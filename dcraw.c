@@ -48,11 +48,13 @@
 #include <io.h>
 #endif
 #ifdef WIN32
+#ifndef __MINGW32__ /* causes warnings in cygwin's gcc -mno-cygwin UF*/
 #include <sys/utime.h>
 #include <winsock2.h>
 #pragma comment(lib, "ws2_32.lib")
 #define strcasecmp stricmp
 typedef __int64 INT64;
+#endif /* __MINGW32__ UF*/
 #else
 #include <unistd.h>
 #include <utime.h>
@@ -78,34 +80,40 @@ typedef unsigned short ushort;
    access them are prefixed with "CLASS".  Note that a thread-safe
    C++ class cannot have non-const static local variables.
  */
-FILE *ifp;
+/* Global used in dcraw_api.c require special attention when upgrading dcraw.c:
+ * ifp, ifname, make, model, use_secondary, verbose, flip, height, width,
+ * fuji_width, maximum, iheight, iwidth, shrink, is_foveon, use_camera_rgb,
+ * filters, image, pre_mul, load_raw, failure, black, colors, use_coeff,
+ * ymag, xmag, cam_mul, white, coeff
+ * These are mark just to create a conflict in cvs if changed. */
+FILE *ifp; /*UF*/
 short order;
-char *ifname, make[64], model[70], model2[64], *meta_data;
+char *ifname, make[64], model[70], model2[64], *meta_data; /*UF*/
 float flash_used, canon_5814;
 time_t timestamp;
 int data_offset, meta_offset, meta_length, nikon_curve_offset;
 int tiff_data_compression, kodak_data_compression;
 int raw_height, raw_width, top_margin, left_margin;
-int height, width, fuji_width, colors, tiff_samples;
-int black, maximum, clip_max, clip_color=1;
-int iheight, iwidth, shrink;
-int is_dng, is_canon, is_foveon, use_coeff, use_gamma;
-int trim, flip, xmag, ymag;
+int height, width, fuji_width, colors, tiff_samples; /*UF*/
+int black, maximum, clip_max, clip_color=1; /*UF*/
+int iheight, iwidth, shrink; /*UF*/
+int is_dng, is_canon, is_foveon, use_coeff, use_gamma; /*UF*/
+int trim, flip, xmag, ymag; /*UF*/
 int zero_after_ff;
-unsigned filters;
-ushort (*image)[4], white[8][8], curve[0x1000];
-void (*load_raw)();
+unsigned filters; /*UF*/
+ushort (*image)[4], white[8][8], curve[0x1000]; /*UF*/
+void (*load_raw)(); /*UF*/
 float bright=1.0, red_scale=1.0, blue_scale=1.0;
 int four_color_rgb=0, document_mode=0, quick_interpolate=0;
-int verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_rgb=0;
-int fuji_secondary, use_secondary=0;
-float cam_mul[4], pre_mul[4], coeff[3][4];
+int verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_rgb=0; /*UF*/
+int fuji_secondary, use_secondary=0; /*UF*/
+float cam_mul[4], pre_mul[4], coeff[3][4]; /*UF*/
 #define camera_red  cam_mul[0]
 #define camera_blue cam_mul[2]
 int histogram[3][0x2000];
 void write_ppm(FILE *);
 void (*write_fun)(FILE *) = write_ppm;
-jmp_buf failure;
+jmp_buf failure; /*UF*/
 
 #ifdef USE_LCMS
 #include <lcms.h>
@@ -116,6 +124,8 @@ struct decode {
   struct decode *branch[2];
   int leaf;
 } first_decode[2048], *second_decode, *free_decode;
+
+int tone_curve_size = 0, tone_curve_offset = 0; /* Nikon Tone Curves UF*/
 
 #define CLASS
 
@@ -178,10 +188,27 @@ char *memmem (char *haystack, size_t haystacklen,
 }
 #endif
 
+#define DCRAW_ERROR 1        /* Centerlize the error handling - UF*/
+#define DCRAW_UNSUPPORTED 2
+#define DCRAW_NO_CAMERA_WB 3
+#define DCRAW_VERBOSE 4
+void dcraw_message(int code, char *format, ...);
+#ifndef DCRAW_NOMAIN
+#include <stdarg.h>
+void dcraw_message(int code, char *format, ...) {
+  if (verbose || code!=DCRAW_VERBOSE) {
+    va_list ap;
+    va_start(ap, format);
+    vfprintf(stderr, format, ap);
+    va_end(ap);
+  }
+}
+#endif /*DCRAW_NOMAIN*/
+
 void CLASS merror (void *ptr, char *where)
 {
   if (ptr) return;
-  fprintf (stderr, "%s: Out of memory in %s\n", ifname, where);
+  dcraw_message (DCRAW_ERROR, "%s: Out of memory in %s\n", ifname, where);/*UF*/
   longjmp (failure, 1);
 }
 
@@ -223,15 +250,19 @@ double CLASS getrat()
 
 float CLASS get_float()
 {
-  int i = get4();
-  return *((float *) &i);
+// Changed code to avoid 'strict-aliasing' warning
+//  int i = get4();
+//  return *((float *) &i);
+  union { int i; float f; } u;
+  u.i = get4();
+  return u.f;
 }
 
 void CLASS read_shorts (ushort *pixel, int count)
 {
   fread (pixel, 2, count, ifp);
   if ((order == 0x4949) == (ntohs(0x1234) == 0x1234))
-    swab (pixel, pixel, count*2);
+    swab ((char *)pixel, (char *)pixel, count*2); /* Added (char *) UF*/
 }
 
 void CLASS canon_600_fixed_wb (int temp)
@@ -490,7 +521,7 @@ uchar * CLASS make_decoder (const uchar *source, int level)
   if (level==0) leaf=0;
   cur = free_decode++;
   if (free_decode > first_decode+2048) {
-    fprintf (stderr, "%s: decoder table overflow\n", ifname);
+    dcraw_message (DCRAW_ERROR, "%s: decoder table overflow\n", ifname); /*UF*/
     longjmp (failure, 2);
   }
   for (i=next=0; i <= leaf && next < 16; )
@@ -1495,7 +1526,7 @@ void CLASS kodak_jpeg_load_raw()
   if ((cinfo.output_width      != width  ) ||
       (cinfo.output_height*2   != height ) ||
       (cinfo.output_components != 3      )) {
-    fprintf (stderr, "%s: incorrect JPEG dimensions\n", ifname);
+    dcraw_message (DCRAW_ERROR, "%s: incorrect JPEG dimensions\n", ifname); /*UF*/
     jpeg_destroy_decompress (&cinfo);
     longjmp (failure, 3);
   }
@@ -1738,7 +1769,7 @@ void CLASS foveon_decoder (unsigned huff[1024], unsigned code)
 
   cur = free_decode++;
   if (free_decode > first_decode+2048) {
-    fprintf (stderr, "%s: decoder table overflow\n", ifname);
+    dcraw_message (DCRAW_ERROR, "%s: decoder table overflow\n", ifname); /*UF*/
     longjmp (failure, 2);
   }
   if (code)
@@ -1855,7 +1886,7 @@ void * CLASS foveon_camf_matrix (int dim[3], char *name)
 	mat[i] = sget4(dp + i*2) & 0xffff;
     return mat;
   }
-  fprintf (stderr, "%s: \"%s\" matrix not found!\n", ifname, name);
+  dcraw_message (DCRAW_ERROR, "%s: \"%s\" matrix not found!\n", ifname, name); /*UF*/
   return NULL;
 }
 
@@ -1948,7 +1979,7 @@ void CLASS foveon_interpolate()
 		"ColorDQ" : "ColorDQCamRGB");
 
   if (!(cp = foveon_camf_param ("WhiteBalanceIlluminants", model2)))
-  { fprintf (stderr, "%s: Invalid white balance \"%s\"\n", ifname, model2);
+  { dcraw_message (DCRAW_ERROR, "%s: Invalid white balance \"%s\"\n", ifname, model2); /*UF*/
     return; }
   foveon_fixed (cam_xyz, 9, cp);
   foveon_fixed (correct, 9,
@@ -2347,13 +2378,10 @@ void CLASS bad_pixels()
 	    n++;
 	  }
     BAYER(row,col) = tot/n;
-    if (verbose) {
-      if (!fixed++)
-	fprintf (stderr, "Fixed bad pixels at:");
-      fprintf (stderr, " %d,%d", col, row);
-    }
+    if (!fixed++) dcraw_message(DCRAW_VERBOSE, "Fixed bad pixels at:"); /*UF*/
+    dcraw_message(DCRAW_VERBOSE, " %d,%d", col, row);
   }
-  if (fixed) fputc ('\n', stderr);
+  if (fixed) dcraw_message(DCRAW_VERBOSE, "\n");
   fclose (fp);
 }
 
@@ -2509,16 +2537,17 @@ void CLASS colorcheck()
   }
   cam_xyz_coeff (best);
   if (verbose) {
-    fprintf (stderr, "    { \"%s %s\",\n\t{ ", make, model);
+    dcraw_message (DCRAW_VERBOSE, "    { \"%s %s\",\n\t{ ", make, model); /*UF*/
     num = 10000 / (best[1][0] + best[1][1] + best[1][2]);
     FORCC for (j=0; j < 3; j++)
-      fprintf (stderr, "%d,", (int) (best[c][j] * num + 0.5));
-    fprintf (stderr, "\b } },\n");
+      dcraw_message (DCRAW_VERBOSE, "%d,", (int) (best[c][j] * num + 0.5));
+    dcraw_message (DCRAW_VERBOSE, "\b } },\n");
   }
 #undef NSQ
 }
 #endif
 
+/* Start of functions copied to dcraw_indi.c (UF) */
 void CLASS scale_colors()
 {
   int row, col, c, val, shift=0;
@@ -2560,7 +2589,8 @@ void CLASS scale_colors()
     else if (camera_red && camera_blue)
       memcpy (pre_mul, cam_mul, sizeof pre_mul);
     else
-      fprintf (stderr, "%s: Cannot use camera white balance.\n", ifname);
+      dcraw_message (DCRAW_NO_CAMERA_WB,
+	      "%s: Cannot use camera white balance.\n", ifname); /*UF*/
   }
   if (!use_coeff) {
     pre_mul[0] *= red_scale;
@@ -2581,11 +2611,9 @@ void CLASS scale_colors()
 	maximum = 0xffff;
     FORCC pre_mul[c] *= bright;
   }
-  if (verbose) {
-    fprintf (stderr, "Scaling with black=%d, pre_mul[] =", black);
-    FORCC fprintf (stderr, " %f", pre_mul[c]);
-    fputc ('\n', stderr);
-  }
+  dcraw_message(DCRAW_VERBOSE, "Scaling with black=%d, pre_mul[] =", black); /*UF*/
+  FORCC dcraw_message(DCRAW_VERBOSE, " %f", pre_mul[c]);
+  dcraw_message(DCRAW_VERBOSE, "\n");
   clip_max = clip_color ? maximum : 0xffff;
   for (row=0; row < height; row++)
     for (col=0; col < width; col++)
@@ -2772,6 +2800,7 @@ void CLASS vng_interpolate()
   memcpy (image[(row-1)*width+2], brow[1]+2, (width-4)*sizeof *image);
   free (brow[4]);
 }
+/* End of functions copied to dcraw_indi.c (UF) */
 
 void CLASS parse_makernote()
 {
@@ -2864,8 +2893,11 @@ void CLASS parse_makernote()
     }
     if (tag == 0x1d)
       fscanf (ifp, "%d", &serial);
-    if (tag == 0x8c)
+    if (tag == 0x8c)  { /* NTC UF*/
       nikon_curve_offset = ftell(ifp) + 2112;
+      tone_curve_offset = ftell(ifp); /* was base+val */
+      tone_curve_size = len;
+    } /* NTC UF*/
     if (tag == 0x96)
       nikon_curve_offset = ftell(ifp) + 2;
     if (tag == 0x97) {
@@ -3269,14 +3301,13 @@ void CLASS parse_external_jpeg()
     }
   if (strcmp (jname, ifname)) {
     if ((ifp = fopen (jname, "rb"))) {
-      if (verbose)
-	fprintf (stderr, "Reading metadata from %s...\n", jname);
+      dcraw_message (DCRAW_VERBOSE, "Reading metadata from %s...\n", jname);/*UF*/
       parse_tiff (12);
       fclose (ifp);
     }
   }
   if (!timestamp)
-    fprintf (stderr, "Failed to read metadata from %s\n", jname);
+    dcraw_message (DCRAW_ERROR, "Failed to read metadata from %s\n", jname);/*UF*/
   free (jname);
   ifp = save;
 }
@@ -3405,9 +3436,21 @@ common:
     if (type == 0x580e)
       timestamp = len;
     if (type == 0x5813)
-      flash_used = *((float *) &len);
+    // Changed to avoid 'strict-aliasing' warning /*UF*/
+    //  flash_used = *((float *) &len);
+    {
+      union { int i; float f; } u;
+      u.i = len;
+      flash_used = u.f;
+    }
     if (type == 0x5814)
-      canon_5814 = *((float *) &len);
+    // Changed to avoid 'strict-aliasing' warning /*UF*/
+    //  canon_5814 = *((float *) &len);
+    {
+      union { int i; float f; } u;
+      u.i = len;
+      canon_5814 = u.f;
+    }
     if (type == 0x1810) {		/* Get the rotation */
       fseek (ifp, aoff+12, SEEK_SET);
       flip = get4();
@@ -3980,6 +4023,7 @@ int CLASS identify (int will_decode)
 #ifdef USE_LCMS
   profile_length = 0;
 #endif
+  tone_curve_offset = tone_curve_size = 0; /*UF*/
 
   order = get2();
   hlen = get4();
@@ -3987,8 +4031,8 @@ int CLASS identify (int will_decode)
   fread (head, 1, 32, ifp);
   fseek (ifp, 0, SEEK_END);
   fsize = ftell(ifp);
-  if ((cp = memmem (head, 32, "MMMMRawT", 8)) ||
-      (cp = memmem (head, 32, "IIIITwaR", 8)))
+  if ((cp = (char *)memmem (head, 32, "MMMMRawT", 8)) ||
+      (cp = (char *)memmem (head, 32, "IIIITwaR", 8))) /* (char *) UF*/
     parse_phase_one (cp-head);
   else if (order == 0x4949 || order == 0x4d4d) {
     if (!memcmp (head+6, "HEAPCCDR", 8)) {
@@ -4080,7 +4124,7 @@ nucore:
   make[63] = model[63] = model2[63] = 0;
 
   if (make[0] == 0) {
-    fprintf (stderr, "%s: unsupported file format.\n", ifname);
+    dcraw_message (DCRAW_UNSUPPORTED, "%s: unsupported file format.\n", ifname); /*UF*/
     return 1;
   }
 
@@ -4657,7 +4701,8 @@ konica_400z:
 	}
 	break;
       default:
-	fprintf (stderr, "%s: %s %s uses unsupported compression method %d.\n",
+	dcraw_message (DCRAW_UNSUPPORTED, /*UF*/
+		"%s: %s %s uses unsupported compression method %d.\n",
 		ifname, make, model, tiff_data_compression);
 	return 1;
     }
@@ -4806,13 +4851,14 @@ konica_400z:
 dng_skip:
   if (!load_raw || !height || strstr(model,"JPEG")) {
     if (will_decode)
-      fprintf (stderr, "%s: Cannot decode %s %s images.\n",
-	ifname, make, model);
+      dcraw_message (DCRAW_UNSUPPORTED, "%s: Cannot decode %s %s images.\n",
+	ifname, make, model); /*UF*/
     return 1;
   }
 #ifdef NO_JPEG
   if (load_raw == kodak_jpeg_load_raw) {
-    fprintf (stderr, "%s: decoder was not linked with libjpeg.\n", ifname);
+    dcraw_message (DCRAW_UNSUPPORTED, /*UF*/
+	    "%s: decoder was not linked with libjpeg.\n", ifname);
     return 1;
   }
 #endif
@@ -4861,8 +4907,7 @@ void CLASS apply_profile (char *pfname)
     free (prof);
   }
   if (!hInProfile) return;
-  if (verbose)
-    fprintf (stderr, "Applying color profile...\n");
+  dcraw_message (DCRAW_VERBOSE, "Applying color profile...\n"); /*UF*/
   maximum = 0xffff;
   use_gamma = use_coeff = 0;
 
@@ -4880,6 +4925,7 @@ void CLASS apply_profile (char *pfname)
 /*
    Convert the entire image to RGB colorspace and build a histogram.
  */
+/* Start of functions copied to dcraw_indi.c (UF) */
 void CLASS convert_to_rgb()
 {
   int row, col, r, g, c=0;
@@ -4925,8 +4971,7 @@ void CLASS fuji_rotate()
   ushort (*img)[4], (*pix)[4];
 
   if (!fuji_width) return;
-  if (verbose)
-    fprintf (stderr, "Rotating image 45 degrees...\n");
+  dcraw_message (DCRAW_VERBOSE, "Rotating image 45 degrees...\n"); /*UF*/
   fuji_width = (fuji_width + shrink) >> shrink;
   step = sqrt(0.5);
   wide = fuji_width / step;
@@ -4999,6 +5044,7 @@ void CLASS flip_image()
     xmag = temp;
   }
 }
+/* End of functions copied to dcraw_indi.c (UF) */
 
 /*
    Write the image to an 8-bit PPM file.
@@ -5103,18 +5149,20 @@ void CLASS write_ppm16 (FILE *ofp)
   free (ppm);
 }
 
+#ifndef DCRAW_NOMAIN /*UF*/
 int CLASS main (int argc, char **argv)
 {
-  int arg, status=0, user_flip=-1;
-  int timestamp_only=0, identify_only=0, write_to_stdout=0;
-  int half_size=0, use_fuji_rotate=1;
-  char opt, *ofname, *cp;
-  struct utimbuf ut;
-  const char *write_ext = ".ppm";
-  FILE *ofp = stdout;
+  static int arg, status=0, user_flip=-1;
+  static int timestamp_only=0, identify_only=0, write_to_stdout=0;
+  static int half_size=0, use_fuji_rotate=1;
+  static char opt, *ofname, *cp;
+  static struct utimbuf ut;
+  static const char *write_ext = ".ppm";
+  static FILE *ofp;
 #ifdef USE_LCMS
   char *profile = NULL;
 #endif
+  ofp = stdout;
 
   if (argc == 1)
   {
@@ -5320,3 +5368,4 @@ cleanup:
   }
   return status;
 }
+#endif /*DCRAW_NOMAIN*/ /*UF*/
