@@ -1,0 +1,190 @@
+UFRaw - Unidentified Flying Raw
+Raw photo loader plugin for The GIMP
+(http://www.aei.mpg.de/~udif/ufraw/)
+by udi Fuchs,
+
+UFRaw is a utility to read and manipulate raw images from digital cameras.
+It can be used by itself or as a Gimp plug-in.
+It reads raw images using Dave Coffin's raw conversion utility DCRaw.
+And it supports basic color management using Little CMS, allowing
+the user to apply color profiles.
+ 
+Ufraw was originally based on the gimp plug-in by Dave Coffin
+http://www.cybercom.net/~dcoffin/
+and on Pawel T. Jochym's (jochym at ifj edu pl) plug-in.
+
+UFRaw is licensed under the GNU General Public License.
+
+Installation
+============
+Requires Gimp 2.0, the Gimp development package, GTK+ >= 2.4 and lcms.
+If you have GTK+ >= 2.6 you will get the extra option of seeing hidden
+files in the file chooser dialogs.
+
+The first step of the installation, is to run:
+./configure
+
+At the end of the configuration you will get a summary of the installation
+settings.
+
+The libjpeg development package is required for saving image in the
+JPEG format in the stand-alone tool. It is also needed to support
+Kodak DC120. If the configuration script does not find this package
+the above options will be suppressed.
+
+The tiff development package is required for saving images in the TIF format.
+If the configuration script does not find this package this option
+will be suppressed.
+
+The zlib package is required for saving images in the TIFF format with
+lossless compression. If the configuration script does not find this package
+this option will be suppressed.
+
+The libexif development package is required for reading exif information
+from some cameras.  If the configuration script does not find this package
+this option will be suppressed. You can also suppress this option explicitly
+by using the '--disable-exif' option to the configuration script.
+A recent version of libexif is required, but since libexif-6.11
+can crash UFRaw, it is recomended to use the CVS version.
+
+Other options for the configuration script are:
+
+--disable-gimp : do not build the gimp plug-in and hence the gimp development
+                 package is not needed.
+
+--enable-extras: build the extra binaries - dcraw, ufraw-exif, nikon-curve.
+
+To build UFRaw:
+make
+
+To make a system wide installation:
+make install
+
+To install for a single user:
+make install-user
+
+You also need to make sure that rawphoto is not installed.
+
+If one of the packages (lcms, jpeg, tiff, zlib) is not installed on your
+system, you can build it locally and export PREFIX to its location.
+To build any of the above packages download the package and type:
+./configure --prefix=$PREFIX
+make
+make install
+
+If zlib is build only localy you will have to configure libtiff with
+the command:
+./configure --prefix=$PREFIX --with-zlib-include-dir=$PREFIX/include --with-zlib-lib-dir=$PREFIX/lib
+
+CVS
+===
+UFRaw has a CVS repository on sourceforge. To use the repository you need
+autoconf and automake to be installed. You should './autogen.sh' before
+'./configure'.
+
+Using the CVS, new versions of dcraw.c can be easily updated. Copy the latest
+version of dcraw.c from Dave Coffin to a ufraw working directory. Then type:
+
+cvs update -r dcraw-original-branch dcraw.c
+cvs commit -m "dcraw original 7.30" dcraw.c
+cvs update -A
+cvs update -j dcraw-original-latest -j dcraw-original-branch dcraw.c
+cvs commit -m "dcraw modified 7.30" dcraw.c
+cvs tag -F -r dcraw-original-branch dcraw-original-latest dcraw.c
+
+This would commit the original dcraw.c to the dcraw-original-branch and
+update the modified dcraw.c in the main trunk.
+
+This update procedure is not full proof. First there can be conflict that
+have to be resolved. But even if there are no conflicts, one should check
+if there where changes in scale_colors(), vng_interpolation(),
+convert_to_rgb(), fuji_rotate(), flip_image(), main(). Such a change could
+effect dcraw_indi.c or dcraw_api.c.
+
+Development version
+===================
+The development version has the following cavities:
+
+The new DCRaw 7 code was incooparated into UFRaw-0.5. But, the new
+"color matrix" option of DCRaw is disabled at the moment. Also, DCRaw 7
+treats WB a bit differently than DCRaw 6, this means that one can get
+different colors than one is used too. It also means that the WB presets
+will be odd, until I'll update them.
+
+You can create ufraw ID files (*.ufraw) that UFRaw should know how to read,
+but the last part wasn't written yet.
+
+The format of these ID files and of the configuration file $HOME/.ufrawrc
+may and will change before the final release. I try to make sure that the
+new releases will read such files correctly even if they are from previous
+releases. No attemp is made to keep backward compatibility with the different
+stages of the development versions. If you use the development version you
+might have to delete or fix manualy such files from time to time.
+
+Reading EXIF data is only supported for NEF, PEF and CR2 files and even then
+your milage may vary. In the worst case UFRaw may crash and in the best case
+it will read some, but not all of the data.
+
+There are some changes in the UI. The "Spot size" adjustment is gone, you can
+get the same effect and more by pressing the mouse button on the image and
+dragging the mouse as you press. Also, you should try clicking the right
+button on both histograms, for some histogram related options.
+
+The old curve file format is not supported any more. Instead UFRaw reads
+a new format, and can also read the Nikon curve formats NTC, NCV.
+
+There is a new curve editor, but the code is not finished yet.
+
+Last but not least, the developement version is poorly tested and has some
+half written features, therefore it is bound to have bugs...
+
+History
+=======
+08/02/2005 - UFRaw-0.4 released, based on DCRaw v6.33.
+* Rotate Fuji images by 45 degrees.
+* Preview dialog is more responsive.
+* Disable internationalization for Hebrew and Arabic (The right to left setting
+  doesn't do good to the preview dialog).
+* Bug correction - ufraw --batch did not calculate WB in some cases.
+* Bug correction - Seg Fault for some images.
+
+23/01/2005 - UFRaw-0.3 released, based on DCRaw v6.23.
+* Added basic color management support using Little CMS.
+* Made a stand-alone version with a GUI interface and batch processing support.
+  Images can be saved in the PPM, TIFF, and JPEG formats.
+* Settings are saved between sessions in a configuration file.
+* Added white balance presets (direct sunlight, cloudy, shade, flash, etc.)
+* Several possible live histograms.
+* Initial (a bit slow) support for thumbnails in the Gimp 2.0 open file dialog.
+* Many smaller changes.
+
+28/10/2004 - UFRaw-0.2 released, based on DCRaw v6.10.
+* Added support for Nikon Tone Curves.
+* This version can be used on the smaller 1024x768 screens.
+* I'm finally satisfied with the Saturation control.
+* Many small changes.
+
+11/10/2004 - UFRaw-0.1 released, based on DCRaw v6.07.
+* Initial version.
+
+Todo
+====
+* Show some Exif Data in dialog and export all the Exif data to the Gimp.
+* Add the UFRaw parameters used to the Exif data.
+* Allow the use of camera curve together with color management.
+* Improve curve controls.
+* Curve corrections per channel.
+* Option to save a copy of the configuration file with every image.
+* Load a different configuration file (not ~/.ufrawrc).
+* Configurable preview image size.
+* Sort out the color temperature.
+* Invert colors for negatives.
+* Rotate by 90 degrees.
+* Zoom.
+* Crop.
+* Spot query - mark on histograms.
+* Multi spot query (when pressing the control key).
+* Show camera overexposures.
+* Help (based on the webpage).
+* Calculate width of the dialog control coloumn
+  and set raw histogram to that width.
