@@ -738,12 +738,14 @@ int save_configuration(cfg_data *c, developer_data *d,
         cfg_printf("<WB>%d</WB>\n", c->wb);
     cfg_printf("<Temperature>%d</Temperature>\n", (int)floor(c->temperature));
     cfg_printf("<Green>%lf</Green>\n", c->green);
-    if (d->rgbWB[3]==0) {
-	cfg_printf("<ChannelMultipliers>%d %d %d</ChannelMultipliers>\n",
-		d->rgbWB[0], d->rgbWB[1], d->rgbWB[2]);
-    } else {
-	cfg_printf("<ChannelMultipliers>%d %d %d %d</ChannelMultipliers>\n",
-		d->rgbWB[0], d->rgbWB[1], d->rgbWB[2], d->rgbWB[3]);
+    if (d!=NULL) {
+	if (d->rgbWB[3]==0) {
+	    cfg_printf("<ChannelMultipliers>%d %d %d</ChannelMultipliers>\n",
+		    d->rgbWB[0], d->rgbWB[1], d->rgbWB[2]);
+	} else {
+	    cfg_printf("<ChannelMultipliers>%d %d %d %d</ChannelMultipliers>\n",
+		    d->rgbWB[0], d->rgbWB[1], d->rgbWB[2], d->rgbWB[3]);
+	}
     }
     if (c->exposure!=cfg_default.exposure)
         cfg_printf("<Exposure>%lf</Exposure>\n", c->exposure);

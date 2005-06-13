@@ -1827,7 +1827,7 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     /* In interactive mode outputPath is taken into account only once */
     strcpy(image->cfg->outputPath, "");
     if (status==GTK_RESPONSE_OK)
-	save_configuration(cfg, Developer, NULL, NULL, 0);
+	save_configuration(cfg, NULL, NULL, NULL, 0);
     else *image->cfg = save_cfg;
     if (status!=GTK_RESPONSE_OK) return UFRAW_CANCEL;
     return UFRAW_SUCCESS;
