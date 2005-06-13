@@ -5,6 +5,9 @@ setlocale() for xml data
 black-point
 clear gamma/contrast mess
 remember that executables are not striped (-s) anymore
+Add reset button to White balance combo-box
+Freeze UI during raw conversion
+check 1024x768 mode before release
 
 For the future
 ==============

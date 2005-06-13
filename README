@@ -21,6 +21,9 @@ Requires Gimp 2.0, the Gimp development package, GTK+ >= 2.4 and lcms.
 If you have GTK+ >= 2.6 you will get the extra option of seeing hidden
 files in the file chooser dialogs.
 
+(if you are using the CVS version you should first run ./autogen.sh
+and check the "Development version" section in this README.)
+
 The first step of the installation, is to run:
 ./configure
 
