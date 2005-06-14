@@ -27,6 +27,9 @@
 
 
   NOTES:
+  06/14/2005 (Udi Fuchs)
+	Added the function CurveDataSetPoint()
+
   06/13/2005 (Shawn Freeman)
     Added a couple of explicit casts to keep some compilers from complaining.
     At this point, I'd say this code is decent enough to classified as 1.0. Right now
@@ -405,9 +408,6 @@ typedef struct
     //contains a list of anchors, 2 doubles per each point, x-y format
     //max is 20 points
     CurveAnchorPoint m_anchors[NIKON_MAX_ANCHORS];
-   
-    //data used only by ufraw
-    double m_contrast, m_saturation, m_black;
     
 } CurveData;
 
@@ -527,6 +527,14 @@ CurveDataSample:
     sample  - Pointer to sample struct to hold the data.
 **********************************************/
 int CurveDataSample(CurveData *curve, CurveSample *sample);
+
+/*********************************************
+ CurveDataSetPoint:
+    Change the position of point to the new (x,y) coordinate.
+    The end-points get a special treatment. When these are moved all the
+    other points are moved together, keeping their relative position constant.
+**********************************************/
+void CurveDataSetPoint(CurveData *curve, int point, double x, double y);
 
 /****************************************************
 SampleToCameraCurve:

@@ -940,6 +940,31 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
     return NC_SUCCESS;
 }
 
+/*********************************************
+CurveDataSetPoint:
+   Change the position of point to the new (x,y) coordinate.
+   The end-points get a special treatment. When these are moved all the
+   other points are moved together, keeping their relative position constant.
+**********************************************/
+void CurveDataSetPoint(CurveData *curve, int point, double x, double y)
+{
+    int i;
+    double left = curve->m_anchors[0].x;
+    double right = curve->m_anchors[curve->m_numAnchors-1].x;
+    if (point==0) {
+	for (i=0; i<curve->m_numAnchors; i++)
+	    curve->m_anchors[i].x = x + (curve->m_anchors[i].x-left) *
+		    (right-x) / (right-left);
+    } else if (point==curve->m_numAnchors-1) {
+	for (i=0; i<curve->m_numAnchors; i++)
+	    curve->m_anchors[i].x = left + (curve->m_anchors[i].x-left) *
+		(x-left) / (right-left);
+    } else {
+	curve->m_anchors[point].x = x;
+    }
+    curve->m_anchors[point].y = y;
+}
+
 /****************************************************
 SampleToCameraCurve:
 

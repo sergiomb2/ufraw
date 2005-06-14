@@ -135,19 +135,11 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
         d->toneCurveData = *curve;
 	CurveSample *cs = CurveSampleInit(0x10000, 0xFFFF);
         if (CurveDataSample(curve, cs)!=UFRAW_SUCCESS) {
-            ufraw_message(UFRAW_ERROR, "Error sampling Nikon curve");
+            ufraw_message(UFRAW_ERROR, "Error sampling curve");
             for (i=0; i<0x10000; i++) d->toneCurve[i] = i;
         } else
             for (i=0; i<0x10000; i++) d->toneCurve[i] = cs->m_Samples[i];
         CurveSampleFree(cs);
-    }
-    int norm = 0x10000/(1.0-curve->m_black);
-    for (i=0; i<0x10000; i++)  {
-        double val = (double)d->toneCurve[i]/0x10000;
-        d->correctionCurve[i] = MIN( floor( MAX(
-                ( curve->m_contrast==0 ? val :
-                    log(1+curve->m_contrast*val) / log(1+curve->m_contrast) ) -
-                curve->m_black, 0) * norm), 0xFFFF);
     }
 }
 
@@ -192,6 +184,6 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
             /* It is also possible to define oldSaturation = max-min */
         }
     }
-    if (mode==16) for (i=0; i<3*count; i++) p16[i] = d->correctionCurve[buf[i]];
-    else for (i=0; i<3*count; i++) p8[i] = d->correctionCurve[buf[i]] >> 8;
+    if (mode==16) for (i=0; i<3*count; i++) p16[i] = d->toneCurve[buf[i]];
+    else for (i=0; i<3*count; i++) p8[i] = d->toneCurve[buf[i]] >> 8;
 }

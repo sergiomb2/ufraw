@@ -53,7 +53,6 @@ char helpText[]=
 "--[no]unclip          Unclip [clip] highlights.\n"
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
-"--contrast=CONTRAST   Contrast adjustment (default 1.0).\n"
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"
 "--exposure=auto|EXPOSURE\n"
 "                      Auto exposure or exposure correction in EV (default 0).\n"
@@ -96,7 +95,6 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, gboolean *batch)
         {"curve", 1, 0, 'c'},
         {"gamma", 1, 0, 'G'},
         {"linearity", 1, 0, 'L'},
-        {"contrast", 1, 0, 'C'},
         {"saturation", 1, 0, 's'},
         {"exposure", 1, 0, 'e'},
         {"black-point", 1, 0, 'k'},
@@ -122,8 +120,8 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, gboolean *batch)
     };
     void *optPointer[] = { &wbName, &cmd->temperature, &cmd->green, &curveName,
         &cmd->profile[0][0].gamma, &cmd->profile[0][0].linear,
-	&cmd->curve[0].m_contrast, &cmd->curve[0].m_saturation,
-        &cmd->exposure, &cmd->curve[0].m_black, &interpolationName,
+	&cmd->saturation,
+        &cmd->exposure, &cmd->black, &interpolationName,
 	&cmd->shrink, &cmd->size, &cmd->compression,
 	&outTypeName, &createIDName, &outPath, &output };
     cmd->autoExposure = FALSE;
@@ -133,9 +131,8 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, gboolean *batch)
     cmd->embedExif=-1;
     cmd->profile[0][0].gamma=NULLF;
     cmd->profile[0][0].linear=NULLF;
-    cmd->curve[0].m_contrast=NULLF;
-    cmd->curve[0].m_saturation=NULLF;
-    cmd->curve[0].m_black=NULLF;
+    cmd->saturation=NULLF;
+    cmd->black=NULLF;
     cmd->exposure=NULLF;
     cmd->temperature=NULLF;
     cmd->green=NULLF;
@@ -404,10 +401,10 @@ int main (int argc, char **argv)
         cfg.wbLoad = load_preserve;
         cfg.curveLoad = load_preserve;
         if (cfg.exposureLoad!=load_auto ||
-                cmd.exposure!=NULLF || cmd.curve[0].m_black!=NULLF)
+                cmd.exposure!=NULLF || cmd.black!=NULLF)
             cfg.exposureLoad = load_preserve;
         if (isnan(cfg.exposure)
-		&& cmd.exposure==NULLF && cmd.curve[0].m_black!=NULLF)
+		&& cmd.exposure==NULLF && cmd.black!=NULLF)
             cmd.exposure = cfg_default.exposure;
     }
     if (cmd.overwrite!=-1) cfg.overwrite = cmd.overwrite;
@@ -431,13 +428,12 @@ int main (int argc, char **argv)
 	cfg.profile[0][cfg.profileIndex[0]].gamma = cmd.profile[0][0].gamma;
     if (cmd.profile[0][0].linear!=NULLF)
 	cfg.profile[0][cfg.profileIndex[0]].linear = cmd.profile[0][0].linear;
+    if (cmd.saturation!=NULLF)
+	cfg.saturation=cmd.saturation;
     if (cmd.curveIndex>=0) cfg.curveIndex = cmd.curveIndex;
-    if (cmd.curve[0].m_contrast!=NULLF)
-	cfg.curve[cfg.curveIndex].m_contrast = cmd.curve[0].m_contrast;
-    if (cmd.curve[0].m_saturation!=NULLF)
-	cfg.curve[cfg.curveIndex].m_saturation=cmd.curve[0].m_saturation;
-    if (cmd.curve[0].m_black!=NULLF)
-	cfg.curve[cfg.curveIndex].m_black = cmd.curve[0].m_black;
+    if (cmd.black!=NULLF)
+	CurveDataSetPoint(&cfg.curve[cfg.curveIndex],
+		0, cmd.black, 0);
     if (cmd.interpolation>=0) cfg.interpolation = cmd.interpolation;
     if (cmd.shrink!=NULLF) {
         cfg.shrink = cmd.shrink;

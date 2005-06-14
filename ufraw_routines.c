@@ -95,7 +95,8 @@ const cfg_data cfg_default = {
     TRUE, /* Embed exif data */
     camera_wb, rgb_histogram, linear_histogram, 128, linear_histogram, 128,
     { TRUE, TRUE, TRUE, TRUE, TRUE, TRUE }, full_interpolation, 1, 0,
-    4750, 1.2, 0.0,
+    4750, 1.2, /* temperature, green */
+    0.0, 1.0, 0.0, /* exposure, saturation, black */
     FALSE /* Unclip highlights */,
     FALSE /* Auto exposure */,
     FALSE /* Unclip highlights */,
@@ -105,11 +106,11 @@ const cfg_data cfg_default = {
     /* Curves defaults */
     camera_curve, camera_curve+1,
     { { "Linear curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
-	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } }, 0.0, 1.0, 0.0 },
+	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
       { "Camera curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
-	  0 , { { 0.0, 0.0 } }, 0.0, 1.0, 0.0 },
+	  0 , { { 0.0, 0.0 } } },
       { "", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
-	  0 , { { 0.0, 0.0 } }, 0.0, 1.0, 0.0 }
+	  0 , { { 0.0, 0.0 } } }
     },
     "",
     /* Profiles defaults */
@@ -213,12 +214,6 @@ void curve_parse_text(GMarkupParseContext *context, const gchar *text,
                     &c->m_anchors[c->m_numAnchors].y);
             c->m_numAnchors++;
         }
-        if (!strcmp("Contrast", element))
-            sscanf(temp, "%lf", &c->m_contrast);
-        if (!strcmp("Saturation", element))
-            sscanf(temp, "%lf", &c->m_saturation);
-        if (!strcmp("BlackPoint", element))
-            sscanf(temp, "%lf", &c->m_black);
     }
 }
 
@@ -475,12 +470,6 @@ void cfg_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
                     &c->curve[i].m_anchors[c->curve[i].m_numAnchors].y);
             c->curve[i].m_numAnchors++;
         }
-        if (!strcmp("Contrast", element))
-            sscanf(temp, "%lf", &c->curve[i].m_contrast);
-        if (!strcmp("Saturation", element))
-            sscanf(temp, "%lf", &c->curve[i].m_saturation);
-        if (!strcmp("BlackPoint", element))
-            sscanf(temp, "%lf", &c->curve[i].m_black);
         return;
     }
     if (c->profileCount[0]<=0) {
@@ -557,6 +546,7 @@ void cfg_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     if (!strcmp("Temperature", element)) sscanf(temp, "%lf", &c->temperature);
     if (!strcmp("Green", element)) sscanf(temp, "%lf", &c->green);
     if (!strcmp("Exposure", element)) sscanf(temp, "%lf", &c->exposure);
+    if (!strcmp("Saturation", element)) sscanf(temp, "%lf", &c->saturation);
     if (!strcmp("Unclip", element)) sscanf(temp, "%d", &c->unclip);
     if (!strcmp("AutoExposure", element)) sscanf(temp, "%d", &c->autoExposure);
     if (!strcmp("CurvePath", element)) g_strlcpy(c->curvePath, temp, max_path);
@@ -643,15 +633,6 @@ char *curve_buffer(CurveData *c, gboolean withPoints)
                     "\t<AnchorXY>%lf %lf</AnchorXY>\n",
                     c->m_anchors[i].x, c->m_anchors[i].y);
     }
-    if (c->m_contrast!=cfg_default.curve[0].m_contrast)
-        bufIndex += snprintf(buf+bufIndex, bufSize-bufIndex,
-                "\t<Contrast>%.2f</Contrast>\n", c->m_contrast);
-    if (c->m_saturation!=cfg_default.curve[0].m_saturation)
-        bufIndex += snprintf(buf+bufIndex, bufSize-bufIndex,
-                "\t<Saturation>%.2f</Saturation>\n", c->m_saturation);
-    if (c->m_black!=cfg_default.curve[0].m_black)
-        bufIndex += snprintf(buf+bufIndex, bufSize-bufIndex,
-                "\t<BlackPoint>%lf</BlackPoint>\n", c->m_black);
     if (bufIndex==0) {
         g_free(buf);
         buf = NULL;
@@ -741,10 +722,10 @@ int save_configuration(cfg_data *c, developer_data *d,
     if (d!=NULL) {
 	if (d->rgbWB[3]==0) {
 	    cfg_printf("<ChannelMultipliers>%d %d %d</ChannelMultipliers>\n",
-		    d->rgbWB[0], d->rgbWB[1], d->rgbWB[2]);
+		d->rgbWB[0], d->rgbWB[1], d->rgbWB[2]);
 	} else {
 	    cfg_printf("<ChannelMultipliers>%d %d %d %d</ChannelMultipliers>\n",
-		    d->rgbWB[0], d->rgbWB[1], d->rgbWB[2], d->rgbWB[3]);
+		d->rgbWB[0], d->rgbWB[1], d->rgbWB[2], d->rgbWB[3]);
 	}
     }
     if (c->exposure!=cfg_default.exposure)
@@ -753,6 +734,8 @@ int save_configuration(cfg_data *c, developer_data *d,
         cfg_printf("<Unclip>%d</Unclip>\n", c->unclip);
     if (c->autoExposure!=cfg_default.autoExposure)
         cfg_printf("<AutoExposure>%d</AutoExposure>\n", c->autoExposure);
+    if (c->saturation!=cfg_default.saturation)
+        cfg_printf("<Saturation>%lf</Saturation>\n", c->saturation);
     if (c->size!=cfg_default.size)
         cfg_printf("<Size>%d</Size>\n", c->size);
     if (c->shrink!=cfg_default.shrink)

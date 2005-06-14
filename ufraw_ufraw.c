@@ -170,14 +170,11 @@ int ufraw_config(image_data *image, cfg_data *cfg)
     if (cfg->wbLoad==load_default) cfg->wb = camera_wb;
     if (cfg->wbLoad==load_auto) cfg->wb = auto_wb;
     if (cfg->curveLoad==load_default)
-        for (i=0; i<cfg->curveCount; i++) {
-            cfg->curve[i].m_contrast = cfg_default.curve[0].m_contrast;
-            cfg->curve[i].m_saturation = cfg_default.curve[0].m_saturation;
-        }
+        cfg->saturation = cfg_default.saturation;
     if (cfg->exposureLoad==load_default) {
         cfg->exposure = cfg_default.exposure;
         for (i=0; i<cfg->curveCount; i++)
-            cfg->curve[i].m_black = cfg_default.curve[0].m_black;
+	    CurveDataSetPoint(&cfg->curve[i], 0, 0, 0);
     }
     if (cfg->exposureLoad==load_auto) cfg->exposure = uf_nan();
 
@@ -218,9 +215,8 @@ int ufraw_config(image_data *image, cfg_data *cfg)
             return UFRAW_WARNING;
         }
         fseek(raw->ifp, pos, SEEK_SET);
+	if (nc.m_numAnchors<2) nc = cfg_default.curve[0];
 	g_strlcpy(nc.name, cfg->curve[camera_curve].name, max_name);
-	nc.m_contrast = cfg->curve[camera_curve].m_contrast;
-	nc.m_saturation = cfg->curve[camera_curve].m_saturation;
         cfg->curve[camera_curve] = nc;
     } else {
 	/* BUG? why -1 and not 0? */
@@ -291,6 +287,7 @@ int ufraw_convert_image(image_data *image, image_data *rawImage)
         image->image = rawCopy->rawImage;
         for (c=0; c<4; c++) image->preMul[c] = rawCopy->pre_mul[c];
 	if (rawCopy->colors<4) image->preMul[3] = 0;
+	// Small BUG if use_coeff preMul is lost
         if (rawCopy->use_coeff) {
             int preMul[4];
             for (c=0; c<4; c++)
@@ -309,7 +306,7 @@ int ufraw_convert_image(image_data *image, image_data *rawImage)
                 cfg->temperature, cfg->green, image->preMul,
                 &cfg->profile[0][cfg->profileIndex[0]],
                 &cfg->profile[1][cfg->profileIndex[1]], cfg->intent,
-                cfg->curve[cfg->curveIndex].m_saturation,
+                cfg->saturation,
                 &cfg->curve[cfg->curveIndex]);
     } else {
         if (isnan(image->cfg->exposure)) {
@@ -337,7 +334,7 @@ int ufraw_convert_image(image_data *image, image_data *rawImage)
                     cfg->temperature, cfg->green, image->preMul,
                     &cfg->profile[0][cfg->profileIndex[0]],
                     &cfg->profile[1][cfg->profileIndex[1]], cfg->intent,
-                    cfg->curve[cfg->curveIndex].m_saturation,
+                    cfg->saturation,
                     &cfg->curve[cfg->curveIndex]);
         } else {
             developer_prepare(image->developer, image->rgbMax,
@@ -345,7 +342,7 @@ int ufraw_convert_image(image_data *image, image_data *rawImage)
                     cfg->temperature, cfg->green, image->preMul,
                     &cfg->profile[0][cfg->profileIndex[0]],
                     &cfg->profile[1][cfg->profileIndex[1]], cfg->intent,
-                    cfg->curve[cfg->curveIndex].m_saturation,
+                    cfg->saturation,
                     &cfg->curve[cfg->curveIndex]);
             dcraw_scale_colors(raw, image->developer->rgbWB);
             image->rgbMax = raw->rgbMax;
@@ -425,7 +422,7 @@ void ufraw_auto_expose(image_data *image)
             &image->cfg->profile[0][image->cfg->profileIndex[0]],
             &image->cfg->profile[1][image->cfg->profileIndex[1]],
             image->cfg->intent,
-            image->cfg->curve[image->cfg->curveIndex].m_saturation,
+            image->cfg->saturation,
             &image->cfg->curve[image->cfg->curveIndex]);
 
     /* First calculate the exposure */
@@ -451,14 +448,14 @@ void ufraw_auto_black(image_data *image)
     guint16 *pixtmp = g_new(guint16, 3*image->width);
 
     stop = image->width*image->height*3/256/4;
-    image->cfg->curve[image->cfg->curveIndex].m_black = 0;
+    CurveDataSetPoint(&image->cfg->curve[image->cfg->curveIndex], 0, 0, 0);
     developer_prepare(image->developer, image->rgbMax,
             pow(2,image->cfg->exposure), image->cfg->unclip,
             image->cfg->temperature, image->cfg->green, image->preMul,
             &image->cfg->profile[0][image->cfg->profileIndex[0]],
             &image->cfg->profile[1][image->cfg->profileIndex[1]],
             image->cfg->intent,
-            image->cfg->curve[image->cfg->curveIndex].m_saturation,
+            image->cfg->saturation,
             &image->cfg->curve[image->cfg->curveIndex]);
     memset(preview_histogram, 0, sizeof(preview_histogram));
     for (i=0; i<image->height; i++) {
@@ -468,10 +465,11 @@ void ufraw_auto_black(image_data *image)
     }
     for (bp=0, sum=0; bp<0x100 && sum<stop; bp++)
         sum += preview_histogram[bp];
-    image->cfg->curve[image->cfg->curveIndex].m_black = (double)bp/256;
+    CurveDataSetPoint(&image->cfg->curve[image->cfg->curveIndex],
+	    0, (double)bp/256, 0);
     g_free(p8);
     g_free(pixtmp);
     ufraw_message(UFRAW_SET_LOG, "ufraw_auto_black: "
 	    "Black %f (black point %d)\n",
-            image->cfg->curve[image->cfg->curveIndex].m_black, bp);
+            image->cfg->curve[image->cfg->curveIndex].m_anchors[0].x, bp);
 }

@@ -58,7 +58,6 @@ typedef struct {
     guint16 gammaCurve[0x10000];
     CurveData toneCurveData;
     guint16 toneCurve[0x10000];
-    guint16 correctionCurve[0x10000];
     guint16 saturationCurve[0x10000];
 } developer_data;
 
@@ -80,7 +79,7 @@ typedef struct {
     int wb, histogram, liveHistogramScale, liveHistogramHeight;
     int rawHistogramScale, rawHistogramHeight;
     int expander[expander_count], interpolation, shrink, size;
-    double temperature, green, exposure;
+    double temperature, green, exposure, saturation, black;
     gboolean unclip, autoExposure, overExp, underExp,
 	     overwrite, losslessCompress;
     int curveIndex, curveCount;

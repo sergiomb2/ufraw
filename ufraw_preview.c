@@ -53,10 +53,11 @@ gboolean freezeDialog;
 int spotX1, spotY1, spotX2, spotY2;
 
 /* Remember the Gtk Widgets that we need to access later */
-GtkWidget *previewWidget, *previewVBox, *rawHisto, *liveHisto, *curveWidget;
+GtkWidget *previewWidget, *previewVBox, *rawHisto, *liveHisto, *curveWidget,
+	  *blackLabel;
 GtkProgressBar *progressBar = NULL;
 GtkAdjustment *adjTemperature, *adjGreen, *adjExposure,
-	*adjGamma, *adjLinear, *adjContrast, *adjSaturation, *adjCurveBlack;
+	*adjGamma, *adjLinear, *adjSaturation;
 GtkComboBox *wbCombo, *curveCombo, *profileCombo[profile_types];
 GtkToggleButton *expAAButton;
 GtkTooltips *toolTips;
@@ -417,11 +418,14 @@ gboolean render_raw_histogram(gpointer mode)
     int raw_his[raw_his_size][3], raw_his_max;
 
     cfg->curve[cfg->curveIndex] = *curveeditor_widget_get_curve(curveWidget);
+    char text[max_name];
+    g_snprintf(text, max_name, "Black point: %0.3lf", Curve->m_anchors[0].x);
+    gtk_label_set_text(GTK_LABEL(blackLabel), text);
     developer_prepare(Developer, previewImage->rgbMax, pow(2, cfg->exposure),
 	    cfg->unclip, cfg->temperature, cfg->green, previewImage->preMul,
             &cfg->profile[0][cfg->profileIndex[0]],
             &cfg->profile[1][cfg->profileIndex[1]], cfg->intent,
-            Curve->m_saturation, Curve);
+            cfg->saturation, Curve);
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(rawHisto));
     if (gdk_pixbuf_get_height(pixbuf)!=cfg->rawHistogramHeight+2) {
         pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
@@ -721,9 +725,7 @@ void update_scales()
             cfg->profile[0][cfg->profileIndex[0]].gamma);
     gtk_adjustment_set_value(adjLinear,
             cfg->profile[0][cfg->profileIndex[0]].linear);
-    gtk_adjustment_set_value(adjContrast, Curve->m_contrast);
-    gtk_adjustment_set_value(adjSaturation, Curve->m_saturation);
-    gtk_adjustment_set_value(adjCurveBlack, Curve->m_black);
+    gtk_adjustment_set_value(adjSaturation, cfg->saturation);
     freezeDialog = FALSE;
     render_preview(NULL, render_default);
 };
@@ -829,12 +831,24 @@ void button_update(GtkButton *button, long type)
 			cfg_default.profile[0][0].gamma;
     if (type==4) cfg->profile[0][cfg->profileIndex[0]].linear =
 			cfg_default.profile[0][0].linear;
-    if (type==10) Curve->m_contrast = cfg_default.curve[0].m_contrast;
-    if (type==20) Curve->m_saturation = cfg_default.curve[0].m_saturation;
-    if (type==101) Curve->m_black = cfg_default.curve[0].m_black;
+    if (type==20) cfg->saturation = cfg_default.saturation;
+    if (type==100) {
+	cfg->curve[cfg->curveIndex].m_numAnchors = 2;
+	cfg->curve[cfg->curveIndex].m_anchors[0].x = 0.0;
+	cfg->curve[cfg->curveIndex].m_anchors[0].y = 0.0;
+	cfg->curve[cfg->curveIndex].m_anchors[1].x = 1.0;
+	cfg->curve[cfg->curveIndex].m_anchors[1].y = 1.0;
+	*Curve = cfg->curve[cfg->curveIndex];
+	curveeditor_widget_update(curveWidget);
+    }
+    if (type==101) {
+	CurveDataSetPoint(Curve, 0, cfg_default.black, 0);
+	curveeditor_widget_update(curveWidget);
+    }
     if (type==102) {
 	ufraw_auto_black(previewImage);
-	Curve->m_black = cfg->curve[cfg->curveIndex].m_black;
+	*Curve = cfg->curve[cfg->curveIndex];
+	curveeditor_widget_update(curveWidget);
     }
     update_scales();
     return;
@@ -1216,7 +1230,7 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     int max_preview_width, max_preview_height;
     int preview_width, preview_height, scale, shrinkSave, sizeSave, i;
     long j;
-    int status, rowstride;
+    int status, rowstride, curveeditorHeight;
     guint8 *pixies;
     image_data preview_image;
     char progressText[max_name], text[max_name];
@@ -1254,6 +1268,9 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
 	    cfg->liveHistogramHeight = 96;
 	if (cfg->rawHistogramHeight==cfg_default.rawHistogramHeight)
 	    cfg->rawHistogramHeight = 96;
+	curveeditorHeight = 192;
+    } else {
+	curveeditorHeight = 256;
     }
     previewHBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
     gtk_container_add(GTK_CONTAINER(previewWindow), GTK_WIDGET(previewHBox));
@@ -1366,7 +1383,10 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     adjGreen = adjustment_scale(table, 0, 2, "Green component",
             cfg->green, &cfg->green, 0.2, 2.5, 0.01, 0.05, 2,
             "Green component");
-    button = gtk_button_new_with_label("Spot\nWB");
+    //button = gtk_button_new_with_label("Spot\nWB");
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                GTK_STOCK_COLOR_PICKER, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(toolTips, button,
 	    "Select a spot on the preview image to apply spot white balance",
 	    NULL);
@@ -1451,25 +1471,36 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(button), "toggled",
             G_CALLBACK(toggle_button_update), &cfg->unclip);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-            GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, button, "Reset exposure to default", NULL);
-    gtk_table_attach(table, button, 8, 9, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(button_update), (gpointer)1);
-
     expAAButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
     gtk_container_add(GTK_CONTAINER(expAAButton), gtk_image_new_from_stock(
             GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(toolTips, GTK_WIDGET(expAAButton),
 	    "Auto adjust exposure", NULL);
-    gtk_table_attach(table, GTK_WIDGET(expAAButton), 9, 10, 0, 1, 0, 0, 0, 0);
+    gtk_table_attach(table, GTK_WIDGET(expAAButton), 8, 9, 0, 1, 0, 0, 0, 0);
     gtk_toggle_button_set_active(expAAButton, cfg->autoExposure);
     g_signal_connect(G_OBJECT(expAAButton), "clicked",
             G_CALLBACK(button_update), (gpointer)2);
 
-    table = GTK_TABLE(table_with_frame(page, expanderText[curve_expander],
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+            GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(toolTips, button, "Reset exposure to default", NULL);
+    gtk_table_attach(table, button, 9, 10, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(button_update), (gpointer)1);
+
+    adjSaturation = adjustment_scale(table, 0, 1, "Saturation",
+            cfg->saturation, &cfg->saturation,
+            0.0, 3.0, 0.01, 0.1, 2, "Saturation");
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+            GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(toolTips, button, "Reset saturation to default", NULL);
+    gtk_table_attach(table, button, 9, 10, 1, 2, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(button_update), (gpointer)20);
+
+    table = GTK_TABLE(table_with_frame(page, NULL,
             cfg->expander[curve_expander]));
     curveCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     /* Fill in the curve names, skipping "camera curve" if there is
@@ -1501,46 +1532,34 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(save_curve), NULL);
 
-    curveWidget = curveeditor_widget_new(256, 256,
+    curveWidget = curveeditor_widget_new(curveeditorHeight, 256,
 	    render_preview, render_default);
     curveeditor_widget_set_curve(curveWidget, &cfg->curve[cfg->curveIndex]);
     Curve = curveeditor_widget_get_curve(curveWidget);
-    gtk_table_attach(table, curveWidget, 0, 9, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+    gtk_table_attach(table, curveWidget, 1, 8, 1, 8, GTK_EXPAND, 0, 0, 0);
 
-    i = 2;
-    adjContrast = adjustment_scale(table, 0, i++,
-            "Contrast", Curve->m_contrast, &Curve->m_contrast,
-            -0.99, 2, 0.01, 0.10, 2, "Contrast");
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, button, "Reset contrast to default", NULL);
-    gtk_table_attach(table, button, 7, 8, i-1, i, 0, 0, 0, 0);
+    gtk_tooltips_set_tip(toolTips, button, "Reset curve to default",NULL);
+    gtk_table_attach(table, button, 8, 9, 7, 8, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(button_update), (gpointer)10);
+            G_CALLBACK(button_update), (gpointer)100);
 
-    adjSaturation = adjustment_scale(table, 0, i++, "Saturation",
-            Curve->m_saturation, &Curve->m_saturation,
-            0.0, 3.0, 0.01, 0.1, 2, "Saturation");
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-            GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, button, "Reset saturation to default", NULL);
-    gtk_table_attach(table, button, 7, 8, i-1, i, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(button_update), (gpointer)20);
-
-    gtk_table_attach(table, gtk_hseparator_new(), 0, 7, i, i+1,
-            GTK_FILL, 0, 0, 0);
-    i++;
-    adjCurveBlack = adjustment_scale(table, 0, i++, "Black point",
-            Curve->m_black, &Curve->m_black, 0, 0.50, 0.01, 0.05, 2,
-            "Black point");
+    blackLabel = gtk_label_new("Black point: 0.000");
+#ifdef HAVE_GTK_2_6
+    gtk_misc_set_alignment(GTK_MISC(blackLabel), 0.5, 1.0);
+    gtk_label_set_angle(GTK_LABEL(blackLabel), 90);
+    gtk_table_attach(table, blackLabel, 0, 1, 5, 6, 0, GTK_FILL|GTK_EXPAND, 0, 0);
+#else
+    gtk_misc_set_alignment(GTK_MISC(blackLabel), 0.0, 0.5);
+    gtk_table_attach(table, blackLabel, 1, 8, 8, 9, 0, 0, 0, 0);
+#endif
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(toolTips, button, "Reset black-point to default",NULL);
-    gtk_table_attach(table, button, 7, 8, i-1, i, 0, 0, 0, 0);
+    gtk_table_attach(table, button, 0, 1, 7, 8, 0, GTK_SHRINK, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(button_update), (gpointer)101);
 
@@ -1548,7 +1567,7 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(toolTips, button, "Auto adjust black-point", NULL);
-    gtk_table_attach(table, button, 8, 9, i-1, i, 0, 0, 0, 0);
+    gtk_table_attach(table, button, 0, 1, 6, 7, 0, 0, GTK_SHRINK, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(button_update), (gpointer)102);
 

@@ -29,8 +29,24 @@ typedef struct {
     void (*callback)();
     gpointer userdata;
     GtkWidget *widget;
-    GtkLabel *label;
 } CurveEditorWidgetData;
+
+/********************************************************
+curveeditor_point_exists:
+*********************************************************/
+gboolean curveeditor_point_exists(CurveData *curve, int selectedPoint, double x)
+{
+    int i;
+    for(i = 0; i < curve->m_numAnchors; i++)
+    {
+	if ( i!=selectedPoint &&
+		fabs(x-curve->m_anchors[i].x)< 1.0/256.0)
+	{
+	    return TRUE;
+	}
+    }
+    return FALSE;
+}
 
 /********************************************************
 curveeditor_widget_qsort_compare:
@@ -245,7 +261,14 @@ gboolean curveeditor_widget_on_button_press_event (GtkWidget * widget,
 	}
     }
 
-    if (data->selectedPoint == -1)
+    double x = (double) event->x / (w-1);
+
+    // Add point only if no other point exists with the same x coordinate
+    // and the added point is between the first and the last points.
+    if (data->selectedPoint == -1 &&
+	    !curveeditor_point_exists(curve, -1, x) &&
+	    x > curve->m_anchors[0].x &&
+	    x < curve->m_anchors[curve->m_numAnchors-1].x)
     {
 	//add point
 	int num = curve->m_numAnchors;
@@ -253,10 +276,8 @@ gboolean curveeditor_widget_on_button_press_event (GtkWidget * widget,
 	//nikon curve files don't allow more than 20 anchors
 	if (curve->m_numAnchors >= NIKON_MAX_ANCHORS) return TRUE;
 
-	int x = (int) event->x;
-
 	//add it to the end
-	curve->m_anchors[num].x = (double) x / (w-1);
+	curve->m_anchors[num].x = x;
 	curve->m_anchors[num].y = (double) (h-1-event->y) / (h-1);
 	data->selectedPoint = num;
 
@@ -292,41 +313,53 @@ gboolean curveeditor_widget_on_motion_notify_event(GtkWidget *widget,
 	GdkEventButton *event, CurveEditorWidgetData *data)
 {
     widget = widget;
-    if ((event->state&GDK_BUTTON1_MASK)==0) return TRUE;
+    CurveData *curve = data->curve;
     int w = data->width;
     int h = data->height;
-    int update = 1;
 
-    CurveData *curve = data->curve;
+    if ((event->state&GDK_BUTTON1_MASK)==0) return TRUE;
     
     if (data->selectedPoint < 0) return TRUE;
 
     double x = (double)event->x / (double)(w-1);
     double y = pow( (double)(h - event->y) / (double)(h-1), curve->m_gamma);
 
+    // If point is dragged outside of the editor, delete it.
+    if ( (event->x < -10 || event->x > w+10) &&
+	    data->selectedPoint>0 &&
+	    data->selectedPoint<curve->m_numAnchors-1 )
+    {
+	int i;
+	for (i = data->selectedPoint; i < curve->m_numAnchors - 1; i++)
+        {
+	    curve->m_anchors[i].x = curve->m_anchors[i + 1].x;
+	    curve->m_anchors[i].y = curve->m_anchors[i + 1].y;
+	}
+	curve->m_numAnchors--;
+
+	data->selectedPoint = -1;
+
+	curveeditor_widget_draw(data);
+	if (data->callback!=NULL)
+	    (*data->callback)(data->widget, data->userdata);
+
+	return TRUE;
+    }
     if (event->x < 0) x = 0;
     if (event->x > w) x = 1;
 
     if (event->y < 0) y = 1;
     if (event->y > h) y = 0;
 	
-    //don't allow a draging point to exceed or preceed neighbors or
-    //else the spline algorithm will explode.
-    int i;
-    for(i = 0; i < curve->m_numAnchors; i++)
+    // Don't allow a draging point to exceed or preceed neighbors or
+    // else the spline algorithm will explode.
+    // Also prevent moving central points beyond the two end points.
+    if ( !curveeditor_point_exists(curve, data->selectedPoint, x) &&
+	    ( data->selectedPoint==0 || x > curve->m_anchors[0].x ) &&
+	    ( data->selectedPoint==curve->m_numAnchors-1 ||
+	      x < curve->m_anchors[curve->m_numAnchors-1].x ) )
     {
-	if ( i!=data->selectedPoint &&
-		fabs(x-curve->m_anchors[i].x)< 1.0/256.0)
-	{
-	    update = 0;
-	}
-    }
-	      
-    //update the points
-    if (update)
-    {
-	curve->m_anchors[data->selectedPoint].x = x;
-	curve->m_anchors[data->selectedPoint].y = y;
+	CurveDataSetPoint(curve, data->selectedPoint, x, y);
 
 	curveeditor_widget_draw(data);
 	if (data->callback!=NULL)
@@ -456,22 +489,24 @@ gboolean curveeditor_widget_on_key_press_event(GtkWidget *widget,
 		curve->m_anchors[data->selectedPoint].y = 0.0;
 	}
 	if (event->keyval==GDK_Right) {
-	    curve->m_anchors[data->selectedPoint].x += 1.0/(w-1);
-	    if (curve->m_anchors[data->selectedPoint].x>1.0)
-		curve->m_anchors[data->selectedPoint].x = 1.0;
-	    if (data->selectedPoint<curve->m_numAnchors-1 &&
-		    curve->m_anchors[data->selectedPoint].x >=
-		    curve->m_anchors[data->selectedPoint+1].x-0.5/(w-1))
-	    curve->m_anchors[data->selectedPoint].x -= 1.0/(w-1);
+	    double x = curve->m_anchors[data->selectedPoint].x + 1.0/(w-1);
+	    double y = curve->m_anchors[data->selectedPoint].y;
+	    if (x>1.0) x = 1.0;
+	    // Update point only if it does not override the next one
+	    if (data->selectedPoint==curve->m_numAnchors-1 ||
+		    x < curve->m_anchors[data->selectedPoint+1].x-0.5/(w-1)) {
+		CurveDataSetPoint(curve, data->selectedPoint, x, y);
+	    }
 	}
 	if (event->keyval==GDK_Left) {
-	    curve->m_anchors[data->selectedPoint].x -= 1.0/(w-1);
-	    if (curve->m_anchors[data->selectedPoint].x<0.0)
-		curve->m_anchors[data->selectedPoint].x = 0.0;
-	    if (data->selectedPoint>0 &&
-		    curve->m_anchors[data->selectedPoint].x <=
-		    curve->m_anchors[data->selectedPoint-1].x+0.5/(w-1))
-	    curve->m_anchors[data->selectedPoint].x += 1.0/(w-1);
+	    double x = curve->m_anchors[data->selectedPoint].x - 1.0/(w-1);
+	    double y = curve->m_anchors[data->selectedPoint].y;
+	    if (x<0.0) x = 0.0;
+	    // Update point only if it does not override the previous one
+	    if (data->selectedPoint==0 ||
+		    x > curve->m_anchors[data->selectedPoint-1].x+0.5/(w-1)) {
+		CurveDataSetPoint(curve, data->selectedPoint, x, y);
+	    }
 	}
 	curveeditor_widget_draw(data);
 	if (data->callback!=NULL)
@@ -501,7 +536,7 @@ GtkWidget *curveeditor_widget_new(int height, int width,
     CurveData *curve = g_new0(CurveData,1);
     GtkWidget *curveImage, *curveEventBox, *curveAlign;
 
-    data->pixmap = gdk_pixmap_new(NULL, height, width, 24);
+    data->pixmap = gdk_pixmap_new(NULL, width, height, 24);
     curveImage = gtk_image_new_from_pixmap(data->pixmap, NULL);
     g_object_unref(data->pixmap);
     curveEventBox = gtk_event_box_new();
@@ -517,7 +552,6 @@ GtkWidget *curveeditor_widget_new(int height, int width,
     data->callback = callback;
     data->userdata = userdata;
     data->selectedPoint = 0;
-    data->label = NULL;
 
     g_signal_connect_after((gpointer)curveEventBox, "button-press-event",
 	G_CALLBACK (curveeditor_widget_on_button_press_event), data);
@@ -569,7 +603,6 @@ gboolean curveeditor_widget_get_coordinates(GtkWidget *widget,
 {
     CurveEditorWidgetData *data = g_object_get_data(G_OBJECT(widget),
 	    "curve-widget-data");
-    //get the current x and y labels
     if (data->selectedPoint != -1)
     {
 	*x = data->curve->m_anchors[data->selectedPoint].x;
