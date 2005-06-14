@@ -1067,7 +1067,7 @@ int SampleToCameraCurve(CurveData *curve, CurveSample *sample)
 	    }
 	    else*/
 	    {
-	        //do real curve
+	        //do real curve??
 	        val = ( log(7*val+1.0) / log(4*val+2.0) )*142.0+104.0*(val);
 	    }
 
@@ -1437,11 +1437,11 @@ CurveSampleInit:
 ********************************************************/
 CurveSample *CurveSampleInit(unsigned int samplingRes, unsigned int outputRes)
 {
-    CurveSample *sample = calloc(1, sizeof(CurveSample));
+    CurveSample *sample = (CurveSample*)calloc(1, sizeof(CurveSample));
     sample->m_samplingRes = samplingRes;
     sample->m_outputRes = outputRes;
     if (samplingRes>0) {
-	sample->m_Samples = calloc(samplingRes, sizeof(int));
+	sample->m_Samples = (unsigned int*)calloc(samplingRes, sizeof(int));
     } else {
 	sample->m_Samples = NULL;
     }
@@ -1811,7 +1811,7 @@ int RipNikonNEFCurve(FILE *file, int offset, CurveData *data,
     //At this point we subtract the number of bytes read for points from the max (50+1)
     fseek(file,(51 - data->m_numAnchors*2),SEEK_CUR);
     
-    //get data data (always 4096 entries, 1 byte apiece)
+    //get data (always 4096 entries, 1 byte apiece)
     DEBUG_PRINT("DEBUG: NEF data OFFSET -> %ld\n",ftell(file));
    
     if (sample_p!=NULL)
@@ -1897,4 +1897,5 @@ int main(int argc, char* argv[])
     return NC_SUCCESS;
 }
 #endif
+
 

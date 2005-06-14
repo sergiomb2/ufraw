@@ -27,6 +27,19 @@
 
 
   NOTES:
+  06/13/2005 (Shawn Freeman)
+    Added a couple of explicit casts to keep some compilers from complaining.
+    At this point, I'd say this code is decent enough to classified as 1.0. Right now
+    there are no outstanding bugs left that I am aware of. The code has been fairly well
+    documented and has a significant amount of error checking built in.
+
+    There are still some experimental code in here that could be removed, along with options
+    for compiling on differnt compilers.
+
+    I don't have as much time as I used to have, due to a new baby and everything.But
+    I should still have time to do some tweaks, features, and fixes if necessary.
+
+  Enjoy!
 
   06/10/2005 (Udi Fuchs)
 	Removed the name "Nikon" from general structures/functions
@@ -209,8 +222,8 @@
 
 #include <stdio.h>
 
-#define NC_VERSION "0.98"
-#define NC_DATE "2005-05-15"
+#define NC_VERSION "1.0"
+#define NC_DATE "2005-06-13"
 
 //////////////////////////////////////////
 //COMPILER CONTROLS
@@ -648,4 +661,5 @@ ConvertNikonCurveData:
 int ConvertNikonCurveData(char *inFileName, char *outFileName, unsigned int samplingRes, unsigned int outputRes);
 
 #endif
+
 
