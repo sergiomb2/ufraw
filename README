@@ -28,7 +28,18 @@ The first step of the installation, is to run:
 ./configure
 
 At the end of the configuration you will get a summary of the installation
-settings.
+settings. It should look like that:
+
+configure: ====================== summary =====================
+configure: build gimp plug-in: yes
+configure: hidden directories support (GTK>=2.6): yes
+configure: EXIF support: yes
+configure: JPEG support: yes
+configure: TIFF support: yes
+configure: lossless compressed TIFF support: yes
+
+If some of the lines end with 'no' instead of 'yes', it is not the end of
+the world. It only means that this option in UFRaw will be disabled.
 
 The libjpeg development package is required for saving image in the
 JPEG format in the stand-alone tool. It is also needed to support

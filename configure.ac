@@ -113,7 +113,7 @@ AC_CHECK_FUNCS(nan canonicalize_file_name)
 have_jpeg=yes
 AC_CHECK_HEADER(jpeglib.h,
   AC_CHECK_LIB(jpeg, jpeg_CreateCompress, , have_jpeg=no))
-AM_CONDITIONAL(HAVE_JPEG, test $have_jpeg = yes)
+AM_CONDITIONAL(HAVE_LIBJPEG, test $have_jpeg = yes)
 
 # Check for zlib package
 have_zlib=yes
@@ -152,6 +152,9 @@ if test $have_exif = yes -a $ufraw_win32 = yes; then
 fi
 
 UFRAW_CFLAGS="$EXIF_CFLAGS $DEPS_CFLAGS"
+if test "!($have_jpeg = yes)"; then
+  UFRAW_CFLAGS="$UFRAW_CFLAGS -DNO_JPEG"
+fi
 UFRAW_LDADD="$EXIF_LIBS $DEPS_LIBS"
 AC_SUBST(UFRAW_CFLAGS)
 AC_SUBST(UFRAW_LDADD)
@@ -201,9 +204,6 @@ case $host_cpu in
 esac
 
 DCRAW_CFLAGS=-Wno-sign-compare
-if test "!($have_jpeg = yes)"; then
-  DCRAW_FLAGS="$DCRAW_CFLAGS -DNO_JPEG"
-fi
 AC_SUBST(DCRAW_CFLAGS)
 
 AC_MSG_CHECKING(whether to build extras)

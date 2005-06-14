@@ -14,7 +14,7 @@ endif
 UFRAW_COMMON = ufraw_ufraw.c ufraw_routines.c ufraw_exif.c ufraw_developer.c \
     ufraw_writer.c ufraw.h ufraw_icon.h blackbody.h \
     dcraw_api.c dcraw_api.h dcraw_indi.c nikon_curve.c nikon_curve.h
-if HAVE_JPEG
+if HAVE_LIBJPEG
   UFRAW_COMMON += iccjpeg.c iccjpeg.h
 endif
 UFRAW_GTK_COMMON = $(UFRAW_COMMON) ufraw_preview.c ufraw_saver.c \

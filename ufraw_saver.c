@@ -69,7 +69,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     GtkAdjustment *shrinkAdj, *heightAdj, *widthAdj;
     GtkComboBox *intCombo, *idCombo;
     GtkToggleButton *ppmButton, *tiffButton, *jpegButton;
-#ifdef HAVE_LIBZ
+#if defined(HAVE_LIBZ) && defined(HAVE_LIBTIFF)
     GtkWidget *losslessButton;
 #endif
 #ifdef HAVE_LIBEXIF
@@ -384,7 +384,7 @@ long ufraw_saver(void *widget, gpointer user_data)
 	}
         image->cfg->overwrite = gtk_toggle_button_get_active(
                 GTK_TOGGLE_BUTTON(overwriteButton));
-#ifdef HAVE_LIBZ
+#if defined(HAVE_LIBZ) && defined(HAVE_LIBTIFF)
         image->cfg->losslessCompress = gtk_toggle_button_get_active(
                 GTK_TOGGLE_BUTTON(losslessButton));
 #endif
