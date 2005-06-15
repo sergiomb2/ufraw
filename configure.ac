@@ -5,7 +5,7 @@ AC_PREREQ(2.57)
 AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE
-AC_CONFIG_HEADERS(config.h)
+AM_CONFIG_HEADER(config.h)
 AC_PROG_CC
 AC_PROG_INSTALL
 
@@ -113,7 +113,6 @@ AC_CHECK_FUNCS(nan canonicalize_file_name)
 have_jpeg=yes
 AC_CHECK_HEADER(jpeglib.h,
   AC_CHECK_LIB(jpeg, jpeg_CreateCompress, , have_jpeg=no))
-AM_CONDITIONAL(HAVE_LIBJPEG, test $have_jpeg = yes)
 
 # Check for zlib package
 have_zlib=yes

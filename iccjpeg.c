@@ -17,8 +17,16 @@
  * to find a malloc() replacement that can allocate more than 64K.
  *
  * To code was copied to ufraw from lcms-1.14 on Jan 2005.
- * Changes: added this comment...
+ * Changes:
+ * 15-Jun-2005 #ifdef HAVE_LIBJPEG on the entire code
+ *    Jan-2005 added this comment...
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef HAVE_LIBJPEG
 
 #include "iccjpeg.h"
 #include <stdlib.h>			/* define malloc() */
@@ -249,3 +257,5 @@ read_icc_profile (j_decompress_ptr cinfo,
 
   return TRUE;
 }
+
+#endif /*HAVE_LIBJPEG*/

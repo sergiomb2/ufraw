@@ -1,11 +1,12 @@
 bin_PROGRAMS = ufraw ufraw-batch
+EXTRA_PROGRAMS = ufraw-gimp dcraw nikon-curve ufraw-exif
 if MAKE_EXTRAS
   bin_PROGRAMS += dcraw nikon-curve ufraw-exif
 endif
 
 if MAKE_GIMP
-gimpbin_PROGRAMS = ufraw-gimp
-gimpbindir = $(GIMP_LIBDIR)/plug-ins
+  gimpbin_PROGRAMS = ufraw-gimp
+  gimpbindir = $(GIMP_LIBDIR)/plug-ins
 endif
 
 #html_DATA = user_guide.html
@@ -13,14 +14,14 @@ endif
 
 UFRAW_COMMON = ufraw_ufraw.c ufraw_routines.c ufraw_exif.c ufraw_developer.c \
     ufraw_writer.c ufraw.h ufraw_icon.h blackbody.h \
-    dcraw_api.c dcraw_api.h dcraw_indi.c nikon_curve.c nikon_curve.h
-if HAVE_LIBJPEG
-  UFRAW_COMMON += iccjpeg.c iccjpeg.h
-endif
+    dcraw_api.c dcraw_api.h dcraw_indi.c nikon_curve.c nikon_curve.h \
+    iccjpeg.c iccjpeg.h
 UFRAW_GTK_COMMON = $(UFRAW_COMMON) ufraw_preview.c ufraw_saver.c \
     ufraw_chooser.c curveeditor_widget.c curveeditor_widget.h
 if UFRAW_WIN32
   UFRAW_ICON = ufraw_icon.opc
+else
+  UFRAW_ICON =
 endif
 
 EXTRA_DIST = ufraw_icon.png ufraw_icon.ico ufraw_icon.rc ufraw-setup.jpg \
@@ -35,7 +36,9 @@ ufraw_batch_SOURCES = $(UFRAW_COMMON)
 ufraw_batch_LDFLAGS = $(CONSOLE)
 ufraw_batch_LDADD = dcraw_nomain.o ufraw_batch.o $(UFRAW_ICON) $(UFRAW_LDADD)
 
-ufraw_gimp_SOURCES = ufraw-gimp.c $(UFRAW_GTK_COMMON)
+if MAKE_GIMP
+  ufraw_gimp_SOURCES = ufraw-gimp.c $(UFRAW_GTK_COMMON)
+endif
 
 ufraw_batch.o: ufraw.c
 	$(COMPILE) -DUFRAW_BATCH -o $@ -c $^
@@ -43,20 +46,22 @@ ufraw_batch.o: ufraw.c
 dcraw_nomain.o: dcraw.c
 	$(COMPILE) -DDCRAW_NOMAIN $(DCRAW_CFLAGS) -o $@ -c $^
 
-dcraw_SOURCES = dcraw.c
-dcraw_CFLAGS = $(UFRAW_CFLAGS) $(DCRAW_CFLAGS)
-dcraw_LDFLAGS = $(CONSOLE)
-dcraw_LDADD = $(UFRAW_LDADD)
+if MAKE_EXTRAS
+  dcraw_SOURCES = dcraw.c
+  dcraw_CFLAGS = $(UFRAW_CFLAGS) $(DCRAW_CFLAGS)
+  dcraw_LDFLAGS = $(CONSOLE)
+  dcraw_LDADD = $(UFRAW_LDADD)
 
-nikon_curve_SOURCES = nikon_curve.c
-nikon_curve_CFLAGS = $(UFRAW_CFLAGS) -D_STAND_ALONE_
-nikon_curve_LDFLAGS = $(CONSOLE)
-nikon_curve_LDADD = $(UFRAW_LDADD)
+  nikon_curve_SOURCES = nikon_curve.c
+  nikon_curve_CFLAGS = $(UFRAW_CFLAGS) -D_STAND_ALONE_
+  nikon_curve_LDFLAGS = $(CONSOLE)
+  nikon_curve_LDADD = $(UFRAW_LDADD)
 
-ufraw_exif_SOURCES = ufraw_exif.c
-ufraw_exif_CFLAGS = $(UFRAW_CFLAGS) -D_STAND_ALONE_
-ufraw_exif_LDFLAGS = $(CONSOLE)
-ufraw_exif_LDADD = $(UFRAW_LDADD)
+  ufraw_exif_SOURCES = ufraw_exif.c
+  ufraw_exif_CFLAGS = $(UFRAW_CFLAGS) -D_STAND_ALONE_
+  ufraw_exif_LDFLAGS = $(CONSOLE)
+  ufraw_exif_LDADD = $(UFRAW_LDADD)
+endif
 
 #ufraw_icon.h: ufraw_icon.png
 #	gdk-pixbuf-csource --raw $^ --name=ufraw_icon > $@
