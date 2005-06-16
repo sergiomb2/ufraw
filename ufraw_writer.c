@@ -322,8 +322,10 @@ int ufraw_batch_saver(image_data *image)
         fgets(ans, max_name, stdin);
         if (ans[0]!='y' && ans[0]!='Y') return UFRAW_CANCEL;
     }
-    char *absname = uf_file_set_absolute(image->cfg->outputFilename);
-    g_strlcpy(image->cfg->outputFilename, absname, max_path);
-    g_free(absname);
+    if (strcmp(image->cfg->outputFilename, "-")) {
+	char *absname = uf_file_set_absolute(image->cfg->outputFilename);
+	g_strlcpy(image->cfg->outputFilename, absname, max_path);
+	g_free(absname);
+    }
     return ufraw_write_image(image);
 }
