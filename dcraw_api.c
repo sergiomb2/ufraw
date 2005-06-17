@@ -35,6 +35,8 @@ extern int black, colors, use_coeff, ymag, xmag;
 extern float cam_mul[4];
 extern gushort white[8][8];
 extern float coeff[3][4];
+extern char *meta_data;
+extern int meta_length;
 #define FC(filters,row,col) \
     (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 int identify(int will_decode);
@@ -117,7 +119,9 @@ int dcraw_load_raw(dcraw_data *h, int half)
     h->height = iheight = (h->height+shrink) >> shrink;
     h->width = iwidth = (h->width+shrink) >> shrink;
     h->fuji_width = (h->fuji_width+shrink) >> shrink;
-    h->rawImage = image = g_new0(dcraw_image_type, h->height * h->width);
+    h->rawImage = image = g_new0(dcraw_image_type, h->height * h->width
+	    + meta_length);
+    meta_data = (char *) (image + iheight*iwidth);
     /* copied from the end of dcraw's identify() */
     if (shrink && colors == 3) {
         for (i=0; i < 32; i+=4) {
