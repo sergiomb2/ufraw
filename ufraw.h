@@ -26,7 +26,7 @@
 #define max_path 200
 #define max_name 80
 
-enum { preserve_wb, camera_wb, auto_wb };
+enum { manual_wb, camera_wb, auto_wb };
 enum { rgb_histogram, r_g_b_histogram, luminosity_histogram, value_histogram,
        saturation_histogram };
 enum { linear_histogram, log_histogram };
@@ -80,8 +80,8 @@ typedef struct {
     int rawHistogramScale, rawHistogramHeight;
     int expander[expander_count], interpolation, shrink, size;
     double temperature, green, exposure, saturation, black;
-    gboolean unclip, autoExposure, overExp, underExp,
-	     overwrite, losslessCompress;
+    gboolean autoExposure, autoBlack, autoCurve;
+    gboolean unclip, overExp, underExp, overwrite, losslessCompress;
     int curveIndex, curveCount;
     CurveData curve[max_curves];
     char curvePath[max_path];
@@ -99,6 +99,7 @@ typedef struct {
     void *raw;
     developer_data *developer;
     cfg_data *cfg;
+    void *widget;
     guchar *exifBuf;
     guint exifBufLen;
     int gimpImage;
@@ -119,19 +120,22 @@ void ufraw_close(image_data *image);
 int ufraw_set_wb(image_data *image);
 void ufraw_auto_expose(image_data *image);
 void ufraw_auto_black(image_data *image);
+void ufraw_auto_curve(image_data *image);
 void ufraw_batch_messenger(char *message, void *parentWindoW);
 
 /* prototypes for functions in ufraw_preview.c */
 int ufraw_preview(image_data *image, int plugin, long (*write_func)());
 void ufraw_focus(void *window, gboolean focus);
 void ufraw_messenger(char *message, void *parentWindow);
-void preview_progress(char *text, double progress);
+void preview_progress(void *widget, char *text, double progress);
 
 /* prototypes for functions in ufraw_routines.c */
 const char *uf_get_home_dir();
 char *uf_file_set_type(const char *filename, const char *type);
 char *uf_file_set_absolute(const char *filename);
 double uf_nan();
+double profile_default_linear(profile_data *p);
+double profile_default_gamma(profile_data *p);
 int curve_load(CurveData *cp, char *filename);
 int curve_save(CurveData *cp, char *filename);
 char *curve_buffer(CurveData *cp, gboolean withPoints);
@@ -144,8 +148,6 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
     double saturation, CurveData *curve);
 inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     guint16 *buf, int count);
-void pixbuf_reverse(int x, int y, guchar *pixbuf, int width, int height,
-    int rowstride);
 void RGB_to_temperature(double *rgb, double *temperature, double *green);
 int load_configuration(cfg_data *c);
 int save_configuration(cfg_data *c, developer_data *d,

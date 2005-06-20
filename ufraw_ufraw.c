@@ -140,6 +140,8 @@ image_data *ufraw_open(char *filename)
     g_strlcpy(image->filename, filename, max_path);
     image->raw = raw;
     image->developer = developer_init();
+    image->cfg = NULL;
+    image->widget = NULL;
     if (raw->fuji_width) {
         /* copied from dcraw's fuji_rotate() */
         image->width = raw->fuji_width / 0.5; /* sqrt(0.5); */
@@ -169,14 +171,20 @@ int ufraw_config(image_data *image, cfg_data *cfg)
 
     if (cfg->wbLoad==load_default) cfg->wb = camera_wb;
     if (cfg->wbLoad==load_auto) cfg->wb = auto_wb;
-    if (cfg->curveLoad==load_default)
-        cfg->saturation = cfg_default.saturation;
-    if (cfg->exposureLoad==load_default) {
-        cfg->exposure = cfg_default.exposure;
+    if (cfg->curveLoad==load_default) {
         for (i=0; i<cfg->curveCount; i++)
 	    CurveDataSetPoint(&cfg->curve[i], 0, 0, 0);
+        cfg->saturation = cfg_default.saturation;
     }
-    if (cfg->exposureLoad==load_auto) cfg->exposure = uf_nan();
+    if (cfg->exposureLoad==load_default) {
+        cfg->exposure = cfg_default.exposure;
+    }
+    if (cfg->exposureLoad==load_auto) {
+	cfg->autoExposure = TRUE;
+	cfg->autoBlack = TRUE;
+    }
+    if (cfg->autoExposure==TRUE) cfg->exposure = uf_nan();
+    if (cfg->autoBlack==TRUE) cfg->black = uf_nan();
 
     if (image==NULL) return UFRAW_SUCCESS;
     image->cfg = cfg;
@@ -263,7 +271,7 @@ int ufraw_convert_image(image_data *image, image_data *rawImage)
     dcraw_data *rawCopy = image->raw;
     cfg_data *cfg = rawImage->cfg;
 
-    preview_progress("Loading image", 0.1);
+    preview_progress(rawImage->widget, "Loading image", 0.1);
     if ( cfg->interpolation==half_interpolation ||
          ( cfg->size==0 && cfg->shrink>1 ) ||
          ( cfg->size>0 && cfg->size<MAX(image->height, image->width)/2 )  ) {
@@ -297,10 +305,8 @@ int ufraw_convert_image(image_data *image, image_data *rawImage)
             for (c=0; c<4; c++) image->preMul[c] = 1.0;
         }
         ufraw_set_wb(image);
-        if (isnan(image->cfg->exposure)) {
-            ufraw_auto_expose(image);
-            ufraw_auto_black(image);
-	}
+        if (isnan(image->cfg->exposure)) ufraw_auto_expose(image);
+        if (isnan(image->cfg->black)) ufraw_auto_black(image);
         developer_prepare(image->developer, image->rgbMax,
                 pow(2,cfg->exposure), cfg->unclip,
                 cfg->temperature, cfg->green, image->preMul,
@@ -309,7 +315,7 @@ int ufraw_convert_image(image_data *image, image_data *rawImage)
                 cfg->saturation,
                 &cfg->curve[cfg->curveIndex]);
     } else {
-        if (isnan(image->cfg->exposure)) {
+        if ( isnan(image->cfg->exposure) || isnan(image->cfg->black) ) {
             image_data tmpImage;
             int shrinkSave = image->cfg->shrink;
             int sizeSave = image->cfg->size;
@@ -361,9 +367,9 @@ int ufraw_convert_image(image_data *image, image_data *rawImage)
         }
     }
     dcraw_convert_to_rgb(rawCopy);
-    preview_progress("Loading image", 0.4);
+    preview_progress(rawImage->widget, "Loading image", 0.4);
     dcraw_flip_image(rawCopy);
-    preview_progress("Loading image", 0.5);
+    preview_progress(rawImage->widget, "Loading image", 0.5);
     image->trim = rawCopy->trim;
     image->height = rawCopy->height - 2*image->trim;
     image->width = rawCopy->width - 2*image->trim;
@@ -377,7 +383,7 @@ int ufraw_set_wb(image_data *image)
     double rgbWB[3];
     int status, c;
 
-    if (image->cfg->wb==preserve_wb) return UFRAW_SUCCESS;
+    if (image->cfg->wb==manual_wb) return UFRAW_SUCCESS;
     if (image->cfg->wb==auto_wb || image->cfg->wb==camera_wb) {
         if ( (status=dcraw_set_color_scale(raw, image->cfg->wb==auto_wb,
                 image->cfg->wb==camera_wb))!=DCRAW_SUCCESS ) {
@@ -465,11 +471,56 @@ void ufraw_auto_black(image_data *image)
     }
     for (bp=0, sum=0; bp<0x100 && sum<stop; bp++)
         sum += preview_histogram[bp];
+    /* Notice that the value of cfg->black is not important. It is only
+     * relevant that it is not is_nan() indicating that it was calculated */
+    image->cfg->black = (double)bp/256;
     CurveDataSetPoint(&image->cfg->curve[image->cfg->curveIndex],
-	    0, (double)bp/256, 0);
+	    0, image->cfg->black, 0);
     g_free(p8);
     g_free(pixtmp);
     ufraw_message(UFRAW_SET_LOG, "ufraw_auto_black: "
 	    "Black %f (black point %d)\n",
             image->cfg->curve[image->cfg->curveIndex].m_anchors[0].x, bp);
+}
+
+void ufraw_auto_curve(image_data *image)
+{
+    int sum, stop, jump, steps=8, bp, i, j;
+    int preview_histogram[0x100];
+    guint8 *p8 = g_new(guint8, 3*image->width);
+    guint16 *pixtmp = g_new(guint16, 3*image->width);
+    CurveData *curve = &image->cfg->curve[image->cfg->curveIndex];
+
+    stop = image->width*image->height*3/256/4;
+    jump = (image->width*image->height*3-stop)*2/(2*steps-1);
+    CurveDataReset(curve);
+    developer_prepare(image->developer, image->rgbMax,
+            pow(2,image->cfg->exposure), image->cfg->unclip,
+            image->cfg->temperature, image->cfg->green, image->preMul,
+            &image->cfg->profile[0][image->cfg->profileIndex[0]],
+            &image->cfg->profile[1][image->cfg->profileIndex[1]],
+            image->cfg->intent,
+            image->cfg->saturation,
+            curve);
+    memset(preview_histogram, 0, sizeof(preview_histogram));
+    for (i=0; i<image->height; i++) {
+        develope(p8, image->image[i*image->width], image->developer, 8,
+                pixtmp, image->width);
+        for (j=0; j<3*image->width; j++) preview_histogram[p8[j]]++;
+    }
+    for (bp=0, i=0; i<steps && bp<0x100; i++) {
+	for (bp=0, sum=0; bp<0x100 && sum<stop+i*jump; bp++)
+	    sum += preview_histogram[bp];
+	curve->m_anchors[i].x = (double)bp/256;
+	curve->m_anchors[i].y = (double)i/steps;
+    }
+    if (bp==0x100) {
+	curve->m_numAnchors = i;
+    } else {
+	curve->m_anchors[i].x = 1.0;
+	curve->m_anchors[i].y = 1.0;
+	curve->m_numAnchors = i+1;
+    }
+    g_free(p8);
+    g_free(pixtmp);
 }

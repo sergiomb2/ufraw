@@ -120,7 +120,8 @@ int ufraw_write_image(image_data *image)
         pixbuf8 = g_new(guint8, image->width*3);
         for (row=0; row<image->height; row++) {
             if (row%100==99)
-                preview_progress("Saving image", 0.5 + 0.5*row/image->height);
+                preview_progress(image->widget, "Saving image",
+			0.5 + 0.5*row/image->height);
             develope(pixbuf8, rawImage[row*rowStride],
                     image->developer, 8, pixbuf16, image->width);
             if ((int)fwrite(pixbuf8, 3, image->width, out)<image->width) {
@@ -134,7 +135,8 @@ int ufraw_write_image(image_data *image)
         fprintf(out, "P6\n%d %d\n%d\n", image->width, image->height, 0xFFFF);
         for (row=0; row<image->height; row++) {
             if (row%100==99)
-                preview_progress("Saving image", 0.5 + 0.5*row/image->height);
+                preview_progress(image->widget, "Saving image",
+			0.5 + 0.5*row/image->height);
             develope(pixbuf16, rawImage[row*rowStride],
                     image->developer, 16, pixbuf16, image->width);
             for (i=0; i<3*image->width; i++)
@@ -185,7 +187,8 @@ int ufraw_write_image(image_data *image)
             pixbuf8 = g_new(guint8, image->width*3);
             for (row=0; row<image->height; row++) {
                 if (row%100==99)
-                    preview_progress("Saving image", 0.5+0.5*row/image->height);
+                    preview_progress(image->widget, "Saving image",
+			    0.5+0.5*row/image->height);
                 develope(pixbuf8, rawImage[row*rowStride],
                         image->developer, 8, pixbuf16, image->width);
                 if (TIFFWriteScanline(out, pixbuf8, row, 0)<0) {
@@ -199,7 +202,8 @@ int ufraw_write_image(image_data *image)
         } else {
             for (row=0; row<image->height; row++) {
                 if (row%100==99)
-                    preview_progress("Saving image", 0.5+0.5*row/image->height);
+                    preview_progress(image->widget, "Saving image",
+			    0.5+0.5*row/image->height);
                 develope(pixbuf16, rawImage[row*rowStride],
                         image->developer, 16, pixbuf16, image->width);
                 if (TIFFWriteScanline(out, pixbuf16, row, 0)<0) {
@@ -253,7 +257,8 @@ int ufraw_write_image(image_data *image)
         pixbuf8 = g_new(guint8, image->width*3);
         for (row=0; row<image->height; row++) {
             if (row%100==99)
-                preview_progress("Saving image", 0.5 + 0.5*row/image->height);
+                preview_progress(image->widget, "Saving image",
+			0.5 + 0.5*row/image->height);
             develope(pixbuf8, rawImage[row*rowStride],
                     image->developer, 8, pixbuf16, image->width);
             jpeg_write_scanlines(&cinfo, &pixbuf8, 1);

@@ -207,7 +207,7 @@ long ufraw_save_gimp_image(GtkWidget *widget, image_data *image)
     rowStride = image->width + 2*image->trim;
     rawImage = image->image + image->trim*rowStride + image->trim;
     for (row = 0; row < image->height; row += tile_height) {
-        preview_progress("Loading image", 0.5 + 0.5*row/image->height);
+        preview_progress(widget, "Loading image", 0.5 + 0.5*row/image->height);
         nrows = MIN(image->height-row, tile_height);
         for (y=0 ; y<nrows; y++)
             develope(&pixbuf[3*y*image->width], rawImage[(row+y)*rowStride],

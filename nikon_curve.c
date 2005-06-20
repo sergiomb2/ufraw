@@ -941,6 +941,24 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
 }
 
 /*********************************************
+CurveDataReset:
+    Reset curve to straight line but don't touch the curve name.
+**********************************************/
+void CurveDataReset(CurveData *curve)
+{
+    curve->m_min_x = 0;
+    curve->m_max_x = 1;
+    curve->m_min_y = 0;
+    curve->m_max_y = 1;
+    curve->m_gamma = 1;
+    curve->m_numAnchors = 2;
+    curve->m_anchors[0].x = 0;
+    curve->m_anchors[0].y = 0;
+    curve->m_anchors[1].x = 1;
+    curve->m_anchors[1].y = 1;
+}
+
+/*********************************************
 CurveDataSetPoint:
    Change the position of point to the new (x,y) coordinate.
    The end-points get a special treatment. When these are moved all the

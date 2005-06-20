@@ -156,7 +156,7 @@ long ufraw_saver(void *widget, gpointer user_data)
                     (gpointer)GTK_RESPONSE_CANCEL);
             gtk_main_quit();
         } else
-	    preview_progress("", 0);
+	    preview_progress(widget, "", 0);
         return UFRAW_SUCCESS;
     }
     fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new(

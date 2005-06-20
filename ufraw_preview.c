@@ -43,36 +43,63 @@ typedef struct {
     int format;
 } colorLabels;
 
-/* Global variables for holding information on the preview image */
-image_data *previewImage;
-#define Developer previewImage->developer
-/* Some actions update the progress bar while working, but meanwhile we want
- * to freeze all other actions. After we thaw the dialog we must call
- * update_scales() which was also frozen. */
-gboolean freezeDialog;
-int spotX1, spotY1, spotX2, spotY2;
+/* All the "global" information is here: */
+typedef struct {
+    image_data *Image;
+    /* Config holds infomation that is kept for the next image load */
+    cfg_data *Config;
+    cfg_data SaveConfig;
+    /* Remember the Gtk Widgets that we need to access later */
+    GtkWidget *ControlsBox, *PreviewWidget, *RawHisto, *LiveHisto;
+    GtkWidget *CurveWidget, *BlackLabel;
+    GtkComboBox *WBCombo, *CurveCombo, *ProfileCombo[profile_types];
+    GtkLabel *SpotPatch;
+    colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
+    GtkToggleButton *AutoExposureButton, *AutoBlackButton, *AutoCurveButton;
+    GtkWidget *ResetGammaButton, *ResetLinearButton;
+    GtkWidget *ResetExposureButton, *ResetSaturationButton;
+    GtkWidget *ResetBlackButton, *ResetCurveButton;
+    GtkTooltips *ToolTips;
+    GtkProgressBar *ProgressBar;
+    /* We need the adjustments for update_scale() */
+    GtkAdjustment *TemperatureAdjustment;
+    GtkAdjustment *GreenAdjustment;
+    GtkAdjustment *GammaAdjustment;
+    GtkAdjustment *LinearAdjustment;
+    GtkAdjustment *ExposureAdjustment;
+    GtkAdjustment *SaturationAdjustment;
+    long (*SaveFunc)();
+    long RenderMode;
+    /* Some actions update the progress bar while working, but meanwhile we
+     * want to freeze all other actions. After we thaw the dialog we must
+     * call update_scales() which was also frozen. */
+    gboolean FreezeDialog;
+    int SpotX1, SpotY1, SpotX2, SpotY2;
+} preview_data;
 
-/* Remember the Gtk Widgets that we need to access later */
-GtkWidget *previewWidget, *previewVBox, *rawHisto, *liveHisto, *curveWidget,
-	  *blackLabel;
-GtkProgressBar *progressBar = NULL;
-GtkAdjustment *adjTemperature, *adjGreen, *adjExposure,
-	*adjGamma, *adjLinear, *adjSaturation;
-GtkComboBox *wbCombo, *curveCombo, *profileCombo[profile_types];
-GtkToggleButton *expAAButton;
-GtkTooltips *toolTips;
-GtkLabel *spotPatch;
-colorLabels *spotLabels, *avrLabels, *devLabels, *overLabels, *underLabels;
+/* These #defines are not very elegant, but otherwise things get tooo long */
+#define CFG data->Config
+#define Developer data->Image->developer
+#define CFG_cameraCurve (CFG->curve[camera_curve].m_numAnchors>=0)
 
-/* cfg holds infomation that is kept for the next image load */
-cfg_data *cfg;
-cfg_data save_cfg;
-
-/* Curve points to a permanent curve for the GUI to update.
- * We need to make sure that the real curves in cfg always get updated. */
-CurveData *Curve;
-
-#define CFG_cameraCurve (cfg->curve[camera_curve].m_numAnchors>=0)
+preview_data *get_preview_data(void *object)
+{
+    GtkWidget *widget;
+    if (GTK_IS_ADJUSTMENT(object)) {
+	widget = g_object_get_data(object, "Parent-Widget");
+    } else if (GTK_IS_MENU(object)) {
+	widget = g_object_get_data(G_OBJECT(object), "Parent-Widget");
+    } else if (GTK_IS_MENU_ITEM(object)) {
+	GtkWidget *menu = gtk_widget_get_ancestor(object, GTK_TYPE_MENU);
+	widget = g_object_get_data(G_OBJECT(menu), "Parent-Widget");
+    } else {
+	widget = object;
+    }
+    GtkWidget *parentWindow = gtk_widget_get_toplevel(widget);
+    preview_data *data =
+	    g_object_get_data(G_OBJECT(parentWindow), "Preview-Data");
+    return data;
+}
 
 void ufraw_focus(void *window, gboolean focus)
 {
@@ -101,17 +128,9 @@ void ufraw_messenger(char *message,  void *parentWindow)
     gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
-void window_response(GtkWidget *widget, gpointer user_data)
-{
-    GtkWindow *window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
-
-    if (freezeDialog) return;
-    g_object_set_data(G_OBJECT(window), "WindowResponse", user_data);
-    gtk_main_quit();
-}
-
 void load_curve(GtkWidget *widget, gpointer user_data)
 {
+    preview_data *data = get_preview_data(widget);
     GtkFileChooser *fileChooser;
     GtkFileFilter *filter;
     GSList *list, *saveList;
@@ -119,8 +138,8 @@ void load_curve(GtkWidget *widget, gpointer user_data)
     char *cp;
 
     user_data = user_data;
-    if (freezeDialog) return;
-    if (cfg->curveCount==max_curves) {
+    if (data->FreezeDialog) return;
+    if (CFG->curveCount==max_curves) {
         ufraw_message(UFRAW_ERROR, "No more room for new curves.");
         return;
     }
@@ -163,23 +182,23 @@ void load_curve(GtkWidget *widget, gpointer user_data)
     gtk_file_filter_add_pattern(filter, "*");
     gtk_file_chooser_add_filter(fileChooser, filter);
 
-    if (strlen(cfg->curvePath)>0)
-        gtk_file_chooser_set_current_folder(fileChooser, cfg->curvePath);
+    if (strlen(CFG->curvePath)>0)
+        gtk_file_chooser_set_current_folder(fileChooser, CFG->curvePath);
     if (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
         for (list=saveList=gtk_file_chooser_get_filenames(fileChooser);
-            list!=NULL && cfg->curveCount<max_curves;
+            list!=NULL && CFG->curveCount<max_curves;
             list=g_slist_next(list)) {
             c = cfg_default.curve[0];
             if (curve_load(&c, list->data)!=UFRAW_SUCCESS) continue;
-            gtk_combo_box_append_text(curveCombo, c.name);
-            cfg->curve[cfg->curveCount++] = c;
-            cfg->curveIndex = cfg->curveCount-1;
+            gtk_combo_box_append_text(data->CurveCombo, c.name);
+            CFG->curve[CFG->curveCount++] = c;
+            CFG->curveIndex = CFG->curveCount-1;
             if (CFG_cameraCurve)
-                gtk_combo_box_set_active(curveCombo, cfg->curveIndex);
+                gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
             else
-                gtk_combo_box_set_active(curveCombo, cfg->curveIndex-1);
+                gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-1);
             cp = g_path_get_dirname(list->data);
-            g_strlcpy(cfg->curvePath, cp, max_path);
+            g_strlcpy(CFG->curvePath, cp, max_path);
             g_free(cp);
             g_free(list->data);
         }
@@ -193,13 +212,14 @@ void load_curve(GtkWidget *widget, gpointer user_data)
 
 void save_curve(GtkWidget *widget, gpointer user_data)
 {
+    preview_data *data = get_preview_data(widget);
     GtkFileChooser *fileChooser;
     GtkFileFilter *filter;
     char defFilename[max_name];
     char *filename, *cp;
 
     user_data = user_data;
-    if (freezeDialog) return;
+    if (data->FreezeDialog) return;
 
     fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new("Save curve",
             GTK_WINDOW(gtk_widget_get_toplevel(widget)),
@@ -239,16 +259,16 @@ void save_curve(GtkWidget *widget, gpointer user_data)
     gtk_file_filter_add_pattern(filter, "*");
     gtk_file_chooser_add_filter(fileChooser, filter);
 
-    if (strlen(cfg->curvePath)>0)
-        gtk_file_chooser_set_current_folder(fileChooser, cfg->curvePath);
+    if (strlen(CFG->curvePath)>0)
+        gtk_file_chooser_set_current_folder(fileChooser, CFG->curvePath);
     snprintf(defFilename, max_name, "%s.curve",
-	    cfg->curve[cfg->curveIndex].name);
+	    CFG->curve[CFG->curveIndex].name);
     gtk_file_chooser_set_current_name(fileChooser, defFilename);
     if (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
         filename = gtk_file_chooser_get_filename(fileChooser);
-	curve_save(&cfg->curve[cfg->curveIndex], filename);
+	curve_save(&CFG->curve[CFG->curveIndex], filename);
         cp = g_path_get_dirname(filename);
-        g_strlcpy(cfg->curvePath, cp, max_path);
+        g_strlcpy(CFG->curvePath, cp, max_path);
         g_free(cp);
         g_free(filename);
     }
@@ -257,14 +277,15 @@ void save_curve(GtkWidget *widget, gpointer user_data)
 }
 void load_profile(GtkWidget *widget, long type)
 {
+    preview_data *data = get_preview_data(widget);
     GtkFileChooser *fileChooser;
     GSList *list, *saveList;
     GtkFileFilter *filter;
     char *filename, *cp;
     profile_data p;
 
-    if (freezeDialog) return;
-    if (cfg->profileCount[type]==max_profiles) {
+    if (data->FreezeDialog) return;
+    if (CFG->profileCount[type]==max_profiles) {
         ufraw_message(UFRAW_ERROR, "No more room for new profiles.");
         return;
     }
@@ -279,8 +300,8 @@ void load_profile(GtkWidget *widget, long type)
 #ifdef HAVE_GTK_2_6
     gtk_file_chooser_set_show_hidden(fileChooser, TRUE);
 #endif
-    if (strlen(cfg->profilePath)>0)
-        gtk_file_chooser_set_current_folder(fileChooser, cfg->profilePath);
+    if (strlen(CFG->profilePath)>0)
+        gtk_file_chooser_set_current_folder(fileChooser, CFG->profilePath);
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
     gtk_file_filter_set_name(filter, "Color Profiles");
     gtk_file_filter_add_pattern(filter, "*.icm");
@@ -294,7 +315,7 @@ void load_profile(GtkWidget *widget, long type)
     gtk_file_chooser_add_filter(fileChooser, filter);
     if (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
         for (list=saveList=gtk_file_chooser_get_filenames(fileChooser);
-            list!=NULL && cfg->profileCount[type]<max_profiles;
+            list!=NULL && CFG->profileCount[type]<max_profiles;
             list=g_slist_next(list))
         {
             filename = list->data;
@@ -307,29 +328,25 @@ void load_profile(GtkWidget *widget, long type)
                 g_free(list->data);
                 continue;
             }
-            /* Set some defaults to the profile's curve */
-	    p.linear = 0.0;
-            if ( !strncmp("Nikon D70 for NEF", p.productName, 17) ||
-                 !strncmp("Nikon D100 for NEF", p.productName, 18) ||
-	         !strncmp("Nikon D1 for NEF", p.productName, 16) )
-	        p.gamma = 0.45;
-	    else
-	        p.gamma = 1.0;
-
 	    char *base = g_path_get_basename(filename);
 	    char *name = uf_file_set_type(base, "");
 	    g_strlcpy(p.name, name, max_name);
 	    g_free(name);
 	    g_free(base);
-            cfg->profile[type][cfg->profileCount[type]++] = p;
-            gtk_combo_box_append_text(profileCombo[type], p.name);
-            cfg->profileIndex[type] = cfg->profileCount[type]-1;
+            /* Set some defaults to the profile's curve */
+	    p.linear = profile_default_linear(&p);
+	    p.gamma = profile_default_gamma(&p);
+
+            CFG->profile[type][CFG->profileCount[type]++] = p;
+            gtk_combo_box_append_text(data->ProfileCombo[type], p.name);
+            CFG->profileIndex[type] = CFG->profileCount[type]-1;
             cp = g_path_get_dirname(list->data);
-            g_strlcpy(cfg->profilePath, cp, max_path);
+            g_strlcpy(CFG->profilePath, cp, max_path);
             g_free(cp);
             g_free(list->data);
         }
-        gtk_combo_box_set_active(profileCombo[type], cfg->profileIndex[type]);
+        gtk_combo_box_set_active(data->ProfileCombo[type], 
+		CFG->profileIndex[type]);
         if (list!=NULL)
             ufraw_message(UFRAW_ERROR, "No more room for new profiles.");
         g_slist_free(saveList);
@@ -385,28 +402,32 @@ void color_labels_set(colorLabels *l, double data[3])
     }
 }
 
-int renderDefault, renderOverexposed, renderUnderexposed;
-gpointer render_default=&renderDefault, render_overexposed=&renderOverexposed,
-    render_underexposed=&renderUnderexposed;
+enum { render_default, render_overexposed, render_underexposed };
 
-gboolean render_raw_histogram(gpointer mode);
-gboolean render_preview_image(gpointer mode);
-void render_spot();
-void draw_spot();
+void render_preview(preview_data *data, long mode);
+gboolean render_raw_histogram(preview_data *data);
+gboolean render_preview_image(preview_data *data);
+void render_spot(preview_data *data);
+void draw_spot(preview_data *data, gboolean draw);
 
-void render_preview(GtkWidget *widget, gpointer mode)
+void render_preview_callback(GtkWidget *widget, long mode)
 {
-    widget = widget;
-    if (freezeDialog) return;
-    g_idle_remove_by_data((gpointer)render_default);
-    g_idle_remove_by_data((gpointer)render_underexposed);
-    g_idle_remove_by_data((gpointer)render_overexposed);
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-            render_raw_histogram, (gpointer)mode, NULL);
+    preview_data *data = get_preview_data(widget);
+    render_preview(data, mode);
 }
 
 static int renderRestart = FALSE;
-gboolean render_raw_histogram(gpointer mode)
+
+void render_preview(preview_data *data, long mode)
+{
+    if (data->FreezeDialog) return;
+    data->RenderMode = mode;
+    g_idle_remove_by_data(data);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+            (GSourceFunc)(render_raw_histogram), data, NULL);
+}
+
+gboolean render_raw_histogram(preview_data *data)
 {
     static GdkPixbuf *pixbuf;
     static guint8 *pixies;
@@ -417,20 +438,20 @@ gboolean render_raw_histogram(gpointer mode)
     int x, c, cl, y, y1;
     int raw_his[raw_his_size][3], raw_his_max;
 
-    cfg->curve[cfg->curveIndex] = *curveeditor_widget_get_curve(curveWidget);
     char text[max_name];
-    g_snprintf(text, max_name, "Black point: %0.3lf", Curve->m_anchors[0].x);
-    gtk_label_set_text(GTK_LABEL(blackLabel), text);
-    developer_prepare(Developer, previewImage->rgbMax, pow(2, cfg->exposure),
-	    cfg->unclip, cfg->temperature, cfg->green, previewImage->preMul,
-            &cfg->profile[0][cfg->profileIndex[0]],
-            &cfg->profile[1][cfg->profileIndex[1]], cfg->intent,
-            cfg->saturation, Curve);
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(rawHisto));
-    if (gdk_pixbuf_get_height(pixbuf)!=cfg->rawHistogramHeight+2) {
+    g_snprintf(text, max_name, "Black point: %0.3lf",
+	    CFG->curve[CFG->curveIndex].m_anchors[0].x);
+    gtk_label_set_text(GTK_LABEL(data->BlackLabel), text);
+    developer_prepare(Developer, data->Image->rgbMax, pow(2, CFG->exposure),
+	    CFG->unclip, CFG->temperature, CFG->green, data->Image->preMul,
+            &CFG->profile[0][CFG->profileIndex[0]],
+            &CFG->profile[1][CFG->profileIndex[1]], CFG->intent,
+            CFG->saturation, &CFG->curve[CFG->curveIndex]);
+    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->RawHisto));
+    if (gdk_pixbuf_get_height(pixbuf)!=CFG->rawHistogramHeight+2) {
         pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-	        raw_his_size+2, cfg->rawHistogramHeight+2);
-	gtk_image_set_from_pixbuf(GTK_IMAGE(rawHisto), pixbuf);
+	        raw_his_size+2, CFG->rawHistogramHeight+2);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(data->RawHisto), pixbuf);
 	g_object_unref(pixbuf);
     }
     pixies = gdk_pixbuf_get_pixels(pixbuf);
@@ -438,62 +459,62 @@ gboolean render_raw_histogram(gpointer mode)
     memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)*
             rowstride + gdk_pixbuf_get_width(pixbuf));
     memset(raw_his, 0, sizeof(raw_his));
-    for (y=0; y<previewImage->height; y++)
-        for (x=0; x<previewImage->width; x++)
+    for (y=0; y<data->Image->height; y++)
+        for (x=0; x<data->Image->width; x++)
             for (c=0; c<3; c++)
-                raw_his[MIN( previewImage->image[y*previewImage->width+x][c] *
-                             (raw_his_size-1) / previewImage->rgbMax,
+                raw_his[MIN( data->Image->image[y*data->Image->width+x][c] *
+                             (raw_his_size-1) / data->Image->rgbMax,
                              raw_his_size-1) ][c]++;
     for (x=0, raw_his_max=1; x<raw_his_size; x++)
         for (c=0; c<3; c++) {
-	    if (cfg->rawHistogramScale==log_histogram)
+	    if (CFG->rawHistogramScale==log_histogram)
 		raw_his[x][c] = log(1+raw_his[x][c])*1000;
             raw_his_max = MAX(raw_his_max, raw_his[x][c]);
 	}
     p8 = pix;
-    p = pixies + cfg->rawHistogramHeight*rowstride + 3;
+    p = pixies + CFG->rawHistogramHeight*rowstride + 3;
     /* draw curves on the raw histogram */
     for (x=0; x<raw_his_size; x++)
         for (c=0; c<3; c++, p++) {
-	    for (y=0; y<cfg->rawHistogramHeight; y++)
-                pixies[(cfg->rawHistogramHeight-y)*rowstride+3*(x+1)+c]=
-                    raw_his[x][c]*cfg->rawHistogramHeight/raw_his_max>y ? 255:0;
+	    for (y=0; y<CFG->rawHistogramHeight; y++)
+                pixies[(CFG->rawHistogramHeight-y)*rowstride+3*(x+1)+c]=
+                    raw_his[x][c]*CFG->rawHistogramHeight/raw_his_max>y ? 255:0;
             /* Value for pixel x of color c in a grey pixel */
             for (cl=0; cl<3; cl++)
                 p16[cl] = MIN((guint64)x*Developer->rgbMax *
                           Developer->rgbWB[c] /
                           Developer->rgbWB[cl] / raw_his_size, 0xFFFF);
             develope(p8, p16, Developer, 8, pixtmp, 1);
-            y=p8[c] * (cfg->rawHistogramHeight-1)/MAXOUT;
+            y=p8[c] * (CFG->rawHistogramHeight-1)/MAXOUT;
             /* Value for pixel x+1 of color c in a grey pixel */
             for (cl=0; cl<3; cl++)
                 p16[cl] = MIN((guint64)(x+1)*Developer->rgbMax *
                          Developer->rgbWB[c] /
                          Developer->rgbWB[cl]/raw_his_size-1, 0xFFFF);
             develope(p8, p16, Developer, 8, pixtmp, 1);
-            y1=p8[c] * (cfg->rawHistogramHeight-1)/MAXOUT;
+            y1=p8[c] * (CFG->rawHistogramHeight-1)/MAXOUT;
             for (; y<=y1; y++) *(p-y*rowstride) = 255 - *(p-y*rowstride);
             /* Value for pixel x of pure color c */
             p16[0] = p16[1] = p16[2] = 0;
             p16[c] = MIN((guint64)x*Developer->rgbMax/raw_his_size, 0xFFFF);
             develope(p8, p16, Developer, 8, pixtmp, 1);
-            y1=p8[c] * (cfg->rawHistogramHeight-1)/MAXOUT;
+            y1=p8[c] * (CFG->rawHistogramHeight-1)/MAXOUT;
             for (; y<y1; y++) *(p-y*rowstride) = 160 - *(p-y*rowstride)/4;
             /* Value for pixel x+1 of pure color c */
             p16[c] = MIN((guint64)(x+1)*Developer->rgbMax/raw_his_size - 1,
                      0xFFFF);
             develope(p8, p16, Developer, 8, pixtmp, 1);
-            y1=p8[c] * (cfg->rawHistogramHeight-1)/MAXOUT;
+            y1=p8[c] * (CFG->rawHistogramHeight-1)/MAXOUT;
             for (; y<=y1; y++) *(p-y*rowstride) = 255 - *(p-y*rowstride);
         }
-    gtk_widget_queue_draw(rawHisto);
+    gtk_widget_queue_draw(data->RawHisto);
     renderRestart = TRUE;
     g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-            render_preview_image, (gpointer)mode, NULL);
+            (GSourceFunc)(render_preview_image), data, NULL);
     return FALSE;
 }
 
-gboolean render_preview_image(gpointer mode)
+gboolean render_preview_image(preview_data *data)
 {
     static GdkPixbuf *pixbuf;
     static guint8 *pixies;
@@ -506,21 +527,21 @@ gboolean render_preview_image(gpointer mode)
 
     if (renderRestart) {
         renderRestart = FALSE;
-        pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(previewWidget));
+        pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
         width = gdk_pixbuf_get_width(pixbuf);
         height = gdk_pixbuf_get_height(pixbuf);
         rowstride = gdk_pixbuf_get_rowstride(pixbuf);
         pixies = gdk_pixbuf_get_pixels(pixbuf);
 #ifdef DEBUG
         fprintf(stderr, "render_preview_image: w=%d, h=%d, r=%d, mode=%d\n",
-                width, height, rowstride, mode);
+                width, height, rowstride, data->RenderMode);
         fflush(stderr);
 #endif
         memset(live_his, 0, sizeof(live_his));
         y = y0 = 0;
     }
     for (; y<height; y++) {
-        develope(&pixies[y*rowstride], previewImage->image[y*width],
+        develope(&pixies[y*rowstride], data->Image->image[y*width],
                 Developer, 8, pixtmp, width);
         for (x=0, p8=&pixies[y*rowstride]; x<width; x++, p8+=3) {
             for (c=0, max=0, min=0x100; c<3; c++) {
@@ -528,42 +549,43 @@ gboolean render_preview_image(gpointer mode)
                 min = MIN(min, p8[c]);
                 live_his[p8[c]][c]++;
             }
-            if (cfg->histogram==luminosity_histogram)
+            if (CFG->histogram==luminosity_histogram)
                 live_his[(int)(0.3*p8[0]+0.59*p8[1]+0.11*p8[2])][3]++;
-            if (cfg->histogram==value_histogram)
+            if (CFG->histogram==value_histogram)
                 live_his[max][3]++;
-            if (cfg->histogram==saturation_histogram) {
+            if (CFG->histogram==saturation_histogram) {
                 if (max==0) live_his[0][3]++;
                 else live_his[255*(max-min)/max][3]++;
             }
             for (c=0; c<3; c++) {
                 o = p8[c];
-                if (mode==render_default) {
-                    if (cfg->overExp && max==MAXOUT) o = 0;
-                    if (cfg->underExp && min==0) o = 255;
-                } else if (mode==render_overexposed) {
+                if (data->RenderMode==render_default) {
+                    if (CFG->overExp && max==MAXOUT) o = 0;
+                    if (CFG->underExp && min==0) o = 255;
+                } else if (data->RenderMode==render_overexposed) {
                     if (o!=255) o = 0;
-                } else if (mode==render_underexposed) {
+                } else if (data->RenderMode==render_underexposed) {
                     if (o!=0) o = 255;
                 }
                 pixies[y*rowstride+3*x+c] = o;
             }
         }
         if (y%32==31) {
-            gtk_widget_queue_draw_area(previewWidget, 0, y0, width, y+1-y0);
+            gtk_widget_queue_draw_area(data->PreviewWidget,
+		    0, y0, width, y+1-y0);
             y0 = y+1;
             y++;
             return TRUE;
         }
     }
-    gtk_widget_queue_draw_area(previewWidget, 0, y0, width, y+1-y0);
+    gtk_widget_queue_draw_area(data->PreviewWidget, 0, y0, width, y+1-y0);
 
     /* draw live histogram */
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(liveHisto));
-    if (gdk_pixbuf_get_height(pixbuf)!=cfg->liveHistogramHeight+2) {
+    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
+    if (gdk_pixbuf_get_height(pixbuf)!=CFG->liveHistogramHeight+2) {
         pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-	        live_his_size+2, cfg->liveHistogramHeight+2);
-	gtk_image_set_from_pixbuf(GTK_IMAGE(liveHisto), pixbuf);
+	        live_his_size+2, CFG->liveHistogramHeight+2);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(data->LiveHisto), pixbuf);
 	g_object_unref(pixbuf);
     }
     pixies = gdk_pixbuf_get_pixels(pixbuf);
@@ -579,12 +601,12 @@ gboolean render_preview_image(gpointer mode)
         }
     }
     for (x=1, live_his_max=1; x<live_his_size-1; x++) {
-	if (cfg->liveHistogramScale==log_histogram)
+	if (CFG->liveHistogramScale==log_histogram)
 	    for (c=0; c<4; c++) live_his[x][c] = log(1+live_his[x][c])*1000;
-        if (cfg->histogram==rgb_histogram)
+        if (CFG->histogram==rgb_histogram)
             for (c=0; c<3; c++)
                 live_his_max = MAX(live_his_max, live_his[x][c]);
-        else if (cfg->histogram==r_g_b_histogram)
+        else if (CFG->histogram==r_g_b_histogram)
             live_his_max = MAX(live_his_max,
                     live_his[x][0]+live_his[x][1]+live_his[x][2]);
         else live_his_max = MAX(live_his_max, live_his[x][3]);
@@ -593,51 +615,51 @@ gboolean render_preview_image(gpointer mode)
     fprintf(stderr, "render_preview: live_his_max=%d\n", live_his_max);
     fflush(stderr);
 #endif
-    for (x=0; x<live_his_size; x++) for (y=0; y<cfg->liveHistogramHeight; y++)
-        if (cfg->histogram==r_g_b_histogram) {
-            if (y*live_his_max < live_his[x][0]*cfg->liveHistogramHeight)
-                pixies[(cfg->liveHistogramHeight-y)*rowstride+3*(x+1)+0] = 255;
+    for (x=0; x<live_his_size; x++) for (y=0; y<CFG->liveHistogramHeight; y++)
+        if (CFG->histogram==r_g_b_histogram) {
+            if (y*live_his_max < live_his[x][0]*CFG->liveHistogramHeight)
+                pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+0] = 255;
             else if (y*live_his_max <
-                    (live_his[x][0]+live_his[x][1])*cfg->liveHistogramHeight)
-                pixies[(cfg->liveHistogramHeight-y)*rowstride+3*(x+1)+1] = 255;
+                    (live_his[x][0]+live_his[x][1])*CFG->liveHistogramHeight)
+                pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+1] = 255;
             else if (y*live_his_max <
                     (live_his[x][0]+live_his[x][1]+live_his[x][2])
-                    *cfg->liveHistogramHeight)
-                pixies[(cfg->liveHistogramHeight-y)*rowstride+3*(x+1)+2] = 255;
+                    *CFG->liveHistogramHeight)
+                pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+2] = 255;
         } else {
             for (c=0; c<3; c++)
-                if (cfg->histogram==rgb_histogram) {
-                    if (y*live_his_max<live_his[x][c]*cfg->liveHistogramHeight)
-                        pixies[(cfg->liveHistogramHeight-y)*rowstride+3*(x+1)+c]
+                if (CFG->histogram==rgb_histogram) {
+                    if (y*live_his_max<live_his[x][c]*CFG->liveHistogramHeight)
+                        pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+c]
 			    = 255;
                 } else {
-                    if (y*live_his_max<live_his[x][3]*cfg->liveHistogramHeight)
-                        pixies[(cfg->liveHistogramHeight-y)*rowstride+3*(x+1)+c]
+                    if (y*live_his_max<live_his[x][3]*CFG->liveHistogramHeight)
+                        pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+c]
 			    = 255;
                 }
        }
 
     /* draw vertical line at quarters "behind" the live histogram */
-    for (y=-1; y<cfg->liveHistogramHeight+1; y++) for (x=64; x<255; x+=64)
-        if (pixies[(cfg->liveHistogramHeight-y)*rowstride+3*(x+1)+0]==0 &&
-            pixies[(cfg->liveHistogramHeight-y)*rowstride+3*(x+1)+1]==0 &&
-            pixies[(cfg->liveHistogramHeight-y)*rowstride+3*(x+1)+2]==0 )
+    for (y=-1; y<CFG->liveHistogramHeight+1; y++) for (x=64; x<255; x+=64)
+        if (pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+0]==0 &&
+            pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+1]==0 &&
+            pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+2]==0 )
             for (c=0; c<3; c++)
-                pixies[(cfg->liveHistogramHeight-y)*rowstride+3*(x+1)+c]=64;
-    gtk_widget_queue_draw(liveHisto);
+                pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+c]=64;
+    gtk_widget_queue_draw(data->LiveHisto);
     for (c=0;c<3;c++) rgb[c] = sum[c]/height/width;
-    color_labels_set(avrLabels, rgb);
+    color_labels_set(data->AvrLabels, rgb);
     for (c=0;c<3;c++) rgb[c] = sqrt(sqr[c]/height/width-rgb[c]*rgb[c]);
-    color_labels_set(devLabels, rgb);
+    color_labels_set(data->DevLabels, rgb);
     for (c=0;c<3;c++) rgb[c] = 100.0*live_his[live_his_size-1][c]/height/width;
-    color_labels_set(overLabels, rgb);
+    color_labels_set(data->OverLabels, rgb);
     for (c=0;c<3;c++) rgb[c] = 100.0*live_his[0][c]/height/width;
-    color_labels_set(underLabels, rgb);
-    render_spot();
+    color_labels_set(data->UnderLabels, rgb);
+    render_spot(data);
     return FALSE;
 }
 
-void render_spot()
+void render_spot(preview_data *data)
 {
     GdkPixbuf *pixbuf;
     guint8 *pixies;
@@ -647,145 +669,204 @@ void render_spot()
     double rgb[3];
     char tmp[max_name];
 
-    if (spotX1<0) return;
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(previewWidget));
+    if (data->SpotX1<0) return;
+    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
     width = gdk_pixbuf_get_width(pixbuf);
     height = gdk_pixbuf_get_height(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     pixies = gdk_pixbuf_get_pixels(pixbuf);
     for (c=0; c<3; c++) rgb[c] = 0;
-    spotSizeY = abs(spotY1-spotY2)+1;
-    spotStartY = MIN(spotY1, spotY2);
-    spotSizeX = abs(spotX1-spotX2)+1;
-    spotStartX = MIN(spotX1, spotX2);
+    spotSizeY = abs(data->SpotY1 - data->SpotY2)+1;
+    spotStartY = MIN(data->SpotY1, data->SpotY2);
+    spotSizeX = abs(data->SpotX1 - data->SpotX2)+1;
+    spotStartX = MIN(data->SpotX1, data->SpotX2);
     for (y=0; y<spotSizeY; y++) {
         for (x=0; x<spotSizeX; x++)
             for (c=0; c<3; c++)
 		rgb[c] += pixies[(spotStartY+y)*rowstride+(spotStartX+x)*3+c];
     }
     for (c=0; c<3; c++) rgb[c] /= spotSizeX * spotSizeY;
-    color_labels_set(spotLabels, rgb);
+    color_labels_set(data->SpotLabels, rgb);
     snprintf(tmp, max_name, "<span background='#%02X%02X%02X'>"
 	    "                    </span>",
 	    (int)rgb[0], (int)rgb[1], (int)rgb[2]);
-    gtk_label_set_markup(spotPatch, tmp);
-    draw_spot();
-    gtk_widget_queue_draw_area(previewWidget, spotStartX-1, spotStartY-1,
+    gtk_label_set_markup(data->SpotPatch, tmp);
+    draw_spot(data, TRUE);
+    gtk_widget_queue_draw_area(data->PreviewWidget, spotStartX-1, spotStartY-1,
 	    spotStartX+spotSizeX+1, spotStartY+spotSizeY+1);
 }
 
-void draw_spot()
+void pixbuf_mark(int x, int y, guchar *pixbuf, int width, int height,
+	        int rowstride, gboolean draw)
+{
+    int c;
+
+    if (x<0 || y<0 || x>=width || y>=height) return;
+    for (c=0; c<3; c++) {
+	if (draw) {
+	    if ( (x+y)%2 == 0 )
+		pixbuf[y*rowstride+3*x+c] = pixbuf[y*rowstride+3*x+c]/4;
+	    else
+		pixbuf[y*rowstride+3*x+c] = 255-(255-pixbuf[y*rowstride+3*x+c])/4;
+	} else {
+	    if ( (x+y)%2 == 0 )
+		pixbuf[y*rowstride+3*x+c] = pixbuf[y*rowstride+3*x+c]*4;
+	    else
+		pixbuf[y*rowstride+3*x+c] = 255-(255-pixbuf[y*rowstride+3*x+c])*4;
+	}
+    }
+}
+
+void draw_spot(preview_data *data, gboolean draw)
 {
     GdkPixbuf *pixbuf;
     guint8 *pixies;
     int width, height, x, y, rowstride;
     int spotStartX, spotStartY, spotSizeX, spotSizeY;
 
-    if (spotX1<0) return;
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(previewWidget));
+    if (data->SpotX1<0) return;
+    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
     width = gdk_pixbuf_get_width(pixbuf);
     height = gdk_pixbuf_get_height(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     pixies = gdk_pixbuf_get_pixels(pixbuf);
-    spotSizeY = abs(spotY1-spotY2)+1;
-    spotStartY = MIN(spotY1, spotY2);
-    spotSizeX = abs(spotX1-spotX2)+1;
-    spotStartX = MIN(spotX1, spotX2);
+    spotSizeY = abs(data->SpotY1 - data->SpotY2)+1;
+    spotStartY = MIN(data->SpotY1, data->SpotY2);
+    spotSizeX = abs(data->SpotX1 - data->SpotX2)+1;
+    spotStartX = MIN(data->SpotX1, data->SpotX2);
     for (x=0; x<=spotSizeX; x++) {
-        pixbuf_reverse(spotStartX+x, spotStartY-1,
-                pixies, width, height, rowstride);
-        pixbuf_reverse(spotStartX+x, spotStartY+spotSizeY+1,
-                pixies, width, height, rowstride);
+        pixbuf_mark(spotStartX+x, spotStartY-1,
+                pixies, width, height, rowstride, draw);
+        pixbuf_mark(spotStartX+x, spotStartY+spotSizeY+1,
+                pixies, width, height, rowstride, draw);
     }
     for (y=-1; y<=spotSizeY+1; y++) {
-        pixbuf_reverse(spotStartX-1, spotStartY+y,
-                pixies, width, height, rowstride);
-        pixbuf_reverse(spotStartX+spotSizeX+1, spotStartY+y,
-	        pixies, width, height, rowstride);
+        pixbuf_mark(spotStartX-1, spotStartY+y,
+                pixies, width, height, rowstride, draw);
+        pixbuf_mark(spotStartX+spotSizeX+1, spotStartY+y,
+	        pixies, width, height, rowstride, draw);
     }
-    gtk_widget_queue_draw_area(previewWidget,
+    gtk_widget_queue_draw_area(data->PreviewWidget,
 	    spotStartX-1, spotStartY-1,
 	    spotSizeX+3, spotSizeY+3);
 }
 
 /* update the UI entries that could have changed automatically */
-void update_scales()
+void update_scales(preview_data *data)
 {
-    if (freezeDialog) return;
-    freezeDialog = TRUE;
-    if (cfg->curveIndex>camera_curve && !CFG_cameraCurve)
-        gtk_combo_box_set_active(curveCombo, cfg->curveIndex-1);
+    if (data->FreezeDialog) return;
+    data->FreezeDialog = TRUE;
+    if (CFG->curveIndex>camera_curve && !CFG_cameraCurve)
+        gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-1);
     else
-        gtk_combo_box_set_active(curveCombo, cfg->curveIndex);
-    gtk_combo_box_set_active(wbCombo, cfg->wb);
-    gtk_adjustment_set_value(adjTemperature, cfg->temperature);
-    gtk_adjustment_set_value(adjGreen, cfg->green);
-    gtk_adjustment_set_value(adjExposure, cfg->exposure);
-    gtk_adjustment_set_value(adjGamma,
-            cfg->profile[0][cfg->profileIndex[0]].gamma);
-    gtk_adjustment_set_value(adjLinear,
-            cfg->profile[0][cfg->profileIndex[0]].linear);
-    gtk_adjustment_set_value(adjSaturation, cfg->saturation);
-    freezeDialog = FALSE;
-    render_preview(NULL, render_default);
+        gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
+    gtk_combo_box_set_active(data->WBCombo, CFG->wb);
+
+    gtk_adjustment_set_value(data->TemperatureAdjustment, CFG->temperature);
+    gtk_adjustment_set_value(data->GreenAdjustment, CFG->green);
+    gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
+    gtk_adjustment_set_value(data->GammaAdjustment,
+            CFG->profile[0][CFG->profileIndex[0]].gamma);
+    gtk_adjustment_set_value(data->LinearAdjustment,
+            CFG->profile[0][CFG->profileIndex[0]].linear);
+    gtk_adjustment_set_value(data->SaturationAdjustment, CFG->saturation);
+
+    gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
+    gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
+    gtk_toggle_button_set_active(data->AutoCurveButton, CFG->autoCurve);
+
+    gtk_widget_set_sensitive(data->ResetGammaButton,
+	    fabs( profile_default_gamma(&CFG->profile[0][CFG->profileIndex[0]])
+		- CFG->profile[0][CFG->profileIndex[0]].gamma) > 0.001);
+    gtk_widget_set_sensitive(data->ResetLinearButton,
+	    fabs( profile_default_linear(&CFG->profile[0][CFG->profileIndex[0]])
+		- CFG->profile[0][CFG->profileIndex[0]].linear) > 0.001);
+    gtk_widget_set_sensitive(data->ResetExposureButton,
+	    fabs( cfg_default.exposure - CFG->exposure) > 0.001);
+    gtk_widget_set_sensitive(data->ResetSaturationButton,
+	    fabs( cfg_default.saturation - CFG->saturation) > 0.001);
+    gtk_widget_set_sensitive(data->ResetBlackButton,
+	    CFG->curve[CFG->curveIndex].m_anchors[0].x!=0.0 ||
+	    CFG->curve[CFG->curveIndex].m_anchors[0].y!=0.0 );
+    gtk_widget_set_sensitive(data->ResetCurveButton,
+	    CFG->curve[CFG->curveIndex].m_numAnchors>2 ||
+	    CFG->curve[CFG->curveIndex].m_anchors[1].x!=1.0 ||
+	    CFG->curve[CFG->curveIndex].m_anchors[1].y!=1.0 );
+
+    data->FreezeDialog = FALSE;
+    render_preview(data, render_default);
 };
+
+void update_scales_callback(GtkWidget *widget, gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    user_data = user_data;
+    CFG->curve[CFG->curveIndex] =
+	*curveeditor_widget_get_curve(data->CurveWidget);
+    CFG->autoBlack = FALSE;
+    CFG->autoCurve = FALSE;
+    update_scales(data);
+}
 
 void spot_wb(GtkWidget *widget, gpointer user_data)
 {
+    preview_data *data = get_preview_data(widget);
     int spotStartX, spotStartY, spotSizeX, spotSizeY;
     int x, y, c;
     double rgb[3];
 
-    widget = widget;
     user_data = user_data;
 
-    if (freezeDialog) return;
-    if (spotX1<=0) return;
-    spotSizeY = abs(spotY1-spotY2)+1;
-    spotStartY = MIN(spotY1, spotY2);
-    spotSizeX = abs(spotX1-spotX2)+1;
-    spotStartX = MIN(spotX1, spotX2);
+    if (data->FreezeDialog) return;
+    if (data->SpotX1<=0) return;
+    spotSizeY = abs(data->SpotY1 - data->SpotY2)+1;
+    spotStartY = MIN(data->SpotY1, data->SpotY2);
+    spotSizeX = abs(data->SpotX1 - data->SpotX2)+1;
+    spotStartX = MIN(data->SpotX1, data->SpotX2);
 
     for (c=0; c<3; c++) rgb[c] = 0;
     for (y=spotStartY; y<spotStartY+spotSizeY; y++)
         for (x=spotStartX; x<spotStartX+spotSizeX; x++)
             for (c=0; c<3; c++)
-                rgb[c] += previewImage->image[y*previewImage->width+x][c];
+                rgb[c] += data->Image->image[y*data->Image->width+x][c];
     for (c=0; c<3; c++)
         rgb[c] /= spotSizeX * spotSizeY;
     ufraw_message(UFRAW_SET_LOG, "spot_wb: r=%f, g=%f, b=%f\n",
             rgb[0], rgb[1], rgb[2]);
-    for (c=0; c<3; c++) rgb[c] *= previewImage->preMul[c];
-    RGB_to_temperature(rgb, &cfg->temperature, &cfg->green);
-    cfg->wb = 0;
-    cfg->autoExposure = FALSE;
-    gtk_toggle_button_set_active(expAAButton, FALSE);
-    update_scales();
+    for (c=0; c<3; c++) rgb[c] *= data->Image->preMul[c];
+    RGB_to_temperature(rgb, &CFG->temperature, &CFG->green);
+    CFG->wb = manual_wb;
+    if (CFG->autoExposure) ufraw_auto_expose(data->Image);
+    CFG->autoBlack = FALSE;
+    CFG->autoCurve = FALSE;
+    update_scales(data);
 }
 
-void spot_press(GtkWidget *event_box, GdkEventButton *event, gpointer data)
+void spot_press(GtkWidget *event_box, GdkEventButton *event, gpointer user_data)
 {
+    preview_data *data = get_preview_data(event_box);
     event_box = event_box;
-    data = data;
-    if (freezeDialog) return;
+    user_data = user_data;
+    if (data->FreezeDialog) return;
     if (event->button!=1) return;
-    draw_spot();
-    spotX1 = event->x;
-    spotY1 = event->y;
-    spotX2 = event->x;
-    spotY2 = event->y;
-    render_spot();
+    draw_spot(data, FALSE);
+    data->SpotX1 = event->x;
+    data->SpotY1 = event->y;
+    data->SpotX2 = event->x;
+    data->SpotY2 = event->y;
+    render_spot(data);
 }
 
-gboolean spot_motion(GtkWidget *event_box, GdkEventMotion *event, gpointer data)
+gboolean spot_motion(GtkWidget *event_box, GdkEventMotion *event,
+	gpointer user_data)
 {
-    event_box = event_box;
-    data = data;
+    preview_data *data = get_preview_data(event_box);
+    user_data = user_data;
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
-    draw_spot();
-    spotX2 = MAX(MIN(event->x,previewImage->width),0);
-    spotY2 = MAX(MIN(event->y,previewImage->height),0);
-    render_spot();
+    draw_spot(data, FALSE);
+    data->SpotX2 = MAX(MIN(event->x,data->Image->width),0);
+    data->SpotY2 = MAX(MIN(event->y,data->Image->height),0);
+    render_spot(data);
     return FALSE;
 }
 
@@ -815,59 +896,87 @@ GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
     return table;
 }
 
-void button_update(GtkButton *button, long type)
+void button_update(GtkWidget *button, gpointer user_data)
 {
-    if (type==1) {
-	cfg->exposure = cfg_default.exposure;
-	cfg->autoExposure = FALSE;
-	gtk_toggle_button_set_active(expAAButton, FALSE);
+    preview_data *data = get_preview_data(button);
+    user_data = user_data;
+
+    if (button==data->ResetGammaButton) {
+	CFG->profile[0][CFG->profileIndex[0]].gamma =
+		profile_default_gamma(&CFG->profile[0][CFG->profileIndex[0]]);
     }
-    if (type==2) {
-	cfg->autoExposure = 
+    if (button==data->ResetLinearButton) {
+	CFG->profile[0][CFG->profileIndex[0]].linear =
+		profile_default_linear(&CFG->profile[0][CFG->profileIndex[0]]);
+    }
+    if (button==GTK_WIDGET(data->AutoExposureButton)) {
+	CFG->autoExposure = 
 	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
-	if (cfg->autoExposure) ufraw_auto_expose(previewImage);
+	if (CFG->autoExposure) ufraw_auto_expose(data->Image);
     }
-    if (type==3) cfg->profile[0][cfg->profileIndex[0]].gamma =
-			cfg_default.profile[0][0].gamma;
-    if (type==4) cfg->profile[0][cfg->profileIndex[0]].linear =
-			cfg_default.profile[0][0].linear;
-    if (type==20) cfg->saturation = cfg_default.saturation;
-    if (type==100) {
-	cfg->curve[cfg->curveIndex].m_numAnchors = 2;
-	cfg->curve[cfg->curveIndex].m_anchors[0].x = 0.0;
-	cfg->curve[cfg->curveIndex].m_anchors[0].y = 0.0;
-	cfg->curve[cfg->curveIndex].m_anchors[1].x = 1.0;
-	cfg->curve[cfg->curveIndex].m_anchors[1].y = 1.0;
-	*Curve = cfg->curve[cfg->curveIndex];
-	curveeditor_widget_update(curveWidget);
+    if (button==data->ResetExposureButton) {
+	CFG->exposure = cfg_default.exposure;
+	CFG->autoExposure = FALSE;
     }
-    if (type==101) {
-	CurveDataSetPoint(Curve, 0, cfg_default.black, 0);
-	curveeditor_widget_update(curveWidget);
+    if (button==data->ResetSaturationButton) {
+	CFG->saturation = cfg_default.saturation;
     }
-    if (type==102) {
-	ufraw_auto_black(previewImage);
-	*Curve = cfg->curve[cfg->curveIndex];
-	curveeditor_widget_update(curveWidget);
+    if (button==GTK_WIDGET(data->AutoBlackButton)) {
+	CFG->autoBlack = 
+	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
+	if (CFG->autoBlack) {
+	    ufraw_auto_black(data->Image);
+	    curveeditor_widget_set_curve(data->CurveWidget,
+		&CFG->curve[CFG->curveIndex]);
+	}
     }
-    update_scales();
+    if (button==data->ResetBlackButton) {
+	CurveDataSetPoint(&CFG->curve[CFG->curveIndex], 0,
+		cfg_default.black, 0);
+	curveeditor_widget_set_curve(data->CurveWidget,
+		&CFG->curve[CFG->curveIndex]);
+    }
+    if (button==GTK_WIDGET(data->AutoCurveButton)) {
+	CFG->autoCurve = 
+	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
+	if (CFG->autoCurve) {
+	    CFG->autoBlack = TRUE;
+	    ufraw_auto_curve(data->Image);
+	    curveeditor_widget_set_curve(data->CurveWidget,
+		&CFG->curve[CFG->curveIndex]);
+	}
+    }
+    if (button==data->ResetCurveButton) {
+	CFG->curve[CFG->curveIndex].m_numAnchors = 2;
+	CFG->curve[CFG->curveIndex].m_anchors[1].x = 1.0;
+	CFG->curve[CFG->curveIndex].m_anchors[1].y = 1.0;
+	curveeditor_widget_set_curve(data->CurveWidget,
+		&CFG->curve[CFG->curveIndex]);
+    }
+    if ( button!=GTK_WIDGET(data->AutoBlackButton)
+       && button!=GTK_WIDGET(data->AutoCurveButton) ) {
+	CFG->autoBlack = FALSE;
+	CFG->autoCurve = FALSE;
+    }
+    update_scales(data);
     return;
 }
 
 void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 {
-    *valuep = gtk_toggle_button_get_active(button);
-    if (valuep==&cfg->unclip) {
-	cfg->autoExposure = FALSE;
-	gtk_toggle_button_set_active(expAAButton, FALSE);
-	/* ugly flip needed because cfg->unclip=!clip_button_active */
-	cfg->unclip = !cfg->unclip;
+    preview_data *data = get_preview_data(button);
+    if (valuep==&CFG->unclip) {
+	/* ugly flip needed because CFG->unclip==!clip_button_active */
+	*valuep = !gtk_toggle_button_get_active(button);
+	if (CFG->autoExposure) ufraw_auto_expose(data->Image);
 	char text[max_name];
         snprintf(text, max_name, "Highlight clipping\n"
-		"Current state: %s", cfg->unclip ? "unclip" : "clip");
-	gtk_tooltips_set_tip(toolTips, GTK_WIDGET(button), text, NULL);
+		"Current state: %s", CFG->unclip ? "unclip" : "clip");
+	gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(button), text, NULL);
+    } else {
+	*valuep = gtk_toggle_button_get_active(button);
     }
-    render_preview(NULL, render_default);
+    render_preview(data, render_default);
 }
 
 void toggle_button(GtkTable *table, int x, int y, char *label, gboolean *valuep)
@@ -887,29 +996,37 @@ void toggle_button(GtkTable *table, int x, int y, char *label, gboolean *valuep)
 
 void adjustment_update(GtkAdjustment *adj, double *valuep)
 {
-    if (freezeDialog) return;
-    if (valuep==&cfg->profile[0][0].gamma)
-        valuep = (void *)&cfg->profile[0][cfg->profileIndex[0]].gamma;
-    if (valuep==&cfg->profile[0][0].linear)
-        valuep = (void *)&cfg->profile[0][cfg->profileIndex[0]].linear;
+    preview_data *data = get_preview_data(adj);
+    if (data->FreezeDialog) return;
+    if (valuep==&CFG->profile[0][0].gamma)
+        valuep = (void *)&CFG->profile[0][CFG->profileIndex[0]].gamma;
+    if (valuep==&CFG->profile[0][0].linear)
+        valuep = (void *)&CFG->profile[0][CFG->profileIndex[0]].linear;
+
+    /* Do noting if value didn't really change */
+    long accuracy =
+	(long)g_object_get_data(G_OBJECT(adj), "Adjustment-Accuracy");
+    if ( fabs(*valuep-gtk_adjustment_get_value(adj))<pow(10,-accuracy)/2)
+	return;
     *valuep = gtk_adjustment_get_value(adj);
-    if (valuep==&cfg->temperature || valuep==&cfg->green) {
-        cfg->wb = 0;
-        gtk_combo_box_set_active(wbCombo, cfg->wb);
-	cfg->autoExposure = FALSE;
-	gtk_toggle_button_set_active(expAAButton, FALSE);
+
+    if (valuep==&CFG->temperature || valuep==&CFG->green) {
+        CFG->wb = manual_wb;
+	if (CFG->autoExposure) ufraw_auto_expose(data->Image);
     }
-    if (valuep==&cfg->exposure) {
-	cfg->autoExposure = FALSE;
-	gtk_toggle_button_set_active(expAAButton, FALSE);
+    if (valuep==&CFG->exposure) {
+	CFG->autoExposure = FALSE;
     }
-    render_preview(NULL, render_default);
+    CFG->autoBlack = FALSE;
+    CFG->autoCurve = FALSE;
+    update_scales(data);
 }
 
 GtkAdjustment *adjustment_scale(GtkTable *table,
     int x, int y, char *label, double value, double *valuep,
-    double min, double max, double step, double jump, int accuracy, char *tip)
+    double min, double max, double step, double jump, long accuracy, char *tip)
 {
+    preview_data *data = get_preview_data(table);
     GtkAdjustment *adj;
     GtkWidget *w, *l;
 
@@ -917,48 +1034,54 @@ GtkAdjustment *adjustment_scale(GtkTable *table,
     l = gtk_label_new(label);
     gtk_misc_set_alignment(GTK_MISC(l), 1, 0.5);
     gtk_container_add(GTK_CONTAINER(w),l);
-    gtk_tooltips_set_tip(toolTips, w, tip, NULL);
+    gtk_tooltips_set_tip(data->ToolTips, w, tip, NULL);
     gtk_table_attach(table, w, x, x+1, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
     adj = GTK_ADJUSTMENT(gtk_adjustment_new(value, min, max, step, jump, 0));
+    g_object_set_data(G_OBJECT(adj), "Adjustment-Accuracy",(gpointer)accuracy);
     g_signal_connect(G_OBJECT(adj), "value-changed",
             G_CALLBACK(adjustment_update), valuep);
+
     w = gtk_hscale_new(adj);
+    g_object_set_data(G_OBJECT(adj), "Parent-Widget", w);
     gtk_scale_set_draw_value(GTK_SCALE(w), FALSE);
-    gtk_tooltips_set_tip(toolTips, w, tip, NULL);
+    gtk_tooltips_set_tip(data->ToolTips, w, tip, NULL);
     gtk_table_attach(table, w, x+1, x+5, y, y+1, GTK_EXPAND|GTK_FILL, 0, 0, 0);
+
     w = gtk_spin_button_new(adj, step, accuracy);
-    gtk_tooltips_set_tip(toolTips, w, tip, NULL);
+    gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON(w), FALSE);
+    gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(w), GTK_UPDATE_IF_VALID);
+    gtk_tooltips_set_tip(data->ToolTips, w, tip, NULL);
     gtk_table_attach(table, w, x+5, x+7, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
     return adj;
 }
 
 void combo_update(GtkWidget *combo, gint *valuep)
 {
-    if (freezeDialog) return;
+    preview_data *data = get_preview_data(combo);
+    if (data->FreezeDialog) return;
     *valuep = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
-    if (valuep==&cfg->curveIndex) {
-        if (!CFG_cameraCurve && cfg->curveIndex>=camera_curve)
-            cfg->curveIndex++;
-	*Curve = cfg->curve[cfg->curveIndex];
-	curveeditor_widget_update(curveWidget);
-        update_scales();
-    } else if (valuep==&cfg->profileIndex[in_profile]) {
-        update_scales();
-    } else if (valuep==&cfg->wb) {
-        ufraw_set_wb(previewImage);
-	cfg->autoExposure = FALSE;
-	gtk_toggle_button_set_active(expAAButton, FALSE);
-        update_scales();
-    } else if (valuep!=&cfg->interpolation)
-        render_preview(NULL, render_default);
+    if (valuep==&CFG->curveIndex) {
+        if (!CFG_cameraCurve && CFG->curveIndex>=camera_curve)
+            CFG->curveIndex++;
+	curveeditor_widget_set_curve(data->CurveWidget,
+		&CFG->curve[CFG->curveIndex]);
+    } else if (valuep==&CFG->wb) {
+        ufraw_set_wb(data->Image);
+	if (CFG->autoExposure) ufraw_auto_expose(data->Image);
+    }
+    if (valuep!=&CFG->interpolation) {
+	CFG->autoBlack = FALSE;
+	CFG->autoCurve = FALSE;
+        update_scales(data);
+    }
 }
 
-void radio_menu_update(GtkRadioMenuItem *item, gint *valuep)
+void radio_menu_update(GtkWidget *item, gint *valuep)
 {
-    int type = (int)g_object_get_data(G_OBJECT(item), "Radio-Value");
     if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item))) {
-	*valuep = type;
-        render_preview(NULL, render_default);
+	preview_data *data = get_preview_data(item);
+	*valuep = (int)g_object_get_data(G_OBJECT(item), "Radio-Value");
+	render_preview(data, render_default);
     }
 }
 
@@ -970,6 +1093,7 @@ void container_remove(GtkWidget *widget, gpointer user_data)
 
 void delete_from_list(GtkWidget *widget, gpointer user_data)
 {
+    preview_data *data = get_preview_data(widget);
     GtkDialog *dialog;
     long type, index;
 
@@ -977,34 +1101,34 @@ void delete_from_list(GtkWidget *widget, gpointer user_data)
     type = (long)g_object_get_data(G_OBJECT(widget), "Type");
     index = (long)user_data;
     if (type<2) {
-        gtk_combo_box_remove_text(profileCombo[type], index);
-        cfg->profileCount[type]--;
-        if (cfg->profileIndex[type]==cfg->profileCount[type])
-            cfg->profileIndex[type]--;
-        for (; index<cfg->profileCount[type]; index++)
-            cfg->profile[type][index] = cfg->profile[type][index+1];
+        gtk_combo_box_remove_text(data->ProfileCombo[type], index);
+        CFG->profileCount[type]--;
+        if (CFG->profileIndex[type]==CFG->profileCount[type])
+            CFG->profileIndex[type]--;
+        for (; index<CFG->profileCount[type]; index++)
+            CFG->profile[type][index] = CFG->profile[type][index+1];
     } else {
         if (CFG_cameraCurve)
-            gtk_combo_box_remove_text(curveCombo, index);
+            gtk_combo_box_remove_text(data->CurveCombo, index);
         else
-            gtk_combo_box_remove_text(curveCombo, index-1);
-        cfg->curveCount--;
-        if (cfg->curveIndex==cfg->curveCount)
-            cfg->curveIndex--;
-        if (cfg->curveIndex==camera_curve && !CFG_cameraCurve)
-            cfg->curveIndex = linear_curve;
-        for (; index<cfg->curveCount; index++)
-            cfg->curve[index] = cfg->curve[index+1];
+            gtk_combo_box_remove_text(data->CurveCombo, index-1);
+        CFG->curveCount--;
+        if (CFG->curveIndex==CFG->curveCount)
+            CFG->curveIndex--;
+        if (CFG->curveIndex==camera_curve && !CFG_cameraCurve)
+            CFG->curveIndex = linear_curve;
+        for (; index<CFG->curveCount; index++)
+            CFG->curve[index] = CFG->curve[index+1];
     }
     gtk_dialog_response(dialog, GTK_RESPONSE_APPLY);
 }
 
 void configuration_save(GtkWidget *widget, gpointer user_data)
 {
-    widget = widget;
+    preview_data *data = get_preview_data(widget);
     user_data = user_data;
-    save_configuration(cfg, Developer, NULL, NULL, 0);
-    save_cfg = *previewImage->cfg;
+    save_configuration(CFG, Developer, NULL, NULL, 0);
+    data->SaveConfig = *data->Image->cfg;
 }
 
 void options_combo_update(GtkWidget *combo, gint *valuep)
@@ -1018,6 +1142,7 @@ void options_combo_update(GtkWidget *combo, gint *valuep)
 
 void options_dialog(GtkWidget *widget, gpointer user_data)
 {
+    preview_data *data = get_preview_data(widget);
     GtkWidget *optionsDialog, *profileTable[2];
     GtkWidget *notebook, *label, *page, *button, *text, *box, *image;
     GtkComboBox *combo;
@@ -1027,11 +1152,12 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     int i, j;
 
     user_data = user_data;
-    if (freezeDialog) return;
+    if (data->FreezeDialog) return;
     optionsDialog = gtk_dialog_new_with_buttons("UFRaw options",
             GTK_WINDOW(gtk_widget_get_toplevel(widget)),
             GTK_DIALOG_DESTROY_WITH_PARENT,
             GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+    g_object_set_data(G_OBJECT(optionsDialog), "Preview-Data", data);
     ufraw_focus(optionsDialog, TRUE);
     gtk_dialog_set_default_response(GTK_DIALOG(optionsDialog),
             GTK_RESPONSE_OK);
@@ -1047,24 +1173,24 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_combo_box_append_text(combo, "Preserve WB");
     gtk_combo_box_append_text(combo, "Camera WB");
     gtk_combo_box_append_text(combo, "Auto WB");
-    gtk_combo_box_set_active(combo, cfg->wbLoad);
+    gtk_combo_box_set_active(combo, CFG->wbLoad);
     g_signal_connect(G_OBJECT(combo), "changed",
-            G_CALLBACK(options_combo_update), &cfg->wbLoad);
+            G_CALLBACK(options_combo_update), &CFG->wbLoad);
     gtk_table_attach_defaults(table, GTK_WIDGET(combo), 0, 1, 0, 1);
     combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     gtk_combo_box_append_text(combo, "Preserve curve corrections");
     gtk_combo_box_append_text(combo, "Default curve corrections");
-    gtk_combo_box_set_active(combo, cfg->curveLoad);
+    gtk_combo_box_set_active(combo, CFG->curveLoad);
     g_signal_connect(G_OBJECT(combo), "changed",
-            G_CALLBACK(options_combo_update), &cfg->curveLoad);
+            G_CALLBACK(options_combo_update), &CFG->curveLoad);
     gtk_table_attach_defaults(table, GTK_WIDGET(combo), 1, 2, 0, 1);
     combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     gtk_combo_box_append_text(combo, "Preserve exposure");
     gtk_combo_box_append_text(combo, "Default exposure");
     gtk_combo_box_append_text(combo, "Auto exposure");
-    gtk_combo_box_set_active(combo, cfg->exposureLoad);
+    gtk_combo_box_set_active(combo, CFG->exposureLoad);
     g_signal_connect(G_OBJECT(combo), "changed",
-            G_CALLBACK(options_combo_update), &cfg->exposureLoad);
+            G_CALLBACK(options_combo_update), &CFG->exposureLoad);
     gtk_table_attach_defaults(table, GTK_WIDGET(combo), 2, 3, 0, 1);
 
     profileTable[0] = table_with_frame(box, "Input color profiles", TRUE);
@@ -1085,7 +1211,8 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     table = GTK_TABLE(gtk_table_new(10, 10, FALSE));
     gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(table), FALSE, FALSE, 0);
     button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-    gtk_tooltips_set_tip(toolTips, button, "Save configuration file", NULL);
+    gtk_tooltips_set_tip(data->ToolTips, button,
+	    "Save configuration file", NULL);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(configuration_save), NULL);
     gtk_table_attach(table, button, 0, 1, 0, 1, 0, 0, 0, 0);
@@ -1128,10 +1255,10 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
             gtk_container_foreach(GTK_CONTAINER(profileTable[j]),
                     (GtkCallback)(container_remove), profileTable[j]);
             table = GTK_TABLE(profileTable[j]);
-            for (i=1; i<cfg->profileCount[j]; i++) {
+            for (i=1; i<CFG->profileCount[j]; i++) {
                 snprintf(txt, max_name, "%s (%s)",
-                        cfg->profile[j][i].name,
-                        cfg->profile[j][i].productName);
+                        CFG->profile[j][i].name,
+                        CFG->profile[j][i].productName);
                 label = gtk_label_new(txt);
                 gtk_table_attach_defaults(table, label, 0, 1, i, i+1);
                 button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
@@ -1144,8 +1271,8 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
         gtk_container_foreach(GTK_CONTAINER(curveTable),
                 (GtkCallback)(container_remove), curveTable);
         table = curveTable;
-        for (i=camera_curve+1; i<cfg->curveCount; i++) {
-            label = gtk_label_new(cfg->curve[i].name);
+        for (i=camera_curve+1; i<CFG->curveCount; i++) {
+            label = gtk_label_new(CFG->curve[i].name);
             gtk_table_attach_defaults(table, label, 0, 1, i, i+1);
             button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
             g_object_set_data(G_OBJECT(button), "Type", (void*)2);
@@ -1153,24 +1280,26 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
                     G_CALLBACK(delete_from_list), (gpointer)i);
             gtk_table_attach(table, button, 1, 2, i, i+1, 0, 0, 0, 0);
         }
-        save_configuration(cfg, Developer, NULL, buf, 10000);
+        save_configuration(CFG, Developer, NULL, buf, 10000);
         gtk_text_buffer_set_text(cfgBuffer, buf, -1);
         gtk_widget_show_all(optionsDialog);
         if (gtk_dialog_run(GTK_DIALOG(optionsDialog))!=
                     GTK_RESPONSE_APPLY) {
 	    ufraw_focus(optionsDialog, FALSE);
             gtk_widget_destroy(optionsDialog);
-            render_preview(NULL, render_default);
+	    render_preview(data, render_default);
             return;
         }
     }
 }
 
-gboolean window_delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
+gboolean window_delete_event(GtkWidget *widget, GdkEvent *event,
+	gpointer user_data)
 {
-    data = data;
+    preview_data *data = get_preview_data(widget);
+    user_data = user_data;
     event = event;
-    if (freezeDialog) return TRUE;
+    if (data->FreezeDialog) return TRUE;
     g_object_set_data(G_OBJECT(widget), "WindowResponse",
             (gpointer)GTK_RESPONSE_CANCEL);
     gtk_main_quit();
@@ -1179,6 +1308,7 @@ gboolean window_delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
 
 void expander_state(GtkWidget *widget, gpointer user_data)
 {
+    preview_data *data = get_preview_data(widget);
     const char *text;
     GtkWidget *label;
     int i;
@@ -1189,11 +1319,13 @@ void expander_state(GtkWidget *widget, gpointer user_data)
     text = gtk_label_get_text(GTK_LABEL(label));
     for (i=0; expanderText[i]!=NULL; i++)
         if (!strcmp(text, expanderText[i]))
-            cfg->expander[i] = gtk_expander_get_expanded(GTK_EXPANDER(widget));
+            CFG->expander[i] = gtk_expander_get_expanded(GTK_EXPANDER(widget));
 }
 
-gboolean live_histo_menu(GtkMenu *menu, GdkEventButton *event)
+gboolean histogram_menu(GtkMenu *menu, GdkEventButton *event)
 {
+    preview_data *data = get_preview_data(menu);
+    if (data->FreezeDialog) return FALSE;
     if (event->button!=3) return FALSE;
     gtk_menu_popup(menu, NULL, NULL, NULL, NULL, event->button, event->time);
     return TRUE;
@@ -1207,17 +1339,40 @@ gboolean preview_cursor(GtkWidget *widget, GdkEventCrossing *event,
     return TRUE;
 }
 
-void preview_progress(char *text, double progress)
+void preview_progress(void *widget, char *text, double progress)
 {
-    if (progressBar==NULL) return;
-    gtk_progress_bar_set_text(progressBar, text);
-    gtk_progress_bar_set_fraction(progressBar, progress);
+    if (widget==NULL) return;
+    preview_data *data = get_preview_data(widget);
+    if (data->ProgressBar==NULL) return;
+    gtk_progress_bar_set_text(data->ProgressBar, text);
+    gtk_progress_bar_set_fraction(data->ProgressBar, progress);
     while (gtk_events_pending()) gtk_main_iteration();
+}
+
+void window_response(GtkWidget *widget, gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    GtkWindow *window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
+
+    if (data->FreezeDialog) return;
+    g_object_set_data(G_OBJECT(window), "WindowResponse", user_data);
+    gtk_main_quit();
+}
+
+void preview_saver(GtkWidget *widget, image_data *image)
+{
+    preview_data *data = get_preview_data(widget);
+    if (data->FreezeDialog==TRUE) return;
+    gtk_widget_set_sensitive(data->ControlsBox, FALSE);
+    data->FreezeDialog = TRUE;
+    (*data->SaveFunc)(widget, image);
+    data->FreezeDialog = FALSE;
+    gtk_widget_set_sensitive(data->ControlsBox, TRUE);
 }
 
 int ufraw_preview(image_data *image, int plugin, long (*save_func)())
 {
-    GtkWidget *previewWindow;
+    GtkWidget *previewWindow, *previewVBox;
     GtkTable *table;
     GtkBox *previewHBox, *box, *hbox;
     GtkComboBox *combo;
@@ -1234,13 +1389,17 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     guint8 *pixies;
     image_data preview_image;
     char progressText[max_name], text[max_name];
+    preview_data PreviewData;
+    preview_data *data = &PreviewData;
 
-    save_cfg = *image->cfg;
-    cfg = image->cfg;
-    spotX1 = -1;
-    freezeDialog = TRUE;
+    data->SaveFunc = save_func;
 
-    toolTips = gtk_tooltips_new();
+    data->SaveConfig = *image->cfg;
+    CFG = image->cfg;
+    data->SpotX1 = -1;
+    data->FreezeDialog = TRUE;
+
+    data->ToolTips = gtk_tooltips_new();
     previewWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     snprintf(previewHeader, max_path, "%s - UFRaw Photo Loader",
             image->filename);
@@ -1250,7 +1409,9 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     gtk_window_set_resizable(GTK_WINDOW(previewWindow), FALSE);
     g_signal_connect(G_OBJECT(previewWindow), "delete-event",
             G_CALLBACK(window_delete_event), NULL);
+    g_object_set_data(G_OBJECT(previewWindow), "Preview-Data", data);
     ufraw_focus(previewWindow, TRUE);
+    image->widget = previewWindow;
 
     gdk_screen_get_monitor_geometry(gdk_screen_get_default(), 0, &screen);
     max_preview_width = MIN(def_preview_width, screen.width-400);
@@ -1264,10 +1425,10 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
             image->height, image->width, scale);
 
     if (screen.height<800) {
-	if (cfg->liveHistogramHeight==cfg_default.liveHistogramHeight)
-	    cfg->liveHistogramHeight = 96;
-	if (cfg->rawHistogramHeight==cfg_default.rawHistogramHeight)
-	    cfg->rawHistogramHeight = 96;
+	if (CFG->liveHistogramHeight==cfg_default.liveHistogramHeight)
+	    CFG->liveHistogramHeight = 96;
+	if (CFG->rawHistogramHeight==cfg_default.rawHistogramHeight)
+	    CFG->rawHistogramHeight = 96;
 	curveeditorHeight = 192;
     } else {
 	curveeditorHeight = 256;
@@ -1278,40 +1439,41 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     gtk_box_pack_start(previewHBox, previewVBox, TRUE, TRUE, 2);
 
     table = GTK_TABLE(table_with_frame(previewVBox, expanderText[raw_expander],
-            cfg->expander[raw_expander]));
+            CFG->expander[raw_expander]));
     event_box = gtk_event_box_new();
     gtk_table_attach(table, event_box, 0, 1, 1, 2, 0, 0, 0, 0);
     pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-            raw_his_size+2, cfg->rawHistogramHeight+2);
-    rawHisto = gtk_image_new_from_pixbuf(pixbuf);
+            raw_his_size+2, CFG->rawHistogramHeight+2);
+    data->RawHisto = gtk_image_new_from_pixbuf(pixbuf);
     g_object_unref(pixbuf);
-    gtk_container_add(GTK_CONTAINER(event_box), rawHisto);
+    gtk_container_add(GTK_CONTAINER(event_box), data->RawHisto);
     pixies = gdk_pixbuf_get_pixels(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)* rowstride +
             gdk_pixbuf_get_width(pixbuf));
     menu = gtk_menu_new();
+    g_object_set_data(G_OBJECT(menu), "Parent-Widget", event_box);
     g_signal_connect_swapped(G_OBJECT(event_box), "button_press_event",
-            G_CALLBACK(live_histo_menu), menu);
+            G_CALLBACK(histogram_menu), menu);
     group = NULL;
     menu_item = gtk_radio_menu_item_new_with_label(group, "Linear");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 6, 7);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->rawHistogramScale==linear_histogram);
+	    CFG->rawHistogramScale==linear_histogram);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)linear_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->rawHistogramScale);
+            G_CALLBACK(radio_menu_update), &CFG->rawHistogramScale);
     menu_item = gtk_radio_menu_item_new_with_label(group, "Logarithmic");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 7, 8);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->rawHistogramScale==log_histogram);
+	    CFG->rawHistogramScale==log_histogram);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)log_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->rawHistogramScale);
+            G_CALLBACK(radio_menu_update), &CFG->rawHistogramScale);
 
     menu_item = gtk_separator_menu_item_new();
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 8, 9);
@@ -1321,46 +1483,47 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 9, 10);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->rawHistogramHeight==96);
+	    CFG->rawHistogramHeight==96);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)96);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->rawHistogramHeight);
+            G_CALLBACK(radio_menu_update), &CFG->rawHistogramHeight);
     menu_item = gtk_radio_menu_item_new_with_label(group, "128 Pixels");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 10, 11);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->rawHistogramHeight==128);
+	    CFG->rawHistogramHeight==128);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)128);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->rawHistogramHeight);
+            G_CALLBACK(radio_menu_update), &CFG->rawHistogramHeight);
     menu_item = gtk_radio_menu_item_new_with_label(group, "192 Pixels");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 11, 12);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->rawHistogramHeight==192);
+	    CFG->rawHistogramHeight==192);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)192);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->rawHistogramHeight);
+            G_CALLBACK(radio_menu_update), &CFG->rawHistogramHeight);
     menu_item = gtk_radio_menu_item_new_with_label(group, "256 Pixels");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 12, 13);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->rawHistogramHeight==256);
+	    CFG->rawHistogramHeight==256);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)256);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->rawHistogramHeight);
+            G_CALLBACK(radio_menu_update), &CFG->rawHistogramHeight);
     gtk_widget_show_all(menu);
 
     table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
-    spotLabels = color_labels_new(table, 0, 1, "Spot values:", pixel_format);
-    spotPatch = GTK_LABEL(gtk_label_new(NULL));
-    gtk_table_attach_defaults(table, GTK_WIDGET(spotPatch), 6, 7, 1, 2);
+    data->SpotLabels = color_labels_new(table, 0, 1,
+	    "Spot values:", pixel_format);
+    data->SpotPatch = GTK_LABEL(gtk_label_new(NULL));
+    gtk_table_attach_defaults(table, GTK_WIDGET(data->SpotPatch), 6, 7, 1, 2);
 
-    noteBox = gtk_notebook_new();
+    data->ControlsBox = noteBox = gtk_notebook_new();
     gtk_box_pack_start(GTK_BOX(previewVBox), noteBox, FALSE, FALSE, 0);
 
     page = table_with_frame(noteBox, "Base", TRUE);
@@ -1368,26 +1531,27 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     label = gtk_label_new("White balance");
     gtk_table_attach(table, label, 0, 1, 0 , 1, 0, 0, 0, 0);
-    wbCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    data->WBCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     for (i=0; i<wb_preset_count; i++)
-        gtk_combo_box_append_text(wbCombo, wb_preset[i].name);
-    gtk_combo_box_set_active(wbCombo, cfg->wb);
-    g_signal_connect(G_OBJECT(wbCombo), "changed",
-            G_CALLBACK(combo_update), &cfg->wb);
-    gtk_table_attach(table, GTK_WIDGET(wbCombo), 1, 6, 0, 1, GTK_FILL, 0, 0, 0);
+        gtk_combo_box_append_text(data->WBCombo, wb_preset[i].name);
+    gtk_combo_box_set_active(data->WBCombo, CFG->wb);
+    g_signal_connect(G_OBJECT(data->WBCombo), "changed",
+            G_CALLBACK(combo_update), &CFG->wb);
+    gtk_table_attach(table, GTK_WIDGET(data->WBCombo), 1, 6, 0, 1,
+	    GTK_FILL, 0, 0, 0);
 
-    adjTemperature = adjustment_scale(table, 0, 1,
-            "Temperature [K]", cfg->temperature, &cfg->temperature,
+    data->TemperatureAdjustment = adjustment_scale(table, 0, 1,
+            "Temperature [K]", CFG->temperature, &CFG->temperature,
             2000, 7000, 50, 200, 0,
             "White balance color temperature (K)");
-    adjGreen = adjustment_scale(table, 0, 2, "Green component",
-            cfg->green, &cfg->green, 0.2, 2.5, 0.01, 0.05, 2,
+    data->GreenAdjustment = adjustment_scale(table, 0, 2, "Green component",
+            CFG->green, &CFG->green, 0.2, 2.5, 0.01, 0.05, 2,
             "Green component");
     //button = gtk_button_new_with_label("Spot\nWB");
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
                 GTK_STOCK_COLOR_PICKER, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, button,
+    gtk_tooltips_set_tip(data->ToolTips, button,
 	    "Select a spot on the preview image to apply spot white balance",
 	    NULL);
     gtk_table_attach(table, button, 7, 8, 1, 3, GTK_FILL, 0, 0, 0);
@@ -1395,19 +1559,19 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
             G_CALLBACK(spot_wb), NULL);
 
     table = GTK_TABLE(table_with_frame(page, expanderText[color_expander],
-            cfg->expander[color_expander]));
+            CFG->expander[color_expander]));
     for (j=0; j<profile_types; j++) {
         label = gtk_label_new(j==in_profile ? "Input profile" :
                 j==out_profile ? "Output profile" : "Error");
         gtk_table_attach(table, label, 0, 1, 3*j+1, 3*j+2, 0, 0, 0, 0);
-        profileCombo[j] = GTK_COMBO_BOX(gtk_combo_box_new_text());
-        for (i=0; i<cfg->profileCount[j]; i++)
-            gtk_combo_box_append_text(profileCombo[j],
-                    cfg->profile[j][i].name);
-        gtk_combo_box_set_active(profileCombo[j], cfg->profileIndex[j]);
-        g_signal_connect(G_OBJECT(profileCombo[j]), "changed",
-                G_CALLBACK(combo_update), &cfg->profileIndex[j]);
-        gtk_table_attach(table, GTK_WIDGET(profileCombo[j]),
+        data->ProfileCombo[j] = GTK_COMBO_BOX(gtk_combo_box_new_text());
+        for (i=0; i<CFG->profileCount[j]; i++)
+            gtk_combo_box_append_text(data->ProfileCombo[j],
+                    CFG->profile[j][i].name);
+        gtk_combo_box_set_active(data->ProfileCombo[j], CFG->profileIndex[j]);
+        g_signal_connect(G_OBJECT(data->ProfileCombo[j]), "changed",
+                G_CALLBACK(combo_update), &CFG->profileIndex[j]);
+        gtk_table_attach(table, GTK_WIDGET(data->ProfileCombo[j]),
                 1, 7, 3*j+1, 3*j+2, GTK_FILL, GTK_FILL, 0, 0);
         button = gtk_button_new();
         gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
@@ -1417,29 +1581,31 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
         g_signal_connect(G_OBJECT(button), "clicked",
                 G_CALLBACK(load_profile), (void *)j);
     }
-    adjGamma = adjustment_scale(table, 0, 2, "Gamma",
-            cfg->profile[0][cfg->profileIndex[0]].gamma,
-            &cfg->profile[0][0].gamma, 0.1, 1.0, 0.01, 0.05, 2,
+    data->GammaAdjustment = adjustment_scale(table, 0, 2, "Gamma",
+            CFG->profile[0][CFG->profileIndex[0]].gamma,
+            &CFG->profile[0][0].gamma, 0.1, 1.0, 0.01, 0.05, 2,
             "Gamma correction for the input profile");
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-            GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, button, "Reset gamma to default", NULL);
-    gtk_table_attach(table, button, 7, 8, 2, 3, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(button_update), (gpointer)3);
+    data->ResetGammaButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetGammaButton),
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, data->ResetGammaButton,
+	    "Reset gamma to default", NULL);
+    gtk_table_attach(table, data->ResetGammaButton, 7, 8, 2, 3, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->ResetGammaButton), "clicked",
+            G_CALLBACK(button_update), NULL);
 
-    adjLinear = adjustment_scale(table, 0, 3, "Linearity",
-            cfg->profile[0][cfg->profileIndex[0]].linear,
-            &cfg->profile[0][0].linear, 0.0, 1.0, 0.01, 0.05, 2,
+    data->LinearAdjustment = adjustment_scale(table, 0, 3, "Linearity",
+            CFG->profile[0][CFG->profileIndex[0]].linear,
+            &CFG->profile[0][0].linear, 0.0, 1.0, 0.01, 0.05, 2,
             "Linear part of the gamma correction");
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-            GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, button, "Reset linearity to default", NULL);
-    gtk_table_attach(table, button, 7, 8, 3, 4, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(button_update), (gpointer)4);
+    data->ResetLinearButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetLinearButton),
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, data->ResetLinearButton,
+	    "Reset linearity to default", NULL);
+    gtk_table_attach(table, data->ResetLinearButton, 7, 8, 3, 4, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->ResetLinearButton), "clicked",
+            G_CALLBACK(button_update), NULL);
 
     label = gtk_label_new("Intent");
     gtk_table_attach(table, label, 0, 1, 5, 6, 0, 0, 0, 0);
@@ -1448,194 +1614,220 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     gtk_combo_box_append_text(combo, "Relative colorimetric");
     gtk_combo_box_append_text(combo, "Saturation");
     gtk_combo_box_append_text(combo, "Absolute colorimetric");
-    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), cfg->intent);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), CFG->intent);
     g_signal_connect(G_OBJECT(combo), "changed",
-            G_CALLBACK(combo_update), &cfg->intent);
+            G_CALLBACK(combo_update), &CFG->intent);
     gtk_table_attach(table, GTK_WIDGET(combo), 1, 7, 5, 6, GTK_FILL, 0, 0, 0);
 
     page = table_with_frame(noteBox, "Corrections", TRUE);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
-    adjExposure = adjustment_scale(table, 0, 0, "Exposure",
-            isnan(cfg->exposure) ? 0 : cfg->exposure, &cfg->exposure,
+    data->ExposureAdjustment = adjustment_scale(table, 0, 0, "Exposure",
+            isnan(CFG->exposure) ? 0 : CFG->exposure, &CFG->exposure,
             -3, 3, 0.01, 1.0/6, 2, "EV compensation");
 
     button = gtk_toggle_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_CUT, GTK_ICON_SIZE_BUTTON));
     snprintf(text, max_name, "Highlight clipping\n"
-	    "Current state: %s", cfg->unclip ? "unclip" : "clip");
-    gtk_tooltips_set_tip(toolTips, button, text, NULL);
+	    "Current state: %s", CFG->unclip ? "unclip" : "clip");
+    gtk_tooltips_set_tip(data->ToolTips, button, text, NULL);
     gtk_table_attach(table, button, 7, 8, 0, 1, 0, 0, 0, 0);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), !cfg->unclip);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), !CFG->unclip);
     g_signal_connect(G_OBJECT(button), "toggled",
-            G_CALLBACK(toggle_button_update), &cfg->unclip);
+            G_CALLBACK(toggle_button_update), &CFG->unclip);
 
-    expAAButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
-    gtk_container_add(GTK_CONTAINER(expAAButton), gtk_image_new_from_stock(
-            GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, GTK_WIDGET(expAAButton),
+    data->AutoExposureButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
+    gtk_container_add(GTK_CONTAINER(data->AutoExposureButton),
+	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoExposureButton),
 	    "Auto adjust exposure", NULL);
-    gtk_table_attach(table, GTK_WIDGET(expAAButton), 8, 9, 0, 1, 0, 0, 0, 0);
-    gtk_toggle_button_set_active(expAAButton, cfg->autoExposure);
-    g_signal_connect(G_OBJECT(expAAButton), "clicked",
-            G_CALLBACK(button_update), (gpointer)2);
+    gtk_table_attach(table, GTK_WIDGET(data->AutoExposureButton), 8, 9, 0, 1,
+	    0, 0, 0, 0);
+    gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
+    g_signal_connect(G_OBJECT(data->AutoExposureButton), "clicked",
+            G_CALLBACK(button_update), NULL);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-            GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, button, "Reset exposure to default", NULL);
-    gtk_table_attach(table, button, 9, 10, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(button_update), (gpointer)1);
+    data->ResetExposureButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetExposureButton),
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, data->ResetExposureButton,
+	    "Reset exposure to default", NULL);
+    gtk_table_attach(table, data->ResetExposureButton, 9, 10, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->ResetExposureButton), "clicked",
+            G_CALLBACK(button_update), NULL);
 
-    adjSaturation = adjustment_scale(table, 0, 1, "Saturation",
-            cfg->saturation, &cfg->saturation,
+    data->SaturationAdjustment = adjustment_scale(table, 0, 1, "Saturation",
+            CFG->saturation, &CFG->saturation,
             0.0, 3.0, 0.01, 0.1, 2, "Saturation");
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-            GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, button, "Reset saturation to default", NULL);
-    gtk_table_attach(table, button, 9, 10, 1, 2, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(button_update), (gpointer)20);
+    data->ResetSaturationButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetSaturationButton),
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, data->ResetSaturationButton,
+	    "Reset saturation to default", NULL);
+    gtk_table_attach(table, data->ResetSaturationButton, 9, 10, 1, 2,
+	    0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->ResetSaturationButton), "clicked",
+            G_CALLBACK(button_update), NULL);
 
     table = GTK_TABLE(table_with_frame(page, NULL,
-            cfg->expander[curve_expander]));
-    curveCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+            CFG->expander[curve_expander]));
+    data->CurveCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     /* Fill in the curve names, skipping "camera curve" if there is
      * no cameraCurve. This will make some mess later with the counting */
-    for (i=0; i<cfg->curveCount; i++)
+    for (i=0; i<CFG->curveCount; i++)
         if ( i!=camera_curve || CFG_cameraCurve )
-            gtk_combo_box_append_text(curveCombo, cfg->curve[i].name);
+            gtk_combo_box_append_text(data->CurveCombo, CFG->curve[i].name);
     /* This is part of the mess with the combo_box counting */
-    if (cfg->curveIndex>camera_curve && !CFG_cameraCurve)
-        gtk_combo_box_set_active(curveCombo, cfg->curveIndex-1);
+    if (CFG->curveIndex>camera_curve && !CFG_cameraCurve)
+        gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-1);
     else
-        gtk_combo_box_set_active(curveCombo, cfg->curveIndex);
-    g_signal_connect(G_OBJECT(curveCombo), "changed",
-            G_CALLBACK(combo_update), &cfg->curveIndex);
-    gtk_table_attach(table, GTK_WIDGET(curveCombo), 0, 7, 0, 1,
+        gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
+    g_signal_connect(G_OBJECT(data->CurveCombo), "changed",
+            G_CALLBACK(combo_update), &CFG->curveIndex);
+    gtk_table_attach(table, GTK_WIDGET(data->CurveCombo), 0, 7, 0, 1,
             GTK_FILL, GTK_FILL, 0, 0);
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
     gtk_table_attach(table, button, 7, 8, 0, 1, GTK_SHRINK, GTK_FILL, 0, 0);
-    gtk_tooltips_set_tip(toolTips, button, "Load curve", NULL);
+    gtk_tooltips_set_tip(data->ToolTips, button, "Load curve", NULL);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(load_curve), NULL);
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, button, "Save curve", NULL);
+    gtk_tooltips_set_tip(data->ToolTips, button, "Save curve", NULL);
     gtk_table_attach(table, button, 8, 9, 0, 1, GTK_SHRINK, GTK_FILL, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(save_curve), NULL);
 
-    curveWidget = curveeditor_widget_new(curveeditorHeight, 256,
-	    render_preview, render_default);
-    curveeditor_widget_set_curve(curveWidget, &cfg->curve[cfg->curveIndex]);
-    Curve = curveeditor_widget_get_curve(curveWidget);
-    gtk_table_attach(table, curveWidget, 1, 8, 1, 8, GTK_EXPAND, 0, 0, 0);
+    data->CurveWidget = curveeditor_widget_new(curveeditorHeight, 256,
+	    update_scales_callback, NULL);
+    curveeditor_widget_set_curve(data->CurveWidget,
+	    &CFG->curve[CFG->curveIndex]);
+    gtk_table_attach(table, data->CurveWidget, 1, 8, 1, 8, GTK_EXPAND, 0, 0, 0);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-            GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, button, "Reset curve to default",NULL);
-    gtk_table_attach(table, button, 8, 9, 7, 8, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(button_update), (gpointer)100);
+    data->AutoCurveButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
+    gtk_container_add(GTK_CONTAINER(data->AutoCurveButton),
+	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoCurveButton),
+	    "Auto adjust curve\n(Flatten histogram)", NULL);
+    gtk_table_attach(table, GTK_WIDGET(data->AutoCurveButton), 8, 9, 6, 7,
+	    0, 0, GTK_SHRINK, 0);
+    gtk_toggle_button_set_active(data->AutoCurveButton, CFG->autoCurve);
+    g_signal_connect(G_OBJECT(data->AutoCurveButton), "clicked",
+            G_CALLBACK(button_update), NULL);
 
-    blackLabel = gtk_label_new("Black point: 0.000");
+    data->ResetCurveButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetCurveButton),
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetCurveButton),
+	    "Reset curve to default",NULL);
+    gtk_table_attach(table, GTK_WIDGET(data->ResetCurveButton), 8, 9, 7, 8,
+		0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->ResetCurveButton), "clicked",
+            G_CALLBACK(button_update), NULL);
+
+    data->BlackLabel = gtk_label_new("Black point: 0.000");
 #ifdef HAVE_GTK_2_6
-    gtk_misc_set_alignment(GTK_MISC(blackLabel), 0.5, 1.0);
-    gtk_label_set_angle(GTK_LABEL(blackLabel), 90);
-    gtk_table_attach(table, blackLabel, 0, 1, 5, 6, 0, GTK_FILL|GTK_EXPAND, 0, 0);
+    gtk_misc_set_alignment(GTK_MISC(data->BlackLabel), 0.5, 1.0);
+    gtk_label_set_angle(GTK_LABEL(data->BlackLabel), 90);
+    gtk_table_attach(table, data->BlackLabel, 0, 1, 5, 6,
+	    0, GTK_FILL|GTK_EXPAND, 0, 0);
 #else
-    gtk_misc_set_alignment(GTK_MISC(blackLabel), 0.0, 0.5);
-    gtk_table_attach(table, blackLabel, 1, 8, 8, 9, 0, 0, 0, 0);
+    button = gtk_alignment_new(0, 0, 0, 0);
+    gtk_table_attach(table, button, 0, 1, 5, 6, 0, GTK_FILL|GTK_EXPAND, 0, 0);
+    gtk_misc_set_alignment(GTK_MISC(data->BlackLabel), 0.0, 0.5);
+    gtk_table_attach(table, data->BlackLabel, 1, 8, 8, 9, GTK_FILL, 0, 0, 0);
 #endif
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-            GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, button, "Reset black-point to default",NULL);
-    gtk_table_attach(table, button, 0, 1, 7, 8, 0, GTK_SHRINK, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(button_update), (gpointer)101);
+    data->ResetBlackButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetBlackButton),
+	gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetBlackButton),
+	    "Reset black-point to default",NULL);
+    gtk_table_attach(table, GTK_WIDGET(data->ResetBlackButton), 0, 1, 7, 8,
+	0, GTK_SHRINK, 0, 0);
+    g_signal_connect(G_OBJECT(data->ResetBlackButton), "clicked",
+            G_CALLBACK(button_update), NULL);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-            GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(toolTips, button, "Auto adjust black-point", NULL);
-    gtk_table_attach(table, button, 0, 1, 6, 7, 0, 0, GTK_SHRINK, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(button_update), (gpointer)102);
+    data->AutoBlackButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
+    gtk_container_add(GTK_CONTAINER(data->AutoBlackButton),
+	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoBlackButton),
+	    "Auto adjust black-point", NULL);
+    gtk_table_attach(table, GTK_WIDGET(data->AutoBlackButton), 0, 1, 6, 7,
+	    0, 0, GTK_SHRINK, 0);
+    gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
+    g_signal_connect(G_OBJECT(data->AutoBlackButton), "clicked",
+            G_CALLBACK(button_update), NULL);
 
     table = GTK_TABLE(table_with_frame(previewVBox, expanderText[live_expander],
-            cfg->expander[live_expander]));
+            CFG->expander[live_expander]));
     event_box = gtk_event_box_new();
     gtk_table_attach(table, event_box, 0, 7, 1, 2, 0, 0, 0, 0);
     pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-            live_his_size+2, cfg->liveHistogramHeight+2);
-    liveHisto = gtk_image_new_from_pixbuf(pixbuf);
+            live_his_size+2, CFG->liveHistogramHeight+2);
+    data->LiveHisto = gtk_image_new_from_pixbuf(pixbuf);
     g_object_unref(pixbuf);
-    gtk_container_add(GTK_CONTAINER(event_box), liveHisto);
+    gtk_container_add(GTK_CONTAINER(event_box), data->LiveHisto);
     pixies = gdk_pixbuf_get_pixels(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)* rowstride +
             gdk_pixbuf_get_width(pixbuf));
     menu = gtk_menu_new();
+    g_object_set_data(G_OBJECT(menu), "Parent-Widget", event_box);
     g_signal_connect_swapped(G_OBJECT(event_box), "button_press_event",
-            G_CALLBACK(live_histo_menu), menu);
+            G_CALLBACK(histogram_menu), menu);
     group = NULL;
     menu_item = gtk_radio_menu_item_new_with_label(group, "RGB histogram");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 0, 1);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->histogram==rgb_histogram);
+	    CFG->histogram==rgb_histogram);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)rgb_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->histogram);
+            G_CALLBACK(radio_menu_update), &CFG->histogram);
     menu_item = gtk_radio_menu_item_new_with_label(group, "R+G+B histogram");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 1, 2);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->histogram==r_g_b_histogram);
+	    CFG->histogram==r_g_b_histogram);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)r_g_b_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->histogram);
+            G_CALLBACK(radio_menu_update), &CFG->histogram);
     menu_item = gtk_radio_menu_item_new_with_label(group,
 	    "Luminosity histogram");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 2, 3);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->histogram==luminosity_histogram);
+	    CFG->histogram==luminosity_histogram);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)luminosity_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->histogram);
+            G_CALLBACK(radio_menu_update), &CFG->histogram);
     menu_item = gtk_radio_menu_item_new_with_label(group,
 	    "Value (maximum) histogram");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 3, 4);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->histogram==value_histogram);
+	    CFG->histogram==value_histogram);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)value_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->histogram);
+            G_CALLBACK(radio_menu_update), &CFG->histogram);
     menu_item = gtk_radio_menu_item_new_with_label(group,
 	    "Saturation histogram");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 4, 5);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->histogram==saturation_histogram);
+	    CFG->histogram==saturation_histogram);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)saturation_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->histogram);
+            G_CALLBACK(radio_menu_update), &CFG->histogram);
 
     menu_item = gtk_separator_menu_item_new();
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 5, 6);
@@ -1645,20 +1837,20 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 6, 7);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->liveHistogramScale==linear_histogram);
+	    CFG->liveHistogramScale==linear_histogram);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)linear_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->liveHistogramScale);
+            G_CALLBACK(radio_menu_update), &CFG->liveHistogramScale);
     menu_item = gtk_radio_menu_item_new_with_label(group, "Logarithmic");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 7, 8);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->liveHistogramScale==log_histogram);
+	    CFG->liveHistogramScale==log_histogram);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)log_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->liveHistogramScale);
+            G_CALLBACK(radio_menu_update), &CFG->liveHistogramScale);
 
     menu_item = gtk_separator_menu_item_new();
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 8, 9);
@@ -1668,67 +1860,68 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 9, 10);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->liveHistogramHeight==96);
+	    CFG->liveHistogramHeight==96);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)96);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->liveHistogramHeight);
+            G_CALLBACK(radio_menu_update), &CFG->liveHistogramHeight);
     menu_item = gtk_radio_menu_item_new_with_label(group, "128 Pixels");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 10, 11);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->liveHistogramHeight==128);
+	    CFG->liveHistogramHeight==128);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)128);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->liveHistogramHeight);
+            G_CALLBACK(radio_menu_update), &CFG->liveHistogramHeight);
     menu_item = gtk_radio_menu_item_new_with_label(group, "192 Pixels");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 11, 12);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->liveHistogramHeight==192);
+	    CFG->liveHistogramHeight==192);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)192);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->liveHistogramHeight);
+            G_CALLBACK(radio_menu_update), &CFG->liveHistogramHeight);
     menu_item = gtk_radio_menu_item_new_with_label(group, "256 Pixels");
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 12, 13);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    cfg->liveHistogramHeight==256);
+	    CFG->liveHistogramHeight==256);
     g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
 	    (gpointer)256);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &cfg->liveHistogramHeight);
+            G_CALLBACK(radio_menu_update), &CFG->liveHistogramHeight);
     gtk_widget_show_all(menu);
 
     i = 2;
-    avrLabels = color_labels_new(table, 0, i++, "Average:", pixel_format);
-    devLabels = color_labels_new(table, 0, i++, "Std. deviation:",
+    data->AvrLabels = color_labels_new(table, 0, i++, "Average:", pixel_format);
+    data->DevLabels = color_labels_new(table, 0, i++, "Std. deviation:",
             pixel_format);
-    overLabels = color_labels_new(table, 0, i, "Overexposed:", percent_format);
-    toggle_button(table, 4, i, NULL, &cfg->overExp);
+    data->OverLabels = color_labels_new(table, 0, i,
+	    "Overexposed:", percent_format);
+    toggle_button(table, 4, i, NULL, &CFG->overExp);
     button = gtk_button_new_with_label("Indicate");
     gtk_table_attach(table, button, 6, 7, i, i+1,
             GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
     g_signal_connect(G_OBJECT(button), "pressed",
-            G_CALLBACK(render_preview), (void *)render_overexposed);
+            G_CALLBACK(render_preview_callback), (void *)render_overexposed);
     g_signal_connect(G_OBJECT(button), "released",
-            G_CALLBACK(render_preview), (void *)render_default);
+            G_CALLBACK(render_preview_callback), (void *)render_default);
     i++;
-    underLabels = color_labels_new(table, 0, i, "Underexposed:",
+    data->UnderLabels = color_labels_new(table, 0, i, "Underexposed:",
             percent_format);
-    toggle_button(table, 4, i, NULL, &cfg->underExp);
+    toggle_button(table, 4, i, NULL, &CFG->underExp);
     button = gtk_button_new_with_label("Indicate");
     gtk_table_attach(table, button, 6, 7, i, i+1,
             GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
     g_signal_connect(G_OBJECT(button), "pressed",
-            G_CALLBACK(render_preview), (void *)render_underexposed);
+            G_CALLBACK(render_preview_callback), (void *)render_underexposed);
     g_signal_connect(G_OBJECT(button), "released",
-            G_CALLBACK(render_preview), (void *)render_default);
+            G_CALLBACK(render_preview_callback), (void *)render_default);
     i++;
 
-/*    right side of the preview window */
+    /* Right side of the preview window */
     vBox = gtk_vbox_new(FALSE, 0);
     gtk_box_pack_start(previewHBox, vBox, FALSE, FALSE, 2);
     align = gtk_alignment_new(0.5, 0.5, 0, 0);
@@ -1739,9 +1932,9 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     gtk_box_pack_start(box, event_box, FALSE, FALSE, 0);
     pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
             preview_width, preview_height);
-    previewWidget = gtk_image_new_from_pixbuf(pixbuf);
+    data->PreviewWidget = gtk_image_new_from_pixbuf(pixbuf);
     g_object_unref(pixbuf);
-    gtk_container_add(GTK_CONTAINER(event_box), previewWidget);
+    gtk_container_add(GTK_CONTAINER(event_box), data->PreviewWidget);
     g_signal_connect(G_OBJECT(event_box), "button_press_event",
             G_CALLBACK(spot_press), NULL);
     g_signal_connect(G_OBJECT(event_box), "motion-notify-event",
@@ -1751,8 +1944,8 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(event_box), "leave-notify-event",
 	    G_CALLBACK(preview_cursor), NULL);
 
-    progressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
-    gtk_box_pack_start(box, GTK_WIDGET(progressBar), FALSE, FALSE, 0);
+    data->ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
+    gtk_box_pack_start(box, GTK_WIDGET(data->ProgressBar), FALSE, FALSE, 0);
 
     box = GTK_BOX(gtk_hbox_new(FALSE, 6));
     gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(box), FALSE, FALSE, 6);
@@ -1762,9 +1955,9 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
         gtk_combo_box_append_text(combo, "Four color interpolation");
         gtk_combo_box_append_text(combo, "Quick interpolation");
         gtk_combo_box_append_text(combo, "half-size interpolation");
-        gtk_combo_box_set_active(combo, cfg->interpolation);
+        gtk_combo_box_set_active(combo, CFG->interpolation);
         g_signal_connect(G_OBJECT(combo), "changed",
-                G_CALLBACK(combo_update), &cfg->interpolation);
+                G_CALLBACK(combo_update), &CFG->interpolation);
         gtk_box_pack_start(box, GTK_WIDGET(combo), FALSE, FALSE, 0);
     }
     align = gtk_alignment_new(0.99, 0.5, 0, 1);
@@ -1788,49 +1981,55 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
     if (plugin) {
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_OK);
         gtk_box_pack_start(box, saveButton, TRUE, TRUE, 0);
+	g_signal_connect(G_OBJECT(saveButton), "clicked",
+		G_CALLBACK(preview_saver), image);
         gtk_widget_grab_focus(saveButton);
     } else {
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
         gtk_box_pack_start(box, saveButton, TRUE, TRUE, 0);
+	g_signal_connect(G_OBJECT(saveButton), "clicked",
+		G_CALLBACK(preview_saver), image);
+
+	/* Get the default save options from ufraw_saver() */
 	char *text = (char *)ufraw_saver(NULL, image);
-	gtk_tooltips_set_tip(toolTips, saveButton, text, NULL);
+	gtk_tooltips_set_tip(data->ToolTips, saveButton, text, NULL);
 	g_free(text);
+
 	saveAsButton = gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
         gtk_box_pack_start(box, saveAsButton, TRUE, TRUE, 0);
+	g_signal_connect(G_OBJECT(saveAsButton), "clicked",
+		G_CALLBACK(preview_saver), image);
         gtk_widget_grab_focus(saveAsButton);
     }
     gtk_widget_show_all(previewWindow);
 
-    preview_progress("Loading preview", 0.2);
+    gtk_widget_set_sensitive(data->ControlsBox, FALSE);
+    preview_progress(previewWindow, "Loading preview", 0.2);
     ufraw_load_raw(image, TRUE);
+    gtk_widget_set_sensitive(data->ControlsBox, TRUE);
 
     shrinkSave = image->cfg->shrink;
     sizeSave = image->cfg->size;
     image->cfg->shrink = scale;
     image->cfg->size = 0;
-    previewImage = &preview_image;
-    ufraw_convert_image(previewImage, image);
+    data->Image = &preview_image;
+    ufraw_convert_image(data->Image, image);
     image->cfg->shrink = shrinkSave;
     image->cfg->size = sizeSave;
-    previewImage->cfg = image->cfg;
-    if (preview_width!=previewImage->width ||
-        preview_height!=previewImage->height) {
+    data->Image->cfg = image->cfg;
+    if (preview_width!=data->Image->width ||
+        preview_height!=data->Image->height) {
         pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-            previewImage->width, previewImage->height);
-        gtk_image_set_from_pixbuf(GTK_IMAGE(previewWidget), pixbuf);
+            data->Image->width, data->Image->height);
+        gtk_image_set_from_pixbuf(GTK_IMAGE(data->PreviewWidget), pixbuf);
         g_object_unref(pixbuf);
     }
     ufraw_message(UFRAW_SET_LOG, "ufraw_preview: rgbMax=%d\n",
-            previewImage->rgbMax);
-    preview_progress(progressText, 0);
-    freezeDialog = FALSE;
-    update_scales();
-    /* The SAVE/OK button is connect only here so it won't be pressed
-     * earlier */
-    g_signal_connect(G_OBJECT(saveButton), "clicked",
-            G_CALLBACK(save_func), image);
-    if (saveAsButton!=NULL) g_signal_connect(G_OBJECT(saveAsButton), "clicked",
-            G_CALLBACK(save_func), image);
+            data->Image->rgbMax);
+    preview_progress(previewWindow, progressText, 0);
+    data->FreezeDialog = FALSE;
+    update_scales(data);
+
     gtk_main();
     status = (long)g_object_get_data(G_OBJECT(previewWindow),
             "WindowResponse");
@@ -1838,16 +2037,16 @@ int ufraw_preview(image_data *image, int plugin, long (*save_func)())
             (GtkCallback)(expander_state), NULL);
     ufraw_focus(previewWindow, FALSE);
     gtk_widget_destroy(previewWindow);
+    gtk_object_sink(GTK_OBJECT(data->ToolTips));
 
-    progressBar = NULL;
-    previewImage->developer = NULL;
-    ufraw_close(previewImage);
+    data->Image->developer = NULL;
+    ufraw_close(data->Image);
     ufraw_close(image);
     /* In interactive mode outputPath is taken into account only once */
     strcpy(image->cfg->outputPath, "");
     if (status==GTK_RESPONSE_OK)
-	save_configuration(cfg, NULL, NULL, NULL, 0);
-    else *image->cfg = save_cfg;
+	save_configuration(CFG, NULL, NULL, NULL, 0);
+    else *image->cfg = data->SaveConfig;
     if (status!=GTK_RESPONSE_OK) return UFRAW_CANCEL;
     return UFRAW_SUCCESS;
 }

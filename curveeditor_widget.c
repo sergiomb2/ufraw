@@ -117,19 +117,19 @@ void curveeditor_widget_draw(CurveEditorWidgetData *data)
 	break;
 
     case RED_CURVE:   //red curve in red
-	color.red = 65535;
+	color.red = 0xFFFF;
 	color.green = 0;
 	color.blue = 0;
 	break;
     case GREEN_CURVE: //green curve in green
 	color.red = 0;
-	color.green = 65535;
+	color.green = 0xFFFF;
 	color.blue = 0;
 	break;
     case BLUE_CURVE:  //blue curve in blue
 	color.red = 0;
 	color.green = 0;
-	color.blue = 65535;
+	color.blue = 0xFFFF;
 	break;
     default:
 	//??
@@ -144,16 +144,7 @@ void curveeditor_widget_draw(CurveEditorWidgetData *data)
     if (curve->m_numAnchors == 0)
     {
 	//init this curve to a straight line
-	curve->m_min_x = 0;
-	curve->m_max_x = 1;
-	curve->m_min_y = 0;
-	curve->m_max_y = 1;
-	curve->m_gamma = 1;
-	curve->m_numAnchors = 2;
-	curve->m_anchors[0].x = 0;
-	curve->m_anchors[0].y = 0;
-	curve->m_anchors[1].x = 1;
-	curve->m_anchors[1].y = 1;
+	CurveDataReset(curve);
     }
     int i = 0;
 

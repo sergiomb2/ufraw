@@ -56,7 +56,8 @@ char helpText[]=
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"
 "--exposure=auto|EXPOSURE\n"
 "                      Auto exposure or exposure correction in EV (default 0).\n"
-"--black-point=BLACK   Set black point (default 0).\n"
+"--black-point=auto|BLACK\n"
+"                      Auto black-point or black-point value (default 0).\n"
 "\n"
 "The options which are related to the final output are:\n"
 "\n"
@@ -125,6 +126,7 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, gboolean *batch)
 	&cmd->shrink, &cmd->size, &cmd->compression,
 	&outTypeName, &createIDName, &outPath, &output };
     cmd->autoExposure = FALSE;
+    cmd->autoBlack = FALSE;
     cmd->unclip=-1;
     cmd->losslessCompress=-1;
     cmd->overwrite=-1;
@@ -149,6 +151,11 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, gboolean *batch)
 		cmd->autoExposure = TRUE;
 		break;
 	    }
+        case 'k':
+	    if (!strcmp(optarg, "auto")) {
+		cmd->autoBlack = TRUE;
+		break;
+	    }
         case 't':
         case 'g':
         case 'C':
@@ -157,7 +164,6 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, gboolean *batch)
         case 's':
         case 'S':
         case 'd':
-        case 'k':
             if (sscanf(optarg, "%lf", (double *)optPointer[index])==0) {
                 ufraw_message(UFRAW_ERROR,
                     "ufraw: '%s' is not a valid value for the --%s option.\n",
@@ -423,7 +429,7 @@ int main (int argc, char **argv)
     if (cmd.wb>=0) cfg.wb = cmd.wb;
     if (cmd.temperature!=NULLF) cfg.temperature = cmd.temperature;
     if (cmd.green!=NULLF) cfg.green = cmd.green;
-    if (cmd.temperature!=NULLF || cmd.green!=NULLF) cfg.wb = preserve_wb;
+    if (cmd.temperature!=NULLF || cmd.green!=NULLF) cfg.wb = manual_wb;
     if (cmd.profile[0][0].gamma!=NULLF)
 	cfg.profile[0][cfg.profileIndex[0]].gamma = cmd.profile[0][0].gamma;
     if (cmd.profile[0][0].linear!=NULLF)
@@ -431,9 +437,15 @@ int main (int argc, char **argv)
     if (cmd.saturation!=NULLF)
 	cfg.saturation=cmd.saturation;
     if (cmd.curveIndex>=0) cfg.curveIndex = cmd.curveIndex;
-    if (cmd.black!=NULLF)
+    if (cmd.autoBlack) {
+	cfg.black = uf_nan();
+	cfg.autoBlack = TRUE;
+    }
+    if (cmd.black!=NULLF) {
 	CurveDataSetPoint(&cfg.curve[cfg.curveIndex],
 		0, cmd.black, 0);
+	cfg.autoBlack = FALSE;
+    }
     if (cmd.interpolation>=0) cfg.interpolation = cmd.interpolation;
     if (cmd.shrink!=NULLF) {
         cfg.shrink = cmd.shrink;
@@ -519,8 +531,9 @@ void ufraw_messenger(char *message, void *parentWindow)
     parentWindow = parentWindow;
 }
 
-void preview_progress(char *text, double progress)
+void preview_progress(void *widget, char *text, double progress)
 {
+    widget = widget;
     text = text;
     progress = progress;
 }

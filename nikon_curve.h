@@ -27,6 +27,9 @@
 
 
   NOTES:
+  06/20/2005 (Udi Fuchs)
+	Added the function CurveDataReset()
+
   06/14/2005 (Udi Fuchs)
 	Added the function CurveDataSetPoint()
 
@@ -527,6 +530,12 @@ CurveDataSample:
     sample  - Pointer to sample struct to hold the data.
 **********************************************/
 int CurveDataSample(CurveData *curve, CurveSample *sample);
+
+/*********************************************
+ * CurveDataReset:
+ *     Reset curve to straight line but don't touch the curve name.
+ **********************************************/
+void CurveDataReset(CurveData *curve);
 
 /*********************************************
  CurveDataSetPoint:

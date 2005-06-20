@@ -97,15 +97,17 @@ const cfg_data cfg_default = {
     { TRUE, TRUE, TRUE, TRUE, TRUE, TRUE }, full_interpolation, 1, 0,
     4750, 1.2, /* temperature, green */
     0.0, 1.0, 0.0, /* exposure, saturation, black */
-    FALSE /* Unclip highlights */,
     FALSE /* Auto exposure */,
+    FALSE /* Auto black */,
+    FALSE /* Auto curve */,
     FALSE /* Unclip highlights */,
+    FALSE /* Overexposure indicator */,
     FALSE /* Underexposure indicator */,
     FALSE /* Overwrite exsisting files without asking */,
     FALSE /* Lossless compression */,
     /* Curves defaults */
     camera_curve, camera_curve+1,
-    { { "Linear curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
+    { { "Manual curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
       { "Camera curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  0 , { { 0.0, 0.0 } } },
@@ -124,7 +126,7 @@ const cfg_data cfg_default = {
 #define D70_RED 2.648505
 #define D70_BLUE 1.355692
 
-const wb_data wb_preset[] = { { "-------------", 0, 0},
+const wb_data wb_preset[] = { { "Manual WB", 0, 0},
     { "Camera WB", 0, 0},
     { "Auto WB", 0, 0},
     { "Incandescent", 1.34375/D70_RED, 2.816406/D70_BLUE }, /* 3000K */
@@ -145,6 +147,26 @@ const char raw_ext[]= "bay,bmq,cr2,crw,cs1,dc2,dcr,fff,hdr,k25,kdc,mrw,nef,"
         "orf,pef,raf,raw,rdc,srf,x3f,jpg,tif";
 
 const char *file_type[] = { ".ppm", ".ppm", ".tif", ".tif", ".jpg" };
+
+double profile_default_linear(profile_data *p)
+{
+    if ( !strcmp(p->name, "sRGB") )
+	return 0.1;
+    else
+	return 0.0;
+}
+
+double profile_default_gamma(profile_data *p)
+{
+    if ( !strcmp(p->name, "sRGB") )
+	return 0.45;
+    else if ( !strncmp(p->productName, "Nikon D70 for NEF", 17)
+	    || !strncmp(p->productName, "Nikon D100 for NEF", 18)
+	    || !strncmp(p->productName, "Nikon D1 for NEF", 16) )
+	return 0.45;
+    else
+	return 1.0;
+}
 
 void curve_parse_start(GMarkupParseContext *context, const gchar *element,
     const gchar **names, const gchar **values, gpointer user, GError **error)
@@ -325,17 +347,6 @@ int curve_save(CurveData *cp, char *filename)
         fclose(out);
     }
     return UFRAW_SUCCESS;
-}
-
-void pixbuf_reverse(int x, int y, guchar *pixbuf, int width, int height,
-        int rowstride)
-{
-    int c;
-
-    if (x>0 && y>0 && x<width && y<height)
-        for (c=0; c<3; c++)
-            pixbuf[y*rowstride+3*x+c] =
-                (pixbuf[y*rowstride+3*x+c] + 128) % 256;
 }
 
 void RGB_to_temperature(double *rgb, double *temperature, double *green)
@@ -549,6 +560,8 @@ void cfg_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     if (!strcmp("Saturation", element)) sscanf(temp, "%lf", &c->saturation);
     if (!strcmp("Unclip", element)) sscanf(temp, "%d", &c->unclip);
     if (!strcmp("AutoExposure", element)) sscanf(temp, "%d", &c->autoExposure);
+    if (!strcmp("AutoBlack", element)) sscanf(temp, "%d", &c->autoBlack);
+    if (!strcmp("AutoCurve", element)) sscanf(temp, "%d", &c->autoCurve);
     if (!strcmp("CurvePath", element)) g_strlcpy(c->curvePath, temp, max_path);
     if (!strcmp("Intent", element)) sscanf(temp, "%d", &c->intent);
     if (!strcmp("ProfilePath", element))
@@ -734,6 +747,10 @@ int save_configuration(cfg_data *c, developer_data *d,
         cfg_printf("<Unclip>%d</Unclip>\n", c->unclip);
     if (c->autoExposure!=cfg_default.autoExposure)
         cfg_printf("<AutoExposure>%d</AutoExposure>\n", c->autoExposure);
+    if (c->autoBlack!=cfg_default.autoBlack)
+        cfg_printf("<AutoBlack>%d</AutoBlack>\n", c->autoBlack);
+    if (c->autoCurve!=cfg_default.autoCurve)
+        cfg_printf("<AutoCurve>%d</AutoCurve>\n", c->autoCurve);
     if (c->saturation!=cfg_default.saturation)
         cfg_printf("<Saturation>%lf</Saturation>\n", c->saturation);
     if (c->size!=cfg_default.size)
