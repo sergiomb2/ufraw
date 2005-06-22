@@ -1,7 +1,7 @@
-bin_PROGRAMS = ufraw ufraw-batch
-EXTRA_PROGRAMS = ufraw-gimp dcraw nikon-curve ufraw-exif
 if MAKE_EXTRAS
-  bin_PROGRAMS += dcraw nikon-curve ufraw-exif
+  bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve ufraw-exif
+else
+  bin_PROGRAMS = ufraw ufraw-batch
 endif
 
 if MAKE_GIMP
@@ -18,6 +18,7 @@ UFRAW_COMMON = ufraw_ufraw.c ufraw_routines.c ufraw_exif.c ufraw_developer.c \
     iccjpeg.c iccjpeg.h
 UFRAW_GTK_COMMON = $(UFRAW_COMMON) ufraw_preview.c ufraw_saver.c \
     ufraw_chooser.c curveeditor_widget.c curveeditor_widget.h
+
 if UFRAW_WIN32
   UFRAW_ICON = ufraw_icon.opc
 else
