@@ -78,16 +78,23 @@ void developer_profile(developer_data *d, int type, profile_data *p)
 
 void developer_prepare(developer_data *d, int rgbMax, double exposure,
 	int unclip, double temperature, double green,
-	float pre_mul[4], profile_data *in, profile_data *out, int intent,
+	float pre_mul[4], float coeff[3][4], int colors, int useMatrix,
+	profile_data *in, profile_data *out, int intent,
         double saturation, CurveData *curve)
 {
-    int c, i;
+    unsigned c, i;
 
     d->rgbMax = rgbMax;
+    d->colors = colors;
+    d->useMatrix = useMatrix;
     i = temperature/10-200;
-    for (c=0; c<4; c++)
+    for (c=0; c<d->colors; c++)
         d->rgbWB[c] = bbWB[i][1]/bbWB[i][c]*pre_mul[c]*
                         (c==1||c==3?green:1.0)*0x10000;
+    if (d->useMatrix)
+	for (i=0; i<3; i++)
+	    for (c=0; c<d->colors; c++)
+		d->colorMatrix[i][c] = coeff[i][c]*0x10000;
     if (unclip) d->max = 0xFFFF;
     else d->max = MIN(exposure*0x10000, 0xFFFF);
     for (c=0; c<4; c++) d->rgbWB[c] = d->rgbWB[c] * exposure;
@@ -147,19 +154,30 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     guint16 *buf, int count)
 {
     guint8 *p8 = po;
-    guint16 *p16 = po, *p, tmp, maxc, midc, minc, c;
+    guint16 *p16 = po, *p, maxc, midc, minc, c, cc;
+    gint64 tmp;
     unsigned sat, hue;
     int i;
 
-    for (i=0; i<count; i++)
-        for (c=0; c<3; c++) {
-	    tmp = pix[i*4+c];
-            tmp = MIN((guint64)d->rgbWB[c]*tmp/d->rgbMax,(guint64)d->max);
-	    buf[i*3+c] = d->gammaCurve[tmp];
+    if (d->useMatrix) {
+	for (i=0; i<count; i++) for (cc=0; cc<3; cc++) {
+	    for (c=0, tmp=0; c<d->colors; c++)
+		tmp += (guint64)pix[i*4+c] * d->rgbWB[c]
+			* d->colorMatrix[cc][c];
+	    tmp /= d->rgbMax * 0x10000;
+	    buf[i*3+cc] = d->gammaCurve[MIN(MAX(tmp, 0), d->max)];
 	}
+    } else {
+	for (i=0; i<count; i++)
+	    for (c=0; c<3; c++) {
+		tmp = (guint64)pix[i*4+c] * d->rgbWB[c] / d->rgbMax;
+		buf[i*3+c] = d->gammaCurve[MIN(tmp, d->max)];
+	    }
+    }
     if (d->colorTransform!=NULL)
         cmsDoTransform(d->colorTransform, buf, buf, count);
-    if (d->saturation!=1) for (i=0, p=buf; i<count; i++, p+=3) {
+//    if (d->saturation!=1)
+    for (i=0, p=buf; i<count; i++, p+=3) {
         if (p[0] > p[1] && p[0] > p[2]) {
             maxc = 0;
             if (p[1] > p[2]) { midc = 1; minc = 2; }
@@ -179,11 +197,14 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
             sat = 0x10000 - (unsigned)d->saturationCurve[p[minc]]*0x10000 /
                     d->saturationCurve[p[maxc]];
             hue = (unsigned)(p[midc]-p[minc])*0x10000/(p[maxc]-p[minc]);
+	    p[maxc] = d->toneCurve[p[maxc]];
             p[minc] = p[maxc]*(0x10000-sat)/0x10000;
             p[midc] = p[maxc]*(0x10000-sat+sat*hue/0x10000)/0x10000;
             /* It is also possible to define oldSaturation = max-min */
         }
     }
-    if (mode==16) for (i=0; i<3*count; i++) p16[i] = d->toneCurve[buf[i]];
-    else for (i=0; i<3*count; i++) p8[i] = d->toneCurve[buf[i]] >> 8;
+//    if (mode==16) for (i=0; i<3*count; i++) p16[i] = d->toneCurve[buf[i]];
+//    else for (i=0; i<3*count; i++) p8[i] = d->toneCurve[buf[i]] >> 8;
+    if (mode==16) for (i=0; i<3*count; i++) p16[i] = buf[i];
+    else for (i=0; i<3*count; i++) p8[i] = buf[i] >> 8;
 }

@@ -109,16 +109,18 @@ const cfg_data cfg_default = {
     camera_curve, camera_curve+1,
     { { "Manual curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
+      { "Linear curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
+	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
       { "Camera curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  0 , { { 0.0, 0.0 } } },
-      { "", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
-	  0 , { { 0.0, 0.0 } } }
     },
     "",
     /* Profiles defaults */
     { 0, 0 } , { 1, 1 },
-    { { { "sRGB", "", "", 0.45, 0.1 } },
-      { { "sRGB", "", "", 0.0, 0.0 } } },
+    { { { "sRGB", "", "", 0.45, 0.1, TRUE },
+        { "Some ICC Profile", "", "", 0.45, 0.0, FALSE } },
+      { { "sRGB", "", "", 0.0, 0.0, FALSE },
+        { "Some ICC Profile", "", "", 0.0, 0.0, FALSE } } },
     0, /* intent */
     ""
 };
@@ -186,9 +188,13 @@ void curve_parse_start(GMarkupParseContext *context, const gchar *element,
         names++;
         values++;
     }
-    /* gamma -1 marks that we are inside a XML Curve block */
-    /* BUG - what happens if gamma is set */
-    if (!strcmp("Curve", element)) c->m_gamma = -1.0;
+    if (!strcmp("Curve", element)) {
+	/* m_gamma==-1 marks that we are inside a XML Curve block.
+	 * This is ok since we never set m_gamma. */
+	c->m_gamma = -1.0;
+	/* m_numAnchors==-1 marks that no anchors where read from the XML */
+	c->m_numAnchors = -1;
+    }
 }
 
 void curve_parse_end(GMarkupParseContext *context, const gchar *element,
@@ -197,7 +203,11 @@ void curve_parse_end(GMarkupParseContext *context, const gchar *element,
     CurveData *c = user;
     context = context;
     error = error;
-    if (!strcmp("Curve", element)) c->m_gamma = - c->m_gamma;
+    if (!strcmp("Curve", element)) {
+	c->m_gamma = cfg_default.curve[0].m_gamma;
+	if (c->m_numAnchors<0)
+	    c->m_numAnchors = cfg_default.curve[0].m_numAnchors;
+    }
 }
 
 void curve_parse_text(GMarkupParseContext *context, const gchar *text,
@@ -218,19 +228,13 @@ void curve_parse_text(GMarkupParseContext *context, const gchar *text,
     }
     /* A negative gamma marks that we are in a Curve XML block */
     if (c->m_gamma < 0) {
-        if (!strcmp("Gamma", element)) {
-            sscanf(temp, "%lf", &c->m_gamma);
-	    if (c->m_gamma <=0) {
-		ufraw_message(UFRAW_ERROR, "Curve gamma must be positive");
-		c->m_gamma = -1;
-	    } else
-		c->m_gamma = - c->m_gamma;
-	}
         if (!strcmp("MinXY", element))
             sscanf(temp, "%lf %lf", &c->m_min_x, &c->m_min_y);
         if (!strcmp("MaxXY", element))
             sscanf(temp, "%lf %lf", &c->m_max_x, &c->m_max_y);
         if (!strcmp("AnchorXY", element)) {
+	    /* If one anchor is supplied then all anchors should be supplied */
+	    if (c->m_numAnchors<0) c->m_numAnchors = 0;
             sscanf(temp, "%lf %lf",
                     &c->m_anchors[c->m_numAnchors].x,
                     &c->m_anchors[c->m_numAnchors].y);
@@ -340,8 +344,8 @@ int curve_save(CurveData *cp, char *filename)
         g_free(base);
         fprintf(out, "<Curve Version='%d'>%s\n", cfg_default.version, name);
 	g_free(name);
-        char *buf = curve_buffer(cp, TRUE);
-        fprintf(out, buf);
+        char *buf = curve_buffer(cp);
+        if (buf!=NULL) fprintf(out, buf);
         g_free(buf);
         fprintf(out, "</Curve>\n");
         fclose(out);
@@ -388,12 +392,8 @@ void cfg_parse_start(GMarkupParseContext *context, const gchar *element,
                     "UFRaw version in .ufrawrc is not supported");
         }
         if (!strcmp(*names,"Current") && int_value!=0) {
-            /* for some backward compatibility with ufraw-0.4 */
-            if (!strcmp("GammaCurve", element))
-                c->curveIndex = linear_curve;
-            /* for some backward compatibility with ufraw-0.4 */
-            if (!strcmp("LogCurve", element))
-                c->curveIndex = linear_curve;
+            if (!strcmp("ManualCurve", element))
+                c->curveIndex = manual_curve;
             if (!strcmp("LinearCurve", element))
                 c->curveIndex = linear_curve;
             if (!strcmp("CameraCurve", element))
@@ -413,15 +413,22 @@ void cfg_parse_start(GMarkupParseContext *context, const gchar *element,
         values++;
     }
     /* The default curve/profile count is always larger than 0,
-     * threfore we can treat 0 as a negative number */
-    /* for some backward compatibility with ufraw-0.4 */
-    if (!strcmp("GammaCurve", element)) c->curveCount = - linear_curve;
-    /* for some backward compatibility with ufraw-0.4 */
-    if (!strcmp("LogCurve", element)) c->curveCount = - linear_curve;
-    if (!strcmp("LinearCurve", element)) c->curveCount = - linear_curve;
-    if (!strcmp("CameraCurve", element)) c->curveCount = - camera_curve;
-    if (!strcmp("sRGBInputProfile", element)) c->profileCount[0] = 0;
-    if (!strcmp("sRGBOutputProfile", element)) c->profileCount[1] = 0;
+     * threfore we can treat 0 as a negative number.
+     * m_numAnchors==-1 marks that no anchors where read from the XML. */
+    if (!strcmp("ManualCurve", element)) {
+	c->curveCount = - manual_curve;
+	c->curve[-c->curveCount].m_numAnchors = -1;
+    }
+    if (!strcmp("LinearCurve", element)) {
+	c->curveCount = - linear_curve;
+	c->curve[-c->curveCount].m_numAnchors = -1;
+    }
+    if (!strcmp("CameraCurve", element)) {
+	c->curveCount = - camera_curve;
+	c->curve[-c->curveCount].m_numAnchors = -1;
+    }
+    if (!strcmp("sRGBInputProfile", element)) c->profileCount[0] = - 0;
+    if (!strcmp("sRGBOutputProfile", element)) c->profileCount[1] = - 0;
 }
 
 void cfg_parse_end(GMarkupParseContext *context, const gchar *element,
@@ -430,15 +437,20 @@ void cfg_parse_end(GMarkupParseContext *context, const gchar *element,
     cfg_data *c = user;
     context = context;
     error = error;
-    /* for some backward compatibility with ufraw-0.4 */
-    if (!strcmp("GammaCurve", element)) c->curveCount = camera_curve+1;
-    /* for some backward compatibility with ufraw-0.4 */
-    if (!strcmp("LogCurve", element)) c->curveCount = camera_curve+1;
-    if (!strcmp("LinearCurve", element)) c->curveCount = camera_curve+1;
-    if (!strcmp("CameraCurve", element)) c->curveCount = camera_curve+1;
-    if (c->curveCount<=0 && !strcmp("Curve", element))
+    if ( c->curveCount<=0 &&
+	 ( !strcmp("ManualCurve", element) ||
+	   !strcmp("LinearCurve", element) ||
+	   !strcmp("CameraCurve", element) ) ) {
+	if (c->curve[-c->curveCount].m_numAnchors<0)
+	    c->curve[-c->curveCount].m_numAnchors = 2;
+	c->curveCount = camera_curve+1;
+    }
+    if (c->curveCount<=0 && !strcmp("Curve", element)) {
+	if (c->curve[-c->curveCount].m_numAnchors<0)
+	    c->curve[-c->curveCount].m_numAnchors = 2;
         c->curveCount = - c->curveCount + 1;
-    if (!strcmp("sRGBInputProfile", element)) c->profileCount[0] = 1;
+    }
+    if (!strcmp("sRGBInputProfile", element)) c->profileCount[0] = 2;
     if (!strcmp("sRGBOutputProfile", element)) c->profileCount[1] = 1;
     if (c->profileCount[0]<=0 && !strcmp("InputProfile", element))
         c->profileCount[0] = - c->profileCount[0] + 1;
@@ -468,14 +480,13 @@ void cfg_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
             if (curve_load(&c->curve[i], temp)!=UFRAW_SUCCESS)
                     c->curveCount = - c->curveCount;
 	}
-        /* Ignore Gamma from ufraw-0.4 or earlier */
-        if (!strcmp("Gamma", element) && c->version>3)
-            sscanf(temp, "%lf", &c->curve[i].m_gamma);
         if (!strcmp("MinXY", element))
             sscanf(temp, "%lf %lf", &c->curve[i].m_min_x, &c->curve[i].m_min_y);
         if (!strcmp("MaxXY", element))
             sscanf(temp, "%lf %lf", &c->curve[i].m_max_x, &c->curve[i].m_max_y);
         if (!strcmp("AnchorXY", element)) {
+	    /* If one anchor is supplied then all anchors should be supplied */
+	    if (c->curve[i].m_numAnchors<0) c->curve[i].m_numAnchors = 0;
             sscanf(temp, "%lf %lf",
                     &c->curve[i].m_anchors[c->curve[i].m_numAnchors].x,
                     &c->curve[i].m_anchors[c->curve[i].m_numAnchors].y);
@@ -493,6 +504,8 @@ void cfg_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
             sscanf(temp, "%lf", &c->profile[0][i].gamma);
         if (!strcmp("Linearity", element))
             sscanf(temp, "%lf", &c->profile[0][i].linear);
+        if (!strcmp("UseColorMatrix", element))
+            sscanf(temp, "%d", &c->profile[0][i].useMatrix);
         return;
     }
     if (c->profileCount[1]<=0) {
@@ -506,13 +519,15 @@ void cfg_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     if (!strcmp("Curve", element)) {
         c->curveCount = - c->curveCount;
         i = - c->curveCount;
-        c->curve[i] = cfg_default.curve[2];
+        c->curve[i] = cfg_default.curve[0];
         g_strlcpy(c->curve[i].name, temp, max_name);
+	/* m_numAnchors==-1 marks that no anchors where read from the XML */
+	c->curve[-c->curveCount].m_numAnchors = -1;
     }
     if (!strcmp("InputProfile", element)) {
         c->profileCount[0] = - c->profileCount[0];
         i = - c->profileCount[0];
-        c->profile[0][i] = cfg_default.profile[0][0];
+        c->profile[0][i] = cfg_default.profile[0][1];
         g_strlcpy(c->profile[0][i].name, temp, max_name);
     }
     if (!strcmp("OutputProfile", element)) {
@@ -614,7 +629,7 @@ int load_configuration(cfg_data *c)
     if (c->version==3) {
         c->version = cfg_default.version;
         /* Don't add linear part to existing profile curves (except sRGB) */
-        for (i=1; i<c->profileCount[0]; i++)
+        for (i=2; i<c->profileCount[0]; i++)
             c->profile[0][i].linear = 0.0;
     }
     /* a few consistency settings */
@@ -628,19 +643,25 @@ int load_configuration(cfg_data *c)
         snprintf(buf+bufIndex, bufSize-bufIndex, format, ## __VA_ARGS__)\
 )
 
-char *curve_buffer(CurveData *c, gboolean withPoints)
+char *curve_buffer(CurveData *c)
 {
     const int bufSize = 1000;
     char *buf = g_new(char, bufSize);
     int bufIndex = 0, i;
-    if (withPoints) {
+    if ( c->m_min_x!=cfg_default.curve[0].m_min_x ||
+	 c->m_min_y!=cfg_default.curve[0].m_min_y ||
+	 c->m_max_x!=cfg_default.curve[0].m_max_x ||
+	 c->m_max_y!=cfg_default.curve[0].m_max_y ) {
         bufIndex += snprintf(buf+bufIndex, bufSize-bufIndex,
                 "\t<MinXY>%lf %lf</MinXY>\n", c->m_min_x, c->m_min_y);
         bufIndex += snprintf(buf+bufIndex, bufSize-bufIndex,
                 "\t<MaxXY>%lf %lf</MaxXY>\n", c->m_max_x, c->m_max_y);
-        if (c->m_gamma!=cfg_default.curve[0].m_gamma)
-            bufIndex += snprintf(buf+bufIndex, bufSize-bufIndex,
-                    "\t<Gamma>%lf</Gamma>\n", c->m_gamma);
+    }
+    if ( c->m_numAnchors!=cfg_default.curve[0].m_numAnchors ||
+	 c->m_anchors[0].x!=cfg_default.curve[0].m_anchors[0].x ||
+	 c->m_anchors[0].y!=cfg_default.curve[0].m_anchors[0].y ||
+	 c->m_anchors[1].x!=cfg_default.curve[0].m_anchors[1].x ||
+	 c->m_anchors[1].y!=cfg_default.curve[0].m_anchors[1].y ) {
         for (i=0; i<c->m_numAnchors; i++)
             bufIndex += snprintf(buf+bufIndex, bufSize-bufIndex,
                     "\t<AnchorXY>%lf %lf</AnchorXY>\n",
@@ -771,45 +792,56 @@ int save_configuration(cfg_data *c, developer_data *d,
         cfg_printf("<LosslessCompression>%d</LosslessCompression>\n",
                 c->losslessCompress);
     for (i=0; i<c->curveCount; i++) {
-        char *curveBuf = curve_buffer(&c->curve[i], i>camera_curve);
+        char *curveBuf = curve_buffer(&c->curve[i]);
         /* Write curve if it is non-default and we are not writing to .ufraw */
 	/* But ALWAYS write the current curve */
-	if (c->curveIndex==i && curveBuf==NULL) curveBuf = g_strdup("");
-        if (curveBuf!=NULL && confFilename==NULL) {
+        if ( c->curveIndex==i || (curveBuf!=NULL && confFilename==NULL) ) {
+	    if (curveBuf==NULL) curveBuf = g_strdup("");
             current = i==c->curveIndex?" Current='yes'":"";
             switch (i) {
-                case linear_curve: type = "LinearCurve";
+                case manual_curve:
+                        cfg_printf("<ManualCurve%s>\n%s</ManualCurve>\n",
+                                        current, curveBuf);
+                        break;
+                case linear_curve:
                         cfg_printf("<LinearCurve%s>\n%s</LinearCurve>\n",
                                         current, curveBuf);
                         break;
-                case camera_curve: type = "CameraCurve";
+                case camera_curve:
                         cfg_printf("<CameraCurve%s>\n%s</CameraCurve>\n",
                                         current, curveBuf);
                         break;
-                default: type = "Curve";
+                default:
                         cfg_printf("<Curve%s>%s\n%s</Curve>\n",
                                         current, c->curve[i].name, curveBuf);
             }
         }
-        if (curveBuf!=NULL) g_free(curveBuf);
+        g_free(curveBuf);
     }
     if (strlen(c->curvePath)>0 && confFilename==NULL)
         cfg_printf("<CurvePath>%s</CurvePath>\n", c->curvePath);
     for (j=0; j<profile_types; j++) {
         type = j==in_profile ? "InputProfile" :
                 j==out_profile ? "OutputProfile" : "Error";
+	/* The default sRGB profile is cfg_default.profile[j][0] */
         if ( c->profileIndex[j]==0 || ( confFilename==NULL &&
              ( c->profile[j][0].gamma!=cfg_default.profile[0][0].gamma ||
-               c->profile[j][0].linear!=cfg_default.profile[0][0].linear ) ) ) {
-            current = 0==c->profileIndex[j]?" Current='yes'":"";
+               c->profile[j][0].linear!=cfg_default.profile[0][0].linear ||
+               c->profile[j][0].useMatrix!=
+		   cfg_default.profile[0][0].useMatrix ) ) ) {
+            current = c->profileIndex[j]==0 ? " Current='yes'" : "";
             cfg_printf("<sRGB%s%s>\n", type, current);
             if (c->profile[j][0].gamma!=cfg_default.profile[j][0].gamma)
-                cfg_printf("\t<Gamma>%.2f</Gamma>\n", c->profile[j][0].gamma);
+                cfg_printf("\t<Gamma>%lf</Gamma>\n", c->profile[j][0].gamma);
             if (c->profile[j][0].linear!=cfg_default.profile[j][0].linear)
-                cfg_printf("\t<Linearity>%.2f</Linearity>\n",
+                cfg_printf("\t<Linearity>%lf</Linearity>\n",
                         c->profile[j][0].linear);
+            if (c->profile[j][0].useMatrix!=cfg_default.profile[j][0].useMatrix)
+                cfg_printf("\t<UseColorMatrix>%d</UseColorMatrix>\n",
+                        c->profile[j][0].useMatrix);
             cfg_printf("</sRGB%s>\n", type);
         }
+	/* While the default ICC profile is cfg_default.profile[j][1] */
         for (i=1; i<c->profileCount[j]; i++) {
 	    if (confFilename!=NULL && i!=c->profileIndex[j])
 		continue;
@@ -818,11 +850,14 @@ int save_configuration(cfg_data *c, developer_data *d,
             cfg_printf("\t<File>%s</File>\n", c->profile[j][i].file);
             cfg_printf("\t<ProductName>%s</ProductName>\n",
                     c->profile[j][i].productName);
-            if (c->profile[j][i].gamma!=cfg_default.profile[j][0].gamma)
-                cfg_printf("\t<Gamma>%.2f</Gamma>\n", c->profile[j][i].gamma);
-            if (c->profile[j][i].linear!=cfg_default.profile[j][0].linear)
-                cfg_printf("\t<Linearity>%.2f</Linearity>\n",
+            if (c->profile[j][i].gamma!=cfg_default.profile[j][1].gamma)
+                cfg_printf("\t<Gamma>%lf</Gamma>\n", c->profile[j][i].gamma);
+            if (c->profile[j][i].linear!=cfg_default.profile[j][1].linear)
+                cfg_printf("\t<Linearity>%lf</Linearity>\n",
                         c->profile[j][i].linear);
+            if (c->profile[j][i].useMatrix!=cfg_default.profile[j][1].useMatrix)
+                cfg_printf("\t<UseColorMatrix>%d</UseColorMatrix>\n",
+                        c->profile[j][i].useMatrix);
             cfg_printf("</%s>\n", type);
         }
     }

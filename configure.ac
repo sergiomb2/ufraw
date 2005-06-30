@@ -179,8 +179,8 @@ if test $ufraw_win32 = yes; then
       COMMENT_ICON=""
       ;;
     * )
-# This is needed only if you plan to cross-make windows-installer from linux
-      test -z $PROGRAMFILES && PROGRAMFILES="$HOME/.wine/drive_c/Program\ Files"
+      # Only needed if you plan to cross-build windows-installer from linux
+      test -z "$PROGRAMFILES" && PROGRAMFILES="c:\\Program Files"
       AC_SUBST(PROGRAMFILES)
       WINE="wine"
       COMMENT_ICON=";"

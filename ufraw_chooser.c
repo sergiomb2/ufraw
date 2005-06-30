@@ -20,7 +20,7 @@
 
 void ufraw_chooser(cfg_data *cfg, char *defPath)
 {
-    image_data *image;
+    ufraw_data *uf;
     GtkFileChooser *fileChooser;
     GSList *list, *saveList;
     GtkFileFilter *filter;
@@ -84,13 +84,13 @@ void ufraw_chooser(cfg_data *cfg, char *defPath)
         for(list=saveList=gtk_file_chooser_get_filenames(fileChooser);
         list!=NULL; list=g_slist_next(list)) {
             filename = list->data;
-            image = ufraw_open(filename);
-            if (image==NULL) {
+            uf = ufraw_open(filename);
+            if (uf==NULL) {
                 ufraw_message(UFRAW_REPORT, NULL);
                 continue;
             }
-            ufraw_config(image, cfg);
-            ufraw_preview(image, FALSE, ufraw_saver);
+            ufraw_config(uf, cfg);
+            ufraw_preview(uf, FALSE, ufraw_saver);
             g_free(filename);
         }
         g_slist_free(saveList);

@@ -31,7 +31,7 @@ void run(const gchar *name,
         gint *nreturn_vals,
         GimpParam **return_vals);
 
-long ufraw_save_gimp_image(GtkWidget *widget, image_data *image);
+long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf);
 
 GimpPlugInInfo PLUG_IN_INFO = {
     NULL,  /* init_procedure */
@@ -85,7 +85,7 @@ void run(const gchar *name,
     static GimpParam values[2];
     GimpRunMode run_mode = (GimpRunMode)param[0].data.d_int32;
     char *filename = param[1].data.d_string;
-    image_data *image;
+    ufraw_data *uf;
     cfg_data cfg;
     int status;
     const char *locale;
@@ -110,9 +110,9 @@ void run(const gchar *name,
         g_setenv("LC_ALL", "en_US", TRUE);
     }
     gimp_ui_init("ufraw-gimp", TRUE);
-    image = ufraw_open(filename);
+    uf = ufraw_open(filename);
     /* if UFRaw fails on jpg or tif then open with Gimp */
-    if (image==NULL) {
+    if (uf==NULL) {
         if (!strcasecmp(filename + strlen(filename) - 4, ".jpg")) {
             *return_vals = gimp_run_procedure2 ("file_jpeg_load",
                     nreturn_vals, nparams, param);
@@ -139,7 +139,7 @@ void run(const gchar *name,
     cfg.size = 0;
     if ( gimp_get_data_size("plug_in_ufraw")==sizeof(cfg) )
         gimp_get_data("plug_in_ufraw", &cfg);
-    ufraw_config(image, &cfg);
+    ufraw_config(uf, &cfg);
     strcpy(cfg.outputFilename, "");
     if (run_mode==GIMP_RUN_NONINTERACTIVE) cfg.shrink = 8;
     else cfg.shrink = 1;
@@ -149,15 +149,15 @@ void run(const gchar *name,
     values[0].type = GIMP_PDB_STATUS;
     values[0].data.d_status = GIMP_PDB_CANCEL;
     if (run_mode==GIMP_RUN_INTERACTIVE) {
-        status = ufraw_preview(image, TRUE, ufraw_save_gimp_image);
+        status = ufraw_preview(uf, TRUE, ufraw_save_gimp_image);
         gimp_set_data("plug_in_ufraw", &cfg, sizeof(cfg));
     } else {
-        status=ufraw_load_raw(image, FALSE);
-        ufraw_save_gimp_image(NULL, image);
-        ufraw_close(image);
+        status=ufraw_load_raw(uf);
+        ufraw_save_gimp_image(NULL, uf);
+        ufraw_close(uf);
     }
     if (status != UFRAW_SUCCESS) return;
-    if (image->gimpImage==-1) {
+    if (uf->gimpImage==-1) {
         values[0].type = GIMP_PDB_STATUS;
         values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
         return;
@@ -166,10 +166,10 @@ void run(const gchar *name,
     values[0].type = GIMP_PDB_STATUS;
     values[0].data.d_status = GIMP_PDB_SUCCESS;
     values[1].type = GIMP_PDB_IMAGE;
-    values[1].data.d_image = image->gimpImage;
+    values[1].data.d_image = uf->gimpImage;
 }
 
-long ufraw_save_gimp_image(GtkWidget *widget, image_data *image)
+long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
 {
     GtkWindow *window;
     GimpDrawable *drawable;
@@ -180,53 +180,54 @@ long ufraw_save_gimp_image(GtkWidget *widget, image_data *image)
     int tile_height, row, nrows, rowStride, y;
     image_type *rawImage;
 
-    if (ufraw_convert_image(image, image)!=UFRAW_SUCCESS) {
-        image->gimpImage = -1;
+    if (ufraw_convert_image(uf)!=UFRAW_SUCCESS) {
+        uf->gimpImage = -1;
         return UFRAW_ERROR;
     }
-    image->gimpImage = gimp_image_new(image->width, image->height,GIMP_RGB);
-    if (image->gimpImage== -1) {
+    uf->gimpImage = gimp_image_new(uf->image.width, uf->image.height,GIMP_RGB);
+    if (uf->gimpImage== -1) {
         ufraw_message(UFRAW_ERROR, "Can't allocate new image.");
         return UFRAW_ERROR;
     }
-    gimp_image_set_filename(image->gimpImage, image->filename);
+    gimp_image_set_filename(uf->gimpImage, uf->filename);
 
     /* Create the "background" layer to hold the image... */
-    layer = gimp_layer_new(image->gimpImage, "Background", image->width,
-            image->height, GIMP_RGB_IMAGE, 100, GIMP_NORMAL_MODE);
-    gimp_image_add_layer(image->gimpImage, layer, 0);
+    layer = gimp_layer_new(uf->gimpImage, "Background", uf->image.width,
+            uf->image.height, GIMP_RGB_IMAGE, 100, GIMP_NORMAL_MODE);
+    gimp_image_add_layer(uf->gimpImage, layer, 0);
 
     /* Get the drawable and set the pixel region for our load... */
     drawable = gimp_drawable_get(layer);
     gimp_pixel_rgn_init(&pixel_region, drawable, 0, 0, drawable->width,
             drawable->height, TRUE, FALSE);
     tile_height = gimp_tile_height();
-    pixbuf = g_new(guint8, tile_height * image->width * 3);
-    pixtmp = g_new(guint16, tile_height * image->width * 3);
+    pixbuf = g_new(guint8, tile_height * uf->image.width * 3);
+    pixtmp = g_new(guint16, tile_height * uf->image.width * 3);
 
-    rowStride = image->width + 2*image->trim;
-    rawImage = image->image + image->trim*rowStride + image->trim;
-    for (row = 0; row < image->height; row += tile_height) {
-        preview_progress(widget, "Loading image", 0.5 + 0.5*row/image->height);
-        nrows = MIN(image->height-row, tile_height);
+    rowStride = uf->image.width + 2*uf->image.trim;
+    rawImage = uf->image.image + uf->image.trim*rowStride + uf->image.trim;
+    for (row = 0; row < uf->image.height; row += tile_height) {
+        preview_progress(widget, "Loading image",
+		0.5 + 0.5*row/uf->image.height);
+        nrows = MIN(uf->image.height-row, tile_height);
         for (y=0 ; y<nrows; y++)
-            develope(&pixbuf[3*y*image->width], rawImage[(row+y)*rowStride],
-                    image->developer, 8, pixtmp, image->width);
+            develope(&pixbuf[3*y*uf->image.width], rawImage[(row+y)*rowStride],
+                    uf->developer, 8, pixtmp, uf->image.width);
         gimp_pixel_rgn_set_rect(&pixel_region, pixbuf, 0, row,
-                image->width, nrows);
+                uf->image.width, nrows);
     }
     g_free(pixbuf);
     g_free(pixtmp);
     gimp_drawable_flush(drawable);
     gimp_drawable_detach(drawable);
-    if (image->exifBuf!=NULL) {
+    if (uf->exifBuf!=NULL) {
         GimpParasite *exif_parasite;
         exif_parasite = gimp_parasite_new ("exif-data",
-                GIMP_PARASITE_PERSISTENT, image->exifBufLen, image->exifBuf);
-        gimp_image_parasite_attach (image->gimpImage, exif_parasite);
+                GIMP_PARASITE_PERSISTENT, uf->exifBufLen, uf->exifBuf);
+        gimp_image_parasite_attach (uf->gimpImage, exif_parasite);
         gimp_parasite_free (exif_parasite);
-        g_free (image->exifBuf);
-        image->exifBuf = NULL;
+        g_free (uf->exifBuf);
+        uf->exifBuf = NULL;
     }
     if (widget!=NULL) {
         window = GTK_WINDOW(gtk_widget_get_toplevel(widget));

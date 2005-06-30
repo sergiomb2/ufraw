@@ -349,7 +349,7 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, gboolean *batch)
 
 int main (int argc, char **argv)
 {
-    image_data *image;
+    ufraw_data *uf;
     cfg_data cfg, cmd;
     gboolean batch=FALSE;
 #ifndef UFRAW_BATCH
@@ -473,7 +473,6 @@ int main (int argc, char **argv)
     } else {
 	/* outputFilename can be used to guess output path,
 	 * but not in batch mode */
-	// BUG - this should be set for every file
 	if (batch) g_strlcpy(cfg.outputFilename, "", max_path);
     }
     if (optind==argc) {
@@ -497,25 +496,26 @@ int main (int argc, char **argv)
     }
 	
     for (; optind<argc; optind++) {
-        image = ufraw_open(argv[optind]);
-        if (image==NULL) {
+        uf = ufraw_open(argv[optind]);
+        if (uf==NULL) {
             ufraw_message(UFRAW_REPORT, NULL);
             continue;
         }
-        ufraw_config(image, &cfg);
+        ufraw_config(uf, &cfg);
         if (batch) {
-            if (ufraw_load_raw(image, FALSE)!=UFRAW_SUCCESS)
+            if (ufraw_load_raw(uf)!=UFRAW_SUCCESS)
                 continue;
             ufraw_message(UFRAW_MESSAGE, "loaded %s\n",
-                image->filename);
-            if (ufraw_batch_saver(image)==UFRAW_SUCCESS)
+                uf->filename);
+            if (ufraw_batch_saver(uf)==UFRAW_SUCCESS)
                 ufraw_message(UFRAW_MESSAGE, "saved %s\n", cfg.outputFilename);
-            ufraw_close(image);
-            g_free(image);
+            ufraw_close(uf);
+            g_free(uf);
+	    g_strlcpy(cfg.outputFilename, "", max_path);
         }
 #ifndef UFRAW_BATCH
         if (!batch)
-            ufraw_preview(image, FALSE, ufraw_saver);
+            ufraw_preview(uf, FALSE, ufraw_saver);
 #endif
     }
 #ifndef UFRAW_BATCH

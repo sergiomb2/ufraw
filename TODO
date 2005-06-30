@@ -2,12 +2,13 @@ For ufraw-0.5
 =============
 read ufraw-id files
 setlocale() for xml data
-black-point
-clear gamma/contrast mess
 remember that executables are not striped (-s) anymore
+Fix raw histogram
 Add reset button to White balance combo-box
-Freeze UI during raw conversion
 check 1024x768 mode before release
+cross-configure in README:
+./configure PREFIX=/home/user/mingw32 DOSPREFIX="z:\\home\\user\\mingw32"
+    --host=i586-mingw32msvc
 
 For the future
 ==============

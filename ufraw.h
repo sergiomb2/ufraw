@@ -34,7 +34,7 @@ enum { full_interpolation, four_color_interpolation, quick_interpolation,
        half_interpolation};
 enum { no_id, also_id, only_id };
 enum { load_preserve, load_default, load_auto };
-enum { linear_curve, camera_curve };
+enum { manual_curve, linear_curve, camera_curve };
 enum { in_profile, out_profile, profile_types};
 enum { raw_expander, exposure_expander, wb_expander, color_expander,
        curve_expander, live_expander, expander_count };
@@ -46,8 +46,8 @@ typedef struct {
 } wb_data;
 
 typedef struct {
-    int rgbMax, max;
-    int rgbWB[4];
+    unsigned rgbMax, max, colors, useMatrix;
+    int rgbWB[4], colorMatrix[3][4];
     double gamma, linear;
     char profileFile[2][max_path];
     void *profile[2];
@@ -68,6 +68,7 @@ typedef struct {
     char file[max_path];
     char productName[max_name];
     double gamma, linear;
+    gboolean useMatrix;
 } profile_data;
 
 /* cfg holds infomation that is kept for the next image load */
@@ -92,10 +93,15 @@ typedef struct {
 } cfg_data;
 
 typedef struct {
-    char filename[max_path];
-    int height, width, trim, rgbMax;
-    float preMul[4];
     image_type *image;
+    int height, width, trim;
+} image_data;
+
+typedef struct {
+    char filename[max_path];
+    int predictateHeight, predictateWidth, rgbMax, colors, use_coeff, useMatrix;
+    float preMul[4], coeff[3][4];
+    image_data image;
     void *raw;
     developer_data *developer;
     cfg_data *cfg;
@@ -103,7 +109,7 @@ typedef struct {
     guchar *exifBuf;
     guint exifBufLen;
     int gimpImage;
-} image_data;
+} ufraw_data;
 
 extern const cfg_data cfg_default;
 extern const wb_data wb_preset[];
@@ -112,19 +118,19 @@ extern const char raw_ext[];
 extern const char *file_type[];
 
 /* prototypes for functions in ufraw_ufraw.c */
-image_data *ufraw_open(char *filename);
-int ufraw_config(image_data *image, cfg_data *cfg);
-int ufraw_load_raw(image_data *image, int interactive);
-int ufraw_convert_image(image_data *image, image_data *rawImage);
-void ufraw_close(image_data *image);
-int ufraw_set_wb(image_data *image);
-void ufraw_auto_expose(image_data *image);
-void ufraw_auto_black(image_data *image);
-void ufraw_auto_curve(image_data *image);
+ufraw_data *ufraw_open(char *filename);
+int ufraw_config(ufraw_data *uf, cfg_data *cfg);
+int ufraw_load_raw(ufraw_data *uf);
+int ufraw_convert_image(ufraw_data *uf);
+void ufraw_close(ufraw_data *uf);
+int ufraw_set_wb(ufraw_data *uf);
+void ufraw_auto_expose(ufraw_data *uf);
+void ufraw_auto_black(ufraw_data *uf);
+void ufraw_auto_curve(ufraw_data *uf);
 void ufraw_batch_messenger(char *message, void *parentWindoW);
 
 /* prototypes for functions in ufraw_preview.c */
-int ufraw_preview(image_data *image, int plugin, long (*write_func)());
+int ufraw_preview(ufraw_data *uf, int plugin, long (*write_func)());
 void ufraw_focus(void *window, gboolean focus);
 void ufraw_messenger(char *message, void *parentWindow);
 void preview_progress(void *widget, char *text, double progress);
@@ -138,27 +144,30 @@ double profile_default_linear(profile_data *p);
 double profile_default_gamma(profile_data *p);
 int curve_load(CurveData *cp, char *filename);
 int curve_save(CurveData *cp, char *filename);
-char *curve_buffer(CurveData *cp, gboolean withPoints);
-developer_data *developer_init();
-void developer_destroy(developer_data *d);
-void developer_profile(developer_data *d, int type, profile_data *p);
-void developer_prepare(developer_data *d, int rgbMax, double exposure,
-    int unclip, double temperature, double green, float pre_mul[4],
-    profile_data *in, profile_data *out, int intent,
-    double saturation, CurveData *curve);
-inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
-    guint16 *buf, int count);
+char *curve_buffer(CurveData *cp);
 void RGB_to_temperature(double *rgb, double *temperature, double *green);
 int load_configuration(cfg_data *c);
 int save_configuration(cfg_data *c, developer_data *d,
 	char *confFilename, char *buf, int bufSize);
 
+/* prototype for functions in ufraw_developer.c */
+developer_data *developer_init();
+void developer_destroy(developer_data *d);
+void developer_profile(developer_data *d, int type, profile_data *p);
+void developer_prepare(developer_data *d, int rgbMax, double exposure,
+    int unclip, double temperature, double green,
+    float pre_mul[4], float coeff[3][4], int colors, int useMatrix,
+    profile_data *in, profile_data *out, int intent,
+    double saturation, CurveData *curve);
+void develope(void *po, guint16 pix[4], developer_data *d, int mode,
+    guint16 *buf, int count);
+
 /* prototype for functions in ufraw_saver.c */
 long ufraw_saver(void *widget, gpointer user_data);
 
 /* prototype for functions in ufraw_writer.c */
-int ufraw_write_image(image_data *image);
-int ufraw_batch_saver(image_data *image);
+int ufraw_write_image(ufraw_data *uf);
+int ufraw_batch_saver(ufraw_data *uf);
 
 /* prototype for functions in ufraw_chooser.c */
 void ufraw_chooser(cfg_data *cfg, char *defPath);

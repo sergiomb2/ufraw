@@ -48,13 +48,13 @@
 #include <io.h>
 #endif
 #ifdef WIN32
-#ifndef __MINGW32__ /* causes warnings in cygwin's gcc -mno-cygwin UF*/
 #include <sys/utime.h>
 #include <winsock2.h>
+#ifndef __MINGW32__ /* causes warnings in cygwin's gcc -mno-cygwin UF*/
 #pragma comment(lib, "ws2_32.lib")
+#endif /* __MINGW32__ UF*/
 #define strcasecmp stricmp
 typedef __int64 INT64;
-#endif /* __MINGW32__ UF*/
 #else
 #include <unistd.h>
 #include <utime.h>

@@ -353,8 +353,8 @@ void CLASS convert_to_rgb_INDI(ushort (*image)[4], const int document_mode,
     }
 }
 
-void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p, int *width_p,
-        int *fuji_width_p, const int shrink, const int colors)
+void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
+    int *width_p, int *fuji_width_p, const int colors)
 {
   int height = *height_p, width = *width_p, fuji_width = *fuji_width_p; /*UF*/
   ushort (*image)[4] = *image_p; /*UF*/
@@ -366,7 +366,7 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p, int *width_p,
 
   if (!fuji_width) return;
   dcraw_message (DCRAW_VERBOSE, "Rotating image 45 degrees...\n");
-  fuji_width = (fuji_width + shrink) >> shrink;
+//  fuji_width = (fuji_width + shrink) >> shrink;
   step = 0.5; /* sqrt(0.5); */
   wide = fuji_width / step;
   high = (height - fuji_width) / step;
@@ -386,7 +386,7 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p, int *width_p,
 	  (pix[    0][i]*(1-fc) + pix[      1][i]*fc) * (1-fr) +
 	  (pix[width][i]*(1-fc) + pix[width+1][i]*fc) * fr;
     }
-  free (image);
+ free (image);
   width  = wide;
   height = high;
   image  = img;
