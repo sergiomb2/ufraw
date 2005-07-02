@@ -46,8 +46,6 @@ typedef struct {
 /* All the "global" information is here: */
 typedef struct {
     ufraw_data *UF;
-    /* Config holds infomation that is kept for the next image load */
-    cfg_data *Config;
     cfg_data SaveConfig;
     /* Remember the Gtk Widgets that we need to access later */
     GtkWidget *ControlsBox, *PreviewWidget, *RawHisto, *LiveHisto;
@@ -80,7 +78,7 @@ typedef struct {
 } preview_data;
 
 /* These #defines are not very elegant, but otherwise things get tooo long */
-#define CFG data->Config
+#define CFG data->UF->cfg
 #define Developer data->UF->developer
 #define CFG_cameraCurve (CFG->curve[camera_curve].m_numAnchors>=0)
 
@@ -808,7 +806,6 @@ void update_scales(preview_data *data)
     }
     gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
     gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
-//    gtk_toggle_button_set_active(data->AutoCurveButton, CFG->autoCurve);
 
     gtk_widget_set_sensitive(data->ResetGammaButton,
 	    fabs( profile_default_gamma(&CFG->profile[0][CFG->profileIndex[0]])
@@ -840,7 +837,6 @@ void update_scales_callback(GtkWidget *widget, gpointer user_data)
     CFG->curve[CFG->curveIndex] =
 	*curveeditor_widget_get_curve(data->CurveWidget);
     CFG->autoBlack = FALSE;
-    CFG->autoCurve = FALSE;
     update_scales(data);
 }
 
@@ -874,7 +870,6 @@ void spot_wb(GtkWidget *widget, gpointer user_data)
     CFG->wb = manual_wb;
     if (CFG->autoExposure) ufraw_auto_expose(data->UF);
     CFG->autoBlack = FALSE;
-    CFG->autoCurve = FALSE;
     update_scales(data);
 }
 
@@ -973,15 +968,11 @@ void button_update(GtkWidget *button, gpointer user_data)
 		&CFG->curve[CFG->curveIndex]);
     }
     if (button==GTK_WIDGET(data->AutoCurveButton)) {
-//	CFG->autoCurve = 
-//	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
-//	if (CFG->autoCurve) {
-	    CFG->autoBlack = FALSE;
-	    CFG->curveIndex = manual_curve;
-	    ufraw_auto_curve(data->UF);
-	    curveeditor_widget_set_curve(data->CurveWidget,
+	CFG->autoBlack = FALSE;
+	CFG->curveIndex = manual_curve;
+	ufraw_auto_curve(data->UF);
+	curveeditor_widget_set_curve(data->CurveWidget,
 		&CFG->curve[CFG->curveIndex]);
-//	}
     }
     if (button==data->ResetCurveButton) {
 	if (CFG->curveIndex==manual_curve) {
@@ -997,7 +988,6 @@ void button_update(GtkWidget *button, gpointer user_data)
     if ( button!=GTK_WIDGET(data->AutoBlackButton)
        && button!=GTK_WIDGET(data->AutoCurveButton) ) {
 	CFG->autoBlack = FALSE;
-	CFG->autoCurve = FALSE;
     }
     update_scales(data);
     return;
@@ -1063,7 +1053,6 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
 	CFG->autoExposure = FALSE;
     }
     CFG->autoBlack = FALSE;
-    CFG->autoCurve = FALSE;
     update_scales(data);
 }
 
@@ -1116,7 +1105,6 @@ void combo_update(GtkWidget *combo, gint *valuep)
     }
     if (valuep!=&CFG->interpolation) {
 	CFG->autoBlack = FALSE;
-	CFG->autoCurve = FALSE;
         update_scales(data);
     }
 }
@@ -1150,9 +1138,9 @@ void delete_from_list(GtkWidget *widget, gpointer user_data)
         CFG->profileCount[type]--;
         if (CFG->profileIndex[type]==CFG->profileCount[type]) {
             CFG->profileIndex[type]--;
-	    gtk_combo_box_set_active(data->ProfileCombo[type], 
-		    CFG->profileIndex[type]);
 	}
+	gtk_combo_box_set_active(data->ProfileCombo[type], 
+		CFG->profileIndex[type]);
         for (; index<CFG->profileCount[type]; index++)
             CFG->profile[type][index] = CFG->profile[type][index+1];
     } else {
@@ -1450,7 +1438,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->SaveFunc = save_func;
 
     data->SaveConfig = *uf->cfg;
-    CFG = uf->cfg;
     data->SpotX1 = -1;
     data->FreezeDialog = TRUE;
 
@@ -1686,7 +1673,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     data->ExposureAdjustment = adjustment_scale(table, 0, 0, "Exposure",
-            isnan(CFG->exposure) ? 0 : CFG->exposure, &CFG->exposure,
+            CFG->exposure, &CFG->exposure,
             -3, 3, 0.01, 1.0/6, 2, "EV compensation");
 
     button = gtk_toggle_button_new();
@@ -1771,7 +1758,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    &CFG->curve[CFG->curveIndex]);
     gtk_table_attach(table, data->CurveWidget, 1, 8, 1, 8, GTK_EXPAND, 0, 0, 0);
 
-//    data->AutoCurveButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
     data->AutoCurveButton = GTK_BUTTON(gtk_button_new());
     gtk_container_add(GTK_CONTAINER(data->AutoCurveButton),
 	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
@@ -1779,7 +1765,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    "Auto adjust curve\n(Flatten histogram)", NULL);
     gtk_table_attach(table, GTK_WIDGET(data->AutoCurveButton), 8, 9, 6, 7,
 	    0, 0, GTK_SHRINK, 0);
-//    gtk_toggle_button_set_active(data->AutoCurveButton, CFG->autoCurve);
     g_signal_connect(G_OBJECT(data->AutoCurveButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
@@ -2013,17 +1998,19 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     box = GTK_BOX(gtk_hbox_new(FALSE, 6));
     gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(box), FALSE, FALSE, 6);
+    combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    gtk_combo_box_append_text(combo, "Full interpolation");
+    gtk_combo_box_append_text(combo, "Four color interpolation");
+    gtk_combo_box_append_text(combo, "Quick interpolation");
     if (plugin) {
-        combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-        gtk_combo_box_append_text(combo, "Full interpolation");
-        gtk_combo_box_append_text(combo, "Four color interpolation");
-        gtk_combo_box_append_text(combo, "Quick interpolation");
-        gtk_combo_box_append_text(combo, "half-size interpolation");
-        gtk_combo_box_set_active(combo, CFG->interpolation);
-        g_signal_connect(G_OBJECT(combo), "changed",
-                G_CALLBACK(combo_update), &CFG->interpolation);
-        gtk_box_pack_start(box, GTK_WIDGET(combo), FALSE, FALSE, 0);
+        gtk_combo_box_append_text(combo, "Half-size interpolation");
     }
+    gtk_combo_box_set_active(combo, CFG->interpolation);
+    g_signal_connect(G_OBJECT(combo), "changed",
+            G_CALLBACK(combo_update), &CFG->interpolation);
+    gtk_box_pack_start(box, GTK_WIDGET(combo), FALSE, FALSE, 0);
+
+    /* Options button */
     align = gtk_alignment_new(0.99, 0.5, 0, 1);
     gtk_box_pack_start(box, align, TRUE, TRUE, 6);
     box = GTK_BOX(gtk_hbox_new(TRUE, 6));
@@ -2086,8 +2073,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
         gtk_image_set_from_pixbuf(GTK_IMAGE(data->PreviewWidget), pixbuf);
         g_object_unref(pixbuf);
     }
-    ufraw_message(UFRAW_SET_LOG, "ufraw_preview: rgbMax=%d\n",
-            data->UF->rgbMax);
     preview_progress(previewWindow, progressText, 0);
     data->FreezeDialog = FALSE;
     update_scales(data);
@@ -2103,11 +2088,19 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     /* In interactive mode outputPath is taken into account only once */
     strcpy(uf->cfg->outputPath, "");
-    if (status==GTK_RESPONSE_OK)
+    if (status==GTK_RESPONSE_OK) {
+	if (CFG->saveConfiguration==disabled_state) {
+	    /* Keep only the 'save options' from the current session */
+	    conf_reset_save(&data->SaveConfig, CFG);
+	    *CFG = data->SaveConfig;
+	}
+	/* If save 'only this once' was chosen, then so be it */
+	if (CFG->saveConfiguration==apply_state)
+	    CFG->saveConfiguration = disabled_state;
 	save_configuration(CFG, NULL, NULL, NULL, 0);
-    else *uf->cfg = data->SaveConfig;
-
-    data->UF->developer = NULL;
+    } else {
+	*CFG = data->SaveConfig;
+    }
     ufraw_close(data->UF);
 
     if (status!=GTK_RESPONSE_OK) return UFRAW_CANCEL;

@@ -80,26 +80,18 @@ char *uf_file_set_absolute(const char *filename)
 #endif
 }
 
-double uf_nan()
-{
-#ifdef HAVE_NAN
-    return nan("");
-#else
-    return strtod("NaN", NULL);
-#endif
-}
-
 const cfg_data cfg_default = {
     sizeof(cfg_data), 5, "", "", "",
-    load_default, load_preserve, load_preserve, ppm8_type, 85, no_id,
+    load_default, load_preserve, load_preserve, enabled_state,
+    ppm8_type, 85, no_id,
     TRUE, /* Embed exif data */
-    camera_wb, rgb_histogram, linear_histogram, 128, linear_histogram, 128,
+    rgb_histogram, linear_histogram, 128, linear_histogram, 128,
     { TRUE, TRUE, TRUE, TRUE, TRUE, TRUE }, full_interpolation, 1, 0,
+    camera_wb,
     4750, 1.2, /* temperature, green */
     0.0, 1.0, 0.0, /* exposure, saturation, black */
-    FALSE /* Auto exposure */,
-    FALSE /* Auto black */,
-    FALSE /* Auto curve */,
+    disabled_state /* Auto exposure */,
+    disabled_state /* Auto black */,
     FALSE /* Unclip highlights */,
     FALSE /* Overexposure indicator */,
     FALSE /* Underexposure indicator */,
@@ -450,7 +442,7 @@ void cfg_parse_end(GMarkupParseContext *context, const gchar *element,
 	    c->curve[-c->curveCount].m_numAnchors = 2;
         c->curveCount = - c->curveCount + 1;
     }
-    if (!strcmp("sRGBInputProfile", element)) c->profileCount[0] = 2;
+    if (!strcmp("sRGBInputProfile", element)) c->profileCount[0] = 1;
     if (!strcmp("sRGBOutputProfile", element)) c->profileCount[1] = 1;
     if (c->profileCount[0]<=0 && !strcmp("InputProfile", element))
         c->profileCount[0] = - c->profileCount[0] + 1;
@@ -543,6 +535,8 @@ void cfg_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     if (!strcmp("LoadWB", element)) sscanf(temp, "%d", &c->wbLoad);
     if (!strcmp("LoadCurve", element)) sscanf(temp, "%d", &c->curveLoad);
     if (!strcmp("LoadExposure", element)) sscanf(temp, "%d", &c->exposureLoad);
+    if (!strcmp("SaveConfiguration", element))
+	sscanf(temp, "%d", &c->saveConfiguration);
     if (!strcmp("Interpolation", element))
             sscanf(temp, "%d", &c->interpolation);
     if (!strcmp("RawExpander", element))
@@ -576,7 +570,6 @@ void cfg_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     if (!strcmp("Unclip", element)) sscanf(temp, "%d", &c->unclip);
     if (!strcmp("AutoExposure", element)) sscanf(temp, "%d", &c->autoExposure);
     if (!strcmp("AutoBlack", element)) sscanf(temp, "%d", &c->autoBlack);
-    if (!strcmp("AutoCurve", element)) sscanf(temp, "%d", &c->autoCurve);
     if (!strcmp("CurvePath", element)) g_strlcpy(c->curvePath, temp, max_path);
     if (!strcmp("Intent", element)) sscanf(temp, "%d", &c->intent);
     if (!strcmp("ProfilePath", element))
@@ -709,6 +702,9 @@ int save_configuration(cfg_data *c, developer_data *d,
             cfg_printf("<LoadCurve>%d</LoadCurve>\n", c->curveLoad);
         if (c->exposureLoad!=cfg_default.exposureLoad)
             cfg_printf("<LoadExposure>%d</LoadExposure>\n", c->exposureLoad);
+        if (c->saveConfiguration!=cfg_default.saveConfiguration)
+            cfg_printf("<SaveConfiguration>%d</SaveConfiguration>\n",
+		    c->saveConfiguration);
         if (c->expander[raw_expander]!=cfg_default.expander[raw_expander])
             cfg_printf("<RawExpander>%d</RawExpander>\n",
                     c->expander[raw_expander]);
@@ -770,8 +766,6 @@ int save_configuration(cfg_data *c, developer_data *d,
         cfg_printf("<AutoExposure>%d</AutoExposure>\n", c->autoExposure);
     if (c->autoBlack!=cfg_default.autoBlack)
         cfg_printf("<AutoBlack>%d</AutoBlack>\n", c->autoBlack);
-    if (c->autoCurve!=cfg_default.autoCurve)
-        cfg_printf("<AutoCurve>%d</AutoCurve>\n", c->autoCurve);
     if (c->saturation!=cfg_default.saturation)
         cfg_printf("<Saturation>%lf</Saturation>\n", c->saturation);
     if (c->size!=cfg_default.size)
@@ -871,4 +865,21 @@ int save_configuration(cfg_data *c, developer_data *d,
     if (buf==NULL) fclose(out);
     else if (bufIndex >= bufSize) return UFRAW_ERROR;
     return UFRAW_SUCCESS;
+}
+
+/* Reset the 'save options' in *c to those of *reset */
+void conf_reset_save(cfg_data *c, const cfg_data *reset)
+{
+    g_strlcpy(c->inputFilename, reset->inputFilename, max_path);
+    g_strlcpy(c->outputFilename, reset->outputFilename, max_path);
+    g_strlcpy(c->outputPath, reset->outputPath, max_path);
+    c->saveConfiguration = reset->saveConfiguration;
+    c->type = reset->type;
+    c->compression = reset->compression;
+    c->createID = reset->createID;
+    c->embedExif = reset->embedExif;
+    c->shrink = reset->shrink;
+    c->size = reset->size;
+    c->overwrite = reset->overwrite;
+    c->losslessCompress = reset->losslessCompress;
 }

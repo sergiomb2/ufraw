@@ -183,11 +183,9 @@ int ufraw_config(ufraw_data *uf, cfg_data *cfg)
         cfg->exposure = cfg_default.exposure;
     }
     if (cfg->exposureLoad==load_auto) {
-	cfg->autoExposure = TRUE;
-	cfg->autoBlack = TRUE;
+	cfg->autoExposure = apply_state;
+	cfg->autoBlack = apply_state;
     }
-    if (cfg->autoExposure==TRUE) cfg->exposure = uf_nan();
-    if (cfg->autoBlack==TRUE) cfg->black = uf_nan();
 
     if (uf==NULL) return UFRAW_SUCCESS;
     uf->cfg = cfg;
@@ -287,8 +285,8 @@ int ufraw_convert_image(ufraw_data *uf)
 	g_free(uf->image.image);
         uf->image.image = final.image;
         ufraw_set_wb(uf);
-        if (isnan(uf->cfg->exposure)) ufraw_auto_expose(uf);
-        if (isnan(uf->cfg->black)) ufraw_auto_black(uf);
+        if (uf->cfg->autoExposure==apply_state) ufraw_auto_expose(uf);
+        if (uf->cfg->autoBlack==apply_state) ufraw_auto_black(uf);
         developer_prepare(uf->developer, uf->rgbMax,
                 pow(2,cfg->exposure), cfg->unclip,
                 cfg->temperature, cfg->green,
@@ -298,7 +296,8 @@ int ufraw_convert_image(ufraw_data *uf)
                 cfg->saturation,
                 &cfg->curve[cfg->curveIndex]);
     } else {
-        if ( isnan(uf->cfg->exposure) || isnan(uf->cfg->black) ) {
+        if ( uf->cfg->autoExposure==apply_state ||
+	     uf->cfg->autoBlack==apply_state ) {
             int shrinkSave = uf->cfg->shrink;
             int sizeSave = uf->cfg->size;
             uf->cfg->shrink = 8;
@@ -407,6 +406,7 @@ void ufraw_auto_expose(ufraw_data *uf)
     for (wp=0xFFFF, sum=0; wp>0 && sum<stop; wp--)
         sum += raw_histogram[wp];
     uf->cfg->exposure = -log((double)wp/uf->developer->rgbMax)/log(2);
+    uf->cfg->autoExposure = enabled_state;
     if (!uf->cfg->unclip)
         uf->cfg->exposure = MAX(uf->cfg->exposure,0);
     ufraw_message(UFRAW_SET_LOG, "ufraw_auto_expose: "
@@ -439,11 +439,9 @@ void ufraw_auto_black(ufraw_data *uf)
     }
     for (bp=0, sum=0; bp<0x100 && sum<stop; bp++)
         sum += preview_histogram[bp];
-    /* Notice that the value of cfg->black is not important. It is only
-     * relevant that it is not is_nan() indicating that it was calculated */
-    uf->cfg->black = (double)bp/256;
     CurveDataSetPoint(&uf->cfg->curve[uf->cfg->curveIndex],
-	    0, uf->cfg->black, 0);
+	    0, (double)bp/256, 0);
+    uf->cfg->autoBlack = enabled_state;
     g_free(p8);
     g_free(pixtmp);
     ufraw_message(UFRAW_SET_LOG, "ufraw_auto_black: "

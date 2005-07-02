@@ -65,9 +65,10 @@ long ufraw_saver(void *widget, gpointer user_data)
 {
     GtkWindow *parentWindow;
     GtkFileChooser *fileChooser;
-    GtkWidget *expander, *box, *table, *widg, *button, *overwriteButton;
+    GtkWidget *expander, *box, *table, *widg, *button, *align, *overwriteButton;
+    GtkWidget *event, *label;
     GtkAdjustment *shrinkAdj, *heightAdj, *widthAdj;
-    GtkComboBox *intCombo, *idCombo;
+    GtkComboBox *intCombo, *idCombo, *confCombo;
     GtkToggleButton *ppmButton, *tiffButton, *jpegButton;
 #if defined(HAVE_LIBZ) && defined(HAVE_LIBTIFF)
     GtkWidget *losslessButton;
@@ -176,6 +177,8 @@ long ufraw_saver(void *widget, gpointer user_data)
     gtk_file_chooser_set_current_name(fileChooser, base);
     g_free(base);
 
+    GtkTooltips *tips = gtk_tooltips_new();
+
     expander = gtk_expander_new("Output options");
     gtk_expander_set_expanded(GTK_EXPANDER(expander), TRUE);
     gtk_file_chooser_set_extra_widget(fileChooser, expander);
@@ -191,11 +194,13 @@ long ufraw_saver(void *widget, gpointer user_data)
     gtk_combo_box_append_text(intCombo, "Four color interpolation");
     gtk_combo_box_append_text(intCombo, "Quick interpolation");
     gtk_combo_box_set_active(intCombo, uf->cfg->interpolation);
-    gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(intCombo), TRUE, TRUE, 0);
+    align = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
+    gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(intCombo));
+    gtk_box_pack_start(GTK_BOX(box), align, FALSE, FALSE, 0);
 
     table = gtk_table_new(5, 1, FALSE);
     gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
-    widg = gtk_label_new("Shrink factor");
+    widg = gtk_label_new("Shrink factor ");
     gtk_table_attach(GTK_TABLE(table), widg, 0, 1, 1, 2, 0, 0, 0, 0);
     shrinkAdj = GTK_ADJUSTMENT(gtk_adjustment_new(shrink,
             1, 100, 1, 2, 3));
@@ -205,7 +210,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     widg = gtk_spin_button_new(shrinkAdj, 1, 3);
     gtk_table_attach(GTK_TABLE(table), widg, 1, 2, 1, 2, 0, 0, 0, 0);
 
-    widg = gtk_label_new(" Height");
+    widg = gtk_label_new("\tHeight ");
     gtk_table_attach(GTK_TABLE(table), widg, 2, 3, 1, 2, 0, 0, 0, 0);
     heightAdj = GTK_ADJUSTMENT(gtk_adjustment_new(height,
             uf->predictateHeight/100, uf->predictateHeight, 10, 100, 0));
@@ -215,7 +220,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     widg = gtk_spin_button_new(heightAdj, 10, 0);
     gtk_table_attach(GTK_TABLE(table), widg, 3, 4, 1, 2, 0, 0, 0, 0);
 
-    widg = gtk_label_new(" Width");
+    widg = gtk_label_new("\tWidth ");
     gtk_table_attach(GTK_TABLE(table), widg, 4, 5, 1, 2, 0, 0, 0, 0);
     widthAdj = GTK_ADJUSTMENT(gtk_adjustment_new(width,
             uf->predictateWidth/100, uf->predictateWidth, 10, 100, 0));
@@ -304,12 +309,32 @@ long ufraw_saver(void *widget, gpointer user_data)
 #endif /*HAVE_LIBJPEG*/
 
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
+    table = gtk_table_new(1, 5, FALSE);
+    gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
+    label = gtk_label_new("Create ID file ");
+    gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, 0, 0, 0, 0);
     idCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    gtk_combo_box_append_text(idCombo, "Do not create ID file");
-    gtk_combo_box_append_text(idCombo, "Create also ID file");
-    gtk_combo_box_append_text(idCombo, "Create only ID file");
+    gtk_combo_box_append_text(idCombo, "No");
+    gtk_combo_box_append_text(idCombo, "Also");
+    gtk_combo_box_append_text(idCombo, "Only");
     gtk_combo_box_set_active(idCombo, uf->cfg->createID);
-    gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(idCombo), TRUE, FALSE, 0);
+    gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(idCombo), 1, 2, 0, 1,
+	    0, 0, 0, 0);
+
+    label = gtk_label_new("\tSave image defaults ");
+    event = gtk_event_box_new();
+    gtk_container_add(GTK_CONTAINER(event), label);
+    gtk_tooltips_set_tip(tips, event,
+	    "Save current image manipulation parameters as defaults.\n"
+	    "The output parameters in this window are always saved.", NULL);
+    gtk_table_attach(GTK_TABLE(table), event, 3, 4, 0, 1, 0, 0, 0, 0);
+    confCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    gtk_combo_box_append_text(confCombo, "Never again");
+    gtk_combo_box_append_text(confCombo, "Always");
+    gtk_combo_box_append_text(confCombo, "Just this once");
+    gtk_combo_box_set_active(confCombo, uf->cfg->saveConfiguration);
+    gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(confCombo), 4, 5, 0, 1,
+	    0, 0, 0, 0);
 
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
     overwriteButton = gtk_check_button_new_with_label(
@@ -375,6 +400,7 @@ long ufraw_saver(void *widget, gpointer user_data)
         filename = gtk_file_chooser_get_filename(fileChooser);
         uf->cfg->interpolation = gtk_combo_box_get_active(intCombo);
         uf->cfg->createID = gtk_combo_box_get_active(idCombo);
+        uf->cfg->saveConfiguration = gtk_combo_box_get_active(confCombo);
 	if (fabs(shrink-floor(shrink+0.0005))<0.0005) {
 	    uf->cfg->shrink = floor(shrink+0.0005);
 	    uf->cfg->size = 0;
@@ -429,6 +455,7 @@ long ufraw_saver(void *widget, gpointer user_data)
                 g_object_set_data(G_OBJECT(parentWindow), "WindowResponse",
                         (gpointer)GTK_RESPONSE_CANCEL);
             gtk_main_quit();
+	    gtk_object_sink(GTK_OBJECT(tips));
             return UFRAW_SUCCESS;
         }
     }

@@ -16,7 +16,6 @@
 #include <stdlib.h>    /* for exit */
 #include <errno.h>     /* for errno */
 #include <string.h>
-#include <math.h>      /* for isnan */
 #include <getopt.h>
 #ifdef UFRAW_BATCH
 #include <glib.h>
@@ -58,10 +57,10 @@ char helpText[]=
 "                      Auto exposure or exposure correction in EV (default 0).\n"
 "--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"
+"--interpolation=full|four-color|quick\n"
 "\n"
 "The options which are related to the final output are:\n"
 "\n"
-"--interpolation=full|four-color|quick|half\n"
 "                      Interpolation algorithm to use (default full).\n"
 "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
 "--size=SIZE           Downsize max(height,width) to SIZE.\n"
@@ -125,8 +124,8 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, gboolean *batch)
         &cmd->exposure, &cmd->black, &interpolationName,
 	&cmd->shrink, &cmd->size, &cmd->compression,
 	&outTypeName, &createIDName, &outPath, &output };
-    cmd->autoExposure = FALSE;
-    cmd->autoBlack = FALSE;
+    cmd->autoExposure = disabled_state;
+    cmd->autoBlack = disabled_state;
     cmd->unclip=-1;
     cmd->losslessCompress=-1;
     cmd->overwrite=-1;
@@ -148,12 +147,12 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, gboolean *batch)
         switch (c) {
         case 'e':
 	    if (!strcmp(optarg, "auto")) {
-		cmd->autoExposure = TRUE;
+		cmd->autoExposure = apply_state;
 		break;
 	    }
         case 'k':
 	    if (!strcmp(optarg, "auto")) {
-		cmd->autoBlack = TRUE;
+		cmd->autoBlack = apply_state;
 		break;
 	    }
         case 't':
@@ -252,8 +251,6 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, gboolean *batch)
             cmd->interpolation = four_color_interpolation;
         else if (!strcmp(interpolationName, "quick"))
             cmd->interpolation = quick_interpolation;
-        else if (!strcmp(interpolationName, "half"))
-            cmd->interpolation = half_interpolation;
         else {
             ufraw_message(UFRAW_ERROR,
                 "'%s' is not a valid interpolation option.\n",
@@ -357,6 +354,8 @@ int main (int argc, char **argv)
 #endif
     const char *locale;
 
+    /* Disable the Hebrew and Arabic locale, since the right-to-left setting
+     * does not go well with the preview window. */
     locale = setlocale(LC_ALL, "");
     if ( locale!=NULL &&
         (!strncmp(locale, "he", 2) || !strncmp(locale, "iw", 2) ||
@@ -391,27 +390,20 @@ int main (int argc, char **argv)
     }
 #endif
     ufraw_config(NULL, &cfg);
+    /* Half interpolation is an option only for the gimp plug-in.
+     * For the stand-alone tool it is disabled */
+    if (cfg.interpolation==half_interpolation)
+	cfg.interpolation = full_interpolation;
+
     if (batch) {
         /* The save options are always set to default */
-        if (cfg.interpolation!=four_color_interpolation)
-            cfg.interpolation = full_interpolation;
-        cfg.shrink = cfg_default.shrink;
-        cfg.size = cfg_default.size;
-        cfg.type = cfg_default.type;
-	cfg.createID = cfg_default.createID;
-	cfg.embedExif = cfg_default.embedExif;
-        cfg.compression = cfg_default.compression;
-        cfg.losslessCompress = cfg_default.losslessCompress;
-        cfg.overwrite = FALSE;
+	conf_reset_save(&cfg, &cfg_default);
         /* Disable some of the resetting done in ufraw_config() */
         cfg.wbLoad = load_preserve;
         cfg.curveLoad = load_preserve;
         if (cfg.exposureLoad!=load_auto ||
                 cmd.exposure!=NULLF || cmd.black!=NULLF)
             cfg.exposureLoad = load_preserve;
-        if (isnan(cfg.exposure)
-		&& cmd.exposure==NULLF && cmd.black!=NULLF)
-            cmd.exposure = cfg_default.exposure;
     }
     if (cmd.overwrite!=-1) cfg.overwrite = cmd.overwrite;
     if (cmd.unclip!=-1) cfg.unclip = cmd.unclip;
@@ -419,12 +411,11 @@ int main (int argc, char **argv)
     if (cmd.embedExif!=-1) cfg.embedExif = cmd.embedExif;
     if (cmd.compression!=NULLF) cfg.compression = cmd.compression;
     if (cmd.autoExposure) {
-	cfg.exposure = uf_nan();
-	cfg.autoExposure = TRUE;
+	cfg.autoExposure = cmd.autoExposure;
     }
     if (cmd.exposure!=NULLF) {
 	cfg.exposure = cmd.exposure;
-	cfg.autoExposure = FALSE;
+	cfg.autoExposure = disabled_state;
     }
     if (cmd.wb>=0) cfg.wb = cmd.wb;
     if (cmd.temperature!=NULLF) cfg.temperature = cmd.temperature;
@@ -438,13 +429,12 @@ int main (int argc, char **argv)
 	cfg.saturation=cmd.saturation;
     if (cmd.curveIndex>=0) cfg.curveIndex = cmd.curveIndex;
     if (cmd.autoBlack) {
-	cfg.black = uf_nan();
-	cfg.autoBlack = TRUE;
+	cfg.autoBlack = cmd.autoBlack;
     }
     if (cmd.black!=NULLF) {
 	CurveDataSetPoint(&cfg.curve[cfg.curveIndex],
 		0, cmd.black, 0);
-	cfg.autoBlack = FALSE;
+	cfg.autoBlack = disabled_state;
     }
     if (cmd.interpolation>=0) cfg.interpolation = cmd.interpolation;
     if (cmd.shrink!=NULLF) {

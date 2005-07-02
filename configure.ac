@@ -10,6 +10,7 @@ AC_PROG_CC
 AC_PROG_INSTALL
 
 CFLAGS="$CFLAGS -W -Wall -O3 -ffast-math -fomit-frame-pointer"
+LDFLAGS="$LDFLAGS -Wl,--as-needed"
 
 # Set default PREFIX, if not already defined according to os.
 # windows will require some special attention
@@ -106,8 +107,9 @@ AC_SEARCH_LIBS(getopt_long, gnugetopt, ,
 if test $ufraw_win32 = yes; then
   LIBS="$LIBS -lws2_32"
 fi
-AC_SEARCH_LIBS(nan, m)
-AC_CHECK_FUNCS(nan canonicalize_file_name)
+# Make sure that libm is in the list of libraries.
+AC_SEARCH_LIBS(pow, m)
+AC_CHECK_FUNCS(canonicalize_file_name)
 
 # Check for jpeg development package
 have_jpeg=yes

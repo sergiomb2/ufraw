@@ -26,6 +26,10 @@
 #define max_path 200
 #define max_name 80
 
+/* Options, like auto-adjust buttons can be in 3 states. Enabled and disabled
+ * are obvious. Apply means that the option was selected and some function
+ * has to act accourdingly, before changing to one of the first two states */
+enum { disabled_state, enabled_state, apply_state };
 enum { manual_wb, camera_wb, auto_wb };
 enum { rgb_histogram, r_g_b_histogram, luminosity_histogram, value_histogram,
        saturation_histogram };
@@ -76,12 +80,14 @@ typedef struct {
     int cfgSize, version;
     char inputFilename[max_path], outputFilename[max_path],
 	 outputPath[max_path];
-    int wbLoad, curveLoad, exposureLoad, type, compression, createID, embedExif;
-    int wb, histogram, liveHistogramScale, liveHistogramHeight;
+    int wbLoad, curveLoad, exposureLoad, saveConfiguration;
+    int type, compression, createID, embedExif;
+    int histogram, liveHistogramScale, liveHistogramHeight;
     int rawHistogramScale, rawHistogramHeight;
     int expander[expander_count], interpolation, shrink, size;
+    int wb;
     double temperature, green, exposure, saturation, black;
-    gboolean autoExposure, autoBlack, autoCurve;
+    int autoExposure, autoBlack;
     gboolean unclip, overExp, underExp, overwrite, losslessCompress;
     int curveIndex, curveCount;
     CurveData curve[max_curves];
@@ -139,7 +145,6 @@ void preview_progress(void *widget, char *text, double progress);
 const char *uf_get_home_dir();
 char *uf_file_set_type(const char *filename, const char *type);
 char *uf_file_set_absolute(const char *filename);
-double uf_nan();
 double profile_default_linear(profile_data *p);
 double profile_default_gamma(profile_data *p);
 int curve_load(CurveData *cp, char *filename);
@@ -149,6 +154,8 @@ void RGB_to_temperature(double *rgb, double *temperature, double *green);
 int load_configuration(cfg_data *c);
 int save_configuration(cfg_data *c, developer_data *d,
 	char *confFilename, char *buf, int bufSize);
+/* Reset the 'save options' in *c to those of *reset */
+void conf_reset_save(cfg_data *c, const cfg_data *reset);
 
 /* prototype for functions in ufraw_developer.c */
 developer_data *developer_init();

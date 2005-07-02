@@ -162,7 +162,7 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     if (d->useMatrix) {
 	for (i=0; i<count; i++) for (cc=0; cc<3; cc++) {
 	    for (c=0, tmp=0; c<d->colors; c++)
-		tmp += (guint64)pix[i*4+c] * d->rgbWB[c]
+		tmp += (gint64)pix[i*4+c] * d->rgbWB[c]
 			* d->colorMatrix[cc][c];
 	    tmp /= d->rgbMax * 0x10000;
 	    buf[i*3+cc] = d->gammaCurve[MIN(MAX(tmp, 0), d->max)];
