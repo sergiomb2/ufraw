@@ -484,7 +484,7 @@ gboolean render_raw_histogram(preview_data *data)
 	/* draw the raw histogram */
         for (c=0, y0=0; c<colors; c++) {
 	    for (cl=0; cl<colors; cl++) p16[cl] = 0;
-	    p16[c] = 0xFFFF;
+	    p16[c] = data->UF->rgbMax;
             develope(pen, p16, Developer, 8, pixtmp, 1);
 	    for (y=0; y<raw_his[x][c]*CFG->rawHistogramHeight/raw_his_max; y++)
 		for (cl=0; cl<3; cl++)
@@ -495,7 +495,7 @@ gboolean render_raw_histogram(preview_data *data)
 	/* draw curves on the raw histogram */
         for (c=0; c<colors; c++) {
 	    for (cl=0; cl<colors; cl++) p16[cl] = 0;
-	    p16[c] = 0xFFFF;
+	    p16[c] = data->UF->rgbMax;
             develope(pen, p16, Developer, 8, pixtmp, 1);
             /* Value for pixel x of color c in a grey pixel */
             for (cl=0; cl<colors; cl++)
@@ -503,14 +503,14 @@ gboolean render_raw_histogram(preview_data *data)
                           Developer->rgbWB[c] /
                           Developer->rgbWB[cl] / raw_his_size, 0xFFFF);
             develope(p8, p16, Developer, 8, pixtmp, 1);
-            y=MAX(MAX(p8[1],p8[2]),p8[3]) * (CFG->rawHistogramHeight-1)/MAXOUT;
+            y=MAX(MAX(p8[0],p8[1]),p8[2]) * (CFG->rawHistogramHeight-1)/MAXOUT;
             /* Value for pixel x+1 of color c in a grey pixel */
             for (cl=0; cl<colors; cl++)
                 p16[cl] = MIN((guint64)(x+1)*Developer->rgbMax *
                          Developer->rgbWB[c] /
                          Developer->rgbWB[cl]/raw_his_size-1, 0xFFFF);
             develope(p8, p16, Developer, 8, pixtmp, 1);
-            y1=MAX(MAX(p8[1],p8[2]),p8[3]) * (CFG->rawHistogramHeight-1)/MAXOUT;
+            y1=MAX(MAX(p8[0],p8[1]),p8[2]) * (CFG->rawHistogramHeight-1)/MAXOUT;
             for (; y<=y1; y++)
 		for (cl=0; cl<3; cl++)
 		    pixies[(CFG->rawHistogramHeight-y)*rowstride
@@ -519,16 +519,16 @@ gboolean render_raw_histogram(preview_data *data)
             p16[0] = p16[1] = p16[2] = p16[3] = 0;
             p16[c] = MIN((guint64)x*Developer->rgbMax/raw_his_size, 0xFFFF);
             develope(p8, p16, Developer, 8, pixtmp, 1);
-            y1=MAX(MAX(p8[1],p8[2]),p8[3]) * (CFG->rawHistogramHeight-1)/MAXOUT;
+            y1=MAX(MAX(p8[0],p8[1]),p8[2]) * (CFG->rawHistogramHeight-1)/MAXOUT;
             for (; y<y1; y++)
 		for (cl=0; cl<3; cl++)
 		    pixies[(CFG->rawHistogramHeight-y)*rowstride
-			    + 3*(x+1)+cl] = pen[cl]/4;
+			    + 3*(x+1)+cl] = pen[cl]/2;
             /* Value for pixel x+1 of pure color c */
             p16[c] = MIN((guint64)(x+1)*Developer->rgbMax/raw_his_size - 1,
                      0xFFFF);
             develope(p8, p16, Developer, 8, pixtmp, 1);
-            y1=MAX(MAX(p8[1],p8[2]),p8[3]) * (CFG->rawHistogramHeight-1)/MAXOUT;
+            y1=MAX(MAX(p8[0],p8[1]),p8[2]) * (CFG->rawHistogramHeight-1)/MAXOUT;
             for (; y<=y1; y++)
 		for (cl=0; cl<3; cl++)
 		    pixies[(CFG->rawHistogramHeight-y)*rowstride

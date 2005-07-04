@@ -142,6 +142,8 @@ int dcraw_load_raw(dcraw_data *h)
     if (is_foveon) {
         dcraw_message(DCRAW_VERBOSE, "Foveon interpolation\n");
         foveon_interpolate();
+	h->raw.width = width;
+	h->raw.height = height;
     }
     fclose(ifp);
     h->ifp = NULL;
@@ -199,7 +201,7 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh, int scale)
 	    }
 	}
     } else {
-	scale /= 2;
+	if (hh->filters!=0) scale /= 2;
         /* I'm skiping the last row/column if it is not a full row/column */
 	f->height = h = hh->raw.height / scale;
 	f->width = w = hh->raw.width / scale;
@@ -309,13 +311,12 @@ int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB)
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 	int quick, int fourColors, int rgbWB[4])
 {
-    int fujiWidth, i, r, c;
-    unsigned cl, ff, f4;
+    int fujiWidth, i, r, c, cl;
+    unsigned ff, f4;
 
     g_free(messageBuffer);
     messageBuffer = NULL;
     lastStatus = DCRAW_SUCCESS;
-    if (!h->filters) return lastStatus;
 
     f->width = h->width;
     f->height = h->height;
@@ -324,6 +325,15 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     f->trim = h->trim;
     f->image = g_new0(dcraw_image_type, f->height * f->width);
 
+    if (h->filters==0) {
+	for (r=0; r<h->height; r++)
+	    for (c=0; c<h->width; c++)
+		for (cl=0; cl<h->colors; cl++)
+		    f->image[r*f->width+c][cl] = MIN( MAX( (gint64)
+			    (h->raw.image[r*h->raw.width+c][cl] - h->black) *
+				rgbWB[cl]/(h->rgbMax-h->black), 0), 0xFFFF);
+	return lastStatus;
+    }
     cl = h->colors;
     if (fourColors && h->colors == 3) {
 	ff = h->fourColorFilters;
