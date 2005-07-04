@@ -10,7 +10,8 @@ AC_PROG_CC
 AC_PROG_INSTALL
 
 CFLAGS="$CFLAGS -W -Wall -O3 -ffast-math -fomit-frame-pointer"
-LDFLAGS="$LDFLAGS -Wl,--as-needed"
+# Uncomment next line to make ufraw-batch independent of gtk shared libraries
+#LDFLAGS="$LDFLAGS -Wl,--as-needed"
 
 # Set default PREFIX, if not already defined according to os.
 # windows will require some special attention
@@ -39,7 +40,8 @@ if test $ufraw_win32 = yes; then
   CFLAGS="$CFLAGS -mno-cygwin -mwindows -mms-bitfields"
   CONSOLE="-mconsole"
   AC_SUBST(CONSOLE)
-  AC_PREFIX_DEFAULT($PREFIX)
+  #AC_PREFIX_DEFAULT($PREFIX) # this ac macro ignores the test condition
+  prefix=$PREFIX
 fi
 
 # PREFIX points to none default locations of headers and libraries.
