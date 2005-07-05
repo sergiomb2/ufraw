@@ -187,11 +187,11 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh, int scale)
 		for (cl=0; cl<hh->raw.colors; cl++) sum[cl] = count[cl] = 0;
 		for (ri=0; ri<scale; ri++)
 		    for (ci=0; ci<scale; ci++) {
-			sum[FC(f4, (r*scale+ri)/2, (c*scale+ci)/2)] +=
+			sum[FC(f4, r*scale+ri, c*scale+ci)] +=
 			    hh->raw.image
 				[(r*scale+ri)/2*hh->raw.width+(c*scale+ci)/2]
-				[FC(f4, (r*scale+ri)/2,(c*scale+ci)/2)];
-			count[FC(f4, (r*scale+ri)/2,(c*scale+ci)/2)]++;
+				[FC(f4, r*scale+ri, c*scale+ci)];
+			count[FC(f4, r*scale+ri, c*scale+ci)]++;
 		    }
 		for (cl=0; cl<hh->raw.colors; cl++)
 		    f->image[r*w+c][cl] =

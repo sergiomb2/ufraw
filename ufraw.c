@@ -46,9 +46,10 @@ char helpText[]=
 "--wb=camera|auto      White balance setting.\n"
 "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
 "--green=GREEN         Green color normalization.\n"
-"--curve=linear|camera\n"
-"                      Type of tone curve to use (default camera if such\n"
-"                      exsists, linear otherwise).\n"
+"--curve=manual|linear|camera|CURVE\n"
+"                      Type of tone curve to use. CURVE can be any curve\n"
+"                      that was previously loaded in the GUI.\n"
+"                      (default camera if such exsists, linear otherwise).\n"
 "--[no]unclip          Unclip [clip] highlights.\n"
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
@@ -65,7 +66,7 @@ char helpText[]=
 "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
 "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 "--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
-"                      Output file formati (default ppm8).\n"
+"                      Output file format (default ppm8).\n"
 "--create-id=no|also|only\n"
 "                      Create no|also|only ID file (default no).\n"
 "--compression=VALUE   JPEG compression (0-100, default 85).\n"
@@ -82,9 +83,10 @@ char helpText[]=
 "\n"
 "Last, but not least, --help displays this help message and exits.\n";
 
-void process_args(int *argc, char ***argv, cfg_data *cmd, gboolean *batch)
+void process_args(int *argc, char ***argv, cfg_data *cmd, cfg_data *cfg,
+	gboolean *batch)
 {
-    int index=0, c;
+    int index=0, c, i;
     char *wbName=NULL;
     char *curveName=NULL, *outTypeName=NULL, *createIDName=NULL,
 	 *outPath=NULL, *output=NULL, *interpolationName=NULL;
@@ -235,12 +237,22 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, gboolean *batch)
     }
     cmd->curveIndex = -1;
     if (curveName!=NULL) {
-        if (!strcmp(curveName, "linear")) cmd->curveIndex=linear_curve;
+        if (!strcmp(curveName, "manual")) cmd->curveIndex=manual_curve;
+	else if (!strcmp(curveName, "linear")) cmd->curveIndex=linear_curve;
         else if (!strcmp(curveName, "camera")) cmd->curveIndex=camera_curve;
         else {
-            ufraw_message(UFRAW_ERROR,
-                "'%s' is not a valid curve name.\n", curveName);
-            exit(1);
+	    cmd->curveIndex = -1;
+	    for( i = camera_curve + 1; i < cfg->curveCount; i++ ) {
+		if( !strcmp( curveName, cfg->curve[i].name )) {
+		    cmd->curveIndex = i;
+		    break;
+		}
+	    }
+	    if( cmd->curveIndex == -1 ) {
+		ufraw_message(UFRAW_ERROR,
+			"'%s' is not a valid curve name.\n", curveName);
+		exit(1);
+	    }
         }
     }
     cmd->interpolation = -1;
@@ -379,7 +391,8 @@ int main (int argc, char **argv)
 #endif
 #endif
 
-    process_args(&argc, &argv, &cmd, &batch);
+    ufraw_config(NULL, &cfg);
+    process_args(&argc, &argv, &cmd, &cfg, &batch);
 
 #ifndef UFRAW_BATCH
     if (!batch && dummyWindow==NULL) {
@@ -389,7 +402,6 @@ int main (int argc, char **argv)
         ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
     }
 #endif
-    ufraw_config(NULL, &cfg);
     /* Half interpolation is an option only for the gimp plug-in.
      * For the stand-alone tool it is disabled */
     if (cfg.interpolation==half_interpolation)
