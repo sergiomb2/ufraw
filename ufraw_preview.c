@@ -1269,7 +1269,10 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_container_add(GTK_CONTAINER(page), text);
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text), FALSE);
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
-    gtk_text_buffer_set_text(buffer, ufraw_message(UFRAW_GET_LOG, NULL), -1);
+    char *utf8_log = g_filename_to_utf8(ufraw_message(UFRAW_GET_LOG, NULL),
+	    -1, NULL, NULL, NULL);
+    gtk_text_buffer_set_text(buffer, utf8_log, -1);
+    g_free(utf8_log);
 
     label = gtk_label_new("About");
     box = gtk_vbox_new(FALSE, 0);
@@ -1324,7 +1327,9 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
             gtk_table_attach(table, button, 1, 2, i, i+1, 0, 0, 0, 0);
         }
         save_configuration(CFG, Developer, NULL, buf, 10000);
-        gtk_text_buffer_set_text(cfgBuffer, buf, -1);
+	char *utf8_buf = g_filename_to_utf8(buf, -1, NULL, NULL, NULL);
+        gtk_text_buffer_set_text(cfgBuffer, utf8_buf, -1);
+	g_free(utf8_buf);
         gtk_widget_show_all(optionsDialog);
         if (gtk_dialog_run(GTK_DIALOG(optionsDialog))!=
                     GTK_RESPONSE_APPLY) {
@@ -1424,7 +1429,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     GSList *group;
     GdkPixbuf *pixbuf;
     GdkRectangle screen;
-    char previewHeader[max_path];
     int max_preview_width, max_preview_height;
     int preview_width, preview_height, scale, shrinkSave, sizeSave, i;
     long j;
@@ -1443,9 +1447,16 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     data->ToolTips = gtk_tooltips_new();
     previewWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    snprintf(previewHeader, max_path, "%s - UFRaw Photo Loader",
-            uf->filename);
+
+    char *utf8_filename = g_filename_to_utf8(uf->filename,
+	    -1, NULL, NULL, NULL);
+    if (utf8_filename==NULL) utf8_filename = g_strdup("Unknow file name");
+    char *previewHeader = g_strdup_printf("%s - UFRaw Photo Loader",
+            utf8_filename);
     gtk_window_set_title(GTK_WINDOW(previewWindow), previewHeader);
+    g_free(previewHeader);
+    g_free(utf8_filename);
+
     gtk_window_set_icon(GTK_WINDOW(previewWindow),
             gdk_pixbuf_new_from_inline(-1, ufraw_icon, FALSE, NULL));
     gtk_window_set_resizable(GTK_WINDOW(previewWindow), FALSE);

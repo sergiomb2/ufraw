@@ -73,9 +73,13 @@ Draws the curve on the drawing area.
 ***********************************************/
 void curveeditor_widget_draw(CurveEditorWidgetData *data)
 {
+    if (data->pixmap==NULL) return;
+
     GdkPoint graphPoints[NIKON_MAX_ANCHORS];
     //get the graphics context
     GdkGC *gc = gdk_gc_new(data->pixmap);
+    GdkColormap *colormap = gdk_colormap_new(gdk_rgb_get_visual(), FALSE);
+    gdk_gc_set_colormap(gc, colormap);
     //Used to alter colors while drawing
     GdkColor color;
     CurveData *curve = data->curve;
@@ -202,6 +206,8 @@ void curveeditor_widget_draw(CurveEditorWidgetData *data)
 		graphPoints[data->selectedPoint].y - 1, 5, 5);
     }
     gtk_widget_queue_draw(data->widget);
+    g_object_unref(gc);
+    g_object_unref(colormap);
 }
 
 /********************************************************
@@ -290,10 +296,17 @@ gboolean curveeditor_widget_on_button_press_event (GtkWidget * widget,
 /********************************************************
 curveeditor_widget_on_show_event:
 *********************************************************/
-void curveeditor_widget_on_show_event(GtkWidget *widget,
+void curveeditor_widget_on_realize(GtkWidget *widget,
 	CurveEditorWidgetData *data)
 {
-    widget = widget;
+    /* We can create the pixmap only after widget is connected to
+     * a GdkWindow. It is needed to get the depth of the pixmap */
+    data->pixmap = gdk_pixmap_new(gtk_widget_get_parent_window(widget),
+	    data->width, data->height, -1);
+    GtkWidget *curveImage = gtk_image_new_from_pixmap(data->pixmap, NULL);
+    g_object_unref(data->pixmap);
+    gtk_container_add(GTK_CONTAINER(widget), curveImage);
+    gtk_widget_show(curveImage);
     curveeditor_widget_draw(data);
 }
 
@@ -525,17 +538,15 @@ GtkWidget *curveeditor_widget_new(int height, int width,
 {
     CurveEditorWidgetData *data = g_new0(CurveEditorWidgetData,1);
     CurveData *curve = g_new0(CurveData,1);
-    GtkWidget *curveImage, *curveEventBox, *curveAlign;
+    GtkWidget *curveEventBox, *curveAlign;
 
-    data->pixmap = gdk_pixmap_new(NULL, width, height, 24);
-    curveImage = gtk_image_new_from_pixmap(data->pixmap, NULL);
-    g_object_unref(data->pixmap);
     curveEventBox = gtk_event_box_new();
     GTK_WIDGET_SET_FLAGS (curveEventBox, GTK_CAN_FOCUS);
-    gtk_container_add(GTK_CONTAINER(curveEventBox), curveImage);
+    gtk_widget_set_size_request(curveEventBox, width, height);
     curveAlign = gtk_alignment_new(0.5, 0.5, 0, 0);
     gtk_container_add(GTK_CONTAINER(curveAlign), curveEventBox);
 
+    data->pixmap = NULL;
     data->curve = curve;
     data->widget = curveAlign;
     data->height = height;
@@ -546,8 +557,8 @@ GtkWidget *curveeditor_widget_new(int height, int width,
 
     g_signal_connect_after((gpointer)curveEventBox, "button-press-event",
 	G_CALLBACK (curveeditor_widget_on_button_press_event), data);
-    g_signal_connect_after((gpointer)curveEventBox, "show",
-	G_CALLBACK(curveeditor_widget_on_show_event), data);
+    g_signal_connect_after((gpointer)curveEventBox, "realize",
+	G_CALLBACK(curveeditor_widget_on_realize), data);
     g_signal_connect_after((gpointer)curveEventBox, "motion-notify-event",
 	G_CALLBACK(curveeditor_widget_on_motion_notify_event), data);
     g_signal_connect_after((gpointer)curveEventBox, "key-press-event",
