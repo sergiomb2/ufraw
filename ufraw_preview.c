@@ -1271,6 +1271,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
     char *utf8_log = g_filename_to_utf8(ufraw_message(UFRAW_GET_LOG, NULL),
 	    -1, NULL, NULL, NULL);
+    if (utf8_log==NULL) utf8_log = g_strdup("Encoding conversion failed");
     gtk_text_buffer_set_text(buffer, utf8_log, -1);
     g_free(utf8_log);
 
@@ -1328,6 +1329,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
         }
         save_configuration(CFG, Developer, NULL, buf, 10000);
 	char *utf8_buf = g_filename_to_utf8(buf, -1, NULL, NULL, NULL);
+	if (utf8_buf==NULL) utf8_buf = g_strdup("Encoding conversion failed");
         gtk_text_buffer_set_text(cfgBuffer, utf8_buf, -1);
 	g_free(utf8_buf);
         gtk_widget_show_all(optionsDialog);
@@ -1450,7 +1452,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     char *utf8_filename = g_filename_to_utf8(uf->filename,
 	    -1, NULL, NULL, NULL);
-    if (utf8_filename==NULL) utf8_filename = g_strdup("Unknow file name");
+    if (utf8_filename==NULL) utf8_filename = g_strdup("Unknown file name");
     char *previewHeader = g_strdup_printf("%s - UFRaw Photo Loader",
             utf8_filename);
     gtk_window_set_title(GTK_WINDOW(previewWindow), previewHeader);
