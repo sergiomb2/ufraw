@@ -19,8 +19,8 @@
    copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
    purchase a license from the author.
 
-   $Revision: 1.267 $
-   $Date: 2005/07/07 03:40:57 $
+   $Revision: 1.269 $
+   $Date: 2005/07/14 02:13:45 $
  */
 
 #define _GNU_SOURCE
@@ -3108,10 +3108,11 @@ void CLASS parse_makernote()
       if (tag == 0x1c) tag = 0x1017;
     }
     if (tag == 0x1d)
-      fscanf (ifp, "%d", &serial);
+      while ((c = fgetc(ifp)))
+	serial = serial*10 + (isdigit(c) ? c - '0' : c % 10);
     if (tag == 0x8c)  { /* NTC UF*/
       nikon_curve_offset = ftell(ifp) + 2112;
-      tone_curve_offset = ftell(ifp); /* was base+val */
+      tone_curve_offset = ftell(ifp);
       tone_curve_size = len;
     } /* NTC UF*/
     if (tag == 0x96)
@@ -3132,7 +3133,7 @@ void CLASS parse_makernote()
 	  FORC4 cam_mul[c] = get2();
       }
       if (ver97 >> 8 == 2) {
-	fseek (ifp, 280, SEEK_CUR);
+	if (ver97 != 0x205) fseek (ifp, 280, SEEK_CUR);
 	fread (buf97, 324, 1, ifp);
       }
     }
@@ -3142,7 +3143,8 @@ void CLASS parse_makernote()
       ck = 0x60;
       for (i=0; i < 324; i++)
 	buf97[i] ^= (cj += ci * ck++);
-      FORC4 cam_mul[c ^ (c >> 1)] = sget2 (buf97+6+c*2);
+      FORC4 cam_mul[c ^ (c >> 1)] =
+	sget2 (buf97 + (ver97 == 0x205 ? 14:6) + c*2);
     }
     if (tag == 0xe0 && len == 17) {
       get2();
@@ -4099,6 +4101,8 @@ void CLASS adobe_coeff()
 	{ 5710,-901,-615,-8594,16617,2024,-2975,4120,6830 } },
     { "NIKON D2X",
 	{ 10231,-2769,-1255,-8301,15900,2552,-797,680,7148 } },
+    { "NIKON D50",
+	{ 7732,-2422,-789,-8238,15884,2498,-859,783,7330 } },
     { "NIKON D70",
 	{ 7732,-2422,-789,-8238,15884,2498,-859,783,7330 } },
     { "NIKON E995",	/* copied from E5000 */
@@ -4177,6 +4181,25 @@ void CLASS simple_coeff (int index)
   use_coeff = 1;
 }
 
+short CLASS guess_byte_order (int words)
+{
+  uchar test[4][2];
+  int t=2, msb;
+  double diff, sum[2] = {0,0};
+
+  fread (test[0], 2, 2, ifp);
+  for (words-=2; words--; ) {
+    fread (test[t], 2, 1, ifp);
+    for (msb=0; msb < 2; msb++) {
+      diff = (test[t^2][msb] << 8 | test[t^2][!msb])
+	   - (test[t  ][msb] << 8 | test[t  ][!msb]);
+      sum[msb] += diff*diff;
+    }
+    t = (t+1) & 3;
+  }
+  return sum[0] < sum[1] ? 0x4d4d : 0x4949;
+}
+
 /*
    Identify which camera created this file, and set global variables
    accordingly.  Return nonzero if the file cannot be decoded.
@@ -4193,21 +4216,28 @@ int CLASS identify (int will_decode)
     {   124928, "Kodak",    "DC20"       ,0 },
     {   311696, "ST Micro", "STV680 VGA" ,0 },  /* SPYz */
     {   787456, "Creative", "PC-CAM 600" ,0 },
-    {  3840000, "Foculus",  "503c"       ,0 },
+    {  3840000, "Foculus",  "531C"       ,0 },
+    {  1920000, "AVT",      "F-201C"     ,0 },
+    {  5067304, "AVT",      "F-510C"     ,0 },
+    { 10134608, "AVT",      "F-510C"     ,0 },
+    { 16157136, "AVT",      "F-810C"     ,0 },
+    {  6624000, "Pixelink", "A782"       ,0 },
+    { 13248000, "Pixelink", "A782"       ,0 },
+    {  6291456, "RoverShot","3320AF"     ,0 },
     {  1581060, "NIKON",    "E900"       ,1 },  /* or E900s,E910 */
     {  2465792, "NIKON",    "E950"       ,1 },  /* or E800,E700 */
     {  2940928, "NIKON",    "E2100"      ,1 },  /* or E2500 */
     {  4771840, "NIKON",    "E990"       ,1 },  /* or E995 */
     {  4775936, "NIKON",    "E3700"      ,1 },  /* or Optio 33WR */
     {  5869568, "NIKON",    "E4300"      ,1 },  /* or DiMAGE Z2 */
-    {  5865472, "NIKON",    "E4500"      ,0 },
+    {  5865472, "NIKON",    "E4500"      ,1 },
     {  7438336, "NIKON",    "E5000"      ,1 },  /* or E5700 */
-    {  1976352, "CASIO",    "QV-2000UX"  ,0 },
-    {  3217760, "CASIO",    "QV-3*00EX"  ,0 },
-    {  6218368, "CASIO",    "QV-5700"    ,0 },
+    {  1976352, "CASIO",    "QV-2000UX"  ,1 },
+    {  3217760, "CASIO",    "QV-3*00EX"  ,1 },
+    {  6218368, "CASIO",    "QV-5700"    ,1 },
     {  7530816, "CASIO",    "QV-R51"     ,1 },
-    {  7684000, "CASIO",    "QV-4000"    ,0 },
-    {  4948608, "CASIO",    "EX-S100"    ,0 },
+    {  7684000, "CASIO",    "QV-4000"    ,1 },
+    {  4948608, "CASIO",    "EX-S100"    ,1 },
     {  7542528, "CASIO",    "EX-Z50"     ,1 },
     {  7753344, "CASIO",    "EX-Z55"     ,1 },
     {  7426656, "CASIO",    "EX-P505"    ,1 },
@@ -4216,8 +4246,6 @@ int CLASS identify (int will_decode)
     {  3178560, "PENTAX",   "Optio S"    ,1 },  /*  8-bit */
     {  4841984, "PENTAX",   "Optio S"    ,1 },  /* 12-bit */
     {  6114240, "PENTAX",   "Optio S4"   ,1 },  /* or S4i */
-    { 13248000, "Pixelink", "782c1"      ,0 },
-    {  6291456, "RoverShot","3320af"     ,0 },
     { 12582980, "Sinar",    ""           ,0 } };
   static const char *corp[] =
     { "Canon", "NIKON", "EPSON", "Kodak", "OLYMPUS", "PENTAX",
@@ -4757,27 +4785,49 @@ konica_400z:
     black = 16;
     pre_mul[0] = 1.097;
     pre_mul[2] = 1.128;
-  } else if (!strcmp(model,"503c")) {
+  } else if (!strcmp(model,"531C")) {
     height = 1200;
     width  = 1600;
     load_raw = unpacked_load_raw;
     filters = 0x49494949;
     pre_mul[1] = 1.218;
-  } else if (!strcmp(model,"782c1")) {
-    height = 3000;
-    width = 2208;
-    filters = 0x61616161;
+  } else if (!strcmp(model,"F-201C")) {
+    height = 1210;
+    width  = 1600;
+    load_raw = eight_bit_load_raw;
+  } else if (!strcmp(model,"F-510C")) {
+    height = 1958;
+    width  = 2588;
+    load_raw = (fsize < 7500000) ? eight_bit_load_raw : unpacked_load_raw;
+    maximum = 0xfff0;
+  } else if (!strcmp(model,"F-810C")) {
+    height = 2469;
+    width  = 3272;
     load_raw = unpacked_load_raw;
+    maximum = 0xfff0;
+  } else if (!strcmp(model,"A782")) {
+    height = 3000;
+    width  = 2208;
+    filters = 0x61616161;
+    load_raw = (fsize < 10000000) ? eight_bit_load_raw : unpacked_load_raw;
     maximum = 0xffc0;
-  } else if (!strcmp(model,"3320af")) {
+  } else if (!strcmp(model,"3320AF")) {
     height = 1536;
-    width  = 2048;
-    order = 0x4949;
+    raw_width = width = 2048;
     filters = 0x61616161;
     load_raw = unpacked_load_raw;
     maximum = 0x3ff;
     pre_mul[0] = 1.717;
     pre_mul[2] = 1.138;
+    fseek (ifp, 0x300000, SEEK_SET);
+    if ((order = guess_byte_order(0x10000)) == 0x4d4d) {
+      data_offset = (2048 * 16 + 28) * 2;
+      height -= 16;
+      width  -= 28;
+      maximum = 0xf5c0;
+      strcpy (make, "ISG");
+      sprintf (model, "%dx%d", width, height);
+    }
   } else if (!strcmp(make,"Imacon")) {
     height = 5444;
     width  = 4080;
@@ -5012,7 +5062,7 @@ konica_400z:
     width  = 1632;
     data_offset = width * 2;
     load_raw = eight_bit_load_raw;
-  } else if (!strcmp(model,"QV-3*00EX")) {
+  } else if (fsize == 3217760) {
     height = 1546;
     width  = 2070;
     raw_width = 2080;
@@ -5038,6 +5088,8 @@ konica_400z:
     width  = 2058;
     raw_width = 3136;
     load_raw = packed_12_load_raw;
+    pre_mul[0] = 1.631;
+    pre_mul[2] = 1.106;
   } else if (!strcmp(model,"EX-Z50")) {
     height = 1931;
     width  = 2570;
@@ -5402,7 +5454,7 @@ int CLASS main (int argc, char **argv)
   if (argc == 1)
   {
     fprintf (stderr,
-    "\nRaw Photo Decoder \"dcraw\" v7.39"
+    "\nRaw Photo Decoder \"dcraw\" v7.42"
     "\nby Dave Coffin, dcoffin a cybercom o net"
     "\n\nUsage:  %s [options] file1 file2 ...\n"
     "\nValid options:"
