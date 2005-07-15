@@ -143,7 +143,6 @@ long ufraw_saver(void *widget, gpointer user_data)
             snprintf(message, max_path,
                 "File '%s' already exists.\nOverwrite?", utf8);
 	    g_free(utf8);
-	    g_free(filename);
             widg = gtk_label_new(message);
             gtk_label_set_line_wrap(GTK_LABEL(widg), TRUE);
             gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), widg);
