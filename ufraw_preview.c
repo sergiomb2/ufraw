@@ -330,7 +330,10 @@ void load_profile(GtkWidget *widget, long type)
             }
 	    char *base = g_path_get_basename(filename);
 	    char *name = uf_file_set_type(base, "");
-	    g_strlcpy(p.name, name, max_name);
+	    char *utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
+	    if (utf8==NULL) utf8 = g_strdup("Unknow file name");
+	    g_strlcpy(p.name, utf8, max_name);
+	    g_free(utf8);
 	    g_free(name);
 	    g_free(base);
             /* Set some defaults to the profile's curve */
@@ -1328,10 +1331,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
             gtk_table_attach(table, button, 1, 2, i, i+1, 0, 0, 0, 0);
         }
         save_configuration(CFG, Developer, NULL, buf, 10000);
-	char *utf8_buf = g_filename_to_utf8(buf, -1, NULL, NULL, NULL);
-	if (utf8_buf==NULL) utf8_buf = g_strdup("Encoding conversion failed");
-        gtk_text_buffer_set_text(cfgBuffer, utf8_buf, -1);
-	g_free(utf8_buf);
+        gtk_text_buffer_set_text(cfgBuffer, buf, -1);
         gtk_widget_show_all(optionsDialog);
         if (gtk_dialog_run(GTK_DIALOG(optionsDialog))!=
                     GTK_RESPONSE_APPLY) {

@@ -284,7 +284,10 @@ int curve_load(CurveData *cp, char *filename)
     }
     char *base = g_path_get_basename(filename);
     char *name = uf_file_set_type(base, "");
-    g_strlcpy(cp->name, name, max_name);
+    char *utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
+    if (utf8==NULL) utf8 = strdup("Unknown file name");
+    g_strlcpy(cp->name, utf8, max_name);
+    g_free(utf8);
     g_free(name);
     g_free(base);
     return UFRAW_SUCCESS;
@@ -333,9 +336,12 @@ int curve_save(CurveData *cp, char *filename)
         }
         char *base = g_path_get_basename(filename);
 	char *name = uf_file_set_type(base, "");
-        g_free(base);
-        fprintf(out, "<Curve Version='%d'>%s\n", cfg_default.version, name);
+	char *utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
+	if (utf8==NULL) utf8 = strdup("Unknown file name");
+        fprintf(out, "<Curve Version='%d'>%s\n", cfg_default.version, utf8);
+	g_free(utf8);
 	g_free(name);
+        g_free(base);
         char *buf = curve_buffer(cp);
         if (buf!=NULL) fprintf(out, buf);
         g_free(buf);
@@ -502,8 +508,12 @@ void cfg_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     }
     if (c->profileCount[1]<=0) {
         i = - c->profileCount[1];
-        if (!strcmp("File", element))
-            g_strlcpy(c->profile[1][i].file, temp, max_path);
+        if (!strcmp("File", element)) {
+	    char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
+	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+            g_strlcpy(c->profile[1][i].file, utf8, max_path);
+	    g_free(utf8);
+	}
         if (!strcmp("ProductName", element))
             g_strlcpy(c->profile[0][i].productName, temp, max_path);
         return;
@@ -528,10 +538,18 @@ void cfg_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
         c->profile[1][i] = cfg_default.profile[1][0];
         g_strlcpy(c->profile[1][i].name, temp, max_name);
     }
-    if (!strcmp("InputFilename", element))
-            g_strlcpy(c->inputFilename, temp, max_path);
-    if (!strcmp("OutputFilename", element))
-            g_strlcpy(c->outputFilename, temp, max_path);
+    if (!strcmp("InputFilename", element)) {
+	char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
+	if (utf8!=NULL)
+            g_strlcpy(c->inputFilename, utf8, max_path);
+	g_free(utf8);
+    }
+    if (!strcmp("OutputFilename", element)) {
+	char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
+	if (utf8!=NULL)
+            g_strlcpy(c->outputFilename, utf8, max_path);
+	g_free(utf8);
+    }
     if (!strcmp("LoadWB", element)) sscanf(temp, "%d", &c->wbLoad);
     if (!strcmp("LoadCurve", element)) sscanf(temp, "%d", &c->curveLoad);
     if (!strcmp("LoadExposure", element)) sscanf(temp, "%d", &c->exposureLoad);
@@ -570,10 +588,19 @@ void cfg_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     if (!strcmp("Unclip", element)) sscanf(temp, "%d", &c->unclip);
     if (!strcmp("AutoExposure", element)) sscanf(temp, "%d", &c->autoExposure);
     if (!strcmp("AutoBlack", element)) sscanf(temp, "%d", &c->autoBlack);
-    if (!strcmp("CurvePath", element)) g_strlcpy(c->curvePath, temp, max_path);
+    if (!strcmp("CurvePath", element)) {
+	char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
+	if (utf8!=NULL)
+            g_strlcpy(c->curvePath, utf8, max_path);
+	g_free(utf8);
+    }
     if (!strcmp("Intent", element)) sscanf(temp, "%d", &c->intent);
-    if (!strcmp("ProfilePath", element))
-            g_strlcpy(c->profilePath, temp, max_path);
+    if (!strcmp("ProfilePath", element)) {
+	char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
+	if (utf8!=NULL)
+            g_strlcpy(c->profilePath, utf8, max_path);
+	g_free(utf8);
+    }
     if (!strcmp("Shrink", element)) sscanf(temp, "%d", &c->shrink);
     if (!strcmp("Size", element)) sscanf(temp, "%d", &c->size);
     if (!strcmp("OutputType", element)) sscanf(temp, "%d", &c->type);
@@ -691,10 +718,18 @@ int save_configuration(cfg_data *c, developer_data *d,
         g_free(cfgFilename);
     }
     cfg_printf("<UFRaw Version='%d'>\n", c->version);
-    if (strlen(c->inputFilename)>0)
-        cfg_printf("<InputFilename>%s</InputFilename>\n", c->inputFilename);
-    if (strlen(c->outputFilename)>0)
-        cfg_printf("<OutputFilename>%s</OutputFilename>\n", c->outputFilename);
+    if (strlen(c->inputFilename)>0) {
+	char *utf8 = g_filename_to_utf8(c->inputFilename, -1, NULL, NULL, NULL);
+	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+        cfg_printf("<InputFilename>%s</InputFilename>\n", utf8);
+	g_free(utf8);
+    }
+    if (strlen(c->outputFilename)>0) {
+	char *utf8=g_filename_to_utf8(c->outputFilename, -1, NULL, NULL, NULL);
+	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+        cfg_printf("<OutputFilename>%s</OutputFilename>\n", utf8);
+	g_free(utf8);
+    }
     if (confFilename==NULL) {
         if (c->wbLoad!=cfg_default.wbLoad)
             cfg_printf("<LoadWB>%d</LoadWB>\n", c->wbLoad);
@@ -812,8 +847,12 @@ int save_configuration(cfg_data *c, developer_data *d,
         }
         g_free(curveBuf);
     }
-    if (strlen(c->curvePath)>0 && confFilename==NULL)
-        cfg_printf("<CurvePath>%s</CurvePath>\n", c->curvePath);
+    if (strlen(c->curvePath)>0 && confFilename==NULL) {
+	char *utf8 = g_filename_to_utf8(c->curvePath, -1, NULL, NULL, NULL);
+	if (utf8!=NULL)
+	    cfg_printf("<CurvePath>%s</CurvePath>\n", utf8);
+	g_free(utf8);
+    }
     for (j=0; j<profile_types; j++) {
         type = j==in_profile ? "InputProfile" :
                 j==out_profile ? "OutputProfile" : "Error";
@@ -841,7 +880,11 @@ int save_configuration(cfg_data *c, developer_data *d,
 		continue;
             current = i==c->profileIndex[j]?" Current='yes'":"";
             cfg_printf("<%s%s>%s\n", type, current, c->profile[j][i].name);
-            cfg_printf("\t<File>%s</File>\n", c->profile[j][i].file);
+	    char *utf8 = g_filename_to_utf8(c->profile[j][i].file,
+		    -1, NULL, NULL, NULL);
+	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+            cfg_printf("\t<File>%s</File>\n", utf8);
+	    g_free(utf8);
             cfg_printf("\t<ProductName>%s</ProductName>\n",
                     c->profile[j][i].productName);
             if (c->profile[j][i].gamma!=cfg_default.profile[j][1].gamma)
@@ -857,10 +900,19 @@ int save_configuration(cfg_data *c, developer_data *d,
     }
     if (c->intent!=cfg_default.intent)
         cfg_printf("<Intent>%d</Intent>\n", c->intent);
-    if (strlen(c->profilePath)>0 && confFilename==NULL)
-        cfg_printf("<ProfilePath>%s</ProfilePath>\n", c->profilePath);
-    if (confFilename!=NULL)
-	cfg_printf("<Log>\n%s</Log>\n", ufraw_message(UFRAW_GET_LOG, NULL));
+    if (strlen(c->profilePath)>0 && confFilename==NULL) {
+	char *utf8 = g_filename_to_utf8(c->profilePath, -1, NULL, NULL, NULL);
+	if (utf8!=NULL)
+	    cfg_printf("<ProfilePath>%s</ProfilePath>\n", utf8);
+	g_free(utf8);
+    }
+    if (confFilename!=NULL) {
+	char *utf8 = g_filename_to_utf8(ufraw_message(UFRAW_GET_LOG, NULL),
+		-1, NULL, NULL, NULL);
+	if (utf8!=NULL)
+	    cfg_printf("<Log>\n%s</Log>\n", utf8);
+	g_free(utf8);
+    }
     cfg_printf("</UFRaw>\n");
     if (buf==NULL) fclose(out);
     else if (bufIndex >= bufSize) return UFRAW_ERROR;
