@@ -42,7 +42,7 @@ void ufraw_saver_adjustment_update(GObject *adj, gboolean *valuep)
     gtk_dialog_response(dialog, GTK_RESPONSE_APPLY);
 }
 
-void ufraw_saver_set_type(GtkWidget *widget, cfg_data *cfg)
+void ufraw_saver_set_type(GtkWidget *widget, conf_data *conf)
 {
     char *filename, *type;
     filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
@@ -51,12 +51,12 @@ void ufraw_saver_set_type(GtkWidget *widget, cfg_data *cfg)
         g_free(filename);
         return;
     }
-    if (!strcmp(type,".ppm") && cfg->type!=ppm16_type)
-        cfg->type = ppm8_type;
-    if (!strcmp(type,".tif") && cfg->type!=tiff16_type)
-        cfg->type = tiff8_type;
+    if (!strcmp(type,".ppm") && conf->type!=ppm16_type)
+        conf->type = ppm8_type;
+    if (!strcmp(type,".tif") && conf->type!=tiff16_type)
+        conf->type = tiff8_type;
     if (!strcmp(type,".jpg"))
-        cfg->type = jpeg_type;
+        conf->type = jpeg_type;
     g_free(filename);
     gtk_dialog_response(GTK_DIALOG(widget), GTK_RESPONSE_APPLY);
 }
@@ -88,30 +88,30 @@ long ufraw_saver(void *widget, gpointer user_data)
     char *filename, *absFilename;
     int status;
 
-    if (uf->cfg->size > 0) {
+    if (uf->conf->size > 0) {
 	if (uf->predictateHeight > uf->predictateWidth) {
-	    height = uf->cfg->size;
-	    width = uf->cfg->size * uf->predictateWidth / uf->predictateHeight;
-	    shrink = (float)uf->predictateHeight / uf->cfg->size;
+	    height = uf->conf->size;
+	    width = uf->conf->size * uf->predictateWidth / uf->predictateHeight;
+	    shrink = (float)uf->predictateHeight / uf->conf->size;
 	} else {
-            width = uf->cfg->size;
-	    height = uf->cfg->size * uf->predictateHeight / uf->predictateWidth;
-	    shrink = (float)uf->predictateWidth / uf->cfg->size;
+            width = uf->conf->size;
+	    height = uf->conf->size * uf->predictateHeight/ uf->predictateWidth;
+	    shrink = (float)uf->predictateWidth / uf->conf->size;
 	}
     } else {
-	if (uf->cfg->shrink<1) {
-            ufraw_message(UFRAW_ERROR, "Fatal Error: uf->cfg->shrink<1");
-	    uf->cfg->shrink = 1;
+	if (uf->conf->shrink<1) {
+            ufraw_message(UFRAW_ERROR, "Fatal Error: uf->conf->shrink<1");
+	    uf->conf->shrink = 1;
 	}
-	height = uf->predictateHeight / uf->cfg->shrink;
-	width = uf->predictateWidth / uf->cfg->shrink;
-	shrink = uf->cfg->shrink;
+	height = uf->predictateHeight / uf->conf->shrink;
+	width = uf->predictateWidth / uf->conf->shrink;
+	shrink = uf->conf->shrink;
     }
-    filename = uf_file_set_type(uf->filename, file_type[uf->cfg->type]);
-    if (strlen(uf->cfg->outputPath)>0) {
+    filename = uf_file_set_type(uf->filename, file_type[uf->conf->type]);
+    if (strlen(uf->conf->outputPath)>0) {
 	char *cp = g_path_get_basename(filename);
 	g_free(filename);
-	filename = g_build_filename(uf->cfg->outputPath, cp, NULL);
+	filename = g_build_filename(uf->conf->outputPath, cp, NULL);
 	g_free(cp);
     }
     absFilename = uf_file_set_absolute(filename);
@@ -120,8 +120,8 @@ long ufraw_saver(void *widget, gpointer user_data)
 	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
 	char *text = g_strdup_printf("Filename: %s\nSize: %d x %d%s",
 		utf8, (int)height, (int)width,
-		uf->cfg->createID==also_id ? "\nCreate also ID file" :
-		uf->cfg->createID==only_id ? "\nCreate only ID file" : "");
+		uf->conf->createID==also_id ? "\nCreate also ID file" :
+		uf->conf->createID==only_id ? "\nCreate only ID file" : "");
 	g_free(utf8);
 	g_free(absFilename);
 	g_free(filename);
@@ -129,7 +129,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     }
     parentWindow = GTK_WINDOW(gtk_widget_get_toplevel(widget));
     if (!strcmp(gtk_button_get_label(GTK_BUTTON(widget)), GTK_STOCK_SAVE)) {
-        if ( !uf->cfg->overwrite && uf->cfg->createID!=only_id
+        if ( !uf->conf->overwrite && uf->conf->createID!=only_id
 	   && g_file_test(absFilename, G_FILE_TEST_EXISTS) ) {
             GtkWidget *dialog;
             char message[max_path];
@@ -152,7 +152,7 @@ long ufraw_saver(void *widget, gpointer user_data)
             if (response!=GTK_RESPONSE_YES)
                 return UFRAW_SUCCESS;
         }
-	g_strlcpy(uf->cfg->outputFilename, absFilename, max_path);
+	g_strlcpy(uf->conf->outputFilename, absFilename, max_path);
         g_free(filename);
 	g_free(absFilename);
         status = ufraw_write_image(uf);
@@ -193,15 +193,15 @@ long ufraw_saver(void *widget, gpointer user_data)
     box = gtk_vbox_new(FALSE, 0);
     gtk_container_add(GTK_CONTAINER(expander), box);
 
-    if (uf->cfg->interpolation==half_interpolation) {
-        uf->cfg->interpolation = full_interpolation;
-        if (uf->cfg->shrink<2) uf->cfg->shrink = 2;
+    if (uf->conf->interpolation==half_interpolation) {
+        uf->conf->interpolation = full_interpolation;
+        if (uf->conf->shrink<2) uf->conf->shrink = 2;
     }
     intCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     gtk_combo_box_append_text(intCombo, "Full interpolation");
     gtk_combo_box_append_text(intCombo, "Four color interpolation");
     gtk_combo_box_append_text(intCombo, "Quick interpolation");
-    gtk_combo_box_set_active(intCombo, uf->cfg->interpolation);
+    gtk_combo_box_set_active(intCombo, uf->conf->interpolation);
     align = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
     gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(intCombo));
     gtk_box_pack_start(GTK_BOX(box), align, FALSE, FALSE, 0);
@@ -242,19 +242,19 @@ long ufraw_saver(void *widget, gpointer user_data)
     button = gtk_radio_button_new_with_label(NULL, "8-bit ppm");
     ppmButton = GTK_TOGGLE_BUTTON(button);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-            uf->cfg->type==ppm8_type);
+            uf->conf->type==ppm8_type);
     g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)ppm8_type);
     g_signal_connect(G_OBJECT(button), "toggled",
-            G_CALLBACK(ufraw_radio_button_update), &uf->cfg->type);
+            G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
     gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);
 
     button = gtk_radio_button_new_with_label_from_widget(
             GTK_RADIO_BUTTON(button), "16-bit ppm");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-            uf->cfg->type==ppm16_type);
+            uf->conf->type==ppm16_type);
     g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)ppm16_type);
     g_signal_connect(G_OBJECT(button), "toggled",
-            G_CALLBACK(ufraw_radio_button_update), &uf->cfg->type);
+            G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
     gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);
 #ifdef HAVE_LIBTIFF
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
@@ -264,23 +264,23 @@ long ufraw_saver(void *widget, gpointer user_data)
             GTK_RADIO_BUTTON(button), "8-bit TIFF");
     tiffButton = GTK_TOGGLE_BUTTON(button);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-            uf->cfg->type==tiff8_type);
+            uf->conf->type==tiff8_type);
     g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)tiff8_type);
     g_signal_connect(G_OBJECT(button), "toggled",
-            G_CALLBACK(ufraw_radio_button_update), &uf->cfg->type);
+            G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
     gtk_table_attach(GTK_TABLE(table), button, 0, 1, 0, 1, 0, 0, 0, 0);
     button = gtk_radio_button_new_with_label_from_widget(
             GTK_RADIO_BUTTON(button), "16-bit TIFF");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-            uf->cfg->type==tiff16_type);
+            uf->conf->type==tiff16_type);
     g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)tiff16_type);
     g_signal_connect(G_OBJECT(button), "toggled",
-            G_CALLBACK(ufraw_radio_button_update), &uf->cfg->type);
+            G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
     gtk_table_attach(GTK_TABLE(table), button, 0, 1, 1, 2, 0, 0, 0, 0);
 #ifdef HAVE_LIBZ
     losslessButton = gtk_check_button_new_with_label("ZIP Compress (lossless)");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(losslessButton),
-                    uf->cfg->losslessCompress);
+                    uf->conf->losslessCompress);
     gtk_table_attach(GTK_TABLE(table), losslessButton, 1, 2, 2, 3, 0, 0, 0, 0);
 #endif
 #endif /*HAVE_LIBTIFF*/
@@ -292,14 +292,14 @@ long ufraw_saver(void *widget, gpointer user_data)
             GTK_RADIO_BUTTON(button), "JPEG");
     jpegButton = GTK_TOGGLE_BUTTON(button);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-            uf->cfg->type==jpeg_type);
+            uf->conf->type==jpeg_type);
     g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)jpeg_type);
     g_signal_connect(G_OBJECT(button), "toggled",
-            G_CALLBACK(ufraw_radio_button_update), &uf->cfg->type);
+            G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
     gtk_table_attach(GTK_TABLE(table), button, 0, 1, 0, 1, 0, 0, 0, 0);
     widg = gtk_label_new("Compression level");
     gtk_table_attach(GTK_TABLE(table), widg, 1, 2, 1, 2, 0, 0, 0, 0);
-    compressAdj = GTK_ADJUSTMENT(gtk_adjustment_new(uf->cfg->compression,
+    compressAdj = GTK_ADJUSTMENT(gtk_adjustment_new(uf->conf->compression,
             0, 100, 5, 10, 0));
     widg = gtk_hscale_new(compressAdj);
     gtk_scale_set_draw_value(GTK_SCALE(widg), FALSE);
@@ -310,7 +310,7 @@ long ufraw_saver(void *widget, gpointer user_data)
 #ifdef HAVE_LIBEXIF
     exifButton = gtk_check_button_new_with_label("Embed EXIF data");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(exifButton),
-                    uf->cfg->embedExif && uf->exifBuf!=NULL);
+                    uf->conf->embedExif && uf->exifBuf!=NULL);
     gtk_widget_set_sensitive(exifButton, uf->exifBuf!=NULL);
     gtk_table_attach(GTK_TABLE(table), exifButton, 1, 2, 2, 3, 0, 0, 0, 0);
 #endif
@@ -325,7 +325,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     gtk_combo_box_append_text(idCombo, "No");
     gtk_combo_box_append_text(idCombo, "Also");
     gtk_combo_box_append_text(idCombo, "Only");
-    gtk_combo_box_set_active(idCombo, uf->cfg->createID);
+    gtk_combo_box_set_active(idCombo, uf->conf->createID);
     gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(idCombo), 1, 2, 0, 1,
 	    0, 0, 0, 0);
 
@@ -340,7 +340,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     gtk_combo_box_append_text(confCombo, "Never again");
     gtk_combo_box_append_text(confCombo, "Always");
     gtk_combo_box_append_text(confCombo, "Just this once");
-    gtk_combo_box_set_active(confCombo, uf->cfg->saveConfiguration);
+    gtk_combo_box_set_active(confCombo, uf->conf->saveConfiguration);
     gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(confCombo), 4, 5, 0, 1,
 	    0, 0, 0, 0);
 
@@ -348,18 +348,18 @@ long ufraw_saver(void *widget, gpointer user_data)
     overwriteButton = gtk_check_button_new_with_label(
             "Overwrite existing files without asking");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(overwriteButton),
-            uf->cfg->overwrite);
+            uf->conf->overwrite);
     gtk_box_pack_start(GTK_BOX(box), overwriteButton, TRUE, TRUE, 0);
     gtk_widget_show_all(expander);
 
-    if (strlen(uf->cfg->inputFilename)>0) {
-        char *cp = g_path_get_dirname(uf->cfg->inputFilename);
+    if (strlen(uf->conf->inputFilename)>0) {
+        char *cp = g_path_get_dirname(uf->conf->inputFilename);
         if (strcmp(cp,"."))
             gtk_file_chooser_add_shortcut_folder(fileChooser, cp, NULL);
         g_free(cp);
     }
     g_signal_connect(G_OBJECT(fileChooser), "selection-changed",
-            G_CALLBACK(ufraw_saver_set_type), uf->cfg);
+            G_CALLBACK(ufraw_saver_set_type), uf->conf);
     while(1) {
         g_object_set_data(G_OBJECT(fileChooser), "ufraw-dialog-run",
 		(gpointer)TRUE);
@@ -373,14 +373,14 @@ long ufraw_saver(void *widget, gpointer user_data)
         }
         if (status==GTK_RESPONSE_APPLY) {
             gtk_toggle_button_set_active(ppmButton,
-                    uf->cfg->type==ppm8_type);
+                    uf->conf->type==ppm8_type);
 #ifdef HAVE_LIBTIFF
             gtk_toggle_button_set_active(tiffButton,
-                    uf->cfg->type==tiff8_type);
+                    uf->conf->type==tiff8_type);
 #endif
 #ifdef HAVE_LIBJPEG
             gtk_toggle_button_set_active(jpegButton,
-                    uf->cfg->type==jpeg_type);
+                    uf->conf->type==jpeg_type);
 #endif
 	    if (shrinkUpdate) {
 	        shrink = gtk_adjustment_get_value(shrinkAdj);
@@ -406,30 +406,30 @@ long ufraw_saver(void *widget, gpointer user_data)
             continue;
         }
         filename = gtk_file_chooser_get_filename(fileChooser);
-        uf->cfg->interpolation = gtk_combo_box_get_active(intCombo);
-        uf->cfg->createID = gtk_combo_box_get_active(idCombo);
-        uf->cfg->saveConfiguration = gtk_combo_box_get_active(confCombo);
+        uf->conf->interpolation = gtk_combo_box_get_active(intCombo);
+        uf->conf->createID = gtk_combo_box_get_active(idCombo);
+        uf->conf->saveConfiguration = gtk_combo_box_get_active(confCombo);
 	if (fabs(shrink-floor(shrink+0.0005))<0.0005) {
-	    uf->cfg->shrink = floor(shrink+0.0005);
-	    uf->cfg->size = 0;
+	    uf->conf->shrink = floor(shrink+0.0005);
+	    uf->conf->size = 0;
 	} else {
-	    uf->cfg->shrink = 1;
-	    uf->cfg->size = floor(MAX(height, width)+0.5);
+	    uf->conf->shrink = 1;
+	    uf->conf->size = floor(MAX(height, width)+0.5);
 	}
-        uf->cfg->overwrite = gtk_toggle_button_get_active(
+        uf->conf->overwrite = gtk_toggle_button_get_active(
                 GTK_TOGGLE_BUTTON(overwriteButton));
 #if defined(HAVE_LIBZ) && defined(HAVE_LIBTIFF)
-        uf->cfg->losslessCompress = gtk_toggle_button_get_active(
+        uf->conf->losslessCompress = gtk_toggle_button_get_active(
                 GTK_TOGGLE_BUTTON(losslessButton));
 #endif
 #ifdef HAVE_LIBJPEG
-        uf->cfg->compression = gtk_adjustment_get_value(compressAdj);
+        uf->conf->compression = gtk_adjustment_get_value(compressAdj);
 #endif
 #ifdef HAVE_LIBEXIF
-        uf->cfg->embedExif = gtk_toggle_button_get_active(
+        uf->conf->embedExif = gtk_toggle_button_get_active(
                 GTK_TOGGLE_BUTTON(exifButton));
 #endif
-        if ( !uf->cfg->overwrite && uf->cfg->createID!=only_id
+        if ( !uf->conf->overwrite && uf->conf->createID!=only_id
 	   && g_file_test(filename, G_FILE_TEST_EXISTS) ) {
             GtkWidget *dialog;
             char message[max_path];
@@ -453,7 +453,7 @@ long ufraw_saver(void *widget, gpointer user_data)
             if (response!=GTK_RESPONSE_YES)
                 continue;
         }
-	g_strlcpy(uf->cfg->outputFilename, filename, max_path);
+	g_strlcpy(uf->conf->outputFilename, filename, max_path);
         g_free(filename);
         status = ufraw_write_image(uf);
         if (status==UFRAW_SUCCESS || status==UFRAW_ABORT_SAVE) {

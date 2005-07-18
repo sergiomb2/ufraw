@@ -26,18 +26,24 @@
 #define max_path 200
 #define max_name 80
 
+/* An impossible value for conf float values */
+#define NULLF -10000.0
+
 /* Options, like auto-adjust buttons can be in 3 states. Enabled and disabled
  * are obvious. Apply means that the option was selected and some function
  * has to act accourdingly, before changing to one of the first two states */
 enum { disabled_state, enabled_state, apply_state };
 enum { manual_wb, camera_wb, auto_wb };
+/* spot_wb is not part of the above enum since it is not an option in the
+ * combo-box, and also because it was added later and we do not want to change
+ * the numbering */
+#define spot_wb -1
 enum { rgb_histogram, r_g_b_histogram, luminosity_histogram, value_histogram,
        saturation_histogram };
 enum { linear_histogram, log_histogram };
 enum { full_interpolation, four_color_interpolation, quick_interpolation,
        half_interpolation};
 enum { no_id, also_id, only_id };
-enum { load_preserve, load_default, load_auto };
 enum { manual_curve, linear_curve, camera_curve };
 enum { in_profile, out_profile, profile_types};
 enum { raw_expander, exposure_expander, wb_expander, color_expander,
@@ -75,28 +81,68 @@ typedef struct {
     gboolean useMatrix;
 } profile_data;
 
-/* cfg holds infomation that is kept for the next image load */
+/* conf_data holds the configuration data of UFRaw.
+ * The data can be split into three groups:
+ * IMAGE manipulation, SAVE options and GUI settings.
+ * The sources for this information are:
+ * DEF: UFRaw's defaults from conf_defaults.
+ * RC: users defaults from ~/.ufrawrc. These options are set from the last
+ *     interactive session.
+ *     If saveConfiguration==disabled_state, IMAGE options are not saved.
+ * ID: ufraw ID files used on their original image.
+ * CONF: same ID files used as configuration for other raw images.
+ * CMD: command line options.
+ * UI: interactive input.
+ * The options are set in the above order, therefore the last sources will
+ * override the first ones with some subtelties:
+ * * ID|CONF contains only data which is different from DEF, still it is
+ *   assumed that IMAGE and SAVE options are included. Therefore missing
+ *   options are set to DEF overwriting RC.
+ * * if both CONF and ID are specified, only in/out filenames are taken from ID.
+ * * in batch mode SAVE options from RC are ignored.
+ * Some fields need special treatment:
+ * RC|CONF: auto[Exposure|Black]==enable_state it is switched to apply_state.
+ * RC|CONF: if !spot_wb reset chanMul[] to -1.0.
+ * CONF|ID: curve/profile are added to the list from RC.
+ * CONF: inputFilename, outputFilename are ignored.
+ * outputPath can only be specified in CMD or guessed in interactive mode.
+ * ID: createID==only_id is switched to also_id.
+ * ID: chanMul[] override wb, green, temperature.
+ */
 typedef struct {
-    int cfgSize, version;
-    char inputFilename[max_path], outputFilename[max_path],
-	 outputPath[max_path];
-    int wbLoad, curveLoad, exposureLoad, saveConfiguration;
-    int type, compression, createID, embedExif;
-    int histogram, liveHistogramScale, liveHistogramHeight;
-    int rawHistogramScale, rawHistogramHeight;
-    int expander[expander_count], interpolation, shrink, size;
+    /* Internal data */
+    int confSize, version;
+
+    /* IMAGE manipulation settings */
     int wb;
-    double temperature, green, exposure, saturation, black;
+    double temperature, green;
+    double chanMul[4];
+    double exposure, saturation, black; /* black is only used in CMD */
+    gboolean unclip;
     int autoExposure, autoBlack;
-    gboolean unclip, overExp, underExp, overwrite, losslessCompress;
     int curveIndex, curveCount;
     CurveData curve[max_curves];
-    char curvePath[max_path];
     int profileIndex[profile_types], profileCount[profile_types];
     profile_data profile[profile_types][max_profiles];
     int intent;
+    int interpolation;
+
+    /* SAVE options */
+    char inputFilename[max_path], outputFilename[max_path],
+	 outputPath[max_path];
+    int type, compression, createID, embedExif;
+    int shrink, size;
+    gboolean overwrite, losslessCompress;
+
+    /* GUI settings */
+    int saveConfiguration;
+    int histogram, liveHistogramScale, liveHistogramHeight;
+    int rawHistogramScale, rawHistogramHeight;
+    int expander[expander_count];
+    gboolean overExp, underExp;
+    char curvePath[max_path];
     char profilePath[max_path];
-} cfg_data;
+} conf_data;
 
 typedef struct {
     image_type *image;
@@ -106,18 +152,18 @@ typedef struct {
 typedef struct {
     char filename[max_path];
     int predictateHeight, predictateWidth, rgbMax, colors, use_coeff, useMatrix;
-    float preMul[4], coeff[3][4];
+    float coeff[3][4];
     image_data image;
     void *raw;
     developer_data *developer;
-    cfg_data *cfg;
+    conf_data *conf;
     void *widget;
     guchar *exifBuf;
     guint exifBufLen;
     int gimpImage;
 } ufraw_data;
 
-extern const cfg_data cfg_default;
+extern const conf_data conf_default;
 extern const wb_data wb_preset[];
 extern const int wb_preset_count;
 extern const char raw_ext[];
@@ -125,7 +171,7 @@ extern const char *file_type[];
 
 /* prototypes for functions in ufraw_ufraw.c */
 ufraw_data *ufraw_open(char *filename);
-int ufraw_config(ufraw_data *uf, cfg_data *cfg);
+int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf,conf_data *cmd);
 int ufraw_load_raw(ufraw_data *uf);
 int ufraw_convert_image(ufraw_data *uf);
 void ufraw_close(ufraw_data *uf);
@@ -150,20 +196,22 @@ double profile_default_gamma(profile_data *p);
 int curve_load(CurveData *cp, char *filename);
 int curve_save(CurveData *cp, char *filename);
 char *curve_buffer(CurveData *cp);
-void RGB_to_temperature(double *rgb, double *temperature, double *green);
-int load_configuration(cfg_data *c);
-int save_configuration(cfg_data *c, developer_data *d,
-	char *confFilename, char *buf, int bufSize);
-/* Reset the 'save options' in *c to those of *reset */
-void conf_reset_save(cfg_data *c, const cfg_data *reset);
+
+/* prototypes for functions in ufraw_conf.c */
+int conf_load(conf_data *c, const char *confFilename);
+int conf_save(conf_data *c, char *confFilename, char *buf, int bufSize);
+/* Copy the image manipulation options from *src to *dst */
+void conf_copy_image(conf_data *dst, const conf_data *src);
+/* Copy the 'save options' from *src to *dst */
+void conf_copy_save(conf_data *dst, const conf_data *src);
+int conf_set_cmd(conf_data *conf, const conf_data *cmd);
 
 /* prototype for functions in ufraw_developer.c */
 developer_data *developer_init();
 void developer_destroy(developer_data *d);
 void developer_profile(developer_data *d, int type, profile_data *p);
 void developer_prepare(developer_data *d, int rgbMax, double exposure,
-    int unclip, double temperature, double green,
-    float pre_mul[4], float coeff[3][4], int colors, int useMatrix,
+    int unclip, double chanMul[4], float coeff[3][4], int colors, int useMatrix,
     profile_data *in, profile_data *out, int intent,
     double saturation, CurveData *curve);
 void develope(void *po, guint16 pix[4], developer_data *d, int mode,
@@ -177,7 +225,7 @@ int ufraw_write_image(ufraw_data *uf);
 int ufraw_batch_saver(ufraw_data *uf);
 
 /* prototype for functions in ufraw_chooser.c */
-void ufraw_chooser(cfg_data *cfg, char *defPath);
+void ufraw_chooser(conf_data *conf, char *defPath);
 
 /* prototype for functions in ufraw_exif.c */
 int ufraw_exif_from_raw(void *ifd, char *filename, unsigned char **exifBuf,

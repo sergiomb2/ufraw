@@ -18,7 +18,6 @@
 #include <glib.h>
 #include "nikon_curve.h"
 #include "ufraw.h"
-#include "blackbody.h"
 
 developer_data *developer_init()
 {
@@ -77,8 +76,8 @@ void developer_profile(developer_data *d, int type, profile_data *p)
 }
 
 void developer_prepare(developer_data *d, int rgbMax, double exposure,
-	int unclip, double temperature, double green,
-	float pre_mul[4], float coeff[3][4], int colors, int useMatrix,
+	int unclip, 
+	double chanMul[4], float coeff[3][4], int colors, int useMatrix,
 	profile_data *in, profile_data *out, int intent,
         double saturation, CurveData *curve)
 {
@@ -87,17 +86,14 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
     d->rgbMax = rgbMax;
     d->colors = colors;
     d->useMatrix = useMatrix;
-    i = temperature/10-200;
     for (c=0; c<d->colors; c++)
-        d->rgbWB[c] = bbWB[i][1]/bbWB[i][c]*pre_mul[c]*
-                        (c==1||c==3?green:1.0)*0x10000;
+        d->rgbWB[c] = chanMul[c] * 0x10000 * exposure;
     if (d->useMatrix)
 	for (i=0; i<3; i++)
 	    for (c=0; c<d->colors; c++)
 		d->colorMatrix[i][c] = coeff[i][c]*0x10000;
     if (unclip) d->max = 0xFFFF;
     else d->max = MIN(exposure*0x10000, 0xFFFF);
-    for (c=0; c<4; c++) d->rgbWB[c] = d->rgbWB[c] * exposure;
     if (in->gamma!=d->gamma || in->linear!=d->linear) {
         double a, b, c, g;
         d->gamma = in->gamma;

@@ -26,8 +26,6 @@
 #include "ufraw.h"
 #include "ufraw_icon.h"
 
-#define NULLF -10000
-
 char helpText[]=
 "UFRaw " VERSION " - Unidentified Flying Raw converter for digital camera images.\n"
 "\n"
@@ -40,6 +38,13 @@ char helpText[]=
 "are given at the command line, UFRaw will display a file chooser dialog.\n"
 "To process the images with no questions asked (and no preview) use\n"
 "'ufraw-batch' or the --batch option.\n"
+"\n"
+"The input files can be either raw images or ufraw's ID files. ID file\n"
+"contain a raw image filename and the parameters for handling the image.\n"
+"One can also use and ID file with the option:\n"
+"\n"
+"--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+"\n"
 "The rest of the options are separated into two groups.\n"
 "The options which are related to the image manipulation are:\n"
 "\n"
@@ -50,7 +55,7 @@ char helpText[]=
 "                      Type of tone curve to use. CURVE can be any curve\n"
 "                      that was previously loaded in the GUI.\n"
 "                      (default camera if such exsists, linear otherwise).\n"
-"--[no]unclip          Unclip [clip] highlights.\n"
+"--[un]clip            Unclip [clip] highlights (default clip).\n"
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"
@@ -59,10 +64,10 @@ char helpText[]=
 "--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"
 "--interpolation=full|four-color|quick\n"
+"                      Interpolation algorithm to use (default full).\n"
 "\n"
 "The options which are related to the final output are:\n"
 "\n"
-"                      Interpolation algorithm to use (default full).\n"
 "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
 "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 "--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
@@ -76,20 +81,21 @@ char helpText[]=
 "--output=FILE         Output file name, use '-' to output to stdout.\n"
 "--overwrite           Overwrite existing files without asking (default no).\n"
 "\n"
-"UFRaw first reads the setting from the configuration file $HOME/.ufrawrc\n"
-"and then sets the options from the command line. In batch mode, the second\n"
-"group of options is NOT read from the configuration file, and therefore,\n"
-"must be specified explicitly if non-default values are desired.\n"
+"UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
+"Then, if an ID file is specified it setting are read. Next, the setting from\n"
+"the --conf option are taken, ignoring input/output filenames in the ID file.\n"
+"Lastly, the options from the command line are set. In batch mode, the second\n"
+"group of options is NOT read from the resource file.\n"
 "\n"
 "Last, but not least, --help displays this help message and exits.\n";
 
-void process_args(int *argc, char ***argv, cfg_data *cmd, cfg_data *cfg,
+void process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc,
 	gboolean *batch)
 {
     int index=0, c, i;
     char *wbName=NULL;
     char *curveName=NULL, *outTypeName=NULL, *createIDName=NULL,
-	 *outPath=NULL, *output=NULL, *interpolationName=NULL;
+	 *outPath=NULL, *output=NULL, *conf=NULL, *interpolationName=NULL;
     static struct option options[] = {
         {"wb", 1, 0, 'w'},
         {"temperature", 1, 0, 't'},
@@ -108,10 +114,11 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, cfg_data *cfg,
         {"create-id", 1, 0, 'I'},
         {"out-path", 1, 0, 'p'},
         {"output", 1, 0, 'o'},
+        {"conf", 1, 0, 'C'},
 /* Binary flags that don't have a value are here at the end */
         {"batch", 0, 0, 'B'},
         {"unclip", 0, 0, 'u'},
-        {"nounclip", 0, 0, 'U'},
+        {"clip", 0, 0, 'U'},
         {"zip", 0, 0, 'z'},
         {"nozip", 0, 0, 'Z'},
         {"overwrite", 0, 0, 'O'},
@@ -125,7 +132,7 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, cfg_data *cfg,
 	&cmd->saturation,
         &cmd->exposure, &cmd->black, &interpolationName,
 	&cmd->shrink, &cmd->size, &cmd->compression,
-	&outTypeName, &createIDName, &outPath, &output };
+	&outTypeName, &createIDName, &outPath, &output, &conf };
     cmd->autoExposure = disabled_state;
     cmd->autoBlack = disabled_state;
     cmd->unclip=-1;
@@ -159,7 +166,6 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, cfg_data *cfg,
 	    }
         case 't':
         case 'g':
-        case 'C':
         case 'G':
         case 'L':
         case 's':
@@ -189,6 +195,7 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, cfg_data *cfg,
         case 'I':
         case 'p':
         case 'o':
+        case 'C':
             *(char **)optPointer[index] = optarg;
             break;
         case 'B':
@@ -242,8 +249,8 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, cfg_data *cfg,
         else if (!strcmp(curveName, "camera")) cmd->curveIndex=camera_curve;
         else {
 	    cmd->curveIndex = -1;
-	    for( i = camera_curve + 1; i < cfg->curveCount; i++ ) {
-		if( !strcmp( curveName, cfg->curve[i].name )) {
+	    for( i = camera_curve + 1; i < rc->curveCount; i++ ) {
+		if( !strcmp( curveName, rc->curve[i].name )) {
 		    cmd->curveIndex = i;
 		    break;
 		}
@@ -354,13 +361,18 @@ void process_args(int *argc, char ***argv, cfg_data *cmd, cfg_data *cfg,
         }
         g_strlcpy(cmd->outputFilename, output, max_path);
     }
+    /* cmd->inputFilename is used to store the conf file */
+    g_strlcpy(cmd->inputFilename, "", max_path);
+    if (conf!=NULL)
+        g_strlcpy(cmd->inputFilename, conf, max_path);
 }
 
 int main (int argc, char **argv)
 {
     ufraw_data *uf;
-    cfg_data cfg, cmd;
+    conf_data rc, cmd, conf;
     gboolean batch=FALSE;
+    int status;
 #ifndef UFRAW_BATCH
     GtkWidget *dummyWindow=NULL;
 #endif
@@ -390,10 +402,34 @@ int main (int argc, char **argv)
     ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
 #endif
 #endif
+    /* Load $HOME/.ufrawrc */
+    conf_load(&rc, NULL);
 
-    ufraw_config(NULL, &cfg);
-    process_args(&argc, &argv, &cmd, &cfg, &batch);
+    /* Half interpolation is an option only for the gimp plug-in.
+     * For the stand-alone tool it is disabled */
+    if (rc.interpolation==half_interpolation)
+	rc.interpolation = full_interpolation;
 
+    if (batch) {
+	/* In batch the save options are always set to default */
+	conf_copy_save(&rc, &conf_default);
+	g_strlcpy(rc.outputPath, "", max_path);
+    } else {
+	/* In interactive mode we try to guess outputPath */
+	char *inPath = g_path_get_dirname(rc.inputFilename);
+	char *outPath = g_path_get_dirname(rc.outputFilename);
+	if ( strcmp(outPath,".") && strcmp(inPath, outPath) )
+	    g_strlcpy(rc.outputPath, outPath, max_path);
+	g_free(outPath);
+	g_free(inPath);
+    }
+    g_strlcpy(rc.inputFilename, "", max_path);
+    g_strlcpy(rc.outputFilename, "", max_path);
+
+    /* Put the command-line options in cmd */
+    process_args(&argc, &argv, &cmd, &rc, &batch);
+
+    /* Create a dummyWindow for the GUI error messenger */
 #ifndef UFRAW_BATCH
     if (!batch && dummyWindow==NULL) {
         dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -402,88 +438,26 @@ int main (int argc, char **argv)
         ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
     }
 #endif
-    /* Half interpolation is an option only for the gimp plug-in.
-     * For the stand-alone tool it is disabled */
-    if (cfg.interpolation==half_interpolation)
-	cfg.interpolation = full_interpolation;
-
-    if (batch) {
-        /* The save options are always set to default */
-	conf_reset_save(&cfg, &cfg_default);
-        /* Disable some of the resetting done in ufraw_config() */
-        cfg.wbLoad = load_preserve;
-        cfg.curveLoad = load_preserve;
-        if (cfg.exposureLoad!=load_auto ||
-                cmd.exposure!=NULLF || cmd.black!=NULLF)
-            cfg.exposureLoad = load_preserve;
-    }
-    if (cmd.overwrite!=-1) cfg.overwrite = cmd.overwrite;
-    if (cmd.unclip!=-1) cfg.unclip = cmd.unclip;
-    if (cmd.losslessCompress!=-1) cfg.losslessCompress = cmd.losslessCompress;
-    if (cmd.embedExif!=-1) cfg.embedExif = cmd.embedExif;
-    if (cmd.compression!=NULLF) cfg.compression = cmd.compression;
-    if (cmd.autoExposure) {
-	cfg.autoExposure = cmd.autoExposure;
-    }
-    if (cmd.exposure!=NULLF) {
-	cfg.exposure = cmd.exposure;
-	cfg.autoExposure = disabled_state;
-    }
-    if (cmd.wb>=0) cfg.wb = cmd.wb;
-    if (cmd.temperature!=NULLF) cfg.temperature = cmd.temperature;
-    if (cmd.green!=NULLF) cfg.green = cmd.green;
-    if (cmd.temperature!=NULLF || cmd.green!=NULLF) cfg.wb = manual_wb;
-    if (cmd.profile[0][0].gamma!=NULLF)
-	cfg.profile[0][cfg.profileIndex[0]].gamma = cmd.profile[0][0].gamma;
-    if (cmd.profile[0][0].linear!=NULLF)
-	cfg.profile[0][cfg.profileIndex[0]].linear = cmd.profile[0][0].linear;
-    if (cmd.saturation!=NULLF)
-	cfg.saturation=cmd.saturation;
-    if (cmd.curveIndex>=0) cfg.curveIndex = cmd.curveIndex;
-    if (cmd.autoBlack) {
-	cfg.autoBlack = cmd.autoBlack;
-    }
-    if (cmd.black!=NULLF) {
-	CurveDataSetPoint(&cfg.curve[cfg.curveIndex],
-		0, cmd.black, 0);
-	cfg.autoBlack = disabled_state;
-    }
-    if (cmd.interpolation>=0) cfg.interpolation = cmd.interpolation;
-    if (cmd.shrink!=NULLF) {
-        cfg.shrink = cmd.shrink;
-        cfg.size = 0;
-        if (cfg.interpolation==half_interpolation)
-            cfg.interpolation = full_interpolation;
-    }
-    if (cmd.size!=NULLF) {
-        cfg.size = cmd.size;
-        cfg.shrink = 1;
-        if (cfg.interpolation==half_interpolation)
-            cfg.interpolation = full_interpolation;
-    }
-    if (cmd.type>=0) cfg.type = cmd.type;
-    if (cmd.createID>=0) cfg.createID = cmd.createID;
-    if (strlen(cmd.outputPath)>0)
-	g_strlcpy(cfg.outputPath, cmd.outputPath, max_path);
-    if (strlen(cmd.outputFilename)>0) {
-        if (cfg.createID!=no_id && !strcmp(cmd.outputFilename,"-")) {
-            ufraw_message(UFRAW_ERROR,
-                "cannot --create-id with stdout");
-            exit(1);
-        }
-	g_strlcpy(cfg.outputFilename, cmd.outputFilename, max_path);
-    } else {
-	/* outputFilename can be used to guess output path,
-	 * but not in batch mode */
-	if (batch) g_strlcpy(cfg.outputFilename, "", max_path);
+    /* Load the --conf file. version==0 means ignore conf. */
+    conf.version = 0;
+    if (strlen(cmd.inputFilename)>0) {
+	status = conf_load(&conf, cmd.inputFilename);
+	if (status==UFRAW_SUCCESS) {
+	    strcpy(conf.inputFilename, "");
+	    strcpy(conf.outputFilename, "");
+	    strcpy(conf.outputPath, "");
+	} else {
+            ufraw_message(UFRAW_REPORT, NULL);
+	    conf.version = 0;
+	}
     }
     if (optind==argc) {
-        if (batch) ufraw_message(UFRAW_WARNING,
-                "no input file, nothing to do.\n");
-	else {
-#ifndef UFRAW_BATCH
-	    ufraw_chooser(&cfg, NULL);
-#endif
+        if (batch) {
+	    ufraw_message(UFRAW_WARNING, "no input file, nothing to do.\n");
+	} else {
+	    status = ufraw_config(NULL, &rc, &conf, &cmd);
+	    if (status==UFRAW_ERROR) exit(1);
+	    ufraw_chooser(&rc, NULL);
 	    exit(0);
 	}
     }
@@ -491,9 +465,9 @@ int main (int argc, char **argv)
      * default directory for the file-chooser */
     if (!batch
 	&& optind==argc-1 && g_file_test(argv[optind],G_FILE_TEST_IS_DIR)) {
-#ifndef UFRAW_BATCH
-        ufraw_chooser(&cfg, argv[optind]);
-#endif
+	status = ufraw_config(NULL, &rc, &conf, &cmd);
+	if (status==UFRAW_ERROR) exit(1);
+        ufraw_chooser(&rc, argv[optind]);
         exit(0);
     }
 	
@@ -503,17 +477,18 @@ int main (int argc, char **argv)
             ufraw_message(UFRAW_REPORT, NULL);
             continue;
         }
-        ufraw_config(uf, &cfg);
+        status = ufraw_config(uf, &rc, &conf, &cmd);
+	if (status==UFRAW_ERROR) exit(1);
         if (batch) {
             if (ufraw_load_raw(uf)!=UFRAW_SUCCESS)
                 continue;
             ufraw_message(UFRAW_MESSAGE, "loaded %s\n",
                 uf->filename);
             if (ufraw_batch_saver(uf)==UFRAW_SUCCESS)
-                ufraw_message(UFRAW_MESSAGE, "saved %s\n", cfg.outputFilename);
+                ufraw_message(UFRAW_MESSAGE, "saved %s\n",
+			uf->conf->outputFilename);
             ufraw_close(uf);
             g_free(uf);
-	    g_strlcpy(cfg.outputFilename, "", max_path);
         }
 #ifndef UFRAW_BATCH
         if (!batch)
@@ -531,6 +506,12 @@ void ufraw_messenger(char *message, void *parentWindow)
 {
     message = message;
     parentWindow = parentWindow;
+}
+
+void ufraw_chooser(conf_data *conf, char *defPath)
+{
+    conf = conf;
+    defPath = defPath;
 }
 
 void preview_progress(void *widget, char *text, double progress)

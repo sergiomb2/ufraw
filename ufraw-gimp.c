@@ -86,7 +86,7 @@ void run(const gchar *name,
     GimpRunMode run_mode = (GimpRunMode)param[0].data.d_int32;
     char *filename = param[1].data.d_string;
     ufraw_data *uf;
-    cfg_data cfg;
+    conf_data conf;
     int status;
     const char *locale;
 
@@ -110,6 +110,7 @@ void run(const gchar *name,
         g_setenv("LC_ALL", "en_US", TRUE);
     }
     gimp_ui_init("ufraw-gimp", TRUE);
+
     uf = ufraw_open(filename);
     /* if UFRaw fails on jpg or tif then open with Gimp */
     if (uf==NULL) {
@@ -136,21 +137,24 @@ void run(const gchar *name,
             return;
         }
     }
-    cfg.size = 0;
-    if ( gimp_get_data_size("plug_in_ufraw")==sizeof(cfg) )
-        gimp_get_data("plug_in_ufraw", &cfg);
-    ufraw_config(uf, &cfg);
-    strcpy(cfg.outputFilename, "");
-    if (run_mode==GIMP_RUN_NONINTERACTIVE) cfg.shrink = 8;
-    else cfg.shrink = 1;
-    cfg.size = 0;
+    conf.confSize = 0;
+    if ( gimp_get_data_size("plug_in_ufraw")==sizeof(conf) )
+        gimp_get_data("plug_in_ufraw", &conf);
+    if (conf.confSize!=conf_default.confSize ||
+	            conf.version!=conf_default.version) {
+	/* Load $HOME/.ufrawrc */
+	conf_load(&conf, NULL);
+    }
+    ufraw_config(uf, &conf, NULL, NULL);
+    conf_copy_save(uf->conf, &conf_default);
+    if (run_mode==GIMP_RUN_NONINTERACTIVE) uf->conf->shrink = 8;
     /* UFRaw already issues warnings.
      * With GIMP_PDB_CANCEL, Gimp won't issue another one. */
     values[0].type = GIMP_PDB_STATUS;
     values[0].data.d_status = GIMP_PDB_CANCEL;
     if (run_mode==GIMP_RUN_INTERACTIVE) {
         status = ufraw_preview(uf, TRUE, ufraw_save_gimp_image);
-        gimp_set_data("plug_in_ufraw", &cfg, sizeof(cfg));
+        gimp_set_data("plug_in_ufraw", &conf, sizeof(conf));
     } else {
         status=ufraw_load_raw(uf);
         ufraw_save_gimp_image(NULL, uf);

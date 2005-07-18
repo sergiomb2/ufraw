@@ -304,7 +304,7 @@ int main(int argc, char **argv)
     dstinfo.err = jpeg_std_error(&jdsterr);
     jpeg_create_compress(&dstinfo);
     if ( (in=fopen(argv[2], "rb"))==NULL) {
-        ufraw_message(UFRAW_SET_WARNING, "Error reading JPEG file '%s': %s\n",
+        ufraw_message(UFRAW_SET_WARNING, "Error reading JPEG file %s: %s\n",
                 argv[2], strerror(errno));
         exit(1);
     }
@@ -313,7 +313,7 @@ int main(int argc, char **argv)
     coef = jpeg_read_coefficients(&srcinfo);
     jpeg_copy_critical_parameters(&srcinfo, &dstinfo);
     if ( (out=fopen(argv[2], "wb"))==NULL) {
-        ufraw_message(UFRAW_SET_WARNING, "Error writing JPEG file '%s': %s\n",
+        ufraw_message(UFRAW_SET_WARNING, "Error writing JPEG file %s: %s\n",
                 argv[2], strerror(errno));
         exit(1);
     }

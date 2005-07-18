@@ -68,7 +68,7 @@ int dcraw_open(dcraw_data *h,char *filename)
     messageBuffer = NULL;
     lastStatus = DCRAW_SUCCESS;
     verbose = 1;
-    ifname = filename;
+    ifname = g_strdup(filename);
 //    use_secondary = 0; /* for Fuji Super CCD SR */
     if (setjmp(failure)) {
         dcraw_message(DCRAW_ERROR, "Fatal internal error\n");
@@ -366,7 +366,8 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 
 void dcraw_close(dcraw_data *h)
 {
-    if (h->raw.image!=NULL) g_free(h->raw.image);
+    g_free(ifname);
+    g_free(h->raw.image);
 }
 
 char *ufraw_message(int code, char *message, ...);

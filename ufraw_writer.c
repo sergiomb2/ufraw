@@ -68,45 +68,44 @@ int ufraw_write_image(ufraw_data *uf)
     message = message;
     ufraw_message(UFRAW_RESET, NULL);
 
-    if ( uf->cfg->createID==only_id ||
-         uf->cfg->createID==also_id) {
-        confFilename = uf_file_set_type(uf->cfg->outputFilename, ".ufraw");
-        if (!strcmp(confFilename, uf->cfg->outputFilename)) {
+    if ( uf->conf->createID==only_id ||
+         uf->conf->createID==also_id) {
+        confFilename = uf_file_set_type(uf->conf->outputFilename, ".ufraw");
+        if (!strcmp(confFilename, uf->conf->outputFilename)) {
             ufraw_message(UFRAW_ERROR, "Image filename can not be the "
                         "same as ID filename '%s'", confFilename);
             return UFRAW_ERROR;
         }
     }
-    if (uf->cfg->createID==only_id) {
-        status = save_configuration(uf->cfg, uf->developer,
-		confFilename, NULL, 0);
+    if (uf->conf->createID==only_id) {
+        status = conf_save(uf->conf, confFilename, NULL, 0);
         g_free(confFilename);
         return status;
     }
 #ifdef HAVE_LIBTIFF
-    if (uf->cfg->type==tiff8_type || uf->cfg->type==tiff16_type) {
+    if (uf->conf->type==tiff8_type || uf->conf->type==tiff16_type) {
         TIFFSetErrorHandler(ufraw_tiff_message);
         TIFFSetWarningHandler(ufraw_tiff_message);
-	if (!strcmp(uf->cfg->outputFilename, "-"))
+	if (!strcmp(uf->conf->outputFilename, "-"))
             out = TIFFFdOpen(fileno((FILE *)stdout),
-		    uf->cfg->outputFilename, "w");
+		    uf->conf->outputFilename, "w");
         else
-            out = TIFFOpen(uf->cfg->outputFilename, "w");
+            out = TIFFOpen(uf->conf->outputFilename, "w");
         if (out==NULL ) {
             message=ufraw_message(UFRAW_GET_WARNING, NULL);
             ufraw_message(UFRAW_ERROR, "Error creating file '%s'.\n%s",
-                    uf->cfg->outputFilename, message);
+                    uf->conf->outputFilename, message);
             return UFRAW_ERROR;
         }
     } else
 #endif
     {
-	if (!strcmp(uf->cfg->outputFilename, "-")) {
+	if (!strcmp(uf->conf->outputFilename, "-")) {
             out = stdout;
 	} else {
-            if ( (out=fopen(uf->cfg->outputFilename, "wb"))==NULL) {
+            if ( (out=fopen(uf->conf->outputFilename, "wb"))==NULL) {
                 ufraw_message(UFRAW_ERROR, "Error creating file '%s': %s",
-                        uf->cfg->outputFilename, g_strerror(errno));
+                        uf->conf->outputFilename, g_strerror(errno));
                 return UFRAW_ERROR;
             }
         }
@@ -117,7 +116,7 @@ int ufraw_write_image(ufraw_data *uf)
     rowStride = width + 2*uf->image.trim;
     rawImage = uf->image.image + uf->image.trim*rowStride + uf->image.trim;
     pixbuf16 = g_new(guint16, width*3);
-    if (uf->cfg->type==ppm8_type) {
+    if (uf->conf->type==ppm8_type) {
         fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFF);
         pixbuf8 = g_new(guint8, width*3);
         for (row=0; row<height; row++) {
@@ -128,12 +127,12 @@ int ufraw_write_image(ufraw_data *uf)
                     uf->developer, 8, pixbuf16, width);
             if ((int)fwrite(pixbuf8, 3, width, out)<width) {
                 ufraw_message(UFRAW_ERROR, "Error creating file '%s': %s.",
-                        uf->cfg->outputFilename, g_strerror(errno));
+                        uf->conf->outputFilename, g_strerror(errno));
                 status = UFRAW_ABORT_SAVE;
                 break;
             }
         }
-    } else if (uf->cfg->type==ppm16_type) {
+    } else if (uf->conf->type==ppm16_type) {
         fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFFFF);
         for (row=0; row<height; row++) {
             if (row%100==99)
@@ -145,26 +144,26 @@ int ufraw_write_image(ufraw_data *uf)
                 pixbuf16[i] = g_htons(pixbuf16[i]);
             if ((int)fwrite(pixbuf16, 6, width, out)<width) {
                 ufraw_message(UFRAW_ERROR, "Error creating file '%s': %s.",
-                        uf->cfg->outputFilename, g_strerror(errno));
+                        uf->conf->outputFilename, g_strerror(errno));
                 status = UFRAW_ABORT_SAVE;
                 break;
             }
         }
 #ifdef HAVE_LIBTIFF
-    } else if (uf->cfg->type==tiff8_type ||
-            uf->cfg->type==tiff16_type) {
+    } else if (uf->conf->type==tiff8_type ||
+            uf->conf->type==tiff16_type) {
         TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
         TIFFSetField(out, TIFFTAG_IMAGELENGTH, height);
         TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
         TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, 3);
-        if (uf->cfg->type==tiff8_type)
+        if (uf->conf->type==tiff8_type)
             TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 8);
         else
             TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 16);
         TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
         TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 #ifdef HAVE_LIBZ
-        if (uf->cfg->losslessCompress) {
+        if (uf->conf->losslessCompress) {
             TIFFSetField(out, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
             TIFFSetField(out, TIFFTAG_ZIPQUALITY, 9);
         }
@@ -182,10 +181,10 @@ int ufraw_write_image(ufraw_data *uf)
             } else ufraw_message(UFRAW_WARNING,
                     "Failed to embed output profile '%s' in '%s'",
                     uf->developer->profileFile[out_profile],
-		    uf->cfg->outputFilename);
+		    uf->conf->outputFilename);
         }
         TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, TIFFDefaultStripSize(out, 0));
-        if (uf->cfg->type==tiff8_type) {
+        if (uf->conf->type==tiff8_type) {
             pixbuf8 = g_new(guint8, width*3);
             for (row=0; row<height; row++) {
                 if (row%100==99)
@@ -196,7 +195,7 @@ int ufraw_write_image(ufraw_data *uf)
                 if (TIFFWriteScanline(out, pixbuf8, row, 0)<0) {
                     message=ufraw_message(UFRAW_GET_WARNING, NULL);
                     ufraw_message(UFRAW_ERROR, "Error creating file '%s'.\n%s",
-                            uf->cfg->outputFilename, message);
+                            uf->conf->outputFilename, message);
                     status = UFRAW_ABORT_SAVE;
                     break;
                 }
@@ -211,7 +210,7 @@ int ufraw_write_image(ufraw_data *uf)
                 if (TIFFWriteScanline(out, pixbuf16, row, 0)<0) {
                     message=ufraw_message(UFRAW_GET_WARNING, NULL);
                     ufraw_message(UFRAW_ERROR, "Error creating file '%s'.\n%s",
-                            uf->cfg->outputFilename, message);
+                            uf->conf->outputFilename, message);
                     status = UFRAW_ABORT_SAVE;
                     break;
                 }
@@ -219,7 +218,7 @@ int ufraw_write_image(ufraw_data *uf)
         }
 #endif /*HAVE_LIBTIFF*/
 #ifdef HAVE_LIBJPEG
-    } else if (uf->cfg->type==jpeg_type) {
+    } else if (uf->conf->type==jpeg_type) {
         struct jpeg_compress_struct cinfo;
         struct jpeg_error_mgr jerr;
 
@@ -234,7 +233,7 @@ int ufraw_write_image(ufraw_data *uf)
         cinfo.input_components = 3;
         cinfo.in_color_space = JCS_RGB;
         jpeg_set_defaults(&cinfo);
-        jpeg_set_quality(&cinfo, uf->cfg->compression, TRUE);
+        jpeg_set_quality(&cinfo, uf->conf->compression, TRUE);
 
         jpeg_start_compress(&cinfo, TRUE);
 
@@ -249,10 +248,10 @@ int ufraw_write_image(ufraw_data *uf)
             } else ufraw_message(UFRAW_WARNING,
                     "Failed to embed output profile '%s' in '%s'",
                     uf->developer->profileFile[out_profile],
-		    uf->cfg->outputFilename);
+		    uf->conf->outputFilename);
         }
 #ifdef HAVE_LIBEXIF
-        if (uf->exifBuf!=NULL && uf->cfg->embedExif)
+        if (uf->exifBuf!=NULL && uf->conf->embedExif)
             jpeg_write_marker(&cinfo, JPEG_APP0+1,
                     uf->exifBuf, uf->exifBufLen);
 #endif
@@ -271,7 +270,7 @@ int ufraw_write_image(ufraw_data *uf)
         jpeg_destroy_compress(&cinfo);
         if ( (message=ufraw_message(UFRAW_GET_ERROR, NULL))!=NULL) {
             ufraw_message(UFRAW_ERROR, "Error creating file '%s'.\n%s",
-                    uf->cfg->outputFilename, message);
+                    uf->conf->outputFilename, message);
             status = UFRAW_ABORT_SAVE;
         } else if (ufraw_message(UFRAW_GET_WARNING, NULL)!=NULL) {
             ufraw_message(UFRAW_REPORT, NULL);
@@ -280,25 +279,25 @@ int ufraw_write_image(ufraw_data *uf)
     } else {
         ufraw_message(UFRAW_ERROR,
                 "Error creating file '%s'. Unknown file type %d.",
-                uf->cfg->outputFilename, uf->cfg->type);
+                uf->conf->outputFilename, uf->conf->type);
         status = UFRAW_ABORT_SAVE;
     }
     g_free(pixbuf16);
     g_free(pixbuf8);
 #ifdef HAVE_LIBTIFF
-    if (uf->cfg->type==tiff8_type || uf->cfg->type==tiff16_type) {
+    if (uf->conf->type==tiff8_type || uf->conf->type==tiff16_type) {
         TIFFClose(out);
         if ( (message=ufraw_message(UFRAW_GET_ERROR, NULL))!=NULL) {
             ufraw_message(UFRAW_ERROR, "Error creating file '%s'.\n%s",
-                    uf->cfg->outputFilename, message);
+                    uf->conf->outputFilename, message);
             status = UFRAW_ABORT_SAVE;
         }
     } else
 #endif
-	if (strcmp(uf->cfg->outputFilename, "-"))
+	if (strcmp(uf->conf->outputFilename, "-"))
             fclose(out);
-    if (uf->cfg->createID==also_id) {
-        save_configuration(uf->cfg, uf->developer, confFilename, NULL, 0);
+    if (uf->conf->createID==also_id) {
+        conf_save(uf->conf, confFilename, NULL, 0);
         g_free(confFilename);
     }
     return status;
@@ -306,32 +305,32 @@ int ufraw_write_image(ufraw_data *uf)
 
 int ufraw_batch_saver(ufraw_data *uf)
 {
-    if (strlen(uf->cfg->outputFilename)==0) {
+    if (strlen(uf->conf->outputFilename)==0) {
 	/* If output filename wasn't specified use input filename */
         char *filename = uf_file_set_type(uf->filename,
-			file_type[uf->cfg->type]);
-	if (strlen(uf->cfg->outputPath)>0) {
+			file_type[uf->conf->type]);
+	if (strlen(uf->conf->outputPath)>0) {
 	    char *cp = g_path_get_basename(filename);
 	    g_free(filename);
-	    filename = g_build_filename(uf->cfg->outputPath, cp , NULL);
+	    filename = g_build_filename(uf->conf->outputPath, cp , NULL);
 	    g_free(cp);
 	}
-        g_strlcpy(uf->cfg->outputFilename, filename, max_path);
+        g_strlcpy(uf->conf->outputFilename, filename, max_path);
 	g_free(filename);
     }
-    if ( !uf->cfg->overwrite && uf->cfg->createID!=only_id
-       && strcmp(uf->cfg->outputFilename, "-")
-       && g_file_test(uf->cfg->outputFilename, G_FILE_TEST_EXISTS) ) {
+    if ( !uf->conf->overwrite && uf->conf->createID!=only_id
+       && strcmp(uf->conf->outputFilename, "-")
+       && g_file_test(uf->conf->outputFilename, G_FILE_TEST_EXISTS) ) {
         char ans[max_name];
         fprintf(stderr, "ufraw: overwrite '%s'? [y/N] ",
-		uf->cfg->outputFilename);
+		uf->conf->outputFilename);
         fflush(stderr);
         fgets(ans, max_name, stdin);
         if (ans[0]!='y' && ans[0]!='Y') return UFRAW_CANCEL;
     }
-    if (strcmp(uf->cfg->outputFilename, "-")) {
-	char *absname = uf_file_set_absolute(uf->cfg->outputFilename);
-	g_strlcpy(uf->cfg->outputFilename, absname, max_path);
+    if (strcmp(uf->conf->outputFilename, "-")) {
+	char *absname = uf_file_set_absolute(uf->conf->outputFilename);
+	g_strlcpy(uf->conf->outputFilename, absname, max_path);
 	g_free(absname);
     }
     return ufraw_write_image(uf);

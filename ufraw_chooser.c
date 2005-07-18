@@ -18,7 +18,7 @@
 #include "ufraw.h"
 #include "ufraw_icon.h"
 
-void ufraw_chooser(cfg_data *cfg, char *defPath)
+void ufraw_chooser(conf_data *conf, char *defPath)
 {
     ufraw_data *uf;
     GtkFileChooser *fileChooser;
@@ -39,17 +39,24 @@ void ufraw_chooser(cfg_data *cfg, char *defPath)
 
     if (defPath!=NULL)
 	gtk_file_chooser_set_current_folder(fileChooser, defPath);
+
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
     gtk_file_filter_set_name(filter, "Raw images");
     extList = g_strsplit(raw_ext, ",", 100);
     for (l=extList; *l!=NULL; l++)
-        if (strcmp(*l, "jpg") && strcmp(*l, "tif")) {
+        if (strcmp(*l, "jpg") && strcmp(*l, "tif") && strcmp(*l, "ufraw")) {
             snprintf(ext, max_name, "*.%s", *l);
             gtk_file_filter_add_pattern(filter, ext);
             gtk_file_filter_add_pattern(filter, cp=g_ascii_strup(ext,-1));
             g_free(cp);
         }
     g_strfreev(extList);
+    gtk_file_chooser_add_filter(fileChooser, filter);
+
+    filter = GTK_FILE_FILTER(gtk_file_filter_new());
+    gtk_file_filter_set_name(filter, "UFRaw ID files");
+    gtk_file_filter_add_pattern(filter, "*.ufraw");
+    gtk_file_filter_add_pattern(filter, "*.UFRAW");
     gtk_file_chooser_add_filter(fileChooser, filter);
 
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
@@ -74,8 +81,8 @@ void ufraw_chooser(cfg_data *cfg, char *defPath)
 #endif
     gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
     /* Add shortcut to folder of last opened file */
-    if (strlen(cfg->inputFilename)>0) {
-        char *cp = g_path_get_dirname(cfg->inputFilename);
+    if (strlen(conf->inputFilename)>0) {
+        char *cp = g_path_get_dirname(conf->inputFilename);
         gtk_file_chooser_add_shortcut_folder( fileChooser, cp, NULL);
         g_free(cp);
     }
@@ -89,7 +96,7 @@ void ufraw_chooser(cfg_data *cfg, char *defPath)
                 ufraw_message(UFRAW_REPORT, NULL);
                 continue;
             }
-            ufraw_config(uf, cfg);
+            ufraw_config(uf, conf, NULL, NULL);
             ufraw_preview(uf, FALSE, ufraw_saver);
             g_free(filename);
         }
