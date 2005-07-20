@@ -414,14 +414,6 @@ int main (int argc, char **argv)
 	/* In batch the save options are always set to default */
 	conf_copy_save(&rc, &conf_default);
 	g_strlcpy(rc.outputPath, "", max_path);
-    } else {
-	/* In interactive mode we try to guess outputPath */
-	char *inPath = g_path_get_dirname(rc.inputFilename);
-	char *outPath = g_path_get_dirname(rc.outputFilename);
-	if ( strcmp(outPath,".") && strcmp(inPath, outPath) )
-	    g_strlcpy(rc.outputPath, outPath, max_path);
-	g_free(outPath);
-	g_free(inPath);
     }
     g_strlcpy(rc.inputFilename, "", max_path);
     g_strlcpy(rc.outputFilename, "", max_path);

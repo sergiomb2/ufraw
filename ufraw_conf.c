@@ -254,6 +254,12 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
             g_strlcpy(c->outputFilename, utf8, max_path);
 	g_free(utf8);
     }
+    if (!strcmp("OutputPath", element)) {
+	char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
+	if (utf8!=NULL)
+            g_strlcpy(c->outputPath, utf8, max_path);
+	g_free(utf8);
+    }
     if (!strcmp("SaveConfiguration", element))
 	sscanf(temp, "%d", &c->saveConfiguration);
     if (!strcmp("Interpolation", element))
@@ -320,7 +326,7 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
 
 int conf_load(conf_data *c, const char *IDFilename)
 {
-    char *confFilename, line[max_path];
+    char *confFilename, line[max_path], *locale;
     const char *hd;
     FILE *in;
     GMarkupParser parser={&conf_parse_start, &conf_parse_end,
@@ -349,6 +355,7 @@ int conf_load(conf_data *c, const char *IDFilename)
         }
 	confFilename = g_strdup(IDFilename);
     }
+    locale = uf_set_locale_C();
     context = g_markup_parse_context_new(&parser, 0, c, NULL);
     line[max_path-1] = '\0';
     fgets(line, max_path-1, in);
@@ -356,6 +363,8 @@ int conf_load(conf_data *c, const char *IDFilename)
         if (!g_markup_parse_context_parse(context, line, strlen(line), &err)) {
             ufraw_message(UFRAW_SET_ERROR, "Error parsing %s\n%s",
                     confFilename, err->message);
+	    g_markup_parse_context_end_parse(context, NULL);
+	    uf_reset_locale(locale);
 	    g_free(confFilename);
             if (g_error_matches(err, ufrawQuark, UFRAW_RC_VERSION))
                 return UFRAW_RC_VERSION;
@@ -365,6 +374,7 @@ int conf_load(conf_data *c, const char *IDFilename)
     }
     g_markup_parse_context_end_parse(context, NULL);
     g_markup_parse_context_free(context);
+    uf_reset_locale(locale);
     g_free(confFilename);
     fclose(in);
 
@@ -391,7 +401,7 @@ int conf_load(conf_data *c, const char *IDFilename)
 
 int conf_save(conf_data *c, char *IDFilename, char *buf, int bufSize)
 {
-    char *confFilename;
+    char *confFilename, *locale;
     const char *hd;
     FILE *out=NULL;
     char *type, *current;
@@ -411,19 +421,37 @@ int conf_save(conf_data *c, char *IDFilename, char *buf, int bufSize)
         }
         g_free(confFilename);
     }
+    locale = uf_set_locale_C();
     conf_printf("<UFRaw Version='%d'>\n", c->version);
-    if (strlen(c->inputFilename)>0) {
+    if (strlen(c->inputFilename)>0 && IDFilename!=NULL) {
 	char *utf8 = g_filename_to_utf8(c->inputFilename, -1, NULL, NULL, NULL);
 	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
         conf_printf("<InputFilename>%s</InputFilename>\n", utf8);
 	g_free(utf8);
     }
-    if (strlen(c->outputFilename)>0) {
+    if (strlen(c->outputFilename)>0 && IDFilename!=NULL) {
 	char *utf8=g_filename_to_utf8(c->outputFilename, -1, NULL, NULL, NULL);
 	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
         conf_printf("<OutputFilename>%s</OutputFilename>\n", utf8);
 	g_free(utf8);
     }
+    if (strlen(c->outputPath)>0) {
+	char *utf8=g_filename_to_utf8(c->outputPath, -1, NULL, NULL, NULL);
+	if (utf8!=NULL) conf_printf("<OutputPath>%s</OutputPath>\n", utf8);
+	g_free(utf8);
+    } else {
+	/* Guess outputPath */
+        char *inPath = g_path_get_dirname(c->inputFilename);
+	char *outPath = g_path_get_dirname(c->outputFilename);
+	if ( strcmp(outPath,".") && strcmp(inPath, outPath) ) {
+	    char *utf8=g_filename_to_utf8(outPath, -1, NULL, NULL, NULL);
+	    if (utf8!=NULL) conf_printf("<OutputPath>%s</OutputPath>\n", utf8);
+	    g_free(utf8);
+	}
+	g_free(outPath);
+	g_free(inPath);
+    }
+					    
     /* GUI settings are only saved to .ufrawrc */
     if (IDFilename==NULL) {
         if (c->saveConfiguration!=conf_default.saveConfiguration)
@@ -609,6 +637,7 @@ int conf_save(conf_data *c, char *IDFilename, char *buf, int bufSize)
 	g_free(utf8);
     }
     conf_printf("</UFRaw>\n");
+    uf_reset_locale(locale);
     if (buf==NULL) fclose(out);
     else if (bufIndex >= bufSize) return UFRAW_ERROR;
     return UFRAW_SUCCESS;

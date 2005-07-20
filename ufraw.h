@@ -191,6 +191,8 @@ void preview_progress(void *widget, char *text, double progress);
 const char *uf_get_home_dir();
 char *uf_file_set_type(const char *filename, const char *type);
 char *uf_file_set_absolute(const char *filename);
+/* Set locale of LC_NUMERIC to "C" to make sure that printf behaves correctly.*/char *uf_set_locale_C();
+void uf_reset_locale(char *locale);
 double profile_default_linear(profile_data *p);
 double profile_default_gamma(profile_data *p);
 int curve_load(CurveData *cp, char *filename);

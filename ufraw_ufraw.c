@@ -212,12 +212,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     }
     if (uf==NULL) return UFRAW_SUCCESS;
 
-    if (strlen(uf->conf->outputPath)==0) {
-        char *inPath = g_path_get_dirname(uf->filename);
-        if (!strcmp(inPath,"."))
-	    g_strlcpy(uf->conf->outputPath, inPath, max_path);
-        g_free(inPath);
-    }
     char *absname = uf_file_set_absolute(uf->filename);
     g_strlcpy(uf->conf->inputFilename, absname, max_path);
     g_free(absname);
@@ -384,10 +378,7 @@ int ufraw_set_wb(ufraw_data *uf)
                     "reverting to auto white balance.\n");
                 ufraw_message(UFRAW_INTERACTIVE_MESSAGE,
                     "Cannot use camera white balance, "
-                    "reverting to auto white balance.\n"
-                    "You can set 'Auto WB' as the initial setting "
-                    "in 'Preferences' to avoid getting this "
-                    "message in the future.\n");
+                    "reverting to auto white balance.\n");
                 uf->conf->wb = auto_wb;
                 status=dcraw_set_color_scale(raw, TRUE, FALSE);
             }

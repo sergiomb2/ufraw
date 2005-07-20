@@ -1192,7 +1192,8 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     GtkWidget *optionsDialog, *profileTable[2];
-    GtkWidget *notebook, *label, *page, *button, *text, *box, *image;
+    GtkComboBox *confCombo;
+    GtkWidget *notebook, *label, *page, *button, *text, *box, *image, *event;
     GtkTable *curveTable, *table;
     GtkTextBuffer *confBuffer, *buffer;
     char txt[max_name], buf[10000];
@@ -1222,6 +1223,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     label = gtk_label_new("Configuration");
     box = gtk_vbox_new(FALSE, 0);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, label);
+
     page = gtk_scrolled_window_new(NULL, NULL);
     gtk_box_pack_start(GTK_BOX(box), page, TRUE, TRUE, 0);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(page),
@@ -1230,14 +1232,32 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_container_add(GTK_CONTAINER(page), text);
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text), FALSE);
     confBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
+
     table = GTK_TABLE(gtk_table_new(10, 10, FALSE));
     gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(table), FALSE, FALSE, 0);
+    label = gtk_label_new("Save image defaults ");
+    event = gtk_event_box_new();
+    gtk_container_add(GTK_CONTAINER(event), label);
+    gtk_tooltips_set_tip(data->ToolTips, event,
+	    "Save current image manipulation parameters as defaults.\n"
+	    "The output parameters in this window are always saved.", NULL);
+    gtk_table_attach(GTK_TABLE(table), event, 0, 2, 0, 1, 0, 0, 0, 0);
+    confCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    gtk_combo_box_append_text(confCombo, "Never again");
+    gtk_combo_box_append_text(confCombo, "Always");
+    gtk_combo_box_append_text(confCombo, "Just this once");
+    gtk_combo_box_set_active(confCombo, CFG->saveConfiguration);
+    g_signal_connect(G_OBJECT(confCombo), "changed",
+	    G_CALLBACK(options_combo_update), &CFG->saveConfiguration);
+    gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(confCombo), 2, 3, 0, 1,
+	    0, 0, 0, 0);
+					    
     button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
     gtk_tooltips_set_tip(data->ToolTips, button,
-	    "Save configuration file", NULL);
+	    "Save resource file ($HOME/.ufrawrc) now", NULL);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(configuration_save), NULL);
-    gtk_table_attach(table, button, 0, 1, 0, 1, 0, 0, 0, 0);
+    gtk_table_attach(table, button, 0, 1, 1, 2, 0, 0, 0, 0);
 
     label = gtk_label_new("Log");
     page = gtk_scrolled_window_new(NULL, NULL);

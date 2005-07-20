@@ -19,6 +19,7 @@
 #include <string.h>
 #include <ctype.h> /* needed for isspace() */
 #include <errno.h>
+#include <locale.h>
 #include <glib.h>
 #include "ufraw.h"
 
@@ -101,6 +102,31 @@ const char raw_ext[]= "bay,bmq,cr2,crw,cs1,dc2,dcr,fff,hdr,k25,kdc,mrw,nef,"
         "orf,pef,raf,raw,rdc,srf,x3f,jpg,tif,ufraw";
 
 const char *file_type[] = { ".ppm", ".ppm", ".tif", ".tif", ".jpg" };
+
+/* Set locale of LC_NUMERIC to "C" to make sure that printf behaves correctly.*/
+char *uf_set_locale_C()
+{
+    char test[max_name], *locale;
+    snprintf(test, max_name, "%.1f", 1234.5);
+    if (strcmp(test, "1234.5")) {
+	locale = setlocale(LC_NUMERIC, "C");
+	snprintf(test, max_name, "%.1f", 1234.5);
+	if (!strcmp(test, "1234.5")) {
+	    return locale;
+	} else {
+	    setlocale(LC_NUMERIC, locale);
+	    ufraw_message(UFRAW_ERROR, "Fatal error setting C locale");
+	    return NULL;
+	}
+    } else {
+	return NULL;
+    }
+}
+
+void uf_reset_locale(char *locale)
+{
+    setlocale(LC_NUMERIC, locale);
+}
 
 double profile_default_linear(profile_data *p)
 {
@@ -210,7 +236,7 @@ int curve_load(CurveData *cp, char *filename)
         *cp = data.curves[TONE_CURVE];
     } else {
 	/* Load UFRaw's curve file format */
-        char line[max_path];
+        char line[max_path], *locale;
         FILE *in;
         GMarkupParser parser={&curve_parse_start, &curve_parse_end,
                 &curve_parse_text, NULL, NULL};
@@ -224,6 +250,7 @@ int curve_load(CurveData *cp, char *filename)
 			    filename, strerror(errno));
 	    return UFRAW_ERROR;
 	}
+	locale = uf_set_locale_C();
         context = g_markup_parse_context_new(&parser, 0, cp, NULL);
         line[max_path-1] = '\0';
         fgets(line, max_path-1, in);
@@ -232,6 +259,8 @@ int curve_load(CurveData *cp, char *filename)
                     strlen(line), &err)) {
                 ufraw_message(UFRAW_ERROR, "Error parsing %s\n%s",
                         filename, err->message);
+		g_markup_parse_context_free(context);
+		uf_reset_locale(locale);
                 if (g_error_matches(err, ufrawQuark, UFRAW_RC_VERSION))
                     return UFRAW_RC_VERSION;
                 else return UFRAW_ERROR;
@@ -240,6 +269,7 @@ int curve_load(CurveData *cp, char *filename)
         }
         g_markup_parse_context_end_parse(context, NULL);
         g_markup_parse_context_free(context);
+	uf_reset_locale(locale);
         fclose(in);
     }
     char *base = g_path_get_basename(filename);
@@ -294,6 +324,7 @@ int curve_save(CurveData *cp, char *filename)
                         filename, g_strerror(errno));
             return UFRAW_ERROR;
         }
+	char *locale = uf_set_locale_C();
         char *base = g_path_get_basename(filename);
 	char *name = uf_file_set_type(base, "");
 	char *utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
@@ -306,6 +337,7 @@ int curve_save(CurveData *cp, char *filename)
         if (buf!=NULL) fprintf(out, buf);
         g_free(buf);
         fprintf(out, "</Curve>\n");
+	uf_reset_locale(locale);
         fclose(out);
     }
     return UFRAW_SUCCESS;
