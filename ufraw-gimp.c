@@ -52,7 +52,17 @@ void query()
     static GimpParamDef load_return_vals[] = {
         { GIMP_PDB_IMAGE, "image", "Output image" },
     };
-
+#if GIMP_CHECK_VERSION(2,2,0)
+    static GimpParamDef thumb_args[] = {
+	{ GIMP_PDB_STRING, "filename",     "The name of the file to load" },
+	{ GIMP_PDB_INT32,  "thumb_size",   "Preferred thumbnail size" }
+    };
+    static GimpParamDef thumb_return_vals[] = {
+	{ GIMP_PDB_IMAGE,  "image",        "Thumbnail image" },
+	{ GIMP_PDB_INT32,  "image_width",  "Width of full-sized image" },
+	{ GIMP_PDB_INT32,  "image_height", "Height of full-sized image" }
+    };
+#endif
     static gint num_load_args = sizeof load_args / sizeof load_args[0];
     static gint num_load_return_vals =
         sizeof load_return_vals / sizeof load_return_vals[0];
@@ -65,7 +75,11 @@ void query()
             "Copyright 2004 by Pawel Jochym\n"
             "Copyright 2004 by Udi Fuchs",
             "ufraw-" VERSION,
-            "<Load>/UFRaw",
+#if GIMP_CHECK_VERSION(2,2,0)
+	    "raw image",
+#else
+	    "<Load>/UFRaw",
+#endif
             NULL,
             GIMP_PLUGIN,
             num_load_args,
@@ -74,6 +88,22 @@ void query()
             load_return_vals);
 
     gimp_register_load_handler("file_ufraw_load", raw_ext, "");
+#if GIMP_CHECK_VERSION(2,2,0)
+    gimp_install_procedure ("file_ufraw_load_thumb",
+	    "Loads a small preview from a raw image",
+	    "",
+	    "",
+	    "Copyright 2004 by Udi Fuchs",
+            "ufraw-" VERSION,
+	    NULL,
+	    NULL,
+	    GIMP_PLUGIN,
+	    G_N_ELEMENTS(thumb_args),
+	    G_N_ELEMENTS(thumb_return_vals),
+	    thumb_args, thumb_return_vals);
+    gimp_register_thumbnail_loader("file_ufraw_load",
+	    "file_ufraw_load_thumb");
+#endif
 }
 
 void run(const gchar *name,
@@ -83,8 +113,9 @@ void run(const gchar *name,
         GimpParam **return_vals)
 {
     static GimpParam values[2];
-    GimpRunMode run_mode = (GimpRunMode)param[0].data.d_int32;
-    char *filename = param[1].data.d_string;
+    GimpRunMode run_mode;
+    char *filename;
+    int size;
     ufraw_data *uf;
     conf_data conf;
     int status;
@@ -93,7 +124,15 @@ void run(const gchar *name,
     *nreturn_vals = 1;
     *return_vals = values;
 
-    if (strcmp(name, "file_ufraw_load")) {
+    if (!strcmp(name, "file_ufraw_load_thumb")) {
+	run_mode = 0;
+	filename = param[0].data.d_string;
+	size = param[1].data.d_int32;
+    } else if (!strcmp(name, "file_ufraw_load")) {
+	run_mode = (GimpRunMode)param[0].data.d_int32;
+	filename = param[1].data.d_string;
+	size = 0;
+    } else {
         values[0].type = GIMP_PDB_STATUS;
         values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
         return;
@@ -115,14 +154,36 @@ void run(const gchar *name,
     /* if UFRaw fails on jpg or tif then open with Gimp */
     if (uf==NULL) {
         if (!strcasecmp(filename + strlen(filename) - 4, ".jpg")) {
-            *return_vals = gimp_run_procedure2 ("file_jpeg_load",
-                    nreturn_vals, nparams, param);
+	    if (size==0)
+		*return_vals = gimp_run_procedure2 ("file_jpeg_load",
+			nreturn_vals, nparams, param);
+	    else
+		*return_vals = gimp_run_procedure2 ("file_jpeg_load_thumb",
+			nreturn_vals, nparams, param);
             return;
         } else if (!strcasecmp(filename+strlen(filename)-4, ".tif")) {
-            *return_vals = gimp_run_procedure2 ("file_tiff_load",
-                    nreturn_vals, nparams, param);
+	    if (size==0)
+		*return_vals = gimp_run_procedure2 ("file_tiff_load",
+			nreturn_vals, nparams, param);
+	    else {
+		/* There is no "file_tiff_load_thumb", so we need to use
+		 * "file_tiff_load". */
+		GimpParam tiffParam[3];
+		tiffParam[0].type = GIMP_PDB_INT32;
+		tiffParam[0].data.d_int32 = GIMP_RUN_NONINTERACTIVE;
+		tiffParam[1].type = GIMP_PDB_STRING;
+		tiffParam[1].data.d_string = filename;
+		tiffParam[2].type = GIMP_PDB_STRING;
+		tiffParam[2].data.d_string = filename;
+		*return_vals = gimp_run_procedure2 ("file_tiff_load",
+		    	nreturn_vals, 3, tiffParam);
+	    }
             return;
         } else {
+	    /* Don't issue a message on thumbnail failure, since ufraw-gimp
+	     * will be called again with "file_ufraw_load" */
+	    if (size>0) return;
+
             GtkWidget *dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
             gtk_window_set_icon(GTK_WINDOW(dummyWindow),
                     gdk_pixbuf_new_from_inline(-1, ufraw_icon, FALSE, NULL));
@@ -147,12 +208,17 @@ void run(const gchar *name,
     }
     ufraw_config(uf, &conf, NULL, NULL);
     conf_copy_save(uf->conf, &conf_default);
+#if GIMP_CHECK_VERSION(2,2,0)
+    if (size>0) uf->conf->size = size;
+#else
     if (run_mode==GIMP_RUN_NONINTERACTIVE) uf->conf->shrink = 8;
+#endif
     /* UFRaw already issues warnings.
      * With GIMP_PDB_CANCEL, Gimp won't issue another one. */
     values[0].type = GIMP_PDB_STATUS;
     values[0].data.d_status = GIMP_PDB_CANCEL;
-    if (run_mode==GIMP_RUN_INTERACTIVE) {
+    /* BUG - what should be done with GIMP_RUN_WITH_LAST_VALS */
+    if (size==0 && run_mode==GIMP_RUN_INTERACTIVE) {
         status = ufraw_preview(uf, TRUE, ufraw_save_gimp_image);
         gimp_set_data("plug_in_ufraw", &conf, sizeof(conf));
     } else {
@@ -171,6 +237,13 @@ void run(const gchar *name,
     values[0].data.d_status = GIMP_PDB_SUCCESS;
     values[1].type = GIMP_PDB_IMAGE;
     values[1].data.d_image = uf->gimpImage;
+    if (size>0) {
+	*nreturn_vals = 4;
+	values[2].type = GIMP_PDB_INT32;
+	values[2].data.d_int32 = uf->predictateWidth;
+	values[3].type = GIMP_PDB_INT32;
+	values[3].data.d_int32 = uf->predictateHeight;
+    }
 }
 
 long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)

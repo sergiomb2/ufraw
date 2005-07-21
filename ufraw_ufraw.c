@@ -161,8 +161,8 @@ ufraw_data *ufraw_open(char *filename)
     uf->widget = NULL;
     if (raw->fuji_width) {
         /* copied from dcraw's fuji_rotate() */
-        uf->predictateWidth = raw->fuji_width / 0.5; /* sqrt(0.5); */
-        uf->predictateHeight = (raw->height - raw->fuji_width) / 0.5; /* sqrt(0.5); */
+        uf->predictateWidth = raw->fuji_width / raw->fuji_step;
+        uf->predictateHeight = (raw->height - raw->fuji_width) / raw->fuji_step;
     } else {
         uf->predictateHeight = raw->height;
         uf->predictateWidth = raw->width;

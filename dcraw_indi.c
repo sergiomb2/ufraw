@@ -354,12 +354,12 @@ void CLASS convert_to_rgb_INDI(ushort (*image)[4], const int document_mode,
 }
 
 void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
-    int *width_p, int *fuji_width_p, const int colors)
+    int *width_p, int *fuji_width_p, const int colors, const double step)
 {
   int height = *height_p, width = *width_p, fuji_width = *fuji_width_p; /*UF*/
   ushort (*image)[4] = *image_p; /*UF*/
   int i, wide, high, row, col;
-  double step;
+//  double step;
   float r, c, fr, fc;
   unsigned ur, uc;
   ushort (*img)[4], (*pix)[4];
@@ -367,7 +367,7 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
   if (!fuji_width) return;
   dcraw_message (DCRAW_VERBOSE, "Rotating image 45 degrees...\n");
 //  fuji_width = (fuji_width + shrink) >> shrink;
-  step = 0.5; /* sqrt(0.5); */
+//  step = 0.5;
   wide = fuji_width / step;
   high = (height - fuji_width) / step;
   img = calloc (wide*high, sizeof *img);

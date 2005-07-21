@@ -26,6 +26,7 @@ typedef struct {
     dcraw_image_data raw;
     float pre_mul[4], post_mul[4], cam_mul[4], coeff[3][4];
     int rgbMax, black, fuji_width;
+    double fuji_step;
     int toneCurveSize, toneCurveOffset;
     char *message;
 } dcraw_data;

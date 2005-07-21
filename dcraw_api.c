@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h> /* for sqrt() */
 #include <setjmp.h>
 #include <errno.h>
 #include <float.h>
@@ -57,7 +58,7 @@ void convert_to_rgb_INDI(gushort (*image)[4], const int document_mode,
 void flip_image_INDI(gushort (*image)[4], int *height_p, int *width_p,
     const int flip, int *ymag_p, int *xmag_p);
 void fuji_rotate_INDI(gushort (**image_p)[4], int *height_p, int *width_p,
-    int *fuji_width_p, const int colors);
+    int *fuji_width_p, const int colors, const double step);
 
 char *messageBuffer = NULL;
 int lastStatus = DCRAW_SUCCESS;
@@ -93,6 +94,7 @@ int dcraw_open(dcraw_data *h,char *filename)
     h->height = height;
     h->width = width;
     h->fuji_width = fuji_width;
+    h->fuji_step = sqrt(0.5);
     h->colors = colors;
     h->filters = filters;
     h->use_coeff = use_coeff;
@@ -222,7 +224,8 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh, int scale)
 	    }
 	}
     }
-    fuji_rotate_INDI(&f->image, &f->height, &f->width, &fujiWidth, f->colors);
+    fuji_rotate_INDI(&f->image, &f->height, &f->width, &fujiWidth,
+	    f->colors, hh->fuji_step);
 
     hh->message = messageBuffer;
     return lastStatus;
@@ -358,7 +361,8 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
         for (i=0; i<f->height*f->width; i++)
             f->image[i][1] = (f->image[i][1]+f->image[i][3])/2;
     }
-    fuji_rotate_INDI(&f->image, &f->height, &f->width, &fujiWidth, f->colors);
+    fuji_rotate_INDI(&f->image, &f->height, &f->width, &fujiWidth,
+	    f->colors, h->fuji_step);
 
     h->message = messageBuffer;
     return lastStatus;
