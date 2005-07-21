@@ -54,5 +54,5 @@ Type: files; Name: {%USERPROFILE}\.gimp-2.0\plug-ins\ufraw-gimp.exe; Tasks: unpl
 Type: files; Name: {%USERPROFILE}\.gimp-2.2\plug-ins\ufraw-gimp.exe; Tasks: unplug
 
 [messages]
-SelectDirDesc=[name] should be installed in the Gimp directory. Where was the Gimp installed?
-WelcomeLabel2=This will install [name/ver] on your computer.%n%nIt is recomended that you will install the Gimp before installing [name].%n%nIt is also recomended that you will not run the Gimp application during this installation.
+SelectDirDesc=If you have the Gimp installed, [name] should be installed in the Gimp directory. Hopefully, the wizard will guess your Gimp directory correctly.
+WelcomeLabel2=%nThis wizard will install [name/ver] on your computer.%n%nYou must install GTK+ before installing [name]. It is also recommended to install the Gimp.  Both packages can be downloaded from http://gimp-win.sourceforge.net/%n%nIt is recommended that you will not run the Gimp application during this installation.
