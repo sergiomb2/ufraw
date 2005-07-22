@@ -112,7 +112,7 @@ void run(const gchar *name,
         gint *nreturn_vals,
         GimpParam **return_vals)
 {
-    static GimpParam values[2];
+    static GimpParam values[4];
     GimpRunMode run_mode;
     char *filename;
     int size;
@@ -166,8 +166,9 @@ void run(const gchar *name,
 		*return_vals = gimp_run_procedure2 ("file_tiff_load",
 			nreturn_vals, nparams, param);
 	    else {
-		/* There is no "file_tiff_load_thumb", so we need to use
-		 * "file_tiff_load". */
+		/* There is no "file_tiff_load_thumb".
+		 * The call to "file_ufraw_load" will handle the thumbnail */
+		/* Following is another solution for tiff thumbnails
 		GimpParam tiffParam[3];
 		tiffParam[0].type = GIMP_PDB_INT32;
 		tiffParam[0].data.d_int32 = GIMP_RUN_NONINTERACTIVE;
@@ -177,6 +178,7 @@ void run(const gchar *name,
 		tiffParam[2].data.d_string = filename;
 		*return_vals = gimp_run_procedure2 ("file_tiff_load",
 		    	nreturn_vals, 3, tiffParam);
+		*/
 	    }
             return;
         } else {

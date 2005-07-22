@@ -98,8 +98,8 @@ const wb_data wb_preset[] = { { "Manual WB", 0, 0},
 //    { "7Hi Cloudy", 1.730469/1.42, 1.269531/1.25 } /* 5823K */ };
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
 
-const char raw_ext[]= "bay,bmq,cr2,crw,cs1,dc2,dcr,fff,hdr,k25,kdc,mrw,nef,"
-        "orf,pef,raf,raw,rdc,srf,x3f,jpg,tif,ufraw";
+const char raw_ext[]= "bay,bmq,cr2,crw,cs1,dc2,dcr,erf,fff,hdr,k25,kdc,"
+	"mos,mrw,nef,orf,pef,pxn,raf,raw,rdc,srf,x3f,dng,jpg,tif,ufraw";
 
 const char *file_type[] = { ".ppm", ".ppm", ".tif", ".tif", ".jpg" };
 

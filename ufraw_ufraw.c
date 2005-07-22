@@ -360,15 +360,17 @@ int ufraw_set_wb(ufraw_data *uf)
 	for (c=0; c<raw->colors; c++)
 	    uf->conf->chanMul[c] = bbWB[i][1] / bbWB[i][c==3?1:c] *
 		    raw->pre_mul[c] * (c==1||c==3?uf->conf->green:1.0);
+	/* Normalize chanMul[] so that MIN(chanMul[]) will be 1.0 */
+	double min = uf->conf->chanMul[0];
+	for (c=1; c<raw->colors; c++)
+	   if (uf->conf->chanMul[c] < min) min = uf->conf->chanMul[c];
+	if (min==0.0) min = 1.0; /* should never happen, just to be safe */
+	for (c=0; c<raw->colors; c++) uf->conf->chanMul[c] /= min;
 	if (raw->colors<4) uf->conf->chanMul[3] = 0.0;
 	return UFRAW_SUCCESS;
     }
     if (uf->conf->wb==spot_wb) {
-	double min = uf->conf->chanMul[0];
-	for (c=1; c<raw->colors; c++)
-	    if (uf->conf->chanMul[c] < min) min = uf->conf->chanMul[c];
-	if (min==0.0) min = 1.0; /* should never happen, just to be safe */
-	for (c=0; c<raw->colors; c++) uf->conf->chanMul[c] /= min;
+	/* do nothing */
     } else if (uf->conf->wb==auto_wb || uf->conf->wb==camera_wb) {
         if ( (status=dcraw_set_color_scale(raw, uf->conf->wb==auto_wb,
                 uf->conf->wb==camera_wb))!=DCRAW_SUCCESS ) {
@@ -393,6 +395,12 @@ int ufraw_set_wb(ufraw_data *uf)
         uf->conf->chanMul[0] *= wb_preset[uf->conf->wb].red;
         uf->conf->chanMul[2] *= wb_preset[uf->conf->wb].blue;
     } else return UFRAW_ERROR;
+    /* Normalize chanMul[] so that MIN(chanMul[]) will be 1.0 */
+    double min = uf->conf->chanMul[0];
+    for (c=1; c<raw->colors; c++)
+	if (uf->conf->chanMul[c] < min) min = uf->conf->chanMul[c];
+    if (min==0.0) min = 1.0; /* should never happen, just to be safe */
+    for (c=0; c<raw->colors; c++) uf->conf->chanMul[c] /= min;
     if (raw->colors<4) uf->conf->chanMul[3] = 0.0;
 
     /* rgbWB holds the normalized channel values */
