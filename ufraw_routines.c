@@ -325,6 +325,7 @@ int curve_save(CurveData *cp, char *filename)
             return UFRAW_ERROR;
         }
 	char *locale = uf_set_locale_C();
+	fprintf(out, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
         char *base = g_path_get_basename(filename);
 	char *name = uf_file_set_type(base, "");
 	char *utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);

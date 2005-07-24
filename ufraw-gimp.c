@@ -200,14 +200,9 @@ void run(const gchar *name,
             return;
         }
     }
-    conf.confSize = 0;
-    if ( gimp_get_data_size("plug_in_ufraw")==sizeof(conf) )
-        gimp_get_data("plug_in_ufraw", &conf);
-    if (conf.confSize!=conf_default.confSize ||
-	            conf.version!=conf_default.version) {
-	/* Load $HOME/.ufrawrc */
-	conf_load(&conf, NULL);
-    }
+    /* Load $HOME/.ufrawrc */
+    conf_load(&conf, NULL);
+
     ufraw_config(uf, &conf, NULL, NULL);
     conf_copy_save(uf->conf, &conf_default);
 #if GIMP_CHECK_VERSION(2,2,0)

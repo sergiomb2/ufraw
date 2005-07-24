@@ -422,6 +422,7 @@ int conf_save(conf_data *c, char *IDFilename, char *buf, int bufSize)
         g_free(confFilename);
     }
     locale = uf_set_locale_C();
+    conf_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
     conf_printf("<UFRaw Version='%d'>\n", c->version);
     if (strlen(c->inputFilename)>0 && IDFilename!=NULL) {
 	char *utf8 = g_filename_to_utf8(c->inputFilename, -1, NULL, NULL, NULL);

@@ -483,8 +483,10 @@ int main (int argc, char **argv)
             g_free(uf);
         }
 #ifndef UFRAW_BATCH
-        if (!batch)
+        if (!batch) {
             ufraw_preview(uf, FALSE, ufraw_saver);
+	    rc = *uf->conf;
+	}
 #endif
     }
 #ifndef UFRAW_BATCH

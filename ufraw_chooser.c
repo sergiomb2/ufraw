@@ -18,6 +18,14 @@
 #include "ufraw.h"
 #include "ufraw_icon.h"
 
+#ifdef HAVE_GTK_2_6
+void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *fileChooser)
+{
+    gtk_file_chooser_set_show_hidden(fileChooser,
+	    gtk_toggle_button_get_active(button));
+}
+#endif
+
 void ufraw_chooser(conf_data *conf, char *defPath)
 {
     ufraw_data *uf;
@@ -77,7 +85,12 @@ void ufraw_chooser(conf_data *conf, char *defPath)
     gtk_file_chooser_add_filter(fileChooser, filter);
 
 #ifdef HAVE_GTK_2_6
-    gtk_file_chooser_set_show_hidden(fileChooser, TRUE);
+    gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
+    GtkWidget *button = gtk_check_button_new_with_label( "Show hidden files");
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
+    g_signal_connect(G_OBJECT(button), "toggled",
+	    G_CALLBACK(ufraw_chooser_toggle), fileChooser);
+    gtk_file_chooser_set_extra_widget(fileChooser, button);
 #endif
     gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
     /* Add shortcut to folder of last opened file */
@@ -88,6 +101,8 @@ void ufraw_chooser(conf_data *conf, char *defPath)
     }
     gtk_widget_show(GTK_WIDGET(fileChooser));
     while (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
+	/* Load $HOME/.ufrawrc */
+	conf_load(conf, NULL);	    
         for(list=saveList=gtk_file_chooser_get_filenames(fileChooser);
         list!=NULL; list=g_slist_next(list)) {
             filename = list->data;
@@ -99,6 +114,7 @@ void ufraw_chooser(conf_data *conf, char *defPath)
             ufraw_config(uf, conf, NULL, NULL);
             ufraw_preview(uf, FALSE, ufraw_saver);
             g_free(filename);
+	    *conf = *uf->conf;
         }
         g_slist_free(saveList);
     }
