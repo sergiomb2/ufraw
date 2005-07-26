@@ -176,7 +176,12 @@ long ufraw_saver(void *widget, gpointer user_data)
     gtk_dialog_set_default_response(GTK_DIALOG(fileChooser), GTK_RESPONSE_OK);
     ufraw_focus(fileChooser, TRUE);
 #ifdef HAVE_GTK_2_6
-    gtk_file_chooser_set_show_hidden(fileChooser, TRUE);
+    gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
+    GtkWidget *hidden_button = gtk_check_button_new_with_label( "Show hidden files");
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(hidden_button), FALSE);
+    g_signal_connect(G_OBJECT(hidden_button), "toggled",
+	    G_CALLBACK(ufraw_chooser_toggle), fileChooser);
+    gtk_file_chooser_set_extra_widget(fileChooser, hidden_button);
 #endif
     char *path = g_path_get_dirname(absFilename);
     gtk_file_chooser_set_current_folder(fileChooser, path);

@@ -151,7 +151,12 @@ void load_curve(GtkWidget *widget, gpointer user_data)
     ufraw_focus(fileChooser, TRUE);
     gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
 #ifdef HAVE_GTK_2_6
-    gtk_file_chooser_set_show_hidden(fileChooser, TRUE);
+    gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
+    GtkWidget *button = gtk_check_button_new_with_label( "Show hidden files");
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
+    g_signal_connect(G_OBJECT(button), "toggled",
+	    G_CALLBACK(ufraw_chooser_toggle), fileChooser);
+    gtk_file_chooser_set_extra_widget(fileChooser, button);
 #endif
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
     gtk_file_filter_set_name(filter, "All curve formats");
@@ -228,7 +233,12 @@ void save_curve(GtkWidget *widget, gpointer user_data)
             GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL));
     ufraw_focus(fileChooser, TRUE);
 #ifdef HAVE_GTK_2_6
-    gtk_file_chooser_set_show_hidden(fileChooser, TRUE);
+    gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
+    GtkWidget *button = gtk_check_button_new_with_label( "Show hidden files");
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
+    g_signal_connect(G_OBJECT(button), "toggled",
+	    G_CALLBACK(ufraw_chooser_toggle), fileChooser);
+    gtk_file_chooser_set_extra_widget(fileChooser, button);
 #endif
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
     gtk_file_filter_set_name(filter, "All curve formats");
@@ -298,7 +308,12 @@ void load_profile(GtkWidget *widget, long type)
     ufraw_focus(fileChooser, TRUE);
     gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
 #ifdef HAVE_GTK_2_6
-    gtk_file_chooser_set_show_hidden(fileChooser, TRUE);
+    gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
+    GtkWidget *button = gtk_check_button_new_with_label( "Show hidden files");
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
+    g_signal_connect(G_OBJECT(button), "toggled",
+	    G_CALLBACK(ufraw_chooser_toggle), fileChooser);
+    gtk_file_chooser_set_extra_widget(fileChooser, button);
 #endif
     if (strlen(CFG->profilePath)>0)
         gtk_file_chooser_set_current_folder(fileChooser, CFG->profilePath);

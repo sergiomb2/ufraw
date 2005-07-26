@@ -16,6 +16,7 @@
 #ifndef _UFRAW_H
 #define _UFRAW_H
 
+#include <gtk/gtk.h>
 #include "nikon_curve.h"
 
 #define MAXOUT 255 /* Max output sample */
@@ -227,6 +228,9 @@ int ufraw_write_image(ufraw_data *uf);
 int ufraw_batch_saver(ufraw_data *uf);
 
 /* prototype for functions in ufraw_chooser.c */
+#ifdef HAVE_GTK_2_6
+void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
+#endif
 void ufraw_chooser(conf_data *conf, char *defPath);
 
 /* prototype for functions in ufraw_exif.c */
