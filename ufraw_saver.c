@@ -18,6 +18,10 @@
 #include <gtk/gtk.h>
 #include "ufraw.h"
 
+#ifdef HAVE_GTK_2_6
+void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
+#endif
+
 void ufraw_radio_button_update(GtkWidget *button, int *valuep)
 {
     GtkWidget *dialog = gtk_widget_get_ancestor(button, GTK_TYPE_DIALOG);

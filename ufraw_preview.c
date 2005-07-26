@@ -26,6 +26,10 @@
 #include "curveeditor_widget.h"
 #include "ufraw_icon.h"
 
+#ifdef HAVE_GTK_2_6
+void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
+#endif
+
 /* Set to huge number so that the preview size is set by the screen size */
 const int def_preview_width = 9000;
 const int def_preview_height = 9000;
