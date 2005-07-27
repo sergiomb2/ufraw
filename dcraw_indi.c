@@ -1,7 +1,7 @@
 /*
  * dcraw_indi.c - dcraw functions made indipended
  *  
- * by udi Fuchs,
+ * by Udi Fuchs,
  *
  * based on dcraw by Dave Coffin
  * http://www.cybercom.net/~dcoffin/

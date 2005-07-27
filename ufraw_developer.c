@@ -1,6 +1,6 @@
 /*
  * UFRaw - Unidentified Flying Raw converter for digital camera images
- * by udi Fuchs,
+ * by Udi Fuchs,
  *
  * ufraw_developer.c - functions for developing images or more exactly pixels.
  *

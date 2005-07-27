@@ -1,6 +1,6 @@
 /*
    dcraw_api.c - an API for dcraw
-   by udi Fuchs,
+   by Udi Fuchs,
 
    based on dcraw by Dave Coffin
    http://www.cybercom.net/~dcoffin/

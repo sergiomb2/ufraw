@@ -1,7 +1,7 @@
 /*
    UFRaw - Unidentified Flying Raw
    Raw photo loader plugin for The GIMP
-   by udi Fuchs,
+   by Udi Fuchs,
 
    based on the gimp plug-in by Pawel T. Jochym jochym at ifj edu pl,
 

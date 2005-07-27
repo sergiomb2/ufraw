@@ -1,7 +1,7 @@
 UFRaw - Unidentified Flying Raw
 Raw photo loader plugin for The GIMP
-(http://www.aei.mpg.de/~udif/ufraw/)
-by udi Fuchs,
+(http://ufraw.sourceforge.net/)
+by Udi Fuchs,
 
 UFRaw is a utility to read and manipulate raw images from digital cameras.
 It can be used by itself or as a Gimp plug-in.
