@@ -19,8 +19,8 @@
    copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
    purchase a license from the author.
 
-   $Revision: 1.269 $
-   $Date: 2005/07/14 02:13:45 $
+   $Revision: 1.270 $
+   $Date: 2005/07/20 22:41:33 $
  */
 
 #define _GNU_SOURCE
@@ -2166,6 +2166,8 @@ void CLASS foveon_interpolate()
   double dsum=0, trsum[3];
   char str[128], *cp;
 
+  dcraw_message (DCRAW_VERBOSE, "Foveon interpolation...\n"); /*UF*/
+
   foveon_fixed (dscr, 4, "DarkShieldColRange");
   foveon_fixed (ppm[0][0], 27, "PostPolyMatrix");
   foveon_fixed (satlev, 3, "SaturationLevel");
@@ -2885,6 +2887,9 @@ void CLASS vng_interpolate()
   int row, col, shift, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
   int g, diff, thold, num, c;
 
+  dcraw_message (DCRAW_VERBOSE, "%s interpolation...\n",
+	quick_interpolate ? "Bilinear":"VNG"); /*UF*/
+
   for (row=0; row < 8; row++) {		/* Precalculate for bilinear */
     for (col=1; col < 3; col++) {
       ip = code[row][col & 1];
@@ -3346,6 +3351,13 @@ int CLASS parse_tiff_ifd (int base, int level)
 	fseek (ifp, get4()+base, SEEK_SET);
 	parse_exif (base);
 	break;
+      case 46275:
+	strcpy (make, "Imacon");
+	data_offset = ftell(ifp);
+	raw_width = 4090;
+	raw_height = len / raw_width / 2;
+	done = 1;
+	break;
       case 50706:			/* DNGVersion */
 	is_dng = 1;
 	break;
@@ -3423,15 +3435,6 @@ guess_cfa_pc:
     FORCC pre_mul[c] = 1 / asn[c];
   if (!use_cm)
     FORCC pre_mul[c] /= cc[c][c];
-
-  if (is_dng || level) return done;
-
-  if ((raw_height & 1) && !strncmp (make,"OLYMPUS",7))
-       raw_height++;
-
-  if (make[0] == 0 && raw_width == 680)
-    strcpy (make, "Imacon");
-
   return done;
 }
 
@@ -3837,12 +3840,12 @@ void CLASS parse_fuji (int offset)
   }
 }
 
-void CLASS parse_jpeg (int offset)
+int CLASS parse_jpeg (int offset)
 {
   int len, save, hlen;
 
   fseek (ifp, offset, SEEK_SET);
-  if (fgetc(ifp) != 0xff || fgetc(ifp) != 0xd8) return;
+  if (fgetc(ifp) != 0xff || fgetc(ifp) != 0xd8) return 0;
 
   while (fgetc(ifp) == 0xff && fgetc(ifp) >> 4 != 0xd) {
     order = 0x4d4d;
@@ -3855,7 +3858,7 @@ void CLASS parse_jpeg (int offset)
     parse_tiff (save+6);
     fseek (ifp, save+len, SEEK_SET);
   }
-  strcat (model," JPEG");
+  return 1;
 }
 
 void CLASS parse_smal (int offset, int fsize)
@@ -4207,7 +4210,7 @@ short CLASS guess_byte_order (int words)
 int CLASS identify (int will_decode)
 {
   char head[32], *cp;
-  unsigned hlen, fsize, i, c;
+  unsigned hlen, fsize, i, c, is_jpeg=0;
   static const struct {
     int fsize;
     char make[12], model[15], withjpeg;
@@ -4357,8 +4360,8 @@ nucore:
       }
   parse_mos(8);
   parse_mos(3472);
-  if (make[0] == 0) parse_jpeg(0);
   if (make[0] == 0) parse_smal (0, fsize);
+  if (make[0] == 0) is_jpeg = parse_jpeg(0);
 
   for (i=0; i < sizeof corp / sizeof *corp; i++)
     if (strstr (make, corp[i]))		/* Simplify company names */
@@ -4408,6 +4411,8 @@ nucore:
   if (!strcmp(make,"NIKON"))
     load_raw = nikon_is_compressed() ?
 	nikon_compressed_load_raw : nikon_load_raw;
+  if (!strncmp (make,"OLYMPUS",7))
+    height += height & 1;
 
 /* Set parameters based on camera name (for non-DNG files). */
 
@@ -4829,17 +4834,10 @@ konica_400z:
       sprintf (model, "%dx%d", width, height);
     }
   } else if (!strcmp(make,"Imacon")) {
-    height = 5444;
-    width  = 4080;
-    raw_width = 4090;
-    data_offset = 314 + raw_width*12;
-    flip = 5;
-    if (raw_height == 680) {
-      order = 0x4949;
-      height = 4084;
-      data_offset -= 10;
-      flip = 3;
-    }
+    height = raw_height - 6;
+    width  = raw_width - 10;
+    data_offset += 6 + raw_width*12;
+    flip = height > width+10 ? 5:3;
     sprintf (model, "Ixpress %d-Mp", height*width/1000000);
     filters = 0x61616161;
     load_raw = unpacked_load_raw;
@@ -5136,10 +5134,10 @@ konica_400z:
   }
   if (!use_coeff) adobe_coeff();
 dng_skip:
-  if (!load_raw || !height || strstr(model,"JPEG")) {
+  if (!load_raw || !height || is_jpeg) {
     if (will_decode)
-      dcraw_message (DCRAW_UNSUPPORTED, "%s: Cannot decode %s %s images.\n",
-	ifname, make, model); /*UF*/
+      dcraw_message (DCRAW_UNSUPPORTED, "%s: Cannot decode %s %s%s images.\n",
+	ifname, make, model, is_jpeg ? " JPEG":""); /*UF*/
     return 1;
   }
 #ifdef NO_JPEG
@@ -5219,6 +5217,9 @@ void CLASS convert_to_rgb()
   ushort *img;
   float rgb[3];
 
+  dcraw_message (DCRAW_VERBOSE, use_coeff ?
+      "Converting to sRGB colorspace...\n" : "Building histograms...\n"); /*UF*/
+
   if (document_mode)
     colors = 1;
   memset (histogram, 0, sizeof histogram);
@@ -5291,6 +5292,9 @@ void CLASS flip_image()
   unsigned *flag;
   int size, base, dest, next, row, col, temp;
   INT64 *img, hold;
+
+  dcraw_message (DCRAW_VERBOSE, "Flipping image %c:%c:%c...\n",
+	flip & 1 ? 'H':'0', flip & 2 ? 'V':'0', flip & 4 ? 'T':'0'); /*UF*/
 
   img = (INT64 *) image;
   size = height * width;
@@ -5403,12 +5407,11 @@ void CLASS write_psd (FILE *ofp)
   merror (buffer, "write_psd()");
   pred = buffer;
 
-  for (row = trim; row < height-trim; row++) {
+  for (row = trim; row < height-trim; row++)
     for (col = trim; col < width-trim; col++) {
       FORC3 pred[c*psize] = htons(image[row*width+col][c]);
       pred++;
     }
-  }
   fwrite(buffer, psize, 6, ofp);
   free (buffer);
 }
@@ -5454,7 +5457,7 @@ int CLASS main (int argc, char **argv)
   if (argc == 1)
   {
     fprintf (stderr,
-    "\nRaw Photo Decoder \"dcraw\" v7.42"
+    "\nRaw Photo Decoder \"dcraw\" v7.43"
     "\nby Dave Coffin, dcoffin a cybercom o net"
     "\n\nUsage:  %s [options] file1 file2 ...\n"
     "\nValid options:"
@@ -5562,8 +5565,7 @@ int CLASS main (int argc, char **argv)
       if ((status = !timestamp))
 	fprintf (stderr, "%s has no timestamp.\n", ifname);
       else {
-	if (verbose)
-	  fprintf (stderr, "%s time set to %d.\n", ifname, (int) timestamp);
+	dcraw_message (DCRAW_VERBOSE, "%s time set to %d.\n", ifname, (int) timestamp); /*UF*/
 	ut.actime = ut.modtime = timestamp;
 	utime (ifname, &ut);
       }
@@ -5589,45 +5591,25 @@ next:
     image = calloc (iheight*iwidth*sizeof *image + meta_length, 1);
     merror (image, "main()");
     meta_data = (char *) (image + iheight*iwidth);
-    if (verbose)
-      fprintf (stderr,
-	"Loading %s %s image from %s...\n", make, model, ifname);
+    dcraw_message (DCRAW_VERBOSE,
+	"Loading %s %s image from %s...\n", make, model, ifname); /*UF*/
     (*load_raw)();
     bad_pixels();
     height = iheight;
     width  = iwidth;
-    if (is_foveon) {
-      if (verbose)
-	fprintf (stderr, "Foveon interpolation...\n");
-      foveon_interpolate();
-    } else {
 #ifdef COLORCHECK
-      colorcheck();
+    colorcheck();
 #endif
-      scale_colors();
-    }
+    if (is_foveon) foveon_interpolate();
+    else scale_colors();
     if (shrink) filters = 0;
-    trim = 0;
-    if (filters && !document_mode) {
-      trim = 1;
-      if (verbose)
-	fprintf (stderr, "%s interpolation...\n",
-	  quick_interpolate ? "Bilinear":"VNG");
-      vng_interpolate();
-    }
+    if ((trim = filters && !document_mode)) vng_interpolate();
     if (use_fuji_rotate) fuji_rotate();
 #ifdef USE_LCMS
     apply_profile (profile);
 #endif
-    if (verbose)
-      fprintf (stderr, "Converting to RGB colorspace...\n");
     convert_to_rgb();
-    if (flip) {
-      if (verbose)
-	fprintf (stderr, "Flipping image %c:%c:%c...\n",
-	  flip & 1 ? 'H':'0', flip & 2 ? 'V':'0', flip & 4 ? 'T':'0');
-      flip_image();
-    }
+    if (flip) flip_image();
     fclose(ifp);
     ofname = malloc (strlen(ifname) + 16);
     merror (ofname, "main()");
@@ -5644,8 +5626,7 @@ next:
 	goto cleanup;
       }
     }
-    if (verbose)
-      fprintf (stderr, "Writing data to %s...\n", ofname);
+    dcraw_message (DCRAW_VERBOSE, "Writing data to %s...\n", ofname); /*UF*/
     (*write_fun)(ofp);
     if (ofp != stdout)
       fclose(ofp);
