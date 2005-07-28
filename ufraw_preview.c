@@ -289,6 +289,7 @@ void save_curve(GtkWidget *widget, gpointer user_data)
     ufraw_focus(fileChooser, FALSE);
     gtk_widget_destroy(GTK_WIDGET(fileChooser));
 }
+
 void load_profile(GtkWidget *widget, long type)
 {
     preview_data *data = get_preview_data(widget);
