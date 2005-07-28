@@ -4,12 +4,12 @@ Raw photo loader plugin for The GIMP
 by Udi Fuchs,
 
 UFRaw is a utility to read and manipulate raw images from digital cameras.
-It can be used by itself or as a Gimp plug-in.
+It can be used by itself or as a GIMP plug-in.
 It reads raw images using Dave Coffin's raw conversion utility DCRaw.
 And it supports basic color management using Little CMS, allowing
 the user to apply color profiles.
  
-Ufraw was originally based on the gimp plug-in by Dave Coffin
+Ufraw was originally based on the GIMP plug-in by Dave Coffin
 http://www.cybercom.net/~dcoffin/
 and on Pawel T. Jochym's (jochym at ifj edu pl) plug-in.
 
@@ -17,7 +17,7 @@ UFRaw is licensed under the GNU General Public License.
 
 Installation
 ============
-Requires Gimp 2.0, the Gimp development package, GTK+ >= 2.4 and lcms.
+Requires GIMP 2.0, the GIMP development package, GTK+ >= 2.4 and lcms.
 If you have GTK+ >= 2.6 you will get the extra option of seeing hidden
 files in the file chooser dialogs.
 
@@ -46,7 +46,7 @@ JPEG format in the stand-alone tool. It is also needed to support
 Kodak DC120. If the configuration script does not find this package
 the above options will be suppressed.
 
-The tiff development package is required for saving images in the TIF format.
+The libtiff development package is required for saving images in the TIFF format.
 If the configuration script does not find this package this option
 will be suppressed.
 
@@ -54,11 +54,11 @@ The zlib package is required for saving images in the TIFF format with
 lossless compression. If the configuration script does not find this package
 this option will be suppressed.
 
-The libexif development package is required for reading exif information
+The libexif development package is required for reading EXIF information
 from some cameras.  If the configuration script does not find this package
 this option will be suppressed. You can also suppress this option explicitly
 by using the '--disable-exif' option to the configuration script.
-A recent version of libexif is required, but since libexif-6.11
+A recent version of libexif is required, but since libexif-0.6.11
 can crash UFRaw, it is recomended to use the CVS version.
 
 Other options for the configuration script are:
@@ -79,14 +79,14 @@ make install-user
 
 You also need to make sure that rawphoto is not installed.
 
-If one of the packages (lcms, jpeg, tiff, zlib) is not installed on your
+If one of the packages (lcms, libjpeg, libtiff, zlib) is not installed on your
 system, you can build it locally and export PREFIX to its location.
 To build any of the above packages download the package and type:
 ./configure --prefix=$PREFIX
 make
 make install
 
-If zlib is build only localy you will have to configure libtiff with
+If zlib is built only locally you will have to configure libtiff with
 the command:
 ./configure --prefix=$PREFIX --with-zlib-include-dir=$PREFIX/include --with-zlib-lib-dir=$PREFIX/lib
 
@@ -117,7 +117,7 @@ effect dcraw_indi.c or dcraw_api.c.
 
 Development version
 ===================
-The development version has the following cavities:
+The development version has the following caveats:
 
 The new DCRaw 7 code was incooparated into UFRaw-0.5. But, the new
 "color matrix" option of DCRaw is disabled at the moment. Also, DCRaw 7
@@ -131,9 +131,9 @@ but the last part wasn't written yet.
 The format of these ID files and of the configuration file $HOME/.ufrawrc
 may and will change before the final release. I try to make sure that the
 new releases will read such files correctly even if they are from previous
-releases. No attemp is made to keep backward compatibility with the different
+releases. No attempt is made to keep backward compatibility with the different
 stages of the development versions. If you use the development version you
-might have to delete or fix manualy such files from time to time.
+might have to delete or fix manually such files from time to time.
 
 Reading EXIF data is only supported for NEF, PEF and CR2 files and even then
 your milage may vary. In the worst case UFRaw may crash and in the best case

@@ -350,7 +350,7 @@ void load_profile(GtkWidget *widget, long type)
 	    char *base = g_path_get_basename(filename);
 	    char *name = uf_file_set_type(base, "");
 	    char *utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
-	    if (utf8==NULL) utf8 = g_strdup("Unknow file name");
+	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
 	    g_strlcpy(p.name, utf8, max_name);
 	    g_free(utf8);
 	    g_free(name);
