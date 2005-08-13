@@ -19,8 +19,8 @@
    copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
    purchase a license from the author.
 
-   $Revision: 1.274 $
-   $Date: 2005/08/06 01:04:30 $
+   $Revision: 1.275 $
+   $Date: 2005/08/12 21:03:34 $
  */
 
 #define _GNU_SOURCE
@@ -4253,6 +4253,7 @@ int CLASS identify (int will_decode)
     {  6624000, "Pixelink", "A782"       ,0 },
     { 13248000, "Pixelink", "A782"       ,0 },
     {  6291456, "RoverShot","3320AF"     ,0 },
+    {  5939200, "OLYMPUS",  "C770UZ"     ,0 },
     {  1581060, "NIKON",    "E900"       ,1 },  /* or E900s,E910 */
     {  2465792, "NIKON",    "E950"       ,1 },  /* or E800,E700 */
     {  2940928, "NIKON",    "E2100"      ,1 },  /* or E2500 */
@@ -4311,8 +4312,8 @@ int CLASS identify (int will_decode)
   fread (head, 1, 32, ifp);
   fseek (ifp, 0, SEEK_END);
   fsize = ftell(ifp);
-  if ((cp = memmem (head, 32, "MMMM", 4)) ||
-      (cp = memmem (head, 32, "IIII", 4))) /* (char *) UF*/
+  if ((cp = (char *)memmem (head, 32, "MMMM", 4)) ||
+      (cp = (char *)memmem (head, 32, "IIII", 4))) /* Added (char *) UF*/
     parse_phase_one (cp-head);
   else if (order == 0x4949 || order == 0x4d4d) {
     if (!memcmp (head+6, "HEAPCCDR", 8)) {
@@ -4917,6 +4918,11 @@ konica_400z:
       maximum = 0xfc30;
     } else
       black = 62;
+  } else if (!strcmp(model,"C770UZ")) {
+    height = 1718;
+    width  = 2304;
+    filters = 0x16161616;
+    load_raw = nikon_e2100_load_raw;
   } else if (!strcmp(make,"OLYMPUS")) {
     load_raw = olympus_cseries_load_raw;
     if (!strcmp(model,"C5050Z") ||
@@ -5482,7 +5488,7 @@ int CLASS main (int argc, char **argv)
   if (argc == 1)
   {
     fprintf (stderr,
-    "\nRaw Photo Decoder \"dcraw\" v7.48"
+    "\nRaw Photo Decoder \"dcraw\" v7.49"
     "\nby Dave Coffin, dcoffin a cybercom o net"
     "\n\nUsage:  %s [options] file1 file2 ...\n"
     "\nValid options:"
