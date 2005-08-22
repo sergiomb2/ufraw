@@ -71,6 +71,12 @@ static const unsigned char *FileTypeHeaders[NUM_FILE_TYPES] = {
     NCVFileHeader,
 };
 
+
+//Used to determine endianess (see header for options)
+static int NC_ENDIAN = NC_ENDIANESS;
+
+
+/**STANDALONE**/
 #ifdef _STAND_ALONE_
 
 //filenames
@@ -163,7 +169,7 @@ int ProcessArgs(int num_args, char *args[])
 
     return NC_SUCCESS;
 }
-#endif
+#endif //End STAND_ALONE
 
 /************************************************************
 nc_message_handler:
@@ -207,9 +213,9 @@ void nc_message(int code, char *format, ...)
     fprintf(stderr, message);
     fflush(stderr);
 
-#endif
+#endif //End WITH_UFRAW
 
-#endif
+#endif //End STAND_ALONE
 }
 
 void DEBUG_PRINT(char *format, ...)
@@ -224,6 +230,186 @@ void DEBUG_PRINT(char *format, ...)
     format = format;
 #endif
 }
+
+/***********************************************************************
+is_big_endian:
+	Determines if the machine we are running on is big endian
+************************************************************************/
+#if NC_ENDIANESS == NC_UNKNOWN_ENDIAN
+int is_big_endian( void )
+{
+	union
+	{
+		unsigned long l;
+		unsigned char c[ 4 ];
+	} u;
+	
+	u.l = 0xFF000000;
+	/* big-endian architectures will have the MSB at
+	the lowest address */
+	if ( u.c[ 0 ] == 0xFF )
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+/***********************************************************************
+file_read:
+	Special read function that handles endianess. This is the slowest
+	version that determines endianess dynamically.
+************************************************************************/
+int file_read(void *data, size_t size, size_t num, FILE* file)
+{	
+	unsigned int i = 0;
+	int rd = 0;
+	
+	//handle 1 byte case
+	if (size*num == 1)
+	{
+		return fread(data,size,num,file);
+	}
+	
+	if (NC_ENDIAN == NC_UNKNOWN_ENDIAN)
+	{
+		NC_ENDIAN = is_big_endian();
+	}
+
+	switch (NC_ENDIAN)
+	{		
+		case NC_BIG_ENDIAN:
+		{
+			//if big endian, reverse all bytes
+			//create a temporary buffer
+			unsigned char *rev = (unsigned char *)malloc(size*num);
+	
+			//read data into tmp buffer
+			rd = fread(rev,size,num,file);
+			//reverse and copy into buffer
+			unsigned char *d = (unsigned char *)data;
+			for(; i < size*num; i++)
+			{
+				d[i] = rev[size*num-i];
+			}
+			free(rev);
+		}
+		break;
+		
+		default:
+			return fread(data,size,num,file);
+	}
+	return rd;
+}
+
+/***********************************************************************
+file_write:
+	Special write function that handles endianess. This is the slowest
+	version that determines endianess dynamically.
+************************************************************************/
+int file_write(const void *data, size_t size, size_t num, FILE* file)
+{
+	unsigned int i = 0;
+	int rd = 0;
+
+	if (size*num == 1)
+	{
+		return fwrite(data,size,num,file);
+	}
+	
+	if (NC_ENDIAN == NC_UNKNOWN_ENDIAN)
+	{
+		NC_ENDIAN = is_big_endian();
+	}
+
+	switch (NC_ENDIAN)
+	{		
+		case NC_BIG_ENDIAN:
+		{
+			//reverse and write out to a file
+			unsigned char *rev = (unsigned char *)malloc(size*num);
+			unsigned char *d = (unsigned char *)data;
+			for(; i < size*num; i++)
+			{
+				rev[i] = d[size*num-i];
+			}
+			rd = fwrite(rev,size,num,file);
+			free(rev);
+		}
+		break;
+		
+		default:
+			return fwrite(data,size,num,file);
+	}
+
+	return rd;
+}
+
+//DEFINED BIG ENDIAN
+#elif NC_ENDIANESS == NC_BIG_ENDIAN
+
+//read from little endian to big endian
+int file_read(void *data, size_t size, size_t num, FILE* file)
+{	
+	unsigned int i = 0;
+	int rd = 0;
+	
+	//handle 1 byte case
+	if (size*num == 1)
+	{
+		return fread(data,size,num,file);
+	}
+	
+	//if big endian, reverse all bytes
+	//create a temporary buffer
+	unsigned char *rev = (unsigned char *)malloc(size*num);
+
+	//read data into tmp buffer
+	rd = fread(rev,size,num,file);
+	//reverse and copy into buffer
+	unsigned char *d = (unsigned char *)data;
+	for(; i < size*num; i++)
+	{
+		d[i] = rev[size*num-i];
+	}
+	//free temp buffer
+	free(rev);
+	return rd;
+}
+
+//write from big endian to little endian
+int file_write(const void *data, size_t size, size_t num, FILE* file)
+{
+	unsigned int i = 0;
+	int rd = 0;
+
+	if (size*num == 1)
+	{
+		return fwrite(data,size,num,file);
+	}
+	
+	
+	//reverse and write out to a file
+	unsigned char *rev = (unsigned char *)malloc(size*num);
+	unsigned char *d = (unsigned char *)data;
+	for(; i < size*num; i++)
+	{
+		rev[i] = d[size*num-i];
+	}
+	rd = fwrite(rev,size,num,file);
+	free(rev);
+	return rd;
+}
+
+//DEFINED LITTLE ENDIAN
+#else
+
+//no need for special functions on little-endian machines
+#define file_read	fread
+#define file_write	fwrite
+
+#endif	//End ENDIANESS
+
 
 //**********************************************************************
 //
@@ -667,7 +853,7 @@ int GetNikonFileType(FILE *file)
     int i = 0, j = 0;
     int found = 1;
 
-    fread(buff,HEADER_SIZE,1,file);
+    file_read(buff,HEADER_SIZE,1,file);
     
     for(i = 0; i < NUM_FILE_TYPES; i++)
     {
@@ -746,25 +932,25 @@ int LoadNikonData(char *fileName, NikonData *data)
     
     //read patch version
     fseek(input,FileOffsets[data->m_fileType][PATCH_DATA],SEEK_SET);
-    fread(&data->m_patch_version,sizeof(unsigned short),1,input);
+    file_read(&data->m_patch_version,sizeof(unsigned short),1,input);
 
     //read box data
     
     fseek(input,FileOffsets[data->m_fileType][BOX_DATA],SEEK_SET);
-    fread(&curve->m_min_x,sizeof(double),1,input);
-    fread(&curve->m_max_x,sizeof(double),1,input);
-    fread(&curve->m_gamma,sizeof(double),1,input);
-    fread(&curve->m_min_y,sizeof(double),1,input);
-    fread(&curve->m_max_y,sizeof(double),1,input);
+    file_read(&curve->m_min_x,sizeof(double),1,input);
+    file_read(&curve->m_max_x,sizeof(double),1,input);
+    file_read(&curve->m_gamma,sizeof(double),1,input);
+    file_read(&curve->m_min_y,sizeof(double),1,input);
+    file_read(&curve->m_max_y,sizeof(double),1,input);
     
     //get number of anchors (always located after box data)
-    fread(&curve->m_numAnchors,1,1,input);
+    file_read(&curve->m_numAnchors,1,1,input);
 
     //Move to start of the anchor data
     fseek(input,FileOffsets[data->m_fileType][ANCHOR_DATA],SEEK_SET);
     
     //read in the anchor points
-    fread(curve->m_anchors,sizeof(CurveAnchorPoint),curve->m_numAnchors,input);
+    file_read(curve->m_anchors,sizeof(CurveAnchorPoint),curve->m_numAnchors,input);
 
     DEBUG_PRINT("DEBUG: Loading Data:\n");
     DEBUG_PRINT("DEBUG: CURVE_TYPE: %u \n",curve->m_curveType);
@@ -794,19 +980,19 @@ int LoadNikonData(char *fileName, NikonData *data)
 	
 	//get box data
 	fseek(input, NEXT_SECTION_BOX_DATA_OFFSET, SEEK_CUR);
-	fread(&curve->m_min_x,sizeof(double),1,input);
-	fread(&curve->m_max_x,sizeof(double),1,input);
-	fread(&curve->m_gamma,sizeof(double),1,input);
-	fread(&curve->m_min_y,sizeof(double),1,input);
-	fread(&curve->m_max_y,sizeof(double),1,input);
+	file_read(&curve->m_min_x,sizeof(double),1,input);
+	file_read(&curve->m_max_x,sizeof(double),1,input);
+	file_read(&curve->m_gamma,sizeof(double),1,input);
+	file_read(&curve->m_min_y,sizeof(double),1,input);
+	file_read(&curve->m_max_y,sizeof(double),1,input);
 
 	//get number of anchors (always located after box data)
-	fread(&curve->m_numAnchors,1,1,input);
+	file_read(&curve->m_numAnchors,1,1,input);
 
 	//allocate memory
 	fseek(input, NUM_POINTS_TO_ANCHOR_OFFSET, SEEK_CUR);
 	
-	fread(curve->m_anchors,sizeof(double),curve->m_numAnchors*2,input);
+	file_read(curve->m_anchors,sizeof(double),curve->m_numAnchors*2,input);
 
 	DEBUG_PRINT("DEBUG: Loading Data:\n");
 	DEBUG_PRINT("DEBUG: CURVE_TYPE: %u \n",curve->m_curveType);
@@ -1143,11 +1329,6 @@ SaveNikonDataFile:
     fileName    - The filename.
     filetype    - Indicator for an NCV or NTC file.
     version        - The version of the Nikon file to write
-
-NOTE:    The only version tested is Nikon 4.1 anything
-	other than this may result in unpredictable behavior.
-	For now, the version passed in is ignored and is forced
-	to 4.1.
 **************************************************************/
 int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 {
@@ -1170,26 +1351,26 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
     }
     
     //write out file header
-    fwrite(FileTypeHeaders[filetype],HEADER_SIZE,1,output);
+    file_write(FileTypeHeaders[filetype],HEADER_SIZE,1,output);
 
     if (filetype == NCV_FILE)
     {
 	//write out unknown header bytes
 	tmp = NCV_UNKNOWN_HEADER_DATA;
-	fwrite(&tmp, 2, 1, output);
+	file_write(&tmp, 2, 1, output);
 	
 	//write out file size - header
 	//Placeholder.The real filesize is written at the end.
 	//NCV files have two size location, one here and one in the
 	//NTC section of the file
 	tmp = 0;
-	fwrite(&tmp, 4, 1, output);
+	file_write(&tmp, 4, 1, output);
 
 	//write second header chunk
-	fwrite(NCVSecondFileHeader,1,NCV_SECOND_HEADER_LENGTH,output);
+	file_write(NCVSecondFileHeader,1,NCV_SECOND_HEADER_LENGTH,output);
 
 	//From here until almost the end, the file is an NTC file
-	fwrite(NTCFileHeader,NTC_FILE_HEADER_LENGTH,1,output);
+	file_write(NTCFileHeader,NTC_FILE_HEADER_LENGTH,1,output);
     }
     
     //patch version? (still unsure about this one)
@@ -1198,35 +1379,35 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 	data->m_patch_version = NIKON_PATCH_5;
     }
     tmp = data->m_patch_version;
-    fwrite(&tmp, 2, 1, output);
+    file_write(&tmp, 2, 1, output);
     
     //write out file size - header
     //Placeholder.The real filesize is written at the end.
     tmp = 0;
-    fwrite(&tmp, 4, 1, output);
+    file_write(&tmp, 4, 1, output);
 
     //write out version
     unsigned int forced_ver = NIKON_VERSION_4_1;
-    fwrite(&forced_ver, 4, 1, output);
+    file_write(&forced_ver, 4, 1, output);
     
     //write out pad (this is a 7 byte pad)
-    fwrite(&pad,1,7,output);
+    file_write(&pad,1,7,output);
 
     //now wash and repeat for the four sections of data
     for(i = 0; i < 4; i++)
     {    
 	//write out section header (same as NTC file header)
-	fwrite(FileSectionHeader,1,NTC_FILE_HEADER_LENGTH,output);
+	file_write(FileSectionHeader,1,NTC_FILE_HEADER_LENGTH,output);
 
 	//write out section type
-	fwrite(&i,4,1,output);
+	file_write(&i,4,1,output);
 
 	//write out unknown data
 	tmp = NTC_UNKNOWN_DATA;
-	fwrite(&tmp,2,1,output);
+	file_write(&tmp,2,1,output);
 
 	//write out pad byte
-	fwrite(pad,1,1,output);
+	file_write(pad,1,1,output);
 
 	//write out components
 	switch (i)
@@ -1251,12 +1432,12 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 	    break;
 	}
 
-	fwrite(&r,4,1,output);
-	fwrite(&g,4,1,output);
-	fwrite(&b,4,1,output);
+	file_write(&r,4,1,output);
+	file_write(&g,4,1,output);
+	file_write(&b,4,1,output);
 	
 	//write out pad (12 byte pad)
-	fwrite(pad,12,1,output);
+	file_write(pad,12,1,output);
 
 	//write out rgb weights
 	switch (i)
@@ -1281,31 +1462,31 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 	    break;
 	}
 	
-	fwrite(&r,4,1,output);
-	fwrite(&g,4,1,output);
-	fwrite(&b,4,1,output);
+	file_write(&r,4,1,output);
+	file_write(&g,4,1,output);
+	file_write(&b,4,1,output);
 
 	curve = &data->curves[i];
 	//write out curve data
 	if (curve->m_numAnchors >= 2)
 	{
 	    //we have a legit curve, use the data as is
-	    fwrite(&curve->m_min_x,sizeof(double),1,output);
-	    fwrite(&curve->m_max_x,sizeof(double),1,output);
-	    fwrite(&curve->m_gamma,sizeof(double),1,output);
-	    fwrite(&curve->m_min_y,sizeof(double),1,output);
-	    fwrite(&curve->m_max_y,sizeof(double),1,output);
+	    file_write(&curve->m_min_x,sizeof(double),1,output);
+	    file_write(&curve->m_max_x,sizeof(double),1,output);
+	    file_write(&curve->m_gamma,sizeof(double),1,output);
+	    file_write(&curve->m_min_y,sizeof(double),1,output);
+	    file_write(&curve->m_max_y,sizeof(double),1,output);
 	    
 	    //write out number of anchor points (minimum is two)
-	    fwrite(&curve->m_numAnchors,1,1,output);
+	    file_write(&curve->m_numAnchors,1,1,output);
 
 	    //write out pad
-	    fwrite(pad,NUM_POINTS_TO_ANCHOR_OFFSET,1,output);
+	    file_write(pad,NUM_POINTS_TO_ANCHOR_OFFSET,1,output);
 
 	    //write out anchor point data
 	    if (curve->m_anchors)
 	    {
-	        fwrite(curve->m_anchors,
+	        file_write(curve->m_anchors,
 			curve->m_numAnchors*sizeof(CurveAnchorPoint),1,output);
 	    }
 	    else
@@ -1321,42 +1502,42 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 	    //This curve either has not been correctly initialized or is empty.
 	    //Force defaults.
 	    double default_val = 0;
-	    fwrite(&default_val,sizeof(double),1,output); //min x
+	    file_write(&default_val,sizeof(double),1,output); //min x
 	    default_val = 1.0;
-	    fwrite(&default_val,sizeof(double),1,output); //max_x
+	    file_write(&default_val,sizeof(double),1,output); //max_x
 	    //gamma has a default of 1
 	    default_val = 1.0;
-	    fwrite(&default_val,sizeof(double),1,output); //gamma
+	    file_write(&default_val,sizeof(double),1,output); //gamma
 	    default_val = 0;
-	    fwrite(&default_val,sizeof(double),1,output); //min y
+	    file_write(&default_val,sizeof(double),1,output); //min y
 	    default_val = 1.0;
-	    fwrite(&default_val,sizeof(double),1,output); //max y
+	    file_write(&default_val,sizeof(double),1,output); //max y
 
 	    //force the number of anchors to be 2
 	    unsigned char num = 2;
-	    fwrite(&num,1,1,output);
+	    file_write(&num,1,1,output);
 
 	    //write out pad
-	    fwrite(pad,NUM_POINTS_TO_ANCHOR_OFFSET,1,output);
+	    file_write(pad,NUM_POINTS_TO_ANCHOR_OFFSET,1,output);
 	    
 	    //if the number of anchors was < 2, force default values.
 	    default_val = 0;
-	    fwrite(&default_val,sizeof(double),1,output); //min x
-	    fwrite(&default_val,sizeof(double),1,output); //min y
+	    file_write(&default_val,sizeof(double),1,output); //min x
+	    file_write(&default_val,sizeof(double),1,output); //min y
 	    default_val = 1.0;
-	    fwrite(&default_val,sizeof(double),1,output); //max x
-	    fwrite(&default_val,sizeof(double),1,output); //max y
+	    file_write(&default_val,sizeof(double),1,output); //max x
+	    file_write(&default_val,sizeof(double),1,output); //max y
 
 	}
 	
 	//write out pad
-	fwrite(pad,END_ANCHOR_DATA_PAD_LENGTH,1,output);
+	file_write(pad,END_ANCHOR_DATA_PAD_LENGTH,1,output);
     }
     
     if (filetype == NCV_FILE)
     {
 	//write out the file terminator if this is an NCV file
-	fwrite(NCVFileTerminator,NCV_FILE_TERMINATOR_LENGTH,1,output);    
+	file_write(NCVFileTerminator,NCV_FILE_TERMINATOR_LENGTH,1,output);    
     }
 
     //calculate the file size
@@ -1367,7 +1548,7 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
     fseek(output, FILE_SIZE_OFFSET, SEEK_SET);
 
     //write out the file size
-    fwrite(&size,4,1,output);
+    file_write(&size,4,1,output);
 
     if (filetype == NCV_FILE)
     {
@@ -1379,7 +1560,7 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 	//I'm assuming it is more than coincedence that those bytes match the last 6 bytes
 	//of the NCV second file header. I've yet to determine their significance.
 	size = size - NCV_HEADER_SIZE - 6 ;
-	fwrite(&size,4,1,output);
+	file_write(&size,4,1,output);
 
     }
     fclose(output);
@@ -1672,7 +1853,7 @@ int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p)
     }
 
     //gets the byte order
-    fread(&byte_order,2,1,file);
+    file_read(&byte_order,2,1,file);
     if (byte_order != 0x4d4d)
     {
 	//Must be in motorola format if it came from a NIKON
@@ -1682,7 +1863,7 @@ int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p)
     }
     
     //get the version
-    //fread(&version,2,1,file);
+    //file_read(&version,2,1,file);
     version = (fgetc(file)<<8)|fgetc(file);    
     if (version != 0x002a)
     {
@@ -1731,7 +1912,7 @@ int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p)
 
     //Check the name. If it isn't Nikon then we can't do anything with this file.
     char name[6];
-    fread(name,6,1,file);
+    file_read(name,6,1,file);
     if (strcmp(name,"Nikon") != 0)
     {
 	nc_message(NC_SET_ERROR,
@@ -1743,7 +1924,7 @@ int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p)
     //save the current file location, as all other offsets for this section run off this.
     unsigned long pos = ftell(file);
     
-    //get byte order
+    //get byte order (use a regular fread)
     fread(&byte_order,2,1,file);
     if (byte_order != 0x4d4d)
     {
@@ -1839,7 +2020,7 @@ int RipNikonNEFCurve(FILE *file, int offset, CurveData *data,
     }
 
     //get number of anchor points (there should be at least 2
-    fread(&data->m_numAnchors,1,1,file);
+    file_read(&data->m_numAnchors,1,1,file);
     DEBUG_PRINT("DEBUG: NEF NUMBER OF ANCHORS -> %u\n",data->m_numAnchors);
     
     //convert data to doubles

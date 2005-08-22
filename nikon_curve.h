@@ -27,6 +27,23 @@
 
 
   NOTES:
+  07/27/2005 (Shawn Freeman)
+	Someone discovered the dreaded endianess bug. NTC and NCV files are written in little-endian
+	format, so when a Mac (or other big endian machine) tries to read in the file it blows up.
+
+	There doesn't appear to be a way to determine the endianess of a machine a runtime (at
+	least not in an ANSI compliant way). The solution? Custom read and write functions that
+	can handle the endianess.
+
+	The NC_ENDIANESS define can be set to either NC_LITTLE_ENDIAN (compiles code for little endian
+	machines), NC_BIG_ENDIAN (compiles code for big endian machines), or NC_UNKNOWN_ENDIAN (compiles
+	code that dynamically determines endianess and runs appropriate code).
+
+	Performance isn't much of an issues since files are small, but it is more efficient
+	to compile with the endianess set than to leave it at unknown.
+
+	Unfortunately, I don't have a way to test this code. But it should do the trick.
+
   06/20/2005 (Udi Fuchs)
 	Added the function CurveDataReset()
 
@@ -228,8 +245,8 @@
 
 #include <stdio.h>
 
-#define NC_VERSION "1.0"
-#define NC_DATE "2005-06-13"
+#define NC_VERSION "1.1"
+#define NC_DATE "2005-07-27"
 
 //////////////////////////////////////////
 //COMPILER CONTROLS
@@ -246,6 +263,21 @@
 #ifdef __MSVC__
     #define vsnprintf _vsnprintf
 #endif
+
+/**
+The following defines are used to determine endianess. If endianess is not defined or
+set to NC_UNKNOWN_ENDIAN, code that dynamiacally determiens endianess will be run, which 
+is less efficient. Then any file data will be read/written.
+
+Setting the endianess executes faster read/write code by not doing the dynamic check,
+however for big-endian machines there is overhead due to converting from little-endian file
+data.
+*/
+#define NC_UNKNOWN_ENDIAN -1			//Compiles code to dynamically check endianess.
+#define NC_LITTLE_ENDIAN 0				//Compiles code to run on little endian machines
+#define NC_BIG_ENDIAN 1				//Compiles code to run on big endian machines
+#define NC_ENDIANESS NC_UNKNOWN_ENDIAN	//Set this to machine endianess	
+
 
 //Define this if using with UFRAW
 //#define __WITH_UFRAW__
@@ -286,7 +318,7 @@ Anchor Point Data: This is aligned on 8 byte boundries. However, the section mus
 #define NCV_PATCH_OFFSET            0x3D    //2 bytes(?)
 #define NTC_PATCH_OFFSET            0x10    //2 bytes(?)                          
 #define FILE_SIZE_OFFSET            0x12    //4 bytes (int). File size - header.
-#define NTC_VERSION                    0x16    //4 bytes (int).(?)
+#define NTC_VERSION_OFFSET          0x16    //4 bytes (int).(?)
 	                                    //9 byte pad(?)
 	                                    //16 bytes. Another section header goes here. 
 
