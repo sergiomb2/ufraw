@@ -87,7 +87,45 @@ char helpText[]=
 "Lastly, the options from the command line are set. In batch mode, the second\n"
 "group of options is NOT read from the resource file.\n"
 "\n"
-"Last, but not least, --help displays this help message and exits.\n";
+"Last, but not least, --version displays the version number and compilation\n"
+"options for ufraw and --help displays this help message and exits.\n";
+
+char versionText[]= 
+#ifdef UFRAW_BATCH 
+"ufraw-batch " 
+#else 
+"ufraw "  
+#endif 
+VERSION "\n" 
+ 
+"EXIF " 
+#ifdef HAVE_LIBEXIF 
+"enabled.\n" 
+#else 
+"disabled.\n" 
+#endif 
+ 
+"JPEG "  
+#ifdef HAVE_LIBJPEG 
+"enabled.\n" 
+#else 
+"disabled.\n" 
+#endif 
+ 
+"TIFF "  
+#ifdef HAVE_LIBTIFF 
+"enabled.\n" 
+#else 
+"disabled.\n" 
+#endif 
+ 
+"ZIP "  
+#ifdef HAVE_LIBZ 
+"enabled.\n" 
+#else 
+"disabled.\n" 
+#endif 
+""; 
 
 void process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc,
 	gboolean *batch)
@@ -125,6 +163,7 @@ void process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc,
 	{"exif", 0, 0, 'E'},
 	{"noexif", 0, 0, 'F'},
         {"help", 0, 0, 'h'},
+	{"version", 0, 0, 'v'},
         {0, 0, 0, 0}
     };
     void *optPointer[] = { &wbName, &cmd->temperature, &cmd->green, &curveName,
@@ -223,6 +262,9 @@ void process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc,
         case 'F': cmd->embedExif = FALSE; break;
         case 'h':
             ufraw_message(UFRAW_WARNING, helpText);
+            exit(0);
+        case 'v':
+            ufraw_message(UFRAW_WARNING, versionText);
             exit(0);
         case '?': /* invalid option. Warning printed by getopt() */
             exit(1);
