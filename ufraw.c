@@ -55,6 +55,8 @@ char helpText[]=
 "                      Type of tone curve to use. CURVE can be any curve\n"
 "                      that was previously loaded in the GUI.\n"
 "                      (default camera if such exsists, linear otherwise).\n"
+"--curve-file=file     Use tone curve included in specified file.\n"
+"                      Overrides --curve option\n"
 "--[un]clip            Unclip [clip] highlights (default clip).\n"
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
@@ -132,13 +134,14 @@ void process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc,
 {
     int index=0, c, i;
     char *wbName=NULL;
-    char *curveName=NULL, *outTypeName=NULL, *createIDName=NULL,
-	 *outPath=NULL, *output=NULL, *conf=NULL, *interpolationName=NULL;
+    char *curveName=NULL, *curveFile=NULL, *outTypeName=NULL,
+         *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL, *interpolationName=NULL;
     static struct option options[] = {
         {"wb", 1, 0, 'w'},
         {"temperature", 1, 0, 't'},
         {"green", 1, 0, 'g'},
         {"curve", 1, 0, 'c'},
+        {"curve-file", 1, 0, 'f'},
         {"gamma", 1, 0, 'G'},
         {"linearity", 1, 0, 'L'},
         {"saturation", 1, 0, 's'},
@@ -166,7 +169,8 @@ void process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc,
 	{"version", 0, 0, 'v'},
         {0, 0, 0, 0}
     };
-    void *optPointer[] = { &wbName, &cmd->temperature, &cmd->green, &curveName,
+    void *optPointer[] = { &wbName, &cmd->temperature, &cmd->green,
+	&curveName, &curveFile,
         &cmd->profile[0][0].gamma, &cmd->profile[0][0].linear,
 	&cmd->saturation,
         &cmd->exposure, &cmd->black, &interpolationName,
@@ -229,6 +233,7 @@ void process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc,
             break;
         case 'w':
         case 'c':
+        case 'f':
         case 'i':
         case 'T':
         case 'I':
@@ -284,24 +289,40 @@ void process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc,
             exit(1);
         }
     }
+
     cmd->curveIndex = -1;
-    if (curveName!=NULL) {
+    if (curveFile!=NULL) {
+        if (cmd->curveCount == max_curves) {
+            ufraw_message(UFRAW_ERROR,
+		    "failed to load curve from %s,"
+		    "too many configured curves\n", curveFile);
+            exit(1);
+        }
+        cmd->curveIndex = cmd->curveCount;
+        if (curve_load(&(rc->curve[cmd->curveIndex]), curveFile) == UFRAW_ERROR)
+	{
+            ufraw_message(UFRAW_ERROR,
+                    "failed to load curve from %s\n", curveFile);
+            exit(1);
+        }
+        cmd->curveCount++;
+    } else if (curveName!=NULL) {
         if (!strcmp(curveName, "manual")) cmd->curveIndex=manual_curve;
-	else if (!strcmp(curveName, "linear")) cmd->curveIndex=linear_curve;
+        else if (!strcmp(curveName, "linear")) cmd->curveIndex=linear_curve;
         else if (!strcmp(curveName, "camera")) cmd->curveIndex=camera_curve;
         else {
-	    cmd->curveIndex = -1;
-	    for( i = camera_curve + 1; i < rc->curveCount; i++ ) {
-		if( !strcmp( curveName, rc->curve[i].name )) {
-		    cmd->curveIndex = i;
-		    break;
-		}
-	    }
-	    if( cmd->curveIndex == -1 ) {
-		ufraw_message(UFRAW_ERROR,
-			"'%s' is not a valid curve name.\n", curveName);
-		exit(1);
-	    }
+            cmd->curveIndex = -1;
+            for( i = camera_curve + 1; i < rc->curveCount; i++ ) {
+                if( !strcmp( curveName, rc->curve[i].name )) {
+                    cmd->curveIndex = i;
+                    break;
+                }
+            }
+            if( cmd->curveIndex == -1 ) {
+                ufraw_message(UFRAW_ERROR,
+                        "'%s' is not a valid curve name.\n", curveName);
+                exit(1);
+            }
         }
     }
     cmd->interpolation = -1;
