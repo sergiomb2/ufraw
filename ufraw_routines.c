@@ -171,8 +171,8 @@ void curve_parse_start(GMarkupParseContext *context, const gchar *element,
 	/* m_gamma==-1 marks that we are inside a XML Curve block.
 	 * This is ok since we never set m_gamma. */
 	c->m_gamma = -1.0;
-	/* m_numAnchors==-1 marks that no anchors where read from the XML */
-	c->m_numAnchors = -1;
+	/* m_numAnchors==0 marks that no anchors where read from the XML */
+	c->m_numAnchors = 0;
     }
 }
 
@@ -184,7 +184,7 @@ void curve_parse_end(GMarkupParseContext *context, const gchar *element,
     error = error;
     if (!strcmp("Curve", element)) {
 	c->m_gamma = conf_default.curve[0].m_gamma;
-	if (c->m_numAnchors<0)
+	if (c->m_numAnchors==0)
 	    c->m_numAnchors = conf_default.curve[0].m_numAnchors;
     }
 }
@@ -213,7 +213,6 @@ void curve_parse_text(GMarkupParseContext *context, const gchar *text,
             sscanf(temp, "%lf %lf", &c->m_max_x, &c->m_max_y);
         if (!strcmp("AnchorXY", element)) {
 	    /* If one anchor is supplied then all anchors should be supplied */
-	    if (c->m_numAnchors<0) c->m_numAnchors = 0;
             sscanf(temp, "%lf %lf",
                     &c->m_anchors[c->m_numAnchors].x,
                     &c->m_anchors[c->m_numAnchors].y);

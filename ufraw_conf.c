@@ -116,18 +116,18 @@ void conf_parse_start(GMarkupParseContext *context, const gchar *element,
     }
     /* The default curve/profile count is always larger than 0,
      * threfore we can treat 0 as a negative number.
-     * m_numAnchors==-1 marks that no anchors where read from the XML. */
+     * m_numAnchors==0 marks that no anchors where read from the XML. */
     if (!strcmp("ManualCurve", element)) {
 	c->curveCount = - manual_curve;
-	c->curve[-c->curveCount].m_numAnchors = -1;
+	c->curve[-c->curveCount].m_numAnchors = 0;
     }
     if (!strcmp("LinearCurve", element)) {
 	c->curveCount = - linear_curve;
-	c->curve[-c->curveCount].m_numAnchors = -1;
+	c->curve[-c->curveCount].m_numAnchors = 0;
     }
     if (!strcmp("CameraCurve", element)) {
 	c->curveCount = - camera_curve;
-	c->curve[-c->curveCount].m_numAnchors = -1;
+	c->curve[-c->curveCount].m_numAnchors = 0;
     }
     if (!strcmp("sRGBInputProfile", element)) c->profileCount[0] = - 0;
     if (!strcmp("sRGBOutputProfile", element)) c->profileCount[1] = - 0;
@@ -143,12 +143,12 @@ void conf_parse_end(GMarkupParseContext *context, const gchar *element,
 	 ( !strcmp("ManualCurve", element) ||
 	   !strcmp("LinearCurve", element) ||
 	   !strcmp("CameraCurve", element) ) ) {
-	if (c->curve[-c->curveCount].m_numAnchors<0)
+	if (c->curve[-c->curveCount].m_numAnchors==0)
 	    c->curve[-c->curveCount].m_numAnchors = 2;
 	c->curveCount = camera_curve+1;
     }
     if (c->curveCount<=0 && !strcmp("Curve", element)) {
-	if (c->curve[-c->curveCount].m_numAnchors<0)
+	if (c->curve[-c->curveCount].m_numAnchors==0)
 	    c->curve[-c->curveCount].m_numAnchors = 2;
         c->curveCount = - c->curveCount + 1;
     }
@@ -188,7 +188,6 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
             sscanf(temp, "%lf %lf", &c->curve[i].m_max_x, &c->curve[i].m_max_y);
         if (!strcmp("AnchorXY", element)) {
 	    /* If one anchor is supplied then all anchors should be supplied */
-	    if (c->curve[i].m_numAnchors<0) c->curve[i].m_numAnchors = 0;
             sscanf(temp, "%lf %lf",
                     &c->curve[i].m_anchors[c->curve[i].m_numAnchors].x,
                     &c->curve[i].m_anchors[c->curve[i].m_numAnchors].y);
@@ -227,8 +226,8 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
         i = - c->curveCount;
         c->curve[i] = conf_default.curve[0];
         g_strlcpy(c->curve[i].name, temp, max_name);
-	/* m_numAnchors==-1 marks that no anchors where read from the XML */
-	c->curve[-c->curveCount].m_numAnchors = -1;
+	/* m_numAnchors==0 marks that no anchors where read from the XML */
+	c->curve[-c->curveCount].m_numAnchors = 0;
     }
     if (!strcmp("InputProfile", element)) {
         c->profileCount[0] = - c->profileCount[0];

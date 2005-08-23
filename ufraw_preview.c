@@ -84,7 +84,7 @@ typedef struct {
 /* These #defines are not very elegant, but otherwise things get tooo long */
 #define CFG data->UF->conf
 #define Developer data->UF->developer
-#define CFG_cameraCurve (CFG->curve[camera_curve].m_numAnchors>=0)
+#define CFG_cameraCurve (CFG->curve[camera_curve].m_numAnchors>0)
 
 preview_data *get_preview_data(void *object)
 {

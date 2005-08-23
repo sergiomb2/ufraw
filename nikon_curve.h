@@ -27,6 +27,18 @@
 
 
   NOTES:
+  08/06/2005 (Shawn Freeman)
+    The last endian fix would not have worked correctly. The new fix should correct the
+    endianess problem.
+
+    The fix uses a new function DetermineEndianess to assign function pointers the correct
+    swapping function based on the endianess of the machine.
+
+    For programs that use this code on big endian machines, it is important that this function
+    be called. So for now, each function that reads or writes data to a file will call this
+    function.
+
+
   07/27/2005 (Shawn Freeman)
 	Someone discovered the dreaded endianess bug. NTC and NCV files are written in little-endian
 	format, so when a Mac (or other big endian machine) tries to read in the file it blows up.
@@ -35,8 +47,8 @@
 	least not in an ANSI compliant way). The solution? Custom read and write functions that
 	can handle the endianess.
 
-	The NC_ENDIANESS define can be set to either NC_LITTLE_ENDIAN (compiles code for little endian
-	machines), NC_BIG_ENDIAN (compiles code for big endian machines), or NC_UNKNOWN_ENDIAN (compiles
+	The ENDIANESS define can be set to either LITTLE_ENDIAN (compiles code for little endian
+	machines), BIG_ENDIAN (compiles code for big endian machines), or UNKNOWN_ENDIAN (compiles
 	code that dynamically determines endianess and runs appropriate code).
 
 	Performance isn't much of an issues since files are small, but it is more efficient
@@ -245,8 +257,8 @@
 
 #include <stdio.h>
 
-#define NC_VERSION "1.1"
-#define NC_DATE "2005-07-27"
+#define NC_VERSION "1.2"
+#define NC_DATE "2005-08-06"
 
 //////////////////////////////////////////
 //COMPILER CONTROLS
@@ -263,21 +275,6 @@
 #ifdef __MSVC__
     #define vsnprintf _vsnprintf
 #endif
-
-/**
-The following defines are used to determine endianess. If endianess is not defined or
-set to NC_UNKNOWN_ENDIAN, code that dynamiacally determiens endianess will be run, which 
-is less efficient. Then any file data will be read/written.
-
-Setting the endianess executes faster read/write code by not doing the dynamic check,
-however for big-endian machines there is overhead due to converting from little-endian file
-data.
-*/
-#define NC_UNKNOWN_ENDIAN -1			//Compiles code to dynamically check endianess.
-#define NC_LITTLE_ENDIAN 0				//Compiles code to run on little endian machines
-#define NC_BIG_ENDIAN 1				//Compiles code to run on big endian machines
-#define NC_ENDIANESS NC_UNKNOWN_ENDIAN	//Set this to machine endianess	
-
 
 //Define this if using with UFRAW
 //#define __WITH_UFRAW__
@@ -438,7 +435,7 @@ typedef struct
     double m_gamma;
 
     //Number of anchor points
-    int m_numAnchors;
+    unsigned char m_numAnchors;
     
     //contains a list of anchors, 2 doubles per each point, x-y format
     //max is 20 points
