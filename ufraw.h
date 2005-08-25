@@ -182,7 +182,7 @@ void ufraw_auto_curve(ufraw_data *uf);
 void ufraw_batch_messenger(char *message, void *parentWindoW);
 
 /* prototypes for functions in ufraw_preview.c */
-int ufraw_preview(ufraw_data *uf, int plugin, long (*write_func)());
+int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)());
 void ufraw_focus(void *window, gboolean focus);
 void ufraw_messenger(char *message, void *parentWindow);
 void preview_progress(void *widget, char *text, double progress);
