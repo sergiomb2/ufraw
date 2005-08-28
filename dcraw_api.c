@@ -312,7 +312,7 @@ int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB)
 }
 
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
-	int quick, int fourColors, int rgbWB[4])
+	int quick, int fourColors, int rgbWB[4], int max)
 {
     int fujiWidth, i, r, c, cl;
     unsigned ff, f4;
@@ -334,7 +334,7 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 		for (cl=0; cl<h->colors; cl++)
 		    f->image[r*f->width+c][cl] = MIN( MAX( (gint64)
 			    (h->raw.image[r*h->raw.width+c][cl] - h->black) *
-				rgbWB[cl]/(h->rgbMax-h->black), 0), 0xFFFF);
+				rgbWB[cl]/(h->rgbMax-h->black), 0), max);
 	return lastStatus;
     }
     cl = h->colors;

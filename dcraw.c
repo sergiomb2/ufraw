@@ -2071,7 +2071,7 @@ void CLASS foveon_load_raw()
     }
   }
   foveon_load_camf();
-  maximum = clip_max = 0xffff;
+  maximum = clip_max = 0x0fff; /* was 0xffff UF */
 }
 
 char * CLASS foveon_camf_param (char *block, char *param)
