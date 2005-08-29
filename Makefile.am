@@ -9,6 +9,12 @@ if MAKE_GIMP
   gimpbindir = $(GIMP_LIBDIR)/plug-ins
 endif
 
+app_DATA = ufraw.desktop
+appdir = $(datadir)/applications
+
+icon_DATA = ufraw.png
+icondir = $(datadir)/pixmaps
+
 #html_DATA = user_guide.html
 #htmldir = $(datadir)/doc/ufraw
 
@@ -25,8 +31,8 @@ else
   UFRAW_ICON =
 endif
 
-EXTRA_DIST = ufraw_icon.png ufraw_icon.ico ufraw_icon.rc ufraw-setup.jpg \
-    autogen.sh MANIFEST gimpui-2.0.pc gimp-2.0.pc
+EXTRA_DIST = ufraw.desktop ufraw.png ufraw_icon.ico ufraw_icon.rc \
+    ufraw-setup.jpg autogen.sh MANIFEST gimpui-2.0.pc gimp-2.0.pc
 
 AM_CFLAGS = $(UFRAW_CFLAGS)
 LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD)
@@ -64,10 +70,10 @@ if MAKE_EXTRAS
   ufraw_exif_LDADD = $(UFRAW_LDADD)
 endif
 
-#ufraw_icon.h: ufraw_icon.png
+#ufraw_icon.h: ufraw.png
 #	gdk-pixbuf-csource --raw $^ --name=ufraw_icon > $@
 
-#ufraw_icon.ico: ufraw_icon.png
+#ufraw_icon.ico: ufraw.png
 #	{ pngtopnm $^ | pnmquant 256; pngtopnm -alpha $^; } | ppmtowinicon -andpgms -output $@ - -
 
 ufraw_icon.opc: ufraw_icon.rc ufraw_icon.ico
@@ -98,6 +104,6 @@ ufraw-$(VERSION)-setup.exe: ufraw-setup.iss ufraw.exe ufraw-batch.exe \
 ufraw-setup.bmp: ufraw-setup.jpg
 	montage -geometry +0+0 $< $@
 
-ufraw_icon.bmp: ufraw_icon.png
+ufraw_icon.bmp: ufraw.png
 	montage -geometry +0+0 $< $@
 

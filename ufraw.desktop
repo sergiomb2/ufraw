@@ -1,0 +1,20 @@
+[Desktop Entry]
+Name=UFRaw
+GenericName=Raw image converter
+GenericName[ru]=Преобразователь Raw-изображений
+Comment=A utility to read and manipulate raw images from digital cameras
+Comment[ru]=Обрабатка Raw-файлов и преобразование в TIFF/JPEG
+
+Encoding=UTF-8
+Version=1.0
+
+Type=Application
+Categories=Application;Graphics;Photography;GTK;
+
+FilePattern=ufraw
+Exec=ufraw %F
+TryExec=ufraw
+Terminal=false
+StartupNotify=true
+
+Icon=ufraw.png
