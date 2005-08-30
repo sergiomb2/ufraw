@@ -9,6 +9,9 @@ if MAKE_GIMP
   gimpbindir = $(GIMP_LIBDIR)/plug-ins
 endif
 
+POD2MAN= @POD2MAN@
+man_MANS = ufraw.1
+
 app_DATA = ufraw.desktop
 appdir = $(datadir)/applications
 
@@ -32,23 +35,19 @@ else
 endif
 
 EXTRA_DIST = ufraw.desktop ufraw.png ufraw_icon.ico ufraw_icon.rc \
-    ufraw-setup.jpg autogen.sh MANIFEST gimpui-2.0.pc gimp-2.0.pc
+    ufraw-setup.jpg autogen.sh MANIFEST ufraw.pod gimpui-2.0.pc gimp-2.0.pc
 
 AM_CFLAGS = $(UFRAW_CFLAGS)
 LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD)
 
 ufraw_SOURCES = ufraw.c $(UFRAW_GTK_COMMON)
 
-ufraw_batch_SOURCES = $(UFRAW_COMMON)
+ufraw_batch_SOURCES = ufraw-batch.c $(UFRAW_COMMON)
 ufraw_batch_LDFLAGS = $(CONSOLE)
-ufraw_batch_LDADD = dcraw_nomain.o ufraw_batch.o $(UFRAW_ICON) $(UFRAW_LDADD)
 
 if MAKE_GIMP
   ufraw_gimp_SOURCES = ufraw-gimp.c $(UFRAW_GTK_COMMON)
 endif
-
-ufraw_batch.o: ufraw.c
-	$(COMPILE) -DUFRAW_BATCH -o $@ -c $^
 
 dcraw_nomain.o: dcraw.c
 	$(COMPILE) -DDCRAW_NOMAIN $(DCRAW_CFLAGS) -o $@ -c $^
@@ -79,6 +78,9 @@ endif
 ufraw_icon.opc: ufraw_icon.rc ufraw_icon.ico
 	$(WINDRES) -i $< -o $@
 
+.pod.1:
+	$(POD2MAN) --section 1 --center "" --release UFRAW $< $@
+	
 install-user: all
 	$(INSTALL_USER)
 

@@ -9,6 +9,8 @@ AM_CONFIG_HEADER(config.h)
 AC_PROG_CC
 AC_PROG_INSTALL
 
+AC_CHECK_PROGS(POD2MAN, pod2man, , $PATH)
+
 CFLAGS="$CFLAGS -W -Wall -O3 -ffast-math -fomit-frame-pointer"
 # Uncomment next line to make ufraw-batch independent of gtk shared libraries
 #LDFLAGS="$LDFLAGS -Wl,--as-needed"

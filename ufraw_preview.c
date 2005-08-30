@@ -125,11 +125,15 @@ void ufraw_messenger(char *message,  void *parentWindow)
 {
     GtkDialog *dialog;
 
-    dialog = GTK_DIALOG(gtk_message_dialog_new(GTK_WINDOW(parentWindow),
-            GTK_DIALOG_DESTROY_WITH_PARENT,
-            GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, message));
-    gtk_dialog_run(dialog);
-    gtk_widget_destroy(GTK_WIDGET(dialog));
+    if (parentWindow==NULL) {
+	ufraw_batch_messenger(message);
+    } else {
+	dialog = GTK_DIALOG(gtk_message_dialog_new(GTK_WINDOW(parentWindow),
+		GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, message));
+	gtk_dialog_run(dialog);
+	gtk_widget_destroy(GTK_WIDGET(dialog));
+    }
 }
 
 void load_curve(GtkWidget *widget, gpointer user_data)

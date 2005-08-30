@@ -16,6 +16,7 @@
 #include <ctype.h> /* needed for isspace() */
 #include <errno.h>
 #include <math.h>
+#include <getopt.h>
 #include <glib.h>
 #include "ufraw.h"
 
@@ -792,4 +793,402 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 	g_strlcpy(conf->outputFilename, cmd->outputFilename, max_path);
     }
     return UFRAW_SUCCESS;
+}
+
+/* Following are global strings and functions used by both 'ufraw' and
+ * 'ufraw-batch'. ufraw_conf.c is a good home for them since they are
+ * closely related to the other configuration functions. */
+
+
+char helpText[]=
+"UFRaw " VERSION " - Unidentified Flying Raw converter for digital camera images.\n"
+"\n"
+"Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
+"       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
+"       ufraw [ options ... ] [ default-directory ]\n"
+"\n"
+"By default 'ufraw' displays a preview window for each raw image allowing\n"
+"the user to tweak the image parameters before saving. If no raw images\n"
+"are given at the command line, UFRaw will display a file chooser dialog.\n"
+"To process the images with no questions asked (and no preview) use\n"
+"'ufraw-batch'.\n"
+"\n"
+"The input files can be either raw images or ufraw's ID files. ID file\n"
+"contain a raw image filename and the parameters for handling the image.\n"
+"One can also use and ID file with the option:\n"
+"\n"
+"--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+"\n"
+"The rest of the options are separated into two groups.\n"
+"The options which are related to the image manipulation are:\n"
+"\n"
+"--wb=camera|auto      White balance setting.\n"
+"--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
+"--green=GREEN         Green color normalization.\n"
+"--curve=manual|linear|camera|CURVE\n"
+"                      Type of tone curve to use. CURVE can be any curve\n"
+"                      that was previously loaded in the GUI.\n"
+"                      (default camera if such exsists, linear otherwise).\n"
+"--curve-file=file     Use tone curve included in specified file.\n"
+"                      Overrides --curve option\n"
+"--[un]clip            Unclip [clip] highlights (default clip).\n"
+"--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+"--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
+"--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"
+"--exposure=auto|EXPOSURE\n"
+"                      Auto exposure or exposure correction in EV (default 0).\n"
+"--black-point=auto|BLACK\n"
+"                      Auto black-point or black-point value (default 0).\n"
+"--interpolation=full|four-color|quick\n"
+"                      Interpolation algorithm to use (default full).\n"
+"\n"
+"The options which are related to the final output are:\n"
+"\n"
+"--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
+"--size=SIZE           Downsize max(height,width) to SIZE.\n"
+"--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
+"                      Output file format (default ppm8).\n"
+"--create-id=no|also|only\n"
+"                      Create no|also|only ID file (default no).\n"
+"--compression=VALUE   JPEG compression (0-100, default 85).\n"
+"--[no]exif            Embed exif in output JPEG (default embed exif).\n"
+"--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"
+"--out-path=PATH       PATH for output file (default use input file's path).\n"
+"--output=FILE         Output file name, use '-' to output to stdout.\n"
+"--overwrite           Overwrite existing files without asking (default no).\n"
+"\n"
+"UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
+"Then, if an ID file is specified it setting are read. Next, the setting from\n"
+"the --conf option are taken, ignoring input/output filenames in the ID file.\n"
+"Lastly, the options from the command line are set. In batch mode, the second\n"
+"group of options is NOT read from the resource file.\n"
+"\n"
+"Last, but not least, --version displays the version number and compilation\n"
+"options for ufraw and --help displays this help message and exits.\n";
+
+char versionText[]= 
+"%s " VERSION "\n" 
+ 
+"EXIF " 
+#ifdef HAVE_LIBEXIF 
+"enabled.\n" 
+#else 
+"disabled.\n" 
+#endif 
+ 
+"JPEG "  
+#ifdef HAVE_LIBJPEG 
+"enabled.\n" 
+#else 
+"disabled.\n" 
+#endif 
+ 
+"TIFF "  
+#ifdef HAVE_LIBTIFF 
+"enabled.\n" 
+#else 
+"disabled.\n" 
+#endif 
+ 
+"ZIP "  
+#ifdef HAVE_LIBZ 
+"enabled.\n" 
+#else 
+"disabled.\n" 
+#endif 
+""; 
+
+/* ufraw_process_args returns values:
+ * -1     : an error occurred.
+ * 0      : --help or --version text were printed.
+ * optint : the index in argv of the first argv-element that is not an option.
+ */
+int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
+{
+    int index=0, c, i;
+    char *base;
+    char *wbName=NULL;
+    char *curveName=NULL, *curveFile=NULL, *outTypeName=NULL,
+         *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL, *interpolationName=NULL;
+    static struct option options[] = {
+        {"wb", 1, 0, 'w'},
+        {"temperature", 1, 0, 't'},
+        {"green", 1, 0, 'g'},
+        {"curve", 1, 0, 'c'},
+        {"curve-file", 1, 0, 'f'},
+        {"gamma", 1, 0, 'G'},
+        {"linearity", 1, 0, 'L'},
+        {"saturation", 1, 0, 's'},
+        {"exposure", 1, 0, 'e'},
+        {"black-point", 1, 0, 'k'},
+        {"interpolation", 1, 0, 'i'},
+        {"shrink", 1, 0, 'x'},
+        {"size", 1, 0, 'X'},
+        {"compression", 1, 0, 'j'},
+        {"out-type", 1, 0, 'T'},
+        {"create-id", 1, 0, 'I'},
+        {"out-path", 1, 0, 'p'},
+        {"output", 1, 0, 'o'},
+        {"conf", 1, 0, 'C'},
+/* Binary flags that don't have a value are here at the end */
+        {"unclip", 0, 0, 'u'},
+        {"clip", 0, 0, 'U'},
+        {"zip", 0, 0, 'z'},
+        {"nozip", 0, 0, 'Z'},
+        {"overwrite", 0, 0, 'O'},
+	{"exif", 0, 0, 'E'},
+	{"noexif", 0, 0, 'F'},
+        {"help", 0, 0, 'h'},
+	{"version", 0, 0, 'v'},
+        {0, 0, 0, 0}
+    };
+    void *optPointer[] = { &wbName, &cmd->temperature, &cmd->green,
+	&curveName, &curveFile,
+        &cmd->profile[0][0].gamma, &cmd->profile[0][0].linear,
+	&cmd->saturation,
+        &cmd->exposure, &cmd->black, &interpolationName,
+	&cmd->shrink, &cmd->size, &cmd->compression,
+	&outTypeName, &createIDName, &outPath, &output, &conf };
+    cmd->autoExposure = disabled_state;
+    cmd->autoBlack = disabled_state;
+    cmd->unclip=-1;
+    cmd->losslessCompress=-1;
+    cmd->overwrite=-1;
+    cmd->embedExif=-1;
+    cmd->profile[0][0].gamma=NULLF;
+    cmd->profile[0][0].linear=NULLF;
+    cmd->saturation=NULLF;
+    cmd->black=NULLF;
+    cmd->exposure=NULLF;
+    cmd->temperature=NULLF;
+    cmd->green=NULLF;
+    cmd->shrink = NULLF;
+    cmd->size = NULLF;
+    cmd->compression=NULLF;
+
+    while (1) {
+        c = getopt_long (*argc, *argv, "h", options, &index);
+        if (c == -1) break;
+        switch (c) {
+        case 'e':
+	    if (!strcmp(optarg, "auto")) {
+		cmd->autoExposure = apply_state;
+		break;
+	    }
+        case 'k':
+	    if (!strcmp(optarg, "auto")) {
+		cmd->autoBlack = apply_state;
+		break;
+	    }
+        case 't':
+        case 'g':
+        case 'G':
+        case 'L':
+        case 's':
+        case 'S':
+        case 'd':
+            if (sscanf(optarg, "%lf", (double *)optPointer[index])==0) {
+                ufraw_message(UFRAW_ERROR,
+			"'%s' is not a valid value for the --%s option.",
+			optarg, options[index].name);
+                return -1;
+            }
+            break;
+        case 'x':
+        case 'X':
+        case 'j':
+            if (sscanf(optarg, "%d", (int *)optPointer[index])==0) {
+                ufraw_message(UFRAW_ERROR,
+			"'%s' is not a valid value for the --%s option.",
+			optarg, options[index].name);
+                return -1;
+            }
+            break;
+        case 'w':
+        case 'c':
+        case 'f':
+        case 'i':
+        case 'T':
+        case 'I':
+        case 'p':
+        case 'o':
+        case 'C':
+            *(char **)optPointer[index] = optarg;
+            break;
+        case 'u': cmd->unclip = TRUE; break;
+        case 'U': cmd->unclip = FALSE; break;
+        case 'O': cmd->overwrite = TRUE; break;
+        case 'z':
+#ifdef HAVE_LIBZ
+            cmd->losslessCompress = TRUE; break;
+#else
+            ufraw_message(UFRAW_ERROR,
+                "ufraw was build without ZIP support.");
+            return -1;
+#endif
+        case 'Z': cmd->losslessCompress = FALSE; break;
+        case 'E': cmd->embedExif = TRUE; break;
+        case 'F': cmd->embedExif = FALSE; break;
+        case 'h':
+            ufraw_message(UFRAW_WARNING, helpText);
+            return 0;
+        case 'v':
+	    base = g_path_get_basename(*argv[0]);
+            ufraw_message(UFRAW_WARNING, versionText, base);
+	    g_free(base);
+            return 0;
+        case '?': /* invalid option. Warning printed by getopt() */
+            return -1;
+        default:
+            ufraw_message(UFRAW_ERROR, "getopt returned "
+                       "character code 0%o ??", c);
+            return -1;
+        }
+    }
+    cmd->wb = -1;
+    if (wbName!=NULL) {
+        if (!strcmp(wbName, "camera")) cmd->wb = camera_wb;
+        else if (!strcmp(wbName, "auto")) cmd->wb = auto_wb;
+        else {
+            ufraw_message(UFRAW_ERROR,
+                "'%s' is not a valid white balance option.", wbName);
+            return -1;
+        }
+    }
+
+    cmd->curveIndex = -1;
+    if (curveFile!=NULL) {
+        if (cmd->curveCount == max_curves) {
+            ufraw_message(UFRAW_ERROR,
+		    "failed to load curve from %s,"
+		    "too many configured curves", curveFile);
+            return -1;
+        }
+        cmd->curveIndex = cmd->curveCount;
+        if (curve_load(&(rc->curve[cmd->curveIndex]), curveFile) == UFRAW_ERROR)
+	{
+            ufraw_message(UFRAW_ERROR,
+                    "failed to load curve from %s", curveFile);
+            return -1;
+        }
+        cmd->curveCount++;
+    } else if (curveName!=NULL) {
+        if (!strcmp(curveName, "manual")) cmd->curveIndex=manual_curve;
+        else if (!strcmp(curveName, "linear")) cmd->curveIndex=linear_curve;
+        else if (!strcmp(curveName, "camera")) cmd->curveIndex=camera_curve;
+        else {
+            cmd->curveIndex = -1;
+            for( i = camera_curve + 1; i < rc->curveCount; i++ ) {
+                if( !strcmp( curveName, rc->curve[i].name )) {
+                    cmd->curveIndex = i;
+                    break;
+                }
+            }
+            if( cmd->curveIndex == -1 ) {
+                ufraw_message(UFRAW_ERROR,
+                        "'%s' is not a valid curve name.", curveName);
+                return -1;
+            }
+        }
+    }
+    cmd->interpolation = -1;
+    if (interpolationName!=NULL) {
+        if (!strcmp(interpolationName, "full"))
+            cmd->interpolation = full_interpolation;
+        else if (!strcmp(interpolationName, "four-color"))
+            cmd->interpolation = four_color_interpolation;
+        else if (!strcmp(interpolationName, "quick"))
+            cmd->interpolation = quick_interpolation;
+        else {
+            ufraw_message(UFRAW_ERROR,
+                "'%s' is not a valid interpolation option.",
+                interpolationName);
+            return -1;
+        }
+    }
+    if (cmd->shrink!=NULLF && cmd->size!=NULLF) {
+        ufraw_message(UFRAW_ERROR,
+                        "you can not specify both --shrink and --size");
+        return -1;
+    }
+    cmd->type = -1;
+    if (outTypeName!=NULL) {
+        if (!strcmp(outTypeName, "ppm8"))
+            cmd->type = ppm8_type;
+        else if (!strcmp(outTypeName, "ppm16"))
+            cmd->type = ppm16_type;
+        else if (!strcmp(outTypeName, "tiff8"))
+#ifdef HAVE_LIBTIFF
+        cmd->type = tiff8_type;
+#else
+        {
+            ufraw_message(UFRAW_ERROR,
+		    "ufraw was build without TIFF support.");
+            return -1;
+        }
+#endif
+        else if (!strcmp(outTypeName, "tiff16"))
+#ifdef HAVE_LIBTIFF
+        cmd->type = tiff16_type;
+#else
+        {
+            ufraw_message(UFRAW_ERROR,
+		    "ufraw was build without TIFF support.");
+            return -1;
+        }
+#endif
+        else if (!strcmp(outTypeName, "jpeg"))
+#ifdef HAVE_LIBJPEG
+        cmd->type = jpeg_type;
+#else
+        {
+            ufraw_message(UFRAW_ERROR,
+		    "ufraw was build without JPEG support.");
+            return -1;
+        }
+#endif
+        else {
+            ufraw_message(UFRAW_ERROR,
+		    "'%s' is not a valid output type.", outTypeName);
+            return -1;
+        }
+    }
+    cmd->createID = -1;
+    if (createIDName!=NULL) {
+        if (!strcmp(createIDName, "no"))
+            cmd->createID = no_id;
+	else if (!strcmp(createIDName, "also"))
+            cmd->createID = also_id;
+	else if (!strcmp(createIDName, "only"))
+            cmd->createID = only_id;
+        else {
+            ufraw_message(UFRAW_ERROR,
+		    "'%s' is not a valid create-id option.", createIDName);
+            return -1;
+        }
+    }
+    g_strlcpy(cmd->outputPath, "", max_path);
+    if (outPath!=NULL) {
+        if (g_file_test(outPath, G_FILE_TEST_IS_DIR))
+            g_strlcpy(cmd->outputPath, outPath, max_path);
+        else {
+            ufraw_message(UFRAW_ERROR, "'%s' is not a valid path.", outPath);
+            return -1;
+        }
+    }
+    g_strlcpy(cmd->outputFilename, "", max_path);
+    if (output!=NULL) {
+        if (*argc-optind>1) {
+            ufraw_message(UFRAW_ERROR, "cannot output more than "
+                                "one file to the same output");
+            return -1;
+        }
+        g_strlcpy(cmd->outputFilename, output, max_path);
+    }
+    /* cmd->inputFilename is used to store the conf file */
+    g_strlcpy(cmd->inputFilename, "", max_path);
+    if (conf!=NULL)
+        g_strlcpy(cmd->inputFilename, conf, max_path);
+
+    return optind;
 }

@@ -30,7 +30,7 @@
 char *ufraw_message_buffer(char *buffer, char *message)
 {
 #ifdef UFRAW_DEBUG
-    ufraw_batch_messenger(message, NULL);
+    ufraw_batch_messenger(message);
 #endif
     char *buf;
     if (buffer==NULL) return g_strdup(message);
@@ -39,16 +39,14 @@ char *ufraw_message_buffer(char *buffer, char *message)
     return buf;
 }
 
-void ufraw_batch_messenger(char *message, void *parentWindow)
+void ufraw_batch_messenger(char *message)
 {
-    if (parentWindow!=NULL) {
-        ufraw_messenger(message, parentWindow);
-#ifdef UFRAW_DEBUG
-        ufraw_batch_messenger(message, NULL);
-#endif
-        return;
-    }
-    fprintf(stderr, "ufraw: %s", message);
+    /* Print the 'ufraw:' header only if there are no newlines in the message
+     * (not including possibly one at the end).
+     * Otherwise, the header will be printed only for the first line. */
+    if (g_strstr_len(message, strlen(message)-1, "\n")==NULL)
+	fprintf(stderr, "%s: ", ufraw_binary);
+    fprintf(stderr, "%s", message);
     if (message[strlen(message)-1]!='\n') fputc('\n', stderr);
     fflush(stderr);
 }
@@ -99,25 +97,25 @@ char *ufraw_message(int code, const char *format, ...)
                 return NULL;
     case UFRAW_BATCH_MESSAGE:
                 if (parentWindow==NULL)
-                    ufraw_batch_messenger(message, parentWindow);
+                    ufraw_messenger(message, parentWindow);
                 g_free(message);
                 return NULL;
     case UFRAW_INTERACTIVE_MESSAGE:
                 if (parentWindow!=NULL)
-                    ufraw_batch_messenger(message, parentWindow);
+		    ufraw_messenger(message, parentWindow);
                 g_free(message);
                 return NULL;
     case UFRAW_LCMS_WARNING:
     case UFRAW_LCMS_RECOVERABLE:
     case UFRAW_LCMS_ABORTED:
-                ufraw_batch_messenger(message, parentWindow);
+                ufraw_messenger(message, parentWindow);
                 g_free(message);
                 return (char *)1; /* Tell lcms that we are handling the error */
     case UFRAW_REPORT:
-                ufraw_batch_messenger(errorBuffer, parentWindow);
+                ufraw_messenger(errorBuffer, parentWindow);
                 return NULL;
     default:
-                ufraw_batch_messenger(message, parentWindow);
+                ufraw_messenger(message, parentWindow);
                 g_free(message);
                 return NULL;
     }
@@ -232,7 +230,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
         long pos = ftell(raw->ifp);
         if (RipNikonNEFCurve(raw->ifp, raw->toneCurveOffset, &nc, NULL)
                 !=UFRAW_SUCCESS) {
-            ufraw_message(UFRAW_ERROR, "Error reading NEF curve\n");
+            ufraw_message(UFRAW_ERROR, "Error reading NEF curve");
             return UFRAW_WARNING;
         }
         fseek(raw->ifp, pos, SEEK_SET);
@@ -377,10 +375,10 @@ int ufraw_set_wb(ufraw_data *uf)
             if (status==DCRAW_NO_CAMERA_WB) {
                 ufraw_message(UFRAW_BATCH_MESSAGE,
                     "Cannot use camera white balance, "
-                    "reverting to auto white balance.\n");
+                    "reverting to auto white balance.");
                 ufraw_message(UFRAW_INTERACTIVE_MESSAGE,
                     "Cannot use camera white balance, "
-                    "reverting to auto white balance.\n");
+                    "reverting to auto white balance.");
                 uf->conf->wb = auto_wb;
                 status=dcraw_set_color_scale(raw, TRUE, FALSE);
             }

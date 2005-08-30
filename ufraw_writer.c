@@ -322,7 +322,7 @@ int ufraw_batch_saver(ufraw_data *uf)
        && strcmp(uf->conf->outputFilename, "-")
        && g_file_test(uf->conf->outputFilename, G_FILE_TEST_EXISTS) ) {
         char ans[max_name];
-        fprintf(stderr, "ufraw: overwrite '%s'? [y/N] ",
+        fprintf(stderr, "%s: overwrite '%s'? [y/N] ", ufraw_binary,
 		uf->conf->outputFilename);
         fflush(stderr);
         fgets(ans, max_name, stdin);

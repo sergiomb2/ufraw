@@ -169,6 +169,10 @@ extern const int wb_preset_count;
 extern const char raw_ext[];
 extern const char *file_type[];
 
+/* ufraw_binary contains the name of the binary file for error messages.
+ * It should be set in every ufraw main() */
+extern char *ufraw_binary;
+
 /* prototypes for functions in ufraw_ufraw.c */
 ufraw_data *ufraw_open(char *filename);
 int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf,conf_data *cmd);
@@ -179,7 +183,7 @@ int ufraw_set_wb(ufraw_data *uf);
 void ufraw_auto_expose(ufraw_data *uf);
 void ufraw_auto_black(ufraw_data *uf);
 void ufraw_auto_curve(ufraw_data *uf);
-void ufraw_batch_messenger(char *message, void *parentWindoW);
+void ufraw_batch_messenger(char *message);
 
 /* prototypes for functions in ufraw_preview.c */
 int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)());
@@ -207,6 +211,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src);
 /* Copy the 'save options' from *src to *dst */
 void conf_copy_save(conf_data *dst, const conf_data *src);
 int conf_set_cmd(conf_data *conf, const conf_data *cmd);
+int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc);
 
 /* prototype for functions in ufraw_developer.c */
 developer_data *developer_init();

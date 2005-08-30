@@ -102,6 +102,8 @@ void query()
 #endif
 }
 
+char *ufraw_binary;
+
 void run(const gchar *name,
 	gint nparams,
 	const GimpParam *param,
@@ -116,6 +118,8 @@ void run(const gchar *name,
     conf_data conf;
     int status;
     const char *locale;
+
+    ufraw_binary = "ufraw-gimp";
 
     *nreturn_vals = 1;
     *return_vals = values;

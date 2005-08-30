@@ -1,0 +1,265 @@
+=pod
+
+=head1 NAME
+
+ufraw - Convert camera RAW images to standard image files.
+
+=head1 SYNOPSIS
+
+ufraw [OPTIONS] <rawfile(s)>
+ufraw-batch [OPTIONS] <rawfile(s)>
+
+=head1 DESCRIPTION
+
+The Unidentified Flying Raw (UFRaw) is a utility to read and manipulate 
+raw images from digital cameras. It reads raw images using Dave Coffin's 
+raw conversion utility - DCRaw. UFRaw supports basic color management 
+using Little CMS, allowing the user to apply color profiles. For Nikon 
+users UFRaw has the advantage that it can read the camera's tone curves. 
+Even if you don't own a Nikon, you can still apply a Nikon curve to your 
+images.
+
+By default 'ufraw' displays a preview window for each raw image allowing
+the user to tweak the image parameters before saving. If no raw images
+are given at the command line, UFRaw will display a file chooser dialog.
+To process the images with no questions asked (and no preview) use
+the command 'ufraw-batch'.
+
+The input files can be either raw images or UFRaw ID-files.
+ID-files contain a raw image filename and the parameters for 
+handling the image.
+
+UFRaw can also work as a GIMP plug-in. To activate it simply open a raw
+image or a UFRaw ID-file in the GIMP.
+
+=head1 OPTIONS
+
+The otions supplied on the command-line decide the starting-values
+for the GUI. The GUI will then allow you to tweak these vaues before
+saving the final image.
+
+=head2 General Options
+
+=over 4
+
+=item --version
+
+Display the version of UFRaw and exit.
+
+=item --help 
+
+Display a brief description of how to use UFRaw and exit.
+
+=item --conf=<ID-filename>
+
+Load all parameters from an ID-file. This feature
+can be used to tweak the parameters for one file using the GUI and
+using those parameters as the starting point for other images as well. 
+
+=back
+
+=head2 Image Manipulation Options
+
+These command-line options override settings from the default configuration
+of UFRaw and from any loaded ID-file. The best way to learn about how these
+parameters work is to experiment with the GUI. All parameters correspond
+exactly to a setting available in the GUI. Not all parameters in the GUI
+have corresponding command-line options.
+
+=over 4
+
+=item --wb=camera|auto
+
+White balance setting. "camera" means that UFRaw tries to read the 
+color-temperature and green color component that the camera recorded 
+in the meta-information in the raw-file. This does not work for all 
+cameras. If UFRaw fails to read the white-balance information from the 
+meta-information, it falls back to "auto".
+
+"auto" means that UFRaw calculates the color-temperature and green color
+component automatically from the image data.
+
+The white-balance can also be set manually with the --temperature and --green
+options.
+
+=item --temperature=TEMP
+
+Manually set the color temperature in Kelvins (2000 - 7000).
+
+=item --green=GREEN
+
+Green color component. Range 0.20 to 2.50.
+
+=item --gamma=GAMMA
+
+Gamma adjustment of the base curve. Range 0.10 to 1.00. Default 0.45.
+
+=item --linearity=LINEARITY 
+
+Linearity of the base curve. Range 0.00 to 1.00. Default 0.10.
+
+=item --exposure=auto|EXPOSURE
+
+Auto exposure or exposure correction in EV. Range -3.00 to 3.00. Default 0.
+
+=item --[un]clip
+
+Unclip or clip highlights. Default clip.
+
+=item --saturation=SAT
+
+Adjust the color saturation. Range 0.00 to 3.00. Default 1.0, 
+use 0 for black & white output.
+
+=item --curve=manual|linear|camera|CURVE
+
+Type of tone curve to use. "manual" means that a manual tone curve is used. 
+This is probably not very useful as a command-line option, since there
+is no way to specify what the curve should look like.
+
+"linear" means that no tone curve corrections is performed. 
+
+"camera" means that UFRaw shall use the curve supplied by the camera
+in the meta-information in the raw-file. 
+
+CURVE can be the filename (without path) of any curve that was 
+previously loaded in the GUI. 
+
+The default is "camera" if such a curve exists, linear otherwise.
+
+=item --curve-file=<curve-file>
+
+Load a curve from a file. The curve file format can be either UFRaw's XML
+format or Nikon's NTC/NCV format.
+
+=item --black-point=auto|BLACK
+
+Black-point value. Range 0.0 to 1.0, default 0.0.
+
+=item --interpolation=full|quick|four-color
+
+Interpolation algorithm to use when converting from the bayer-pattern
+to normal RGB values. "full" does VNG interpolation that should give
+best results but is a bit slow.
+"quick" does a bilinear interpolation, which is faster but not as good.
+
+"four-color" is a variation of the VNG interpolation that should only be
+used if you see strange square patterns in the
+resulting image. See L<http://www.cybercom.net/~dcoffin/dcraw/>.
+
+=back
+
+=head2 Output Options
+
+The options which are related to the final output are:
+
+=over 4
+
+=item --shrink=FACTOR
+
+Shrink the image by FACTOR (default 1).
+
+=item --size=SIZE
+
+Downsize max(height,width) to SIZE.
+
+=item --out-type=ppm8|ppm16|tiff8|tiff16|jpeg
+
+Output file-format to use. ppm8 and tiff8 uses eight bits to encode each of 
+the  Red, Green and Blue components of each pixel. ppm16 and tiff16 uses 
+16 bits. The jpeg-format only allows for eight bits for each color component.
+
+The raw-files contain more than eight bits of information for each color
+component. This means that by using an eight bit format, you are actually
+discarding some of the information supplied by the camera. This is not
+a problem if you only plan to view the image on screen. For prints you
+should consider a 16 bits workflow.
+
+The default output file-format is ppm8.
+
+=item --compression=VALUE
+
+JPEG quality factor. Range 0-100 with a higher number giving a higher quality
+at the cost of a larger file. Default 85. The --compression parameter is only
+relevant if the output file-format is jpeg.
+
+=item --[no]exif
+
+Embed exif in output JPEG. Default embed exif. Exif information can only
+be embedded in jpeg-files.
+
+=item --[no]zip
+
+Enable [disable] TIFF zip compression. The zip-compression is loss-less.
+Default nozip. The --zip parameter is only relevant if the output file-format
+if tiff8 or tiff16.
+
+=item --out-path=PATH
+
+PATH for output file. In batch mode by default, output-files are placed in
+the same directory as the input-files. In interactive mode UFRaw tries to
+''guess'' if you have a favorite output directory.
+
+=item --output=FILE
+
+Output file name to use. This is only relevant if a single raw-file is
+supplied on the command-line. . Use '-' to output to stdout. The default
+is to name the output-file the same as the input-file but with the extension
+given by the output file-format.
+
+=item --overwrite
+
+Overwrite existing files without asking. Default is to ask before deleting
+an existing file.
+
+=back
+
+=head1 Conversion Setting Priority
+
+Conversion settings are applied in the following priority order:
+
+=over 2
+
+=item 1. Command-line options
+
+=item 2. Settings from the configuration file specified with --conf=<ID-file> 
+(ignoring any filenames in the ID-file).
+
+=item 3. Settings from an ID-file supplied as an input-file.
+
+=item 4. Settings from $HOME/.ufrawrc
+
+=item 5. UFRaw's default settings.
+
+=back
+
+This means that an option supplied on the command-line always takes precedence
+over all other options.
+
+The conversion settings can be changed in the GUI before the resulting
+image is saved.
+
+=for comment 
+In batch mode, the output options are NOT read from the resource file.
+
+=head1 FILES
+
+$HOME/.ufrawrc - UFRaw resource file containing the user default settings.
+This is an XML file that can be modified with any text editor. Still, it is
+recomended not to edit this file. This file is updated from the GUI when
+you save an image, or when you explicitly ask to save this file in the
+'Options' menu.
+
+=head1 ONLINE RESOURCES
+
+=over 4
+
+=item UFRaw homepage: L<http://ufraw.sourceforge.net>
+
+=item dcraw homepage: L<http://www.cybercom.net/~dcoffin/dcraw/>
+
+=head1 SEE ALSO
+
+L<gimp>
+
+=back
