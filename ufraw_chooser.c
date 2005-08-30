@@ -45,9 +45,11 @@ void ufraw_chooser(conf_data *conf, char *defPath)
             gdk_pixbuf_new_from_inline(-1, ufraw_icon, FALSE, NULL));
     ufraw_message(UFRAW_SET_PARENT, (char *)fileChooser);
 
-    if (defPath!=NULL)
-	gtk_file_chooser_set_current_folder(fileChooser, defPath);
-
+    if (defPath!=NULL) {
+	char *fullPath = uf_file_set_absolute(defPath);
+	gtk_file_chooser_set_current_folder(fileChooser, fullPath);
+	g_free(fullPath);
+    }
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
     gtk_file_filter_set_name(filter, "Raw images");
     extList = g_strsplit(raw_ext, ",", 100);

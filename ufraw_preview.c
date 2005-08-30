@@ -59,7 +59,7 @@ typedef struct {
     colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
     GtkToggleButton *AutoExposureButton, *AutoBlackButton;
     GtkButton *AutoCurveButton;
-    GtkWidget *ResetGammaButton, *ResetLinearButton;
+    GtkWidget *ResetWBButton, *ResetGammaButton, *ResetLinearButton;
     GtkWidget *ResetExposureButton, *ResetSaturationButton;
     GtkWidget *ResetBlackButton, *ResetCurveButton;
     GtkWidget *UseMatrixButton;
@@ -833,6 +833,14 @@ void update_scales(preview_data *data)
     gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
     gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
 
+    gtk_widget_set_sensitive(data->ResetWBButton,
+	    ( CFG->wb!=data->SaveConfig.wb
+	    ||fabs(CFG->temperature-data->SaveConfig.temperature)>1
+	    ||fabs(CFG->green-data->SaveConfig.green)>0.001
+	    ||CFG->chanMul[0]!=data->SaveConfig.chanMul[0]
+	    ||CFG->chanMul[1]!=data->SaveConfig.chanMul[1]
+	    ||CFG->chanMul[2]!=data->SaveConfig.chanMul[2]
+	    ||CFG->chanMul[3]!=data->SaveConfig.chanMul[3] ) );
     gtk_widget_set_sensitive(data->ResetGammaButton,
 	    fabs( profile_default_gamma(&CFG->profile[0][CFG->profileIndex[0]])
 		- CFG->profile[0][CFG->profileIndex[0]].gamma) > 0.001);
@@ -960,6 +968,13 @@ void button_update(GtkWidget *button, gpointer user_data)
     preview_data *data = get_preview_data(button);
     user_data = user_data;
 
+    if (button==data->ResetWBButton) {
+	int c;
+	CFG->wb = data->SaveConfig.wb;
+	CFG->temperature = data->SaveConfig.temperature;
+	CFG->green = data->SaveConfig.green;
+	for (c=0; c<4; c++) CFG->chanMul[c] = data->SaveConfig.chanMul[c];
+    }
     if (button==data->ResetGammaButton) {
 	CFG->profile[0][CFG->profileIndex[0]].gamma =
 		profile_default_gamma(&CFG->profile[0][CFG->profileIndex[0]]);
@@ -1501,14 +1516,15 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     preview_height = uf->predictateHeight / scale;
     snprintf(progressText, max_name, "size %dx%d, scale 1/%d",
             uf->predictateHeight, uf->predictateWidth, scale);
-    if (screen.height<800) {
+    /* With the following guesses the window usually fits into the screen.
+     * There should be more intelegent settings to widget sizes. */
+    curveeditorHeight = 256;
+    if (screen.height<801) {
 	if (CFG->liveHistogramHeight==conf_default.liveHistogramHeight)
 	    CFG->liveHistogramHeight = 96;
 	if (CFG->rawHistogramHeight==conf_default.rawHistogramHeight)
 	    CFG->rawHistogramHeight = 96;
-	curveeditorHeight = 192;
-    } else {
-	curveeditorHeight = 256;
+	if (screen.height<800) curveeditorHeight = 192;
     }
     previewHBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
     gtk_container_add(GTK_CONTAINER(previewWindow), GTK_WIDGET(previewHBox));
@@ -1616,6 +1632,15 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(combo_update), &CFG->wb);
     gtk_table_attach(table, GTK_WIDGET(data->WBCombo), 1, 6, 0, 1,
 	    GTK_FILL, 0, 0, 0);
+
+    data->ResetWBButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetWBButton),
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, data->ResetWBButton,
+	    "Reset white balance to initial value", NULL);
+    gtk_table_attach(table, data->ResetWBButton, 7, 8, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->ResetWBButton), "clicked",
+            G_CALLBACK(button_update), NULL);
 
     data->TemperatureAdjustment = adjustment_scale(table, 0, 1,
             "Temperature [K]", CFG->temperature, &CFG->temperature,
@@ -2102,6 +2127,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     ufraw_convert_image(data->UF);
     CFG->shrink = shrinkSave;
     CFG->size = sizeSave;
+
+    /* Copy ChannelMul[] to SaveConfig so that "Reset WB" will work correctly */
+    for (i=0; i<4; i++) data->SaveConfig.chanMul[i] = CFG->chanMul[i];
+
     if (preview_width!=data->UF->image.width ||
         preview_height!=data->UF->image.height) {
         pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
