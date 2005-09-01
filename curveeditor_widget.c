@@ -173,7 +173,10 @@ void curveeditor_widget_draw(CurveEditorWidgetData *data)
 	}
     }
 
-    CurveDataSample(curve, sample);
+    if (CurveDataSample(curve, sample)!=NC_SUCCESS)
+	for (i=0; i<(int)sample->m_samplingRes; i++)
+	    sample->m_Samples[i] =
+		    sample->m_outputRes * i / sample->m_samplingRes;
 
     for (i=0; i<(int)sample->m_samplingRes; i++)
     {
@@ -396,7 +399,10 @@ gboolean curveeditor_widget_on_key_press_event(GtkWidget *widget,
 		  return TRUE;
 	
 	CurveSample *sample = CurveSampleInit(w, h-1);
-	CurveDataSample(curve, sample);
+	if (CurveDataSample(curve, sample)!=NC_SUCCESS)
+	    for (i=0; i<(int)sample->m_samplingRes; i++)
+		sample->m_Samples[i] =
+			sample->m_outputRes * i / sample->m_samplingRes;
 
 	//Add the point at the end - it will be sorted later anyway
 	curve->m_anchors[curve->m_numAnchors].x =

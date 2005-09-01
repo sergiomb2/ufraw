@@ -1056,6 +1056,7 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
     //The setings currently calculate the natural spline, which closely matches
     //camera curve output in raw files.
     double *ypp = spline_cubic_set(n, x, y, 2, 0.0, 2, 0.0);
+    if (ypp==NULL) return NC_ERROR;
     
     //first derivative at a point
     double ypval = 0;
@@ -1227,6 +1228,7 @@ int SampleToCameraCurve(CurveData *curve, CurveSample *sample)
     //The setings currently calculate the natural spline, which closely matches
     //camera curve output in raw files.
     double *ypp = spline_cubic_set(curve->m_numAnchors,x,y,2, 0.0, 2, 0.0);
+    if (ypp==NULL) return NC_ERROR;
     
     //first derivative at a point
     double ypval = 0;

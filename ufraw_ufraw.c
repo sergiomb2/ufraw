@@ -518,6 +518,9 @@ void ufraw_auto_curve(ufraw_data *uf)
     for (bp=0, i=0; i<steps && bp<0x100; i++) {
 	for (bp=0, sum=0; bp<0x100 && sum<stop; bp++)
 	    sum += preview_histogram[bp];
+	/* Try to make sure that points are always increasing. */
+	if (i>0 && curve->m_anchors[i-1].x>=(double)bp/256 && bp<0x100)
+	    bp = curve->m_anchors[i-1].x * 256 + 1;
 	curve->m_anchors[i].x = (double)bp/256;
 	curve->m_anchors[i].y = (double)i/steps;
 	stop += (uf->image.width*uf->image.height*3) * pow(decay,i) / norm;

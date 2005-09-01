@@ -260,7 +260,7 @@ int ufraw_exif_from_raw(void *ifd, char *filename, unsigned char **exifBuf,
 #define UFRAW_GET_LOG 205 /* Return the log buffer */
 #define UFRAW_BATCH_MESSAGE 206
 #define UFRAW_INTERACTIVE_MESSAGE 207
-#define UFRAW_REPORT 208 /* Report previews messages */
+#define UFRAW_REPORT 208 /* Report previous messages */
 #define UFRAW_CLEAN 209 /* Clean all buffers */
 #define UFRAW_RESET 210 /* Reset warnings and errors */
 #define UFRAW_SET_PARENT 211 /* Set parent window for message dialog */

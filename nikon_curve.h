@@ -277,7 +277,7 @@
 #endif
 
 //Define this if using with UFRAW
-//#define __WITH_UFRAW__
+#define __WITH_UFRAW__
 
 //Flags used to determine what file we're trying to process.
 //Should only be used in standalone mode.
@@ -399,9 +399,9 @@ Anchor Point Data: This is aligned on 8 byte boundries. However, the section mus
 ////////////////////////
 ////////////////////////
 #define NC_SUCCESS 0
-#define NC_ERROR 1
-#define NC_WARNING 2
-#define NC_SET_ERROR 3
+#define NC_ERROR 100
+#define NC_WARNING 104
+#define NC_SET_ERROR 200
 
 
 //////////////////////////////////////////////////////////////////////////////

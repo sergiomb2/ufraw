@@ -98,8 +98,14 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
         double a, b, c, g;
         d->gamma = in->gamma;
         d->linear = in->linear;
+	/* The parameters of the linearized gamma curve are set in a way that
+	 * keeps the curve continuous and smooth at the connecting point.
+	 * d->linear also changes the real gamma used for the curve (g) in
+	 * a way that keeps the derivative at i=0x10000 constant.
+	 * This way changing the linearity changes the curve behaviour in
+	 * the shadows, but has a minimal effect on the rest of the range. */ 
         if (d->linear<1.0) {
-            g = d->gamma*(1.0-d->linear);
+            g = d->gamma*(1.0-d->linear)/(1.0-d->gamma*d->linear);
             a = 1.0/(1.0+d->linear*(g-1));
             b = d->linear*(g-1)*a;
             c = pow(a*d->linear+b, g)/d->linear;
@@ -137,8 +143,9 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
     if (memcmp(curve,&d->toneCurveData, sizeof(CurveData))) {
         d->toneCurveData = *curve;
 	CurveSample *cs = CurveSampleInit(0x10000, 0xFFFF);
+        ufraw_message(UFRAW_CLEAN, NULL);
         if (CurveDataSample(curve, cs)!=UFRAW_SUCCESS) {
-            ufraw_message(UFRAW_ERROR, "Error sampling curve");
+            ufraw_message(UFRAW_REPORT, NULL);
             for (i=0; i<0x10000; i++) d->toneCurve[i] = i;
         } else
             for (i=0; i<0x10000; i++) d->toneCurve[i] = cs->m_Samples[i];
