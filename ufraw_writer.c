@@ -78,7 +78,7 @@ int ufraw_write_image(ufraw_data *uf)
         }
     }
     if (uf->conf->createID==only_id) {
-        status = conf_save(uf->conf, confFilename, NULL, 0);
+        status = conf_save(uf->conf, confFilename, NULL);
         g_free(confFilename);
         return status;
     }
@@ -297,7 +297,7 @@ int ufraw_write_image(ufraw_data *uf)
 	if (strcmp(uf->conf->outputFilename, "-"))
             fclose(out);
     if (uf->conf->createID==also_id) {
-        conf_save(uf->conf, confFilename, NULL, 0);
+        conf_save(uf->conf, confFilename, NULL);
         g_free(confFilename);
     }
     return status;

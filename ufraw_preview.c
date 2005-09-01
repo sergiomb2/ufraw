@@ -1214,7 +1214,7 @@ void configuration_save(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     user_data = user_data;
-    conf_save(CFG, NULL, NULL, 0);
+    conf_save(CFG, NULL, NULL);
     data->SaveConfig = *data->UF->conf;
 }
 
@@ -1235,7 +1235,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     GtkWidget *notebook, *label, *page, *button, *text, *box, *image, *event;
     GtkTable *curveTable, *table;
     GtkTextBuffer *confBuffer, *buffer;
-    char txt[max_name], buf[10000];
+    char txt[max_name], *buf;
     long i, j;
 
     user_data = user_data;
@@ -1307,12 +1307,13 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_container_add(GTK_CONTAINER(page), text);
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text), FALSE);
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
-    char *utf8_log = g_filename_to_utf8(ufraw_message(UFRAW_GET_LOG, NULL),
-	    -1, NULL, NULL, NULL);
-    if (utf8_log==NULL) utf8_log = g_strdup("Encoding conversion failed");
-    gtk_text_buffer_set_text(buffer, utf8_log, -1);
-    g_free(utf8_log);
-
+    char *log = ufraw_message(UFRAW_GET_LOG, NULL);
+    if (log!=NULL) {
+	char *utf8_log = g_filename_to_utf8(log, -1, NULL, NULL, NULL);
+	if (utf8_log==NULL) utf8_log = g_strdup("Encoding conversion failed");
+	gtk_text_buffer_set_text(buffer, utf8_log, -1);
+	g_free(utf8_log);
+    }
     label = gtk_label_new("About");
     box = gtk_vbox_new(FALSE, 0);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, label);
@@ -1365,11 +1366,9 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
                     G_CALLBACK(delete_from_list), (gpointer)i);
             gtk_table_attach(table, button, 1, 2, i, i+1, 0, 0, 0, 0);
         }
-        conf_save(CFG, NULL, buf, 10000);
-	char *utf8_buf = g_filename_to_utf8(buf, -1, NULL, NULL, NULL);
-	if (utf8_buf==NULL) utf8_buf = g_strdup("Encoding conversion failed");
-        gtk_text_buffer_set_text(confBuffer, utf8_buf, -1);
-	g_free(utf8_buf);
+        conf_save(CFG, NULL, &buf);
+        gtk_text_buffer_set_text(confBuffer, buf, -1);
+	g_free(buf);
         gtk_widget_show_all(optionsDialog);
         if (gtk_dialog_run(GTK_DIALOG(optionsDialog))!=
                     GTK_RESPONSE_APPLY) {
@@ -2168,7 +2167,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	/* If save 'only this once' was chosen, then so be it */
 	if (CFG->saveConfiguration==apply_state)
 	    CFG->saveConfiguration = disabled_state;
-	conf_save(CFG, NULL, NULL, 0);
+	conf_save(CFG, NULL, NULL);
     } else {
 	*CFG = data->SaveConfig;
     }

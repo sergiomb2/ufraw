@@ -78,6 +78,23 @@ char *uf_file_set_absolute(const char *filename)
 #endif
 }
 
+char *uf_markup_buf(char *buffer, const char *format, ...)
+{
+    va_list ap;
+    va_start(ap, format);
+    char *line = g_markup_vprintf_escaped(format, ap);
+    va_end(ap);
+    if (buffer==NULL) {
+	return line;
+    } else {
+	char *buf;
+	buf = g_strconcat(buffer, line, NULL);
+	g_free(line);
+	g_free(buffer);
+	return buf;
+    }
+}
+
 #define D70_RED 2.648505
 #define D70_BLUE 1.355692
 
@@ -346,16 +363,15 @@ int curve_save(CurveData *cp, char *filename)
 
 char *curve_buffer(CurveData *c)
 {
-    const int bufSize = 1000;
-    char *buf = g_new(char, bufSize);
-    int bufIndex = 0, i;
+    char *buf = NULL;
+    int i;
     if ( c->m_min_x!=conf_default.curve[0].m_min_x ||
 	 c->m_min_y!=conf_default.curve[0].m_min_y ||
 	 c->m_max_x!=conf_default.curve[0].m_max_x ||
 	 c->m_max_y!=conf_default.curve[0].m_max_y ) {
-        bufIndex += snprintf(buf+bufIndex, bufSize-bufIndex,
-                "\t<MinXY>%lf %lf</MinXY>\n", c->m_min_x, c->m_min_y);
-        bufIndex += snprintf(buf+bufIndex, bufSize-bufIndex,
+	buf = uf_markup_buf(buf,
+		"\t<MinXY>%lf %lf</MinXY>\n", c->m_min_x, c->m_min_y);
+	buf = uf_markup_buf(buf,
                 "\t<MaxXY>%lf %lf</MaxXY>\n", c->m_max_x, c->m_max_y);
     }
     if ( c->m_numAnchors!=conf_default.curve[0].m_numAnchors ||
@@ -364,13 +380,9 @@ char *curve_buffer(CurveData *c)
 	 c->m_anchors[1].x!=conf_default.curve[0].m_anchors[1].x ||
 	 c->m_anchors[1].y!=conf_default.curve[0].m_anchors[1].y ) {
         for (i=0; i<c->m_numAnchors; i++)
-            bufIndex += snprintf(buf+bufIndex, bufSize-bufIndex,
+	    buf = uf_markup_buf(buf,
                     "\t<AnchorXY>%lf %lf</AnchorXY>\n",
                     c->m_anchors[i].x, c->m_anchors[i].y);
-    }
-    if (bufIndex==0) {
-        g_free(buf);
-        buf = NULL;
     }
     return buf;
 }

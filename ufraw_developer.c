@@ -143,7 +143,7 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
     if (memcmp(curve,&d->toneCurveData, sizeof(CurveData))) {
         d->toneCurveData = *curve;
 	CurveSample *cs = CurveSampleInit(0x10000, 0xFFFF);
-        ufraw_message(UFRAW_CLEAN, NULL);
+        ufraw_message(UFRAW_RESET, NULL);
         if (CurveDataSample(curve, cs)!=UFRAW_SUCCESS) {
             ufraw_message(UFRAW_REPORT, NULL);
             for (i=0; i<0x10000; i++) d->toneCurve[i] = i;

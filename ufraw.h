@@ -197,6 +197,7 @@ char *uf_file_set_type(const char *filename, const char *type);
 char *uf_file_set_absolute(const char *filename);
 /* Set locale of LC_NUMERIC to "C" to make sure that printf behaves correctly.*/char *uf_set_locale_C();
 void uf_reset_locale(char *locale);
+char *uf_markup_buf(char *buffer, const char *format, ...);
 double profile_default_linear(profile_data *p);
 double profile_default_gamma(profile_data *p);
 int curve_load(CurveData *cp, char *filename);
@@ -205,7 +206,7 @@ char *curve_buffer(CurveData *cp);
 
 /* prototypes for functions in ufraw_conf.c */
 int conf_load(conf_data *c, const char *confFilename);
-int conf_save(conf_data *c, char *confFilename, char *buf, int bufSize);
+int conf_save(conf_data *c, char *confFilename, char **confBuffer);
 /* Copy the image manipulation options from *src to *dst */
 void conf_copy_image(conf_data *dst, const conf_data *src);
 /* Copy the 'save options' from *src to *dst */

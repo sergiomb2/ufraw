@@ -389,56 +389,31 @@ int conf_load(conf_data *c, const char *IDFilename)
     return UFRAW_SUCCESS;
 }
 
-#define conf_printf(format, ...) {\
-    gchar *conf_print_temp = g_markup_printf_escaped(format, ## __VA_ARGS__);\
-    if (buf==NULL) {\
-	fputs(conf_print_temp, out);\
-    } else {\
-	bufIndex += g_strlcpy(buf+bufIndex, conf_print_temp, bufSize-bufIndex);\
-    }\
-    g_free(conf_print_temp);\
-}
-
-int conf_save(conf_data *c, char *IDFilename, char *buf, int bufSize)
+int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 {
-    char *confFilename, *locale;
-    const char *hd;
-    FILE *out=NULL;
-    char *type, *current;
-    int bufIndex=0, i, j;
+    char *buf=NULL, *type, *current;
+    int i, j;
 
-    if (buf==NULL) {
-	if (IDFilename==NULL) {
-            hd = uf_get_home_dir();
-            confFilename = g_build_filename(hd, ".ufrawrc", NULL);
-	} else
-	    confFilename = g_strdup(IDFilename);
-        if ( (out=fopen(confFilename, "w"))==NULL ) {
-            ufraw_message(UFRAW_ERROR,
-                    "Can't open file %s for writing\n%s\n",
-                    confFilename, strerror(errno) );
-            return UFRAW_ERROR;
-        }
-        g_free(confFilename);
-    }
-    locale = uf_set_locale_C();
-    conf_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-    conf_printf("<UFRaw Version='%d'>\n", c->version);
+    char *locale = uf_set_locale_C();
+
+    buf = uf_markup_buf(buf, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+    buf = uf_markup_buf(buf, "<UFRaw Version='%d'>\n", c->version);
     if (strlen(c->inputFilename)>0 && IDFilename!=NULL) {
 	char *utf8 = g_filename_to_utf8(c->inputFilename, -1, NULL, NULL, NULL);
 	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
-        conf_printf("<InputFilename>%s</InputFilename>\n", utf8);
+        buf = uf_markup_buf(buf, "<InputFilename>%s</InputFilename>\n", utf8);
 	g_free(utf8);
     }
     if (strlen(c->outputFilename)>0 && IDFilename!=NULL) {
 	char *utf8=g_filename_to_utf8(c->outputFilename, -1, NULL, NULL, NULL);
 	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
-        conf_printf("<OutputFilename>%s</OutputFilename>\n", utf8);
+        buf = uf_markup_buf(buf, "<OutputFilename>%s</OutputFilename>\n", utf8);
 	g_free(utf8);
     }
     if (strlen(c->outputPath)>0) {
 	char *utf8=g_filename_to_utf8(c->outputPath, -1, NULL, NULL, NULL);
-	if (utf8!=NULL) conf_printf("<OutputPath>%s</OutputPath>\n", utf8);
+	if (utf8!=NULL)
+	    buf = uf_markup_buf(buf, "<OutputPath>%s</OutputPath>\n", utf8);
 	g_free(utf8);
     } else {
 	/* Guess outputPath */
@@ -446,7 +421,8 @@ int conf_save(conf_data *c, char *IDFilename, char *buf, int bufSize)
 	char *outPath = g_path_get_dirname(c->outputFilename);
 	if ( strcmp(outPath,".") && strcmp(inPath, outPath) ) {
 	    char *utf8=g_filename_to_utf8(outPath, -1, NULL, NULL, NULL);
-	    if (utf8!=NULL) conf_printf("<OutputPath>%s</OutputPath>\n", utf8);
+	    if (utf8!=NULL)
+		buf = uf_markup_buf(buf, "<OutputPath>%s</OutputPath>\n", utf8);
 	    g_free(utf8);
 	}
 	g_free(outPath);
@@ -456,97 +432,116 @@ int conf_save(conf_data *c, char *IDFilename, char *buf, int bufSize)
     /* GUI settings are only saved to .ufrawrc */
     if (IDFilename==NULL) {
         if (c->saveConfiguration!=conf_default.saveConfiguration)
-            conf_printf("<SaveConfiguration>%d</SaveConfiguration>\n",
+            buf = uf_markup_buf(buf,
+		    "<SaveConfiguration>%d</SaveConfiguration>\n",
 		    c->saveConfiguration);
         if (c->expander[raw_expander]!=conf_default.expander[raw_expander])
-            conf_printf("<RawExpander>%d</RawExpander>\n",
+            buf = uf_markup_buf(buf, "<RawExpander>%d</RawExpander>\n",
                     c->expander[raw_expander]);
         if (c->expander[exposure_expander]!=
 		conf_default.expander[exposure_expander])
-            conf_printf("<ExposureExpander>%d</ExposureExpander>\n",
+            buf = uf_markup_buf(buf,
+		    "<ExposureExpander>%d</ExposureExpander>\n",
                     c->expander[exposure_expander]);
         if (c->expander[wb_expander]!=conf_default.expander[wb_expander])
-            conf_printf("<WBExpander>%d</WBExpander>\n",
+            buf = uf_markup_buf(buf, "<WBExpander>%d</WBExpander>\n",
 		    c->expander[wb_expander]);
         if (c->expander[color_expander]!=conf_default.expander[color_expander])
-            conf_printf("<ColorExpander>%d</ColorExpander>\n",
+            buf = uf_markup_buf(buf, "<ColorExpander>%d</ColorExpander>\n",
                     c->expander[color_expander]);
         if (c->expander[curve_expander]!=conf_default.expander[curve_expander])
-            conf_printf("<CurveExpander>%d</CurveExpander>\n",
+            buf = uf_markup_buf(buf, "<CurveExpander>%d</CurveExpander>\n",
                     c->expander[curve_expander]);
         if (c->expander[live_expander]!=conf_default.expander[live_expander])
-            conf_printf("<LiveExpander>%d</LiveExpander>\n",
+            buf = uf_markup_buf(buf, "<LiveExpander>%d</LiveExpander>\n",
                     c->expander[live_expander]);
         if (c->histogram!=conf_default.histogram)
-            conf_printf("<Histogram>%d</Histogram>\n", c->histogram);
+            buf = uf_markup_buf(buf,
+		    "<Histogram>%d</Histogram>\n", c->histogram);
         if (c->liveHistogramScale!=conf_default.liveHistogramScale)
-            conf_printf("<LiveHistogramScale>%d</LiveHistogramScale>\n",
+            buf = uf_markup_buf(buf,
+		    "<LiveHistogramScale>%d</LiveHistogramScale>\n",
 		    c->liveHistogramScale);
         if (c->liveHistogramHeight!=conf_default.liveHistogramHeight)
-            conf_printf("<LiveHistogramHeight>%d</LiveHistogramHeight>\n",
+            buf = uf_markup_buf(buf,
+		    "<LiveHistogramHeight>%d</LiveHistogramHeight>\n",
 		    c->liveHistogramHeight);
         if (c->rawHistogramScale!=conf_default.rawHistogramScale)
-            conf_printf("<RawHistogramScale>%d</RawHistogramScale>\n",
+            buf = uf_markup_buf(buf,
+		    "<RawHistogramScale>%d</RawHistogramScale>\n",
 		    c->rawHistogramScale);
         if (c->rawHistogramHeight!=conf_default.rawHistogramHeight)
-            conf_printf("<RawHistogramHeight>%d</RawHistogramHeight>\n",
+            buf = uf_markup_buf(buf,
+		    "<RawHistogramHeight>%d</RawHistogramHeight>\n",
 		    c->rawHistogramHeight);
         if (c->overExp!=conf_default.overExp)
-            conf_printf("<OverExposure>%d</OverExposure>\n", c->overExp);
+            buf = uf_markup_buf(buf,
+		    "<OverExposure>%d</OverExposure>\n", c->overExp);
         if (c->underExp!=conf_default.underExp)
-            conf_printf("<UnderExposure>%d</UnderExposure>\n", c->underExp);
+            buf = uf_markup_buf(buf,
+		    "<UnderExposure>%d</UnderExposure>\n", c->underExp);
 	if (strlen(c->curvePath)>0) {
 	    char *utf8 = g_filename_to_utf8(c->curvePath, -1, NULL, NULL, NULL);
 	    if (utf8!=NULL)
-		conf_printf("<CurvePath>%s</CurvePath>\n", utf8);
+		buf = uf_markup_buf(buf, "<CurvePath>%s</CurvePath>\n", utf8);
 	    g_free(utf8);
 	}
 	if (strlen(c->profilePath)>0) {
 	    char *utf8 = g_filename_to_utf8(c->profilePath, -1,NULL,NULL,NULL);
 	    if (utf8!=NULL)
-		conf_printf("<ProfilePath>%s</ProfilePath>\n", utf8);
+		buf = uf_markup_buf(buf,
+			"<ProfilePath>%s</ProfilePath>\n", utf8);
 	    g_free(utf8);
 	}
     }
     if (c->interpolation!=conf_default.interpolation)
-        conf_printf("<Interpolation>%d</Interpolation>\n", c->interpolation);
+        buf = uf_markup_buf(buf,
+		"<Interpolation>%d</Interpolation>\n", c->interpolation);
     if (c->wb!=conf_default.wb)
-        conf_printf("<WB>%d</WB>\n", c->wb);
-    conf_printf("<Temperature>%d</Temperature>\n", (int)floor(c->temperature));
-    conf_printf("<Green>%lf</Green>\n", c->green);
+        buf = uf_markup_buf(buf, "<WB>%d</WB>\n", c->wb);
+    buf = uf_markup_buf(buf,
+	    "<Temperature>%d</Temperature>\n", (int)floor(c->temperature));
+    buf = uf_markup_buf(buf,
+	    "<Green>%lf</Green>\n", c->green);
     if (c->chanMul[3]==0.0) {
-	conf_printf("<ChannelMultipliers>%f %f %f</ChannelMultipliers>\n",
+	buf = uf_markup_buf(buf,
+		"<ChannelMultipliers>%f %f %f</ChannelMultipliers>\n",
 		c->chanMul[0], c->chanMul[1], c->chanMul[2]);
     } else {
-	conf_printf("<ChannelMultipliers>%f %f %f %f</ChannelMultipliers>\n",
+	buf = uf_markup_buf(buf,
+		"<ChannelMultipliers>%f %f %f %f</ChannelMultipliers>\n",
 		c->chanMul[0], c->chanMul[1], c->chanMul[2], c->chanMul[3]);
     }
     if (c->exposure!=conf_default.exposure)
-        conf_printf("<Exposure>%lf</Exposure>\n", c->exposure);
+        buf = uf_markup_buf(buf, "<Exposure>%lf</Exposure>\n", c->exposure);
     if (c->unclip!=conf_default.unclip)
-        conf_printf("<Unclip>%d</Unclip>\n", c->unclip);
+        buf = uf_markup_buf(buf, "<Unclip>%d</Unclip>\n", c->unclip);
     if (c->autoExposure!=conf_default.autoExposure)
-        conf_printf("<AutoExposure>%d</AutoExposure>\n", c->autoExposure);
+        buf = uf_markup_buf(buf,
+		"<AutoExposure>%d</AutoExposure>\n", c->autoExposure);
     if (c->autoBlack!=conf_default.autoBlack)
-        conf_printf("<AutoBlack>%d</AutoBlack>\n", c->autoBlack);
+        buf = uf_markup_buf(buf, "<AutoBlack>%d</AutoBlack>\n", c->autoBlack);
     if (c->saturation!=conf_default.saturation)
-        conf_printf("<Saturation>%lf</Saturation>\n", c->saturation);
+        buf = uf_markup_buf(buf,
+		"<Saturation>%lf</Saturation>\n", c->saturation);
     if (c->size!=conf_default.size)
-        conf_printf("<Size>%d</Size>\n", c->size);
+        buf = uf_markup_buf(buf, "<Size>%d</Size>\n", c->size);
     if (c->shrink!=conf_default.shrink)
-        conf_printf("<Shrink>%d</Shrink>\n", c->shrink);
+        buf = uf_markup_buf(buf, "<Shrink>%d</Shrink>\n", c->shrink);
     if (c->type!=conf_default.type)
-        conf_printf("<OutputType>%d</OutputType>\n", c->type);
+        buf = uf_markup_buf(buf, "<OutputType>%d</OutputType>\n", c->type);
     if (c->createID!=conf_default.createID)
-        conf_printf("<CreateID>%d</CreateID>\n", c->createID);
+        buf = uf_markup_buf(buf, "<CreateID>%d</CreateID>\n", c->createID);
     if (c->embedExif!=conf_default.embedExif)
-        conf_printf("<EmbedExif>%d</EmbedExif>\n", c->embedExif);
+        buf = uf_markup_buf(buf, "<EmbedExif>%d</EmbedExif>\n", c->embedExif);
     if (c->compression!=conf_default.compression)
-        conf_printf("<Compression>%d</Compression>\n", c->compression);
+        buf = uf_markup_buf(buf,
+		"<Compression>%d</Compression>\n", c->compression);
     if (c->overwrite!=conf_default.overwrite)
-        conf_printf("<Overwrite>%d</Overwrite>\n", c->overwrite);
+        buf = uf_markup_buf(buf, "<Overwrite>%d</Overwrite>\n", c->overwrite);
     if (c->losslessCompress!=conf_default.losslessCompress)
-        conf_printf("<LosslessCompression>%d</LosslessCompression>\n",
+        buf = uf_markup_buf(buf,
+		"<LosslessCompression>%d</LosslessCompression>\n",
                 c->losslessCompress);
     for (i=0; i<c->curveCount; i++) {
         char *curveBuf = curve_buffer(&c->curve[i]);
@@ -557,25 +552,29 @@ int conf_save(conf_data *c, char *IDFilename, char *buf, int bufSize)
             current = i==c->curveIndex?"yes":"no";
             switch (i) {
                 case manual_curve:
-                        conf_printf("<ManualCurve Current='%s'>\n", current);
-			conf_printf(curveBuf);
-			conf_printf("</ManualCurve>\n");
+                        buf = uf_markup_buf(buf,
+				"<ManualCurve Current='%s'>\n", current);
+			buf = uf_markup_buf(buf, curveBuf);
+			buf = uf_markup_buf(buf, "</ManualCurve>\n");
                         break;
                 case linear_curve:
-                        conf_printf("<LinearCurve Current='%s'>\n", current);
-			conf_printf(curveBuf);
-			conf_printf("</LinearCurve>\n");
+                        buf = uf_markup_buf(buf,
+				"<LinearCurve Current='%s'>\n", current);
+			buf = uf_markup_buf(buf, curveBuf);
+			buf = uf_markup_buf(buf, "</LinearCurve>\n");
                         break;
                 case camera_curve:
-                        conf_printf("<CameraCurve Current='%s'>\n", current);
-			conf_printf(curveBuf);
-			conf_printf("</CameraCurve>\n");
+                        buf = uf_markup_buf(buf,
+				"<CameraCurve Current='%s'>\n", current);
+			buf = uf_markup_buf(buf, curveBuf);
+			buf = uf_markup_buf(buf, "</CameraCurve>\n");
                         break;
                 default:
-                        conf_printf("<Curve Current='%s'>%s\n", current,
+                        buf = uf_markup_buf(buf,
+				"<Curve Current='%s'>%s\n", current,
 				c->curve[i].name);
-			conf_printf(curveBuf);
-			conf_printf("</Curve>\n");
+			buf = uf_markup_buf(buf, curveBuf);
+			buf = uf_markup_buf(buf, "</Curve>\n");
             }
         }
         g_free(curveBuf);
@@ -590,57 +589,84 @@ int conf_save(conf_data *c, char *IDFilename, char *buf, int bufSize)
                c->profile[j][0].useMatrix!=
 		   conf_default.profile[0][0].useMatrix ) ) ) {
             current = c->profileIndex[j]==0 ? "yes" : "no";
-            conf_printf("<sRGB%s Current='%s'>\n", type, current);
+            buf = uf_markup_buf(buf, "<sRGB%s Current='%s'>\n", type, current);
             if (c->profile[j][0].gamma!=conf_default.profile[j][0].gamma)
-                conf_printf("\t<Gamma>%lf</Gamma>\n", c->profile[j][0].gamma);
+                buf = uf_markup_buf(buf,
+			"\t<Gamma>%lf</Gamma>\n", c->profile[j][0].gamma);
             if (c->profile[j][0].linear!=conf_default.profile[j][0].linear)
-                conf_printf("\t<Linearity>%lf</Linearity>\n",
+                buf = uf_markup_buf(buf, "\t<Linearity>%lf</Linearity>\n",
                         c->profile[j][0].linear);
             if (c->profile[j][0].useMatrix!=
 		    conf_default.profile[j][0].useMatrix)
-                conf_printf("\t<UseColorMatrix>%d</UseColorMatrix>\n",
+                buf = uf_markup_buf(buf,
+			"\t<UseColorMatrix>%d</UseColorMatrix>\n",
                         c->profile[j][0].useMatrix);
-            conf_printf("</sRGB%s>\n", type);
+            buf = uf_markup_buf(buf, "</sRGB%s>\n", type);
         }
 	/* While the default ICC profile is conf_default.profile[j][1] */
         for (i=1; i<c->profileCount[j]; i++) {
 	    if (IDFilename!=NULL && i!=c->profileIndex[j])
 		continue;
             current = i==c->profileIndex[j]?"yes":"no";
-            conf_printf("<%s Current='%s'>%s\n",
+            buf = uf_markup_buf(buf, "<%s Current='%s'>%s\n",
 		    type, current, c->profile[j][i].name);
 	    char *utf8 = g_filename_to_utf8(c->profile[j][i].file,
 		    -1, NULL, NULL, NULL);
 	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
-            conf_printf("\t<File>%s</File>\n", utf8);
+            buf = uf_markup_buf(buf, "\t<File>%s</File>\n", utf8);
 	    g_free(utf8);
-            conf_printf("\t<ProductName>%s</ProductName>\n",
+            buf = uf_markup_buf(buf, "\t<ProductName>%s</ProductName>\n",
                     c->profile[j][i].productName);
             if (c->profile[j][i].gamma!=conf_default.profile[j][1].gamma)
-                conf_printf("\t<Gamma>%lf</Gamma>\n", c->profile[j][i].gamma);
+                buf = uf_markup_buf(buf,
+			"\t<Gamma>%lf</Gamma>\n", c->profile[j][i].gamma);
             if (c->profile[j][i].linear!=conf_default.profile[j][1].linear)
-                conf_printf("\t<Linearity>%lf</Linearity>\n",
+                buf = uf_markup_buf(buf, "\t<Linearity>%lf</Linearity>\n",
                         c->profile[j][i].linear);
             if (c->profile[j][i].useMatrix!=
 		    conf_default.profile[j][1].useMatrix)
-                conf_printf("\t<UseColorMatrix>%d</UseColorMatrix>\n",
+                buf = uf_markup_buf(buf,
+			"\t<UseColorMatrix>%d</UseColorMatrix>\n",
                         c->profile[j][i].useMatrix);
-            conf_printf("</%s>\n", type);
+            buf = uf_markup_buf(buf, "</%s>\n", type);
         }
     }
     if (c->intent!=conf_default.intent)
-        conf_printf("<Intent>%d</Intent>\n", c->intent);
+        buf = uf_markup_buf(buf, "<Intent>%d</Intent>\n", c->intent);
     if (IDFilename!=NULL) {
-	char *utf8 = g_filename_to_utf8(ufraw_message(UFRAW_GET_LOG, NULL),
-		-1, NULL, NULL, NULL);
-	if (utf8!=NULL)
-	    conf_printf("<Log>\n%s</Log>\n", utf8);
-	g_free(utf8);
+	char *log = ufraw_message(UFRAW_GET_LOG, NULL);
+	if (log!=NULL) {
+	    char *utf8 = g_filename_to_utf8(log, -1, NULL, NULL, NULL);
+	    if (utf8!=NULL)
+		buf = uf_markup_buf(buf, "<Log>\n%s</Log>\n", utf8);
+	    g_free(utf8);
+	}
     }
-    conf_printf("</UFRaw>\n");
+    buf = uf_markup_buf(buf, "</UFRaw>\n");
     uf_reset_locale(locale);
-    if (buf==NULL) fclose(out);
-    else if (bufIndex >= bufSize) return UFRAW_ERROR;
+    if (confBuffer==NULL) {
+	char *confFilename;
+	FILE *out;
+	if (IDFilename==NULL) {
+            const char *hd = uf_get_home_dir();
+            confFilename = g_build_filename(hd, ".ufrawrc", NULL);
+	} else
+	    confFilename = g_strdup(IDFilename);
+        if ( (out=fopen(confFilename, "w"))==NULL ) {
+            ufraw_message(UFRAW_ERROR,
+                    "Can't open file %s for writing\n%s\n",
+                    confFilename, strerror(errno) );
+	    g_free(confFilename);
+	    g_free(buf);
+            return UFRAW_ERROR;
+        }
+	fputs(buf, out);
+	fclose(out);
+        g_free(confFilename);
+	g_free(buf);
+    } else {
+	*confBuffer = buf;
+    }
     return UFRAW_SUCCESS;
 }
 

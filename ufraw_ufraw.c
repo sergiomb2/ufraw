@@ -238,7 +238,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	g_strlcpy(nc.name, uf->conf->curve[camera_curve].name, max_name);
         uf->conf->curve[camera_curve] = nc;
     } else {
-        uf->conf->curve[camera_curve].m_numAnchors = -1;
+        uf->conf->curve[camera_curve].m_numAnchors = 0;
         /* don't retain camera_curve if no cameraCurve */
         if (uf->conf->curveIndex==camera_curve)
             uf->conf->curveIndex = linear_curve;
