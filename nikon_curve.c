@@ -71,13 +71,6 @@ static const unsigned char *FileTypeHeaders[NUM_FILE_TYPES] = {
     NCVFileHeader,
 };
 
-//Function pointers assigned swapping functions based upon the endianess of the machine.
-short (*ShortVal)(short s);
-int (*LongVal)(int i);
-float (*FloatVal)(float f);
-double (*DoubleVal)(double d);
-
-
 /**STANDALONE**/
 #ifdef _STAND_ALONE_
 
@@ -234,135 +227,101 @@ void DEBUG_PRINT(char *format, ...)
 }
 
 /***********************************************************************
-ShortSwap/ShortNoSwap:
-	ShortSwap is the function used when on a big endian machine. 
-    ShortNoSwap is used on little endian machines. A function pointer
-    is assigned one or the other depending on the endianess of the machine.
+isBigEndian:
+	Determines if the machine we are running on is big endian or not.
 ************************************************************************/
-short ShortSwap( short s )
+int isBigEndian()
 {
-  unsigned char b1, b2;
-  
-  b1 = s & 255;
-  b2 = (s >> 8) & 255;
-
-  return (b1 << 8) + b2;
-}
-
-short ShortNoSwap( short s )
-{
-  return s;
-}
-
-/***********************************************************************
-LongSwap/LongNoSwap:
-	LongSwap is the function used when on a big endian machine. 
-    LongNoSwap is used on little endian machines. A function pointer
-    is assigned one or the other depending on the endianess of the machine.
-************************************************************************/
-int LongSwap (int i)
-{
-  unsigned char b1, b2, b3, b4;
-
-  b1 = i & 255;
-  b2 = ( i >> 8 ) & 255;
-  b3 = ( i>>16 ) & 255;
-  b4 = ( i>>24 ) & 255;
-
-  return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
-}
-
-int LongNoSwap( int i )
-{
-  return i;
-}
-
-/***********************************************************************
-FloatSwap/FloatNoSwap:
-	FloatSwap is the function used when on a big endian machine. 
-    FloatNoSwap is used on little endian machines. A function pointer
-    is assigned one or the other depending on the endianess of the machine.
-************************************************************************/
-float FloatSwap( float f )
-{
-  union
-  {
-    float f;
-    unsigned char b[4];
-  } dat1, dat2;
-
-  dat1.f = f;
-  dat2.b[0] = dat1.b[3];
-  dat2.b[1] = dat1.b[2];
-  dat2.b[2] = dat1.b[1];
-  dat2.b[3] = dat1.b[0];
-  return dat2.f;
-}
-
-
-float FloatNoSwap( float f )
-{
-  return f;
-}
-
-/***********************************************************************
-DoubleSwap/DoubleNoSwap:
-	DoubleSwap is the function used when on a big endian machine. 
-    DoubleNoSwap is used on little endian machines. A function pointer
-    is assigned one or the other depending on the endianess of the machine.
-************************************************************************/
-double DoubleSwap(double d)
-{
-    union
-  {
-    double d;
-    unsigned char b[8];
-  } dat1, dat2;
-
-  dat1.d = d;
-  dat2.b[0] = dat1.b[7];
-  dat2.b[1] = dat1.b[6];
-  dat2.b[2] = dat1.b[5];
-  dat2.b[3] = dat1.b[4];
-  dat2.b[4] = dat1.b[3];
-  dat2.b[5] = dat1.b[2];
-  dat2.b[6] = dat1.b[1];
-  dat2.b[7] = dat1.b[0];
-  return dat2.d;
-}
-
-double DoubleNoSwap( double f )
-{
-  return f;
-}
-
-/***********************************************************************
-DetermineEndianess:
-	Determines if the machine we are running on is big endian or not
-    and sets a number of function pointers to handle swapping bytes
-    if necessary.
-************************************************************************/
-void DetermineEndianess()
-{
-	short x;
+    short x;
     unsigned char EndianTest[2] = { 1, 0 };
-  
+
     x = *(short *) EndianTest;
-	
-	if(x == 1) //little endian
-    {
-        ShortVal = ShortNoSwap;
-        LongVal = LongNoSwap;
-        FloatVal = FloatNoSwap;
-        DoubleVal = DoubleNoSwap;
-    }
-	else
-    {
-        ShortVal = ShortSwap;
-        LongVal = LongSwap;
-        FloatVal = FloatSwap;
-        DoubleVal = DoubleSwap;
-    }
+
+    return (x!=1);
+}
+
+/***********************************************************************
+ShortVal:
+	Convert short int (16 bit) from little endian to machine endianess.
+************************************************************************/
+short ShortVal(short s)
+{
+    if (isBigEndian()) {
+	unsigned char b1, b2;
+
+        b1 = s & 255;
+	b2 = (s >> 8) & 255;
+
+	return (b1 << 8) + b2;
+    } else
+	return s;
+}
+
+/***********************************************************************
+LongVal:
+	Convert long int (32 bit) from little endian to machine endianess.
+************************************************************************/
+int LongVal(int i)
+{
+    if (isBigEndian()) {
+	unsigned char b1, b2, b3, b4;
+
+	b1 = i & 255;
+	b2 = ( i >> 8 ) & 255;
+	b3 = ( i>>16 ) & 255;
+	b4 = ( i>>24 ) & 255;
+
+	return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
+    } else
+	return i;
+}
+
+/***********************************************************************
+FloatVal:
+	Convert float from little endian to machine endianess.
+************************************************************************/
+float FloatVal(float f)
+{
+    if (isBigEndian()) {
+	union {
+	    float f;
+	    unsigned char b[4];
+	} dat1, dat2;
+
+	dat1.f = f;
+	dat2.b[0] = dat1.b[3];
+	dat2.b[1] = dat1.b[2];
+	dat2.b[2] = dat1.b[1];
+	dat2.b[3] = dat1.b[0];
+	return dat2.f;
+    } else
+	return f;
+}
+
+/***********************************************************************
+DoubleVal:
+	Convert double from little endian to machine endianess.
+************************************************************************/
+double DoubleVal(double d)
+{
+    if (isBigEndian()) {
+	union {
+	    double d;
+	    unsigned char b[8];
+	} dat1, dat2;
+
+	dat1.d = d;
+	dat2.b[0] = dat1.b[7];
+	dat2.b[1] = dat1.b[6];
+	dat2.b[2] = dat1.b[5];
+	dat2.b[3] = dat1.b[4];
+	dat2.b[4] = dat1.b[3];
+	dat2.b[5] = dat1.b[2];
+	dat2.b[6] = dat1.b[1];
+	dat2.b[7] = dat1.b[0];
+	return dat2.d;
+    } else
+	return d;
 }
 
 //**********************************************************************
@@ -845,11 +804,6 @@ int LoadNikonData(char *fileName, NikonData *data)
     int offset = 0;
     CurveData *curve = NULL;
 
-    //sets up what endian the machine is so the read and write to files
-    //ends up correct.
-    //THIS MUST BE DONE AT LEAST ONCE!!!
-    DetermineEndianess();
-    
     if (fileName == NULL || strlen(fileName) == 0)
     {
 	nc_message(NC_SET_ERROR,
@@ -875,6 +829,14 @@ int LoadNikonData(char *fileName, NikonData *data)
     
     //get the file type
     data->m_fileType = GetNikonFileType(input);
+    // set file seek positions for curve tones depending of file type
+    // todo: is it possible to find one common rule?
+    long curveFilePos[4][4] = {
+        {FileOffsets[data->m_fileType][BOX_DATA], SEEK_SET, FileOffsets[data->m_fileType][ANCHOR_DATA], SEEK_SET},
+        {NEXT_SECTION_BOX_DATA_OFFSET, SEEK_CUR, NUM_POINTS_TO_ANCHOR_OFFSET, SEEK_CUR},
+        {NEXT_SECTION_BOX_DATA_OFFSET, SEEK_CUR, NUM_POINTS_TO_ANCHOR_OFFSET, SEEK_CUR},
+        {NEXT_SECTION_BOX_DATA_OFFSET, SEEK_CUR, NUM_POINTS_TO_ANCHOR_OFFSET, SEEK_CUR}
+    };
 
     //make sure we have a good file type
     if (data->m_fileType == -1)
@@ -894,117 +856,72 @@ int LoadNikonData(char *fileName, NikonData *data)
     fread(&data->m_patch_version,sizeof(unsigned short),1,input);
     data->m_patch_version = ShortVal(data->m_patch_version);
 
-    //read box data
-    
-    fseek(input,FileOffsets[data->m_fileType][BOX_DATA],SEEK_SET);
-    
-    fread(&curve->m_min_x,sizeof(double),1,input);
-    curve->m_min_x = DoubleVal(curve->m_min_x);
-
-    fread(&curve->m_max_x,sizeof(double),1,input);
-    curve->m_max_x = DoubleVal(curve->m_max_x);
-
-    fread(&curve->m_gamma,sizeof(double),1,input);
-    curve->m_gamma = DoubleVal(curve->m_gamma);
-    
-    fread(&curve->m_min_y,sizeof(double),1,input);
-    curve->m_min_y = DoubleVal(curve->m_min_y);
-    
-    fread(&curve->m_max_y,sizeof(double),1,input);
-    curve->m_max_y = DoubleVal(curve->m_max_y);
-    
-    //get number of anchors (always located after box data)
-    fread(&curve->m_numAnchors,1,1,input);
-
-    //Move to start of the anchor data
-    fseek(input,FileOffsets[data->m_fileType][ANCHOR_DATA],SEEK_SET);
-    
-    //read in the anchor points
-    fread(curve->m_anchors,sizeof(CurveAnchorPoint),curve->m_numAnchors,input);
+    // read all tone curves data follow from here
     int i;
-    for (i = 0; i < curve->m_numAnchors; i++)
+    for(i = 0; i < NUM_CURVE_TYPES; i++)
     {
-        curve->m_anchors[i].x = DoubleVal(curve->m_anchors[i].x);
-        curve->m_anchors[i].y = DoubleVal(curve->m_anchors[i].y);
-    }
+        curve = &data->curves[i];
 
-    DEBUG_PRINT("DEBUG: Loading Data:\n");
-    DEBUG_PRINT("DEBUG: CURVE_TYPE: %u \n",curve->m_curveType);
-    DEBUG_PRINT("DEBUG: BOX->MIN_X: %f\n",curve->m_min_x);
-    DEBUG_PRINT("DEBUG: BOX->MAX_X: %f\n",curve->m_max_x);
-    DEBUG_PRINT("DEBUG: BOX->GAMMA: %f\n",curve->m_gamma);
-    DEBUG_PRINT("DEBUG: BOX->MIN_Y: %f\n",curve->m_min_y);
-    DEBUG_PRINT("DEBUG: BOX->MAX_Y: %f\n",curve->m_max_x);
+        //set curve type
+        curve->m_curveType = i;
+
+        //get box data
+        fseek(input, curveFilePos[i][0], curveFilePos[i][1]);
+
+        fread(&curve->m_min_x,sizeof(double),1,input);
+        curve->m_min_x = DoubleVal(curve->m_min_x);
+
+        fread(&curve->m_max_x,sizeof(double),1,input);
+        curve->m_max_x = DoubleVal(curve->m_max_x);
+
+        fread(&curve->m_gamma,sizeof(double),1,input);
+        curve->m_gamma = DoubleVal(curve->m_gamma);
+
+        fread(&curve->m_min_y,sizeof(double),1,input);
+        curve->m_min_y = DoubleVal(curve->m_min_y);
+
+        fread(&curve->m_max_y,sizeof(double),1,input);
+        curve->m_max_y = DoubleVal(curve->m_max_y);
+
+        //get number of anchors (always located after box data)
+        fread(&curve->m_numAnchors,1,1,input);
+
+        //Move to start of the anchor data
+        fseek(input, curveFilePos[i][2], curveFilePos[i][3]);
+
+        //read in the anchor points
+        int rs = fread(curve->m_anchors, sizeof(CurveAnchorPoint),
+		curve->m_numAnchors, input);
+        if (curve->m_numAnchors != rs) {
+	    nc_message(NC_SET_ERROR, "Error reading all anchor points\n");
+	    return NC_ERROR;
+	}
+
+        int j;
+        for (j = 0; j < curve->m_numAnchors; j++)
+        {
+            curve->m_anchors[j].x = DoubleVal(curve->m_anchors[j].x);
+            curve->m_anchors[j].y = DoubleVal(curve->m_anchors[j].y);
+        }
+
+        DEBUG_PRINT("DEBUG: Loading Data:\n");
+        DEBUG_PRINT("DEBUG: CURVE_TYPE: %u \n",curve->m_curveType);
+        DEBUG_PRINT("DEBUG: BOX->MIN_X: %f\n",curve->m_min_x);
+        DEBUG_PRINT("DEBUG: BOX->MAX_X: %f\n",curve->m_max_x);
+        DEBUG_PRINT("DEBUG: BOX->GAMMA: %f\n",curve->m_gamma);
+        DEBUG_PRINT("DEBUG: BOX->MIN_Y: %f\n",curve->m_min_y);
+        DEBUG_PRINT("DEBUG: BOX->MAX_Y: %f\n",curve->m_max_x);
 
 #ifdef _DEBUG
-	int i_dbg;
-	for(i_dbg = 0; i_dbg < curve->m_numAnchors; i_dbg++)
-	{
-	    DEBUG_PRINT("DEBUG: ANCHOR X,Y: %f,%f\n",
-	            curve->m_anchors[i_dbg].x,curve->m_anchors[i_dbg].y); 
-	}
-	DEBUG_PRINT("\n");
-#endif
-
-    //the rest of the curves follow from here
-    for(i = 1; i < NUM_CURVE_TYPES; i++)
-    {
-	curve = &data->curves[i];
-	//set curve type
-	curve->m_curveType = i;
-	
-	//get box data
-	fseek(input, NEXT_SECTION_BOX_DATA_OFFSET, SEEK_CUR);
-	
-    fread(&curve->m_min_x,sizeof(double),1,input);
-    curve->m_min_x = DoubleVal(curve->m_min_x);
-
-    fread(&curve->m_max_x,sizeof(double),1,input);
-    curve->m_max_x = DoubleVal(curve->m_max_x);
-
-    fread(&curve->m_gamma,sizeof(double),1,input);
-    curve->m_gamma = DoubleVal(curve->m_gamma);
-    
-    fread(&curve->m_min_y,sizeof(double),1,input);
-    curve->m_min_y = DoubleVal(curve->m_min_y);
-    
-    fread(&curve->m_max_y,sizeof(double),1,input);
-    curve->m_max_y = DoubleVal(curve->m_max_y);
-
-	//get number of anchors (always located after box data)
-	fread(&curve->m_numAnchors,1,1,input);
-
-	//allocate memory
-	fseek(input, NUM_POINTS_TO_ANCHOR_OFFSET, SEEK_CUR);
-	
-	fread(curve->m_anchors,sizeof(CurveAnchorPoint),curve->m_numAnchors,input);
-    int i;
-    for (i = 0; i < curve->m_numAnchors; i++)
-    {
-        curve->m_anchors[i].x = DoubleVal(curve->m_anchors[i].x);
-        curve->m_anchors[i].y = DoubleVal(curve->m_anchors[i].y);
-    }
-
-
-	DEBUG_PRINT("DEBUG: Loading Data:\n");
-	DEBUG_PRINT("DEBUG: CURVE_TYPE: %u \n",curve->m_curveType);
-	DEBUG_PRINT("DEBUG: BOX->MIN_X: %f\n",curve->m_min_x);
-	DEBUG_PRINT("DEBUG: BOX->MAX_X: %f\n",curve->m_max_x);
-	DEBUG_PRINT("DEBUG: BOX->GAMMA: %f\n",curve->m_gamma);
-	DEBUG_PRINT("DEBUG: BOX->MIN_Y: %f\n",curve->m_min_y);
-	DEBUG_PRINT("DEBUG: BOX->MAX_Y: %f\n",curve->m_max_x);
-
-#ifdef _DEBUG
-	int j_dbg;
-	for(j_dbg = 0; j_dbg < curve->m_numAnchors*2; j_dbg+=2)
-	{
-	    DEBUG_PRINT("DEBUG: ANCHOR X,Y: %f,%f\n",
-	            curve->m_anchors[j_dbg],curve->m_anchors[j_dbg+1]); 
-	}
-	DEBUG_PRINT("\n");
+        int i_dbg;
+        for(i_dbg = 0; i_dbg < curve->m_numAnchors; i_dbg++)
+        {
+            DEBUG_PRINT("DEBUG: ANCHOR X,Y: %f,%f\n",
+                    curve->m_anchors[i_dbg].x,curve->m_anchors[i_dbg].y); 
+        }
+        DEBUG_PRINT("\n");
 #endif
     }
-
     fclose(input);
     return NC_SUCCESS;
 }
@@ -1334,11 +1251,6 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
     CurveData *curve = NULL;
     version = version;
     
-    //sets up what endian the machine is so the read and write to files
-    //ends up correct.
-    //THIS MUST BE DONE AT LEAST ONCE!!!
-    DetermineEndianess();
-
     //used for file padding
     unsigned char pad[32];
     memset(pad,0,32);
@@ -1868,11 +1780,6 @@ int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p)
     unsigned short num_entries = 0;
     unsigned short version = 0;
     unsigned int offset = 0;
-    
-    //sets up what endian the machine is so the read and write to files
-    //ends up correct.
-    //THIS MUST BE DONE AT LEAST ONCE!!!
-    DetermineEndianess();
 
     //open the file
     FILE *file = fopen(infile,"rb");
@@ -2018,11 +1925,6 @@ int RipNikonNEFCurve(FILE *file, int offset, CurveData *data,
 {
     int i;
 
-    //sets up what endian the machine is so the read and write to files
-    //ends up correct.
-    //THIS MUST BE DONE AT LEAST ONCE!!!
-    DetermineEndianess();
-
     //seek to the offset of the data. Skip first two bytes (section isn't needed).
     fseek(file, offset+2, SEEK_SET);
     
@@ -2101,11 +2003,6 @@ main:
 
 int main(int argc, char* argv[])
 {
-    //sets up what endian the machine is so the read and write to files
-    //ends up correct.
-    //THIS MUST BE DONE!!!
-    DetermineEndianess();
-
     //make sure we can continue processing
     if (ProcessArgs(argc,argv) == NC_SUCCESS)
     {
@@ -2166,5 +2063,3 @@ int main(int argc, char* argv[])
     return NC_SUCCESS;
 }
 #endif
-
-
