@@ -49,9 +49,6 @@ fi
 # PREFIX points to none default locations of headers and libraries.
 if test "!(-z $PREFIX)"; then
   export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig$PATH_SEPARATOR$PKG_CONFIG_PATH"
-  if test $ufraw_win32 = yes; then
-    export PKG_CONFIG_PATH=".$PATH_SEPARATOR$PKG_CONFIG_PATH"
-  fi
   CPPFLAGS="$CPPFLAGS -I$PREFIX/include"
   LDFLAGS="$LDFLAGS -L$PREFIX/lib"
 fi
@@ -69,17 +66,11 @@ fi
 
 # DEPS packages must exist to build ufraw
 PKG_CHECK_MODULES(DEPS, $gimp_pkg gtk+-2.0 >= 2.4 lcms)
-if test $ufraw_win32 = yes; then
-  DEPS_CFLAGS=`$PKG_CONFIG --define-variable=prefix=$PREFIX --cflags $gimp_pkg gtk+-2.0 lcms`
-  AC_MSG_NOTICE(DEPS_CFLAGS=$DEPS_CFLAGS)
-  DEPS_LIBS=`$PKG_CONFIG --define-variable=prefix=$PREFIX --libs $gimp_pkg gtk+-2.0 lcms`
-  AC_MSG_NOTICE(DEPS_LIBS=$DEPS_LIBS)
-fi
 
 # Disable deprecated functions on tested versions of GTK
-# doesn't work on win32 because we are using an old gimp-dev package
-if test $ufraw_win32 = no; then
-  if $PKG_CONFIG --max-version=2.6.2 gtk+-2.0; then
+# unless using an old gimp-dev package.
+if $PKG_CONFIG --atleast-version=2.2 gimpui-2.0; then
+  if $PKG_CONFIG --max-version=2.6.8 gtk+-2.0; then
     AC_DEFINE(G_DISABLE_DEPRECATED, [], disable deprecated glib features)
     AC_DEFINE(GDK_DISABLE_DEPRECATED, [], disable deprecated gdk features)
     AC_DEFINE(GTK_DISABLE_DEPRECATED, [], disable deprecated gtk+ features)
@@ -123,11 +114,6 @@ AC_CHECK_HEADER(jpeglib.h,
 # Check for zlib package
 have_zlib=yes
 AC_CHECK_LIB(z, deflate, , have_zlib=no)
-# it is not a real check on win32 because zlib could be in a DLL,
-if test $ufraw_win32 = yes -a $have_zlib = no; then
-  have_zlib=yes
-  AC_DEFINE(HAVE_LIBZ)
-fi
 
 # Check for tiff development package
 have_tiff=yes
@@ -147,13 +133,6 @@ if test $have_tiff = yes -a $enable_exif = yes; then
     [ have_exif=no ])
 else
   have_exif=no
-fi
-if test $have_exif = yes -a $ufraw_win32 = yes; then
-    EXIF_CFLAGS="`$PKG_CONFIG --define-variable=prefix=$PREFIX --cflags libexif`"
-    AC_DEFINE(HAVE_LIBEXIF)
-    AC_MSG_NOTICE(EXIF_CFLAGS=$EXIF_CFLAGS)
-    EXIF_LIBS="`$PKG_CONFIG --define-variable=prefix=$PREFIX --libs libexif`"
-    AC_MSG_NOTICE(EXIF_LIBS=$EXIF_LIBS)
 fi
 
 UFRAW_CFLAGS="$EXIF_CFLAGS $DEPS_CFLAGS"

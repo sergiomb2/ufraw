@@ -90,6 +90,31 @@ If zlib is built only locally you will have to configure libtiff with
 the command:
 ./configure --prefix=$PREFIX --with-zlib-include-dir=$PREFIX/include --with-zlib-lib-dir=$PREFIX/lib
 
+MS-Windows installation
+=======================
+Windows users can simply download ufraw-VERSION-setup.exe that automatically
+installs UFRaw.
+
+Here are a few pointers if you still want to build UFRaw yourself.
+
+'make install' will try to make a unix like installation into /usr/local.
+'make windows-installer' will create a windows installer and
+'make install-windows' will run this installer.
+
+pkg-config behaves differently under MinGW32. Therefore, if you are working
+under CygWin or cross compiling from Linux, you will have to modify all the
+*.pc files that come with the different packages. The following script should
+do the trick (after updating TARGET to your needs):
+
+TARGET=/opt/i586-mingw32msvc
+for f in $TARGET/lib/pkgconfig/*.pc ; do
+  cat $f | sed s+^prefix=.*+prefix=$TARGET+ > $f.tmp
+  mv $f.tmp $f
+done
+
+The gimp-dev package can be tricky to find. You can download it from:
+http://www.gimp.org/win32/gimp-dev-2.2.7.zip
+
 CVS
 ===
 UFRaw has a CVS repository on sourceforge. To use the repository you need
@@ -119,15 +144,6 @@ Development version
 ===================
 The development version has the following caveats:
 
-The new DCRaw 7 code was incooparated into UFRaw-0.5. But, the new
-"color matrix" option of DCRaw is disabled at the moment. Also, DCRaw 7
-treats WB a bit differently than DCRaw 6, this means that one can get
-different colors than one is used too. It also means that the WB presets
-will be odd, until I'll update them.
-
-You can create ufraw ID files (*.ufraw) that UFRaw should know how to read,
-but the last part wasn't written yet.
-
 The format of these ID files and of the configuration file $HOME/.ufrawrc
 may and will change before the final release. I try to make sure that the
 new releases will read such files correctly even if they are from previous
@@ -146,8 +162,6 @@ button on both histograms, for some histogram related options.
 
 The old curve file format is not supported any more. Instead UFRaw reads
 a new format, and can also read the Nikon curve formats NTC, NCV.
-
-There is a new curve editor, but the code is not finished yet.
 
 Last but not least, the developement version is poorly tested and has some
 half written features, therefore it is bound to have bugs...
