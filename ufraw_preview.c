@@ -2130,6 +2130,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* Copy ChannelMul[] to SaveConfig so that "Reset WB" will work correctly */
     for (i=0; i<4; i++) data->SaveConfig.chanMul[i] = CFG->chanMul[i];
 
+    /* Update the curve editor in case ufraw_convert_image() modified it. */
+    curveeditor_widget_set_curve(data->CurveWidget,
+	    &CFG->curve[CFG->curveIndex]);
+
     if (preview_width!=data->UF->image.width ||
         preview_height!=data->UF->image.height) {
         pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
