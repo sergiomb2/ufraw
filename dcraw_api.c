@@ -32,10 +32,10 @@ extern void (*load_raw)();
 //extern void (*write_fun)(FILE *);
 extern jmp_buf failure;
 extern int tone_curve_size, tone_curve_offset;
-extern int black, colors, use_coeff, ymag, xmag;
+extern int black, colors, raw_color, ymag, xmag;
 extern float cam_mul[4];
 extern gushort white[8][8];
-extern float coeff[3][4];
+extern float rgb_cam[3][4];
 extern char *meta_data;
 extern int meta_length;
 #define FC(filters,row,col) \
@@ -97,7 +97,7 @@ int dcraw_open(dcraw_data *h,char *filename)
     h->fuji_step = sqrt(0.5);
     h->colors = colors;
     h->filters = filters;
-    h->use_coeff = use_coeff;
+    h->use_coeff = !raw_color;
     h->trim = (h->filters!=0);
     h->shrink = shrink = (h->filters!=0);
     /* copied from dcraw's main() */
@@ -156,7 +156,7 @@ int dcraw_load_raw(dcraw_data *h)
     for (i=0; i<h->colors; i++) if (dmin > pre_mul[i]) dmin = pre_mul[i];
     for (i=0; i<h->colors; i++) h->pre_mul[i] = pre_mul[i]/dmin;
     memcpy(h->cam_mul, cam_mul, sizeof cam_mul);
-    memcpy(h->coeff, coeff, sizeof coeff);
+    memcpy(h->coeff, rgb_cam, sizeof rgb_cam);
     h->message = messageBuffer;
     return lastStatus;
 }
