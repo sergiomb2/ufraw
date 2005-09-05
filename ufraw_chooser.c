@@ -103,8 +103,6 @@ void ufraw_chooser(conf_data *conf, char *defPath)
     }
     gtk_widget_show(GTK_WIDGET(fileChooser));
     while (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
-	/* Load $HOME/.ufrawrc */
-	conf_load(conf, NULL);	    
         for(list=saveList=gtk_file_chooser_get_filenames(fileChooser);
         list!=NULL; list=g_slist_next(list)) {
             filename = list->data;

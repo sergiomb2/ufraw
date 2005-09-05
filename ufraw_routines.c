@@ -54,28 +54,28 @@ char *uf_file_set_type(const char *filename, const char *type)
 /* Make sure filename has asolute path */
 char *uf_file_set_absolute(const char *filename)
 {
-#ifdef HAVE_CANONICALIZE_FILE_NAME
-    char *path = g_path_get_dirname(filename);
-    char *base = g_path_get_basename(filename);
-    char *canon = canonicalize_file_name(path);
-    char *abs = g_build_filename(canon, base, NULL);
-    g_free(path);
-    g_free(base);
-    g_free(canon);
-    return abs;
-#else
-    // We could use realpath(filename, NULL)
-    // if we add a check that it is not buggy
-    // This code does not remove '/./' or '/../'
     if (g_path_is_absolute(filename)) {
 	return g_strdup(filename);
     } else {
+#ifdef HAVE_CANONICALIZE_FILE_NAME
+	char *path = g_path_get_dirname(filename);
+	char *base = g_path_get_basename(filename);
+	char *canon = canonicalize_file_name(path);
+	char *abs = g_build_filename(canon, base, NULL);
+	g_free(path);
+	g_free(base);
+	g_free(canon);
+	return abs;
+#else
+	// We could use realpath(filename, NULL)
+	// if we add a check that it is not buggy
+	// This code does not remove '/./' or '/../'
 	char *cd = g_get_current_dir();
 	char *fn = g_build_filename(cd, filename, NULL);
 	g_free(cd);
 	return fn;
-    }
 #endif
+    }
 }
 
 char *uf_markup_buf(char *buffer, const char *format, ...)

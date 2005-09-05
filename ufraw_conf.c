@@ -966,6 +966,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{"noexif", 0, 0, 'F'},
         {"help", 0, 0, 'h'},
 	{"version", 0, 0, 'v'},
+	{"batch", 0, 0, 'b'},
         {0, 0, 0, 0}
     };
     void *optPointer[] = { &wbName, &cmd->temperature, &cmd->green,
@@ -1058,11 +1059,15 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         case 'h':
             ufraw_message(UFRAW_WARNING, helpText);
             return 0;
-        case 'v':
+	case 'v':
 	    base = g_path_get_basename(*argv[0]);
             ufraw_message(UFRAW_WARNING, versionText, base);
 	    g_free(base);
             return 0;
+	case 'b':
+            ufraw_message(UFRAW_ERROR,
+                "--batch is obselete. use ufraw-batch instead.");
+            return -1;
         case '?': /* invalid option. Warning printed by getopt() */
             return -1;
         default:
@@ -1077,9 +1082,15 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         else if (!strcmp(wbName, "auto")) cmd->wb = auto_wb;
         else {
             ufraw_message(UFRAW_ERROR,
-                "'%s' is not a valid white balance option.", wbName);
+                    "'%s' is not a valid white balance setting.", wbName);
             return -1;
         }
+	if (cmd->temperature!=NULLF || cmd->green!=NULLF) {
+            ufraw_message(UFRAW_WARNING,
+		    "--temperature and --green options override "
+		    "the --wb=%s option.", wbName);
+            cmd->wb = -1;
+	}
     }
 
     cmd->curveIndex = -1;

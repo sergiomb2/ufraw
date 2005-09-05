@@ -1047,6 +1047,7 @@ void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
         snprintf(text, max_name, "Highlight clipping\n"
 		"Current state: %s", CFG->unclip ? "unclip" : "clip");
 	gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(button), text, NULL);
+	CFG->autoBlack = FALSE;
 	update_scales(data);
     } else {
 	*valuep = gtk_toggle_button_get_active(button);
