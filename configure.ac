@@ -11,6 +11,24 @@ AC_PROG_INSTALL
 
 AC_CHECK_PROGS(POD2MAN, pod2man, , $PATH)
 
+# nikon_curve makes some sizeof assumptions, requiring the following tests
+AC_CHECK_SIZEOF(short)
+if test $ac_cv_sizeof_short -ne 2; then
+    AC_MSG_ERROR([size of short must be 2])
+fi
+AC_CHECK_SIZEOF(int)
+if test $ac_cv_sizeof_int -ne 4; then
+    AC_MSG_ERROR([size of int must be 4])
+fi
+AC_CHECK_SIZEOF(float)
+if test $ac_cv_sizeof_float -ne 4; then
+    AC_MSG_ERROR([size of float must be 4])
+fi
+AC_CHECK_SIZEOF(double)
+if test $ac_cv_sizeof_double -ne 8; then
+    AC_MSG_ERROR([size of double must be 8])
+fi
+
 CFLAGS="$CFLAGS -W -Wall -O3 -ffast-math -fomit-frame-pointer"
 # Uncomment next line to make ufraw-batch independent of gtk shared libraries
 #LDFLAGS="$LDFLAGS -Wl,--as-needed"
