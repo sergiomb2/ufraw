@@ -109,7 +109,7 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
  
 /* The rest of the scaling is done somewhere else UF*/
 #if 0
-  if (!use_coeff) {
+  if (raw_color) {
     pre_mul[0] *= red_scale;
     pre_mul[2] *= blue_scale;
   }
