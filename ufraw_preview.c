@@ -51,6 +51,7 @@ typedef struct {
 typedef struct {
     ufraw_data *UF;
     conf_data SaveConfig;
+    double initialChanMul[4];
     /* Remember the Gtk Widgets that we need to access later */
     GtkWidget *ControlsBox, *PreviewWidget, *RawHisto, *LiveHisto;
     GtkWidget *CurveWidget, *BlackLabel;
@@ -837,10 +838,10 @@ void update_scales(preview_data *data)
 	    ( CFG->wb!=data->SaveConfig.wb
 	    ||fabs(CFG->temperature-data->SaveConfig.temperature)>1
 	    ||fabs(CFG->green-data->SaveConfig.green)>0.001
-	    ||CFG->chanMul[0]!=data->SaveConfig.chanMul[0]
-	    ||CFG->chanMul[1]!=data->SaveConfig.chanMul[1]
-	    ||CFG->chanMul[2]!=data->SaveConfig.chanMul[2]
-	    ||CFG->chanMul[3]!=data->SaveConfig.chanMul[3] ) );
+	    ||CFG->chanMul[0]!=data->initialChanMul[0]
+	    ||CFG->chanMul[1]!=data->initialChanMul[1]
+	    ||CFG->chanMul[2]!=data->initialChanMul[2]
+	    ||CFG->chanMul[3]!=data->initialChanMul[3] ) );
     gtk_widget_set_sensitive(data->ResetGammaButton,
 	    fabs( profile_default_gamma(&CFG->profile[0][CFG->profileIndex[0]])
 		- CFG->profile[0][CFG->profileIndex[0]].gamma) > 0.001);
@@ -973,7 +974,7 @@ void button_update(GtkWidget *button, gpointer user_data)
 	CFG->wb = data->SaveConfig.wb;
 	CFG->temperature = data->SaveConfig.temperature;
 	CFG->green = data->SaveConfig.green;
-	for (c=0; c<4; c++) CFG->chanMul[c] = data->SaveConfig.chanMul[c];
+	for (c=0; c<4; c++) CFG->chanMul[c] = data->initialChanMul[c];
     }
     if (button==data->ResetGammaButton) {
 	CFG->profile[0][CFG->profileIndex[0]].gamma =
@@ -2128,8 +2129,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     CFG->shrink = shrinkSave;
     CFG->size = sizeSave;
 
-    /* Copy ChannelMul[] to SaveConfig so that "Reset WB" will work correctly */
-    for (i=0; i<4; i++) data->SaveConfig.chanMul[i] = CFG->chanMul[i];
+    /* Save InitialChanMul[] for the sake of "Reset WB" */
+    for (i=0; i<4; i++) data->initialChanMul[i] = CFG->chanMul[i];
 
     /* Update the curve editor in case ufraw_convert_image() modified it. */
     curveeditor_widget_set_curve(data->CurveWidget,
@@ -2159,15 +2160,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     strcpy(uf->conf->outputPath, "");
     if (status==GTK_RESPONSE_OK) {
 	if (CFG->saveConfiguration==disabled_state) {
-	    /* Keep only the 'save options' from the current session */
-	    g_strlcpy(data->SaveConfig.inputFilename,
-		    CFG->inputFilename, max_path);
-	    g_strlcpy(data->SaveConfig.outputFilename,
-		    CFG->outputFilename, max_path);
-	    g_strlcpy(data->SaveConfig.outputPath,
-		    CFG->outputPath, max_path);
-	    conf_copy_save(&data->SaveConfig, CFG);
-	    *CFG = data->SaveConfig;
+	    /* Restore the original 'image settings' */
+	    conf_copy_image(CFG, &data->SaveConfig);
 	}
 	/* If save 'only this once' was chosen, then so be it */
 	if (CFG->saveConfiguration==apply_state)

@@ -503,14 +503,16 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	    "<Temperature>%d</Temperature>\n", (int)floor(c->temperature));
     buf = uf_markup_buf(buf,
 	    "<Green>%lf</Green>\n", c->green);
-    if (c->chanMul[3]==0.0) {
-	buf = uf_markup_buf(buf,
-		"<ChannelMultipliers>%f %f %f</ChannelMultipliers>\n",
-		c->chanMul[0], c->chanMul[1], c->chanMul[2]);
-    } else {
-	buf = uf_markup_buf(buf,
-		"<ChannelMultipliers>%f %f %f %f</ChannelMultipliers>\n",
-		c->chanMul[0], c->chanMul[1], c->chanMul[2], c->chanMul[3]);
+    if (c->chanMul[0]>0.0) {
+	if (c->chanMul[3]==0.0) {
+	    buf = uf_markup_buf(buf,
+		    "<ChannelMultipliers>%f %f %f</ChannelMultipliers>\n",
+		    c->chanMul[0], c->chanMul[1], c->chanMul[2]);
+	} else {
+	    buf = uf_markup_buf(buf,
+		    "<ChannelMultipliers>%f %f %f %f</ChannelMultipliers>\n",
+		    c->chanMul[0], c->chanMul[1], c->chanMul[2], c->chanMul[3]);
+	}
     }
     if (c->exposure!=conf_default.exposure)
         buf = uf_markup_buf(buf, "<Exposure>%lf</Exposure>\n", c->exposure);
@@ -679,6 +681,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->wb = src->wb;
     dst->temperature = src->temperature;
     dst->green = src->green;
+    for (i=0; i<4; i++) dst->chanMul[i] = src->chanMul[i];
     dst->exposure = src->exposure;
     dst->saturation = src->saturation;
     dst->black = src->black;
