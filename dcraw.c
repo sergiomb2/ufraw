@@ -3954,7 +3954,7 @@ void CLASS parse_rollei()
 void CLASS parse_mos (int offset)
 {
   uchar data[40];
-  int skip, from, i, c, neut[4];
+  int skip, from, i, neut[4];
   static const unsigned bayer[] =
 	{ 0x94949494, 0x61616161, 0x16161616, 0x49494949 };
 
@@ -3982,7 +3982,8 @@ void CLASS parse_mos (int offset)
     if (!strcmp(data,"NeutObj_neutrals")) {
       for (i=0; i < 4; i++)
 	fscanf (ifp, "%d", neut+i);
-      FORC3 cam_mul[c] = 1.0 / neut[c+1];
+      camera_red  = (float) neut[2] / neut[1];
+      camera_blue = (float) neut[2] / neut[3];
     }
     parse_mos (from);
     fseek (ifp, skip+from, SEEK_SET);
