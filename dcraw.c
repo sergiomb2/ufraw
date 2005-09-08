@@ -2822,11 +2822,11 @@ void CLASS scale_colors()
 
   maximum -= black;
   if (use_auto_wb || (use_camera_wb && camera_red == -1)) {
-    FORC4 min[c] = INT_MAX;
-    FORC4 max[c] = count[c] = sum[c] = 0;
+    FORCC min[c] = INT_MAX;
+    FORCC max[c] = count[c] = sum[c] = 0;
     for (row=0; row < height; row++)
       for (col=0; col < width; col++)
-	FORC4 {
+	FORCC {
 	  val = image[row*width+col][c];
 	  if (!val) continue;
 	  if (min[c] > val) min[c] = val;
@@ -2837,10 +2837,10 @@ void CLASS scale_colors()
 	  sum[c] += val;
 	  count[c]++;
 	}
-    FORC4 if (sum[c]) pre_mul[c] = count[c] / sum[c];
+    FORCC pre_mul[c] = count[c] / sum[c];
   }
   if (use_camera_wb && camera_red != -1) {
-    FORC4 count[c] = sum[c] = 0;
+    FORCC count[c] = sum[c] = 0;
     for (row=0; row < 8; row++)
       for (col=0; col < 8; col++) {
 	c = FC(row,col);
@@ -2848,8 +2848,10 @@ void CLASS scale_colors()
 	  sum[c] += val;
 	count[c]++;
       }
-    if (sum[0] && sum[1] && sum[2] && sum[3])
-      FORC4 pre_mul[c] = count[c] / sum[c];
+    val = 1;
+    FORCC if (sum[c] == 0) val = 0;
+    if (val)
+      FORCC pre_mul[c] = count[c] / sum[c];
     else if (camera_red && camera_blue)
       memcpy (pre_mul, cam_mul, sizeof pre_mul);
     else
@@ -2860,46 +2862,34 @@ void CLASS scale_colors()
     pre_mul[0] *= red_scale;
     pre_mul[2] *= blue_scale;
   }
-  if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
   dmin = DBL_MAX;
-  FORC4 if (dmin > pre_mul[c])
+  FORCC if (dmin > pre_mul[c])
 	    dmin = pre_mul[c];
-  FORC4 pre_mul[c] /= dmin;
+  FORCC pre_mul[c] /= dmin;
 
   while (maximum << shift < 0x8000) shift++;
-  FORC4 pre_mul[c] *= 1 << shift;
+  FORCC pre_mul[c] *= 1 << shift;
   maximum <<= shift;
 
   if (write_fun != write_ppm || bright < 1) {
     maximum *= bright;
     if (maximum > 0xffff)
 	maximum = 0xffff;
-    FORC4 pre_mul[c] *= bright;
+    FORCC pre_mul[c] *= bright;
   }
   dcraw_message(DCRAW_VERBOSE, "Scaling with black=%d, pre_mul[] =", black); /*UF*/
-  FORC4 dcraw_message(DCRAW_VERBOSE, " %f", pre_mul[c]);
+  FORCC dcraw_message(DCRAW_VERBOSE, " %f", pre_mul[c]);
   dcraw_message(DCRAW_VERBOSE, "\n");
   clip_max = clip_color ? maximum : 0xffff;
   for (row=0; row < height; row++)
     for (col=0; col < width; col++)
-      FORC4 {
+      FORCC {
 	val = image[row*width+col][c];
 	if (!val) continue;
 	val -= black;
 	val *= pre_mul[c];
 	image[row*width+col][c] = CLIP(val);
       }
-  if (filters && colors == 3) {
-    if (four_color_rgb) {
-      colors++;
-      FORC3 rgb_cam[c][3] = rgb_cam[c][1] /= 2;
-    } else {
-      for (row = FC(1,0) >> 1; row < height; row+=2)
-	for (col = FC(row,1) & 1; col < width; col+=2)
-	  image[row*width+col][1] = image[row*width+col][3];
-      filters &= ~((filters & 0x55555555) << 1);
-    }
-  }
 }
 
 /*
@@ -5409,13 +5399,18 @@ dng_skip:
     rgb_cam[0][c] *= red_scale;
     rgb_cam[2][c] *= blue_scale;
   }
-  if (filters && colors == 3)
+  if (four_color_rgb && filters && colors == 3) {
     for (i=0; i < 32; i+=4) {
       if ((filters >> i & 15) == 9)
 	filters |= 2 << i;
       if ((filters >> i & 15) == 6)
 	filters |= 8 << i;
     }
+    colors++;
+    cam_mul[3] = cam_mul[1];
+    pre_mul[3] = pre_mul[1];
+    FORC3 rgb_cam[c][3] = rgb_cam[c][1] /= 2;
+  }
   fseek (ifp, data_offset, SEEK_SET);
   return 0;
 }
