@@ -144,6 +144,8 @@ Development version
 ===================
 The development version has the following caveats:
 
+./autogen.sh must be run before ./configure.
+
 The format of these ID files and of the configuration file $HOME/.ufrawrc
 may and will change before the final release. I try to make sure that the
 new releases will read such files correctly even if they are from previous
