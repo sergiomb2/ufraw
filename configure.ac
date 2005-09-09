@@ -125,18 +125,18 @@ AC_SEARCH_LIBS(pow, m)
 AC_CHECK_FUNCS(canonicalize_file_name)
 
 # Check for jpeg development package
-have_jpeg=yes
 AC_CHECK_HEADER(jpeglib.h,
-  AC_CHECK_LIB(jpeg, jpeg_CreateCompress, , have_jpeg=no))
+  AC_CHECK_LIB(jpeg, jpeg_CreateCompress))
+have_jpeg=$ac_cv_lib_jpeg_jpeg_CreateCompress
 
 # Check for zlib package
-have_zlib=yes
-AC_CHECK_LIB(z, deflate, , have_zlib=no)
+AC_CHECK_LIB(z, deflate)
+have_zlib=$ac_cv_lib_z_deflate
 
 # Check for tiff development package
-have_tiff=yes
 AC_CHECK_HEADER(tiffio.h,
-  AC_CHECK_LIB(tiff, TIFFSetErrorHandler, , have_tiff=no; have_zlib=no))
+  AC_CHECK_LIB(tiff, TIFFSetErrorHandler, , have_zlib=no), have_zlib=no)
+have_tiff=$ac_cv_lib_tiff_TIFFSetErrorHandler
 
 AC_MSG_CHECKING(whether to try to support exif)
 AC_ARG_ENABLE(exif,
