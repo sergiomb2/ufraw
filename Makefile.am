@@ -54,7 +54,7 @@ dcraw_nomain.o: dcraw.c
 
 if MAKE_EXTRAS
   dcraw_SOURCES = dcraw.c
-  dcraw_CFLAGS = $(UFRAW_CFLAGS) $(DCRAW_CFLAGS)
+  dcraw_CFLAGS = $(UFRAW_CFLAGS) $(DCRAW_CFLAGS) -DUSE_LCMS
   dcraw_LDFLAGS = $(CONSOLE)
   dcraw_LDADD = $(UFRAW_LDADD)
 

@@ -154,7 +154,7 @@ else
 fi
 
 UFRAW_CFLAGS="$EXIF_CFLAGS $DEPS_CFLAGS"
-if test "!($have_jpeg = yes)"; then
+if test $have_jpeg = no; then
   UFRAW_CFLAGS="$UFRAW_CFLAGS -DNO_JPEG"
 fi
 UFRAW_LDADD="$EXIF_LIBS $DEPS_LIBS"
