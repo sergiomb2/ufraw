@@ -2822,11 +2822,11 @@ void CLASS scale_colors()
 
   maximum -= black;
   if (use_auto_wb || (use_camera_wb && camera_red == -1)) {
-    FORCC min[c] = INT_MAX;
-    FORCC max[c] = count[c] = sum[c] = 0;
+    FORC4 min[c] = INT_MAX;
+    FORC4 max[c] = count[c] = sum[c] = 0;
     for (row=0; row < height; row++)
       for (col=0; col < width; col++)
-	FORCC {
+	FORC4 {
 	  val = image[row*width+col][c];
 	  if (!val) continue;
 	  if (min[c] > val) min[c] = val;
@@ -2837,10 +2837,10 @@ void CLASS scale_colors()
 	  sum[c] += val;
 	  count[c]++;
 	}
-    FORCC pre_mul[c] = count[c] / sum[c];
+    FORC4 if (sum[c]) pre_mul[c] = count[c] / sum[c];
   }
   if (use_camera_wb && camera_red != -1) {
-    FORCC count[c] = sum[c] = 0;
+    FORC4 count[c] = sum[c] = 0;
     for (row=0; row < 8; row++)
       for (col=0; col < 8; col++) {
 	c = FC(row,col);
@@ -2848,10 +2848,8 @@ void CLASS scale_colors()
 	  sum[c] += val;
 	count[c]++;
       }
-    val = 1;
-    FORCC if (sum[c] == 0) val = 0;
-    if (val)
-      FORCC pre_mul[c] = count[c] / sum[c];
+    if (sum[0] && sum[1] && sum[2] && sum[3])
+      FORC4 pre_mul[c] = count[c] / sum[c];
     else if (camera_red && camera_blue)
       memcpy (pre_mul, cam_mul, sizeof pre_mul);
     else
@@ -2862,34 +2860,46 @@ void CLASS scale_colors()
     pre_mul[0] *= red_scale;
     pre_mul[2] *= blue_scale;
   }
+  if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
   dmin = DBL_MAX;
-  FORCC if (dmin > pre_mul[c])
+  FORC4 if (dmin > pre_mul[c])
 	    dmin = pre_mul[c];
-  FORCC pre_mul[c] /= dmin;
+  FORC4 pre_mul[c] /= dmin;
 
   while (maximum << shift < 0x8000) shift++;
-  FORCC pre_mul[c] *= 1 << shift;
+  FORC4 pre_mul[c] *= 1 << shift;
   maximum <<= shift;
 
   if (write_fun != write_ppm || bright < 1) {
     maximum *= bright;
     if (maximum > 0xffff)
 	maximum = 0xffff;
-    FORCC pre_mul[c] *= bright;
+    FORC4 pre_mul[c] *= bright;
   }
   dcraw_message(DCRAW_VERBOSE, "Scaling with black=%d, pre_mul[] =", black); /*UF*/
-  FORCC dcraw_message(DCRAW_VERBOSE, " %f", pre_mul[c]);
+  FORC4 dcraw_message(DCRAW_VERBOSE, " %f", pre_mul[c]);
   dcraw_message(DCRAW_VERBOSE, "\n");
   clip_max = clip_color ? maximum : 0xffff;
   for (row=0; row < height; row++)
     for (col=0; col < width; col++)
-      FORCC {
+      FORC4 {
 	val = image[row*width+col][c];
 	if (!val) continue;
 	val -= black;
 	val *= pre_mul[c];
 	image[row*width+col][c] = CLIP(val);
       }
+  if (filters && colors == 3) {
+    if (four_color_rgb) {
+      colors++;
+      FORC3 rgb_cam[c][3] = rgb_cam[c][1] /= 2;
+    } else {
+      for (row = FC(1,0) >> 1; row < height; row+=2)
+	for (col = FC(row,1) & 1; col < width; col+=2)
+	  image[row*width+col][1] = image[row*width+col][3];
+      filters &= ~((filters & 0x55555555) << 1);
+    }
+  }
 }
 
 /*
@@ -3954,7 +3964,7 @@ void CLASS parse_rollei()
 void CLASS parse_mos (int offset)
 {
   uchar data[40];
-  int skip, from, i, neut[4];
+  int skip, from, i, c, neut[4];
   static const unsigned bayer[] =
 	{ 0x94949494, 0x61616161, 0x16161616, 0x49494949 };
 
@@ -3982,8 +3992,7 @@ void CLASS parse_mos (int offset)
     if (!strcmp(data,"NeutObj_neutrals")) {
       for (i=0; i < 4; i++)
 	fscanf (ifp, "%d", neut+i);
-      camera_red  = (float) neut[2] / neut[1];
-      camera_blue = (float) neut[2] / neut[3];
+      FORC3 cam_mul[c] = 1.0 / neut[c+1];
     }
     parse_mos (from);
     fseek (ifp, skip+from, SEEK_SET);
@@ -4501,8 +4510,13 @@ int CLASS identify (int will_decode)
   raw_color = use_gamma = xmag = ymag = 1;
   filters = UINT_MAX;	/* 0 = no filters, UINT_MAX = unknown */
   for (i=0; i < 4; i++) {
-    cam_mul[i] = 1 & i; /*UF - Work around bug in gcc 3.4.3*/
+#ifdef DCRAW_NOMAIN /*UF*/
+    cam_mul[i] = 1 & i;
+    pre_mul[i] = 1;
+#else
+    cam_mul[i] = i == 1;
     pre_mul[i] = i < 3;
+#endif /*DCRAW_NOMAIN*/ /*UF*/
     FORC3 rgb_cam[c][i] = c == i;
   }
   colors = 3;
@@ -5400,18 +5414,24 @@ dng_skip:
     rgb_cam[0][c] *= red_scale;
     rgb_cam[2][c] *= blue_scale;
   }
+#ifdef DCRAW_NOMAIN /*UF*/
   if (four_color_rgb && filters && colors == 3) {
+#else
+  if (filters && colors == 3)
+#endif /*DCRAW_NOMAIN*/ /*UF*/
     for (i=0; i < 32; i+=4) {
       if ((filters >> i & 15) == 9)
 	filters |= 2 << i;
       if ((filters >> i & 15) == 6)
 	filters |= 8 << i;
     }
+#ifdef DCRAW_NOMAIN /*UF*/
     colors++;
     cam_mul[3] = cam_mul[1];
     pre_mul[3] = pre_mul[1];
     FORC3 rgb_cam[c][3] = rgb_cam[c][1] /= 2;
   }
+#endif /*DCRAW_NOMAIN*/ /*UF*/
   fseek (ifp, data_offset, SEEK_SET);
   return 0;
 }
