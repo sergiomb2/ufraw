@@ -19,8 +19,8 @@
    copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
    purchase a license from the author.
 
-   $Revision: 1.284 $
-   $Date: 2005/09/08 04:31:20 $
+   $Revision: 1.285 $
+   $Date: 2005/09/13 01:03:22 $
  */
 
 #define _GNU_SOURCE
@@ -109,7 +109,7 @@ float bright=1.0, red_scale=1.0, blue_scale=1.0;
 int four_color_rgb=0, document_mode=0, quick_interpolate=0;
 int verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_rgb=0; /*UF*/
 int fuji_secondary, use_secondary=0; /*UF*/
-float cam_mul[4], pre_mul[4], rgb_cam[3][4];	/* RGB from camera color */
+float cam_mul[4], pre_mul[4], rgb_cam[3][4];	/* RGB from camera color *//*UF*/
 const double xyz_rgb[3][3] = {			/* XYZ from RGB */
   { 0.412453, 0.357580, 0.180423 },
   { 0.212671, 0.715160, 0.072169 },
@@ -220,7 +220,7 @@ void dcraw_message(int code, char *format, ...) {
 void CLASS merror (void *ptr, char *where)
 {
   if (ptr) return;
-  dcraw_message (DCRAW_ERROR, "%s: Out of memory in %s\n", ifname, where);/*UF*/
+  dcraw_message (DCRAW_ERROR, "%s: Out of memory in %s\n", ifname, where); /*UF*/
   longjmp (failure, 1);
 }
 
@@ -2083,7 +2083,11 @@ void CLASS foveon_load_raw()
     }
   }
   foveon_load_camf();
-  maximum = clip_max = 0x0fff; /* was 0xffff UF */
+#ifdef DCRAW_NOMAIN /*UF*/
+  maximum = clip_max = 0x0fff;
+#else
+  maximum = clip_max = 0xffff;
+#endif /*DCRAW_NOMAIN*/ /*UF*/
 }
 
 char * CLASS foveon_camf_param (char *block, char *param)
@@ -4494,7 +4498,7 @@ int CLASS identify (int will_decode)
     {  6114240, "PENTAX",   "Optio S4"   ,1 },  /* or S4i */
     { 12582980, "Sinar",    ""           ,0 } };
   static const char *corp[] =
-    { "Canon", "NIKON", "EPSON", "Kodak", "OLYMPUS", "PENTAX",
+    { "Canon", "NIKON", "EPSON", "KODAK", "Kodak", "OLYMPUS", "PENTAX",
       "MINOLTA", "Minolta", "Konica", "CASIO" };
 
 /*  What format is this file?  Set make[] if we recognize it. */
@@ -5175,6 +5179,12 @@ konica_400z:
     order = 0x4d4d;
     load_raw = unpacked_load_raw;
     black = 512;
+  } else if (!strncmp(model,"P850",4)) {
+    height = 1950;
+    width  = 2608;
+    data_offset = 76456;
+    filters = 0x16161616;
+    load_raw = packed_12_load_raw;
   } else if (!strcasecmp(make,"KODAK")) {
     filters = 0x61616161;
     if (!strcmp(model,"NC2000F")) {
@@ -5717,7 +5727,7 @@ int CLASS main (int argc, char **argv)
   if (argc == 1)
   {
     fprintf (stderr,
-    "\nRaw Photo Decoder \"dcraw\" v7.64"
+    "\nRaw Photo Decoder \"dcraw\" v7.65"
     "\nby Dave Coffin, dcoffin a cybercom o net"
     "\n\nUsage:  %s [options] file1 file2 ...\n"
     "\nValid options:"
