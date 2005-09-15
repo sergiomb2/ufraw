@@ -74,7 +74,7 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
 #ifdef HAVE_LIBEXIF
     TIFF *tiff;
     short tiffCount;
-    unsigned short tiffOrientation;
+//    unsigned short tiffOrientation;
     int *tiffData, tiffFd, exifOffset;
     ExifData *exifData;
     ExifEntry *entry;
@@ -139,6 +139,13 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
         exif_content_add_entry(exifData->ifd[EXIF_IFD_0], entry);
     }
     /* If there is camera orientation information */
+
+    /* Orientation is ignored at the moment since UFRaw rotates the image
+     * by itself. Orientation aware software like gqview will rotate the
+     * image again if we set this tag.
+     * This is a temporary solution. The real solution is to read this tag
+     * and change it later as needed. */
+    /*
     if (TIFFGetField(tiff, TIFFTAG_ORIENTATION, &tiffOrientation) == 1) {
         entry = exif_entry_new();
         entry->tag = EXIF_TAG_ORIENTATION;
@@ -150,6 +157,7 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
                         tiffOrientation);
         exif_content_add_entry(exifData->ifd[EXIF_IFD_0], entry);
     }
+    */
     /* If there is software information */
     if (TIFFGetField(tiff, TIFFTAG_SOFTWARE, &buffer) == 1) {
         entry = exif_entry_new();
