@@ -173,7 +173,7 @@ int ufraw_write_image(ufraw_data *uf)
         /* Embed output profile if it is not the internal sRGB*/
         if (strcmp(uf->developer->profileFile[out_profile], "")) {
             char *buf;
-            int len;
+            gsize len;
             if (g_file_get_contents(uf->developer->profileFile[out_profile],
                 &buf, &len, NULL)) {
             TIFFSetField(out, TIFFTAG_ICCPROFILE, len, buf);
@@ -240,10 +240,10 @@ int ufraw_write_image(ufraw_data *uf)
         /* Embed output profile if it is not the internal sRGB*/
         if (strcmp(uf->developer->profileFile[out_profile], "")) {
             char *buf;
-            int len;
+            gsize len;
             if (g_file_get_contents(uf->developer->profileFile[out_profile],
                     &buf, &len, NULL)) {
-                write_icc_profile(&cinfo, buf, len);
+                write_icc_profile(&cinfo, (unsigned char *)buf, len);
                 g_free(buf);
             } else ufraw_message(UFRAW_WARNING,
                     "Failed to embed output profile '%s' in '%s'",

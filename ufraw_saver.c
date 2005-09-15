@@ -73,19 +73,19 @@ long ufraw_saver(void *widget, gpointer user_data)
     GtkWidget *event, *label;
     GtkAdjustment *shrinkAdj, *heightAdj, *widthAdj;
     GtkComboBox *intCombo, *idCombo, *confCombo;
-    GtkToggleButton *ppmButton, *tiffButton, *jpegButton;
+    GtkToggleButton *ppmButton;
 #if defined(HAVE_LIBZ) && defined(HAVE_LIBTIFF)
+    GtkToggleButton *tiffButton;
     GtkWidget *losslessButton;
 #endif
 #ifdef HAVE_LIBEXIF
     GtkWidget *exifButton;
 #endif
 #ifdef HAVE_LIBJPEG
+    GtkToggleButton *jpegButton;
     GtkAdjustment *compressAdj;
 #endif
     ufraw_data *uf = user_data;
-    tiffButton = tiffButton;
-    jpegButton = jpegButton;
     float shrink;
     float height, width;
     gboolean shrinkUpdate=FALSE, heightUpdate=FALSE, widthUpdate=FALSE;

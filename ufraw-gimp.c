@@ -307,7 +307,7 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
      * if it is not the internal sRGB.*/
     if (strcmp(uf->developer->profileFile[out_profile], "")) {
 	char *buf;
-	int len;
+	gsize len;
 	if (g_file_get_contents(uf->developer->profileFile[out_profile],
 		&buf, &len, NULL))
 	{

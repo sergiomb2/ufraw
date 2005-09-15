@@ -42,7 +42,7 @@ char *uf_file_set_type(const char *filename, const char *type)
 {
     char *file, *cp;
     if ( (cp=strrchr(filename, '.'))==NULL)
-	file = g_strconcat(filename, type);
+	file = g_strconcat(filename, type, NULL);
     else {
 	file = g_new(char, cp - filename + strlen(type) + 1);
 	g_strlcpy(file, filename, cp - filename + 1);

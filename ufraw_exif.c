@@ -282,7 +282,7 @@ char usage[] = "usage: ufraw-exif input-file.raw [output-file.jpg]\n\n"
 int main(int argc, char **argv)
 {
     unsigned char *buf;
-    int len;
+    unsigned int len;
     if (argc<2 || !strcmp(argv[1],"-h") || !strcmp(argv[1],"--help") ) {
         ufraw_message(UFRAW_SET_WARNING, usage);
         exit(0);
