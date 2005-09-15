@@ -215,11 +215,16 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     g_free(absname);
 
     raw = uf->raw;
-    if (ufraw_exif_from_raw(raw->ifp, uf->filename, &uf->exifBuf,
+    /* Somehow ufraw_exif_from_raw() overrides the value of raw->ifp.
+     * I can not find the memory leak.
+     * Saving raw->ifp is a quick and ugly fix. */
+    FILE *tmp = raw->ifp;
+    if (ufraw_exif_from_raw(NULL, uf->filename, &uf->exifBuf,
             &uf->exifBufLen)!=UFRAW_SUCCESS) {
         ufraw_message(UFRAW_SET_LOG, "Error reading EXIF data from %s\n",
                 uf->filename);
     }
+    raw->ifp = tmp;
     /* Always set useMatrix if colors=4
      * Always reset useMatrix if !use_coeff */
     uf->useMatrix = ( uf->conf->profile[0][uf->conf->profileIndex[0]].useMatrix
