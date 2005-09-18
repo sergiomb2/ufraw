@@ -1,6 +1,5 @@
 For ufraw-0.5
 =============
-remember that executables are not striped (-s) anymore
 cross-configure in README:
 ./configure PREFIX=/home/user/mingw32 DOSPREFIX="z:\\home\\user\\mingw32"
     --host=i586-mingw32msvc
@@ -40,3 +39,4 @@ Fix raw histogram
 Add reset button to White balance combo-box
 check 1024x768 mode before release
 Support DCRaw 7 color matrices
+remember that executables are not striped (-s) anymore

@@ -30,6 +30,8 @@ if test $ac_cv_sizeof_double -ne 8; then
 fi
 
 CFLAGS="$CFLAGS -W -Wall -O3 -ffast-math -fomit-frame-pointer"
+# Uncomment next line for release to strip the binaries of debug information
+#LDFLAGS="$LDFLAGS -s"
 # Uncomment next line to make ufraw-batch independent of gtk shared libraries
 #LDFLAGS="$LDFLAGS -Wl,--as-needed"
 
