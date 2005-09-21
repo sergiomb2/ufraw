@@ -125,7 +125,7 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
 
         entry->components = strlen(buffer)+1;
         entry->size = exif_format_get_size (entry->format) * entry->components;
-        entry->data = strdup(buffer);
+        entry->data = (unsigned char *)strdup(buffer);
         exif_content_add_entry(exifData->ifd[EXIF_IFD_0], entry);
     }
     /* If there is camera model information */
@@ -135,7 +135,7 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
         entry->format = EXIF_FORMAT_ASCII;
         entry->components = strlen(buffer)+1;
         entry->size = exif_format_get_size (entry->format) * entry->components;
-        entry->data = strdup(buffer);
+        entry->data = (unsigned char *)strdup(buffer);
         exif_content_add_entry(exifData->ifd[EXIF_IFD_0], entry);
     }
     /* If there is camera orientation information */
@@ -165,7 +165,7 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
         entry->format = EXIF_FORMAT_ASCII;
         entry->components = strlen(buffer)+1;
         entry->size = exif_format_get_size (entry->format) * entry->components;
-        entry->data = strdup(buffer);
+        entry->data = (unsigned char *)strdup(buffer);
         exif_content_add_entry(exifData->ifd[EXIF_IFD_0], entry);
     }
 
@@ -175,7 +175,7 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
         entry->format = EXIF_FORMAT_ASCII;
         entry->components = strlen(buffer)+1;
         entry->size = exif_format_get_size (entry->format) * entry->components;
-        entry->data = strdup(buffer);
+        entry->data = (unsigned char *)strdup(buffer);
         exif_content_add_entry(exifData->ifd[EXIF_IFD_0], entry);
     }
 
@@ -222,7 +222,7 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
     buffer[0x10] = exifOffset & 0xff;
 
     /* Have libexiff read in the EXIF data */
-    exif_data_load_data(exifData, buffer, tiffStat.st_size+9);
+    exif_data_load_data(exifData, (unsigned char *)buffer, tiffStat.st_size+9);
 
     /* Free the TIFF file buffer */
     free(buffer);
