@@ -208,6 +208,8 @@ case $host_cpu in
 esac
 
 DCRAW_CFLAGS=-Wno-sign-compare
+# Uncomment next line to avoid compiler warnings when using gcc-4.0.x
+#DCRAW_CFLAGS="$DCRAW_CFLAGS -Wno-pointer-sign"
 AC_SUBST(DCRAW_CFLAGS)
 
 AC_MSG_CHECKING(whether to build extras)
