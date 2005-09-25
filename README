@@ -170,6 +170,20 @@ half written features, therefore it is bound to have bugs...
 
 History
 =======
+25/09/2005 - UFRaw-0.5 released, based on DCRaw v7.65.
+* Read support for Nikon Tone Curve (NTC/NCV) files.
+* Added a curve editor.
+* Added control on the base curve (see the user guide for more information).
+* Support the new DCRaw color matrices for better color rendering.
+* More controls can be set from the command-line.
+* Preliminary EXIF support.
+* New UFRaw ID files contain all the conversion parameters and allow
+  for batch conversion.
+* New 'ufraw-batch' replaces 'ufraw --batch'.
+* Numerous other changes.
+* Notice that the new Adaptive Homogeneity-Directed interpolation
+  is still not enabled.
+
 08/02/2005 - UFRaw-0.4 released, based on DCRaw v6.33.
 * Rotate Fuji images by 45 degrees.
 * Preview dialog is more responsive.

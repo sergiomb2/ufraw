@@ -12,6 +12,8 @@ endif
 POD2MAN= @POD2MAN@
 man_MANS = ufraw.1
 
+CLEANFILES = ufraw.1
+
 app_DATA = ufraw.desktop
 appdir = $(datadir)/applications
 
@@ -35,7 +37,7 @@ else
 endif
 
 EXTRA_DIST = ufraw.desktop ufraw.png ufraw_icon.ico ufraw_icon.rc \
-    ufraw-setup.jpg autogen.sh MANIFEST ufraw.pod gimpui-2.0.pc gimp-2.0.pc
+    ufraw-setup.jpg autogen.sh MANIFEST ufraw.pod
 
 AM_CFLAGS = $(UFRAW_CFLAGS)
 LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD)

@@ -74,8 +74,10 @@ long ufraw_saver(void *widget, gpointer user_data)
     GtkAdjustment *shrinkAdj, *heightAdj, *widthAdj;
     GtkComboBox *intCombo, *idCombo, *confCombo;
     GtkToggleButton *ppmButton;
-#if defined(HAVE_LIBZ) && defined(HAVE_LIBTIFF)
+#ifdef HAVE_LIBTIFF
     GtkToggleButton *tiffButton;
+#endif
+#if defined(HAVE_LIBZ) && defined(HAVE_LIBTIFF)
     GtkWidget *losslessButton;
 #endif
 #ifdef HAVE_LIBEXIF

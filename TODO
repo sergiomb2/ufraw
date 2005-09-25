@@ -1,8 +1,6 @@
 For ufraw-0.5
 =============
-cross-configure in README:
-./configure PREFIX=/home/user/mingw32 DOSPREFIX="z:\\home\\user\\mingw32"
-    --host=i586-mingw32msvc
+nothing!
 
 For the future
 ==============
@@ -17,26 +15,3 @@ window size
 g_fopen - UTF-8
 Read RAW preview image (parse.c)
 Use AHD interpolation
-
-Done
-====
-Read ntc files and camera curve
-Base gamma curve with linear term
-new ufraw curve format
-Curve editor
-spot selection changed
-exif
---output
---size
---expose=auto
-create UFRaw ID files (still need to read them)
-Save (not As)
-log scale option in histograms
-hidden directories for GTK 2.6
-read ufraw-id files
-setlocale() for xml data
-Fix raw histogram
-Add reset button to White balance combo-box
-check 1024x768 mode before release
-Support DCRaw 7 color matrices
-remember that executables are not striped (-s) anymore
