@@ -1,3 +1,5 @@
+# $Id: Makefile.am,v 1.10 2005/09/26 23:42:05 lexort Exp $
+
 if MAKE_EXTRAS
   bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve ufraw-exif
 else
@@ -82,7 +84,7 @@ ufraw_icon.opc: ufraw_icon.rc ufraw_icon.ico
 
 .pod.1:
 	$(POD2MAN) --section 1 --center "" --release UFRAW $< $@
-	
+
 install-user: all
 	$(INSTALL_USER)
 
@@ -96,9 +98,9 @@ endif
 
 install-windows: windows-installer
 	$(WINE) ./ufraw-$(VERSION)-setup.exe
-  
+
 windows-installer: ufraw-$(VERSION)-setup.exe
-   
+
 ufraw-$(VERSION)-setup.exe: ufraw-setup.iss ufraw.exe ufraw-batch.exe \
     ufraw-gimp.exe ufraw-setup.bmp ufraw_icon.bmp ufraw_icon.ico \
     $(PREFIX)/bin/liblcms-1.dll $(PREFIX)/bin/libexif-12.dll
@@ -110,4 +112,3 @@ ufraw-setup.bmp: ufraw-setup.jpg
 
 ufraw_icon.bmp: ufraw.png
 	montage -geometry +0+0 $< $@
-
