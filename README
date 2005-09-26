@@ -21,7 +21,9 @@ Requires GIMP 2.0, the GIMP development package, GTK+ >= 2.4 and lcms.
 If you have GTK+ >= 2.6 you will get the extra option of seeing hidden
 files in the file chooser dialogs.
 
-(if you are using the CVS version you should first run ./autogen.sh
+The UFRaw build process expects perl to be present (for pod2man).
+
+(If you are using the CVS version you should first run ./autogen.sh
 and check the "Development version" section in this README.)
 
 The first step of the installation, is to run:
@@ -41,14 +43,18 @@ configure: lossless compressed TIFF support: yes
 If some of the lines end with 'no' instead of 'yes', it is not the end of
 the world. It only means that this option in UFRaw will be disabled.
 
+The paragraphs use the Linux term "development package"; the general
+requirement is to have the full library installed, including header
+files used in compilation of programs using the library.
+
 The libjpeg development package is required for saving image in the
 JPEG format in the stand-alone tool. It is also needed to support
 Kodak DC120. If the configuration script does not find this package
 the above options will be suppressed.
 
-The libtiff development package is required for saving images in the TIFF format.
-If the configuration script does not find this package this option
-will be suppressed.
+The libtiff development package is required for saving images in the
+TIFF format.  If the configuration script does not find this package
+this option will be suppressed.
 
 The zlib package is required for saving images in the TIFF format with
 lossless compression. If the configuration script does not find this package
