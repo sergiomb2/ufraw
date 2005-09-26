@@ -6,8 +6,11 @@ ufraw - Convert camera RAW images to standard image files.
 
 =head1 SYNOPSIS
 
-ufraw [OPTIONS] <rawfile(s)>
-ufraw-batch [OPTIONS] <rawfile(s)>
+=over 4
+
+=item ufraw [OPTIONS] <rawfile(s)>
+
+=item ufraw-batch [OPTIONS] <rawfile(s)>
 
 =head1 DESCRIPTION
 
