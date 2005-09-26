@@ -1,4 +1,4 @@
-AC_INIT(ufraw, 0.5)
+AC_INIT(ufraw, 0.6)
 AC_PREREQ(2.57)
 
 # Create host_os, host_cpu variables
