@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.15 2005/09/27 00:07:13 lexort Exp $
+dnl $Id: configure.ac,v 1.16 2005/09/27 17:44:40 lexort Exp $
 AC_INIT(ufraw, 0.6)
 AC_PREREQ(2.57)
 
@@ -70,8 +70,13 @@ if test $ufraw_win32 = yes; then
   prefix=$PREFIX
 fi
 
-# PREFIX points to none default locations of headers and libraries.
+# If prefix is non-empty, add prefix's pkgconfig dir to the pkgconfig search
+# path, so we'll find programs/libraries also installed to this prefix.
+# XXX Really, where we are building to and where we obtain things from are
+# logically separate, and this should be solved by --with-gimp=/foo/bar
+# arguments.
 if test "!(-z $PREFIX)"; then
+  echo "Adding pkgconfig/cppflags/ldflags for $PREFIX."
   export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig$PATH_SEPARATOR$PKG_CONFIG_PATH"
   CPPFLAGS="$CPPFLAGS -I$PREFIX/include"
   LDFLAGS="$LDFLAGS -L$PREFIX/lib"
@@ -123,7 +128,8 @@ if test $enable_gimp = yes; then
   AC_SUBST(GIMP_LIBDIR)
 fi
 
-# Search for getopt_long, trying libgnugetopt if necessary.
+# Ensure that getopt_long is available.  It is included in GNU libc and
+# in at least most BSD libcs.  If not found, search for it in libgnugetopt.
 AC_SEARCH_LIBS(getopt_long, gnugetopt, ,
   AC_MSG_ERROR(can not build ufraw without getoptlong))
 
