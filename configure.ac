@@ -1,3 +1,4 @@
+dnl $Id: configure.ac,v 1.15 2005/09/27 00:07:13 lexort Exp $
 AC_INIT(ufraw, 0.6)
 AC_PREREQ(2.57)
 
@@ -12,6 +13,8 @@ AC_PROG_INSTALL
 AC_CHECK_PROGS(POD2MAN, pod2man, , $PATH)
 
 # nikon_curve makes some sizeof assumptions, requiring the following tests
+# XXX Fix nikon_curve to use C99 standard types so it will work on 64-bit
+# machines.
 AC_CHECK_SIZEOF(short)
 if test $ac_cv_sizeof_short -ne 2; then
     AC_MSG_ERROR([size of short must be 2])
@@ -29,6 +32,7 @@ if test $ac_cv_sizeof_double -ne 8; then
     AC_MSG_ERROR([size of double must be 8])
 fi
 
+# XXX  gcc-specific
 CFLAGS="$CFLAGS -W -Wall -O3 -ffast-math -fomit-frame-pointer"
 # Uncomment next line for release to strip the binaries of debug information
 #LDFLAGS="$LDFLAGS -s"
@@ -73,7 +77,8 @@ if test "!(-z $PREFIX)"; then
   LDFLAGS="$LDFLAGS -L$PREFIX/lib"
 fi
 
-# If the gimp plug-in is not build, ufraw is completely independent of the gimp
+# If the gimp plug-in is not built, ufraw is completely independent of
+# the gimp.
 AC_MSG_CHECKING(whether to build the gimp plug-in)
 AC_ARG_ENABLE(gimp,
   [  --disable-gimp          disable build of the gimp plug-in], ,
@@ -107,7 +112,10 @@ else
 fi
 AC_MSG_RESULT($have_gtk_2_6)
 
-# The gimp plug-in should be installed under gimplibdir
+# The gimp plug-in should be installed under gimplibdir.
+# XXX It is not clear if we should install in the gimplibdir-like
+# place in our prefix, or in gimp's actual lib dir.  This only matters
+# if our prefix and gimp's prefix differ.
 if test $enable_gimp = yes; then
   test $prefix = NONE || pkg_prefix="--define-variable=prefix=$prefix"
   test $exec_prefix = NONE || pkg_exec_prefix="--define-variable=exec_prefix=$exec_prefix"
@@ -115,27 +123,30 @@ if test $enable_gimp = yes; then
   AC_SUBST(GIMP_LIBDIR)
 fi
 
-# Non GNU environments may require the following
+# Search for getopt_long, trying libgnugetopt if necessary.
 AC_SEARCH_LIBS(getopt_long, gnugetopt, ,
-  AC_MSG_ERROR(can not build ufraw without getopt))
+  AC_MSG_ERROR(can not build ufraw without getoptlong))
+
+# XXX A comment is required to explain this. 
 #AC_SEARCH_LIBS(ntohs, ws2_32)
 if test $ufraw_win32 = yes; then
   LIBS="$LIBS -lws2_32"
 fi
+
 # Make sure that libm is in the list of libraries.
 AC_SEARCH_LIBS(pow, m)
 AC_CHECK_FUNCS(canonicalize_file_name)
 
-# Check for jpeg development package
+# Check for jpeg headers and library.
 AC_CHECK_HEADER(jpeglib.h,
   AC_CHECK_LIB(jpeg, jpeg_CreateCompress))
 have_jpeg=$ac_cv_lib_jpeg_jpeg_CreateCompress
 
-# Check for zlib package
+# Check for zlib.
 AC_CHECK_LIB(z, deflate)
 have_zlib=$ac_cv_lib_z_deflate
 
-# Check for tiff development package
+# Check for tiff headers and library.
 AC_CHECK_HEADER(tiffio.h,
   AC_CHECK_LIB(tiff, TIFFSetErrorHandler, , have_zlib=no), have_zlib=no)
 have_tiff=$ac_cv_lib_tiff_TIFFSetErrorHandler
@@ -145,7 +156,7 @@ AC_ARG_ENABLE(exif,
   [  --disable-exif          disable exif support], ,
   enable_exif=yes)
 AC_MSG_RESULT($enable_exif)
-# check for exif development package, relevant only if have_tiff
+# If we have tiff, check for exif via pkg-config.
 if test $have_tiff = yes -a $enable_exif = yes; then
   PKG_CHECK_MODULES(EXIF, libexif >= 0.6.11,
     [ have_exif=yes
@@ -197,6 +208,8 @@ else
 fi
 AC_SUBST(INSTALL_USER)
 
+# XXX For binary package creation, adjusting for the build CPU is not
+# appropriate.
 case $host_cpu in
   686)
     CFLAGS="$CFLAGS -march=i686"
@@ -207,14 +220,18 @@ case $host_cpu in
     ;;
 esac
 
+# XXX gcc-specific
 DCRAW_CFLAGS=-Wno-sign-compare
+
+# XXX gcc-specific
 # Uncomment next line to avoid compiler warnings when using gcc-4.0.x
 #DCRAW_CFLAGS="$DCRAW_CFLAGS -Wno-pointer-sign"
+
 AC_SUBST(DCRAW_CFLAGS)
 
 AC_MSG_CHECKING(whether to build extras)
 AC_ARG_ENABLE(extras,
-  [  --enable-extras          build extra (dcraw, nikon-curve) executables], ,
+  [  --enable-extras          build extra (dcraw, nikon-curve, ufraw-exif) executables], ,
   enable_extras=no)
 AC_MSG_RESULT($enable_extras)
 AM_CONDITIONAL(MAKE_EXTRAS, test $enable_extras = yes)
