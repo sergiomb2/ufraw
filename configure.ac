@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.17 2005/09/28 00:36:45 lexort Exp $
+dnl $Id: configure.ac,v 1.18 2005/09/28 05:14:53 nkbj Exp $
 AC_INIT(ufraw, 0.6)
 AC_PREREQ(2.57)
 
@@ -131,7 +131,7 @@ fi
 # Ensure that getopt_long is available.  It is included in GNU libc and
 # in at least most BSD libcs.  If not found, search for it in libgnugetopt.
 AC_SEARCH_LIBS(getopt_long, gnugetopt, ,
-  AC_MSG_ERROR(can not build ufraw without getoptlong))
+  AC_MSG_ERROR(can not build ufraw without getopt_long))
 
 # XXX A comment is required to explain this. 
 #AC_SEARCH_LIBS(ntohs, ws2_32)
