@@ -6,11 +6,11 @@
   simple ASCII file containing a table of interpolation
   values. See the header file for more information.
 
-  This code is free to use in any non-commercial software
-  as long as you give me some credit. :)
-
-  For commercial software, well, you should buy the Nikon SDK. :)
-
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+	    
   @author: Shawn Freeman 1/06/2005
   @liscense: GNU GPL
 ****************************************************/

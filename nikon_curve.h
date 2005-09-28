@@ -16,15 +16,19 @@
   Thanks goes out to Udi Fuchs for wanting to incorporate nikon curve loading into his program.
   This will make GIMP just that much better. :)
 
-  Standard disclaimer: If this program crashes, destroys your data, opens a wormhole, or causes any other
-  calamity, I am not responsible. I have taken measures to ensure this program is safe but I make no
-  guarantees or warranties of any kind.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundati; either versi 2 of the License, or
+  (at your opti) any later versi.
 
-  This code is free to use in any non-commercial software as long as you give me some credit. :)
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-  For commercial software, well, you should buy the Nikon SDK. :)
-  email: xyrus@comcast.net
-
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundati, Inc., 51 Franklin St, Fifth Floor, Bost, MA  02110-1301  USA
 
   NOTES:
   08/06/2005 (Shawn Freeman)
