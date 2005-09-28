@@ -16,3 +16,4 @@ g_fopen - UTF-8
 Read RAW preview image (parse.c)
 Use AHD interpolation
 Use bilateral filtering for noise reduction
+Better EXIF support
