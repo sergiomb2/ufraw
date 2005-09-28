@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.16 2005/09/27 17:44:40 lexort Exp $
+dnl $Id: configure.ac,v 1.17 2005/09/28 00:36:45 lexort Exp $
 AC_INIT(ufraw, 0.6)
 AC_PREREQ(2.57)
 
@@ -139,23 +139,23 @@ if test $ufraw_win32 = yes; then
   LIBS="$LIBS -lws2_32"
 fi
 
-# Make sure that libm is in the list of libraries.
+# Make sure that pow is available, trying libm if necessary.
 AC_SEARCH_LIBS(pow, m)
 AC_CHECK_FUNCS(canonicalize_file_name)
 
 # Check for jpeg headers and library.
 AC_CHECK_HEADER(jpeglib.h,
   AC_CHECK_LIB(jpeg, jpeg_CreateCompress))
-have_jpeg=$ac_cv_lib_jpeg_jpeg_CreateCompress
+have_jpeg=${ac_cv_lib_jpeg_jpeg_CreateCompress:-no}
 
 # Check for zlib.
 AC_CHECK_LIB(z, deflate)
-have_zlib=$ac_cv_lib_z_deflate
+have_zlib=${ac_cv_lib_z_deflate:-no}
 
 # Check for tiff headers and library.
 AC_CHECK_HEADER(tiffio.h,
-  AC_CHECK_LIB(tiff, TIFFSetErrorHandler, , have_zlib=no), have_zlib=no)
-have_tiff=$ac_cv_lib_tiff_TIFFSetErrorHandler
+  AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
+have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
 
 AC_MSG_CHECKING(whether to try to support exif)
 AC_ARG_ENABLE(exif,
@@ -174,6 +174,7 @@ fi
 
 UFRAW_CFLAGS="$EXIF_CFLAGS $DEPS_CFLAGS"
 if test $have_jpeg = no; then
+  # dcraw assumes jpeg unless NO_JPEG, rather than using HAVE_LIBJPEG
   UFRAW_CFLAGS="$UFRAW_CFLAGS -DNO_JPEG"
 fi
 UFRAW_LDADD="$EXIF_LIBS $DEPS_LIBS"
@@ -252,5 +253,6 @@ AC_MSG_NOTICE([hidden directories support (GTK>=2.6): $have_gtk_2_6])
 AC_MSG_NOTICE(EXIF support: $have_exif)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(TIFF support: $have_tiff)
-AC_MSG_NOTICE(lossless compressed TIFF support: $have_zlib)
-
+if test $have_tiff = yes; then
+  AC_MSG_NOTICE(TIFF deflate (lossless compression) support: $have_zlib)
+fi
