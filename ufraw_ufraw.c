@@ -154,7 +154,7 @@ ufraw_data *ufraw_open(char *filename)
     uf->image.image = NULL;
     uf->raw = raw;
     uf->colors = raw->colors;
-    uf->use_coeff = raw->use_coeff;
+    uf->raw_color = raw->raw_color;
     uf->developer = developer_init();
     uf->widget = NULL;
     if (raw->fuji_width) {
@@ -224,9 +224,9 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     raw = uf->raw;
 
     /* Always set useMatrix if colors=4
-     * Always reset useMatrix if !use_coeff */
+     * Always reset useMatrix if 'raw_color' */
     uf->useMatrix = ( uf->conf->profile[0][uf->conf->profileIndex[0]].useMatrix
-	    && uf->use_coeff ) || uf->colors==4;
+	    && !uf->raw_color ) || uf->colors==4;
 
     if (raw->toneCurveSize!=0) {
         CurveData nc;
@@ -259,7 +259,7 @@ int ufraw_load_raw(ufraw_data *uf)
         return status;
     }
     uf->rgbMax = raw->rgbMax;
-    memcpy(uf->coeff, raw->coeff, sizeof uf->coeff);
+    memcpy(uf->rgb_cam, raw->rgb_cam, sizeof uf->rgb_cam);
     return UFRAW_SUCCESS;
 }
 
@@ -296,7 +296,7 @@ int ufraw_convert_image(ufraw_data *uf)
         if (uf->conf->autoBlack==apply_state) ufraw_auto_black(uf);
         developer_prepare(uf->developer, uf->rgbMax,
                 pow(2,conf->exposure), conf->unclip,
-		uf->conf->chanMul, uf->coeff, uf->colors, uf->useMatrix,
+		uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
                 &conf->profile[0][conf->profileIndex[0]],
                 &conf->profile[1][conf->profileIndex[1]], conf->intent,
                 conf->saturation,
@@ -316,14 +316,12 @@ int ufraw_convert_image(ufraw_data *uf)
 	}
         developer_prepare(uf->developer, uf->rgbMax,
                 pow(2,conf->exposure), conf->unclip,
-		conf->chanMul, uf->coeff, uf->colors, uf->useMatrix,
+		conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
                 &conf->profile[0][conf->profileIndex[0]],
                 &conf->profile[1][conf->profileIndex[1]], conf->intent,
                 conf->saturation,
                 &conf->curve[conf->curveIndex]);
-        dcraw_finalize_interpolate(&final, raw,
-		conf->interpolation==quick_interpolation,
-                conf->interpolation==four_color_interpolation,
+        dcraw_finalize_interpolate(&final, raw, conf->interpolation,
 		uf->developer->rgbWB, uf->developer->max);
 	uf->developer->rgbMax = 0xFFFF;
         for (c=0; c<4; c++)
@@ -430,7 +428,7 @@ void ufraw_auto_expose(ufraw_data *uf)
     uf->conf->exposure = 0;
     developer_prepare(uf->developer, uf->rgbMax,
             pow(2,uf->conf->exposure), uf->conf->unclip,
-	    uf->conf->chanMul, uf->coeff, uf->colors, uf->useMatrix,
+	    uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
             &uf->conf->profile[0][uf->conf->profileIndex[0]],
             &uf->conf->profile[1][uf->conf->profileIndex[1]],
             uf->conf->intent,
@@ -464,7 +462,7 @@ void ufraw_auto_black(ufraw_data *uf)
     CurveDataSetPoint(&uf->conf->curve[uf->conf->curveIndex], 0, 0, 0);
     developer_prepare(uf->developer, uf->rgbMax,
             pow(2,uf->conf->exposure), uf->conf->unclip,
-	    uf->conf->chanMul, uf->coeff, uf->colors, uf->useMatrix,
+	    uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
             &uf->conf->profile[0][uf->conf->profileIndex[0]],
             &uf->conf->profile[1][uf->conf->profileIndex[1]],
             uf->conf->intent,
@@ -503,7 +501,7 @@ void ufraw_auto_curve(ufraw_data *uf)
     CurveDataReset(curve);
     developer_prepare(uf->developer, uf->rgbMax,
             pow(2,uf->conf->exposure), uf->conf->unclip,
-	    uf->conf->chanMul, uf->coeff, uf->colors, uf->useMatrix,
+	    uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
             &uf->conf->profile[0][uf->conf->profileIndex[0]],
             &uf->conf->profile[1][uf->conf->profileIndex[1]],
             uf->conf->intent,

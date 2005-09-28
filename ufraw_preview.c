@@ -470,7 +470,7 @@ gboolean render_raw_histogram(preview_data *data)
 	    CFG->curve[CFG->curveIndex].m_anchors[0].x);
     gtk_label_set_text(GTK_LABEL(data->BlackLabel), text);
     developer_prepare(Developer, data->UF->rgbMax, pow(2, CFG->exposure),
-	    CFG->unclip, CFG->chanMul, data->UF->coeff,
+	    CFG->unclip, CFG->chanMul, data->UF->rgb_cam,
 	    data->UF->colors, data->UF->useMatrix,
             &CFG->profile[0][CFG->profileIndex[0]],
             &CFG->profile[1][CFG->profileIndex[1]], CFG->intent,
@@ -1690,7 +1690,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    data->UF->useMatrix);
     g_signal_connect(G_OBJECT(data->UseMatrixButton), "toggled",
             G_CALLBACK(toggle_button_update), &data->UF->useMatrix);
-    if (!data->UF->use_coeff || data->UF->colors==4)
+    if (data->UF->raw_color || data->UF->colors==4)
 	gtk_widget_set_sensitive(data->UseMatrixButton, FALSE);
 
     data->GammaAdjustment = adjustment_scale(table, 0, 3, "Gamma",
@@ -2061,9 +2061,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     box = GTK_BOX(gtk_hbox_new(FALSE, 6));
     gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(box), FALSE, FALSE, 6);
     combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    gtk_combo_box_append_text(combo, "Full interpolation");
-    gtk_combo_box_append_text(combo, "Four color interpolation");
-    gtk_combo_box_append_text(combo, "Quick interpolation");
+    gtk_combo_box_append_text(combo, "AHD interpolation");
+    gtk_combo_box_append_text(combo, "VNG interpolation");
+    gtk_combo_box_append_text(combo, "VNG four color interpolation");
+    gtk_combo_box_append_text(combo, "Bilinear interpolation");
     if (plugin) {
         gtk_combo_box_append_text(combo, "Half-size interpolation");
     }

@@ -59,7 +59,7 @@ int main (int argc, char **argv)
     /* Half interpolation is an option only for the gimp plug-in.
      * For the stand-alone tool it is disabled */
     if (rc.interpolation==half_interpolation)
-	rc.interpolation = full_interpolation;
+	rc.interpolation = ahd_interpolation;
 
     g_strlcpy(rc.inputFilename, "", max_path);
     g_strlcpy(rc.outputFilename, "", max_path);

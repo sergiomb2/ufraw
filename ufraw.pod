@@ -139,16 +139,22 @@ format or Nikon's NTC/NCV format.
 
 Black-point value. Range 0.0 to 1.0, default 0.0.
 
-=item --interpolation=full|quick|four-color
+=item --interpolation=ahd|vng|four-color|bilinear
 
 Interpolation algorithm to use when converting from the bayer-pattern
-to normal RGB values. "full" does VNG interpolation that should give
-best results but is a bit slow.
-"quick" does a bilinear interpolation, which is faster but not as good.
+to normal RGB values. AHD (Adaptive Homogeneity Directed) interpolation
+is the best, but also the slowest. VNG (Variable Number Gradients)
+is second best and a bit faster. Bilinear is the simplest yet fastest
+interpolation.
 
 "four-color" is a variation of the VNG interpolation that should only be
-used if you see strange square patterns in the
-resulting image. See L<http://www.cybercom.net/~dcoffin/dcraw/>.
+used if you see strange square patterns in the VNG interpolation,
+See L<http://www.cybercom.net/~dcoffin/dcraw/>.
+
+AHD is the default interpolation.
+AHD interpolation is not supported for cameras with four color filters,
+such as the Sony-828 RGBE filter. In such cases, VNG interpolation
+will be used instead.
 
 =back
 

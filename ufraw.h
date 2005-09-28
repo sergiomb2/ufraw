@@ -41,8 +41,11 @@ enum { manual_wb, camera_wb, auto_wb };
 enum { rgb_histogram, r_g_b_histogram, luminosity_histogram, value_histogram,
        saturation_histogram };
 enum { linear_histogram, log_histogram };
-enum { full_interpolation, four_color_interpolation, quick_interpolation,
-       half_interpolation};
+/* The following enum should match the dcraw_interpolation enum
+ * in dcraw_api.h. */
+enum { ahd_interpolation, vng_interpolation, four_color_interpolation,
+       bilinear_interpolation, half_interpolation };
+extern const char *interpolationNames[];
 enum { no_id, also_id, only_id };
 enum { manual_curve, linear_curve, camera_curve };
 enum { in_profile, out_profile, profile_types};
@@ -151,8 +154,8 @@ typedef struct {
 
 typedef struct {
     char filename[max_path];
-    int predictateHeight, predictateWidth, rgbMax, colors, use_coeff, useMatrix;
-    float coeff[3][4];
+    int predictateHeight, predictateWidth, rgbMax, colors, raw_color, useMatrix;
+    float rgb_cam[3][4];
     image_data image;
     void *raw;
     developer_data *developer;
@@ -219,8 +222,8 @@ developer_data *developer_init();
 void developer_destroy(developer_data *d);
 void developer_profile(developer_data *d, int type, profile_data *p);
 void developer_prepare(developer_data *d, int rgbMax, double exposure,
-    int unclip, double chanMul[4], float coeff[3][4], int colors, int useMatrix,
-    profile_data *in, profile_data *out, int intent,
+    int unclip, double chanMul[4], float rgb_cam[3][4], int colors,
+    int useMatrix, profile_data *in, profile_data *out, int intent,
     double saturation, CurveData *curve);
 void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     guint16 *buf, int count);

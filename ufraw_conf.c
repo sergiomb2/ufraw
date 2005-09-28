@@ -48,7 +48,7 @@ const conf_data conf_default = {
       { { "sRGB", "", "", 0.0, 0.0, FALSE },
         { "Some ICC Profile", "", "", 0.0, 0.0, FALSE } } },
     0, /* intent */
-    full_interpolation, /* interpolation */
+    ahd_interpolation, /* interpolation */
 
     /* Save options */
     "", "", "", /* inputFilename, outputFilename, outputPath */
@@ -68,6 +68,26 @@ const conf_data conf_default = {
     FALSE, /* underExp indicator */
     "", "" /* curvePath, profilePath */
 };
+
+const char *interpolationNames[] =
+    { "ahd", "vng", "four-color", "bilinear", "half" };
+
+int conf_find_name(const char name[],const char *namesList[])
+{
+    int i;
+    for (i=0; namesList[i]!=NULL; i++) {
+	if (!strcmp(name, namesList[i])) return i;
+    }
+    return -1;	
+}
+
+const char *conf_get_name(const char *namesList[], int index)
+{
+    int i;
+    for (i=0; namesList[i]!=NULL; i++)
+	if (i==index) return namesList[i];
+    return "Error";
+}
 
 void conf_parse_start(GMarkupParseContext *context, const gchar *element,
     const gchar **names, const gchar **values, gpointer user, GError **error)
@@ -262,8 +282,21 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     }
     if (!strcmp("SaveConfiguration", element))
 	sscanf(temp, "%d", &c->saveConfiguration);
-    if (!strcmp("Interpolation", element))
-            sscanf(temp, "%d", &c->interpolation);
+    if (!strcmp("Interpolation", element)) {
+	/* Keep compatebility with old numbers from ufraw-0.5 */
+        if (sscanf(temp, "%d", &c->interpolation)==1) {
+	    switch (c->interpolation) {
+		case 0: c->interpolation = vng_interpolation; break;
+		case 1: c->interpolation = four_color_interpolation; break;
+		case 2: c->interpolation = bilinear_interpolation; break;
+		case 3: c->interpolation = half_interpolation; break;
+		default: c->interpolation = ahd_interpolation;
+	    }
+	} else {
+	    c->interpolation = conf_find_name(temp, interpolationNames);
+	    if (c->interpolation<0) c->interpolation = ahd_interpolation;
+	}
+    }
     if (!strcmp("RawExpander", element))
             sscanf(temp, "%d", &c->expander[raw_expander]);
     if (!strcmp("ExposureExpander", element))
@@ -495,8 +528,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	}
     }
     if (c->interpolation!=conf_default.interpolation)
-        buf = uf_markup_buf(buf,
-		"<Interpolation>%d</Interpolation>\n", c->interpolation);
+        buf = uf_markup_buf(buf, "<Interpolation>%s</Interpolation>\n",
+		conf_get_name(interpolationNames, c->interpolation));
     if (c->wb!=conf_default.wb)
         buf = uf_markup_buf(buf, "<WB>%d</WB>\n", c->wb);
     buf = uf_markup_buf(buf,
@@ -801,13 +834,13 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
         conf->shrink = cmd->shrink;
         conf->size = 0;
         if (conf->interpolation==half_interpolation)
-            conf->interpolation = full_interpolation;
+            conf->interpolation = ahd_interpolation;
     }
     if (cmd->size!=NULLF) {
         conf->size = cmd->size;
         conf->shrink = 1;
         if (conf->interpolation==half_interpolation)
-            conf->interpolation = full_interpolation;
+            conf->interpolation = ahd_interpolation;
     }
     if (cmd->type>=0) conf->type = cmd->type;
     if (cmd->createID>=0) conf->createID = cmd->createID;
@@ -868,8 +901,8 @@ char helpText[]=
 "                      Auto exposure or exposure correction in EV (default 0).\n"
 "--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"
-"--interpolation=full|four-color|quick\n"
-"                      Interpolation algorithm to use (default full).\n"
+"--interpolation=ahd|vng|four-color|bilinear\n"
+"                      Interpolation algorithm to use (default ahd).\n"
 "\n"
 "The options which are related to the final output are:\n"
 "\n"
@@ -1133,13 +1166,14 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     }
     cmd->interpolation = -1;
     if (interpolationName!=NULL) {
+	/* Keep compatebility with old numbers from ufraw-0.5 */
         if (!strcmp(interpolationName, "full"))
-            cmd->interpolation = full_interpolation;
-        else if (!strcmp(interpolationName, "four-color"))
-            cmd->interpolation = four_color_interpolation;
+            cmd->interpolation = vng_interpolation;
         else if (!strcmp(interpolationName, "quick"))
-            cmd->interpolation = quick_interpolation;
-        else {
+            cmd->interpolation = bilinear_interpolation;
+	else cmd->interpolation = conf_find_name(interpolationName,
+		    interpolationNames);
+	if (cmd->interpolation<0 || cmd->interpolation==half_interpolation) {
             ufraw_message(UFRAW_ERROR,
                 "'%s' is not a valid interpolation option.",
                 interpolationName);

@@ -205,13 +205,14 @@ long ufraw_saver(void *widget, gpointer user_data)
     gtk_container_add(GTK_CONTAINER(expander), box);
 
     if (uf->conf->interpolation==half_interpolation) {
-        uf->conf->interpolation = full_interpolation;
+        uf->conf->interpolation = ahd_interpolation;
         if (uf->conf->shrink<2) uf->conf->shrink = 2;
     }
     intCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    gtk_combo_box_append_text(intCombo, "Full interpolation");
-    gtk_combo_box_append_text(intCombo, "Four color interpolation");
-    gtk_combo_box_append_text(intCombo, "Quick interpolation");
+    gtk_combo_box_append_text(intCombo, "AHD interpolation");
+    gtk_combo_box_append_text(intCombo, "VNG interpolation");
+    gtk_combo_box_append_text(intCombo, "VNG four color interpolation");
+    gtk_combo_box_append_text(intCombo, "Bilinear interpolation");
     gtk_combo_box_set_active(intCombo, uf->conf->interpolation);
     align = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
     gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(intCombo));

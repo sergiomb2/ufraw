@@ -28,6 +28,7 @@
 typedef unsigned short ushort;
 typedef gint64 INT64;
 
+extern const double xyz_rgb[3][3];			/* XYZ from RGB */
 #define camera_red  cam_mul[0]
 #define camera_blue cam_mul[2]
 
@@ -181,6 +182,9 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   int row, col, shift, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
   int g, diff, thold, num, c;
 
+  dcraw_message (DCRAW_VERBOSE, "%s interpolation...\n",
+	quick_interpolate ? "Bilinear":"VNG"); /*UF*/
+
   for (row=0; row < 8; row++) {		/* Precalculate for bilinear */
     for (col=1; col < 3; col++) {
       ip = code[row][col & 1];
@@ -313,45 +317,166 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   free (brow[4]);
 }
 
-/*
-   Convert the entire image to RGB colorspace and build a histogram.
- */
-void CLASS convert_to_rgb_INDI(ushort (*image)[4], const int document_mode,
-        int colors, const int trim, const int height, const int width,
-        const unsigned filters, const int use_coeff,
-        /*const*/ float coeff[3][4], const int clip_max)/*UF*/
-{
-  int row, col, r, g, c=0;
-  ushort *img;
-  float rgb[3];
+#define SQR(x) ((x)*(x))
+/* dcraw.c defines:
+ * #define CLIP(x) (MAX(0,MIN((x),clip_max)))
+ * But in our case maximum should already be normalized to 0xFFFF */
+#define CLIP(x) (MAX(0,MIN((x),0xFFFF)))
 
-/* Disabled features UF
-  if (document_mode)
-    colors = 1;
-  memset (histogram, 0, sizeof histogram);
-*/
-  for (row = trim; row < height-trim; row++)
-    for (col = trim; col < width-trim; col++) {
-      img = image[row*width+col];
-      if (document_mode)
-	c = FC(row,col);
-      if (colors == 4 && !use_coeff)	/* Recombine the greens */
-	img[1] = (img[1] + img[3]) >> 1;
-      if (colors == 1)			/* RGB from grayscale */
-	for (r=0; r < 3; r++)
-	  rgb[r] = img[c];
-      else if (use_coeff) {		/* RGB via coeff[][] */
-	for (r=0; r < 3; r++)
-	  for (rgb[r]=g=0; g < colors; g++)
-	    rgb[r] += img[g] * coeff[r][g];
-        for (r=0; r < 3; r++) {
-	  if (rgb[r] < 0)        rgb[r] = 0;
-	  if (rgb[r] > clip_max) rgb[r] = clip_max;
-	  img[r] = rgb[r];
-        }
+void CLASS cam_to_cielab_INDI (ushort cam[4], float lab[3],
+	const int colors, const int maximum, const float rgb_cam[3][4])
+{
+  int c, i, j, k;
+  float r, xyz[3];
+  static const float d65[3] = { 0.950456, 1, 1.088754 };
+  static float cbrt[0x10000], xyz_cam[3][3];
+
+  if (cam == NULL) {
+    for (i=0; i < 0x10000; i++) {
+      r = (float) i / maximum;
+      cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
+    }
+    for (i=0; i < 3; i++)
+      for (j=0; j < colors; j++)
+        for (xyz_cam[i][j] = k=0; k < 3; k++)
+	  xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65[i];
+  } else {
+    for (i=0; i < 3; i++) {
+      for (xyz[i]=0.5, c=0; c < colors; c++)
+	xyz[i] += xyz_cam[i][c] * cam[c];
+      xyz[i] = cbrt[CLIP((int) xyz[i])];
+    }
+    lab[0] = 116 * xyz[1] - 16;
+    lab[1] = 500 * (xyz[0] - xyz[1]);
+    lab[2] = 200 * (xyz[1] - xyz[2]);
+  }
+}
+
+/*
+   Adaptive Homogeneity-Directed interpolation is based on
+   the work of Keigo Hirakawa, Thomas Parks, and Paul Lee.
+ */
+#define TS 256		/* Tile Size */
+
+void CLASS ahd_interpolate_INDI(const int height, const int width,
+	const unsigned filters, ushort (*image)[4], int *trim_p,
+	const int colors, const int maximum, const float rgb_cam[3][4])
+{
+  int trim = *trim_p;
+  int i, j, top, left, row, col, tr, tc, fc, c, d, val, hm[2];
+  ushort (*pix)[4], (*rix)[3];
+  static const int dir[4] = { -1, 1, -TS, TS };
+  unsigned ldiff[2][4], abdiff[2][4], leps, abeps;
+  float flab[3];
+  ushort (*rgb)[TS][TS][3];
+   short (*lab)[TS][TS][3];
+   char (*homo)[TS][TS], *buffer;
+
+  dcraw_message (DCRAW_VERBOSE, "AHD interpolation...\n"); /*UF*/
+  buffer = malloc (26*TS*TS);			/* 1664 kB */
+  merror (buffer, "ahd_interpolate()");
+  rgb  = (void *) buffer;
+  lab  = (void *) (buffer + 12*TS*TS);
+  homo = (void *) (buffer + 24*TS*TS);
+
+  for (top=0; top < height; top += TS-6)
+    for (left=0; left < width; left += TS-6) {
+      memset (rgb, 0, 12*TS*TS);
+
+/*  Horizontally interpolate green into rgb[0]:			*/
+      for (row = top; row < top+TS && row < height; row++) {
+	col = left + (FC(row,left) == 1);
+	if (col < 2) col += 2;
+	for (fc = FC(row,col); col < left+TS && col < width-2; col+=2) {
+	  pix = image + row*width + col;
+	  val = ((pix[-1][1] + pix[0][fc] + pix[1][1]) * 2
+		- pix[-2][fc] - pix[2][fc]) >> 2;
+	  rgb[0][row-top][col-left][1] = CLIP(val);
+	}
+      }
+/*  Vertically interpolate green into rgb[1]:			*/
+      for (row = top < 2 ? 2:top; row < top+TS && row < height-2; row++) {
+	col = left + (FC(row,left) == 1);
+	for (fc = FC(row,col); col < left+TS && col < width; col+=2) {
+	  pix = image + row*width + col;
+	  val = ((pix[-width][1] + pix[0][fc] + pix[width][1]) * 2
+		- pix[-2*width][fc] - pix[2*width][fc]) >> 2;
+	  rgb[1][row-top][col-left][1] = CLIP(val);
+	}
+      }
+/*  Interpolate red and blue, and convert to CIELab:		*/
+      for (d=0; d < 2; d++)
+	for (row=top+1; row < top+TS-1 && row < height-1; row++) {
+	  tr = row-top;
+	  for (col=left+1; col < left+TS-1 && col < width-1; col++) {
+	    tc = col-left;
+	    pix = image + row*width + col;
+	    rix = &rgb[d][tr][tc];
+	    if ((c = 2 - FC(row,col)) == 1) {
+	      c = FC(row+1,col);
+	      val = pix[0][1] + (( pix[-1][2-c] + pix[1][2-c]
+				 - rix[-1][1] - rix[1][1] ) >> 1);
+	      rix[0][2-c] = CLIP(val);
+	      val = pix[0][1] + (( pix[-width][c] + pix[width][c]
+				 - rix[-TS][1] - rix[TS][1] ) >> 1);
+	    } else
+	      val = rix[0][1] + (( pix[-width-1][c] + pix[-width+1][c]
+				 + pix[+width-1][c] + pix[+width+1][c]
+				 - rix[-TS-1][1] - rix[-TS+1][1]
+				 - rix[+TS-1][1] - rix[+TS+1][1] + 1) >> 2);
+	    rix[0][c] = CLIP(val);
+	    c = FC(row,col);
+	    rix[0][c] = pix[0][c];
+	    cam_to_cielab_INDI (rix[0], flab, colors, maximum, rgb_cam);
+	    FORC3 lab[d][tr][tc][c] = 64*flab[c];
+	  }
+	}
+/*  Build homogeneity maps from the CIELab images:		*/
+      memset (homo, 0, 2*TS*TS);
+      for (row=top+2; row < top+TS-2 && row < height; row++) {
+	tr = row-top;
+	for (col=left+2; col < left+TS-2 && col < width; col++) {
+	  tc = col-left;
+	  for (d=0; d < 2; d++)
+	    for (i=0; i < 4; i++)
+	      ldiff[d][i] = ABS(lab[d][tr][tc][0]-lab[d][tr][tc+dir[i]][0]);
+	  leps = MIN(MAX(ldiff[0][0],ldiff[0][1]),
+		     MAX(ldiff[1][2],ldiff[1][3]));
+	  for (d=0; d < 2; d++)
+	    for (i=0; i < 4; i++)
+	      if (i >> 1 == d || ldiff[d][i] <= leps)
+		abdiff[d][i] = SQR(lab[d][tr][tc][1]-lab[d][tr][tc+dir[i]][1])
+			     + SQR(lab[d][tr][tc][2]-lab[d][tr][tc+dir[i]][2]);
+	  abeps = MIN(MAX(abdiff[0][0],abdiff[0][1]),
+		      MAX(abdiff[1][2],abdiff[1][3]));
+	  for (d=0; d < 2; d++)
+	    for (i=0; i < 4; i++)
+	      if (ldiff[d][i] <= leps && abdiff[d][i] <= abeps)
+		homo[d][tr][tc]++;
+	}
+      }
+/*  Combine the most homogenous pixels for the final result:	*/
+      for (row=top+3; row < top+TS-3 && row < height-3; row++) {
+	tr = row-top;
+	for (col=left+3; col < left+TS-3 && col < width-3; col++) {
+	  tc = col-left;
+	  for (d=0; d < 2; d++)
+	    for (hm[d]=0, i=tr-1; i <= tr+1; i++)
+	      for (j=tc-1; j <= tc+1; j++)
+		hm[d] += homo[d][i][j];
+	  if (hm[0] != hm[1])
+	    FORC3 image[row*width+col][c] = rgb[hm[1] > hm[0]][tr][tc][c];
+	  else
+	    FORC3 image[row*width+col][c] =
+		(rgb[0][tr][tc][c] + rgb[1][tr][tc][c]) >> 1;
+	}
       }
     }
+  free (buffer);
+  trim = 3;
+  *trim_p = trim;
 }
+#undef TS
 
 void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
     int *width_p, int *fuji_width_p, const int colors, const double step)

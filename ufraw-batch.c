@@ -35,7 +35,7 @@ int main (int argc, char **argv)
     /* Half interpolation is an option only for the gimp plug-in.
      * For the stand-alone tool it is disabled */
     if (rc.interpolation==half_interpolation)
-	rc.interpolation = full_interpolation;
+	rc.interpolation = ahd_interpolation;
 
     /* In batch the save options are always set to default */
     conf_copy_save(&rc, &conf_default);

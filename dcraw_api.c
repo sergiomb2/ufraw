@@ -51,10 +51,11 @@ void scale_colors_INDI(gushort (*image)[4], const int rgb_max, const int black,
 void vng_interpolate_INDI(gushort (*image)[4], const unsigned filters,
     const int width, const int height, const int colors,
     const int quick_interpolate, const int rgb_max);
-void convert_to_rgb_INDI(gushort (*image)[4], const int document_mode,
-    int *colors_p, const int trim, const int height, const int width,
-    const unsigned filters, const int use_coeff,
-    /*const*/ float coeff[3][4], const int rgb_max);
+void cam_to_cielab_INDI (ushort cam[4], float lab[3],
+	const int colors, const int maximum, float rgb_cam[3][4]);
+void ahd_interpolate_INDI(const int height, const int width,
+	const unsigned filters, ushort (*image)[4], int *trim_p,
+	const int colors, const int maximum, float rgb_cam[3][4]);
 void flip_image_INDI(gushort (*image)[4], int *height_p, int *width_p,
     const int flip, int *ymag_p, int *xmag_p);
 void fuji_rotate_INDI(gushort (**image_p)[4], int *height_p, int *width_p,
@@ -79,11 +80,13 @@ int dcraw_open(dcraw_data *h,char *filename)
     if (!(ifp = fopen (ifname, "rb"))) {
         dcraw_message(DCRAW_OPEN_ERROR, "Could not open %s: %s\n",
                 filename, strerror(errno));
+	g_free(ifname);
         h->message = messageBuffer;
         return DCRAW_OPEN_ERROR;
     }
     if (identify(1)) { /* dcraw already sent a dcraw_message() */
         fclose(ifp);
+	g_free(ifname);
         h->message = messageBuffer;
         return lastStatus;
     }
@@ -97,7 +100,7 @@ int dcraw_open(dcraw_data *h,char *filename)
     h->fuji_step = sqrt(0.5);
     h->colors = colors;
     h->filters = filters;
-    h->use_coeff = !raw_color;
+    h->raw_color = raw_color;
     h->trim = (h->filters!=0);
     h->shrink = shrink = (h->filters!=0);
     /* copied from dcraw's main() */
@@ -152,11 +155,12 @@ int dcraw_load_raw(dcraw_data *h)
     h->rgbMax = maximum;
     h->black = black;
     dcraw_message(DCRAW_VERBOSE, "Black: %d, Maximum: %d\n", black, maximum);
+    cam_to_cielab_INDI(NULL, NULL, h->colors, h->rgbMax, rgb_cam);
     dmin = DBL_MAX;
     for (i=0; i<h->colors; i++) if (dmin > pre_mul[i]) dmin = pre_mul[i];
     for (i=0; i<h->colors; i++) h->pre_mul[i] = pre_mul[i]/dmin;
     memcpy(h->cam_mul, cam_mul, sizeof cam_mul);
-    memcpy(h->coeff, rgb_cam, sizeof rgb_cam);
+    memcpy(h->rgb_cam, rgb_cam, sizeof rgb_cam);
     h->message = messageBuffer;
     return lastStatus;
 }
@@ -312,7 +316,7 @@ int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB)
 }
 
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
-	int quick, int fourColors, int rgbWB[4], int max)
+	int interpolation, int rgbWB[4], int max)
 {
     int fujiWidth, i, r, c, cl;
     unsigned ff, f4;
@@ -338,12 +342,16 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 	return lastStatus;
     }
     cl = h->colors;
-    if (fourColors && h->colors == 3) {
+    if (interpolation==dcraw_four_color_interpolation && h->colors == 3) {
 	ff = h->fourColorFilters;
         cl = 4;
+	interpolation = dcraw_vng_interpolation;
     } else {
 	ff = h->filters;
     }
+    /* It might be better to report an error here: */
+    if (interpolation==dcraw_ahd_interpolation && h->colors > 3)
+	interpolation = dcraw_vng_interpolation;
     f4 = h->fourColorFilters;
     if (rgbWB[3]==0) rgbWB[3] = rgbWB[1];
     for(r=0; r<h->height; r++)
@@ -352,12 +360,17 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
                 (h->raw.image[r/2*h->raw.width+c/2][FC(f4,r,c)] - h->black) *
                 rgbWB[FC(f4,r,c)]/(h->rgbMax-h->black), 0), 0xFFFF);
 
-    dcraw_message(DCRAW_VERBOSE, "%s interpolation...\n",
-                quick ? "Bilinear":"VNG");
-    vng_interpolate_INDI(f->image, ff, f->width, f->height,
-	    cl, quick, 0xFFFF);
+    if (interpolation==dcraw_bilinear_interpolation)
+	vng_interpolate_INDI(f->image, ff, f->width, f->height,
+		cl, TRUE, 0xFFFF);
+    else if (interpolation==dcraw_vng_interpolation)
+	vng_interpolate_INDI(f->image, ff, f->width, f->height,
+		cl, FALSE, 0xFFFF);
+    else if (interpolation==dcraw_ahd_interpolation)
+	ahd_interpolate_INDI(f->height, f->width,
+		h->filters, f->image, &f->trim, f->colors, 0xFFFF, h->rgb_cam);
 
-    if (fourColors && h->colors == 3) {
+    if (cl==4 && h->colors == 3) {
         for (i=0; i<f->height*f->width; i++)
             f->image[i][1] = (f->image[i][1]+f->image[i][3])/2;
     }

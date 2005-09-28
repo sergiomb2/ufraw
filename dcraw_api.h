@@ -21,16 +21,18 @@ typedef struct {
 
 typedef struct {
     FILE *ifp;
-    int width, height, colors, fourColorFilters, filters, use_coeff, trim;
+    int width, height, colors, fourColorFilters, filters, raw_color, trim;
     int flip, shrink;
     dcraw_image_data raw;
-    float pre_mul[4], post_mul[4], cam_mul[4], coeff[3][4];
+    float pre_mul[4], post_mul[4], cam_mul[4], rgb_cam[3][4];
     int rgbMax, black, fuji_width;
     double fuji_step;
     int toneCurveSize, toneCurveOffset;
     char *message;
 } dcraw_data;
 
+enum { dcraw_ahd_interpolation, dcraw_vng_interpolation,
+    dcraw_four_color_interpolation, dcraw_bilinear_interpolation };
 int dcraw_open(dcraw_data *h, char *filename);
 int dcraw_load_raw(dcraw_data *h);
 int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *h, int scale);
@@ -38,7 +40,7 @@ int dcraw_image_resize(dcraw_image_data *image, int size);
 int dcraw_flip_image(dcraw_image_data *image, int flip);
 int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB);
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
-	int quick, int fourColor, int rgbWB[4], int max);
+	int interpolation, int rgbWB[4], int max);
 void dcraw_close(dcraw_data *h);
 
 #define DCRAW_SUCCESS 0

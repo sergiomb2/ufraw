@@ -3072,7 +3072,6 @@ void CLASS vng_interpolate()
   memcpy (image[(row-1)*width+2], brow[1]+2, (width-4)*sizeof *image);
   free (brow[4]);
 }
-/* End of functions copied to dcraw_indi.c (UF) */
 
 void CLASS cam_to_cielab (ushort cam[4], float lab[3])
 {
@@ -3223,6 +3222,7 @@ void CLASS ahd_interpolate()
   trim = 3;
 }
 #undef TS
+/* End of functions copied to dcraw_indi.c (UF) */
 
 /*
    Bilateral Filtering was developed by C. Tomasi and R. Manduchi.
@@ -5517,7 +5517,6 @@ void CLASS apply_profile (char *pfname)
 /*
    Convert the entire image to RGB colorspace and build a histogram.
  */
-/* Start of functions copied to dcraw_indi.c (UF) */
 void CLASS convert_to_rgb()
 {
   int row, col, c, i, fc=0;
@@ -5550,6 +5549,7 @@ norgb:
     }
 }
 
+/* Start of functions copied to dcraw_indi.c (UF) */
 void CLASS fuji_rotate()
 {
   int i, wide, high, row, col;
