@@ -1,6 +1,6 @@
-For ufraw-0.5
+For UFRaw-0.6
 =============
-nothing!
+Use AHD interpolation
 
 For the future
 ==============
@@ -14,6 +14,8 @@ support URI
 window size
 g_fopen - UTF-8
 Read RAW preview image (parse.c)
-Use AHD interpolation
 Use bilateral filtering for noise reduction
 Better EXIF support
+
+Done
+====
