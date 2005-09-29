@@ -162,7 +162,7 @@ ufraw_data *ufraw_open(char *filename)
         uf->predictateWidth = raw->fuji_width / raw->fuji_step;
         uf->predictateHeight = (raw->height - raw->fuji_width) / raw->fuji_step;
     } else {
-        uf->predictateHeight = raw->height;
+        uf->predictateHeight = raw->height * raw->ymag;
         uf->predictateWidth = raw->width;
     }
     if (raw->flip & 4) {
@@ -338,6 +338,8 @@ int ufraw_convert_image(ufraw_data *uf)
 	}
     }
     preview_progress(uf->widget, "Loading image", 0.4);
+    dcraw_image_stretch(&final, raw->ymag);
+    uf->image.image = final.image;
     dcraw_flip_image(&final, raw->flip);
     uf->image.trim = final.trim;
     uf->image.height = final.height - 2 * final.trim;

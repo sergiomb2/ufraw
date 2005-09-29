@@ -523,13 +523,12 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
 }
 
 void CLASS flip_image_INDI(ushort (*image)[4], int *height_p, int *width_p,
-    /*const*/ int flip, int *ymag_p, int *xmag_p) /*UF*/
+    /*const*/ int flip) /*UF*/
 {
   unsigned *flag;
   int size, base, dest, next, row, col, temp;
   INT64 *img, hold;
-  int height = *height_p, width = *width_p,
-              ymag = *ymag_p, xmag = *xmag_p;/* INDI - UF*/
+  int height = *height_p, width = *width_p;/* INDI - UF*/
 
   img = (INT64 *) image;
   size = height * width;
@@ -565,12 +564,10 @@ void CLASS flip_image_INDI(ushort (*image)[4], int *height_p, int *width_p,
     temp = height;
     height = width;
     width = temp;
-    temp = ymag;
-    ymag = xmag;
-    xmag = temp;
+//    temp = ymag; /* We always stretch before we flip - UF*/
+//    ymag = xmag;
+//    xmag = temp;
   }
   *height_p = height; /* INDI - UF*/
   *width_p = width;
-  *ymag_p = ymag;
-  *xmag_p = xmag;
 }

@@ -22,7 +22,7 @@ typedef struct {
 typedef struct {
     FILE *ifp;
     int width, height, colors, fourColorFilters, filters, raw_color, trim;
-    int flip, shrink;
+    int flip, shrink, ymag;
     dcraw_image_data raw;
     float pre_mul[4], post_mul[4], cam_mul[4], rgb_cam[3][4];
     int rgbMax, black, fuji_width;
@@ -37,6 +37,7 @@ int dcraw_open(dcraw_data *h, char *filename);
 int dcraw_load_raw(dcraw_data *h);
 int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *h, int scale);
 int dcraw_image_resize(dcraw_image_data *image, int size);
+int dcraw_image_stretch(dcraw_image_data *image, int ymag);
 int dcraw_flip_image(dcraw_image_data *image, int flip);
 int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB);
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,

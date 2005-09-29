@@ -32,7 +32,7 @@ extern void (*load_raw)();
 //extern void (*write_fun)(FILE *);
 extern jmp_buf failure;
 extern int tone_curve_size, tone_curve_offset;
-extern int black, colors, raw_color, ymag, xmag;
+extern int black, colors, raw_color, ymag;
 extern float cam_mul[4];
 extern gushort white[8][8];
 extern float rgb_cam[3][4];
@@ -57,7 +57,7 @@ void ahd_interpolate_INDI(const int height, const int width,
 	const unsigned filters, gushort (*image)[4], int *trim_p,
 	const int colors, const int maximum, float rgb_cam[3][4]);
 void flip_image_INDI(gushort (*image)[4], int *height_p, int *width_p,
-    const int flip, int *ymag_p, int *xmag_p);
+    const int flip);
 void fuji_rotate_INDI(gushort (**image_p)[4], int *height_p, int *width_p,
     int *fuji_width_p, const int colors, const double step);
 
@@ -103,6 +103,7 @@ int dcraw_open(dcraw_data *h,char *filename)
     h->raw_color = raw_color;
     h->trim = (h->filters!=0);
     h->shrink = shrink = (h->filters!=0);
+    h->ymag = ymag;
     /* copied from dcraw's main() */
     switch ((flip+3600) % 360) {
         case 270: flip = 5; break;
@@ -283,18 +284,36 @@ int dcraw_image_resize(dcraw_image_data *image, int size)
     return DCRAW_SUCCESS;
 }
 
+/* Stretch image by 'ymag'. It is needed only for Nikon D1X images.
+ * We can ignore 'xmag' since we always stretch before we flip */
+int dcraw_image_stretch(dcraw_image_data *image, int ymag)
+{
+    int r;
+    if (ymag==1) return DCRAW_SUCCESS;
+    if (ymag!=2) return DCRAW_ERROR;
+    int w = image->width;
+    dcraw_image_type *iBuf = g_new(dcraw_image_type,
+	    image->height * 2  * w);
+    for(r=0; r<image->height; r++) {
+	memcpy(iBuf[(2*r)*w], image->image[r*w], w*4*2);
+	memcpy(iBuf[(2*r+1)*w], image->image[r*w], w*4*2);
+    }
+    g_free(image->image);
+    image->image = iBuf;
+    image->height *= 2;
+    return DCRAW_SUCCESS;
+}
+
 int dcraw_flip_image(dcraw_image_data *image, int flip)
 {
     g_free(messageBuffer);
     messageBuffer = NULL;
     lastStatus = DCRAW_SUCCESS;
-    /* BUG ymag, xmag should not be globals */
     if (flip) {
 //        dcraw_message(DCRAW_VERBOSE, "Flipping image %c:%c:%c...\n",
 //                flip & 1 ? 'H':'0', flip & 2 ? 'V':'0',
 //                flip & 4 ? 'T':'0');
-        flip_image_INDI(image->image, &image->height, &image->width,
-                flip, &ymag, &xmag);
+        flip_image_INDI(image->image, &image->height, &image->width, flip);
     }
 //    h->message = messageBuffer;
     return lastStatus;
