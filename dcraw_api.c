@@ -51,10 +51,10 @@ void scale_colors_INDI(gushort (*image)[4], const int rgb_max, const int black,
 void vng_interpolate_INDI(gushort (*image)[4], const unsigned filters,
     const int width, const int height, const int colors,
     const int quick_interpolate, const int rgb_max);
-void cam_to_cielab_INDI (ushort cam[4], float lab[3],
+void cam_to_cielab_INDI (gushort cam[4], float lab[3],
 	const int colors, const int maximum, float rgb_cam[3][4]);
 void ahd_interpolate_INDI(const int height, const int width,
-	const unsigned filters, ushort (*image)[4], int *trim_p,
+	const unsigned filters, gushort (*image)[4], int *trim_p,
 	const int colors, const int maximum, float rgb_cam[3][4]);
 void flip_image_INDI(gushort (*image)[4], int *height_p, int *width_p,
     const int flip, int *ymag_p, int *xmag_p);
