@@ -188,7 +188,9 @@ int tone_curve_size = 0, tone_curve_offset = 0; /* Nikon Tone Curves UF*/
 	3 G R G R G R	3 B G B G B G	3 R G R G R G	3 G B G B G B
  */
 
-#ifndef __GLIBC__
+#include <sys/param.h>
+
+#if !(defined(__GLIBC__) || (defined(__NetBSD__) && (__NetBSD_Version__ >= 300000000)))
 char *memmem (char *haystack, size_t haystacklen,
 	      char *needle, size_t needlelen)
 {
