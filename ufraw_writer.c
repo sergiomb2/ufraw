@@ -113,8 +113,8 @@ int ufraw_write_image(ufraw_data *uf)
     ufraw_convert_image(uf);
     width = uf->image.width;
     height = uf->image.height;
-    rowStride = width + 2*uf->image.trim;
-    rawImage = uf->image.image + uf->image.trim*rowStride + uf->image.trim;
+    rowStride = width;
+    rawImage = uf->image.image;
     pixbuf16 = g_new(guint16, width*3);
     if (uf->conf->type==ppm8_type) {
         fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFF);

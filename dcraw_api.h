@@ -16,12 +16,12 @@ typedef guint16 dcraw_image_type[4];
 
 typedef struct {
     dcraw_image_type *image;
-    int width, height, colors, trim;
+    int width, height, colors;
 } dcraw_image_data;
 
 typedef struct {
     FILE *ifp;
-    int width, height, colors, fourColorFilters, filters, raw_color, trim;
+    int width, height, colors, fourColorFilters, filters, raw_color;
     int flip, shrink, ymag;
     dcraw_image_data raw;
     float pre_mul[4], post_mul[4], cam_mul[4], rgb_cam[3][4];

@@ -278,8 +278,8 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
     pixbuf = g_new(guint8, tile_height * uf->image.width * 3);
     pixtmp = g_new(guint16, tile_height * uf->image.width * 3);
 
-    rowStride = uf->image.width + 2*uf->image.trim;
-    rawImage = uf->image.image + uf->image.trim*rowStride + uf->image.trim;
+    rowStride = uf->image.width;
+    rawImage = uf->image.image;
     for (row = 0; row < uf->image.height; row += tile_height) {
 	preview_progress(widget, "Loading image",
 		0.5 + 0.5*row/uf->image.height);

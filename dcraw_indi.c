@@ -32,9 +32,17 @@ extern const double xyz_rgb[3][3];			/* XYZ from RGB */
 #define camera_red  cam_mul[0]
 #define camera_blue cam_mul[2]
 
+#define CLASS
+
 #define FORC3 for (c=0; c < 3; c++)
 #define FORC4 for (c=0; c < 4; c++)
 #define FORCC for (c=0; c < colors; c++)
+
+#define SQR(x) ((x)*(x))
+/* dcraw.c defines:
+ * #define CLIP(x) (MAX(0,MIN((x),clip_max)))
+ * But in our case maximum should already be normalized to 0xFFFF */
+#define CLIP(x) (MAX(0,MIN((x),0xFFFF)))
 
 /*
    In order to inline this calculation, I make the risky
@@ -45,8 +53,6 @@ extern const double xyz_rgb[3][3];			/* XYZ from RGB */
  */
 #define FC(row,col) \
 	(int)(filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
-
-#define CLASS
 
 void CLASS merror (void *ptr, char *where);
 
@@ -63,8 +69,8 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
 
   maximum -= black; /* maximum is changed only locally */
   if (use_auto_wb || (use_camera_wb && camera_red == -1)) {
-    FORCC min[c] = INT_MAX;
-    FORCC max[c] = count[c] = sum[c] = 0;
+    FORC4 min[c] = INT_MAX;
+    FORC4 max[c] = count[c] = sum[c] = 0;
     for (row=0; row < height; row++)
       for (col=0; col < width; col++)
 	FORCC {
@@ -78,10 +84,10 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
 	  sum[c] += val;
 	  count[c]++;
 	}
-    FORCC pre_mul[c] = count[c] / sum[c];
+    FORCC if (sum[c]) pre_mul[c] = count[c] / sum[c];
   }
   if (use_camera_wb && camera_red != -1) {
-    FORCC count[c] = sum[c] = 0;
+    FORC4 count[c] = sum[c] = 0;
     for (row=0; row < 8; row++)
       for (col=0; col < 8; col++) {
 	c = FC(row,col);
@@ -94,6 +100,7 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
     if (val)
       FORCC pre_mul[c] = count[c] / sum[c];
     else if (camera_red && camera_blue)
+      /* 'sizoef pre_mul' does not work because pre_mul is an argument (UF)*/
       memcpy (pre_mul, cam_mul, 4*sizeof(float));
     else
       dcraw_message (DCRAW_NO_CAMERA_WB,
@@ -139,6 +146,71 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
 #endif
 }
 
+void CLASS border_interpolate_INDI (const int height, const int width,
+	ushort (*image)[4], const unsigned filters, int colors,
+	int border)
+{
+  int row, col, y, x, c, sum[8]; /* changed from unsigned to int UF */
+
+  for (row=0; row < height; row++)
+    for (col=0; col < width; col++) {
+      if (col==border && row >= border && row < height-border)
+	col = width-border;
+      memset (sum, 0, sizeof sum);
+      for (y=row-1; y != row+2; y++)
+	for (x=col-1; x != col+2; x++)
+	  if (y < height && x < width) {
+	    /* Do not use BAYER macro since shrink is aways false here UF */
+	    sum[FC(y,x)] += image[row*width + col][FC(row,col)];
+	    sum[FC(y,x)+4]++;
+	  }
+      FORCC if (c != FC(row,col))
+	image[row*width+col][c] = sum[c] / sum[c+4];
+    }
+}
+
+void CLASS lin_interpolate_INDI(ushort (*image)[4], const unsigned filters,
+        const int width, const int height, const int colors) /*UF*/
+{
+  int code[8][2][32], *ip, sum[4];
+  int c, i, x, y, row, col, shift, color;
+  ushort *pix;
+
+  dcraw_message (DCRAW_VERBOSE, "Bilinear interpolation...\n"); /*UF*/
+
+  border_interpolate_INDI (height, width, image, filters, colors, 1);
+  for (row=0; row < 8; row++)
+    for (col=0; col < 2; col++) {
+      ip = code[row][col];
+      memset (sum, 0, sizeof sum);
+      for (y=-1; y <= 1; y++)
+	for (x=-1; x <= 1; x++) {
+	  shift = (y==0) + (x==0);
+	  if (shift == 2) continue;
+	  color = FC(row+y,col+x);
+	  *ip++ = (width*y + x)*4 + color;
+	  *ip++ = shift;
+	  *ip++ = color;
+	  sum[color] += 1 << shift;
+	}
+      FORCC
+	if (c != FC(row,col)) {
+	  *ip++ = c;
+	  *ip++ = sum[c];
+	}
+    }
+  for (row=1; row < height-1; row++)
+    for (col=1; col < width-1; col++) {
+      pix = image[row*width+col];
+      ip = code[row & 7][col & 1];
+      memset (sum, 0, sizeof sum);
+      for (i=8; i--; ip+=3)
+	sum[ip[2]] += pix[ip[0]] << ip[1];
+      for (i=colors; --i; ip+=2)
+	pix[ip[0]] = sum[ip[0]] / ip[1];
+    }
+}
+
 /*
    This algorithm is officially called:
 
@@ -150,8 +222,7 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
    Gradients are numbered clockwise from NW=0 to W=7.
  */
 void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
-        const int width, const int height, const int colors,
-        const int quick_interpolate, const int clip_max) /*UF*/
+        const int width, const int height, const int colors) /*UF*/
 {
   static const signed char *cp, terms[] = {
     -2,-2,+0,-1,0,0x01, -2,-2,+0,+0,1,0x01, -2,-1,-1,+0,0,0x01,
@@ -179,51 +250,11 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   }, chood[] = { -1,-1, -1,0, -1,+1, 0,+1, +1,+1, +1,0, +1,-1, 0,-1 };
   ushort (*brow[5])[4], *pix;
   int code[8][2][320], *ip, gval[8], gmin, gmax, sum[4];
-  int row, col, shift, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
+  int row, col, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
   int g, diff, thold, num, c;
 
-  dcraw_message (DCRAW_VERBOSE, "%s interpolation...\n",
-	quick_interpolate ? "Bilinear":"VNG"); /*UF*/
-
-  for (row=0; row < 8; row++) {		/* Precalculate for bilinear */
-    for (col=1; col < 3; col++) {
-      ip = code[row][col & 1];
-      memset (sum, 0, sizeof sum);
-      for (y=-1; y <= 1; y++)
-	for (x=-1; x <= 1; x++) {
-	  shift = (y==0) + (x==0);
-	  if (shift == 2) continue;
-	  color = FC(row+y,col+x);
-	  *ip++ = (width*y + x)*4 + color;
-	  *ip++ = shift;
-	  *ip++ = color;
-	  sum[color] += 1 << shift;
-	}
-      FORCC
-	if (c != FC(row,col)) {
-	  *ip++ = c;
-	  *ip++ = sum[c];
-	}
-    }
-  }
-  for (row=1; row < height-1; row++) {	/* Do bilinear interpolation */
-    for (col=1; col < width-1; col++) {
-      pix = image[row*width+col];
-      ip = code[row & 7][col & 1];
-      memset (sum, 0, sizeof sum);
-      for (g=8; g--; ) {
-	diff = pix[*ip++];
-	diff <<= *ip++;
-	sum[*ip++] += diff;
-      }
-      for (g=colors; --g; ) {
-	c = *ip++;
-	pix[c] = sum[c] / *ip++;
-      }
-    }
-  }
-  if (quick_interpolate)
-    return;
+  lin_interpolate_INDI(image, filters, width, height, colors); /*UF*/
+  dcraw_message (DCRAW_VERBOSE, "VNG interpolation...\n"); /*UF*/
 
   for (row=0; row < 8; row++) {		/* Precalculate for VNG */
     for (col=0; col < 2; col++) {
@@ -266,8 +297,8 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
       ip = code[row & 7][col & 1];
       memset (gval, 0, sizeof gval);
       while ((g = ip[0]) != INT_MAX) {		/* Calculate gradients */
-	num = (diff = pix[g] - pix[ip[1]]) >> 31;
-	gval[ip[3]] += (diff = ((diff ^ num) - num) << ip[2]);
+	diff = ABS(pix[g] - pix[ip[1]]) << ip[2];
+	gval[ip[3]] += diff;
 	ip += 5;
 	if ((g = ip[-1]) == -1) continue;
 	gval[g] += diff;
@@ -299,12 +330,9 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
       }
       FORCC {					/* Save to buffer */
 	t = pix[color];
-	if (c != color) {
-	  t += (sum[c] - sum[color])/num;
-	  if (t < 0) t = 0;
-	  if (t > clip_max) t = clip_max;
-	}
-	brow[2][col][c] = t;
+	if (c != color)
+	  t += (sum[c] - sum[color]) / num;
+	brow[2][col][c] = CLIP(t);
       }
     }
     if (row > 3)				/* Write buffer to image */
@@ -316,12 +344,6 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   memcpy (image[(row-1)*width+2], brow[1]+2, (width-4)*sizeof *image);
   free (brow[4]);
 }
-
-#define SQR(x) ((x)*(x))
-/* dcraw.c defines:
- * #define CLIP(x) (MAX(0,MIN((x),clip_max)))
- * But in our case maximum should already be normalized to 0xFFFF */
-#define CLIP(x) (MAX(0,MIN((x),0xFFFF)))
 
 void CLASS cam_to_cielab_INDI (ushort cam[4], float lab[3],
 	const int colors, const int maximum, const float rgb_cam[3][4])
@@ -358,11 +380,10 @@ void CLASS cam_to_cielab_INDI (ushort cam[4], float lab[3],
  */
 #define TS 256		/* Tile Size */
 
-void CLASS ahd_interpolate_INDI(const int height, const int width,
-	const unsigned filters, ushort (*image)[4], int *trim_p,
-	const int colors, const int maximum, const float rgb_cam[3][4])
+void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
+        const int width, const int height, const int colors,
+	const int maximum, const float rgb_cam[3][4])
 {
-  int trim = *trim_p;
   int i, j, top, left, row, col, tr, tc, fc, c, d, val, hm[2];
   ushort (*pix)[4], (*rix)[3];
   static const int dir[4] = { -1, 1, -TS, TS };
@@ -373,6 +394,8 @@ void CLASS ahd_interpolate_INDI(const int height, const int width,
    char (*homo)[TS][TS], *buffer;
 
   dcraw_message (DCRAW_VERBOSE, "AHD interpolation...\n"); /*UF*/
+
+  border_interpolate_INDI (height, width, image, filters, colors, 3);
   buffer = malloc (26*TS*TS);			/* 1664 kB */
   merror (buffer, "ahd_interpolate()");
   rgb  = (void *) buffer;
@@ -383,22 +406,15 @@ void CLASS ahd_interpolate_INDI(const int height, const int width,
     for (left=0; left < width; left += TS-6) {
       memset (rgb, 0, 12*TS*TS);
 
-/*  Horizontally interpolate green into rgb[0]:			*/
-      for (row = top; row < top+TS && row < height; row++) {
+/*  Interpolate green horizontally and vertically:		*/
+      for (row = top < 2 ? 2:top; row < top+TS && row < height-2; row++) {
 	col = left + (FC(row,left) == 1);
 	if (col < 2) col += 2;
 	for (fc = FC(row,col); col < left+TS && col < width-2; col+=2) {
-	  pix = image + row*width + col;
+	  pix = image + row*width+col;
 	  val = ((pix[-1][1] + pix[0][fc] + pix[1][1]) * 2
 		- pix[-2][fc] - pix[2][fc]) >> 2;
 	  rgb[0][row-top][col-left][1] = CLIP(val);
-	}
-      }
-/*  Vertically interpolate green into rgb[1]:			*/
-      for (row = top < 2 ? 2:top; row < top+TS && row < height-2; row++) {
-	col = left + (FC(row,left) == 1);
-	for (fc = FC(row,col); col < left+TS && col < width; col+=2) {
-	  pix = image + row*width + col;
 	  val = ((pix[-width][1] + pix[0][fc] + pix[width][1]) * 2
 		- pix[-2*width][fc] - pix[2*width][fc]) >> 2;
 	  rgb[1][row-top][col-left][1] = CLIP(val);
@@ -406,12 +422,10 @@ void CLASS ahd_interpolate_INDI(const int height, const int width,
       }
 /*  Interpolate red and blue, and convert to CIELab:		*/
       for (d=0; d < 2; d++)
-	for (row=top+1; row < top+TS-1 && row < height-1; row++) {
-	  tr = row-top;
+	for (row=top+1; row < top+TS-1 && row < height-1; row++)
 	  for (col=left+1; col < left+TS-1 && col < width-1; col++) {
-	    tc = col-left;
-	    pix = image + row*width + col;
-	    rix = &rgb[d][tr][tc];
+	    pix = image + row*width+col;
+	    rix = &rgb[d][row-top][col-left];
 	    if ((c = 2 - FC(row,col)) == 1) {
 	      c = FC(row+1,col);
 	      val = pix[0][1] + (( pix[-1][2-c] + pix[1][2-c]
@@ -428,9 +442,8 @@ void CLASS ahd_interpolate_INDI(const int height, const int width,
 	    c = FC(row,col);
 	    rix[0][c] = pix[0][c];
 	    cam_to_cielab_INDI (rix[0], flab, colors, maximum, rgb_cam);
-	    FORC3 lab[d][tr][tc][c] = 64*flab[c];
+	    FORC3 lab[d][row-top][col-left][c] = 64*flab[c];
 	  }
-	}
 /*  Build homogeneity maps from the CIELab images:		*/
       memset (homo, 0, 2*TS*TS);
       for (row=top+2; row < top+TS-2 && row < height; row++) {
@@ -473,8 +486,6 @@ void CLASS ahd_interpolate_INDI(const int height, const int width,
       }
     }
   free (buffer);
-  trim = 3;
-  *trim_p = trim;
 }
 #undef TS
 
@@ -511,7 +522,7 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
 	  (pix[    0][i]*(1-fc) + pix[      1][i]*fc) * (1-fr) +
 	  (pix[width][i]*(1-fc) + pix[width+1][i]*fc) * fr;
     }
- free (image);
+  free (image);
   width  = wide;
   height = high;
   image  = img;
@@ -530,6 +541,10 @@ void CLASS flip_image_INDI(ushort (*image)[4], int *height_p, int *width_p,
   INT64 *img, hold;
   int height = *height_p, width = *width_p;/* INDI - UF*/
 
+//  Message is suppressed because error handling is not enabled here.
+//  dcraw_message (DCRAW_VERBOSE, "Flipping image %c:%c:%c...\n",
+//	flip & 1 ? 'H':'0', flip & 2 ? 'V':'0', flip & 4 ? 'T':'0'); /*UF*/
+  
   img = (INT64 *) image;
   size = height * width;
   flag = calloc ((size+31) >> 5, sizeof *flag);

@@ -149,7 +149,7 @@ typedef struct {
 
 typedef struct {
     image_type *image;
-    int height, width, trim;
+    int height, width;
 } image_data;
 
 typedef struct {

@@ -341,9 +341,8 @@ int ufraw_convert_image(ufraw_data *uf)
     dcraw_image_stretch(&final, raw->ymag);
     uf->image.image = final.image;
     dcraw_flip_image(&final, raw->flip);
-    uf->image.trim = final.trim;
-    uf->image.height = final.height - 2 * final.trim;
-    uf->image.width = final.width - 2 * final.trim;
+    uf->image.height = final.height;
+    uf->image.width = final.width;
     preview_progress(uf->widget, "Loading image", 0.5);
     return UFRAW_SUCCESS;
 }

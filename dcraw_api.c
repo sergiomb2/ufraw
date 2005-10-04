@@ -40,7 +40,7 @@ extern char *meta_data;
 extern int meta_length;
 #define FC(filters,row,col) \
     (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
-int identify(int will_decode);
+int identify(int no_decode);
 void bad_pixels();
 void foveon_interpolate();
 void scale_colors_INDI(gushort (*image)[4], const int rgb_max, const int black,
@@ -48,14 +48,15 @@ void scale_colors_INDI(gushort (*image)[4], const int rgb_max, const int black,
     const int height, const int width, const int colors,
     float pre_mul[4], const unsigned filters, /*const*/ gushort white[8][8],
     const char *ifname);
+void lin_interpolate_INDI(gushort (*image)[4], const unsigned filters,
+    const int width, const int height, const int colors);
 void vng_interpolate_INDI(gushort (*image)[4], const unsigned filters,
-    const int width, const int height, const int colors,
-    const int quick_interpolate, const int rgb_max);
+    const int width, const int height, const int colors, const int rgb_max);
 void cam_to_cielab_INDI (gushort cam[4], float lab[3],
-	const int colors, const int maximum, float rgb_cam[3][4]);
-void ahd_interpolate_INDI(const int height, const int width,
-	const unsigned filters, gushort (*image)[4], int *trim_p,
-	const int colors, const int maximum, float rgb_cam[3][4]);
+    const int colors, const int maximum, float rgb_cam[3][4]);
+void ahd_interpolate_INDI(gushort (*image)[4], const unsigned filters,
+    const int width, const int height, const int colors,
+    const int maximum, float rgb_cam[3][4]);
 void flip_image_INDI(gushort (*image)[4], int *height_p, int *width_p,
     const int flip);
 void fuji_rotate_INDI(gushort (**image_p)[4], int *height_p, int *width_p,
@@ -84,7 +85,7 @@ int dcraw_open(dcraw_data *h,char *filename)
         h->message = messageBuffer;
         return DCRAW_OPEN_ERROR;
     }
-    if (identify(1)) { /* dcraw already sent a dcraw_message() */
+    if (identify(0)) { /* dcraw already sent a dcraw_message() */
         fclose(ifp);
 	g_free(ifname);
         h->message = messageBuffer;
@@ -101,7 +102,6 @@ int dcraw_open(dcraw_data *h,char *filename)
     h->colors = colors;
     h->filters = filters;
     h->raw_color = raw_color;
-    h->trim = (h->filters!=0);
     h->shrink = shrink = (h->filters!=0);
     h->ymag = ymag;
     /* copied from dcraw's main() */
@@ -139,7 +139,6 @@ int dcraw_load_raw(dcraw_data *h)
         colors++;
     }
     h->raw.colors = colors;
-    h->raw.trim = 0;
     h->fourColorFilters = filters;
     dcraw_message(DCRAW_VERBOSE, "Loading %s %s image from %s...\n",
                 make, model, ifname);
@@ -177,7 +176,6 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh, int scale)
 
     recombine = ( hh->colors==3 && hh->raw.colors==4 );
     f->colors = hh->colors;
-    f->trim = 0;
 
     /* hh->raw.image is shrunk in half if there are filters.
      * If scale is odd we need to "unshrink" it using the info in
@@ -250,7 +248,6 @@ int dcraw_image_resize(dcraw_image_data *image, int size)
     wid = image->width;
     iBuf = (void*)g_new0(guint64, h * w * 4);
     norm = div * div;
-    /* BUG - handle image->trim */
 
     for(r=0; r<image->height; r++) {
         /* r should be divided between ri and rii */
@@ -309,12 +306,8 @@ int dcraw_flip_image(dcraw_image_data *image, int flip)
     g_free(messageBuffer);
     messageBuffer = NULL;
     lastStatus = DCRAW_SUCCESS;
-    if (flip) {
-//        dcraw_message(DCRAW_VERBOSE, "Flipping image %c:%c:%c...\n",
-//                flip & 1 ? 'H':'0', flip & 2 ? 'V':'0',
-//                flip & 4 ? 'T':'0');
+    if (flip)
         flip_image_INDI(image->image, &image->height, &image->width, flip);
-    }
 //    h->message = messageBuffer;
     return lastStatus;
 }
@@ -348,7 +341,6 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     f->height = h->height;
     fujiWidth = h->fuji_width;
     f->colors = h->colors;
-    f->trim = h->trim;
     f->image = g_new0(dcraw_image_type, f->height * f->width);
 
     if (h->filters==0) {
@@ -369,6 +361,7 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 	ff = h->filters;
     }
     /* It might be better to report an error here: */
+    /* (dcraw also forbids AHD for Fuji rotated images) */
     if (interpolation==dcraw_ahd_interpolation && h->colors > 3)
 	interpolation = dcraw_vng_interpolation;
     f4 = h->fourColorFilters;
@@ -380,14 +373,12 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
                 rgbWB[FC(f4,r,c)]/(h->rgbMax-h->black), 0), 0xFFFF);
 
     if (interpolation==dcraw_bilinear_interpolation)
-	vng_interpolate_INDI(f->image, ff, f->width, f->height,
-		cl, TRUE, 0xFFFF);
+	lin_interpolate_INDI(f->image, ff, f->width, f->height, cl);
     else if (interpolation==dcraw_vng_interpolation)
-	vng_interpolate_INDI(f->image, ff, f->width, f->height,
-		cl, FALSE, 0xFFFF);
+	vng_interpolate_INDI(f->image, ff, f->width, f->height, cl, 0xFFFF);
     else if (interpolation==dcraw_ahd_interpolation)
-	ahd_interpolate_INDI(f->height, f->width,
-		h->filters, f->image, &f->trim, f->colors, 0xFFFF, h->rgb_cam);
+	ahd_interpolate_INDI(f->image, ff, f->width, f->height, cl,
+		0xFFFF, h->rgb_cam);
 
     if (cl==4 && h->colors == 3) {
         for (i=0; i<f->height*f->width; i++)
