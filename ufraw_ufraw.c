@@ -284,8 +284,9 @@ int ufraw_convert_image(ufraw_data *uf)
     if ( conf->interpolation==half_interpolation ||
          ( conf->size==0 && conf->shrink>1 ) ||
          ( conf->size>0 &&
-	   conf->size<MAX(raw->raw.height, raw->raw.width) )  ) {
-        dcraw_finalize_shrink(&final, raw, MAX(conf->shrink,2));
+	   conf->size<MAX(raw->raw.height, raw->raw.width) ) ||
+	 ( raw->filters==0 )  ) {
+        dcraw_finalize_shrink(&final, raw, MAX(conf->shrink,1>>raw->shrink));
  
         uf->image.height = final.height;
         uf->image.width = final.width;
