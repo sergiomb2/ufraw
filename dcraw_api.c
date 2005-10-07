@@ -353,7 +353,7 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 	return lastStatus;
     }
     cl = h->colors;
-    if (interpolation==dcraw_four_color_interpolation && h->colors == 3) {
+    if (interpolation==dcraw_four_color_interpolation) {
 	ff = h->fourColorFilters;
         cl = 4;
 	interpolation = dcraw_vng_interpolation;

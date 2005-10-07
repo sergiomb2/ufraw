@@ -4609,13 +4609,8 @@ int CLASS identify (int no_decode)
   raw_color = use_gamma = xmag = ymag = 1;
   filters = UINT_MAX;	/* 0 = no filters, UINT_MAX = unknown */
   for (i=0; i < 4; i++) {
-#ifdef DCRAW_NOMAIN /*UF*/
-    cam_mul[i] = 1 & i;
-    pre_mul[i] = 1;
-#else
     cam_mul[i] = i == 1;
     pre_mul[i] = i < 3;
-#endif /*DCRAW_NOMAIN*/ /*UF*/
     FORC3 rgb_cam[c][i] = c == i;
   }
   colors = 3;
@@ -5529,10 +5524,9 @@ dng_skip:
     rgb_cam[0][c] *= red_scale;
     rgb_cam[2][c] *= blue_scale;
   }
-#ifdef DCRAW_NOMAIN /*UF*/
-  if (four_color_rgb && filters && colors == 3) {
-#else
   if (filters && colors == 3)
+#ifdef DCRAW_NOMAIN /*UF*/
+  {
 #endif /*DCRAW_NOMAIN*/ /*UF*/
     for (i=0; i < 32; i+=4) {
       if ((filters >> i & 15) == 9)

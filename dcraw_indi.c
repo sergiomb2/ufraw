@@ -14,7 +14,7 @@
  * independed of dcraw's global variables.
  *
  * NOTICE: One must check if updates in dcraw.c effect this code.
- * This file was last synchronized with dcraw 7.20
+ * This file was last synchronized with dcraw 7.74
  */
 
 #include <math.h>
@@ -73,7 +73,7 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
     FORC4 max[c] = count[c] = sum[c] = 0;
     for (row=0; row < height; row++)
       for (col=0; col < width; col++)
-	FORCC {
+	FORC4 {
 	  val = image[row*width+col][c];
 	  if (!val) continue;
 	  if (min[c] > val) min[c] = val;
@@ -84,7 +84,7 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
 	  sum[c] += val;
 	  count[c]++;
 	}
-    FORCC if (sum[c]) pre_mul[c] = count[c] / sum[c];
+    FORC4 if (sum[c]) pre_mul[c] = count[c] / sum[c];
   }
   if (use_camera_wb && camera_red != -1) {
     FORC4 count[c] = sum[c] = 0;
@@ -95,24 +95,23 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
 	  sum[c] += val;
 	count[c]++;
       }
-    val = 1;
-    FORCC if (sum[c] == 0) val = 0;
-    if (val)
-      FORCC pre_mul[c] = count[c] / sum[c];
+    if (sum[0] && sum[1] && sum[2] && sum[3])
+      FORC4 pre_mul[c] = count[c] / sum[c];
     else if (camera_red && camera_blue)
-      /* 'sizoef pre_mul' does not work because pre_mul is an argument (UF)*/
+      /* 'sizeof pre_mul' does not work because pre_mul is an argument (UF)*/
       memcpy (pre_mul, cam_mul, 4*sizeof(float));
     else
       dcraw_message (DCRAW_NO_CAMERA_WB,
 	      "%s: Cannot use camera white balance.\n", ifname);
   }
+  if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
   dmin = DBL_MAX;
-  FORCC if (dmin > pre_mul[c])
+  FORC4 if (dmin > pre_mul[c])
 	    dmin = pre_mul[c];
-  FORCC pre_mul[c] /= dmin;
+  FORC4 pre_mul[c] /= dmin;
     
   dcraw_message(DCRAW_VERBOSE, "Scaling with black=%d, pre_mul[] =", black);
-  FORCC dcraw_message(DCRAW_VERBOSE, " %f", pre_mul[c]);
+  FORC4 dcraw_message(DCRAW_VERBOSE, " %f", pre_mul[c]);
   dcraw_message(DCRAW_VERBOSE, "\n");
  
 /* The rest of the scaling is done somewhere else UF*/
@@ -122,27 +121,36 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
     pre_mul[2] *= blue_scale;
   }
   while (maximum << shift < 0x8000) shift++;
-  FORCC pre_mul[c] *= 1 << shift;
+  FORC4 pre_mul[c] *= 1 << shift;
   maximum <<= shift;
 
   if (write_fun != write_ppm || bright < 1) {
     maximum *= bright;
     if (maximum > 0xffff)
 	maximum = 0xffff;
-    FORCC pre_mul[c] *= bright;
+    FORC4 pre_mul[c] *= bright;
   }
   clip_max = clip_color ? maximum : 0xffff;
   for (row=0; row < height; row++)
     for (col=0; col < width; col++)
-      FORCC {
+      FORC4 {
 	val = image[row*width+col][c];
 	if (!val) continue;
 	val -= black;
 	val *= pre_mul[c];
-	if (val < 0) val = 0;
-	if (val > clip_max) val = clip_max;
-	image[row*width+col][c] = val;
+	image[row*width+col][c] = CLIP(val);
       }
+  if (filters && colors == 3) {
+    if (four_color_rgb) {
+      colors++;
+      FORC3 rgb_cam[c][3] = rgb_cam[c][1] /= 2;
+    } else {
+      for (row = FC(1,0) >> 1; row < height; row+=2)
+        for (col = FC(row,1) & 1; col < width; col+=2)
+          image[row*width+col][1] = image[row*width+col][3];
+      filters &= ~((filters & 0x55555555) << 1);
+    }
+  }
 #endif
 }
 
