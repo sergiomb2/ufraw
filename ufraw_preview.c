@@ -2156,6 +2156,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     ufraw_focus(previewWindow, FALSE);
     gtk_widget_destroy(previewWindow);
     gtk_object_sink(GTK_OBJECT(data->ToolTips));
+    /* Make sure that there are no preview idle task remaining */
+    g_idle_remove_by_data(data);
 
     /* In interactive mode outputPath is taken into account only once */
     strcpy(uf->conf->outputPath, "");

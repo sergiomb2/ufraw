@@ -359,7 +359,7 @@ void CLASS cam_to_cielab_INDI (ushort cam[4], float lab[3],
   int c, i, j, k;
   float r, xyz[3];
   static const float d65[3] = { 0.950456, 1, 1.088754 };
-  static float cbrt[0x10000], xyz_cam[3][3];
+  static float cbrt[0x10000], xyz_cam[3][4];
 
   if (cam == NULL) {
     for (i=0; i < 0x10000; i++) {
