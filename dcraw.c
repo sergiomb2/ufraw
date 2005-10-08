@@ -5541,22 +5541,12 @@ dng_skip:
     rgb_cam[2][c] *= blue_scale;
   }
   if (filters && colors == 3)
-#ifdef DCRAW_NOMAIN /*UF*/
-  {
-#endif /*DCRAW_NOMAIN*/ /*UF*/
     for (i=0; i < 32; i+=4) {
       if ((filters >> i & 15) == 9)
 	filters |= 2 << i;
       if ((filters >> i & 15) == 6)
 	filters |= 8 << i;
     }
-#ifdef DCRAW_NOMAIN /*UF*/
-    colors++;
-    cam_mul[3] = cam_mul[1];
-    pre_mul[3] = pre_mul[1];
-    FORC3 rgb_cam[c][3] = rgb_cam[c][1] /= 2;
-  }
-#endif /*DCRAW_NOMAIN*/ /*UF*/
   fseek (ifp, data_offset, SEEK_SET);
   return 0;
 }

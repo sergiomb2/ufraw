@@ -354,12 +354,12 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 	return lastStatus;
     }
     cl = h->colors;
-    if (interpolation==dcraw_four_color_interpolation) {
+    if (interpolation==dcraw_four_color_interpolation && h->colors == 3) {
 	ff = h->fourColorFilters;
         cl = 4;
 	interpolation = dcraw_vng_interpolation;
     } else {
-	ff = h->filters;
+	ff = h->filters &= ~((h->filters & 0x55555555) << 1);
     }
     /* It might be better to report an error here: */
     /* (dcraw also forbids AHD for Fuji rotated images) */
