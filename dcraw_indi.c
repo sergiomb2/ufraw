@@ -109,7 +109,7 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
   FORC4 if (dmin > pre_mul[c])
 	    dmin = pre_mul[c];
   FORC4 pre_mul[c] /= dmin;
-    
+
   dcraw_message(DCRAW_VERBOSE, "Scaling with black=%d, pre_mul[] =", black);
   FORC4 dcraw_message(DCRAW_VERBOSE, " %f", pre_mul[c]);
   dcraw_message(DCRAW_VERBOSE, "\n");
