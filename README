@@ -9,7 +9,7 @@ It reads raw images using Dave Coffin's raw conversion utility DCRaw.
 And it supports basic color management using Little CMS, allowing
 the user to apply color profiles.
  
-Ufraw was originally based on the GIMP plug-in by Dave Coffin
+UFRaw was originally based on the GIMP plug-in by Dave Coffin
 http://www.cybercom.net/~dcoffin/
 and on Pawel T. Jochym's (jochym at ifj edu pl) plug-in.
 
@@ -128,7 +128,7 @@ autoconf and automake to be installed. You should './autogen.sh' before
 './configure'.
 
 Using the CVS, new versions of dcraw.c can be easily updated. Copy the latest
-version of dcraw.c from Dave Coffin to a ufraw working directory. Then type:
+version of dcraw.c from Dave Coffin to a UFRaw working directory. Then type:
 
 cvs update -r dcraw-original-branch dcraw.c
 cvs commit -m "dcraw original 7.30" dcraw.c

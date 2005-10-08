@@ -124,7 +124,7 @@
 	    saving (TONE_CURVE, RED_CURVE, GREEN_CURVE, or BLUE_CURVE). Typically, the curve would be tone.
 
 
-  03/11/2005    Udi added some debugging code for use with UFRAW. Unfortunately, the debugging code uses
+  03/11/2005    Udi added some debugging code for use with UFRaw. Unfortunately, the debugging code uses
 	    macros with variable arguments, which are not supported by all compilers (namely MSVC).
 	    I added the following:
 	    
@@ -132,8 +132,8 @@
 	                        the program to still print out debug information, though not quite as robust
 	                        as with using gcc.
 
-	    __WITH_UFRAW__    : Define this if this code is compiling with UFRAW, This allows for connecting
-	                        out to the UFRAW error handler.
+	    __WITH_UFRAW__    : Define this if this code is compiling with UFRaw, This allows for connecting
+	                        out to the UFRaw error handler.
 
 	    In regards to these flags, the code has been changed around a little bit. I also moved some code
 	    to more "appropriate" locations, in keeping with the layout of these files.
@@ -157,7 +157,7 @@
   03/04/2005 Added a new function called ResampleCurve that allows the programmer to resample curves
 	    that are contained in a NikonCurve structure. A cubic spline interpolator is used in the
 	    resampling for the smoothest possible curve. This functions was added at the request of
-	    Udi Fuchs to allow UFRAW to read in and resample curves stored in NEF files.
+	    Udi Fuchs to allow UFRaw to read in and resample curves stored in NEF files.
 
 	    A word of caution when using this function. While the function stores all of it's results
 	    in the passed in curve structure, those results may not be compatible with the camera and/or
@@ -204,7 +204,7 @@
 	    static, resulting in errors when trying to compile into another program.
 
 	    Added a function to remove redundant calculated curve data and placing it in a 
-	    an allocated array. This should help facilitate a no diska access interface to UFRAW.
+	    an allocated array. This should help facilitate a no diska access interface to UFRaw.
 
 	    Tweaked a few lines that were either not compiling or had warnings when compiled with
 	    gcc.
@@ -280,7 +280,7 @@
     #define vsnprintf _vsnprintf
 #endif
 
-//Define this if using with UFRAW
+//Define this if using with UFRaw
 #define __WITH_UFRAW__
 
 //Flags used to determine what file we're trying to process.

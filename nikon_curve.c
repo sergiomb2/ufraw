@@ -25,7 +25,7 @@
 
 #ifdef __WITH_UFRAW__
     #include <glib.h>
-    #include <ufraw.h>
+    #include "ufraw.h"
 #else
     #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #endif

@@ -10,7 +10,7 @@
  * http://www.cybercom.net/~dcoffin/
  *
  * UFRaw is licensed under the GNU General Public License.
- * It uses "dcraw" code to do the actual raw decoding.
+ * It uses DCRaw code to do the actual raw decoding.
  */
 
 #ifndef _UFRAW_H
@@ -92,7 +92,7 @@ typedef struct {
  * RC: users defaults from ~/.ufrawrc. These options are set from the last
  *     interactive session.
  *     If saveConfiguration==disabled_state, IMAGE options are not saved.
- * ID: ufraw ID files used on their original image.
+ * ID: UFRaw ID files used on their original image.
  * CONF: same ID files used as configuration for other raw images.
  * CMD: command line options.
  * UI: interactive input.
@@ -173,7 +173,7 @@ extern const char raw_ext[];
 extern const char *file_type[];
 
 /* ufraw_binary contains the name of the binary file for error messages.
- * It should be set in every ufraw main() */
+ * It should be set in every UFRaw main() */
 extern char *ufraw_binary;
 
 /* prototypes for functions in ufraw_ufraw.c */
@@ -242,7 +242,7 @@ void ufraw_chooser(conf_data *conf, char *defPath);
 int ufraw_exif_from_raw(void *ifd, char *filename, unsigned char **exifBuf,
     unsigned int *exifBufLen);
 
-/* status numbers from dcraw and ufraw */
+/* status numbers from DCRaw and UFRaw */
 #define UFRAW_SUCCESS 0
 //#define UFRAW_DCRAW_ERROR 1 /* General dcraw unrecoverable error */
 //#define UFRAW_DCRAW_UNSUPPORTED 2

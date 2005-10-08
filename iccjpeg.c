@@ -16,14 +16,14 @@
  * change all the "unsigned int" variables to "INT32".  You'll also need
  * to find a malloc() replacement that can allocate more than 64K.
  *
- * To code was copied to ufraw from lcms-1.14 on Jan 2005.
+ * To code was copied to UFRaw from lcms-1.14 on Jan 2005.
  * Changes:
  * 15-Jun-2005 #ifdef HAVE_LIBJPEG on the entire code
  *    Jan-2005 added this comment...
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #ifdef HAVE_LIBJPEG

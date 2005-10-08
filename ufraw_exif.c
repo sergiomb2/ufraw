@@ -15,7 +15,7 @@
 //#define HAVE_LIBEXIF
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <sys/stat.h>
@@ -87,7 +87,7 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
     TIFFSetErrorHandler(tiff_message);
     TIFFSetWarningHandler(tiff_message);
     ufraw_message(UFRAW_RESET, NULL);
-    /* It seems more elegant to use the same FILE * as dcraw,
+    /* It seems more elegant to use the same FILE * as DCRaw,
      * but it does not work for me at the moment */
 //    if ((tiff = TIFFFdOpen(fileno((FILE *)ifp), filename, "r")) == NULL)
     ifp = ifp;

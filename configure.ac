@@ -1,5 +1,5 @@
-dnl $Id: configure.ac,v 1.18 2005/09/28 05:14:53 nkbj Exp $
-AC_INIT(ufraw, 0.6)
+dnl $Id: configure.ac,v 1.19 2005/10/08 08:34:15 nkbj Exp $
+AC_INIT(UFRaw, 0.6)
 AC_PREREQ(2.57)
 
 # Create host_os, host_cpu variables
@@ -82,7 +82,7 @@ if test "!(-z $PREFIX)"; then
   LDFLAGS="$LDFLAGS -L$PREFIX/lib"
 fi
 
-# If the gimp plug-in is not built, ufraw is completely independent of
+# If the gimp plug-in is not built, UFRaw is completely independent of
 # the gimp.
 AC_MSG_CHECKING(whether to build the gimp plug-in)
 AC_ARG_ENABLE(gimp,
@@ -94,7 +94,7 @@ if test $enable_gimp = yes; then
     gimp_pkg=gimpui-2.0
 fi
 
-# DEPS packages must exist to build ufraw
+# DEPS packages must exist to build UFRaw
 PKG_CHECK_MODULES(DEPS, $gimp_pkg gtk+-2.0 >= 2.4 lcms)
 
 # Disable deprecated functions on tested versions of GTK
@@ -131,7 +131,7 @@ fi
 # Ensure that getopt_long is available.  It is included in GNU libc and
 # in at least most BSD libcs.  If not found, search for it in libgnugetopt.
 AC_SEARCH_LIBS(getopt_long, gnugetopt, ,
-  AC_MSG_ERROR(can not build ufraw without getopt_long))
+  AC_MSG_ERROR(can not build UFRaw without getopt_long))
 
 # XXX A comment is required to explain this. 
 #AC_SEARCH_LIBS(ntohs, ws2_32)
@@ -174,7 +174,7 @@ fi
 
 UFRAW_CFLAGS="$EXIF_CFLAGS $DEPS_CFLAGS"
 if test $have_jpeg = no; then
-  # dcraw assumes jpeg unless NO_JPEG, rather than using HAVE_LIBJPEG
+  # DCRaw assumes jpeg unless NO_JPEG, rather than using HAVE_LIBJPEG
   UFRAW_CFLAGS="$UFRAW_CFLAGS -DNO_JPEG"
 fi
 UFRAW_LDADD="$EXIF_LIBS $DEPS_LIBS"

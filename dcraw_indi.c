@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
-#include <dcraw_api.h>
+#include "dcraw_api.h"
 
 #define ushort UshORt
 typedef unsigned short ushort;

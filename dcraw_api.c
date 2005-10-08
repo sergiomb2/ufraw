@@ -131,7 +131,7 @@ int dcraw_load_raw(dcraw_data *h)
 	    + meta_length);
     meta_data = (char *) (image + iheight*iwidth);
     /* copied from the end of dcraw's identify() */
-    if (filters!=0 && colors == 3) {
+    if (filters && colors == 3) {
         for (i=0; i < 32; i+=4) {
             if ((filters >> i & 15) == 9) filters |= 2 << i;
             if ((filters >> i & 15) == 6) filters |= 8 << i;

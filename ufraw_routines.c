@@ -5,11 +5,11 @@
  * ufraw_routines.c - general routines
  *
  * UFRaw is licensed under the GNU General Public License.
- * It uses "dcraw" code to do the actual raw decoding.
+ * It uses DCRaw code to do the actual raw decoding.
 */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #if defined(HAVE_CANONICALIZE_FILE_NAME) && !defined(_GNU_SOURCE)

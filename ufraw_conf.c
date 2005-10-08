@@ -5,11 +5,11 @@
  * ufraw_conf.c - handle configuration issues
  *
  * UFRaw is licensed under the GNU General Public License.
- * It uses "dcraw" code to do the actual raw decoding.
+ * It uses DCRaw code to do the actual raw decoding.
 */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <string.h>

@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-ufraw - Convert camera RAW images to standard image files.
+UFRaw - Convert camera RAW images to standard image files.
 
 =head1 SYNOPSIS
 

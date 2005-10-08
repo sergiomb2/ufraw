@@ -5,11 +5,11 @@
  * ufraw_developer.c - functions for developing images or more exactly pixels.
  *
  * UFRaw is licensed under the GNU General Public License.
- * It uses "dcraw" code to do the actual raw decoding.
+ * It uses DCRaw code to do the actual raw decoding.
 */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <stdio.h>
