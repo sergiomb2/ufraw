@@ -2083,11 +2083,7 @@ void CLASS foveon_load_raw()
     }
   }
   foveon_load_camf();
-#ifdef DCRAW_NOMAIN /*UF*/
-  maximum = clip_max = 0x0fff;
-#else
   maximum = clip_max = 0xffff;
-#endif /*DCRAW_NOMAIN*/ /*UF*/
 }
 
 char * CLASS foveon_camf_param (char *block, char *param)

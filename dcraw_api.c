@@ -145,7 +145,7 @@ int dcraw_load_raw(dcraw_data *h)
     (*load_raw)();
     bad_pixels();
     if (is_foveon) {
-        dcraw_message(DCRAW_VERBOSE, "Foveon interpolation\n");
+        maximum = 0x0fff; /* Fix for dark foveon images. */
         foveon_interpolate();
 	h->raw.width = width;
 	h->raw.height = height;
@@ -318,11 +318,12 @@ int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB)
     messageBuffer = NULL;
     lastStatus = DCRAW_SUCCESS;
     memcpy(h->post_mul, h->pre_mul, sizeof h->post_mul);
-    /* BUG white should not be global */
-    scale_colors_INDI(h->raw.image,
-            h->rgbMax-h->black, h->black, useAutoWB, useCameraWB,
-            h->cam_mul, h->raw.height, h->raw.width, h->raw.colors,
-            h->post_mul, h->filters, white, ifname);
+    if (!is_foveon) /* foveon_interpolate() do this. */
+        /* BUG white should not be global */
+        scale_colors_INDI(h->raw.image,
+                h->rgbMax-h->black, h->black, useAutoWB, useCameraWB,
+                h->cam_mul, h->raw.height, h->raw.width, h->raw.colors,
+                h->post_mul, h->filters, white, ifname);
     h->message = messageBuffer;
     return lastStatus;
 }
