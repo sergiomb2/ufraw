@@ -1,6 +1,5 @@
 For UFRaw-0.6
 =============
-Use AHD interpolation
 
 For the future
 ==============
@@ -19,3 +18,4 @@ Better EXIF support
 
 Done
 ====
+Use AHD interpolation as default
