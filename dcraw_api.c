@@ -329,7 +329,7 @@ int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB)
 }
 
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
-	int interpolation, int rgbWB[4], int max)
+	int interpolation, int rgbWB[4])
 {
     int fujiWidth, i, r, c, cl;
     unsigned ff, f4;
@@ -344,15 +344,9 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     f->colors = h->colors;
     f->image = g_new0(dcraw_image_type, f->height * f->width);
 
-    if (h->filters==0) {
-	for (r=0; r<h->height; r++)
-	    for (c=0; c<h->width; c++)
-		for (cl=0; cl<h->colors; cl++)
-		    f->image[r*f->width+c][cl] = MIN( MAX( (gint64)
-			    (h->raw.image[r*h->raw.width+c][cl] - h->black) *
-				rgbWB[cl]/(h->rgbMax-h->black), 0), max);
-	return lastStatus;
-    }
+    if (h->filters==0)
+	return DCRAW_ERROR;
+
     cl = h->colors;
     if (interpolation==dcraw_four_color_interpolation && h->colors == 3) {
 	ff = h->fourColorFilters;

@@ -323,7 +323,7 @@ int ufraw_convert_image(ufraw_data *uf)
                 conf->saturation,
                 &conf->curve[conf->curveIndex]);
         dcraw_finalize_interpolate(&final, raw, conf->interpolation,
-		uf->developer->rgbWB, uf->developer->max);
+		uf->developer->rgbWB);
 	uf->developer->rgbMax = 0xFFFF;
         for (c=0; c<4; c++)
 	    uf->developer->rgbWB[c] = uf->developer->rgbMax;

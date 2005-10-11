@@ -41,7 +41,7 @@ int dcraw_image_stretch(dcraw_image_data *image, int ymag);
 int dcraw_flip_image(dcraw_image_data *image, int flip);
 int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB);
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
-	int interpolation, int rgbWB[4], int max);
+	int interpolation, int rgbWB[4]);
 void dcraw_close(dcraw_data *h);
 
 #define DCRAW_SUCCESS 0
