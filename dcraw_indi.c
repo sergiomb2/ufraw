@@ -39,10 +39,12 @@ extern const double xyz_rgb[3][3];			/* XYZ from RGB */
 #define FORCC for (c=0; c < colors; c++)
 
 #define SQR(x) ((x)*(x))
+#define LIM(x,min,max) MAX(min,MIN(x,max))
+#define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 /* dcraw.c defines:
- * #define CLIP(x) (MAX(0,MIN((x),clip_max)))
+ * #define CLIP(x) LIM(x,0,clip_max)
  * But in our case maximum should already be normalized to 0xFFFF */
-#define CLIP(x) (MAX(0,MIN((x),0xFFFF)))
+#define CLIP(x) LIM(x,0,0xFFFF)
 
 /*
    In order to inline this calculation, I make the risky
@@ -422,10 +424,10 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 	  pix = image + row*width+col;
 	  val = ((pix[-1][1] + pix[0][fc] + pix[1][1]) * 2
 		- pix[-2][fc] - pix[2][fc]) >> 2;
-	  rgb[0][row-top][col-left][1] = CLIP(val);
+	  rgb[0][row-top][col-left][1] = ULIM(val,pix[-1][1],pix[1][1]);
 	  val = ((pix[-width][1] + pix[0][fc] + pix[width][1]) * 2
 		- pix[-2*width][fc] - pix[2*width][fc]) >> 2;
-	  rgb[1][row-top][col-left][1] = CLIP(val);
+	  rgb[1][row-top][col-left][1] = ULIM(val,pix[-width][1],pix[width][1]);
 	}
       }
 /*  Interpolate red and blue, and convert to CIELab:		*/
