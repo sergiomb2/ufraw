@@ -19,8 +19,8 @@
    copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
    purchase a license from the author.
 
-   $Revision: 1.289 $
-   $Date: 2005/10/08 04:03:17 $
+   $Revision: 1.292 $
+   $Date: 2005/10/19 21:55:29 $
  */
 
 #define _GNU_SOURCE
@@ -101,7 +101,7 @@ void (*load_raw)();
 float bright=1, red_scale=1, blue_scale=1, sigma_d=0, sigma_r=0;
 int four_color_rgb=0, document_mode=0;
 int verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_rgb=0;
-int fuji_secondary, use_secondary=0;
+int fuji_layout, fuji_secondary, use_secondary=0;
 float cam_mul[4], pre_mul[4], rgb_cam[3][4];	/* RGB from camera color */
 const double xyz_rgb[3][3] = {			/* XYZ from RGB */
   { 0.412453, 0.357580, 0.180423 },
@@ -132,9 +132,11 @@ struct decode {
 
 #define SQR(x) ((x)*(x))
 #define ABS(x) (((int)(x) ^ ((int)(x) >> 31)) - ((int)(x) >> 31))
-#define MIN(a,b) (((a) < (b)) ? (a) : (b))
-#define MAX(a,b) (((a) > (b)) ? (a) : (b))
-#define CLIP(x) (MAX(0,MIN((x),clip_max)))
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define LIM(x,min,max) MAX(min,MIN(x,max))
+#define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
+#define CLIP(x) LIM(x,0,clip_max)
 
 /*
    In order to inline this calculation, I make the risky
@@ -1096,49 +1098,27 @@ void CLASS nikon_e2100_load_raw()
 /*
    The Fuji Super CCD is just a Bayer grid rotated 45 degrees.
  */
-void CLASS fuji_s2_load_raw()
+void CLASS fuji_load_raw()
 {
-  ushort pixel[2944];
+  ushort *pixel;
   int row, col, r, c;
 
-  for (row=0; row < 2144; row++) {
-    read_shorts (pixel, 2944);
-    for (col=0; col < 2880; col++) {
-      r = row + ((col+1) >> 1);
-      c = 2143 - row + (col >> 1);
-      BAYER(r,c) = pixel[col];
-    }
-  }
-}
-
-void CLASS fuji_s3_load_raw()
-{
-  ushort pixel[4352];
-  int row, col, r, c;
-
-  for (row=0; row < 1440; row++) {
-    read_shorts (pixel, 4352);
-    for (col=0; col < 4288; col++) {
-      r = 2143 + row - (col >> 1);
-      c = row + ((col+1) >> 1);
-      BAYER(r,c) = pixel[col];
-    }
-  }
-}
-
-void CLASS fuji_common_load_raw()
-{
-  ushort pixel[2944];
-  int row, col, r, c;
-
+  pixel = calloc (raw_width, sizeof *pixel);
+  merror (pixel, "fuji_load_raw()");
   for (row=0; row < raw_height; row++) {
     read_shorts (pixel, raw_width);
-    for (col=0; col <= fuji_width; col++) {
-      r = fuji_width - col + (row >> 1);
-      c = col + ((row+1) >> 1);
+    for (col=0; col < fuji_width << !fuji_layout; col++) {
+      if (fuji_layout) {
+	r = fuji_width - 1 - col + (row >> 1);
+	c = col + ((row+1) >> 1);
+      } else {
+	r = fuji_width - 1 + row - (col >> 1);
+	c = row + ((col+1) >> 1);
+      }
       BAYER(r,c) = pixel[col];
     }
   }
+  free (pixel);
 }
 
 void CLASS rollei_load_raw()
@@ -3103,10 +3083,10 @@ void CLASS ahd_interpolate()
 	  pix = image + row*width+col;
 	  val = ((pix[-1][1] + pix[0][fc] + pix[1][1]) * 2
 		- pix[-2][fc] - pix[2][fc]) >> 2;
-	  rgb[0][row-top][col-left][1] = CLIP(val);
+	  rgb[0][row-top][col-left][1] = ULIM(val,pix[-1][1],pix[1][1]);
 	  val = ((pix[-width][1] + pix[0][fc] + pix[width][1]) * 2
 		- pix[-2*width][fc] - pix[2*width][fc]) >> 2;
-	  rgb[1][row-top][col-left][1] = CLIP(val);
+	  rgb[1][row-top][col-left][1] = ULIM(val,pix[-width][1],pix[width][1]);
 	}
       }
 /*  Interpolate red and blue, and convert to CIELab:		*/
@@ -4098,14 +4078,26 @@ void CLASS parse_fuji (int offset)
 
   fseek (ifp, offset, SEEK_SET);
   entries = get4();
-  if (entries > 60) return;
+  if (entries > 255) return;
   while (entries--) {
     tag = get2();
     len = get2();
     save = ftell(ifp);
+    if (tag == 0x100) {
+      raw_height = get2();
+      raw_width  = get2();
+    } else if (tag == 0x121) {
+      height = get2();
+      if ((width = get2()) == 4284) width += 3;
+    } else if (tag == 0x130)
+      fuji_layout = fgetc(ifp) >> 7;
     if (tag == 0x2ff0)
       FORC4 cam_mul[c ^ 1] = get2();
     fseek (ifp, save+len, SEEK_SET);
+  }
+  if (fuji_layout) {
+    height *= 2;
+    width  /= 2;
   }
 }
 
@@ -4608,7 +4600,7 @@ int CLASS identify (int no_decode)
       (cp = memmem (head, 32, "IIII", 4)))
     parse_phase_one (cp-head);
   else if (order == 0x4949 || order == 0x4d4d) {
-    if (!memcmp (head+6, "HEAPCCDR", 8)) {
+    if (!memcmp (head+6,"HEAPCCDR",8)) {
       data_offset = hlen;
       parse_ciff (hlen, fsize - hlen);
     } else {
@@ -4616,13 +4608,13 @@ int CLASS identify (int no_decode)
       if (!dng_version && !strncmp(make,"NIKON",5) && filters == UINT_MAX)
 	make[0] = 0;
     }
-  } else if (!memcmp (head, "\xff\xd8\xff\xe1", 4) &&
-	     !memcmp (head+6, "Exif", 4)) {
+  } else if (!memcmp (head,"\xff\xd8\xff\xe1",4) &&
+	     !memcmp (head+6,"Exif",4)) {
     fseek (ifp, 4, SEEK_SET);
     fseek (ifp, 4 + get2(), SEEK_SET);
     if (fgetc(ifp) != 0xff)
       parse_tiff(12);
-  } else if (!memcmp (head, "BM", 2)) {
+  } else if (!memcmp (head,"BM",2)) {
     data_offset = 0x1000;
     order = 0x4949;
     fseek (ifp, 38, SEEK_SET);
@@ -4631,7 +4623,7 @@ int CLASS identify (int no_decode)
       flip = 3;
       goto nucore;
     }
-  } else if (!memcmp (head, "BR", 2)) {
+  } else if (!memcmp (head,"BR",2)) {
     strcpy (model, "RAW");
 nucore:
     strcpy (make, "Nucore");
@@ -4645,7 +4637,7 @@ nucore:
       raw_width++;
       data_offset -= 0x1000;
     }
-  } else if (!memcmp (head+25, "ARECOYK", 7)) {
+  } else if (!memcmp (head+25,"ARECOYK",7)) {
     strcpy (make, "Contax");
     strcpy (model,"N Digital");
     fseek (ifp, 33, SEEK_SET);
@@ -4655,22 +4647,28 @@ nucore:
   } else if (!strcmp (head, "PXN")) {
     strcpy (make, "Logitech");
     strcpy (model,"Fotoman Pixtura");
-  } else if (!memcmp (head, "FUJIFILM", 8)) {
+  } else if (!memcmp (head,"FUJIFILM",8)) {
     fseek (ifp, 92, SEEK_SET);
     parse_fuji (get4());
     fseek (ifp, 84, SEEK_SET);
-    parse_tiff (get4()+12);
+    if ((hlen = get4()) > 120) {
+      fseek (ifp, 120, SEEK_SET);
+      fuji_secondary = (i = get4()) && 1;
+      if (fuji_secondary && use_secondary)
+	parse_fuji (i);
+    }
     fseek (ifp, 100, SEEK_SET);
-    fread (&data_offset, 4, 1, ifp);
-    data_offset = ntohl(data_offset);
-  } else if (!memcmp (head, "RIFF", 4)) {
+    i = get4();
+    parse_tiff (hlen+12);
+    data_offset = i;
+  } else if (!memcmp (head,"RIFF",4)) {
     fseek (ifp, 0, SEEK_SET);
     parse_riff();
-  } else if (!memcmp (head, "DSC-Image", 9))
+  } else if (!memcmp (head,"DSC-Image",9))
     parse_rollei();
-  else if (!memcmp (head, "\0MRM", 4))
+  else if (!memcmp (head,"\0MRM",4))
     parse_minolta();
-  else if (!memcmp (head, "FOVb", 4))
+  else if (!memcmp (head,"FOVb",4))
     parse_foveon();
   else
     for (i=0; i < sizeof table / sizeof *table; i++)
@@ -4722,6 +4720,7 @@ nucore:
       load_raw = adobe_dng_load_raw_nc;
     if (tiff_data_compression == 7)
       load_raw = adobe_dng_load_raw_lj;
+    FORC4 cam_mul[c] = pre_mul[c];
     goto dng_skip;
   }
 
@@ -4971,64 +4970,31 @@ dimage_z2:
   } else if (!strcmp(model,"R-D1")) {
     tiff_data_compression = 34713;
     load_raw = nikon_load_raw;
-  } else if (!strcmp(model,"FinePixS2Pro")) {
-    height = 3584;
-    width  = 3583;
-    fuji_width = 2144;
-    data_offset += (24*2944+32)*2;
-    filters = 0x61616161;
-    load_raw = fuji_s2_load_raw;
-    black = 128;
-    strcpy (model+7, " S2Pro");
-  } else if (!strcmp(model,"FinePix S3Pro")) {
-    height = 3583;
-    width  = 3584;
-    fuji_width = 2144;
-    data_offset += (2*4352+32)*2;
-    if (fsize > 18000000 && use_secondary)
-      data_offset += 1444*4352*2;
-    filters = 0x49494949;
-    load_raw = fuji_s3_load_raw;
-    maximum = 0x3dfd;
   } else if (!strcmp(model,"FinePix S5100") ||
 	     !strcmp(model,"FinePix S5500")) {
-    height = 1735;
-    width  = 2304;
-    data_offset += width*10;
-    filters = 0x49494949;
     load_raw = unpacked_load_raw;
     maximum = 0xffff;
-  } else if (!strcmp(model,"FinePix S5000")) {
-    raw_height = 2152;
-    raw_width  = 1472;
-    fuji_width = 1423;
-    data_offset += (4*raw_width+24)*2;
-    goto fuji_common;
-  } else if (!strcmp(model,"FinePix E550") ||
-	    !strncmp(model,"FinePix F8",10) ||
-	     !strcmp(model,"FinePix S7000")) {
-    raw_height = 3080;
-    raw_width  = 2048;
-    fuji_width = 2047;
-    goto fuji_common;
-  } else if (!strcmp(model,"FinePix S9000") ||
-	     !strcmp(model,"FinePix S9500")) {
-    raw_height = 3688;
-    raw_width  = 2512;
-    fuji_width = 2447;
-    data_offset += 64;
-    goto fuji_common;
-  } else if (!strncmp(model,"FinePix F7",10) ||
-	     !strcmp(model,"FinePix S20Pro")) {
-    raw_height = 2168;
-    raw_width  = 2944;
-    fuji_width = 1439;
-    data_offset += 32 + use_secondary*2944;
-fuji_common:
-    width = 1 + (height = raw_height/2 + fuji_width);
-    load_raw = fuji_common_load_raw;
-    filters = 0x49494949;
-    maximum = 0x3e00;
+  } else if (!strncmp(model,"FinePix",7)) {
+    if (!strcmp(model+7,"S2Pro")) {
+      strcpy (model+7," S2Pro");
+      height = 2144;
+      width  = 2880;
+      black = 128;
+      flip = 6;
+    } else
+      maximum = 0x3e00;
+    top_margin = (raw_height - height)/2;
+    left_margin = (raw_width - width )/2;
+    data_offset += (top_margin*raw_width + left_margin) * 2;
+    if (fuji_secondary)
+      data_offset += use_secondary * ( strcmp(model+7," S3Pro")
+		? (raw_width *= 2) : raw_height*raw_width*2 );
+    fuji_width = width >> !fuji_layout;
+    width = (height >> fuji_layout) + fuji_width;
+    raw_height = height;
+    height = width - 1;
+    load_raw = fuji_load_raw;
+    if (!(fuji_width & 1)) filters = 0x49494949;
   } else if (!strcmp(model,"RD175")) {
     height = 986;
     width = 1534;
@@ -5602,7 +5568,7 @@ void CLASS fuji_rotate()
   if (!fuji_width) return;
   if (verbose)
     fprintf (stderr, "Rotating image 45 degrees...\n");
-  fuji_width = (fuji_width + shrink) >> shrink;
+  fuji_width = (fuji_width - 1 + shrink) >> shrink;
   step = sqrt(0.5);
   wide = fuji_width / step;
   high = (height - fuji_width) / step;
@@ -5785,9 +5751,9 @@ void CLASS write_ppm16 (FILE *ofp)
 
 int CLASS main (int argc, char **argv)
 {
-  int arg, status=0, user_flip=-1, user_black=-1;
+  int arg, status=0, user_flip=-1, user_black=-1, user_qual=-1;
   int timestamp_only=0, identify_only=0, write_to_stdout=0;
-  int half_size=0, use_fuji_rotate=1, quality=3;
+  int half_size=0, use_fuji_rotate=1, quality;
   char opt, *ofname, *cp;
   struct utimbuf ut;
   const char *write_ext = ".ppm";
@@ -5802,7 +5768,7 @@ int CLASS main (int argc, char **argv)
   if (argc == 1)
   {
     fprintf (stderr,
-    "\nRaw Photo Decoder \"dcraw\" v7.77"
+    "\nRaw Photo Decoder \"dcraw\" v7.79"
     "\nby Dave Coffin, dcoffin a cybercom o net"
     "\n\nUsage:  %s [options] file1 file2 ...\n"
     "\nValid options:"
@@ -5822,7 +5788,7 @@ int CLASS main (int argc, char **argv)
     "\n-p <file> Apply color profile from file"
 #endif
     "\n-d        Document Mode (no color, no interpolation)"
-    "\n-q [0-3]  Set the interpolation quality (default = 3)"
+    "\n-q [0-3]  Set the interpolation quality"
     "\n-h        Half-size color image (twice as fast as \"-q 0\")"
     "\n-f        Interpolate RGGB as four colors"
     "\n-B <domain> <range>  Apply bilateral filter to reduce noise"
@@ -5853,7 +5819,7 @@ int CLASS main (int argc, char **argv)
       case 'l':  blue_scale  = atof(argv[arg++]);  break;
       case 'k':  user_black  = atoi(argv[arg++]);  break;
       case 't':  user_flip   = atoi(argv[arg++]);  break;
-      case 'q':  quality     = atoi(argv[arg++]);  break;
+      case 'q':  user_qual   = atoi(argv[arg++]);  break;
 #ifdef USE_LCMS
       case 'p':  profile     =      argv[arg++] ;  break;
 #endif
@@ -5954,6 +5920,8 @@ next:
 #ifdef COLORCHECK
     colorcheck();
 #endif
+    quality = 2 + !fuji_width;
+    if (user_qual >= 0) quality = user_qual;
     if (user_black >= 0) black = user_black;
     if (is_foveon) foveon_interpolate();
     else scale_colors();
@@ -5962,7 +5930,7 @@ next:
     if (filters && !document_mode) {
       if (quality == 0)
 	lin_interpolate();
-      else if (quality < 3 || colors > 3 || fuji_width)
+      else if (quality < 3 || colors > 3)
 	   vng_interpolate();
       else ahd_interpolate();
     }
