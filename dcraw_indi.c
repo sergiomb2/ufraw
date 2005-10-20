@@ -14,7 +14,7 @@
  * independed of dcraw's global variables.
  *
  * NOTICE: One must check if updates in dcraw.c effect this code.
- * This file was last synchronized with dcraw 7.74
+ * This file was last synchronized with dcraw 7.79
  */
 
 #include <math.h>
@@ -512,7 +512,7 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
 
   if (!fuji_width) return;
   dcraw_message (DCRAW_VERBOSE, "Rotating image 45 degrees...\n");
-//  fuji_width = (fuji_width + shrink) >> shrink;
+//  fuji_width = (fuji_width - 1 + shrink) >> shrink;
 //  step = 0.5;
   wide = fuji_width / step;
   high = (height - fuji_width) / step;

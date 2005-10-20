@@ -210,7 +210,7 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh, int scale)
         /* I'm skiping the last row/column if it is not a full row/column */
 	f->height = h = hh->raw.height / scale;
 	f->width = w = hh->raw.width / scale;
-	fujiWidth = ( (hh->fuji_width+hh->shrink) >> hh->shrink ) / scale;
+	fujiWidth = ( (hh->fuji_width-1+hh->shrink) >> hh->shrink ) / scale;
 	f->image = g_new0(dcraw_image_type, h * w);
 	norm = scale * scale;
 	for(r=0; r<h; r++) {
