@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.19 2005/10/08 08:34:15 nkbj Exp $
+dnl $Id: configure.ac,v 1.20 2005/10/21 05:50:41 nkbj Exp $
 AC_INIT(UFRaw, 0.6)
 AC_PREREQ(2.57)
 
@@ -229,10 +229,6 @@ esac
 
 # XXX gcc-specific
 DCRAW_CFLAGS=-Wno-sign-compare
-
-# XXX gcc-specific
-# Uncomment next line to avoid compiler warnings when using gcc-4.0.x
-#DCRAW_CFLAGS="$DCRAW_CFLAGS -Wno-pointer-sign"
 
 AC_SUBST(DCRAW_CFLAGS)
 
