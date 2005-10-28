@@ -19,8 +19,8 @@
    copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
    purchase a license from the author.
 
-   $Revision: 1.292 $
-   $Date: 2005/10/19 21:55:29 $
+   $Revision: 1.295 $
+   $Date: 2005/10/26 22:36:53 $
  */
 
 #define _GNU_SOURCE
@@ -222,6 +222,7 @@ int CLASS sget4 (uchar *s)
   else
     return s[0] << 24 | s[1] << 16 | s[2] << 8 | s[3];
 }
+#define sget4(s) sget4((uchar *)s)
 
 int CLASS get4()
 {
@@ -1286,7 +1287,10 @@ void CLASS olympus_e300_load_raw()
     }
     for (col=0; col < width; col++)
       BAYER(row,col) = (pixel[col] & 0xfff);
+    for (col=width+4; col < raw_width; col++)
+      black += pixel[col] & 0xfff;
   }
+  black /= (raw_width - width - 4) * height;
   free (data);
 }
 
@@ -1522,7 +1526,7 @@ void CLASS kodak_jpeg_load_raw() {}
 METHODDEF(boolean)
 fill_input_buffer (j_decompress_ptr cinfo)
 {
-  static char jpeg_buffer[4096];
+  static uchar jpeg_buffer[4096];
   size_t nbytes;
 
   nbytes = fread (jpeg_buffer, 1, 4096, ifp);
@@ -1972,7 +1976,7 @@ void CLASS foveon_load_raw()
   int fixed, row, col, bit=-1, c, i;
 
   fixed = get4();
-  read_shorts (diff, 1024);
+  read_shorts ((ushort *) diff, 1024);
   if (!fixed) {
     for (i=0; i < 1024; i++)
       huff[i] = get4();
@@ -2112,11 +2116,13 @@ void CLASS foveon_make_curves
   FORC3 curvep[c] = foveon_make_curve (max, mul[c], filt);
 }
 
-int CLASS foveon_apply_curve (ushort *curve, int i)
+int CLASS foveon_apply_curve (short *curve, int i)
 {
   if (abs(i) >= curve[0]) return 0;
   return i < 0 ? -curve[1-i] : curve[1+i];
 }
+
+#define image ((short (*)[4]) image)
 
 void CLASS foveon_interpolate()
 {
@@ -2358,7 +2364,7 @@ void CLASS foveon_interpolate()
     if (min > i) min = i;
   }
   limit = min * 9 >> 4;
-  for (pix=image[0]; pix < (short *) image[height*width]; pix+=4) {
+  for (pix=image[0]; pix < image[height*width]; pix+=4) {
     if (pix[0] <= limit || pix[1] <= limit || pix[2] <= limit)
       continue;
     min = max = pix[0];
@@ -2427,7 +2433,7 @@ void CLASS foveon_interpolate()
   }
 
   /* Transform the image to a different colorspace */
-  for (pix=image[0]; pix < (short *) image[height*width]; pix+=4) {
+  for (pix=image[0]; pix < image[height*width]; pix+=4) {
     FORC3 pix[c] -= foveon_apply_curve (curve[c], pix[c]);
     sum = (pix[0]+pix[1]+pix[1]+pix[2]) >> 2;
     FORC3 pix[c] -= foveon_apply_curve (curve[c], pix[c]-sum);
@@ -2514,6 +2520,7 @@ void CLASS foveon_interpolate()
   width = i;
   height = row;
 }
+#undef image
 
 /* END GPL BLOCK */
 
@@ -3451,7 +3458,7 @@ int CLASS parse_tiff_ifd (int base, int level)
   unsigned entries, tag, type, len, plen=16, save;
   int done=0, use_cm=0, cfa, i, j, c;
   static const int size[] = { 1,1,1,2,4,8,1,1,2,4,8,4,8 };
-  char software[64];
+  char software[64], *cbuf, *cp;
   static const int flip_map[] = { 0,1,3,2,4,6,7,5 };
   uchar cfa_pat[16], cfa_pc[] = { 0,1,2,3 }, tab[256];
   double dblack, cc[4][4], cm[4][3], cam_xyz[4][3];
@@ -3532,8 +3539,9 @@ int CLASS parse_tiff_ifd (int base, int level)
 	if (level) {
 	  data_offset = ftell(ifp);
 	} else {
-	  strcpy (make, "Leaf");
+	  if (!make[0]) strcpy (make, "Leaf");
 	  data_offset = get4();
+	  done = 1;
 	}
 	break;
       case 0x14a:			/* SubIFD tag */
@@ -3587,6 +3595,15 @@ int CLASS parse_tiff_ifd (int base, int level)
 	raw_width = 4090;
 	raw_height = len / raw_width / 2;
 	done = 1;
+	break;
+      case 50454:			/* Sinar tag */
+      case 50455:
+	if (!(cbuf = malloc(len))) break;
+	fread (cbuf, 1, len, ifp);
+	for (cp = cbuf-1; cp && cp < cbuf+len; cp = strchr(cp,'\n'))
+	  if (!strncmp (++cp,"Neutral ",8))
+	    sscanf (cp+8, "%f %f %f", cam_mul, cam_mul+1, cam_mul+2);
+	free (cbuf);
 	break;
       case 50706:			/* DNGVersion */
 	FORC4 dng_version = (dng_version << 8) + fgetc(ifp);
@@ -3980,7 +3997,7 @@ void CLASS parse_rollei()
 
 void CLASS parse_mos (int offset)
 {
-  uchar data[40];
+  char data[40];
   int skip, from, i, c, neut[4];
   static const unsigned bayer[] =
 	{ 0x94949494, 0x61616161, 0x16161616, 0x49494949 };
@@ -4445,6 +4462,8 @@ void CLASS adobe_coeff()
 	{ 13173,-4732,-1499,-5807,14036,1895,-2045,2452,7142 } },
     { "OLYMPUS E-300",
 	{ 7828,-1761,-348,-5788,14071,1830,-2853,4518,6557 } },
+    { "OLYMPUS E-500",	/* copied from E-300 */
+	{ 7828,-1761,-348,-5788,14071,1830,-2853,4518,6557 } },
     { "PENTAX *ist DS",
 	{ 10371,-2333,-1206,-8688,16231,2602,-1230,1116,11282 } },
     { "PENTAX *ist D",
@@ -4564,7 +4583,7 @@ int CLASS identify (int no_decode)
     { 12582980, "Sinar",    ""           ,0 } };
   static const char *corp[] =
     { "Canon", "NIKON", "EPSON", "KODAK", "Kodak", "OLYMPUS", "PENTAX",
-      "MINOLTA", "Minolta", "Konica", "CASIO" };
+      "MINOLTA", "Minolta", "Konica", "CASIO", "Sinar" };
 
 /*  What format is this file?  Set make[] if we recognize it. */
 
@@ -4694,7 +4713,7 @@ nucore:
   cp = model + strlen(model);
   while (*--cp == ' ') *cp = 0;
   i = strlen(make);			/* Remove make from model */
-  if (!strncmp (model, make, i++))
+  if (!strncmp (model, make, i) && model[i++] == ' ')
     memmove (model, model+i, 64-i);
   make[63] = model[63] = model2[63] = 0;
 
@@ -5152,14 +5171,16 @@ konica_400z:
     maximum = 0xffff;
     pre_mul[0] = 1.963;
     pre_mul[2] = 1.430;
-  } else if (!strcmp(make,"Sinar") && !memcmp(head,"8BPS",4)) {
-    fseek (ifp, 14, SEEK_SET);
-    height = get4();
-    width  = get4();
-    filters = 0x61616161;
-    data_offset = 68;
+  } else if (!strcmp(make,"Sinar")) {
+    if (!memcmp(head,"8BPS",4)) {
+      fseek (ifp, 14, SEEK_SET);
+      height = get4();
+      width  = get4();
+      filters = 0x61616161;
+      data_offset = 68;
+    }
     load_raw = unpacked_load_raw;
-    maximum = 0xffff;
+    maximum = 0x3fff;
   } else if (!strcmp(make,"Leaf")) {
     load_raw = unpacked_load_raw;
     if (tiff_data_compression == 99)
@@ -5188,15 +5209,15 @@ konica_400z:
     load_raw = unpacked_load_raw;
     maximum = 0xffc0;
     black = 2560;
-  } else if (!strcmp(model,"E-300")) {
-    width -= 21;
+  } else if (!strcmp(model,"E-300") ||
+	     !strcmp(model,"E-500")) {
+    width -= 20;
     load_raw = olympus_e300_load_raw;
     maximum = 0xfff;
     if (fsize > 15728640) {
       load_raw = unpacked_load_raw;
       maximum = 0xfc30;
-    } else
-      black = 62;
+    }
   } else if (!strcmp(model,"C770UZ")) {
     height = 1718;
     width  = 2304;
@@ -5768,7 +5789,7 @@ int CLASS main (int argc, char **argv)
   if (argc == 1)
   {
     fprintf (stderr,
-    "\nRaw Photo Decoder \"dcraw\" v7.79"
+    "\nRaw Photo Decoder \"dcraw\" v7.81"
     "\nby Dave Coffin, dcoffin a cybercom o net"
     "\n\nUsage:  %s [options] file1 file2 ...\n"
     "\nValid options:"
