@@ -210,7 +210,7 @@ void load_curve(GtkWidget *widget, gpointer user_data)
             if (CFG_cameraCurve)
                 gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
             else
-                gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-1);
+                gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-2);
             cp = g_path_get_dirname(list->data);
             g_strlcpy(CFG->curvePath, cp, max_path);
             g_free(cp);
@@ -812,7 +812,7 @@ void update_scales(preview_data *data)
     if (data->FreezeDialog) return;
     data->FreezeDialog = TRUE;
     if (CFG->curveIndex>camera_curve && !CFG_cameraCurve)
-        gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-1);
+        gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-2);
     else
         gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
     gtk_combo_box_set_active(data->WBCombo, MAX(CFG->wb, 0));
@@ -1141,8 +1141,8 @@ void combo_update(GtkWidget *combo, gint *valuep)
     if (data->FreezeDialog) return;
     *valuep = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
     if (valuep==&CFG->curveIndex) {
-        if (!CFG_cameraCurve && CFG->curveIndex>=camera_curve)
-            CFG->curveIndex++;
+        if (!CFG_cameraCurve && CFG->curveIndex>camera_curve-2)
+            CFG->curveIndex += 2;
 	curveeditor_widget_set_curve(data->CurveWidget,
 		&CFG->curve[CFG->curveIndex]);
     } else if (valuep==&CFG->wb) {
@@ -1193,14 +1193,14 @@ void delete_from_list(GtkWidget *widget, gpointer user_data)
         if (CFG_cameraCurve)
             gtk_combo_box_remove_text(data->CurveCombo, index);
         else
-            gtk_combo_box_remove_text(data->CurveCombo, index-1);
+            gtk_combo_box_remove_text(data->CurveCombo, index-2);
         CFG->curveCount--;
         if (CFG->curveIndex==CFG->curveCount) {
             CFG->curveIndex--;
 	    if (CFG->curveIndex==camera_curve && !CFG_cameraCurve)
 		CFG->curveIndex = linear_curve;
 	    if (CFG->curveIndex>camera_curve && !CFG_cameraCurve)
-		gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-1);
+		gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-2);
 	    else
 		gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
 	    curveeditor_widget_set_curve(data->CurveWidget,
@@ -1785,14 +1785,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     table = GTK_TABLE(table_with_frame(page, NULL,
             CFG->expander[curve_expander]));
     data->CurveCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    /* Fill in the curve names, skipping "camera curve" if there is
+    /* Fill in the curve names, skipping custom and camera curves if there is
      * no cameraCurve. This will make some mess later with the counting */
     for (i=0; i<CFG->curveCount; i++)
-        if ( i!=camera_curve || CFG_cameraCurve )
+        if ( (i!=custom_curve && i!=camera_curve) || CFG_cameraCurve )
             gtk_combo_box_append_text(data->CurveCombo, CFG->curve[i].name);
     /* This is part of the mess with the combo_box counting */
     if (CFG->curveIndex>camera_curve && !CFG_cameraCurve)
-        gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-1);
+        gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-2);
     else
         gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
     g_signal_connect(G_OBJECT(data->CurveCombo), "changed",

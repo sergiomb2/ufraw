@@ -133,6 +133,7 @@ struct decode {
 } first_decode[2048], *second_decode, *free_decode;
 
 int tone_curve_size = 0, tone_curve_offset = 0; /* Nikon Tone Curves UF*/
+int tone_mode_offset, tone_mode_size; /* Nikon ToneComp UF*/
 
 #define CLASS
 
@@ -3342,6 +3343,10 @@ void CLASS parse_makernote()
     if (tag == 0x1d)
       while ((c = fgetc(ifp)))
 	serial = serial*10 + (isdigit(c) ? c - '0' : c % 10);
+    if (tag == 0x81)  { /* NTC UF*/
+      tone_mode_offset = ftell(ifp);
+      tone_mode_size = len;
+    }
     if (tag == 0x8c)  { /* NTC UF*/
       nikon_curve_offset = ftell(ifp) + 2112;
       tone_curve_offset = ftell(ifp);

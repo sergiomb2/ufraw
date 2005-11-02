@@ -28,6 +28,7 @@ typedef struct {
     int rgbMax, black, fuji_width;
     double fuji_step;
     int toneCurveSize, toneCurveOffset;
+    int toneModeSize, toneModeOffset;
     char *message;
 } dcraw_data;
 

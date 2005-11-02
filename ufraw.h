@@ -47,7 +47,7 @@ enum { ahd_interpolation, vng_interpolation, four_color_interpolation,
        bilinear_interpolation, half_interpolation };
 extern const char *interpolationNames[];
 enum { no_id, also_id, only_id };
-enum { manual_curve, linear_curve, camera_curve };
+enum { manual_curve, linear_curve, custom_curve, camera_curve };
 enum { in_profile, out_profile, profile_types};
 enum { raw_expander, exposure_expander, wb_expander, color_expander,
        curve_expander, live_expander, expander_count };

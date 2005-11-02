@@ -32,6 +32,7 @@ extern void (*load_raw)();
 //extern void (*write_fun)(FILE *);
 extern jmp_buf failure;
 extern int tone_curve_size, tone_curve_offset;
+extern int tone_mode_offset, tone_mode_size;
 extern int black, colors, raw_color, ymag;
 extern float cam_mul[4];
 extern gushort white[8][8];
@@ -113,6 +114,9 @@ int dcraw_open(dcraw_data *h,char *filename)
     h->flip = flip;
     h->toneCurveSize = tone_curve_size;
     h->toneCurveOffset = tone_curve_offset;
+    h->toneModeOffset = tone_mode_offset;
+    h->toneModeSize = tone_mode_size;
+
     h->message = messageBuffer;
     return lastStatus;
 }

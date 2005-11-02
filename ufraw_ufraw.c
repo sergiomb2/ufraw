@@ -228,24 +228,58 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     uf->useMatrix = ( uf->conf->profile[0][uf->conf->profileIndex[0]].useMatrix
 	    && !uf->raw_color ) || uf->colors==4;
 
+    uf->conf->curve[camera_curve].m_numAnchors = 0;
+    uf->conf->curve[custom_curve].m_numAnchors = 0;
+
+    /* If there is an embeded curve we "turn on" the custom/camera curve
+     * mechanism */
     if (raw->toneCurveSize!=0) {
-        CurveData nc;
-        long pos = ftell(raw->ifp);
-        if (RipNikonNEFCurve(raw->ifp, raw->toneCurveOffset, &nc, NULL)
-                !=UFRAW_SUCCESS) {
-            ufraw_message(UFRAW_ERROR, "Error reading NEF curve");
-            return UFRAW_WARNING;
-        }
-        fseek(raw->ifp, pos, SEEK_SET);
+	CurveData nc;
+	long pos = ftell(raw->ifp);
+	if (RipNikonNEFCurve(raw->ifp, raw->toneCurveOffset, &nc, NULL)
+		!=UFRAW_SUCCESS) {
+	    ufraw_message(UFRAW_ERROR, "Error reading NEF curve");
+	    return UFRAW_WARNING;
+	}
+	fseek(raw->ifp, pos, SEEK_SET);
 	if (nc.m_numAnchors<2) nc = conf_default.curve[0];
-	g_strlcpy(nc.name, uf->conf->curve[camera_curve].name, max_name);
-        uf->conf->curve[camera_curve] = nc;
+	    
+	g_strlcpy(nc.name, uf->conf->curve[custom_curve].name, max_name);
+	uf->conf->curve[custom_curve] = nc;
+
+	int use_custom_curve = 0;
+	if (raw->toneModeSize) {
+	    // "AUTO    " "HIGH    " "CS      " "MID.L   " "MID.H   "NORMAL  " "LOW     "
+	    long pos = ftell(raw->ifp);
+	    char buf[9];
+	    fseek(raw->ifp, raw->toneModeOffset, SEEK_SET);
+	    // read it in.
+	    fread(&buf, 9, 1, raw->ifp);
+	    fseek(raw->ifp, pos, SEEK_SET);
+
+	    if (!strncmp(buf, "CS      ", sizeof(buf)))  use_custom_curve=1;
+
+	    // down the line, we need to translate the other values into 
+	    // tone curves!
+	}
+
+	if (use_custom_curve) {
+	    uf->conf->curve[camera_curve] = uf->conf->curve[custom_curve];
+	    g_strlcpy(uf->conf->curve[camera_curve].name,
+		    conf_default.curve[camera_curve].name, max_name);
+	} else {
+	    uf->conf->curve[camera_curve] = conf_default.curve[camera_curve];
+	}
     } else {
-        uf->conf->curve[camera_curve].m_numAnchors = 0;
-        /* don't retain camera_curve if no cameraCurve */
-        if (uf->conf->curveIndex==camera_curve)
-            uf->conf->curveIndex = linear_curve;
+	/* If there is no embeded curve we "turn off" the custom/camera curve
+	 * mechanism */
+	uf->conf->curve[camera_curve].m_numAnchors = 0;
+	uf->conf->curve[custom_curve].m_numAnchors = 0;
+	if (uf->conf->curveIndex==custom_curve ||
+		uf->conf->curveIndex==camera_curve)
+	    uf->conf->curveIndex = linear_curve;
     }
+
     return UFRAW_SUCCESS;
 }
 

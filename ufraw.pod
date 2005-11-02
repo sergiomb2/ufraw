@@ -37,8 +37,8 @@ image or a UFRaw ID-file in the GIMP.
 
 =head1 OPTIONS
 
-The otions supplied on the command-line decide the starting-values
-for the GUI. The GUI will then allow you to tweak these vaues before
+The options supplied on the command-line decide the starting-values
+for the GUI. The GUI will then allow you to tweak these values before
 saving the final image.
 
 =head2 General Options
@@ -114,7 +114,7 @@ Unclip or clip highlights. Default clip.
 Adjust the color saturation. Range 0.00 to 3.00. Default 1.0, 
 use 0 for black & white output.
 
-=item --curve=manual|linear|camera|CURVE
+=item --curve=manual|linear|custom|camera|CURVE
 
 Type of tone curve to use. "manual" means that a manual tone curve is used. 
 This is probably not very useful as a command-line option, since there
@@ -122,9 +122,13 @@ is no way to specify what the curve should look like.
 
 "linear" means that no tone curve corrections is performed. 
 
-"camera" means that UFRaw shall use the curve supplied by the camera
+"custom" means that UFRaw shall use the curve supplied by the camera
 in the meta-information in the raw-file. 
 
+"camera" means that UFRaw shall use the "custom" curve only if the camera
+was set to use it (according to the meta-information).
+Otherwise the "linear" curve is used.
+ 
 CURVE can be the filename (without path) of any curve that was 
 previously loaded in the GUI. 
 
@@ -141,7 +145,7 @@ Black-point value. Range 0.0 to 1.0, default 0.0.
 
 =item --interpolation=ahd|vng|four-color|bilinear
 
-Interpolation algorithm to use when converting from the bayer-pattern
+Interpolation algorithm to use when converting from the Bayer-pattern
 to normal RGB values. AHD (Adaptive Homogeneity Directed) interpolation
 is the best, but also the slowest. VNG (Variable Number Gradients)
 is second best and a bit faster. Bilinear is the simplest yet fastest
@@ -255,7 +259,7 @@ In batch mode, the output options are NOT read from the resource file.
 
 $HOME/.ufrawrc - UFRaw resource file containing the user default settings.
 This is an XML file that can be modified with any text editor. Still, it is
-recomended not to edit this file. This file is updated from the GUI when
+recommended not to edit this file. This file is updated from the GUI when
 you save an image, or when you explicitly ask to save this file in the
 'Options' menu.
 

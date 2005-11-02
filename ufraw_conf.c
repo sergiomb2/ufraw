@@ -38,8 +38,10 @@ const conf_data conf_default = {
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
       { "Linear curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
+      { "Custom curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
+	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
       { "Camera curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
-	  0 , { { 0.0, 0.0 } } },
+	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } }
     },
     { 0, 0 } , { 1, 1 }, /* profileIndex[], profileCount[] */
     /* Profile data defaults */
@@ -121,6 +123,8 @@ void conf_parse_start(GMarkupParseContext *context, const gchar *element,
                 c->curveIndex = linear_curve;
             if (!strcmp("CameraCurve", element))
                 c->curveIndex = camera_curve;
+            if (!strcmp("CustomCurve", element))
+                c->curveIndex = custom_curve;
             if (!strcmp("Curve", element))
                 c->curveIndex = c->curveCount;
             if (!strcmp("sRGBInputProfile", element))
@@ -150,6 +154,10 @@ void conf_parse_start(GMarkupParseContext *context, const gchar *element,
 	c->curveCount = - camera_curve;
 	c->curve[-c->curveCount].m_numAnchors = 0;
     }
+    if (!strcmp("CustomCurve", element)) {
+	c->curveCount = - custom_curve;
+	c->curve[-c->curveCount].m_numAnchors = 0;
+    }
     if (!strcmp("sRGBInputProfile", element)) c->profileCount[0] = - 0;
     if (!strcmp("sRGBOutputProfile", element)) c->profileCount[1] = - 0;
 }
@@ -163,6 +171,7 @@ void conf_parse_end(GMarkupParseContext *context, const gchar *element,
     if ( c->curveCount<=0 &&
 	 ( !strcmp("ManualCurve", element) ||
 	   !strcmp("LinearCurve", element) ||
+	   !strcmp("CustomCurve", element) ||
 	   !strcmp("CameraCurve", element) ) ) {
 	if (c->curve[-c->curveCount].m_numAnchors==0)
 	    c->curve[-c->curveCount].m_numAnchors = 2;
@@ -592,6 +601,12 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 			buf = uf_markup_buf(buf, curveBuf);
 			buf = uf_markup_buf(buf, "</ManualCurve>\n");
                         break;
+                case custom_curve:
+                        buf = uf_markup_buf(buf,
+				"<CustomCurve Current='%s'>\n", current);
+			buf = uf_markup_buf(buf, curveBuf);
+			buf = uf_markup_buf(buf, "</CustomCurve>\n");
+                        break;
                 case linear_curve:
                         buf = uf_markup_buf(buf,
 				"<LinearCurve Current='%s'>\n", current);
@@ -887,7 +902,7 @@ char helpText[]=
 "--wb=camera|auto      White balance setting.\n"
 "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
 "--green=GREEN         Green color normalization.\n"
-"--curve=manual|linear|camera|CURVE\n"
+"--curve=manual|linear|camera|custom|CURVE\n"
 "                      Type of tone curve to use. CURVE can be any curve\n"
 "                      that was previously loaded in the GUI.\n"
 "                      (default camera if such exsists, linear otherwise).\n"
@@ -1149,6 +1164,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         if (!strcmp(curveName, "manual")) cmd->curveIndex=manual_curve;
         else if (!strcmp(curveName, "linear")) cmd->curveIndex=linear_curve;
         else if (!strcmp(curveName, "camera")) cmd->curveIndex=camera_curve;
+        else if (!strcmp(curveName, "custom")) cmd->curveIndex=custom_curve;
         else {
             cmd->curveIndex = -1;
             for( i = camera_curve + 1; i < rc->curveCount; i++ ) {
