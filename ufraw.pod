@@ -87,7 +87,7 @@ options.
 
 =item --temperature=TEMP
 
-Manually set the color temperature in Kelvins (2000 - 7000).
+Manually set the color temperature in Kelvin (2000 - 7000).
 
 =item --green=GREEN
 
@@ -114,9 +114,14 @@ Unclip or clip highlights. Default clip.
 Adjust the color saturation. Range 0.00 to 3.00. Default 1.0, 
 use 0 for black & white output.
 
-=item --curve=manual|linear|custom|camera|CURVE
+=item --base-curve=manual|linear|custom|camera|CURVE
 
-Type of tone curve to use. "manual" means that a manual tone curve is used. 
+Type of tone curve to use. The base curve is a combination of the gamma
+curve corrected by the curve specified here.
+The base curve is applied to each channel of the raw data after the
+white balance and color matrix, but before the ICC transformation.
+
+"manual" means that a manual tone curve is used. 
 This is probably not very useful as a command-line option, since there
 is no way to specify what the curve should look like.
 
@@ -134,9 +139,32 @@ previously loaded in the GUI.
 
 The default is "camera" if such a curve exists, linear otherwise.
 
+=item --base-curve-file=<curve-file>
+
+Load the base curve from a file.
+The curve file format can be either UFRaw's XML
+format or Nikon's NTC/NCV format.
+
+=item --curve=manual|linear|CURVE
+
+Type of luminosity curve to use. This curve is applied in HSV space
+and therefore hue and saturation should not be effected by it.
+
+"manual" means that a manual luminosity curve is used. 
+This is probably not very useful as a command-line option, since there
+is no way to specify what the curve should look like.
+
+"linear" means that no luminosity correction is performed. 
+
+CURVE can be the filename (without path) of any curve that was 
+previously loaded in the GUI. 
+
+The default is "linear".
+
 =item --curve-file=<curve-file>
 
-Load a curve from a file. The curve file format can be either UFRaw's XML
+Load the luminosity curve from a file.
+The curve file format can be either UFRaw's XML
 format or Nikon's NTC/NCV format.
 
 =item --black-point=auto|BLACK

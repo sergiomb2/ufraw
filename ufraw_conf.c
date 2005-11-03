@@ -32,8 +32,8 @@ const conf_data conf_default = {
     FALSE /* Unclip highlights */,
     disabled_state, /* autoExposure */
     disabled_state, /* autoBlack */
-    camera_curve, camera_curve+1, /* curveIndex, curveCount */
-    /* Curve data defaults */
+    camera_curve, camera_curve+1, /* BaseCurveIndex, BaseCurveCount */
+    /* BaseCurve data defaults */
     { { "Manual curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
       { "Linear curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
@@ -41,6 +41,13 @@ const conf_data conf_default = {
       { "Custom curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
       { "Camera curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
+	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } }
+    },
+    linear_curve, linear_curve+1, /* curveIndex, curveCount */
+    /* Curve data defaults */
+    { { "Manual curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
+	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
+      { "Linear curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } }
     },
     { 0, 0 } , { 1, 1 }, /* profileIndex[], profileCount[] */
@@ -117,14 +124,20 @@ void conf_parse_start(GMarkupParseContext *context, const gchar *element,
                     "UFRaw version in .ufrawrc is not supported");
         }
         if (!strcmp(*names,"Current") && int_value!=0) {
+            if (!strcmp("BaseManualCurve", element))
+                c->BaseCurveIndex = manual_curve;
+            if (!strcmp("BaseLinearCurve", element))
+                c->BaseCurveIndex = linear_curve;
+            if (!strcmp("BaseCustomCurve", element))
+                c->BaseCurveIndex = custom_curve;
+            if (!strcmp("BaseCameraCurve", element))
+                c->BaseCurveIndex = camera_curve;
+            if (!strcmp("BaseCurve", element))
+                c->BaseCurveIndex = c->BaseCurveCount;
             if (!strcmp("ManualCurve", element))
                 c->curveIndex = manual_curve;
             if (!strcmp("LinearCurve", element))
                 c->curveIndex = linear_curve;
-            if (!strcmp("CameraCurve", element))
-                c->curveIndex = camera_curve;
-            if (!strcmp("CustomCurve", element))
-                c->curveIndex = custom_curve;
             if (!strcmp("Curve", element))
                 c->curveIndex = c->curveCount;
             if (!strcmp("sRGBInputProfile", element))
@@ -142,20 +155,28 @@ void conf_parse_start(GMarkupParseContext *context, const gchar *element,
     /* The default curve/profile count is always larger than 0,
      * threfore we can treat 0 as a negative number.
      * m_numAnchors==0 marks that no anchors where read from the XML. */
+    if (!strcmp("BaseManualCurve", element)) {
+	c->BaseCurveCount = - manual_curve;
+	c->BaseCurve[-c->BaseCurveCount].m_numAnchors = 0;
+    }
+    if (!strcmp("BaseLinearCurve", element)) {
+	c->BaseCurveCount = - linear_curve;
+	c->BaseCurve[-c->BaseCurveCount].m_numAnchors = 0;
+    }
+    if (!strcmp("BaseCustomCurve", element)) {
+	c->BaseCurveCount = - custom_curve;
+	c->BaseCurve[-c->BaseCurveCount].m_numAnchors = 0;
+    }
+    if (!strcmp("BaseCameraCurve", element)) {
+	c->BaseCurveCount = - camera_curve;
+	c->BaseCurve[-c->BaseCurveCount].m_numAnchors = 0;
+    }
     if (!strcmp("ManualCurve", element)) {
 	c->curveCount = - manual_curve;
 	c->curve[-c->curveCount].m_numAnchors = 0;
     }
     if (!strcmp("LinearCurve", element)) {
 	c->curveCount = - linear_curve;
-	c->curve[-c->curveCount].m_numAnchors = 0;
-    }
-    if (!strcmp("CameraCurve", element)) {
-	c->curveCount = - camera_curve;
-	c->curve[-c->curveCount].m_numAnchors = 0;
-    }
-    if (!strcmp("CustomCurve", element)) {
-	c->curveCount = - custom_curve;
 	c->curve[-c->curveCount].m_numAnchors = 0;
     }
     if (!strcmp("sRGBInputProfile", element)) c->profileCount[0] = - 0;
@@ -168,14 +189,26 @@ void conf_parse_end(GMarkupParseContext *context, const gchar *element,
     conf_data *c = user;
     context = context;
     error = error;
+    if ( c->BaseCurveCount<=0 &&
+	 ( !strcmp("BaseManualCurve", element) ||
+	   !strcmp("BaseLinearCurve", element) ||
+	   !strcmp("BaseCustomCurve", element) ||
+	   !strcmp("BaseCameraCurve", element) ) ) {
+	if (c->BaseCurve[-c->BaseCurveCount].m_numAnchors==0)
+	    c->BaseCurve[-c->BaseCurveCount].m_numAnchors = 2;
+	c->BaseCurveCount = camera_curve+1;
+    }
+    if (c->BaseCurveCount<=0 && !strcmp("BaseCurve", element)) {
+	if (c->BaseCurve[-c->BaseCurveCount].m_numAnchors==0)
+	    c->BaseCurve[-c->BaseCurveCount].m_numAnchors = 2;
+        c->BaseCurveCount = - c->BaseCurveCount + 1;
+    }
     if ( c->curveCount<=0 &&
 	 ( !strcmp("ManualCurve", element) ||
-	   !strcmp("LinearCurve", element) ||
-	   !strcmp("CustomCurve", element) ||
-	   !strcmp("CameraCurve", element) ) ) {
+	   !strcmp("LinearCurve", element) ) ) {
 	if (c->curve[-c->curveCount].m_numAnchors==0)
 	    c->curve[-c->curveCount].m_numAnchors = 2;
-	c->curveCount = camera_curve+1;
+	c->curveCount = linear_curve+1;
     }
     if (c->curveCount<=0 && !strcmp("Curve", element)) {
 	if (c->curve[-c->curveCount].m_numAnchors==0)
@@ -250,6 +283,14 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
         if (!strcmp("ProductName", element))
             g_strlcpy(c->profile[0][i].productName, temp, max_path);
         return;
+    }
+    if (!strcmp("BaseCurve", element)) {
+        c->BaseCurveCount = - c->BaseCurveCount;
+        i = - c->BaseCurveCount;
+        c->BaseCurve[i] = conf_default.BaseCurve[0];
+        g_strlcpy(c->BaseCurve[i].name, temp, max_name);
+	/* m_numAnchors==0 marks that no anchors where read from the XML */
+	c->BaseCurve[-c->BaseCurveCount].m_numAnchors = 0;
     }
     if (!strcmp("Curve", element)) {
         c->curveCount = - c->curveCount;
@@ -587,6 +628,48 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
         buf = uf_markup_buf(buf,
 		"<LosslessCompression>%d</LosslessCompression>\n",
                 c->losslessCompress);
+    for (i=0; i<c->BaseCurveCount; i++) {
+        char *curveBuf = curve_buffer(&c->BaseCurve[i]);
+        /* Write curve if it is non-default and we are not writing to .ufraw */
+	/* But ALWAYS write the current curve */
+        if ( c->BaseCurveIndex==i || (curveBuf!=NULL && IDFilename==NULL) ) {
+	    if (curveBuf==NULL) curveBuf = g_strdup("");
+            current = i==c->BaseCurveIndex?"yes":"no";
+            switch (i) {
+                case manual_curve:
+                        buf = uf_markup_buf(buf,
+				"<BaseManualCurve Current='%s'>\n", current);
+			buf = uf_markup_buf(buf, curveBuf);
+			buf = uf_markup_buf(buf, "</BaseManualCurve>\n");
+                        break;
+                case linear_curve:
+                        buf = uf_markup_buf(buf,
+				"<BaseLinearCurve Current='%s'>\n", current);
+			buf = uf_markup_buf(buf, curveBuf);
+			buf = uf_markup_buf(buf, "</BaseLinearCurve>\n");
+                        break;
+                case custom_curve:
+                        buf = uf_markup_buf(buf,
+				"<BaseCustomCurve Current='%s'>\n", current);
+			buf = uf_markup_buf(buf, curveBuf);
+			buf = uf_markup_buf(buf, "</BaseCustomCurve>\n");
+                        break;
+                case camera_curve:
+                        buf = uf_markup_buf(buf,
+				"<BaseCameraCurve Current='%s'>\n", current);
+			buf = uf_markup_buf(buf, curveBuf);
+			buf = uf_markup_buf(buf, "</BaseCameraCurve>\n");
+                        break;
+                default:
+                        buf = uf_markup_buf(buf,
+				"<BaseCurve Current='%s'>%s\n", current,
+				c->BaseCurve[i].name);
+			buf = uf_markup_buf(buf, curveBuf);
+			buf = uf_markup_buf(buf, "</BaseCurve>\n");
+            }
+        }
+        g_free(curveBuf);
+    }
     for (i=0; i<c->curveCount; i++) {
         char *curveBuf = curve_buffer(&c->curve[i]);
         /* Write curve if it is non-default and we are not writing to .ufraw */
@@ -601,23 +684,11 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 			buf = uf_markup_buf(buf, curveBuf);
 			buf = uf_markup_buf(buf, "</ManualCurve>\n");
                         break;
-                case custom_curve:
-                        buf = uf_markup_buf(buf,
-				"<CustomCurve Current='%s'>\n", current);
-			buf = uf_markup_buf(buf, curveBuf);
-			buf = uf_markup_buf(buf, "</CustomCurve>\n");
-                        break;
                 case linear_curve:
                         buf = uf_markup_buf(buf,
 				"<LinearCurve Current='%s'>\n", current);
 			buf = uf_markup_buf(buf, curveBuf);
 			buf = uf_markup_buf(buf, "</LinearCurve>\n");
-                        break;
-                case camera_curve:
-                        buf = uf_markup_buf(buf,
-				"<CameraCurve Current='%s'>\n", current);
-			buf = uf_markup_buf(buf, curveBuf);
-			buf = uf_markup_buf(buf, "</CameraCurve>\n");
                         break;
                 default:
                         buf = uf_markup_buf(buf,
@@ -736,8 +807,34 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->autoExposure = src->autoExposure;
     dst->autoBlack = src->autoBlack;
     dst->unclip = src->unclip;
+    /* We only copy the current BaseCurve */
+    if (src->BaseCurveIndex<=camera_curve) {
+        dst->BaseCurveIndex = src->BaseCurveIndex;
+	if (src->BaseCurveIndex==manual_curve)
+	    dst->BaseCurve[manual_curve] = src->BaseCurve[manual_curve];
+    } else {
+	/* For non-standard curves we look for a curve with the same name
+	 * and override it, assuming it is the same curve. */
+	for (i=camera_curve+1; i<dst->BaseCurveCount; i++) {
+	    if (!strcmp(dst->BaseCurve[i].name,
+			src->BaseCurve[src->BaseCurveIndex].name)) {
+		dst->BaseCurve[i] = src->BaseCurve[src->BaseCurveIndex];
+		dst->BaseCurveIndex = i;
+		break;
+	    }
+	}
+	/* If the curve was not found we add it. */
+	if (i==dst->BaseCurveCount) {
+	    /* If there is no more room we throw away the last curve. */
+	    if (dst->BaseCurveCount==max_curves) dst->BaseCurveCount--;
+	    dst->BaseCurve[dst->BaseCurveCount] =
+		src->BaseCurve[src->BaseCurveIndex];
+	    dst->BaseCurveIndex = dst->BaseCurveCount;
+	    dst->BaseCurveCount++;
+	}
+    }
     /* We only copy the current curve */
-    if (src->curveIndex<=camera_curve) {
+    if (src->curveIndex<=linear_curve) {
         dst->curveIndex = src->curveIndex;
 	if (src->curveIndex==manual_curve)
 	    dst->curve[manual_curve] = src->curve[manual_curve];
@@ -835,6 +932,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 		cmd->profile[0][0].linear;
     if (cmd->saturation!=NULLF)
 	conf->saturation=cmd->saturation;
+    if (cmd->BaseCurveIndex>=0) conf->BaseCurveIndex = cmd->BaseCurveIndex;
     if (cmd->curveIndex>=0) conf->curveIndex = cmd->curveIndex;
     if (cmd->autoBlack) {
 	conf->autoBlack = cmd->autoBlack;
@@ -902,12 +1000,19 @@ char helpText[]=
 "--wb=camera|auto      White balance setting.\n"
 "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
 "--green=GREEN         Green color normalization.\n"
-"--curve=manual|linear|camera|custom|CURVE\n"
-"                      Type of tone curve to use. CURVE can be any curve\n"
+"--base-curve=manual|linear|camera|custom|CURVE\n"
+"                      Type of base tone curve to use. CURVE can be any curve\n"
 "                      that was previously loaded in the GUI.\n"
 "                      (default camera if such exsists, linear otherwise).\n"
-"--curve-file=file     Use tone curve included in specified file.\n"
-"                      Overrides --curve option\n"
+"--base-curve-file=file\n"
+"                      Use base tone curve included in specified file.\n"
+"                      Overrides --base-curve option.\n"
+"--curve=manual|linear|CURVE\n"
+"                      Type of luminosity curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default linear).\n"
+"--curve-file=file     Use luminosity curve included in specified file.\n"
+"                      Overrides --curve option.\n"
 "--[un]clip            Unclip [clip] highlights (default clip).\n"
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
@@ -985,12 +1090,15 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     int index=0, c, i;
     char *base;
     char *wbName=NULL;
-    char *curveName=NULL, *curveFile=NULL, *outTypeName=NULL,
+    char *baseCurveName=NULL, *baseCurveFile=NULL,
+	 *curveName=NULL, *curveFile=NULL, *outTypeName=NULL,
          *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL, *interpolationName=NULL;
     static struct option options[] = {
         {"wb", 1, 0, 'w'},
         {"temperature", 1, 0, 't'},
         {"green", 1, 0, 'g'},
+        {"base-curve", 1, 0, 'B'},
+        {"base-curve-file", 1, 0, 'S'},
         {"curve", 1, 0, 'c'},
         {"curve-file", 1, 0, 'f'},
         {"gamma", 1, 0, 'G'},
@@ -1021,7 +1129,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         {0, 0, 0, 0}
     };
     void *optPointer[] = { &wbName, &cmd->temperature, &cmd->green,
-	&curveName, &curveFile,
+	&baseCurveName, &baseCurveFile, &curveName, &curveFile,
         &cmd->profile[0][0].gamma, &cmd->profile[0][0].linear,
 	&cmd->saturation,
         &cmd->exposure, &cmd->black, &interpolationName,
@@ -1063,7 +1171,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         case 'G':
         case 'L':
         case 's':
-        case 'S':
         case 'd':
             if (sscanf(optarg, "%lf", (double *)optPointer[index])==0) {
                 ufraw_message(UFRAW_ERROR,
@@ -1083,6 +1190,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
             }
             break;
         case 'w':
+        case 'B':
+        case 'S':
         case 'c':
         case 'f':
         case 'i':
@@ -1143,7 +1252,46 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
             cmd->wb = -1;
 	}
     }
-
+    cmd->BaseCurveIndex = -1;
+    if (baseCurveFile!=NULL) {
+        if (cmd->BaseCurveCount == max_curves) {
+            ufraw_message(UFRAW_ERROR,
+		    "failed to load curve from %s,"
+		    "too many configured base curves", baseCurveFile);
+            return -1;
+        }
+        cmd->BaseCurveIndex = cmd->BaseCurveCount;
+        if (curve_load(&(rc->BaseCurve[cmd->BaseCurveIndex]), baseCurveFile)
+		== UFRAW_ERROR) {
+            ufraw_message(UFRAW_ERROR,
+                    "failed to load curve from %s", baseCurveFile);
+            return -1;
+        }
+        cmd->BaseCurveCount++;
+    } else if (baseCurveName!=NULL) {
+        if (!strcmp(baseCurveName, "manual"))
+	    cmd->BaseCurveIndex=manual_curve;
+        else if (!strcmp(baseCurveName, "linear"))
+	    cmd->BaseCurveIndex=linear_curve;
+        else if (!strcmp(baseCurveName, "custom"))
+	    cmd->BaseCurveIndex=custom_curve;
+        else if (!strcmp(baseCurveName, "camera"))
+	    cmd->BaseCurveIndex=camera_curve;
+        else {
+            cmd->BaseCurveIndex = -1;
+            for( i = camera_curve + 1; i < rc->BaseCurveCount; i++ ) {
+                if( !strcmp(baseCurveName, rc->BaseCurve[i].name )) {
+                    cmd->BaseCurveIndex = i;
+                    break;
+                }
+            }
+            if( cmd->BaseCurveIndex == -1 ) {
+                ufraw_message(UFRAW_ERROR,
+                        "'%s' is not a valid base curve name.", baseCurveName);
+                return -1;
+            }
+        }
+    }
     cmd->curveIndex = -1;
     if (curveFile!=NULL) {
         if (cmd->curveCount == max_curves) {
@@ -1163,11 +1311,9 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     } else if (curveName!=NULL) {
         if (!strcmp(curveName, "manual")) cmd->curveIndex=manual_curve;
         else if (!strcmp(curveName, "linear")) cmd->curveIndex=linear_curve;
-        else if (!strcmp(curveName, "camera")) cmd->curveIndex=camera_curve;
-        else if (!strcmp(curveName, "custom")) cmd->curveIndex=custom_curve;
         else {
             cmd->curveIndex = -1;
-            for( i = camera_curve + 1; i < rc->curveCount; i++ ) {
+            for( i = linear_curve + 1; i < rc->curveCount; i++ ) {
                 if( !strcmp( curveName, rc->curve[i].name )) {
                     cmd->curveIndex = i;
                     break;

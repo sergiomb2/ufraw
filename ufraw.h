@@ -68,9 +68,9 @@ typedef struct {
     gboolean updateTransform;
     void *colorTransform;
     double saturation;
+    CurveData baseCurveData, luminosityCurveData;
     guint16 gammaCurve[0x10000];
-    CurveData toneCurveData;
-    guint16 toneCurve[0x10000];
+    guint16 luminosityCurve[0x10000];
     guint16 saturationCurve[0x10000];
 } developer_data;
 
@@ -123,6 +123,8 @@ typedef struct {
     double exposure, saturation, black; /* black is only used in CMD */
     gboolean unclip;
     int autoExposure, autoBlack;
+    int BaseCurveIndex, BaseCurveCount;
+    CurveData BaseCurve[max_curves];
     int curveIndex, curveCount;
     CurveData curve[max_curves];
     int profileIndex[profile_types], profileCount[profile_types];
@@ -224,7 +226,7 @@ void developer_profile(developer_data *d, int type, profile_data *p);
 void developer_prepare(developer_data *d, int rgbMax, double exposure,
     int unclip, double chanMul[4], float rgb_cam[3][4], int colors,
     int useMatrix, profile_data *in, profile_data *out, int intent,
-    double saturation, CurveData *curve);
+    double saturation, CurveData *baseCurve, CurveData *curve);
 void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     guint16 *buf, int count);
 

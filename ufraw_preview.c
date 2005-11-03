@@ -54,15 +54,16 @@ typedef struct {
     double initialChanMul[4];
     /* Remember the Gtk Widgets that we need to access later */
     GtkWidget *ControlsBox, *PreviewWidget, *RawHisto, *LiveHisto;
-    GtkWidget *CurveWidget, *BlackLabel;
-    GtkComboBox *WBCombo, *CurveCombo, *ProfileCombo[profile_types];
+    GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
+    GtkComboBox *WBCombo, *BaseCurveCombo, *CurveCombo,
+		*ProfileCombo[profile_types];
     GtkLabel *SpotPatch;
     colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
     GtkToggleButton *AutoExposureButton, *AutoBlackButton;
     GtkButton *AutoCurveButton;
     GtkWidget *ResetWBButton, *ResetGammaButton, *ResetLinearButton;
     GtkWidget *ResetExposureButton, *ResetSaturationButton;
-    GtkWidget *ResetBlackButton, *ResetCurveButton;
+    GtkWidget *ResetBlackButton, *ResetBaseCurveButton, *ResetCurveButton;
     GtkWidget *UseMatrixButton;
     GtkTooltips *ToolTips;
     GtkProgressBar *ProgressBar;
@@ -85,7 +86,9 @@ typedef struct {
 /* These #defines are not very elegant, but otherwise things get tooo long */
 #define CFG data->UF->conf
 #define Developer data->UF->developer
-#define CFG_cameraCurve (CFG->curve[camera_curve].m_numAnchors>0)
+#define CFG_cameraCurve (CFG->BaseCurve[camera_curve].m_numAnchors>0)
+
+enum { base_curve, luminosity_curve };
 
 preview_data *get_preview_data(void *object)
 {
@@ -137,7 +140,7 @@ void ufraw_messenger(char *message,  void *parentWindow)
     }
 }
 
-void load_curve(GtkWidget *widget, gpointer user_data)
+void load_curve(GtkWidget *widget, long curveType)
 {
     preview_data *data = get_preview_data(widget);
     GtkFileChooser *fileChooser;
@@ -145,10 +148,12 @@ void load_curve(GtkWidget *widget, gpointer user_data)
     GSList *list, *saveList;
     CurveData c;
     char *cp;
+    int curveCount;
 
-    user_data = user_data;
     if (data->FreezeDialog) return;
-    if (CFG->curveCount==max_curves) {
+    if (curveType==base_curve) curveCount = CFG->BaseCurveCount;
+    else curveCount = CFG->curveCount;
+    if (curveCount>=max_curves) {
         ufraw_message(UFRAW_ERROR, "No more room for new curves.");
         return;
     }
@@ -200,17 +205,26 @@ void load_curve(GtkWidget *widget, gpointer user_data)
         gtk_file_chooser_set_current_folder(fileChooser, CFG->curvePath);
     if (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
         for (list=saveList=gtk_file_chooser_get_filenames(fileChooser);
-            list!=NULL && CFG->curveCount<max_curves;
+            list!=NULL && curveCount<max_curves;
             list=g_slist_next(list)) {
             c = conf_default.curve[0];
             if (curve_load(&c, list->data)!=UFRAW_SUCCESS) continue;
-            gtk_combo_box_append_text(data->CurveCombo, c.name);
-            CFG->curve[CFG->curveCount++] = c;
-            CFG->curveIndex = CFG->curveCount-1;
-            if (CFG_cameraCurve)
-                gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
-            else
-                gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-2);
+	    if (curveType==base_curve) {
+		gtk_combo_box_append_text(data->BaseCurveCombo, c.name);
+		CFG->BaseCurve[curveCount++] = c;
+		CFG->BaseCurveIndex = curveCount-1;
+		if (CFG_cameraCurve)
+		    gtk_combo_box_set_active(data->BaseCurveCombo,
+			    CFG->BaseCurveIndex);
+		else
+		    gtk_combo_box_set_active(data->BaseCurveCombo,
+			    CFG->BaseCurveIndex-2);
+	    } else {
+		gtk_combo_box_append_text(data->CurveCombo, c.name);
+		CFG->curve[curveCount++] = c;
+		CFG->curveIndex = curveCount-1;
+		gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
+	    }
             cp = g_path_get_dirname(list->data);
             g_strlcpy(CFG->curvePath, cp, max_path);
             g_free(cp);
@@ -220,11 +234,13 @@ void load_curve(GtkWidget *widget, gpointer user_data)
         ufraw_message(UFRAW_ERROR, "No more room for new curves.");
         g_slist_free(saveList);
     }
+    if (curveType==base_curve) CFG->BaseCurveCount = curveCount;
+    else CFG->curveCount = curveCount;
     ufraw_focus(fileChooser, FALSE);
     gtk_widget_destroy(GTK_WIDGET(fileChooser));
 }
 
-void save_curve(GtkWidget *widget, gpointer user_data)
+void save_curve(GtkWidget *widget, long curveType)
 {
     preview_data *data = get_preview_data(widget);
     GtkFileChooser *fileChooser;
@@ -232,7 +248,6 @@ void save_curve(GtkWidget *widget, gpointer user_data)
     char defFilename[max_name];
     char *filename, *cp;
 
-    user_data = user_data;
     if (data->FreezeDialog) return;
 
     fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new("Save curve",
@@ -280,12 +295,19 @@ void save_curve(GtkWidget *widget, gpointer user_data)
 
     if (strlen(CFG->curvePath)>0)
         gtk_file_chooser_set_current_folder(fileChooser, CFG->curvePath);
-    snprintf(defFilename, max_name, "%s.curve",
-	    CFG->curve[CFG->curveIndex].name);
+    if (curveType==base_curve)
+	snprintf(defFilename, max_name, "%s.curve",
+		CFG->BaseCurve[CFG->BaseCurveIndex].name);
+    else
+	snprintf(defFilename, max_name, "%s.curve",
+		CFG->curve[CFG->curveIndex].name);
     gtk_file_chooser_set_current_name(fileChooser, defFilename);
     if (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
         filename = gtk_file_chooser_get_filename(fileChooser);
-	curve_save(&CFG->curve[CFG->curveIndex], filename);
+	if (curveType==base_curve)
+	    curve_save(&CFG->BaseCurve[CFG->BaseCurveIndex], filename);
+	else
+	    curve_save(&CFG->curve[CFG->curveIndex], filename);
         cp = g_path_get_dirname(filename);
         g_strlcpy(CFG->curvePath, cp, max_path);
         g_free(cp);
@@ -474,7 +496,8 @@ gboolean render_raw_histogram(preview_data *data)
 	    data->UF->colors, data->UF->useMatrix,
             &CFG->profile[0][CFG->profileIndex[0]],
             &CFG->profile[1][CFG->profileIndex[1]], CFG->intent,
-            CFG->saturation, &CFG->curve[CFG->curveIndex]);
+            CFG->saturation, &CFG->BaseCurve[CFG->BaseCurveIndex],
+            &CFG->curve[CFG->curveIndex]);
 
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->RawHisto));
     if (gdk_pixbuf_get_height(pixbuf)!=CFG->rawHistogramHeight+2) {
@@ -811,10 +834,11 @@ void update_scales(preview_data *data)
 {
     if (data->FreezeDialog) return;
     data->FreezeDialog = TRUE;
-    if (CFG->curveIndex>camera_curve && !CFG_cameraCurve)
-        gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-2);
+    if (CFG->BaseCurveIndex>camera_curve && !CFG_cameraCurve)
+        gtk_combo_box_set_active(data->BaseCurveCombo, CFG->BaseCurveIndex-2);
     else
-        gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
+        gtk_combo_box_set_active(data->BaseCurveCombo, CFG->BaseCurveIndex);
+    gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
     gtk_combo_box_set_active(data->WBCombo, MAX(CFG->wb, 0));
 
     gtk_adjustment_set_value(data->TemperatureAdjustment, CFG->temperature);
@@ -852,6 +876,10 @@ void update_scales(preview_data *data)
 	    fabs( conf_default.exposure - CFG->exposure) > 0.001);
     gtk_widget_set_sensitive(data->ResetSaturationButton,
 	    fabs( conf_default.saturation - CFG->saturation) > 0.001);
+    gtk_widget_set_sensitive(data->ResetBaseCurveButton,
+	    CFG->BaseCurve[CFG->BaseCurveIndex].m_numAnchors>2 ||
+	    CFG->BaseCurve[CFG->BaseCurveIndex].m_anchors[1].x!=1.0 ||
+	    CFG->BaseCurve[CFG->BaseCurveIndex].m_anchors[1].y!=1.0 );
     gtk_widget_set_sensitive(data->ResetBlackButton,
 	    CFG->curve[CFG->curveIndex].m_anchors[0].x!=0.0 ||
 	    CFG->curve[CFG->curveIndex].m_anchors[0].y!=0.0 );
@@ -864,13 +892,18 @@ void update_scales(preview_data *data)
     render_preview(data, render_default);
 };
 
-void update_scales_callback(GtkWidget *widget, gpointer user_data)
+void update_scales_callback(GtkWidget *widget, long curveType)
 {
     preview_data *data = get_preview_data(widget);
-    user_data = user_data;
-    CFG->curveIndex = manual_curve;
-    CFG->curve[CFG->curveIndex] =
-	*curveeditor_widget_get_curve(data->CurveWidget);
+    if (curveType==base_curve) {
+	CFG->BaseCurveIndex = manual_curve;
+	CFG->BaseCurve[CFG->BaseCurveIndex] =
+	    *curveeditor_widget_get_curve(data->BaseCurveWidget);
+    } else {
+	CFG->curveIndex = manual_curve;
+	CFG->curve[CFG->curveIndex] =
+	    *curveeditor_widget_get_curve(data->CurveWidget);
+    }
     CFG->autoBlack = FALSE;
     update_scales(data);
 }
@@ -1018,6 +1051,17 @@ void button_update(GtkWidget *button, gpointer user_data)
 	curveeditor_widget_set_curve(data->CurveWidget,
 		&CFG->curve[CFG->curveIndex]);
     }
+    if (button==data->ResetBaseCurveButton) {
+	if (CFG->BaseCurveIndex==manual_curve) {
+	    CFG->BaseCurve[CFG->BaseCurveIndex].m_numAnchors = 2;
+	    CFG->BaseCurve[CFG->BaseCurveIndex].m_anchors[1].x = 1.0;
+	    CFG->BaseCurve[CFG->BaseCurveIndex].m_anchors[1].y = 1.0;
+	} else {
+	    CFG->BaseCurveIndex = linear_curve;
+	}
+	curveeditor_widget_set_curve(data->BaseCurveWidget,
+		&CFG->BaseCurve[CFG->BaseCurveIndex]);
+    }
     if (button==data->ResetCurveButton) {
 	if (CFG->curveIndex==manual_curve) {
 	    CFG->curve[CFG->curveIndex].m_numAnchors = 2;
@@ -1140,9 +1184,12 @@ void combo_update(GtkWidget *combo, gint *valuep)
     preview_data *data = get_preview_data(combo);
     if (data->FreezeDialog) return;
     *valuep = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
-    if (valuep==&CFG->curveIndex) {
-        if (!CFG_cameraCurve && CFG->curveIndex>camera_curve-2)
-            CFG->curveIndex += 2;
+    if (valuep==&CFG->BaseCurveIndex) {
+        if (!CFG_cameraCurve && CFG->BaseCurveIndex>camera_curve-2)
+            CFG->BaseCurveIndex += 2;
+	curveeditor_widget_set_curve(data->BaseCurveWidget,
+		&CFG->BaseCurve[CFG->BaseCurveIndex]);
+    } else if (valuep==&CFG->curveIndex) {
 	curveeditor_widget_set_curve(data->CurveWidget,
 		&CFG->curve[CFG->curveIndex]);
     } else if (valuep==&CFG->wb) {
@@ -1189,20 +1236,33 @@ void delete_from_list(GtkWidget *widget, gpointer user_data)
 		CFG->profileIndex[type]);
         for (; index<CFG->profileCount[type]; index++)
             CFG->profile[type][index] = CFG->profile[type][index+1];
-    } else {
+    } else if (type==2+base_curve) {
         if (CFG_cameraCurve)
-            gtk_combo_box_remove_text(data->CurveCombo, index);
+            gtk_combo_box_remove_text(data->BaseCurveCombo, index);
         else
-            gtk_combo_box_remove_text(data->CurveCombo, index-2);
+            gtk_combo_box_remove_text(data->BaseCurveCombo, index-2);
+        CFG->BaseCurveCount--;
+        if (CFG->BaseCurveIndex==CFG->BaseCurveCount) {
+            CFG->BaseCurveIndex--;
+	    if (CFG->BaseCurveIndex==camera_curve && !CFG_cameraCurve)
+		CFG->BaseCurveIndex = linear_curve;
+	    if (CFG->BaseCurveIndex>camera_curve && !CFG_cameraCurve)
+		gtk_combo_box_set_active(data->BaseCurveCombo,
+			CFG->BaseCurveIndex-2);
+	    else
+		gtk_combo_box_set_active(data->BaseCurveCombo,
+			CFG->BaseCurveIndex);
+	    curveeditor_widget_set_curve(data->BaseCurveWidget,
+		&CFG->BaseCurve[CFG->BaseCurveIndex]);
+	}
+        for (; index<CFG->BaseCurveCount; index++)
+            CFG->BaseCurve[index] = CFG->BaseCurve[index+1];
+    } else if (type==2+luminosity_curve) {
+        gtk_combo_box_remove_text(data->CurveCombo, index);
         CFG->curveCount--;
         if (CFG->curveIndex==CFG->curveCount) {
             CFG->curveIndex--;
-	    if (CFG->curveIndex==camera_curve && !CFG_cameraCurve)
-		CFG->curveIndex = linear_curve;
-	    if (CFG->curveIndex>camera_curve && !CFG_cameraCurve)
-		gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-2);
-	    else
-		gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
+	    gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
 	    curveeditor_widget_set_curve(data->CurveWidget,
 		&CFG->curve[CFG->curveIndex]);
 	}
@@ -1235,7 +1295,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     GtkWidget *optionsDialog, *profileTable[2];
     GtkComboBox *confCombo;
     GtkWidget *notebook, *label, *page, *button, *text, *box, *image, *event;
-    GtkTable *curveTable, *table;
+    GtkTable *baseCurveTable, *curveTable, *table;
     GtkTextBuffer *confBuffer, *buffer;
     char txt[max_name], *buf;
     long i, j;
@@ -1259,7 +1319,8 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, label);
     profileTable[0] = table_with_frame(box, "Input color profiles", TRUE);
     profileTable[1] = table_with_frame(box, "Output color profiles", TRUE);
-    curveTable = GTK_TABLE(table_with_frame(box, "Curves", TRUE));
+    baseCurveTable = GTK_TABLE(table_with_frame(box, "Base Curves", TRUE));
+    curveTable = GTK_TABLE(table_with_frame(box, "Luminosity Curves", TRUE));
 
     label = gtk_label_new("Configuration");
     box = gtk_vbox_new(FALSE, 0);
@@ -1356,14 +1417,28 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
                 gtk_table_attach(table, button, 1, 2, i, i+1, 0, 0, 0, 0);
             }
         }
+        gtk_container_foreach(GTK_CONTAINER(baseCurveTable),
+                (GtkCallback)(container_remove), baseCurveTable);
+        table = baseCurveTable;
+        for (i=camera_curve+1; i<CFG->BaseCurveCount; i++) {
+            label = gtk_label_new(CFG->BaseCurve[i].name);
+            gtk_table_attach_defaults(table, label, 0, 1, i, i+1);
+            button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+            g_object_set_data(G_OBJECT(button), "Type",
+		    (gpointer)2+base_curve);
+            g_signal_connect(G_OBJECT(button), "clicked",
+                    G_CALLBACK(delete_from_list), (gpointer)i);
+            gtk_table_attach(table, button, 1, 2, i, i+1, 0, 0, 0, 0);
+        }
         gtk_container_foreach(GTK_CONTAINER(curveTable),
                 (GtkCallback)(container_remove), curveTable);
         table = curveTable;
-        for (i=camera_curve+1; i<CFG->curveCount; i++) {
+        for (i=linear_curve+1; i<CFG->curveCount; i++) {
             label = gtk_label_new(CFG->curve[i].name);
             gtk_table_attach_defaults(table, label, 0, 1, i, i+1);
             button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-            g_object_set_data(G_OBJECT(button), "Type", (void*)2);
+            g_object_set_data(G_OBJECT(button), "Type",
+		    (gpointer)2+luminosity_curve);
             g_signal_connect(G_OBJECT(button), "clicked",
                     G_CALLBACK(delete_from_list), (gpointer)i);
             gtk_table_attach(table, button, 1, 2, i, i+1, 0, 0, 0, 0);
@@ -1617,10 +1692,103 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->SpotPatch = GTK_LABEL(gtk_label_new(NULL));
     gtk_table_attach_defaults(table, GTK_WIDGET(data->SpotPatch), 6, 7, 1, 2);
 
+    table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
+    data->ExposureAdjustment = adjustment_scale(table, 0, 0, "Exposure",
+            CFG->exposure, &CFG->exposure,
+            -3, 3, 0.01, 1.0/6, 2, "EV compensation");
+
+    button = gtk_toggle_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+            GTK_STOCK_CUT, GTK_ICON_SIZE_BUTTON));
+    snprintf(text, max_name, "Highlight clipping\n"
+	    "Current state: %s", CFG->unclip ? "unclip" : "clip");
+    gtk_tooltips_set_tip(data->ToolTips, button, text, NULL);
+    gtk_table_attach(table, button, 7, 8, 0, 1, 0, 0, 0, 0);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), !CFG->unclip);
+    g_signal_connect(G_OBJECT(button), "toggled",
+            G_CALLBACK(toggle_button_update), &CFG->unclip);
+
+    data->AutoExposureButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
+    gtk_container_add(GTK_CONTAINER(data->AutoExposureButton),
+	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoExposureButton),
+	    "Auto adjust exposure", NULL);
+    gtk_table_attach(table, GTK_WIDGET(data->AutoExposureButton), 8, 9, 0, 1,
+	    0, 0, 0, 0);
+    gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
+    g_signal_connect(G_OBJECT(data->AutoExposureButton), "clicked",
+            G_CALLBACK(button_update), NULL);
+
+    data->ResetExposureButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetExposureButton),
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, data->ResetExposureButton,
+	    "Reset exposure to default", NULL);
+    gtk_table_attach(table, data->ResetExposureButton, 9, 10, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->ResetExposureButton), "clicked",
+            G_CALLBACK(button_update), NULL);
+
     data->ControlsBox = noteBox = gtk_notebook_new();
     gtk_box_pack_start(GTK_BOX(previewVBox), noteBox, FALSE, FALSE, 0);
 
+    /* Start of Base Curve page */
     page = table_with_frame(noteBox, "Base", TRUE);
+
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+
+    data->BaseCurveCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    /* Fill in the curve names, skipping custom and camera curves if there is
+     * no cameraCurve. This will make some mess later with the counting */
+    for (i=0; i<CFG->BaseCurveCount; i++)
+        if ( (i!=custom_curve && i!=camera_curve) || CFG_cameraCurve )
+            gtk_combo_box_append_text(data->BaseCurveCombo,
+		    CFG->BaseCurve[i].name);
+    /* This is part of the mess with the combo_box counting */
+    if (CFG->BaseCurveIndex>camera_curve && !CFG_cameraCurve)
+        gtk_combo_box_set_active(data->BaseCurveCombo, CFG->BaseCurveIndex-2);
+    else
+        gtk_combo_box_set_active(data->BaseCurveCombo, CFG->BaseCurveIndex);
+    g_signal_connect(G_OBJECT(data->BaseCurveCombo), "changed",
+            G_CALLBACK(combo_update), &CFG->BaseCurveIndex);
+    gtk_table_attach(table, GTK_WIDGET(data->BaseCurveCombo), 0, 7, 0, 1,
+            GTK_FILL, GTK_FILL, 0, 0);
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+            GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
+    gtk_table_attach(table, button, 7, 8, 0, 1, GTK_SHRINK, GTK_FILL, 0, 0);
+    gtk_tooltips_set_tip(data->ToolTips, button, "Load base curve", NULL);
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(load_curve), (gpointer)base_curve);
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+            GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, button, "Save base curve", NULL);
+    gtk_table_attach(table, button, 8, 9, 0, 1, GTK_SHRINK, GTK_FILL, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(save_curve), (gpointer)base_curve);
+
+    data->BaseCurveWidget = curveeditor_widget_new(curveeditorHeight, 256,
+	    update_scales_callback, (gpointer)base_curve);
+    curveeditor_widget_set_curve(data->BaseCurveWidget,
+	    &CFG->BaseCurve[CFG->BaseCurveIndex]);
+    gtk_table_attach(table, data->BaseCurveWidget, 1, 8, 1, 8,
+	    GTK_EXPAND, 0, 0, 0);
+
+    data->ResetBaseCurveButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetBaseCurveButton),
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetBaseCurveButton),
+	    "Reset base curve to default",NULL);
+    gtk_table_attach(table, GTK_WIDGET(data->ResetBaseCurveButton), 8, 9, 7, 8,
+		0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->ResetBaseCurveButton), "clicked",
+            G_CALLBACK(button_update), NULL);
+    /* End of Base Curve page */
+
+    /* Start of Color setting page */
+    page = table_with_frame(noteBox, "Color", TRUE);
+    /* Set this page to be the opening page. */
+    int openingPage = gtk_notebook_page_num(GTK_NOTEBOOK(noteBox), page);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     label = gtk_label_new("White balance");
@@ -1730,45 +1898,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(combo), "changed",
             G_CALLBACK(combo_update), &CFG->intent);
     gtk_table_attach(table, GTK_WIDGET(combo), 1, 7, 6, 7, GTK_FILL, 0, 0, 0);
+    /* End of Color setting page */
 
+    /* Start of Corrections page */
     page = table_with_frame(noteBox, "Corrections", TRUE);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
-    data->ExposureAdjustment = adjustment_scale(table, 0, 0, "Exposure",
-            CFG->exposure, &CFG->exposure,
-            -3, 3, 0.01, 1.0/6, 2, "EV compensation");
-
-    button = gtk_toggle_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-            GTK_STOCK_CUT, GTK_ICON_SIZE_BUTTON));
-    snprintf(text, max_name, "Highlight clipping\n"
-	    "Current state: %s", CFG->unclip ? "unclip" : "clip");
-    gtk_tooltips_set_tip(data->ToolTips, button, text, NULL);
-    gtk_table_attach(table, button, 7, 8, 0, 1, 0, 0, 0, 0);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), !CFG->unclip);
-    g_signal_connect(G_OBJECT(button), "toggled",
-            G_CALLBACK(toggle_button_update), &CFG->unclip);
-
-    data->AutoExposureButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
-    gtk_container_add(GTK_CONTAINER(data->AutoExposureButton),
-	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoExposureButton),
-	    "Auto adjust exposure", NULL);
-    gtk_table_attach(table, GTK_WIDGET(data->AutoExposureButton), 8, 9, 0, 1,
-	    0, 0, 0, 0);
-    gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
-    g_signal_connect(G_OBJECT(data->AutoExposureButton), "clicked",
-            G_CALLBACK(button_update), NULL);
-
-    data->ResetExposureButton = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(data->ResetExposureButton),
-	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, data->ResetExposureButton,
-	    "Reset exposure to default", NULL);
-    gtk_table_attach(table, data->ResetExposureButton, 9, 10, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(data->ResetExposureButton), "clicked",
-            G_CALLBACK(button_update), NULL);
-
     data->SaturationAdjustment = adjustment_scale(table, 0, 1, "Saturation",
             CFG->saturation, &CFG->saturation,
             0.0, 3.0, 0.01, 0.1, 2, "Saturation");
@@ -1785,16 +1920,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     table = GTK_TABLE(table_with_frame(page, NULL,
             CFG->expander[curve_expander]));
     data->CurveCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    /* Fill in the curve names, skipping custom and camera curves if there is
-     * no cameraCurve. This will make some mess later with the counting */
+    /* Fill in the curve names */
     for (i=0; i<CFG->curveCount; i++)
-        if ( (i!=custom_curve && i!=camera_curve) || CFG_cameraCurve )
-            gtk_combo_box_append_text(data->CurveCombo, CFG->curve[i].name);
-    /* This is part of the mess with the combo_box counting */
-    if (CFG->curveIndex>camera_curve && !CFG_cameraCurve)
-        gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex-2);
-    else
-        gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
+        gtk_combo_box_append_text(data->CurveCombo, CFG->curve[i].name);
+    gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
     g_signal_connect(G_OBJECT(data->CurveCombo), "changed",
             G_CALLBACK(combo_update), &CFG->curveIndex);
     gtk_table_attach(table, GTK_WIDGET(data->CurveCombo), 0, 7, 0, 1,
@@ -1805,17 +1934,17 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_table_attach(table, button, 7, 8, 0, 1, GTK_SHRINK, GTK_FILL, 0, 0);
     gtk_tooltips_set_tip(data->ToolTips, button, "Load curve", NULL);
     g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(load_curve), NULL);
+            G_CALLBACK(load_curve), (gpointer)luminosity_curve);
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, button, "Save curve", NULL);
     gtk_table_attach(table, button, 8, 9, 0, 1, GTK_SHRINK, GTK_FILL, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(save_curve), NULL);
+            G_CALLBACK(save_curve), (gpointer)luminosity_curve);
 
     data->CurveWidget = curveeditor_widget_new(curveeditorHeight, 256,
-	    update_scales_callback, NULL);
+	    update_scales_callback, (gpointer)luminosity_curve);
     curveeditor_widget_set_curve(data->CurveWidget,
 	    &CFG->curve[CFG->curveIndex]);
     gtk_table_attach(table, data->CurveWidget, 1, 8, 1, 8, GTK_EXPAND, 0, 0, 0);
@@ -1872,6 +2001,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
     g_signal_connect(G_OBJECT(data->AutoBlackButton), "clicked",
             G_CALLBACK(button_update), NULL);
+    /* End of Corrections page */
 
     table = GTK_TABLE(table_with_frame(previewVBox, expanderText[live_expander],
             CFG->expander[live_expander]));
@@ -2116,6 +2246,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
         gtk_widget_grab_focus(saveAsButton);
     }
     gtk_widget_show_all(previewWindow);
+    gtk_notebook_set_current_page(GTK_NOTEBOOK(noteBox), openingPage);
 
     gtk_widget_set_sensitive(data->ControlsBox, FALSE);
     preview_progress(previewWindow, "Loading preview", 0.2);

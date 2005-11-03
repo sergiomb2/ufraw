@@ -30,7 +30,8 @@ developer_data *developer_init()
         d->profile[i] = NULL;
         strcpy(d->profileFile[i],"no such file");
     }
-    d->toneCurveData.m_gamma = -1.0;
+    d->baseCurveData.m_gamma = -1.0;
+    d->luminosityCurveData.m_gamma = -1.0;
     d->intent = -1;
     d->updateTransform = TRUE;
     d->colorTransform = NULL;
@@ -79,7 +80,7 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
 	int unclip, 
 	double chanMul[4], float rgb_cam[3][4], int colors, int useMatrix,
 	profile_data *in, profile_data *out, int intent,
-        double saturation, CurveData *curve)
+        double saturation, CurveData *baseCurve, CurveData *curve)
 {
     unsigned c, i;
 
@@ -94,8 +95,17 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
 		d->colorMatrix[i][c] = rgb_cam[i][c]*0x10000;
     if (unclip) d->max = 0xFFFF;
     else d->max = MIN(exposure*0x10000, 0xFFFF);
-    if (in->gamma!=d->gamma || in->linear!=d->linear) {
+    /* Check if base curve data has changed. */
+    if (in->gamma!=d->gamma || in->linear!=d->linear ||
+	    memcmp(baseCurve, &d->baseCurveData, sizeof(CurveData)) ) {
         double a, b, c, g;
+	CurveSample *cs = CurveSampleInit(0x10000, 0xFFFF);
+        d->baseCurveData = *baseCurve;
+        ufraw_message(UFRAW_RESET, NULL);
+        if (CurveDataSample(baseCurve, cs)!=UFRAW_SUCCESS) {
+            ufraw_message(UFRAW_REPORT, NULL);
+            for (i=0; i<0x10000; i++) cs->m_Samples[i] = i;
+	}
         d->gamma = in->gamma;
         d->linear = in->linear;
 	/* The parameters of the linearized gamma curve are set in a way that
@@ -113,9 +123,11 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
             a = b = g = 0.0;
             c = 1.0;
         }
-        for (i=0; i<0x10000*d->linear; i++) d->gammaCurve[i] = MIN(c*i, 0xFFFF);
+        for (i=0; i<0x10000*d->linear; i++) d->gammaCurve[i] =
+	    cs->m_Samples[(gushort)MIN(c*i, 0xFFFF)];
         for (; i<0x10000; i++) d->gammaCurve[i] =
-            MIN(pow(a*i/0x10000+b, g)*0x10000, 0xFFFF);
+            cs->m_Samples[(gushort)MIN(pow(a*i/0x10000+b, g)*0x10000, 0xFFFF)];
+        CurveSampleFree(cs);
     }
     developer_profile(d, 0, in);
     developer_profile(d, 1, out);
@@ -138,17 +150,16 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
         for (i=0; i<0x10000; i++) d->saturationCurve[i] = MAX(MIN(
             pow((double)i/0x10000, saturation)*0x10000,0xFFFF),1);
     }
-    /* Check if curve data has changed. Changes in contrast, saturation
-     * will cause a redundant call to CurveDataSample() */
-    if (memcmp(curve,&d->toneCurveData, sizeof(CurveData))) {
-        d->toneCurveData = *curve;
+    /* Check if curve data has changed. */
+    if (memcmp(curve, &d->luminosityCurveData, sizeof(CurveData))) {
+        d->luminosityCurveData = *curve;
 	CurveSample *cs = CurveSampleInit(0x10000, 0xFFFF);
         ufraw_message(UFRAW_RESET, NULL);
         if (CurveDataSample(curve, cs)!=UFRAW_SUCCESS) {
             ufraw_message(UFRAW_REPORT, NULL);
-            for (i=0; i<0x10000; i++) d->toneCurve[i] = i;
+            for (i=0; i<0x10000; i++) d->luminosityCurve[i] = i;
         } else
-            for (i=0; i<0x10000; i++) d->toneCurve[i] = cs->m_Samples[i];
+            for (i=0; i<0x10000; i++) d->luminosityCurve[i] = cs->m_Samples[i];
         CurveSampleFree(cs);
     }
 }
@@ -200,7 +211,7 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
             sat = 0x10000 - (unsigned)d->saturationCurve[p[minc]]*0x10000 /
                     d->saturationCurve[p[maxc]];
             hue = (unsigned)(p[midc]-p[minc])*0x10000/(p[maxc]-p[minc]);
-	    p[maxc] = d->toneCurve[p[maxc]];
+	    p[maxc] = d->luminosityCurve[p[maxc]];
             p[minc] = p[maxc]*(0x10000-sat)/0x10000;
             p[midc] = p[maxc]*(0x10000-sat+sat*hue/0x10000)/0x10000;
             /* It is also possible to define oldSaturation = max-min */

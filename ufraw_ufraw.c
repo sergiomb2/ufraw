@@ -228,9 +228,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     uf->useMatrix = ( uf->conf->profile[0][uf->conf->profileIndex[0]].useMatrix
 	    && !uf->raw_color ) || uf->colors==4;
 
-    uf->conf->curve[camera_curve].m_numAnchors = 0;
-    uf->conf->curve[custom_curve].m_numAnchors = 0;
-
     /* If there is an embeded curve we "turn on" the custom/camera curve
      * mechanism */
     if (raw->toneCurveSize!=0) {
@@ -242,10 +239,10 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	    return UFRAW_WARNING;
 	}
 	fseek(raw->ifp, pos, SEEK_SET);
-	if (nc.m_numAnchors<2) nc = conf_default.curve[0];
+	if (nc.m_numAnchors<2) nc = conf_default.BaseCurve[0];
 	    
-	g_strlcpy(nc.name, uf->conf->curve[custom_curve].name, max_name);
-	uf->conf->curve[custom_curve] = nc;
+	g_strlcpy(nc.name, uf->conf->BaseCurve[custom_curve].name, max_name);
+	uf->conf->BaseCurve[custom_curve] = nc;
 
 	int use_custom_curve = 0;
 	if (raw->toneModeSize) {
@@ -264,20 +261,22 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	}
 
 	if (use_custom_curve) {
-	    uf->conf->curve[camera_curve] = uf->conf->curve[custom_curve];
-	    g_strlcpy(uf->conf->curve[camera_curve].name,
-		    conf_default.curve[camera_curve].name, max_name);
+	    uf->conf->BaseCurve[camera_curve] =
+		uf->conf->BaseCurve[custom_curve];
+	    g_strlcpy(uf->conf->BaseCurve[camera_curve].name,
+		    conf_default.BaseCurve[camera_curve].name, max_name);
 	} else {
-	    uf->conf->curve[camera_curve] = conf_default.curve[camera_curve];
+	    uf->conf->BaseCurve[camera_curve] =
+		conf_default.BaseCurve[camera_curve];
 	}
     } else {
 	/* If there is no embeded curve we "turn off" the custom/camera curve
 	 * mechanism */
-	uf->conf->curve[camera_curve].m_numAnchors = 0;
-	uf->conf->curve[custom_curve].m_numAnchors = 0;
-	if (uf->conf->curveIndex==custom_curve ||
-		uf->conf->curveIndex==camera_curve)
-	    uf->conf->curveIndex = linear_curve;
+	uf->conf->BaseCurve[camera_curve].m_numAnchors = 0;
+	uf->conf->BaseCurve[custom_curve].m_numAnchors = 0;
+	if (uf->conf->BaseCurveIndex==custom_curve ||
+		uf->conf->BaseCurveIndex==camera_curve)
+	    uf->conf->BaseCurveIndex = linear_curve;
     }
 
     return UFRAW_SUCCESS;
@@ -335,6 +334,7 @@ int ufraw_convert_image(ufraw_data *uf)
                 &conf->profile[0][conf->profileIndex[0]],
                 &conf->profile[1][conf->profileIndex[1]], conf->intent,
                 conf->saturation,
+                &conf->BaseCurve[conf->BaseCurveIndex],
                 &conf->curve[conf->curveIndex]);
     } else {
         if ( uf->conf->autoExposure==apply_state ||
@@ -355,6 +355,7 @@ int ufraw_convert_image(ufraw_data *uf)
                 &conf->profile[0][conf->profileIndex[0]],
                 &conf->profile[1][conf->profileIndex[1]], conf->intent,
                 conf->saturation,
+                &conf->BaseCurve[conf->BaseCurveIndex],
                 &conf->curve[conf->curveIndex]);
         dcraw_finalize_interpolate(&final, raw, conf->interpolation,
 		uf->developer->rgbWB);
@@ -469,6 +470,7 @@ void ufraw_auto_expose(ufraw_data *uf)
             &uf->conf->profile[1][uf->conf->profileIndex[1]],
             uf->conf->intent,
             uf->conf->saturation,
+            &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
             &uf->conf->curve[uf->conf->curveIndex]);
 
     /* First calculate the exposure */
@@ -503,6 +505,7 @@ void ufraw_auto_black(ufraw_data *uf)
             &uf->conf->profile[1][uf->conf->profileIndex[1]],
             uf->conf->intent,
             uf->conf->saturation,
+            &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
             &uf->conf->curve[uf->conf->curveIndex]);
     memset(preview_histogram, 0, sizeof(preview_histogram));
     for (i=0; i<uf->image.height; i++) {
@@ -542,6 +545,7 @@ void ufraw_auto_curve(ufraw_data *uf)
             &uf->conf->profile[1][uf->conf->profileIndex[1]],
             uf->conf->intent,
             uf->conf->saturation,
+            &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
             curve);
     /* Collect histogram data */
     memset(preview_histogram, 0, sizeof(preview_histogram));
