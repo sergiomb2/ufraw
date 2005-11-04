@@ -258,6 +258,23 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
         }
         return;
     }
+
+    if (c->BaseCurveCount<=0) {
+        i = - c->BaseCurveCount;
+        if (!strcmp("MinXY", element))
+            sscanf(temp, "%lf %lf", &c->BaseCurve[i].m_min_x, &c->BaseCurve[i].m_min_y);
+        if (!strcmp("MaxXY", element))
+            sscanf(temp, "%lf %lf", &c->BaseCurve[i].m_max_x, &c->BaseCurve[i].m_max_y);
+        if (!strcmp("AnchorXY", element)) {
+	    /* If one anchor is supplied then all anchors should be supplied */
+            sscanf(temp, "%lf %lf",
+                    &c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].x,
+                    &c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].y);
+            c->BaseCurve[i].m_numAnchors++;
+        }
+        return;
+    }
+
     if (c->profileCount[0]<=0) {
         i = - c->profileCount[0];
         if (!strcmp("File", element))
