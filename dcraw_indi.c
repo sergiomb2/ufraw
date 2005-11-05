@@ -169,9 +169,9 @@ void CLASS border_interpolate_INDI (const int height, const int width,
       memset (sum, 0, sizeof sum);
       for (y=row-1; y != row+2; y++)
 	for (x=col-1; x != col+2; x++)
-	  if (y < height && x < width) {
+	  if (y>=0 && y < height && x>=0 && x < width) {
 	    /* Do not use BAYER macro since shrink is aways false here UF */
-	    sum[FC(y,x)] += image[row*width + col][FC(row,col)];
+	    sum[FC(y,x)] += image[y*width + x][FC(y,x)];
 	    sum[FC(y,x)+4]++;
 	  }
       FORCC if (c != FC(row,col))
