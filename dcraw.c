@@ -19,8 +19,8 @@
    copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
    purchase a license from the author.
 
-   $Revision: 1.296 $
-   $Date: 2005/11/04 06:28:05 $
+   $Revision: 1.297 $
+   $Date: 2005/11/06 04:17:59 $
  */
 
 #define _GNU_SOURCE
@@ -4908,19 +4908,20 @@ canon_cr2:
     camera_red  *= 256/527.0;
     camera_blue *= 256/317.0;
   } else if (!strcmp(model,"D1X")) {
-    width  = 4024;
+    width -= 4;
     ymag = 2;
-  } else if (!strcmp(model,"D70")) {
+  } else if (!strncmp(model,"D50",3) || !strncmp(model,"D70",3)) {
+    width--;
     maximum = 0xf53;
   } else if (!strcmp(model,"D100")) {
     if (tiff_data_compression == 34713 && load_raw == nikon_load_raw)
       raw_width = (width += 3) + 3;
     maximum = 0xf44;
-  } else if (!strcmp(model,"D2H")) {
-    width  = 2482;
+  } else if (!strncmp(model,"D2H",3)) {
     left_margin = 6;
+    width -= 14;
   } else if (!strcmp(model,"D2X")) {
-    width  = 4312;
+    width -= 8;
   } else if (fsize == 1581060) {
     height = 963;
     width = 1287;
@@ -5228,13 +5229,15 @@ konica_400z:
       strcpy (model, "Volare");
     }
   } else if (!strcmp(make,"LEICA") || !strcmp(make,"Panasonic")) {
-    if (width == 3304) width -= 16;
     if (width == 3880) {
       data_offset += 12;
+      maximum = 0xf7f0;
       width -= 22;
-    }
+    } else if (width == 3304) {
+      maximum = 0xf94c;
+      width -= 16;
+    } else maximum = 0xfff0;
     load_raw = unpacked_load_raw;
-    maximum = 0xfff0;
   } else if (!strcmp(model,"E-1")) {
     filters = 0x61616161;
     load_raw = unpacked_load_raw;
