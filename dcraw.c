@@ -194,7 +194,7 @@ int tone_mode_offset, tone_mode_size; /* Nikon ToneComp UF*/
 
 #include <sys/param.h>
 
-#if !(defined(__GLIBC__) || (defined(__NetBSD__) && (__NetBSD_Version__ >= 300000000)))
+#if !(defined(__GLIBC__) || (defined(__NetBSD__) && (__NetBSD_Version__ >= 300000000)) || (defined(__FreeBSD__) && (__FreeBSD_version >= 600000)))
 char *memmem (char *haystack, size_t haystacklen,
 	      char *needle, size_t needlelen)
 {
@@ -5946,7 +5946,7 @@ int CLASS main (int argc, char **argv)
       if ((status = identify(1)))
 	fprintf (stderr, "%s has no timestamp.\n", ifname);
       else if (identify_only)
-	printf ("%10ld%10d %s\n", timestamp, shot_order, ifname);
+	printf ("%10ld%10d %s\n", (long)timestamp, shot_order, ifname);
       else {
 	dcraw_message (DCRAW_VERBOSE, "%s time set to %d.\n", ifname, (int) timestamp); /*UF*/
 	ut.actime = ut.modtime = timestamp;
