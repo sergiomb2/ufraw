@@ -73,9 +73,8 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
 {
 #ifdef HAVE_LIBEXIF
     TIFF *tiff;
-    short tiffCount;
 //    unsigned short tiffOrientation;
-    int *tiffData, tiffFd, exifOffset;
+    int tiffFd, exifOffset;
     ExifData *exifData;
     ExifEntry *entry;
     char *buffer;
@@ -97,11 +96,20 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
         return UFRAW_ERROR;
 
     /* Look for the EXIF tag */
+    /* EXIFIFD became an official libtiff tag since version 3.7.4 */
+    /* that requires different handling. */ 
+#ifdef TIFFTAG_EXIFIFD
+    if (TIFFGetField(tiff, TIFFTAG_EXIFIFD, &exifOffset)!= 1)
+        return UFRAW_ERROR;
+#else
+    short tiffCount;
+    int *tiffData;
     if (TIFFGetField(tiff, 34665, &tiffCount, &tiffData)!= 1 || tiffCount != 1)
         return UFRAW_ERROR;
 
     /* Get the offset of the EXIF data in the TIFF */
     exifOffset = *tiffData;
+#endif
 
     /* Get the underlying file descriptor for the TIFF file */
     if ((tiffFd = TIFFFileno(tiff)) < 0)

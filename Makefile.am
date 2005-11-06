@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.10 2005/09/26 23:42:05 lexort Exp $
+# $Id: Makefile.am,v 1.11 2005/11/06 23:01:22 udifuchs Exp $
 
 if MAKE_EXTRAS
   bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve ufraw-exif
@@ -45,12 +45,14 @@ AM_CFLAGS = $(UFRAW_CFLAGS)
 LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD)
 
 ufraw_SOURCES = ufraw.c $(UFRAW_GTK_COMMON)
+ufraw_LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD) $(GTK_LIBS)
 
 ufraw_batch_SOURCES = ufraw-batch.c $(UFRAW_COMMON)
-ufraw_batch_LDFLAGS = $(CONSOLE)
+ufraw_batch_LDFLAGS = @CONSOLE@
 
 if MAKE_GIMP
   ufraw_gimp_SOURCES = ufraw-gimp.c $(UFRAW_GTK_COMMON)
+  ufraw_gimp_LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD) $(GIMP_LIBS)
 endif
 
 dcraw_nomain.o: dcraw.c
@@ -59,17 +61,17 @@ dcraw_nomain.o: dcraw.c
 if MAKE_EXTRAS
   dcraw_SOURCES = dcraw.c
   dcraw_CFLAGS = $(UFRAW_CFLAGS) $(DCRAW_CFLAGS) -DUSE_LCMS
-  dcraw_LDFLAGS = $(CONSOLE)
+  dcraw_LDFLAGS = @CONSOLE@
   dcraw_LDADD = $(UFRAW_LDADD)
 
   nikon_curve_SOURCES = nikon_curve.c
   nikon_curve_CFLAGS = $(UFRAW_CFLAGS) -D_STAND_ALONE_
-  nikon_curve_LDFLAGS = $(CONSOLE)
+  nikon_curve_LDFLAGS = @CONSOLE@
   nikon_curve_LDADD = $(UFRAW_LDADD)
 
   ufraw_exif_SOURCES = ufraw_exif.c
   ufraw_exif_CFLAGS = $(UFRAW_CFLAGS) -D_STAND_ALONE_
-  ufraw_exif_LDFLAGS = $(CONSOLE)
+  ufraw_exif_LDFLAGS = @CONSOLE@
   ufraw_exif_LDADD = $(UFRAW_LDADD)
 endif
 

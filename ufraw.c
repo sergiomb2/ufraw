@@ -42,10 +42,10 @@ int main (int argc, char **argv)
         !strncmp(locale, "ar", 2) ||
         !strncmp(locale, "Hebrew", 6) || !strncmp(locale, "Arabic", 6) ) ) {
         /* I'm not sure why the following doesn't work (on Windows at least) */
-	/* locale = setlocale(LC_ALL, "en_US");
+	/* locale = setlocale(LC_ALL, "C");
          * gtk_disable_setlocale(); */
         /* so I'm using setenv */
-        g_setenv("LC_ALL", "en_US", TRUE);
+        g_setenv("LC_ALL", "C", TRUE);
     }
     gtk_init(&argc, &argv);
 #ifdef WIN32

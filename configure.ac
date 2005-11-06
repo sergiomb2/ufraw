@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.20 2005/10/21 05:50:41 nkbj Exp $
+dnl $Id: configure.ac,v 1.21 2005/11/06 23:01:23 udifuchs Exp $
 AC_INIT(UFRaw, 0.6)
 AC_PREREQ(2.57)
 
@@ -36,8 +36,6 @@ fi
 CFLAGS="$CFLAGS -W -Wall -O3 -ffast-math -fomit-frame-pointer"
 # Uncomment next line for release to strip the binaries of debug information
 #LDFLAGS="$LDFLAGS -s"
-# Uncomment next line to make ufraw-batch independent of gtk shared libraries
-#LDFLAGS="$LDFLAGS -Wl,--as-needed"
 
 # Set default PREFIX, if not already defined according to os.
 # windows will require some special attention
@@ -65,10 +63,12 @@ AM_CONDITIONAL(UFRAW_WIN32, test $ufraw_win32 = yes)
 if test $ufraw_win32 = yes; then
   CFLAGS="$CFLAGS -mno-cygwin -mwindows -mms-bitfields"
   CONSOLE="-mconsole"
-  AC_SUBST(CONSOLE)
   #AC_PREFIX_DEFAULT($PREFIX) # this ac macro ignores the test condition
   prefix=$PREFIX
+else
+  CONSOLE=
 fi
+AC_SUBST(CONSOLE)
 
 # If prefix is non-empty, add prefix's pkgconfig dir to the pkgconfig search
 # path, so we'll find programs/libraries also installed to this prefix.
@@ -82,6 +82,11 @@ if test "!(-z $PREFIX)"; then
   LDFLAGS="$LDFLAGS -L$PREFIX/lib"
 fi
 
+PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4)
+AC_SUBST(GTK_LIBS)
+PKG_CHECK_MODULES(GLIB, glib-2.0)
+PKG_CHECK_MODULES(LCMS, lcms)
+
 # If the gimp plug-in is not built, UFRaw is completely independent of
 # the gimp.
 AC_MSG_CHECKING(whether to build the gimp plug-in)
@@ -91,11 +96,12 @@ AC_ARG_ENABLE(gimp,
 AM_CONDITIONAL(MAKE_GIMP, test $enable_gimp = yes)
 AC_MSG_RESULT($enable_gimp)
 if test $enable_gimp = yes; then
-    gimp_pkg=gimpui-2.0
+    PKG_CHECK_MODULES(GIMP, gimpui-2.0)
+else
+    GIMP_CFLAGS=
+    GIMP_LIBS=
 fi
-
-# DEPS packages must exist to build UFRaw
-PKG_CHECK_MODULES(DEPS, $gimp_pkg gtk+-2.0 >= 2.4 lcms)
+AC_SUBST(GIMP_LIBS)
 
 # Disable deprecated functions on tested versions of GTK
 # unless using an old gimp-dev package.
@@ -172,12 +178,12 @@ else
   have_exif=no
 fi
 
-UFRAW_CFLAGS="$EXIF_CFLAGS $DEPS_CFLAGS"
+UFRAW_CFLAGS="$EXIF_CFLAGS $GIMP_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS"
 if test $have_jpeg = no; then
   # DCRaw assumes jpeg unless NO_JPEG, rather than using HAVE_LIBJPEG
   UFRAW_CFLAGS="$UFRAW_CFLAGS -DNO_JPEG"
 fi
-UFRAW_LDADD="$EXIF_LIBS $DEPS_LIBS"
+UFRAW_LDADD="$EXIF_LIBS $GLIB_LIBS $LCMS_LIBS"
 AC_SUBST(UFRAW_CFLAGS)
 AC_SUBST(UFRAW_LDADD)
 
