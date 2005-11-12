@@ -19,8 +19,8 @@
    copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
    purchase a license from the author.
 
-   $Revision: 1.297 $
-   $Date: 2005/11/06 04:17:59 $
+   $Revision: 1.299 $
+   $Date: 2005/11/12 01:20:27 $
  */
 
 #define _GNU_SOURCE
@@ -3377,6 +3377,11 @@ void CLASS parse_makernote()
       fseek (ifp, 188, SEEK_CUR);
       goto get2_256;
     }
+    if (tag == 0x1011 && len == 9) {
+      for (i=0; i < 3; i++)
+	FORC3 rgb_cam[i][c] = ((short) get2()) / 256.0;
+      raw_color = rgb_cam[0][0] < 1;
+    }
     if (tag == 0x1017)
       camera_red  = get2() / 256.0;
     if (tag == 0x1018)
@@ -4404,8 +4409,8 @@ void CLASS adobe_coeff()
 	{ 8560,-2487,-986,-8112,15535,2771,-1209,1324,7743 } },
     { "Minolta DiMAGE A2",
 	{ 9097,-2726,-1053,-8073,15506,2762,-966,981,7763 } },
-    { "Minolta DiMAGE Z2",
-	{ 11428,-3512,-1706,-5895,13815,2266,-2382,2719,5651 } },
+    { "MINOLTA DiMAGE Z2",	/* DJC */
+	{ 11222,-3449,-1675,-5789,13566,2225,-2339,2670,5549 } },
     { "MINOLTA DYNAX 5",
 	{ 10284,-3283,-1086,-7957,15762,2316,-829,882,6644 } },
     { "MINOLTA DYNAX 7",
@@ -4547,6 +4552,7 @@ int CLASS identify (int no_decode)
     {    62464, "Kodak",    "DC20"       ,0 },
     {   124928, "Kodak",    "DC20"       ,0 },
     {   311696, "ST Micro", "STV680 VGA" ,0 },  /* SPYz */
+    {   614400, "Kodak",    "KAI-0340"   ,0 },
     {   787456, "Creative", "PC-CAM 600" ,0 },
     {  1138688, "Minolta",  "RD175"      ,0 },
     {  3840000, "Foculus",  "531C"       ,0 },
@@ -5119,6 +5125,14 @@ konica_400z:
     black = 16;
     pre_mul[0] = 1.097;
     pre_mul[2] = 1.128;
+  } else if (!strcmp(model,"KAI-0340")) {
+    height = 477;
+    width  = 640;
+    order = 0x4949;
+    data_offset = 3840;
+    load_raw = unpacked_load_raw;
+    pre_mul[0] = 1.561;
+    pre_mul[2] = 2.454;
   } else if (!strcmp(model,"531C")) {
     height = 1200;
     width  = 1600;
@@ -5797,7 +5811,7 @@ int CLASS main (int argc, char **argv)
   if (argc == 1)
   {
     fprintf (stderr,
-    "\nRaw Photo Decoder \"dcraw\" v7.82"
+    "\nRaw Photo Decoder \"dcraw\" v7.84"
     "\nby Dave Coffin, dcoffin a cybercom o net"
     "\n\nUsage:  %s [options] file1 file2 ...\n"
     "\nValid options:"
