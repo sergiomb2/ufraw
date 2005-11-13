@@ -878,6 +878,8 @@ void update_scales(preview_data *data)
 	    fabs( conf_default.saturation - CFG->saturation) > 0.001);
     gtk_widget_set_sensitive(data->ResetBaseCurveButton,
 	    CFG->BaseCurve[CFG->BaseCurveIndex].m_numAnchors>2 ||
+	    CFG->BaseCurve[CFG->BaseCurveIndex].m_anchors[0].x!=0.0 ||
+	    CFG->BaseCurve[CFG->BaseCurveIndex].m_anchors[0].y!=0.0 ||
 	    CFG->BaseCurve[CFG->BaseCurveIndex].m_anchors[1].x!=1.0 ||
 	    CFG->BaseCurve[CFG->BaseCurveIndex].m_anchors[1].y!=1.0 );
     gtk_widget_set_sensitive(data->ResetBlackButton,
@@ -1054,6 +1056,8 @@ void button_update(GtkWidget *button, gpointer user_data)
     if (button==data->ResetBaseCurveButton) {
 	if (CFG->BaseCurveIndex==manual_curve) {
 	    CFG->BaseCurve[CFG->BaseCurveIndex].m_numAnchors = 2;
+	    CFG->BaseCurve[CFG->BaseCurveIndex].m_anchors[0].x = 0.0;
+	    CFG->BaseCurve[CFG->BaseCurveIndex].m_anchors[0].y = 0.0;
 	    CFG->BaseCurve[CFG->BaseCurveIndex].m_anchors[1].x = 1.0;
 	    CFG->BaseCurve[CFG->BaseCurveIndex].m_anchors[1].y = 1.0;
 	} else {
