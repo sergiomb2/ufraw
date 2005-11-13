@@ -19,8 +19,8 @@
    copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
    purchase a license from the author.
 
-   $Revision: 1.299 $
-   $Date: 2005/11/12 01:20:27 $
+   $Revision: 1.300 $
+   $Date: 2005/11/13 01:46:57 $
  */
 
 #define _GNU_SOURCE
@@ -192,9 +192,11 @@ int tone_mode_offset, tone_mode_size; /* Nikon ToneComp UF*/
 	3 G R G R G R	3 B G B G B G	3 R G R G R G	3 G B G B G B
  */
 
+#ifndef __GLIBC__
 #include <sys/param.h>
 
-#if !(defined(__GLIBC__) || (defined(__NetBSD__) && (__NetBSD_Version__ >= 300000000)) || (defined(__FreeBSD__) && (__FreeBSD_version >= 600000)))
+#if !(defined(__NetBSD__) && (__NetBSD_Version__ >= 300000000))
+#if !(defined(__FreeBSD__) && (__FreeBSD_version >= 600000))
 char *memmem (char *haystack, size_t haystacklen,
 	      char *needle, size_t needlelen)
 {
@@ -204,7 +206,9 @@ char *memmem (char *haystack, size_t haystacklen,
       return c;
   return NULL;
 }
-#endif
+#endif /* !(__FreeBSD__) && (__FreeBSD_version >= 600000)) */
+#endif /* !(__NetBSD__) && (__NetBSD_Version__ >= 300000000)) */
+#endif /* !__GLIBC__ */
 
 #define DCRAW_ERROR 1        /* Centerlize the error handling - UF*/
 #define DCRAW_UNSUPPORTED 2
@@ -3304,6 +3308,7 @@ void CLASS parse_makernote()
     fseek (ifp,  2, SEEK_CUR);
   } else if (!strcmp (buf,"OLYMP") ||
 	     !strcmp (buf,"LEICA") ||
+	     !strcmp (buf,"Ricoh") ||
 	     !strcmp (buf,"EPSON"))
     fseek (ifp, -2, SEEK_CUR);
   else if (!strcmp (buf,"AOC") ||
@@ -5510,7 +5515,7 @@ konica_400z:
     load_raw = packed_12_load_raw;
     pre_mul[0] = 2.07;
     pre_mul[2] = 1.88;
-  } else if (!strcmp(model,"EX-P600")) {
+  } else if (fsize == 9313536) {	/* EX-P600 or QV-R61 */
     height = 2142;
     width  = 2844;
     raw_width = 4288;
@@ -5960,7 +5965,7 @@ int CLASS main (int argc, char **argv)
       if ((status = identify(1)))
 	fprintf (stderr, "%s has no timestamp.\n", ifname);
       else if (identify_only)
-	printf ("%10ld%10d %s\n", (long)timestamp, shot_order, ifname);
+	printf ("%10ld%10d %s\n", (long)timestamp, shot_order, ifname); /* Added (long) NKBJ*/
       else {
 	dcraw_message (DCRAW_VERBOSE, "%s time set to %d.\n", ifname, (int) timestamp); /*UF*/
 	ut.actime = ut.modtime = timestamp;
