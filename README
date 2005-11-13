@@ -21,7 +21,7 @@ Requires GIMP 2.0, the GIMP development package, GTK+ >= 2.4 and lcms.
 If you have GTK+ >= 2.6 you will get the extra option of seeing hidden
 files in the file chooser dialogs.
 
-The UFRaw build process expects perl to be present (for pod2man).
+The UFRaw build process expects Perl to be present (for pod2man).
 
 (If you are using the CVS version you should first run ./autogen.sh
 and check the "Development version" section in this README.)
@@ -103,7 +103,7 @@ installs UFRaw.
 
 Here are a few pointers if you still want to build UFRaw yourself.
 
-'make install' will try to make a unix like installation into /usr/local.
+'make install' will try to make a Unix like installation into /usr/local.
 'make windows-installer' will create a windows installer and
 'make install-windows' will run this installer.
 
@@ -152,7 +152,7 @@ The development version has the following caveats:
 
 ./autogen.sh must be run before ./configure.
 
-The format of these ID files and of the configuration file $HOME/.ufrawrc
+The format of the ID files and of the configuration file $HOME/.ufrawrc
 may and will change before the final release. I try to make sure that the
 new releases will read such files correctly even if they are from previous
 releases. No attempt is made to keep backward compatibility with the different
@@ -162,14 +162,6 @@ might have to delete or fix manually such files from time to time.
 Reading EXIF data is only supported for NEF, PEF and CR2 files and even then
 your mileage may vary. In the worst case UFRaw may crash and in the best case
 it will read some, but not all of the data.
-
-There are some changes in the UI. The "Spot size" adjustment is gone, you can
-get the same effect and more by pressing the mouse button on the image and
-dragging the mouse as you press. Also, you should try clicking the right
-button on both histograms, for some histogram related options.
-
-The old curve file format is not supported any more. Instead UFRaw reads
-a new format, and can also read the Nikon curve formats NTC, NCV.
 
 Last but not least, the development version is poorly tested and has some
 half written features, therefore it is bound to have bugs...
@@ -198,6 +190,16 @@ date user guide.
 
 History
 =======
+13/11/2005 - UFRaw-0.6 released, based on DCRaw v7.84.
+* Enabled AHD (Adaptive Homogeneity-Directed) interpolation.
+* Added base curve, which simulates Nikon tone curve behavior.
+  (The old correction curve is still there.)
+* Automatically apply the embedded custom curve only if the camera
+  was setup to use this curve.
+* Support the D1X rectangular pixels.
+* Fix EXIF support with libtiff 3.7.4.
+* Some bug fixes.
+
 25/09/2005 - UFRaw-0.5 released, based on DCRaw v7.65.
 * Read support for Nikon Tone Curve (NTC/NCV) files.
 * Added a curve editor.
@@ -241,16 +243,11 @@ History
 
 Todo
 ====
-* Show some Exif Data in dialog and export all the Exif data to the Gimp.
+* Show some Exif Data in dialog.
 * Add the UFRaw parameters used to the Exif data.
-* Allow the use of camera curve together with color management.
-* Improve curve controls.
 * Curve corrections per channel.
-* Option to save a copy of the configuration file with every image.
-* Load a different configuration file (not ~/.ufrawrc).
 * Configurable preview image size.
 * Sort out the color temperature.
-* Invert colors for negatives.
 * Rotate by 90 degrees.
 * Zoom.
 * Crop.
@@ -260,3 +257,5 @@ Todo
 * Help (based on the webpage).
 * Calculate width of the dialog control column
   and set raw histogram to that width.
+* Add a "Send to Gimp" option in the stand-alone tool.
+* Improve the unclip highlights option.

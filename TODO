@@ -1,11 +1,10 @@
-For UFRaw-0.6
+For UFRaw-0.7
 =============
 
 For the future
 ==============
 Calculate color temperature correctly
 Leaf embedded profiles
-D1X rectangular pixels
 fuji sqrt(0.5) factor in size
 WB Presets per camera
 Canon 10D presets from ExifTool
@@ -18,4 +17,3 @@ Better EXIF support
 
 Done
 ====
-Use AHD interpolation as default
