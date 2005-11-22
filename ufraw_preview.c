@@ -1210,7 +1210,8 @@ void radio_menu_update(GtkWidget *item, gint *valuep)
 {
     if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item))) {
 	preview_data *data = get_preview_data(item);
-	*valuep = (int)g_object_get_data(G_OBJECT(item), "Radio-Value");
+	*valuep = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(item),
+		    "Radio-Value"));
 	render_preview(data, render_default);
     }
 }
