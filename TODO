@@ -31,3 +31,4 @@ adjustments for a batch of photos.
 
 Done
 ====
+* Fix crash when saving images from four color-filter cameras.
