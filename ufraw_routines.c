@@ -116,7 +116,7 @@ const wb_data wb_preset[] = { { "Manual WB", 0, 0},
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
 
 const char raw_ext[]= "bay,bmq,cr2,crw,cs1,dc2,dcr,dng,erf,fff,hdr,jpg,k25,"
-	"kdc,mdc,mos,mrw,nef,orf,pef,pxn,raf,raw,rdc,sr2,srf,tif,ufraw,x3f";
+	"kdc,mdc,mos,mrw,nef,orf,pef,pxn,raf,raw,rdc,sr2,srf,sti,tif,ufraw,x3f";
 
 const char *file_type[] = { ".ppm", ".ppm", ".tif", ".tif", ".jpg" };
 
