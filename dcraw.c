@@ -19,8 +19,8 @@
    copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
    purchase a license from the author.
 
-   $Revision: 1.301 $
-   $Date: 2005/11/23 08:07:55 $
+   $Revision: 1.302 $
+   $Date: 2005/11/24 01:42:35 $
  */
 
 #define _GNU_SOURCE
@@ -192,12 +192,7 @@ int tone_mode_offset, tone_mode_size; /* Nikon ToneComp UF*/
 	3 G R G R G R	3 B G B G B G	3 R G R G R G	3 G B G B G B
  */
 
-#ifndef __GLIBC__
-#include <sys/param.h>
-
-#if !(defined(__NetBSD__) && (__NetBSD_Version__ >= 300000000))
-#if !(defined(__FreeBSD__) && (__FreeBSD_version >= 600000))
-char *memmem (char *haystack, size_t haystacklen,
+char *my_memmem (char *haystack, size_t haystacklen,
 	      char *needle, size_t needlelen)
 {
   char *c;
@@ -206,9 +201,6 @@ char *memmem (char *haystack, size_t haystacklen,
       return c;
   return NULL;
 }
-#endif /* !(__FreeBSD__) && (__FreeBSD_version >= 600000)) */
-#endif /* !(__NetBSD__) && (__NetBSD_Version__ >= 300000000)) */
-#endif /* !__GLIBC__ */
 
 #define DCRAW_ERROR 1        /* Centerlize the error handling - UF*/
 #define DCRAW_UNSUPPORTED 2
@@ -3304,6 +3296,7 @@ void CLASS parse_makernote()
     offset = get4();
     fseek (ifp, offset-8, SEEK_CUR);
   } else if (!strncmp (buf,"FUJIFILM",8) ||
+	     !strncmp (buf,"SONY",4) ||
 	     !strcmp  (buf,"Panasonic")) {
     order = 0x4949;
     fseek (ifp,  2, SEEK_CUR);
@@ -4658,8 +4651,8 @@ int CLASS identify (int no_decode)
   fread (head, 1, 32, ifp);
   fseek (ifp, 0, SEEK_END);
   fsize = ftell(ifp);
-  if ((cp = (char *)memmem (head, 32, "MMMM", 4)) ||
-      (cp = (char *)memmem (head, 32, "IIII", 4))) /* Added (char *) UF*/
+  if ((cp = my_memmem (head, 32, "MMMM", 4)) ||
+      (cp = my_memmem (head, 32, "IIII", 4)))
     parse_phase_one (cp-head);
   else if (order == 0x4949 || order == 0x4d4d) {
     if (!memcmp (head+6,"HEAPCCDR",8)) {
