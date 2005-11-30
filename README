@@ -131,14 +131,15 @@ Using the CVS, new versions of dcraw.c can be easily updated. Copy the latest
 version of dcraw.c from Dave Coffin to a UFRaw working directory. Then type:
 
 cvs update -r dcraw-original-branch dcraw.c
-cvs commit -m "dcraw original 7.30" dcraw.c
+cvs commit -m "DCRaw original 7.86 (1.304)." dcraw.c
 cvs update -A
 cvs update -j dcraw-original-latest -j dcraw-original-branch dcraw.c
-cvs commit -m "dcraw modified 7.30" dcraw.c
+cvs commit -m "DCRaw modified 7.86 (1.304)." dcraw.c
 cvs tag -F -r dcraw-original-branch dcraw-original-latest dcraw.c
 
 This would commit the original dcraw.c to the dcraw-original-branch and
-update the modified dcraw.c in the main trunk.
+update the modified dcraw.c in the main trunk. Remember to use the correct
+version (7.86 in the example) and revision (1.304 in the example) numbers.
 
 This update procedure is not full proof. First there can be conflict that
 have to be resolved. But even if there are no conflicts, one should check
