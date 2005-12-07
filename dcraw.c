@@ -5077,7 +5077,8 @@ dimage_z2:
   } else if (!strcmp(model,"FinePix S5100") ||
 	     !strcmp(model,"FinePix S5500")) {
     top_margin = 6;
-    data_offset += (top_margin*raw_width) * 2;
+    data_offset += (top_margin*raw_width/* + left_margin*/) * 2;
+    height -= 6;
     load_raw = unpacked_load_raw;
     maximum = 0x3e00;
   } else if (!strncmp(model,"FinePix",7)) {
