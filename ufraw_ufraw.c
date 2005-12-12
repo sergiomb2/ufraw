@@ -291,7 +291,7 @@ int ufraw_load_raw(ufraw_data *uf)
         ufraw_message(status, raw->message);
         return status;
     }
-    uf->rgbMax = raw->rgbMax;
+    uf->rgbMax = raw->rgbMax - raw->black;
     memcpy(uf->rgb_cam, raw->rgb_cam, sizeof uf->rgb_cam);
     return UFRAW_SUCCESS;
 }
