@@ -19,8 +19,8 @@
    copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
    purchase a license from the author.
 
-   $Revision: 1.308 $
-   $Date: 2005/12/11 01:07:33 $
+   $Revision: 1.309 $
+   $Date: 2005/12/18 21:02:19 $
  */
 
 #define _GNU_SOURCE
@@ -104,7 +104,7 @@ int dng_version, is_foveon, raw_color, use_gamma; /*UF*/
 int flip, xmag, ymag; /*UF*/
 int zero_after_ff;
 unsigned filters; /*UF*/
-ushort (*image)[4], white[8][8], curve[0x1000]; /*UF*/
+ushort (*image)[4], white[8][8], curve[0x1000], cr2_slice[3]; /*UF*/
 void (*load_raw)(); /*UF*/
 float bright=1, red_scale=1, blue_scale=1, sigma_d=0, sigma_r=0; /*UF*/
 int four_color_rgb=0, document_mode=0;
@@ -331,7 +331,7 @@ int CLASS canon_600_color (int ratio[2], int mar)
   return 1;
 }
 
-void CLASS canon_600_auto_wb ()
+void CLASS canon_600_auto_wb()
 {
   int mar, row, col, i, j, st, count[] = { 0,0 };
   int test[8], total[2][8], ratio[2][2], stat[2];
@@ -373,7 +373,7 @@ next: continue;
   }
 }
 
-void CLASS canon_600_coeff ()
+void CLASS canon_600_coeff()
 {
   static const short table[6][12] = {
     { -190,702,-1878,2390,   1861,-1349,905,-393, -432,944,2617,-2105  },
@@ -491,7 +491,7 @@ unsigned CLASS getbits (int nbits)
   return bitbuf << (32-nbits-vbits) >> (32-nbits);
 }
 
-void CLASS init_decoder ()
+void CLASS init_decoder()
 {
   memset (first_decode, 0, sizeof first_decode);
   free_decode = first_decode;
@@ -792,7 +792,7 @@ void CLASS ljpeg_row (int jrow, struct jhead *jh)
 
 void CLASS lossless_jpeg_load_raw()
 {
-  int jwide, jrow, jcol, val, jidx, i, row, col;
+  int jwide, jrow, jcol, val, jidx, i, j, row, col;
   struct jhead jh;
   int min=INT_MAX;
 
@@ -806,23 +806,13 @@ void CLASS lossless_jpeg_load_raw()
       if (jh.bits <= 12)
 	val = curve[val];
       jidx = jrow*jwide + jcol;
-      if (raw_width == 5108) {
-	i = jidx / (1680*jh.high);
-	if (i < 2) {
-	  row = jidx / 1680 % jh.high;
-	  col = jidx % 1680 + i*1680;
-	} else {
-	  jidx -= 2*1680*jh.high;
-	  row = jidx / 1748;
-	  col = jidx % 1748 + 2*1680;
-	}
-      } else if (raw_width == 4476 || raw_width == 3516) {
-	row = jidx / (raw_width/2);
-	col = jidx % (raw_width/2);
-	if (row >= raw_height) {
-	  row -= raw_height;
-	  col += raw_width/2;
-	}
+      if (cr2_slice[0]) {
+	i = jidx / (cr2_slice[1]*jh.high);
+	if ((j = i >= cr2_slice[0]))
+		 i  = cr2_slice[0];
+	jidx -= i * (cr2_slice[1]*jh.high);
+	row = jidx / cr2_slice[1+j];
+	col = jidx % cr2_slice[1+j] + i*cr2_slice[1];
       } else {
 	row = jidx / raw_width;
 	col = jidx % raw_width;
@@ -3431,8 +3421,8 @@ get2_256:
       camera_blue = get2() / 256.0;
     }
     if (tag == 0x4001) {
-      fseek (ifp, strstr(model,"EOS-1D") ?  68 :
-		  strstr(model,"EOS 5D") ? 126 : 50, SEEK_CUR);
+      i = len == 582 ? 50 : len == 653 ? 68 : len == 796 ? 126 : 0;
+      fseek (ifp, i ,SEEK_CUR);
 get2_rggb:
       FORC4 cam_mul[c ^ (c >> 1)] = get2();
     }
@@ -3730,6 +3720,9 @@ guess_cfa_pc:
 	if (dng_version) break;
 	fseek (ifp, get4()+base, SEEK_SET);
 	parse_tiff_ifd (base, level+1);
+	break;
+      case 50752:
+	read_shorts (cr2_slice, 3);
 	break;
       case 50829:			/* ActiveArea */
 	top_margin = get4();
@@ -4364,6 +4357,8 @@ void CLASS adobe_coeff()
 	{ 6018,-617,-965,-8645,15881,2975,-1530,1719,7642 } },
     { "Canon EOS-1Ds Mark II", 0,
 	{ 6517,-602,-867,-8180,15926,2378,-1618,1771,7633 } },
+    { "Canon EOS-1D Mark II N", 0,
+	{ 6240,-466,-822,-8180,15825,2500,-1801,1938,8042 } },
     { "Canon EOS-1D Mark II", 0,
 	{ 6264,-582,-724,-8312,15948,2504,-1744,1919,8664 } },
     { "Canon EOS-1DS", 0,
@@ -4486,7 +4481,7 @@ void CLASS adobe_coeff()
 	{ 8560,-2487,-986,-8112,15535,2771,-1209,1324,7743 } },
     { "Minolta DiMAGE A2", 0,
 	{ 9097,-2726,-1053,-8073,15506,2762,-966,981,7763 } },
-    { "MINOLTA DiMAGE Z2", 0,	/* DJC */
+    { "Minolta DiMAGE Z2", 0,	/* DJC */
 	{ 11280,-3564,-1370,-4655,12374,2282,-1423,2168,5396 } },
     { "MINOLTA DYNAX 5", 0,
 	{ 10284,-3283,-1086,-7957,15762,2316,-829,882,6644 } },
@@ -4512,6 +4507,8 @@ void CLASS adobe_coeff()
 	{ -5547,11762,2189,5814,-558,3342,-4924,9840,5949,688,9083,96 } },
     { "NIKON E2500", 0,
 	{ -5547,11762,2189,5814,-558,3342,-4924,9840,5949,688,9083,96 } },
+    { "NIKON E4300", 0, /* copied from Minolta DiMAGE Z2 */
+	{ 11280,-3564,-1370,-4655,12374,2282,-1423,2168,5396 } },
     { "NIKON E4500", 0,
 	{ -5547,11762,2189,5814,-558,3342,-4924,9840,5949,688,9083,96 } },
     { "NIKON E5000", 0,
@@ -4680,7 +4677,7 @@ int CLASS identify (int no_decode)
 /*  What format is this file?  Set make[] if we recognize it. */
 
   load_raw = NULL;
-  raw_height = raw_width = fuji_width = flip = 0;
+  raw_height = raw_width = fuji_width = flip = cr2_slice[0] = 0;
   height = width = top_margin = left_margin = 0;
   make[0] = model[0] = model2[0] = 0;
   iso_speed = shutter = aperture = focal_len = 0;
@@ -5050,22 +5047,16 @@ cp_e2500:
       pre_mul[0] = 1.331;
       pre_mul[2] = 1.820;
     }
-  } else if (!strcmp(model,"E4300")) {
-    if (!timestamp && minolta_z2()) goto dimage_z2;
+  } else if (fsize == 5869568) {
     height = 1710;
     width  = 2288;
     filters = 0x16161616;
-    pre_mul[0] = 508;
-    pre_mul[1] = 256;
-    pre_mul[2] = 322;
-  } else if (!strcmp(model,"DiMAGE Z2")) {
-dimage_z2:
-    strcpy (make, "MINOLTA");
-    strcpy (model,"DiMAGE Z2");
-    height = 1710;
-    width  = 2288;
-    filters = 0x16161616;
-    load_raw = nikon_e2100_load_raw;
+    if (!timestamp && minolta_z2()) {
+      strcpy (make, "Minolta");
+      strcpy (model,"DiMAGE Z2");
+    }
+    if (make[0] == 'M')
+      load_raw = nikon_e2100_load_raw;
   } else if (!strcmp(model,"E4500")) {
     height = 1708;
     width  = 2288;
@@ -5879,7 +5870,7 @@ int CLASS main (int argc, char **argv)
   if (argc == 1)
   {
     fprintf (stderr,
-    "\nRaw Photo Decoder \"dcraw\" v7.93"
+    "\nRaw Photo Decoder \"dcraw\" v7.94"
     "\nby Dave Coffin, dcoffin a cybercom o net"
     "\n\nUsage:  %s [options] file1 file2 ...\n"
     "\nValid options:"
