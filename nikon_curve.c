@@ -1947,16 +1947,26 @@ int RipNikonNEFCurve(FILE *file, int offset, CurveData *data,
     DEBUG_PRINT("DEBUG: NEF Y MAX -> %e\n",data->m_max_y);
     //DEBUG_PRINT("DEBUG: NEF GAMMA (16-bit fixed point) -> %e\n",(data->m_gamma>>8)+(data->m_gamma&0x00ff)/256.0);
     DEBUG_PRINT("DEBUG: NEF GAMMA -> %e\n",data->m_gamma);
-    // FIXME: is there a more elegant solution?
+    // It seems that if there is no curve then the 62 bytes in the buffer
+    // are either all 0x00 (D70) or 0xFF (D2H).
+    // We therefore switch these values with the default values.
+    if (data->m_min_x==1.0) {
+	data->m_min_x = 0.0;
+	DEBUG_PRINT("DEBUG: NEF X MIN -> %e (changed)\n",data->m_min_x);
+    }
     if (data->m_max_x==0.0) {
 	data->m_max_x = 1.0;
 	DEBUG_PRINT("DEBUG: NEF X MAX -> %e (changed)\n",data->m_max_x);
+    }
+    if (data->m_min_y==1.0) {
+	data->m_min_y = 0.0;
+	DEBUG_PRINT("DEBUG: NEF Y MIN -> %e (changed)\n",data->m_min_y);
     }
     if (data->m_max_y==0.0) {
 	data->m_max_y = 1.0;
 	DEBUG_PRINT("DEBUG: NEF Y MAX -> %e (changed)\n",data->m_max_y);
     }
-    if (data->m_gamma==0.0) {
+    if (data->m_gamma==0.0 || data->m_gamma==255.0+255.0/256.0) {
 	data->m_gamma = 1.0;
 	DEBUG_PRINT("DEBUG: NEF GAMMA -> %e (changed)\n",data->m_gamma);
     }
@@ -1964,6 +1974,16 @@ int RipNikonNEFCurve(FILE *file, int offset, CurveData *data,
     //get number of anchor points (there should be at least 2
     fread(&data->m_numAnchors,1,1,file);
     DEBUG_PRINT("DEBUG: NEF NUMBER OF ANCHORS -> %u\n",data->m_numAnchors);
+    if (data->m_numAnchors==255) {
+	data->m_numAnchors = 0;
+	DEBUG_PRINT("DEBUG: NEF NUMBER OF ANCHORS -> %u (changed)\n",
+		data->m_numAnchors);
+    }
+    if (data->m_numAnchors > NIKON_MAX_ANCHORS) {
+	data->m_numAnchors = NIKON_MAX_ANCHORS;
+	DEBUG_PRINT("DEBUG: NEF NUMBER OF ANCHORS -> %u (changed)\n",
+		data->m_numAnchors);
+    }
     
     //convert data to doubles
     for(i = 0; i < data->m_numAnchors; i++)
