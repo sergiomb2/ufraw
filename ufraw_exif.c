@@ -96,7 +96,7 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
         return UFRAW_ERROR;
 
     /* Look for the EXIF tag */
-    /* EXIFIFD became an official libtiff tag since version 3.7.4 */
+    /* EXIFIFD became an official libtiff tag since version 3.7.3 */
     /* that requires different handling. */ 
 #ifdef TIFFTAG_EXIFIFD
     if (TIFFGetField(tiff, TIFFTAG_EXIFIFD, &exifOffset)!= 1)
@@ -201,7 +201,7 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
     TIFFClose(tiff);
 
     /* Construct a fake JPEG/EXIF header at the beginning of the buffer
-       so that the libexiff routines can be fooled into parsing the TIFF */
+       so that the libexif routines can be fooled into parsing the TIFF */
 
     /* JPEG APP1 marker */
     buffer[0x0] = 0xe1;
@@ -229,7 +229,7 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
     buffer[0xf] = (exifOffset >> 8) & 0xff;
     buffer[0x10] = exifOffset & 0xff;
 
-    /* Have libexiff read in the EXIF data */
+    /* Have libexif read in the EXIF data */
     exif_data_load_data(exifData, (unsigned char *)buffer, tiffStat.st_size+9);
 
     /* Free the TIFF file buffer */
