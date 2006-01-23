@@ -22,7 +22,7 @@
 extern FILE *ifp;
 extern char *ifname, make[], model[];
 extern int use_secondary, verbose, flip, height, width, fuji_width, maximum,
-    iheight, iwidth, shrink, is_foveon, data_offset;
+    iheight, iwidth, shrink, is_raw, is_foveon, data_offset;
 extern unsigned filters;
 //extern guint16 (*image)[4];
 extern dcraw_image_type *image;
@@ -90,6 +90,8 @@ int dcraw_open(dcraw_data *h,char *filename)
         return DCRAW_OPEN_ERROR;
     }
     identify();
+    /* We first check if dcraw recognizes the file, this is equivalent
+     * to 'dcraw -i' succeeding */
     if (!make[0]) {
 	dcraw_message(DCRAW_OPEN_ERROR, "%s: unsupported file format.\n",
 		ifname);
@@ -98,7 +100,8 @@ int dcraw_open(dcraw_data *h,char *filename)
         h->message = messageBuffer;
         return lastStatus;
     }
-    if (!load_raw || !height) {
+    /* Next we check if dcraw can decode the file */
+    if (!is_raw) {
 	dcraw_message(DCRAW_OPEN_ERROR, "%s: Cannot decode %s %s images.\n",
 		ifname, make, model);
         fclose(ifp);
