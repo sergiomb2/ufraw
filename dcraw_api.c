@@ -22,12 +22,13 @@
 extern FILE *ifp;
 extern char *ifname, make[], model[];
 extern int use_secondary, verbose, flip, height, width, fuji_width, maximum,
-    iheight, iwidth, shrink, is_foveon;
+    iheight, iwidth, shrink, is_foveon, data_offset;
 extern unsigned filters;
 //extern guint16 (*image)[4];
 extern dcraw_image_type *image;
 extern float pre_mul[4];
 extern void (*load_raw)();
+void kodak_ycbcr_load_raw(); 
 //void write_ppm16(FILE *);
 //extern void (*write_fun)(FILE *);
 extern jmp_buf failure;
@@ -39,9 +40,11 @@ extern gushort white[8][8];
 extern float rgb_cam[3][4];
 extern char *meta_data;
 extern int meta_length;
+extern float iso_speed, shutter, aperture, focal_len;
+extern time_t timestamp;
 #define FC(filters,row,col) \
     (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
-int identify(int no_decode);
+void identify();
 void bad_pixels();
 void foveon_interpolate();
 void scale_colors_INDI(gushort (*image)[4], const int rgb_max, const int black,
@@ -82,15 +85,30 @@ int dcraw_open(dcraw_data *h,char *filename)
     if (!(ifp = fopen (ifname, "rb"))) {
         dcraw_message(DCRAW_OPEN_ERROR, "Could not open %s: %s\n",
                 filename, strerror(errno));
-	g_free(ifname);
+        g_free(ifname);
         h->message = messageBuffer;
         return DCRAW_OPEN_ERROR;
     }
-    if (identify(0)) { /* dcraw already sent a dcraw_message() */
+    identify();
+    if (!make[0]) {
+	dcraw_message(DCRAW_OPEN_ERROR, "%s: unsupported file format.\n",
+		ifname);
         fclose(ifp);
-	g_free(ifname);
+        g_free(ifname);
         h->message = messageBuffer;
         return lastStatus;
+    }
+    if (!load_raw || !height) {
+	dcraw_message(DCRAW_OPEN_ERROR, "%s: Cannot decode %s %s images.\n",
+		ifname, make, model);
+        fclose(ifp);
+        g_free(ifname);
+        h->message = messageBuffer;
+        return lastStatus;
+    }
+    if (load_raw == kodak_ycbcr_load_raw) {
+	height += height & 1;
+	width += width & 1;
     }
     /* Pass global variables to the handler on two conditions:
      * 1. They are needed at this stage.
@@ -116,7 +134,13 @@ int dcraw_open(dcraw_data *h,char *filename)
     h->toneCurveOffset = tone_curve_offset;
     h->toneModeOffset = tone_mode_offset;
     h->toneModeSize = tone_mode_size;
-
+    g_strlcpy(h->make, make, 80);
+    g_strlcpy(h->model, model, 80);
+    h->iso_speed = iso_speed;
+    h->shutter = shutter;
+    h->aperture = aperture;
+    h->focal_len = focal_len;
+    h->timestamp = timestamp;
     h->message = messageBuffer;
     return lastStatus;
 }
@@ -146,6 +170,7 @@ int dcraw_load_raw(dcraw_data *h)
     h->fourColorFilters = filters;
     dcraw_message(DCRAW_VERBOSE, "Loading %s %s image from %s...\n",
                 make, model, ifname);
+    fseek (ifp, data_offset, SEEK_SET);
     (*load_raw)();
     bad_pixels();
     if (is_foveon) {

@@ -30,6 +30,9 @@ typedef struct {
     int toneCurveSize, toneCurveOffset;
     int toneModeSize, toneModeOffset;
     char *message;
+    float iso_speed, shutter, aperture, focal_len;
+    time_t timestamp;
+    char make[80], model[80];
 } dcraw_data;
 
 enum { dcraw_ahd_interpolation, dcraw_vng_interpolation,
