@@ -65,40 +65,48 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
        float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
        const char *ifname)
 {
-  int row, col, c, val; // , shift=0; /*UF*/
-  int min[4], max[4], count[4];
-  double sum[4], dmin;
+  int row, col, x, y, c, val; // , shift=0; /*UF*/
+  int min[4], max[4], sum[8];
+  double dsum[8], dmin;
 
   maximum -= black; /* maximum is changed only locally */
   if (use_auto_wb || (use_camera_wb && camera_red == -1)) {
     FORC4 min[c] = INT_MAX;
-    FORC4 max[c] = count[c] = sum[c] = 0;
-    for (row=0; row < height; row++)
-      for (col=0; col < width; col++)
-	FORC4 {
-	  val = image[row*width+col][c];
-	  if (!val) continue;
-	  if (min[c] > val) min[c] = val;
-	  if (max[c] < val) max[c] = val;
-	  val -= black;
-	  if (val > maximum-25) continue;
-	  if (val < 0) val = 0;
-	  sum[c] += val;
-	  count[c]++;
-	}
-    FORC4 if (sum[c]) pre_mul[c] = count[c] / sum[c];
+    FORC4 max[c] = 0;
+    memset (dsum, 0, sizeof dsum);
+    for (row=0; row < height-7; row++)
+      for (col=0; col < width-7; col++) {
+       memset (sum, 0, sizeof sum);
+       for (y=row; y < row+7; y++)
+         for (x=col; x < col+7; x++)
+           FORC4 {
+             val = image[y*width+x][c];
+             if (!val) continue;
+             if (min[c] > val) min[c] = val;
+             if (max[c] < val) max[c] = val;
+             val -= black;
+             if (val > maximum-25) goto skip_block;
+             if (val < 0) val = 0;
+             sum[c] += val;
+             sum[c+4]++;
+           }
+       for (c=0; c < 8; c++) dsum[c] += sum[c];
+skip_block:
+       continue;
+      }
+    FORC4 if (dsum[c]) pre_mul[c] = dsum[c+4] / dsum[c];
   }
   if (use_camera_wb && camera_red != -1) {
-    FORC4 count[c] = sum[c] = 0;
+    memset (sum, 0, sizeof sum);
     for (row=0; row < 8; row++)
       for (col=0; col < 8; col++) {
 	c = FC(row,col);
 	if ((val = white[row][col] - black) > 0)
 	  sum[c] += val;
-	count[c]++;
+	sum[c+4]++;
       }
     if (sum[0] && sum[1] && sum[2] && sum[3])
-      FORC4 pre_mul[c] = count[c] / sum[c];
+      FORC4 pre_mul[c] = (float) sum[c+4] / sum[c];
     else if (camera_red && camera_blue)
       /* 'sizeof pre_mul' does not work because pre_mul is an argument (UF)*/
       memcpy (pre_mul, cam_mul, 4*sizeof(float));
