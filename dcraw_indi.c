@@ -14,7 +14,8 @@
  * independed of dcraw's global variables.
  *
  * NOTICE: One must check if updates in dcraw.c effect this code.
- * This file was last synchronized with dcraw 7.79
+ * This file was last synchronized with dcraw 8.01, except for
+ * flip_image_INDI() which was last synchronized with dcraw 7.94.
  */
 
 #include <math.h>
@@ -45,6 +46,7 @@ extern const double xyz_rgb[3][3];			/* XYZ from RGB */
  * #define CLIP(x) LIM(x,0,clip_max)
  * But in our case maximum should already be normalized to 0xFFFF */
 #define CLIP(x) LIM(x,0,0xFFFF)
+#define SWAP(a,b) { a ^= b; a ^= (b ^= a); }
 
 /*
    In order to inline this calculation, I make the risky
@@ -126,7 +128,7 @@ skip_block:
  
 /* The rest of the scaling is done somewhere else UF*/
 #if 0
-  if (raw_color) {
+  if (raw_color || !output_color) {
     pre_mul[0] *= red_scale;
     pre_mul[2] *= blue_scale;
   }
@@ -521,7 +523,7 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
   if (!fuji_width) return;
   dcraw_message (DCRAW_VERBOSE, "Rotating image 45 degrees...\n");
 //  fuji_width = (fuji_width - 1 + shrink) >> shrink;
-//  step = 0.5;
+//  step = sqrt(0.5);
   wide = fuji_width / step;
   high = (height - fuji_width) / step;
   img = calloc (wide*high, sizeof *img);
@@ -555,7 +557,7 @@ void CLASS flip_image_INDI(ushort (*image)[4], int *height_p, int *width_p,
     /*const*/ int flip) /*UF*/
 {
   unsigned *flag;
-  int size, base, dest, next, row, col, temp;
+  int size, base, dest, next, row, col;
   INT64 *img, hold;
   int height = *height_p, width = *width_p;/* INDI - UF*/
 
@@ -594,12 +596,8 @@ void CLASS flip_image_INDI(ushort (*image)[4], int *height_p, int *width_p,
   }
   free (flag);
   if (flip & 4) {
-    temp = height;
-    height = width;
-    width = temp;
-//    temp = ymag; /* We always stretch before we flip - UF*/
-//    ymag = xmag;
-//    xmag = temp;
+    SWAP (height, width);
+//  SWAP (ymag, xmag); /* We always stretch before we flip - UF*/
   }
   *height_p = height; /* INDI - UF*/
   *width_p = width;
