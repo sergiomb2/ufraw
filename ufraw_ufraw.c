@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 #include <errno.h>
 #include <glib.h>
 #include "dcraw_api.h"
@@ -223,6 +224,17 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
      * I have not found the cause, but the solution is to set it here. */
     raw = uf->raw;
 
+    /* Set the EXIF data */
+    ctime_r(&raw->timestamp, uf->conf->timestamp);
+    if (uf->conf->timestamp[strlen(uf->conf->timestamp)-1]=='\n')
+	uf->conf->timestamp[strlen(uf->conf->timestamp)-1] = '\0';
+    g_strlcpy(uf->conf->make, raw->make, max_name);
+    g_strlcpy(uf->conf->model, raw->model, max_name);
+    uf->conf->iso_speed = raw->iso_speed;
+    uf->conf->shutter = raw->shutter;
+    uf->conf->aperture = raw->aperture;
+    uf->conf->focal_len = raw->focal_len;
+
     /* Always set useMatrix if colors=4
      * Always reset useMatrix if 'raw_color' */
     uf->useMatrix = ( uf->conf->profile[0][uf->conf->profileIndex[0]].useMatrix
@@ -359,9 +371,9 @@ int ufraw_convert_image(ufraw_data *uf)
                 &conf->curve[conf->curveIndex]);
         dcraw_finalize_interpolate(&final, raw, conf->interpolation,
 		uf->developer->rgbWB);
-	uf->developer->rgbMax = 0xFFFF;
+	uf->developer->rgbMax = uf->developer->max;
         for (c=0; c<4; c++)
-	    uf->developer->rgbWB[c] = uf->developer->rgbMax;
+	    uf->developer->rgbWB[c] = 0x10000;
 	g_free(uf->image.image);
         uf->image.image = final.image;
     }
@@ -481,7 +493,7 @@ void ufraw_auto_expose(ufraw_data *uf)
                     uf->developer->rgbWB[c] / 0x10000, 0xFFFF)]++;
     for (wp=0xFFFF, sum=0; wp>0 && sum<stop; wp--)
         sum += raw_histogram[wp];
-    uf->conf->exposure = -log((double)wp/uf->developer->rgbMax)/log(2);
+    uf->conf->exposure = -log((double)wp/uf->developer->max)/log(2);
     uf->conf->autoExposure = enabled_state;
     if (!uf->conf->unclip)
         uf->conf->exposure = MAX(uf->conf->exposure,0);

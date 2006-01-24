@@ -397,7 +397,7 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
         for(c=0; c<h->width; c++)
             f->image[r*f->width+c][FC(ff,r,c)] = MIN( MAX( (gint64)
                 (h->raw.image[r/2*h->raw.width+c/2][FC(f4,r,c)] - h->black) *
-                rgbWB[FC(f4,r,c)]/(h->rgbMax-h->black), 0), 0xFFFF);
+                rgbWB[FC(f4,r,c)]/0x10000, 0), 0xFFFF);
 
     if (interpolation==dcraw_bilinear_interpolation)
 	lin_interpolate_INDI(f->image, ff, f->width, f->height, cl);

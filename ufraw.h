@@ -59,7 +59,8 @@ typedef struct {
 } wb_data;
 
 typedef struct {
-    unsigned rgbMax, max, colors, useMatrix;
+    unsigned rgbMax, max, exposure, colors, useMatrix;
+    gboolean unclip;
     int rgbWB[4], colorMatrix[3][4];
     double gamma, linear;
     char profileFile[2][max_path];
@@ -147,6 +148,10 @@ typedef struct {
     gboolean overExp, underExp;
     char curvePath[max_path];
     char profilePath[max_path];
+
+    /* EXIF data */
+    float iso_speed, shutter, aperture, focal_len;
+    char timestamp[max_name], make[max_name], model[max_name];
 } conf_data;
 
 typedef struct {

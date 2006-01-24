@@ -87,14 +87,19 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
     d->rgbMax = rgbMax;
     d->colors = colors;
     d->useMatrix = useMatrix;
-    for (c=0; c<d->colors; c++)
-        d->rgbWB[c] = chanMul[c] * 0x10000 * exposure;
+    d->unclip = unclip;
+    d->exposure = exposure * 0x10000;
+
+    double max = 0;
+    for (c=0; c<d->colors; c++) max = MAX(max, chanMul[c]);
+    for (c=0; c<d->colors; c++) d->rgbWB[c] = chanMul[c] * 0x10000 / max
+	    * 0xFFFF / d->rgbMax;
+    d->max = 0x10000 / max;
+
     if (d->useMatrix)
 	for (i=0; i<3; i++)
 	    for (c=0; c<d->colors; c++)
 		d->colorMatrix[i][c] = rgb_cam[i][c]*0x10000;
-    if (unclip) d->max = 0xFFFF;
-    else d->max = MIN(exposure*0x10000, 0xFFFF);
     /* Check if base curve data has changed. */
     if (in->gamma!=d->gamma || in->linear!=d->linear ||
 	    memcmp(baseCurve, &d->baseCurveData, sizeof(CurveData)) ) {
@@ -169,24 +174,72 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 {
     guint8 *p8 = po;
     guint16 *p16 = po, *p, maxc, midc, minc, c, cc;
-    gint64 tmp;
+    gint64 tmp, tmppix[4];
+//  guint min, max;
     unsigned sat, hue;
     int i;
+//    gboolean clipped;
 
-    if (d->useMatrix) {
-	for (i=0; i<count; i++) for (cc=0; cc<3; cc++) {
-	    for (c=0, tmp=0; c<d->colors; c++)
-		tmp += MIN((gint64)pix[i*4+c] * d->rgbWB[c] / d->rgbMax, d->max)
-			* d->colorMatrix[cc][c];
-	    tmp /= 0x10000;
-	    buf[i*3+cc] = d->gammaCurve[MIN(MAX(tmp, 0), d->max)];
-	}
-    } else {
-	for (i=0; i<count; i++)
-	    for (c=0; c<3; c++) {
-		tmp = (guint64)pix[i*4+c] * d->rgbWB[c] / d->rgbMax;
-		buf[i*3+c] = d->gammaCurve[MIN(tmp, d->max)];
+    for (i=0; i<count; i++) {
+//	clipped = FALSE;
+//	max = 0;
+	for (c=0; c<d->colors; c++) {
+	    tmppix[c] = (guint64)pix[i*4+c] * d->rgbWB[c] / 0x10000;
+	    if (tmppix[c] > d->max) {
+		if (d->unclip) {
+//		    clipped = TRUE;
+		} else {
+		    tmppix[c] = d->max;
+		}
 	    }
+	    tmppix[c] = tmppix[c] * d->exposure / d->max;
+//	    if (tmppix[c] > max) max = tmppix[c];
+	}
+//	if (clipped && d->max<0xFFFF) {
+//	    max = 0;
+//	    for (c=0; c<d->colors; c++) {
+//		if (tmppix[c] > d->max) { /* This channel requires unclipping */
+//		    /* If another channel is saturated, then this channel can
+//		     * not have a value larger than the saturated channel
+//		     * rgbWB[]. Therefore, if the clipped value is larger
+//		     * than rgbWB[] we do a linear interpolation to make sure
+//		     * that the clipping process is continuous. */
+//		    min = tmppix[c];
+//		    const int unclip_strength = 10;
+//		    for (cc=0; cc<d->colors; cc++) {
+//			if (tmppix[c] > d->rgbWB[cc]) {
+//			    tmp = d->rgbWB[cc] + (tmppix[c]-d->rgbWB[cc]) *
+//				MIN(unclip_strength * (d->rgbMax-
+//					MIN(pix[i*4+cc],d->rgbMax)),d->rgbMax)
+//				/ d->rgbMax;
+//			    if (tmp<min) min = tmp;
+//			}
+//		    }
+//		    tmppix[c] = min;
+//		}
+//		if (tmppix[c] > max) max = tmppix[c];
+//	    }
+//	}
+//	if (max>0xFFFF) { /* We need to restore color */
+//	    
+//	    for (c=0; c<d->colors; c++) {
+//		tmppix[c] = tmppix[c] * ( (max-0xFFFF)*tmppix[c]+(gint64)0xFFFF*0xFFFF )
+//		    / max / 0xFFFF;
+////		tmppix[c] = tmppix[c] * ( (max-0xFFFF)*tmppix[c]+(gint64)0xFFFF*d->rgbWB[c] )
+////		    / max / d->rgbWB[c] * 0xFFFF / d->rgbWB[c];
+//	    }
+//	}
+	if (d->useMatrix) {
+	    for (cc=0; cc<3; cc++) {
+		for (c=0, tmp=0; c<d->colors; c++)
+		    tmp += tmppix[c] * d->colorMatrix[cc][c];
+		tmp /= 0x10000;
+		buf[i*3+cc] = d->gammaCurve[MIN(MAX(tmp, 0), 0xFFFF)];
+	    }
+	} else {
+	    for (c=0; c<3; c++)
+		buf[i*3+c] = d->gammaCurve[MIN(tmppix[c], 0xFFFF)];
+	}
     }
     if (d->colorTransform!=NULL)
         cmsDoTransform(d->colorTransform, buf, buf, count);
