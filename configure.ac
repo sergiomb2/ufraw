@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.24 2006/01/25 06:20:00 nkbj Exp $
+dnl $Id: configure.ac,v 1.25 2006/01/25 22:55:30 udifuchs Exp $
 AC_INIT(UFRaw, 0.7)
 AC_PREREQ(2.57)
 
@@ -163,20 +163,23 @@ AC_CHECK_HEADER(tiffio.h,
   AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
 have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
 
-AC_MSG_CHECKING(whether to try to support exif)
-AC_ARG_ENABLE(exif,
-  [  --disable-exif          disable exif support], ,
-  enable_exif=yes)
-AC_MSG_RESULT($enable_exif)
+AC_MSG_CHECKING(whether to read raw exif data using libexif)
+AC_ARG_WITH(libexif,
+  [  --with-libexif          use libexif to read raw exif data], ,
+  [ with_libexif=no ])
+AC_MSG_RESULT($with_libexif)
 # If we have tiff, check for exif via pkg-config.
-if test $have_tiff = yes -a $enable_exif = yes; then
+if test $have_tiff = yes -a $with_libexif = yes; then
   PKG_CHECK_MODULES(EXIF, libexif >= 0.6.11,
-    [ have_exif=yes
+    [ have_libexif=yes
       AC_DEFINE(HAVE_LIBEXIF, [], have libexif) ],
-    [ have_exif=no ])
+    [ have_libexif=no ])
+  COMMENT_LIBEXIF=""
 else
-  have_exif=no
+  have_libexif=no
+  COMMENT_LIBEXIF=";"
 fi
+AC_SUBST(COMMENT_LIBEXIF)
 
 UFRAW_CFLAGS="$EXIF_CFLAGS $GIMP_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS"
 if test $have_jpeg = no; then
@@ -252,7 +255,7 @@ AC_OUTPUT
 AC_MSG_NOTICE(====================== summary =====================)
 AC_MSG_NOTICE(build GIMP plug-in: $enable_gimp)
 AC_MSG_NOTICE([hidden directories support (GTK>=2.6): $have_gtk_2_6])
-AC_MSG_NOTICE(EXIF support: $have_exif)
+AC_MSG_NOTICE(EXIF support using libexif: $have_libexif)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(TIFF support: $have_tiff)
 if test $have_tiff = yes; then

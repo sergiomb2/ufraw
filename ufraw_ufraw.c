@@ -225,7 +225,12 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     raw = uf->raw;
 
     /* Set the EXIF data */
+#ifdef __MINGW32__
+    /* For MinG32 we don't have the thread safe ctime_r */
+    g_strlcpy(uf->conf->timestamp, ctime(&raw->timestamp), max_name);
+#else
     ctime_r(&raw->timestamp, uf->conf->timestamp);
+#endif
     if (uf->conf->timestamp[strlen(uf->conf->timestamp)-1]=='\n')
 	uf->conf->timestamp[strlen(uf->conf->timestamp)-1] = '\0';
     g_strlcpy(uf->conf->make, raw->make, max_name);

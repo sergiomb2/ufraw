@@ -31,7 +31,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 Source: "ufraw.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "ufraw-batch.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\liblcms-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "@DOSPREFIX@\bin\libexif-12.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+@COMMENT_LIBEXIF@Source: "@DOSPREFIX@\bin\libexif-12.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "ufraw-gimp.exe"; DestDir: "{app}\lib\gimp\2.0\plug-ins"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
