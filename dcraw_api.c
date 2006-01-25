@@ -34,7 +34,7 @@ extern void kodak_ycbcr_load_raw();
 extern jmp_buf failure;
 extern int tone_curve_size, tone_curve_offset;
 extern int tone_mode_offset, tone_mode_size;
-extern int black, colors, raw_color, /*xmag,*/ ymag;
+extern int black, colors, raw_color, /*xmag*/, ymag;
 extern float cam_mul[4];
 extern gushort white[8][8];
 extern float rgb_cam[3][4];
