@@ -1,5 +1,5 @@
 The Unidentified Flying Raw (UFRaw) is a utility to read and manipulate raw
-images from digital cameras. It can be used on its own or as a Gimp plug-in.
+images from digital cameras. It can be used on its own or as a GIMP plug-in.
 
 The Unix philosophy is "Do one thing, do it well".
 UFRaw tries to take this idea to the extreme and "Do nothing", or at least

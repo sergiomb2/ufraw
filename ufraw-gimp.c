@@ -4,9 +4,9 @@
  *
  * ufraw-gimp.c - The GIMP plug-in.
  *
- * based on the gimp plug-in by Pawel T. Jochym jochym at ifj edu pl,
+ * based on the GIMP plug-in by Pawel T. Jochym jochym at ifj edu pl,
  *
- * based on the gimp plug-in by Dave Coffin
+ * based on the GIMP plug-in by Dave Coffin
  * http://www.cybercom.net/~dcoffin/
  *
  * UFRaw is licensed under the GNU General Public License.
@@ -151,7 +151,7 @@ void run(const gchar *name,
     gimp_ui_init("ufraw-gimp", TRUE);
 
     uf = ufraw_open(filename);
-    /* if UFRaw fails on jpg or tif then open with Gimp */
+    /* if UFRaw fails on jpg or tif then open with GIMP */
     if (uf==NULL) {
 	if (!strcasecmp(filename + strlen(filename) - 4, ".jpg")) {
 	    if (size==0)

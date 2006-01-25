@@ -1,12 +1,12 @@
 /*
-   dcraw_api.c - an API for dcraw
+   dcraw_api.c - an API for DCRaw
    by Udi Fuchs,
 
-   based on dcraw by Dave Coffin
+   based on DCRaw by Dave Coffin
    http://www.cybercom.net/~dcoffin/
 
    UFRaw is licensed under the GNU General Public License.
-   It uses "dcraw" code to do the actual raw decoding.
+   It uses DCRaw code to do the actual raw decoding.
 */
 
 #include <stdio.h>
@@ -28,13 +28,13 @@ extern unsigned filters;
 extern dcraw_image_type *image;
 extern float pre_mul[4];
 extern void (*load_raw)();
-void kodak_ycbcr_load_raw(); 
+extern void kodak_ycbcr_load_raw(); 
 //void write_ppm16(FILE *);
 //extern void (*write_fun)(FILE *);
 extern jmp_buf failure;
 extern int tone_curve_size, tone_curve_offset;
 extern int tone_mode_offset, tone_mode_size;
-extern int black, colors, raw_color, ymag;
+extern int black, colors, raw_color, /*xmag,*/ ymag;
 extern float cam_mul[4];
 extern gushort white[8][8];
 extern float rgb_cam[3][4];
@@ -44,9 +44,9 @@ extern float iso_speed, shutter, aperture, focal_len;
 extern time_t timestamp;
 #define FC(filters,row,col) \
     (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
-void identify();
-void bad_pixels();
-void foveon_interpolate();
+extern void identify();
+extern void bad_pixels();
+extern void foveon_interpolate();
 void scale_colors_INDI(gushort (*image)[4], const int rgb_max, const int black,
     const int use_auto_wb, const int use_camera_wb, const float cam_mul[4],
     const int height, const int width, const int colors,

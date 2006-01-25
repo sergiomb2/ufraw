@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.23 2006/01/24 21:18:45 udifuchs Exp $
+dnl $Id: configure.ac,v 1.24 2006/01/25 06:20:00 nkbj Exp $
 AC_INIT(UFRaw, 0.7)
 AC_PREREQ(2.57)
 
@@ -87,11 +87,11 @@ AC_SUBST(GTK_LIBS)
 PKG_CHECK_MODULES(GLIB, glib-2.0)
 PKG_CHECK_MODULES(LCMS, lcms)
 
-# If the gimp plug-in is not built, UFRaw is completely independent of
-# the gimp.
-AC_MSG_CHECKING(whether to build the gimp plug-in)
+# If the GIMP plug-in is not built, UFRaw is completely independent of
+# the GIMP.
+AC_MSG_CHECKING(whether to build the GIMP plug-in)
 AC_ARG_ENABLE(gimp,
-  [  --disable-gimp          disable build of the gimp plug-in], ,
+  [  --disable-gimp          disable build of the GIMP plug-in], ,
   enable_gimp=yes)
 AM_CONDITIONAL(MAKE_GIMP, test $enable_gimp = yes)
 AC_MSG_RESULT($enable_gimp)
@@ -123,10 +123,10 @@ else
 fi
 AC_MSG_RESULT($have_gtk_2_6)
 
-# The gimp plug-in should be installed under gimplibdir.
+# The GIMP plug-in should be installed under gimplibdir.
 # XXX It is not clear if we should install in the gimplibdir-like
-# place in our prefix, or in gimp's actual lib dir.  This only matters
-# if our prefix and gimp's prefix differ.
+# place in our prefix, or in GIMP's actual lib dir.  This only matters
+# if our prefix and GIMP's prefix differ.
 if test $enable_gimp = yes; then
   test $prefix = NONE || pkg_prefix="--define-variable=prefix=$prefix"
   test $exec_prefix = NONE || pkg_exec_prefix="--define-variable=exec_prefix=$exec_prefix"
@@ -250,7 +250,7 @@ AC_CONFIG_FILES(ufraw-setup.iss)
 AC_OUTPUT
 
 AC_MSG_NOTICE(====================== summary =====================)
-AC_MSG_NOTICE(build gimp plug-in: $enable_gimp)
+AC_MSG_NOTICE(build GIMP plug-in: $enable_gimp)
 AC_MSG_NOTICE([hidden directories support (GTK>=2.6): $have_gtk_2_6])
 AC_MSG_NOTICE(EXIF support: $have_exif)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)

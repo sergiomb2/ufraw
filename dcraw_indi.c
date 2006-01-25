@@ -1,21 +1,21 @@
 /*
- * dcraw_indi.c - dcraw functions made indipended
+ * dcraw_indi.c - DCRaw functions made independed
  *  
  * by Udi Fuchs,
  *
- * based on dcraw by Dave Coffin
+ * based on DCRaw by Dave Coffin
  * http://www.cybercom.net/~dcoffin/
  *
  * UFRaw is licensed under the GNU General Public License.
- * It uses "dcraw" code to do the actual raw decoding.
+ * It uses DCRaw code to do the actual raw decoding.
  *
  * This file contains some functions taken from dcraw.c that where modified
  * to work with UFRaw. Biggest change is that these functions are now
- * independed of dcraw's global variables.
+ * independed of DCRaw.c's global variables.
  *
  * NOTICE: One must check if updates in dcraw.c effect this code.
- * This file was last synchronized with dcraw 8.01, except for
- * flip_image_INDI() which was last synchronized with dcraw 7.94.
+ * This file was last synchronized with DCRaw 8.01, except for
+ * flip_image_INDI() which was last synchronized with DCRaw 7.94.
  */
 
 #include <math.h>

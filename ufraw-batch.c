@@ -32,7 +32,7 @@ int main (int argc, char **argv)
     /* Load $HOME/.ufrawrc */
     conf_load(&rc, NULL);
 
-    /* Half interpolation is an option only for the gimp plug-in.
+    /* Half interpolation is an option only for the GIMP plug-in.
      * For the stand-alone tool it is disabled */
     if (rc.interpolation==half_interpolation)
 	rc.interpolation = ahd_interpolation;

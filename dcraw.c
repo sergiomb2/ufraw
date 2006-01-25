@@ -87,9 +87,10 @@ typedef unsigned short ushort;
  */
 /* Global used in dcraw_api.c require special attention when upgrading dcraw.c:
  * ifp, ifname, make, model, use_secondary, verbose, flip, height, width,
- * fuji_width, maximum, iheight, iwidth, shrink, is_foveon, output_color,
- * filters, image, pre_mul, load_raw, failure, black, colors, raw_color,
- * ymag, xmag, cam_mul, white, rgb_cam
+ * fuji_width, maximum, iheight, iwidth, shrink, is_raw, is_foveon,
+ * data_offset, filters, image, pre_mul, load_raw, kodak_ycbcr_load_raw,
+ * failure, black, colors, raw_color, ymag, cam_mul, white, rgb_cam, meta_data,
+ * meta_length, iso_speed, shutter, aperture, focal_len, timestamp
  * These are mark just to create a conflict in cvs if changed. */
 FILE *ifp; /*UF*/
 short order;
@@ -101,18 +102,18 @@ int profile_offset, profile_length;
 int thumb_offset, thumb_length, thumb_width, thumb_height, thumb_misc;
 int data_offset, strip_offset, curve_offset, meta_offset, meta_length; /*UF*/
 int tiff_nifds, tiff_flip, tiff_bps, tiff_compress;
-int raw_height, raw_width, top_margin, left_margin; /*UF*/
+int raw_height, raw_width, top_margin, left_margin;
 int height, width, fuji_width, colors, tiff_samples; /*UF*/
 int black, maximum, clip_max, raw_color, use_gamma; /*UF*/
 int iheight, iwidth, shrink, flip, xmag, ymag; /*UF*/
 int zero_after_ff, is_raw, dng_version, is_foveon; /*UF*/
 ushort (*image)[4], white[8][8], curve[0x1000], cr2_slice[3]; /*UF*/
-float bright=1, red_scale=1, blue_scale=1, sigma_d=0, sigma_r=0; /*UF*/
-int four_color_rgb=0, document_mode=0, clip_color=1; /*UF*/
+float bright=1, red_scale=1, blue_scale=1, sigma_d=0, sigma_r=0;
+int four_color_rgb=0, document_mode=0, clip_color=1;
 int verbose=0, use_auto_wb=0, use_camera_wb=0, output_color=1; /*UF*/
 int fuji_layout, fuji_secondary, use_secondary=0; /*UF*/
 float cam_mul[4], pre_mul[4], rgb_cam[3][4];	/* RGB from camera color *//*UF*/
-const double xyz_rgb[3][3] = {			/* XYZ from RGB */
+const double xyz_rgb[3][3] = {			/* XYZ from RGB *//*UF*/
   { 0.412453, 0.357580, 0.180423 },
   { 0.212671, 0.715160, 0.072169 },
   { 0.019334, 0.119193, 0.950227 } };

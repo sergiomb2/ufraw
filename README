@@ -33,7 +33,7 @@ At the end of the configuration you will get a summary of the installation
 settings. It should look like that:
 
 configure: ====================== summary =====================
-configure: build gimp plug-in: yes
+configure: build GIMP plug-in: yes
 configure: hidden directories support (GTK>=2.6): yes
 configure: EXIF support: yes
 configure: JPEG support: yes
@@ -69,7 +69,7 @@ can crash UFRaw, it is recommended to use the CVS version.
 
 Other options for the configuration script are:
 
---disable-gimp : do not build the gimp plug-in and hence the gimp development
+--disable-gimp : do not build the GIMP plug-in and hence the GIMP development
                  package is not needed.
 
 --enable-extras: build the extra binaries - dcraw, ufraw-exif, nikon-curve.
@@ -232,7 +232,7 @@ History
 * Settings are saved between sessions in a configuration file.
 * Added white balance presets (direct sunlight, cloudy, shade, flash, etc.)
 * Several possible live histograms.
-* Initial (a bit slow) support for thumbnails in the Gimp 2.0 open file dialog.
+* Initial (a bit slow) support for thumbnails in the GIMP 2.0 open file dialog.
 * Many smaller changes.
 
 28/10/2004 - UFRaw-0.2 released, based on DCRaw v6.10.
@@ -260,5 +260,5 @@ Todo
 * Help (based on the webpage).
 * Calculate width of the dialog control column
   and set raw histogram to that width.
-* Add a "Send to Gimp" option in the stand-alone tool.
+* Add a "Send to GIMP" option in the stand-alone tool.
 * Improve the unclip highlights option.

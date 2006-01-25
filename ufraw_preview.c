@@ -3,9 +3,9 @@
    Raw photo loader plugin for The GIMP
    by Udi Fuchs,
 
-   based on the gimp plug-in by Pawel T. Jochym jochym at ifj edu pl,
+   based on the GIMP plug-in by Pawel T. Jochym jochym at ifj edu pl,
 
-   based on the gimp plug-in by Dave Coffin
+   based on the GIMP plug-in by Dave Coffin
    http://www.cybercom.net/~dcoffin/
 
    UFRaw is licensed under the GNU General Public License.
