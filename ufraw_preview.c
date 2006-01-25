@@ -967,8 +967,8 @@ gboolean spot_motion(GtkWidget *event_box, GdkEventMotion *event,
     user_data = user_data;
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
     draw_spot(data, FALSE);
-    data->SpotX2 = MAX(MIN(event->x,data->UF->image.width),0);
-    data->SpotY2 = MAX(MIN(event->y,data->UF->image.height),0);
+    data->SpotX2 = MAX(MIN(event->x,data->UF->image.width-1),0);
+    data->SpotY2 = MAX(MIN(event->y,data->UF->image.height-1),0);
     render_spot(data);
     return FALSE;
 }
