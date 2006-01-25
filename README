@@ -160,9 +160,11 @@ releases. No attempt is made to keep backward compatibility with the different
 stages of the development versions. If you use the development version you
 might have to delete or fix manually such files from time to time.
 
-Reading EXIF data is only supported for NEF, PEF and CR2 files and even then
-your mileage may vary. In the worst case UFRaw may crash and in the best case
-it will read some, but not all of the data.
+Reading EXIF data is only supported for NEF and PEF files - which are really
+big-endian TIFF files - and even then your mileage may vary. In the worst
+case UFRaw may crash and in the best case it will read some, but not all of
+the data. Reading EXIF data from CR2 files - which are little-endian TIFF
+files - is currently not supported.
 
 Last but not least, the development version is poorly tested and has some
 half written features, therefore it is bound to have bugs...
