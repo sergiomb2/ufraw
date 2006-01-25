@@ -32,3 +32,4 @@ adjustments for a batch of photos.
 Done
 ====
 * Fix crash when saving images from four color-filter cameras.
+* Fix crash when saving images from foveon cameras.
