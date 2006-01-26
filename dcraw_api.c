@@ -34,7 +34,7 @@ extern void kodak_ycbcr_load_raw();
 extern jmp_buf failure;
 extern int tone_curve_size, tone_curve_offset;
 extern int tone_mode_offset, tone_mode_size;
-extern int black, colors, raw_color, /*xmag*/, ymag;
+extern int black, colors, raw_color, /*xmag,*/ ymag;
 extern float cam_mul[4];
 extern gushort white[8][8];
 extern float rgb_cam[3][4];
@@ -102,8 +102,7 @@ int dcraw_open(dcraw_data *h,char *filename)
     }
     /* Next we check if dcraw can decode the file */
     if (!is_raw) {
-	dcraw_message(DCRAW_OPEN_ERROR, "%s: Cannot decode %s %s images.\n",
-		ifname, make, model);
+	dcraw_message(DCRAW_OPEN_ERROR, "Cannot decode %s\n", ifname);
         fclose(ifp);
         g_free(ifname);
         h->message = messageBuffer;
