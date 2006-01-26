@@ -297,10 +297,14 @@ you save an image, or when you explicitly ask to save this file in the
 
 =item UFRaw homepage: L<http://ufraw.sourceforge.net>
 
-=item dcraw homepage: L<http://www.cybercom.net/~dcoffin/dcraw/>
+=item DCRaw homepage: L<http://www.cybercom.net/~dcoffin/dcraw>
+
+=back
 
 =head1 SEE ALSO
 
-L<gimp>
+=over 4
+
+=item The GIMP homepage: L<http://www.gimp.org>
 
 =back
