@@ -6,12 +6,12 @@ by Udi Fuchs,
 UFRaw is a utility to read and manipulate raw images from digital cameras.
 It can be used by itself or as a GIMP plug-in.
 It reads raw images using Dave Coffin's raw conversion utility DCRaw.
-And it supports basic color management using Little CMS, allowing
-the user to apply color profiles.
+It supports basic color management using Little CMS, allowing the user to
+apply color profiles.
  
 UFRaw was originally based on the GIMP plug-in by Dave Coffin
 http://www.cybercom.net/~dcoffin/
-and on Pawel T. Jochym's (jochym at ifj edu pl) plug-in.
+and on Pawel T. Jochym's (jochym at ifj edu pl) GIMP plug-in.
 
 UFRaw is licensed under the GNU General Public License.
 
@@ -35,13 +35,20 @@ settings. It should look like that:
 configure: ====================== summary =====================
 configure: build GIMP plug-in: yes
 configure: hidden directories support (GTK>=2.6): yes
-configure: EXIF support: yes
+configure: EXIF support using libexif: no
 configure: JPEG support: yes
 configure: TIFF support: yes
 configure: lossless compressed TIFF support: yes
 
 If some of the lines end with 'no' instead of 'yes', it is not the end of
-the world. It only means that this option in UFRaw will be disabled.
+the world. It only means that this option in UFRaw will be disabled. EXIF
+support is disabled by default. It can be enabled for Nikon NEF and Pentax
+PEF files by running configure as:
+./configure --with-libexif
+
+The libexif development package is required for this to work. A recent
+version of libexif is required, but since libexif-0.6.11 can crash UFRaw,
+it is recommended to use the CVS version.
 
 The paragraphs use the Linux term "development package"; the general
 requirement is to have the full library installed, including header
@@ -53,19 +60,12 @@ Kodak DC120. If the configuration script does not find this package
 the above options will be suppressed.
 
 The libtiff development package is required for saving images in the
-TIFF format.  If the configuration script does not find this package
+TIFF format. If the configuration script does not find this package
 this option will be suppressed.
 
 The zlib package is required for saving images in the TIFF format with
 lossless compression. If the configuration script does not find this package
 this option will be suppressed.
-
-The libexif development package is required for reading EXIF information
-from some cameras.  If the configuration script does not find this package
-this option will be suppressed. You can also suppress this option explicitly
-by using the '--disable-exif' option to the configuration script.
-A recent version of libexif is required, but since libexif-0.6.11
-can crash UFRaw, it is recommended to use the CVS version.
 
 Other options for the configuration script are:
 
@@ -73,6 +73,8 @@ Other options for the configuration script are:
                  package is not needed.
 
 --enable-extras: build the extra binaries - dcraw, ufraw-exif, nikon-curve.
+
+--with-libexif:  use libexif to read raw EXIF data.
 
 To build UFRaw:
 make
@@ -184,7 +186,7 @@ Notice also that the UFRaw executables have different dependencies.
 * ufraw only depends on libgtk and its derivatives.
 * ufraw-batch only depends on glib.
 In addition all the executables may depend on lcms, libjpeg, libtiff, zlib,
-libexif, depending on the way you configured UFRaw's build.
+and libexif, depending on the way you configured UFRaw's build.
 
 Lastly, I'm requesting that you should consider adding a link to
 http://ufraw.sourceforge.net/ where ever is appropriate on the package page.

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.25 2006/01/25 22:55:30 udifuchs Exp $
+dnl $Id: configure.ac,v 1.26 2006/01/26 07:17:19 nkbj Exp $
 AC_INIT(UFRaw, 0.7)
 AC_PREREQ(2.57)
 
@@ -163,9 +163,9 @@ AC_CHECK_HEADER(tiffio.h,
   AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
 have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
 
-AC_MSG_CHECKING(whether to read raw exif data using libexif)
+AC_MSG_CHECKING(whether to read raw EXIF data using libexif)
 AC_ARG_WITH(libexif,
-  [  --with-libexif          use libexif to read raw exif data], ,
+  [  --with-libexif          use libexif to read raw EXIF data], ,
   [ with_libexif=no ])
 AC_MSG_RESULT($with_libexif)
 # If we have tiff, check for exif via pkg-config.
