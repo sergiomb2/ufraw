@@ -181,7 +181,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     dcraw_data *raw=NULL;
     int status;
 
-    if (rc->wb!=spot_wb) rc->chanMul[0] = -1.0;
+    if (strcmp(rc->wb, spot_wb)) rc->chanMul[0] = -1.0;
     if (rc->autoExposure==enabled_state) rc->autoExposure = apply_state;
     if (rc->autoBlack==enabled_state) rc->autoBlack = apply_state;
 
@@ -201,7 +201,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     if (conf!=NULL && conf->version!=0) {
 	conf_copy_image(rc, conf);
 	conf_copy_save(rc, conf);
-	if (rc->wb!=spot_wb) rc->chanMul[0] = -1.0;
+	if (strcmp(rc->wb, spot_wb)) rc->chanMul[0] = -1.0;
 	if (rc->autoExposure==enabled_state) rc->autoExposure = apply_state;
 	if (rc->autoBlack==enabled_state) rc->autoBlack = apply_state;
     }
@@ -404,11 +404,11 @@ int ufraw_set_wb(ufraw_data *uf)
 {
     dcraw_data *raw = uf->raw;
     double rgbWB[3], rbRatio;
-    int status, c, l, r, m;
+    int status, c, l, r, m, i;
 
     /* For manual_wb we calculate chanMul from the temperature/green. */
     /* For all other it is the other way around. */
-    if (uf->conf->wb==manual_wb) {
+    if (!strcmp(uf->conf->wb, manual_wb)) {
 	int i = uf->conf->temperature/10-200;
 	for (c=0; c<raw->colors; c++)
 	    uf->conf->chanMul[c] = bbWB[i][1] / bbWB[i][c==3?1:c] *
@@ -422,11 +422,13 @@ int ufraw_set_wb(ufraw_data *uf)
 	if (raw->colors<4) uf->conf->chanMul[3] = 0.0;
 	return UFRAW_SUCCESS;
     }
-    if (uf->conf->wb==spot_wb) {
+    if (!strcmp(uf->conf->wb, spot_wb)) {
 	/* do nothing */
-    } else if (uf->conf->wb==auto_wb || uf->conf->wb==camera_wb) {
-        if ( (status=dcraw_set_color_scale(raw, uf->conf->wb==auto_wb,
-                uf->conf->wb==camera_wb))!=DCRAW_SUCCESS ) {
+    } else if ( !strcmp(uf->conf->wb, auto_wb) ||
+		!strcmp(uf->conf->wb, camera_wb) ) {
+        if ( (status=dcraw_set_color_scale(raw,
+		!strcmp(uf->conf->wb, auto_wb),
+		!strcmp(uf->conf->wb, camera_wb)))!=DCRAW_SUCCESS ) {
             if (status==DCRAW_NO_CAMERA_WB) {
                 ufraw_message(UFRAW_BATCH_MESSAGE,
                     "Cannot use camera white balance, "
@@ -434,7 +436,7 @@ int ufraw_set_wb(ufraw_data *uf)
                 ufraw_message(UFRAW_INTERACTIVE_MESSAGE,
                     "Cannot use camera white balance, "
                     "reverting to auto white balance.");
-                uf->conf->wb = auto_wb;
+		g_strlcpy(uf->conf->wb, auto_wb, max_name);
                 status=dcraw_set_color_scale(raw, TRUE, FALSE);
             }
             if (status!=DCRAW_SUCCESS)
@@ -442,12 +444,18 @@ int ufraw_set_wb(ufraw_data *uf)
         }
         for (c=0; c<raw->colors; c++)
             uf->conf->chanMul[c] = raw->post_mul[c];
-    } else if (uf->conf->wb<wb_preset_count) {
-        for (c=0; c<raw->colors; c++)
-            uf->conf->chanMul[c] = raw->pre_mul[c];
-        uf->conf->chanMul[0] *= wb_preset[uf->conf->wb].red;
-        uf->conf->chanMul[2] *= wb_preset[uf->conf->wb].blue;
-    } else return UFRAW_ERROR;
+    } else {
+	for (i=0; i<wb_preset_count; i++) {
+	    if (!strcmp(uf->conf->wb, wb_preset[i].name)) {
+		for (c=0; c<raw->colors; c++)
+		    uf->conf->chanMul[c] = raw->pre_mul[c];
+		uf->conf->chanMul[0] *= wb_preset[i].red;
+		uf->conf->chanMul[2] *= wb_preset[i].blue;
+		break;
+	    }
+	}
+	if (i==wb_preset_count) return UFRAW_ERROR;
+    }
     /* Normalize chanMul[] so that MIN(chanMul[]) will be 1.0 */
     double min = uf->conf->chanMul[0];
     for (c=1; c<raw->colors; c++)

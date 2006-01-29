@@ -832,6 +832,7 @@ void draw_spot(preview_data *data, gboolean draw)
 /* update the UI entries that could have changed automatically */
 void update_scales(preview_data *data)
 {
+    int i;
     if (data->FreezeDialog) return;
     data->FreezeDialog = TRUE;
     if (CFG->BaseCurveIndex>camera_curve && !CFG_cameraCurve)
@@ -839,8 +840,10 @@ void update_scales(preview_data *data)
     else
         gtk_combo_box_set_active(data->BaseCurveCombo, CFG->BaseCurveIndex);
     gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
-    gtk_combo_box_set_active(data->WBCombo, MAX(CFG->wb, 0));
-
+    for (i=0; i<wb_preset_count; i++) {
+	if (!strcmp(CFG->wb, wb_preset[i].name) || i==0)
+	    gtk_combo_box_set_active(data->WBCombo, i);
+    }
     gtk_adjustment_set_value(data->TemperatureAdjustment, CFG->temperature);
     gtk_adjustment_set_value(data->GreenAdjustment, CFG->green);
     gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
@@ -859,7 +862,7 @@ void update_scales(preview_data *data)
     gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
 
     gtk_widget_set_sensitive(data->ResetWBButton,
-	    ( CFG->wb!=data->SaveConfig.wb
+	    ( strcmp(CFG->wb, data->SaveConfig.wb)
 	    ||fabs(CFG->temperature-data->SaveConfig.temperature)>1
 	    ||fabs(CFG->green-data->SaveConfig.green)>0.001
 	    ||CFG->chanMul[0]!=data->initialChanMul[0]
@@ -938,7 +941,7 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
     ufraw_message(UFRAW_SET_LOG,
 	    "spot_wb: channel multipliers = { %.0f, %.0f, %.0f, %.0f }\n",
             CFG->chanMul[0], CFG->chanMul[1], CFG->chanMul[2], CFG->chanMul[3]);
-    CFG->wb = spot_wb;
+    g_strlcpy(CFG->wb, spot_wb, max_name);
     ufraw_set_wb(data->UF);
     if (CFG->autoExposure) ufraw_auto_expose(data->UF);
     CFG->autoBlack = FALSE;
@@ -1006,7 +1009,7 @@ void button_update(GtkWidget *button, gpointer user_data)
 
     if (button==data->ResetWBButton) {
 	int c;
-	CFG->wb = data->SaveConfig.wb;
+	g_strlcpy(CFG->wb, data->SaveConfig.wb, max_name); 
 	CFG->temperature = data->SaveConfig.temperature;
 	CFG->green = data->SaveConfig.green;
 	for (c=0; c<4; c++) CFG->chanMul[c] = data->initialChanMul[c];
@@ -1139,7 +1142,7 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
     *valuep = gtk_adjustment_get_value(adj);
 
     if (valuep==&CFG->temperature || valuep==&CFG->green) {
-        CFG->wb = manual_wb;
+	g_strlcpy(CFG->wb, manual_wb, max_name); 
 	ufraw_set_wb(data->UF);
 	if (CFG->autoExposure) ufraw_auto_expose(data->UF);
     }
@@ -1187,7 +1190,12 @@ void combo_update(GtkWidget *combo, gint *valuep)
 {
     preview_data *data = get_preview_data(combo);
     if (data->FreezeDialog) return;
-    *valuep = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
+    if ((char *)valuep==CFG->wb) {
+	int i = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
+	g_strlcpy(CFG->wb, wb_preset[i].name, max_name);
+    } else {
+	*valuep = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
+    }
     if (valuep==&CFG->BaseCurveIndex) {
         if (!CFG_cameraCurve && CFG->BaseCurveIndex>camera_curve-2)
             CFG->BaseCurveIndex += 2;
@@ -1196,7 +1204,7 @@ void combo_update(GtkWidget *combo, gint *valuep)
     } else if (valuep==&CFG->curveIndex) {
 	curveeditor_widget_set_curve(data->CurveWidget,
 		&CFG->curve[CFG->curveIndex]);
-    } else if (valuep==&CFG->wb) {
+    } else if ((char *)valuep==CFG->wb) {
         ufraw_set_wb(data->UF);
 	if (CFG->autoExposure) ufraw_auto_expose(data->UF);
     }
@@ -1799,11 +1807,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     label = gtk_label_new("White balance");
     gtk_table_attach(table, label, 0, 1, 0 , 1, 0, 0, 0, 0);
     data->WBCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    for (i=0; i<wb_preset_count; i++)
+    for (i=0; i<wb_preset_count; i++) {
         gtk_combo_box_append_text(data->WBCombo, wb_preset[i].name);
-    gtk_combo_box_set_active(data->WBCombo, MAX(CFG->wb, 0) );
+	if (!strcmp(CFG->wb, wb_preset[i].name) || i==0)
+	    gtk_combo_box_set_active(data->WBCombo, i);
+    }
     g_signal_connect(G_OBJECT(data->WBCombo), "changed",
-            G_CALLBACK(combo_update), &CFG->wb);
+            G_CALLBACK(combo_update), CFG->wb);
     gtk_table_attach(table, GTK_WIDGET(data->WBCombo), 1, 6, 0, 1,
 	    GTK_FILL, 0, 0, 0);
 

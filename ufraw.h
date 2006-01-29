@@ -33,11 +33,12 @@
  * are obvious. Apply means that the option was selected and some function
  * has to act accourdingly, before changing to one of the first two states */
 enum { disabled_state, enabled_state, apply_state };
-enum { manual_wb, camera_wb, auto_wb };
-/* spot_wb is not part of the above enum since it is not an option in the
- * combo-box, and also because it was added later and we do not want to change
- * the numbering */
-#define spot_wb -1
+
+#define spot_wb "Spot WB"
+#define manual_wb "Manual WB"
+#define camera_wb "Camera WB"
+#define auto_wb "Auto WB"
+
 enum { rgb_histogram, r_g_b_histogram, luminosity_histogram, value_histogram,
        saturation_histogram };
 enum { linear_histogram, log_histogram };
@@ -118,7 +119,8 @@ typedef struct {
     int confSize, version;
 
     /* IMAGE manipulation settings */
-    int wb;
+//    int wb;
+    char wb[max_name];
     double temperature, green;
     double chanMul[4];
     double exposure, saturation, black; /* black is only used in CMD */

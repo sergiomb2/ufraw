@@ -389,7 +389,26 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
 	    sscanf(temp, "%d", &c->rawHistogramHeight);
     if (!strcmp("OverExposure", element)) sscanf(temp, "%d", &c->overExp);
     if (!strcmp("UnderExposure", element)) sscanf(temp, "%d", &c->underExp);
-    if (!strcmp("WB", element)) sscanf(temp, "%d", &c->wb);
+    if (!strcmp("WB", element)) {
+	/* Keep compatebility with old numbers from ufraw-0.6 */
+        if (sscanf(temp, "%d", &i)==1) {
+	    switch (i) {
+		case -1: g_strlcpy(c->wb, spot_wb, max_name); break;
+		case 0: g_strlcpy(c->wb, manual_wb, max_name); break;
+		case 1: g_strlcpy(c->wb, camera_wb, max_name); break;
+		case 2: g_strlcpy(c->wb, auto_wb, max_name); break;
+		case 3: g_strlcpy(c->wb, "Incandescent", max_name); break;
+		case 4: g_strlcpy(c->wb, "Fluorescent", max_name); break;
+		case 5: g_strlcpy(c->wb, "Direct sunlight", max_name);break;
+		case 6: g_strlcpy(c->wb, "Flash", max_name); break;
+		case 7: g_strlcpy(c->wb, "Cloudy", max_name); break;
+		case 8: g_strlcpy(c->wb, "Shade", max_name); break;
+		default: g_strlcpy(c->wb, "", max_name);
+	    }
+	} else {
+	    g_strlcpy(c->wb, temp, max_name);
+	}
+    }
     if (!strcmp("Temperature", element)) sscanf(temp, "%lf", &c->temperature);
     if (!strcmp("Green", element)) sscanf(temp, "%lf", &c->green);
     if (!strcmp("ChannelMultipliers", element)) {
@@ -599,8 +618,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     if (c->interpolation!=conf_default.interpolation)
         buf = uf_markup_buf(buf, "<Interpolation>%s</Interpolation>\n",
 		conf_get_name(interpolationNames, c->interpolation));
-    if (c->wb!=conf_default.wb)
-        buf = uf_markup_buf(buf, "<WB>%d</WB>\n", c->wb);
+    if (strcmp(c->wb, conf_default.wb))
+	buf = uf_markup_buf(buf, "<WB>%s</WB>\n", c->wb);
     buf = uf_markup_buf(buf,
 	    "<Temperature>%d</Temperature>\n", (int)floor(c->temperature));
     buf = uf_markup_buf(buf,
@@ -829,7 +848,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     int i, j;
 
     dst->interpolation = src->interpolation;
-    dst->wb = src->wb;
+    g_strlcpy(dst->wb, src->wb, max_name);
     dst->temperature = src->temperature;
     dst->green = src->green;
     for (i=0; i<4; i++) dst->chanMul[i] = src->chanMul[i];
@@ -952,10 +971,11 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 	conf->exposure = cmd->exposure;
 	conf->autoExposure = disabled_state;
     }
-    if (cmd->wb>=0) conf->wb = cmd->wb;
+    if (strlen(cmd->wb)>0) g_strlcpy(conf->wb, cmd->wb, max_name);
     if (cmd->temperature!=NULLF) conf->temperature = cmd->temperature;
     if (cmd->green!=NULLF) conf->green = cmd->green;
-    if (cmd->temperature!=NULLF || cmd->green!=NULLF) conf->wb = manual_wb;
+    if (cmd->temperature!=NULLF || cmd->green!=NULLF)
+	g_strlcpy(conf->wb, manual_wb, max_name);
     if (cmd->profile[0][0].gamma!=NULLF)
 	conf->profile[0][conf->profileIndex[0]].gamma =
 		cmd->profile[0][0].gamma;
@@ -1268,10 +1288,12 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
             return -1;
         }
     }
-    cmd->wb = -1;
+    g_strlcpy(cmd->wb, "", max_name);
     if (wbName!=NULL) {
-        if (!strcmp(wbName, "camera")) cmd->wb = camera_wb;
-        else if (!strcmp(wbName, "auto")) cmd->wb = auto_wb;
+        if (!strcmp(wbName, "camera"))
+	    g_strlcpy(cmd->wb, camera_wb, max_name);
+        else if (!strcmp(wbName, "auto"))
+	    g_strlcpy(cmd->wb, auto_wb, max_name);
         else {
             ufraw_message(UFRAW_ERROR,
                     "'%s' is not a valid white balance setting.", wbName);
@@ -1281,7 +1303,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
             ufraw_message(UFRAW_WARNING,
 		    "--temperature and --green options override "
 		    "the --wb=%s option.", wbName);
-            cmd->wb = -1;
+	    g_strlcpy(cmd->wb, "", max_name);
 	}
     }
     cmd->BaseCurveIndex = -1;
