@@ -128,8 +128,14 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS DIGITAL REBEL XT", "Fluorescent", { 1.999040, 1, 1.995202, 0 } }, 
   { "Canon", "EOS DIGITAL REBEL XT", "Shade",	    { 2.827112, 1, 1.235756, 0 } },
   { "Canon", "EOS DIGITAL REBEL XT", "Flash",	    { 2.715128, 1, 1.295678, 0 } }, 
-  { "Canon", "EOS DIGITAL REBEL XT", "Cloudy",	    { 2.611984, 1, 1.343811, 0 } }
+  { "Canon", "EOS DIGITAL REBEL XT", "Cloudy",	    { 2.611984, 1, 1.343811, 0 } },
 
+  { "Canon", "EOS 10D", "Sunlight", { 2.159856, 1, 1.218750, 0 } }, 
+  { "Canon", "EOS 10D", "Shadow",   { 2.533654, 1, 1.036058, 0 } }, 
+  { "Canon", "EOS 10D", "Cloudy",   { 2.348558, 1, 1.116587, 0 } }, 
+  { "Canon", "EOS 10D", "Indescandent", { 1.431544, 1, 1.851040, 0 } }, 
+  { "Canon", "EOS 10D", "Flourescent", { 1.891509, 1, 1.647406, 0 } }, 
+  { "Canon", "EOS 10D", "Flash",    { 2.385817, 1, 1.115385, 0 } }
 };
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
 
