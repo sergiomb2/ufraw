@@ -95,24 +95,42 @@ char *uf_markup_buf(char *buffer, const char *format, ...)
     }
 }
 
-#define D70_RED 2.648505
-#define D70_BLUE 1.355692
+#define D70_RED    2.648505
+#define D70_BLUE   1.355692
+#define M7Hi_RED   1.42
+#define M7Hi_BLUE  1.25
+#define C350D_RED  2.690726
+#define C350D_BLUE 1.270038
+/* The first column is the "make" of the camera, the
+   second is the "model".  Use the make and model as provided
+   by dcraw */
+const wb_data wb_preset[] = { 
 
-const wb_data wb_preset[] = { { "Manual WB", 0, 0},
-    { "Camera WB", 0, 0},
-    { "Auto WB", 0, 0},
-    { "Incandescent", 1.34375/D70_RED, 2.816406/D70_BLUE }, /* 3000K */
-    { "Fluorescent", 1.964844/D70_RED, 2.476563/D70_BLUE }, /* 4200K */
-    { "Direct sunlight", 2.0625/D70_RED, 1.597656/D70_BLUE }, /* 5200K*/
-    { "Flash", 2.441406/D70_RED, 1.5/D70_BLUE }, /* 5400K */
-    { "Cloudy", 2.257813/D70_RED, 1.457031/D70_BLUE }, /* 6000K */
-    { "Shade", 2.613281/D70_RED, 1.277344/D70_BLUE } /* 8000K */
+  { "", "", "Manual WB",       { 0, 0, 0, 0} },
+  { "", "", "Camera WB",       { 0, 0, 0, 0} },
+  { "", "", "Auto WB",         { 0, 0, 0, 0} },
+
+  { "NIKON", "D70", "Incandescent", { 1.34375, 1, 2.816406, 0 } }, /* 3000K */
+  { "NIKON", "D70", "Fluorescent",  { 1.964844, 1, 2.476563, 0 } }, /* 4200K */
+  { "NIKON", "D70", "Direct sunlight", { 2.0625, 1, 1.597656, 0 } }, /* 5200K*/
+  { "NIKON", "D70", "Flash",	    { 2.441406, 1, 1.5, 0 } },	  /* 5400K */
+  { "NIKON", "D70", "Cloudy",	    { 2.257813, 1, 1.457031, 0 } }, /* 6000K */
+  { "NIKON", "D70", "Shade",	    { 2.613281, 1, 1.277344, 0 } }, /* 8000K */
+
+  { "Minolta", "DiMAGE 7Hi", "Daylight",    { 1.609375, 1, 1.328125, 0 } },  /* 5500K */
+  { "Minolta", "DiMAGE 7Hi", "Tungsten",    { 0.878906, 1, 2.433594, 0 } },  /* 2800K */
+  { "Minolta", "DiMAGE 7Hi", "Fluorescent 1", { 1.664062, 1, 2.105469, 0 } },  /* 4060K*/
+  { "Minolta", "DiMAGE 7Hi", "Fluorescent 2", { 1.796875, 1, 1.734375, 0 } },  /* 4938K */
+  { "Minolta", "DiMAGE 7Hi", "Cloudy",      { 1.730469, 1, 1.269531, 0 } },  /* 5823K */
+
+  { "Canon", "EOS DIGITAL REBEL XT", "Tungsten",    { 1.554250, 1, 2.377034, 0 } }, 
+  { "Canon", "EOS DIGITAL REBEL XT", "Daylight",    { 2.392927, 1, 1.487230, 0 } }, 
+  { "Canon", "EOS DIGITAL REBEL XT", "Fluorescent", { 1.999040, 1, 1.995202, 0 } }, 
+  { "Canon", "EOS DIGITAL REBEL XT", "Shade",	    { 2.827112, 1, 1.235756, 0 } },
+  { "Canon", "EOS DIGITAL REBEL XT", "Flash",	    { 2.715128, 1, 1.295678, 0 } }, 
+  { "Canon", "EOS DIGITAL REBEL XT", "Cloudy",	    { 2.611984, 1, 1.343811, 0 } }
+
 };
-//    { "7Hi Daylight", 1.609375/1.42, 1.328125/1.25 }, /* 5500K */
-//    { "7Hi Tungsten", 0.878906/1.42, 2.433594/1.25 }, /* 2800K */
-//    { "7Hi Fluorescent 1", 1.664062/1.42, 2.105469/1.25 }, /* 4060K */
-//    { "7Hi Fluorescent 2", 1.796875/1.42, 1.734375/1.25 }, /* 4938K */
-//    { "7Hi Cloudy", 1.730469/1.42, 1.269531/1.25 } /* 5823K */ };
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
 
 const char raw_ext[]= "bay,bmq,cr2,crw,cs1,dc2,dcr,dng,erf,fff,hdr,jpg,k25,"

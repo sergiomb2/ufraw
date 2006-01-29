@@ -446,15 +446,19 @@ int ufraw_set_wb(ufraw_data *uf)
             uf->conf->chanMul[c] = raw->post_mul[c];
     } else {
 	for (i=0; i<wb_preset_count; i++) {
-	    if (!strcmp(uf->conf->wb, wb_preset[i].name)) {
+	    if (!strcmp(uf->conf->wb, wb_preset[i].name) &&
+		!strcmp(uf->conf->make, wb_preset[i].make) &&
+		!strcmp(uf->conf->model, wb_preset[i].model) ) {
 		for (c=0; c<raw->colors; c++)
-		    uf->conf->chanMul[c] = raw->pre_mul[c];
-		uf->conf->chanMul[0] *= wb_preset[i].red;
-		uf->conf->chanMul[2] *= wb_preset[i].blue;
+		    uf->conf->chanMul[c] = wb_preset[i].channel[c];
 		break;
 	    }
 	}
-	if (i==wb_preset_count) return UFRAW_ERROR;
+	if (i==wb_preset_count) {
+	    g_strlcpy(uf->conf->wb, manual_wb, max_name);
+	    ufraw_set_wb(uf);
+	    return UFRAW_WARNING;
+	}
     }
     /* Normalize chanMul[] so that MIN(chanMul[]) will be 1.0 */
     double min = uf->conf->chanMul[0];

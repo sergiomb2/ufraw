@@ -55,8 +55,10 @@ enum { raw_expander, exposure_expander, wb_expander, color_expander,
 enum { ppm8_type, ppm16_type, tiff8_type, tiff16_type, jpeg_type };
 
 typedef struct {
+    char *make;
+    char *model;
     char *name;
-    double red, blue;
+    double channel[4];
 } wb_data;
 
 typedef struct {

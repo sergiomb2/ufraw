@@ -52,6 +52,7 @@ typedef struct {
     ufraw_data *UF;
     conf_data SaveConfig;
     double initialChanMul[4];
+    GList *WBPresets; /* List of WB presets in WBCombo*/
     /* Remember the Gtk Widgets that we need to access later */
     GtkWidget *ControlsBox, *PreviewWidget, *RawHisto, *LiveHisto;
     GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
@@ -832,7 +833,6 @@ void draw_spot(preview_data *data, gboolean draw)
 /* update the UI entries that could have changed automatically */
 void update_scales(preview_data *data)
 {
-    int i;
     if (data->FreezeDialog) return;
     data->FreezeDialog = TRUE;
     if (CFG->BaseCurveIndex>camera_curve && !CFG_cameraCurve)
@@ -840,10 +840,14 @@ void update_scales(preview_data *data)
     else
         gtk_combo_box_set_active(data->BaseCurveCombo, CFG->BaseCurveIndex);
     gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
-    for (i=0; i<wb_preset_count; i++) {
-	if (!strcmp(CFG->wb, wb_preset[i].name) || i==0)
+
+    int i;
+    GList *l;
+    gtk_combo_box_set_active(data->WBCombo, 0);
+    for (i=0, l=data->WBPresets; l!=NULL; i++, l=g_list_next(l))
+	if (!strcmp(CFG->wb, l->data))
 	    gtk_combo_box_set_active(data->WBCombo, i);
-    }
+
     gtk_adjustment_set_value(data->TemperatureAdjustment, CFG->temperature);
     gtk_adjustment_set_value(data->GreenAdjustment, CFG->green);
     gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
@@ -1192,7 +1196,7 @@ void combo_update(GtkWidget *combo, gint *valuep)
     if (data->FreezeDialog) return;
     if ((char *)valuep==CFG->wb) {
 	int i = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
-	g_strlcpy(CFG->wb, wb_preset[i].name, max_name);
+	g_strlcpy(CFG->wb, g_list_nth_data(data->WBPresets, i), max_name);
     } else {
 	*valuep = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
     }
@@ -1807,16 +1811,40 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     label = gtk_label_new("White balance");
     gtk_table_attach(table, label, 0, 1, 0 , 1, 0, 0, 0, 0);
     data->WBCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    data->WBPresets = NULL;
+    gboolean make_model_match = FALSE;
     for (i=0; i<wb_preset_count; i++) {
-        gtk_combo_box_append_text(data->WBCombo, wb_preset[i].name);
-	if (!strcmp(CFG->wb, wb_preset[i].name) || i==0)
-	    gtk_combo_box_set_active(data->WBCombo, i);
+        if (strcmp(wb_preset[i].make, "")==0) {
+            gtk_combo_box_append_text(data->WBCombo, wb_preset[i].name);
+	    data->WBPresets = g_list_append(data->WBPresets, wb_preset[i].name);
+        } else if ( (strcmp(wb_preset[i].make, uf->conf->make)==0 ) &&
+                    (strcmp(wb_preset[i].model, uf->conf->model)==0)) {
+            make_model_match = TRUE;
+            gtk_combo_box_append_text(data->WBCombo, wb_preset[i].name);
+	    data->WBPresets = g_list_append(data->WBPresets, wb_preset[i].name);
+        }
     }
+    GList *l;
+    gtk_combo_box_set_active(data->WBCombo, 0);
+    for (i=0, l=data->WBPresets; g_list_next(l)!=NULL; i++, l=g_list_next(l))
+	if (!strcmp(CFG->wb, l->data))
+	    gtk_combo_box_set_active(data->WBCombo, i);
     g_signal_connect(G_OBJECT(data->WBCombo), "changed",
             G_CALLBACK(combo_update), CFG->wb);
     gtk_table_attach(table, GTK_WIDGET(data->WBCombo), 1, 6, 0, 1,
 	    GTK_FILL, 0, 0, 0);
-
+    if (!make_model_match) {
+	event_box = gtk_event_box_new();
+	label = gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING,
+		GTK_ICON_SIZE_BUTTON);
+	gtk_container_add(GTK_CONTAINER(event_box), label);
+	gtk_table_attach(table, event_box, 6, 7, 0, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_tooltips_set_tip(data->ToolTips, event_box,
+	    "There are no white balance presets for your camera model.\n"
+	    "Check UFRaw's webpage for information on how to get your\n"
+	    "camera supported.", NULL);
+    }
     data->ResetWBButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetWBButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
@@ -1843,6 +1871,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_table_attach(table, button, 7, 8, 1, 3, GTK_FILL, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(spot_wb_event), NULL);
+    if (!make_model_match) {
+        label = gtk_label_new("Unknown white balance presets for this camera");
+        gtk_table_attach(table, label, 0, 8, 3, 4, 0, 0, 0, 0);
+	}
 
     table = GTK_TABLE(table_with_frame(page, expanderText[color_expander],
             CFG->expander[color_expander]));
@@ -2320,6 +2352,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	*CFG = data->SaveConfig;
     }
     ufraw_close(data->UF);
+    g_list_free(data->WBPresets);
 
     if (status!=GTK_RESPONSE_OK) return UFRAW_CANCEL;
     return UFRAW_SUCCESS;
