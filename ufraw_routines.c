@@ -95,12 +95,6 @@ char *uf_markup_buf(char *buffer, const char *format, ...)
     }
 }
 
-#define D70_RED    2.648505
-#define D70_BLUE   1.355692
-#define M7Hi_RED   1.42
-#define M7Hi_BLUE  1.25
-#define C350D_RED  2.690726
-#define C350D_BLUE 1.270038
 /* The first column is the "make" of the camera, the
    second is the "model".  Use the make and model as provided
    by dcraw */
@@ -130,12 +124,26 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS DIGITAL REBEL XT", "Flash",	    { 2.715128, 1, 1.295678, 0 } }, 
   { "Canon", "EOS DIGITAL REBEL XT", "Cloudy",	    { 2.611984, 1, 1.343811, 0 } },
 
+  { "Canon", "EOS 350D DIGITAL", "Tungsten",    { 1.554250, 1, 2.377034, 0 } }, 
+  { "Canon", "EOS 350D DIGITAL", "Daylight",    { 2.392927, 1, 1.487230, 0 } }, 
+  { "Canon", "EOS 350D DIGITAL", "Fluorescent", { 1.999040, 1, 1.995202, 0 } }, 
+  { "Canon", "EOS 350D DIGITAL", "Shade",      { 2.827112, 1, 1.235756, 0 } },
+  { "Canon", "EOS 350D DIGITAL", "Flash",      { 2.715128, 1, 1.295678, 0 } }, 
+  { "Canon", "EOS 350D DIGITAL", "Cloudy",     { 2.611984, 1, 1.343811, 0 } },
+
   { "Canon", "EOS 10D", "Sunlight", { 2.159856, 1, 1.218750, 0 } }, 
   { "Canon", "EOS 10D", "Shadow",   { 2.533654, 1, 1.036058, 0 } }, 
   { "Canon", "EOS 10D", "Cloudy",   { 2.348558, 1, 1.116587, 0 } }, 
   { "Canon", "EOS 10D", "Indescandent", { 1.431544, 1, 1.851040, 0 } }, 
   { "Canon", "EOS 10D", "Flourescent", { 1.891509, 1, 1.647406, 0 } }, 
-  { "Canon", "EOS 10D", "Flash",    { 2.385817, 1, 1.115385, 0 } }
+  { "Canon", "EOS 10D", "Flash",    { 2.385817, 1, 1.115385, 0 } },
+
+  { "FUJIFILM", "FinePix S5000", "Incandescent", { 1.212081, 1, 2.672364, 0 } },
+  { "FUJIFILM", "FinePix S5000", "Fluorescent",  { 1.772316, 1, 2.349902, 0 } },
+  { "FUJIFILM", "FinePix S5000", "Direct sunlight", { 1.860403, 1, 1.515946, 0 } },
+  { "FUJIFILM", "FinePix S5000", "Flash",   { 2.202181, 1, 1.423284, 0 } },
+  { "FUJIFILM", "FinePix S5000", "Cloudy",  { 2.036578, 1, 1.382513, 0 } },
+  { "FUJIFILM", "FinePix S5000", "Shade",   { 2.357215, 1, 1.212016, 0 } }
 };
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
 
