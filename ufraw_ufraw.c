@@ -223,6 +223,14 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
      * I have not found the cause, but the solution is to set it here. */
     raw = uf->raw;
 
+    /* If we switched cameras, ignore channel multipliers and
+     * change spot_wb to manual_wb */
+    if (strcmp(uf->conf->make, raw->make)!=0 ||
+	strcmp(uf->conf->model, raw->model)!=0) {
+	uf->conf->chanMul[0] = -1.0;
+	if (strcmp(uf->conf->wb, spot_wb)==0)
+	    g_strlcpy(uf->conf->wb, manual_wb, max_name);
+    }
     /* Set the EXIF data */
 #ifdef __MINGW32__
     /* For MinG32 we don't have the thread safe ctime_r */
@@ -423,12 +431,19 @@ int ufraw_set_wb(ufraw_data *uf)
 	 * We use the fact that rgb_cam[3][4] * (1,1,1,1) = (1,1,1) and get:
 	 * (1/chanMul)[4] = (1/preMul)[4][4] * cam_rgb[4][3] * rgbWB[3]
 	 */
-	for (c=0; c<raw->colors; c++) {
-	    double chanMulInv = 0;
-	    for (cc=0; cc<raw->colors; cc++)
-		chanMulInv += 1/raw->pre_mul[c] * raw->cam_rgb[c][cc]
-			* rgbWB[cc];
-	    uf->conf->chanMul[c] = 1/chanMulInv;
+	if (uf->raw_color) {
+	    /* If there is no color matrix it is simple */
+	    for (c=0; c<raw->colors; c++) {
+		uf->conf->chanMul[c] = raw->pre_mul[c] / rgbWB[c];
+	    }
+	} else {
+	    for (c=0; c<raw->colors; c++) {
+		double chanMulInv = 0;
+		for (cc=0; cc<raw->colors; cc++)
+		    chanMulInv += 1/raw->pre_mul[c] * raw->cam_rgb[c][cc]
+			    * rgbWB[cc];
+		uf->conf->chanMul[c] = 1/chanMulInv;
+	    }
 	}
 	/* Normalize chanMul[] so that MIN(chanMul[]) will be 1.0 */
 	double min = uf->conf->chanMul[0];
@@ -489,11 +504,18 @@ int ufraw_set_wb(ufraw_data *uf)
      * Therefore:
      * rgbWB[3] = rgb_cam[3][4] * preMul[4][4] * (1/chanMul)[4]
      */
-    for (c=0; c<3; c++) {
-	rgbWB[c] = 0;
-	for (cc=0; cc<raw->colors; cc++)
-	    rgbWB[c] += raw->rgb_cam[c][cc] * raw->pre_mul[cc] 
-		/ uf->conf->chanMul[cc];
+    if (uf->raw_color) {
+	/* If there is no color matrix it is simple */
+	for (c=0; c<3; c++) {
+	    rgbWB[c] = raw->pre_mul[c] / uf->conf->chanMul[c];
+	}
+    } else {
+	for (c=0; c<3; c++) {
+	    rgbWB[c] = 0;
+	    for (cc=0; cc<raw->colors; cc++)
+		rgbWB[c] += raw->rgb_cam[c][cc] * raw->pre_mul[cc] 
+		    / uf->conf->chanMul[cc];
+	}
     }
     /* From these values we calculate temperature, green values */
     RGB_to_Temperature(rgbWB, &uf->conf->temperature, &uf->conf->green);

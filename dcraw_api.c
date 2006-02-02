@@ -45,6 +45,7 @@ extern float iso_speed, shutter, aperture, focal_len;
 extern time_t timestamp;
 #define FC(filters,row,col) \
     (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
+extern void pseudoinverse(const double (*in)[3], double (*out)[3], int size);
 extern void identify();
 extern void bad_pixels();
 extern void foveon_interpolate();
@@ -193,6 +194,11 @@ int dcraw_load_raw(dcraw_data *h)
     for (i=0; i<h->colors; i++) h->pre_mul[i] = pre_mul[i]/dmin;
     memcpy(h->cam_mul, cam_mul, sizeof cam_mul);
     memcpy(h->rgb_cam, rgb_cam, sizeof rgb_cam);
+    if (cam_rgb[0][0]==-1) {
+	double tmp[4][3];
+	for (i=0; i<12; i++) tmp[i%4][i/4] = rgb_cam[i/4][i%4];
+	pseudoinverse ((const double (*)[3])tmp, cam_rgb, colors);
+    }
     memcpy(h->cam_rgb, cam_rgb, sizeof cam_rgb);
     h->message = messageBuffer;
     return lastStatus;

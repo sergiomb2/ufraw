@@ -511,6 +511,9 @@ int conf_load(conf_data *c, const char *IDFilename)
         for (i=2; i<c->profileCount[0]; i++)
             c->profile[0][i].linear = 0.0;
     }
+    if (c->version==5) {
+        c->version = conf_default.version;
+    }
     /* a few consistency settings */
     if (c->curveIndex>=c->curveCount) c->curveIndex = conf_default.curveIndex;
     return UFRAW_SUCCESS;
@@ -547,6 +550,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
         char *inPath = g_path_get_dirname(c->inputFilename);
 	char *outPath = g_path_get_dirname(c->outputFilename);
 	if ( strcmp(outPath,".") && strcmp(inPath, outPath) ) {
+	    g_strlcpy(c->outputPath, outPath, max_path);
 	    char *utf8=g_filename_to_utf8(outPath, -1, NULL, NULL, NULL);
 	    if (utf8!=NULL)
 		buf = uf_markup_buf(buf, "<OutputPath>%s</OutputPath>\n", utf8);
@@ -798,9 +802,11 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     }
     if (c->intent!=conf_default.intent)
         buf = uf_markup_buf(buf, "<Intent>%d</Intent>\n", c->intent);
+    /* We always write the Make and Mode information
+     * to know if the WB setting is relevant */
+    buf = uf_markup_buf(buf, "<Make>%s</Make>\n", c->make);
+    buf = uf_markup_buf(buf, "<Model>%s</Model>\n", c->model);
     if (IDFilename!=NULL) {
-	buf = uf_markup_buf(buf, "<Make>%s</Make>\n", c->make);
-	buf = uf_markup_buf(buf, "<Model>%s</Model>\n", c->model);
 	buf = uf_markup_buf(buf, "<Timestamp>%s</Timestamp>\n", c->timestamp);
 	buf = uf_markup_buf(buf, "<ISOSpeed>%d</ISOSpeed>\n",
 		(int)c->iso_speed);

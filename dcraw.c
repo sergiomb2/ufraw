@@ -2724,7 +2724,7 @@ void CLASS pseudoinverse (const double (*in)[3], double (*out)[3], int size)
 }
 
 /* UFRaw uses cam_rgb, so we make it a global variable */
-double cam_rgb[4][3];
+double cam_rgb[4][3] = {{-1}};//{{1,0,0},{0,1,0},{0,0,1},{0,0,0}};
 
 void CLASS cam_xyz_coeff (double cam_xyz[4][3])
 {
