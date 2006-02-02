@@ -38,6 +38,7 @@ extern int black, colors, raw_color, /*xmag,*/ ymag;
 extern float cam_mul[4];
 extern gushort white[8][8];
 extern float rgb_cam[3][4];
+extern double cam_rgb[4][3];
 extern char *meta_data;
 extern int meta_length;
 extern float iso_speed, shutter, aperture, focal_len;
@@ -192,6 +193,7 @@ int dcraw_load_raw(dcraw_data *h)
     for (i=0; i<h->colors; i++) h->pre_mul[i] = pre_mul[i]/dmin;
     memcpy(h->cam_mul, cam_mul, sizeof cam_mul);
     memcpy(h->rgb_cam, rgb_cam, sizeof rgb_cam);
+    memcpy(h->cam_rgb, cam_rgb, sizeof cam_rgb);
     h->message = messageBuffer;
     return lastStatus;
 }

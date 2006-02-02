@@ -214,6 +214,8 @@ void uf_reset_locale(char *locale);
 char *uf_markup_buf(char *buffer, const char *format, ...);
 double profile_default_linear(profile_data *p);
 double profile_default_gamma(profile_data *p);
+void Temperature_to_RGB(double T, double RGB[3]);
+void RGB_to_Temperature(double RGB[3], double *T, double *Green);
 int curve_load(CurveData *cp, char *filename);
 int curve_save(CurveData *cp, char *filename);
 char *curve_buffer(CurveData *cp);

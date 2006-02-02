@@ -104,6 +104,12 @@ const wb_data wb_preset[] = {
   { "", "", "Camera WB",       { 0, 0, 0, 0} },
   { "", "", "Auto WB",         { 0, 0, 0, 0} },
 
+  { "NIKON", "D50", "Incandescent", { 1.328125, 1, 2.500000, 0 } },
+  { "NIKON", "D50", "Fluorescent",  { 1.945312, 1, 2.191406, 0 } },
+  { "NIKON", "D50", "Sunny",        { 2.140625, 1, 1.398438, 0 } },
+  { "NIKON", "D50", "Flash",        { 2.398438, 1, 1.339844, 0 } },
+  { "NIKON", "D50", "Shade",        { 2.746094, 1, 1.156250, 0 } },
+
   { "NIKON", "D70", "Incandescent", { 1.34375, 1, 2.816406, 0 } }, /* 3000K */
   { "NIKON", "D70", "Fluorescent",  { 1.964844, 1, 2.476563, 0 } }, /* 4200K */
   { "NIKON", "D70", "Direct sunlight", { 2.0625, 1, 1.597656, 0 } }, /* 5200K*/
@@ -276,6 +282,66 @@ double profile_default_gamma(profile_data *p)
     else
 	return 1.0;
 }
+
+/* Convert between Temperature and RGB.
+ * Base on information from http://www.brucelindbloom.com/
+ * The generalization to 2000K < T < 4000K is my own and
+ * should be taken with a grain of salt.
+ */
+const double XYZ_to_RGB[3][3] = {
+    { 3.24071,	-0.969258,  0.0556352 },
+    {-1.53726,	1.87599,    -0.203996 },
+    {-0.498571,	0.0415557,  1.05707 } };
+
+void Temperature_to_RGB(double T, double RGB[3])
+{
+    int c;
+    double xD, yD, X, Y, Z, max;
+    if (T<= 4000) {
+        xD = 0.27475e9/(T*T*T) - 0.98598e6/(T*T) + 1.17444e3/T + 0.145986;
+    } else if (T<= 7000) {
+	xD = -4.6070e9/(T*T*T) + 2.9678e6/(T*T) + 0.09911e3/T + 0.244063;
+    } else {
+	xD = -2.0064e9/(T*T*T) + 1.9018e6/(T*T) + 0.24748e3/T + 0.237040;
+    }
+    yD = -3*xD*xD + 2.87*xD - 0.275;
+    X = xD/yD;
+    Y = 1;
+    Z = (1-xD-yD)/yD;
+    max = 0;
+    for (c=0; c<3; c++) {
+	RGB[c] = X*XYZ_to_RGB[0][c] + Y*XYZ_to_RGB[1][c] + Z*XYZ_to_RGB[2][c];
+	if (RGB[c]>max) max = RGB[c];
+    }
+    for (c=0; c<3; c++) RGB[c] = RGB[c]/max;
+}
+
+void RGB_to_Temperature(double RGB[3], double *T, double *Green)
+{
+    double Tmax, Tmin, testRGB[3];
+    Tmin = 2000;
+    Tmax = 12000;
+    for (*T=(Tmax+Tmin)/2; Tmax-Tmin>10; *T=(Tmax+Tmin)/2) {
+	Temperature_to_RGB(*T, testRGB);
+	if (testRGB[2]/testRGB[0] > RGB[2]/RGB[0])
+	    Tmax = *T;
+	else
+	    Tmin = *T;
+    }
+    *Green = (testRGB[1]/testRGB[0]) / (RGB[1]/RGB[0]);
+}
+
+/* Following code might be useful if we want to convert temperature from
+ * pre 0.7 calculation to the current temperature calculation */
+/*
+#include <blackbody.h>
+void BB_Temperature_to_RGB(double T, double RGB[3])
+{
+    int i = T/10-200;
+    int c;
+    for (c=0; c<3; c++) RGB[c] = bbWB[c];
+}
+*/
 
 void curve_parse_start(GMarkupParseContext *context, const gchar *element,
     const gchar **names, const gchar **values, gpointer user, GError **error)

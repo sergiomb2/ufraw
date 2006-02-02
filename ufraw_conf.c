@@ -22,11 +22,11 @@
 
 const conf_data conf_default = {
     /* Internal data */
-    sizeof(conf_data), 5, /* confSize, version */
+    sizeof(conf_data), 7, /* confSize, version */
 
     /* Image manipulation settings */
     camera_wb, /* wb */
-    4750, 1.2, /* temperature, green */
+    6500, 1.0, /* temperature, green */
     { -1.0, -1.0, -1.0, -1.0 }, /* chanMul[] */
     0.0, 1.0, 0.0, /* exposure, saturation, black */
     FALSE /* Unclip highlights */,
@@ -119,6 +119,12 @@ void conf_parse_start(GMarkupParseContext *context, const gchar *element,
             if (int_value==3) {
                 ufraw_message(UFRAW_WARNING,
                     "Trying to convert .ufrawrc from UFRaw-0.4 or earlier");
+                c->version = int_value;
+            }
+	    /* In version 7 temperature calculation has changed */
+            if (int_value==5) {
+                ufraw_message(UFRAW_WARNING,
+                    "Trying to convert .ufrawrc from UFRaw-0.6 or earlier");
                 c->version = int_value;
             }
             if (int_value!=c->version)

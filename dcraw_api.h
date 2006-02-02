@@ -25,6 +25,7 @@ typedef struct {
     int flip, shrink, ymag;
     dcraw_image_data raw;
     float pre_mul[4], post_mul[4], cam_mul[4], rgb_cam[3][4];
+    double cam_rgb[4][3];
     int rgbMax, black, fuji_width;
     double fuji_step;
     int toneCurveSize, toneCurveOffset;
