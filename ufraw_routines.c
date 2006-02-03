@@ -117,7 +117,10 @@ const wb_data wb_preset[] = {
   { "NIKON", "D70", "Cloudy",	    { 2.257813, 1, 1.457031, 0 } }, /* 6000K */
   { "NIKON", "D70", "Shade",	    { 2.613281, 1, 1.277344, 0 } }, /* 8000K */
 
-  /* D2X basic WB presets */
+  /*
+   * D2X with firmware A 1.01 and B 1.01
+   * D2X basic WB presets
+   */
   { "NIKON", "D2X", "Incandescent", { 0.92086, 1, 2.89928, 0 } }, /* 3000K */
   { "NIKON", "D2X", "Fluorescent",  { 1.42969, 1, 2.62891, 0 } }, /* ~~4200K */
   { "NIKON", "D2X", "Direct sunlight", { 1.52734, 1, 1.69531, 0 } }, /* ~5200K */
