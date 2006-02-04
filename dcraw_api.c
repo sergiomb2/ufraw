@@ -77,6 +77,8 @@ int dcraw_open(dcraw_data *h,char *filename)
     messageBuffer = NULL;
     lastStatus = DCRAW_SUCCESS;
     verbose = 1;
+    /* Since we made cam_rgb global we need to reset it. */
+    cam_rgb[0][0] = -1;
     ifname = g_strdup(filename);
 //    use_secondary = 0; /* for Fuji Super CCD SR */
     if (setjmp(failure)) {

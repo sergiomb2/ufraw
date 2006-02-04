@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.26 2006/01/26 07:17:19 nkbj Exp $
+dnl $Id: configure.ac,v 1.27 2006/02/04 20:36:27 udifuchs Exp $
 AC_INIT(UFRaw, 0.7)
 AC_PREREQ(2.57)
 
@@ -39,12 +39,7 @@ CFLAGS="$CFLAGS -W -Wall -O3 -ffast-math -fomit-frame-pointer"
 
 # Set default PREFIX, if not already defined according to os.
 # windows will require some special attention
-# in cygwin we always cross-compile to mingw32
 case $host_os in
-  *cygwin* )
-    ufraw_win32=yes
-    test -z $PREFIX && PREFIX=/cygdrive/c/mingw32
-    ;;
   *mingw* )
     ufraw_win32=yes
     test -z $PREFIX && PREFIX=/c/mingw32
@@ -192,11 +187,7 @@ AC_SUBST(UFRAW_LDADD)
 
 if test $ufraw_win32 = yes; then
   INSTALL_USER="cp ufraw-gimp.exe \"\$(USERPROFILE)\.gimp-2.0\plug-ins\""
-  if test -z $target_alias; then
-    WINDRES="windres"
-  else
-    WINDRES="$target_alias-windres"
-  fi
+  AC_CHECK_PROGS(WINDRES, $target_alias-windres windres, , $PATH)
   AC_SUBST(WINDRES)
   # For the windows-intstaller make needs the location of the DLLs
   AC_SUBST(PREFIX)
