@@ -71,6 +71,7 @@ typedef struct {
     /* We need the adjustments for update_scale() */
     GtkAdjustment *TemperatureAdjustment;
     GtkAdjustment *GreenAdjustment;
+    GtkAdjustment *ChannelAdjustment[4];
     GtkAdjustment *GammaAdjustment;
     GtkAdjustment *LinearAdjustment;
     GtkAdjustment *ExposureAdjustment;
@@ -856,6 +857,9 @@ void update_scales(preview_data *data)
             CFG->profile[0][CFG->profileIndex[0]].gamma);
     gtk_adjustment_set_value(data->LinearAdjustment,
             CFG->profile[0][CFG->profileIndex[0]].linear);
+    for (i=0; i<data->UF->colors; i++)
+	gtk_adjustment_set_value(data->ChannelAdjustment[i],
+		CFG->chanMul[i]);
 
     if (GTK_WIDGET_SENSITIVE(data->UseMatrixButton)) {
 	data->UF->useMatrix = CFG->profile[0][CFG->profileIndex[0]].useMatrix;
@@ -1150,6 +1154,11 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
 	ufraw_set_wb(data->UF);
 	if (CFG->autoExposure) ufraw_auto_expose(data->UF);
     }
+    if (valuep>=&CFG->chanMul[0] && valuep<=&CFG->chanMul[3]) {
+	g_strlcpy(CFG->wb, spot_wb, max_name); 
+	ufraw_set_wb(data->UF);
+	if (CFG->autoExposure) ufraw_auto_expose(data->UF);
+    }
     if (valuep==&CFG->exposure) {
 	CFG->autoExposure = FALSE;
     }
@@ -1173,14 +1182,14 @@ GtkAdjustment *adjustment_scale(GtkTable *table,
     gtk_table_attach(table, w, x, x+1, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
     adj = GTK_ADJUSTMENT(gtk_adjustment_new(value, min, max, step, jump, 0));
     g_object_set_data(G_OBJECT(adj), "Adjustment-Accuracy",(gpointer)accuracy);
-    g_signal_connect(G_OBJECT(adj), "value-changed",
-            G_CALLBACK(adjustment_update), valuep);
 
     w = gtk_hscale_new(adj);
     g_object_set_data(G_OBJECT(adj), "Parent-Widget", w);
     gtk_scale_set_draw_value(GTK_SCALE(w), FALSE);
     gtk_tooltips_set_tip(data->ToolTips, w, tip, NULL);
     gtk_table_attach(table, w, x+1, x+5, y, y+1, GTK_EXPAND|GTK_FILL, 0, 0, 0);
+    g_signal_connect(G_OBJECT(adj), "value-changed",
+            G_CALLBACK(adjustment_update), valuep);
 
     w = gtk_spin_button_new(adj, step, accuracy);
     gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON(w), FALSE);
@@ -1871,11 +1880,23 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_table_attach(table, button, 7, 8, 1, 3, GTK_FILL, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(spot_wb_event), NULL);
-    if (!make_model_match) {
-        label = gtk_label_new("Unknown white balance presets for this camera");
-        gtk_table_attach(table, label, 0, 8, 3, 4, 0, 0, 0, 0);
-	}
 
+    GtkTable *subtable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
+    gtk_table_attach(table, GTK_WIDGET(subtable), 0, 8, 3, 4, 0, 0, 0, 0);
+    label = gtk_label_new("Channel multipliers:");
+    gtk_table_attach(subtable, label, 0, 1, 0, 1, 0, 0, 0, 0);
+    for (i=0; i<data->UF->colors; i++) {
+	data->ChannelAdjustment[i] = GTK_ADJUSTMENT(gtk_adjustment_new(
+		CFG->chanMul[i], 0.5, 9.0, 0.01, 0.01, 0));
+	g_object_set_data(G_OBJECT(data->ChannelAdjustment[i]),
+		"Adjustment-Accuracy",(gpointer)3);
+	button = gtk_spin_button_new(data->ChannelAdjustment[i], 0.001, 3);
+    	g_object_set_data(G_OBJECT(data->ChannelAdjustment[i]),
+		"Parent-Widget", button);
+	gtk_table_attach(subtable, button, i+1, i+2, 0, 1, 0, 0, 0, 0);
+	g_signal_connect(G_OBJECT(data->ChannelAdjustment[i]), "value-changed",
+		G_CALLBACK(adjustment_update), &CFG->chanMul[i]);
+    }
     table = GTK_TABLE(table_with_frame(page, expanderText[color_expander],
             CFG->expander[color_expander]));
     for (j=0; j<profile_types; j++) {

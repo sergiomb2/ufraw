@@ -433,13 +433,13 @@ int ufraw_set_wb(ufraw_data *uf)
 	 */
 	if (uf->raw_color) {
 	    /* If there is no color matrix it is simple */
-	    for (c=0; c<raw->colors; c++) {
+	    for (c=0; c<3; c++) {
 		uf->conf->chanMul[c] = raw->pre_mul[c] / rgbWB[c];
 	    }
 	} else {
 	    for (c=0; c<raw->colors; c++) {
 		double chanMulInv = 0;
-		for (cc=0; cc<raw->colors; cc++)
+		for (cc=0; cc<3; cc++)
 		    chanMulInv += 1/raw->pre_mul[c] * raw->cam_rgb[c][cc]
 			    * rgbWB[cc];
 		uf->conf->chanMul[c] = 1/chanMulInv;

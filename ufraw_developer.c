@@ -163,8 +163,9 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
         if (CurveDataSample(curve, cs)!=UFRAW_SUCCESS) {
             ufraw_message(UFRAW_REPORT, NULL);
             for (i=0; i<0x10000; i++) d->luminosityCurve[i] = i;
-        } else
+        } else {
             for (i=0; i<0x10000; i++) d->luminosityCurve[i] = cs->m_Samples[i];
+	}
         CurveSampleFree(cs);
     }
 }
@@ -268,10 +269,10 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
             p[minc] = p[maxc]*(0x10000-sat)/0x10000;
             p[midc] = p[maxc]*(0x10000-sat+sat*hue/0x10000)/0x10000;
             /* It is also possible to define oldSaturation = max-min */
-        }
+        } else {
+	    for (c=0; c<3; c++) p[c] = d->luminosityCurve[p[c]];
+	}
     }
-//    if (mode==16) for (i=0; i<3*count; i++) p16[i] = d->toneCurve[buf[i]];
-//    else for (i=0; i<3*count; i++) p8[i] = d->toneCurve[buf[i]] >> 8;
     if (mode==16) for (i=0; i<3*count; i++) p16[i] = buf[i];
     else for (i=0; i<3*count; i++) p8[i] = buf[i] >> 8;
 }
