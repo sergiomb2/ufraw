@@ -258,6 +258,12 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
         if (!strcmp("MaxXY", element))
             sscanf(temp, "%lf %lf", &c->curve[i].m_max_x, &c->curve[i].m_max_y);
         if (!strcmp("AnchorXY", element)) {
+	    if (c->curve[i].m_numAnchors==max_anchors) {
+		ufraw_message(UFRAW_WARNING,
+			"Too many anchors for curve '%s'", c->curve[i].name);
+		/* We try to keep the last anchor point */
+		c->curve[i].m_numAnchors--;
+	    }
 	    /* If one anchor is supplied then all anchors should be supplied */
             sscanf(temp, "%lf %lf",
                     &c->curve[i].m_anchors[c->curve[i].m_numAnchors].x,

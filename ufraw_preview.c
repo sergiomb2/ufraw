@@ -1817,8 +1817,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     int openingPage = gtk_notebook_page_num(GTK_NOTEBOOK(noteBox), page);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+    GtkTable *subTable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
+    gtk_table_attach(table, GTK_WIDGET(subTable), 0, 1, 0 , 1,
+	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
     label = gtk_label_new("White balance");
-    gtk_table_attach(table, label, 0, 1, 0 , 1, 0, 0, 0, 0);
+    gtk_table_attach(subTable, label, 0, 1, 0 , 1, 0, 0, 0, 0);
     data->WBCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     data->WBPresets = NULL;
     gboolean make_model_match = FALSE;
@@ -1840,14 +1843,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    gtk_combo_box_set_active(data->WBCombo, i);
     g_signal_connect(G_OBJECT(data->WBCombo), "changed",
             G_CALLBACK(combo_update), CFG->wb);
-    gtk_table_attach(table, GTK_WIDGET(data->WBCombo), 1, 6, 0, 1,
+    gtk_table_attach(subTable, GTK_WIDGET(data->WBCombo), 1, 6, 0, 1,
 	    GTK_FILL, 0, 0, 0);
     if (!make_model_match) {
 	event_box = gtk_event_box_new();
 	label = gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING,
 		GTK_ICON_SIZE_BUTTON);
 	gtk_container_add(GTK_CONTAINER(event_box), label);
-	gtk_table_attach(table, event_box, 6, 7, 0, 1,
+	gtk_table_attach(subTable, event_box, 6, 7, 0, 1,
 		GTK_FILL, 0, 0, 0);
 	gtk_tooltips_set_tip(data->ToolTips, event_box,
 	    "There are no white balance presets for your camera model.\n"
@@ -1859,41 +1862,44 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, data->ResetWBButton,
 	    "Reset white balance to initial value", NULL);
-    gtk_table_attach(table, data->ResetWBButton, 7, 8, 0, 1, 0, 0, 0, 0);
+    gtk_table_attach(subTable, data->ResetWBButton, 7, 8, 0, 1, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetWBButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
-    data->TemperatureAdjustment = adjustment_scale(table, 0, 1,
+    data->TemperatureAdjustment = adjustment_scale(subTable, 0, 1,
             "Temperature [K]", CFG->temperature, &CFG->temperature,
             2000, 12000, 50, 200, 0,
             "White balance color temperature (K)");
-    data->GreenAdjustment = adjustment_scale(table, 0, 2, "Green component",
+    data->GreenAdjustment = adjustment_scale(subTable, 0, 2, "Green component",
             CFG->green, &CFG->green, 0.2, 2.5, 0.01, 0.05, 2,
             "Green component");
-    //button = gtk_button_new_with_label("Spot\nWB");
+    // Spot WB button:
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
                 GTK_STOCK_COLOR_PICKER, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, button,
 	    "Select a spot on the preview image to apply spot white balance",
 	    NULL);
-    gtk_table_attach(table, button, 7, 8, 1, 3, GTK_FILL, 0, 0, 0);
+    gtk_table_attach(subTable, button, 7, 8, 1, 3, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(spot_wb_event), NULL);
 
-    GtkTable *subtable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
-    gtk_table_attach(table, GTK_WIDGET(subtable), 0, 8, 3, 4, 0, 0, 0, 0);
-    label = gtk_label_new("Channel multipliers:");
-    gtk_table_attach(subtable, label, 0, 1, 0, 1, 0, 0, 0, 0);
+    GtkBox *subbox = GTK_BOX(gtk_hbox_new(0,0));
+    gtk_table_attach(table, GTK_WIDGET(subbox), 0, 1, 1, 2, 0, 0, 0, 0);
+    if (data->UF->colors>3)
+	label = gtk_label_new("Chan. multipliers:");
+    else
+	label = gtk_label_new("Channel multipliers:");
+    gtk_box_pack_start(subbox, label, 0, 0, 0);
     for (i=0; i<data->UF->colors; i++) {
 	data->ChannelAdjustment[i] = GTK_ADJUSTMENT(gtk_adjustment_new(
 		CFG->chanMul[i], 0.5, 9.0, 0.01, 0.01, 0));
 	g_object_set_data(G_OBJECT(data->ChannelAdjustment[i]),
-		"Adjustment-Accuracy",(gpointer)3);
-	button = gtk_spin_button_new(data->ChannelAdjustment[i], 0.001, 3);
+		"Adjustment-Accuracy",(gpointer)2);
+	button = gtk_spin_button_new(data->ChannelAdjustment[i], 0.01, 2);
     	g_object_set_data(G_OBJECT(data->ChannelAdjustment[i]),
 		"Parent-Widget", button);
-	gtk_table_attach(subtable, button, i+1, i+2, 0, 1, 0, 0, 0, 0);
+	gtk_box_pack_start(subbox, button, 0, 0, 0);
 	g_signal_connect(G_OBJECT(data->ChannelAdjustment[i]), "value-changed",
 		G_CALLBACK(adjustment_update), &CFG->chanMul[i]);
     }

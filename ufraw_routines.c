@@ -219,6 +219,7 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 350D DIGITAL", "Flash",      { 2.715128, 1, 1.295678, 0 } }, 
   { "Canon", "EOS 350D DIGITAL", "Cloudy",     { 2.611984, 1, 1.343811, 0 } },
 
+  { "Canon", "EOS DIGITAL REBEL", "Daylight", { 2.13702, 1, 1.15745, 0 } }, 
   { "Canon", "EOS 300D DIGITAL", "Daylight", { 2.13702, 1, 1.15745, 0 } }, 
   { "Canon", "EOS 300D DIGITAL", "Cloudy",   { 2.50961, 1, 0.97716, 0 } }, 
   { "Canon", "EOS 300D DIGITAL", "Tungsten", { 2.32091, 1, 1.05529, 0 } }, 
@@ -364,7 +365,9 @@ void curve_parse_start(GMarkupParseContext *context, const gchar *element,
     while (*names!=NULL) {
         sscanf(*values, "%d", &int_value);
         if (!strcmp(element, "Curve") && !strcmp(*names, "Version")) {
-            if (int_value!=conf_default.version)
+	    /* We never changed the curve format so we support all
+	     * previous versions */
+            if (int_value>conf_default.version)
                 g_set_error(error, ufrawQuark, UFRAW_RC_VERSION,
                     "Curve version is not supported");
         }
