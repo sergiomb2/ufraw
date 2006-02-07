@@ -220,6 +220,12 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 350D DIGITAL", "Cloudy",     { 2.611984, 1, 1.343811, 0 } },
 
   { "Canon", "EOS DIGITAL REBEL", "Daylight", { 2.13702, 1, 1.15745, 0 } }, 
+  { "Canon", "EOS DIGITAL REBEL", "Cloudy",   { 2.50961, 1, 0.97716, 0 } }, 
+  { "Canon", "EOS DIGITAL REBEL", "Tungsten", { 2.32091, 1, 1.05529, 0 } }, 
+  { "Canon", "EOS DIGITAL REBEL", "Flourescent", { 1.39677, 1, 1.79892, 0 } }, 
+  { "Canon", "EOS DIGITAL REBEL", "Flash",    { 1.84229, 1, 1.60573, 0 } },
+  { "Canon", "EOS DIGITAL REBEL", "Shade",    { 2.13702, 1, 1.15745, 0 } },
+
   { "Canon", "EOS 300D DIGITAL", "Daylight", { 2.13702, 1, 1.15745, 0 } }, 
   { "Canon", "EOS 300D DIGITAL", "Cloudy",   { 2.50961, 1, 0.97716, 0 } }, 
   { "Canon", "EOS 300D DIGITAL", "Tungsten", { 2.32091, 1, 1.05529, 0 } }, 
