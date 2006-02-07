@@ -180,7 +180,6 @@ int dcraw_load_raw(dcraw_data *h)
     (*load_raw)();
     bad_pixels();
     if (is_foveon) {
-        maximum = 0x0fff; /* Fix for dark foveon images. */
         foveon_interpolate();
 	h->raw.width = width;
 	h->raw.height = height;
