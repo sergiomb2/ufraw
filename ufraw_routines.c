@@ -199,6 +199,13 @@ const wb_data wb_preset[] = {
   { "NIKON", "D2X", "9100K",	    { 2.09766, 1, 1.24609, 0 } },
   { "NIKON", "D2X", "10000K",	    { 2.17578, 1, 1.18359, 0 } },
 
+  { "MINOLTA", "DYNAX 7D", "Daylight", { 1.621094, 1, 1.601562, 0 } },
+  { "MINOLTA", "DYNAX 7D", "Shade", { 1.855469, 1, 1.402344, 0 } },
+  { "MINOLTA", "DYNAX 7D", "Cloudy", { 1.738281, 1, 1.464844, 0 } },
+  { "MINOLTA", "DYNAX 7D", "Tungsten", { 0.945312, 1, 3.292969, 0 } },
+  { "MINOLTA", "DYNAX 7D", "Fluorescent", { 1.570312, 1, 2.453125, 0 } },
+  { "MINOLTA", "DYNAX 7D", "Flash", { 1.890625, 1, 1.445312, 0 } },
+
   { "Minolta", "DiMAGE 7Hi", "Daylight",    { 1.609375, 1, 1.328125, 0 } },  /* 5500K */
   { "Minolta", "DiMAGE 7Hi", "Tungsten",    { 0.878906, 1, 2.433594, 0 } },  /* 2800K */
   { "Minolta", "DiMAGE 7Hi", "Fluorescent 1", { 1.664062, 1, 2.105469, 0 } },  /* 4060K*/
