@@ -199,18 +199,23 @@ const wb_data wb_preset[] = {
   { "NIKON", "D2X", "9100K",	    { 2.09766, 1, 1.24609, 0 } },
   { "NIKON", "D2X", "10000K",	    { 2.17578, 1, 1.18359, 0 } },
 
-  { "MINOLTA", "DYNAX 7D", "Daylight", { 1.621094, 1, 1.601562, 0 } },
-  { "MINOLTA", "DYNAX 7D", "Shade", { 1.855469, 1, 1.402344, 0 } },
-  { "MINOLTA", "DYNAX 7D", "Cloudy", { 1.738281, 1, 1.464844, 0 } },
-  { "MINOLTA", "DYNAX 7D", "Tungsten", { 0.945312, 1, 3.292969, 0 } },
-  { "MINOLTA", "DYNAX 7D", "Fluorescent", { 1.570312, 1, 2.453125, 0 } },
-  { "MINOLTA", "DYNAX 7D", "Flash", { 1.890625, 1, 1.445312, 0 } },
+  { "MINOLTA", "DYNAX 7D", "Cloudy", { 1.738281, 1, 1.464844, 0} },
+  { "MINOLTA", "DYNAX 7D", "Daylight", { 1.621094, 1, 1.601562, 0} },
+  { "MINOLTA", "DYNAX 7D", "Flash", { 1.890625, 1, 1.445312, 0} },
+  { "MINOLTA", "DYNAX 7D", "Fluorescent", { 1.570312, 1, 2.453125, 0} },
+  { "MINOLTA", "DYNAX 7D", "Shade", { 1.855469, 1, 1.402344, 0} },
+  { "MINOLTA", "DYNAX 7D", "Tungsten", { 0.945312, 1, 3.292969, 0} },
 
   { "Minolta", "DiMAGE 7Hi", "Daylight",    { 1.609375, 1, 1.328125, 0 } },  /* 5500K */
   { "Minolta", "DiMAGE 7Hi", "Tungsten",    { 0.878906, 1, 2.433594, 0 } },  /* 2800K */
   { "Minolta", "DiMAGE 7Hi", "Fluorescent 1", { 1.664062, 1, 2.105469, 0 } },  /* 4060K*/
   { "Minolta", "DiMAGE 7Hi", "Fluorescent 2", { 1.796875, 1, 1.734375, 0 } },  /* 4938K */
   { "Minolta", "DiMAGE 7Hi", "Cloudy",      { 1.730469, 1, 1.269531, 0 } },  /* 5823K */
+
+  { "Minolta", "DiMAGE G500", "sun",	{ 1.496094, 1, 1.121094, 0 } },
+  { "Minolta", "DiMAGE G500", "cloudy", { 1.527344, 1, 1.105469, 0 } },
+  { "Minolta", "DiMAGE G500", "luminescent", { 1.382813, 1, 1.347656, 0 } },
+  { "Minolta", "DiMAGE G500", "lamp",	{ 1.042969, 1, 1.859375, 0 } },
 
   { "Canon", "EOS DIGITAL REBEL XT", "Tungsten",    { 1.554250, 1, 2.377034, 0 } }, 
   { "Canon", "EOS DIGITAL REBEL XT", "Daylight",    { 2.392927, 1, 1.487230, 0 } }, 
@@ -246,6 +251,13 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 10D", "Indescandent", { 1.431544, 1, 1.851040, 0 } }, 
   { "Canon", "EOS 10D", "Flourescent", { 1.891509, 1, 1.647406, 0 } }, 
   { "Canon", "EOS 10D", "Flash",    { 2.385817, 1, 1.115385, 0 } },
+
+  { "Canon", "EOS-1D Mark II", "Cloudy",    { 2.093750, 1, 1.166016, 0} },
+  { "Canon", "EOS-1D Mark II", "Daylight",  { 1.957031, 1, 1.295898, 0} },
+  { "Canon", "EOS-1D Mark II", "Flash",	    { 2.225586, 1, 1.172852, 0} },
+  { "Canon", "EOS-1D Mark II", "Fluorescent", { 1.785853, 1, 1.785853, 0} },
+  { "Canon", "EOS-1D Mark II", "Shade",	    { 2.220703, 1, 1.069336, 0} },
+  { "Canon", "EOS-1D Mark II", "Tungsten",  { 1.415480, 1, 2.160142, 0} },
 
   { "FUJIFILM", "FinePix S5000", "Incandescent", { 1.212081, 1, 2.672364, 0 } },
   { "FUJIFILM", "FinePix S5000", "Fluorescent",  { 1.772316, 1, 2.349902, 0 } },
