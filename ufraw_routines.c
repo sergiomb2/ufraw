@@ -252,6 +252,13 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 10D", "Flourescent", { 1.891509, 1, 1.647406, 0 } }, 
   { "Canon", "EOS 10D", "Flash",    { 2.385817, 1, 1.115385, 0 } },
 
+  { "Canon", "EOS 20D", "Daylight", { 1.954680, 1, 1.478818, 0} },
+  { "Canon", "EOS 20D", "Shade",    { 2.248276, 1, 1.227586, 0} },
+  { "Canon", "EOS 20D", "Cloudy",   { 2.115271, 1, 1.336946, 0} },
+  { "Canon", "EOS 20D", "Tungsten", { 1.368087, 1, 2.417044, 0} },
+  { "Canon", "EOS 20D", "Fluorescent", { 1.752709, 1, 2.060098, 0} },
+  { "Canon", "EOS 20D", "Flash",    { 2.145813, 1, 1.293596, 0} },
+  
   { "Canon", "EOS-1D Mark II", "Cloudy",    { 2.093750, 1, 1.166016, 0} },
   { "Canon", "EOS-1D Mark II", "Daylight",  { 1.957031, 1, 1.295898, 0} },
   { "Canon", "EOS-1D Mark II", "Flash",	    { 2.225586, 1, 1.172852, 0} },
@@ -321,8 +328,9 @@ double profile_default_gamma(profile_data *p)
 
 /* Convert between Temperature and RGB.
  * Base on information from http://www.brucelindbloom.com/
- * The generalization to 2000K < T < 4000K is my own and
- * should be taken with a grain of salt.
+ * The fit for D-illuminant between 4000K and 12000K are from CIE
+ * The generalization to 2000K < T < 4000K and the blackbody fits
+ * are my own and should be taken with a grain of salt.
  */
 const double XYZ_to_RGB[3][3] = {
     { 3.24071,	-0.969258,  0.0556352 },
@@ -333,6 +341,7 @@ void Temperature_to_RGB(double T, double RGB[3])
 {
     int c;
     double xD, yD, X, Y, Z, max;
+    // Fit for CIE Daylight illuminant
     if (T<= 4000) {
         xD = 0.27475e9/(T*T*T) - 0.98598e6/(T*T) + 1.17444e3/T + 0.145986;
     } else if (T<= 7000) {
@@ -341,6 +350,15 @@ void Temperature_to_RGB(double T, double RGB[3])
 	xD = -2.0064e9/(T*T*T) + 1.9018e6/(T*T) + 0.24748e3/T + 0.237040;
     }
     yD = -3*xD*xD + 2.87*xD - 0.275;
+
+    // Fit for Blackbody using CIE standard observer function at 2 degrees
+    //xD = -1.8596e9/(T*T*T) + 1.37686e6/(T*T) + 0.360496e3/T + 0.232632;
+    //yD = -2.6046*xD*xD + 2.6106*xD - 0.239156;
+
+    // Fit for Blackbody using CIE standard observer function at 10 degrees
+    //xD = -1.98883e9/(T*T*T) + 1.45155e6/(T*T) + 0.364774e3/T + 0.231136;
+    //yD = -2.35563*xD*xD + 2.39688*xD - 0.196035;
+
     X = xD/yD;
     Y = 1;
     Z = (1-xD-yD)/yD;
