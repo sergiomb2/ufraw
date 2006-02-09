@@ -292,6 +292,11 @@ const wb_data wb_preset[] = {
   { "LEICA", "DIGILUX 2", "Flash",	{ 2.074219, 1, 1.304688, 0 } },
   { "LEICA", "DIGILUX 2", "B/W",	{ 1.632812, 1, 1.550781, 0 } },
 
+  { "Panasonic", "DMC-FZ30", "Sunny",	    { 1.757576, 1, 1.446970, 0 } },
+  { "Panasonic", "DMC-FZ30", "Cloudy",	    { 1.943182, 1, 1.276515, 0 } },
+  { "Panasonic", "DMC-FZ30", "Fluorescent", { 1.098485, 1, 2.106061, 0 } },
+  { "Panasonic", "DMC-FZ30", "Flash",	    { 1.965909, 1, 1.303030, 0 } },
+
 };
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
 
