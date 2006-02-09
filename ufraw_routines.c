@@ -212,10 +212,10 @@ const wb_data wb_preset[] = {
   { "Minolta", "DiMAGE 7Hi", "Fluorescent 2", { 1.796875, 1, 1.734375, 0 } },  /* 4938K */
   { "Minolta", "DiMAGE 7Hi", "Cloudy",      { 1.730469, 1, 1.269531, 0 } },  /* 5823K */
 
-  { "Minolta", "DiMAGE G500", "sun",	{ 1.496094, 1, 1.121094, 0 } },
-  { "Minolta", "DiMAGE G500", "cloudy", { 1.527344, 1, 1.105469, 0 } },
-  { "Minolta", "DiMAGE G500", "luminescent", { 1.382813, 1, 1.347656, 0 } },
-  { "Minolta", "DiMAGE G500", "lamp",	{ 1.042969, 1, 1.859375, 0 } },
+  { "Minolta", "DiMAGE G500", "Sun",	{ 1.496094, 1, 1.121094, 0 } },
+  { "Minolta", "DiMAGE G500", "Cloudy", { 1.527344, 1, 1.105469, 0 } },
+  { "Minolta", "DiMAGE G500", "Luminescent", { 1.382813, 1, 1.347656, 0 } },
+  { "Minolta", "DiMAGE G500", "Lamp",	{ 1.042969, 1, 1.859375, 0 } },
 
   { "Canon", "EOS DIGITAL REBEL XT", "Tungsten",    { 1.554250, 1, 2.377034, 0 } }, 
   { "Canon", "EOS DIGITAL REBEL XT", "Daylight",    { 2.392927, 1, 1.487230, 0 } }, 
@@ -271,7 +271,27 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "FinePix S5000", "Direct sunlight", { 1.860403, 1, 1.515946, 0 } },
   { "FUJIFILM", "FinePix S5000", "Flash",   { 2.202181, 1, 1.423284, 0 } },
   { "FUJIFILM", "FinePix S5000", "Cloudy",  { 2.036578, 1, 1.382513, 0 } },
-  { "FUJIFILM", "FinePix S5000", "Shade",   { 2.357215, 1, 1.212016, 0 } }
+  { "FUJIFILM", "FinePix S5000", "Shade",   { 2.357215, 1, 1.212016, 0 } },
+
+  { "OLYMPUS", "E-1", "3000K Tungsten",	    { 1, 1.024000, 1.992000, 0 } },
+  { "OLYMPUS", "E-1", "3300K",		    { 1.070312, 1, 1.773438, 0 } },
+  { "OLYMPUS", "E-1", "3600K Incandesent",  { 1.156250, 1, 1.640625, 0 } },
+  { "OLYMPUS", "E-1", "3900K",		    { 1.234375, 1, 1.523438, 0 } },
+  { "OLYMPUS", "E-1", "4000K White fluorescent", { 2.062500, 1, 1.679688, 0 } },
+  { "OLYMPUS", "E-1", "4300K",		    { 1.414062, 1, 1.343750, 0 } },
+  { "OLYMPUS", "E-1", "4500K Neutral fluorescent", { 1.835938, 1, 1.320312, 0 } },
+  { "OLYMPUS", "E-1", "4800K",		    { 1.546875, 1, 1.226562, 0 } },
+  { "OLYMPUS", "E-1", "5300K Clear day",    { 1.664062, 1, 1.140625, 0 } },
+  { "OLYMPUS", "E-1", "6000K Cloudy (with flash)", { 1.796875, 1, 1.046875, 0 } },
+  { "OLYMPUS", "E-1", "6600K Daylight fluorescent", { 2.101562, 1, 1.085938, 0 } },
+  { "OLYMPUS", "E-1", "7500K Shadows",	    { 2.196581, 1.094017, 1, 0 } },
+
+  { "LEICA", "DIGILUX 2", "Sunshine",	{ 1.628906, 1, 1.488281, 0 } },
+  { "LEICA", "DIGILUX 2", "Cloudy",	{ 1.835938, 1, 1.343750, 0 } },
+  { "LEICA", "DIGILUX 2", "Indoor Halogen", { 1.078125, 1, 2.203125, 0 } },
+  { "LEICA", "DIGILUX 2", "Flash",	{ 2.074219, 1, 1.304688, 0 } },
+  { "LEICA", "DIGILUX 2", "B/W",	{ 1.632812, 1, 1.550781, 0 } },
+
 };
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
 

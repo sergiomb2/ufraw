@@ -336,14 +336,24 @@ int ufraw_convert_image(ufraw_data *uf)
     dcraw_data *raw = uf->raw;
     conf_data *conf = uf->conf;
     dcraw_image_data final;
+    int shrink = 1;
 
     preview_progress(uf->widget, "Loading image", 0.1);
+    /* We can do a simple interpolation in the following cases:
+     * We shrink by an integer value.
+     * If there is a ymag (D1X) shrink must be at least 4.
+     * Wanted size is smaller than raw size (size is after a raw->shrink).
+     * There are no filters (Foveon). */
     if ( conf->interpolation==half_interpolation ||
-         ( conf->size==0 && conf->shrink>1 ) ||
+         ( conf->size==0 && conf->shrink/raw->ymag>1 ) ||
          ( conf->size>0 &&
 	   conf->size<MAX(raw->raw.height, raw->raw.width) ) ||
 	 ( raw->filters==0 )  ) {
-        dcraw_finalize_shrink(&final, raw, MAX(conf->shrink,1<<raw->shrink));
+	if (conf->size==0 && conf->shrink%raw->ymag==0)
+	    shrink = conf->shrink / raw->ymag;
+	else if (raw->filters!=0)
+	    shrink = 2;
+        dcraw_finalize_shrink(&final, raw, shrink);
  
         uf->image.height = final.height;
         uf->image.width = final.width;
@@ -389,6 +399,12 @@ int ufraw_convert_image(ufraw_data *uf)
 	g_free(uf->image.image);
         uf->image.image = final.image;
     }
+    if (raw->ymag==2) {
+	dcraw_image_stretch(&final, raw->ymag);
+	if (conf->size==0 && conf->shrink>1)
+            dcraw_image_resize(&final,
+		    shrink*MAX(final.height, final.width)/conf->shrink);
+    }
     if (conf->size>0) {
         if ( conf->size>MAX(final.height, final.width) ) {
             ufraw_message(UFRAW_ERROR, "Can not downsize from %d to %d.",
@@ -398,7 +414,6 @@ int ufraw_convert_image(ufraw_data *uf)
 	}
     }
     preview_progress(uf->widget, "Loading image", 0.4);
-    dcraw_image_stretch(&final, raw->ymag);
     uf->image.image = final.image;
     dcraw_flip_image(&final, raw->flip);
     uf->image.height = final.height;
