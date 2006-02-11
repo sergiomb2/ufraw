@@ -266,6 +266,13 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS-1D Mark II", "Shade",	    { 2.220703, 1, 1.069336, 0} },
   { "Canon", "EOS-1D Mark II", "Tungsten",  { 1.415480, 1, 2.160142, 0} },
 
+  { "Canon", "PowerShot S50", "Day Light",  { 1.772506, 1, 1.536496, 0 } },
+  { "Canon", "PowerShot S50", "Cloudy",	    { 1.831311, 1, 1.484223, 0 } },
+  { "Canon", "PowerShot S50", "Tungsten",   { 1.185542, 1, 2.480723, 0 } },
+  { "Canon", "PowerShot S50", "Fluorescent", { 1.706410, 1, 2.160256, 0 } },
+  { "Canon", "PowerShot S50", "Fluorescent H", { 1.562500, 1, 1.817402, 0 } },
+  { "Canon", "PowerShot S50", "Flash",	    { 1.776156, 1, 1.531630, 0 } },
+
   { "FUJIFILM", "FinePix S5000", "Incandescent", { 1.212081, 1, 2.672364, 0 } },
   { "FUJIFILM", "FinePix S5000", "Fluorescent",  { 1.772316, 1, 2.349902, 0 } },
   { "FUJIFILM", "FinePix S5000", "Direct sunlight", { 1.860403, 1, 1.515946, 0 } },
