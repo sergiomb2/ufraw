@@ -282,7 +282,7 @@ const wb_data wb_preset[] = {
 
   { "OLYMPUS", "E-1", "3000K Tungsten",	    { 1, 1.024000, 1.992000, 0 } },
   { "OLYMPUS", "E-1", "3300K",		    { 1.070312, 1, 1.773438, 0 } },
-  { "OLYMPUS", "E-1", "3600K Incandesent",  { 1.156250, 1, 1.640625, 0 } },
+  { "OLYMPUS", "E-1", "3600K Incandescent",  { 1.156250, 1, 1.640625, 0 } },
   { "OLYMPUS", "E-1", "3900K",		    { 1.234375, 1, 1.523438, 0 } },
   { "OLYMPUS", "E-1", "4000K White fluorescent", { 2.062500, 1, 1.679688, 0 } },
   { "OLYMPUS", "E-1", "4300K",		    { 1.414062, 1, 1.343750, 0 } },
@@ -292,6 +292,14 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "E-1", "6000K Cloudy (with flash)", { 1.796875, 1, 1.046875, 0 } },
   { "OLYMPUS", "E-1", "6600K Daylight fluorescent", { 2.101562, 1, 1.085938, 0 } },
   { "OLYMPUS", "E-1", "7500K Shadows",	    { 2.196581, 1.094017, 1, 0 } },
+
+  { "OLYMPUS", "E-10", "3000K Incandescent",	    { 1, 1.153153, 3.441442, 0 } },
+  { "OLYMPUS", "E-10", "3700K Incandescent (mood)",  { 1.101562, 1, 2.351562, 0 } },
+  { "OLYMPUS", "E-10", "4000K White fluorescent", { 1.460938, 1, 2.546875, 0 } },
+  { "OLYMPUS", "E-10", "4500K Daylight fluorescent", { 1.460938, 1, 1.843750, 0 } },
+  { "OLYMPUS", "E-10", "5500K Clear day",    { 1.523438, 1, 1.617188, 0 } },
+  { "OLYMPUS", "E-10", "6500K Cloudy day", { 1.687500, 1, 1.437500, 0 } },
+  { "OLYMPUS", "E-10", "7500K Shadows",	    { 1.812500, 1, 1.312500, 0 } },
 
   { "LEICA", "DIGILUX 2", "Sunshine",	{ 1.628906, 1, 1.488281, 0 } },
   { "LEICA", "DIGILUX 2", "Cloudy",	{ 1.835938, 1, 1.343750, 0 } },
@@ -420,7 +428,7 @@ void RGB_to_Temperature(double RGB[3], double *T, double *Green)
 /* Following code might be useful if we want to convert temperature from
  * pre 0.7 calculation to the current temperature calculation */
 /*
-#include <blackbody.h>
+#include "blackbody.h"
 void BB_Temperature_to_RGB(double T, double RGB[3])
 {
     int i = T/10-200;
