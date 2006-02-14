@@ -266,7 +266,14 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS-1D Mark II", "Shade",	    { 2.220703, 1, 1.069336, 0} },
   { "Canon", "EOS-1D Mark II", "Tungsten",  { 1.415480, 1, 2.160142, 0} },
 
-  { "Canon", "PowerShot S50", "Day Light",  { 1.772506, 1, 1.536496, 0 } },
+  { "Canon", "PowerShot G5", "Daylight",  { 1.639521, 1, 1.528144, 0 } },
+  { "Canon", "PowerShot G5", "Cloudy",	    { 1.702153, 1, 1.462919, 0 } },
+  { "Canon", "PowerShot G5", "Tungsten",   { 1.135071, 1, 2.374408, 0 } },
+  { "Canon", "PowerShot G5", "Fluorescent", { 1.660281, 1, 2.186462, 0 } },
+  { "Canon", "PowerShot G5", "Daylight Fluorescent", { 1.463297, 1, 1.764140, 0 } },
+  { "Canon", "PowerShot G5", "Flash",	    { 1.603593, 1, 1.562874, 0 } },
+
+  { "Canon", "PowerShot S50", "Daylight",  { 1.772506, 1, 1.536496, 0 } },
   { "Canon", "PowerShot S50", "Cloudy",	    { 1.831311, 1, 1.484223, 0 } },
   { "Canon", "PowerShot S50", "Tungsten",   { 1.185542, 1, 2.480723, 0 } },
   { "Canon", "PowerShot S50", "Fluorescent", { 1.706410, 1, 2.160256, 0 } },
@@ -279,6 +286,13 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "FinePix S5000", "Flash",   { 2.202181, 1, 1.423284, 0 } },
   { "FUJIFILM", "FinePix S5000", "Cloudy",  { 2.036578, 1, 1.382513, 0 } },
   { "FUJIFILM", "FinePix S5000", "Shade",   { 2.357215, 1, 1.212016, 0 } },
+
+  { "FUJIFILM", "FinePix S7000", "Outdoor fine",  { 1.900000, 1, 1.525000, 0 } },
+  { "FUJIFILM", "FinePix S7000", "Shade", { 2.137500, 1, 1.350000, 0 } },
+  { "FUJIFILM", "FinePix S7000", "Daylight fluorescent",   { 2.315217, 1, 1.347826, 0 } },
+  { "FUJIFILM", "FinePix S7000", "Warm White fluorescent",  { 1.902174, 1, 1.663043, 0 } },
+  { "FUJIFILM", "FinePix S7000", "Cool White fluorescent",   { 1.836957, 1, 2.130435, 0 } },
+  { "FUJIFILM", "FinePix S7000", "Incandescent", { 1.221239, 1, 2.548673, 0 } },
 
   { "OLYMPUS", "E-1", "3000K Tungsten",	    { 1, 1.024000, 1.992000, 0 } },
   { "OLYMPUS", "E-1", "3300K",		    { 1.070312, 1, 1.773438, 0 } },
