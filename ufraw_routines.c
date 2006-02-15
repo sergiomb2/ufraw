@@ -214,7 +214,7 @@ const wb_data wb_preset[] = {
   { "MINOLTA", "DYNAX 7D", "Tungsten", { 0.945312, 1, 3.292969, 0} },
 
   { "Minolta", "DiMAGE 7Hi", "Daylight",    { 1.609375, 1, 1.328125, 0 } },  /* 5500K */
-  { "Minolta", "DiMAGE 7Hi", "Tungsten",    { 0.878906, 1, 2.433594, 0 } },  /* 2800K */
+  { "Minolta", "DiMAGE 7Hi", "Tungsten",    { 1, 1.137778, 2.768889, 0 } },  /* 2800K */
   { "Minolta", "DiMAGE 7Hi", "Fluorescent 1", { 1.664062, 1, 2.105469, 0 } },  /* 4060K*/
   { "Minolta", "DiMAGE 7Hi", "Fluorescent 2", { 1.796875, 1, 1.734375, 0 } },  /* 4938K */
   { "Minolta", "DiMAGE 7Hi", "Cloudy",      { 1.730469, 1, 1.269531, 0 } },  /* 5823K */
