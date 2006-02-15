@@ -273,12 +273,27 @@ const wb_data wb_preset[] = {
   { "Canon", "PowerShot G5", "Daylight Fluorescent", { 1.463297, 1, 1.764140, 0 } },
   { "Canon", "PowerShot G5", "Flash",	    { 1.603593, 1, 1.562874, 0 } },
 
+  { "Canon", "PowerShot G6", "Daylight",  { 1.769704, 1, 1.637931, 0 } },
+  { "Canon", "PowerShot G6", "Cloudy",	    { 1.769704, 1, 1.637931, 0 } },
+  { "Canon", "PowerShot G6", "Tungsten",   { 1.146341, 1, 2.996341, 0 } },
+  { "Canon", "PowerShot G6", "Fluorescent", { 1.077106, 1, 2.721234, 0 } },
+  { "Canon", "PowerShot G6", "Fluorescent H", { 2.201958, 1, 1.351285, 0 } },
+  { "Canon", "PowerShot G6", "Flash",	    { 2.062731, 1, 1.442804, 0 } },
+
   { "Canon", "PowerShot S50", "Daylight",  { 1.772506, 1, 1.536496, 0 } },
   { "Canon", "PowerShot S50", "Cloudy",	    { 1.831311, 1, 1.484223, 0 } },
   { "Canon", "PowerShot S50", "Tungsten",   { 1.185542, 1, 2.480723, 0 } },
   { "Canon", "PowerShot S50", "Fluorescent", { 1.706410, 1, 2.160256, 0 } },
   { "Canon", "PowerShot S50", "Fluorescent H", { 1.562500, 1, 1.817402, 0 } },
   { "Canon", "PowerShot S50", "Flash",	    { 1.776156, 1, 1.531630, 0 } },
+
+  { "Canon", "PowerShot S60", "Daylight",  { 1.742169, 1, 1.486747, 0 } },
+  { "Canon", "PowerShot S60", "Cloudy",	    { 1.742169, 1, 1.486747, 0 } },
+  { "Canon", "PowerShot S60", "Tungsten",   { 1.207362, 1, 2.788957, 0 } },
+  { "Canon", "PowerShot S60", "Fluorescent", { 1.144910, 1, 2.566467, 0 } },
+  { "Canon", "PowerShot S60", "Fluorescent H", { 2.348730, 1, 1.042725, 0 } },
+  { "Canon", "PowerShot S60", "Flash",	    { 1.881437, 1, 1.366467, 0 } },
+  { "Canon", "PowerShot S60", "Underwater",    { 2.677109, 1, 1.148193, 0 } },
 
   { "FUJIFILM", "FinePix S5000", "Incandescent", { 1.212081, 1, 2.672364, 0 } },
   { "FUJIFILM", "FinePix S5000", "Fluorescent",  { 1.772316, 1, 2.349902, 0 } },
