@@ -208,6 +208,14 @@ const wb_data wb_preset[] = {
   { "Minolta", "DiMAGE 7Hi", "Fluorescent 2", { 1.796875, 1, 1.734375, 0 } },  /* 4938K */
   { "Minolta", "DiMAGE 7Hi", "Cloudy",      { 1.730469, 1, 1.269531, 0 } },  /* 5823K */
 
+  { "Minolta", "DiMAGE A1", "Daylight",	    { 1.808594, 1, 1.304688, 0 } },
+  { "Minolta", "DiMAGE A1", "Tungsten",	    { 1.062500, 1, 2.675781, 0 } },
+  { "Minolta", "DiMAGE A1", "Fluorescent",  { 1.707031, 1, 2.039063, 0 } },
+  { "Minolta", "DiMAGE A1", "Cloudy",	    { 1.960938, 1, 1.339844, 0 } },
+  { "Minolta", "DiMAGE A1", "Shade",	    { 2.253906, 1, 1.199219, 0 } },
+  { "Minolta", "DiMAGE A1", "Shade + 2",    { 2.000000, 1, 1.183594, 0 } },
+  { "Minolta", "DiMAGE A1", "Flash",	    { 1.972656, 1, 1.265625, 0 } },
+
   { "Minolta", "DiMAGE G500", "Sun",	{ 1.496094, 1, 1.121094, 0 } },
   { "Minolta", "DiMAGE G500", "Cloudy", { 1.527344, 1, 1.105469, 0 } },
   { "Minolta", "DiMAGE G500", "Luminescent", { 1.382813, 1, 1.347656, 0 } },
