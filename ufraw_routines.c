@@ -411,6 +411,15 @@ const wb_data wb_preset[] = {
   { "Panasonic", "DMC-FZ30", "Fluorescent", { 1.098485, 1, 2.106061, 0 } },
   { "Panasonic", "DMC-FZ30", "Flash",	    { 1.965909, 1, 1.303030, 0 } },
 
+  { "PENTAX", "*ist DS", "Daylight", { 1.632812, 1, 1, 0 } },
+  { "PENTAX", "*ist DS", "Shade", { 1.964844, 1, 1, 0 } },
+  { "PENTAX", "*ist DS", "Cloudy", { 1.761719, 1, 1, 0 } },
+  { "PENTAX", "*ist DS", "Daylight colors fluorescent",	{ 1.910156, 1, 1, 0 } },
+  { "PENTAX", "*ist DS", "Daylight white fluorescent", { 1.521569, 1.003922, 1, 0 } },
+  { "PENTAX", "*ist DS", "White light fluorescent", { 1.496094, 1, 1.023438, 0 } },
+  { "PENTAX", "*ist DS", "Tungsten", { 1, 1, 2.027344, 0 } },
+  { "PENTAX", "*ist DS", "Flash", { 1.695312, 1, 1, 0 } },
+
 };
 
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
