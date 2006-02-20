@@ -128,10 +128,10 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
             a = b = g = 0.0;
             c = 1.0;
         }
-        for (i=0; i<0x10000*d->linear; i++) d->gammaCurve[i] =
-	    cs->m_Samples[(gushort)MIN(c*i, 0xFFFF)];
+        for (i=0; i<0x10000 && cs->m_Samples[i]<0x10000*d->linear ; i++)
+	    d->gammaCurve[i] = MIN(c*cs->m_Samples[i], 0xFFFF);
         for (; i<0x10000; i++) d->gammaCurve[i] =
-            cs->m_Samples[(gushort)MIN(pow(a*i/0x10000+b, g)*0x10000, 0xFFFF)];
+            MIN(pow(a*cs->m_Samples[i]/0x10000+b, g)*0x10000, 0xFFFF);
         CurveSampleFree(cs);
     }
     developer_profile(d, 0, in);
