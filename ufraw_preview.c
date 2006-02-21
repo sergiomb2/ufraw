@@ -69,6 +69,7 @@ typedef struct {
     GtkTooltips *ToolTips;
     GtkProgressBar *ProgressBar;
     /* We need the adjustments for update_scale() */
+    GtkAdjustment *WBTuningAdjustment;
     GtkAdjustment *TemperatureAdjustment;
     GtkAdjustment *GreenAdjustment;
     GtkAdjustment *ChannelAdjustment[4];
@@ -849,6 +850,8 @@ void update_scales(preview_data *data)
 	if (!strcmp(CFG->wb, l->data))
 	    gtk_combo_box_set_active(data->WBCombo, i);
 
+    if (data->WBTuningAdjustment!=NULL)
+	gtk_adjustment_set_value(data->WBTuningAdjustment, CFG->WBTuning);
     gtk_adjustment_set_value(data->TemperatureAdjustment, CFG->temperature);
     gtk_adjustment_set_value(data->GreenAdjustment, CFG->green);
     gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
@@ -1158,6 +1161,16 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
 	g_strlcpy(CFG->wb, spot_wb, max_name); 
 	ufraw_set_wb(data->UF);
 	if (CFG->autoExposure) ufraw_auto_expose(data->UF);
+    }
+    if (valuep==&CFG->WBTuning) {
+	if ( strcmp(data->UF->conf->wb, auto_wb)==0 ||
+	     strcmp(data->UF->conf->wb, camera_wb)==0 ) {
+	    /* Prevent recalculation of Camera/Auto WB on WBTuning events */
+	    data->UF->conf->WBTuning = 0;
+	} else {
+	    ufraw_set_wb(data->UF);
+	    if (CFG->autoExposure) ufraw_auto_expose(data->UF);
+	}
     }
     if (valuep==&CFG->exposure) {
 	CFG->autoExposure = FALSE;
@@ -1770,16 +1783,26 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 //    gtk_table_attach(subTable, label, 0, 1, 0 , 1, 0, 0, 0, 0);
     data->WBCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     data->WBPresets = NULL;
-    gboolean make_model_match = FALSE;
+    const wb_data *lastPreset = NULL;
+    gboolean make_model_match = FALSE, make_model_fine_tuning = FALSE;
     for (i=0; i<wb_preset_count; i++) {
         if (strcmp(wb_preset[i].make, "")==0) {
-            gtk_combo_box_append_text(data->WBCombo, wb_preset[i].name);
+	    /* Common presets */
 	    data->WBPresets = g_list_append(data->WBPresets, wb_preset[i].name);
+	    gtk_combo_box_append_text(data->WBCombo, wb_preset[i].name);
         } else if ( (strcmp(wb_preset[i].make, uf->conf->make)==0 ) &&
                     (strcmp(wb_preset[i].model, uf->conf->model)==0)) {
+	    /* Camera specific presets */
             make_model_match = TRUE;
-            gtk_combo_box_append_text(data->WBCombo, wb_preset[i].name);
+	    if ( lastPreset==NULL ||
+		 strcmp(wb_preset[i].name,lastPreset->name)!=0 ) {
 	    data->WBPresets = g_list_append(data->WBPresets, wb_preset[i].name);
+		gtk_combo_box_append_text(data->WBCombo, wb_preset[i].name);
+	    } else {
+		/* Fine tuning presets */
+		make_model_fine_tuning = TRUE;
+	    }
+	    lastPreset = &wb_preset[i];
         }
     }
     GList *l;
@@ -1794,7 +1817,20 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_tooltips_set_tip(data->ToolTips, event_box, "White Balance", NULL);
     gtk_table_attach(subTable, event_box, 0, 6, 0, 1,
 	    GTK_FILL, 0, 0, 0);
-    if (!make_model_match) {
+
+    data->WBTuningAdjustment = NULL;
+    if (make_model_fine_tuning) {
+	data->WBTuningAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
+		CFG->WBTuning, -9, 9, 1, 1, 0));
+	g_object_set_data(G_OBJECT(data->WBTuningAdjustment),
+		"Adjustment-Accuracy",(gpointer)0);
+	button = gtk_spin_button_new(data->WBTuningAdjustment, 1, 0);
+    	g_object_set_data(G_OBJECT(data->WBTuningAdjustment),
+		"Parent-Widget", button);
+	gtk_table_attach(subTable, button, 6, 7, 0, 1, GTK_SHRINK, 0, 0, 0);
+	g_signal_connect(G_OBJECT(data->WBTuningAdjustment), "value-changed",
+		G_CALLBACK(adjustment_update), &CFG->WBTuning);
+    } else if (!make_model_match) {
 	event_box = gtk_event_box_new();
 	label = gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING,
 		GTK_ICON_SIZE_BUTTON);

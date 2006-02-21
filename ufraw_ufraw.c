@@ -467,10 +467,12 @@ int ufraw_set_wb(ufraw_data *uf)
 	if (min==0.0) min = 1.0; /* should never happen, just to be safe */
 	for (c=0; c<raw->colors; c++) uf->conf->chanMul[c] /= min;
 	if (raw->colors<4) uf->conf->chanMul[3] = 0.0;
+	uf->conf->WBTuning = 0;
 	return UFRAW_SUCCESS;
     }
     if (!strcmp(uf->conf->wb, spot_wb)) {
 	/* do nothing */
+	uf->conf->WBTuning = 0;
     } else if ( !strcmp(uf->conf->wb, auto_wb) ||
 		!strcmp(uf->conf->wb, camera_wb) ) {
         if ( (status=dcraw_set_color_scale(raw,
@@ -491,13 +493,44 @@ int ufraw_set_wb(ufraw_data *uf)
         }
         for (c=0; c<raw->colors; c++)
             uf->conf->chanMul[c] = raw->post_mul[c];
+	uf->conf->WBTuning = 0;
     } else {
+	int lastTuning = -1;
 	for (i=0; i<wb_preset_count; i++) {
 	    if (!strcmp(uf->conf->wb, wb_preset[i].name) &&
 		!strcmp(uf->conf->make, wb_preset[i].make) &&
 		!strcmp(uf->conf->model, wb_preset[i].model) ) {
+		if (uf->conf->WBTuning == wb_preset[i].tuning) {
+		    for (c=0; c<raw->colors; c++)
+			uf->conf->chanMul[c] = wb_preset[i].channel[c];
+		    break;
+		} else if (uf->conf->WBTuning < wb_preset[i].tuning) {
+		    if (lastTuning == -1) {
+			/* WBTuning was set to a value smaller than possible */
+			uf->conf->WBTuning = wb_preset[i].tuning;
+			for (c=0; c<raw->colors; c++)
+			    uf->conf->chanMul[c] = wb_preset[i].channel[c];
+			break;
+		    } else {
+			/* Extrapolate WB tuning values:
+			 * f(x) = f(a) + (x-a)*(f(b)-f(a))/(b-a) */
+			for (c=0; c<raw->colors; c++)
+			    uf->conf->chanMul[c] = wb_preset[i].channel[c] +
+				(uf->conf->WBTuning - wb_preset[i].tuning) *
+				(wb_preset[lastTuning].channel[c] -
+				 wb_preset[i].channel[c]) /
+				(wb_preset[lastTuning].tuning -
+				 wb_preset[i].tuning);
+			break;
+		    }
+		} else if (uf->conf->WBTuning > wb_preset[i].tuning) {
+			lastTuning = i;
+		}
+	    } else if (lastTuning!=-1) {
+		/* WBTuning was set to a value larger than possible */
+		uf->conf->WBTuning = wb_preset[lastTuning].tuning;
 		for (c=0; c<raw->colors; c++)
-		    uf->conf->chanMul[c] = wb_preset[i].channel[c];
+		    uf->conf->chanMul[c] = wb_preset[lastTuning].channel[c];
 		break;
 	    }
 	}

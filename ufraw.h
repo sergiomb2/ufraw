@@ -58,6 +58,7 @@ typedef struct {
     char *make;
     char *model;
     char *name;
+    int tuning;
     double channel[4];
 } wb_data;
 
@@ -123,6 +124,7 @@ typedef struct {
     /* IMAGE manipulation settings */
 //    int wb;
     char wb[max_name];
+    double WBTuning;
     double temperature, green;
     double chanMul[4];
     double exposure, saturation, black; /* black is only used in CMD */

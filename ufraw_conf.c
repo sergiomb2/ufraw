@@ -25,7 +25,7 @@ const conf_data conf_default = {
     sizeof(conf_data), 7, /* confSize, version */
 
     /* Image manipulation settings */
-    camera_wb, /* wb */
+    camera_wb, 0, /* wb, WBTuning */
     6500, 1.0, /* temperature, green */
     { -1.0, -1.0, -1.0, -1.0 }, /* chanMul[] */
     0.0, 1.0, 0.0, /* exposure, saturation, black */
@@ -421,6 +421,7 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
 	    g_strlcpy(c->wb, temp, max_name);
 	}
     }
+    if (!strcmp("WBFineTuning", element)) sscanf(temp, "%lf", &c->WBTuning);
     if (!strcmp("Temperature", element)) sscanf(temp, "%lf", &c->temperature);
     if (!strcmp("Green", element)) sscanf(temp, "%lf", &c->green);
     if (!strcmp("ChannelMultipliers", element)) {
@@ -636,6 +637,9 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 		conf_get_name(interpolationNames, c->interpolation));
     if (strcmp(c->wb, conf_default.wb))
 	buf = uf_markup_buf(buf, "<WB>%s</WB>\n", c->wb);
+    if (c->WBTuning!=conf_default.WBTuning)
+	buf = uf_markup_buf(buf, "<WBFineTuning>%d</WBFineTuning>\n",
+		(int)floor(c->WBTuning));
     buf = uf_markup_buf(buf,
 	    "<Temperature>%d</Temperature>\n", (int)floor(c->temperature));
     buf = uf_markup_buf(buf,

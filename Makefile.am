@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.12 2006/01/23 06:39:21 nkbj Exp $
+# $Id: Makefile.am,v 1.13 2006/02/21 00:05:30 udifuchs Exp $
 
 if MAKE_EXTRAS
   bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve ufraw-exif
@@ -26,7 +26,7 @@ icondir = $(datadir)/pixmaps
 #htmldir = $(datadir)/doc/ufraw
 
 UFRAW_COMMON = ufraw_ufraw.c ufraw_routines.c ufraw_exif.c ufraw_developer.c \
-    ufraw_conf.c ufraw_writer.c ufraw.h ufraw_icon.h blackbody.h \
+    ufraw_conf.c ufraw_writer.c ufraw.h ufraw_icon.h wb_presets.c blackbody.h \
     dcraw_api.c dcraw_api.h dcraw_indi.c nikon_curve.c nikon_curve.h \
     iccjpeg.c iccjpeg.h
 UFRAW_GTK_COMMON = $(UFRAW_COMMON) ufraw_preview.c ufraw_saver.c \
