@@ -871,6 +871,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
 
     dst->interpolation = src->interpolation;
     g_strlcpy(dst->wb, src->wb, max_name);
+    dst->WBTuning = src->WBTuning;
     dst->temperature = src->temperature;
     dst->green = src->green;
     for (i=0; i<4; i++) dst->chanMul[i] = src->chanMul[i];
