@@ -2723,12 +2723,9 @@ void CLASS pseudoinverse (const double (*in)[3], double (*out)[3], int size)
 	out[i][j] += work[j][k+3] * in[i][k];
 }
 
-/* UFRaw uses cam_rgb, so we make it a global variable */
-double cam_rgb[4][3] = {{-1}};//{{1,0,0},{0,1,0},{0,0,1},{0,0,0}};
-
 void CLASS cam_xyz_coeff (double cam_xyz[4][3])
 {
-  double inverse[4][3], num;
+  double cam_rgb[4][3], inverse[4][3], num;
   int i, j, k;
 
   for (i=0; i < colors; i++)		/* Multiply out XYZ colorspace */

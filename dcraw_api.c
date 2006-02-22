@@ -38,7 +38,6 @@ extern int black, colors, raw_color, /*xmag,*/ ymag;
 extern float cam_mul[4];
 extern gushort white[8][8];
 extern float rgb_cam[3][4];
-extern double cam_rgb[4][3];
 extern char *meta_data;
 extern int meta_length;
 extern float iso_speed, shutter, aperture, focal_len;
@@ -77,8 +76,6 @@ int dcraw_open(dcraw_data *h,char *filename)
     messageBuffer = NULL;
     lastStatus = DCRAW_SUCCESS;
     verbose = 1;
-    /* Since we made cam_rgb global we need to reset it. */
-    cam_rgb[0][0] = -1;
     ifname = g_strdup(filename);
 //    use_secondary = 0; /* for Fuji Super CCD SR */
     if (setjmp(failure)) {
@@ -153,7 +150,7 @@ int dcraw_open(dcraw_data *h,char *filename)
 
 int dcraw_load_raw(dcraw_data *h)
 {
-    int i;
+    int i, j;
     double dmin;
 
     g_free(messageBuffer);
@@ -195,12 +192,12 @@ int dcraw_load_raw(dcraw_data *h)
     for (i=0; i<h->colors; i++) h->pre_mul[i] = pre_mul[i]/dmin;
     memcpy(h->cam_mul, cam_mul, sizeof cam_mul);
     memcpy(h->rgb_cam, rgb_cam, sizeof rgb_cam);
-    if (cam_rgb[0][0]==-1) {
-	double tmp[4][3];
-	for (i=0; i<12; i++) tmp[i%4][i/4] = rgb_cam[i/4][i%4];
-	pseudoinverse ((const double (*)[3])tmp, cam_rgb, colors);
-    }
-    memcpy(h->cam_rgb, cam_rgb, sizeof cam_rgb);
+
+    double rgb_cam_transpose[4][3];
+    for (i=0; i<4; i++) for (j=0; j<3; j++)
+	rgb_cam_transpose[i][j] = rgb_cam[j][i];
+    pseudoinverse ((const double (*)[3])rgb_cam_transpose, h->cam_rgb, colors);
+
     h->message = messageBuffer;
     return lastStatus;
 }
