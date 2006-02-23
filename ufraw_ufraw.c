@@ -535,9 +535,16 @@ int ufraw_set_wb(ufraw_data *uf)
 	    }
 	}
 	if (i==wb_preset_count) {
-	    g_strlcpy(uf->conf->wb, manual_wb, max_name);
-	    ufraw_set_wb(uf);
-	    return UFRAW_WARNING;
+	    if (lastTuning!=-1) {
+		/* WBTuning was set to a value larger than possible */
+		uf->conf->WBTuning = wb_preset[lastTuning].tuning;
+		for (c=0; c<raw->colors; c++)
+		    uf->conf->chanMul[c] = wb_preset[lastTuning].channel[c];
+	    } else {
+		g_strlcpy(uf->conf->wb, manual_wb, max_name);
+		ufraw_set_wb(uf);
+		return UFRAW_WARNING;
+	    }
 	}
     }
     /* Normalize chanMul[] so that MIN(chanMul[]) will be 1.0 */

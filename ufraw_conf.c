@@ -467,7 +467,6 @@ int conf_load(conf_data *c, const char *IDFilename)
             &conf_parse_text, NULL, NULL};
     GMarkupParseContext *context;
     GError *err = NULL;
-    GQuark ufrawQuark = g_quark_from_static_string("UFRaw");
     int i;
 
     *c = conf_default;
@@ -495,14 +494,17 @@ int conf_load(conf_data *c, const char *IDFilename)
     fgets(line, max_path-1, in);
     while (!feof(in)) {
         if (!g_markup_parse_context_parse(context, line, strlen(line), &err)) {
-            ufraw_message(UFRAW_SET_ERROR, "Error parsing %s\n%s",
+            ufraw_message(UFRAW_ERROR, "Error parsing '%s'\n%s",
                     confFilename, err->message);
-	    g_markup_parse_context_end_parse(context, NULL);
+	    g_markup_parse_context_free(context);
 	    uf_reset_locale(locale);
 	    g_free(confFilename);
-            if (g_error_matches(err, ufrawQuark, UFRAW_RC_VERSION))
-                return UFRAW_RC_VERSION;
-            else return UFRAW_ERROR;
+	    fclose(in);
+	    // We could if needed check explicitly for a version mismatch error
+	    //GQuark ufrawQuark = g_quark_from_static_string("UFRaw");
+            //if (g_error_matches(err, ufrawQuark, UFRAW_RC_VERSION))
+	    g_error_free(err);
+            return UFRAW_ERROR;
         }
         fgets(line, max_path, in);
     }

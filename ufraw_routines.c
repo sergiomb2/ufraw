@@ -313,7 +313,6 @@ int curve_load(CurveData *cp, char *filename)
                 &curve_parse_text, NULL, NULL};
         GMarkupParseContext *context;
         GError *err = NULL;
-        GQuark ufrawQuark = g_quark_from_static_string("UFRaw");
 
         *cp = conf_default.curve[0];
         if ( (in=fopen(filename, "r"))==NULL ) {
@@ -328,13 +327,13 @@ int curve_load(CurveData *cp, char *filename)
         while (!feof(in)) {
             if (!g_markup_parse_context_parse(context, line,
                     strlen(line), &err)) {
-                ufraw_message(UFRAW_ERROR, "Error parsing %s\n%s",
+                ufraw_message(UFRAW_ERROR, "Error parsing '%s'\n%s",
                         filename, err->message);
 		g_markup_parse_context_free(context);
 		uf_reset_locale(locale);
-                if (g_error_matches(err, ufrawQuark, UFRAW_RC_VERSION))
-                    return UFRAW_RC_VERSION;
-                else return UFRAW_ERROR;
+		fclose(in);
+		g_error_free(err);
+                return UFRAW_ERROR;
             }
             fgets(line, max_path, in);
         }
