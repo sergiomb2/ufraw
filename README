@@ -46,11 +46,10 @@ support is disabled by default. It can be enabled for Nikon NEF and Pentax
 PEF files by running configure as:
 ./configure --with-libexif
 
-The libexif development package is required for this to work. A recent
-version of libexif is required, but since libexif-0.6.11 can crash UFRaw,
-it is recommended to use the CVS version.
+The libexif development package is required for this to work.
+You should use libexif-0.6.13 or newer.
 
-The paragraphs use the Linux term "development package"; the general
+These paragraphs use the term "development package"; the general
 requirement is to have the full library installed, including header
 files used in compilation of programs using the library.
 
@@ -109,8 +108,8 @@ Here are a few pointers if you still want to build UFRaw yourself.
 'make windows-installer' will create a windows installer and
 'make install-windows' will run this installer.
 
-pkg-config behaves differently under MinGW32. Therefore, if you are working
-under CygWin or cross compiling from Linux, you will have to modify all the
+pkg-config behaves differently under MinGW32. Therefore, if you are
+cross compiling from Linux or CygWin, you will have to modify all the
 *.pc files that come with the different packages. The following script should
 do the trick (after updating TARGET to your needs):
 
@@ -122,6 +121,9 @@ done
 
 The gimp-dev package can be tricky to find. You can download it from:
 http://www.gimp.org/win32/gimp-dev-2.2.7.zip
+
+To build Cygwin binaries you can use the development libraries from:
+http://cygwinports.dotsrc.org/
 
 CVS
 ===
@@ -252,7 +254,6 @@ Todo
 * Add the UFRaw parameters used to the Exif data.
 * Curve corrections per channel.
 * Configurable preview image size.
-* Sort out the color temperature.
 * Rotate by 90 degrees.
 * Zoom.
 * Crop.

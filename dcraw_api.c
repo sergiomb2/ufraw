@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <math.h> /* for sqrt() */
 #include <setjmp.h>
 #include <errno.h>

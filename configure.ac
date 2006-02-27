@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.27 2006/02/04 20:36:27 udifuchs Exp $
+dnl $Id: configure.ac,v 1.28 2006/02/27 16:00:42 udifuchs Exp $
 AC_INIT(UFRaw, 0.7)
 AC_PREREQ(2.57)
 
@@ -165,7 +165,7 @@ AC_ARG_WITH(libexif,
 AC_MSG_RESULT($with_libexif)
 # If we have tiff, check for exif via pkg-config.
 if test $have_tiff = yes -a $with_libexif = yes; then
-  PKG_CHECK_MODULES(EXIF, libexif >= 0.6.11,
+  PKG_CHECK_MODULES(EXIF, libexif >= 0.6.13,
     [ have_libexif=yes
       AC_DEFINE(HAVE_LIBEXIF, [], have libexif) ],
     [ have_libexif=no ])
