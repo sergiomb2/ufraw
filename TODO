@@ -17,7 +17,6 @@ Show WB spot/area values in HSV (in addition to output colorspace pixels).
 Show WB spot/area values in Adam's exposure zones somehow.
 Bug: when show overexposure is checked, WB spot counts blown out as 0.
 Master reset button to set all adjustments to default.
-Allow deleting profiles from selection menu somehow.
 
 Add the ability to save a spot measurement, and then to adjust WB to
 make a new measurement match the old.  Usage is shooting a whitish
