@@ -6,7 +6,6 @@ For the future
 Calculate color temperature correctly
 Leaf embedded profiles
 fuji sqrt(0.5) factor in size
-WB Presets per camera
 Canon 10D presets from ExifTool
 support URI
 window size
@@ -18,6 +17,7 @@ Show WB spot/area values in HSV (in addition to output colorspace pixels).
 Show WB spot/area values in Adam's exposure zones somehow.
 Bug: when show overexposure is checked, WB spot counts blown out as 0.
 Master reset button to set all adjustments to default.
+Allow deleting profiles from selection menu somehow.
 
 Add the ability to save a spot measurement, and then to adjust WB to
 make a new measurement match the old.  Usage is shooting a whitish
@@ -29,7 +29,15 @@ Add the ability to have groups of saved values, perhaps one for flash
 and one not, so one can save 2 color temperatures and exposure
 adjustments for a batch of photos.
 
+Separate display and output profiles.
+
+Automatic profile selection based on camera model and serial#.
+
+Understand differences between ufraw with defaults and in-camera with
+defaults.  Document them, or fix them as bugs.
+
 Done
 ====
 * Fix crash when saving images from four color-filter cameras.
 * Fix crash when saving images from foveon cameras.
+* WB Presets per camera (done in general, now in maintenance mode).
