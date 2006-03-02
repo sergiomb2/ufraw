@@ -280,7 +280,9 @@ long ufraw_saver(void *widget, gpointer user_data)
     g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)tiff8_type);
     g_signal_connect(G_OBJECT(button), "toggled",
             G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
-    gtk_table_attach(GTK_TABLE(table), button, 0, 1, 0, 1, 0, 0, 0, 0);
+    align = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
+    gtk_container_add(GTK_CONTAINER(align), button);
+    gtk_table_attach(GTK_TABLE(table), align, 0, 1, 0, 1, GTK_FILL,0, 0, 0);
     button = gtk_radio_button_new_with_label_from_widget(
             GTK_RADIO_BUTTON(button), "16-bit TIFF");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
