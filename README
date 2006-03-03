@@ -197,6 +197,14 @@ date user guide.
 
 History
 =======
+03/03/2006 - UFRaw-0.7 released, based on DCRaw v8.05.
+* Much more accurate white balance temperature setting.
+* White balance presets per camera model.
+* Show the channel multipliers in the UI.
+* Apply base curve before gamma curve.
+* Fix a few general bugs.
+* Fix camera specific bugs for Sony F828, Sigma Foveon, Nikon D2H, D1X.
+
 13/11/2005 - UFRaw-0.6 released, based on DCRaw v7.84.
 * Enabled AHD (Adaptive Homogeneity-Directed) interpolation.
 * Added base curve, which simulates Nikon tone curve behavior.

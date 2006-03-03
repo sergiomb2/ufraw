@@ -73,10 +73,8 @@ a fairly simple and very responsive file manager.
 Comments - image comments could be easily added to the ID files or to
 the EXIF data.
 
-Camera database - ideally UFRaw should not care what camera the image came from,
-DCRaw takes care of it. In practice some camera features effect UFRaw directly.
-It would be nice to have a database with supported (or tested) cameras and
-features. One example where this database could effect the code is
-white balance presets. At the moment UFRaw uses the Nikon D70 WB presets,
-but it should have different presets for different cameras.
-
+Camera database - ideally UFRaw should not care what camera the image
+came from, DCRaw takes care of it. In practice some camera features
+effect UFRaw directly. It would be nice to have a database with
+supported (or tested) cameras and features. One example of camera
+specific feature in UFRaw is the WB presets.

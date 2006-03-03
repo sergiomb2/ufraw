@@ -34,9 +34,3 @@ Automatic profile selection based on camera model and serial#.
 
 Understand differences between ufraw with defaults and in-camera with
 defaults.  Document them, or fix them as bugs.
-
-Done
-====
-* Fix crash when saving images from four color-filter cameras.
-* Fix crash when saving images from foveon cameras.
-* WB Presets per camera (done in general, now in maintenance mode).
