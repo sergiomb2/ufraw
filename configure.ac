@@ -1,5 +1,5 @@
-dnl $Id: configure.ac,v 1.28 2006/02/27 16:00:42 udifuchs Exp $
-AC_INIT(UFRaw, 0.7)
+dnl $Id: configure.ac,v 1.29 2006/03/04 20:32:10 udifuchs Exp $
+AC_INIT(UFRaw, 0.8)
 AC_PREREQ(2.57)
 
 # Create host_os, host_cpu variables
@@ -13,8 +13,7 @@ AC_PROG_INSTALL
 AC_CHECK_PROGS(POD2MAN, pod2man, , $PATH)
 
 # nikon_curve makes some sizeof assumptions, requiring the following tests
-# XXX Fix nikon_curve to use C99 standard types so it will work on 64-bit
-# machines.
+# (could be avoided by using C99 standart types)
 AC_CHECK_SIZEOF(short)
 if test $ac_cv_sizeof_short -ne 2; then
     AC_MSG_ERROR([size of short must be 2])
@@ -37,16 +36,10 @@ CFLAGS="$CFLAGS -W -Wall -O3 -ffast-math -fomit-frame-pointer"
 # Uncomment next line for release to strip the binaries of debug information
 #LDFLAGS="$LDFLAGS -s"
 
-# Set default PREFIX, if not already defined according to os.
 # windows will require some special attention
 case $host_os in
   *mingw* )
     ufraw_win32=yes
-    test -z $PREFIX && PREFIX=/c/mingw32
-    ;;
-  *darwin* )
-    ufraw_win32=no
-    test -z $PREFIX && PREFIX=/sw
     ;;
   * )
     ufraw_win32=no
@@ -54,28 +47,31 @@ case $host_os in
 esac
 AM_CONDITIONAL(UFRAW_WIN32, test $ufraw_win32 = yes)
 
-# In windows --prefix=$PREFIX is set as default
 if test $ufraw_win32 = yes; then
   CFLAGS="$CFLAGS -mno-cygwin -mwindows -mms-bitfields"
   CONSOLE="-mconsole"
-  #AC_PREFIX_DEFAULT($PREFIX) # this ac macro ignores the test condition
-  prefix=$PREFIX
 else
   CONSOLE=
 fi
 AC_SUBST(CONSOLE)
 
-# If prefix is non-empty, add prefix's pkgconfig dir to the pkgconfig search
-# path, so we'll find programs/libraries also installed to this prefix.
-# XXX Really, where we are building to and where we obtain things from are
-# logically separate, and this should be solved by --with-gimp=/foo/bar
-# arguments.
-if test "!(-z $PREFIX)"; then
-  echo "Adding pkgconfig/cppflags/ldflags for $PREFIX."
-  export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig$PATH_SEPARATOR$PKG_CONFIG_PATH"
-  CPPFLAGS="$CPPFLAGS -I$PREFIX/include"
-  LDFLAGS="$LDFLAGS -L$PREFIX/lib"
+# point to programs/libraries installed in a non-default place
+AC_ARG_WITH(prefix,
+  [  --with-prefix=PREFIX    use also PREFIX as an input prefix for the build],
+  [ with_prefix=$withval],
+  [ with_prefix=NONE ] )
+if test "$with_prefix = NONE"; then
+  echo "Adding pkgconfig/cppflags/ldflags for $with_prefix."
+  export PKG_CONFIG_PATH="$with_prefix/lib/pkgconfig$PATH_SEPARATOR$PKG_CONFIG_PATH"
+  CPPFLAGS="$CPPFLAGS -I$with_prefix/include"
+  LDFLAGS="$LDFLAGS -L$with_prefix/lib"
 fi
+
+AC_ARG_WITH(dosprefix,
+  [  --with-dosprefix=PREFIX PREFIX is the prefix in dos format
+                          (needed only in windows) ],
+  [ with_dosprefix=$withval],
+  [ with_dosprefix=NONE ] )
 
 PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4)
 AC_SUBST(GTK_LIBS)
@@ -101,7 +97,7 @@ AC_SUBST(GIMP_LIBS)
 # Disable deprecated functions on tested versions of GTK
 # unless using an old gimp-dev package.
 if $PKG_CONFIG --atleast-version=2.2 gimpui-2.0; then
-  if $PKG_CONFIG --max-version=2.8.9 gtk+-2.0; then
+  if $PKG_CONFIG --max-version=2.8.12 gtk+-2.0; then
     AC_DEFINE(G_DISABLE_DEPRECATED, [], disable deprecated glib features)
     AC_DEFINE(GDK_DISABLE_DEPRECATED, [], disable deprecated gdk features)
     AC_DEFINE(GTK_DISABLE_DEPRECATED, [], disable deprecated gtk+ features)
@@ -134,8 +130,7 @@ fi
 AC_SEARCH_LIBS(getopt_long, gnugetopt, ,
   AC_MSG_ERROR(can not build UFRaw without getopt_long))
 
-# XXX A comment is required to explain this. 
-#AC_SEARCH_LIBS(ntohs, ws2_32)
+# The ws2_32 library is required for the ntohs sybmol on WIN32. 
 if test $ufraw_win32 = yes; then
   LIBS="$LIBS -lws2_32"
 fi
@@ -190,9 +185,10 @@ if test $ufraw_win32 = yes; then
   AC_CHECK_PROGS(WINDRES, $target_alias-windres windres, , $PATH)
   AC_SUBST(WINDRES)
   # For the windows-intstaller make needs the location of the DLLs
+  PREFIX=$with_prefix
   AC_SUBST(PREFIX)
   # and ISCC (ufraw-setup.iss.in) needs them in dos format...
-  test -z $DOSPREFIX && DOSPREFIX="C:\\mingw32"
+  DOSPREFIX=$with_dosprefix
   AC_SUBST(DOSPREFIX)
   ISCC="\"\$(PROGRAMFILES)\"/Inno\ Setup\ 5/ISCC.exe"
   AC_SUBST(ISCC)
@@ -234,7 +230,7 @@ AC_SUBST(DCRAW_CFLAGS)
 
 AC_MSG_CHECKING(whether to build extras)
 AC_ARG_ENABLE(extras,
-  [  --enable-extras          build extra (dcraw, nikon-curve, ufraw-exif) executables], ,
+  [  --enable-extras         build extra (dcraw, nikon-curve, ufraw-exif) executables], ,
   enable_extras=no)
 AC_MSG_RESULT($enable_extras)
 AM_CONDITIONAL(MAKE_EXTRAS, test $enable_extras = yes)

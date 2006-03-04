@@ -206,18 +206,6 @@ void RGB_to_Temperature(double RGB[3], double *T, double *Green)
     *Green = (testRGB[1]/testRGB[0]) / (RGB[1]/RGB[0]);
 }
 
-/* Following code might be useful if we want to convert temperature from
- * pre 0.7 calculation to the current temperature calculation */
-/*
-#include "blackbody.h"
-void BB_Temperature_to_RGB(double T, double RGB[3])
-{
-    int i = T/10-200;
-    int c;
-    for (c=0; c<3; c++) RGB[c] = bbWB[c];
-}
-*/
-
 void curve_parse_start(GMarkupParseContext *context, const gchar *element,
     const gchar **names, const gchar **values, gpointer user, GError **error)
 {

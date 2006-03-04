@@ -75,6 +75,11 @@ Other options for the configuration script are:
 
 --with-libexif:  use libexif to read raw EXIF data.
 
+--with-prefix=PREFIX: use also {REFOX as am input prefix for the build
+
+--with-dosprefix=PREFIX: PREFIX is the prefix in dos format
+                         (needed only in windows)
+
 To build UFRaw:
 make
 
@@ -86,8 +91,9 @@ make install-user
 
 You also need to make sure that rawphoto is not installed.
 
-If one of the packages (lcms, libjpeg, libtiff, zlib) is not installed on your
-system, you can build it locally and export PREFIX to its location.
+If one of the packages (lcms, libjpeg, libtiff, zlib) is not installed
+on your system, you can build it locally and use UFRaw's configuration
+option --with-prefix to point to its location.
 To build any of the above packages download the package and type:
 ./configure --prefix=$PREFIX
 make
@@ -96,6 +102,9 @@ make install
 If zlib is built only locally you will have to configure libtiff with
 the command:
 ./configure --prefix=$PREFIX --with-zlib-include-dir=$PREFIX/include --with-zlib-lib-dir=$PREFIX/lib
+
+Finally, you should configure UFRaw with the command:
+./configure --prefix=$PREFIX --with-prefix=$PREFIX
 
 MS-Windows installation
 =======================
@@ -108,10 +117,16 @@ Here are a few pointers if you still want to build UFRaw yourself.
 'make windows-installer' will create a windows installer and
 'make install-windows' will run this installer.
 
+For creating the installer UFRaw needs to know the path to all the DLLs.
+For this you should use the configuration option --with-dosprefix.
+For example, from CygWin:
+./configure --with-prefix=/cygdrive/c/mingw32  --with-dosprefix=c:\\mingw32 \
+    --target=i686-mingw32msvc --host=i686-mingw32msvc --build=i686-mingw32msvc
+
 pkg-config behaves differently under MinGW32. Therefore, if you are
 cross compiling from Linux or CygWin, you will have to modify all the
-*.pc files that come with the different packages. The following script should
-do the trick (after updating TARGET to your needs):
+*.pc files that come with the different packages. The following script
+should does the trick in debian (update TARGET to your needs):
 
 TARGET=/opt/i586-mingw32msvc
 for f in $TARGET/lib/pkgconfig/*.pc ; do
