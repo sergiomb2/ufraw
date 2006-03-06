@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.29 2006/03/04 20:32:10 udifuchs Exp $
+dnl $Id: configure.ac,v 1.30 2006/03/06 22:22:18 udifuchs Exp $
 AC_INIT(UFRaw, 0.8)
 AC_PREREQ(2.57)
 
@@ -8,6 +8,7 @@ AC_CANONICAL_HOST
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_INSTALL
 
 AC_CHECK_PROGS(POD2MAN, pod2man, , $PATH)
@@ -58,14 +59,13 @@ AC_SUBST(CONSOLE)
 # point to programs/libraries installed in a non-default place
 AC_ARG_WITH(prefix,
   [  --with-prefix=PREFIX    use also PREFIX as an input prefix for the build],
-  [ with_prefix=$withval],
+  [ with_prefix=$withval
+    echo "Adding pkgconfig/cppflags/ldflags for $with_prefix."
+    export PKG_CONFIG_PATH="$with_prefix/lib/pkgconfig$PATH_SEPARATOR$PKG_CONFIG_PATH"
+    CPPFLAGS="$CPPFLAGS -I$with_prefix/include"
+    LDFLAGS="$LDFLAGS -L$with_prefix/lib"
+  ],
   [ with_prefix=NONE ] )
-if test "$with_prefix = NONE"; then
-  echo "Adding pkgconfig/cppflags/ldflags for $with_prefix."
-  export PKG_CONFIG_PATH="$with_prefix/lib/pkgconfig$PATH_SEPARATOR$PKG_CONFIG_PATH"
-  CPPFLAGS="$CPPFLAGS -I$with_prefix/include"
-  LDFLAGS="$LDFLAGS -L$with_prefix/lib"
-fi
 
 AC_ARG_WITH(dosprefix,
   [  --with-dosprefix=PREFIX PREFIX is the prefix in dos format
@@ -155,28 +155,40 @@ have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
 
 AC_MSG_CHECKING(whether to read raw EXIF data using libexif)
 AC_ARG_WITH(libexif,
-  [  --with-libexif          use libexif to read raw EXIF data], ,
-  [ with_libexif=no ])
+  [  --with-libexif          use libexif to read raw EXIF data],
+  [ with_libexif=yes ],
+  [ with_libexif=no
+    have_libexif=no
+    COMMENT_LIBEXIF=";" ])
 AC_MSG_RESULT($with_libexif)
-# If we have tiff, check for exif via pkg-config.
-if test $have_tiff = yes -a $with_libexif = yes; then
+# Check for exif via pkg-config.
+if test $with_libexif = yes; then
   PKG_CHECK_MODULES(EXIF, libexif >= 0.6.13,
     [ have_libexif=yes
-      AC_DEFINE(HAVE_LIBEXIF, [], have libexif) ],
-    [ have_libexif=no ])
-  COMMENT_LIBEXIF=""
-else
-  have_libexif=no
-  COMMENT_LIBEXIF=";"
+      AC_DEFINE(HAVE_LIBEXIF, [], have libexif)
+      COMMENT_LIBEXIF="" ],
+    [ have_libexif=no
+      COMMENT_LIBEXIF=";" ])
 fi
 AC_SUBST(COMMENT_LIBEXIF)
+
+AC_MSG_CHECKING(whether to read raw EXIF data using exiv2)
+AC_ARG_WITH(exiv2,
+  [  --with-exiv2            use exiv2 to read raw EXIF data],
+  [ with_exiv2=yes ],
+  [ with_exiv2=no ])
+AC_MSG_RESULT($with_exiv2)
+if test $with_exiv2 = yes; then
+  AC_DEFINE(HAVE_EXIV2, [], have exiv2)
+  EXIV2_LIBS=-lexiv2
+fi
 
 UFRAW_CFLAGS="$EXIF_CFLAGS $GIMP_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS"
 if test $have_jpeg = no; then
   # DCRaw assumes jpeg unless NO_JPEG, rather than using HAVE_LIBJPEG
   UFRAW_CFLAGS="$UFRAW_CFLAGS -DNO_JPEG"
 fi
-UFRAW_LDADD="$EXIF_LIBS $GLIB_LIBS $LCMS_LIBS"
+UFRAW_LDADD="$EXIF_LIBS $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS"
 AC_SUBST(UFRAW_CFLAGS)
 AC_SUBST(UFRAW_LDADD)
 
@@ -243,6 +255,7 @@ AC_MSG_NOTICE(====================== summary =====================)
 AC_MSG_NOTICE(build GIMP plug-in: $enable_gimp)
 AC_MSG_NOTICE([hidden directories support (GTK>=2.6): $have_gtk_2_6])
 AC_MSG_NOTICE(EXIF support using libexif: $have_libexif)
+AC_MSG_NOTICE(EXIF support using exiv2: $with_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(TIFF support: $have_tiff)
 if test $have_tiff = yes; then

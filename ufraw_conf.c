@@ -1135,6 +1135,13 @@ char versionText[]=
 "disabled.\n" 
 #endif 
  
+"EXIV2 " 
+#ifdef HAVE_EXIV2 
+"enabled.\n" 
+#else 
+"disabled.\n" 
+#endif 
+ 
 "JPEG "  
 #ifdef HAVE_LIBJPEG 
 "enabled.\n" 

@@ -80,10 +80,10 @@ long ufraw_saver(void *widget, gpointer user_data)
 #if defined(HAVE_LIBZ) && defined(HAVE_LIBTIFF)
     GtkWidget *losslessButton;
 #endif
-#ifdef HAVE_LIBEXIF
+#ifdef HAVE_LIBJPEG
+#if defined(HAVE_LIBEXIF) || defined(HAVE_EXIV2)
     GtkWidget *exifButton;
 #endif
-#ifdef HAVE_LIBJPEG
     GtkToggleButton *jpegButton;
     GtkAdjustment *compressAdj;
 #endif
@@ -321,7 +321,7 @@ long ufraw_saver(void *widget, gpointer user_data)
             GTK_EXPAND|GTK_FILL, 0, 0, 0);
     widg = gtk_spin_button_new(compressAdj, 5, 0);
     gtk_table_attach(GTK_TABLE(table), widg, 3, 4, 1, 2, 0, 0, 0, 0);
-#ifdef HAVE_LIBEXIF
+#if defined(HAVE_LIBEXIF) || defined(HAVE_EXIV2)
     exifButton = gtk_check_button_new_with_label("Embed EXIF data");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(exifButton),
                     uf->conf->embedExif && uf->exifBuf!=NULL);
@@ -438,10 +438,10 @@ long ufraw_saver(void *widget, gpointer user_data)
 #endif
 #ifdef HAVE_LIBJPEG
         uf->conf->compression = gtk_adjustment_get_value(compressAdj);
-#endif
-#ifdef HAVE_LIBEXIF
+#if defined(HAVE_LIBEXIF) || defined(HAVE_EXIV2)
         uf->conf->embedExif = gtk_toggle_button_get_active(
                 GTK_TOGGLE_BUTTON(exifButton));
+#endif
 #endif
         if ( !uf->conf->overwrite && uf->conf->createID!=only_id
 	   && g_file_test(filename, G_FILE_TEST_EXISTS) ) {

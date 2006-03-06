@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.14 2006/03/04 20:32:10 udifuchs Exp $
+# $Id: Makefile.am,v 1.15 2006/03/06 22:22:18 udifuchs Exp $
 
 if MAKE_EXTRAS
   bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve ufraw-exif
@@ -28,7 +28,7 @@ icondir = $(datadir)/pixmaps
 UFRAW_COMMON = ufraw_ufraw.c ufraw_routines.c ufraw_exif.c ufraw_developer.c \
     ufraw_conf.c ufraw_writer.c ufraw.h ufraw_icon.h wb_presets.c \
     dcraw_api.c dcraw_api.h dcraw_indi.c nikon_curve.c nikon_curve.h \
-    iccjpeg.c iccjpeg.h
+    ufraw_exiv2.cc iccjpeg.c iccjpeg.h
 UFRAW_GTK_COMMON = $(UFRAW_COMMON) ufraw_preview.c ufraw_saver.c \
     ufraw_chooser.c curveeditor_widget.c curveeditor_widget.h
 
@@ -42,6 +42,7 @@ EXTRA_DIST = ufraw.desktop ufraw.png ufraw_icon.ico ufraw_icon.rc \
     ufraw-setup.jpg autogen.sh MANIFEST ufraw.pod
 
 AM_CFLAGS = $(UFRAW_CFLAGS)
+AM_CXXFLAGS = $(UFRAW_CFLAGS)
 LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD)
 
 ufraw_SOURCES = ufraw.c $(UFRAW_GTK_COMMON)
@@ -69,7 +70,7 @@ if MAKE_EXTRAS
   nikon_curve_LDFLAGS = @CONSOLE@
   nikon_curve_LDADD = $(UFRAW_LDADD)
 
-  ufraw_exif_SOURCES = ufraw_exif.c
+  ufraw_exif_SOURCES = ufraw_exif.c ufraw_exiv2.cc
   ufraw_exif_CFLAGS = $(UFRAW_CFLAGS) -D_STAND_ALONE_
   ufraw_exif_LDFLAGS = @CONSOLE@
   ufraw_exif_LDADD = $(UFRAW_LDADD)

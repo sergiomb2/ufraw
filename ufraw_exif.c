@@ -10,9 +10,11 @@
  * It uses DCRaw code to do the actual raw decoding.
  */
 
-// uncomment the next two lines to compile ufraw_exif as a stand-alone tool.
+// uncomment the next lines to compile ufraw_exif as a stand-alone tool.
 //#define _STAND_ALONE_
 //#define HAVE_LIBEXIF
+//#define HAVE_LIBTIFF
+//#define HAVE_EXIV2
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +30,14 @@
 #ifdef HAVE_LIBEXIF
 #include <libexif/exif-data.h>
 #include <libexif/exif-utils.h>
+#endif
+#ifdef HAVE_LIBTIFF
 #include <tiffio.h>
+#endif
+
+#ifdef HAVE_EXIV2
+int ufraw_exif_from_exiv2(void *ifp, char *filename,
+	unsigned char **exifBuf, unsigned int *exifBufLen);
 #endif
 
 #ifdef _STAND_ALONE_
@@ -68,24 +77,19 @@ void tiff_message(const char *module, const char *fmt, va_list ap)
     ufraw_message(UFRAW_SET_WARNING, "%s\n", buf);
 }
 
-int ufraw_exif_from_raw(void *ifp, char *filename,
-    unsigned char **exifBuf, unsigned int *exifBufLen)
+#if defined(HAVE_LIBEXIF) && defined(HAVE_LIBTIFF)
+static ExifData* ufraw_exif_from_tiff(void *ifp, char *filename)
 {
-#ifdef HAVE_LIBEXIF
-    TIFF *tiff;
+   TIFF *tiff;
 //    unsigned short tiffOrientation;
     int tiffFd, exifOffset;
-    ExifData *exifData;
+    ExifData *exifData = NULL;
     ExifEntry *entry;
     char *buffer;
     struct stat tiffStat;
 
-    *exifBuf = NULL;
-    *exifBufLen = 0;
-
     TIFFSetErrorHandler(tiff_message);
     TIFFSetWarningHandler(tiff_message);
-    ufraw_message(UFRAW_RESET, NULL);
     /* It seems more elegant to use the same FILE * as DCRaw,
      * but it does not work for me at the moment */
 //    if ((tiff = TIFFFdOpen(fileno((FILE *)ifp), filename, "r")) == NULL)
@@ -93,32 +97,40 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
 
     /* Open the NEF TIFF file */
     if ((tiff = TIFFOpen(filename, "r")) == NULL)
-        return UFRAW_ERROR;
+        return NULL;
 
     /* Look for the EXIF tag */
     /* EXIFIFD became an official libtiff tag since version 3.7.3 */
     /* that requires different handling. */ 
 #ifdef TIFFTAG_EXIFIFD
-    if (TIFFGetField(tiff, TIFFTAG_EXIFIFD, &exifOffset)!= 1)
-        return UFRAW_ERROR;
+    if (TIFFGetField(tiff, TIFFTAG_EXIFIFD, &exifOffset)!= 1) {
+        TIFFClose(tiff);
+        return NULL;
+    }
 #else
     short tiffCount;
     int *tiffData;
-    if (TIFFGetField(tiff, 34665, &tiffCount, &tiffData)!= 1 || tiffCount != 1)
-        return UFRAW_ERROR;
-
+    if (TIFFGetField(tiff, 34665, &tiffCount, &tiffData)!= 1 || tiffCount != 1) {
+        TIFFClose(tiff);
+        return NULL;
+    }
+    
     /* Get the offset of the EXIF data in the TIFF */
     exifOffset = *tiffData;
 #endif
 
     /* Get the underlying file descriptor for the TIFF file */
-    if ((tiffFd = TIFFFileno(tiff)) < 0)
-        return UFRAW_ERROR;
-
+    if ((tiffFd = TIFFFileno(tiff)) < 0) {
+        TIFFClose(tiff);
+        return NULL;
+    }
+    
     /* Get the size of the TIFF file through the filesystem */
-    if (fstat(tiffFd, &tiffStat) < 0)
-        return UFRAW_ERROR;
-
+    if (fstat(tiffFd, &tiffStat) < 0) {
+        TIFFClose(tiff);
+        return NULL;
+    }
+    
     /* Creat a new EXIF data structure */
     exifData = exif_data_new();
 
@@ -235,6 +247,49 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
     /* Free the TIFF file buffer */
     free(buffer);
 
+    return exifData;
+}
+#endif
+
+int ufraw_exif_from_raw(void *ifp, char *filename,
+    unsigned char **exifBuf, unsigned int *exifBufLen)
+{
+    *exifBuf = NULL;
+    *exifBufLen = 0;
+#ifdef HAVE_EXIV2
+    int status = ufraw_exif_from_exiv2(ifp, filename, exifBuf, exifBufLen);
+    if (status==UFRAW_SUCCESS)
+	return status;
+#ifdef HAVE_LIBEXIF
+    ufraw_message(UFRAW_SET_LOG,
+	    "Can not read EXIF data using exiv2. Trying libexif.\n");
+#else
+    return status;
+#endif
+#endif
+#ifdef HAVE_LIBEXIF
+    ExifData *exifData = NULL;
+
+    *exifBuf = NULL;
+    *exifBufLen = 0;
+
+    ufraw_message(UFRAW_RESET, NULL);
+
+    /* Try "native" libexif first */
+    exifData = exif_data_new_from_file(filename);
+    if (exifData != NULL) {
+	if (exifData->size == 0) {
+	    exif_data_free(exifData);
+	    exifData = NULL;
+	}
+    }
+#ifdef HAVE_LIBTIFF 
+    if (exifData == NULL)
+	exifData = ufraw_exif_from_tiff(ifp, filename);
+#endif
+    if (exifData == NULL)
+	return UFRAW_ERROR;
+    
     exif_data_save_data(exifData, exifBuf, exifBufLen);
 
     char value[max_name];
@@ -278,14 +333,11 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
     exif_data_unref(exifData);
 
     return UFRAW_SUCCESS;
-#else
+#endif /*HAVE_LIBEXIF*/
     ifp = ifp;
     filename = filename;
-    exifBuf = exifBuf;
-    exifBufLen = exifBufLen;
     ufraw_message(UFRAW_SET_LOG, "ufraw built without EXIF support\n");
     return UFRAW_ERROR;
-#endif /*HAVE_LIBEXIF*/
 }
 
 #ifdef _STAND_ALONE_
