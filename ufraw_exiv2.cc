@@ -25,7 +25,7 @@ extern "C" {
 #include "ufraw.h"
 }
 
-extern "C" static int ufraw_exif_from_exiv2(void *ifp, char *filename,
+extern "C" int ufraw_exif_from_exiv2(void *ifp, char *filename,
 	unsigned char **exifBuf, unsigned int *exifBufLen)
 try {
     ifp = ifp;
