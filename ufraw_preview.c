@@ -35,6 +35,8 @@ const int def_preview_width = 9000;
 const int def_preview_height = 9000;
 #define raw_his_size 320
 #define live_his_size 256
+#define min_scale 2
+#define max_scale 20
 
 enum { pixel_format, percent_format };
 
@@ -77,6 +79,7 @@ typedef struct {
     GtkAdjustment *LinearAdjustment;
     GtkAdjustment *ExposureAdjustment;
     GtkAdjustment *SaturationAdjustment;
+    GtkAdjustment *ZoomAdjustment;
     long (*SaveFunc)();
     long RenderMode;
     /* Some actions update the progress bar while working, but meanwhile we
@@ -481,6 +484,7 @@ void render_preview(preview_data *data, long mode)
 
 gboolean render_raw_histogram(preview_data *data)
 {
+    if (data->FreezeDialog) return FALSE;
     static GdkPixbuf *pixbuf;
     static guint8 *pixies;
     int rowstride;
@@ -597,6 +601,7 @@ gboolean render_raw_histogram(preview_data *data)
 
 gboolean render_preview_image(preview_data *data)
 {
+    if (data->FreezeDialog) return FALSE;
     static GdkPixbuf *pixbuf;
     static guint8 *pixies;
     static int width, height, x, y, c, o, min, max, rowstride, y0;
@@ -742,6 +747,7 @@ gboolean render_preview_image(preview_data *data)
 
 void render_spot(preview_data *data)
 {
+    if (data->FreezeDialog) return;
     GdkPixbuf *pixbuf;
     guint8 *pixies;
     int width, height, rowstride;
@@ -863,6 +869,7 @@ void update_scales(preview_data *data)
     for (i=0; i<data->UF->colors; i++)
 	gtk_adjustment_set_value(data->ChannelAdjustment[i],
 		CFG->chanMul[i]);
+    gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
 
     if (GTK_WIDGET_SENSITIVE(data->UseMatrixButton)) {
 	data->UF->useMatrix = CFG->profile[0][CFG->profileIndex[0]].useMatrix;
@@ -985,6 +992,86 @@ gboolean spot_motion(GtkWidget *event_box, GdkEventMotion *event,
     data->SpotY2 = MAX(MIN(event->y,data->UF->image.height-1),0);
     render_spot(data);
     return FALSE;
+}
+
+gboolean create_base_image(preview_data *data)
+{
+    int shrinkSave = CFG->shrink;
+    int sizeSave = CFG->size;
+    if (CFG->Scale==0) {
+	CFG->size = CFG->Zoom / 100.0 *
+	    MAX(data->UF->predictateHeight, data->UF->predictateWidth);
+	CFG->shrink = 0;
+    } else {
+	CFG->size = 0;
+	CFG->shrink = CFG->Scale;
+    }
+    g_free(data->UF->image.image);
+    data->UF->image.image = NULL;
+    ufraw_convert_image(data->UF);
+    CFG->shrink = shrinkSave;
+    CFG->size = sizeSave;
+    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+    int width = gdk_pixbuf_get_width(pixbuf);
+    int height = gdk_pixbuf_get_height(pixbuf);
+    if (width!=data->UF->image.width || height!=data->UF->image.height) {
+	pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
+		data->UF->image.width, data->UF->image.height);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(data->PreviewWidget), pixbuf);
+	g_object_unref(pixbuf);
+    }
+    char progressText[max_name];
+    if (CFG->Scale==0)
+	snprintf(progressText, max_name, "size %dx%d, zoom %2.f%%",
+		data->UF->predictateHeight, data->UF->predictateWidth,
+		CFG->Zoom);
+    else
+	snprintf(progressText, max_name, "size %dx%d, scale 1/%d",
+		data->UF->predictateHeight, data->UF->predictateWidth,
+		CFG->Scale);
+    if (data->ProgressBar!=NULL) {
+	gtk_progress_bar_set_text(data->ProgressBar, progressText);
+	gtk_progress_bar_set_fraction(data->ProgressBar, 0);
+    }
+    return FALSE;
+}
+
+void zoom_in_event(GtkWidget *widget, gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    user_data = user_data;
+    if (data->FreezeDialog) return;
+    if (CFG->Scale==0) {
+	if (CFG->Zoom<100.0/max_scale) CFG->Zoom = 100.0/(max_scale+1);
+	CFG->Scale = floor(100.0/CFG->Zoom);
+	if (CFG->Scale==100.0/CFG->Zoom) CFG->Scale--;
+    } else {
+	CFG->Scale--;
+    }
+    if (CFG->Scale<min_scale) CFG->Scale = min_scale;
+    if (CFG->Scale>max_scale) CFG->Scale = max_scale;
+    CFG->Zoom = 100.0/CFG->Scale;
+    create_base_image(data);
+    update_scales(data);
+}
+
+void zoom_out_event(GtkWidget *widget, gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    user_data = user_data;
+    if (data->FreezeDialog) return;
+    if (CFG->Scale==0) {
+	if (CFG->Zoom<100.0/max_scale) CFG->Zoom = 100.0/(max_scale+1);
+	CFG->Scale = ceil(100.0/CFG->Zoom);
+	if (CFG->Scale==100.0/CFG->Zoom) CFG->Scale++;
+    } else {
+	CFG->Scale++;
+    }
+    if (CFG->Scale<min_scale) CFG->Scale = min_scale;
+    if (CFG->Scale>max_scale) CFG->Scale = max_scale;
+    CFG->Zoom = 100.0/CFG->Scale;
+    create_base_image(data);
+    update_scales(data);
 }
 
 GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
@@ -1175,7 +1262,12 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
     if (valuep==&CFG->exposure) {
 	CFG->autoExposure = FALSE;
     }
-    CFG->autoBlack = FALSE;
+    if (valuep==&CFG->Zoom) {
+	CFG->Scale = 0;
+	create_base_image(data);
+    } else {
+	CFG->autoBlack = FALSE;
+    }
     update_scales(data);
 }
 
@@ -1585,11 +1677,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     GdkPixbuf *pixbuf;
     GdkRectangle screen;
     int max_preview_width, max_preview_height;
-    int preview_width, preview_height, scale, shrinkSave, sizeSave, i;
+    int preview_width, preview_height, i;
     long j;
     int status, rowstride, curveeditorHeight;
     guint8 *pixies;
-    char progressText[max_name], text[max_name];
+    char text[max_name];
     preview_data PreviewData;
     preview_data *data = &PreviewData;
 
@@ -1624,13 +1716,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gdk_screen_get_monitor_geometry(gdk_screen_get_default(), 0, &screen);
     max_preview_width = MIN(def_preview_width, screen.width-400);
     max_preview_height = MIN(def_preview_height, screen.height-120);
-    scale = MAX((uf->predictateWidth-1)/max_preview_width,
+    CFG->Scale = MAX((uf->predictateWidth-1)/max_preview_width,
             (uf->predictateHeight-1)/max_preview_height)+1;
-    scale = MAX(2, scale);
-    preview_width = uf->predictateWidth / scale;
-    preview_height = uf->predictateHeight / scale;
-    snprintf(progressText, max_name, "size %dx%d, scale 1/%d",
-            uf->predictateHeight, uf->predictateWidth, scale);
+    CFG->Scale = MAX(2, CFG->Scale);
+    CFG->Zoom = 100.0 / CFG->Scale;
+    preview_width = uf->predictateWidth / CFG->Scale;
+    preview_height = uf->predictateHeight / CFG->Scale;
     /* With the following guesses the window usually fits into the screen.
      * There should be more intelegent settings to widget sizes. */
     curveeditorHeight = 256;
@@ -2103,7 +2194,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetBlackButton),
 	    "Reset black-point to default",NULL);
     gtk_table_attach(table, GTK_WIDGET(data->ResetBlackButton), 0, 1, 7, 8,
-	0, GTK_SHRINK, 0, 0);
+	0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetBlackButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
@@ -2113,11 +2204,43 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoBlackButton),
 	    "Auto adjust black-point", NULL);
     gtk_table_attach(table, GTK_WIDGET(data->AutoBlackButton), 0, 1, 6, 7,
-	    0, 0, GTK_SHRINK, 0);
+	    0, GTK_SHRINK, 0, 0);
     gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
     g_signal_connect(G_OBJECT(data->AutoBlackButton), "clicked",
             G_CALLBACK(button_update), NULL);
     /* End of Corrections page */
+
+    /* Start of Zoom page */
+    page = table_with_frame(noteBox, "Zoom", TRUE);
+
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+
+    label = gtk_label_new("Zoom %");
+    gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
+    data->ZoomAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
+		CFG->Zoom, 5, 50, 1, 1, 0));
+    g_object_set_data(G_OBJECT(data->ZoomAdjustment),
+		"Adjustment-Accuracy", (gpointer)0);
+    button = gtk_spin_button_new(data->ZoomAdjustment, 1, 0);
+    g_object_set_data(G_OBJECT(data->ZoomAdjustment), "Parent-Widget", button);
+    gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->ZoomAdjustment), "value-changed",
+		G_CALLBACK(adjustment_update), &CFG->Zoom);
+    // Zoom in button:
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                GTK_STOCK_ZOOM_IN, GTK_ICON_SIZE_BUTTON));
+    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(zoom_in_event), NULL);
+    // Zoom out button:
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                GTK_STOCK_ZOOM_OUT, GTK_ICON_SIZE_BUTTON));
+    gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(zoom_out_event), NULL);
+    /* End of Zoom page */
 
     table = GTK_TABLE(table_with_frame(previewVBox, expanderText[live_expander],
             CFG->expander[live_expander]));
@@ -2291,6 +2414,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             preview_width, preview_height);
     data->PreviewWidget = gtk_image_new_from_pixbuf(pixbuf);
     g_object_unref(pixbuf);
+    gtk_misc_set_alignment(GTK_MISC(data->PreviewWidget), 0, 0);
     gtk_container_add(GTK_CONTAINER(event_box), data->PreviewWidget);
     g_signal_connect(G_OBJECT(event_box), "button_press_event",
             G_CALLBACK(spot_press), NULL);
@@ -2369,13 +2493,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     ufraw_load_raw(uf);
     gtk_widget_set_sensitive(data->ControlsBox, TRUE);
 
-    shrinkSave = CFG->shrink;
-    sizeSave = CFG->size;
-    CFG->shrink = scale;
-    CFG->size = 0;
-    ufraw_convert_image(data->UF);
-    CFG->shrink = shrinkSave;
-    CFG->size = sizeSave;
+    create_base_image(data);
 
     /* Save InitialChanMul[] for the sake of "Reset WB" */
     for (i=0; i<4; i++) data->initialChanMul[i] = CFG->chanMul[i];
@@ -2384,14 +2502,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     curveeditor_widget_set_curve(data->CurveWidget,
 	    &CFG->curve[CFG->curveIndex]);
 
-    if (preview_width!=data->UF->image.width ||
-        preview_height!=data->UF->image.height) {
-        pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-            data->UF->image.width, data->UF->image.height);
-        gtk_image_set_from_pixbuf(GTK_IMAGE(data->PreviewWidget), pixbuf);
-        g_object_unref(pixbuf);
-    }
-    preview_progress(previewWindow, progressText, 0);
     data->FreezeDialog = FALSE;
     update_scales(data);
 

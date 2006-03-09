@@ -147,6 +147,8 @@ typedef struct {
     gboolean overwrite, losslessCompress;
 
     /* GUI settings */
+    double Zoom;
+    int Scale;
     int saveConfiguration;
     int histogram, liveHistogramScale, liveHistogramHeight;
     int rawHistogramScale, rawHistogramHeight;

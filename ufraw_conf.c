@@ -68,6 +68,7 @@ const conf_data conf_default = {
     FALSE, /* losslessCompress */
 
     /* GUI settings */
+    25.0, 4, /* Zoom, Scale */
     enabled_state, /* saveConfiguration */
     rgb_histogram, /* histogram */
     linear_histogram, 128, /* liveHistogramScale, liveHistogramHeight */

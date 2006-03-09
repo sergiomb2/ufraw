@@ -338,7 +338,7 @@ int ufraw_convert_image(ufraw_data *uf)
     dcraw_image_data final;
     int shrink = 1;
 
-    preview_progress(uf->widget, "Loading image", 0.1);
+//    preview_progress(uf->widget, "Loading image", 0.1);
     /* We can do a simple interpolation in the following cases:
      * We shrink by an integer value.
      * If there is a ymag (D1X) shrink must be at least 4.
@@ -413,12 +413,12 @@ int ufraw_convert_image(ufraw_data *uf)
             dcraw_image_resize(&final, conf->size);
 	}
     }
-    preview_progress(uf->widget, "Loading image", 0.4);
+//    preview_progress(uf->widget, "Loading image", 0.4);
     uf->image.image = final.image;
     dcraw_flip_image(&final, raw->flip);
     uf->image.height = final.height;
     uf->image.width = final.width;
-    preview_progress(uf->widget, "Loading image", 0.5);
+//    preview_progress(uf->widget, "Loading image", 0.5);
     return UFRAW_SUCCESS;
 }
 
