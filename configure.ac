@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.30 2006/03/06 22:22:18 udifuchs Exp $
+dnl $Id: configure.ac,v 1.31 2006/03/10 16:04:11 udifuchs Exp $
 AC_INIT(UFRaw, 0.8)
 AC_PREREQ(2.57)
 
@@ -157,18 +157,16 @@ AC_MSG_CHECKING(whether to read raw EXIF data using libexif)
 AC_ARG_WITH(libexif,
   [  --with-libexif          use libexif to read raw EXIF data],
   [ with_libexif=yes ],
-  [ with_libexif=no
-    have_libexif=no
-    COMMENT_LIBEXIF=";" ])
+  [ with_libexif=no ])
 AC_MSG_RESULT($with_libexif)
+have_libexif=no
+COMMENT_LIBEXIF=";"
 # Check for exif via pkg-config.
 if test $with_libexif = yes; then
   PKG_CHECK_MODULES(EXIF, libexif >= 0.6.13,
     [ have_libexif=yes
-      AC_DEFINE(HAVE_LIBEXIF, [], have libexif)
-      COMMENT_LIBEXIF="" ],
-    [ have_libexif=no
-      COMMENT_LIBEXIF=";" ])
+      AC_DEFINE(HAVE_LIBEXIF, 1, have libexif)
+      COMMENT_LIBEXIF="" ])
 fi
 AC_SUBST(COMMENT_LIBEXIF)
 
@@ -178,9 +176,14 @@ AC_ARG_WITH(exiv2,
   [ with_exiv2=yes ],
   [ with_exiv2=no ])
 AC_MSG_RESULT($with_exiv2)
+have_exiv2=no
 if test $with_exiv2 = yes; then
-  AC_DEFINE(HAVE_EXIV2, [], have exiv2)
-  EXIV2_LIBS=-lexiv2
+  AC_CHECK_PROGS(EXIV2_CONFIG, exiv2-config, , $PATH)
+  if test -n "$EXIV2_CONFIG"; then
+    have_exiv2=yes
+    AC_DEFINE(HAVE_EXIV2, 1, have exiv2)
+    EXIV2_LIBS=`$EXIV2_CONFIG --libs`
+  fi
 fi
 
 UFRAW_CFLAGS="$EXIF_CFLAGS $GIMP_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS"
@@ -255,7 +258,7 @@ AC_MSG_NOTICE(====================== summary =====================)
 AC_MSG_NOTICE(build GIMP plug-in: $enable_gimp)
 AC_MSG_NOTICE([hidden directories support (GTK>=2.6): $have_gtk_2_6])
 AC_MSG_NOTICE(EXIF support using libexif: $have_libexif)
-AC_MSG_NOTICE(EXIF support using exiv2: $with_exiv2)
+AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(TIFF support: $have_tiff)
 if test $have_tiff = yes; then
