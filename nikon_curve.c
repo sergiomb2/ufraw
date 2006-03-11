@@ -117,7 +117,8 @@ int ProcessArgs(int num_args, char *args[])
 	else if (strcmp(args[i],"-o") == 0 || strcmp(args[i],"-O") == 0)
 	{
 	    i++;
-	    strcpy(exportFilename,args[i]);
+	    strncpy(exportFilename, args[i], 1023);
+	    exportFilename[1023] = '\0';
 	}
 	else if (strcmp(args[i],"-sr") == 0)
 	{
@@ -145,21 +146,24 @@ int ProcessArgs(int num_args, char *args[])
 	{
 	    i++;
 	    program_mode = NEF_MODE;
-	    strcpy(nikonFilename,args[i]);
+	    strncpy(nikonFilename, args[i], 1023);
+	    nikonFilename[1023] = '\0';
 	}
 	//don't load argument 0
 	else if (i != 0)
 	{
 	    //consider this the file name to load
-	    strcpy(nikonFilename,args[i]);
+	    strncpy(nikonFilename, args[i], 1023);
+	    nikonFilename[1023] = '\0';
 	}
     }
 
     if (strlen(exportFilename) == 0)
     {
 	//set it to have a default output file name
-	strcpy(exportFilename,nikonFilename);
-	strcat(exportFilename,"_CURVE_OUTPUT.txt");
+	strncpy(exportFilename, nikonFilename, 1023);
+	strncat(exportFilename, "_CURVE_OUTPUT.txt", 1023);
+	exportFilename[1023] = '\0';
     }
 
     return NC_SUCCESS;
@@ -180,7 +184,8 @@ void nc_message(int code, char *format, ...)
     va_list ap;
     va_start(ap, format);
 
-    vsprintf(message, format, ap);
+    vsnprintf(message, 255, format, ap);
+    message[255] = '\0';
     va_end(ap);
 
 #ifdef _STAND_ALONE_    //if we're running standalone mode
@@ -1674,29 +1679,30 @@ int ConvertNikonCurveData(char *inFileName, char *outFileName,
 	}
 	
 	//rename output files
-	strcpy(tmpstr,outFileName);
+	strncpy(tmpstr, outFileName, 1023);
+	tmpstr[1023] = '\0';
 	//if the name has an extension, attempt to remove it
-	if (tmpstr[strlen(outFileName)-4] == '.')
+	if (tmpstr[strlen(tmpstr)-4] == '.')
 	{
-	    tmpstr[strlen(outFileName)-4] = '\0';
+	    tmpstr[strlen(tmpstr)-4] = '\0';
 	}
 
 	switch(i)
 	{
 	    case TONE_CURVE:
-	        strcat(tmpstr,"_TONE.txt");
+	        strncat(tmpstr, "_TONE.txt", 1023);
 	    break;
 
 	    case RED_CURVE:
-	        strcat(tmpstr,"_RED.txt");
+	        strncat(tmpstr, "_RED.txt", 1023);
 	    break;
 
 	    case GREEN_CURVE:
-	        strcat(tmpstr,"_GREEN.txt");
+	        strncat(tmpstr, "_GREEN.txt", 1023);
 	    break;
 
 	    case BLUE_CURVE:
-	        strcat(tmpstr,"_BLUE.txt");
+	        strncat(tmpstr, "_BLUE.txt", 1023);
 	    break;
 
 	    default:
