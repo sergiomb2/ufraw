@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.31 2006/03/10 16:04:11 udifuchs Exp $
+dnl $Id: configure.ac,v 1.32 2006/03/13 07:47:50 nkbj Exp $
 AC_INIT(UFRaw, 0.8)
 AC_PREREQ(2.57)
 
@@ -14,7 +14,7 @@ AC_PROG_INSTALL
 AC_CHECK_PROGS(POD2MAN, pod2man, , $PATH)
 
 # nikon_curve makes some sizeof assumptions, requiring the following tests
-# (could be avoided by using C99 standart types)
+# (could be avoided by using C99 standard types)
 AC_CHECK_SIZEOF(short)
 if test $ac_cv_sizeof_short -ne 2; then
     AC_MSG_ERROR([size of short must be 2])
