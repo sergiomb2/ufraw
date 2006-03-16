@@ -171,7 +171,7 @@ void CLASS border_interpolate_INDI (const int height, const int width,
 	ushort (*image)[4], const unsigned filters, int colors,
 	int border)
 {
-  int row, col, y, x, c, sum[8]; /* changed from unsigned to int UF */
+  int row, col, y, x, c, sum[8];
 
   for (row=0; row < height; row++)
     for (col=0; col < width; col++) {
@@ -180,7 +180,7 @@ void CLASS border_interpolate_INDI (const int height, const int width,
       memset (sum, 0, sizeof sum);
       for (y=row-1; y != row+2; y++)
 	for (x=col-1; x != col+2; x++)
-	  if (y>=0 && y < height && x>=0 && x < width) {
+	  if (y >= 0 && y < height && x >= 0 && x < width) {
 	    /* Do not use BAYER macro since shrink is aways false here UF */
 	    sum[FC(y,x)] += image[y*width + x][FC(y,x)];
 	    sum[FC(y,x)+4]++;
@@ -518,7 +518,7 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
   int i, wide, high, row, col;
 //  double step;
   float r, c, fr, fc;
-  unsigned ur, uc;
+  int ur, uc;
   ushort (*img)[4], (*pix)[4];
 
   if (!fuji_width) return;
@@ -534,7 +534,7 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
     for (col=0; col < wide; col++) {
       ur = r = fuji_width + (row-col)*step;
       uc = c = (row+col)*step;
-      if ((int)ur > height-2 || (int)uc > width-2) continue;
+      if (ur > height-2 || uc > width-2) continue;
       fr = r - ur;
       fc = c - uc;
       pix = image + ur*width + uc;

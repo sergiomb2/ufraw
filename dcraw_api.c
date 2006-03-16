@@ -23,8 +23,8 @@
 extern FILE *ifp;
 extern char *ifname, make[], model[];
 extern int use_secondary, verbose, flip, height, width, fuji_width, maximum,
-    iheight, iwidth, shrink, is_raw, is_foveon, data_offset;
-extern unsigned filters;
+    iheight, iwidth, shrink, is_raw, is_foveon;
+extern unsigned filters, data_offset;
 //extern guint16 (*image)[4];
 extern dcraw_image_type *image;
 extern float pre_mul[4];

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.15 2006/03/06 22:22:18 udifuchs Exp $
+# $Id: Makefile.am,v 1.16 2006/03/16 06:43:35 nkbj Exp $
 
 if MAKE_EXTRAS
   bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve ufraw-exif
@@ -57,11 +57,11 @@ if MAKE_GIMP
 endif
 
 dcraw_nomain.o: dcraw.c
-	$(COMPILE) -DDCRAW_NOMAIN -DNO_LCMS $(DCRAW_CFLAGS) -o $@ -c $^
+	$(COMPILE) -DDCRAW_NOMAIN -DNO_LCMS -o $@ -c $^
 
 if MAKE_EXTRAS
   dcraw_SOURCES = dcraw.c
-  dcraw_CFLAGS = $(UFRAW_CFLAGS) $(DCRAW_CFLAGS)
+  dcraw_CFLAGS = $(UFRAW_CFLAGS)
   dcraw_LDFLAGS = @CONSOLE@
   dcraw_LDADD = $(UFRAW_LDADD)
 

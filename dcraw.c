@@ -98,9 +98,9 @@ char *ifname, make[64], model[72], model2[64], *meta_data, cdesc[5]; /*UF*/
 float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len; /*UF*/
 time_t timestamp; /*UF*/
 unsigned shot_order, kodak_cbpp, filters; /*UF*/
-int profile_offset, profile_length;
+unsigned profile_offset, profile_length;
+unsigned data_offset, strip_offset, curve_offset, meta_offset, meta_length; /*UF*/
 int thumb_offset, thumb_length, thumb_width, thumb_height, thumb_misc;
-int data_offset, strip_offset, curve_offset, meta_offset, meta_length; /*UF*/
 int tiff_nifds, tiff_flip, tiff_bps, tiff_compress;
 int raw_height, raw_width, top_margin, left_margin;
 int height, width, fuji_width, colors, tiff_samples; /*UF*/
@@ -160,7 +160,7 @@ int tone_mode_offset, tone_mode_size; /* Nikon ToneComp UF*/
    Return values are either 0/1/2/3 = G/M/C/Y or 0/1/2/3 = R/G1/B/G2
  */
 #define FC(row,col) \
-	(filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
+	(int)(filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 
 #define BAYER(row,col) \
 	image[((row) >> shrink)*iwidth + ((col) >> shrink)][FC(row,col)]
@@ -633,7 +633,7 @@ int CLASS canon_has_lowbits()
 
   fseek (ifp, 0, SEEK_SET);
   fread (test, 1, sizeof test, ifp);
-  for (i=540; i < sizeof test - 1; i++)
+  for (i=540; i < (int) sizeof test - 1; i++)
     if (test[i] == 0xff) {
       if (test[i+1]) return 1;
       ret=0;
@@ -700,10 +700,10 @@ void CLASS canon_compressed_load_raw()
     }
     for (r=0; r < 8; r++) {
       irow = row - top_margin + r;
-      if (irow >= height) continue;
+      if (irow >= (unsigned) height) continue;
       for (col = 0; col < raw_width; col++) {
 	icol = col - left_margin;
-	if (icol < width)
+	if (icol < (unsigned) width)
 	  BAYER(irow,icol) = pixel[r*raw_width+col];
 	else
 	  black += pixel[r*raw_width+col];
@@ -824,8 +824,8 @@ void CLASS lossless_jpeg_load_raw()
 	row = jidx / cr2_slice[1+j];
 	col = jidx % cr2_slice[1+j] + i*cr2_slice[1];
       }
-      if ((unsigned) (row-top_margin) < height) {
-	if ((unsigned) (col-left_margin) < width) {
+      if (row-top_margin >= 0 && row-top_margin < height) {
+	if (col-left_margin >= 0 && col-left_margin < width) {
 	  BAYER(row-top_margin,col-left_margin) = val;
 	  if (min > val) min = val;
 	} else black += val;
@@ -843,7 +843,7 @@ void CLASS lossless_jpeg_load_raw()
 
 void CLASS adobe_copy_pixel (int row, int col, ushort **rp)
 {
-  unsigned r, c;
+  int r, c;
 
   r = row -= top_margin;
   c = col -= left_margin;
@@ -952,7 +952,7 @@ void CLASS nikon_compressed_load_raw()
 	hpred[col] = vpred[i];
       } else
 	hpred[col & 1] += diff;
-      if ((unsigned) (col-left_margin) >= width) continue;
+      if (col-left_margin < 0 || col-left_margin >= width) continue;
       diff = hpred[col & 1];
       if (diff >= csize) diff = csize-1;
       BAYER(row,col-left_margin) = curve[diff];
@@ -977,7 +977,7 @@ void CLASS nikon_load_raw()
     }
     for (col=0; col < raw_width; col++) {
       i = getbits(12);
-      if ((unsigned) (col-left_margin) < width)
+      if (col-left_margin >= 0 && col-left_margin < width)
 	BAYER(row,col-left_margin) = i;
       if (tiff_compress == 34713 && (col % 10) == 9)
 	getbits(8);
@@ -1054,7 +1054,7 @@ int CLASS nikon_3700()
 
   fseek (ifp, -sizeof tail, SEEK_END);
   fread (tail, 1, sizeof tail, ifp);
-  for (i=0; i < sizeof tail; i++)
+  for (i=0; i < (int) sizeof tail; i++)
     sum[(i>>2) & 1] += tail[i];
   if (sum[1] > 4*sum[0]) return 2;
   return sum[0] > 4*sum[1];
@@ -1070,7 +1070,7 @@ int CLASS minolta_z2()
 
   fseek (ifp, -sizeof tail, SEEK_END);
   fread (tail, 1, sizeof tail, ifp);
-  for (i=0; i < sizeof tail; i++)
+  for (i=0; i < (int) sizeof tail; i++)
     if (tail[i]) return 1;
   return 0;
 }
@@ -1214,7 +1214,7 @@ void CLASS rollei_load_raw()
     for (i=0; i < 16; i+=2) {
       row = todo[i] / raw_width - top_margin;
       col = todo[i] % raw_width - left_margin;
-      if (row < height && col < width)
+      if (row < (unsigned) height && col < (unsigned) width)
 	BAYER(row,col) = (todo[i+1] & 0x3ff);
     }
   }
@@ -1292,7 +1292,7 @@ void CLASS phase_one_load_raw_c()
       else
 	pixel[col] = pred[col & 1] += ph1_bits(i) + 1 - (1 << (i - 1));
     }
-    if ((unsigned) (row-top_margin) < height)
+    if (row-top_margin >= 0 && row-top_margin < height)
       for (col=0; col < width; col++)
 	BAYER(row-top_margin,col) = pixel[col+left_margin];
   }
@@ -1536,7 +1536,7 @@ void CLASS kodak_radc_load_raw()
 
   init_decoder();
   getbits(-1);
-  for (i=0; i < sizeof(buf)/sizeof(short); i++)
+  for (i=0; i < (int) sizeof(buf)/(int) sizeof(short); i++)
     buf[0][0][i] = 2048;
   for (row=0; row < height; row+=4) {
     FORC3 mul[c] = getbits(6);
@@ -1545,7 +1545,7 @@ void CLASS kodak_radc_load_raw()
       s = val > 65564 ? 10:12;
       x = ~(-1 << (s-1));
       val <<= 12-s;
-      for (i=0; i < sizeof(buf[0])/sizeof(short); i++)
+      for (i=0; i < (int) sizeof(buf[0])/(int) sizeof(short); i++)
 	buf[c][0][i] = (buf[c][0][i] * val + x) >> s;
       last[c] = mul[c];
       for (r=0; r <= !c; r++) {
@@ -1627,8 +1627,8 @@ void CLASS kodak_jpeg_load_raw()
   cinfo.src->fill_input_buffer = fill_input_buffer;
   jpeg_read_header (&cinfo, TRUE);
   jpeg_start_decompress (&cinfo);
-  if ((cinfo.output_width      != width  ) ||
-      (cinfo.output_height*2   != height ) ||
+  if ((cinfo.output_width      != (unsigned) width  ) ||
+      (cinfo.output_height*2   != (unsigned) height ) ||
       (cinfo.output_components != 3      )) {
     dcraw_message (DCRAW_ERROR, "%s: incorrect JPEG dimensions\n", ifname); /*UF*/
     jpeg_destroy_decompress (&cinfo);
@@ -1679,11 +1679,11 @@ void CLASS kodak_easy_load_raw()
     black = 0;
   pixel = calloc (raw_width, sizeof *pixel);
   merror (pixel, "kodak_easy_load_raw()");
-  for (row=0; row < height; row++) {
+  for (row=0; row < (unsigned) height; row++) {
     fread (pixel, 1, raw_width, ifp);
-    for (col=0; col < raw_width; col++) {
+    for (col=0; col < (unsigned) raw_width; col++) {
       icol = col - left_margin;
-      if (icol < width)
+      if (icol < (unsigned) width)
 	BAYER(row,icol) = (ushort) curve[pixel[col]];
       else
 	black += curve[pixel[col]];
@@ -1846,12 +1846,12 @@ void CLASS sony_load_raw()
   fseek (ifp, data_offset, SEEK_SET);
   pixel = calloc (raw_width, sizeof *pixel);
   merror (pixel, "sony_load_raw()");
-  for (row=0; row < height; row++) {
+  for (row=0; row < (unsigned) height; row++) {
     fread (pixel, 2, raw_width, ifp);
     sony_decrypt ((void *) pixel, raw_width/2, !row, key);
-    for (col=9; col < left_margin; col++)
+    for (col=9; col < (unsigned) left_margin; col++)
       black += ntohs(pixel[col]);
-    for (col=0; col < width; col++)
+    for (col=0; col < (unsigned) width; col++)
       BAYER(row,col) = ntohs(pixel[col+left_margin]);
   }
   free (pixel);
@@ -1917,12 +1917,12 @@ void CLASS smal_decode_segment (unsigned seg[2][2], int holes)
     diff = sym[2] << 5 | sym[1] << 2 | (sym[0] & 3);
     if (sym[0] & 4)
       diff = diff ? -diff : 0x80;
-    if (ftell(ifp) + 12 >= seg[1][1])
+    if ((unsigned) ftell(ifp) + 12 >= seg[1][1])
       diff = 0;
     pred[pix & 1] += diff;
     row = pix / raw_width - top_margin;
     col = pix % raw_width - left_margin;
-    if (row < height && col < width)
+    if (row < (unsigned) height && col < (unsigned) width)
       BAYER(row,col) = pred[pix & 1];
     if (!(pix & 1) && HOLE(row)) pix += 2;
   }
@@ -2007,7 +2007,7 @@ void CLASS foveon_decoder (unsigned size, unsigned code)
 {
   static unsigned huff[1024];
   struct decode *cur;
-  int i, len;
+  unsigned i, len;
 
   if (!code) {
     for (i=0; i < size; i++)
@@ -2424,8 +2424,8 @@ void CLASS foveon_interpolate()
     for (i=0; i < dim[0]; i++) {
       col = (badpix[i] >> 8 & 0xfff) - keep[0];
       row = (badpix[i] >> 20       ) - keep[1];
-      if ((unsigned)(row-1) > height-3 || (unsigned)(col-1) > width-3)
-	continue;
+      if (row-1 < 0 || row-1 > height-3 || col-1 < 0 || col-1 > width-3)
+        continue;
       memset (fsum, 0, sizeof fsum);
       for (sum=j=0; j < 8; j++)
 	if (badpix[i] & (1 << j)) {
@@ -2676,12 +2676,12 @@ void CLASS bad_pixels()
     cp = strchr (line, '#');
     if (cp) *cp = 0;
     if (sscanf (line, "%d %d %d", &col, &row, &time) != 3) continue;
-    if ((unsigned) col >= width || (unsigned) row >= height) continue;
+    if (col >= width || row >= height) continue;
     if (time > timestamp) continue;
     for (tot=n=0, rad=1; rad < 3 && n==0; rad++)
       for (r = row-rad; r <= row+rad; r++)
 	for (c = col-rad; c <= col+rad; c++)
-	  if ((unsigned) r < height && (unsigned) c < width &&
+	  if (r >= 0 && r < height && c >= 0 && c < width &&
 		(r != row || c != col) && FC(r,c) == FC(row,col)) {
 	    tot += BAYER(r,c);
 	    n++;
@@ -2951,7 +2951,7 @@ skip_block:
 
 void CLASS border_interpolate (int border)
 {
-  unsigned row, col, y, x, c, sum[8];
+  int row, col, y, x, c, sum[8];
 
   for (row=0; row < height; row++)
     for (col=0; col < width; col++) {
@@ -2960,7 +2960,7 @@ void CLASS border_interpolate (int border)
       memset (sum, 0, sizeof sum);
       for (y=row-1; y != row+2; y++)
 	for (x=col-1; x != col+2; x++)
-	  if (y < height && x < width) {
+	  if (y >= 0 && y < height && x >= 0 && x < width) {
 	    sum[FC(y,x)] += BAYER(y,x);
 	    sum[FC(y,x)+4]++;
 	  }
@@ -3324,9 +3324,9 @@ void CLASS bilateral_filter()
     for (col=0; col < width; col++) {
       memset (sum, 0, sizeof sum);
       for (y=-wr; y <= wr; y++)
-	if ((unsigned)(row+y) < height)
+	if (row+y >= 0 && row+y < height)
 	  for (x=-wr; x <= wr; x++)
-	    if ((unsigned)(col+x) < width) {
+	    if (col+x >= 0 && col+x < width) {
 	      sep = ( SQR(window[wr+y][col+x][4] - window[wr][col][4])
 		    + SQR(window[wr+y][col+x][5] - window[wr][col][5])
 		    + SQR(window[wr+y][col+x][6] - window[wr][col][6]) )
@@ -3687,7 +3687,7 @@ int CLASS parse_tiff_ifd (int base, int level)
   struct jhead jh;
   FILE *sfp;
 
-  if (tiff_nifds >= sizeof tiff_ifd / sizeof tiff_ifd[0])
+  if (tiff_nifds >= (int) sizeof tiff_ifd / (int) sizeof tiff_ifd[0])
     return 1;
   ifd = tiff_nifds++;
   for (j=0; j < 4; j++)
@@ -3794,7 +3794,7 @@ int CLASS parse_tiff_ifd (int base, int level)
       case 64777:			/* Kodak P-series */
 	if ((plen=len) > 16) plen = 16;
 	fread (cfa_pat, 1, plen, ifp);
-	for (colors=cfa=i=0; i < plen; i++) {
+	for (colors=cfa=i=0; i < (int) plen; i++) {
 	  colors += !(cfa & (1 << cfa_pat[i]));
 	  cfa |= 1 << cfa_pat[i];
 	}
@@ -3871,7 +3871,7 @@ guess_cfa_pc:
       case 50714:			/* BlackLevel */
       case 50715:			/* BlackLevelDeltaH */
       case 50716:			/* BlackLevelDeltaV */
-	for (dblack=i=0; i < len; i++)
+	for (dblack=i=0; i < (int) len; i++)
 	  dblack += getrat();
 	black += dblack/len + 0.5;
 	break;
@@ -4441,7 +4441,7 @@ void CLASS parse_riff()
   if (!memcmp(tag,"RIFF",4) || !memcmp(tag,"LIST",4)) {
     end = ftell(ifp) + size;
     get4();
-    while (ftell(ifp) < end)
+    while ((unsigned) ftell(ifp) < end)
       parse_riff();
   } else if (!memcmp(tag,"IDIT",4) && size < 64) {
     fread (date, 64, 1, ifp);
@@ -4824,7 +4824,7 @@ void CLASS adobe_coeff()
   int i, j;
 
   sprintf (name, "%s %s", make, model);
-  for (i=0; i < sizeof table / sizeof *table; i++)
+  for (i=0; i < (int) sizeof table / (int) sizeof *table; i++)
     if (!strncmp (name, table[i].prefix, strlen(table[i].prefix))) {
       if (table[i].black)
 	black = table[i].black;
@@ -4884,7 +4884,7 @@ void CLASS identify()
   unsigned hlen, fsize, i, c, is_canon;
   struct jhead jh;
   static const struct {
-    int fsize;
+    unsigned fsize;
     char make[12], model[15], withjpeg;
   } table[] = {
     {    62464, "Kodak",    "DC20"       ,0 },
@@ -5906,7 +5906,7 @@ void CLASS fuji_rotate()
   int i, wide, high, row, col;
   double step;
   float r, c, fr, fc;
-  unsigned ur, uc;
+  int ur, uc;
   ushort (*img)[4], (*pix)[4];
 
   if (!fuji_width) return;

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.32 2006/03/13 07:47:50 nkbj Exp $
+dnl $Id: configure.ac,v 1.33 2006/03/16 06:43:35 nkbj Exp $
 AC_INIT(UFRaw, 0.8)
 AC_PREREQ(2.57)
 
@@ -237,11 +237,6 @@ case $host_cpu in
     CFLAGS="$CFLAGS -mcpu=powerpc -fno-loop-optimize"
     ;;
 esac
-
-# XXX gcc-specific
-DCRAW_CFLAGS=-Wno-sign-compare
-
-AC_SUBST(DCRAW_CFLAGS)
 
 AC_MSG_CHECKING(whether to build extras)
 AC_ARG_ENABLE(extras,
