@@ -235,6 +235,8 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 #ifdef __MINGW32__
     /* For MinG32 we don't have the thread safe ctime_r */
     g_strlcpy(uf->conf->timestamp, ctime(&raw->timestamp), max_name);
+#elifdef SOLARIS
+    ctime_r(&raw->timestamp, uf->conf->timestamp,sizeof(uf->conf->timestamp));
 #else
     ctime_r(&raw->timestamp, uf->conf->timestamp);
 #endif

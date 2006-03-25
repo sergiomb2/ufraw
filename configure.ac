@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.33 2006/03/16 06:43:35 nkbj Exp $
+dnl $Id: configure.ac,v 1.34 2006/03/25 18:40:31 udifuchs Exp $
 AC_INIT(UFRaw, 0.8)
 AC_PREREQ(2.57)
 
@@ -32,10 +32,10 @@ if test $ac_cv_sizeof_double -ne 8; then
     AC_MSG_ERROR([size of double must be 8])
 fi
 
-# XXX  gcc-specific
-CFLAGS="$CFLAGS -W -Wall -O3 -ffast-math -fomit-frame-pointer"
-# Uncomment next line for release to strip the binaries of debug information
-#LDFLAGS="$LDFLAGS -s"
+if test "x$GCC" = "xyes"; then
+    CFLAGS="$CFLAGS -W -Wall -O3"
+fi
+CFLAGS="$CFLAGS -ffast-math -fomit-frame-pointer"
 
 # windows will require some special attention
 case $host_os in
