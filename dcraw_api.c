@@ -398,7 +398,7 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     if (interpolation==dcraw_ahd_interpolation && h->colors > 3)
 	interpolation = dcraw_vng_interpolation;
     f4 = h->fourColorFilters;
-    if (rgbWB[3]==0) rgbWB[3] = rgbWB[1];
+    if (h->colors==3) rgbWB[3] = rgbWB[1];
     for(r=0; r<h->height; r++)
         for(c=0; c<h->width; c++)
             f->image[r*f->width+c][FC(ff,r,c)] = MIN( MAX( (gint64)

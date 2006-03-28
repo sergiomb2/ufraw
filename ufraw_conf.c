@@ -442,6 +442,8 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
 	g_free(utf8);
     }
     if (!strcmp("Intent", element)) sscanf(temp, "%d", &c->intent);
+    if (!strcmp("Make", element)) g_strlcpy(c->make, temp, max_name);
+    if (!strcmp("Model", element)) g_strlcpy(c->model, temp, max_name);
     if (!strcmp("ProfilePath", element)) {
 	char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
 	if (utf8!=NULL)
@@ -878,6 +880,10 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->temperature = src->temperature;
     dst->green = src->green;
     for (i=0; i<4; i++) dst->chanMul[i] = src->chanMul[i];
+    /* make and model are 'part of' ChanMul,
+     * since on different make and model ChanMul are meaningless */
+    g_strlcpy(dst->make, src->make, max_name);
+    g_strlcpy(dst->model, src->model, max_name);
     dst->exposure = src->exposure;
     dst->saturation = src->saturation;
     dst->black = src->black;

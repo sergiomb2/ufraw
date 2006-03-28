@@ -179,6 +179,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 {
     dcraw_data *raw=NULL;
     int status;
+    gboolean loadingID = FALSE;
 
     if (strcmp(rc->wb, spot_wb)) rc->chanMul[0] = -1.0;
     if (rc->autoExposure==enabled_state) rc->autoExposure = apply_state;
@@ -187,6 +188,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     /* Check if we are loading an ID file */
     if (uf!=NULL) {
 	if (uf->conf!=NULL) {
+	    loadingID = TRUE;
 	    conf_data tmp = *rc;
 	    conf_copy_image(&tmp, uf->conf);
 	    conf_copy_save(&tmp, uf->conf);
@@ -225,8 +227,9 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 
     /* If we switched cameras, ignore channel multipliers and
      * change spot_wb to manual_wb */
-    if (strcmp(uf->conf->make, raw->make)!=0 ||
-	strcmp(uf->conf->model, raw->model)!=0) {
+    if ( !loadingID &&
+	 ( strcmp(uf->conf->make, raw->make)!=0 ||
+	   strcmp(uf->conf->model, raw->model)!=0 ) ) {
 	uf->conf->chanMul[0] = -1.0;
 	if (strcmp(uf->conf->wb, spot_wb)==0)
 	    g_strlcpy(uf->conf->wb, manual_wb, max_name);
