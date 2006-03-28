@@ -28,6 +28,7 @@
     #include "ufraw.h"
 #else
     #define MAX(a,b) ((a) > (b) ? (a) : (b))
+    #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #endif
 
 /*************************************************
@@ -941,7 +942,7 @@ CurveDataSample:
 **********************************************/
 int CurveDataSample(CurveData *curve, CurveSample *sample)
 {
-    unsigned int i = 0, n;
+    int i = 0, n;
     
     double x[20];
     double y[20];
@@ -965,7 +966,7 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
     }
     else
     {
-	for(i = 0; i < (unsigned int)curve->m_numAnchors; i++)
+	for(i = 0; i < curve->m_numAnchors; i++)
 	{
 	    x[i] = curve->m_anchors[i].x*box_width + curve->m_min_x;
 	    y[i] = curve->m_anchors[i].y*box_height + curve->m_min_y;
@@ -987,7 +988,7 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
     double yppval = 0;
 
     //Now build a table
-    double val = 0;
+    int val;
     double res = 1.0/(double)sample->m_samplingRes;
     
     //allocate enough space for the samples
@@ -995,46 +996,41 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
 	        sample->m_samplingRes*sizeof(int));
     DEBUG_PRINT("DEBUG: SAMPLING OUTPUT RANGE: 0 -> %u\n", sample->m_outputRes);
     
-    //release old sample allocation if it exists
-    if (sample->m_Samples!=NULL)
-    {
-	free(sample->m_Samples);
-    }
-    sample->m_Samples = (unsigned int *)calloc(sample->m_samplingRes, sizeof(int));
+    sample->m_Samples = (unsigned int *)realloc(sample->m_Samples,
+	    sample->m_samplingRes * sizeof(int));
 
-    for(i = 0; i < sample->m_samplingRes; i++)
+    int firstPointX = curve->m_anchors[0].x * sample->m_samplingRes;
+    int firstPointY = pow(curve->m_anchors[0].y, gamma) *
+		sample->m_outputRes;
+    int lastPointX = curve->m_anchors[curve->m_numAnchors-1].x *
+		sample->m_samplingRes;
+    int lastPointY = pow(curve->m_anchors[curve->m_numAnchors-1].y, gamma) *
+		sample->m_outputRes;
+    int maxY = curve->m_max_y * sample->m_outputRes;
+    int minY = curve->m_min_y * sample->m_outputRes;
+
+    for(i = 0; i < (int)sample->m_samplingRes; i++)
     {
 	//get the value of the curve at a point
 	//take into account that curves may not necessarily begin at x = 0.0
 	//nor end at x = 1.0
 
 	//Before the first point and after the last point, take a strait line
-	if (i*res < curve->m_anchors[0].x) {
-	    val = pow(curve->m_anchors[0].y, gamma);
-	} else if (i*res > curve->m_anchors[curve->m_numAnchors-1].x) {
-	    val = pow(curve->m_anchors[curve->m_numAnchors-1].y, gamma);
+	if (i < firstPointX) {
+	    sample->m_Samples[i] = firstPointY;
+	} else if (i > lastPointX) {
+	    sample->m_Samples[i] = lastPointY;
 	} else {
 	    //within range, we can sample the curve
-	    val = spline_cubic_val ( n, x, i*res, y,
-	                      ypp, &ypval, &yppval );
+	    if (gamma==1.0)
+		val = spline_cubic_val( n, x, i*res, y,
+			ypp, &ypval, &yppval ) * sample->m_outputRes;
+	    else
+		val = pow(spline_cubic_val( n, x, i*res, y,
+			ypp, &ypval, &yppval ), gamma) * sample->m_outputRes;
 
-	    //Compensate for gamma.
-	    val = pow(val,gamma);
-	    
-	    //cap at the high end of the range
-	    if (val > curve->m_max_y)
-	    {
-	        val = curve->m_max_y;
-	    }
-	    //cap at the low end of the range
-	    else if (val < curve->m_min_y)
-	    {
-	        val = curve->m_min_y;
-	    }
+	    sample->m_Samples[i] = MIN(MAX(val,minY),maxY);
 	}
-
-	//save the sample
-	sample->m_Samples[i] = (unsigned int)floor(val*sample->m_outputRes);
     }
     
     free(ypp);
