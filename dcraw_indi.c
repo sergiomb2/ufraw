@@ -14,7 +14,7 @@
  * independed of DCRaw.c's global variables.
  *
  * NOTICE: One must check if updates in dcraw.c effect this code.
- * This file was last synchronized with DCRaw 8.01, except for
+ * This file was last synchronized with DCRaw 8.11, except for
  * flip_image_INDI() which was last synchronized with DCRaw 7.94.
  */
 
@@ -31,6 +31,7 @@ typedef unsigned short ushort;
 typedef gint64 INT64;
 
 extern const double xyz_rgb[3][3];			/* XYZ from RGB */
+extern const float d65_white[3];
 #define camera_red  cam_mul[0]
 #define camera_blue cam_mul[2]
 
@@ -371,7 +372,6 @@ void CLASS cam_to_cielab_INDI (ushort cam[4], float lab[3],
 {
   int c, i, j, k;
   float r, xyz[3];
-  static const float d65[3] = { 0.950456, 1, 1.088754 };
   static float cbrt[0x10000], xyz_cam[3][4];
 
   if (cam == NULL) {
@@ -382,7 +382,7 @@ void CLASS cam_to_cielab_INDI (ushort cam[4], float lab[3],
     for (i=0; i < 3; i++)
       for (j=0; j < colors; j++)
         for (xyz_cam[i][j] = k=0; k < 3; k++)
-	  xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65[i];
+	  xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65_white[i];
   } else {
     for (i=0; i < 3; i++) {
       for (xyz[i]=0.5, c=0; c < colors; c++)
