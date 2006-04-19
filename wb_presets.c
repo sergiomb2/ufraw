@@ -80,6 +80,12 @@ const wb_data wb_preset[] = {
   { "Canon", "PowerShot S70", "Flash", 0,	{ 2.389189, 1, 1.147297, 0 } },
   { "Canon", "PowerShot S70", "Underwater", 0,  { 3.110565, 1, 1.162162, 0 } },
 
+  { "Canon", "EOS D60", "Daylight", 0,		{ 2.472594, 1, 1.225335, 0 } },
+  { "Canon", "EOS D60", "Cloudy", 0,		{ 2.723926, 1, 1.137423, 0 } },
+  { "Canon", "EOS D60", "Tungsten", 0,		{ 1.543054, 1, 1.907003, 0 } },
+  { "Canon", "EOS D60", "Fluorescent", 0,	{ 1.957346, 1, 1.662322, 0 } },
+  { "Canon", "EOS D60", "Flash", 0,		{ 2.829840, 1, 1.108508, 0 } },
+
   { "Canon", "EOS 5D", "Flash", 0,		{ 2.211914, 1, 1.260742, 0 } }, /*6550K*/
   { "Canon", "EOS 5D", "Fluorescent", 0,	{ 1.726054, 1, 2.088123, 0 } }, /*3850K*/
   { "Canon", "EOS 5D", "Tungsten", 0,		{ 1.373285, 1, 2.301006, 0 } }, /*3250K*/
