@@ -250,9 +250,16 @@ int ufraw_write_image(ufraw_data *uf)
                     uf->developer->profileFile[out_profile],
 		    uf->conf->outputFilename);
         }
-        if (uf->exifBuf!=NULL && uf->conf->embedExif)
-            jpeg_write_marker(&cinfo, JPEG_APP0+1,
-                    uf->exifBuf, uf->exifBufLen);
+        if (uf->exifBuf!=NULL && uf->conf->embedExif) {
+	     if (uf->exifBufLen>65533) {
+		ufraw_message(UFRAW_SET_WARNING,
+			"EXIF buffer length %d, too long, ignored.\n",
+			uf->exifBufLen);
+	    } else {
+		jpeg_write_marker(&cinfo, JPEG_APP0+1,
+			uf->exifBuf, uf->exifBufLen);
+	    }
+	}
         pixbuf8 = g_new(guint8, width*3);
         for (row=0; row<height; row++) {
             if (row%100==99)

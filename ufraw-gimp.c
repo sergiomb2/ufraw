@@ -295,13 +295,17 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
     gimp_drawable_flush(drawable);
     gimp_drawable_detach(drawable);
     if (uf->exifBuf!=NULL) {
-	GimpParasite *exif_parasite;
-	exif_parasite = gimp_parasite_new ("exif-data",
-		GIMP_PARASITE_PERSISTENT, uf->exifBufLen, uf->exifBuf);
-	gimp_image_parasite_attach (uf->gimpImage, exif_parasite);
-	gimp_parasite_free (exif_parasite);
-	g_free (uf->exifBuf);
-	uf->exifBuf = NULL;
+	if (uf->exifBufLen>65533) {
+	    ufraw_message(UFRAW_SET_WARNING,
+		    "EXIF buffer length %d, too long, ignored.\n",
+		    uf->exifBufLen);
+	} else {
+	    GimpParasite *exif_parasite;
+	    exif_parasite = gimp_parasite_new ("exif-data",
+		    GIMP_PARASITE_PERSISTENT, uf->exifBufLen, uf->exifBuf);
+	    gimp_image_parasite_attach (uf->gimpImage, exif_parasite);
+	    gimp_parasite_free (exif_parasite);
+	}
     }
     /* Create "icc-profile" parasite from output profile
      * if it is not the internal sRGB.*/

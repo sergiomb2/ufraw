@@ -329,6 +329,7 @@ void ufraw_close(ufraw_data *uf)
 {
     dcraw_close(uf->raw);
     g_free(uf->raw);
+    g_free(uf->exifBuf);
     g_free(uf->image.image);
     developer_destroy(uf->developer);
     ufraw_message(UFRAW_CLEAN, NULL);

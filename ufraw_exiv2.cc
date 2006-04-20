@@ -48,6 +48,8 @@ try {
     *exifBuf = g_new(unsigned char, *exifBufLen);
     memcpy(*exifBuf, ExifHeader, sizeof(ExifHeader));
     memcpy(*exifBuf+sizeof(ExifHeader), buf.pData_, buf.size_);
+    ufraw_message(UFRAW_SET_LOG, "EXIF data read using exiv2, buflen %d\n",
+	    *exifBufLen);
 
     Exiv2::ExifData::const_iterator end = exifData.end();
     for (Exiv2::ExifData::const_iterator i = exifData.begin(); i != end; ++i) {
