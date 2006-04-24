@@ -155,18 +155,25 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
         for (i=0; i<0x10000; i++) d->saturationCurve[i] = MAX(MIN(
             pow((double)i/0x10000, saturation)*0x10000,0xFFFF),1);
     }
-    /* Check if curve data has changed. */
-    if (memcmp(curve, &d->luminosityCurveData, sizeof(CurveData))) {
-        d->luminosityCurveData = *curve;
-	CurveSample *cs = CurveSampleInit(0x10000, 0xFFFF);
-        ufraw_message(UFRAW_RESET, NULL);
-        if (CurveDataSample(curve, cs)!=UFRAW_SUCCESS) {
-            ufraw_message(UFRAW_REPORT, NULL);
-            for (i=0; i<0x10000; i++) d->luminosityCurve[i] = i;
-        } else {
-            for (i=0; i<0x10000; i++) d->luminosityCurve[i] = cs->m_Samples[i];
+    if (curve==NULL) {
+	/* Reset the luminosity curve and make sure it gets recalculated */
+        for (i=0; i<0x10000; i++) d->luminosityCurve[i] = i;
+	d->luminosityCurveData.m_gamma = -1.0;
+    } else {
+	/* Check if curve data has changed. */
+	if (memcmp(curve, &d->luminosityCurveData, sizeof(CurveData))) {
+	    d->luminosityCurveData = *curve;
+	    CurveSample *cs = CurveSampleInit(0x10000, 0xFFFF);
+	    ufraw_message(UFRAW_RESET, NULL);
+	    if (CurveDataSample(curve, cs)!=UFRAW_SUCCESS) {
+		ufraw_message(UFRAW_REPORT, NULL);
+		for (i=0; i<0x10000; i++) d->luminosityCurve[i] = i;
+	    } else {
+		for (i=0; i<0x10000; i++)
+		    d->luminosityCurve[i] = cs->m_Samples[i];
+	    }
+	    CurveSampleFree(cs);
 	}
-        CurveSampleFree(cs);
     }
 }
 

@@ -157,6 +157,7 @@ ufraw_data *ufraw_open(char *filename)
     uf->raw_color = raw->raw_color;
     uf->developer = developer_init();
     uf->widget = NULL;
+    uf->RawLumHistogram = NULL;
     if (raw->fuji_width) {
         /* Copied from DCRaw's fuji_rotate() */
         uf->predictateWidth = raw->fuji_width / raw->fuji_step;
@@ -238,7 +239,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 #ifdef __MINGW32__
     /* For MinG32 we don't have the thread safe ctime_r */
     g_strlcpy(uf->conf->timestamp, ctime(&raw->timestamp), max_name);
-#elifdef SOLARIS
+#elif defined(SOLARIS)
     ctime_r(&raw->timestamp, uf->conf->timestamp, sizeof(uf->conf->timestamp));
 #else
     ctime_r(&raw->timestamp, uf->conf->timestamp);
@@ -322,6 +323,10 @@ int ufraw_load_raw(ufraw_data *uf)
     }
     uf->rgbMax = raw->rgbMax - raw->black;
     memcpy(uf->rgb_cam, raw->rgb_cam, sizeof uf->rgb_cam);
+    
+    if (uf->conf->chanMul[0]<0) ufraw_set_wb(uf);
+    ufraw_auto_expose(uf);
+    ufraw_auto_black(uf);
     return UFRAW_SUCCESS;
 }
 
@@ -332,6 +337,7 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->exifBuf);
     g_free(uf->image.image);
     developer_destroy(uf->developer);
+    g_free(uf->RawLumHistogram);
     ufraw_message(UFRAW_CLEAN, NULL);
 }
 
@@ -340,23 +346,30 @@ int ufraw_convert_image(ufraw_data *uf)
 {
     int c;
     dcraw_data *raw = uf->raw;
-    conf_data *conf = uf->conf;
     dcraw_image_data final;
     int shrink = 1;
 
 //    preview_progress(uf->widget, "Loading image", 0.1);
+    developer_prepare(uf->developer, uf->rgbMax,
+	    pow(2,uf->conf->exposure), uf->conf->unclip,
+	    uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
+	    &uf->conf->profile[0][uf->conf->profileIndex[0]],
+	    &uf->conf->profile[1][uf->conf->profileIndex[1]], uf->conf->intent,
+	    uf->conf->saturation,
+	    &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
+	    &uf->conf->curve[uf->conf->curveIndex]);
     /* We can do a simple interpolation in the following cases:
      * We shrink by an integer value.
      * If there is a ymag (D1X) shrink must be at least 4.
      * Wanted size is smaller than raw size (size is after a raw->shrink).
      * There are no filters (Foveon). */
-    if ( conf->interpolation==half_interpolation ||
-         ( conf->size==0 && conf->shrink/raw->ymag>1 ) ||
-         ( conf->size>0 &&
-	   conf->size<MAX(raw->raw.height, raw->raw.width) ) ||
+    if ( uf->conf->interpolation==half_interpolation ||
+         ( uf->conf->size==0 && uf->conf->shrink/raw->ymag>1 ) ||
+         ( uf->conf->size>0 &&
+	   uf->conf->size<MAX(raw->raw.height, raw->raw.width) ) ||
 	 ( raw->filters==0 )  ) {
-	if (conf->size==0 && conf->shrink%raw->ymag==0)
-	    shrink = conf->shrink / raw->ymag;
+	if (uf->conf->size==0 && uf->conf->shrink%raw->ymag==0)
+	    shrink = uf->conf->shrink / raw->ymag;
 	else if (raw->filters!=0)
 	    shrink = 2;
         dcraw_finalize_shrink(&final, raw, shrink);
@@ -365,39 +378,8 @@ int ufraw_convert_image(ufraw_data *uf)
         uf->image.width = final.width;
 	g_free(uf->image.image);
         uf->image.image = final.image;
-        if (uf->conf->chanMul[0]<0) ufraw_set_wb(uf);
-        if (uf->conf->autoExposure==apply_state) ufraw_auto_expose(uf);
-        if (uf->conf->autoBlack==apply_state) ufraw_auto_black(uf);
-        developer_prepare(uf->developer, uf->rgbMax,
-                pow(2,conf->exposure), conf->unclip,
-		uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
-                &conf->profile[0][conf->profileIndex[0]],
-                &conf->profile[1][conf->profileIndex[1]], conf->intent,
-                conf->saturation,
-                &conf->BaseCurve[conf->BaseCurveIndex],
-                &conf->curve[conf->curveIndex]);
     } else {
-        if ( uf->conf->autoExposure==apply_state ||
-	     uf->conf->autoBlack==apply_state ) {
-            int shrinkSave = uf->conf->shrink;
-            int sizeSave = uf->conf->size;
-            uf->conf->shrink = 8;
-            uf->conf->size = 0;
-            ufraw_convert_image(uf);
-            uf->conf->shrink = shrinkSave;
-            uf->conf->size = sizeSave;
-        } else {
-	    if (uf->conf->chanMul[0]<0) ufraw_set_wb(uf);
-	}
-        developer_prepare(uf->developer, uf->rgbMax,
-                pow(2,conf->exposure), conf->unclip,
-		conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
-                &conf->profile[0][conf->profileIndex[0]],
-                &conf->profile[1][conf->profileIndex[1]], conf->intent,
-                conf->saturation,
-                &conf->BaseCurve[conf->BaseCurveIndex],
-                &conf->curve[conf->curveIndex]);
-        dcraw_finalize_interpolate(&final, raw, conf->interpolation,
+        dcraw_finalize_interpolate(&final, raw, uf->conf->interpolation,
 		uf->developer->rgbWB);
 	uf->developer->rgbMax = uf->developer->max;
         for (c=0; c<4; c++)
@@ -407,16 +389,16 @@ int ufraw_convert_image(ufraw_data *uf)
     }
     if (raw->ymag==2) {
 	dcraw_image_stretch(&final, raw->ymag);
-	if (conf->size==0 && conf->shrink>1)
+	if (uf->conf->size==0 && uf->conf->shrink>1)
             dcraw_image_resize(&final,
-		    shrink*MAX(final.height, final.width)/conf->shrink);
+		    shrink*MAX(final.height, final.width)/uf->conf->shrink);
     }
-    if (conf->size>0) {
-        if ( conf->size>MAX(final.height, final.width) ) {
+    if (uf->conf->size>0) {
+        if ( uf->conf->size>MAX(final.height, final.width) ) {
             ufraw_message(UFRAW_ERROR, "Can not downsize from %d to %d.",
-                    MAX(final.height, final.width), conf->size);
+                    MAX(final.height, final.width), uf->conf->size);
         } else {
-            dcraw_image_resize(&final, conf->size);
+            dcraw_image_resize(&final, uf->conf->size);
 	}
     }
 //    preview_progress(uf->widget, "Loading image", 0.4);
@@ -479,8 +461,28 @@ int ufraw_set_wb(ufraw_data *uf)
     if (!strcmp(uf->conf->wb, spot_wb)) {
 	/* do nothing */
 	uf->conf->WBTuning = 0;
-    } else if ( !strcmp(uf->conf->wb, auto_wb) ||
-		!strcmp(uf->conf->wb, camera_wb) ) {
+    } else if ( !strcmp(uf->conf->wb, auto_wb) ) {
+	int max, p;
+	/* Build a raw channel histogram */
+	image_type *histogram;
+	histogram = g_new0(image_type, uf->rgbMax+1);
+	for (c=0; c<uf->colors; c++) rgbWB[c] = uf->conf->chanMul[c]*0x10000;
+	if (uf->colors==3) rgbWB[3] = rgbWB[1];
+	for (i=0; i<raw->raw.height*raw->raw.width; i++) {
+	    for (c=0, max=0; c<raw->raw.colors; c++) {
+		p = MIN(MAX(raw->raw.image[i][c]-raw->black, 0), uf->rgbMax);
+		histogram[p][c]++;
+	    }
+	}
+        gint64 sum;
+        for (c=0; c<uf->colors; c++) {
+            sum = 0;
+            for (i=0; i<uf->rgbMax+1; i++)
+                sum += i*histogram[i][c];
+            uf->conf->chanMul[c] = 1.0/sum;
+        }
+	g_free(histogram);
+    } else if ( !strcmp(uf->conf->wb, camera_wb) ) {
         if ( (status=dcraw_set_color_scale(raw,
 		!strcmp(uf->conf->wb, auto_wb),
 		!strcmp(uf->conf->wb, camera_wb)))!=DCRAW_SUCCESS ) {
@@ -492,7 +494,7 @@ int ufraw_set_wb(ufraw_data *uf)
                     "Cannot use camera white balance, "
                     "reverting to auto white balance.");
 		g_strlcpy(uf->conf->wb, auto_wb, max_name);
-                status=dcraw_set_color_scale(raw, TRUE, FALSE);
+		return ufraw_set_wb(uf);
             }
             if (status!=DCRAW_SUCCESS)
 		return status;
@@ -584,124 +586,177 @@ int ufraw_set_wb(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
+void ufraw_build_raw_luminosity_histogram(ufraw_data *uf)
+{
+    int i, c;
+    gint64 max;
+    double maxChan = 0;
+    dcraw_data *raw = uf->raw;
+    gboolean updateHistogram = FALSE;
+    updateHistogram = FALSE;
+
+    if (uf->RawLumHistogram==NULL) {
+	uf->RawLumHistogram = g_new(int, uf->rgbMax+1);
+	updateHistogram = TRUE;
+    }
+    for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
+    for (c=0; c<uf->colors; c++) {
+	int tmp = floor(uf->conf->chanMul[c]/maxChan*0x10000);
+	if (uf->RawLumChanMul[c]!=tmp) {
+	    updateHistogram = TRUE;
+	    uf->RawLumChanMul[c] = tmp;
+	}
+    }
+    if (!updateHistogram) return;
+
+    if (uf->colors==3) uf->RawLumChanMul[3] = uf->RawLumChanMul[1];
+    memset(uf->RawLumHistogram, 0, (uf->rgbMax+1)*sizeof(int));
+    uf->RawLumCount = raw->raw.height*raw->raw.width;
+    for (i=0; i<uf->RawLumCount; i++) {
+        for (c=0, max=0; c<raw->raw.colors; c++) {
+            max = MAX( (raw->raw.image[i][c]-raw->black) *
+			uf->RawLumChanMul[c], max);
+        }
+        uf->RawLumHistogram[MIN(max/0x10000,uf->rgbMax)]++;
+    }
+}
+
 void ufraw_auto_expose(ufraw_data *uf)
 {
-    int sum, stop, wp, i, c;
-    int raw_histogram[0x10000];
+    int sum, stop, wp, c, pMax, pMin, p;
+    image_type pix;
+    guint16 p16[3], pixtmp[3];
 
-    /* set cutoff at 1/256/4 of the histogram */
-    stop = uf->image.width*uf->image.height*3/256/4;
-    uf->conf->exposure = 0;
+    if (uf->conf->autoExposure!=apply_state) return;
+
+    /* Reset the exposure and luminosityCurve */
     developer_prepare(uf->developer, uf->rgbMax,
-            pow(2,uf->conf->exposure), uf->conf->unclip,
+	    pow(2,0) /*exposure*/, uf->conf->unclip,
 	    uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
-            &uf->conf->profile[0][uf->conf->profileIndex[0]],
-            &uf->conf->profile[1][uf->conf->profileIndex[1]],
-            uf->conf->intent,
-            uf->conf->saturation,
-            &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
-            &uf->conf->curve[uf->conf->curveIndex]);
-
-    /* First calculate the exposure */
-    memset(raw_histogram, 0, sizeof(raw_histogram));
-    for (i=0; i<uf->image.width*uf->image.height; i++)
-        for (c=0; c<3; c++)
-            raw_histogram[MIN((guint64)uf->image.image[i][c] *
-                    uf->developer->rgbWB[c] / 0x10000, 0xFFFF)]++;
-    for (wp=0xFFFF, sum=0; wp>0 && sum<stop; wp--)
-        sum += raw_histogram[wp];
-    uf->conf->exposure = -log((double)wp/uf->developer->max)/log(2);
+	    &uf->conf->profile[0][uf->conf->profileIndex[0]],
+	    &uf->conf->profile[1][uf->conf->profileIndex[1]],
+	    uf->conf->intent,
+	    uf->conf->saturation,
+	    &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
+	    NULL /*luminosityCurve*/);
+    /* Find the grey value that gives 99% luminosity */
+    double maxChan = 0;
+    for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
+    for (pMax=uf->rgbMax, pMin=0, p=(pMax+pMin)/2; pMin<pMax-1; p=(pMax+pMin)/2)
+    {
+	for (c=0; c<uf->colors; c++) pix[c] = p * maxChan/uf->conf->chanMul[c];
+	develope(p16, pix, uf->developer, 16, pixtmp, 1);
+	if (p16[1] < 0x10000 * 99/100) pMin = p;
+	else pMax = p;
+    }
+    /* set cutoff at 99% of the histogram */
+    ufraw_build_raw_luminosity_histogram(uf);
+    stop = uf->RawLumCount * 1/100;
+    /* Calculate the white point */
+    for (wp=uf->rgbMax, sum=0; wp>0 && sum<stop; wp--)
+                sum += uf->RawLumHistogram[wp];
+    /* Set 99% of the luminosity values with luminosity below 99% */
+    uf->conf->exposure = log((double)p/wp)/log(2);
     uf->conf->autoExposure = enabled_state;
     if (!uf->conf->unclip)
         uf->conf->exposure = MAX(uf->conf->exposure,0);
-    ufraw_message(UFRAW_SET_LOG, "ufraw_auto_expose: "
-	    "Exposure %f (white point %d)\n", uf->conf->exposure, wp);
+//    ufraw_message(UFRAW_SET_LOG, "ufraw_auto_expose: "
+//	    "Exposure %f (white point %d/%d)\n", uf->conf->exposure, wp, p);
 }
 
 void ufraw_auto_black(ufraw_data *uf)
 {
-    int sum, stop, bp, i, j;
-    int preview_histogram[0x100];
-    guint8 *p8 = g_new(guint8, 3*uf->image.width);
-    guint16 *pixtmp = g_new(guint16, 3*uf->image.width);
+    int sum, stop, bp, c;
+    image_type pix;
+    guint16 p16[3], pixtmp[3];
 
-    stop = uf->image.width*uf->image.height*3/256/4;
-    CurveDataSetPoint(&uf->conf->curve[uf->conf->curveIndex], 0, 0, 0);
+    if (uf->conf->autoBlack==disabled_state) return;
+
+    /* Reset the luminosityCurve */
     developer_prepare(uf->developer, uf->rgbMax,
-            pow(2,uf->conf->exposure), uf->conf->unclip,
+	    pow(2,uf->conf->exposure), uf->conf->unclip,
 	    uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
-            &uf->conf->profile[0][uf->conf->profileIndex[0]],
-            &uf->conf->profile[1][uf->conf->profileIndex[1]],
-            uf->conf->intent,
-            uf->conf->saturation,
-            &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
-            &uf->conf->curve[uf->conf->curveIndex]);
-    memset(preview_histogram, 0, sizeof(preview_histogram));
-    for (i=0; i<uf->image.height; i++) {
-        develope(p8, uf->image.image[i*uf->image.width], uf->developer,
-		8, pixtmp, uf->image.width);
-        for (j=0; j<3*uf->image.width; j++) preview_histogram[p8[j]]++;
-    }
-    for (bp=0, sum=0; bp<0x100 && sum<stop; bp++)
-        sum += preview_histogram[bp];
+	    &uf->conf->profile[0][uf->conf->profileIndex[0]],
+	    &uf->conf->profile[1][uf->conf->profileIndex[1]],
+	    uf->conf->intent,
+	    uf->conf->saturation,
+	    &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
+	    NULL /*luminosityCurve*/);
+    /* Calculate the black point */
+    ufraw_build_raw_luminosity_histogram(uf);
+    stop = uf->RawLumCount/256/4;
+    for (bp=0, sum=0; bp<uf->rgbMax && sum<stop; bp++)
+                sum += uf->RawLumHistogram[bp];
+    double maxChan = 0;
+    for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
+    for (c=0; c<uf->colors; c++) pix[c] = bp *maxChan / uf->conf->chanMul[c];
+    develope(p16, pix, uf->developer, 16, pixtmp, 1);
+    for (c=0, bp=0; c<uf->colors; c++) bp = MAX(bp, p16[c]);
+
     CurveDataSetPoint(&uf->conf->curve[uf->conf->curveIndex],
-	    0, (double)bp/256, 0);
+            0, (double)bp/0x10000, 0);
+
     uf->conf->autoBlack = enabled_state;
-    g_free(p8);
-    g_free(pixtmp);
-    ufraw_message(UFRAW_SET_LOG, "ufraw_auto_black: "
-	    "Black %f (black point %d)\n",
-            uf->conf->curve[uf->conf->curveIndex].m_anchors[0].x, bp);
+//    ufraw_message(UFRAW_SET_LOG, "ufraw_auto_black: "
+//	    "Black %f (black point %d)\n",
+//	    uf->conf->curve[uf->conf->curveIndex].m_anchors[0].x, bp);
 }
 
 /* ufraw_auto_curve sets the black-point and then distribute the (step-1)
  * parts of the histogram with the weights: w_i = pow(decay,i). */
 void ufraw_auto_curve(ufraw_data *uf)
 {
-    int sum, stop, steps=8, bp, i, j;
-    int preview_histogram[0x100];
-    guint8 *p8 = g_new(guint8, 3*uf->image.width);
-    guint16 *pixtmp = g_new(guint16, 3*uf->image.width);
+    int sum, stop, steps=8, bp, p, i, j, c;
+    image_type pix;
+    guint16 p16[3], pixtmp[3];
     CurveData *curve = &uf->conf->curve[uf->conf->curveIndex];
-    double decay = 0.9;
+    double decay = 0.90;
     double norm = (1-pow(decay,steps))/(1-decay);
 
     CurveDataReset(curve);
     developer_prepare(uf->developer, uf->rgbMax,
-            pow(2,uf->conf->exposure), uf->conf->unclip,
+	    pow(2,uf->conf->exposure), uf->conf->unclip,
 	    uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
-            &uf->conf->profile[0][uf->conf->profileIndex[0]],
-            &uf->conf->profile[1][uf->conf->profileIndex[1]],
-            uf->conf->intent,
-            uf->conf->saturation,
-            &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
-            curve);
-    /* Collect histogram data */
-    memset(preview_histogram, 0, sizeof(preview_histogram));
-    for (i=0; i<uf->image.height; i++) {
-        develope(p8, uf->image.image[i*uf->image.width], uf->developer,
-		8, pixtmp, uf->image.width);
-        for (j=0; j<3*uf->image.width; j++) preview_histogram[p8[j]]++;
-    }
+	    &uf->conf->profile[0][uf->conf->profileIndex[0]],
+	    &uf->conf->profile[1][uf->conf->profileIndex[1]],
+	    uf->conf->intent,
+	    uf->conf->saturation,
+	    &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
+	    NULL /*luminosityCurve*/);
     /* Calculate curve points */
-    stop = uf->image.width*uf->image.height*3/256/4;
-    for (bp=0, i=0; i<steps && bp<0x100; i++) {
-	for (bp=0, sum=0; bp<0x100 && sum<stop; bp++)
-	    sum += preview_histogram[bp];
-	/* Try to make sure that points are always increasing. */
-	if (i>0 && curve->m_anchors[i-1].x>=(double)bp/256 && bp<0x100)
-	    bp = curve->m_anchors[i-1].x * 256 + 1;
-	curve->m_anchors[i].x = (double)bp/256;
-	curve->m_anchors[i].y = (double)i/steps;
-	stop += (uf->image.width*uf->image.height*3) * pow(decay,i) / norm;
+    ufraw_build_raw_luminosity_histogram(uf);
+    stop = uf->RawLumCount/256/4;
+    double maxChan = 0;
+    for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
+    for (bp=0, sum=0, p=0, i=j=0; i<steps && bp<uf->rgbMax && p<0xFFFF; i++) {
+	for (; bp<uf->rgbMax && sum<stop; bp++)
+            sum += uf->RawLumHistogram[bp];
+	for (c=0; c<uf->colors; c++) pix[c] = bp * maxChan/uf->conf->chanMul[c];
+	develope(p16, pix, uf->developer, 16, pixtmp, 1);
+	for (c=0, p=0; c<uf->colors; c++) p = MAX(p, p16[c]);
+	stop += uf->RawLumCount * pow(decay,i) / norm;
+	/* Skeep adding point if slope is too big (more than 4) */
+	if (j>0 && p - curve->m_anchors[j-1].x*0x10000 < (i+1-j)*0x04000/steps)
+	    continue;
+	curve->m_anchors[j].x = (double)p/0x10000;
+	curve->m_anchors[j].y = (double)i/steps;
+	j++;
     }
-    if (bp==0x100) {
-	curve->m_numAnchors = i;
+    if (bp==0x10000) {
+	curve->m_numAnchors = j;
     } else {
-	curve->m_anchors[i].x = 1.0;
-	curve->m_anchors[i].y = 1.0;
-	curve->m_numAnchors = i+1;
+	curve->m_anchors[j].x = 1.0;
+	/* The last point can be up to twice the hight of a linear
+	 * interpolation of the last two points */
+	if (j>1) {
+	    curve->m_anchors[j].y = curve->m_anchors[j-1].y +
+		    2 * (1.0 - curve->m_anchors[j-1].x) *
+		    (curve->m_anchors[j-1].y - curve->m_anchors[j-2].y) /
+		    (curve->m_anchors[j-1].x - curve->m_anchors[j-2].x);
+	    if (curve->m_anchors[j].y > 1.0) curve->m_anchors[j].y = 1.0;
+	} else {
+	    curve->m_anchors[j].y = 1.0;
+	}
+	curve->m_numAnchors = j+1;
     }
-    g_free(p8);
-    g_free(pixtmp);
 }

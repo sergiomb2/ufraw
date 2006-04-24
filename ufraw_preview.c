@@ -494,6 +494,15 @@ gboolean render_raw_histogram(preview_data *data)
     int x, c, cl, colors, y, y0, y1;
     int raw_his[raw_his_size][4], raw_his_max;
 
+    if (CFG->autoExposure == apply_state) {
+	ufraw_auto_expose(data->UF);
+	gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
+    }
+    if (CFG->autoBlack == apply_state) {
+	ufraw_auto_black(data->UF);
+	curveeditor_widget_set_curve(data->CurveWidget,
+		&CFG->curve[CFG->curveIndex]);
+    }
     char text[max_name];
     g_snprintf(text, max_name, "Black point: %0.3lf",
 	    CFG->curve[CFG->curveIndex].m_anchors[0].x);
@@ -843,6 +852,7 @@ void update_scales(preview_data *data)
 {
     if (data->FreezeDialog) return;
     data->FreezeDialog = TRUE;
+
     if (CFG->BaseCurveIndex>camera_curve && !CFG_cameraCurve)
         gtk_combo_box_set_active(data->BaseCurveCombo, CFG->BaseCurveIndex-2);
     else
@@ -878,6 +888,8 @@ void update_scales(preview_data *data)
     }
     gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
     gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
+    curveeditor_widget_set_curve(data->CurveWidget,
+	    &CFG->curve[CFG->curveIndex]);
 
     gtk_widget_set_sensitive(data->ResetWBButton,
 	    ( strcmp(CFG->wb, data->SaveConfig.wb)
@@ -915,19 +927,21 @@ void update_scales(preview_data *data)
     render_preview(data, render_default);
 };
 
-void update_scales_callback(GtkWidget *widget, long curveType)
+void curve_update(GtkWidget *widget, long curveType)
 {
     preview_data *data = get_preview_data(widget);
     if (curveType==base_curve) {
 	CFG->BaseCurveIndex = manual_curve;
 	CFG->BaseCurve[CFG->BaseCurveIndex] =
 	    *curveeditor_widget_get_curve(data->BaseCurveWidget);
+	if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
+	if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     } else {
 	CFG->curveIndex = manual_curve;
 	CFG->curve[CFG->curveIndex] =
 	    *curveeditor_widget_get_curve(data->CurveWidget);
+	CFG->autoBlack = FALSE;
     }
-    CFG->autoBlack = FALSE;
     update_scales(data);
 }
 
@@ -961,8 +975,8 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
             CFG->chanMul[0], CFG->chanMul[1], CFG->chanMul[2], CFG->chanMul[3]);
     g_strlcpy(CFG->wb, spot_wb, max_name);
     ufraw_set_wb(data->UF);
-    if (CFG->autoExposure) ufraw_auto_expose(data->UF);
-    CFG->autoBlack = FALSE;
+    if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
+    if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     update_scales(data);
 }
 
@@ -1052,7 +1066,8 @@ void zoom_in_event(GtkWidget *widget, gpointer user_data)
     if (CFG->Scale>max_scale) CFG->Scale = max_scale;
     CFG->Zoom = 100.0/CFG->Scale;
     create_base_image(data);
-    update_scales(data);
+    gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+    render_preview(data, render_default);
 }
 
 void zoom_out_event(GtkWidget *widget, gpointer user_data)
@@ -1071,7 +1086,8 @@ void zoom_out_event(GtkWidget *widget, gpointer user_data)
     if (CFG->Scale>max_scale) CFG->Scale = max_scale;
     CFG->Zoom = 100.0/CFG->Scale;
     create_base_image(data);
-    update_scales(data);
+    gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+    render_preview(data, render_default);
 }
 
 GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
@@ -1123,7 +1139,6 @@ void button_update(GtkWidget *button, gpointer user_data)
     if (button==GTK_WIDGET(data->AutoExposureButton)) {
 	CFG->autoExposure = 
 	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
-	if (CFG->autoExposure) ufraw_auto_expose(data->UF);
     }
     if (button==data->ResetExposureButton) {
 	CFG->exposure = conf_default.exposure;
@@ -1135,24 +1150,15 @@ void button_update(GtkWidget *button, gpointer user_data)
     if (button==GTK_WIDGET(data->AutoBlackButton)) {
 	CFG->autoBlack = 
 	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
-	if (CFG->autoBlack) {
-	    ufraw_auto_black(data->UF);
-	    curveeditor_widget_set_curve(data->CurveWidget,
-		&CFG->curve[CFG->curveIndex]);
-	}
     }
     if (button==data->ResetBlackButton) {
 	CurveDataSetPoint(&CFG->curve[CFG->curveIndex], 0,
 		conf_default.black, 0);
-	curveeditor_widget_set_curve(data->CurveWidget,
-		&CFG->curve[CFG->curveIndex]);
+	CFG->autoBlack = FALSE;
     }
     if (button==GTK_WIDGET(data->AutoCurveButton)) {
-	CFG->autoBlack = FALSE;
 	CFG->curveIndex = manual_curve;
 	ufraw_auto_curve(data->UF);
-	curveeditor_widget_set_curve(data->CurveWidget,
-		&CFG->curve[CFG->curveIndex]);
     }
     if (button==data->ResetBaseCurveButton) {
 	if (CFG->BaseCurveIndex==manual_curve) {
@@ -1175,13 +1181,9 @@ void button_update(GtkWidget *button, gpointer user_data)
 	} else {
 	    CFG->curveIndex = linear_curve;
 	}
-	curveeditor_widget_set_curve(data->CurveWidget,
-		&CFG->curve[CFG->curveIndex]);
     }
-    if ( button!=GTK_WIDGET(data->AutoBlackButton)
-       && button!=GTK_WIDGET(data->AutoCurveButton) ) {
-	CFG->autoBlack = FALSE;
-    }
+    if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
+    if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     update_scales(data);
     return;
 }
@@ -1192,17 +1194,19 @@ void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
     if (valuep==&CFG->unclip) {
 	/* ugly flip needed because CFG->unclip==!clip_button_active */
 	*valuep = !gtk_toggle_button_get_active(button);
-	if (CFG->autoExposure) ufraw_auto_expose(data->UF);
+	if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
 	char text[max_name];
         snprintf(text, max_name, "Highlight clipping\n"
 		"Current state: %s", CFG->unclip ? "unclip" : "clip");
 	gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(button), text, NULL);
-	CFG->autoBlack = FALSE;
 	update_scales(data);
     } else {
 	*valuep = gtk_toggle_button_get_active(button);
-	if (valuep==&data->UF->useMatrix)
+	if (valuep==&data->UF->useMatrix) {
 	    CFG->profile[0][CFG->profileIndex[0]].useMatrix = *valuep;
+	    if (CFG->autoExposure==enabled_state)
+		CFG->autoExposure = apply_state;
+	}
 	render_preview(data, render_default);
     }
 }
@@ -1242,12 +1246,10 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
     if (valuep==&CFG->temperature || valuep==&CFG->green) {
 	g_strlcpy(CFG->wb, manual_wb, max_name); 
 	ufraw_set_wb(data->UF);
-	if (CFG->autoExposure) ufraw_auto_expose(data->UF);
     }
     if (valuep>=&CFG->chanMul[0] && valuep<=&CFG->chanMul[3]) {
 	g_strlcpy(CFG->wb, spot_wb, max_name); 
 	ufraw_set_wb(data->UF);
-	if (CFG->autoExposure) ufraw_auto_expose(data->UF);
     }
     if (valuep==&CFG->WBTuning) {
 	if ( strcmp(data->UF->conf->wb, auto_wb)==0 ||
@@ -1256,7 +1258,6 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
 	    data->UF->conf->WBTuning = 0;
 	} else {
 	    ufraw_set_wb(data->UF);
-	    if (CFG->autoExposure) ufraw_auto_expose(data->UF);
 	}
     }
     if (valuep==&CFG->exposure) {
@@ -1266,7 +1267,8 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
 	CFG->Scale = 0;
 	create_base_image(data);
     } else {
-	CFG->autoBlack = FALSE;
+	if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
+	if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     }
     update_scales(data);
 }
@@ -1324,10 +1326,10 @@ void combo_update(GtkWidget *combo, gint *valuep)
 		&CFG->curve[CFG->curveIndex]);
     } else if ((char *)valuep==CFG->wb) {
         ufraw_set_wb(data->UF);
-	if (CFG->autoExposure) ufraw_auto_expose(data->UF);
     }
     if (valuep!=&CFG->interpolation) {
-	CFG->autoBlack = FALSE;
+	if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
+	if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
         update_scales(data);
     }
 }
@@ -2018,7 +2020,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(save_curve), (gpointer)base_curve);
 
     data->BaseCurveWidget = curveeditor_widget_new(curveeditorHeight, 256,
-	    update_scales_callback, (gpointer)base_curve);
+	    curve_update, (gpointer)base_curve);
     curveeditor_widget_set_curve(data->BaseCurveWidget,
 	    &CFG->BaseCurve[CFG->BaseCurveIndex]);
     gtk_table_attach(table, data->BaseCurveWidget, 1, 8, 1, 8,
@@ -2151,7 +2153,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(save_curve), (gpointer)luminosity_curve);
 
     data->CurveWidget = curveeditor_widget_new(curveeditorHeight, 256,
-	    update_scales_callback, (gpointer)luminosity_curve);
+	    curve_update, (gpointer)luminosity_curve);
     curveeditor_widget_set_curve(data->CurveWidget,
 	    &CFG->curve[CFG->curveIndex]);
     gtk_table_attach(table, data->CurveWidget, 1, 8, 1, 8, GTK_EXPAND, 0, 0, 0);

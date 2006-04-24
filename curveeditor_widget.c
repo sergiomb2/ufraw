@@ -23,6 +23,7 @@
 //All the internal data of curve widget is held in this structure
 typedef struct {
     CurveData *curve;
+    CurveData drawnCurve;
     int selectedPoint;
     GdkPixmap *pixmap;
     int width, height;
@@ -74,6 +75,10 @@ Draws the curve on the drawing area.
 void curveeditor_widget_draw(CurveEditorWidgetData *data)
 {
     if (data->pixmap==NULL) return;
+
+    /* If curve has not changed, do nothing */
+    if (memcmp(&data->drawnCurve, data->curve, sizeof(data->drawnCurve))==0)
+	return;
 
     GdkPoint graphPoints[NIKON_MAX_ANCHORS];
     //get the graphics context
@@ -211,6 +216,7 @@ void curveeditor_widget_draw(CurveEditorWidgetData *data)
     gtk_widget_queue_draw(data->widget);
     g_object_unref(gc);
     g_object_unref(colormap);
+    data->drawnCurve = *data->curve;
 }
 
 /********************************************************
@@ -554,6 +560,7 @@ GtkWidget *curveeditor_widget_new(int height, int width,
 
     data->pixmap = NULL;
     data->curve = curve;
+    data->drawnCurve.m_gamma = -1.0;
     data->widget = curveAlign;
     data->height = height;
     data->width = width;
