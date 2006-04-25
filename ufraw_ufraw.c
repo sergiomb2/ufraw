@@ -469,9 +469,16 @@ int ufraw_set_wb(ufraw_data *uf)
 	for (c=0; c<uf->colors; c++) rgbWB[c] = uf->conf->chanMul[c]*0x10000;
 	if (uf->colors==3) rgbWB[3] = rgbWB[1];
 	for (i=0; i<raw->raw.height*raw->raw.width; i++) {
-	    for (c=0, max=0; c<raw->raw.colors; c++) {
-		p = MIN(MAX(raw->raw.image[i][c]-raw->black, 0), uf->rgbMax);
-		histogram[p][c]++;
+	    gboolean countPixel = TRUE;
+	    /* The -25 bound was copied from dcraw */
+	    for (c=0, max=0; c<raw->raw.colors; c++)
+		if (raw->raw.image[i][c] > uf->rgbMax+raw->black-25)
+		    countPixel = FALSE;
+	    if (countPixel) {
+		for (c=0, max=0; c<raw->raw.colors; c++) {
+		    p = MIN(MAX(raw->raw.image[i][c]-raw->black,0),uf->rgbMax);
+		    histogram[p][c]++;
+		}
 	    }
 	}
         gint64 sum;
