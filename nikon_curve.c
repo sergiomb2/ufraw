@@ -892,6 +892,39 @@ int LoadNikonData(char *fileName, NikonData *data)
         //get number of anchors (always located after box data)
         fread(&curve->m_numAnchors,1,1,input);
 
+	// It seems that if there is no curve then the 62 bytes in the buffer
+	// are either all 0x00 (D70) or 0xFF (D2H).
+	// We therefore switch these values with the default values.
+	if (curve->m_min_x==1.0) {
+	    curve->m_min_x = 0.0;
+	    DEBUG_PRINT("DEBUG: NEF X MIN -> %e (changed)\n",curve->m_min_x);
+	}
+	if (curve->m_max_x==0.0) {
+	    curve->m_max_x = 1.0;
+	    DEBUG_PRINT("DEBUG: NEF X MAX -> %e (changed)\n",curve->m_max_x);
+	}
+	if (curve->m_min_y==1.0) {
+	    curve->m_min_y = 0.0;
+	    DEBUG_PRINT("DEBUG: NEF Y MIN -> %e (changed)\n",curve->m_min_y);
+	}
+	if (curve->m_max_y==0.0) {
+	    curve->m_max_y = 1.0;
+	    DEBUG_PRINT("DEBUG: NEF Y MAX -> %e (changed)\n",curve->m_max_y);
+	}
+	if (curve->m_gamma==0.0 || curve->m_gamma==255.0+255.0/256.0) {
+	    curve->m_gamma = 1.0;
+	    DEBUG_PRINT("DEBUG: NEF GAMMA -> %e (changed)\n",curve->m_gamma);
+	}
+	if (curve->m_numAnchors==255) {
+	    curve->m_numAnchors = 0;
+	    DEBUG_PRINT("DEBUG: NEF NUMBER OF ANCHORS -> %u (changed)\n",
+		    curve->m_numAnchors);
+	}
+	if (curve->m_numAnchors > NIKON_MAX_ANCHORS) {
+	    curve->m_numAnchors = NIKON_MAX_ANCHORS;
+	    DEBUG_PRINT("DEBUG: NEF NUMBER OF ANCHORS -> %u (changed)\n",
+		    curve->m_numAnchors);
+	}
         //Move to start of the anchor data
         fseek(input, curveFilePos[i][2], curveFilePos[i][3]);
 
