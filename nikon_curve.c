@@ -1006,7 +1006,6 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
 	}
 	n = curve->m_numAnchors;
     }
-    
     //returns an array of second derivatives used to calculate the spline curve.
     //this is a malloc'd array that needs to be freed when done.
     //The setings currently calculate the natural spline, which closely matches
@@ -1032,13 +1031,10 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
     sample->m_Samples = (unsigned int *)realloc(sample->m_Samples,
 	    sample->m_samplingRes * sizeof(int));
 
-    int firstPointX = curve->m_anchors[0].x * sample->m_samplingRes;
-    int firstPointY = pow(curve->m_anchors[0].y, gamma) *
-		sample->m_outputRes;
-    int lastPointX = curve->m_anchors[curve->m_numAnchors-1].x *
-		sample->m_samplingRes;
-    int lastPointY = pow(curve->m_anchors[curve->m_numAnchors-1].y, gamma) *
-		sample->m_outputRes;
+    int firstPointX = x[0] * sample->m_samplingRes;
+    int firstPointY = pow(y[0], gamma) * sample->m_outputRes;
+    int lastPointX = x[n-1] * sample->m_samplingRes;
+    int lastPointY = pow(y[n-1], gamma) * sample->m_outputRes;
     int maxY = curve->m_max_y * sample->m_outputRes;
     int minY = curve->m_min_y * sample->m_outputRes;
 
