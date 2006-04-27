@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.34 2006/03/25 18:40:31 udifuchs Exp $
+dnl $Id: configure.ac,v 1.35 2006/04/27 11:57:49 udifuchs Exp $
 AC_INIT(UFRaw, 0.8)
 AC_PREREQ(2.57)
 
@@ -234,7 +234,7 @@ case $host_cpu in
     ;;
   powerpc* | ppc*)
 # there is a -floop-optimize bug in gcc 3.3.2 on powerpc (resolved in gcc 3.4)
-    CFLAGS="$CFLAGS -mcpu=powerpc -fno-loop-optimize"
+    CFLAGS="$CFLAGS -fno-loop-optimize"
     ;;
 esac
 
