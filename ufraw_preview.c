@@ -502,6 +502,9 @@ gboolean render_raw_histogram(preview_data *data)
 	ufraw_auto_black(data->UF);
 	curveeditor_widget_set_curve(data->CurveWidget,
 		&CFG->curve[CFG->curveIndex]);
+	gtk_widget_set_sensitive(data->ResetBlackButton,
+		CFG->curve[CFG->curveIndex].m_anchors[0].x!=0.0 ||
+		CFG->curve[CFG->curveIndex].m_anchors[0].y!=0.0 );
     }
     char text[max_name];
     g_snprintf(text, max_name, "Black point: %0.3lf",
@@ -1716,7 +1719,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     uf->widget = previewWindow;
 
     gdk_screen_get_monitor_geometry(gdk_screen_get_default(), 0, &screen);
-    max_preview_width = MIN(def_preview_width, screen.width-400);
+    max_preview_width = MIN(def_preview_width, screen.width-416);
     max_preview_height = MIN(def_preview_height, screen.height-120);
     CFG->Scale = MAX((uf->predictateWidth-1)/max_preview_width,
             (uf->predictateHeight-1)/max_preview_height)+1;
