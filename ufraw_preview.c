@@ -1673,7 +1673,7 @@ void preview_saver(GtkWidget *widget, ufraw_data *uf)
 int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 {
     GtkWidget *previewWindow, *previewVBox;
-    GtkTable *table;
+    GtkTable *table, *subTable;
     GtkBox *previewHBox, *box, *hbox;
     GtkComboBox *combo;
     GtkWidget *button, *saveButton, *saveAsButton=NULL, *event_box, *align,
@@ -1872,7 +1872,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     int openingPage = gtk_notebook_page_num(GTK_NOTEBOOK(noteBox), page);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
-    GtkTable *subTable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
+    subTable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
     gtk_table_attach(table, GTK_WIDGET(subTable), 0, 1, 0 , 1,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 //    label = gtk_label_new("White balance");
@@ -1911,8 +1911,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     event_box = gtk_event_box_new();
     gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(data->WBCombo));
     gtk_tooltips_set_tip(data->ToolTips, event_box, "White Balance", NULL);
-    gtk_table_attach(subTable, event_box, 0, 6, 0, 1,
-	    GTK_FILL, 0, 0, 0);
+    gtk_table_attach(subTable, event_box, 0, 6, 0, 1, GTK_FILL, 0, 0, 0);
 
     data->WBTuningAdjustment = NULL;
     if (make_model_fine_tuning) {
@@ -1931,8 +1930,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	label = gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING,
 		GTK_ICON_SIZE_BUTTON);
 	gtk_container_add(GTK_CONTAINER(event_box), label);
-	gtk_table_attach(subTable, event_box, 6, 7, 0, 1,
-		GTK_FILL, 0, 0, 0);
+	gtk_table_attach(subTable, event_box, 6, 7, 0, 1, GTK_FILL, 0, 0, 0);
 	gtk_tooltips_set_tip(data->ToolTips, event_box,
 	    "There are no white balance presets for your camera model.\n"
 	    "Check UFRaw's webpage for information on how to get your\n"
@@ -1990,6 +1988,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     page = table_with_frame(noteBox, "Base", TRUE);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+    box = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    gtk_table_attach(table, GTK_WIDGET(box), 0, 9, 0, 1,
+	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 
     data->BaseCurveCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     /* Fill in the curve names, skipping custom and camera curves if there is
@@ -2005,12 +2006,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
         gtk_combo_box_set_active(data->BaseCurveCombo, CFG->BaseCurveIndex);
     g_signal_connect(G_OBJECT(data->BaseCurveCombo), "changed",
             G_CALLBACK(combo_update), &CFG->BaseCurveIndex);
-    gtk_table_attach(table, GTK_WIDGET(data->BaseCurveCombo), 0, 7, 0, 1,
-            GTK_FILL, GTK_FILL, 0, 0);
+    gtk_box_pack_start(box, GTK_WIDGET(data->BaseCurveCombo), TRUE, TRUE, 0);
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
-    gtk_table_attach(table, button, 7, 8, 0, 1, GTK_SHRINK, GTK_FILL, 0, 0);
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
     gtk_tooltips_set_tip(data->ToolTips, button, "Load base curve", NULL);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(load_curve), (gpointer)base_curve);
@@ -2018,24 +2018,30 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, button, "Save base curve", NULL);
-    gtk_table_attach(table, button, 8, 9, 0, 1, GTK_SHRINK, GTK_FILL, 0, 0);
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(save_curve), (gpointer)base_curve);
 
+    box = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    gtk_table_attach(table, GTK_WIDGET(box), 0, 9, 1, 2,
+	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
     data->BaseCurveWidget = curveeditor_widget_new(curveeditorHeight, 256,
 	    curve_update, (gpointer)base_curve);
     curveeditor_widget_set_curve(data->BaseCurveWidget,
 	    &CFG->BaseCurve[CFG->BaseCurveIndex]);
-    gtk_table_attach(table, data->BaseCurveWidget, 1, 8, 1, 8,
-	    GTK_EXPAND, 0, 0, 0);
+    align = gtk_alignment_new(1, 0, 0, 1);
+    gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(data->BaseCurveWidget));
+    gtk_box_pack_start(box, align, TRUE, TRUE, 0);
 
     data->ResetBaseCurveButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetBaseCurveButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetBaseCurveButton),
 	    "Reset base curve to default",NULL);
-    gtk_table_attach(table, GTK_WIDGET(data->ResetBaseCurveButton), 8, 9, 7, 8,
-		0, 0, 0, 0);
+    align = gtk_alignment_new(0, 1, 1, 0);
+    gtk_container_add(GTK_CONTAINER(align),
+	    GTK_WIDGET(data->ResetBaseCurveButton));
+    gtk_box_pack_start(box, align, FALSE, FALSE, 0);
     g_signal_connect(G_OBJECT(data->ResetBaseCurveButton), "clicked",
             G_CALLBACK(button_update), NULL);
     /* End of Base Curve page */
@@ -2131,6 +2137,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     table = GTK_TABLE(table_with_frame(page, NULL,
             CFG->expander[curve_expander]));
+    box = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    gtk_table_attach(table, GTK_WIDGET(box), 0, 9, 0, 1,
+	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
     data->CurveCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     /* Fill in the curve names */
     for (i=0; i<CFG->curveCount; i++)
@@ -2138,12 +2147,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
     g_signal_connect(G_OBJECT(data->CurveCombo), "changed",
             G_CALLBACK(combo_update), &CFG->curveIndex);
-    gtk_table_attach(table, GTK_WIDGET(data->CurveCombo), 0, 7, 0, 1,
-            GTK_FILL, GTK_FILL, 0, 0);
+    gtk_box_pack_start(box, GTK_WIDGET(data->CurveCombo), TRUE, TRUE, 0);
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
-    gtk_table_attach(table, button, 7, 8, 0, 1, GTK_SHRINK, GTK_FILL, 0, 0);
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
     gtk_tooltips_set_tip(data->ToolTips, button, "Load curve", NULL);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(load_curve), (gpointer)luminosity_curve);
@@ -2151,23 +2159,27 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, button, "Save curve", NULL);
-    gtk_table_attach(table, button, 8, 9, 0, 1, GTK_SHRINK, GTK_FILL, 0, 0);
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(save_curve), (gpointer)luminosity_curve);
 
+    subTable = GTK_TABLE(gtk_table_new(9, 9, FALSE));
+    gtk_table_attach(table, GTK_WIDGET(subTable), 0, 1, 1 , 2,
+	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
     data->CurveWidget = curveeditor_widget_new(curveeditorHeight, 256,
 	    curve_update, (gpointer)luminosity_curve);
     curveeditor_widget_set_curve(data->CurveWidget,
 	    &CFG->curve[CFG->curveIndex]);
-    gtk_table_attach(table, data->CurveWidget, 1, 8, 1, 8, GTK_EXPAND, 0, 0, 0);
+    gtk_table_attach(subTable, data->CurveWidget, 1, 8, 1, 8,
+	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 
     data->AutoCurveButton = GTK_BUTTON(gtk_button_new());
     gtk_container_add(GTK_CONTAINER(data->AutoCurveButton),
 	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoCurveButton),
 	    "Auto adjust curve\n(Flatten histogram)", NULL);
-    gtk_table_attach(table, GTK_WIDGET(data->AutoCurveButton), 8, 9, 6, 7,
-	    0, 0, GTK_SHRINK, 0);
+    gtk_table_attach(subTable, GTK_WIDGET(data->AutoCurveButton), 8, 9, 6, 7,
+	    0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->AutoCurveButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
@@ -2176,7 +2188,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetCurveButton),
 	    "Reset curve to default",NULL);
-    gtk_table_attach(table, GTK_WIDGET(data->ResetCurveButton), 8, 9, 7, 8,
+    gtk_table_attach(subTable, GTK_WIDGET(data->ResetCurveButton), 8, 9, 7, 8,
 		0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetCurveButton), "clicked",
             G_CALLBACK(button_update), NULL);
@@ -2185,21 +2197,22 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 #ifdef HAVE_GTK_2_6
     gtk_misc_set_alignment(GTK_MISC(data->BlackLabel), 0.5, 1.0);
     gtk_label_set_angle(GTK_LABEL(data->BlackLabel), 90);
-    gtk_table_attach(table, data->BlackLabel, 0, 1, 5, 6,
+    gtk_table_attach(subTable, data->BlackLabel, 0, 1, 5, 6,
 	    0, GTK_FILL|GTK_EXPAND, 0, 0);
 #else
     button = gtk_alignment_new(0, 0, 0, 0);
-    gtk_table_attach(table, button, 0, 1, 5, 6, 0, GTK_FILL|GTK_EXPAND, 0, 0);
+    gtk_table_attach(subTable, button, 0, 1, 5, 6,
+	    0, GTK_FILL|GTK_EXPAND, 0, 0);
     gtk_misc_set_alignment(GTK_MISC(data->BlackLabel), 0.0, 0.5);
-    gtk_table_attach(table, data->BlackLabel, 1, 8, 8, 9, GTK_FILL, 0, 0, 0);
+    gtk_table_attach(subTable, data->BlackLabel, 1, 8, 8, 9, GTK_FILL, 0, 0, 0);
 #endif
     data->ResetBlackButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetBlackButton),
 	gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetBlackButton),
 	    "Reset black-point to default",NULL);
-    gtk_table_attach(table, GTK_WIDGET(data->ResetBlackButton), 0, 1, 7, 8,
-	0, 0, 0, 0);
+    gtk_table_attach(subTable, GTK_WIDGET(data->ResetBlackButton), 0, 1, 7, 8,
+	    0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetBlackButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
@@ -2208,7 +2221,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoBlackButton),
 	    "Auto adjust black-point", NULL);
-    gtk_table_attach(table, GTK_WIDGET(data->AutoBlackButton), 0, 1, 6, 7,
+    gtk_table_attach(subTable, GTK_WIDGET(data->AutoBlackButton), 0, 1, 6, 7,
 	    0, GTK_SHRINK, 0, 0);
     gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
     g_signal_connect(G_OBJECT(data->AutoBlackButton), "clicked",
