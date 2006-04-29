@@ -24,7 +24,7 @@
 typedef struct {
     CurveData *curve;
     CurveData drawnCurve;
-    int selectedPoint;
+    int selectedPoint, drawnSelectedPoint;
     GdkPixmap *pixmap;
     int width, height;
     void (*callback)();
@@ -77,7 +77,8 @@ void curveeditor_widget_draw(CurveEditorWidgetData *data)
     if (data->pixmap==NULL) return;
 
     /* If curve has not changed, do nothing */
-    if (memcmp(&data->drawnCurve, data->curve, sizeof(data->drawnCurve))==0)
+    if (memcmp(&data->drawnCurve, data->curve, sizeof(data->drawnCurve))==0 &&
+	data->drawnSelectedPoint==data->selectedPoint)
 	return;
 
     GdkPoint graphPoints[NIKON_MAX_ANCHORS];
@@ -217,6 +218,7 @@ void curveeditor_widget_draw(CurveEditorWidgetData *data)
     g_object_unref(gc);
     g_object_unref(colormap);
     data->drawnCurve = *data->curve;
+    data->drawnSelectedPoint = data->selectedPoint;
 }
 
 /********************************************************
@@ -567,6 +569,7 @@ GtkWidget *curveeditor_widget_new(int height, int width,
     data->callback = callback;
     data->userdata = userdata;
     data->selectedPoint = 0;
+    data->drawnSelectedPoint = -1;
 
     g_signal_connect_after((gpointer)curveEventBox, "button-press-event",
 	G_CALLBACK (curveeditor_widget_on_button_press_event), data);
