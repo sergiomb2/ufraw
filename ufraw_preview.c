@@ -497,6 +497,8 @@ gboolean render_raw_histogram(preview_data *data)
     if (CFG->autoExposure == apply_state) {
 	ufraw_auto_expose(data->UF);
 	gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
+	gtk_widget_set_sensitive(data->ResetExposureButton,
+		fabs( conf_default.exposure - CFG->exposure) > 0.001);
     }
     if (CFG->autoBlack == apply_state) {
 	ufraw_auto_black(data->UF);

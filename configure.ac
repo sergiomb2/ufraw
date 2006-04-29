@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.35 2006/04/27 11:57:49 udifuchs Exp $
+dnl $Id: configure.ac,v 1.36 2006/04/29 22:03:29 udifuchs Exp $
 AC_INIT(UFRaw, 0.8)
 AC_PREREQ(2.57)
 
@@ -32,10 +32,10 @@ if test $ac_cv_sizeof_double -ne 8; then
     AC_MSG_ERROR([size of double must be 8])
 fi
 
+UFRAW_CFLAGS="-ffast-math -fomit-frame-pointer"
 if test "x$GCC" = "xyes"; then
-    CFLAGS="$CFLAGS -W -Wall -O3"
+    UFRAW_CFLAGS="$UFRAW_CFLAGS -W -Wall -O3"
 fi
-CFLAGS="$CFLAGS -ffast-math -fomit-frame-pointer"
 
 # windows will require some special attention
 case $host_os in
@@ -49,7 +49,7 @@ esac
 AM_CONDITIONAL(UFRAW_WIN32, test $ufraw_win32 = yes)
 
 if test $ufraw_win32 = yes; then
-  CFLAGS="$CFLAGS -mno-cygwin -mwindows -mms-bitfields"
+  UFRAW_CFLAGS="$UFRAW_CFLAGS -mno-cygwin -mwindows -mms-bitfields"
   CONSOLE="-mconsole"
 else
   CONSOLE=
@@ -186,14 +186,12 @@ if test $with_exiv2 = yes; then
   fi
 fi
 
-UFRAW_CFLAGS="$EXIF_CFLAGS $GIMP_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS"
+UFRAW_CFLAGS="$UFRAW_CFLAGS $EXIF_CFLAGS $GIMP_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS"
 if test $have_jpeg = no; then
   # DCRaw assumes jpeg unless NO_JPEG, rather than using HAVE_LIBJPEG
   UFRAW_CFLAGS="$UFRAW_CFLAGS -DNO_JPEG"
 fi
 UFRAW_LDADD="$EXIF_LIBS $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS"
-AC_SUBST(UFRAW_CFLAGS)
-AC_SUBST(UFRAW_LDADD)
 
 if test $ufraw_win32 = yes; then
   INSTALL_USER="cp ufraw-gimp.exe \"\$(USERPROFILE)\.gimp-2.0\plug-ins\""
@@ -230,13 +228,15 @@ AC_SUBST(INSTALL_USER)
 # appropriate.
 case $host_cpu in
   686)
-    CFLAGS="$CFLAGS -march=i686"
+    UFRAW_CFLAGS="$UFRAW_CFLAGS -march=i686"
     ;;
   powerpc* | ppc*)
 # there is a -floop-optimize bug in gcc 3.3.2 on powerpc (resolved in gcc 3.4)
-    CFLAGS="$CFLAGS -fno-loop-optimize"
+    UFRAW_CFLAGS="$UFRAW_CFLAGS -fno-loop-optimize"
     ;;
 esac
+AC_SUBST(UFRAW_CFLAGS)
+AC_SUBST(UFRAW_LDADD)
 
 AC_MSG_CHECKING(whether to build extras)
 AC_ARG_ENABLE(extras,
