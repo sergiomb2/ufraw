@@ -600,7 +600,6 @@ void ufraw_build_raw_luminosity_histogram(ufraw_data *uf)
     double maxChan = 0;
     dcraw_data *raw = uf->raw;
     gboolean updateHistogram = FALSE;
-    updateHistogram = FALSE;
 
     if (uf->RawLumHistogram==NULL) {
 	uf->RawLumHistogram = g_new(int, uf->rgbMax+1);
@@ -621,7 +620,7 @@ void ufraw_build_raw_luminosity_histogram(ufraw_data *uf)
     uf->RawLumCount = raw->raw.height*raw->raw.width;
     for (i=0; i<uf->RawLumCount; i++) {
         for (c=0, max=0; c<raw->raw.colors; c++) {
-            max = MAX( (raw->raw.image[i][c]-raw->black) *
+            max = MAX( (gint64)(raw->raw.image[i][c]-raw->black) *
 			uf->RawLumChanMul[c], max);
         }
         uf->RawLumHistogram[MIN(max/0x10000,uf->rgbMax)]++;
@@ -651,7 +650,8 @@ void ufraw_auto_expose(ufraw_data *uf)
     for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
     for (pMax=uf->rgbMax, pMin=0, p=(pMax+pMin)/2; pMin<pMax-1; p=(pMax+pMin)/2)
     {
-	for (c=0; c<uf->colors; c++) pix[c] = p * maxChan/uf->conf->chanMul[c];
+	for (c=0; c<uf->colors; c++)
+	    pix[c] = MIN (p * maxChan/uf->conf->chanMul[c], uf->rgbMax);
 	develope(p16, pix, uf->developer, 16, pixtmp, 1);
 	if (p16[1] < 0x10000 * 99/100) pMin = p;
 	else pMax = p;
@@ -660,7 +660,7 @@ void ufraw_auto_expose(ufraw_data *uf)
     ufraw_build_raw_luminosity_histogram(uf);
     stop = uf->RawLumCount * 1/100;
     /* Calculate the white point */
-    for (wp=uf->rgbMax, sum=0; wp>0 && sum<stop; wp--)
+    for (wp=uf->rgbMax, sum=0; wp>1 && sum<stop; wp--)
                 sum += uf->RawLumHistogram[wp];
     /* Set 99% of the luminosity values with luminosity below 99% */
     uf->conf->exposure = log((double)p/wp)/log(2);
@@ -696,7 +696,8 @@ void ufraw_auto_black(ufraw_data *uf)
                 sum += uf->RawLumHistogram[bp];
     double maxChan = 0;
     for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
-    for (c=0; c<uf->colors; c++) pix[c] = bp *maxChan / uf->conf->chanMul[c];
+    for (c=0; c<uf->colors; c++)
+	pix[c] = MIN (bp * maxChan/uf->conf->chanMul[c], uf->rgbMax);
     develope(p16, pix, uf->developer, 16, pixtmp, 1);
     for (c=0, bp=0; c<uf->colors; c++) bp = MAX(bp, p16[c]);
 
@@ -738,7 +739,8 @@ void ufraw_auto_curve(ufraw_data *uf)
     for (bp=0, sum=0, p=0, i=j=0; i<steps && bp<uf->rgbMax && p<0xFFFF; i++) {
 	for (; bp<uf->rgbMax && sum<stop; bp++)
             sum += uf->RawLumHistogram[bp];
-	for (c=0; c<uf->colors; c++) pix[c] = bp * maxChan/uf->conf->chanMul[c];
+	for (c=0; c<uf->colors; c++)
+	    pix[c] = MIN (bp * maxChan/uf->conf->chanMul[c], uf->rgbMax);
 	develope(p16, pix, uf->developer, 16, pixtmp, 1);
 	for (c=0, p=0; c<uf->colors; c++) p = MAX(p, p16[c]);
 	stop += uf->RawLumCount * pow(decay,i) / norm;
