@@ -466,8 +466,6 @@ int ufraw_set_wb(ufraw_data *uf)
 	/* Build a raw channel histogram */
 	image_type *histogram;
 	histogram = g_new0(image_type, uf->rgbMax+1);
-	for (c=0; c<uf->colors; c++) rgbWB[c] = uf->conf->chanMul[c]*0x10000;
-	if (uf->colors==3) rgbWB[3] = rgbWB[1];
 	for (i=0; i<raw->raw.height*raw->raw.width; i++) {
 	    gboolean countPixel = TRUE;
 	    /* The -25 bound was copied from dcraw */
