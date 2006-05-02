@@ -462,7 +462,7 @@ int ufraw_set_wb(ufraw_data *uf)
 	/* do nothing */
 	uf->conf->WBTuning = 0;
     } else if ( !strcmp(uf->conf->wb, auto_wb) ) {
-	int max, p;
+	int p;
 	/* Build a raw channel histogram */
 	image_type *histogram;
 	histogram = g_new0(image_type, uf->rgbMax+1);
@@ -471,11 +471,11 @@ int ufraw_set_wb(ufraw_data *uf)
 	for (i=0; i<raw->raw.height*raw->raw.width; i++) {
 	    gboolean countPixel = TRUE;
 	    /* The -25 bound was copied from dcraw */
-	    for (c=0, max=0; c<raw->raw.colors; c++)
+	    for (c=0; c<raw->raw.colors; c++)
 		if (raw->raw.image[i][c] > uf->rgbMax+raw->black-25)
 		    countPixel = FALSE;
 	    if (countPixel) {
-		for (c=0, max=0; c<raw->raw.colors; c++) {
+		for (c=0; c<raw->raw.colors; c++) {
 		    p = MIN(MAX(raw->raw.image[i][c]-raw->black,0),uf->rgbMax);
 		    histogram[p][c]++;
 		}
@@ -485,7 +485,7 @@ int ufraw_set_wb(ufraw_data *uf)
         for (c=0; c<uf->colors; c++) {
             sum = 0;
             for (i=0; i<uf->rgbMax+1; i++)
-                sum += i*histogram[i][c];
+                sum += (gint64)i*histogram[i][c];
             uf->conf->chanMul[c] = 1.0/sum;
         }
 	g_free(histogram);
@@ -699,7 +699,7 @@ void ufraw_auto_black(ufraw_data *uf)
     for (c=0; c<uf->colors; c++)
 	pix[c] = MIN (bp * maxChan/uf->conf->chanMul[c], uf->rgbMax);
     develope(p16, pix, uf->developer, 16, pixtmp, 1);
-    for (c=0, bp=0; c<uf->colors; c++) bp = MAX(bp, p16[c]);
+    for (c=0, bp=0; c<3; c++) bp = MAX(bp, p16[c]);
 
     CurveDataSetPoint(&uf->conf->curve[uf->conf->curveIndex],
             0, (double)bp/0x10000, 0);
@@ -742,7 +742,7 @@ void ufraw_auto_curve(ufraw_data *uf)
 	for (c=0; c<uf->colors; c++)
 	    pix[c] = MIN (bp * maxChan/uf->conf->chanMul[c], uf->rgbMax);
 	develope(p16, pix, uf->developer, 16, pixtmp, 1);
-	for (c=0, p=0; c<uf->colors; c++) p = MAX(p, p16[c]);
+	for (c=0, p=0; c<3; c++) p = MAX(p, p16[c]);
 	stop += uf->RawLumCount * pow(decay,i) / norm;
 	/* Skeep adding point if slope is too big (more than 4) */
 	if (j>0 && p - curve->m_anchors[j-1].x*0x10000 < (i+1-j)*0x04000/steps)
