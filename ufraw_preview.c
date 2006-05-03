@@ -530,8 +530,8 @@ gboolean render_raw_histogram(preview_data *data)
     colors = data->UF->colors;
     pixies = gdk_pixbuf_get_pixels(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
-    memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)*
-            rowstride + gdk_pixbuf_get_width(pixbuf));
+    memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)*rowstride +
+            gdk_pixbuf_get_width(pixbuf)*gdk_pixbuf_get_n_channels(pixbuf));
     memset(raw_his, 0, sizeof(raw_his));
     /* Collect histogram data */
     for (y=0; y<data->UF->image.height; y++)
@@ -691,7 +691,7 @@ gboolean render_preview_image(preview_data *data)
     pixies = gdk_pixbuf_get_pixels(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)*rowstride +
-            gdk_pixbuf_get_width(pixbuf));
+            gdk_pixbuf_get_width(pixbuf)*gdk_pixbuf_get_n_channels(pixbuf));
     for (c=0; c<3; c++) {
         sum[c] = 0;
         sqr[c] = 0;
@@ -1756,7 +1756,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     pixies = gdk_pixbuf_get_pixels(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)* rowstride +
-            gdk_pixbuf_get_width(pixbuf));
+            gdk_pixbuf_get_width(pixbuf)*gdk_pixbuf_get_n_channels(pixbuf));
     menu = gtk_menu_new();
     g_object_set_data(G_OBJECT(menu), "Parent-Widget", event_box);
     g_signal_connect_swapped(G_OBJECT(event_box), "button_press_event",
@@ -2274,7 +2274,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     pixies = gdk_pixbuf_get_pixels(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)* rowstride +
-            gdk_pixbuf_get_width(pixbuf));
+            gdk_pixbuf_get_width(pixbuf)*gdk_pixbuf_get_n_channels(pixbuf));
     menu = gtk_menu_new();
     g_object_set_data(G_OBJECT(menu), "Parent-Widget", event_box);
     g_signal_connect_swapped(G_OBJECT(event_box), "button_press_event",

@@ -651,7 +651,8 @@ void ufraw_auto_expose(ufraw_data *uf)
 	for (c=0; c<uf->colors; c++)
 	    pix[c] = MIN (p * maxChan/uf->conf->chanMul[c], uf->rgbMax);
 	develope(p16, pix, uf->developer, 16, pixtmp, 1);
-	if (p16[1] < 0x10000 * 99/100) pMin = p;
+	for (c=0, wp=0; c<3; c++) wp = MAX(wp, p16[c]);
+	if (wp < 0x10000 * 99/100) pMin = p;
 	else pMax = p;
     }
     /* set cutoff at 99% of the histogram */

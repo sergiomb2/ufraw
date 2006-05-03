@@ -30,7 +30,9 @@ developer_data *developer_init()
         d->profile[i] = NULL;
         strcpy(d->profileFile[i],"no such file");
     }
+    memset(&d->baseCurveData, 0, sizeof(d->baseCurveData));
     d->baseCurveData.m_gamma = -1.0;
+    memset(&d->luminosityCurveData, 0, sizeof(d->luminosityCurveData));
     d->luminosityCurveData.m_gamma = -1.0;
     d->intent = -1;
     d->updateTransform = TRUE;
