@@ -1,9 +1,8 @@
-For UFRaw-0.8
-=============
+For the next release
+====================
 
 For the future
 ==============
-Calculate color temperature correctly
 Leaf embedded profiles
 fuji sqrt(0.5) factor in size
 Canon 10D presets from ExifTool

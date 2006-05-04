@@ -36,18 +36,22 @@ configure: ====================== summary =====================
 configure: build GIMP plug-in: yes
 configure: hidden directories support (GTK>=2.6): yes
 configure: EXIF support using libexif: no
+configure: EXIF support using exiv2: no
 configure: JPEG support: yes
 configure: TIFF support: yes
 configure: lossless compressed TIFF support: yes
 
 If some of the lines end with 'no' instead of 'yes', it is not the end of
 the world. It only means that this option in UFRaw will be disabled. EXIF
-support is disabled by default. It can be enabled for Nikon NEF and Pentax
-PEF files by running configure as:
+support is disabled by default. It can be enabled for Nikon NEF, Pentax
+PEF and Fuji RAF files by running configure as:
 ./configure --with-libexif
 
 The libexif development package is required for this to work.
 You should use libexif-0.6.13 or newer.
+
+For EXIF support for CRW files use (requires he exiv2 development package):
+./configure --with-exiv2
 
 These paragraphs use the term "development package"; the general
 requirement is to have the full library installed, including header
@@ -74,6 +78,8 @@ Other options for the configuration script are:
 --enable-extras: build the extra binaries - dcraw, ufraw-exif, nikon-curve.
 
 --with-libexif:  use libexif to read raw EXIF data.
+
+--with-exiv2:    use Exiv2 to read raw EXIF data.
 
 --with-prefix=PREFIX: use also {REFOX as am input prefix for the build
 
@@ -212,6 +218,17 @@ date user guide.
 
 History
 =======
+04/05/2006 - UFRaw-0.8 released, based on DCRaw v8.13.
+* Preliminary zoom support, only up to 50% and with no scrolling.
+* Auto white balance is much faster.
+* Auto exposure is smarter, and hopefully better.
+* Auto black and auto curve are much faster.
+* EXIF data of Canon CRW files can be read using Exiv2 (not enabled by default).
+* EXIF data of Fuji RAF files can be read using libexif (not enabled by default).
+* White balance presets for more cameras.
+* Fix the bug that sometimes caused a 'maze effect'.
+* A few minor bug fixes.
+
 03/03/2006 - UFRaw-0.7 released, based on DCRaw v8.05.
 * Much more accurate white balance temperature setting.
 * White balance presets per camera model.
