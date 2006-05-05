@@ -202,7 +202,7 @@ int tone_mode_offset, tone_mode_size; /* Nikon ToneComp UF*/
 	3 G R G R G R	3 B G B G B G	3 R G R G R G	3 G B G B G B
  */
 
-#ifndef __GLIBC__
+#ifndef HAVE_MEMMEM
 char *my_memmem (char *haystack, size_t haystacklen,
 	      char *needle, size_t needlelen)
 {

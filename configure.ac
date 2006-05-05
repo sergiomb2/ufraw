@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.37 2006/05/05 06:50:22 nkbj Exp $
+dnl $Id: configure.ac,v 1.38 2006/05/05 07:07:33 nkbj Exp $
 AC_INIT(UFRaw, 0.8)
 AC_PREREQ(2.57)
 
@@ -138,6 +138,7 @@ fi
 # Make sure that pow is available, trying libm if necessary.
 AC_SEARCH_LIBS(pow, m)
 AC_CHECK_FUNCS(canonicalize_file_name)
+AC_CHECK_FUNCS(memmem)
 
 # Check for jpeg headers and library.
 AC_CHECK_HEADER(jpeglib.h,
