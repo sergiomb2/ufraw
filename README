@@ -50,7 +50,8 @@ PEF and Fuji RAF files by running configure as:
 The libexif development package is required for this to work.
 You should use libexif-0.6.13 or newer.
 
-For EXIF support for CRW files use (requires he exiv2 development package):
+To enable EXIF support for Canon CRW files use (requires the exiv2
+development package):
 ./configure --with-exiv2
 
 These paragraphs use the term "development package"; the general
@@ -168,7 +169,8 @@ version (7.86 in the example) and revision (1.304 in the example) numbers.
 
 This update procedure is not full proof. First there can be conflict that
 have to be resolved. But even if there are no conflicts, one should check
-if there where changes in scale_colors(), vng_interpolation(),
+if there where changes in scale_colors(), border_interpolate(),
+lin_interpolate(), vng_interpolate(), cam_to_cielab(), ahd_interpolate(),
 convert_to_rgb(), fuji_rotate(), flip_image(), main(). Such a change could
 effect dcraw_indi.c or dcraw_api.c.
 

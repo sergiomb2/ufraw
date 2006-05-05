@@ -14,7 +14,7 @@
  * independed of DCRaw.c's global variables.
  *
  * NOTICE: One must check if updates in dcraw.c effect this code.
- * This file was last synchronized with DCRaw 8.11, except for
+ * This file was last synchronized with DCRaw 8.15, except for
  * flip_image_INDI() which was last synchronized with DCRaw 7.94.
  */
 
@@ -32,8 +32,6 @@ typedef gint64 INT64;
 
 extern const double xyz_rgb[3][3];			/* XYZ from RGB */
 extern const float d65_white[3];
-#define camera_red  cam_mul[0]
-#define camera_blue cam_mul[2]
 
 #define CLASS
 
@@ -74,7 +72,7 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
   double dsum[8], dmin;
 
   maximum -= black; /* maximum is changed only locally */
-  if (use_auto_wb || (use_camera_wb && camera_red == -1)) {
+  if (use_auto_wb || (use_camera_wb && cam_mul[0] == -1)) {
     FORC4 min[c] = INT_MAX;
     FORC4 max[c] = 0;
     memset (dsum, 0, sizeof dsum);
@@ -100,7 +98,7 @@ skip_block:
       }
     FORC4 if (dsum[c]) pre_mul[c] = dsum[c+4] / dsum[c];
   }
-  if (use_camera_wb && camera_red != -1) {
+  if (use_camera_wb && cam_mul[0] != -1) {
     memset (sum, 0, sizeof sum);
     for (row=0; row < 8; row++)
       for (col=0; col < 8; col++) {
@@ -111,7 +109,7 @@ skip_block:
       }
     if (sum[0] && sum[1] && sum[2] && sum[3])
       FORC4 pre_mul[c] = (float) sum[c+4] / sum[c];
-    else if (camera_red && camera_blue)
+    else if (cam_mul[0] && cam_mul[2])
       /* 'sizeof pre_mul' does not work because pre_mul is an argument (UF)*/
       memcpy (pre_mul, cam_mul, 4*sizeof(float));
     else
