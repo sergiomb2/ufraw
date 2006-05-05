@@ -23,6 +23,10 @@
    $Date: 2006/05/04 22:45:45 $
  */
 
+#ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
+#include "config.h"
+#endif
+
 #define _GNU_SOURCE
 #define _USE_MATH_DEFINES
 #include <ctype.h>
@@ -37,10 +41,9 @@
 #include <string.h>
 #include <time.h>
 /*
-   NO_JPEG disables decoding of compressed Kodak DC120 files.
    NO_LCMS disables the "-p" option.
  */
-#ifndef NO_JPEG
+#ifdef HAVE_LIBJPEG
 #include <jpeglib.h>
 #endif
 #ifndef NO_LCMS
@@ -1811,7 +1814,7 @@ void CLASS kodak_radc_load_raw()
 #undef FORYX
 #undef PREDICTOR
 
-#ifdef NO_JPEG
+#ifndef HAVE_LIBJPEG
 void CLASS kodak_jpeg_load_raw() {}
 #else
 
@@ -5568,9 +5571,9 @@ cp_e2500:
     load_raw = nikon_load_raw;
   } else if (!strcmp(model,"FinePix S5100") ||
 	     !strcmp(model,"FinePix S5500")) {
-    top_margin = 6; /*Fix UFRaw bug #1367902 - NKBJ*/
+    top_margin = 6;                        /*Fix UFRaw bug #1367902 - NKBJ*/
     data_offset += top_margin*raw_width*2; /*Fix UFRaw bug #1367902 - NKBJ*/
-    height -= 6; /*Fix UFRaw bug #1367902 - NKBJ*/
+    height -= 6;                           /*Fix UFRaw bug #1367902 - NKBJ*/
     load_raw = unpacked_load_raw;
     maximum = 0x3e00;
   } else if (!strncmp(model,"FinePix",7)) {
@@ -6040,7 +6043,7 @@ konica_400z:
   }
 dng_skip:
   if (!load_raw || !height) is_raw = 0;
-#ifdef NO_JPEG
+#ifndef HAVE_LIBJPEG
   if (load_raw == kodak_jpeg_load_raw) {
     fprintf (stderr, "%s: You must link dcraw.c with libjpeg!!\n", ifname);
     is_raw = 0;

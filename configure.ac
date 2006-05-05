@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.36 2006/04/29 22:03:29 udifuchs Exp $
+dnl $Id: configure.ac,v 1.37 2006/05/05 06:50:22 nkbj Exp $
 AC_INIT(UFRaw, 0.8)
 AC_PREREQ(2.57)
 
@@ -187,10 +187,6 @@ if test $with_exiv2 = yes; then
 fi
 
 UFRAW_CFLAGS="$UFRAW_CFLAGS $EXIF_CFLAGS $GIMP_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS"
-if test $have_jpeg = no; then
-  # DCRaw assumes jpeg unless NO_JPEG, rather than using HAVE_LIBJPEG
-  UFRAW_CFLAGS="$UFRAW_CFLAGS -DNO_JPEG"
-fi
 UFRAW_LDADD="$EXIF_LIBS $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS"
 
 if test $ufraw_win32 = yes; then
