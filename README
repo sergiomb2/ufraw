@@ -82,7 +82,7 @@ Other options for the configuration script are:
 
 --with-exiv2:    use Exiv2 to read raw EXIF data.
 
---with-prefix=PREFIX: use also {REFOX as am input prefix for the build
+--with-prefix=PREFIX: use also PREFIX as am input prefix for the build
 
 --with-dosprefix=PREFIX: PREFIX is the prefix in dos format
                          (needed only in windows)
