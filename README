@@ -220,6 +220,10 @@ date user guide.
 
 History
 =======
+13/05/2006 - UFRaw-0.8.1 released, based on DCRaw v8.15.
+* Fix Gimp plug-in half-interpolation crash.
+* Fix possible crash in auto-exposure.
+
 04/05/2006 - UFRaw-0.8 released, based on DCRaw v8.13.
 * Preliminary zoom support, only up to 50% and with no scrolling.
 * Auto white balance is much faster.
