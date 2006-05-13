@@ -496,6 +496,12 @@ gboolean render_raw_histogram(preview_data *data)
 
     if (CFG->autoExposure == apply_state) {
 	ufraw_auto_expose(data->UF);
+	gdouble lower, upper;
+	g_object_get(data->ExposureAdjustment, "lower", &lower,
+		"upper", &upper, NULL);
+	/* Clip the exposure to prevent a "changed" signal */
+	if (CFG->exposure > upper) CFG->exposure = upper;
+	if (CFG->exposure < lower) CFG->exposure = lower;
 	gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
 	gtk_widget_set_sensitive(data->ResetExposureButton,
 		fabs( conf_default.exposure - CFG->exposure) > 0.001);

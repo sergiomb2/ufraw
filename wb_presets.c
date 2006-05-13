@@ -114,6 +114,13 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 20D", "Fluorescent", 0,	{ 1.752709, 1, 2.060098, 0 } },
   { "Canon", "EOS 20D", "Flash", 0,		{ 2.145813, 1, 1.293596, 0 } },
 
+  { "Canon", "EOS 30D", "Direct sunlight", 0,	{ 1.920898, 1, 1.514648, 0 } },
+  { "Canon", "EOS 30D", "Shade", 0,		{ 2.211914, 1, 1.251953, 0 } },
+  { "Canon", "EOS 30D", "Clouds", 0,		{ 2.073242, 1, 1.373047, 0 } },
+  { "Canon", "EOS 30D", "Tungsten", 0,		{ 1.340369, 1, 2.383465, 0 } },
+  { "Canon", "EOS 30D", "Fluorescent", 0,	{ 1.684063, 1, 2.245107, 0 } },
+  { "Canon", "EOS 30D", "Flash", 0,		{ 2.093750, 1, 1.330078, 0 } },
+
   { "Canon", "EOS 300D DIGITAL", "Daylight", 0, { 2.13702, 1, 1.15745, 0 } }, 
   { "Canon", "EOS 300D DIGITAL", "Cloudy", 0,   { 2.50961, 1, 0.97716, 0 } }, 
   { "Canon", "EOS 300D DIGITAL", "Tungsten", 0, { 2.32091, 1, 1.05529, 0 } }, 
