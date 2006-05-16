@@ -1,5 +1,5 @@
-dnl $Id: configure.ac,v 1.40 2006/05/13 21:09:07 udifuchs Exp $
-AC_INIT(UFRaw, 0.8.1)
+dnl $Id: configure.ac,v 1.41 2006/05/16 09:06:21 nkbj Exp $
+AC_INIT(UFRaw, 0.9)
 AC_PREREQ(2.57)
 
 # Create host_os, host_cpu variables
