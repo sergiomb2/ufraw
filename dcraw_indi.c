@@ -42,10 +42,7 @@ extern const float d65_white[3];
 #define SQR(x) ((x)*(x))
 #define LIM(x,min,max) MAX(min,MIN(x,max))
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
-/* dcraw.c defines:
- * #define CLIP(x) LIM(x,0,clip_max)
- * But in our case maximum should already be normalized to 0xFFFF */
-#define CLIP(x) LIM(x,0,0xFFFF)
+#define CLIP(x) LIM(x,0,65535)
 #define SWAP(a,b) { a ^= b; a ^= (b ^= a); }
 
 /*
