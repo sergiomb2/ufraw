@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.41 2006/05/16 09:06:21 nkbj Exp $
+dnl $Id: configure.ac,v 1.42 2006/05/21 06:34:17 nkbj Exp $
 AC_INIT(UFRaw, 0.9)
 AC_PREREQ(2.57)
 
@@ -162,12 +162,13 @@ AC_ARG_WITH(libexif,
 AC_MSG_RESULT($with_libexif)
 have_libexif=no
 COMMENT_LIBEXIF=";"
-# Check for exif via pkg-config.
+# Check for libexif via pkg-config.
 if test $with_libexif = yes; then
   PKG_CHECK_MODULES(EXIF, libexif >= 0.6.13,
     [ have_libexif=yes
       AC_DEFINE(HAVE_LIBEXIF, 1, have libexif)
-      COMMENT_LIBEXIF="" ])
+      COMMENT_LIBEXIF="" ],
+    AC_MSG_RESULT([$EXIF_PKG_ERRORS: libexif is not used]))
 fi
 AC_SUBST(COMMENT_LIBEXIF)
 
