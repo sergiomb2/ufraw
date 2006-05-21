@@ -33,3 +33,5 @@ Automatic profile selection based on camera model and serial#.
 
 Understand differences between ufraw with defaults and in-camera with
 defaults.  Document them, or fix them as bugs.
+
+Add highlight recovery from DCRaw.
