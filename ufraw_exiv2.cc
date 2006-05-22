@@ -17,8 +17,7 @@
 #ifdef HAVE_EXIV2
 #include <exiv2/image.hpp>
 #include <exiv2/exif.hpp>
-//#include <iostream>
-//#include <iomanip>
+#include <sstream>
 #include <cassert>
 extern "C" {
 #include <glib.h>
@@ -41,6 +40,17 @@ try {
         std::string error(filename);
         error += ": No Exif data found in the file";
         throw Exiv2::Error(1, error);
+    }
+    /* Reset orientation tag since UFRaw already rotates the image */
+    Exiv2::ExifKey key("Exif.Image.Orientation");
+    Exiv2::ExifData::iterator pos = exifData.findKey(key);
+    if (pos != exifData.end()) {
+	std::stringstream str;
+       	str << *pos;
+	ufraw_message(UFRAW_SET_LOG, "Reseting %s from '%d - %s' to '1'\n",
+		pos->key().c_str(), pos->value().toLong(),
+		str.str().c_str());
+	pos->setValue("1"); /* 1 = Normal orientation */
     }
     Exiv2::DataBuf const buf(exifData.copy());
     const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
