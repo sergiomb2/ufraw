@@ -14,7 +14,7 @@
  * independed of DCRaw.c's global variables.
  *
  * NOTICE: One must check if updates in dcraw.c effect this code.
- * This file was last synchronized with DCRaw 8.15, except for
+ * This file was last synchronized with DCRaw 8.19, except for
  * flip_image_INDI() which was last synchronized with DCRaw 7.94.
  */
 
@@ -304,7 +304,7 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
       }
     }
   }
-  brow[4] = calloc (width*3, sizeof **brow);
+  brow[4] = (ushort (*)[4]) calloc (width*3, sizeof **brow);
   merror (brow[4], "vng_interpolate()");
   for (row=0; row < 3; row++)
     brow[row] = brow[4] + row*width;
@@ -412,11 +412,11 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   dcraw_message (DCRAW_VERBOSE, "AHD interpolation...\n"); /*UF*/
 
   border_interpolate_INDI (height, width, image, filters, colors, 3);
-  buffer = malloc (26*TS*TS);			/* 1664 kB */
+  buffer = (char *) malloc (26*TS*TS);		/* 1664 kB */
   merror (buffer, "ahd_interpolate()");
-  rgb  = (void *) buffer;
-  lab  = (void *) (buffer + 12*TS*TS);
-  homo = (void *) (buffer + 24*TS*TS);
+  rgb  = (ushort(*)[TS][TS][3]) buffer;
+  lab  = (short (*)[TS][TS][3])(buffer + 12*TS*TS);
+  homo = (char  (*)[TS][TS])   (buffer + 24*TS*TS);
 
   for (top=0; top < height; top += TS-6)
     for (left=0; left < width; left += TS-6) {
@@ -522,7 +522,7 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
 //  step = sqrt(0.5);
   wide = fuji_width / step;
   high = (height - fuji_width) / step;
-  img = calloc (wide*high, sizeof *img);
+  img = (ushort (*)[4]) calloc (wide*high, sizeof *img);
   merror (img, "fuji_rotate()");
 
   for (row=0; row < high; row++)
