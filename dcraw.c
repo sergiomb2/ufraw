@@ -19,8 +19,8 @@
    copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
    purchase a license from the author.
 
-   $Revision: 1.328 $
-   $Date: 2006/05/21 20:04:39 $
+   $Revision: 1.329 $
+   $Date: 2006/05/28 05:07:49 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -684,7 +684,7 @@ void CLASS canon_compressed_load_raw()
   fseek (ifp, 540 + lowbits*raw_height*raw_width/4, SEEK_SET);
   zero_after_ff = 1;
   getbits(-1);
-  for (row = 0; row < raw_height; row += 8) {
+  for (row=0; row < raw_height; row+=8) {
     for (block=0; block < raw_width >> 3; block++) {
       memset (diffbuf, 0, sizeof diffbuf);
       decode = first_decode;
@@ -727,7 +727,7 @@ void CLASS canon_compressed_load_raw()
     for (r=0; r < 8; r++) {
       irow = row - top_margin + r;
       if (irow >= (unsigned) height) continue;
-      for (col = 0; col < raw_width; col++) {
+      for (col=0; col < raw_width; col++) {
 	icol = col - left_margin;
 	if (icol < (unsigned) width)
 	  BAYER(irow,icol) = pixel[r*raw_width+col];
@@ -2851,7 +2851,7 @@ void CLASS foveon_interpolate()
   active[1] -= keep[1];
   active[3] -= 2;
   i = active[2] - active[0];
-  for (row = 0; row < active[3]-active[1]; row++)
+  for (row=0; row < active[3]-active[1]; row++)
     memcpy (image[row*i], image[(row+active[1])*width+active[0]],
 	 i * sizeof *image);
   width = i;
@@ -3353,7 +3353,7 @@ void CLASS cam_to_cielab (ushort cam[4], float lab[3])
 
   if (cam == NULL) {
     for (i=0; i < 0x10000; i++) {
-      r = (float) i / maximum;
+      r = i / 65535.0;
       cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
     }
     for (i=0; i < 3; i++)
@@ -3988,6 +3988,16 @@ void CLASS parse_mos (int offset)
 	(uchar) "\x94\x61\x16\x49"[(flip/90 + frot) & 3];
 }
 
+void CLASS linear_table (unsigned len)
+{
+  int i;
+  if (len > 0x1000) len = 0x1000;
+  read_shorts (curve, len);
+  for (i=len; i < 0x1000; i++)
+    curve[i] = curve[i-1];
+  maximum = curve[0xfff];
+}
+
 int CLASS parse_tiff_ifd (int base, int level)
 {
   unsigned entries, tag, type, len, plen=16, save;
@@ -4196,14 +4206,8 @@ guess_cfa_pc:
 	}
 	break;
       case 291:
-      case 2317:
       case 50712:			/* LinearizationTable */
-	if (len > 0x1000)
-	    len = 0x1000;
-	read_shorts (curve, len);
-	for (i=len; i < 0x1000; i++)
-	  curve[i] = curve[i-1];
-	maximum = curve[0xfff];
+	linear_table (len);
 	break;
       case 50714:			/* BlackLevel */
       case 50715:			/* BlackLevelDeltaH */
@@ -4296,6 +4300,45 @@ guess_cfa_pc:
   return 0;
 }
 
+void CLASS parse_kodak_ifd (int base)
+{
+  unsigned entries, tag, type, len, save;
+  int i, c, wbi=-2, wbtemp;
+  char line[128];
+  static const char *wbs[] =
+  { "Auto","Daylight","Tungsten","Fluorescent","Flash" };
+  float mul[3], num;
+
+  entries = get2();
+  if (entries > 1024) return;
+  while (entries--) {
+    tiff_get (base, &tag, &type, &len, &save);
+    if (tag == 1009)
+      while ((int) len > 0) {
+	fgets (line, 128, ifp);
+	len -= strlen(line) + 1;
+	if (!strncmp (line, "White bal", 9)) {
+	  wbtemp = atoi (line + strlen(line) - 5);
+	  if (wbtemp < 1000) wbtemp = 6500;
+	  for (i=0; i < 5; i++)
+	    if (strstr (line, wbs[i])) wbi = i-1;
+	}
+      }
+    if (tag == (unsigned)(2130 + wbi))
+      FORC3 mul[c] = getreal(type);
+    if (tag == (unsigned)(2140 + wbi) && wbi >= 0)
+      FORC3 {
+	for (num=i=0; i < 4; i++)
+	  num += getreal(type) * pow (wbtemp/100.0, i);
+	cam_mul[c] = 2048 / (num * mul[c]);
+      }
+    if (tag == 2317) linear_table (len);
+    if (tag == 6020) iso_speed = getint(type);
+    fseek (ifp, save, SEEK_SET);
+  }
+  if (wbi == -1) cam_mul[0] = -1;
+}
+
 void CLASS parse_tiff (int base)
 {
   int doff, max_samp=0, raw=-1, thm=-1, i;
@@ -4313,7 +4356,7 @@ void CLASS parse_tiff (int base)
   }
   if (!dng_version && !strncmp(make,"Kodak",5)) {
     fseek (ifp, 12+base, SEEK_SET);
-    parse_tiff_ifd (base, 2);
+    parse_kodak_ifd (base);
   }
   thumb_misc = 16;
   if (thumb_offset) {
@@ -4504,7 +4547,7 @@ void CLASS parse_ciff (int offset, int length)
   fseek (ifp, tboff, SEEK_SET);
   nrecs = get2();
   if (nrecs > 100) return;
-  for (i = 0; i < nrecs; i++) {
+  for (i=0; i < nrecs; i++) {
     type = get2();
     len  = get4();
     save = ftell(ifp) + 4;
@@ -5231,6 +5274,9 @@ void CLASS identify()
     {  5067304, "AVT",      "F-510C"     ,0 },
     { 10134608, "AVT",      "F-510C"     ,0 },
     { 16157136, "AVT",      "F-810C"     ,0 },
+    {  1409024, "Sony",     "XCD-SX910CR",0 },
+    {  2818048, "Sony",     "XCD-SX910CR",0 },
+    {  3884928, "Micron",   "2010"       ,0 },
     {  6624000, "Pixelink", "A782"       ,0 },
     { 13248000, "Pixelink", "A782"       ,0 },
     {  6291456, "RoverShot","3320AF"     ,0 },
@@ -5254,8 +5300,8 @@ void CLASS identify()
     {  7426656, "CASIO",    "EX-P505"    ,1 },
     {  9313536, "CASIO",    "EX-P600"    ,1 },
     { 10979200, "CASIO",    "EX-P700"    ,1 },
-    {  3178560, "PENTAX",   "Optio S"    ,1 },  /*  8-bit */
-    {  4841984, "PENTAX",   "Optio S"    ,1 },  /* 12-bit */
+    {  3178560, "PENTAX",   "Optio S"    ,1 },
+    {  4841984, "PENTAX",   "Optio S"    ,1 },
     {  6114240, "PENTAX",   "Optio S4"   ,1 },  /* or S4i */
     { 12582980, "Sinar",    ""           ,0 } };
   static const char *corp[] =
@@ -5803,6 +5849,20 @@ konica_400z:
     width  = 3272;
     load_raw = unpacked_load_raw;
     maximum = 0xfff0;
+  } else if (!strcmp(model,"XCD-SX910CR")) {
+    height = 1024;
+    width  = 1375;
+    raw_width = 1376;
+    filters = 0x49494949;
+    maximum = 0x3ff;
+    load_raw = (fsize < 2000000) ? eight_bit_load_raw : unpacked_load_raw;
+  } else if (!strcmp(model,"2010")) {
+    height = 1207;
+    width  = 1608;
+    order = 0x4949;
+    data_offset = 3212;
+    maximum = 0x3ff;
+    load_raw = unpacked_load_raw;
   } else if (!strcmp(model,"A782")) {
     height = 3000;
     width  = 2208;
@@ -6164,7 +6224,6 @@ void CLASS apply_profile (char *input, char *output)
   hTransform = cmsCreateTransform (hInProfile, TYPE_RGBA_16,
 	hOutProfile, TYPE_RGBA_16, INTENT_PERCEPTUAL, 0);
   cmsDoTransform (hTransform, image, image, width*height);
-  maximum = 0xffff;
   raw_color = 1;		/* Don't use rgb_cam with a profile */
   cmsDeleteTransform (hTransform);
   cmsCloseProfile (hOutProfile);
@@ -6208,8 +6267,8 @@ void CLASS convert_to_rgb()
 
   mix_green = raw_color && rgb_cam[1][1] == rgb_cam[1][3];
   memset (histogram, 0, sizeof histogram);
-  for (row = 0; row < height; row++)
-    for (col = 0; col < width; col++) {
+  for (row=0; row < height; row++)
+    for (col=0; col < width; col++) {
       img = image[row*width+col];
       if (document_mode && filters)
 	img[0] = img[FC(row,col)];
@@ -6358,8 +6417,8 @@ void CLASS write_ppm16 (FILE *ofp)
     fprintf (ofp, "P%d\n%d %d\n%d\n",
 	colors/2+5, width, height, 65535);
 
-  for (row = 0; row < height; row++) {
-    for (col = 0; col < width; col++)
+  for (row=0; row < height; row++) {
+    for (col=0; col < width; col++)
       FORCC ppm[col*colors+c] = htons(image[row*width+col][c]);
     fwrite (ppm, 2*colors, width, ofp);
   }
@@ -6395,8 +6454,8 @@ void CLASS write_psd (FILE *ofp)
   merror (buffer, "write_psd()");
   pred = buffer;
 
-  for (row = 0; row < height; row++)
-    for (col = 0; col < width; col++) {
+  for (row=0; row < height; row++)
+    for (col=0; col < width; col++) {
       FORCC pred[c*psize] = htons(image[row*width+col][c]);
       pred++;
     }
@@ -6429,7 +6488,7 @@ int CLASS main (int argc, char **argv)
   if (argc == 1)
   {
     fprintf (stderr,
-    "\nRaw Photo Decoder \"dcraw\" v8.19"
+    "\nRaw Photo Decoder \"dcraw\" v8.20"
     "\nby Dave Coffin, dcoffin a cybercom o net"
     "\n\nUsage:  %s [options] file1 file2 ...\n"
     "\nValid options:"
