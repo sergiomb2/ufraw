@@ -363,7 +363,7 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 }
 
 void CLASS cam_to_cielab_INDI (ushort cam[4], float lab[3],
-	const int colors, const int maximum, const float rgb_cam[3][4])
+	const int colors, const float rgb_cam[3][4])
 {
   int c, i, j, k;
   float r, xyz[3];
@@ -371,7 +371,7 @@ void CLASS cam_to_cielab_INDI (ushort cam[4], float lab[3],
 
   if (cam == NULL) {
     for (i=0; i < 0x10000; i++) {
-      r = (float) i / maximum;
+      r = (float) i / 65535.0;
       cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
     }
     for (i=0; i < 3; i++)
@@ -398,7 +398,7 @@ void CLASS cam_to_cielab_INDI (ushort cam[4], float lab[3],
 
 void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
         const int width, const int height, const int colors,
-	const int maximum, const float rgb_cam[3][4])
+       	const float rgb_cam[3][4])
 {
   int i, j, top, left, row, col, tr, tc, fc, c, d, val, hm[2];
   ushort (*pix)[4], (*rix)[3];
@@ -457,7 +457,7 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 	    rix[0][c] = CLIP(val);
 	    c = FC(row,col);
 	    rix[0][c] = pix[0][c];
-	    cam_to_cielab_INDI (rix[0], flab, colors, maximum, rgb_cam);
+	    cam_to_cielab_INDI (rix[0], flab, colors, rgb_cam);
 	    FORC3 lab[d][row-top][col-left][c] = 64*flab[c];
 	  }
 /*  Build homogeneity maps from the CIELab images:		*/
