@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.42 2006/05/21 06:34:17 nkbj Exp $
+dnl $Id: configure.ac,v 1.43 2006/05/31 05:39:09 nkbj Exp $
 AC_INIT(UFRaw, 0.9)
 AC_PREREQ(2.57)
 
@@ -168,7 +168,7 @@ if test $with_libexif = yes; then
     [ have_libexif=yes
       AC_DEFINE(HAVE_LIBEXIF, 1, have libexif)
       COMMENT_LIBEXIF="" ],
-    AC_MSG_RESULT([$EXIF_PKG_ERRORS: libexif is not used]))
+    AC_MSG_RESULT($EXIF_PKG_ERRORS))
 fi
 AC_SUBST(COMMENT_LIBEXIF)
 
