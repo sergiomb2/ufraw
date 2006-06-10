@@ -489,6 +489,7 @@ int ufraw_set_wb(ufraw_data *uf)
             uf->conf->chanMul[c] = 1.0/sum;
         }
 	g_free(histogram);
+	uf->conf->WBTuning = 0;
     } else if ( !strcmp(uf->conf->wb, camera_wb) ) {
         if ( (status=dcraw_set_color_scale(raw,
 		!strcmp(uf->conf->wb, auto_wb),
