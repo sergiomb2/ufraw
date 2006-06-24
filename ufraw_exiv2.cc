@@ -24,47 +24,135 @@ extern "C" {
 #include "ufraw.h"
 }
 
-extern "C" int ufraw_exif_from_exiv2(void *ifp, char *filename,
-	unsigned char **exifBuf, unsigned int *exifBufLen)
+extern "C" int ufraw_exif_from_exiv2(ufraw_data *uf)
 try {
-    ifp = ifp;
-    *exifBuf = NULL;
-    *exifBufLen = 0;
+    uf->exifBuf = NULL;
+    uf->exifBufLen = 0;
 
-    Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(filename);
+    Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(uf->filename);
     assert(image.get() != 0);
     image->readMetadata();
 
     Exiv2::ExifData &exifData = image->exifData();
     if (exifData.empty()) {
-        std::string error(filename);
+        std::string error(uf->filename);
         error += ": No Exif data found in the file";
         throw Exiv2::Error(1, error);
     }
     /* Reset orientation tag since UFRaw already rotates the image */
-    Exiv2::ExifKey key("Exif.Image.Orientation");
-    Exiv2::ExifData::iterator pos = exifData.findKey(key);
-    if (pos != exifData.end()) {
-	std::stringstream str;
-       	str << *pos;
-	ufraw_message(UFRAW_SET_LOG, "Reseting %s from '%d - %s' to '1'\n",
-		pos->key().c_str(), pos->value().toLong(),
-		str.str().c_str());
+    Exiv2::ExifData::iterator pos;
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.Orientation")))
+	    != exifData.end() ) {
+	ufraw_message(UFRAW_SET_LOG, "Reseting %s from '%d'  to '1'\n",
+		pos->key().c_str(), pos->value().toLong());
 	pos->setValue("1"); /* 1 = Normal orientation */
     }
     Exiv2::DataBuf const buf(exifData.copy());
     const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
-    *exifBufLen = buf.size_ + sizeof(ExifHeader);
-    *exifBuf = g_new(unsigned char, *exifBufLen);
-    memcpy(*exifBuf, ExifHeader, sizeof(ExifHeader));
-    memcpy(*exifBuf+sizeof(ExifHeader), buf.pData_, buf.size_);
+    uf->exifBufLen = buf.size_ + sizeof(ExifHeader);
+    uf->exifBuf = g_new(unsigned char, uf->exifBufLen);
+    memcpy(uf->exifBuf, ExifHeader, sizeof(ExifHeader));
+    memcpy(uf->exifBuf+sizeof(ExifHeader), buf.pData_, buf.size_);
     ufraw_message(UFRAW_SET_LOG, "EXIF data read using exiv2, buflen %d\n",
-	    *exifBufLen);
+	    uf->exifBufLen);
+    g_strlcpy(uf->conf->exifSource, EXV_PACKAGE_STRING, max_name);
 
-    Exiv2::ExifData::const_iterator end = exifData.end();
-    for (Exiv2::ExifData::const_iterator i = exifData.begin(); i != end; ++i) {
-	ufraw_message(UFRAW_SET_LOG, "%s: %s\n",
-		i->key().c_str(), i->value().toString().c_str());
+    /* List of tag names taken from exiv2's printSummary() in actions.cpp */
+    /* Read shutter time */
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.ExposureTime")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->shutterText, str.str().c_str(), max_name);
+    } else if ( (pos=exifData.findKey(
+		    Exiv2::ExifKey("Exif.Photo.ShutterSpeedValue")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->shutterText, str.str().c_str(), max_name);
+    }
+    /* Read aperture */
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.FNumber")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->apertureText, str.str().c_str(), max_name);
+    } else if ( (pos=exifData.findKey(
+		    Exiv2::ExifKey("Exif.Photo.ApertureValue")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->apertureText, str.str().c_str(), max_name);
+    }
+    /* Read ISO speed */
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.ISOSpeedRatings")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
+    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.CanonCs2.ISOSpeed")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
+    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon1.ISOSpeed")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
+    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon2.ISOSpeed")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
+    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.ISOSpeed")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
+    } else if ( (pos=exifData.findKey(
+		    Exiv2::ExifKey("Exif.MinoltaCsNew.ISOSpeed")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
+    } else if ( (pos=exifData.findKey(
+		    Exiv2::ExifKey("Exif.MinoltaCsOld.ISOSpeed")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
+    } else if ( (pos=exifData.findKey(
+		    Exiv2::ExifKey("Exif.MinoltaCs5D.ISOSpeed")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
+    } else if ( (pos=exifData.findKey(Exiv2::ExifKey(
+			"Exif.MinoltaCs7D.ISOSpeed")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
+    }
+    /* Read focal length */
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.FocalLength")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	if ( (pos=exifData.findKey(
+			Exiv2::ExifKey("Exif.Photo.FocalLengthIn35mmFilm")))
+		!= exifData.end() ) {
+	    str << "(35mm equivalent: " << *pos << ")";
+	}
+	g_strlcpy(uf->conf->focalLenText, str.str().c_str(), max_name);
+    }
+    /* Read lens name */
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.Lens")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->lensText, str.str().c_str(), max_name);
     }
     return UFRAW_SUCCESS;
 }

@@ -1,7 +1,7 @@
-# $Id: Makefile.am,v 1.16 2006/03/16 06:43:35 nkbj Exp $
+# $Id: Makefile.am,v 1.17 2006/06/24 16:20:27 udifuchs Exp $
 
 if MAKE_EXTRAS
-  bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve ufraw-exif
+  bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve
 else
   bin_PROGRAMS = ufraw ufraw-batch
 endif
@@ -69,11 +69,6 @@ if MAKE_EXTRAS
   nikon_curve_CFLAGS = $(UFRAW_CFLAGS) -D_STAND_ALONE_
   nikon_curve_LDFLAGS = @CONSOLE@
   nikon_curve_LDADD = $(UFRAW_LDADD)
-
-  ufraw_exif_SOURCES = ufraw_exif.c ufraw_exiv2.cc
-  ufraw_exif_CFLAGS = $(UFRAW_CFLAGS) -D_STAND_ALONE_
-  ufraw_exif_LDFLAGS = @CONSOLE@
-  ufraw_exif_LDADD = $(UFRAW_LDADD)
 endif
 
 #ufraw_icon.h: ufraw.png

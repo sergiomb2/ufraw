@@ -10,12 +10,6 @@
  * It uses DCRaw code to do the actual raw decoding.
  */
 
-// uncomment the next lines to compile ufraw_exif as a stand-alone tool.
-//#define _STAND_ALONE_
-//#define HAVE_LIBEXIF
-//#define HAVE_LIBTIFF
-//#define HAVE_EXIV2
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -34,39 +28,11 @@
 #ifdef HAVE_LIBTIFF
 #include <tiffio.h>
 #endif
-
-#ifdef HAVE_EXIV2
-int ufraw_exif_from_exiv2(void *ifp, char *filename,
-	unsigned char **exifBuf, unsigned int *exifBufLen);
-#endif
-
-#ifdef _STAND_ALONE_
-#include <stdarg.h>
-#include <jpeglib.h>
-#define UFRAW_SET_LOG 0
-#define UFRAW_SET_WARNING 1
-#define UFRAW_RESET 0
-#define UFRAW_SUCCESS 0
-#define UFRAW_ERROR 1
-void ufraw_message(int code, const char *format, ...)
-{
-    if (format==NULL) return;
-    va_list ap;
-    va_start(ap, format);
-    if (code==UFRAW_SET_LOG) {
-        vfprintf(stdout, format, ap);
-        fflush(stdout);
-    } else {\
-        vfprintf(stderr, format, ap);\
-        fflush(stderr);\
-    }
-    va_end(ap);
-}
-#define max_name 80
-#define max_path 256
-#else
 #include <glib.h>
 #include "ufraw.h"
+
+#ifdef HAVE_EXIV2
+int ufraw_exif_from_exiv2(ufraw_data *uf);
 #endif
 
 void tiff_message(const char *module, const char *fmt, va_list ap)
@@ -77,8 +43,8 @@ void tiff_message(const char *module, const char *fmt, va_list ap)
     ufraw_message(UFRAW_SET_WARNING, "%s\n", buf);
 }
 
-#if defined(HAVE_LIBEXIF) && defined(HAVE_LIBTIFF)
-static ExifData* ufraw_exif_from_tiff(void *ifp, char *filename)
+#if defined(HAVE_LIBEXIF) && defined(HAVE_LIBTIFF) && defined(USE_LIBEXIF_LIBTIFF_HACK)
+static ExifData* ufraw_exif_from_tiff(char *filename)
 {
    TIFF *tiff;
 //    unsigned short tiffOrientation;
@@ -93,7 +59,6 @@ static ExifData* ufraw_exif_from_tiff(void *ifp, char *filename)
     /* It seems more elegant to use the same FILE * as DCRaw,
      * but it does not work for me at the moment */
 //    if ((tiff = TIFFFdOpen(fileno((FILE *)ifp), filename, "r")) == NULL)
-    ifp = ifp;
 
     /* Open the NEF TIFF file */
     if ((tiff = TIFFOpen(filename, "r")) == NULL)
@@ -251,13 +216,12 @@ static ExifData* ufraw_exif_from_tiff(void *ifp, char *filename)
 }
 #endif
 
-int ufraw_exif_from_raw(void *ifp, char *filename,
-    unsigned char **exifBuf, unsigned int *exifBufLen)
+int ufraw_exif_from_raw(ufraw_data *uf)
 {
-    *exifBuf = NULL;
-    *exifBufLen = 0;
+    uf->exifBuf = NULL;
+    uf->exifBufLen = 0;
 #ifdef HAVE_EXIV2
-    int status = ufraw_exif_from_exiv2(ifp, filename, exifBuf, exifBufLen);
+    int status = ufraw_exif_from_exiv2(uf);
     if (status==UFRAW_SUCCESS)
 	return status;
 #ifdef HAVE_LIBEXIF
@@ -270,131 +234,68 @@ int ufraw_exif_from_raw(void *ifp, char *filename,
 #ifdef HAVE_LIBEXIF
     ExifData *exifData = NULL;
 
-    *exifBuf = NULL;
-    *exifBufLen = 0;
-
     ufraw_message(UFRAW_RESET, NULL);
 
     /* Try "native" libexif first */
-    exifData = exif_data_new_from_file(filename);
+    exifData = exif_data_new_from_file(uf->filename);
     if (exifData != NULL) {
 	if (exifData->size == 0) {
 	    exif_data_free(exifData);
 	    exifData = NULL;
+	} else {
+	    g_strlcpy(uf->conf->exifSource, "libexif", max_name);
 	}
     }
-#ifdef HAVE_LIBTIFF 
-    if (exifData == NULL)
-	exifData = ufraw_exif_from_tiff(ifp, filename);
+#if defined(HAVE_LIBTIFF) && defined(USE_LIBEXIF_LIBTIFF_HACK)
+    if (exifData == NULL) {
+	exifData = ufraw_exif_from_tiff(uf->filename);
+	if (exifData != NULL)
+	    g_strlcpy(uf->conf->exifSource, "libexif/libtiff", max_name);
+    }
 #endif
     if (exifData == NULL)
 	return UFRAW_ERROR;
     
-    exif_data_save_data(exifData, exifBuf, exifBufLen);
+    exif_data_save_data(exifData, &uf->exifBuf, &uf->exifBufLen);
 
-    char value[max_name];
-    int i,j;
-    for (i=0; i<EXIF_IFD_COUNT; i++) {
-        ExifContent *content = exifData->ifd[i];
-        if (content==NULL) continue;
-        for (j=0; j<(int)content->count; j++) {
-            ExifEntry *entry = content->entries[j];
-            ufraw_message(UFRAW_SET_LOG, "EXIF tag 0x%04x: %s : %s\n",
-                    entry->tag,
-                    exif_tag_get_title(entry->tag),
-                    exif_entry_get_value(entry, value, max_name));
-        }
-    }
-/*  Interesting tags:
-    int tag;
+    ExifEntry *entry;
+    int tag, i;
     tag = EXIF_TAG_EXPOSURE_TIME;
-    if ( (entry=exif_content_get_entry(exifData->ifd[EXIF_IFD_0], tag))!=NULL) {
-        ufraw_message(UFRAW_SET_LOG, "%s : %s\n", exif_tag_get_title(tag),
-                        exif_entry_get_value(entry, value, max_name));
+    for (i=0, entry=NULL; i<EXIF_IFD_COUNT && entry==NULL; i++)
+	entry=exif_content_get_entry(exifData->ifd[i], tag);
+    if ( entry!=NULL) {
+        exif_entry_get_value(entry, uf->conf->shutterText, max_name);
     }
-    tag = EXIF_TAG_FNUMBER;
-    tag = EXIF_TAG_ISO_SPEED_RATINGS;
-    tag = EXIF_TAG_DATE_TIME_ORIGINAL;
     tag = EXIF_TAG_APERTURE_VALUE;
-    tag = EXIF_TAG_FOCAL_LENGTH;
-    tag = EXIF_TAG_SUBJECT_DISTANCE;
-*/
-    ExifMnoteData *notes = exif_data_get_mnote_data (exifData);
-    if (notes==NULL) {
-        ufraw_message(UFRAW_SET_LOG, "EXIF unknown MakerNote format.\n");
+    for (i=0, entry=NULL; i<EXIF_IFD_COUNT && entry==NULL; i++)
+	entry=exif_content_get_entry(exifData->ifd[i], tag);
+    if ( entry!=NULL) {
+        exif_entry_get_value(entry, uf->conf->apertureText, max_name);
     } else {
-        int c = exif_mnote_data_count (notes);
-        ufraw_message(UFRAW_SET_LOG, "EXIF MakerNote contains %i values:\n", c);
-        for (i = 0; i < c; i++)
-            ufraw_message(UFRAW_SET_LOG, "EXIF tag 0x%04x: %s : %s\n",
-                    i, exif_mnote_data_get_title (notes, i),
-                    exif_mnote_data_get_value (notes, i, value, max_name));
+	tag = EXIF_TAG_FNUMBER;
+	for (i=0, entry=NULL; i<EXIF_IFD_COUNT && entry==NULL; i++)
+	    entry=exif_content_get_entry(exifData->ifd[i], tag);
+	if ( entry!=NULL) {
+	    exif_entry_get_value(entry, uf->conf->apertureText, max_name);
+	}
+    }
+    tag = EXIF_TAG_ISO_SPEED_RATINGS;
+    for (i=0, entry=NULL; i<EXIF_IFD_COUNT && entry==NULL; i++)
+	entry=exif_content_get_entry(exifData->ifd[i], tag);
+    if ( entry!=NULL) {
+        exif_entry_get_value(entry, uf->conf->isoText, max_name);
+    }
+    tag = EXIF_TAG_FOCAL_LENGTH;
+    for (i=0, entry=NULL; i<EXIF_IFD_COUNT && entry==NULL; i++)
+	entry=exif_content_get_entry(exifData->ifd[i], tag);
+    if ( entry!=NULL) {
+        exif_entry_get_value(entry, uf->conf->focalLenText, max_name);
     }
     exif_data_unref(exifData);
 
     return UFRAW_SUCCESS;
 #endif /*HAVE_LIBEXIF*/
-    ifp = ifp;
-    filename = filename;
+    uf = uf;
     ufraw_message(UFRAW_SET_LOG, "ufraw built without EXIF support\n");
     return UFRAW_ERROR;
 }
-
-#ifdef _STAND_ALONE_
-
-char usage[] = "usage: ufraw-exif input-file.raw [output-file.jpg]\n\n"
-"ufraw-exif dumps the EXIF data from the RAW file to stdout.\n"
-"If a JPEG file is specified, the EXIF data is copied to it.\n"
-"This overwrites the original JPEG, so make sure you have a backup for it.\n";
-
-int main(int argc, char **argv)
-{
-    unsigned char *buf;
-    unsigned int len;
-    if (argc<2 || !strcmp(argv[1],"-h") || !strcmp(argv[1],"--help") ) {
-        ufraw_message(UFRAW_SET_WARNING, usage);
-        exit(0);
-    }
-    if (ufraw_exif_from_raw(NULL, argv[1], &buf, &len)!=UFRAW_SUCCESS)
-        exit(1);
-
-    if (argc<3)
-        exit(0);
-
-    struct jpeg_decompress_struct srcinfo;
-    struct jpeg_compress_struct dstinfo;
-    struct jpeg_error_mgr jsrcerr, jdsterr;
-    jvirt_barray_ptr *coef;
-    FILE *in, *out;
-
-    srcinfo.err = jpeg_std_error(&jsrcerr);
-    jpeg_create_decompress(&srcinfo);
-    dstinfo.err = jpeg_std_error(&jdsterr);
-    jpeg_create_compress(&dstinfo);
-    if ( (in=fopen(argv[2], "rb"))==NULL) {
-        ufraw_message(UFRAW_SET_WARNING, "Error reading JPEG file %s: %s\n",
-                argv[2], strerror(errno));
-        exit(1);
-    }
-    jpeg_stdio_src(&srcinfo, in);
-    jpeg_read_header(&srcinfo, TRUE);
-    coef = jpeg_read_coefficients(&srcinfo);
-    jpeg_copy_critical_parameters(&srcinfo, &dstinfo);
-    if ( (out=fopen(argv[2], "wb"))==NULL) {
-        ufraw_message(UFRAW_SET_WARNING, "Error writing JPEG file %s: %s\n",
-                argv[2], strerror(errno));
-        exit(1);
-    }
-    jpeg_stdio_dest(&dstinfo, out);
-    jpeg_write_coefficients(&dstinfo, coef);
-    jpeg_write_marker(&dstinfo, JPEG_APP0+1, buf, len);
-    jpeg_finish_compress(&dstinfo);
-    jpeg_destroy_compress(&dstinfo);
-    fclose(out);
-    jpeg_finish_decompress(&srcinfo);
-    jpeg_destroy_decompress(&srcinfo);
-    fclose(in);
-
-    exit(0);
-}
-#endif

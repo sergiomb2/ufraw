@@ -78,7 +78,8 @@ const conf_data conf_default = {
     FALSE, /* underExp indicator */
     "", "", /* curvePath, profilePath */
     0.0, 0.0, 0.0, 0.0, /* iso_speed, shutter, aperture, focal_len */
-    "", "", "" /* timestamp, make, model */
+    "", "", "", "", /* exifSource, isoText, shutterText, apertureText */
+    "", "", "", "", "" /* focalLenText, lensText, timestamp, make, model */
 };
 
 const char *interpolationNames[] =
@@ -824,15 +825,16 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     if (IDFilename!=NULL) {
 	buf = uf_markup_buf(buf, "<Timestamp>%s</Timestamp>\n", c->timestamp);
 	buf = uf_markup_buf(buf, "<ISOSpeed>%d</ISOSpeed>\n",
-		(int)c->iso_speed);
-	if (c->shutter>0 && c->shutter<1)
-	    buf = uf_markup_buf(buf, "<Shutter>1/%0.1f</Shutter>\n",
-		    1/c->shutter);
-	else
-	    buf = uf_markup_buf(buf, "<Shutter>%0.1f</Shutter>\n", c->shutter);
-	buf = uf_markup_buf(buf, "<Aperture>f/%0.1f</Aperture>\n", c->aperture);
-	buf = uf_markup_buf(buf, "<FocalLength>%d mm</FocalLength>\n",
-		(int)c->focal_len);
+		(int)c->isoText);
+	buf = uf_markup_buf(buf, "<Shutter>%s</Shutter>\n", c->shutterText);
+	buf = uf_markup_buf(buf, "<Aperture>%s</Aperture>\n", c->apertureText);
+	buf = uf_markup_buf(buf, "<FocalLength>%s</FocalLength>\n",
+		(int)c->focalLenText);
+	if (strlen(c->lensText)>0)
+	    buf = uf_markup_buf(buf, "<Lens>%s</Lens>\n",
+		    (int)c->lensText);
+	buf = uf_markup_buf(buf, "<EXIFSource>%s</EXIFSource>\n",
+		(int)c->exifSource);
 	char *log = ufraw_message(UFRAW_GET_LOG, NULL);
 	if (log!=NULL) {
 	    char *utf8 = g_filename_to_utf8(log, -1, NULL, NULL, NULL);

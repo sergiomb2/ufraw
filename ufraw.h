@@ -159,6 +159,8 @@ typedef struct {
 
     /* EXIF data */
     float iso_speed, shutter, aperture, focal_len;
+    char exifSource[max_name], isoText[max_name], shutterText[max_name],
+	 apertureText[max_name], focalLenText[max_name], lensText[max_name];
     char timestamp[max_name], make[max_name], model[max_name];
 } conf_data;
 
@@ -259,8 +261,7 @@ int ufraw_batch_saver(ufraw_data *uf);
 void ufraw_chooser(conf_data *conf, char *defPath);
 
 /* prototype for functions in ufraw_exif.c */
-int ufraw_exif_from_raw(void *ifd, char *filename, unsigned char **exifBuf,
-    unsigned int *exifBufLen);
+int ufraw_exif_from_raw(ufraw_data *uf);
 
 /* status numbers from DCRaw and UFRaw */
 #define UFRAW_SUCCESS 0

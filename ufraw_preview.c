@@ -1121,7 +1121,7 @@ GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
     } else {
 	table = gtk_table_new(10, 10, FALSE);
         frame = gtk_frame_new(NULL);
-        gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 0);
         gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(table));
     }
     return table;
@@ -2267,6 +2267,41 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(zoom_out_event), NULL);
     /* End of Zoom page */
+
+    /* Start of EXIF page */
+    page = table_with_frame(noteBox, "EXIF", TRUE);
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+
+    align = gtk_scrolled_window_new(NULL, NULL);
+    gtk_table_attach(table, align, 0, 1, 0, 1, GTK_EXPAND|GTK_FILL,
+	    GTK_EXPAND|GTK_FILL, 0, 0);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(align),
+            GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    label = gtk_text_view_new();
+    gtk_container_add(GTK_CONTAINER(align), label);
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(label), FALSE);
+    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(label), FALSE);
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(label));
+    GString *message = g_string_new("");
+    g_string_append_printf(message, "Camera: %s %s\n", CFG->make, CFG->model);
+    g_string_append_printf(message, "Timestamp: %s\n", CFG->timestamp);
+    g_string_append_printf(message, "Shutter: %s\n", CFG->shutterText);
+    g_string_append_printf(message, "Aperture: %s\n", CFG->apertureText);
+    g_string_append_printf(message, "ISO speed: %s\n", CFG->isoText);
+    g_string_append_printf(message, "Focal length: %s\n",
+	    CFG->focalLenText);
+    if (strlen(CFG->lensText)>0)
+	g_string_append_printf(message, "Lens: %s\n", CFG->lensText);
+    g_string_append_printf(message, "\nEXIF data read by %s", CFG->exifSource);
+    gtk_text_buffer_set_text(buffer, message->str, -1);
+    g_string_free(message, TRUE);
+    if (uf->exifBuf==NULL) {
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(label), "<span foreground='red'>"
+		"Warning: EXIF data will not be sent to output</span>");
+	gtk_table_attach(table, label, 0, 1, 1, 2, 0, 0, 0, 0);
+    }
+    /* End of EXIF page */
 
     table = GTK_TABLE(table_with_frame(previewVBox, expanderText[live_expander],
             CFG->expander[live_expander]));
