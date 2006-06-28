@@ -95,10 +95,13 @@ int main (int argc, char **argv)
 	    conf.version = 0;
 	}
     }
+    cmd.darkframe=ufraw_load_darkframe(cmd.darkframeFile);
+
     if (optInd==argc) {
 	status = ufraw_config(NULL, &rc, &conf, &cmd);
 	if (status==UFRAW_ERROR) exit(1);
 	ufraw_chooser(&rc, NULL);
+//	ufraw_close(cmd.darkframe);
 	exit(0);
     }
     /* If there only one argument and it is a directory, use it as the
@@ -107,6 +110,7 @@ int main (int argc, char **argv)
 	status = ufraw_config(NULL, &rc, &conf, &cmd);
 	if (status==UFRAW_ERROR) exit(1);
         ufraw_chooser(&rc, argv[optInd]);
+//	ufraw_close(cmd.darkframe);
         exit(0);
     }
 	
@@ -123,5 +127,6 @@ int main (int argc, char **argv)
     }
     if (dummyWindow!=NULL) gtk_widget_destroy(dummyWindow);
 
+//    ufraw_close(cmd.darkframe);
     exit(0);
 }

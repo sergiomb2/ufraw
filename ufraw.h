@@ -138,6 +138,8 @@ typedef struct {
     profile_data profile[profile_types][max_profiles];
     int intent;
     int interpolation;
+    char darkframeFile[max_path];
+    struct ufraw_struct *darkframe;
 
     /* SAVE options */
     char inputFilename[max_path], outputFilename[max_path],
@@ -169,7 +171,7 @@ typedef struct {
     int height, width;
 } image_data;
 
-typedef struct {
+typedef struct ufraw_struct {
     char filename[max_path];
     int predictateHeight, predictateWidth, rgbMax, colors, raw_color, useMatrix;
     float rgb_cam[3][4];
@@ -200,6 +202,7 @@ extern char *ufraw_binary;
 ufraw_data *ufraw_open(char *filename);
 int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf,conf_data *cmd);
 int ufraw_load_raw(ufraw_data *uf);
+ufraw_data *ufraw_load_darkframe(char *darkframeFilename);
 int ufraw_convert_image(ufraw_data *uf);
 void ufraw_close(ufraw_data *uf);
 int ufraw_set_wb(ufraw_data *uf);

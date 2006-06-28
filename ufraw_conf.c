@@ -58,7 +58,7 @@ const conf_data conf_default = {
         { "Some ICC Profile", "", "", 0.0, 0.0, FALSE } } },
     0, /* intent */
     ahd_interpolation, /* interpolation */
-
+    "", NULL, /* darkframeFile, darkframe */
     /* Save options */
     "", "", "", /* inputFilename, outputFilename, outputPath */
     ppm8_type, 85, no_id, /* type, compression, createID */
@@ -445,6 +445,8 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     if (!strcmp("Intent", element)) sscanf(temp, "%d", &c->intent);
     if (!strcmp("Make", element)) g_strlcpy(c->make, temp, max_name);
     if (!strcmp("Model", element)) g_strlcpy(c->model, temp, max_name);
+    if (!strcmp("DarkframeFile", element))
+	g_strlcpy(c->darkframeFile, temp, max_path);
     if (!strcmp("ProfilePath", element)) {
 	char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
 	if (utf8!=NULL)
@@ -823,6 +825,9 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     buf = uf_markup_buf(buf, "<Make>%s</Make>\n", c->make);
     buf = uf_markup_buf(buf, "<Model>%s</Model>\n", c->model);
     if (IDFilename!=NULL) {
+	if (strcmp(c->darkframeFile, conf_default.darkframeFile)!=0)
+	    buf = uf_markup_buf(buf,
+		    "<DarkframeFile>%s</DarkframeFile>\n", c->darkframeFile);
 	buf = uf_markup_buf(buf, "<Timestamp>%s</Timestamp>\n", c->timestamp);
 	buf = uf_markup_buf(buf, "<ISOSpeed>%d</ISOSpeed>\n",
 		(int)c->isoText);
@@ -842,6 +847,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 		buf = uf_markup_buf(buf, "<Log>\n%s</Log>\n", utf8);
 	    g_free(utf8);
 	}
+	/* As long as darkframe is not in the GUI we save it only to ID files.*/
     }
     buf = uf_markup_buf(buf, "</UFRaw>\n");
     uf_reset_locale(locale);
@@ -892,6 +898,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->autoExposure = src->autoExposure;
     dst->autoBlack = src->autoBlack;
     dst->unclip = src->unclip;
+    g_strlcpy(dst->darkframeFile, src->darkframeFile, max_path);
     /* We only copy the current BaseCurve */
     if (src->BaseCurveIndex<=camera_curve) {
         dst->BaseCurveIndex = src->BaseCurveIndex;
@@ -1043,6 +1050,10 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     }
     if (cmd->type>=0) conf->type = cmd->type;
     if (cmd->createID>=0) conf->createID = cmd->createID;
+    if (strlen(cmd->darkframeFile)>0)
+	g_strlcpy(conf->darkframeFile, cmd->darkframeFile, max_path);
+    if (cmd->darkframe!=NULL)
+	conf->darkframe = cmd->darkframe;
     if (strlen(cmd->outputPath)>0)
 	g_strlcpy(conf->outputPath, cmd->outputPath, max_path);
     if (strlen(cmd->outputFilename)>0) {
@@ -1123,6 +1134,7 @@ char helpText[]=
 "--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 "--output=FILE         Output file name, use '-' to output to stdout.\n"
+"--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
 "--overwrite           Overwrite existing files without asking (default no).\n"
 "\n"
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
@@ -1185,7 +1197,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     char *wbName=NULL;
     char *baseCurveName=NULL, *baseCurveFile=NULL,
 	 *curveName=NULL, *curveFile=NULL, *outTypeName=NULL,
-         *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL, *interpolationName=NULL;
+         *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL,
+         *interpolationName=NULL, *darkframeFile=NULL;
     static struct option options[] = {
         {"wb", 1, 0, 'w'},
         {"temperature", 1, 0, 't'},
@@ -1207,6 +1220,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         {"create-id", 1, 0, 'I'},
         {"out-path", 1, 0, 'p'},
         {"output", 1, 0, 'o'},
+        {"darkframe",1,0,'a'},
         {"conf", 1, 0, 'C'},
 /* Binary flags that don't have a value are here at the end */
         {"unclip", 0, 0, 'u'},
@@ -1227,7 +1241,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	&cmd->saturation,
         &cmd->exposure, &cmd->black, &interpolationName,
 	&cmd->shrink, &cmd->size, &cmd->compression,
-	&outTypeName, &createIDName, &outPath, &output, &conf };
+	&outTypeName, &createIDName, &outPath, &output, &darkframeFile, &conf };
     cmd->autoExposure = disabled_state;
     cmd->autoBlack = disabled_state;
     cmd->unclip=-1;
@@ -1292,6 +1306,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         case 'I':
         case 'p':
         case 'o':
+        case 'a':
         case 'C':
             *(char **)optPointer[index] = optarg;
             break;
@@ -1516,6 +1531,17 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         }
         g_strlcpy(cmd->outputFilename, output, max_path);
     }
+    g_strlcpy(cmd->darkframeFile, "", max_path);
+    if (darkframeFile!=NULL) {
+        if (*argc-optind>1) {
+            ufraw_message(UFRAW_ERROR, "can have only 1 darkframe");
+            return -1;
+        }
+	char *df = uf_file_set_absolute(darkframeFile);
+	cmd->darkframe = ufraw_load_darkframe(df);
+        g_strlcpy(cmd->darkframeFile, df, max_path);
+	g_free(df);
+    }    
     /* cmd->inputFilename is used to store the conf file */
     g_strlcpy(cmd->inputFilename, "", max_path);
     if (conf!=NULL)

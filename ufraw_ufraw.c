@@ -176,6 +176,33 @@ ufraw_data *ufraw_open(char *filename)
     return uf;
 }
 
+ufraw_data *ufraw_load_darkframe(char *darkframeFile)
+{
+    ufraw_data *uf;
+    if (strlen(darkframeFile)>0) {
+        uf = ufraw_open(darkframeFile);
+        if (!uf){
+            ufraw_message(UFRAW_ERROR,
+		    "darkframe error: %s is not a raw file\n", darkframeFile);
+            return NULL;
+        }
+	uf->conf = g_new(conf_data, 1);
+	*uf->conf = conf_default;
+	/* disable all auto settings on darkframe */
+	uf->conf->autoExposure = disabled_state;
+	uf->conf->autoBlack = disabled_state;
+        if (ufraw_load_raw(uf)==UFRAW_SUCCESS){
+            ufraw_message(UFRAW_BATCH_MESSAGE, "using darkframe %s\n",
+		    uf->filename);
+            return uf;
+        }
+        else
+            ufraw_message(UFRAW_ERROR, "error loading darkframe %s\n",
+		    uf->filename);
+    }
+    return NULL;
+}
+
 int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 {
     dcraw_data *raw=NULL;
@@ -256,7 +283,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	    g_snprintf(uf->conf->shutterText, max_name, "1/%0.1f s",
 		    1/uf->conf->shutter);
 	else
-	    g_snprintf(uf->conf->shutterText, max_name, "%0.1f s", 
+	    g_snprintf(uf->conf->shutterText, max_name, "%0.1f s",
 		    uf->conf->shutter);
 	uf->conf->aperture = raw->aperture;
 	g_snprintf(uf->conf->apertureText, max_name, "F/%0.1f",
@@ -282,7 +309,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	}
 	fseek(raw->ifp, pos, SEEK_SET);
 	if (nc.m_numAnchors<2) nc = conf_default.BaseCurve[0];
-	    
+
 	g_strlcpy(nc.name, uf->conf->BaseCurve[custom_curve].name, max_name);
 	uf->conf->BaseCurve[custom_curve] = nc;
 
@@ -298,7 +325,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 
 	    if (!strncmp(buf, "CS      ", sizeof(buf)))  use_custom_curve=1;
 
-	    // down the line, we need to translate the other values into 
+	    // down the line, we need to translate the other values into
 	    // tone curves!
 	}
 
@@ -320,8 +347,42 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 		uf->conf->BaseCurveIndex==camera_curve)
 	    uf->conf->BaseCurveIndex = linear_curve;
     }
-
+    /* Using DarkframeFile from the configuration is disabled since we still
+     * cannot open two raw files simultaniously */
+    /*
+    if (strcmp(uf->conf->darkframeFile, cmd->darkframeFile)!=0)
+	uf->conf->darkframe = ufraw_load_darkframe(uf->conf->darkframeFile);
+    */
     return UFRAW_SUCCESS;
+}
+
+void ufraw_substract_darkframe(ufraw_data *uf)
+{
+    dcraw_data *df = uf->conf->darkframe->raw;
+    dcraw_data *org = uf->raw;
+    int i, cl;
+
+    if (org->raw.width!=df->raw.width &&
+        org->raw.width!=df->raw.width &&
+        org->raw.colors!=df->raw.colors){
+
+        ufraw_message(UFRAW_SET_WARNING, "incompatible darkframe");
+        return;
+    }
+
+    for( i=0; i<org->raw.height*org->raw.width; i++ ) {
+        for( cl=0; cl<org->raw.colors; cl++ ){
+            org->raw.image[i][cl] =
+		    org->raw.image[i][cl] >= df->raw.image[i][cl] ?
+                    org->raw.image[i][cl] - df->raw.image[i][cl] :
+                    0;
+        }
+    }
+    org->black = org->black >= df->black ?
+	    org->black - df->black :
+	    0;
+    ufraw_message(UFRAW_SET_LOG, "subtracted darkframe '%s'\n",
+	    uf->conf->darkframeFile);
 }
 
 int ufraw_load_raw(ufraw_data *uf)
@@ -333,9 +394,13 @@ int ufraw_load_raw(ufraw_data *uf)
         ufraw_message(status, raw->message);
         return status;
     }
+    /* raw->black can change in ufraw_subtract_darkframe() so we must
+     * calculate uf->rgbMax first */
     uf->rgbMax = raw->rgbMax - raw->black;
+    if (uf->conf->darkframe!=NULL)
+        ufraw_substract_darkframe(uf);
     memcpy(uf->rgb_cam, raw->rgb_cam, sizeof uf->rgb_cam);
-    
+
     if (uf->conf->chanMul[0]<0) ufraw_set_wb(uf);
     ufraw_auto_expose(uf);
     ufraw_auto_black(uf);
@@ -387,7 +452,7 @@ int ufraw_convert_image(ufraw_data *uf)
 	else if (raw->filters!=0)
 	    shrink = 2;
         dcraw_finalize_shrink(&final, raw, shrink);
- 
+
         uf->image.height = final.height;
         uf->image.width = final.width;
 	g_free(uf->image.image);
@@ -596,7 +661,7 @@ int ufraw_set_wb(ufraw_data *uf)
 	for (c=0; c<3; c++) {
 	    rgbWB[c] = 0;
 	    for (cc=0; cc<raw->colors; cc++)
-		rgbWB[c] += raw->rgb_cam[c][cc] * raw->pre_mul[cc] 
+		rgbWB[c] += raw->rgb_cam[c][cc] * raw->pre_mul[cc]
 		    / uf->conf->chanMul[cc];
 	}
     }

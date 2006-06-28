@@ -64,6 +64,8 @@ int main (int argc, char **argv)
     if (optInd==argc) {
 	    ufraw_message(UFRAW_WARNING, "no input file, nothing to do.");
     }
+    cmd.darkframe=ufraw_load_darkframe(cmd.darkframeFile);    
+    
     for (; optInd<argc; optInd++) {
         uf = ufraw_open(argv[optInd]);
         if (uf==NULL) {
@@ -82,6 +84,7 @@ int main (int argc, char **argv)
         ufraw_close(uf);
         g_free(uf);
     }
+//    ufraw_close(cmd.darkframe);
     exit(0);
 }
 
