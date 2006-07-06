@@ -156,6 +156,14 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS-1D Mark II", "Shade", 0,	{ 2.220703, 1, 1.069336, 0 } },
   { "Canon", "EOS-1D Mark II", "Tungsten", 0,	{ 1.415480, 1, 2.160142, 0 } },
 
+  { "FUJIFILM", "FinePix F700", "Incandescent", 0, { 1.168142, 1, 2.477876, 0 } },
+  { "FUJIFILM", "FinePix F700", "Cool white fluorescent", 0, { 1.684783, 1, 2.152174, 0 } },
+  { "FUJIFILM", "FinePix F700", "Warm white fluorescent", 0, { 1.706522, 1, 1.663043, 0 } },
+  { "FUJIFILM", "FinePix F700", "Daylight fluorescent light", 0, { 2.032609, 1, 1.336957, 0 } },
+  { "FUJIFILM", "FinePix F700", "Shade", 0,	{ 1.950000, 1, 1.325000, 0 } },
+  { "FUJIFILM", "FinePix F700", "Outdoors in fine weather", 0, { 1.725000, 1, 1.500000, 0 } },
+
+  
   { "FUJIFILM", "FinePix S20Pro", "Direct sunlight", 0, { 1.712500, 1, 1.500000, 0 } },
   { "FUJIFILM", "FinePix S20Pro", "Cloudy", 0,	{ 1.887500, 1, 1.262500, 0 } },
   { "FUJIFILM", "FinePix S20Pro", "Daylight fluorescent", 0, { 2.097826, 1, 1.304348, 0 } },
@@ -163,12 +171,26 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "FinePix S20Pro", "Cool white fluorescent", 0, { 1.670213, 1, 2.063830, 0 } },
   { "FUJIFILM", "FinePix S20Pro", "Incandescent bulb", 0, { 1.069565, 1, 2.486957 } },
 
+  { "FUJIFILM", "FinePix S2Pro", "Sunny", 0,	{ 1.509804, 1, 1.401961, 0 } },
+  { "FUJIFILM", "FinePix S2Pro", "Cloudy", 0,	{ 1.666667, 1, 1.166667, 0 } },
+  { "FUJIFILM", "FinePix S2Pro", "Flash", 0,	{ 1, 1.014084, 2.542253, 0 } },
+  { "FUJIFILM", "FinePix S2Pro", "Bulb1", 0,	{ 1.948718, 1, 1.230769, 0 } },
+  { "FUJIFILM", "FinePix S2Pro", "Bulb2", 0,	{ 1.675214, 1, 1.572650, 0 } },
+  { "FUJIFILM", "FinePix S2Pro", "Bulb3", 0,	{ 1.649573, 1, 2.094017, 0 } },
+
   { "FUJIFILM", "FinePix S5000", "Incandescent", 0, { 1.212081, 1, 2.672364, 0 } },
   { "FUJIFILM", "FinePix S5000", "Fluorescent", 0, { 1.772316, 1, 2.349902, 0 } },
   { "FUJIFILM", "FinePix S5000", "Direct sunlight", 0, { 1.860403, 1, 1.515946, 0 } },
   { "FUJIFILM", "FinePix S5000", "Flash", 0,	{ 2.202181, 1, 1.423284, 0 } },
   { "FUJIFILM", "FinePix S5000", "Cloudy", 0,	{ 2.036578, 1, 1.382513, 0 } },
   { "FUJIFILM", "FinePix S5000", "Shade", 0,	{ 2.357215, 1, 1.212016, 0 } },
+
+  { "FUJIFILM", "FinePix S5500", "Outdoor fine", 0, { 1.712500, 1, 1.550000, 0 } },
+  { "FUJIFILM", "FinePix S5500", "Shade", 0,	{ 1.912500, 1, 1.375000, 0 } },
+  { "FUJIFILM", "FinePix S5500", "Daylight fluorescent", 0, { 1.978261, 1, 1.380435, 0 } },
+  { "FUJIFILM", "FinePix S5500", "Warm White fluorescent", 0, { 1.673913, 1, 1.673913, 0 } },
+  { "FUJIFILM", "FinePix S5500", "Cool White fluorescent", 0, { 1.663043, 1, 2.163043, 0 } },
+  { "FUJIFILM", "FinePix S5500", "Incandescent", 0, { 1.115044, 1, 2.566372, 0 } },
 
   { "FUJIFILM", "FinePix S5600", "Fine", 0,	{ 1.587500, 1, 1.381250, 0 } },
   { "FUJIFILM", "FinePix S5600", "Shade", 0,	{ 1.946875, 1, 1.175000, 0 } },
@@ -880,7 +902,40 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "E-10", "5500K Clear day", 0,	{ 1.523438, 1, 1.617188, 0 } },
   { "OLYMPUS", "E-10", "6500K Cloudy day", 0,	{ 1.687500, 1, 1.437500, 0 } },
   { "OLYMPUS", "E-10", "7500K Shadows", 0,	{ 1.812500, 1, 1.312500, 0 } },
-  
+
+  { "OLYMPUS", "E-300", " Bulb 1", -7,		{ 1.179688, 1, 2.125000, 0 } },
+  { "OLYMPUS", "E-300", " Bulb 1", 0,		{ 1.140625, 1, 2.203125, 0 } },
+  { "OLYMPUS", "E-300", " Bulb 1", 7,		{ 1.093750, 1, 2.273438, 0 } },
+  { "OLYMPUS", "E-300", " Bulb 2", -7,		{ 1.382812, 1, 1.859375, 0 } },
+  { "OLYMPUS", "E-300", " Bulb 2", 0,		{ 1.312500, 1, 1.906250, 0 } },
+  { "OLYMPUS", "E-300", " Bulb 2", 7,		{ 1.257812, 1, 1.984375, 0 } },
+  { "OLYMPUS", "E-300", " Fluorescent 1", -7,	{ 2.109375, 1, 1.710938, 0 } },
+  { "OLYMPUS", "E-300", " Fluorescent 1", 0,	{ 1.976562, 1, 1.921875, 0 } },
+  { "OLYMPUS", "E-300", " Fluorescent 1", 7,	{ 1.804688, 1, 2.062500, 0 } },
+  { "OLYMPUS", "E-300", " Fluorescent 2", -7,	{ 1.945312, 1, 1.445312, 0 } },
+  { "OLYMPUS", "E-300", " Fluorescent 2", 0,	{ 1.820312, 1, 1.562500, 0 } },
+  { "OLYMPUS", "E-300", " Fluorescent 2", 7,	{ 1.585938, 1, 1.945312, 0 } },
+  { "OLYMPUS", "E-300", " Fluorescent 3", -7,	{ 2.203125, 1, 1.000000, 0 } },
+  { "OLYMPUS", "E-300", " Fluorescent 3", 0,	{ 2.031250, 1, 1.328125, 0 } },
+  { "OLYMPUS", "E-300", " Fluorescent 3", 7,	{ 1.765625, 1, 1.367188, 0 } },
+  { "OLYMPUS", "E-300", " direct sun", -7,	{ 1.835938, 1, 1.304688, 0 } },
+  { "OLYMPUS", "E-300", " direct sun", 0,	{ 1.789062, 1, 1.351562, 0 } },
+  { "OLYMPUS", "E-300", " direct sun", 7,	{ 1.726562, 1, 1.398438, 0 } },
+  { "OLYMPUS", "E-300", " cloudy", -7,		{ 2.000000, 1, 1.156250, 0 } },
+  { "OLYMPUS", "E-300", " cloudy", 0,		{ 1.890625, 1, 1.257812, 0 } },
+  { "OLYMPUS", "E-300", " cloudy", 7,		{ 1.835938, 1, 1.304688, 0 } },
+  { "OLYMPUS", "E-300", " shadow", -7,		{ 2.179688, 1, 1.007812, 0 } },
+  { "OLYMPUS", "E-300", " shadow", 0,		{ 2.070312, 1, 1.109375, 0 } },
+  { "OLYMPUS", "E-300", " shadow", 7,		{ 1.945312, 1, 1.210938, 0 } },
+    
+  { "OLYMPUS", "E-500", "Sunny", 0,		{ 1.898438, 1, 1.359375, 0 } }, /*5300K*/
+  { "OLYMPUS", "E-500", "Cloudy", 0,		{ 1.992188, 1, 1.265625, 0 } }, /*6000K*/
+  { "OLYMPUS", "E-500", "Shadows", 0,		{ 2.148438, 1, 1.125000, 0 } }, /*7500K*/
+  { "OLYMPUS", "E-500", "Incandescent", 0,	{ 1.265625, 1, 2.195312, 0 } }, /*3000K*/
+  { "OLYMPUS", "E-500", "Fluorescent 1", 0,	{ 1.976562, 1, 1.914062, 0 } }, /*4000K*/
+  { "OLYMPUS", "E-500", "Fluorescent 2", 0,	{ 1.828125, 1, 1.562500, 0 } }, /*4500K*/
+  { "OLYMPUS", "E-500", "Fluorescent 3", 0,	{ 2.046875, 1, 1.359375, 0 } }, /*6600K*/
+
   { "Panasonic", "DMC-FZ30", "Sunny", 0,	{ 1.757576, 1, 1.446970, 0 } },
   { "Panasonic", "DMC-FZ30", "Cloudy", 0,	{ 1.943182, 1, 1.276515, 0 } },
   { "Panasonic", "DMC-FZ30", "Fluorescent", 0,	{ 1.098485, 1, 2.106061, 0 } },
