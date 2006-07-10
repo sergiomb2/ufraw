@@ -95,22 +95,22 @@ long ufraw_saver(void *widget, gpointer user_data)
     int status;
 
     if (uf->conf->size > 0) {
-	if (uf->predictateHeight > uf->predictateWidth) {
+	if (uf->predictedHeight > uf->predictedWidth) {
 	    height = uf->conf->size;
-	    width = uf->conf->size * uf->predictateWidth / uf->predictateHeight;
-	    shrink = (float)uf->predictateHeight / uf->conf->size;
+	    width = uf->conf->size * uf->predictedWidth / uf->predictedHeight;
+	    shrink = (float)uf->predictedHeight / uf->conf->size;
 	} else {
             width = uf->conf->size;
-	    height = uf->conf->size * uf->predictateHeight/ uf->predictateWidth;
-	    shrink = (float)uf->predictateWidth / uf->conf->size;
+	    height = uf->conf->size * uf->predictedHeight/ uf->predictedWidth;
+	    shrink = (float)uf->predictedWidth / uf->conf->size;
 	}
     } else {
 	if (uf->conf->shrink<1) {
             ufraw_message(UFRAW_ERROR, "Fatal Error: uf->conf->shrink<1");
 	    uf->conf->shrink = 1;
 	}
-	height = uf->predictateHeight / uf->conf->shrink;
-	width = uf->predictateWidth / uf->conf->shrink;
+	height = uf->predictedHeight / uf->conf->shrink;
+	width = uf->predictedWidth / uf->conf->shrink;
 	shrink = uf->conf->shrink;
     }
     filename = uf_file_set_type(uf->filename, file_type[uf->conf->type]);
@@ -233,7 +233,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     widg = gtk_label_new("\tHeight ");
     gtk_table_attach(GTK_TABLE(table), widg, 2, 3, 1, 2, 0, 0, 0, 0);
     heightAdj = GTK_ADJUSTMENT(gtk_adjustment_new(height,
-            uf->predictateHeight/100, uf->predictateHeight, 10, 100, 0));
+            uf->predictedHeight/100, uf->predictedHeight, 10, 100, 0));
     g_object_set_data(G_OBJECT(heightAdj), "ufraw-dialog", fileChooser);
     g_signal_connect(G_OBJECT(heightAdj), "value-changed",
             G_CALLBACK(ufraw_saver_adjustment_update), &heightUpdate);
@@ -243,7 +243,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     widg = gtk_label_new("\tWidth ");
     gtk_table_attach(GTK_TABLE(table), widg, 4, 5, 1, 2, 0, 0, 0, 0);
     widthAdj = GTK_ADJUSTMENT(gtk_adjustment_new(width,
-            uf->predictateWidth/100, uf->predictateWidth, 10, 100, 0));
+            uf->predictedWidth/100, uf->predictedWidth, 10, 100, 0));
     g_object_set_data(G_OBJECT(widthAdj), "ufraw-dialog", fileChooser);
     g_signal_connect(G_OBJECT(widthAdj), "value-changed",
             G_CALLBACK(ufraw_saver_adjustment_update), &widthUpdate);
@@ -398,20 +398,20 @@ long ufraw_saver(void *widget, gpointer user_data)
 #endif
 	    if (shrinkUpdate) {
 	        shrink = gtk_adjustment_get_value(shrinkAdj);
-	        height = uf->predictateHeight / shrink;
-	        width = uf->predictateWidth / shrink;
+	        height = uf->predictedHeight / shrink;
+	        width = uf->predictedWidth / shrink;
 		shrinkUpdate = FALSE;
 	    }
 	    if (heightUpdate) {
 	        height = gtk_adjustment_get_value(heightAdj);
-	        width = height * uf->predictateWidth / uf->predictateHeight;
-	        shrink = (float)uf->predictateHeight / height;
+	        width = height * uf->predictedWidth / uf->predictedHeight;
+	        shrink = (float)uf->predictedHeight / height;
 		heightUpdate = FALSE;
 	    }
 	    if (widthUpdate) {
 	        width = gtk_adjustment_get_value(widthAdj);
-	        height = width * uf->predictateHeight / uf->predictateWidth;
-	        shrink = (float)uf->predictateWidth / width;
+	        height = width * uf->predictedHeight / uf->predictedWidth;
+	        shrink = (float)uf->predictedWidth / width;
 		widthUpdate = FALSE;
 	    }
 	    gtk_adjustment_set_value(shrinkAdj, shrink);

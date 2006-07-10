@@ -160,19 +160,19 @@ ufraw_data *ufraw_open(char *filename)
     uf->RawLumHistogram = NULL;
     if (raw->fuji_width) {
         /* Copied from DCRaw's fuji_rotate() */
-        uf->predictateWidth = raw->fuji_width / raw->fuji_step;
-        uf->predictateHeight = (raw->height - raw->fuji_width) / raw->fuji_step;
+        uf->predictedWidth = raw->fuji_width / raw->fuji_step;
+        uf->predictedHeight = (raw->height - raw->fuji_width) / raw->fuji_step;
     } else {
-        uf->predictateHeight = raw->height * raw->ymag;
-        uf->predictateWidth = raw->width;
+        uf->predictedHeight = raw->height * raw->ymag;
+        uf->predictedWidth = raw->width;
     }
     if (raw->flip & 4) {
-        int tmp = uf->predictateHeight;
-        uf->predictateHeight = uf->predictateWidth;
-        uf->predictateWidth = tmp;
+        int tmp = uf->predictedHeight;
+        uf->predictedHeight = uf->predictedWidth;
+        uf->predictedWidth = tmp;
     }
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
-        uf->predictateWidth, uf->predictateHeight, raw->toneCurveSize);
+        uf->predictedWidth, uf->predictedHeight, raw->toneCurveSize);
     return uf;
 }
 

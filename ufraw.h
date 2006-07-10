@@ -173,7 +173,7 @@ typedef struct {
 
 typedef struct ufraw_struct {
     char filename[max_path];
-    int predictateHeight, predictateWidth, rgbMax, colors, raw_color, useMatrix;
+    int predictedHeight, predictedWidth, rgbMax, colors, raw_color, useMatrix;
     float rgb_cam[3][4];
     image_data image;
     void *raw;

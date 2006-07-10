@@ -783,10 +783,15 @@ void render_spot(preview_data *data)
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     pixies = gdk_pixbuf_get_pixels(pixbuf);
     for (c=0; c<3; c++) rgb[c] = 0;
-    spotSizeY = abs(data->SpotY1 - data->SpotY2)+1;
-    spotStartY = MIN(data->SpotY1, data->SpotY2);
-    spotSizeX = abs(data->SpotX1 - data->SpotX2)+1;
-    spotStartX = MIN(data->SpotX1, data->SpotX2);
+    /* Scale image coordinates to pixbuf coordinates */
+    spotSizeY = abs(data->SpotY1 - data->SpotY2)
+	    * height / data->UF->predictedHeight + 1;
+    spotStartY = MIN(data->SpotY1, data->SpotY2)
+	    *height / data->UF->predictedHeight;
+    spotSizeX = abs(data->SpotX1 - data->SpotX2)
+	    * width / data->UF->predictedWidth + 1;
+    spotStartX = MIN(data->SpotX1, data->SpotX2)
+	    * width / data->UF->predictedWidth;
     for (y=0; y<spotSizeY; y++) {
         for (x=0; x<spotSizeX; x++)
             for (c=0; c<3; c++)
@@ -837,10 +842,15 @@ void draw_spot(preview_data *data, gboolean draw)
     height = gdk_pixbuf_get_height(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     pixies = gdk_pixbuf_get_pixels(pixbuf);
-    spotSizeY = abs(data->SpotY1 - data->SpotY2)+1;
-    spotStartY = MIN(data->SpotY1, data->SpotY2);
-    spotSizeX = abs(data->SpotX1 - data->SpotX2)+1;
-    spotStartX = MIN(data->SpotX1, data->SpotX2);
+    /* Scale image coordinates to pixbuf coordinates */
+    spotSizeY = abs(data->SpotY1 - data->SpotY2)
+	    * height / data->UF->predictedHeight + 1;
+    spotStartY = MIN(data->SpotY1, data->SpotY2)
+	    *height / data->UF->predictedHeight;
+    spotSizeX = abs(data->SpotX1 - data->SpotX2)
+	    * width / data->UF->predictedWidth + 1;
+    spotStartX = MIN(data->SpotX1, data->SpotX2)
+	    * width / data->UF->predictedWidth;
     for (x=0; x<=spotSizeX; x++) {
         pixbuf_mark(spotStartX+x, spotStartY-1,
                 pixies, width, height, rowstride, draw);
@@ -960,17 +970,26 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     int spotStartX, spotStartY, spotSizeX, spotSizeY;
-    int x, y, c;
+    int width, height, x, y, c;
     guint64 rgb[4];
+    GdkPixbuf *pixbuf;
 
     user_data = user_data;
 
     if (data->FreezeDialog) return;
     if (data->SpotX1<=0) return;
-    spotSizeY = abs(data->SpotY1 - data->SpotY2)+1;
-    spotStartY = MIN(data->SpotY1, data->SpotY2);
-    spotSizeX = abs(data->SpotX1 - data->SpotX2)+1;
-    spotStartX = MIN(data->SpotX1, data->SpotX2);
+    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+    width = gdk_pixbuf_get_width(pixbuf);
+    height = gdk_pixbuf_get_height(pixbuf);
+    /* Scale image coordinates to pixbuf coordinates */
+    spotSizeY = abs(data->SpotY1 - data->SpotY2)
+	    * height / data->UF->predictedHeight + 1;
+    spotStartY = MIN(data->SpotY1, data->SpotY2)
+	    *height / data->UF->predictedHeight;
+    spotSizeX = abs(data->SpotX1 - data->SpotX2)
+	    * width / data->UF->predictedWidth + 1;
+    spotStartX = MIN(data->SpotX1, data->SpotX2)
+	    * width / data->UF->predictedWidth;
 
     for (c=0; c<4; c++) rgb[c] = 0;
     for (y=spotStartY; y<spotStartY+spotSizeY; y++)
@@ -994,15 +1013,21 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
 void spot_press(GtkWidget *event_box, GdkEventButton *event, gpointer user_data)
 {
     preview_data *data = get_preview_data(event_box);
-    event_box = event_box;
+    GdkPixbuf *pixbuf;
+    int width, height;
+
     user_data = user_data;
     if (data->FreezeDialog) return;
     if (event->button!=1) return;
     draw_spot(data, FALSE);
-    data->SpotX1 = event->x;
-    data->SpotY1 = event->y;
-    data->SpotX2 = event->x;
-    data->SpotY2 = event->y;
+    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+    width = gdk_pixbuf_get_width(pixbuf);
+    height = gdk_pixbuf_get_height(pixbuf);
+    /* Scale pixbuf coordinates to image coordinates */
+    data->SpotX1 = event->x * data->UF->predictedWidth / width;
+    data->SpotY1 = event->y * data->UF->predictedHeight / height;
+    data->SpotX2 = event->x * data->UF->predictedWidth / width;
+    data->SpotY2 = event->y * data->UF->predictedHeight / height;
     render_spot(data);
 }
 
@@ -1010,11 +1035,18 @@ gboolean spot_motion(GtkWidget *event_box, GdkEventMotion *event,
 	gpointer user_data)
 {
     preview_data *data = get_preview_data(event_box);
+    GdkPixbuf *pixbuf;
+    int width, height;
+
     user_data = user_data;
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
     draw_spot(data, FALSE);
-    data->SpotX2 = MAX(MIN(event->x,data->UF->image.width-1),0);
-    data->SpotY2 = MAX(MIN(event->y,data->UF->image.height-1),0);
+    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+    width = gdk_pixbuf_get_width(pixbuf);
+    height = gdk_pixbuf_get_height(pixbuf);
+    /* Scale pixbuf coordinates to image coordinates */
+    data->SpotX2 = event->x * data->UF->predictedWidth / width;
+    data->SpotY2 = event->y * data->UF->predictedHeight / height;
     render_spot(data);
     return FALSE;
 }
@@ -1025,7 +1057,7 @@ gboolean create_base_image(preview_data *data)
     int sizeSave = CFG->size;
     if (CFG->Scale==0) {
 	CFG->size = CFG->Zoom / 100.0 *
-	    MAX(data->UF->predictateHeight, data->UF->predictateWidth);
+	    MAX(data->UF->predictedHeight, data->UF->predictedWidth);
 	CFG->shrink = 0;
     } else {
 	CFG->size = 0;
@@ -1048,11 +1080,11 @@ gboolean create_base_image(preview_data *data)
     char progressText[max_name];
     if (CFG->Scale==0)
 	snprintf(progressText, max_name, "size %dx%d, zoom %2.f%%",
-		data->UF->predictateHeight, data->UF->predictateWidth,
+		data->UF->predictedHeight, data->UF->predictedWidth,
 		CFG->Zoom);
     else
 	snprintf(progressText, max_name, "size %dx%d, scale 1/%d",
-		data->UF->predictateHeight, data->UF->predictateWidth,
+		data->UF->predictedHeight, data->UF->predictedWidth,
 		CFG->Scale);
     if (data->ProgressBar!=NULL) {
 	gtk_progress_bar_set_text(data->ProgressBar, progressText);
@@ -1729,12 +1761,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gdk_screen_get_monitor_geometry(gdk_screen_get_default(), 0, &screen);
     max_preview_width = MIN(def_preview_width, screen.width-416);
     max_preview_height = MIN(def_preview_height, screen.height-120);
-    CFG->Scale = MAX((uf->predictateWidth-1)/max_preview_width,
-            (uf->predictateHeight-1)/max_preview_height)+1;
+    CFG->Scale = MAX((uf->predictedWidth-1)/max_preview_width,
+            (uf->predictedHeight-1)/max_preview_height)+1;
     CFG->Scale = MAX(2, CFG->Scale);
     CFG->Zoom = 100.0 / CFG->Scale;
-    preview_width = uf->predictateWidth / CFG->Scale;
-    preview_height = uf->predictateHeight / CFG->Scale;
+    preview_width = uf->predictedWidth / CFG->Scale;
+    preview_height = uf->predictedHeight / CFG->Scale;
     /* With the following guesses the window usually fits into the screen.
      * There should be more intelegent settings to widget sizes. */
     curveeditorHeight = 256;
