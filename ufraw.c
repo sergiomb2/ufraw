@@ -95,8 +95,6 @@ int main (int argc, char **argv)
 	    conf.version = 0;
 	}
     }
-    cmd.darkframe=ufraw_load_darkframe(cmd.darkframeFile);
-
     if (optInd==argc) {
 	status = ufraw_config(NULL, &rc, &conf, &cmd);
 	if (status==UFRAW_ERROR) exit(1);

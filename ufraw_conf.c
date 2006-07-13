@@ -1533,10 +1533,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     }
     g_strlcpy(cmd->darkframeFile, "", max_path);
     if (darkframeFile!=NULL) {
-        if (*argc-optind>1) {
-            ufraw_message(UFRAW_ERROR, "can have only 1 darkframe");
-            return -1;
-        }
 	char *df = uf_file_set_absolute(darkframeFile);
 	cmd->darkframe = ufraw_load_darkframe(df);
         g_strlcpy(cmd->darkframeFile, df, max_path);
