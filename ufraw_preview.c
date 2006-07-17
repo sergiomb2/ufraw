@@ -1153,7 +1153,7 @@ GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
     } else {
 	table = gtk_table_new(10, 10, FALSE);
         frame = gtk_frame_new(NULL);
-        gtk_box_pack_start(GTK_BOX(box), frame, TRUE, TRUE, 0);
+        gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 0);
         gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(table));
     }
     return table;
@@ -1717,7 +1717,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     GtkBox *previewHBox, *box, *hbox;
     GtkComboBox *combo;
     GtkWidget *button, *saveButton, *saveAsButton=NULL, *event_box, *align,
-	    *label, *vBox, *noteBox, *page, *menu, *menu_item;
+	    *label, *vBox, *noteBox, *page, *menu, *menu_item, *frame;
     GSList *group;
     GdkPixbuf *pixbuf;
     GdkRectangle screen;
@@ -2302,7 +2302,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     /* Start of EXIF page */
     page = table_with_frame(noteBox, "EXIF", TRUE);
-    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+    frame = gtk_frame_new(NULL);
+    gtk_box_pack_start(GTK_BOX(page), frame, TRUE, TRUE, 0);
+    table = GTK_TABLE(gtk_table_new(10, 10, FALSE));
+    gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(table));
 
     align = gtk_scrolled_window_new(NULL, NULL);
     gtk_table_attach(table, align, 0, 1, 0, 1, GTK_EXPAND|GTK_FILL,
