@@ -445,10 +445,11 @@ int ufraw_convert_image(ufraw_data *uf)
          ( uf->conf->size>0 &&
 	   uf->conf->size<MAX(raw->raw.height, raw->raw.width) ) ||
 	 ( raw->filters==0 )  ) {
-	if (uf->conf->interpolation==half_interpolation)
-	    shrink = 2;
-	else if (uf->conf->size==0 && uf->conf->shrink%raw->ymag==0)
+	if (uf->conf->size==0 && uf->conf->shrink>=2 &&
+		uf->conf->shrink%raw->ymag==0)
 	    shrink = uf->conf->shrink / raw->ymag;
+	else if (uf->conf->interpolation==half_interpolation)
+	    shrink = 2;
 	else if (raw->filters!=0)
 	    shrink = 2;
         dcraw_finalize_shrink(&final, raw, shrink);
