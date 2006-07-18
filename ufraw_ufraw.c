@@ -128,7 +128,19 @@ ufraw_data *ufraw_open(char *filename)
     dcraw_data *raw;
     ufraw_message(UFRAW_CLEAN, NULL);
     conf_data *conf = NULL;
+    char *fname, *hostname;
 
+    fname = g_filename_from_uri(filename, &hostname, NULL);
+    if (fname!=NULL) {
+	if (hostname!=NULL) {
+	    ufraw_message(UFRAW_SET_ERROR, "Remote URI is not supported");
+	    g_free(hostname);
+	    g_free(fname);
+	    return NULL;
+	}
+	g_strlcpy(filename, fname, max_path);
+	g_free(fname);
+    }
     /* First handle ufraw ID files */
     if (!strcasecmp(filename + strlen(filename) - 6, ".ufraw")) {
 	conf = g_new(conf_data, 1);
