@@ -47,6 +47,17 @@ try {
 		pos->key().c_str(), pos->value().toLong());
 	pos->setValue("1"); /* 1 = Normal orientation */
     }
+    /* Delete original TIFF data, which is irrelevant*/
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.StripOffsets")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.RowsPerStrip")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.StripByteCounts")))
+	    != exifData.end() )
+	exifData.erase(pos);
+
     Exiv2::DataBuf const buf(exifData.copy());
     const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
     uf->exifBufLen = buf.size_ + sizeof(ExifHeader);
