@@ -29,7 +29,7 @@ const conf_data conf_default = {
     6500, 1.0, /* temperature, green */
     { -1.0, -1.0, -1.0, -1.0 }, /* chanMul[] */
     0.0, 1.0, 0.0, /* exposure, saturation, black */
-    FALSE /* Unclip highlights */,
+    TRUE /* Unclip highlights */,
     disabled_state, /* autoExposure */
     disabled_state, /* autoBlack */
     camera_curve, camera_curve+1, /* BaseCurveIndex, BaseCurveCount */

@@ -90,13 +90,19 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
     d->colors = colors;
     d->useMatrix = useMatrix;
     d->unclip = unclip;
+    if (exposure>=1.0) d->unclip = FALSE;
     d->exposure = exposure * 0x10000;
 
     double max = 0;
     for (c=0; c<d->colors; c++) max = MAX(max, chanMul[c]);
-    for (c=0; c<d->colors; c++) d->rgbWB[c] = chanMul[c] * 0x10000 / max
-	    * 0xFFFF / d->rgbMax;
     d->max = 0x10000 / max;
+    /* rgbWB is used in dcraw_finalized_interpolation() before the Bayer
+     * Interpolation. It is normalized to guaranty that values do not
+     * exceed 0xFFFF */
+    for (c=0; c<d->colors; c++) d->rgbWB[c] = chanMul[c] * d->max
+	    * 0xFFFF / d->rgbMax;
+    /* rgbNorm is used in the unclipping algorithm */
+    for (c=0; c<d->colors; c++) d->rgbNorm[c] = chanMul[c] * d->exposure;
 
     if (d->useMatrix)
 	for (i=0; i<3; i++)
@@ -185,19 +191,19 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     guint8 *p8 = po;
     guint16 *p16 = po, *p, maxc, midc, minc, c, cc;
     gint64 tmp, tmppix[4];
-//  guint min, max;
+    guint min; // max;
     unsigned sat, hue;
     int i;
-//    gboolean clipped;
+    gboolean clipped;
 
     for (i=0; i<count; i++) {
-//	clipped = FALSE;
+	clipped = FALSE;
 //	max = 0;
 	for (c=0; c<d->colors; c++) {
 	    tmppix[c] = (guint64)pix[i*4+c] * d->rgbWB[c] / 0x10000;
 	    if (tmppix[c] > d->max) {
 		if (d->unclip) {
-//		    clipped = TRUE;
+		    clipped = TRUE;
 		} else {
 		    tmppix[c] = d->max;
 		}
@@ -205,31 +211,32 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 	    tmppix[c] = tmppix[c] * d->exposure / d->max;
 //	    if (tmppix[c] > max) max = tmppix[c];
 	}
-//	if (clipped && d->max<0xFFFF) {
+	if (clipped) {
 //	    max = 0;
-//	    for (c=0; c<d->colors; c++) {
-//		if (tmppix[c] > d->max) { /* This channel requires unclipping */
-//		    /* If another channel is saturated, then this channel can
-//		     * not have a value larger than the saturated channel
-//		     * rgbWB[]. Therefore, if the clipped value is larger
-//		     * than rgbWB[] we do a linear interpolation to make sure
-//		     * that the clipping process is continuous. */
-//		    min = tmppix[c];
-//		    const int unclip_strength = 10;
-//		    for (cc=0; cc<d->colors; cc++) {
-//			if (tmppix[c] > d->rgbWB[cc]) {
-//			    tmp = d->rgbWB[cc] + (tmppix[c]-d->rgbWB[cc]) *
-//				MIN(unclip_strength * (d->rgbMax-
-//					MIN(pix[i*4+cc],d->rgbMax)),d->rgbMax)
-//				/ d->rgbMax;
-//			    if (tmp<min) min = tmp;
-//			}
-//		    }
-//		    tmppix[c] = min;
-//		}
+	    for (c=0; c<d->colors; c++) {
+		if (tmppix[c] > d->exposure) {
+		    /* This channel requires unclipping.
+		     * If another channel is saturated, then this channel can
+		     * not have a value larger than the saturated channel
+		     * rgbWB[]. Therefore, if the clipped value is larger
+		     * than rgbWB[] we do a linear interpolation to make sure
+		     * that the clipping process is continuous. */
+		    min = tmppix[c];
+		    const int unclip_strength = 1;
+		    for (cc=0; cc<d->colors; cc++) {
+			if (tmppix[c] > d->rgbNorm[cc]) {
+			    tmp = d->rgbNorm[cc] + (tmppix[c]-d->rgbNorm[cc]) *
+				MIN(unclip_strength * (d->rgbMax-
+					MIN(pix[i*4+cc],d->rgbMax)),d->rgbMax)
+				/ d->rgbMax;
+			    if (tmp<min) min = tmp;
+			}
+		    }
+		    tmppix[c] = min;
+		}
 //		if (tmppix[c] > max) max = tmppix[c];
-//	    }
-//	}
+	    }
+	}
 //	if (max>0xFFFF) { /* We need to restore color */
 //	    
 //	    for (c=0; c<d->colors; c++) {

@@ -65,7 +65,7 @@ typedef struct {
 typedef struct {
     unsigned rgbMax, max, exposure, colors, useMatrix;
     gboolean unclip;
-    int rgbWB[4], colorMatrix[3][4];
+    int rgbWB[4], rgbNorm[4], colorMatrix[3][4];
     double gamma, linear;
     char profileFile[2][max_path];
     void *profile[2];

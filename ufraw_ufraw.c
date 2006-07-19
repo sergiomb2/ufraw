@@ -757,8 +757,6 @@ void ufraw_auto_expose(ufraw_data *uf)
     /* Set 99% of the luminosity values with luminosity below 99% */
     uf->conf->exposure = log((double)p/wp)/log(2);
     uf->conf->autoExposure = enabled_state;
-    if (!uf->conf->unclip)
-        uf->conf->exposure = MAX(uf->conf->exposure,0);
 //    ufraw_message(UFRAW_SET_LOG, "ufraw_auto_expose: "
 //	    "Exposure %f (white point %d/%d)\n", uf->conf->exposure, wp, p);
 }
