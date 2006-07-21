@@ -1,16 +1,19 @@
 /*
-   UFRaw - Unidentified Flying Raw
-   Raw photo loader plugin for The GIMP
-   by Udi Fuchs,
-
-   based on the GIMP plug-in by Pawel T. Jochym jochym at ifj edu pl,
-
-   based on the GIMP plug-in by Dave Coffin
-   http://www.cybercom.net/~dcoffin/
-
-   UFRaw is licensed under the GNU General Public License.
-   It uses DCRaw code to do the actual raw decoding.
-*/
+ * UFRaw - Unidentified Flying Raw converter for digital camera images
+ *
+ * ufraw_preview.c - GUI for controlling all the image manipulations
+ * Copyright 2004-2006 by Udi Fuchs
+ *
+ * based on the GIMP plug-in by Pawel T. Jochym jochym at ifj edu pl,
+ *
+ * based on the GIMP plug-in by Dave Coffin
+ * http://www.cybercom.net/~dcoffin/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * as published by the Free Software Foundation. You should have received
+ * a copy of the license along with this program.
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

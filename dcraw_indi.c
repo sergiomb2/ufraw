@@ -1,21 +1,16 @@
 /*
- * dcraw_indi.c - DCRaw functions made independed
- *  
- * by Udi Fuchs,
+ * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
- * based on DCRaw by Dave Coffin
+ * dcraw_indi.c - DCRaw functions made independed
+ * Copyright 2004-2006 by Udi Fuchs
+ *
+ * based on dcraw by Dave Coffin
  * http://www.cybercom.net/~dcoffin/
  *
- * UFRaw is licensed under the GNU General Public License.
- * It uses DCRaw code to do the actual raw decoding.
- *
- * This file contains some functions taken from dcraw.c that where modified
- * to work with UFRaw. Biggest change is that these functions are now
- * independed of DCRaw.c's global variables.
- *
- * NOTICE: One must check if updates in dcraw.c effect this code.
- * This file was last synchronized with DCRaw 8.19, except for
- * flip_image_INDI() which was last synchronized with DCRaw 7.94.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * as published by the Free Software Foundation. You should have received
+ * a copy of the license along with this program.
  */
 
 #include <math.h>

@@ -1,5 +1,16 @@
 /***************************************************
- nikon_curve.h
+ nikon_curve.h - read Nikon NTC/NCV files
+
+ Copyright 2004-2006 by Shawn Freeman, Udi Fuchs
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License version 2
+ as published by the Free Software Foundation. You should have received
+ a copy of the license along with this program.
+
+****************************************************/
+
+/***************************************************
 
   This program reads in a Nikon NTC/NCV file, 
   interperates it's tone curve, and writes out a
@@ -15,20 +26,6 @@
 
   Thanks goes out to Udi Fuchs for wanting to incorporate nikon curve loading into his program.
   This will make GIMP just that much better. :)
-
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundati; either versi 2 of the License, or
-  (at your opti) any later versi.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundati, Inc., 51 Franklin St, Fifth Floor, Bost, MA  02110-1301  USA
 
   NOTES:
   08/06/2005 (Shawn Freeman)

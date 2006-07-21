@@ -1,11 +1,13 @@
 /*
  * UFRaw - Unidentified Flying Raw converter for digital camera images
- * by Udi Fuchs
  *
  * ufraw.c - The standalone interface to UFRaw.
+ * Copyright 2004-2006 by Udi Fuchs
  *
- * UFRaw is licensed under the GNU General Public License.
- * It uses DCRaw code to do the actual raw decoding.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * as published by the Free Software Foundation. You should have received
+ * a copy of the license along with this program.
  */
 
 #ifdef HAVE_CONFIG_H

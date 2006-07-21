@@ -1,13 +1,17 @@
 /*
-   dcraw_api.h - an API for DCRaw
-   by Udi Fuchs,
-
-   based on DCRaw by Dave Coffin
-   http://www.cybercom.net/~dcoffin/
-
-   UFRaw is licensed under the GNU General Public License.
-   It uses DCRaw code to do the actual raw decoding.
-*/
+ * UFRaw - Unidentified Flying Raw converter for digital camera images
+ *
+ * dcraw_api.h - API for DCRaw
+ * Copyright 2004-2006 by Udi Fuchs
+ *
+ * based on dcraw by Dave Coffin
+ * http://www.cybercom.net/~dcoffin/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * as published by the Free Software Foundation. You should have received
+ * a copy of the license along with this program.
+ */
 
 #ifndef _DCRAW_API_H
 #define _DCRAW_API_H

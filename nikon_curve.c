@@ -1,18 +1,18 @@
 /***************************************************
- nikon_curve.c
+ nikon_curve.c - read Nikon NTC/NCV files
+ 
+ Copyright 2004-2006 by Shawn Freeman, Udi Fuchs
 
-  This program reads in a Nikon NTC/NCV file, 
-  interperates it's tone curve, and writes out a
-  simple ASCII file containing a table of interpolation
-  values. See the header file for more information.
+ This program reads in a Nikon NTC/NCV file, 
+ interperates it's tone curve, and writes out a
+ simple ASCII file containing a table of interpolation
+ values. See the header file for more information.
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
-	    
-  @author: Shawn Freeman 1/06/2005
-  @liscense: GNU GPL
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License version 2
+ as published by the Free Software Foundation. You should have received
+ a copy of the license along with this program.
+
 ****************************************************/
 
 #include <stdlib.h>
