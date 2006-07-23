@@ -217,6 +217,11 @@ const wb_data wb_preset[] = {
   { "LEICA", "DIGILUX 2", "Flash", 0,		{ 2.074219, 1, 1.304688, 0 } },
   { "LEICA", "DIGILUX 2", "B/W", 0,		{ 1.632812, 1, 1.550781, 0 } },
 
+  { "Minolta", "DiMAGE 5", "Sunlight", 0,	{ 2.023438, 1, 1.371094, 0 } },
+  { "Minolta", "DiMAGE 5", "Incandescent", 0,	{ 1.113281, 1, 2.480469, 0 } },
+  { "Minolta", "DiMAGE 5", "Fluorescent", 0,	{ 1.957031, 1, 2.058594, 0 } },
+  { "Minolta", "DiMAGE 5", "Cloudy", 0,		{ 2.199219, 1, 1.300781, 0 } },
+
   { "Minolta", "DiMAGE 7Hi", "Daylight", 0,	{ 1.609375, 1, 1.328125, 0 } },  /* 5500K */
   { "Minolta", "DiMAGE 7Hi", "Tungsten", 0,	{ 1, 1.137778, 2.768889, 0 } },  /* 2800K */
   { "Minolta", "DiMAGE 7Hi", "Fluorescent 1", 0, { 1.664062, 1, 2.105469, 0 } },  /* 4060K*/
