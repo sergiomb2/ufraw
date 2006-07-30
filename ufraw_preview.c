@@ -1048,8 +1048,10 @@ gboolean spot_motion(GtkWidget *event_box, GdkEventMotion *event,
     width = gdk_pixbuf_get_width(pixbuf);
     height = gdk_pixbuf_get_height(pixbuf);
     /* Scale pixbuf coordinates to image coordinates */
-    data->SpotX2 = event->x * data->UF->predictedWidth / width;
-    data->SpotY2 = event->y * data->UF->predictedHeight / height;
+    data->SpotX2 = MAX(MIN(event->x,data->UF->image.width),0)
+	    * data->UF->predictedWidth / width;
+    data->SpotY2 = MAX(MIN(event->y,data->UF->image.height),0)
+	    * data->UF->predictedHeight / height;
     render_spot(data);
     return FALSE;
 }
