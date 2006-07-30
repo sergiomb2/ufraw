@@ -16,6 +16,10 @@
 #ifndef _DCRAW_API_H
 #define _DCRAW_API_H
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 typedef guint16 dcraw_image_type[4];
 
 typedef struct {
@@ -24,6 +28,7 @@ typedef struct {
 } dcraw_image_data;
 
 typedef struct {
+    void *dcraw;
     FILE *ifp;
     int width, height, colors, fourColorFilters, filters, raw_color;
     int flip, shrink, ymag;
@@ -60,6 +65,10 @@ void dcraw_close(dcraw_data *h);
 #define DCRAW_VERBOSE 4
 #define DCRAW_OPEN_ERROR 5
 
-void dcraw_message(int code, char *format, ...);
+void dcraw_message(void *dcraw, int code, char *format, ...);
+
+#ifdef  __cplusplus
+}
+#endif
 
 #endif /*_DCRAW_API_H*/

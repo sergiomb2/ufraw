@@ -25,8 +25,12 @@
 typedef unsigned short ushort;
 typedef gint64 INT64;
 
-extern const double xyz_rgb[3][3];			/* XYZ from RGB */
-extern const float d65_white[3];
+/* FIXME: Should be extern definition */
+const double xyz_rgb[3][3] = {                  /* XYZ from RGB *//*UF*/
+      { 0.412453, 0.357580, 0.180423 },
+        { 0.212671, 0.715160, 0.072169 },
+	  { 0.019334, 0.119193, 0.950227 } };
+const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
 #define CLASS
 
@@ -50,14 +54,45 @@ extern const float d65_white[3];
 #define FC(row,col) \
 	(int)(filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 
-void CLASS merror (void *ptr, char *where);
+int  fc_INDI (const unsigned filters, const int row, const int col)
+{
+  static const char filter[16][16] =
+  { { 2,1,1,3,2,3,2,0,3,2,3,0,1,2,1,0 },
+    { 0,3,0,2,0,1,3,1,0,1,1,2,0,3,3,2 },
+    { 2,3,3,2,3,1,1,3,3,1,2,1,2,0,0,3 },
+    { 0,1,0,1,0,2,0,2,2,0,3,0,1,3,2,1 },
+    { 3,1,1,2,0,1,0,2,1,3,1,3,0,1,3,0 },
+    { 2,0,0,3,3,2,3,1,2,0,2,0,3,2,2,1 },
+    { 2,3,3,1,2,1,2,1,2,1,1,2,3,0,0,1 },
+    { 1,0,0,2,3,0,0,3,0,3,0,3,2,1,2,3 },
+    { 2,3,3,1,1,2,1,0,3,2,3,0,2,3,1,3 },
+    { 1,0,2,0,3,0,3,2,0,1,1,2,0,1,0,2 },
+    { 0,1,1,3,3,2,2,1,1,3,3,0,2,1,3,2 },
+    { 2,3,2,0,0,1,3,0,2,0,1,2,3,0,1,0 },
+    { 1,3,1,2,3,2,3,2,0,2,0,1,1,0,3,0 },
+    { 0,2,0,3,1,0,0,1,1,3,3,2,3,2,2,1 },
+    { 2,1,3,2,3,1,2,1,0,3,0,2,0,2,0,2 },
+    { 0,3,1,0,0,2,0,3,2,1,3,1,1,3,1,3 } };
+
+  if (filters != 1) return FC(row,col);
+  /* Assume that we are handling the Leaf CatchLight with
+   * top_margin = 8; left_margin = 18; */
+//  return filter[(row+top_margin) & 15][(col+left_margin) & 15];
+  return filter[(row+10) & 8][(col+18) & 15];
+}
+
+void CLASS merror (void *ptr, char *where)
+{
+    if (ptr) return;
+    g_error("Out of memory in %s\n", where);
+}
 
 void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
        const int black, const int use_auto_wb, const int use_camera_wb,
        const float cam_mul[4],
        const int height, const int width, const int colors,
        float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
-       const char *ifname)
+       const char *ifname, void *dcraw)
 {
   int row, col, x, y, c, val; // , shift=0; /*UF*/
   int min[4], max[4], sum[8];
@@ -105,7 +140,7 @@ skip_block:
       /* 'sizeof pre_mul' does not work because pre_mul is an argument (UF)*/
       memcpy (pre_mul, cam_mul, 4*sizeof(float));
     else
-      dcraw_message (DCRAW_NO_CAMERA_WB,
+      dcraw_message (dcraw, DCRAW_NO_CAMERA_WB,
 	      "%s: Cannot use camera white balance.\n", ifname);
   }
   if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
@@ -114,9 +149,10 @@ skip_block:
 	    dmin = pre_mul[c];
   FORC4 pre_mul[c] /= dmin;
 
-  dcraw_message(DCRAW_VERBOSE, "Scaling with black=%d, pre_mul[] =", black);
-  FORC4 dcraw_message(DCRAW_VERBOSE, " %f", pre_mul[c]);
-  dcraw_message(DCRAW_VERBOSE, "\n");
+  dcraw_message(dcraw, DCRAW_VERBOSE, "Scaling with black=%d, pre_mul[] =",
+	  black);
+  FORC4 dcraw_message(dcraw, DCRAW_VERBOSE, " %f", pre_mul[c]);
+  dcraw_message(dcraw, DCRAW_VERBOSE, "\n");
  
 /* The rest of the scaling is done somewhere else UF*/
 #if 0
@@ -162,7 +198,7 @@ void CLASS border_interpolate_INDI (const int height, const int width,
 	ushort (*image)[4], const unsigned filters, int colors,
 	int border)
 {
-  int row, col, y, x, c, sum[8];
+  int row, col, y, x, f, c, sum[8];
 
   for (row=0; row < height; row++)
     for (col=0; col < width; col++) {
@@ -172,41 +208,42 @@ void CLASS border_interpolate_INDI (const int height, const int width,
       for (y=row-1; y != row+2; y++)
 	for (x=col-1; x != col+2; x++)
 	  if (y >= 0 && y < height && x >= 0 && x < width) {
-	    /* Do not use BAYER macro since shrink is aways false here UF */
-	    sum[FC(y,x)] += image[y*width + x][FC(y,x)];
-	    sum[FC(y,x)+4]++;
+	    f = fc_INDI(filters, y, x);
+	    sum[f] += image[y*width + x][f];
+	    sum[f+4]++;
 	  }
-      FORCC if (c != FC(row,col))
+      f = fc_INDI(filters,row,col);
+      FORCC if (c != f && sum[c+4])
 	image[row*width+col][c] = sum[c] / sum[c+4];
     }
 }
 
 void CLASS lin_interpolate_INDI(ushort (*image)[4], const unsigned filters,
-        const int width, const int height, const int colors) /*UF*/
+        const int width, const int height, const int colors, void *dcraw) /*UF*/
 {
-  int code[8][2][32], *ip, sum[4];
+  int code[16][16][32], *ip, sum[4];
   int c, i, x, y, row, col, shift, color;
   ushort *pix;
 
-  dcraw_message (DCRAW_VERBOSE, "Bilinear interpolation...\n"); /*UF*/
+  dcraw_message (dcraw, DCRAW_VERBOSE, "Bilinear interpolation...\n"); /*UF*/
 
   border_interpolate_INDI (height, width, image, filters, colors, 1);
-  for (row=0; row < 8; row++)
-    for (col=0; col < 2; col++) {
+  for (row=0; row < 16; row++)
+    for (col=0; col < 16; col++) {
       ip = code[row][col];
       memset (sum, 0, sizeof sum);
       for (y=-1; y <= 1; y++)
 	for (x=-1; x <= 1; x++) {
 	  shift = (y==0) + (x==0);
 	  if (shift == 2) continue;
-	  color = FC(row+y,col+x);
+	  color = fc_INDI(filters,row+y,col+x);
 	  *ip++ = (width*y + x)*4 + color;
 	  *ip++ = shift;
 	  *ip++ = color;
 	  sum[color] += 1 << shift;
 	}
       FORCC
-	if (c != FC(row,col)) {
+	if (c != fc_INDI(filters,row,col)) {
 	  *ip++ = c;
 	  *ip++ = sum[c];
 	}
@@ -214,7 +251,7 @@ void CLASS lin_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   for (row=1; row < height-1; row++)
     for (col=1; col < width-1; col++) {
       pix = image[row*width+col];
-      ip = code[row & 7][col & 1];
+      ip = code[row & 15][col & 15];
       memset (sum, 0, sizeof sum);
       for (i=8; i--; ip+=3)
 	sum[ip[2]] += pix[ip[0]] << ip[1];
@@ -234,7 +271,7 @@ void CLASS lin_interpolate_INDI(ushort (*image)[4], const unsigned filters,
    Gradients are numbered clockwise from NW=0 to W=7.
  */
 void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
-        const int width, const int height, const int colors) /*UF*/
+        const int width, const int height, const int colors, void *dcraw) /*UF*/
 {
   static const signed char *cp, terms[] = {
     -2,-2,+0,-1,0,0x01, -2,-2,+0,+0,1,0x01, -2,-1,-1,+0,0,0x01,
@@ -261,24 +298,27 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
     +1,+0,+2,+1,0,0x10
   }, chood[] = { -1,-1, -1,0, -1,+1, 0,+1, +1,+1, +1,0, +1,-1, 0,-1 };
   ushort (*brow[5])[4], *pix;
-  int code[8][2][320], *ip, gval[8], gmin, gmax, sum[4];
+  int prow=7, pcol=1, *ip, *code[16][16], gval[8], gmin, gmax, sum[4];
   int row, col, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
   int g, diff, thold, num, c;
+      
+  lin_interpolate_INDI(image, filters, width, height, colors, dcraw); /*UF*/
+  dcraw_message (dcraw, DCRAW_VERBOSE, "VNG interpolation...\n"); /*UF*/
 
-  lin_interpolate_INDI(image, filters, width, height, colors); /*UF*/
-  dcraw_message (DCRAW_VERBOSE, "VNG interpolation...\n"); /*UF*/
-
-  for (row=0; row < 8; row++) {		/* Precalculate for VNG */
-    for (col=0; col < 2; col++) {
-      ip = code[row][col];
+  if (filters == 1) prow = pcol = 15;
+  ip = (int *) calloc ((prow+1)*(pcol+1), 1280);
+  merror (ip, "vng_interpolate()");
+  for (row=0; row <= prow; row++)               /* Precalculate for VNG */
+    for (col=0; col <= pcol; col++) {
+      code[row][col] = ip;
       for (cp=terms, t=0; t < 64; t++) {
 	y1 = *cp++;  x1 = *cp++;
 	y2 = *cp++;  x2 = *cp++;
 	weight = *cp++;
 	grads = *cp++;
-	color = FC(row+y1,col+x1);
-	if (FC(row+y2,col+x2) != color) continue;
-	diag = (FC(row,col+1) == color && FC(row+1,col) == color) ? 2:1;
+	color = fc_INDI(filters,row+y1,col+x1);
+	if (fc_INDI(filters,row+y2,col+x2) != color) continue;
+	diag = (fc_INDI(filters,row,col+1) == color && fc_INDI(filters,row+1,col) == color) ? 2:1;
 	if (abs(y1-y2) == diag && abs(x1-x2) == diag) continue;
 	*ip++ = (y1*width + x1)*4 + color;
 	*ip++ = (y2*width + x2)*4 + color;
@@ -291,14 +331,13 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
       for (cp=chood, g=0; g < 8; g++) {
 	y = *cp++;  x = *cp++;
 	*ip++ = (y*width + x) * 4;
-	color = FC(row,col);
-	if (FC(row+y,col+x) != color && FC(row+y*2,col+x*2) == color)
+	color = fc_INDI(filters,row,col);
+	if (fc_INDI(filters,row+y,col+x) != color && fc_INDI(filters,row+y*2,col+x*2) == color)
 	  *ip++ = (y*width + x) * 8 + color;
 	else
 	  *ip++ = 0;
       }
     }
-  }
   brow[4] = (ushort (*)[4]) calloc (width*3, sizeof **brow);
   merror (brow[4], "vng_interpolate()");
   for (row=0; row < 3; row++)
@@ -306,7 +345,7 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   for (row=2; row < height-2; row++) {		/* Do VNG interpolation */
     for (col=2; col < width-2; col++) {
       pix = image[row*width+col];
-      ip = code[row & 7][col & 1];
+      ip = code[row & prow][col & pcol];
       memset (gval, 0, sizeof gval);
       while ((g = ip[0]) != INT_MAX) {		/* Calculate gradients */
 	diff = ABS(pix[g] - pix[ip[1]]) << ip[2];
@@ -329,7 +368,7 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
       }
       thold = gmin + (gmax >> 1);
       memset (sum, 0, sizeof sum);
-      color = FC(row,col);
+      color = fc_INDI(filters,row,col);
       for (num=g=0; g < 8; g++,ip+=2) {		/* Average the neighbors */
 	if (gval[g] <= thold) {
 	  FORCC
@@ -393,7 +432,7 @@ void CLASS cam_to_cielab_INDI (ushort cam[4], float lab[3],
 
 void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
         const int width, const int height, const int colors,
-       	const float rgb_cam[3][4])
+       	const float rgb_cam[3][4], void *dcraw)
 {
   int i, j, top, left, row, col, tr, tc, fc, c, d, val, hm[2];
   ushort (*pix)[4], (*rix)[3];
@@ -404,7 +443,7 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
    short (*lab)[TS][TS][3];
    char (*homo)[TS][TS], *buffer;
 
-  dcraw_message (DCRAW_VERBOSE, "AHD interpolation...\n"); /*UF*/
+  dcraw_message (dcraw, DCRAW_VERBOSE, "AHD interpolation...\n"); /*UF*/
 
   border_interpolate_INDI (height, width, image, filters, colors, 3);
   buffer = (char *) malloc (26*TS*TS);		/* 1664 kB */
@@ -501,7 +540,8 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 #undef TS
 
 void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
-    int *width_p, int *fuji_width_p, const int colors, const double step)
+    int *width_p, int *fuji_width_p, const int colors, const double step,
+    void *dcraw)
 {
   int height = *height_p, width = *width_p, fuji_width = *fuji_width_p; /*UF*/
   ushort (*image)[4] = *image_p; /*UF*/
@@ -512,7 +552,7 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
   ushort (*img)[4], (*pix)[4];
 
   if (!fuji_width) return;
-  dcraw_message (DCRAW_VERBOSE, "Rotating image 45 degrees...\n");
+  dcraw_message (dcraw, DCRAW_VERBOSE, "Rotating image 45 degrees...\n");
 //  fuji_width = (fuji_width - 1 + shrink) >> shrink;
 //  step = sqrt(0.5);
   wide = fuji_width / step;
@@ -553,7 +593,7 @@ void CLASS flip_image_INDI(ushort (*image)[4], int *height_p, int *width_p,
   int height = *height_p, width = *width_p;/* INDI - UF*/
 
 //  Message is suppressed because error handling is not enabled here.
-//  dcraw_message (DCRAW_VERBOSE, "Flipping image %c:%c:%c...\n",
+//  dcraw_message (dcraw, DCRAW_VERBOSE, "Flipping image %c:%c:%c...\n",
 //	flip & 1 ? 'H':'0', flip & 2 ? 'V':'0', flip & 4 ? 'T':'0'); /*UF*/
   
   img = (INT64 *) image;

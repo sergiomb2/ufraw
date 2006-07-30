@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.17 2006/06/24 16:20:27 udifuchs Exp $
+# $Id: Makefile.am,v 1.18 2006/07/30 16:56:58 udifuchs Exp $
 
 if MAKE_EXTRAS
   bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve
@@ -27,7 +27,7 @@ icondir = $(datadir)/pixmaps
 
 UFRAW_COMMON = ufraw_ufraw.c ufraw_routines.c ufraw_exif.c ufraw_developer.c \
     ufraw_conf.c ufraw_writer.c ufraw.h ufraw_icon.h wb_presets.c \
-    dcraw_api.c dcraw_api.h dcraw_indi.c nikon_curve.c nikon_curve.h \
+    dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h nikon_curve.c nikon_curve.h \
     ufraw_exiv2.cc iccjpeg.c iccjpeg.h
 UFRAW_GTK_COMMON = $(UFRAW_COMMON) ufraw_preview.c ufraw_saver.c \
     ufraw_chooser.c curveeditor_widget.c curveeditor_widget.h
@@ -56,12 +56,12 @@ if MAKE_GIMP
   ufraw_gimp_LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD) $(GIMP_LIBS)
 endif
 
-dcraw_nomain.o: dcraw.c
+dcraw_nomain.o: dcraw.cc
 	$(COMPILE) -DDCRAW_NOMAIN -DNO_LCMS -o $@ -c $^
 
 if MAKE_EXTRAS
-  dcraw_SOURCES = dcraw.c
-  dcraw_CFLAGS = $(UFRAW_CFLAGS)
+  dcraw_SOURCES = dcraw.cc
+  dcraw_CXXFLAGS = $(UFRAW_CFLAGS)
   dcraw_LDFLAGS = @CONSOLE@
   dcraw_LDADD = $(UFRAW_LDADD)
 
