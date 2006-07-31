@@ -296,7 +296,7 @@ void CLASS read_shorts (ushort *pixel, int count)
 {
   fread (pixel, 2, count, ifp);
   if ((order == 0x4949) == (ntohs(0x1234) == 0x1234))
-    swab (pixel, pixel, count*2);
+    swab ((const char *)pixel, (char *)pixel, count*2); /*mingw support UF*/
 }
 
 void CLASS canon_600_fixed_wb (int temp)
@@ -1835,7 +1835,7 @@ fill_input_buffer (j_decompress_ptr cinfo)
   DCRaw *d = (DCRaw*)cinfo->client_data;
 
   nbytes = fread (jpeg_buffer, 1, 4096, d->ifp);
-  swab (jpeg_buffer, jpeg_buffer, nbytes);
+  swab ((const char *)jpeg_buffer, (char *)jpeg_buffer, nbytes); /*mingw UF*/
   cinfo->src->next_input_byte = jpeg_buffer;
   cinfo->src->bytes_in_buffer = nbytes;
   return TRUE;
@@ -6736,7 +6736,7 @@ void CLASS write_ppm_tiff (FILE *ofp)
 	     ppm [(col*xmag+i)*colors+c] = lut[image[row*width+col][c]];
 	else ppm2[(col*xmag+i)*colors+c] =     image[row*width+col][c];
     if (output_bps == 16 && !output_tiff && th.order == 0x4949)
-      swab (ppm2, ppm2, xmag*width*colors*2);
+      swab ((const char *)ppm2, (char *)ppm2, xmag*width*colors*2); /*mingw UF*/
     for (i=0; i < ymag; i++)
       fwrite (ppm, colors*output_bps/8, xmag*width, ofp);
   }
