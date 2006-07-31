@@ -215,7 +215,6 @@ void apply_profile (char *input, char *output);
 void convert_to_rgb();
 void fuji_rotate();
 int flip_index (int row, int col);
-void flip_image();
 void gamma_lut (uchar lut[0x10000]);
 void tiff_set (ushort *ntag,
 	        ushort tag, ushort type, int count, int val);
