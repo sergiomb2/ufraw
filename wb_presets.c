@@ -960,6 +960,26 @@ const wb_data wb_preset[] = {
   { "PENTAX", "*ist DS", "Tungsten", 0,		{ 1, 1, 2.027344, 0 } },
   { "PENTAX", "*ist DS", "Flash", 0,		{ 1.695312, 1, 1, 0 } },
 
+  { "SONY", "DSLR-A100", "Daylight", -3,	{ 1.601562, 1, 2.101562, 0 } },
+  { "SONY", "DSLR-A100", "Daylight", 0,		{ 1.746094, 1, 1.843750, 0 } },
+  { "SONY", "DSLR-A100", "Daylight", 3,		{ 1.914062, 1, 1.628906, 0 } },
+  { "SONY", "DSLR-A100", "Shade", -3,		{ 1.906250, 1, 1.843750, 0 } },
+  { "SONY", "DSLR-A100", "Shade", 0,		{ 2.070312, 1, 1.609375, 0 } },
+  { "SONY", "DSLR-A100", "Shade", 3,		{ 2.281250, 1, 1.429688, 0 } },
+  { "SONY", "DSLR-A100", "Cloudy", -3,		{ 1.691406, 1, 1.863281, 0 } },
+  { "SONY", "DSLR-A100", "Cloudy", 0,		{ 1.855469, 1, 1.628906, 0 } },
+  { "SONY", "DSLR-A100", "Cloudy", 3,		{ 2.023438, 1, 1.445312, 0 } },
+  { "SONY", "DSLR-A100", "Tungsten", -3,    	{ 1, 1.028112, 4.610442, 0 } },
+  { "SONY", "DSLR-A100", "Tungsten", 0,		{ 1.054688, 1, 3.917969, 0 } },
+  { "SONY", "DSLR-A100", "Tungsten", 3,		{ 1.164062, 1, 3.476562, 0 } },
+  { "SONY", "DSLR-A100", "Fluorescent", -2,	{ 1.058594, 1, 4.453125, 0 } },
+  { "SONY", "DSLR-A100", "Fluorescent", 0,	{ 1.718750, 1, 3.058594, 0 } },
+  { "SONY", "DSLR-A100", "Fluorescent", 3,	{ 2.238281, 1, 1.949219, 0 } },
+  { "SONY", "DSLR-A100", "Fluorescent", 4,	{ 1.992188, 1, 1.757812, 0 } },
+  { "SONY", "DSLR-A100", "Flash", -3,		{ 1.710938, 1, 1.988281, 0 } },
+  { "SONY", "DSLR-A100", "Flash", 0,		{ 1.859375, 1, 1.746094, 0 } },
+  { "SONY", "DSLR-A100", "Flash", 3,		{ 2.046875, 1, 1.542969, 0 } },
+
 };
 
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
