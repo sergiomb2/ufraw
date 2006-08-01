@@ -80,11 +80,11 @@ typedef unsigned long long UINT64;
 /* All definitions of global variables are defined inside a class in dcraw.h */
 #include "dcraw.h"
 
-static const double xyz_rgb[3][3] = {			/* XYZ from RGB *//*UF*/
+const double xyz_rgb[3][3] = {			/* XYZ from RGB *//*UF*/
   { 0.412453, 0.357580, 0.180423 },
   { 0.212671, 0.715160, 0.072169 },
   { 0.019334, 0.119193, 0.950227 } };
-static const float d65_white[3] = { 0.950456, 1, 1.088754 };
+const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
 #define DCRAW_SUCCESS 0        /* Centerlize the error handling - UF*/
 #define DCRAW_ERROR 1
