@@ -6692,7 +6692,7 @@ void CLASS write_ppm_tiff (FILE *ofp)
   th.rat[4] = (int)(th.rat[4] * focal_len);
   strncpy (th.make, make, 64);
   strncpy (th.model, model, 72);
-  strcpy (th.soft, "dcraw v"VERSION);
+  strcpy (th.soft, "dcraw v"DCRAW_VERSION);
   t = gmtime (&timestamp);
   sprintf (th.date, "%04d:%02d:%02d %02d:%02d:%02d",
       t->tm_year+1900,t->tm_mon+1,t->tm_mday,t->tm_hour,t->tm_min,t->tm_sec);
@@ -6747,7 +6747,7 @@ int CLASS main (int argc, char **argv)
   if (argc == 1)
   {
     fprintf (stderr,
-    "\nRaw Photo Decoder \"dcraw\" v"VERSION
+    "\nRaw Photo Decoder \"dcraw\" v"DCRAW_VERSION
     "\nby Dave Coffin, dcoffin a cybercom o net"
     "\n\nUsage:  %s [options] file1 file2 ...\n"
     "\nValid options:"
