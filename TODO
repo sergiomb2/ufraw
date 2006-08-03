@@ -6,12 +6,10 @@ For the future
 Leaf embedded profiles
 fuji sqrt(0.5) factor in size
 Canon 10D presets from ExifTool
-support URI
 window size
 g_fopen - UTF-8
-Read RAW preview image (parse.c)
+Read RAW preview image
 Use bilateral filtering for noise reduction
-Better EXIF support
 Show WB spot/area values in HSV (in addition to output colorspace pixels).
 Show WB spot/area values in Adam's exposure zones somehow.
 Bug: when show overexposure is checked, WB spot counts blown out as 0.

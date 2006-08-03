@@ -43,16 +43,12 @@ configure: lossless compressed TIFF support: yes
 
 If some of the lines end with 'no' instead of 'yes', it is not the end of
 the world. It only means that this option in UFRaw will be disabled. EXIF
-support is disabled by default. It can be enabled for Nikon NEF, Pentax
-PEF and Fuji RAF files by running configure as:
-./configure --with-libexif
-
-The libexif development package is required for this to work.
-You should use libexif-0.6.13 or newer.
-
-To enable EXIF support for Canon CRW files use (requires the exiv2
-development package):
-./configure --with-exiv2
+support is disabled by default. It can be enabled for Canon (CRW, CR2),
+Nikon (NEF), Pentax (PEF), Samsung (PEF), Sony (SR2, ARW) and Adobe's DNG
+by running configure as:
+./configure --with-exiv2 (requires exiv2-0.10 or newer)
+and for Fuji (RAF) by:
+./configure --with-libexif (requires libexif-0.6.13 or newer)
 
 These paragraphs use the term "development package"; the general
 requirement is to have the full library installed, including header
@@ -189,12 +185,6 @@ releases. No attempt is made to keep backward compatibility with the different
 stages of the development versions. If you use the development version you
 might have to delete or fix manually such files from time to time.
 
-Reading EXIF data is only supported for NEF and PEF files - which are really
-big-endian TIFF files - and even then your mileage may vary. In the worst
-case UFRaw may crash and in the best case it will read some, but not all of
-the data. Reading EXIF data from CR2 files - which are little-endian TIFF
-files - is currently not supported.
-
 Last but not least, the development version is poorly tested and has some
 half written features, therefore it is bound to have bugs...
 
@@ -222,6 +212,14 @@ date user guide.
 
 History
 =======
+
+03/08/2006 - UFRaw-0.9 released, based on DCRaw v8.28.
+* Display EXIF data in user interface.
+* Add darkframe subtraction option.
+* More conservative highlight unclipping.
+* Support filenames in URI format.
+* Some bug corrections.
+
 13/05/2006 - UFRaw-0.8.1 released, based on DCRaw v8.15.
 * Fix Gimp plug-in half-interpolation crash.
 * Fix possible crash in auto-exposure.
