@@ -448,11 +448,14 @@ void DCRaw::dcraw_message(int code, const char *format, ...)
 
 void dcraw_message(void *dcraw, int code, char *format, ...)
 {
+    char *message;
     DCRaw *d = (DCRaw *)dcraw;
     va_list ap;
     va_start(ap, format);
-    d->dcraw_message(code, format, ap);
+    message = g_strdup_vprintf(format, ap);
+    d->dcraw_message(code, message);
     va_end(ap);
+    g_free(message);
 }
 
 }

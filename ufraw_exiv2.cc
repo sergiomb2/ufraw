@@ -29,6 +29,11 @@ try {
     uf->exifBuf = NULL;
     uf->exifBufLen = 0;
 
+    /* Redirect exiv2 errors to a string buffer */
+    std::ostringstream stderror;
+    std::streambuf *savecerr = std::cerr.rdbuf();
+    std::cerr.rdbuf(stderror.rdbuf());
+
     Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(uf->filename);
     assert(image.get() != 0);
     image->readMetadata();
@@ -165,6 +170,9 @@ try {
        	str << *pos;
 	g_strlcpy(uf->conf->lensText, str.str().c_str(), max_name);
     }
+    std::cerr.rdbuf(savecerr);
+    ufraw_message(UFRAW_SET_LOG, "%s\n", stderror.str().c_str());
+
     return UFRAW_SUCCESS;
 }
 catch (Exiv2::AnyError& e) {
