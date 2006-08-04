@@ -42,7 +42,9 @@
    NO_LCMS disables the "-p" option.
  */
 #ifdef HAVE_LIBJPEG
+extern "C" {
 #include <jpeglib.h>
+}
 #endif
 #ifndef NO_LCMS
 #include <lcms.h>
