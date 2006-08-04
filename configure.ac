@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.43 2006/05/31 05:39:09 nkbj Exp $
+dnl $Id: configure.ac,v 1.44 2006/08/04 22:22:11 udifuchs Exp $
 AC_INIT(UFRaw, 0.9)
 AC_PREREQ(2.57)
 
@@ -238,7 +238,7 @@ AC_SUBST(UFRAW_LDADD)
 
 AC_MSG_CHECKING(whether to build extras)
 AC_ARG_ENABLE(extras,
-  [  --enable-extras         build extra (dcraw, nikon-curve, ufraw-exif) executables], ,
+  [  --enable-extras         build extra (dcraw, nikon-curve) executables], ,
   enable_extras=no)
 AC_MSG_RESULT($enable_extras)
 AM_CONDITIONAL(MAKE_EXTRAS, test $enable_extras = yes)
