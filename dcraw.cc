@@ -15,8 +15,8 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.339 $
-   $Date: 2006/08/06 20:28:43 $
+   $Revision: 1.340 $
+   $Date: 2006/08/08 15:06:13 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -3983,6 +3983,7 @@ void CLASS get_timestamp (int reversed)
     for (i=19; i--; ) str[i] = fgetc(ifp);
   else
     fread (str, 19, 1, ifp);
+  memset (&t, 0, sizeof t);
   if (sscanf (str, "%d:%d:%d %d:%d:%d", &t.tm_year, &t.tm_mon,
 	&t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec) != 6)
     return;
@@ -4777,6 +4778,7 @@ void CLASS parse_rollei()
   struct tm t;
 
   fseek (ifp, 0, SEEK_SET);
+  memset (&t, 0, sizeof t);
   do {
     fgets (line, 128, ifp);
     if ((val = strchr(line,'=')))
@@ -4949,6 +4951,7 @@ void CLASS parse_riff()
   } else if (!memcmp(tag,"IDIT",4) && size < 64) {
     fread (date, 64, 1, ifp);
     date[size] = 0;
+    memset (&t, 0, sizeof t);
     if (sscanf (date, "%*s %s %d %d:%d:%d %d", month, &t.tm_mday,
 	&t.tm_hour, &t.tm_min, &t.tm_sec, &t.tm_year) == 6) {
       for (i=0; i < 12 && strcmp(mon[i],month); i++);
