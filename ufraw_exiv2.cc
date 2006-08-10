@@ -25,16 +25,18 @@ extern "C" {
 }
 
 extern "C" int ufraw_exif_from_exiv2(ufraw_data *uf)
-try {
-    uf->exifBuf = NULL;
-    uf->exifBufLen = 0;
-
+{
     /* Redirect exiv2 errors to a string buffer */
     std::ostringstream stderror;
     std::streambuf *savecerr = std::cerr.rdbuf();
     std::cerr.rdbuf(stderror.rdbuf());
 
+try {
+    uf->exifBuf = NULL;
+    uf->exifBufLen = 0;
+
     Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(uf->filename);
+ 
     assert(image.get() != 0);
     image->readMetadata();
 
@@ -176,7 +178,10 @@ try {
     return UFRAW_SUCCESS;
 }
 catch (Exiv2::AnyError& e) {
+    std::cerr.rdbuf(savecerr);
     ufraw_message(UFRAW_SET_WARNING, "%s\n", e.what().c_str());
     return UFRAW_ERROR;
+}
+
 }
 #endif /* HAVE_EXIV2 */
