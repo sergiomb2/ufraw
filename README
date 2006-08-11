@@ -44,8 +44,8 @@ configure: lossless compressed TIFF support: yes
 If some of the lines end with 'no' instead of 'yes', it is not the end of
 the world. It only means that this option in UFRaw will be disabled. EXIF
 support is disabled by default. It can be enabled for Canon (CRW, CR2),
-Nikon (NEF), Pentax (PEF), Samsung (PEF), Sony (SR2, ARW) and Adobe's DNG
-by running configure as:
+Minolta (MRW), Nikon (NEF), Pentax (PEF), Samsung (PEF), Sony (SR2, ARW)
+and Adobe's DNG by running configure as:
 ./configure --with-exiv2 (requires exiv2-0.10 or newer)
 and for Fuji (RAF) by:
 ./configure --with-libexif (requires libexif-0.6.13 or newer)
