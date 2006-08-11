@@ -600,10 +600,20 @@ int ufraw_set_wb(ufraw_data *uf)
 	uf->conf->WBTuning = 0;
     } else {
 	int lastTuning = -1;
+	char model[max_name];
+	if ( strcmp(uf->conf->make,"MINOLTA")==0 &&
+		( strncmp(uf->conf->model, "ALPHA", 5)==0 ||
+		  strncmp(uf->conf->model, "MAXXUM", 6)==0 ) ) {
+	    /* Canonize Minolta model names (copied from dcraw) */
+	    g_snprintf(model, max_name, "DYNAX %s",
+	    uf->conf->model+6+(uf->conf->model[0]=='M'));
+	} else {
+	    g_strlcpy(model, uf->conf->model, max_name);
+	}
 	for (i=0; i<wb_preset_count; i++) {
 	    if (!strcmp(uf->conf->wb, wb_preset[i].name) &&
 		!strcmp(uf->conf->make, wb_preset[i].make) &&
-		!strcmp(uf->conf->model, wb_preset[i].model) ) {
+		!strcmp(model, wb_preset[i].model) ) {
 		if (uf->conf->WBTuning == wb_preset[i].tuning) {
 		    for (c=0; c<raw->colors; c++)
 			uf->conf->chanMul[c] = wb_preset[i].channel[c];

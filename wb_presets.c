@@ -27,6 +27,8 @@
  *	      It is enough to give only the extreme values, the other values
  *	      will be interpolated.
  * Column 5 - Channel multipliers.
+ *
+ * Minolta's ALPHA and MAXXUM models are treated as the DYNAX model.
  */
 const wb_data wb_preset[] = { 
 

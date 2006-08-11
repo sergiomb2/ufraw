@@ -1926,13 +1926,23 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->WBPresets = NULL;
     const wb_data *lastPreset = NULL;
     gboolean make_model_match = FALSE, make_model_fine_tuning = FALSE;
+    char model[max_name];
+    if ( strcmp(uf->conf->make,"MINOLTA")==0 &&
+            ( strncmp(uf->conf->model, "ALPHA", 5)==0 ||
+              strncmp(uf->conf->model, "MAXXUM", 6)==0 ) ) {
+        /* Canonize Minolta model names (copied from dcraw) */
+        g_snprintf(model, max_name, "DYNAX %s",
+        uf->conf->model+6+(uf->conf->model[0]=='M'));
+    } else {
+        g_strlcpy(model, uf->conf->model, max_name);
+    }
     for (i=0; i<wb_preset_count; i++) {
         if (strcmp(wb_preset[i].make, "")==0) {
 	    /* Common presets */
 	    data->WBPresets = g_list_append(data->WBPresets, wb_preset[i].name);
 	    gtk_combo_box_append_text(data->WBCombo, wb_preset[i].name);
         } else if ( (strcmp(wb_preset[i].make, uf->conf->make)==0 ) &&
-                    (strcmp(wb_preset[i].model, uf->conf->model)==0)) {
+                    (strcmp(wb_preset[i].model, model)==0)) {
 	    /* Camera specific presets */
             make_model_match = TRUE;
 	    if ( lastPreset==NULL ||
