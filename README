@@ -213,6 +213,12 @@ date user guide.
 History
 =======
 
+12/08/2006 - UFRaw-0.9.1 released, based on DCRaw v8.29.
+* Recognize Sony's *.arw file type.
+* Redirect exiv2 warnings from the terminal to the log.
+* Fix build for some build environments (libjpeg errors).
+* Treat Minolta's Alpha and Maxxum models as the Dynax model for WB presets.
+
 03/08/2006 - UFRaw-0.9 released, based on DCRaw v8.28.
 * Display EXIF data in user interface.
 * Add darkframe subtraction option.
