@@ -36,6 +36,11 @@ developer_data *developer_init()
     d->baseCurveData.m_gamma = -1.0;
     memset(&d->luminosityCurveData, 0, sizeof(d->luminosityCurveData));
     d->luminosityCurveData.m_gamma = -1.0;
+    d->luminosityProfile = NULL;
+    LPGAMMATABLE *TransferFunction = (LPGAMMATABLE *)d->TransferFunction;
+    TransferFunction[0] = cmsAllocGamma(0x100);
+    TransferFunction[1] = TransferFunction[2] = cmsBuildGamma(0x100, 1.0);
+    d->saturationProfile = NULL;
     d->intent = -1;
     d->updateTransform = TRUE;
     d->colorTransform = NULL;
@@ -49,6 +54,10 @@ void developer_destroy(developer_data *d)
     if (d==NULL) return;
     for (i=0; i<profile_types; i++)
         if (d->profile[i]!=NULL) cmsCloseProfile(d->profile[i]);
+    cmsCloseProfile(d->luminosityProfile);
+    cmsFreeGamma(d->TransferFunction[0]);
+    cmsFreeGamma(d->TransferFunction[1]);
+    cmsCloseProfile(d->saturationProfile);
     if (d->colorTransform!=NULL)
         cmsDeleteTransform(d->colorTransform);
     g_free(d);
@@ -78,6 +87,55 @@ void developer_profile(developer_data *d, int type, profile_data *p)
         else
             strcpy(p->productName, "");
     }
+}
+
+int saturation_sampler(register WORD In[], register WORD Out[], register LPVOID Cargo){
+    cmsCIELab LabIn, LabOut;
+    cmsCIELCh LChIn, LChOut;
+    double saturation = *(double *)Cargo;
+    cmsLabEncoded2Float(&LabIn, In);
+    cmsLab2LCh(&LChIn, &LabIn);
+    // Do some adjusts on LCh
+    LChOut.L = LChIn.L;
+    LChOut.C = (1-pow(1-(LChIn.C/256.), saturation))*256;
+    LChOut.h = LChIn.h;
+
+    cmsLCh2Lab(&LabOut, &LChOut);
+    // Back to encoded
+    cmsFloat2LabEncoded(Out, &LabOut);
+
+    return TRUE;
+}
+
+/* Based on lcms' cmsCreateBCHSWabstractProfile() */
+cmsHPROFILE create_saturation_profile(double saturation)
+{
+    cmsHPROFILE hICC;
+    LPLUT Lut;
+
+    hICC = _cmsCreateProfilePlaceholder();
+    if (hICC==NULL) return NULL;// can't allocate
+
+    cmsSetDeviceClass(hICC, icSigAbstractClass);
+    cmsSetColorSpace(hICC, icSigLabData);
+    cmsSetPCS(hICC, icSigLabData);
+    cmsSetRenderingIntent(hICC, INTENT_PERCEPTUAL);
+
+    // Creates a LUT with 3D grid only
+    Lut = cmsAllocLUT();
+    cmsAlloc3DGrid(Lut, 7, 3, 3);
+    if (!cmsSample3DGrid(Lut, saturation_sampler, &saturation , 0)) {
+        // Shouldn't reach here
+        cmsFreeLUT(Lut);
+        cmsCloseProfile(hICC);
+        return NULL;
+    }
+    // Create tags
+    cmsAddTag(hICC, icSigMediaWhitePointTag, (LPVOID) cmsD50_XYZ());
+    cmsAddTag(hICC, icSigAToB0Tag, (LPVOID) Lut);
+    // LUT is already on virtual profile
+    cmsFreeLUT(Lut);
+    return hICC;
 }
 
 void developer_prepare(developer_data *d, int rgbMax, double exposure,
@@ -114,7 +172,7 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
     if (in->gamma!=d->gamma || in->linear!=d->linear ||
 	    memcmp(baseCurve, &d->baseCurveData, sizeof(CurveData)) ) {
         double a, b, c, g;
-	CurveSample *cs = CurveSampleInit(0x10000, 0xFFFF);
+	CurveSample *cs = CurveSampleInit(0x10000, 0x10000);
         d->baseCurveData = *baseCurve;
         ufraw_message(UFRAW_RESET, NULL);
         if (CurveDataSample(baseCurve, cs)!=UFRAW_SUCCESS) {
@@ -150,39 +208,67 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
         d->intent = intent;
         d->updateTransform = TRUE;
     }
-    if (d->updateTransform) {
-        if (d->colorTransform!=NULL)
-            cmsDeleteTransform(d->colorTransform);
-        if (!strcmp(d->profileFile[0],"") && !strcmp(d->profileFile[1],""))
-            d->colorTransform = NULL;
-        else
-            d->colorTransform = cmsCreateTransform(
-                    d->profile[0], TYPE_RGB_16,
-                    d->profile[1], TYPE_RGB_16, d->intent, 0);
-    }
-    if (saturation!=d->saturation) {
-        d->saturation = saturation;
-        for (i=0; i<0x10000; i++) d->saturationCurve[i] = MAX(MIN(
-            pow((double)i/0x10000, saturation)*0x10000,0xFFFF),1);
-    }
     if (curve==NULL) {
-	/* Reset the luminosity curve and make sure it gets recalculated */
-        for (i=0; i<0x10000; i++) d->luminosityCurve[i] = i;
+	/* Reset the luminosity profile and make sure it gets recalculated */
+	cmsCloseProfile(d->luminosityProfile);
+	d->luminosityProfile = NULL;
 	d->luminosityCurveData.m_gamma = -1.0;
+        d->updateTransform = TRUE;
     } else {
 	/* Check if curve data has changed. */
 	if (memcmp(curve, &d->luminosityCurveData, sizeof(CurveData))) {
 	    d->luminosityCurveData = *curve;
-	    CurveSample *cs = CurveSampleInit(0x10000, 0xFFFF);
-	    ufraw_message(UFRAW_RESET, NULL);
-	    if (CurveDataSample(curve, cs)!=UFRAW_SUCCESS) {
-		ufraw_message(UFRAW_REPORT, NULL);
-		for (i=0; i<0x10000; i++) d->luminosityCurve[i] = i;
+	    /* Trivial curve does not require a profile */
+	    if (curve->m_anchors[0].x==0 && curve->m_anchors[0].y==0 &&
+		curve->m_anchors[1].x==1 && curve->m_anchors[1].y==1 ) {
+		d->luminosityProfile = NULL;
 	    } else {
-		for (i=0; i<0x10000; i++)
-		    d->luminosityCurve[i] = cs->m_Samples[i];
+		cmsCloseProfile(d->luminosityProfile);
+		CurveSample *cs = CurveSampleInit(0x100, 0x10000);
+		ufraw_message(UFRAW_RESET, NULL);
+		if (CurveDataSample(curve, cs)!=UFRAW_SUCCESS) {
+		    ufraw_message(UFRAW_REPORT, NULL);
+		    d->luminosityProfile = NULL;
+		} else {
+		    LPGAMMATABLE *TransferFunction =
+			(LPGAMMATABLE *)d->TransferFunction;
+		    for (i=0; i<0x100; i++)
+			TransferFunction[0]->GammaTable[i] = cs->m_Samples[i];
+		    d->luminosityProfile = cmsCreateLinearizationDeviceLink(
+			    icSigLabData, TransferFunction);
+		    cmsSetDeviceClass(d->luminosityProfile, icSigAbstractClass);
+		}
+		CurveSampleFree(cs);
 	    }
-	    CurveSampleFree(cs);
+	    d->updateTransform = TRUE;
+	}
+    }
+    if (saturation!=d->saturation) {
+        d->saturation = saturation;
+	cmsCloseProfile(d->saturationProfile);
+	if (saturation==1)
+	    d->saturationProfile = NULL;
+	else
+	    d->saturationProfile = create_saturation_profile(d->saturation);
+        d->updateTransform = TRUE;
+    }
+    if (d->updateTransform) {
+        if (d->colorTransform!=NULL)
+            cmsDeleteTransform(d->colorTransform);
+        if (!strcmp(d->profileFile[0],"") && !strcmp(d->profileFile[1],"") &&
+	    d->luminosityProfile==NULL && d->saturationProfile==NULL)
+            d->colorTransform = NULL;
+        else {
+	    cmsHPROFILE prof[4];
+	    i = 0;
+	    prof[i++] = d->profile[0];
+	    if (d->luminosityProfile!=NULL)
+		prof[i++] = d->luminosityProfile;
+	    if (d->saturationProfile!=NULL)
+		prof[i++] = d->saturationProfile;
+	    prof[i++] = d->profile[1];
+	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
+		    TYPE_RGB_16, TYPE_RGB_16, d->intent, 0);
 	}
     }
 }
@@ -191,10 +277,9 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     guint16 *buf, int count)
 {
     guint8 *p8 = po;
-    guint16 *p16 = po, *p, maxc, midc, minc, c, cc;
+    guint16 *p16 = po, c, cc;
     gint64 tmp, tmppix[4];
     guint min; // max;
-    unsigned sat, hue;
     int i;
     gboolean clipped;
 
@@ -262,35 +347,7 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     }
     if (d->colorTransform!=NULL)
         cmsDoTransform(d->colorTransform, buf, buf, count);
-//    if (d->saturation!=1)
-    for (i=0, p=buf; i<count; i++, p+=3) {
-        if (p[0] > p[1] && p[0] > p[2]) {
-            maxc = 0;
-            if (p[1] > p[2]) { midc = 1; minc = 2; }
-            else { midc = 2; minc = 1; }
-        } else if (p[1] > p[2]) {
-            maxc = 1;
-            if (p[0] > p[2]) { midc = 0; minc = 2; }
-            else { midc = 2; minc = 0; }
-        } else {
-            maxc = 2;
-            if (p[0] > p[1]) { midc = 0; minc = 1; }
-            else { midc = 1; minc = 0; }
-        }
-        if (p[maxc]!=p[minc]) {
-            /* oldSaturation = (max-min) / max */
-            /* newSaturation = 1 - pow(1 - oldSaturation, saturate) */
-            sat = 0x10000 - (unsigned)d->saturationCurve[p[minc]]*0x10000 /
-                    d->saturationCurve[p[maxc]];
-            hue = (unsigned)(p[midc]-p[minc])*0x10000/(p[maxc]-p[minc]);
-	    p[maxc] = d->luminosityCurve[p[maxc]];
-            p[minc] = p[maxc]*(0x10000-sat)/0x10000;
-            p[midc] = p[maxc]*(0x10000-sat+sat*hue/0x10000)/0x10000;
-            /* It is also possible to define oldSaturation = max-min */
-        } else {
-	    for (c=0; c<3; c++) p[c] = d->luminosityCurve[p[c]];
-	}
-    }
+ 
     if (mode==16) for (i=0; i<3*count; i++) p16[i] = buf[i];
     else for (i=0; i<3*count; i++) p8[i] = buf[i] >> 8;
 }

@@ -1021,7 +1021,7 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
 
     //Now build a table
     int val;
-    double res = 1.0/(double)sample->m_samplingRes;
+    double res = 1.0/(double)(sample->m_samplingRes-1);
     
     //allocate enough space for the samples
     DEBUG_PRINT("DEBUG: SAMPLING ALLOCATION: %u bytes\n",
@@ -1031,12 +1031,12 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
     sample->m_Samples = (unsigned int *)realloc(sample->m_Samples,
 	    sample->m_samplingRes * sizeof(int));
 
-    int firstPointX = x[0] * sample->m_samplingRes;
-    int firstPointY = pow(y[0], gamma) * sample->m_outputRes;
-    int lastPointX = x[n-1] * sample->m_samplingRes;
-    int lastPointY = pow(y[n-1], gamma) * sample->m_outputRes;
-    int maxY = curve->m_max_y * sample->m_outputRes;
-    int minY = curve->m_min_y * sample->m_outputRes;
+    int firstPointX = x[0] * (sample->m_samplingRes-1);
+    int firstPointY = pow(y[0], gamma) * (sample->m_outputRes-1);
+    int lastPointX = x[n-1] * (sample->m_samplingRes-1);
+    int lastPointY = pow(y[n-1], gamma) * (sample->m_outputRes-1);
+    int maxY = curve->m_max_y * (sample->m_outputRes-1);
+    int minY = curve->m_min_y * (sample->m_outputRes-1);
 
     for(i = 0; i < (int)sample->m_samplingRes; i++)
     {
@@ -1053,10 +1053,11 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
 	    //within range, we can sample the curve
 	    if (gamma==1.0)
 		val = spline_cubic_val( n, x, i*res, y,
-			ypp, &ypval, &yppval ) * sample->m_outputRes;
+			ypp, &ypval, &yppval ) * (sample->m_outputRes-1) + 0.5;
 	    else
 		val = pow(spline_cubic_val( n, x, i*res, y,
-			ypp, &ypval, &yppval ), gamma) * sample->m_outputRes;
+			ypp, &ypval, &yppval ), gamma) *
+			(sample->m_outputRes-1) + 0.5;
 
 	    sample->m_Samples[i] = MIN(MAX(val,minY),maxY);
 	}

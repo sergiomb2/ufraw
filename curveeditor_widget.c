@@ -116,7 +116,7 @@ void curveeditor_widget_draw(CurveEditorWidgetData *data)
     gdk_draw_line (graph, gc, 0, 3 * h/4, w, 3 * h/4);
 
     //redraw the curve
-    CurveSample *sample = CurveSampleInit(w, h-1);
+    CurveSample *sample = CurveSampleInit(w, h);
 
     switch(curve->m_curveType)
     {
@@ -406,7 +406,7 @@ gboolean curveeditor_widget_on_key_press_event(GtkWidget *widget,
 	      curve->m_anchors[data->selectedPoint].x ) < 2.0/(w-1) )
 		  return TRUE;
 	
-	CurveSample *sample = CurveSampleInit(w, h-1);
+	CurveSample *sample = CurveSampleInit(w, h);
 	if (CurveDataSample(curve, sample)!=NC_SUCCESS)
 	    for (i=0; i<(int)sample->m_samplingRes; i++)
 		sample->m_Samples[i] =

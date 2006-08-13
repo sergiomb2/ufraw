@@ -72,8 +72,9 @@ typedef struct {
     double saturation;
     CurveData baseCurveData, luminosityCurveData;
     guint16 gammaCurve[0x10000];
-    guint16 luminosityCurve[0x10000];
-    guint16 saturationCurve[0x10000];
+    void *luminosityProfile;
+    void *TransferFunction[3];
+    void *saturationProfile;
 } developer_data;
 
 typedef guint16 image_type[4];
