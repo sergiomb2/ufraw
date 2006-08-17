@@ -972,6 +972,17 @@ const wb_data wb_preset[] = {
   { "Panasonic", "DMC-FZ30", "Fluorescent", 0,	{ 1.098485, 1, 2.106061, 0 } },
   { "Panasonic", "DMC-FZ30", "Flash", 0,	{ 1.965909, 1, 1.303030, 0 } },
 
+  /* It seemst that the *ist DL WB settings are not really presets. */
+  { "PENTAX", "*ist DL", "Daylight", 0,		{ 1.546875, 1, 1.007812, 0 } },
+  { "PENTAX", "*ist DL", "Shade", 0,		{ 1.933594, 1, 1.027344, 0 } },
+  { "PENTAX", "*ist DL", "Cloudy", 0,		{ 1.703125, 1, 1.003906, 0 } },
+  { "PENTAX", "*ist DL", "Daylight colors fluorescent", 0, { 2.593909, 1.299492, 1, 0 } },
+  { "PENTAX", "*ist DL", "Daylight white fluorescent", 0, { 1.539062, 1, 1.003906, 0 } },
+  { "PENTAX", "*ist DL", "White light fluorescent", 0, { 1.390625, 1, 1.117188, 0 } },
+  { "PENTAX", "*ist DL", "Tungston", 0,		{ 1.000000, 1, 2.074219, 0 } },
+  { "PENTAX", "*ist DL", "Flash", 0,		{ 1.621094, 1, 1.027344, 0 } },
+
+  /* It seemst that the *ist DS WB settings are not really presets. */
   { "PENTAX", "*ist DS", "Daylight", 0,		{ 1.632812, 1, 1, 0 } },
   { "PENTAX", "*ist DS", "Shade", 0,		{ 1.964844, 1, 1, 0 } },
   { "PENTAX", "*ist DS", "Cloudy", 0,		{ 1.761719, 1, 1, 0 } },
