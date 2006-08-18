@@ -3721,7 +3721,7 @@ void CLASS tiff_get (unsigned base,
     fseek (ifp, get4()+base, SEEK_SET);
 }
 
-void CLASS parse_thumb_note (int base, int toff, int tlen)
+void CLASS parse_thumb_note (int base, unsigned toff, unsigned tlen)
 {
   unsigned entries, tag, type, len, save;
 
