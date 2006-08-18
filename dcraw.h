@@ -185,7 +185,7 @@ void bilateral_filter();
 void recover_highlights();
 void tiff_get (unsigned base,
 	unsigned *tag, unsigned *type, unsigned *len, unsigned *save);
-void parse_olympus_note (int base);
+void parse_thumb_note (int base, int toff, int tlen);
 void parse_makernote (int base);
 void get_timestamp (int reversed);
 void parse_exif (int base);
