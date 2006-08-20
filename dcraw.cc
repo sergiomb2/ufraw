@@ -1520,7 +1520,8 @@ void CLASS leaf_hdr_load_raw()
 	fseek (ifp, get4() + 2*left_margin, SEEK_SET);
       }
       read_shorts (pixel, raw_width);
-      if ((row = r - top_margin) >= height) continue;
+      row = r - top_margin;
+      if (row >= height || row<0) continue;
       for (col=0; col < width; col++)
 	if (filters)  BAYER(row,col) = pixel[col];
 	else image[row*width+col][c] = pixel[col];
