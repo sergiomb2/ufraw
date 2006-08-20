@@ -49,7 +49,8 @@ enum { manual_curve, linear_curve, custom_curve, camera_curve };
 enum { in_profile, out_profile, profile_types};
 enum { raw_expander, exposure_expander, wb_expander, color_expander,
        curve_expander, live_expander, expander_count };
-enum { ppm8_type, ppm16_type, tiff8_type, tiff16_type, jpeg_type };
+enum { ppm8_type, ppm16_type, tiff8_type, tiff16_type, jpeg_type,
+       embedded_jpeg_type };
 
 typedef struct {
     char *make;
@@ -144,7 +145,7 @@ typedef struct {
 	 outputPath[max_path];
     int type, compression, createID, embedExif;
     int shrink, size;
-    gboolean overwrite, losslessCompress;
+    gboolean overwrite, losslessCompress, embeddedImage;
 
     /* GUI settings */
     double Zoom;
@@ -158,6 +159,7 @@ typedef struct {
     char profilePath[max_path];
 
     /* EXIF data */
+    int flip;
     float iso_speed, shutter, aperture, focal_len;
     char exifSource[max_name], isoText[max_name], shutterText[max_name],
 	 apertureText[max_name], focalLenText[max_name], lensText[max_name];
@@ -166,6 +168,7 @@ typedef struct {
 
 typedef struct {
     image_type *image;
+    guint8 *buffer;
     int height, width;
 } image_data;
 
@@ -174,6 +177,7 @@ typedef struct ufraw_struct {
     int predictedHeight, predictedWidth, rgbMax, colors, raw_color, useMatrix;
     float rgb_cam[3][4];
     image_data image;
+    image_data thumb;
     void *raw;
     developer_data *developer;
     conf_data *conf;
@@ -257,6 +261,11 @@ long ufraw_saver(void *widget, gpointer user_data);
 /* prototype for functions in ufraw_writer.c */
 int ufraw_write_image(ufraw_data *uf);
 int ufraw_batch_saver(ufraw_data *uf);
+
+/* prototype for functions in ufraw_embedded.c */
+int ufraw_read_embedded(ufraw_data *uf);
+int ufraw_convert_embedded(ufraw_data *uf);
+int ufraw_write_embedded(ufraw_data *uf);
 
 /* prototype for functions in ufraw_chooser.c */
 void ufraw_chooser(conf_data *conf, char *defPath);

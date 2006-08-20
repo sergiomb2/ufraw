@@ -68,6 +68,7 @@ const conf_data conf_default = {
     1, 0, /* shrink, size */
     FALSE, /* overwrite exsisting files without asking */
     FALSE, /* losslessCompress */
+    FALSE, /* load embedded preview image */
 
     /* GUI settings */
     25.0, 4, /* Zoom, Scale */
@@ -79,6 +80,9 @@ const conf_data conf_default = {
     FALSE, /* overExp indicator */
     FALSE, /* underExp indicator */
     "", "", /* curvePath, profilePath */
+
+    /* EXIF data */
+    0, /* flip */
     0.0, 0.0, 0.0, 0.0, /* iso_speed, shutter, aperture, focal_len */
     "", "", "", "", /* exifSource, isoText, shutterText, apertureText */
     "", "", "", "", "" /* focalLenText, lensText, timestamp, make, model */
@@ -997,6 +1001,7 @@ void conf_copy_save(conf_data *dst, const conf_data *src)
     dst->size = src->size;
     dst->overwrite = src->overwrite;
     dst->losslessCompress = src->losslessCompress;
+    dst->embeddedImage = src->embeddedImage;
 }
 
 int conf_set_cmd(conf_data *conf, const conf_data *cmd)
@@ -1006,6 +1011,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     if (cmd->losslessCompress!=-1)
 	conf->losslessCompress = cmd->losslessCompress;
     if (cmd->embedExif!=-1) conf->embedExif = cmd->embedExif;
+    if (cmd->embeddedImage!=-1) conf->embeddedImage = cmd->embeddedImage;
     if (cmd->compression!=NULLF) conf->compression = cmd->compression;
     if (cmd->autoExposure) {
 	conf->autoExposure = cmd->autoExposure;
@@ -1134,6 +1140,8 @@ char helpText[]=
 "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 "--[no]exif            Embed exif in output JPEG (default embed exif).\n"
 "--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"
+"--embedded-image      Extract the preview image embedded in the raw file\n"
+"                      instead of converting the raw image.\n"
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 "--output=FILE         Output file name, use '-' to output to stdout.\n"
 "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
@@ -1232,6 +1240,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         {"overwrite", 0, 0, 'O'},
 	{"exif", 0, 0, 'E'},
 	{"noexif", 0, 0, 'F'},
+	{"embedded-image", 0, 0, 'm'},
         {"help", 0, 0, 'h'},
 	{"version", 0, 0, 'v'},
 	{"batch", 0, 0, 'b'},
@@ -1315,6 +1324,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         case 'u': cmd->unclip = TRUE; break;
         case 'U': cmd->unclip = FALSE; break;
         case 'O': cmd->overwrite = TRUE; break;
+	case 'm': cmd->embeddedImage = TRUE; break;
         case 'z':
 #ifdef HAVE_LIBZ
             cmd->losslessCompress = TRUE; break;
@@ -1501,6 +1511,24 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
             return -1;
         }
     }
+    if (cmd->embeddedImage) {
+        if (outTypeName==NULL || !strcmp(outTypeName, "jpeg"))
+#ifdef HAVE_LIBJPEG
+	    cmd->type = embedded_jpeg_type;
+#else
+	    {
+		ufraw_message(UFRAW_ERROR,
+			"ufraw was build without JPEG support.");
+		return -1;
+	    }
+#endif
+        else {
+            ufraw_message(UFRAW_ERROR,
+		    "'%s' is not a valid output type for embedded image.",
+		    outTypeName);
+            return -1;
+        }
+    }
     cmd->createID = -1;
     if (createIDName!=NULL) {
         if (!strcmp(createIDName, "no"))
@@ -1534,6 +1562,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         g_strlcpy(cmd->outputFilename, output, max_path);
     }
     g_strlcpy(cmd->darkframeFile, "", max_path);
+    cmd->darkframe = NULL;
     if (darkframeFile!=NULL) {
 	char *df = uf_file_set_absolute(darkframeFile);
 	cmd->darkframe = ufraw_load_darkframe(df);

@@ -1738,6 +1738,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->UF = uf;
     data->SaveFunc = save_func;
 
+    if (uf->conf->embeddedImage) {
+	ufraw_message(UFRAW_ERROR, "Extracting embedded image is not "
+		"supported in interactive mode");
+	return UFRAW_ERROR;
+    }
     data->SaveConfig = *uf->conf;
     data->SpotX1 = -1;
     data->FreezeDialog = TRUE;

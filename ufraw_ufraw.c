@@ -162,6 +162,7 @@ ufraw_data *ufraw_open(char *filename)
     uf->conf = conf;
     g_strlcpy(uf->filename, filename, max_path);
     uf->image.image = NULL;
+    uf->thumb.buffer = NULL;
     uf->raw = raw;
     uf->colors = raw->colors;
     uf->raw_color = raw->raw_color;
@@ -284,6 +285,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	uf->conf->timestamp[strlen(uf->conf->timestamp)-1] = '\0';
     g_strlcpy(uf->conf->make, raw->make, max_name);
     g_strlcpy(uf->conf->model, raw->model, max_name);
+    uf->conf->flip = raw->flip;
     if (uf->exifBuf==NULL) {
 	g_strlcpy(uf->conf->exifSource, "DCRaw", max_name);
 	uf->conf->iso_speed = raw->iso_speed;
@@ -400,6 +402,16 @@ int ufraw_load_raw(ufraw_data *uf)
     int status;
     dcraw_data *raw = uf->raw;
 
+    if (uf->conf->embeddedImage) {
+	dcraw_image_data thumb;
+	if ( (status=dcraw_load_thumb(raw, &thumb))!=DCRAW_SUCCESS ) {
+	    ufraw_message(status, raw->message);
+	    return status;
+	}
+	uf->thumb.height = thumb.height;
+	uf->thumb.width = thumb.width;
+	return ufraw_read_embedded(uf);
+    }
     if ( (status=dcraw_load_raw(raw))!=DCRAW_SUCCESS ) {
         ufraw_message(status, raw->message);
         return status;
@@ -423,6 +435,7 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->raw);
     g_free(uf->exifBuf);
     g_free(uf->image.image);
+    g_free(uf->thumb.buffer);
     developer_destroy(uf->developer);
     g_free(uf->RawLumHistogram);
     ufraw_message(UFRAW_CLEAN, NULL);

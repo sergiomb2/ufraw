@@ -4647,7 +4647,7 @@ void CLASS parse_external_jpeg()
     }
   }
   if (!timestamp)
-    dcraw_message (DCRAW_ERROR, "Failed to read metadata from %s\n", jname);/*UF*/
+    dcraw_message (DCRAW_VERBOSE, "Failed to read metadata from %s\n", jname);/*UF*/
   free (jname);
   ifp = save;
 }

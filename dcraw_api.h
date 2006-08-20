@@ -43,12 +43,15 @@ typedef struct {
     float iso_speed, shutter, aperture, focal_len;
     time_t timestamp;
     char make[80], model[80];
+    int thumbType, thumbOffset, thumbBufferLength;
 } dcraw_data;
 
 enum { dcraw_ahd_interpolation, dcraw_vng_interpolation,
     dcraw_four_color_interpolation, dcraw_bilinear_interpolation };
+enum { unknown_thumb_type, jpeg_thumb_type, ppm_thumb_type };
 int dcraw_open(dcraw_data *h, char *filename);
 int dcraw_load_raw(dcraw_data *h);
+int dcraw_load_thumb(dcraw_data *h, dcraw_image_data *thumb);
 int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *h, int scale);
 int dcraw_image_resize(dcraw_image_data *image, int size);
 int dcraw_image_stretch(dcraw_image_data *image, int ymag);

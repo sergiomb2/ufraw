@@ -132,6 +132,8 @@ int dcraw_open(dcraw_data *h,char *filename)
     h->aperture = d->aperture;
     h->focal_len = d->focal_len;
     h->timestamp = d->timestamp;
+    h->raw.image = NULL;
+    h->thumbType = unknown_thumb_type;
     h->message = d->messageBuffer;
     return d->lastStatus;
 }
@@ -188,6 +190,36 @@ int dcraw_load_raw(dcraw_data *h)
 	rgb_cam_transpose[i][j] = d->rgb_cam[j][i];
     d->pseudoinverse (rgb_cam_transpose, h->cam_rgb, d->colors);
 
+    h->message = d->messageBuffer;
+    return d->lastStatus;
+}
+
+int dcraw_load_thumb(dcraw_data *h, dcraw_image_data *thumb)
+{
+    DCRaw *d = (DCRaw *)h->dcraw;
+
+    g_free(d->messageBuffer);
+    d->messageBuffer = NULL;
+    d->lastStatus = DCRAW_SUCCESS;
+
+    thumb->height = d->thumb_height;
+    thumb->width = d->thumb_width;
+    h->thumbOffset = d->thumb_offset;
+    h->thumbBufferLength = d->thumb_length;
+    if (d->thumb_offset==0) {
+	dcraw_message(d, DCRAW_ERROR,
+		"%s has no thumbnail.", d->ifname);
+    } else if (d->thumb_load_raw!=NULL) {
+	dcraw_message(d, DCRAW_ERROR,
+		"Unsupported thumb format (load_raw) for %s", d->ifname);
+    } else if (d->write_thumb==&DCRaw::jpeg_thumb) {
+	h->thumbType = jpeg_thumb_type;
+    } else if (d->write_thumb==&DCRaw::ppm_thumb) {
+	h->thumbType = ppm_thumb_type;
+    } else {
+	dcraw_message(d, DCRAW_ERROR,
+		"Unsupported thumb format for %s", d->ifname);
+    }
     h->message = d->messageBuffer;
     return d->lastStatus;
 }

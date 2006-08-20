@@ -23,6 +23,7 @@
 #endif
 #ifdef HAVE_LIBJPEG
 #include <jpeglib.h>
+#include <jerror.h>
 #include "iccjpeg.h"
 #endif
 #include "ufraw.h"
@@ -40,8 +41,8 @@ void ufraw_tiff_message(const char *module, const char *fmt, va_list ap)
 #ifdef HAVE_LIBJPEG
 void ufraw_jpeg_warning(j_common_ptr cinfo)
 {
-    ufraw_message(UFRAW_SET_WARNING, cinfo->err->jpeg_message_table
-            [cinfo->err->msg_code],
+    ufraw_message(UFRAW_SET_WARNING,
+	    cinfo->err->jpeg_message_table[cinfo->err->msg_code],
             cinfo->err->msg_parm.i[0],
             cinfo->err->msg_parm.i[1],
             cinfo->err->msg_parm.i[2],
@@ -49,8 +50,20 @@ void ufraw_jpeg_warning(j_common_ptr cinfo)
 }
 void ufraw_jpeg_error(j_common_ptr cinfo)
 {
-    ufraw_message(UFRAW_SET_ERROR, cinfo->err->jpeg_message_table
-            [cinfo->err->msg_code],
+    /* We ignore the SOI error if second byte is 0xd8 since Minolta's
+     * SOI is known to be wrong */
+    if (cinfo->err->msg_code==JERR_NO_SOI &&
+	cinfo->err->msg_parm.i[1]==0xd8) {
+	ufraw_message(UFRAW_SET_LOG,
+		cinfo->err->jpeg_message_table[cinfo->err->msg_code],
+		cinfo->err->msg_parm.i[0],
+		cinfo->err->msg_parm.i[1],
+		cinfo->err->msg_parm.i[2],
+		cinfo->err->msg_parm.i[3]);
+	return;
+    }
+    ufraw_message(UFRAW_SET_ERROR,
+	    cinfo->err->jpeg_message_table[cinfo->err->msg_code],
             cinfo->err->msg_parm.i[0],
             cinfo->err->msg_parm.i[1],
             cinfo->err->msg_parm.i[2],
@@ -340,5 +353,13 @@ int ufraw_batch_saver(ufraw_data *uf)
 	g_strlcpy(uf->conf->outputFilename, absname, max_path);
 	g_free(absname);
     }
-    return ufraw_write_image(uf);
+    if (uf->conf->embeddedImage) {
+	int status;
+	status = ufraw_convert_embedded(uf);
+	if (status!=UFRAW_SUCCESS) return status;
+	status = ufraw_write_embedded(uf);
+	return status;
+    } else {
+	return ufraw_write_image(uf);
+    }
 }

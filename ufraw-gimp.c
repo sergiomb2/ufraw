@@ -208,7 +208,10 @@ void run(const gchar *name,
     ufraw_config(uf, &conf, NULL, NULL);
     conf_copy_save(uf->conf, &conf_default);
 #if GIMP_CHECK_VERSION(2,2,0)
-    if (size>0) uf->conf->size = size;
+    if (size>0) {
+	uf->conf->size = size;
+	uf->conf->embeddedImage = TRUE;
+    }
 #else
     if (run_mode==GIMP_RUN_NONINTERACTIVE) uf->conf->shrink = 8;
 #endif
@@ -222,11 +225,15 @@ void run(const gchar *name,
 	gimp_set_data("plug_in_ufraw", &conf, sizeof(conf));
     } else {
 	status=ufraw_load_raw(uf);
+	if ( status!=UFRAW_SUCCESS ) { 
+	    values[0].type = GIMP_PDB_STATUS;
+	    values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+	    return;
+	}
 	ufraw_save_gimp_image(NULL, uf);
 	ufraw_close(uf);
     }
-    if (status != UFRAW_SUCCESS) return;
-    if (uf->gimpImage==-1) {
+    if ( status != UFRAW_SUCCESS || uf->gimpImage==-1 ) {
 	values[0].type = GIMP_PDB_STATUS;
 	values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
 	return;
@@ -253,14 +260,23 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
     gint32 layer;
     guint8 *pixbuf;
     guint16 *pixtmp;
-    int tile_height, row, nrows, rowStride, y;
+    int height, width, tile_height, row, nrows, rowStride, y;
     image_type *rawImage;
 
-    if (ufraw_convert_image(uf)!=UFRAW_SUCCESS) {
-	uf->gimpImage = -1;
-	return UFRAW_ERROR;
+    uf->gimpImage = -1;
+
+    if (uf->conf->embeddedImage) {
+	if (ufraw_convert_embedded(uf)!=UFRAW_SUCCESS)
+	    return UFRAW_ERROR;
+	height = uf->thumb.height;
+	width = uf->thumb.width;
+    } else {
+	if (ufraw_convert_image(uf)!=UFRAW_SUCCESS)
+	    return UFRAW_ERROR;
+	height = uf->image.height;
+	width = uf->image.width;
     }
-    uf->gimpImage = gimp_image_new(uf->image.width, uf->image.height,GIMP_RGB);
+    uf->gimpImage = gimp_image_new(width, height,GIMP_RGB);
     if (uf->gimpImage== -1) {
 	ufraw_message(UFRAW_ERROR, "Can't allocate new image.");
 	return UFRAW_ERROR;
@@ -268,8 +284,8 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
     gimp_image_set_filename(uf->gimpImage, uf->filename);
 
     /* Create the "background" layer to hold the image... */
-    layer = gimp_layer_new(uf->gimpImage, "Background", uf->image.width,
-	    uf->image.height, GIMP_RGB_IMAGE, 100, GIMP_NORMAL_MODE);
+    layer = gimp_layer_new(uf->gimpImage, "Background", width,
+	    height, GIMP_RGB_IMAGE, 100, GIMP_NORMAL_MODE);
     gimp_image_add_layer(uf->gimpImage, layer, 0);
 
     /* Get the drawable and set the pixel region for our load... */
@@ -277,25 +293,36 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
     gimp_pixel_rgn_init(&pixel_region, drawable, 0, 0, drawable->width,
 	    drawable->height, TRUE, FALSE);
     tile_height = gimp_tile_height();
-    pixbuf = g_new(guint8, tile_height * uf->image.width * 3);
-    pixtmp = g_new(guint16, tile_height * uf->image.width * 3);
 
-    rowStride = uf->image.width;
-    rawImage = uf->image.image;
-    for (row = 0; row < uf->image.height; row += tile_height) {
-	preview_progress(widget, "Loading image",
-		0.5 + 0.5*row/uf->image.height);
-	nrows = MIN(uf->image.height-row, tile_height);
-	for (y=0 ; y<nrows; y++)
-	    develope(&pixbuf[3*y*uf->image.width], rawImage[(row+y)*rowStride],
-		    uf->developer, 8, pixtmp, uf->image.width);
-	gimp_pixel_rgn_set_rect(&pixel_region, pixbuf, 0, row,
-		uf->image.width, nrows);
+    if (uf->conf->embeddedImage) {
+	for (row = 0; row < height; row += tile_height) {
+	    nrows = MIN(height-row, tile_height);
+	    gimp_pixel_rgn_set_rect(&pixel_region,
+		    uf->thumb.buffer+3*row*width, 0, row, width, nrows);
+	}
+    } else {
+	pixbuf = g_new(guint8, tile_height * width * 3);
+	pixtmp = g_new(guint16, tile_height * width * 3);
+	rowStride = width;
+	rawImage = uf->image.image;
+	for (row = 0; row < height; row += tile_height) {
+	    preview_progress(widget, "Loading image",
+		    0.5 + 0.5*row/height);
+	    nrows = MIN(height-row, tile_height);
+	    for (y=0 ; y<nrows; y++)
+		develope(&pixbuf[3*y*width], rawImage[(row+y)*rowStride],
+			uf->developer, 8, pixtmp, width);
+	    gimp_pixel_rgn_set_rect(&pixel_region, pixbuf, 0, row,
+		    width, nrows);
+	}
+	g_free(pixbuf);
+	g_free(pixtmp);
     }
-    g_free(pixbuf);
-    g_free(pixtmp);
     gimp_drawable_flush(drawable);
     gimp_drawable_detach(drawable);
+
+    if (uf->conf->embeddedImage) return UFRAW_SUCCESS;
+
     if (uf->exifBuf!=NULL) {
 	if (uf->exifBufLen>65533) {
 	    ufraw_message(UFRAW_SET_WARNING,
