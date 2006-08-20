@@ -256,9 +256,13 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
         if (d->colorTransform!=NULL)
             cmsDeleteTransform(d->colorTransform);
         if (!strcmp(d->profileFile[0],"") && !strcmp(d->profileFile[1],"") &&
-	    d->luminosityProfile==NULL && d->saturationProfile==NULL)
+	    d->luminosityProfile==NULL && d->saturationProfile==NULL) {
             d->colorTransform = NULL;
-        else {
+        } else if (d->luminosityProfile==NULL && d->saturationProfile==NULL) {
+	    /* a bypass to a lcms 1.13 bug */
+	    d->colorTransform = cmsCreateTransform(d->profile[0],
+		    TYPE_RGB_16, d->profile[1], TYPE_RGB_16, d->intent, 0);
+        } else {
 	    cmsHPROFILE prof[4];
 	    i = 0;
 	    prof[i++] = d->profile[0];
