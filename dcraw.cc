@@ -4396,8 +4396,8 @@ guess_cfa_pc:
       case 50718:			/* DefaultScale */
 	sx = getrat();
 	sy = getrat();
-	if (sx > sy) xmag = sx / sy;
-	else	     ymag = sy / sx;
+	if (sx > sy) xmag = (int)(sx / sy);
+	else	     ymag = (int)(sy / sx);
 	break;
       case 50721:			/* ColorMatrix1 */
       case 50722:			/* ColorMatrix2 */
