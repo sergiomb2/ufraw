@@ -258,10 +258,11 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
         if (!strcmp(d->profileFile[0],"") && !strcmp(d->profileFile[1],"") &&
 	    d->luminosityProfile==NULL && d->saturationProfile==NULL) {
             d->colorTransform = NULL;
+#if defined(LCMS_VERSION) && LCMS_VERSION <= 113 /* Bypass a lcms 1.13 bug. */
         } else if (d->luminosityProfile==NULL && d->saturationProfile==NULL) {
-	    /* a bypass to a lcms 1.13 bug */
 	    d->colorTransform = cmsCreateTransform(d->profile[0],
 		    TYPE_RGB_16, d->profile[1], TYPE_RGB_16, d->intent, 0);
+#endif
         } else {
 	    cmsHPROFILE prof[4];
 	    i = 0;
