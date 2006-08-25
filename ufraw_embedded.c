@@ -16,6 +16,7 @@
 
 #include <stdio.h>     /* for printf */
 #include <errno.h>     /* for errno */
+#include <time.h>      /* for time_t */
 #include <string.h>
 #include <glib.h>
 #ifdef HAVE_LIBJPEG
@@ -232,7 +233,8 @@ int ufraw_write_embedded(ufraw_data *uf)
 	    return UFRAW_ERROR;
 	}
     }
-    if ( uf->conf->shrink<2 && uf->conf->size==0 && uf->conf->flip==0 ) {
+    if ( uf->conf->shrink<2 && uf->conf->size==0 && uf->conf->flip==0 &&
+	 raw->thumbType==jpeg_thumb_type ) {
         fwrite(uf->thumb.buffer, 1, raw->thumbBufferLength, out);
     } else {
 #ifdef HAVE_LIBJPEG
