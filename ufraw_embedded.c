@@ -22,7 +22,6 @@
 #ifdef HAVE_LIBJPEG
 #include <jpeglib.h>
 #endif
-#include <time.h>      /* for time_t */
 #include "dcraw_api.h"
 #include "ufraw.h"
 
