@@ -74,6 +74,8 @@ Other options for the configuration script are:
 
 --enable-extras: build the extra binaries - dcraw, ufraw-exif, nikon-curve.
 
+--enable-mime:   install mime files. (see mime section later on)
+
 --with-libexif:  use libexif to read raw EXIF data.
 
 --with-exiv2:    use Exiv2 to read raw EXIF data.
@@ -108,6 +110,26 @@ the command:
 
 Finally, you should configure UFRaw with the command:
 ./configure --prefix=$PREFIX --with-prefix=$PREFIX
+
+Install mime files
+==================
+Your desktop can automatically generate thumbnails to raw files and
+associate them with UFRaw by installing some mime file. To enable this
+option you need to use the configuration option '--enable-mime'.
+This options is limited to the GNOME desktop at the moment.
+
+To finish the installation you should use the following
+(assuming you are using --prefix=/usr):
+
+# Associate mime type to raw images:
+update-mime-database /usr/share/mime
+# Install UFRaw's thumbnails generator:
+GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule /usr/share/gconf/schemas/ufraw.schemas
+# Associate UFRaw with the raw images mime types:
+update-desktop-database
+
+More information can be found at:
+http://www.chauveau-central.net/rawthumb/
 
 MS-Windows installation
 =======================

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+
+  <mime-type type="application/x-ufraw">
+    <sub-class-of type="text/xml"/>
+    <comment>UFRaw ID file</comment>
+    <acronym>UFRaw</acronym>
+    <expanded-acronym>Unidentified Flying Raw</expanded-acronym>
+    <glob pattern="*.ufraw"/>
+  </mime-type>
+
+  <mime-type type="image/x-dcraw">
+    <comment>Digital raw image</comment>
+    <acronym>DCRaw</acronym>
+    <expanded-acronym>Digital camera Raw</expanded-acronym>
+  </mime-type>
+
+  <!-- Canon has 2 format: CRW and CR2  !-->
+
+  <!-- CRW is easy !-->
+  <mime-type type="image/x-canon-crw">
+    <sub-class-of type="image/x-dcraw"/>
+    <comment>Canon raw image</comment>
+    <acronym>CRW</acronym>
+    <expanded-acronym>Canon RaW</expanded-acronym>
+    <magic priority="60">
+      <match value="II\x1a\x00\x00\x00HEAPCCDR" type="string" offset="0"/>
+    </magic>
+    <glob pattern="*.crw"/>
+  </mime-type>
+
+  <!-- CR2 is a TIFF !-->
+  <mime-type type="image/x-canon-cr2">
+    <sub-class-of type="image/x-dcraw"/>
+    <sub-class-of type="image/tiff"/>
+    <comment>Canon raw image</comment>
+    <acronym>CR2</acronym>
+    <expanded-acronym>Canon Raw 2</expanded-acronym>
+    <glob pattern="*.cr2"/>
+  </mime-type>
+
+  <mime-type type="image/x-fuji-raf">
+    <sub-class-of type="image/x-dcraw"/>
+    <comment>Fuji raw image</comment>
+    <acronym>RAF</acronym>
+    <expanded-acronym>RAw Format</expanded-acronym>
+    <glob pattern="*.raf"/>
+  </mime-type>
+
+ <mime-type type="image/x-kodak-dcr">
+    <sub-class-of type="image/x-dcraw"/>
+    <sub-class-of type="image/tiff"/>
+    <comment>Kodak raw image</comment>
+    <acronym>DCR</acronym>
+    <expanded-acronym>Digital Camera Raw</expanded-acronym>
+    <glob pattern="*.dcr"/>
+  </mime-type>
+
+  <mime-type type="image/x-minolta-mrw">
+    <sub-class-of type="image/x-dcraw"/>
+    <comment>Minolta raw image</comment>
+    <acronym>MRW</acronym>
+    <expanded-acronym>Minolta RaW</expanded-acronym>
+    <magic priority="50">
+      <match value="\x00MRM" type="string" offset="0"/>
+    </magic>
+    <glob pattern="*.mrw" />
+  </mime-type>
+
+  <mime-type type="image/x-nikon-nef">
+    <sub-class-of type="image/x-dcraw"/>
+    <sub-class-of type="image/tiff"/>
+    <comment>Nikon raw image</comment>
+    <acronym>NEF</acronym>
+    <expanded-acronym>Nikon Electronic Format</expanded-acronym>
+    <glob pattern="*.nef"/>
+  </mime-type>
+
+  <mime-type type="image/x-olympus-orf">
+    <sub-class-of type="image/x-dcraw"/>
+    <comment>Olympus raw image</comment>
+    <acronym>ORF</acronym>
+    <expanded-acronym>Olympus Raw Format</expanded-acronym>
+    <magic priority="50">
+      <!-- an ORF file is basically a TIFF file with a non standard !-->
+      <!-- header IIRO which is not nice since it is only composed  !-->
+      <!-- of ASCII codes. Fortunately, the TIFF header is followed !-->
+      <!-- by the offset of the first TIFF ifd which is always      !-->
+      <!-- 0x00000008 (Little endian) for an ORF                    !-->
+      <match value="IIRO\x08\x00\x00\x00" type="string" offset="0"/>
+    </magic>
+    <glob pattern="*.orf"/>
+  </mime-type>
+
+  <mime-type type="image/x-panasonic-raw">
+    <sub-class-of type="image/x-dcraw"/>
+    <comment>Panasonic raw image</comment>
+    <magic priority="50">
+      <!-- Some kind of TIFF file with a non-standard version in prefix !-->
+      <match value="IIU\x00\x08\x00\x00\x00" type="string" offset="0"/>
+    </magic>
+    <glob pattern="*.raw"/>
+  </mime-type>
+
+  <mime-type type="image/x-pentax-pef">
+    <sub-class-of type="image/x-dcraw"/>
+    <sub-class-of type="image/tiff"/>
+    <comment>Pentax raw image</comment>
+    <acronym>PEF</acronym>
+    <expanded-acronym>Pentax Electronic Format</expanded-acronym>
+    <glob pattern="*.pef"/>
+  </mime-type>
+
+  <mime-type type="image/x-sigma-x3f">
+    <sub-class-of type="image/x-dcraw"/>
+    <comment>Sigma raw image</comment>
+    <acronym>X3F</acronym>
+    <expanded-acronym>X3 Foveon</expanded-acronym>
+      <magic priority="50">
+        <!-- The header is "FOVb" (Foveon) !-->
+        <match value="FOVb" type="string" offset="0">
+          <!-- Followed by a 32bit LSB specifying the version number (major.minor) !-->
+          <match value="0x00FF00FF" type="little32" offset="4" mask="0xFF00FF00" />
+        </match>
+      </magic>
+    <glob pattern="*.x3f"/>
+  </mime-type>
+
+  <mime-type type="image/x-sony-srf">
+    <sub-class-of type="image/x-dcraw"/>
+    <sub-class-of type="image/tiff"/>
+    <acronym>SRF</acronym>
+    <expanded-acronym>Sony Raw Format</expanded-acronym>
+    <comment>Sony raw image</comment>
+    <glob pattern="*.srf"/>
+  </mime-type>
+
+  <mime-type type="image/x-sony-sr2">
+    <sub-class-of type="image/x-dcraw"/>
+    <sub-class-of type="image/tiff"/>
+    <acronym>SR2</acronym>
+    <expanded-acronym>Sony Raw format 2</expanded-acronym>
+    <comment>Sony raw image</comment>
+    <glob pattern="*.sr2"/>
+  </mime-type>
+
+  <mime-type type="image/x-sony-arw">
+    <sub-class-of type="image/x-dcraw"/>
+    <sub-class-of type="image/tiff"/>
+    <acronym>ARW</acronym>
+    <expanded-acronym>Alpha Raw format</expanded-acronym>
+    <comment>Sony raw image</comment>
+    <glob pattern="*.arw"/>
+  </mime-type>
+
+</mime-info>

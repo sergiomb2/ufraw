@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.19 2006/08/20 20:51:05 udifuchs Exp $
+# $Id: Makefile.am,v 1.20 2006/08/26 13:29:16 udifuchs Exp $
 
 if MAKE_EXTRAS
   bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve
@@ -16,8 +16,16 @@ man_MANS = ufraw.1
 
 CLEANFILES = ufraw.1
 
-app_DATA = ufraw.desktop
-appdir = $(datadir)/applications
+if INSTALL_MIME
+  app_DATA = ufraw.desktop
+  appdir = $(datadir)/applications
+
+  mime_DATA = ufraw-mime.xml
+  mimedir = $(datadir)/mime/packages
+
+  schemas_DATA = ufraw.schemas
+  schemasdir = $(datadir)/gconf/schemas
+endif
 
 icon_DATA = ufraw.png
 icondir = $(datadir)/pixmaps
@@ -40,6 +48,7 @@ else
 endif
 
 EXTRA_DIST = ufraw.desktop ufraw.png ufraw_icon.ico ufraw_icon.rc \
+    ufraw-mime.xml generate_schemas.sh \
     ufraw-setup.jpg autogen.sh MANIFEST ufraw.pod
 
 AM_CFLAGS = $(UFRAW_CFLAGS)
@@ -83,6 +92,9 @@ ufraw_icon.opc: ufraw_icon.rc ufraw_icon.ico
 
 .pod.1:
 	$(POD2MAN) --section 1 --center "" --release UFRAW $< $@
+
+ufraw.schemas: generate_schemas.sh
+	$(srcdir)/$< $(prefix) $@
 
 install-user: all
 	$(INSTALL_USER)

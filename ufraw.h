@@ -50,7 +50,7 @@ enum { in_profile, out_profile, profile_types};
 enum { raw_expander, exposure_expander, wb_expander, color_expander,
        curve_expander, live_expander, expander_count };
 enum { ppm8_type, ppm16_type, tiff8_type, tiff16_type, jpeg_type,
-       embedded_jpeg_type };
+       embedded_jpeg_type, embedded_png_type };
 
 typedef struct {
     char *make;
@@ -143,6 +143,7 @@ typedef struct {
     /* SAVE options */
     char inputFilename[max_path], outputFilename[max_path],
 	 outputPath[max_path];
+    char inputURI[max_path], inputModTime[max_name];
     int type, compression, createID, embedExif;
     int shrink, size;
     gboolean overwrite, losslessCompress, embeddedImage;

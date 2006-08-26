@@ -101,7 +101,7 @@ const char raw_ext[]= "arw,bay,bmq,cr2,crw,cs1,dc2,dcr,dng,erf,fff,hdr,jpg,k25,"
 	"kdc,mdc,mos,mrw,nef,orf,pef,pxn,raf,raw,rdc,sr2,srf,sti,tif,ufraw,x3f";
 
 const char *file_type[] = { ".ppm", ".ppm", ".tif", ".tif", ".jpg",
-	".embedded.jpg" };
+	".embedded.jpg", ".embedded.png" };
 
 /* Set locale of LC_NUMERIC to "C" to make sure that printf behaves correctly.*/
 char *uf_set_locale_C()

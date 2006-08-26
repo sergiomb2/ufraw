@@ -18,6 +18,7 @@
 #include <ctype.h> /* needed for isspace() */
 #include <errno.h>
 #include <math.h>
+#include <sys/stat.h> /* needed for fstat() */
 #include <getopt.h>
 #include <glib.h>
 #include "ufraw.h"
@@ -63,6 +64,7 @@ const conf_data conf_default = {
     "", NULL, /* darkframeFile, darkframe */
     /* Save options */
     "", "", "", /* inputFilename, outputFilename, outputPath */
+    "", "", /* inputURI, inputModTime */
     ppm8_type, 85, no_id, /* type, compression, createID */
     TRUE, /* embedExif */
     1, 0, /* shrink, size */
@@ -500,6 +502,11 @@ int conf_load(conf_data *c, const char *IDFilename)
         }
 	confFilename = g_strdup(IDFilename);
     }
+    g_snprintf(c->inputURI, max_path, "file://%s", confFilename);
+    struct stat s;
+    fstat(fileno(in), &s);
+    g_snprintf(c->inputModTime, max_name, "%d", (int)s.st_mtime);
+
     locale = uf_set_locale_C();
     context = g_markup_parse_context_new(&parser, 0, c, NULL);
     line[max_path-1] = '\0';
@@ -993,6 +1000,8 @@ void conf_copy_save(conf_data *dst, const conf_data *src)
     g_strlcpy(dst->outputFilename, src->outputFilename, max_path);
     g_strlcpy(dst->outputPath, src->outputPath, max_path);
     */
+    g_strlcpy(dst->inputURI, src->inputURI, max_path);
+    g_strlcpy(dst->inputModTime, src->inputModTime, max_name);
     dst->type = src->type;
     dst->compression = src->compression;
     dst->createID = src->createID;
@@ -1065,7 +1074,8 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     if (strlen(cmd->outputPath)>0)
 	g_strlcpy(conf->outputPath, cmd->outputPath, max_path);
     if (strlen(cmd->outputFilename)>0) {
-        if (conf->createID!=no_id && !strcmp(cmd->outputFilename,"-")) {
+        if ( conf->createID!=no_id && !strcmp(cmd->outputFilename,"-") &&
+	     !cmd->embeddedImage ) {
             ufraw_message(UFRAW_ERROR,
                 "cannot --create-id with stdout");
             return UFRAW_ERROR;
@@ -1470,7 +1480,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         return -1;
     }
     cmd->type = -1;
-    if (outTypeName!=NULL) {
+    if (outTypeName!=NULL && !cmd->embeddedImage) {
         if (!strcmp(outTypeName, "ppm8"))
             cmd->type = ppm8_type;
         else if (!strcmp(outTypeName, "ppm16"))
@@ -1512,17 +1522,17 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         }
     }
     if (cmd->embeddedImage) {
-        if (outTypeName==NULL || !strcmp(outTypeName, "jpeg"))
-#ifdef HAVE_LIBJPEG
-	    cmd->type = embedded_jpeg_type;
-#else
-	    {
-		ufraw_message(UFRAW_ERROR,
-			"ufraw was build without JPEG support.");
-		return -1;
-	    }
+#ifndef HAVE_LIBJPEG
+	ufraw_message(UFRAW_ERROR, "ufraw was build without JPEG support.");
+	return -1;
 #endif
-        else {
+        if ( outTypeName==NULL || strcmp(outTypeName, "jpeg")==0 )
+	    cmd->type = embedded_jpeg_type;
+#ifdef HAVE_LIBPNG
+        else if ( strcmp(outTypeName, "png")==0 )
+	    cmd->type = embedded_png_type;
+#endif
+	else {
             ufraw_message(UFRAW_ERROR,
 		    "'%s' is not a valid output type for embedded image.",
 		    outTypeName);

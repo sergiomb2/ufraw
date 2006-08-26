@@ -22,6 +22,9 @@
 #ifdef HAVE_LIBJPEG
 #include <jpeglib.h>
 #endif
+#ifdef HAVE_LIBPNG
+#include <png.h>
+#endif
 #include "dcraw_api.h"
 #include "ufraw.h"
 
@@ -48,6 +51,7 @@ int ufraw_read_embedded(ufraw_data *uf)
     fseek(raw->ifp, raw->thumbOffset, SEEK_SET);
 
     if ( uf->conf->shrink<2 && uf->conf->size==0 && uf->conf->flip==0 &&
+	 uf->conf->type==embedded_jpeg_type &&
 	 raw->thumbType==jpeg_thumb_type) {
         uf->thumb.buffer = g_new(unsigned char, raw->thumbBufferLength);
         fread(uf->thumb.buffer, 1, raw->thumbBufferLength, raw->ifp);
@@ -210,10 +214,11 @@ int ufraw_write_embedded(ufraw_data *uf)
 {
     int status=UFRAW_SUCCESS;
     dcraw_data *raw = uf->raw;
-    FILE *out = NULL;
+    FILE * volatile out = NULL; /* 'volatile' supresses clobbering warning */
     ufraw_message(UFRAW_RESET, NULL);
 
-    if ( uf->conf->type!=embedded_jpeg_type ) {
+    if ( uf->conf->type!=embedded_jpeg_type &&
+	 uf->conf->type!=embedded_png_type ) {
         ufraw_message(UFRAW_ERROR,
                 "Error creating file '%s'. Unknown file type %d.",
                 uf->conf->outputFilename, uf->conf->type);
@@ -233,9 +238,10 @@ int ufraw_write_embedded(ufraw_data *uf)
 	}
     }
     if ( uf->conf->shrink<2 && uf->conf->size==0 && uf->conf->flip==0 &&
-	 raw->thumbType==jpeg_thumb_type ) {
+	 uf->conf->type==embedded_jpeg_type &&
+	 raw->thumbType==jpeg_thumb_type) {
         fwrite(uf->thumb.buffer, 1, raw->thumbBufferLength, out);
-    } else {
+    } else if ( uf->conf->type==embedded_jpeg_type ) {
 #ifdef HAVE_LIBJPEG
 	struct jpeg_compress_struct dstinfo;
 	struct jpeg_error_mgr jdsterr;
@@ -272,6 +278,60 @@ int ufraw_write_embedded(ufraw_data *uf)
 	    ufraw_message(UFRAW_REPORT, NULL);
 	}
 #endif /*HAVE_LIBJPEG*/
+    } else if ( uf->conf->type==embedded_png_type ) {
+#ifdef HAVE_LIBPNG
+	/* It is assumed that PNG output will be used to create thumbnails.
+	 * Therefore the PNG image is created according to the
+	 * thumbmail standards in:
+	 * http://jens.triq.net/thumbnail-spec/index.html
+	 */
+	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+		NULL, NULL, NULL);
+	png_infop info = png_create_info_struct(png);
+	if ( setjmp(png_jmpbuf(png)) ) {
+	    ufraw_message(UFRAW_ERROR, "Error writing '%s'",
+		    uf->conf->outputFilename);
+	    png_destroy_write_struct(&png, &info);
+	    fclose(out);
+	    return UFRAW_ERROR;
+	}
+	png_init_io(png, out);
+	png_set_IHDR(png, info, uf->thumb.width, uf->thumb.height,
+		8 /*bit_depth*/, PNG_COLOR_TYPE_RGB,
+		PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE,
+		PNG_FILTER_TYPE_BASE);
+	png_text text[5];
+//	char height[max_name], width[max_name];
+	text[0].compression = PNG_TEXT_COMPRESSION_NONE;
+	text[0].key = "Thumb::URI";
+	text[0].text = uf->conf->inputURI;
+	text[1].compression = PNG_TEXT_COMPRESSION_NONE;
+	text[1].key = "Thumb::MTime";
+	text[1].text = uf->conf->inputModTime;
+//	text[2].compression = PNG_TEXT_COMPRESSION_NONE;
+//	text[2].key = "Thumb::Image::Height";
+//	g_snprintf(height, max_name, "%d", uf->predictedHeight);
+//	text[2].text = height;
+//	text[3].compression = PNG_TEXT_COMPRESSION_NONE;
+//	text[3].key = "Thumb::Image::Width";
+//	g_snprintf(width, max_name, "%d", uf->predictedWidth);
+//	text[3].text = width;
+//	text[4].compression = PNG_TEXT_COMPRESSION_NONE;
+//	text[4].key = "Software";
+//	text[4].text = "UFRaw";
+	png_set_text(png, info, text, 2);
+	png_write_info(png, info);
+
+	int r;
+	for (r=0; r<uf->thumb.height; r++)
+	    png_write_row(png, uf->thumb.buffer+r*uf->thumb.width*3);
+	png_write_end(png, NULL);
+	png_destroy_write_struct(&png, &info);
+#endif /*HAVE_LIBPNG*/
+    } else {
+	ufraw_message(UFRAW_ERROR, "Unsupported output type (%d) "
+		"for embedded image", uf->conf->type);
+	status = UFRAW_ERROR;
     }
     if ( strcmp(uf->conf->outputFilename, "-") )
         fclose(out);

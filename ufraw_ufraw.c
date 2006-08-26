@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h> /* for fstat() */
 #include <math.h>
 #include <time.h>
 #include <errno.h>
@@ -216,7 +217,7 @@ ufraw_data *ufraw_load_darkframe(char *darkframeFile)
 
 int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 {
-    dcraw_data *raw=NULL;
+    dcraw_data *raw = uf->raw;
     int status;
     gboolean loadingID = FALSE;
 
@@ -254,15 +255,17 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     char *absname = uf_file_set_absolute(uf->filename);
     g_strlcpy(uf->conf->inputFilename, absname, max_path);
     g_free(absname);
-
+    if (!loadingID) {
+	g_snprintf(uf->conf->inputURI, max_path, "file://%s",
+		uf->conf->inputFilename);
+	struct stat s;
+	fstat(fileno(raw->ifp), &s);
+	g_snprintf(uf->conf->inputModTime, max_name, "%d", (int)s.st_mtime);
+    }
     if (ufraw_exif_from_raw(uf)!=UFRAW_SUCCESS) {
         ufraw_message(UFRAW_SET_LOG, "Error reading EXIF data from %s\n",
                 uf->filename);
     }
-    /* There is a memory leak if 'raw' is set before ufraw_exif_from_raw().
-     * I have not found the cause, but the solution is to set it here. */
-    raw = uf->raw;
-
     /* If we switched cameras, ignore channel multipliers and
      * change spot_wb to manual_wb */
     if ( !loadingID &&

@@ -17,4 +17,6 @@ TryExec=ufraw
 Terminal=false
 StartupNotify=true
 
+MimeType=application/x-ufraw;image/x-dcraw
+
 Icon=ufraw.png

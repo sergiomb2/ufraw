@@ -1,5 +1,5 @@
-dnl $Id: configure.ac,v 1.45 2006/08/12 15:46:33 udifuchs Exp $
-AC_INIT(UFRaw, 0.9.1)
+dnl $Id: configure.ac,v 1.46 2006/08/26 13:29:16 udifuchs Exp $
+AC_INIT(UFRaw, 0.10)
 AC_PREREQ(2.57)
 
 # Create host_os, host_cpu variables
@@ -145,6 +145,11 @@ AC_CHECK_HEADER(jpeglib.h,
   AC_CHECK_LIB(jpeg, jpeg_CreateCompress))
 have_jpeg=${ac_cv_lib_jpeg_jpeg_CreateCompress:-no}
 
+# Check for png headers and library.
+AC_CHECK_HEADER(png.h,
+  AC_CHECK_LIB(png, png_create_info_struct))
+have_png=${ac_cv_lib_png_png_create_info_struct:-no}
+
 # Check for zlib.
 AC_CHECK_LIB(z, deflate)
 have_zlib=${ac_cv_lib_z_deflate:-no}
@@ -236,6 +241,13 @@ esac
 AC_SUBST(UFRAW_CFLAGS)
 AC_SUBST(UFRAW_LDADD)
 
+AC_MSG_CHECKING(whether to install mime types)
+AC_ARG_ENABLE(mime,
+  [  --enable-mime         install mime files, see README for more information],
+  , enable_mime=no)
+AC_MSG_RESULT($enable_mime)
+AM_CONDITIONAL(INSTALL_MIME, test $enable_mime = yes)
+
 AC_MSG_CHECKING(whether to build extras)
 AC_ARG_ENABLE(extras,
   [  --enable-extras         build extra (dcraw, nikon-curve) executables], ,
@@ -253,6 +265,7 @@ AC_MSG_NOTICE([hidden directories support (GTK>=2.6): $have_gtk_2_6])
 AC_MSG_NOTICE(EXIF support using libexif: $have_libexif)
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
+AC_MSG_NOTICE(PNG support: $have_png)
 AC_MSG_NOTICE(TIFF support: $have_tiff)
 if test $have_tiff = yes; then
   AC_MSG_NOTICE(TIFF deflate (lossless compression) support: $have_zlib)
