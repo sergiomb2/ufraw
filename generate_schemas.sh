@@ -55,7 +55,7 @@ EOF
 #
 #
 
-if [[ $# != "2" ]] ; then
+if [ $# != "2" ] ; then
   echo "usage: generate_schemas prefix output"
   echo "generate schemas for thumbnailing raw images."
   exit 1
