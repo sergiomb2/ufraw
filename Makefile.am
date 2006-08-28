@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.20 2006/08/26 13:29:16 udifuchs Exp $
+# $Id: Makefile.am,v 1.21 2006/08/28 20:53:15 nkbj Exp $
 
 if MAKE_EXTRAS
   bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve
@@ -14,7 +14,7 @@ endif
 POD2MAN= @POD2MAN@
 man_MANS = ufraw.1
 
-CLEANFILES = ufraw.1
+CLEANFILES = ufraw.1 ufraw.schemas
 
 if INSTALL_MIME
   app_DATA = ufraw.desktop
