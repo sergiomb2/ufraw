@@ -212,7 +212,7 @@ int ufraw_convert_embedded(ufraw_data *uf)
 
 int ufraw_write_embedded(ufraw_data *uf)
 {
-    static int status = UFRAW_SUCCESS;
+    volatile int status = UFRAW_SUCCESS;
     dcraw_data *raw = uf->raw;
     FILE * volatile out = NULL; /* 'volatile' supresses clobbering warning */
     ufraw_message(UFRAW_RESET, NULL);
