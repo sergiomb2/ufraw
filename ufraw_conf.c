@@ -842,17 +842,15 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	    buf = uf_markup_buf(buf,
 		    "<DarkframeFile>%s</DarkframeFile>\n", c->darkframeFile);
 	buf = uf_markup_buf(buf, "<Timestamp>%s</Timestamp>\n", c->timestamp);
-	buf = uf_markup_buf(buf, "<ISOSpeed>%d</ISOSpeed>\n",
-		(int)c->isoText);
+	buf = uf_markup_buf(buf, "<ISOSpeed>%s</ISOSpeed>\n", c->isoText);
 	buf = uf_markup_buf(buf, "<Shutter>%s</Shutter>\n", c->shutterText);
 	buf = uf_markup_buf(buf, "<Aperture>%s</Aperture>\n", c->apertureText);
 	buf = uf_markup_buf(buf, "<FocalLength>%s</FocalLength>\n",
-		(int)c->focalLenText);
+		c->focalLenText);
 	if (strlen(c->lensText)>0)
-	    buf = uf_markup_buf(buf, "<Lens>%s</Lens>\n",
-		    (int)c->lensText);
+	    buf = uf_markup_buf(buf, "<Lens>%s</Lens>\n", c->lensText);
 	buf = uf_markup_buf(buf, "<EXIFSource>%s</EXIFSource>\n",
-		(int)c->exifSource);
+		c->exifSource);
 	char *log = ufraw_message(UFRAW_GET_LOG, NULL);
 	if (log!=NULL) {
 	    char *utf8 = g_filename_to_utf8(log, -1, NULL, NULL, NULL);
