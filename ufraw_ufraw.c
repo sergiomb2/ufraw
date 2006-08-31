@@ -217,7 +217,6 @@ ufraw_data *ufraw_load_darkframe(char *darkframeFile)
 
 int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 {
-    dcraw_data *raw = uf->raw;
     int status;
     gboolean loadingID = FALSE;
 
@@ -252,6 +251,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     }
     if (uf==NULL) return UFRAW_SUCCESS;
 
+    dcraw_data *raw = uf->raw;
     char *absname = uf_file_set_absolute(uf->filename);
     g_strlcpy(uf->conf->inputFilename, absname, max_path);
     g_free(absname);
