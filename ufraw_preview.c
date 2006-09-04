@@ -90,10 +90,12 @@ typedef struct {
      * call update_scales() which was also frozen. */
     gboolean FreezeDialog;
     int SpotX1, SpotY1, SpotX2, SpotY2;
+    gboolean OptionsChanged;
 } preview_data;
 
 /* These #defines are not very elegant, but otherwise things get tooo long */
 #define CFG data->UF->conf
+#define RC data->SaveConfig
 #define Developer data->UF->developer
 #define CFG_cameraCurve (CFG->BaseCurve[camera_curve].m_numAnchors>0)
 
@@ -157,14 +159,12 @@ void load_curve(GtkWidget *widget, long curveType)
     GSList *list, *saveList;
     CurveData c;
     char *cp;
-    int curveCount;
 
     if (data->FreezeDialog) return;
-    if (curveType==base_curve) curveCount = CFG->BaseCurveCount;
-    else curveCount = CFG->curveCount;
-    if (curveCount>=max_curves) {
-        ufraw_message(UFRAW_ERROR, "No more room for new curves.");
-        return;
+    if ( (curveType==base_curve && CFG->BaseCurveCount>=max_curves) ||
+	 (curveType==luminosity_curve && CFG->curveCount>=max_curves) ) {
+	ufraw_message(UFRAW_ERROR, "No more room for new curves.");
+	return;
     }
     fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new("Load curve",
             GTK_WINDOW(gtk_widget_get_toplevel(widget)),
@@ -213,29 +213,40 @@ void load_curve(GtkWidget *widget, long curveType)
     if (strlen(CFG->curvePath)>0)
         gtk_file_chooser_set_current_folder(fileChooser, CFG->curvePath);
     if (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
-        for (list=saveList=gtk_file_chooser_get_filenames(fileChooser);
-            list!=NULL && curveCount<max_curves;
-            list=g_slist_next(list)) {
+        for ( list=saveList=gtk_file_chooser_get_filenames(fileChooser);
+              list!=NULL;
+              list=g_slist_next(list) ) {
             c = conf_default.curve[0];
             if (curve_load(&c, list->data)!=UFRAW_SUCCESS) continue;
 	    if (curveType==base_curve) {
+		if ( CFG->BaseCurveCount>= max_curves ) break;
 		gtk_combo_box_append_text(data->BaseCurveCombo, c.name);
-		CFG->BaseCurve[curveCount++] = c;
-		CFG->BaseCurveIndex = curveCount-1;
+		CFG->BaseCurve[CFG->BaseCurveCount] = c;
+		CFG->BaseCurveIndex = CFG->BaseCurveCount;
+		CFG->BaseCurveCount++;
+		/* Add curve to .ufrawrc but don't make it default */
+		RC.BaseCurve[RC.BaseCurveCount++] = c;
+		RC.BaseCurveCount++;
 		if (CFG_cameraCurve)
 		    gtk_combo_box_set_active(data->BaseCurveCombo,
 			    CFG->BaseCurveIndex);
 		else
 		    gtk_combo_box_set_active(data->BaseCurveCombo,
 			    CFG->BaseCurveIndex-2);
-	    } else {
+	    } else { /* curveType==luminosity_curve */
 		gtk_combo_box_append_text(data->CurveCombo, c.name);
-		CFG->curve[curveCount++] = c;
-		CFG->curveIndex = curveCount-1;
+		CFG->curve[CFG->curveCount] = c;
+		CFG->curveIndex = CFG->curveCount;
+		CFG->curveCount++;
+		/* Add curve to .ufrawrc but don't make it default */
+		RC.curve[RC.curveCount++] = c;
+		RC.curveCount++;
 		gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
 	    }
             cp = g_path_get_dirname(list->data);
             g_strlcpy(CFG->curvePath, cp, max_path);
+            g_strlcpy(RC.curvePath, cp, max_path);
+	    conf_save(&RC, NULL, NULL);
             g_free(cp);
             g_free(list->data);
         }
@@ -243,8 +254,6 @@ void load_curve(GtkWidget *widget, long curveType)
         ufraw_message(UFRAW_ERROR, "No more room for new curves.");
         g_slist_free(saveList);
     }
-    if (curveType==base_curve) CFG->BaseCurveCount = curveCount;
-    else CFG->curveCount = curveCount;
     ufraw_focus(fileChooser, FALSE);
     gtk_widget_destroy(GTK_WIDGET(fileChooser));
 }
@@ -400,10 +409,14 @@ void load_profile(GtkWidget *widget, long type)
             CFG->profileIndex[type] = CFG->profileCount[type]-1;
             cp = g_path_get_dirname(list->data);
             g_strlcpy(CFG->profilePath, cp, max_path);
+	    /* Add profile to .ufrawrc but don't make it default */
+            RC.profile[type][RC.profileCount[type]++] = p;
+            g_strlcpy(RC.profilePath, cp, max_path);
+	    conf_save(&RC, NULL, NULL);
             g_free(cp);
             g_free(list->data);
         }
-        gtk_combo_box_set_active(data->ProfileCombo[type], 
+        gtk_combo_box_set_active(data->ProfileCombo[type],
 		CFG->profileIndex[type]);
         if (list!=NULL)
             ufraw_message(UFRAW_ERROR, "No more room for new profiles.");
@@ -1171,7 +1184,7 @@ void button_update(GtkWidget *button, gpointer user_data)
 
     if (button==data->ResetWBButton) {
 	int c;
-	g_strlcpy(CFG->wb, data->SaveConfig.wb, max_name); 
+	g_strlcpy(CFG->wb, data->SaveConfig.wb, max_name);
 	CFG->temperature = data->SaveConfig.temperature;
 	CFG->green = data->SaveConfig.green;
 	for (c=0; c<4; c++) CFG->chanMul[c] = data->initialChanMul[c];
@@ -1185,7 +1198,7 @@ void button_update(GtkWidget *button, gpointer user_data)
 		profile_default_linear(&CFG->profile[0][CFG->profileIndex[0]]);
     }
     if (button==GTK_WIDGET(data->AutoExposureButton)) {
-	CFG->autoExposure = 
+	CFG->autoExposure =
 	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
     }
     if (button==data->ResetExposureButton) {
@@ -1196,7 +1209,7 @@ void button_update(GtkWidget *button, gpointer user_data)
 	CFG->saturation = conf_default.saturation;
     }
     if (button==GTK_WIDGET(data->AutoBlackButton)) {
-	CFG->autoBlack = 
+	CFG->autoBlack =
 	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
     }
     if (button==data->ResetBlackButton) {
@@ -1292,11 +1305,11 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
     *valuep = gtk_adjustment_get_value(adj);
 
     if (valuep==&CFG->temperature || valuep==&CFG->green) {
-	g_strlcpy(CFG->wb, manual_wb, max_name); 
+	g_strlcpy(CFG->wb, manual_wb, max_name);
 	ufraw_set_wb(data->UF);
     }
     if (valuep>=&CFG->chanMul[0] && valuep<=&CFG->chanMul[3]) {
-	g_strlcpy(CFG->wb, spot_wb, max_name); 
+	g_strlcpy(CFG->wb, spot_wb, max_name);
 	ufraw_set_wb(data->UF);
     }
     if (valuep==&CFG->WBTuning) {
@@ -1410,46 +1423,50 @@ void delete_from_list(GtkWidget *widget, gpointer user_data)
     if (type<2) {
         gtk_combo_box_remove_text(data->ProfileCombo[type], index);
         CFG->profileCount[type]--;
-        if (CFG->profileIndex[type]==CFG->profileCount[type]) {
+	if ( CFG->profileIndex[type]==index )
+            CFG->profileIndex[type] = conf_default.profileIndex[type];
+	else if ( CFG->profileIndex[type]>index )
             CFG->profileIndex[type]--;
-	}
-	gtk_combo_box_set_active(data->ProfileCombo[type], 
-		CFG->profileIndex[type]);
         for (; index<CFG->profileCount[type]; index++)
             CFG->profile[type][index] = CFG->profile[type][index+1];
+	gtk_combo_box_set_active(data->ProfileCombo[type],
+		CFG->profileIndex[type]);
     } else if (type==2+base_curve) {
         if (CFG_cameraCurve)
             gtk_combo_box_remove_text(data->BaseCurveCombo, index);
         else
             gtk_combo_box_remove_text(data->BaseCurveCombo, index-2);
         CFG->BaseCurveCount--;
-        if (CFG->BaseCurveIndex==CFG->BaseCurveCount) {
+	if ( CFG->BaseCurveIndex==index )
+            CFG->BaseCurveIndex = conf_default.BaseCurveIndex;
+	else if ( CFG->BaseCurveIndex>index )
             CFG->BaseCurveIndex--;
-	    if (CFG->BaseCurveIndex==camera_curve && !CFG_cameraCurve)
-		CFG->BaseCurveIndex = linear_curve;
-	    if (CFG->BaseCurveIndex>camera_curve && !CFG_cameraCurve)
-		gtk_combo_box_set_active(data->BaseCurveCombo,
-			CFG->BaseCurveIndex-2);
-	    else
-		gtk_combo_box_set_active(data->BaseCurveCombo,
-			CFG->BaseCurveIndex);
-	    curveeditor_widget_set_curve(data->BaseCurveWidget,
-		&CFG->BaseCurve[CFG->BaseCurveIndex]);
-	}
+	if ( CFG->BaseCurveIndex==camera_curve && !CFG_cameraCurve )
+	    CFG->BaseCurveIndex = linear_curve;
         for (; index<CFG->BaseCurveCount; index++)
             CFG->BaseCurve[index] = CFG->BaseCurve[index+1];
+	if ( CFG->BaseCurveIndex>camera_curve && !CFG_cameraCurve )
+	    gtk_combo_box_set_active(data->BaseCurveCombo,
+		    CFG->BaseCurveIndex-2);
+	else
+	    gtk_combo_box_set_active(data->BaseCurveCombo,
+		    CFG->BaseCurveIndex);
+	curveeditor_widget_set_curve(data->BaseCurveWidget,
+		&CFG->BaseCurve[CFG->BaseCurveIndex]);
     } else if (type==2+luminosity_curve) {
         gtk_combo_box_remove_text(data->CurveCombo, index);
         CFG->curveCount--;
-        if (CFG->curveIndex==CFG->curveCount) {
+	if ( CFG->curveIndex==index )
+            CFG->curveIndex = conf_default.curveIndex;
+	else if ( CFG->curveIndex>index )
             CFG->curveIndex--;
-	    gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
-	    curveeditor_widget_set_curve(data->CurveWidget,
-		&CFG->curve[CFG->curveIndex]);
-	}
         for (; index<CFG->curveCount; index++)
             CFG->curve[index] = CFG->curve[index+1];
+	gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
+	curveeditor_widget_set_curve(data->CurveWidget,
+	    &CFG->curve[CFG->curveIndex]);
     }
+    data->OptionsChanged = TRUE;
     gtk_dialog_response(dialog, GTK_RESPONSE_APPLY);
 }
 
@@ -1479,13 +1496,20 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     GtkTable *baseCurveTable, *curveTable, *table;
     GtkTextBuffer *confBuffer, *buffer;
     char txt[max_name], *buf;
-    long i, j;
+    long i, j, response;
 
     user_data = user_data;
     if (data->FreezeDialog) return;
+    data->OptionsChanged = FALSE;
+    int saveBaseCurveIndex = CFG->BaseCurveIndex;
+    int saveCurveIndex = CFG->curveIndex;
+    int saveProfileIndex[profile_types];
+    for (i=0; i<profile_types; i++)
+	saveProfileIndex[i] = CFG->profileIndex[i];
     optionsDialog = gtk_dialog_new_with_buttons("UFRaw options",
             GTK_WINDOW(gtk_widget_get_toplevel(widget)),
             GTK_DIALOG_DESTROY_WITH_PARENT,
+            GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
             GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
     g_object_set_data(G_OBJECT(optionsDialog), "Preview-Data", data);
     ufraw_focus(optionsDialog, TRUE);
@@ -1532,15 +1556,19 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_combo_box_set_active(confCombo, CFG->saveConfiguration);
     g_signal_connect(G_OBJECT(confCombo), "changed",
 	    G_CALLBACK(options_combo_update), &CFG->saveConfiguration);
-    gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(confCombo), 2, 3, 0, 1,
+    gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(confCombo), 2, 4, 0, 1,
 	    0, 0, 0, 0);
-					    
+
+    label = gtk_label_new("Save full configuration ");
+    event = gtk_event_box_new();
+    gtk_tooltips_set_tip(data->ToolTips, event,
+	    "Save resource file ($HOME/.ufrawrc)", NULL);
+    gtk_container_add(GTK_CONTAINER(event), label);
+    gtk_table_attach(GTK_TABLE(table), event, 0, 2, 1, 2, 0, 0, 0, 0);
     button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-    gtk_tooltips_set_tip(data->ToolTips, button,
-	    "Save resource file ($HOME/.ufrawrc) now", NULL);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(configuration_save), NULL);
-    gtk_table_attach(table, button, 0, 1, 1, 2, 0, 0, 0, 0);
+    gtk_table_attach(table, button, 2, 3, 1, 2, 0, 0, 0, 0);
 
     label = gtk_label_new("Log");
     page = gtk_scrolled_window_new(NULL, NULL);
@@ -1628,13 +1656,88 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
         gtk_text_buffer_set_text(confBuffer, buf, -1);
 	g_free(buf);
         gtk_widget_show_all(optionsDialog);
-        if (gtk_dialog_run(GTK_DIALOG(optionsDialog))!=
-                    GTK_RESPONSE_APPLY) {
-	    ufraw_focus(optionsDialog, FALSE);
-            gtk_widget_destroy(optionsDialog);
-	    render_preview(data, render_default);
-            return;
-        }
+        response = gtk_dialog_run(GTK_DIALOG(optionsDialog));
+	/* APPLY only marks that something changed and we need to refresh */
+	if (response==GTK_RESPONSE_APPLY)
+	    continue;
+	if ( !data->OptionsChanged ) {
+	    /* If nothing changed there is nothing to do */
+    	} else if ( response==GTK_RESPONSE_OK ) {
+	    /* Copy profiles and curves from CFG to RC and save .ufrawrc */
+	    if ( memcmp(&RC.BaseCurve[RC.BaseCurveIndex],
+		    &CFG->BaseCurve[RC.BaseCurveIndex], sizeof(CurveData))!=0 )
+		RC.BaseCurveIndex = CFG->BaseCurveIndex;
+	    for (i=0; i<CFG->BaseCurveCount; i++)
+		RC.BaseCurve[i] = CFG->BaseCurve[i];
+	    RC.BaseCurveCount = CFG->BaseCurveCount;
+
+	    if ( memcmp(&RC.curve[RC.curveIndex],
+		    &CFG->curve[RC.curveIndex], sizeof(CurveData))!=0 )
+		RC.curveIndex = CFG->curveIndex;
+	    for (i=0; i<CFG->curveCount; i++)
+		RC.curve[i] = CFG->curve[i];
+	    RC.curveCount = CFG->curveCount;
+
+	    for (i=0; i<profile_types; i++) {
+		if ( memcmp(&RC.profile[i][RC.profileIndex[i]],
+			&CFG->profile[i][RC.profileIndex[i]],
+			sizeof(profile_data))!=0 )
+		    RC.profileIndex[i] = CFG->profileIndex[i];
+		for (j=0; j<CFG->profileCount[i]; j++)
+		    RC.profile[i][j] = CFG->profile[i][j];
+		RC.profileCount[i] = CFG->profileCount[i];
+	    }
+	    conf_save(&RC, NULL, NULL);
+	} else { /* response==GTK_RESPONSE_CANCEL or window closed */
+	    /* Copy profiles and curves from RC to CFG */
+
+	    /* We might remove 'too much' here, but it causes no harm */
+	    for (i=0; i<CFG->BaseCurveCount; i++)
+		gtk_combo_box_remove_text(data->BaseCurveCombo, 0);
+	    for (i=0; i<RC.BaseCurveCount; i++) {
+		CFG->BaseCurve[i] = RC.BaseCurve[i];
+		if ( (i!=custom_curve && i!=camera_curve) || CFG_cameraCurve )
+		    gtk_combo_box_append_text(data->BaseCurveCombo,
+			    CFG->BaseCurve[i].name);
+	    }
+	    CFG->BaseCurveCount = RC.BaseCurveCount;
+	    CFG->BaseCurveIndex = saveBaseCurveIndex;
+	    if (CFG->BaseCurveIndex>camera_curve && !CFG_cameraCurve)
+		gtk_combo_box_set_active(data->BaseCurveCombo,
+			CFG->BaseCurveIndex-2);
+	    else
+		gtk_combo_box_set_active(data->BaseCurveCombo,
+			CFG->BaseCurveIndex);
+
+	    for (i=0; i<CFG->curveCount; i++)
+		gtk_combo_box_remove_text(data->CurveCombo, 0);
+	    for (i=0; i<RC.curveCount; i++) {
+		CFG->curve[i] = RC.curve[i];
+		gtk_combo_box_append_text(data->CurveCombo,
+			CFG->curve[i].name);
+	    }
+	    CFG->curveCount = RC.curveCount;
+	    CFG->curveIndex = saveCurveIndex;
+	    gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
+
+	    for (j=0; j<profile_types; j++) {
+		for (i=0; i<CFG->profileCount[j]; i++)
+		    gtk_combo_box_remove_text(data->ProfileCombo[j], 0);
+		for (i=0; i<RC.profileCount[j]; i++) {
+		    CFG->profile[j][i] = RC.profile[j][i];
+		    gtk_combo_box_append_text(data->ProfileCombo[j],
+			    CFG->profile[j][i].name);
+		}
+		CFG->profileCount[j] = RC.profileCount[j];
+		CFG->profileIndex[j] = saveProfileIndex[j];
+		gtk_combo_box_set_active(data->ProfileCombo[j],
+			CFG->profileIndex[j]);
+	    }
+	}
+	ufraw_focus(optionsDialog, FALSE);
+        gtk_widget_destroy(optionsDialog);
+	render_preview(data, render_default);
+        return;
     }
 }
 
@@ -2634,17 +2737,25 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     /* In interactive mode outputPath is taken into account only once */
     strcpy(uf->conf->outputPath, "");
-    if (status==GTK_RESPONSE_OK) {
-	if (CFG->saveConfiguration==disabled_state) {
-	    /* Restore the original 'image settings' */
-	    conf_copy_image(CFG, &data->SaveConfig);
-	}
+
+    if ( status==GTK_RESPONSE_OK ) {
+	if ( CFG->saveConfiguration==enabled_state ) {
+	    conf_save(CFG, NULL, NULL);
 	/* If save 'only this once' was chosen, then so be it */
-	if (CFG->saveConfiguration==apply_state)
+	} else if ( CFG->saveConfiguration==apply_state ) {
 	    CFG->saveConfiguration = disabled_state;
-	conf_save(CFG, NULL, NULL);
+	    conf_save(CFG, NULL, NULL);
+	} else if ( CFG->saveConfiguration==disabled_state ) {
+	    /* If save 'never again' was set in this session, we still
+	     * need to save this setting */
+	    if ( RC.saveConfiguration!=disabled_state ) {
+		RC.saveConfiguration = disabled_state;
+		conf_save(&RC, NULL, NULL);
+	    }
+	    *CFG = RC;
+	}
     } else {
-	*CFG = data->SaveConfig;
+	*CFG = RC;
     }
     ufraw_close(data->UF);
     g_list_free(data->WBPresets);
