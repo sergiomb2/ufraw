@@ -17,6 +17,7 @@
 #include <stdio.h>     /* for printf */
 #include <string.h>
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include "ufraw.h"
 #include "ufraw_icon.h"
 
@@ -90,7 +91,7 @@ void ufraw_chooser(conf_data *conf, char *defPath)
 
 #ifdef HAVE_GTK_2_6
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
-    GtkWidget *button = gtk_check_button_new_with_label( "Show hidden files");
+    GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
     g_signal_connect(G_OBJECT(button), "toggled",
 	    G_CALLBACK(ufraw_chooser_toggle), fileChooser);

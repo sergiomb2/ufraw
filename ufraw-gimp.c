@@ -23,6 +23,7 @@
 #include <libgimp/gimp.h>
 #include <libgimp/gimpui.h>
 #include <locale.h>
+#include <glib/gi18n.h>
 #include "ufraw.h"
 #include "ufraw_icon.h"
 
@@ -150,6 +151,10 @@ void run(const gchar *name,
 	/* so I'm using setenv */
 	g_setenv("LC_ALL", "C", TRUE);
     }
+    bindtextdomain("ufraw", UFRAW_LOCALEDIR);
+    bind_textdomain_codeset("ufraw", "UTF-8");
+    textdomain("ufraw");
+
     gimp_ui_init("ufraw-gimp", TRUE);
 
     uf = ufraw_open(filename);

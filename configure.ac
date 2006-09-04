@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.46 2006/08/26 13:29:16 udifuchs Exp $
+dnl $Id: configure.ac,v 1.47 2006/09/04 21:35:33 udifuchs Exp $
 AC_INIT(UFRaw, 0.10)
 AC_PREREQ(2.57)
 
@@ -255,7 +255,15 @@ AC_ARG_ENABLE(extras,
 AC_MSG_RESULT($enable_extras)
 AM_CONDITIONAL(MAKE_EXTRAS, test $enable_extras = yes)
 
-AC_CONFIG_FILES(Makefile)
+ALL_LINGUAS="ru"
+AM_GLIB_GNU_GETTEXT
+LIBS="$LIBS $INTLLIBS"
+AM_GLIB_DEFINE_LOCALEDIR(UFRAW_LOCALEDIR)
+
+GETTEXT_PACKAGE=ufraw
+AC_SUBST(GETTEXT_PACKAGE)
+
+AC_CONFIG_FILES(Makefile po/Makefile.in)
 AC_CONFIG_FILES(ufraw-setup.iss)
 AC_OUTPUT
 

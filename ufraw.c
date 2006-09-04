@@ -20,6 +20,7 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <locale.h>
+#include <glib/gi18n.h>
 #include "ufraw.h"
 #include "ufraw_icon.h"
 
@@ -49,6 +50,10 @@ int main (int argc, char **argv)
         /* so I'm using setenv */
         g_setenv("LC_ALL", "C", TRUE);
     }
+    bindtextdomain("ufraw", UFRAW_LOCALEDIR);
+    bind_textdomain_codeset("ufraw", "UTF-8");
+    textdomain("ufraw");
+
     gtk_init(&argc, &argv);
 #ifdef WIN32
     dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);

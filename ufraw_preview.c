@@ -25,6 +25,7 @@
 #include <math.h>
 #include <errno.h>
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include "ufraw.h"
 #include "curveeditor_widget.h"
 #include "ufraw_icon.h"
@@ -175,7 +176,7 @@ void load_curve(GtkWidget *widget, long curveType)
     gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
 #ifdef HAVE_GTK_2_6
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
-    GtkWidget *button = gtk_check_button_new_with_label( "Show hidden files");
+    GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
     g_signal_connect(G_OBJECT(button), "toggled",
 	    G_CALLBACK(ufraw_chooser_toggle), fileChooser);
@@ -276,7 +277,7 @@ void save_curve(GtkWidget *widget, long curveType)
     ufraw_focus(fileChooser, TRUE);
 #ifdef HAVE_GTK_2_6
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
-    GtkWidget *button = gtk_check_button_new_with_label( "Show hidden files");
+    GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
     g_signal_connect(G_OBJECT(button), "toggled",
 	    G_CALLBACK(ufraw_chooser_toggle), fileChooser);
@@ -359,7 +360,7 @@ void load_profile(GtkWidget *widget, long type)
     gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
 #ifdef HAVE_GTK_2_6
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
-    GtkWidget *button = gtk_check_button_new_with_label( "Show hidden files");
+    GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
     g_signal_connect(G_OBJECT(button), "toggled",
 	    G_CALLBACK(ufraw_chooser_toggle), fileChooser);

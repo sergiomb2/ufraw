@@ -1,4 +1,6 @@
-# $Id: Makefile.am,v 1.21 2006/08/28 20:53:15 nkbj Exp $
+# $Id: Makefile.am,v 1.22 2006/09/04 21:35:33 udifuchs Exp $
+
+SUBDIRS=po
 
 if MAKE_EXTRAS
   bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve
