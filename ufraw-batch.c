@@ -19,6 +19,7 @@
 #include <errno.h>     /* for errno */
 #include <string.h>
 #include <glib.h>
+#include <glib/gi18n.h>
 #include "ufraw.h"
 
 char *ufraw_binary;
@@ -33,6 +34,10 @@ int main (int argc, char **argv)
 
     /* Load $HOME/.ufrawrc */
     conf_load(&rc, NULL);
+
+    bindtextdomain("ufraw", UFRAW_LOCALEDIR);
+    bind_textdomain_codeset("ufraw", "UTF-8");
+    textdomain("ufraw");
 
     /* Half interpolation is an option only for the GIMP plug-in.
      * For the stand-alone tool it is disabled */
@@ -64,7 +69,7 @@ int main (int argc, char **argv)
 	}
     }
     if (optInd==argc) {
-	    ufraw_message(UFRAW_WARNING, "no input file, nothing to do.");
+	    ufraw_message(UFRAW_WARNING, _("No input file, nothing to do."));
     }
     for (; optInd<argc; optInd++) {
         uf = ufraw_open(argv[optInd]);
@@ -77,9 +82,9 @@ int main (int argc, char **argv)
 
         if (ufraw_load_raw(uf)!=UFRAW_SUCCESS)
             continue;
-        ufraw_message(UFRAW_MESSAGE, "loaded %s", uf->filename);
+        ufraw_message(UFRAW_MESSAGE, _("loaded %s"), uf->filename);
         if (ufraw_batch_saver(uf)==UFRAW_SUCCESS)
-            ufraw_message(UFRAW_MESSAGE, "saved %s",
+            ufraw_message(UFRAW_MESSAGE, _("saved %s"),
 		    uf->conf->outputFilename);
         ufraw_close(uf);
         g_free(uf);
