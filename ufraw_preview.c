@@ -164,10 +164,10 @@ void load_curve(GtkWidget *widget, long curveType)
     if (data->FreezeDialog) return;
     if ( (curveType==base_curve && CFG->BaseCurveCount>=max_curves) ||
 	 (curveType==luminosity_curve && CFG->curveCount>=max_curves) ) {
-	ufraw_message(UFRAW_ERROR, "No more room for new curves.");
+	ufraw_message(UFRAW_ERROR, _("No more room for new curves."));
 	return;
     }
-    fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new("Load curve",
+    fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new(_("Load curve"),
             GTK_WINDOW(gtk_widget_get_toplevel(widget)),
             GTK_FILE_CHOOSER_ACTION_OPEN,
             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -183,7 +183,7 @@ void load_curve(GtkWidget *widget, long curveType)
     gtk_file_chooser_set_extra_widget(fileChooser, button);
 #endif
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
-    gtk_file_filter_set_name(filter, "All curve formats");
+    gtk_file_filter_set_name(filter, _("All curve formats"));
     gtk_file_filter_add_pattern(filter, "*.ntc");
     gtk_file_filter_add_pattern(filter, "*.NTC");
     gtk_file_filter_add_pattern(filter, "*.ncv");
@@ -193,13 +193,13 @@ void load_curve(GtkWidget *widget, long curveType)
     gtk_file_chooser_add_filter(fileChooser, filter);
 
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
-    gtk_file_filter_set_name(filter, "UFRaw curve format");
+    gtk_file_filter_set_name(filter, _("UFRaw curve format"));
     gtk_file_filter_add_pattern(filter, "*.curve");
     gtk_file_filter_add_pattern(filter, "*.CURVE");
     gtk_file_chooser_add_filter(fileChooser, filter);
 
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
-    gtk_file_filter_set_name(filter, "Nikon curve format");
+    gtk_file_filter_set_name(filter, _("Nikon curve format"));
     gtk_file_filter_add_pattern(filter, "*.ntc");
     gtk_file_filter_add_pattern(filter, "*.NTC");
     gtk_file_filter_add_pattern(filter, "*.ncv");
@@ -207,7 +207,7 @@ void load_curve(GtkWidget *widget, long curveType)
     gtk_file_chooser_add_filter(fileChooser, filter);
 
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
-    gtk_file_filter_set_name(filter, "All files");
+    gtk_file_filter_set_name(filter, _("All files"));
     gtk_file_filter_add_pattern(filter, "*");
     gtk_file_chooser_add_filter(fileChooser, filter);
 
@@ -252,7 +252,7 @@ void load_curve(GtkWidget *widget, long curveType)
             g_free(list->data);
         }
         if (list!=NULL)
-        ufraw_message(UFRAW_ERROR, "No more room for new curves.");
+        ufraw_message(UFRAW_ERROR, _("No more room for new curves."));
         g_slist_free(saveList);
     }
     ufraw_focus(fileChooser, FALSE);
@@ -269,7 +269,7 @@ void save_curve(GtkWidget *widget, long curveType)
 
     if (data->FreezeDialog) return;
 
-    fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new("Save curve",
+    fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new(_("Save curve"),
             GTK_WINDOW(gtk_widget_get_toplevel(widget)),
             GTK_FILE_CHOOSER_ACTION_SAVE,
             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -284,7 +284,7 @@ void save_curve(GtkWidget *widget, long curveType)
     gtk_file_chooser_set_extra_widget(fileChooser, button);
 #endif
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
-    gtk_file_filter_set_name(filter, "All curve formats");
+    gtk_file_filter_set_name(filter, _("All curve formats"));
     gtk_file_filter_add_pattern(filter, "*.ntc");
     gtk_file_filter_add_pattern(filter, "*.NTC");
     gtk_file_filter_add_pattern(filter, "*.ncv");
@@ -294,13 +294,13 @@ void save_curve(GtkWidget *widget, long curveType)
     gtk_file_chooser_add_filter(fileChooser, filter);
 
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
-    gtk_file_filter_set_name(filter, "UFRaw curve format");
+    gtk_file_filter_set_name(filter, _("UFRaw curve format"));
     gtk_file_filter_add_pattern(filter, "*.curve");
     gtk_file_filter_add_pattern(filter, "*.CURVE");
     gtk_file_chooser_add_filter(fileChooser, filter);
 
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
-    gtk_file_filter_set_name(filter, "Nikon curve format");
+    gtk_file_filter_set_name(filter, _("Nikon curve format"));
     gtk_file_filter_add_pattern(filter, "*.ntc");
     gtk_file_filter_add_pattern(filter, "*.NTC");
     gtk_file_filter_add_pattern(filter, "*.ncv");
@@ -308,7 +308,7 @@ void save_curve(GtkWidget *widget, long curveType)
     gtk_file_chooser_add_filter(fileChooser, filter);
 
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
-    gtk_file_filter_set_name(filter, "All files");
+    gtk_file_filter_set_name(filter, _("All files"));
     gtk_file_filter_add_pattern(filter, "*");
     gtk_file_chooser_add_filter(fileChooser, filter);
 
@@ -347,11 +347,11 @@ void load_profile(GtkWidget *widget, long type)
 
     if (data->FreezeDialog) return;
     if (CFG->profileCount[type]==max_profiles) {
-        ufraw_message(UFRAW_ERROR, "No more room for new profiles.");
+        ufraw_message(UFRAW_ERROR, _("No more room for new profiles."));
         return;
     }
     fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new(
-            "Load color profile",
+            _("Load color profile"),
             GTK_WINDOW(gtk_widget_get_toplevel(widget)),
             GTK_FILE_CHOOSER_ACTION_OPEN,
             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -369,14 +369,14 @@ void load_profile(GtkWidget *widget, long type)
     if (strlen(CFG->profilePath)>0)
         gtk_file_chooser_set_current_folder(fileChooser, CFG->profilePath);
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
-    gtk_file_filter_set_name(filter, "Color Profiles");
+    gtk_file_filter_set_name(filter, _("Color Profiles"));
     gtk_file_filter_add_pattern(filter, "*.icm");
     gtk_file_filter_add_pattern(filter, "*.ICM");
     gtk_file_filter_add_pattern(filter, "*.icc");
     gtk_file_filter_add_pattern(filter, "*.ICC");
     gtk_file_chooser_add_filter(fileChooser, filter);
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
-    gtk_file_filter_set_name(filter, "All files");
+    gtk_file_filter_set_name(filter, _("All files"));
     gtk_file_filter_add_pattern(filter, "*");
     gtk_file_chooser_add_filter(fileChooser, filter);
     if (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
@@ -397,7 +397,7 @@ void load_profile(GtkWidget *widget, long type)
 	    char *base = g_path_get_basename(filename);
 	    char *name = uf_file_set_type(base, "");
 	    char *utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
-	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+	    if (utf8==NULL) utf8 = g_strdup(_("Unknown file name"));
 	    g_strlcpy(p.name, utf8, max_name);
 	    g_free(utf8);
 	    g_free(name);
@@ -420,7 +420,7 @@ void load_profile(GtkWidget *widget, long type)
         gtk_combo_box_set_active(data->ProfileCombo[type],
 		CFG->profileIndex[type]);
         if (list!=NULL)
-            ufraw_message(UFRAW_ERROR, "No more room for new profiles.");
+            ufraw_message(UFRAW_ERROR, _("No more room for new profiles."));
         g_slist_free(saveList);
     }
     ufraw_focus(fileChooser, FALSE);
@@ -532,7 +532,7 @@ gboolean render_raw_histogram(preview_data *data)
 		CFG->curve[CFG->curveIndex].m_anchors[0].y!=0.0 );
     }
     char text[max_name];
-    g_snprintf(text, max_name, "Black point: %0.3lf",
+    g_snprintf(text, max_name, _("Black point: %0.3lf"),
 	    CFG->curve[CFG->curveIndex].m_anchors[0].x);
     gtk_label_set_text(GTK_LABEL(data->BlackLabel), text);
     developer_prepare(Developer, data->UF->rgbMax, pow(2, CFG->exposure),
@@ -1098,11 +1098,11 @@ gboolean create_base_image(preview_data *data)
     }
     char progressText[max_name];
     if (CFG->Scale==0)
-	snprintf(progressText, max_name, "size %dx%d, zoom %2.f%%",
+	snprintf(progressText, max_name, _("size %dx%d, zoom %2.f%%"),
 		data->UF->predictedHeight, data->UF->predictedWidth,
 		CFG->Zoom);
     else
-	snprintf(progressText, max_name, "size %dx%d, scale 1/%d",
+	snprintf(progressText, max_name, _("size %dx%d, scale 1/%d"),
 		data->UF->predictedHeight, data->UF->predictedWidth,
 		CFG->Scale);
     if (data->ProgressBar!=NULL) {
@@ -1258,8 +1258,7 @@ void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	*valuep = !gtk_toggle_button_get_active(button);
 	if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
 	char text[max_name];
-        snprintf(text, max_name, "Highlight clipping\n"
-		"Current state: %s", CFG->unclip ? "unclip" : "clip");
+        snprintf(text, max_name, _("Highlight clipping\nCurrent state: %s"), CFG->unclip ? _("unclip") : _("clip"));
 	gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(button), text, NULL);
 	update_scales(data);
     } else {
@@ -1507,7 +1506,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     int saveProfileIndex[profile_types];
     for (i=0; i<profile_types; i++)
 	saveProfileIndex[i] = CFG->profileIndex[i];
-    optionsDialog = gtk_dialog_new_with_buttons("UFRaw options",
+    optionsDialog = gtk_dialog_new_with_buttons(_("UFRaw options"),
             GTK_WINDOW(gtk_widget_get_toplevel(widget)),
             GTK_DIALOG_DESTROY_WITH_PARENT,
             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -1520,15 +1519,15 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_container_add(GTK_CONTAINER(GTK_DIALOG(optionsDialog)->vbox),
             notebook);
 
-    label =gtk_label_new("Settings");
+    label =gtk_label_new(_("Settings"));
     box = gtk_vbox_new(FALSE, 0);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, label);
-    profileTable[0] = table_with_frame(box, "Input color profiles", TRUE);
-    profileTable[1] = table_with_frame(box, "Output color profiles", TRUE);
-    baseCurveTable = GTK_TABLE(table_with_frame(box, "Base Curves", TRUE));
-    curveTable = GTK_TABLE(table_with_frame(box, "Luminosity Curves", TRUE));
+    profileTable[0] = table_with_frame(box, _("Input color profiles"), TRUE);
+    profileTable[1] = table_with_frame(box, _("Output color profiles"), TRUE);
+    baseCurveTable = GTK_TABLE(table_with_frame(box, _("Base Curves"), TRUE));
+    curveTable = GTK_TABLE(table_with_frame(box, _("Luminosity Curves"), TRUE));
 
-    label = gtk_label_new("Configuration");
+    label = gtk_label_new(_("Configuration"));
     box = gtk_vbox_new(FALSE, 0);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, label);
 
@@ -1543,27 +1542,26 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
 
     table = GTK_TABLE(gtk_table_new(10, 10, FALSE));
     gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(table), FALSE, FALSE, 0);
-    label = gtk_label_new("Save image defaults ");
+    label = gtk_label_new(_("Save image defaults "));
     event = gtk_event_box_new();
     gtk_container_add(GTK_CONTAINER(event), label);
     gtk_tooltips_set_tip(data->ToolTips, event,
-	    "Save current image manipulation parameters as defaults.\n"
-	    "The output parameters in this window are always saved.", NULL);
+	    _("Save current image manipulation parameters as defaults.\nThe output parameters in this window are always saved."), NULL);
     gtk_table_attach(GTK_TABLE(table), event, 0, 2, 0, 1, 0, 0, 0, 0);
     confCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    gtk_combo_box_append_text(confCombo, "Never again");
-    gtk_combo_box_append_text(confCombo, "Always");
-    gtk_combo_box_append_text(confCombo, "Just this once");
+    gtk_combo_box_append_text(confCombo, _("Never again"));
+    gtk_combo_box_append_text(confCombo, _("Always"));
+    gtk_combo_box_append_text(confCombo, _("Just this once"));
     gtk_combo_box_set_active(confCombo, CFG->saveConfiguration);
     g_signal_connect(G_OBJECT(confCombo), "changed",
 	    G_CALLBACK(options_combo_update), &CFG->saveConfiguration);
     gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(confCombo), 2, 4, 0, 1,
 	    0, 0, 0, 0);
 
-    label = gtk_label_new("Save full configuration ");
+    label = gtk_label_new(_("Save full configuration "));
     event = gtk_event_box_new();
     gtk_tooltips_set_tip(data->ToolTips, event,
-	    "Save resource file ($HOME/.ufrawrc)", NULL);
+	    _("Save resource file ($HOME/.ufrawrc)"), NULL);
     gtk_container_add(GTK_CONTAINER(event), label);
     gtk_table_attach(GTK_TABLE(table), event, 0, 2, 1, 2, 0, 0, 0, 0);
     button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
@@ -1571,7 +1569,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
             G_CALLBACK(configuration_save), NULL);
     gtk_table_attach(table, button, 2, 3, 1, 2, 0, 0, 0, 0);
 
-    label = gtk_label_new("Log");
+    label = gtk_label_new(_("Log"));
     page = gtk_scrolled_window_new(NULL, NULL);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), page, label);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(page),
@@ -1583,11 +1581,11 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     char *log = ufraw_message(UFRAW_GET_LOG, NULL);
     if (log!=NULL) {
 	char *utf8_log = g_filename_to_utf8(log, -1, NULL, NULL, NULL);
-	if (utf8_log==NULL) utf8_log = g_strdup("Encoding conversion failed");
+	if (utf8_log==NULL) utf8_log = g_strdup(_("Encoding conversion failed"));
 	gtk_text_buffer_set_text(buffer, utf8_log, -1);
 	g_free(utf8_log);
     }
-    label = gtk_label_new("About");
+    label = gtk_label_new(_("About"));
     box = gtk_vbox_new(FALSE, 0);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, label);
     image = gtk_image_new_from_pixbuf(
@@ -1843,8 +1841,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->SaveFunc = save_func;
 
     if (uf->conf->embeddedImage) {
-	ufraw_message(UFRAW_ERROR, "Extracting embedded image is not "
-		"supported in interactive mode");
+	ufraw_message(UFRAW_ERROR, _("Extracting embedded image is not supported in interactive mode"));
 	return UFRAW_ERROR;
     }
     data->SaveConfig = *uf->conf;
@@ -1856,8 +1853,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     char *utf8_filename = g_filename_to_utf8(uf->filename,
 	    -1, NULL, NULL, NULL);
-    if (utf8_filename==NULL) utf8_filename = g_strdup("Unknown file name");
-    char *previewHeader = g_strdup_printf("%s - UFRaw Photo Loader",
+    if (utf8_filename==NULL) utf8_filename = g_strdup(_("Unknown file name"));
+    char *previewHeader = g_strdup_printf(_("%s - UFRaw Photo Loader"),
             utf8_filename);
     gtk_window_set_title(GTK_WINDOW(previewWindow), previewHeader);
     g_free(previewHeader);
@@ -1914,7 +1911,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect_swapped(G_OBJECT(event_box), "button_press_event",
             G_CALLBACK(histogram_menu), menu);
     group = NULL;
-    menu_item = gtk_radio_menu_item_new_with_label(group, "Linear");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("Linear"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 6, 7);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -1923,7 +1920,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    (gpointer)linear_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->rawHistogramScale);
-    menu_item = gtk_radio_menu_item_new_with_label(group, "Logarithmic");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("Logarithmic"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 7, 8);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -1937,7 +1934,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 8, 9);
 
     group = NULL;
-    menu_item = gtk_radio_menu_item_new_with_label(group, "96 Pixels");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("96 Pixels"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 9, 10);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -1946,7 +1943,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    (gpointer)96);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->rawHistogramHeight);
-    menu_item = gtk_radio_menu_item_new_with_label(group, "128 Pixels");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("128 Pixels"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 10, 11);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -1955,7 +1952,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    (gpointer)128);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->rawHistogramHeight);
-    menu_item = gtk_radio_menu_item_new_with_label(group, "192 Pixels");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("192 Pixels"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 11, 12);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -1964,7 +1961,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    (gpointer)192);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->rawHistogramHeight);
-    menu_item = gtk_radio_menu_item_new_with_label(group, "256 Pixels");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("256 Pixels"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 12, 13);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -1977,20 +1974,19 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
     data->SpotLabels = color_labels_new(table, 0, 1,
-	    "Spot values:", pixel_format);
+	    _("Spot values:"), pixel_format);
     data->SpotPatch = GTK_LABEL(gtk_label_new(NULL));
     gtk_table_attach_defaults(table, GTK_WIDGET(data->SpotPatch), 6, 7, 1, 2);
 
     table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
-    data->ExposureAdjustment = adjustment_scale(table, 0, 0, "Exposure",
+    data->ExposureAdjustment = adjustment_scale(table, 0, 0, _("Exposure"),
             CFG->exposure, &CFG->exposure,
-            -3, 3, 0.01, 1.0/6, 2, "EV compensation");
+            -3, 3, 0.01, 1.0/6, 2, _("EV compensation"));
 
     button = gtk_toggle_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_CUT, GTK_ICON_SIZE_BUTTON));
-    snprintf(text, max_name, "Highlight clipping\n"
-	    "Current state: %s", CFG->unclip ? "unclip" : "clip");
+    snprintf(text, max_name, _("Highlight clipping\nCurrent state: %s"), CFG->unclip ? _("unclip") : _("clip"));
     gtk_tooltips_set_tip(data->ToolTips, button, text, NULL);
     gtk_table_attach(table, button, 7, 8, 0, 1, 0, 0, 0, 0);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), !CFG->unclip);
@@ -2001,7 +1997,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(data->AutoExposureButton),
 	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoExposureButton),
-	    "Auto adjust exposure", NULL);
+	    _("Auto adjust exposure"), NULL);
     gtk_table_attach(table, GTK_WIDGET(data->AutoExposureButton), 8, 9, 0, 1,
 	    0, 0, 0, 0);
     gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
@@ -2012,7 +2008,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(data->ResetExposureButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, data->ResetExposureButton,
-	    "Reset exposure to default", NULL);
+	    _("Reset exposure to default"), NULL);
     gtk_table_attach(table, data->ResetExposureButton, 9, 10, 0, 1, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetExposureButton), "clicked",
             G_CALLBACK(button_update), NULL);
@@ -2021,7 +2017,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_box_pack_start(GTK_BOX(previewVBox), noteBox, FALSE, FALSE, 0);
 
     /* Start of White Balance setting page */
-    page = table_with_frame(noteBox, "WB", TRUE);
+    page = table_with_frame(noteBox, _("WB"), TRUE);
     /* Set this page to be the opening page. */
     int openingPage = gtk_notebook_page_num(GTK_NOTEBOOK(noteBox), page);
 
@@ -2074,7 +2070,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(combo_update), CFG->wb);
     event_box = gtk_event_box_new();
     gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(data->WBCombo));
-    gtk_tooltips_set_tip(data->ToolTips, event_box, "White Balance", NULL);
+    gtk_tooltips_set_tip(data->ToolTips, event_box, _("White Balance"), NULL);
     gtk_table_attach(subTable, event_box, 0, 6, 0, 1, GTK_FILL, 0, 0, 0);
 
     data->WBTuningAdjustment = NULL;
@@ -2096,32 +2092,30 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	gtk_container_add(GTK_CONTAINER(event_box), label);
 	gtk_table_attach(subTable, event_box, 6, 7, 0, 1, GTK_FILL, 0, 0, 0);
 	gtk_tooltips_set_tip(data->ToolTips, event_box,
-	    "There are no white balance presets for your camera model.\n"
-	    "Check UFRaw's webpage for information on how to get your\n"
-	    "camera supported.", NULL);
+	    _("There are no white balance presets for your camera model.\nCheck UFRaw's webpage for information on how to get your\ncamera supported."), NULL);
     }
     data->ResetWBButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetWBButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, data->ResetWBButton,
-	    "Reset white balance to initial value", NULL);
+	    _("Reset white balance to initial value"), NULL);
     gtk_table_attach(subTable, data->ResetWBButton, 7, 8, 0, 1, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetWBButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
     data->TemperatureAdjustment = adjustment_scale(subTable, 0, 1,
-            "Temperature", CFG->temperature, &CFG->temperature,
+            _("Temperature"), CFG->temperature, &CFG->temperature,
             2000, 12000, 50, 200, 0,
-            "White balance color temperature (K)");
-    data->GreenAdjustment = adjustment_scale(subTable, 0, 2, "Green",
+            _("White balance color temperature (K)"));
+    data->GreenAdjustment = adjustment_scale(subTable, 0, 2, _("Green"),
             CFG->green, &CFG->green, 0.2, 2.5, 0.01, 0.05, 2,
-            "Green component");
+            _("Green component"));
     // Spot WB button:
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
                 GTK_STOCK_COLOR_PICKER, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, button,
-	    "Select a spot on the preview image to apply spot white balance",
+	    _("Select a spot on the preview image to apply spot white balance"),
 	    NULL);
     gtk_table_attach(subTable, button, 7, 8, 1, 3, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
@@ -2130,9 +2124,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     GtkBox *subbox = GTK_BOX(gtk_hbox_new(0,0));
     gtk_table_attach(table, GTK_WIDGET(subbox), 0, 1, 1, 2, 0, 0, 0, 0);
     if (data->UF->colors>3)
-	label = gtk_label_new("Chan. multipliers:");
+	label = gtk_label_new(_("Chan. multipliers:"));
     else
-	label = gtk_label_new("Channel multipliers:");
+	label = gtk_label_new(_("Channel multipliers:"));
     gtk_box_pack_start(subbox, label, 0, 0, 0);
     for (i=0; i<data->UF->colors; i++) {
 	data->ChannelAdjustment[i] = GTK_ADJUSTMENT(gtk_adjustment_new(
@@ -2149,7 +2143,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* End of White Balance setting page */
 
     /* Start of Base Curve page */
-    page = table_with_frame(noteBox, "Base", TRUE);
+    page = table_with_frame(noteBox, _("Base"), TRUE);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     box = GTK_BOX(gtk_hbox_new(FALSE, 0));
@@ -2175,13 +2169,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    gtk_tooltips_set_tip(data->ToolTips, button, "Load base curve", NULL);
+    gtk_tooltips_set_tip(data->ToolTips, button, _("Load base curve"), NULL);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(load_curve), (gpointer)base_curve);
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, button, "Save base curve", NULL);
+    gtk_tooltips_set_tip(data->ToolTips, button, _("Save base curve"), NULL);
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(save_curve), (gpointer)base_curve);
@@ -2201,7 +2195,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(data->ResetBaseCurveButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetBaseCurveButton),
-	    "Reset base curve to default",NULL);
+	    _("Reset base curve to default"),NULL);
     align = gtk_alignment_new(0, 1, 1, 0);
     gtk_container_add(GTK_CONTAINER(align),
 	    GTK_WIDGET(data->ResetBaseCurveButton));
@@ -2211,11 +2205,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* End of Base Curve page */
 
     /* Start of Color management page */
-    page = table_with_frame(noteBox, "Color", TRUE);
+    page = table_with_frame(noteBox, _("Color"), TRUE);
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     for (j=0; j<profile_types; j++) {
-        label = gtk_label_new(j==in_profile ? "Input profile" :
-                j==out_profile ? "Output profile" : "Error");
+        label = gtk_label_new(j==in_profile ? _("Input profile") :
+                j==out_profile ? _("Output profile") : "Error");
         gtk_table_attach(table, label, 0, 1, 4*j+1, 4*j+2, 0, 0, 0, 0);
         data->ProfileCombo[j] = GTK_COMBO_BOX(gtk_combo_box_new_text());
         for (i=0; i<CFG->profileCount[j]; i++)
@@ -2234,7 +2228,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
         g_signal_connect(G_OBJECT(button), "clicked",
                 G_CALLBACK(load_profile), (void *)j);
     }
-    data->UseMatrixButton = gtk_check_button_new_with_label("Use color matrix");
+    data->UseMatrixButton = gtk_check_button_new_with_label(_("Use color matrix"));
     gtk_table_attach(table, data->UseMatrixButton, 0, 3, 2, 3, 0, 0, 0, 0);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->UseMatrixButton),
 	    data->UF->useMatrix);
@@ -2243,39 +2237,39 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     if (data->UF->raw_color || data->UF->colors==4)
 	gtk_widget_set_sensitive(data->UseMatrixButton, FALSE);
 
-    data->GammaAdjustment = adjustment_scale(table, 0, 3, "Gamma",
+    data->GammaAdjustment = adjustment_scale(table, 0, 3, _("Gamma"),
             CFG->profile[0][CFG->profileIndex[0]].gamma,
             &CFG->profile[0][0].gamma, 0.1, 1.0, 0.01, 0.05, 2,
-            "Gamma correction for the input profile");
+            _("Gamma correction for the input profile"));
     data->ResetGammaButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetGammaButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, data->ResetGammaButton,
-	    "Reset gamma to default", NULL);
+	    _("Reset gamma to default"), NULL);
     gtk_table_attach(table, data->ResetGammaButton, 7, 8, 3, 4, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetGammaButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
-    data->LinearAdjustment = adjustment_scale(table, 0, 4, "Linearity",
+    data->LinearAdjustment = adjustment_scale(table, 0, 4, _("Linearity"),
             CFG->profile[0][CFG->profileIndex[0]].linear,
             &CFG->profile[0][0].linear, 0.0, 1.0, 0.01, 0.05, 2,
-            "Linear part of the gamma correction");
+            _("Linear part of the gamma correction"));
     data->ResetLinearButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetLinearButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, data->ResetLinearButton,
-	    "Reset linearity to default", NULL);
+	    _("Reset linearity to default"), NULL);
     gtk_table_attach(table, data->ResetLinearButton, 7, 8, 4, 5, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetLinearButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
-    label = gtk_label_new("Intent");
+    label = gtk_label_new(_("Intent"));
     gtk_table_attach(table, label, 0, 1, 6, 7, 0, 0, 0, 0);
     combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    gtk_combo_box_append_text(combo, "Perceptual");
-    gtk_combo_box_append_text(combo, "Relative colorimetric");
-    gtk_combo_box_append_text(combo, "Saturation");
-    gtk_combo_box_append_text(combo, "Absolute colorimetric");
+    gtk_combo_box_append_text(combo, _("Perceptual"));
+    gtk_combo_box_append_text(combo, _("Relative colorimetric"));
+    gtk_combo_box_append_text(combo, _("Saturation"));
+    gtk_combo_box_append_text(combo, _("Absolute colorimetric"));
     gtk_combo_box_set_active(GTK_COMBO_BOX(combo), CFG->intent);
     g_signal_connect(G_OBJECT(combo), "changed",
             G_CALLBACK(combo_update), &CFG->intent);
@@ -2283,17 +2277,17 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* End of Color management page */
 
     /* Start of Corrections page */
-    page = table_with_frame(noteBox, "Corrections", TRUE);
+    page = table_with_frame(noteBox, _("Corrections"), TRUE);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
-    data->SaturationAdjustment = adjustment_scale(table, 0, 1, "Saturation",
+    data->SaturationAdjustment = adjustment_scale(table, 0, 1, _("Saturation"),
             CFG->saturation, &CFG->saturation,
-            0.0, 3.0, 0.01, 0.1, 2, "Saturation");
+            0.0, 3.0, 0.01, 0.1, 2, _("Saturation"));
     data->ResetSaturationButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetSaturationButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, data->ResetSaturationButton,
-	    "Reset saturation to default", NULL);
+	    _("Reset saturation to default"), NULL);
     gtk_table_attach(table, data->ResetSaturationButton, 9, 10, 1, 2,
 	    0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetSaturationButton), "clicked",
@@ -2316,13 +2310,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    gtk_tooltips_set_tip(data->ToolTips, button, "Load curve", NULL);
+    gtk_tooltips_set_tip(data->ToolTips, button, _("Load curve"), NULL);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(load_curve), (gpointer)luminosity_curve);
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, button, "Save curve", NULL);
+    gtk_tooltips_set_tip(data->ToolTips, button, _("Save curve"), NULL);
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(save_curve), (gpointer)luminosity_curve);
@@ -2341,7 +2335,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(data->AutoCurveButton),
 	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoCurveButton),
-	    "Auto adjust curve\n(Flatten histogram)", NULL);
+	    _("Auto adjust curve\n(Flatten histogram)"), NULL);
     gtk_table_attach(subTable, GTK_WIDGET(data->AutoCurveButton), 8, 9, 6, 7,
 	    0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->AutoCurveButton), "clicked",
@@ -2351,13 +2345,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(data->ResetCurveButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetCurveButton),
-	    "Reset curve to default",NULL);
+	    _("Reset curve to default"),NULL);
     gtk_table_attach(subTable, GTK_WIDGET(data->ResetCurveButton), 8, 9, 7, 8,
 		0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetCurveButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
-    data->BlackLabel = gtk_label_new("Black point: 0.000");
+    data->BlackLabel = gtk_label_new(_("Black point: 0.000"));
 #ifdef HAVE_GTK_2_6
     gtk_misc_set_alignment(GTK_MISC(data->BlackLabel), 0.5, 1.0);
     gtk_label_set_angle(GTK_LABEL(data->BlackLabel), 90);
@@ -2374,7 +2368,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(data->ResetBlackButton),
 	gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetBlackButton),
-	    "Reset black-point to default",NULL);
+	    _("Reset black-point to default"),NULL);
     gtk_table_attach(subTable, GTK_WIDGET(data->ResetBlackButton), 0, 1, 7, 8,
 	    0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetBlackButton), "clicked",
@@ -2384,7 +2378,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(data->AutoBlackButton),
 	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoBlackButton),
-	    "Auto adjust black-point", NULL);
+	    _("Auto adjust black-point"), NULL);
     gtk_table_attach(subTable, GTK_WIDGET(data->AutoBlackButton), 0, 1, 6, 7,
 	    0, GTK_SHRINK, 0, 0);
     gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
@@ -2393,11 +2387,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* End of Corrections page */
 
     /* Start of Zoom page */
-    page = table_with_frame(noteBox, "Zoom", TRUE);
+    page = table_with_frame(noteBox, _("Zoom"), TRUE);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
-    label = gtk_label_new("Zoom %");
+    label = gtk_label_new(_("Zoom %"));
     gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
     data->ZoomAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
 		CFG->Zoom, 5, 50, 1, 1, 0));
@@ -2442,16 +2436,16 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(label), FALSE);
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(label));
     GString *message = g_string_new("");
-    g_string_append_printf(message, "Camera: %s %s\n", CFG->make, CFG->model);
-    g_string_append_printf(message, "Timestamp: %s\n", CFG->timestamp);
-    g_string_append_printf(message, "Shutter: %s\n", CFG->shutterText);
-    g_string_append_printf(message, "Aperture: %s\n", CFG->apertureText);
-    g_string_append_printf(message, "ISO speed: %s\n", CFG->isoText);
-    g_string_append_printf(message, "Focal length: %s\n",
+    g_string_append_printf(message, _("Camera: %s %s\n"), CFG->make, CFG->model);
+    g_string_append_printf(message, _("Timestamp: %s\n"), CFG->timestamp);
+    g_string_append_printf(message, _("Shutter: %s\n"), CFG->shutterText);
+    g_string_append_printf(message, _("Aperture: %s\n"), CFG->apertureText);
+    g_string_append_printf(message, _("ISO speed: %s\n"), CFG->isoText);
+    g_string_append_printf(message, _("Focal length: %s\n"),
 	    CFG->focalLenText);
     if (strlen(CFG->lensText)>0)
-	g_string_append_printf(message, "Lens: %s\n", CFG->lensText);
-    g_string_append_printf(message, "\nEXIF data read by %s", CFG->exifSource);
+	g_string_append_printf(message, _("Lens: %s\n"), CFG->lensText);
+    g_string_append_printf(message, _("\nEXIF data read by %s"), CFG->exifSource);
     gtk_text_buffer_set_text(buffer, message->str, -1);
     g_string_free(message, TRUE);
     if (uf->exifBuf==NULL) {
@@ -2480,7 +2474,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect_swapped(G_OBJECT(event_box), "button_press_event",
             G_CALLBACK(histogram_menu), menu);
     group = NULL;
-    menu_item = gtk_radio_menu_item_new_with_label(group, "RGB histogram");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("RGB histogram"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 0, 1);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -2489,7 +2483,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    (gpointer)rgb_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->histogram);
-    menu_item = gtk_radio_menu_item_new_with_label(group, "R+G+B histogram");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("R+G+B histogram"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 1, 2);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -2499,7 +2493,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->histogram);
     menu_item = gtk_radio_menu_item_new_with_label(group,
-	    "Luminosity histogram");
+	    _("Luminosity histogram"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 2, 3);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -2509,7 +2503,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->histogram);
     menu_item = gtk_radio_menu_item_new_with_label(group,
-	    "Value (maximum) histogram");
+	    _("Value (maximum) histogram"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 3, 4);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -2519,7 +2513,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->histogram);
     menu_item = gtk_radio_menu_item_new_with_label(group,
-	    "Saturation histogram");
+	    _("Saturation histogram"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 4, 5);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -2533,7 +2527,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 5, 6);
 
     group = NULL;
-    menu_item = gtk_radio_menu_item_new_with_label(group, "Linear");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("Linear"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 6, 7);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -2542,7 +2536,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    (gpointer)linear_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->liveHistogramScale);
-    menu_item = gtk_radio_menu_item_new_with_label(group, "Logarithmic");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("Logarithmic"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 7, 8);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -2556,7 +2550,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 8, 9);
 
     group = NULL;
-    menu_item = gtk_radio_menu_item_new_with_label(group, "96 Pixels");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("96 Pixels"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 9, 10);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -2565,7 +2559,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    (gpointer)96);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->liveHistogramHeight);
-    menu_item = gtk_radio_menu_item_new_with_label(group, "128 Pixels");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("128 Pixels"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 10, 11);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -2574,7 +2568,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    (gpointer)128);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->liveHistogramHeight);
-    menu_item = gtk_radio_menu_item_new_with_label(group, "192 Pixels");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("192 Pixels"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 11, 12);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -2583,7 +2577,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    (gpointer)192);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->liveHistogramHeight);
-    menu_item = gtk_radio_menu_item_new_with_label(group, "256 Pixels");
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("256 Pixels"));
     gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 12, 13);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
@@ -2595,13 +2589,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_widget_show_all(menu);
 
     i = 2;
-    data->AvrLabels = color_labels_new(table, 0, i++, "Average:", pixel_format);
-    data->DevLabels = color_labels_new(table, 0, i++, "Std. deviation:",
+    data->AvrLabels = color_labels_new(table, 0, i++, _("Average:"), pixel_format);
+    data->DevLabels = color_labels_new(table, 0, i++, _("Std. deviation:"),
             pixel_format);
     data->OverLabels = color_labels_new(table, 0, i,
-	    "Overexposed:", percent_format);
+	    _("Overexposed:"), percent_format);
     toggle_button(table, 4, i, NULL, &CFG->overExp);
-    button = gtk_button_new_with_label("Indicate");
+    button = gtk_button_new_with_label(_("Indicate"));
     gtk_table_attach(table, button, 6, 7, i, i+1,
             GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
     g_signal_connect(G_OBJECT(button), "pressed",
@@ -2609,10 +2603,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(button), "released",
             G_CALLBACK(render_preview_callback), (void *)render_default);
     i++;
-    data->UnderLabels = color_labels_new(table, 0, i, "Underexposed:",
+    data->UnderLabels = color_labels_new(table, 0, i, _("Underexposed:"),
             percent_format);
     toggle_button(table, 4, i, NULL, &CFG->underExp);
-    button = gtk_button_new_with_label("Indicate");
+    button = gtk_button_new_with_label(_("Indicate"));
     gtk_table_attach(table, button, 6, 7, i, i+1,
             GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
     g_signal_connect(G_OBJECT(button), "pressed",
@@ -2651,12 +2645,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     box = GTK_BOX(gtk_hbox_new(FALSE, 6));
     gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(box), FALSE, FALSE, 6);
     combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    gtk_combo_box_append_text(combo, "AHD interpolation");
-    gtk_combo_box_append_text(combo, "VNG interpolation");
-    gtk_combo_box_append_text(combo, "VNG four color interpolation");
-    gtk_combo_box_append_text(combo, "Bilinear interpolation");
+    gtk_combo_box_append_text(combo, _("AHD interpolation"));
+    gtk_combo_box_append_text(combo, _("VNG interpolation"));
+    gtk_combo_box_append_text(combo, _("VNG four color interpolation"));
+    gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
     if (plugin) {
-        gtk_combo_box_append_text(combo, "Half-size interpolation");
+        gtk_combo_box_append_text(combo, _("Half-size interpolation"));
     }
     gtk_combo_box_set_active(combo, CFG->interpolation);
     g_signal_connect(G_OBJECT(combo), "changed",
@@ -2673,7 +2667,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(hbox));
     gtk_box_pack_start(hbox, gtk_image_new_from_stock(
             GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_BUTTON), FALSE, FALSE, 0);
-    gtk_box_pack_start(hbox, gtk_label_new("Options"),
+    gtk_box_pack_start(hbox, gtk_label_new(_("Options")),
             FALSE, FALSE, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(options_dialog), previewWindow);
@@ -2709,7 +2703,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_notebook_set_current_page(GTK_NOTEBOOK(noteBox), openingPage);
 
     gtk_widget_set_sensitive(data->ControlsBox, FALSE);
-    preview_progress(previewWindow, "Loading preview", 0.2);
+    preview_progress(previewWindow, _("Loading preview"), 0.2);
     ufraw_load_raw(uf);
     gtk_widget_set_sensitive(data->ControlsBox, TRUE);
 
