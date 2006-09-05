@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.47 2006/09/04 21:35:33 udifuchs Exp $
+dnl $Id: configure.ac,v 1.48 2006/09/05 06:31:29 nkbj Exp $
 AC_INIT(UFRaw, 0.10)
 AC_PREREQ(2.57)
 
@@ -255,7 +255,7 @@ AC_ARG_ENABLE(extras,
 AC_MSG_RESULT($enable_extras)
 AM_CONDITIONAL(MAKE_EXTRAS, test $enable_extras = yes)
 
-ALL_LINGUAS="ru"
+ALL_LINGUAS="da ru"
 AM_GLIB_GNU_GETTEXT
 LIBS="$LIBS $INTLLIBS"
 AM_GLIB_DEFINE_LOCALEDIR(UFRAW_LOCALEDIR)
