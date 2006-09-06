@@ -238,6 +238,11 @@ const wb_data wb_preset[] = {
   { "Minolta", "DiMAGE 5", "Fluorescent", 0,	{ 1.957031, 1, 2.058594, 0 } },
   { "Minolta", "DiMAGE 5", "Cloudy", 0,		{ 2.199219, 1, 1.300781, 0 } },
 
+  { "Minolta", "DiMAGE 7", "Cloudy", 0,		{ 2.082031, 1, 1.226562, 0 } },
+  { "Minolta", "DiMAGE 7", "Daylight", 0,	{ 1.914062, 1, 1.527344, 0 } },
+  { "Minolta", "DiMAGE 7", "Fluorescent", 0,	{ 1.917969, 1, 2.007812, 0 } },
+  { "Minolta", "DiMAGE 7", "Tungsten", 0,	{ 1.050781, 1, 2.437500, 0 } },
+
   { "Minolta", "DiMAGE 7i", "Daylight", 0,	{ 1.441406, 1, 1.457031, 0 } },
   { "Minolta", "DiMAGE 7i", "Tungsten", 0,	{ 1, 1.333333, 3.572917, 0 } },
   { "Minolta", "DiMAGE 7i", "Fluorescent", 0,	{ 1.554688, 1, 2.230469, 0 } },
