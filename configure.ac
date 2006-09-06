@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.48 2006/09/05 06:31:29 nkbj Exp $
+dnl $Id: configure.ac,v 1.49 2006/09/06 21:18:26 udifuchs Exp $
 AC_INIT(UFRaw, 0.10)
 AC_PREREQ(2.57)
 
@@ -238,6 +238,15 @@ case $host_cpu in
     UFRAW_CFLAGS="$UFRAW_CFLAGS -fno-loop-optimize"
     ;;
 esac
+
+ALL_LINGUAS="da ru"
+AM_GLIB_GNU_GETTEXT
+LIBS="$LIBS $INTLLIBS"
+# The following is not compatible with autoconf 2.60
+#AM_GLIB_DEFINE_LOCALEDIR(UFRAW_LOCALEDIR)
+GETTEXT_PACKAGE=ufraw
+AC_SUBST(GETTEXT_PACKAGE)
+
 AC_SUBST(UFRAW_CFLAGS)
 AC_SUBST(UFRAW_LDADD)
 
@@ -254,14 +263,6 @@ AC_ARG_ENABLE(extras,
   enable_extras=no)
 AC_MSG_RESULT($enable_extras)
 AM_CONDITIONAL(MAKE_EXTRAS, test $enable_extras = yes)
-
-ALL_LINGUAS="da ru"
-AM_GLIB_GNU_GETTEXT
-LIBS="$LIBS $INTLLIBS"
-AM_GLIB_DEFINE_LOCALEDIR(UFRAW_LOCALEDIR)
-
-GETTEXT_PACKAGE=ufraw
-AC_SUBST(GETTEXT_PACKAGE)
 
 AC_CONFIG_FILES(Makefile po/Makefile.in)
 AC_CONFIG_FILES(ufraw-setup.iss)

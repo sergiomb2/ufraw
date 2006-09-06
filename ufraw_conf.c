@@ -21,6 +21,7 @@
 #include <sys/stat.h> /* needed for fstat() */
 #include <getopt.h>
 #include <glib.h>
+#include <glib/gi18n.h>
 #include "ufraw.h"
 
 const conf_data conf_default = {
@@ -128,18 +129,18 @@ void conf_parse_start(GMarkupParseContext *context, const gchar *element,
         if (!strcmp(element, "UFRaw") && !strcmp(*names, "Version")) {
             if (int_value==3) {
                 ufraw_message(UFRAW_WARNING,
-                    "Trying to convert .ufrawrc from UFRaw-0.4 or earlier");
+                    _("Trying to convert .ufrawrc from UFRaw-0.4 or earlier"));
                 c->version = int_value;
             }
 	    /* In version 7 temperature calculation has changed */
             if (int_value==5) {
                 ufraw_message(UFRAW_WARNING,
-                    "Trying to convert .ufrawrc from UFRaw-0.6 or earlier");
+                   _("Trying to convert .ufrawrc from UFRaw-0.6 or earlier"));
                 c->version = int_value;
             }
             if (int_value!=c->version)
                 g_set_error(error, ufrawQuark, UFRAW_RC_VERSION,
-                    "UFRaw version in .ufrawrc is not supported");
+                    _("UFRaw version in .ufrawrc is not supported"));
         }
         if (!strcmp(*names,"Current") && int_value!=0) {
             if (!strcmp("BaseManualCurve", element))
@@ -270,7 +271,7 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
         if (!strcmp("AnchorXY", element)) {
 	    if (c->curve[i].m_numAnchors==max_anchors) {
 		ufraw_message(UFRAW_WARNING,
-			"Too many anchors for curve '%s'", c->curve[i].name);
+			_("Too many anchors for curve '%s'"), c->curve[i].name);
 		/* We try to keep the last anchor point */
 		c->curve[i].m_numAnchors--;
 	    }
@@ -496,7 +497,7 @@ int conf_load(conf_data *c, const char *IDFilename)
     } else {
         if ( (in=fopen(IDFilename, "r"))==NULL ) {
             ufraw_message(UFRAW_SET_ERROR,
-                    "Can't open ID file %s for reading\n%s\n",
+                    _("Can't open ID file %s for reading\n%s\n"),
                     IDFilename, strerror(errno) );
             return UFRAW_ERROR;
         }
@@ -513,7 +514,7 @@ int conf_load(conf_data *c, const char *IDFilename)
     fgets(line, max_path-1, in);
     while (!feof(in)) {
         if (!g_markup_parse_context_parse(context, line, strlen(line), &err)) {
-            ufraw_message(UFRAW_ERROR, "Error parsing '%s'\n%s",
+            ufraw_message(UFRAW_ERROR, _("Error parsing '%s'\n%s"),
                     confFilename, err->message);
 	    g_markup_parse_context_free(context);
 	    uf_reset_locale(locale);
@@ -1074,8 +1075,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     if (strlen(cmd->outputFilename)>0) {
         if ( conf->createID!=no_id && !strcmp(cmd->outputFilename,"-") &&
 	     !cmd->embeddedImage ) {
-            ufraw_message(UFRAW_ERROR,
-                "cannot --create-id with stdout");
+            ufraw_message(UFRAW_ERROR, _("cannot --create-id with stdout"));
             return UFRAW_ERROR;
         }
 	g_strlcpy(conf->outputFilename, cmd->outputFilename, max_path);
@@ -1088,81 +1088,83 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
  * closely related to the other configuration functions. */
 
 
-char helpText[]=
-"UFRaw " VERSION " - Unidentified Flying Raw converter for digital camera images.\n"
-"\n"
-"Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
-"       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
-"       ufraw [ options ... ] [ default-directory ]\n"
-"\n"
-"By default 'ufraw' displays a preview window for each raw image allowing\n"
+char *helpText[] = {
+N_("UFRaw " VERSION " - Unidentified Flying Raw converter for digital camera images.\n"),
+"\n",
+N_("Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"),
+N_("       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"),
+N_("       ufraw [ options ... ] [ default-directory ]\n"),
+"\n",
+N_("By default 'ufraw' displays a preview window for each raw image allowing\n"
 "the user to tweak the image parameters before saving. If no raw images\n"
 "are given at the command line, UFRaw will display a file chooser dialog.\n"
 "To process the images with no questions asked (and no preview) use\n"
-"'ufraw-batch'.\n"
-"\n"
-"The input files can be either raw images or ufraw's ID files. ID file\n"
+"'ufraw-batch'.\n"),
+"\n",
+N_("The input files can be either raw images or ufraw's ID files. ID file\n"
 "contain a raw image filename and the parameters for handling the image.\n"
-"One can also use and ID file with the option:\n"
-"\n"
-"--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
-"\n"
-"The rest of the options are separated into two groups.\n"
-"The options which are related to the image manipulation are:\n"
-"\n"
-"--wb=camera|auto      White balance setting.\n"
-"--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
-"--green=GREEN         Green color normalization.\n"
-"--base-curve=manual|linear|camera|custom|CURVE\n"
-"                      Type of base tone curve to use. CURVE can be any curve\n"
-"                      that was previously loaded in the GUI.\n"
-"                      (default camera if such exsists, linear otherwise).\n"
-"--base-curve-file=file\n"
+"One can also use and ID file with the option:\n"),
+"\n",
+N_("--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"),
+"\n",
+N_("The rest of the options are separated into two groups.\n"),
+N_("The options which are related to the image manipulation are:\n"),
+"\n",
+N_("--wb=camera|auto      White balance setting.\n"),
+N_("--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"),
+N_("--green=GREEN         Green color normalization.\n"),
+N_("--base-curve=manual|linear|camera|custom|CURVE\n"
+"                      Type of base tone curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default camera if such exsists, linear otherwise).\n"),
+N_("--base-curve-file=file\n"
 "                      Use base tone curve included in specified file.\n"
-"                      Overrides --base-curve option.\n"
-"--curve=manual|linear|CURVE\n"
+"                      Overrides --base-curve option.\n"),
+N_("--curve=manual|linear|CURVE\n"
 "                      Type of luminosity curve to use. CURVE can be any\n"
 "                      curve that was previously loaded in the GUI.\n"
-"                      (default linear).\n"
-"--curve-file=file     Use luminosity curve included in specified file.\n"
-"                      Overrides --curve option.\n"
-"--[un]clip            Unclip [clip] highlights (default clip).\n"
-"--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
-"--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
-"--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"
-"--exposure=auto|EXPOSURE\n"
-"                      Auto exposure or exposure correction in EV (default 0).\n"
-"--black-point=auto|BLACK\n"
-"                      Auto black-point or black-point value (default 0).\n"
-"--interpolation=ahd|vng|four-color|bilinear\n"
-"                      Interpolation algorithm to use (default ahd).\n"
-"\n"
-"The options which are related to the final output are:\n"
-"\n"
-"--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
-"--size=SIZE           Downsize max(height,width) to SIZE.\n"
-"--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
-"                      Output file format (default ppm8).\n"
-"--create-id=no|also|only\n"
-"                      Create no|also|only ID file (default no).\n"
-"--compression=VALUE   JPEG compression (0-100, default 85).\n"
-"--[no]exif            Embed exif in output JPEG (default embed exif).\n"
-"--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"
-"--embedded-image      Extract the preview image embedded in the raw file\n"
-"                      instead of converting the raw image.\n"
-"--out-path=PATH       PATH for output file (default use input file's path).\n"
-"--output=FILE         Output file name, use '-' to output to stdout.\n"
-"--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
-"--overwrite           Overwrite existing files without asking (default no).\n"
-"\n"
-"UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
+"                      (default linear).\n"),
+N_("--curve-file=file     Use luminosity curve included in specified file.\n"
+"                      Overrides --curve option.\n"),
+N_("--[un]clip            Unclip [clip] highlights (default clip).\n"),
+N_("--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"),
+N_("--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"),
+N_("--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"),
+N_("--exposure=auto|EXPOSURE\n"
+"                      Auto exposure or exposure correction in EV (default 0).\n"),
+N_("--black-point=auto|BLACK\n"
+"                      Auto black-point or black-point value (default 0).\n"),
+N_("--interpolation=ahd|vng|four-color|bilinear\n"
+"                      Interpolation algorithm to use (default ahd).\n"),
+"\n",
+N_("The options which are related to the final output are:\n"),
+"\n",
+N_("--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"),
+N_("--size=SIZE           Downsize max(height,width) to SIZE.\n"),
+N_("--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
+"                      Output file format (default ppm8).\n"),
+N_("--create-id=no|also|only\n"
+"                      Create no|also|only ID file (default no).\n"),
+N_("--compression=VALUE   JPEG compression (0-100, default 85).\n"),
+N_("--[no]exif            Embed exif in output JPEG (default embed exif).\n"),
+N_("--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"),
+N_("--embedded-image      Extract the preview image embedded in the raw file\n"
+"                      instead of converting the raw image.\n"),
+N_("--out-path=PATH       PATH for output file (default use input file's path).\n"),
+N_("--output=FILE         Output file name, use '-' to output to stdout.\n"),
+N_("--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"),
+N_("--overwrite           Overwrite existing files without asking (default no).\n"),
+"\n",
+N_("UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified it setting are read. Next, the setting from\n"
 "the --conf option are taken, ignoring input/output filenames in the ID file.\n"
 "Lastly, the options from the command line are set. In batch mode, the second\n"
-"group of options is NOT read from the resource file.\n"
-"\n"
-"Last, but not least, --version displays the version number and compilation\n"
-"options for ufraw and --help displays this help message and exits.\n";
+"group of options is NOT read from the resource file.\n"),
+"\n",
+N_("Last, but not least, --version displays the version number and compilation\n"
+"options for ufraw and --help displays this help message and exits.\n"),
+"END"
+};
 
 char versionText[]= 
 "%s " VERSION "\n" 
@@ -1300,7 +1302,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         case 'd':
             if (sscanf(optarg, "%lf", (double *)optPointer[index])==0) {
                 ufraw_message(UFRAW_ERROR,
-			"'%s' is not a valid value for the --%s option.",
+			_("'%s' is not a valid value for the --%s option."),
 			optarg, options[index].name);
                 return -1;
             }
@@ -1310,7 +1312,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         case 'j':
             if (sscanf(optarg, "%d", (int *)optPointer[index])==0) {
                 ufraw_message(UFRAW_ERROR,
-			"'%s' is not a valid value for the --%s option.",
+			_("'%s' is not a valid value for the --%s option."),
 			optarg, options[index].name);
                 return -1;
             }
@@ -1338,14 +1340,17 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
             cmd->losslessCompress = TRUE; break;
 #else
             ufraw_message(UFRAW_ERROR,
-                "ufraw was build without ZIP support.");
+                _("ufraw was build without ZIP support."));
             return -1;
 #endif
         case 'Z': cmd->losslessCompress = FALSE; break;
         case 'E': cmd->embedExif = TRUE; break;
         case 'F': cmd->embedExif = FALSE; break;
         case 'h':
-            ufraw_message(UFRAW_WARNING, helpText);
+	    for (i=0; strcmp(helpText[i],"END")!=0; i++)
+		ufraw_message(UFRAW_SET_WARNING, _(helpText[i]));
+	    ufraw_message(UFRAW_WARNING,
+		    ufraw_message(UFRAW_GET_WARNING, NULL));
             return 0;
 	case 'v':
 	    base = g_path_get_basename(*argv[0]);
@@ -1354,7 +1359,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
             return 0;
 	case 'b':
             ufraw_message(UFRAW_ERROR,
-                "--batch is obselete. use ufraw-batch instead.");
+                _("--batch is obselete. use ufraw-batch instead."));
             return -1;
         case '?': /* invalid option. Warning printed by getopt() */
             return -1;
@@ -1372,13 +1377,12 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    g_strlcpy(cmd->wb, auto_wb, max_name);
         else {
             ufraw_message(UFRAW_ERROR,
-                    "'%s' is not a valid white balance setting.", wbName);
+                    _("'%s' is not a valid white balance setting."), wbName);
             return -1;
         }
 	if (cmd->temperature!=NULLF || cmd->green!=NULLF) {
             ufraw_message(UFRAW_WARNING,
-		    "--temperature and --green options override "
-		    "the --wb=%s option.", wbName);
+		    _("--temperature and --green options override the --wb=%s option."), wbName);
 	    g_strlcpy(cmd->wb, "", max_name);
 	}
     }
@@ -1386,15 +1390,14 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     if (baseCurveFile!=NULL) {
         if (cmd->BaseCurveCount == max_curves) {
             ufraw_message(UFRAW_ERROR,
-		    "failed to load curve from %s,"
-		    "too many configured base curves", baseCurveFile);
+		    _("failed to load curve from %s, too many configured base curves"), baseCurveFile);
             return -1;
         }
         cmd->BaseCurveIndex = cmd->BaseCurveCount;
         if (curve_load(&(rc->BaseCurve[cmd->BaseCurveIndex]), baseCurveFile)
 		== UFRAW_ERROR) {
             ufraw_message(UFRAW_ERROR,
-                    "failed to load curve from %s", baseCurveFile);
+                    _("failed to load curve from %s"), baseCurveFile);
             return -1;
         }
         cmd->BaseCurveCount++;
@@ -1417,7 +1420,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
             }
             if( cmd->BaseCurveIndex == -1 ) {
                 ufraw_message(UFRAW_ERROR,
-                        "'%s' is not a valid base curve name.", baseCurveName);
+                        _("'%s' is not a valid base curve name."), baseCurveName);
                 return -1;
             }
         }
@@ -1426,15 +1429,14 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     if (curveFile!=NULL) {
         if (cmd->curveCount == max_curves) {
             ufraw_message(UFRAW_ERROR,
-		    "failed to load curve from %s,"
-		    "too many configured curves", curveFile);
+		    _("failed to load curve from %s, too many configured curves"), curveFile);
             return -1;
         }
         cmd->curveIndex = cmd->curveCount;
         if (curve_load(&(rc->curve[cmd->curveIndex]), curveFile) == UFRAW_ERROR)
 	{
             ufraw_message(UFRAW_ERROR,
-                    "failed to load curve from %s", curveFile);
+                    _("failed to load curve from %s"), curveFile);
             return -1;
         }
         cmd->curveCount++;
@@ -1451,7 +1453,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
             }
             if( cmd->curveIndex == -1 ) {
                 ufraw_message(UFRAW_ERROR,
-                        "'%s' is not a valid curve name.", curveName);
+                        _("'%s' is not a valid curve name."), curveName);
                 return -1;
             }
         }
@@ -1467,14 +1469,14 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 		    interpolationNames);
 	if (cmd->interpolation<0 || cmd->interpolation==half_interpolation) {
             ufraw_message(UFRAW_ERROR,
-                "'%s' is not a valid interpolation option.",
+                _("'%s' is not a valid interpolation option."),
                 interpolationName);
             return -1;
         }
     }
     if (cmd->shrink!=NULLF && cmd->size!=NULLF) {
         ufraw_message(UFRAW_ERROR,
-                        "you can not specify both --shrink and --size");
+                        _("you can not specify both --shrink and --size"));
         return -1;
     }
     cmd->type = -1;
@@ -1489,7 +1491,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 #else
         {
             ufraw_message(UFRAW_ERROR,
-		    "ufraw was build without TIFF support.");
+		    _("ufraw was build without TIFF support."));
             return -1;
         }
 #endif
@@ -1499,7 +1501,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 #else
         {
             ufraw_message(UFRAW_ERROR,
-		    "ufraw was build without TIFF support.");
+		    _("ufraw was build without TIFF support."));
             return -1;
         }
 #endif
@@ -1509,19 +1511,19 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 #else
         {
             ufraw_message(UFRAW_ERROR,
-		    "ufraw was build without JPEG support.");
+		    _("ufraw was build without JPEG support."));
             return -1;
         }
 #endif
         else {
             ufraw_message(UFRAW_ERROR,
-		    "'%s' is not a valid output type.", outTypeName);
+		    _("'%s' is not a valid output type."), outTypeName);
             return -1;
         }
     }
     if (cmd->embeddedImage) {
 #ifndef HAVE_LIBJPEG
-	ufraw_message(UFRAW_ERROR, "ufraw was build without JPEG support.");
+	ufraw_message(UFRAW_ERROR, _("ufraw was build without JPEG support."));
 	return -1;
 #endif
         if ( outTypeName==NULL || strcmp(outTypeName, "jpeg")==0 )
@@ -1532,7 +1534,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 #endif
 	else {
             ufraw_message(UFRAW_ERROR,
-		    "'%s' is not a valid output type for embedded image.",
+		    _("'%s' is not a valid output type for embedded image."),
 		    outTypeName);
             return -1;
         }
@@ -1547,7 +1549,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
             cmd->createID = only_id;
         else {
             ufraw_message(UFRAW_ERROR,
-		    "'%s' is not a valid create-id option.", createIDName);
+		    _("'%s' is not a valid create-id option."), createIDName);
             return -1;
         }
     }
@@ -1556,15 +1558,15 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         if (g_file_test(outPath, G_FILE_TEST_IS_DIR))
             g_strlcpy(cmd->outputPath, outPath, max_path);
         else {
-            ufraw_message(UFRAW_ERROR, "'%s' is not a valid path.", outPath);
+            ufraw_message(UFRAW_ERROR, _("'%s' is not a valid path."), outPath);
             return -1;
         }
     }
     g_strlcpy(cmd->outputFilename, "", max_path);
     if (output!=NULL) {
         if (*argc-optind>1) {
-            ufraw_message(UFRAW_ERROR, "cannot output more than "
-                                "one file to the same output");
+            ufraw_message(UFRAW_ERROR,
+		    _("cannot output more than one file to the same output"));
             return -1;
         }
         g_strlcpy(cmd->outputFilename, output, max_path);

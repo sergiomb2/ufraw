@@ -32,12 +32,12 @@ int main (int argc, char **argv)
 
     ufraw_binary = g_path_get_basename(argv[0]);
 
-    /* Load $HOME/.ufrawrc */
-    conf_load(&rc, NULL);
-
     bindtextdomain("ufraw", UFRAW_LOCALEDIR);
     bind_textdomain_codeset("ufraw", "UTF-8");
     textdomain("ufraw");
+
+    /* Load $HOME/.ufrawrc */
+    conf_load(&rc, NULL);
 
     /* Half interpolation is an option only for the GIMP plug-in.
      * For the stand-alone tool it is disabled */
