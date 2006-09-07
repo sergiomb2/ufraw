@@ -56,6 +56,15 @@
     <glob pattern="*.dcr"/>
   </mime-type>
 
+ <mime-type type="image/x-kodak-kdc">
+    <sub-class-of type="image/x-dcraw"/>
+    <sub-class-of type="image/tiff"/>
+    <comment>Kodak raw image</comment>
+    <acronym>KDC</acronym>
+    <expanded-acronym>Kodak Digital Camera</expanded-acronym>
+    <glob pattern="*.kdc"/>
+  </mime-type>
+
   <mime-type type="image/x-minolta-mrw">
     <sub-class-of type="image/x-dcraw"/>
     <comment>Minolta raw image</comment>
