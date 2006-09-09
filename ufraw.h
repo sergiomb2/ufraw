@@ -47,8 +47,7 @@ extern const char *interpolationNames[];
 enum { no_id, also_id, only_id };
 enum { manual_curve, linear_curve, custom_curve, camera_curve };
 enum { in_profile, out_profile, profile_types};
-enum { raw_expander, exposure_expander, wb_expander, color_expander,
-       curve_expander, live_expander, expander_count };
+enum { raw_expander, live_expander, expander_count };
 enum { ppm8_type, ppm16_type, tiff8_type, tiff16_type, jpeg_type,
        embedded_jpeg_type, embedded_png_type };
 
@@ -163,7 +162,8 @@ typedef struct {
     int flip;
     float iso_speed, shutter, aperture, focal_len;
     char exifSource[max_name], isoText[max_name], shutterText[max_name],
-	 apertureText[max_name], focalLenText[max_name], lensText[max_name];
+	 apertureText[max_name], focalLenText[max_name],
+	 focalLen35Text[max_name], lensText[max_name];
     char timestamp[max_name], make[max_name], model[max_name];
 } conf_data;
 

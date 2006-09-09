@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <locale.h>
 #include <glib.h>
+#include <glib/gi18n.h>
 #include "ufraw.h"
 
 /* we start by some general purpose functions that mostly take care of
@@ -224,7 +225,7 @@ void curve_parse_start(GMarkupParseContext *context, const gchar *element,
 	     * previous versions */
             if (int_value>conf_default.version)
                 g_set_error(error, ufrawQuark, UFRAW_RC_VERSION,
-                    "Curve version is not supported");
+                    _("Curve version is not supported"));
         }
         names++;
         values++;
@@ -291,7 +292,7 @@ int curve_load(CurveData *cp, char *filename)
 	 !strcasecmp(filename + strlen(filename) - 4, ".ncv") ) {
         /* Try loading ntc/ncv files */
         if (LoadNikonData(filename, &data)!=UFRAW_SUCCESS) {
-            ufraw_message(UFRAW_ERROR, "Invalid Nikon curve file '%s'",
+            ufraw_message(UFRAW_ERROR, _("Invalid Nikon curve file '%s'"),
                         filename);
             return UFRAW_ERROR;
         }
@@ -307,7 +308,7 @@ int curve_load(CurveData *cp, char *filename)
 
         *cp = conf_default.curve[0];
         if ( (in=fopen(filename, "r"))==NULL ) {
-            ufraw_message(UFRAW_ERROR, "Error opening Curve file '%s': %s",
+            ufraw_message(UFRAW_ERROR, _("Error opening Curve file '%s': %s"),
 			    filename, strerror(errno));
 	    return UFRAW_ERROR;
 	}
@@ -318,7 +319,7 @@ int curve_load(CurveData *cp, char *filename)
         while (!feof(in)) {
             if (!g_markup_parse_context_parse(context, line,
                     strlen(line), &err)) {
-                ufraw_message(UFRAW_ERROR, "Error parsing '%s'\n%s",
+                ufraw_message(UFRAW_ERROR, _("Error parsing '%s'\n%s"),
                         filename, err->message);
 		g_markup_parse_context_free(context);
 		uf_reset_locale(locale);
@@ -363,15 +364,15 @@ int curve_save(CurveData *cp, char *filename)
 
         //check to see if we can save
         if (cp->m_numAnchors < 2) {
-            ufraw_message(UFRAW_ERROR, "Error saving Nikon curve file."
-                        "Curve data is not from an NEF, NTC, or NCV file.");
+            ufraw_message(UFRAW_ERROR, _("Error saving Nikon curve file."
+                        "Curve data is not from an NEF, NTC, or NCV file."));
             return UFRAW_ERROR;
         }
 	data.curves[TONE_CURVE] = *cp;
 
         if (SaveNikonDataFile(&data, filename, nikon_file_type,
                                 NIKON_VERSION_4_1)!=UFRAW_SUCCESS) {
-            ufraw_message(UFRAW_ERROR, "Invalid Nikon curve file '%s'",
+            ufraw_message(UFRAW_ERROR, _("Invalid Nikon curve file '%s'"),
                             filename);
             return UFRAW_ERROR;
         }
@@ -381,7 +382,7 @@ int curve_save(CurveData *cp, char *filename)
         FILE *out;
 
         if ( (out=fopen(filename, "w"))==NULL ) {
-            ufraw_message(UFRAW_ERROR, "Error opening file '%s': %s",
+            ufraw_message(UFRAW_ERROR, _("Error opening file '%s': %s"),
                         filename, g_strerror(errno));
             return UFRAW_ERROR;
         }

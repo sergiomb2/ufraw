@@ -158,12 +158,15 @@ try {
 	    != exifData.end() ) {
 	std::stringstream str;
        	str << *pos;
-	if ( (pos=exifData.findKey(
-			Exiv2::ExifKey("Exif.Photo.FocalLengthIn35mmFilm")))
-		!= exifData.end() ) {
-	    str << "(35mm equivalent: " << *pos << ")";
-	}
 	g_strlcpy(uf->conf->focalLenText, str.str().c_str(), max_name);
+    }
+    /* Read focal length in 35mm equivalent */
+    if ( (pos=exifData.findKey(Exiv2::ExifKey(
+		"Exif.Photo.FocalLengthIn35mmFilm")))
+	    != exifData.end() ) {
+	std::stringstream str;
+       	str << *pos;
+	g_strlcpy(uf->conf->focalLen35Text, str.str().c_str(), max_name);
     }
     /* Read lens name */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.Lens")))

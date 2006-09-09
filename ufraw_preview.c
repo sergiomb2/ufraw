@@ -44,8 +44,7 @@ const int def_preview_height = 9000;
 
 enum { pixel_format, percent_format };
 
-char *expanderText[] = { "Raw histogram", "Exposure", "White balance",
-    "Color management", "Curve corrections", "Live histogram", NULL };
+char *expanderText[] = { N_("Raw histogram"), N_("Live histogram"), NULL };
 
 typedef struct {
     GtkLabel *labels[4];
@@ -235,6 +234,7 @@ void load_curve(GtkWidget *widget, long curveType)
 		    gtk_combo_box_set_active(data->BaseCurveCombo,
 			    CFG->BaseCurveIndex-2);
 	    } else { /* curveType==luminosity_curve */
+		if ( CFG->curveCount >= max_curves ) break;
 		gtk_combo_box_append_text(data->CurveCombo, c.name);
 		CFG->curve[CFG->curveCount] = c;
 		CFG->curveIndex = CFG->curveCount;
@@ -397,7 +397,7 @@ void load_profile(GtkWidget *widget, long type)
 	    char *base = g_path_get_basename(filename);
 	    char *name = uf_file_set_type(base, "");
 	    char *utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
-	    if (utf8==NULL) utf8 = g_strdup(_("Unknown file name"));
+	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
 	    g_strlcpy(p.name, utf8, max_name);
 	    g_free(utf8);
 	    g_free(name);
@@ -1695,7 +1695,12 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
 		gtk_combo_box_remove_text(data->BaseCurveCombo, 0);
 	    for (i=0; i<RC.BaseCurveCount; i++) {
 		CFG->BaseCurve[i] = RC.BaseCurve[i];
-		if ( (i!=custom_curve && i!=camera_curve) || CFG_cameraCurve )
+		if ( (i==custom_curve || i==camera_curve) && !CFG_cameraCurve )
+		    continue;
+		if ( i<=camera_curve )
+		    gtk_combo_box_append_text(data->BaseCurveCombo,
+			    _(CFG->BaseCurve[i].name));
+		else
 		    gtk_combo_box_append_text(data->BaseCurveCombo,
 			    CFG->BaseCurve[i].name);
 	    }
@@ -1712,8 +1717,12 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
 		gtk_combo_box_remove_text(data->CurveCombo, 0);
 	    for (i=0; i<RC.curveCount; i++) {
 		CFG->curve[i] = RC.curve[i];
-		gtk_combo_box_append_text(data->CurveCombo,
-			CFG->curve[i].name);
+		if ( i<=linear_curve )
+		    gtk_combo_box_append_text(data->CurveCombo,
+			    _(CFG->curve[i].name));
+		else
+		    gtk_combo_box_append_text(data->CurveCombo,
+			    CFG->curve[i].name);
 	    }
 	    CFG->curveCount = RC.curveCount;
 	    CFG->curveIndex = saveCurveIndex;
@@ -1724,8 +1733,12 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
 		    gtk_combo_box_remove_text(data->ProfileCombo[j], 0);
 		for (i=0; i<RC.profileCount[j]; i++) {
 		    CFG->profile[j][i] = RC.profile[j][i];
-		    gtk_combo_box_append_text(data->ProfileCombo[j],
-			    CFG->profile[j][i].name);
+		    if ( i==0 )
+			gtk_combo_box_append_text(data->ProfileCombo[j],
+				_(CFG->profile[j][i].name));
+		    else
+			gtk_combo_box_append_text(data->ProfileCombo[j],
+				CFG->profile[j][i].name);
 		}
 		CFG->profileCount[j] = RC.profileCount[j];
 		CFG->profileIndex[j] = saveProfileIndex[j];
@@ -1765,7 +1778,7 @@ void expander_state(GtkWidget *widget, gpointer user_data)
     label = gtk_expander_get_label_widget(GTK_EXPANDER(widget));
     text = gtk_label_get_text(GTK_LABEL(label));
     for (i=0; expanderText[i]!=NULL; i++)
-        if (!strcmp(text, expanderText[i]))
+        if (!strcmp(text, _(expanderText[i])))
             CFG->expander[i] = gtk_expander_get_expanded(GTK_EXPANDER(widget));
 }
 
@@ -1853,7 +1866,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     char *utf8_filename = g_filename_to_utf8(uf->filename,
 	    -1, NULL, NULL, NULL);
-    if (utf8_filename==NULL) utf8_filename = g_strdup(_("Unknown file name"));
+    if (utf8_filename==NULL) utf8_filename = g_strdup("Unknown file name");
     char *previewHeader = g_strdup_printf(_("%s - UFRaw Photo Loader"),
             utf8_filename);
     gtk_window_set_title(GTK_WINDOW(previewWindow), previewHeader);
@@ -1893,8 +1906,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     previewVBox = gtk_vbox_new(FALSE, 0);
     gtk_box_pack_start(previewHBox, previewVBox, TRUE, TRUE, 2);
 
-    table = GTK_TABLE(table_with_frame(previewVBox, expanderText[raw_expander],
-            CFG->expander[raw_expander]));
+    table = GTK_TABLE(table_with_frame(previewVBox,
+	    _(expanderText[raw_expander]), CFG->expander[raw_expander]));
     event_box = gtk_event_box_new();
     gtk_table_attach(table, event_box, 0, 1, 1, 2, 0, 0, 0, 0);
     pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
@@ -2045,7 +2058,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
         if (strcmp(wb_preset[i].make, "")==0) {
 	    /* Common presets */
 	    data->WBPresets = g_list_append(data->WBPresets, wb_preset[i].name);
-	    gtk_combo_box_append_text(data->WBCombo, wb_preset[i].name);
+	    gtk_combo_box_append_text(data->WBCombo, _(wb_preset[i].name));
         } else if ( (strcmp(wb_preset[i].make, uf->conf->make)==0 ) &&
                     (strcmp(wb_preset[i].model, model)==0)) {
 	    /* Camera specific presets */
@@ -2053,7 +2066,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    if ( lastPreset==NULL ||
 		 strcmp(wb_preset[i].name,lastPreset->name)!=0 ) {
 	    data->WBPresets = g_list_append(data->WBPresets, wb_preset[i].name);
-		gtk_combo_box_append_text(data->WBCombo, wb_preset[i].name);
+		gtk_combo_box_append_text(data->WBCombo, _(wb_preset[i].name));
 	    } else {
 		/* Fine tuning presets */
 		make_model_fine_tuning = TRUE;
@@ -2153,10 +2166,16 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->BaseCurveCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     /* Fill in the curve names, skipping custom and camera curves if there is
      * no cameraCurve. This will make some mess later with the counting */
-    for (i=0; i<CFG->BaseCurveCount; i++)
-        if ( (i!=custom_curve && i!=camera_curve) || CFG_cameraCurve )
-            gtk_combo_box_append_text(data->BaseCurveCombo,
+    for (i=0; i<CFG->BaseCurveCount; i++) {
+	if ( (i==custom_curve || i==camera_curve) && !CFG_cameraCurve )
+	    continue;
+	if ( i<=camera_curve )
+	    gtk_combo_box_append_text(data->BaseCurveCombo,
+		    _(CFG->BaseCurve[i].name));
+	else
+	    gtk_combo_box_append_text(data->BaseCurveCombo,
 		    CFG->BaseCurve[i].name);
+    }
     /* This is part of the mess with the combo_box counting */
     if (CFG->BaseCurveIndex>camera_curve && !CFG_cameraCurve)
         gtk_combo_box_set_active(data->BaseCurveCombo, CFG->BaseCurveIndex-2);
@@ -2213,8 +2232,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
         gtk_table_attach(table, label, 0, 1, 4*j+1, 4*j+2, 0, 0, 0, 0);
         data->ProfileCombo[j] = GTK_COMBO_BOX(gtk_combo_box_new_text());
         for (i=0; i<CFG->profileCount[j]; i++)
-            gtk_combo_box_append_text(data->ProfileCombo[j],
-                    CFG->profile[j][i].name);
+            if ( i==0 )
+		gtk_combo_box_append_text(data->ProfileCombo[j],
+			_(CFG->profile[j][i].name));
+	    else
+		gtk_combo_box_append_text(data->ProfileCombo[j],
+			CFG->profile[j][i].name);
         gtk_combo_box_set_active(data->ProfileCombo[j], CFG->profileIndex[j]);
         g_signal_connect(G_OBJECT(data->ProfileCombo[j]), "changed",
                 G_CALLBACK(combo_update), &CFG->profileIndex[j]);
@@ -2293,15 +2316,17 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->ResetSaturationButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
-    table = GTK_TABLE(table_with_frame(page, NULL,
-            CFG->expander[curve_expander]));
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     box = GTK_BOX(gtk_hbox_new(FALSE, 0));
     gtk_table_attach(table, GTK_WIDGET(box), 0, 9, 0, 1,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
     data->CurveCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     /* Fill in the curve names */
     for (i=0; i<CFG->curveCount; i++)
-        gtk_combo_box_append_text(data->CurveCombo, CFG->curve[i].name);
+	if ( i<=linear_curve )
+	    gtk_combo_box_append_text(data->CurveCombo, _(CFG->curve[i].name));
+	else
+	    gtk_combo_box_append_text(data->CurveCombo, CFG->curve[i].name);
     gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
     g_signal_connect(G_OBJECT(data->CurveCombo), "changed",
             G_CALLBACK(combo_update), &CFG->curveIndex);
@@ -2443,6 +2468,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_string_append_printf(message, _("ISO speed: %s\n"), CFG->isoText);
     g_string_append_printf(message, _("Focal length: %s\n"),
 	    CFG->focalLenText);
+    if (strlen(CFG->focalLen35Text)>0)
+	g_string_append_printf(message,
+		_("Focal length in 35mm equivalent: %s\n"),
+		CFG->focalLen35Text);
     if (strlen(CFG->lensText)>0)
 	g_string_append_printf(message, _("Lens: %s\n"), CFG->lensText);
     g_string_append_printf(message, _("\nEXIF data read by %s"), CFG->exifSource);
@@ -2456,8 +2485,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     }
     /* End of EXIF page */
 
-    table = GTK_TABLE(table_with_frame(previewVBox, expanderText[live_expander],
-            CFG->expander[live_expander]));
+    table = GTK_TABLE(table_with_frame(previewVBox,
+	    _(expanderText[live_expander]), CFG->expander[live_expander]));
     event_box = gtk_event_box_new();
     gtk_table_attach(table, event_box, 0, 7, 1, 2, 0, 0, 0, 0);
     pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,

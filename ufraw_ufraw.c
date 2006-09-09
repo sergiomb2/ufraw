@@ -22,6 +22,7 @@
 #include <time.h>
 #include <errno.h>
 #include <glib.h>
+#include <glib/gi18n.h>
 #include "dcraw_api.h"
 #include "nikon_curve.h"
 #include "ufraw.h"
@@ -132,7 +133,7 @@ ufraw_data *ufraw_open(char *filename)
     fname = g_filename_from_uri(filename, &hostname, NULL);
     if (fname!=NULL) {
 	if (hostname!=NULL) {
-	    ufraw_message(UFRAW_SET_ERROR, "Remote URI is not supported");
+	    ufraw_message(UFRAW_SET_ERROR, _("Remote URI is not supported"));
 	    g_free(hostname);
 	    g_free(fname);
 	    return NULL;
@@ -195,7 +196,8 @@ ufraw_data *ufraw_load_darkframe(char *darkframeFile)
         uf = ufraw_open(darkframeFile);
         if (!uf){
             ufraw_message(UFRAW_ERROR,
-		    "darkframe error: %s is not a raw file\n", darkframeFile);
+		    _("darkframe error: %s is not a raw file\n"),
+		    darkframeFile);
             return NULL;
         }
 	uf->conf = g_new(conf_data, 1);
@@ -204,12 +206,12 @@ ufraw_data *ufraw_load_darkframe(char *darkframeFile)
 	uf->conf->autoExposure = disabled_state;
 	uf->conf->autoBlack = disabled_state;
         if (ufraw_load_raw(uf)==UFRAW_SUCCESS){
-            ufraw_message(UFRAW_BATCH_MESSAGE, "using darkframe %s\n",
+            ufraw_message(UFRAW_BATCH_MESSAGE, _("using darkframe '%s'\n"),
 		    uf->filename);
             return uf;
         }
         else
-            ufraw_message(UFRAW_ERROR, "error loading darkframe %s\n",
+            ufraw_message(UFRAW_ERROR, _("error loading darkframe '%s'\n"),
 		    uf->filename);
     }
     return NULL;
@@ -319,7 +321,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	long pos = ftell(raw->ifp);
 	if (RipNikonNEFCurve(raw->ifp, raw->toneCurveOffset, &nc, NULL)
 		!=UFRAW_SUCCESS) {
-	    ufraw_message(UFRAW_ERROR, "Error reading NEF curve");
+	    ufraw_message(UFRAW_ERROR, _("Error reading NEF curve"));
 	    return UFRAW_WARNING;
 	}
 	fseek(raw->ifp, pos, SEEK_SET);
@@ -381,7 +383,8 @@ void ufraw_substract_darkframe(ufraw_data *uf)
         org->raw.width!=df->raw.width &&
         org->raw.colors!=df->raw.colors){
 
-        ufraw_message(UFRAW_SET_WARNING, "incompatible darkframe");
+        ufraw_message(UFRAW_SET_WARNING,
+		_("Darkframe is incompatible with main image"));
         return;
     }
 
@@ -501,7 +504,7 @@ int ufraw_convert_image(ufraw_data *uf)
     }
     if (uf->conf->size>0) {
         if ( uf->conf->size>MAX(final.height, final.width) ) {
-            ufraw_message(UFRAW_ERROR, "Can not downsize from %d to %d.",
+            ufraw_message(UFRAW_ERROR, _("Can not downsize from %d to %d."),
                     MAX(final.height, final.width), uf->conf->size);
         } else {
             dcraw_image_resize(&final, uf->conf->size);
@@ -600,11 +603,11 @@ int ufraw_set_wb(ufraw_data *uf)
 		!strcmp(uf->conf->wb, camera_wb)))!=DCRAW_SUCCESS ) {
             if (status==DCRAW_NO_CAMERA_WB) {
                 ufraw_message(UFRAW_BATCH_MESSAGE,
-                    "Cannot use camera white balance, "
-                    "reverting to auto white balance.");
+                    _("Cannot use camera white balance, "
+                    "reverting to auto white balance."));
                 ufraw_message(UFRAW_INTERACTIVE_MESSAGE,
-                    "Cannot use camera white balance, "
-                    "reverting to auto white balance.");
+                    _("Cannot use camera white balance, "
+                    "reverting to auto white balance."));
 		g_strlcpy(uf->conf->wb, auto_wb, max_name);
 		return ufraw_set_wb(uf);
             }

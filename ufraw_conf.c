@@ -38,27 +38,27 @@ const conf_data conf_default = {
     disabled_state, /* autoBlack */
     camera_curve, camera_curve+1, /* BaseCurveIndex, BaseCurveCount */
     /* BaseCurve data defaults */
-    { { "Manual curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
+    { { N_("Manual curve"), TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
-      { "Linear curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
+      { N_("Linear curve"), TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
-      { "Custom curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
+      { N_("Custom curve"), TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
-      { "Camera curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
+      { N_("Camera curve"), TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } }
     },
     linear_curve, linear_curve+1, /* curveIndex, curveCount */
     /* Curve data defaults */
-    { { "Manual curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
+    { { N_("Manual curve"), TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } },
-      { "Linear curve", TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
+      { N_("Linear curve"), TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } }
     },
     { 0, 0 } , { 1, 1 }, /* profileIndex[], profileCount[] */
     /* Profile data defaults */
-    { { { "sRGB", "", "", 0.45, 0.1, TRUE },
+    { { { N_("sRGB"), "", "", 0.45, 0.1, TRUE },
         { "Some ICC Profile", "", "", 0.45, 0.0, FALSE } },
-      { { "sRGB", "", "", 0.0, 0.0, FALSE },
+      { { N_("sRGB"), "", "", 0.0, 0.0, FALSE },
         { "Some ICC Profile", "", "", 0.0, 0.0, FALSE } } },
     0, /* intent */
     ahd_interpolation, /* interpolation */
@@ -79,7 +79,7 @@ const conf_data conf_default = {
     rgb_histogram, /* histogram */
     linear_histogram, 128, /* liveHistogramScale, liveHistogramHeight */
     linear_histogram, 128, /* rawHistogramScale, rawHistogramHeight */
-    { TRUE, TRUE, TRUE, TRUE, TRUE, TRUE }, /* expander[] */
+    { TRUE, TRUE }, /* expander[] */
     FALSE, /* overExp indicator */
     FALSE, /* underExp indicator */
     "", "", /* curvePath, profilePath */
@@ -88,7 +88,8 @@ const conf_data conf_default = {
     0, /* flip */
     0.0, 0.0, 0.0, 0.0, /* iso_speed, shutter, aperture, focal_len */
     "", "", "", "", /* exifSource, isoText, shutterText, apertureText */
-    "", "", "", "", "" /* focalLenText, lensText, timestamp, make, model */
+    "", "", "", /* focalLenText, focalLen35Text, lensText */
+    "", "", "" /* timestamp, make, model */
 };
 
 const char *interpolationNames[] =
@@ -391,14 +392,6 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     }
     if (!strcmp("RawExpander", element))
             sscanf(temp, "%d", &c->expander[raw_expander]);
-    if (!strcmp("ExposureExpander", element))
-            sscanf(temp, "%d", &c->expander[exposure_expander]);
-    if (!strcmp("WBExpander", element))
-            sscanf(temp, "%d", &c->expander[wb_expander]);
-    if (!strcmp("ColorExpander", element))
-            sscanf(temp, "%d", &c->expander[color_expander]);
-    if (!strcmp("CurveExpander", element))
-            sscanf(temp, "%d", &c->expander[curve_expander]);
     if (!strcmp("LiveExpander", element))
             sscanf(temp, "%d", &c->expander[live_expander]);
     if (!strcmp("Histogram", element)) sscanf(temp, "%d", &c->histogram);
@@ -598,20 +591,6 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
         if (c->expander[raw_expander]!=conf_default.expander[raw_expander])
             buf = uf_markup_buf(buf, "<RawExpander>%d</RawExpander>\n",
                     c->expander[raw_expander]);
-        if (c->expander[exposure_expander]!=
-		conf_default.expander[exposure_expander])
-            buf = uf_markup_buf(buf,
-		    "<ExposureExpander>%d</ExposureExpander>\n",
-                    c->expander[exposure_expander]);
-        if (c->expander[wb_expander]!=conf_default.expander[wb_expander])
-            buf = uf_markup_buf(buf, "<WBExpander>%d</WBExpander>\n",
-		    c->expander[wb_expander]);
-        if (c->expander[color_expander]!=conf_default.expander[color_expander])
-            buf = uf_markup_buf(buf, "<ColorExpander>%d</ColorExpander>\n",
-                    c->expander[color_expander]);
-        if (c->expander[curve_expander]!=conf_default.expander[curve_expander])
-            buf = uf_markup_buf(buf, "<CurveExpander>%d</CurveExpander>\n",
-                    c->expander[curve_expander]);
         if (c->expander[live_expander]!=conf_default.expander[live_expander])
             buf = uf_markup_buf(buf, "<LiveExpander>%d</LiveExpander>\n",
                     c->expander[live_expander]);
@@ -848,6 +827,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	buf = uf_markup_buf(buf, "<Aperture>%s</Aperture>\n", c->apertureText);
 	buf = uf_markup_buf(buf, "<FocalLength>%s</FocalLength>\n",
 		c->focalLenText);
+	buf = uf_markup_buf(buf, "<FocalLength35>%s</FocalLength35>\n",
+		c->focalLen35Text);
 	if (strlen(c->lensText)>0)
 	    buf = uf_markup_buf(buf, "<Lens>%s</Lens>\n", c->lensText);
 	buf = uf_markup_buf(buf, "<EXIFSource>%s</EXIFSource>\n",
@@ -873,7 +854,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	    confFilename = g_strdup(IDFilename);
         if ( (out=fopen(confFilename, "w"))==NULL ) {
             ufraw_message(UFRAW_ERROR,
-                    "Can't open file %s for writing\n%s\n",
+                    _("Can't open file %s for writing\n%s\n"),
                     confFilename, strerror(errno) );
 	    g_free(confFilename);
 	    g_free(buf);

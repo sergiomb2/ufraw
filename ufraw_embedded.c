@@ -19,6 +19,7 @@
 #include <time.h>      /* for time_t */
 #include <string.h>
 #include <glib.h>
+#include <glib/gi18n.h>
 #ifdef HAVE_LIBJPEG
 #include <jpeglib.h>
 #endif
@@ -45,7 +46,7 @@ int ufraw_read_embedded(ufraw_data *uf)
     return UFRAW_ERROR;
 #endif
     if ( raw->thumbType==unknown_thumb_type) {
-        ufraw_message(UFRAW_ERROR, "No embedded image found");
+        ufraw_message(UFRAW_ERROR, _("No embedded image found"));
         return UFRAW_ERROR;
     }
     fseek(raw->ifp, raw->thumbOffset, SEEK_SET);
@@ -63,8 +64,8 @@ int ufraw_read_embedded(ufraw_data *uf)
 	if (uf->conf->size>0) {
 	    int srcSize = MAX(srcHeight, srcWidth);
 	    if (srcSize<uf->conf->size) {
-		ufraw_message(UFRAW_WARNING, "Original size (%d) "
-			"is smaller than the requested size (%d)",
+		ufraw_message(UFRAW_WARNING, _("Original size (%d) "
+			"is smaller than the requested size (%d)"),
 			srcSize, uf->conf->size);
 	    } else {
 		    scaleNum = uf->conf->size;
@@ -76,8 +77,8 @@ int ufraw_read_embedded(ufraw_data *uf)
 	}
 	if (raw->thumbType==ppm_thumb_type) {
 	    if (srcHeight*srcWidth*3!=(unsigned)raw->thumbBufferLength) {
-		ufraw_message(UFRAW_ERROR, "ppm thumb mismatch, "
-			"height %d, width %d, while buffer %d.",
+		ufraw_message(UFRAW_ERROR, _("ppm thumb mismatch, "
+			"height %d, width %d, while buffer %d."),
 			srcHeight, srcWidth, raw->thumbBufferLength);
 		return UFRAW_ERROR;
 	    }
@@ -97,14 +98,14 @@ int ufraw_read_embedded(ufraw_data *uf)
 
 	    jpeg_read_header(&srcinfo, TRUE);
 	    if (srcinfo.image_height!=srcHeight) {
-		ufraw_message(UFRAW_WARNING, "JPEG thumb height %d "
-			"different than expected %d.",
+		ufraw_message(UFRAW_WARNING, _("JPEG thumb height %d "
+			"different than expected %d."),
 			srcinfo.image_height, srcHeight);
 		srcHeight = srcinfo.image_height;
 	    }
 	    if (srcinfo.image_width!=srcWidth) {
-		ufraw_message(UFRAW_WARNING, "JPEG thumb width %d "
-			"different than expected %d.",
+		ufraw_message(UFRAW_WARNING, _("JPEG thumb width %d "
+			"different than expected %d."),
 			srcinfo.image_width, srcWidth);
 		srcWidth = srcinfo.image_width;
 	    }
@@ -126,7 +127,7 @@ int ufraw_read_embedded(ufraw_data *uf)
 	    jpeg_destroy_decompress(&srcinfo);
 	    char *message = ufraw_message(UFRAW_GET_ERROR, NULL);
 	    if (message!=NULL) {
-		ufraw_message(UFRAW_ERROR, "Error creating file '%s'.\n%s",
+		ufraw_message(UFRAW_ERROR, _("Error creating file '%s'.\n%s"),
 			uf->conf->outputFilename, message);
 		status = UFRAW_ERROR;
 	    } else if (ufraw_message(UFRAW_GET_WARNING, NULL)!=NULL) {
@@ -141,7 +142,7 @@ int ufraw_read_embedded(ufraw_data *uf)
 int ufraw_convert_embedded(ufraw_data *uf)
 {
     if ( uf->thumb.buffer==NULL) {
-        ufraw_message(UFRAW_ERROR, "No embedded image read");
+        ufraw_message(UFRAW_ERROR, _("No embedded image read"));
         return UFRAW_ERROR;
     }
     unsigned srcHeight = uf->thumb.height, srcWidth = uf->thumb.width;
@@ -225,14 +226,14 @@ int ufraw_write_embedded(ufraw_data *uf)
         return UFRAW_ERROR;
     }
     if ( uf->thumb.buffer==NULL) {
-        ufraw_message(UFRAW_ERROR, "No embedded image read");
+        ufraw_message(UFRAW_ERROR, _("No embedded image read"));
         return UFRAW_ERROR;
     }
     if (!strcmp(uf->conf->outputFilename, "-")) {
 	out = stdout;
     } else {
 	if ( (out=fopen(uf->conf->outputFilename, "wb"))==NULL) {
-	    ufraw_message(UFRAW_ERROR, "Error creating file '%s': %s",
+	    ufraw_message(UFRAW_ERROR, _("Error creating file '%s': %s"),
 		    uf->conf->outputFilename, g_strerror(errno));
 	    return UFRAW_ERROR;
 	}
@@ -271,7 +272,7 @@ int ufraw_write_embedded(ufraw_data *uf)
 	jpeg_destroy_compress(&dstinfo);
         char *message = ufraw_message(UFRAW_GET_ERROR, NULL);
 	if ( message!=NULL ) {
-	    ufraw_message(UFRAW_ERROR, "Error creating file '%s'.\n%s",
+	    ufraw_message(UFRAW_ERROR, _("Error creating file '%s'.\n%s"),
 		    uf->conf->outputFilename, message);
 	    status = UFRAW_ERROR;
 	} else if (ufraw_message(UFRAW_GET_WARNING, NULL)!=NULL) {
@@ -289,7 +290,7 @@ int ufraw_write_embedded(ufraw_data *uf)
 		NULL, NULL, NULL);
 	png_infop info = png_create_info_struct(png);
 	if ( setjmp(png_jmpbuf(png)) ) {
-	    ufraw_message(UFRAW_ERROR, "Error writing '%s'",
+	    ufraw_message(UFRAW_ERROR, _("Error writing '%s'"),
 		    uf->conf->outputFilename);
 	    png_destroy_write_struct(&png, &info);
 	    fclose(out);
@@ -329,8 +330,9 @@ int ufraw_write_embedded(ufraw_data *uf)
 	png_destroy_write_struct(&png, &info);
 #endif /*HAVE_LIBPNG*/
     } else {
-	ufraw_message(UFRAW_ERROR, "Unsupported output type (%d) "
-		"for embedded image", uf->conf->type);
+	ufraw_message(UFRAW_ERROR,
+		"Unsupported output type (%d) for embedded image",
+		uf->conf->type);
 	status = UFRAW_ERROR;
     }
     if ( strcmp(uf->conf->outputFilename, "-") )

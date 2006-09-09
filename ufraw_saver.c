@@ -127,7 +127,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     absFilename = uf_file_set_absolute(filename);
     if (widget==NULL) {
 	char *utf8 = g_filename_to_utf8(absFilename, -1, NULL, NULL, NULL);
-	if (utf8==NULL) utf8 = g_strdup(_("Unknown file name"));
+	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
 	char *text = g_strdup_printf(_("Filename: %s\nSize: %d x %d%s"),
 		utf8, (int)height, (int)width,
 		uf->conf->createID==also_id ? _("\nCreate also ID file") :
@@ -149,7 +149,7 @@ long ufraw_saver(void *widget, gpointer user_data)
                 GTK_STOCK_NO, GTK_RESPONSE_NO,
                 GTK_STOCK_YES, GTK_RESPONSE_YES, NULL);
 	    char *utf8 = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
-	    if (utf8==NULL) utf8 = g_strdup(_("Unknown file name"));
+	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
             snprintf(message, max_path,
                 _("File '%s' already exists.\nOverwrite?"), utf8);
 	    g_free(utf8);
@@ -457,7 +457,7 @@ long ufraw_saver(void *widget, gpointer user_data)
                 GTK_STOCK_NO, GTK_RESPONSE_NO,
                 GTK_STOCK_YES, GTK_RESPONSE_YES, NULL);
 	    char *utf8 = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
-	    if (utf8==NULL) utf8 = g_strdup(_("Unknown file name"));
+	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
             snprintf(message, max_path,
                 _("File '%s' already exists.\nOverwrite?"), utf8);
 	    g_free(utf8);
