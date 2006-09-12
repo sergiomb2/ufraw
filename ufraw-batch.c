@@ -18,6 +18,7 @@
 #include <stdlib.h>    /* for exit */
 #include <errno.h>     /* for errno */
 #include <string.h>
+#include <locale.h>
 #include <glib.h>
 #include <glib/gi18n.h>
 #include "ufraw.h"
@@ -32,6 +33,7 @@ int main (int argc, char **argv)
 
     ufraw_binary = g_path_get_basename(argv[0]);
 
+    setlocale(LC_ALL, "");
     bindtextdomain("ufraw", UFRAW_LOCALEDIR);
     bind_textdomain_codeset("ufraw", "UTF-8");
     textdomain("ufraw");

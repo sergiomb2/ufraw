@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.10\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-09 18:59+0200\n"
+"POT-Creation-Date: 2006-09-13 01:22+0200\n"
 "PO-Revision-Date: 2006-09-02 17:48+0400\n"
 "Last-Translator: Alexey Voinov <voins@voins.program.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -19,16 +19,16 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: ufraw-batch.c:72
+#: ufraw-batch.c:74
 msgid "No input file, nothing to do."
 msgstr "Нет файла на входе, нечего обрабатывать."
 
-#: ufraw-batch.c:85
+#: ufraw-batch.c:87
 #, c-format
 msgid "loaded %s"
 msgstr "загружен %s"
 
-#: ufraw-batch.c:87
+#: ufraw-batch.c:89
 #, c-format
 msgid "saved %s"
 msgstr "сохранён %s"
@@ -1160,9 +1160,20 @@ msgstr ""
 msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr ""
 
-#: ufraw_writer.c:346
+#. First letter of the word 'yes' for the y/n question
+#: ufraw_writer.c:347
+msgid "y"
+msgstr "д"
+
+#. First letter of the word 'no' for the y/n question
+#: ufraw_writer.c:349
+#, fuzzy
+msgid "n"
+msgstr "н"
+
+#: ufraw_writer.c:350
 #, c-format
-msgid "%s: overwrite '%s'? [y/N] "
+msgid "%s: overwrite '%s'?"
 msgstr ""
 
 #: wb_presets.c:57
@@ -1559,6 +1570,9 @@ msgstr ""
 #: wb_presets.c:983 wb_presets.c:993 wb_presets.c:994 wb_presets.c:995
 msgid "Incandescent warm"
 msgstr ""
+
+#~ msgid "yes"
+#~ msgstr "д"
 
 #, fuzzy
 #~ msgid "Cool white fluorescent 2"

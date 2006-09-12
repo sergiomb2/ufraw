@@ -343,11 +343,25 @@ int ufraw_batch_saver(ufraw_data *uf)
        && strcmp(uf->conf->outputFilename, "-")
        && g_file_test(uf->conf->outputFilename, G_FILE_TEST_EXISTS) ) {
         char ans[max_name];
-        fprintf(stderr, _("%s: overwrite '%s'? [y/N] "), ufraw_binary,
+	/* First letter of the word 'yes' for the y/n question */
+	gchar *yChar = g_utf8_strdown(_("y"), -1);
+	/* First letter of the word 'no' for the y/n question */
+	gchar *nChar = g_utf8_strup(_("n"), -1);
+        fprintf(stderr, _("%s: overwrite '%s'?"), ufraw_binary,
 		uf->conf->outputFilename);
+        fprintf(stderr, " [%s/%s] ", yChar, nChar);
         fflush(stderr);
         fgets(ans, max_name, stdin);
-        if (ans[0]!='y' && ans[0]!='Y') return UFRAW_CANCEL;
+	gchar *ans8 = g_utf8_strdown(ans, 1);
+	if ( g_utf8_collate(ans8, yChar)!=0 ) {
+	    g_free(yChar);
+	    g_free(nChar);
+	    g_free(ans8);
+	    return UFRAW_CANCEL;
+	}
+	g_free(yChar);
+	g_free(nChar);
+	g_free(ans8);
     }
     if (strcmp(uf->conf->outputFilename, "-")) {
 	char *absname = uf_file_set_absolute(uf->conf->outputFilename);
