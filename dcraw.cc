@@ -15,15 +15,15 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.348 $
-   $Date: 2006/09/08 14:52:39 $
+   $Revision: 1.349 $
+   $Date: 2006/09/12 08:38:59 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.37"
+#define DCRAW_VERSION "8.38"
 
 //#define _GNU_SOURCE /*UF*/
 #define _USE_MATH_DEFINES
@@ -4167,6 +4167,9 @@ int CLASS parse_tiff_ifd (int base, int level)
 	if (type == 3 && len == 1)
 	  cam_mul[(tag-17)*2] = get2() / 256.0;
 	break;
+      case 23:
+	if (type == 3) iso_speed = get2();
+	break;
       case 36: case 37: case 38:
 	cam_mul[tag-0x24] = get2();
 	break;
@@ -6133,17 +6136,28 @@ konica_400z:
       left_margin = 3;
       filters = 0x49494949;
       adobe_coeff ("Panasonic","DMC-FZ50");
+    } else if (width == 3770) {
+      height = 2760;
+      width  = 3672;
+      top_margin  = 15;
+      left_margin = 17;
+      adobe_coeff ("Panasonic","DMC-FZ50");
     } else if (width == 3880) {
       maximum = 0xf7f0;
-      left_margin = 6;
       width -= 22;
+      left_margin = 6;
       adobe_coeff ("Panasonic","DMC-LX1");
+    } else if (width == 4290) {
+      height--;
+      width = 4248;
+      left_margin = 3;
+      filters = 0x49494949;
+      adobe_coeff ("Panasonic","DMC-LX2");
     } else if (width == 4330) {
       height = 2400;
       width  = 4248;
       top_margin  = 15;
       left_margin = 17;
-      filters = 0x16161616;
       adobe_coeff ("Panasonic","DMC-LX2");
     }
     load_raw = &CLASS unpacked_load_raw;
