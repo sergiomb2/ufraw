@@ -1250,6 +1250,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->losslessCompress=-1;
     cmd->overwrite=-1;
     cmd->embedExif=-1;
+    cmd->embeddedImage=FALSE;
     cmd->profile[0][0].gamma=NULLF;
     cmd->profile[0][0].linear=NULLF;
     cmd->saturation=NULLF;
