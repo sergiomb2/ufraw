@@ -5886,9 +5886,7 @@ cp_e2500:
     load_raw = &CLASS nikon_load_raw;
   } else if (!strcmp(model,"FinePix S5100") ||
 	     !strcmp(model,"FinePix S5500")) {
-    top_margin = 6;                        /*Fix UFRaw bug #1367902 - NKBJ*/
-    data_offset += top_margin*raw_width*2; /*Fix UFRaw bug #1367902 - NKBJ*/
-    height -= 6;                           /*Fix UFRaw bug #1367902 - NKBJ*/
+    top_margin = 6; height -= top_margin; /*Fix UFRaw bug #1367902 - NKBJ*/
     load_raw = &CLASS unpacked_load_raw;
     maximum = 0x3e00;
   } else if (!strncmp(model,"FinePix",7)) {
