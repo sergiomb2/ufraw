@@ -15,8 +15,8 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.350 $
-   $Date: 2006/09/19 20:50:11 $
+   $Revision: 1.351 $
+   $Date: 2006/09/22 04:59:09 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -4766,6 +4766,10 @@ void CLASS parse_ciff (int offset, int length)
       raw_width = (get2(),get2());
       raw_height = get2();
     }
+    if (type == 0x5029) {
+      focal_len = len >> 16;
+      if ((len & 0xffff) == 2) focal_len /= 32;
+    }
     if (type == 0x5813) flash_used = int_to_float(len);
     if (type == 0x5814) canon_ev   = int_to_float(len);
     if (type == 0x5817) shot_order = len;
@@ -6972,7 +6976,7 @@ int CLASS main (int argc, char **argv)
 	shutter = (printf ("1/"), 1 / shutter);
       printf ("%0.1f sec\n", shutter);
       printf ("Aperture: f/%0.1f\n", aperture);
-      printf ("Focal Length: %d mm\n", (int) focal_len);
+      printf ("Focal Length: %0.1f mm\n", focal_len);
       printf ("Secondary pixels: %s\n", fuji_secondary ? "yes":"no");
       printf ("Embedded ICC profile: %s\n", profile_length ? "yes":"no");
       printf ("Decodable with dcraw: %s\n", is_raw ? "yes":"no");
