@@ -980,7 +980,7 @@ msgstr ""
 
 #: ufraw_routines.c:367
 msgid ""
-"Error saving Nikon curve file.Curve data is not from an NEF, NTC, or NCV "
+"Error saving Nikon curve file. Curve data is not from an NEF, NTC, or NCV "
 "file."
 msgstr ""
 

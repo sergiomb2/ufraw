@@ -20,38 +20,38 @@ msgstr ""
 
 #: ufraw-batch.c:74
 msgid "No input file, nothing to do."
-msgstr ""
+msgstr "Ingen inddatafil, ikke noget at lave."
 
 #: ufraw-batch.c:87
 #, c-format
 msgid "loaded %s"
-msgstr ""
+msgstr "indlæst %s"
 
 #: ufraw-batch.c:89
 #, c-format
 msgid "saved %s"
-msgstr ""
+msgstr "gemt %s"
 
 #: ufraw_chooser.c:57
 msgid "Raw images"
-msgstr ""
+msgstr "Raw-billeder"
 
 #: ufraw_chooser.c:70
 msgid "UFRaw ID files"
-msgstr ""
+msgstr "UFRaw ID-filer"
 
 #: ufraw_chooser.c:76
 msgid "Raw jpg's"
-msgstr ""
+msgstr "Raw jpg'er"
 
 #: ufraw_chooser.c:82
 msgid "Raw tif's"
-msgstr ""
+msgstr "Raw tif'er"
 
 #: ufraw_chooser.c:88 ufraw_preview.c:209 ufraw_preview.c:311
 #: ufraw_preview.c:379
 msgid "All files"
-msgstr ""
+msgstr "Alle filer"
 
 #: ufraw_chooser.c:94 ufraw_preview.c:178 ufraw_preview.c:280
 #: ufraw_preview.c:363 ufraw_saver.c:190
@@ -74,88 +74,91 @@ msgstr "Vis skjulte filer"
 #. Curve data defaults
 #: ufraw_conf.c:41 ufraw_conf.c:52
 msgid "Manual curve"
-msgstr ""
+msgstr "Manuel kurve"
 
 #: ufraw_conf.c:43 ufraw_conf.c:54
 msgid "Linear curve"
-msgstr ""
+msgstr "Lineær kurve"
 
 #: ufraw_conf.c:45
 msgid "Custom curve"
-msgstr ""
+msgstr "Brugerdefineret kurve"
 
 #: ufraw_conf.c:47
 msgid "Camera curve"
-msgstr ""
+msgstr "Kamerakurve"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
 #: ufraw_conf.c:59 ufraw_conf.c:61
 msgid "sRGB"
-msgstr ""
+msgstr "sRGB"
 
 #: ufraw_conf.c:133
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
-msgstr ""
+msgstr "Prøver at konvertere .ufrawrc fra UFRaw-0.4 eller tidligere"
 
 #: ufraw_conf.c:139
 msgid "Trying to convert .ufrawrc from UFRaw-0.6 or earlier"
-msgstr ""
+msgstr "Prøver at konvertere .ufrawrc fra UFRaw-0.6 eller tidligere"
 
 #: ufraw_conf.c:144
 #, c-format
 msgid "UFRaw version in .ufrawrc is not supported"
-msgstr ""
+msgstr "UFRaw versionen i .ufrawrc er ikke understøttet"
 
 #: ufraw_conf.c:275
 #, c-format
 msgid "Too many anchors for curve '%s'"
-msgstr ""
+msgstr "For mange ankerpunkter i kurve '%s'"
 
 #: ufraw_conf.c:493
 #, c-format
 msgid ""
 "Can't open ID file %s for reading\n"
 "%s\n"
-msgstr ""
+msgstr "Kan ikke åbne ID-fil %s til indlæsning\n"
+"%s\n"
 
 #: ufraw_conf.c:510 ufraw_routines.c:322
 #, c-format
 msgid ""
 "Error parsing '%s'\n"
 "%s"
-msgstr ""
+msgstr "Fejl ved læsning af '%s'\n"
+"%s"
 
 #: ufraw_conf.c:857
 #, c-format
 msgid ""
 "Can't open file %s for writing\n"
 "%s\n"
-msgstr ""
+msgstr "Kan ikke åbne fil %s til skrivning\n"
+"%s\n"
 
 #: ufraw_conf.c:1059
 msgid "cannot --create-id with stdout"
-msgstr ""
+msgstr "Kan ikke bruge --create-id til stdout"
 
 #: ufraw_conf.c:1073
 msgid "UFRaw "
-msgstr ""
+msgstr "UFRaw "
 
 #: ufraw_conf.c:1073
 msgid " - Unidentified Flying Raw converter for digital camera images.\n"
-msgstr ""
+msgstr " - Uidentificeret Flyvende Raw-konverter til digitalkamerabilleder.\n"
 
 #: ufraw_conf.c:1075
 msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
-msgstr ""
+msgstr "Anvendelse: ufraw [ tilvalg ... ] [ raw-billedfiler ... ]\n"
 
 #: ufraw_conf.c:1076
 msgid "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
-msgstr ""
+msgstr "       ufraw-batch [ tilvalg ... ] [ raw-billedfiler ... ]\n"
 
 #: ufraw_conf.c:1077
 msgid "       ufraw [ options ... ] [ default-directory ]\n"
-msgstr ""
+msgstr "       ufraw [ tilvalg ... ] [ standardbibliotek ]\n"
 
 #: ufraw_conf.c:1079
 msgid ""
@@ -844,51 +847,51 @@ msgstr ""
 #. Start of Zoom page
 #: ufraw_preview.c:2415
 msgid "Zoom"
-msgstr ""
+msgstr "Zoom"
 
 #: ufraw_preview.c:2419
 msgid "Zoom %"
-msgstr ""
+msgstr "Zoom %"
 
 #: ufraw_preview.c:2464
 #, c-format
 msgid "Camera: %s %s\n"
-msgstr ""
+msgstr "Kamera: %s %s\n"
 
 #: ufraw_preview.c:2465
 #, c-format
 msgid "Timestamp: %s\n"
-msgstr ""
+msgstr "Tidspunkt: %s\n"
 
 #: ufraw_preview.c:2466
 #, c-format
 msgid "Shutter: %s\n"
-msgstr ""
+msgstr "Lukkertid: %s\n"
 
 #: ufraw_preview.c:2467
 #, c-format
 msgid "Aperture: %s\n"
-msgstr ""
+msgstr "Blænde: %s\n"
 
 #: ufraw_preview.c:2468
 #, c-format
 msgid "ISO speed: %s\n"
-msgstr ""
+msgstr "ISO-hastighed: %s\n"
 
 #: ufraw_preview.c:2469
 #, c-format
 msgid "Focal length: %s\n"
-msgstr ""
+msgstr "Brændvidde: %s\n"
 
 #: ufraw_preview.c:2473
 #, c-format
 msgid "Focal length in 35mm equivalent: %s\n"
-msgstr ""
+msgstr "Brændvidde (35mm-ækvivalent): %s\n"
 
 #: ufraw_preview.c:2476
 #, c-format
 msgid "Lens: %s\n"
-msgstr ""
+msgstr "Objektiv: %s\n"
 
 #: ufraw_preview.c:2477
 #, c-format
@@ -896,100 +899,104 @@ msgid ""
 "\n"
 "EXIF data read by %s"
 msgstr ""
+"\n"
+"EXIF-data læst med %s"
 
 #: ufraw_preview.c:2506
 msgid "RGB histogram"
-msgstr ""
+msgstr "RGB-histogram"
 
 #: ufraw_preview.c:2515
 msgid "R+G+B histogram"
-msgstr ""
+msgstr "R+G+B-histogram"
 
 #: ufraw_preview.c:2525
 msgid "Luminosity histogram"
-msgstr ""
+msgstr "Lysstyrkehistogram"
 
 #: ufraw_preview.c:2535
 msgid "Value (maximum) histogram"
-msgstr ""
+msgstr "(Maksimums-)værdihistogram"
 
 #: ufraw_preview.c:2545
 msgid "Saturation histogram"
-msgstr ""
+msgstr "Farvemætningshistogram"
 
 #: ufraw_preview.c:2621
 msgid "Average:"
-msgstr ""
+msgstr "Gennemsnit:"
 
 #: ufraw_preview.c:2622
 msgid "Std. deviation:"
-msgstr ""
+msgstr "Standardafvigelse:"
 
 #: ufraw_preview.c:2625
 msgid "Overexposed:"
-msgstr ""
+msgstr "Overeksponeret:"
 
 #: ufraw_preview.c:2627 ufraw_preview.c:2638
 msgid "Indicate"
-msgstr ""
+msgstr "Vis"
 
 #: ufraw_preview.c:2635
 msgid "Underexposed:"
-msgstr ""
+msgstr "Undereksponeret:"
 
 #: ufraw_preview.c:2677 ufraw_saver.c:216
 msgid "AHD interpolation"
-msgstr ""
+msgstr "AHD interpolation"
 
 #: ufraw_preview.c:2678 ufraw_saver.c:217
 msgid "VNG interpolation"
-msgstr ""
+msgstr "VNG interpolation"
 
 #: ufraw_preview.c:2679 ufraw_saver.c:218
 msgid "VNG four color interpolation"
-msgstr ""
+msgstr "VNG firefarve-interpolation"
 
 #: ufraw_preview.c:2680 ufraw_saver.c:219
 msgid "Bilinear interpolation"
-msgstr ""
+msgstr "Bilineær interpolation"
 
 #: ufraw_preview.c:2682
 msgid "Half-size interpolation"
-msgstr ""
+msgstr "Halvstørrelseinterpolation"
 
 #: ufraw_preview.c:2699
 msgid "Options"
-msgstr ""
+msgstr "Tilvalg"
 
 #: ufraw_preview.c:2735
 msgid "Loading preview"
-msgstr ""
+msgstr "Indlæser preview"
 
 #: ufraw_routines.c:228
 #, c-format
 msgid "Curve version is not supported"
-msgstr ""
+msgstr "Kurveversion er ikke understøttet"
 
 #: ufraw_routines.c:295 ufraw_routines.c:375
 #, c-format
 msgid "Invalid Nikon curve file '%s'"
-msgstr ""
+msgstr "Fejlbehæftet Nikon kurvefil '%s'"
 
 #: ufraw_routines.c:311
 #, c-format
 msgid "Error opening Curve file '%s': %s"
-msgstr ""
+msgstr "Fejl ved åbning af kurvefil '%s': %s"
 
 #: ufraw_routines.c:367
 msgid ""
-"Error saving Nikon curve file.Curve data is not from an NEF, NTC, or NCV "
+"Error saving Nikon curve file. Curve data is not from an NEF, NTC, or NCV "
 "file."
 msgstr ""
+"Fejl ved skrivning af Nikon kurvefil. Kurvedata er ikke fra en NEF, NTC "
+"eller NCV fil."
 
 #: ufraw_routines.c:385
 #, c-format
 msgid "Error opening file '%s': %s"
-msgstr ""
+msgstr "Fejl ved åbning af fil '%s': %s"
 
 #: ufraw_saver.c:131
 #, c-format
@@ -997,22 +1004,28 @@ msgid ""
 "Filename: %s\n"
 "Size: %d x %d%s"
 msgstr ""
+"Filnavn: %s\n"
+"Størrelse: %d x %d%s"
 
 #: ufraw_saver.c:133
 msgid ""
 "\n"
 "Create also ID file"
 msgstr ""
+"\n"
+"Skab også ID-fil"
 
 #: ufraw_saver.c:134
 msgid ""
 "\n"
 "Create only ID file"
 msgstr ""
+"\n"
+"Skab kun ID-fil"
 
 #: ufraw_saver.c:147 ufraw_saver.c:454
 msgid "File exists"
-msgstr ""
+msgstr "Filen findes"
 
 #: ufraw_saver.c:154 ufraw_saver.c:462
 #, c-format
@@ -1020,141 +1033,143 @@ msgid ""
 "File '%s' already exists.\n"
 "Overwrite?"
 msgstr ""
+"Filen '%s' findes allerede.\n"
+"Overskriv?"
 
 #: ufraw_saver.c:182
 msgid "Save image"
-msgstr ""
+msgstr "Gem billede"
 
 #: ufraw_saver.c:205
 msgid "Output options"
-msgstr ""
+msgstr "Uddatatilvalg"
 
 #: ufraw_saver.c:227
 msgid "Shrink factor "
-msgstr ""
+msgstr "Formindskelsesfaktor "
 
 #: ufraw_saver.c:237
 msgid "\tHeight "
-msgstr ""
+msgstr "\tHøjde "
 
 #: ufraw_saver.c:247
 msgid "\tWidth "
-msgstr ""
+msgstr "\tBredde "
 
 #: ufraw_saver.c:258
 msgid "8-bit ppm"
-msgstr ""
+msgstr "8-bit ppm"
 
 #: ufraw_saver.c:268
 msgid "16-bit ppm"
-msgstr ""
+msgstr "16-bit ppm"
 
 #: ufraw_saver.c:280
 msgid "8-bit TIFF"
-msgstr ""
+msgstr "8-bit TIFF"
 
 #: ufraw_saver.c:291
 msgid "16-bit TIFF"
-msgstr ""
+msgstr "16-bit TIFF"
 
 #: ufraw_saver.c:299
 msgid "ZIP Compress (lossless)"
-msgstr ""
+msgstr "ZIP-kompression (tabsfri)"
 
 #: ufraw_saver.c:318
 msgid "Compression level"
-msgstr ""
+msgstr "Kompressionsniveau"
 
 #: ufraw_saver.c:329
 msgid "Embed EXIF data"
-msgstr ""
+msgstr "Tilføj EXIF-data"
 
 #: ufraw_saver.c:340
 msgid "Create ID file "
-msgstr ""
+msgstr "Skab ID-fil "
 
 #: ufraw_saver.c:343
 msgid "No"
-msgstr ""
+msgstr "Nej"
 
 #: ufraw_saver.c:344
 msgid "Also"
-msgstr ""
+msgstr "Også"
 
 #: ufraw_saver.c:345
 msgid "Only"
-msgstr ""
+msgstr "Kun"
 
 #: ufraw_saver.c:350
 msgid "\tSave image defaults "
-msgstr ""
+msgstr "\tGem standardindstillinger for billede "
 
 #: ufraw_saver.c:366
 msgid "Overwrite existing files without asking"
-msgstr ""
+msgstr "Overskriv eksisterende filer uden at spørge"
 
 #: ufraw_ufraw.c:136
 msgid "Remote URI is not supported"
-msgstr ""
+msgstr "Fjerntliggende URI er ikke understøttet"
 
 #: ufraw_ufraw.c:199
 #, c-format
 msgid "darkframe error: %s is not a raw file\n"
-msgstr ""
+msgstr "darkframe-fejl: %s er ikke en raw-fil\n"
 
 #: ufraw_ufraw.c:209
 #, c-format
 msgid "using darkframe '%s'\n"
-msgstr ""
+msgstr "bruger darkframe '%s'\n"
 
 #: ufraw_ufraw.c:214
 #, c-format
 msgid "error loading darkframe '%s'\n"
-msgstr ""
+msgstr "fejl ved indlæsning af darkframe '%s'\n"
 
 #: ufraw_ufraw.c:324
 msgid "Error reading NEF curve"
-msgstr ""
+msgstr "Fejl ved indlæsning af NEF-kurve"
 
 #: ufraw_ufraw.c:387
 msgid "Darkframe is incompatible with main image"
-msgstr ""
+msgstr "Darkframe er inkompatibel med hovedbilledet"
 
 #: ufraw_ufraw.c:507
 #, c-format
 msgid "Can not downsize from %d to %d."
-msgstr ""
+msgstr "Kan ikke formindske fra %d til %d."
 
 #: ufraw_ufraw.c:606 ufraw_ufraw.c:609
 msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
+msgstr "Kan ikke benytte kamerahvidbalance, skifter til autohvidbalance."
 
 #. First letter of the word 'yes' for the y/n question
 #: ufraw_writer.c:347
 msgid "y"
-msgstr ""
+msgstr "j"
 
 #. First letter of the word 'no' for the y/n question
 #: ufraw_writer.c:349
 msgid "n"
-msgstr ""
+msgstr "n"
 
 #: ufraw_writer.c:350
 #, c-format
 msgid "%s: overwrite '%s'?"
-msgstr ""
+msgstr "%s: overskriv '%s'?"
 
 #: wb_presets.c:57
 msgid "Manual WB"
-msgstr ""
+msgstr "Manuel hvidbalance"
 
 #: wb_presets.c:58
 msgid "Camera WB"
-msgstr ""
+msgstr "Kamerahvidbalance"
 
 #: wb_presets.c:59
 msgid "Auto WB"
-msgstr ""
+msgstr "Autohvidbalance"
 
 #. 7200K
 #. 5250K
@@ -1189,7 +1204,7 @@ msgstr ""
 #: wb_presets.c:1039 wb_presets.c:1048 wb_presets.c:1057 wb_presets.c:1058
 #: wb_presets.c:1059
 msgid "Daylight"
-msgstr ""
+msgstr "Dagslys"
 
 #. 3250K
 #. 4938K
@@ -1235,7 +1250,7 @@ msgstr ""
 #: wb_presets.c:1031 wb_presets.c:1041 wb_presets.c:1050 wb_presets.c:1063
 #: wb_presets.c:1064 wb_presets.c:1065
 msgid "Cloudy"
-msgstr ""
+msgstr "Overskyet"
 
 #. 3850K
 #. 5500K
@@ -1264,7 +1279,7 @@ msgstr ""
 #: wb_presets.c:1035 wb_presets.c:1045 wb_presets.c:1054 wb_presets.c:1066
 #: wb_presets.c:1067 wb_presets.c:1068
 msgid "Tungsten"
-msgstr ""
+msgstr "Kunstlys"
 
 #. 6550K
 #. 2700K
@@ -1294,13 +1309,13 @@ msgstr ""
 #: wb_presets.c:588 wb_presets.c:604 wb_presets.c:1025 wb_presets.c:1069
 #: wb_presets.c:1070 wb_presets.c:1071 wb_presets.c:1072
 msgid "Fluorescent"
-msgstr ""
+msgstr "Lysstofrør"
 
 #: wb_presets.c:65 wb_presets.c:72 wb_presets.c:79 wb_presets.c:86
 #: wb_presets.c:93 wb_presets.c:100 wb_presets.c:107 wb_presets.c:114
 #: wb_presets.c:122 wb_presets.c:130
 msgid "Fluorescent high"
-msgstr ""
+msgstr "Højtemperatur lysstofrør"
 
 #. 4800K
 #. ~~6000K
@@ -1329,11 +1344,11 @@ msgstr ""
 #: wb_presets.c:1036 wb_presets.c:1046 wb_presets.c:1055 wb_presets.c:1073
 #: wb_presets.c:1074 wb_presets.c:1075
 msgid "Flash"
-msgstr ""
+msgstr "Blitz"
 
 #: wb_presets.c:116 wb_presets.c:124
 msgid "Underwater"
-msgstr ""
+msgstr "Under vandet"
 
 #. 6100K
 #. ~5400K
@@ -1376,7 +1391,7 @@ msgstr ""
 #: wb_presets.c:1013 wb_presets.c:1017 wb_presets.c:1030 wb_presets.c:1040
 #: wb_presets.c:1049 wb_presets.c:1060 wb_presets.c:1061 wb_presets.c:1062
 msgid "Shade"
-msgstr ""
+msgstr "Skygge"
 
 #. ~~2700K
 #. 5600K
@@ -1394,7 +1409,7 @@ msgstr ""
 #: wb_presets.c:571 wb_presets.c:572 wb_presets.c:589 wb_presets.c:590
 #: wb_presets.c:591 wb_presets.c:639
 msgid "Direct sunlight"
-msgstr ""
+msgstr "Direkte sollys"
 
 #.
 #. * D2X with firmware A 1.01 and B 1.01
@@ -1429,7 +1444,7 @@ msgstr ""
 #: wb_presets.c:982 wb_presets.c:990 wb_presets.c:991 wb_presets.c:992
 #: wb_presets.c:1018
 msgid "Incandescent"
-msgstr ""
+msgstr "Kunstlys"
 
 #. 4060K
 #. 5000K
@@ -1444,12 +1459,12 @@ msgstr ""
 #: wb_presets.c:763 wb_presets.c:764 wb_presets.c:765 wb_presets.c:766
 #: wb_presets.c:767 wb_presets.c:768
 msgid "Cool white fluorescent"
-msgstr ""
+msgstr "Koldt hvide lysstofrør"
 
 #: wb_presets.c:204 wb_presets.c:213 wb_presets.c:221 wb_presets.c:234
 #: wb_presets.c:241 wb_presets.c:248
 msgid "Warm white fluorescent"
-msgstr ""
+msgstr "Varmt hvide lysstofrør"
 
 #. 6700K
 #. 6000K
@@ -1469,11 +1484,11 @@ msgstr ""
 #: wb_presets.c:985 wb_presets.c:1002 wb_presets.c:1003 wb_presets.c:1004
 #: wb_presets.c:1021 wb_presets.c:1032 wb_presets.c:1042 wb_presets.c:1051
 msgid "Daylight fluorescent"
-msgstr ""
+msgstr "Dagslys-lysstofrør"
 
 #: wb_presets.c:256
 msgid "Black & white"
-msgstr ""
+msgstr "Sort/hvid"
 
 #. 2800K
 #. 4200K
@@ -1495,7 +1510,7 @@ msgstr ""
 #: wb_presets.c:996 wb_presets.c:997 wb_presets.c:998 wb_presets.c:1019
 #: wb_presets.c:1034 wb_presets.c:1044 wb_presets.c:1053
 msgid "White fluorescent"
-msgstr ""
+msgstr "Hvidt lysstofrør"
 
 #: wb_presets.c:618 wb_presets.c:619 wb_presets.c:620 wb_presets.c:640
 #: wb_presets.c:694 wb_presets.c:695 wb_presets.c:696 wb_presets.c:697
@@ -1503,7 +1518,7 @@ msgstr ""
 #: wb_presets.c:702 wb_presets.c:703 wb_presets.c:704 wb_presets.c:705
 #: wb_presets.c:706 wb_presets.c:707 wb_presets.c:708
 msgid "Evening sun"
-msgstr ""
+msgstr "Aftensol"
 
 #. 6700K
 #. 5000K
@@ -1523,16 +1538,16 @@ msgstr ""
 #: wb_presets.c:1001 wb_presets.c:1020 wb_presets.c:1033 wb_presets.c:1043
 #: wb_presets.c:1052
 msgid "Neutral fluorescent"
-msgstr ""
+msgstr "Neutralt lysstofrør"
 
 #: wb_presets.c:646 wb_presets.c:709 wb_presets.c:710 wb_presets.c:711
 #: wb_presets.c:712 wb_presets.c:713 wb_presets.c:714 wb_presets.c:715
 #: wb_presets.c:716 wb_presets.c:717 wb_presets.c:718 wb_presets.c:719
 #: wb_presets.c:720 wb_presets.c:721 wb_presets.c:722 wb_presets.c:723
 msgid "Flash (auto mode)"
-msgstr ""
+msgstr "Blitz (auto-indstilling)"
 
 #. 3000K
 #: wb_presets.c:983 wb_presets.c:993 wb_presets.c:994 wb_presets.c:995
 msgid "Incandescent warm"
-msgstr ""
+msgstr "Varmt kunstlys"

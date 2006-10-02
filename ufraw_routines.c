@@ -364,7 +364,7 @@ int curve_save(CurveData *cp, char *filename)
 
         //check to see if we can save
         if (cp->m_numAnchors < 2) {
-            ufraw_message(UFRAW_ERROR, _("Error saving Nikon curve file."
+            ufraw_message(UFRAW_ERROR, _("Error saving Nikon curve file. "
                         "Curve data is not from an NEF, NTC, or NCV file."));
             return UFRAW_ERROR;
         }
