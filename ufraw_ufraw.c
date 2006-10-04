@@ -306,8 +306,8 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	g_snprintf(uf->conf->apertureText, max_name, "F/%0.1f",
 		uf->conf->aperture);
 	uf->conf->focal_len = raw->focal_len;
-	g_snprintf(uf->conf->focalLenText, max_name, "%d mm",
-		(int)uf->conf->focal_len);
+	g_snprintf(uf->conf->focalLenText, max_name, "%0.1f mm",
+		uf->conf->focal_len);
     }
     /* Always set useMatrix if colors=4
      * Always reset useMatrix if 'raw_color' */
