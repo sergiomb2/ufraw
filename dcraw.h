@@ -108,7 +108,7 @@ void nikon_load_raw();
 int nikon_is_compressed();
 int nikon_e995();
 int nikon_e2100();
-int nikon_3700();
+void nikon_3700();
 int minolta_z2();
 void nikon_e900_load_raw();
 void nikon_e2100_load_raw();
