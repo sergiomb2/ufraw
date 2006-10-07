@@ -199,12 +199,33 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS DIGITAL REBEL XT", N_("Flash"), 0, { 2.715128, 1, 1.295678, 0 } },
   { "Canon", "EOS DIGITAL REBEL XT", N_("Cloudy"), 0, { 2.611984, 1, 1.343811, 0 } },
 
+  { "Canon", "EOS Kiss Digital N", N_("Tungsten"), 0, { 1.554250, 1, 2.377034, 0 } },
+  { "Canon", "EOS Kiss Digital N", N_("Daylight"), 0, { 2.392927, 1, 1.487230, 0 } },
+  { "Canon", "EOS Kiss Digital N", N_("Fluorescent"), 0, { 1.999040, 1, 1.995202, 0 } },
+  { "Canon", "EOS Kiss Digital N", N_("Shade"), 0, { 2.827112, 1, 1.235756, 0 } },
+  { "Canon", "EOS Kiss Digital N", N_("Flash"), 0, { 2.715128, 1, 1.295678, 0 } },
+  { "Canon", "EOS Kiss Digital N", N_("Cloudy"), 0, { 2.611984, 1, 1.343811, 0 } },
+
+  { "Canon", "EOS 400D DIGITAL", N_("Daylight"), 0, { 2.207031, 1, 1.516602, 0 } },
+  { "Canon", "EOS 400D DIGITAL", N_("Shade"), 0, { 2.592773, 1, 1.250000, 0 } },
+  { "Canon", "EOS 400D DIGITAL", N_("Cloudy"), 0, { 2.403320, 1, 1.371094, 0 } },
+  { "Canon", "EOS 400D DIGITAL", N_("Incandescent"), 0, { 1.472578, 1, 2.431444, 0 } },
+  { "Canon", "EOS 400D DIGITAL", N_("Fluorescent"), 0, { 1.842459, 1, 2.164265, 0 } },
+  { "Canon", "EOS 400D DIGITAL", N_("Flash"), 0, { 2.456055, 1, 1.339844, 0 } },
+
   { "Canon", "EOS DIGITAL REBEL XTi", N_("Daylight"), 0, { 2.207031, 1, 1.516602, 0 } },
   { "Canon", "EOS DIGITAL REBEL XTi", N_("Shade"), 0, { 2.592773, 1, 1.250000, 0 } },
   { "Canon", "EOS DIGITAL REBEL XTi", N_("Cloudy"), 0, { 2.403320, 1, 1.371094, 0 } },
   { "Canon", "EOS DIGITAL REBEL XTi", N_("Incandescent"), 0, { 1.472578, 1, 2.431444, 0 } },
   { "Canon", "EOS DIGITAL REBEL XTi", N_("Fluorescent"), 0, { 1.842459, 1, 2.164265, 0 } },
   { "Canon", "EOS DIGITAL REBEL XTi", N_("Flash"), 0, { 2.456055, 1, 1.339844, 0 } },
+
+  { "Canon", "EOS Kiss Digital X", N_("Daylight"), 0, { 2.207031, 1, 1.516602, 0 } },
+  { "Canon", "EOS Kiss Digital X", N_("Shade"), 0, { 2.592773, 1, 1.250000, 0 } },
+  { "Canon", "EOS Kiss Digital X", N_("Cloudy"), 0, { 2.403320, 1, 1.371094, 0 } },
+  { "Canon", "EOS Kiss Digital X", N_("Incandescent"), 0, { 1.472578, 1, 2.431444, 0 } },
+  { "Canon", "EOS Kiss Digital X", N_("Fluorescent"), 0, { 1.842459, 1, 2.164265, 0 } },
+  { "Canon", "EOS Kiss Digital X", N_("Flash"), 0, { 2.456055, 1, 1.339844, 0 } },
 
   { "Canon", "EOS-1D Mark II", N_("Cloudy"), 0,	{ 2.093750, 1, 1.166016, 0 } },
   { "Canon", "EOS-1D Mark II", N_("Daylight"), 0, { 1.957031, 1, 1.295898, 0 } },
