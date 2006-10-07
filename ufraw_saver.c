@@ -22,6 +22,21 @@
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
+/* Global information for the 'Save As' dialog */
+typedef struct {
+    ufraw_data *uf;
+    double shrink;
+    double height;
+    double width;
+    gboolean FreezeDialog;
+    GtkAdjustment *shrinkAdj;
+    GtkAdjustment *heightAdj;
+    GtkAdjustment *widthAdj;
+    GtkToggleButton *ppmButton;
+    GtkToggleButton *tiffButton;
+    GtkToggleButton *jpegButton;
+} save_as_dialog_data;
+
 #ifdef HAVE_GTK_2_6
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
@@ -41,16 +56,37 @@ void ufraw_radio_button_update(GtkWidget *button, int *valuep)
     g_free(newname);
 }
 
-void ufraw_saver_adjustment_update(GObject *adj, gboolean *valuep)
+void ufraw_saver_adjustment_update(GtkAdjustment *adj,
+    save_as_dialog_data *data)
 {
-    GtkDialog *dialog = GTK_DIALOG(g_object_get_data(adj, "ufraw-dialog"));
-    if (!g_object_get_data(G_OBJECT(dialog), "ufraw-dialog-run"))
-	return;
-    *valuep = TRUE;
-    gtk_dialog_response(dialog, GTK_RESPONSE_APPLY);
+    if (data->FreezeDialog) return;
+    data->FreezeDialog = TRUE;
+
+    if ( adj==data->shrinkAdj ) {
+	data->shrink = gtk_adjustment_get_value(data->shrinkAdj);
+	data->height = data->uf->predictedHeight / data->shrink;
+	data->width = data->uf->predictedWidth / data->shrink;
+    }
+    if ( adj==data->heightAdj ) {
+	data->height = gtk_adjustment_get_value(data->heightAdj);
+	data->width = data->height * data->uf->predictedWidth /
+		data->uf->predictedHeight;
+	data->shrink = (double)data->uf->predictedHeight / data->height;
+    }
+    if ( adj==data->widthAdj ) {
+        data->width = gtk_adjustment_get_value(data->widthAdj);
+        data->height = data->width * data->uf->predictedHeight /
+		data->uf->predictedWidth;
+        data->shrink = (float)data->uf->predictedWidth / data->width;
+    }
+    gtk_adjustment_set_value(data->shrinkAdj, data->shrink);
+    gtk_adjustment_set_value(data->heightAdj, data->height);
+    gtk_adjustment_set_value(data->widthAdj, data->width);
+
+    data->FreezeDialog = FALSE;
 }
 
-void ufraw_saver_set_type(GtkWidget *widget, conf_data *conf)
+void ufraw_saver_set_type(GtkWidget *widget, save_as_dialog_data *data)
 {
     char *filename, *type;
     filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
@@ -59,14 +95,23 @@ void ufraw_saver_set_type(GtkWidget *widget, conf_data *conf)
         g_free(filename);
         return;
     }
-    if (!strcmp(type,".ppm") && conf->type!=ppm16_type)
-        conf->type = ppm8_type;
-    if (!strcmp(type,".tif") && conf->type!=tiff16_type)
-        conf->type = tiff8_type;
-    if (!strcmp(type,".jpg"))
-        conf->type = jpeg_type;
+    if ( !strcmp(type,".ppm") && data->uf->conf->type!=ppm16_type ) {
+        data->uf->conf->type = ppm8_type;
+        gtk_toggle_button_set_active(data->ppmButton, TRUE);
+    }
+#ifdef HAVE_LIBTIFF
+    if ( !strcmp(type,".tif") && data->uf->conf->type!=tiff16_type ) {
+        data->uf->conf->type = tiff8_type;
+        gtk_toggle_button_set_active(data->tiffButton, TRUE);
+    }
+#endif
+#ifdef HAVE_LIBJPEG
+    if ( !strcmp(type,".jpg") ) {
+        data->uf->conf->type = jpeg_type;
+        gtk_toggle_button_set_active(data->jpegButton, TRUE);
+    }
+#endif
     g_free(filename);
-    gtk_dialog_response(GTK_DIALOG(widget), GTK_RESPONSE_APPLY);
 }
 
 long ufraw_saver(void *widget, gpointer user_data)
@@ -75,12 +120,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     GtkFileChooser *fileChooser;
     GtkWidget *expander, *box, *table, *widg, *button, *align, *overwriteButton;
     GtkWidget *event, *label;
-    GtkAdjustment *shrinkAdj, *heightAdj, *widthAdj;
     GtkComboBox *intCombo, *idCombo, *confCombo;
-    GtkToggleButton *ppmButton;
-#ifdef HAVE_LIBTIFF
-    GtkToggleButton *tiffButton;
-#endif
 #if defined(HAVE_LIBZ) && defined(HAVE_LIBTIFF)
     GtkWidget *losslessButton;
 #endif
@@ -88,34 +128,35 @@ long ufraw_saver(void *widget, gpointer user_data)
 #if defined(HAVE_LIBEXIF) || defined(HAVE_EXIV2)
     GtkWidget *exifButton;
 #endif
-    GtkToggleButton *jpegButton;
     GtkAdjustment *compressAdj;
 #endif
     ufraw_data *uf = user_data;
-    float shrink;
-    float height, width;
-    gboolean shrinkUpdate=FALSE, heightUpdate=FALSE, widthUpdate=FALSE;
     char *filename, *absFilename;
     int status;
+    save_as_dialog_data DialogData, *data = &DialogData;
+    data->uf = uf;
+    data->FreezeDialog = TRUE;
 
     if (uf->conf->size > 0) {
 	if (uf->predictedHeight > uf->predictedWidth) {
-	    height = uf->conf->size;
-	    width = uf->conf->size * uf->predictedWidth / uf->predictedHeight;
-	    shrink = (float)uf->predictedHeight / uf->conf->size;
+	    data->height = uf->conf->size;
+	    data->width = uf->conf->size * uf->predictedWidth /
+		    uf->predictedHeight;
+	    data->shrink = (float)uf->predictedHeight / uf->conf->size;
 	} else {
-            width = uf->conf->size;
-	    height = uf->conf->size * uf->predictedHeight/ uf->predictedWidth;
-	    shrink = (float)uf->predictedWidth / uf->conf->size;
+            data->width = uf->conf->size;
+	    data->height = uf->conf->size * uf->predictedHeight /
+		uf->predictedWidth;
+	    data->shrink = (float)uf->predictedWidth / uf->conf->size;
 	}
     } else {
 	if (uf->conf->shrink<1) {
             ufraw_message(UFRAW_ERROR, "Fatal Error: uf->conf->shrink<1");
 	    uf->conf->shrink = 1;
 	}
-	height = uf->predictedHeight / uf->conf->shrink;
-	width = uf->predictedWidth / uf->conf->shrink;
-	shrink = uf->conf->shrink;
+	data->height = uf->predictedHeight / uf->conf->shrink;
+	data->width = uf->predictedWidth / uf->conf->shrink;
+	data->shrink = uf->conf->shrink;
     }
     filename = uf_file_set_type(uf->filename, file_type[uf->conf->type]);
     if (strlen(uf->conf->outputPath)>0) {
@@ -129,7 +170,7 @@ long ufraw_saver(void *widget, gpointer user_data)
 	char *utf8 = g_filename_to_utf8(absFilename, -1, NULL, NULL, NULL);
 	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
 	char *text = g_strdup_printf(_("Filename: %s\nSize: %d x %d%s"),
-		utf8, (int)height, (int)width,
+		utf8, (int)data->height, (int)data->width,
 		uf->conf->createID==also_id ? _("\nCreate also ID file") :
 		uf->conf->createID==only_id ? _("\nCreate only ID file") : "");
 	g_free(utf8);
@@ -226,37 +267,34 @@ long ufraw_saver(void *widget, gpointer user_data)
     gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
     widg = gtk_label_new(_("Shrink factor "));
     gtk_table_attach(GTK_TABLE(table), widg, 0, 1, 1, 2, 0, 0, 0, 0);
-    shrinkAdj = GTK_ADJUSTMENT(gtk_adjustment_new(shrink,
+    data->shrinkAdj = GTK_ADJUSTMENT(gtk_adjustment_new(data->shrink,
             1, 100, 1, 2, 3));
-    g_object_set_data(G_OBJECT(shrinkAdj), "ufraw-dialog", fileChooser);
-    g_signal_connect(G_OBJECT(shrinkAdj), "value-changed",
-            G_CALLBACK(ufraw_saver_adjustment_update), &shrinkUpdate);
-    widg = gtk_spin_button_new(shrinkAdj, 1, 3);
+    g_signal_connect(G_OBJECT(data->shrinkAdj), "value-changed",
+            G_CALLBACK(ufraw_saver_adjustment_update), data);
+    widg = gtk_spin_button_new(data->shrinkAdj, 1, 3);
     gtk_table_attach(GTK_TABLE(table), widg, 1, 2, 1, 2, 0, 0, 0, 0);
 
     widg = gtk_label_new(_("\tHeight "));
     gtk_table_attach(GTK_TABLE(table), widg, 2, 3, 1, 2, 0, 0, 0, 0);
-    heightAdj = GTK_ADJUSTMENT(gtk_adjustment_new(height,
+    data->heightAdj = GTK_ADJUSTMENT(gtk_adjustment_new(data->height,
             uf->predictedHeight/100, uf->predictedHeight, 10, 100, 0));
-    g_object_set_data(G_OBJECT(heightAdj), "ufraw-dialog", fileChooser);
-    g_signal_connect(G_OBJECT(heightAdj), "value-changed",
-            G_CALLBACK(ufraw_saver_adjustment_update), &heightUpdate);
-    widg = gtk_spin_button_new(heightAdj, 10, 0);
+    g_signal_connect(G_OBJECT(data->heightAdj), "value-changed",
+            G_CALLBACK(ufraw_saver_adjustment_update), data);
+    widg = gtk_spin_button_new(data->heightAdj, 10, 0);
     gtk_table_attach(GTK_TABLE(table), widg, 3, 4, 1, 2, 0, 0, 0, 0);
 
     widg = gtk_label_new(_("\tWidth "));
     gtk_table_attach(GTK_TABLE(table), widg, 4, 5, 1, 2, 0, 0, 0, 0);
-    widthAdj = GTK_ADJUSTMENT(gtk_adjustment_new(width,
+    data->widthAdj = GTK_ADJUSTMENT(gtk_adjustment_new(data->width,
             uf->predictedWidth/100, uf->predictedWidth, 10, 100, 0));
-    g_object_set_data(G_OBJECT(widthAdj), "ufraw-dialog", fileChooser);
-    g_signal_connect(G_OBJECT(widthAdj), "value-changed",
-            G_CALLBACK(ufraw_saver_adjustment_update), &widthUpdate);
-    widg = gtk_spin_button_new(widthAdj, 10, 0);
+    g_signal_connect(G_OBJECT(data->widthAdj), "value-changed",
+            G_CALLBACK(ufraw_saver_adjustment_update), data);
+    widg = gtk_spin_button_new(data->widthAdj, 10, 0);
     gtk_table_attach(GTK_TABLE(table), widg, 5, 6, 1, 2, 0, 0, 0, 0);
 
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
     button = gtk_radio_button_new_with_label(NULL, _("8-bit ppm"));
-    ppmButton = GTK_TOGGLE_BUTTON(button);
+    data->ppmButton = GTK_TOGGLE_BUTTON(button);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
             uf->conf->type==ppm8_type);
     g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)ppm8_type);
@@ -278,7 +316,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
     button = gtk_radio_button_new_with_label_from_widget(
             GTK_RADIO_BUTTON(button), _("8-bit TIFF"));
-    tiffButton = GTK_TOGGLE_BUTTON(button);
+    data->tiffButton = GTK_TOGGLE_BUTTON(button);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
             uf->conf->type==tiff8_type);
     g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)tiff8_type);
@@ -308,7 +346,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
     button = gtk_radio_button_new_with_label_from_widget(
             GTK_RADIO_BUTTON(button), "JPEG");
-    jpegButton = GTK_TOGGLE_BUTTON(button);
+    data->jpegButton = GTK_TOGGLE_BUTTON(button);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
             uf->conf->type==jpeg_type);
     g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)jpeg_type);
@@ -376,62 +414,26 @@ long ufraw_saver(void *widget, gpointer user_data)
         g_free(cp);
     }
     g_signal_connect(G_OBJECT(fileChooser), "selection-changed",
-            G_CALLBACK(ufraw_saver_set_type), uf->conf);
+            G_CALLBACK(ufraw_saver_set_type), data);
+    data->FreezeDialog = FALSE;
     while(1) {
-        g_object_set_data(G_OBJECT(fileChooser), "ufraw-dialog-run",
-		(gpointer)TRUE);
         status = gtk_dialog_run(GTK_DIALOG(fileChooser));
-        g_object_set_data(G_OBJECT(fileChooser), "ufraw-dialog-run",
-		(gpointer)FALSE);
         if (status==GTK_RESPONSE_CANCEL) {
 	    ufraw_focus(fileChooser, FALSE);
             gtk_widget_destroy(GTK_WIDGET(fileChooser));
             return UFRAW_CANCEL;
         }
-        if (status==GTK_RESPONSE_APPLY) {
-            gtk_toggle_button_set_active(ppmButton,
-                    uf->conf->type==ppm8_type);
-#ifdef HAVE_LIBTIFF
-            gtk_toggle_button_set_active(tiffButton,
-                    uf->conf->type==tiff8_type);
-#endif
-#ifdef HAVE_LIBJPEG
-            gtk_toggle_button_set_active(jpegButton,
-                    uf->conf->type==jpeg_type);
-#endif
-	    if (shrinkUpdate) {
-	        shrink = gtk_adjustment_get_value(shrinkAdj);
-	        height = uf->predictedHeight / shrink;
-	        width = uf->predictedWidth / shrink;
-		shrinkUpdate = FALSE;
-	    }
-	    if (heightUpdate) {
-	        height = gtk_adjustment_get_value(heightAdj);
-	        width = height * uf->predictedWidth / uf->predictedHeight;
-	        shrink = (float)uf->predictedHeight / height;
-		heightUpdate = FALSE;
-	    }
-	    if (widthUpdate) {
-	        width = gtk_adjustment_get_value(widthAdj);
-	        height = width * uf->predictedHeight / uf->predictedWidth;
-	        shrink = (float)uf->predictedWidth / width;
-		widthUpdate = FALSE;
-	    }
-	    gtk_adjustment_set_value(shrinkAdj, shrink);
-	    gtk_adjustment_set_value(heightAdj, height);
-	    gtk_adjustment_set_value(widthAdj, width);
-            continue;
-        }
+	/* GTK_RESPONSE_OK - save file */
         filename = gtk_file_chooser_get_filename(fileChooser);
         uf->conf->interpolation = gtk_combo_box_get_active(intCombo);
         uf->conf->createID = gtk_combo_box_get_active(idCombo);
         uf->conf->saveConfiguration = gtk_combo_box_get_active(confCombo);
-	if (fabs(shrink-floor(shrink+0.0005))<0.0005) {
-	    uf->conf->shrink = floor(shrink+0.0005);
+	if ( fabs(data->shrink-floor(data->shrink+0.0005))<0.0005 ) {
+	    uf->conf->shrink = floor(data->shrink+0.0005);
 	    uf->conf->size = 0;
 	} else {
 	    uf->conf->shrink = 1;
-	    uf->conf->size = floor(MAX(height, width)+0.5);
+	    uf->conf->size = floor(MAX(data->height, data->width)+0.5);
 	}
         uf->conf->overwrite = gtk_toggle_button_get_active(
                 GTK_TOGGLE_BUTTON(overwriteButton));
