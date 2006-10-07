@@ -150,6 +150,10 @@ ufraw_data *ufraw_open(char *filename)
 	    return NULL;
 	}
 	if (conf->createID==only_id) conf->createID = also_id;
+	/* Output image should be created in the path of the ID file */
+	char *path = g_path_get_dirname(filename);
+	g_strlcpy(conf->outputPath, path, max_path);
+	g_free(path);
 	filename = conf->inputFilename;
     }
     raw = g_new(dcraw_data, 1);
@@ -233,6 +237,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	    conf_data tmp = *rc;
 	    conf_copy_image(&tmp, uf->conf);
 	    conf_copy_save(&tmp, uf->conf);
+	    g_strlcpy(tmp.outputPath, uf->conf->outputPath, max_path);
 	    *uf->conf = tmp;
 	} else {
 	    uf->conf = g_new(conf_data, 1);
