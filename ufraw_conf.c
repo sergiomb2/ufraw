@@ -1084,7 +1084,7 @@ N_("By default 'ufraw' displays a preview window for each raw image allowing\n"
 "\n",
 N_("The input files can be either raw images or ufraw's ID files. ID file\n"
 "contain a raw image filename and the parameters for handling the image.\n"
-"One can also use and ID file with the option:\n"),
+"One can also use an ID file with the option:\n"),
 "\n",
 N_("--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"),
 "\n",
