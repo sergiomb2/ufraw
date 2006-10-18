@@ -259,8 +259,8 @@ void curve_parse_text(GMarkupParseContext *context, const gchar *text,
     const gchar *element = g_markup_parse_context_get_element(context);
     char temp[max_path];
     error = error;
-    for(; len>0 && isspace(*text); len--, text++);
-    for(; len>0 && isspace(text[len-1]); len--);
+    for(; len>0 && g_ascii_isspace(*text); len--, text++);
+    for(; len>0 && g_ascii_isspace(text[len-1]); len--);
     if (len==0) return;
     if (len>max_path-1) len=max_path-1;
     strncpy(temp, text, len);
