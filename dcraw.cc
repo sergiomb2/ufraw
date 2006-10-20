@@ -15,8 +15,8 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.352 $
-   $Date: 2006/10/06 16:35:50 $
+   $Revision: 1.353 $
+   $Date: 2006/10/10 04:46:02 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -3306,7 +3306,7 @@ void CLASS lin_interpolate()
 
    "Interpolation using a Threshold-based variable number of gradients"
 
-   described in http://www-ise.stanford.edu/~tingchen/algodep/vargra.html
+   described in http://scien.stanford.edu/class/psych221/projects/99/tingchen/algodep/vargra.html
 
    I've extended the basic idea to work with non-Bayer filter arrays.
    Gradients are numbered clockwise from NW=0 to W=7.
