@@ -19,7 +19,6 @@
 #include <errno.h>     /* for errno */
 #include <string.h>
 #include <gtk/gtk.h>
-#include <locale.h>
 #include <glib/gi18n.h>
 #include "ufraw.h"
 #include "ufraw_icon.h"
@@ -32,28 +31,10 @@ int main (int argc, char **argv)
     conf_data rc, cmd, conf;
     int status;
     GtkWidget *dummyWindow=NULL;
-    const char *locale;
     int optInd;
 
     ufraw_binary = g_path_get_basename(argv[0]);
-
-    /* Disable the Hebrew and Arabic locale, since the right-to-left setting
-     * does not go well with the preview window. */
-    locale = setlocale(LC_ALL, "");
-    if ( locale!=NULL &&
-        (!strncmp(locale, "he", 2) || !strncmp(locale, "iw", 2) ||
-        !strncmp(locale, "ar", 2) ||
-        !strncmp(locale, "Hebrew", 6) || !strncmp(locale, "Arabic", 6) ) ) {
-        /* I'm not sure why the following doesn't work (on Windows at least) */
-	/* locale = setlocale(LC_ALL, "C");
-         * gtk_disable_setlocale(); */
-        /* so I'm using setenv */
-        g_setenv("LC_ALL", "C", TRUE);
-    }
-    bindtextdomain("ufraw", UFRAW_LOCALEDIR);
-    bind_textdomain_codeset("ufraw", "UTF-8");
-    textdomain("ufraw");
-
+    uf_init_locale(argv[0]);
     gtk_init(&argc, &argv);
 #ifdef WIN32
     dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);

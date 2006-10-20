@@ -22,7 +22,6 @@
 #include <string.h>
 #include <libgimp/gimp.h>
 #include <libgimp/gimpui.h>
-#include <locale.h>
 #include <glib/gi18n.h>
 #include "ufraw.h"
 #include "ufraw_icon.h"
@@ -120,9 +119,9 @@ void run(const gchar *name,
     ufraw_data *uf;
     conf_data conf;
     int status;
-    const char *locale;
 
-    ufraw_binary = "ufraw-gimp";
+    ufraw_binary = g_path_get_basename(gimp_get_progname);
+    uf_init_locale(gimp_get_progname());
 
     *nreturn_vals = 1;
     *return_vals = values;
@@ -140,20 +139,6 @@ void run(const gchar *name,
 	values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
 	return;
     }
-    locale = setlocale(LC_ALL, "");
-    if ( locale!=NULL &&
-	(!strncmp(locale, "he", 2) || !strncmp(locale, "iw", 2) ||
-	!strncmp(locale, "ar", 2) ||
-	!strncmp(locale, "Hebrew", 6) || !strncmp(locale, "Arabic", 6) ) ) {
-	/* I'm not sure why the following doesn't work (on Windows at least) */
-/*	setlocale(LC_ALL, "C");
-	gtk_disable_setlocale(); */
-	/* so I'm using setenv */
-	g_setenv("LC_ALL", "C", TRUE);
-    }
-    bindtextdomain("ufraw", UFRAW_LOCALEDIR);
-    bind_textdomain_codeset("ufraw", "UTF-8");
-    textdomain("ufraw");
 
     gimp_ui_init("ufraw-gimp", TRUE);
 

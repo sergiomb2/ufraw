@@ -19,7 +19,6 @@
 #endif
 #include <stdlib.h> /* needed for canonicalize_file_name() */
 #include <string.h>
-#include <ctype.h> /* needed for isspace() */
 #include <errno.h>
 #include <locale.h>
 #include <glib.h>
@@ -39,6 +38,47 @@ const char *uf_get_home_dir()
         hd = "/";
 #endif
     return hd;
+}
+
+void uf_init_locale(const char *exename)
+{
+    const char *locale = setlocale(LC_ALL, "");
+    /* Disable the Hebrew and Arabic locale, since the right-to-left setting
+     * does not go well with the preview window. */
+    if ( locale!=NULL &&
+	(!strncmp(locale, "he", 2) || !strncmp(locale, "iw", 2) ||
+	!strncmp(locale, "ar", 2) ||
+	!strncmp(locale, "Hebrew", 6) || !strncmp(locale, "Arabic", 6) ) ) {
+	/* I'm not sure why the following doesn't work (on Windows at least) */
+	/* locale = setlocale(LC_ALL, "C");
+	 * gtk_disable_setlocale(); */
+	/* so I'm using setenv */
+	g_setenv("LC_ALL", "C", TRUE);
+    }
+    /* Try getting the localedir from the environment */
+    char *localedir = g_strconcat(g_getenv("UFRAW_LOCALEDIR"), NULL);
+    if (localedir==NULL) {
+        /* If that fails, there are two defaults: */
+#ifdef WIN32
+	/* In Windows the localedir is found relative to the exe file.
+	 * The exact location here should match ufraw-setup.iss.in */
+	if ( strcasecmp(g_path_get_basename(exename), "ufraw-gimp.exe")==0 ) {
+	    localedir = g_strconcat(g_path_get_dirname(exename),
+		    "/../../../locale", NULL);
+	} else {
+	    localedir = g_strconcat(g_path_get_dirname(exename),
+		    "/../lib/locale", NULL);
+	}
+#else
+	exename = exename; /* suppress warning */
+	/* In other environments localedir is set at compile time */
+	localedir = g_strconcat(UFRAW_LOCALEDIR, NULL);
+#endif
+    }
+    bindtextdomain("ufraw", localedir);
+    g_free(localedir);
+    bind_textdomain_codeset("ufraw", "UTF-8");
+    textdomain("ufraw");
 }
 
 char *uf_file_set_type(const char *filename, const char *type)

@@ -15,7 +15,6 @@
 #endif
 
 #include <string.h>
-#include <ctype.h> /* needed for isspace() */
 #include <errno.h>
 #include <math.h>
 #include <sys/stat.h> /* needed for fstat() */

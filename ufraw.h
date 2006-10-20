@@ -222,6 +222,7 @@ void preview_progress(void *widget, char *text, double progress);
 
 /* prototypes for functions in ufraw_routines.c */
 const char *uf_get_home_dir();
+void uf_init_locale(const char *exename);
 char *uf_file_set_type(const char *filename, const char *type);
 char *uf_file_set_absolute(const char *filename);
 /* Set locale of LC_NUMERIC to "C" to make sure that printf behaves correctly.*/char *uf_set_locale_C();
