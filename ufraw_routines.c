@@ -362,12 +362,6 @@ int curve_save(CurveData *cp, char *filename)
         //clear it out
         memset(&data,0,sizeof(NikonData));
 
-        //check to see if we can save
-        if (cp->m_numAnchors < 2) {
-            ufraw_message(UFRAW_ERROR, _("Error saving Nikon curve file. "
-                        "Curve data is not from an NEF, NTC, or NCV file."));
-            return UFRAW_ERROR;
-        }
 	data.curves[TONE_CURVE] = *cp;
 
         if (SaveNikonDataFile(&data, filename, nikon_file_type,
@@ -376,7 +370,6 @@ int curve_save(CurveData *cp, char *filename)
                             filename);
             return UFRAW_ERROR;
         }
-//        FreeNikonData(&data);
     } else {
         /* Save UFRaw's curve format */
         FILE *out;
