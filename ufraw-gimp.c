@@ -120,7 +120,7 @@ void run(const gchar *name,
     conf_data conf;
     int status;
 
-    ufraw_binary = g_path_get_basename(gimp_get_progname);
+    ufraw_binary = g_path_get_basename(gimp_get_progname());
     uf_init_locale(gimp_get_progname());
 
     *nreturn_vals = 1;
