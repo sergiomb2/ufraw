@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.24 2006/10/18 12:24:49 lexort Exp $
+# $Id: Makefile.am,v 1.25 2006/10/21 06:48:49 nkbj Exp $
 
 SUBDIRS=po
 
@@ -96,7 +96,7 @@ ufraw_icon.opc: ufraw_icon.rc ufraw_icon.ico
 	$(POD2MAN) --section 1 --center "" --release UFRAW $< $@
 
 ufraw.schemas: generate_schemas.sh
-	$(srcdir)/$< $(prefix) $@
+	$(srcdir)/generate_schemas.sh $(prefix) $@
 
 install-user: all
 	$(INSTALL_USER)
