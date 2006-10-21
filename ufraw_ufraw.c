@@ -150,10 +150,31 @@ ufraw_data *ufraw_open(char *filename)
 	    return NULL;
 	}
 	if (conf->createID==only_id) conf->createID = also_id;
+
+	/* If inputFilename and outputFilename have the same path,
+	 * then inputFilename is searched for in the path of the ID file.
+	 * This allows moving raw and ID files together between folders. */
+	char *inPath = g_path_get_dirname(conf->inputFilename);
+	char *outPath = g_path_get_dirname(conf->outputFilename);
+	if ( strcmp(inPath, outPath)==0 ) {
+	    char *path = g_path_get_dirname(filename);
+	    char *inName = g_path_get_basename(conf->inputFilename);
+	    char *inFile = g_strconcat(path, "/", inName, NULL);
+	    if ( g_file_test(inFile, G_FILE_TEST_EXISTS) ) {
+		g_strlcpy(conf->inputFilename, inFile, max_path);
+	    }
+	    g_free(path);
+	    g_free(inName);
+	    g_free(inFile);
+	}
+	g_free(inPath);
+	g_free(outPath);
+
 	/* Output image should be created in the path of the ID file */
 	char *path = g_path_get_dirname(filename);
 	g_strlcpy(conf->outputPath, path, max_path);
 	g_free(path);
+
 	filename = conf->inputFilename;
     }
     raw = g_new(dcraw_data, 1);
