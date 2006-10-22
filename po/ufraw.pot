@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-10-21 06:49+0200\n"
+"POT-Creation-Date: 2006-10-23 00:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -625,6 +625,19 @@ msgstr ""
 msgid "About"
 msgstr ""
 
+#: ufraw_preview.c:1600
+msgid ""
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
+"to\n"
+"read and manipulate raw images from digital cameras.\n"
+"UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"for the actual encoding of the raw images.\n"
+"\n"
+"Author: Udi Fuchs\n"
+"Homepage: http://ufraw.sourceforge.net/\n"
+"\n"
+msgstr ""
+
 #: ufraw_preview.c:1857
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
@@ -1089,35 +1102,35 @@ msgstr ""
 msgid "Remote URI is not supported"
 msgstr ""
 
-#: ufraw_ufraw.c:203
+#: ufraw_ufraw.c:224
 #, c-format
 msgid "darkframe error: %s is not a raw file\n"
 msgstr ""
 
-#: ufraw_ufraw.c:213
+#: ufraw_ufraw.c:234
 #, c-format
 msgid "using darkframe '%s'\n"
 msgstr ""
 
-#: ufraw_ufraw.c:218
+#: ufraw_ufraw.c:239
 #, c-format
 msgid "error loading darkframe '%s'\n"
 msgstr ""
 
-#: ufraw_ufraw.c:329
+#: ufraw_ufraw.c:350
 msgid "Error reading NEF curve"
 msgstr ""
 
-#: ufraw_ufraw.c:392
+#: ufraw_ufraw.c:413
 msgid "Darkframe is incompatible with main image"
 msgstr ""
 
-#: ufraw_ufraw.c:512
+#: ufraw_ufraw.c:533
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr ""
 
-#: ufraw_ufraw.c:611 ufraw_ufraw.c:614
+#: ufraw_ufraw.c:632 ufraw_ufraw.c:635
 msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr ""
 

@@ -1069,7 +1069,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 
 
 char *helpText[] = {
-N_("UFRaw " VERSION " - Unidentified Flying Raw converter for digital camera images.\n"),
+N_("UFRaw "), VERSION, N_(" - Unidentified Flying Raw converter for digital camera images.\n"),
 "\n",
 N_("Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"),
 N_("       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"),

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-10-21 06:49+0200\n"
+"POT-Creation-Date: 2006-10-23 00:37+0200\n"
 "PO-Revision-Date: 2006-09-29 02:44+0400\n"
 "Last-Translator:  Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-"
 "net.by>\n"
@@ -726,6 +726,19 @@ msgstr "Преобразование текста не удалось"
 msgid "About"
 msgstr "О программе"
 
+#: ufraw_preview.c:1600
+msgid ""
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
+"to\n"
+"read and manipulate raw images from digital cameras.\n"
+"UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"for the actual encoding of the raw images.\n"
+"\n"
+"Author: Udi Fuchs\n"
+"Homepage: http://ufraw.sourceforge.net/\n"
+"\n"
+msgstr ""
+
 #: ufraw_preview.c:1857
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
@@ -1208,35 +1221,35 @@ msgstr "Перезаписать существующие файлы без по
 msgid "Remote URI is not supported"
 msgstr "Удаленный URI не поддерживается"
 
-#: ufraw_ufraw.c:203
+#: ufraw_ufraw.c:224
 #, c-format
 msgid "darkframe error: %s is not a raw file\n"
 msgstr "ошибка темного кадра: %s не является RAW файлом\n"
 
-#: ufraw_ufraw.c:213
+#: ufraw_ufraw.c:234
 #, c-format
 msgid "using darkframe '%s'\n"
 msgstr "использую темный кадр '%s'\n"
 
-#: ufraw_ufraw.c:218
+#: ufraw_ufraw.c:239
 #, c-format
 msgid "error loading darkframe '%s'\n"
 msgstr "ошибка загрузки темного кадра '%s'\n"
 
-#: ufraw_ufraw.c:329
+#: ufraw_ufraw.c:350
 msgid "Error reading NEF curve"
 msgstr "Ошибка чтения NEF кривой"
 
-#: ufraw_ufraw.c:392
+#: ufraw_ufraw.c:413
 msgid "Darkframe is incompatible with main image"
 msgstr "Темный кадр не совместим с основным изображением"
 
-#: ufraw_ufraw.c:512
+#: ufraw_ufraw.c:533
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "Не могу уменьшить размер из %d в %d."
 
-#: ufraw_ufraw.c:611 ufraw_ufraw.c:614
+#: ufraw_ufraw.c:632 ufraw_ufraw.c:635
 msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr ""
 "Не могу использовать баланс белого камеры, возвращаюсь к автоматическому "

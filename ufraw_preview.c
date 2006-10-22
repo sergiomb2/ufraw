@@ -1593,18 +1593,18 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
     label = gtk_label_new(NULL);
     gtk_label_set_markup(GTK_LABEL(label),
-            "<span size='xx-large'><b>UFRaw " VERSION "</b></span>");
+            "<span size='xx-large'><b>UFRaw " VERSION "</b></span>\n");
     gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
     label = gtk_label_new(NULL);
-    gtk_label_set_markup(GTK_LABEL(label), "\n"
+    gtk_label_set_markup(GTK_LABEL(label), _(
             "The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> "
-            "(<b>UFRaw</b>) is a utility to read\n"
-            "and manipulate raw images from digital cameras.\n"
+            "(<b>UFRaw</b>) is a utility to\n"
+            "read and manipulate raw images from digital cameras.\n"
 	    "UFRaw relies on <b>D</b>igital <b>C</b>amera "
 	    "<b>Raw</b> (<b>DCRaw</b>)\n"
 	    "for the actual encoding of the raw images.\n\n"
             "Author: Udi Fuchs\n"
-            "Homepage: http://ufraw.sourceforge.net/\n\n");
+            "Homepage: http://ufraw.sourceforge.net/\n\n"));
     gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
 
     while (1) {
