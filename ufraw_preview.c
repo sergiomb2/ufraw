@@ -1909,7 +1909,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     table = GTK_TABLE(table_with_frame(previewVBox,
 	    _(expanderText[raw_expander]), CFG->expander[raw_expander]));
     event_box = gtk_event_box_new();
-    gtk_table_attach(table, event_box, 0, 1, 1, 2, 0, 0, 0, 0);
+    gtk_table_attach(table, event_box, 0, 1, 1, 2, GTK_EXPAND, 0, 0, 0);
     pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
             raw_his_size+2, CFG->rawHistogramHeight+2);
     data->RawHisto = gtk_image_new_from_pixbuf(pixbuf);
