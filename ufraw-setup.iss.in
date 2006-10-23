@@ -30,7 +30,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Files]
 Source: "ufraw.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "ufraw-batch.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "po\da.mo"; DestDir: "{app}\lib\locale\da\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
+Source: "po\fr.mo"; DestDir: "{app}\lib\locale\fr\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\ru.mo"; DestDir: "{app}\lib\locale\ru\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\liblcms-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 @COMMENT_LIBEXIF@Source: "@DOSPREFIX@\bin\libexif-12.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
