@@ -4236,6 +4236,7 @@ int CLASS parse_tiff_ifd (int base, int level)
 	if (!strncmp(software,"Adobe",5) ||
 	    !strncmp(software,"dcraw",5) ||
 	    !strncmp(software,"Bibble",6) ||
+	    !strncmp(software,"Nikon Scan",10) ||
 	    !strcmp (software,"Digital Photo Professional"))
 	  is_raw = 0;
 	break;
