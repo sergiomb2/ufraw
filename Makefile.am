@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.25 2006/10/21 06:48:49 nkbj Exp $
+# $Id: Makefile.am,v 1.26 2006/10/25 20:16:29 udifuchs Exp $
 
 SUBDIRS=po
 
@@ -69,7 +69,7 @@ if MAKE_GIMP
 endif
 
 dcraw_nomain.o: dcraw.cc
-	$(COMPILE) -DDCRAW_NOMAIN -DNO_LCMS -o $@ -c dcraw.cc
+	$(COMPILE) -DDCRAW_NOMAIN -DNO_LCMS -o $@ -c $(srcdir)/dcraw.cc
 
 if MAKE_EXTRAS
   dcraw_SOURCES = dcraw.cc
