@@ -22,6 +22,7 @@
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
+gboolean silentMessenger;
 char *ufraw_binary;
 
 int main (int argc, char **argv)
@@ -51,6 +52,7 @@ int main (int argc, char **argv)
     int optInd = ufraw_process_args(&argc, &argv, &cmd, &rc);
     if (optInd<0) exit(1);
     if (optInd==0) exit(0);
+    silentMessenger = cmd.silent;
 
     /* Load the --conf file. version==0 means ignore conf. */
     conf.version = 0;
@@ -93,7 +95,7 @@ int main (int argc, char **argv)
 void ufraw_messenger(char *message, void *parentWindow)
 {
     parentWindow = parentWindow;
-    ufraw_batch_messenger(message);
+    if (!silentMessenger) ufraw_batch_messenger(message);
 }
 
 void preview_progress(void *widget, char *text, double progress)

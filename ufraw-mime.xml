@@ -15,6 +15,15 @@
     <expanded-acronym>Digital camera Raw</expanded-acronym>
   </mime-type>
 
+ <mime-type type="image/x-adobe-dng">
+    <sub-class-of type="image/x-dcraw"/>
+    <sub-class-of type="image/tiff"/>
+    <comment>Adobe Digital Negative</comment>
+    <acronym>DNG</acronym>
+    <expanded-acronym>Digital Negative</expanded-acronym>
+    <glob pattern="*.dng"/>
+  </mime-type>
+
   <!-- Canon has 2 format: CRW and CR2  !-->
 
   <!-- CRW is easy !-->

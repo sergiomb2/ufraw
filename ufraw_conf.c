@@ -82,6 +82,7 @@ const conf_data conf_default = {
     FALSE, /* overExp indicator */
     FALSE, /* underExp indicator */
     "", "", /* curvePath, profilePath */
+    FALSE, /* silent */
 
     /* EXIF data */
     0, /* flip */
@@ -1000,6 +1001,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 	conf->losslessCompress = cmd->losslessCompress;
     if (cmd->embedExif!=-1) conf->embedExif = cmd->embedExif;
     if (cmd->embeddedImage!=-1) conf->embeddedImage = cmd->embeddedImage;
+    if (cmd->silent!=-1) conf->silent = cmd->silent;
     if (cmd->compression!=NULLF) conf->compression = cmd->compression;
     if (cmd->autoExposure) {
 	conf->autoExposure = cmd->autoExposure;
@@ -1231,6 +1233,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{"exif", 0, 0, 'E'},
 	{"noexif", 0, 0, 'F'},
 	{"embedded-image", 0, 0, 'm'},
+	{"silent", 0, 0, 'q'},
         {"help", 0, 0, 'h'},
 	{"version", 0, 0, 'v'},
 	{"batch", 0, 0, 'b'},
@@ -1250,6 +1253,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->overwrite=-1;
     cmd->embedExif=-1;
     cmd->embeddedImage=FALSE;
+    cmd->silent=FALSE;
     cmd->profile[0][0].gamma=NULLF;
     cmd->profile[0][0].linear=NULLF;
     cmd->saturation=NULLF;
@@ -1316,6 +1320,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         case 'U': cmd->unclip = FALSE; break;
         case 'O': cmd->overwrite = TRUE; break;
 	case 'm': cmd->embeddedImage = TRUE; break;
+	case 'q': cmd->silent = TRUE; break;
         case 'z':
 #ifdef HAVE_LIBZ
             cmd->losslessCompress = TRUE; break;

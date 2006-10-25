@@ -55,10 +55,19 @@ int main (int argc, char **argv)
 
     /* Put the command-line options in cmd */
     optInd = ufraw_process_args(&argc, &argv, &cmd, &rc);
-    if (strlen(cmd.outputFilename)!=0) {
-	    ufraw_message(UFRAW_ERROR,
-		    "--output option is valid only in batch mode");
-	    optInd = -1;
+    if ( strlen(cmd.outputFilename)!=0 ) {
+	ufraw_message(UFRAW_ERROR,
+		"--output option is valid only in batch mode");
+	optInd = -1;
+    }
+    if ( cmd.silent ) {
+	ufraw_message(UFRAW_ERROR,
+		"--silent is valid only in batch mode");
+	optInd = -1;
+    }
+    if ( cmd.embeddedImage ) {
+        ufraw_message(UFRAW_ERROR, _("Extracting embedded image is not supported in interactive mode"));
+	optInd = -1;
     }
     if (optInd<0) exit(1);
     if (optInd==0) exit(0);

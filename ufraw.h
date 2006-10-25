@@ -157,6 +157,7 @@ typedef struct {
     gboolean overExp, underExp;
     char curvePath[max_path];
     char profilePath[max_path];
+    gboolean silent;
 
     /* EXIF data */
     int flip;

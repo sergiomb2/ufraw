@@ -40,7 +40,7 @@ do_mime () {
       <applyto>/desktop/gnome/thumbnailers/$MIME/command</applyto>
       <owner>ufraw</owner>
       <type>string</type>
-      <default>$PREFIX/bin/ufraw-batch --embedded-image --out-type=png --size=%s %i --overwrite --output=%o</default>
+      <default>$PREFIX/bin/ufraw-batch --embedded-image --out-type=png --size=%s %i --overwrite --silent --output=%o</default>
       <locale name="C">
         <short></short>
         <long></long>
@@ -69,6 +69,7 @@ echo "   <schemalist>" >> $SCHEMAS
 
 do_mime application@x-ufraw
 do_mime image@x-dcraw
+do_mime image@x-adobe-dng
 do_mime image@x-canon-crw
 do_mime image@x-canon-cr2
 do_mime image@x-fuji-raf
