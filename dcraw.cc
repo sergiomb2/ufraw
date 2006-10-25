@@ -4133,7 +4133,7 @@ void CLASS parse_kodak_ifd (int base)
     if (tag == 2118) wbtemp = getint(type);
     if (tag == (unsigned)(2130 + wbi))
       FORC3 mul[c] = getreal(type);
-    if (tag == (unsigned)(2140 + wbi && wbi >= 0))
+    if (tag == (unsigned)(2140 + wbi) && wbi >= 0)
       FORC3 {
 	for (num=i=0; i < 4; i++)
 	  num += getreal(type) * pow (wbtemp/100.0, i);
