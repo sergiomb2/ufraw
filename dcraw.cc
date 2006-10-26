@@ -15,15 +15,15 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.353 $
-   $Date: 2006/10/10 04:46:02 $
+   $Revision: 1.354 $
+   $Date: 2006/10/25 22:35:03 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.40"
+#define DCRAW_VERSION "8.41"
 
 //#define _GNU_SOURCE /*UF*/
 #define _USE_MATH_DEFINES
@@ -1059,27 +1059,25 @@ int CLASS nikon_e2100()
 
 void CLASS nikon_3700()
 {
-  int i, sum[] = { 0, 0 };
-  uchar tail[952];
+  int bits, i;
+  uchar dp[24];
+  static const struct {
+    int bits;
+    char make[12], model[15];
+  } table[] = {
+    { 0x00, "PENTAX",  "Optio 33WR" },
+    { 0x03, "NIKON",   "E3200" },
+    { 0x32, "NIKON",   "E3700" },
+    { 0x33, "OLYMPUS", "C740UZ" } };
 
-  fseek (ifp, -sizeof tail, SEEK_END);
-  fread (tail, 1, sizeof tail, ifp);
-  for (i=0; i < (int) sizeof tail; i++)
-    sum[(i>>2) & 1] += tail[i];
-  if (sum[0] > 4*sum[1]) return;
-  if (sum[1] > 4*sum[0]) {
-    strcpy (make, "OLYMPUS");
-    strcpy (model, "C740UZ");
-    return;
-  }
-  sum[0] = sum[1] = 0;
-  for (i=0; i < (int) sizeof tail; i++)
-    sum[i & 1] += tail[i];
-  if (sum[1] > 4*sum[0] || sum[0]+sum[1] > 216000) {
-    strcpy (make, "PENTAX");
-    strcpy (model,"Optio 33WR");
-  } else
-    strcpy (model, "E3200");
+  fseek (ifp, 3072, SEEK_SET);
+  fread (dp, 1, 24, ifp);
+  bits = (dp[8] & 3) << 4 | (dp[20] & 3);
+  for (i=0; i < (int) sizeof table / (int) sizeof *table; i++)
+    if (bits == table[i].bits) {
+      strcpy (make,  table[i].make );
+      strcpy (model, table[i].model);
+    }
 }
 
 /*
