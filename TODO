@@ -8,7 +8,6 @@ fuji sqrt(0.5) factor in size
 Canon 10D presets from ExifTool
 window size
 g_fopen - UTF-8
-Read RAW preview image
 Use bilateral filtering for noise reduction
 Show WB spot/area values in HSV (in addition to output colorspace pixels).
 Show WB spot/area values in Adam's exposure zones somehow.

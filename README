@@ -235,6 +235,26 @@ date user guide.
 History
 =======
 
+26/10/2006 - UFRaw-0.10 released, based on DCRaw v 8.41.
+* Apply luminosity curve and saturation corrections in LCH(ab) space.
+* Add the '--embedded-image' option to ufraw-batch for reading the
+  embedded preview image in raw files.
+* Use the above code in the Gimp plug-in for a much quicker generation
+  of the preview thumbnails.
+* Add mime types to recognize raw files in the Gnome desktop.
+* Add schemas to generate thumbnails for these mime types.
+* Modify the desktop entry to associate ufraw with these mime types.
+* If 'save ID' is set to 'never again' then .ufrawrc is not written
+  after each processed image.
+* Add a 'Cancel' button to the 'Options' window.
+* Fix compatibility issues with GTK+ 2.10.
+* When handling ID files save output image in same directory as ID file.
+* If input and output filenames in the ID file have the same path,
+  then input filename is searched for in the path of the ID file.
+  This allows moving raw and ID files together between folders. 
+* Add translations to French and Russian.
+* Some bug corrections.
+
 12/08/2006 - UFRaw-0.9.1 released, based on DCRaw v8.29.
 * Recognize Sony's *.arw file type.
 * Redirect exiv2 warnings from the terminal to the log.
