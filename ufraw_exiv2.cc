@@ -24,6 +24,11 @@ extern "C" {
 #include "ufraw.h"
 }
 
+// Exiv2 versions before 0.10 didn't have this file and the macros
+#ifndef EXIV2_CHECK_VERSION
+#define EXIV2_CHECK_VERSION(a,b,c) (false)
+#endif
+
 extern "C" int ufraw_exif_from_exiv2(ufraw_data *uf)
 {
     /* Redirect exiv2 errors to a string buffer */
@@ -108,8 +113,11 @@ try {
 	std::stringstream str;
        	str << *pos;
 	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
-    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.CanonCs2.ISOSpeed")))
-	    != exifData.end() ) {
+    } else if ( (pos=exifData.findKey(Exiv2::ExifKey(
+		    // Group name changed in exiv2-0.11
+		    EXIV2_CHECK_VERSION(0,11,0) ?
+			"Exif.CanonSi.ISOSpeed" :
+			"Exif.CanonCs2.ISOSpeed"))) != exifData.end() ) {
 	std::stringstream str;
        	str << *pos;
 	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
