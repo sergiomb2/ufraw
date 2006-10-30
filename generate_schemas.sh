@@ -74,6 +74,8 @@ do_mime image@x-canon-crw
 do_mime image@x-canon-cr2
 do_mime image@x-fuji-raf
 do_mime image@x-kodak-dcr
+do_mime image@x-kodak-k25
+do_mime image@x-kodak-kdc
 do_mime image@x-minolta-mrw
 do_mime image@x-nikon-nef
 do_mime image@x-olympus-orf

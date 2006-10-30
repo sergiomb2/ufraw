@@ -15,7 +15,7 @@
     <expanded-acronym>Digital camera Raw</expanded-acronym>
   </mime-type>
 
- <mime-type type="image/x-adobe-dng">
+  <mime-type type="image/x-adobe-dng">
     <sub-class-of type="image/x-dcraw"/>
     <sub-class-of type="image/tiff"/>
     <comment>Adobe Digital Negative</comment>
@@ -32,7 +32,7 @@
     <comment>Canon raw image</comment>
     <acronym>CRW</acronym>
     <expanded-acronym>Canon RaW</expanded-acronym>
-    <magic priority="60">
+    <magic priority="50">
       <match value="II\x1a\x00\x00\x00HEAPCCDR" type="string" offset="0"/>
     </magic>
     <glob pattern="*.crw"/>
@@ -53,10 +53,13 @@
     <comment>Fuji raw image</comment>
     <acronym>RAF</acronym>
     <expanded-acronym>RAw Format</expanded-acronym>
+    <magic priority="50">
+      <match value="FUJIFILMCCD-RAW " type="string" offset="0"/>
+    </magic>
     <glob pattern="*.raf"/>
   </mime-type>
 
- <mime-type type="image/x-kodak-dcr">
+  <mime-type type="image/x-kodak-dcr">
     <sub-class-of type="image/x-dcraw"/>
     <sub-class-of type="image/tiff"/>
     <comment>Kodak raw image</comment>
@@ -65,7 +68,16 @@
     <glob pattern="*.dcr"/>
   </mime-type>
 
- <mime-type type="image/x-kodak-kdc">
+  <mime-type type="image/x-kodak-k25">
+    <sub-class-of type="image/x-dcraw"/>
+    <sub-class-of type="image/tiff"/>
+    <comment>Kodak raw image</comment>
+    <acronym>K25</acronym>
+    <expanded-acronym>Kodak DC25</expanded-acronym>
+    <glob pattern="*.k25"/>
+  </mime-type>
+
+  <mime-type type="image/x-kodak-kdc">
     <sub-class-of type="image/x-dcraw"/>
     <sub-class-of type="image/tiff"/>
     <comment>Kodak raw image</comment>
