@@ -2080,7 +2080,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     event_box = gtk_event_box_new();
     gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(data->WBCombo));
     gtk_tooltips_set_tip(data->ToolTips, event_box, _("White Balance"), NULL);
-    gtk_table_attach(subTable, event_box, 0, 6, 0, 1, GTK_FILL, 0, 0, 0);
+    if ( make_model_fine_tuning || !make_model_match)
+	gtk_table_attach(subTable, event_box, 0, 6, 0, 1, GTK_FILL, 0, 0, 0);
+    else
+	gtk_table_attach(subTable, event_box, 0, 7, 0, 1, GTK_FILL, 0, 0, 0);
 
     data->WBTuningAdjustment = NULL;
     if (make_model_fine_tuning) {
