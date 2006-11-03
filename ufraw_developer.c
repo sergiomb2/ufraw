@@ -139,7 +139,7 @@ cmsHPROFILE create_saturation_profile(double saturation)
 }
 
 void developer_prepare(developer_data *d, int rgbMax, double exposure,
-	int unclip, 
+	int unclip,
 	double chanMul[4], float rgb_cam[3][4], int colors, int useMatrix,
 	profile_data *in, profile_data *out, int intent,
         double saturation, CurveData *baseCurve, CurveData *curve)
@@ -161,8 +161,6 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
      * exceed 0xFFFF */
     for (c=0; c<d->colors; c++) d->rgbWB[c] = chanMul[c] * d->max
 	    * 0xFFFF / d->rgbMax;
-    /* rgbNorm is used in the unclipping algorithm */
-    for (c=0; c<d->colors; c++) d->rgbNorm[c] = chanMul[c] * d->exposure;
 
     if (d->useMatrix)
 	for (i=0; i<3; i++)
@@ -186,7 +184,7 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
 	 * d->linear also changes the real gamma used for the curve (g) in
 	 * a way that keeps the derivative at i=0x10000 constant.
 	 * This way changing the linearity changes the curve behaviour in
-	 * the shadows, but has a minimal effect on the rest of the range. */ 
+	 * the shadows, but has a minimal effect on the rest of the range. */
         if (d->linear<1.0) {
             g = d->gamma*(1.0-d->linear)/(1.0-d->gamma*d->linear);
             a = 1.0/(1.0+d->linear*(g-1));
@@ -278,81 +276,119 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
     }
 }
 
+void MaxMidMin(gint64 p[3], int *maxc, int *midc, int *minc)
+{
+    if (p[0] > p[1] && p[0] > p[2]) {
+        *maxc = 0;
+        if (p[1] > p[2]) { *midc = 1; *minc = 2; }
+        else { *midc = 2; *minc = 1; }
+    } else if (p[1] > p[2]) {
+        *maxc = 1;
+        if (p[0] > p[2]) { *midc = 0; *minc = 2; }
+        else { *midc = 2; *minc = 0; }
+    } else {
+        *maxc = 2;
+        if (p[0] > p[1]) { *midc = 0; *minc = 1; }
+        else { *midc = 1; *minc = 0; }
+    }
+}
+
 inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     guint16 *buf, int count)
 {
     guint8 *p8 = po;
     guint16 *p16 = po, c, cc;
     gint64 tmp, tmppix[4];
-    guint min; // max;
     int i;
     gboolean clipped;
-
     for (i=0; i<count; i++) {
 	clipped = FALSE;
-//	max = 0;
 	for (c=0; c<d->colors; c++) {
 	    tmppix[c] = (guint64)pix[i*4+c] * d->rgbWB[c] / 0x10000;
-	    if (tmppix[c] > d->max) {
-		if (d->unclip) {
+	    if (d->unclip) {
+		/* We start unclipping early, to soften the trasition
+		 * between clipped and unclipped pixels. */
+		if (tmppix[c] > d->max * d->exposure / 0x10000)
 		    clipped = TRUE;
-		} else {
-		    tmppix[c] = d->max;
-		}
+	    } else {
+		tmppix[c] = MIN(tmppix[c], d->max);
 	    }
 	    tmppix[c] = tmppix[c] * d->exposure / d->max;
-//	    if (tmppix[c] > max) max = tmppix[c];
 	}
-	if (clipped) {
-//	    max = 0;
-	    for (c=0; c<d->colors; c++) {
-		if (tmppix[c] > d->exposure) {
-		    /* This channel requires unclipping.
-		     * If another channel is saturated, then this channel can
-		     * not have a value larger than the saturated channel
-		     * rgbWB[]. Therefore, if the clipped value is larger
-		     * than rgbWB[] we do a linear interpolation to make sure
-		     * that the clipping process is continuous. */
-		    min = tmppix[c];
-		    const int unclip_strength = 1;
-		    for (cc=0; cc<d->colors; cc++) {
-			if (tmppix[c] > d->rgbNorm[cc]) {
-			    tmp = d->rgbNorm[cc] + (tmppix[c]-d->rgbNorm[cc]) *
-				MIN(unclip_strength * (d->rgbMax-
-					MIN(pix[i*4+cc],d->rgbMax)),d->rgbMax)
-				/ d->rgbMax;
-			    if (tmp<min) min = tmp;
-			}
-		    }
-		    tmppix[c] = min;
+	if ( clipped ) {
+	    gint64 unclippedPix[3], clippedPix[3];
+	    if ( d->useMatrix ) {
+		for (cc=0; cc<3; cc++) {
+		    for (c=0, tmp=0; c<d->colors; c++)
+			tmp += tmppix[c] * d->colorMatrix[cc][c];
+		    unclippedPix[cc] = MAX(tmp / 0x10000, 0);
 		}
-//		if (tmppix[c] > max) max = tmppix[c];
+	    } else {
+		for (c=0; c<3; c++) unclippedPix[c] = tmppix[c];
 	    }
-	}
-//	if (max>0xFFFF) { /* We need to restore color */
-//	    
-//	    for (c=0; c<d->colors; c++) {
-//		tmppix[c] = tmppix[c] * ( (max-0xFFFF)*tmppix[c]+(gint64)0xFFFF*0xFFFF )
-//		    / max / 0xFFFF;
-////		tmppix[c] = tmppix[c] * ( (max-0xFFFF)*tmppix[c]+(gint64)0xFFFF*d->rgbWB[c] )
-////		    / max / d->rgbWB[c] * 0xFFFF / d->rgbWB[c];
-//	    }
-//	}
-	if (d->useMatrix) {
-	    for (cc=0; cc<3; cc++) {
-		for (c=0, tmp=0; c<d->colors; c++)
-		    tmp += tmppix[c] * d->colorMatrix[cc][c];
-		tmp /= 0x10000;
-		buf[i*3+cc] = d->gammaCurve[MIN(MAX(tmp, 0), 0xFFFF)];
+	    for (c=0; c<3; c++) tmppix[c] = MIN(tmppix[c], d->exposure);
+	    if ( d->useMatrix ) {
+		for (cc=0; cc<3; cc++) {
+		    for (c=0, tmp=0; c<d->colors; c++)
+			tmp += tmppix[c] * d->colorMatrix[cc][c];
+		    clippedPix[cc] = MAX(tmp/0x10000, 0);
+		}
+	    } else {
+		for (c=0; c<3; c++) clippedPix[c] = tmppix[c];
 	    }
-	} else {
+	    int maxc, midc, minc;
+	    MaxMidMin(unclippedPix, &maxc, &midc, &minc);
+	    gint64 unclippedLum = unclippedPix[maxc];
+	    gint64 clippedLum = clippedPix[maxc];
+	    gint64 unclippedSat = 0x10000 -
+		    unclippedPix[minc] * 0x10000 / unclippedPix[maxc];
+	    gint64 clippedSat = 0x10000 -
+		    clippedPix[minc] * 0x10000 / clippedPix[maxc];
+	    gint64 clippedHue;
+	    if ( clippedPix[maxc]==clippedPix[minc] ) clippedHue = 0;
+	    else clippedHue =
+		    (clippedPix[midc]-clippedPix[minc])*0x10000 /
+		    (clippedPix[maxc]-clippedPix[minc]);
+	    gint64 unclippedHue;
+	    if ( unclippedPix[maxc]==unclippedPix[minc] )
+		unclippedHue = clippedHue;
+	    else
+		unclippedHue =
+		    (unclippedPix[midc]-unclippedPix[minc])*0x10000 /
+		    (unclippedPix[maxc]-unclippedPix[minc]);
+	    /* Here we decide how to mix the clipped and unclipped values.
+	     * The general equation is clipped + (unclipped - clipped) * x,
+	     * where x is between 0 and 1. */
+	    /* For lum we set x=1/2. This way hightlights are not too bright. */
+	    gint64 lum = clippedLum + (unclippedLum - clippedLum) / 2;
+	    /* For sat we should set x=0 to prevent color artifacts.
+	     * Instead we set x=1/3 to soften the transitions a bit. */
+	    gint64 sat = clippedSat + (unclippedSat - clippedSat) / 3;
+	    /* For hue we set x=1. This doesn't seem to have much effect. */
+	    gint64 hue = unclippedHue;
+
+	    tmppix[maxc] = lum;
+	    tmppix[minc] = lum * (0x10000-sat) / 0x10000;
+	    tmppix[midc] = lum * (0x10000-sat + sat*hue/0x10000) / 0x10000;
 	    for (c=0; c<3; c++)
 		buf[i*3+c] = d->gammaCurve[MIN(tmppix[c], 0xFFFF)];
+	} else {
+	    if (d->useMatrix) {
+		for (cc=0; cc<3; cc++) {
+		    for (c=0, tmp=0; c<d->colors; c++)
+			tmp += tmppix[c] * d->colorMatrix[cc][c];
+		    tmp /= 0x10000;
+		    buf[i*3+cc] = d->gammaCurve[MIN(MAX(tmp, 0), 0xFFFF)];
+		}
+	    } else {
+		for (c=0; c<3; c++)
+		    buf[i*3+c] = d->gammaCurve[MIN(tmppix[c], 0xFFFF)];
+	    }
 	}
     }
     if (d->colorTransform!=NULL)
         cmsDoTransform(d->colorTransform, buf, buf, count);
- 
+
     if (mode==16) for (i=0; i<3*count; i++) p16[i] = buf[i];
     else for (i=0; i<3*count; i++) p8[i] = buf[i] >> 8;
 }

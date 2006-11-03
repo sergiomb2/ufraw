@@ -577,9 +577,13 @@ gboolean render_raw_histogram(preview_data *data)
     for (x=0; x<raw_his_size; x++) {
 	/* draw the raw histogram */
         for (c=0, y0=0; c<colors; c++) {
+	    /* Prepare pen color, which is not effected by exposure */
 	    for (cl=0; cl<colors; cl++) p16[cl] = 0;
-	    p16[c] = data->UF->rgbMax;
+	    int saveExposure = Developer->exposure;
+	    Developer->exposure = 0x10000;
+	    p16[c] = Developer->max * 0x10000 / Developer->rgbWB[c]; 
             develope(pen, p16, Developer, 8, pixtmp, 1);
+	    Developer->exposure = saveExposure;
 	    for (y=0; y<raw_his[x][c]*CFG->rawHistogramHeight/raw_his_max; y++)
 		for (cl=0; cl<3; cl++)
 		    pixies[(CFG->rawHistogramHeight-y-y0)*rowstride
@@ -588,9 +592,13 @@ gboolean render_raw_histogram(preview_data *data)
 	}
 	/* draw curves on the raw histogram */
         for (c=0; c<colors; c++) {
+	    /* Prepare pen color, which is not effected by exposure */
 	    for (cl=0; cl<colors; cl++) p16[cl] = 0;
-	    p16[c] = data->UF->rgbMax;
+	    int saveExposure = Developer->exposure;
+	    Developer->exposure = 0x10000;
+	    p16[c] = Developer->max * 0x10000 / Developer->rgbWB[c]; 
             develope(pen, p16, Developer, 8, pixtmp, 1);
+	    Developer->exposure = saveExposure;
             /* Value for pixel x of color c in a grey pixel */
             for (cl=0; cl<colors; cl++)
                 p16[cl] = MIN((guint64)x*Developer->rgbMax *
