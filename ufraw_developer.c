@@ -276,6 +276,74 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
     }
 }
 
+extern const double xyz_rgb[3][3];
+//const double xyz_rgb[3][3] = {                  /* XYZ from RGB */
+//  { 0.412453, 0.357580, 0.180423 },
+//  { 0.212671, 0.715160, 0.072169 },
+//  { 0.019334, 0.119193, 0.950227 } };
+const double rgb_xyz[3][3] = {			/* RGB from XYZ */
+    { 3.24048, -1.53715, -0.498536 },
+    { -0.969255, 1.87599, 0.0415559 },
+    { 0.0556466, -0.204041, 1.05731 } };
+
+void rgb_to_cielch(gint64 rgb[3], float lch[3])
+{
+    int c, cc, i;
+    float r, xyz[3], lab[3];
+    static gboolean firstRun = TRUE;
+    static float cbrt[0x10000];
+
+    if (firstRun) {
+	for (i=0; i < 0x10000; i++) {
+	    r = i / 65535.0;
+	cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
+	}
+	firstRun = FALSE;
+    } else {
+	xyz[0] = xyz[1] = xyz[2] = 0.5;
+	for (c=0; c<3; c++)
+	    for (cc=0; cc<3; cc++)
+		xyz[cc] += xyz_rgb[cc][c] * rgb[c];
+	for (c=0; c<3; c++)
+	    xyz[c] = cbrt[MAX(MIN((int)xyz[c], 0xFFFF), 0)];
+	lab[0] = 116 * xyz[1] - 16;
+	lab[1] = 500 * (xyz[0] - xyz[1]);
+	lab[2] = 200 * (xyz[1] - xyz[2]);
+
+	lch[0] = lab[0];
+	lch[1] = sqrt(lab[1]*lab[1]+lab[2]*lab[2]);
+	lch[2] = atan2(lab[2], lab[1]);
+    }
+}
+
+void cielch_to_rgb(float lch[3], gint64 rgb[3])
+{
+    int c, cc;
+    float xyz[3], fx, fy, fz, xr, yr, zr, kappa, epsilon, tmpf, lab[3];
+    epsilon = 0.008856; kappa = 903.3;
+    lab[0] = lch[0];
+    lab[1] = lch[1] * cos(lch[2]);
+    lab[2] = lch[1] * sin(lch[2]);
+    yr = (lab[0]<=kappa*epsilon) ? 
+	(lab[0]/kappa) : (pow((lab[0]+16.0)/116.0, 3.0));
+    fy = (yr<=epsilon) ? ((kappa*yr+16.0)/116.0) : ((lab[0]+16.0)/116.0);
+    fz = fy - lab[2]/200.0;
+    fx = lab[1]/500.0 + fy;
+    zr = (pow(fz, 3.0)<=epsilon) ? ((116.0*fz-16.0)/kappa) : (pow(fz, 3.0));
+    xr = (pow(fx, 3.0)<=epsilon) ? ((116.0*fx-16.0)/kappa) : (pow(fx, 3.0));
+
+    xyz[0] = xr*65535.0 - 0.5;
+    xyz[1] = yr*65535.0 - 0.5;
+    xyz[2] = zr*65535.0 - 0.5;
+
+    for (c=0; c<3; c++) {
+	tmpf = 0;
+	for (cc=0; cc<3; cc++)
+	    tmpf += rgb_xyz[c][cc] * xyz[cc];
+	rgb[c] = MAX(tmpf, 0);
+    }
+}
+
 void MaxMidMin(gint64 p[3], int *maxc, int *midc, int *minc)
 {
     if (p[0] > p[1] && p[0] > p[2]) {
@@ -306,9 +374,7 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 	for (c=0; c<d->colors; c++) {
 	    tmppix[c] = (guint64)pix[i*4+c] * d->rgbWB[c] / 0x10000;
 	    if (d->unclip) {
-		/* We start unclipping early, to soften the trasition
-		 * between clipped and unclipped pixels. */
-		if (tmppix[c] > d->max * d->exposure / 0x10000)
+		if (tmppix[c] > d->max / 0x10000)
 		    clipped = TRUE;
 	    } else {
 		tmppix[c] = MIN(tmppix[c], d->max);
@@ -336,6 +402,15 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 	    } else {
 		for (c=0; c<3; c++) clippedPix[c] = tmppix[c];
 	    }
+#ifdef LCH_BLENDING
+	    float lch[3], clippedLch[3], unclippedLch[3];
+	    rgb_to_cielch(unclippedPix, unclippedLch);
+	    rgb_to_cielch(clippedPix, clippedLch);
+	    lch[0] = clippedLch[0] + (unclippedLch[0]-clippedLch[0]) * 2/2;
+	    lch[1] = clippedLch[1];
+	    lch[2] = clippedLch[2];
+	    cielch_to_rgb(lch, tmppix);
+#else
 	    int maxc, midc, minc;
 	    MaxMidMin(unclippedPix, &maxc, &midc, &minc);
 	    gint64 unclippedLum = unclippedPix[maxc];
@@ -360,16 +435,16 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 	     * The general equation is clipped + (unclipped - clipped) * x,
 	     * where x is between 0 and 1. */
 	    /* For lum we set x=1/2. This way hightlights are not too bright. */
-	    gint64 lum = clippedLum + (unclippedLum - clippedLum) / 2;
-	    /* For sat we should set x=0 to prevent color artifacts.
-	     * Instead we set x=1/3 to soften the transitions a bit. */
-	    gint64 sat = clippedSat + (unclippedSat - clippedSat) / 3;
+	    gint64 lum = clippedLum + (unclippedLum - clippedLum) * 1/2;
+	    /* For sat we should set x=0 to prevent color artifacts. */
+	    gint64 sat = clippedSat + (unclippedSat - clippedSat) * 0/1 ;
 	    /* For hue we set x=1. This doesn't seem to have much effect. */
 	    gint64 hue = unclippedHue;
 
 	    tmppix[maxc] = lum;
 	    tmppix[minc] = lum * (0x10000-sat) / 0x10000;
 	    tmppix[midc] = lum * (0x10000-sat + sat*hue/0x10000) / 0x10000;
+#endif /*LCH_BLENDING*/
 	    for (c=0; c<3; c++)
 		buf[i*3+c] = d->gammaCurve[MIN(tmppix[c], 0xFFFF)];
 	} else {
