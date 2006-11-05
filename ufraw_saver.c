@@ -158,7 +158,11 @@ long ufraw_saver(void *widget, gpointer user_data)
 	data->width = uf->predictedWidth / uf->conf->shrink;
 	data->shrink = uf->conf->shrink;
     }
-    filename = uf_file_set_type(uf->filename, file_type[uf->conf->type]);
+    if ( strlen(uf->conf->outputFilename)>0 )
+	filename = uf_file_set_type(uf->conf->outputFilename,
+		file_type[uf->conf->type]);
+    else
+	filename = uf_file_set_type(uf->filename, file_type[uf->conf->type]);
     if (strlen(uf->conf->outputPath)>0) {
 	char *cp = g_path_get_basename(filename);
 	g_free(filename);
@@ -167,6 +171,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     }
     absFilename = uf_file_set_absolute(filename);
     if (widget==NULL) {
+	/* Function was only called to collect data. */
 	char *utf8 = g_filename_to_utf8(absFilename, -1, NULL, NULL, NULL);
 	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
 	char *text = g_strdup_printf(_("Filename: %s\nSize: %d x %d%s"),

@@ -258,6 +258,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	    conf_data tmp = *rc;
 	    conf_copy_image(&tmp, uf->conf);
 	    conf_copy_save(&tmp, uf->conf);
+	    g_strlcpy(tmp.outputFilename, uf->conf->outputFilename, max_path);
 	    g_strlcpy(tmp.outputPath, uf->conf->outputPath, max_path);
 	    *uf->conf = tmp;
 	} else {
