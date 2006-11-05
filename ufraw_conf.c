@@ -1136,6 +1136,7 @@ N_("--out-path=PATH       PATH for output file (default use input file's path).\
 N_("--output=FILE         Output file name, use '-' to output to stdout.\n"),
 N_("--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"),
 N_("--overwrite           Overwrite existing files without asking (default no).\n"),
+N_("--silent              Do not display any messages during batch conversion.\n"),
 "\n",
 N_("UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified it setting are read. Next, the setting from\n"
