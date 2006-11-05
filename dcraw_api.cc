@@ -58,7 +58,6 @@ int dcraw_open(dcraw_data *h,char *filename)
     d->lastStatus = DCRAW_SUCCESS;
     d->verbose = 1;
     d->ifname = g_strdup(filename);
-//    use_secondary = 0; /* for Fuji Super CCD SR */
     if (setjmp(d->failure)) {
         d->dcraw_message(DCRAW_ERROR, "Fatal internal error\n");
         h->message = d->messageBuffer;

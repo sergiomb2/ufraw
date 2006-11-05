@@ -42,7 +42,7 @@ float bright, user_mul[4], sigma_d, sigma_r;
 int four_color_rgb, document_mode, highlight;
 int verbose, use_auto_wb, use_camera_wb;
 int output_color, output_bps, output_tiff;
-int fuji_layout, fuji_secondary, use_secondary;
+int fuji_layout, fuji_secondary, shot_select;
 float cam_mul[4], pre_mul[4], rgb_cam[3][4];	/* RGB from camera color */
 int histogram[4][0x2000];
 void (DCRaw::*write_thumb)(FILE *), (DCRaw::*write_fun)(FILE *);
@@ -125,6 +125,7 @@ void phase_one_load_raw();
 unsigned ph1_bits (int nbits);
 void phase_one_load_raw_c();
 void leaf_hdr_load_raw();
+void sinar_4shot_load_raw();
 void imacon_full_load_raw();
 void packed_12_load_raw();
 void unpacked_load_raw();
