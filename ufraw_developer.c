@@ -415,10 +415,18 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 	    MaxMidMin(unclippedPix, &maxc, &midc, &minc);
 	    gint64 unclippedLum = unclippedPix[maxc];
 	    gint64 clippedLum = clippedPix[maxc];
-	    gint64 unclippedSat = 0x10000 -
-		    unclippedPix[minc] * 0x10000 / unclippedPix[maxc];
-	    gint64 clippedSat = 0x10000 -
-		    clippedPix[minc] * 0x10000 / clippedPix[maxc];
+	    gint64 unclippedSat;
+	    if ( unclippedPix[maxc]==0 )
+		unclippedSat = 0;
+	    else
+		unclippedSat = 0x10000 -
+			unclippedPix[minc] * 0x10000 / unclippedPix[maxc];
+	    gint64 clippedSat;
+	    if ( clippedPix[maxc]<clippedPix[minc] || clippedPix[maxc]==0 )
+		clippedSat = 0;
+	    else
+		clippedSat = 0x10000 -
+			clippedPix[minc] * 0x10000 / clippedPix[maxc];
 	    gint64 clippedHue;
 	    if ( clippedPix[maxc]==clippedPix[minc] ) clippedHue = 0;
 	    else clippedHue =
