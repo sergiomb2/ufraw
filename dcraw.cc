@@ -94,7 +94,6 @@ const float d65_white[3] = { 0.950456, 1, 1.088754 };
 #define DCRAW_VERBOSE 4
 
 #define CLASS DCRaw::
-#define fgetc getc_unlocked
 
 CLASS DCRaw()
 {
