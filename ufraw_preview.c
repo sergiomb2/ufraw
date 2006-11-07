@@ -2771,6 +2771,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     if ( status==GTK_RESPONSE_OK ) {
 	if ( CFG->saveConfiguration==enabled_state ) {
+	    /* Save configuration from CFG, but not the output filename. */
+	    strcpy(CFG->outputFilename, "");
 	    conf_save(CFG, NULL, NULL);
 	/* If save 'only this once' was chosen, then so be it */
 	} else if ( CFG->saveConfiguration==apply_state ) {
