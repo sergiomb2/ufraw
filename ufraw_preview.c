@@ -2771,6 +2771,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     if ( status==GTK_RESPONSE_OK ) {
 	if ( CFG->saveConfiguration==enabled_state ) {
+	    /* Keep output path in saved configuration. */
+	    char *cp = g_path_get_dirname(CFG->outputFilename);
+	    strcpy(CFG->outputPath, cp);
+	    g_free(cp);
 	    /* Save configuration from CFG, but not the output filename. */
 	    strcpy(CFG->outputFilename, "");
 	    conf_save(CFG, NULL, NULL);
