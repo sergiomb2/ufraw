@@ -1215,7 +1215,7 @@ const wb_data wb_preset[] = {
 
   { "Panasonic", "DMC-FZ50", N_("Daylight"), 0, { 2.095057, 1, 1.642586, 0 } },
   { "Panasonic", "DMC-FZ50", N_("Cloudy"), 0,	{ 2.319392, 1, 1.482890, 0 } },
-  { "Panasonic", "DMC-FZ50", N_("Shade"), 0, { 2.463878 1, 1.414449, 0 } },
+  { "Panasonic", "DMC-FZ50", N_("Shade"), 0, { 2.463878, 1, 1.414449, 0 } },
   { "Panasonic", "DMC-FZ50", N_("Fluorescent"), 0, { 1.365019, 1, 2.311787, 0 } },
   { "Panasonic", "DMC-FZ50", N_("Flash"), 0,	{ 2.338403, 1, 1.338403, 0 } },
 
