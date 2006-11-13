@@ -483,14 +483,8 @@ int ufraw_convert_image(ufraw_data *uf)
     int shrink = 1;
 
 //    preview_progress(uf->widget, "Loading image", 0.1);
-    developer_prepare(uf->developer, uf->rgbMax,
-	    pow(2,uf->conf->exposure), uf->conf->unclip,
-	    uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
-	    &uf->conf->profile[0][uf->conf->profileIndex[0]],
-	    &uf->conf->profile[1][uf->conf->profileIndex[1]], uf->conf->intent,
-	    uf->conf->saturation,
-	    &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
-	    &uf->conf->curve[uf->conf->curveIndex]);
+    developer_prepare(uf->developer, uf->conf,
+	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, FALSE);
     /* We can do a simple interpolation in the following cases:
      * We shrink by an integer value.
      * If there is a ymag (D1X) shrink must be at least 4.
@@ -781,15 +775,9 @@ void ufraw_auto_expose(ufraw_data *uf)
     if (uf->conf->autoExposure!=apply_state) return;
 
     /* Reset the exposure and luminosityCurve */
-    developer_prepare(uf->developer, uf->rgbMax,
-	    pow(2,0) /*exposure*/, uf->conf->unclip,
-	    uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
-	    &uf->conf->profile[0][uf->conf->profileIndex[0]],
-	    &uf->conf->profile[1][uf->conf->profileIndex[1]],
-	    uf->conf->intent,
-	    uf->conf->saturation,
-	    &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
-	    NULL /*luminosityCurve*/);
+    uf->conf->exposure = 0;
+    developer_prepare(uf->developer, uf->conf,
+	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, TRUE);
     /* Find the grey value that gives 99% luminosity */
     double maxChan = 0;
     for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
@@ -824,15 +812,8 @@ void ufraw_auto_black(ufraw_data *uf)
     if (uf->conf->autoBlack==disabled_state) return;
 
     /* Reset the luminosityCurve */
-    developer_prepare(uf->developer, uf->rgbMax,
-	    pow(2,uf->conf->exposure), uf->conf->unclip,
-	    uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
-	    &uf->conf->profile[0][uf->conf->profileIndex[0]],
-	    &uf->conf->profile[1][uf->conf->profileIndex[1]],
-	    uf->conf->intent,
-	    uf->conf->saturation,
-	    &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
-	    NULL /*luminosityCurve*/);
+    developer_prepare(uf->developer, uf->conf,
+	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, TRUE);
     /* Calculate the black point */
     ufraw_build_raw_luminosity_histogram(uf);
     stop = uf->RawLumCount/256/4;
@@ -866,15 +847,8 @@ void ufraw_auto_curve(ufraw_data *uf)
     double norm = (1-pow(decay,steps))/(1-decay);
 
     CurveDataReset(curve);
-    developer_prepare(uf->developer, uf->rgbMax,
-	    pow(2,uf->conf->exposure), uf->conf->unclip,
-	    uf->conf->chanMul, uf->rgb_cam, uf->colors, uf->useMatrix,
-	    &uf->conf->profile[0][uf->conf->profileIndex[0]],
-	    &uf->conf->profile[1][uf->conf->profileIndex[1]],
-	    uf->conf->intent,
-	    uf->conf->saturation,
-	    &uf->conf->BaseCurve[uf->conf->BaseCurveIndex],
-	    NULL /*luminosityCurve*/);
+    developer_prepare(uf->developer, uf->conf,
+	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, TRUE);
     /* Calculate curve points */
     ufraw_build_raw_luminosity_histogram(uf);
     stop = uf->RawLumCount/256/4;

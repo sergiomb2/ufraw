@@ -1086,6 +1086,25 @@ void CurveDataReset(CurveData *curve)
 }
 
 /*********************************************
+CurveDataIsTrivial:
+    Check if the curve is a trivial linear curve.
+**********************************************/
+int CurveDataIsTrivial(CurveData *curve)
+{
+    if ( curve->m_min_x != 0 ) return FALSE;
+    if ( curve->m_max_x != 1 ) return FALSE;
+    if ( curve->m_min_y != 0 ) return FALSE;
+    if ( curve->m_max_y != 1 ) return FALSE;
+    if ( curve->m_numAnchors < 2 ) return TRUE;
+    if ( curve->m_numAnchors != 2 ) return FALSE;
+    if ( curve->m_anchors[0].x != 0 ) return FALSE;
+    if ( curve->m_anchors[0].y != 0 ) return FALSE;
+    if ( curve->m_anchors[1].x != 1 ) return FALSE;
+    if ( curve->m_anchors[1].y != 1 ) return FALSE;
+    return TRUE;
+}
+
+/*********************************************
 CurveDataSetPoint:
    Change the position of point to the new (x,y) coordinate.
    The end-points get a special treatment. When these are moved all the

@@ -138,47 +138,90 @@ cmsHPROFILE create_saturation_profile(double saturation)
     return hICC;
 }
 
-void developer_prepare(developer_data *d, int rgbMax, double exposure,
-	int unclip,
-	double chanMul[4], float rgb_cam[3][4], int colors, int useMatrix,
-	profile_data *in, profile_data *out, int intent,
-        double saturation, CurveData *baseCurve, CurveData *curve)
+/* Find a for which (1-exp(-a x)/(1-exp(-a)) has derivative b at x=0 */
+/* In other words, solve a/(1-exp(-a))==b */
+double findExpCoeff(double b)
+{
+    double a, bg;
+    int try;
+    if (b<=1) return 0;
+    if (b<2) a=(b-1)/2; else a=b;
+    bg = a/(1-exp(-a));
+    /* The limit on try is just to be sure there is no infinite loop. */
+    for (try=0; abs(bg-b)>0.001 || try<100; try++) {
+	a = a + (b-bg);
+	bg = a/(1-exp(-a));
+    }
+    return a;
+}
+void developer_prepare(developer_data *d, conf_data *conf,
+    int rgbMax, float rgb_cam[3][4], int colors, int useMatrix,
+    gboolean autoTools)
 {
     unsigned c, i;
+    profile_data *in, *out;
+    CurveData *baseCurve, *curve;
+
+    in = &conf->profile[in_profile][conf->profileIndex[in_profile]];
+    out = &conf->profile[out_profile][conf->profileIndex[out_profile]];
+    baseCurve = &conf->BaseCurve[conf->BaseCurveIndex];
+    curve = &conf->curve[conf->curveIndex];
+    if (autoTools) curve = NULL;
 
     d->rgbMax = rgbMax;
     d->colors = colors;
     d->useMatrix = useMatrix;
-    d->unclip = unclip;
-    if (exposure>=1.0) d->unclip = FALSE;
-    d->exposure = exposure * 0x10000;
 
     double max = 0;
-    for (c=0; c<d->colors; c++) max = MAX(max, chanMul[c]);
+    /* We assume that min(conf->chanMul[c])==1.0 */
+    for (c=0; c<d->colors; c++) max = MAX(max, conf->chanMul[c]);
     d->max = 0x10000 / max;
     /* rgbWB is used in dcraw_finalized_interpolation() before the Bayer
      * Interpolation. It is normalized to guaranty that values do not
      * exceed 0xFFFF */
-    for (c=0; c<d->colors; c++) d->rgbWB[c] = chanMul[c] * d->max
+    for (c=0; c<d->colors; c++) d->rgbWB[c] = conf->chanMul[c] * d->max
 	    * 0xFFFF / d->rgbMax;
 
     if (d->useMatrix)
 	for (i=0; i<3; i++)
 	    for (c=0; c<d->colors; c++)
 		d->colorMatrix[i][c] = rgb_cam[i][c]*0x10000;
-    /* Check if base curve data has changed. */
-    if (in->gamma!=d->gamma || in->linear!=d->linear ||
-	    memcmp(baseCurve, &d->baseCurveData, sizeof(CurveData)) ) {
-        double a, b, c, g;
+ 
+    d->restoreDetails = conf->restoreDetails;
+    int clipHighlights = conf->clipHighlights;
+    unsigned exposure = pow(2, conf->exposure) * 0x10000;
+    if ( exposure>=0x10000 ) d->restoreDetails = clip_details;
+    if ( exposure<=0x10000 ) clipHighlights = digital_highlights;
+    /* Check if gamma curve data has changed. */
+    if ( in->gamma!=d->gamma || in->linear!=d->linear ||
+	 exposure!=d->exposure || clipHighlights!=d->clipHighlights ||
+	 memcmp(baseCurve, &d->baseCurveData, sizeof(CurveData))!=0 ) {
+	d->baseCurveData = *baseCurve;
+	guint16 BaseCurve[0x10000];
 	CurveSample *cs = CurveSampleInit(0x10000, 0x10000);
-        d->baseCurveData = *baseCurve;
-        ufraw_message(UFRAW_RESET, NULL);
-        if (CurveDataSample(baseCurve, cs)!=UFRAW_SUCCESS) {
-            ufraw_message(UFRAW_REPORT, NULL);
-            for (i=0; i<0x10000; i++) cs->m_Samples[i] = i;
+	ufraw_message(UFRAW_RESET, NULL);
+	if (CurveDataSample(baseCurve, cs)!=UFRAW_SUCCESS) {
+	    ufraw_message(UFRAW_REPORT, NULL);
+	    for (i=0; i<0x10000; i++) cs->m_Samples[i] = i;
 	}
+	for (i=0; i<0x10000; i++) BaseCurve[i] = cs->m_Samples[i];
+	CurveSampleFree(cs);
+
         d->gamma = in->gamma;
         d->linear = in->linear;
+	d->exposure = exposure;
+	d->clipHighlights = clipHighlights;
+	guint16 FilmCurve[0x10000];
+	if ( d->clipHighlights==film_highlights ) {
+	    /* Exposure is set by FilmCurve[].
+	     * Set initial slope to d->exposuse/0x10000 */
+	    double a = findExpCoeff((double)d->exposure/0x10000);
+	    for (i=0; i<0x10000; i++) FilmCurve[i] =
+		    (1-exp(-a*i/0x10000)) / (1-exp(-a)) * 0xFFFF;
+	} else { /* digital highlights */
+	    for (i=0; i<0x10000; i++) FilmCurve[i] = i;
+	}
+        double a, b, c, g;
 	/* The parameters of the linearized gamma curve are set in a way that
 	 * keeps the curve continuous and smooth at the connecting point.
 	 * d->linear also changes the real gamma used for the curve (g) in
@@ -194,16 +237,17 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
             a = b = g = 0.0;
             c = 1.0;
         }
-        for (i=0; i<0x10000 && cs->m_Samples[i]<0x10000*d->linear ; i++)
-	    d->gammaCurve[i] = MIN(c*cs->m_Samples[i], 0xFFFF);
-        for (; i<0x10000; i++) d->gammaCurve[i] =
-            MIN(pow(a*cs->m_Samples[i]/0x10000+b, g)*0x10000, 0xFFFF);
-        CurveSampleFree(cs);
+	for (i=0; i<0x10000; i++)
+	    if (BaseCurve[FilmCurve[i]]<0x10000*d->linear)
+		d->gammaCurve[i] = MIN(c*BaseCurve[FilmCurve[i]], 0xFFFF);
+	    else
+		d->gammaCurve[i] = MIN(pow(a*BaseCurve[FilmCurve[i]]/0x10000+b,
+					   g)*0x10000, 0xFFFF);
     }
     developer_profile(d, 0, in);
     developer_profile(d, 1, out);
-    if (intent!=d->intent) {
-        d->intent = intent;
+    if ( conf->intent!=d->intent ) {
+        d->intent = conf->intent;
         d->updateTransform = TRUE;
     }
     if (curve==NULL) {
@@ -217,8 +261,7 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
 	if (memcmp(curve, &d->luminosityCurveData, sizeof(CurveData))) {
 	    d->luminosityCurveData = *curve;
 	    /* Trivial curve does not require a profile */
-	    if (curve->m_anchors[0].x==0 && curve->m_anchors[0].y==0 &&
-		curve->m_anchors[1].x==1 && curve->m_anchors[1].y==1 ) {
+	    if ( CurveDataIsTrivial(curve) ) {
 		d->luminosityProfile = NULL;
 	    } else {
 		cmsCloseProfile(d->luminosityProfile);
@@ -241,10 +284,10 @@ void developer_prepare(developer_data *d, int rgbMax, double exposure,
 	    d->updateTransform = TRUE;
 	}
     }
-    if (saturation!=d->saturation) {
-        d->saturation = saturation;
+    if ( conf->saturation!=d->saturation ) {
+        d->saturation = conf->saturation;
 	cmsCloseProfile(d->saturationProfile);
-	if (saturation==1)
+	if (d->saturation==1)
 	    d->saturationProfile = NULL;
 	else
 	    d->saturationProfile = create_saturation_profile(d->saturation);
@@ -324,7 +367,7 @@ void cielch_to_rgb(float lch[3], gint64 rgb[3])
     lab[0] = lch[0];
     lab[1] = lch[1] * cos(lch[2]);
     lab[2] = lch[1] * sin(lch[2]);
-    yr = (lab[0]<=kappa*epsilon) ? 
+    yr = (lab[0]<=kappa*epsilon) ?
 	(lab[0]/kappa) : (pow((lab[0]+16.0)/116.0, 3.0));
     fy = (yr<=epsilon) ? ((kappa*yr+16.0)/116.0) : ((lab[0]+16.0)/116.0);
     fz = fy - lab[2]/200.0;
@@ -372,16 +415,25 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     for (i=0; i<count; i++) {
 	clipped = FALSE;
 	for (c=0; c<d->colors; c++) {
+	    /* Set WB, normalizing tmppix[c]<0x10000 */
 	    tmppix[c] = (guint64)pix[i*4+c] * d->rgbWB[c] / 0x10000;
-	    if (d->unclip) {
-		if (tmppix[c] > d->max / 0x10000)
-		    clipped = TRUE;
+	    if ( d->restoreDetails!=clip_details &&
+		 tmppix[c] > d->max ) {
+		clipped = TRUE;
 	    } else {
 		tmppix[c] = MIN(tmppix[c], d->max);
 	    }
-	    tmppix[c] = tmppix[c] * d->exposure / d->max;
+	    /* We are counting on the fact that film_highlights
+	     * and !clip_highlights cannot be set simultaneously. */
+	    if ( d->clipHighlights==film_highlights )
+		tmppix[c] = tmppix[c] * 0x10000 / d->max;
+	    else
+		tmppix[c] = tmppix[c] * d->exposure / d->max;
 	}
 	if ( clipped ) {
+	    /* At this point a value of d->exposure in tmppix[c] corresponds
+	     * to "1.0" (full exposure). Still the maximal value can be
+	     * d->exposure * 0x10000 / d->max */
 	    gint64 unclippedPix[3], clippedPix[3];
 	    if ( d->useMatrix ) {
 		for (cc=0; cc<3; cc++) {
@@ -402,72 +454,70 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 	    } else {
 		for (c=0; c<3; c++) clippedPix[c] = tmppix[c];
 	    }
-#ifdef LCH_BLENDING
-	    float lch[3], clippedLch[3], unclippedLch[3];
-	    rgb_to_cielch(unclippedPix, unclippedLch);
-	    rgb_to_cielch(clippedPix, clippedLch);
-	    lch[0] = clippedLch[0] + (unclippedLch[0]-clippedLch[0]) * 2/2;
-	    lch[1] = clippedLch[1];
-	    lch[2] = clippedLch[2];
-	    cielch_to_rgb(lch, tmppix);
-#else
-	    int maxc, midc, minc;
-	    MaxMidMin(unclippedPix, &maxc, &midc, &minc);
-	    gint64 unclippedLum = unclippedPix[maxc];
-	    gint64 clippedLum = clippedPix[maxc];
-	    gint64 unclippedSat;
-	    if ( unclippedPix[maxc]==0 )
-		unclippedSat = 0;
-	    else
-		unclippedSat = 0x10000 -
-			unclippedPix[minc] * 0x10000 / unclippedPix[maxc];
-	    gint64 clippedSat;
-	    if ( clippedPix[maxc]<clippedPix[minc] || clippedPix[maxc]==0 )
-		clippedSat = 0;
-	    else
-		clippedSat = 0x10000 -
-			clippedPix[minc] * 0x10000 / clippedPix[maxc];
-	    gint64 clippedHue;
-	    if ( clippedPix[maxc]==clippedPix[minc] ) clippedHue = 0;
-	    else clippedHue =
-		    (clippedPix[midc]-clippedPix[minc])*0x10000 /
-		    (clippedPix[maxc]-clippedPix[minc]);
-	    gint64 unclippedHue;
-	    if ( unclippedPix[maxc]==unclippedPix[minc] )
-		unclippedHue = clippedHue;
-	    else
-		unclippedHue =
-		    (unclippedPix[midc]-unclippedPix[minc])*0x10000 /
-		    (unclippedPix[maxc]-unclippedPix[minc]);
-	    /* Here we decide how to mix the clipped and unclipped values.
-	     * The general equation is clipped + (unclipped - clipped) * x,
-	     * where x is between 0 and 1. */
-	    /* For lum we set x=1/2. This way hightlights are not too bright. */
-	    gint64 lum = clippedLum + (unclippedLum - clippedLum) * 1/2;
-	    /* For sat we should set x=0 to prevent color artifacts. */
-	    gint64 sat = clippedSat + (unclippedSat - clippedSat) * 0/1 ;
-	    /* For hue we set x=1. This doesn't seem to have much effect. */
-	    gint64 hue = unclippedHue;
+	    if ( d->restoreDetails==restore_lch_details ) {
+		float lch[3], clippedLch[3], unclippedLch[3];
+		rgb_to_cielch(unclippedPix, unclippedLch);
+		rgb_to_cielch(clippedPix, clippedLch);
+		//lch[0] = clippedLch[0] + (unclippedLch[0]-clippedLch[0]) * x;
+		lch[0] = unclippedLch[0];
+		lch[1] = clippedLch[1];
+		lch[2] = clippedLch[2];
+		cielch_to_rgb(lch, tmppix);
+	    } else { /* restore_hsv_details */
+		int maxc, midc, minc;
+		MaxMidMin(unclippedPix, &maxc, &midc, &minc);
+		gint64 unclippedLum = unclippedPix[maxc];
+		gint64 clippedLum = clippedPix[maxc];
+		/*gint64 unclippedSat;
+		if ( unclippedPix[maxc]==0 )
+		    unclippedSat = 0;
+		else
+		    unclippedSat = 0x10000 -
+			    unclippedPix[minc] * 0x10000 / unclippedPix[maxc];*/
+		gint64 clippedSat;
+		if ( clippedPix[maxc]<clippedPix[minc] || clippedPix[maxc]==0 )
+		    clippedSat = 0;
+		else
+		    clippedSat = 0x10000 -
+			    clippedPix[minc] * 0x10000 / clippedPix[maxc];
+		gint64 clippedHue;
+		if ( clippedPix[maxc]==clippedPix[minc] ) clippedHue = 0;
+		else clippedHue =
+			(clippedPix[midc]-clippedPix[minc])*0x10000 /
+			(clippedPix[maxc]-clippedPix[minc]);
+		gint64 unclippedHue;
+		if ( unclippedPix[maxc]==unclippedPix[minc] )
+		    unclippedHue = clippedHue;
+		else
+		    unclippedHue =
+			(unclippedPix[midc]-unclippedPix[minc])*0x10000 /
+			(unclippedPix[maxc]-unclippedPix[minc]);
+		/* Here we decide how to mix the clipped and unclipped values.
+		 * The general equation is clipped + (unclipped - clipped) * x,
+		 * where x is between 0 and 1. */
+		/* For lum we set x=1/2. Thus hightlights are not too bright. */
+		gint64 lum = clippedLum + (unclippedLum - clippedLum) * 1/2;
+		/* For sat we should set x=0 to prevent color artifacts. */
+		//gint64 sat = clippedSat + (unclippedSat - clippedSat) * 0/1 ;
+		gint64 sat = clippedSat;
+		/* For hue we set x=1. This doesn't seem to have much effect. */
+		gint64 hue = unclippedHue;
 
-	    tmppix[maxc] = lum;
-	    tmppix[minc] = lum * (0x10000-sat) / 0x10000;
-	    tmppix[midc] = lum * (0x10000-sat + sat*hue/0x10000) / 0x10000;
-#endif /*LCH_BLENDING*/
-	    for (c=0; c<3; c++)
-		buf[i*3+c] = d->gammaCurve[MIN(tmppix[c], 0xFFFF)];
-	} else {
+		tmppix[maxc] = lum;
+		tmppix[minc] = lum * (0x10000-sat) / 0x10000;
+		tmppix[midc] = lum * (0x10000-sat + sat*hue/0x10000) / 0x10000;
+	    }
+	} else { /* !clipped */
 	    if (d->useMatrix) {
 		for (cc=0; cc<3; cc++) {
 		    for (c=0, tmp=0; c<d->colors; c++)
 			tmp += tmppix[c] * d->colorMatrix[cc][c];
-		    tmp /= 0x10000;
-		    buf[i*3+cc] = d->gammaCurve[MIN(MAX(tmp, 0), 0xFFFF)];
+		    tmppix[cc] = tmp/0x10000;
 		}
-	    } else {
-		for (c=0; c<3; c++)
-		    buf[i*3+c] = d->gammaCurve[MIN(tmppix[c], 0xFFFF)];
 	    }
 	}
+	for (c=0; c<3; c++)
+	    buf[i*3+c] = d->gammaCurve[MIN(MAX(tmppix[c], 0), 0xFFFF)];
     }
     if (d->colorTransform!=NULL)
         cmsDoTransform(d->colorTransform, buf, buf, count);

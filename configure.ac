@@ -1,5 +1,5 @@
-dnl $Id: configure.ac,v 1.51 2006/10/23 21:38:10 udifuchs Exp $
-AC_INIT(UFRaw, 0.10)
+dnl $Id: configure.ac,v 1.52 2006/11/13 00:30:40 udifuchs Exp $
+AC_INIT(UFRaw, 0.11)
 AC_PREREQ(2.57)
 
 # Create host_os, host_cpu variables
@@ -264,7 +264,9 @@ AC_ARG_ENABLE(extras,
 AC_MSG_RESULT($enable_extras)
 AM_CONDITIONAL(MAKE_EXTRAS, test $enable_extras = yes)
 
-AC_CONFIG_FILES(Makefile po/Makefile.in)
+AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES(icons/Makefile)
+AC_CONFIG_FILES(po/Makefile.in)
 AC_CONFIG_FILES(ufraw-setup.iss)
 AC_OUTPUT
 

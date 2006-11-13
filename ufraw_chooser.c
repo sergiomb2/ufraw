@@ -19,7 +19,6 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include "ufraw.h"
-#include "ufraw_icon.h"
 
 #ifdef HAVE_GTK_2_6
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *fileChooser)
@@ -44,8 +43,13 @@ void ufraw_chooser(conf_data *conf, char *defPath)
             GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL));
     gtk_window_set_type_hint(GTK_WINDOW(fileChooser),
 	    GDK_WINDOW_TYPE_HINT_NORMAL);
+#ifdef HAVE_GTK_2_6
+    gtk_window_set_icon_name(GTK_WINDOW(fileChooser), "ufraw-ufraw");
+#else
     gtk_window_set_icon(GTK_WINDOW(fileChooser),
-            gdk_pixbuf_new_from_inline(-1, ufraw_icon, FALSE, NULL));
+            gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
+                    "ufraw-ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
+#endif
     ufraw_message(UFRAW_SET_PARENT, (char *)fileChooser);
 
     if (defPath!=NULL) {

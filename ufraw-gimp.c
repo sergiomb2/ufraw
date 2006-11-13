@@ -24,7 +24,6 @@
 #include <libgimp/gimpui.h>
 #include <glib/gi18n.h>
 #include "ufraw.h"
-#include "ufraw_icon.h"
 
 void query();
 void run(const gchar *name,
@@ -178,9 +177,15 @@ void run(const gchar *name,
 	     * will be called again with "file_ufraw_load" */
 	    if (size>0) return;
 
+	    ufraw_icons_init();
 	    GtkWidget *dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+#ifdef HAVE_GTK_2_6
+	    gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw-ufraw");
+#else
 	    gtk_window_set_icon(GTK_WINDOW(dummyWindow),
-		    gdk_pixbuf_new_from_inline(-1, ufraw_icon, FALSE, NULL));
+		    gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
+			"ufraw-ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
+#endif
 	    ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
 
 	    ufraw_message(UFRAW_REPORT, NULL);
@@ -215,7 +220,7 @@ void run(const gchar *name,
 	gimp_set_data("plug_in_ufraw", &conf, sizeof(conf));
     } else {
 	status=ufraw_load_raw(uf);
-	if ( status!=UFRAW_SUCCESS ) { 
+	if ( status!=UFRAW_SUCCESS ) {
 	    values[0].type = GIMP_PDB_STATUS;
 	    values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
 	    return;

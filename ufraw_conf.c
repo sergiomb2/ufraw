@@ -32,7 +32,8 @@ const conf_data conf_default = {
     6500, 1.0, /* temperature, green */
     { -1.0, -1.0, -1.0, -1.0 }, /* chanMul[] */
     0.0, 1.0, 0.0, /* exposure, saturation, black */
-    TRUE /* Unclip highlights */,
+    restore_lch_details, /* restoreDetails */
+    digital_highlights, /* clipHighlights */
     disabled_state, /* autoExposure */
     disabled_state, /* autoBlack */
     camera_curve, camera_curve+1, /* BaseCurveIndex, BaseCurveCount */
@@ -93,15 +94,19 @@ const conf_data conf_default = {
 };
 
 const char *interpolationNames[] =
-    { "ahd", "vng", "four-color", "bilinear", "half" };
+    { "ahd", "vng", "four-color", "bilinear", "half", NULL };
+const char *restoreDetailsNames[] =
+    { "clip", "lch", "hsv", NULL };
+const char *clipHighlightsNames[] =
+    { "digital", "film", NULL };
 
-int conf_find_name(const char name[],const char *namesList[])
+int conf_find_name(const char name[],const char *namesList[], int notFound)
 {
     int i;
     for (i=0; namesList[i]!=NULL; i++) {
 	if (!strcmp(name, namesList[i])) return i;
     }
-    return -1;	
+    return notFound;
 }
 
 const char *conf_get_name(const char *namesList[], int index)
@@ -386,8 +391,8 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
 		default: c->interpolation = ahd_interpolation;
 	    }
 	} else {
-	    c->interpolation = conf_find_name(temp, interpolationNames);
-	    if (c->interpolation<0) c->interpolation = ahd_interpolation;
+	    c->interpolation = conf_find_name(temp, interpolationNames,
+		    conf_default.interpolation);
 	}
     }
     if (!strcmp("RawExpander", element))
@@ -435,7 +440,19 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     }
     if (!strcmp("Exposure", element)) sscanf(temp, "%lf", &c->exposure);
     if (!strcmp("Saturation", element)) sscanf(temp, "%lf", &c->saturation);
-    if (!strcmp("Unclip", element)) sscanf(temp, "%d", &c->unclip);
+    if (!strcmp("RestoreDetails", element))
+	c->restoreDetails = conf_find_name(temp, restoreDetailsNames,
+		conf_default.restoreDetails);
+    if (!strcmp("ClipHighlights", element))
+	c->clipHighlights = conf_find_name(temp, clipHighlightsNames,
+		conf_default.clipHighlights);
+    /* For compatibility with UFRaw-0.10 and earlier. */
+    if (!strcmp("Unclip", element)) {
+	int unclip;
+	sscanf(temp, "%d", &unclip);
+	if (unclip) c->restoreDetails = restore_lch_details;
+	else c->restoreDetails = clip_details;
+    }
     if (!strcmp("AutoExposure", element)) sscanf(temp, "%d", &c->autoExposure);
     if (!strcmp("AutoBlack", element)) sscanf(temp, "%d", &c->autoBlack);
     if (!strcmp("CurvePath", element)) {
@@ -658,8 +675,12 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     }
     if (c->exposure!=conf_default.exposure)
         buf = uf_markup_buf(buf, "<Exposure>%lf</Exposure>\n", c->exposure);
-    if (c->unclip!=conf_default.unclip)
-        buf = uf_markup_buf(buf, "<Unclip>%d</Unclip>\n", c->unclip);
+    if (c->restoreDetails!=conf_default.restoreDetails)
+        buf = uf_markup_buf(buf, "<RestoreDetails>%s</RestoreDetails>\n",
+		conf_get_name(restoreDetailsNames, c->restoreDetails));
+    if (c->clipHighlights!=conf_default.clipHighlights)
+        buf = uf_markup_buf(buf, "<ClipHighlights>%s</ClipHighlights>\n",
+		conf_get_name(clipHighlightsNames, c->clipHighlights));
     if (c->autoExposure!=conf_default.autoExposure)
         buf = uf_markup_buf(buf,
 		"<AutoExposure>%d</AutoExposure>\n", c->autoExposure);
@@ -890,7 +911,8 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->black = src->black;
     dst->autoExposure = src->autoExposure;
     dst->autoBlack = src->autoBlack;
-    dst->unclip = src->unclip;
+    dst->restoreDetails = src->restoreDetails;
+    dst->clipHighlights = src->clipHighlights;
     g_strlcpy(dst->darkframeFile, src->darkframeFile, max_path);
     /* We only copy the current BaseCurve */
     if (src->BaseCurveIndex<=camera_curve) {
@@ -996,7 +1018,10 @@ void conf_copy_save(conf_data *dst, const conf_data *src)
 int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 {
     if (cmd->overwrite!=-1) conf->overwrite = cmd->overwrite;
-    if (cmd->unclip!=-1) conf->unclip = cmd->unclip;
+    if (cmd->restoreDetails!=-1)
+	conf->restoreDetails = cmd->restoreDetails;
+    if (cmd->clipHighlights!=-1)
+	conf->clipHighlights = cmd->clipHighlights;
     if (cmd->losslessCompress!=-1)
 	conf->losslessCompress = cmd->losslessCompress;
     if (cmd->embedExif!=-1) conf->embedExif = cmd->embedExif;
@@ -1108,7 +1133,15 @@ N_("--curve=manual|linear|CURVE\n"
 "                      (default linear).\n"),
 N_("--curve-file=file     Use luminosity curve included in specified file.\n"
 "                      Overrides --curve option.\n"),
-N_("--[un]clip            Unclip [clip] highlights (default clip).\n"),
+N_("--restore=clip|lch|hsv\n"
+   "                      Restore details for negative EV.\n"
+   "                      'clip' restores nothing - safe from artifacts.\n"
+   "                      'lch' restores in LCH space - giving soft details.\n"
+   "                      'hsv' restores in HSV space - giving sharp details.\n"
+   "                      (default lch).\n"),
+N_("--clip=digital|film   Clip highlights for positive EV.\n"
+   "                      'digital' linear digital sensor response.\n"
+   "                      'film' emulate soft film response. (default linear).\n"),
 N_("--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"),
 N_("--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"),
 N_("--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"),
@@ -1201,7 +1234,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     char *baseCurveName=NULL, *baseCurveFile=NULL,
 	 *curveName=NULL, *curveFile=NULL, *outTypeName=NULL,
          *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL,
-         *interpolationName=NULL, *darkframeFile=NULL;
+         *interpolationName=NULL, *darkframeFile=NULL,
+	 *restoreName=NULL, *clipName=NULL;
     static struct option options[] = {
         {"wb", 1, 0, 'w'},
         {"temperature", 1, 0, 't'},
@@ -1224,10 +1258,10 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         {"out-path", 1, 0, 'p'},
         {"output", 1, 0, 'o'},
         {"darkframe",1,0,'a'},
+        {"restore", 0, 0, 'r'},
+        {"clip", 0, 0, 'u'},
         {"conf", 1, 0, 'C'},
 /* Binary flags that don't have a value are here at the end */
-        {"unclip", 0, 0, 'u'},
-        {"clip", 0, 0, 'U'},
         {"zip", 0, 0, 'z'},
         {"nozip", 0, 0, 'Z'},
         {"overwrite", 0, 0, 'O'},
@@ -1246,10 +1280,10 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	&cmd->saturation,
         &cmd->exposure, &cmd->black, &interpolationName,
 	&cmd->shrink, &cmd->size, &cmd->compression,
-	&outTypeName, &createIDName, &outPath, &output, &darkframeFile, &conf };
+	&outTypeName, &createIDName, &outPath, &output, &darkframeFile,
+	&restoreName, &clipName, &conf };
     cmd->autoExposure = disabled_state;
     cmd->autoBlack = disabled_state;
-    cmd->unclip=-1;
     cmd->losslessCompress=-1;
     cmd->overwrite=-1;
     cmd->embedExif=-1;
@@ -1315,10 +1349,10 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         case 'o':
         case 'a':
         case 'C':
+        case 'r':
+        case 'u':
             *(char **)optPointer[index] = optarg;
             break;
-        case 'u': cmd->unclip = TRUE; break;
-        case 'U': cmd->unclip = FALSE; break;
         case 'O': cmd->overwrite = TRUE; break;
 	case 'm': cmd->embeddedImage = TRUE; break;
 	case 'q': cmd->silent = TRUE; break;
@@ -1453,13 +1487,33 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         else if (!strcmp(interpolationName, "quick"))
             cmd->interpolation = bilinear_interpolation;
 	else cmd->interpolation = conf_find_name(interpolationName,
-		    interpolationNames);
+		    interpolationNames, -1);
 	if (cmd->interpolation<0 || cmd->interpolation==half_interpolation) {
             ufraw_message(UFRAW_ERROR,
                 _("'%s' is not a valid interpolation option."),
                 interpolationName);
             return -1;
         }
+    }
+    cmd->restoreDetails = -1;
+    if (restoreName!=NULL) {
+	cmd->restoreDetails = conf_find_name(restoreName,
+		    restoreDetailsNames, -1);
+	if ( cmd->restoreDetails<0 ) {
+            ufraw_message(UFRAW_ERROR, _("'%s' is not a valid restore option."),
+                restoreName);
+            return -1;
+	}
+    }
+    cmd->clipHighlights = -1;
+    if (clipName!=NULL) {
+	cmd->clipHighlights = conf_find_name(clipName,
+		    clipHighlightsNames, -1);
+	if ( cmd->clipHighlights<0 ) {
+            ufraw_message(UFRAW_ERROR, _("'%s' is not a valid clip option."),
+                clipName);
+            return -1;
+	}
     }
     if (cmd->shrink!=NULLF && cmd->size!=NULLF) {
         ufraw_message(UFRAW_ERROR,

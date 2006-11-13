@@ -50,6 +50,9 @@ enum { in_profile, out_profile, profile_types};
 enum { raw_expander, live_expander, expander_count };
 enum { ppm8_type, ppm16_type, tiff8_type, tiff16_type, jpeg_type,
        embedded_jpeg_type, embedded_png_type };
+enum { clip_details, restore_lch_details, restore_hsv_details,
+       restore_types };
+enum { digital_highlights, film_highlights, highlights_types };
 
 typedef struct {
     char *make;
@@ -61,7 +64,7 @@ typedef struct {
 
 typedef struct {
     unsigned rgbMax, max, exposure, colors, useMatrix;
-    gboolean unclip;
+    int restoreDetails, clipHighlights;
     int rgbWB[4], colorMatrix[3][4];
     double gamma, linear;
     char profileFile[2][max_path];
@@ -126,7 +129,7 @@ typedef struct {
     double temperature, green;
     double chanMul[4];
     double exposure, saturation, black; /* black is only used in CMD */
-    gboolean unclip;
+    int restoreDetails, clipHighlights;
     int autoExposure, autoBlack;
     int BaseCurveIndex, BaseCurveCount;
     CurveData BaseCurve[max_curves];
@@ -251,10 +254,9 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc);
 developer_data *developer_init();
 void developer_destroy(developer_data *d);
 void developer_profile(developer_data *d, int type, profile_data *p);
-void developer_prepare(developer_data *d, int rgbMax, double exposure,
-    int unclip, double chanMul[4], float rgb_cam[3][4], int colors,
-    int useMatrix, profile_data *in, profile_data *out, int intent,
-    double saturation, CurveData *baseCurve, CurveData *curve);
+void developer_prepare(developer_data *d, conf_data *conf,
+    int rgbMax, float rgb_cam[3][4], int colors, int useMatrix,
+    gboolean autoTools);
 void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     guint16 *buf, int count);
 
@@ -272,6 +274,9 @@ int ufraw_write_embedded(ufraw_data *uf);
 
 /* prototype for functions in ufraw_chooser.c */
 void ufraw_chooser(conf_data *conf, char *defPath);
+
+/* prototype for functions in ufraw_icons.c */
+void ufraw_icons_init();
 
 /* prototype for functions in ufraw_exif.c */
 int ufraw_exif_from_raw(ufraw_data *uf);

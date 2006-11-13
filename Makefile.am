@@ -1,6 +1,6 @@
-# $Id: Makefile.am,v 1.26 2006/10/25 20:16:29 udifuchs Exp $
+# $Id: Makefile.am,v 1.27 2006/11/13 00:30:40 udifuchs Exp $
 
-SUBDIRS=po
+SUBDIRS=po icons
 
 if MAKE_EXTRAS
   bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve
@@ -29,19 +29,17 @@ if INSTALL_MIME
   schemasdir = $(datadir)/gconf/schemas
 endif
 
-icon_DATA = ufraw.png
-icondir = $(datadir)/pixmaps
-
 #html_DATA = user_guide.html
 #htmldir = $(datadir)/doc/ufraw
 
 UFRAW_COMMON = ufraw_ufraw.c ufraw_routines.c ufraw_exif.c ufraw_developer.c \
-    ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw.h ufraw_icon.h \
+    ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw.h \
     wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
     nikon_curve.c nikon_curve.h \
     ufraw_exiv2.cc iccjpeg.c iccjpeg.h
 UFRAW_GTK_COMMON = $(UFRAW_COMMON) ufraw_preview.c ufraw_saver.c \
-    ufraw_chooser.c curveeditor_widget.c curveeditor_widget.h
+    ufraw_chooser.c ufraw_icons.c icons/ufraw_icons.h \
+    curveeditor_widget.c curveeditor_widget.h
 
 if UFRAW_WIN32
   UFRAW_ICON = ufraw_icon.opc
@@ -49,7 +47,7 @@ else
   UFRAW_ICON =
 endif
 
-EXTRA_DIST = ufraw.desktop ufraw.png ufraw_icon.ico ufraw_icon.rc \
+EXTRA_DIST = ufraw.desktop ufraw_icon.ico ufraw_icon.rc \
     ufraw-mime.xml generate_schemas.sh \
     ufraw-setup.jpg autogen.sh MANIFEST ufraw.pod
 
@@ -83,10 +81,7 @@ if MAKE_EXTRAS
   nikon_curve_LDADD = $(UFRAW_LDADD)
 endif
 
-#ufraw_icon.h: ufraw.png
-#	gdk-pixbuf-csource --raw $^ --name=ufraw_icon > $@
-
-#ufraw_icon.ico: ufraw.png
+#ufraw_icon.ico: icons/ufraw.png
 #	{ pngtopnm $^ | pnmquant 256; pngtopnm -alpha $^; } | ppmtowinicon -andpgms -output $@ - -
 
 ufraw_icon.opc: ufraw_icon.rc ufraw_icon.ico
@@ -123,5 +118,5 @@ ufraw-$(VERSION)-setup.exe: ufraw-setup.iss ufraw.exe ufraw-batch.exe \
 ufraw-setup.bmp: ufraw-setup.jpg
 	montage -geometry +0+0 $< $@
 
-ufraw_icon.bmp: ufraw.png
+ufraw_icon.bmp: icons/ufraw.png
 	montage -geometry +0+0 $< $@

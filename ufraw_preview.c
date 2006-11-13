@@ -28,7 +28,6 @@
 #include <glib/gi18n.h>
 #include "ufraw.h"
 #include "curveeditor_widget.h"
-#include "ufraw_icon.h"
 
 #ifdef HAVE_GTK_2_6
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
@@ -535,13 +534,9 @@ gboolean render_raw_histogram(preview_data *data)
     g_snprintf(text, max_name, _("Black point: %0.3lf"),
 	    CFG->curve[CFG->curveIndex].m_anchors[0].x);
     gtk_label_set_text(GTK_LABEL(data->BlackLabel), text);
-    developer_prepare(Developer, data->UF->rgbMax, pow(2, CFG->exposure),
-	    CFG->unclip, CFG->chanMul, data->UF->rgb_cam,
-	    data->UF->colors, data->UF->useMatrix,
-            &CFG->profile[0][CFG->profileIndex[0]],
-            &CFG->profile[1][CFG->profileIndex[1]], CFG->intent,
-            CFG->saturation, &CFG->BaseCurve[CFG->BaseCurveIndex],
-            &CFG->curve[CFG->curveIndex]);
+    developer_prepare(Developer, CFG,
+	    data->UF->rgbMax, data->UF->rgb_cam,
+	    data->UF->colors, data->UF->useMatrix, FALSE);
 
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->RawHisto));
     if (gdk_pixbuf_get_height(pixbuf)!=CFG->rawHistogramHeight+2) {
@@ -1258,17 +1253,125 @@ void button_update(GtkWidget *button, gpointer user_data)
     return;
 }
 
+void restore_details_button_set(GtkButton *button, preview_data *data)
+{
+#ifndef HAVE_GTK_2_6
+    GtkWidget *lastImage = gtk_bin_get_child(GTK_BIN(button));
+    if ( lastImage!=NULL )
+	gtk_container_remove(GTK_CONTAINER(button), lastImage);
+    GtkWidget *image;
+#endif
+    const char *state;
+    switch (CFG->restoreDetails) {
+    case clip_details:
+#ifdef HAVE_GTK_2_6
+	gtk_button_set_image(button, gtk_image_new_from_stock(
+		GTK_STOCK_CUT, GTK_ICON_SIZE_BUTTON));
+#else
+	image = gtk_image_new_from_stock(GTK_STOCK_CUT, GTK_ICON_SIZE_BUTTON);
+	gtk_container_add(GTK_CONTAINER(button), image);
+	gtk_widget_show(image);
+#endif
+	state = _("clip");
+	break;
+    case restore_lch_details:
+#ifdef HAVE_GTK_2_6
+	gtk_button_set_image(button, gtk_image_new_from_stock(
+		"ufraw-restore-lch", GTK_ICON_SIZE_BUTTON));
+#else
+	image = gtk_image_new_from_stock("ufraw-restore-lch",
+		GTK_ICON_SIZE_BUTTON);
+	gtk_container_add(GTK_CONTAINER(button), image);
+	gtk_widget_show(image);
+#endif
+	state = _("restore in LCH space for soft details");
+	break;
+    case restore_hsv_details:
+#ifdef HAVE_GTK_2_6
+	gtk_button_set_image(button, gtk_image_new_from_stock(
+		"ufraw-restore-hsv", GTK_ICON_SIZE_BUTTON));
+#else
+	image = gtk_image_new_from_stock("ufraw-restore-hsv",
+		GTK_ICON_SIZE_BUTTON);
+	gtk_container_add(GTK_CONTAINER(button), image);
+	gtk_widget_show(image);
+#endif
+	state = _("restore in HSV space for sharp details");
+	break;
+    default:
+	state = "Error";
+    }
+    char *text = g_strdup_printf(_("Restore details for negative EV\n"
+	    "Current state: %s"), state);
+    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(button), text, NULL);
+    g_free(text);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
+}
+
+void clip_highlights_button_set(GtkButton *button, preview_data *data)
+{
+#ifndef HAVE_GTK_2_6
+    GtkWidget *lastImage = gtk_bin_get_child(GTK_BIN(button));
+    if ( lastImage!=NULL )
+	gtk_container_remove(GTK_CONTAINER(button), lastImage);
+    GtkWidget *image;
+#endif
+    const char *state;
+    switch (CFG->clipHighlights) {
+    case digital_highlights:
+#ifdef HAVE_GTK_2_6
+	gtk_button_set_image(button, gtk_image_new_from_stock(
+		"ufraw-digital", GTK_ICON_SIZE_BUTTON));
+#else
+	image = gtk_image_new_from_stock("ufraw-digital", GTK_ICON_SIZE_BUTTON);
+	gtk_container_add(GTK_CONTAINER(button), image);
+	gtk_widget_show(image);
+#endif
+	state = _("digital linear");
+	break;
+    case film_highlights:
+#ifdef HAVE_GTK_2_6
+	gtk_button_set_image(button, gtk_image_new_from_stock(
+		"ufraw-film", GTK_ICON_SIZE_BUTTON));
+#else
+	image = gtk_image_new_from_stock("ufraw-film",
+		GTK_ICON_SIZE_BUTTON);
+	gtk_container_add(GTK_CONTAINER(button), image);
+	gtk_widget_show(image);
+#endif
+	state = _("soft film like");
+	break;
+    default:
+	state = "Error";
+    }
+    char *text = g_strdup_printf(_("Clip highlights for positive EV\n"
+	    "Current state: %s"), state);
+    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(button), text, NULL);
+    g_free(text);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
+}
+
 void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 {
     preview_data *data = get_preview_data(button);
-    if (valuep==&CFG->unclip) {
-	/* ugly flip needed because CFG->unclip==!clip_button_active */
-	*valuep = !gtk_toggle_button_get_active(button);
-	if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
-	char text[max_name];
-        snprintf(text, max_name, _("Highlight clipping\nCurrent state: %s"), CFG->unclip ? _("unclip") : _("clip"));
-	gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(button), text, NULL);
-	update_scales(data);
+    if (valuep==&CFG->restoreDetails) {
+	/* Our untoggling of the button creates a redundant event. */
+	if ( gtk_toggle_button_get_active(button) ) {
+	    /* Scroll through the settings. */
+	    CFG->restoreDetails =
+		    (CFG->restoreDetails+1) % restore_types;
+	    restore_details_button_set(GTK_BUTTON(button), data);
+	    update_scales(data);
+	}
+    } else if (valuep==&CFG->clipHighlights) {
+	/* Our untoggling of the button creates a redundant event. */
+	if ( gtk_toggle_button_get_active(button) ) {
+	    /* Scroll through the settings. */
+	    CFG->clipHighlights =
+		    (CFG->clipHighlights+1) % highlights_types;
+	    clip_highlights_button_set(GTK_BUTTON(button), data);
+	    update_scales(data);
+	}
     } else {
 	*valuep = gtk_toggle_button_get_active(button);
 	if (valuep==&data->UF->useMatrix) {
@@ -1348,12 +1451,17 @@ GtkAdjustment *adjustment_scale(GtkTable *table,
 {
     preview_data *data = get_preview_data(table);
     GtkAdjustment *adj;
-    GtkWidget *w, *l;
+    GtkWidget *w, *l, *icon;
 
     w = gtk_event_box_new();
-    l = gtk_label_new(label);
-    gtk_misc_set_alignment(GTK_MISC(l), 1, 0.5);
-    gtk_container_add(GTK_CONTAINER(w),l);
+    if ( strncmp(label, "ufraw-", 6)==0 ) {
+	icon = gtk_image_new_from_stock(label, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_container_add(GTK_CONTAINER(w), icon);
+    } else {
+	l = gtk_label_new(label);
+	gtk_misc_set_alignment(GTK_MISC(l), 1, 0.5);
+	gtk_container_add(GTK_CONTAINER(w), l);
+    }
     gtk_tooltips_set_tip(data->ToolTips, w, tip, NULL);
     gtk_table_attach(table, w, x, x+1, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
     adj = GTK_ADJUSTMENT(gtk_adjustment_new(value, min, max, step, jump, 0));
@@ -1596,8 +1704,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     label = gtk_label_new(_("About"));
     box = gtk_vbox_new(FALSE, 0);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, label);
-    image = gtk_image_new_from_pixbuf(
-            gdk_pixbuf_new_from_inline(-1, ufraw_icon, FALSE, NULL));
+    image = gtk_image_new_from_stock("ufraw-ufraw", GTK_ICON_SIZE_DIALOG);
     gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
     label = gtk_label_new(NULL);
     gtk_label_set_markup(GTK_LABEL(label),
@@ -1854,7 +1961,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     long j;
     int status, rowstride, curveeditorHeight;
     guint8 *pixies;
-    char text[max_name];
     preview_data PreviewData;
     preview_data *data = &PreviewData;
 
@@ -1877,8 +1983,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_free(previewHeader);
     g_free(utf8_filename);
 
+    ufraw_icons_init();
+#ifdef HAVE_GTK_2_6
+    gtk_window_set_icon_name(GTK_WINDOW(previewWindow), "ufraw-ufraw");
+#else
     gtk_window_set_icon(GTK_WINDOW(previewWindow),
-            gdk_pixbuf_new_from_inline(-1, ufraw_icon, FALSE, NULL));
+	    gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
+		    "ufraw-ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
+#endif
     gtk_window_set_resizable(GTK_WINDOW(previewWindow), FALSE);
     g_signal_connect(G_OBJECT(previewWindow), "delete-event",
             G_CALLBACK(window_delete_event), NULL);
@@ -1996,26 +2108,28 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_table_attach_defaults(table, GTK_WIDGET(data->SpotPatch), 6, 7, 1, 2);
 
     table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
-    data->ExposureAdjustment = adjustment_scale(table, 0, 0, _("Exposure"),
+    data->ExposureAdjustment = adjustment_scale(table, 0, 0, "ufraw-exposure",
             CFG->exposure, &CFG->exposure,
-            -3, 3, 0.01, 1.0/6, 2, _("EV compensation"));
+            -3, 3, 0.01, 1.0/6, 2, _("Exposure compensation in EV"));
 
     button = gtk_toggle_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-            GTK_STOCK_CUT, GTK_ICON_SIZE_BUTTON));
-    snprintf(text, max_name, _("Highlight clipping\nCurrent state: %s"), CFG->unclip ? _("unclip") : _("clip"));
-    gtk_tooltips_set_tip(data->ToolTips, button, text, NULL);
+    restore_details_button_set(GTK_BUTTON(button), data);
     gtk_table_attach(table, button, 7, 8, 0, 1, 0, 0, 0, 0);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), !CFG->unclip);
     g_signal_connect(G_OBJECT(button), "toggled",
-            G_CALLBACK(toggle_button_update), &CFG->unclip);
+            G_CALLBACK(toggle_button_update), &CFG->restoreDetails);
+
+    button = gtk_toggle_button_new();
+    clip_highlights_button_set(GTK_BUTTON(button), data);
+    gtk_table_attach(table, button, 8, 9, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "toggled",
+            G_CALLBACK(toggle_button_update), &CFG->clipHighlights);
 
     data->AutoExposureButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
     gtk_container_add(GTK_CONTAINER(data->AutoExposureButton),
 	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoExposureButton),
 	    _("Auto adjust exposure"), NULL);
-    gtk_table_attach(table, GTK_WIDGET(data->AutoExposureButton), 8, 9, 0, 1,
+    gtk_table_attach(table, GTK_WIDGET(data->AutoExposureButton), 9, 10, 0, 1,
 	    0, 0, 0, 0);
     gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
     g_signal_connect(G_OBJECT(data->AutoExposureButton), "clicked",
@@ -2026,7 +2140,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, data->ResetExposureButton,
 	    _("Reset exposure to default"), NULL);
-    gtk_table_attach(table, data->ResetExposureButton, 9, 10, 0, 1, 0, 0, 0, 0);
+    gtk_table_attach(table, data->ResetExposureButton, 10, 11, 0, 1, 0,0,0,0);
     g_signal_connect(G_OBJECT(data->ResetExposureButton), "clicked",
             G_CALLBACK(button_update), NULL);
 

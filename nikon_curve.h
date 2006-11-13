@@ -568,6 +568,12 @@ int CurveDataSample(CurveData *curve, CurveSample *sample);
 void CurveDataReset(CurveData *curve);
 
 /*********************************************
+ * CurveDataIsTrivial:
+ *     Check if the curve is a trivial linear curve.
+ ***********************************************/
+int CurveDataIsTrivial(CurveData *curve);
+
+/*********************************************
  CurveDataSetPoint:
     Change the position of point to the new (x,y) coordinate.
     The end-points get a special treatment. When these are moved all the
