@@ -572,13 +572,16 @@ gboolean render_raw_histogram(preview_data *data)
     for (x=0; x<raw_his_size; x++) {
 	/* draw the raw histogram */
         for (c=0, y0=0; c<colors; c++) {
-	    /* Prepare pen color, which is not effected by exposure */
+	    /* Prepare pen color, which is not effected by exposure.
+	     * Use a small value to avoid highlights and then normalize. */
 	    for (cl=0; cl<colors; cl++) p16[cl] = 0;
-	    int saveExposure = Developer->exposure;
-	    Developer->exposure = 0x10000;
-	    p16[c] = Developer->max * 0x10000 / Developer->rgbWB[c]; 
+	    p16[c] = Developer->max * 0x01000 / Developer->rgbWB[c] *
+		     0x10000 / Developer->exposure; 
             develope(pen, p16, Developer, 8, pixtmp, 1);
-	    Developer->exposure = saveExposure;
+	    guint8 max=1;
+	    for (cl=0; cl<3; cl++) max = MAX(pen[cl], max);
+	    for (cl=0; cl<3; cl++) pen[cl] = pen[cl] * 0xff / max;
+
 	    for (y=0; y<raw_his[x][c]*CFG->rawHistogramHeight/raw_his_max; y++)
 		for (cl=0; cl<3; cl++)
 		    pixies[(CFG->rawHistogramHeight-y-y0)*rowstride
@@ -587,13 +590,15 @@ gboolean render_raw_histogram(preview_data *data)
 	}
 	/* draw curves on the raw histogram */
         for (c=0; c<colors; c++) {
-	    /* Prepare pen color, which is not effected by exposure */
+	    /* Prepare pen color, which is not effected by exposure.
+	     * Use a small value to avoid highlights and then normalize. */
 	    for (cl=0; cl<colors; cl++) p16[cl] = 0;
-	    int saveExposure = Developer->exposure;
-	    Developer->exposure = 0x10000;
-	    p16[c] = Developer->max * 0x10000 / Developer->rgbWB[c]; 
+	    p16[c] = Developer->max * 0x01000 / Developer->rgbWB[c] *
+		     0x10000 / Developer->exposure; 
             develope(pen, p16, Developer, 8, pixtmp, 1);
-	    Developer->exposure = saveExposure;
+	    guint8 max=1;
+	    for (cl=0; cl<3; cl++) max = MAX(pen[cl], max);
+	    for (cl=0; cl<3; cl++) pen[cl] = pen[cl] * 0xff / max;
             /* Value for pixel x of color c in a grey pixel */
             for (cl=0; cl<colors; cl++)
                 p16[cl] = MIN((guint64)x*Developer->rgbMax *
@@ -1016,6 +1021,7 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
         for (x=spotStartX; x<spotStartX+spotSizeX; x++)
             for (c=0; c<data->UF->colors; c++)
                 rgb[c] += data->UF->image.image[y*data->UF->image.width+x][c];
+    for (c=0; c<4; c++) rgb[c] = MAX(rgb[c], 1);
     for (c=0; c<data->UF->colors; c++)
         CFG->chanMul[c] = (double)spotSizeX * spotSizeY * data->UF->rgbMax
 		/ rgb[c];
