@@ -89,6 +89,7 @@ int canon_600_color (int ratio[2], int mar);
 void canon_600_auto_wb();
 void canon_600_coeff();
 void canon_600_load_raw();
+void remove_zeroes();
 void canon_a5_load_raw();
 unsigned getbits (int nbits);
 void init_decoder();
@@ -173,6 +174,7 @@ void foveon_make_curves
 int foveon_apply_curve (short *curve, int i);
 void foveon_interpolate();
 void bad_pixels();
+void subtract(char *fname);
 void pseudoinverse (double (*in)[3], double (*out)[3], int size);
 void cam_xyz_coeff (double cam_xyz[4][3]);
 void colorcheck();

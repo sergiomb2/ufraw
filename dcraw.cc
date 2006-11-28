@@ -15,15 +15,15 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.356 $
-   $Date: 2006/11/21 16:32:10 $
+   $Revision: 1.357 $
+   $Date: 2006/11/28 04:18:50 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.43"
+#define DCRAW_VERSION "8.44"
 
 #define _USE_MATH_DEFINES
 #include <ctype.h>
@@ -458,33 +458,43 @@ void CLASS canon_600_load_raw()
   black = 0;
 }
 
+void CLASS remove_zeroes()
+{
+  int row, col, tot, n, r, c;
+
+  for (row=0; row < height; row++)
+    for (col=0; col < width; col++)
+      if (BAYER(row,col) == 0) {
+	tot = n = 0;
+	for (r = row-2; r <= row+2; r++)
+	  for (c = col-2; c <= col+2; c++)
+	    if (r < height && c < width &&
+		FC(r,c) == FC(row,col) && BAYER(r,c))
+	      tot += (n++,BAYER(r,c));
+	if (n) BAYER(row,col) = tot/n;
+      }
+}
+
 void CLASS canon_a5_load_raw()
 {
-  uchar  data[1940], *dp;
-  ushort pixel[1552], *pix;
-  int row, col;
+  ushort data[1670], *dp, pixel;
+  int vbits=0, buf=0, row, col, bc=0;
 
-  for (row=0; row < height; row++) {
-    fread (data, raw_width * 10 / 8, 1, ifp);
-    for (dp=data, pix=pixel; pix < pixel+raw_width; dp+=10, pix+=8)
-    {
-      pix[0] = (dp[1] << 2) + (dp[0] >> 6);
-      pix[1] = (dp[0] << 4) + (dp[3] >> 4);
-      pix[2] = (dp[3] << 6) + (dp[2] >> 2);
-      pix[3] = (dp[2] << 8) + (dp[5]     );
-      pix[4] = (dp[4] << 2) + (dp[7] >> 6);
-      pix[5] = (dp[7] << 4) + (dp[6] >> 4);
-      pix[6] = (dp[6] << 6) + (dp[9] >> 2);
-      pix[7] = (dp[9] << 8) + (dp[8]     );
+  order = 0x4949;
+  for (row=-top_margin; row < raw_height-top_margin; row++) {
+    read_shorts (dp=data, raw_width * 10 / 16);
+    for (col=-left_margin; col < raw_width-left_margin; col++) {
+      if (vbits < 10)
+	buf = (vbits += 16, (buf << 16) + *dp++);
+      pixel = buf >> (vbits -= 10) & 0x3ff;
+      if (row >= 0 && row < height && col >= 0 && col < width)
+	BAYER(row,col) = pixel;
+      else black += (bc++,pixel);
     }
-    for (col=0; col < width; col++)
-      BAYER(row,col) = (pixel[col] & 0x3ff);
-    for (col=width; col < raw_width; col++)
-      black += pixel[col] & 0x3ff;
   }
-  if (raw_width > width)
-    black /= (raw_width - width) * height;
+  if (bc) black /= bc;
   maximum = 0x3ff;
+  if (raw_width > 1600) remove_zeroes();
 }
 
 /*
@@ -3025,6 +3035,45 @@ void CLASS bad_pixels()
   fclose (fp);
 }
 
+void CLASS subtract (char *fname)
+{
+  FILE *fp;
+  int dim[3]={0,0,0}, comment=0, number=0, error=0, nd=0, c, row, col;
+  ushort *pixel;
+
+  if (!(fp = fopen (fname, "rb"))) {
+    perror (fname);  return;
+  }
+  if (fgetc(fp) != 'P' || fgetc(fp) != '5') error = 1;
+  while (!error && nd < 3 && (c = fgetc(fp)) != EOF) {
+    if (c == '#')  comment = 1;
+    if (c == '\n') comment = 0;
+    if (comment) continue;
+    if (isdigit(c)) number = 1;
+    if (number) {
+      if (isdigit(c)) dim[nd] = dim[nd]*10 + c -'0';
+      else if (isspace(c)) {
+	number = 0;  nd++;
+      } else error = 1;
+    }
+  }
+  if (error || nd < 3) {
+    fprintf (stderr, "%s is not a valid PGM file!\n", fname);
+    fclose (fp);  return;
+  } else if (dim[0] != width || dim[1] != height || dim[2] != 65535) {
+    fprintf (stderr, "%s has the wrong dimensions!\n", fname);
+    fclose (fp);  return;
+  }
+  pixel = (ushort *) calloc (width, sizeof *pixel);
+  merror (pixel, "subtract()");
+  for (row=0; row < height; row++) {
+    fread (pixel, 2, width, fp);
+    for (col=0; col < width; col++)
+      BAYER(row,col) = MAX (BAYER(row,col) - ntohs(pixel[col]), 0);
+  }
+  free (pixel);
+}
+
 void CLASS pseudoinverse (double (*in)[3], double (*out)[3], int size)
 {
   double work[3][6], num;
@@ -4229,7 +4278,7 @@ int CLASS parse_tiff_ifd (int base, int level)
       case 273:				/* StripOffset */
       case 513:
 	tiff_ifd[ifd].offset = get4()+base;
-	if (!tiff_ifd[ifd].width) {
+	if (!tiff_ifd[ifd].bps) {
 	  fseek (ifp, tiff_ifd[ifd].offset, SEEK_SET);
 	  if (ljpeg_start (&jh, 1)) {
 	    tiff_ifd[ifd].comp    = 6;
@@ -5190,6 +5239,8 @@ void CLASS adobe_coeff (char *make, char *model)
 	{ 8795,-2482,-797,-7804,15403,2573,-1422,1996,7082 } },
     { "Canon PowerShot S70", 0,
 	{ 9976,-3810,-832,-7115,14463,2906,-901,989,7889 } },
+    { "Canon PowerShot A610", 0, /* copied from the S60 */
+	{ 8795,-2482,-797,-7804,15403,2573,-1422,1996,7082 } },
     { "Contax N Digital", 0,
 	{ 7777,1285,-1053,-9280,16543,2916,-3677,5679,7060 } },
     { "EPSON R-D1", 0,
@@ -5497,6 +5548,7 @@ void CLASS identify()
     {  6624000, "Pixelink", "A782"       ,0 },
     { 13248000, "Pixelink", "A782"       ,0 },
     {  6291456, "RoverShot","3320AF"     ,0 },
+    {  6573120, "Canon",    "PowerShot A610",0 },
     {  5939200, "OLYMPUS",  "C770UZ"     ,0 },
     {  1581060, "NIKON",    "E900"       ,1 },  /* or E900s,E910 */
     {  2465792, "NIKON",    "E950"       ,1 },  /* or E800,E700 */
@@ -5734,6 +5786,14 @@ nucore:
     width  = 1552;
     colors = 4;
     filters = 0x1e4b4e1b;
+    load_raw = &CLASS canon_a5_load_raw;
+  } else if (!strcmp(model,"PowerShot A610")) {
+    height = 1960;
+    width  = 2616;
+    raw_height = 1968;
+    raw_width  = 2672;
+    top_margin  = 8;
+    left_margin = 12;
     load_raw = &CLASS canon_a5_load_raw;
   } else if (!strcmp(model,"PowerShot Pro90 IS")) {
     width  = 1896;
@@ -6837,7 +6897,7 @@ int CLASS main (int argc, char **argv)
   static int arg, status=0, user_flip=-1, user_black=-1, user_qual=-1;
   static int timestamp_only=0, thumbnail_only=0, identify_only=0, write_to_stdout=0;
   static int half_size=0, use_fuji_rotate=1, quality, i, c;
-  static char opt, *ofname, *sp, *cp;
+  static char opt, *ofname, *sp, *cp, *dark_frame = NULL;
   static const char *write_ext;
   static struct utimbuf ut;
   static FILE *ofp = stdout;
@@ -6865,6 +6925,7 @@ int CLASS main (int argc, char **argv)
     "\n-r <nums> Set raw white balance (four values required)"
     "\n-b <num>  Adjust brightness (default = 1.0)"
     "\n-k <num>  Set black point"
+    "\n-K <file> Subtract dark frame (16-bit raw PGM)"
     "\n-H [0-9]  Highlight mode (0=clip, 1=no clip, 2+=recover)"
     "\n-t [0-7]  Flip image (0=none, 3=180, 5=90CCW, 6=90CW)"
     "\n-o [0-5]  Output colorspace (raw,sRGB,Adobe,Wide,ProPhoto,XYZ)"
@@ -6915,6 +6976,8 @@ int CLASS main (int argc, char **argv)
 	break;
       case 'p':  cam_profile = argv[arg++];
 #endif
+	break;
+      case 'K':  dark_frame  = argv[arg++];
 	break;
       case 'z':  timestamp_only    = 1;  break;
       case 'e':  thumbnail_only    = 1;  break;
@@ -7075,6 +7138,7 @@ next:
     fseek (ifp, data_offset, SEEK_SET);
     (*this.*load_raw)();
     bad_pixels();
+    if (dark_frame) subtract (dark_frame);
     height = iheight;
     width  = iwidth;
     quality = 2 + !fuji_width;
