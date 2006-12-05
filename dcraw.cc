@@ -977,7 +977,7 @@ void CLASS pentax_k10_load_raw()
 	hpred[col] = vpred[i];
       } else
 	hpred[col & 1] += diff;
-      if ((unsigned) col < width)
+      if (col < width)
 	BAYER(row,col) = hpred[col & 1];
     }
 }
