@@ -1239,6 +1239,15 @@ const wb_data wb_preset[] = {
   { "PENTAX", "*ist DS", N_("Tungsten"), 0,	{ 1, 1, 2.027344, 0 } },
   { "PENTAX", "*ist DS", N_("Flash"), 0,	{ 1.695312, 1, 1, 0 } },
 
+  { "PENTAX", "K100D", N_("Daylight"), 0,	{ 1.468750, 1, 1.023438, 0 } },
+  { "PENTAX", "K100D", N_("Shade"), 0,	{ 1.769531, 1, 1, 0 } },
+  { "PENTAX", "K100D", N_("Cloudy"), 0,	{ 1.589844, 1, 1, 0 } },
+  { "PENTAX", "K100D", N_("Daylight fluorescent"), 0, { 1.722656, 1, 1.039063, 0 } },
+  { "PENTAX", "K100D", N_("Neutral fluorescent"), 0, { 1.425781, 1, 1.160156, 0 } },
+  { "PENTAX", "K100D", N_("White fluorescent"), 0, { 1.265625, 1, 1.414063, 0 } },
+  { "PENTAX", "K100D", N_("Tungsten"), 0,	{ 1, 1.015873, 2.055556, 0 } },
+  { "PENTAX", "K100D", N_("Flash"), 0,	{ 1.527344, 1, 1, 0 } },
+
   { "SAMSUNG", "GX-1S", N_("Daylight"), 0,	{ 1.574219, 1, 1.109375, 0 } },
   { "SAMSUNG", "GX-1S", N_("Shade"), 0,		{ 1.855469, 1, 1.000000, 0 } },
   { "SAMSUNG", "GX-1S", N_("Cloudy"), 0,	{ 1.664062, 1, 1.000000, 0 } },
