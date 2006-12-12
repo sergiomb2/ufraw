@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.52 2006/11/13 00:30:40 udifuchs Exp $
+dnl $Id: configure.ac,v 1.53 2006/12/12 04:39:20 nkbj Exp $
 AC_INIT(UFRaw, 0.11)
 AC_PREREQ(2.57)
 
@@ -239,7 +239,7 @@ case $host_cpu in
     ;;
 esac
 
-ALL_LINGUAS="fr ru"
+ALL_LINGUAS="da fr ru"
 AM_GLIB_GNU_GETTEXT
 LIBS="$LIBS $INTLLIBS"
 # The following is not compatible with autoconf 2.60
