@@ -5557,7 +5557,7 @@ void CLASS identify()
   struct jhead jh;
   static const struct {
     unsigned fsize;
-    char make[12], model[16], withjpeg;
+    char make[12], model[19], withjpeg;
   } table[] = {
     {    62464, "Kodak",    "DC20"       ,0 },
     {   124928, "Kodak",    "DC20"       ,0 },
@@ -6698,7 +6698,7 @@ void CLASS convert_to_rgb()
   raw_color |= colors == 1 || document_mode ||
 		output_color < 1 || output_color > 5;
   if (!raw_color) {
-    oprof = (unsigned *)calloc (phead[0], 1);
+    oprof = (unsigned *) calloc (phead[0], 1);
     merror (oprof, "convert_to_rgb()");
     memcpy (oprof, phead, sizeof phead);
     if (output_color == 5) oprof[4] = oprof[5];
