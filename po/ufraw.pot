@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-11-12 22:07+0100\n"
+"POT-Creation-Date: 2006-12-15 11:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -526,7 +526,7 @@ msgstr ""
 msgid "No more room for new curves."
 msgstr ""
 
-#: ufraw_preview.c:168 ufraw_preview.c:2459
+#: ufraw_preview.c:168 ufraw_preview.c:2465
 msgid "Load curve"
 msgstr ""
 
@@ -542,7 +542,7 @@ msgstr ""
 msgid "Nikon curve format"
 msgstr ""
 
-#: ufraw_preview.c:271 ufraw_preview.c:2465
+#: ufraw_preview.c:271 ufraw_preview.c:2471
 msgid "Save curve"
 msgstr ""
 
@@ -563,121 +563,121 @@ msgstr ""
 msgid "Black point: %0.3lf"
 msgstr ""
 
-#: ufraw_preview.c:1104
+#: ufraw_preview.c:1110
 #, c-format
 msgid "size %dx%d, zoom %2.f%%"
 msgstr ""
 
-#: ufraw_preview.c:1108
+#: ufraw_preview.c:1114
 #, c-format
 msgid "size %dx%d, scale 1/%d"
 msgstr ""
 
-#: ufraw_preview.c:1275
+#: ufraw_preview.c:1281
 msgid "clip"
 msgstr ""
 
-#: ufraw_preview.c:1287
+#: ufraw_preview.c:1293
 msgid "restore in LCH space for soft details"
 msgstr ""
 
-#: ufraw_preview.c:1299
+#: ufraw_preview.c:1305
 msgid "restore in HSV space for sharp details"
 msgstr ""
 
-#: ufraw_preview.c:1304
+#: ufraw_preview.c:1310
 #, c-format
 msgid ""
 "Restore details for negative EV\n"
 "Current state: %s"
 msgstr ""
 
-#: ufraw_preview.c:1330
+#: ufraw_preview.c:1336
 msgid "digital linear"
 msgstr ""
 
-#: ufraw_preview.c:1342
+#: ufraw_preview.c:1348
 msgid "soft film like"
 msgstr ""
 
-#: ufraw_preview.c:1347
+#: ufraw_preview.c:1353
 #, c-format
 msgid ""
 "Clip highlights for positive EV\n"
 "Current state: %s"
 msgstr ""
 
-#: ufraw_preview.c:1625
+#: ufraw_preview.c:1631
 msgid "UFRaw options"
 msgstr ""
 
-#: ufraw_preview.c:1638
+#: ufraw_preview.c:1644
 msgid "Settings"
 msgstr ""
 
-#: ufraw_preview.c:1641
+#: ufraw_preview.c:1647
 msgid "Input color profiles"
 msgstr ""
 
-#: ufraw_preview.c:1642
+#: ufraw_preview.c:1648
 msgid "Output color profiles"
 msgstr ""
 
-#: ufraw_preview.c:1643
+#: ufraw_preview.c:1649
 msgid "Base Curves"
 msgstr ""
 
-#: ufraw_preview.c:1644
+#: ufraw_preview.c:1650
 msgid "Luminosity Curves"
 msgstr ""
 
-#: ufraw_preview.c:1646
+#: ufraw_preview.c:1652
 msgid "Configuration"
 msgstr ""
 
-#: ufraw_preview.c:1661
+#: ufraw_preview.c:1667
 msgid "Save image defaults "
 msgstr ""
 
-#: ufraw_preview.c:1665 ufraw_saver.c:397
+#: ufraw_preview.c:1671 ufraw_saver.c:397
 msgid ""
 "Save current image manipulation parameters as defaults.\n"
 "The output parameters in this window are always saved."
 msgstr ""
 
-#: ufraw_preview.c:1668 ufraw_saver.c:400
+#: ufraw_preview.c:1674 ufraw_saver.c:400
 msgid "Never again"
 msgstr ""
 
-#: ufraw_preview.c:1669 ufraw_saver.c:401
+#: ufraw_preview.c:1675 ufraw_saver.c:401
 msgid "Always"
 msgstr ""
 
-#: ufraw_preview.c:1670 ufraw_saver.c:402
+#: ufraw_preview.c:1676 ufraw_saver.c:402
 msgid "Just this once"
 msgstr ""
 
-#: ufraw_preview.c:1677
+#: ufraw_preview.c:1683
 msgid "Save full configuration "
 msgstr ""
 
-#: ufraw_preview.c:1680
+#: ufraw_preview.c:1686
 msgid "Save resource file ($HOME/.ufrawrc)"
 msgstr ""
 
-#: ufraw_preview.c:1688
+#: ufraw_preview.c:1694
 msgid "Log"
 msgstr ""
 
-#: ufraw_preview.c:1700
+#: ufraw_preview.c:1706
 msgid "Encoding conversion failed"
 msgstr ""
 
-#: ufraw_preview.c:1704
+#: ufraw_preview.c:1710
 msgid "About"
 msgstr ""
 
-#: ufraw_preview.c:1715
+#: ufraw_preview.c:1721
 msgid ""
 "The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
 "to\n"
@@ -690,333 +690,333 @@ msgid ""
 "\n"
 msgstr ""
 
-#: ufraw_preview.c:1980
+#: ufraw_preview.c:1986
 #, c-format
 msgid "%s - UFRaw Photo Loader"
 msgstr ""
 
-#: ufraw_preview.c:2043 ufraw_preview.c:2680
+#: ufraw_preview.c:2049 ufraw_preview.c:2686
 msgid "Linear"
 msgstr ""
 
-#: ufraw_preview.c:2052 ufraw_preview.c:2689
+#: ufraw_preview.c:2058 ufraw_preview.c:2695
 msgid "Logarithmic"
 msgstr ""
 
-#: ufraw_preview.c:2066 ufraw_preview.c:2703
+#: ufraw_preview.c:2072 ufraw_preview.c:2709
 msgid "96 Pixels"
 msgstr ""
 
-#: ufraw_preview.c:2075 ufraw_preview.c:2712
+#: ufraw_preview.c:2081 ufraw_preview.c:2718
 msgid "128 Pixels"
 msgstr ""
 
-#: ufraw_preview.c:2084 ufraw_preview.c:2721
+#: ufraw_preview.c:2090 ufraw_preview.c:2727
 msgid "192 Pixels"
 msgstr ""
 
-#: ufraw_preview.c:2093 ufraw_preview.c:2730
+#: ufraw_preview.c:2099 ufraw_preview.c:2736
 msgid "256 Pixels"
 msgstr ""
 
-#: ufraw_preview.c:2106
+#: ufraw_preview.c:2112
 msgid "Spot values:"
 msgstr ""
 
-#: ufraw_preview.c:2113
+#: ufraw_preview.c:2119
 msgid "Exposure compensation in EV"
 msgstr ""
 
-#: ufraw_preview.c:2131
+#: ufraw_preview.c:2137
 msgid "Auto adjust exposure"
 msgstr ""
 
-#: ufraw_preview.c:2142
+#: ufraw_preview.c:2148
 msgid "Reset exposure to default"
 msgstr ""
 
 #. Start of White Balance setting page
-#: ufraw_preview.c:2151
+#: ufraw_preview.c:2157
 msgid "WB"
 msgstr ""
 
-#: ufraw_preview.c:2204
+#: ufraw_preview.c:2210
 msgid "White Balance"
 msgstr ""
 
-#: ufraw_preview.c:2229
+#: ufraw_preview.c:2235
 msgid ""
 "There are no white balance presets for your camera model.\n"
 "Check UFRaw's webpage for information on how to get your\n"
 "camera supported."
 msgstr ""
 
-#: ufraw_preview.c:2235
+#: ufraw_preview.c:2241
 msgid "Reset white balance to initial value"
 msgstr ""
 
-#: ufraw_preview.c:2241
+#: ufraw_preview.c:2247
 msgid "Temperature"
 msgstr ""
 
-#: ufraw_preview.c:2243
+#: ufraw_preview.c:2249
 msgid "White balance color temperature (K)"
 msgstr ""
 
-#: ufraw_preview.c:2244
+#: ufraw_preview.c:2250
 msgid "Green"
 msgstr ""
 
-#: ufraw_preview.c:2246
+#: ufraw_preview.c:2252
 msgid "Green component"
 msgstr ""
 
-#: ufraw_preview.c:2252
+#: ufraw_preview.c:2258
 msgid "Select a spot on the preview image to apply spot white balance"
 msgstr ""
 
-#: ufraw_preview.c:2261
+#: ufraw_preview.c:2267
 msgid "Chan. multipliers:"
 msgstr ""
 
-#: ufraw_preview.c:2263
+#: ufraw_preview.c:2269
 msgid "Channel multipliers:"
 msgstr ""
 
 #. End of White Balance setting page
 #. Start of Base Curve page
-#: ufraw_preview.c:2280
+#: ufraw_preview.c:2286
 msgid "Base"
 msgstr ""
 
-#: ufraw_preview.c:2312
+#: ufraw_preview.c:2318
 msgid "Load base curve"
 msgstr ""
 
-#: ufraw_preview.c:2318
+#: ufraw_preview.c:2324
 msgid "Save base curve"
 msgstr ""
 
-#: ufraw_preview.c:2338
+#: ufraw_preview.c:2344
 msgid "Reset base curve to default"
 msgstr ""
 
 #. End of Base Curve page
 #. Start of Color management page
-#: ufraw_preview.c:2348
+#: ufraw_preview.c:2354
 msgid "Color"
 msgstr ""
 
-#: ufraw_preview.c:2351
+#: ufraw_preview.c:2357
 msgid "Input profile"
 msgstr ""
 
-#: ufraw_preview.c:2352
+#: ufraw_preview.c:2358
 msgid "Output profile"
 msgstr ""
 
-#: ufraw_preview.c:2375
+#: ufraw_preview.c:2381
 msgid "Use color matrix"
 msgstr ""
 
-#: ufraw_preview.c:2384
+#: ufraw_preview.c:2390
 msgid "Gamma"
 msgstr ""
 
-#: ufraw_preview.c:2387
+#: ufraw_preview.c:2393
 msgid "Gamma correction for the input profile"
 msgstr ""
 
-#: ufraw_preview.c:2392
+#: ufraw_preview.c:2398
 msgid "Reset gamma to default"
 msgstr ""
 
-#: ufraw_preview.c:2397
+#: ufraw_preview.c:2403
 msgid "Linearity"
 msgstr ""
 
-#: ufraw_preview.c:2400
+#: ufraw_preview.c:2406
 msgid "Linear part of the gamma correction"
 msgstr ""
 
-#: ufraw_preview.c:2405
+#: ufraw_preview.c:2411
 msgid "Reset linearity to default"
 msgstr ""
 
-#: ufraw_preview.c:2410
+#: ufraw_preview.c:2416
 msgid "Intent"
 msgstr ""
 
-#: ufraw_preview.c:2413
+#: ufraw_preview.c:2419
 msgid "Perceptual"
 msgstr ""
 
-#: ufraw_preview.c:2414
+#: ufraw_preview.c:2420
 msgid "Relative colorimetric"
 msgstr ""
 
-#: ufraw_preview.c:2415 ufraw_preview.c:2427 ufraw_preview.c:2429
+#: ufraw_preview.c:2421 ufraw_preview.c:2433 ufraw_preview.c:2435
 msgid "Saturation"
 msgstr ""
 
-#: ufraw_preview.c:2416
+#: ufraw_preview.c:2422
 msgid "Absolute colorimetric"
 msgstr ""
 
 #. End of Color management page
 #. Start of Corrections page
-#: ufraw_preview.c:2424
+#: ufraw_preview.c:2430
 msgid "Corrections"
 msgstr ""
 
-#: ufraw_preview.c:2434
+#: ufraw_preview.c:2440
 msgid "Reset saturation to default"
 msgstr ""
 
-#: ufraw_preview.c:2484
+#: ufraw_preview.c:2490
 msgid ""
 "Auto adjust curve\n"
 "(Flatten histogram)"
 msgstr ""
 
-#: ufraw_preview.c:2494
+#: ufraw_preview.c:2500
 msgid "Reset curve to default"
 msgstr ""
 
-#: ufraw_preview.c:2500
+#: ufraw_preview.c:2506
 msgid "Black point: 0.000"
 msgstr ""
 
-#: ufraw_preview.c:2517
+#: ufraw_preview.c:2523
 msgid "Reset black-point to default"
 msgstr ""
 
-#: ufraw_preview.c:2527
+#: ufraw_preview.c:2533
 msgid "Auto adjust black-point"
 msgstr ""
 
 #. End of Corrections page
 #. Start of Zoom page
-#: ufraw_preview.c:2536
+#: ufraw_preview.c:2542
 msgid "Zoom"
 msgstr ""
 
-#: ufraw_preview.c:2540
+#: ufraw_preview.c:2546
 msgid "Zoom %"
 msgstr ""
 
-#: ufraw_preview.c:2585
+#: ufraw_preview.c:2591
 #, c-format
 msgid "Camera: %s %s\n"
 msgstr ""
 
-#: ufraw_preview.c:2586
+#: ufraw_preview.c:2592
 #, c-format
 msgid "Timestamp: %s\n"
 msgstr ""
 
-#: ufraw_preview.c:2587
+#: ufraw_preview.c:2593
 #, c-format
 msgid "Shutter: %s\n"
 msgstr ""
 
-#: ufraw_preview.c:2588
+#: ufraw_preview.c:2594
 #, c-format
 msgid "Aperture: %s\n"
 msgstr ""
 
-#: ufraw_preview.c:2589
+#: ufraw_preview.c:2595
 #, c-format
 msgid "ISO speed: %s\n"
 msgstr ""
 
-#: ufraw_preview.c:2590
+#: ufraw_preview.c:2596
 #, c-format
 msgid "Focal length: %s\n"
 msgstr ""
 
-#: ufraw_preview.c:2594
+#: ufraw_preview.c:2600
 #, c-format
 msgid "Focal length in 35mm equivalent: %s\n"
 msgstr ""
 
-#: ufraw_preview.c:2597
+#: ufraw_preview.c:2603
 #, c-format
 msgid "Lens: %s\n"
 msgstr ""
 
-#: ufraw_preview.c:2598
+#: ufraw_preview.c:2604
 #, c-format
 msgid ""
 "\n"
 "EXIF data read by %s"
 msgstr ""
 
-#: ufraw_preview.c:2627
+#: ufraw_preview.c:2633
 msgid "RGB histogram"
 msgstr ""
 
-#: ufraw_preview.c:2636
+#: ufraw_preview.c:2642
 msgid "R+G+B histogram"
 msgstr ""
 
-#: ufraw_preview.c:2646
+#: ufraw_preview.c:2652
 msgid "Luminosity histogram"
 msgstr ""
 
-#: ufraw_preview.c:2656
+#: ufraw_preview.c:2662
 msgid "Value (maximum) histogram"
 msgstr ""
 
-#: ufraw_preview.c:2666
+#: ufraw_preview.c:2672
 msgid "Saturation histogram"
 msgstr ""
 
-#: ufraw_preview.c:2742
+#: ufraw_preview.c:2748
 msgid "Average:"
 msgstr ""
 
-#: ufraw_preview.c:2743
+#: ufraw_preview.c:2749
 msgid "Std. deviation:"
 msgstr ""
 
-#: ufraw_preview.c:2746
+#: ufraw_preview.c:2752
 msgid "Overexposed:"
 msgstr ""
 
-#: ufraw_preview.c:2748 ufraw_preview.c:2759
+#: ufraw_preview.c:2754 ufraw_preview.c:2765
 msgid "Indicate"
 msgstr ""
 
-#: ufraw_preview.c:2756
+#: ufraw_preview.c:2762
 msgid "Underexposed:"
 msgstr ""
 
-#: ufraw_preview.c:2798 ufraw_saver.c:262
+#: ufraw_preview.c:2804 ufraw_saver.c:262
 msgid "AHD interpolation"
 msgstr ""
 
-#: ufraw_preview.c:2799 ufraw_saver.c:263
+#: ufraw_preview.c:2805 ufraw_saver.c:263
 msgid "VNG interpolation"
 msgstr ""
 
-#: ufraw_preview.c:2800 ufraw_saver.c:264
+#: ufraw_preview.c:2806 ufraw_saver.c:264
 msgid "VNG four color interpolation"
 msgstr ""
 
-#: ufraw_preview.c:2801 ufraw_saver.c:265
+#: ufraw_preview.c:2807 ufraw_saver.c:265
 msgid "Bilinear interpolation"
 msgstr ""
 
-#: ufraw_preview.c:2803
+#: ufraw_preview.c:2809
 msgid "Half-size interpolation"
 msgstr ""
 
-#: ufraw_preview.c:2820
+#: ufraw_preview.c:2826
 msgid "Options"
 msgstr ""
 
-#: ufraw_preview.c:2856
+#: ufraw_preview.c:2862
 msgid "Loading preview"
 msgstr ""
 
@@ -1226,31 +1226,39 @@ msgstr ""
 #: wb_presets.c:437 wb_presets.c:438 wb_presets.c:439 wb_presets.c:453
 #: wb_presets.c:458 wb_presets.c:459 wb_presets.c:460 wb_presets.c:461
 #: wb_presets.c:462 wb_presets.c:463 wb_presets.c:464 wb_presets.c:501
-#: wb_presets.c:502 wb_presets.c:503 wb_presets.c:542 wb_presets.c:755
-#: wb_presets.c:756 wb_presets.c:757 wb_presets.c:771 wb_presets.c:772
-#: wb_presets.c:773 wb_presets.c:790 wb_presets.c:803 wb_presets.c:804
-#: wb_presets.c:805 wb_presets.c:867 wb_presets.c:868 wb_presets.c:869
-#: wb_presets.c:870 wb_presets.c:871 wb_presets.c:872 wb_presets.c:873
-#: wb_presets.c:874 wb_presets.c:875 wb_presets.c:876 wb_presets.c:877
-#: wb_presets.c:878 wb_presets.c:879 wb_presets.c:880 wb_presets.c:881
-#: wb_presets.c:1109 wb_presets.c:1110 wb_presets.c:1111 wb_presets.c:1112
-#: wb_presets.c:1113 wb_presets.c:1114 wb_presets.c:1115 wb_presets.c:1116
-#: wb_presets.c:1117 wb_presets.c:1118 wb_presets.c:1119 wb_presets.c:1120
-#: wb_presets.c:1121 wb_presets.c:1122 wb_presets.c:1123 wb_presets.c:1174
-#: wb_presets.c:1193 wb_presets.c:1194 wb_presets.c:1195 wb_presets.c:1203
-#: wb_presets.c:1211 wb_presets.c:1223 wb_presets.c:1233 wb_presets.c:1242
-#: wb_presets.c:1251 wb_presets.c:1252 wb_presets.c:1253
+#: wb_presets.c:502 wb_presets.c:503 wb_presets.c:585 wb_presets.c:797
+#: wb_presets.c:798 wb_presets.c:799 wb_presets.c:813 wb_presets.c:814
+#: wb_presets.c:815 wb_presets.c:832 wb_presets.c:845 wb_presets.c:846
+#: wb_presets.c:847 wb_presets.c:909 wb_presets.c:910 wb_presets.c:911
+#: wb_presets.c:912 wb_presets.c:913 wb_presets.c:914 wb_presets.c:915
+#: wb_presets.c:916 wb_presets.c:917 wb_presets.c:918 wb_presets.c:919
+#: wb_presets.c:920 wb_presets.c:921 wb_presets.c:922 wb_presets.c:923
+#: wb_presets.c:1151 wb_presets.c:1152 wb_presets.c:1153 wb_presets.c:1154
+#: wb_presets.c:1155 wb_presets.c:1156 wb_presets.c:1157 wb_presets.c:1158
+#: wb_presets.c:1159 wb_presets.c:1160 wb_presets.c:1161 wb_presets.c:1162
+#: wb_presets.c:1163 wb_presets.c:1164 wb_presets.c:1165 wb_presets.c:1216
+#: wb_presets.c:1235 wb_presets.c:1236 wb_presets.c:1237 wb_presets.c:1245
+#: wb_presets.c:1253 wb_presets.c:1258 wb_presets.c:1265 wb_presets.c:1275
+#: wb_presets.c:1284 wb_presets.c:1293 wb_presets.c:1302 wb_presets.c:1303
+#: wb_presets.c:1304
 msgid "Daylight"
 msgstr ""
 
 #. 3250K
 #. 4938K
-#. ~~4800K
-#. ~6600K
-#. ~6400K
-#. ~6200K
-#. ~6000K
-#. ~5800K
+#. 4800K
+#. 6600K
+#. 6400K
+#. 6200K
+#. 6000K
+#. 5800K
+#. 5600K
+#. 4800K
+#. 6600K
+#. 6400K
+#. 6200K
+#. 6000K
+#. 5800K
 #. 5600K
 #. 6000K
 #. 5300K
@@ -1270,26 +1278,28 @@ msgstr ""
 #: wb_presets.c:454 wb_presets.c:472 wb_presets.c:473 wb_presets.c:474
 #: wb_presets.c:475 wb_presets.c:476 wb_presets.c:477 wb_presets.c:478
 #: wb_presets.c:507 wb_presets.c:508 wb_presets.c:509 wb_presets.c:533
-#: wb_presets.c:534 wb_presets.c:535 wb_presets.c:544 wb_presets.c:581
-#: wb_presets.c:582 wb_presets.c:583 wb_presets.c:584 wb_presets.c:585
-#: wb_presets.c:586 wb_presets.c:587 wb_presets.c:657 wb_presets.c:658
-#: wb_presets.c:659 wb_presets.c:660 wb_presets.c:661 wb_presets.c:662
-#: wb_presets.c:663 wb_presets.c:723 wb_presets.c:724 wb_presets.c:725
-#: wb_presets.c:742 wb_presets.c:743 wb_presets.c:744 wb_presets.c:761
-#: wb_presets.c:762 wb_presets.c:763 wb_presets.c:780 wb_presets.c:781
-#: wb_presets.c:782 wb_presets.c:793 wb_presets.c:800 wb_presets.c:801
-#: wb_presets.c:802 wb_presets.c:826 wb_presets.c:852 wb_presets.c:853
-#: wb_presets.c:854 wb_presets.c:855 wb_presets.c:856 wb_presets.c:857
-#: wb_presets.c:858 wb_presets.c:859 wb_presets.c:860 wb_presets.c:861
-#: wb_presets.c:862 wb_presets.c:863 wb_presets.c:864 wb_presets.c:865
-#: wb_presets.c:866 wb_presets.c:1124 wb_presets.c:1125 wb_presets.c:1126
-#: wb_presets.c:1127 wb_presets.c:1128 wb_presets.c:1129 wb_presets.c:1130
-#: wb_presets.c:1131 wb_presets.c:1132 wb_presets.c:1133 wb_presets.c:1134
-#: wb_presets.c:1135 wb_presets.c:1136 wb_presets.c:1137 wb_presets.c:1138
-#: wb_presets.c:1175 wb_presets.c:1196 wb_presets.c:1197 wb_presets.c:1198
-#: wb_presets.c:1204 wb_presets.c:1212 wb_presets.c:1217 wb_presets.c:1225
-#: wb_presets.c:1235 wb_presets.c:1244 wb_presets.c:1257 wb_presets.c:1258
-#: wb_presets.c:1259
+#: wb_presets.c:534 wb_presets.c:535 wb_presets.c:568 wb_presets.c:569
+#: wb_presets.c:570 wb_presets.c:571 wb_presets.c:572 wb_presets.c:573
+#: wb_presets.c:574 wb_presets.c:587 wb_presets.c:623 wb_presets.c:624
+#: wb_presets.c:625 wb_presets.c:626 wb_presets.c:627 wb_presets.c:628
+#: wb_presets.c:629 wb_presets.c:699 wb_presets.c:700 wb_presets.c:701
+#: wb_presets.c:702 wb_presets.c:703 wb_presets.c:704 wb_presets.c:705
+#: wb_presets.c:765 wb_presets.c:766 wb_presets.c:767 wb_presets.c:784
+#: wb_presets.c:785 wb_presets.c:786 wb_presets.c:803 wb_presets.c:804
+#: wb_presets.c:805 wb_presets.c:822 wb_presets.c:823 wb_presets.c:824
+#: wb_presets.c:835 wb_presets.c:842 wb_presets.c:843 wb_presets.c:844
+#: wb_presets.c:868 wb_presets.c:894 wb_presets.c:895 wb_presets.c:896
+#: wb_presets.c:897 wb_presets.c:898 wb_presets.c:899 wb_presets.c:900
+#: wb_presets.c:901 wb_presets.c:902 wb_presets.c:903 wb_presets.c:904
+#: wb_presets.c:905 wb_presets.c:906 wb_presets.c:907 wb_presets.c:908
+#: wb_presets.c:1166 wb_presets.c:1167 wb_presets.c:1168 wb_presets.c:1169
+#: wb_presets.c:1170 wb_presets.c:1171 wb_presets.c:1172 wb_presets.c:1173
+#: wb_presets.c:1174 wb_presets.c:1175 wb_presets.c:1176 wb_presets.c:1177
+#: wb_presets.c:1178 wb_presets.c:1179 wb_presets.c:1180 wb_presets.c:1217
+#: wb_presets.c:1238 wb_presets.c:1239 wb_presets.c:1240 wb_presets.c:1246
+#: wb_presets.c:1254 wb_presets.c:1259 wb_presets.c:1267 wb_presets.c:1277
+#: wb_presets.c:1286 wb_presets.c:1295 wb_presets.c:1308 wb_presets.c:1309
+#: wb_presets.c:1310
 msgid "Cloudy"
 msgstr ""
 
@@ -1310,26 +1320,34 @@ msgstr ""
 #: wb_presets.c:451 wb_presets.c:456 wb_presets.c:479 wb_presets.c:480
 #: wb_presets.c:481 wb_presets.c:482 wb_presets.c:483 wb_presets.c:484
 #: wb_presets.c:485 wb_presets.c:510 wb_presets.c:511 wb_presets.c:512
-#: wb_presets.c:972 wb_presets.c:973 wb_presets.c:974 wb_presets.c:975
-#: wb_presets.c:976 wb_presets.c:977 wb_presets.c:978 wb_presets.c:979
-#: wb_presets.c:980 wb_presets.c:981 wb_presets.c:982 wb_presets.c:983
-#: wb_presets.c:984 wb_presets.c:985 wb_presets.c:986 wb_presets.c:989
-#: wb_presets.c:990 wb_presets.c:991 wb_presets.c:992 wb_presets.c:993
-#: wb_presets.c:994 wb_presets.c:995 wb_presets.c:996 wb_presets.c:997
-#: wb_presets.c:998 wb_presets.c:999 wb_presets.c:1000 wb_presets.c:1001
-#: wb_presets.c:1002 wb_presets.c:1003 wb_presets.c:1229 wb_presets.c:1239
-#: wb_presets.c:1248 wb_presets.c:1260 wb_presets.c:1261 wb_presets.c:1262
+#: wb_presets.c:1014 wb_presets.c:1015 wb_presets.c:1016 wb_presets.c:1017
+#: wb_presets.c:1018 wb_presets.c:1019 wb_presets.c:1020 wb_presets.c:1021
+#: wb_presets.c:1022 wb_presets.c:1023 wb_presets.c:1024 wb_presets.c:1025
+#: wb_presets.c:1026 wb_presets.c:1027 wb_presets.c:1028 wb_presets.c:1031
+#: wb_presets.c:1032 wb_presets.c:1033 wb_presets.c:1034 wb_presets.c:1035
+#: wb_presets.c:1036 wb_presets.c:1037 wb_presets.c:1038 wb_presets.c:1039
+#: wb_presets.c:1040 wb_presets.c:1041 wb_presets.c:1042 wb_presets.c:1043
+#: wb_presets.c:1044 wb_presets.c:1045 wb_presets.c:1271 wb_presets.c:1281
+#: wb_presets.c:1290 wb_presets.c:1299 wb_presets.c:1311 wb_presets.c:1312
+#: wb_presets.c:1313
 msgid "Tungsten"
 msgstr ""
 
 #. 6550K
 #. 2700K
-#. ~~7200K
-#. ~~6500K
-#. ~~5000K
-#. ~~4200K
-#. ~~3700K
-#. ~~3000K
+#. 7200K
+#. 6500K
+#. 5000K
+#. 4200K
+#. 3700K
+#. 3000K
+#. 2700K
+#. 7200K
+#. 6500K
+#. 5000K
+#. 4200K
+#. 3700K
+#. 3000K
 #. 4200K
 #: wb_presets.c:64 wb_presets.c:71 wb_presets.c:78 wb_presets.c:85
 #: wb_presets.c:92 wb_presets.c:99 wb_presets.c:106 wb_presets.c:113
@@ -1343,15 +1361,17 @@ msgstr ""
 #: wb_presets.c:486 wb_presets.c:487 wb_presets.c:488 wb_presets.c:489
 #: wb_presets.c:490 wb_presets.c:491 wb_presets.c:492 wb_presets.c:513
 #: wb_presets.c:514 wb_presets.c:515 wb_presets.c:516 wb_presets.c:524
-#: wb_presets.c:525 wb_presets.c:526 wb_presets.c:541 wb_presets.c:560
-#: wb_presets.c:561 wb_presets.c:562 wb_presets.c:563 wb_presets.c:564
-#: wb_presets.c:565 wb_presets.c:566 wb_presets.c:636 wb_presets.c:637
-#: wb_presets.c:638 wb_presets.c:639 wb_presets.c:640 wb_presets.c:641
-#: wb_presets.c:642 wb_presets.c:706 wb_presets.c:714 wb_presets.c:715
-#: wb_presets.c:716 wb_presets.c:733 wb_presets.c:734 wb_presets.c:735
-#: wb_presets.c:752 wb_presets.c:753 wb_presets.c:754 wb_presets.c:777
-#: wb_presets.c:778 wb_presets.c:779 wb_presets.c:792 wb_presets.c:1213
-#: wb_presets.c:1263 wb_presets.c:1264 wb_presets.c:1265 wb_presets.c:1266
+#: wb_presets.c:525 wb_presets.c:526 wb_presets.c:547 wb_presets.c:548
+#: wb_presets.c:549 wb_presets.c:550 wb_presets.c:551 wb_presets.c:552
+#: wb_presets.c:553 wb_presets.c:584 wb_presets.c:602 wb_presets.c:603
+#: wb_presets.c:604 wb_presets.c:605 wb_presets.c:606 wb_presets.c:607
+#: wb_presets.c:608 wb_presets.c:678 wb_presets.c:679 wb_presets.c:680
+#: wb_presets.c:681 wb_presets.c:682 wb_presets.c:683 wb_presets.c:684
+#: wb_presets.c:748 wb_presets.c:756 wb_presets.c:757 wb_presets.c:758
+#: wb_presets.c:775 wb_presets.c:776 wb_presets.c:777 wb_presets.c:794
+#: wb_presets.c:795 wb_presets.c:796 wb_presets.c:819 wb_presets.c:820
+#: wb_presets.c:821 wb_presets.c:834 wb_presets.c:1255 wb_presets.c:1261
+#: wb_presets.c:1314 wb_presets.c:1315 wb_presets.c:1316 wb_presets.c:1317
 msgid "Fluorescent"
 msgstr ""
 
@@ -1362,12 +1382,19 @@ msgid "Fluorescent high"
 msgstr ""
 
 #. 4800K
-#. ~~6000K
-#. ~~5800K
-#. ~~5600K
-#. ~5400K
-#. ~~5200K
-#. ~~5000K
+#. 6000K
+#. 5800K
+#. 5600K
+#. 5400K
+#. 5200K
+#. 5000K
+#. 4800K
+#. 6000K
+#. 5800K
+#. 5600K
+#. 5400K
+#. 5200K
+#. 5000K
 #. 5400K
 #: wb_presets.c:66 wb_presets.c:73 wb_presets.c:80 wb_presets.c:87
 #: wb_presets.c:94 wb_presets.c:101 wb_presets.c:108 wb_presets.c:115
@@ -1380,16 +1407,18 @@ msgstr ""
 #: wb_presets.c:441 wb_presets.c:442 wb_presets.c:493 wb_presets.c:494
 #: wb_presets.c:495 wb_presets.c:496 wb_presets.c:497 wb_presets.c:498
 #: wb_presets.c:499 wb_presets.c:517 wb_presets.c:518 wb_presets.c:519
-#: wb_presets.c:530 wb_presets.c:531 wb_presets.c:532 wb_presets.c:543
-#: wb_presets.c:574 wb_presets.c:575 wb_presets.c:576 wb_presets.c:577
-#: wb_presets.c:578 wb_presets.c:579 wb_presets.c:580 wb_presets.c:650
-#: wb_presets.c:651 wb_presets.c:652 wb_presets.c:653 wb_presets.c:654
-#: wb_presets.c:655 wb_presets.c:656 wb_presets.c:708 wb_presets.c:720
-#: wb_presets.c:721 wb_presets.c:722 wb_presets.c:739 wb_presets.c:740
-#: wb_presets.c:741 wb_presets.c:758 wb_presets.c:759 wb_presets.c:760
-#: wb_presets.c:783 wb_presets.c:784 wb_presets.c:785 wb_presets.c:794
-#: wb_presets.c:1214 wb_presets.c:1220 wb_presets.c:1230 wb_presets.c:1240
-#: wb_presets.c:1249 wb_presets.c:1267 wb_presets.c:1268 wb_presets.c:1269
+#: wb_presets.c:530 wb_presets.c:531 wb_presets.c:532 wb_presets.c:561
+#: wb_presets.c:562 wb_presets.c:563 wb_presets.c:564 wb_presets.c:565
+#: wb_presets.c:566 wb_presets.c:567 wb_presets.c:586 wb_presets.c:616
+#: wb_presets.c:617 wb_presets.c:618 wb_presets.c:619 wb_presets.c:620
+#: wb_presets.c:621 wb_presets.c:622 wb_presets.c:692 wb_presets.c:693
+#: wb_presets.c:694 wb_presets.c:695 wb_presets.c:696 wb_presets.c:697
+#: wb_presets.c:698 wb_presets.c:750 wb_presets.c:762 wb_presets.c:763
+#: wb_presets.c:764 wb_presets.c:781 wb_presets.c:782 wb_presets.c:783
+#: wb_presets.c:800 wb_presets.c:801 wb_presets.c:802 wb_presets.c:825
+#: wb_presets.c:826 wb_presets.c:827 wb_presets.c:836 wb_presets.c:1256
+#: wb_presets.c:1262 wb_presets.c:1272 wb_presets.c:1282 wb_presets.c:1291
+#: wb_presets.c:1300 wb_presets.c:1318 wb_presets.c:1319 wb_presets.c:1320
 msgid "Flash"
 msgstr ""
 
@@ -1398,12 +1427,19 @@ msgid "Underwater"
 msgstr ""
 
 #. 6100K
-#. ~5400K
-#. ~9200K
-#. ~8800K
-#. ~8400K
-#. ~8000K
-#. ~7500K
+#. 5400K
+#. 9200K
+#. 8800K
+#. 8400K
+#. 8000K
+#. 7500K
+#. 7100K
+#. 5400K
+#. 9200K
+#. 8800K
+#. 8400K
+#. 8000K
+#. 7500K
 #. 7100K
 #. 8000K
 #. 3000K
@@ -1421,57 +1457,74 @@ msgstr ""
 #: wb_presets.c:447 wb_presets.c:448 wb_presets.c:465 wb_presets.c:466
 #: wb_presets.c:467 wb_presets.c:468 wb_presets.c:469 wb_presets.c:470
 #: wb_presets.c:471 wb_presets.c:504 wb_presets.c:505 wb_presets.c:506
-#: wb_presets.c:536 wb_presets.c:537 wb_presets.c:538 wb_presets.c:545
-#: wb_presets.c:588 wb_presets.c:589 wb_presets.c:590 wb_presets.c:591
-#: wb_presets.c:592 wb_presets.c:593 wb_presets.c:594 wb_presets.c:664
-#: wb_presets.c:665 wb_presets.c:666 wb_presets.c:667 wb_presets.c:668
-#: wb_presets.c:669 wb_presets.c:670 wb_presets.c:709 wb_presets.c:726
-#: wb_presets.c:727 wb_presets.c:728 wb_presets.c:745 wb_presets.c:746
-#: wb_presets.c:747 wb_presets.c:764 wb_presets.c:765 wb_presets.c:766
-#: wb_presets.c:786 wb_presets.c:787 wb_presets.c:788 wb_presets.c:795
-#: wb_presets.c:797 wb_presets.c:798 wb_presets.c:799 wb_presets.c:825
-#: wb_presets.c:837 wb_presets.c:838 wb_presets.c:839 wb_presets.c:840
-#: wb_presets.c:841 wb_presets.c:842 wb_presets.c:843 wb_presets.c:844
-#: wb_presets.c:845 wb_presets.c:846 wb_presets.c:847 wb_presets.c:848
-#: wb_presets.c:849 wb_presets.c:850 wb_presets.c:851 wb_presets.c:1154
-#: wb_presets.c:1155 wb_presets.c:1156 wb_presets.c:1157 wb_presets.c:1158
-#: wb_presets.c:1159 wb_presets.c:1160 wb_presets.c:1161 wb_presets.c:1162
-#: wb_presets.c:1163 wb_presets.c:1164 wb_presets.c:1165 wb_presets.c:1166
-#: wb_presets.c:1167 wb_presets.c:1168 wb_presets.c:1176 wb_presets.c:1199
-#: wb_presets.c:1200 wb_presets.c:1201 wb_presets.c:1205 wb_presets.c:1224
-#: wb_presets.c:1234 wb_presets.c:1243 wb_presets.c:1254 wb_presets.c:1255
-#: wb_presets.c:1256
+#: wb_presets.c:536 wb_presets.c:537 wb_presets.c:538 wb_presets.c:575
+#: wb_presets.c:576 wb_presets.c:577 wb_presets.c:578 wb_presets.c:579
+#: wb_presets.c:580 wb_presets.c:581 wb_presets.c:588 wb_presets.c:630
+#: wb_presets.c:631 wb_presets.c:632 wb_presets.c:633 wb_presets.c:634
+#: wb_presets.c:635 wb_presets.c:636 wb_presets.c:706 wb_presets.c:707
+#: wb_presets.c:708 wb_presets.c:709 wb_presets.c:710 wb_presets.c:711
+#: wb_presets.c:712 wb_presets.c:751 wb_presets.c:768 wb_presets.c:769
+#: wb_presets.c:770 wb_presets.c:787 wb_presets.c:788 wb_presets.c:789
+#: wb_presets.c:806 wb_presets.c:807 wb_presets.c:808 wb_presets.c:828
+#: wb_presets.c:829 wb_presets.c:830 wb_presets.c:837 wb_presets.c:839
+#: wb_presets.c:840 wb_presets.c:841 wb_presets.c:867 wb_presets.c:879
+#: wb_presets.c:880 wb_presets.c:881 wb_presets.c:882 wb_presets.c:883
+#: wb_presets.c:884 wb_presets.c:885 wb_presets.c:886 wb_presets.c:887
+#: wb_presets.c:888 wb_presets.c:889 wb_presets.c:890 wb_presets.c:891
+#: wb_presets.c:892 wb_presets.c:893 wb_presets.c:1196 wb_presets.c:1197
+#: wb_presets.c:1198 wb_presets.c:1199 wb_presets.c:1200 wb_presets.c:1201
+#: wb_presets.c:1202 wb_presets.c:1203 wb_presets.c:1204 wb_presets.c:1205
+#: wb_presets.c:1206 wb_presets.c:1207 wb_presets.c:1208 wb_presets.c:1209
+#: wb_presets.c:1210 wb_presets.c:1218 wb_presets.c:1241 wb_presets.c:1242
+#: wb_presets.c:1243 wb_presets.c:1247 wb_presets.c:1260 wb_presets.c:1266
+#: wb_presets.c:1276 wb_presets.c:1285 wb_presets.c:1294 wb_presets.c:1305
+#: wb_presets.c:1306 wb_presets.c:1307
 msgid "Shade"
 msgstr ""
 
-#. ~~2700K
+#. 2700K
 #. 5600K
-#. ~5400K
+#. 5400K
 #. 5300K
-#. ~5200K
+#. 5200K
 #. 5000K
-#. ~4900K
+#. 4900K
+#. 2700K
+#. 5600K
+#. 5400K
+#. 5300K
+#. 5200K
+#. 5000K
+#. 4900K
 #. 5200K
 #: wb_presets.c:160 wb_presets.c:527 wb_presets.c:528 wb_presets.c:529
-#: wb_presets.c:567 wb_presets.c:568 wb_presets.c:569 wb_presets.c:570
-#: wb_presets.c:571 wb_presets.c:572 wb_presets.c:573 wb_presets.c:643
-#: wb_presets.c:644 wb_presets.c:645 wb_presets.c:646 wb_presets.c:647
-#: wb_presets.c:648 wb_presets.c:649 wb_presets.c:707 wb_presets.c:717
-#: wb_presets.c:718 wb_presets.c:719 wb_presets.c:736 wb_presets.c:737
-#: wb_presets.c:738 wb_presets.c:827
+#: wb_presets.c:554 wb_presets.c:555 wb_presets.c:556 wb_presets.c:557
+#: wb_presets.c:558 wb_presets.c:559 wb_presets.c:560 wb_presets.c:609
+#: wb_presets.c:610 wb_presets.c:611 wb_presets.c:612 wb_presets.c:613
+#: wb_presets.c:614 wb_presets.c:615 wb_presets.c:685 wb_presets.c:686
+#: wb_presets.c:687 wb_presets.c:688 wb_presets.c:689 wb_presets.c:690
+#: wb_presets.c:691 wb_presets.c:749 wb_presets.c:759 wb_presets.c:760
+#: wb_presets.c:761 wb_presets.c:778 wb_presets.c:779 wb_presets.c:780
+#: wb_presets.c:869
 msgid "Direct sunlight"
 msgstr ""
 
-#.
-#. * D2X with firmware A 1.01 and B 1.01
-#. * D2X basic WB presets
-#.
-#. D2X fine tune presets (0 is basic, above)
-#. ~3300K
-#. ~3200K
+#. 3250K
+#. 3150K
 #. 3100K
 #. 3000K
-#. ~2900K
+#. 2900K
+#. 2800K
+#. 6700K
+#.
+#. * D2X with firmware A 1.01 and B 1.01
+#.
+#. D2X basic + fine tune presets
+#. 3300K
+#. 3200K
+#. 3100K
+#. 3000K
+#. 2900K
 #. 2800K
 #. D200 basic + fine tune WB presets
 #. 3000K
@@ -1479,25 +1532,25 @@ msgstr ""
 #. 3000K
 #. 3600K
 #. 7500K
-#. { "Panasonic", "DMC-FZ50", N_("House (Landscape??)"), 0, { 2.463878 1, 1.414449, 0 } },
 #: wb_presets.c:212 wb_presets.c:219 wb_presets.c:226 wb_presets.c:237
 #: wb_presets.c:249 wb_presets.c:258 wb_presets.c:270 wb_presets.c:277
 #: wb_presets.c:284 wb_presets.c:291 wb_presets.c:293 wb_presets.c:346
 #: wb_presets.c:401 wb_presets.c:406 wb_presets.c:521 wb_presets.c:522
-#: wb_presets.c:523 wb_presets.c:540 wb_presets.c:553 wb_presets.c:554
-#: wb_presets.c:555 wb_presets.c:556 wb_presets.c:557 wb_presets.c:558
-#: wb_presets.c:559 wb_presets.c:630 wb_presets.c:631 wb_presets.c:632
-#: wb_presets.c:633 wb_presets.c:634 wb_presets.c:635 wb_presets.c:705
-#: wb_presets.c:711 wb_presets.c:712 wb_presets.c:713 wb_presets.c:730
-#: wb_presets.c:731 wb_presets.c:732 wb_presets.c:749 wb_presets.c:750
-#: wb_presets.c:751 wb_presets.c:774 wb_presets.c:775 wb_presets.c:776
-#: wb_presets.c:791 wb_presets.c:821 wb_presets.c:822 wb_presets.c:823
-#: wb_presets.c:833 wb_presets.c:1019 wb_presets.c:1020 wb_presets.c:1021
-#: wb_presets.c:1022 wb_presets.c:1023 wb_presets.c:1024 wb_presets.c:1025
-#: wb_presets.c:1026 wb_presets.c:1027 wb_presets.c:1028 wb_presets.c:1029
-#: wb_presets.c:1030 wb_presets.c:1031 wb_presets.c:1032 wb_presets.c:1033
-#: wb_presets.c:1170 wb_presets.c:1178 wb_presets.c:1179 wb_presets.c:1180
-#: wb_presets.c:1206 wb_presets.c:1219
+#: wb_presets.c:523 wb_presets.c:540 wb_presets.c:541 wb_presets.c:542
+#: wb_presets.c:543 wb_presets.c:544 wb_presets.c:545 wb_presets.c:546
+#: wb_presets.c:583 wb_presets.c:595 wb_presets.c:596 wb_presets.c:597
+#: wb_presets.c:598 wb_presets.c:599 wb_presets.c:600 wb_presets.c:601
+#: wb_presets.c:672 wb_presets.c:673 wb_presets.c:674 wb_presets.c:675
+#: wb_presets.c:676 wb_presets.c:677 wb_presets.c:747 wb_presets.c:753
+#: wb_presets.c:754 wb_presets.c:755 wb_presets.c:772 wb_presets.c:773
+#: wb_presets.c:774 wb_presets.c:791 wb_presets.c:792 wb_presets.c:793
+#: wb_presets.c:816 wb_presets.c:817 wb_presets.c:818 wb_presets.c:833
+#: wb_presets.c:863 wb_presets.c:864 wb_presets.c:865 wb_presets.c:875
+#: wb_presets.c:1061 wb_presets.c:1062 wb_presets.c:1063 wb_presets.c:1064
+#: wb_presets.c:1065 wb_presets.c:1066 wb_presets.c:1067 wb_presets.c:1068
+#: wb_presets.c:1069 wb_presets.c:1070 wb_presets.c:1071 wb_presets.c:1072
+#: wb_presets.c:1073 wb_presets.c:1074 wb_presets.c:1075 wb_presets.c:1212
+#: wb_presets.c:1220 wb_presets.c:1221 wb_presets.c:1222 wb_presets.c:1248
 msgid "Incandescent"
 msgstr ""
 
@@ -1508,11 +1561,11 @@ msgstr ""
 #. 4200K
 #: wb_presets.c:238 wb_presets.c:248 wb_presets.c:256 wb_presets.c:269
 #: wb_presets.c:276 wb_presets.c:283 wb_presets.c:290 wb_presets.c:423
-#: wb_presets.c:815 wb_presets.c:816 wb_presets.c:817 wb_presets.c:831
-#: wb_presets.c:942 wb_presets.c:943 wb_presets.c:944 wb_presets.c:945
-#: wb_presets.c:946 wb_presets.c:947 wb_presets.c:948 wb_presets.c:949
-#: wb_presets.c:950 wb_presets.c:951 wb_presets.c:952 wb_presets.c:953
-#: wb_presets.c:954 wb_presets.c:955 wb_presets.c:956
+#: wb_presets.c:857 wb_presets.c:858 wb_presets.c:859 wb_presets.c:873
+#: wb_presets.c:984 wb_presets.c:985 wb_presets.c:986 wb_presets.c:987
+#: wb_presets.c:988 wb_presets.c:989 wb_presets.c:990 wb_presets.c:991
+#: wb_presets.c:992 wb_presets.c:993 wb_presets.c:994 wb_presets.c:995
+#: wb_presets.c:996 wb_presets.c:997 wb_presets.c:998
 msgid "Cool white fluorescent"
 msgstr ""
 
@@ -1527,18 +1580,18 @@ msgstr ""
 #. 4000K
 #. 4500K
 #: wb_presets.c:240 wb_presets.c:246 wb_presets.c:254 wb_presets.c:267
-#: wb_presets.c:274 wb_presets.c:281 wb_presets.c:288 wb_presets.c:809
-#: wb_presets.c:810 wb_presets.c:811 wb_presets.c:829 wb_presets.c:912
-#: wb_presets.c:913 wb_presets.c:914 wb_presets.c:915 wb_presets.c:916
-#: wb_presets.c:917 wb_presets.c:918 wb_presets.c:919 wb_presets.c:920
-#: wb_presets.c:921 wb_presets.c:922 wb_presets.c:923 wb_presets.c:924
-#: wb_presets.c:925 wb_presets.c:926 wb_presets.c:1139 wb_presets.c:1140
-#: wb_presets.c:1141 wb_presets.c:1142 wb_presets.c:1143 wb_presets.c:1144
-#: wb_presets.c:1145 wb_presets.c:1146 wb_presets.c:1147 wb_presets.c:1148
-#: wb_presets.c:1149 wb_presets.c:1150 wb_presets.c:1151 wb_presets.c:1152
-#: wb_presets.c:1153 wb_presets.c:1173 wb_presets.c:1190 wb_presets.c:1191
-#: wb_presets.c:1192 wb_presets.c:1209 wb_presets.c:1226 wb_presets.c:1236
-#: wb_presets.c:1245
+#: wb_presets.c:274 wb_presets.c:281 wb_presets.c:288 wb_presets.c:851
+#: wb_presets.c:852 wb_presets.c:853 wb_presets.c:871 wb_presets.c:954
+#: wb_presets.c:955 wb_presets.c:956 wb_presets.c:957 wb_presets.c:958
+#: wb_presets.c:959 wb_presets.c:960 wb_presets.c:961 wb_presets.c:962
+#: wb_presets.c:963 wb_presets.c:964 wb_presets.c:965 wb_presets.c:966
+#: wb_presets.c:967 wb_presets.c:968 wb_presets.c:1181 wb_presets.c:1182
+#: wb_presets.c:1183 wb_presets.c:1184 wb_presets.c:1185 wb_presets.c:1186
+#: wb_presets.c:1187 wb_presets.c:1188 wb_presets.c:1189 wb_presets.c:1190
+#: wb_presets.c:1191 wb_presets.c:1192 wb_presets.c:1193 wb_presets.c:1194
+#: wb_presets.c:1195 wb_presets.c:1215 wb_presets.c:1232 wb_presets.c:1233
+#: wb_presets.c:1234 wb_presets.c:1251 wb_presets.c:1268 wb_presets.c:1278
+#: wb_presets.c:1287 wb_presets.c:1296
 msgid "Daylight fluorescent"
 msgstr ""
 
@@ -1554,25 +1607,25 @@ msgstr ""
 #. 4000K
 #. 3700K
 #. 3000K
-#: wb_presets.c:422 wb_presets.c:818 wb_presets.c:819 wb_presets.c:820
-#: wb_presets.c:832 wb_presets.c:957 wb_presets.c:958 wb_presets.c:959
-#: wb_presets.c:960 wb_presets.c:961 wb_presets.c:962 wb_presets.c:963
-#: wb_presets.c:964 wb_presets.c:965 wb_presets.c:966 wb_presets.c:967
-#: wb_presets.c:968 wb_presets.c:969 wb_presets.c:970 wb_presets.c:971
-#: wb_presets.c:1049 wb_presets.c:1050 wb_presets.c:1051 wb_presets.c:1052
-#: wb_presets.c:1053 wb_presets.c:1054 wb_presets.c:1055 wb_presets.c:1056
-#: wb_presets.c:1057 wb_presets.c:1058 wb_presets.c:1059 wb_presets.c:1060
-#: wb_presets.c:1061 wb_presets.c:1062 wb_presets.c:1063 wb_presets.c:1172
-#: wb_presets.c:1184 wb_presets.c:1185 wb_presets.c:1186 wb_presets.c:1207
-#: wb_presets.c:1228 wb_presets.c:1238 wb_presets.c:1247
+#: wb_presets.c:422 wb_presets.c:860 wb_presets.c:861 wb_presets.c:862
+#: wb_presets.c:874 wb_presets.c:999 wb_presets.c:1000 wb_presets.c:1001
+#: wb_presets.c:1002 wb_presets.c:1003 wb_presets.c:1004 wb_presets.c:1005
+#: wb_presets.c:1006 wb_presets.c:1007 wb_presets.c:1008 wb_presets.c:1009
+#: wb_presets.c:1010 wb_presets.c:1011 wb_presets.c:1012 wb_presets.c:1013
+#: wb_presets.c:1091 wb_presets.c:1092 wb_presets.c:1093 wb_presets.c:1094
+#: wb_presets.c:1095 wb_presets.c:1096 wb_presets.c:1097 wb_presets.c:1098
+#: wb_presets.c:1099 wb_presets.c:1100 wb_presets.c:1101 wb_presets.c:1102
+#: wb_presets.c:1103 wb_presets.c:1104 wb_presets.c:1105 wb_presets.c:1214
+#: wb_presets.c:1226 wb_presets.c:1227 wb_presets.c:1228 wb_presets.c:1249
+#: wb_presets.c:1270 wb_presets.c:1280 wb_presets.c:1289 wb_presets.c:1298
 msgid "White fluorescent"
 msgstr ""
 
-#: wb_presets.c:806 wb_presets.c:807 wb_presets.c:808 wb_presets.c:828
-#: wb_presets.c:882 wb_presets.c:883 wb_presets.c:884 wb_presets.c:885
-#: wb_presets.c:886 wb_presets.c:887 wb_presets.c:888 wb_presets.c:889
-#: wb_presets.c:890 wb_presets.c:891 wb_presets.c:892 wb_presets.c:893
-#: wb_presets.c:894 wb_presets.c:895 wb_presets.c:896
+#: wb_presets.c:848 wb_presets.c:849 wb_presets.c:850 wb_presets.c:870
+#: wb_presets.c:924 wb_presets.c:925 wb_presets.c:926 wb_presets.c:927
+#: wb_presets.c:928 wb_presets.c:929 wb_presets.c:930 wb_presets.c:931
+#: wb_presets.c:932 wb_presets.c:933 wb_presets.c:934 wb_presets.c:935
+#: wb_presets.c:936 wb_presets.c:937 wb_presets.c:938
 msgid "Evening sun"
 msgstr ""
 
@@ -1582,32 +1635,28 @@ msgstr ""
 #. 5000K
 #. 4500K
 #. 4000K
-#: wb_presets.c:812 wb_presets.c:813 wb_presets.c:814 wb_presets.c:830
-#: wb_presets.c:927 wb_presets.c:928 wb_presets.c:929 wb_presets.c:930
-#: wb_presets.c:931 wb_presets.c:932 wb_presets.c:933 wb_presets.c:934
-#: wb_presets.c:935 wb_presets.c:936 wb_presets.c:937 wb_presets.c:938
-#: wb_presets.c:939 wb_presets.c:940 wb_presets.c:941 wb_presets.c:1079
-#: wb_presets.c:1080 wb_presets.c:1081 wb_presets.c:1082 wb_presets.c:1083
-#: wb_presets.c:1084 wb_presets.c:1085 wb_presets.c:1086 wb_presets.c:1087
-#: wb_presets.c:1088 wb_presets.c:1089 wb_presets.c:1090 wb_presets.c:1091
-#: wb_presets.c:1092 wb_presets.c:1093 wb_presets.c:1187 wb_presets.c:1188
-#: wb_presets.c:1189 wb_presets.c:1208 wb_presets.c:1227 wb_presets.c:1237
-#: wb_presets.c:1246
+#: wb_presets.c:854 wb_presets.c:855 wb_presets.c:856 wb_presets.c:872
+#: wb_presets.c:969 wb_presets.c:970 wb_presets.c:971 wb_presets.c:972
+#: wb_presets.c:973 wb_presets.c:974 wb_presets.c:975 wb_presets.c:976
+#: wb_presets.c:977 wb_presets.c:978 wb_presets.c:979 wb_presets.c:980
+#: wb_presets.c:981 wb_presets.c:982 wb_presets.c:983 wb_presets.c:1121
+#: wb_presets.c:1122 wb_presets.c:1123 wb_presets.c:1124 wb_presets.c:1125
+#: wb_presets.c:1126 wb_presets.c:1127 wb_presets.c:1128 wb_presets.c:1129
+#: wb_presets.c:1130 wb_presets.c:1131 wb_presets.c:1132 wb_presets.c:1133
+#: wb_presets.c:1134 wb_presets.c:1135 wb_presets.c:1229 wb_presets.c:1230
+#: wb_presets.c:1231 wb_presets.c:1250 wb_presets.c:1269 wb_presets.c:1279
+#: wb_presets.c:1288 wb_presets.c:1297
 msgid "Neutral fluorescent"
 msgstr ""
 
-#: wb_presets.c:834 wb_presets.c:897 wb_presets.c:898 wb_presets.c:899
-#: wb_presets.c:900 wb_presets.c:901 wb_presets.c:902 wb_presets.c:903
-#: wb_presets.c:904 wb_presets.c:905 wb_presets.c:906 wb_presets.c:907
-#: wb_presets.c:908 wb_presets.c:909 wb_presets.c:910 wb_presets.c:911
+#: wb_presets.c:876 wb_presets.c:939 wb_presets.c:940 wb_presets.c:941
+#: wb_presets.c:942 wb_presets.c:943 wb_presets.c:944 wb_presets.c:945
+#: wb_presets.c:946 wb_presets.c:947 wb_presets.c:948 wb_presets.c:949
+#: wb_presets.c:950 wb_presets.c:951 wb_presets.c:952 wb_presets.c:953
 msgid "Flash (auto mode)"
 msgstr ""
 
 #. 3000K
-#: wb_presets.c:1171 wb_presets.c:1181 wb_presets.c:1182 wb_presets.c:1183
+#: wb_presets.c:1213 wb_presets.c:1223 wb_presets.c:1224 wb_presets.c:1225
 msgid "Incandescent warm"
-msgstr ""
-
-#: wb_presets.c:1216
-msgid "Sunlight"
 msgstr ""
