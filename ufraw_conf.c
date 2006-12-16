@@ -1108,7 +1108,7 @@ N_("By default 'ufraw' displays a preview window for each raw image allowing\n"
 "To process the images with no questions asked (and no preview) use\n"
 "'ufraw-batch'.\n"),
 "\n",
-N_("The input files can be either raw images or ufraw's ID files. ID file\n"
+N_("The input files can be either raw images or ufraw's ID files. ID files\n"
 "contain a raw image filename and the parameters for handling the image.\n"
 "One can also use an ID file with the option:\n"),
 "\n",
