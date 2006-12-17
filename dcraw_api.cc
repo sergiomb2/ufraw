@@ -349,7 +349,7 @@ int dcraw_image_stretch(dcraw_image_data *image, int ymag)
     if (ymag!=2) return DCRAW_ERROR;
     int w = image->width;
     dcraw_image_type *iBuf = g_new(dcraw_image_type,
-	    image->height * 2  * w);
+	    image->height * 2 * w);
     for(r=0; r<image->height; r++) {
 	memcpy(iBuf[(2*r)*w], image->image[r*w], w*4*2);
 	memcpy(iBuf[(2*r+1)*w], image->image[r*w], w*4*2);
