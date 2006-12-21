@@ -2270,10 +2270,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_box_pack_start(subbox, label, 0, 0, 0);
     for (i=0; i<data->UF->colors; i++) {
 	data->ChannelAdjustment[i] = GTK_ADJUSTMENT(gtk_adjustment_new(
-		CFG->chanMul[i], 0.5, 9.0, 0.01, 0.01, 0));
+		CFG->chanMul[i], 0.5, 9.0, 0.001, 0.001, 0));
 	g_object_set_data(G_OBJECT(data->ChannelAdjustment[i]),
-		"Adjustment-Accuracy",(gpointer)2);
-	button = gtk_spin_button_new(data->ChannelAdjustment[i], 0.01, 2);
+		"Adjustment-Accuracy",(gpointer)3);
+	button = gtk_spin_button_new(data->ChannelAdjustment[i], 0.001, 3);
     	g_object_set_data(G_OBJECT(data->ChannelAdjustment[i]),
 		"Parent-Widget", button);
 	gtk_box_pack_start(subbox, button, 0, 0, 0);
