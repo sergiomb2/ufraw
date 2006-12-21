@@ -2248,7 +2248,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             2000, 12000, 50, 200, 0,
             _("White balance color temperature (K)"));
     data->GreenAdjustment = adjustment_scale(subTable, 0, 2, _("Green"),
-            CFG->green, &CFG->green, 0.2, 2.5, 0.01, 0.05, 2,
+            CFG->green, &CFG->green, 0.2, 2.5, 0.001, 0.005, 3,
             _("Green component"));
     // Spot WB button:
     button = gtk_button_new();
