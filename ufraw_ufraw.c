@@ -201,8 +201,12 @@ ufraw_data *ufraw_open(char *filename)
         uf->predictedWidth = raw->fuji_width / raw->fuji_step;
         uf->predictedHeight = (raw->height - raw->fuji_width) / raw->fuji_step;
     } else {
-        uf->predictedHeight = raw->height * raw->ymag;
+	uf->predictedHeight = raw->height;
         uf->predictedWidth = raw->width;
+	if (raw->pixel_aspect < 1)
+	    uf->predictedHeight = raw->height / raw->pixel_aspect + 0.5;
+	if (raw->pixel_aspect > 1)
+            uf->predictedWidth = raw->width * raw->pixel_aspect + 0.5;
     }
     if (raw->flip & 4) {
         int tmp = uf->predictedHeight;
@@ -487,17 +491,15 @@ int ufraw_convert_image(ufraw_data *uf)
 	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, FALSE);
     /* We can do a simple interpolation in the following cases:
      * We shrink by an integer value.
-     * If there is a ymag (D1X) shrink must be at least 4.
      * Wanted size is smaller than raw size (size is after a raw->shrink).
      * There are no filters (Foveon). */
     if ( uf->conf->interpolation==half_interpolation ||
-         ( uf->conf->size==0 && uf->conf->shrink/raw->ymag>1 ) ||
+         ( uf->conf->size==0 && uf->conf->shrink*raw->pixel_aspect>1 ) ||
          ( uf->conf->size>0 &&
 	   uf->conf->size<MAX(raw->raw.height, raw->raw.width) ) ||
 	 ( raw->filters==0 )  ) {
-	if (uf->conf->size==0 && uf->conf->shrink>=2 &&
-		uf->conf->shrink%raw->ymag==0)
-	    shrink = uf->conf->shrink / raw->ymag;
+	if (uf->conf->size==0 && uf->conf->shrink>=2)
+	    shrink = uf->conf->shrink * raw->pixel_aspect;
 	else if (uf->conf->interpolation==half_interpolation)
 	    shrink = 2;
 	else if (raw->filters!=0)
@@ -517,8 +519,8 @@ int ufraw_convert_image(ufraw_data *uf)
 	g_free(uf->image.image);
         uf->image.image = final.image;
     }
-    if (raw->ymag==2) {
-	dcraw_image_stretch(&final, raw->ymag);
+    if (raw->pixel_aspect!=1) {
+	dcraw_image_stretch(&final, raw->pixel_aspect);
 	if (uf->conf->size==0 && uf->conf->shrink>1)
             dcraw_image_resize(&final,
 		    shrink*MAX(final.height, final.width)/uf->conf->shrink);

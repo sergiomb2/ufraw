@@ -112,7 +112,7 @@ int dcraw_open(dcraw_data *h,char *filename)
     h->filters = d->filters;
     h->raw_color = d->raw_color;
     h->shrink = d->shrink = (h->filters!=0);
-    h->ymag = d->ymag;
+    h->pixel_aspect = d->pixel_aspect;
     /* copied from dcraw's main() */
     switch ((d->flip+3600) % 360) {
         case 270: d->flip = 5; break;
@@ -340,19 +340,17 @@ int dcraw_image_resize(dcraw_image_data *image, int size)
     return DCRAW_SUCCESS;
 }
 
-/* Stretch image by 'ymag'. It is needed only for Nikon D1X images.
- * We can ignore 'xmag' since we always stretch before we flip */
-int dcraw_image_stretch(dcraw_image_data *image, int ymag)
+int dcraw_image_stretch(dcraw_image_data *image, double pixel_aspect)
 {
     int r;
-    if (ymag==1) return DCRAW_SUCCESS;
-    if (ymag!=2) return DCRAW_ERROR;
+    if (pixel_aspect==1) return DCRAW_SUCCESS;
+    if (pixel_aspect!=0.5) return DCRAW_ERROR;
     int w = image->width;
     dcraw_image_type *iBuf = g_new(dcraw_image_type,
-	    image->height * 2 * w);
+            image->height * 2 * w);
     for(r=0; r<image->height; r++) {
-	memcpy(iBuf[(2*r)*w], image->image[r*w], w*4*2);
-	memcpy(iBuf[(2*r+1)*w], image->image[r*w], w*4*2);
+        memcpy(iBuf[(2*r)*w], image->image[r*w], w*4*2);
+        memcpy(iBuf[(2*r+1)*w], image->image[r*w], w*4*2);
     }
     g_free(image->image);
     image->image = iBuf;

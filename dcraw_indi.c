@@ -626,10 +626,7 @@ void CLASS flip_image_INDI(ushort (*image)[4], int *height_p, int *width_p,
     img[dest] = hold;
   }
   free (flag);
-  if (flip & 4) {
-    SWAP (height, width);
-//  SWAP (ymag, xmag); /* We always stretch before we flip - UF*/
-  }
+  if (flip & 4) SWAP (height, width);
   *height_p = height; /* INDI - UF*/
   *width_p = width;
 }

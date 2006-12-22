@@ -24,7 +24,7 @@ class DCRaw { public:
 /* All dcraw's global variables are members of this class. */
 FILE *ifp;
 short order;
-char *ifname, make[64], model[72], model2[64], *meta_data, cdesc[5];
+char *ifname, make[64], model[64], model2[64], *meta_data, cdesc[5];
 float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
 time_t timestamp;
 unsigned shot_order, kodak_cbpp, filters, unique_id, *oprof;
@@ -35,7 +35,8 @@ int tiff_nifds, tiff_flip, tiff_bps, tiff_compress, tile_length;
 int raw_height, raw_width, top_margin, left_margin;
 int height, width, fuji_width, colors, tiff_samples;
 int black, maximum, raw_color, use_gamma;
-int iheight, iwidth, shrink, flip, xmag, ymag;
+int iheight, iwidth, shrink, flip;
+double pixel_aspect;
 int zero_after_ff, is_raw, dng_version, is_foveon;
 ushort (*image)[4], white[8][8], curve[0x1000], cr2_slice[3];
 float bright, user_mul[4], sigma_d, sigma_r;
@@ -218,6 +219,7 @@ void identify();
 void apply_profile (char *input, char *output);
 void convert_to_rgb();
 void fuji_rotate();
+void stretch();
 int flip_index (int row, int col);
 void gamma_lut (uchar lut[0x10000]);
 void tiff_set (ushort *ntag,
