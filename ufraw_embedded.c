@@ -42,7 +42,7 @@ int ufraw_read_embedded(ufraw_data *uf)
     ufraw_message(UFRAW_RESET, NULL);
 
 #ifndef HAVE_LIBJPEG
-    ufraw_message(UFRAW_ERROR, "Reading embedded image requires libjpeg.");
+    ufraw_message(UFRAW_ERROR, _("Reading embedded image requires libjpeg."));
     return UFRAW_ERROR;
 #endif
     if ( raw->thumbType==unknown_thumb_type) {
@@ -221,7 +221,7 @@ int ufraw_write_embedded(ufraw_data *uf)
     if ( uf->conf->type!=embedded_jpeg_type &&
 	 uf->conf->type!=embedded_png_type ) {
         ufraw_message(UFRAW_ERROR,
-                "Error creating file '%s'. Unknown file type %d.",
+                _("Error creating file '%s'. Unknown file type %d."),
                 uf->conf->outputFilename, uf->conf->type);
         return UFRAW_ERROR;
     }
@@ -331,7 +331,7 @@ int ufraw_write_embedded(ufraw_data *uf)
 #endif /*HAVE_LIBPNG*/
     } else {
 	ufraw_message(UFRAW_ERROR,
-		"Unsupported output type (%d) for embedded image",
+		_("Unsupported output type (%d) for embedded image"),
 		uf->conf->type);
 	status = UFRAW_ERROR;
     }

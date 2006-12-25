@@ -151,7 +151,7 @@ long ufraw_saver(void *widget, gpointer user_data)
 	}
     } else {
 	if (uf->conf->shrink<1) {
-            ufraw_message(UFRAW_ERROR, "Fatal Error: uf->conf->shrink<1");
+            ufraw_message(UFRAW_ERROR, _("Fatal Error: uf->conf->shrink<1"));
 	    uf->conf->shrink = 1;
 	}
 	data->height = uf->predictedHeight / uf->conf->shrink;

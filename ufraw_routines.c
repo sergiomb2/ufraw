@@ -156,7 +156,7 @@ char *uf_set_locale_C()
 	    return locale;
 	} else {
 	    setlocale(LC_NUMERIC, locale);
-	    ufraw_message(UFRAW_ERROR, "Fatal error setting C locale");
+	    ufraw_message(UFRAW_ERROR, _("Fatal error setting C locale"));
 	    return NULL;
 	}
     } else {

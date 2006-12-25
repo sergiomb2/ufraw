@@ -25,6 +25,7 @@
 #include "dcraw_api.h"
 #include "dcraw.h"
 
+#define FORCC for (c=0; c < colors; c++)
 #define FC(filters,row,col) \
     (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 extern "C" {
@@ -340,21 +341,43 @@ int dcraw_image_resize(dcraw_image_data *image, int size)
     return DCRAW_SUCCESS;
 }
 
+/* Adapted from dcraw.c stretch() - NKBJ */
 int dcraw_image_stretch(dcraw_image_data *image, double pixel_aspect)
 {
-    int r;
+    int newdim, row, col, c, colors = image->colors;
+    double rc, frac;
+    ushort *pix0, *pix1;
+    dcraw_image_type *iBuf;
+
     if (pixel_aspect==1) return DCRAW_SUCCESS;
-    if (pixel_aspect!=0.5) return DCRAW_ERROR;
-    int w = image->width;
-    dcraw_image_type *iBuf = g_new(dcraw_image_type,
-            image->height * 2 * w);
-    for(r=0; r<image->height; r++) {
-        memcpy(iBuf[(2*r)*w], image->image[r*w], w*4*2);
-        memcpy(iBuf[(2*r+1)*w], image->image[r*w], w*4*2);
+    if (pixel_aspect < 1) {
+	newdim = (int)(image->height / pixel_aspect + 0.5);
+	iBuf = g_new(dcraw_image_type, image->width * newdim);
+	for (rc=row=0; row < newdim; row++, rc+=pixel_aspect) {
+	    frac = rc - (c = (int)rc);
+	    pix0 = pix1 = image->image[c*image->width];
+	    if (c+1 < image->height) pix1 += image->width*4;
+	    for (col=0; col < image->width; col++, pix0+=4, pix1+=4)
+		FORCC iBuf[row*image->width+col][c] =
+		    (guint16)(pix0[c]*(1-frac) + pix1[c]*frac + 0.5);
+	}
+	image->height = newdim;
+    } else {
+	newdim = (int)(image->width * pixel_aspect + 0.5);
+	iBuf = g_new(dcraw_image_type, image->height * newdim);
+	for (rc=col=0; col < newdim; col++, rc+=1/pixel_aspect) {
+	    frac = rc - (c = (int)rc);
+	    pix0 = pix1 = image->image[c];
+	    if (c+1 < image->width) pix1 += 4;
+	    for (row=0; row < image->height;
+		row++, pix0+=image->width*4, pix1+=image->width*4)
+		FORCC iBuf[row*newdim+col][c] =
+		    (guint16)(pix0[c]*(1-frac) + pix1[c]*frac + 0.5);
+	}
+	image->width = newdim;
     }
     g_free(image->image);
     image->image = iBuf;
-    image->height *= 2;
     return DCRAW_SUCCESS;
 }
 
@@ -487,4 +510,4 @@ void dcraw_message(void *dcraw, int code, char *format, ...)
     g_free(message);
 }
 
-}
+} /*extern "C"*/

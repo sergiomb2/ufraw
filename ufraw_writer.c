@@ -88,8 +88,8 @@ int ufraw_write_image(ufraw_data *uf)
          uf->conf->createID==also_id) {
         confFilename = uf_file_set_type(uf->conf->outputFilename, ".ufraw");
         if (!strcmp(confFilename, uf->conf->outputFilename)) {
-            ufraw_message(UFRAW_ERROR, "Image filename can not be the "
-                        "same as ID filename '%s'", confFilename);
+            ufraw_message(UFRAW_ERROR, _("Image filename can not be the "
+                        "same as ID filename '%s'"), confFilename);
             return UFRAW_ERROR;
         }
     }
@@ -109,7 +109,7 @@ int ufraw_write_image(ufraw_data *uf)
             out = TIFFOpen(uf->conf->outputFilename, "w");
         if (out==NULL ) {
             message=ufraw_message(UFRAW_GET_WARNING, NULL);
-            ufraw_message(UFRAW_ERROR, "Error creating file '%s'.\n%s",
+            ufraw_message(UFRAW_ERROR, _("Error creating file '%s'.\n%s"),
                     uf->conf->outputFilename, message);
             return UFRAW_ERROR;
         }
@@ -120,7 +120,7 @@ int ufraw_write_image(ufraw_data *uf)
             out = stdout;
 	} else {
             if ( (out=fopen(uf->conf->outputFilename, "wb"))==NULL) {
-                ufraw_message(UFRAW_ERROR, "Error creating file '%s': %s",
+                ufraw_message(UFRAW_ERROR, _("Error creating file '%s': %s"),
                         uf->conf->outputFilename, g_strerror(errno));
                 return UFRAW_ERROR;
             }
@@ -137,12 +137,12 @@ int ufraw_write_image(ufraw_data *uf)
         pixbuf8 = g_new(guint8, width*3);
         for (row=0; row<height; row++) {
             if (row%100==99)
-                preview_progress(uf->widget, "Saving image",
+                preview_progress(uf->widget, _("Saving image"),
 			0.5 + 0.5*row/height);
             develope(pixbuf8, rawImage[row*rowStride],
                     uf->developer, 8, pixbuf16, width);
             if ((int)fwrite(pixbuf8, 3, width, out)<width) {
-                ufraw_message(UFRAW_ERROR, "Error creating file '%s': %s.",
+                ufraw_message(UFRAW_ERROR, _("Error creating file '%s': %s."),
                         uf->conf->outputFilename, g_strerror(errno));
                 status = UFRAW_ABORT_SAVE;
                 break;
@@ -152,14 +152,14 @@ int ufraw_write_image(ufraw_data *uf)
         fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFFFF);
         for (row=0; row<height; row++) {
             if (row%100==99)
-                preview_progress(uf->widget, "Saving image",
+                preview_progress(uf->widget, _("Saving image"),
 			0.5 + 0.5*row/height);
             develope(pixbuf16, rawImage[row*rowStride],
                     uf->developer, 16, pixbuf16, width);
             for (i=0; i<3*width; i++)
                 pixbuf16[i] = g_htons(pixbuf16[i]);
             if ((int)fwrite(pixbuf16, 6, width, out)<width) {
-                ufraw_message(UFRAW_ERROR, "Error creating file '%s': %s.",
+                ufraw_message(UFRAW_ERROR, _("Error creating file '%s': %s."),
                         uf->conf->outputFilename, g_strerror(errno));
                 status = UFRAW_ABORT_SAVE;
                 break;
@@ -195,7 +195,7 @@ int ufraw_write_image(ufraw_data *uf)
             TIFFSetField(out, TIFFTAG_ICCPROFILE, len, buf);
             g_free(buf);
             } else ufraw_message(UFRAW_WARNING,
-                    "Failed to embed output profile '%s' in '%s'",
+                    _("Failed to embed output profile '%s' in '%s'"),
                     uf->developer->profileFile[out_profile],
 		    uf->conf->outputFilename);
         }
@@ -204,13 +204,14 @@ int ufraw_write_image(ufraw_data *uf)
             pixbuf8 = g_new(guint8, width*3);
             for (row=0; row<height; row++) {
                 if (row%100==99)
-                    preview_progress(uf->widget, "Saving image",
+                    preview_progress(uf->widget, _("Saving image"),
 			    0.5+0.5*row/height);
                 develope(pixbuf8, rawImage[row*rowStride],
                         uf->developer, 8, pixbuf16, width);
                 if (TIFFWriteScanline(out, pixbuf8, row, 0)<0) {
                     message=ufraw_message(UFRAW_GET_WARNING, NULL);
-                    ufraw_message(UFRAW_ERROR, "Error creating file '%s'.\n%s",
+                    ufraw_message(UFRAW_ERROR,
+                            _("Error creating file '%s'.\n%s"),
                             uf->conf->outputFilename, message);
                     status = UFRAW_ABORT_SAVE;
                     break;
@@ -219,13 +220,14 @@ int ufraw_write_image(ufraw_data *uf)
         } else {
             for (row=0; row<height; row++) {
                 if (row%100==99)
-                    preview_progress(uf->widget, "Saving image",
+                    preview_progress(uf->widget, _("Saving image"),
 			    0.5+0.5*row/height);
                 develope(pixbuf16, rawImage[row*rowStride],
                         uf->developer, 16, pixbuf16, width);
                 if (TIFFWriteScanline(out, pixbuf16, row, 0)<0) {
                     message=ufraw_message(UFRAW_GET_WARNING, NULL);
-                    ufraw_message(UFRAW_ERROR, "Error creating file '%s'.\n%s",
+                    ufraw_message(UFRAW_ERROR,
+                            _("Error creating file '%s'.\n%s"),
                             uf->conf->outputFilename, message);
                     status = UFRAW_ABORT_SAVE;
                     break;
@@ -262,14 +264,14 @@ int ufraw_write_image(ufraw_data *uf)
                 write_icc_profile(&cinfo, (unsigned char *)buf, len);
                 g_free(buf);
             } else ufraw_message(UFRAW_WARNING,
-                    "Failed to embed output profile '%s' in '%s'",
+                    _("Failed to embed output profile '%s' in '%s'"),
                     uf->developer->profileFile[out_profile],
 		    uf->conf->outputFilename);
         }
         if (uf->exifBuf!=NULL && uf->conf->embedExif) {
 	     if (uf->exifBufLen>65533) {
 		ufraw_message(UFRAW_SET_WARNING,
-			"EXIF buffer length %d, too long, ignored.\n",
+			_("EXIF buffer length %d, too long, ignored.\n"),
 			uf->exifBufLen);
 	    } else {
 		jpeg_write_marker(&cinfo, JPEG_APP0+1,
@@ -279,7 +281,7 @@ int ufraw_write_image(ufraw_data *uf)
         pixbuf8 = g_new(guint8, width*3);
         for (row=0; row<height; row++) {
             if (row%100==99)
-                preview_progress(uf->widget, "Saving image",
+                preview_progress(uf->widget, _("Saving image"),
 			0.5 + 0.5*row/height);
             develope(pixbuf8, rawImage[row*rowStride],
                     uf->developer, 8, pixbuf16, width);
@@ -290,7 +292,7 @@ int ufraw_write_image(ufraw_data *uf)
         if (message==NULL) jpeg_finish_compress(&cinfo);
         jpeg_destroy_compress(&cinfo);
         if ( (message=ufraw_message(UFRAW_GET_ERROR, NULL))!=NULL) {
-            ufraw_message(UFRAW_ERROR, "Error creating file '%s'.\n%s",
+            ufraw_message(UFRAW_ERROR, _("Error creating file '%s'.\n%s"),
                     uf->conf->outputFilename, message);
             status = UFRAW_ABORT_SAVE;
         } else if (ufraw_message(UFRAW_GET_WARNING, NULL)!=NULL) {
@@ -299,7 +301,7 @@ int ufraw_write_image(ufraw_data *uf)
 #endif /*HAVE_LIBJPEG*/
     } else {
         ufraw_message(UFRAW_ERROR,
-                "Error creating file '%s'. Unknown file type %d.",
+                _("Error creating file '%s'. Unknown file type %d."),
                 uf->conf->outputFilename, uf->conf->type);
         status = UFRAW_ABORT_SAVE;
     }
@@ -309,7 +311,7 @@ int ufraw_write_image(ufraw_data *uf)
     if (uf->conf->type==tiff8_type || uf->conf->type==tiff16_type) {
         TIFFClose(out);
         if ( (message=ufraw_message(UFRAW_GET_ERROR, NULL))!=NULL) {
-            ufraw_message(UFRAW_ERROR, "Error creating file '%s'.\n%s",
+            ufraw_message(UFRAW_ERROR, _("Error creating file '%s'.\n%s"),
                     uf->conf->outputFilename, message);
             status = UFRAW_ABORT_SAVE;
         }

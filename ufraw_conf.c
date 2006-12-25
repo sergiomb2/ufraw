@@ -1093,8 +1093,6 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 /* Following are global strings and functions used by both 'ufraw' and
  * 'ufraw-batch'. ufraw_conf.c is a good home for them since they are
  * closely related to the other configuration functions. */
-
-
 char *helpText[] = {
 N_("UFRaw "), VERSION, N_(" - Unidentified Flying Raw converter for digital camera images.\n"),
 "\n",
@@ -1385,8 +1383,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         case '?': /* invalid option. Warning printed by getopt() */
             return -1;
         default:
-            ufraw_message(UFRAW_ERROR, "getopt returned "
-                       "character code 0%o ??", c);
+            ufraw_message(UFRAW_ERROR, _("getopt returned "
+                       "character code 0%o ??"), c);
             return -1;
         }
     }

@@ -226,7 +226,7 @@ void CLASS dcraw_message(int code, const char *format, ...) {
 void CLASS merror (void *ptr, char *where)
 {
   if (ptr) return;
-  dcraw_message (DCRAW_ERROR, "%s: Out of memory in %s\n", ifname, where); /*UF*/
+  dcraw_message (DCRAW_ERROR,_("%s: Out of memory in %s\n"), ifname, where); /*UF*/
   longjmp (failure, 1);
 }
 
@@ -565,7 +565,7 @@ uchar * CLASS make_decoder (const uchar *source, int level)
   if (level==0) leaf=0;
   cur = free_decode++;
   if (free_decode > first_decode+2048) {
-    dcraw_message (DCRAW_ERROR, "%s: decoder table overflow\n", ifname); /*UF*/
+    dcraw_message (DCRAW_ERROR,_("%s: decoder table overflow\n"), ifname); /*UF*/
     longjmp (failure, 2);
   }
   for (i=next=0; i <= leaf && next < 16; )
@@ -1344,7 +1344,7 @@ void CLASS phase_one_correct()
   ushort curve[0x10000], *xval[2];
 
   if (shrink || !meta_length) return;
-  dcraw_message (DCRAW_VERBOSE, "Phase One correction...\n"); /*UF*/
+  dcraw_message (DCRAW_VERBOSE,_("Phase One correction...\n")); /*UF*/
   fseek (ifp, meta_offset, SEEK_SET);
   order = get2();
   fseek (ifp, 6, SEEK_CUR);
@@ -1576,6 +1576,8 @@ void CLASS leaf_hdr_load_raw()
     raw_color = 1;
   }
 }
+
+//void CLASS unpacked_load_raw();
 
 void CLASS sinar_4shot_load_raw()
 {
@@ -1936,7 +1938,7 @@ void CLASS kodak_jpeg_load_raw()
   if ((cinfo.output_width      != (unsigned) width  ) ||
       (cinfo.output_height*2   != (unsigned) height ) ||
       (cinfo.output_components != 3      )) {
-    dcraw_message (DCRAW_ERROR, "%s: incorrect JPEG dimensions\n", ifname); /*UF*/
+    dcraw_message (DCRAW_ERROR,_("%s: incorrect JPEG dimensions\n"), ifname); /*UF*/
     jpeg_destroy_decompress (&cinfo);
     longjmp (failure, 3);
   }
@@ -2390,7 +2392,7 @@ void CLASS foveon_decoder (unsigned size, unsigned code)
   }
   cur = free_decode++;
   if (free_decode > first_decode+2048) {
-    dcraw_message (DCRAW_ERROR, "%s: decoder table overflow\n", ifname); /*UF*/
+    dcraw_message (DCRAW_ERROR,_("%s: decoder table overflow\n"), ifname); /*UF*/
     longjmp (failure, 2);
   }
   if (code)
@@ -2549,7 +2551,7 @@ void * CLASS foveon_camf_matrix (int dim[3], const char *name)
 	mat[i] = sget4(dp + i*2) & 0xffff;
     return mat;
   }
-  dcraw_message (DCRAW_ERROR, "%s: \"%s\" matrix not found!\n", ifname, name); /*UF*/
+  dcraw_message (DCRAW_ERROR,_("%s: \"%s\" matrix not found!\n"), ifname, name); /*UF*/
   return NULL;
 }
 
@@ -2633,7 +2635,7 @@ void CLASS foveon_interpolate()
   char str[128];
   const char* cp;
 
-  dcraw_message (DCRAW_VERBOSE, "Foveon interpolation...\n"); /*UF*/
+  dcraw_message (DCRAW_VERBOSE,_("Foveon interpolation...\n")); /*UF*/
 
   foveon_fixed (dscr, 4, "DarkShieldColRange");
   foveon_fixed (ppm[0][0], 27, "PostPolyMatrix");
@@ -2659,7 +2661,7 @@ void CLASS foveon_interpolate()
     }
 
   if (!(cp = foveon_camf_param ("WhiteBalanceIlluminants", model2)))
-  { dcraw_message (DCRAW_ERROR, "%s: Invalid white balance \"%s\"\n", ifname, model2); /*UF*/
+  { dcraw_message (DCRAW_ERROR,_("%s: Invalid white balance \"%s\"\n"), ifname, model2); /*UF*/
     return; }
   foveon_fixed (cam_xyz, 9, cp);
   foveon_fixed (correct, 9,
@@ -3064,7 +3066,7 @@ void CLASS bad_pixels()
 	    n++;
 	  }
     BAYER2(row,col) = tot/n;
-    if (!fixed++) dcraw_message(DCRAW_VERBOSE, "Fixed bad pixels at:"); /*UF*/
+    if (!fixed++) dcraw_message(DCRAW_VERBOSE,_("Fixed bad pixels at:")); /*UF*/
     dcraw_message(DCRAW_VERBOSE, " %d,%d", col, row);
   }
   if (fixed) dcraw_message(DCRAW_VERBOSE, "\n");
@@ -3094,10 +3096,10 @@ void CLASS subtract (char *fname)
     }
   }
   if (error || nd < 3) {
-    fprintf (stderr,_("%s is not a valid PGM file!\n"), fname);
+    dcraw_message (DCRAW_ERROR,_("%s is not a valid PGM file!\n"), fname); /*UF*/
     fclose (fp);  return;
   } else if (dim[0] != width || dim[1] != height || dim[2] != 65535) {
-    fprintf (stderr,_("%s has the wrong dimensions!\n"), fname);
+    dcraw_message (DCRAW_ERROR,_("%s has the wrong dimensions!\n"), fname); /*UF*/
     fclose (fp);  return;
   }
   pixel = (ushort *) calloc (width, sizeof *pixel);
@@ -3302,7 +3304,7 @@ skip_block:
       memcpy (pre_mul, cam_mul, sizeof pre_mul);
     else
       dcraw_message (DCRAW_NO_CAMERA_WB,
-	      "%s: Cannot use camera white balance.\n", ifname); /*UF*/
+	      _("%s: Cannot use camera white balance.\n"), ifname); /*UF*/
   }
   if (user_mul[0])
     memcpy (pre_mul, user_mul, sizeof pre_mul);
@@ -3315,7 +3317,7 @@ skip_block:
   }
   if (!highlight) dmax = dmin;
   FORC4 scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / maximum;
-  dcraw_message(DCRAW_VERBOSE, "Scaling with black=%d, pre_mul[] =", black); /*UF*/
+  dcraw_message(DCRAW_VERBOSE,_("Scaling with black=%d, pre_mul[] ="), black); /*UF*/
   FORC4 dcraw_message(DCRAW_VERBOSE, " %f", pre_mul[c]);
   dcraw_message(DCRAW_VERBOSE, "\n");
   for (row=0; row < height; row++)
@@ -3368,7 +3370,7 @@ void CLASS lin_interpolate()
   int c, i, x, y, row, col, shift, color;
   ushort *pix;
 
-  dcraw_message (DCRAW_VERBOSE, "Bilinear interpolation...\n"); /*UF*/
+  dcraw_message (DCRAW_VERBOSE,_("Bilinear interpolation...\n")); /*UF*/
 
   border_interpolate(1);
   for (row=0; row < 16; row++)
@@ -3445,7 +3447,7 @@ void CLASS vng_interpolate()
   int g, diff, thold, num, c;
 
   lin_interpolate();
-  dcraw_message (DCRAW_VERBOSE, "VNG interpolation...\n"); /*UF*/
+  dcraw_message (DCRAW_VERBOSE,_("VNG interpolation...\n")); /*UF*/
 
   if (filters == 1) prow = pcol = 15;
   ip = (int *) calloc ((prow+1)*(pcol+1), 1280);
@@ -3587,7 +3589,7 @@ void CLASS ahd_interpolate()
    short (*lab)[TS][TS][3];
    char (*homo)[TS][TS], *buffer;
 
-  dcraw_message (DCRAW_VERBOSE, "AHD interpolation...\n"); /*UF*/
+  dcraw_message (DCRAW_VERBOSE,_("AHD interpolation...\n")); /*UF*/
 
   border_interpolate(3);
   buffer = (char *) malloc (26*TS*TS);		/* 1664 kB */
@@ -3693,7 +3695,7 @@ void CLASS bilateral_filter()
   int c, i, wr, ws, wlast, row, col, y, x;
   unsigned sep;
 
-  dcraw_message (DCRAW_VERBOSE, "Bilateral filtering...\n"); /*UF*/
+  dcraw_message (DCRAW_VERBOSE,_("Bilateral filtering...\n")); /*UF*/
 
   wr = (int)ceil(sigma_d*2);		/* window radius */
   ws = 2*wr + 1;		/* window size */
@@ -3751,7 +3753,7 @@ void CLASS recover_highlights()
   static const signed char dir[8][2] =
     { {-1,-1}, {-1,0}, {-1,1}, {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1} };
 
-  dcraw_message (DCRAW_VERBOSE, "Highlight recovery...\n"); /*UF*/
+  dcraw_message (DCRAW_VERBOSE,_("Highlight recovery...\n")); /*UF*/
 
   grow = pow (2, 4-highlight);
   FORCC hsat[c] = (int)(32000 * pre_mul[c]);
@@ -4755,7 +4757,7 @@ void CLASS parse_external_jpeg()
     }
   if (strcmp (jname, ifname)) {
     if ((ifp = fopen (jname, "rb"))) {
-      dcraw_message (DCRAW_VERBOSE, "Reading metadata from %s...\n", jname);/*UF*/
+      dcraw_message (DCRAW_VERBOSE,_("Reading metadata from %s...\n"), jname);/*UF*/
       parse_tiff (12);
       thumb_offset = 0;
       is_raw = 1;
@@ -4763,7 +4765,7 @@ void CLASS parse_external_jpeg()
     }
   }
   if (!timestamp)
-    dcraw_message (DCRAW_VERBOSE, "Failed to read metadata from %s\n", jname);/*UF*/
+    dcraw_message (DCRAW_VERBOSE,_("Failed to read metadata from %s\n"), jname);/*UF*/
   free (jname);
   ifp = save;
 }
@@ -6595,7 +6597,7 @@ dng_skip:
   if (!load_raw || !height) is_raw = 0;
 #ifndef HAVE_LIBJPEG
   if (load_raw == &CLASS kodak_jpeg_load_raw) {
-    dcraw_message (DCRAW_ERROR, "%s: You must link dcraw.c with libjpeg!!\n",
+    dcraw_message (DCRAW_ERROR,_("%s: You must link dcraw.c with libjpeg!!\n"),
 	    ifname); /*UF*/
     is_raw = 0;
   }
@@ -6635,7 +6637,7 @@ void CLASS apply_profile (char *input, char *output)
     hInProfile = cmsOpenProfileFromMem (prof, profile_length);
     free (prof);
   } else
-    dcraw_message (DCRAW_ERROR, "%s has no embedded profile.\n", ifname); /*UF*/
+    dcraw_message (DCRAW_ERROR,_("%s has no embedded profile.\n"), ifname); /*UF*/
   if (!hInProfile) return;
   if (!output)
     hOutProfile = cmsCreate_sRGBProfile();
@@ -6651,9 +6653,9 @@ void CLASS apply_profile (char *input, char *output)
       oprof = NULL;
     }
   } else
-    fprintf (stderr,_("Cannot open file %s!\n"), output);
+    dcraw_message (DCRAW_ERROR,_("Cannot open file %s!\n"), output); /*UF*/
   if (!hOutProfile) goto quit;
-  dcraw_message (DCRAW_VERBOSE, "Applying color profile...\n"); /*UF*/
+  dcraw_message (DCRAW_VERBOSE,_("Applying color profile...\n")); /*UF*/
   hTransform = cmsCreateTransform (hInProfile, TYPE_RGBA_16,
 	hOutProfile, TYPE_RGBA_16, INTENT_PERCEPTUAL, 0);
   cmsDoTransform (hTransform, image, image, width*height);
@@ -6751,8 +6753,8 @@ void CLASS convert_to_rgb()
 	for (out_cam[i][j] = k=0; k < 3; k++)
 	  out_cam[i][j] += out_rgb[output_color-1][i][k] * rgb_cam[k][j];
   }
-  dcraw_message (DCRAW_VERBOSE, raw_color ? "Building histograms...\n" :
-	"Converting to %s colorspace...\n", name[output_color-1]); /*UF*/
+  dcraw_message (DCRAW_VERBOSE, raw_color ? _("Building histograms...\n") :
+	_("Converting to %s colorspace...\n"), name[output_color-1]); /*UF*/
 
   mix_green = rgb_cam[1][1] == rgb_cam[1][3];
   memset (histogram, 0, sizeof histogram);
@@ -6787,7 +6789,7 @@ void CLASS fuji_rotate()
   ushort (*img)[4], (*pix)[4];
 
   if (!fuji_width) return;
-  dcraw_message (DCRAW_VERBOSE, "Rotating image 45 degrees...\n"); /*UF*/
+  dcraw_message (DCRAW_VERBOSE, _("Rotating image 45 degrees...\n")); /*UF*/
   fuji_width = (fuji_width - 1 + shrink) >> shrink;
   step = sqrt(0.5);
   wide = (int)(fuji_width / step);
@@ -6822,7 +6824,7 @@ void CLASS stretch()
   ushort (*img)[4], *pix0, *pix1;
 
   if (pixel_aspect == 1) return;
-  dcraw_message (DCRAW_VERBOSE,_("Stretching the image...\n"));
+  dcraw_message (DCRAW_VERBOSE,_("Stretching the image...\n")); /*UF*/
   if (pixel_aspect < 1) {
     newdim = (int)(height / pixel_aspect + 0.5);
     img = (ushort (*)[4]) calloc (width*newdim, sizeof *img);
@@ -7071,7 +7073,7 @@ int CLASS main (int argc, char **argv)
     if ((cp = strchr (sp="BbrktqsH", opt)))
       for (i=0; i < "21411111"[cp-sp]-'0'; i++)
 	if (!isdigit(argv[arg+i][0])) {
-	  dcraw_message (DCRAW_ERROR, "Non-numeric argument to \"-%c\"\n", opt); /*UF*/
+	  dcraw_message (DCRAW_ERROR,_("Non-numeric argument to \"-%c\"\n"), opt); /*UF*/
 	  return 1;
 	}
     switch (opt) {
@@ -7112,17 +7114,17 @@ int CLASS main (int argc, char **argv)
       case 'T':  output_tiff       = 1;  break;
       case '4':  output_bps       = 16;  break;
       default:
-	dcraw_message (DCRAW_ERROR, "Unknown option \"-%c\".\n", opt); /*UF*/
+	dcraw_message (DCRAW_ERROR,_("Unknown option \"-%c\".\n"), opt); /*UF*/
 	return 1;
     }
   }
   if (arg == argc) {
-    dcraw_message (DCRAW_ERROR, "No files to process.\n"); /*UF*/
+    dcraw_message (DCRAW_ERROR,_("No files to process.\n")); /*UF*/
     return 1;
   }
   if (write_to_stdout) {
     if (isatty(1)) {
-      dcraw_message (DCRAW_ERROR, "Will not write an image to the terminal!\n"); /*UF*/
+      dcraw_message (DCRAW_ERROR,_("Will not write an image to the terminal!\n")); /*UF*/
       return 1;
     }
 #if defined(WIN32) || defined(DJGPP) || defined(__CYGWIN__)
@@ -7151,11 +7153,11 @@ int CLASS main (int argc, char **argv)
     status = (identify(),!is_raw);
     if (timestamp_only) {
       if ((status = !timestamp))
-	dcraw_message (DCRAW_ERROR, "%s has no timestamp.\n", ifname); /*UF*/
+	dcraw_message (DCRAW_ERROR,_("%s has no timestamp.\n"), ifname); /*UF*/
       else if (identify_only)
 	printf ("%10ld%10d %s\n", (long) timestamp, shot_order, ifname);
       else {
-	dcraw_message (DCRAW_VERBOSE, "%s time set to %d.\n", ifname,
+	dcraw_message (DCRAW_VERBOSE,_("%s time set to %d.\n"), ifname,
 		(int) timestamp); /*UF*/
 	ut.actime = ut.modtime = timestamp;
 	utime (ifname, &ut);
@@ -7165,7 +7167,7 @@ int CLASS main (int argc, char **argv)
     write_fun = &CLASS write_ppm_tiff;
     if (thumbnail_only) {
       if ((status = !thumb_offset)) {
-	dcraw_message (DCRAW_ERROR, "%s has no thumbnail.\n", ifname); /*UF*/
+	dcraw_message (DCRAW_ERROR,_("%s has no thumbnail.\n"), ifname); /*UF*/
 	goto next;
       } else if (thumb_load_raw) {
 	load_raw = thumb_load_raw;
@@ -7208,7 +7210,7 @@ int CLASS main (int argc, char **argv)
 	printf (_("Thumb size:  %4d x %d\n"), thumb_width, thumb_height);
       printf (_("Full size:   %4d x %d\n"), raw_width, raw_height);
     } else if (!is_raw)
-      dcraw_message (DCRAW_ERROR, "Cannot decode %s\n", ifname); /*UF*/
+      dcraw_message (DCRAW_ERROR,_("Cannot decode %s\n"), ifname); /*UF*/
     if (!is_raw) goto next;
     if (user_flip >= 0)
       flip = user_flip;
@@ -7261,7 +7263,7 @@ next:
     merror (image, "main()");
     meta_data = (char *) (image + iheight*iwidth);
     dcraw_message (DCRAW_VERBOSE,
-	"Loading %s %s image from %s...\n", make, model, ifname); /*UF*/
+	_("Loading %s %s image from %s ...\n"), make, model, ifname); /*UF*/
     fseek (ifp, data_offset, SEEK_SET);
     (*this.*load_raw)();
     bad_pixels();
@@ -7317,7 +7319,7 @@ thumbnail:
 	goto cleanup;
       }
     }
-    dcraw_message (DCRAW_VERBOSE, "Writing data to %s ...\n", ofname); /*UF*/
+    dcraw_message (DCRAW_VERBOSE,_("Writing data to %s ...\n"), ofname); /*UF*/
     (*this.*write_fun)(ofp);
     fclose(ifp);
     if (ofp != stdout) fclose(ofp);

@@ -273,7 +273,7 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
     }
     uf->gimpImage = gimp_image_new(width, height,GIMP_RGB);
     if (uf->gimpImage== -1) {
-	ufraw_message(UFRAW_ERROR, "Can't allocate new image.");
+	ufraw_message(UFRAW_ERROR, _("Can't allocate new image."));
 	return UFRAW_ERROR;
     }
     gimp_image_set_filename(uf->gimpImage, uf->filename);
@@ -321,7 +321,7 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
     if (uf->exifBuf!=NULL) {
 	if (uf->exifBufLen>65533) {
 	    ufraw_message(UFRAW_SET_WARNING,
-		    "EXIF buffer length %d, too long, ignored.\n",
+		    _("EXIF buffer length %d, too long, ignored.\n"),
 		    uf->exifBufLen);
 	} else {
 	    GimpParasite *exif_parasite;
@@ -347,7 +347,7 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
 	    g_free(buf);
 	} else {
 	    ufraw_message(UFRAW_WARNING,
-		    "Failed to embed output profile '%s' in image.",
+		    _("Failed to embed output profile '%s' in image."),
 		    uf->developer->profileFile[out_profile]);
 	}
     }

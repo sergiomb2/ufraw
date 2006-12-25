@@ -62,12 +62,12 @@ int main (int argc, char **argv)
     optInd = ufraw_process_args(&argc, &argv, &cmd, &rc);
     if ( strlen(cmd.outputFilename)!=0 ) {
 	ufraw_message(UFRAW_ERROR,
-		"--output option is valid only in batch mode");
+		_("--output option is valid only in batch mode"));
 	optInd = -1;
     }
     if ( cmd.silent ) {
 	ufraw_message(UFRAW_ERROR,
-		"--silent is valid only in batch mode");
+		_("--silent is valid only in batch mode"));
 	optInd = -1;
     }
     if ( cmd.embeddedImage ) {

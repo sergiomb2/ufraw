@@ -1,7 +1,4 @@
 curveeditor_widget.c
-dcraw_api.cc
-dcraw.cc
-dcraw_indi.c
 iccjpeg.c
 nikon_curve.c
 ufraw-batch.c

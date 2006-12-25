@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-16 05:15+0100\n"
+"POT-Creation-Date: 2006-12-24 11:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,6 +28,14 @@ msgstr ""
 #: ufraw-batch.c:86
 #, c-format
 msgid "saved %s"
+msgstr ""
+
+#: ufraw.c:65
+msgid "--output option is valid only in batch mode"
+msgstr ""
+
+#: ufraw.c:70
+msgid "--silent is valid only in batch mode"
 msgstr ""
 
 #: ufraw.c:74
@@ -140,27 +148,27 @@ msgstr ""
 msgid "cannot --create-id with stdout"
 msgstr ""
 
-#: ufraw_conf.c:1099
+#: ufraw_conf.c:1097
 msgid "UFRaw "
 msgstr ""
 
-#: ufraw_conf.c:1099
+#: ufraw_conf.c:1097
 msgid " - Unidentified Flying Raw converter for digital camera images.\n"
 msgstr ""
 
-#: ufraw_conf.c:1101
+#: ufraw_conf.c:1099
 msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
 msgstr ""
 
-#: ufraw_conf.c:1102
+#: ufraw_conf.c:1100
 msgid "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
 msgstr ""
 
-#: ufraw_conf.c:1103
+#: ufraw_conf.c:1101
 msgid "       ufraw [ options ... ] [ default-directory ]\n"
 msgstr ""
 
-#: ufraw_conf.c:1105
+#: ufraw_conf.c:1103
 msgid ""
 "By default 'ufraw' displays a preview window for each raw image allowing\n"
 "the user to tweak the image parameters before saving. If no raw images\n"
@@ -169,39 +177,39 @@ msgid ""
 "'ufraw-batch'.\n"
 msgstr ""
 
-#: ufraw_conf.c:1111
+#: ufraw_conf.c:1109
 msgid ""
 "The input files can be either raw images or ufraw's ID files. ID files\n"
 "contain a raw image filename and the parameters for handling the image.\n"
 "One can also use an ID file with the option:\n"
 msgstr ""
 
-#: ufraw_conf.c:1115
+#: ufraw_conf.c:1113
 msgid ""
 "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
 msgstr ""
 
-#: ufraw_conf.c:1117
+#: ufraw_conf.c:1115
 msgid "The rest of the options are separated into two groups.\n"
 msgstr ""
 
-#: ufraw_conf.c:1118
+#: ufraw_conf.c:1116
 msgid "The options which are related to the image manipulation are:\n"
 msgstr ""
 
-#: ufraw_conf.c:1120
+#: ufraw_conf.c:1118
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr ""
 
-#: ufraw_conf.c:1121
+#: ufraw_conf.c:1119
 msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
 msgstr ""
 
-#: ufraw_conf.c:1122
+#: ufraw_conf.c:1120
 msgid "--green=GREEN         Green color normalization.\n"
 msgstr ""
 
-#: ufraw_conf.c:1123
+#: ufraw_conf.c:1121
 msgid ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
 "                      Type of base tone curve to use. CURVE can be any\n"
@@ -209,14 +217,14 @@ msgid ""
 "                      (default camera if such exsists, linear otherwise).\n"
 msgstr ""
 
-#: ufraw_conf.c:1127
+#: ufraw_conf.c:1125
 msgid ""
 "--base-curve-file=file\n"
 "                      Use base tone curve included in specified file.\n"
 "                      Overrides --base-curve option.\n"
 msgstr ""
 
-#: ufraw_conf.c:1130
+#: ufraw_conf.c:1128
 msgid ""
 "--curve=manual|linear|CURVE\n"
 "                      Type of luminosity curve to use. CURVE can be any\n"
@@ -224,13 +232,13 @@ msgid ""
 "                      (default linear).\n"
 msgstr ""
 
-#: ufraw_conf.c:1134
+#: ufraw_conf.c:1132
 msgid ""
 "--curve-file=file     Use luminosity curve included in specified file.\n"
 "                      Overrides --curve option.\n"
 msgstr ""
 
-#: ufraw_conf.c:1136
+#: ufraw_conf.c:1134
 msgid ""
 "--restore=clip|lch|hsv\n"
 "                      Restore details for negative EV.\n"
@@ -240,115 +248,115 @@ msgid ""
 "                      (default lch).\n"
 msgstr ""
 
-#: ufraw_conf.c:1142
+#: ufraw_conf.c:1140
 msgid ""
 "--clip=digital|film   Clip highlights for positive EV.\n"
 "                      'digital' linear digital sensor response.\n"
 "                      'film' emulate soft film response. (default linear).\n"
 msgstr ""
 
-#: ufraw_conf.c:1145
+#: ufraw_conf.c:1143
 msgid ""
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 msgstr ""
 
-#: ufraw_conf.c:1146
+#: ufraw_conf.c:1144
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr ""
 
-#: ufraw_conf.c:1147
+#: ufraw_conf.c:1145
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
 msgstr ""
 
-#: ufraw_conf.c:1148
+#: ufraw_conf.c:1146
 msgid ""
 "--exposure=auto|EXPOSURE\n"
 "                      Auto exposure or exposure correction in EV (default "
 "0).\n"
 msgstr ""
 
-#: ufraw_conf.c:1150
+#: ufraw_conf.c:1148
 msgid ""
 "--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"
 msgstr ""
 
-#: ufraw_conf.c:1152
+#: ufraw_conf.c:1150
 msgid ""
 "--interpolation=ahd|vng|four-color|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"
 msgstr ""
 
-#: ufraw_conf.c:1155
+#: ufraw_conf.c:1153
 msgid "The options which are related to the final output are:\n"
 msgstr ""
 
-#: ufraw_conf.c:1157
+#: ufraw_conf.c:1155
 msgid "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
 msgstr ""
 
-#: ufraw_conf.c:1158
+#: ufraw_conf.c:1156
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr ""
 
-#: ufraw_conf.c:1159
+#: ufraw_conf.c:1157
 msgid ""
 "--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
 "                      Output file format (default ppm8).\n"
 msgstr ""
 
-#: ufraw_conf.c:1161
+#: ufraw_conf.c:1159
 msgid ""
 "--create-id=no|also|only\n"
 "                      Create no|also|only ID file (default no).\n"
 msgstr ""
 
-#: ufraw_conf.c:1163
+#: ufraw_conf.c:1161
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr ""
 
-#: ufraw_conf.c:1164
+#: ufraw_conf.c:1162
 msgid "--[no]exif            Embed exif in output JPEG (default embed exif).\n"
 msgstr ""
 
-#: ufraw_conf.c:1165
+#: ufraw_conf.c:1163
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
 "nozip).\n"
 msgstr ""
 
-#: ufraw_conf.c:1166
+#: ufraw_conf.c:1164
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"
 msgstr ""
 
-#: ufraw_conf.c:1168
+#: ufraw_conf.c:1166
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 
-#: ufraw_conf.c:1169
+#: ufraw_conf.c:1167
 msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
 msgstr ""
 
-#: ufraw_conf.c:1170
+#: ufraw_conf.c:1168
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
 msgstr ""
 
-#: ufraw_conf.c:1171
+#: ufraw_conf.c:1169
 msgid ""
 "--overwrite           Overwrite existing files without asking (default no).\n"
 msgstr ""
 
-#: ufraw_conf.c:1172
+#: ufraw_conf.c:1170
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
 msgstr ""
 
-#: ufraw_conf.c:1174
+#: ufraw_conf.c:1172
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified it setting are read. Next, the setting "
@@ -360,109 +368,118 @@ msgid ""
 "group of options is NOT read from the resource file.\n"
 msgstr ""
 
-#: ufraw_conf.c:1180
+#: ufraw_conf.c:1178
 msgid ""
 "Last, but not least, --version displays the version number and compilation\n"
 "options for ufraw and --help displays this help message and exits.\n"
 msgstr ""
 
-#: ufraw_conf.c:1325 ufraw_conf.c:1335
+#: ufraw_conf.c:1323 ufraw_conf.c:1333
 #, c-format
 msgid "'%s' is not a valid value for the --%s option."
 msgstr ""
 
-#: ufraw_conf.c:1364
+#: ufraw_conf.c:1362
 msgid "ufraw was build without ZIP support."
 msgstr ""
 
-#: ufraw_conf.c:1383
+#: ufraw_conf.c:1381
 msgid "--batch is obselete. use ufraw-batch instead."
 msgstr ""
 
-#: ufraw_conf.c:1401
+#: ufraw_conf.c:1386
+#, c-format
+msgid "getopt returned character code 0%o ??"
+msgstr ""
+
+#: ufraw_conf.c:1399
 #, c-format
 msgid "'%s' is not a valid white balance setting."
 msgstr ""
 
-#: ufraw_conf.c:1406
+#: ufraw_conf.c:1404
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr ""
 
-#: ufraw_conf.c:1414
+#: ufraw_conf.c:1412
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
 msgstr ""
 
-#: ufraw_conf.c:1421 ufraw_conf.c:1460
+#: ufraw_conf.c:1419 ufraw_conf.c:1458
 #, c-format
 msgid "failed to load curve from %s"
 msgstr ""
 
-#: ufraw_conf.c:1444
+#: ufraw_conf.c:1442
 #, c-format
 msgid "'%s' is not a valid base curve name."
 msgstr ""
 
-#: ufraw_conf.c:1453
+#: ufraw_conf.c:1451
 #, c-format
 msgid "failed to load curve from %s, too many configured curves"
 msgstr ""
 
-#: ufraw_conf.c:1477
+#: ufraw_conf.c:1475
 #, c-format
 msgid "'%s' is not a valid curve name."
 msgstr ""
 
-#: ufraw_conf.c:1493
+#: ufraw_conf.c:1491
 #, c-format
 msgid "'%s' is not a valid interpolation option."
 msgstr ""
 
-#: ufraw_conf.c:1503
+#: ufraw_conf.c:1501
 #, c-format
 msgid "'%s' is not a valid restore option."
 msgstr ""
 
-#: ufraw_conf.c:1513
+#: ufraw_conf.c:1511
 #, c-format
 msgid "'%s' is not a valid clip option."
 msgstr ""
 
-#: ufraw_conf.c:1520
+#: ufraw_conf.c:1518
 msgid "you can not specify both --shrink and --size"
 msgstr ""
 
-#: ufraw_conf.c:1535 ufraw_conf.c:1545
+#: ufraw_conf.c:1533 ufraw_conf.c:1543
 msgid "ufraw was build without TIFF support."
 msgstr ""
 
-#: ufraw_conf.c:1555 ufraw_conf.c:1567
+#: ufraw_conf.c:1553 ufraw_conf.c:1565
 msgid "ufraw was build without JPEG support."
 msgstr ""
 
-#: ufraw_conf.c:1561
+#: ufraw_conf.c:1559
 #, c-format
 msgid "'%s' is not a valid output type."
 msgstr ""
 
-#: ufraw_conf.c:1578
+#: ufraw_conf.c:1576
 #, c-format
 msgid "'%s' is not a valid output type for embedded image."
 msgstr ""
 
-#: ufraw_conf.c:1593
+#: ufraw_conf.c:1591
 #, c-format
 msgid "'%s' is not a valid create-id option."
 msgstr ""
 
-#: ufraw_conf.c:1602
+#: ufraw_conf.c:1600
 #, c-format
 msgid "'%s' is not a valid path."
 msgstr ""
 
-#: ufraw_conf.c:1610
+#: ufraw_conf.c:1608
 msgid "cannot output more than one file to the same output"
+msgstr ""
+
+#: ufraw_embedded.c:45
+msgid "Reading embedded image requires libjpeg."
 msgstr ""
 
 #: ufraw_embedded.c:49
@@ -489,7 +506,8 @@ msgstr ""
 msgid "JPEG thumb width %d different than expected %d."
 msgstr ""
 
-#: ufraw_embedded.c:130 ufraw_embedded.c:275
+#: ufraw_embedded.c:130 ufraw_embedded.c:275 ufraw_writer.c:112
+#: ufraw_writer.c:214 ufraw_writer.c:230 ufraw_writer.c:295 ufraw_writer.c:314
 #, c-format
 msgid ""
 "Error creating file '%s'.\n"
@@ -500,7 +518,12 @@ msgstr ""
 msgid "No embedded image read"
 msgstr ""
 
-#: ufraw_embedded.c:236
+#: ufraw_embedded.c:224 ufraw_writer.c:304
+#, c-format
+msgid "Error creating file '%s'. Unknown file type %d."
+msgstr ""
+
+#: ufraw_embedded.c:236 ufraw_writer.c:123
 #, c-format
 msgid "Error creating file '%s': %s"
 msgstr ""
@@ -510,8 +533,27 @@ msgstr ""
 msgid "Error writing '%s'"
 msgstr ""
 
+#: ufraw_embedded.c:334
+#, c-format
+msgid "Unsupported output type (%d) for embedded image"
+msgstr ""
+
+#: ufraw-gimp.c:276
+msgid "Can't allocate new image."
+msgstr ""
+
 #: ufraw-gimp.c:304
 msgid "Loading image"
+msgstr ""
+
+#: ufraw-gimp.c:324 ufraw_writer.c:274
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored.\n"
+msgstr ""
+
+#: ufraw-gimp.c:350
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
 msgstr ""
 
 #: ufraw_preview.c:46
@@ -1020,6 +1062,10 @@ msgstr ""
 msgid "Loading preview"
 msgstr ""
 
+#: ufraw_routines.c:159
+msgid "Fatal error setting C locale"
+msgstr ""
+
 #: ufraw_routines.c:268
 #, c-format
 msgid "Curve version is not supported"
@@ -1038,6 +1084,10 @@ msgstr ""
 #: ufraw_routines.c:418
 #, c-format
 msgid "Error opening file '%s': %s"
+msgstr ""
+
+#: ufraw_saver.c:154
+msgid "Fatal Error: uf->conf->shrink<1"
 msgstr ""
 
 #: ufraw_saver.c:177
@@ -1146,49 +1196,69 @@ msgstr ""
 msgid "Remote URI is not supported"
 msgstr ""
 
-#: ufraw_ufraw.c:224
+#: ufraw_ufraw.c:230
 #, c-format
 msgid "darkframe error: %s is not a raw file\n"
 msgstr ""
 
-#: ufraw_ufraw.c:234
+#: ufraw_ufraw.c:240
 #, c-format
 msgid "using darkframe '%s'\n"
 msgstr ""
 
-#: ufraw_ufraw.c:239
+#: ufraw_ufraw.c:245
 #, c-format
 msgid "error loading darkframe '%s'\n"
 msgstr ""
 
-#: ufraw_ufraw.c:351
+#: ufraw_ufraw.c:357
 msgid "Error reading NEF curve"
 msgstr ""
 
-#: ufraw_ufraw.c:414
+#: ufraw_ufraw.c:420
 msgid "Darkframe is incompatible with main image"
 msgstr ""
 
-#: ufraw_ufraw.c:528
+#: ufraw_ufraw.c:530
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr ""
 
-#: ufraw_ufraw.c:627 ufraw_ufraw.c:630
+#: ufraw_ufraw.c:629 ufraw_ufraw.c:632
 msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr ""
 
+#: ufraw_writer.c:91
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr ""
+
+#: ufraw_writer.c:140 ufraw_writer.c:155 ufraw_writer.c:207 ufraw_writer.c:223
+#: ufraw_writer.c:284
+msgid "Saving image"
+msgstr ""
+
+#: ufraw_writer.c:145 ufraw_writer.c:162
+#, c-format
+msgid "Error creating file '%s': %s."
+msgstr ""
+
+#: ufraw_writer.c:198 ufraw_writer.c:267
+#, c-format
+msgid "Failed to embed output profile '%s' in '%s'"
+msgstr ""
+
 #. First letter of the word 'yes' for the y/n question
-#: ufraw_writer.c:347
+#: ufraw_writer.c:349
 msgid "y"
 msgstr ""
 
 #. First letter of the word 'no' for the y/n question
-#: ufraw_writer.c:349
+#: ufraw_writer.c:351
 msgid "n"
 msgstr ""
 
-#: ufraw_writer.c:350
+#: ufraw_writer.c:352
 #, c-format
 msgid "%s: overwrite '%s'?"
 msgstr ""

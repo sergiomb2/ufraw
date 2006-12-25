@@ -201,12 +201,14 @@ ufraw_data *ufraw_open(char *filename)
         uf->predictedWidth = raw->fuji_width / raw->fuji_step;
         uf->predictedHeight = (raw->height - raw->fuji_width) / raw->fuji_step;
     } else {
-	uf->predictedHeight = raw->height;
-        uf->predictedWidth = raw->width;
 	if (raw->pixel_aspect < 1)
 	    uf->predictedHeight = raw->height / raw->pixel_aspect + 0.5;
+	else
+	    uf->predictedHeight = raw->height;
 	if (raw->pixel_aspect > 1)
-            uf->predictedWidth = raw->width * raw->pixel_aspect + 0.5;
+	    uf->predictedWidth = raw->width * raw->pixel_aspect + 0.5;
+	else
+	    uf->predictedWidth = raw->width;
     }
     if (raw->flip & 4) {
         int tmp = uf->predictedHeight;
@@ -486,7 +488,7 @@ int ufraw_convert_image(ufraw_data *uf)
     dcraw_image_data final;
     int shrink = 1;
 
-//    preview_progress(uf->widget, "Loading image", 0.1);
+//    preview_progress(uf->widget, _("Loading image"), 0.1);
     developer_prepare(uf->developer, uf->conf,
 	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, FALSE);
     /* We can do a simple interpolation in the following cases:
@@ -494,7 +496,7 @@ int ufraw_convert_image(ufraw_data *uf)
      * Wanted size is smaller than raw size (size is after a raw->shrink).
      * There are no filters (Foveon). */
     if ( uf->conf->interpolation==half_interpolation ||
-         ( uf->conf->size==0 && uf->conf->shrink*raw->pixel_aspect>1 ) ||
+         ( uf->conf->size==0 && uf->conf->shrink>1 ) ||
          ( uf->conf->size>0 &&
 	   uf->conf->size<MAX(raw->raw.height, raw->raw.width) ) ||
 	 ( raw->filters==0 )  ) {
@@ -519,12 +521,10 @@ int ufraw_convert_image(ufraw_data *uf)
 	g_free(uf->image.image);
         uf->image.image = final.image;
     }
-    if (raw->pixel_aspect!=1) {
-	dcraw_image_stretch(&final, raw->pixel_aspect);
-	if (uf->conf->size==0 && uf->conf->shrink>1)
-            dcraw_image_resize(&final,
-		    shrink*MAX(final.height, final.width)/uf->conf->shrink);
-    }
+    dcraw_image_stretch(&final, raw->pixel_aspect);
+    if (uf->conf->size==0 && uf->conf->shrink>1)
+	dcraw_image_resize(&final,
+		shrink*MAX(final.height, final.width)/uf->conf->shrink);
     if (uf->conf->size>0) {
         if ( uf->conf->size>MAX(final.height, final.width) ) {
             ufraw_message(UFRAW_ERROR, _("Can not downsize from %d to %d."),
@@ -533,12 +533,12 @@ int ufraw_convert_image(ufraw_data *uf)
             dcraw_image_resize(&final, uf->conf->size);
 	}
     }
-//    preview_progress(uf->widget, "Loading image", 0.4);
+//    preview_progress(uf->widget, _("Loading image"), 0.4);
     uf->image.image = final.image;
     dcraw_flip_image(&final, raw->flip);
     uf->image.height = final.height;
     uf->image.width = final.width;
-//    preview_progress(uf->widget, "Loading image", 0.5);
+//    preview_progress(uf->widget, _("Loading image"), 0.5);
     return UFRAW_SUCCESS;
 }
 
