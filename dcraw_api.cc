@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <float.h>
 #include <glib.h>
+#include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 #include "dcraw_api.h"
 #include "dcraw.h"
 
@@ -60,13 +61,13 @@ int dcraw_open(dcraw_data *h,char *filename)
     d->verbose = 1;
     d->ifname = g_strdup(filename);
     if (setjmp(d->failure)) {
-        d->dcraw_message(DCRAW_ERROR, "Fatal internal error\n");
+        d->dcraw_message(DCRAW_ERROR,_("Fatal internal error\n"));
         h->message = d->messageBuffer;
 	delete d;
         return DCRAW_ERROR;
     }
     if (!(d->ifp = fopen (d->ifname, "rb"))) {
-        d->dcraw_message(DCRAW_OPEN_ERROR, "Could not open %s: %s\n",
+        d->dcraw_message(DCRAW_OPEN_ERROR,_("Cannot open file %s: %s\n"),
                 filename, strerror(errno));
         g_free(d->ifname);
         h->message = d->messageBuffer;
@@ -77,7 +78,7 @@ int dcraw_open(dcraw_data *h,char *filename)
     /* We first check if dcraw recognizes the file, this is equivalent
      * to 'dcraw -i' succeeding */
     if (!d->make[0]) {
-	d->dcraw_message(DCRAW_OPEN_ERROR, "%s: unsupported file format.\n",
+	d->dcraw_message(DCRAW_OPEN_ERROR,_("%s: unsupported file format.\n"),
 		d->ifname);
         fclose(d->ifp);
         g_free(d->ifname);
@@ -88,7 +89,7 @@ int dcraw_open(dcraw_data *h,char *filename)
     }
     /* Next we check if dcraw can decode the file */
     if (!d->is_raw) {
-	d->dcraw_message(DCRAW_OPEN_ERROR, "Cannot decode %s\n", d->ifname);
+	d->dcraw_message(DCRAW_OPEN_ERROR,_("Cannot decode file %s\n"), d->ifname);
         fclose(d->ifp);
         g_free(d->ifname);
         h->message = d->messageBuffer;
@@ -162,7 +163,7 @@ int dcraw_load_raw(dcraw_data *h)
     }
     h->raw.colors = d->colors;
     h->fourColorFilters = d->filters;
-    d->dcraw_message(DCRAW_VERBOSE, "Loading %s %s image from %s...\n",
+    d->dcraw_message(DCRAW_VERBOSE,_("Loading %s %s image from %s ...\n"),
                 d->make, d->model, d->ifname);
     fseek (d->ifp, d->data_offset, SEEK_SET);
     (d->*d->load_raw)();
@@ -176,7 +177,7 @@ int dcraw_load_raw(dcraw_data *h)
     h->ifp = NULL;
     h->rgbMax = d->maximum;
     h->black = d->black;
-    d->dcraw_message(DCRAW_VERBOSE, "Black: %d, Maximum: %d\n",
+    d->dcraw_message(DCRAW_VERBOSE,_("Black: %d, Maximum: %d\n"),
 	    d->black, d->maximum);
     cam_to_cielab_INDI(NULL, NULL, h->colors, d->rgb_cam);
     dmin = DBL_MAX;
@@ -207,18 +208,17 @@ int dcraw_load_thumb(dcraw_data *h, dcraw_image_data *thumb)
     h->thumbOffset = d->thumb_offset;
     h->thumbBufferLength = d->thumb_length;
     if (d->thumb_offset==0) {
-	dcraw_message(d, DCRAW_ERROR,
-		"%s has no thumbnail.", d->ifname);
+	dcraw_message(d, DCRAW_ERROR,_("%s has no thumbnail."), d->ifname);
     } else if (d->thumb_load_raw!=NULL) {
 	dcraw_message(d, DCRAW_ERROR,
-		"Unsupported thumb format (load_raw) for %s", d->ifname);
+		_("Unsupported thumb format (load_raw) for %s"), d->ifname);
     } else if (d->write_thumb==&DCRaw::jpeg_thumb) {
 	h->thumbType = jpeg_thumb_type;
     } else if (d->write_thumb==&DCRaw::ppm_thumb) {
 	h->thumbType = ppm_thumb_type;
     } else {
 	dcraw_message(d, DCRAW_ERROR,
-		"Unsupported thumb format for %s", d->ifname);
+		_("Unsupported thumb format for %s"), d->ifname);
     }
     h->message = d->messageBuffer;
     return d->lastStatus;

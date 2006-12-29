@@ -67,7 +67,7 @@ int main (int argc, char **argv)
     }
     if ( cmd.silent ) {
 	ufraw_message(UFRAW_ERROR,
-		_("--silent is valid only in batch mode"));
+		_("--silent option is valid only in batch mode"));
 	optInd = -1;
     }
     if ( cmd.embeddedImage ) {

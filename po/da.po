@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-24 11:03+0100\n"
-"PO-Revision-Date: 2006-12-24 11:04+0100\n"
+"POT-Creation-Date: 2006-12-29 07:03+0100\n"
+"PO-Revision-Date: 2006-12-29 07:15+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -31,20 +31,20 @@ msgstr "gemt %s"
 
 #: ufraw.c:65
 msgid "--output option is valid only in batch mode"
-msgstr ""
+msgstr "--output kan kun anvendes i batch-modus"
 
 #: ufraw.c:70
-msgid "--silent is valid only in batch mode"
-msgstr ""
+msgid "--silent option is valid only in batch mode"
+msgstr "--silent kan kun anvendes i batch-modus"
 
 #: ufraw.c:74
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
-"Indlæsning af indlejret billede er ikke understøttet i interaktivt modus"
+"Udtrækning af indlejret billede er ikke understøttet i interaktivt modus"
 
 #: ufraw_chooser.c:61
 msgid "Raw images"
-msgstr "RAW-billeder"
+msgstr "Raw-billeder"
 
 #: ufraw_chooser.c:74
 msgid "UFRaw ID files"
@@ -52,11 +52,11 @@ msgstr "UFRaw ID-filer"
 
 #: ufraw_chooser.c:80
 msgid "Raw jpg's"
-msgstr "RAW jpg'er"
+msgstr "Raw jpg'er"
 
 #: ufraw_chooser.c:86
 msgid "Raw tif's"
-msgstr "RAW tif'er"
+msgstr "Raw tif'er"
 
 #: ufraw_chooser.c:92 ufraw_preview.c:208 ufraw_preview.c:310
 #: ufraw_preview.c:378
@@ -138,7 +138,7 @@ msgid ""
 "Error parsing '%s'\n"
 "%s"
 msgstr ""
-"Fejl i fortolkning af '%s'\n"
+"Fejl ved fortolkning af '%s'\n"
 "%s"
 
 #: ufraw_conf.c:878
@@ -160,15 +160,15 @@ msgstr "UFRaw "
 
 #: ufraw_conf.c:1097
 msgid " - Unidentified Flying Raw converter for digital camera images.\n"
-msgstr " - Uidentificeret Flyvende RAW-konverter for digitalkamerabilleder.\n"
+msgstr " - Uidentificeret Flyvende Raw-konverter for digitalkamerabilleder.\n"
 
 #: ufraw_conf.c:1099
 msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
-msgstr "Anvendelse: ufraw [ tilvalg ... ] [ RAW-billed-filer ... ]\n"
+msgstr "Anvendelse: ufraw [ tilvalg ... ] [ raw-billed-filer ... ]\n"
 
 #: ufraw_conf.c:1100
 msgid "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
-msgstr "       ufraw-batch [ tilvalg ... ] [ RAW-billed-filer ... ]\n"
+msgstr "       ufraw-batch [ tilvalg ... ] [ raw-billed-filer ... ]\n"
 
 #: ufraw_conf.c:1101
 msgid "       ufraw [ options ... ] [ default-directory ]\n"
@@ -182,6 +182,13 @@ msgid ""
 "To process the images with no questions asked (and no preview) use\n"
 "'ufraw-batch'.\n"
 msgstr ""
+"Normalt viser 'ufraw' et forvisningsvindue for hvert raw-billede, der "
+"tillader\n"
+"brugeren at finjustere billedparametrene før det gemmes. UFRaw vil vise en\n"
+"Filvalgsdialog, hvis der ikke er angivet nogen raw-billeder i "
+"kommandolinien.\n"
+"Brug 'ufraw-batch' til at behandle billeder uden at svare på spørgsmål\n"
+"(og uden forvisning).\n"
 
 #: ufraw_conf.c:1109
 msgid ""
@@ -189,15 +196,15 @@ msgid ""
 "contain a raw image filename and the parameters for handling the image.\n"
 "One can also use an ID file with the option:\n"
 msgstr ""
-"Inddatafilerne kan være enten RAW-billeder eller ufraws ID-filer. ID-filer\n"
-"indeholder et RAW-billedfilnavn og parametrene til behandling af billedet.\n"
+"Inddatafilerne kan være enten raw-billeder eller ufraws ID-filer. ID-filer\n"
+"indeholder et raw-billedfilnavn og parametrene til behandling af billedet.\n"
 "Man kan også anvende en ID-fil med tilvalget:\n"
 
 #: ufraw_conf.c:1113
 msgid ""
 "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
 msgstr ""
-"--conf=ID-fil         Brug parametrene i ID-fil på andre RAW-billeder.\n"
+"--conf=ID-fil         Brug parametrene i ID-fil på andre raw-billeder.\n"
 
 #: ufraw_conf.c:1115
 msgid "The rest of the options are separated into two groups.\n"
@@ -224,8 +231,15 @@ msgid ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
 "                      Type of base tone curve to use. CURVE can be any\n"
 "                      curve that was previously loaded in the GUI.\n"
-"                      (default camera if such exsists, linear otherwise).\n"
+"                      (default camera if such exists, linear otherwise).\n"
 msgstr ""
+"--base-curve=manual|linear|camera|custom|KURVE\n"
+"                      Basistonekurvetype. KURVE kan være en hvilken som "
+"helst\n"
+"                      kurve, der har været indlæst i den grafiske "
+"brugerflade.\n"
+"                      (standardværdi camera hvis den findes, ellers "
+"linear).\n"
 
 #: ufraw_conf.c:1125
 msgid ""
@@ -233,6 +247,9 @@ msgid ""
 "                      Use base tone curve included in specified file.\n"
 "                      Overrides --base-curve option.\n"
 msgstr ""
+"--base-curve-file=fil\n"
+"                      Brug basistonekurve fra den specificerede fil.\n"
+"                      Har forret for tilvalget --base-curve.\n"
 
 #: ufraw_conf.c:1128
 msgid ""
@@ -241,12 +258,20 @@ msgid ""
 "                      curve that was previously loaded in the GUI.\n"
 "                      (default linear).\n"
 msgstr ""
+"--curve=manual|linear|KURVE\n"
+"                      Lysstyrkekurvetype. KURVE kan være en hvilken som "
+"helst\n"
+"                      kurve, der har været indlæst i den grafiske "
+"brugerflade.\n"
+"                      (standardværdi linear).\n"
 
 #: ufraw_conf.c:1132
 msgid ""
 "--curve-file=file     Use luminosity curve included in specified file.\n"
 "                      Overrides --curve option.\n"
 msgstr ""
+"--curve-file=fil      Brug lysstyrkekurve fra den specificerede fil.\n"
+"                      Har forret for tilvalget --curve.\n"
 
 #: ufraw_conf.c:1134
 msgid ""
@@ -257,28 +282,44 @@ msgid ""
 "                      'hsv' restores in HSV space - giving sharp details.\n"
 "                      (default lch).\n"
 msgstr ""
+"--restore=clip|lch|hsv\n"
+"                      Gendan detaljer for negative LV.\n"
+"                      'clip' gendanner intet - sikrer mod tab af detaljer.\n"
+"                      'lch' gendanner i LCH-farverummet - giver bløde\n"
+"                      detaljer.\n"
+"                      'hsv' gendanner i HSV-farverummet - giver skarpe\n"
+"                      detaljer. (standardværdi lch).\n"
 
 #: ufraw_conf.c:1140
 msgid ""
 "--clip=digital|film   Clip highlights for positive EV.\n"
 "                      'digital' linear digital sensor response.\n"
-"                      'film' emulate soft film response. (default linear).\n"
+"                      'film' emulate soft film response. (default digital).\n"
 msgstr ""
+"--clip=digital|film   Klip højlys for positive LV.\n"
+"                      'digital' lineær digitalsensorkurve.\n"
+"                      'film' emulerer blød filmkurve. (standardværdi "
+"digital).\n"
 
 #: ufraw_conf.c:1143
 msgid ""
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 msgstr ""
+"--gamma=GAMMA         Gammajustering for basiskurven (standardværdi 0.45).\n"
 
 #: ufraw_conf.c:1144
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr ""
+"--linearity=LINEARITET\n"
+"                      Linearitet af basiskurven (standardværdi 0.10).\n"
 
 #: ufraw_conf.c:1145
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
 msgstr ""
+"--saturation=MÆTNING  Farvemætingsjustering (standardværdi 1.0, 0 for S&H\n"
+"                      uddata).\n"
 
 #: ufraw_conf.c:1146
 msgid ""
@@ -286,85 +327,110 @@ msgid ""
 "                      Auto exposure or exposure correction in EV (default "
 "0).\n"
 msgstr ""
+"--exposure=auto|EKSPONERING\n"
+"                      Autoeksponering eller eksponeringskorrektion i LV\n"
+"                      (standardværdi 0).\n"
 
 #: ufraw_conf.c:1148
 msgid ""
 "--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"
 msgstr ""
+"--black-point=auto|SORT\n"
+"                      Autosortpunkt eller sortpunktsværdi (standardværdi "
+"0).\n"
 
 #: ufraw_conf.c:1150
 msgid ""
 "--interpolation=ahd|vng|four-color|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"
 msgstr ""
+"--interpolation=ahd|vng|four-color|bilinear\n"
+"                      Interpolationsalgoritme (standardværdi ahd).\n"
 
 #: ufraw_conf.c:1153
 msgid "The options which are related to the final output are:\n"
-msgstr ""
+msgstr "Tilvalgene, der er relateret til de endelige uddata, er:\n"
 
 #: ufraw_conf.c:1155
 msgid "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
 msgstr ""
+"--shrink=FAKTOR       Formindsk billedet med FAKTOR (standardværdi 1).\n"
 
 #: ufraw_conf.c:1156
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
-msgstr ""
+msgstr "--size=STØRRELSE      Formindsk maks(højde,bredde) til STØRRELSE.\n"
 
 #: ufraw_conf.c:1157
 msgid ""
 "--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
 "                      Output file format (default ppm8).\n"
 msgstr ""
+"--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
+"                      Uddatafilformat (standardværdi ppm8).\n"
 
 #: ufraw_conf.c:1159
 msgid ""
 "--create-id=no|also|only\n"
 "                      Create no|also|only ID file (default no).\n"
 msgstr ""
+"--create-id=no|also|only\n"
+"                      Dan ikke|også|kun ID-fil (standardværdi ikke).\n"
 
 #: ufraw_conf.c:1161
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
-msgstr ""
+msgstr "--compression=VÆRDI   JPEG-komprimering (0-100, standardværdi 85).\n"
 
 #: ufraw_conf.c:1162
-msgid "--[no]exif            Embed exif in output JPEG (default embed exif).\n"
+msgid "--[no]exif            Embed EXIF in output JPEG (default embed EXIF).\n"
 msgstr ""
+"--[no]exif            Indlejr EXIF i uddata JPEG (standardværdi indlejr "
+"EXIF).\n"
 
 #: ufraw_conf.c:1163
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
 "nozip).\n"
 msgstr ""
+"--[no]zip             Vælg [fravælg] TIFF zip-komprimering\n"
+"                      (standardværdi fravælg).\n"
 
 #: ufraw_conf.c:1164
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"
 msgstr ""
+"--embedded-image      Brug det i raw-filen indlejrede forvisningsbillede\n"
+"                      i stedet for at konvertere raw-billedet.\n"
 
 #: ufraw_conf.c:1166
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
+"--out-path=STI        STI for uddatafil (som standardværdi bruges\n"
+"                      inddatafilens sti).\n"
 
 #: ufraw_conf.c:1167
 msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
 msgstr ""
+"--output=FIL          Uddatafilens navn, brug '-' for standarduddata.\n"
 
 #: ufraw_conf.c:1168
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
-msgstr ""
+msgstr "--darkframe=FIL       Brug FIL til raw-sortbilledsubtraktion.\n"
 
 #: ufraw_conf.c:1169
 msgid ""
 "--overwrite           Overwrite existing files without asking (default no).\n"
 msgstr ""
+"--overwrite           Overskriv eksisterende filer uden at spørge\n"
+"                      (standardværdi nej).\n"
 
 #: ufraw_conf.c:1170
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
 msgstr ""
+"--silent              Vis ingen meddelelser under batch-konvertering.\n"
 
 #: ufraw_conf.c:1172
 msgid ""
@@ -377,144 +443,151 @@ msgid ""
 "second\n"
 "group of options is NOT read from the resource file.\n"
 msgstr ""
+"UFRaw læser først indstillinger fra ressourcefilen $HOME/.ufrawrc.\n"
+"Så læses indstillinger fra en ID-fil, hvis en sådan er angivet. Dernæst\n"
+"tages indstillingerne fra --conf tilvalget, hvor inddata-/uddata-filnavne i\n"
+"ID-filen ignoreres. Til sidst anvendes tilvalg fra kommandolinien.\n"
+"I batch-modus indlæses den anden gruppe tilvalg IKKE fra ressourcefilen.\n"
 
 #: ufraw_conf.c:1178
 msgid ""
 "Last, but not least, --version displays the version number and compilation\n"
 "options for ufraw and --help displays this help message and exits.\n"
 msgstr ""
+"Sidst, men ikke mindst, viser --version versionsnummer og bygningstilvalg\n"
+"for ufraw, og --help viser denne hjælpetekst og stopper programmet.\n"
 
 #: ufraw_conf.c:1323 ufraw_conf.c:1333
 #, c-format
 msgid "'%s' is not a valid value for the --%s option."
-msgstr ""
+msgstr "'%s' er ikke en legal værdi for tilvalget --%s."
 
 #: ufraw_conf.c:1362
 msgid "ufraw was build without ZIP support."
-msgstr ""
+msgstr "ufraw blev bygget uden ZIP-understøttelse."
 
 #: ufraw_conf.c:1381
 msgid "--batch is obselete. use ufraw-batch instead."
-msgstr ""
+msgstr "--batch er forældet. Anvend ufraw-batch i stedet for."
 
 #: ufraw_conf.c:1386
 #, c-format
 msgid "getopt returned character code 0%o ??"
-msgstr ""
+msgstr "getopt returnerede tegnkode 0%o ??"
 
 #: ufraw_conf.c:1399
 #, c-format
 msgid "'%s' is not a valid white balance setting."
-msgstr ""
+msgstr "'%s' er ikke en legal hvidbalanceindstilling."
 
 #: ufraw_conf.c:1404
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
-msgstr ""
+msgstr "--temperature og --green har forret for --wb=%s."
 
 #: ufraw_conf.c:1412
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
-msgstr ""
+msgstr "fejl ved indlæsning af kurve fra %s, for mange indlæste basiskurver"
 
 #: ufraw_conf.c:1419 ufraw_conf.c:1458
 #, c-format
 msgid "failed to load curve from %s"
-msgstr ""
+msgstr "fejl ved indlæsning af kurve fra %s"
 
 #: ufraw_conf.c:1442
 #, c-format
 msgid "'%s' is not a valid base curve name."
-msgstr ""
+msgstr "'%s' er ikke et legalt basiskurvenavn."
 
 #: ufraw_conf.c:1451
 #, c-format
 msgid "failed to load curve from %s, too many configured curves"
-msgstr ""
+msgstr "fejl ved indlæsning af kurve fra %s, for mange indlæste kurver"
 
 #: ufraw_conf.c:1475
 #, c-format
 msgid "'%s' is not a valid curve name."
-msgstr ""
+msgstr "'%s' er ikke et legalt kurvenavn."
 
 #: ufraw_conf.c:1491
 #, c-format
 msgid "'%s' is not a valid interpolation option."
-msgstr ""
+msgstr "'%s' er ikke et legalt interpolationstilvalg."
 
 #: ufraw_conf.c:1501
 #, c-format
 msgid "'%s' is not a valid restore option."
-msgstr ""
+msgstr "'%s' er ikke et legalt gendannelsestilvalg."
 
 #: ufraw_conf.c:1511
 #, c-format
 msgid "'%s' is not a valid clip option."
-msgstr ""
+msgstr "'%s' er ikke et legalt klipningstilvalg."
 
 #: ufraw_conf.c:1518
 msgid "you can not specify both --shrink and --size"
-msgstr ""
+msgstr "Du kan ikke anvende både --shrink og --size"
 
 #: ufraw_conf.c:1533 ufraw_conf.c:1543
 msgid "ufraw was build without TIFF support."
-msgstr ""
+msgstr "ufraw blev bygget uden TIFF-understøttelse."
 
 #: ufraw_conf.c:1553 ufraw_conf.c:1565
 msgid "ufraw was build without JPEG support."
-msgstr ""
+msgstr "ufraw blev bygget uden JPEG-understøttelse."
 
 #: ufraw_conf.c:1559
 #, c-format
 msgid "'%s' is not a valid output type."
-msgstr ""
+msgstr "'%s' er ikke en legal uddatatype."
 
 #: ufraw_conf.c:1576
 #, c-format
 msgid "'%s' is not a valid output type for embedded image."
-msgstr ""
+msgstr "'%s' er ikke en legal uddatatype for indlejrede billeder."
 
 #: ufraw_conf.c:1591
 #, c-format
 msgid "'%s' is not a valid create-id option."
-msgstr ""
+msgstr "'%s' er ikke et legalt create-id-tilvalg."
 
 #: ufraw_conf.c:1600
 #, c-format
 msgid "'%s' is not a valid path."
-msgstr ""
+msgstr "'%s' er ikke en legal sti."
 
 #: ufraw_conf.c:1608
 msgid "cannot output more than one file to the same output"
-msgstr ""
+msgstr "kan ikke skrive mere end en fil til samme uddata"
 
 #: ufraw_embedded.c:45
 msgid "Reading embedded image requires libjpeg."
-msgstr ""
+msgstr "Læsning af indlejret billede kræver libjpeg."
 
 #: ufraw_embedded.c:49
 msgid "No embedded image found"
-msgstr ""
+msgstr "Indlejret billede ikke fundet"
 
 #: ufraw_embedded.c:67
 #, c-format
 msgid "Original size (%d) is smaller than the requested size (%d)"
-msgstr ""
+msgstr "Originalstørrelsen (%d) er mindre end den valgte størrelse (%d)"
 
 #: ufraw_embedded.c:80
 #, c-format
 msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
-msgstr ""
+msgstr "Indlejret ppm forskellighed, højde %d, bredde %d, mens buffer %d."
 
 #: ufraw_embedded.c:101
 #, c-format
 msgid "JPEG thumb height %d different than expected %d."
-msgstr ""
+msgstr "Indlejret JPEG højde %d anderledes end forventet %d."
 
 #: ufraw_embedded.c:107
 #, c-format
 msgid "JPEG thumb width %d different than expected %d."
-msgstr ""
+msgstr "Indlejret JPEG bredde %d anderledes end forventet %d."
 
 #: ufraw_embedded.c:130 ufraw_embedded.c:275 ufraw_writer.c:112
 #: ufraw_writer.c:214 ufraw_writer.c:230 ufraw_writer.c:295 ufraw_writer.c:314
@@ -523,119 +596,121 @@ msgid ""
 "Error creating file '%s'.\n"
 "%s"
 msgstr ""
+"Fejl ved dannelse af fil '%s'.\n"
+"%s"
 
 #: ufraw_embedded.c:145 ufraw_embedded.c:229
 msgid "No embedded image read"
-msgstr ""
+msgstr "Indlejret billede ikke læst"
 
 #: ufraw_embedded.c:224 ufraw_writer.c:304
 #, c-format
 msgid "Error creating file '%s'. Unknown file type %d."
-msgstr ""
+msgstr "Fejl ved dannelse af fil '%s'. Ukendt filtype %d."
 
 #: ufraw_embedded.c:236 ufraw_writer.c:123
 #, c-format
 msgid "Error creating file '%s': %s"
-msgstr ""
+msgstr "Fejl ved dannelse af fil '%s': %s"
 
 #: ufraw_embedded.c:293
 #, c-format
 msgid "Error writing '%s'"
-msgstr ""
+msgstr "Fejl ved skrivning af '%s'"
 
 #: ufraw_embedded.c:334
 #, c-format
 msgid "Unsupported output type (%d) for embedded image"
-msgstr ""
+msgstr "Ikke-understøttet uddatatype (%d) for indlejret billede"
 
 #: ufraw-gimp.c:276
 msgid "Can't allocate new image."
-msgstr ""
+msgstr "Kan ikke allokere nyt billede."
 
 #: ufraw-gimp.c:304
 msgid "Loading image"
-msgstr ""
+msgstr "Indlæser billede"
 
 #: ufraw-gimp.c:324 ufraw_writer.c:274
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr ""
+msgstr "EXIF-buffer længde %d, for lang, ignoreret.\n"
 
 #: ufraw-gimp.c:350
 #, c-format
 msgid "Failed to embed output profile '%s' in image."
-msgstr ""
+msgstr "Fejl ved indlejring af uddataprofil '%s' i billede."
 
 #: ufraw_preview.c:46
 msgid "Raw histogram"
-msgstr ""
+msgstr "Raw-histogram"
 
 #: ufraw_preview.c:46
 msgid "Live histogram"
-msgstr ""
+msgstr "Sandtidshistogram"
 
 #: ufraw_preview.c:165 ufraw_preview.c:254
 msgid "No more room for new curves."
-msgstr ""
+msgstr "Ikke mere plads til nye kurver."
 
 #: ufraw_preview.c:168 ufraw_preview.c:2465
 msgid "Load curve"
-msgstr ""
+msgstr "Indlæser kurve"
 
 #: ufraw_preview.c:184 ufraw_preview.c:286
 msgid "All curve formats"
-msgstr ""
+msgstr "Alle kurveformater"
 
 #: ufraw_preview.c:194 ufraw_preview.c:296
 msgid "UFRaw curve format"
-msgstr ""
+msgstr "UFRaw kurveformat"
 
 #: ufraw_preview.c:200 ufraw_preview.c:302
 msgid "Nikon curve format"
-msgstr ""
+msgstr "Nikon kurveformat"
 
 #: ufraw_preview.c:271 ufraw_preview.c:2471
 msgid "Save curve"
-msgstr ""
+msgstr "Gem kurve"
 
 #: ufraw_preview.c:349 ufraw_preview.c:422
 msgid "No more room for new profiles."
-msgstr ""
+msgstr "Ikke mere plads til nye profiler."
 
 #: ufraw_preview.c:353
 msgid "Load color profile"
-msgstr ""
+msgstr "Indlæs farveprofil"
 
 #: ufraw_preview.c:371
 msgid "Color Profiles"
-msgstr ""
+msgstr "Farveprofiler"
 
 #: ufraw_preview.c:534
 #, c-format
 msgid "Black point: %0.3lf"
-msgstr ""
+msgstr "Sortpunkt: %0.3lf"
 
 #: ufraw_preview.c:1110
 #, c-format
 msgid "size %dx%d, zoom %2.f%%"
-msgstr ""
+msgstr "størrelse %dx%d, zoom %2.f%%"
 
 #: ufraw_preview.c:1114
 #, c-format
 msgid "size %dx%d, scale 1/%d"
-msgstr ""
+msgstr "størrelse %dx%d, skala 1/%d"
 
 #: ufraw_preview.c:1281
 msgid "clip"
-msgstr ""
+msgstr "klip"
 
 #: ufraw_preview.c:1293
 msgid "restore in LCH space for soft details"
-msgstr ""
+msgstr "gendan i LCH-farverum for bløde detaljer"
 
 #: ufraw_preview.c:1305
 msgid "restore in HSV space for sharp details"
-msgstr ""
+msgstr "gendan i HSV-farverum for skarpe detaljer"
 
 #: ufraw_preview.c:1310
 #, c-format
@@ -643,14 +718,16 @@ msgid ""
 "Restore details for negative EV\n"
 "Current state: %s"
 msgstr ""
+"Gendan detaljer for negative LV\n"
+"Nuværende tilstand: %s"
 
 #: ufraw_preview.c:1336
 msgid "digital linear"
-msgstr ""
+msgstr "digital lineær"
 
 #: ufraw_preview.c:1348
 msgid "soft film like"
-msgstr ""
+msgstr "blød filmlignende"
 
 #: ufraw_preview.c:1353
 #, c-format
@@ -658,76 +735,80 @@ msgid ""
 "Clip highlights for positive EV\n"
 "Current state: %s"
 msgstr ""
+"Klip højlys for positive LV\n"
+"Nuværende tilstand: %s"
 
 #: ufraw_preview.c:1631
 msgid "UFRaw options"
-msgstr ""
+msgstr "UFRaw tilvalg"
 
 #: ufraw_preview.c:1644
 msgid "Settings"
-msgstr ""
+msgstr "Indstillinger"
 
 #: ufraw_preview.c:1647
 msgid "Input color profiles"
-msgstr ""
+msgstr "Inddatafarveprofiler"
 
 #: ufraw_preview.c:1648
 msgid "Output color profiles"
-msgstr ""
+msgstr "Uddatafarveprofiler"
 
 #: ufraw_preview.c:1649
 msgid "Base Curves"
-msgstr ""
+msgstr "Basiskurver"
 
 #: ufraw_preview.c:1650
 msgid "Luminosity Curves"
-msgstr ""
+msgstr "Lysstyrkekurver"
 
 #: ufraw_preview.c:1652
 msgid "Configuration"
-msgstr ""
+msgstr "Konfiguration"
 
 #: ufraw_preview.c:1667
 msgid "Save image defaults "
-msgstr ""
+msgstr "Gem billedstandardværdier "
 
 #: ufraw_preview.c:1671 ufraw_saver.c:397
 msgid ""
 "Save current image manipulation parameters as defaults.\n"
 "The output parameters in this window are always saved."
 msgstr ""
+"Gem nuværende billedbehandlingsparametre som standardværdier.\n"
+"Uddataparametrene i dette vindue gemmes altid."
 
 #: ufraw_preview.c:1674 ufraw_saver.c:400
 msgid "Never again"
-msgstr ""
+msgstr "Aldrig igen"
 
 #: ufraw_preview.c:1675 ufraw_saver.c:401
 msgid "Always"
-msgstr ""
+msgstr "Altid"
 
 #: ufraw_preview.c:1676 ufraw_saver.c:402
 msgid "Just this once"
-msgstr ""
+msgstr "Kun denne ene gang"
 
 #: ufraw_preview.c:1683
 msgid "Save full configuration "
-msgstr ""
+msgstr "Gem fuld konfiguration "
 
 #: ufraw_preview.c:1686
 msgid "Save resource file ($HOME/.ufrawrc)"
-msgstr ""
+msgstr "Gem ressourcefil ($HOME/.ufrawrc)"
 
 #: ufraw_preview.c:1694
 msgid "Log"
-msgstr ""
+msgstr "Log"
 
 #: ufraw_preview.c:1706
 msgid "Encoding conversion failed"
-msgstr ""
+msgstr "Indkodningskonvertering fejlede"
 
 #: ufraw_preview.c:1710
 msgid "About"
-msgstr ""
+msgstr "Om"
 
 #: ufraw_preview.c:1721
 msgid ""
@@ -741,60 +822,69 @@ msgid ""
 "Homepage: http://ufraw.sourceforge.net/\n"
 "\n"
 msgstr ""
+"<b>U</b>identificeret <b>F</b>lyvende <b>Raw</b> (<b>UFRaw</b>) er et "
+"program\n"
+"til at læse og behandle raw-billeder fra digitalkameraer.\n"
+"UFRaw anvender <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"til den egentlige udkodning af raw-billeder.\n"
+"\n"
+"Programforfatter: Udi Fuchs\n"
+"Hjemmeside: http://ufraw.sourceforge.net/\n"
+"\n"
 
 #: ufraw_preview.c:1986
 #, c-format
 msgid "%s - UFRaw Photo Loader"
-msgstr ""
+msgstr "%s - UFRaw Fotoindlæser"
 
 #: ufraw_preview.c:2049 ufraw_preview.c:2686
 msgid "Linear"
-msgstr ""
+msgstr "Lineær"
 
 #: ufraw_preview.c:2058 ufraw_preview.c:2695
 msgid "Logarithmic"
-msgstr ""
+msgstr "Logaritmisk"
 
 #: ufraw_preview.c:2072 ufraw_preview.c:2709
 msgid "96 Pixels"
-msgstr ""
+msgstr "96 punkter"
 
 #: ufraw_preview.c:2081 ufraw_preview.c:2718
 msgid "128 Pixels"
-msgstr ""
+msgstr "128 punkter"
 
 #: ufraw_preview.c:2090 ufraw_preview.c:2727
 msgid "192 Pixels"
-msgstr ""
+msgstr "192 punkter"
 
 #: ufraw_preview.c:2099 ufraw_preview.c:2736
 msgid "256 Pixels"
-msgstr ""
+msgstr "256 punkter"
 
 #: ufraw_preview.c:2112
 msgid "Spot values:"
-msgstr ""
+msgstr "Punktværdier:"
 
 #: ufraw_preview.c:2119
 msgid "Exposure compensation in EV"
-msgstr ""
+msgstr "Eksponeringskompensation i LV"
 
 #: ufraw_preview.c:2137
 msgid "Auto adjust exposure"
-msgstr ""
+msgstr "Automatisk eksponeringsindstilling"
 
 #: ufraw_preview.c:2148
 msgid "Reset exposure to default"
-msgstr ""
+msgstr "Sæt eksponering til standardværdi"
 
 #. Start of White Balance setting page
 #: ufraw_preview.c:2157
 msgid "WB"
-msgstr ""
+msgstr "HB"
 
 #: ufraw_preview.c:2210
 msgid "White Balance"
-msgstr ""
+msgstr "Hvidbalance"
 
 #: ufraw_preview.c:2235
 msgid ""
@@ -802,200 +892,205 @@ msgid ""
 "Check UFRaw's webpage for information on how to get your\n"
 "camera supported."
 msgstr ""
+"Der er ingen hvidbalanceforvalg for din kameramodel.\n"
+"Kig på UFRaws hjemmeside for information om, hvordan du\n"
+"får dit kamera understøttet."
 
 #: ufraw_preview.c:2241
 msgid "Reset white balance to initial value"
-msgstr ""
+msgstr "Sæt hvidbalance til startværdien"
 
 #: ufraw_preview.c:2247
 msgid "Temperature"
-msgstr ""
+msgstr "Temperatur"
 
 #: ufraw_preview.c:2249
 msgid "White balance color temperature (K)"
-msgstr ""
+msgstr "Hvidbalancefarvetemperatur (K)"
 
 #: ufraw_preview.c:2250
 msgid "Green"
-msgstr ""
+msgstr "Grøn"
 
 #: ufraw_preview.c:2252
 msgid "Green component"
-msgstr ""
+msgstr "Grøn komponent"
 
 #: ufraw_preview.c:2258
 msgid "Select a spot on the preview image to apply spot white balance"
-msgstr ""
+msgstr "Vælg et punkt på forvisningsbilledet for at måle punkthvidbalance"
 
 #: ufraw_preview.c:2267
 msgid "Chan. multipliers:"
-msgstr ""
+msgstr "Kanalmultiplikatorer:"
 
 #: ufraw_preview.c:2269
 msgid "Channel multipliers:"
-msgstr ""
+msgstr "Kanalmultiplikatorer:"
 
 #. End of White Balance setting page
 #. Start of Base Curve page
 #: ufraw_preview.c:2286
 msgid "Base"
-msgstr ""
+msgstr "Basis"
 
 #: ufraw_preview.c:2318
 msgid "Load base curve"
-msgstr ""
+msgstr "Indlæs basiskurve"
 
 #: ufraw_preview.c:2324
 msgid "Save base curve"
-msgstr ""
+msgstr "Gem basiskurve"
 
 #: ufraw_preview.c:2344
 msgid "Reset base curve to default"
-msgstr ""
+msgstr "Sæt basiskurve til standardværdi"
 
 #. End of Base Curve page
 #. Start of Color management page
 #: ufraw_preview.c:2354
 msgid "Color"
-msgstr ""
+msgstr "Farve"
 
 #: ufraw_preview.c:2357
 msgid "Input profile"
-msgstr ""
+msgstr "Inddataprofil"
 
 #: ufraw_preview.c:2358
 msgid "Output profile"
-msgstr ""
+msgstr "Uddataprofil"
 
 #: ufraw_preview.c:2381
 msgid "Use color matrix"
-msgstr ""
+msgstr "Brug farvematrice"
 
 #: ufraw_preview.c:2390
 msgid "Gamma"
-msgstr ""
+msgstr "Gamma"
 
 #: ufraw_preview.c:2393
 msgid "Gamma correction for the input profile"
-msgstr ""
+msgstr "Gammakorrektion for inddataprofilen"
 
 #: ufraw_preview.c:2398
 msgid "Reset gamma to default"
-msgstr ""
+msgstr "Sæt gamma til standardværdi"
 
 #: ufraw_preview.c:2403
 msgid "Linearity"
-msgstr ""
+msgstr "Linearitet"
 
 #: ufraw_preview.c:2406
 msgid "Linear part of the gamma correction"
-msgstr ""
+msgstr "Lineær del af gammakorrektionen"
 
 #: ufraw_preview.c:2411
 msgid "Reset linearity to default"
-msgstr ""
+msgstr "Sæt linearitet til standardværdi"
 
 #: ufraw_preview.c:2416
 msgid "Intent"
-msgstr ""
+msgstr "Farvegengivelse"
 
 #: ufraw_preview.c:2419
 msgid "Perceptual"
-msgstr ""
+msgstr "Som opfattet"
 
 #: ufraw_preview.c:2420
 msgid "Relative colorimetric"
-msgstr ""
+msgstr "Relativ kolorimetrisk"
 
 #: ufraw_preview.c:2421 ufraw_preview.c:2433 ufraw_preview.c:2435
 msgid "Saturation"
-msgstr ""
+msgstr "Farvemættet"
 
 #: ufraw_preview.c:2422
 msgid "Absolute colorimetric"
-msgstr ""
+msgstr "Absolut kolorimetrisk"
 
 #. End of Color management page
 #. Start of Corrections page
 #: ufraw_preview.c:2430
 msgid "Corrections"
-msgstr ""
+msgstr "Korrektioner"
 
 #: ufraw_preview.c:2440
 msgid "Reset saturation to default"
-msgstr ""
+msgstr "Sæt farvemætning til standardværdi"
 
 #: ufraw_preview.c:2490
 msgid ""
 "Auto adjust curve\n"
 "(Flatten histogram)"
 msgstr ""
+"Automatisk kurveindstilling\n"
+"(Fladgør histogram)"
 
 #: ufraw_preview.c:2500
 msgid "Reset curve to default"
-msgstr ""
+msgstr "Sæt kurve til standardværdi"
 
 #: ufraw_preview.c:2506
 msgid "Black point: 0.000"
-msgstr ""
+msgstr "Sortpunkt: 0,000"
 
 #: ufraw_preview.c:2523
 msgid "Reset black-point to default"
-msgstr ""
+msgstr "Sæt sortpunkt til standardværdi"
 
 #: ufraw_preview.c:2533
 msgid "Auto adjust black-point"
-msgstr ""
+msgstr "Automatisk sortpunktsindstilling"
 
 #. End of Corrections page
 #. Start of Zoom page
 #: ufraw_preview.c:2542
 msgid "Zoom"
-msgstr ""
+msgstr "Zoom"
 
 #: ufraw_preview.c:2546
 msgid "Zoom %"
-msgstr ""
+msgstr "Zoom %"
 
 #: ufraw_preview.c:2591
 #, c-format
 msgid "Camera: %s %s\n"
-msgstr ""
+msgstr "Kamera: %s %s\n"
 
 #: ufraw_preview.c:2592
 #, c-format
 msgid "Timestamp: %s\n"
-msgstr ""
+msgstr "Tidspunkt: %s\n"
 
 #: ufraw_preview.c:2593
 #, c-format
 msgid "Shutter: %s\n"
-msgstr ""
+msgstr "Lukkertid: %s\n"
 
 #: ufraw_preview.c:2594
 #, c-format
 msgid "Aperture: %s\n"
-msgstr ""
+msgstr "Blænde: %s\n"
 
 #: ufraw_preview.c:2595
 #, c-format
 msgid "ISO speed: %s\n"
-msgstr ""
+msgstr "ISO-følsomhed: %s\n"
 
 #: ufraw_preview.c:2596
 #, c-format
 msgid "Focal length: %s\n"
-msgstr ""
+msgstr "Brændvidde: %s\n"
 
 #: ufraw_preview.c:2600
 #, c-format
 msgid "Focal length in 35mm equivalent: %s\n"
-msgstr ""
+msgstr "Brændvidde i 35mm-format: %s\n"
 
 #: ufraw_preview.c:2603
 #, c-format
 msgid "Lens: %s\n"
-msgstr ""
+msgstr "Objektiv: %s\n"
 
 #: ufraw_preview.c:2604
 #, c-format
@@ -1003,102 +1098,104 @@ msgid ""
 "\n"
 "EXIF data read by %s"
 msgstr ""
+"\n"
+"EXIF-data læst af %s"
 
 #: ufraw_preview.c:2633
 msgid "RGB histogram"
-msgstr ""
+msgstr "RGB-histogram"
 
 #: ufraw_preview.c:2642
 msgid "R+G+B histogram"
-msgstr ""
+msgstr "R+G+B-histogram"
 
 #: ufraw_preview.c:2652
 msgid "Luminosity histogram"
-msgstr ""
+msgstr "Lysstyrkehistogram"
 
 #: ufraw_preview.c:2662
 msgid "Value (maximum) histogram"
-msgstr ""
+msgstr "Maksimumsværdihistogram"
 
 #: ufraw_preview.c:2672
 msgid "Saturation histogram"
-msgstr ""
+msgstr "Farvemætningshistogram"
 
 #: ufraw_preview.c:2748
 msgid "Average:"
-msgstr ""
+msgstr "Gennemsnit:"
 
 #: ufraw_preview.c:2749
 msgid "Std. deviation:"
-msgstr ""
+msgstr "Standardafvigelse:"
 
 #: ufraw_preview.c:2752
 msgid "Overexposed:"
-msgstr ""
+msgstr "Overeksponeret:"
 
 #: ufraw_preview.c:2754 ufraw_preview.c:2765
 msgid "Indicate"
-msgstr ""
+msgstr "Vis"
 
 #: ufraw_preview.c:2762
 msgid "Underexposed:"
-msgstr ""
+msgstr "Undereksponeret:"
 
 #: ufraw_preview.c:2804 ufraw_saver.c:262
 msgid "AHD interpolation"
-msgstr ""
+msgstr "AHD-interpolation"
 
 #: ufraw_preview.c:2805 ufraw_saver.c:263
 msgid "VNG interpolation"
-msgstr ""
+msgstr "VNG-interpolation"
 
 #: ufraw_preview.c:2806 ufraw_saver.c:264
 msgid "VNG four color interpolation"
-msgstr ""
+msgstr "VNG firfarveinterpolation"
 
 #: ufraw_preview.c:2807 ufraw_saver.c:265
 msgid "Bilinear interpolation"
-msgstr ""
+msgstr "Bilineær interpolation"
 
 #: ufraw_preview.c:2809
 msgid "Half-size interpolation"
-msgstr ""
+msgstr "Halvstørrelseinterpolation"
 
 #: ufraw_preview.c:2826
 msgid "Options"
-msgstr ""
+msgstr "Tilvalg"
 
 #: ufraw_preview.c:2862
 msgid "Loading preview"
-msgstr ""
+msgstr "Indlæser forvisning"
 
 #: ufraw_routines.c:159
 msgid "Fatal error setting C locale"
-msgstr ""
+msgstr "Fatal fejl ved indstilling af C-lokalisering"
 
 #: ufraw_routines.c:268
 #, c-format
 msgid "Curve version is not supported"
-msgstr ""
+msgstr "Kurveversion er ikke understøttet"
 
 #: ufraw_routines.c:335 ufraw_routines.c:409
 #, c-format
 msgid "Invalid Nikon curve file '%s'"
-msgstr ""
+msgstr "Ugyldig Nikon kurvefil '%s'"
 
 #: ufraw_routines.c:351
 #, c-format
 msgid "Error opening Curve file '%s': %s"
-msgstr ""
+msgstr "Fejl ved åbning af kurvefil '%s': %s"
 
 #: ufraw_routines.c:418
 #, c-format
 msgid "Error opening file '%s': %s"
-msgstr ""
+msgstr "Fejl ved åbning af fil '%s': %s"
 
 #: ufraw_saver.c:154
 msgid "Fatal Error: uf->conf->shrink<1"
-msgstr ""
+msgstr "Fatal fejl: uf->conf->shrink<1"
 
 #: ufraw_saver.c:177
 #, c-format
@@ -1106,22 +1203,28 @@ msgid ""
 "Filename: %s\n"
 "Size: %d x %d%s"
 msgstr ""
+"Filnavn: %s\n"
+"Størrelse: %d x %d%s"
 
 #: ufraw_saver.c:179
 msgid ""
 "\n"
 "Create also ID file"
 msgstr ""
+"\n"
+"Lav også ID-fil"
 
 #: ufraw_saver.c:180
 msgid ""
 "\n"
 "Create only ID file"
 msgstr ""
+"\n"
+"Lav kun ID-fil"
 
 #: ufraw_saver.c:193 ufraw_saver.c:461
 msgid "File exists"
-msgstr ""
+msgstr "Filen findes"
 
 #: ufraw_saver.c:200 ufraw_saver.c:469
 #, c-format
@@ -1129,6 +1232,8 @@ msgid ""
 "File '%s' already exists.\n"
 "Overwrite?"
 msgstr ""
+"Filen '%s' findes allerede.\n"
+"Overskriv?"
 
 #: ufraw_saver.c:228
 msgid "Save image"
@@ -1196,7 +1301,7 @@ msgstr "Kun"
 
 #: ufraw_saver.c:393
 msgid "\tSave image defaults "
-msgstr "\tGem billedets standardindstillinger "
+msgstr "\tGem billedets standardværdier "
 
 #: ufraw_saver.c:409
 msgid "Overwrite existing files without asking"
@@ -1209,17 +1314,17 @@ msgstr "Ekstern URI er ikke understøttet"
 #: ufraw_ufraw.c:230
 #, c-format
 msgid "darkframe error: %s is not a raw file\n"
-msgstr "sortbilledfejl: %s er ikke en RAW-fil\n"
+msgstr "sortbilledfejl: %s er ikke en raw-fil\n"
 
 #: ufraw_ufraw.c:240
 #, c-format
 msgid "using darkframe '%s'\n"
-msgstr "Bruger sortbillede '%s'\n"
+msgstr "bruger sortbillede '%s'\n"
 
 #: ufraw_ufraw.c:245
 #, c-format
 msgid "error loading darkframe '%s'\n"
-msgstr "Fejl i indlæsning af sortbillede '%s'\n"
+msgstr "fejl i indlæsning af sortbillede '%s'\n"
 
 #: ufraw_ufraw.c:357
 msgid "Error reading NEF curve"
@@ -1242,7 +1347,7 @@ msgstr ""
 #: ufraw_writer.c:91
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"
-msgstr ""
+msgstr "Billedfilnavnet kan ikke være det samme som ID-filnavnet '%s'"
 
 #: ufraw_writer.c:140 ufraw_writer.c:155 ufraw_writer.c:207 ufraw_writer.c:223
 #: ufraw_writer.c:284
@@ -1252,12 +1357,12 @@ msgstr "Gemmer billede"
 #: ufraw_writer.c:145 ufraw_writer.c:162
 #, c-format
 msgid "Error creating file '%s': %s."
-msgstr "Fejl i dannelse af fil '%s': %s."
+msgstr "Fejl ved dannelse af fil '%s': %s."
 
 #: ufraw_writer.c:198 ufraw_writer.c:267
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'"
-msgstr ""
+msgstr "Fejl ved indlejring af uddataprofil '%s' i '%s'"
 
 #. First letter of the word 'yes' for the y/n question
 #: ufraw_writer.c:349
@@ -1735,7 +1840,7 @@ msgstr "Neutralt fluorescerende"
 #: wb_presets.c:946 wb_presets.c:947 wb_presets.c:948 wb_presets.c:949
 #: wb_presets.c:950 wb_presets.c:951 wb_presets.c:952 wb_presets.c:953
 msgid "Flash (auto mode)"
-msgstr "Flash (automatisk)"
+msgstr "Flash (auto-modus)"
 
 #. 3000K
 #: wb_presets.c:1213 wb_presets.c:1223 wb_presets.c:1224 wb_presets.c:1225

@@ -69,7 +69,7 @@ const conf_data conf_default = {
     ppm8_type, 85, no_id, /* type, compression, createID */
     TRUE, /* embedExif */
     1, 0, /* shrink, size */
-    FALSE, /* overwrite exsisting files without asking */
+    FALSE, /* overwrite existing files without asking */
     FALSE, /* losslessCompress */
     FALSE, /* load embedded preview image */
 
@@ -1121,7 +1121,7 @@ N_("--green=GREEN         Green color normalization.\n"),
 N_("--base-curve=manual|linear|camera|custom|CURVE\n"
 "                      Type of base tone curve to use. CURVE can be any\n"
 "                      curve that was previously loaded in the GUI.\n"
-"                      (default camera if such exsists, linear otherwise).\n"),
+"                      (default camera if such exists, linear otherwise).\n"),
 N_("--base-curve-file=file\n"
 "                      Use base tone curve included in specified file.\n"
 "                      Overrides --base-curve option.\n"),
@@ -1139,7 +1139,7 @@ N_("--restore=clip|lch|hsv\n"
    "                      (default lch).\n"),
 N_("--clip=digital|film   Clip highlights for positive EV.\n"
    "                      'digital' linear digital sensor response.\n"
-   "                      'film' emulate soft film response. (default linear).\n"),
+   "                      'film' emulate soft film response. (default digital).\n"),
 N_("--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"),
 N_("--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"),
 N_("--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"),
@@ -1159,7 +1159,7 @@ N_("--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
 N_("--create-id=no|also|only\n"
 "                      Create no|also|only ID file (default no).\n"),
 N_("--compression=VALUE   JPEG compression (0-100, default 85).\n"),
-N_("--[no]exif            Embed exif in output JPEG (default embed exif).\n"),
+N_("--[no]exif            Embed EXIF in output JPEG (default embed EXIF).\n"),
 N_("--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"),
 N_("--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"),

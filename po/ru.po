@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-24 11:03+0100\n"
+"POT-Creation-Date: 2006-12-29 07:03+0100\n"
 "PO-Revision-Date: 2006-10-26 13:17+0300\n"
 "Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net."
 "by>\n"
@@ -40,7 +40,7 @@ msgid "--output option is valid only in batch mode"
 msgstr ""
 
 #: ufraw.c:70
-msgid "--silent is valid only in batch mode"
+msgid "--silent option is valid only in batch mode"
 msgstr ""
 
 #: ufraw.c:74
@@ -235,11 +235,12 @@ msgid "--green=GREEN         Green color normalization.\n"
 msgstr "--green=GREEN         Нормализация зелёного цвета.\n"
 
 #: ufraw_conf.c:1121
+#, fuzzy
 msgid ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
 "                      Type of base tone curve to use. CURVE can be any\n"
 "                      curve that was previously loaded in the GUI.\n"
-"                      (default camera if such exsists, linear otherwise).\n"
+"                      (default camera if such exists, linear otherwise).\n"
 msgstr ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
 "                      Используемый тип базовой тональной кривой. CURVE "
@@ -296,7 +297,7 @@ msgstr ""
 msgid ""
 "--clip=digital|film   Clip highlights for positive EV.\n"
 "                      'digital' linear digital sensor response.\n"
-"                      'film' emulate soft film response. (default linear).\n"
+"                      'film' emulate soft film response. (default digital).\n"
 msgstr ""
 
 #: ufraw_conf.c:1143
@@ -383,7 +384,8 @@ msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   сжатие JPEG (0-100, по умолчанию 85).\n"
 
 #: ufraw_conf.c:1162
-msgid "--[no]exif            Embed exif in output JPEG (default embed exif).\n"
+#, fuzzy
+msgid "--[no]exif            Embed EXIF in output JPEG (default embed EXIF).\n"
 msgstr ""
 "--[no]exif            Встроить exif в выходное изображение JPEG (по "
 "умолчанию встроить exif).\n"

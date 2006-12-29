@@ -19,6 +19,7 @@
 #include <string.h>
 #include <time.h>
 #include <glib.h>
+#include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 #include "dcraw_api.h"
 
 #define ushort UshORt
@@ -141,7 +142,7 @@ skip_block:
       memcpy (pre_mul, cam_mul, 4*sizeof(float));
     else
       dcraw_message (dcraw, DCRAW_NO_CAMERA_WB,
-	      "%s: Cannot use camera white balance.\n", ifname);
+	      _("%s: Cannot use camera white balance.\n"), ifname);
   }
   if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
   dmin = DBL_MAX;
@@ -149,7 +150,7 @@ skip_block:
 	    dmin = pre_mul[c];
   FORC4 pre_mul[c] /= dmin;
 
-  dcraw_message(dcraw, DCRAW_VERBOSE, "Scaling with black=%d, pre_mul[] =",
+  dcraw_message(dcraw, DCRAW_VERBOSE,_("Scaling with black %d, multipliers"),
 	  black);
   FORC4 dcraw_message(dcraw, DCRAW_VERBOSE, " %f", pre_mul[c]);
   dcraw_message(dcraw, DCRAW_VERBOSE, "\n");
@@ -225,7 +226,7 @@ void CLASS lin_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   int c, i, x, y, row, col, shift, color;
   ushort *pix;
 
-  dcraw_message (dcraw, DCRAW_VERBOSE, "Bilinear interpolation...\n"); /*UF*/
+  dcraw_message (dcraw, DCRAW_VERBOSE,_("Bilinear interpolation...\n")); /*UF*/
 
   border_interpolate_INDI (height, width, image, filters, colors, 1);
   for (row=0; row < 16; row++)
@@ -303,7 +304,7 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   int g, diff, thold, num, c;
       
   lin_interpolate_INDI(image, filters, width, height, colors, dcraw); /*UF*/
-  dcraw_message (dcraw, DCRAW_VERBOSE, "VNG interpolation...\n"); /*UF*/
+  dcraw_message (dcraw, DCRAW_VERBOSE,_("VNG interpolation...\n")); /*UF*/
 
   if (filters == 1) prow = pcol = 15;
   ip = (int *) calloc ((prow+1)*(pcol+1), 1280);
@@ -443,7 +444,7 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
    short (*lab)[TS][TS][3];
    char (*homo)[TS][TS], *buffer;
 
-  dcraw_message (dcraw, DCRAW_VERBOSE, "AHD interpolation...\n"); /*UF*/
+  dcraw_message (dcraw, DCRAW_VERBOSE,_("AHD interpolation...\n")); /*UF*/
 
   border_interpolate_INDI (height, width, image, filters, colors, 3);
   buffer = (char *) malloc (26*TS*TS);		/* 1664 kB */
@@ -552,7 +553,7 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
   ushort (*img)[4], (*pix)[4];
 
   if (!fuji_width) return;
-  dcraw_message (dcraw, DCRAW_VERBOSE, "Rotating image 45 degrees...\n");
+  dcraw_message (dcraw, DCRAW_VERBOSE,_("Rotating image 45 degrees...\n"));
 //  fuji_width = (fuji_width - 1 + shrink) >> shrink;
 //  step = sqrt(0.5);
   wide = fuji_width / step;
@@ -593,7 +594,7 @@ void CLASS flip_image_INDI(ushort (*image)[4], int *height_p, int *width_p,
   int height = *height_p, width = *width_p;/* INDI - UF*/
 
 //  Message is suppressed because error handling is not enabled here.
-//  dcraw_message (dcraw, DCRAW_VERBOSE, "Flipping image %c:%c:%c...\n",
+//  dcraw_message (dcraw, DCRAW_VERBOSE,_("Flipping image %c:%c:%c...\n"),
 //	flip & 1 ? 'H':'0', flip & 2 ? 'V':'0', flip & 4 ? 'T':'0'); /*UF*/
   
   img = (INT64 *) image;

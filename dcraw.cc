@@ -25,6 +25,7 @@
 
 #define DCRAW_VERSION "8.48"
 
+//#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
 #include <ctype.h>
 #include <errno.h>
@@ -48,12 +49,13 @@ extern "C" {
 #ifndef NO_LCMS
 #include <lcms.h>
 #endif
-#ifdef LOCALEDIR
-#include <libintl.h>
-#define _(String) gettext(String)
-#else
-#define _(String) (String)
-#endif
+//#ifdef LOCALEDIR
+//#include <libintl.h>
+//#define _(String) gettext(String)
+//#else
+//#define _(String) (String)
+//#endif
+#include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 
 #ifdef __CYGWIN__
 #include <io.h>
@@ -119,9 +121,10 @@ lastStatus = DCRAW_SUCCESS;
 #define FORCC for (c=0; c < colors; c++)
 
 #define SQR(x) ((x)*(x))
-#define ABS(x) (((int)(x) ^ ((int)(x) >> 31)) - ((int)(x) >> 31))
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
+/*ABS, MIN and MAX are defined in glib/gmacros.h - NKBJ*/
+//#define ABS(x) (((int)(x) ^ ((int)(x) >> 31)) - ((int)(x) >> 31))
+//#define MIN(a,b) ((a) < (b) ? (a) : (b))
+//#define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define LIM(x,min,max) MAX(min,MIN(x,max))
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 #define CLIP(x) LIM(x,0,65535)
@@ -3317,7 +3320,7 @@ skip_block:
   }
   if (!highlight) dmax = dmin;
   FORC4 scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / maximum;
-  dcraw_message(DCRAW_VERBOSE,_("Scaling with black=%d, pre_mul[] ="), black); /*UF*/
+  dcraw_message(DCRAW_VERBOSE,_("Scaling with black %d, multipliers"), black); /*UF*/
   FORC4 dcraw_message(DCRAW_VERBOSE, " %f", pre_mul[c]);
   dcraw_message(DCRAW_VERBOSE, "\n");
   for (row=0; row < height; row++)
@@ -4757,7 +4760,7 @@ void CLASS parse_external_jpeg()
     }
   if (strcmp (jname, ifname)) {
     if ((ifp = fopen (jname, "rb"))) {
-      dcraw_message (DCRAW_VERBOSE,_("Reading metadata from %s...\n"), jname);/*UF*/
+      dcraw_message (DCRAW_VERBOSE,_("Reading metadata from %s ...\n"), jname);/*UF*/
       parse_tiff (12);
       thumb_offset = 0;
       is_raw = 1;
@@ -6597,7 +6600,7 @@ dng_skip:
   if (!load_raw || !height) is_raw = 0;
 #ifndef HAVE_LIBJPEG
   if (load_raw == &CLASS kodak_jpeg_load_raw) {
-    dcraw_message (DCRAW_ERROR,_("%s: You must link dcraw.c with libjpeg!!\n"),
+    dcraw_message (DCRAW_ERROR,_("%s: You must link dcraw with libjpeg!!\n"),
 	    ifname); /*UF*/
     is_raw = 0;
   }
@@ -6789,7 +6792,7 @@ void CLASS fuji_rotate()
   ushort (*img)[4], (*pix)[4];
 
   if (!fuji_width) return;
-  dcraw_message (DCRAW_VERBOSE, _("Rotating image 45 degrees...\n")); /*UF*/
+  dcraw_message (DCRAW_VERBOSE,_("Rotating image 45 degrees...\n")); /*UF*/
   fuji_width = (fuji_width - 1 + shrink) >> shrink;
   step = sqrt(0.5);
   wide = (int)(fuji_width / step);
@@ -7210,7 +7213,7 @@ int CLASS main (int argc, char **argv)
 	printf (_("Thumb size:  %4d x %d\n"), thumb_width, thumb_height);
       printf (_("Full size:   %4d x %d\n"), raw_width, raw_height);
     } else if (!is_raw)
-      dcraw_message (DCRAW_ERROR,_("Cannot decode %s\n"), ifname); /*UF*/
+      dcraw_message (DCRAW_ERROR,_("Cannot decode file %s\n"), ifname); /*UF*/
     if (!is_raw) goto next;
     if (user_flip >= 0)
       flip = user_flip;
