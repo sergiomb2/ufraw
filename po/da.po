@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-12-29 07:03+0100\n"
-"PO-Revision-Date: 2006-12-29 07:15+0100\n"
+"PO-Revision-Date: 2006-12-30 07:23+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -182,13 +182,11 @@ msgid ""
 "To process the images with no questions asked (and no preview) use\n"
 "'ufraw-batch'.\n"
 msgstr ""
-"Normalt viser 'ufraw' et forvisningsvindue for hvert raw-billede, der "
-"tillader\n"
-"brugeren at finjustere billedparametrene før det gemmes. UFRaw vil vise en\n"
-"Filvalgsdialog, hvis der ikke er angivet nogen raw-billeder i "
-"kommandolinien.\n"
-"Brug 'ufraw-batch' til at behandle billeder uden at svare på spørgsmål\n"
-"(og uden forvisning).\n"
+"Normalt viser 'ufraw' et forhåndsvisningsvindue for hvert raw-billede, der\n"
+"tillader brugeren at finjustere billedparametrene før det gemmes. UFRaw vil\n"
+"vise en filvalgsdialog, hvis der ikke er angivet nogen raw-billeder på\n"
+"kommandolinien. Brug 'ufraw-batch' til at behandle billeder uden at skulle\n"
+"svare på spørgsmål (og uden forhåndsvisning).\n"
 
 #: ufraw_conf.c:1109
 msgid ""
@@ -400,7 +398,7 @@ msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"
 msgstr ""
-"--embedded-image      Brug det i raw-filen indlejrede forvisningsbillede\n"
+"--embedded-image      Brug det i raw-filen indlejrede miniaturebillede\n"
 "                      i stedet for at konvertere raw-billedet.\n"
 
 #: ufraw_conf.c:1166
@@ -918,7 +916,7 @@ msgstr "Grøn komponent"
 
 #: ufraw_preview.c:2258
 msgid "Select a spot on the preview image to apply spot white balance"
-msgstr "Vælg et punkt på forvisningsbilledet for at måle punkthvidbalance"
+msgstr "Vælg et punkt på forhåndsvisningsbilledet for at måle punkthvidbalance"
 
 #: ufraw_preview.c:2267
 msgid "Chan. multipliers:"
@@ -1167,7 +1165,7 @@ msgstr "Tilvalg"
 
 #: ufraw_preview.c:2862
 msgid "Loading preview"
-msgstr "Indlæser forvisning"
+msgstr "Indlæser forhåndsvisning"
 
 #: ufraw_routines.c:159
 msgid "Fatal error setting C locale"
