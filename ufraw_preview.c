@@ -1108,11 +1108,11 @@ gboolean create_base_image(preview_data *data)
     char progressText[max_name];
     if (CFG->Scale==0)
 	snprintf(progressText, max_name, _("size %dx%d, zoom %2.f%%"),
-		data->UF->predictedHeight, data->UF->predictedWidth,
+		data->UF->predictedWidth, data->UF->predictedHeight,
 		CFG->Zoom);
     else
 	snprintf(progressText, max_name, _("size %dx%d, scale 1/%d"),
-		data->UF->predictedHeight, data->UF->predictedWidth,
+		data->UF->predictedWidth, data->UF->predictedHeight,
 		CFG->Scale);
     if (data->ProgressBar!=NULL) {
 	gtk_progress_bar_set_text(data->ProgressBar, progressText);
