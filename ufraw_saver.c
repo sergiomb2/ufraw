@@ -175,7 +175,7 @@ long ufraw_saver(void *widget, gpointer user_data)
 	char *utf8 = g_filename_to_utf8(absFilename, -1, NULL, NULL, NULL);
 	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
 	char *text = g_strdup_printf(_("Filename: %s\nSize: %d x %d%s"),
-		utf8, (int)data->height, (int)data->width,
+		utf8, (int)data->width, (int)data->height,
 		uf->conf->createID==also_id ? _("\nCreate also ID file") :
 		uf->conf->createID==only_id ? _("\nCreate only ID file") : "");
 	g_free(utf8);

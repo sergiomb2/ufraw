@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-12-29 07:03+0100\n"
-"PO-Revision-Date: 2006-12-30 07:23+0100\n"
+"PO-Revision-Date: 2006-12-31 09:25+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -31,11 +31,11 @@ msgstr "gemt %s"
 
 #: ufraw.c:65
 msgid "--output option is valid only in batch mode"
-msgstr "--output kan kun anvendes i batch-modus"
+msgstr "Tilvalget --output kan kun anvendes i batch-modus"
 
 #: ufraw.c:70
 msgid "--silent option is valid only in batch mode"
-msgstr "--silent kan kun anvendes i batch-modus"
+msgstr "Tilvalget --silent kan kun anvendes i batch-modus"
 
 #: ufraw.c:74
 msgid "Extracting embedded image is not supported in interactive mode"
@@ -160,7 +160,7 @@ msgstr "UFRaw "
 
 #: ufraw_conf.c:1097
 msgid " - Unidentified Flying Raw converter for digital camera images.\n"
-msgstr " - Uidentificeret Flyvende Raw-konverter for digitalkamerabilleder.\n"
+msgstr " - Uidentificeret Flyvende Raw-konverter til digitalkamerabilleder.\n"
 
 #: ufraw_conf.c:1099
 msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
@@ -183,8 +183,8 @@ msgid ""
 "'ufraw-batch'.\n"
 msgstr ""
 "Normalt viser 'ufraw' et forhåndsvisningsvindue for hvert raw-billede, der\n"
-"tillader brugeren at finjustere billedparametrene før det gemmes. UFRaw vil\n"
-"vise en filvalgsdialog, hvis der ikke er angivet nogen raw-billeder på\n"
+"tillader brugeren at finjustere billedparametrene før billedet gemmes. UFRaw\n"
+"viser en filvalgsdialog, hvis der ikke er angivet nogen raw-billeder på\n"
 "kommandolinien. Brug 'ufraw-batch' til at behandle billeder uden at skulle\n"
 "svare på spørgsmål (og uden forhåndsvisning).\n"
 
@@ -316,8 +316,8 @@ msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
 msgstr ""
-"--saturation=MÆTNING  Farvemætingsjustering (standardværdi 1.0, 0 for S&H\n"
-"                      uddata).\n"
+"--saturation=MÆTNING  Farvemætingsjustering (standardværdi 1.0,\n"
+"                      0 for sort & hvid uddata).\n"
 
 #: ufraw_conf.c:1146
 msgid ""
@@ -453,7 +453,7 @@ msgid ""
 "options for ufraw and --help displays this help message and exits.\n"
 msgstr ""
 "Sidst, men ikke mindst, viser --version versionsnummer og bygningstilvalg\n"
-"for ufraw, og --help viser denne hjælpetekst og stopper programmet.\n"
+"for ufraw, mens --help viser denne hjælpetekst og stopper programmet.\n"
 
 #: ufraw_conf.c:1323 ufraw_conf.c:1333
 #, c-format
@@ -481,7 +481,7 @@ msgstr "'%s' er ikke en legal hvidbalanceindstilling."
 #: ufraw_conf.c:1404
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
-msgstr "--temperature og --green har forret for --wb=%s."
+msgstr "Tilvalgene --temperature og --green har forret for tilvalget --wb=%s."
 
 #: ufraw_conf.c:1412
 #, c-format
@@ -890,7 +890,7 @@ msgid ""
 "Check UFRaw's webpage for information on how to get your\n"
 "camera supported."
 msgstr ""
-"Der er ingen hvidbalanceforvalg for din kameramodel.\n"
+"Der er ingen hvidbalanceforvalg til din kameramodel.\n"
 "Kig på UFRaws hjemmeside for information om, hvordan du\n"
 "får dit kamera understøttet."
 
@@ -1058,7 +1058,7 @@ msgstr "Kamera: %s %s\n"
 #: ufraw_preview.c:2592
 #, c-format
 msgid "Timestamp: %s\n"
-msgstr "Tidspunkt: %s\n"
+msgstr "Optagelsestidspunkt: %s\n"
 
 #: ufraw_preview.c:2593
 #, c-format
@@ -1210,7 +1210,7 @@ msgid ""
 "Create also ID file"
 msgstr ""
 "\n"
-"Lav også ID-fil"
+"Dan også ID-fil"
 
 #: ufraw_saver.c:180
 msgid ""
@@ -1218,7 +1218,7 @@ msgid ""
 "Create only ID file"
 msgstr ""
 "\n"
-"Lav kun ID-fil"
+"Dan kun ID-fil"
 
 #: ufraw_saver.c:193 ufraw_saver.c:461
 msgid "File exists"
@@ -1299,7 +1299,7 @@ msgstr "Kun"
 
 #: ufraw_saver.c:393
 msgid "\tSave image defaults "
-msgstr "\tGem billedets standardværdier "
+msgstr "\tGem billedstandardværdier "
 
 #: ufraw_saver.c:409
 msgid "Overwrite existing files without asking"
