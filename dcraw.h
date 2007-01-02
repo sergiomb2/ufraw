@@ -1,7 +1,7 @@
 /*
    dcraw.h - Dave Coffin's raw photo decoder - header for C++ adaptation
-   Copyright 1997-2006 by Dave Coffin, dcoffin a cybercom o net
-   Copyright 2004-2006 by Udi Fuchs, udifuchs a gmail o com
+   Copyright 1997-2007 by Dave Coffin, dcoffin a cybercom o net
+   Copyright 2004-2007 by Udi Fuchs, udifuchs a gmail o com
  
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License version 2
@@ -132,6 +132,7 @@ void sinar_4shot_load_raw();
 void imacon_full_load_raw();
 void packed_12_load_raw();
 void unpacked_load_raw();
+void panasonic_load_raw();
 void olympus_e300_load_raw();
 void olympus_cseries_load_raw();
 void minolta_rd175_load_raw();
@@ -205,6 +206,7 @@ void parse_external_jpeg();
 void ciff_block_1030();
 void parse_ciff (int offset, int length);
 void parse_rollei();
+void parse_sinar_ia();
 void parse_phase_one (int base);
 void parse_fuji (int offset);
 int parse_jpeg (int offset);
