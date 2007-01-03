@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * wb_presets.c - White balance preset values for various cameras
- * Copyright 2004-2006 by Udi Fuchs
+ * Copyright 2004-2007 by Udi Fuchs
  *
  * Thanks goes for all the people who sent in the preset values
  * for their cameras.
@@ -1281,6 +1281,15 @@ const wb_data wb_preset[] = {
   { "PENTAX", "*ist DS", N_("Tungsten"), 0,	{ 1, 1, 2.027344, 0 } },
   { "PENTAX", "*ist DS", N_("Flash"), 0,	{ 1.695312, 1, 1, 0 } },
 
+  { "PENTAX", "K10D", N_("Daylight"), 0, { 1.660156, 1.000000, 1.066406, 0 } },
+  { "PENTAX", "K10D", N_("Shade"), 0, { 2.434783, 1.236715, 1.000000, 0 } },
+  { "PENTAX", "K10D", N_("Cloudy"), 0, { 1.872428, 1.053498, 1.000000, 0 } },
+  { "PENTAX", "K10D", N_("Daylight fluorescent"), 0, { 2.121094, 1.000000, 1.078125, 0 } },
+  { "PENTAX", "K10D", N_("Neutral fluorescent"), 0, { 1.773438, 1.000000, 1.226562, 0 } },
+  { "PENTAX", "K10D", N_("White fluorescent"), 0, { 1.597656, 1.000000, 1.488281, 0 } },
+  { "PENTAX", "K10D", N_("Tungsten"), 0, { 1.000000, 1.000000, 2.558594, 0 } },
+  { "PENTAX", "K10D", N_("Flash"), 0, { 1.664062, 1.000000, 1.046875, 0 } },
+
   { "PENTAX", "K100D", N_("Daylight"), 0,	{ 1.468750, 1, 1.023438, 0 } },
   { "PENTAX", "K100D", N_("Shade"), 0,	{ 1.769531, 1, 1, 0 } },
   { "PENTAX", "K100D", N_("Cloudy"), 0,	{ 1.589844, 1, 1, 0 } },
@@ -1322,4 +1331,3 @@ const wb_data wb_preset[] = {
 };
 
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
-
