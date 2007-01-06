@@ -493,6 +493,7 @@ int ufraw_convert_image(ufraw_data *uf)
 	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, FALSE);
     /* We can do a simple interpolation in the following cases:
      * We shrink by an integer value.
+     * If pixel_aspect<1 (e.g. NIKON D1X) shrink must be at least 4.
      * Wanted size is smaller than raw size (size is after a raw->shrink).
      * There are no filters (Foveon). */
     if ( uf->conf->interpolation==half_interpolation ||
@@ -500,7 +501,8 @@ int ufraw_convert_image(ufraw_data *uf)
          ( uf->conf->size>0 &&
 	   uf->conf->size<MAX(raw->raw.height, raw->raw.width) ) ||
 	 ( raw->filters==0 )  ) {
-	if (uf->conf->size==0 && uf->conf->shrink>=2)
+	if (uf->conf->size==0 && uf->conf->shrink>=2 &&
+	    (int)(uf->conf->shrink*raw->pixel_aspect)%2==0)
 	    shrink = uf->conf->shrink * raw->pixel_aspect;
 	else if (uf->conf->interpolation==half_interpolation)
 	    shrink = 2;
