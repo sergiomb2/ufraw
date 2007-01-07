@@ -497,12 +497,12 @@ int ufraw_convert_image(ufraw_data *uf)
      * Wanted size is smaller than raw size (size is after a raw->shrink).
      * There are no filters (Foveon). */
     if ( uf->conf->interpolation==half_interpolation ||
-         ( uf->conf->size==0 && uf->conf->shrink>=2 ) ||
+         ( uf->conf->size==0 && uf->conf->shrink>1 ) ||
          ( uf->conf->size>0 &&
-	   uf->conf->size<MAX(uf->predictedHeight, uf->predictedWidth) ) ||
-	 ( raw->filters==0 )  ) {
-	if (uf->conf->size==0 && uf->conf->shrink>=2 &&
-	    (int)(uf->conf->shrink*raw->pixel_aspect)%2==0)
+	   uf->conf->size<=MAX(raw->raw.height, raw->raw.width) ) ||
+	 ( raw->filters==0 ) ) {
+	if (uf->conf->size==0 && uf->conf->shrink>1 &&
+		(int)(uf->conf->shrink*raw->pixel_aspect)%2==0)
 	    shrink = uf->conf->shrink * raw->pixel_aspect;
 	else if (uf->conf->interpolation==half_interpolation)
 	    shrink = 2;

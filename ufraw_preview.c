@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw_preview.c - GUI for controlling all the image manipulations
- * Copyright 2004-2006 by Udi Fuchs
+ * Copyright 2004-2007 by Udi Fuchs
  *
  * based on the GIMP plug-in by Pawel T. Jochym jochym at ifj edu pl,
  *
@@ -1127,7 +1127,7 @@ void zoom_in_event(GtkWidget *widget, gpointer user_data)
     user_data = user_data;
     if (data->FreezeDialog) return;
     if (CFG->Scale==0) {
-	if (CFG->Zoom<100.0/max_scale) CFG->Zoom = 100.0/(max_scale+1);
+	if (CFG->Zoom<100.0/max_scale) CFG->Zoom = 100.0/max_scale;
 	CFG->Scale = floor(100.0/CFG->Zoom);
 	if (CFG->Scale==100.0/CFG->Zoom) CFG->Scale--;
     } else {
@@ -1147,7 +1147,7 @@ void zoom_out_event(GtkWidget *widget, gpointer user_data)
     user_data = user_data;
     if (data->FreezeDialog) return;
     if (CFG->Scale==0) {
-	if (CFG->Zoom<100.0/max_scale) CFG->Zoom = 100.0/(max_scale+1);
+	if (CFG->Zoom<100.0/max_scale) CFG->Zoom = 100.0/max_scale;
 	CFG->Scale = ceil(100.0/CFG->Zoom);
 	if (CFG->Scale==100.0/CFG->Zoom) CFG->Scale++;
     } else {
