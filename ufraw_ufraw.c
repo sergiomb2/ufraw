@@ -297,6 +297,9 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	fstat(fileno(raw->ifp), &s);
 	g_snprintf(uf->conf->inputModTime, max_name, "%d", (int)s.st_mtime);
     }
+    /*Reset EXIF data fields not found in all images to avoid spill over.*/
+    strcpy(uf->conf->focalLen35Text, "");
+    strcpy(uf->conf->lensText, "");
     if (ufraw_exif_from_raw(uf)!=UFRAW_SUCCESS) {
         ufraw_message(UFRAW_SET_LOG, "Error reading EXIF data from %s\n",
                 uf->filename);
