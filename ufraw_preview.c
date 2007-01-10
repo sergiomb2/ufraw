@@ -2590,11 +2590,15 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     GString *message = g_string_new("");
     g_string_append_printf(message, _("Camera: %s %s\n"), CFG->make, CFG->model);
     g_string_append_printf(message, _("Timestamp: %s\n"), CFG->timestamp);
-    g_string_append_printf(message, _("Shutter: %s\n"), CFG->shutterText);
-    g_string_append_printf(message, _("Aperture: %s\n"), CFG->apertureText);
-    g_string_append_printf(message, _("ISO speed: %s\n"), CFG->isoText);
-    g_string_append_printf(message, _("Focal length: %s\n"),
-	    CFG->focalLenText);
+    if (strlen(CFG->shutterText)>0)
+	g_string_append_printf(message, _("Shutter: %s\n"), CFG->shutterText);
+    if (strlen(CFG->apertureText)>0)
+	g_string_append_printf(message, _("Aperture: %s\n"), CFG->apertureText);
+    if (strlen(CFG->isoText)>0)
+	g_string_append_printf(message, _("ISO speed: %s\n"), CFG->isoText);
+    if (strlen(CFG->focalLenText)>0)
+	g_string_append_printf(message, _("Focal length: %s\n"),
+		CFG->focalLenText);
     if (strlen(CFG->focalLen35Text)>0)
 	g_string_append_printf(message,
 		_("Focal length in 35mm equivalent: %s\n"),

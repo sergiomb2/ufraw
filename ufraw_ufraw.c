@@ -297,7 +297,11 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	fstat(fileno(raw->ifp), &s);
 	g_snprintf(uf->conf->inputModTime, max_name, "%d", (int)s.st_mtime);
     }
-    /*Reset EXIF data fields not found in all images to avoid spill over.*/
+    /*Reset EXIF data text fields to avoid spill over between images.*/
+    strcpy(uf->conf->isoText, "");
+    strcpy(uf->conf->shutterText, "");
+    strcpy(uf->conf->apertureText, "");
+    strcpy(uf->conf->focalLenText, "");
     strcpy(uf->conf->focalLen35Text, "");
     strcpy(uf->conf->lensText, "");
     if (ufraw_exif_from_raw(uf)!=UFRAW_SUCCESS) {
