@@ -185,6 +185,7 @@ double profile_default_gamma(profile_data *p)
 	    || !strncmp(p->productName, "Nikon D1 for NEF", 16)
 	    || !strncmp(p->productName, "Nikon D50 for NEF", 17)
 	    || !strncmp(p->productName, "Nikon D70 for NEF", 17)
+	    || !strncmp(p->productName, "Nikon D80 for NEF", 17)
 	    || !strncmp(p->productName, "Nikon D100 for NEF", 18) )
 	return 0.45;
     else
