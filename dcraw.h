@@ -226,6 +226,7 @@ int flip_index (int row, int col);
 void gamma_lut (uchar lut[0x10000]);
 void tiff_set (ushort *ntag,
 	        ushort tag, ushort type, int count, int val);
+void tiff_head (struct tiff_hdr *th, int full);
 void write_ppm_tiff (FILE *ofp);
 void write_ppm (FILE *ofp);
 void write_ppm16 (FILE *ofp);
