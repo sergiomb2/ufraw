@@ -86,6 +86,13 @@ const wb_data wb_preset[] = {
   { "Canon", "PowerShot G6", N_("Fluorescent high"), 0, { 2.543677, 1, 1.650587, 0 } },
   { "Canon", "PowerShot G6", N_("Flash"), 0,	{ 2.285322, 1, 1.333333, 0 } },
 
+  /* Canon PowerShot S3 IS does not support native WB presets. These are made
+     as custom WB presets. */
+  { "Canon", "PowerShot S3 IS", N_("Daylight"), 0,	{ 1.627271, 1, 1.823491, 0 } },
+  { "Canon", "PowerShot S3 IS", N_("Cloudy"), 0,	{ 1.794382, 1, 1.618412, 0 } },
+  { "Canon", "PowerShot S3 IS", N_("Tungsten"), 0,	{ 1, 1.192243, 4.546950, 0 } },
+  { "Canon", "PowerShot S3 IS", N_("Flash"), 0,	{ 1.884691, 1, 1.553869, 0 } },
+
   { "Canon", "PowerShot S30", N_("Daylight"), 0, { 1.741088, 1, 1.318949, 0 } },
   { "Canon", "PowerShot S30", N_("Cloudy"), 0,	{ 1.766635, 1, 1.298969, 0 } },
   { "Canon", "PowerShot S30", N_("Tungsten"), 0, { 1.498106, 1, 1.576705, 0 } },
