@@ -56,6 +56,7 @@ typedef struct {
     ufraw_data *UF;
     conf_data SaveConfig;
     double initialChanMul[4];
+    int raw_his[raw_his_size][4];
     GList *WBPresets; /* List of WB presets in WBCombo*/
     /* Remember the Gtk Widgets that we need to access later */
     GtkWidget *ControlsBox, *PreviewWidget, *RawHisto, *LiveHisto;
@@ -504,7 +505,7 @@ gboolean render_raw_histogram(preview_data *data)
     static GdkPixbuf *pixbuf;
     static guint8 *pixies;
     int rowstride;
-    guint8 pix[99], *p8, pen[3], *p;
+    guint8 pix[99], *p8, pen[4][3];
     guint16 pixtmp[9999];
     image_type p16;
     int x, c, cl, colors, y, y0, y1;
@@ -550,91 +551,77 @@ gboolean render_raw_histogram(preview_data *data)
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)*rowstride +
             gdk_pixbuf_get_width(pixbuf)*gdk_pixbuf_get_n_channels(pixbuf));
-    memset(raw_his, 0, sizeof(raw_his));
-    /* Collect histogram data */
-    for (y=0; y<data->UF->image.height; y++)
-        for (x=0; x<data->UF->image.width; x++)
-            for (c=0; c<colors; c++)
-                raw_his[MIN(
-			data->UF->image.image[y*data->UF->image.width+x][c] *
-                        (raw_his_size-1) / data->UF->rgbMax,
-                        raw_his_size-1) ][c]++;
+    /* Normalize raw histogram data */
     for (x=0, raw_his_max=1; x<raw_his_size; x++) {
 	for (c=0, y=0; c<colors; c++) {
 	    if (CFG->rawHistogramScale==log_histogram)
-		raw_his[x][c] = log(1+raw_his[x][c])*1000;
+		raw_his[x][c] = log(1+data->raw_his[x][c])*1000;
+	    else
+		raw_his[x][c] = data->raw_his[x][c];
 	    y += raw_his[x][c];
 	}
         raw_his_max = MAX(raw_his_max, y);
     }
+    /* Prepare pen color, which is not effected by exposure.
+     * Use a small value to avoid highlights and then normalize. */
+    for (c=0; c<colors; c++) {
+	for (cl=0; cl<colors; cl++) p16[cl] = 0;
+	p16[c] = Developer->max * 0x010000 / Developer->rgbWB[c] *
+		0x10000 / Developer->exposure; 
+        develope(pen[c], p16, Developer, 8, pixtmp, 1);
+	guint8 max=1;
+	for (cl=0; cl<3; cl++) max = MAX(pen[c][cl], max);
+	for (cl=0; cl<3; cl++) pen[c][cl] = pen[c][cl] * 0xff / max;
+    }
+    /* Calculate the curves */
     p8 = pix;
-    p = pixies + CFG->rawHistogramHeight*rowstride + 3;
-    for (x=0; x<raw_his_size; x++) {
-	/* draw the raw histogram */
-        for (c=0, y0=0; c<colors; c++) {
-	    /* Prepare pen color, which is not effected by exposure.
-	     * Use a small value to avoid highlights and then normalize. */
-	    for (cl=0; cl<colors; cl++) p16[cl] = 0;
-	    p16[c] = Developer->max * 0x01000 / Developer->rgbWB[c] *
-		     0x10000 / Developer->exposure; 
-            develope(pen, p16, Developer, 8, pixtmp, 1);
-	    guint8 max=1;
-	    for (cl=0; cl<3; cl++) max = MAX(pen[cl], max);
-	    for (cl=0; cl<3; cl++) pen[cl] = pen[cl] * 0xff / max;
-
-	    for (y=0; y<raw_his[x][c]*CFG->rawHistogramHeight/raw_his_max; y++)
-		for (cl=0; cl<3; cl++)
-		    pixies[(CFG->rawHistogramHeight-y-y0)*rowstride
-			    + 3*(x+1)+cl] = pen[cl];
-	    y0 += y;
-	}
-	/* draw curves on the raw histogram */
-        for (c=0; c<colors; c++) {
-	    /* Prepare pen color, which is not effected by exposure.
-	     * Use a small value to avoid highlights and then normalize. */
-	    for (cl=0; cl<colors; cl++) p16[cl] = 0;
-	    p16[c] = Developer->max * 0x01000 / Developer->rgbWB[c] *
-		     0x10000 / Developer->exposure; 
-            develope(pen, p16, Developer, 8, pixtmp, 1);
-	    guint8 max=1;
-	    for (cl=0; cl<3; cl++) max = MAX(pen[cl], max);
-	    for (cl=0; cl<3; cl++) pen[cl] = pen[cl] * 0xff / max;
-            /* Value for pixel x of color c in a grey pixel */
+    guint8 grayCurve[raw_his_size+1][4];
+    guint8 pureCurve[raw_his_size+1][4];
+    for (x=0; x<raw_his_size+1; x++) {
+	for (c=0; c<colors; c++) {
+            /* Value for pixel x of color c in a gray pixel */
             for (cl=0; cl<colors; cl++)
                 p16[cl] = MIN((guint64)x*Developer->rgbMax *
                           Developer->rgbWB[c] /
                           Developer->rgbWB[cl] / raw_his_size, 0xFFFF);
             develope(p8, p16, Developer, 8, pixtmp, 1);
-            y=MAX(MAX(p8[0],p8[1]),p8[2]) * (CFG->rawHistogramHeight-1)/MAXOUT;
-            /* Value for pixel x+1 of color c in a grey pixel */
-            for (cl=0; cl<colors; cl++)
-                p16[cl] = MIN((guint64)(x+1)*Developer->rgbMax *
-                         Developer->rgbWB[c] /
-                         Developer->rgbWB[cl]/raw_his_size-1, 0xFFFF);
-            develope(p8, p16, Developer, 8, pixtmp, 1);
-            y1=MAX(MAX(p8[0],p8[1]),p8[2]) * (CFG->rawHistogramHeight-1)/MAXOUT;
-            for (; y<=y1; y++)
-		for (cl=0; cl<3; cl++)
-		    pixies[(CFG->rawHistogramHeight-y)*rowstride
-			    + 3*(x+1)+cl] = pen[cl];
+            grayCurve[x][c] = MAX(MAX(p8[0],p8[1]),p8[2]) *
+		    (CFG->rawHistogramHeight-1) / MAXOUT;
             /* Value for pixel x of pure color c */
             p16[0] = p16[1] = p16[2] = p16[3] = 0;
             p16[c] = MIN((guint64)x*Developer->rgbMax/raw_his_size, 0xFFFF);
             develope(p8, p16, Developer, 8, pixtmp, 1);
-            y1=MAX(MAX(p8[0],p8[1]),p8[2]) * (CFG->rawHistogramHeight-1)/MAXOUT;
-            for (; y<y1; y++)
+            pureCurve[x][c] = MAX(MAX(p8[0],p8[1]),p8[2]) *
+		    (CFG->rawHistogramHeight-1) / MAXOUT;
+	}
+    }
+    for (x=0; x<raw_his_size; x++) {
+	/* draw the raw histogram */
+        for (c=0, y0=0; c<colors; c++) {
+	    for (y=0; y<raw_his[x][c]*CFG->rawHistogramHeight/raw_his_max; y++)
 		for (cl=0; cl<3; cl++)
-		    pixies[(CFG->rawHistogramHeight-y)*rowstride
-			    + 3*(x+1)+cl] = pen[cl]/2;
-            /* Value for pixel x+1 of pure color c */
-            p16[c] = MIN((guint64)(x+1)*Developer->rgbMax/raw_his_size - 1,
-                     0xFFFF);
-            develope(p8, p16, Developer, 8, pixtmp, 1);
-            y1=MAX(MAX(p8[0],p8[1]),p8[2]) * (CFG->rawHistogramHeight-1)/MAXOUT;
+		    pixies[(CFG->rawHistogramHeight-y-y0)*rowstride
+			    + 3*(x+1)+cl] = pen[c][cl];
+	    y0 += y;
+	}
+	/* draw curves on the raw histogram */
+        for (c=0; c<colors; c++) {
+            y = grayCurve[x][c];
+            y1 = grayCurve[x+1][c];
             for (; y<=y1; y++)
 		for (cl=0; cl<3; cl++)
 		    pixies[(CFG->rawHistogramHeight-y)*rowstride
-			    + 3*(x+1)+cl] = pen[cl];
+			    + 3*(x+1)+cl] = pen[c][cl];
+            y1 = pureCurve[x][c];
+            for (; y<y1; y++)
+		for (cl=0; cl<3; cl++)
+		    pixies[(CFG->rawHistogramHeight-y)*rowstride
+			    + 3*(x+1)+cl] = pen[c][cl]/2;
+            y1 = pureCurve[x+1][c];
+            for (; y<=y1; y++)
+		for (cl=0; cl<3; cl++)
+		    pixies[(CFG->rawHistogramHeight-y)*rowstride
+			    + 3*(x+1)+cl] = pen[c][cl];
         }
     }
     gtk_widget_queue_draw(data->RawHisto);
@@ -1963,7 +1950,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     GdkPixbuf *pixbuf;
     GdkRectangle screen;
     int max_preview_width, max_preview_height;
-    int preview_width, preview_height, i;
+    int preview_width, preview_height, i, c;
     long j;
     int status, rowstride, curveeditorHeight;
     guint8 *pixies;
@@ -2868,6 +2855,15 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_widget_set_sensitive(data->ControlsBox, TRUE);
 
     create_base_image(data);
+
+    /* Collect raw histogram data */
+    memset(data->raw_his, 0, sizeof(data->raw_his));
+    for (i=0; i<data->UF->image.height*data->UF->image.width; i++)
+            for (c=0; c<data->UF->colors; c++)
+                data->raw_his[MIN(
+			data->UF->image.image[i][c] *
+                        (raw_his_size-1) / data->UF->rgbMax,
+                        raw_his_size-1) ][c]++;
 
     /* Save InitialChanMul[] for the sake of "Reset WB" */
     for (i=0; i<4; i++) data->initialChanMul[i] = CFG->chanMul[i];
