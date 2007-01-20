@@ -342,21 +342,20 @@ void rgb_to_cielch(gint64 rgb[3], float lch[3])
 	cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
 	}
 	firstRun = FALSE;
-    } else {
-	xyz[0] = xyz[1] = xyz[2] = 0.5;
-	for (c=0; c<3; c++)
-	    for (cc=0; cc<3; cc++)
-		xyz[cc] += xyz_rgb[cc][c] * rgb[c];
-	for (c=0; c<3; c++)
-	    xyz[c] = cbrt[MAX(MIN((int)xyz[c], 0xFFFF), 0)];
-	lab[0] = 116 * xyz[1] - 16;
-	lab[1] = 500 * (xyz[0] - xyz[1]);
-	lab[2] = 200 * (xyz[1] - xyz[2]);
-
-	lch[0] = lab[0];
-	lch[1] = sqrt(lab[1]*lab[1]+lab[2]*lab[2]);
-	lch[2] = atan2(lab[2], lab[1]);
     }
+    xyz[0] = xyz[1] = xyz[2] = 0.5;
+    for (c=0; c<3; c++)
+	for (cc=0; cc<3; cc++)
+	    xyz[cc] += xyz_rgb[cc][c] * rgb[c];
+    for (c=0; c<3; c++)
+	xyz[c] = cbrt[MAX(MIN((int)xyz[c], 0xFFFF), 0)];
+    lab[0] = 116 * xyz[1] - 16;
+    lab[1] = 500 * (xyz[0] - xyz[1]);
+    lab[2] = 200 * (xyz[1] - xyz[2]);
+
+    lch[0] = lab[0];
+    lch[1] = sqrt(lab[1]*lab[1]+lab[2]*lab[2]);
+    lch[2] = atan2(lab[2], lab[1]);
 }
 
 void cielch_to_rgb(float lch[3], gint64 rgb[3])
