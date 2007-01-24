@@ -53,6 +53,10 @@ Display the version of UFRaw and exit.
 
 Display a brief description of how to use UFRaw and exit.
 
+=item --silent
+
+Do not display any messages during batch conversion.
+
 =item --conf=<ID-filename>
 
 Load all parameters from an ID-file. This feature
@@ -105,9 +109,23 @@ Linearity of the base curve. Range 0.00 to 1.00. Default 0.10.
 
 Auto exposure or exposure correction in EV. Range -3.00 to 3.00. Default 0.
 
-=item --[un]clip
+=item --restore=clip|lch|hsv
 
-Unclip or clip highlights. Default clip.
+Control how hightlights are restored when applying negative EV.
+'clip' restores nothing and is therefore safe from any artifacts.
+'lch' resotores in LCH space, resulting in restored highlights with soft
+details (good for clouds).
+'hsv' resotres in HSV space, resulting in restored hightlights with
+sharp details.
+The default is 'lch'.
+
+=item --clip=digital|film
+
+Control how highlights are clipped when applying positive EV.
+'digital' corresponds to using a linear reponse, emulating the
+harsh behaviour of the digital sensor.
+'film' emulate the soft film response.
+The default is 'digital'.
 
 =item --saturation=SAT
 
@@ -188,6 +206,10 @@ AHD interpolation is not supported for cameras with four color filters,
 such as the Sony-828 RGBE filter. In such cases, VNG interpolation
 will be used instead.
 
+=item --darkframe=FILE
+
+Use FILE for raw darkframe subtraction.
+
 =back
 
 =head2 Output Options
@@ -252,6 +274,16 @@ given by the output file-format.
 
 Overwrite existing files without asking. Default is to ask before deleting
 an existing file.
+
+=item --create-id=no|also|only
+
+Control whether UFRaw ID files are created for the output image.
+(Default is no).
+
+=item --embedded-image
+
+Extract the preview image embedded in the raw file instead of converting
+the raw image.
 
 =back
 
