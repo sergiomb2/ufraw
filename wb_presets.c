@@ -297,6 +297,13 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "FinePix S9500", N_("Cool white fluorescent"), 0, { 1.546196, 1, 1.622283, 0 } },
   { "FUJIFILM", "FinePix S9500", N_("Incandescent"), 0, { 1.064159, 1, 1.960177, 0 } },
 
+  { "KODAK", "P850 ZOOM", N_("Daylight"), 0,	{ 1.859375, 1, 1.566406, 0 } },
+  { "KODAK", "P850 ZOOM", N_("Cloudy"), 0,	{ 1.960938, 1, 1.570313, 0 } },
+  { "KODAK", "P850 ZOOM", N_("Shade"), 0,	{ 2.027344, 1, 1.519531, 0 } },
+  { "KODAK", "P850 ZOOM", N_("Evening sun"), 0,	{ 1.679688, 1, 1.812500, 0 } },
+  { "KODAK", "P850 ZOOM", N_("Tungsten"), 0,	{ 1.140625, 1, 2.726563, 0 } },
+  { "KODAK", "P850 ZOOM", N_("Fluorescent"), 0,	{ 1.113281, 1, 2.949219, 0 } },
+
   { "Leica Camera AG", "R8 - Digital Back DMR DNG", N_("Incandescent"), 0, { 1, 1.109985, 2.430664, 0 } },
   { "Leica Camera AG", "R8 - Digital Back DMR DNG", N_("Fluorescent"), 0, { 1.234985, 1, 1.791138, 0 } },
   { "Leica Camera AG", "R8 - Digital Back DMR DNG", N_("Daylight"), 0, { 1.459961, 1, 1.184937, 0 } },
