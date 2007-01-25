@@ -129,6 +129,7 @@ typedef struct {
     double temperature, green;
     double chanMul[4];
     double exposure, saturation, black; /* black is only used in CMD */
+    int ExposureNorm;
     int restoreDetails, clipHighlights;
     int autoExposure, autoBlack;
     int BaseCurveIndex, BaseCurveCount;

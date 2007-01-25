@@ -190,6 +190,9 @@ void developer_prepare(developer_data *d, conf_data *conf,
     d->restoreDetails = conf->restoreDetails;
     int clipHighlights = conf->clipHighlights;
     unsigned exposure = pow(2, conf->exposure) * 0x10000;
+    /* Handle the exposure normalization for Canon EOS cameras. */
+    if ( conf->ExposureNorm>0 )
+	exposure = exposure * d->rgbMax / conf->ExposureNorm;
     if ( exposure>=0x10000 ) d->restoreDetails = clip_details;
     if ( exposure<=0x10000 ) clipHighlights = digital_highlights;
     /* Check if gamma curve data has changed. */

@@ -32,6 +32,7 @@ const conf_data conf_default = {
     6500, 1.0, /* temperature, green */
     { -1.0, -1.0, -1.0, -1.0 }, /* chanMul[] */
     0.0, 1.0, 0.0, /* exposure, saturation, black */
+    0, /* ExposureNorm */
     restore_lch_details, /* restoreDetails */
     digital_highlights, /* clipHighlights */
     disabled_state, /* autoExposure */
@@ -439,6 +440,7 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
 	if (i<4) c->chanMul[3] = 0.0;
     }
     if (!strcmp("Exposure", element)) sscanf(temp, "%lf", &c->exposure);
+    if (!strcmp("ExposureNorm", element)) sscanf(temp, "%d", &c->ExposureNorm);
     if (!strcmp("Saturation", element)) sscanf(temp, "%lf", &c->saturation);
     if (!strcmp("RestoreDetails", element))
 	c->restoreDetails = conf_find_name(temp, restoreDetailsNames,
@@ -675,6 +677,9 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     }
     if (c->exposure!=conf_default.exposure)
         buf = uf_markup_buf(buf, "<Exposure>%lf</Exposure>\n", c->exposure);
+    if (c->ExposureNorm!=conf_default.ExposureNorm)
+        buf = uf_markup_buf(buf, "<ExposureNorm>%d</ExposureNorm>\n",
+		c->ExposureNorm);
     if (c->restoreDetails!=conf_default.restoreDetails)
         buf = uf_markup_buf(buf, "<RestoreDetails>%s</RestoreDetails>\n",
 		conf_get_name(restoreDetailsNames, c->restoreDetails));
@@ -907,6 +912,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     g_strlcpy(dst->make, src->make, max_name);
     g_strlcpy(dst->model, src->model, max_name);
     dst->exposure = src->exposure;
+    dst->ExposureNorm = src->ExposureNorm;
     dst->saturation = src->saturation;
     dst->black = src->black;
     dst->autoExposure = src->autoExposure;

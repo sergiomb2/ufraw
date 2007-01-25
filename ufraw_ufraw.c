@@ -469,6 +469,17 @@ int ufraw_load_raw(ufraw_data *uf)
         ufraw_substract_darkframe(uf);
     memcpy(uf->rgb_cam, raw->rgb_cam, sizeof uf->rgb_cam);
 
+    /* Canon EOS cameras require special exposure normalization */
+    if ( strcmp(uf->conf->make, "Canon")==0 &&
+	 strncmp(uf->conf->model, "EOS", 3)==0 ) {
+	int c, max = raw->cam_mul[0];
+	for (c=1; c<raw->colors; c++) max = MAX(raw->cam_mul[c], max);
+	uf->conf->ExposureNorm = max;
+	ufraw_message(UFRAW_SET_LOG, "Exposure Normalization set to %d\n",
+		uf->conf->ExposureNorm);
+    } else {
+	uf->conf->ExposureNorm = 0;
+    }
     if (uf->conf->chanMul[0]<0) ufraw_set_wb(uf);
     ufraw_auto_expose(uf);
     ufraw_auto_black(uf);
