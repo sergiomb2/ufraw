@@ -251,8 +251,8 @@ ufraw_data *ufraw_load_darkframe(char *darkframeFile)
 int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 {
     int status;
-    gboolean loadingID = FALSE;
 
+    uf->LoadingID = FALSE;
     if (strcmp(rc->wb, spot_wb)) rc->chanMul[0] = -1.0;
     if (rc->autoExposure==enabled_state) rc->autoExposure = apply_state;
     if (rc->autoBlack==enabled_state) rc->autoBlack = apply_state;
@@ -260,7 +260,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     /* Check if we are loading an ID file */
     if (uf!=NULL) {
 	if (uf->conf!=NULL) {
-	    loadingID = TRUE;
+	    uf->LoadingID = TRUE;
 	    conf_data tmp = *rc;
 	    conf_copy_image(&tmp, uf->conf);
 	    conf_copy_save(&tmp, uf->conf);
@@ -290,7 +290,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     char *absname = uf_file_set_absolute(uf->filename);
     g_strlcpy(uf->conf->inputFilename, absname, max_path);
     g_free(absname);
-    if (!loadingID) {
+    if (!uf->LoadingID) {
 	g_snprintf(uf->conf->inputURI, max_path, "file://%s",
 		uf->conf->inputFilename);
 	struct stat s;
@@ -310,7 +310,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     }
     /* If we switched cameras, ignore channel multipliers and
      * change spot_wb to manual_wb */
-    if ( !loadingID &&
+    if ( !uf->LoadingID &&
 	 ( strcmp(uf->conf->make, raw->make)!=0 ||
 	   strcmp(uf->conf->model, raw->model)!=0 ) ) {
 	uf->conf->chanMul[0] = -1.0;
@@ -474,9 +474,15 @@ int ufraw_load_raw(ufraw_data *uf)
 	 strncmp(uf->conf->model, "EOS", 3)==0 ) {
 	int c, max = raw->cam_mul[0];
 	for (c=1; c<raw->colors; c++) max = MAX(raw->cam_mul[c], max);
+	/* Convert exposure value from old ID files from before ExposureNorm */
+	if (uf->LoadingID && uf->conf->ExposureNorm==0)
+	    uf->conf->exposure -=
+		log(1.0*uf->rgbMax/max)/log(2);
 	uf->conf->ExposureNorm = max;
-	ufraw_message(UFRAW_SET_LOG, "Exposure Normalization set to %d\n",
-		uf->conf->ExposureNorm);
+	ufraw_message(UFRAW_SET_LOG,
+		"Exposure Normalization set to %d (%.2f EV)\n",
+		uf->conf->ExposureNorm,
+		log(1.0*uf->rgbMax/uf->conf->ExposureNorm)/log(2));
     } else {
 	uf->conf->ExposureNorm = 0;
     }
@@ -798,6 +804,9 @@ void ufraw_auto_expose(ufraw_data *uf)
 
     /* Reset the exposure and luminosityCurve */
     uf->conf->exposure = 0;
+    /* If we normalize the exposure then 0 EV also gets normalized */
+    if ( uf->conf->ExposureNorm>0 )
+	uf->conf->exposure = -log(1.0*uf->rgbMax/uf->conf->ExposureNorm)/log(2);
     developer_prepare(uf->developer, uf->conf,
 	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, TRUE);
     /* Find the grey value that gives 99% luminosity */
@@ -820,6 +829,11 @@ void ufraw_auto_expose(ufraw_data *uf)
                 sum += uf->RawLumHistogram[wp];
     /* Set 99% of the luminosity values with luminosity below 99% */
     uf->conf->exposure = log((double)p/wp)/log(2);
+    /* If we are going to normalize the exposure later,
+     * we need to cancel its effect here. */
+    if ( uf->conf->ExposureNorm>0 )
+	uf->conf->exposure -=
+		log(1.0*uf->rgbMax/uf->conf->ExposureNorm)/log(2);
     uf->conf->autoExposure = enabled_state;
 //    ufraw_message(UFRAW_SET_LOG, "ufraw_auto_expose: "
 //	    "Exposure %f (white point %d/%d)\n", uf->conf->exposure, wp, p);
