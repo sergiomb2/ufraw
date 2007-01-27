@@ -252,13 +252,13 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 {
     int status;
 
-    uf->LoadingID = FALSE;
     if (strcmp(rc->wb, spot_wb)) rc->chanMul[0] = -1.0;
     if (rc->autoExposure==enabled_state) rc->autoExposure = apply_state;
     if (rc->autoBlack==enabled_state) rc->autoBlack = apply_state;
 
     /* Check if we are loading an ID file */
     if (uf!=NULL) {
+	uf->LoadingID = FALSE;
 	if (uf->conf!=NULL) {
 	    uf->LoadingID = TRUE;
 	    conf_data tmp = *rc;
