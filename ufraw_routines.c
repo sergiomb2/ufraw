@@ -104,7 +104,11 @@ char *uf_file_set_absolute(const char *filename)
 	char *path = g_path_get_dirname(filename);
 	char *base = g_path_get_basename(filename);
 	char *canon = canonicalize_file_name(path);
-	char *abs = g_build_filename(canon, base, NULL);
+	char *abs;
+	if ( canon==NULL )
+	    abs = g_strdup(filename);
+	else
+	    abs = g_build_filename(canon, base, NULL);
 	g_free(path);
 	g_free(base);
 	g_free(canon);
