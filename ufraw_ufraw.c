@@ -486,7 +486,19 @@ int ufraw_load_raw(ufraw_data *uf)
     } else {
 	uf->conf->ExposureNorm = 0;
     }
+    /* chanMul[0]<0 signals that we need to recalculate the WB */
     if (uf->conf->chanMul[0]<0) ufraw_set_wb(uf);
+    else {
+	/* Otherwise we just normalize the channels and recalculate
+	 * the temperature/green */
+	int WBTuning = uf->conf->WBTuning;
+	char wb[max_name];
+	g_strlcpy(wb, uf->conf->wb, max_name);
+	g_strlcpy(uf->conf->wb, spot_wb, max_name);
+	ufraw_set_wb(uf);
+	g_strlcpy(uf->conf->wb, wb, max_name);
+	uf->conf->WBTuning = WBTuning;
+    }
     ufraw_auto_expose(uf);
     ufraw_auto_black(uf);
     return UFRAW_SUCCESS;

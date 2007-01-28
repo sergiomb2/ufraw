@@ -55,6 +55,8 @@ typedef struct {
 typedef struct {
     ufraw_data *UF;
     conf_data SaveConfig;
+    char initialWB[max_name];
+    double initialTemperature, initialGreen;
     double initialChanMul[4];
     int raw_his[raw_his_size][4];
     GList *WBPresets; /* List of WB presets in WBCombo*/
@@ -926,8 +928,8 @@ void update_scales(preview_data *data)
 
     gtk_widget_set_sensitive(data->ResetWBButton,
 	    ( strcmp(CFG->wb, data->SaveConfig.wb)
-	    ||fabs(CFG->temperature-data->SaveConfig.temperature)>1
-	    ||fabs(CFG->green-data->SaveConfig.green)>0.001
+	    ||fabs(CFG->temperature-data->initialTemperature)>1
+	    ||fabs(CFG->green-data->initialGreen)>0.001
 	    ||CFG->chanMul[0]!=data->initialChanMul[0]
 	    ||CFG->chanMul[1]!=data->initialChanMul[1]
 	    ||CFG->chanMul[2]!=data->initialChanMul[2]
@@ -1181,9 +1183,9 @@ void button_update(GtkWidget *button, gpointer user_data)
 
     if (button==data->ResetWBButton) {
 	int c;
-	g_strlcpy(CFG->wb, data->SaveConfig.wb, max_name);
-	CFG->temperature = data->SaveConfig.temperature;
-	CFG->green = data->SaveConfig.green;
+	g_strlcpy(CFG->wb, data->initialWB, max_name);
+	CFG->temperature = data->initialTemperature;
+	CFG->green = data->initialGreen;
 	for (c=0; c<4; c++) CFG->chanMul[c] = data->initialChanMul[c];
     }
     if (button==data->ResetGammaButton) {
@@ -2865,7 +2867,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
                         (raw_his_size-1) / data->UF->rgbMax,
                         raw_his_size-1) ][c]++;
 
-    /* Save InitialChanMul[] for the sake of "Reset WB" */
+    /* Save initial WB data for the sake of "Reset WB" */
+    g_strlcpy(data->initialWB, CFG->wb, max_name);
+    data->initialTemperature = CFG->temperature;
+    data->initialGreen = CFG->green;
     for (i=0; i<4; i++) data->initialChanMul[i] = CFG->chanMul[i];
 
     /* Update the curve editor in case ufraw_convert_image() modified it. */
