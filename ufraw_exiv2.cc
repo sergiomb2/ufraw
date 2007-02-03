@@ -70,8 +70,19 @@ try {
 	    != exifData.end() )
 	exifData.erase(pos);
 
-    Exiv2::DataBuf const buf(exifData.copy());
+    Exiv2::DataBuf buf(exifData.copy());
     const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
+    /* If buffer too big for JPEG, try deleting some staff. */
+    if ( buf.size_+sizeof(ExifHeader)>65533 ) {
+	if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.MakerNote")))
+		!= exifData.end() ) {
+	    exifData.erase(pos);
+	    ufraw_message(UFRAW_SET_LOG,
+		    "buflen %d too big, erasing Exif.Photo.MakerNote\n",
+		    buf.size_+sizeof(ExifHeader));
+	    buf = exifData.copy();
+	}
+    }
     uf->exifBufLen = buf.size_ + sizeof(ExifHeader);
     uf->exifBuf = g_new(unsigned char, uf->exifBufLen);
     memcpy(uf->exifBuf, ExifHeader, sizeof(ExifHeader));
