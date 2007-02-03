@@ -72,7 +72,7 @@ try {
 
     Exiv2::DataBuf buf(exifData.copy());
     const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
-    /* If buffer too big for JPEG, try deleting some staff. */
+    /* If buffer too big for JPEG, try deleting some stuff. */
     if ( buf.size_+sizeof(ExifHeader)>65533 ) {
 	if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.MakerNote")))
 		!= exifData.end() ) {
