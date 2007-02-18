@@ -183,6 +183,7 @@ int dcraw_load_raw(dcraw_data *h)
     dmin = DBL_MAX;
     for (i=0; i<h->colors; i++) if (dmin > d->pre_mul[i]) dmin = d->pre_mul[i];
     for (i=0; i<h->colors; i++) h->pre_mul[i] = d->pre_mul[i]/dmin;
+    if (h->colors==3) h->pre_mul[3] = 0;
     memcpy(h->cam_mul, d->cam_mul, sizeof d->cam_mul);
     memcpy(h->rgb_cam, d->rgb_cam, sizeof d->rgb_cam);
 

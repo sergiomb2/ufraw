@@ -474,15 +474,22 @@ int ufraw_load_raw(ufraw_data *uf)
 	 strncmp(uf->conf->model, "EOS", 3)==0 ) {
 	int c, max = raw->cam_mul[0];
 	for (c=1; c<raw->colors; c++) max = MAX(raw->cam_mul[c], max);
-	/* Convert exposure value from old ID files from before ExposureNorm */
-	if (uf->LoadingID && uf->conf->ExposureNorm==0)
-	    uf->conf->exposure -=
-		log(1.0*uf->rgbMax/max)/log(2);
-	uf->conf->ExposureNorm = max;
-	ufraw_message(UFRAW_SET_LOG,
-		"Exposure Normalization set to %d (%.2f EV)\n",
-		uf->conf->ExposureNorm,
-		log(1.0*uf->rgbMax/uf->conf->ExposureNorm)/log(2));
+	/* Camera multipliers in DNG file are normalized to 1.
+	 * Therefore, they can not be used to normalize exposure. */
+	if ( max < 100 ) {
+	    uf->conf->ExposureNorm = 0;
+	    ufraw_message(UFRAW_SET_LOG, "Failed to normalizing exposure\n");
+	} else {
+	    /* Convert exposure value from old ID files from before
+	     * ExposureNorm */
+	    if (uf->LoadingID && uf->conf->ExposureNorm==0)
+		uf->conf->exposure -= log(1.0*uf->rgbMax/max)/log(2);
+	    uf->conf->ExposureNorm = max;
+	    ufraw_message(UFRAW_SET_LOG,
+		    "Exposure Normalization set to %d (%.2f EV)\n",
+		    uf->conf->ExposureNorm,
+		    log(1.0*uf->rgbMax/uf->conf->ExposureNorm)/log(2));
+	}
     } else {
 	uf->conf->ExposureNorm = 0;
     }
