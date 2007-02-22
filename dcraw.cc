@@ -15,15 +15,15 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.365 $
-   $Date: 2007/02/12 22:55:47 $
+   $Revision: 1.366 $
+   $Date: 2007/02/22 02:27:27 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.54"
+#define DCRAW_VERSION "8.60"
 
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
@@ -105,8 +105,8 @@ const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
 CLASS DCRaw()
 {
-bright=1, sigma_d=0, sigma_r=0;
-four_color_rgb=0, document_mode=0, highlight=0;
+bright=1, threshold=0;
+half_size=0, four_color_rgb=0, document_mode=0, highlight=0;
 verbose=0, use_auto_wb=0, use_camera_wb=0;
 output_color=1, output_bps=8, output_tiff=0;
 shot_select=0;
@@ -2672,16 +2672,14 @@ void CLASS foveon_interpolate()
     for (j=0; j < 3; j++)
       FORC3 last[i][j] += correct[i][c] * cam_xyz[c][j];
 
+  #define LAST(x,y) last[(i+x)%3][(c+y)%3]
+  for (i=0; i < 3; i++)
+    FORC3 diag[c][i] = LAST(1,1)*LAST(2,2) - LAST(1,2)*LAST(2,1);
+  #undef LAST
+  FORC3 div[c] = diag[c][0]*0.3127 + diag[c][1]*0.329 + diag[c][2]*0.3583;
   sprintf (str, "%sRGBNeutral", model2);
   if (foveon_camf_param ("IncludeBlocks", str))
     foveon_fixed (div, 3, str);
-  else {
-    #define LAST(x,y) last[(i+x)%3][(c+y)%3]
-    for (i=0; i < 3; i++)
-      FORC3 diag[c][i] = LAST(1,1)*LAST(2,2) - LAST(1,2)*LAST(2,1);
-    #undef LAST
-    FORC3 div[c] = diag[c][0]*0.3127 + diag[c][1]*0.329 + diag[c][2]*0.3583;
-  }
   num = 0;
   FORC3 if (num < div[c]) num = div[c];
   FORC3 div[c] /= num;
@@ -3260,26 +3258,122 @@ void CLASS colorcheck()
 }
 #endif
 
+void CLASS wavelet_denoise()
+{
+  float *fimg, *temp, mul[2], avg, diff;
+  int scale=1, dim=0, row, col, size, sh, nc, c, i, j, k, m, wlast;
+  ushort *window[4];
+  static const float wlet[] =	/* Daubechies 9-tap/7-tap filter */
+  { 1.149604398, -1.586134342, -0.05298011854, 0.8829110762, 0.4435068522 };
+
+  if (verbose) fprintf (stderr,_("Wavelet denoising...\n"));
+
+  while (maximum << scale < 0x10000) scale++;
+  maximum <<= --scale;
+  black <<= scale;
+  while (1 << dim < iwidth || 1 << dim < iheight) dim++;
+  fimg = (float *) calloc ((1 << dim*2)+(1 << dim)+2, sizeof *fimg);
+  merror (fimg, "wavelet_denoise()");
+  temp = fimg + (1 << dim*2) + 1;
+  if ((nc = colors) == 3 && filters) nc++;
+  for (c=0; c < nc; c++) {	/* denoise R,G1,B,G3 individually */
+    for (row=0; row < iheight; row++)
+      for (col=0; col < iwidth; col++)
+	fimg[(row << dim)+col] = image[row*iwidth+col][c] << scale;
+    for (size = 1 << dim; size > 1; size >>= 1)
+      for (sh=0; sh <= dim; sh += dim)
+	for (i=0; i < size; i++) {
+	  for (j=0; j < size; j++)
+	    temp[j] = fimg[(i << (dim-sh))+(j << sh)];
+	  for (k=1; k < 5; k+=2) {
+	    temp[size] = temp[size-2];
+	    for (m=1; m < size; m+=2)
+	      temp[m] += wlet[k] * (temp[m-1] + temp[m+1]);
+	    temp[-1] = temp[1];
+	    for (m=0; m < size; m+=2)
+	      temp[m] += wlet[k+1] * (temp[m-1] + temp[m+1]);
+	  }
+	  for (m=0; m < size; m++)
+	    temp[m] *= (m & 1) ? 1/wlet[0] : wlet[0];
+	  for (j=k=0; j < size; j++, k+=2) {
+	    if (k == size) k = 1;
+	    fimg[(i << (dim-sh))+(j << sh)] = temp[k];
+	  }
+	}
+    for (i=0; i < 1 << dim*2; i++)
+      if      (fimg[i] < -threshold) fimg[i] += threshold;
+      else if (fimg[i] >  threshold) fimg[i] -= threshold;
+      else     fimg[i] = 0;
+    for (size = 2; size <= 1 << dim; size <<= 1)
+      for (sh=dim; sh >= 0; sh -= dim)
+	for (i=0; i < size; i++) {
+	  for (j=k=0; j < size; j++, k+=2) {
+	    if (k == size) k = 1;
+	    temp[k] = fimg[(i << (dim-sh))+(j << sh)];
+	  }
+	  for (m=0; m < size; m++)
+	    temp[m] *= (m & 1) ? wlet[0] : 1/wlet[0];
+	  for (k=3; k > 0; k-=2) {
+	    temp[-1] = temp[1];
+	    for (m=0; m < size; m+=2)
+	      temp[m] -= wlet[k+1] * (temp[m-1] + temp[m+1]);
+	    temp[size] = temp[size-2];
+	    for (m=1; m < size; m+=2)
+	      temp[m] -= wlet[k] * (temp[m-1] + temp[m+1]);
+	  }
+	  for (j=0; j < size; j++)
+	    fimg[(i << (dim-sh))+(j << sh)] = temp[j];
+	}
+    for (row=0; row < iheight; row++)
+      for (col=0; col < iwidth; col++)
+	image[row*iwidth+col][c] = CLIP((UshORt)(fimg[(row << dim)+col] + 0.5));
+  }
+  if (filters && colors == 3) {  /* pull G1 and G3 closer together */
+    for (row=0; row < 2; row++)
+      mul[row] = 0.125 * pre_mul[FC(row+1,0) | 1] / pre_mul[FC(row,0) | 1];
+    for (i=0; i < 4; i++)
+      window[i] = (ushort *) fimg + width*i;
+    for (wlast=-1, row=1; row < height-1; row++) {
+      while (wlast < row+1) {
+	for (wlast++, i=0; i < 4; i++)
+	  window[(i+3) & 3] = window[i];
+	for (col = FC(wlast,1) & 1; col < width; col+=2)
+	  window[2][col] = BAYER(wlast,col);
+      }
+      for (col = (FC(row,0) & 1)+1; col < width-1; col+=2) {
+	avg = ( window[0][col-1] + window[0][col+1] +
+		window[2][col-1] + window[2][col+1] - black*4 )
+	      * mul[row & 1] + (window[1][col] - black) * 0.5 + black;
+	diff = BAYER(row,col) - avg;
+	if      (diff < -threshold/M_SQRT2) diff += threshold/M_SQRT2;
+	else if (diff >  threshold/M_SQRT2) diff -= threshold/M_SQRT2;
+	else diff = 0;
+	BAYER(row,col) = CLIP((UshORt)(avg + diff + 0.5));
+      }
+    }
+  }
+  free (fimg);
+}
+
 /* Start of functions copied to dcraw_indi.c (UF) */
 void CLASS scale_colors()
 {
-  int row, col, x, y, c, val, sum[8];
+  int dblack, row, col, x, y, c, val, sum[8];
   double dsum[8], dmin, dmax;
   float scale_mul[4];
 
-  maximum -= black;
   if (use_auto_wb || (use_camera_wb && cam_mul[0] == -1)) {
     memset (dsum, 0, sizeof dsum);
-    for (row=0; row < height-7; row += 8)
-      for (col=0; col < width-7; col += 8) {
+    for (row=0; row < iheight-7; row += 8)
+      for (col=0; col < iwidth-7; col += 8) {
 	memset (sum, 0, sizeof sum);
 	for (y=row; y < row+8; y++)
 	  for (x=col; x < col+8; x++)
 	    FORC4 {
-	      val = image[y*width+x][c];
+	      val = image[y*iwidth+x][c];
 	      if (!val) continue;
-	      val -= black;
 	      if (val > maximum-25) goto skip_block;
+	      val -= black;
 	      if (val < 0) val = 0;
 	      sum[c] += val;
 	      sum[c+4]++;
@@ -3310,6 +3404,9 @@ skip_block:
   if (user_mul[0])
     memcpy (pre_mul, user_mul, sizeof pre_mul);
   if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
+  dblack = black;
+  if (threshold) wavelet_denoise();
+  maximum -= black;
   for (dmin=DBL_MAX, dmax=c=0; c < 4; c++) {
     if (dmin > pre_mul[c])
 	dmin = pre_mul[c];
@@ -3318,23 +3415,44 @@ skip_block:
   }
   if (!highlight) dmax = dmin;
   FORC4 scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / maximum;
-  dcraw_message(DCRAW_VERBOSE,_("Scaling with black %d, multipliers"), black); /*UF*/
+  dcraw_message(DCRAW_VERBOSE,_("Scaling with black %d, multipliers"), dblack); /*UF*/
   FORC4 dcraw_message(DCRAW_VERBOSE, " %f", pre_mul[c]);
   dcraw_message(DCRAW_VERBOSE, "\n");
-  for (row=0; row < height; row++)
-    for (col=0; col < width; col++)
+  for (row=0; row < iheight; row++)
+    for (col=0; col < iwidth; col++)
       FORC4 {
-	val = image[row*width+col][c];
+	val = image[row*iwidth+col][c];
 	if (!val) continue;
 	val -= black;
 	val = (int)(val*scale_mul[c]);
-	image[row*width+col][c] = CLIP(val);
+	image[row*iwidth+col][c] = CLIP(val);
       }
-  if (filters && colors == 3) {
-    if (four_color_rgb) {
-      colors++;
-      FORC3 rgb_cam[c][3] = rgb_cam[c][1] /= 2;
+}
+
+void CLASS pre_interpolate()
+{
+  ushort (*img)[4];
+  int row, col;
+
+  if (shrink) {
+    if (half_size) {
+      height = iheight;
+      width  = iwidth;
+      filters = 0;
     } else {
+      img = (ushort (*)[4]) calloc (height*width, sizeof *img);
+      merror (img, "unshrink()");
+      for (row=0; row < height; row++)
+	for (col=0; col < width; col++)
+	  img[row*width+col][FC(row,col)] = BAYER(row,col);
+      free (image);
+      image = img;
+      shrink = 0;
+    }
+  }
+  if (filters && colors == 3) {
+    if ((mix_green = four_color_rgb)) colors++;
+    else {
       for (row = FC(1,0) >> 1; row < height; row+=2)
 	for (col = FC(row,1) & 1; col < width; col+=2)
 	  image[row*width+col][1] = image[row*width+col][3];
@@ -3686,63 +3804,6 @@ void CLASS ahd_interpolate()
 }
 #undef TS
 /* End of functions copied to dcraw_indi.c (UF) */
-
-/*
-   Bilateral Filtering was developed by C. Tomasi and R. Manduchi.
- */
-void CLASS bilateral_filter()
-{
-  float (**window)[7], *kernel, scale_r, elut[1024], sum[5];
-  int c, i, wr, ws, wlast, row, col, y, x;
-  unsigned sep;
-
-  dcraw_message (DCRAW_VERBOSE,_("Bilateral filtering...\n")); /*UF*/
-
-  wr = (int)ceil(sigma_d*2);		/* window radius */
-  ws = 2*wr + 1;		/* window size */
-  window = (float (**)[7]) calloc ((ws+1)*sizeof *window +
-		ws*width*sizeof **window + ws*sizeof *kernel, 1);
-  merror (window, "bilateral_filter()");
-  for (i=0; i <= ws; i++)
-    window[i] = (float (*)[7]) (window+ws+1) + i*width;
-  kernel = (float *) window[ws] + wr;
-  for (i=-wr; i <= wr; i++)
-    kernel[i] = 256 / (2*SQR(sigma_d)) * i*i + 0.25;
-  scale_r     = 256 / (2*SQR(sigma_r));
-  for (i=0; i < 1024; i++)
-    elut[i] = exp (-i/256.0);
-
-  for (wlast=-1, row=0; row < height; row++) {
-    while (wlast < row+wr) {
-      wlast++;
-      for (i=0; i <= ws; i++)	/* rotate window rows */
-	window[(ws+i) % (ws+1)] = window[i];
-      if (wlast < height)
-	for (col=0; col < width; col++) {
-	  FORCC window[ws-1][col][c] = image[wlast*width+col][c];
-	  cam_to_cielab (image[wlast*width+col], window[ws-1][col]+4);
-	}
-    }
-    for (col=0; col < width; col++) {
-      memset (sum, 0, sizeof sum);
-      for (y=-wr; y <= wr; y++)
-	if (row+y >= 0 && row+y < height)
-	  for (x=-wr; x <= wr; x++)
-	    if (col+x >= 0 && col+x < width) {
-	      sep = (unsigned)(( SQR(window[wr+y][col+x][4] - window[wr][col][4])
-		    + SQR(window[wr+y][col+x][5] - window[wr][col][5])
-		    + SQR(window[wr+y][col+x][6] - window[wr][col][6]) )
-			* scale_r + kernel[y] + kernel[x]);
-	      if (sep < 1024) {
-		FORCC sum[c] += elut[sep] * window[wr+y][col+x][c];
-		sum[4] += elut[sep];
-	      }
-	    }
-      FORCC image[row*width+col][c] = (ushort)(sum[c]/sum[4]);
-    }
-  }
-  free (window);
-}
 
 #define SCALE (4 >> shrink)
 void CLASS recover_highlights()
@@ -5446,6 +5507,8 @@ void CLASS adobe_coeff (char *make, char *model)
 	{ 5710,-901,-615,-8594,16617,2024,-2975,4120,6830 } },
     { "NIKON D2X", 0,
 	{ 10231,-2769,-1255,-8301,15900,2552,-797,680,7148 } },
+    { "NIKON D40", 0,
+	{ 6992,-1668,-806,-8138,15748,2543,-874,850,7897 } },
     { "NIKON D50", 0,
 	{ 7732,-2422,-789,-8238,15884,2498,-859,783,7330 } },
     { "NIKON D70", 0,
@@ -5519,7 +5582,7 @@ void CLASS adobe_coeff (char *make, char *model)
     { "PENTAX *ist D", 0,
 	{ 9651,-2059,-1189,-8881,16512,2487,-1460,1345,10687 } },
     { "PENTAX K10D", 0,
-	{ 28402,-6651,-983,-14699,32553,6467,-1746,1571,25283 } },
+	{ 9566,-2863,-803,-7170,15172,2112,-818,803,9705 } },
     { "PENTAX K1", 0,
 	{ 11095,-3157,-1324,-8377,15834,2720,-1108,947,11688 } },
     { "Panasonic DMC-FZ30", 0,
@@ -5690,7 +5753,7 @@ void CLASS identify()
   colors = 3;
   tiff_bps = 12;
   for (i=0; i < 0x1000; i++) curve[i] = i;
-  profile_length = 0;
+  mix_green = profile_length = 0;
   tone_curve_offset = tone_curve_size = 0; /*UF*/
 
   order = get2();
@@ -6726,7 +6789,7 @@ quit:
 
 void CLASS convert_to_rgb()
 {
-  int mix_green, row, col, c, i, j, k;
+  int row, col, c, i, j, k;
   ushort *img;
   float out[3], out_cam[3][4];
   double num, inverse[3][3];
@@ -6813,7 +6876,6 @@ void CLASS convert_to_rgb()
   dcraw_message (DCRAW_VERBOSE, raw_color ? _("Building histograms...\n") :
 	_("Converting to %s colorspace...\n"), name[output_color-1]); /*UF*/
 
-  mix_green = rgb_cam[1][1] == rgb_cam[1][3];
   memset (histogram, 0, sizeof histogram);
   for (img=image[0], row=0; row < height; row++)
     for (col=0; col < width; col++, img+=4) {
@@ -6828,11 +6890,9 @@ void CLASS convert_to_rgb()
       }
       else if (document_mode)
 	img[0] = img[FC(row,col)];
-      else if (mix_green)
-	img[1] = (img[1] + img[3]) >> 1;
       FORCC histogram[c][img[c] >> 3]++;
     }
-  if (colors == 4 && (output_color || mix_green)) colors = 3;
+  if (colors == 4 && output_color) colors = 3;
   if (document_mode && filters) colors = 1;
 }
 
@@ -7100,8 +7160,8 @@ void CLASS write_ppm_tiff (FILE *ofp)
 int CLASS main (int argc, char **argv)
 {
   static int arg, status=0, user_flip=-1, user_black=-1, user_qual=-1;
-  static int timestamp_only=0, thumbnail_only=0, identify_only=0, write_to_stdout=0;
-  static int half_size=0, use_fuji_rotate=1, quality, i, c;
+  static int timestamp_only=0, thumbnail_only=0, identify_only=0;
+  static int use_fuji_rotate=1, write_to_stdout=0, quality, i, c;
   static char opt, *ofname, *sp, *cp, *dark_frame = NULL;
   static const char *write_ext;
   static struct utimbuf ut;
@@ -7134,6 +7194,7 @@ int CLASS main (int argc, char **argv)
     puts(_("-w        Use camera white balance, if possible"));
     puts(_("-r <4 numbers> Set custom white balance"));
     puts(_("-b <num>  Adjust brightness (default = 1.0)"));
+    puts(_("-n <num>  Set threshold for wavelet denoising"));
     puts(_("-k <num>  Set black point"));
     puts(_("-K <file> Subtract dark frame (16-bit raw PGM)"));
     puts(_("-H [0-9]  Highlight mode (0=clip, 1=no clip, 2+=recover)"));
@@ -7149,7 +7210,6 @@ int CLASS main (int argc, char **argv)
     puts(_("-q [0-3]  Set the interpolation quality"));
     puts(_("-h        Half-size color image (twice as fast as \"-q 0\")"));
     puts(_("-f        Interpolate RGGB as four colors"));
-    puts(_("-B <domain> <range> Apply bilateral filter to smooth noise"));
     puts(_("-s [0-99] Select a different raw image from the same file"));
     puts(_("-4        Write 16-bit linear instead of 8-bit with gamma"));
     puts(_("-T        Write TIFF instead of PPM"));
@@ -7159,15 +7219,14 @@ int CLASS main (int argc, char **argv)
   argv[argc] = "";
   for (arg=1; argv[arg][0] == '-'; ) {
     opt = argv[arg++][1];
-    if ((cp = strchr (sp="BbrktqsH", opt)))
-      for (i=0; i < "21411111"[cp-sp]-'0'; i++)
+    if ((cp = strchr (sp="nbrktqsH", opt)))
+      for (i=0; i < "11411111"[cp-sp]-'0'; i++)
 	if (!isdigit(argv[arg+i][0])) {
 	  dcraw_message (DCRAW_ERROR,_("Non-numeric argument to \"-%c\"\n"), opt); /*UF*/
 	  return 1;
 	}
     switch (opt) {
-      case 'B':  sigma_d     = atof(argv[arg++]);
-		 sigma_r     = atof(argv[arg++]);  break;
+      case 'n':  threshold   = atof(argv[arg++]);  break;
       case 'b':  bright      = atof(argv[arg++]);  break;
       case 'r':
 	   FORC4 user_mul[c] = atof(argv[arg++]);  break;
@@ -7308,7 +7367,7 @@ int CLASS main (int argc, char **argv)
     } else if (!is_raw)
       dcraw_message (DCRAW_ERROR,_("Cannot decode file %s\n"), ifname); /*UF*/
     if (!is_raw) goto next;
-    shrink = half_size && filters;
+    shrink = (half_size || threshold) && filters;
     iheight = (height + shrink) >> shrink;
     iwidth  = (width  + shrink) >> shrink;
     if (identify_only) {
@@ -7357,8 +7416,6 @@ next:
     (*this.*load_raw)();
     bad_pixels();
     if (dark_frame) subtract (dark_frame);
-    height = iheight;
-    width  = iwidth;
     quality = 2 + !fuji_width;
     if (user_qual >= 0) quality = user_qual;
     if (user_black >= 0) black = user_black;
@@ -7367,7 +7424,7 @@ next:
 #endif
     if (is_foveon && !document_mode) foveon_interpolate();
     if (!is_foveon && document_mode < 2) scale_colors();
-    if (shrink) filters = 0;
+    pre_interpolate();
     cam_to_cielab (NULL,NULL);
     if (filters && !document_mode) {
       if (quality == 0)
@@ -7376,9 +7433,11 @@ next:
 	   vng_interpolate();
       else ahd_interpolate();
     }
-    if (sigma_d > 0 && sigma_r > 0) bilateral_filter();
     if (!is_foveon && highlight > 1) recover_highlights();
     if (use_fuji_rotate) fuji_rotate();
+    if (mix_green && (colors = 3))
+      for (i=0; i < height*width; i++)
+	image[i][1] = (image[i][1] + image[i][3]) >> 1;
 #ifndef NO_LCMS
     if (cam_profile) apply_profile (cam_profile, out_profile);
 #endif
