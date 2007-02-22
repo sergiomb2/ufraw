@@ -95,13 +95,14 @@ const double xyz_rgb[3][3] = {			/* XYZ from RGB *//*UF*/
   { 0.019334, 0.119193, 0.950227 } };
 const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
-#define DCRAW_SUCCESS 0        /* Centerlize the error handling - UF*/
+#define DCRAW_SUCCESS 0		/* Centerlize the error handling - UF*/
 #define DCRAW_ERROR 1
 #define DCRAW_UNSUPPORTED 2
 #define DCRAW_NO_CAMERA_WB 3
 #define DCRAW_VERBOSE 4
 
 #define CLASS DCRaw::
+//#define fgetc getc_unlocked	/* Undefined to keep UFRaw thread-safe - NKBJ*/
 
 CLASS DCRaw()
 {
@@ -3266,7 +3267,7 @@ void CLASS wavelet_denoise()
   static const float wlet[] =	/* Daubechies 9-tap/7-tap filter */
   { 1.149604398, -1.586134342, -0.05298011854, 0.8829110762, 0.4435068522 };
 
-  if (verbose) fprintf (stderr,_("Wavelet denoising...\n"));
+  dcraw_message (DCRAW_VERBOSE,_("Wavelet denoising...\n")); /*UF*/
 
   while (maximum << scale < 0x10000) scale++;
   maximum <<= --scale;
@@ -3326,7 +3327,7 @@ void CLASS wavelet_denoise()
 	}
     for (row=0; row < iheight; row++)
       for (col=0; col < iwidth; col++)
-	image[row*iwidth+col][c] = CLIP((UshORt)(fimg[(row << dim)+col] + 0.5));
+	image[row*iwidth+col][c] = CLIP((int)(fimg[(row << dim)+col] + 0.5));
   }
   if (filters && colors == 3) {  /* pull G1 and G3 closer together */
     for (row=0; row < 2; row++)
@@ -3348,7 +3349,7 @@ void CLASS wavelet_denoise()
 	if      (diff < -threshold/M_SQRT2) diff += threshold/M_SQRT2;
 	else if (diff >  threshold/M_SQRT2) diff -= threshold/M_SQRT2;
 	else diff = 0;
-	BAYER(row,col) = CLIP((UshORt)(avg + diff + 0.5));
+	BAYER(row,col) = CLIP((int)(avg + diff + 0.5));
       }
     }
   }
@@ -4828,7 +4829,7 @@ void CLASS parse_external_jpeg()
     }
   }
   if (!timestamp)
-    dcraw_message (DCRAW_VERBOSE,_("Failed to read metadata from %s\n"), jname);/*UF*/
+    dcraw_message (DCRAW_ERROR,_("Failed to read metadata from %s\n"), jname);/*UF*/
   free (jname);
   ifp = save;
 }
@@ -6952,7 +6953,7 @@ void CLASS stretch()
       if (c+1 < height) pix1 += width*4;
       for (col=0; col < width; col++, pix0+=4, pix1+=4)
 	FORCC img[row*width+col][c] =
-		(UshORt)(pix0[c]*(1-frac) + pix1[c]*frac + 0.5);
+		(int)(pix0[c]*(1-frac) + pix1[c]*frac + 0.5);
     }
     height = newdim;
   } else {
@@ -6965,7 +6966,7 @@ void CLASS stretch()
       if (c+1 < width) pix1 += 4;
       for (row=0; row < height; row++, pix0+=width*4, pix1+=width*4)
 	FORCC img[row*newdim+col][c] =
-		(UshORt)(pix0[c]*(1-frac) + pix1[c]*frac + 0.5);
+		(int)(pix0[c]*(1-frac) + pix1[c]*frac + 0.5);
     }
     width = newdim;
   }
@@ -6987,7 +6988,7 @@ void CLASS gamma_lut (uchar lut[0x10000])
   int perc, c, val, total, i;
   float white=0, r;
 
-  perc = (int)(width * height * 0.01);	    /* 99th percentile white point */
+  perc = (int)(width * height * 0.01);	/* 99th percentile white point */
   if (fuji_width) perc /= 2;
   if (highlight) perc = 0;
   FORCC {
