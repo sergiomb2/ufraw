@@ -16,7 +16,7 @@
    work.
 
    $Revision: 1.366 $
-   $Date: 2007/02/22 02:27:27 $
+   $Date: 2007/02/22 16:50:08 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -3327,7 +3327,7 @@ void CLASS wavelet_denoise()
 	}
     for (row=0; row < iheight; row++)
       for (col=0; col < iwidth; col++)
-	image[row*iwidth+col][c] = CLIP((int)(fimg[(row << dim)+col] + 0.5));
+	image[row*iwidth+col][c] = CLIP((ushort)(fimg[(row << dim)+col] + 0.5));
   }
   if (filters && colors == 3) {  /* pull G1 and G3 closer together */
     for (row=0; row < 2; row++)
@@ -3349,7 +3349,7 @@ void CLASS wavelet_denoise()
 	if      (diff < -threshold/M_SQRT2) diff += threshold/M_SQRT2;
 	else if (diff >  threshold/M_SQRT2) diff -= threshold/M_SQRT2;
 	else diff = 0;
-	BAYER(row,col) = CLIP((int)(avg + diff + 0.5));
+	BAYER(row,col) = CLIP((ushort)(avg + diff + 0.5));
       }
     }
   }
@@ -3943,7 +3943,8 @@ void CLASS parse_makernote (int base)
     0xbe,0x57,0x19,0x32,0x7e,0x2a,0xd0,0xb8,0xba,0x29,0x00,0x3c,0x52,0x7d,0xa8,0x49,
     0x3b,0x2d,0xeb,0x25,0x49,0xfa,0xa3,0xaa,0x39,0xa7,0xc5,0xa7,0x50,0x11,0x36,0xfb,
     0xc6,0x67,0x4a,0xf5,0xa5,0x12,0x65,0x7e,0xb0,0xdf,0xaf,0x4e,0xb3,0x61,0x7f,0x2f } };
-  unsigned offset=0, entries, tag, type, len, save, c;
+  int c;
+  unsigned offset=0, entries, tag, type, len, save;
   unsigned ver97=0, serial=0, i, wb[4]={0,0,0,0};
   uchar buf97[324], ci, cj, ck;
   short sorder;
@@ -4019,7 +4020,7 @@ void CLASS parse_makernote (int base)
       if (tag == 0x1c) tag = 0x1017;
     }
     if (tag == 0x1d)
-      while ((c = fgetc(ifp)))
+      while ((c = fgetc(ifp)) && c != EOF)
 	serial = serial*10 + (isdigit(c) ? c - '0' : c % 10);
     if (tag == 0x81)  { /* NTC UF*/
       tone_mode_offset = ftell(ifp);
@@ -6953,7 +6954,7 @@ void CLASS stretch()
       if (c+1 < height) pix1 += width*4;
       for (col=0; col < width; col++, pix0+=4, pix1+=4)
 	FORCC img[row*width+col][c] =
-		(int)(pix0[c]*(1-frac) + pix1[c]*frac + 0.5);
+		(ushort)(pix0[c]*(1-frac) + pix1[c]*frac + 0.5);
     }
     height = newdim;
   } else {
@@ -6966,7 +6967,7 @@ void CLASS stretch()
       if (c+1 < width) pix1 += 4;
       for (row=0; row < height; row++, pix0+=width*4, pix1+=width*4)
 	FORCC img[row*newdim+col][c] =
-		(int)(pix0[c]*(1-frac) + pix1[c]*frac + 0.5);
+		(ushort)(pix0[c]*(1-frac) + pix1[c]*frac + 0.5);
     }
     width = newdim;
   }
