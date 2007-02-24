@@ -1,5 +1,5 @@
-# Russian translations for UFRaw package
-# Copyright (C) 2006 by Udi Fuchs
+# Russian translation for UFRaw package
+# Copyright (C) 2007 by Udi Fuchs
 # This file is distributed under the same license as the UFRaw package.
 #
 # Alexey Voinov <voins@voins.program.ru>, 2006.
@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-01-27 07:40+0100\n"
-"PO-Revision-Date: 2006-10-26 13:17+0300\n"
+"PO-Revision-Date: 2007-02-24 00:17+0300\n"
 "Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net."
 "by>\n"
 "Language-Team: Russian <gnome-cyr@gnome.org>\n"
@@ -37,11 +37,11 @@ msgstr "сохранён %s"
 
 #: ufraw.c:65
 msgid "--output option is valid only in batch mode"
-msgstr ""
+msgstr "ключ --output используется только в пакетном режиме"
 
 #: ufraw.c:70
 msgid "--silent option is valid only in batch mode"
-msgstr ""
+msgstr "ключ --silent используется только в пакетном режиме"
 
 #: ufraw.c:74
 msgid "Extracting embedded image is not supported in interactive mode"
@@ -145,7 +145,7 @@ msgid ""
 "Error parsing '%s'\n"
 "%s"
 msgstr ""
-"ошибка при разборе '%s'\n"
+"Ошибка при разборе '%s'\n"
 "%s"
 
 #: ufraw_conf.c:883
@@ -236,7 +236,6 @@ msgid "--green=GREEN         Green color normalization.\n"
 msgstr "--green=GREEN         Нормализация зелёного цвета.\n"
 
 #: ufraw_conf.c:1127
-#, fuzzy
 msgid ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
 "                      Type of base tone curve to use. CURVE can be any\n"
@@ -244,12 +243,9 @@ msgid ""
 "                      (default camera if such exists, linear otherwise).\n"
 msgstr ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
-"                      Используемый тип базовой тональной кривой. CURVE "
-"(КРИВАЯ) может быть любой\n"
-"                      кривой, предварительно загруженной в графическом "
-"интерфейсе пользователя (GUI).\n"
-"                      (по умолчанию: кривая камеры, если есть; если нет -, "
-"линейная).\n"
+"                      Используемый тип базовой тональной кривой. CURVE (КРИВАЯ) может быть любой\n"
+"                      кривой, предварительно загруженной в графическом интерфейсе.\n"
+"                      (по умолчанию — кривая камеры, если есть; если нет — линейная).\n"
 
 #: ufraw_conf.c:1131
 msgid ""
@@ -258,8 +254,7 @@ msgid ""
 "                      Overrides --base-curve option.\n"
 msgstr ""
 "--base-curve-file=file\n"
-"                      Использовать базовую тональную кривую, заключённую в "
-"файле.\n"
+"                      Использовать базовую тональную кривую, встроенную в файл.\n"
 "                      Аннулирует ключ --base-curve .\n"
 
 #: ufraw_conf.c:1134
@@ -270,11 +265,9 @@ msgid ""
 "                      (default linear).\n"
 msgstr ""
 "--curve=manual|linear|CURVE\n"
-"                      Тип используемой кривой освещённости. CURVE (КРИВАЯ) - "
-"может быть любой\n"
-"                      кривой, предварительно загружавшейся в графическом "
-"режиме (GUI).\n"
-"                      (по умолчанию линейная - linear).\n"
+"                      Тип используемой кривой освещённости. CURVE (КРИВАЯ) — может быть любой\n"
+"                      кривой, предварительно загружавшейся в графическом интерфейсе.\n"
+"                      (по умолчанию используется линейная кривая).\n"
 
 #: ufraw_conf.c:1138
 msgid ""
@@ -293,6 +286,12 @@ msgid ""
 "                      'hsv' restores in HSV space - giving sharp details.\n"
 "                      (default lch).\n"
 msgstr ""
+"--restore=clip|lch|hsv\n"
+"                      Восстанавливает детализацию при отрицательной экспокоррекции.\n"
+"                      'clip' ничего не восстанавливает — нет артефактов.\n"
+"                      'lch' восстановливает в цветовом пространстве LCH, давая мягкие детали.\n"
+"                      'hsv' восстанавливает в цветовом пространстве HSV, давая резкие детали.\n"
+"                      (по умолчанию используется lch).\n"
 
 #: ufraw_conf.c:1146
 msgid ""
@@ -300,24 +299,27 @@ msgid ""
 "                      'digital' linear digital sensor response.\n"
 "                      'film' emulate soft film response. (default digital).\n"
 msgstr ""
+"--clip=digital|film   Обрезает пересветы при положительной экспокоррекции EV.\n"
+"                      'digital' (цифровой тип) — линейный отклик с сенсора камеры.\n"
+"                      'film' (плёночный тип) — эмуляция мягкого отклика пленки. \n"
+"                      (по умолчанию используется digital).\n"
 
 #: ufraw_conf.c:1149
 msgid ""
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 msgstr ""
-"--gamma=GAMMA         Настройка гаммы базовой кривой (по умолчанию 0.45).\n"
+"--gamma=GAMMA         Коррекция гаммы базовой кривой (по умолчанию = 0.45).\n"
 
 #: ufraw_conf.c:1150
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
-msgstr "--linearity=LINEARITY Линейность базовой кривой (по умолчанию 0.10).\n"
+msgstr "--linearity=LINEARITY Линейность базовой кривой (по умолчанию = 0.10).\n"
 
 #: ufraw_conf.c:1151
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
 msgstr ""
-"--saturation=SAT     Настройка насыщенности (по умолчанию 1.0, 0 для Ч/Б "
-"результата).\n"
+"--saturation=SAT     Коррекция насыщенности (по умолчанию = 1.0, 0 — для Ч/Б результата).\n"
 
 #: ufraw_conf.c:1152
 msgid ""
@@ -326,8 +328,7 @@ msgid ""
 "0).\n"
 msgstr ""
 "--exposure=auto|EXPOSURE\n"
-"                      Авто экспозиция или коррекция экспозиции в EV (по "
-"умолчанию 0).\n"
+"                      Автоэкспозиция или коррекция экспозиции в EV (по умолчанию = 0).\n"
 
 #: ufraw_conf.c:1154
 msgid ""
@@ -335,8 +336,7 @@ msgid ""
 "                      Auto black-point or black-point value (default 0).\n"
 msgstr ""
 "--black-point=auto|BLACK\n"
-"                      Авто точка (уровень) чёрного или значение точки (по "
-"умолчанию 0).\n"
+"                      Автоточка (уровень) чёрного или значение точки чёрного (по умолчанию = 0).\n"
 
 #: ufraw_conf.c:1156
 msgid ""
@@ -344,8 +344,7 @@ msgid ""
 "                      Interpolation algorithm to use (default ahd).\n"
 msgstr ""
 "--interpolation=ahd|vng|four-color|bilinear\n"
-"                      Используемый алгоритм интерполяции (по умолчанию "
-"ahd).\n"
+"                      Используемый алгоритм интерполяции (по умолчанию используется ahd).\n"
 
 #: ufraw_conf.c:1159
 msgid "The options which are related to the final output are:\n"
@@ -385,11 +384,9 @@ msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   сжатие JPEG (0-100, по умолчанию 85).\n"
 
 #: ufraw_conf.c:1168
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output JPEG (default embed EXIF).\n"
 msgstr ""
-"--[no]exif            Встроить exif в выходное изображение JPEG (по "
-"умолчанию встроить exif).\n"
+"--[no]exif            Встроить данные EXIF в выходное изображение JPEG (по умолчанию — встроить).\n"
 
 #: ufraw_conf.c:1169
 msgid ""
@@ -423,7 +420,7 @@ msgstr ""
 #: ufraw_conf.c:1174
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
 msgstr ""
-"--darkframe=FILE      Использовать файл FILE для raw вычитания темной рамки "
+"--darkframe=FILE      Использовать файл FILE для вычитания тёмного кадра RAW"
 "(darkframe).\n"
 
 #: ufraw_conf.c:1175
@@ -437,6 +434,7 @@ msgstr ""
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
 msgstr ""
+"--silent              Ничего не выводить при пакетной обработке.\n"
 
 #: ufraw_conf.c:1178
 msgid ""
@@ -453,7 +451,7 @@ msgstr ""
 "Затем, если указан ID-файл, читаются настройки из него. Затем берутся "
 "настройки из\n"
 "ключа --conf, игнорируя входные/выходные имена файлов в ID-файле.\n"
-"Наконец, устанавливаются ключа из командной строки. В пакетном режиме, "
+"Наконец, устанавливаются ключи из командной строки. В пакетном режиме, "
 "вторая\n"
 "группа ключей НЕ читается из файла ресурсов.\n"
 
@@ -482,7 +480,7 @@ msgstr "--batch устарел. Используйте ufraw-batch."
 #: ufraw_conf.c:1392
 #, c-format
 msgid "getopt returned character code 0%o ??"
-msgstr ""
+msgstr "getopt вернул код символа 0%o ??"
 
 #: ufraw_conf.c:1405
 #, c-format
@@ -528,14 +526,14 @@ msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' не является правильным ключом интерполяции."
 
 #: ufraw_conf.c:1507
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid restore option."
-msgstr "%s' не является корректным ключом create-id."
+msgstr "%s' не является корректным ключом восстановления."
 
 #: ufraw_conf.c:1517
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid clip option."
-msgstr "%s' не является корректным ключом create-id."
+msgstr "%s' не является корректным ключом обрезания."
 
 #: ufraw_conf.c:1524
 msgid "you can not specify both --shrink and --size"
@@ -571,15 +569,15 @@ msgstr "'%s' не является правильным путём."
 
 #: ufraw_conf.c:1614
 msgid "cannot output more than one file to the same output"
-msgstr "не могу вывести более одного файла в один и тот же вывод"
+msgstr "Невозможно вывести более одного файла в один и тот же файл"
 
 #: ufraw_embedded.c:45
 msgid "Reading embedded image requires libjpeg."
-msgstr ""
+msgstr "Для чтения встроенного изображения необходима библиотека libjpeg."
 
 #: ufraw_embedded.c:49
 msgid "No embedded image found"
-msgstr "Не найдено встроенного изображения"
+msgstr "Встроенное изображение не найдено"
 
 #: ufraw_embedded.c:67
 #, c-format
@@ -600,7 +598,7 @@ msgstr "высота JPEG thumb (эскиза) %d отличается от ож
 #: ufraw_embedded.c:107
 #, c-format
 msgid "JPEG thumb width %d different than expected %d."
-msgstr "ширина JPEG thumb (эскиза) %d отличается от ожидаемой %d."
+msgstr "ширина эскиза JPEG  %d отличается от ожидаемой %d."
 
 #: ufraw_embedded.c:130 ufraw_embedded.c:275 ufraw_writer.c:112
 #: ufraw_writer.c:214 ufraw_writer.c:230 ufraw_writer.c:295 ufraw_writer.c:314
@@ -617,11 +615,9 @@ msgid "No embedded image read"
 msgstr "Не прочитано встроенное изображение"
 
 #: ufraw_embedded.c:224 ufraw_writer.c:304
-#, fuzzy, c-format
+#, c-format
 msgid "Error creating file '%s'. Unknown file type %d."
-msgstr ""
-"Ошибка создания файла '%s'.\n"
-"%s"
+msgstr "Ошибка создания файла '%s'. Неизвестный тип файла %d."
 
 #: ufraw_embedded.c:236 ufraw_writer.c:123
 #, c-format
@@ -634,13 +630,13 @@ msgid "Error writing '%s'"
 msgstr "Ошибка записи '%s'"
 
 #: ufraw_embedded.c:334
-#, fuzzy, c-format
+#, c-format
 msgid "Unsupported output type (%d) for embedded image"
-msgstr "'%s' не является корректным типом вывода для встроенного изображения."
+msgstr "Неподдерживаемый тип конечного формата файлов (%d) для встроенного изображения"
 
 #: ufraw-gimp.c:276
 msgid "Can't allocate new image."
-msgstr ""
+msgstr "Невозможно создать новое изображение."
 
 #: ufraw-gimp.c:304
 msgid "Loading image"
@@ -649,12 +645,12 @@ msgstr "Загружается снимок"
 #: ufraw-gimp.c:324 ufraw_writer.c:274
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr ""
+msgstr "буфер EXIF длиной %d, слишком длинный, проигнорирован.\n"
 
 #: ufraw-gimp.c:350
 #, c-format
 msgid "Failed to embed output profile '%s' in image."
-msgstr ""
+msgstr "Невозможно встроить профиль вывода '%s' в изображение."
 
 #: ufraw_preview.c:46
 msgid "Raw histogram"
@@ -721,11 +717,11 @@ msgstr "вырезаны"
 
 #: ufraw_preview.c:1280
 msgid "restore in LCH space for soft details"
-msgstr ""
+msgstr "Восстановление в пространстве LCH для получения мягких деталей"
 
 #: ufraw_preview.c:1292
 msgid "restore in HSV space for sharp details"
-msgstr ""
+msgstr "Восстановление в пространстве HSV для получения резких деталей"
 
 #: ufraw_preview.c:1297
 #, c-format
@@ -733,22 +729,24 @@ msgid ""
 "Restore details for negative EV\n"
 "Current state: %s"
 msgstr ""
+"Восстановление деталей при отрицательной экспокоррекции EV\n"
+"Текущее состояние: %s"
 
 #: ufraw_preview.c:1323
 msgid "digital linear"
-msgstr ""
+msgstr "Цифровое, линейное"
 
 #: ufraw_preview.c:1335
 msgid "soft film like"
-msgstr ""
+msgstr "Мягкое, плёночного типа"
 
 #: ufraw_preview.c:1340
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Clip highlights for positive EV\n"
 "Current state: %s"
 msgstr ""
-"Вырезание пересветов\n"
+"Вырезание пересветов при положительной экспокоррекции\n"
 "Текущее состояние: %s"
 
 #: ufraw_preview.c:1618
@@ -757,7 +755,7 @@ msgstr "Параметры UFRaw"
 
 #: ufraw_preview.c:1631
 msgid "Settings"
-msgstr "Настройки"
+msgstr "Параметры"
 
 #: ufraw_preview.c:1634
 msgid "Input color profiles"
@@ -878,9 +876,8 @@ msgid "Spot values:"
 msgstr "Значения в точке:"
 
 #: ufraw_preview.c:2106
-#, fuzzy
 msgid "Exposure compensation in EV"
-msgstr "Компенсация экспозиции"
+msgstr "Компенсация экспозиции в EV"
 
 #: ufraw_preview.c:2124
 msgid "Auto adjust exposure"
@@ -905,8 +902,8 @@ msgid ""
 "Check UFRaw's webpage for information on how to get your\n"
 "camera supported."
 msgstr ""
-"Для модели вашей камеры нету предустановленных значений баланса белого.\n"
-"Посетите интернет-страницу UFRaw для получения инструкции, как сделать\n"
+"Для модели вашей камеры нет предустановленных значений баланса белого.\n"
+"Зайдите на сайт UFRaw, чтобы узнать, как сделать\n"
 "вашу камеру поддерживаемой."
 
 #: ufraw_preview.c:2228
@@ -1185,7 +1182,7 @@ msgstr "Загружается предосмотр"
 
 #: ufraw_routines.c:160
 msgid "Fatal error setting C locale"
-msgstr ""
+msgstr "Критическая ошибка при установке локали С"
 
 #: ufraw_routines.c:270
 #, c-format
@@ -1209,7 +1206,7 @@ msgstr "Ошибка открытия файла '%s': %s"
 
 #: ufraw_saver.c:154
 msgid "Fatal Error: uf->conf->shrink<1"
-msgstr ""
+msgstr "Критическая ошибка: uf->conf->shrink<1"
 
 #: ufraw_saver.c:177
 #, c-format
@@ -1271,19 +1268,19 @@ msgstr "\tШирина "
 
 #: ufraw_saver.c:301
 msgid "8-bit ppm"
-msgstr "8-битные PPM"
+msgstr "8-разрядные PPM"
 
 #: ufraw_saver.c:311
 msgid "16-bit ppm"
-msgstr "16-битные PPM"
+msgstr "16-разрядные PPM"
 
 #: ufraw_saver.c:323
 msgid "8-bit TIFF"
-msgstr "8-битные TIFF"
+msgstr "8-разрядные TIFF"
 
 #: ufraw_saver.c:334
 msgid "16-bit TIFF"
-msgstr "16-битные TIFF"
+msgstr "16-разрядные TIFF"
 
 #: ufraw_saver.c:342
 msgid "ZIP Compress (lossless)"
@@ -1323,26 +1320,26 @@ msgstr "Перезаписать существующие файлы без по
 
 #: ufraw_ufraw.c:136
 msgid "Remote URI is not supported"
-msgstr "Удаленный URI не поддерживается"
+msgstr "Удалённый URI не поддерживается"
 
 #: ufraw_ufraw.c:230
 #, c-format
 msgid "darkframe error: %s is not a raw file\n"
-msgstr "ошибка темного кадра: %s не является RAW файлом\n"
+msgstr "Ошибка тёмного кадра: %s не является файлом RAW\n"
 
 #: ufraw_ufraw.c:240
 #, c-format
 msgid "using darkframe '%s'\n"
-msgstr "использую темный кадр '%s'\n"
+msgstr "Используется темный кадр '%s'\n"
 
 #: ufraw_ufraw.c:245
 #, c-format
 msgid "error loading darkframe '%s'\n"
-msgstr "ошибка загрузки темного кадра '%s'\n"
+msgstr "Ошибка при загрузке тёмного кадра '%s'\n"
 
 #: ufraw_ufraw.c:364
 msgid "Error reading NEF curve"
-msgstr "Ошибка чтения NEF кривой"
+msgstr "Ошибка чтения кривой NEF"
 
 #: ufraw_ufraw.c:427
 msgid "Darkframe is incompatible with main image"
@@ -1351,34 +1348,33 @@ msgstr "Тёмный кадр не совместим с основным изо
 #: ufraw_ufraw.c:556
 #, c-format
 msgid "Can not downsize from %d to %d."
-msgstr "Не могу уменьшить размер из %d в %d."
+msgstr "Невозможно уменьшить размер из %d в %d."
 
 #: ufraw_ufraw.c:655 ufraw_ufraw.c:658
 msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr ""
-"Не могу использовать баланс белого камеры, возвращаюсь к автоматическому "
+"Невозможно использовать баланс белого камеры, возврат к автоматическому \n"
 "балансу белого"
 
 #: ufraw_writer.c:91
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"
-msgstr ""
+msgstr "Имя файла не может совпадать с именем ID-файла '%s'"
 
 #: ufraw_writer.c:140 ufraw_writer.c:155 ufraw_writer.c:207 ufraw_writer.c:223
 #: ufraw_writer.c:284
-#, fuzzy
 msgid "Saving image"
-msgstr "Сохранить снимок"
+msgstr "Сохраняется снимок"
 
 #: ufraw_writer.c:145 ufraw_writer.c:162
-#, fuzzy, c-format
+#, c-format
 msgid "Error creating file '%s': %s."
-msgstr "Ошибка создания файла '%s': %s"
+msgstr "Ошибка при создании файла '%s': %s."
 
 #: ufraw_writer.c:198 ufraw_writer.c:267
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'"
-msgstr ""
+msgstr "Не удалось встроить профиль вывода '%s' in '%s'"
 
 #. First letter of the word 'yes' for the y/n question
 #: ufraw_writer.c:349
@@ -1397,7 +1393,7 @@ msgstr "%s: переписать '%s'?"
 
 #: wb_presets.c:57
 msgid "Manual WB"
-msgstr "Ручной ББ"
+msgstr "Другой ББ"
 
 #: wb_presets.c:58
 msgid "Camera WB"
