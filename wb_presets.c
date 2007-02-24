@@ -1264,6 +1264,13 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "E-500", N_("Neutral fluorescent"), 0, { 1.828125, 1, 1.562500, 0 } }, /*4500K*/
   { "OLYMPUS", "E-500", N_("Daylight fluorescent"), 0, { 2.046875, 1, 1.359375, 0 } }, /*6600K*/
 
+  { "OLYMPUS", "SP510UZ", N_("Daylight"), 0, { 1.656250, 1, 1.621094, 0 } },
+  { "OLYMPUS", "SP510UZ", N_("Cloudy"), 0, { 1.789063, 1, 1.546875, 0 } },
+  { "OLYMPUS", "SP510UZ", N_("Incandescent"), 0, { 1, 1.066667, 2.891667, 0 } },
+  { "OLYMPUS", "SP510UZ", N_("White fluorescent"), 0, { 1.929688, 1, 1.562500, 0 } },
+  { "OLYMPUS", "SP510UZ", N_("Neutral fluorescent"), 0, { 1.644531, 1, 1.843750, 0 } },
+  { "OLYMPUS", "SP510UZ", N_("Daylight fluorescent"), 0, { 1.628906, 1, 2.210938, 0 } },
+
   { "Panasonic", "DMC-FZ30", N_("Daylight"), 0,	{ 1.757576, 1, 1.446970, 0 } },
   { "Panasonic", "DMC-FZ30", N_("Cloudy"), 0,	{ 1.943182, 1, 1.276515, 0 } },
   { "Panasonic", "DMC-FZ30", N_("Fluorescent"), 0, { 1.098485, 1, 2.106061, 0 } },
