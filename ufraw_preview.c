@@ -2252,10 +2252,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     GtkBox *subbox = GTK_BOX(gtk_hbox_new(0,0));
     gtk_table_attach(table, GTK_WIDGET(subbox), 0, 1, 1, 2, 0, 0, 0, 0);
-    if (data->UF->colors>3)
-	label = gtk_label_new(_("Chan. multipliers:"));
-    else
-	label = gtk_label_new(_("Channel multipliers:"));
+    label = gtk_label_new(_("Chan. multipliers:"));
     gtk_box_pack_start(subbox, label, 0, 0, 0);
     for (i=0; i<data->UF->colors; i++) {
 	data->ChannelAdjustment[i] = GTK_ADJUSTMENT(gtk_adjustment_new(
