@@ -2237,7 +2237,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             2000, 12000, 50, 200, 0,
             _("White balance color temperature (K)"));
     data->GreenAdjustment = adjustment_scale(subTable, 0, 2, _("Green"),
-            CFG->green, &CFG->green, 0.2, 2.5, 0.001, 0.005, 3,
+            CFG->green, &CFG->green, 0.2, 2.5, 0.010, 0.050, 3,
             _("Green component"));
     // Spot WB button:
     button = gtk_button_new();
@@ -2269,6 +2269,32 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	g_signal_connect(G_OBJECT(data->ChannelAdjustment[i]), "value-changed",
 		G_CALLBACK(adjustment_update), &CFG->chanMul[i]);
     }
+    /* Interpolation is temporeraly in the WB page */
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+//    box = GTK_BOX(gtk_hbox_new(FALSE, 6));
+//    gtk_table_attach(table, GTK_WIDGET(box), 0, 1, 0, 1,
+//	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
+    event_box = gtk_event_box_new();
+    GtkWidget *icon = gtk_image_new_from_stock("ufraw-interpolation",
+	    GTK_ICON_SIZE_LARGE_TOOLBAR);
+    gtk_container_add(GTK_CONTAINER(event_box), icon);
+    gtk_tooltips_set_tip(data->ToolTips, event_box,
+	    _("Bayer pattern interpolation"), NULL);
+    gtk_table_attach(table, event_box, 0, 1, 0, 1, 0, 0, 0, 0);
+    combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    gtk_combo_box_append_text(combo, _("AHD interpolation"));
+    gtk_combo_box_append_text(combo, _("VNG interpolation"));
+    gtk_combo_box_append_text(combo, _("VNG four color interpolation"));
+    gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
+    if (plugin) {
+        gtk_combo_box_append_text(combo, _("Half-size interpolation"));
+    }
+    gtk_combo_box_set_active(combo, CFG->interpolation);
+    g_signal_connect(G_OBJECT(combo), "changed",
+            G_CALLBACK(combo_update), &CFG->interpolation);
+    gtk_table_attach(table, GTK_WIDGET(combo), 1, 2, 0, 1,
+	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
+//    gtk_box_pack_start(box, GTK_WIDGET(combo), FALSE, FALSE, 0);
     /* End of White Balance setting page */
 
     /* Start of Base Curve page */
@@ -2790,21 +2816,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     data->ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
     gtk_box_pack_start(box, GTK_WIDGET(data->ProgressBar), FALSE, FALSE, 0);
-
-    box = GTK_BOX(gtk_hbox_new(FALSE, 6));
-    gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(box), FALSE, FALSE, 6);
-    combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    gtk_combo_box_append_text(combo, _("AHD interpolation"));
-    gtk_combo_box_append_text(combo, _("VNG interpolation"));
-    gtk_combo_box_append_text(combo, _("VNG four color interpolation"));
-    gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
-    if (plugin) {
-        gtk_combo_box_append_text(combo, _("Half-size interpolation"));
-    }
-    gtk_combo_box_set_active(combo, CFG->interpolation);
-    g_signal_connect(G_OBJECT(combo), "changed",
-            G_CALLBACK(combo_update), &CFG->interpolation);
-    gtk_box_pack_start(box, GTK_WIDGET(combo), FALSE, FALSE, 0);
 
     /* Options button */
     align = gtk_alignment_new(0.99, 0.5, 0, 1);

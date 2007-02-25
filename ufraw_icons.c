@@ -49,4 +49,8 @@ void ufraw_icons_init()
     pixbuf = gdk_pixbuf_new_from_inline(-1, ufraw_restore_hsv_24, FALSE, NULL);
     iconset = gtk_icon_set_new_from_pixbuf(pixbuf);
     gtk_icon_factory_add(factory, "ufraw-restore-hsv", iconset);
+
+    pixbuf = gdk_pixbuf_new_from_inline(-1, ufraw_interpolation_24, FALSE, NULL);
+    iconset = gtk_icon_set_new_from_pixbuf(pixbuf);
+    gtk_icon_factory_add(factory, "ufraw-interpolation", iconset);
 }
