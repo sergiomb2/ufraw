@@ -199,7 +199,7 @@ void parse_exif (int base);
 void romm_coeff (float romm_cam[3][3]);
 void parse_mos (int offset);
 void linear_table (unsigned len);
-int parse_tiff_ifd (int base, int level);
+int parse_tiff_ifd (int base);
 void parse_kodak_ifd (int base);
 void parse_tiff (int base);
 void parse_minolta (int base);
