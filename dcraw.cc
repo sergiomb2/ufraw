@@ -5,25 +5,24 @@
    This is a command-line ANSI C program to convert raw photos from
    any digital camera on any computer running any operating system.
 
-   Attention!  Some parts of this program are restricted under the
-   terms of the GNU General Public License.  Such code is enclosed
-   in "BEGIN GPL BLOCK" and "END GPL BLOCK" declarations.
-   Any code not declared GPL is free for all uses.
+   No license is required to download and use dcraw.c.  However,
+   to lawfully redistribute this code, you must either (a) include
+   full source code* for all executable files containing RESTRICTED
+   functions, (b) remove all RESTRICTED functions, re-implement them,
+   or copy them from an earlier, unrestricted Revision of dcraw.c,
+   or (c) purchase a license from the author.
 
-   Starting in Revision 1.237, the code to support Foveon cameras
-   is under GPL.
+   The functions that process Foveon images have been RESTRICTED
+   since Revision 1.237.  All other code remains free for all uses.
 
-   To lawfully redistribute dcraw.c, you must either (a) include
-   full source code for all executable files containing restricted
-   functions, (b) remove these functions, re-implement them, or
-   copy them from an earlier, non-GPL Revision of dcraw.c, or (c)
-   purchase a license from the author.
+   *If you have not modified dcraw.c in any way, a link to my
+   homepage qualifies as "full source code".
 
-   $Revision: 1.366 $
-   $Date: 2007/02/22 02:27:27 $
+   $Revision: 1.368 $
+   $Date: 2007/02/25 03:09:54 $
  */
 
-#define VERSION "8.60"
+#define VERSION "8.61"
 
 #define _GNU_SOURCE
 #define _USE_MATH_DEFINES
@@ -3915,6 +3914,8 @@ void CLASS parse_thumb_note (int base, unsigned toff, unsigned tlen)
   }
 }
 
+int CLASS parse_tiff_ifd (int base);
+
 void CLASS parse_makernote (int base)
 {
   static const uchar xlat[2][256] = {
@@ -4017,6 +4018,10 @@ void CLASS parse_makernote (int base)
     }
     if (tag == 0x10 && type == 4)
       unique_id = get4();
+    if (tag == 0x11 && is_raw) {
+      fseek (ifp, get4()+base, SEEK_SET);
+      parse_tiff_ifd (base);
+    }
     if (tag == 0x14 && len == 2560 && type == 7) {
       fseek (ifp, 1248, SEEK_CUR);
       goto get2_256;
@@ -4026,7 +4031,7 @@ void CLASS parse_makernote (int base)
       if (tag == 0x1c) tag = 0x1017;
     }
     if (tag == 0x1d)
-      while ((c = fgetc(ifp)))
+      while ((c = fgetc(ifp)) && c != EOF)
 	serial = serial*10 + (isdigit(c) ? c - '0' : c % 10);
     if (tag == 0x81 && type == 4) {
       data_offset = get4();
@@ -4318,7 +4323,7 @@ void CLASS parse_kodak_ifd (int base)
 
 void CLASS parse_minolta (int base);
 
-int CLASS parse_tiff_ifd (int base, int level)
+int CLASS parse_tiff_ifd (int base)
 {
   unsigned entries, tag, type, len, plen=16, save;
   int ifd, use_cm=0, cfa, i, j, c, ima_len=0;
@@ -4429,7 +4434,7 @@ int CLASS parse_tiff_ifd (int base, int level)
 	while (len--) {
 	  i = ftell(ifp);
 	  fseek (ifp, get4()+base, SEEK_SET);
-	  if (parse_tiff_ifd (base, level+1)) break;
+	  if (parse_tiff_ifd (base)) break;
 	  fseek (ifp, i+4, SEEK_SET);
 	}
 	break;
@@ -4607,7 +4612,7 @@ guess_cfa_pc:
 	parse_minolta (j = get4()+base);
 	order = i;
 	fseek (ifp, j, SEEK_SET);
-	parse_tiff_ifd (base, level+1);
+	parse_tiff_ifd (base);
 	break;
       case 50752:
 	read_shorts (cr2_slice, 3);
@@ -4635,7 +4640,7 @@ guess_cfa_pc:
     if ((ifp = tmpfile())) {
       fwrite (buf, sony_length, 1, ifp);
       fseek (ifp, 0, SEEK_SET);
-      parse_tiff_ifd (-sony_offset, level);
+      parse_tiff_ifd (-sony_offset);
       fclose (ifp);
     }
     ifp = sfp;
@@ -4669,7 +4674,7 @@ void CLASS parse_tiff (int base)
   tiff_nifds = 0;
   while ((doff = get4())) {
     fseek (ifp, doff+base, SEEK_SET);
-    if (parse_tiff_ifd (base, 0)) break;
+    if (parse_tiff_ifd (base)) break;
   }
   thumb_misc = 16;
   if (thumb_offset) {
