@@ -15,8 +15,8 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.368 $
-   $Date: 2007/02/25 03:09:54 $
+   $Revision: 1.369 $
+   $Date: 2007/02/27 02:11:06 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -2379,7 +2379,7 @@ void CLASS smal_v9_load_raw()
   if (holes) fill_holes (holes);
 }
 
-/* BEGIN GPL BLOCK */
+/* RESTRICTED code starts here */
 
 void CLASS foveon_decoder (unsigned size, unsigned code)
 {
@@ -3015,7 +3015,7 @@ void CLASS foveon_interpolate()
 }
 #undef image
 
-/* END GPL BLOCK */
+/* RESTRICTED code ends here */
 
 /*
    Seach from the current directory up to the root looking for
@@ -5886,7 +5886,7 @@ nucore:
     height = width - 1;
     pixel_aspect = 1;
   }
-  if (!strcmp(model,"K10D")) {		/* Camera DNGs are not cropped! */
+  if (height == 2624 && width == 3936) { /* Pentax K10D and Samsung GX10 */
     height = 2616;
     width  = 3896;
   }
