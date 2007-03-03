@@ -1886,6 +1886,3 @@ msgstr "Вспышка (в режиме авто)"
 #: wb_presets.c:1227 wb_presets.c:1237 wb_presets.c:1238 wb_presets.c:1239
 msgid "Incandescent warm"
 msgstr "Теплый ламп накаливания"
-
-#~ msgid "Channel multipliers:"
-#~ msgstr "Множители каналов:"

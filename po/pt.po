@@ -1858,6 +1858,3 @@ msgstr "Flash (modo auto)"
 #: wb_presets.c:1227 wb_presets.c:1237 wb_presets.c:1238 wb_presets.c:1239
 msgid "Incandescent warm"
 msgstr "Incandescente quente"
-
-#~ msgid "Channel multipliers:"
-#~ msgstr "Multiplicadores de canal:"
