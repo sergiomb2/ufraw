@@ -111,11 +111,11 @@ Auto exposure or exposure correction in EV. Range -3.00 to 3.00. Default 0.
 
 =item --restore=clip|lch|hsv
 
-Control how hightlights are restored when applying negative EV.
+Control how highlights are restored when applying negative EV.
 'clip' restores nothing and is therefore safe from any artifacts.
 'lch' restores in LCH space, resulting in restored highlights with soft
 details (good for clouds).
-'hsv' restores in HSV space, resulting in restored hightlights with
+'hsv' restores in HSV space, resulting in restored highlights with
 sharp details.
 The default is 'lch'.
 
