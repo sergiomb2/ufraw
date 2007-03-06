@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-05 21:32+0100\n"
-"PO-Revision-Date: 2007-02-08 23:21+0900\n"
+"POT-Creation-Date: 2007-03-06 22:06+0100\n"
+"PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -85,22 +85,18 @@ msgstr "隠しファイルを表示する"
 #. curveIndex, curveCount
 #. Curve data defaults
 #: ufraw_conf.c:42 ufraw_conf.c:53
-#, fuzzy
 msgid "Manual curve"
 msgstr "マニュアルカーブ"
 
 #: ufraw_conf.c:44 ufraw_conf.c:55
-#, fuzzy
 msgid "Linear curve"
-msgstr "線形カーブ"
+msgstr "リニアカーブ"
 
 #: ufraw_conf.c:46
-#, fuzzy
 msgid "Custom curve"
 msgstr "カスタムカーブ"
 
 #: ufraw_conf.c:48
-#, fuzzy
 msgid "Camera curve"
 msgstr "カメラカーブ"
 
@@ -193,16 +189,15 @@ msgstr ""
 "画像を開かずに処理する場合は'ufraw-batch'を使用してください。\n"
 
 #: ufraw_conf.c:1115
-#, fuzzy
 msgid ""
 "The input files can be either raw images or ufraw's ID files. ID files\n"
 "contain a raw image filename and the parameters for handling the image.\n"
 "One can also use an ID file with the option:\n"
 msgstr ""
-"入力ファイルはraw画像とufrawのIDファイルを読み込めます。IDファイルは\n"
+"入力ファイルはraw画像とufrawのIDファイルを読み込めます。IDファイルには\n"
 "画像を操作するためのraw画像のファイル名とパラメータが書き込まれています。\n"
-"指定IDファイルがひとつの場合IDファイルと一緒にオプションを使用することが\n"
-"できます。\n"
+"指定するIDファイルがひとつの場合にはIDファイルと一緒にオプションを使用する\n"
+"ことができます。\n"
 
 #: ufraw_conf.c:1119
 msgid ""
@@ -230,7 +225,6 @@ msgid "--green=GREEN         Green color normalization.\n"
 msgstr "--green=GREEN         緑色の標準化。\n"
 
 #: ufraw_conf.c:1127
-#, fuzzy
 msgid ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
 "                      Type of base tone curve to use. CURVE can be any\n"
@@ -240,8 +234,8 @@ msgstr ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
 "                      使用する基本トーンカーブの種類を指定する。CURVEは\n"
 "                      GUIで以前に読み込んだことのあるものが使えます。\n"
-"                       (デフォルトではカメラカーブがあれば使用。\n"
-"                       無い場合はlinearを使用)。\n"
+"                       (デフォルトではカメラカーブがあればそれを使用。\n"
+"                       無い場合は直線を使用)。\n"
 
 #: ufraw_conf.c:1131
 msgid ""
@@ -274,6 +268,7 @@ msgstr ""
 "                      --curveオプションを上書きします。\n"
 
 #: ufraw_conf.c:1140
+#, fuzzy
 msgid ""
 "--restore=clip|lch|hsv\n"
 "                      Restore details for negative EV.\n"
@@ -282,6 +277,12 @@ msgid ""
 "                      'hsv' restores in HSV space - giving sharp details.\n"
 "                      (default lch).\n"
 msgstr ""
+"--restore=clip|lch|hsv\n"
+"                      ネガティブEVのディテールを復元します。\n"
+"                      'clip' 何もしません - safe from artifacts.\n"
+"                      'lch' LCH空間で復元します - giving soft details.\n"
+"                      'hsv' HSV空間で復元します - giving sharp details.\n"
+"                      (デフォルトはlchです)。\n"
 
 #: ufraw_conf.c:1146
 msgid ""
@@ -411,7 +412,6 @@ msgid ""
 msgstr "--silent              バッチ処理の間なにもメッセージを表示しません。\n"
 
 #: ufraw_conf.c:1178
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified it setting are read. Next, the setting "
@@ -453,7 +453,7 @@ msgstr "--batchオプションでは無くufraw-batchプログラムを使って
 #: ufraw_conf.c:1392
 #, c-format
 msgid "getopt returned character code 0%o ??"
-msgstr ""
+msgstr "getoptが文字コード 0%o を返しました。"
 
 #: ufraw_conf.c:1405
 #, c-format
@@ -496,14 +496,14 @@ msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' は正しい補間オプションではありません"
 
 #: ufraw_conf.c:1507
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid restore option."
-msgstr "'%s' は正しいcreate-idのオプションではありません"
+msgstr "'%s' は正しいrestoreオプションではありません。"
 
 #: ufraw_conf.c:1517
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid clip option."
-msgstr "'%s' は正しいcreate-idのオプションではありません"
+msgstr "'%s' は正しいclipオプションではありません。"
 
 #: ufraw_conf.c:1524
 msgid "you can not specify both --shrink and --size"
@@ -560,12 +560,12 @@ msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
 msgstr "ppmのサムネイルがミスマッチです。高さ %d、幅 %d、バッファ間 %d"
 
 #: ufraw_embedded.c:101
-#, fuzzy, c-format
+#, c-format
 msgid "JPEG thumb height %d different than expected %d."
 msgstr "JPEGサムネイルの高さ %d は推定の %dと違っています"
 
 #: ufraw_embedded.c:107
-#, fuzzy, c-format
+#, c-format
 msgid "JPEG thumb width %d different than expected %d."
 msgstr "JPEGサムネイルの幅 %d は推定の %dと違っています"
 
@@ -584,11 +584,9 @@ msgid "No embedded image read"
 msgstr "埋め込み画像を読み込めません"
 
 #: ufraw_embedded.c:224 ufraw_writer.c:304
-#, fuzzy, c-format
+#, c-format
 msgid "Error creating file '%s'. Unknown file type %d."
-msgstr ""
-"ファイル作成エラー '%s'.\n"
-"%s"
+msgstr "ファイル作成エラー '%s'. %dのファイルタイプが不明です。"
 
 #: ufraw_embedded.c:236 ufraw_writer.c:123
 #, c-format
@@ -601,9 +599,9 @@ msgid "Error writing '%s'"
 msgstr "書き込みエラー '%s'"
 
 #: ufraw_embedded.c:334
-#, fuzzy, c-format
+#, c-format
 msgid "Unsupported output type (%d) for embedded image"
-msgstr "'%s' は埋め込み画像として正しい出力形式ではありません"
+msgstr "'%d'は埋め込み画像としてサポートしていない出力形式です"
 
 #: ufraw-gimp.c:276
 msgid "Can't allocate new image."
@@ -690,26 +688,28 @@ msgstr "切り取る"
 
 #: ufraw_preview.c:1282
 msgid "restore in LCH space for soft details"
-msgstr ""
+msgstr "ソフトのディテールをLCH空間で復元する"
 
 #: ufraw_preview.c:1294
 msgid "restore in HSV space for sharp details"
-msgstr ""
+msgstr "シャープのディテールをHSV空間で復元する"
 
 #: ufraw_preview.c:1299
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Restore details for negative EV\n"
 "Current state: %s"
 msgstr ""
+"ネガティブEVの詳細を元に戻す\n"
+"現在の状態: %s"
 
 #: ufraw_preview.c:1325
 msgid "digital linear"
-msgstr ""
+msgstr "デジタル直線"
 
 #: ufraw_preview.c:1337
 msgid "soft film like"
-msgstr ""
+msgstr "フィルムのようにソフトに"
 
 #: ufraw_preview.c:1342
 #, fuzzy, c-format
@@ -745,7 +745,6 @@ msgid "Luminosity Curves"
 msgstr "輝度カーブ"
 
 #: ufraw_preview.c:1641
-#, fuzzy
 msgid "Configuration"
 msgstr "構成"
 
@@ -821,10 +820,9 @@ msgstr "%s - UFRaw Photo Loader"
 #: ufraw_preview.c:2038 ufraw_preview.c:2702
 #, fuzzy
 msgid "Linear"
-msgstr "リニア"
+msgstr "直線"
 
 #: ufraw_preview.c:2047 ufraw_preview.c:2711
-#, fuzzy
 msgid "Logarithmic"
 msgstr "対数"
 
@@ -849,7 +847,6 @@ msgid "Spot values:"
 msgstr "スポット値:"
 
 #: ufraw_preview.c:2108
-#, fuzzy
 msgid "Exposure compensation in EV"
 msgstr "EV補償"
 
@@ -889,9 +886,8 @@ msgid "Temperature"
 msgstr "色温度"
 
 #: ufraw_preview.c:2238
-#, fuzzy
 msgid "White balance color temperature (K)"
-msgstr "ホワイトバランス色温度 (K)"
+msgstr "ホワイトバランスの色温度 (K)"
 
 #: ufraw_preview.c:2239
 msgid "Green"
@@ -1005,11 +1001,11 @@ msgstr "対象"
 
 #: ufraw_preview.c:2431
 msgid "Perceptual"
-msgstr "知覚的(好ましい色再現)"
+msgstr "知覚的"
 
 #: ufraw_preview.c:2432
 msgid "Relative colorimetric"
-msgstr "相対的色域保持"
+msgstr "相対比色"
 
 #: ufraw_preview.c:2433 ufraw_preview.c:2445 ufraw_preview.c:2447
 msgid "Saturation"
@@ -1017,7 +1013,7 @@ msgstr "彩度"
 
 #: ufraw_preview.c:2434
 msgid "Absolute colorimetric"
-msgstr "絶対的色域保持"
+msgstr "絶対比色"
 
 #. End of Color management page
 #. Start of Corrections page
@@ -1043,17 +1039,14 @@ msgstr "カーブをデフォルトに戻す"
 
 # ブラックポイントをどう訳すか
 #: ufraw_preview.c:2518
-#, fuzzy
 msgid "Black point: 0.000"
 msgstr "ブラックポイント: 0.000"
 
 #: ufraw_preview.c:2535
-#, fuzzy
 msgid "Reset black-point to default"
 msgstr "ブラックポイントをデフォルトに戻す"
 
 #: ufraw_preview.c:2545
-#, fuzzy
 msgid "Auto adjust black-point"
 msgstr "ブラックポイントを自動調整"
 
@@ -1167,7 +1160,7 @@ msgstr "プレビュー画像を読み込んでいます"
 
 #: ufraw_routines.c:164
 msgid "Fatal error setting C locale"
-msgstr ""
+msgstr "深刻なエラー : Cロケールの設定"
 
 #: ufraw_routines.c:274
 #, c-format
@@ -1191,7 +1184,7 @@ msgstr "ファイルを開くのに失敗しました '%s': %s"
 
 #: ufraw_saver.c:154
 msgid "Fatal Error: uf->conf->shrink<1"
-msgstr ""
+msgstr "深刻なエラー: uf->conf->shrink<1"
 
 #: ufraw_saver.c:177
 #, c-format
@@ -1288,12 +1281,10 @@ msgid "No"
 msgstr "いいえ"
 
 #: ufraw_saver.c:387
-#, fuzzy
 msgid "Also"
 msgstr "IDファイルも"
 
 #: ufraw_saver.c:388
-#, fuzzy
 msgid "Only"
 msgstr "IDファイルのみ"
 
@@ -1334,12 +1325,12 @@ msgstr "NEFカーブの読込に失敗しました"
 msgid "Darkframe is incompatible with main image"
 msgstr "ダークフレームはメイン画像と互換性がありません"
 
-#: ufraw_ufraw.c:575
+#: ufraw_ufraw.c:577
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "%d から %d へダウンサイズできません。"
 
-#: ufraw_ufraw.c:674 ufraw_ufraw.c:677
+#: ufraw_ufraw.c:676 ufraw_ufraw.c:679
 msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr "カメラのホワイトバランスが使えないので自動ホワイトバランスに戻ります。"
 
@@ -1354,7 +1345,7 @@ msgid "Saving image"
 msgstr "画像を保存しています"
 
 #: ufraw_writer.c:145 ufraw_writer.c:162
-#, fuzzy, c-format
+#, c-format
 msgid "Error creating file '%s': %s."
 msgstr "ファイル作成エラー '%s': %s"
 
@@ -1436,7 +1427,7 @@ msgstr "冷白色蛍光灯"
 
 #: wb_presets.c:50
 msgid "Warm white fluorescent"
-msgstr "昼白色蛍光灯"
+msgstr "温白色蛍光灯"
 
 #: wb_presets.c:51
 msgid "Daylight fluorescent"
