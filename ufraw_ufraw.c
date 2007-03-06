@@ -475,7 +475,9 @@ int ufraw_load_raw(ufraw_data *uf)
 	int c, max = raw->cam_mul[0];
 	for (c=1; c<raw->colors; c++) max = MAX(raw->cam_mul[c], max);
 	/* Camera multipliers in DNG file are normalized to 1.
-	 * Therefore, they can not be used to normalize exposure. */
+	 * Therefore, they can not be used to normalize exposure.
+	 * Also, for some Canon DSLR cameras dcraw cannot read the
+	 * camera multipliers (1D for example). */
 	if ( max < 100 ) {
 	    uf->conf->ExposureNorm = 0;
 	    ufraw_message(UFRAW_SET_LOG, "Failed to normalizing exposure\n");
