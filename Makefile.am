@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.28 2007/02/18 23:16:11 udifuchs Exp $
+# $Id: Makefile.am,v 1.29 2007/03/06 21:59:13 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -16,7 +16,7 @@ endif
 POD2MAN= @POD2MAN@
 man_MANS = ufraw.1
 
-CLEANFILES = ufraw.1 ufraw.schemas
+CLEANFILES = ufraw.1 ufraw.schemas ufraw_icon.opc ufraw-setup.bmp
 
 if INSTALL_MIME
   app_DATA = ufraw.desktop
@@ -85,7 +85,7 @@ endif
 #	{ pngtopnm $^ | pnmquant 256; pngtopnm -alpha $^; } | ppmtowinicon -andpgms -output $@ - -
 
 ufraw_icon.opc: ufraw_icon.rc ufraw_icon.ico
-	$(WINDRES) -i $< -o $@
+	$(WINDRES) --include-dir=$(srcdir) --input $< --output $@
 
 .pod.1:
 	$(POD2MAN) --section 1 --center "" --release UFRAW $< $@
