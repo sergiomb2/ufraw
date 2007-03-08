@@ -75,7 +75,7 @@ int  fc_INDI (const unsigned filters, const int row, const int col)
   /* Assume that we are handling the Leaf CatchLight with
    * top_margin = 8; left_margin = 18; */
 //  return filter[(row+top_margin) & 15][(col+left_margin) & 15];
-  return filter[(row+10) & 8][(col+18) & 15];
+  return filter[(row+8) & 15][(col+18) & 15];
 }
 
 void CLASS merror (void *ptr, char *where)
