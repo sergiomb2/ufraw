@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.57 2007/03/08 21:00:54 udifuchs Exp $
+dnl $Id: configure.ac,v 1.58 2007/03/08 21:16:16 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -12,25 +12,6 @@ AC_PROG_CXX
 AC_PROG_INSTALL
 
 AC_CHECK_PROGS(POD2MAN, pod2man, , $PATH)
-
-# nikon_curve makes some sizeof assumptions, requiring the following tests
-# (could be avoided by using C99 standard types)
-AC_CHECK_SIZEOF(short)
-if test $ac_cv_sizeof_short -ne 2; then
-    AC_MSG_ERROR([size of short must be 2])
-fi
-AC_CHECK_SIZEOF(int)
-if test $ac_cv_sizeof_int -ne 4; then
-    AC_MSG_ERROR([size of int must be 4])
-fi
-AC_CHECK_SIZEOF(float)
-if test $ac_cv_sizeof_float -ne 4; then
-    AC_MSG_ERROR([size of float must be 4])
-fi
-AC_CHECK_SIZEOF(double)
-if test $ac_cv_sizeof_double -ne 8; then
-    AC_MSG_ERROR([size of double must be 8])
-fi
 
 UFRAW_CFLAGS="-ffast-math -fomit-frame-pointer"
 if test "x$GCC" = "xyes"; then

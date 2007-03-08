@@ -232,12 +232,18 @@ void DEBUG_PRINT(char *format, ...)
 #endif
 }
 
+// Assert something at compile time (must use this inside a function);
+// works because compilers won't let us declare negative-length arrays.
+#define STATIC_ASSERT(cond) \
+    { (void)((int (*)(char failed_static_assertion[(cond)?1:-1]))0); }
+
 /***********************************************************************
 isBigEndian:
 	Determines if the machine we are running on is big endian or not.
 ************************************************************************/
 int isBigEndian()
 {
+    STATIC_ASSERT(sizeof(short)==2);
     short x;
     unsigned char EndianTest[2] = { 1, 0 };
 
@@ -252,6 +258,7 @@ ShortVal:
 ************************************************************************/
 short ShortVal(short s)
 {
+    STATIC_ASSERT(sizeof(short)==2);
     if (isBigEndian()) {
 	unsigned char b1, b2;
 
@@ -269,6 +276,7 @@ LongVal:
 ************************************************************************/
 int LongVal(int i)
 {
+    STATIC_ASSERT(sizeof(int)==4);
     if (isBigEndian()) {
 	unsigned char b1, b2, b3, b4;
 
@@ -288,6 +296,7 @@ FloatVal:
 ************************************************************************/
 float FloatVal(float f)
 {
+    STATIC_ASSERT(sizeof(float)==4);
     if (isBigEndian()) {
 	union {
 	    float f;
@@ -310,6 +319,7 @@ DoubleVal:
 ************************************************************************/
 double DoubleVal(double d)
 {
+    STATIC_ASSERT(sizeof(double)==8);
     if (isBigEndian()) {
 	union {
 	    double d;
