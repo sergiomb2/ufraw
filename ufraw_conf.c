@@ -1262,8 +1262,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         {"out-path", 1, 0, 'p'},
         {"output", 1, 0, 'o'},
         {"darkframe",1,0,'a'},
-        {"restore", 0, 0, 'r'},
-        {"clip", 0, 0, 'u'},
+        {"restore", 1, 0, 'r'},
+        {"clip", 1, 0, 'u'},
         {"conf", 1, 0, 'C'},
 /* Binary flags that don't have a value are here at the end */
         {"zip", 0, 0, 'z'},
