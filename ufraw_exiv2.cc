@@ -14,20 +14,16 @@
 #include "config.h"
 #endif
 
-#ifdef HAVE_EXIV2
-#include <exiv2/image.hpp>
-#include <exiv2/exif.hpp>
-#include <sstream>
-#include <cassert>
 extern "C" {
 #include <glib.h>
 #include "ufraw.h"
 }
 
-// Exiv2 versions before 0.10 didn't have this file and the macros
-#ifndef EXIV2_CHECK_VERSION
-#define EXIV2_CHECK_VERSION(a,b,c) (false)
-#endif
+#ifdef HAVE_EXIV2
+#include <exiv2/image.hpp>
+#include <exiv2/exif.hpp>
+#include <sstream>
+#include <cassert>
 
 extern "C" int ufraw_exif_from_exiv2(ufraw_data *uf)
 {
@@ -205,5 +201,12 @@ catch (Exiv2::AnyError& e) {
     return UFRAW_ERROR;
 }
 
+}
+#else
+extern "C" int ufraw_exif_from_exiv2(ufraw_data *uf)
+{
+    uf = uf;
+    ufraw_message(UFRAW_SET_LOG, "ufraw built without EXIF support\n");
+    return UFRAW_ERROR;
 }
 #endif /* HAVE_EXIV2 */

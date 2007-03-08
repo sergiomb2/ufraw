@@ -23,6 +23,10 @@
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
+#ifdef HAVE_EXIV2
+#include <exiv2/exv_conf.h>
+#endif
+
 const conf_data conf_default = {
     /* Internal data */
     sizeof(conf_data), 7, /* confSize, version */
@@ -600,7 +604,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	g_free(outPath);
 	g_free(inPath);
     }
-					    
+
     /* GUI settings are only saved to .ufrawrc */
     if (IDFilename==NULL) {
         if (c->saveConfiguration!=conf_default.saveConfiguration)
@@ -1186,44 +1190,37 @@ N_("Last, but not least, --version displays the version number and compilation\n
 "END"
 };
 
-char versionText[]= 
-"%s " VERSION "\n" 
- 
-"EXIF " 
-#ifdef HAVE_LIBEXIF 
-"enabled.\n" 
-#else 
-"disabled.\n" 
-#endif 
- 
-"EXIV2 " 
-#ifdef HAVE_EXIV2 
-"enabled.\n" 
-#else 
-"disabled.\n" 
-#endif 
- 
-"JPEG "  
-#ifdef HAVE_LIBJPEG 
-"enabled.\n" 
-#else 
-"disabled.\n" 
-#endif 
- 
-"TIFF "  
-#ifdef HAVE_LIBTIFF 
-"enabled.\n" 
-#else 
-"disabled.\n" 
-#endif 
- 
-"ZIP "  
-#ifdef HAVE_LIBZ 
-"enabled.\n" 
-#else 
-"disabled.\n" 
-#endif 
-""; 
+char versionText[]=
+"%s " VERSION "\n"
+
+"EXIV2 "
+#ifdef HAVE_EXIV2
+EXV_PACKAGE_VERSION "\n"
+#else
+"disabled.\n"
+#endif
+
+"JPEG "
+#ifdef HAVE_LIBJPEG
+"enabled.\n"
+#else
+"disabled.\n"
+#endif
+
+"TIFF "
+#ifdef HAVE_LIBTIFF
+"enabled.\n"
+#else
+"disabled.\n"
+#endif
+
+"ZIP "
+#ifdef HAVE_LIBZ
+"enabled.\n"
+#else
+"disabled.\n"
+#endif
+"";
 
 /* ufraw_process_args returns values:
  * -1     : an error occurred.
@@ -1623,7 +1620,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	cmd->darkframe = ufraw_load_darkframe(df);
         g_strlcpy(cmd->darkframeFile, df, max_path);
 	g_free(df);
-    }    
+    }
     /* cmd->inputFilename is used to store the conf file */
     g_strlcpy(cmd->inputFilename, "", max_path);
     if (conf!=NULL)

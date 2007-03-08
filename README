@@ -35,24 +35,23 @@ settings. It should look like that:
 configure: ====================== summary =====================
 configure: build GIMP plug-in: yes
 configure: hidden directories support (GTK>=2.6): yes
-configure: EXIF support using libexif: no
 configure: EXIF support using exiv2: no
 configure: JPEG support: yes
 configure: TIFF support: yes
 configure: lossless compressed TIFF support: yes
 
 If some of the lines end with 'no' instead of 'yes', it is not the end of
-the world. It only means that this option in UFRaw will be disabled. EXIF
-support is disabled by default. It can be enabled for Canon (CRW, CR2),
-Minolta (MRW), Nikon (NEF), Pentax (PEF), Samsung (PEF), Sony (SR2, ARW)
-and Adobe's DNG by running configure as:
-./configure --with-exiv2 (requires exiv2-0.10 or newer)
-and for Fuji (RAF) by:
-./configure --with-libexif (requires libexif-0.6.13 or newer)
+the world. It only means that this option in UFRaw will be disabled.
 
 These paragraphs use the term "development package"; the general
 requirement is to have the full library installed, including header
 files used in compilation of programs using the library.
+
+The exiv2 development package is required for reading the EXIF data.
+Supported formats are Canon (CRW, CR2), Fuji (RAF), Minolta (MRW),
+Nikon (NEF), Pentax (PEF), Samsung (PEF), Sony (SR2, ARW)
+and Adobe's DNG. If the configuration script does not find this package
+this option will be suppressed.
 
 The libjpeg development package is required for saving image in the
 JPEG format in the stand-alone tool. It is also needed to support
@@ -75,10 +74,6 @@ Other options for the configuration script are:
 --enable-extras: build the extra binaries - dcraw, nikon-curve.
 
 --enable-mime:   install mime files. (see mime section later on)
-
---with-libexif:  use libexif to read raw EXIF data.
-
---with-exiv2:    use Exiv2 to read raw EXIF data.
 
 --with-prefix=PREFIX: use also PREFIX as input prefix for the build.
 
@@ -225,8 +220,8 @@ Notice also that the UFRaw executables have different dependencies.
 * ufraw-gimp depends on libgimp and all its derivatives.
 * ufraw only depends on libgtk and its derivatives.
 * ufraw-batch only depends on glib.
-In addition all the executables may depend on lcms, libjpeg, libtiff, zlib,
-libexiv2 and libexif, depending on the way you configured UFRaw's build.
+In addition all the executables may depend on lcms, libjpeg, libtiff, zlib
+and exiv2, depending on the way you configured UFRaw's build.
 
 Lastly, I'm requesting that you should consider adding a link to
 http://ufraw.sourceforge.net/ where ever is appropriate on the package page.

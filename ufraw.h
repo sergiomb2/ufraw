@@ -280,8 +280,8 @@ void ufraw_chooser(conf_data *conf, char *defPath);
 /* prototype for functions in ufraw_icons.c */
 void ufraw_icons_init();
 
-/* prototype for functions in ufraw_exif.c */
-int ufraw_exif_from_raw(ufraw_data *uf);
+/* prototype for functions in ufraw_exiv2.cc */
+int ufraw_exif_from_exiv2(ufraw_data *uf);
 
 /* status numbers from DCRaw and UFRaw */
 #define UFRAW_SUCCESS 0

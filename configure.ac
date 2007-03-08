@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.56 2007/03/08 16:54:46 nkbj Exp $
+dnl $Id: configure.ac,v 1.57 2007/03/08 21:00:54 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -159,42 +159,14 @@ AC_CHECK_HEADER(tiffio.h,
   AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
 have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
 
-AC_MSG_CHECKING(whether to read raw EXIF data using libexif)
-AC_ARG_WITH(libexif,
-  [  --with-libexif          use libexif to read raw EXIF data],
-  [ with_libexif=yes ],
-  [ with_libexif=no ])
-AC_MSG_RESULT($with_libexif)
-have_libexif=no
-COMMENT_LIBEXIF=";"
-# Check for libexif via pkg-config.
-if test $with_libexif = yes; then
-  PKG_CHECK_MODULES(EXIF, libexif >= 0.6.13,
-    [ have_libexif=yes
-      AC_DEFINE(HAVE_LIBEXIF, 1, have libexif)
-      COMMENT_LIBEXIF="" ],
-    AC_MSG_RESULT($EXIF_PKG_ERRORS))
-fi
-AC_SUBST(COMMENT_LIBEXIF)
+PKG_CHECK_MODULES(EXIV2, exiv2,
+  [ have_exiv2=yes
+    AC_DEFINE(HAVE_EXIV2, 1, have exiv2) ],
+  [ have_exiv2=no
+    AC_MSG_RESULT($EXIV2_PKG_ERRORS) ] )
 
-AC_MSG_CHECKING(whether to read raw EXIF data using exiv2)
-AC_ARG_WITH(exiv2,
-  [  --with-exiv2            use exiv2 to read raw EXIF data],
-  [ with_exiv2=yes ],
-  [ with_exiv2=no ])
-AC_MSG_RESULT($with_exiv2)
-have_exiv2=no
-if test $with_exiv2 = yes; then
-  AC_CHECK_PROGS(EXIV2_CONFIG, exiv2-config, , $PATH)
-  if test -n "$EXIV2_CONFIG"; then
-    have_exiv2=yes
-    AC_DEFINE(HAVE_EXIV2, 1, have exiv2)
-    EXIV2_LIBS=`$EXIV2_CONFIG --libs`
-  fi
-fi
-
-UFRAW_CFLAGS="$UFRAW_CFLAGS $EXIF_CFLAGS $GIMP_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS"
-UFRAW_LDADD="$EXIF_LIBS $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS"
+UFRAW_CFLAGS="$UFRAW_CFLAGS $EXIV2_CFLAGS $GIMP_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS"
+UFRAW_LDADD="$EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS"
 
 if test $ufraw_win32 = yes; then
   INSTALL_USER="cp ufraw-gimp.exe \"\$(USERPROFILE)\.gimp-2.0\plug-ins\""
@@ -273,7 +245,6 @@ AC_OUTPUT
 AC_MSG_NOTICE(====================== summary =====================)
 AC_MSG_NOTICE(build GIMP plug-in: $enable_gimp)
 AC_MSG_NOTICE([hidden directories support (GTK>=2.6): $have_gtk_2_6])
-AC_MSG_NOTICE(EXIF support using libexif: $have_libexif)
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(PNG support: $have_png)

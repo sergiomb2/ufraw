@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.29 2007/03/06 21:59:13 udifuchs Exp $
+# $Id: Makefile.am,v 1.30 2007/03/08 21:00:54 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -32,7 +32,7 @@ endif
 #html_DATA = user_guide.html
 #htmldir = $(datadir)/doc/ufraw
 
-UFRAW_COMMON = ufraw_ufraw.c ufraw_routines.c ufraw_exif.c ufraw_developer.c \
+UFRAW_COMMON = ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
     ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw.h \
     wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
     nikon_curve.c nikon_curve.h \
@@ -111,7 +111,7 @@ windows-installer: ufraw-$(VERSION)-setup.exe
 
 ufraw-$(VERSION)-setup.exe: ufraw-setup.iss ufraw.exe ufraw-batch.exe \
     ufraw-gimp.exe ufraw-setup.bmp ufraw_icon.bmp ufraw_icon.ico \
-    $(PREFIX)/bin/liblcms-1-16-ufraw.dll $(PREFIX)/bin/libexif-12.dll
+    $(PREFIX)/bin/liblcms-1-16-ufraw.dll
 	strip ufraw.exe ufraw-batch.exe ufraw-gimp.exe
 	$(WINE) $(ISCC) ufraw-setup.iss
 
