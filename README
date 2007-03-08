@@ -34,11 +34,11 @@ settings. It should look like that:
 
 configure: ====================== summary =====================
 configure: build GIMP plug-in: yes
-configure: hidden directories support (GTK>=2.6): yes
 configure: EXIF support using exiv2: no
 configure: JPEG support: yes
+configure: PNG support: yes
 configure: TIFF support: yes
-configure: lossless compressed TIFF support: yes
+configure: TIFF deflate (lossless compression) support: yes
 
 If some of the lines end with 'no' instead of 'yes', it is not the end of
 the world. It only means that this option in UFRaw will be disabled.

@@ -37,7 +37,7 @@ typedef struct {
     GtkToggleButton *jpegButton;
 } save_as_dialog_data;
 
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
 
@@ -231,7 +231,7 @@ long ufraw_saver(void *widget, gpointer user_data)
 
     gtk_dialog_set_default_response(GTK_DIALOG(fileChooser), GTK_RESPONSE_OK);
     ufraw_focus(fileChooser, TRUE);
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
     GtkWidget *hidden_button = gtk_check_button_new_with_label( _("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(hidden_button), FALSE);

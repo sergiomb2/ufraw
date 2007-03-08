@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.58 2007/03/08 21:16:16 udifuchs Exp $
+dnl $Id: configure.ac,v 1.59 2007/03/08 21:34:55 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -84,16 +84,6 @@ if $PKG_CONFIG --atleast-version=2.2 gimpui-2.0; then
     AC_DEFINE(GTK_DISABLE_DEPRECATED, [], disable deprecated gtk+ features)
   fi
 fi
-
-# Enable GTK+ 2.6 features (hidden directories in GtkFileChooser)
-AC_MSG_CHECKING([if GTK+ is version 2.6 or higher])
-if $PKG_CONFIG --atleast-version=2.6 gtk+-2.0; then
-  have_gtk_2_6=yes
-  AC_DEFINE(HAVE_GTK_2_6, [], have atleast version 2.6 of gtk+)
-else
-  have_gtk_2_6=no
-fi
-AC_MSG_RESULT($have_gtk_2_6)
 
 # The GIMP plug-in should be installed under gimplibdir.
 # XXX It is not clear if we should install in the gimplibdir-like
@@ -225,7 +215,6 @@ AC_OUTPUT
 
 AC_MSG_NOTICE(====================== summary =====================)
 AC_MSG_NOTICE(build GIMP plug-in: $enable_gimp)
-AC_MSG_NOTICE([hidden directories support (GTK>=2.6): $have_gtk_2_6])
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(PNG support: $have_png)

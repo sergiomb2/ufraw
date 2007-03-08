@@ -20,7 +20,7 @@
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *fileChooser)
 {
     gtk_file_chooser_set_show_hidden(fileChooser,
@@ -43,7 +43,7 @@ void ufraw_chooser(conf_data *conf, char *defPath)
             GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL));
     gtk_window_set_type_hint(GTK_WINDOW(fileChooser),
 	    GDK_WINDOW_TYPE_HINT_NORMAL);
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
     gtk_window_set_icon_name(GTK_WINDOW(fileChooser), "ufraw-ufraw");
 #else
     gtk_window_set_icon(GTK_WINDOW(fileChooser),
@@ -93,7 +93,7 @@ void ufraw_chooser(conf_data *conf, char *defPath)
     gtk_file_filter_add_pattern(filter, "*");
     gtk_file_chooser_add_filter(fileChooser, filter);
 
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
     GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);

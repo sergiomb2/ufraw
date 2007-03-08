@@ -179,7 +179,7 @@ void run(const gchar *name,
 
 	    ufraw_icons_init();
 	    GtkWidget *dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
 	    gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw-ufraw");
 #else
 	    gtk_window_set_icon(GTK_WINDOW(dummyWindow),

@@ -29,7 +29,7 @@
 #include "ufraw.h"
 #include "curveeditor_widget.h"
 
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
 
@@ -175,7 +175,7 @@ void load_curve(GtkWidget *widget, long curveType)
             GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL));
     ufraw_focus(fileChooser, TRUE);
     gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
     GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
@@ -277,7 +277,7 @@ void save_curve(GtkWidget *widget, long curveType)
             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
             GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL));
     ufraw_focus(fileChooser, TRUE);
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
     GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
@@ -360,7 +360,7 @@ void load_profile(GtkWidget *widget, long type)
             GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL));
     ufraw_focus(fileChooser, TRUE);
     gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
     GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
@@ -1250,7 +1250,7 @@ void button_update(GtkWidget *button, gpointer user_data)
 
 void restore_details_button_set(GtkButton *button, preview_data *data)
 {
-#ifndef HAVE_GTK_2_6
+#if !GTK_CHECK_VERSION(2,6,0)
     GtkWidget *lastImage = gtk_bin_get_child(GTK_BIN(button));
     if ( lastImage!=NULL )
 	gtk_container_remove(GTK_CONTAINER(button), lastImage);
@@ -1259,7 +1259,7 @@ void restore_details_button_set(GtkButton *button, preview_data *data)
     const char *state;
     switch (CFG->restoreDetails) {
     case clip_details:
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
 	gtk_button_set_image(button, gtk_image_new_from_stock(
 		GTK_STOCK_CUT, GTK_ICON_SIZE_BUTTON));
 #else
@@ -1270,7 +1270,7 @@ void restore_details_button_set(GtkButton *button, preview_data *data)
 	state = _("clip");
 	break;
     case restore_lch_details:
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
 	gtk_button_set_image(button, gtk_image_new_from_stock(
 		"ufraw-restore-lch", GTK_ICON_SIZE_BUTTON));
 #else
@@ -1282,7 +1282,7 @@ void restore_details_button_set(GtkButton *button, preview_data *data)
 	state = _("restore in LCH space for soft details");
 	break;
     case restore_hsv_details:
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
 	gtk_button_set_image(button, gtk_image_new_from_stock(
 		"ufraw-restore-hsv", GTK_ICON_SIZE_BUTTON));
 #else
@@ -1305,7 +1305,7 @@ void restore_details_button_set(GtkButton *button, preview_data *data)
 
 void clip_highlights_button_set(GtkButton *button, preview_data *data)
 {
-#ifndef HAVE_GTK_2_6
+#if !GTK_CHECK_VERSION(2,6,0)
     GtkWidget *lastImage = gtk_bin_get_child(GTK_BIN(button));
     if ( lastImage!=NULL )
 	gtk_container_remove(GTK_CONTAINER(button), lastImage);
@@ -1314,7 +1314,7 @@ void clip_highlights_button_set(GtkButton *button, preview_data *data)
     const char *state;
     switch (CFG->clipHighlights) {
     case digital_highlights:
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
 	gtk_button_set_image(button, gtk_image_new_from_stock(
 		"ufraw-digital", GTK_ICON_SIZE_BUTTON));
 #else
@@ -1325,7 +1325,7 @@ void clip_highlights_button_set(GtkButton *button, preview_data *data)
 	state = _("digital linear");
 	break;
     case film_highlights:
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
 	gtk_button_set_image(button, gtk_image_new_from_stock(
 		"ufraw-film", GTK_ICON_SIZE_BUTTON));
 #else
@@ -1979,7 +1979,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_free(utf8_filename);
 
     ufraw_icons_init();
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
     gtk_window_set_icon_name(GTK_WINDOW(previewWindow), "ufraw-ufraw");
 #else
     gtk_window_set_icon(GTK_WINDOW(previewWindow),
@@ -2516,7 +2516,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(button_update), NULL);
 
     data->BlackLabel = gtk_label_new(_("Black point: 0.000"));
-#ifdef HAVE_GTK_2_6
+#if GTK_CHECK_VERSION(2,6,0)
     gtk_misc_set_alignment(GTK_MISC(data->BlackLabel), 0.5, 1.0);
     gtk_label_set_angle(GTK_LABEL(data->BlackLabel), 90);
     gtk_table_attach(subTable, data->BlackLabel, 0, 1, 5, 6,
