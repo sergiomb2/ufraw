@@ -27,7 +27,7 @@ short order;
 char *ifname, make[64], model[64], model2[64], *meta_data, cdesc[5];
 float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
 time_t timestamp;
-unsigned shot_order, kodak_cbpp, filters, unique_id, *oprof;
+unsigned shot_order, kodak_cbpp, filters, exif_cfa, unique_id, *oprof;
 unsigned profile_offset, profile_length;
 unsigned data_offset, strip_offset, curve_offset, meta_offset, meta_length;
 int thumb_offset, thumb_length, thumb_width, thumb_height, thumb_misc;
