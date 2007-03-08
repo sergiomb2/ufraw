@@ -477,6 +477,13 @@ const wb_data wb_preset[] = {
   { "Minolta", "DiMAGE A2", Tungsten, 0,	{ 1.097656, 1, 2.882812, 0 } },
   { "Minolta", "DiMAGE A2", Tungsten, 3,	{ 1.191406, 1, 2.601562, 0 } },
 
+  { "Minolta", "DiMAGE Z2", Daylight, 0,	{ 1.675985, 1, 1.734786, 0 } },
+  { "Minolta", "DiMAGE Z2", Cloudy, 0,		{ 1.844637, 1, 1.561251, 0 } },
+  { "Minolta", "DiMAGE Z2", Tungsten, 0,	{ 1, 1.030208, 3.294546, 0 } },
+  { "Minolta", "DiMAGE Z2", Fluorescent, 0,	{ 1.300931, 1, 2.555140, 0 } },
+  { "Minolta", "DiMAGE Z2", Flash, 0,		{ 1.637154, 1, 1.686841, 0 } },
+  { "Minolta", "DiMAGE Z2", Shade, 0,		{ 1.970521, 1, 1.445588, 0 } },
+
   { "Minolta", "DiMAGE G500", Daylight, 0, { 1.496094, 1, 1.121094, 0 } },
   { "Minolta", "DiMAGE G500", Cloudy, 0,	{ 1.527344, 1, 1.105469, 0 } },
   { "Minolta", "DiMAGE G500", Fluorescent, 0,	{ 1.382813, 1, 1.347656, 0 } },
@@ -1294,6 +1301,16 @@ const wb_data wb_preset[] = {
   { "Panasonic", "DMC-FZ50", Shade, 0,		{ 2.463878, 1, 1.414449, 0 } },
   { "Panasonic", "DMC-FZ50", Fluorescent, 0,	{ 1.365019, 1, 2.311787, 0 } },
   { "Panasonic", "DMC-FZ50", Flash, 0,		{ 2.338403, 1, 1.338403, 0 } },
+
+  /* It seems that the *ist D WB settings are not really presets. */
+  { "PENTAX", "*ist D", Daylight, 0,		{ 1.460938, 1, 1.019531, 0 } },
+  { "PENTAX", "*ist D", Shade, 0,		{ 1.734375, 1, 1.000000, 0 } },
+  { "PENTAX", "*ist D", Cloudy, 0,		{ 1.634921, 1.015873, 1, 0 } },
+  { "PENTAX", "*ist D", DaylightFluorescent, 0,	{ 1.657025, 1.057851, 1, 0 } },
+  { "PENTAX", "*ist D", NeutralFluorescent, 0,	{ 1.425781, 1, 1.117188, 0 } },
+  { "PENTAX", "*ist D", WhiteFluorescent, 0,	{ 1.328125, 1, 1.210938, 0 } },
+  { "PENTAX", "*ist D", Tungsten, 0,		{ 1.000000, 1, 2.226563, 0 } },
+  { "PENTAX", "*ist D", Flash, 0,		{ 1.750000, 1, 1.000000, 0 } },
 
   /* It seems that the *ist DL WB settings are not really presets. */
   { "PENTAX", "*ist DL", Daylight, 0,		{ 1.546875, 1, 1.007812, 0 } },
