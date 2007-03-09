@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.30 2007/03/08 21:00:54 udifuchs Exp $
+# $Id: Makefile.am,v 1.31 2007/03/09 23:13:47 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -11,6 +11,11 @@ endif
 if MAKE_GIMP
   gimpbin_PROGRAMS = ufraw-gimp
   gimpbindir = $(GIMP_LIBDIR)/plug-ins
+endif
+
+if MAKE_CINEPAINT
+  cinepaintbin_PROGRAMS = cinepaint-ufraw
+  cinepaintbindir = $(CINEPAINT_LIBDIR)/plug-ins
 endif
 
 POD2MAN= @POD2MAN@
@@ -63,7 +68,14 @@ ufraw_batch_LDFLAGS = @CONSOLE@
 
 if MAKE_GIMP
   ufraw_gimp_SOURCES = ufraw-gimp.c $(UFRAW_GTK_COMMON)
+  ufraw_gimp_CFLAGS = $(AM_CFLAGS) $(GIMP_CFLAGS) 
   ufraw_gimp_LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD) $(GIMP_LIBS)
+endif
+
+if MAKE_CINEPAINT
+  cinepaint_ufraw_SOURCES = ufraw-gimp.c $(UFRAW_GTK_COMMON)
+  cinepaint_ufraw_CFLAGS = $(AM_CFLAGS) $(CINEPAINT_CFLAGS) -DUFRAW_CINEPAINT
+  cinepaint_ufraw_LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD) $(CINEPAINT_LIBS)
 endif
 
 dcraw_nomain.o: dcraw.cc
@@ -92,9 +104,6 @@ ufraw_icon.opc: ufraw_icon.rc ufraw_icon.ico
 
 ufraw.schemas: generate_schemas.sh
 	$(srcdir)/generate_schemas.sh $(prefix) $@
-
-install-user: all
-	$(INSTALL_USER)
 
 install-exec-local:
 if UFRAW_WIN32

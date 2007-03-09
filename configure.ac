@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.59 2007/03/08 21:34:55 udifuchs Exp $
+dnl $Id: configure.ac,v 1.60 2007/03/09 23:13:47 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -59,21 +59,35 @@ AC_SUBST(GTK_LIBS)
 PKG_CHECK_MODULES(GLIB, glib-2.0)
 PKG_CHECK_MODULES(LCMS, lcms)
 
-# If the GIMP plug-in is not built, UFRaw is completely independent of
-# the GIMP.
-AC_MSG_CHECKING(whether to build the GIMP plug-in)
-AC_ARG_ENABLE(gimp,
-  [  --disable-gimp          disable build of the GIMP plug-in], ,
-  enable_gimp=yes)
-AM_CONDITIONAL(MAKE_GIMP, test $enable_gimp = yes)
-AC_MSG_RESULT($enable_gimp)
-if test $enable_gimp = yes; then
-    PKG_CHECK_MODULES(GIMP, gimpui-2.0)
-else
-    GIMP_CFLAGS=
-    GIMP_LIBS=
-fi
+# The GIMP/CinePaint plug-ins installation dir is defined in pkg-config.
+# It is not clear if we should install in the libdir-like place in our prefix,
+# or in GIMP's actual lib dir. This only matters if our prefix and
+# the package prefix differ.
+pkg_prefix="$PKG_CONFIG"
+test $prefix = NONE || pkg_prefix+=" --define-variable=prefix=$prefix"
+test $exec_prefix = NONE || pkg_prefix+=" --define-variable=exec_prefix=$exec_prefix"
+
+PKG_CHECK_MODULES(GIMP, gimpui-2.0,
+  [ have_gimp=yes
+    GIMP_LIBDIR=`$pkg_prefix --variable=gimplibdir gimp-2.0` ],
+  [ have_gimp=no
+    GIMP_LIBIR=
+    AC_MSG_RESULT($GIMP_PKG_ERRORS) ] )
+AM_CONDITIONAL(MAKE_GIMP, test $have_gimp = yes)
+AC_SUBST(GIMP_CFLAGS)
 AC_SUBST(GIMP_LIBS)
+AC_SUBST(GIMP_LIBDIR)
+
+PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.22,
+  [ have_cinepaint=yes
+    CINEPAINT_LIBDIR=`$pkg_prefix --variable=cinepaintlibdir cinepaint-gtk` ],
+  [ have_cinepaint=no
+    CINEPAINT_LIBIR=
+    AC_MSG_RESULT($CINEPAINT_PKG_ERRORS) ] )
+AM_CONDITIONAL(MAKE_CINEPAINT, test $have_cinepaint = yes)
+AC_SUBST(CINEPAINT_CFLAGS)
+AC_SUBST(CINEPAINT_LIBS)
+AC_SUBST(CINEPAINT_LIBDIR)
 
 # Disable deprecated functions on tested versions of GTK
 # unless using an old gimp-dev package.
@@ -83,17 +97,6 @@ if $PKG_CONFIG --atleast-version=2.2 gimpui-2.0; then
     AC_DEFINE(GDK_DISABLE_DEPRECATED, [], disable deprecated gdk features)
     AC_DEFINE(GTK_DISABLE_DEPRECATED, [], disable deprecated gtk+ features)
   fi
-fi
-
-# The GIMP plug-in should be installed under gimplibdir.
-# XXX It is not clear if we should install in the gimplibdir-like
-# place in our prefix, or in GIMP's actual lib dir.  This only matters
-# if our prefix and GIMP's prefix differ.
-if test $enable_gimp = yes; then
-  test $prefix = NONE || pkg_prefix="--define-variable=prefix=$prefix"
-  test $exec_prefix = NONE || pkg_exec_prefix="--define-variable=exec_prefix=$exec_prefix"
-  GIMP_LIBDIR=`$PKG_CONFIG --variable=gimplibdir gimp-2.0 $pkg_prefix $pkg_exec_prefix`
-  AC_SUBST(GIMP_LIBDIR)
 fi
 
 # Ensure that getopt_long is available.  It is included in GNU libc and
@@ -136,11 +139,10 @@ PKG_CHECK_MODULES(EXIV2, exiv2,
   [ have_exiv2=no
     AC_MSG_RESULT($EXIV2_PKG_ERRORS) ] )
 
-UFRAW_CFLAGS="$UFRAW_CFLAGS $EXIV2_CFLAGS $GIMP_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS"
+UFRAW_CFLAGS="$UFRAW_CFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS"
 UFRAW_LDADD="$EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS"
 
 if test $ufraw_win32 = yes; then
-  INSTALL_USER="cp ufraw-gimp.exe \"\$(USERPROFILE)\.gimp-2.0\plug-ins\""
   AC_CHECK_PROGS(WINDRES, $target_alias-windres windres, , $PATH)
   AC_SUBST(WINDRES)
   # For the windows-intstaller make needs the location of the DLLs
@@ -165,10 +167,7 @@ if test $ufraw_win32 = yes; then
   esac
   AC_SUBST(WINE)
   AC_SUBST(COMMENT_ICON)
-else
-  INSTALL_USER="gimptool-2.0 --install-bin ufraw-gimp"
 fi
-AC_SUBST(INSTALL_USER)
 
 # XXX For binary package creation, adjusting for the build CPU is not
 # appropriate.
@@ -214,7 +213,8 @@ AC_CONFIG_FILES(ufraw-setup.iss)
 AC_OUTPUT
 
 AC_MSG_NOTICE(====================== summary =====================)
-AC_MSG_NOTICE(build GIMP plug-in: $enable_gimp)
+AC_MSG_NOTICE(build GIMP plug-in: $have_gimp)
+AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint)
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(PNG support: $have_png)

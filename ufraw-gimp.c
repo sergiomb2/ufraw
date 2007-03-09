@@ -20,15 +20,29 @@
 #endif
 
 #include <string.h>
+#ifdef UFRAW_CINEPAINT
+/* Bypass a bug in CinePaint header files */
+#define RNH_FLOAT
+#include <plugin_main.h>
+#define GIMP_CONST
+/* Fix some compatibility issues between CinePaint and GIMP */
+#define GIMP_CHECK_VERSION(a,b,c) 0
+typedef GimpRunModeType GimpRunMode;
+#else
 #include <libgimp/gimp.h>
 #include <libgimp/gimpui.h>
+#define GIMP_CONST const
+/* Missing and irrelevant definitions in GIMP */
+#define U16_RGB 0
+#define U16_RGB_IMAGE 0
+#endif
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
 void query();
-void run(const gchar *name,
+void run(GIMP_CONST gchar *name,
 	gint nparams,
-	const GimpParam *param,
+	GIMP_CONST GimpParam *param,
 	gint *nreturn_vals,
 	GimpParam **return_vals);
 
@@ -84,7 +98,7 @@ void query()
 	    load_args,
 	    load_return_vals);
 
-    gimp_register_load_handler("file_ufraw_load", raw_ext, "");
+    gimp_register_load_handler("file_ufraw_load", (char *)raw_ext, "");
 #if GIMP_CHECK_VERSION(2,2,0)
     gimp_install_procedure ("file_ufraw_load_thumb",
 	    "Loads a small preview from a raw image",
@@ -105,9 +119,18 @@ void query()
 
 char *ufraw_binary;
 
-void run(const gchar *name,
+#ifdef UFRAW_CINEPAINT
+/* There is no way to get the full executable path in Cinepaint.
+ * It is only needed for windows, so no big deal. */
+char *gimp_get_progname()
+{
+    return "ufraw-cinepaint";
+}
+#endif
+
+void run(GIMP_CONST gchar *name,
 	gint nparams,
-	const GimpParam *param,
+	GIMP_CONST GimpParam *param,
 	gint *nreturn_vals,
 	GimpParam **return_vals)
 {
@@ -255,7 +278,7 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
     gint32 layer;
     guint8 *pixbuf;
     guint16 *pixtmp;
-    int height, width, tile_height, row, nrows, rowStride, y;
+    int height, width, depth, tile_height, row, nrows, rowStride, y;
     image_type *rawImage;
 
     uf->gimpImage = -1;
@@ -265,13 +288,20 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
 	    return UFRAW_ERROR;
 	height = uf->thumb.height;
 	width = uf->thumb.width;
+	depth = 3;
     } else {
 	if (ufraw_convert_image(uf)!=UFRAW_SUCCESS)
 	    return UFRAW_ERROR;
 	height = uf->image.height;
 	width = uf->image.width;
+#ifdef UFRAW_CINEPAINT
+	depth = 6;
+#else
+	depth = 3;
+#endif
     }
-    uf->gimpImage = gimp_image_new(width, height,GIMP_RGB);
+    uf->gimpImage = gimp_image_new(width, height,
+	    depth==3 ? GIMP_RGB : U16_RGB );
     if (uf->gimpImage== -1) {
 	ufraw_message(UFRAW_ERROR, _("Can't allocate new image."));
 	return UFRAW_ERROR;
@@ -280,7 +310,8 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
 
     /* Create the "background" layer to hold the image... */
     layer = gimp_layer_new(uf->gimpImage, "Background", width,
-	    height, GIMP_RGB_IMAGE, 100, GIMP_NORMAL_MODE);
+	    height, depth==3 ? GIMP_RGB_IMAGE : U16_RGB_IMAGE,
+	    100, GIMP_NORMAL_MODE);
     gimp_image_add_layer(uf->gimpImage, layer, 0);
 
     /* Get the drawable and set the pixel region for our load... */
@@ -296,7 +327,7 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
 		    uf->thumb.buffer+3*row*width, 0, row, width, nrows);
 	}
     } else {
-	pixbuf = g_new(guint8, tile_height * width * 3);
+	pixbuf = g_new(guint8, tile_height * width * depth);
 	pixtmp = g_new(guint16, tile_height * width * 3);
 	rowStride = width;
 	rawImage = uf->image.image;
@@ -305,8 +336,8 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
 		    0.5 + 0.5*row/height);
 	    nrows = MIN(height-row, tile_height);
 	    for (y=0 ; y<nrows; y++)
-		develope(&pixbuf[3*y*width], rawImage[(row+y)*rowStride],
-			uf->developer, 8, pixtmp, width);
+		develope(&pixbuf[y*width*depth], rawImage[(row+y)*rowStride],
+			uf->developer, depth==3 ? 8 : 16, pixtmp, width);
 	    gimp_pixel_rgn_set_rect(&pixel_region, pixbuf, 0, row,
 		    width, nrows);
 	}
@@ -318,6 +349,28 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
 
     if (uf->conf->embeddedImage) return UFRAW_SUCCESS;
 
+#ifdef UFRAW_CINEPAINT
+/* No parasites in CinePaint.
+ * We need to disable EXIF export.
+ * ICC profile export works differently. */
+    if ( strcmp(uf->developer->profileFile[out_profile], "")==0) {
+	gimp_image_set_srgb_profile(uf->gimpImage);
+    } else {
+	char *buf;
+	gsize len;
+	if (g_file_get_contents(uf->developer->profileFile[out_profile],
+		&buf, &len, NULL))
+	{
+	    gimp_image_set_icc_profile_by_mem(uf->gimpImage, len, buf,
+		    ICC_IMAGE_PROFILE);
+	    g_free(buf);
+	} else {
+	    ufraw_message(UFRAW_WARNING,
+		    _("Failed to embed output profile '%s' in image."),
+		    uf->developer->profileFile[out_profile]);
+	}
+    }
+#else
     if (uf->exifBuf!=NULL) {
 	if (uf->exifBufLen>65533) {
 	    ufraw_message(UFRAW_SET_WARNING,
@@ -351,6 +404,7 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
 		    uf->developer->profileFile[out_profile]);
 	}
     }
+#endif
     if (widget!=NULL) {
 	window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
 	g_object_set_data(G_OBJECT(window), "WindowResponse",
