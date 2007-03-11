@@ -17,7 +17,7 @@ UFRaw is licensed under the GNU General Public License.
 
 Installation
 ============
-Requires GIMP 2.0, the GIMP development package, GTK+ >= 2.4 and lcms.
+Requires GIMP >= 2.0, the GIMP development package, GTK+ >= 2.4 and lcms.
 If you have GTK+ >= 2.6 you will get the extra option of seeing hidden
 files in the file chooser dialogs.
 
@@ -51,25 +51,22 @@ The exiv2 development package is required for reading the EXIF data.
 Supported formats are Canon (CRW, CR2), Fuji (RAF), Minolta (MRW),
 Nikon (NEF), Pentax (PEF), Samsung (PEF), Sony (SR2, ARW)
 and Adobe's DNG. If the configuration script does not find this package
-this option will be suppressed.
+EXIF support will be omitted.
 
 The libjpeg development package is required for saving image in the
 JPEG format in the stand-alone tool. It is also needed to support
 Kodak DC120. If the configuration script does not find this package
-the above options will be suppressed.
+JPEG support will be omitted.
 
 The libtiff development package is required for saving images in the
 TIFF format. If the configuration script does not find this package
-this option will be suppressed.
+TIFF support will be omitted.
 
 The zlib package is required for saving images in the TIFF format with
-lossless compression. If the configuration script does not find this package
-this option will be suppressed.
+lossless compression. If the configuration script does not find this
+package compressed TIFF support will be omitted.
 
 Other options for the configuration script are:
-
---disable-gimp : do not build the GIMP plug-in and hence the GIMP development
-                 package is not needed.
 
 --enable-extras: build the extra binaries - dcraw, nikon-curve.
 
@@ -81,24 +78,33 @@ Other options for the configuration script are:
                          (needed only in windows).
 
 To build UFRaw:
-make
+  make
 
 To make a system wide installation:
-make install
+  make install
+
+Note that the gimp and cinepaint plugins, if built, will be installed
+into gimp's prefix, rather than ufraw's prefix.  This is somewhat
+unclean, as building and installing ufraw with --prefix=/usr/ufraw
+should arguably result in not writing outside that prefix.  However,
+plugins will not work automatically unless they are in the plug-in
+directory, so the current behavior is arguably more helpful.
 
 To install for a single user:
-make install-user
+  make install-user
 
-You also need to make sure that rawphoto is not installed.
+To use the ufraw gimp plugin, ensure that other raw converters
+(e.g. rawphoto) are not installed because they may claim the raw file
+first, preventing ufraw from running.
 
 If one of the packages (lcms, libjpeg, libtiff, zlib) is not installed
-on your system, you can build it locally and use UFRaw's configuration
-option --with-prefix to point to its location.
-To build any of the above packages download the package and type:
-./configure --prefix=$PREFIX
-make
-make install
-
+on your system, and you can not install it using the normal packaging
+system, you can build it locally and use UFRaw's configuration option
+--with-prefix to point to its location.  To build any of the above
+packages download the package and type:
+  ./configure --prefix=$PREFIX
+  make
+  make install
 If zlib is built only locally you will have to configure libtiff with
 the command:
 ./configure --prefix=$PREFIX --with-zlib-include-dir=$PREFIX/include --with-zlib-lib-dir=$PREFIX/lib
