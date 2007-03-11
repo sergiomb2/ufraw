@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.60 2007/03/09 23:13:47 udifuchs Exp $
+dnl $Id: configure.ac,v 1.61 2007/03/11 14:58:04 lexort Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -59,10 +59,13 @@ AC_SUBST(GTK_LIBS)
 PKG_CHECK_MODULES(GLIB, glib-2.0)
 PKG_CHECK_MODULES(LCMS, lcms)
 
-# The GIMP/CinePaint plug-ins installation dir is defined in pkg-config.
-# It is not clear if we should install in the libdir-like place in our prefix,
-# or in GIMP's actual lib dir. This only matters if our prefix and
-# the package prefix differ.
+# The GIMP/CinePaint plug-ins installation dir is defined in
+# pkg-config.  It is not clear if we should install the plugin in the
+# libdir-like place in our prefix, or in GIMP's actual lib dir.
+# Currently, we install the plugin in GIMP's prefix.  The ufraw
+# executable and other files remain in the prefix given to configure.
+# (If gimp's prefix and the configured ufraw prefix are the same, this
+# doesn't matter.)
 pkg_prefix="$PKG_CONFIG"
 test $prefix = NONE || pkg_prefix+=" --define-variable=prefix=$prefix"
 test $exec_prefix = NONE || pkg_prefix+=" --define-variable=exec_prefix=$exec_prefix"
