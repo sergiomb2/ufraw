@@ -232,6 +232,18 @@ void DEBUG_PRINT(char *format, ...)
 #endif
 }
 
+/* nc_merror(): Handle memory allocaltion errors */
+void nc_merror(void *ptr, char *where)
+{
+    if (ptr) return;
+#ifdef __WITH_UFRAW__
+    g_error("Out of memory in %s\n", where);
+#else
+    fprintf(stderr, "Out of memory in %s\n", where);
+    exit(1);
+#endif
+}
+
 // Assert something at compile time (must use this inside a function);
 // works because compilers won't let us declare negative-length arrays.
 #define STATIC_ASSERT(cond) \
@@ -406,6 +418,7 @@ double *d3_np_fs ( int n, double a[], double b[] )
     }
   }
   x = (double *)calloc(n,sizeof(double));
+  nc_merror(x, "d3_np_fs");
 
   for ( i = 0; i < n; i++ )
   {
@@ -567,7 +580,9 @@ double *spline_cubic_set ( int n, double t[], double y[], int ibcbeg, double ybc
     }
   }
   a = (double *)calloc(3*n,sizeof(double));
+  nc_merror(a, "spline_cubic_set");
   b = (double *)calloc(n,sizeof(double));
+  nc_merror(b, "spline_cubic_set");
 //
 //  Set up the first equation.
 //
@@ -643,6 +658,7 @@ double *spline_cubic_set ( int n, double t[], double y[], int ibcbeg, double ybc
   if ( n == 2 && ibcbeg == 0 && ibcend == 0 )
   {
     ypp = (double *)calloc(2,sizeof(double));
+    nc_merror(ypp, "spline_cubic_set");
 
     ypp[0] = 0.0E+00;
     ypp[1] = 0.0E+00;
@@ -1040,6 +1056,7 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
     
     sample->m_Samples = (unsigned int *)realloc(sample->m_Samples,
 	    sample->m_samplingRes * sizeof(int));
+    nc_merror(sample->m_Samples, "CurveDataSample");
 
     int firstPointX = x[0] * (sample->m_samplingRes-1);
     int firstPointY = pow(y[0], gamma) * (sample->m_outputRes-1);
@@ -1662,10 +1679,12 @@ CurveSampleInit:
 CurveSample *CurveSampleInit(unsigned int samplingRes, unsigned int outputRes)
 {
     CurveSample *sample = (CurveSample*)calloc(1, sizeof(CurveSample));
+    nc_merror(sample, "CurveSampleInit");
     sample->m_samplingRes = samplingRes;
     sample->m_outputRes = outputRes;
     if (samplingRes>0) {
 	sample->m_Samples = (unsigned int*)calloc(samplingRes, sizeof(int));
+	nc_merror(sample->m_Samples, "CurveSampleInit");
     } else {
 	sample->m_Samples = NULL;
     }

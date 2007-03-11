@@ -353,7 +353,7 @@ int ufraw_batch_saver(ufraw_data *uf)
 		uf->conf->outputFilename);
         fprintf(stderr, " [%s/%s] ", yChar, nChar);
         fflush(stderr);
-        fgets(ans, max_name, stdin);
+        if ( fgets(ans, max_name, stdin)==NULL ) ans[0] = '\0';
 	gchar *ans8 = g_utf8_strdown(ans, 1);
 	if ( g_utf8_collate(ans8, yChar)!=0 ) {
 	    g_free(yChar);
