@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.61 2007/03/11 14:58:04 lexort Exp $
+dnl $Id: configure.ac,v 1.62 2007/03/13 05:51:08 nkbj Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -117,6 +117,10 @@ AC_SEARCH_LIBS(pow, m)
 AC_CHECK_FUNCS(canonicalize_file_name)
 AC_CHECK_FUNCS(memmem)
 
+# Check for zlib.
+AC_CHECK_LIB(z, deflate)
+have_zlib=${ac_cv_lib_z_deflate:-no}
+
 # Check for jpeg headers and library.
 AC_CHECK_HEADER(jpeglib.h,
   AC_CHECK_LIB(jpeg, jpeg_CreateCompress))
@@ -126,10 +130,6 @@ have_jpeg=${ac_cv_lib_jpeg_jpeg_CreateCompress:-no}
 AC_CHECK_HEADER(png.h,
   AC_CHECK_LIB(png, png_create_info_struct))
 have_png=${ac_cv_lib_png_png_create_info_struct:-no}
-
-# Check for zlib.
-AC_CHECK_LIB(z, deflate)
-have_zlib=${ac_cv_lib_z_deflate:-no}
 
 # Check for tiff headers and library.
 AC_CHECK_HEADER(tiffio.h,
