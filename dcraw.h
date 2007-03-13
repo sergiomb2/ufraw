@@ -181,6 +181,7 @@ void subtract(char *fname);
 void pseudoinverse (double (*in)[3], double (*out)[3], int size);
 void cam_xyz_coeff (double cam_xyz[4][3]);
 void colorcheck();
+void hat_transform (float *temp, float *base, int st, int size, int sc);
 void wavelet_denoise();
 void scale_colors();
 void pre_interpolate();
