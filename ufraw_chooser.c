@@ -44,11 +44,11 @@ void ufraw_chooser(conf_data *conf, char *defPath)
     gtk_window_set_type_hint(GTK_WINDOW(fileChooser),
 	    GDK_WINDOW_TYPE_HINT_NORMAL);
 #if GTK_CHECK_VERSION(2,6,0)
-    gtk_window_set_icon_name(GTK_WINDOW(fileChooser), "ufraw-ufraw");
+    gtk_window_set_icon_name(GTK_WINDOW(fileChooser), "ufraw");
 #else
     gtk_window_set_icon(GTK_WINDOW(fileChooser),
             gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
-                    "ufraw-ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
+                    "ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
 #endif
     ufraw_message(UFRAW_SET_PARENT, (char *)fileChooser);
 

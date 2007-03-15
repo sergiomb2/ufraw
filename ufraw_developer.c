@@ -42,6 +42,7 @@ developer_data *developer_init()
     TransferFunction[1] = TransferFunction[2] = cmsBuildGamma(0x100, 1.0);
     d->saturationProfile = NULL;
     d->intent = -1;
+    d->proofingIntent = -1;
     d->updateTransform = TRUE;
     d->colorTransform = NULL;
     cmsSetErrorHandler((void *)ufraw_message);
@@ -154,19 +155,102 @@ double findExpCoeff(double b)
     }
     return a;
 }
+
+void developer_create_transform(developer_data *d, DeveloperMode mode)
+{
+    if ( mode==auto_developer ) {
+	/* For auto-tools we ignore all the output settings:
+	 * luminosity, saturation, output profile and proofing.
+	 * Instead we create an sRGB output. */
+	cmsHPROFILE *sRGBprofile = cmsCreate_sRGBProfile();
+	d->colorTransform = cmsCreateTransform(
+		d->profile[in_profile], TYPE_RGB_16,
+		sRGBprofile, TYPE_RGB_16, d->intent, 0);
+        cmsCloseProfile(sRGBprofile);
+	return;
+    }
+    int targetProfile;
+    if ( mode==file_developer ) {
+	targetProfile = out_profile;
+    } else { /* mode==display_developer */
+	targetProfile = display_profile;
+    }
+    if ( d->proofingIntent==disable_intent ||
+	 strcmp(d->profile[out_profile], d->profile[targetProfile])==0 ) {
+	/* No need for proofing transformation. */
+	if ( strcmp(d->profileFile[in_profile],"")==0 && 
+	     strcmp(d->profileFile[targetProfile],"")==0 &&
+	     d->luminosityProfile==NULL && d->saturationProfile==NULL ) {
+	    /* No transformation at all. */
+            d->colorTransform = NULL;
+#if defined(LCMS_VERSION) && LCMS_VERSION <= 113 /* Bypass a lcms 1.13 bug. */
+	} else if ( d->luminosityProfile==NULL && d->saturationProfile==NULL ) {
+	    d->colorTransform = cmsCreateTransform(
+		    d->profile[in_profile], TYPE_RGB_16,
+		    d->profile[targetProfile], TYPE_RGB_16, d->intent, 0);
+#endif
+        } else {
+	    cmsHPROFILE prof[4];
+	    int i = 0;
+	    prof[i++] = d->profile[in_profile];
+	    if ( d->luminosityProfile!=NULL )
+		prof[i++] = d->luminosityProfile;
+	    if ( d->saturationProfile!=NULL )
+		prof[i++] = d->saturationProfile;
+	    prof[i++] = d->profile[targetProfile];
+	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
+		    TYPE_RGB_16, TYPE_RGB_16, d->intent, 0);
+	}
+    } else {
+	/* Create a proofing profile */
+	if ( d->luminosityProfile==NULL && d->saturationProfile==NULL ) {
+	    /* No intermediate profiles, we can use lcms proofing directly. */
+	    d->colorTransform = cmsCreateProofingTransform(
+		    d->profile[in_profile], TYPE_RGB_16,
+		    d->profile[display_profile], TYPE_RGB_16,
+		    d->profile[out_profile],
+		    d->intent, d->proofingIntent,
+		    cmsFLAGS_SOFTPROOFING);
+	} else {
+	    /* Following code imitates the function
+	     * cmsCreateMultiprofileProofingTransform(),
+	     * which does not exist in lcms. */
+	    cmsHPROFILE prof[3];
+	    int i = 0;
+	    prof[i++] = d->profile[in_profile];
+	    if ( d->luminosityProfile!=NULL )
+		prof[i++] = d->luminosityProfile;
+	    if ( d->saturationProfile!=NULL )
+		prof[i++] = d->saturationProfile;
+	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
+		    TYPE_RGB_16, TYPE_RGB_16, d->intent, cmsFLAGS_SOFTPROOFING);
+	    prof[0] = cmsTransform2DeviceLink(d->colorTransform,
+		    cmsFLAGS_GUESSDEVICECLASS);
+	    cmsDeleteTransform(d->colorTransform);
+	    d->colorTransform = cmsCreateProofingTransform(
+		    prof[0], TYPE_RGB_16,
+		    d->profile[display_profile], TYPE_RGB_16,
+		    d->profile[out_profile],
+		    d->intent, d->proofingIntent,
+		    cmsFLAGS_SOFTPROOFING);
+	}
+    }
+}
+
 void developer_prepare(developer_data *d, conf_data *conf,
     int rgbMax, float rgb_cam[3][4], int colors, int useMatrix,
-    gboolean autoTools)
+    DeveloperMode mode)
 {
     unsigned c, i;
-    profile_data *in, *out;
+    profile_data *in, *out, *display;
     CurveData *baseCurve, *curve;
 
     in = &conf->profile[in_profile][conf->profileIndex[in_profile]];
     out = &conf->profile[out_profile][conf->profileIndex[out_profile]];
+    display = &conf->profile[display_profile]
+		[conf->profileIndex[display_profile]];
     baseCurve = &conf->BaseCurve[conf->BaseCurveIndex];
     curve = &conf->curve[conf->curveIndex];
-    if (autoTools) curve = NULL;
 
     d->rgbMax = rgbMax;
     d->colors = colors;
@@ -247,78 +331,56 @@ void developer_prepare(developer_data *d, conf_data *conf,
 		d->gammaCurve[i] = MIN(pow(a*BaseCurve[FilmCurve[i]]/0x10000+b,
 					   g)*0x10000, 0xFFFF);
     }
-    developer_profile(d, 0, in);
-    developer_profile(d, 1, out);
+    developer_profile(d, in_profile, in);
+    developer_profile(d, out_profile, out);
+    developer_profile(d, display_profile, display);
     if ( conf->intent!=d->intent ) {
         d->intent = conf->intent;
         d->updateTransform = TRUE;
     }
-    if (curve==NULL) {
-	/* Reset the luminosity profile and make sure it gets recalculated */
-	cmsCloseProfile(d->luminosityProfile);
-	d->luminosityProfile = NULL;
-	d->luminosityCurveData.m_gamma = -1.0;
+    if ( conf->proofingIntent!=d->proofingIntent ) {
+        d->proofingIntent = conf->proofingIntent;
         d->updateTransform = TRUE;
-    } else {
-	/* Check if curve data has changed. */
-	if (memcmp(curve, &d->luminosityCurveData, sizeof(CurveData))) {
-	    d->luminosityCurveData = *curve;
-	    /* Trivial curve does not require a profile */
-	    if ( CurveDataIsTrivial(curve) ) {
+    }
+    /* Check if curve data has changed. */
+    if (memcmp(curve, &d->luminosityCurveData, sizeof(CurveData))) {
+	d->luminosityCurveData = *curve;
+	/* Trivial curve does not require a profile */
+	if ( CurveDataIsTrivial(curve) ) {
+	    d->luminosityProfile = NULL;
+	} else {
+	    cmsCloseProfile(d->luminosityProfile);
+	    CurveSample *cs = CurveSampleInit(0x100, 0x10000);
+	    ufraw_message(UFRAW_RESET, NULL);
+	    if (CurveDataSample(curve, cs)!=UFRAW_SUCCESS) {
+		ufraw_message(UFRAW_REPORT, NULL);
 		d->luminosityProfile = NULL;
 	    } else {
-		cmsCloseProfile(d->luminosityProfile);
-		CurveSample *cs = CurveSampleInit(0x100, 0x10000);
-		ufraw_message(UFRAW_RESET, NULL);
-		if (CurveDataSample(curve, cs)!=UFRAW_SUCCESS) {
-		    ufraw_message(UFRAW_REPORT, NULL);
-		    d->luminosityProfile = NULL;
-		} else {
-		    LPGAMMATABLE *TransferFunction =
+		LPGAMMATABLE *TransferFunction =
 			(LPGAMMATABLE *)d->TransferFunction;
-		    for (i=0; i<0x100; i++)
-			TransferFunction[0]->GammaTable[i] = cs->m_Samples[i];
-		    d->luminosityProfile = cmsCreateLinearizationDeviceLink(
-			    icSigLabData, TransferFunction);
-		    cmsSetDeviceClass(d->luminosityProfile, icSigAbstractClass);
-		}
-		CurveSampleFree(cs);
+		for (i=0; i<0x100; i++)
+		    TransferFunction[0]->GammaTable[i] = cs->m_Samples[i];
+		d->luminosityProfile = cmsCreateLinearizationDeviceLink(
+			icSigLabData, TransferFunction);
+		cmsSetDeviceClass(d->luminosityProfile, icSigAbstractClass);
 	    }
-	    d->updateTransform = TRUE;
+	    CurveSampleFree(cs);
 	}
+	d->updateTransform = TRUE;
     }
     if ( conf->saturation!=d->saturation ) {
-        d->saturation = conf->saturation;
+	d->saturation = conf->saturation;
 	cmsCloseProfile(d->saturationProfile);
 	if (d->saturation==1)
 	    d->saturationProfile = NULL;
 	else
 	    d->saturationProfile = create_saturation_profile(d->saturation);
-        d->updateTransform = TRUE;
+	d->updateTransform = TRUE;
     }
-    if (d->updateTransform) {
+    if (d->updateTransform || mode==auto_developer) {
         if (d->colorTransform!=NULL)
             cmsDeleteTransform(d->colorTransform);
-        if (!strcmp(d->profileFile[0],"") && !strcmp(d->profileFile[1],"") &&
-	    d->luminosityProfile==NULL && d->saturationProfile==NULL) {
-            d->colorTransform = NULL;
-#if defined(LCMS_VERSION) && LCMS_VERSION <= 113 /* Bypass a lcms 1.13 bug. */
-        } else if (d->luminosityProfile==NULL && d->saturationProfile==NULL) {
-	    d->colorTransform = cmsCreateTransform(d->profile[0],
-		    TYPE_RGB_16, d->profile[1], TYPE_RGB_16, d->intent, 0);
-#endif
-        } else {
-	    cmsHPROFILE prof[4];
-	    i = 0;
-	    prof[i++] = d->profile[0];
-	    if (d->luminosityProfile!=NULL)
-		prof[i++] = d->luminosityProfile;
-	    if (d->saturationProfile!=NULL)
-		prof[i++] = d->saturationProfile;
-	    prof[i++] = d->profile[1];
-	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
-		    TYPE_RGB_16, TYPE_RGB_16, d->intent, 0);
-	}
+	developer_create_transform(d, mode);
     }
 }
 

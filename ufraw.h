@@ -46,13 +46,17 @@ enum { ahd_interpolation, vng_interpolation, four_color_interpolation,
 extern const char *interpolationNames[];
 enum { no_id, also_id, only_id };
 enum { manual_curve, linear_curve, custom_curve, camera_curve };
-enum { in_profile, out_profile, profile_types};
+enum { in_profile, out_profile, display_profile, profile_types};
 enum { raw_expander, live_expander, expander_count };
 enum { ppm8_type, ppm16_type, tiff8_type, tiff16_type, jpeg_type,
        embedded_jpeg_type, embedded_png_type };
 enum { clip_details, restore_lch_details, restore_hsv_details,
        restore_types };
 enum { digital_highlights, film_highlights, highlights_types };
+typedef enum { display_developer, file_developer, auto_developer }
+	DeveloperMode;
+typedef enum { perceptual_intent, relative_intent, saturation_intent,
+	absolute_intent, disable_intent } Intent;
 
 typedef struct {
     char *make;
@@ -67,9 +71,9 @@ typedef struct {
     int restoreDetails, clipHighlights;
     int rgbWB[4], colorMatrix[3][4];
     double gamma, linear;
-    char profileFile[2][max_path];
-    void *profile[2];
-    int intent;
+    char profileFile[profile_types][max_path];
+    void *profile[profile_types];
+    Intent intent, proofingIntent;
     gboolean updateTransform;
     void *colorTransform;
     double saturation;
@@ -138,7 +142,7 @@ typedef struct {
     CurveData curve[max_curves];
     int profileIndex[profile_types], profileCount[profile_types];
     profile_data profile[profile_types][max_profiles];
-    int intent;
+    Intent intent, proofingIntent;
     int interpolation;
     char darkframeFile[max_path];
     struct ufraw_struct *darkframe;
@@ -258,7 +262,7 @@ void developer_destroy(developer_data *d);
 void developer_profile(developer_data *d, int type, profile_data *p);
 void developer_prepare(developer_data *d, conf_data *conf,
     int rgbMax, float rgb_cam[3][4], int colors, int useMatrix,
-    gboolean autoTools);
+    DeveloperMode mode);
 void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     guint16 *buf, int count);
 

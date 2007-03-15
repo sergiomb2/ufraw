@@ -39,11 +39,11 @@ int main (int argc, char **argv)
 #ifdef WIN32
     dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 #if GTK_CHECK_VERSION(2,6,0)
-    gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw-ufraw");
+    gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
 #else
     gtk_window_set_icon(GTK_WINDOW(dummyWindow),
 	    gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
-		    "ufraw-ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
+		    "ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
 #endif
     ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
 #endif
@@ -81,11 +81,11 @@ int main (int argc, char **argv)
     if (dummyWindow==NULL) {
 	dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 #if GTK_CHECK_VERSION(2,6,0)
-	gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw-ufraw");
+	gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
 #else
 	gtk_window_set_icon(GTK_WINDOW(dummyWindow),
 		gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
-			"ufraw-ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
+			"ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
 #endif
 	ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
     }

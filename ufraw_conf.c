@@ -59,13 +59,15 @@ const conf_data conf_default = {
       { N_("Linear curve"), TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } }
     },
-    { 0, 0 } , { 1, 1 }, /* profileIndex[], profileCount[] */
+    { 0, 0, 0 } , { 1, 1, 1 }, /* profileIndex[], profileCount[] */
     /* Profile data defaults */
     { { { N_("sRGB"), "", "", 0.45, 0.1, TRUE },
         { "Some ICC Profile", "", "", 0.45, 0.0, FALSE } },
       { { N_("sRGB"), "", "", 0.0, 0.0, FALSE },
+        { "Some ICC Profile", "", "", 0.0, 0.0, FALSE } },
+      { { N_("sRGB"), "", "", 0.0, 0.0, FALSE },
         { "Some ICC Profile", "", "", 0.0, 0.0, FALSE } } },
-    0, /* intent */
+    0, 0, /* intent, proofingIntent */
     ahd_interpolation, /* interpolation */
     "", NULL, /* darkframeFile, darkframe */
     /* Save options */
@@ -104,6 +106,8 @@ const char *restoreDetailsNames[] =
     { "clip", "lch", "hsv", NULL };
 const char *clipHighlightsNames[] =
     { "digital", "film", NULL };
+const char *intentNames[] =
+    { "perceptual", "relative", "saturation", "absolute", "disable", NULL };
 
 int conf_find_name(const char name[],const char *namesList[], int notFound)
 {
@@ -171,13 +175,18 @@ void conf_parse_start(GMarkupParseContext *context, const gchar *element,
             if (!strcmp("Curve", element))
                 c->curveIndex = c->curveCount;
             if (!strcmp("sRGBInputProfile", element))
-                c->profileIndex[0] = 0;
+                c->profileIndex[in_profile] = 0;
             if (!strcmp("sRGBOutputProfile", element))
-                c->profileIndex[1] = 0;
+                c->profileIndex[out_profile] = 0;
+            if (!strcmp("sRGBDisplayProfile", element))
+                c->profileIndex[display_profile] = 0;
             if (!strcmp("InputProfile", element))
-                c->profileIndex[0] = c->profileCount[0];
+                c->profileIndex[in_profile] = c->profileCount[in_profile];
             if (!strcmp("OutputProfile", element))
-                c->profileIndex[1] = c->profileCount[1];
+                c->profileIndex[out_profile] = c->profileCount[out_profile];
+            if (!strcmp("DisplayProfile", element))
+                c->profileIndex[display_profile] =
+			c->profileCount[display_profile];
         }
         names++;
         values++;
@@ -209,8 +218,12 @@ void conf_parse_start(GMarkupParseContext *context, const gchar *element,
 	c->curveCount = - linear_curve;
 	c->curve[-c->curveCount].m_numAnchors = 0;
     }
-    if (!strcmp("sRGBInputProfile", element)) c->profileCount[0] = - 0;
-    if (!strcmp("sRGBOutputProfile", element)) c->profileCount[1] = - 0;
+    if ( !strcmp("sRGBInputProfile", element) )
+	c->profileCount[in_profile] = - 0;
+    if ( !strcmp("sRGBOutputProfile", element) )
+	c->profileCount[out_profile] = - 0;
+    if ( !strcmp("sRGBDisplayProfile", element) )
+	c->profileCount[display_profile] = - 0;
 }
 
 void conf_parse_end(GMarkupParseContext *context, const gchar *element,
@@ -245,12 +258,20 @@ void conf_parse_end(GMarkupParseContext *context, const gchar *element,
 	    c->curve[-c->curveCount].m_numAnchors = 2;
         c->curveCount = - c->curveCount + 1;
     }
-    if (!strcmp("sRGBInputProfile", element)) c->profileCount[0] = 1;
-    if (!strcmp("sRGBOutputProfile", element)) c->profileCount[1] = 1;
-    if (c->profileCount[0]<=0 && !strcmp("InputProfile", element))
-        c->profileCount[0] = - c->profileCount[0] + 1;
-    if (c->profileCount[1]<=0 && !strcmp("OutputProfile", element))
-        c->profileCount[1] = - c->profileCount[1] + 1;
+    if ( !strcmp("sRGBInputProfile", element) )
+	c->profileCount[in_profile] = 1;
+    if ( !strcmp("sRGBOutputProfile", element) )
+	c->profileCount[out_profile] = 1;
+    if ( !strcmp("sRGBDisplayProfile", element) )
+	c->profileCount[display_profile] = 1;
+    if ( c->profileCount[in_profile]<=0 && strcmp("InputProfile", element)==0 )
+        c->profileCount[in_profile] = -c->profileCount[in_profile]+1;
+    if ( c->profileCount[out_profile]<=0 &&
+	 strcmp("OutputProfile", element)==0 )
+        c->profileCount[out_profile] = - c->profileCount[out_profile] + 1;
+    if ( c->profileCount[display_profile]<=0 &&
+	 strcmp("DisplayProfile", element)==0 )
+        c->profileCount[display_profile] = -c->profileCount[display_profile]+1;
 }
 
 void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
@@ -311,30 +332,43 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
         return;
     }
 
-    if (c->profileCount[0]<=0) {
-        i = - c->profileCount[0];
+    if (c->profileCount[in_profile]<=0) {
+        i = - c->profileCount[in_profile];
         if (!strcmp("File", element))
-            g_strlcpy(c->profile[0][i].file, temp, max_path);
+            g_strlcpy(c->profile[in_profile][i].file, temp, max_path);
         if (!strcmp("ProductName", element))
-            g_strlcpy(c->profile[0][i].productName, temp, max_path);
+            g_strlcpy(c->profile[in_profile][i].productName, temp, max_path);
         if (!strcmp("Gamma", element))
-            sscanf(temp, "%lf", &c->profile[0][i].gamma);
+            sscanf(temp, "%lf", &c->profile[in_profile][i].gamma);
         if (!strcmp("Linearity", element))
-            sscanf(temp, "%lf", &c->profile[0][i].linear);
+            sscanf(temp, "%lf", &c->profile[in_profile][i].linear);
         if (!strcmp("UseColorMatrix", element))
-            sscanf(temp, "%d", &c->profile[0][i].useMatrix);
+            sscanf(temp, "%d", &c->profile[in_profile][i].useMatrix);
         return;
     }
-    if (c->profileCount[1]<=0) {
-        i = - c->profileCount[1];
+    if (c->profileCount[out_profile]<=0) {
+        i = - c->profileCount[out_profile];
         if (!strcmp("File", element)) {
 	    char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
 	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
-            g_strlcpy(c->profile[1][i].file, utf8, max_path);
+            g_strlcpy(c->profile[out_profile][i].file, utf8, max_path);
 	    g_free(utf8);
 	}
         if (!strcmp("ProductName", element))
-            g_strlcpy(c->profile[0][i].productName, temp, max_path);
+            g_strlcpy(c->profile[out_profile][i].productName, temp, max_path);
+        return;
+    }
+    if (c->profileCount[display_profile]<=0) {
+        i = - c->profileCount[display_profile];
+        if (!strcmp("File", element)) {
+	    char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
+	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+            g_strlcpy(c->profile[display_profile][i].file, utf8, max_path);
+	    g_free(utf8);
+	}
+        if (!strcmp("ProductName", element))
+            g_strlcpy(c->profile[display_profile][i].productName, temp,
+		    max_path);
         return;
     }
     if (!strcmp("BaseCurve", element)) {
@@ -354,16 +388,23 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
 	c->curve[-c->curveCount].m_numAnchors = 0;
     }
     if (!strcmp("InputProfile", element)) {
-        c->profileCount[0] = - c->profileCount[0];
-        i = - c->profileCount[0];
-        c->profile[0][i] = conf_default.profile[0][1];
-        g_strlcpy(c->profile[0][i].name, temp, max_name);
+        c->profileCount[in_profile] = - c->profileCount[in_profile];
+        i = - c->profileCount[in_profile];
+        c->profile[in_profile][i] = conf_default.profile[in_profile][1];
+        g_strlcpy(c->profile[in_profile][i].name, temp, max_name);
     }
     if (!strcmp("OutputProfile", element)) {
-        c->profileCount[1] = - c->profileCount[1];
-        i = - c->profileCount[1];
-        c->profile[1][i] = conf_default.profile[1][0];
-        g_strlcpy(c->profile[1][i].name, temp, max_name);
+        c->profileCount[out_profile] = - c->profileCount[out_profile];
+        i = - c->profileCount[out_profile];
+        c->profile[out_profile][i] = conf_default.profile[out_profile][0];
+        g_strlcpy(c->profile[out_profile][i].name, temp, max_name);
+    }
+    if (!strcmp("DisplayProfile", element)) {
+        c->profileCount[display_profile] = - c->profileCount[display_profile];
+        i = - c->profileCount[display_profile];
+        c->profile[display_profile][i] =
+		conf_default.profile[display_profile][0];
+        g_strlcpy(c->profile[display_profile][i].name, temp, max_name);
     }
     if (!strcmp("InputFilename", element)) {
 	char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
@@ -467,7 +508,13 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
             g_strlcpy(c->curvePath, utf8, max_path);
 	g_free(utf8);
     }
-    if (!strcmp("Intent", element)) sscanf(temp, "%d", &c->intent);
+    if ( strcmp("Intent", element)==0 )
+	/* Keep compatebility with numbers from ufraw-0.11 */
+        if (sscanf(temp, "%d", (int *)&c->intent)!=1)
+	    c->intent = conf_find_name(temp, intentNames, conf_default.intent);
+    if ( strcmp("ProofingIntent", element)==0 )
+	c->proofingIntent = conf_find_name(temp, intentNames,
+		conf_default.proofingIntent);
     if (!strcmp("Make", element)) g_strlcpy(c->make, temp, max_name);
     if (!strcmp("Model", element)) g_strlcpy(c->model, temp, max_name);
     if (!strcmp("DarkframeFile", element))
@@ -553,8 +600,8 @@ int conf_load(conf_data *c, const char *IDFilename)
     if (c->version==3) {
         c->version = conf_default.version;
         /* Don't add linear part to existing profile curves (except sRGB) */
-        for (i=2; i<c->profileCount[0]; i++)
-            c->profile[0][i].linear = 0.0;
+        for (i=2; i<c->profileCount[in_profile]; i++)
+            c->profile[in_profile][i].linear = 0.0;
     }
     if (c->version==5) {
         c->version = conf_default.version;
@@ -791,7 +838,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     }
     for (j=0; j<profile_types; j++) {
         type = j==in_profile ? "InputProfile" :
-                j==out_profile ? "OutputProfile" : "Error";
+                j==out_profile ? "OutputProfile" :
+                j==display_profile ? "DisplayProfile" : "Error";
 	/* The default sRGB profile is conf_default.profile[j][0] */
         if ( c->profileIndex[j]==0 || ( IDFilename==NULL &&
              ( c->profile[j][0].gamma!=conf_default.profile[0][0].gamma ||
@@ -842,7 +890,11 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
         }
     }
     if (c->intent!=conf_default.intent)
-        buf = uf_markup_buf(buf, "<Intent>%d</Intent>\n", c->intent);
+        buf = uf_markup_buf(buf, "<Intent>%s</Intent>\n",
+		conf_get_name(intentNames, c->intent));
+    if (c->proofingIntent!=conf_default.proofingIntent)
+        buf = uf_markup_buf(buf, "<ProofingIntent>%s</ProofingIntent>\n",
+		conf_get_name(intentNames, c->proofingIntent));
     /* We always write the Make and Mode information
      * to know if the WB setting is relevant */
     buf = uf_markup_buf(buf, "<Make>%s</Make>\n", c->make);
@@ -974,8 +1026,8 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
 	    dst->curveCount++;
 	}
     }
-    /* We only copy the current input/output profile */
-    for (j=0; j<2; j++) {
+    /* We only copy the current input/output/display profile */
+    for (j=0; j<profile_types; j++) {
 	if (src->profileIndex[j]==0) {
 	    dst->profileIndex[j] = src->profileIndex[j];
 	    dst->profile[j][0] = src->profile[j][0];
@@ -1002,6 +1054,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
 	}
     }
     dst->intent = src->intent;
+    dst->proofingIntent = src->proofingIntent;
 }
 
 /* Copy the 'save options' from *src to *dst */

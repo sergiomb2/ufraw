@@ -61,7 +61,7 @@ typedef struct {
     int raw_his[raw_his_size][4];
     GList *WBPresets; /* List of WB presets in WBCombo*/
     /* Remember the Gtk Widgets that we need to access later */
-    GtkWidget *ControlsBox, *PreviewWidget, *RawHisto, *LiveHisto;
+    GtkWidget *Controls, *PreviewWidget, *RawHisto, *LiveHisto;
     GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
     GtkComboBox *WBCombo, *BaseCurveCombo, *CurveCombo,
 		*ProfileCombo[profile_types];
@@ -539,7 +539,7 @@ gboolean render_raw_histogram(preview_data *data)
     gtk_label_set_text(GTK_LABEL(data->BlackLabel), text);
     developer_prepare(Developer, CFG,
 	    data->UF->rgbMax, data->UF->rgb_cam,
-	    data->UF->colors, data->UF->useMatrix, FALSE);
+	    data->UF->colors, data->UF->useMatrix, display_developer);
 
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->RawHisto));
     if (gdk_pixbuf_get_height(pixbuf)!=CFG->rawHistogramHeight+2) {
@@ -1150,16 +1150,31 @@ void zoom_out_event(GtkWidget *widget, gpointer user_data)
     render_preview(data, render_default);
 }
 
+GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text, char *icon,
+    GtkTooltips *tooltips)
+{
+    GtkWidget *page = gtk_vbox_new(FALSE, 0);
+    if ( icon==NULL ) {
+	GtkWidget *label = gtk_label_new(text);
+	gtk_notebook_append_page(notebook, GTK_WIDGET(page), label);
+    } else {
+	GtkWidget *event_box = gtk_event_box_new();
+	GtkWidget *image = gtk_image_new_from_stock(icon,
+		GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_container_add(GTK_CONTAINER(event_box), image);
+        gtk_tooltips_set_tip(tooltips, event_box, text, NULL);
+        gtk_widget_show_all(event_box);
+	gtk_notebook_append_page(notebook, GTK_WIDGET(page), event_box);
+    }
+    return page;
+}
+
 GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
 {
     GtkWidget *frame, *expander;
     GtkWidget *table;
 
-    if (GTK_IS_NOTEBOOK(box)) {
-	table = gtk_vbox_new(FALSE, 0);
-	gtk_notebook_append_page(GTK_NOTEBOOK(box),
-		GTK_WIDGET(table), gtk_label_new(label));
-    } else if (label!=NULL) {
+    if (label!=NULL) {
 	table = gtk_table_new(10, 10, FALSE);
         expander = gtk_expander_new(label);
         gtk_expander_set_expanded(GTK_EXPANDER(expander), expand);
@@ -1272,9 +1287,9 @@ void restore_details_button_set(GtkButton *button, preview_data *data)
     case restore_lch_details:
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_button_set_image(button, gtk_image_new_from_stock(
-		"ufraw-restore-lch", GTK_ICON_SIZE_BUTTON));
+		"restore-highlights-lch", GTK_ICON_SIZE_BUTTON));
 #else
-	image = gtk_image_new_from_stock("ufraw-restore-lch",
+	image = gtk_image_new_from_stock("restore-highlights-lch",
 		GTK_ICON_SIZE_BUTTON);
 	gtk_container_add(GTK_CONTAINER(button), image);
 	gtk_widget_show(image);
@@ -1284,9 +1299,9 @@ void restore_details_button_set(GtkButton *button, preview_data *data)
     case restore_hsv_details:
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_button_set_image(button, gtk_image_new_from_stock(
-		"ufraw-restore-hsv", GTK_ICON_SIZE_BUTTON));
+		"highlights-restore-hsv", GTK_ICON_SIZE_BUTTON));
 #else
-	image = gtk_image_new_from_stock("ufraw-restore-hsv",
+	image = gtk_image_new_from_stock("highlights-restore-hsv",
 		GTK_ICON_SIZE_BUTTON);
 	gtk_container_add(GTK_CONTAINER(button), image);
 	gtk_widget_show(image);
@@ -1316,9 +1331,10 @@ void clip_highlights_button_set(GtkButton *button, preview_data *data)
     case digital_highlights:
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_button_set_image(button, gtk_image_new_from_stock(
-		"ufraw-digital", GTK_ICON_SIZE_BUTTON));
+		"clip-highlights-digital", GTK_ICON_SIZE_BUTTON));
 #else
-	image = gtk_image_new_from_stock("ufraw-digital", GTK_ICON_SIZE_BUTTON);
+	image = gtk_image_new_from_stock("clip-highlights-digital",
+		GTK_ICON_SIZE_BUTTON);
 	gtk_container_add(GTK_CONTAINER(button), image);
 	gtk_widget_show(image);
 #endif
@@ -1327,9 +1343,9 @@ void clip_highlights_button_set(GtkButton *button, preview_data *data)
     case film_highlights:
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_button_set_image(button, gtk_image_new_from_stock(
-		"ufraw-film", GTK_ICON_SIZE_BUTTON));
+		"clip-highlights-film", GTK_ICON_SIZE_BUTTON));
 #else
-	image = gtk_image_new_from_stock("ufraw-film",
+	image = gtk_image_new_from_stock("clip-highlights-film",
 		GTK_ICON_SIZE_BUTTON);
 	gtk_container_add(GTK_CONTAINER(button), image);
 	gtk_widget_show(image);
@@ -1449,7 +1465,7 @@ GtkAdjustment *adjustment_scale(GtkTable *table,
     GtkWidget *w, *l, *icon;
 
     w = gtk_event_box_new();
-    if ( strncmp(label, "ufraw-", 6)==0 ) {
+    if ( strcmp(label, "exposure")==0 ) {
 	icon = gtk_image_new_from_stock(label, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_container_add(GTK_CONTAINER(w), icon);
     } else {
@@ -1531,7 +1547,7 @@ void delete_from_list(GtkWidget *widget, gpointer user_data)
     dialog = GTK_DIALOG(gtk_widget_get_ancestor(widget, GTK_TYPE_DIALOG));
     type = (long)g_object_get_data(G_OBJECT(widget), "Type");
     index = (long)user_data;
-    if (type<2) {
+    if (type<profile_types) {
         gtk_combo_box_remove_text(data->ProfileCombo[type], index);
         CFG->profileCount[type]--;
 	if ( CFG->profileIndex[type]==index )
@@ -1542,7 +1558,7 @@ void delete_from_list(GtkWidget *widget, gpointer user_data)
             CFG->profile[type][index] = CFG->profile[type][index+1];
 	gtk_combo_box_set_active(data->ProfileCombo[type],
 		CFG->profileIndex[type]);
-    } else if (type==2+base_curve) {
+    } else if (type==profile_types+base_curve) {
         if (CFG_cameraCurve)
             gtk_combo_box_remove_text(data->BaseCurveCombo, index);
         else
@@ -1564,7 +1580,7 @@ void delete_from_list(GtkWidget *widget, gpointer user_data)
 		    CFG->BaseCurveIndex);
 	curveeditor_widget_set_curve(data->BaseCurveWidget,
 		&CFG->BaseCurve[CFG->BaseCurveIndex]);
-    } else if (type==2+luminosity_curve) {
+    } else if (type==profile_types+luminosity_curve) {
         gtk_combo_box_remove_text(data->CurveCombo, index);
         CFG->curveCount--;
 	if ( CFG->curveIndex==index )
@@ -1601,7 +1617,7 @@ void options_combo_update(GtkWidget *combo, gint *valuep)
 void options_dialog(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    GtkWidget *optionsDialog, *profileTable[2];
+    GtkWidget *optionsDialog, *profileTable[profile_types];
     GtkComboBox *confCombo;
     GtkWidget *notebook, *label, *page, *button, *text, *box, *image, *event;
     GtkTable *baseCurveTable, *curveTable, *table;
@@ -1633,8 +1649,12 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     label =gtk_label_new(_("Settings"));
     box = gtk_vbox_new(FALSE, 0);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, label);
-    profileTable[0] = table_with_frame(box, _("Input color profiles"), TRUE);
-    profileTable[1] = table_with_frame(box, _("Output color profiles"), TRUE);
+    profileTable[in_profile] =
+	    table_with_frame(box, _("Input color profiles"), TRUE);
+    profileTable[out_profile] =
+	    table_with_frame(box, _("Output color profiles"), TRUE);
+    profileTable[display_profile] =
+	    table_with_frame(box, _("Display color profiles"), TRUE);
     baseCurveTable = GTK_TABLE(table_with_frame(box, _("Base Curves"), TRUE));
     curveTable = GTK_TABLE(table_with_frame(box, _("Luminosity Curves"), TRUE));
 
@@ -1699,7 +1719,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     label = gtk_label_new(_("About"));
     box = gtk_vbox_new(FALSE, 0);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, label);
-    image = gtk_image_new_from_stock("ufraw-ufraw", GTK_ICON_SIZE_DIALOG);
+    image = gtk_image_new_from_stock("ufraw", GTK_ICON_SIZE_DIALOG);
     gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
     label = gtk_label_new(NULL);
     gtk_label_set_markup(GTK_LABEL(label),
@@ -1718,7 +1738,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
 
     while (1) {
-        for (j=0; j<2; j++) {
+        for (j=0; j<profile_types; j++) {
             gtk_container_foreach(GTK_CONTAINER(profileTable[j]),
                     (GtkCallback)(container_remove), profileTable[j]);
             table = GTK_TABLE(profileTable[j]);
@@ -1743,7 +1763,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
             gtk_table_attach_defaults(table, label, 0, 1, i, i+1);
             button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
             g_object_set_data(G_OBJECT(button), "Type",
-		    (gpointer)2+base_curve);
+		    (gpointer)profile_types+base_curve);
             g_signal_connect(G_OBJECT(button), "clicked",
                     G_CALLBACK(delete_from_list), (gpointer)i);
             gtk_table_attach(table, button, 1, 2, i, i+1, 0, 0, 0, 0);
@@ -1756,7 +1776,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
             gtk_table_attach_defaults(table, label, 0, 1, i, i+1);
             button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
             g_object_set_data(G_OBJECT(button), "Type",
-		    (gpointer)2+luminosity_curve);
+		    (gpointer)profile_types+luminosity_curve);
             g_signal_connect(G_OBJECT(button), "clicked",
                     G_CALLBACK(delete_from_list), (gpointer)i);
             gtk_table_attach(table, button, 1, 2, i, i+1, 0, 0, 0, 0);
@@ -1933,11 +1953,11 @@ void preview_saver(GtkWidget *widget, ufraw_data *uf)
 {
     preview_data *data = get_preview_data(widget);
     if (data->FreezeDialog==TRUE) return;
-    gtk_widget_set_sensitive(data->ControlsBox, FALSE);
+    gtk_widget_set_sensitive(data->Controls, FALSE);
     data->FreezeDialog = TRUE;
     (*data->SaveFunc)(widget, uf);
     data->FreezeDialog = FALSE;
-    gtk_widget_set_sensitive(data->ControlsBox, TRUE);
+    gtk_widget_set_sensitive(data->Controls, TRUE);
 }
 
 int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
@@ -1947,7 +1967,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     GtkBox *previewHBox, *box, *hbox;
     GtkComboBox *combo;
     GtkWidget *button, *saveButton, *saveAsButton=NULL, *event_box, *align,
-	    *label, *vBox, *noteBox, *page, *menu, *menu_item, *frame;
+	    *label, *vBox, *page, *menu, *menu_item, *frame;
     GSList *group;
     GdkPixbuf *pixbuf;
     GdkRectangle screen;
@@ -1980,11 +2000,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     ufraw_icons_init();
 #if GTK_CHECK_VERSION(2,6,0)
-    gtk_window_set_icon_name(GTK_WINDOW(previewWindow), "ufraw-ufraw");
+    gtk_window_set_icon_name(GTK_WINDOW(previewWindow), "ufraw");
 #else
     gtk_window_set_icon(GTK_WINDOW(previewWindow),
 	    gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
-		    "ufraw-ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
+		    "ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
 #endif
     gtk_window_set_resizable(GTK_WINDOW(previewWindow), FALSE);
     g_signal_connect(G_OBJECT(previewWindow), "delete-event",
@@ -2103,7 +2123,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_table_attach_defaults(table, GTK_WIDGET(data->SpotPatch), 6, 7, 1, 2);
 
     table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
-    data->ExposureAdjustment = adjustment_scale(table, 0, 0, "ufraw-exposure",
+    data->ExposureAdjustment = adjustment_scale(table, 0, 0, "exposure",
             CFG->exposure, &CFG->exposure,
             -3, 3, 0.01, 1.0/6, 2, _("Exposure compensation in EV"));
 
@@ -2139,13 +2159,16 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->ResetExposureButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
-    data->ControlsBox = noteBox = gtk_notebook_new();
-    gtk_box_pack_start(GTK_BOX(previewVBox), noteBox, FALSE, FALSE, 0);
+    GtkNotebook *notebook = GTK_NOTEBOOK(gtk_notebook_new());
+    data->Controls = GTK_WIDGET(notebook);
+    gtk_box_pack_start(GTK_BOX(previewVBox), GTK_WIDGET(notebook),
+	    FALSE, FALSE, 0);
 
     /* Start of White Balance setting page */
-    page = table_with_frame(noteBox, _("WB"), TRUE);
+    page = notebook_page_new(notebook, _("White balance"),
+	    "white-balance", data->ToolTips);
     /* Set this page to be the opening page. */
-    int openingPage = gtk_notebook_page_num(GTK_NOTEBOOK(noteBox), page);
+    int openingPage = gtk_notebook_page_num(notebook, page);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     subTable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
@@ -2272,7 +2295,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 //    gtk_table_attach(table, GTK_WIDGET(box), 0, 1, 0, 1,
 //	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
     event_box = gtk_event_box_new();
-    GtkWidget *icon = gtk_image_new_from_stock("ufraw-interpolation",
+    GtkWidget *icon = gtk_image_new_from_stock("interpolation",
 	    GTK_ICON_SIZE_LARGE_TOOLBAR);
     gtk_container_add(GTK_CONTAINER(event_box), icon);
     gtk_tooltips_set_tip(data->ToolTips, event_box,
@@ -2295,7 +2318,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* End of White Balance setting page */
 
     /* Start of Base Curve page */
-    page = table_with_frame(noteBox, _("Base"), TRUE);
+    page = notebook_page_new(notebook, _("Base curve"),
+	    "base-curve", data->ToolTips);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     box = GTK_BOX(gtk_hbox_new(FALSE, 0));
@@ -2363,12 +2387,23 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* End of Base Curve page */
 
     /* Start of Color management page */
-    page = table_with_frame(noteBox, _("Color"), TRUE);
+    page = notebook_page_new(notebook, _("Color management"),
+	    "color-management", data->ToolTips);
+
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     for (j=0; j<profile_types; j++) {
-        label = gtk_label_new(j==in_profile ? _("Input profile") :
-                j==out_profile ? _("Output profile") : "Error");
-        gtk_table_attach(table, label, 0, 1, 4*j+1, 4*j+2, 0, 0, 0, 0);
+	event_box = gtk_event_box_new();
+	icon = gtk_image_new_from_stock(
+		j==in_profile ? "icc-profile-camera" :
+                j==out_profile ? "icc-profile-output" :
+                j==display_profile ? "icc-profile-display" : "error",
+		GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_container_add(GTK_CONTAINER(event_box), icon);
+	gtk_tooltips_set_tip(data->ToolTips, event_box,
+		j==in_profile ? _("Input ICC profile") :
+                j==out_profile ? _("Output ICC profile") :
+                j==display_profile ? _("Display ICC profile") : "Error", NULL);
+        gtk_table_attach(table, event_box, 0, 1, 4*j+1, 4*j+2, 0, 0, 0, 0);
         data->ProfileCombo[j] = GTK_COMBO_BOX(gtk_combo_box_new_text());
         for (i=0; i<CFG->profileCount[j]; i++)
             if ( i==0 )
@@ -2390,8 +2425,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
         g_signal_connect(G_OBJECT(button), "clicked",
                 G_CALLBACK(load_profile), (void *)j);
     }
-    data->UseMatrixButton = gtk_check_button_new_with_label(_("Use color matrix"));
-    gtk_table_attach(table, data->UseMatrixButton, 0, 3, 2, 3, 0, 0, 0, 0);
+    data->UseMatrixButton = gtk_check_button_new_with_label(
+	    _("Use color matrix"));
+    gtk_table_attach(table, data->UseMatrixButton, 0, 4, 2, 3, 0, 0, 0, 0);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->UseMatrixButton),
 	    data->UF->useMatrix);
     g_signal_connect(G_OBJECT(data->UseMatrixButton), "toggled",
@@ -2436,10 +2472,24 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(combo), "changed",
             G_CALLBACK(combo_update), &CFG->intent);
     gtk_table_attach(table, GTK_WIDGET(combo), 1, 7, 6, 7, GTK_FILL, 0, 0, 0);
+
+    label = gtk_label_new(_("Proofing intent"));
+    gtk_table_attach(table, label, 0, 3, 10, 11, 0, 0, 0, 0);
+    combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    gtk_combo_box_append_text(combo, _("Perceptual"));
+    gtk_combo_box_append_text(combo, _("Relative colorimetric"));
+    gtk_combo_box_append_text(combo, _("Saturation"));
+    gtk_combo_box_append_text(combo, _("Absolute colorimetric"));
+    gtk_combo_box_append_text(combo, _("Disable soft proofing"));
+    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), CFG->proofingIntent);
+    g_signal_connect(G_OBJECT(combo), "changed",
+            G_CALLBACK(combo_update), &CFG->proofingIntent);
+    gtk_table_attach(table, GTK_WIDGET(combo), 3, 7, 10, 11, GTK_FILL, 0, 0, 0);
     /* End of Color management page */
 
     /* Start of Corrections page */
-    page = table_with_frame(noteBox, _("Corrections"), TRUE);
+    page = notebook_page_new(notebook, _("Correct luminosity, saturation"),
+	    "color-corrections", data->ToolTips);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     data->SaturationAdjustment = adjustment_scale(table, 0, 1, _("Saturation"),
@@ -2551,7 +2601,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* End of Corrections page */
 
     /* Start of Zoom page */
-    page = table_with_frame(noteBox, _("Zoom"), TRUE);
+    page = notebook_page_new(notebook, _("Zoom"), NULL, NULL);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
@@ -2583,7 +2633,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* End of Zoom page */
 
     /* Start of EXIF page */
-    page = table_with_frame(noteBox, "EXIF", TRUE);
+    page = notebook_page_new(notebook, _("EXIF"), NULL, NULL);
+
     frame = gtk_frame_new(NULL);
     gtk_box_pack_start(GTK_BOX(page), frame, TRUE, TRUE, 0);
     table = GTK_TABLE(gtk_table_new(10, 10, FALSE));
@@ -2857,12 +2908,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
         gtk_widget_grab_focus(saveAsButton);
     }
     gtk_widget_show_all(previewWindow);
-    gtk_notebook_set_current_page(GTK_NOTEBOOK(noteBox), openingPage);
+    gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);
 
-    gtk_widget_set_sensitive(data->ControlsBox, FALSE);
+    gtk_widget_set_sensitive(data->Controls, FALSE);
     preview_progress(previewWindow, _("Loading preview"), 0.2);
     ufraw_load_raw(uf);
-    gtk_widget_set_sensitive(data->ControlsBox, TRUE);
+    gtk_widget_set_sensitive(data->Controls, TRUE);
 
     create_base_image(data);
 

@@ -535,7 +535,7 @@ int ufraw_convert_image(ufraw_data *uf)
 
 //    preview_progress(uf->widget, _("Loading image"), 0.1);
     developer_prepare(uf->developer, uf->conf,
-	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, FALSE);
+	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, file_developer);
     /* We can do a simple interpolation in the following cases:
      * We shrink by an integer value.
      * If pixel_aspect<1 (e.g. NIKON D1X) shrink must be at least 4.
@@ -829,7 +829,7 @@ void ufraw_auto_expose(ufraw_data *uf)
     if ( uf->conf->ExposureNorm>0 )
 	uf->conf->exposure = -log(1.0*uf->rgbMax/uf->conf->ExposureNorm)/log(2);
     developer_prepare(uf->developer, uf->conf,
-	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, TRUE);
+	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, auto_developer);
     /* Find the grey value that gives 99% luminosity */
     double maxChan = 0;
     for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
@@ -870,7 +870,7 @@ void ufraw_auto_black(ufraw_data *uf)
 
     /* Reset the luminosityCurve */
     developer_prepare(uf->developer, uf->conf,
-	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, TRUE);
+	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, auto_developer);
     /* Calculate the black point */
     ufraw_build_raw_luminosity_histogram(uf);
     stop = uf->RawLumCount/256/4;
@@ -905,7 +905,7 @@ void ufraw_auto_curve(ufraw_data *uf)
 
     CurveDataReset(curve);
     developer_prepare(uf->developer, uf->conf,
-	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, TRUE);
+	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, auto_developer);
     /* Calculate curve points */
     ufraw_build_raw_luminosity_histogram(uf);
     stop = uf->RawLumCount/256/4;
