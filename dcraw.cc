@@ -243,11 +243,11 @@ void CLASS merror (void *ptr, char *where)
 void CLASS derror()
 {
   if (!data_error) {
-    fprintf (stderr, "%s: ", ifname);
+    dcraw_message (DCRAW_ERROR, "%s: ", ifname);
     if (feof(ifp))
-      fprintf (stderr,_("Unexpected end of file\n"));
+      dcraw_message (DCRAW_ERROR,_("Unexpected end of file\n"));
     else
-      fprintf (stderr,_("Corrupt data near 0x%lx\n"), ftell(ifp));
+      dcraw_message (DCRAW_ERROR,_("Corrupt data near 0x%lx\n"), ftell(ifp));
   }
   data_error = 1;
 }
