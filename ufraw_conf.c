@@ -508,10 +508,11 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
             g_strlcpy(c->curvePath, utf8, max_path);
 	g_free(utf8);
     }
-    if ( strcmp("Intent", element)==0 )
-	/* Keep compatebility with numbers from ufraw-0.11 */
-        if (sscanf(temp, "%d", (int *)&c->intent)!=1)
-	    c->intent = conf_find_name(temp, intentNames, conf_default.intent);
+    if ( strcmp("Intent", element)==0 ) {
+	/* Keep compatibility with numbers from ufraw-0.11 */
+        if (sscanf(temp, "%d", &i)==1) c->intent = i;
+	else c->intent = conf_find_name(temp, intentNames, conf_default.intent);
+    }
     if ( strcmp("ProofingIntent", element)==0 )
 	c->proofingIntent = conf_find_name(temp, intentNames,
 		conf_default.proofingIntent);
