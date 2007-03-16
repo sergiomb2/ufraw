@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-03-16 00:37+0100\n"
-"PO-Revision-Date: 2006-03-06 04:20+0100\n"
+"PO-Revision-Date: 2006-03-16 05:10+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -755,9 +755,8 @@ msgid "Output color profiles"
 msgstr "Uddatafarveprofiler"
 
 #: ufraw_preview.c:1657
-#, fuzzy
 msgid "Display color profiles"
-msgstr "Inddatafarveprofiler"
+msgstr "Monitorfarveprofiler"
 
 #: ufraw_preview.c:1658
 msgid "Base Curves"
@@ -884,7 +883,6 @@ msgstr "Sæt eksponering til standardværdi"
 
 #. Start of White Balance setting page
 #: ufraw_preview.c:2168
-#, fuzzy
 msgid "White balance"
 msgstr "Hvidbalance"
 
@@ -958,9 +956,8 @@ msgstr "Halvstørrelseinterpolation"
 #. End of White Balance setting page
 #. Start of Base Curve page
 #: ufraw_preview.c:2321
-#, fuzzy
 msgid "Base curve"
-msgstr "Basiskurver"
+msgstr "Basiskurve"
 
 #: ufraw_preview.c:2354
 msgid "Load base curve"
@@ -981,14 +978,12 @@ msgid "Color management"
 msgstr ""
 
 #: ufraw_preview.c:2403
-#, fuzzy
 msgid "Input ICC profile"
-msgstr "Inddataprofil"
+msgstr "Inddata-ICC-profil"
 
 #: ufraw_preview.c:2404
-#, fuzzy
 msgid "Output ICC profile"
-msgstr "Uddataprofil"
+msgstr "Uddata-ICC-profil"
 
 #: ufraw_preview.c:2405
 msgid "Display ICC profile"
@@ -1512,15 +1507,3 @@ msgstr "Kamera-HB"
 #: wb_presets.c:65
 msgid "Auto WB"
 msgstr "Automatisk HB"
-
-#~ msgid "WB"
-#~ msgstr "HB"
-
-#~ msgid "Base"
-#~ msgstr "Basis"
-
-#~ msgid "Color"
-#~ msgstr "Farve"
-
-#~ msgid "Corrections"
-#~ msgstr "Korrektioner"
