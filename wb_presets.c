@@ -247,6 +247,13 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS-1D Mark II", Shade, 0,	{ 2.220703, 1, 1.069336, 0 } },
   { "Canon", "EOS-1D Mark II", Tungsten, 0,	{ 1.415480, 1, 2.160142, 0 } },
 
+  { "Canon", "EOS-1D Mark II N", Cloudy, 0,	{ 2.183594, 1, 1.220703, 0 } },
+  { "Canon", "EOS-1D Mark II N", Daylight, 0, { 2.019531, 1, 1.349609, 0 } },
+  { "Canon", "EOS-1D Mark II N", Flash, 0,	{ 2.291016, 1, 1.149414, 0 } },
+  { "Canon", "EOS-1D Mark II N", Fluorescent, 0,	{ 1.802899, 1, 1.990338, 0 } },
+  { "Canon", "EOS-1D Mark II N", Shade, 0,	{ 2.337891, 1, 1.112305, 0 } },
+  { "Canon", "EOS-1D Mark II N", Tungsten, 0,	{ 1.408514, 1, 2.147645, 0 } },
+
   { "FUJIFILM", "FinePix E900", Daylight, 0,	{ 1.571875, 1, 1.128125, 0 } },
   { "FUJIFILM", "FinePix E900", Shade, 0,	{ 1.668750, 1, 1.006250, 0 } },
   { "FUJIFILM", "FinePix E900", DaylightFluorescent, 0, { 1.907609, 1, 1.016304, 0 } },
