@@ -33,7 +33,7 @@ extern "C" {
 int  fc_INDI (const unsigned filters, const int row, const int col);
 void scale_colors_INDI(gushort (*image)[4], const int rgb_max, const int black,
     const int use_auto_wb, const int use_camera_wb, const float cam_mul[4],
-    const int height, const int width, const int colors,
+    const int iheight, const int iwidth, const int colors,
     float pre_mul[4], const unsigned filters, /*const*/ gushort white[8][8],
     const char *ifname, void *dcraw);
 void lin_interpolate_INDI(gushort (*image)[4], const unsigned filters,

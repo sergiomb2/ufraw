@@ -1,7 +1,7 @@
 /*
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
- * dcraw_indi.c - DCRaw functions made independed
+ * dcraw_indi.c - DCRaw functions made independent
  * Copyright 2004-2007 by Udi Fuchs
  *
  * based on dcraw by Dave Coffin
@@ -51,7 +51,7 @@ extern const float d65_white[3];
 #define FC(row,col) \
 	(int)(filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 
-int  fc_INDI (const unsigned filters, const int row, const int col)
+int CLASS fc_INDI (const unsigned filters, const int row, const int col)
 {
   static const char filter[16][16] =
   { { 2,1,1,3,2,3,2,0,3,2,3,0,1,2,1,0 },
@@ -87,31 +87,26 @@ void CLASS merror (void *ptr, char *where)
 void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
        const int black, const int use_auto_wb, const int use_camera_wb,
        const float cam_mul[4],
-       const int height, const int width, const int colors,
+       const int iheight, const int iwidth, const int colors,
        float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
        const char *ifname, void *dcraw)
 {
-  int row, col, x, y, c, val; // , shift=0; /*UF*/
-  int min[4], max[4], sum[8];
-  double dsum[8], dmin;
+  int dblack, row, col, x, y, c, val, sum[8];
+  double dsum[8], dmin, dmax;
+  float scale_mul[4];
 
-  maximum -= black; /* maximum is changed only locally */
   if (use_auto_wb || (use_camera_wb && cam_mul[0] == -1)) {
-    FORC4 min[c] = INT_MAX;
-    FORC4 max[c] = 0;
     memset (dsum, 0, sizeof dsum);
-    for (row=0; row < height-7; row++)
-      for (col=0; col < width-7; col++) {
+    for (row=0; row < iheight-7; row += 8)
+      for (col=0; col < iwidth-7; col += 8) {
        memset (sum, 0, sizeof sum);
-       for (y=row; y < row+7; y++)
-         for (x=col; x < col+7; x++)
+       for (y=row; y < row+8; y++)
+         for (x=col; x < col+8; x++)
            FORC4 {
-             val = image[y*width+x][c];
+             val = image[y*iwidth+x][c];
              if (!val) continue;
-             if (min[c] > val) min[c] = val;
-             if (max[c] < val) max[c] = val;
-             val -= black;
              if (val > maximum-25) goto skip_block;
+             val -= black;
              if (val < 0) val = 0;
              sum[c] += val;
              sum[c+4]++;
@@ -140,54 +135,36 @@ skip_block:
       dcraw_message (dcraw, DCRAW_NO_CAMERA_WB,
 	      _("%s: Cannot use camera white balance.\n"), ifname);
   }
+//  if (user_mul[0])
+//    memcpy (pre_mul, user_mul, sizeof pre_mul);
   if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
-  dmin = DBL_MAX;
-  FORC4 if (dmin > pre_mul[c])
-	    dmin = pre_mul[c];
-  FORC4 pre_mul[c] /= dmin;
-
+  dblack = black;
+//  if (threshold) wavelet_denoise();
+  maximum -= black;
+  for (dmin=DBL_MAX, dmax=c=0; c < 4; c++) {
+    if (dmin > pre_mul[c])
+        dmin = pre_mul[c];
+    if (dmax < pre_mul[c])
+        dmax = pre_mul[c];
+  }
+//  if (!highlight) dmax = dmin;
+  FORC4 scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / maximum;
   dcraw_message(dcraw, DCRAW_VERBOSE,_("Scaling with black %d, multipliers"),
-	  black);
+	  dblack);
   FORC4 dcraw_message(dcraw, DCRAW_VERBOSE, " %f", pre_mul[c]);
   dcraw_message(dcraw, DCRAW_VERBOSE, "\n");
  
 /* The rest of the scaling is done somewhere else UF*/
 #if 0
-  if (raw_color || !output_color) {
-    pre_mul[0] *= red_scale;
-    pre_mul[2] *= blue_scale;
-  }
-  while (maximum << shift < 0x8000) shift++;
-  FORC4 pre_mul[c] *= 1 << shift;
-  maximum <<= shift;
-
-  if (write_fun != write_ppm || bright < 1) {
-    maximum *= bright;
-    if (maximum > 0xffff)
-	maximum = 0xffff;
-    FORC4 pre_mul[c] *= bright;
-  }
-  clip_max = clip_color ? maximum : 0xffff;
-  for (row=0; row < height; row++)
-    for (col=0; col < width; col++)
+  for (row=0; row < iheight; row++)
+    for (col=0; col < iwidth; col++)
       FORC4 {
-	val = image[row*width+col][c];
+	val = image[row*iwidth+col][c];
 	if (!val) continue;
 	val -= black;
-	val *= pre_mul[c];
-	image[row*width+col][c] = CLIP(val);
+	val = (int)(val*scale_mul[c]);
+	image[row*iwidth+col][c] = CLIP(val);
       }
-  if (filters && colors == 3) {
-    if (four_color_rgb) {
-      colors++;
-      FORC3 rgb_cam[c][3] = rgb_cam[c][1] /= 2;
-    } else {
-      for (row = FC(1,0) >> 1; row < height; row+=2)
-        for (col = FC(row,1) & 1; col < width; col+=2)
-          image[row*width+col][1] = image[row*width+col][3];
-      filters &= ~((filters & 0x55555555) << 1);
-    }
-  }
 #endif
 }
 

@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw-gimp.c - The GIMP plug-in.
- * Copyright 2004-2006 by Udi Fuchs
+ * Copyright 2004-2007 by Udi Fuchs
  *
  * based on the GIMP plug-in by Pawel T. Jochym jochym at ifj edu pl,
  *
