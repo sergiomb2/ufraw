@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.62 2007/03/13 05:51:08 nkbj Exp $
+dnl $Id: configure.ac,v 1.63 2007/03/16 01:06:46 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -10,6 +10,7 @@ AM_CONFIG_HEADER(config.h)
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_INSTALL
+AC_PROG_RANLIB
 
 AC_CHECK_PROGS(POD2MAN, pod2man, , $PATH)
 

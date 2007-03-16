@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.31 2007/03/09 23:13:47 udifuchs Exp $
+# $Id: Makefile.am,v 1.32 2007/03/16 01:06:46 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -21,6 +21,8 @@ endif
 POD2MAN= @POD2MAN@
 man_MANS = ufraw.1
 
+noinst_LIBRARIES = libufraw.a
+
 CLEANFILES = ufraw.1 ufraw.schemas ufraw_icon.opc ufraw-setup.bmp
 
 if INSTALL_MIME
@@ -34,18 +36,6 @@ if INSTALL_MIME
   schemasdir = $(datadir)/gconf/schemas
 endif
 
-#html_DATA = user_guide.html
-#htmldir = $(datadir)/doc/ufraw
-
-UFRAW_COMMON = ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
-    ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw.h \
-    wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
-    nikon_curve.c nikon_curve.h \
-    ufraw_exiv2.cc iccjpeg.c iccjpeg.h
-UFRAW_GTK_COMMON = $(UFRAW_COMMON) ufraw_preview.c ufraw_saver.c \
-    ufraw_chooser.c ufraw_icons.c icons/ufraw_icons.h \
-    curveeditor_widget.c curveeditor_widget.h
-
 if UFRAW_WIN32
   UFRAW_ICON = ufraw_icon.opc
 else
@@ -56,34 +46,43 @@ EXTRA_DIST = ufraw.desktop ufraw_icon.ico ufraw_icon.rc \
     ufraw-mime.xml generate_schemas.sh \
     ufraw-setup.jpg autogen.sh MANIFEST ufraw.pod
 
-AM_CFLAGS = $(UFRAW_CFLAGS) -DUFRAW_LOCALEDIR=\"$(datadir)/locale\"
-AM_CXXFLAGS = $(UFRAW_CFLAGS)
-LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD)
+AM_CPPFLAGS = $(UFRAW_CFLAGS) -DDCRAW_NOMAIN \
+		-DUFRAW_LOCALEDIR=\"$(datadir)/locale\"
+LDADD = libufraw.a $(UFRAW_ICON) $(UFRAW_LDADD)
+LINK = $(CXXLINK)
 
-ufraw_SOURCES = ufraw.c $(UFRAW_GTK_COMMON)
-ufraw_LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD) $(GTK_LIBS)
+libufraw_a_SOURCES = \
+    dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
+    ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw.h \
+    wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
+    nikon_curve.c nikon_curve.h \
+    ufraw_exiv2.cc iccjpeg.c iccjpeg.h \
+    ufraw_preview.c ufraw_saver.c \
+    ufraw_chooser.c ufraw_icons.c icons/ufraw_icons.h \
+    curveeditor_widget.c curveeditor_widget.h
 
-ufraw_batch_SOURCES = ufraw-batch.c $(UFRAW_COMMON)
+ufraw_SOURCES = ufraw.c
+ufraw_LDADD = $(LDADD) $(GTK_LIBS)
+
+ufraw_batch_SOURCES = ufraw-batch.c
 ufraw_batch_LDFLAGS = @CONSOLE@
 
 if MAKE_GIMP
-  ufraw_gimp_SOURCES = ufraw-gimp.c $(UFRAW_GTK_COMMON)
-  ufraw_gimp_CFLAGS = $(AM_CFLAGS) $(GIMP_CFLAGS) 
-  ufraw_gimp_LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD) $(GIMP_LIBS)
+  ufraw_gimp_SOURCES = ufraw-gimp.c
+  ufraw_gimp_CPPFLAGS = $(AM_CPPFLAGS) $(GIMP_CFLAGS) 
+  ufraw_gimp_LDADD = $(LDADD) $(GIMP_LIBS)
 endif
 
 if MAKE_CINEPAINT
-  cinepaint_ufraw_SOURCES = ufraw-gimp.c $(UFRAW_GTK_COMMON)
-  cinepaint_ufraw_CFLAGS = $(AM_CFLAGS) $(CINEPAINT_CFLAGS) -DUFRAW_CINEPAINT
-  cinepaint_ufraw_LDADD = dcraw_nomain.o $(UFRAW_ICON) $(UFRAW_LDADD) $(CINEPAINT_LIBS)
+  cinepaint_ufraw_SOURCES = ufraw-gimp.c
+  cinepaint_ufraw_CPPFLAGS = $(AM_CPPFLAGS) $(CINEPAINT_CFLAGS) \
+				-DUFRAW_CINEPAINT
+  cinepaint_ufraw_LDADD = $(LDADD) $(CINEPAINT_LIBS)
 endif
-
-dcraw_nomain.o: dcraw.cc
-	$(COMPILE) -DDCRAW_NOMAIN -DNO_LCMS -o $@ -c $(srcdir)/dcraw.cc
 
 if MAKE_EXTRAS
   dcraw_SOURCES = dcraw.cc
-  dcraw_CXXFLAGS = $(UFRAW_CFLAGS)
+  dcraw_CPPFLAGS = $(UFRAW_CFLAGS)
   dcraw_LDFLAGS = @CONSOLE@
   dcraw_LDADD = $(UFRAW_LDADD)
 
@@ -104,14 +103,6 @@ ufraw_icon.opc: ufraw_icon.rc ufraw_icon.ico
 
 ufraw.schemas: generate_schemas.sh
 	$(srcdir)/generate_schemas.sh $(prefix) $@
-
-install-exec-local:
-if UFRAW_WIN32
-	@echo "################################################################"
-	@echo "'make install' is not really supported on cygwin/mingw32"
-	@echo "'make install-windows' will make a standard windows installation"
-	@echo "################################################################"
-endif
 
 install-windows: windows-installer
 	$(WINE) ./ufraw-$(VERSION)-setup.exe
