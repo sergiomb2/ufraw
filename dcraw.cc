@@ -15,15 +15,15 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.374 $
-   $Date: 2007/03/15 05:19:10 $
+   $Revision: 1.375 $
+   $Date: 2007/03/17 05:18:22 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.66"
+#define DCRAW_VERSION "8.67"
 
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
@@ -5166,10 +5166,8 @@ void CLASS parse_fuji (int offset)
       FORC4 cam_mul[c ^ 1] = get2();
     fseek (ifp, save+len, SEEK_SET);
   }
-  if (fuji_layout) {
-    height *= 2;
-    width  /= 2;
-  }
+  height <<= fuji_layout;
+  width  >>= fuji_layout;
 }
 
 int CLASS parse_jpeg (int offset)
@@ -5439,6 +5437,8 @@ void CLASS adobe_coeff (char *make, char *model)
     { "FUJIFILM FinePix S2Pro", 128,
 	{ 12492,-4690,-1402,-7033,15423,1647,-1507,2111,7697 } },
     { "FUJIFILM FinePix S3Pro", 0,
+	{ 11807,-4612,-1294,-8927,16968,1988,-2120,2741,8006 } },
+    { "FUJIFILM FinePix S5Pro", 0,
 	{ 11807,-4612,-1294,-8927,16968,1988,-2120,2741,8006 } },
     { "FUJIFILM FinePix S5000", 0,
 	{ 8754,-2732,-1019,-7204,15069,2276,-1702,2334,6982 } },
@@ -5775,7 +5775,7 @@ void CLASS identify()
       "SAMSUNG" };
 
   tiff_flip = flip = filters = (unsigned)-1;	/* 0 is valid, so -1 is unknown */
-  raw_height = raw_width = fuji_width = cr2_slice[0] = 0;
+  raw_height = raw_width = fuji_width = fuji_layout = cr2_slice[0] = 0;
   maximum = height = width = top_margin = left_margin = 0;
   make[0] = model[0] = model2[0] = cdesc[0] = 0;
   iso_speed = shutter = aperture = focal_len = unique_id = 0;
@@ -6229,8 +6229,8 @@ cp_e2500:
     top_margin = (raw_height - height)/2;
     left_margin = (raw_width - width )/2;
     if (fuji_secondary)
-      data_offset += (shot_select > 0) * ( strcmp(model+7," S3Pro")
-		? (raw_width *= 2) : raw_height*raw_width*2 );
+      data_offset += (shot_select > 0) * ( fuji_layout ?
+		(raw_width *= 2) : raw_height*raw_width*2 );
     fuji_width = width >> !fuji_layout;
     width = (height >> fuji_layout) + fuji_width;
     raw_height = height;
