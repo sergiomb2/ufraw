@@ -30,7 +30,7 @@
 #define FC(filters,row,col) \
     (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 extern "C" {
-int  fc_INDI (const unsigned filters, const int row, const int col);
+int fc_INDI (const unsigned filters, const int row, const int col);
 void scale_colors_INDI(gushort (*image)[4], const int rgb_max, const int black,
     const int use_auto_wb, const int use_camera_wb, const float cam_mul[4],
     const int iheight, const int iwidth, const int colors,

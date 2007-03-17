@@ -183,7 +183,7 @@ void CLASS border_interpolate_INDI (const int height, const int width,
 	for (x=col-1; x != col+2; x++)
 	  if (y >= 0 && y < height && x >= 0 && x < width) {
 	    f = fc_INDI(filters, y, x);
-	    sum[f] += image[y*width + x][f];
+	    sum[f] += image[y*width+x][f];
 	    sum[f+4]++;
 	  }
       f = fc_INDI(filters,row,col);
@@ -201,7 +201,7 @@ void CLASS lin_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 
   dcraw_message (dcraw, DCRAW_VERBOSE,_("Bilinear interpolation...\n")); /*UF*/
 
-  border_interpolate_INDI (height, width, image, filters, colors, 1);
+  border_interpolate_INDI(height, width, image, filters, colors, 1);
   for (row=0; row < 16; row++)
     for (col=0; col < 16; col++) {
       ip = code[row][col];
@@ -379,7 +379,7 @@ void CLASS cam_to_cielab_INDI (ushort cam[4], float lab[3],
 
   if (cam == NULL) {
     for (i=0; i < 0x10000; i++) {
-      r = (float) i / 65535.0;
+      r = i / 65535.0;
       cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
     }
     for (i=0; i < 3; i++)
@@ -387,11 +387,15 @@ void CLASS cam_to_cielab_INDI (ushort cam[4], float lab[3],
         for (xyz_cam[i][j] = k=0; k < 3; k++)
 	  xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65_white[i];
   } else {
-    for (i=0; i < 3; i++) {
-      for (xyz[i]=0.5, c=0; c < colors; c++)
-	xyz[i] += xyz_cam[i][c] * cam[c];
-      xyz[i] = cbrt[CLIP((int) xyz[i])];
+    xyz[0] = xyz[1] = xyz[2] = 0.5;
+    FORCC {
+      xyz[0] += xyz_cam[0][c] * cam[c];
+      xyz[1] += xyz_cam[1][c] * cam[c];
+      xyz[2] += xyz_cam[2][c] * cam[c];
     }
+    xyz[0] = cbrt[CLIP((int) xyz[0])];
+    xyz[1] = cbrt[CLIP((int) xyz[1])];
+    xyz[2] = cbrt[CLIP((int) xyz[2])];
     lab[0] = 116 * xyz[1] - 16;
     lab[1] = 500 * (xyz[0] - xyz[1]);
     lab[2] = 200 * (xyz[1] - xyz[2]);
@@ -529,23 +533,23 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
   dcraw_message (dcraw, DCRAW_VERBOSE,_("Rotating image 45 degrees...\n"));
 //  fuji_width = (fuji_width - 1 + shrink) >> shrink;
 //  step = sqrt(0.5);
-  wide = fuji_width / step;
-  high = (height - fuji_width) / step;
+  wide = (int)(fuji_width / step);
+  high = (int)((height - fuji_width) / step);
   img = (ushort (*)[4]) calloc (wide*high, sizeof *img);
   merror (img, "fuji_rotate()");
 
   for (row=0; row < high; row++)
     for (col=0; col < wide; col++) {
-      ur = r = fuji_width + (row-col)*step;
-      uc = c = (row+col)*step;
+      ur = (int)(r = fuji_width + (row-col)*step);
+      uc = (int)(c = (row+col)*step);
       if (ur > height-2 || uc > width-2) continue;
       fr = r - ur;
       fc = c - uc;
       pix = image + ur*width + uc;
       for (i=0; i < colors; i++)
-	img[row*wide+col][i] =
+	img[row*wide+col][i] = (ushort)(
 	  (pix[    0][i]*(1-fc) + pix[      1][i]*fc) * (1-fr) +
-	  (pix[width][i]*(1-fc) + pix[width+1][i]*fc) * fr;
+	  (pix[width][i]*(1-fc) + pix[width+1][i]*fc) * fr);
     }
   free (image);
   width  = wide;

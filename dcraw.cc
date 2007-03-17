@@ -3454,6 +3454,7 @@ skip_block:
 	image[row*iwidth+col][c] = CLIP(val);
       }
 }
+/* End of functions copied to dcraw_indi.c (UF) */
 
 void CLASS pre_interpolate()
 {
@@ -3489,6 +3490,7 @@ void CLASS pre_interpolate()
   }
 }
 
+/* Start of functions copied to dcraw_indi.c (UF) */
 void CLASS border_interpolate (int border)
 {
   int row, col, y, x, f, c, sum[8];
@@ -6978,6 +6980,7 @@ void CLASS fuji_rotate()
   image  = img;
   fuji_width = 0;
 }
+/* End of functions copied to dcraw_indi.c (UF) */
 
 void CLASS stretch()
 {
@@ -7025,7 +7028,6 @@ int CLASS flip_index (int row, int col)
   if (flip & 1) col = iwidth  - 1 - col;
   return row * iwidth + col;
 }
-/* End of functions copied to dcraw_indi.c (UF) */
 
 void CLASS gamma_lut (uchar lut[0x10000])
 {
