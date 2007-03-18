@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.63 2007/03/16 01:06:46 udifuchs Exp $
+dnl $Id: configure.ac,v 1.64 2007/03/18 12:56:07 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -82,7 +82,7 @@ AC_SUBST(GIMP_CFLAGS)
 AC_SUBST(GIMP_LIBS)
 AC_SUBST(GIMP_LIBDIR)
 
-PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.22,
+PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.21,
   [ have_cinepaint=yes
     CINEPAINT_LIBDIR=`$pkg_prefix --variable=cinepaintlibdir cinepaint-gtk` ],
   [ have_cinepaint=no

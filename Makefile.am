@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.32 2007/03/16 01:06:46 udifuchs Exp $
+# $Id: Makefile.am,v 1.33 2007/03/18 12:56:05 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -77,7 +77,7 @@ if MAKE_CINEPAINT
   cinepaint_ufraw_SOURCES = ufraw-gimp.c
   cinepaint_ufraw_CPPFLAGS = $(AM_CPPFLAGS) $(CINEPAINT_CFLAGS) \
 				-DUFRAW_CINEPAINT
-  cinepaint_ufraw_LDADD = $(LDADD) $(CINEPAINT_LIBS)
+  cinepaint_ufraw_LDADD = $(LDADD) $(CINEPAINT_LIBS) $(GTK_LIBS)
 endif
 
 if MAKE_EXTRAS
