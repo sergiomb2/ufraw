@@ -1299,9 +1299,9 @@ void restore_details_button_set(GtkButton *button, preview_data *data)
     case restore_hsv_details:
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_button_set_image(button, gtk_image_new_from_stock(
-		"highlights-restore-hsv", GTK_ICON_SIZE_BUTTON));
+		"restore-highlights-hsv", GTK_ICON_SIZE_BUTTON));
 #else
-	image = gtk_image_new_from_stock("highlights-restore-hsv",
+	image = gtk_image_new_from_stock("restore-highlights-hsv",
 		GTK_ICON_SIZE_BUTTON);
 	gtk_container_add(GTK_CONTAINER(button), image);
 	gtk_widget_show(image);
