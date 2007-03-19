@@ -253,7 +253,10 @@ void run(GIMP_CONST gchar *name,
     }
     if ( status != UFRAW_SUCCESS || uf->gimpImage==-1 ) {
 	values[0].type = GIMP_PDB_STATUS;
-	values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+	if ( status==UFRAW_CANCEL )
+	    values[0].data.d_status = GIMP_PDB_CANCEL;
+	else
+	    values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
 	return;
     }
     *nreturn_vals = 2;
