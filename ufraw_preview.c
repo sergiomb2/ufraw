@@ -1160,7 +1160,7 @@ GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text, char *icon,
     } else {
 	GtkWidget *event_box = gtk_event_box_new();
 	GtkWidget *image = gtk_image_new_from_stock(icon,
-		GTK_ICON_SIZE_LARGE_TOOLBAR);
+		GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_container_add(GTK_CONTAINER(event_box), image);
         gtk_tooltips_set_tip(tooltips, event_box, text, NULL);
         gtk_widget_show_all(event_box);
