@@ -189,7 +189,6 @@ void pre_interpolate();
 void border_interpolate (int border);
 void lin_interpolate();
 void vng_interpolate();
-void cam_to_cielab (ushort cam[4], float lab[3]);
 void ahd_interpolate();
 void recover_highlights();
 void tiff_get (unsigned base,
