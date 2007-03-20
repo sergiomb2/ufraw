@@ -41,8 +41,6 @@ void lin_interpolate_INDI(gushort (*image)[4], const unsigned filters,
 void vng_interpolate_INDI(gushort (*image)[4], const unsigned filters,
     const int width, const int height, const int colors, const int rgb_max,
     void *dcraw);
-void cam_to_cielab_INDI (gushort cam[4], float lab[3],
-    const int colors, float rgb_cam[3][4]);
 void ahd_interpolate_INDI(gushort (*image)[4], const unsigned filters,
     const int width, const int height, const int colors, float rgb_cam[3][4],
     void *dcraw);
@@ -179,7 +177,6 @@ int dcraw_load_raw(dcraw_data *h)
     h->black = d->black;
     d->dcraw_message(DCRAW_VERBOSE,_("Black: %d, Maximum: %d\n"),
 	    d->black, d->maximum);
-    cam_to_cielab_INDI(NULL, NULL, h->colors, d->rgb_cam);
     dmin = DBL_MAX;
     for (i=0; i<h->colors; i++) if (dmin > d->pre_mul[i]) dmin = d->pre_mul[i];
     for (i=0; i<h->colors; i++) h->pre_mul[i] = d->pre_mul[i]/dmin;
