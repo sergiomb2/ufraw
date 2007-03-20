@@ -499,7 +499,7 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 		for (cc=0; cc<3; cc++) {
 		    for (c=0, tmp=0; c<d->colors; c++)
 			tmp += tmppix[c] * d->colorMatrix[cc][c];
-		    unclippedPix[cc] = MAX(tmp / 0x10000, 0);
+		    unclippedPix[cc] = tmp/0x10000;
 		}
 	    } else {
 		for (c=0; c<3; c++) unclippedPix[c] = tmppix[c];
@@ -509,7 +509,7 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 		for (cc=0; cc<3; cc++) {
 		    for (c=0, tmp=0; c<d->colors; c++)
 			tmp += tmppix[c] * d->colorMatrix[cc][c];
-		    clippedPix[cc] = MAX(tmp/0x10000, 0);
+		    clippedPix[cc] = tmp/0x10000;
 		}
 	    } else {
 		for (c=0; c<3; c++) clippedPix[c] = tmppix[c];
