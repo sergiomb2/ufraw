@@ -197,7 +197,8 @@ try {
 }
 catch (Exiv2::AnyError& e) {
     std::cerr.rdbuf(savecerr);
-    ufraw_message(UFRAW_SET_WARNING, "%s\n", e.what().c_str());
+    std::string s(e.what());
+    ufraw_message(UFRAW_SET_WARNING, "%s\n", s.c_str());
     return UFRAW_ERROR;
 }
 
