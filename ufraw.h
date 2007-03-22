@@ -73,7 +73,7 @@ typedef struct {
     double gamma, linear;
     char profileFile[profile_types][max_path];
     void *profile[profile_types];
-    Intent intent, proofingIntent;
+    Intent intent[profile_types];
     gboolean updateTransform;
     void *colorTransform;
     double saturation;
@@ -142,7 +142,7 @@ typedef struct {
     CurveData curve[max_curves];
     int profileIndex[profile_types], profileCount[profile_types];
     profile_data profile[profile_types][max_profiles];
-    Intent intent, proofingIntent;
+    Intent intent[profile_types];
     int interpolation;
     char darkframeFile[max_path];
     struct ufraw_struct *darkframe;

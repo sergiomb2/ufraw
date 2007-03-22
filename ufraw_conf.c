@@ -67,7 +67,7 @@ const conf_data conf_default = {
         { "Some ICC Profile", "", "", 0.0, 0.0, FALSE } },
       { { N_("sRGB"), "", "", 0.0, 0.0, FALSE },
         { "Some ICC Profile", "", "", 0.0, 0.0, FALSE } } },
-    0, 0, /* intent, proofingIntent */
+    { 0, 0, 0 }, /* intent */
     ahd_interpolation, /* interpolation */
     "", NULL, /* darkframeFile, darkframe */
     /* Save options */
@@ -510,12 +510,17 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     }
     if ( strcmp("Intent", element)==0 ) {
 	/* Keep compatibility with numbers from ufraw-0.11 */
-        if (sscanf(temp, "%d", &i)==1) c->intent = i;
-	else c->intent = conf_find_name(temp, intentNames, conf_default.intent);
+        if (sscanf(temp, "%d", &i)==1) c->intent[out_profile] = i;
+	else c->intent[out_profile] = conf_find_name(temp, intentNames,
+		    conf_default.intent[out_profile]);
     }
-    if ( strcmp("ProofingIntent", element)==0 )
-	c->proofingIntent = conf_find_name(temp, intentNames,
-		conf_default.proofingIntent);
+    /* OutputIntent replaces Intent starting from ufraw-0.12. */
+    if ( strcmp("OutputIntent", element)==0 )
+	c->intent[out_profile] = conf_find_name(temp, intentNames,
+		    conf_default.intent[out_profile]);
+    if ( strcmp("DisplayIntent", element)==0 )
+	c->intent[display_profile] = conf_find_name(temp, intentNames,
+		conf_default.intent[display_profile]);
     if (!strcmp("Make", element)) g_strlcpy(c->make, temp, max_name);
     if (!strcmp("Model", element)) g_strlcpy(c->model, temp, max_name);
     if (!strcmp("DarkframeFile", element))
@@ -890,12 +895,12 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
             buf = uf_markup_buf(buf, "</%s>\n", type);
         }
     }
-    if (c->intent!=conf_default.intent)
-        buf = uf_markup_buf(buf, "<Intent>%s</Intent>\n",
-		conf_get_name(intentNames, c->intent));
-    if (c->proofingIntent!=conf_default.proofingIntent)
-        buf = uf_markup_buf(buf, "<ProofingIntent>%s</ProofingIntent>\n",
-		conf_get_name(intentNames, c->proofingIntent));
+    if (c->intent[out_profile]!=conf_default.intent[out_profile])
+        buf = uf_markup_buf(buf, "<OutputIntent>%s</OutputIntent>\n",
+		conf_get_name(intentNames, c->intent[out_profile]));
+    if (c->intent[display_profile]!=conf_default.intent[display_profile])
+        buf = uf_markup_buf(buf, "<DisplayIntent>%s</DisplayIntent>\n",
+		conf_get_name(intentNames, c->intent[display_profile]));
     /* We always write the Make and Mode information
      * to know if the WB setting is relevant */
     buf = uf_markup_buf(buf, "<Make>%s</Make>\n", c->make);
@@ -1054,8 +1059,8 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
 	    }
 	}
     }
-    dst->intent = src->intent;
-    dst->proofingIntent = src->proofingIntent;
+    dst->intent[out_profile] = src->intent[out_profile];
+    dst->intent[display_profile] = src->intent[display_profile];
 }
 
 /* Copy the 'save options' from *src to *dst */

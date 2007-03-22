@@ -2461,19 +2461,19 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->ResetLinearButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
-    label = gtk_label_new(_("Intent"));
-    gtk_table_attach(table, label, 0, 1, 6, 7, 0, 0, 0, 0);
+    label = gtk_label_new(_("Output intent"));
+    gtk_table_attach(table, label, 0, 3, 6, 7, 0, 0, 0, 0);
     combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     gtk_combo_box_append_text(combo, _("Perceptual"));
     gtk_combo_box_append_text(combo, _("Relative colorimetric"));
     gtk_combo_box_append_text(combo, _("Saturation"));
     gtk_combo_box_append_text(combo, _("Absolute colorimetric"));
-    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), CFG->intent);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), CFG->intent[out_profile]);
     g_signal_connect(G_OBJECT(combo), "changed",
-            G_CALLBACK(combo_update), &CFG->intent);
-    gtk_table_attach(table, GTK_WIDGET(combo), 1, 7, 6, 7, GTK_FILL, 0, 0, 0);
+            G_CALLBACK(combo_update), &CFG->intent[out_profile]);
+    gtk_table_attach(table, GTK_WIDGET(combo), 3, 7, 6, 7, GTK_FILL, 0, 0, 0);
 
-    label = gtk_label_new(_("Proofing intent"));
+    label = gtk_label_new(_("Display intent"));
     gtk_table_attach(table, label, 0, 3, 10, 11, 0, 0, 0, 0);
     combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     gtk_combo_box_append_text(combo, _("Perceptual"));
@@ -2481,9 +2481,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_combo_box_append_text(combo, _("Saturation"));
     gtk_combo_box_append_text(combo, _("Absolute colorimetric"));
     gtk_combo_box_append_text(combo, _("Disable soft proofing"));
-    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), CFG->proofingIntent);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(combo),CFG->intent[display_profile]);
     g_signal_connect(G_OBJECT(combo), "changed",
-            G_CALLBACK(combo_update), &CFG->proofingIntent);
+            G_CALLBACK(combo_update), &CFG->intent[display_profile]);
     gtk_table_attach(table, GTK_WIDGET(combo), 3, 7, 10, 11, GTK_FILL, 0, 0, 0);
     /* End of Color management page */
 

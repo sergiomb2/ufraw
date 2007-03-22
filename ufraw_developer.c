@@ -41,8 +41,8 @@ developer_data *developer_init()
     TransferFunction[0] = cmsAllocGamma(0x100);
     TransferFunction[1] = TransferFunction[2] = cmsBuildGamma(0x100, 1.0);
     d->saturationProfile = NULL;
-    d->intent = -1;
-    d->proofingIntent = -1;
+    d->intent[out_profile] = -1;
+    d->intent[display_profile] = -1;
     d->updateTransform = TRUE;
     d->colorTransform = NULL;
     cmsSetErrorHandler((void *)ufraw_message);
@@ -165,7 +165,7 @@ void developer_create_transform(developer_data *d, DeveloperMode mode)
 	cmsHPROFILE *sRGBprofile = cmsCreate_sRGBProfile();
 	d->colorTransform = cmsCreateTransform(
 		d->profile[in_profile], TYPE_RGB_16,
-		sRGBprofile, TYPE_RGB_16, d->intent, 0);
+		sRGBprofile, TYPE_RGB_16, d->intent[out_profile], 0);
         cmsCloseProfile(sRGBprofile);
 	return;
     }
@@ -175,8 +175,9 @@ void developer_create_transform(developer_data *d, DeveloperMode mode)
     } else { /* mode==display_developer */
 	targetProfile = display_profile;
     }
-    if ( d->proofingIntent==disable_intent ||
-	 strcmp(d->profile[out_profile], d->profile[targetProfile])==0 ) {
+    /* When softproofing is disabled, use the out_profile intent. */
+    if ( mode==file_developer ||
+	 d->intent[display_profile]==disable_intent ) {
 	/* No need for proofing transformation. */
 	if ( strcmp(d->profileFile[in_profile],"")==0 && 
 	     strcmp(d->profileFile[targetProfile],"")==0 &&
@@ -187,7 +188,8 @@ void developer_create_transform(developer_data *d, DeveloperMode mode)
 	} else if ( d->luminosityProfile==NULL && d->saturationProfile==NULL ) {
 	    d->colorTransform = cmsCreateTransform(
 		    d->profile[in_profile], TYPE_RGB_16,
-		    d->profile[targetProfile], TYPE_RGB_16, d->intent, 0);
+		    d->profile[targetProfile], TYPE_RGB_16,
+		    d->intent[out_profile], 0);
 #endif
         } else {
 	    cmsHPROFILE prof[4];
@@ -199,7 +201,7 @@ void developer_create_transform(developer_data *d, DeveloperMode mode)
 		prof[i++] = d->saturationProfile;
 	    prof[i++] = d->profile[targetProfile];
 	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
-		    TYPE_RGB_16, TYPE_RGB_16, d->intent, 0);
+		    TYPE_RGB_16, TYPE_RGB_16, d->intent[out_profile], 0);
 	}
     } else {
 	/* Create a proofing profile */
@@ -209,7 +211,7 @@ void developer_create_transform(developer_data *d, DeveloperMode mode)
 		    d->profile[in_profile], TYPE_RGB_16,
 		    d->profile[display_profile], TYPE_RGB_16,
 		    d->profile[out_profile],
-		    d->intent, d->proofingIntent,
+		    d->intent[display_profile], d->intent[out_profile],
 		    cmsFLAGS_SOFTPROOFING);
 	} else {
 	    /* Following code imitates the function
@@ -223,7 +225,8 @@ void developer_create_transform(developer_data *d, DeveloperMode mode)
 	    if ( d->saturationProfile!=NULL )
 		prof[i++] = d->saturationProfile;
 	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
-		    TYPE_RGB_16, TYPE_RGB_16, d->intent, cmsFLAGS_SOFTPROOFING);
+		    TYPE_RGB_16, TYPE_RGB_16, d->intent[display_profile],
+		    cmsFLAGS_SOFTPROOFING);
 	    prof[0] = cmsTransform2DeviceLink(d->colorTransform,
 		    cmsFLAGS_GUESSDEVICECLASS);
 	    cmsDeleteTransform(d->colorTransform);
@@ -231,7 +234,7 @@ void developer_create_transform(developer_data *d, DeveloperMode mode)
 		    prof[0], TYPE_RGB_16,
 		    d->profile[display_profile], TYPE_RGB_16,
 		    d->profile[out_profile],
-		    d->intent, d->proofingIntent,
+		    d->intent[display_profile], d->intent[out_profile],
 		    cmsFLAGS_SOFTPROOFING);
 	}
     }
@@ -334,12 +337,12 @@ void developer_prepare(developer_data *d, conf_data *conf,
     developer_profile(d, in_profile, in);
     developer_profile(d, out_profile, out);
     developer_profile(d, display_profile, display);
-    if ( conf->intent!=d->intent ) {
-        d->intent = conf->intent;
+    if ( conf->intent[out_profile]!=d->intent[out_profile] ) {
+        d->intent[out_profile] = conf->intent[out_profile];
         d->updateTransform = TRUE;
     }
-    if ( conf->proofingIntent!=d->proofingIntent ) {
-        d->proofingIntent = conf->proofingIntent;
+    if ( conf->intent[display_profile]!=d->intent[display_profile] ) {
+        d->intent[display_profile] = conf->intent[display_profile];
         d->updateTransform = TRUE;
     }
     /* Check if curve data has changed. */
