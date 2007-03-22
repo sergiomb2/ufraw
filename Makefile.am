@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.34 2007/03/22 15:08:29 nkbj Exp $
+# $Id: Makefile.am,v 1.35 2007/03/22 16:13:23 nkbj Exp $
 
 SUBDIRS=po icons
 
@@ -15,7 +15,7 @@ endif
 
 if MAKE_CINEPAINT
   cinepaintbin_PROGRAMS = ufraw-cinepaint
-  cinepaintbindir = $(CINEPAINT_LIBDIR)/plug-ins
+  cinepaintbindir = $(CINEPAINT_PROGRAMPLUGINDIR)/plug-ins
 endif
 
 POD2MAN= @POD2MAN@

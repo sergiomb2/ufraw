@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.66 2007/03/22 15:47:22 nkbj Exp $
+dnl $Id: configure.ac,v 1.67 2007/03/22 16:13:23 nkbj Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -84,7 +84,9 @@ AC_SUBST(GIMP_LIBDIR)
 
 PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.21,
   [ have_cinepaint=yes
-    CINEPAINT_LIBDIR=`$pkg_prefix --variable=libdir cinepaint-gtk` ],
+    CINEPAINT_LIBDIR=`$pkg_prefix --variable=libdir cinepaint-gtk`
+    CINEPAINT_PROGRAMPLUGINDIR=`$pkg_prefix --variable=programplugindir cinepai
+nt-gtk` ],
   [ have_cinepaint=no
     CINEPAINT_LIBDIR=
     AC_MSG_RESULT($CINEPAINT_PKG_ERRORS) ] )
@@ -92,6 +94,7 @@ AM_CONDITIONAL(MAKE_CINEPAINT, test $have_cinepaint = yes)
 AC_SUBST(CINEPAINT_CFLAGS)
 AC_SUBST(CINEPAINT_LIBS)
 AC_SUBST(CINEPAINT_LIBDIR)
+AC_SUBST(CINEPAINT_PROGRAMPLUGINDIR)
 
 # Disable deprecated functions on tested versions of GTK
 # unless using an old gimp-dev package.
