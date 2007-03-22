@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.64 2007/03/18 12:56:07 udifuchs Exp $
+dnl $Id: configure.ac,v 1.65 2007/03/22 15:08:30 nkbj Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -86,7 +86,7 @@ PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.21,
   [ have_cinepaint=yes
     CINEPAINT_LIBDIR=`$pkg_prefix --variable=cinepaintlibdir cinepaint-gtk` ],
   [ have_cinepaint=no
-    CINEPAINT_LIBIR=
+    CINEPAINT_LIBDIR=
     AC_MSG_RESULT($CINEPAINT_PKG_ERRORS) ] )
 AM_CONDITIONAL(MAKE_CINEPAINT, test $have_cinepaint = yes)
 AC_SUBST(CINEPAINT_CFLAGS)

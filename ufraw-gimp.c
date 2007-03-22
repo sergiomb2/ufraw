@@ -312,9 +312,9 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
     gimp_image_set_filename(uf->gimpImage, uf->filename);
 
     /* Create the "background" layer to hold the image... */
-    layer = gimp_layer_new(uf->gimpImage, "Background", width,
+    layer = gimp_layer_new(uf->gimpImage, _("Background"), width,
 	    height, depth==3 ? GIMP_RGB_IMAGE : U16_RGB_IMAGE,
-	    100, GIMP_NORMAL_MODE);
+	    100.0, GIMP_NORMAL_MODE);
     gimp_image_add_layer(uf->gimpImage, layer, 0);
 
     /* Get the drawable and set the pixel region for our load... */
