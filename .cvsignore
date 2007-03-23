@@ -3,6 +3,7 @@ Makefile
 Makefile.in
 aclocal.m4
 autom4te.cache
+cinepaint-ufraw
 compile
 config.guess
 config.h
@@ -22,6 +23,7 @@ ufraw
 ufraw.1
 ufraw.schemas
 ufraw-batch
+ufraw-cinepaint
 ufraw-exif
 ufraw-gimp
 ufraw-setup.bmp
