@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.68 2007/03/22 16:20:42 nkbj Exp $
+dnl $Id: configure.ac,v 1.69 2007/03/23 14:10:22 nkbj Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -75,21 +75,32 @@ PKG_CHECK_MODULES(GIMP, gimpui-2.0,
   [ have_gimp=yes
     GIMP_LIBDIR=`$pkg_prefix --variable=gimplibdir gimp-2.0` ],
   [ have_gimp=no
-    GIMP_LIBIR=
+    GIMP_LIBDIR=
     AC_MSG_RESULT($GIMP_PKG_ERRORS) ] )
 AM_CONDITIONAL(MAKE_GIMP, test $have_gimp = yes)
 AC_SUBST(GIMP_CFLAGS)
 AC_SUBST(GIMP_LIBS)
 AC_SUBST(GIMP_LIBDIR)
 
-PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.21,
+PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.22,
   [ have_cinepaint=yes
     CINEPAINT_LIBDIR=`$pkg_prefix --variable=libdir cinepaint-gtk`
     CINEPAINT_PROGRAMPLUGINDIR=`$pkg_prefix --variable=programplugindir cinepaint-gtk` ],
   [ have_cinepaint=no
     CINEPAINT_LIBDIR=
-    AC_MSG_RESULT($CINEPAINT_PKG_ERRORS) ] )
+    CINEPAINT_PROGRAMPLUGINDIR= ] )
 AM_CONDITIONAL(MAKE_CINEPAINT, test $have_cinepaint = yes)
+if test $have_cinepaint = no; then
+  PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.21,
+    [ have_cinepaint_021=yes
+      CINEPAINT_LIBDIR=`$pkg_prefix --variable=libdir cinepaint-gtk`
+      CINEPAINT_PROGRAMPLUGINDIR= ],
+    [ have_cinepaint_021=no
+      CINEPAINT_LIBDIR=
+      CINEPAINT_PROGRAMPLUGINDIR=
+      AC_MSG_RESULT($CINEPAINT_PKG_ERRORS) ] )
+fi
+AM_CONDITIONAL(MAKE_CINEPAINT_021, test $have_cinepaint_021 = yes)
 AC_SUBST(CINEPAINT_CFLAGS)
 AC_SUBST(CINEPAINT_LIBS)
 AC_SUBST(CINEPAINT_LIBDIR)
@@ -220,7 +231,11 @@ AC_OUTPUT
 
 AC_MSG_NOTICE(====================== summary =====================)
 AC_MSG_NOTICE(build GIMP plug-in: $have_gimp)
-AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint)
+if test $have_cinepaint = yes; then
+  AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint)
+else
+  AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint_021)
+fi
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(PNG support: $have_png)

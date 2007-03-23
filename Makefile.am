@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.35 2007/03/22 16:13:23 nkbj Exp $
+# $Id: Makefile.am,v 1.36 2007/03/23 14:10:19 nkbj Exp $
 
 SUBDIRS=po icons
 
@@ -16,6 +16,11 @@ endif
 if MAKE_CINEPAINT
   cinepaintbin_PROGRAMS = ufraw-cinepaint
   cinepaintbindir = $(CINEPAINT_PROGRAMPLUGINDIR)/plug-ins
+endif
+
+if MAKE_CINEPAINT_021
+  cinepaintbin_PROGRAMS = cinepaint-ufraw
+  cinepaintbindir = $(CINEPAINT_LIBDIR)/cinepaint/`cinepainttool --version`/plug-ins
 endif
 
 POD2MAN= @POD2MAN@
@@ -78,6 +83,13 @@ if MAKE_CINEPAINT
   ufraw_cinepaint_CPPFLAGS = $(AM_CPPFLAGS) $(CINEPAINT_CFLAGS) \
 				-DUFRAW_CINEPAINT
   ufraw_cinepaint_LDADD = $(LDADD) $(CINEPAINT_LIBS) $(GTK_LIBS)
+endif
+
+if MAKE_CINEPAINT_021
+  cinepaint_ufraw_SOURCES = ufraw-gimp.c
+  cinepaint_ufraw_CPPFLAGS = $(AM_CPPFLAGS) $(CINEPAINT_CFLAGS) \
+				-DUFRAW_CINEPAINT
+  cinepaint_ufraw_LDADD = $(LDADD) $(CINEPAINT_LIBS) $(GTK_LIBS)
 endif
 
 if MAKE_EXTRAS
