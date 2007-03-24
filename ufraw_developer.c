@@ -90,20 +90,27 @@ void developer_profile(developer_data *d, int type, profile_data *p)
     }
 }
 
-int saturation_sampler(register WORD In[], register WORD Out[], register LPVOID Cargo){
-    cmsCIELab LabIn, LabOut;
-    cmsCIELCh LChIn, LChOut;
-    double saturation = *(double *)Cargo;
-    cmsLabEncoded2Float(&LabIn, In);
-    cmsLab2LCh(&LChIn, &LabIn);
-    // Do some adjusts on LCh
-    LChOut.L = LChIn.L;
-    LChOut.C = (1-pow(1-(LChIn.C/256.), saturation))*256;
-    LChOut.h = LChIn.h;
+#define CLAMP_AB_DOUBLE(ab) \
+	( (ab<-128.0) ? -128.0 : ( (ab>127.9961) ? +127.9961 : ab) )
 
-    cmsLCh2Lab(&LabOut, &LChOut);
-    // Back to encoded
-    cmsFloat2LabEncoded(Out, &LabOut);
+int saturation_sampler(register WORD In[], register WORD Out[],
+	register LPVOID Cargo)
+{
+    cmsCIELab Lab;
+    double saturation = *(double *)Cargo;
+
+    cmsLabEncoded2Float(&Lab, In);
+
+    if ( Lab.a!=0.0 || Lab.b!=0.0 ) {
+
+	/* Normalized Chroma of current color (0.0 to 1.0) */
+	double Cn = MAX( fabs(Lab.a), fabs(Lab.b) ) / 128.0;
+
+	double scale = ( 1.0 - pow( 1.0 - Cn , saturation ) ) / Cn;
+	Lab.a = CLAMP_AB_DOUBLE(Lab.a * scale);
+	Lab.b = CLAMP_AB_DOUBLE(Lab.b * scale);
+    }
+    cmsFloat2LabEncoded(Out, &Lab);
 
     return TRUE;
 }
