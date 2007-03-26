@@ -66,6 +66,18 @@ void ufraw_chooser(conf_data *conf, char *defPath)
             gtk_file_filter_add_pattern(filter, ext);
             gtk_file_filter_add_pattern(filter, cp=g_ascii_strup(ext,-1));
             g_free(cp);
+#ifdef HAVE_LIBZ
+            snprintf(ext, max_name, "*.%s.gz", *l);
+            gtk_file_filter_add_pattern(filter, ext);
+            gtk_file_filter_add_pattern(filter, cp=g_ascii_strup(ext,-1));
+            g_free(cp);
+#endif
+#ifdef HAVE_LIBBZ2
+            snprintf(ext, max_name, "*.%s.bz2", *l);
+            gtk_file_filter_add_pattern(filter, ext);
+            gtk_file_filter_add_pattern(filter, cp=g_ascii_strup(ext,-1));
+            g_free(cp);
+#endif
         }
     g_strfreev(extList);
     gtk_file_chooser_add_filter(fileChooser, filter);

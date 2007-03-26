@@ -21,6 +21,12 @@
 #include <math.h>
 #include <time.h>
 #include <errno.h>
+#ifdef HAVE_LIBZ
+#include <zlib.h>
+#endif
+#ifdef HAVE_LIBBZ2
+#include <bzlib.h>
+#endif
 #include <glib.h>
 #include <glib/gi18n.h>
 #include "dcraw_api.h"
@@ -121,6 +127,97 @@ char *ufraw_message(int code, const char *format, ...)
     }
 }
 
+static int make_temporary(char *basefilename, char **tmpfilename)
+{
+    int fd;
+    char *basename = g_path_get_basename(basefilename);
+    char *template = g_strconcat(basename, ".tmp.XXXXXX", NULL);
+    fd = g_file_open_tmp(template, tmpfilename, NULL);
+    g_free(template);
+    g_free(basename);
+    return fd;
+}
+
+static ssize_t writeall(int fd, const char *buf, ssize_t size)
+{
+  ssize_t written;
+  ssize_t wr;
+  for (written = 0; size > 0; size -= wr, written += wr, buf += wr)
+	if ((wr = write(fd, buf, size)) < 0)
+	    break;
+  return written;
+}
+
+static char *decompress_gz(char *origfilename)
+{
+#ifdef HAVE_LIBZ
+    char *filename;
+    int tmpfd;
+    gzFile gzfile;
+    char buf[8192];
+    ssize_t size;
+    if ((tmpfd = make_temporary(origfilename, &filename)) != -1) {
+	if ((gzfile = gzopen(origfilename, "rb")) != 0) {
+	    while ((size = gzread(gzfile, buf, sizeof buf)) > 0) {
+		if (writeall(tmpfd, buf, size) != size)
+		    break;
+	    }
+	    gzclose(gzfile);
+	    if (size == 0)
+		if (close(tmpfd) == 0)
+		    return filename;
+	}
+	close(tmpfd);
+	unlink(filename);
+	free(filename);
+    }
+#else
+    origfilename = origfilename;
+    ufraw_message(UFRAW_SET_ERROR,
+		  "Cannot open gzip compressed images.\n");
+#endif
+    return NULL;
+}
+
+static char *decompress_bz2(char *origfilename)
+{
+#ifdef HAVE_LIBBZ2
+    char *filename;
+    int tmpfd;
+    FILE *compfile;
+    BZFILE *bzfile;
+    int bzerror;
+    char buf[8192];
+    ssize_t size;
+
+    if ((tmpfd = make_temporary(origfilename, &filename)) != -1) {
+	if ((compfile = fopen(origfilename, "rb")) != 0) {
+	    if ((bzfile = BZ2_bzReadOpen(&bzerror, compfile,
+					 0, 0, 0, 0)) != 0) {
+	        while ((size = BZ2_bzRead(&bzerror, bzfile,
+					  buf, sizeof buf)) > 0)
+		    if (writeall(tmpfd, buf, size) != size)
+		        break;
+		BZ2_bzReadClose(&bzerror, bzfile);
+		fclose(compfile);
+		if (size == 0) {
+		    close(tmpfd);
+		    return filename;
+		}
+	    }
+	}
+	close(tmpfd);
+	unlink(filename);
+	free(filename);
+    }
+#else
+    origfilename = origfilename;
+    ufraw_message(UFRAW_SET_ERROR,
+		  "Cannot open bzip2 compressed images.\n");
+#endif
+    return NULL;
+}
+
 ufraw_data *ufraw_open(char *filename)
 {
     int status;
@@ -129,6 +226,7 @@ ufraw_data *ufraw_open(char *filename)
     ufraw_message(UFRAW_CLEAN, NULL);
     conf_data *conf = NULL;
     char *fname, *hostname;
+    char *origfilename;
 
     fname = g_filename_from_uri(filename, &hostname, NULL);
     if (fname!=NULL) {
@@ -177,8 +275,23 @@ ufraw_data *ufraw_open(char *filename)
 
 	filename = conf->inputFilename;
     }
+    origfilename = filename;
+    if (!strcasecmp(filename + strlen(filename) - 3, ".gz"))
+	filename = decompress_gz(filename);
+    else if (!strcasecmp(filename + strlen(filename) - 4, ".bz2"))
+	filename = decompress_bz2(filename);
+    if (filename == 0) {
+	ufraw_message(UFRAW_SET_ERROR,
+		      "Error creating temporary file for compressed data.");
+	return NULL;
+    }
     raw = g_new(dcraw_data, 1);
     status = dcraw_open(raw, filename);
+    if (filename != origfilename) {
+	unlink(filename);
+	free(filename);
+	filename = origfilename;
+    }
     if ( status!=DCRAW_SUCCESS) {
         /* Hold the message without displaying it */
         ufraw_message(UFRAW_SET_WARNING, raw->message);
@@ -217,6 +330,10 @@ ufraw_data *ufraw_open(char *filename)
     }
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
         uf->predictedWidth, uf->predictedHeight, raw->toneCurveSize);
+    if (origfilename != filename) {
+      unlink(filename);
+      free(filename);
+    }
     return uf;
 }
 

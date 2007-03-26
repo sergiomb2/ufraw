@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.69 2007/03/23 14:10:22 nkbj Exp $
+dnl $Id: configure.ac,v 1.70 2007/03/26 20:49:49 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -135,6 +135,10 @@ AC_CHECK_FUNCS(memmem)
 AC_CHECK_LIB(z, deflate)
 have_zlib=${ac_cv_lib_z_deflate:-no}
 
+# Check for libbz2
+AC_CHECK_LIB(bz2, BZ2_bzReadOpen)
+have_libbz2=${ac_cv_lib_bz2_BZ2_bzReadOpen:-no}
+
 # Check for jpeg headers and library.
 AC_CHECK_HEADER(jpeglib.h,
   AC_CHECK_LIB(jpeg, jpeg_CreateCompress))
@@ -240,6 +244,5 @@ AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(PNG support: $have_png)
 AC_MSG_NOTICE(TIFF support: $have_tiff)
-if test $have_tiff = yes; then
-  AC_MSG_NOTICE(TIFF deflate (lossless compression) support: $have_zlib)
-fi
+AC_MSG_NOTICE(gzip compressed raw support: $have_zlib)
+AC_MSG_NOTICE(bzip2 compressed raw support: $have_libbz2)
