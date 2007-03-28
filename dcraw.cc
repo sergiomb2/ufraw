@@ -4677,7 +4677,9 @@ guess_cfa_pc:
     cam_xyz_coeff (cam_xyz);
   }
   if (asn[0])
-    FORCC pre_mul[c] = 1 / asn[c];
+/*  Keep daylight multipliers in DNG files (UF) */
+/*  FORCC pre_mul[c] = 1 / asn[c]; */
+    FORCC cam_mul[c] = 1 / asn[c];
   if (!use_cm)
     FORCC pre_mul[c] /= cc[c][c];
   return 0;
@@ -5921,7 +5923,8 @@ nucore:
       load_raw = &CLASS adobe_dng_load_raw_nc;
     if (tiff_compress == 7)
       load_raw = &CLASS adobe_dng_load_raw_lj;
-    FORC4 cam_mul[c] = pre_mul[c];
+/*  Keep daylight multipliers in DNG files (UF) */
+/*  FORC4 cam_mul[c] = pre_mul[c]; */
     goto dng_skip;
   }
 
