@@ -298,7 +298,6 @@ int ufraw_exif_from_exiv2(ufraw_data *uf);
 #define UFRAW_DCRAW_SET_LOG 4 /* DCRAW_VERBOSE */
 #define UFRAW_ERROR 100
 #define UFRAW_CANCEL 101
-#define UFRAW_ABORT_SAVE 102 /* Unrecoverable error during image save */
 #define UFRAW_RC_VERSION 103 /* Mismatch in version from .ufrawrc */
 #define UFRAW_WARNING 104
 #define UFRAW_MESSAGE 105

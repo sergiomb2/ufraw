@@ -275,7 +275,6 @@ void run(GIMP_CONST gchar *name,
 
 long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
 {
-    GtkWindow *window;
     GimpDrawable *drawable;
     GimpPixelRgn pixel_region;
     gint32 layer;
@@ -408,12 +407,6 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
 	}
     }
 #endif
-    if (widget!=NULL) {
-	window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
-	g_object_set_data(G_OBJECT(window), "WindowResponse",
-		(gpointer)GTK_RESPONSE_OK);
-	gtk_main_quit();
-    }
     return UFRAW_SUCCESS;
 }
 

@@ -81,7 +81,6 @@ int ufraw_write_image(ufraw_data *uf)
     guint16 *pixbuf16;
     char *confFilename=NULL;
     char *message=NULL;
-    message = message;
     ufraw_message(UFRAW_RESET, NULL);
 
     if ( uf->conf->createID==only_id ||
@@ -90,6 +89,7 @@ int ufraw_write_image(ufraw_data *uf)
         if (!strcmp(confFilename, uf->conf->outputFilename)) {
             ufraw_message(UFRAW_ERROR, _("Image filename can not be the "
                         "same as ID filename '%s'"), confFilename);
+	    g_free(confFilename);
             return UFRAW_ERROR;
         }
     }
@@ -144,7 +144,7 @@ int ufraw_write_image(ufraw_data *uf)
             if ((int)fwrite(pixbuf8, 3, width, out)<width) {
                 ufraw_message(UFRAW_ERROR, _("Error creating file '%s': %s."),
                         uf->conf->outputFilename, g_strerror(errno));
-                status = UFRAW_ABORT_SAVE;
+                status = UFRAW_ERROR;
                 break;
             }
         }
@@ -161,7 +161,7 @@ int ufraw_write_image(ufraw_data *uf)
             if ((int)fwrite(pixbuf16, 6, width, out)<width) {
                 ufraw_message(UFRAW_ERROR, _("Error creating file '%s': %s."),
                         uf->conf->outputFilename, g_strerror(errno));
-                status = UFRAW_ABORT_SAVE;
+                status = UFRAW_ERROR;
                 break;
             }
         }
@@ -213,7 +213,7 @@ int ufraw_write_image(ufraw_data *uf)
                     ufraw_message(UFRAW_ERROR,
                             _("Error creating file '%s'.\n%s"),
                             uf->conf->outputFilename, message);
-                    status = UFRAW_ABORT_SAVE;
+                    status = UFRAW_ERROR;
                     break;
                 }
             }
@@ -229,7 +229,7 @@ int ufraw_write_image(ufraw_data *uf)
                     ufraw_message(UFRAW_ERROR,
                             _("Error creating file '%s'.\n%s"),
                             uf->conf->outputFilename, message);
-                    status = UFRAW_ABORT_SAVE;
+                    status = UFRAW_ERROR;
                     break;
                 }
             }
@@ -294,7 +294,7 @@ int ufraw_write_image(ufraw_data *uf)
         if ( (message=ufraw_message(UFRAW_GET_ERROR, NULL))!=NULL) {
             ufraw_message(UFRAW_ERROR, _("Error creating file '%s'.\n%s"),
                     uf->conf->outputFilename, message);
-            status = UFRAW_ABORT_SAVE;
+            status = UFRAW_ERROR;
         } else if (ufraw_message(UFRAW_GET_WARNING, NULL)!=NULL) {
             ufraw_message(UFRAW_REPORT, NULL);
         }
@@ -303,7 +303,7 @@ int ufraw_write_image(ufraw_data *uf)
         ufraw_message(UFRAW_ERROR,
                 _("Error creating file '%s'. Unknown file type %d."),
                 uf->conf->outputFilename, uf->conf->type);
-        status = UFRAW_ABORT_SAVE;
+        status = UFRAW_ERROR;
     }
     g_free(pixbuf16);
     g_free(pixbuf8);
@@ -313,7 +313,7 @@ int ufraw_write_image(ufraw_data *uf)
         if ( (message=ufraw_message(UFRAW_GET_ERROR, NULL))!=NULL) {
             ufraw_message(UFRAW_ERROR, _("Error creating file '%s'.\n%s"),
                     uf->conf->outputFilename, message);
-            status = UFRAW_ABORT_SAVE;
+            status = UFRAW_ERROR;
         }
     } else
 #endif

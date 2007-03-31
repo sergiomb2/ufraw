@@ -1068,7 +1068,7 @@ gboolean spot_motion(GtkWidget *event_box, GdkEventMotion *event,
     return FALSE;
 }
 
-gboolean create_base_image(preview_data *data)
+void create_base_image(preview_data *data)
 {
     int shrinkSave = CFG->shrink;
     int sizeSave = CFG->size;
@@ -1107,7 +1107,6 @@ gboolean create_base_image(preview_data *data)
 	gtk_progress_bar_set_text(data->ProgressBar, progressText);
 	gtk_progress_bar_set_fraction(data->ProgressBar, 0);
     }
-    return FALSE;
 }
 
 void zoom_in_event(GtkWidget *widget, gpointer user_data)
@@ -1949,13 +1948,22 @@ void window_response(GtkWidget *widget, gpointer user_data)
     gtk_main_quit();
 }
 
-void preview_saver(GtkWidget *widget, ufraw_data *uf)
+void preview_saver(GtkWidget *widget, gpointer user_data)
 {
+    user_data = user_data;
     preview_data *data = get_preview_data(widget);
     if (data->FreezeDialog==TRUE) return;
     gtk_widget_set_sensitive(data->Controls, FALSE);
     data->FreezeDialog = TRUE;
-    (*data->SaveFunc)(widget, uf);
+    if ( (*data->SaveFunc)(widget, data->UF)==UFRAW_SUCCESS ) {
+	GtkWindow *window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
+        g_object_set_data(G_OBJECT(window), "WindowResponse",
+                (gpointer)GTK_RESPONSE_OK);
+        gtk_main_quit();
+    } else {
+	preview_progress(widget, "", 0);
+	create_base_image(data);
+    }
     data->FreezeDialog = FALSE;
     gtk_widget_set_sensitive(data->Controls, TRUE);
 }
@@ -2888,13 +2896,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_OK);
         gtk_box_pack_start(box, saveButton, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(saveButton), "clicked",
-		G_CALLBACK(preview_saver), uf);
+		G_CALLBACK(preview_saver), NULL);
         gtk_widget_grab_focus(saveButton);
     } else {
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
         gtk_box_pack_start(box, saveButton, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(saveButton), "clicked",
-		G_CALLBACK(preview_saver), uf);
+		G_CALLBACK(preview_saver), NULL);
 
 	/* Get the default save options from ufraw_saver() */
 	char *text = (char *)ufraw_saver(NULL, uf);
@@ -2904,7 +2912,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	saveAsButton = gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
         gtk_box_pack_start(box, saveAsButton, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(saveAsButton), "clicked",
-		G_CALLBACK(preview_saver), uf);
+		G_CALLBACK(preview_saver), NULL);
         gtk_widget_grab_focus(saveAsButton);
     }
     gtk_widget_show_all(previewWindow);
