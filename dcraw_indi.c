@@ -98,7 +98,7 @@ void CLASS hat_transform (float *temp, float *base, int st, int size, int sc)
     temp[i] = 2*base[st*i] + base[st*(i-sc)] + base[st*(2*size-2-(i+sc))];
 }
 
-void CLASS wavelet_denoise_INDI(ushort (*image)[4], int black,
+void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
        const int iheight, const int iwidth, const int height, const int width,
        const int colors, const int shrink, float pre_mul[4],
        const float threshold, const unsigned filters, void *dcraw)

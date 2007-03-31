@@ -35,6 +35,7 @@ const conf_data conf_default = {
     camera_wb, 0, /* wb, WBTuning */
     6500, 1.0, /* temperature, green */
     { -1.0, -1.0, -1.0, -1.0 }, /* chanMul[] */
+    0.0, /* wavelet denoising threshold */
     0.0, 1.0, 0.0, /* exposure, saturation, black */
     0, /* ExposureNorm */
     restore_lch_details, /* restoreDetails */
@@ -484,6 +485,8 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
 		&c->chanMul[0], &c->chanMul[1], &c->chanMul[2], &c->chanMul[3]);
 	if (i<4) c->chanMul[3] = 0.0;
     }
+    if (!strcmp("WaveletDenoisingThreshold", element))
+	sscanf(temp, "%lf", &c->threshold);
     if (!strcmp("Exposure", element)) sscanf(temp, "%lf", &c->exposure);
     if (!strcmp("ExposureNorm", element)) sscanf(temp, "%d", &c->ExposureNorm);
     if (!strcmp("Saturation", element)) sscanf(temp, "%lf", &c->saturation);
@@ -732,6 +735,10 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 		    c->chanMul[0], c->chanMul[1], c->chanMul[2], c->chanMul[3]);
 	}
     }
+    if (c->threshold!=conf_default.threshold)
+        buf = uf_markup_buf(buf,
+		"<WaveletDenoisingThreshold>%lf</WaveletDenoisingThreshold>\n",
+		c->threshold);
     if (c->exposure!=conf_default.exposure)
         buf = uf_markup_buf(buf, "<Exposure>%lf</Exposure>\n", c->exposure);
     if (c->ExposureNorm!=conf_default.ExposureNorm)
@@ -973,6 +980,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
      * since on different make and model ChanMul are meaningless */
     g_strlcpy(dst->make, src->make, max_name);
     g_strlcpy(dst->model, src->model, max_name);
+    dst->threshold = src->threshold;
     dst->exposure = src->exposure;
     dst->ExposureNorm = src->ExposureNorm;
     dst->saturation = src->saturation;
@@ -1100,6 +1108,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     if (cmd->autoExposure) {
 	conf->autoExposure = cmd->autoExposure;
     }
+    if (cmd->threshold!=NULLF) conf->threshold = cmd->threshold;
     if (cmd->exposure!=NULLF) {
 	conf->exposure = cmd->exposure;
 	conf->autoExposure = disabled_state;
@@ -1212,6 +1221,8 @@ N_("--clip=digital|film   Clip highlights for positive EV.\n"
 N_("--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"),
 N_("--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"),
 N_("--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"),
+N_("--wavelet-denoising-threshold=THRESHOLD\n"
+"                      Wavelet denoising threshold (default 0.0).\n"),
 N_("--exposure=auto|EXPOSURE\n"
 "                      Auto exposure or exposure correction in EV (default 0).\n"),
 N_("--black-point=auto|BLACK\n"
@@ -1307,6 +1318,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         {"gamma", 1, 0, 'G'},
         {"linearity", 1, 0, 'L'},
         {"saturation", 1, 0, 's'},
+        {"wavelet-denoising-threshold", 1, 0, 'n'},
         {"exposure", 1, 0, 'e'},
         {"black-point", 1, 0, 'k'},
         {"interpolation", 1, 0, 'i'},
@@ -1337,7 +1349,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     void *optPointer[] = { &wbName, &cmd->temperature, &cmd->green,
 	&baseCurveName, &baseCurveFile, &curveName, &curveFile,
         &cmd->profile[0][0].gamma, &cmd->profile[0][0].linear,
-	&cmd->saturation,
+	&cmd->saturation, &cmd->threshold, 
         &cmd->exposure, &cmd->black, &interpolationName,
 	&cmd->shrink, &cmd->size, &cmd->compression,
 	&outTypeName, &createIDName, &outPath, &output, &darkframeFile,
@@ -1353,6 +1365,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->profile[0][0].linear=NULLF;
     cmd->saturation=NULLF;
     cmd->black=NULLF;
+    cmd->threshold=NULLF;
     cmd->exposure=NULLF;
     cmd->temperature=NULLF;
     cmd->green=NULLF;
@@ -1379,6 +1392,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         case 'G':
         case 'L':
         case 's':
+	case 'n':
         case 'd':
             if (sscanf(optarg, "%lf", (double *)optPointer[index])==0) {
                 ufraw_message(UFRAW_ERROR,

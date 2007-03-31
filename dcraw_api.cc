@@ -387,7 +387,8 @@ int dcraw_flip_image(dcraw_image_data *image, int flip)
     return DCRAW_SUCCESS;
 }
 
-int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB)
+int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB,
+	float threshold)
 {
     DCRaw *d = (DCRaw *)h->dcraw;
     g_free(d->messageBuffer);
@@ -400,7 +401,7 @@ int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB)
                 h->rgbMax-h->black, h->black, useAutoWB, useCameraWB,
                 h->cam_mul, h->raw.height, h->raw.width, h->height, h->width,
                 h->raw.colors, h->shrink,
-                h->post_mul, 0.0, h->filters, d->white, d->ifname, d);
+                h->post_mul, threshold, h->filters, d->white, d->ifname, d);
     h->message = d->messageBuffer;
     return d->lastStatus;
 }

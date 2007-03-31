@@ -787,7 +787,8 @@ int ufraw_set_wb(ufraw_data *uf)
     } else if ( !strcmp(uf->conf->wb, camera_wb) ) {
         if ( (status=dcraw_set_color_scale(raw,
 		!strcmp(uf->conf->wb, auto_wb),
-		!strcmp(uf->conf->wb, camera_wb)))!=DCRAW_SUCCESS ) {
+		!strcmp(uf->conf->wb, camera_wb),
+		uf->conf->threshold))!=DCRAW_SUCCESS ) {
             if (status==DCRAW_NO_CAMERA_WB) {
                 ufraw_message(UFRAW_BATCH_MESSAGE,
                     _("Cannot use camera white balance, "

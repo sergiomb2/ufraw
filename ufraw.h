@@ -132,6 +132,7 @@ typedef struct {
     double WBTuning;
     double temperature, green;
     double chanMul[4];
+    double threshold;
     double exposure, saturation, black; /* black is only used in CMD */
     int ExposureNorm;
     int restoreDetails, clipHighlights;
