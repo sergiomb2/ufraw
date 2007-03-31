@@ -31,11 +31,12 @@
     (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 extern "C" {
 int fc_INDI (const unsigned filters, const int row, const int col);
-void scale_colors_INDI(gushort (*image)[4], const int rgb_max, const int black,
+void scale_colors_INDI(gushort (*image)[4], const int maximum, const int black,
     const int use_auto_wb, const int use_camera_wb, const float cam_mul[4],
-    const int iheight, const int iwidth, const int colors,
-    float pre_mul[4], const unsigned filters, /*const*/ gushort white[8][8],
-    const char *ifname, void *dcraw);
+    const int iheight, const int iwidth, const int height, const int width,
+    const int colors, const int shrink, float pre_mul[4],
+    const float threshold, const unsigned filters,
+    /*const*/ gushort white[8][8], const char *ifname, void *dcraw);
 void lin_interpolate_INDI(gushort (*image)[4], const unsigned filters,
     const int width, const int height, const int colors, void *dcraw);
 void vng_interpolate_INDI(gushort (*image)[4], const unsigned filters,
@@ -397,8 +398,9 @@ int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB)
         /* BUG white should not be global */
         scale_colors_INDI(h->raw.image,
                 h->rgbMax-h->black, h->black, useAutoWB, useCameraWB,
-                h->cam_mul, h->raw.height, h->raw.width, h->raw.colors,
-                h->post_mul, h->filters, d->white, d->ifname, d);
+                h->cam_mul, h->raw.height, h->raw.width, h->height, h->width,
+                h->raw.colors, h->shrink,
+                h->post_mul, 0.0, h->filters, d->white, d->ifname, d);
     h->message = d->messageBuffer;
     return d->lastStatus;
 }

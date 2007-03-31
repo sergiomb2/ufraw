@@ -51,6 +51,9 @@ extern const float d65_white[3];
 #define FC(row,col) \
 	(int)(filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 
+#define BAYER(row,col) \
+        image[((row) >> shrink)*iwidth + ((col) >> shrink)][FC(row,col)]
+
 int CLASS fc_INDI (const unsigned filters, const int row, const int col)
 {
   static const char filter[16][16] =
@@ -84,12 +87,104 @@ void CLASS merror (void *ptr, char *where)
     g_error("Out of memory in %s\n", where);
 }
 
-void CLASS scale_colors_INDI(ushort (*image)[4], int maximum,
-       const int black, const int use_auto_wb, const int use_camera_wb,
-       const float cam_mul[4],
-       const int iheight, const int iwidth, const int colors,
-       float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
-       const char *ifname, void *dcraw)
+void CLASS hat_transform (float *temp, float *base, int st, int size, int sc)
+{
+  int i;
+  for (i=0; i < sc; i++)
+    temp[i] = 2*base[st*i] + base[st*(sc-i)] + base[st*(i+sc)];
+  for (; i+sc < size; i++)
+    temp[i] = 2*base[st*i] + base[st*(i-sc)] + base[st*(i+sc)];
+  for (; i < size; i++)
+    temp[i] = 2*base[st*i] + base[st*(i-sc)] + base[st*(2*size-2-(i+sc))];
+}
+
+void CLASS wavelet_denoise_INDI(ushort (*image)[4], int black,
+       const int iheight, const int iwidth, const int height, const int width,
+       const int colors, const int shrink, float pre_mul[4],
+       const float threshold, const unsigned filters, void *dcraw)
+{
+  float *fimg, *temp, thold, mul[2], avg, diff;
+  int /*scale=1,*/ size, lev, hpass, lpass, row, col, nc, c, i, wlast;
+  ushort *window[4];
+  static const float noise[] =
+  { 0.8002,0.2735,0.1202,0.0585,0.0291,0.0152,0.0080,0.0044 };
+
+  dcraw_message (dcraw, DCRAW_VERBOSE,_("Wavelet denoising...\n")); /*UF*/
+
+/* Scaling is done somewhere else - NKBJ*/
+#if 0
+  while (maximum << scale < 0x10000) scale++;
+  maximum <<= --scale;
+  black <<= scale;
+#endif
+  size = iheight*iwidth;
+  fimg = (float *) malloc ((size*3 + iheight + iwidth) * sizeof *fimg);
+  merror (fimg, "wavelet_denoise()");
+  temp = fimg + size*3;
+  if ((nc = colors) == 3 && filters) nc++;
+  for (c=0; c < nc; c++) {      /* denoise R,G1,B,G3 individually */
+    for (i=0; i < size; i++)
+      fimg[i] = sqrt((unsigned) (image[i][c] << (/*scale+*/16)));
+    for (hpass=lev=0; lev < 5; lev++) {
+      lpass = size*((lev & 1)+1);
+      for (row=0; row < iheight; row++) {
+        hat_transform (temp, fimg+hpass+row*iwidth, 1, iwidth, 1 << lev);
+        for (col=0; col < iwidth; col++)
+          fimg[lpass + row*iwidth + col] = temp[col] * 0.25;
+      }
+      for (col=0; col < iwidth; col++) {
+        hat_transform (temp, fimg+lpass+col, iwidth, iheight, 1 << lev);
+        for (row=0; row < iheight; row++)
+          fimg[lpass + row*iwidth + col] = temp[row] * 0.25;
+      }
+      thold = threshold * noise[lev];
+      for (i=0; i < size; i++) {
+        fimg[hpass+i] -= fimg[lpass+i];
+        if      (fimg[hpass+i] < -thold) fimg[hpass+i] += thold;
+        else if (fimg[hpass+i] >  thold) fimg[hpass+i] -= thold;
+        else     fimg[hpass+i] = 0;
+        if (hpass) fimg[i] += fimg[hpass+i];
+      }
+      hpass = lpass;
+    }
+    for (i=0; i < size; i++)
+      image[i][c] = CLIP((ushort)(SQR(fimg[i]+fimg[lpass+i])/0x10000));
+  }
+  if (filters && colors == 3) {  /* pull G1 and G3 closer together */
+    for (row=0; row < 2; row++)
+      mul[row] = 0.125 * pre_mul[FC(row+1,0) | 1] / pre_mul[FC(row,0) | 1];
+    for (i=0; i < 4; i++)
+      window[i] = (ushort *) fimg + width*i;
+    for (wlast=-1, row=1; row < height-1; row++) {
+      while (wlast < row+1) {
+        for (wlast++, i=0; i < 4; i++)
+          window[(i+3) & 3] = window[i];
+        for (col = FC(wlast,1) & 1; col < width; col+=2)
+          window[2][col] = BAYER(wlast,col);
+      }
+      thold = threshold/512;
+      for (col = (FC(row,0) & 1)+1; col < width-1; col+=2) {
+        avg = ( window[0][col-1] + window[0][col+1] +
+                window[2][col-1] + window[2][col+1] - black*4 )
+              * mul[row & 1] + (window[1][col] - black) * 0.5 + black;
+        avg = avg < 0 ? 0 : sqrt(avg);
+        diff = sqrt(BAYER(row,col)) - avg;
+        if      (diff < -thold) diff += thold;
+        else if (diff >  thold) diff -= thold;
+        else diff = 0;
+        BAYER(row,col) = CLIP((ushort)(SQR(avg+diff) + 0.5));
+      }
+    }
+  }
+  free (fimg);
+}
+
+void CLASS scale_colors_INDI(ushort (*image)[4], int maximum, const int black,
+       const int use_auto_wb, const int use_camera_wb, const float cam_mul[4],
+       const int iheight, const int iwidth, const int height, const int width,
+       const int colors, const int shrink, float pre_mul[4],
+       const float threshold, const unsigned filters,
+       /*const*/ ushort white[8][8], const char *ifname, void *dcraw)
 {
   int dblack, row, col, x, y, c, val, sum[8];
   double dsum[8], dmin, dmax;
@@ -139,7 +234,8 @@ skip_block:
 //    memcpy (pre_mul, user_mul, sizeof pre_mul);
   if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
   dblack = black;
-//  if (threshold) wavelet_denoise();
+  if (threshold) wavelet_denoise_INDI(image, black, iheight, iwidth,
+	height, width, colors, shrink, pre_mul, threshold, filters, dcraw);
   maximum -= black;
   for (dmin=DBL_MAX, dmax=c=0; c < 4; c++) {
     if (dmin > pre_mul[c])

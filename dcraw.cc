@@ -3295,6 +3295,7 @@ void CLASS colorcheck()
 }
 #endif
 
+/* Start of functions copied to dcraw_indi.c (UF) */
 void CLASS hat_transform (float *temp, float *base, int st, int size, int sc)
 {
   int i;
@@ -3381,7 +3382,6 @@ void CLASS wavelet_denoise()
   free (fimg);
 }
 
-/* Start of functions copied to dcraw_indi.c (UF) */
 void CLASS scale_colors()
 {
   int dblack, row, col, x, y, c, val, sum[8];

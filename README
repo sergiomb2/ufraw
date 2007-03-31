@@ -191,10 +191,11 @@ version (7.86 in the example) and revision (1.304 in the example) numbers.
 This update procedure is not foolproof. First there can be conflicts that
 have to be resolved. But even if there are no conflicts, one should check
 if there are new global variables or functions and add them to dcraw.h.
-One should also check if there where changes to the functions scale_colors(),
-pre_interpolate(), border_interpolate(), lin_interpolate(), vng_interpolate(),
-ahd_interpolate(), convert_to_rgb(), fuji_rotate(), or main(). Such changes
-could affect dcraw_indi.c or dcraw_api.cc.
+One should also check if there where changes to the functions hat_transform(),
+wavelet_denoise(), scale_colors(), pre_interpolate(), border_interpolate(),
+lin_interpolate(), vng_interpolate(), ahd_interpolate(), convert_to_rgb(),
+fuji_rotate() or main(). Such changes could affect dcraw_indi.c or
+dcraw_api.cc.
 
 Development version
 ===================
