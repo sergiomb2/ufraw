@@ -645,7 +645,7 @@ void ufraw_close(ufraw_data *uf)
 /* Convert rawImage to standard rgb image */
 int ufraw_convert_image(ufraw_data *uf)
 {
-    int c;
+    int status, c;
     dcraw_data *raw = uf->raw;
     dcraw_image_data final;
     int shrink = 1;
@@ -677,6 +677,9 @@ int ufraw_convert_image(ufraw_data *uf)
 	g_free(uf->image.image);
         uf->image.image = final.image;
     } else {
+	if ( (status=dcraw_wavelet_denoise(raw,
+		uf->conf->threshold))!=DCRAW_SUCCESS )
+	    return status;
         dcraw_finalize_interpolate(&final, raw, uf->conf->interpolation,
 		uf->developer->rgbWB);
 	uf->developer->rgbMax = uf->developer->max;
@@ -787,8 +790,7 @@ int ufraw_set_wb(ufraw_data *uf)
     } else if ( !strcmp(uf->conf->wb, camera_wb) ) {
         if ( (status=dcraw_set_color_scale(raw,
 		!strcmp(uf->conf->wb, auto_wb),
-		!strcmp(uf->conf->wb, camera_wb),
-		uf->conf->threshold))!=DCRAW_SUCCESS ) {
+		!strcmp(uf->conf->wb, camera_wb)))!=DCRAW_SUCCESS ) {
             if (status==DCRAW_NO_CAMERA_WB) {
                 ufraw_message(UFRAW_BATCH_MESSAGE,
                     _("Cannot use camera white balance, "

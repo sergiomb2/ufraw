@@ -181,10 +181,9 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
 
 void CLASS scale_colors_INDI(ushort (*image)[4], int maximum, const int black,
        const int use_auto_wb, const int use_camera_wb, const float cam_mul[4],
-       const int iheight, const int iwidth, const int height, const int width,
-       const int colors, const int shrink, float pre_mul[4],
-       const float threshold, const unsigned filters,
-       /*const*/ ushort white[8][8], const char *ifname, void *dcraw)
+       const int iheight, const int iwidth, const int colors, float pre_mul[4],
+       const unsigned filters, /*const*/ ushort white[8][8],
+       const char *ifname, void *dcraw)
 {
   int dblack, row, col, x, y, c, val, sum[8];
   double dsum[8], dmin, dmax;
@@ -234,8 +233,7 @@ skip_block:
 //    memcpy (pre_mul, user_mul, sizeof pre_mul);
   if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
   dblack = black;
-  if (threshold) wavelet_denoise_INDI(image, black, iheight, iwidth,
-	height, width, colors, shrink, pre_mul, threshold, filters, dcraw);
+//  if (threshold) wavelet_denoise();
   maximum -= black;
   for (dmin=DBL_MAX, dmax=c=0; c < 4; c++) {
     if (dmin > pre_mul[c])
