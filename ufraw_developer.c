@@ -579,11 +579,12 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 	    }
 	} else { /* !clipped */
 	    if (d->useMatrix) {
+		gint64 tmp[3];
 		for (cc=0; cc<3; cc++) {
-		    for (c=0, tmp=0; c<d->colors; c++)
-			tmp += tmppix[c] * d->colorMatrix[cc][c];
-		    tmppix[cc] = tmp/0x10000;
+		    for (c=0, tmp[cc]=0; c<d->colors; c++)
+			tmp[cc] += tmppix[c] * d->colorMatrix[cc][c];
 		}
+		for (c=0; c<3; c++) tmppix[c] = tmp[c]/0x10000;
 	    }
 	    gint64 max = tmppix[0];
 	    for (c=1; c<3; c++) max = MAX(tmppix[c], max);
