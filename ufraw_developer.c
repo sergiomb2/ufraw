@@ -585,35 +585,13 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 		    tmppix[cc] = tmp/0x10000;
 		}
 	    }
-	    gboolean clipped = FALSE;
-	    for (c=0; c<3; c++) if (tmppix[c]>0xFFFF) clipped = TRUE;
-	    if (clipped) {
-		/* When clipping to 0xFFFF, retain some saturation and hue. */
-		gint64 *unclippedPix = tmppix;
-		int maxc, midc, minc;
-		MaxMidMin(unclippedPix, &maxc, &midc, &minc);
-		gint64 unclippedLum = unclippedPix[maxc];
+	    gint64 max = tmppix[0];
+	    for (c=1; c<3; c++) max = MAX(tmppix[c], max);
+	    if (max > 0xFFFF) {
+		gint64 unclippedLum = max;
 		gint64 clippedLum = 0xFFFF;
-		gint64 unclippedSat;
-		if ( unclippedPix[maxc]==0 )
-		    unclippedSat = 0;
-		else
-		    unclippedSat = 0x10000 -
-			    unclippedPix[minc] * 0x10000 / unclippedPix[maxc];
-		gint64 unclippedHue;
-		if ( unclippedPix[maxc]==unclippedPix[minc] )
-		    unclippedHue = 0;
-		else
-		    unclippedHue =
-			(unclippedPix[midc]-unclippedPix[minc])*0x10000 /
-			(unclippedPix[maxc]-unclippedPix[minc]);
 		gint64 lum = clippedLum + (unclippedLum - clippedLum) * 1/4;
-		gint64 sat = unclippedSat;
-		gint64 hue = unclippedHue;
-
-		tmppix[maxc] = lum;
-		tmppix[minc] = lum * (0x10000-sat) / 0x10000;
-		tmppix[midc] = lum * (0x10000-sat + sat*hue/0x10000) / 0x10000;
+		for (c=0; c<3; c++) tmppix[c] = tmppix[c] * lum / max;
 	    }
 	}
 	for (c=0; c<3; c++)
