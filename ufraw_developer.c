@@ -233,7 +233,12 @@ void developer_create_transform(developer_data *d, DeveloperMode mode)
 		prof[i++] = d->saturationProfile;
 	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
 		    TYPE_RGB_16, TYPE_RGB_16, d->intent[display_profile],
-		    cmsFLAGS_SOFTPROOFING);
+		    cmsFLAGS_SOFTPROOFING );
+	    if (d->colorTransform == NULL) {
+	      fprintf(stderr, "Failed to create multiprofiletransform\n");
+	      abort();		/* XXX recover */
+	    }
+
 	    prof[0] = cmsTransform2DeviceLink(d->colorTransform,
 		    cmsFLAGS_GUESSDEVICECLASS);
 	    cmsDeleteTransform(d->colorTransform);
