@@ -224,20 +224,22 @@ void developer_create_transform(developer_data *d, DeveloperMode mode)
 	    /* Following code imitates the function
 	     * cmsCreateMultiprofileProofingTransform(),
 	     * which does not exist in lcms. */
-	    cmsHPROFILE prof[3];
+	    cmsHPROFILE prof[4];
 	    int i = 0;
 	    prof[i++] = d->profile[in_profile];
 	    if ( d->luminosityProfile!=NULL )
 		prof[i++] = d->luminosityProfile;
 	    if ( d->saturationProfile!=NULL )
 		prof[i++] = d->saturationProfile;
+#if defined(LCMS_VERSION) && LCMS_VERSION == 116 /* Bypass a lcms 1.16 bug. */
+	    if ( i==2 && d->luminosityProfile!=NULL )
+		prof[i++] = d->luminosityProfile;
+	    if ( i==2 && d->saturationProfile!=NULL )
+		prof[i++] = d->saturationProfile;
+#endif
 	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
 		    TYPE_RGB_16, TYPE_RGB_16, d->intent[display_profile],
 		    cmsFLAGS_SOFTPROOFING);
-	    if (d->colorTransform == NULL) {
-	      fprintf(stderr, "Failed to create multiprofiletransform\n");
-	      abort();		/* XXX recover */
-	    }
 
 	    prof[0] = cmsTransform2DeviceLink(d->colorTransform,
 		    cmsFLAGS_GUESSDEVICECLASS);
