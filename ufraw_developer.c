@@ -224,7 +224,7 @@ void developer_create_transform(developer_data *d, DeveloperMode mode)
 	    /* Following code imitates the function
 	     * cmsCreateMultiprofileProofingTransform(),
 	     * which does not exist in lcms. */
-	    cmsHPROFILE prof[4];
+	    cmsHPROFILE prof[3];
 	    int i = 0;
 	    prof[i++] = d->profile[in_profile];
 	    if ( d->luminosityProfile!=NULL )
@@ -234,7 +234,7 @@ void developer_create_transform(developer_data *d, DeveloperMode mode)
 #if defined(LCMS_VERSION) && LCMS_VERSION == 116 /* Bypass a lcms 1.16 bug. */
 	    if ( i==2 && d->luminosityProfile!=NULL )
 		prof[i++] = d->luminosityProfile;
-	    if ( i==2 && d->saturationProfile!=NULL )
+	    else if ( i==2 && d->saturationProfile!=NULL )
 		prof[i++] = d->saturationProfile;
 #endif
 	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
