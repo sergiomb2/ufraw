@@ -231,15 +231,9 @@ void developer_create_transform(developer_data *d, DeveloperMode mode)
 		prof[i++] = d->luminosityProfile;
 	    if ( d->saturationProfile!=NULL )
 		prof[i++] = d->saturationProfile;
-#if defined(LCMS_VERSION) && LCMS_VERSION == 116 /* Bypass a lcms 1.16 bug. */
-	    if ( i==2 && d->luminosityProfile!=NULL )
-		prof[i++] = d->luminosityProfile;
-	    else if ( i==2 && d->saturationProfile!=NULL )
-		prof[i++] = d->saturationProfile;
-#endif
 	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
-		    TYPE_RGB_16, TYPE_RGB_16, d->intent[display_profile],
-		    cmsFLAGS_SOFTPROOFING);
+		    TYPE_RGB_16, NOCOLORSPACECHECK(TYPE_RGB_16),
+		    d->intent[display_profile], cmsFLAGS_SOFTPROOFING);
 
 	    prof[0] = cmsTransform2DeviceLink(d->colorTransform,
 		    cmsFLAGS_GUESSDEVICECLASS);
