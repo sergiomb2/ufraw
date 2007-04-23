@@ -4158,7 +4158,7 @@ get2_256:
       fseek (ifp, get4(), SEEK_SET);
       parse_thumb_note (base, 136, 137);
     }
-    if (tag == 0x4001) {
+    if (tag == 0x4001 && type == 3) {
       i = len == 582 ? 50 : len == 653 ? 68 : 126;
       fseek (ifp, i, SEEK_CUR);
 get2_rggb:
