@@ -81,4 +81,20 @@ void ufraw_icons_init()
     pixbuf = gdk_pixbuf_new_from_inline(-1, curve_24, FALSE, NULL);
     iconset = gtk_icon_set_new_from_pixbuf(pixbuf);
     gtk_icon_factory_add(factory, "base-curve", iconset);
+
+    pixbuf = gdk_pixbuf_new_from_inline(-1, flip_horiz_24, FALSE, NULL);
+    iconset = gtk_icon_set_new_from_pixbuf(pixbuf);
+    gtk_icon_factory_add(factory, "flip-horiz", iconset);
+
+    pixbuf = gdk_pixbuf_new_from_inline(-1, flip_vert_24, FALSE, NULL);
+    iconset = gtk_icon_set_new_from_pixbuf(pixbuf);
+    gtk_icon_factory_add(factory, "flip-vert", iconset);
+
+    pixbuf = gdk_pixbuf_new_from_inline(-1, rotate_90_24, FALSE, NULL);
+    iconset = gtk_icon_set_new_from_pixbuf(pixbuf);
+    gtk_icon_factory_add(factory, "rotate-90", iconset);
+
+    pixbuf = gdk_pixbuf_new_from_inline(-1, rotate_270_24, FALSE, NULL);
+    iconset = gtk_icon_set_new_from_pixbuf(pixbuf);
+    gtk_icon_factory_add(factory, "rotate-270", iconset);
 }

@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
+#include "dcraw_api.h"
 #include "ufraw.h"
 #include "curveeditor_widget.h"
 
@@ -1146,6 +1147,22 @@ void zoom_out_event(GtkWidget *widget, gpointer user_data)
     CFG->Zoom = 100.0/CFG->Scale;
     create_base_image(data);
     gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+    render_preview(data, render_default);
+}
+
+static void flip_image(GtkWidget *widget, int flip)
+{
+    preview_data *data = get_preview_data(widget);
+    
+    if (data->FreezeDialog) return;
+    ufraw_flip_image(data->UF, flip);
+    
+    if (flip & 4) {
+	int temp = data->UF->predictedWidth;
+	data->UF->predictedWidth = data->UF->predictedHeight;
+	data->UF->predictedHeight = temp;
+    }
+    create_base_image(data);
     render_preview(data, render_default);
 }
 
@@ -2639,6 +2656,47 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(zoom_out_event), NULL);
     /* End of Zoom page */
+
+    /* Start of Orientation page */
+    page = notebook_page_new(notebook, _("Orientation"),
+			     NULL, data->ToolTips);
+
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+
+    label = gtk_label_new(_("Rotate:"));
+    gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                "rotate-90", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+		     G_CALLBACK(flip_image), (gpointer)6);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                "rotate-270", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+		     G_CALLBACK(flip_image), (gpointer)5);
+
+    label = gtk_label_new(_("Flip:"));
+    gtk_table_attach(table, label, 0, 1, 1, 2, 0, 0, 0, 0);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                "flip-horiz", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_table_attach(table, button, 1, 2, 1, 2, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+		     G_CALLBACK(flip_image), (gpointer)1);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                "flip-vert", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_table_attach(table, button, 2, 3, 1, 2, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+		     G_CALLBACK(flip_image), (gpointer)2);
+    /* End of Orientation page */
 
     /* Start of EXIF page */
     page = notebook_page_new(notebook, _("EXIF"), NULL, NULL);

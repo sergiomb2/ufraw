@@ -375,7 +375,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 
     /* Check if we are loading an ID file */
     if (uf!=NULL) {
-	uf->LoadingID = FALSE;
 	if (uf->conf!=NULL) {
 	    uf->LoadingID = TRUE;
 	    conf_data tmp = *rc;
@@ -385,6 +384,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	    g_strlcpy(tmp.outputPath, uf->conf->outputPath, max_path);
 	    *uf->conf = tmp;
 	} else {
+	    uf->LoadingID = FALSE;
 	    uf->conf = g_new(conf_data, 1);
 	    *uf->conf = *rc;
 	}
@@ -447,7 +447,8 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	uf->conf->timestamp[strlen(uf->conf->timestamp)-1] = '\0';
     g_strlcpy(uf->conf->make, raw->make, max_name);
     g_strlcpy(uf->conf->model, raw->model, max_name);
-    uf->conf->flip = raw->flip;
+    if ( !uf->LoadingID || uf->conf->orientation<0 )
+	uf->conf->orientation = raw->flip;
     if (uf->exifBuf==NULL) {
 	g_strlcpy(uf->conf->exifSource, "DCRaw", max_name);
 	uf->conf->iso_speed = raw->iso_speed;
@@ -702,10 +703,27 @@ int ufraw_convert_image(ufraw_data *uf)
     }
 //    preview_progress(uf->widget, _("Loading image"), 0.4);
     uf->image.image = final.image;
-    dcraw_flip_image(&final, raw->flip);
+    dcraw_flip_image(&final, uf->conf->orientation);
     uf->image.height = final.height;
     uf->image.width = final.width;
 //    preview_progress(uf->widget, _("Loading image"), 0.5);
+    return UFRAW_SUCCESS;
+}
+
+int ufraw_flip_image(ufraw_data *uf, int flip)
+{
+    const int flipMatrix[8][8] = {
+	{ 0, 1, 2, 3, 4, 5, 6, 7 }, /* No flip */
+	{ 1, 0, 3, 2, 5, 4, 7, 6 }, /* Flip horizontal */
+	{ 2, 3, 0, 1, 6, 7, 4, 5 }, /* Flip vertical */
+	{ 3, 2, 1, 0, 7, 6, 5, 4 }, /* Rotate 180 */
+	{ 4, 6, 5, 7, 0, 2, 1, 3 }, /* Flip over diagonal "\" */
+	{ 5, 7, 4, 6, 1, 3, 0, 2 }, /* Rotate 270 */
+	{ 6, 4, 7, 5, 2, 0, 3, 1 }, /* Rotate 90 */
+	{ 7, 5, 6, 4, 3, 1, 2, 0 }  /* Flip over diagonal "/" */
+    };
+    uf->conf->orientation = flipMatrix[uf->conf->orientation][flip];
+
     return UFRAW_SUCCESS;
 }
 

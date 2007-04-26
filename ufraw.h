@@ -169,7 +169,7 @@ typedef struct {
     gboolean silent;
 
     /* EXIF data */
-    int flip;
+    int orientation;
     float iso_speed, shutter, aperture, focal_len;
     char exifSource[max_name], isoText[max_name], shutterText[max_name],
 	 apertureText[max_name], focalLenText[max_name],
@@ -219,6 +219,7 @@ int ufraw_load_raw(ufraw_data *uf);
 ufraw_data *ufraw_load_darkframe(char *darkframeFilename);
 int ufraw_convert_image(ufraw_data *uf);
 void ufraw_close(ufraw_data *uf);
+int ufraw_flip_image(ufraw_data *uf, int flip);
 int ufraw_set_wb(ufraw_data *uf);
 void ufraw_auto_expose(ufraw_data *uf);
 void ufraw_auto_black(ufraw_data *uf);

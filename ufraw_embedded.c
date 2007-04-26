@@ -51,7 +51,7 @@ int ufraw_read_embedded(ufraw_data *uf)
     }
     fseek(raw->ifp, raw->thumbOffset, SEEK_SET);
 
-    if ( uf->conf->shrink<2 && uf->conf->size==0 && uf->conf->flip==0 &&
+    if ( uf->conf->shrink<2 && uf->conf->size==0 && uf->conf->orientation==0 &&
 	 uf->conf->type==embedded_jpeg_type &&
 	 raw->thumbType==jpeg_thumb_type) {
         uf->thumb.buffer = g_new(unsigned char, raw->thumbBufferLength);
@@ -174,24 +174,24 @@ int ufraw_convert_embedded(ufraw_data *uf)
 	    }
 	}	
     }
-    if (uf->conf->flip!=0) {
+    if (uf->conf->orientation!=0) {
 	unsigned r, nr, c, nc, tmp;
 	int m;
 	unsigned height = dstHeight;
 	unsigned width = dstWidth;
-	if (uf->conf->flip & 4) {
+	if (uf->conf->orientation & 4) {
 	    tmp = height;
 	    height = width;
 	    width = tmp;
 	}
 	unsigned char *newBuffer = g_new(unsigned char, width * height * 3);
 	for (r=0; r<dstHeight; r++) {
-	    if (uf->conf->flip & 2) nr = dstHeight - r - 1;
+	    if (uf->conf->orientation & 2) nr = dstHeight - r - 1;
 	    else nr = r;
 	    for (c=0; c<dstWidth; c++) {
-		if (uf->conf->flip & 1) nc = dstWidth - c -1;
+		if (uf->conf->orientation & 1) nc = dstWidth - c -1;
 		else nc = c;
-		if (uf->conf->flip & 4) tmp = nc*width+nr;
+		if (uf->conf->orientation & 4) tmp = nc*width+nr;
 		else tmp = nr*width+nc;
 		for (m=0; m<3; m++) {
 		    newBuffer[tmp * 3 + m] =
@@ -201,7 +201,7 @@ int ufraw_convert_embedded(ufraw_data *uf)
 	}
 	g_free(uf->thumb.buffer);
 	uf->thumb.buffer = newBuffer;
-	if (uf->conf->flip & 4) {
+	if (uf->conf->orientation & 4) {
 	    dstHeight = height;
 	    dstWidth = width;
 	}
@@ -238,7 +238,7 @@ int ufraw_write_embedded(ufraw_data *uf)
 	    return UFRAW_ERROR;
 	}
     }
-    if ( uf->conf->shrink<2 && uf->conf->size==0 && uf->conf->flip==0 &&
+    if ( uf->conf->shrink<2 && uf->conf->size==0 && uf->conf->orientation==0 &&
 	 uf->conf->type==embedded_jpeg_type &&
 	 raw->thumbType==jpeg_thumb_type) {
         fwrite(uf->thumb.buffer, 1, raw->thumbBufferLength, out);

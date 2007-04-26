@@ -94,7 +94,7 @@ const conf_data conf_default = {
     FALSE, /* silent */
 
     /* EXIF data */
-    0, /* flip */
+    -1, /* orientation */
     0.0, 0.0, 0.0, 0.0, /* iso_speed, shutter, aperture, focal_len */
     "", "", "", "", /* exifSource, isoText, shutterText, apertureText */
     "", "", "", /* focalLenText, focalLen35Text, lensText */
@@ -534,6 +534,7 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
             g_strlcpy(c->profilePath, utf8, max_path);
 	g_free(utf8);
     }
+    if (!strcmp("Orientation", element)) sscanf(temp, "%d", &c->orientation);
     if (!strcmp("Shrink", element)) sscanf(temp, "%d", &c->shrink);
     if (!strcmp("Size", element)) sscanf(temp, "%d", &c->size);
     if (!strcmp("OutputType", element)) sscanf(temp, "%d", &c->type);
@@ -917,6 +918,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	    buf = uf_markup_buf(buf,
 		    "<DarkframeFile>%s</DarkframeFile>\n", c->darkframeFile);
 	buf = uf_markup_buf(buf, "<Timestamp>%s</Timestamp>\n", c->timestamp);
+	buf = uf_markup_buf(buf, "<Orientation>%d</Orientation>\n",
+		c->orientation);
 	buf = uf_markup_buf(buf, "<ISOSpeed>%s</ISOSpeed>\n", c->isoText);
 	buf = uf_markup_buf(buf, "<Shutter>%s</Shutter>\n", c->shutterText);
 	buf = uf_markup_buf(buf, "<Aperture>%s</Aperture>\n", c->apertureText);
@@ -980,6 +983,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
      * since on different make and model ChanMul are meaningless */
     g_strlcpy(dst->make, src->make, max_name);
     g_strlcpy(dst->model, src->model, max_name);
+    dst->orientation = src->orientation;
     dst->threshold = src->threshold;
     dst->exposure = src->exposure;
     dst->ExposureNorm = src->ExposureNorm;
