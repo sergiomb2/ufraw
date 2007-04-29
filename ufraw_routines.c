@@ -143,8 +143,8 @@ char *uf_markup_buf(char *buffer, const char *format, ...)
 }
 
 const char raw_ext[]= "arw,bay,bmq,cr2,crw,cs1,dc2,dcr,dng,erf,fff,hdr,ia,jpg,"
-	"k25,kc2,kdc,mdc,mos,mrw,nef,orf,pef,pxn,raf,raw,rdc,sr2,srf,sti,tif,"
-	"ufraw,x3f";
+	"k25,kc2,kdc,mdc,mef,mos,mrw,nef,orf,pef,pxn,qtk,raf,raw,rdc,sr2,srf,"
+	"sti,tif,ufraw,x3f";
 
 const char *file_type[] = { ".ppm", ".ppm", ".tif", ".tif", ".jpg",
 	".embedded.jpg", ".embedded.png" };
