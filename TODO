@@ -24,8 +24,6 @@ Add the ability to have groups of saved values, perhaps one for flash
 and one not, so one can save 2 color temperatures and exposure
 adjustments for a batch of photos.
 
-Separate display and output profiles.
-
 Automatic profile selection based on camera model and serial#.
 
 Understand differences between ufraw with defaults and in-camera with
