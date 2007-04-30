@@ -16,7 +16,7 @@
    work.
 
    $Revision: 1.378 $
-   $Date: 2007/04/29 03:59:28 $
+   $Date: 2007/04/29 19:01:29 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -489,7 +489,7 @@ void CLASS canon_600_load_raw()
 
 void CLASS remove_zeroes()
 {
-  int row, col, tot, n, r, c;
+  unsigned row, col, tot, n, r, c;
 
   for (row=0; row < height; row++)
     for (col=0; col < width; col++)
@@ -765,10 +765,10 @@ void CLASS canon_compressed_load_raw()
     }
     for (r=0; r < 8; r++) {
       irow = row - top_margin + r;
-      if (irow >= (unsigned) height) continue;
+      if (irow >= height) continue;
       for (col=0; col < raw_width; col++) {
 	icol = col - left_margin;
-	if (icol < (unsigned) width)
+	if (icol < width)
 	  BAYER(irow,icol) = pixel[r*raw_width+col];
 	else
 	  black += pixel[r*raw_width+col];
@@ -796,6 +796,7 @@ int CLASS ljpeg_start (struct jhead *jh, int info_only)
   uchar data[0x10000], *dp;
 
   init_decoder();
+  memset (jh, 0, sizeof *jh);
   for (i=0; i < 4; i++)
     jh->huff[i] = free_decode;
   jh->restart = INT_MAX;
@@ -1311,7 +1312,7 @@ void CLASS rollei_load_raw()
     for (i=0; i < 16; i+=2) {
       row = todo[i] / raw_width - top_margin;
       col = todo[i] % raw_width - left_margin;
-      if (row < (unsigned) height && col < (unsigned) width)
+      if (row < height && col < width)
 	BAYER(row,col) = (todo[i+1] & 0x3ff);
     }
   }
@@ -1320,8 +1321,7 @@ void CLASS rollei_load_raw()
 
 int CLASS bayer (unsigned row, unsigned col)
 {
-  return (row < (unsigned) height &&
-	  col < (unsigned) width) ? BAYER(row,col) : 0;
+  return (row < height && col < width) ? BAYER(row,col) : 0;
 }
 
 void CLASS phase_one_flat_field (int is_float, int nc)
@@ -1344,14 +1344,14 @@ void CLASS phase_one_flat_field (int is_float, int nc)
       }
     if (y==0) continue;
     rend = head[1]-top_margin + y*head[5];
-    for (row = rend-head[5]; row < (unsigned) height && row < rend; row++) {
+    for (row = rend-head[5]; row < height && row < rend; row++) {
       for (x=1; x < wide; x++) {
 	for (c=0; c < nc; c+=2) {
 	  mult[c] = mrow[c*wide+x-1];
 	  mult[c+1] = (mrow[c*wide+x] - mult[c]) / head[4];
 	}
 	cend = head[0]-left_margin + x*head[4];
-	for (col = cend-head[4]; col < (unsigned) width && col < cend; col++) {
+	for (col = cend-head[4]; col < width && col < cend; col++) {
 	  c = nc > 2 ? FC(row,col) : 0;
 	  if (!(c & 1)) {
 	    c = (int)(BAYER(row,col) * mult[c]);
@@ -1409,17 +1409,17 @@ void CLASS phase_one_correct()
 	  num = num * i + poly[j];
 	curve[i] = (int)LIM(num+i,0,65535);
       } apply:					/* apply to whole image */
-      for (row=0; row < (unsigned) height; row++)
-	for (col = (tag & 1)*ph1.split_col; col < (unsigned) width; col++)
+      for (row=0; row < height; row++)
+	for (col = (tag & 1)*ph1.split_col; col < width; col++)
 	  BAYER(row,col) = curve[BAYER(row,col)];
     } else if (tag == 0x400) {			/* Sensor defects */
       while ((len -= 8) >= 0) {
 	col  = get2() - left_margin;
 	row  = get2() - top_margin;
 	type = get2(); get2();
-	if (col >= (unsigned) width) continue;
+	if (col >= width) continue;
 	if (type == 131)			/* Bad column */
-	  for (row=0; row < (unsigned) height; row++)
+	  for (row=0; row < height; row++)
 	    if (FC(row,col) == 1) {
 	      for (sum=i=0; i < 4; i++)
 		sum += val[i] = bayer (row+dir[i][0], col+dir[i][1]);
@@ -1435,7 +1435,7 @@ void CLASS phase_one_correct()
 		(bayer(row,col-2) + bayer(row,col+2)) * 0.3535534);
 	    }
 	else if (type == 129) {			/* Bad pixel */
-	  if (row >= (unsigned) height) continue;
+	  if (row >= height) continue;
 	  j = (FC(row,col) != 1) * 4;
 	  for (sum=0, i=j; i < j+8; i++)
 	    sum += bayer (row+dir[i][0], col+dir[i][1]);
@@ -1473,8 +1473,8 @@ void CLASS phase_one_correct()
     for (i=0; i < 2; i++)
       for (j=0; j < head[i+1]*head[i+3]; j++)
 	xval[i][j] = get2();
-    for (row=0; row < (unsigned) height; row++)
-      for (col=0; col < (unsigned) width; col++) {
+    for (row=0; row < height; row++)
+      for (col=0; col < width; col++) {
 	cfrac = (float) col * head[3] / raw_width;
 	cfrac -= cip = (int)cfrac;
 	num = BAYER(row,col) * 0.5;
@@ -1702,8 +1702,7 @@ void CLASS olympus_e300_load_raw()
 {
   uchar  *data,  *dp;
   ushort *pixel, *pix;
-  unsigned dwide;
-  int row, col;
+  int dwide, row, col;
 
   dwide = raw_width * 16 / 10;
   fseek (ifp, dwide*top_margin, SEEK_CUR);
@@ -1711,7 +1710,7 @@ void CLASS olympus_e300_load_raw()
   merror (data, "olympus_e300_load_raw()");
   pixel = (ushort *) (data + dwide);
   for (row=0; row < height; row++) {
-    if (fread (data, 1, dwide, ifp) < dwide) derror();
+    if ((int)fread (data, 1, dwide, ifp) < dwide) derror();
     for (dp=data, pix=pixel; pix < pixel+raw_width; dp+=3, pix+=2) {
       if (((dp-data) & 15) == 15)
 	if (*dp++ && pix < pixel+width+left_margin) derror();
@@ -2080,8 +2079,8 @@ void CLASS kodak_jpeg_load_raw()
   cinfo.src->fill_input_buffer = fill_input_buffer;
   jpeg_read_header (&cinfo, TRUE);
   jpeg_start_decompress (&cinfo);
-  if ((cinfo.output_width      != (unsigned) width  ) ||
-      (cinfo.output_height*2   != (unsigned) height ) ||
+  if ((cinfo.output_width      != width  ) ||
+      (cinfo.output_height*2   != height ) ||
       (cinfo.output_components != 3      )) {
     dcraw_message (DCRAW_ERROR,_("%s: incorrect JPEG dimensions\n"), ifname); /*UF*/
     jpeg_destroy_decompress (&cinfo);
@@ -2349,12 +2348,12 @@ void CLASS sony_load_raw()
   fseek (ifp, data_offset, SEEK_SET);
   pixel = (ushort *) calloc (raw_width, sizeof *pixel);
   merror (pixel, "sony_load_raw()");
-  for (row=0; row < (unsigned) height; row++) {
+  for (row=0; row < height; row++) {
     if ((int)fread (pixel, 2, raw_width, ifp) < raw_width) derror();
     sony_decrypt ((unsigned int *) pixel, raw_width/2, !row, key);
-    for (col=9; col < (unsigned) left_margin; col++)
+    for (col=9; col < left_margin; col++)
       black += ntohs(pixel[col]);
-    for (col=0; col < (unsigned) width; col++)
+    for (col=0; col < width; col++)
       if ((BAYER(row,col) = ntohs(pixel[col+left_margin])) >> 14)
 	derror();
   }
@@ -2446,7 +2445,7 @@ void CLASS smal_decode_segment (unsigned seg[2][2], int holes)
     pred[pix & 1] += diff;
     row = pix / raw_width - top_margin;
     col = pix % raw_width - left_margin;
-    if (row < (unsigned) height && col < (unsigned) width)
+    if (row < height && col < width)
       BAYER(row,col) = pred[pix & 1];
     if (!(pix & 1) && HOLE(row)) pix += 2;
   }
@@ -4889,7 +4888,7 @@ void CLASS parse_tiff (int base)
   for (i=0; i < (int) tiff_nifds; i++)
     if (i != raw && tiff_ifd[i].samples == max_samp &&
 	tiff_ifd[i].width * tiff_ifd[i].height / SQR(tiff_ifd[i].bps+1) >
-        (int)(thumb_width *       thumb_height / SQR(thumb_misc+1))) {
+	(int)(thumb_width *       thumb_height / SQR(thumb_misc+1))) {
       thumb_width  = tiff_ifd[i].width;
       thumb_height = tiff_ifd[i].height;
       thumb_offset = tiff_ifd[i].offset;
