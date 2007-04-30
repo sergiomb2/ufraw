@@ -83,15 +83,25 @@ void uf_init_locale(const char *exename)
 
 char *uf_file_set_type(const char *filename, const char *type)
 {
-    char *file, *cp;
-    if ( (cp=strrchr(filename, '.'))==NULL)
-	file = g_strconcat(filename, type, NULL);
-    else {
-	file = g_new(char, cp - filename + strlen(type) + 1);
-	g_strlcpy(file, filename, cp - filename + 1);
-	g_strlcpy(file + (cp - filename), type, strlen(type) + 1);
+    char *infile = (char *)filename, *outfile, *tmpfile=NULL, *dotPosition;
+    if ( (dotPosition=strrchr(infile, '.'))==NULL) {
+	outfile = g_strconcat(infile, type, NULL);
+	return outfile;
     }
-    return file;
+    if ( strcmp(dotPosition, ".gz")==0 || strcmp(dotPosition, ".bz2")==0 ) {
+	char *tmpfile = g_strndup(infile, dotPosition - infile);
+	if ( (dotPosition=strrchr(tmpfile, '.'))==NULL) {
+	    outfile = g_strconcat(tmpfile, type, NULL);
+	    g_free(tmpfile);
+	    return outfile;
+	}
+	infile = tmpfile;
+    }
+    outfile = g_new(char, dotPosition - infile + strlen(type) + 1);
+    g_strlcpy(outfile, infile, dotPosition - infile + 1);
+    g_strlcpy(outfile + (dotPosition - infile), type, strlen(type) + 1);
+    g_free(tmpfile);
+    return outfile;
 }
 
 /* Make sure filename has asolute path */
