@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.1 2007/04/30 16:56:40 lexort Exp $
+$Id: README-processing.txt,v 1.2 2007/04/30 17:14:02 udifuchs Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -17,8 +17,11 @@ white balance, and color management.
 
 == Reading Raw files
 
-The raw file is read and per-pixel sensor values extracted.  All
-supported cameras express these values in a 12-bit space (0-4095).
+The raw file is read and per-pixel sensor values extracted.
+Each pixel is represented by integer number which is between
+8 and 16 bits in size. 8 bits are used in some old cameras, while
+16 bits are reserved for the more profesional cameras. Most cameras
+today use 12-bits.
 
 === Canon raw file encoding
 
