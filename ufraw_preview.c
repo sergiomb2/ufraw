@@ -2668,14 +2668,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                "rotate-90", GTK_ICON_SIZE_LARGE_TOOLBAR));
+                "object-rotate-right", GTK_ICON_SIZE_LARGE_TOOLBAR));
     gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
 		     G_CALLBACK(flip_image), (gpointer)6);
 
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                "rotate-270", GTK_ICON_SIZE_LARGE_TOOLBAR));
+                "object-rotate-left", GTK_ICON_SIZE_LARGE_TOOLBAR));
     gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
 		     G_CALLBACK(flip_image), (gpointer)5);
@@ -2685,14 +2685,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                "flip-horiz", GTK_ICON_SIZE_LARGE_TOOLBAR));
+                "object-flip-horizontal", GTK_ICON_SIZE_LARGE_TOOLBAR));
     gtk_table_attach(table, button, 1, 2, 1, 2, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
 		     G_CALLBACK(flip_image), (gpointer)1);
 
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                "flip-vert", GTK_ICON_SIZE_LARGE_TOOLBAR));
+                "object-flip-vertical", GTK_ICON_SIZE_LARGE_TOOLBAR));
     gtk_table_attach(table, button, 2, 3, 1, 2, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
 		     G_CALLBACK(flip_image), (gpointer)2);
