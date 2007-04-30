@@ -36,8 +36,13 @@ try {
     uf->exifBuf = NULL;
     uf->exifBufLen = 0;
 
-    Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(uf->filename);
- 
+    Exiv2::Image::AutoPtr image;
+    if ( uf->unzippedBuf!=NULL ) {
+	image = Exiv2::ImageFactory::open(
+		(const Exiv2::byte*)uf->unzippedBuf, uf->unzippedBufLen);
+    } else {
+	image = Exiv2::ImageFactory::open(uf->filename);
+    }
     assert(image.get() != 0);
     image->readMetadata();
 

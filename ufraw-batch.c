@@ -77,10 +77,16 @@ int main (int argc, char **argv)
             continue;
         }
         status = ufraw_config(uf, &rc, &conf, &cmd);
-	if (status==UFRAW_ERROR) exit(1);
-
-        if (ufraw_load_raw(uf)!=UFRAW_SUCCESS)
+	if (status==UFRAW_ERROR) {
+	    ufraw_close(uf);
+	    g_free(uf);
+	    exit(1);
+	}
+        if (ufraw_load_raw(uf)!=UFRAW_SUCCESS) {
+	    ufraw_close(uf);
+	    g_free(uf);
             continue;
+	}
         ufraw_message(UFRAW_MESSAGE, _("loaded %s"), uf->filename);
         if (ufraw_batch_saver(uf)==UFRAW_SUCCESS)
             ufraw_message(UFRAW_MESSAGE, _("saved %s"),

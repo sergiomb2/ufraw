@@ -191,6 +191,8 @@ typedef struct ufraw_struct {
     image_data image;
     image_data thumb;
     void *raw;
+    void *unzippedBuf;
+    unsigned unzippedBufLen;
     developer_data *developer;
     conf_data *conf;
     void *widget;

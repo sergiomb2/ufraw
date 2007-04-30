@@ -227,6 +227,8 @@ ufraw_data *ufraw_open(char *filename)
     conf_data *conf = NULL;
     char *fname, *hostname;
     char *origfilename;
+    gchar *unzippedBuf = NULL;
+    unsigned unzippedBufLen = 0;
 
     fname = g_filename_from_uri(filename, &hostname, NULL);
     if (fname!=NULL) {
@@ -288,6 +290,7 @@ ufraw_data *ufraw_open(char *filename)
     raw = g_new(dcraw_data, 1);
     status = dcraw_open(raw, filename);
     if (filename != origfilename) {
+	g_file_get_contents(filename, &unzippedBuf, &unzippedBufLen, NULL);
 	unlink(filename);
 	free(filename);
 	filename = origfilename;
@@ -297,10 +300,13 @@ ufraw_data *ufraw_open(char *filename)
         ufraw_message(UFRAW_SET_WARNING, raw->message);
 	if ( status!=DCRAW_WARNING) {
 	    g_free(raw);
+	    g_free(unzippedBuf);
 	    return NULL;
 	}
     }
     uf = g_new0(ufraw_data, 1);
+    uf->unzippedBuf = unzippedBuf;
+    uf->unzippedBufLen = unzippedBufLen;
     uf->conf = conf;
     g_strlcpy(uf->filename, filename, max_path);
     uf->image.image = NULL;
@@ -332,10 +338,7 @@ ufraw_data *ufraw_open(char *filename)
     }
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
         uf->predictedWidth, uf->predictedHeight, raw->toneCurveSize);
-    if (origfilename != filename) {
-      unlink(filename);
-      free(filename);
-    }
+ 
     return uf;
 }
 
@@ -427,6 +430,8 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
         ufraw_message(UFRAW_SET_LOG, "Error reading EXIF data from %s\n",
                 uf->filename);
     }
+    g_free(uf->unzippedBuf);
+    uf->unzippedBuf = NULL;
     /* If we switched cameras, ignore channel multipliers and
      * change spot_wb to manual_wb */
     if ( !uf->LoadingID &&
@@ -636,6 +641,7 @@ int ufraw_load_raw(ufraw_data *uf)
 void ufraw_close(ufraw_data *uf)
 {
     dcraw_close(uf->raw);
+    g_free(uf->unzippedBuf);
     g_free(uf->raw);
     g_free(uf->exifBuf);
     g_free(uf->image.image);

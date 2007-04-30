@@ -126,7 +126,11 @@ int main (int argc, char **argv)
             continue;
         }
         status = ufraw_config(uf, &rc, &conf, &cmd);
-	if (status==UFRAW_ERROR) exit(1);
+	if (status==UFRAW_ERROR) {
+	    ufraw_close(uf);
+	    g_free(uf);
+	    exit(1);
+	}
         ufraw_preview(uf, FALSE, ufraw_saver);
 	rc = *uf->conf;
     }
