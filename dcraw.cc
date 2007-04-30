@@ -110,6 +110,7 @@ const float d65_white[3] = { 0.950456, 1, 1.088754 };
 #define DCRAW_UNSUPPORTED 2
 #define DCRAW_NO_CAMERA_WB 3
 #define DCRAW_VERBOSE 4
+#define DCRAW_WARNING 5
 
 #define CLASS DCRaw::
 
@@ -246,11 +247,11 @@ void CLASS merror (void *ptr, char *where)
 void CLASS derror()
 {
   if (!data_error) {
-    dcraw_message (DCRAW_ERROR, "%s: ", ifname);
+    dcraw_message (DCRAW_WARNING, "%s: ", ifname);
     if (feof(ifp))
-      dcraw_message (DCRAW_ERROR,_("Unexpected end of file\n"));
+      dcraw_message (DCRAW_WARNING,_("Unexpected end of file\n"));
     else
-      dcraw_message (DCRAW_ERROR,_("Corrupt data near 0x%lx\n"), ftell(ifp));
+      dcraw_message (DCRAW_WARNING,_("Corrupt data near 0x%lx\n"), ftell(ifp));
   }
   data_error = 1;
 }

@@ -295,8 +295,10 @@ ufraw_data *ufraw_open(char *filename)
     if ( status!=DCRAW_SUCCESS) {
         /* Hold the message without displaying it */
         ufraw_message(UFRAW_SET_WARNING, raw->message);
-        g_free(raw);
-        return NULL;
+	if ( status!=DCRAW_WARNING) {
+	    g_free(raw);
+	    return NULL;
+	}
     }
     uf = g_new0(ufraw_data, 1);
     uf->conf = conf;
@@ -578,7 +580,7 @@ int ufraw_load_raw(ufraw_data *uf)
     }
     if ( (status=dcraw_load_raw(raw))!=DCRAW_SUCCESS ) {
         ufraw_message(status, raw->message);
-        return status;
+        if (status!=DCRAW_WARNING) return status;
     }
     /* raw->black can change in ufraw_subtract_darkframe() so we must
      * calculate uf->rgbMax first */

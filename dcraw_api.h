@@ -68,7 +68,8 @@ void dcraw_close(dcraw_data *h);
 #define DCRAW_UNSUPPORTED 2
 #define DCRAW_NO_CAMERA_WB 3
 #define DCRAW_VERBOSE 4
-#define DCRAW_OPEN_ERROR 5
+#define DCRAW_WARNING 5
+#define DCRAW_OPEN_ERROR 6
 
 void dcraw_message(void *dcraw, int code, char *format, ...);
 

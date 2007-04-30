@@ -150,6 +150,12 @@ int dcraw_load_raw(dcraw_data *h)
     g_free(d->messageBuffer);
     d->messageBuffer = NULL;
     d->lastStatus = DCRAW_SUCCESS;
+    if (setjmp(d->failure)) {
+        d->dcraw_message(DCRAW_ERROR,_("Fatal internal error\n"));
+        h->message = d->messageBuffer;
+	delete d;
+        return DCRAW_ERROR;
+    }
     h->raw.height = d->iheight = (h->height+h->shrink) >> h->shrink;
     h->raw.width = d->iwidth = (h->width+h->shrink) >> h->shrink;
     h->raw.image = d->image = g_new0(dcraw_image_type, d->iheight * d->iwidth
