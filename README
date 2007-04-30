@@ -90,9 +90,6 @@ should arguably result in not writing outside that prefix.  However,
 plugins will not work automatically unless they are in the plug-in
 directory, so the current behavior is arguably more helpful.
 
-To install for a single user:
-  make install-user
-
 To use the ufraw gimp plugin, ensure that other raw converters
 (e.g. rawphoto) are not installed because they may claim the raw file
 first, preventing ufraw from running.
