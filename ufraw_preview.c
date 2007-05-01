@@ -29,7 +29,11 @@
 #include "dcraw_api.h"
 #include "ufraw.h"
 #include "curveeditor_widget.h"
-
+//#undef HAVE_GTKIMAGEVIEW
+#ifdef HAVE_GTKIMAGEVIEW
+#include <gtkimageview/gtkimagescrollwin.h>
+#include <gtkimageview/gtkimageview.h>
+#endif
 #if GTK_CHECK_VERSION(2,6,0)
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
@@ -648,7 +652,12 @@ gboolean render_preview_image(preview_data *data)
 
     if (renderRestart) {
         renderRestart = FALSE;
+#ifdef HAVE_GTKIMAGEVIEW
+	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
+        pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
+#else
         pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+#endif
         width = gdk_pixbuf_get_width(pixbuf);
         height = gdk_pixbuf_get_height(pixbuf);
         rowstride = gdk_pixbuf_get_rowstride(pixbuf);
@@ -700,7 +709,11 @@ gboolean render_preview_image(preview_data *data)
         }
     }
     gtk_widget_queue_draw_area(data->PreviewWidget, 0, y0, width, y+1-y0);
-
+#ifdef HAVE_GTKIMAGEVIEW
+//    I'm not sure why the next line crashes:
+//    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget), pixbuf);
+    gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
+#endif
     /* draw live histogram */
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
     if (gdk_pixbuf_get_height(pixbuf)!=CFG->liveHistogramHeight+2) {
@@ -792,7 +805,11 @@ void render_spot(preview_data *data)
     char tmp[max_name];
 
     if (data->SpotX1<0) return;
+#ifdef HAVE_GTKIMAGEVIEW
+    pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
+#else
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+#endif
     width = gdk_pixbuf_get_width(pixbuf);
     height = gdk_pixbuf_get_height(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
@@ -852,7 +869,11 @@ void draw_spot(preview_data *data, gboolean draw)
     int spotStartX, spotStartY, spotSizeX, spotSizeY;
 
     if (data->SpotX1<0) return;
+#ifdef HAVE_GTKIMAGEVIEW
+    pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
+#else
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+#endif
     width = gdk_pixbuf_get_width(pixbuf);
     height = gdk_pixbuf_get_height(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
@@ -993,7 +1014,11 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
 
     if (data->FreezeDialog) return;
     if (data->SpotX1<=0) return;
+#ifdef HAVE_GTKIMAGEVIEW
+    pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
+#else
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+#endif
     width = gdk_pixbuf_get_width(pixbuf);
     height = gdk_pixbuf_get_height(pixbuf);
     /* Scale image coordinates to pixbuf coordinates */
@@ -1036,7 +1061,11 @@ void spot_press(GtkWidget *event_box, GdkEventButton *event, gpointer user_data)
     if (data->FreezeDialog) return;
     if (event->button!=1) return;
     draw_spot(data, FALSE);
+#ifdef HAVE_GTKIMAGEVIEW
+    pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
+#else
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+#endif
     width = gdk_pixbuf_get_width(pixbuf);
     height = gdk_pixbuf_get_height(pixbuf);
     /* Scale pixbuf coordinates to image coordinates */
@@ -1057,7 +1086,11 @@ gboolean spot_motion(GtkWidget *event_box, GdkEventMotion *event,
     user_data = user_data;
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
     draw_spot(data, FALSE);
+#ifdef HAVE_GTKIMAGEVIEW
+    pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
+#else
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+#endif
     width = gdk_pixbuf_get_width(pixbuf);
     height = gdk_pixbuf_get_height(pixbuf);
     /* Scale pixbuf coordinates to image coordinates */
@@ -1086,13 +1119,22 @@ void create_base_image(preview_data *data)
     ufraw_convert_image(data->UF);
     CFG->shrink = shrinkSave;
     CFG->size = sizeSave;
-    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+    GdkPixbuf *pixbuf;
+#ifdef HAVE_GTKIMAGEVIEW
+    pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
+#else
+    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+#endif
     int width = gdk_pixbuf_get_width(pixbuf);
     int height = gdk_pixbuf_get_height(pixbuf);
     if (width!=data->UF->image.width || height!=data->UF->image.height) {
 	pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
 		data->UF->image.width, data->UF->image.height);
+#ifdef HAVE_GTKIMAGEVIEW
+	gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget), pixbuf);
+#else
 	gtk_image_set_from_pixbuf(GTK_IMAGE(data->PreviewWidget), pixbuf);
+#endif
 	g_object_unref(pixbuf);
     }
     char progressText[max_name];
@@ -2907,16 +2949,29 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* Right side of the preview window */
     vBox = gtk_vbox_new(FALSE, 0);
     gtk_box_pack_start(previewHBox, vBox, FALSE, FALSE, 2);
+    pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
+            preview_width, preview_height);
+#ifdef HAVE_GTKIMAGEVIEW
+    data->PreviewWidget = gtk_image_view_new();
+//    gtk_image_view_set_pixbuf_no_repaint(GTK_IMAGE_VIEW(data->PreviewWidget),
+    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
+	    pixbuf);
+    gtk_image_view_set_fit_mode(GTK_IMAGE_VIEW(data->PreviewWidget), GTK_FIT_NONE);
+    gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
+    // The following two lines have no effect on the widget size:
+    GtkRequisition sizeRequest = { preview_width, preview_height };
+    gtk_widget_size_request(data->PreviewWidget, &sizeRequest);
+    GtkWidget *scroll = gtk_image_scroll_win_new(
+	    GTK_IMAGE_VIEW(data->PreviewWidget));
+    gtk_box_pack_start(GTK_BOX(vBox), scroll, TRUE, TRUE, 0);
+#else
     align = gtk_alignment_new(0.5, 0.5, 0, 0);
     gtk_box_pack_start(GTK_BOX(vBox), align, TRUE, TRUE, 0);
     box = GTK_BOX(gtk_vbox_new(FALSE, 0));
     gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(box));
     event_box = gtk_event_box_new();
     gtk_box_pack_start(box, event_box, FALSE, FALSE, 0);
-    pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-            preview_width, preview_height);
     data->PreviewWidget = gtk_image_new_from_pixbuf(pixbuf);
-    g_object_unref(pixbuf);
     gtk_misc_set_alignment(GTK_MISC(data->PreviewWidget), 0, 0);
     gtk_container_add(GTK_CONTAINER(event_box), data->PreviewWidget);
     g_signal_connect(G_OBJECT(event_box), "button_press_event",
@@ -2927,13 +2982,16 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    G_CALLBACK(preview_cursor), gdk_cursor_new(GDK_HAND2));
     g_signal_connect(G_OBJECT(event_box), "leave-notify-event",
 	    G_CALLBACK(preview_cursor), NULL);
+#endif
+    g_object_unref(pixbuf);
 
     data->ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
-    gtk_box_pack_start(box, GTK_WIDGET(data->ProgressBar), FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(data->ProgressBar),
+	    FALSE, FALSE, 0);
 
     /* Options button */
     align = gtk_alignment_new(0.99, 0.5, 0, 1);
-    gtk_box_pack_start(box, align, TRUE, TRUE, 6);
+    gtk_box_pack_start(GTK_BOX(vBox), align, FALSE, FALSE, 6);
     box = GTK_BOX(gtk_hbox_new(TRUE, 6));
     gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(box));
     button = gtk_button_new();

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.71 2007/04/02 04:46:16 nkbj Exp $
+dnl $Id: configure.ac,v 1.72 2007/05/01 13:48:01 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -59,6 +59,11 @@ PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4)
 AC_SUBST(GTK_LIBS)
 PKG_CHECK_MODULES(GLIB, glib-2.0)
 PKG_CHECK_MODULES(LCMS, lcms)
+PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview-1.0,
+  [ have_gtkimageview=yes
+    AC_DEFINE(HAVE_GTKIMAGEVIEW, 1, have gtk image view) ],
+  [ have_gtkimageview=no
+    AC_MSG_RESULT($GIMP_PKG_ERRORS) ] )
 
 # The GIMP/CinePaint plug-ins installation dir is defined in
 # pkg-config.  It is not clear if we should install the plugin in the
@@ -161,8 +166,8 @@ PKG_CHECK_MODULES(EXIV2, exiv2,
   [ have_exiv2=no
     AC_MSG_RESULT($EXIV2_PKG_ERRORS) ] )
 
-UFRAW_CFLAGS="$UFRAW_CFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS"
-UFRAW_LDADD="$EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS"
+UFRAW_CFLAGS="$UFRAW_CFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS $GTKIMAGEVIEW_CFLAGS"
+UFRAW_LDADD="$EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $GTKIMAGEVIEW_LIBS"
 
 if test $ufraw_win32 = yes; then
   AC_CHECK_PROGS(WINDRES, $target_alias-windres windres, , $PATH)
@@ -247,3 +252,4 @@ AC_MSG_NOTICE(PNG support: $have_png)
 AC_MSG_NOTICE(TIFF support: $have_tiff)
 AC_MSG_NOTICE(gzip compressed raw support: $have_zlib)
 AC_MSG_NOTICE(bzip2 compressed raw support: $have_libbz2)
+AC_MSG_NOTICE(Scrolling in preview using GtkImageView: $have_gtkimageview)
