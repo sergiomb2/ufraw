@@ -2953,7 +2953,7 @@ void CLASS foveon_interpolate()
       col = (badpix[i] >> 8 & 0xfff) - keep[0];
       row = (badpix[i] >> 20       ) - keep[1];
       if (row-1 < 0 || row-1 > height-3 || col-1 < 0 || col-1 > width-3)
-        continue;
+	continue;
       memset (fsum, 0, sizeof fsum);
       for (sum=j=0; j < 8; j++)
 	if (badpix[i] & (1 << j)) {
@@ -7693,4 +7693,3 @@ int main(int argc, char **argv)
     return 0;
 }
 #endif /*DCRAW_NOMAIN*/ /*UF*/
-
