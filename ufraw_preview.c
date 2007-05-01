@@ -712,7 +712,6 @@ gboolean render_preview_image(preview_data *data)
 #ifdef HAVE_GTKIMAGEVIEW
 //    I'm not sure why the next line crashes:
 //    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget), pixbuf);
-    gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
 #endif
     /* draw live histogram */
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
@@ -1132,6 +1131,7 @@ void create_base_image(preview_data *data)
 		data->UF->image.width, data->UF->image.height);
 #ifdef HAVE_GTKIMAGEVIEW
 	gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget), pixbuf);
+	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
 #else
 	gtk_image_set_from_pixbuf(GTK_IMAGE(data->PreviewWidget), pixbuf);
 #endif
@@ -2956,7 +2956,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 //    gtk_image_view_set_pixbuf_no_repaint(GTK_IMAGE_VIEW(data->PreviewWidget),
     gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
 	    pixbuf);
-    gtk_image_view_set_fit_mode(GTK_IMAGE_VIEW(data->PreviewWidget), GTK_FIT_NONE);
     gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
     // The following two lines have no effect on the widget size:
     GtkRequisition sizeRequest = { preview_width, preview_height };
