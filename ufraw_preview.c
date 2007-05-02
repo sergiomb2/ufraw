@@ -481,6 +481,21 @@ void color_labels_set(colorLabels *l, double data[3])
     }
 }
 
+#ifdef HAVE_GTKIMAGEVIEW
+void image_view_draw_area(GtkImageView *view,
+	int x, int y, int width, int height)
+{
+    GdkRectangle viewRect;
+    gtk_image_view_get_viewport(view, &viewRect);
+    if (y<viewRect.y) height += y - viewRect.y;
+    if (x<viewRect.x) width += x - viewRect.x;
+    x = MAX(x-viewRect.x, 0);
+    y = MAX(y-viewRect.y, 0);
+    if ( height>0 && width>0 )
+	gtk_widget_queue_draw_area(GTK_WIDGET(view), x, y, width, height);
+}
+#endif
+
 enum { render_default, render_overexposed, render_underexposed };
 
 void render_preview(preview_data *data, long mode);
@@ -653,7 +668,6 @@ gboolean render_preview_image(preview_data *data)
     if (renderRestart) {
         renderRestart = FALSE;
 #ifdef HAVE_GTKIMAGEVIEW
-	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
         pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
 #else
         pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
@@ -701,17 +715,28 @@ gboolean render_preview_image(preview_data *data)
             }
         }
         if (y%32==31) {
+#ifdef HAVE_GTKIMAGEVIEW
+//	    With the following line redraw does not work:
+//	    gtk_widget_queue_draw(data->PreviewWidget);
+	    image_view_draw_area(GTK_IMAGE_VIEW(data->PreviewWidget),
+		    0, y0, width, y+1-y0);
+#else
             gtk_widget_queue_draw_area(data->PreviewWidget,
 		    0, y0, width, y+1-y0);
+#endif
             y0 = y+1;
             y++;
             return TRUE;
         }
     }
-    gtk_widget_queue_draw_area(data->PreviewWidget, 0, y0, width, y+1-y0);
 #ifdef HAVE_GTKIMAGEVIEW
 //    I'm not sure why the next line crashes:
 //    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget), pixbuf);
+    image_view_draw_area(GTK_IMAGE_VIEW(data->PreviewWidget),
+	    0, y0, width, y+1-y0);
+    g_signal_emit_by_name(G_OBJECT(data->PreviewWidget), "pixbuf-changed");
+#else
+    gtk_widget_queue_draw_area(data->PreviewWidget, 0, y0, width, y+1-y0);
 #endif
     /* draw live histogram */
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
@@ -2073,7 +2098,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
 		    "ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
 #endif
+#ifndef HAVE_GTKIMAGEVIEW
     gtk_window_set_resizable(GTK_WINDOW(previewWindow), FALSE);
+#endif
     g_signal_connect(G_OBJECT(previewWindow), "delete-event",
             G_CALLBACK(window_delete_event), NULL);
     g_object_set_data(G_OBJECT(previewWindow), "Preview-Data", data);
@@ -2102,7 +2129,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     previewHBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
     gtk_container_add(GTK_CONTAINER(previewWindow), GTK_WIDGET(previewHBox));
     previewVBox = gtk_vbox_new(FALSE, 0);
-    gtk_box_pack_start(previewHBox, previewVBox, TRUE, TRUE, 2);
+    gtk_box_pack_start(previewHBox, previewVBox, FALSE, FALSE, 2);
 
     table = GTK_TABLE(table_with_frame(previewVBox,
 	    _(expanderText[raw_expander]), CFG->expander[raw_expander]));
@@ -2948,18 +2975,17 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     /* Right side of the preview window */
     vBox = gtk_vbox_new(FALSE, 0);
-    gtk_box_pack_start(previewHBox, vBox, FALSE, FALSE, 2);
+    gtk_box_pack_start(previewHBox, vBox, TRUE, TRUE, 2);
     pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
             preview_width, preview_height);
 #ifdef HAVE_GTKIMAGEVIEW
     data->PreviewWidget = gtk_image_view_new();
-//    gtk_image_view_set_pixbuf_no_repaint(GTK_IMAGE_VIEW(data->PreviewWidget),
     gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
 	    pixbuf);
     gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
     // The following two lines have no effect on the widget size:
-    GtkRequisition sizeRequest = { preview_width, preview_height };
-    gtk_widget_size_request(data->PreviewWidget, &sizeRequest);
+    gtk_widget_set_size_request(data->PreviewWidget,
+	    preview_width, preview_height);
     GtkWidget *scroll = gtk_image_scroll_win_new(
 	    GTK_IMAGE_VIEW(data->PreviewWidget));
     gtk_box_pack_start(GTK_BOX(vBox), scroll, TRUE, TRUE, 0);
@@ -3032,6 +3058,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     }
     gtk_widget_show_all(previewWindow);
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);
+    /* After window size was set, the user may want to shrink it */
+    gtk_widget_set_size_request(data->PreviewWidget, -1, -1);
 
     gtk_widget_set_sensitive(data->Controls, FALSE);
     preview_progress(previewWindow, _("Loading preview"), 0.2);
