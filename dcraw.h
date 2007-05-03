@@ -192,6 +192,7 @@ void border_interpolate (int border);
 void lin_interpolate();
 void vng_interpolate();
 void ahd_interpolate();
+void blend_highlights();
 void recover_highlights();
 void tiff_get (unsigned base,
 	unsigned *tag, unsigned *type, unsigned *len, unsigned *save);

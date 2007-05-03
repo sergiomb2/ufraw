@@ -15,15 +15,15 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.378 $
-   $Date: 2007/04/29 19:01:29 $
+   $Revision: 1.379 $
+   $Date: 2007/05/03 06:15:16 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.70"
+#define DCRAW_VERSION "8.71"
 
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
@@ -1190,13 +1190,14 @@ void CLASS nikon_e900_load_raw()
 
 void CLASS nikon_e2100_load_raw()
 {
-  uchar   data[3456], *dp;
-  ushort pixel[2304], *pix;
+  uchar   data[4608], *dp;
+  ushort pixel[3072], *pix;
   int row, col;
 
   for (row=0; row <= height; row+=2) {
     if (row == height) {
-      fseek (ifp, ((width==1616) << 13) - (-ftell(ifp) & -2048), SEEK_SET);
+      fseek (ifp, 0, SEEK_END);
+      fseek (ifp, ftell(ifp)/2, SEEK_SET);
       row = 1;
     }
     fread (data, 1, width*3/2, ifp);
@@ -1764,7 +1765,7 @@ void CLASS olympus_e410_load_raw()
 	  else pred = (w + n) >> 1;
 	} else pred = ABS(w-nw) > ABS(n-nw) ? w : n;
       }
-      BAYER(row,col) = pred + ((diff << 2) | low);
+      if ((BAYER(row,col) = pred + ((diff << 2) | low)) >> 12) derror();
     }
   }
 }
@@ -2560,7 +2561,8 @@ void CLASS foveon_decoder (unsigned size, unsigned code)
 
 void CLASS foveon_thumb (FILE *tfp)
 {
-  unsigned bwide, row, col, bitbuf=0, bit=1, c, i;
+  int bwide;
+  unsigned row, col, bitbuf=0, bit=1, c, i;
   char *buf;
   struct decode *dindex;
   short pred[3];
@@ -2568,6 +2570,7 @@ void CLASS foveon_thumb (FILE *tfp)
   bwide = get4();
   fprintf (tfp, "P6\n%d %d\n255\n", thumb_width, thumb_height);
   if (bwide > 0) {
+    if (bwide < thumb_width*3) return;
     buf = (char *) malloc (bwide);
     merror (buf, "foveon_thumb()");
     for (row=0; row < thumb_height; row++) {
@@ -3941,6 +3944,43 @@ void CLASS ahd_interpolate()
 #undef TS
 /* End of functions copied to dcraw_indi.c (UF) */
 
+void CLASS blend_highlights()
+{
+  int clip=INT_MAX, row, col, c, i, j;
+  static const float trans[2][4][4] =
+  { { { 1,1,1 }, { 1.7320508,-1.7320508,0 }, { -1,-1,2 } },
+    { { 1,1,1,1 }, { 1,-1,1,-1 }, { 1,1,-1,-1 }, { 1,-1,-1,1 } } };
+  static const float itrans[2][4][4] =
+  { { { 1,0.8660254,-0.5 }, { 1,-0.8660254,-0.5 }, { 1,0,1 } },
+    { { 1,1,1,1 }, { 1,-1,1,-1 }, { 1,1,-1,-1 }, { 1,-1,-1,1 } } };
+  float cam[2][4], lab[2][4], sum[2], chratio;
+
+  if ((unsigned) (colors-3) > 1) return;
+  if (verbose) fprintf (stderr,_("Blending highlights...\n"));
+  FORCC if (clip > (i = (int)(65535*pre_mul[c]))) clip = i;
+  for (row=0; row < height; row++)
+    for (col=0; col < width; col++) {
+      FORCC if (image[row*width+col][c] > clip) break;
+      if (c == colors) continue;
+      FORCC {
+	cam[0][c] = image[row*width+col][c];
+	cam[1][c] = MIN(cam[0][c],clip);
+      }
+      for (i=0; i < 2; i++) {
+	FORCC for (lab[i][c]=j=0; j < colors; j++)
+	  lab[i][c] += trans[colors-3][c][j] * cam[i][j];
+	for (sum[i]=0,c=1; c < colors; c++)
+	  sum[i] += SQR(lab[i][c]);
+      }
+      chratio = sqrt(sum[1]/sum[0]);
+      for (c=1; c < colors; c++)
+	lab[0][c] *= chratio;
+      FORCC for (cam[0][c]=j=0; j < colors; j++)
+	cam[0][c] += itrans[colors-3][c][j] * lab[0][j];
+      FORCC image[row*width+col][c] = (ushort)(cam[0][c] / colors);
+    }
+}
+
 #define SCALE (4 >> shrink)
 void CLASS recover_highlights()
 {
@@ -3951,7 +3991,7 @@ void CLASS recover_highlights()
   static const signed char dir[8][2] =
     { {-1,-1}, {-1,0}, {-1,1}, {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1} };
 
-  dcraw_message (DCRAW_VERBOSE,_("Highlight recovery...\n")); /*UF*/
+  dcraw_message (DCRAW_VERBOSE,_("Rebuilding highlights...\n")); /*UF*/
 
   grow = pow (2, 4-highlight);
   FORCC hsat[c] = (int)(32000 * pre_mul[c]);
@@ -4140,10 +4180,13 @@ void CLASS parse_makernote (int base, int uptag)
     tag |= uptag << 16;
     if (tag == 2 && strstr(make,"NIKON"))
       iso_speed = (get2(),get2());
-    if (tag == 4 && len == 27) {
+    if (tag == 4 && len > 26 && len < 35) {
       iso_speed = 50 * pow (2, (get4(),get2())/32.0 - 4);
-      aperture = (get2(), pow (2, get2()/64.0));
-      shutter = pow (2, ((short) get2())/-32.0);
+      if ((i=(get2(),get2())) != 0x7fff)
+	aperture = pow (2, i/64.0);
+      if ((i=get2()) != 0xffff)
+	shutter = pow (2, (short) i/-32.0);
+      shot_order = (get4(),get2(),get2());
     }
     if (tag == 8 && type == 4)
       shot_order = get4();
@@ -4225,6 +4268,8 @@ void CLASS parse_makernote (int base, int uptag)
       FORC4 cam_mul[c ^ (c >> 1)] =
 	sget2 (buf97 + (ver97 == 0x205 ? 14:6) + c*2);
     }
+    if (tag == 0x200 && len == 3)
+      shot_order = (get4(),get4());
     if (tag == 0x200 && len == 4)
       black = (get2()+get2()+get2()+get2())/4;
     if (tag == 0x201 && len == 4)
@@ -5895,6 +5940,7 @@ void CLASS identify()
     {  3178560, "PENTAX",   "Optio S"    ,1 },
     {  4841984, "PENTAX",   "Optio S"    ,1 },
     {  6114240, "PENTAX",   "Optio S4"   ,1 },  /* or S4i, CASIO EX-Z4 */
+    { 10702848, "PENTAX",   "Optio 750Z" ,1 },
     { 12582980, "Sinar",    ""           ,0 },
     { 33292868, "Sinar",    ""           ,0 },
     { 44390468, "Sinar",    ""           ,0 } };
@@ -6439,6 +6485,10 @@ konica_400z:
     maximum = 0xf7a;
     pre_mul[0] = 1.980;
     pre_mul[2] = 1.570;
+  } else if (!strcmp(model,"Optio 750Z")) {
+    height = 2302;
+    width  = 3072;
+    load_raw = &CLASS nikon_e2100_load_raw;
   } else if (!strcmp(model,"STV680 VGA")) {
     height = 484;
     width  = 644;
@@ -6914,7 +6964,7 @@ qt_common:
     }
   }
 dng_skip:
-  if (!load_raw || !height) is_raw = 0;
+  if (!load_raw || height < 22) is_raw = 0;
 #ifndef HAVE_LIBJPEG
   if (load_raw == &CLASS kodak_jpeg_load_raw) {
     dcraw_message (DCRAW_ERROR,_("%s: You must link dcraw with libjpeg!!\n"),
@@ -7190,7 +7240,7 @@ void CLASS gamma_lut (uchar lut[0x10000])
 
   perc = (int)(width * height * 0.01);	/* 99th percentile white point */
   if (fuji_width) perc /= 2;
-  if (highlight) perc = 0;
+  if (highlight) perc = -1;
   FORCC {
     for (val=0x2000, total=0; --val > 32; )
       if ((total += histogram[c][val]) > perc) break;
@@ -7399,7 +7449,7 @@ int CLASS main (int argc, char **argv)
     puts(_("-n <num>  Set threshold for wavelet denoising"));
     puts(_("-k <num>  Set black point"));
     puts(_("-K <file> Subtract dark frame (16-bit raw PGM)"));
-    puts(_("-H [0-9]  Highlight mode (0=clip, 1=no clip, 2+=recover)"));
+    puts(_("-H [0-9]  Highlight mode (0=clip, 1=unclip, 2=blend, 3+=rebuild)"));
     puts(_("-t [0-7]  Flip image (0=none, 3=180, 5=90CCW, 6=90CW)"));
     puts(_("-o [0-5]  Output colorspace (raw,sRGB,Adobe,Wide,ProPhoto,XYZ)"));
 #ifndef NO_LCMS
@@ -7638,11 +7688,12 @@ next:
 	   vng_interpolate();
       else ahd_interpolate();
     }
-    if (!is_foveon && highlight > 1) recover_highlights();
-    if (use_fuji_rotate) fuji_rotate();
     if (mix_green && (colors = 3))
       for (i=0; i < height*width; i++)
 	image[i][1] = (image[i][1] + image[i][3]) >> 1;
+    if (!is_foveon && highlight == 2) blend_highlights();
+    if (!is_foveon && highlight > 2) recover_highlights();
+    if (use_fuji_rotate) fuji_rotate();
 #ifndef NO_LCMS
     if (cam_profile) apply_profile (cam_profile, out_profile);
 #endif
