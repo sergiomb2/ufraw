@@ -316,9 +316,6 @@ int ufraw_exif_from_exiv2(ufraw_data *uf);
 #define UFRAW_CLEAN 209 /* Clean all buffers */
 #define UFRAW_RESET 210 /* Reset warnings and errors */
 #define UFRAW_SET_PARENT 211 /* Set parent window for message dialog */
-#define UFRAW_LCMS_WARNING 0x1000
-#define UFRAW_LCMS_RECOVERABLE 0x2000
-#define UFRAW_LCMS_ABORTED 0x3000
 
 char *ufraw_message(int code, const char *format, ...);
 

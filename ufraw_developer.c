@@ -21,6 +21,17 @@
 #include "nikon_curve.h"
 #include "ufraw.h"
 
+int lcms_message(int ErrorCode, const char *ErrorText)
+{
+    /* Possible ErrorCode:
+     * LCMS_ERRC_WARNING        0x1000
+     * LCMS_ERRC_RECOVERABLE    0x2000
+     * LCMS_ERRC_ABORTED        0x3000 */
+    (void)ErrorCode;
+    ufraw_message(UFRAW_ERROR, "%s", ErrorText);
+    return 1; /* Tell lcms that we handled the error */
+}
+
 developer_data *developer_init()
 {
     int i;
@@ -45,7 +56,7 @@ developer_data *developer_init()
     d->intent[display_profile] = -1;
     d->updateTransform = TRUE;
     d->colorTransform = NULL;
-    cmsSetErrorHandler((void *)ufraw_message);
+    cmsSetErrorHandler(lcms_message);
     return d;
 }
 

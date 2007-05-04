@@ -111,12 +111,6 @@ char *ufraw_message(int code, const char *format, ...)
 		    ufraw_messenger(message, parentWindow);
                 g_free(message);
                 return NULL;
-    case UFRAW_LCMS_WARNING:
-    case UFRAW_LCMS_RECOVERABLE:
-    case UFRAW_LCMS_ABORTED:
-                ufraw_messenger(message, parentWindow);
-                g_free(message);
-                return (char *)1; /* Tell lcms that we are handling the error */
     case UFRAW_REPORT:
                 ufraw_messenger(errorBuffer, parentWindow);
                 return NULL;
