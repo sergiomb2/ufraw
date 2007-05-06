@@ -65,6 +65,8 @@ typedef struct {
     double initialChanMul[4];
     int raw_his[raw_his_size][4];
     GList *WBPresets; /* List of WB presets in WBCombo*/
+    GdkPixbuf *PreviewPixbuf;
+    GdkCursor *SpotCursor;
     /* Remember the Gtk Widgets that we need to access later */
     GtkWidget *Controls, *PreviewWidget, *RawHisto, *LiveHisto;
     GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
@@ -485,12 +487,26 @@ void color_labels_set(colorLabels *l, double data[3])
 void image_view_draw_area(GtkImageView *view,
 	int x, int y, int width, int height)
 {
+    /* Find location of area in the view. */
     GdkRectangle viewRect;
     gtk_image_view_get_viewport(view, &viewRect);
-    if (y<viewRect.y) height += y - viewRect.y;
-    if (x<viewRect.x) width += x - viewRect.x;
-    x = MAX(x-viewRect.x, 0);
-    y = MAX(y-viewRect.y, 0);
+    GdkPixbuf *pixbuf = gtk_image_view_get_pixbuf(view);
+    int pixbufWidth = gdk_pixbuf_get_width(pixbuf);
+    int pixbufHeight = gdk_pixbuf_get_height(pixbuf);
+    int viewWidth = GTK_WIDGET(view)->allocation.width;
+    int viewHeight = GTK_WIDGET(view)->allocation.height;
+    if ( pixbufWidth>viewWidth ) {
+	if (x<viewRect.x) width += x - viewRect.x;
+	x = MAX(x-viewRect.x, 0);
+    } else {
+	x += (viewWidth - pixbufWidth) / 2;
+    }
+    if ( pixbufHeight>viewHeight ) {
+	if (y<viewRect.y) height += y - viewRect.y;
+	y = MAX(y-viewRect.y, 0);
+    } else {
+	y += (viewHeight - pixbufHeight) / 2;
+    }
     if ( height>0 && width>0 )
 	gtk_widget_queue_draw_area(GTK_WIDGET(view), x, y, width, height);
 }
@@ -666,23 +682,18 @@ gboolean render_preview_image(preview_data *data)
     guint64 sum[3], sqr[3];
 
     if (renderRestart) {
-        renderRestart = FALSE;
-#ifdef HAVE_GTKIMAGEVIEW
-        pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
-#else
-        pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
-#endif
-        width = gdk_pixbuf_get_width(pixbuf);
-        height = gdk_pixbuf_get_height(pixbuf);
-        rowstride = gdk_pixbuf_get_rowstride(pixbuf);
-        pixies = gdk_pixbuf_get_pixels(pixbuf);
+	renderRestart = FALSE;
+	width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+	height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+	rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
+	pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
 #ifdef DEBUG
-        fprintf(stderr, "render_preview_image: w=%d, h=%d, r=%d, mode=%d\n",
-                width, height, rowstride, data->RenderMode);
-        fflush(stderr);
+	fprintf(stderr, "render_preview_image: w=%d, h=%d, r=%d, mode=%d\n",
+		width, height, rowstride, data->RenderMode);
+	fflush(stderr);
 #endif
-        memset(live_his, 0, sizeof(live_his));
-        y = y0 = 0;
+	memset(live_his, 0, sizeof(live_his));
+	y = y0 = 0;
     }
     for (; y<height; y++) {
         develope(&pixies[y*rowstride], data->UF->image.image[y*width],
@@ -721,7 +732,7 @@ gboolean render_preview_image(preview_data *data)
 	    image_view_draw_area(GTK_IMAGE_VIEW(data->PreviewWidget),
 		    0, y0, width, y+1-y0);
 #else
-            gtk_widget_queue_draw_area(data->PreviewWidget,
+	    gtk_widget_queue_draw_area(data->PreviewWidget,
 		    0, y0, width, y+1-y0);
 #endif
             y0 = y+1;
@@ -730,8 +741,8 @@ gboolean render_preview_image(preview_data *data)
         }
     }
 #ifdef HAVE_GTKIMAGEVIEW
-//    I'm not sure why the next line crashes:
-//    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget), pixbuf);
+//    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
+//	    data->PreviewPixbuf, FALSE);
     image_view_draw_area(GTK_IMAGE_VIEW(data->PreviewWidget),
 	    0, y0, width, y+1-y0);
     g_signal_emit_by_name(G_OBJECT(data->PreviewWidget), "pixbuf-changed");
@@ -820,7 +831,6 @@ gboolean render_preview_image(preview_data *data)
 void render_spot(preview_data *data)
 {
     if (data->FreezeDialog) return;
-    GdkPixbuf *pixbuf;
     guint8 *pixies;
     int width, height, rowstride;
     int c, y, x;
@@ -829,15 +839,10 @@ void render_spot(preview_data *data)
     char tmp[max_name];
 
     if (data->SpotX1<0) return;
-#ifdef HAVE_GTKIMAGEVIEW
-    pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
-#else
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
-#endif
-    width = gdk_pixbuf_get_width(pixbuf);
-    height = gdk_pixbuf_get_height(pixbuf);
-    rowstride = gdk_pixbuf_get_rowstride(pixbuf);
-    pixies = gdk_pixbuf_get_pixels(pixbuf);
+    width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
+    pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
     for (c=0; c<3; c++) rgb[c] = 0;
     /* Scale image coordinates to pixbuf coordinates */
     spotSizeY = abs(data->SpotY1 - data->SpotY2)
@@ -860,8 +865,6 @@ void render_spot(preview_data *data)
 	    (int)rgb[0], (int)rgb[1], (int)rgb[2]);
     gtk_label_set_markup(data->SpotPatch, tmp);
     draw_spot(data, TRUE);
-    gtk_widget_queue_draw_area(data->PreviewWidget, spotStartX-1, spotStartY-1,
-	    spotStartX+spotSizeX+1, spotStartY+spotSizeY+1);
 }
 
 void pixbuf_mark(int x, int y, guchar *pixbuf, int width, int height,
@@ -887,21 +890,15 @@ void pixbuf_mark(int x, int y, guchar *pixbuf, int width, int height,
 
 void draw_spot(preview_data *data, gboolean draw)
 {
-    GdkPixbuf *pixbuf;
     guint8 *pixies;
     int width, height, x, y, rowstride;
     int spotStartX, spotStartY, spotSizeX, spotSizeY;
 
     if (data->SpotX1<0) return;
-#ifdef HAVE_GTKIMAGEVIEW
-    pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
-#else
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
-#endif
-    width = gdk_pixbuf_get_width(pixbuf);
-    height = gdk_pixbuf_get_height(pixbuf);
-    rowstride = gdk_pixbuf_get_rowstride(pixbuf);
-    pixies = gdk_pixbuf_get_pixels(pixbuf);
+    width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
+    pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
     /* Scale image coordinates to pixbuf coordinates */
     spotSizeY = abs(data->SpotY1 - data->SpotY2)
 	    * height / data->UF->predictedHeight + 1;
@@ -923,9 +920,14 @@ void draw_spot(preview_data *data, gboolean draw)
         pixbuf_mark(spotStartX+spotSizeX+1, spotStartY+y,
 	        pixies, width, height, rowstride, draw);
     }
-    gtk_widget_queue_draw_area(data->PreviewWidget,
+#ifdef HAVE_GTKIMAGEVIEW
+    image_view_draw_area(GTK_IMAGE_VIEW(data->PreviewWidget),
 	    spotStartX-1, spotStartY-1,
 	    spotSizeX+3, spotSizeY+3);
+#else
+    gtk_widget_queue_draw_area(data->PreviewWidget, spotStartX-1, spotStartY-1,
+	    spotSizeX+3, spotSizeY+3);
+#endif
 }
 
 /* update the UI entries that could have changed automatically */
@@ -1006,7 +1008,7 @@ void update_scales(preview_data *data)
 
     data->FreezeDialog = FALSE;
     render_preview(data, render_default);
-};
+}
 
 void curve_update(GtkWidget *widget, long curveType)
 {
@@ -1032,19 +1034,13 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
     int spotStartX, spotStartY, spotSizeX, spotSizeY;
     int width, height, x, y, c;
     guint64 rgb[4];
-    GdkPixbuf *pixbuf;
 
     user_data = user_data;
 
     if (data->FreezeDialog) return;
     if (data->SpotX1<=0) return;
-#ifdef HAVE_GTKIMAGEVIEW
-    pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
-#else
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
-#endif
-    width = gdk_pixbuf_get_width(pixbuf);
-    height = gdk_pixbuf_get_height(pixbuf);
+    width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    height = gdk_pixbuf_get_height(data->PreviewPixbuf);
     /* Scale image coordinates to pixbuf coordinates */
     spotSizeY = abs(data->SpotY1 - data->SpotY2)
 	    * height / data->UF->predictedHeight + 1;
@@ -1075,55 +1071,78 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
     update_scales(data);
 }
 
-void spot_press(GtkWidget *event_box, GdkEventButton *event, gpointer user_data)
+gboolean spot_button_press(GtkWidget *event_box, GdkEventButton *event,
+	gpointer user_data)
 {
     preview_data *data = get_preview_data(event_box);
-    GdkPixbuf *pixbuf;
-    int width, height;
-
-    user_data = user_data;
-    if (data->FreezeDialog) return;
-    if (event->button!=1) return;
+    (void)user_data;
+    if (data->FreezeDialog) return FALSE;
+    if (event->button!=1) return FALSE;
     draw_spot(data, FALSE);
+    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
 #ifdef HAVE_GTKIMAGEVIEW
-    pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
-#else
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+    /* Find location of event in the view. */
+    GdkRectangle viewRect;
+    gtk_image_view_get_viewport(GTK_IMAGE_VIEW(data->PreviewWidget),
+	    &viewRect);
+    int viewWidth = data->PreviewWidget->allocation.width;
+    int viewHeight = data->PreviewWidget->allocation.height;
+    if ( viewWidth<width ) {
+	event->x += viewRect.x;
+    } else {
+	event->x -= (viewWidth - width) / 2;
+    }
+    if ( viewHeight<height ) {
+	event->y += viewRect.y;
+    } else {
+	event->y -= (viewHeight - height) / 2;
+    }
 #endif
-    width = gdk_pixbuf_get_width(pixbuf);
-    height = gdk_pixbuf_get_height(pixbuf);
     /* Scale pixbuf coordinates to image coordinates */
     data->SpotX1 = event->x * data->UF->predictedWidth / width;
     data->SpotY1 = event->y * data->UF->predictedHeight / height;
     data->SpotX2 = event->x * data->UF->predictedWidth / width;
     data->SpotY2 = event->y * data->UF->predictedHeight / height;
     render_spot(data);
+    return TRUE;
 }
 
-gboolean spot_motion(GtkWidget *event_box, GdkEventMotion *event,
+gboolean spot_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
 	gpointer user_data)
 {
     preview_data *data = get_preview_data(event_box);
-    GdkPixbuf *pixbuf;
-    int width, height;
 
-    user_data = user_data;
+    (void)user_data;
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
     draw_spot(data, FALSE);
+    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
 #ifdef HAVE_GTKIMAGEVIEW
-    pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
-#else
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
+    /* Find location of event in the view. */
+    GdkRectangle viewRect;
+    gtk_image_view_get_viewport(GTK_IMAGE_VIEW(data->PreviewWidget),
+	    &viewRect);
+    int viewWidth = data->PreviewWidget->allocation.width;
+    int viewHeight = data->PreviewWidget->allocation.height;
+    if ( viewWidth<width ) {
+	event->x += viewRect.x;
+    } else {
+	event->x -= (viewWidth - width) / 2;
+    }
+    if ( viewHeight<height ) {
+	event->y += viewRect.y;
+    } else {
+	event->y -= (viewHeight - height) / 2;
+    }
 #endif
-    width = gdk_pixbuf_get_width(pixbuf);
-    height = gdk_pixbuf_get_height(pixbuf);
     /* Scale pixbuf coordinates to image coordinates */
     data->SpotX2 = MAX(MIN(event->x,data->UF->image.width),0)
 	    * data->UF->predictedWidth / width;
     data->SpotY2 = MAX(MIN(event->y,data->UF->image.height),0)
 	    * data->UF->predictedHeight / height;
     render_spot(data);
-    return FALSE;
+    return TRUE;
 }
 
 void create_base_image(preview_data *data)
@@ -1143,24 +1162,19 @@ void create_base_image(preview_data *data)
     ufraw_convert_image(data->UF);
     CFG->shrink = shrinkSave;
     CFG->size = sizeSave;
-    GdkPixbuf *pixbuf;
-#ifdef HAVE_GTKIMAGEVIEW
-    pixbuf = gtk_image_view_get_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget));
-#else
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->PreviewWidget));
-#endif
-    int width = gdk_pixbuf_get_width(pixbuf);
-    int height = gdk_pixbuf_get_height(pixbuf);
+    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
     if (width!=data->UF->image.width || height!=data->UF->image.height) {
-	pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
+	data->PreviewPixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
 		data->UF->image.width, data->UF->image.height);
 #ifdef HAVE_GTKIMAGEVIEW
-	gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget), pixbuf);
+	gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
+		data->PreviewPixbuf, FALSE);
 	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
 #else
 	gtk_image_set_from_pixbuf(GTK_IMAGE(data->PreviewWidget), pixbuf);
 #endif
-	g_object_unref(pixbuf);
+	g_object_unref(data->PreviewPixbuf);
     }
     char progressText[max_name];
     if (CFG->Scale==0)
@@ -2004,14 +2018,6 @@ gboolean histogram_menu(GtkMenu *menu, GdkEventButton *event)
     return TRUE;
 }
 
-gboolean preview_cursor(GtkWidget *widget, GdkEventCrossing *event,
-	GdkCursor *cursor)
-{
-    widget = widget;
-    gdk_window_set_cursor(event->window, cursor);
-    return TRUE;
-}
-
 void preview_progress(void *widget, char *text, double progress)
 {
     if (widget==NULL) return;
@@ -2050,6 +2056,29 @@ void preview_saver(GtkWidget *widget, gpointer user_data)
     }
     data->FreezeDialog = FALSE;
     gtk_widget_set_sensitive(data->Controls, TRUE);
+}
+
+void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
+	guint page_num, gpointer user_data)
+{
+    (void)page;
+    (void)user_data;
+#ifdef HAVE_GTKIMAGEVIEW
+    preview_data *data = get_preview_data(notebook);
+    if (data->FreezeDialog==TRUE) return;
+    GtkWidget *event =
+	    gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_EVENT_BOX);
+    if ( page_num==0 ) {
+	gtk_event_box_set_above_child(GTK_EVENT_BOX(event), TRUE);
+	gdk_window_set_cursor(event->window,
+		data->SpotCursor);
+    } else {
+	gtk_event_box_set_above_child(GTK_EVENT_BOX(event), FALSE);
+    }
+#else
+    (void)notebook;
+    (void)page_num;
+#endif
 }
 
 int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
@@ -2254,6 +2283,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(button_update), NULL);
 
     GtkNotebook *notebook = GTK_NOTEBOOK(gtk_notebook_new());
+    g_signal_connect(G_OBJECT(notebook), "switch-page",
+            G_CALLBACK(notebook_switch_page), NULL);
     data->Controls = GTK_WIDGET(notebook);
     gtk_box_pack_start(GTK_BOX(previewVBox), GTK_WIDGET(notebook),
 	    FALSE, FALSE, 0);
@@ -2976,39 +3007,47 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* Right side of the preview window */
     vBox = gtk_vbox_new(FALSE, 0);
     gtk_box_pack_start(previewHBox, vBox, TRUE, TRUE, 2);
-    pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
+    data->PreviewPixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
             preview_width, preview_height);
+    GtkWidget *PreviewEventBox = gtk_event_box_new();
 #ifdef HAVE_GTKIMAGEVIEW
     data->PreviewWidget = gtk_image_view_new();
     gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
-	    pixbuf);
+	    data->PreviewPixbuf, FALSE);
     gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
-    // The following two lines have no effect on the widget size:
     gtk_widget_set_size_request(data->PreviewWidget,
 	    preview_width, preview_height);
+    gtk_event_box_set_above_child(GTK_EVENT_BOX(PreviewEventBox), TRUE);
+//    gtk_container_add(GTK_CONTAINER(PreviewEventBox), data->PreviewWidget);
+//    GtkWidget *scroll = gtk_image_scroll_win_new(
+//	    (GtkImageView*)PreviewEventBox);
+//    gtk_box_pack_start(GTK_BOX(vBox), scroll, TRUE, TRUE, 0);
     GtkWidget *scroll = gtk_image_scroll_win_new(
 	    GTK_IMAGE_VIEW(data->PreviewWidget));
+    GtkWidget *container =
+	    gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_TABLE);
+    g_object_ref(G_OBJECT(data->PreviewWidget));
+    gtk_container_remove(GTK_CONTAINER(container), data->PreviewWidget);
+    gtk_container_add(GTK_CONTAINER(PreviewEventBox), data->PreviewWidget);
+    g_object_unref(G_OBJECT(data->PreviewWidget));
+    gtk_table_attach(GTK_TABLE(container), PreviewEventBox, 0, 1, 0, 1,
+	    GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
     gtk_box_pack_start(GTK_BOX(vBox), scroll, TRUE, TRUE, 0);
 #else
     align = gtk_alignment_new(0.5, 0.5, 0, 0);
     gtk_box_pack_start(GTK_BOX(vBox), align, TRUE, TRUE, 0);
     box = GTK_BOX(gtk_vbox_new(FALSE, 0));
     gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(box));
-    event_box = gtk_event_box_new();
-    gtk_box_pack_start(box, event_box, FALSE, FALSE, 0);
+    gtk_box_pack_start(box, PreviewEventBox, FALSE, FALSE, 0);
     data->PreviewWidget = gtk_image_new_from_pixbuf(pixbuf);
     gtk_misc_set_alignment(GTK_MISC(data->PreviewWidget), 0, 0);
-    gtk_container_add(GTK_CONTAINER(event_box), data->PreviewWidget);
-    g_signal_connect(G_OBJECT(event_box), "button_press_event",
-            G_CALLBACK(spot_press), NULL);
-    g_signal_connect(G_OBJECT(event_box), "motion-notify-event",
-            G_CALLBACK(spot_motion), NULL);
-    g_signal_connect(G_OBJECT(event_box), "enter-notify-event",
-	    G_CALLBACK(preview_cursor), gdk_cursor_new(GDK_HAND2));
-    g_signal_connect(G_OBJECT(event_box), "leave-notify-event",
-	    G_CALLBACK(preview_cursor), NULL);
+    gtk_container_add(GTK_CONTAINER(PreviewEventBox), data->PreviewWidget);
 #endif
-    g_object_unref(pixbuf);
+    g_signal_connect(G_OBJECT(PreviewEventBox), "button_press_event",
+	    G_CALLBACK(spot_button_press), NULL);
+    g_signal_connect(G_OBJECT(PreviewEventBox), "motion-notify-event",
+	    G_CALLBACK(spot_motion_notify), NULL);
+    g_object_unref(data->PreviewPixbuf);
 
     data->ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
     gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(data->ProgressBar),
@@ -3060,6 +3099,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);
     /* After window size was set, the user may want to shrink it */
     gtk_widget_set_size_request(data->PreviewWidget, -1, -1);
+    data->SpotCursor = gdk_cursor_new(GDK_HAND2);
+    gdk_window_set_cursor(PreviewEventBox->window, data->SpotCursor);
 
     gtk_widget_set_sensitive(data->Controls, FALSE);
     preview_progress(previewWindow, _("Loading preview"), 0.2);
@@ -3098,6 +3139,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     ufraw_focus(previewWindow, FALSE);
     gtk_widget_destroy(previewWindow);
     gtk_object_sink(GTK_OBJECT(data->ToolTips));
+    gdk_cursor_unref(data->SpotCursor);
     /* Make sure that there are no preview idle task remaining */
     g_idle_remove_by_data(data);
 
