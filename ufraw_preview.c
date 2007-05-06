@@ -1172,7 +1172,8 @@ void create_base_image(preview_data *data)
 		data->PreviewPixbuf, FALSE);
 	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
 #else
-	gtk_image_set_from_pixbuf(GTK_IMAGE(data->PreviewWidget), pixbuf);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(data->PreviewWidget),
+		data->PreviewPixbuf);
 #endif
 	g_object_unref(data->PreviewPixbuf);
     }
@@ -1545,6 +1546,8 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
     }
     if (valuep==&CFG->Zoom) {
 	CFG->Scale = 0;
+	create_base_image(data);
+    } else if (valuep==&CFG->threshold) {
 	create_base_image(data);
     } else {
 	if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
@@ -2440,6 +2443,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_table_attach(table, GTK_WIDGET(combo), 1, 2, 0, 1,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 //    gtk_box_pack_start(box, GTK_WIDGET(combo), FALSE, FALSE, 0);
+
+    adjustment_scale(table, 0, 2, _("Threshold"),
+	    CFG->threshold, &CFG->threshold, 0.0, 1000.0, 10, 50, 0,
+	    _("Threshold for wavelet denoising"));
     /* End of White Balance setting page */
 
     /* Start of Base Curve page */
@@ -3039,7 +3046,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     box = GTK_BOX(gtk_vbox_new(FALSE, 0));
     gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(box));
     gtk_box_pack_start(box, PreviewEventBox, FALSE, FALSE, 0);
-    data->PreviewWidget = gtk_image_new_from_pixbuf(pixbuf);
+    data->PreviewWidget = gtk_image_new_from_pixbuf(data->PreviewPixbuf);
     gtk_misc_set_alignment(GTK_MISC(data->PreviewWidget), 0, 0);
     gtk_container_add(GTK_CONTAINER(PreviewEventBox), data->PreviewWidget);
 #endif
