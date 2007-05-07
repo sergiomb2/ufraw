@@ -26,7 +26,6 @@
 #include <errno.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
-#include "dcraw_api.h"
 #include "ufraw.h"
 #include "curveeditor_widget.h"
 //#undef HAVE_GTKIMAGEVIEW
@@ -55,6 +54,12 @@ typedef struct {
     int num;
     int format;
 } colorLabels;
+
+typedef enum { render_default, render_overexposed, render_underexposed
+	} RenderModeType;
+
+typedef enum { render_all, render_draw_phase, render_spot_phase,
+	render_finished } RenderPhaseType;
 
 /* All the "global" information is here: */
 typedef struct {
@@ -93,7 +98,9 @@ typedef struct {
     GtkAdjustment *SaturationAdjustment;
     GtkAdjustment *ZoomAdjustment;
     long (*SaveFunc)();
-    long RenderMode;
+    RenderModeType RenderMode;
+    RenderPhaseType RenderPhase;
+    int RenderLine;
     /* Some actions update the progress bar while working, but meanwhile we
      * want to freeze all other actions. After we thaw the dialog we must
      * call update_scales() which was also frozen. */
@@ -512,36 +519,123 @@ void image_view_draw_area(GtkImageView *view,
 }
 #endif
 
-enum { render_default, render_overexposed, render_underexposed };
+void preview_draw_area(preview_data *data, int x, int y, int width, int height)
+{
+    int rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
+    guint8 *pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
+    guint8 *p8;
+    int xx, yy, c, o, min, max;
+    for (yy=y; yy<y+height; yy++) {
+	memcpy(pixies+yy*rowstride,
+		data->UF->Images[0].buffer + yy*data->UF->Images[0].rowstride,
+		width*data->UF->Images[0].depth);
+        for (xx=x, p8=&pixies[yy*rowstride]; xx<width; xx++, p8+=3) {
+	    for (c=0, max=0, min=0x100; c<3; c++) {
+		max = MAX(max, p8[c]);
+		min = MIN(min, p8[c]);
+	    }
+            for (c=0; c<3; c++) {
+                o = p8[c];
+                if (data->RenderMode==render_default) {
+                    if (CFG->overExp && max==MAXOUT) o = 0;
+                    if (CFG->underExp && min==0) o = 255;
+                } else if (data->RenderMode==render_overexposed) {
+                    if (o!=255) o = 0;
+                } else if (data->RenderMode==render_underexposed) {
+                    if (o!=0) o = 255;
+                }
+                pixies[yy*rowstride+3*xx+c] = o;
+            }
+        }
+    }
+#ifdef HAVE_GTKIMAGEVIEW
+    image_view_draw_area(GTK_IMAGE_VIEW(data->PreviewWidget),
+	    x, y, width, height);
+#else
+    gtk_widget_queue_draw_area(data->PreviewWidget,
+	    x, y, width, height);
+#endif
+}
 
-void render_preview(preview_data *data, long mode);
+void render_preview(preview_data *data, RenderPhaseType phase);
 gboolean render_raw_histogram(preview_data *data);
 gboolean render_preview_image(preview_data *data);
-void render_spot(preview_data *data);
+gboolean render_live_histogram(preview_data *data);
+gboolean render_spot(preview_data *data);
 void draw_spot(preview_data *data, gboolean draw);
 
 void render_preview_callback(GtkWidget *widget, long mode)
 {
     preview_data *data = get_preview_data(widget);
-    render_preview(data, mode);
+    data->RenderMode = mode;
+    render_preview(data, render_all);
 }
 
-static int renderRestart = FALSE;
-
-void render_preview(preview_data *data, long mode)
+void render_preview(preview_data *data, RenderPhaseType phase)
 {
     if (data->FreezeDialog) return;
-    data->RenderMode = mode;
-    g_idle_remove_by_data(data);
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-            (GSourceFunc)(render_raw_histogram), data, NULL);
+    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    if (width!=data->UF->image.width || height!=data->UF->image.height) {
+	data->PreviewPixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
+		data->UF->image.width, data->UF->image.height);
+#ifdef HAVE_GTKIMAGEVIEW
+	gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
+		data->PreviewPixbuf, FALSE);
+	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
+#else
+	gtk_image_set_from_pixbuf(GTK_IMAGE(data->PreviewWidget),
+		data->PreviewPixbuf);
+#endif
+	g_object_unref(data->PreviewPixbuf);
+    }
+    char progressText[max_name];
+    if (CFG->Scale==0)
+	snprintf(progressText, max_name, _("size %dx%d, zoom %2.f%%"),
+		data->UF->predictedWidth, data->UF->predictedHeight,
+		CFG->Zoom);
+    else
+	snprintf(progressText, max_name, _("size %dx%d, scale 1/%d"),
+		data->UF->predictedWidth, data->UF->predictedHeight,
+		CFG->Scale);
+    if (data->ProgressBar!=NULL) {
+	gtk_progress_bar_set_text(data->ProgressBar, progressText);
+	gtk_progress_bar_set_fraction(data->ProgressBar, 0);
+    }
+    if ( phase==render_draw_phase ) {
+	int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+	int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+	preview_draw_area(data, 0, 0, width, height);
+#ifdef HAVE_GTKIMAGEVIEW
+	gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
+		data->PreviewPixbuf, FALSE);
+#endif
+	if ( data->RenderPhase!=render_finished )
+	    /* We are in the middle of some other rendering */
+	    phase = render_all;
+	else
+	    phase = render_spot_phase;
+    }
+    if ( phase==render_spot_phase ) {
+	g_idle_remove_by_data(data);
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+		(GSourceFunc)(render_spot), data, NULL);
+	return;
+    }
+    if ( phase==render_all ) {
+	data->RenderPhase = render_all;
+	data->RenderLine = 0;
+	g_idle_remove_by_data(data);
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+		(GSourceFunc)(render_raw_histogram), data, NULL);
+    }
 }
 
 gboolean render_raw_histogram(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
-    static GdkPixbuf *pixbuf;
-    static guint8 *pixies;
+    GdkPixbuf *pixbuf;
+    guint8 *pixies;
     int rowstride;
     guint8 pix[99], *p8, pen[4][3];
     guint16 pixtmp[9999];
@@ -663,7 +757,6 @@ gboolean render_raw_histogram(preview_data *data)
         }
     }
     gtk_widget_queue_draw(data->RawHisto);
-    renderRestart = TRUE;
     g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
             (GSourceFunc)(render_preview_image), data, NULL);
     return FALSE;
@@ -672,93 +765,63 @@ gboolean render_raw_histogram(preview_data *data)
 gboolean render_preview_image(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
-    static GdkPixbuf *pixbuf;
-    static guint8 *pixies;
-    static int width, height, x, y, c, o, min, max, rowstride, y0;
-    static int live_his[live_his_size][4], live_his_max;
-    guint8 *p8;
-    guint16 pixtmp[9999];
-    double rgb[3];
-    guint64 sum[3], sqr[3];
 
-    if (renderRestart) {
-	renderRestart = FALSE;
-	width = gdk_pixbuf_get_width(data->PreviewPixbuf);
-	height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-	rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
-	pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
-#ifdef DEBUG
-	fprintf(stderr, "render_preview_image: w=%d, h=%d, r=%d, mode=%d\n",
-		width, height, rowstride, data->RenderMode);
-	fflush(stderr);
-#endif
-	memset(live_his, 0, sizeof(live_his));
-	y = y0 = 0;
-    }
-    for (; y<height; y++) {
-        develope(&pixies[y*rowstride], data->UF->image.image[y*width],
-                Developer, 8, pixtmp, width);
-        for (x=0, p8=&pixies[y*rowstride]; x<width; x++, p8+=3) {
-            for (c=0, max=0, min=0x100; c<3; c++) {
-                max = MAX(max, p8[c]);
-                min = MIN(min, p8[c]);
-                live_his[p8[c]][c]++;
-            }
-            if (CFG->histogram==luminosity_histogram)
-                live_his[(int)(0.3*p8[0]+0.59*p8[1]+0.11*p8[2])][3]++;
-            if (CFG->histogram==value_histogram)
-                live_his[max][3]++;
-            if (CFG->histogram==saturation_histogram) {
-                if (max==0) live_his[0][3]++;
-                else live_his[255*(max-min)/max][3]++;
-            }
-            for (c=0; c<3; c++) {
-                o = p8[c];
-                if (data->RenderMode==render_default) {
-                    if (CFG->overExp && max==MAXOUT) o = 0;
-                    if (CFG->underExp && min==0) o = 255;
-                } else if (data->RenderMode==render_overexposed) {
-                    if (o!=255) o = 0;
-                } else if (data->RenderMode==render_underexposed) {
-                    if (o!=0) o = 255;
-                }
-                pixies[y*rowstride+3*x+c] = o;
-            }
-        }
-        if (y%32==31) {
-#ifdef HAVE_GTKIMAGEVIEW
-//	    With the following line redraw does not work:
-//	    gtk_widget_queue_draw(data->PreviewWidget);
-	    image_view_draw_area(GTK_IMAGE_VIEW(data->PreviewWidget),
-		    0, y0, width, y+1-y0);
-#else
-	    gtk_widget_queue_draw_area(data->PreviewWidget,
-		    0, y0, width, y+1-y0);
-#endif
-            y0 = y+1;
-            y++;
-            return TRUE;
-        }
-    }
+    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    int tileHeight = MIN(height - data->RenderLine, 32);
+    ufraw_convert_image_area(data->UF, 0, data->RenderLine, width, tileHeight);
+    preview_draw_area(data, 0, data->RenderLine, width, tileHeight);
+    data->RenderLine += tileHeight;
+    if ( data->RenderLine<height )
+        return TRUE;
+
 #ifdef HAVE_GTKIMAGEVIEW
 //    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
 //	    data->PreviewPixbuf, FALSE);
-    image_view_draw_area(GTK_IMAGE_VIEW(data->PreviewWidget),
-	    0, y0, width, y+1-y0);
     g_signal_emit_by_name(G_OBJECT(data->PreviewWidget), "pixbuf-changed");
-#else
-    gtk_widget_queue_draw_area(data->PreviewWidget, 0, y0, width, y+1-y0);
 #endif
-    /* draw live histogram */
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+            (GSourceFunc)(render_live_histogram), data, NULL);
+    return FALSE;
+}
+
+gboolean render_live_histogram(preview_data *data)
+{
+    if (data->FreezeDialog) return FALSE;
+
+    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    int i, x, y, c, min, max;
+    guint8 *p8;
+    double rgb[3];
+    guint64 sum[3], sqr[3];
+    int live_his[live_his_size][4];
+    memset(live_his, 0, sizeof(live_his));
+    for (i=0; i < data->UF->Images[0].height*data->UF->Images[0].width; i++) {
+	p8 = data->UF->Images[0].buffer + i*data->UF->Images[0].depth;
+        for (c=0, max=0, min=0x100; c<3; c++) {
+            max = MAX(max, p8[c]);
+            min = MIN(min, p8[c]);
+            live_his[p8[c]][c]++;
+	}
+        if (CFG->histogram==luminosity_histogram)
+            live_his[(int)(0.3*p8[0]+0.59*p8[1]+0.11*p8[2])][3]++;
+        if (CFG->histogram==value_histogram)
+            live_his[max][3]++;
+        if (CFG->histogram==saturation_histogram) {
+            if (max==0) live_his[0][3]++;
+            else live_his[255*(max-min)/max][3]++;
+        }
+    }
+    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
     if (gdk_pixbuf_get_height(pixbuf)!=CFG->liveHistogramHeight+2) {
         pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
 	        live_his_size+2, CFG->liveHistogramHeight+2);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(data->LiveHisto), pixbuf);
 	g_object_unref(pixbuf);
     }
-    pixies = gdk_pixbuf_get_pixels(pixbuf);
-    rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+    guint8 *pixies = gdk_pixbuf_get_pixels(pixbuf);
+    int rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)*rowstride +
             gdk_pixbuf_get_width(pixbuf)*gdk_pixbuf_get_n_channels(pixbuf));
     for (c=0; c<3; c++) {
@@ -769,6 +832,7 @@ gboolean render_preview_image(preview_data *data)
             sqr[c] += (guint64)x*x*live_his[x][c];
         }
     }
+    int live_his_max;
     for (x=1, live_his_max=1; x<live_his_size-1; x++) {
 	if (CFG->liveHistogramScale==log_histogram)
 	    for (c=0; c<4; c++) live_his[x][c] = log(1+live_his[x][c])*1000;
@@ -777,11 +841,11 @@ gboolean render_preview_image(preview_data *data)
                 live_his_max = MAX(live_his_max, live_his[x][c]);
         else if (CFG->histogram==r_g_b_histogram)
             live_his_max = MAX(live_his_max,
-                    live_his[x][0]+live_his[x][1]+live_his[x][2]);
+		    live_his[x][0]+live_his[x][1]+live_his[x][2]);
         else live_his_max = MAX(live_his_max, live_his[x][3]);
     }
 #ifdef DEBUG
-    fprintf(stderr, "render_preview: live_his_max=%d\n", live_his_max);
+    fprintf(stderr, "render_live_histogram: live_his_max=%d\n", live_his_max);
     fflush(stderr);
 #endif
     for (x=0; x<live_his_size; x++) for (y=0; y<CFG->liveHistogramHeight; y++)
@@ -824,13 +888,15 @@ gboolean render_preview_image(preview_data *data)
     color_labels_set(data->OverLabels, rgb);
     for (c=0;c<3;c++) rgb[c] = 100.0*live_his[0][c]/height/width;
     color_labels_set(data->UnderLabels, rgb);
-    render_spot(data);
+
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+            (GSourceFunc)(render_spot), data, NULL);
     return FALSE;
 }
 
-void render_spot(preview_data *data)
+gboolean render_spot(preview_data *data)
 {
-    if (data->FreezeDialog) return;
+    if (data->FreezeDialog) return FALSE;
     guint8 *pixies;
     int width, height, rowstride;
     int c, y, x;
@@ -838,13 +904,14 @@ void render_spot(preview_data *data)
     double rgb[3];
     char tmp[max_name];
 
-    if (data->SpotX1<0) return;
-    width = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
-    pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
+    data->RenderPhase = render_finished;
+    if (data->SpotX1<0) return FALSE;
+    width = data->UF->Images[0].width;
+    height = data->UF->Images[0].height;
+    rowstride = data->UF->Images[0].rowstride;
+    pixies = data->UF->Images[0].buffer;
     for (c=0; c<3; c++) rgb[c] = 0;
-    /* Scale image coordinates to pixbuf coordinates */
+    /* Scale image coordinates to Images[0] coordinates */
     spotSizeY = abs(data->SpotY1 - data->SpotY2)
 	    * height / data->UF->predictedHeight + 1;
     spotStartY = MIN(data->SpotY1, data->SpotY2)
@@ -865,10 +932,12 @@ void render_spot(preview_data *data)
 	    (int)rgb[0], (int)rgb[1], (int)rgb[2]);
     gtk_label_set_markup(data->SpotPatch, tmp);
     draw_spot(data, TRUE);
+
+    return FALSE;
 }
 
-void pixbuf_mark(int x, int y, guchar *pixbuf, int width, int height,
-	        int rowstride, gboolean draw)
+void pixbuf_mark(int x, int y, guint8 *pixbuf, guint8 *image,
+	int width, int height, int rowstride, int imageStride, gboolean draw)
 {
     int c;
 
@@ -876,49 +945,46 @@ void pixbuf_mark(int x, int y, guchar *pixbuf, int width, int height,
     for (c=0; c<3; c++) {
 	if (draw) {
 	    if ( (x+y)%2 == 0 )
-		pixbuf[y*rowstride+3*x+c] = pixbuf[y*rowstride+3*x+c]/4;
+		pixbuf[y*rowstride+3*x+c] = 0;
 	    else
-		pixbuf[y*rowstride+3*x+c] = 255-(255-pixbuf[y*rowstride+3*x+c])/4;
+		pixbuf[y*rowstride+3*x+c] = 255;
 	} else {
-	    if ( (x+y)%2 == 0 )
-		pixbuf[y*rowstride+3*x+c] = pixbuf[y*rowstride+3*x+c]*4;
-	    else
-		pixbuf[y*rowstride+3*x+c] = 255-(255-pixbuf[y*rowstride+3*x+c])*4;
+	    pixbuf[y*rowstride+3*x+c] = image[y*imageStride+3*x+c];
 	}
     }
 }
 
 void draw_spot(preview_data *data, gboolean draw)
 {
-    guint8 *pixies;
-    int width, height, x, y, rowstride;
-    int spotStartX, spotStartY, spotSizeX, spotSizeY;
+    int x, y;
 
     if (data->SpotX1<0) return;
-    width = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
-    pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
+    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    int rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
+    guint8 *pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
+    guint8 *image = data->UF->Images[0].buffer;
+    int imageStride = data->UF->Images[0].rowstride;
     /* Scale image coordinates to pixbuf coordinates */
-    spotSizeY = abs(data->SpotY1 - data->SpotY2)
+    int spotSizeY = abs(data->SpotY1 - data->SpotY2)
 	    * height / data->UF->predictedHeight + 1;
-    spotStartY = MIN(data->SpotY1, data->SpotY2)
+    int spotStartY = MIN(data->SpotY1, data->SpotY2)
 	    *height / data->UF->predictedHeight;
-    spotSizeX = abs(data->SpotX1 - data->SpotX2)
+    int spotSizeX = abs(data->SpotX1 - data->SpotX2)
 	    * width / data->UF->predictedWidth + 1;
-    spotStartX = MIN(data->SpotX1, data->SpotX2)
+    int spotStartX = MIN(data->SpotX1, data->SpotX2)
 	    * width / data->UF->predictedWidth;
     for (x=0; x<=spotSizeX; x++) {
         pixbuf_mark(spotStartX+x, spotStartY-1,
-                pixies, width, height, rowstride, draw);
+                pixies, image, width, height, rowstride, imageStride, draw);
         pixbuf_mark(spotStartX+x, spotStartY+spotSizeY+1,
-                pixies, width, height, rowstride, draw);
+                pixies, image, width, height, rowstride, imageStride, draw);
     }
     for (y=-1; y<=spotSizeY+1; y++) {
         pixbuf_mark(spotStartX-1, spotStartY+y,
-                pixies, width, height, rowstride, draw);
+                pixies, image, width, height, rowstride, imageStride, draw);
         pixbuf_mark(spotStartX+spotSizeX+1, spotStartY+y,
-	        pixies, width, height, rowstride, draw);
+	        pixies, image, width, height, rowstride, imageStride, draw);
     }
 #ifdef HAVE_GTKIMAGEVIEW
     image_view_draw_area(GTK_IMAGE_VIEW(data->PreviewWidget),
@@ -1007,7 +1073,7 @@ void update_scales(preview_data *data)
 	    CFG->curve[CFG->curveIndex].m_anchors[1].y!=1.0 );
 
     data->FreezeDialog = FALSE;
-    render_preview(data, render_default);
+    render_preview(data, render_all);
 }
 
 void curve_update(GtkWidget *widget, long curveType)
@@ -1151,7 +1217,7 @@ void create_base_image(preview_data *data)
     int sizeSave = CFG->size;
     if (CFG->Scale==0) {
 	CFG->size = CFG->Zoom / 100.0 *
-	    MAX(data->UF->predictedHeight, data->UF->predictedWidth);
+		MAX(data->UF->predictedHeight, data->UF->predictedWidth);
 	CFG->shrink = 0;
     } else {
 	CFG->size = 0;
@@ -1159,37 +1225,10 @@ void create_base_image(preview_data *data)
     }
     g_free(data->UF->image.image);
     data->UF->image.image = NULL;
-    ufraw_convert_image(data->UF);
+    ufraw_convert_image_init(data->UF);
+    ufraw_convert_image_first_phase(data->UF, TRUE);
     CFG->shrink = shrinkSave;
     CFG->size = sizeSave;
-    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    if (width!=data->UF->image.width || height!=data->UF->image.height) {
-	data->PreviewPixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-		data->UF->image.width, data->UF->image.height);
-#ifdef HAVE_GTKIMAGEVIEW
-	gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
-		data->PreviewPixbuf, FALSE);
-	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
-#else
-	gtk_image_set_from_pixbuf(GTK_IMAGE(data->PreviewWidget),
-		data->PreviewPixbuf);
-#endif
-	g_object_unref(data->PreviewPixbuf);
-    }
-    char progressText[max_name];
-    if (CFG->Scale==0)
-	snprintf(progressText, max_name, _("size %dx%d, zoom %2.f%%"),
-		data->UF->predictedWidth, data->UF->predictedHeight,
-		CFG->Zoom);
-    else
-	snprintf(progressText, max_name, _("size %dx%d, scale 1/%d"),
-		data->UF->predictedWidth, data->UF->predictedHeight,
-		CFG->Scale);
-    if (data->ProgressBar!=NULL) {
-	gtk_progress_bar_set_text(data->ProgressBar, progressText);
-	gtk_progress_bar_set_fraction(data->ProgressBar, 0);
-    }
 }
 
 void zoom_in_event(GtkWidget *widget, gpointer user_data)
@@ -1209,7 +1248,7 @@ void zoom_in_event(GtkWidget *widget, gpointer user_data)
     CFG->Zoom = 100.0/CFG->Scale;
     create_base_image(data);
     gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
-    render_preview(data, render_default);
+    render_preview(data, render_all);
 }
 
 void zoom_out_event(GtkWidget *widget, gpointer user_data)
@@ -1229,10 +1268,10 @@ void zoom_out_event(GtkWidget *widget, gpointer user_data)
     CFG->Zoom = 100.0/CFG->Scale;
     create_base_image(data);
     gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
-    render_preview(data, render_default);
+    render_preview(data, render_all);
 }
 
-static void flip_image(GtkWidget *widget, int flip)
+void flip_image(GtkWidget *widget, int flip)
 {
     preview_data *data = get_preview_data(widget);
     
@@ -1244,8 +1283,7 @@ static void flip_image(GtkWidget *widget, int flip)
 	data->UF->predictedWidth = data->UF->predictedHeight;
 	data->UF->predictedHeight = temp;
     }
-    create_base_image(data);
-    render_preview(data, render_default);
+    render_preview(data, render_draw_phase);
 }
 
 GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text, char *icon,
@@ -1488,7 +1526,7 @@ void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    if (CFG->autoExposure==enabled_state)
 		CFG->autoExposure = apply_state;
 	}
-	render_preview(data, render_default);
+	render_preview(data, render_all);
     }
 }
 
@@ -1628,7 +1666,7 @@ void radio_menu_update(GtkWidget *item, gint *valuep)
 	preview_data *data = get_preview_data(item);
 	*valuep = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(item),
 		    "Radio-Value"));
-	render_preview(data, render_default);
+	render_preview(data, render_all);
     }
 }
 
@@ -1978,7 +2016,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
 	}
 	ufraw_focus(optionsDialog, FALSE);
         gtk_widget_destroy(optionsDialog);
-	render_preview(data, render_default);
+	render_preview(data, render_all);
         return;
     }
 }
@@ -3136,6 +3174,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    &CFG->curve[CFG->curveIndex]);
 
     data->FreezeDialog = FALSE;
+    data->RenderMode = render_default;
     update_scales(data);
 
     gtk_main();

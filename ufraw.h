@@ -180,7 +180,7 @@ typedef struct {
 typedef struct {
     image_type *image;
     guint8 *buffer;
-    int height, width;
+    int height, width, depth, rowstride;
 } image_data;
 
 typedef struct ufraw_struct {
@@ -188,6 +188,8 @@ typedef struct ufraw_struct {
     int predictedHeight, predictedWidth, rgbMax, colors, raw_color, useMatrix;
     gboolean LoadingID; /* Indication that we are loading an ID file */
     float rgb_cam[3][4];
+    int ConvertShrink;
+    image_data Images[1];
     image_data image;
     image_data thumb;
     void *raw;
@@ -220,6 +222,10 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf,conf_data *cmd);
 int ufraw_load_raw(ufraw_data *uf);
 ufraw_data *ufraw_load_darkframe(char *darkframeFilename);
 int ufraw_convert_image(ufraw_data *uf);
+int ufraw_convert_image_init(ufraw_data *uf);
+int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean inPhases);
+int ufraw_convert_image_area(ufraw_data *uf,
+	int x, int y, int width, int height);
 void ufraw_close(ufraw_data *uf);
 int ufraw_flip_image(ufraw_data *uf, int flip);
 int ufraw_set_wb(ufraw_data *uf);

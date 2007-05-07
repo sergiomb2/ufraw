@@ -738,8 +738,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     }
     if (c->threshold!=conf_default.threshold)
         buf = uf_markup_buf(buf,
-		"<WaveletDenoisingThreshold>%lf</WaveletDenoisingThreshold>\n",
-		c->threshold);
+		"<WaveletDenoisingThreshold>%d</WaveletDenoisingThreshold>\n",
+		(int)floor(c->threshold));
     if (c->exposure!=conf_default.exposure)
         buf = uf_markup_buf(buf, "<Exposure>%lf</Exposure>\n", c->exposure);
     if (c->ExposureNorm!=conf_default.ExposureNorm)

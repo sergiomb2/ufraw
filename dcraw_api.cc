@@ -428,6 +428,20 @@ int dcraw_wavelet_denoise(dcraw_data *h, float threshold)
     return d->lastStatus;
 }
 
+int dcraw_wavelet_denoise_shrinked(dcraw_image_data *f,
+	dcraw_data *h, float threshold)
+{
+    DCRaw *d = (DCRaw *)h->dcraw;
+    g_free(d->messageBuffer);
+    d->messageBuffer = NULL;
+    d->lastStatus = DCRAW_SUCCESS;
+    if (threshold)
+	wavelet_denoise_INDI(f->image, 0, f->height, f->width, 0, 0, 4, 0,
+		h->pre_mul, threshold, 0, d);
+    h->message = d->messageBuffer;
+    return d->lastStatus;
+}
+
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 	int interpolation, int rgbWB[4])
 {

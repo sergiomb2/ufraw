@@ -304,6 +304,7 @@ ufraw_data *ufraw_open(char *filename)
     uf->conf = conf;
     g_strlcpy(uf->filename, filename, max_path);
     uf->image.image = NULL;
+    uf->Images[0].buffer = NULL;
     uf->thumb.buffer = NULL;
     uf->raw = raw;
     uf->colors = raw->colors;
@@ -639,21 +640,17 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->raw);
     g_free(uf->exifBuf);
     g_free(uf->image.image);
+    g_free(uf->Images[0].buffer);
     g_free(uf->thumb.buffer);
     developer_destroy(uf->developer);
     g_free(uf->RawLumHistogram);
     ufraw_message(UFRAW_CLEAN, NULL);
 }
 
-/* Convert rawImage to standard rgb image */
-int ufraw_convert_image(ufraw_data *uf)
+int ufraw_convert_image_init(ufraw_data *uf)
 {
-    int status, c;
     dcraw_data *raw = uf->raw;
-    dcraw_image_data final;
-    int shrink = 1;
 
-//    preview_progress(uf->widget, _("Loading image"), 0.1);
     developer_prepare(uf->developer, uf->conf,
 	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, file_developer);
     /* We can do a simple interpolation in the following cases:
@@ -661,6 +658,7 @@ int ufraw_convert_image(ufraw_data *uf)
      * If pixel_aspect<1 (e.g. NIKON D1X) shrink must be at least 4.
      * Wanted size is smaller than raw size (size is after a raw->shrink).
      * There are no filters (Foveon). */
+    uf->ConvertShrink = 1;
     if ( uf->conf->interpolation==half_interpolation ||
          ( uf->conf->size==0 && uf->conf->shrink>1 ) ||
          ( uf->conf->size>0 &&
@@ -668,12 +666,36 @@ int ufraw_convert_image(ufraw_data *uf)
 	 ( raw->filters==0 ) ) {
 	if (uf->conf->size==0 && uf->conf->shrink>1 &&
 		(int)(uf->conf->shrink*raw->pixel_aspect)%2==0)
-	    shrink = uf->conf->shrink * raw->pixel_aspect;
+	    uf->ConvertShrink = uf->conf->shrink * raw->pixel_aspect;
 	else if (uf->conf->interpolation==half_interpolation)
-	    shrink = 2;
+	    uf->ConvertShrink = 2;
 	else if (raw->filters!=0)
-	    shrink = 2;
-        dcraw_finalize_shrink(&final, raw, shrink);
+	    uf->ConvertShrink = 2;
+    }
+    return UFRAW_SUCCESS;
+}
+
+int ufraw_convert_image(ufraw_data *uf)
+{
+    ufraw_convert_image_init(uf);
+    ufraw_convert_image_first_phase(uf, FALSE);
+    return UFRAW_SUCCESS;
+}
+
+/* This is the part of the conversion which is not supported by
+ * ufraw_convert_image_area() */
+int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean inPhases)
+{
+    int status, c;
+    dcraw_data *raw = uf->raw;
+    dcraw_image_data final;
+
+    if (uf->ConvertShrink>1) {
+        dcraw_finalize_shrink(&final, raw, uf->ConvertShrink);
+	/* Scale threshold according to shrink factor, as the effect of
+	 * neighbouring pixels decays about exponentially with distance. */
+	float threshold = uf->conf->threshold * exp(-(uf->ConvertShrink/2.0-1));
+	dcraw_wavelet_denoise_shrinked(&final, raw, threshold);
 
         uf->image.height = final.height;
         uf->image.width = final.width;
@@ -694,7 +716,7 @@ int ufraw_convert_image(ufraw_data *uf)
     dcraw_image_stretch(&final, raw->pixel_aspect);
     if (uf->conf->size==0 && uf->conf->shrink>1)
 	dcraw_image_resize(&final,
-		shrink*MAX(final.height, final.width)/uf->conf->shrink);
+	    uf->ConvertShrink*MAX(final.height, final.width)/uf->conf->shrink);
     if (uf->conf->size>0) {
         if ( uf->conf->size>MAX(final.height, final.width) ) {
             ufraw_message(UFRAW_ERROR, _("Can not downsize from %d to %d."),
@@ -703,12 +725,34 @@ int ufraw_convert_image(ufraw_data *uf)
             dcraw_image_resize(&final, uf->conf->size);
 	}
     }
-//    preview_progress(uf->widget, _("Loading image"), 0.4);
     uf->image.image = final.image;
     dcraw_flip_image(&final, uf->conf->orientation);
     uf->image.height = final.height;
     uf->image.width = final.width;
-//    preview_progress(uf->widget, _("Loading image"), 0.5);
+    if (inPhases) {
+	uf->Images[0].height = uf->image.height;
+	uf->Images[0].width = uf->image.width;
+	uf->Images[0].depth = 3;
+	uf->Images[0].rowstride = uf->Images[0].width*uf->Images[0].depth;
+	uf->Images[0].buffer = g_realloc(uf->Images[0].image,
+		uf->Images[0].height*uf->Images[0].rowstride);
+    }
+    return UFRAW_SUCCESS;
+}
+
+int ufraw_convert_image_area(ufraw_data *uf,
+	int x, int y, int width, int height)
+{
+    guint16 *pixtmp = g_new(guint16, width*3);
+    image_data in = uf->image;
+    image_data out = uf->Images[0];
+    int yy;
+    for (yy=y; yy<y+height; yy++) {
+	develope(out.buffer + (yy*out.width + x)*out.depth,
+		in.image[yy*in.width+x], uf->developer, 8,
+		pixtmp, width);
+    }
+    g_free(pixtmp);
     return UFRAW_SUCCESS;
 }
 
@@ -725,7 +769,56 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
 	{ 7, 5, 6, 4, 3, 1, 2, 0 }  /* Flip over diagonal "/" */
     };
     uf->conf->orientation = flipMatrix[uf->conf->orientation][flip];
+    dcraw_image_data tmp;
+    tmp.image = uf->image.image;
+    tmp.height = uf->image.height;
+    tmp.width = uf->image.width;
+    dcraw_flip_image(&tmp, flip);
+    uf->image.image = tmp.image;
+    uf->image.height = tmp.height;
+    uf->image.width = tmp.width;
 
+    /* Following code was copied from dcraw's flip_image()
+     * and modified to work with any pixel depth. */
+    int base, dest, next, row, col;
+    guint8 *image = uf->Images[0].buffer;
+    int height = uf->Images[0].height;
+    int width = uf->Images[0].width;
+    int depth = uf->Images[0].depth;
+    int size = height * width;
+    guint8 hold[8];
+    unsigned *flag = g_new0(unsigned, (size+31) >> 5);
+    for (base = 0; base < size; base++) {
+	if (flag[base >> 5] & (1 << (base & 31)))
+	    continue;
+	dest = base;
+	memcpy(hold, image+base*depth, depth);
+	while (1) {
+	    if (flip & 4) {
+		row = dest % height;
+		col = dest / height;
+	    } else {
+		row = dest / width;
+		col = dest % width;
+	    }
+	    if (flip & 2)
+		row = height - 1 - row;
+	    if (flip & 1)
+		col = width - 1 - col;
+	    next = row * width + col;
+	    if (next == base) break;
+	    flag[next >> 5] |= 1 << (next & 31);
+	    memcpy(image+dest*depth, image+next*depth, depth);
+	    dest = next;
+	}
+	memcpy(image+dest*depth, hold, depth);
+    }
+    g_free (flag);
+    if (flip & 4) {
+	uf->Images[0].height = width;
+	uf->Images[0].width = height;
+	uf->Images[0].rowstride = height * depth;
+    }
     return UFRAW_SUCCESS;
 }
 
