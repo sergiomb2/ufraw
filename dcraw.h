@@ -191,6 +191,7 @@ void pre_interpolate();
 void border_interpolate (int border);
 void lin_interpolate();
 void vng_interpolate();
+void ppg_interpolate();
 void ahd_interpolate();
 void blend_highlights();
 void recover_highlights();

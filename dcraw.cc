@@ -15,15 +15,15 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.379 $
-   $Date: 2007/05/03 06:15:16 $
+   $Revision: 1.380 $
+   $Date: 2007/05/06 23:05:56 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.71"
+#define DCRAW_VERSION "8.72"
 
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
@@ -3813,6 +3813,76 @@ void CLASS vng_interpolate()
 }
 
 /*
+   Patterned Pixel Grouping Interpolation by Alain Desbiolles
+*/
+void CLASS ppg_interpolate()
+{
+  int gr[4], dir[4] = { 1, width, -1, -width };
+  int row, col, avg, pat, diff[2], guess[2], c, d, i;
+  static const short sort[] = { 0,2,1,3,0,1,2,3 };
+  ushort (*pix)[4];
+
+  border_interpolate(3);
+  dcraw_message (DCRAW_VERBOSE,_("PPG interpolation...\n")); /*UF*/
+
+/*  Fill in the green layer with gradients and pattern recognition: */
+  for (row=3; row < height-3; row++)
+    for (col=3+(FC(row,3) & 1), c=FC(row,col); col < width-3; col+=2) {
+      pix = image + row*width+col;
+      for (avg=i=0; i < 4; i++)
+	avg += gr[i] = pix[dir[i]][1] << 2;
+      avg >>= 2;
+      for (pat=i=0; i < 4; i++)
+	pat = pat << 1 | (gr[i] > avg);
+      if (pat & 8) pat ^= 15;
+      for (i=0; i < 8; i+=2)
+	if (gr[sort[i]] > gr[sort[i+1]])
+	  SWAP(gr[sort[i]],gr[sort[i+1]])
+      if (pat == 0 || pat == 3 || pat == 6)
+	pix[0][1] = (gr[1]+gr[2]) >> 3;
+      else {
+	for (i=0; (d=dir[i]) > 0; i++) {
+	  diff[i] = ( ABS(pix[-2*d][c] - pix[ 0][c]) +
+		      ABS(pix[ 2*d][c] - pix[ 0][c]) +
+		      ABS(pix[  -d][1] - pix[ d][1]) ) * 3 +
+		    ( ABS(pix[ 3*d][1] - pix[ d][1]) +
+		      ABS(pix[-3*d][1] - pix[-d][1]) ) * 2;
+	  guess[i] = (pix[-d][1] + pix[0][c] + pix[d][1]) * 2
+			- pix[-2*d][c] - pix[2*d][c];
+	}
+	d = dir[i = diff[0] > diff[1]];
+	if (diff[0] != diff[1])
+	  pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
+	else
+	  pix[0][1] = ULIM((guess[0]+guess[1]) >> 1, gr[1], gr[2]) >> 2;
+      }
+    }
+/*  Calculate red and blue for each green pixel:		*/
+  for (row=1; row < height-1; row++)
+    for (col=1+(FC(row,2) & 1), c=FC(row,col+1); col < width-1; col+=2) {
+      pix = image + row*width+col;
+      for (i=0; (d=dir[i]) > 0; c=2-c, i++)
+	pix[0][c] = CLIP(((pix[0][1] + pix[-d][c] + pix[d][c]) * 2
+				     - pix[-d][1] - pix[d][1]) >> 2);
+    }
+/*  Calculate blue for red pixels and vice versa:		*/
+  for (row=1; row < height-1; row++)
+    for (col=1+(FC(row,1) & 1), c=2-FC(row,col); col < width-1; col+=2) {
+      pix = image + row*width+col;
+      for (i=0; (d=dir[i]+dir[i+1]) > 0; i++) {
+	diff[i] = ABS(pix[-d][c] - pix[d][c]) +
+		  ABS(pix[-d][1] + pix[d][1] - 2*pix[0][1]);
+	guess[i] = (pix[0][1] + pix[-d][c] + pix[d][c]) * 2
+			      - pix[-d][1] - pix[d][1];
+      }
+      if (diff[0] != diff[1])
+	pix[0][c] = CLIP(guess[diff[0] > diff[1]] >> 2);
+      else
+	pix[0][c] = CLIP((guess[0]+guess[1]) >> 3);
+    }
+}
+
+/*
    Adaptive Homogeneity-Directed interpolation is based on
    the work of Keigo Hirakawa, Thomas Parks, and Paul Lee.
  */
@@ -3956,7 +4026,7 @@ void CLASS blend_highlights()
   float cam[2][4], lab[2][4], sum[2], chratio;
 
   if ((unsigned) (colors-3) > 1) return;
-  if (verbose) fprintf (stderr,_("Blending highlights...\n"));
+  dcraw_message (DCRAW_VERBOSE,_("Blending highlights...\n")); /*UF*/
   FORCC if (clip > (i = (int)(65535*pre_mul[c]))) clip = i;
   for (row=0; row < height; row++)
     for (col=0; col < width; col++) {
@@ -7684,8 +7754,10 @@ next:
     if (filters && !document_mode) {
       if (quality == 0)
 	lin_interpolate();
-      else if (quality < 3 || colors > 3)
-	   vng_interpolate();
+      else if (quality == 1 || colors > 3)
+	vng_interpolate();
+      else if (quality == 2)
+	ppg_interpolate();
       else ahd_interpolate();
     }
     if (mix_green && (colors = 3))
