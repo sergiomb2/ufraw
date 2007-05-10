@@ -48,6 +48,8 @@ void vng_interpolate_INDI(gushort (*image)[4], const unsigned filters,
 void ahd_interpolate_INDI(gushort (*image)[4], const unsigned filters,
     const int width, const int height, const int colors, float rgb_cam[3][4],
     void *dcraw);
+void ppg_interpolate_INDI(gushort (*image)[4], const unsigned filters,
+    const int width, const int height, const int colors, void *dcraw);
 void flip_image_INDI(gushort (*image)[4], int *height_p, int *width_p,
     const int flip);
 void fuji_rotate_INDI(gushort (**image_p)[4], int *height_p, int *width_p,
@@ -489,6 +491,8 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     else if (interpolation==dcraw_ahd_interpolation)
 	ahd_interpolate_INDI(f->image, ff, f->width, f->height, cl,
 		h->rgb_cam, d);
+    else if (interpolation==dcraw_ppg_interpolation)
+	ppg_interpolate_INDI(f->image, ff, f->width, f->height, cl, d);
 
     if (cl==4 && h->colors == 3) {
         for (i=0; i<f->height*f->width; i++)

@@ -1180,6 +1180,7 @@ gboolean spot_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
     preview_data *data = get_preview_data(event_box);
 
     (void)user_data;
+    if (!gtk_event_box_get_above_child(GTK_EVENT_BOX(event_box))) return FALSE;
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
     draw_spot(data, FALSE);
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
@@ -2471,6 +2472,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_combo_box_append_text(combo, _("AHD interpolation"));
     gtk_combo_box_append_text(combo, _("VNG interpolation"));
     gtk_combo_box_append_text(combo, _("VNG four color interpolation"));
+    gtk_combo_box_append_text(combo, _("Pixel grouping interpolation"));
     gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
     if (plugin) {
         gtk_combo_box_append_text(combo, _("Half-size interpolation"));
@@ -3146,7 +3148,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_widget_set_size_request(data->PreviewWidget, -1, -1);
     data->SpotCursor = gdk_cursor_new(GDK_HAND2);
     gdk_window_set_cursor(PreviewEventBox->window, data->SpotCursor);
-
     gtk_widget_set_sensitive(data->Controls, FALSE);
     preview_progress(previewWindow, _("Loading preview"), 0.2);
     ufraw_load_raw(uf);

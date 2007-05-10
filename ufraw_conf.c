@@ -102,7 +102,7 @@ const conf_data conf_default = {
 };
 
 const char *interpolationNames[] =
-    { "ahd", "vng", "four-color", "bilinear", "half", NULL };
+    { "ahd", "vng", "four-color", "ppg", "bilinear", "half", NULL };
 const char *restoreDetailsNames[] =
     { "clip", "lch", "hsv", NULL };
 const char *clipHighlightsNames[] =
