@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.73 2007/05/06 16:37:36 udifuchs Exp $
+dnl $Id: configure.ac,v 1.74 2007/05/12 05:16:14 nkbj Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -96,17 +96,6 @@ PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.22,
     CINEPAINT_PROGRAMPLUGINDIR=
     AC_MSG_RESULT($CINEPAINT_PKG_ERRORS) ] )
 AM_CONDITIONAL(MAKE_CINEPAINT, test $have_cinepaint = yes)
-if test $have_cinepaint = no; then
-  PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.21,
-    [ have_cinepaint_021=yes
-      CINEPAINT_LIBDIR=`$pkg_prefix --variable=libdir cinepaint-gtk`
-      CINEPAINT_PROGRAMPLUGINDIR= ],
-    [ have_cinepaint_021=no
-      CINEPAINT_LIBDIR=
-      CINEPAINT_PROGRAMPLUGINDIR=
-      AC_MSG_RESULT($CINEPAINT_PKG_ERRORS) ] )
-fi
-AM_CONDITIONAL(MAKE_CINEPAINT_021, test $have_cinepaint_021 = yes)
 AC_SUBST(CINEPAINT_CFLAGS)
 AC_SUBST(CINEPAINT_LIBS)
 AC_SUBST(CINEPAINT_LIBDIR)
@@ -241,11 +230,7 @@ AC_OUTPUT
 
 AC_MSG_NOTICE(====================== summary =====================)
 AC_MSG_NOTICE(build GIMP plug-in: $have_gimp)
-if test $have_cinepaint = yes; then
-  AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint)
-else
-  AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint_021)
-fi
+AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint)
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(PNG support: $have_png)
