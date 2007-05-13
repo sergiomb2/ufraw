@@ -256,7 +256,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     gtk_combo_box_append_text(intCombo, _("AHD interpolation"));
     gtk_combo_box_append_text(intCombo, _("VNG interpolation"));
     gtk_combo_box_append_text(intCombo, _("VNG four color interpolation"));
-    gtk_combo_box_append_text(intCombo, _("Pixel grouping interpolation"));
+    gtk_combo_box_append_text(intCombo, _("PPG interpolation"));
     gtk_combo_box_append_text(intCombo, _("Bilinear interpolation"));
     gtk_combo_box_set_active(intCombo, uf->conf->interpolation);
     align = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);

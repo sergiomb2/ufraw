@@ -2472,7 +2472,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_combo_box_append_text(combo, _("AHD interpolation"));
     gtk_combo_box_append_text(combo, _("VNG interpolation"));
     gtk_combo_box_append_text(combo, _("VNG four color interpolation"));
-    gtk_combo_box_append_text(combo, _("Pixel grouping interpolation"));
+    gtk_combo_box_append_text(combo, _("PPG interpolation"));
     gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
     if (plugin) {
         gtk_combo_box_append_text(combo, _("Half-size interpolation"));
