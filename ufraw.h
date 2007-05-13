@@ -57,6 +57,8 @@ typedef enum { display_developer, file_developer, auto_developer }
 	DeveloperMode;
 typedef enum { perceptual_intent, relative_intent, saturation_intent,
 	absolute_intent, disable_intent } Intent;
+typedef enum { ufraw_first_phase, ufraw_denoise_phase, ufraw_final_phase,
+	ufraw_phases_num } UFRawPhase;
 
 typedef struct {
     char *make;
@@ -178,6 +180,12 @@ typedef struct {
 } conf_data;
 
 typedef struct {
+    guint8 *buffer;
+    int height, width, depth, rowstride;
+} ufraw_image_data;
+
+/* image_data should be phased out and replaced by ufraw_image_data */
+typedef struct {
     image_type *image;
     guint8 *buffer;
     int height, width, depth, rowstride;
@@ -189,7 +197,7 @@ typedef struct ufraw_struct {
     gboolean LoadingID; /* Indication that we are loading an ID file */
     float rgb_cam[3][4];
     int ConvertShrink;
-    image_data Images[1];
+    ufraw_image_data Images[ufraw_phases_num];
     image_data image;
     image_data thumb;
     void *raw;
@@ -223,9 +231,10 @@ int ufraw_load_raw(ufraw_data *uf);
 ufraw_data *ufraw_load_darkframe(char *darkframeFilename);
 int ufraw_convert_image(ufraw_data *uf);
 int ufraw_convert_image_init(ufraw_data *uf);
-int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean inPhases);
+int ufraw_convert_image_first_phase(ufraw_data *uf);
+int ufraw_convert_image_init_phase(ufraw_data *uf);
 int ufraw_convert_image_area(ufraw_data *uf,
-	int x, int y, int width, int height);
+	int x, int y, int width, int height, UFRawPhase fromPhase);
 void ufraw_close(ufraw_data *uf);
 int ufraw_flip_image(ufraw_data *uf, int flip);
 int ufraw_set_wb(ufraw_data *uf);

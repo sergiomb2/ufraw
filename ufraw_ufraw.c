@@ -304,7 +304,9 @@ ufraw_data *ufraw_open(char *filename)
     uf->conf = conf;
     g_strlcpy(uf->filename, filename, max_path);
     uf->image.image = NULL;
-    uf->Images[0].buffer = NULL;
+    int i;
+    for (i=ufraw_first_phase; i<ufraw_final_phase; i++)
+	uf->Images[i].buffer = NULL;
     uf->thumb.buffer = NULL;
     uf->raw = raw;
     uf->colors = raw->colors;
@@ -640,7 +642,9 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->raw);
     g_free(uf->exifBuf);
     g_free(uf->image.image);
-    g_free(uf->Images[0].buffer);
+    int i;
+    for (i=ufraw_first_phase+1; i<ufraw_final_phase; i++)
+	g_free(uf->Images[i].buffer);
     g_free(uf->thumb.buffer);
     developer_destroy(uf->developer);
     g_free(uf->RawLumHistogram);
@@ -678,13 +682,24 @@ int ufraw_convert_image_init(ufraw_data *uf)
 int ufraw_convert_image(ufraw_data *uf)
 {
     ufraw_convert_image_init(uf);
-    ufraw_convert_image_first_phase(uf, FALSE);
+    ufraw_convert_image_first_phase(uf);
+    if (uf->ConvertShrink>1) {
+	dcraw_data *raw = uf->raw;
+	dcraw_image_data final;
+        final.height = uf->image.height;
+        final.width = uf->image.width;
+        final.image = uf->image.image;
+	/* Scale threshold according to shrink factor, as the effect of
+	 * neighbouring pixels decays about exponentially with distance. */
+	float threshold = uf->conf->threshold * exp(-(uf->ConvertShrink/2.0-1));
+	dcraw_wavelet_denoise_shrinked(&final, raw, threshold);
+    }
     return UFRAW_SUCCESS;
 }
 
 /* This is the part of the conversion which is not supported by
  * ufraw_convert_image_area() */
-int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean inPhases)
+int ufraw_convert_image_first_phase(ufraw_data *uf)
 {
     int status, c;
     dcraw_data *raw = uf->raw;
@@ -692,10 +707,6 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean inPhases)
 
     if (uf->ConvertShrink>1) {
         dcraw_finalize_shrink(&final, raw, uf->ConvertShrink);
-	/* Scale threshold according to shrink factor, as the effect of
-	 * neighbouring pixels decays about exponentially with distance. */
-	float threshold = uf->conf->threshold * exp(-(uf->ConvertShrink/2.0-1));
-	dcraw_wavelet_denoise_shrinked(&final, raw, threshold);
 
         uf->image.height = final.height;
         uf->image.width = final.width;
@@ -714,14 +725,17 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean inPhases)
         uf->image.image = final.image;
     }
     dcraw_image_stretch(&final, raw->pixel_aspect);
-    if (uf->conf->size==0 && uf->conf->shrink>1)
+    if (uf->conf->size==0 && uf->conf->shrink>1) {
 	dcraw_image_resize(&final,
 	    uf->ConvertShrink*MAX(final.height, final.width)/uf->conf->shrink);
+	uf->ConvertShrink = uf->conf->shrink;
+    }
     if (uf->conf->size>0) {
         if ( uf->conf->size>MAX(final.height, final.width) ) {
             ufraw_message(UFRAW_ERROR, _("Can not downsize from %d to %d."),
                     MAX(final.height, final.width), uf->conf->size);
         } else {
+	    uf->ConvertShrink = MAX(final.height, final.width)/uf->conf->size;
             dcraw_image_resize(&final, uf->conf->size);
 	}
     }
@@ -729,62 +743,90 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean inPhases)
     dcraw_flip_image(&final, uf->conf->orientation);
     uf->image.height = final.height;
     uf->image.width = final.width;
-    if (inPhases) {
-	uf->Images[0].height = uf->image.height;
-	uf->Images[0].width = uf->image.width;
-	uf->Images[0].depth = 3;
-	uf->Images[0].rowstride = uf->Images[0].width*uf->Images[0].depth;
-	uf->Images[0].buffer = g_realloc(uf->Images[0].image,
-		uf->Images[0].height*uf->Images[0].rowstride);
+
+    ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
+    FirstImage->height = uf->image.height;
+    FirstImage->width = uf->image.width;
+    FirstImage->depth = sizeof(dcraw_image_type);
+    FirstImage->rowstride = FirstImage->width * FirstImage->depth;
+    FirstImage->buffer = (guint8 *)uf->image.image;
+
+    return UFRAW_SUCCESS;
+}
+
+int ufraw_convert_image_init_phase(ufraw_data *uf)
+{
+    ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
+    ufraw_image_data *img;
+    if ( uf->conf->threshold>0 ) {
+	img = &uf->Images[ufraw_denoise_phase];
+	img->height = FirstImage->height;
+	img->width = FirstImage->width;
+	img->depth = sizeof(dcraw_image_type);
+	img->rowstride = img->width * img->depth;
+	img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
     }
+    img = &uf->Images[ufraw_final_phase];
+    img->height = FirstImage->height;
+    img->width = FirstImage->width;
+    img->depth = 3;
+    img->rowstride = img->width * img->depth;
+    img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
+
     return UFRAW_SUCCESS;
 }
 
 int ufraw_convert_image_area(ufraw_data *uf,
-	int x, int y, int width, int height)
+	int x, int y, int width, int height, UFRawPhase fromPhase)
 {
-    guint16 *pixtmp = g_new(guint16, width*3);
-    image_data in = uf->image;
-    image_data out = uf->Images[0];
+    dcraw_data *raw = uf->raw;
+    ufraw_image_data in = uf->Images[ufraw_first_phase];
     int yy;
+
+    if ( fromPhase<=ufraw_denoise_phase && uf->conf->threshold>0 ) {
+	dcraw_image_data tmp;
+	/* With shrink==2 the border should be 16 pixels */
+	int border = 16 * 2 / uf->ConvertShrink;
+	int bx = MAX(x-border, 0);
+	int by = MAX(y-border, 0);
+	tmp.width = MIN(width + x-bx + border, in.width - bx);
+	tmp.height = MIN(height + y-by + border, in.height - by);
+	tmp.image = g_new(dcraw_image_type, tmp.height * tmp.width);
+	for (yy=0; yy<tmp.height; yy++)
+	    memcpy(tmp.image[yy*tmp.width],
+		    in.buffer + ((by+yy)*in.width + bx)*in.depth,
+		    tmp.width * in.depth);
+	/* Scale threshold according to shrink factor, as the effect of
+	 * neighbouring pixels decays about exponentially with distance. */
+	float threshold = uf->conf->threshold * exp(-(uf->ConvertShrink/2.0-1));
+	dcraw_wavelet_denoise_shrinked(&tmp, raw, threshold);
+	ufraw_image_data denoise = uf->Images[ufraw_denoise_phase];
+	for (yy=0; yy<height; yy++)
+	    memcpy(denoise.buffer + ((y+yy)*denoise.width + x)*denoise.depth,
+		    tmp.image[(yy+y-by)*width+x-bx], width*denoise.depth);
+	g_free(tmp.image);
+    }
+    if ( uf->conf->threshold>0 ) in = uf->Images[ufraw_denoise_phase];
+    guint16 *pixtmp = g_new(guint16, width*3);
+    ufraw_image_data out = uf->Images[ufraw_final_phase];
     for (yy=y; yy<y+height; yy++) {
 	develope(out.buffer + (yy*out.width + x)*out.depth,
-		in.image[yy*in.width+x], uf->developer, 8,
-		pixtmp, width);
+		(void*)in.buffer + (yy*in.width + x)*in.depth,
+		uf->developer, 8, pixtmp, width);
     }
     g_free(pixtmp);
     return UFRAW_SUCCESS;
 }
 
-int ufraw_flip_image(ufraw_data *uf, int flip)
+int ufraw_flip_image_buffer(ufraw_image_data *img, int flip)
 {
-    const int flipMatrix[8][8] = {
-	{ 0, 1, 2, 3, 4, 5, 6, 7 }, /* No flip */
-	{ 1, 0, 3, 2, 5, 4, 7, 6 }, /* Flip horizontal */
-	{ 2, 3, 0, 1, 6, 7, 4, 5 }, /* Flip vertical */
-	{ 3, 2, 1, 0, 7, 6, 5, 4 }, /* Rotate 180 */
-	{ 4, 6, 5, 7, 0, 2, 1, 3 }, /* Flip over diagonal "\" */
-	{ 5, 7, 4, 6, 1, 3, 0, 2 }, /* Rotate 270 */
-	{ 6, 4, 7, 5, 2, 0, 3, 1 }, /* Rotate 90 */
-	{ 7, 5, 6, 4, 3, 1, 2, 0 }  /* Flip over diagonal "/" */
-    };
-    uf->conf->orientation = flipMatrix[uf->conf->orientation][flip];
-    dcraw_image_data tmp;
-    tmp.image = uf->image.image;
-    tmp.height = uf->image.height;
-    tmp.width = uf->image.width;
-    dcraw_flip_image(&tmp, flip);
-    uf->image.image = tmp.image;
-    uf->image.height = tmp.height;
-    uf->image.width = tmp.width;
-
     /* Following code was copied from dcraw's flip_image()
      * and modified to work with any pixel depth. */
     int base, dest, next, row, col;
-    guint8 *image = uf->Images[0].buffer;
-    int height = uf->Images[0].height;
-    int width = uf->Images[0].width;
-    int depth = uf->Images[0].depth;
+    guint8 *image = img->buffer;
+    int height = img->height;
+    int width = img->width;
+    int depth = img->depth;
     int size = height * width;
     guint8 hold[8];
     unsigned *flag = g_new0(unsigned, (size+31) >> 5);
@@ -815,10 +857,32 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
     }
     g_free (flag);
     if (flip & 4) {
-	uf->Images[0].height = width;
-	uf->Images[0].width = height;
-	uf->Images[0].rowstride = height * depth;
+	img->height = width;
+	img->width = height;
+	img->rowstride = height * depth;
     }
+    return UFRAW_SUCCESS;
+}
+
+int ufraw_flip_image(ufraw_data *uf, int flip)
+{
+    const int flipMatrix[8][8] = {
+	{ 0, 1, 2, 3, 4, 5, 6, 7 }, /* No flip */
+	{ 1, 0, 3, 2, 5, 4, 7, 6 }, /* Flip horizontal */
+	{ 2, 3, 0, 1, 6, 7, 4, 5 }, /* Flip vertical */
+	{ 3, 2, 1, 0, 7, 6, 5, 4 }, /* Rotate 180 */
+	{ 4, 6, 5, 7, 0, 2, 1, 3 }, /* Flip over diagonal "\" */
+	{ 5, 7, 4, 6, 1, 3, 0, 2 }, /* Rotate 270 */
+	{ 6, 4, 7, 5, 2, 0, 3, 1 }, /* Rotate 90 */
+	{ 7, 5, 6, 4, 3, 1, 2, 0 }  /* Flip over diagonal "/" */
+    };
+    uf->conf->orientation = flipMatrix[uf->conf->orientation][flip];
+
+    ufraw_flip_image_buffer(&uf->Images[ufraw_first_phase], flip);
+    if ( uf->conf->threshold>0 )
+	ufraw_flip_image_buffer(&uf->Images[ufraw_denoise_phase], flip);
+    ufraw_flip_image_buffer(&uf->Images[ufraw_final_phase], flip);
+ 
     return UFRAW_SUCCESS;
 }
 

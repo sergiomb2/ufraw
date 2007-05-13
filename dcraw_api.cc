@@ -439,7 +439,7 @@ int dcraw_wavelet_denoise_shrinked(dcraw_image_data *f,
     d->lastStatus = DCRAW_SUCCESS;
     if (threshold)
 	wavelet_denoise_INDI(f->image, 0, f->height, f->width, 0, 0, 4, 0,
-		h->pre_mul, threshold, 0, d);
+		NULL, threshold, 0, d);
     h->message = d->messageBuffer;
     return d->lastStatus;
 }
