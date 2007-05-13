@@ -88,7 +88,8 @@ char *uf_file_set_type(const char *filename, const char *type)
 	outfile = g_strconcat(infile, type, NULL);
 	return outfile;
     }
-    if ( strcmp(dotPosition, ".gz")==0 || strcmp(dotPosition, ".bz2")==0 ) {
+    if ( strcasecmp(dotPosition, ".gz")==0 ||
+	 strcasecmp(dotPosition, ".bz2")==0 ) {
 	char *tmpfile = g_strndup(infile, dotPosition - infile);
 	if ( (dotPosition=strrchr(tmpfile, '.'))==NULL) {
 	    outfile = g_strconcat(tmpfile, type, NULL);

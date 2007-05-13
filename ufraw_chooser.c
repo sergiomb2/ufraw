@@ -69,14 +69,26 @@ void ufraw_chooser(conf_data *conf, char *defPath)
 #ifdef HAVE_LIBZ
             snprintf(ext, max_name, "*.%s.gz", *l);
             gtk_file_filter_add_pattern(filter, ext);
-            gtk_file_filter_add_pattern(filter, cp=g_ascii_strup(ext,-1));
+            snprintf(ext, max_name, "*.%s.GZ", *l);
+            gtk_file_filter_add_pattern(filter, ext);
+            snprintf(ext, max_name, "*.%s.gz", cp=g_ascii_strup(*l,-1));
             g_free(cp);
+            gtk_file_filter_add_pattern(filter, ext);
+            snprintf(ext, max_name, "*.%s.GZ", cp=g_ascii_strup(*l,-1));
+            g_free(cp);
+            gtk_file_filter_add_pattern(filter, ext);
 #endif
 #ifdef HAVE_LIBBZ2
             snprintf(ext, max_name, "*.%s.bz2", *l);
             gtk_file_filter_add_pattern(filter, ext);
-            gtk_file_filter_add_pattern(filter, cp=g_ascii_strup(ext,-1));
+            snprintf(ext, max_name, "*.%s.BZ2", *l);
+            gtk_file_filter_add_pattern(filter, ext);
+            snprintf(ext, max_name, "*.%s.bz2", cp=g_ascii_strup(*l,-1));
             g_free(cp);
+            gtk_file_filter_add_pattern(filter, ext);
+            snprintf(ext, max_name, "*.%s.BZ2", cp=g_ascii_strup(*l,-1));
+            g_free(cp);
+            gtk_file_filter_add_pattern(filter, ext);
 #endif
         }
     g_strfreev(extList);
