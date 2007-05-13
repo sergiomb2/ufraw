@@ -82,7 +82,7 @@ int ufraw_read_embedded(ufraw_data *uf)
 			srcHeight, srcWidth, raw->thumbBufferLength);
 		return UFRAW_ERROR;
 	    }
-	    uf->thumb.buffer = g_new(JSAMPLE, raw->thumbBufferLength);
+	    uf->thumb.buffer = g_new(guint8, raw->thumbBufferLength);
 	    fread(uf->thumb.buffer, 1, raw->thumbBufferLength, raw->ifp);
 	} else {
 #ifdef HAVE_LIBJPEG
