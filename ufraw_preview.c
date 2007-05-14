@@ -3168,7 +3168,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     memset(data->raw_his, 0, sizeof(data->raw_his));
     ufraw_image_data *image = &data->UF->Images[ufraw_first_phase];
     for (i=0; i<image->height*image->width; i++) {
-	    guint16 *buf = (guint16*)image->buffer+i*image->depth;
+	    guint16 *buf = (guint16*)(image->buffer+i*image->depth);
             for (c=0; c<data->UF->colors; c++)
                 data->raw_his[MIN( buf[c] *
                         (raw_his_size-1) / data->UF->rgbMax,
