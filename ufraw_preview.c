@@ -3071,8 +3071,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
 	    data->PreviewPixbuf, FALSE);
     gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
-    gtk_widget_set_size_request(data->PreviewWidget,
-	    preview_width, preview_height);
     gtk_event_box_set_above_child(GTK_EVENT_BOX(PreviewEventBox), TRUE);
 //    gtk_container_add(GTK_CONTAINER(PreviewEventBox), data->PreviewWidget);
 //    GtkWidget *scroll = gtk_image_scroll_win_new(
@@ -3080,6 +3078,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 //    gtk_box_pack_start(GTK_BOX(vBox), scroll, TRUE, TRUE, 0);
     GtkWidget *scroll = gtk_image_scroll_win_new(
 	    GTK_IMAGE_VIEW(data->PreviewWidget));
+    gtk_widget_set_size_request(scroll,//data->PreviewWidget,
+	    preview_width, preview_height);
     GtkWidget *container =
 	    gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_TABLE);
     g_object_ref(G_OBJECT(data->PreviewWidget));
@@ -3088,7 +3088,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_object_unref(G_OBJECT(data->PreviewWidget));
     gtk_table_attach(GTK_TABLE(container), PreviewEventBox, 0, 1, 0, 1,
 	    GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
-    gtk_box_pack_start(GTK_BOX(vBox), scroll, TRUE, TRUE, 0);
+    GtkWidget *scrollBox = gtk_vbox_new(FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(scrollBox), scroll, TRUE, TRUE, 0);
+    gtk_widget_set_size_request(scrollBox,//data->PreviewWidget,
+	    preview_width, preview_height);
+    gtk_box_pack_start(GTK_BOX(vBox), scrollBox, TRUE, TRUE, 0);
 #else
     align = gtk_alignment_new(0.5, 0.5, 0, 0);
     gtk_box_pack_start(GTK_BOX(vBox), align, TRUE, TRUE, 0);
@@ -3154,7 +3158,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_widget_show_all(previewWindow);
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);
     /* After window size was set, the user may want to shrink it */
-    gtk_widget_set_size_request(data->PreviewWidget, -1, -1);
+//    gtk_widget_set_size_request(data->PreviewWidget, -1, -1);
+//    gtk_widget_set_size_request(scrollBox, -1, -1);
     data->SpotCursor = gdk_cursor_new(GDK_HAND2);
     gdk_window_set_cursor(PreviewEventBox->window, data->SpotCursor);
     gtk_widget_set_sensitive(data->Controls, FALSE);
