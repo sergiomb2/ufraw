@@ -21,11 +21,24 @@ OutputDir=.
 WizardImageFile=ufraw-setup.bmp
 WizardSmallImageFile=ufraw_icon.bmp
 UsePreviousAppDir=no
+ChangesAssociations=yes
 
 [Tasks]
-Name: "unplug"; Description: "Attempt to delete old versions of the UFRaw plug-in that were installed in the user's folders. This option only deletes ufraw-gimp.exe from the current user folders. You should make sure that there are no other copies of ufraw-gimp.exe in any of the user's folders that wish to use the new version of the UFRaw plug-in."; GroupDescription: "Delete previous versions:";
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}";
-Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "unplug"; Description: "Attempt to delete old versions of the UFRaw plug-in"
+; that were installed in the user's folders. This option only deletes ufraw-gimp.exe from the current user folders. You should make sure that there are no other copies of ufraw-gimp.exe in any of the user's folders that wish to use the new version of the UFRaw plug-in."
+; GroupDescription: "Delete previous plug-in versions:";
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
+; GroupDescription: "{cm:AdditionalIcons}";
+Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"
+; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "UFRawAssociation"; Description: "UFRaw ID files"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "DNGAssociation"; Description: "DNG - Adobe Digital Negative"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "CRWAssociation"; Description: "CRW,CR2 - Canon Raw"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "NEFAssociation"; Description: "NEF - Nikon Electronic Format"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "PEFAssociation"; Description: "PEF - Pentax Electronic Format"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "RAFAssociation"; Description: "RAF - Fuji Raw Format"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "ORFAssociation"; Description: "ORF - Olympus Raw Format"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "MRWAssociation"; Description: "MRW - Minolta Raw"; GroupDescription: "Associate the following file types with UFRaw:"
 
 [Files]
 Source: "ufraw.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -50,6 +63,19 @@ Root: HKLM; SubKey: "Software\Microsoft\Windows\CurrentVersion\App Paths\ufraw.e
 Root: HKLM; SubKey: "Software\Microsoft\Windows\CurrentVersion\App Paths\ufraw-batch.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\ufraw-batch.exe";
 Root: HKLM; SubKey: "Software\Microsoft\Windows\CurrentVersion\App Paths\ufraw-batch.exe"; ValueType: string; ValueName: "Path"; ValueData: "{app}\bin;{reg:HKLM\SOFTWARE\GTK\2.0,DllPath|none}";
 
+Root: HKCR; Subkey: ".ufraw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: UFRAWAssociation
+Root: HKCR; Subkey: ".dng"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: DNGAssociation
+Root: HKCR; Subkey: ".crw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: CRWAssociation
+Root: HKCR; Subkey: ".cr2"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: CRWAssociation
+Root: HKCR; Subkey: ".nef"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: NEFAssociation
+Root: HKCR; Subkey: ".pef"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: PEFAssociation
+Root: HKCR; Subkey: ".raf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: RAFAssociation
+Root: HKCR; Subkey: ".orf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ORFAssociation
+Root: HKCR; Subkey: ".mrw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: MRWAssociation
+Root: HKCR; Subkey: "UFRaw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "UFRaw\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\ufraw.exe,0"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "UFRaw\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\ufraw.exe"" ""%1"""; Flags: uninsdeletevalue
+
 [Run]
 Filename: "{app}\bin\ufraw.exe"; Description: "{cm:LaunchProgram,UFRaw}"; Flags: nowait postinstall skipifsilent
 
@@ -60,3 +86,4 @@ Type: files; Name: {%USERPROFILE}\.gimp-2.2\plug-ins\ufraw-gimp.exe; Tasks: unpl
 [messages]
 SelectDirDesc=If you have the GIMP installed, [name] should be installed in the GIMP directory. Hopefully, the wizard will guess your GIMP directory correctly.
 WelcomeLabel2=%nThis wizard will install [name/ver] on your computer.%n%nYou must install GTK+ before installing [name]. It is also recommended to install the GIMP.  Both packages can be downloaded from http://gimp-win.sourceforge.net/%n%nIt is recommended that you will not run the GIMP application during this installation.
+SelectTasksLabel2=Select the additional tasks you would like to perform while installing UFRaw:

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.74 2007/05/12 05:16:14 nkbj Exp $
+dnl $Id: configure.ac,v 1.75 2007/05/24 21:48:38 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -15,6 +15,7 @@ AC_PROG_RANLIB
 AC_CHECK_PROGS(POD2MAN, pod2man, , $PATH)
 
 UFRAW_CFLAGS="-ffast-math -fomit-frame-pointer"
+UFRAW_LDADD=""
 if test "x$GCC" = "xyes"; then
     UFRAW_CFLAGS="$UFRAW_CFLAGS -W -Wall -O3"
 fi
@@ -32,6 +33,7 @@ AM_CONDITIONAL(UFRAW_WIN32, test $ufraw_win32 = yes)
 
 if test $ufraw_win32 = yes; then
   UFRAW_CFLAGS="$UFRAW_CFLAGS -mno-cygwin -mwindows -mms-bitfields"
+  UFRAW_LDADD="$UFRAW_LDADD -mno-cygwin -mwindows -mms-bitfields"
   CONSOLE="-mconsole"
 else
   CONSOLE=
@@ -156,7 +158,7 @@ PKG_CHECK_MODULES(EXIV2, exiv2,
     AC_MSG_RESULT($EXIV2_PKG_ERRORS) ] )
 
 UFRAW_CFLAGS="$UFRAW_CFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS $GTKIMAGEVIEW_CFLAGS"
-UFRAW_LDADD="$EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $GTKIMAGEVIEW_LIBS"
+UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $GTKIMAGEVIEW_LIBS"
 
 if test $ufraw_win32 = yes; then
   AC_CHECK_PROGS(WINDRES, $target_alias-windres windres, , $PATH)
