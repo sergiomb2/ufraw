@@ -3149,8 +3149,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     }
     gtk_widget_show_all(previewWindow);
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);
+#idef HAVE_GTKIMAGEVIEW
     /* After window size was set, the user may want to shrink it */
     gtk_widget_set_size_request(scroll, -1, -1);
+#endif
     data->SpotCursor = gdk_cursor_new(GDK_HAND2);
     gdk_window_set_cursor(PreviewEventBox->window, data->SpotCursor);
     gtk_widget_set_sensitive(data->Controls, FALSE);
