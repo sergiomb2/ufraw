@@ -3149,7 +3149,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     }
     gtk_widget_show_all(previewWindow);
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);
-#idef HAVE_GTKIMAGEVIEW
+#ifdef HAVE_GTKIMAGEVIEW
     /* After window size was set, the user may want to shrink it */
     gtk_widget_set_size_request(scroll, -1, -1);
 #endif
