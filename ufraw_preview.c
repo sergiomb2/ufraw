@@ -1124,13 +1124,16 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
 	    * width / data->UF->predictedWidth + 1;
     spotStartX = MIN(data->SpotX1, data->SpotX2)
 	    * width / data->UF->predictedWidth;
-    ufraw_image_data *image = &data->UF->Images[ufraw_final_phase];
+    ufraw_image_data *image = &data->UF->Images[ufraw_first_phase];
 
     for (c=0; c<4; c++) rgb[c] = 0;
     for (y=spotStartY; y<spotStartY+spotSizeY; y++)
         for (x=spotStartX; x<spotStartX+spotSizeX; x++)
-            for (c=0; c<data->UF->colors; c++)
-                rgb[c] += image->buffer[(y*image->width + x)*image->depth + c];
+            for (c=0; c<data->UF->colors; c++) {
+		guint16 *pixie = (guint16*)(image->buffer +
+			(y*image->width + x)*image->depth);
+                rgb[c] += pixie[c];
+	    }
     for (c=0; c<4; c++) rgb[c] = MAX(rgb[c], 1);
     for (c=0; c<data->UF->colors; c++)
         CFG->chanMul[c] = (double)spotSizeX * spotSizeY * data->UF->rgbMax
