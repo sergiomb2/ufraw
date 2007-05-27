@@ -338,7 +338,7 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
         if (!strcmp("File", element))
             g_strlcpy(c->profile[in_profile][i].file, temp, max_path);
         if (!strcmp("ProductName", element))
-            g_strlcpy(c->profile[in_profile][i].productName, temp, max_path);
+            g_strlcpy(c->profile[in_profile][i].productName, temp, max_name);
         if (!strcmp("Gamma", element))
             sscanf(temp, "%lf", &c->profile[in_profile][i].gamma);
         if (!strcmp("Linearity", element))
