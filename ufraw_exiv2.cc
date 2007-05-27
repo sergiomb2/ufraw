@@ -84,6 +84,13 @@ try {
 	    buf = exifData.copy();
 	}
     }
+    if ( buf.size_+sizeof(ExifHeader)>65533 ) {
+	exifData.eraseThumbnail();
+	ufraw_message(UFRAW_SET_LOG,
+		"buflen %d too big, erasing Thumbnail\n",
+		buf.size_+sizeof(ExifHeader));
+	buf = exifData.copy();
+    }
     uf->exifBufLen = buf.size_ + sizeof(ExifHeader);
     uf->exifBuf = g_new(unsigned char, uf->exifBufLen);
     memcpy(uf->exifBuf, ExifHeader, sizeof(ExifHeader));
