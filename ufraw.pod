@@ -189,7 +189,7 @@ format or Nikon's NTC/NCV format.
 
 Black-point value. Range 0.0 to 1.0, default 0.0.
 
-=item --interpolation=ahd|vng|four-color|bilinear
+=item --interpolation=ahd|vng|four-color|ppg|bilinear
 
 Interpolation algorithm to use when converting from the Bayer-pattern
 to normal RGB values. AHD (Adaptive Homogeneity Directed) interpolation
