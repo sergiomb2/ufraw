@@ -662,7 +662,7 @@ int ufraw_convert_image_init(ufraw_data *uf)
      * If pixel_aspect<1 (e.g. NIKON D1X) shrink must be at least 4.
      * Wanted size is smaller than raw size (size is after a raw->shrink).
      * There are no filters (Foveon). */
-    uf->ConvertShrink = uf->conf->shrink;
+    uf->ConvertShrink = 1;
     if ( uf->conf->interpolation==half_interpolation ||
          ( uf->conf->size==0 && uf->conf->shrink>1 ) ||
          ( uf->conf->size>0 &&
@@ -705,7 +705,7 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
     dcraw_data *raw = uf->raw;
     dcraw_image_data final;
 
-    if (uf->ConvertShrink>1) {
+    if (uf->ConvertShrink>1 || raw->filters==0) {
         dcraw_finalize_shrink(&final, raw, uf->ConvertShrink);
 
         uf->image.height = final.height;
