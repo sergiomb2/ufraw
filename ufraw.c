@@ -133,6 +133,7 @@ int main (int argc, char **argv)
 	}
         ufraw_preview(uf, FALSE, ufraw_saver);
 	rc = *uf->conf;
+	g_free(uf);
     }
     if (dummyWindow!=NULL) gtk_widget_destroy(dummyWindow);
 

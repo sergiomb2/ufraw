@@ -640,10 +640,12 @@ void ufraw_close(ufraw_data *uf)
     dcraw_close(uf->raw);
     g_free(uf->unzippedBuf);
     g_free(uf->raw);
+    /* We cannot free uf->conf since it might be accessed after the close */
+//    g_free(uf->conf);
     g_free(uf->exifBuf);
     g_free(uf->image.image);
     int i;
-    for (i=ufraw_first_phase+1; i<ufraw_final_phase; i++)
+    for (i=ufraw_first_phase+1; i<=ufraw_final_phase; i++)
 	g_free(uf->Images[i].buffer);
     g_free(uf->thumb.buffer);
     developer_destroy(uf->developer);

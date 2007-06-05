@@ -106,6 +106,8 @@ typedef struct {
      * want to freeze all other actions. After we thaw the dialog we must
      * call update_scales() which was also frozen. */
     gboolean FreezeDialog;
+    /* Since the event-box can be larger than the preview pixbuf we need: */
+    gboolean SpotButtonPressed;
     int SpotX1, SpotY1, SpotX2, SpotY2;
     gboolean OptionsChanged;
 } preview_data;
@@ -1171,18 +1173,32 @@ gboolean spot_button_press(GtkWidget *event_box, GdkEventButton *event,
     } else {
 	event->x -= (viewWidth - width) / 2;
     }
+    if ( event->x<0 || event->x>=width ) return FALSE;
+
     if ( viewHeight<height ) {
 	event->y += viewRect.y;
     } else {
 	event->y -= (viewHeight - height) / 2;
     }
+    if ( event->y<0 || event->y>=height ) return FALSE;
 #endif
+    data->SpotButtonPressed = TRUE;
     /* Scale pixbuf coordinates to image coordinates */
     data->SpotX1 = event->x * data->UF->predictedWidth / width;
     data->SpotY1 = event->y * data->UF->predictedHeight / height;
     data->SpotX2 = event->x * data->UF->predictedWidth / width;
     data->SpotY2 = event->y * data->UF->predictedHeight / height;
     render_spot(data);
+    return TRUE;
+}
+
+gboolean spot_button_release(GtkWidget *event_box, GdkEventButton *event,
+	gpointer user_data)
+{
+    preview_data *data = get_preview_data(event_box);
+    (void)user_data;
+    if (event->button!=1) return FALSE;
+    data->SpotButtonPressed = FALSE;
     return TRUE;
 }
 
@@ -1194,6 +1210,7 @@ gboolean spot_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
     (void)user_data;
     if (!gtk_event_box_get_above_child(GTK_EVENT_BOX(event_box))) return FALSE;
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
+    if ( !data->SpotButtonPressed ) return FALSE;
     draw_spot(data, FALSE);
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
@@ -1209,11 +1226,16 @@ gboolean spot_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
     } else {
 	event->x -= (viewWidth - width) / 2;
     }
+    if ( event->x<0 ) event->x = 0;
+    if ( event->x>=width ) event->x = width-1;
+
     if ( viewHeight<height ) {
 	event->y += viewRect.y;
     } else {
 	event->y -= (viewHeight - height) / 2;
     }
+    if ( event->y<0 ) event->y = 0;
+    if ( event->y>=height ) event->y = height-1;
 #endif
     /* Scale pixbuf coordinates to image coordinates */
     ufraw_image_data *image = &data->UF->Images[ufraw_final_phase];
@@ -3037,7 +3059,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_widget_show_all(menu);
 
     i = 2;
-    data->AvrLabels = color_labels_new(table, 0, i++, _("Average:"), pixel_format);
+    data->AvrLabels = color_labels_new(table, 0, i++, _("Average:"),
+	    pixel_format);
     data->DevLabels = color_labels_new(table, 0, i++, _("Std. deviation:"),
             pixel_format);
     data->OverLabels = color_labels_new(table, 0, i,
@@ -3098,8 +3121,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_misc_set_alignment(GTK_MISC(data->PreviewWidget), 0, 0);
     gtk_container_add(GTK_CONTAINER(PreviewEventBox), data->PreviewWidget);
 #endif
-    g_signal_connect(G_OBJECT(PreviewEventBox), "button_press_event",
+    data->SpotButtonPressed = FALSE;
+    g_signal_connect(G_OBJECT(PreviewEventBox), "button-press-event",
 	    G_CALLBACK(spot_button_press), NULL);
+    g_signal_connect(G_OBJECT(PreviewEventBox), "button-release-event",
+	    G_CALLBACK(spot_button_release), NULL);
     g_signal_connect(G_OBJECT(PreviewEventBox), "motion-notify-event",
 	    G_CALLBACK(spot_motion_notify), NULL);
     g_object_unref(data->PreviewPixbuf);
@@ -3231,6 +3257,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     }
     ufraw_close(data->UF);
     g_list_free(data->WBPresets);
+    g_free(data->SpotLabels);
+    g_free(data->AvrLabels);
+    g_free(data->DevLabels);
+    g_free(data->OverLabels);
+    g_free(data->UnderLabels);
 
     if (status!=GTK_RESPONSE_OK) return UFRAW_CANCEL;
     return UFRAW_SUCCESS;
