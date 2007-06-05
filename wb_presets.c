@@ -634,9 +634,9 @@ const wb_data wb_preset[] = {
   { "MINOLTA", "DYNAX 7D", "9800K", 0,		{ 2.226562, 1, 1.144531, 0 } },
   { "MINOLTA", "DYNAX 7D", "9900K", 0,		{ 2.242188, 1, 1.144531, 0 } },
 
-  { "NIKON", "D1", Incandescent, -3,		{ 2.102941, 1.329403, 1, 0 } },
-  { "NIKON", "D1", Incandescent, 0,		{ 2.422904, 1.395879, 1, 0 } },
-  { "NIKON", "D1", Incandescent, 3,		{ 2.913170, 1.516977, 1, 0 } },
+  { "NIKON", "D1", Incandescent, -3,		{ 1, 1.439891, 2.125769, 0 } },
+  { "NIKON", "D1", Incandescent, 0,		{ 1, 1.582583, 2.556096, 0 } },
+  { "NIKON", "D1", Incandescent, 3,		{ 1, 1.745033, 3.044175, 0 } },
   { "NIKON", "D1", Fluorescent, -3,		{ 1.267352, 1.223811, 1, 0 } },
   { "NIKON", "D1", Fluorescent, 0,		{ 1.591707, 1.355273, 1, 0 } },
   { "NIKON", "D1", Fluorescent, 3,		{ 1.514178, 1.324688, 1, 0 } },
