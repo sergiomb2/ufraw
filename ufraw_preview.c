@@ -1208,7 +1208,9 @@ gboolean spot_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
     preview_data *data = get_preview_data(event_box);
 
     (void)user_data;
+#ifdef HAVE_GTKIMAGEVIEW
     if (!gtk_event_box_get_above_child(GTK_EVENT_BOX(event_box))) return FALSE;
+#endif
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
     if ( !data->SpotButtonPressed ) return FALSE;
     draw_spot(data, FALSE);

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.75 2007/05/24 21:48:38 udifuchs Exp $
+dnl $Id: configure.ac,v 1.76 2007/06/06 15:00:50 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -61,7 +61,7 @@ PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4)
 AC_SUBST(GTK_LIBS)
 PKG_CHECK_MODULES(GLIB, glib-2.0)
 PKG_CHECK_MODULES(LCMS, lcms)
-PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview-1.0 >= 1.1,
+PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview-1.0 >= 1.3,
   [ have_gtkimageview=yes
     AC_DEFINE(HAVE_GTKIMAGEVIEW, 1, have gtk image view) ],
   [ have_gtkimageview=no
