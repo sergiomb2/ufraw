@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.77 2007/06/06 15:10:59 udifuchs Exp $
+dnl $Id: configure.ac,v 1.78 2007/06/06 15:33:16 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -75,8 +75,8 @@ PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview-1.0 >= 1.1,
 # (If gimp's prefix and the configured ufraw prefix are the same, this
 # doesn't matter.)
 pkg_prefix="$PKG_CONFIG"
-test $prefix = NONE || pkg_prefix+=" --define-variable=prefix=$prefix"
-test $exec_prefix = NONE || pkg_prefix+=" --define-variable=exec_prefix=$exec_prefix"
+test $prefix = NONE || pkg_prefix="$pkg_prefix --define-variable=prefix=$prefix"
+test $exec_prefix = NONE || pkg_prefix="$pkg_prefix --define-variable=exec_prefix=$exec_prefix"
 
 PKG_CHECK_MODULES(GIMP, gimpui-2.0,
   [ have_gimp=yes
