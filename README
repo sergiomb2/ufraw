@@ -15,37 +15,55 @@ and on Pawel T. Jochym's (jochym at ifj edu pl) GIMP plug-in.
 
 UFRaw is licensed under the GNU General Public License.
 
+Terminology
+===========
+This document uses the (Linux) term "development package" to denote
+that not only must a program be installed so that it can be run
+(binaries, shared libraries), but also so that other programs can be
+compiled against it (include files, static libraries).  Many Linux
+packaging systems split programs into a regular and development
+package along these lines.  Other packaging systems, such as pkgsrc,
+generally have a single package that includes the entire program,
+including header files.
+
 Installation
 ============
-Requires GIMP >= 2.0, the GIMP development package, GTK+ >= 2.4 and lcms.
-If you have GTK+ >= 2.6 you will get the extra option of seeing hidden
-files in the file chooser dialogs.
+(If building from CVS rather than a release see also "Building UFRaw
+from CVS", below.)
+
+Building UFRaw requires development packages for GTK+ >= 2.4 and lcms.
+There are many optional dependencies which enable building additional
+programs and adding features to existing programs.
 
 The UFRaw build process expects Perl to be present (for pod2man).
 
-(If you are using the CVS version you should first run ./autogen.sh
-and check the "Development version" section in this README.)
+A modern make is required.  GNU make and BSD make both work currently.
+In case of trouble, try GNU make.
 
-The first step of the installation, is to run:
+The first step of the installation is to run the configure script:
+
 ./configure
 
-At the end of the configuration you will get a summary of the installation
-settings. It should look like that:
+At the end of the configuration you will get a summary of the
+installation settings.  If most optional dependencies are present it
+will look like this:
 
 configure: ====================== summary =====================
 configure: build GIMP plug-in: yes
-configure: EXIF support using exiv2: no
+configure: build CinePaint plug-in: no
+configure: EXIF support using exiv2: yes
 configure: JPEG support: yes
 configure: PNG support: yes
 configure: TIFF support: yes
-configure: TIFF deflate (lossless compression) support: yes
+configure: gzip compressed raw support: yes
+configure: bzip2 compressed raw support: yes
+configure: Scrolling in preview using GtkImageView: yes
 
-If some of the lines end with 'no' instead of 'yes', it is not the end of
-the world. It only means that this option in UFRaw will be disabled.
+If some of the lines end with 'no' instead of 'yes', UFRaw can still
+be built, but the named option will be disabled.
 
-These paragraphs use the term "development package"; the general
-requirement is to have the full library installed, including header
-files used in compilation of programs using the library.
+With GTK+ >= 2.6 you will get the extra option of seeing hidden files
+in the file chooser dialogs.
 
 The exiv2 development package is required for reading the EXIF data.
 Supported formats are Canon (CRW, CR2), Fuji (RAF), Minolta (MRW),
@@ -62,9 +80,14 @@ The libtiff development package is required for saving images in the
 TIFF format. If the configuration script does not find this package
 TIFF support will be omitted.
 
-The zlib package is required for saving images in the TIFF format with
-lossless compression. If the configuration script does not find this
-package compressed TIFF support will be omitted.
+The zlib development package is required for saving images in the TIFF
+format with lossless compression. If the configuration script does not
+find this package compressed TIFF support will be omitted.
+
+The gtkimageview package (very new - see
+http://trac.bjourne.webfactional.com/wiki) is required to enable
+scrollable preview window support.  If the configuration script does
+not find this package the preview window will not be scrollable.
 
 Other options for the configuration script are:
 
@@ -164,11 +187,27 @@ http://www.gimp.org/win32/gimp-dev-2.2.7.zip
 To build Cygwin binaries you can use the development libraries from:
 http://cygwinports.dotsrc.org/
 
-CVS
-===
-UFRaw has a CVS repository on sourceforge. To use the repository you need
-autoconf and automake to be installed. You should './autogen.sh' before
-'./configure'.
+Building UFRaw from CVS
+===================
+The development version has the following caveats:
+
+autoconf and automake must be installed.
+
+./autogen.sh must be run before ./configure.
+
+The format of the ID files and of the configuration file $HOME/.ufrawrc
+may and will change before the final release. I try to make sure that the
+new releases will read such files correctly even if they are from previous
+releases. No attempt is made to keep backward compatibility with the different
+stages of the development versions. If you use the development version you
+might have to delete or fix manually such files from time to time.
+
+Last but not least, the development version is poorly tested and has some
+half written features, therefore it is bound to have bugs...
+
+Source control of UFRaw via CVS
+===============================
+UFRaw has a CVS repository on sourceforge. 
 
 Using the CVS, new versions of dcraw.c can be easily updated. Copy the latest
 version of dcraw.c from Dave Coffin to a UFRaw working directory with the
@@ -193,22 +232,6 @@ wavelet_denoise(), scale_colors(), pre_interpolate(), border_interpolate(),
 lin_interpolate(), vng_interpolate(), ahd_interpolate(), convert_to_rgb(),
 fuji_rotate() or main(). Such changes could affect dcraw_indi.c or
 dcraw_api.cc.
-
-Development version
-===================
-The development version has the following caveats:
-
-./autogen.sh must be run before ./configure.
-
-The format of the ID files and of the configuration file $HOME/.ufrawrc
-may and will change before the final release. I try to make sure that the
-new releases will read such files correctly even if they are from previous
-releases. No attempt is made to keep backward compatibility with the different
-stages of the development versions. If you use the development version you
-might have to delete or fix manually such files from time to time.
-
-Last but not least, the development version is poorly tested and has some
-half written features, therefore it is bound to have bugs...
 
 For Packagers
 =============
