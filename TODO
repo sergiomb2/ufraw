@@ -3,28 +3,42 @@ For the next release
 
 For the future
 ==============
-Leaf embedded profiles
-fuji sqrt(0.5) factor in size
-Canon 10D presets from ExifTool
-window size
-g_fopen - UTF-8
-Use wavelet denoising for noise reduction
-Show WB spot/area values in HSV (in addition to output colorspace pixels).
-Show WB spot/area values in Adam's exposure zones somehow.
-Bug: when show overexposure is checked, WB spot counts blown out as 0.
-Master reset button to set all adjustments to default.
+* Show some Exif Data in dialog.
+* Add the UFRaw parameters used to the Exif data.
+* Curve corrections per channel.
+* Configurable preview image size.
+* Crop.
+* Spot query - mark on histograms.
+* Multi spot query (when pressing the control key).
+* Show camera overexposures.
+* Help (based on the webpage).
+* Calculate width of the dialog control column
+  and set raw histogram to that width.
+* Add a "Send to GIMP" option in the stand-alone tool.
+* Improve the unclip highlights option.
 
-Add the ability to save a spot measurement, and then to adjust WB to
-make a new measurement match the old.  Usage is shooting a whitish
-wall with a white card, doing WB to card, saving wall, and then later
-adjusting wall to wall's color, e.g. for actual shots with no white
-card.
+* Leaf embedded profiles
+* fuji sqrt(0.5) factor in size
+* Canon 10D presets from ExifTool
+* window size
+* g_fopen - UTF-8
+* Use wavelet denoising for noise reduction
+* Show WB spot/area values in HSV (in addition to output colorspace pixels).
+* Show WB spot/area values in Adam's exposure zones.
+* Bug: when show overexposure is checked, WB spot counts blown out as 0.
+* Master reset button to set all adjustments to default.
 
-Add the ability to have groups of saved values, perhaps one for flash
-and one not, so one can save 2 color temperatures and exposure
-adjustments for a batch of photos.
+* Add the ability to save a spot measurement, and then to adjust WB to
+  make a new measurement match the old.  Usage is shooting a whitish
+  wall with a white card, doing WB to card, saving wall, and then later
+  adjusting wall to wall's color, e.g. for actual shots with no white
+  card.
 
-Automatic profile selection based on camera model and serial#.
+* Add the ability to have groups of saved values, perhaps one for flash
+  and one not, so one can save 2 color temperatures and exposure
+  adjustments for a batch of photos.
 
-Understand differences between ufraw with defaults and in-camera with
-defaults.  Document them, or fix them as bugs.
+* Automatic profile selection based on camera model and serial#.
+
+* Understand differences between ufraw with defaults and in-camera with
+  defaults.  Document them, or fix them as bugs.

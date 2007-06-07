@@ -377,21 +377,3 @@ History
 
 11/10/2004 - UFRaw-0.1 released, based on DCRaw v6.07.
 * Initial version.
-
-Todo
-====
-* Show some Exif Data in dialog.
-* Add the UFRaw parameters used to the Exif data.
-* Curve corrections per channel.
-* Configurable preview image size.
-* Rotate by 90 degrees.
-* Zoom.
-* Crop.
-* Spot query - mark on histograms.
-* Multi spot query (when pressing the control key).
-* Show camera overexposures.
-* Help (based on the webpage).
-* Calculate width of the dialog control column
-  and set raw histogram to that width.
-* Add a "Send to GIMP" option in the stand-alone tool.
-* Improve the unclip highlights option.
