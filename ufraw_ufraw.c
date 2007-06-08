@@ -305,7 +305,7 @@ ufraw_data *ufraw_open(char *filename)
     g_strlcpy(uf->filename, filename, max_path);
     uf->image.image = NULL;
     int i;
-    for (i=ufraw_first_phase; i<ufraw_final_phase; i++)
+    for (i=ufraw_first_phase; i<ufraw_phases_num; i++)
 	uf->Images[i].buffer = NULL;
     uf->thumb.buffer = NULL;
     uf->raw = raw;
@@ -645,7 +645,7 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->exifBuf);
     g_free(uf->image.image);
     int i;
-    for (i=ufraw_first_phase+1; i<=ufraw_final_phase; i++)
+    for (i=ufraw_first_phase+1; i<ufraw_phases_num; i++)
 	g_free(uf->Images[i].buffer);
     g_free(uf->thumb.buffer);
     developer_destroy(uf->developer);
