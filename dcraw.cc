@@ -15,15 +15,15 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.383 $
-   $Date: 2007/06/04 01:19:23 $
+   $Revision: 1.384 $
+   $Date: 2007/06/08 06:32:15 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.73"
+#define DCRAW_VERSION "8.74"
 
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
@@ -119,7 +119,7 @@ CLASS DCRaw()
 {
 bright=1, threshold=0;
 half_size=0, four_color_rgb=0, document_mode=0, highlight=0;
-verbose=0, use_auto_wb=0, use_camera_wb=0;
+verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_matrix=1;
 output_color=1, output_bps=8, output_tiff=0;
 shot_select=0;
 user_mul[0] = user_mul[1] = user_mul[2] = user_mul[3] = 0;
@@ -415,7 +415,7 @@ void CLASS canon_600_auto_wb()
       for (i=0; i < 8; i++)
 	total[st][i] += test[i];
       count[st]++;
-next: continue;
+next: ;
     }
   if (count[0] | count[1]) {
     st = count[0]*200 < count[1];
@@ -3543,8 +3543,7 @@ void CLASS scale_colors()
 	      if (filters) break;
 	    }
 	for (c=0; c < 8; c++) dsum[c] += sum[c];
-skip_block:
-	continue;
+skip_block: ;
       }
     FORC4 if (dsum[c]) pre_mul[c] = dsum[c+4] / dsum[c];
   }
@@ -3856,7 +3855,7 @@ void CLASS vng_interpolate()
 */
 void CLASS ppg_interpolate()
 {
-  int gr[4], dir[4] = { 1, width, -1, -width };
+  int gr[4], dir[5] = { 1, width, -1, -width, 1 };
   int row, col, avg, pat, diff[2], guess[2], c, d, i;
   static const short sort[] = { 0,2,1,3,0,1,2,3 };
   ushort (*pix)[4];
@@ -3878,31 +3877,34 @@ void CLASS ppg_interpolate()
 	if (gr[sort[i]] > gr[sort[i+1]])
 	  SWAP(gr[sort[i]],gr[sort[i+1]])
       if (pat == 0 || pat == 3 || pat == 6)
-	pix[0][1] = (gr[1]+gr[2]) >> 3;
-      else {
-	for (i=0; (d=dir[i]) > 0; i++) {
-	  diff[i] = ( ABS(pix[-2*d][c] - pix[ 0][c]) +
-		      ABS(pix[ 2*d][c] - pix[ 0][c]) +
-		      ABS(pix[  -d][1] - pix[ d][1]) ) * 3 +
-		    ( ABS(pix[ 3*d][1] - pix[ d][1]) +
-		      ABS(pix[-3*d][1] - pix[-d][1]) ) * 2;
-	  guess[i] = (pix[-d][1] + pix[0][c] + pix[d][1]) * 2
-			- pix[-2*d][c] - pix[2*d][c];
+	for (d=0; d < 4; d++) {
+	  for (i=-2; i < 2; i++)
+	    if (pix[i*dir[d] + (i+1)*dir[d+1]][1] <= avg) break;
+	  if (i == 2) {
+	    pix[0][1] = (gr[1]+gr[2]) >> 3;
+	    goto next_pixel;
+	  }
 	}
-	d = dir[i = diff[0] > diff[1]];
-	if (diff[0] != diff[1])
-	  pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
-	else
-	  pix[0][1] = ULIM((guess[0]+guess[1]) >> 1, gr[1], gr[2]) >> 2;
+      for (i=0; (d=dir[i]) > 0; i++) {
+	guess[i] = (pix[-d][1] + pix[0][c] + pix[d][1]) * 2
+		      - pix[-2*d][c] - pix[2*d][c];
+	diff[i] = ( ABS(pix[-2*d][c] - pix[ 0][c]) +
+		    ABS(pix[ 2*d][c] - pix[ 0][c]) +
+		    ABS(pix[  -d][1] - pix[ d][1]) ) * 3 +
+		  ( ABS(pix[ 3*d][1] - pix[ d][1]) +
+		    ABS(pix[-3*d][1] - pix[-d][1]) ) * 2;
       }
+      d = dir[i = diff[0] > diff[1]];
+      pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
+next_pixel: ;
     }
 /*  Calculate red and blue for each green pixel:		*/
   for (row=1; row < height-1; row++)
     for (col=1+(FC(row,2) & 1), c=FC(row,col+1); col < width-1; col+=2) {
       pix = image + row*width+col;
       for (i=0; (d=dir[i]) > 0; c=2-c, i++)
-	pix[0][c] = CLIP(((pix[0][1] + pix[-d][c] + pix[d][c]) * 2
-				     - pix[-d][1] - pix[d][1]) >> 2);
+	pix[0][c] = CLIP((pix[-d][c] + pix[d][c] + 2*pix[0][1]
+			- pix[-d][1] - pix[d][1]) >> 1);
     }
 /*  Calculate blue for red pixels and vice versa:		*/
   for (row=1; row < height-1; row++)
@@ -3910,14 +3912,15 @@ void CLASS ppg_interpolate()
       pix = image + row*width+col;
       for (i=0; (d=dir[i]+dir[i+1]) > 0; i++) {
 	diff[i] = ABS(pix[-d][c] - pix[d][c]) +
-		  ABS(pix[-d][1] + pix[d][1] - 2*pix[0][1]);
-	guess[i] = (pix[0][1] + pix[-d][c] + pix[d][c]) * 2
-			      - pix[-d][1] - pix[d][1];
+		  ABS(pix[-d][1] - pix[0][1]) +
+		  ABS(pix[ d][1] - pix[0][1]);
+	guess[i] = pix[-d][c] + pix[d][c] + 2*pix[0][1]
+		 - pix[-d][1] - pix[d][1];
       }
       if (diff[0] != diff[1])
-	pix[0][c] = CLIP(guess[diff[0] > diff[1]] >> 2);
+	pix[0][c] = CLIP(guess[diff[0] > diff[1]] >> 1);
       else
-	pix[0][c] = CLIP((guess[0]+guess[1]) >> 3);
+	pix[0][c] = CLIP((guess[0]+guess[1]) >> 2);
     }
 }
 
@@ -4416,7 +4419,8 @@ void CLASS parse_makernote (int base, int uptag)
       else goto next;
       goto get2_256;
     }
-    if (((tag == 0x1011 && len == 9) || tag == 0x20400200) && use_camera_wb) {
+    if (((tag == 0x1011 && len == 9) || tag == 0x20400200)
+	&& use_camera_matrix) {
       for (i=0; i < 3; i++)
 	FORC3 rgb_cam[i][c] = ((short) get2()) / 256.0;
       raw_color = rgb_cam[0][0] < 0.25;
@@ -4556,7 +4560,7 @@ void CLASS parse_mos (int offset)
       if ((unsigned) i < sizeof mod / sizeof (*mod))
 	strcpy (model, mod[i]);
     }
-    if (!strcmp(data,"CaptProf_color_matrix") && use_camera_wb) {
+    if (!strcmp(data,"CaptProf_color_matrix") && use_camera_matrix) {
       for (i=0; i < 9; i++)
 	fscanf (ifp, "%f", &romm_cam[0][i]);
       romm_coeff (romm_cam);
@@ -4788,12 +4792,12 @@ int CLASS parse_tiff_ifd (int base)
 	FORC4 cam_mul[c ^ 1] = 4096.0 / get2();
 	break;
       case 34307:			/* Leaf CatchLight color matrix */
+	if (!use_camera_matrix) break;
 	fread (software, 1, 7, ifp);
 	if (strncmp(software,"MATRIX",6)) break;
 	colors = 4;
 	for (raw_color = i=0; i < 3; i++) {
 	  FORC4 fscanf (ifp, "%f", &rgb_cam[i][c^1]);
-	  if (!use_camera_wb) continue;
 	  num = 0;
 	  FORC4 num += rgb_cam[i][c];
 	  FORC4 rgb_cam[i][c] /= num;
@@ -5409,7 +5413,7 @@ void CLASS parse_phase_one (int base)
     switch (tag) {
       case 0x100:  flip = "0653"[data & 3]-'0';  break;
       case 0x106:
-	if (!use_camera_wb) break;
+	if (!use_camera_matrix) break;
 	for (i=0; i < 9; i++)
 	  romm_cam[0][i] = getreal(11);
 	romm_coeff (romm_cam);
@@ -5663,7 +5667,7 @@ void CLASS adobe_coeff (char *make, char *model)
     short black, trans[12];
   } table[] = {
     { "Apple QuickTake", 0,	/* DJC */
-	{ 17524,-3363,-2877,5519,6087,-1605,9082,1142,-31 } },
+	{ 17576,-3191,-3318,5210,6733,-1942,9031,1280,-124 } },
     { "Canon EOS D2000", 0,
 	{ 24542,-10860,-3401,-1490,11370,-297,2858,-605,3225 } },
     { "Canon EOS D6000", 0,
@@ -7625,6 +7629,7 @@ int CLASS main (int argc, char **argv)
     puts(_("-a        Average the whole image for white balance"));
     puts(_("-A <x y w h> Average a grey box for white balance"));
     puts(_("-r <r g b g> Set custom white balance"));
+    puts(_("-M        Don't use an embedded color matrix"));
     puts(_("-C <r b>  Correct chromatic aberration"));
     puts(_("-b <num>  Adjust brightness (default = 1.0)"));
     puts(_("-n <num>  Set threshold for wavelet denoising"));
@@ -7691,6 +7696,7 @@ int CLASS main (int argc, char **argv)
       case 'A':  FORC4 greybox[c]  = atoi(argv[arg++]);
       case 'a':  use_auto_wb       = 1;  break;
       case 'w':  use_camera_wb     = 1;  break;
+      case 'M':  use_camera_matrix = 0;  break;
       case 'D':
       case 'd':  document_mode = 1 + (opt == 'D');
       case 'j':  use_fuji_rotate   = 0;  break;

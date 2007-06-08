@@ -42,7 +42,7 @@ double pixel_aspect;
 ushort (*image)[4], white[8][8], curve[0x1000], cr2_slice[3];
 float bright, user_mul[4], threshold;
 int half_size, four_color_rgb, document_mode, highlight;
-int verbose, use_auto_wb, use_camera_wb;
+int verbose, use_auto_wb, use_camera_wb, use_camera_matrix;
 int output_color, output_bps, output_tiff;
 int fuji_layout, fuji_secondary, shot_select;
 float cam_mul[4], pre_mul[4], rgb_cam[3][4];	/* RGB from camera color */
