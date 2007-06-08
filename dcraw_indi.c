@@ -470,7 +470,7 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
         const int width, const int height, const int colors, void *dcraw)
 {
-  int gr[4], dir[4] = { 1, width, -1, -width };
+  int gr[4], dir[5] = { 1, width, -1, -width, 1 };
   int row, col, avg, pat, diff[2], guess[2], c, d, i;
   static const short sort[] = { 0,2,1,3,0,1,2,3 };
   ushort (*pix)[4];
@@ -492,31 +492,34 @@ void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 	if (gr[sort[i]] > gr[sort[i+1]])
 	  SWAP(gr[sort[i]],gr[sort[i+1]])
       if (pat == 0 || pat == 3 || pat == 6)
-	pix[0][1] = (gr[1]+gr[2]) >> 3;
-      else {
-	for (i=0; (d=dir[i]) > 0; i++) {
-	  diff[i] = ( ABS(pix[-2*d][c] - pix[ 0][c]) +
-		      ABS(pix[ 2*d][c] - pix[ 0][c]) +
-		      ABS(pix[  -d][1] - pix[ d][1]) ) * 3 +
-		    ( ABS(pix[ 3*d][1] - pix[ d][1]) +
-		      ABS(pix[-3*d][1] - pix[-d][1]) ) * 2;
-	  guess[i] = (pix[-d][1] + pix[0][c] + pix[d][1]) * 2
-			- pix[-2*d][c] - pix[2*d][c];
+	for (d=0; d < 4; d++) {
+	  for (i=-2; i < 2; i++)
+	    if (pix[i*dir[d] + (i+1)*dir[d+1]][1] <= avg) break;
+	  if (i == 2) {
+	    pix[0][1] = (gr[1]+gr[2]) >> 3;
+	    goto next_pixel;
+	  }
 	}
-	d = dir[i = diff[0] > diff[1]];
-	if (diff[0] != diff[1])
-	  pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
-	else
-	  pix[0][1] = ULIM((guess[0]+guess[1]) >> 1, gr[1], gr[2]) >> 2;
+      for (i=0; (d=dir[i]) > 0; i++) {
+	guess[i] = (pix[-d][1] + pix[0][c] + pix[d][1]) * 2
+		      - pix[-2*d][c] - pix[2*d][c];
+	diff[i] = ( ABS(pix[-2*d][c] - pix[ 0][c]) +
+		    ABS(pix[ 2*d][c] - pix[ 0][c]) +
+		    ABS(pix[  -d][1] - pix[ d][1]) ) * 3 +
+		  ( ABS(pix[ 3*d][1] - pix[ d][1]) +
+		    ABS(pix[-3*d][1] - pix[-d][1]) ) * 2;
       }
+      d = dir[i = diff[0] > diff[1]];
+      pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
+next_pixel: ;
     }
 /*  Calculate red and blue for each green pixel:		*/
   for (row=1; row < height-1; row++)
     for (col=1+(FC(row,2) & 1), c=FC(row,col+1); col < width-1; col+=2) {
       pix = image + row*width+col;
       for (i=0; (d=dir[i]) > 0; c=2-c, i++)
-	pix[0][c] = CLIP(((pix[0][1] + pix[-d][c] + pix[d][c]) * 2
-				     - pix[-d][1] - pix[d][1]) >> 2);
+	pix[0][c] = CLIP((pix[-d][c] + pix[d][c] + 2*pix[0][1]
+			- pix[-d][1] - pix[d][1]) >> 1);
     }
 /*  Calculate blue for red pixels and vice versa:		*/
   for (row=1; row < height-1; row++)
@@ -524,14 +527,15 @@ void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
       pix = image + row*width+col;
       for (i=0; (d=dir[i]+dir[i+1]) > 0; i++) {
 	diff[i] = ABS(pix[-d][c] - pix[d][c]) +
-		  ABS(pix[-d][1] + pix[d][1] - 2*pix[0][1]);
-	guess[i] = (pix[0][1] + pix[-d][c] + pix[d][c]) * 2
-			      - pix[-d][1] - pix[d][1];
+		  ABS(pix[-d][1] - pix[0][1]) +
+		  ABS(pix[ d][1] - pix[0][1]);
+	guess[i] = pix[-d][c] + pix[d][c] + 2*pix[0][1]
+		 - pix[-d][1] - pix[d][1];
       }
       if (diff[0] != diff[1])
-	pix[0][c] = CLIP(guess[diff[0] > diff[1]] >> 2);
+	pix[0][c] = CLIP(guess[diff[0] > diff[1]] >> 1);
       else
-	pix[0][c] = CLIP((guess[0]+guess[1]) >> 3);
+	pix[0][c] = CLIP((guess[0]+guess[1]) >> 2);
     }
 }
 
