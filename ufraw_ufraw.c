@@ -792,7 +792,15 @@ int ufraw_convert_image_area(ufraw_data *uf,
 	int bx = MAX(x-border, 0);
 	int by = MAX(y-border, 0);
 	tmp.width = MIN(width + x-bx + border, in.width - bx);
+	if ( tmp.width<16 ) {
+	    bx = bx + tmp.width - 16; // We assume in.width>16
+	    tmp.width = 16;
+	}
 	tmp.height = MIN(height + y-by + border, in.height - by);
+	if ( tmp.height<16 ) {
+	    by = by + tmp.height - 16; // We assume in.height>16
+	    tmp.height = 16;
+	}
 	tmp.image = g_new(dcraw_image_type, tmp.height * tmp.width);
 	for (yy=0; yy<tmp.height; yy++)
 	    memcpy(tmp.image[yy*tmp.width],
