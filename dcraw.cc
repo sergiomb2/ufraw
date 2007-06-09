@@ -16,7 +16,7 @@
    work.
 
    $Revision: 1.384 $
-   $Date: 2007/06/08 06:32:15 $
+   $Date: 2007/06/08 21:29:34 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -3856,7 +3856,7 @@ void CLASS vng_interpolate()
 void CLASS ppg_interpolate()
 {
   int gr[4], dir[5] = { 1, width, -1, -width, 1 };
-  int row, col, avg, pat, diff[2], guess[2], c, d, i;
+  int row, col, avg, diff[2], guess[2], c, d, i;
   static const short sort[] = { 0,2,1,3,0,1,2,3 };
   ushort (*pix)[4];
 
@@ -3870,21 +3870,17 @@ void CLASS ppg_interpolate()
       for (avg=i=0; i < 4; i++)
 	avg += gr[i] = pix[dir[i]][1] << 2;
       avg >>= 2;
-      for (pat=i=0; i < 4; i++)
-	pat = pat << 1 | (gr[i] > avg);
-      if (pat & 8) pat ^= 15;
       for (i=0; i < 8; i+=2)
 	if (gr[sort[i]] > gr[sort[i+1]])
 	  SWAP(gr[sort[i]],gr[sort[i+1]])
-      if (pat == 0 || pat == 3 || pat == 6)
-	for (d=0; d < 4; d++) {
-	  for (i=-2; i < 2; i++)
-	    if (pix[i*dir[d] + (i+1)*dir[d+1]][1] <= avg) break;
-	  if (i == 2) {
-	    pix[0][1] = (gr[1]+gr[2]) >> 3;
-	    goto next_pixel;
-	  }
+      for (d=0; d < 4; d++) {
+	for (i=-2; i < 2; i++)
+	  if (pix[i*dir[d] + (i+1)*dir[d+1]][1] <= avg) break;
+	if (i == 2) {
+	  pix[0][1] = (gr[1]+gr[2]) >> 3;
+	  goto next_pixel;
 	}
+      }
       for (i=0; (d=dir[i]) > 0; i++) {
 	guess[i] = (pix[-d][1] + pix[0][c] + pix[d][1]) * 2
 		      - pix[-2*d][c] - pix[2*d][c];
