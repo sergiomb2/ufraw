@@ -119,7 +119,13 @@ CLASS DCRaw()
 {
 bright=1, threshold=0;
 half_size=0, four_color_rgb=0, document_mode=0, highlight=0;
-verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_matrix=1;
+verbose=0, use_auto_wb=0, use_camera_wb=0;
+#ifdef DCRAW_NOMAIN
+/*UFRaw currently does not use embedded color matrices - NKBJ*/
+use_camera_matrix=0;
+#else
+use_camera_matrix=1;
+#endif
 output_color=1, output_bps=8, output_tiff=0;
 shot_select=0;
 user_mul[0] = user_mul[1] = user_mul[2] = user_mul[3] = 0;
