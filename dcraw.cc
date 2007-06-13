@@ -15,15 +15,15 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.384 $
-   $Date: 2007/06/08 21:29:34 $
+   $Revision: 1.385 $
+   $Date: 2007/06/13 06:40:04 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.74"
+#define DCRAW_VERSION "8.75"
 
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
@@ -119,13 +119,7 @@ CLASS DCRaw()
 {
 bright=1, threshold=0;
 half_size=0, four_color_rgb=0, document_mode=0, highlight=0;
-verbose=0, use_auto_wb=0, use_camera_wb=0;
-#ifdef DCRAW_NOMAIN
-/*UFRaw currently does not use embedded color matrices - NKBJ*/
-use_camera_matrix=0;
-#else
-use_camera_matrix=1;
-#endif
+verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_matrix=-1;
 output_color=1, output_bps=8, output_tiff=0;
 shot_select=0;
 user_mul[0] = user_mul[1] = user_mul[2] = user_mul[3] = 0;
@@ -3631,7 +3625,6 @@ void CLASS pre_interpolate()
     if (half_size) {
       height = iheight;
       width  = iwidth;
-      filters = 0;
     } else {
       img = (ushort (*)[4]) calloc (height*width, sizeof *img);
       merror (img, "unshrink()");
@@ -3654,6 +3647,7 @@ void CLASS pre_interpolate()
       filters &= ~((filters & 0x55555555) << 1);
     }
   }
+  if (half_size) filters = 0;
 }
 
 /* Start of functions copied to dcraw_indi.c (UF) */
@@ -4421,12 +4415,9 @@ void CLASS parse_makernote (int base, int uptag)
       else goto next;
       goto get2_256;
     }
-    if (((tag == 0x1011 && len == 9) || tag == 0x20400200)
-	&& use_camera_matrix) {
+    if ((tag == 0x1011 && len == 9) || tag == 0x20400200)
       for (i=0; i < 3; i++)
-	FORC3 rgb_cam[i][c] = ((short) get2()) / 256.0;
-      raw_color = rgb_cam[0][0] < 0.25;
-    }
+	FORC3 cmatrix[i][c] = ((short) get2()) / 256.0;
     if ((tag == 0x1012 || tag == 0x20400600) && len == 4)
       for (black = i=0; i < 4; i++)
 	black += get2() << 2;
@@ -4526,10 +4517,10 @@ void CLASS romm_coeff (float romm_cam[3][3])
     { -0.008565, -0.153273,  1.161839 } };
   int i, j, k;
 
-  for (raw_color = i=0; i < 3; i++)
+  for (i=0; i < 3; i++)
     for (j=0; j < 3; j++)
-      for (rgb_cam[i][j] = k=0; k < 3; k++)
-	rgb_cam[i][j] += rgb_romm[i][k] * romm_cam[k][j];
+      for (cmatrix[i][j] = k=0; k < 3; k++)
+	cmatrix[i][j] += rgb_romm[i][k] * romm_cam[k][j];
 }
 
 void CLASS parse_mos (int offset)
@@ -4562,7 +4553,12 @@ void CLASS parse_mos (int offset)
       if ((unsigned) i < sizeof mod / sizeof (*mod))
 	strcpy (model, mod[i]);
     }
-    if (!strcmp(data,"CaptProf_color_matrix") && use_camera_matrix) {
+    if (!strcmp(data,"icc_camera_to_tone_matrix")) {
+      for (i=0; i < 9; i++)
+	romm_cam[0][i] = int_to_float(get4());
+      romm_coeff (romm_cam);
+    }
+    if (!strcmp(data,"CaptProf_color_matrix")) {
       for (i=0; i < 9; i++)
 	fscanf (ifp, "%f", &romm_cam[0][i]);
       romm_coeff (romm_cam);
@@ -4794,12 +4790,12 @@ int CLASS parse_tiff_ifd (int base)
 	FORC4 cam_mul[c ^ 1] = 4096.0 / get2();
 	break;
       case 34307:			/* Leaf CatchLight color matrix */
-	if (!use_camera_matrix) break;
 	fread (software, 1, 7, ifp);
 	if (strncmp(software,"MATRIX",6)) break;
 	colors = 4;
 	for (raw_color = i=0; i < 3; i++) {
 	  FORC4 fscanf (ifp, "%f", &rgb_cam[i][c^1]);
+	  if (!use_camera_wb) continue;
 	  num = 0;
 	  FORC4 num += rgb_cam[i][c];
 	  FORC4 rgb_cam[i][c] /= num;
@@ -5415,7 +5411,6 @@ void CLASS parse_phase_one (int base)
     switch (tag) {
       case 0x100:  flip = "0653"[data & 3]-'0';  break;
       case 0x106:
-	if (!use_camera_matrix) break;
 	for (i=0; i < 9; i++)
 	  romm_cam[0][i] = getreal(11);
 	romm_coeff (romm_cam);
@@ -6140,6 +6135,7 @@ void CLASS identify()
   for (i=0; i < 4; i++) {
     cam_mul[i] = i == 1;
     pre_mul[i] = i < 3;
+    FORC3 cmatrix[c][i] = 0;
     FORC3 rgb_cam[c][i] = c == i;
   }
   colors = 3;
@@ -7599,7 +7595,7 @@ int CLASS main (int argc, char **argv)
   static int arg, status=0, user_flip=-1, user_black=-1, user_qual=-1;
   static int timestamp_only=0, thumbnail_only=0, identify_only=0;
   static int use_fuji_rotate=1, write_to_stdout=0, quality, i, c;
-  static char opt, *ofname, *sp, *cp, *dark_frame=0;
+  static char opm, opt, *ofname, *sp, *cp, *dark_frame=0;
   static const char *write_ext;
   static struct utimbuf ut;
   static FILE *ofp = stdout;
@@ -7631,7 +7627,7 @@ int CLASS main (int argc, char **argv)
     puts(_("-a        Average the whole image for white balance"));
     puts(_("-A <x y w h> Average a grey box for white balance"));
     puts(_("-r <r g b g> Set custom white balance"));
-    puts(_("-M        Don't use an embedded color matrix"));
+    puts(_("+M/-M     Use/don't use an embedded color matrix"));
     puts(_("-C <r b>  Correct chromatic aberration"));
     puts(_("-b <num>  Adjust brightness (default = 1.0)"));
     puts(_("-n <num>  Set threshold for wavelet denoising"));
@@ -7657,7 +7653,7 @@ int CLASS main (int argc, char **argv)
     return 1;
   }
   argv[argc] = "";
-  for (arg=1; argv[arg][0] == '-'; ) {
+  for (arg=1; (((opm = argv[arg][0]) - 2) | 2) == '+'; ) {
     opt = argv[arg++][1];
     if ((cp = strchr (sp="nbrktqsHAC", opt)))
       for (i=0; i < "1141111142"[cp-sp]-'0'; i++)
@@ -7698,7 +7694,7 @@ int CLASS main (int argc, char **argv)
       case 'A':  FORC4 greybox[c]  = atoi(argv[arg++]);
       case 'a':  use_auto_wb       = 1;  break;
       case 'w':  use_camera_wb     = 1;  break;
-      case 'M':  use_camera_matrix = 0;  break;
+      case 'M':  use_camera_matrix = (opm == '+');  break;
       case 'D':
       case 'd':  document_mode = 1 + (opt == 'D');
       case 'j':  use_fuji_rotate   = 0;  break;
@@ -7710,6 +7706,8 @@ int CLASS main (int argc, char **argv)
 	return 1;
     }
   }
+  if (use_camera_matrix < 0)
+      use_camera_matrix = use_camera_wb;
   if (arg == argc) {
     dcraw_message (DCRAW_ERROR,_("No files to process.\n")); /*UF*/
     return 1;
@@ -7852,6 +7850,10 @@ int CLASS main (int argc, char **argv)
 next:
       fclose(ifp);
       continue;
+    }
+    if (use_camera_matrix && cmatrix[0][0] > 0.25) {
+      memcpy (rgb_cam, cmatrix, sizeof cmatrix);
+      raw_color = 0;
     }
     image = (ushort (*)[4]) calloc (iheight*iwidth, sizeof *image);
     merror (image, "main()");

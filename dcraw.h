@@ -45,7 +45,7 @@ int half_size, four_color_rgb, document_mode, highlight;
 int verbose, use_auto_wb, use_camera_wb, use_camera_matrix;
 int output_color, output_bps, output_tiff;
 int fuji_layout, fuji_secondary, shot_select;
-float cam_mul[4], pre_mul[4], rgb_cam[3][4];	/* RGB from camera color */
+float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 int histogram[4][0x2000];
 void (DCRaw::*write_thumb)(FILE *), (DCRaw::*write_fun)(FILE *);
 void (DCRaw::*load_raw)(), (DCRaw::*thumb_load_raw)();
