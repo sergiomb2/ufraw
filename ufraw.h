@@ -286,6 +286,7 @@ void developer_prepare(developer_data *d, conf_data *conf,
     DeveloperMode mode);
 void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     guint16 *buf, int count);
+void develop_linear(guint16 in[4], guint16 out[3], developer_data *d);
 
 /* prototype for functions in ufraw_saver.c */
 long ufraw_saver(void *widget, gpointer user_data);

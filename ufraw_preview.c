@@ -46,13 +46,15 @@ const int def_preview_height = 9000;
 #define max_scale 20
 
 enum { pixel_format, percent_format };
+enum { without_zone, with_zone };
 
 char *expanderText[] = { N_("Raw histogram"), N_("Live histogram"), NULL };
 
 typedef struct {
-    GtkLabel *labels[4];
+    GtkLabel *labels[5];
     int num;
     int format;
+    gboolean zonep;                 /* non-zero to display value/zone */
 } colorLabels;
 
 typedef enum { render_default, render_overexposed, render_underexposed
@@ -451,14 +453,18 @@ void load_profile(GtkWidget *widget, long type)
 }
 
 colorLabels *color_labels_new(GtkTable *table, int x, int y, char *label,
-        int format)
+        int format, int zonep, preview_data *data)
 {
     colorLabels *l;
     GtkWidget *lbl;
-    int c, i = 0;
+    int c, i = 0, numlabels;
 
     l = g_new(colorLabels, 1);
     l->format = format;
+    l->zonep = zonep;
+
+    numlabels = (zonep == with_zone ? 5 : 3);
+
     if (label!=NULL){
         lbl = gtk_label_new(label);
         gtk_misc_set_alignment(GTK_MISC(lbl), 1, 0.5);
@@ -466,19 +472,91 @@ colorLabels *color_labels_new(GtkTable *table, int x, int y, char *label,
                 GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
         i++;
     }
-    for (c=0; c<3; c++, i++) {
-        l->labels[c] = GTK_LABEL(gtk_label_new(NULL));
-        gtk_table_attach_defaults(table, GTK_WIDGET(l->labels[c]),
+    /* 0-2 for RGB, 3 for value, 4 for zone */
+    for (c=0; c<numlabels; c++, i++) {
+	l->labels[c] = GTK_LABEL(gtk_label_new(NULL));
+	GtkWidget *event_box = gtk_event_box_new();
+	gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(l->labels[c]));
+	gtk_table_attach_defaults(table, event_box,
                 x+i, x+i+1, y, y+1);
+	if ( c==3 )
+	    gtk_tooltips_set_tip(data->ToolTips, event_box,
+                    _("Luminosity (Y value)"), NULL);
+	if ( c==4 ) 
+	    gtk_tooltips_set_tip(data->ToolTips, event_box,
+                              _("Adams' zone"), NULL);
     }
     return l;
 }
 
-void color_labels_set(colorLabels *l, double data[3])
+/*
+ * XXX This code doesn't belong here.  We probably should be using
+ * something in lcms instead.  The values being processed here should
+ * probably be in the output colorspace (or working?) rather than the
+ * display colorspace that I think they are in.
+ */
+
+extern const double xyz_rgb[3][3];
+
+/*
+ * Convert sRGB pixel value to 0-1 space, intending to reprsent,
+ * absent contrast manipulation and color issues, luminance relative
+ * to an 18% grey card at 0.18.
+ */
+double pixel2value(double pixel)
+{
+    double pl = pixel / 255.0;
+    double r;
+
+    if (pl <= 0.04045)
+	r = pl/12.92;
+    else
+	r = pow((pl + 0.055)/1.055, 2.4);
+    return r;
+}
+
+/*
+ * Convert pixel triplets to aggregate luminance.
+ */
+double pixels2value(double r, double g, double b)
+{
+    double y;
+
+    /* Convert sRGB to Y of XYZ. */
+    y =
+	0.212671 * pixel2value(r) +
+	0.715160 * pixel2value(g) +
+	0.072169 * pixel2value(b);
+
+    return y;
+}
+
+/* Return numeric zone representation from 0-1 luminance value.
+ * Unlike Adams, we use arabic for now. */
+double value2zone(double v)
+{
+    const double zoneV = 0.18;
+    double z_rel_V;
+    double zone;
+
+    /* Convert to value relative to zone V value. */
+    z_rel_V = v / zoneV;
+
+    /* Convert to log-based value, with zone V 0. */
+    zone = log(z_rel_V)/log(2.0);
+
+    /* Move zone 5 to the proper place. */
+    zone += 5.0;
+
+    return zone;
+}
+
+void color_labels_set(colorLabels *l, double data[])
 {
     int c;
     char buf1[max_name], buf2[max_name];
-    const char *colorName[] = {"red", "green", "blue"};
+    /* Value black, zone purple, for no good reason. */
+    const char *colorName[] = {"red", "green", "blue", "black", "purple"};
 
     for (c=0; c<3; c++) {
         switch (l->format) {
@@ -495,6 +573,27 @@ void color_labels_set(colorLabels *l, double data[3])
                 colorName[c], buf1);
         gtk_label_set_markup(l->labels[c], buf2);
     }
+    /* If value/zone not requested, just return now. */
+    if (l->zonep == without_zone)
+	return;
+
+    /* Value */
+    c = 3;
+    snprintf(buf2, max_name, "<span foreground='%s'>%0.3f</span>",
+	    colorName[c], data[3]);
+    gtk_label_set_markup(l->labels[c], buf2);
+
+    /* Zone */
+    c = 4;
+    /* 2 decimal places may be excessive */
+    snprintf(buf2, max_name, "<span foreground='%s'>%0.2f</span>",
+	    colorName[c], data[4]);
+    gtk_label_set_markup(l->labels[c], buf2);
+#if 0
+    double value = pixels2value(data[0], data[1], data[2]);
+    double zone = value2zone(value);
+    printf("%0.3f %0.2f\n", value, zone);
+#endif
 }
 
 #ifdef HAVE_GTKIMAGEVIEW
@@ -911,36 +1010,51 @@ gboolean render_live_histogram(preview_data *data)
 gboolean render_spot(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
-    guint8 *pixies;
-    int width, height, rowstride;
-    int c, y, x;
-    int spotStartX, spotStartY, spotSizeX, spotSizeY;
-    double rgb[3];
-    char tmp[max_name];
 
     data->RenderPhase = render_finished;
     if (data->SpotX1<0) return FALSE;
-    width = data->UF->Images[ufraw_final_phase].width;
-    height = data->UF->Images[ufraw_final_phase].height;
-    rowstride = data->UF->Images[ufraw_final_phase].rowstride;
-    pixies = data->UF->Images[ufraw_final_phase].buffer;
-    for (c=0; c<3; c++) rgb[c] = 0;
+    int width = data->UF->Images[ufraw_final_phase].width;
+    int height = data->UF->Images[ufraw_final_phase].height;
+    int outDepth = data->UF->Images[ufraw_final_phase].depth;
+    void *outBuffer = data->UF->Images[ufraw_final_phase].buffer;
+    int rawDepth = data->UF->Images[ufraw_first_phase].depth;
+    void *rawBuffer = data->UF->Images[ufraw_first_phase].buffer;
+    /* We assume that first_phase and final_phase buffer sizes are the same. */
     /* Scale image coordinates to Images[ufraw_final_phase] coordinates */
-    spotSizeY = abs(data->SpotY1 - data->SpotY2)
+    int spotSizeY = abs(data->SpotY1 - data->SpotY2)
 	    * height / data->UF->predictedHeight + 1;
-    spotStartY = MIN(data->SpotY1, data->SpotY2)
+    int spotStartY = MIN(data->SpotY1, data->SpotY2)
 	    *height / data->UF->predictedHeight;
-    spotSizeX = abs(data->SpotX1 - data->SpotX2)
+    int spotSizeX = abs(data->SpotX1 - data->SpotX2)
 	    * width / data->UF->predictedWidth + 1;
-    spotStartX = MIN(data->SpotX1, data->SpotX2)
+    int spotStartX = MIN(data->SpotX1, data->SpotX2)
 	    * width / data->UF->predictedWidth;
-    for (y=0; y<spotSizeY; y++) {
-        for (x=0; x<spotSizeX; x++)
+    guint64 rawSum[4], outSum[3];
+    int c, y, x;
+    for (c=0; c<3; c++) rawSum[c] = outSum[c] = 0;
+    for (y=spotStartY; y<spotStartY+spotSizeY; y++) {
+        for (x=spotStartX; x<spotStartX+spotSizeX; x++) {
+	    guint16 *rawPixie = rawBuffer + (y*width + x)*rawDepth;
+            for (c=0; c<data->UF->colors; c++)
+		rawSum[c] += rawPixie[c];
+	    guint8 *outPixie = outBuffer + (y*width + x)*outDepth;
             for (c=0; c<3; c++)
-		rgb[c] += pixies[(spotStartY+y)*rowstride+(spotStartX+x)*3+c];
+		outSum[c] += outPixie[c];
+	}
     }
-    for (c=0; c<3; c++) rgb[c] /= spotSizeX * spotSizeY;
+    double rgb[5];
+    for (c=0; c<3; c++) rgb[c] = outSum[c] / (spotSizeX * spotSizeY);
+    guint16 rawChannels[4], linearChannels[3];
+    for (c=0; c<3; c++) rawChannels[c] = rawSum[c] / (spotSizeX * spotSizeY);
+    develop_linear(rawChannels, linearChannels, Developer);
+    double yValue = 0.5;
+    for (c=0; c<3; c++)
+        yValue += xyz_rgb[1][c] * linearChannels[c];
+    yValue /= 0xFFFF;
+    rgb[3] = yValue;
+    rgb[4] = value2zone(yValue);
     color_labels_set(data->SpotLabels, rgb);
+    char tmp[max_name];
     snprintf(tmp, max_name, "<span background='#%02X%02X%02X'>"
 	    "                    </span>",
 	    (int)rgb[0], (int)rgb[1], (int)rgb[2]);
@@ -1134,12 +1248,12 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
 
     for (c=0; c<4; c++) rgb[c] = 0;
     for (y=spotStartY; y<spotStartY+spotSizeY; y++)
-        for (x=spotStartX; x<spotStartX+spotSizeX; x++)
-            for (c=0; c<data->UF->colors; c++) {
-		guint16 *pixie = (guint16*)(image->buffer +
-			(y*image->width + x)*image->depth);
+        for (x=spotStartX; x<spotStartX+spotSizeX; x++) {
+	    guint16 *pixie = (guint16*)(image->buffer +
+		    (y*image->width + x)*image->depth);
+            for (c=0; c<data->UF->colors; c++)
                 rgb[c] += pixie[c];
-	    }
+	}
     for (c=0; c<4; c++) rgb[c] = MAX(rgb[c], 1);
     for (c=0; c<data->UF->colors; c++)
         CFG->chanMul[c] = (double)spotSizeX * spotSizeY * data->UF->rgbMax
@@ -2325,7 +2439,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
     data->SpotLabels = color_labels_new(table, 0, 1,
-	    _("Spot values:"), pixel_format);
+	    _("Spot values:"), pixel_format, with_zone, data);
     data->SpotPatch = GTK_LABEL(gtk_label_new(NULL));
     gtk_table_attach_defaults(table, GTK_WIDGET(data->SpotPatch), 6, 7, 1, 2);
 
@@ -3094,11 +3208,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     i = 2;
     data->AvrLabels = color_labels_new(table, 0, i++, _("Average:"),
-	    pixel_format);
+	    pixel_format, without_zone, data);
     data->DevLabels = color_labels_new(table, 0, i++, _("Std. deviation:"),
-            pixel_format);
+            pixel_format, without_zone, data);
     data->OverLabels = color_labels_new(table, 0, i,
-	    _("Overexposed:"), percent_format);
+	    _("Overexposed:"), percent_format, without_zone, data);
     toggle_button(table, 4, i, NULL, &CFG->overExp);
     button = gtk_button_new_with_label(_("Indicate"));
     gtk_table_attach(table, button, 6, 7, i, i+1,
@@ -3109,7 +3223,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(render_preview_callback), (void *)render_default);
     i++;
     data->UnderLabels = color_labels_new(table, 0, i, _("Underexposed:"),
-            percent_format);
+            percent_format, without_zone, data);
     toggle_button(table, 4, i, NULL, &CFG->underExp);
     button = gtk_button_new_with_label(_("Indicate"));
     gtk_table_attach(table, button, 6, 7, i, i+1,

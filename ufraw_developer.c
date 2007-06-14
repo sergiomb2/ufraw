@@ -490,129 +490,136 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     guint16 *buf, int count)
 {
     guint8 *p8 = po;
-    guint16 *p16 = po, c, cc;
-    gint64 tmp, tmppix[4];
+    guint16 *p16 = po, c, tmppix[3];
     int i;
-    gboolean clipped;
     for (i=0; i<count; i++) {
-	clipped = FALSE;
-	for (c=0; c<d->colors; c++) {
-	    /* Set WB, normalizing tmppix[c]<0x10000 */
-	    tmppix[c] = (guint64)pix[i*4+c] * d->rgbWB[c] / 0x10000;
-	    if ( d->restoreDetails!=clip_details &&
-		 tmppix[c] > d->max ) {
-		clipped = TRUE;
-	    } else {
-		tmppix[c] = MIN(tmppix[c], d->max);
-	    }
-	    /* We are counting on the fact that film_highlights
-	     * and !clip_highlights cannot be set simultaneously. */
-	    if ( d->clipHighlights==film_highlights )
-		tmppix[c] = tmppix[c] * 0x10000 / d->max;
-	    else
-		tmppix[c] = tmppix[c] * d->exposure / d->max;
-	}
-	if ( clipped ) {
-	    /* At this point a value of d->exposure in tmppix[c] corresponds
-	     * to "1.0" (full exposure). Still the maximal value can be
-	     * d->exposure * 0x10000 / d->max */
-	    gint64 unclippedPix[3], clippedPix[3];
-	    if ( d->useMatrix ) {
-		for (cc=0; cc<3; cc++) {
-		    for (c=0, tmp=0; c<d->colors; c++)
-			tmp += tmppix[c] * d->colorMatrix[cc][c];
-		    unclippedPix[cc] = tmp/0x10000;
-		}
-	    } else {
-		for (c=0; c<3; c++) unclippedPix[c] = tmppix[c];
-	    }
-	    for (c=0; c<3; c++) tmppix[c] = MIN(tmppix[c], d->exposure);
-	    if ( d->useMatrix ) {
-		for (cc=0; cc<3; cc++) {
-		    for (c=0, tmp=0; c<d->colors; c++)
-			tmp += tmppix[c] * d->colorMatrix[cc][c];
-		    clippedPix[cc] = tmp/0x10000;
-		}
-	    } else {
-		for (c=0; c<3; c++) clippedPix[c] = tmppix[c];
-	    }
-	    if ( d->restoreDetails==restore_lch_details ) {
-		float lch[3], clippedLch[3], unclippedLch[3];
-		rgb_to_cielch(unclippedPix, unclippedLch);
-		rgb_to_cielch(clippedPix, clippedLch);
-		//lch[0] = clippedLch[0] + (unclippedLch[0]-clippedLch[0]) * x;
-		lch[0] = unclippedLch[0];
-		lch[1] = clippedLch[1];
-		lch[2] = clippedLch[2];
-		cielch_to_rgb(lch, tmppix);
-	    } else { /* restore_hsv_details */
-		int maxc, midc, minc;
-		MaxMidMin(unclippedPix, &maxc, &midc, &minc);
-		gint64 unclippedLum = unclippedPix[maxc];
-		gint64 clippedLum = clippedPix[maxc];
-		/*gint64 unclippedSat;
-		if ( unclippedPix[maxc]==0 )
-		    unclippedSat = 0;
-		else
-		    unclippedSat = 0x10000 -
-			    unclippedPix[minc] * 0x10000 / unclippedPix[maxc];*/
-		gint64 clippedSat;
-		if ( clippedPix[maxc]<clippedPix[minc] || clippedPix[maxc]==0 )
-		    clippedSat = 0;
-		else
-		    clippedSat = 0x10000 -
-			    clippedPix[minc] * 0x10000 / clippedPix[maxc];
-		gint64 clippedHue;
-		if ( clippedPix[maxc]==clippedPix[minc] ) clippedHue = 0;
-		else clippedHue =
-			(clippedPix[midc]-clippedPix[minc])*0x10000 /
-			(clippedPix[maxc]-clippedPix[minc]);
-		gint64 unclippedHue;
-		if ( unclippedPix[maxc]==unclippedPix[minc] )
-		    unclippedHue = clippedHue;
-		else
-		    unclippedHue =
-			(unclippedPix[midc]-unclippedPix[minc])*0x10000 /
-			(unclippedPix[maxc]-unclippedPix[minc]);
-		/* Here we decide how to mix the clipped and unclipped values.
-		 * The general equation is clipped + (unclipped - clipped) * x,
-		 * where x is between 0 and 1. */
-		/* For lum we set x=1/2. Thus hightlights are not too bright. */
-		gint64 lum = clippedLum + (unclippedLum - clippedLum) * 1/2;
-		/* For sat we should set x=0 to prevent color artifacts. */
-		//gint64 sat = clippedSat + (unclippedSat - clippedSat) * 0/1 ;
-		gint64 sat = clippedSat;
-		/* For hue we set x=1. This doesn't seem to have much effect. */
-		gint64 hue = unclippedHue;
-
-		tmppix[maxc] = lum;
-		tmppix[minc] = lum * (0x10000-sat) / 0x10000;
-		tmppix[midc] = lum * (0x10000-sat + sat*hue/0x10000) / 0x10000;
-	    }
-	} else { /* !clipped */
-	    if (d->useMatrix) {
-		gint64 tmp[3];
-		for (cc=0; cc<3; cc++) {
-		    for (c=0, tmp[cc]=0; c<d->colors; c++)
-			tmp[cc] += tmppix[c] * d->colorMatrix[cc][c];
-		}
-		for (c=0; c<3; c++) tmppix[c] = tmp[c]/0x10000;
-	    }
-	    gint64 max = tmppix[0];
-	    for (c=1; c<3; c++) max = MAX(tmppix[c], max);
-	    if (max > 0xFFFF) {
-		gint64 unclippedLum = max;
-		gint64 clippedLum = 0xFFFF;
-		gint64 lum = clippedLum + (unclippedLum - clippedLum) * 1/4;
-		for (c=0; c<3; c++) tmppix[c] = tmppix[c] * lum / max;
-	    }
-	}
+	develop_linear(pix+i*4, tmppix, d);
 	for (c=0; c<3; c++)
-	    buf[i*3+c] = d->gammaCurve[MIN(MAX(tmppix[c], 0), 0xFFFF)];
+	    buf[i*3+c] = d->gammaCurve[tmppix[c]];
     }
     if (d->colorTransform!=NULL)
         cmsDoTransform(d->colorTransform, buf, buf, count);
 
     if (mode==16) for (i=0; i<3*count; i++) p16[i] = buf[i];
     else for (i=0; i<3*count; i++) p8[i] = buf[i] >> 8;
+}
+
+void develop_linear(guint16 in[4], guint16 out[3], developer_data *d)
+{
+    unsigned c, cc;
+    gint64 tmppix[4], tmp;
+    gboolean clipped = FALSE;
+    for (c=0; c<d->colors; c++) {
+	/* Set WB, normalizing tmppix[c]<0x10000 */
+	tmppix[c] = (guint64)in[c] * d->rgbWB[c] / 0x10000;
+	if ( d->restoreDetails!=clip_details &&
+	    tmppix[c] > d->max ) {
+	    clipped = TRUE;
+	} else {
+	    tmppix[c] = MIN(tmppix[c], d->max);
+	}
+	/* We are counting on the fact that film_highlights
+	 * and !clip_highlights cannot be set simultaneously. */
+	if ( d->clipHighlights==film_highlights )
+	    tmppix[c] = tmppix[c] * 0x10000 / d->max;
+	else
+	    tmppix[c] = tmppix[c] * d->exposure / d->max;
+    }
+    if ( clipped ) {
+	/* At this point a value of d->exposure in tmppix[c] corresponds
+	 * to "1.0" (full exposure). Still the maximal value can be
+	 * d->exposure * 0x10000 / d->max */
+	gint64 unclippedPix[3], clippedPix[3];
+	if ( d->useMatrix ) {
+	    for (cc=0; cc<3; cc++) {
+		for (c=0, tmp=0; c<d->colors; c++)
+		    tmp += tmppix[c] * d->colorMatrix[cc][c];
+		unclippedPix[cc] = MAX(tmp/0x10000, 0);
+	    }
+	} else {
+	    for (c=0; c<3; c++) unclippedPix[c] = tmppix[c];
+	}
+	for (c=0; c<3; c++) tmppix[c] = MIN(tmppix[c], d->exposure);
+	if ( d->useMatrix ) {
+	    for (cc=0; cc<3; cc++) {
+		for (c=0, tmp=0; c<d->colors; c++)
+		    tmp += tmppix[c] * d->colorMatrix[cc][c];
+		clippedPix[cc] = MAX(tmp/0x10000, 0);
+	    }
+	} else {
+	    for (c=0; c<3; c++) clippedPix[c] = tmppix[c];
+	}
+	if ( d->restoreDetails==restore_lch_details ) {
+	    float lch[3], clippedLch[3], unclippedLch[3];
+	    rgb_to_cielch(unclippedPix, unclippedLch);
+	    rgb_to_cielch(clippedPix, clippedLch);
+	    //lch[0] = clippedLch[0] + (unclippedLch[0]-clippedLch[0]) * x;
+	    lch[0] = unclippedLch[0];
+	    lch[1] = clippedLch[1];
+	    lch[2] = clippedLch[2];
+	    cielch_to_rgb(lch, tmppix);
+	} else { /* restore_hsv_details */
+	    int maxc, midc, minc;
+	    MaxMidMin(unclippedPix, &maxc, &midc, &minc);
+	    gint64 unclippedLum = unclippedPix[maxc];
+	    gint64 clippedLum = clippedPix[maxc];
+	    /*gint64 unclippedSat;
+	    if ( unclippedPix[maxc]==0 )
+	        unclippedSat = 0;
+	    else
+	        unclippedSat = 0x10000 -
+			unclippedPix[minc] * 0x10000 / unclippedPix[maxc];*/
+	    gint64 clippedSat;
+	    if ( clippedPix[maxc]<clippedPix[minc] || clippedPix[maxc]==0 )
+		clippedSat = 0;
+	    else
+		clippedSat = 0x10000 -
+			clippedPix[minc] * 0x10000 / clippedPix[maxc];
+	    gint64 clippedHue;
+	    if ( clippedPix[maxc]==clippedPix[minc] ) clippedHue = 0;
+	    else clippedHue =
+		    (clippedPix[midc]-clippedPix[minc])*0x10000 /
+		    (clippedPix[maxc]-clippedPix[minc]);
+	    gint64 unclippedHue;
+	    if ( unclippedPix[maxc]==unclippedPix[minc] )
+		unclippedHue = clippedHue;
+	    else
+		unclippedHue =
+		    (unclippedPix[midc]-unclippedPix[minc])*0x10000 /
+		    (unclippedPix[maxc]-unclippedPix[minc]);
+	    /* Here we decide how to mix the clipped and unclipped values.
+	     * The general equation is clipped + (unclipped - clipped) * x,
+	     * where x is between 0 and 1. */
+	    /* For lum we set x=1/2. Thus hightlights are not too bright. */
+	    gint64 lum = clippedLum + (unclippedLum - clippedLum) * 1/2;
+	    /* For sat we should set x=0 to prevent color artifacts. */
+	    //gint64 sat = clippedSat + (unclippedSat - clippedSat) * 0/1 ;
+	    gint64 sat = clippedSat;
+	    /* For hue we set x=1. This doesn't seem to have much effect. */
+	    gint64 hue = unclippedHue;
+
+	    tmppix[maxc] = lum;
+	    tmppix[minc] = lum * (0x10000-sat) / 0x10000;
+	    tmppix[midc] = lum * (0x10000-sat + sat*hue/0x10000) / 0x10000;
+	}
+    } else { /* !clipped */
+	if (d->useMatrix) {
+	    gint64 tmp[3];
+	    for (cc=0; cc<3; cc++) {
+		for (c=0, tmp[cc]=0; c<d->colors; c++)
+		    tmp[cc] += tmppix[c] * d->colorMatrix[cc][c];
+	    }
+	    for (c=0; c<3; c++) tmppix[c] = MAX(tmp[c]/0x10000, 0);
+	}
+	gint64 max = tmppix[0];
+	for (c=1; c<3; c++) max = MAX(tmppix[c], max);
+	if (max > 0xFFFF) {
+	    gint64 unclippedLum = max;
+	    gint64 clippedLum = 0xFFFF;
+	    gint64 lum = clippedLum + (unclippedLum - clippedLum) * 1/4;
+	    for (c=0; c<3; c++) tmppix[c] = tmppix[c] * lum / max;
+	}
+    }
+    for (c=0; c<3; c++)
+	out[c] = MIN(MAX(tmppix[c], 0), 0xFFFF);
 }
