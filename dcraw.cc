@@ -867,7 +867,7 @@ void CLASS ljpeg_row (int jrow, struct jhead *jh)
     for (c=0; c < jh->clrs; c++) {
       diff = ljpeg_diff (jh->huff[c]);
       *outp = diff = col ? outp[-jh->clrs]+diff : (jh->vpred[c] += diff);
-      if (diff >> jh->bits) derror();
+      if ((ushort) diff >> jh->bits) derror();
       outp++;
     }
 }

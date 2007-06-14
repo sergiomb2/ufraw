@@ -476,6 +476,8 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     /* (dcraw also forbids AHD for Fuji rotated images) */
     if (interpolation==dcraw_ahd_interpolation && h->colors > 3)
 	interpolation = dcraw_vng_interpolation;
+    if (interpolation==dcraw_ppg_interpolation && h->colors > 3)
+	interpolation = dcraw_vng_interpolation;
     f4 = h->fourColorFilters;
     if (h->colors==3) rgbWB[3] = rgbWB[1];
     for(r=0; r<h->height; r++)

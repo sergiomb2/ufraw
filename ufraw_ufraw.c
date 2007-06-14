@@ -333,6 +333,7 @@ ufraw_data *ufraw_open(char *filename)
         uf->predictedHeight = uf->predictedWidth;
         uf->predictedWidth = tmp;
     }
+    uf->HaveFilters = raw->filters!=0;
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
         uf->predictedWidth, uf->predictedHeight, raw->toneCurveSize);
  
@@ -581,6 +582,7 @@ int ufraw_load_raw(ufraw_data *uf)
 	return ufraw_read_embedded(uf);
     }
     if ( (status=dcraw_load_raw(raw))!=DCRAW_SUCCESS ) {
+	ufraw_message(UFRAW_SET_LOG, raw->message);
         ufraw_message(status, raw->message);
         if (status!=DCRAW_WARNING) return status;
     }
@@ -669,13 +671,13 @@ int ufraw_convert_image_init(ufraw_data *uf)
          ( uf->conf->size==0 && uf->conf->shrink>1 ) ||
          ( uf->conf->size>0 &&
 	   uf->conf->size<=MAX(raw->raw.height, raw->raw.width) ) ||
-	 ( raw->filters==0 ) ) {
+	 !uf->HaveFilters ) {
 	if (uf->conf->size==0 && uf->conf->shrink>1 &&
 		(int)(uf->conf->shrink*raw->pixel_aspect)%2==0)
 	    uf->ConvertShrink = uf->conf->shrink * raw->pixel_aspect;
 	else if (uf->conf->interpolation==half_interpolation)
 	    uf->ConvertShrink = 2;
-	else if (raw->filters!=0)
+	else if ( uf->HaveFilters)
 	    uf->ConvertShrink = 2;
     }
     return UFRAW_SUCCESS;
@@ -707,7 +709,7 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
     dcraw_data *raw = uf->raw;
     dcraw_image_data final;
 
-    if (uf->ConvertShrink>1 || raw->filters==0) {
+    if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
         dcraw_finalize_shrink(&final, raw, uf->ConvertShrink);
 
         uf->image.height = final.height;

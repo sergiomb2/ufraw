@@ -70,6 +70,10 @@ typedef struct {
     double initialChanMul[4];
     int raw_his[raw_his_size][4];
     GList *WBPresets; /* List of WB presets in WBCombo*/
+    /* Map from interpolation combobox index to real values */
+    int InterpolationTable[num_interpolations];
+    /* combobox index */
+    int Interpolation;
     GdkPixbuf *PreviewPixbuf;
     GdkCursor *SpotCursor;
     /* Remember the Gtk Widgets that we need to access later */
@@ -705,7 +709,7 @@ gboolean render_raw_histogram(preview_data *data)
      * Use a small value to avoid highlights and then normalize. */
     for (c=0; c<colors; c++) {
 	for (cl=0; cl<colors; cl++) p16[cl] = 0;
-	p16[c] = Developer->max * 0x010000 / Developer->rgbWB[c] *
+	p16[c] = Developer->max * 0x01000 / Developer->rgbWB[c] *
 		0x10000 / Developer->exposure; 
         develope(pen[c], p16, Developer, 8, pixtmp, 1);
 	guint8 max=1;
@@ -1690,7 +1694,9 @@ void combo_update(GtkWidget *combo, gint *valuep)
     } else if ((char *)valuep==CFG->wb) {
         ufraw_set_wb(data->UF);
     }
-    if (valuep!=&CFG->interpolation) {
+    if ( valuep==&data->Interpolation ) {
+	CFG->interpolation = data->InterpolationTable[data->Interpolation];
+    } else {
 	if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
 	if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
         update_scales(data);
@@ -2505,17 +2511,43 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    _("Bayer pattern interpolation"), NULL);
     gtk_table_attach(table, event_box, 0, 1, 0, 1, 0, 0, 0, 0);
     combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    gtk_combo_box_append_text(combo, _("AHD interpolation"));
-    gtk_combo_box_append_text(combo, _("VNG interpolation"));
-    gtk_combo_box_append_text(combo, _("VNG four color interpolation"));
-    gtk_combo_box_append_text(combo, _("PPG interpolation"));
-    gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
-    if (plugin) {
-        gtk_combo_box_append_text(combo, _("Half-size interpolation"));
+    data->Interpolation = 0;
+    if ( data->UF->HaveFilters ) {
+	int i = 0;
+	if ( data->UF->colors==4 ) {
+	    gtk_combo_box_append_text(combo, _("VNG four color interpolation"));
+	    data->InterpolationTable[i++] = four_color_interpolation;
+	    gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
+	    data->InterpolationTable[i++] = bilinear_interpolation;
+	} else {
+	    gtk_combo_box_append_text(combo, _("AHD interpolation"));
+	    data->InterpolationTable[i++] = ahd_interpolation;
+	    gtk_combo_box_append_text(combo, _("VNG interpolation"));
+	    data->InterpolationTable[i++] = vng_interpolation;
+	    gtk_combo_box_append_text(combo, _("VNG four color interpolation"));
+	    data->InterpolationTable[i++] = four_color_interpolation;
+	    gtk_combo_box_append_text(combo, _("PPG interpolation"));
+	    data->InterpolationTable[i++] = ppg_interpolation;
+	    gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
+	    data->InterpolationTable[i++] = bilinear_interpolation;
+	}
+	if ( plugin ) {
+	    gtk_combo_box_append_text(combo, _("Half-size interpolation"));
+	    data->InterpolationTable[i++] = half_interpolation;
+	}
+	for (i--; i>=0; i--)
+	    if ( data->InterpolationTable[i]==CFG->interpolation )
+		data->Interpolation = i;
+	/* Make sure that CFG->interpolation is set to a valid one */
+	CFG->interpolation = data->InterpolationTable[data->Interpolation];
+	gtk_combo_box_set_active(combo, data->Interpolation);
+	g_signal_connect(G_OBJECT(combo), "changed",
+		G_CALLBACK(combo_update), &data->Interpolation);
+    } else {
+	gtk_combo_box_append_text(combo, _("No Bayer pattern"));
+	gtk_combo_box_set_active(combo, 0);
+	gtk_widget_set_sensitive(GTK_WIDGET(combo), FALSE);
     }
-    gtk_combo_box_set_active(combo, CFG->interpolation);
-    g_signal_connect(G_OBJECT(combo), "changed",
-            G_CALLBACK(combo_update), &CFG->interpolation);
     gtk_table_attach(table, GTK_WIDGET(combo), 1, 2, 0, 1,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 //    gtk_box_pack_start(box, GTK_WIDGET(combo), FALSE, FALSE, 0);

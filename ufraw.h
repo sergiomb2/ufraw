@@ -42,7 +42,8 @@ enum { linear_histogram, log_histogram };
 /* The following enum should match the dcraw_interpolation enum
  * in dcraw_api.h. */
 enum { ahd_interpolation, vng_interpolation, four_color_interpolation,
-       ppg_interpolation, bilinear_interpolation, half_interpolation };
+       ppg_interpolation, bilinear_interpolation, half_interpolation,
+       num_interpolations };
 extern const char *interpolationNames[];
 enum { no_id, also_id, only_id };
 enum { manual_curve, linear_curve, custom_curve, camera_curve };
@@ -201,6 +202,7 @@ typedef struct ufraw_struct {
     image_data image;
     image_data thumb;
     void *raw;
+    gboolean HaveFilters;
     void *unzippedBuf;
     unsigned unzippedBufLen;
     developer_data *developer;
