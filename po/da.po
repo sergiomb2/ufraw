@@ -971,7 +971,6 @@ msgid "Half-size interpolation"
 msgstr "Halvstørrelseinterpolation"
 
 #: ufraw_preview.c:2547
-#, fuzzy
 msgid "No Bayer pattern"
 msgstr "Intet Bayermønster"
 
