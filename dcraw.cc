@@ -15,8 +15,8 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.385 $
-   $Date: 2007/06/13 06:40:04 $
+   $Revision: 1.386 $
+   $Date: 2007/06/13 22:42:15 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -3588,8 +3588,7 @@ skip_block: ;
     image[0][i] = CLIP(val);
   }
   if ((aber[0] != 1 || aber[2] != 1) && colors == 3) {
-    if (verbose)
-      fprintf (stderr,_("Correcting chromatic aberration...\n"));
+    dcraw_message (DCRAW_VERBOSE,_("Correcting chromatic aberration...\n")); /*UF*/
     for (c=0; c < 4; c+=2) {
       if (aber[c] == 1) continue;
       img = (ushort *) malloc (size * sizeof *img);
