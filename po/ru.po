@@ -8,10 +8,9 @@ msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-06-14 16:15+0200\n"
-"PO-Revision-Date: 2007-02-24 00:17+0300\n"
-"Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net."
-"by>\n"
-"Language-Team: Russian <gnome-cyr@gnome.org>\n"
+"PO-Revision-Date: 2007-06-15 12:26+0300\n"
+"Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-"
+"net>Language-Team: Russian <gnome-cyr@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -341,6 +340,9 @@ msgid ""
 "--wavelet-denoising-threshold=THRESHOLD\n"
 "                      Wavelet denoising threshold (default 0.0).\n"
 msgstr ""
+"--wavelet-denoising-threshold=THRESHOLD\n"
+"                      Порог вейвлетного подавления шумов (по умолчанию "
+"0.0).\n"
 
 #: ufraw_conf.c:1230
 msgid ""
@@ -362,12 +364,11 @@ msgstr ""
 "(по умолчанию = 0).\n"
 
 #: ufraw_conf.c:1234
-#, fuzzy
 msgid ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"
 msgstr ""
-"--interpolation=ahd|vng|four-color|bilinear\n"
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Используемый алгоритм интерполяции (по умолчанию "
 "используется ahd).\n"
 
@@ -668,7 +669,7 @@ msgstr "Невозможно создать новое изображение."
 #. Create the "background" layer to hold the image...
 #: ufraw-gimp.c:314
 msgid "Background"
-msgstr ""
+msgstr "Фон"
 
 #: ufraw-gimp.c:337
 msgid "Loading image"
@@ -798,9 +799,8 @@ msgid "Output color profiles"
 msgstr "Цветовые профили вывода"
 
 #: ufraw_preview.c:1838
-#, fuzzy
 msgid "Display color profiles"
-msgstr "Цветовые профили ввода"
+msgstr "Цветовые профили монитора"
 
 #: ufraw_preview.c:1839
 msgid "Base Curves"
@@ -926,7 +926,6 @@ msgstr "Сбросить значение экспозиции до исходн
 
 #. Start of White Balance setting page
 #: ufraw_preview.c:2377
-#, fuzzy
 msgid "White balance"
 msgstr "Баланс белого"
 
@@ -994,34 +993,31 @@ msgid "VNG interpolation"
 msgstr "Интерполяция VNG"
 
 #: ufraw_preview.c:2529 ufraw_saver.c:259
-#, fuzzy
 msgid "PPG interpolation"
-msgstr "Интерполяция VNG"
+msgstr "Интерполяция PPG"
 
 #: ufraw_preview.c:2535
 msgid "Half-size interpolation"
 msgstr "Интерполяция половины размера"
 
 #: ufraw_preview.c:2547
-#, fuzzy
 msgid "No Bayer pattern"
-msgstr "Интерполяция Баейеровской структуры"
+msgstr "Без баейеровской структуры"
 
 #. gtk_box_pack_start(box, GTK_WIDGET(combo), FALSE, FALSE, 0);
 #: ufraw_preview.c:2555
 msgid "Threshold"
-msgstr ""
+msgstr "Порог"
 
 #: ufraw_preview.c:2557
 msgid "Threshold for wavelet denoising"
-msgstr ""
+msgstr "Порог для вейвлетного подавления шума"
 
 #. End of White Balance setting page
 #. Start of Base Curve page
 #: ufraw_preview.c:2561
-#, fuzzy
 msgid "Base curve"
-msgstr "Базовые кривые"
+msgstr "Базовая кривая"
 
 #: ufraw_preview.c:2594
 msgid "Load base curve"
@@ -1039,21 +1035,19 @@ msgstr "Сбросить базовую кривую до исходной"
 #. Start of Color management page
 #: ufraw_preview.c:2630
 msgid "Color management"
-msgstr ""
+msgstr "Управление цветом"
 
 #: ufraw_preview.c:2643
-#, fuzzy
 msgid "Input ICC profile"
-msgstr "Профиль ввода"
+msgstr "ICC-профиль устройства ввода"
 
 #: ufraw_preview.c:2644
-#, fuzzy
 msgid "Output ICC profile"
-msgstr "Профиль вывода"
+msgstr "ICC-профиль устройства вывода"
 
 #: ufraw_preview.c:2645
 msgid "Display ICC profile"
-msgstr ""
+msgstr "ICC-профиль монитора"
 
 #: ufraw_preview.c:2669
 msgid "Use color matrix"
@@ -1084,9 +1078,8 @@ msgid "Reset linearity to default"
 msgstr "Сбросить значение линейности до исходного"
 
 #: ufraw_preview.c:2704
-#, fuzzy
 msgid "Output intent"
-msgstr "Параметры вывода"
+msgstr "Цветопередача вывода"
 
 #: ufraw_preview.c:2707 ufraw_preview.c:2719
 msgid "Perceptual"
@@ -1107,17 +1100,17 @@ msgstr "Абс. колориметрическая"
 
 #: ufraw_preview.c:2716
 msgid "Display intent"
-msgstr ""
+msgstr "Цветопередача монитора"
 
 #: ufraw_preview.c:2723
 msgid "Disable soft proofing"
-msgstr ""
+msgstr "Отключить экранную цветопробу"
 
 #. End of Color management page
 #. Start of Corrections page
 #: ufraw_preview.c:2731
 msgid "Correct luminosity, saturation"
-msgstr ""
+msgstr "Изменить освещенность, насыщенность"
 
 #: ufraw_preview.c:2742
 msgid "Reset saturation to default"
@@ -1161,22 +1154,21 @@ msgstr "Масштаб %"
 #. Start of Orientation page
 #: ufraw_preview.c:2876
 msgid "Orientation"
-msgstr ""
+msgstr "Ориентация"
 
 #: ufraw_preview.c:2881
 msgid "Rotate:"
-msgstr ""
+msgstr "Повернуть:"
 
 #: ufraw_preview.c:2898
-#, fuzzy
 msgid "Flip:"
-msgstr "вырезаны"
+msgstr "Отразить:"
 
 #. End of Orientation page
 #. Start of EXIF page
 #: ufraw_preview.c:2917
 msgid "EXIF"
-msgstr ""
+msgstr "EXIF"
 
 #: ufraw_preview.c:2935
 #, c-format
