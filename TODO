@@ -1,32 +1,45 @@
+$Id: TODO,v 1.27 2007/06/17 00:32:18 lexort Exp $
+
+These items are not ordered or prioritized, but are roughly grouped by
+kind of change.
+
 For the next release
 ====================
 
 For the future
 ==============
-* Add the UFRaw parameters used to the Exif data.
-* Curve corrections per channel.
-* Crop.
-* Spot query - mark on histograms.
-* Multi spot query (when pressing the control key).
-* Show camera overexposures.
+* Master reset button to set all adjustments to default.
 * Help (based on the webpage).
+
 * Calculate width of the dialog control column
   and set raw histogram to that width.
 * Add a "Send to GIMP" option in the stand-alone tool.
 
-* Leaf embedded profiles
-* fuji sqrt(0.5) factor in size
-* Canon 10D presets from ExifTool
-* g_fopen - UTF-8
+* Curve corrections per channel.
+* Crop.
+* Show camera overexposures.
+
+* Add the UFRaw parameters used to the Exif data in saved images.
+* Display "exposure value" in Exif (Av, Tv, and also with ISO).
+* Display scene zones and scene luminance (raw data with input profile
+  but no other adjustments.
+* Display "developed raw zone", which is zone relative to the working
+  colorspace after all adjustments but before the output profile.
+
+* Spot query - mark on histograms.
+* Multi spot query (when pressing the control key).
 * Show WB spot/area values in HSV (in addition to output colorspace pixels).
 * Show WB spot/area values in Adam's exposure zones.
-* Master reset button to set all adjustments to default.
-
 * Add the ability to save a spot measurement, and then to adjust WB to
   make a new measurement match the old.  Usage is shooting a whitish
   wall with a white card, doing WB to card, saving wall, and then later
   adjusting wall to wall's color, e.g. for actual shots with no white
   card.
+
+* Leaf embedded profiles
+* fuji sqrt(0.5) factor in size
+* Canon 10D presets from ExifTool
+* g_fopen - UTF-8
 
 * Add the ability to have groups of saved values, perhaps one for flash
   and one not, so one can save 2 color temperatures and exposure
