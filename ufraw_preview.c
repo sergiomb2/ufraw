@@ -89,6 +89,7 @@ typedef struct {
     GtkButton *AutoCurveButton;
     GtkWidget *ResetWBButton, *ResetGammaButton, *ResetLinearButton;
     GtkWidget *ResetExposureButton, *ResetSaturationButton;
+    GtkWidget *ResetThresholdButton;
     GtkWidget *ResetBlackButton, *ResetBaseCurveButton, *ResetCurveButton;
     GtkWidget *UseMatrixButton;
     GtkTooltips *ToolTips;
@@ -101,6 +102,7 @@ typedef struct {
     GtkAdjustment *GammaAdjustment;
     GtkAdjustment *LinearAdjustment;
     GtkAdjustment *ExposureAdjustment;
+    GtkAdjustment *ThresholdAdjustment;
     GtkAdjustment *SaturationAdjustment;
     GtkAdjustment *ZoomAdjustment;
     long (*SaveFunc)();
@@ -1148,6 +1150,7 @@ void update_scales(preview_data *data)
     gtk_adjustment_set_value(data->TemperatureAdjustment, CFG->temperature);
     gtk_adjustment_set_value(data->GreenAdjustment, CFG->green);
     gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
+    gtk_adjustment_set_value(data->ThresholdAdjustment, CFG->threshold);
     gtk_adjustment_set_value(data->SaturationAdjustment, CFG->saturation);
     gtk_adjustment_set_value(data->GammaAdjustment,
             CFG->profile[0][CFG->profileIndex[0]].gamma);
@@ -1184,6 +1187,8 @@ void update_scales(preview_data *data)
 		- CFG->profile[0][CFG->profileIndex[0]].linear) > 0.001);
     gtk_widget_set_sensitive(data->ResetExposureButton,
 	    fabs( conf_default.exposure - CFG->exposure) > 0.001);
+    gtk_widget_set_sensitive(data->ResetThresholdButton,
+	    fabs( conf_default.threshold - CFG->threshold) > 1);
     gtk_widget_set_sensitive(data->ResetSaturationButton,
 	    fabs( conf_default.saturation - CFG->saturation) > 0.001);
     gtk_widget_set_sensitive(data->ResetBaseCurveButton,
@@ -1426,6 +1431,27 @@ void zoom_out_event(GtkWidget *widget, gpointer user_data)
     render_preview(data, render_all);
 }
 
+#ifdef HAVE_GTKIMAGEVIEW
+void zoom_fit_event(GtkWidget *widget, gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    user_data = user_data;
+    if (data->FreezeDialog) return;
+    GtkWidget *preview =
+	gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_IMAGE_SCROLL_WIN);
+    int previewWidth = preview->allocation.width;
+    int previewHeight = preview->allocation.height;
+    double wScale = (double)data->UF->predictedWidth / previewWidth;
+    double hScale = (double)data->UF->predictedHeight / previewHeight;
+    CFG->Zoom = 100/MAX(wScale, hScale);
+    CFG->Scale = 0;
+
+    create_base_image(data);
+    gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+    render_preview(data, render_all);
+}
+#endif
+
 void flip_image(GtkWidget *widget, int flip)
 {
     preview_data *data = get_preview_data(widget);
@@ -1509,6 +1535,9 @@ void button_update(GtkWidget *button, gpointer user_data)
     if (button==data->ResetExposureButton) {
 	CFG->exposure = conf_default.exposure;
 	CFG->autoExposure = FALSE;
+    }
+    if (button==data->ResetThresholdButton) {
+	CFG->threshold = conf_default.threshold;
     }
     if (button==data->ResetSaturationButton) {
 	CFG->saturation = conf_default.saturation;
@@ -2666,9 +2695,94 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 //    gtk_box_pack_start(box, GTK_WIDGET(combo), FALSE, FALSE, 0);
 
-    adjustment_scale(table, 0, 2, _("Threshold"),
+    /* Denoising is temporeraly in the WB page */
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+    data->ThresholdAdjustment = adjustment_scale(table, 0, 0, _("Threshold"),
 	    CFG->threshold, &CFG->threshold, 0.0, 1000.0, 10, 50, 0,
 	    _("Threshold for wavelet denoising"));
+    data->ResetThresholdButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetThresholdButton),
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, data->ResetExposureButton,
+	    _("Reset denoise threshold to default"), NULL);
+    gtk_table_attach(table, data->ResetThresholdButton, 7, 8, 0, 1, 0,0,0,0);
+    g_signal_connect(G_OBJECT(data->ResetThresholdButton), "clicked",
+            G_CALLBACK(button_update), NULL);
+
+    /* Orientation is temporeraly in the WB page */
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+
+    label = gtk_label_new(_("Orientation:"));
+    gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                "object-rotate-right", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+		     G_CALLBACK(flip_image), (gpointer)6);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                "object-rotate-left", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+		     G_CALLBACK(flip_image), (gpointer)5);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                "object-flip-horizontal", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+		     G_CALLBACK(flip_image), (gpointer)1);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                "object-flip-vertical", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_table_attach(table, button, 4, 5, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+		     G_CALLBACK(flip_image), (gpointer)2);
+    /* End of Orientation controls */
+
+    /* Without GtkImageView, zoom controls cannot be bellow the image because
+     * if the image is zoomed in too much the controls will be out of
+     * the screen and it would be impossible to zoom out again. */
+#ifndef HAVE_GTKIMAGEVIEW
+    // Zoom controls:
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+    label = gtk_label_new(_("Zoom:"));
+    gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
+ 
+    // Zoom out button:
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                GTK_STOCK_ZOOM_OUT, GTK_ICON_SIZE_BUTTON));
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(zoom_out_event), NULL);
+    gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
+
+    // Zoom percentage spin button:
+    data->ZoomAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
+		CFG->Zoom, 5, 50, 1, 1, 0));
+    g_object_set_data(G_OBJECT(data->ZoomAdjustment),
+		"Adjustment-Accuracy", (gpointer)0);
+    button = gtk_spin_button_new(data->ZoomAdjustment, 1, 0);
+    g_object_set_data(G_OBJECT(data->ZoomAdjustment), "Parent-Widget", button);
+    g_signal_connect(G_OBJECT(data->ZoomAdjustment), "value-changed",
+		G_CALLBACK(adjustment_update), &CFG->Zoom);
+    gtk_tooltips_set_tip(data->ToolTips, button,
+	    _("Zoom percentage"), NULL);
+    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
+
+    // Zoom in button:
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                GTK_STOCK_ZOOM_IN, GTK_ICON_SIZE_BUTTON));
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(zoom_in_event), NULL);
+    gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
+#endif // !HAVE_GTKIMAGEVIEW
+
     /* End of White Balance setting page */
 
     /* Start of Base Curve page */
@@ -2954,79 +3068,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(button_update), NULL);
     /* End of Corrections page */
 
-    /* Start of Zoom page */
-    page = notebook_page_new(notebook, _("Zoom"), NULL, NULL);
-
-    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
-
-    label = gtk_label_new(_("Zoom %"));
-    gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
-    data->ZoomAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
-		CFG->Zoom, 5, 50, 1, 1, 0));
-    g_object_set_data(G_OBJECT(data->ZoomAdjustment),
-		"Adjustment-Accuracy", (gpointer)0);
-    button = gtk_spin_button_new(data->ZoomAdjustment, 1, 0);
-    g_object_set_data(G_OBJECT(data->ZoomAdjustment), "Parent-Widget", button);
-    gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(data->ZoomAdjustment), "value-changed",
-		G_CALLBACK(adjustment_update), &CFG->Zoom);
-    // Zoom in button:
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                GTK_STOCK_ZOOM_IN, GTK_ICON_SIZE_BUTTON));
-    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(zoom_in_event), NULL);
-    // Zoom out button:
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                GTK_STOCK_ZOOM_OUT, GTK_ICON_SIZE_BUTTON));
-    gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(zoom_out_event), NULL);
-    /* End of Zoom page */
-
-    /* Start of Orientation page */
-    page = notebook_page_new(notebook, _("Orientation"),
-			     NULL, data->ToolTips);
-
-    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
-
-    label = gtk_label_new(_("Rotate:"));
-    gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
-
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                "object-rotate-right", GTK_ICON_SIZE_LARGE_TOOLBAR));
-    gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(flip_image), (gpointer)6);
-
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                "object-rotate-left", GTK_ICON_SIZE_LARGE_TOOLBAR));
-    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(flip_image), (gpointer)5);
-
-    label = gtk_label_new(_("Flip:"));
-    gtk_table_attach(table, label, 0, 1, 1, 2, 0, 0, 0, 0);
-
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                "object-flip-horizontal", GTK_ICON_SIZE_LARGE_TOOLBAR));
-    gtk_table_attach(table, button, 1, 2, 1, 2, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(flip_image), (gpointer)1);
-
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                "object-flip-vertical", GTK_ICON_SIZE_LARGE_TOOLBAR));
-    gtk_table_attach(table, button, 2, 3, 1, 2, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(flip_image), (gpointer)2);
-    /* End of Orientation page */
-
     /* Start of EXIF page */
     page = notebook_page_new(notebook, _("EXIF"), NULL, NULL);
 
@@ -3282,11 +3323,54 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(data->ProgressBar),
 	    FALSE, FALSE, 0);
 
-    /* Options button */
-    align = gtk_alignment_new(0.99, 0.5, 0, 1);
-    gtk_box_pack_start(GTK_BOX(vBox), align, FALSE, FALSE, 6);
+    /* Control buttons at the bottom */
+    GtkBox *ControlsBox = GTK_BOX(gtk_hbox_new(FALSE, 6));
+    gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(ControlsBox), FALSE, FALSE, 6);
+    // Zoom controls:
+    GtkBox *ZoomBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    gtk_box_pack_start(ControlsBox, GTK_WIDGET(ZoomBox), TRUE, FALSE, 0);
+#ifdef HAVE_GTKIMAGEVIEW
+    // Zoom out button:
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                GTK_STOCK_ZOOM_OUT, GTK_ICON_SIZE_BUTTON));
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(zoom_out_event), NULL);
+    gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
+
+    // Zoom percentage spin button:
+    data->ZoomAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
+		CFG->Zoom, 5, 50, 1, 1, 0));
+    g_object_set_data(G_OBJECT(data->ZoomAdjustment),
+		"Adjustment-Accuracy", (gpointer)0);
+    button = gtk_spin_button_new(data->ZoomAdjustment, 1, 0);
+    g_object_set_data(G_OBJECT(data->ZoomAdjustment), "Parent-Widget", button);
+    g_signal_connect(G_OBJECT(data->ZoomAdjustment), "value-changed",
+		G_CALLBACK(adjustment_update), &CFG->Zoom);
+    gtk_tooltips_set_tip(data->ToolTips, button,
+	    _("Zoom percentage"), NULL);
+    gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
+
+    // Zoom in button:
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                GTK_STOCK_ZOOM_IN, GTK_ICON_SIZE_BUTTON));
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(zoom_in_event), NULL);
+    gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
+
+    // Zoom fit button:
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                GTK_STOCK_ZOOM_FIT, GTK_ICON_SIZE_BUTTON));
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(zoom_fit_event), NULL);
+    gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
+#endif // HAVE_GTKIMAGEVIEW
+
     box = GTK_BOX(gtk_hbox_new(TRUE, 6));
-    gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(box));
+    gtk_box_pack_start(GTK_BOX(ControlsBox), GTK_WIDGET(box), FALSE, FALSE, 0);
+    /* Options button */
     button = gtk_button_new();
     hbox = GTK_BOX(gtk_hbox_new(FALSE, 6));
     gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(hbox));
@@ -3297,10 +3381,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(options_dialog), previewWindow);
     gtk_box_pack_start(box, button, TRUE, TRUE, 0);
+
+    // Cancel button:
     button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(window_response), (gpointer)GTK_RESPONSE_CANCEL);
     gtk_box_pack_start(box, button, TRUE, TRUE, 0);
+
     if (plugin) {
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_OK);
         gtk_box_pack_start(box, saveButton, TRUE, TRUE, 0);
