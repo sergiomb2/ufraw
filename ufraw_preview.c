@@ -1053,6 +1053,8 @@ gboolean render_spot(preview_data *data)
     for (c=0; c<3; c++)
         yValue += xyz_rgb[1][c] * linearChannels[c];
     yValue /= 0xFFFF;
+    if ( Developer->clipHighlights==film_highlights )
+	yValue *= (double)Developer->exposure/0x10000;
     rgb[3] = yValue;
     rgb[4] = value2zone(yValue);
     color_labels_set(data->SpotLabels, rgb);
