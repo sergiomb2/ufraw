@@ -92,8 +92,6 @@ typedef unsigned long long UINT64;
 /* All definitions of global variables are defined inside a class in dcraw.h */
 #include "dcraw.h"
 
-double aber[4]={1,1,1,1};
-unsigned greybox[4] = { 0, 0, UINT_MAX, UINT_MAX };
 #ifdef DCRAW_NOMAIN
 extern
 #endif
@@ -117,12 +115,12 @@ const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
 CLASS DCRaw()
 {
-bright=1, threshold=0;
-half_size=0, four_color_rgb=0, document_mode=0, highlight=0;
+aber[0] = aber[1] = aber[2] = aber[3] = 1;
+bright=1, user_mul[0] = user_mul[1] = user_mul[2] = user_mul[3] = 0;
+threshold=0, half_size=0, four_color_rgb=0, document_mode=0, highlight=0;
 verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_matrix=-1;
-output_color=1, output_bps=8, output_tiff=0;
-shot_select=0;
-user_mul[0] = user_mul[1] = user_mul[2] = user_mul[3] = 0;
+output_color=1, output_bps=8, output_tiff=0, shot_select=0;
+greybox[0] = greybox[1] = 0, greybox[2] = greybox[3] = UINT_MAX;
 tone_curve_size = 0, tone_curve_offset = 0; /* Nikon Tone Curves UF*/
 messageBuffer = NULL;
 lastStatus = DCRAW_SUCCESS;
