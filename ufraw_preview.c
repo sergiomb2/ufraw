@@ -2337,6 +2337,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->FreezeDialog = TRUE;
 
     data->ToolTips = gtk_tooltips_new();
+#if GTK_CHECK_VERSION(2,10,0)
+    g_object_ref_sink(GTK_OBJECT(data->ToolTips));
+#else
+    g_object_ref(data->ToolTips);
+    gtk_object_sink(GTK_OBJECT(data->ToolTips));
+#endif
     previewWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
     char *utf8_filename = g_filename_to_utf8(uf->filename,
@@ -3459,7 +3465,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             (GtkCallback)(expander_state), NULL);
     ufraw_focus(previewWindow, FALSE);
     gtk_widget_destroy(previewWindow);
-    gtk_object_sink(GTK_OBJECT(data->ToolTips));
     gdk_cursor_unref(data->SpotCursor);
     /* Make sure that there are no preview idle task remaining */
     g_idle_remove_by_data(data);

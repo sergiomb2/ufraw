@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.78 2007/06/06 15:33:16 udifuchs Exp $
+dnl $Id: configure.ac,v 1.79 2007/06/22 23:04:52 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -106,7 +106,7 @@ AC_SUBST(CINEPAINT_PROGRAMPLUGINDIR)
 # Disable deprecated functions on tested versions of GTK
 # unless using an old gimp-dev package.
 if $PKG_CONFIG --atleast-version=2.2 gimpui-2.0; then
-  if $PKG_CONFIG --max-version=2.8.12 gtk+-2.0; then
+  if $PKG_CONFIG --max-version=2.10.99 gtk+-2.0; then
     AC_DEFINE(G_DISABLE_DEPRECATED, [], disable deprecated glib features)
     AC_DEFINE(GDK_DISABLE_DEPRECATED, [], disable deprecated gdk features)
     AC_DEFINE(GTK_DISABLE_DEPRECATED, [], disable deprecated gtk+ features)
@@ -151,7 +151,7 @@ AC_CHECK_HEADER(tiffio.h,
   AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
 have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
 
-PKG_CHECK_MODULES(EXIV2, exiv2,
+PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
   [ have_exiv2=yes
     AC_DEFINE(HAVE_EXIV2, 1, have exiv2) ],
   [ have_exiv2=no

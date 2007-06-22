@@ -241,6 +241,12 @@ long ufraw_saver(void *widget, gpointer user_data)
     g_free(base);
 
     GtkTooltips *tips = gtk_tooltips_new();
+#if GTK_CHECK_VERSION(2,10,0)
+    g_object_ref_sink(GTK_OBJECT(tips));
+#else
+    g_object_ref(tips);
+    gtk_object_sink(GTK_OBJECT(tips));
+#endif
 
     expander = gtk_expander_new(_("Output options"));
     gtk_expander_set_expanded(GTK_EXPANDER(expander), TRUE);
@@ -422,7 +428,6 @@ long ufraw_saver(void *widget, gpointer user_data)
 	if (status==GTK_RESPONSE_CANCEL) {
 	    ufraw_focus(fileChooser, FALSE);
 	    gtk_widget_destroy(GTK_WIDGET(fileChooser));
-	    gtk_object_sink(GTK_OBJECT(tips));
 	    return UFRAW_CANCEL;
 	}
 	/* GTK_RESPONSE_OK - save file */
@@ -461,7 +466,6 @@ long ufraw_saver(void *widget, gpointer user_data)
 	if (status==UFRAW_SUCCESS) {
 	    ufraw_focus(fileChooser, FALSE);
 	    gtk_widget_destroy(GTK_WIDGET(fileChooser));
-	    gtk_object_sink(GTK_OBJECT(tips));
 	    return UFRAW_SUCCESS;
 	}
     }

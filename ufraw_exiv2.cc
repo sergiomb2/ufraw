@@ -133,10 +133,7 @@ try {
        	str << *pos;
 	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey(
-		    // Group name changed in exiv2-0.11
-		    EXIV2_CHECK_VERSION(0,11,0) ?
-			"Exif.CanonSi.ISOSpeed" :
-			"Exif.CanonCs2.ISOSpeed"))) != exifData.end() ) {
+			"Exif.CanonSi.ISOSpeed"))) != exifData.end() ) {
 	std::stringstream str;
        	str << *pos;
 	g_strlcpy(uf->conf->isoText, str.str().c_str(), max_name);
