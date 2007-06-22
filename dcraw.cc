@@ -527,7 +527,7 @@ void CLASS canon_a5_load_raw()
       if (vbits < 10)
 	buf = (vbits += 16, (buf << 16) + *dp++);
       pixel = buf >> (vbits -= 10) & 0x3ff;
-      if (row >= 0 && row < height && col >= 0 && col < width)
+      if ((unsigned) row < height && (unsigned) col < width)
 	BAYER(row,col) = pixel;
       else if (col > 1-left_margin && col != width)
 	black += (bc++,pixel);
@@ -896,8 +896,8 @@ void CLASS lossless_jpeg_load_raw()
       }
       if (raw_width == 3984 && (col -= 2) < 0)
 	col += (row--,raw_width);
-      if (row-top_margin >= 0 && row-top_margin < height) {
-	if (col-left_margin >= 0 && col-left_margin < width) {
+      if ((unsigned) (row-top_margin) < height) {
+	if ((unsigned) (col-left_margin) < width) {
 	  BAYER(row-top_margin,col-left_margin) = val;
 	  if (min > val) min = val;
 	} else black += val;
@@ -1044,7 +1044,7 @@ void CLASS nikon_compressed_load_raw()
 	hpred[col] = vpred[row & 1][col] += diff;
       else
 	hpred[col & 1] += diff;
-      if (col-left_margin < 0 || col-left_margin >= width) continue;
+      if ((unsigned) (col-left_margin) >= width) continue;
       if (hpred[col & 1] >= csize) derror();
       else BAYER(row,col-left_margin) = curve[hpred[col & 1]];
     }
@@ -1068,7 +1068,7 @@ void CLASS nikon_load_raw()
     }
     for (col=0; col < raw_width; col++) {
       i = getbits(12);
-      if (col-left_margin >= 0 && col-left_margin < width)
+      if ((unsigned) (col-left_margin) < width)
 	BAYER(row,col-left_margin) = i;
       if (tiff_compress == 34713 && (col % 10) == 9)
 	if (getbits(8)) derror();
@@ -1577,7 +1577,7 @@ void CLASS phase_one_load_raw_c()
       if (ph1.format == 5 && pixel[col] < 256)
 	pixel[col] = curve[pixel[col]];
     }
-    if (row-top_margin >= 0 && row-top_margin < height)
+    if ((unsigned) (row-top_margin) < height)
       for (col=0; col < width; col++) {
 	i = (pixel[col+left_margin] << 2)
 		- ph1.black + black[row][col >= ph1.split_col];
@@ -2149,7 +2149,7 @@ void CLASS eight_bit_load_raw()
     if ((int)fread (pixel, 1, raw_width, ifp) < raw_width) derror();
     for (col=0; col < raw_width; col++) {
       val = curve[pixel[col]];
-      if (col-left_margin >= 0 && col-left_margin < width)
+      if ((unsigned) (col-left_margin) < width)
         BAYER(row,col-left_margin) = val;
       else lblack += val;
     }
@@ -2201,7 +2201,7 @@ void CLASS kodak_262_load_raw()
       pixel[pi] = val = pred + ljpeg_diff (decode[chess]);
       if (val >> 8) derror();
       val = curve[pixel[pi++]];
-      if (col-left_margin >= 0 && col-left_margin < width)
+      if ((unsigned) (col-left_margin) < width)
 	BAYER(row,col-left_margin) = val;
       else black += val;
     }
@@ -3218,12 +3218,12 @@ void CLASS bad_pixels()
     cp = strchr (line, '#');
     if (cp) *cp = 0;
     if (sscanf (line, "%d %d %d", &col, &row, &time) != 3) continue;
-    if (col >= width || row >= height) continue;
+    if ((unsigned) col >= width || (unsigned) row >= height) continue;
     if (time > timestamp) continue;
     for (tot=n=0, rad=1; rad < 3 && n==0; rad++)
       for (r = row-rad; r <= row+rad; r++)
 	for (c = col-rad; c <= col+rad; c++)
-	  if (r >= 0 && r < height && c >= 0 && c < width &&
+	  if ((unsigned) r < height && (unsigned) c < width &&
 		(r != row || c != col) && fc(r,c) == fc(row,col)) {
 	    tot += BAYER2(r,c);
 	    n++;
