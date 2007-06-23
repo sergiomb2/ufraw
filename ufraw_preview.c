@@ -1396,7 +1396,8 @@ void create_base_image(preview_data *data)
 void zoom_in_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    user_data = user_data;
+    const double prev_zoom = CFG->Zoom;
+    (void)user_data;
     if (data->FreezeDialog) return;
     if (CFG->Scale==0) {
 	if (CFG->Zoom<100.0/max_scale) CFG->Zoom = 100.0/max_scale;
@@ -1408,15 +1409,18 @@ void zoom_in_event(GtkWidget *widget, gpointer user_data)
     if (CFG->Scale<min_scale) CFG->Scale = min_scale;
     if (CFG->Scale>max_scale) CFG->Scale = max_scale;
     CFG->Zoom = 100.0/CFG->Scale;
-    create_base_image(data);
-    gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
-    render_preview(data, render_all);
+    if (prev_zoom != CFG->Zoom) {
+	create_base_image(data);
+	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+	render_preview(data, render_all);
+    }
 }
 
 void zoom_out_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    user_data = user_data;
+    const double prev_zoom = CFG->Zoom;
+    (void)user_data;
     if (data->FreezeDialog) return;
     if (CFG->Scale==0) {
 	if (CFG->Zoom<100.0/max_scale) CFG->Zoom = 100.0/max_scale;
@@ -1428,16 +1432,19 @@ void zoom_out_event(GtkWidget *widget, gpointer user_data)
     if (CFG->Scale<min_scale) CFG->Scale = min_scale;
     if (CFG->Scale>max_scale) CFG->Scale = max_scale;
     CFG->Zoom = 100.0/CFG->Scale;
-    create_base_image(data);
-    gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
-    render_preview(data, render_all);
+    if (prev_zoom != CFG->Zoom) {
+	create_base_image(data);
+	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+	render_preview(data, render_all);
+    }
 }
 
 #ifdef HAVE_GTKIMAGEVIEW
 void zoom_fit_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    user_data = user_data;
+    const double prev_zoom = CFG->Zoom;
+    (void)user_data;
     if (data->FreezeDialog) return;
     GtkWidget *preview =
 	gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_IMAGE_SCROLL_WIN);
@@ -1447,10 +1454,11 @@ void zoom_fit_event(GtkWidget *widget, gpointer user_data)
     double hScale = (double)data->UF->predictedHeight / previewHeight;
     CFG->Zoom = 100/MAX(wScale, hScale);
     CFG->Scale = 0;
-
-    create_base_image(data);
-    gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
-    render_preview(data, render_all);
+    if (prev_zoom != CFG->Zoom) {
+	create_base_image(data);
+	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+	render_preview(data, render_all);
+    }
 }
 #endif
 
