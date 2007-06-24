@@ -1462,6 +1462,21 @@ void zoom_fit_event(GtkWidget *widget, gpointer user_data)
 }
 #endif
 
+void zoom_max_event(GtkWidget *widget, gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    const double prev_zoom = CFG->Zoom;
+    (void)user_data;
+    if (data->FreezeDialog) return;
+    CFG->Scale = min_scale;
+    CFG->Zoom = 100.0/CFG->Scale;
+    if (prev_zoom != CFG->Zoom) {
+	create_base_image(data);
+	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+	render_preview(data, render_all);
+    }
+}
+
 void flip_image(GtkWidget *widget, int flip)
 {
     preview_data *data = get_preview_data(widget);
@@ -3381,6 +3396,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
                 GTK_STOCK_ZOOM_FIT, GTK_ICON_SIZE_BUTTON));
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(zoom_fit_event), NULL);
+    gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
+
+    // Zoom max button:
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                GTK_STOCK_ZOOM_100, GTK_ICON_SIZE_BUTTON));
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(zoom_max_event), NULL);
     gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
 #endif // HAVE_GTKIMAGEVIEW
 
