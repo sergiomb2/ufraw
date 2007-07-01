@@ -2837,7 +2837,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->ResetThresholdButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetThresholdButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, data->ResetExposureButton,
+    gtk_tooltips_set_tip(data->ToolTips, data->ResetThresholdButton,
 	    _("Reset denoise threshold to default"), NULL);
     gtk_table_attach(table, data->ResetThresholdButton, 7, 8, 0, 1, 0,0,0,0);
     g_signal_connect(G_OBJECT(data->ResetThresholdButton), "clicked",
