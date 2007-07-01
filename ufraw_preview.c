@@ -3018,18 +3018,20 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
         g_signal_connect(G_OBJECT(data->ProfileCombo[j]), "changed",
                 G_CALLBACK(combo_update), &CFG->profileIndex[j]);
         gtk_table_attach(table, GTK_WIDGET(data->ProfileCombo[j]),
-                1, 7, 4*j+1, 4*j+2, GTK_FILL, GTK_FILL, 0, 0);
+                1, 8, 4*j+1, 4*j+2, GTK_FILL, GTK_FILL, 0, 0);
         button = gtk_button_new();
         gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
                 GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
-        gtk_table_attach(table, button, 7, 8, 4*j+1, 4*j+2,
+        gtk_table_attach(table, button, 8, 9, 4*j+1, 4*j+2,
                 GTK_SHRINK, GTK_FILL, 0, 0);
         g_signal_connect(G_OBJECT(button), "clicked",
                 G_CALLBACK(load_profile), (void *)j);
     }
     data->UseMatrixButton = gtk_check_button_new_with_label(
 	    _("Use color matrix"));
-    gtk_table_attach(table, data->UseMatrixButton, 0, 4, 2, 3, 0, 0, 0, 0);
+    align = gtk_alignment_new(0, 0, 0, 0);
+    gtk_container_add(GTK_CONTAINER(align), data->UseMatrixButton);
+    gtk_table_attach(table, align, 1, 8, 2, 3, GTK_EXPAND|GTK_FILL, 0, 0, 0);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->UseMatrixButton),
 	    data->UF->useMatrix);
     g_signal_connect(G_OBJECT(data->UseMatrixButton), "toggled",
@@ -3037,7 +3039,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     if (data->UF->raw_color || data->UF->colors==4)
 	gtk_widget_set_sensitive(data->UseMatrixButton, FALSE);
 
-    data->GammaAdjustment = adjustment_scale(table, 0, 3, _("Gamma"),
+    data->GammaAdjustment = adjustment_scale(table, 1, 3, _("Gamma"),
             CFG->profile[0][CFG->profileIndex[0]].gamma,
             &CFG->profile[0][0].gamma, 0.1, 1.0, 0.01, 0.05, 2,
             _("Gamma correction for the input profile"));
@@ -3046,11 +3048,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, data->ResetGammaButton,
 	    _("Reset gamma to default"), NULL);
-    gtk_table_attach(table, data->ResetGammaButton, 7, 8, 3, 4, 0, 0, 0, 0);
+    gtk_table_attach(table, data->ResetGammaButton, 8, 9, 3, 4, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetGammaButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
-    data->LinearAdjustment = adjustment_scale(table, 0, 4, _("Linearity"),
+    data->LinearAdjustment = adjustment_scale(table, 1, 4, _("Linearity"),
             CFG->profile[0][CFG->profileIndex[0]].linear,
             &CFG->profile[0][0].linear, 0.0, 1.0, 0.01, 0.05, 2,
             _("Linear part of the gamma correction"));
@@ -3059,7 +3061,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_tooltips_set_tip(data->ToolTips, data->ResetLinearButton,
 	    _("Reset linearity to default"), NULL);
-    gtk_table_attach(table, data->ResetLinearButton, 7, 8, 4, 5, 0, 0, 0, 0);
+    gtk_table_attach(table, data->ResetLinearButton, 8, 9, 4, 5, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->ResetLinearButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
@@ -3073,7 +3075,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_combo_box_set_active(GTK_COMBO_BOX(combo), CFG->intent[out_profile]);
     g_signal_connect(G_OBJECT(combo), "changed",
             G_CALLBACK(combo_update), &CFG->intent[out_profile]);
-    gtk_table_attach(table, GTK_WIDGET(combo), 3, 7, 6, 7, GTK_FILL, 0, 0, 0);
+    gtk_table_attach(table, GTK_WIDGET(combo), 3, 8, 6, 7, GTK_FILL, 0, 0, 0);
 
     label = gtk_label_new(_("Display intent"));
     gtk_table_attach(table, label, 0, 3, 10, 11, 0, 0, 0, 0);
@@ -3086,7 +3088,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_combo_box_set_active(GTK_COMBO_BOX(combo),CFG->intent[display_profile]);
     g_signal_connect(G_OBJECT(combo), "changed",
             G_CALLBACK(combo_update), &CFG->intent[display_profile]);
-    gtk_table_attach(table, GTK_WIDGET(combo), 3, 7, 10, 11, GTK_FILL, 0, 0, 0);
+    gtk_table_attach(table, GTK_WIDGET(combo), 3, 8, 10, 11, GTK_FILL, 0, 0, 0);
     /* End of Color management page */
 
     /* Start of Corrections page */
@@ -3632,6 +3634,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	gtk_tooltips_set_tip(data->ToolTips, saveButton, text, NULL);
 	g_free(text);
 
+	/* All buttons except SAVE_AS are fixed width */
+	box = GTK_BOX(gtk_hbox_new(TRUE, 6));
+	gtk_box_pack_start(GTK_BOX(ControlsBox), GTK_WIDGET(box),
+		FALSE, FALSE, 0);
 	saveAsButton = gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
         gtk_box_pack_start(box, saveAsButton, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(saveAsButton), "clicked",
