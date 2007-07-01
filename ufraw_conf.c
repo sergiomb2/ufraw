@@ -71,6 +71,7 @@ const conf_data conf_default = {
     { 0, 0, 0 }, /* intent */
     ahd_interpolation, /* interpolation */
     "", NULL, /* darkframeFile, darkframe */
+    -1, -1, -1, -1, /* Crop X1,Y1,X2,Y2 */
     /* Save options */
     "", "", "", /* inputFilename, outputFilename, outputPath */
     "", "", /* inputURI, inputModTime */
@@ -535,6 +536,8 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
 	g_free(utf8);
     }
     if (!strcmp("Orientation", element)) sscanf(temp, "%d", &c->orientation);
+    if (!strcmp("Crop", element)) sscanf(temp, "%d %d %d %d",
+	    &c->CropX1, &c->CropY1, &c->CropX2, &c->CropY2);
     if (!strcmp("Shrink", element)) sscanf(temp, "%d", &c->shrink);
     if (!strcmp("Size", element)) sscanf(temp, "%d", &c->size);
     if (!strcmp("OutputType", element)) sscanf(temp, "%d", &c->type);
@@ -909,6 +912,9 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     if (c->intent[display_profile]!=conf_default.intent[display_profile])
         buf = uf_markup_buf(buf, "<DisplayIntent>%s</DisplayIntent>\n",
 		conf_get_name(intentNames, c->intent[display_profile]));
+    if (c->CropX1>0 || c->CropY1>0 || c->CropX2>0 || c->CropY2>0)
+        buf = uf_markup_buf(buf, "<Crop>%d %d %d %d</Crop>\n",
+		c->CropX1, c->CropY1, c->CropX2, c->CropY2);
     /* We always write the Make and Mode information
      * to know if the WB setting is relevant */
     buf = uf_markup_buf(buf, "<Make>%s</Make>\n", c->make);
@@ -984,6 +990,10 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     g_strlcpy(dst->make, src->make, max_name);
     g_strlcpy(dst->model, src->model, max_name);
     dst->orientation = src->orientation;
+    dst->CropX1 = src->CropX1;
+    dst->CropY1 = src->CropY1;
+    dst->CropX2 = src->CropX2;
+    dst->CropY2 = src->CropY2;
     dst->threshold = src->threshold;
     dst->exposure = src->exposure;
     dst->ExposureNorm = src->ExposureNorm;

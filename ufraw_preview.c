@@ -78,6 +78,7 @@ typedef struct {
     int Interpolation;
     GdkPixbuf *PreviewPixbuf;
     GdkCursor *SpotCursor;
+    GdkCursor *CropCursor;
     /* Remember the Gtk Widgets that we need to access later */
     GtkWidget *Controls, *PreviewWidget, *RawHisto, *LiveHisto;
     GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
@@ -94,6 +95,10 @@ typedef struct {
     GtkWidget *UseMatrixButton;
     GtkTooltips *ToolTips;
     GtkProgressBar *ProgressBar;
+    GtkSpinButton *CropX1Spin;
+    GtkSpinButton *CropY1Spin;
+    GtkSpinButton *CropX2Spin;
+    GtkSpinButton *CropY2Spin;
     /* We need the adjustments for update_scale() */
     GtkAdjustment *WBTuningAdjustment;
     GtkAdjustment *TemperatureAdjustment;
@@ -104,6 +109,10 @@ typedef struct {
     GtkAdjustment *ExposureAdjustment;
     GtkAdjustment *ThresholdAdjustment;
     GtkAdjustment *SaturationAdjustment;
+    GtkAdjustment *CropX1Adjustment;
+    GtkAdjustment *CropY1Adjustment;
+    GtkAdjustment *CropX2Adjustment;
+    GtkAdjustment *CropY2Adjustment;
     GtkAdjustment *ZoomAdjustment;
     long (*SaveFunc)();
     RenderModeType RenderMode;
@@ -1393,6 +1402,66 @@ void create_base_image(preview_data *data)
     data->fromPhase = ufraw_denoise_phase;
 }
 
+void update_crop_ranges(preview_data *data)
+{
+    int CropX1 = CFG->CropX1;
+    int CropY1 = CFG->CropY1;
+    int CropX2 = CFG->CropX2;
+    int CropY2 = CFG->CropY2;
+
+    gtk_spin_button_set_range(data->CropX1Spin, 0, CropX2-1);
+    gtk_spin_button_set_range(data->CropY1Spin, 0, CropY2-1);
+    gtk_spin_button_set_range(data->CropX2Spin,
+	CropX1+1, data->UF->predictedWidth);
+    gtk_spin_button_set_range(data->CropY2Spin,
+	CropY1+1, data->UF->predictedHeight);
+
+    gtk_adjustment_set_value(data->CropX1Adjustment, CropX1);
+    gtk_adjustment_set_value(data->CropY1Adjustment, CropY1);
+    gtk_adjustment_set_value(data->CropX2Adjustment, CropX2);
+    gtk_adjustment_set_value(data->CropY2Adjustment, CropY2);
+}
+
+void crop_event(GtkWidget *widget, gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    user_data = user_data;
+
+    if (data->FreezeDialog) return;
+    if (data->SpotX1 < 0) return;
+
+    if (data->SpotX1 < data->SpotX2) {
+	CFG->CropX1 = data->SpotX1;
+	CFG->CropX2 = data->SpotX2;
+    } else {
+	CFG->CropX1 = data->SpotX2;
+	CFG->CropX2 = data->SpotX1;
+    }
+
+    if (data->SpotY1 < data->SpotY2) {
+	CFG->CropY1 = data->SpotY1;
+	CFG->CropY2 = data->SpotY2;
+    } else {
+	CFG->CropY1 = data->SpotY2;
+	CFG->CropY2 = data->SpotY1;
+    }
+
+    update_crop_ranges(data);
+}
+
+void crop_reset(GtkWidget *widget, gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    user_data = user_data;
+
+    CFG->CropX1 = 0;
+    CFG->CropY1 = 0;
+    CFG->CropX2 = data->UF->predictedWidth;
+    CFG->CropY2 = data->UF->predictedHeight;
+
+    update_crop_ranges(data);
+}
+
 void zoom_in_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
@@ -1479,16 +1548,35 @@ void zoom_max_event(GtkWidget *widget, gpointer user_data)
 
 void flip_image(GtkWidget *widget, int flip)
 {
+    int temp;
     preview_data *data = get_preview_data(widget);
-    
+
     if (data->FreezeDialog) return;
     ufraw_flip_image(data->UF, flip);
-    
+
     if (flip & 4) {
-	int temp = data->UF->predictedWidth;
+	temp = data->UF->predictedWidth;
 	data->UF->predictedWidth = data->UF->predictedHeight;
 	data->UF->predictedHeight = temp;
+	temp = CFG->CropX1;
+	CFG->CropX1 = CFG->CropY1;
+	CFG->CropY1 = temp;
+	temp = CFG->CropX2;
+	CFG->CropX2 = CFG->CropY2;
+	CFG->CropY2 = temp;
     }
+    if (flip & 2) {
+	temp = CFG->CropY1;
+	CFG->CropY1 = data->UF->predictedHeight - CFG->CropY2;
+	CFG->CropY2 = data->UF->predictedHeight - temp;
+    }
+    if (flip & 1) {
+	temp = CFG->CropX1;
+	CFG->CropX1 = data->UF->predictedWidth - CFG->CropX2;
+	CFG->CropX2 = data->UF->predictedWidth - temp;
+    }
+
+    update_crop_ranges(data);
     render_preview(data, render_draw_phase);
 }
 
@@ -1759,17 +1847,28 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
 {
     preview_data *data = get_preview_data(adj);
     if (data->FreezeDialog) return;
+
     if (valuep==&CFG->profile[0][0].gamma)
         valuep = (void *)&CFG->profile[0][CFG->profileIndex[0]].gamma;
     if (valuep==&CFG->profile[0][0].linear)
         valuep = (void *)&CFG->profile[0][CFG->profileIndex[0]].linear;
 
+    if ( (int *)valuep==&CFG->CropX1 || (int *)valuep==&CFG->CropX2 ||
+	 (int *)valuep==&CFG->CropY1 || (int *)valuep==&CFG->CropY2 ) {
+	*((int *)valuep) = (int) gtk_adjustment_get_value(adj);
+	update_crop_ranges(data);
+	return;
+    }
+
     /* Do noting if value didn't really change */
     long accuracy =
 	(long)g_object_get_data(G_OBJECT(adj), "Adjustment-Accuracy");
-    if ( fabs(*valuep-gtk_adjustment_get_value(adj))<pow(10,-accuracy)/2)
+    float change = fabs(*valuep-gtk_adjustment_get_value(adj));
+    float min_change = pow(10,-accuracy)/2;
+    if ( change < min_change )
 	return;
-    *valuep = gtk_adjustment_get_value(adj);
+    else
+	*valuep = gtk_adjustment_get_value(adj);
 
     if (valuep==&CFG->temperature || valuep==&CFG->green) {
 	g_strlcpy(CFG->wb, manual_wb, max_name);
@@ -2324,6 +2423,10 @@ void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
 	gtk_event_box_set_above_child(GTK_EVENT_BOX(event), TRUE);
 	gdk_window_set_cursor(event->window,
 		data->SpotCursor);
+    } else if ( page_num==4 ) {
+	gtk_event_box_set_above_child(GTK_EVENT_BOX(event), TRUE);
+	gdk_window_set_cursor(event->window,
+		data->CropCursor);
     } else {
 	gtk_event_box_set_above_child(GTK_EVENT_BOX(event), FALSE);
     }
@@ -3099,6 +3202,91 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(button_update), NULL);
     /* End of Corrections page */
 
+    /* Start of Crop page */
+    page = notebook_page_new(notebook, _("Crop"), NULL, NULL);
+
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+
+    label = gtk_label_new(_("Left:"));
+    gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
+
+    data->CropX1Adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
+	CFG->CropX1, 0, data->UF->predictedWidth, 1, 1, 0));
+    data->CropX1Spin = GTK_SPIN_BUTTON(gtk_spin_button_new(
+	data->CropX1Adjustment, 1, 0));
+    g_object_set_data(G_OBJECT(data->CropX1Adjustment),
+	"Parent-Widget", data->CropX1Spin);
+    gtk_table_attach(table,
+	GTK_WIDGET(data->CropX1Spin), 1, 2, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->CropX1Adjustment), "value-changed",
+	G_CALLBACK(adjustment_update), &CFG->CropX1);
+
+    label = gtk_label_new(_("Top:"));
+    gtk_table_attach(table, label, 2, 3, 0, 1, 0, 0, 0, 0);
+
+    data->CropY1Adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
+	CFG->CropY1, 0, data->UF->predictedHeight, 1, 1, 0));
+    data->CropY1Spin = GTK_SPIN_BUTTON(gtk_spin_button_new(
+	data->CropY1Adjustment, 1, 0));
+    g_object_set_data(G_OBJECT(data->CropY1Adjustment),
+	"Parent-Widget", data->CropY1Spin);
+    gtk_table_attach(table,
+	GTK_WIDGET(data->CropY1Spin), 3, 4, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->CropY1Adjustment), "value-changed",
+	G_CALLBACK(adjustment_update), &CFG->CropY1);
+
+    label = gtk_label_new(_("Right:"));
+    gtk_table_attach(table, label, 0, 1, 1, 2, 0, 0, 0, 0);
+
+    data->CropX2Adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
+	CFG->CropX2, 0, data->UF->predictedWidth, 1, 1, 0));
+    data->CropX2Spin = GTK_SPIN_BUTTON(gtk_spin_button_new(
+	data->CropX2Adjustment, 1, 0));
+    g_object_set_data(G_OBJECT(data->CropX2Adjustment),
+	"Parent-Widget", data->CropX2Spin);
+    gtk_table_attach(table,
+	GTK_WIDGET(data->CropX2Spin), 1, 2, 1, 2, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->CropX2Adjustment), "value-changed",
+	G_CALLBACK(adjustment_update), &CFG->CropX2);
+
+    label = gtk_label_new(_("Buttom:"));
+    gtk_table_attach(table, label, 2, 3, 1, 2, 0, 0, 0, 0);
+
+    data->CropY2Adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
+	CFG->CropY2, 0, data->UF->predictedHeight, 1, 1, 0));
+    data->CropY2Spin = GTK_SPIN_BUTTON(gtk_spin_button_new(
+	data->CropY2Adjustment, 1, 0));
+    g_object_set_data(G_OBJECT(data->CropY2Adjustment),
+	"Parent-Widget", data->CropY2Spin);
+    gtk_table_attach(table,
+	GTK_WIDGET(data->CropY2Spin), 3, 4, 1, 2, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->CropY2Adjustment), "value-changed",
+	G_CALLBACK(adjustment_update), &CFG->CropY2);
+
+    // Crop set button:
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+	GTK_STOCK_CUT, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, button,
+	_("Select the crop area on the preview image"),
+	NULL);
+    gtk_table_attach(table, button, 4, 5, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+	G_CALLBACK(crop_event), NULL);
+
+    // Crop reset button:
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+	GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, button,
+	_("Reset the crop region"),
+	NULL);
+    gtk_table_attach(table, button, 4, 5, 1, 2, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+	G_CALLBACK(crop_reset), NULL);
+
+    /* End of Crop page */
+
     /* Start of EXIF page */
     page = notebook_page_new(notebook, _("EXIF"), NULL, NULL);
 
@@ -3457,6 +3645,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_widget_set_size_request(scroll, -1, -1);
 #endif
     data->SpotCursor = gdk_cursor_new(GDK_HAND2);
+    data->CropCursor = gdk_cursor_new(GDK_CROSSHAIR);
     gdk_window_set_cursor(PreviewEventBox->window, data->SpotCursor);
     gtk_widget_set_sensitive(data->Controls, FALSE);
     preview_progress(previewWindow, _("Loading preview"), 0.2);
@@ -3464,6 +3653,15 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_widget_set_sensitive(data->Controls, TRUE);
 
     create_base_image(data);
+
+    /* Set crop to image bounds if not set */
+    if (CFG->CropX1 < 0) {
+	CFG->CropX1 = 0;
+	CFG->CropY1 = 0;
+	CFG->CropX2 = data->UF->predictedWidth;
+	CFG->CropY2 = data->UF->predictedHeight;
+	update_crop_ranges(data);
+    }
 
     /* Collect raw histogram data */
     memset(data->raw_his, 0, sizeof(data->raw_his));
@@ -3497,6 +3695,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     ufraw_focus(previewWindow, FALSE);
     gtk_widget_destroy(previewWindow);
     gdk_cursor_unref(data->SpotCursor);
+    gdk_cursor_unref(data->CropCursor);
     /* Make sure that there are no preview idle task remaining */
     g_idle_remove_by_data(data);
 

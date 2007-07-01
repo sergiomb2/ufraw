@@ -150,6 +150,7 @@ typedef struct {
     int interpolation;
     char darkframeFile[max_path];
     struct ufraw_struct *darkframe;
+    int CropX1, CropY1, CropX2, CropY2;
 
     /* SAVE options */
     char inputFilename[max_path], outputFilename[max_path],
