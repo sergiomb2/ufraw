@@ -124,7 +124,7 @@ typedef struct {
      * call update_scales() which was also frozen. */
     gboolean FreezeDialog;
     /* Since the event-box can be larger than the preview pixbuf we need: */
-    gboolean SpotButtonPressed;
+    gboolean SpotButtonPressed, SpotDraw;
     int SpotX1, SpotY1, SpotX2, SpotY2;
     gboolean OptionsChanged;
 } preview_data;
@@ -638,32 +638,63 @@ void image_view_draw_area(GtkImageView *view,
 
 void preview_draw_area(preview_data *data, int x, int y, int width, int height)
 {
+    int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
     guint8 *pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
     guint8 *p8;
     ufraw_image_data img = data->UF->Images[ufraw_final_phase];
+    /* Scale crop image coordinates to pixbuf coordinates */
+    int CropY1 = CFG->CropY1 * pixbufHeight / data->UF->predictedHeight;
+    int CropY2 = CFG->CropY2 * pixbufHeight / data->UF->predictedHeight;
+    int CropX1 = CFG->CropX1 * pixbufWidth / data->UF->predictedWidth;
+    int CropX2 = CFG->CropX2 * pixbufWidth / data->UF->predictedWidth;
+    /* Scale spot image coordinates to pixbuf coordinates */
+    int SpotY1 = MIN(data->SpotY1, data->SpotY2)
+	    * pixbufHeight / data->UF->predictedHeight - 1;
+    int SpotY2 = MAX(data->SpotY1, data->SpotY2)
+	    * pixbufHeight / data->UF->predictedHeight + 1;
+    int SpotX1 = MIN(data->SpotX1, data->SpotX2)
+	    * pixbufWidth / data->UF->predictedWidth - 1;
+    int SpotX2 = MAX(data->SpotX1, data->SpotX2)
+	    * pixbufWidth / data->UF->predictedWidth + 1;
     int xx, yy, c, o, min, max;
     for (yy=y; yy<y+height; yy++) {
-	memcpy(pixies+yy*rowstride, img.buffer + yy*img.rowstride,
-		width*img.depth);
-        for (xx=x, p8=&pixies[yy*rowstride]; xx<width; xx++, p8+=3) {
+	memcpy(pixies+yy*rowstride+x*3,
+		img.buffer + yy*img.rowstride + x*img.depth, width*img.depth);
+	for (xx=x, p8=&pixies[yy*rowstride+x*3]; xx<x+width; xx++, p8+=3) {
+	    if ( data->SpotDraw &&
+		( ((yy==SpotY1 || yy==SpotY2) && xx>=SpotX1 && xx<=SpotX2) ||
+		  ((xx==SpotX1 || xx==SpotX2) && yy>=SpotY1 && yy<=SpotY2) ) ) {
+		for (c=0; c<3; c++)
+		    if ( (xx+yy)%2 == 0 )
+			p8[c] = 0;
+		    else
+			p8[c] = 255;
+		continue;
+	    }
+	    if ( yy<CropY1 || yy>CropY2 || xx<CropX1 || xx>CropX2 ) {
+		for (c=0; c<3; c++)
+		    p8[c] = p8[c]/4;
+		continue;
+	    }
 	    for (c=0, max=0, min=0x100; c<3; c++) {
 		max = MAX(max, p8[c]);
 		min = MIN(min, p8[c]);
 	    }
-            for (c=0; c<3; c++) {
-                o = p8[c];
-                if (data->RenderMode==render_default) {
-                    if (CFG->overExp && max==MAXOUT) o = 0;
-                    if (CFG->underExp && min==0) o = 255;
-                } else if (data->RenderMode==render_overexposed) {
-                    if (o!=255) o = 0;
-                } else if (data->RenderMode==render_underexposed) {
-                    if (o!=0) o = 255;
-                }
-                pixies[yy*rowstride+3*xx+c] = o;
-            }
-        }
+	    for (c=0; c<3; c++) {
+		o = p8[c];
+		if (data->RenderMode==render_default) {
+		    if (CFG->overExp && max==MAXOUT) o = 0;
+		    if (CFG->underExp && min==0) o = 255;
+		} else if (data->RenderMode==render_overexposed) {
+		    if (o!=255) o = 0;
+		} else if (data->RenderMode==render_underexposed) {
+		    if (o!=0) o = 255;
+		}
+		pixies[yy*rowstride+xx*3+c] = o;
+	    }
+	}
     }
 #ifdef HAVE_GTKIMAGEVIEW
     image_view_draw_area(GTK_IMAGE_VIEW(data->PreviewWidget),
@@ -1032,19 +1063,19 @@ gboolean render_spot(preview_data *data)
     void *rawBuffer = data->UF->Images[ufraw_first_phase].buffer;
     /* We assume that first_phase and final_phase buffer sizes are the same. */
     /* Scale image coordinates to Images[ufraw_final_phase] coordinates */
-    int spotSizeY = abs(data->SpotY1 - data->SpotY2)
+    int spotHeight = abs(data->SpotY1 - data->SpotY2)
 	    * height / data->UF->predictedHeight + 1;
     int spotStartY = MIN(data->SpotY1, data->SpotY2)
 	    *height / data->UF->predictedHeight;
-    int spotSizeX = abs(data->SpotX1 - data->SpotX2)
+    int spotWidth = abs(data->SpotX1 - data->SpotX2)
 	    * width / data->UF->predictedWidth + 1;
     int spotStartX = MIN(data->SpotX1, data->SpotX2)
 	    * width / data->UF->predictedWidth;
     guint64 rawSum[4], outSum[3];
     int c, y, x;
     for (c=0; c<3; c++) rawSum[c] = outSum[c] = 0;
-    for (y=spotStartY; y<spotStartY+spotSizeY; y++) {
-        for (x=spotStartX; x<spotStartX+spotSizeX; x++) {
+    for (y=spotStartY; y<spotStartY+spotHeight; y++) {
+        for (x=spotStartX; x<spotStartX+spotWidth; x++) {
 	    guint16 *rawPixie = rawBuffer + (y*width + x)*rawDepth;
             for (c=0; c<data->UF->colors; c++)
 		rawSum[c] += rawPixie[c];
@@ -1054,9 +1085,9 @@ gboolean render_spot(preview_data *data)
 	}
     }
     double rgb[5];
-    for (c=0; c<3; c++) rgb[c] = outSum[c] / (spotSizeX * spotSizeY);
+    for (c=0; c<3; c++) rgb[c] = outSum[c] / (spotWidth * spotHeight);
     guint16 rawChannels[4], linearChannels[3];
-    for (c=0; c<3; c++) rawChannels[c] = rawSum[c] / (spotSizeX * spotSizeY);
+    for (c=0; c<3; c++) rawChannels[c] = rawSum[c] / (spotWidth * spotHeight);
     develop_linear(rawChannels, linearChannels, Developer);
     double yValue = 0.5;
     for (c=0; c<3; c++)
@@ -1077,64 +1108,25 @@ gboolean render_spot(preview_data *data)
     return FALSE;
 }
 
-void pixbuf_mark(int x, int y, guint8 *pixbuf, guint8 *image,
-	int width, int height, int rowstride, int imageStride, gboolean draw)
-{
-    int c;
-
-    if (x<0 || y<0 || x>=width || y>=height) return;
-    for (c=0; c<3; c++) {
-	if (draw) {
-	    if ( (x+y)%2 == 0 )
-		pixbuf[y*rowstride+3*x+c] = 0;
-	    else
-		pixbuf[y*rowstride+3*x+c] = 255;
-	} else {
-	    pixbuf[y*rowstride+3*x+c] = image[y*imageStride+3*x+c];
-	}
-    }
-}
-
 void draw_spot(preview_data *data, gboolean draw)
 {
-    int x, y;
-
     if (data->SpotX1<0) return;
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    int rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
-    guint8 *pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
-    guint8 *image = data->UF->Images[ufraw_final_phase].buffer;
-    int imageStride = data->UF->Images[ufraw_final_phase].rowstride;
-    /* Scale image coordinates to pixbuf coordinates */
-    int spotSizeY = abs(data->SpotY1 - data->SpotY2)
-	    * height / data->UF->predictedHeight + 1;
-    int spotStartY = MIN(data->SpotY1, data->SpotY2)
-	    *height / data->UF->predictedHeight;
-    int spotSizeX = abs(data->SpotX1 - data->SpotX2)
-	    * width / data->UF->predictedWidth + 1;
-    int spotStartX = MIN(data->SpotX1, data->SpotX2)
-	    * width / data->UF->predictedWidth;
-    for (x=0; x<=spotSizeX; x++) {
-        pixbuf_mark(spotStartX+x, spotStartY-1,
-                pixies, image, width, height, rowstride, imageStride, draw);
-        pixbuf_mark(spotStartX+x, spotStartY+spotSizeY+1,
-                pixies, image, width, height, rowstride, imageStride, draw);
-    }
-    for (y=-1; y<=spotSizeY+1; y++) {
-        pixbuf_mark(spotStartX-1, spotStartY+y,
-                pixies, image, width, height, rowstride, imageStride, draw);
-        pixbuf_mark(spotStartX+spotSizeX+1, spotStartY+y,
-	        pixies, image, width, height, rowstride, imageStride, draw);
-    }
-#ifdef HAVE_GTKIMAGEVIEW
-    image_view_draw_area(GTK_IMAGE_VIEW(data->PreviewWidget),
-	    spotStartX-1, spotStartY-1,
-	    spotSizeX+3, spotSizeY+3);
-#else
-    gtk_widget_queue_draw_area(data->PreviewWidget, spotStartX-1, spotStartY-1,
-	    spotSizeX+3, spotSizeY+3);
-#endif
+    data->SpotDraw = draw;
+    /* Scale spot image coordinates to pixbuf coordinates */
+    int SpotY1 = MAX(MIN(data->SpotY1, data->SpotY2)
+	    * height / data->UF->predictedHeight - 1, 0);
+    int SpotY2 = MIN(MAX(data->SpotY1, data->SpotY2)
+	    * height / data->UF->predictedHeight + 1, height);
+    int SpotX1 = MAX(MIN(data->SpotX1, data->SpotX2)
+	    * width / data->UF->predictedWidth - 1, 0);
+    int SpotX2 = MIN(MAX(data->SpotX1, data->SpotX2)
+	    * width / data->UF->predictedWidth + 1, height);
+    preview_draw_area(data, SpotX1, SpotY1, SpotX2-SpotX1+1, 1);
+    preview_draw_area(data, SpotX1, SpotY2, SpotX2-SpotX1+1, 1);
+    preview_draw_area(data, SpotX1, SpotY1, 1, SpotY2-SpotY1+1);
+    preview_draw_area(data, SpotX2, SpotY1, 1, SpotY2-SpotY1+1);
 }
 
 /* update the UI entries that could have changed automatically */
@@ -1241,7 +1233,7 @@ void curve_update(GtkWidget *widget, long curveType)
 void spot_wb_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    int spotStartX, spotStartY, spotSizeX, spotSizeY;
+    int spotStartX, spotStartY, spotWidth, spotHeight;
     int width, height, x, y, c;
     guint64 rgb[4];
 
@@ -1252,19 +1244,19 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
     width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     height = gdk_pixbuf_get_height(data->PreviewPixbuf);
     /* Scale image coordinates to pixbuf coordinates */
-    spotSizeY = abs(data->SpotY1 - data->SpotY2)
+    spotHeight = abs(data->SpotY1 - data->SpotY2)
 	    * height / data->UF->predictedHeight + 1;
     spotStartY = MIN(data->SpotY1, data->SpotY2)
 	    *height / data->UF->predictedHeight;
-    spotSizeX = abs(data->SpotX1 - data->SpotX2)
+    spotWidth = abs(data->SpotX1 - data->SpotX2)
 	    * width / data->UF->predictedWidth + 1;
     spotStartX = MIN(data->SpotX1, data->SpotX2)
 	    * width / data->UF->predictedWidth;
     ufraw_image_data *image = &data->UF->Images[ufraw_first_phase];
 
     for (c=0; c<4; c++) rgb[c] = 0;
-    for (y=spotStartY; y<spotStartY+spotSizeY; y++)
-        for (x=spotStartX; x<spotStartX+spotSizeX; x++) {
+    for (y=spotStartY; y<spotStartY+spotHeight; y++)
+        for (x=spotStartX; x<spotStartX+spotWidth; x++) {
 	    guint16 *pixie = (guint16*)(image->buffer +
 		    (y*image->width + x)*image->depth);
             for (c=0; c<data->UF->colors; c++)
@@ -1272,7 +1264,7 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
 	}
     for (c=0; c<4; c++) rgb[c] = MAX(rgb[c], 1);
     for (c=0; c<data->UF->colors; c++)
-        CFG->chanMul[c] = (double)spotSizeX * spotSizeY * data->UF->rgbMax
+        CFG->chanMul[c] = (double)spotWidth * spotHeight * data->UF->rgbMax
 		/ rgb[c];
     if (data->UF->colors<4) CFG->chanMul[3] = 0.0;
     ufraw_message(UFRAW_SET_LOG,
@@ -1379,6 +1371,7 @@ gboolean spot_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
 	    * data->UF->predictedWidth / width;
     data->SpotY2 = MAX(MIN(event->y, image->height), 0)
 	    * data->UF->predictedHeight / height;
+
     render_spot(data);
     return TRUE;
 }
@@ -1420,6 +1413,8 @@ void update_crop_ranges(preview_data *data)
     gtk_adjustment_set_value(data->CropY1Adjustment, CropY1);
     gtk_adjustment_set_value(data->CropX2Adjustment, CropX2);
     gtk_adjustment_set_value(data->CropY2Adjustment, CropY2);
+
+    render_preview(data, render_draw_phase);
 }
 
 void crop_event(GtkWidget *widget, gpointer user_data)
@@ -1554,6 +1549,26 @@ void flip_image(GtkWidget *widget, int flip)
     if (data->FreezeDialog) return;
     ufraw_flip_image(data->UF, flip);
 
+    if (flip & 1) {
+	temp = CFG->CropX1;
+	CFG->CropX1 = data->UF->predictedWidth - CFG->CropX2;
+	CFG->CropX2 = data->UF->predictedWidth - temp;
+	if ( data->SpotX1>=0 ) {
+	    temp = data->SpotX1;
+	    data->SpotX1 = data->UF->predictedWidth - data->SpotX2;
+	    data->SpotX2 = data->UF->predictedWidth - temp;
+	}
+    }
+    if (flip & 2) {
+	temp = CFG->CropY1;
+	CFG->CropY1 = data->UF->predictedHeight - CFG->CropY2;
+	CFG->CropY2 = data->UF->predictedHeight - temp;
+	if ( data->SpotX1>=0 ) {
+	    temp = data->SpotY1;
+	    data->SpotY1 = data->UF->predictedHeight - data->SpotY2;
+	    data->SpotY2 = data->UF->predictedHeight - temp;
+	}
+    }
     if (flip & 4) {
 	temp = data->UF->predictedWidth;
 	data->UF->predictedWidth = data->UF->predictedHeight;
@@ -1564,20 +1579,16 @@ void flip_image(GtkWidget *widget, int flip)
 	temp = CFG->CropX2;
 	CFG->CropX2 = CFG->CropY2;
 	CFG->CropY2 = temp;
+	if ( data->SpotX1>=0 ) {
+	    temp = data->SpotX1;
+	    data->SpotX1 = data->SpotY1;
+	    data->SpotY1 = temp;
+	    temp = data->SpotX2;
+	    data->SpotX2 = data->SpotY2;
+	    data->SpotY2 = temp;
+	}
     }
-    if (flip & 2) {
-	temp = CFG->CropY1;
-	CFG->CropY1 = data->UF->predictedHeight - CFG->CropY2;
-	CFG->CropY2 = data->UF->predictedHeight - temp;
-    }
-    if (flip & 1) {
-	temp = CFG->CropX1;
-	CFG->CropX1 = data->UF->predictedWidth - CFG->CropX2;
-	CFG->CropX2 = data->UF->predictedWidth - temp;
-    }
-
     update_crop_ranges(data);
-    render_preview(data, render_draw_phase);
 }
 
 GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text, char *icon,
