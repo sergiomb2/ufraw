@@ -2843,41 +2843,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->ResetThresholdButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
-    /* Orientation is temporeraly in the WB page */
-    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
-
-    label = gtk_label_new(_("Orientation:"));
-    gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
-
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                "object-rotate-right", GTK_ICON_SIZE_LARGE_TOOLBAR));
-    gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(flip_image), (gpointer)6);
-
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                "object-rotate-left", GTK_ICON_SIZE_LARGE_TOOLBAR));
-    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(flip_image), (gpointer)5);
-
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                "object-flip-horizontal", GTK_ICON_SIZE_LARGE_TOOLBAR));
-    gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(flip_image), (gpointer)1);
-
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                "object-flip-vertical", GTK_ICON_SIZE_LARGE_TOOLBAR));
-    gtk_table_attach(table, button, 4, 5, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(flip_image), (gpointer)2);
-    /* End of Orientation controls */
-
     /* Without GtkImageView, zoom controls cannot be bellow the image because
      * if the image is zoomed in too much the controls will be out of
      * the screen and it would be impossible to zoom out again. */
@@ -3204,11 +3169,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(button_update), NULL);
     /* End of Corrections page */
 
-    /* Start of Crop page */
-    page = notebook_page_new(notebook, _("Crop"), NULL, NULL);
+    /* Start of transformations page */
+    page = notebook_page_new(notebook, _("Crop and rotate"),
+	    GTK_STOCK_CONVERT, data->ToolTips);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
+    /* Start of Crop controls */
     label = gtk_label_new(_("Left:"));
     gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
 
@@ -3287,7 +3254,40 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(button), "clicked",
 	G_CALLBACK(crop_reset), NULL);
 
-    /* End of Crop page */
+    /* Orientation controls */
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+
+    label = gtk_label_new(_("Orientation:"));
+    gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                "object-rotate-right", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+		     G_CALLBACK(flip_image), (gpointer)6);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                "object-rotate-left", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+		     G_CALLBACK(flip_image), (gpointer)5);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                "object-flip-horizontal", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+		     G_CALLBACK(flip_image), (gpointer)1);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                "object-flip-vertical", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_table_attach(table, button, 4, 5, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+		     G_CALLBACK(flip_image), (gpointer)2);
+    /* End of transformation page */
 
     /* Start of EXIF page */
     page = notebook_page_new(notebook, _("EXIF"), NULL, NULL);
