@@ -3229,7 +3229,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->CropX2Adjustment), "value-changed",
 	G_CALLBACK(adjustment_update), &CFG->CropX2);
 
-    label = gtk_label_new(_("Buttom:"));
+    label = gtk_label_new(_("Bottom:"));
     gtk_table_attach(table, label, 2, 3, 1, 2, 0, 0, 0, 0);
 
     data->CropY2Adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(

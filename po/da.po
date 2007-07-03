@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw 0.11\n"
+"Project-Id-Version: UFRaw 0.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-07-02 01:05+0200\n"
-"PO-Revision-Date: 2007-06-21 06:16+0200\n"
+"POT-Creation-Date: 2007-07-03 05:40+0200\n"
+"PO-Revision-Date: 2007-07-03 05:48+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -667,7 +667,7 @@ msgstr "Sandtidshistogram"
 msgid "No more room for new curves."
 msgstr "Ikke mere plads til nye kurver."
 
-#: ufraw_preview.c:205 ufraw_preview.c:3131
+#: ufraw_preview.c:205 ufraw_preview.c:3107
 msgid "Load curve"
 msgstr "Indlæser kurve"
 
@@ -683,7 +683,7 @@ msgstr "UFRaw kurveformat"
 msgid "Nikon curve format"
 msgstr "Nikon kurveformat"
 
-#: ufraw_preview.c:308 ufraw_preview.c:3137
+#: ufraw_preview.c:308 ufraw_preview.c:3113
 msgid "Save curve"
 msgstr "Gem kurve"
 
@@ -707,34 +707,34 @@ msgstr "Lysstyrke (Y-værdi)"
 msgid "Adams' zone"
 msgstr "Adams' zone"
 
-#: ufraw_preview.c:715
+#: ufraw_preview.c:746
 #, c-format
 msgid "size %dx%d, zoom %2.f%%"
 msgstr "størrelse %dx%d, zoom %2.f%%"
 
-#: ufraw_preview.c:719
+#: ufraw_preview.c:750
 #, c-format
 msgid "size %dx%d, scale 1/%d"
 msgstr "størrelse %dx%d, skala 1/%d"
 
-#: ufraw_preview.c:788
+#: ufraw_preview.c:819
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "Sortpunkt: %0.3lf"
 
-#: ufraw_preview.c:1718
+#: ufraw_preview.c:1729
 msgid "clip"
 msgstr "klip"
 
-#: ufraw_preview.c:1730
+#: ufraw_preview.c:1741
 msgid "restore in LCH space for soft details"
 msgstr "gendan i LCH-farverum for bløde detaljer"
 
-#: ufraw_preview.c:1742
+#: ufraw_preview.c:1753
 msgid "restore in HSV space for sharp details"
 msgstr "gendan i HSV-farverum for skarpe detaljer"
 
-#: ufraw_preview.c:1747
+#: ufraw_preview.c:1758
 #, c-format
 msgid ""
 "Restore details for negative EV\n"
@@ -743,15 +743,15 @@ msgstr ""
 "Gendan detaljer for negative LV\n"
 "Nuværende tilstand: %s"
 
-#: ufraw_preview.c:1774
+#: ufraw_preview.c:1785
 msgid "digital linear"
 msgstr "digital lineær"
 
-#: ufraw_preview.c:1786
+#: ufraw_preview.c:1797
 msgid "soft film like"
 msgstr "blød filmlignende"
 
-#: ufraw_preview.c:1791
+#: ufraw_preview.c:1802
 #, c-format
 msgid ""
 "Clip highlights for positive EV\n"
@@ -760,43 +760,43 @@ msgstr ""
 "Klip højlys for positive LV\n"
 "Nuværende tilstand: %s"
 
-#: ufraw_preview.c:2084
+#: ufraw_preview.c:2095
 msgid "UFRaw options"
 msgstr "UFRaw tilvalg"
 
-#: ufraw_preview.c:2097
+#: ufraw_preview.c:2108
 msgid "Settings"
 msgstr "Indstillinger"
 
-#: ufraw_preview.c:2101
+#: ufraw_preview.c:2112
 msgid "Input color profiles"
 msgstr "Inddatafarveprofiler"
 
-#: ufraw_preview.c:2103
+#: ufraw_preview.c:2114
 msgid "Output color profiles"
 msgstr "Uddatafarveprofiler"
 
-#: ufraw_preview.c:2105
+#: ufraw_preview.c:2116
 msgid "Display color profiles"
 msgstr "Monitorfarveprofiler"
 
-#: ufraw_preview.c:2106
+#: ufraw_preview.c:2117
 msgid "Base Curves"
 msgstr "Basiskurver"
 
-#: ufraw_preview.c:2107
+#: ufraw_preview.c:2118
 msgid "Luminosity Curves"
 msgstr "Lysstyrkekurver"
 
-#: ufraw_preview.c:2109
+#: ufraw_preview.c:2120
 msgid "Configuration"
 msgstr "Konfiguration"
 
-#: ufraw_preview.c:2124
+#: ufraw_preview.c:2135
 msgid "Save image defaults "
 msgstr "Gem billedstandardværdier "
 
-#: ufraw_preview.c:2128 ufraw_saver.c:397
+#: ufraw_preview.c:2139 ufraw_saver.c:397
 msgid ""
 "Save current image manipulation parameters as defaults.\n"
 "The output parameters in this window are always saved."
@@ -804,39 +804,39 @@ msgstr ""
 "Gem nuværende billedbehandlingsparametre som standardværdier.\n"
 "Uddataparametrene i dette vindue gemmes altid."
 
-#: ufraw_preview.c:2131 ufraw_saver.c:401
+#: ufraw_preview.c:2142 ufraw_saver.c:401
 msgid "Never again"
 msgstr "Aldrig igen"
 
-#: ufraw_preview.c:2132 ufraw_saver.c:402
+#: ufraw_preview.c:2143 ufraw_saver.c:402
 msgid "Always"
 msgstr "Altid"
 
-#: ufraw_preview.c:2133 ufraw_saver.c:403
+#: ufraw_preview.c:2144 ufraw_saver.c:403
 msgid "Just this once"
 msgstr "Kun denne ene gang"
 
-#: ufraw_preview.c:2140
+#: ufraw_preview.c:2151
 msgid "Save full configuration "
 msgstr "Gem fuld konfiguration "
 
-#: ufraw_preview.c:2143
+#: ufraw_preview.c:2154
 msgid "Save resource file ($HOME/.ufrawrc)"
 msgstr "Gem ressourcefil ($HOME/.ufrawrc)"
 
-#: ufraw_preview.c:2151
+#: ufraw_preview.c:2162
 msgid "Log"
 msgstr "Log"
 
-#: ufraw_preview.c:2163
+#: ufraw_preview.c:2174
 msgid "Encoding conversion failed"
 msgstr "Indkodningskonvertering fejlede"
 
-#: ufraw_preview.c:2167
+#: ufraw_preview.c:2178
 msgid "About"
 msgstr "Om"
 
-#: ufraw_preview.c:2178
+#: ufraw_preview.c:2189
 msgid ""
 "The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
 "to\n"
@@ -858,61 +858,61 @@ msgstr ""
 "Hjemmeside: http://ufraw.sourceforge.net/\n"
 "\n"
 
-#: ufraw_preview.c:2477
+#: ufraw_preview.c:2488
 #, c-format
 msgid "%s - UFRaw Photo Loader"
 msgstr "%s - UFRaw Fotoindlæser"
 
-#: ufraw_preview.c:2542 ufraw_preview.c:3410
+#: ufraw_preview.c:2553 ufraw_preview.c:3421
 msgid "Linear"
 msgstr "Lineær"
 
-#: ufraw_preview.c:2551 ufraw_preview.c:3419
+#: ufraw_preview.c:2562 ufraw_preview.c:3430
 msgid "Logarithmic"
 msgstr "Logaritmisk"
 
-#: ufraw_preview.c:2565 ufraw_preview.c:3433
+#: ufraw_preview.c:2576 ufraw_preview.c:3444
 msgid "96 Pixels"
 msgstr "96 punkter"
 
-#: ufraw_preview.c:2574 ufraw_preview.c:3442
+#: ufraw_preview.c:2585 ufraw_preview.c:3453
 msgid "128 Pixels"
 msgstr "128 punkter"
 
-#: ufraw_preview.c:2583 ufraw_preview.c:3451
+#: ufraw_preview.c:2594 ufraw_preview.c:3462
 msgid "192 Pixels"
 msgstr "192 punkter"
 
-#: ufraw_preview.c:2592 ufraw_preview.c:3460
+#: ufraw_preview.c:2603 ufraw_preview.c:3471
 msgid "256 Pixels"
 msgstr "256 punkter"
 
-#: ufraw_preview.c:2605
+#: ufraw_preview.c:2616
 msgid "Spot values:"
 msgstr "Punktværdier:"
 
-#: ufraw_preview.c:2612
+#: ufraw_preview.c:2623
 msgid "Exposure compensation in EV"
 msgstr "Eksponeringskompensation i LV"
 
-#: ufraw_preview.c:2630
+#: ufraw_preview.c:2641
 msgid "Auto adjust exposure"
 msgstr "Automatisk eksponeringsindstilling"
 
-#: ufraw_preview.c:2641
+#: ufraw_preview.c:2652
 msgid "Reset exposure to default"
-msgstr "Sæt eksponering til standardværdi"
+msgstr "Resæt eksponering til standardværdi"
 
 #. Start of White Balance setting page
-#: ufraw_preview.c:2654
+#: ufraw_preview.c:2665
 msgid "White balance"
 msgstr "Hvidbalance"
 
-#: ufraw_preview.c:2708
+#: ufraw_preview.c:2719
 msgid "White Balance"
 msgstr "Hvidbalance"
 
-#: ufraw_preview.c:2733
+#: ufraw_preview.c:2744
 msgid ""
 "There are no white balance presets for your camera model.\n"
 "Check UFRaw's webpage for information on how to get your\n"
@@ -922,194 +922,190 @@ msgstr ""
 "Kig på UFRaws hjemmeside for information om, hvordan du\n"
 "får dit kamera understøttet."
 
-#: ufraw_preview.c:2739
+#: ufraw_preview.c:2750
 msgid "Reset white balance to initial value"
-msgstr "Sæt hvidbalance til startværdien"
+msgstr "Resæt hvidbalance til startværdien"
 
-#: ufraw_preview.c:2745
+#: ufraw_preview.c:2756
 msgid "Temperature"
 msgstr "Temperatur"
 
-#: ufraw_preview.c:2747
+#: ufraw_preview.c:2758
 msgid "White balance color temperature (K)"
 msgstr "Hvidbalancefarvetemperatur (K)"
 
-#: ufraw_preview.c:2748
+#: ufraw_preview.c:2759
 msgid "Green"
 msgstr "Grøn"
 
-#: ufraw_preview.c:2750
+#: ufraw_preview.c:2761
 msgid "Green component"
 msgstr "Grøn komponent"
 
-#: ufraw_preview.c:2756
+#: ufraw_preview.c:2767
 msgid "Select a spot on the preview image to apply spot white balance"
 msgstr "Vælg et punkt på forhåndsvisningsbilledet for at måle punkthvidbalance"
 
-#: ufraw_preview.c:2764
+#: ufraw_preview.c:2775
 msgid "Chan. multipliers:"
 msgstr "Kanalmultiplikatorer:"
 
-#: ufraw_preview.c:2788
+#: ufraw_preview.c:2799
 msgid "Bayer pattern interpolation"
 msgstr "Bayermønsterinterpolation"
 
-#: ufraw_preview.c:2795 ufraw_preview.c:2804 ufraw_saver.c:263
+#: ufraw_preview.c:2806 ufraw_preview.c:2815 ufraw_saver.c:263
 msgid "VNG four color interpolation"
 msgstr "VNG firfarveinterpolation"
 
-#: ufraw_preview.c:2797 ufraw_preview.c:2808 ufraw_saver.c:265
+#: ufraw_preview.c:2808 ufraw_preview.c:2819 ufraw_saver.c:265
 msgid "Bilinear interpolation"
 msgstr "Bilineær interpolation"
 
-#: ufraw_preview.c:2800 ufraw_saver.c:261
+#: ufraw_preview.c:2811 ufraw_saver.c:261
 msgid "AHD interpolation"
 msgstr "AHD-interpolation"
 
-#: ufraw_preview.c:2802 ufraw_saver.c:262
+#: ufraw_preview.c:2813 ufraw_saver.c:262
 msgid "VNG interpolation"
 msgstr "VNG-interpolation"
 
-#: ufraw_preview.c:2806 ufraw_saver.c:264
+#: ufraw_preview.c:2817 ufraw_saver.c:264
 msgid "PPG interpolation"
 msgstr "PPG-interpolation"
 
-#: ufraw_preview.c:2812
+#: ufraw_preview.c:2823
 msgid "Half-size interpolation"
 msgstr "Halvstørrelseinterpolation"
 
-#: ufraw_preview.c:2824
+#: ufraw_preview.c:2835
 msgid "No Bayer pattern"
 msgstr "Intet Bayermønster"
 
-#: ufraw_preview.c:2834
+#: ufraw_preview.c:2845
 msgid "Threshold"
 msgstr "Tærskelværdi"
 
-#: ufraw_preview.c:2836
+#: ufraw_preview.c:2847
 msgid "Threshold for wavelet denoising"
 msgstr "Tærskelværdi for wavelet-støjreduktion"
 
-#: ufraw_preview.c:2841
+#: ufraw_preview.c:2852
 msgid "Reset denoise threshold to default"
-msgstr "Sæt strøjreduktionstærskelværdi til standardværdi"
+msgstr "Resæt strøjreduktionstærskelværdi til standardværdi"
 
-#: ufraw_preview.c:2849
-msgid "Orientation:"
-msgstr "Orientering:"
-
-#: ufraw_preview.c:2887
+#: ufraw_preview.c:2863
 msgid "Zoom:"
 msgstr "Zoom:"
 
-#: ufraw_preview.c:2908 ufraw_preview.c:3572
+#: ufraw_preview.c:2884 ufraw_preview.c:3583
 msgid "Zoom percentage"
 msgstr "Zoom-procent"
 
 #. End of White Balance setting page
 #. Start of Base Curve page
-#: ufraw_preview.c:2923
+#: ufraw_preview.c:2899
 msgid "Base curve"
 msgstr "Basiskurve"
 
-#: ufraw_preview.c:2956
+#: ufraw_preview.c:2932
 msgid "Load base curve"
 msgstr "Indlæs basiskurve"
 
-#: ufraw_preview.c:2962
+#: ufraw_preview.c:2938
 msgid "Save base curve"
 msgstr "Gem basiskurve"
 
-#: ufraw_preview.c:2982
+#: ufraw_preview.c:2958
 msgid "Reset base curve to default"
-msgstr "Sæt basiskurve til standardværdi"
+msgstr "Resæt basiskurve til standardværdi"
 
 #. End of Base Curve page
 #. Start of Color management page
-#: ufraw_preview.c:2992
+#: ufraw_preview.c:2968
 msgid "Color management"
 msgstr "Farvestyring"
 
-#: ufraw_preview.c:3005
+#: ufraw_preview.c:2981
 msgid "Input ICC profile"
 msgstr "Inddata-ICC-profil"
 
-#: ufraw_preview.c:3006
+#: ufraw_preview.c:2982
 msgid "Output ICC profile"
 msgstr "Uddata-ICC-profil"
 
-#: ufraw_preview.c:3007
+#: ufraw_preview.c:2983
 msgid "Display ICC profile"
 msgstr "Monitor-ICC-profil"
 
-#: ufraw_preview.c:3031
+#: ufraw_preview.c:3007
 msgid "Use color matrix"
 msgstr "Brug farvematrice"
 
-#: ufraw_preview.c:3042
+#: ufraw_preview.c:3018
 msgid "Gamma"
 msgstr "Gamma"
 
-#: ufraw_preview.c:3045
+#: ufraw_preview.c:3021
 msgid "Gamma correction for the input profile"
 msgstr "Gammakorrektion for inddataprofilen"
 
-#: ufraw_preview.c:3050
+#: ufraw_preview.c:3026
 msgid "Reset gamma to default"
-msgstr "Sæt gamma til standardværdi"
+msgstr "Resæt gamma til standardværdi"
 
-#: ufraw_preview.c:3055
+#: ufraw_preview.c:3031
 msgid "Linearity"
 msgstr "Linearitet"
 
-#: ufraw_preview.c:3058
+#: ufraw_preview.c:3034
 msgid "Linear part of the gamma correction"
 msgstr "Lineær del af gammakorrektionen"
 
-#: ufraw_preview.c:3063
+#: ufraw_preview.c:3039
 msgid "Reset linearity to default"
-msgstr "Sæt linearitet til standardværdi"
+msgstr "Resæt linearitet til standardværdi"
 
-#: ufraw_preview.c:3068
+#: ufraw_preview.c:3044
 msgid "Output intent"
 msgstr "Uddatafarvegengivelse"
 
-#: ufraw_preview.c:3071 ufraw_preview.c:3083
+#: ufraw_preview.c:3047 ufraw_preview.c:3059
 msgid "Perceptual"
 msgstr "Som opfattet"
 
-#: ufraw_preview.c:3072 ufraw_preview.c:3084
+#: ufraw_preview.c:3048 ufraw_preview.c:3060
 msgid "Relative colorimetric"
 msgstr "Relativ kolorimetrisk"
 
-#: ufraw_preview.c:3073 ufraw_preview.c:3085 ufraw_preview.c:3099
-#: ufraw_preview.c:3101
+#: ufraw_preview.c:3049 ufraw_preview.c:3061 ufraw_preview.c:3075
+#: ufraw_preview.c:3077
 msgid "Saturation"
 msgstr "Farvemættet"
 
-#: ufraw_preview.c:3074 ufraw_preview.c:3086
+#: ufraw_preview.c:3050 ufraw_preview.c:3062
 msgid "Absolute colorimetric"
 msgstr "Absolut kolorimetrisk"
 
-#: ufraw_preview.c:3080
+#: ufraw_preview.c:3056
 msgid "Display intent"
 msgstr "Monitorfarvegengivelse"
 
-#: ufraw_preview.c:3087
+#: ufraw_preview.c:3063
 msgid "Disable soft proofing"
 msgstr "Fravælg softwarekorrektur"
 
 #. End of Color management page
 #. Start of Corrections page
-#: ufraw_preview.c:3095
+#: ufraw_preview.c:3071
 msgid "Correct luminosity, saturation"
 msgstr "Korriger lysstyrke, farvemætning"
 
-#: ufraw_preview.c:3106
+#: ufraw_preview.c:3082
 msgid "Reset saturation to default"
-msgstr "Sæt farvemætning til standardværdi"
+msgstr "Resæt farvemætning til standardværdi"
 
-#: ufraw_preview.c:3156
+#: ufraw_preview.c:3132
 msgid ""
 "Auto adjust curve\n"
 "(Flatten histogram)"
@@ -1117,99 +1113,104 @@ msgstr ""
 "Automatisk kurveindstilling\n"
 "(Fladgør histogram)"
 
-#: ufraw_preview.c:3166
+#: ufraw_preview.c:3142
 msgid "Reset curve to default"
-msgstr "Sæt kurve til standardværdi"
+msgstr "Resæt kurve til standardværdi"
 
-#: ufraw_preview.c:3172
+#: ufraw_preview.c:3148
 msgid "Black point: 0.000"
 msgstr "Sortpunkt: 0,000"
 
-#: ufraw_preview.c:3189
+#: ufraw_preview.c:3165
 msgid "Reset black-point to default"
-msgstr "Sæt sortpunkt til standardværdi"
+msgstr "Resæt sortpunkt til standardværdi"
 
-#: ufraw_preview.c:3199
+#: ufraw_preview.c:3175
 msgid "Auto adjust black-point"
 msgstr "Automatisk sortpunktsindstilling"
 
 #. End of Corrections page
-#. Start of Crop page
-#: ufraw_preview.c:3208
-msgid "Crop"
-msgstr ""
+#. Start of transformations page
+#: ufraw_preview.c:3184
+msgid "Crop and rotate"
+msgstr "Beskær og roter"
 
-#: ufraw_preview.c:3212
+#. Start of Crop controls
+#: ufraw_preview.c:3190
 msgid "Left:"
-msgstr ""
+msgstr "Venstre:"
 
-#: ufraw_preview.c:3226
+#: ufraw_preview.c:3204
 msgid "Top:"
-msgstr ""
+msgstr "Top:"
 
-#: ufraw_preview.c:3240
+#: ufraw_preview.c:3218
 msgid "Right:"
-msgstr ""
+msgstr "Højre:"
 
-#: ufraw_preview.c:3254
-msgid "Buttom:"
-msgstr ""
+#: ufraw_preview.c:3232
+msgid "Bottom:"
+msgstr "Bund:"
 
-#: ufraw_preview.c:3273
+#: ufraw_preview.c:3251
 msgid "Select the crop area on the preview image"
-msgstr ""
+msgstr "Vælg beskæringsareal i forhåndsvisningsbilledet"
 
-#: ufraw_preview.c:3284
+#: ufraw_preview.c:3262
 msgid "Reset the crop region"
-msgstr ""
+msgstr "Resæt beskæringsareal"
 
-#. End of Crop page
+#: ufraw_preview.c:3271
+msgid "Orientation:"
+msgstr "Orientering:"
+
+#. End of transformation page
 #. Start of EXIF page
-#: ufraw_preview.c:3293
+#: ufraw_preview.c:3304
 msgid "EXIF"
 msgstr "EXIF"
 
-#: ufraw_preview.c:3311
+#: ufraw_preview.c:3322
 #, c-format
 msgid "Camera: %s %s\n"
 msgstr "Kamera: %s %s\n"
 
-#: ufraw_preview.c:3312
+#: ufraw_preview.c:3323
 #, c-format
 msgid "Timestamp: %s\n"
 msgstr "Optagelsestidspunkt: %s\n"
 
-#: ufraw_preview.c:3314
+#: ufraw_preview.c:3325
 #, c-format
 msgid "Shutter: %s\n"
 msgstr "Lukkertid: %s\n"
 
-#: ufraw_preview.c:3316
+#: ufraw_preview.c:3327
 #, c-format
 msgid "Aperture: %s\n"
 msgstr "Blænde: %s\n"
 
-#: ufraw_preview.c:3318
+#: ufraw_preview.c:3329
 #, c-format
 msgid "ISO speed: %s\n"
 msgstr "ISO-følsomhed: %s\n"
 
-#: ufraw_preview.c:3320
+#: ufraw_preview.c:3331
 #, c-format
 msgid "Focal length: %s\n"
 msgstr "Brændvidde: %s\n"
 
-#: ufraw_preview.c:3324
+#: ufraw_preview.c:3335
 #, c-format
 msgid "Focal length in 35mm equivalent: %s\n"
 msgstr "Brændvidde i 35mm-format: %s\n"
 
-#: ufraw_preview.c:3327
+#: ufraw_preview.c:3338
 #, c-format
 msgid "Lens: %s\n"
 msgstr "Objektiv: %s\n"
 
-#: ufraw_preview.c:3328
+#: ufraw_preview.c:3339
 #, c-format
 msgid ""
 "\n"
@@ -1218,51 +1219,51 @@ msgstr ""
 "\n"
 "EXIF-data læst af %s"
 
-#: ufraw_preview.c:3357
+#: ufraw_preview.c:3368
 msgid "RGB histogram"
 msgstr "RGB-histogram"
 
-#: ufraw_preview.c:3366
+#: ufraw_preview.c:3377
 msgid "R+G+B histogram"
 msgstr "R+G+B-histogram"
 
-#: ufraw_preview.c:3376
+#: ufraw_preview.c:3387
 msgid "Luminosity histogram"
 msgstr "Lysstyrkehistogram"
 
-#: ufraw_preview.c:3386
+#: ufraw_preview.c:3397
 msgid "Value (maximum) histogram"
 msgstr "Maksimumsværdihistogram"
 
-#: ufraw_preview.c:3396
+#: ufraw_preview.c:3407
 msgid "Saturation histogram"
 msgstr "Farvemætningshistogram"
 
-#: ufraw_preview.c:3472
+#: ufraw_preview.c:3483
 msgid "Average:"
 msgstr "Gennemsnit:"
 
-#: ufraw_preview.c:3474
+#: ufraw_preview.c:3485
 msgid "Std. deviation:"
 msgstr "Standardafvigelse:"
 
-#: ufraw_preview.c:3477
+#: ufraw_preview.c:3488
 msgid "Overexposed:"
 msgstr "Overeksponeret:"
 
-#: ufraw_preview.c:3479 ufraw_preview.c:3490
+#: ufraw_preview.c:3490 ufraw_preview.c:3501
 msgid "Indicate"
 msgstr "Vis"
 
-#: ufraw_preview.c:3487
+#: ufraw_preview.c:3498
 msgid "Underexposed:"
 msgstr "Undereksponeret:"
 
-#: ufraw_preview.c:3608
+#: ufraw_preview.c:3619
 msgid "Options"
 msgstr "Tilvalg"
 
-#: ufraw_preview.c:3657
+#: ufraw_preview.c:3668
 msgid "Loading preview"
 msgstr "Indlæser forhåndsvisning"
 
