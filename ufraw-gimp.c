@@ -280,7 +280,7 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
     gint32 layer;
     guint8 *pixbuf;
     guint16 *pixtmp;
-    int height, width, depth, tile_height, row, nrows, rowStride, y;
+    int height, width, top, left, depth, tile_height, row, nrows, rowStride, y;
     image_type *rawImage;
 
     uf->gimpImage = -1;
@@ -290,12 +290,16 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
 	    return UFRAW_ERROR;
 	height = uf->thumb.height;
 	width = uf->thumb.width;
+	top = 0;
+	left = 0;
 	depth = 3;
     } else {
 	if (ufraw_convert_image(uf)!=UFRAW_SUCCESS)
 	    return UFRAW_ERROR;
-	height = uf->image.height;
-	width = uf->image.width;
+	height = uf->conf->CropY2 - uf->conf->CropY1;
+	width = uf->conf->CropX2 - uf->conf->CropX1;
+	top = uf->conf->CropY1;
+	left = uf->conf->CropX1;
 #ifdef UFRAW_CINEPAINT
 	depth = 6;
 #else
@@ -331,14 +335,14 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
     } else {
 	pixbuf = g_new(guint8, tile_height * width * depth);
 	pixtmp = g_new(guint16, tile_height * width * 3);
-	rowStride = width;
+	rowStride = uf->image.width;
 	rawImage = uf->image.image;
 	for (row = 0; row < height; row += tile_height) {
 	    preview_progress(widget, _("Loading image"),
 		    0.5 + 0.5*row/height);
 	    nrows = MIN(height-row, tile_height);
 	    for (y=0 ; y<nrows; y++)
-		develope(&pixbuf[y*width*depth], rawImage[(row+y)*rowStride],
+		develope(&pixbuf[y*width*depth], rawImage[(top+row+y)*rowStride+left],
 			uf->developer, depth==3 ? 8 : 16, pixtmp, width);
 	    gimp_pixel_rgn_set_rect(&pixel_region, pixbuf, 0, row,
 		    width, nrows);

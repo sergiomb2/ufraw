@@ -3671,14 +3671,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     create_base_image(data);
 
-    /* Set crop to image bounds if not set */
-    if (CFG->CropX1 < 0) {
-	CFG->CropX1 = 0;
-	CFG->CropY1 = 0;
-	CFG->CropX2 = data->UF->predictedWidth;
-	CFG->CropY2 = data->UF->predictedHeight;
-	update_crop_ranges(data);
-    }
+    update_crop_ranges(data);
 
     /* Collect raw histogram data */
     memset(data->raw_his, 0, sizeof(data->raw_his));

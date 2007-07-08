@@ -533,6 +533,13 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     if (strcmp(uf->conf->darkframeFile, cmd->darkframeFile)!=0)
 	uf->conf->darkframe = ufraw_load_darkframe(uf->conf->darkframeFile);
     */
+
+    // Check crop co-ordinates.
+    if (uf->conf->CropX1 < 0) uf->conf->CropX1 = 0;
+    if (uf->conf->CropY1 < 0) uf->conf->CropY1 = 0;
+    if (uf->conf->CropX2 < 0) uf->conf->CropX2 = uf->predictedWidth;
+    if (uf->conf->CropY2 < 0) uf->conf->CropY2 = uf->predictedHeight;
+
     return UFRAW_SUCCESS;
 }
 
