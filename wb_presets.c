@@ -1484,6 +1484,28 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "E-500", NeutralFluorescent, 0,	{ 1.828125, 1, 1.562500, 0 } }, /*4500K*/
   { "OLYMPUS", "E-500", DaylightFluorescent, 0,	{ 2.046875, 1, 1.359375, 0 } }, /*6600K*/
 
+  { "OLYMPUS", "E-510", Daylight, -7,		{ 2.164063, 1, 1.546875, 0 } },
+  { "OLYMPUS", "E-510", Daylight, 0,		{ 1.968750, 1, 1.296875, 0 } },
+  { "OLYMPUS", "E-510", Daylight, 7,		{ 1.742187, 1, 1.062500, 0 } },
+  { "OLYMPUS", "E-510", Shade, -7,		{ 2.492188, 1, 1.273438, 0 } },
+  { "OLYMPUS", "E-510", Shade, 0,		{ 2.439024, 1.040650, 1, 0 } },
+  { "OLYMPUS", "E-510", Shade, 7,		{ 3.055556, 1.422222, 1, 0 } },
+  { "OLYMPUS", "E-510", Cloudy, -7,		{ 2.312500, 1, 1.414062, 0 } },
+  { "OLYMPUS", "E-510", Cloudy, 0,		{ 2.109375, 1, 1.187500, 0 } },
+  { "OLYMPUS", "E-510", Cloudy, 7,		{ 2.192982, 1.122807, 1, 0 } },
+  { "OLYMPUS", "E-510", Incandescent, -7,	{ 1.109375, 1, 3.351562, 0 } },
+  { "OLYMPUS", "E-510", Incandescent, 0,	{ 1.093750, 1, 2.671875, 0 } },
+  { "OLYMPUS", "E-510", Incandescent, 7,	{ 1.031250, 1, 2.054688, 0 } },
+  { "OLYMPUS", "E-510", WhiteFluorescent, -7,	{ 1.578125, 1, 2.250000, 0 } },
+  { "OLYMPUS", "E-510", WhiteFluorescent, 0,	{ 1.718750, 1, 2.109375, 0 } },
+  { "OLYMPUS", "E-510", WhiteFluorescent, 7,	{ 1.523437, 1, 1.265625, 0 } },
+  { "OLYMPUS", "E-510", NeutralFluorescent, -7,	{ 1.835938, 1, 1.828125, 0 } },
+  { "OLYMPUS", "E-510", NeutralFluorescent, 0,	{ 1.687500, 1, 1.710938, 0 } },
+  { "OLYMPUS", "E-510", NeutralFluorescent, 7,	{ 1.726562, 1, 1.078125, 0 } },
+  { "OLYMPUS", "E-510", DaylightFluorescent, -7, { 2.203125, 1, 1.500000, 0 } },
+  { "OLYMPUS", "E-510", DaylightFluorescent, 0,	{ 2.023438, 1, 1.398437, 0 } },
+  { "OLYMPUS", "E-510", DaylightFluorescent, 7,	{ 3.193182, 1.454545, 1, 0 } },
+
   { "OLYMPUS", "SP510UZ", Daylight, 0,		{ 1.656250, 1, 1.621094, 0 } },
   { "OLYMPUS", "SP510UZ", Cloudy, 0,		{ 1.789063, 1, 1.546875, 0 } },
   { "OLYMPUS", "SP510UZ", Incandescent, 0,	{ 1, 1.066667, 2.891667, 0 } },
