@@ -143,7 +143,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     GtkFileChooser *fileChooser;
     GtkWidget *expander, *box, *table, *widg, *button, *align, *overwriteButton;
     GtkWidget *event, *label;
-    GtkComboBox *intCombo, *idCombo, *confCombo;
+    GtkComboBox *idCombo, *confCombo;
 #if defined(HAVE_LIBZ) && defined(HAVE_LIBTIFF)
     GtkWidget *losslessButton;
 #endif
@@ -256,18 +256,8 @@ long ufraw_saver(void *widget, gpointer user_data)
     if (uf->conf->interpolation==half_interpolation) {
 	uf->conf->interpolation = ahd_interpolation;
 	if (uf->conf->shrink<2) uf->conf->shrink = 2;
+	ufraw_message(UFRAW_WARNING, _("Interpolation method set to AHD"));
     }
-    intCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    gtk_combo_box_append_text(intCombo, _("EAHD interpolation"));
-    gtk_combo_box_append_text(intCombo, _("AHD interpolation"));
-    gtk_combo_box_append_text(intCombo, _("VNG interpolation"));
-    gtk_combo_box_append_text(intCombo, _("VNG four color interpolation"));
-    gtk_combo_box_append_text(intCombo, _("PPG interpolation"));
-    gtk_combo_box_append_text(intCombo, _("Bilinear interpolation"));
-    gtk_combo_box_set_active(intCombo, uf->conf->interpolation);
-    align = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
-    gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(intCombo));
-    gtk_box_pack_start(GTK_BOX(box), align, FALSE, FALSE, 0);
 
     table = gtk_table_new(5, 1, FALSE);
     gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
@@ -432,7 +422,6 @@ long ufraw_saver(void *widget, gpointer user_data)
 	}
 	/* GTK_RESPONSE_OK - save file */
 	filename = gtk_file_chooser_get_filename(fileChooser);
-	uf->conf->interpolation = gtk_combo_box_get_active(intCombo);
 	uf->conf->createID = gtk_combo_box_get_active(idCombo);
 	uf->conf->saveConfiguration = gtk_combo_box_get_active(confCombo);
 	if ( fabs(data->shrink-floor(data->shrink+0.0005))<0.0005 ) {
