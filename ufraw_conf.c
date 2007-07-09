@@ -912,9 +912,6 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     if (c->intent[display_profile]!=conf_default.intent[display_profile])
         buf = uf_markup_buf(buf, "<DisplayIntent>%s</DisplayIntent>\n",
 		conf_get_name(intentNames, c->intent[display_profile]));
-    if (c->CropX1>0 || c->CropY1>0 || c->CropX2>0 || c->CropY2>0)
-        buf = uf_markup_buf(buf, "<Crop>%d %d %d %d</Crop>\n",
-		c->CropX1, c->CropY1, c->CropX2, c->CropY2);
     /* We always write the Make and Mode information
      * to know if the WB setting is relevant */
     buf = uf_markup_buf(buf, "<Make>%s</Make>\n", c->make);
@@ -937,6 +934,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	    buf = uf_markup_buf(buf, "<Lens>%s</Lens>\n", c->lensText);
 	buf = uf_markup_buf(buf, "<EXIFSource>%s</EXIFSource>\n",
 		c->exifSource);
+	buf = uf_markup_buf(buf, "<Crop>%d %d %d %d</Crop>\n",
+		c->CropX1, c->CropY1, c->CropX2, c->CropY2);
 	char *log = ufraw_message(UFRAW_GET_LOG, NULL);
 	if (log!=NULL) {
 	    char *utf8 = g_filename_to_utf8(log, -1, NULL, NULL, NULL);
