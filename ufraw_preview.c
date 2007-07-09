@@ -2808,6 +2808,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
 	    data->InterpolationTable[i++] = bilinear_interpolation;
 	} else {
+	    gtk_combo_box_append_text(combo, _("EAHD interpolation"));
+	    data->InterpolationTable[i++] = eahd_interpolation;
 	    gtk_combo_box_append_text(combo, _("AHD interpolation"));
 	    data->InterpolationTable[i++] = ahd_interpolation;
 	    gtk_combo_box_append_text(combo, _("VNG interpolation"));

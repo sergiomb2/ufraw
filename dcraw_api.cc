@@ -48,6 +48,9 @@ void vng_interpolate_INDI(gushort (*image)[4], const unsigned filters,
 void ahd_interpolate_INDI(gushort (*image)[4], const unsigned filters,
     const int width, const int height, const int colors, float rgb_cam[3][4],
     void *dcraw);
+void eahd_interpolate_INDI(gushort (*image)[4], const unsigned filters,
+    const int width, const int height, const int colors, float rgb_cam[3][4],
+    void *dcraw);
 void ppg_interpolate_INDI(gushort (*image)[4], const unsigned filters,
     const int width, const int height, const int colors, void *dcraw);
 void flip_image_INDI(gushort (*image)[4], int *height_p, int *width_p,
@@ -474,7 +477,8 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     }
     /* It might be better to report an error here: */
     /* (dcraw also forbids AHD for Fuji rotated images) */
-    if (interpolation==dcraw_ahd_interpolation && h->colors > 3)
+    if ((interpolation==dcraw_ahd_interpolation ||
+	 interpolation==dcraw_eahd_interpolation) && h->colors > 3)
 	interpolation = dcraw_vng_interpolation;
     if (interpolation==dcraw_ppg_interpolation && h->colors > 3)
 	interpolation = dcraw_vng_interpolation;
@@ -492,6 +496,9 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 	vng_interpolate_INDI(f->image, ff, f->width, f->height, cl, 0xFFFF, d);
     else if (interpolation==dcraw_ahd_interpolation)
 	ahd_interpolate_INDI(f->image, ff, f->width, f->height, cl,
+		h->rgb_cam, d);
+    else if (interpolation==dcraw_eahd_interpolation)
+	eahd_interpolate_INDI(f->image, ff, f->width, f->height, cl,
 		h->rgb_cam, d);
     else if (interpolation==dcraw_ppg_interpolation)
 	ppg_interpolate_INDI(f->image, ff, f->width, f->height, cl, d);

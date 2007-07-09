@@ -103,7 +103,7 @@ const conf_data conf_default = {
 };
 
 const char *interpolationNames[] =
-    { "ahd", "vng", "four-color", "ppg", "bilinear", "half", NULL };
+    { "eahd", "ahd", "vng", "four-color", "ppg", "bilinear", "half", NULL };
 const char *restoreDetailsNames[] =
     { "clip", "lch", "hsv", NULL };
 const char *clipHighlightsNames[] =
@@ -1240,7 +1240,7 @@ N_("--exposure=auto|EXPOSURE\n"
 "                      Auto exposure or exposure correction in EV (default 0).\n"),
 N_("--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"),
-N_("--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+N_("--interpolation=eahd|ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"),
 "\n",
 N_("The options which are related to the final output are:\n"),

@@ -41,7 +41,8 @@ enum { rgb_histogram, r_g_b_histogram, luminosity_histogram, value_histogram,
 enum { linear_histogram, log_histogram };
 /* The following enum should match the dcraw_interpolation enum
  * in dcraw_api.h. */
-enum { ahd_interpolation, vng_interpolation, four_color_interpolation,
+enum { eahd_interpolation, ahd_interpolation,
+       vng_interpolation, four_color_interpolation,
        ppg_interpolation, bilinear_interpolation, half_interpolation,
        num_interpolations };
 extern const char *interpolationNames[];

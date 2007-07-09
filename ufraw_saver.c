@@ -258,6 +258,7 @@ long ufraw_saver(void *widget, gpointer user_data)
 	if (uf->conf->shrink<2) uf->conf->shrink = 2;
     }
     intCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    gtk_combo_box_append_text(intCombo, _("EAHD interpolation"));
     gtk_combo_box_append_text(intCombo, _("AHD interpolation"));
     gtk_combo_box_append_text(intCombo, _("VNG interpolation"));
     gtk_combo_box_append_text(intCombo, _("VNG four color interpolation"));

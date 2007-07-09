@@ -668,6 +668,112 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 }
 #undef TS
 
+
+#define DTOP(x) ((x>65535) ? (unsigned short)65535 : (x<0) ? (unsigned short)0 : (unsigned short) x)  
+
+/*
+ * MG - This comment applies to the 3x3 optimized median function
+ *
+ * The following routines have been built from knowledge gathered
+ * around the Web. I am not aware of any copyright problem with
+ * them, so use it as you want.
+ * N. Devillard - 1998
+ */
+
+#define PIX_SORT(a,b) { if ((a)>(b)) PIX_SWAP((a),(b)); }
+#define PIX_SWAP(a,b) { int temp=(a);(a)=(b);(b)=temp; }
+
+inline int median9(int *p)
+{
+    PIX_SORT(p[1], p[2]) ; PIX_SORT(p[4], p[5]) ; PIX_SORT(p[7], p[8]) ; 
+    PIX_SORT(p[0], p[1]) ; PIX_SORT(p[3], p[4]) ; PIX_SORT(p[6], p[7]) ; 
+    PIX_SORT(p[1], p[2]) ; PIX_SORT(p[4], p[5]) ; PIX_SORT(p[7], p[8]) ; 
+    PIX_SORT(p[0], p[3]) ; PIX_SORT(p[5], p[8]) ; PIX_SORT(p[4], p[7]) ; 
+    PIX_SORT(p[3], p[6]) ; PIX_SORT(p[1], p[4]) ; PIX_SORT(p[2], p[5]) ; 
+    PIX_SORT(p[4], p[7]) ; PIX_SORT(p[4], p[2]) ; PIX_SORT(p[6], p[4]) ; 
+    PIX_SORT(p[4], p[2]) ; return(p[4]) ;
+}
+
+#undef PIX_SWAP
+#undef PIX_SORT
+
+inline ushort eahd_median(int row, int col, int color,
+	      ushort (*image)[4],
+   	      const int width) {
+  
+  //declare the pixel array
+  int pArray[9];
+  int result;
+
+  //perform the median filter (this only works for red or blue)
+  //  result = median(R-G)+G or median(B-G)+G
+  //
+  // to perform the filter on green, it needs to be the average 
+  //  results = (median(G-R)+median(G-B)+R+B)/2
+
+  //no checks are done here to speed up the inlining
+  pArray[0] = image[width*(row  )+col+1][color] - image[width*(row  )+col+1][1];
+  pArray[1] = image[width*(row-1)+col+1][color] - image[width*(row-1)+col+1][1];
+  pArray[2] = image[width*(row-1)+col  ][color] - image[width*(row-1)+col  ][1];
+  pArray[3] = image[width*(row-1)+col-1][color] - image[width*(row-1)+col-1][1];
+  pArray[4] = image[width*(row  )+col-1][color] - image[width*(row  )+col-1][1];
+  pArray[5] = image[width*(row+1)+col-1][color] - image[width*(row+1)+col-1][1];
+  pArray[6] = image[width*(row+1)+col  ][color] - image[width*(row+1)+col  ][1];
+  pArray[7] = image[width*(row+1)+col+1][color] - image[width*(row+1)+col+1][1];
+  pArray[8] = image[width*(row  )+col  ][color] - image[width*(row  )+col  ][1];
+  
+  median9(pArray);
+  result = pArray[4]+image[width*(row  )+col  ][1];
+  return DTOP(result);
+  
+}
+
+/*
+   Adaptive Homogeneity-Directed interpolation is based on
+   the work of Keigo Hirakawa, Thomas Parks, and Paul Lee.
+   
+   Algorithm updated by Michael Goertz
+
+ */
+#define TS 256		/* Tile Size */
+
+void CLASS eahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
+        const int width, const int height, const int colors,
+       	const float rgb_cam[3][4], void *dcraw)
+{
+  ahd_interpolate_INDI(image, filters, width, height, colors, rgb_cam, dcraw);
+
+  /***********************
+  Add the color smoothing from Kimmel as suggested in the AHD paper
+  ************************/
+
+  int row, col;
+  int row_start = 2;
+  int row_stop  = height-2;
+  int col_start = 2;
+  int col_stop  = width-2;
+  //interate through all the colors
+  int count;
+
+  ushort *mpix;
+  
+  for (count=0;count<3;count++) {
+    //perform 3 iterations - seems to be a commonly settled upon number of iterations
+    for (row=row_start; row < row_stop; row++) {
+      for (col=col_start; col < col_stop; col++) {
+	//calculate the median only over the red and blue
+	//calculating over green seems to offer very little additional quality
+	mpix = image[row*width+col];
+	mpix[0] = eahd_median(row, col, 0, image, width);
+	mpix[2] = eahd_median(row, col, 2, image, width);
+	
+      }
+    }
+  }
+}
+#undef TS
+
+
 void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
     int *width_p, int *fuji_width_p, const int colors, const double step,
     void *dcraw)
