@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.79 2007/06/22 23:04:52 udifuchs Exp $
+dnl $Id: configure.ac,v 1.80 2007/07/13 15:35:39 udifuchs Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -61,11 +61,14 @@ PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4)
 AC_SUBST(GTK_LIBS)
 PKG_CHECK_MODULES(GLIB, glib-2.0)
 PKG_CHECK_MODULES(LCMS, lcms)
-PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview-1.0 >= 1.1,
+PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview >= 1.2,
   [ have_gtkimageview=yes
     AC_DEFINE(HAVE_GTKIMAGEVIEW, 1, have gtk image view) ],
-  [ have_gtkimageview=no
-    AC_MSG_RESULT($GIMP_PKG_ERRORS) ] )
+  [ PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview-1.0 >= 1.1,
+    [ have_gtkimageview=yes
+      AC_DEFINE(HAVE_GTKIMAGEVIEW, 1, have gtk image view) ],
+    [ have_gtkimageview=no
+      AC_MSG_RESULT($GIMP_PKG_ERRORS) ] ) ] )
 
 # The GIMP/CinePaint plug-ins installation dir is defined in
 # pkg-config.  It is not clear if we should install the plugin in the
