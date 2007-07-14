@@ -63,6 +63,17 @@ typedef enum { render_default, render_overexposed, render_underexposed
 typedef enum { render_all, render_draw_phase,
 	render_spot_phase, render_finished } RenderPhaseType;
 
+typedef enum { spot_cursor, crop_cursor,
+    left_cursor, right_cursor, top_cursor, bottom_cursor,
+    top_left_cursor, top_right_cursor, bottom_left_cursor, bottom_right_cursor,
+    cursor_num } CursorType;
+
+const GdkCursorType Cursors[cursor_num] = {
+    GDK_HAND2, GDK_CROSSHAIR,
+    GDK_LEFT_SIDE, GDK_RIGHT_SIDE, GDK_TOP_SIDE, GDK_BOTTOM_SIDE,
+    GDK_TOP_LEFT_CORNER, GDK_TOP_RIGHT_CORNER,
+    GDK_BOTTOM_LEFT_CORNER, GDK_BOTTOM_RIGHT_CORNER };
+
 /* All the "global" information is here: */
 typedef struct {
     ufraw_data *UF;
@@ -77,8 +88,7 @@ typedef struct {
     /* combobox index */
     int Interpolation;
     GdkPixbuf *PreviewPixbuf;
-    GdkCursor *SpotCursor;
-    GdkCursor *CropCursor;
+    GdkCursor *Cursor[cursor_num];
     /* Remember the Gtk Widgets that we need to access later */
     GtkWidget *Controls, *PreviewWidget, *RawHisto, *LiveHisto;
     GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
@@ -124,9 +134,11 @@ typedef struct {
      * call update_scales() which was also frozen. */
     gboolean FreezeDialog;
     /* Since the event-box can be larger than the preview pixbuf we need: */
-    gboolean SpotButtonPressed, SpotDraw;
+    gboolean PreviewButtonPressed, SpotDraw;
     int SpotX1, SpotY1, SpotX2, SpotY2;
+    CursorType CropMotionType;
     gboolean OptionsChanged;
+    int PageNum;
 } preview_data;
 
 /* These #defines are not very elegant, but otherwise things get tooo long */
@@ -493,7 +505,7 @@ colorLabels *color_labels_new(GtkTable *table, int x, int y, char *label,
 	if ( c==3 )
 	    gtk_tooltips_set_tip(data->ToolTips, event_box,
                     _("Luminosity (Y value)"), NULL);
-	if ( c==4 ) 
+	if ( c==4 )
 	    gtk_tooltips_set_tip(data->ToolTips, event_box,
                               _("Adams' zone"), NULL);
     }
@@ -673,6 +685,15 @@ void preview_draw_area(preview_data *data, int x, int y, int width, int height)
 			p8[c] = 255;
 		continue;
 	    }
+	    /* Draw white frame around crop area */
+	    if ( ((yy==CropY1-1 || yy==CropY2+1) && xx>=CropX1 && xx<=CropX2) ||
+		 ((xx==CropX1-1 || xx==CropX2+1) && yy>=CropY1 && yy<=CropY2) )
+	    {
+		for (c=0; c<3; c++)
+		    p8[c] = 255;
+		continue;
+	    }
+	    /* Shade the cropped out area */
 	    if ( yy<CropY1 || yy>CropY2 || xx<CropX1 || xx>CropX2 ) {
 		for (c=0; c<3; c++)
 		    p8[c] = p8[c]/4;
@@ -851,7 +872,7 @@ gboolean render_raw_histogram(preview_data *data)
     for (c=0; c<colors; c++) {
 	for (cl=0; cl<colors; cl++) p16[cl] = 0;
 	p16[c] = Developer->max * 0x01000 / Developer->rgbWB[c] *
-		0x10000 / Developer->exposure; 
+		0x10000 / Developer->exposure;
         develope(pen[c], p16, Developer, 8, pixtmp, 1);
 	guint8 max=1;
 	for (cl=0; cl<3; cl++) max = MAX(pen[c][cl], max);
@@ -1103,7 +1124,8 @@ gboolean render_spot(preview_data *data)
 	    "                    </span>",
 	    (int)rgb[0], (int)rgb[1], (int)rgb[2]);
     gtk_label_set_markup(data->SpotPatch, tmp);
-    draw_spot(data, TRUE);
+    if ( data->PageNum!=4 )
+	draw_spot(data, TRUE);
 
     return FALSE;
 }
@@ -1277,14 +1299,8 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
     update_scales(data);
 }
 
-gboolean spot_button_press(GtkWidget *event_box, GdkEventButton *event,
-	gpointer user_data)
+void event_coordinate_rescale(gdouble *x, gdouble *y, preview_data *data)
 {
-    preview_data *data = get_preview_data(event_box);
-    (void)user_data;
-    if (data->FreezeDialog) return FALSE;
-    if (event->button!=1) return FALSE;
-    draw_spot(data, FALSE);
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
 #ifdef HAVE_GTKIMAGEVIEW
@@ -1295,40 +1311,125 @@ gboolean spot_button_press(GtkWidget *event_box, GdkEventButton *event,
     int viewWidth = data->PreviewWidget->allocation.width;
     int viewHeight = data->PreviewWidget->allocation.height;
     if ( viewWidth<width ) {
-	event->x += viewRect.x;
+	*x += viewRect.x;
     } else {
-	event->x -= (viewWidth - width) / 2;
+	*x -= (viewWidth - width) / 2;
     }
-    if ( event->x<0 || event->x>=width ) return FALSE;
+    if ( *x<0) *x = 0;
+    if ( *x>=width ) *x = width-1;
 
     if ( viewHeight<height ) {
-	event->y += viewRect.y;
+	*y += viewRect.y;
     } else {
-	event->y -= (viewHeight - height) / 2;
+	*y -= (viewHeight - height) / 2;
     }
-    if ( event->y<0 || event->y>=height ) return FALSE;
+    if ( *y<0 ) *y = 0;
+    if ( *y>=height ) *y = height-1;
 #endif
-    data->SpotButtonPressed = TRUE;
     /* Scale pixbuf coordinates to image coordinates */
-    data->SpotX1 = event->x * data->UF->predictedWidth / width;
-    data->SpotY1 = event->y * data->UF->predictedHeight / height;
-    data->SpotX2 = event->x * data->UF->predictedWidth / width;
-    data->SpotY2 = event->y * data->UF->predictedHeight / height;
-    render_spot(data);
-    return TRUE;
+    *x = *x * data->UF->predictedWidth / width;
+    *y = *y * data->UF->predictedHeight / height;
 }
 
-gboolean spot_button_release(GtkWidget *event_box, GdkEventButton *event,
+gboolean preview_button_press(GtkWidget *event_box, GdkEventButton *event,
+	gpointer user_data)
+{
+    preview_data *data = get_preview_data(event_box);
+    (void)user_data;
+    if (data->FreezeDialog) return FALSE;
+    if (event->button!=1) return FALSE;
+    event_coordinate_rescale(&event->x, &event->y, data);
+    if ( data->PageNum==0 ) {
+	data->PreviewButtonPressed = TRUE;
+	draw_spot(data, FALSE);
+	data->SpotX1 = data->SpotX2 = event->x;
+	data->SpotY1 = data->SpotY2 = event->y;
+	render_spot(data);
+	return TRUE;
+    }
+    if ( data->PageNum==4 ) {
+	data->PreviewButtonPressed = TRUE;
+	return TRUE;
+    }
+    return FALSE;
+}
+
+gboolean preview_button_release(GtkWidget *event_box, GdkEventButton *event,
 	gpointer user_data)
 {
     preview_data *data = get_preview_data(event_box);
     (void)user_data;
     if (event->button!=1) return FALSE;
-    data->SpotButtonPressed = FALSE;
+    data->PreviewButtonPressed = FALSE;
     return TRUE;
 }
 
-gboolean spot_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
+void update_crop_ranges(preview_data *data);
+
+gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
+{
+    event_coordinate_rescale(&event->x, &event->y, data);
+    int x = event->x;
+    int y = event->y;
+    int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    int sideSizeX = MIN(16 * data->UF->predictedWidth / pixbufWidth,
+	    (CFG->CropX2-CFG->CropX1)/3);
+    int sideSizeY = MIN(16 * data->UF->predictedHeight / pixbufHeight,
+	    (CFG->CropY2-CFG->CropY1)/3);
+
+    if ( (event->state&GDK_BUTTON1_MASK)==0 ) {
+	data->CropMotionType = crop_cursor;
+	if ( y>=CFG->CropY1-1 && y<CFG->CropY1+sideSizeY &&
+	     x>=CFG->CropX1 && x<=CFG->CropX2)
+	    data->CropMotionType = top_cursor;
+	if ( y>CFG->CropY2-sideSizeY && y<=CFG->CropY2+1 &&
+	     x>=CFG->CropX1 && x<=CFG->CropX2)
+	    data->CropMotionType = bottom_cursor;
+	if ( x>=CFG->CropX1-1 && x<CFG->CropX1+sideSizeX &&
+	     y>=CFG->CropY1 && y<=CFG->CropY2) {
+	    if ( data->CropMotionType == top_cursor )
+		data->CropMotionType = top_left_cursor;
+	    else if ( data->CropMotionType == bottom_cursor )
+		data->CropMotionType = bottom_left_cursor;
+	    else data->CropMotionType = left_cursor;
+	}
+	if ( x>CFG->CropX2-sideSizeX && x<=CFG->CropX2+1 &&
+	     y>=CFG->CropY1 && y<=CFG->CropY2) {
+	    if ( data->CropMotionType == top_cursor )
+		data->CropMotionType = top_right_cursor;
+	    else if ( data->CropMotionType == bottom_cursor )
+		data->CropMotionType = bottom_right_cursor;
+	    else data->CropMotionType = right_cursor;
+	}
+	GtkWidget *event_box =
+	    gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_EVENT_BOX);
+	gdk_window_set_cursor(event_box->window,
+		data->Cursor[data->CropMotionType]);
+    } else {
+	if ( data->CropMotionType==top_cursor ||
+	     data->CropMotionType==top_left_cursor ||
+	     data->CropMotionType==top_right_cursor )
+	    if (y<CFG->CropY2) CFG->CropY1 = y;
+	if ( data->CropMotionType==bottom_cursor ||
+	     data->CropMotionType==bottom_left_cursor ||
+	     data->CropMotionType==bottom_right_cursor )
+	    if (y>CFG->CropY1) CFG->CropY2 = y;
+	if ( data->CropMotionType==left_cursor ||
+	     data->CropMotionType==top_left_cursor ||
+	     data->CropMotionType==bottom_left_cursor )
+	    if (x<CFG->CropX2) CFG->CropX1 = x;
+	if ( data->CropMotionType==right_cursor ||
+	     data->CropMotionType==top_right_cursor ||
+	     data->CropMotionType==bottom_right_cursor )
+	    if (x>CFG->CropX1) CFG->CropX2 = x;
+	if ( data->CropMotionType!=crop_cursor )
+		update_crop_ranges(data);
+    }
+    return TRUE;
+}
+
+gboolean preview_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
 	gpointer user_data)
 {
     preview_data *data = get_preview_data(event_box);
@@ -1337,41 +1438,14 @@ gboolean spot_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
 #ifdef HAVE_GTKIMAGEVIEW
     if (!gtk_event_box_get_above_child(GTK_EVENT_BOX(event_box))) return FALSE;
 #endif
+    if ( data->PageNum==4 )
+	return crop_motion_notify(data, event);
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
-    if ( !data->SpotButtonPressed ) return FALSE;
+    if ( !data->PreviewButtonPressed ) return FALSE;
     draw_spot(data, FALSE);
-    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-#ifdef HAVE_GTKIMAGEVIEW
-    /* Find location of event in the view. */
-    GdkRectangle viewRect;
-    gtk_image_view_get_viewport(GTK_IMAGE_VIEW(data->PreviewWidget),
-	    &viewRect);
-    int viewWidth = data->PreviewWidget->allocation.width;
-    int viewHeight = data->PreviewWidget->allocation.height;
-    if ( viewWidth<width ) {
-	event->x += viewRect.x;
-    } else {
-	event->x -= (viewWidth - width) / 2;
-    }
-    if ( event->x<0 ) event->x = 0;
-    if ( event->x>=width ) event->x = width-1;
-
-    if ( viewHeight<height ) {
-	event->y += viewRect.y;
-    } else {
-	event->y -= (viewHeight - height) / 2;
-    }
-    if ( event->y<0 ) event->y = 0;
-    if ( event->y>=height ) event->y = height-1;
-#endif
-    /* Scale pixbuf coordinates to image coordinates */
-    ufraw_image_data *image = &data->UF->Images[ufraw_final_phase];
-    data->SpotX2 = MAX(MIN(event->x, image->width), 0)
-	    * data->UF->predictedWidth / width;
-    data->SpotY2 = MAX(MIN(event->y, image->height), 0)
-	    * data->UF->predictedHeight / height;
-
+    event_coordinate_rescale(&event->x, &event->y, data);
+    data->SpotX2 = event->x;
+    data->SpotY2 = event->y;
     render_spot(data);
     return TRUE;
 }
@@ -1415,33 +1489,6 @@ void update_crop_ranges(preview_data *data)
     gtk_adjustment_set_value(data->CropY2Adjustment, CropY2);
 
     render_preview(data, render_draw_phase);
-}
-
-void crop_event(GtkWidget *widget, gpointer user_data)
-{
-    preview_data *data = get_preview_data(widget);
-    user_data = user_data;
-
-    if (data->FreezeDialog) return;
-    if (data->SpotX1 < 0) return;
-
-    if (data->SpotX1 < data->SpotX2) {
-	CFG->CropX1 = data->SpotX1;
-	CFG->CropX2 = data->SpotX2;
-    } else {
-	CFG->CropX1 = data->SpotX2;
-	CFG->CropX2 = data->SpotX1;
-    }
-
-    if (data->SpotY1 < data->SpotY2) {
-	CFG->CropY1 = data->SpotY1;
-	CFG->CropY2 = data->SpotY2;
-    } else {
-	CFG->CropY1 = data->SpotY2;
-	CFG->CropY2 = data->SpotY1;
-    }
-
-    update_crop_ranges(data);
 }
 
 void crop_reset(GtkWidget *widget, gpointer user_data)
@@ -2425,26 +2472,34 @@ void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
 {
     (void)page;
     (void)user_data;
-#ifdef HAVE_GTKIMAGEVIEW
     preview_data *data = get_preview_data(notebook);
     if (data->FreezeDialog==TRUE) return;
-    GtkWidget *event =
+
+    GtkWidget *event_box =
 	    gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_EVENT_BOX);
+#ifdef HAVE_GTKIMAGEVIEW
     if ( page_num==0 ) {
-	gtk_event_box_set_above_child(GTK_EVENT_BOX(event), TRUE);
-	gdk_window_set_cursor(event->window,
-		data->SpotCursor);
+	gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), TRUE);
+	gdk_window_set_cursor(event_box->window, data->Cursor[spot_cursor]);
+	draw_spot(data, TRUE);
     } else if ( page_num==4 ) {
-	gtk_event_box_set_above_child(GTK_EVENT_BOX(event), TRUE);
-	gdk_window_set_cursor(event->window,
-		data->CropCursor);
+	gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), TRUE);
+	gdk_window_set_cursor(event_box->window, data->Cursor[crop_cursor]);
+	draw_spot(data, FALSE);
     } else {
-	gtk_event_box_set_above_child(GTK_EVENT_BOX(event), FALSE);
+	gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), FALSE);
+	draw_spot(data, TRUE);
     }
 #else
-    (void)notebook;
-    (void)page_num;
+    if ( page_num==4 ) {
+	gdk_window_set_cursor(event_box->window, data->Cursor[crop_cursor]);
+	draw_spot(data, FALSE);
+    } else {
+	gdk_window_set_cursor(event_box->window, data->Cursor[spot_cursor]);
+	draw_spot(data, TRUE);
+    }
 #endif
+    data->PageNum = page_num;
 }
 
 int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
@@ -2864,7 +2919,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     label = gtk_label_new(_("Zoom:"));
     gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
- 
+
     // Zoom out button:
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
@@ -3190,7 +3245,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     /* Start of Crop controls */
     label = gtk_label_new(_("Left:"));
-    gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
+    gtk_table_attach(table, label, 0, 1, 1, 2, 0, 0, 0, 0);
 
     data->CropX1Adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
 	CFG->CropX1, 0, data->UF->predictedWidth, 1, 1, 0));
@@ -3199,12 +3254,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_object_set_data(G_OBJECT(data->CropX1Adjustment),
 	"Parent-Widget", data->CropX1Spin);
     gtk_table_attach(table,
-	GTK_WIDGET(data->CropX1Spin), 1, 2, 0, 1, 0, 0, 0, 0);
+	GTK_WIDGET(data->CropX1Spin), 1, 2, 1, 2, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->CropX1Adjustment), "value-changed",
 	G_CALLBACK(adjustment_update), &CFG->CropX1);
 
     label = gtk_label_new(_("Top:"));
-    gtk_table_attach(table, label, 2, 3, 0, 1, 0, 0, 0, 0);
+    gtk_table_attach(table, label, 1, 2, 0, 1, 0, 0, 0, 0);
 
     data->CropY1Adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
 	CFG->CropY1, 0, data->UF->predictedHeight, 1, 1, 0));
@@ -3213,12 +3268,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_object_set_data(G_OBJECT(data->CropY1Adjustment),
 	"Parent-Widget", data->CropY1Spin);
     gtk_table_attach(table,
-	GTK_WIDGET(data->CropY1Spin), 3, 4, 0, 1, 0, 0, 0, 0);
+	GTK_WIDGET(data->CropY1Spin), 2, 3, 0, 1, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->CropY1Adjustment), "value-changed",
 	G_CALLBACK(adjustment_update), &CFG->CropY1);
 
     label = gtk_label_new(_("Right:"));
-    gtk_table_attach(table, label, 0, 1, 1, 2, 0, 0, 0, 0);
+    gtk_table_attach(table, label, 2, 3, 1, 2, 0, 0, 0, 0);
 
     data->CropX2Adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
 	CFG->CropX2, 0, data->UF->predictedWidth, 1, 1, 0));
@@ -3227,12 +3282,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_object_set_data(G_OBJECT(data->CropX2Adjustment),
 	"Parent-Widget", data->CropX2Spin);
     gtk_table_attach(table,
-	GTK_WIDGET(data->CropX2Spin), 1, 2, 1, 2, 0, 0, 0, 0);
+	GTK_WIDGET(data->CropX2Spin), 3, 4, 1, 2, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->CropX2Adjustment), "value-changed",
 	G_CALLBACK(adjustment_update), &CFG->CropX2);
 
     label = gtk_label_new(_("Bottom:"));
-    gtk_table_attach(table, label, 2, 3, 1, 2, 0, 0, 0, 0);
+    gtk_table_attach(table, label, 1, 2, 2, 3, 0, 0, 0, 0);
 
     data->CropY2Adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
 	CFG->CropY2, 0, data->UF->predictedHeight, 1, 1, 0));
@@ -3241,20 +3296,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_object_set_data(G_OBJECT(data->CropY2Adjustment),
 	"Parent-Widget", data->CropY2Spin);
     gtk_table_attach(table,
-	GTK_WIDGET(data->CropY2Spin), 3, 4, 1, 2, 0, 0, 0, 0);
+	GTK_WIDGET(data->CropY2Spin), 2, 3, 2, 3, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->CropY2Adjustment), "value-changed",
 	G_CALLBACK(adjustment_update), &CFG->CropY2);
-
-    // Crop set button:
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	GTK_STOCK_CUT, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, button,
-	_("Select the crop area on the preview image"),
-	NULL);
-    gtk_table_attach(table, button, 4, 5, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-	G_CALLBACK(crop_event), NULL);
 
     // Crop reset button:
     button = gtk_button_new();
@@ -3544,13 +3588,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_misc_set_alignment(GTK_MISC(data->PreviewWidget), 0, 0);
     gtk_container_add(GTK_CONTAINER(PreviewEventBox), data->PreviewWidget);
 #endif
-    data->SpotButtonPressed = FALSE;
+    data->PreviewButtonPressed = FALSE;
     g_signal_connect(G_OBJECT(PreviewEventBox), "button-press-event",
-	    G_CALLBACK(spot_button_press), NULL);
+	    G_CALLBACK(preview_button_press), NULL);
     g_signal_connect(G_OBJECT(PreviewEventBox), "button-release-event",
-	    G_CALLBACK(spot_button_release), NULL);
+	    G_CALLBACK(preview_button_release), NULL);
     g_signal_connect(G_OBJECT(PreviewEventBox), "motion-notify-event",
-	    G_CALLBACK(spot_motion_notify), NULL);
+	    G_CALLBACK(preview_motion_notify), NULL);
+    gtk_widget_add_events(PreviewEventBox, GDK_POINTER_MOTION_MASK);
     g_object_unref(data->PreviewPixbuf);
 
     data->ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
@@ -3663,9 +3708,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* After window size was set, the user may want to shrink it */
     gtk_widget_set_size_request(scroll, -1, -1);
 #endif
-    data->SpotCursor = gdk_cursor_new(GDK_HAND2);
-    data->CropCursor = gdk_cursor_new(GDK_CROSSHAIR);
-    gdk_window_set_cursor(PreviewEventBox->window, data->SpotCursor);
+    for (i=0; i<cursor_num; i++)
+	data->Cursor[i] = gdk_cursor_new(Cursors[i]);
+    gdk_window_set_cursor(PreviewEventBox->window, data->Cursor[spot_cursor]);
     gtk_widget_set_sensitive(data->Controls, FALSE);
     preview_progress(previewWindow, _("Loading preview"), 0.2);
     ufraw_load_raw(uf);
@@ -3706,8 +3751,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             (GtkCallback)(expander_state), NULL);
     ufraw_focus(previewWindow, FALSE);
     gtk_widget_destroy(previewWindow);
-    gdk_cursor_unref(data->SpotCursor);
-    gdk_cursor_unref(data->CropCursor);
+    for (i=0; i<cursor_num; i++)
+	gdk_cursor_unref(data->Cursor[i]);
     /* Make sure that there are no preview idle task remaining */
     g_idle_remove_by_data(data);
 
