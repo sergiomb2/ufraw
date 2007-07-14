@@ -416,12 +416,13 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	struct stat s;
 	fstat(fileno(raw->ifp), &s);
 	g_snprintf(uf->conf->inputModTime, max_name, "%d", (int)s.st_mtime);
+
+	/*Reset crop coordinates between images.*/
+	uf->conf->CropX1 = -1;
+	uf->conf->CropY1 = -1;
+	uf->conf->CropX2 = -1;
+	uf->conf->CropY2 = -1;
     }
-    /*Reset crop coordinates between images.*/
-    uf->conf->CropX1 = -1;
-    uf->conf->CropY1 = -1;
-    uf->conf->CropX2 = -1;
-    uf->conf->CropY2 = -1;
     /*Reset EXIF data text fields to avoid spill over between images.*/
     strcpy(uf->conf->isoText, "");
     strcpy(uf->conf->shutterText, "");
