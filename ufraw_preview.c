@@ -60,9 +60,6 @@ typedef struct {
 typedef enum { render_default, render_overexposed, render_underexposed
 	} RenderModeType;
 
-typedef enum { render_all, render_draw_phase,
-	render_spot_phase, render_finished } RenderPhaseType;
-
 typedef enum { spot_cursor, crop_cursor,
     left_cursor, right_cursor, top_cursor, bottom_cursor,
     top_left_cursor, top_right_cursor, bottom_left_cursor, bottom_right_cursor,
@@ -126,7 +123,6 @@ typedef struct {
     GtkAdjustment *ZoomAdjustment;
     long (*SaveFunc)();
     RenderModeType RenderMode;
-    RenderPhaseType RenderPhase;
     int RenderLine;
     UFRawPhase fromPhase;
     /* Some actions update the progress bar while working, but meanwhile we
@@ -137,6 +133,7 @@ typedef struct {
     gboolean PreviewButtonPressed, SpotDraw;
     int SpotX1, SpotY1, SpotX2, SpotY2;
     CursorType CropMotionType;
+    int DrawnCropX1, DrawnCropX2, DrawnCropY1, DrawnCropY2;
     gboolean OptionsChanged;
     int PageNum;
 } preview_data;
@@ -619,6 +616,23 @@ void color_labels_set(colorLabels *l, double data[])
 #endif
 }
 
+void redraw_navigation_image(preview_data *data)
+{
+#ifdef HAVE_GTKIMAGEVIEW
+    GtkWidget *scroll =
+	gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_IMAGE_SCROLL_WIN);
+    GtkImageNav *nav = GTK_IMAGE_NAV(GTK_IMAGE_SCROLL_WIN(scroll)->nav);
+    int navWidth = gdk_pixbuf_get_width(nav->pixbuf);
+    int navHeight = gdk_pixbuf_get_height(nav->pixbuf);
+    g_object_unref(nav->pixbuf);
+    // GDK_INTERP_BILINEAR is too slow
+    nav->pixbuf = gdk_pixbuf_scale_simple(data->PreviewPixbuf,
+	    navWidth, navHeight, GDK_INTERP_NEAREST);
+#else
+    (void)data;
+#endif
+}
+
 #ifdef HAVE_GTKIMAGEVIEW
 void image_view_draw_area(GtkImageView *view,
 	int x, int y, int width, int height)
@@ -670,7 +684,7 @@ void preview_draw_area(preview_data *data, int x, int y, int width, int height)
 	    * pixbufWidth / data->UF->predictedWidth - 1;
     int SpotX2 = MAX(data->SpotX1, data->SpotX2)
 	    * pixbufWidth / data->UF->predictedWidth + 1;
-    int xx, yy, c, o, min, max;
+    int xx, yy, c;
     for (yy=y; yy<y+height; yy++) {
 	memcpy(pixies+yy*rowstride+x*3,
 		img.buffer + yy*img.rowstride + x*img.depth, width*img.depth);
@@ -678,42 +692,35 @@ void preview_draw_area(preview_data *data, int x, int y, int width, int height)
 	    if ( data->SpotDraw &&
 		( ((yy==SpotY1 || yy==SpotY2) && xx>=SpotX1 && xx<=SpotX2) ||
 		  ((xx==SpotX1 || xx==SpotX2) && yy>=SpotY1 && yy<=SpotY2) ) ) {
-		for (c=0; c<3; c++)
-		    if ( (xx+yy)%2 == 0 )
-			p8[c] = 0;
-		    else
-			p8[c] = 255;
+		if ( (xx+yy)%2 == 0 )
+		    p8[0] = p8[1] = p8[2] = 0;
+		else
+		    p8[0] = p8[1] = p8[2] = 255;
 		continue;
 	    }
 	    /* Draw white frame around crop area */
 	    if ( ((yy==CropY1-1 || yy==CropY2+1) && xx>=CropX1 && xx<=CropX2) ||
 		 ((xx==CropX1-1 || xx==CropX2+1) && yy>=CropY1 && yy<=CropY2) )
 	    {
-		for (c=0; c<3; c++)
-		    p8[c] = 255;
+		p8[0] = p8[1] = p8[2] = 255;
 		continue;
 	    }
 	    /* Shade the cropped out area */
 	    if ( yy<CropY1 || yy>CropY2 || xx<CropX1 || xx>CropX2 ) {
-		for (c=0; c<3; c++)
-		    p8[c] = p8[c]/4;
+		for (c=0; c<3; c++) p8[c] = p8[c]/4;
 		continue;
 	    }
-	    for (c=0, max=0, min=0x100; c<3; c++) {
-		max = MAX(max, p8[c]);
-		min = MIN(min, p8[c]);
+	    if (data->RenderMode==render_default) {
+		if ( CFG->overExp && (p8[0]==255 || p8[1]==255 || p8[2]==255) )
+		    p8[0] = p8[1] = p8[2] = 0;
+		else if ( CFG->underExp && (p8[0]==0 || p8[1]==0 || p8[2]==0) )
+		    p8[0] = p8[1] = p8[2] = 255;
+		continue;
 	    }
-	    for (c=0; c<3; c++) {
-		o = p8[c];
-		if (data->RenderMode==render_default) {
-		    if (CFG->overExp && max==MAXOUT) o = 0;
-		    if (CFG->underExp && min==0) o = 255;
-		} else if (data->RenderMode==render_overexposed) {
-		    if (o!=255) o = 0;
-		} else if (data->RenderMode==render_underexposed) {
-		    if (o!=0) o = 255;
-		}
-		pixies[yy*rowstride+xx*3+c] = o;
+	    if (data->RenderMode==render_overexposed) {
+		for (c=0; c<3; c++) if (p8[c]!=255) p8[c] = 0;
+	    } else if (data->RenderMode==render_underexposed) {
+		for (c=0; c<3; c++) if (p8[c]!=0) p8[c] = 255;
 	    }
 	}
     }
@@ -724,23 +731,34 @@ void preview_draw_area(preview_data *data, int x, int y, int width, int height)
     gtk_widget_queue_draw_area(data->PreviewWidget,
 	    x, y, width, height);
 #endif
+    data->DrawnCropX1 = CFG->CropX1;
+    data->DrawnCropX2 = CFG->CropX2;
+    data->DrawnCropY1 = CFG->CropY1;
+    data->DrawnCropY2 = CFG->CropY2;
 }
 
-void render_preview(preview_data *data, RenderPhaseType phase);
+void render_preview(preview_data *data);
 gboolean render_raw_histogram(preview_data *data);
 gboolean render_preview_image(preview_data *data);
 gboolean render_live_histogram(preview_data *data);
 gboolean render_spot(preview_data *data);
 void draw_spot(preview_data *data, gboolean draw);
 
-void render_preview_callback(GtkWidget *widget, long mode)
+void render_special_mode(GtkWidget *widget, long mode)
 {
     preview_data *data = get_preview_data(widget);
     data->RenderMode = mode;
-    render_preview(data, render_all);
+    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    preview_draw_area(data, 0, 0, width, height);
+#ifdef HAVE_GTKIMAGEVIEW
+    /* GtkImageView does not refresh the full image. */
+    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
+	    data->PreviewPixbuf, FALSE);
+#endif
 }
 
-void render_preview(preview_data *data, RenderPhaseType phase)
+void render_preview(preview_data *data)
 {
     if (data->FreezeDialog) return;
 
@@ -774,34 +792,11 @@ void render_preview(preview_data *data, RenderPhaseType phase)
 	gtk_progress_bar_set_text(data->ProgressBar, progressText);
 	gtk_progress_bar_set_fraction(data->ProgressBar, 0);
     }
-    if ( phase==render_draw_phase ) {
-	int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
-	int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-	preview_draw_area(data, 0, 0, width, height);
-#ifdef HAVE_GTKIMAGEVIEW
-	gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
-		data->PreviewPixbuf, FALSE);
-#endif
-	if ( data->RenderPhase!=render_finished )
-	    /* We are in the middle of some other rendering */
-	    phase = render_all;
-	else
-	    phase = render_spot_phase;
-    }
-    if ( phase==render_spot_phase ) {
-	g_idle_remove_by_data(data);
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-		(GSourceFunc)(render_spot), data, NULL);
-	return;
-    }
-    if ( phase==render_all ) {
-	ufraw_convert_image_init_phase(data->UF);
-	data->RenderPhase = render_all;
-	data->RenderLine = 0;
-	g_idle_remove_by_data(data);
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-		(GSourceFunc)(render_raw_histogram), data, NULL);
-    }
+    ufraw_convert_image_init_phase(data->UF);
+    data->RenderLine = 0;
+    g_idle_remove_by_data(data);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	    (GSourceFunc)(render_raw_histogram), data, NULL);
 }
 
 gboolean render_raw_histogram(preview_data *data)
@@ -1074,7 +1069,6 @@ gboolean render_spot(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
 
-    data->RenderPhase = render_finished;
     if (data->SpotX1<0) return FALSE;
     int width = data->UF->Images[ufraw_final_phase].width;
     int height = data->UF->Images[ufraw_final_phase].height;
@@ -1231,7 +1225,7 @@ void update_scales(preview_data *data)
 	    CFG->curve[CFG->curveIndex].m_anchors[1].y!=1.0 );
 
     data->FreezeDialog = FALSE;
-    render_preview(data, render_all);
+    render_preview(data);
 }
 
 void curve_update(GtkWidget *widget, long curveType)
@@ -1316,7 +1310,7 @@ void event_coordinate_rescale(gdouble *x, gdouble *y, preview_data *data)
 	*x -= (viewWidth - width) / 2;
     }
     if ( *x<0) *x = 0;
-    if ( *x>=width ) *x = width-1;
+    if ( *x>width ) *x = width;
 
     if ( viewHeight<height ) {
 	*y += viewRect.y;
@@ -1324,7 +1318,7 @@ void event_coordinate_rescale(gdouble *x, gdouble *y, preview_data *data)
 	*y -= (viewHeight - height) / 2;
     }
     if ( *y<0 ) *y = 0;
-    if ( *y>=height ) *y = height-1;
+    if ( *y>height ) *y = height;
 #endif
     /* Scale pixbuf coordinates to image coordinates */
     *x = *x * data->UF->predictedWidth / width;
@@ -1471,6 +1465,8 @@ void create_base_image(preview_data *data)
 
 void update_crop_ranges(preview_data *data)
 {
+    if (data->FreezeDialog) return;
+
     int CropX1 = CFG->CropX1;
     int CropY1 = CFG->CropY1;
     int CropX2 = CFG->CropX2;
@@ -1488,7 +1484,53 @@ void update_crop_ranges(preview_data *data)
     gtk_adjustment_set_value(data->CropX2Adjustment, CropX2);
     gtk_adjustment_set_value(data->CropY2Adjustment, CropY2);
 
-    render_preview(data, render_draw_phase);
+    int x1[4], x2[4], y1[4], y2[4], i=0;
+    if (CropX1!=data->DrawnCropX1) {
+	x1[i] = MIN(CropX1,data->DrawnCropX1);
+	x2[i] = MAX(CropX1,data->DrawnCropX1);
+	y1[i] = MIN(CropY1, data->DrawnCropY1);
+	y2[i] = MAX(CropY2, data->DrawnCropY2);
+	data->DrawnCropX1 = x2[i];
+	i++;
+    }
+    if (CropX2!=data->DrawnCropX2) {
+	x1[i] = MIN(CropX2,data->DrawnCropX2);
+	x2[i] = MAX(CropX2,data->DrawnCropX2);
+	y1[i] = MIN(CropY1, data->DrawnCropY1);
+	y2[i] = MAX(CropY2, data->DrawnCropY2);
+	data->DrawnCropX2 = x1[i];
+	i++;
+    }
+    if (CropY1!=data->DrawnCropY1) {
+	y1[i] = MIN(CropY1,data->DrawnCropY1);
+	y2[i] = MAX(CropY1,data->DrawnCropY1);
+	x1[i] = MIN(CropX1, data->DrawnCropX1);
+	x2[i] = MAX(CropX2, data->DrawnCropX2);
+	data->DrawnCropY1 = y2[i];
+	i++;
+    }
+    if (CropY2!=data->DrawnCropY2) {
+	y1[i] = MIN(CropY2,data->DrawnCropY2);
+	y2[i] = MAX(CropY2,data->DrawnCropY2);
+	x1[i] = MIN(CropX1, data->DrawnCropX1);
+	x2[i] = MAX(CropX2, data->DrawnCropX2);
+	data->DrawnCropY2 = y2[i];
+	i++;
+    }
+    int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    for (i--; i>=0; i--) {
+	x1[i] = x1[i] * pixbufWidth / data->UF->predictedWidth;
+	x1[i] = MAX(x1[i]-2, 0);
+	x2[i] = x2[i] * pixbufWidth / data->UF->predictedWidth;
+	x2[i] = MIN(x2[i]+2, pixbufWidth);
+	y1[i] = y1[i] * pixbufHeight / data->UF->predictedHeight;
+	y1[i] = MAX(y1[i]-2, 0);
+	y2[i] = y2[i] * pixbufHeight / data->UF->predictedHeight;
+	y2[i] = MIN(y2[i]+2, pixbufHeight);
+	preview_draw_area(data, x1[i], y1[i], x2[i]-x1[i], y2[i]-y1[i]);
+    }
+    redraw_navigation_image(data);
 }
 
 void crop_reset(GtkWidget *widget, gpointer user_data)
@@ -1523,7 +1565,7 @@ void zoom_in_event(GtkWidget *widget, gpointer user_data)
     if (prev_zoom != CFG->Zoom) {
 	create_base_image(data);
 	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
-	render_preview(data, render_all);
+	render_preview(data);
     }
 }
 
@@ -1546,7 +1588,7 @@ void zoom_out_event(GtkWidget *widget, gpointer user_data)
     if (prev_zoom != CFG->Zoom) {
 	create_base_image(data);
 	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
-	render_preview(data, render_all);
+	render_preview(data);
     }
 }
 
@@ -1568,7 +1610,7 @@ void zoom_fit_event(GtkWidget *widget, gpointer user_data)
     if (prev_zoom != CFG->Zoom) {
 	create_base_image(data);
 	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
-	render_preview(data, render_all);
+	render_preview(data);
     }
 }
 #endif
@@ -1584,7 +1626,7 @@ void zoom_max_event(GtkWidget *widget, gpointer user_data)
     if (prev_zoom != CFG->Zoom) {
 	create_base_image(data);
 	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
-	render_preview(data, render_all);
+	render_preview(data);
     }
 }
 
@@ -1881,7 +1923,18 @@ void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    if (CFG->autoExposure==enabled_state)
 		CFG->autoExposure = apply_state;
 	}
-	render_preview(data, render_all);
+	if ( valuep==&CFG->overExp || valuep==&CFG->underExp ) {
+	    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+	    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+	    preview_draw_area(data, 0, 0, width, height);
+#ifdef HAVE_GTKIMAGEVIEW
+	    /* GtkImageView does not refresh the full image. */
+	    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
+		    data->PreviewPixbuf, FALSE);
+#endif
+	} else {
+	    render_preview(data);
+	}
     }
 }
 
@@ -2034,7 +2087,7 @@ void radio_menu_update(GtkWidget *item, gint *valuep)
 	preview_data *data = get_preview_data(item);
 	*valuep = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(item),
 		    "Radio-Value"));
-	render_preview(data, render_all);
+	render_preview(data);
     }
 }
 
@@ -2384,7 +2437,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
 	}
 	ufraw_focus(optionsDialog, FALSE);
         gtk_widget_destroy(optionsDialog);
-	render_preview(data, render_all);
+	render_preview(data);
         return;
     }
 }
@@ -2527,6 +2580,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->SaveConfig = *uf->conf;
     data->SpotX1 = -1;
     data->FreezeDialog = TRUE;
+    data->PageNum = 0;
+    data->DrawnCropX1 = 0;
+    data->DrawnCropX2 = 0;
+    data->DrawnCropY1 = 0;
+    data->DrawnCropY2 = 0;
 
     data->ToolTips = gtk_tooltips_new();
 #if GTK_CHECK_VERSION(2,10,0)
@@ -3537,9 +3595,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_table_attach(table, button, 6, 7, i, i+1,
             GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
     g_signal_connect(G_OBJECT(button), "pressed",
-            G_CALLBACK(render_preview_callback), (void *)render_overexposed);
+            G_CALLBACK(render_special_mode), (void *)render_overexposed);
     g_signal_connect(G_OBJECT(button), "released",
-            G_CALLBACK(render_preview_callback), (void *)render_default);
+            G_CALLBACK(render_special_mode), (void *)render_default);
     i++;
     data->UnderLabels = color_labels_new(table, 0, i, _("Underexposed:"),
             percent_format, without_zone, data);
@@ -3548,9 +3606,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_table_attach(table, button, 6, 7, i, i+1,
             GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
     g_signal_connect(G_OBJECT(button), "pressed",
-            G_CALLBACK(render_preview_callback), (void *)render_underexposed);
+            G_CALLBACK(render_special_mode), (void *)render_underexposed);
     g_signal_connect(G_OBJECT(button), "released",
-            G_CALLBACK(render_preview_callback), (void *)render_default);
+            G_CALLBACK(render_special_mode), (void *)render_default);
     i++;
 
     /* Right side of the preview window */
