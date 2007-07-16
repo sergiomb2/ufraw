@@ -758,10 +758,8 @@ void render_special_mode(GtkWidget *widget, long mode)
 #endif
 }
 
-void render_preview(preview_data *data)
+void render_init(preview_data *data)
 {
-    if (data->FreezeDialog) return;
-
     /* Check if we need a new pixbuf */
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
@@ -792,6 +790,13 @@ void render_preview(preview_data *data)
 	gtk_progress_bar_set_text(data->ProgressBar, progressText);
 	gtk_progress_bar_set_fraction(data->ProgressBar, 0);
     }
+}
+
+void render_preview(preview_data *data)
+{
+    if (data->FreezeDialog) return;
+
+    render_init(data);
     ufraw_convert_image_init_phase(data->UF);
     data->RenderLine = 0;
     g_idle_remove_by_data(data);
@@ -1138,7 +1143,7 @@ void draw_spot(preview_data *data, gboolean draw)
     int SpotX1 = MAX(MIN(data->SpotX1, data->SpotX2)
 	    * width / data->UF->predictedWidth - 1, 0);
     int SpotX2 = MIN(MAX(data->SpotX1, data->SpotX2)
-	    * width / data->UF->predictedWidth + 1, height);
+	    * width / data->UF->predictedWidth + 1, width);
     preview_draw_area(data, SpotX1, SpotY1, SpotX2-SpotX1+1, 1);
     preview_draw_area(data, SpotX1, SpotY2, SpotX2-SpotX1+1, 1);
     preview_draw_area(data, SpotX1, SpotY1, 1, SpotY2-SpotY1+1);
@@ -1309,17 +1314,16 @@ void event_coordinate_rescale(gdouble *x, gdouble *y, preview_data *data)
     } else {
 	*x -= (viewWidth - width) / 2;
     }
-    if ( *x<0) *x = 0;
-    if ( *x>width ) *x = width;
-
     if ( viewHeight<height ) {
 	*y += viewRect.y;
     } else {
 	*y -= (viewHeight - height) / 2;
     }
+#endif
+    if ( *x<0) *x = 0;
+    if ( *x>width ) *x = width;
     if ( *y<0 ) *y = 0;
     if ( *y>height ) *y = height;
-#endif
     /* Scale pixbuf coordinates to image coordinates */
     *x = *x * data->UF->predictedWidth / width;
     *y = *y * data->UF->predictedHeight / height;
@@ -1677,7 +1681,8 @@ void flip_image(GtkWidget *widget, int flip)
 	    data->SpotY2 = temp;
 	}
     }
-    update_crop_ranges(data);
+    render_init(data);
+    render_special_mode(widget, render_default);
 }
 
 GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text, char *icon,
@@ -2579,6 +2584,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     data->SaveConfig = *uf->conf;
     data->SpotX1 = -1;
+    data->SpotX2 = -1;
+    data->SpotY1 = -1;
+    data->SpotY2 = -1;
     data->FreezeDialog = TRUE;
     data->PageNum = 0;
     data->DrawnCropX1 = 0;
