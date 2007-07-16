@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-07-16 20:51+0200\n"
-"PO-Revision-Date: 2007-07-02 00:06+0100\n"
+"PO-Revision-Date: 2007-07-02 22:51+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Country: FRANCE\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"X-Poedit-Basepath: /home/gpe/sources/ufraw/ufraw-cvs/ufraw-20070701\n"
+"X-Poedit-Basepath: /home/gpe/sources/ufraw/ufraw-cvs/ufraw-20070702\n"
 "X-Poedit-Language: French\n"
 
 #: ufraw-batch.c:71
@@ -1162,7 +1162,7 @@ msgstr "Ajustement automatique du point noir"
 #. Start of transformations page
 #: ufraw_preview.c:3299
 msgid "Crop and rotate"
-msgstr ""
+msgstr "Découpe et rotation"
 
 #. Start of Crop controls
 #: ufraw_preview.c:3305
@@ -1612,3 +1612,9 @@ msgstr "Bal. du Blanc Boitier"
 #: wb_presets.c:65
 msgid "Auto WB"
 msgstr "Bal. du Blanc Auto"
+
+#~ msgid "Select the crop area on the preview image"
+#~ msgstr "Sélectionne la zone de découpe sur la pré-visualisation"
+
+#~ msgid "Crop"
+#~ msgstr "Découpe"
