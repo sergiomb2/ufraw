@@ -6806,7 +6806,7 @@ konica_400z:
       case 2568:
 	adobe_coeff ("Panasonic","DMC-LC1");  break;
       case 3130:
-	left_margin = -14;
+	left_margin = (ushort)-14;
       case 3170:
 	left_margin += 18;
 	width = 3096;
@@ -6832,7 +6832,7 @@ konica_400z:
 	adobe_coeff ("Panasonic","DMC-FZ30");  break;
       case 3690:
 	height += 36;
-	left_margin = -14;
+	left_margin = (ushort)-14;
 	filters = 0x49494949;
 	maximum = 0xf7f0;
       case 3770:
@@ -6850,7 +6850,7 @@ konica_400z:
 	adobe_coeff ("Panasonic","DMC-LX1");  break;
       case 4290:
 	height += 38;
-	left_margin = -14;
+	left_margin = (ushort)-14;
 	filters = 0x49494949;
       case 4330:
 	width = 4248;
