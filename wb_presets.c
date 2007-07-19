@@ -1593,6 +1593,15 @@ const wb_data wb_preset[] = {
   { "SAMSUNG", "GX-1S", Tungsten, 0,		{ 1.000000, 1, 2.226562, 0 } },
   { "SAMSUNG", "GX-1S", Flash, 0,		{ 1.609375, 1, 1.031250, 0 } },
 
+  { "SAMSUNG", "GX10", Daylight, 0,		{ 1.660156, 1, 1.066406, 0 } },
+  { "SAMSUNG", "GX10", Shade, 0,		{ 2.434783, 1.236715, 1, 0 } },
+  { "SAMSUNG", "GX10", Cloudy, 0,		{ 1.872428, 1.053498, 1, 0 } },
+  { "SAMSUNG", "GX10", DaylightFluorescent, 0,	{ 2.121094, 1, 1.078125, 0 } },
+  { "SAMSUNG", "GX10", NeutralFluorescent, 0,	{ 1.773438, 1, 1.226562, 0 } },
+  { "SAMSUNG", "GX10", WhiteFluorescent, 0,	{ 1.597656, 1, 1.488281, 0 } },
+  { "SAMSUNG", "GX10", Tungsten, 0,		{ 1.000000, 1, 2.558594, 0 } },
+  { "SAMSUNG", "GX10", Flash, 0,		{ 1.664062, 1, 1.046875, 0 } },
+
   { "SONY", "DSLR-A100", Daylight, -3,		{ 1.601562, 1, 2.101562, 0 } },
   { "SONY", "DSLR-A100", Daylight, 0,		{ 1.746094, 1, 1.843750, 0 } },
   { "SONY", "DSLR-A100", Daylight, 3,		{ 1.914062, 1, 1.628906, 0 } },
