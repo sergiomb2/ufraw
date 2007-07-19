@@ -65,6 +65,7 @@ int dcraw_wavelet_denoise_shrinked(dcraw_image_data *f,
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 	int interpolation, int rgbWB[4]);
 void dcraw_close(dcraw_data *h);
+int dcraw_image_dimensions(dcraw_data *raw, int *height, int *width);
 
 #define DCRAW_SUCCESS 0
 #define DCRAW_ERROR 1

@@ -267,9 +267,9 @@ void run(GIMP_CONST gchar *name,
     if (size>0) {
 	*nreturn_vals = 4;
 	values[2].type = GIMP_PDB_INT32;
-	values[2].data.d_int32 = uf->predictedWidth;
+	values[2].data.d_int32 = uf->initialWidth;
 	values[3].type = GIMP_PDB_INT32;
-	values[3].data.d_int32 = uf->predictedHeight;
+	values[3].data.d_int32 = uf->initialHeight;
     }
 }
 

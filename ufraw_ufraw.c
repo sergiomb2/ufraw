@@ -314,28 +314,10 @@ ufraw_data *ufraw_open(char *filename)
     uf->developer = developer_init();
     uf->widget = NULL;
     uf->RawLumHistogram = NULL;
-    if (raw->fuji_width) {
-        /* Copied from DCRaw's fuji_rotate() */
-        uf->predictedWidth = raw->fuji_width / raw->fuji_step;
-        uf->predictedHeight = (raw->height - raw->fuji_width) / raw->fuji_step;
-    } else {
-	if (raw->pixel_aspect < 1)
-	    uf->predictedHeight = raw->height / raw->pixel_aspect + 0.5;
-	else
-	    uf->predictedHeight = raw->height;
-	if (raw->pixel_aspect > 1)
-	    uf->predictedWidth = raw->width * raw->pixel_aspect + 0.5;
-	else
-	    uf->predictedWidth = raw->width;
-    }
-    if (raw->flip & 4) {
-        int tmp = uf->predictedHeight;
-        uf->predictedHeight = uf->predictedWidth;
-        uf->predictedWidth = tmp;
-    }
+    dcraw_image_dimensions(raw, &uf->initialHeight, &uf->initialWidth);
     uf->HaveFilters = raw->filters!=0;
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
-        uf->predictedWidth, uf->predictedHeight, raw->toneCurveSize);
+        uf->initialWidth, uf->initialHeight, raw->toneCurveSize);
  
     return uf;
 }
@@ -543,8 +525,8 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     // Check crop co-ordinates.
     if (uf->conf->CropX1 < 0) uf->conf->CropX1 = 0;
     if (uf->conf->CropY1 < 0) uf->conf->CropY1 = 0;
-    if (uf->conf->CropX2 < 0) uf->conf->CropX2 = uf->predictedWidth;
-    if (uf->conf->CropY2 < 0) uf->conf->CropY2 = uf->predictedHeight;
+    if (uf->conf->CropX2 < 0) uf->conf->CropX2 = uf->initialWidth;
+    if (uf->conf->CropY2 < 0) uf->conf->CropY2 = uf->initialHeight;
 
     return UFRAW_SUCCESS;
 }
@@ -632,6 +614,12 @@ int ufraw_load_raw(ufraw_data *uf)
     } else {
 	uf->conf->ExposureNorm = 0;
     }
+    /* Foveon image dimensions are knows only after load_raw()*/
+    dcraw_image_dimensions(raw, &uf->initialHeight, &uf->initialWidth);
+    if (uf->conf->CropX2 > uf->initialWidth)
+	uf->conf->CropX2 = uf->initialWidth;
+    if (uf->conf->CropY2 > uf->initialHeight)
+	uf->conf->CropY2 = uf->initialHeight;
     /* chanMul[0]<0 signals that we need to recalculate the WB */
     if (uf->conf->chanMul[0]<0) ufraw_set_wb(uf);
     else {

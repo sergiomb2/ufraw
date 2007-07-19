@@ -196,7 +196,7 @@ typedef struct {
 
 typedef struct ufraw_struct {
     char filename[max_path];
-    int predictedHeight, predictedWidth, rgbMax, colors, raw_color, useMatrix;
+    int initialHeight, initialWidth, rgbMax, colors, raw_color, useMatrix;
     gboolean LoadingID; /* Indication that we are loading an ID file */
     float rgb_cam[3][4];
     int ConvertShrink;

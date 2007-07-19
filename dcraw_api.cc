@@ -146,6 +146,30 @@ int dcraw_open(dcraw_data *h,char *filename)
     return d->lastStatus;
 }
 
+int dcraw_image_dimensions(dcraw_data *raw, int *height, int *width)
+{
+    if (raw->fuji_width) {
+        /* Copied from DCRaw's fuji_rotate() */
+        *width = (int)(raw->fuji_width / raw->fuji_step);
+        *height = (int)((raw->height - raw->fuji_width) / raw->fuji_step);
+    } else {
+        if (raw->pixel_aspect < 1)
+            *height = (int)(raw->height / raw->pixel_aspect + 0.5);
+        else
+            *height = raw->height;
+        if (raw->pixel_aspect > 1)
+            *width = (int)(raw->width * raw->pixel_aspect + 0.5);
+        else
+            *width = raw->width;
+    }
+    if (raw->flip & 4) {
+        int tmp = *height;
+        *height = *width;
+        *width = tmp;
+    }
+    return DCRAW_SUCCESS;
+}
+
 int dcraw_load_raw(dcraw_data *h)
 {
     DCRaw *d = (DCRaw *)h->dcraw;
