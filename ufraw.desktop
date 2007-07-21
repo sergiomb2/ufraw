@@ -16,7 +16,7 @@ Type=Application
 Categories=Application;Graphics;Photography;GTK;
 
 FilePattern=ufraw
-Exec=ufraw %F
+Exec=ufraw %U
 TryExec=ufraw
 Terminal=false
 StartupNotify=true
