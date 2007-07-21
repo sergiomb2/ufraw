@@ -207,8 +207,8 @@ int dcraw_load_raw(dcraw_data *h)
     d->bad_pixels();
     if (d->is_foveon) {
         d->foveon_interpolate();
-	h->raw.width = d->width;
-	h->raw.height = d->height;
+	h->raw.width = h->width = d->width;
+	h->raw.height = h->height = d->height;
     }
     fclose(d->ifp);
     h->ifp = NULL;
