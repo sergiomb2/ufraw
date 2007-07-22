@@ -51,10 +51,8 @@ void ufraw_batch_messenger(char *message)
      * (not including possibly one at the end).
      * Otherwise, the header will be printed only for the first line. */
     if (g_strstr_len(message, strlen(message)-1, "\n")==NULL)
-	fprintf(stderr, "%s: ", ufraw_binary);
-    fprintf(stderr, "%s", message);
-    if (message[strlen(message)-1]!='\n') fputc('\n', stderr);
-    fflush(stderr);
+	g_printerr("%s: ", ufraw_binary);
+    g_printerr("%s%c", message, message[strlen(message)-1]!='\n' ? '\n' : 0);
 }
 
 char *ufraw_message(int code, const char *format, ...)

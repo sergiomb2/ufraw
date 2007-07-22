@@ -211,8 +211,7 @@ void nc_message(int code, char *format, ...)
 #else    //else, just print out the errors normally
 
     code = code;
-    fprintf(stderr, message);
-    fflush(stderr);
+    g_printerr("%s", message);
 
 #endif //End WITH_UFRAW
 

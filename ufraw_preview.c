@@ -1030,10 +1030,6 @@ gboolean render_live_histogram(preview_data *data)
 		    live_his[x][0]+live_his[x][1]+live_his[x][2]);
         else live_his_max = MAX(live_his_max, live_his[x][3]);
     }
-#ifdef DEBUG
-    fprintf(stderr, "render_live_histogram: live_his_max=%d\n", live_his_max);
-    fflush(stderr);
-#endif
     for (x=0; x<live_his_size; x++) for (y=0; y<CFG->liveHistogramHeight; y++)
         if (CFG->histogram==r_g_b_histogram) {
             if (y*live_his_max < live_his[x][0]*CFG->liveHistogramHeight)
