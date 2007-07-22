@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.37 2007/05/12 05:16:14 nkbj Exp $
+# $Id: Makefile.am,v 1.38 2007/07/22 16:59:01 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -29,8 +29,9 @@ if INSTALL_MIME
   app_DATA = ufraw.desktop
   appdir = $(datadir)/applications
 
-  mime_DATA = ufraw-mime.xml
-  mimedir = $(datadir)/mime/packages
+#  Not needed since it is contained in shared-mine-info 0.21
+#  mime_DATA = ufraw-mime.xml
+#  mimedir = $(datadir)/mime/packages
 
   schemas_DATA = ufraw.schemas
   schemasdir = $(datadir)/gconf/schemas
