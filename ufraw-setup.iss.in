@@ -73,6 +73,7 @@ Root: HKCR; Subkey: ".raf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"
 Root: HKCR; Subkey: ".orf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ORFAssociation
 Root: HKCR; Subkey: ".mrw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: MRWAssociation
 Root: HKCR; Subkey: "UFRaw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "UFRaw"; ValueType: string; ValueName: ""; ValueData: "UFRaw photo"; Flags: uninsdeletevalue
 Root: HKCR; Subkey: "UFRaw\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\ufraw.exe,0"; Flags: uninsdeletevalue
 Root: HKCR; Subkey: "UFRaw\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\ufraw.exe"" ""%1"""; Flags: uninsdeletevalue
 
