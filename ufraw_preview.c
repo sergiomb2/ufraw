@@ -881,7 +881,7 @@ gboolean render_raw_histogram(preview_data *data)
      * Use a small value to avoid highlights and then normalize. */
     for (c=0; c<colors; c++) {
 	for (cl=0; cl<colors; cl++) p16[cl] = 0;
-	p16[c] = Developer->max * 0x01000 / Developer->rgbWB[c] *
+	p16[c] = Developer->max * 0x08000 / Developer->rgbWB[c] *
 		0x10000 / Developer->exposure;
         develope(pen[c], p16, Developer, 8, pixtmp, 1);
 	guint8 max=1;
