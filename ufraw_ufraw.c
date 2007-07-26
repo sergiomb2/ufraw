@@ -966,12 +966,12 @@ int ufraw_set_wb(ufraw_data *uf)
 		}
 	    }
 	}
-        gint64 sum;
         for (c=0; c<uf->colors; c++) {
-            sum = 0;
+	    gint64 sum = 0;
             for (i=0; i<uf->rgbMax+1; i++)
                 sum += (gint64)i*histogram[i][c];
-            uf->conf->chanMul[c] = 1.0/sum;
+	    if (sum==0) uf->conf->chanMul[c] = 1.0;
+            else uf->conf->chanMul[c] = 1.0/sum;
         }
 	g_free(histogram);
 	uf->conf->WBTuning = 0;
