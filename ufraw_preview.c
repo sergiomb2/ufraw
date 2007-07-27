@@ -1081,6 +1081,8 @@ gboolean render_spot(preview_data *data)
     if (data->FreezeDialog) return FALSE;
 
     if (data->SpotX1<0) return FALSE;
+    if ( data->SpotX1>=data->UF->initialWidth ||
+	 data->SpotY1>=data->UF->initialHeight ) return FALSE;
     int width = data->UF->Images[ufraw_final_phase].width;
     int height = data->UF->Images[ufraw_final_phase].height;
     int outDepth = data->UF->Images[ufraw_final_phase].depth;
@@ -1092,7 +1094,7 @@ gboolean render_spot(preview_data *data)
     int spotHeight = abs(data->SpotY1 - data->SpotY2)
 	    * height / data->UF->initialHeight + 1;
     int spotStartY = MIN(data->SpotY1, data->SpotY2)
-	    *height / data->UF->initialHeight;
+	    * height / data->UF->initialHeight;
     int spotWidth = abs(data->SpotX1 - data->SpotX2)
 	    * width / data->UF->initialWidth + 1;
     int spotStartX = MIN(data->SpotX1, data->SpotX2)
@@ -2593,6 +2595,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->SpotX2 = -1;
     data->SpotY1 = -1;
     data->SpotY2 = -1;
+    data->SpotDraw = FALSE;
     data->FreezeDialog = TRUE;
     data->PageNum = 0;
     data->DrawnCropX1 = 0;

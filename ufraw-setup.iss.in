@@ -49,6 +49,7 @@ Source: "po\ja.mo"; DestDir: "{app}\lib\locale\ja\LC_MESSAGES\"; DestName: "ufra
 Source: "po\pt.mo"; DestDir: "{app}\lib\locale\pt\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\ru.mo"; DestDir: "{app}\lib\locale\ru\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\liblcms-1-16-ufraw.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\bzip2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "ufraw-gimp.exe"; DestDir: "{app}\lib\gimp\2.0\plug-ins"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
