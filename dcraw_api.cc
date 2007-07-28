@@ -146,7 +146,7 @@ int dcraw_open(dcraw_data *h,char *filename)
     return d->lastStatus;
 }
 
-int dcraw_image_dimensions(dcraw_data *raw, int *height, int *width)
+int dcraw_image_dimensions(dcraw_data *raw, int flip, int *height, int *width)
 {
     if (raw->fuji_width) {
         /* Copied from DCRaw's fuji_rotate() */
@@ -162,7 +162,7 @@ int dcraw_image_dimensions(dcraw_data *raw, int *height, int *width)
         else
             *width = raw->width;
     }
-    if (raw->flip & 4) {
+    if (flip & 4) {
         int tmp = *height;
         *height = *width;
         *width = tmp;

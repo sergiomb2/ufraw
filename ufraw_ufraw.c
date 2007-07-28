@@ -312,7 +312,6 @@ ufraw_data *ufraw_open(char *filename)
     uf->developer = developer_init();
     uf->widget = NULL;
     uf->RawLumHistogram = NULL;
-    dcraw_image_dimensions(raw, &uf->initialHeight, &uf->initialWidth);
     uf->HaveFilters = raw->filters!=0;
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
         uf->initialWidth, uf->initialHeight, raw->toneCurveSize);
@@ -520,6 +519,8 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	uf->conf->darkframe = ufraw_load_darkframe(uf->conf->darkframeFile);
     */
 
+    dcraw_image_dimensions(raw, uf->conf->orientation,
+	    &uf->initialHeight, &uf->initialWidth);
     // Check crop co-ordinates.
     if (uf->conf->CropX1 < 0) uf->conf->CropX1 = 0;
     if (uf->conf->CropY1 < 0) uf->conf->CropY1 = 0;
@@ -613,7 +614,8 @@ int ufraw_load_raw(ufraw_data *uf)
 	uf->conf->ExposureNorm = 0;
     }
     /* Foveon image dimensions are knows only after load_raw()*/
-    dcraw_image_dimensions(raw, &uf->initialHeight, &uf->initialWidth);
+    dcraw_image_dimensions(raw, uf->conf->orientation,
+	    &uf->initialHeight, &uf->initialWidth);
     if (uf->conf->CropX2 > uf->initialWidth)
 	uf->conf->CropX2 = uf->initialWidth;
     if (uf->conf->CropY2 > uf->initialHeight)
