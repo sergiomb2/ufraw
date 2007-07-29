@@ -107,11 +107,9 @@ To make a system wide installation:
   make install
 
 Note that the gimp and cinepaint plugins, if built, will be installed
-into gimp's prefix, rather than ufraw's prefix.  This is somewhat
-unclean, as building and installing ufraw with --prefix=/usr/ufraw
-should arguably result in not writing outside that prefix.  However,
-plugins will not work automatically unless they are in the plug-in
-directory, so the current behavior is arguably more helpful.
+into ufraw's prefix.  Thus, if ufraw's prefix is different from gimp's
+and cinepaint's prefix, you may have to add plugin directories to the
+search path, add symbolic links, or something similar.
 
 To use the ufraw gimp plugin, ensure that other raw converters
 (e.g. rawphoto) are not installed because they may claim the raw file
