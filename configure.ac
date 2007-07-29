@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.81 2007/07/28 19:46:15 udifuchs Exp $
+dnl $Id: configure.ac,v 1.82 2007/07/29 21:18:33 lexort Exp $
 AC_INIT(UFRaw, 0.12)
 AC_PREREQ(2.57)
 
@@ -67,13 +67,11 @@ PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview >= 1.3,
   [ have_gtkimageview=no
     AC_MSG_RESULT($GIMP_PKG_ERRORS) ] )
 
-# The GIMP/CinePaint plug-ins installation dir is defined in
-# pkg-config.  It is not clear if we should install the plugin in the
-# libdir-like place in our prefix, or in GIMP's actual lib dir.
-# Currently, we install the plugin in GIMP's prefix.  The ufraw
-# executable and other files remain in the prefix given to configure.
-# (If gimp's prefix and the configured ufraw prefix are the same, this
-# doesn't matter.)
+# It is not clear if we should install the GIMP and Cinepaint plugins
+# in the corresponding place in our prefix, or in GIMP's or
+# Cinepaint's lib dir in their prefixes.  Currently, we install the
+# plugin in our prefix.  (If the gimp/cinepaint prefix and the
+# configured ufraw prefix are the same, this doesn't matter.)
 pkg_prefix="$PKG_CONFIG"
 test $prefix = NONE || pkg_prefix="$pkg_prefix --define-variable=prefix=$prefix"
 test $exec_prefix = NONE || pkg_prefix="$pkg_prefix --define-variable=exec_prefix=$exec_prefix"
