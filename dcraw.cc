@@ -15,8 +15,8 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.389 $
-   $Date: 2007/07/28 23:39:53 $
+   $Revision: 1.390 $
+   $Date: 2007/07/30 15:43:07 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -4506,8 +4506,8 @@ void CLASS parse_exif (int base)
       case 33434:  shutter = getrat();			break;
       case 33437:  aperture = getrat();			break;
       case 34855:  iso_speed = get2();			break;
-      case 36867:
-      case 36868:  get_timestamp(0);			break;
+      case 36867:  get_timestamp(0);			break;
+      case 36868:  if (!timestamp) get_timestamp(0);	break;
       case 37377:  if ((expo = -getrat()) < 128)
 		     shutter = pow (2, expo);		break;
       case 37378:  aperture = pow (2, getrat()/2);	break;
