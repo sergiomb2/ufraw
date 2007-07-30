@@ -4,7 +4,7 @@ http://ufraw.sourceforge.net/
 by Udi Fuchs
 
 UFRaw is a utility to read and manipulate raw images from digital cameras.
-It can be used by itself or as a GIMP plug-in.
+It can be used by itself or as a GIMP or CinePaint plug-in.
 It reads raw images using Dave Coffin's raw conversion utility DCRaw.
 It supports basic color management using Little CMS, allowing the user to
 apply color profiles.
@@ -83,6 +83,10 @@ TIFF support will be omitted.
 The zlib development package is required for saving images in the TIFF
 format with lossless compression. If the configuration script does not
 find this package compressed TIFF support will be omitted.
+This pacakage also enables loading of raw files compressed with gzip.
+
+The libbz2 development package is required for loading of raw
+files compressed with bzip2.
 
 The gtkimageview package (very new - see
 http://trac.bjourne.webfactional.com/wiki) is required to enable
@@ -107,9 +111,11 @@ To make a system wide installation:
   make install
 
 Note that the gimp and cinepaint plugins, if built, will be installed
-into ufraw's prefix.  Thus, if ufraw's prefix is different from gimp's
-and cinepaint's prefix, you may have to add plugin directories to the
-search path, add symbolic links, or something similar.
+into gimp's prefix, rather than ufraw's prefix.  This is somewhat
+unclean, as building and installing ufraw with --prefix=/usr/ufraw
+should arguably result in not writing outside that prefix.  However,
+plugins will not work automatically unless they are in the plug-in
+directory, so the current behavior is arguably more helpful.
 
 To use the ufraw gimp plugin, ensure that other raw converters
 (e.g. rawphoto) are not installed because they may claim the raw file
@@ -261,6 +267,35 @@ date user guide.
 
 History
 =======
+
+30/07/2007 - UFRaw-0.12 released, based on DCRaw v 8.77.
+
+* Full color management workflow with camera, display and output profiles.
+* Added image cropping. Patch contributed by Martin Ling.
+* Added rotate/flip support. Patch contributed by Bruce Guenter.
+* Added scrolling and panning. Based on the new GtkImageView widget by
+  Bjoern Lindqvist.
+* Added support for dcraw's wavelet denoising. Code contributed by
+  Niels Kristian Bech Jensen.
+* Added Patterned Pixel Grouping (PPG) Interpolation. It can be even better
+  than other interpolations in some cases and much faster. Patch contributed
+  by Alain Desbiolles.
+* Added EAHD interpolation. It is an enhancement of the AHD interpolation
+  with another phase of color smoothing. The improvement is mostly seen in
+  high contrast as it removes color artifacts such as chromatic aberration.
+  Patch contributed by Michael Goertz.
+* Read raw files compressed with gzip or bzip2. Patch contributed by
+  Bruce Guenter.
+* Display luminosity value and Adams' zone for spot value. Patch contributed by
+  Greg Troxel.
+* Added 'max zoom' (only 50% at the moment) and 'zoom to fit' buttons.
+* Retain some hue and saturation when clipping pixels. This is only relevant
+  when applying positive exposure compensation, and mostly for Canon cameras
+  where positive exposure is applied by default.
+* Added a Cinepaint plug-in. Thanks to Cinepaint developer Kai-Uwe Behrmann.
+* Based the user interface more on icons and less on text.
+* Removed dependency on libexif.
+* Dozens of smaller fixes.
 
 06/03/2007 - UFRaw-0.11 released, based on DCRaw v 8.62.
 

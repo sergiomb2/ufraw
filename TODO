@@ -1,4 +1,4 @@
-$Id: TODO,v 1.27 2007/06/17 00:32:18 lexort Exp $
+$Id: TODO,v 1.28 2007/07/30 21:02:14 udifuchs Exp $
 
 These items are not ordered or prioritized, but are roughly grouped by
 kind of change.
@@ -16,7 +16,6 @@ For the future
 * Add a "Send to GIMP" option in the stand-alone tool.
 
 * Curve corrections per channel.
-* Crop.
 * Show camera overexposures.
 
 * Add the UFRaw parameters used to the Exif data in saved images.

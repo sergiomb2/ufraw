@@ -7,7 +7,6 @@ ufraw_chooser.c
 ufraw_conf.c
 ufraw_developer.c
 ufraw_embedded.c
-ufraw_exif.c
 ufraw_exiv2.cc
 ufraw-gimp.c
 ufraw_preview.c
