@@ -2,11 +2,11 @@
 Name=UFRaw
 GenericName=Raw image converter
 GenericName[da]=Raw-billedbehandler
-GenericName[ru]=Преобразователь Raw-изображений
+GenericName[ru]=Проявитель цифровых негативов
 GenericName[pt]=Conversor de imagens cruas
 Comment=A utility to read and manipulate raw images from digital cameras
 Comment[da]=Et program til at læse og behandle raw-billeder fra digitalkameraer
-Comment[ru]=Обрабатка Raw-файлов и преобразование в TIFF/JPEG
+Comment[ru]=Проявка цифровых негативов и сохранение в TIFF/JPEG
 Comment[pt]=Programa para ler e manipular imagens de câmeras digitais
 
 Encoding=UTF-8
