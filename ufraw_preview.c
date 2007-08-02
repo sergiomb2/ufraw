@@ -959,6 +959,7 @@ gboolean render_preview_image(preview_data *data)
     if ( data->RenderLine<height )
         return TRUE;
 
+    data->RenderLine = MAX(height, width);
     data->fromPhase = ufraw_final_phase;
 #ifdef HAVE_GTKIMAGEVIEW
 //    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
@@ -1095,10 +1096,12 @@ gboolean render_spot(preview_data *data)
 	    * height / data->UF->initialHeight + 1;
     int spotStartY = MIN(data->SpotY1, data->SpotY2)
 	    * height / data->UF->initialHeight;
+    if (spotHeight+spotStartY>height) spotStartY = height - spotHeight;
     int spotWidth = abs(data->SpotX1 - data->SpotX2)
 	    * width / data->UF->initialWidth + 1;
     int spotStartX = MIN(data->SpotX1, data->SpotX2)
 	    * width / data->UF->initialWidth;
+    if (spotWidth+spotStartX>width) spotStartX = width - spotWidth;
     guint64 rawSum[4], outSum[3];
     int c, y, x;
     for (c=0; c<3; c++) rawSum[c] = outSum[c] = 0;
@@ -1115,7 +1118,8 @@ gboolean render_spot(preview_data *data)
     double rgb[5];
     for (c=0; c<3; c++) rgb[c] = outSum[c] / (spotWidth * spotHeight);
     guint16 rawChannels[4], linearChannels[3];
-    for (c=0; c<3; c++) rawChannels[c] = rawSum[c] / (spotWidth * spotHeight);
+    for (c=0; c<data->UF->colors; c++)
+	rawChannels[c] = rawSum[c] / (spotWidth * spotHeight);
     develop_linear(rawChannels, linearChannels, Developer);
     double yValue = 0.5;
     for (c=0; c<3; c++)
@@ -1690,7 +1694,17 @@ void flip_image(GtkWidget *widget, int flip)
 	}
     }
     render_init(data);
-    render_special_mode(widget, render_default);
+    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    if ( data->RenderLine<MAX(height,width) ) {
+	/* We are in the middle or a rendering scan,
+	 * so just start from the beginning. */
+	data->RenderLine = 0;
+    } else {
+	/* Full image was already rendered.
+	 * We only need to draw the flipped image. */
+	render_special_mode(widget, render_default);
+    }
 }
 
 GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text, char *icon,
