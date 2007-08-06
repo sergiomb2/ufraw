@@ -77,7 +77,6 @@ int ufraw_write_image(ufraw_data *uf)
     void *out; /* out is a pointer to FILE or TIFF */
     int width, height, row, rowStride, i, status=UFRAW_SUCCESS;
     int left, top;
-    double shrink;
     image_type *rawImage;
     guint8 *pixbuf8=NULL;
     guint16 *pixbuf16;
@@ -129,11 +128,12 @@ int ufraw_write_image(ufraw_data *uf)
         }
     }
     ufraw_convert_image(uf);
-    shrink = uf->conf->shrink;
-    left = uf->conf->CropX1/shrink;
-    top = uf->conf->CropY1/shrink;
-    width = (uf->conf->CropX2 - uf->conf->CropX1)/shrink;
-    height = (uf->conf->CropY2 - uf->conf->CropY1)/shrink;
+    left = uf->conf->CropX1 * uf->image.width / uf->initialWidth;
+    top = uf->conf->CropY1 * uf->image.height / uf->initialHeight;
+    width = (uf->conf->CropX2 - uf->conf->CropX1)
+	    * uf->image.width / uf->initialWidth;
+    height = (uf->conf->CropY2 - uf->conf->CropY1)
+	    * uf->image.height / uf->initialHeight;
     rowStride = uf->image.width;
     rawImage = uf->image.image;
     pixbuf16 = g_new(guint16, width*3);

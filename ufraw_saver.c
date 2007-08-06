@@ -37,9 +37,6 @@ typedef struct {
     GtkToggleButton *jpegButton;
 } save_as_dialog_data;
 
-#define CROPPED_WIDTH (data->uf->conf->CropX2 - data->uf->conf->CropX1)
-#define CROPPED_HEIGHT (data->uf->conf->CropY2 - data->uf->conf->CropY1)
-
 #if GTK_CHECK_VERSION(2,6,0)
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
@@ -65,20 +62,22 @@ void ufraw_saver_adjustment_update(GtkAdjustment *adj,
     if (data->FreezeDialog) return;
     data->FreezeDialog = TRUE;
 
+    int croppedWidth = data->uf->conf->CropX2 - data->uf->conf->CropX1;
+    int croppedHeight = data->uf->conf->CropY2 - data->uf->conf->CropY1;
     if ( adj==data->shrinkAdj ) {
 	data->shrink = gtk_adjustment_get_value(data->shrinkAdj);
-	data->height = CROPPED_HEIGHT / data->shrink;
-	data->width = CROPPED_WIDTH / data->shrink;
+	data->height = croppedHeight / data->shrink;
+	data->width = croppedWidth / data->shrink;
     }
     if ( adj==data->heightAdj ) {
 	data->height = gtk_adjustment_get_value(data->heightAdj);
-	data->width = data->height * CROPPED_WIDTH / CROPPED_HEIGHT;
-	data->shrink = (double)CROPPED_HEIGHT / data->height;
+	data->width = data->height * croppedWidth / croppedHeight;
+	data->shrink = (double)croppedHeight / data->height;
     }
     if ( adj==data->widthAdj ) {
 	data->width = gtk_adjustment_get_value(data->widthAdj);
-	data->height = data->width * CROPPED_HEIGHT / CROPPED_WIDTH;
-	data->shrink = (double)CROPPED_WIDTH / data->width;
+	data->height = data->width * croppedHeight / croppedWidth;
+	data->shrink = (double)croppedWidth / data->width;
     }
     gtk_adjustment_set_value(data->shrinkAdj, data->shrink);
     gtk_adjustment_set_value(data->heightAdj, data->height);
@@ -160,23 +159,25 @@ long ufraw_saver(void *widget, gpointer user_data)
     data->uf = uf;
     data->FreezeDialog = TRUE;
 
+    int croppedWidth = data->uf->conf->CropX2 - data->uf->conf->CropX1;
+    int croppedHeight = data->uf->conf->CropY2 - data->uf->conf->CropY1;
     if (uf->conf->size > 0) {
-	if (CROPPED_HEIGHT > CROPPED_WIDTH) {
+	if (croppedHeight > croppedWidth) {
 	    data->height = uf->conf->size;
-	    data->width = uf->conf->size * CROPPED_WIDTH / CROPPED_HEIGHT;
-	    data->shrink = (double)CROPPED_HEIGHT / uf->conf->size;
+	    data->width = uf->conf->size * croppedWidth / croppedHeight;
+	    data->shrink = (double)croppedHeight / uf->conf->size;
 	} else {
 	    data->width = uf->conf->size;
-	    data->height = uf->conf->size * CROPPED_HEIGHT / CROPPED_WIDTH;
-	    data->shrink = (double)CROPPED_WIDTH / uf->conf->size;
+	    data->height = uf->conf->size * croppedHeight / croppedWidth;
+	    data->shrink = (double)croppedWidth / uf->conf->size;
 	}
     } else {
 	if (uf->conf->shrink<1) {
 	    ufraw_message(UFRAW_ERROR, _("Fatal Error: uf->conf->shrink<1"));
 	    uf->conf->shrink = 1;
 	}
-	data->height = CROPPED_HEIGHT / uf->conf->shrink;
-	data->width = CROPPED_WIDTH / uf->conf->shrink;
+	data->height = croppedHeight / uf->conf->shrink;
+	data->width = croppedWidth / uf->conf->shrink;
 	data->shrink = uf->conf->shrink;
     }
     if ( strlen(uf->conf->outputFilename)>0 )
@@ -273,7 +274,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     widg = gtk_label_new(_("\tHeight "));
     gtk_table_attach(GTK_TABLE(table), widg, 2, 3, 1, 2, 0, 0, 0, 0);
     data->heightAdj = GTK_ADJUSTMENT(gtk_adjustment_new(data->height,
-	    CROPPED_HEIGHT/100, CROPPED_HEIGHT, 10, 100, 0));
+	    croppedHeight/100, croppedHeight, 10, 100, 0));
     g_signal_connect(G_OBJECT(data->heightAdj), "value-changed",
 	    G_CALLBACK(ufraw_saver_adjustment_update), data);
     widg = gtk_spin_button_new(data->heightAdj, 10, 0);
@@ -282,7 +283,7 @@ long ufraw_saver(void *widget, gpointer user_data)
     widg = gtk_label_new(_("\tWidth "));
     gtk_table_attach(GTK_TABLE(table), widg, 4, 5, 1, 2, 0, 0, 0, 0);
     data->widthAdj = GTK_ADJUSTMENT(gtk_adjustment_new(data->width,
-	    CROPPED_WIDTH/100, CROPPED_WIDTH, 10, 100, 0));
+	    croppedWidth/100, croppedWidth, 10, 100, 0));
     g_signal_connect(G_OBJECT(data->widthAdj), "value-changed",
 	    G_CALLBACK(ufraw_saver_adjustment_update), data);
     widg = gtk_spin_button_new(data->widthAdj, 10, 0);

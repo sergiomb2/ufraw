@@ -1465,8 +1465,10 @@ void create_base_image(preview_data *data)
     int shrinkSave = CFG->shrink;
     int sizeSave = CFG->size;
     if (CFG->Scale==0) {
-	CFG->size = CFG->Zoom / 100.0 *
-		MAX(data->UF->initialHeight, data->UF->initialWidth);
+	int cropHeight = data->UF->conf->CropY2 - data->UF->conf->CropY1;
+	int cropWidth = data->UF->conf->CropX2 - data->UF->conf->CropX1;
+	int cropSize = MAX(cropHeight, cropWidth);
+	CFG->size = CFG->Zoom / 100.0 * cropSize;
 	CFG->shrink = 0;
     } else {
 	CFG->size = 0;

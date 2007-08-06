@@ -296,10 +296,12 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
     } else {
 	if (ufraw_convert_image(uf)!=UFRAW_SUCCESS)
 	    return UFRAW_ERROR;
-	height = uf->conf->CropY2 - uf->conf->CropY1;
-	width = uf->conf->CropX2 - uf->conf->CropX1;
-	top = uf->conf->CropY1;
-	left = uf->conf->CropX1;
+	height = (uf->conf->CropY2 - uf->conf->CropY1)
+		* uf->image.height / uf->initialHeight;
+	width = (uf->conf->CropX2 - uf->conf->CropX1)
+		* uf->image.width / uf->initialWidth;
+	top = uf->conf->CropY1 * uf->image.height / uf->initialHeight;
+	left = uf->conf->CropX1 * uf->image.width / uf->initialWidth;
 #ifdef UFRAW_CINEPAINT
 	depth = 6;
 #else
