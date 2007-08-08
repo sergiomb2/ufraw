@@ -61,7 +61,7 @@ extern "C" {
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 //#ifndef DJGPP
 //#define fgetc getc_unlocked
-//#define fseek fseeko
+#define fseek fseeko
 //#endif
 #ifdef __CYGWIN__
 #include <io.h>
