@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.83 2007/08/06 19:53:54 udifuchs Exp $
+dnl $Id: configure.ac,v 1.84 2007/08/09 22:11:59 udifuchs Exp $
 AC_INIT(UFRaw, 0.12.1)
 AC_PREREQ(2.57)
 
@@ -13,6 +13,7 @@ AC_PROG_INSTALL
 AC_PROG_RANLIB
 
 AC_CHECK_PROGS(POD2MAN, pod2man, , $PATH)
+AC_FUNC_FSEEKO
 
 UFRAW_CFLAGS="-ffast-math -fomit-frame-pointer"
 UFRAW_LDADD=""
