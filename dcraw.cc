@@ -59,10 +59,10 @@ extern "C" {
 //#define _(String) (String)
 //#endif
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
-//#ifndef DJGPP
+#ifndef DJGPP
 //#define fgetc getc_unlocked
 #define fseek fseeko
-//#endif
+#endif
 #ifdef __CYGWIN__
 #include <io.h>
 #endif
