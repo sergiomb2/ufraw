@@ -71,6 +71,9 @@ const GdkCursorType Cursors[cursor_num] = {
     GDK_TOP_LEFT_CORNER, GDK_TOP_RIGHT_CORNER,
     GDK_BOTTOM_LEFT_CORNER, GDK_BOTTOM_RIGHT_CORNER };
 
+// Response can be any unique positive integer
+#define UFRAW_RESPONSE_DELETE 1
+
 /* All the "global" information is here: */
 typedef struct {
     ufraw_data *UF;
@@ -2549,6 +2552,24 @@ void preview_saver(GtkWidget *widget, gpointer user_data)
     gtk_widget_set_sensitive(data->Controls, TRUE);
 }
 
+void delete_button_event(GtkWidget *widget, gpointer user_data)
+{
+    (void)user_data;
+    preview_data *data = get_preview_data(widget);
+    if (data->FreezeDialog==TRUE) return;
+    gtk_widget_set_sensitive(data->Controls, FALSE);
+    data->FreezeDialog = TRUE;
+    if ( ufraw_delete(widget, data->UF)==UFRAW_SUCCESS ) {
+	GtkWindow *window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
+        g_object_set_data(G_OBJECT(window), "WindowResponse",
+                (gpointer)UFRAW_RESPONSE_DELETE);
+        gtk_main_quit();
+    }
+    data->FreezeDialog = FALSE;
+    gtk_widget_set_sensitive(data->Controls, TRUE);
+}
+
+
 void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
 	guint page_num, gpointer user_data)
 {
@@ -3696,7 +3717,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* Control buttons at the bottom */
     GtkBox *ControlsBox = GTK_BOX(gtk_hbox_new(FALSE, 6));
     gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(ControlsBox), FALSE, FALSE, 6);
-    // Zoom controls:
+    // Zoom buttons are centered:
     GtkBox *ZoomBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
     gtk_box_pack_start(ControlsBox, GTK_WIDGET(ZoomBox), TRUE, FALSE, 0);
 #ifdef HAVE_GTKIMAGEVIEW
@@ -3746,7 +3767,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
 #endif // HAVE_GTKIMAGEVIEW
 
-    box = GTK_BOX(gtk_hbox_new(TRUE, 6));
+    // The rest of the control button are aligned to the right
+    box = GTK_BOX(gtk_hbox_new(FALSE, 6));
     gtk_box_pack_start(GTK_BOX(ControlsBox), GTK_WIDGET(box), FALSE, FALSE, 0);
     /* Options button */
     button = gtk_button_new();
@@ -3758,23 +3780,36 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             FALSE, FALSE, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(options_dialog), previewWindow);
-    gtk_box_pack_start(box, button, TRUE, TRUE, 0);
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
 
+    if (!plugin) {
+	// Delete button:
+	button = gtk_button_new();
+	gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+                GTK_STOCK_DELETE, GTK_ICON_SIZE_BUTTON));
+	gtk_tooltips_set_tip(data->ToolTips, button,
+		_("Delete raw file"), NULL);
+	g_signal_connect(G_OBJECT(button), "clicked",
+		G_CALLBACK(delete_button_event), NULL);
+	gtk_box_pack_start(box, button, FALSE, FALSE, 0);
+    }
     // Cancel button:
     button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(window_response), (gpointer)GTK_RESPONSE_CANCEL);
-    gtk_box_pack_start(box, button, TRUE, TRUE, 0);
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
 
     if (plugin) {
+	// OK button for the plug-in
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-        gtk_box_pack_start(box, saveButton, TRUE, TRUE, 0);
+        gtk_box_pack_start(box, saveButton, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(saveButton), "clicked",
 		G_CALLBACK(preview_saver), NULL);
         gtk_widget_grab_focus(saveButton);
     } else {
+	// Save button for the stand-alone tool
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-        gtk_box_pack_start(box, saveButton, TRUE, TRUE, 0);
+        gtk_box_pack_start(box, saveButton, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(saveButton), "clicked",
 		G_CALLBACK(preview_saver), NULL);
 
@@ -3783,12 +3818,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	gtk_tooltips_set_tip(data->ToolTips, saveButton, text, NULL);
 	g_free(text);
 
-	/* All buttons except SAVE_AS are fixed width */
+	// Save as button
 	box = GTK_BOX(gtk_hbox_new(TRUE, 6));
 	gtk_box_pack_start(GTK_BOX(ControlsBox), GTK_WIDGET(box),
 		FALSE, FALSE, 0);
 	saveAsButton = gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
-        gtk_box_pack_start(box, saveAsButton, TRUE, TRUE, 0);
+        gtk_box_pack_start(box, saveAsButton, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(saveAsButton), "clicked",
 		G_CALLBACK(preview_saver), NULL);
         gtk_widget_grab_focus(saveAsButton);
@@ -3875,6 +3910,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     } else {
 	*CFG = RC;
     }
+    // UFRAW_RESPONSE_DELETE requires no special action
     ufraw_close(data->UF);
     g_list_free(data->WBPresets);
     g_free(data->SpotLabels);

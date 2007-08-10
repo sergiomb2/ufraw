@@ -297,6 +297,9 @@ long ufraw_saver(void *widget, gpointer user_data);
 int ufraw_write_image(ufraw_data *uf);
 int ufraw_batch_saver(ufraw_data *uf);
 
+/* prototype for functions in ufraw_delete.c */
+long ufraw_delete(void *widget, ufraw_data *uf);
+
 /* prototype for functions in ufraw_embedded.c */
 int ufraw_read_embedded(ufraw_data *uf);
 int ufraw_convert_embedded(ufraw_data *uf);

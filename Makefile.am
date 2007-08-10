@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.38 2007/07/22 16:59:01 udifuchs Exp $
+# $Id: Makefile.am,v 1.39 2007/08/10 21:45:00 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -58,7 +58,7 @@ libufraw_a_SOURCES = \
     wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
     nikon_curve.c nikon_curve.h \
     ufraw_exiv2.cc iccjpeg.c iccjpeg.h \
-    ufraw_preview.c ufraw_saver.c \
+    ufraw_preview.c ufraw_saver.c ufraw_delete.c \
     ufraw_chooser.c ufraw_icons.c icons/ufraw_icons.h \
     curveeditor_widget.c curveeditor_widget.h
 
