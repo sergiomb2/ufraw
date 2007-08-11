@@ -402,6 +402,19 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	uf->conf->CropX2 = -1;
 	uf->conf->CropY2 = -1;
     }
+    if (strlen(uf->conf->outputFilename)==0) {
+        /* If output filename wasn't specified use input filename */
+        char *filename = uf_file_set_type(uf->filename,
+                        file_type[uf->conf->type]);
+        if (strlen(uf->conf->outputPath)>0) {
+            char *cp = g_path_get_basename(filename);
+            g_free(filename);
+            filename = g_build_filename(uf->conf->outputPath, cp , NULL);
+            g_free(cp);
+        }
+        g_strlcpy(uf->conf->outputFilename, filename, max_path);
+        g_free(filename);
+    }
     /*Reset EXIF data text fields to avoid spill over between images.*/
     strcpy(uf->conf->isoText, "");
     strcpy(uf->conf->shutterText, "");

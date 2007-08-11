@@ -110,6 +110,9 @@ typedef struct {
     GtkSpinButton *CropY1Spin;
     GtkSpinButton *CropX2Spin;
     GtkSpinButton *CropY2Spin;
+    GtkSpinButton *ShrinkSpin;
+    GtkSpinButton *HeightSpin;
+    GtkSpinButton *WidthSpin;
     /* We need the adjustments for update_scale() */
     GtkAdjustment *WBTuningAdjustment;
     GtkAdjustment *TemperatureAdjustment;
@@ -125,6 +128,9 @@ typedef struct {
     GtkAdjustment *CropX2Adjustment;
     GtkAdjustment *CropY2Adjustment;
     GtkAdjustment *ZoomAdjustment;
+    GtkAdjustment *ShrinkAdjustment;
+    GtkAdjustment *HeightAdjustment;
+    GtkAdjustment *WidthAdjustment;
     long (*SaveFunc)();
     RenderModeType RenderMode;
     int RenderLine;
@@ -138,6 +144,7 @@ typedef struct {
     int SpotX1, SpotY1, SpotX2, SpotY2;
     CursorType CropMotionType;
     int DrawnCropX1, DrawnCropX2, DrawnCropY1, DrawnCropY2;
+    double shrink, height, width;
     gboolean OptionsChanged;
     int PageNum;
     /* Original aspect ratio (0) or actual aspect ratio */
@@ -1195,6 +1202,8 @@ void draw_spot(preview_data *data, gboolean draw)
     preview_notify_dirty(data);
 }
 
+void update_shrink_ranges(preview_data *data);
+
 /* update the UI entries that could have changed automatically */
 void update_scales(preview_data *data)
 {
@@ -1274,7 +1283,15 @@ void update_scales(preview_data *data)
 	    CFG->curve[CFG->curveIndex].m_anchors[1].x!=1.0 ||
 	    CFG->curve[CFG->curveIndex].m_anchors[1].y!=1.0 );
 
+    if ( fabs(data->shrink-floor(data->shrink+0.0005))<0.0005 ) {
+        CFG->shrink = floor(data->shrink+0.0005);
+        CFG->size = 0;
+    } else {
+        CFG->shrink = 1;
+        CFG->size = floor(MAX(data->height, data->width)+0.5);
+    }
     data->FreezeDialog = FALSE;
+    update_shrink_ranges(data);
     render_preview(data);
 }
 
@@ -1550,6 +1567,41 @@ void create_base_image(preview_data *data)
     data->fromPhase = ufraw_denoise_phase;
 }
 
+void update_shrink_ranges(preview_data *data)
+{
+    if (data->FreezeDialog) return;
+    data->FreezeDialog++;
+
+    int croppedWidth = CFG->CropX2 - CFG->CropX1;
+    int croppedHeight = CFG->CropY2 - CFG->CropY1;
+    if (CFG->size > 0) {
+        if (croppedHeight > croppedWidth) {
+            data->height = CFG->size;
+            data->width = CFG->size * croppedWidth / croppedHeight;
+            data->shrink = (double)croppedHeight / CFG->size;
+        } else {
+            data->width = CFG->size;
+            data->height = CFG->size * croppedHeight / croppedWidth;
+            data->shrink = (double)croppedWidth / CFG->size;
+        }
+    } else {
+        if (CFG->shrink<1) {
+            ufraw_message(UFRAW_ERROR, _("Fatal Error: uf->conf->shrink<1"));
+            CFG->shrink = 1;
+        }
+        data->height = croppedHeight / CFG->shrink;
+        data->width = croppedWidth / CFG->shrink;
+        data->shrink = CFG->shrink;
+    }
+    gtk_spin_button_set_range(data->HeightSpin, 0, croppedHeight);
+    gtk_spin_button_set_range(data->WidthSpin, 0, croppedWidth);
+    gtk_adjustment_set_value(data->ShrinkAdjustment, data->shrink);
+    gtk_adjustment_set_value(data->HeightAdjustment, data->height);
+    gtk_adjustment_set_value(data->WidthAdjustment, data->width);
+
+    data->FreezeDialog--;
+}
+
 void update_crop_ranges(preview_data *data)
 {
     if (data->FreezeDialog) return;
@@ -1626,6 +1678,7 @@ void update_crop_ranges(preview_data *data)
         y2[i] = MIN (y2[i] + 1, pixbufHeight);
 	preview_draw_area (data, x1[i], y1[i], x2[i]-x1[i], y2[i]-y1[i]);
     }
+    update_shrink_ranges(data);
     redraw_navigation_image(data);
     preview_notify_dirty(data);
 }
@@ -1823,11 +1876,11 @@ void refresh_aspect(preview_data *data)
 	    data->FreezeDialog--;
             return;
         }
-    char text [50];
-    snprintf (text, sizeof (text), "%.4g", data->AspectRatio);
+    char *text = g_strdup_printf ("%.4g", data->AspectRatio);
     data->FreezeDialog++;
     gtk_entry_set_text (data->AspectEntry, text);
     data->FreezeDialog--;
+    g_free(text);
 }
 
 void fix_crop_aspect(preview_data *data, CursorType cursor)
@@ -2347,7 +2400,6 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
 	if (!data->LockAspect) refresh_aspect(data);
 	return;
     }
-
     /* Do noting if value didn't really change */
     long accuracy =
 	(long)g_object_get_data(G_OBJECT(adj), "Adjustment-Accuracy");
@@ -2386,6 +2438,20 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
     } else {
 	if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
 	if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
+    }
+    int croppedWidth = CFG->CropX2 - CFG->CropX1;
+    int croppedHeight = CFG->CropY2 - CFG->CropY1;
+    if ( valuep==&data->shrink ) {
+        data->height = croppedHeight / data->shrink;
+        data->width = croppedWidth / data->shrink;
+    }
+    if ( valuep==&data->height ) {
+        data->width = data->height * croppedWidth / croppedHeight;
+        data->shrink = (double)croppedHeight / data->height;
+    }
+    if ( valuep==&data->width ) {
+        data->height = data->width * croppedHeight / croppedWidth;
+        data->shrink = (double)croppedWidth / data->width;
     }
     update_scales(data);
 }
@@ -3811,6 +3877,53 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* Set current aspect ratio */
     set_new_aspect (data);
 
+    /* Size/shrink controls */
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+    label = gtk_label_new(_("Shrink factor"));
+    gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, 0, 0, 0, 0);
+    data->ShrinkAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(CFG->shrink,
+            1, 100, 1, 2, 3));
+    g_object_set_data(G_OBJECT(data->ShrinkAdjustment),
+		"Adjustment-Accuracy", (gpointer)0);
+    data->ShrinkSpin = GTK_SPIN_BUTTON(gtk_spin_button_new(
+	    data->ShrinkAdjustment, 1, 3));
+    g_object_set_data(G_OBJECT(data->ShrinkAdjustment), "Parent-Widget",
+	    data->ShrinkSpin);
+    g_signal_connect(G_OBJECT(data->ShrinkAdjustment), "value-changed",
+            G_CALLBACK(adjustment_update), &data->shrink);
+    gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(data->ShrinkSpin),
+	    1, 2, 1, 2, 0, 0, 0, 0);
+
+    label = gtk_label_new(_("Height"));
+    gtk_table_attach(GTK_TABLE(table), label, 2, 3, 1, 2, 0, 0, 0, 0);
+    data->HeightAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(data->height,
+            10, 0, 10, 100, 0));
+    g_object_set_data(G_OBJECT(data->HeightAdjustment),
+		"Adjustment-Accuracy", (gpointer)0);
+    data->HeightSpin = GTK_SPIN_BUTTON(gtk_spin_button_new(
+	    data->HeightAdjustment, 10, 0));
+    g_object_set_data(G_OBJECT(data->HeightAdjustment), "Parent-Widget",
+	    data->HeightSpin);
+    g_signal_connect(G_OBJECT(data->HeightAdjustment), "value-changed",
+            G_CALLBACK(adjustment_update), &data->height);
+    gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(data->HeightSpin),
+		3, 4, 1, 2, 0, 0, 0, 0);
+
+    label = gtk_label_new(_("Width"));
+    gtk_table_attach(GTK_TABLE(table), label, 4, 5, 1, 2, 0, 0, 0, 0);
+    data->WidthAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(data->width,
+            10, 0, 10, 100, 0));
+    g_object_set_data(G_OBJECT(data->WidthAdjustment),
+		"Adjustment-Accuracy", (gpointer)0);
+    data->WidthSpin = GTK_SPIN_BUTTON(gtk_spin_button_new(
+	    data->WidthAdjustment, 10, 0));
+    g_object_set_data(G_OBJECT(data->WidthAdjustment), "Parent-Widget",
+	    data->WidthSpin);
+    g_signal_connect(G_OBJECT(data->WidthAdjustment), "value-changed",
+            G_CALLBACK(adjustment_update), &data->width);
+    gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(data->WidthSpin),
+	    5, 6, 1, 2, 0, 0, 0, 0);
+
     /* Orientation controls */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
@@ -4201,8 +4314,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	g_signal_connect(G_OBJECT(saveButton), "clicked",
 		G_CALLBACK(preview_saver), NULL);
 
-	/* Get the default save options from ufraw_saver() */
-	char *text = (char *)ufraw_saver(NULL, uf);
+	char *absFilename = uf_file_set_absolute(CFG->outputFilename);
+        char *utf8 = g_filename_to_utf8(absFilename, -1, NULL, NULL, NULL);
+        if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+        char *text = g_strdup_printf(_("Filename: %s%s"), utf8,
+                CFG->createID==also_id ? _("\nCreate also ID file") :
+                CFG->createID==only_id ? _("\nCreate only ID file") : "");
+        g_free(utf8);
+        g_free(absFilename);
 	gtk_tooltips_set_tip(data->ToolTips, saveButton, text, NULL);
 	g_free(text);
 
@@ -4232,8 +4351,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     create_base_image(data);
 
-    update_crop_ranges(data);
-
     /* Collect raw histogram data */
     memset(data->raw_his, 0, sizeof(data->raw_his));
     ufraw_image_data *image = &data->UF->Images[ufraw_first_phase];
@@ -4256,6 +4373,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     data->FreezeDialog = FALSE;
     data->RenderMode = render_default;
+    update_crop_ranges(data);
     update_scales(data);
 
     gtk_main();

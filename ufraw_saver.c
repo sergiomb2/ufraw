@@ -25,13 +25,6 @@
 /* Global information for the 'Save As' dialog */
 typedef struct {
     ufraw_data *uf;
-    double shrink;
-    double height;
-    double width;
-    gboolean FreezeDialog;
-    GtkAdjustment *shrinkAdj;
-    GtkAdjustment *heightAdj;
-    GtkAdjustment *widthAdj;
     GtkToggleButton *ppmButton;
     GtkToggleButton *tiffButton;
     GtkToggleButton *jpegButton;
@@ -54,36 +47,6 @@ void ufraw_radio_button_update(GtkWidget *button, int *valuep)
     g_free(base);
     gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), newname);
     g_free(newname);
-}
-
-void ufraw_saver_adjustment_update(GtkAdjustment *adj,
-    save_as_dialog_data *data)
-{
-    if (data->FreezeDialog) return;
-    data->FreezeDialog = TRUE;
-
-    int croppedWidth = data->uf->conf->CropX2 - data->uf->conf->CropX1;
-    int croppedHeight = data->uf->conf->CropY2 - data->uf->conf->CropY1;
-    if ( adj==data->shrinkAdj ) {
-	data->shrink = gtk_adjustment_get_value(data->shrinkAdj);
-	data->height = croppedHeight / data->shrink;
-	data->width = croppedWidth / data->shrink;
-    }
-    if ( adj==data->heightAdj ) {
-	data->height = gtk_adjustment_get_value(data->heightAdj);
-	data->width = data->height * croppedWidth / croppedHeight;
-	data->shrink = (double)croppedHeight / data->height;
-    }
-    if ( adj==data->widthAdj ) {
-	data->width = gtk_adjustment_get_value(data->widthAdj);
-	data->height = data->width * croppedHeight / croppedWidth;
-	data->shrink = (double)croppedWidth / data->width;
-    }
-    gtk_adjustment_set_value(data->shrinkAdj, data->shrink);
-    gtk_adjustment_set_value(data->heightAdj, data->height);
-    gtk_adjustment_set_value(data->widthAdj, data->width);
-
-    data->FreezeDialog = FALSE;
 }
 
 void ufraw_saver_set_type(GtkWidget *widget, save_as_dialog_data *data)
@@ -153,67 +116,16 @@ long ufraw_saver(void *widget, gpointer user_data)
     GtkAdjustment *compressAdj;
 #endif
     ufraw_data *uf = user_data;
-    char *filename, *absFilename;
     int status;
     save_as_dialog_data DialogData, *data = &DialogData;
     data->uf = uf;
-    data->FreezeDialog = TRUE;
 
-    int croppedWidth = data->uf->conf->CropX2 - data->uf->conf->CropX1;
-    int croppedHeight = data->uf->conf->CropY2 - data->uf->conf->CropY1;
-    if (uf->conf->size > 0) {
-	if (croppedHeight > croppedWidth) {
-	    data->height = uf->conf->size;
-	    data->width = uf->conf->size * croppedWidth / croppedHeight;
-	    data->shrink = (double)croppedHeight / uf->conf->size;
-	} else {
-	    data->width = uf->conf->size;
-	    data->height = uf->conf->size * croppedHeight / croppedWidth;
-	    data->shrink = (double)croppedWidth / uf->conf->size;
-	}
-    } else {
-	if (uf->conf->shrink<1) {
-	    ufraw_message(UFRAW_ERROR, _("Fatal Error: uf->conf->shrink<1"));
-	    uf->conf->shrink = 1;
-	}
-	data->height = croppedHeight / uf->conf->shrink;
-	data->width = croppedWidth / uf->conf->shrink;
-	data->shrink = uf->conf->shrink;
-    }
-    if ( strlen(uf->conf->outputFilename)>0 )
-	filename = uf_file_set_type(uf->conf->outputFilename,
-		file_type[uf->conf->type]);
-    else
-	filename = uf_file_set_type(uf->filename, file_type[uf->conf->type]);
-    if (strlen(uf->conf->outputPath)>0) {
-	char *cp = g_path_get_basename(filename);
-	g_free(filename);
-	filename = g_build_filename(uf->conf->outputPath, cp, NULL);
-	g_free(cp);
-    }
-    absFilename = uf_file_set_absolute(filename);
-    if (widget==NULL) {
-	/* Function was only called to collect data. */
-	char *utf8 = g_filename_to_utf8(absFilename, -1, NULL, NULL, NULL);
-	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
-	char *text = g_strdup_printf(_("Filename: %s\nSize: %d x %d%s"),
-		utf8, (int)data->width, (int)data->height,
-		uf->conf->createID==also_id ? _("\nCreate also ID file") :
-		uf->conf->createID==only_id ? _("\nCreate only ID file") : "");
-	g_free(utf8);
-	g_free(absFilename);
-	g_free(filename);
-	return (long)text;
-    }
     if (!strcmp(gtk_button_get_label(GTK_BUTTON(widget)), GTK_STOCK_SAVE)) {
 	if ( !uf->conf->overwrite && uf->conf->createID!=only_id
-	   && g_file_test(absFilename, G_FILE_TEST_EXISTS) ) {
-	    if ( !ufraw_overwrite_dialog(filename, widget) )
+	   && g_file_test(uf->conf->outputFilename, G_FILE_TEST_EXISTS) ) {
+	    if ( !ufraw_overwrite_dialog(uf->conf->outputFilename, widget) )
 		return UFRAW_ERROR;
 	}
-	g_strlcpy(uf->conf->outputFilename, absFilename, max_path);
-	g_free(filename);
-	g_free(absFilename);
 	status = ufraw_write_image(uf);
 	return status;
     }
@@ -233,10 +145,12 @@ long ufraw_saver(void *widget, gpointer user_data)
 	    G_CALLBACK(ufraw_chooser_toggle), fileChooser);
     gtk_file_chooser_set_extra_widget(fileChooser, hidden_button);
 #endif
+    char *absFilename = uf_file_set_absolute(uf->conf->outputFilename);
     char *path = g_path_get_dirname(absFilename);
     gtk_file_chooser_set_current_folder(fileChooser, path);
     g_free(path);
-    char *base = g_path_get_basename(filename);
+    g_free(absFilename);
+    char *base = g_path_get_basename(uf->conf->outputFilename);
     gtk_file_chooser_set_current_name(fileChooser, base);
     g_free(base);
 
@@ -259,35 +173,6 @@ long ufraw_saver(void *widget, gpointer user_data)
 	if (uf->conf->shrink<2) uf->conf->shrink = 2;
 	ufraw_message(UFRAW_WARNING, _("Interpolation method set to AHD"));
     }
-
-    table = gtk_table_new(5, 1, FALSE);
-    gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
-    widg = gtk_label_new(_("Shrink factor "));
-    gtk_table_attach(GTK_TABLE(table), widg, 0, 1, 1, 2, 0, 0, 0, 0);
-    data->shrinkAdj = GTK_ADJUSTMENT(gtk_adjustment_new(data->shrink,
-	    1, 100, 1, 2, 3));
-    g_signal_connect(G_OBJECT(data->shrinkAdj), "value-changed",
-	    G_CALLBACK(ufraw_saver_adjustment_update), data);
-    widg = gtk_spin_button_new(data->shrinkAdj, 1, 3);
-    gtk_table_attach(GTK_TABLE(table), widg, 1, 2, 1, 2, 0, 0, 0, 0);
-
-    widg = gtk_label_new(_("\tHeight "));
-    gtk_table_attach(GTK_TABLE(table), widg, 2, 3, 1, 2, 0, 0, 0, 0);
-    data->heightAdj = GTK_ADJUSTMENT(gtk_adjustment_new(data->height,
-	    croppedHeight/100, croppedHeight, 10, 100, 0));
-    g_signal_connect(G_OBJECT(data->heightAdj), "value-changed",
-	    G_CALLBACK(ufraw_saver_adjustment_update), data);
-    widg = gtk_spin_button_new(data->heightAdj, 10, 0);
-    gtk_table_attach(GTK_TABLE(table), widg, 3, 4, 1, 2, 0, 0, 0, 0);
-
-    widg = gtk_label_new(_("\tWidth "));
-    gtk_table_attach(GTK_TABLE(table), widg, 4, 5, 1, 2, 0, 0, 0, 0);
-    data->widthAdj = GTK_ADJUSTMENT(gtk_adjustment_new(data->width,
-	    croppedWidth/100, croppedWidth, 10, 100, 0));
-    g_signal_connect(G_OBJECT(data->widthAdj), "value-changed",
-	    G_CALLBACK(ufraw_saver_adjustment_update), data);
-    widg = gtk_spin_button_new(data->widthAdj, 10, 0);
-    gtk_table_attach(GTK_TABLE(table), widg, 5, 6, 1, 2, 0, 0, 0, 0);
 
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
     button = gtk_radio_button_new_with_label(NULL, _("8-bit ppm"));
@@ -413,7 +298,6 @@ long ufraw_saver(void *widget, gpointer user_data)
     }
     g_signal_connect(G_OBJECT(fileChooser), "selection-changed",
 	    G_CALLBACK(ufraw_saver_set_type), data);
-    data->FreezeDialog = FALSE;
     while(1) {
 	status = gtk_dialog_run(GTK_DIALOG(fileChooser));
 	if (status==GTK_RESPONSE_CANCEL) {
@@ -422,16 +306,9 @@ long ufraw_saver(void *widget, gpointer user_data)
 	    return UFRAW_CANCEL;
 	}
 	/* GTK_RESPONSE_OK - save file */
-	filename = gtk_file_chooser_get_filename(fileChooser);
+	char *filename = gtk_file_chooser_get_filename(fileChooser);
 	uf->conf->createID = gtk_combo_box_get_active(idCombo);
 	uf->conf->saveConfiguration = gtk_combo_box_get_active(confCombo);
-	if ( fabs(data->shrink-floor(data->shrink+0.0005))<0.0005 ) {
-	    uf->conf->shrink = floor(data->shrink+0.0005);
-	    uf->conf->size = 0;
-	} else {
-	    uf->conf->shrink = 1;
-	    uf->conf->size = floor(MAX(data->height, data->width)+0.5);
-	}
 	uf->conf->overwrite = gtk_toggle_button_get_active(
 		GTK_TOGGLE_BUTTON(overwriteButton));
 #if defined(HAVE_LIBZ) && defined(HAVE_LIBTIFF)
