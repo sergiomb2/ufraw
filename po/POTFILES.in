@@ -5,6 +5,7 @@ ufraw-batch.c
 ufraw.c
 ufraw_chooser.c
 ufraw_conf.c
+ufraw_delete.c
 ufraw_developer.c
 ufraw_embedded.c
 ufraw_exiv2.cc

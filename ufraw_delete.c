@@ -31,7 +31,7 @@ long ufraw_delete(void *widget, ufraw_data *uf)
 {
     if ( !g_file_test(uf->filename, G_FILE_TEST_EXISTS) ) {
 	char *ufile = g_filename_to_utf8(uf->filename, -1, NULL, NULL, NULL);
-	ufraw_message(UFRAW_ERROR, "Raw file '%s' missing.", ufile);
+	ufraw_message(UFRAW_ERROR, _("Raw file '%s' missing."), ufile);
 	g_free(ufile);
 	return UFRAW_ERROR;
     }
@@ -40,7 +40,7 @@ long ufraw_delete(void *widget, ufraw_data *uf)
 	    GTK_DIALOG_DESTROY_WITH_PARENT,
 	    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 	    _("_Delete selected"), UFRAW_RESPONSE_DELETE_SELECTED,
-	    _("delete _All"), UFRAW_RESPONSE_DELETE_ALL, NULL));
+	    _("Delete _All"), UFRAW_RESPONSE_DELETE_ALL, NULL));
     gtk_dialog_set_default_response(dialog, GTK_RESPONSE_CANCEL);
 
     GtkBox *box = GTK_BOX(dialog->vbox);
@@ -51,7 +51,7 @@ long ufraw_delete(void *widget, ufraw_data *uf)
     GDir *dir = g_dir_open(path, 0, NULL);
     if ( dir==NULL ) {
 	char *upath = g_filename_to_utf8(path, -1, NULL, NULL, NULL);
-	ufraw_message(UFRAW_ERROR, "Error reading directory '%s'.", upath);
+	ufraw_message(UFRAW_ERROR, _("Error reading directory '%s'."), upath);
 	g_free(upath);
 	g_free(path);
 	return UFRAW_ERROR;
@@ -108,7 +108,7 @@ long ufraw_delete(void *widget, ufraw_data *uf)
 	    if ( g_unlink(fileList->data)!=0 ) {
 		char *ufile = g_filename_to_utf8(fileList->data,
 			-1, NULL, NULL, NULL);
-		ufraw_message(UFRAW_ERROR, "Error deleting '%s'", ufile);
+		ufraw_message(UFRAW_ERROR, _("Error deleting '%s'"), ufile);
 		g_free(ufile);
 	    } else if (strcmp(fileList->data, uf->filename)==0 ) {
 		/* Success means deleting the raw file */
