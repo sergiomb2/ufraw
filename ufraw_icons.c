@@ -97,4 +97,8 @@ void ufraw_icons_init()
     pixbuf = gdk_pixbuf_new_from_inline(-1, rotate_270_24, FALSE, NULL);
     iconset = gtk_icon_set_new_from_pixbuf(pixbuf);
     gtk_icon_factory_add(factory, "object-rotate-left", iconset);
+
+    pixbuf = gdk_pixbuf_new_from_inline(-1, lock_24, FALSE, NULL);
+    iconset = gtk_icon_set_new_from_pixbuf(pixbuf);
+    gtk_icon_factory_add(factory, "object-lock", iconset);
 }
