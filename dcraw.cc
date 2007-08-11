@@ -15,8 +15,8 @@
    license. Naturaly, the GPL license applies only to this derived
    work.
 
-   $Revision: 1.391 $
-   $Date: 2007/08/08 21:28:17 $
+   $Revision: 1.392 $
+   $Date: 2007/08/10 21:09:34 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -59,12 +59,7 @@ extern "C" {
 //#define _(String) (String)
 //#endif
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
-#ifndef DJGPP
 //#define fgetc getc_unlocked
-#ifdef HAVE_FSEEKO
-#define fseek fseeko
-#endif
-#endif
 #ifdef __CYGWIN__
 #include <io.h>
 #endif
@@ -256,7 +251,12 @@ void CLASS derror()
     if (feof(ifp))
       dcraw_message (DCRAW_WARNING,_("Unexpected end of file\n"));
     else
+#ifdef HAVE_FSEEKO
+      dcraw_message (DCRAW_WARNING,_("Corrupt data near 0x%llx\n"),
+		(INT64) ftello(ifp));
+#else
       dcraw_message (DCRAW_WARNING,_("Corrupt data near 0x%lx\n"), ftell(ifp));
+#endif
   }
   data_error = 1;
 }
@@ -7958,7 +7958,11 @@ next:
       dcraw_message (DCRAW_ERROR,
 	_("%s: \"-s %d\" requests a nonexistent image!\n"),
 	ifname, shot_select); /*UF*/
+#ifdef HAVE_FSEEKO
+    fseeko (ifp, data_offset, SEEK_SET);
+#else
     fseek (ifp, data_offset, SEEK_SET);
+#endif
     (*this.*load_raw)();
     if (zero_is_bad) remove_zeroes();
     bad_pixels();
