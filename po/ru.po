@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-11 08:15+0200\n"
+"POT-Creation-Date: 2007-08-12 07:30+0200\n"
 "PO-Revision-Date: 2007-07-22 19:21+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@gnome.org>\n"
@@ -65,13 +65,13 @@ msgstr "Raw jpg's"
 msgid "Raw tif's"
 msgstr "Raw tif's"
 
-#: ufraw_chooser.c:116 ufraw_preview.c:257 ufraw_preview.c:359
-#: ufraw_preview.c:427
+#: ufraw_chooser.c:116 ufraw_preview.c:273 ufraw_preview.c:375
+#: ufraw_preview.c:443
 msgid "All files"
 msgstr "Все файлы"
 
-#: ufraw_chooser.c:122 ufraw_preview.c:226 ufraw_preview.c:328
-#: ufraw_preview.c:411 ufraw_saver.c:230
+#: ufraw_chooser.c:122 ufraw_preview.c:242 ufraw_preview.c:344
+#: ufraw_preview.c:427 ufraw_saver.c:142
 msgid "Show hidden files"
 msgstr "Показывать скрытые файлы"
 
@@ -590,7 +590,7 @@ msgstr "невозможно вывести более одного изобра
 msgid "Raw file '%s' missing."
 msgstr ""
 
-#: ufraw_delete.c:39 ufraw_preview.c:3791
+#: ufraw_delete.c:39 ufraw_preview.c:4292
 #, fuzzy
 msgid "Delete raw file"
 msgstr "Создать ID-файл "
@@ -715,78 +715,82 @@ msgstr "Гистограмма RAW"
 msgid "Live histogram"
 msgstr "Динамическая гистограмма"
 
-#: ufraw_preview.c:214 ufraw_preview.c:303
+#: ufraw_preview.c:230 ufraw_preview.c:319
 msgid "No more room for new curves."
 msgstr "Не хватает места для новых кривых."
 
-#: ufraw_preview.c:217 ufraw_preview.c:3276
+#: ufraw_preview.c:233 ufraw_preview.c:3690
 msgid "Load curve"
 msgstr "Загрузить кривую"
 
-#: ufraw_preview.c:233 ufraw_preview.c:335
+#: ufraw_preview.c:249 ufraw_preview.c:351
 msgid "All curve formats"
 msgstr "Все форматы кривых"
 
-#: ufraw_preview.c:243 ufraw_preview.c:345
+#: ufraw_preview.c:259 ufraw_preview.c:361
 msgid "UFRaw curve format"
 msgstr "Формат кривых UFRaw"
 
-#: ufraw_preview.c:249 ufraw_preview.c:351
+#: ufraw_preview.c:265 ufraw_preview.c:367
 msgid "Nikon curve format"
 msgstr "Формат кривых Nikon"
 
-#: ufraw_preview.c:320 ufraw_preview.c:3282
+#: ufraw_preview.c:336 ufraw_preview.c:3696
 msgid "Save curve"
 msgstr "Сохранить кривую"
 
-#: ufraw_preview.c:398 ufraw_preview.c:471
+#: ufraw_preview.c:414 ufraw_preview.c:487
 msgid "No more room for new profiles."
 msgstr "Не хватает места для новых профилей."
 
-#: ufraw_preview.c:402
+#: ufraw_preview.c:418
 msgid "Load color profile"
 msgstr "Загрузить цветовой профиль"
 
-#: ufraw_preview.c:420
+#: ufraw_preview.c:436
 msgid "Color Profiles"
 msgstr "Цветовые профили"
 
-#: ufraw_preview.c:507
+#: ufraw_preview.c:523
 msgid "Luminosity (Y value)"
 msgstr "Освещённость (значение Y)"
 
-#: ufraw_preview.c:510
+#: ufraw_preview.c:526
 msgid "Adams' zone"
 msgstr "Зона Адамса"
 
-#: ufraw_preview.c:796
+#: ufraw_preview.c:835
 #, c-format
 msgid "size %dx%d, zoom %2.f%%"
 msgstr "размер %dx%d, масштаб %2.f%%"
 
-#: ufraw_preview.c:800
+#: ufraw_preview.c:839
 #, c-format
 msgid "size %dx%d, scale 1/%d"
 msgstr "размер %dx%d, масштаб 1/%d"
 
-#: ufraw_preview.c:853
+#: ufraw_preview.c:892
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "Чёрная точка: %0.3lf"
 
-#: ufraw_preview.c:1850
+#: ufraw_preview.c:1589
+msgid "Fatal Error: uf->conf->shrink<1"
+msgstr "Критическая ошибка: uf->conf->shrink<1"
+
+#: ufraw_preview.c:2245
 msgid "clip"
 msgstr "вырезаны"
 
-#: ufraw_preview.c:1862
+#: ufraw_preview.c:2257
 msgid "restore in LCH space for soft details"
 msgstr "Восстановление в пространстве LCH для получения мягких деталей"
 
-#: ufraw_preview.c:1874
+#: ufraw_preview.c:2269
 msgid "restore in HSV space for sharp details"
 msgstr "Восстановление в пространстве HSV для получения резких деталей"
 
-#: ufraw_preview.c:1879
+#: ufraw_preview.c:2274
 #, c-format
 msgid ""
 "Restore details for negative EV\n"
@@ -795,15 +799,15 @@ msgstr ""
 "Восстановление недоэкспонированных деталей\n"
 "Текущее состояние: %s"
 
-#: ufraw_preview.c:1906
+#: ufraw_preview.c:2301
 msgid "digital linear"
 msgstr "Цифровое, линейное"
 
-#: ufraw_preview.c:1918
+#: ufraw_preview.c:2313
 msgid "soft film like"
 msgstr "Мягкое, плёночного типа"
 
-#: ufraw_preview.c:1923
+#: ufraw_preview.c:2318
 #, c-format
 msgid ""
 "Clip highlights for positive EV\n"
@@ -812,43 +816,43 @@ msgstr ""
 "Восстановление пересвеченных участков\n"
 "Текущее состояние: %s"
 
-#: ufraw_preview.c:2227
+#: ufraw_preview.c:2638
 msgid "UFRaw options"
 msgstr "Параметры UFRaw"
 
-#: ufraw_preview.c:2240
+#: ufraw_preview.c:2651
 msgid "Settings"
 msgstr "Параметры"
 
-#: ufraw_preview.c:2244
+#: ufraw_preview.c:2655
 msgid "Input color profiles"
 msgstr "Цветовые профили ввода"
 
-#: ufraw_preview.c:2246
+#: ufraw_preview.c:2657
 msgid "Output color profiles"
 msgstr "Цветовые профили вывода"
 
-#: ufraw_preview.c:2248
+#: ufraw_preview.c:2659
 msgid "Display color profiles"
 msgstr "Цветовые профили монитора"
 
-#: ufraw_preview.c:2249
+#: ufraw_preview.c:2660
 msgid "Base Curves"
 msgstr "Базовые кривые"
 
-#: ufraw_preview.c:2250
+#: ufraw_preview.c:2661
 msgid "Luminosity Curves"
 msgstr "Кривые яркости"
 
-#: ufraw_preview.c:2252
+#: ufraw_preview.c:2663
 msgid "Configuration"
 msgstr "Настройка"
 
-#: ufraw_preview.c:2267
+#: ufraw_preview.c:2678
 msgid "Save image defaults "
 msgstr "Сохранять параметры снимков"
 
-#: ufraw_preview.c:2271 ufraw_saver.c:389
+#: ufraw_preview.c:2682 ufraw_saver.c:274
 msgid ""
 "Save current image manipulation parameters as defaults.\n"
 "The output parameters in this window are always saved."
@@ -856,39 +860,39 @@ msgstr ""
 "Сохранить текущие параметры снимка как исходные.\n"
 "Параметры экспорта в этом окне всегда будут сохраняться."
 
-#: ufraw_preview.c:2274 ufraw_saver.c:393
+#: ufraw_preview.c:2685 ufraw_saver.c:278
 msgid "Never again"
 msgstr "Никогда больше"
 
-#: ufraw_preview.c:2275 ufraw_saver.c:394
+#: ufraw_preview.c:2686 ufraw_saver.c:279
 msgid "Always"
 msgstr "Всегда"
 
-#: ufraw_preview.c:2276 ufraw_saver.c:395
+#: ufraw_preview.c:2687 ufraw_saver.c:280
 msgid "Just this once"
 msgstr "Только в этот раз"
 
-#: ufraw_preview.c:2283
+#: ufraw_preview.c:2694
 msgid "Save full configuration "
 msgstr "Сохранение всех параметров"
 
-#: ufraw_preview.c:2286
+#: ufraw_preview.c:2697
 msgid "Save resource file ($HOME/.ufrawrc)"
 msgstr "Сохранить файл настроек ($HOME/.ufrawrc)"
 
-#: ufraw_preview.c:2294
+#: ufraw_preview.c:2705
 msgid "Log"
 msgstr "Журнал"
 
-#: ufraw_preview.c:2306
+#: ufraw_preview.c:2717
 msgid "Encoding conversion failed"
 msgstr "Преобразование текста не удалось"
 
-#: ufraw_preview.c:2310
+#: ufraw_preview.c:2721
 msgid "About"
 msgstr "О программе"
 
-#: ufraw_preview.c:2321
+#: ufraw_preview.c:2732
 msgid ""
 "The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
 "to\n"
@@ -909,61 +913,61 @@ msgstr ""
 "Сайт проекта: http://ufraw.sourceforge.net/\n"
 "\n"
 
-#: ufraw_preview.c:2655
+#: ufraw_preview.c:3069
 #, c-format
 msgid "%s - UFRaw Photo Loader"
 msgstr "%s – загрузчик фотографий UFRaw"
 
-#: ufraw_preview.c:2720 ufraw_preview.c:3579
+#: ufraw_preview.c:3134 ufraw_preview.c:4080
 msgid "Linear"
 msgstr "Линейный масштаб"
 
-#: ufraw_preview.c:2729 ufraw_preview.c:3588
+#: ufraw_preview.c:3143 ufraw_preview.c:4089
 msgid "Logarithmic"
 msgstr "Логарифмический масштаб"
 
-#: ufraw_preview.c:2743 ufraw_preview.c:3602
+#: ufraw_preview.c:3157 ufraw_preview.c:4103
 msgid "96 Pixels"
 msgstr "96 пикселов"
 
-#: ufraw_preview.c:2752 ufraw_preview.c:3611
+#: ufraw_preview.c:3166 ufraw_preview.c:4112
 msgid "128 Pixels"
 msgstr "128 пикселов"
 
-#: ufraw_preview.c:2761 ufraw_preview.c:3620
+#: ufraw_preview.c:3175 ufraw_preview.c:4121
 msgid "192 Pixels"
 msgstr "192 пиксела"
 
-#: ufraw_preview.c:2770 ufraw_preview.c:3629
+#: ufraw_preview.c:3184 ufraw_preview.c:4130
 msgid "256 Pixels"
 msgstr "256 пикселов"
 
-#: ufraw_preview.c:2783
+#: ufraw_preview.c:3197
 msgid "Spot values:"
 msgstr "Значения в точке:"
 
-#: ufraw_preview.c:2790
+#: ufraw_preview.c:3204
 msgid "Exposure compensation in EV"
 msgstr "Компенсация экспозиции в EV"
 
-#: ufraw_preview.c:2808
+#: ufraw_preview.c:3222
 msgid "Auto adjust exposure"
 msgstr "Автоматически скорректировать экспозицию"
 
-#: ufraw_preview.c:2819
+#: ufraw_preview.c:3233
 msgid "Reset exposure to default"
 msgstr "Сбросить значение экспозиции до исходного"
 
 #. Start of White Balance setting page
-#: ufraw_preview.c:2832
+#: ufraw_preview.c:3246
 msgid "White balance"
 msgstr "Баланс белого"
 
-#: ufraw_preview.c:2886
+#: ufraw_preview.c:3300
 msgid "White Balance"
 msgstr "Баланс белого"
 
-#: ufraw_preview.c:2911
+#: ufraw_preview.c:3325
 msgid ""
 "There are no white balance presets for your camera model.\n"
 "Check UFRaw's webpage for information on how to get your\n"
@@ -973,195 +977,195 @@ msgstr ""
 "Зайдите на сайт UFRaw, чтобы узнать, как сделать\n"
 "вашу камеру поддерживаемой."
 
-#: ufraw_preview.c:2917
+#: ufraw_preview.c:3331
 msgid "Reset white balance to initial value"
 msgstr "Сбросить значение баланса белого до исходного"
 
-#: ufraw_preview.c:2923
+#: ufraw_preview.c:3337
 msgid "Temperature"
 msgstr "Температура"
 
-#: ufraw_preview.c:2925
+#: ufraw_preview.c:3339
 msgid "White balance color temperature (K)"
 msgstr "Температура цвета в Кельвинах"
 
-#: ufraw_preview.c:2926
+#: ufraw_preview.c:3340
 msgid "Green"
 msgstr "Зелёный"
 
-#: ufraw_preview.c:2928
+#: ufraw_preview.c:3342
 msgid "Green component"
 msgstr "Зелёный компонент"
 
-#: ufraw_preview.c:2934
+#: ufraw_preview.c:3348
 msgid "Select a spot on the preview image to apply spot white balance"
 msgstr ""
 "Выберите область на изображении для применения баланса белого по области"
 
-#: ufraw_preview.c:2942
+#: ufraw_preview.c:3356
 msgid "Chan. multipliers:"
 msgstr "Множ. каналов:"
 
-#: ufraw_preview.c:2966
+#: ufraw_preview.c:3380
 msgid "Bayer pattern interpolation"
 msgstr "Интерполяция Баейеровской структуры"
 
-#: ufraw_preview.c:2973 ufraw_preview.c:2984
+#: ufraw_preview.c:3387 ufraw_preview.c:3398
 msgid "VNG four color interpolation"
 msgstr "Интерполяция VNG для 4-х цветов"
 
-#: ufraw_preview.c:2975 ufraw_preview.c:2988
+#: ufraw_preview.c:3389 ufraw_preview.c:3402
 msgid "Bilinear interpolation"
 msgstr "Билинейная интерполяция"
 
-#: ufraw_preview.c:2978
+#: ufraw_preview.c:3392
 msgid "EAHD interpolation"
 msgstr "Интерполяция EAHD"
 
-#: ufraw_preview.c:2980
+#: ufraw_preview.c:3394
 msgid "AHD interpolation"
 msgstr "Интерполяция AHD"
 
-#: ufraw_preview.c:2982
+#: ufraw_preview.c:3396
 msgid "VNG interpolation"
 msgstr "Интерполяция VNG"
 
-#: ufraw_preview.c:2986
+#: ufraw_preview.c:3400
 msgid "PPG interpolation"
 msgstr "Интерполяция PPG"
 
-#: ufraw_preview.c:2992
+#: ufraw_preview.c:3406
 msgid "Half-size interpolation"
 msgstr "Интерполяция половинного размера"
 
-#: ufraw_preview.c:3004
+#: ufraw_preview.c:3418
 msgid "No Bayer pattern"
 msgstr "Без баейеровской структуры"
 
-#: ufraw_preview.c:3014
+#: ufraw_preview.c:3428
 msgid "Threshold"
 msgstr "Порог"
 
-#: ufraw_preview.c:3016
+#: ufraw_preview.c:3430
 msgid "Threshold for wavelet denoising"
 msgstr "Порог для вейвлетного подавления шума"
 
-#: ufraw_preview.c:3021
+#: ufraw_preview.c:3435
 msgid "Reset denoise threshold to default"
 msgstr "Сбросить порог шумоподавления"
 
-#: ufraw_preview.c:3032
+#: ufraw_preview.c:3446
 msgid "Zoom:"
 msgstr "Масштаб:"
 
-#: ufraw_preview.c:3053 ufraw_preview.c:3742
+#: ufraw_preview.c:3467 ufraw_preview.c:4243
 msgid "Zoom percentage"
 msgstr "Масштаб в процентах"
 
 #. End of White Balance setting page
 #. Start of Base Curve page
-#: ufraw_preview.c:3068
+#: ufraw_preview.c:3482
 msgid "Base curve"
 msgstr "Базовая кривая"
 
-#: ufraw_preview.c:3101
+#: ufraw_preview.c:3515
 msgid "Load base curve"
 msgstr "Загрузить базовую кривую"
 
-#: ufraw_preview.c:3107
+#: ufraw_preview.c:3521
 msgid "Save base curve"
 msgstr "Сохранить базовую кривую"
 
-#: ufraw_preview.c:3127
+#: ufraw_preview.c:3541
 msgid "Reset base curve to default"
 msgstr "Сбросить базовую кривую до исходной"
 
 #. End of Base Curve page
 #. Start of Color management page
-#: ufraw_preview.c:3137
+#: ufraw_preview.c:3551
 msgid "Color management"
 msgstr "Управление цветом"
 
-#: ufraw_preview.c:3150
+#: ufraw_preview.c:3564
 msgid "Input ICC profile"
 msgstr "ICC-профиль устройства ввода"
 
-#: ufraw_preview.c:3151
+#: ufraw_preview.c:3565
 msgid "Output ICC profile"
 msgstr "ICC-профиль устройства вывода"
 
-#: ufraw_preview.c:3152
+#: ufraw_preview.c:3566
 msgid "Display ICC profile"
 msgstr "ICC-профиль монитора"
 
-#: ufraw_preview.c:3176
+#: ufraw_preview.c:3590
 msgid "Use color matrix"
 msgstr "Использовать матрицу цвета"
 
-#: ufraw_preview.c:3187
+#: ufraw_preview.c:3601
 msgid "Gamma"
 msgstr "Гамма"
 
-#: ufraw_preview.c:3190
+#: ufraw_preview.c:3604
 msgid "Gamma correction for the input profile"
 msgstr "Гамма-коррекция профиля ввода"
 
-#: ufraw_preview.c:3195
+#: ufraw_preview.c:3609
 msgid "Reset gamma to default"
 msgstr "Сбросить значение гаммы до исходного"
 
-#: ufraw_preview.c:3200
+#: ufraw_preview.c:3614
 msgid "Linearity"
 msgstr "Линейность"
 
-#: ufraw_preview.c:3203
+#: ufraw_preview.c:3617
 msgid "Linear part of the gamma correction"
 msgstr "Линейная часть гамма-коррекции"
 
-#: ufraw_preview.c:3208
+#: ufraw_preview.c:3622
 msgid "Reset linearity to default"
 msgstr "Сбросить значение линейности до исходного"
 
-#: ufraw_preview.c:3213
+#: ufraw_preview.c:3627
 msgid "Output intent"
 msgstr "Вывод"
 
-#: ufraw_preview.c:3216 ufraw_preview.c:3228
+#: ufraw_preview.c:3630 ufraw_preview.c:3642
 msgid "Perceptual"
 msgstr "Воспринимаемая"
 
-#: ufraw_preview.c:3217 ufraw_preview.c:3229
+#: ufraw_preview.c:3631 ufraw_preview.c:3643
 msgid "Relative colorimetric"
 msgstr "Отн. колориметрическая"
 
-#: ufraw_preview.c:3218 ufraw_preview.c:3230 ufraw_preview.c:3244
-#: ufraw_preview.c:3246
+#: ufraw_preview.c:3632 ufraw_preview.c:3644 ufraw_preview.c:3658
+#: ufraw_preview.c:3660
 msgid "Saturation"
 msgstr "Насыщенность"
 
-#: ufraw_preview.c:3219 ufraw_preview.c:3231
+#: ufraw_preview.c:3633 ufraw_preview.c:3645
 msgid "Absolute colorimetric"
 msgstr "Абс. колориметрическая"
 
-#: ufraw_preview.c:3225
+#: ufraw_preview.c:3639
 msgid "Display intent"
 msgstr "Монитор"
 
-#: ufraw_preview.c:3232
+#: ufraw_preview.c:3646
 msgid "Disable soft proofing"
 msgstr "Отключить экранную цветопробу"
 
 #. End of Color management page
 #. Start of Corrections page
-#: ufraw_preview.c:3240
+#: ufraw_preview.c:3654
 msgid "Correct luminosity, saturation"
 msgstr "Изменить освещенность, насыщенность"
 
-#: ufraw_preview.c:3251
+#: ufraw_preview.c:3665
 msgid "Reset saturation to default"
 msgstr "Сбросить значение насыщенности до исходного"
 
-#: ufraw_preview.c:3301
+#: ufraw_preview.c:3715
 msgid ""
 "Auto adjust curve\n"
 "(Flatten histogram)"
@@ -1169,100 +1173,127 @@ msgstr ""
 "Автоматически скорректировать кривую\n"
 "(Выровнять гистограмму)"
 
-#: ufraw_preview.c:3311
+#: ufraw_preview.c:3725
 msgid "Reset curve to default"
 msgstr "Вернуть кривую в исходное состояние"
 
-#: ufraw_preview.c:3317
+#: ufraw_preview.c:3731
 msgid "Black point: 0.000"
 msgstr "Чёрная точка: 0.000"
 
-#: ufraw_preview.c:3334
+#: ufraw_preview.c:3748
 msgid "Reset black-point to default"
 msgstr "Сбросить значение чёрной точки до исходного"
 
-#: ufraw_preview.c:3344
+#: ufraw_preview.c:3758
 msgid "Auto adjust black-point"
 msgstr "Автоматически скорректировать чёрную точку"
 
 #. End of Corrections page
 #. Start of transformations page
-#: ufraw_preview.c:3353
+#: ufraw_preview.c:3767
 msgid "Crop and rotate"
 msgstr "Кадрирование и вращение"
 
 #. Start of Crop controls
-#: ufraw_preview.c:3359
+#: ufraw_preview.c:3773
 msgid "Left:"
 msgstr "Слева:"
 
-#: ufraw_preview.c:3373
+#: ufraw_preview.c:3787
 msgid "Top:"
 msgstr "Сверху:"
 
-#: ufraw_preview.c:3387
+#: ufraw_preview.c:3801
 msgid "Right:"
 msgstr "Справа:"
 
-#: ufraw_preview.c:3401
+#: ufraw_preview.c:3815
 msgid "Bottom:"
 msgstr "Снизу:"
 
-#: ufraw_preview.c:3420
+#: ufraw_preview.c:3834
 msgid "Reset the crop region"
 msgstr "Сбросить область кадрирования"
 
-#: ufraw_preview.c:3429
+#: ufraw_preview.c:3843
+msgid "Aspect ratio:"
+msgstr ""
+
+#: ufraw_preview.c:3849
+msgid "Crop area aspect ratio"
+msgstr ""
+
+#: ufraw_preview.c:3867
+msgid "Lock aspect ratio"
+msgstr ""
+
+#: ufraw_preview.c:3882
+#, fuzzy
+msgid "Shrink factor"
+msgstr "Коэффициент кадрирования"
+
+#: ufraw_preview.c:3897
+#, fuzzy
+msgid "Height"
+msgstr "\tВысота"
+
+#: ufraw_preview.c:3912
+#, fuzzy
+msgid "Width"
+msgstr "\tШирина "
+
+#: ufraw_preview.c:3930
 msgid "Orientation:"
 msgstr "Ориентация:"
 
 #. End of transformation page
 #. Start of EXIF page
-#: ufraw_preview.c:3462
+#: ufraw_preview.c:3963
 msgid "EXIF"
 msgstr "EXIF"
 
-#: ufraw_preview.c:3480
+#: ufraw_preview.c:3981
 #, c-format
 msgid "Camera: %s %s\n"
 msgstr "Камера: %s %s\n"
 
-#: ufraw_preview.c:3481
+#: ufraw_preview.c:3982
 #, c-format
 msgid "Timestamp: %s\n"
 msgstr "Дата и время: %s\n"
 
-#: ufraw_preview.c:3483
+#: ufraw_preview.c:3984
 #, c-format
 msgid "Shutter: %s\n"
 msgstr "Выдержка: %s\n"
 
-#: ufraw_preview.c:3485
+#: ufraw_preview.c:3986
 #, c-format
 msgid "Aperture: %s\n"
 msgstr "Диафрагма: %s\n"
 
-#: ufraw_preview.c:3487
+#: ufraw_preview.c:3988
 #, c-format
 msgid "ISO speed: %s\n"
 msgstr "Чувствительность ISO: %s\n"
 
-#: ufraw_preview.c:3489
+#: ufraw_preview.c:3990
 #, c-format
 msgid "Focal length: %s\n"
 msgstr "Фокусное расстояние: %s\n"
 
-#: ufraw_preview.c:3493
+#: ufraw_preview.c:3994
 #, c-format
 msgid "Focal length in 35mm equivalent: %s\n"
 msgstr "Фокусное расстояние в 35 мм эквиваленте: %s\n"
 
-#: ufraw_preview.c:3496
+#: ufraw_preview.c:3997
 #, c-format
 msgid "Lens: %s\n"
 msgstr "Объектив: %s\n"
 
-#: ufraw_preview.c:3497
+#: ufraw_preview.c:3998
 #, c-format
 msgid ""
 "\n"
@@ -1271,51 +1302,74 @@ msgstr ""
 "\n"
 "Данные EXIF прочитаны %s"
 
-#: ufraw_preview.c:3526
+#: ufraw_preview.c:4027
 msgid "RGB histogram"
 msgstr "Гистограмма RGB"
 
-#: ufraw_preview.c:3535
+#: ufraw_preview.c:4036
 msgid "R+G+B histogram"
 msgstr "Гистограмма R+G+B"
 
-#: ufraw_preview.c:3545
+#: ufraw_preview.c:4046
 msgid "Luminosity histogram"
 msgstr "Гистограмма освещенности"
 
-#: ufraw_preview.c:3555
+#: ufraw_preview.c:4056
 msgid "Value (maximum) histogram"
 msgstr "Гистограмма значений (максимума)"
 
-#: ufraw_preview.c:3565
+#: ufraw_preview.c:4066
 msgid "Saturation histogram"
 msgstr "Гистограмма насыщенности"
 
-#: ufraw_preview.c:3641
+#: ufraw_preview.c:4142
 msgid "Average:"
 msgstr "Среднее:"
 
-#: ufraw_preview.c:3643
+#: ufraw_preview.c:4144
 msgid "Std. deviation:"
 msgstr "Ср.квадр. отклонение:"
 
-#: ufraw_preview.c:3646
+#: ufraw_preview.c:4147
 msgid "Overexposed:"
 msgstr "Переэкспонировано:"
 
-#: ufraw_preview.c:3648 ufraw_preview.c:3659
+#: ufraw_preview.c:4149 ufraw_preview.c:4160
 msgid "Indicate"
 msgstr "Показать"
 
-#: ufraw_preview.c:3656
+#: ufraw_preview.c:4157
 msgid "Underexposed:"
 msgstr "Недоэкспонировано:"
 
-#: ufraw_preview.c:3779
+#: ufraw_preview.c:4280
 msgid "Options"
 msgstr "Параметры"
 
-#: ufraw_preview.c:3841
+#: ufraw_preview.c:4320
+#, fuzzy, c-format
+msgid "Filename: %s%s"
+msgstr ""
+"Имя файла: %s\n"
+"Размер: %d x %d%s"
+
+#: ufraw_preview.c:4321
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+"\n"
+"Дополнительно создать ID-файл"
+
+#: ufraw_preview.c:4322
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+"\n"
+"Создать только ID-файл"
+
+#: ufraw_preview.c:4348
 msgid "Loading preview"
 msgstr "Загружается предосмотр"
 
@@ -1343,11 +1397,11 @@ msgstr "Ошибка открытия файла кривой '%s': %s"
 msgid "Error opening file '%s': %s"
 msgstr "Ошибка открытия файла '%s': %s"
 
-#: ufraw_saver.c:121
+#: ufraw_saver.c:84
 msgid "File exists"
 msgstr "Такой файл уже есть"
 
-#: ufraw_saver.c:129
+#: ufraw_saver.c:92
 #, c-format
 msgid ""
 "File '%s' already exists.\n"
@@ -1356,108 +1410,67 @@ msgstr ""
 "Файл '%s' уже существует.\n"
 "Перезаписать его?"
 
-#: ufraw_saver.c:176
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "Критическая ошибка: uf->conf->shrink<1"
-
-#: ufraw_saver.c:199
-#, c-format
-msgid ""
-"Filename: %s\n"
-"Size: %d x %d%s"
-msgstr ""
-"Имя файла: %s\n"
-"Размер: %d x %d%s"
-
-#: ufraw_saver.c:201
-msgid ""
-"\n"
-"Create also ID file"
-msgstr ""
-"\n"
-"Дополнительно создать ID-файл"
-
-#: ufraw_saver.c:202
-msgid ""
-"\n"
-"Create only ID file"
-msgstr ""
-"\n"
-"Создать только ID-файл"
-
-#: ufraw_saver.c:221
+#: ufraw_saver.c:133
 msgid "Save image"
 msgstr "Сохранить снимок"
 
-#: ufraw_saver.c:251
+#: ufraw_saver.c:165
 msgid "Output options"
 msgstr "Параметры вывода"
 
-#: ufraw_saver.c:260
+#: ufraw_saver.c:174
 msgid "Interpolation method set to AHD"
 msgstr "Используется способ интерполяции AHD"
 
-#: ufraw_saver.c:265
-msgid "Shrink factor "
-msgstr "Коэффициент кадрирования"
-
-#: ufraw_saver.c:274
-msgid "\tHeight "
-msgstr "\tВысота"
-
-#: ufraw_saver.c:283
-msgid "\tWidth "
-msgstr "\tШирина "
-
-#: ufraw_saver.c:293
+#: ufraw_saver.c:178
 msgid "8-bit ppm"
 msgstr "8-разрядные PPM"
 
-#: ufraw_saver.c:303
+#: ufraw_saver.c:188
 msgid "16-bit ppm"
 msgstr "16-разрядные PPM"
 
-#: ufraw_saver.c:315
+#: ufraw_saver.c:200
 msgid "8-bit TIFF"
 msgstr "8-разрядные TIFF"
 
-#: ufraw_saver.c:326
+#: ufraw_saver.c:211
 msgid "16-bit TIFF"
 msgstr "16-разрядные TIFF"
 
-#: ufraw_saver.c:334
+#: ufraw_saver.c:219
 msgid "ZIP Compress (lossless)"
 msgstr "Сжатие ZIP (без потерь в качестве)"
 
-#: ufraw_saver.c:353
+#: ufraw_saver.c:238
 msgid "Compression level"
 msgstr "Уровень сжатия"
 
-#: ufraw_saver.c:364
+#: ufraw_saver.c:249
 msgid "Embed EXIF data"
 msgstr "Встроить данные EXIF"
 
-#: ufraw_saver.c:375
+#: ufraw_saver.c:260
 msgid "Create ID file "
 msgstr "Создать ID-файл "
 
-#: ufraw_saver.c:378
+#: ufraw_saver.c:263
 msgid "No"
 msgstr "Нет"
 
-#: ufraw_saver.c:379
+#: ufraw_saver.c:264
 msgid "Also"
 msgstr "Также"
 
-#: ufraw_saver.c:380
+#: ufraw_saver.c:265
 msgid "Only"
 msgstr "Только"
 
-#: ufraw_saver.c:385
+#: ufraw_saver.c:270
 msgid "\tSave image defaults "
 msgstr "\tСохранить эти параметры как исходные "
 
-#: ufraw_saver.c:402
+#: ufraw_saver.c:287
 msgid "Overwrite existing files without asking"
 msgstr "Перезаписать существующие файлы без подтверждения"
 
@@ -1480,20 +1493,20 @@ msgstr "Используется темный кадр '%s'\n"
 msgid "error loading darkframe '%s'\n"
 msgstr "Ошибка при загрузке тёмного кадра '%s'\n"
 
-#: ufraw_ufraw.c:472
+#: ufraw_ufraw.c:485
 msgid "Error reading NEF curve"
 msgstr "Ошибка чтения кривой NEF"
 
-#: ufraw_ufraw.c:544
+#: ufraw_ufraw.c:557
 msgid "Darkframe is incompatible with main image"
 msgstr "Тёмный кадр не совместим с основным изображением"
 
-#: ufraw_ufraw.c:743
+#: ufraw_ufraw.c:756
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "Невозможно уменьшить размер из %d в %d."
 
-#: ufraw_ufraw.c:993 ufraw_ufraw.c:996
+#: ufraw_ufraw.c:1006 ufraw_ufraw.c:1009
 msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr ""
 "Невозможно использовать баланс белого камеры, возврат к автоматическому \n"
@@ -1520,16 +1533,16 @@ msgid "Failed to embed output profile '%s' in '%s'"
 msgstr "Не удалось встроить профиль вывода '%s' in '%s'"
 
 #. First letter of the word 'yes' for the y/n question
-#: ufraw_writer.c:354
+#: ufraw_writer.c:341
 msgid "y"
 msgstr "д"
 
 #. First letter of the word 'no' for the y/n question
-#: ufraw_writer.c:356
+#: ufraw_writer.c:343
 msgid "n"
 msgstr "н"
 
-#: ufraw_writer.c:357
+#: ufraw_writer.c:344
 #, c-format
 msgid "%s: overwrite '%s'?"
 msgstr "%s: переписать '%s'?"
