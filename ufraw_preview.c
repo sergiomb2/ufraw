@@ -3765,7 +3765,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     /* Start of transformations page */
     page = notebook_page_new(notebook, _("Crop and rotate"),
-	    GTK_STOCK_CONVERT, data->ToolTips);
+	    "crop", data->ToolTips);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
@@ -3960,49 +3960,74 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* End of transformation page */
 
     /* Start of EXIF page */
-    page = notebook_page_new(notebook, _("EXIF"), NULL, NULL);
+    page = notebook_page_new(notebook, _("EXIF"), "exif", data->ToolTips);
 
     frame = gtk_frame_new(NULL);
     gtk_box_pack_start(GTK_BOX(page), frame, TRUE, TRUE, 0);
-    table = GTK_TABLE(gtk_table_new(10, 10, FALSE));
-    gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(table));
+    vBox = gtk_vbox_new(FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(vBox));
+
+    GtkListStore *store;
+    store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
 
     align = gtk_scrolled_window_new(NULL, NULL);
-    gtk_table_attach(table, align, 0, 1, 0, 1, GTK_EXPAND|GTK_FILL,
-	    GTK_EXPAND|GTK_FILL, 0, 0);
+    gtk_box_pack_start(GTK_BOX (vBox), align, TRUE, TRUE, 0);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(align),
             GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    label = gtk_text_view_new();
-    gtk_container_add(GTK_CONTAINER(align), label);
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(label), FALSE);
-    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(label), FALSE);
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(label));
+
+    GtkWidget *treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
+    gtk_tree_view_set_search_column (GTK_TREE_VIEW (treeview), 0);
+    gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (treeview), TRUE);
+    // does not work???
+    gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (treeview), FALSE);
+    g_object_unref (store);
+
+    gtk_container_add(GTK_CONTAINER (align), treeview);
+
+    GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes (
+        _("Tag"), gtk_cell_renderer_text_new (), "text", 0, NULL);
+    gtk_tree_view_column_set_sort_column_id (column, 0);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), column);
+
+    column = gtk_tree_view_column_new_with_attributes (
+        _("Value"), gtk_cell_renderer_text_new (), "text", 1, NULL);
+    gtk_tree_view_column_set_sort_column_id (column, 1);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), column);
+
+    // Fill table with EXIF tags
+    void fill_tag(char *name, char *var)
+    {
+	if ( var!=NULL && strlen(var)>0 )
+	{
+	    GtkTreeIter iter;
+	    gtk_list_store_append (store, &iter);
+	    gtk_list_store_set (store, &iter, 0, name, 1, var, -1);
+	}
+    }
+    fill_tag(_("Camera maker"), CFG->make);
+    fill_tag(_("Camera model"), CFG->model);
+    fill_tag(_("Timestamp"), CFG->timestamp);
+    fill_tag(_("Exposure"), CFG->shutterText);
+    fill_tag(_("Aperture"), CFG->apertureText);
+    fill_tag(_("ISO speed"), CFG->isoText);
+    fill_tag(_("Focal length"), CFG->focalLenText);
+    fill_tag(_("35mm focal length"), CFG->focalLen35Text);
+    fill_tag(_("Lens"), CFG->lensText);
+
+    label = gtk_label_new(NULL);
     GString *message = g_string_new("");
-    g_string_append_printf(message, _("Camera: %s %s\n"), CFG->make, CFG->model);
-    g_string_append_printf(message, _("Timestamp: %s\n"), CFG->timestamp);
-    if (strlen(CFG->shutterText)>0)
-	g_string_append_printf(message, _("Shutter: %s\n"), CFG->shutterText);
-    if (strlen(CFG->apertureText)>0)
-	g_string_append_printf(message, _("Aperture: %s\n"), CFG->apertureText);
-    if (strlen(CFG->isoText)>0)
-	g_string_append_printf(message, _("ISO speed: %s\n"), CFG->isoText);
-    if (strlen(CFG->focalLenText)>0)
-	g_string_append_printf(message, _("Focal length: %s\n"),
-		CFG->focalLenText);
-    if (strlen(CFG->focalLen35Text)>0)
-	g_string_append_printf(message,
-		_("Focal length in 35mm equivalent: %s\n"),
-		CFG->focalLen35Text);
-    if (strlen(CFG->lensText)>0)
-	g_string_append_printf(message, _("Lens: %s\n"), CFG->lensText);
-    g_string_append_printf(message, _("\nEXIF data read by %s"), CFG->exifSource);
-    gtk_text_buffer_set_text(buffer, message->str, -1);
-    g_string_free(message, TRUE);
-    if (uf->exifBuf==NULL) {
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(label), "<span foreground='red'>"
-		"Warning: EXIF data will not be sent to output</span>");
-	gtk_table_attach(table, label, 0, 1, 1, 2, 0, 0, 0, 0);
+    g_string_append_printf(message, _("EXIF data read by %s"), CFG->exifSource);
+    gtk_label_set_markup(GTK_LABEL(label), message->str);
+    gtk_box_pack_start(GTK_BOX (vBox), label, FALSE, FALSE, 0);
+
+    if (uf->exifBuf==NULL)
+    {
+        label = gtk_label_new(NULL);
+        char *text = g_strdup_printf("<span foreground='red'>%s</span>",
+			_("Warning: EXIF data will not be sent to output"));
+        gtk_label_set_markup(GTK_LABEL(label), text);
+	g_free(text);
+        gtk_box_pack_start(GTK_BOX (vBox), label, FALSE, FALSE, 0);
     }
     /* End of EXIF page */
 
