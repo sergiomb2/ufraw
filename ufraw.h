@@ -13,6 +13,9 @@
 #ifndef _UFRAW_H
 #define _UFRAW_H
 
+// Mark function private to the source file
+#define ufraw_private_function static
+
 #include "nikon_curve.h"
 
 #define MAXOUT 255 /* Max output sample */

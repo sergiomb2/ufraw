@@ -3016,6 +3016,17 @@ void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
     data->PageNum = page_num;
 }
 
+ufraw_private_function void list_store_add(GtkListStore *store,
+    char *name, char *var)
+{
+    if ( var!=NULL && strlen(var)>0 )
+    {
+	GtkTreeIter iter;
+	gtk_list_store_append (store, &iter);
+	gtk_list_store_set (store, &iter, 0, name, 1, var, -1);
+    }
+}
+
 int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 {
     GtkWidget *previewWindow, *previewVBox;
@@ -3995,24 +4006,15 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), column);
 
     // Fill table with EXIF tags
-    void fill_tag(char *name, char *var)
-    {
-	if ( var!=NULL && strlen(var)>0 )
-	{
-	    GtkTreeIter iter;
-	    gtk_list_store_append (store, &iter);
-	    gtk_list_store_set (store, &iter, 0, name, 1, var, -1);
-	}
-    }
-    fill_tag(_("Camera maker"), CFG->make);
-    fill_tag(_("Camera model"), CFG->model);
-    fill_tag(_("Timestamp"), CFG->timestamp);
-    fill_tag(_("Exposure"), CFG->shutterText);
-    fill_tag(_("Aperture"), CFG->apertureText);
-    fill_tag(_("ISO speed"), CFG->isoText);
-    fill_tag(_("Focal length"), CFG->focalLenText);
-    fill_tag(_("35mm focal length"), CFG->focalLen35Text);
-    fill_tag(_("Lens"), CFG->lensText);
+    list_store_add(store, _("Camera maker"), CFG->make);
+    list_store_add(store, _("Camera model"), CFG->model);
+    list_store_add(store, _("Timestamp"), CFG->timestamp);
+    list_store_add(store, _("Exposure"), CFG->shutterText);
+    list_store_add(store, _("Aperture"), CFG->apertureText);
+    list_store_add(store, _("ISO speed"), CFG->isoText);
+    list_store_add(store, _("Focal length"), CFG->focalLenText);
+    list_store_add(store, _("35mm focal length"), CFG->focalLen35Text);
+    list_store_add(store, _("Lens"), CFG->lensText);
 
     label = gtk_label_new(NULL);
     GString *message = g_string_new("");
