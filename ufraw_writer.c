@@ -14,8 +14,8 @@
 #include "config.h"
 #endif
 
-#include <stdio.h>     /* for printf */
-#include <errno.h>     /* for errno */
+#include <stdio.h>	/* for printf */
+#include <errno.h>	/* for errno */
 #include <string.h>
 #include <glib.h>
 #include <glib/gi18n.h>
@@ -27,106 +27,135 @@
 #include <jerror.h>
 #include "iccjpeg.h"
 #endif
+#ifdef HAVE_LIBPNG
+#include <png.h>
+#endif
 #include "ufraw.h"
 
 #ifdef HAVE_LIBTIFF
-void ufraw_tiff_message(const char *module, const char *fmt, va_list ap)
+// There seem to be no way to get the libtiff message without a static variable
+static char ufraw_tiff_message[max_path];
+
+ufraw_private_function void tiff_messenger(const char *module,
+    const char *fmt, va_list ap)
 {
-    module = module;
-    char buf[max_path];
-    vsnprintf(buf, max_path, fmt, ap);
-    ufraw_message(UFRAW_SET_WARNING, "%s\n", buf);
+    (void)module;
+    vsnprintf(ufraw_tiff_message, max_path, fmt, ap);
 }
 #endif /*HAVE_LIBTIFF*/
 
 #ifdef HAVE_LIBJPEG
-void ufraw_jpeg_warning(j_common_ptr cinfo)
+ufraw_private_function void jpeg_warning_handler(j_common_ptr cinfo)
 {
-    ufraw_message(UFRAW_SET_WARNING,
+    ufraw_data *uf = cinfo->client_data;
+    ufraw_set_warning(uf,
 	    cinfo->err->jpeg_message_table[cinfo->err->msg_code],
-            cinfo->err->msg_parm.i[0],
-            cinfo->err->msg_parm.i[1],
-            cinfo->err->msg_parm.i[2],
-            cinfo->err->msg_parm.i[3]);
+	    cinfo->err->msg_parm.i[0],
+	    cinfo->err->msg_parm.i[1],
+	    cinfo->err->msg_parm.i[2],
+	    cinfo->err->msg_parm.i[3]);
 }
-void ufraw_jpeg_error(j_common_ptr cinfo)
+
+ufraw_private_function void jpeg_error_handler(j_common_ptr cinfo)
 {
     /* We ignore the SOI error if second byte is 0xd8 since Minolta's
      * SOI is known to be wrong */
+    ufraw_data *uf = cinfo->client_data;
     if (cinfo->err->msg_code==JERR_NO_SOI &&
 	cinfo->err->msg_parm.i[1]==0xd8) {
-	ufraw_message(UFRAW_SET_LOG,
-		cinfo->err->jpeg_message_table[cinfo->err->msg_code],
-		cinfo->err->msg_parm.i[0],
-		cinfo->err->msg_parm.i[1],
-		cinfo->err->msg_parm.i[2],
-		cinfo->err->msg_parm.i[3]);
+	    ufraw_set_info(uf,
+		    cinfo->err->jpeg_message_table[cinfo->err->msg_code],
+		    cinfo->err->msg_parm.i[0],
+		    cinfo->err->msg_parm.i[1],
+		    cinfo->err->msg_parm.i[2],
+		    cinfo->err->msg_parm.i[3]);
 	return;
     }
-    ufraw_message(UFRAW_SET_ERROR,
+    ufraw_set_error(uf,
 	    cinfo->err->jpeg_message_table[cinfo->err->msg_code],
-            cinfo->err->msg_parm.i[0],
-            cinfo->err->msg_parm.i[1],
-            cinfo->err->msg_parm.i[2],
-            cinfo->err->msg_parm.i[3]);
+	    cinfo->err->msg_parm.i[0],
+	    cinfo->err->msg_parm.i[1],
+	    cinfo->err->msg_parm.i[2],
+	    cinfo->err->msg_parm.i[3]);
 }
 #endif /*HAVE_LIBJPEG*/
 
+#ifdef HAVE_LIBPNG
+ufraw_private_function void png_error_handler(png_structp png,
+    png_const_charp error_msg)
+{
+    ufraw_data *uf = png_get_error_ptr(png);
+    ufraw_set_error(uf, "%s: %s.", error_msg, g_strerror(errno));
+    longjmp(png_jmpbuf(png), 1);
+}
+
+ufraw_private_function void png_warning_handler(png_structp png,
+    png_const_charp warning_msg)
+{
+    ufraw_data *uf = png_get_error_ptr(png);
+    ufraw_set_warning(uf, "%s.", warning_msg);
+}
+#endif /*HAVE_LIBPNG*/
+
 int ufraw_write_image(ufraw_data *uf)
 {
-    void *out; /* out is a pointer to FILE or TIFF */
-    int width, height, row, rowStride, i, status=UFRAW_SUCCESS;
+    /* 'volatile' supresses clobbering warning */
+    void * volatile out; /* out is a pointer to FILE or TIFF */
+    int width, height, row, rowStride, i;
     int left, top;
     image_type *rawImage;
     guint8 *pixbuf8=NULL;
     guint16 *pixbuf16;
-    char *confFilename=NULL;
-    char *message=NULL;
-    ufraw_message(UFRAW_RESET, NULL);
+    char * volatile confFilename=NULL;
+    ufraw_message_reset(uf);
 
     if ( uf->conf->createID==only_id ||
-         uf->conf->createID==also_id) {
-        confFilename = uf_file_set_type(uf->conf->outputFilename, ".ufraw");
-        if (!strcmp(confFilename, uf->conf->outputFilename)) {
-            ufraw_message(UFRAW_ERROR, _("Image filename can not be the "
-                        "same as ID filename '%s'"), confFilename);
+	    uf->conf->createID==also_id) {
+	confFilename = uf_file_set_type(uf->conf->outputFilename, ".ufraw");
+	if (!strcmp(confFilename, uf->conf->outputFilename)) {
+	    ufraw_set_error(uf, _("Image filename can not be the "
+		    "same as ID filename '%s'"), confFilename);
 	    g_free(confFilename);
-            return UFRAW_ERROR;
-        }
+	    return ufraw_get_status(uf);
+	}
     }
     if (uf->conf->createID==only_id) {
-        status = conf_save(uf->conf, confFilename, NULL);
-        g_free(confFilename);
-        return status;
+	int status = conf_save(uf->conf, confFilename, NULL);
+	g_free(confFilename);
+	return status;
     }
 #ifdef HAVE_LIBTIFF
     if (uf->conf->type==tiff8_type || uf->conf->type==tiff16_type) {
-        TIFFSetErrorHandler(ufraw_tiff_message);
-        TIFFSetWarningHandler(ufraw_tiff_message);
+	TIFFSetErrorHandler(tiff_messenger);
+	TIFFSetWarningHandler(tiff_messenger);
+	ufraw_tiff_message[0] = '\0';
 	if (!strcmp(uf->conf->outputFilename, "-"))
-            out = TIFFFdOpen(fileno((FILE *)stdout),
+	    out = TIFFFdOpen(fileno((FILE *)stdout),
 		    uf->conf->outputFilename, "w");
-        else
-            out = TIFFOpen(uf->conf->outputFilename, "w");
-        if (out==NULL ) {
-            message=ufraw_message(UFRAW_GET_WARNING, NULL);
-            ufraw_message(UFRAW_ERROR, _("Error creating file '%s'.\n%s"),
-                    uf->conf->outputFilename, message);
-            return UFRAW_ERROR;
-        }
+	else
+	    out = TIFFOpen(uf->conf->outputFilename, "w");
+	if (out==NULL ) {
+	    ufraw_set_error(uf, _("Error creating file."));
+	    ufraw_set_error(uf, ufraw_tiff_message);
+	    ufraw_set_error(uf, g_strerror(errno));
+	    ufraw_tiff_message[0] = '\0';
+	    return ufraw_get_status(uf);
+	}
     } else
 #endif
     {
 	if (!strcmp(uf->conf->outputFilename, "-")) {
-            out = stdout;
+	    out = stdout;
 	} else {
-            if ( (out=fopen(uf->conf->outputFilename, "wb"))==NULL) {
-                ufraw_message(UFRAW_ERROR, _("Error creating file '%s': %s"),
-                        uf->conf->outputFilename, g_strerror(errno));
-                return UFRAW_ERROR;
-            }
-        }
+	    if ( (out=fopen(uf->conf->outputFilename, "wb"))==NULL) {
+		ufraw_set_error(uf, _("Error creating file '%s'."),
+			uf->conf->outputFilename);
+		ufraw_set_error(uf, g_strerror(errno));
+		return ufraw_get_status(uf);
+	    }
+	}
     }
+    // TODO: error handling
     ufraw_convert_image(uf);
     left = uf->conf->CropX1 * uf->image.width / uf->initialWidth;
     top = uf->conf->CropY1 * uf->image.height / uf->initialHeight;
@@ -138,236 +167,276 @@ int ufraw_write_image(ufraw_data *uf)
     rawImage = uf->image.image;
     pixbuf16 = g_new(guint16, width*3);
     if (uf->conf->type==ppm8_type) {
-        fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFF);
-        pixbuf8 = g_new(guint8, width*3);
-        for (row=0; row<height; row++) {
-            if (row%100==99)
-                preview_progress(uf->widget, _("Saving image"),
+	fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFF);
+	pixbuf8 = g_new(guint8, width*3);
+	for (row=0; row<height; row++) {
+	    if (row%100==99)
+		preview_progress(uf->widget, _("Saving image"),
 			0.5 + 0.5*row/height);
-            develope(pixbuf8, rawImage[(top+row)*rowStride+left],
-                    uf->developer, 8, pixbuf16, width);
-            if ((int)fwrite(pixbuf8, 3, width, out)<width) {
-                ufraw_message(UFRAW_ERROR, _("Error creating file '%s': %s."),
-                        uf->conf->outputFilename, g_strerror(errno));
-                status = UFRAW_ERROR;
-                break;
-            }
-        }
+	    develope(pixbuf8, rawImage[(top+row)*rowStride+left],
+		    uf->developer, 8, pixbuf16, width);
+	    if ((int)fwrite(pixbuf8, 3, width, out)<width) {
+		ufraw_set_error(uf, _("Error creating file '%s'."),
+			uf->conf->outputFilename);
+		ufraw_set_error(uf, g_strerror(errno));
+		break;
+	    }
+	}
     } else if (uf->conf->type==ppm16_type) {
-        fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFFFF);
-        for (row=0; row<height; row++) {
-            if (row%100==99)
-                preview_progress(uf->widget, _("Saving image"),
+	fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFFFF);
+	for (row=0; row<height; row++) {
+	    if (row%100==99)
+		preview_progress(uf->widget, _("Saving image"),
 			0.5 + 0.5*row/height);
-            develope(pixbuf16, rawImage[(top+row)*rowStride+left],
-                    uf->developer, 16, pixbuf16, width);
-            for (i=0; i<3*width; i++)
-                pixbuf16[i] = g_htons(pixbuf16[i]);
-            if ((int)fwrite(pixbuf16, 6, width, out)<width) {
-                ufraw_message(UFRAW_ERROR, _("Error creating file '%s': %s."),
-                        uf->conf->outputFilename, g_strerror(errno));
-                status = UFRAW_ERROR;
-                break;
-            }
-        }
+	    develope(pixbuf16, rawImage[(top+row)*rowStride+left],
+		    uf->developer, 16, pixbuf16, width);
+	    for (i=0; i<3*width; i++)
+		pixbuf16[i] = g_htons(pixbuf16[i]);
+	    if ((int)fwrite(pixbuf16, 6, width, out)<width) {
+		ufraw_set_error(uf, _("Error creating file '%s'."),
+			uf->conf->outputFilename);
+		ufraw_set_error(uf, g_strerror(errno));
+		break;
+	    }
+	}
 #ifdef HAVE_LIBTIFF
     } else if (uf->conf->type==tiff8_type ||
-            uf->conf->type==tiff16_type) {
-        TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
-        TIFFSetField(out, TIFFTAG_IMAGELENGTH, height);
-        TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
-        TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, 3);
-        if (uf->conf->type==tiff8_type)
-            TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 8);
-        else
-            TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 16);
-        TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-        TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+	    uf->conf->type==tiff16_type) {
+	TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
+	TIFFSetField(out, TIFFTAG_IMAGELENGTH, height);
+	TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+	TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, 3);
+	if (uf->conf->type==tiff8_type)
+	    TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 8);
+	else
+	    TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 16);
+	TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 #ifdef HAVE_LIBZ
-        if (uf->conf->losslessCompress) {
-            TIFFSetField(out, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
-            TIFFSetField(out, TIFFTAG_ZIPQUALITY, 9);
-        }
-        else
+	if (uf->conf->losslessCompress) {
+	    TIFFSetField(out, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
+	    TIFFSetField(out, TIFFTAG_ZIPQUALITY, 9);
+	}
+	else
 #endif
-            TIFFSetField(out, TIFFTAG_COMPRESSION, COMPRESSION_NONE);
-        /* Embed output profile if it is not the internal sRGB*/
-        if (strcmp(uf->developer->profileFile[out_profile], "")) {
-            char *buf;
-            gsize len;
-            if (g_file_get_contents(uf->developer->profileFile[out_profile],
-                &buf, &len, NULL)) {
-            TIFFSetField(out, TIFFTAG_ICCPROFILE, len, buf);
-            g_free(buf);
-            } else ufraw_message(UFRAW_WARNING,
-                    _("Failed to embed output profile '%s' in '%s'"),
-                    uf->developer->profileFile[out_profile],
-		    uf->conf->outputFilename);
-        }
-        TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, TIFFDefaultStripSize(out, 0));
-        if (uf->conf->type==tiff8_type) {
-            pixbuf8 = g_new(guint8, width*3);
-            for (row=0; row<height; row++) {
-                if (row%100==99)
-                    preview_progress(uf->widget, _("Saving image"),
+	    TIFFSetField(out, TIFFTAG_COMPRESSION, COMPRESSION_NONE);
+	/* Embed output profile if it is not the internal sRGB*/
+	if (strcmp(uf->developer->profileFile[out_profile], "")) {
+	    char *buf;
+	    gsize len;
+	    if ( g_file_get_contents(uf->developer->profileFile[out_profile],
+			&buf, &len, NULL)) {
+		TIFFSetField(out, TIFFTAG_ICCPROFILE, len, buf);
+		g_free(buf);
+	    } else {
+		ufraw_set_warning(uf,
+			_("Failed to embed output profile '%s' in '%s'."),
+			uf->developer->profileFile[out_profile],
+			uf->conf->outputFilename);
+	    }
+	}
+	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, TIFFDefaultStripSize(out, 0));
+	if (uf->conf->type==tiff8_type) {
+	    pixbuf8 = g_new(guint8, width*3);
+	    for (row=0; row<height; row++) {
+		if (row%100==99) preview_progress(uf->widget, _("Saving image"),
 			    0.5+0.5*row/height);
-                develope(pixbuf8, rawImage[(top+row)*rowStride+left],
-                        uf->developer, 8, pixbuf16, width);
-                if (TIFFWriteScanline(out, pixbuf8, row, 0)<0) {
-                    message=ufraw_message(UFRAW_GET_WARNING, NULL);
-                    ufraw_message(UFRAW_ERROR,
-                            _("Error creating file '%s'.\n%s"),
-                            uf->conf->outputFilename, message);
-                    status = UFRAW_ERROR;
-                    break;
-                }
-            }
-        } else {
-            for (row=0; row<height; row++) {
-                if (row%100==99)
-                    preview_progress(uf->widget, _("Saving image"),
+		develope(pixbuf8, rawImage[(top+row)*rowStride+left],
+			uf->developer, 8, pixbuf16, width);
+		if (TIFFWriteScanline(out, pixbuf8, row, 0)<0) {
+		    // 'errno' does seem to contain useful information
+		    ufraw_set_error(uf, _("Error creating file."));
+		    ufraw_set_error(uf, ufraw_tiff_message);
+		    ufraw_tiff_message[0] = '\0';
+		    break;
+		}
+	    }
+	} else {
+	    for (row=0; row<height; row++) {
+		if (row%100==99) preview_progress(uf->widget, _("Saving image"),
 			    0.5+0.5*row/height);
-                develope(pixbuf16, rawImage[(top+row)*rowStride+left],
-                        uf->developer, 16, pixbuf16, width);
-                if (TIFFWriteScanline(out, pixbuf16, row, 0)<0) {
-                    message=ufraw_message(UFRAW_GET_WARNING, NULL);
-                    ufraw_message(UFRAW_ERROR,
-                            _("Error creating file '%s'.\n%s"),
-                            uf->conf->outputFilename, message);
-                    status = UFRAW_ERROR;
-                    break;
-                }
-            }
-        }
+		develope(pixbuf16, rawImage[(top+row)*rowStride+left],
+			uf->developer, 16, pixbuf16, width);
+		if (TIFFWriteScanline(out, pixbuf16, row, 0)<0) {
+		    // 'errno' does seem to contain useful information
+		    ufraw_set_error(uf, _("Error creating file."));
+		    ufraw_set_error(uf, ufraw_tiff_message);
+		    ufraw_tiff_message[0] = '\0';
+		    break;
+		}
+	    }
+	}
 #endif /*HAVE_LIBTIFF*/
 #ifdef HAVE_LIBJPEG
     } else if (uf->conf->type==jpeg_type) {
-        struct jpeg_compress_struct cinfo;
-        struct jpeg_error_mgr jerr;
+	struct jpeg_compress_struct cinfo;
+	struct jpeg_error_mgr jerr;
 
-        cinfo.err = jpeg_std_error(&jerr);
-        /* possible BUG: two messages in case of error? */
-        cinfo.err->output_message = ufraw_jpeg_warning;
-        cinfo.err->error_exit = ufraw_jpeg_error;
-        jpeg_create_compress(&cinfo);
-        jpeg_stdio_dest(&cinfo, out);
-        cinfo.image_width = width;
-        cinfo.image_height = height;
-        cinfo.input_components = 3;
-        cinfo.in_color_space = JCS_RGB;
-        jpeg_set_defaults(&cinfo);
-        jpeg_set_quality(&cinfo, uf->conf->compression, TRUE);
+	cinfo.err = jpeg_std_error(&jerr);
+	cinfo.err->output_message = jpeg_warning_handler;
+	cinfo.err->error_exit = jpeg_error_handler;
+	cinfo.client_data = uf;
+	jpeg_create_compress(&cinfo);
+	jpeg_stdio_dest(&cinfo, out);
+	cinfo.image_width = width;
+	cinfo.image_height = height;
+	cinfo.input_components = 3;
+	cinfo.in_color_space = JCS_RGB;
+	jpeg_set_defaults(&cinfo);
+	jpeg_set_quality(&cinfo, uf->conf->compression, TRUE);
 
-        jpeg_start_compress(&cinfo, TRUE);
+	jpeg_start_compress(&cinfo, TRUE);
 
-        /* Embed output profile if it is not the internal sRGB*/
-        if (strcmp(uf->developer->profileFile[out_profile], "")) {
-            char *buf;
-            gsize len;
-            if (g_file_get_contents(uf->developer->profileFile[out_profile],
-                    &buf, &len, NULL)) {
-                write_icc_profile(&cinfo, (unsigned char *)buf, len);
-                g_free(buf);
-            } else ufraw_message(UFRAW_WARNING,
-                    _("Failed to embed output profile '%s' in '%s'"),
-                    uf->developer->profileFile[out_profile],
-		    uf->conf->outputFilename);
-        }
-        if (uf->exifBuf!=NULL && uf->conf->embedExif) {
-	     if (uf->exifBufLen>65533) {
-		ufraw_message(UFRAW_SET_WARNING,
-			_("EXIF buffer length %d, too long, ignored.\n"),
+	/* Embed output profile if it is not the internal sRGB*/
+	if (strcmp(uf->developer->profileFile[out_profile], "")) {
+	    char *buf;
+	    gsize len;
+	    if (g_file_get_contents(uf->developer->profileFile[out_profile],
+		    &buf, &len, NULL)) {
+		write_icc_profile(&cinfo, (unsigned char *)buf, len);
+		g_free(buf);
+	    } else {
+		ufraw_set_warning(uf,
+			_("Failed to embed output profile '%s' in '%s'."),
+			uf->developer->profileFile[out_profile],
+			uf->conf->outputFilename);
+	    }
+	}
+	if (uf->exifBuf!=NULL && uf->conf->embedExif) {
+	    if (uf->exifBufLen>65533) {
+		ufraw_set_warning(uf,
+			_("EXIF buffer length %d, too long, ignored."),
 			uf->exifBufLen);
 	    } else {
 		jpeg_write_marker(&cinfo, JPEG_APP0+1,
 			uf->exifBuf, uf->exifBufLen);
 	    }
 	}
-        pixbuf8 = g_new(guint8, width*3);
-        for (row=0; row<height; row++) {
-            if (row%100==99)
-                preview_progress(uf->widget, _("Saving image"),
+	pixbuf8 = g_new(guint8, width*3);
+	for (row=0; row<height; row++) {
+	    if (row%100==99) preview_progress(uf->widget, _("Saving image"),
 			0.5 + 0.5*row/height);
-            develope(pixbuf8, rawImage[(top+row)*rowStride+left],
-                    uf->developer, 8, pixbuf16, width);
-            jpeg_write_scanlines(&cinfo, &pixbuf8, 1);
-            message=ufraw_message(UFRAW_GET_ERROR, NULL);
-            if (message!=NULL ) break;
-        }
-        if (message==NULL) jpeg_finish_compress(&cinfo);
-        jpeg_destroy_compress(&cinfo);
-        if ( (message=ufraw_message(UFRAW_GET_ERROR, NULL))!=NULL) {
-            ufraw_message(UFRAW_ERROR, _("Error creating file '%s'.\n%s"),
-                    uf->conf->outputFilename, message);
-            status = UFRAW_ERROR;
-        } else if (ufraw_message(UFRAW_GET_WARNING, NULL)!=NULL) {
-            ufraw_message(UFRAW_REPORT, NULL);
-        }
+	    develope(pixbuf8, rawImage[(top+row)*rowStride+left],
+		    uf->developer, 8, pixbuf16, width);
+	    jpeg_write_scanlines(&cinfo, &pixbuf8, 1);
+	    if ( ufraw_is_error(uf) ) break;
+	}
+	if ( ufraw_is_error(uf) ) {
+	    char *message = g_strdup(ufraw_get_message(uf));
+	    ufraw_message_reset(uf);
+	    ufraw_set_error(uf, _("Error creating file '%s'."),
+		    uf->conf->outputFilename);
+	    ufraw_set_error(uf, message);
+	    g_free(message);
+	} else
+	    jpeg_finish_compress(&cinfo);
+	jpeg_destroy_compress(&cinfo);
 #endif /*HAVE_LIBJPEG*/
+#ifdef HAVE_LIBPNG
+    } else if (uf->conf->type==png8_type || uf->conf->type==png16_type) {
+	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+		uf, png_error_handler, png_warning_handler);
+	png_infop info = png_create_info_struct(png);
+	if ( setjmp(png_jmpbuf(png)) ) {
+	    char *message = g_strdup(ufraw_get_message(uf));
+	    ufraw_message_reset(uf);
+	    ufraw_set_error(uf, _("Error creating file '%s'."),
+		    uf->conf->outputFilename);
+	    ufraw_set_error(uf, message);
+	    g_free(message);
+	    png_destroy_write_struct(&png, &info);
+	} else {
+	    png_init_io(png, out);
+	    int bit_depth = uf->conf->type==png8_type ? 8 : 16;
+	    png_set_IHDR(png, info, width, height, bit_depth,
+		    PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+		    PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+	    png_set_compression_level(png, Z_BEST_COMPRESSION);
+	    png_text text[2];
+	    text[0].compression = PNG_TEXT_COMPRESSION_NONE;
+	    text[0].key = "Software";
+	    text[0].text = "UFRaw";
+	    text[1].compression = PNG_TEXT_COMPRESSION_NONE;
+	    text[1].key = "Source";
+	    text[1].text = g_strdup_printf("%s%s",
+		    uf->conf->make, uf->conf->model);
+	    png_set_text(png, info, text, 2);
+	    g_free(text[1].text);
+	    /* Embed output profile if it is not the internal sRGB*/
+	    if (strcmp(uf->developer->profileFile[out_profile], "")) {
+		char *buf;
+		gsize len;
+		if (g_file_get_contents(uf->developer->profileFile[out_profile],
+			&buf, &len, NULL)) {
+		    png_set_iCCP(png, info,
+			    uf->developer->profileFile[out_profile],
+			    PNG_COMPRESSION_TYPE_BASE,
+			    buf, len);
+		    g_free(buf);
+		} else {
+		    ufraw_set_warning(uf,
+			_("Failed to embed output profile '%s' in '%s'."),
+			uf->developer->profileFile[out_profile],
+			uf->conf->outputFilename);
+		}
+	    }
+	    png_write_info(png, info);
+	    if (uf->conf->type==png8_type) {
+		pixbuf8 = g_new(guint8, width*3);
+		for (row=0; row<height; row++) {
+		    if (row%100==99) preview_progress(uf->widget,
+			    _("Saving image"), 0.5+0.5*row/height);
+		    develope(pixbuf8, rawImage[(top+row)*rowStride+left],
+			    uf->developer, 8, pixbuf16, width);
+		    png_write_row(png, pixbuf8);
+		}
+	    } else {
+		png_set_swap(png); // Swap byte order to big-endian
+		for (row=0; row<height; row++) {
+		    if (row%100==99) preview_progress(uf->widget,
+			    _("Saving image"), 0.5+0.5*row/height);
+		    develope(pixbuf16, rawImage[(top+row)*rowStride+left],
+			    uf->developer, 16, pixbuf16, width);
+		    png_write_row(png, (guint8 *)pixbuf16);
+		}
+	    }
+	    png_write_end(png, NULL);
+	    png_destroy_write_struct(&png, &info);
+	}
+#endif /*HAVE_LIBPNG*/
     } else {
-        ufraw_message(UFRAW_ERROR,
-                _("Error creating file '%s'. Unknown file type %d."),
-                uf->conf->outputFilename, uf->conf->type);
-        status = UFRAW_ERROR;
+	ufraw_set_error(uf, _("Error creating file '%s'."),
+		uf->conf->outputFilename);
+	ufraw_set_error(uf, _("Unknown file type %d."), uf->conf->type);
     }
     g_free(pixbuf16);
     g_free(pixbuf8);
 #ifdef HAVE_LIBTIFF
     if (uf->conf->type==tiff8_type || uf->conf->type==tiff16_type) {
-        TIFFClose(out);
-        if ( (message=ufraw_message(UFRAW_GET_ERROR, NULL))!=NULL) {
-            ufraw_message(UFRAW_ERROR, _("Error creating file '%s'.\n%s"),
-                    uf->conf->outputFilename, message);
-            status = UFRAW_ERROR;
-        }
+	TIFFClose(out);
+	if ( ufraw_tiff_message[0]!='\0' ) {
+	    if ( !ufraw_is_error(uf) ) { // Error was not already set before
+		ufraw_set_error(uf, _("Error creating file."));
+		ufraw_set_error(uf, ufraw_tiff_message);
+	    }
+	    ufraw_tiff_message[0] = '\0';
+	}
     } else
 #endif
+    {
 	if (strcmp(uf->conf->outputFilename, "-"))
-            fclose(out);
+	    if ( fclose(out)!=0 ) {
+		if ( !ufraw_is_error(uf) ) { // Error was not already set before
+		    ufraw_set_error(uf, _("Error creating file '%s'."),
+			    uf->conf->outputFilename);
+		    ufraw_set_error(uf, g_strerror(errno));
+		}
+	    }
+    }
     if (uf->conf->createID==also_id) {
-        conf_save(uf->conf, confFilename, NULL);
-        g_free(confFilename);
+	// TODO: error handling
+	conf_save(uf->conf, confFilename, NULL);
+	g_free(confFilename);
     }
-    return status;
-}
-
-int ufraw_batch_saver(ufraw_data *uf)
-{
-    if ( !uf->conf->overwrite && uf->conf->createID!=only_id
-       && strcmp(uf->conf->outputFilename, "-")
-       && g_file_test(uf->conf->outputFilename, G_FILE_TEST_EXISTS) ) {
-        char ans[max_name];
-	/* First letter of the word 'yes' for the y/n question */
-	gchar *yChar = g_utf8_strdown(_("y"), -1);
-	/* First letter of the word 'no' for the y/n question */
-	gchar *nChar = g_utf8_strup(_("n"), -1);
-        g_printerr(_("%s: overwrite '%s'?"), ufraw_binary,
-		uf->conf->outputFilename);
-        g_printerr(" [%s/%s] ", yChar, nChar);
-        if ( fgets(ans, max_name, stdin)==NULL ) ans[0] = '\0';
-	gchar *ans8 = g_utf8_strdown(ans, 1);
-	if ( g_utf8_collate(ans8, yChar)!=0 ) {
-	    g_free(yChar);
-	    g_free(nChar);
-	    g_free(ans8);
-	    return UFRAW_CANCEL;
-	}
-	g_free(yChar);
-	g_free(nChar);
-	g_free(ans8);
-    }
-    if (strcmp(uf->conf->outputFilename, "-")) {
-	char *absname = uf_file_set_absolute(uf->conf->outputFilename);
-	g_strlcpy(uf->conf->outputFilename, absname, max_path);
-	g_free(absname);
-    }
-    if (uf->conf->embeddedImage) {
-	int status;
-	status = ufraw_convert_embedded(uf);
-	if (status!=UFRAW_SUCCESS) return status;
-	status = ufraw_write_embedded(uf);
-	return status;
-    } else {
-	return ufraw_write_image(uf);
-    }
+    return ufraw_get_status(uf);
 }

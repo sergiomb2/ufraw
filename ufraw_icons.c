@@ -1,7 +1,7 @@
 /*
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
- * ufraw_saver.c - The GUI file saver.
+ * ufraw_icons.c - load icons for UFRaw's GUI.
  * Copyright 2004-2007 by Udi Fuchs
  *
  * This program is free software; you can redistribute it and/or modify

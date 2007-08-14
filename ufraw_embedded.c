@@ -22,6 +22,7 @@
 #include <glib/gi18n.h>
 #ifdef HAVE_LIBJPEG
 #include <jpeglib.h>
+#include <jerror.h>
 #endif
 #ifdef HAVE_LIBPNG
 #include <png.h>
@@ -29,11 +30,38 @@
 #include "dcraw_api.h"
 #include "ufraw.h"
 
-/* prototype for functions in ufraw_writer.c */
 #ifdef HAVE_LIBJPEG
-void ufraw_jpeg_warning(j_common_ptr cinfo);
-void ufraw_jpeg_error(j_common_ptr cinfo);
-#endif
+void ufraw_jpeg_warning(j_common_ptr cinfo)
+{
+    ufraw_message(UFRAW_SET_WARNING,
+	    cinfo->err->jpeg_message_table[cinfo->err->msg_code],
+	    cinfo->err->msg_parm.i[0],
+	    cinfo->err->msg_parm.i[1],
+	    cinfo->err->msg_parm.i[2],
+	    cinfo->err->msg_parm.i[3]);
+}
+void ufraw_jpeg_error(j_common_ptr cinfo)
+{
+    /* We ignore the SOI error if second byte is 0xd8 since Minolta's
+     * SOI is known to be wrong */
+    if (cinfo->err->msg_code==JERR_NO_SOI &&
+	cinfo->err->msg_parm.i[1]==0xd8) {
+	ufraw_message(UFRAW_SET_LOG,
+		cinfo->err->jpeg_message_table[cinfo->err->msg_code],
+		cinfo->err->msg_parm.i[0],
+		cinfo->err->msg_parm.i[1],
+		cinfo->err->msg_parm.i[2],
+		cinfo->err->msg_parm.i[3]);
+	return;
+    }
+    ufraw_message(UFRAW_SET_ERROR,
+	    cinfo->err->jpeg_message_table[cinfo->err->msg_code],
+	    cinfo->err->msg_parm.i[0],
+	    cinfo->err->msg_parm.i[1],
+	    cinfo->err->msg_parm.i[2],
+	    cinfo->err->msg_parm.i[3]);
+}
+#endif /*HAVE_LIBJPEG*/
 
 int ufraw_read_embedded(ufraw_data *uf)
 {

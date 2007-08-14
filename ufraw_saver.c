@@ -28,6 +28,7 @@ typedef struct {
     GtkToggleButton *ppmButton;
     GtkToggleButton *tiffButton;
     GtkToggleButton *jpegButton;
+    GtkToggleButton *pngButton;
 } save_as_dialog_data;
 
 #if GTK_CHECK_VERSION(2,6,0)
@@ -72,6 +73,12 @@ void ufraw_saver_set_type(GtkWidget *widget, save_as_dialog_data *data)
     if ( !strcmp(type,".jpg") ) {
 	data->uf->conf->type = jpeg_type;
 	gtk_toggle_button_set_active(data->jpegButton, TRUE);
+    }
+#endif
+#ifdef HAVE_LIBPNG
+    if ( !strcmp(type,".png") ) {
+	data->uf->conf->type = png8_type;
+	gtk_toggle_button_set_active(data->pngButton, TRUE);
     }
 #endif
     g_free(filename);
@@ -127,7 +134,13 @@ long ufraw_saver(void *widget, gpointer user_data)
 		return UFRAW_ERROR;
 	}
 	status = ufraw_write_image(uf);
-	return status;
+        if ( status==UFRAW_ERROR ) {
+            ufraw_message(status, ufraw_get_message(uf));
+	    return UFRAW_ERROR;
+	}
+	if ( ufraw_get_message(uf)!=NULL )
+            ufraw_message(UFRAW_SET_LOG, ufraw_get_message(uf));
+	return UFRAW_SUCCESS;
     }
     fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new(
 	    _("Save image"), GTK_WINDOW(gtk_widget_get_toplevel(widget)),
@@ -253,6 +266,30 @@ long ufraw_saver(void *widget, gpointer user_data)
     gtk_table_attach(GTK_TABLE(table), exifButton, 1, 2, 2, 3, 0, 0, 0, 0);
 #endif
 #endif /*HAVE_LIBJPEG*/
+#ifdef HAVE_LIBPNG
+    gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
+    table = gtk_table_new(5, 1, FALSE);
+    gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
+    button = gtk_radio_button_new_with_label_from_widget(
+	    GTK_RADIO_BUTTON(button), _("8-bit PNG"));
+    data->pngButton = GTK_TOGGLE_BUTTON(button);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
+	    uf->conf->type==png8_type);
+    g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)png8_type);
+    g_signal_connect(G_OBJECT(button), "toggled",
+	    G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
+    align = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
+    gtk_container_add(GTK_CONTAINER(align), button);
+    gtk_table_attach(GTK_TABLE(table), align, 0, 1, 0, 1, GTK_FILL,0, 0, 0);
+    button = gtk_radio_button_new_with_label_from_widget(
+	    GTK_RADIO_BUTTON(button), _("16-bit PNG"));
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
+	    uf->conf->type==png16_type);
+    g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)png16_type);
+    g_signal_connect(G_OBJECT(button), "toggled",
+	    G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
+    gtk_table_attach(GTK_TABLE(table), button, 0, 1, 1, 2, 0, 0, 0, 0);
+#endif /*HAVE_LIBPNG*/
 
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
     table = gtk_table_new(1, 5, FALSE);
@@ -330,7 +367,13 @@ long ufraw_saver(void *widget, gpointer user_data)
 	g_strlcpy(uf->conf->outputFilename, filename, max_path);
 	g_free(filename);
 	status = ufraw_write_image(uf);
-	if (status==UFRAW_SUCCESS) {
+	if ( status==UFRAW_ERROR ) {
+            ufraw_message(status, ufraw_get_message(uf));
+	} else {
+	    if ( status==UFRAW_WARNING )
+		ufraw_message(status, ufraw_get_message(uf));
+	    if ( ufraw_get_message(uf)!=NULL )
+		ufraw_message(UFRAW_SET_LOG, ufraw_get_message(uf));
 	    ufraw_focus(fileChooser, FALSE);
 	    gtk_widget_destroy(GTK_WIDGET(fileChooser));
 	    return UFRAW_SUCCESS;

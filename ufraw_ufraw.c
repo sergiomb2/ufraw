@@ -33,92 +33,6 @@
 #include "nikon_curve.h"
 #include "ufraw.h"
 
-char *ufraw_message_buffer(char *buffer, char *message)
-{
-#ifdef UFRAW_DEBUG
-    ufraw_batch_messenger(message);
-#endif
-    char *buf;
-    if (buffer==NULL) return g_strdup(message);
-    buf = g_strconcat(buffer, message, NULL);
-    g_free(buffer);
-    return buf;
-}
-
-void ufraw_batch_messenger(char *message)
-{
-    /* Print the 'ufraw:' header only if there are no newlines in the message
-     * (not including possibly one at the end).
-     * Otherwise, the header will be printed only for the first line. */
-    if (g_strstr_len(message, strlen(message)-1, "\n")==NULL)
-	g_printerr("%s: ", ufraw_binary);
-    g_printerr("%s%c", message, message[strlen(message)-1]!='\n' ? '\n' : 0);
-}
-
-char *ufraw_message(int code, const char *format, ...)
-{
-    static char *logBuffer = NULL;
-    static char *errorBuffer = NULL;
-    static gboolean errorFlag = FALSE;
-    static void *parentWindow = NULL;
-    char *message = NULL;
-    void *saveParentWindow;
-
-    if (code==UFRAW_SET_PARENT) {
-        saveParentWindow = parentWindow;
-        parentWindow = (void *)format;
-        return saveParentWindow;
-    }
-    if (format!=NULL) {
-        va_list ap;
-        va_start(ap, format);
-        message = g_strdup_vprintf (format, ap);
-        va_end(ap);
-    }
-    switch (code) {
-    case UFRAW_SET_ERROR:
-                errorFlag = TRUE;
-    case UFRAW_SET_WARNING:
-                errorBuffer = ufraw_message_buffer(errorBuffer, message);
-    case UFRAW_SET_LOG:
-    case UFRAW_DCRAW_SET_LOG:
-                logBuffer = ufraw_message_buffer(logBuffer, message);
-                g_free(message);
-                return NULL;
-    case UFRAW_GET_ERROR:
-                if (!errorFlag) return NULL;
-    case UFRAW_GET_WARNING:
-                return errorBuffer;
-    case UFRAW_GET_LOG:
-                return logBuffer;
-    case UFRAW_CLEAN:
-                g_free(logBuffer);
-                logBuffer = NULL;
-    case UFRAW_RESET:
-                g_free(errorBuffer);
-                errorBuffer = NULL;
-                errorFlag = FALSE;
-                return NULL;
-    case UFRAW_BATCH_MESSAGE:
-                if (parentWindow==NULL)
-                    ufraw_messenger(message, parentWindow);
-                g_free(message);
-                return NULL;
-    case UFRAW_INTERACTIVE_MESSAGE:
-                if (parentWindow!=NULL)
-		    ufraw_messenger(message, parentWindow);
-                g_free(message);
-                return NULL;
-    case UFRAW_REPORT:
-                ufraw_messenger(errorBuffer, parentWindow);
-                return NULL;
-    default:
-                ufraw_messenger(message, parentWindow);
-                g_free(message);
-                return NULL;
-    }
-}
-
 static int make_temporary(char *basefilename, char **tmpfilename)
 {
     int fd;
@@ -297,6 +211,7 @@ ufraw_data *ufraw_open(char *filename)
 	}
     }
     uf = g_new0(ufraw_data, 1);
+    ufraw_message_init(uf);
     uf->unzippedBuf = unzippedBuf;
     uf->unzippedBufLen = unzippedBufLen;
     uf->conf = conf;
@@ -666,6 +581,7 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->thumb.buffer);
     developer_destroy(uf->developer);
     g_free(uf->RawLumHistogram);
+    ufraw_message_reset(uf);
     ufraw_message(UFRAW_CLEAN, NULL);
 }
 

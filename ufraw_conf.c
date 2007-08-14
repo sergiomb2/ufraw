@@ -1247,7 +1247,7 @@ N_("The options which are related to the final output are:\n"),
 "\n",
 N_("--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"),
 N_("--size=SIZE           Downsize max(height,width) to SIZE.\n"),
-N_("--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
+N_("--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg\n"
 "                      Output file format (default ppm8).\n"),
 N_("--create-id=no|also|only\n"
 "                      Create no|also|only ID file (default no).\n"),
@@ -1640,6 +1640,26 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         {
             ufraw_message(UFRAW_ERROR,
 		    _("ufraw was build without JPEG support."));
+            return -1;
+        }
+#endif
+        else if (!strcmp(outTypeName, "png8"))
+#ifdef HAVE_LIBPNG
+        cmd->type = png8_type;
+#else
+        {
+            ufraw_message(UFRAW_ERROR,
+		    _("ufraw was build without PNG support."));
+            return -1;
+        }
+#endif
+        else if (!strcmp(outTypeName, "png16"))
+#ifdef HAVE_LIBPNG
+        cmd->type = png16_type;
+#else
+        {
+            ufraw_message(UFRAW_ERROR,
+		    _("ufraw was build without PNG support."));
             return -1;
         }
 #endif

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.39 2007/08/10 21:45:00 udifuchs Exp $
+# $Id: Makefile.am,v 1.40 2007/08/14 23:55:46 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -54,7 +54,7 @@ LINK = $(CXXLINK)
 
 libufraw_a_SOURCES = \
     dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
-    ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw.h \
+    ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw_message.c ufraw.h \
     wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
     nikon_curve.c nikon_curve.h \
     ufraw_exiv2.cc iccjpeg.c iccjpeg.h \

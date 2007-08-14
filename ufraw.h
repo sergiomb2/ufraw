@@ -54,7 +54,7 @@ enum { manual_curve, linear_curve, custom_curve, camera_curve };
 enum { in_profile, out_profile, display_profile, profile_types};
 enum { raw_expander, live_expander, expander_count };
 enum { ppm8_type, ppm16_type, tiff8_type, tiff16_type, jpeg_type,
-       embedded_jpeg_type, embedded_png_type };
+       png8_type, png16_type, embedded_jpeg_type, embedded_png_type };
 enum { clip_details, restore_lch_details, restore_hsv_details,
        restore_types };
 enum { digital_highlights, film_highlights, highlights_types };
@@ -198,6 +198,8 @@ typedef struct {
 } image_data;
 
 typedef struct ufraw_struct {
+    int status;
+    char *message;
     char filename[max_path];
     int initialHeight, initialWidth, rgbMax, colors, raw_color, useMatrix;
     gboolean LoadingID; /* Indication that we are loading an ID file */
@@ -248,6 +250,19 @@ int ufraw_set_wb(ufraw_data *uf);
 void ufraw_auto_expose(ufraw_data *uf);
 void ufraw_auto_black(ufraw_data *uf);
 void ufraw_auto_curve(ufraw_data *uf);
+
+/* prototypes for functions in ufraw_message.c */
+char *ufraw_get_message(ufraw_data *uf);
+/* The following functions should only be used internally */
+void ufraw_message_init(ufraw_data *uf);
+void ufraw_message_reset(ufraw_data *uf);
+void ufraw_set_error(ufraw_data *uf, const char *format, ...);
+void ufraw_set_warning(ufraw_data *uf, const char *format, ...);
+void ufraw_set_info(ufraw_data *uf, const char *format, ...);
+int ufraw_get_status(ufraw_data *uf);
+int ufraw_is_error(ufraw_data *uf);
+// Old error handling, should be removed after being fully implemented.
+char *ufraw_message(int code, const char *format, ...);
 void ufraw_batch_messenger(char *message);
 
 /* prototypes for functions in ufraw_preview.c */
@@ -298,7 +313,6 @@ long ufraw_saver(void *widget, gpointer user_data);
 
 /* prototype for functions in ufraw_writer.c */
 int ufraw_write_image(ufraw_data *uf);
-int ufraw_batch_saver(ufraw_data *uf);
 
 /* prototype for functions in ufraw_delete.c */
 long ufraw_delete(void *widget, ufraw_data *uf);
@@ -342,7 +356,5 @@ int ufraw_exif_from_exiv2(ufraw_data *uf);
 #define UFRAW_CLEAN 209 /* Clean all buffers */
 #define UFRAW_RESET 210 /* Reset warnings and errors */
 #define UFRAW_SET_PARENT 211 /* Set parent window for message dialog */
-
-char *ufraw_message(int code, const char *format, ...);
 
 #endif /*_UFRAW_H*/
