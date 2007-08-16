@@ -391,7 +391,8 @@ int ufraw_write_image(ufraw_data *uf)
 		    png_write_row(png, pixbuf8);
 		}
 	    } else {
-		png_set_swap(png); // Swap byte order to big-endian
+		if ( G_BYTE_ORDER==G_LITTLE_ENDIAN )
+		    png_set_swap(png); // Swap byte order to big-endian
 		for (row=0; row<height; row++) {
 		    if (row%100==99) preview_progress(uf->widget,
 			    _("Saving image"), 0.5+0.5*row/height);
