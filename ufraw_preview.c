@@ -769,7 +769,6 @@ void preview_draw_area(preview_data *data, int x, int y, int width, int height)
 void preview_notify_dirty(preview_data *data)
 {
 #ifdef HAVE_GTKIMAGEVIEW
-#if 0
     /* This is the only True Way {tm} to signal GtkImageView that we
      * have changed the pixmap. If we don't signal about the changes,
      * GtkImageView can reuse parts of the old cached pixmap which will
@@ -779,15 +778,6 @@ void preview_notify_dirty(preview_data *data)
     /* Signal GtkImageView that the pixbuf has changed */
     gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
 	    data->PreviewPixbuf, FALSE);
-#else
-    /* As a workaround we use the esoteric knowledge of GtkImageView's
-     * internal logic. It will reuse pieces of the cached old pixmap
-     * only if nothing changes in the view, otherwise it will discard
-     * the cache. So we will change the transparency background for our
-     * GtkImageView since anyway it is not seen through.
-     */
-    GTK_IMAGE_VIEW(data->PreviewWidget)->check_color1++;
-#endif
 #endif
 }
 
