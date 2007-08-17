@@ -4018,6 +4018,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     list_store_add(store, _("Focal length"), CFG->focalLenText);
     list_store_add(store, _("35mm focal length"), CFG->focalLen35Text);
     list_store_add(store, _("Lens"), CFG->lensText);
+    list_store_add(store, _("Flash"), CFG->flashText);
 
     label = gtk_label_new(NULL);
     GString *message = g_string_new("");

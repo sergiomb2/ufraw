@@ -181,7 +181,7 @@ typedef struct {
     float iso_speed, shutter, aperture, focal_len;
     char exifSource[max_name], isoText[max_name], shutterText[max_name],
 	 apertureText[max_name], focalLenText[max_name],
-	 focalLen35Text[max_name], lensText[max_name];
+	 focalLen35Text[max_name], lensText[max_name], flashText[max_name];
     char timestamp[max_name], make[max_name], model[max_name];
 } conf_data;
 

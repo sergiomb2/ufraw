@@ -337,6 +337,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     strcpy(uf->conf->focalLenText, "");
     strcpy(uf->conf->focalLen35Text, "");
     strcpy(uf->conf->lensText, "");
+    strcpy(uf->conf->flashText, "");
     if (ufraw_exif_from_exiv2(uf)!=UFRAW_SUCCESS) {
         ufraw_message(UFRAW_SET_LOG, "Error reading EXIF data from %s\n",
                 uf->filename);
