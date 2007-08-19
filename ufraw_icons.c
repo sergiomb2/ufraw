@@ -56,4 +56,5 @@ void ufraw_icons_init()
     load_icon(factory, exif_24, "exif");
     load_icon(factory, crop_24, "crop");
     load_icon(factory, rectify_24, "rectify");
+    load_icon(factory, gimp_24, "gimp");
 }

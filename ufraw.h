@@ -49,7 +49,7 @@ enum { eahd_interpolation, ahd_interpolation,
        ppg_interpolation, bilinear_interpolation, half_interpolation,
        num_interpolations };
 extern const char *interpolationNames[];
-enum { no_id, also_id, only_id };
+enum { no_id, also_id, only_id, send_id };
 enum { manual_curve, linear_curve, custom_curve, camera_curve };
 enum { in_profile, out_profile, display_profile, profile_types};
 enum { raw_expander, live_expander, expander_count };
@@ -175,6 +175,7 @@ typedef struct {
     char curvePath[max_path];
     char profilePath[max_path];
     gboolean silent;
+    char remoteGimpCommand[max_path];
 
     /* EXIF data */
     int orientation;
@@ -309,7 +310,9 @@ void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 void develop_linear(guint16 in[4], guint16 out[3], developer_data *d);
 
 /* prototype for functions in ufraw_saver.c */
-long ufraw_saver(void *widget, gpointer user_data);
+long ufraw_save_as(ufraw_data *uf, void *widget);
+long ufraw_save_now(ufraw_data *uf, void *widget);
+long ufraw_send_to_gimp(ufraw_data *uf);
 
 /* prototype for functions in ufraw_writer.c */
 int ufraw_write_image(ufraw_data *uf);

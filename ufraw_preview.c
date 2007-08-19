@@ -74,6 +74,8 @@ const GdkCursorType Cursors[cursor_num] = {
 
 // Response can be any unique positive integer
 #define UFRAW_RESPONSE_DELETE 1
+#define UFRAW_RESPONSE_REDRAW 2
+#define UFRAW_NO_RESPONSE 3
 
 /* All the "global" information is here: */
 typedef struct {
@@ -2610,6 +2612,17 @@ void configuration_save(GtkWidget *widget, gpointer user_data)
     data->SaveConfig = *data->UF->conf;
 }
 
+void gimp_entry_changed(GtkEntry *entry, char text[])
+{
+    g_strlcpy(text, gtk_entry_get_text(entry), max_path);
+}
+
+void gimp_reset_clicked(GtkWidget *widget, GtkEntry *entry)
+{
+    (void)widget;
+    gtk_entry_set_text(entry, conf_default.remoteGimpCommand);
+}
+
 void options_combo_update(GtkWidget *combo, gint *valuep)
 {
     GtkDialog *dialog;
@@ -2662,6 +2675,25 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
 	    table_with_frame(box, _("Display color profiles"), TRUE);
     baseCurveTable = GTK_TABLE(table_with_frame(box, _("Base Curves"), TRUE));
     curveTable = GTK_TABLE(table_with_frame(box, _("Luminosity Curves"), TRUE));
+    GtkTable *settingsTable =
+	    GTK_TABLE(table_with_frame(box, _("Settings"), TRUE));
+    label = gtk_label_new(_("Remote Gimp command"));
+    gtk_table_attach(settingsTable, label, 0, 1, 0, 1, 0, 0, 0, 0);
+    GtkEntry *gimpEntry = GTK_ENTRY(gtk_entry_new());
+    gtk_entry_set_max_length(gimpEntry, max_path);
+    gtk_entry_set_text(gimpEntry, data->UF->conf->remoteGimpCommand);
+    gtk_table_attach(settingsTable, GTK_WIDGET(gimpEntry), 1, 2, 0, 1,
+	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
+    g_signal_connect(G_OBJECT(gimpEntry), "changed",
+            G_CALLBACK(gimp_entry_changed), data->UF->conf->remoteGimpCommand);
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button),
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, button,
+	    _("Reset command to default"), NULL);
+    gtk_table_attach(settingsTable, button, 2, 3, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(gimp_reset_clicked), gimpEntry);
 
     label = gtk_label_new(_("Configuration"));
     box = gtk_vbox_new(FALSE, 0);
@@ -2936,53 +2968,61 @@ void preview_progress(void *widget, char *text, double progress)
     while (gtk_events_pending()) gtk_main_iteration();
 }
 
-void window_response(GtkWidget *widget, gpointer user_data)
-{
-    preview_data *data = get_preview_data(widget);
-    GtkWindow *window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
+enum { cancel_button, ok_button, save_button, save_as_button,
+	gimp_button, delete_button };
 
-    if (data->FreezeDialog) return;
-    g_object_set_data(G_OBJECT(window), "WindowResponse", user_data);
-    gtk_main_quit();
-}
-
-void preview_saver(GtkWidget *widget, gpointer user_data)
+ufraw_private_function void control_button_event(GtkWidget *widget, long type)
 {
-    user_data = user_data;
     preview_data *data = get_preview_data(widget);
     if (data->FreezeDialog==TRUE) return;
-    gtk_widget_set_sensitive(data->Controls, FALSE);
     data->FreezeDialog = TRUE;
-    if ( (*data->SaveFunc)(widget, data->UF)==UFRAW_SUCCESS ) {
-	GtkWindow *window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
-        g_object_set_data(G_OBJECT(window), "WindowResponse",
-                (gpointer)GTK_RESPONSE_OK);
-        gtk_main_quit();
-    } else {
+    GtkWindow *window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
+    gtk_widget_set_sensitive(data->Controls, FALSE);
+    long response = UFRAW_NO_RESPONSE;
+
+    switch (type) {
+    case cancel_button:
+	response = GTK_RESPONSE_CANCEL;
+	break;
+    case delete_button:
+	if ( ufraw_delete(widget, data->UF)==UFRAW_SUCCESS )
+	    response = UFRAW_RESPONSE_DELETE;
+	break;
+    case save_as_button:
+	if ( ufraw_save_as(data->UF, widget)==UFRAW_SUCCESS )
+	    response = GTK_RESPONSE_OK;
+	else
+	    response = UFRAW_RESPONSE_REDRAW;
+	break;
+    case save_button:
+	if ( ufraw_save_now(data->UF, widget)==UFRAW_SUCCESS )
+	    response = GTK_RESPONSE_OK;
+	else
+	    response = UFRAW_RESPONSE_REDRAW;
+	break;
+    case gimp_button:
+	if ( ufraw_send_to_gimp(data->UF)==UFRAW_SUCCESS )
+	    response = GTK_RESPONSE_OK;
+	else
+	    response = UFRAW_RESPONSE_REDRAW;
+	break;
+    case ok_button:
+	if ( (*data->SaveFunc)(data->UF, widget)==UFRAW_SUCCESS )
+	    response = GTK_RESPONSE_OK;
+	else
+	    response = UFRAW_RESPONSE_REDRAW;
+    }
+    if ( response==UFRAW_RESPONSE_REDRAW ) {
 	preview_progress(widget, "", 0);
 	create_base_image(data);
+    } else if ( response!=UFRAW_NO_RESPONSE ) {
+	g_object_set_data(G_OBJECT(window), "WindowResponse",
+		(gpointer)response);
+	gtk_main_quit();
     }
     data->FreezeDialog = FALSE;
     gtk_widget_set_sensitive(data->Controls, TRUE);
 }
-
-void delete_button_event(GtkWidget *widget, gpointer user_data)
-{
-    (void)user_data;
-    preview_data *data = get_preview_data(widget);
-    if (data->FreezeDialog==TRUE) return;
-    gtk_widget_set_sensitive(data->Controls, FALSE);
-    data->FreezeDialog = TRUE;
-    if ( ufraw_delete(widget, data->UF)==UFRAW_SUCCESS ) {
-	GtkWindow *window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
-        g_object_set_data(G_OBJECT(window), "WindowResponse",
-                (gpointer)UFRAW_RESPONSE_DELETE);
-        gtk_main_quit();
-    }
-    data->FreezeDialog = FALSE;
-    gtk_widget_set_sensitive(data->Controls, TRUE);
-}
-
 
 void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
 	guint page_num, gpointer user_data)
@@ -4322,13 +4362,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	gtk_tooltips_set_tip(data->ToolTips, button,
 		_("Delete raw file"), NULL);
 	g_signal_connect(G_OBJECT(button), "clicked",
-		G_CALLBACK(delete_button_event), NULL);
+		G_CALLBACK(control_button_event), (gpointer)delete_button);
 	gtk_box_pack_start(box, button, FALSE, FALSE, 0);
     }
     // Cancel button:
     button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
     g_signal_connect(G_OBJECT(button), "clicked",
-            G_CALLBACK(window_response), (gpointer)GTK_RESPONSE_CANCEL);
+            G_CALLBACK(control_button_event), cancel_button);
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
 
     if (plugin) {
@@ -4336,14 +4376,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_OK);
         gtk_box_pack_start(box, saveButton, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(saveButton), "clicked",
-		G_CALLBACK(preview_saver), NULL);
+		G_CALLBACK(control_button_event), (gpointer)ok_button);
         gtk_widget_grab_focus(saveButton);
     } else {
 	// Save button for the stand-alone tool
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
         gtk_box_pack_start(box, saveButton, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(saveButton), "clicked",
-		G_CALLBACK(preview_saver), NULL);
+		G_CALLBACK(control_button_event), (gpointer)save_button);
 
 	char *absFilename = uf_file_set_absolute(CFG->outputFilename);
         char *utf8 = g_filename_to_utf8(absFilename, -1, NULL, NULL, NULL);
@@ -4357,14 +4397,28 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	g_free(text);
 
 	// Save as button
-	box = GTK_BOX(gtk_hbox_new(TRUE, 6));
-	gtk_box_pack_start(GTK_BOX(ControlsBox), GTK_WIDGET(box),
-		FALSE, FALSE, 0);
 	saveAsButton = gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
         gtk_box_pack_start(box, saveAsButton, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(saveAsButton), "clicked",
-		G_CALLBACK(preview_saver), NULL);
+		G_CALLBACK(control_button_event), (gpointer)save_as_button);
         gtk_widget_grab_focus(saveAsButton);
+
+	// Send to Gimp button
+	GtkWidget *gimpButton = gtk_button_new();
+#if GTK_CHECK_VERSION(2,8,0)
+	gtk_button_set_image(GTK_BUTTON(gimpButton), gtk_image_new_from_stock(
+		"gimp", GTK_ICON_SIZE_BUTTON));
+#else
+	GtkWidget *gimpImage = gtk_image_new_from_stock("gimp",
+		GTK_ICON_SIZE_BUTTON);
+	gtk_container_add(GTK_CONTAINER(gimpButton), gimpImage);
+	gtk_widget_show(gimpImage);
+#endif
+        gtk_box_pack_start(box, gimpButton, FALSE, FALSE, 0);
+	gtk_tooltips_set_tip(data->ToolTips, gimpButton,
+		_("Send image to Gimp"), NULL);
+	g_signal_connect(G_OBJECT(gimpButton), "clicked",
+		G_CALLBACK(control_button_event), (gpointer)gimp_button);
     }
     gtk_widget_show_all(previewWindow);
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);

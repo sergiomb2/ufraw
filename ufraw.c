@@ -131,7 +131,7 @@ int main (int argc, char **argv)
 	    g_free(uf);
 	    exit(1);
 	}
-        ufraw_preview(uf, FALSE, ufraw_saver);
+        ufraw_preview(uf, FALSE, NULL);
 	rc = *uf->conf;
 	g_free(uf);
     }

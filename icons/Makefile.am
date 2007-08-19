@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.7 2007/08/12 19:18:36 udifuchs Exp $
+# $Id: Makefile.am,v 1.8 2007/08/19 00:50:12 udifuchs Exp $
 
 noinst_HEADERS = ufraw_icons.h
 icon_DATA = ufraw.png
@@ -12,7 +12,7 @@ UFRAW_ICONS = ufraw.png exposure-24.png film-24.png digital-24.png \
     icc-profile-camera-24.png icc-profile-output-24.png \
     icc-profile-display-24.png curve-24.png \
     flip-horiz-24.png flip-vert-24.png rotate-90-24.png rotate-270-24.png \
-    lock-24.png exif-24.png crop-24.png rectify-24.png
+    lock-24.png exif-24.png crop-24.png rectify-24.png gimp-24.png
 
 EXTRA_DIST = $(UFRAW_ICONS) exposure.svg film.svg digital.svg \
     restore-lch.svg restore-hsv.svg interpolation.svg \
@@ -43,4 +43,5 @@ ufraw_icons.h: $(UFRAW_ICONS)
 		flip_vert_24 $(srcdir)/flip-vert-24.png \
 		rotate_90_24 $(srcdir)/rotate-90-24.png \
 		rotate_270_24 $(srcdir)/rotate-270-24.png \
+		gimp_24 $(srcdir)/gimp-24.png \
 		> $@ || rm -f $@

@@ -36,6 +36,10 @@ typedef GimpRunModeType GimpRunMode;
 #define U16_RGB 0
 #define U16_RGB_IMAGE 0
 #endif
+#include <glib/gstdio.h>
+#if !GLIB_CHECK_VERSION(2,10,0)
+#include <unistd.h> // For unlink
+#endif
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
@@ -46,7 +50,7 @@ void run(GIMP_CONST gchar *name,
 	gint *nreturn_vals,
 	GimpParam **return_vals);
 
-long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf);
+long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget);
 
 GimpPlugInInfo PLUG_IN_INFO = {
     NULL,  /* init_procedure */
@@ -128,6 +132,8 @@ char *gimp_get_progname()
 }
 #endif
 
+gboolean sendToGimpMode;
+ 
 void run(GIMP_CONST gchar *name,
 	gint nparams,
 	GIMP_CONST GimpParam *param,
@@ -161,6 +167,7 @@ void run(GIMP_CONST gchar *name,
 	values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
 	return;
     }
+    gboolean loadThumbnail = size>0;
 
     gimp_ui_init("ufraw-gimp", TRUE);
 
@@ -168,15 +175,15 @@ void run(GIMP_CONST gchar *name,
     /* if UFRaw fails on jpg or tif then open with GIMP */
     if (uf==NULL) {
 	if (!strcasecmp(filename + strlen(filename) - 4, ".jpg")) {
-	    if (size==0)
-		*return_vals = gimp_run_procedure2 ("file_jpeg_load",
+	    if ( loadThumbnail )
+		*return_vals = gimp_run_procedure2 ("file_jpeg_load_thumb",
 			nreturn_vals, nparams, param);
 	    else
-		*return_vals = gimp_run_procedure2 ("file_jpeg_load_thumb",
+		*return_vals = gimp_run_procedure2 ("file_jpeg_load",
 			nreturn_vals, nparams, param);
 	    return;
 	} else if (!strcasecmp(filename+strlen(filename)-4, ".tif")) {
-	    if (size==0)
+	    if ( !loadThumbnail )
 		*return_vals = gimp_run_procedure2 ("file_tiff_load",
 			nreturn_vals, nparams, param);
 	    else {
@@ -198,7 +205,7 @@ void run(GIMP_CONST gchar *name,
 	} else {
 	    /* Don't issue a message on thumbnail failure, since ufraw-gimp
 	     * will be called again with "file_ufraw_load" */
-	    if (size>0) return;
+	    if ( loadThumbnail ) return;
 
 	    ufraw_icons_init();
 	    GtkWidget *dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -224,9 +231,9 @@ void run(GIMP_CONST gchar *name,
     conf_load(&conf, NULL);
 
     ufraw_config(uf, &conf, NULL, NULL);
-    conf_copy_save(uf->conf, &conf_default);
+    sendToGimpMode = (uf->conf->createID==send_id);
 #if GIMP_CHECK_VERSION(2,2,0)
-    if (size>0) {
+    if ( loadThumbnail ) {
 	uf->conf->size = size;
 	uf->conf->embeddedImage = TRUE;
     }
@@ -238,18 +245,34 @@ void run(GIMP_CONST gchar *name,
     values[0].type = GIMP_PDB_STATUS;
     values[0].data.d_status = GIMP_PDB_CANCEL;
     /* BUG - what should be done with GIMP_RUN_WITH_LAST_VALS */
-    if (size==0 && run_mode==GIMP_RUN_INTERACTIVE) {
+    if ( run_mode==GIMP_RUN_INTERACTIVE &&
+	 !loadThumbnail && !sendToGimpMode ) {
+	/* Show the preview in interactive mode, unless if we are
+	 * in thumbnail mode or 'send to gimp' mode. */
 	status = ufraw_preview(uf, TRUE, ufraw_save_gimp_image);
-	gimp_set_data("plug_in_ufraw", &conf, sizeof(conf));
     } else {
+	if ( sendToGimpMode ) {
+	    char *text = g_strdup_printf(_("Loading raw file '%s'"),
+		    uf->filename);
+	    gimp_progress_init(text);
+	    g_free(text);
+	}
+	if ( sendToGimpMode ) gimp_progress_update(0.1);
 	status=ufraw_load_raw(uf);
 	if ( status!=UFRAW_SUCCESS ) {
 	    values[0].type = GIMP_PDB_STATUS;
 	    values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
 	    return;
 	}
-	ufraw_save_gimp_image(NULL, uf);
+	if ( sendToGimpMode ) gimp_progress_update(0.3);
+	ufraw_save_gimp_image(uf, NULL);
+	if ( sendToGimpMode ) gimp_progress_update(1.0);
 	ufraw_close(uf);
+	/* To make sure we don't delete the raw file by mistake we check
+	 * that the file is really an ID file. */
+	if ( sendToGimpMode &&
+	     strcasecmp(filename + strlen(filename) - 6, ".ufraw")==0 )
+	    g_unlink(filename);
     }
     if ( status != UFRAW_SUCCESS || uf->gimpImage==-1 ) {
 	values[0].type = GIMP_PDB_STATUS;
@@ -264,7 +287,7 @@ void run(GIMP_CONST gchar *name,
     values[0].data.d_status = GIMP_PDB_SUCCESS;
     values[1].type = GIMP_PDB_IMAGE;
     values[1].data.d_image = uf->gimpImage;
-    if (size>0) {
+    if ( loadThumbnail ) {
 	*nreturn_vals = 4;
 	values[2].type = GIMP_PDB_INT32;
 	values[2].data.d_int32 = uf->initialWidth;
@@ -273,7 +296,7 @@ void run(GIMP_CONST gchar *name,
     }
 }
 
-long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
+long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 {
     GimpDrawable *drawable;
     GimpPixelRgn pixel_region;
@@ -340,8 +363,11 @@ long ufraw_save_gimp_image(GtkWidget *widget, ufraw_data *uf)
 	rowStride = uf->image.width;
 	rawImage = uf->image.image;
 	for (row = 0; row < height; row += tile_height) {
-	    preview_progress(widget, _("Loading image"),
-		    0.5 + 0.5*row/height);
+	    if ( sendToGimpMode )
+		gimp_progress_update(0.5 + 0.5*row/height);
+	    else
+		preview_progress(widget, _("Loading image"),
+			0.5 + 0.5*row/height);
 	    nrows = MIN(height-row, tile_height);
 	    for (y=0 ; y<nrows; y++)
 		develope(&pixbuf[y*width*depth], rawImage[(top+row+y)*rowStride+left],

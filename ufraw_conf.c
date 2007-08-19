@@ -93,6 +93,7 @@ const conf_data conf_default = {
     FALSE, /* underExp indicator */
     "", "", /* curvePath, profilePath */
     FALSE, /* silent */
+    "gimp-remote", /* remoteGimpCommand */
 
     /* EXIF data */
     -1, /* orientation */
@@ -429,7 +430,7 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
     if (!strcmp("SaveConfiguration", element))
 	sscanf(temp, "%d", &c->saveConfiguration);
     if (!strcmp("Interpolation", element)) {
-	/* Keep compatebility with old numbers from ufraw-0.5 */
+	/* Keep compatibility with old numbers from ufraw-0.5 */
         if (sscanf(temp, "%d", &c->interpolation)==1) {
 	    switch (c->interpolation) {
 		case 0: c->interpolation = vng_interpolation; break;
@@ -456,6 +457,8 @@ void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
 	    sscanf(temp, "%d", &c->rawHistogramScale);
     if (!strcmp("RawHistogramheight", element))
 	    sscanf(temp, "%d", &c->rawHistogramHeight);
+    if (!strcmp("RemoteGimpCommand", element))
+	    g_strlcpy(c->remoteGimpCommand, temp, max_path);
     if (!strcmp("OverExposure", element)) sscanf(temp, "%d", &c->overExp);
     if (!strcmp("UnderExposure", element)) sscanf(temp, "%d", &c->underExp);
     if (!strcmp("WB", element)) {
@@ -702,6 +705,10 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
         if (c->underExp!=conf_default.underExp)
             buf = uf_markup_buf(buf,
 		    "<UnderExposure>%d</UnderExposure>\n", c->underExp);
+        if ( strcmp(c->remoteGimpCommand, conf_default.remoteGimpCommand)!=0 )
+            buf = uf_markup_buf(buf,
+		    "<RemoteGimpCommand>%s</RemoteGimpCommand>\n",
+			    c->remoteGimpCommand);
 	if (strlen(c->curvePath)>0) {
 	    char *utf8 = g_filename_to_utf8(c->curvePath, -1, NULL, NULL, NULL);
 	    if (utf8!=NULL)

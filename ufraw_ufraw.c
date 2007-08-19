@@ -147,8 +147,8 @@ ufraw_data *ufraw_open(char *filename)
 	g_strlcpy(filename, fname, max_path);
 	g_free(fname);
     }
-    /* First handle ufraw ID files */
-    if (!strcasecmp(filename + strlen(filename) - 6, ".ufraw")) {
+    /* First handle ufraw ID files. */
+    if ( strcasecmp(filename + strlen(filename) - 6, ".ufraw")==0 ) {
 	conf = g_new(conf_data, 1);
 	status = conf_load(conf, filename);
 	if (status!=UFRAW_SUCCESS) {
@@ -250,7 +250,7 @@ ufraw_data *ufraw_load_darkframe(char *darkframeFile)
 	/* disable all auto settings on darkframe */
 	uf->conf->autoExposure = disabled_state;
 	uf->conf->autoBlack = disabled_state;
-        if (ufraw_load_raw(uf)==UFRAW_SUCCESS){
+        if (ufraw_load_raw(uf)==UFRAW_SUCCESS) {
             ufraw_message(UFRAW_BATCH_MESSAGE, _("using darkframe '%s'\n"),
 		    uf->filename);
             return uf;

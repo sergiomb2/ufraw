@@ -15,8 +15,11 @@
 #endif
 
 #include <stdio.h>	/* for printf */
+#include <errno.h>
 #include <string.h>
-#include <math.h>	/* for fabs, floor */
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <glib/gstdio.h>
 #include <gtk/gtk.h>
 #include <locale.h>
 #include <glib/gi18n.h>
@@ -107,7 +110,7 @@ int ufraw_overwrite_dialog(char *filename, GtkWidget *widget)
     return (response==GTK_RESPONSE_YES);
 }
 
-long ufraw_saver(void *widget, gpointer user_data)
+long ufraw_save_as(ufraw_data *uf, void *widget)
 {
     GtkFileChooser *fileChooser;
     GtkWidget *expander, *box, *table, *widg, *button, *align, *overwriteButton;
@@ -122,26 +125,10 @@ long ufraw_saver(void *widget, gpointer user_data)
 #endif
     GtkAdjustment *compressAdj;
 #endif
-    ufraw_data *uf = user_data;
     int status;
     save_as_dialog_data DialogData, *data = &DialogData;
     data->uf = uf;
 
-    if (!strcmp(gtk_button_get_label(GTK_BUTTON(widget)), GTK_STOCK_SAVE)) {
-	if ( !uf->conf->overwrite && uf->conf->createID!=only_id
-	   && g_file_test(uf->conf->outputFilename, G_FILE_TEST_EXISTS) ) {
-	    if ( !ufraw_overwrite_dialog(uf->conf->outputFilename, widget) )
-		return UFRAW_ERROR;
-	}
-	status = ufraw_write_image(uf);
-        if ( status==UFRAW_ERROR ) {
-            ufraw_message(status, ufraw_get_message(uf));
-	    return UFRAW_ERROR;
-	}
-	if ( ufraw_get_message(uf)!=NULL )
-            ufraw_message(UFRAW_SET_LOG, ufraw_get_message(uf));
-	return UFRAW_SUCCESS;
-    }
     fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new(
 	    _("Save image"), GTK_WINDOW(gtk_widget_get_toplevel(widget)),
 	    GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -379,4 +366,86 @@ long ufraw_saver(void *widget, gpointer user_data)
 	    return UFRAW_SUCCESS;
 	}
     }
+}
+
+long ufraw_save_now(ufraw_data *uf, void *widget)
+{
+    if ( !uf->conf->overwrite && uf->conf->createID!=only_id
+	&& g_file_test(uf->conf->outputFilename, G_FILE_TEST_EXISTS) ) {
+	if ( !ufraw_overwrite_dialog(uf->conf->outputFilename, widget) )
+	    return UFRAW_ERROR;
+    }
+    int status = ufraw_write_image(uf);
+    if ( status==UFRAW_ERROR ) {
+        ufraw_message(status, ufraw_get_message(uf));
+	return UFRAW_ERROR;
+    }
+    if ( ufraw_get_message(uf)!=NULL )
+        ufraw_message(UFRAW_SET_LOG, ufraw_get_message(uf));
+    return UFRAW_SUCCESS;
+}
+
+long ufraw_send_to_gimp(ufraw_data *uf)
+{
+    uf->conf->createID = send_id;
+    char *basename = g_path_get_basename(uf->conf->inputFilename);
+    char *template = g_strconcat(basename, "_XXXXXX", NULL);
+    g_free(basename);
+    char *confFilename = NULL;
+    GError *err = NULL;
+    int fd = g_file_open_tmp(template, &confFilename, &err);
+    g_free(template);
+    if ( fd==-1 ) {
+	g_free(confFilename);
+        ufraw_message(UFRAW_ERROR, "%s\n%s",
+		_("Error creating temporary file."), err->message);
+	g_error_free(err);
+	return UFRAW_ERROR;
+    }
+    FILE *out = fdopen(fd, "w");
+    if ( out==NULL ) {
+	g_free(confFilename);
+        ufraw_message(UFRAW_ERROR, "%s\n%s",
+		_("Error creating temporary file."), g_strerror(errno));
+	return UFRAW_ERROR;
+    }
+    char *buffer;
+    conf_save(uf->conf, confFilename, &buffer);
+    if ( fwrite(buffer, strlen(buffer), 1, out)!=1 ) {
+	g_free(buffer);
+	g_free(confFilename);
+        ufraw_message(UFRAW_ERROR, "%s\n%s",
+		_("Error creating temporary file."), g_strerror(errno));
+	return UFRAW_ERROR;
+    }
+    g_free(buffer);
+    if ( fclose(out)!=0 ) {
+	g_free(confFilename);
+        ufraw_message(UFRAW_ERROR, "%s\n%s",
+		_("Error creating temporary file."), g_strerror(errno));
+	return UFRAW_ERROR;
+    }
+    char *fullConfFilename = g_strconcat(confFilename, ".ufraw", NULL);
+    if ( g_rename(confFilename, fullConfFilename)==-1 ) {
+	g_free(confFilename);
+	g_free(fullConfFilename);
+        ufraw_message(UFRAW_ERROR, "%s\n%s",
+		_("Error creating temporary file."), g_strerror(errno));
+	return UFRAW_ERROR;
+    }
+    g_free(confFilename);
+    char *commandLine = g_strdup_printf("%s %s",
+	    uf->conf->remoteGimpCommand, fullConfFilename);
+    g_free(fullConfFilename);
+    /* gimp-remote starts the gimp in a fork().
+     * Therefore we must call it asynchronously. */
+    if ( !g_spawn_command_line_async(commandLine, &err) ) {
+	g_free(commandLine);
+        ufraw_message(UFRAW_ERROR, "%s\n%s",
+		_("Error activating Gimp."), err->message);
+	g_error_free(err);
+	return UFRAW_ERROR;
+    }
+    g_free(commandLine);
+    return UFRAW_SUCCESS;
 }

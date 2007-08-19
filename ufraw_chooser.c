@@ -143,7 +143,7 @@ void ufraw_chooser(conf_data *conf, char *defPath)
                 continue;
             }
             ufraw_config(uf, conf, NULL, NULL);
-            ufraw_preview(uf, FALSE, ufraw_saver);
+            ufraw_preview(uf, FALSE, NULL);
             g_free(filename);
 	    *conf = *uf->conf;
         }
