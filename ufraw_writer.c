@@ -95,6 +95,10 @@ ufraw_private_function void png_warning_handler(png_structp png,
     ufraw_data *uf = png_get_error_ptr(png);
     ufraw_set_warning(uf, "%s.", warning_msg);
 }
+
+ufraw_private_function void PNGwriteRawProfile(png_struct *ping,
+    png_info *ping_info, char *profile_type, guint8 *profile_data,
+    png_uint_32 length);
 #endif /*HAVE_LIBPNG*/
 
 int ufraw_write_image(ufraw_data *uf)
@@ -380,6 +384,9 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->conf->outputFilename);
 		}
 	    }
+	    if (uf->exifBuf!=NULL && uf->conf->embedExif)
+		PNGwriteRawProfile(png, info, "exif",
+			uf->exifBuf, uf->exifBufLen);
 	    png_write_info(png, info);
 	    if (uf->conf->type==png8_type) {
 		pixbuf8 = g_new(guint8, width*3);
@@ -441,3 +448,71 @@ int ufraw_write_image(ufraw_data *uf)
     }
     return ufraw_get_status(uf);
 }
+
+
+/* Write EXIF data to PNG file.
+ * Code copied from DigiKam's libs/dimg/loaders/pngloader.cpp.
+ * The EXIF embeding is defined by ImageMagicK.
+ * It is documented in the ExifTool page:
+ * http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/PNG.html
+ */
+
+#ifdef HAVE_LIBPNG
+ufraw_private_function void PNGwriteRawProfile(png_struct *ping,
+    png_info *ping_info, char *profile_type, guint8 *profile_data,
+    png_uint_32 length)
+{
+    png_textp text;
+    long i;
+    guint8 *sp;
+    png_charp dp;
+    png_uint_32 allocated_length, description_length;
+
+    const guint8 hex[16] =
+	    {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+    text = png_malloc(ping, sizeof(png_text));
+    description_length = strlen(profile_type);
+    allocated_length = length*2 + (length >> 5) + 20 + description_length;
+
+    text[0].text = png_malloc(ping, allocated_length);
+    text[0].key = png_malloc(ping, 80);
+    text[0].key[0] = '\0';
+
+    g_strlcat(text[0].key, "Raw profile type ", 80);
+    g_strlcat(text[0].key, profile_type, 80);
+
+    sp = profile_data;
+    dp = text[0].text;
+    *dp++='\n';
+
+    g_strlcpy(dp, profile_type, allocated_length);
+
+    dp += description_length;
+    *dp++='\n';
+
+    g_snprintf(dp, allocated_length-strlen(text[0].text), "%8lu ", length);
+
+    dp += 8;
+
+    for (i=0; i < (long) length; i++)
+    {
+        if (i%36 == 0)
+            *dp++='\n';
+
+        *(dp++) = hex[((*sp >> 4) & 0x0f)];
+        *(dp++) = hex[((*sp++ ) & 0x0f)];
+    }
+
+    *dp++='\n';
+    *dp='\0';
+    text[0].text_length = (dp-text[0].text);
+    text[0].compression = -1;
+
+    if (text[0].text_length <= allocated_length)
+	png_set_text(ping, ping_info,text, 1);
+
+    png_free(ping, text[0].text);
+    png_free(ping, text[0].key);
+    png_free(ping, text);
+}
+#endif /*HAVE_LIBPNG*/

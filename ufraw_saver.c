@@ -120,7 +120,7 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
     GtkWidget *losslessButton;
 #endif
 #ifdef HAVE_LIBJPEG
-#if defined(HAVE_LIBEXIF) || defined(HAVE_EXIV2)
+#ifdef HAVE_EXIV2
     GtkWidget *exifButton;
 #endif
     GtkAdjustment *compressAdj;
@@ -245,13 +245,6 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
     widg = gtk_spin_button_new(compressAdj, 5, 0);
     gtk_table_attach(GTK_TABLE(table), widg, 3, 4, 1, 2, 0, 0, 0, 0);
-#if defined(HAVE_LIBEXIF) || defined(HAVE_EXIV2)
-    exifButton = gtk_check_button_new_with_label(_("Embed EXIF data"));
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(exifButton),
-	    uf->conf->embedExif && uf->exifBuf!=NULL);
-    gtk_widget_set_sensitive(exifButton, uf->exifBuf!=NULL);
-    gtk_table_attach(GTK_TABLE(table), exifButton, 1, 2, 2, 3, 0, 0, 0, 0);
-#endif
 #endif /*HAVE_LIBJPEG*/
 #ifdef HAVE_LIBPNG
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
@@ -277,6 +270,16 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
 	    G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
     gtk_table_attach(GTK_TABLE(table), button, 0, 1, 1, 2, 0, 0, 0, 0);
 #endif /*HAVE_LIBPNG*/
+
+#ifdef HAVE_EXIV2
+    gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
+    exifButton = gtk_check_button_new_with_label(
+	    _("Embed EXIF data in JPEG or PNG files"));
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(exifButton),
+	    uf->conf->embedExif && uf->exifBuf!=NULL);
+    gtk_widget_set_sensitive(exifButton, uf->exifBuf!=NULL);
+    gtk_box_pack_start(GTK_BOX(box), exifButton, TRUE, TRUE, 0);
+#endif /*HAVE_EXIV2*/
 
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
     table = gtk_table_new(1, 5, FALSE);
@@ -341,7 +344,7 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
 #endif
 #ifdef HAVE_LIBJPEG
 	uf->conf->compression = gtk_adjustment_get_value(compressAdj);
-#if defined(HAVE_LIBEXIF) || defined(HAVE_EXIV2)
+#ifdef HAVE_EXIV2
 	uf->conf->embedExif = gtk_toggle_button_get_active(
 		GTK_TOGGLE_BUTTON(exifButton));
 #endif
