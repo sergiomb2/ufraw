@@ -4496,9 +4496,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 		RC.saveConfiguration = disabled_state;
 		conf_save(&RC, NULL, NULL);
 	    }
+	    strcpy(RC.inputFilename, "");
+	    strcpy(RC.outputFilename, "");
 	    *CFG = RC;
 	}
     } else {
+	strcpy(RC.inputFilename, "");
+	strcpy(RC.outputFilename, "");
 	*CFG = RC;
     }
     // UFRAW_RESPONSE_DELETE requires no special action
