@@ -390,7 +390,6 @@ long ufraw_save_now(ufraw_data *uf, void *widget)
 
 long ufraw_send_to_gimp(ufraw_data *uf)
 {
-    uf->conf->createID = send_id;
     char *basename = g_path_get_basename(uf->conf->inputFilename);
     char *template = g_strconcat(basename, "_XXXXXX", NULL);
     g_free(basename);
@@ -413,7 +412,10 @@ long ufraw_send_to_gimp(ufraw_data *uf)
 	return UFRAW_ERROR;
     }
     char *buffer;
+    int saveCreateID = uf->conf->createID;
+    uf->conf->createID = send_id;
     conf_save(uf->conf, confFilename, &buffer);
+    uf->conf->createID = saveCreateID;
     if ( fwrite(buffer, strlen(buffer), 1, out)!=1 ) {
 	g_free(buffer);
 	g_free(confFilename);
