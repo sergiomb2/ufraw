@@ -643,6 +643,7 @@ void redraw_navigation_image(preview_data *data)
     GtkWidget *scroll =
 	gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_IMAGE_SCROLL_WIN);
     GtkImageNav *nav = GTK_IMAGE_NAV(GTK_IMAGE_SCROLL_WIN(scroll)->nav);
+    if ( nav->pixbuf==NULL ) return;
     int navWidth = gdk_pixbuf_get_width(nav->pixbuf);
     int navHeight = gdk_pixbuf_get_height(nav->pixbuf);
     g_object_unref(nav->pixbuf);
