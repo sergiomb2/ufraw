@@ -3,13 +3,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-22 19:45+0200\n"
-"PO-Revision-Date: 2007-07-17 22:03+0200\n"
+"POT-Creation-Date: 2007-09-02 01:23+0200\n"
+"PO-Revision-Date: 2007-09-01 23:07+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Poedit-Basepath: ~/sources/ufraw/ufraw-cvs/ufraw-20070901/po\n"
 
 #: ufraw-batch.c:73
 msgid "No input file, nothing to do."
@@ -56,7 +59,7 @@ msgstr "L'extraction de l'image incluse n'est pas supporté en mode interactif"
 
 #: ufraw_chooser.c:61
 msgid "Raw images"
-msgstr "Images Raw"
+msgstr "Images brutes (raw)"
 
 #: ufraw_chooser.c:98
 msgid "UFRaw ID files"
@@ -146,7 +149,7 @@ msgstr ""
 "Ne peut ouvrir le fichier ID %s en lecture\n"
 "%s\n"
 
-#: ufraw_conf.c:596 ufraw_routines.c:380
+#: ufraw_conf.c:596 ufraw_routines.c:381
 #, c-format
 msgid ""
 "Error parsing '%s'\n"
@@ -199,8 +202,9 @@ msgid ""
 "'ufraw-batch'.\n"
 msgstr ""
 "Par défaut 'ufraw' affiche une fenêtre de pré-visualisation pour chaque\n"
-"image raw, autorisant l'utilisateur à modifier les paramètres de l'image\n"
-"avant sauvegarde. Si aucun fichier raw n'est donné sur la ligne de\n"
+"image brute (raw), autorisant l'utilisateur à modifier les paramètres de "
+"l'image\n"
+"avant sauvegarde. Si aucun fichier brut (raw) n'est donné sur la ligne de\n"
 "commande, UFRaw affichera un sélecteur de fichier.\n"
 "Pour traiter les images sans questions (et sans pré-visualisation),\n"
 "utiliser 'ufraw-batch'.\n"
@@ -391,12 +395,11 @@ msgstr ""
 "--size=TAILLE         Réduit la dimension max(hauteur,largeur) à TAILLE.\n"
 
 #: ufraw_conf.c:1257
-#, fuzzy
 msgid ""
 "--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg\n"
 "                      Output file format (default ppm8).\n"
 msgstr ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
+"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16jpeg\n"
 "                      Format du fichier de sortie (défaut ppm8).\n"
 
 #: ufraw_conf.c:1259
@@ -412,12 +415,11 @@ msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   Compression JPEG (0-100, défaut 85).\n"
 
 #: ufraw_conf.c:1262
-#, fuzzy
 msgid ""
 "--[no]exif            Embed EXIF in output JPEG or PNG (default embed "
 "EXIF).\n"
 msgstr ""
-"--[no]exif            Copie les exif dans le fichier de sortie JPEG\n"
+"--[no]exif            Copie les exif dans le fichier de sortie JPEG ou PNG\n"
 "                      (défaut exif).\n"
 
 #: ufraw_conf.c:1263
@@ -433,8 +435,9 @@ msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"
 msgstr ""
-"--embedded-image      Extrait l'imagette contenue dans le fichier raw\n"
-"                      plutôt que de convertir l'image raw.\n"
+"--embedded-image      Extrait l'imagette contenue dans le fichier brut "
+"(raw)\n"
+"                      plutôt que de convertir l'image brute.\n"
 
 #: ufraw_conf.c:1266
 msgid ""
@@ -582,9 +585,8 @@ msgid "ufraw was build without JPEG support."
 msgstr "ufraw a été compilé sans le support du JPEG."
 
 #: ufraw_conf.c:1659 ufraw_conf.c:1669
-#, fuzzy
 msgid "ufraw was build without PNG support."
-msgstr "ufraw a été compilé sans le support du JPEG."
+msgstr "ufraw a été compilé sans le support du PNG."
 
 #: ufraw_conf.c:1675
 #, c-format
@@ -613,37 +615,33 @@ msgstr "Impossible d'écrire plus d'un fichier sur la même sortie"
 #: ufraw_delete.c:34
 #, c-format
 msgid "Raw file '%s' missing."
-msgstr ""
+msgstr "Fichier brut '%s' est manquant."
 
 #: ufraw_delete.c:39 ufraw_preview.c:4364
-#, fuzzy
 msgid "Delete raw file"
-msgstr "Créer un fichier ID"
+msgstr "Effacer des fichiers brut (raw)"
 
 #: ufraw_delete.c:42
 msgid "_Delete selected"
-msgstr ""
+msgstr "_Effacer la sélection"
 
 #: ufraw_delete.c:43
-#, fuzzy
 msgid "Delete _All"
-msgstr "Créer un fichier ID"
+msgstr "Effacer _Tout"
 
 #: ufraw_delete.c:47
 msgid "Select files to delete"
-msgstr ""
+msgstr "Sélectionner les fichiers à effacer"
 
 #: ufraw_delete.c:54
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading directory '%s'."
-msgstr ""
-"Erreur en créant le fichier '%s'.\n"
-"%s"
+msgstr "Erreur en lisant le répertoire '%s'."
 
 #: ufraw_delete.c:111
-#, fuzzy, c-format
+#, c-format
 msgid "Error deleting '%s'"
-msgstr "Erreur en écrivant '%s'"
+msgstr "Erreur en effaçant '%s'"
 
 #: ufraw_embedded.c:73
 msgid "Reading embedded image requires libjpeg."
@@ -709,11 +707,9 @@ msgid "Unsupported output type (%d) for embedded image"
 msgstr "Type de sortie (%d) non supporté pour l'image incluse."
 
 #: ufraw-gimp.c:255
-#, fuzzy, c-format
+#, c-format
 msgid "Loading raw file '%s'"
-msgstr ""
-"Erreur en créant le fichier '%s'.\n"
-"%s"
+msgstr "Charge le fichier brut (raw) '%s'"
 
 #: ufraw-gimp.c:337
 msgid "Can't allocate new image."
@@ -740,7 +736,7 @@ msgstr "Longueur du tampon EXIF %d, trop longue, ignorée.\n"
 
 #: ufraw_preview.c:51
 msgid "Raw histogram"
-msgstr "Histogramme Raw"
+msgstr "Histogramme brut"
 
 #: ufraw_preview.c:51
 msgid "Live histogram"
@@ -877,12 +873,11 @@ msgstr "Courbes de luminosité"
 
 #: ufraw_preview.c:2681
 msgid "Remote Gimp command"
-msgstr ""
+msgstr "Commande distante pour Gimp"
 
 #: ufraw_preview.c:2694
-#, fuzzy
 msgid "Reset command to default"
-msgstr "RàZ du gamma"
+msgstr "Retour à la commande par défaut"
 
 #: ufraw_preview.c:2699
 msgid "Configuration"
@@ -1260,30 +1255,29 @@ msgstr "RàZ de la zone de découpe"
 
 #: ufraw_preview.c:3898
 msgid "Aspect ratio:"
-msgstr ""
+msgstr "Proportions:"
 
 #: ufraw_preview.c:3904
 msgid "Crop area aspect ratio"
-msgstr ""
+msgstr "Proportions de la zone de découpe"
 
 #: ufraw_preview.c:3922
 msgid "Lock aspect ratio"
-msgstr ""
+msgstr "Garder les proportions"
 
 #: ufraw_preview.c:3937
-#, fuzzy
 msgid "Shrink factor"
-msgstr "Facteur de rétrécissement"
+msgstr ""
+"Facteur de\n"
+"réduction"
 
 #: ufraw_preview.c:3952
-#, fuzzy
 msgid "Height"
-msgstr "\tHauteur"
+msgstr "Hauteur"
 
 #: ufraw_preview.c:3967
-#, fuzzy
 msgid "Width"
-msgstr "\tLargeur"
+msgstr "Largeur"
 
 #: ufraw_preview.c:3985
 msgid "Orientation:"
@@ -1297,71 +1291,63 @@ msgstr "EXIF"
 
 #: ufraw_preview.c:4043
 msgid "Tag"
-msgstr ""
+msgstr "Marqueur"
 
 #: ufraw_preview.c:4048
 msgid "Value"
-msgstr ""
+msgstr "Valeur"
 
 #. Fill table with EXIF tags
 #: ufraw_preview.c:4053
-#, fuzzy
 msgid "Camera maker"
-msgstr "Courbe de l'appareil"
+msgstr "Fabricant"
 
 #: ufraw_preview.c:4054
-#, fuzzy
 msgid "Camera model"
-msgstr "Courbe de l'appareil"
+msgstr "Modèle"
 
 #: ufraw_preview.c:4055
-#, fuzzy
 msgid "Timestamp"
-msgstr "Horodatage: %s\n"
+msgstr "Horodatage"
 
 #: ufraw_preview.c:4056
 msgid "Exposure"
-msgstr ""
+msgstr "Exposition"
 
 #: ufraw_preview.c:4057
-#, fuzzy
 msgid "Aperture"
-msgstr "Ouverture: %s\n"
+msgstr "Ouverture"
 
 #: ufraw_preview.c:4058
-#, fuzzy
 msgid "ISO speed"
-msgstr "Sensibilité: %s\n"
+msgstr "Sensibilité"
 
 #: ufraw_preview.c:4059
-#, fuzzy
 msgid "Focal length"
-msgstr "Focale: %s\n"
+msgstr "Focale"
 
 #: ufraw_preview.c:4060
-#, fuzzy
 msgid "35mm focal length"
-msgstr "Focale: %s\n"
+msgstr "Focale 35mm"
 
 #: ufraw_preview.c:4061
-#, fuzzy
 msgid "Lens"
-msgstr "Objectif: %s\n"
+msgstr "Objectif"
 
 #: ufraw_preview.c:4062 wb_presets.c:54
 msgid "Flash"
 msgstr "Flash"
 
 #: ufraw_preview.c:4066
-#, fuzzy, c-format
+#, c-format
 msgid "EXIF data read by %s"
-msgstr ""
-"\n"
-"Données EXIF lues par %s"
+msgstr "Données EXIF lues par %s"
 
 #: ufraw_preview.c:4074
 msgid "Warning: EXIF data will not be sent to output"
 msgstr ""
+"Avertissement: les données EXIF ne seront pas\n"
+"               envoyées vers la sortie"
 
 #: ufraw_preview.c:4099
 msgid "RGB histogram"
@@ -1408,11 +1394,9 @@ msgid "Options"
 msgstr "Options"
 
 #: ufraw_preview.c:4392
-#, fuzzy, c-format
+#, c-format
 msgid "Filename: %s%s"
-msgstr ""
-"Fichier: %s\n"
-"Taille: %d x %d%s"
+msgstr "Fichier: %s%s"
 
 #: ufraw_preview.c:4393
 msgid ""
@@ -1432,7 +1416,7 @@ msgstr ""
 
 #: ufraw_preview.c:4420
 msgid "Send image to Gimp"
-msgstr ""
+msgstr "Envoyer l'image à Gimp"
 
 #: ufraw_preview.c:4434
 msgid "Loading preview"
@@ -1442,22 +1426,22 @@ msgstr "Charge la pré-visualisation"
 msgid "Fatal error setting C locale"
 msgstr "Erreur fatale en position la locale C"
 
-#: ufraw_routines.c:286
+#: ufraw_routines.c:287
 #, c-format
 msgid "Curve version is not supported"
 msgstr "Cette version de courbe n'est pas supporté"
 
-#: ufraw_routines.c:353 ufraw_routines.c:427
+#: ufraw_routines.c:354 ufraw_routines.c:428
 #, c-format
 msgid "Invalid Nikon curve file '%s'"
 msgstr "Fichier de courbe Nikon invalide '%s'"
 
-#: ufraw_routines.c:369
+#: ufraw_routines.c:370
 #, c-format
 msgid "Error opening Curve file '%s': %s"
 msgstr "Erreur en ouvrant la courbe '%s': %s"
 
-#: ufraw_routines.c:436
+#: ufraw_routines.c:437
 #, c-format
 msgid "Error opening file '%s': %s"
 msgstr "Erreur à l'ouverture du fichier '%s': %s"
@@ -1512,18 +1496,16 @@ msgid "Compression level"
 msgstr "Niveau de compression"
 
 #: ufraw_saver.c:254
-#, fuzzy
 msgid "8-bit PNG"
-msgstr "8-bit ppm"
+msgstr "8-bit PNG"
 
 #: ufraw_saver.c:265
-#, fuzzy
 msgid "16-bit PNG"
-msgstr "16-bit ppm"
+msgstr "16-bit PNG"
 
 #: ufraw_saver.c:277
 msgid "Embed EXIF data in JPEG or PNG files"
-msgstr ""
+msgstr "Inclure les données EXIF dans les fichiers JPEG ou PNG"
 
 #: ufraw_saver.c:287
 msgid "Create ID file "
@@ -1551,18 +1533,12 @@ msgstr "Écraser les fichiers existants sans demander"
 
 #: ufraw_saver.c:403 ufraw_saver.c:411 ufraw_saver.c:423 ufraw_saver.c:430
 #: ufraw_saver.c:438
-#, fuzzy
 msgid "Error creating temporary file."
-msgstr ""
-"Erreur en créant le fichier '%s'.\n"
-"%s"
+msgstr "Erreur en créant le fichier temporaire."
 
 #: ufraw_saver.c:450
-#, fuzzy
 msgid "Error activating Gimp."
-msgstr ""
-"Erreur en créant le fichier '%s'.\n"
-"%s"
+msgstr "Erreur à l'activation de Gimp."
 
 #: ufraw_ufraw.c:142
 msgid "Remote URI is not supported"
@@ -1610,20 +1586,15 @@ msgstr ""
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
 #: ufraw_writer.c:142 ufraw_writer.c:252 ufraw_writer.c:266 ufraw_writer.c:427
-#, fuzzy
 msgid "Error creating file."
-msgstr ""
-"Erreur en créant le fichier '%s'.\n"
-"%s"
+msgstr "Erreur en créant le fichier."
 
 #. Error was not already set before
 #: ufraw_writer.c:155 ufraw_writer.c:183 ufraw_writer.c:200 ufraw_writer.c:331
 #: ufraw_writer.c:347 ufraw_writer.c:416 ufraw_writer.c:438
-#, fuzzy, c-format
+#, c-format
 msgid "Error creating file '%s'."
-msgstr ""
-"Erreur en créant le fichier '%s'.\n"
-"%s"
+msgstr "Erreur en créant le fichier '%s'."
 
 #: ufraw_writer.c:178 ufraw_writer.c:193 ufraw_writer.c:246 ufraw_writer.c:260
 #: ufraw_writer.c:321 ufraw_writer.c:395 ufraw_writer.c:405
@@ -1631,19 +1602,19 @@ msgid "Saving image"
 msgstr "Sauver l'image"
 
 #: ufraw_writer.c:237 ufraw_writer.c:304 ufraw_writer.c:382
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "Échoue à inclure le profil de sortie '%s' dans '%s'"
 
 #: ufraw_writer.c:312
-#, fuzzy, c-format
+#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
-msgstr "Longueur du tampon EXIF %d, trop longue, ignorée.\n"
+msgstr "Longueur du tampon EXIF %d, trop longue, ignorée."
 
 #: ufraw_writer.c:418
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown file type %d."
-msgstr "Erreur en créant le fichier '%s'. Type de fichier %d inconnu."
+msgstr "Type de fichier %d inconnu."
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
