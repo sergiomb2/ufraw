@@ -3457,7 +3457,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
 	    data->InterpolationTable[i++] = bilinear_interpolation;
 	}
-	if ( plugin ) {
+	if ( plugin==1 ) {
 	    gtk_combo_box_append_text(combo, _("Half-size interpolation"));
 	    data->InterpolationTable[i++] = half_interpolation;
 	}
@@ -4372,7 +4372,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(control_button_event), cancel_button);
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
 
-    if (plugin) {
+    /* plugin=0 : Normal stand-alone
+     * plugin=1 : Gimp plug-in
+     * plugin=2 : Stand-alone with --output option */
+    if ( plugin==1 ) {
 	// OK button for the plug-in
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_OK);
         gtk_box_pack_start(box, saveButton, FALSE, FALSE, 0);
@@ -4396,7 +4399,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
         g_free(absFilename);
 	gtk_tooltips_set_tip(data->ToolTips, saveButton, text, NULL);
 	g_free(text);
-
+    }
+    if ( plugin==0 ) {
 	// Save as button
 	saveAsButton = gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
         gtk_box_pack_start(box, saveAsButton, FALSE, FALSE, 0);

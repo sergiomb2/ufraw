@@ -249,7 +249,7 @@ void run(GIMP_CONST gchar *name,
 	 !loadThumbnail && !sendToGimpMode ) {
 	/* Show the preview in interactive mode, unless if we are
 	 * in thumbnail mode or 'send to gimp' mode. */
-	status = ufraw_preview(uf, TRUE, ufraw_save_gimp_image);
+	status = ufraw_preview(uf, 1, ufraw_save_gimp_image);
     } else {
 	if ( sendToGimpMode ) {
 	    char *text = g_strdup_printf(_("Loading raw file '%s'"),

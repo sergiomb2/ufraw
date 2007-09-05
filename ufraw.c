@@ -31,6 +31,7 @@ int main (int argc, char **argv)
     int status;
     GtkWidget *dummyWindow=NULL;
     int optInd;
+    int plugin = 0;
 
     ufraw_binary = g_path_get_basename(argv[0]);
     uf_init_locale(argv[0]);
@@ -61,9 +62,7 @@ int main (int argc, char **argv)
     /* Put the command-line options in cmd */
     optInd = ufraw_process_args(&argc, &argv, &cmd, &rc);
     if ( strlen(cmd.outputFilename)!=0 ) {
-	ufraw_message(UFRAW_ERROR,
-		_("--output option is valid only in batch mode"));
-	optInd = -1;
+	    plugin = 2;
     }
     if ( cmd.silent ) {
 	ufraw_message(UFRAW_ERROR,
@@ -131,7 +130,7 @@ int main (int argc, char **argv)
 	    g_free(uf);
 	    exit(1);
 	}
-        ufraw_preview(uf, FALSE, NULL);
+        ufraw_preview(uf, plugin, NULL);
 	rc = *uf->conf;
 	g_free(uf);
     }
