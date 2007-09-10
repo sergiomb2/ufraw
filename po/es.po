@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-22 19:45+0200\n"
+"POT-Creation-Date: 2007-09-10 17:30+0200\n"
 "PO-Revision-Date: 2007-08-10 12:57+0200\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -45,15 +45,11 @@ msgstr "n"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: ¿sobreescribir '%s'?"
 
-#: ufraw.c:65
-msgid "--output option is valid only in batch mode"
-msgstr "la opción --output sólo es válida en modo por lotes"
-
-#: ufraw.c:70
+#: ufraw.c:69
 msgid "--silent option is valid only in batch mode"
 msgstr "la opcion --silent solo es válida en modo por lotes"
 
-#: ufraw.c:74
+#: ufraw.c:73
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
 "La extracción de la imagen incrustada no esta soportada en modo interactivo"
@@ -150,7 +146,7 @@ msgstr ""
 "No se puede abrir el archivo ID %s para lectura\n"
 "%s\n"
 
-#: ufraw_conf.c:596 ufraw_routines.c:380
+#: ufraw_conf.c:596 ufraw_routines.c:381
 #, c-format
 msgid ""
 "Error parsing '%s'\n"
@@ -1405,14 +1401,14 @@ msgstr "Subexpuesto:"
 msgid "Options"
 msgstr "Opciones"
 
-#: ufraw_preview.c:4392
+#: ufraw_preview.c:4395
 #, fuzzy, c-format
 msgid "Filename: %s%s"
 msgstr ""
 "Archivo: %s\n"
 "Tamaño: %d x %d%s"
 
-#: ufraw_preview.c:4393
+#: ufraw_preview.c:4396
 msgid ""
 "\n"
 "Create also ID file"
@@ -1420,7 +1416,7 @@ msgstr ""
 "\n"
 "También crear archivo ID"
 
-#: ufraw_preview.c:4394
+#: ufraw_preview.c:4397
 msgid ""
 "\n"
 "Create only ID file"
@@ -1428,11 +1424,11 @@ msgstr ""
 "\n"
 "Sólo crear archivo ID"
 
-#: ufraw_preview.c:4420
+#: ufraw_preview.c:4424
 msgid "Send image to Gimp"
 msgstr ""
 
-#: ufraw_preview.c:4434
+#: ufraw_preview.c:4438
 msgid "Loading preview"
 msgstr "Cargando previsualización"
 
@@ -1440,22 +1436,22 @@ msgstr "Cargando previsualización"
 msgid "Fatal error setting C locale"
 msgstr "Error fatal al poner la codificación C"
 
-#: ufraw_routines.c:286
+#: ufraw_routines.c:287
 #, c-format
 msgid "Curve version is not supported"
 msgstr "Versión de la curva no soportada"
 
-#: ufraw_routines.c:353 ufraw_routines.c:427
+#: ufraw_routines.c:354 ufraw_routines.c:428
 #, c-format
 msgid "Invalid Nikon curve file '%s'"
 msgstr "Archivo de curva Nikon '%s' no válido"
 
-#: ufraw_routines.c:369
+#: ufraw_routines.c:370
 #, c-format
 msgid "Error opening Curve file '%s': %s"
 msgstr "Error al abrir el archivo de curva '%s': %s"
 
-#: ufraw_routines.c:436
+#: ufraw_routines.c:437
 #, c-format
 msgid "Error opening file '%s': %s"
 msgstr "Error al abrir el archivo '%s': %s"

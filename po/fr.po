@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-02 01:23+0200\n"
+"POT-Creation-Date: 2007-09-10 17:30+0200\n"
 "PO-Revision-Date: 2007-09-01 23:07+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -43,17 +43,12 @@ msgstr "n"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: écraser '%s'?"
 
-#: ufraw.c:65
-msgid "--output option is valid only in batch mode"
-msgstr ""
-"--output cette option est valable uniquement en mode de traitement par lot"
-
-#: ufraw.c:70
+#: ufraw.c:69
 msgid "--silent option is valid only in batch mode"
 msgstr ""
 "--silent cette option est valable uniquement en mode de traitement par lot"
 
-#: ufraw.c:74
+#: ufraw.c:73
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr "L'extraction de l'image incluse n'est pas supporté en mode interactif"
 
@@ -1393,12 +1388,12 @@ msgstr "Sous-exposé:"
 msgid "Options"
 msgstr "Options"
 
-#: ufraw_preview.c:4392
+#: ufraw_preview.c:4395
 #, c-format
 msgid "Filename: %s%s"
 msgstr "Fichier: %s%s"
 
-#: ufraw_preview.c:4393
+#: ufraw_preview.c:4396
 msgid ""
 "\n"
 "Create also ID file"
@@ -1406,7 +1401,7 @@ msgstr ""
 "\n"
 "Créer aussi un fichier ID"
 
-#: ufraw_preview.c:4394
+#: ufraw_preview.c:4397
 msgid ""
 "\n"
 "Create only ID file"
@@ -1414,11 +1409,11 @@ msgstr ""
 "\n"
 "Créer seulement un fichier ID"
 
-#: ufraw_preview.c:4420
+#: ufraw_preview.c:4424
 msgid "Send image to Gimp"
 msgstr "Envoyer l'image à Gimp"
 
-#: ufraw_preview.c:4434
+#: ufraw_preview.c:4438
 msgid "Loading preview"
 msgstr "Charge la pré-visualisation"
 

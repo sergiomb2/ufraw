@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-22 19:45+0200\n"
+"POT-Creation-Date: 2007-09-10 17:30+0200\n"
 "PO-Revision-Date: 2007-08-22 20:00+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
@@ -44,15 +44,11 @@ msgstr "n"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: overskriv '%s'?"
 
-#: ufraw.c:65
-msgid "--output option is valid only in batch mode"
-msgstr "Tilvalget --output kan kun anvendes i batch-modus"
-
-#: ufraw.c:70
+#: ufraw.c:69
 msgid "--silent option is valid only in batch mode"
 msgstr "Tilvalget --silent kan kun anvendes i batch-modus"
 
-#: ufraw.c:74
+#: ufraw.c:73
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
 "Udtrækning af indlejret billede er ikke understøttet i interaktivt modus"
@@ -149,7 +145,7 @@ msgstr ""
 "Kan ikke åbne ID-fil %s for indlæsning\n"
 "%s\n"
 
-#: ufraw_conf.c:596 ufraw_routines.c:380
+#: ufraw_conf.c:596 ufraw_routines.c:381
 #, c-format
 msgid ""
 "Error parsing '%s'\n"
@@ -1364,12 +1360,12 @@ msgstr "Undereksponeret:"
 msgid "Options"
 msgstr "Tilvalg"
 
-#: ufraw_preview.c:4392
+#: ufraw_preview.c:4395
 #, c-format
 msgid "Filename: %s%s"
 msgstr "Filnavn: %s%s"
 
-#: ufraw_preview.c:4393
+#: ufraw_preview.c:4396
 msgid ""
 "\n"
 "Create also ID file"
@@ -1377,7 +1373,7 @@ msgstr ""
 "\n"
 "Dan også ID-fil"
 
-#: ufraw_preview.c:4394
+#: ufraw_preview.c:4397
 msgid ""
 "\n"
 "Create only ID file"
@@ -1385,11 +1381,11 @@ msgstr ""
 "\n"
 "Dan kun ID-fil"
 
-#: ufraw_preview.c:4420
+#: ufraw_preview.c:4424
 msgid "Send image to Gimp"
 msgstr "Send billede til Gimp"
 
-#: ufraw_preview.c:4434
+#: ufraw_preview.c:4438
 msgid "Loading preview"
 msgstr "Indlæser forhåndsvisning"
 
@@ -1397,22 +1393,22 @@ msgstr "Indlæser forhåndsvisning"
 msgid "Fatal error setting C locale"
 msgstr "Fatal fejl ved indstilling af C-lokalisering"
 
-#: ufraw_routines.c:286
+#: ufraw_routines.c:287
 #, c-format
 msgid "Curve version is not supported"
 msgstr "Kurveversion er ikke understøttet"
 
-#: ufraw_routines.c:353 ufraw_routines.c:427
+#: ufraw_routines.c:354 ufraw_routines.c:428
 #, c-format
 msgid "Invalid Nikon curve file '%s'"
 msgstr "Ugyldig Nikon kurvefil '%s'"
 
-#: ufraw_routines.c:369
+#: ufraw_routines.c:370
 #, c-format
 msgid "Error opening Curve file '%s': %s"
 msgstr "Fejl ved åbning af kurvefil '%s': %s"
 
-#: ufraw_routines.c:436
+#: ufraw_routines.c:437
 #, c-format
 msgid "Error opening file '%s': %s"
 msgstr "Fejl ved åbning af fil '%s': %s"

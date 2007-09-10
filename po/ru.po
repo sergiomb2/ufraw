@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-22 19:45+0200\n"
+"POT-Creation-Date: 2007-09-10 17:30+0200\n"
 "PO-Revision-Date: 2007-07-22 19:21+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@gnome.org>\n"
@@ -51,15 +51,11 @@ msgstr "н"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: переписать '%s'?"
 
-#: ufraw.c:65
-msgid "--output option is valid only in batch mode"
-msgstr "ключ --output используется только в пакетном режиме"
-
-#: ufraw.c:70
+#: ufraw.c:69
 msgid "--silent option is valid only in batch mode"
 msgstr "ключ --silent используется только в пакетном режиме"
 
-#: ufraw.c:74
+#: ufraw.c:73
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
 "Извлечение встроенного изображения не поддерживается в интерактивном режиме"
@@ -156,7 +152,7 @@ msgstr ""
 "Невозможно открыть ID-файл %s для чтения\n"
 "%s\n"
 
-#: ufraw_conf.c:596 ufraw_routines.c:380
+#: ufraw_conf.c:596 ufraw_routines.c:381
 #, c-format
 msgid ""
 "Error parsing '%s'\n"
@@ -1404,14 +1400,14 @@ msgstr "Недоэкспонировано:"
 msgid "Options"
 msgstr "Параметры"
 
-#: ufraw_preview.c:4392
+#: ufraw_preview.c:4395
 #, fuzzy, c-format
 msgid "Filename: %s%s"
 msgstr ""
 "Имя файла: %s\n"
 "Размер: %d x %d%s"
 
-#: ufraw_preview.c:4393
+#: ufraw_preview.c:4396
 msgid ""
 "\n"
 "Create also ID file"
@@ -1419,7 +1415,7 @@ msgstr ""
 "\n"
 "Дополнительно создать ID-файл"
 
-#: ufraw_preview.c:4394
+#: ufraw_preview.c:4397
 msgid ""
 "\n"
 "Create only ID file"
@@ -1427,11 +1423,11 @@ msgstr ""
 "\n"
 "Создать только ID-файл"
 
-#: ufraw_preview.c:4420
+#: ufraw_preview.c:4424
 msgid "Send image to Gimp"
 msgstr ""
 
-#: ufraw_preview.c:4434
+#: ufraw_preview.c:4438
 msgid "Loading preview"
 msgstr "Загружается предосмотр"
 
@@ -1439,22 +1435,22 @@ msgstr "Загружается предосмотр"
 msgid "Fatal error setting C locale"
 msgstr "Критическая ошибка при установке локали С"
 
-#: ufraw_routines.c:286
+#: ufraw_routines.c:287
 #, c-format
 msgid "Curve version is not supported"
 msgstr "Версия кривой не поддерживается"
 
-#: ufraw_routines.c:353 ufraw_routines.c:427
+#: ufraw_routines.c:354 ufraw_routines.c:428
 #, c-format
 msgid "Invalid Nikon curve file '%s'"
 msgstr "Неправильный файл кривой Nikon '%s'"
 
-#: ufraw_routines.c:369
+#: ufraw_routines.c:370
 #, c-format
 msgid "Error opening Curve file '%s': %s"
 msgstr "Ошибка открытия файла кривой '%s': %s"
 
-#: ufraw_routines.c:436
+#: ufraw_routines.c:437
 #, c-format
 msgid "Error opening file '%s': %s"
 msgstr "Ошибка открытия файла '%s': %s"
