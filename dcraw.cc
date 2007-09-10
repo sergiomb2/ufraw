@@ -8044,7 +8044,6 @@ cleanup:
 int main(int argc, char **argv)
 {
     DCRaw *d = new DCRaw;
-    d->main(argc, argv);
-    return 0;
+    return d->main(argc, argv);
 }
 #endif /*DCRAW_NOMAIN*/ /*UF*/
