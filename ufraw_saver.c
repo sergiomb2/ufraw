@@ -32,6 +32,7 @@ typedef struct {
     GtkToggleButton *tiffButton;
     GtkToggleButton *jpegButton;
     GtkToggleButton *pngButton;
+    GtkToggleButton *fitsButton;
 } save_as_dialog_data;
 
 #if GTK_CHECK_VERSION(2,6,0)
@@ -82,6 +83,12 @@ void ufraw_saver_set_type(GtkWidget *widget, save_as_dialog_data *data)
     if ( !strcmp(type,".png") ) {
 	data->uf->conf->type = png8_type;
 	gtk_toggle_button_set_active(data->pngButton, TRUE);
+    }
+#endif
+#ifdef HAVE_LIBCFITSIO
+    if ( !strcmp(type,".fits") ) {
+	data->uf->conf->type = fits_type;
+	gtk_toggle_button_set_active(data->fitsButton, TRUE);
     }
 #endif
     g_free(filename);
@@ -193,6 +200,7 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
     g_signal_connect(G_OBJECT(button), "toggled",
 	    G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
     gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);
+
 #ifdef HAVE_LIBTIFF
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
     table = gtk_table_new(5, 1, FALSE);
@@ -275,6 +283,19 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
 	    G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
     gtk_table_attach(GTK_TABLE(table), button, 0, 1, 1, 2, 0, 0, 0, 0);
 #endif /*HAVE_LIBPNG*/
+#ifdef HAVE_LIBCFITSIO
+    gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
+
+    button = gtk_radio_button_new_with_label_from_widget(
+	    GTK_RADIO_BUTTON(button), _("Flexible Image Transport System (FITS)"));
+    data->fitsButton = GTK_TOGGLE_BUTTON(button);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
+	    uf->conf->type==fits_type);
+    g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)fits_type);
+    g_signal_connect(G_OBJECT(button), "toggled",
+	    G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
+    gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);
+#endif
 
 #ifdef HAVE_EXIV2
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);

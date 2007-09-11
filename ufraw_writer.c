@@ -32,6 +32,11 @@
 #endif
 #include "ufraw.h"
 
+#ifdef HAVE_LIBCFITSIO
+#include <unistd.h>
+#include "fitsio.h"
+#endif
+
 #ifdef HAVE_LIBTIFF
 // There seem to be no way to get the libtiff message without a static variable
 static char ufraw_tiff_message[max_path];
@@ -80,6 +85,42 @@ ufraw_private_function void jpeg_error_handler(j_common_ptr cinfo)
 }
 #endif /*HAVE_LIBJPEG*/
 
+#ifdef HAVE_LIBCFITSIO
+ufraw_private_function int fits_set_keys(
+    fitsfile *ff, ufraw_data *uf, char *chan, float max, float min, int *status)
+{
+    fits_update_key(ff, TSTRING, "CHANNEL", chan,
+	    "red, green or blue channel", status);
+    fits_update_key(ff, TFLOAT, "DATAMIN", &min,
+	    "minimum data in the data set", status);
+    fits_update_key(ff, TFLOAT, "DATAMAX", &max,
+	    "maximum data in the data set", status);
+
+    // EXIF properties
+    fits_update_key(ff, TSTRING, "EXPOSURE", &uf->conf->shutterText,
+	    "Exposure Time", status);
+    fits_update_key(ff, TSTRING, "ISO", &uf->conf->isoText,
+	    "ISO Speed", status);
+    fits_update_key(ff, TSTRING, "APERTURE", &uf->conf->apertureText,
+	    "Aperture", status);
+    fits_update_key(ff, TSTRING, "FOCALLEN", &uf->conf->focalLenText,
+	    "Focal Length", status);
+    // TODO: This must be in special time format
+    fits_update_key(ff, TSTRING, "DATE-OBS", &uf->conf->timestamp,
+	    "Observation Date", status);
+    fits_update_key(ff, TSTRING, "MANUFRAC", &uf->conf->make,
+	    "Manufractor of the Camera", status);
+    fits_update_key(ff, TSTRING, "INSTRUME", &uf->conf->model,
+	    "Camera Model", status);
+
+    // Creator Ufraw
+    fits_update_key(ff, TSTRING, "CREATOR",  "UFRaw" VERSION,
+	    "Creator Software", status);
+
+    return *status;
+}
+#endif /* HAVE_LIBCFITSIO */
+
 #ifdef HAVE_LIBPNG
 ufraw_private_function void png_error_handler(png_structp png,
     png_const_charp error_msg)
@@ -105,6 +146,9 @@ int ufraw_write_image(ufraw_data *uf)
 {
     /* 'volatile' supresses clobbering warning */
     void * volatile out; /* out is a pointer to FILE or TIFF */
+#ifdef HAVE_LIBCFITSIO
+    fitsfile *fitsFile;
+#endif
     int width, height, row, rowStride, i;
     int left, top;
     image_type *rawImage;
@@ -145,6 +189,32 @@ int ufraw_write_image(ufraw_data *uf)
 	    ufraw_tiff_message[0] = '\0';
 	    return ufraw_get_status(uf);
 	}
+    } else
+#endif
+#ifdef HAVE_LIBCFITSIO
+    if ( uf->conf->type==fits_type ) {
+	if ( strcmp(uf->conf->outputFilename, "-")!=0 ) {
+	    if ( g_file_test(uf->conf->outputFilename, G_FILE_TEST_EXISTS) ) {
+		if ( unlink(uf->conf->outputFilename) ) {
+		    ufraw_set_error(uf, _("Error creating file '%s'."),
+			    uf->conf->outputFilename);
+		    ufraw_set_error(uf, g_strerror(errno));
+		    return ufraw_get_status(uf);
+		}
+	    }
+	}
+	int status;
+        fits_create_file(&fitsFile, uf->conf->outputFilename, &status);
+        if ( status ) {
+	    ufraw_set_error(uf, _("Error creating file '%s'."),
+		    uf->conf->outputFilename);
+	    char errBuffer[max_name];
+	    fits_get_errstatus(status, errBuffer);
+	    ufraw_set_error(uf, errBuffer);
+	    while (fits_read_errmsg(errBuffer))
+		ufraw_set_error(uf, errBuffer);
+	    return ufraw_get_status(uf);
+        }
     } else
 #endif
     {
@@ -414,6 +484,76 @@ int ufraw_write_image(ufraw_data *uf)
 	    png_destroy_write_struct(&png, &info);
 	}
 #endif /*HAVE_LIBPNG*/
+#ifdef HAVE_LIBCFITSIO
+    } else if ( uf->conf->type==fits_type ) {
+
+        // image data and min/max values
+        guint16 *fr, *fg, *fb;
+        guint16 rmax, rmin, gmax, gmin, bmax, bmin;
+        rmin = gmin = bmin = 65535;
+        rmax = gmax = bmax = 0 ;
+
+        fr   = (guint16 *) malloc (width * height * sizeof(guint16));
+        fg   = (guint16 *) malloc (width * height * sizeof(guint16));
+        fb   = (guint16 *) malloc (width * height * sizeof(guint16));
+
+        for (row=0; row<height; row++) {
+            if (row%100==99)
+                preview_progress(uf->widget, _("Saving image"),
+                    0.5 + 0.5*row/height);
+            develope(pixbuf16, rawImage[(top+row)*rowStride+left],
+                    uf->developer, 16, pixbuf16, width);
+            for (i=0; i < width; i++)
+            {
+		develop_linear(rawImage[(top+row)*rowStride+left+i], pixbuf16,
+			uf->developer);
+                // red channel
+                fr[row*width + i] = pixbuf16[0];
+		rmax = MAX(pixbuf16[0], rmax);
+		rmin = MIN(pixbuf16[0], rmin);
+
+                // green channel
+                fg[row*width + i] = pixbuf16[1];
+		gmax = MAX(pixbuf16[1], gmax);
+		gmin = MIN(pixbuf16[1], gmin);
+
+                // blue channel
+                fb[row*width + i] = pixbuf16[2];
+		bmax = MAX(pixbuf16[2], bmax);
+		bmin = MIN(pixbuf16[2], bmin);
+            }
+        }
+        // FITS Header (taken from cookbook.c)
+        int bitpix = USHORT_IMG;        // Use float format
+        int naxis  = 2;                 // 2-dimensional image
+        long naxes[2]  = { width, height };
+        int status = 0;                 // status variable for fitsio
+
+        fits_create_img(fitsFile, bitpix, naxis, naxes, &status);
+        fits_set_keys(fitsFile, uf, "RED", rmax, rmin, &status);
+        fits_write_img(fitsFile, TUSHORT, 1, width*height, fr, &status);
+
+        fits_create_img(fitsFile, bitpix, naxis, naxes, &status);
+        fits_set_keys(fitsFile, uf, "GREEN", gmax, gmin, &status);
+        fits_write_img(fitsFile, TUSHORT, 1, width*height, fg, &status);
+
+        fits_create_img(fitsFile, bitpix, naxis, naxes, &status);
+        fits_set_keys(fitsFile, uf, "BLUE", bmax, bmin, &status);
+        fits_write_img(fitsFile, TUSHORT, 1, width*height, fb, &status);
+
+        fits_close_file(fitsFile, &status);
+
+        if ( status ) {
+	    ufraw_set_error(uf, _("Error creating file '%s'."),
+		    uf->conf->outputFilename);
+	    char errBuffer[max_name];
+	    fits_get_errstatus(status, errBuffer);
+	    ufraw_set_error(uf, errBuffer);
+	    while (fits_read_errmsg(errBuffer))
+		ufraw_set_error(uf, errBuffer);
+	    return ufraw_get_status(uf);
+        }
+#endif /* HAVE_LIBCFITSIO */
     } else {
 	ufraw_set_error(uf, _("Error creating file '%s'."),
 		uf->conf->outputFilename);
@@ -432,6 +572,11 @@ int ufraw_write_image(ufraw_data *uf)
 	    ufraw_tiff_message[0] = '\0';
 	}
     } else
+#endif
+#ifdef HAVE_LIBCFITSIO
+    // Dummy to prevent fclose
+    if ( uf->conf->type==fits_type ) {}
+    else
 #endif
     {
 	if (strcmp(uf->conf->outputFilename, "-"))

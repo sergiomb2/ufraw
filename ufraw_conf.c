@@ -1258,7 +1258,7 @@ N_("The options which are related to the final output are:\n"),
 "\n",
 N_("--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"),
 N_("--size=SIZE           Downsize max(height,width) to SIZE.\n"),
-N_("--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg\n"
+N_("--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
 "                      Output file format (default ppm8).\n"),
 N_("--create-id=no|also|only\n"
 "                      Create no|also|only ID file (default no).\n"),
@@ -1303,6 +1303,13 @@ EXV_PACKAGE_VERSION "\n"
 
 "TIFF "
 #ifdef HAVE_LIBTIFF
+"enabled.\n"
+#else
+"disabled.\n"
+#endif
+
+"FITS "
+#ifdef HAVE_LIBCFITSIO
 "enabled.\n"
 #else
 "disabled.\n"
@@ -1624,7 +1631,13 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
             cmd->type = ppm8_type;
         else if (!strcmp(outTypeName, "ppm16"))
             cmd->type = ppm16_type;
+#ifdef HAVE_LIBCFITSIO
+        else if (!strcmp(outTypeName, "fits"))
+            cmd->type = fits_type;
+#endif
+
         else if (!strcmp(outTypeName, "tiff8"))
+
 #ifdef HAVE_LIBTIFF
         cmd->type = tiff8_type;
 #else
@@ -1691,6 +1704,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         else if ( strcmp(outTypeName, "png")==0 )
 	    cmd->type = embedded_png_type;
 #endif
+
 	else {
             ufraw_message(UFRAW_ERROR,
 		    _("'%s' is not a valid output type for embedded image."),

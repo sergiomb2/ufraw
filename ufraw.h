@@ -54,7 +54,8 @@ enum { manual_curve, linear_curve, custom_curve, camera_curve };
 enum { in_profile, out_profile, display_profile, profile_types};
 enum { raw_expander, live_expander, expander_count };
 enum { ppm8_type, ppm16_type, tiff8_type, tiff16_type, jpeg_type,
-       png8_type, png16_type, embedded_jpeg_type, embedded_png_type };
+       png8_type, png16_type, embedded_jpeg_type, embedded_png_type,
+       fits_type};
 enum { clip_details, restore_lch_details, restore_hsv_details,
        restore_types };
 enum { digital_highlights, film_highlights, highlights_types };

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.86 2007/08/11 06:15:33 nkbj Exp $
+dnl $Id: configure.ac,v 1.87 2007/09/11 20:59:27 udifuchs Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -150,6 +150,16 @@ AC_CHECK_HEADER(tiffio.h,
   AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
 have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
 
+# Check for fits headers and library.
+## You need to un-comment the next two lines to enable FITS support.
+## The reason for disabling this feature in hardcode is that the FITS
+## output is not final yet. If you use this feature, you should be
+## aware of the fact that future version of UFRaw would create
+## different FITS files.
+#AC_CHECK_HEADER(fitsio.h,
+#  AC_CHECK_LIB(cfitsio, ffcmsg))
+have_fits=${ac_cv_lib_cfitsio_ffcmsg:-no}
+
 PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
   [ have_exiv2=yes
     AC_DEFINE(HAVE_EXIV2, 1, have exiv2) ],
@@ -235,6 +245,7 @@ AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint)
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(PNG support: $have_png)
+AC_MSG_NOTICE(FITS support: $have_fits)
 AC_MSG_NOTICE(TIFF support: $have_tiff)
 AC_MSG_NOTICE(gzip compressed raw support: $have_zlib)
 AC_MSG_NOTICE(bzip2 compressed raw support: $have_libbz2)
