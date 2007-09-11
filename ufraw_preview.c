@@ -157,6 +157,9 @@ typedef struct {
     GtkEntry *AspectEntry;
     /* Mouse coordinates in previous frame (used when dragging crop area) */
     int OldMouseX, OldMouseY;
+    /* True if the highlight blink function is enabled */
+    gboolean BlinkHighlights;
+    int OverUnderTicker;
 } preview_data;
 
 /* These #defines are not very elegant, but otherwise things get tooo long */
@@ -655,10 +658,10 @@ void redraw_navigation_image(preview_data *data)
 #endif
 }
 
-#ifdef HAVE_GTKIMAGEVIEW
-void image_view_draw_area(GtkImageView *view,
-	int x, int y, int width, int height)
+void image_draw_area(GtkWidget *widget, int x, int y, int width, int height)
 {
+#ifdef HAVE_GTKIMAGEVIEW
+    GtkImageView *view = GTK_IMAGE_VIEW(widget);
     /* Find location of area in the view. */
     GdkRectangle viewRect;
     gtk_image_view_get_viewport(view, &viewRect);
@@ -668,21 +671,23 @@ void image_view_draw_area(GtkImageView *view,
     int viewWidth = GTK_WIDGET(view)->allocation.width;
     int viewHeight = GTK_WIDGET(view)->allocation.height;
     if ( pixbufWidth>viewWidth ) {
-	if (x<viewRect.x) width += x - viewRect.x;
+	if (x<viewRect.x)
+	    width += x - viewRect.x;
 	x = MAX(x-viewRect.x, 0);
     } else {
 	x += (viewWidth - pixbufWidth) / 2;
     }
     if ( pixbufHeight>viewHeight ) {
-	if (y<viewRect.y) height += y - viewRect.y;
+	if (y<viewRect.y)
+	    height += y - viewRect.y;
 	y = MAX(y-viewRect.y, 0);
     } else {
 	y += (viewHeight - pixbufHeight) / 2;
     }
-    if ( height>0 && width>0 )
-        gtk_widget_queue_draw_area(GTK_WIDGET(view), x, y, width, height);
-}
 #endif
+    if ( height>0 && width>0 )
+        gtk_widget_queue_draw_area(widget, x, y, width, height);
+}
 
 /* Modify the preview image to mark crop and spot areas.
  * Note that all coordinate intervals are semi-inclusive, e.g.
@@ -747,26 +752,22 @@ void preview_draw_area(preview_data *data, int x, int y, int width, int height)
 		continue;
 	    }
 	    if (data->RenderMode==render_default) {
-		if ( CFG->overExp && (p8[0]==255 || p8[1]==255 || p8[2]==255) )
+		if ( CFG->overExp && (data->OverUnderTicker & 3) == 1 &&
+		     (p8[0]==255 || p8[1]==255 || p8[2]==255) )
 		    p8[0] = p8[1] = p8[2] = 0;
-		else if ( CFG->underExp && (p8[0]==0 || p8[1]==0 || p8[2]==0) )
+		else if ( CFG->underExp && (data->OverUnderTicker & 3) == 3 &&
+			  (p8[0]==0 || p8[1]==0 || p8[2]==0) )
 		    p8[0] = p8[1] = p8[2] = 255;
 		continue;
-	    }
-	    if (data->RenderMode==render_overexposed) {
+	    } else if (data->RenderMode==render_overexposed) {
 		for (c=0; c<3; c++) if (p8[c]!=255) p8[c] = 0;
 	    } else if (data->RenderMode==render_underexposed) {
 		for (c=0; c<3; c++) if (p8[c]!=0) p8[c] = 255;
 	    }
 	}
     }
-#ifdef HAVE_GTKIMAGEVIEW
     /* Redraw the changed areas */
-    image_view_draw_area(GTK_IMAGE_VIEW(data->PreviewWidget), x, y, width, height);
-#else
-    gtk_widget_queue_draw_area(data->PreviewWidget,
-	    x, y, width, height);
-#endif
+    image_draw_area(data->PreviewWidget, x, y, width, height);
 }
 
 void preview_notify_dirty(preview_data *data)
@@ -794,6 +795,44 @@ void preview_notify_dirty(preview_data *data)
 #else
     (void)data;
 #endif
+}
+
+gboolean switch_highlights(gpointer ptr)
+{
+    preview_data *data = ptr;
+    if (data->RenderMode!=render_default)
+	return TRUE;
+    int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    if (data->RenderLine==MAX(pixbufHeight, pixbufWidth)) {
+	float scale_x = ((float)pixbufWidth) / data->UF->initialWidth;
+	float scale_y = ((float)pixbufHeight) / data->UF->initialHeight;
+#ifdef HAVE_GTKIMAGEVIEW
+	GdkRectangle viewRect;
+	gtk_image_view_get_viewport(GTK_IMAGE_VIEW(data->PreviewWidget),
+		&viewRect);
+	
+	int x = MAX(viewRect.x, floor(CFG->CropX1 * scale_x));
+	int x2 = MIN(viewRect.x+viewRect.width, ceil(CFG->CropX2 * scale_x));
+	int width =  MAX(x2 - x, 0);
+	int y = MAX(viewRect.y, floor (CFG->CropY1 * scale_y));
+	int y2 = MIN(viewRect.y+viewRect.height, ceil(CFG->CropY2 * scale_y));
+	int height =  MAX(y2 - y, 0);
+#else
+	int x = floor(CFG->CropX1 * scale_x);
+	int width =  ceil(CFG->CropX2 * scale_x) - x;
+	int y = floor (CFG->CropY1 * scale_y);
+	int height =  ceil(CFG->CropY2 * scale_x) - y;
+#endif
+	data->OverUnderTicker++;
+	preview_draw_area(data, x, y, width, height);
+	preview_notify_dirty(data);
+    }
+    if (!CFG->overExp && !CFG->underExp) {
+	data->BlinkHighlights = FALSE;
+	return FALSE;
+    }
+    return TRUE;
 }
 
 void render_preview(preview_data *data);
@@ -2357,10 +2396,10 @@ void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 		CFG->autoExposure = apply_state;
 	}
 	if ( valuep==&CFG->overExp || valuep==&CFG->underExp ) {
-	    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
-	    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-            preview_draw_area(data, 0, 0, width, height);
-            preview_notify_dirty(data);
+	    if ((CFG->overExp || CFG->underExp) && !data->BlinkHighlights) {
+		data->BlinkHighlights = TRUE;
+		g_timeout_add(500, switch_highlights, data);
+	    }
 	} else {
 	    render_preview(data);
 	}
@@ -4465,6 +4504,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->RenderMode = render_default;
     update_crop_ranges(data);
     update_scales(data);
+
+    data->OverUnderTicker = 0;
+    data->BlinkHighlights = CFG->overExp || CFG->underExp;
+    if ( data->BlinkHighlights )
+	g_timeout_add(500, switch_highlights, data);
 
     gtk_main();
     status = (long)g_object_get_data(G_OBJECT(previewWindow),
