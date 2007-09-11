@@ -124,6 +124,7 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
     GtkWidget *exifButton;
 #endif
     GtkAdjustment *compressAdj;
+    GtkWidget *progressiveButton;
 #endif
     int status;
     save_as_dialog_data DialogData, *data = &DialogData;
@@ -224,7 +225,7 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
 #endif /*HAVE_LIBTIFF*/
 #ifdef HAVE_LIBJPEG
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
-    table = gtk_table_new(5, 1, FALSE);
+    table = gtk_table_new(5, 2, FALSE);
     gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
     button = gtk_radio_button_new_with_label_from_widget(
 	    GTK_RADIO_BUTTON(button), "JPEG");
@@ -245,6 +246,10 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
     widg = gtk_spin_button_new(compressAdj, 5, 0);
     gtk_table_attach(GTK_TABLE(table), widg, 3, 4, 1, 2, 0, 0, 0, 0);
+    progressiveButton = gtk_check_button_new_with_label(_("Progressive encoding"));
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(progressiveButton),
+    				 uf->conf->progressiveJPEG);
+    gtk_table_attach(GTK_TABLE(table), progressiveButton, 1, 2, 2, 3, 0, 0, 0, 0);
 #endif /*HAVE_LIBJPEG*/
 #ifdef HAVE_LIBPNG
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
@@ -348,6 +353,8 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
 	uf->conf->embedExif = gtk_toggle_button_get_active(
 		GTK_TOGGLE_BUTTON(exifButton));
 #endif
+	uf->conf->progressiveJPEG = gtk_toggle_button_get_active(
+		GTK_TOGGLE_BUTTON(progressiveButton));
 #endif
 	if ( !uf->conf->overwrite && uf->conf->createID!=only_id
 	   && g_file_test(filename, G_FILE_TEST_EXISTS) ) {
