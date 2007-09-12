@@ -21,7 +21,6 @@
 #include <sys/wait.h>
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
-#include <locale.h>
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
@@ -480,5 +479,7 @@ long ufraw_send_to_gimp(ufraw_data *uf)
 	return UFRAW_ERROR;
     }
     g_free(commandLine);
+    // Sleep for 0.2 seconds, giving time for gimp-remote to do the X query.
+    g_usleep(200*1000);
     return UFRAW_SUCCESS;
 }
