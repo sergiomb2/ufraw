@@ -157,10 +157,12 @@ typedef struct {
     GtkEntry *AspectEntry;
     /* Mouse coordinates in previous frame (used when dragging crop area) */
     int OldMouseX, OldMouseY;
-    /* True if the highlight blink function is enabled */
-    gboolean BlinkHighlights;
     int OverUnderTicker;
 } preview_data;
+
+/* Set to the event source number if the highlight blink function is
+ * enabled.  This variable must be static. */
+static guint blink_timer;
 
 /* These #defines are not very elegant, but otherwise things get tooo long */
 #define CFG data->UF->conf
@@ -800,13 +802,15 @@ void preview_notify_dirty(preview_data *data)
 gboolean switch_highlights(gpointer ptr)
 {
     preview_data *data = ptr;
-    if (data->RenderMode!=render_default)
+    /* Only redraw the highlights in the default rendering mode. */
+    if (data->RenderMode!=render_default || data->FreezeDialog)
 	return TRUE;
     int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
     if (data->RenderLine==MAX(pixbufHeight, pixbufWidth)) {
 	float scale_x = ((float)pixbufWidth) / data->UF->initialWidth;
 	float scale_y = ((float)pixbufHeight) / data->UF->initialHeight;
+	/* Set the area to redraw based on the crop rectangle and view port. */
 #ifdef HAVE_GTKIMAGEVIEW
 	GdkRectangle viewRect;
 	gtk_image_view_get_viewport(GTK_IMAGE_VIEW(data->PreviewWidget),
@@ -828,11 +832,52 @@ gboolean switch_highlights(gpointer ptr)
 	preview_draw_area(data, x, y, width, height);
 	preview_notify_dirty(data);
     }
+    /* If no highlights are needed, disable this timeout function. */
     if (!CFG->overExp && !CFG->underExp) {
-	data->BlinkHighlights = FALSE;
+        blink_timer = 0;
 	return FALSE;
     }
     return TRUE;
+}
+
+static void start_blink(preview_data *data)
+{
+    if (!blink_timer) {
+	blink_timer = g_timeout_add(500, switch_highlights, data);
+    }
+}
+
+static void stop_blink(preview_data *data)
+{
+    if (blink_timer) {
+	if (data) {
+	    data->OverUnderTicker = 0;
+	    switch_highlights(data);
+	}
+	g_source_remove(blink_timer);
+	blink_timer = 0;
+    }
+}
+
+static void window_map_event(GtkWidget *widget, GdkEvent *event,
+			     gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    if (CFG->overExp || CFG->underExp)
+	start_blink(data);
+    else
+	stop_blink(data);
+    (void)event;
+    (void)user_data;
+}
+
+static void window_unmap_event(GtkWidget *widget, GdkEvent *event,
+			       gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    stop_blink(data);
+    (void)event;
+    (void)user_data;
 }
 
 void render_preview(preview_data *data);
@@ -2396,10 +2441,8 @@ void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 		CFG->autoExposure = apply_state;
 	}
 	if ( valuep==&CFG->overExp || valuep==&CFG->underExp ) {
-	    if ((CFG->overExp || CFG->underExp) && !data->BlinkHighlights) {
-		data->BlinkHighlights = TRUE;
-		g_timeout_add(500, switch_highlights, data);
-	    }
+	    if (CFG->overExp || CFG->underExp)
+		start_blink(data);
 	} else {
 	    render_preview(data);
 	}
@@ -3179,6 +3222,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 #endif
     g_signal_connect(G_OBJECT(previewWindow), "delete-event",
             G_CALLBACK(window_delete_event), NULL);
+    g_signal_connect(G_OBJECT(previewWindow), "map-event",
+		     G_CALLBACK(window_map_event), NULL);
+    g_signal_connect(G_OBJECT(previewWindow), "unmap-event",
+		     G_CALLBACK(window_unmap_event), NULL);
     g_object_set_data(G_OBJECT(previewWindow), "Preview-Data", data);
     ufraw_focus(previewWindow, TRUE);
     uf->widget = previewWindow;
@@ -4506,9 +4553,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     update_scales(data);
 
     data->OverUnderTicker = 0;
-    data->BlinkHighlights = CFG->overExp || CFG->underExp;
-    if ( data->BlinkHighlights )
-	g_timeout_add(500, switch_highlights, data);
 
     gtk_main();
     status = (long)g_object_get_data(G_OBJECT(previewWindow),
@@ -4521,6 +4565,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	gdk_cursor_unref(data->Cursor[i]);
     /* Make sure that there are no preview idle task remaining */
     g_idle_remove_by_data(data);
+    stop_blink(0);
 
     /* In interactive mode outputPath is taken into account only once */
     strcpy(uf->conf->outputPath, "");
@@ -4566,3 +4611,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     if (status!=GTK_RESPONSE_OK) return UFRAW_CANCEL;
     return UFRAW_SUCCESS;
 }
+
+/* vim:set shiftwidth=4: */
+/* vim:set softtabstop=4: */
+/* emacs: -*- c-basic-offset: 4 -*- */

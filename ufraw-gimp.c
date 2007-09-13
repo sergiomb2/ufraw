@@ -36,7 +36,9 @@ typedef GimpRunModeType GimpRunMode;
 #define U16_RGB 0
 #define U16_RGB_IMAGE 0
 #endif
+#if GLIB_CHECK_VERSION(2,6,0)
 #include <glib/gstdio.h>
+#endif
 #if !GLIB_CHECK_VERSION(2,10,0)
 #include <unistd.h> // For unlink
 #endif

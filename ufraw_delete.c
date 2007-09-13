@@ -15,11 +15,12 @@
 #endif
 #include <string.h>
 #include <gtk/gtk.h>
+#if GLIB_CHECK_VERSION(2,6,0)
 #include <glib/gstdio.h>
+#endif
 #if !GLIB_CHECK_VERSION(2,10,0)
 #include <unistd.h> // For unlink
 #endif
-#include <locale.h>
 #include <glib/gi18n.h>
 #include "ufraw.h"
 

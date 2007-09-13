@@ -19,8 +19,10 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <glib/gstdio.h>
 #include <gtk/gtk.h>
+#if GLIB_CHECK_VERSION(2,6,0)
+#include <glib/gstdio.h>
+#endif
 #include <glib/gi18n.h>
 #include "ufraw.h"
 

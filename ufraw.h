@@ -29,6 +29,11 @@
 /* An impossible value for conf float values */
 #define NULLF -10000.0
 
+#if !GLIB_CHECK_VERSION(2,6,0)
+#define g_unlink unlink
+#define g_rename rename
+#endif
+
 /* Options, like auto-adjust buttons can be in 3 states. Enabled and disabled
  * are obvious. Apply means that the option was selected and some function
  * has to act accourdingly, before changing to one of the first two states */
