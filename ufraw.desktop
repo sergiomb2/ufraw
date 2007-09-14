@@ -15,9 +15,8 @@ Encoding=UTF-8
 Version=1.0
 
 Type=Application
-Categories=Application;Graphics;Photography;GTK;
+Categories=Graphics;Photography;GTK;
 
-FilePattern=ufraw
 Exec=ufraw %U
 TryExec=ufraw
 Terminal=false
