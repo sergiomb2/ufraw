@@ -158,11 +158,10 @@ typedef struct {
     /* Mouse coordinates in previous frame (used when dragging crop area) */
     int OldMouseX, OldMouseY;
     int OverUnderTicker;
+    /* The event source number when the highlight blink function is enabled. */
+    guint BlinkTimer;
 } preview_data;
 
-/* Set to the event source number if the highlight blink function is
- * enabled.  This variable must be static. */
-static guint blink_timer;
 
 /* These #defines are not very elegant, but otherwise things get tooo long */
 #define CFG data->UF->conf
@@ -834,7 +833,7 @@ gboolean switch_highlights(gpointer ptr)
     }
     /* If no highlights are needed, disable this timeout function. */
     if (!CFG->overExp && !CFG->underExp) {
-        blink_timer = 0;
+        data->BlinkTimer = 0;
 	return FALSE;
     }
     return TRUE;
@@ -842,20 +841,18 @@ gboolean switch_highlights(gpointer ptr)
 
 static void start_blink(preview_data *data)
 {
-    if (!blink_timer) {
-	blink_timer = g_timeout_add(500, switch_highlights, data);
+    if (!data->BlinkTimer) {
+	data->BlinkTimer = g_timeout_add(500, switch_highlights, data);
     }
 }
 
 static void stop_blink(preview_data *data)
 {
-    if (blink_timer) {
-	if (data) {
-	    data->OverUnderTicker = 0;
-	    switch_highlights(data);
-	}
-	g_source_remove(blink_timer);
-	blink_timer = 0;
+    if (data->BlinkTimer) {
+	data->OverUnderTicker = 0;
+	switch_highlights(data);
+	g_source_remove(data->BlinkTimer);
+	data->BlinkTimer = 0;
     }
 }
 
@@ -4565,8 +4562,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	gdk_cursor_unref(data->Cursor[i]);
     /* Make sure that there are no preview idle task remaining */
     g_idle_remove_by_data(data);
-    stop_blink(0);
-
+    if (data->BlinkTimer) {
+	g_source_remove(data->BlinkTimer);
+	data->BlinkTimer = 0;
+    }
     /* In interactive mode outputPath is taken into account only once */
     strcpy(uf->conf->outputPath, "");
 
