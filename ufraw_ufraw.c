@@ -459,14 +459,14 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     return UFRAW_SUCCESS;
 }
 
-void ufraw_substract_darkframe(ufraw_data *uf)
+void ufraw_subtract_darkframe(ufraw_data *uf)
 {
     dcraw_data *df = uf->conf->darkframe->raw;
     dcraw_data *org = uf->raw;
     int i, cl;
 
     if (org->raw.width!=df->raw.width &&
-        org->raw.width!=df->raw.width &&
+        org->raw.height!=df->raw.height &&
         org->raw.colors!=df->raw.colors){
 
         ufraw_message(UFRAW_SET_WARNING,
@@ -513,7 +513,7 @@ int ufraw_load_raw(ufraw_data *uf)
      * calculate uf->rgbMax first */
     uf->rgbMax = raw->rgbMax - raw->black;
     if (uf->conf->darkframe!=NULL)
-        ufraw_substract_darkframe(uf);
+        ufraw_subtract_darkframe(uf);
     memcpy(uf->rgb_cam, raw->rgb_cam, sizeof uf->rgb_cam);
 
     /* Canon EOS cameras require special exposure normalization */
