@@ -3187,6 +3187,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     data->AspectRatio = 0.0;
     data->LockAspect = FALSE;
+    data->BlinkTimer = 0;
 
     data->ToolTips = gtk_tooltips_new();
 #if GTK_CHECK_VERSION(2,10,0)
