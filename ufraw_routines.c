@@ -17,9 +17,12 @@
 #if defined(HAVE_CANONICALIZE_FILE_NAME) && !defined(_GNU_SOURCE)
 #define _GNU_SOURCE /* needed for canonicalize_file_name() */
 #endif
+
+#include <errno.h>
+#include <locale.h>
 #include <stdlib.h> /* needed for canonicalize_file_name() */
 #include <string.h>
-#include <errno.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
 #include "ufraw.h"
