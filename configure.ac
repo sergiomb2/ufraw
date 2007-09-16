@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.87 2007/09/11 20:59:27 udifuchs Exp $
+dnl $Id: configure.ac,v 1.88 2007/09/16 13:21:16 udifuchs Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -67,6 +67,9 @@ PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview >= 1.3,
     AC_DEFINE(HAVE_GTKIMAGEVIEW, 1, have gtk image view) ],
   [ have_gtkimageview=no
     AC_MSG_RESULT($GIMP_PKG_ERRORS) ] )
+PKG_CHECK_MODULES(gtk_image_view_damage_pixels, gtkimageview > 1.5.0,
+  [ AC_DEFINE_UNQUOTED(GTK_IMAGE_VIEW_DAMAGE_PIXELS, 1, temporary) ],
+  [ AC_DEFINE_UNQUOTED(GTK_IMAGE_VIEW_DAMAGE_PIXELS, 0, temporary) ])
 
 # It is not clear if we should install the GIMP and Cinepaint plugins
 # in the corresponding place in our prefix, or in GIMP's or

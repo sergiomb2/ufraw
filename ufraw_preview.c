@@ -643,7 +643,7 @@ void color_labels_set(colorLabels *l, double data[])
 
 void redraw_navigation_image(preview_data *data)
 {
-#ifdef HAVE_GTKIMAGEVIEW
+#if defined(HAVE_GTKIMAGEVIEW) && GTK_IMAGE_VIEW_DAMAGE_PIXELS==0
     GtkWidget *scroll =
 	gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_IMAGE_SCROLL_WIN);
     GtkImageNav *nav = GTK_IMAGE_NAV(GTK_IMAGE_SCROLL_WIN(scroll)->nav);
@@ -659,9 +659,19 @@ void redraw_navigation_image(preview_data *data)
 #endif
 }
 
-void image_draw_area(GtkWidget *widget, int x, int y, int width, int height)
+void image_draw_area(preview_data *data, int x, int y, int width, int height)
 {
+    GtkWidget *widget = data->PreviewWidget;
 #ifdef HAVE_GTKIMAGEVIEW
+#if GTK_IMAGE_VIEW_DAMAGE_PIXELS==1
+    GtkImageView *view = GTK_IMAGE_VIEW(widget);
+    GdkRectangle rect;
+    rect.x = x;
+    rect.y = y;
+    rect.width = width;
+    rect.height = height;
+    gtk_image_view_damage_pixels(view, &rect);
+#else
     GtkImageView *view = GTK_IMAGE_VIEW(widget);
     /* Find location of area in the view. */
     GdkRectangle viewRect;
@@ -685,9 +695,22 @@ void image_draw_area(GtkWidget *widget, int x, int y, int width, int height)
     } else {
 	y += (viewHeight - pixbufHeight) / 2;
     }
-#endif
+//preview_notify_dirty(preview_data *data)
+    /* As a workaround we use the esoteric knowledge of GtkImageView's
+     * internal logic. It will reuse pieces of the cached old pixmap
+     * only if nothing changes in the view, otherwise it will discard
+     * the cache. So we will change the transparency background for our
+     * GtkImageView since anyway it is not seen through.
+     */
+    GTK_IMAGE_VIEW(data->PreviewWidget)->check_color1++;
+
     if ( height>0 && width>0 )
         gtk_widget_queue_draw_area(widget, x, y, width, height);
+#endif
+#else
+    if ( height>0 && width>0 )
+        gtk_widget_queue_draw_area(widget, x, y, width, height);
+#endif
 }
 
 /* Modify the preview image to mark crop and spot areas.
@@ -768,34 +791,7 @@ void preview_draw_area(preview_data *data, int x, int y, int width, int height)
 	}
     }
     /* Redraw the changed areas */
-    image_draw_area(data->PreviewWidget, x, y, width, height);
-}
-
-void preview_notify_dirty(preview_data *data)
-{
-#ifdef HAVE_GTKIMAGEVIEW
-#if 0
-    /* This is the only True Way {tm} to signal GtkImageView that we
-     * have changed the pixmap. If we don't signal about the changes,
-     * GtkImageView can reuse parts of the old cached pixmap which will
-     * result in pretty unpleasant artifacts.
-     */
-
-    /* Signal GtkImageView that the pixbuf has changed */
-    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
-	    data->PreviewPixbuf, FALSE);
-#else
-    /* As a workaround we use the esoteric knowledge of GtkImageView's
-     * internal logic. It will reuse pieces of the cached old pixmap
-     * only if nothing changes in the view, otherwise it will discard
-     * the cache. So we will change the transparency background for our
-     * GtkImageView since anyway it is not seen through.
-     */
-    GTK_IMAGE_VIEW(data->PreviewWidget)->check_color1++;
-#endif
-#else
-    (void)data;
-#endif
+    image_draw_area(data, x, y, width, height);
 }
 
 gboolean switch_highlights(gpointer ptr)
@@ -829,7 +825,6 @@ gboolean switch_highlights(gpointer ptr)
 #endif
 	data->OverUnderTicker++;
 	preview_draw_area(data, x, y, width, height);
-	preview_notify_dirty(data);
     }
     /* If no highlights are needed, disable this timeout function. */
     if (!CFG->overExp && !CFG->underExp) {
@@ -891,7 +886,6 @@ void render_special_mode(GtkWidget *widget, long mode)
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
     preview_draw_area(data, 0, 0, width, height);
-    preview_notify_dirty(data);
 }
 
 void render_init(preview_data *data)
@@ -1083,14 +1077,12 @@ gboolean render_preview_image(preview_data *data)
     ufraw_convert_image_area(data->UF, 0, data->RenderLine, width, tileHeight,
 	    data->fromPhase);
     preview_draw_area(data, 0, data->RenderLine, width, tileHeight);
-    preview_notify_dirty(data);
     data->RenderLine += tileHeight;
     if ( data->RenderLine<height )
         return TRUE;
 
     data->RenderLine = MAX(height, width);
     data->fromPhase = ufraw_final_phase;
-    preview_notify_dirty(data);
     redraw_navigation_image(data);
     g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
             (GSourceFunc)(render_live_histogram), data, NULL);
@@ -1286,7 +1278,6 @@ void draw_spot(preview_data *data, gboolean draw)
     preview_draw_area(data, SpotX1, SpotY2, SpotX2-SpotX1+1, 1);
     preview_draw_area(data, SpotX1, SpotY1, 1, SpotY2-SpotY1+1);
     preview_draw_area(data, SpotX2, SpotY1, 1, SpotY2-SpotY1+1);
-    preview_notify_dirty(data);
 }
 
 void update_shrink_ranges(preview_data *data);
@@ -1767,7 +1758,6 @@ void update_crop_ranges(preview_data *data)
     }
     update_shrink_ranges(data);
     redraw_navigation_image(data);
-    preview_notify_dirty(data);
 }
 
 void crop_reset(GtkWidget *widget, gpointer user_data)
