@@ -338,6 +338,13 @@ const wb_data wb_preset[] = {
   { "KODAK", "P850 ZOOM", Tungsten, 0,		{ 1.140625, 1, 2.726563, 0 } },
   { "KODAK", "P850 ZOOM", Fluorescent, 0,	{ 1.113281, 1, 2.949219, 0 } },
 
+  { "Leica Camera AG", "M8 Digital Camera", Cloudy, 0, { 2.136719, 1, 1.168213, 0 } },
+  { "Leica Camera AG", "M8 Digital Camera", Daylight, 0, { 2.007996, 1, 1.268982, 0 } },
+  { "Leica Camera AG", "M8 Digital Camera", Flash, 0, { 2.164490, 1, 1.177795, 0 } },
+  { "Leica Camera AG", "M8 Digital Camera", Fluorescent, 0, { 1.655579, 1, 2.070374, 0 } },
+  { "Leica Camera AG", "M8 Digital Camera", Shade, 0, { 2.197754, 1, 1.111084, 0 } }, 
+  { "Leica Camera AG", "M8 Digital Camera", Tungsten, 0, { 1.160034, 1, 2.028381, 0 } },
+
   { "Leica Camera AG", "R8 - Digital Back DMR", Incandescent, 0, { 1, 1.109985, 2.430664, 0 } },
   { "Leica Camera AG", "R8 - Digital Back DMR", Fluorescent, 0, { 1.234985, 1, 1.791138, 0 } },
   { "Leica Camera AG", "R8 - Digital Back DMR", Daylight, 0, { 1.459961, 1, 1.184937, 0 } },
