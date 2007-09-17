@@ -260,6 +260,8 @@ int dcraw_load_thumb(dcraw_data *h, dcraw_image_data *thumb)
 	h->thumbType = jpeg_thumb_type;
     } else if (d->write_thumb==&DCRaw::ppm_thumb) {
 	h->thumbType = ppm_thumb_type;
+	// Copied from dcraw's ppm_thumb()
+	h->thumbBufferLength = thumb->width*thumb->height*3;
     } else {
 	dcraw_message(d, DCRAW_ERROR,
 		_("Unsupported thumb format for %s"), d->ifname);

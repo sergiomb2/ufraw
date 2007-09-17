@@ -6231,6 +6231,7 @@ void CLASS identify()
   tiff_bps = 12;
   for (i=0; i < 0x1000; i++) curve[i] = i;
   tone_curve_offset = tone_curve_size = 0; /*UF*/
+  order = 0; // Suppress a valgrind error 
 
   order = get2();
   hlen = get4();
