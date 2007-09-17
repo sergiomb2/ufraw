@@ -237,7 +237,7 @@ void CLASS dcraw_message(int code, const char *format, ...) {
 }
 #endif /*DCRAW_NOMAIN*/
 
-void CLASS merror (void *ptr, char *where)
+void CLASS merror (void *ptr, const char *where)
 {
   if (ptr) return;
   dcraw_message (DCRAW_ERROR,_("%s: Out of memory in %s\n"), ifname, where); /*UF*/
@@ -3254,7 +3254,7 @@ void CLASS bad_pixels()
   fclose (fp);
 }
 
-void CLASS subtract (char *fname)
+void CLASS subtract (const char *fname)
 {
   FILE *fp;
   int dim[3]={0,0,0}, comment=0, number=0, error=0, nd=0, c, row, col;
@@ -5175,7 +5175,8 @@ void CLASS parse_minolta (int base)
  */
 void CLASS parse_external_jpeg()
 {
-  char *file, *ext, *jname, *jfile, *jext;
+  const char *file;
+  char *ext, *jname, *jfile, *jext;
   FILE *save=ifp;
 
   ext  = strrchr (ifname, '.');
@@ -5738,7 +5739,7 @@ void CLASS parse_foveon()
 /*
    Thanks to Adobe for providing these excellent CAM -> XYZ matrices!
  */
-void CLASS adobe_coeff (char *make, char *model)
+void CLASS adobe_coeff (const char *make, const char *model)
 {
   static const struct {
     const char *prefix;
@@ -7256,7 +7257,7 @@ notraw:
 }
 
 #ifndef NO_LCMS
-void CLASS apply_profile (char *input, char *output)
+void CLASS apply_profile (const char *input, const char *output)
 {
   char *prof;
   cmsHPROFILE hInProfile=0, hOutProfile=0;
@@ -7686,21 +7687,22 @@ void CLASS write_ppm_tiff (FILE *ofp)
   free (ppm);
 }
 
-int CLASS main (int argc, char **argv)
+int CLASS main (int argc, const char **argv)
 {
   static int arg, status=0, user_flip=-1, user_black=-1, user_qual=-1;
   static int timestamp_only=0, thumbnail_only=0, identify_only=0;
   static int use_fuji_rotate=1, write_to_stdout=0, quality, i, c;
-  static char opm, opt, *ofname, *sp, *cp, *dark_frame=0;
+  static char opm, opt, *ofname, *cp;
+  static const char *sp, *dark_frame=0;
   static const char *write_ext;
   static struct utimbuf ut;
   static FILE *ofp = stdout;
 #ifndef NO_LCMS
-  static char *cam_profile=0, *out_profile=0;
+  static const char *cam_profile=0, *out_profile=0;
 #endif
 
 #ifndef LOCALTIME
-  putenv ("TZ=UTC");
+  putenv (const_cast<char *>("TZ=UTC"));
 #endif
 #ifdef LOCALEDIR
   setlocale (LC_CTYPE, "");
@@ -7834,7 +7836,7 @@ int CLASS main (int argc, char **argv)
       status = 1;
       goto cleanup;
     }
-    ifname = argv[arg];
+    ifname = const_cast<char*>(argv[arg]);
     if (!(ifp = fopen (ifname, "rb"))) {
       perror (ifname);
       continue;
@@ -8048,7 +8050,7 @@ cleanup:
 }
 
 #ifndef DCRAW_NOMAIN /*UF*/
-int main(int argc, char **argv)
+int main(int argc, const char **argv)
 {
     DCRaw *d = new DCRaw;
     return d->main(argc, argv);

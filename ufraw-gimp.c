@@ -85,12 +85,12 @@ void query()
     };
 #endif
     gimp_install_procedure("file_ufraw_load",
-	    "Loads raw digital camera files",
-	    "This plug-in loads raw digital camera files.",
+	    "Loads digital camera raw files",
+	    "Loads digital camera raw files.",
 	    "Udi Fuchs",
 	    "Copyright 2003 by Dave Coffin\n"
 	    "Copyright 2004 by Pawel Jochym\n"
-	    "Copyright 2004 by Udi Fuchs",
+	    "Copyright 2004-2007 by Udi Fuchs",
 	    "ufraw-" VERSION,
 #if GIMP_CHECK_VERSION(2,2,0)
 	    "raw image",
@@ -105,12 +105,13 @@ void query()
 	    load_return_vals);
 
     gimp_register_load_handler("file_ufraw_load", (char *)raw_ext, "");
+
 #if GIMP_CHECK_VERSION(2,2,0)
     gimp_install_procedure ("file_ufraw_load_thumb",
-	    "Loads a small preview from a raw image",
-	    "",
-	    "",
-	    "Copyright 2004 by Udi Fuchs",
+	    "Loads thumbnails from digital camera raw files.",
+	    "Loads thumbnails from digital camera raw files.",
+	    "Udi Fuchs",
+	    "Copyright 2004-2007 by Udi Fuchs",
 	    "ufraw-" VERSION,
 	    NULL,
 	    NULL,
@@ -118,6 +119,7 @@ void query()
 	    G_N_ELEMENTS(thumb_args),
 	    G_N_ELEMENTS(thumb_return_vals),
 	    thumb_args, thumb_return_vals);
+
     gimp_register_thumbnail_loader("file_ufraw_load",
 	    "file_ufraw_load_thumb");
 #endif
@@ -170,7 +172,6 @@ void run(GIMP_CONST gchar *name,
 	return;
     }
     gboolean loadThumbnail = size>0;
-
     gimp_ui_init("ufraw-gimp", TRUE);
 
     uf = ufraw_open(filename);

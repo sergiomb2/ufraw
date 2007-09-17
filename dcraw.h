@@ -24,7 +24,8 @@ class DCRaw { public:
 /* All dcraw's global variables are members of this class. */
 FILE *ifp;
 short order;
-char *ifname, *meta_data;
+char *ifname;
+char *meta_data;
 char cdesc[5], desc[512], make[64], model[64], model2[64], artist[64];
 float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
 time_t timestamp;
@@ -80,7 +81,7 @@ void dcraw_message(int code, const char *format, ...);
 /* All dcraw functions with the CLASS prefix are members of this class. */
 int fc (int row, int col);
 void derror();
-void merror (void *ptr, char *where);
+void merror (void *ptr, const char *where);
 ushort sget2 (uchar *s);
 ushort get2();
 unsigned sget4 (uchar *s);
@@ -184,7 +185,7 @@ void foveon_make_curves
 int foveon_apply_curve (short *curve, int i);
 void foveon_interpolate();
 void bad_pixels();
-void subtract(char *fname);
+void subtract(const char *fname);
 void pseudoinverse (double (*in)[3], double (*out)[3], int size);
 void cam_xyz_coeff (double cam_xyz[4][3]);
 void colorcheck();
@@ -225,11 +226,11 @@ void parse_smal (int offset, unsigned fsize);
 void parse_cine();
 char * foveon_gets (int offset, char *str, int len);
 void parse_foveon();
-void adobe_coeff (char *make, char *model);
+void adobe_coeff (const char *make, const char *model);
 void simple_coeff (int index);
 short guess_byte_order (int words);
 void identify();
-void apply_profile (char *input, char *output);
+void apply_profile (const char *input, const char *output);
 void convert_to_rgb();
 void fuji_rotate();
 void stretch();
@@ -242,5 +243,5 @@ void write_ppm_tiff (FILE *ofp);
 void write_ppm (FILE *ofp);
 void write_ppm16 (FILE *ofp);
 void write_psd (FILE *ofp);
-int main (int argc, char **argv);
+int main (int argc, const char **argv);
 };
