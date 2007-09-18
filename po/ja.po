@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-12 17:15+0200\n"
+"POT-Creation-Date: 2007-09-18 23:35+0200\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -69,13 +69,13 @@ msgstr "Raw形式のjpg"
 msgid "Raw tif's"
 msgstr "Raw形式のtif"
 
-#: ufraw_chooser.c:116 ufraw_preview.c:278 ufraw_preview.c:380
-#: ufraw_preview.c:448
+#: ufraw_chooser.c:116 ufraw_preview.c:279 ufraw_preview.c:381
+#: ufraw_preview.c:449
 msgid "All files"
 msgstr "全てのファイル"
 
-#: ufraw_chooser.c:122 ufraw_preview.c:247 ufraw_preview.c:349
-#: ufraw_preview.c:432 ufraw_saver.c:149
+#: ufraw_chooser.c:122 ufraw_preview.c:248 ufraw_preview.c:350
+#: ufraw_preview.c:433 ufraw_saver.c:151
 msgid "Show hidden files"
 msgstr "隠しファイルを表示する"
 
@@ -145,7 +145,7 @@ msgstr ""
 "%sのIDファイルを読み込めません\n"
 "%s\n"
 
-#: ufraw_conf.c:598 ufraw_routines.c:382
+#: ufraw_conf.c:598 ufraw_routines.c:384
 #, c-format
 msgid ""
 "Error parsing '%s'\n"
@@ -568,37 +568,37 @@ msgstr "'%s' は正しいパスではありません"
 msgid "cannot output more than one file to the same output"
 msgstr "一つ以上のファイルを同じ出力に出力できません"
 
-#: ufraw_delete.c:34
+#: ufraw_delete.c:35
 #, c-format
 msgid "Raw file '%s' missing."
 msgstr ""
 
-#: ufraw_delete.c:39 ufraw_preview.c:4403
+#: ufraw_delete.c:40 ufraw_preview.c:4438
 #, fuzzy
 msgid "Delete raw file"
 msgstr "IDファイルを作成"
 
-#: ufraw_delete.c:42
+#: ufraw_delete.c:43
 msgid "_Delete selected"
 msgstr ""
 
-#: ufraw_delete.c:43
+#: ufraw_delete.c:44
 #, fuzzy
 msgid "Delete _All"
 msgstr "IDファイルを作成"
 
-#: ufraw_delete.c:47
+#: ufraw_delete.c:48
 msgid "Select files to delete"
 msgstr ""
 
-#: ufraw_delete.c:54
+#: ufraw_delete.c:55
 #, fuzzy, c-format
 msgid "Error reading directory '%s'."
 msgstr ""
 "ファイル作成エラー '%s'.\n"
 "%s"
 
-#: ufraw_delete.c:111
+#: ufraw_delete.c:112
 #, fuzzy, c-format
 msgid "Error deleting '%s'"
 msgstr "書き込みエラー '%s'"
@@ -664,32 +664,32 @@ msgstr "書き込みエラー '%s'"
 msgid "Unsupported output type (%d) for embedded image"
 msgstr "'%d'は埋め込み画像としてサポートしていない出力形式です"
 
-#: ufraw-gimp.c:255
+#: ufraw-gimp.c:258
 #, fuzzy, c-format
 msgid "Loading raw file '%s'"
 msgstr ""
 "ファイル作成エラー '%s'.\n"
 "%s"
 
-#: ufraw-gimp.c:337
+#: ufraw-gimp.c:340
 msgid "Can't allocate new image."
 msgstr "新しい画像を割り当てられません。"
 
 #. Create the "background" layer to hold the image...
-#: ufraw-gimp.c:343
+#: ufraw-gimp.c:346
 msgid "Background"
 msgstr ""
 
-#: ufraw-gimp.c:369
+#: ufraw-gimp.c:372
 msgid "Loading image"
 msgstr "画像を読み込んでいます"
 
-#: ufraw-gimp.c:403 ufraw-gimp.c:437
+#: ufraw-gimp.c:406 ufraw-gimp.c:440
 #, c-format
 msgid "Failed to embed output profile '%s' in image."
 msgstr "出力プロファイル'%s'を画像に埋め込むのに失敗しました。"
 
-#: ufraw-gimp.c:411
+#: ufraw-gimp.c:414
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored.\n"
 msgstr "EXIFバッファ長 %d が長すぎるので無視します\n"
@@ -702,85 +702,85 @@ msgstr "Rawヒストグラム"
 msgid "Live histogram"
 msgstr "動的ヒストグラム"
 
-#: ufraw_preview.c:235 ufraw_preview.c:324
+#: ufraw_preview.c:236 ufraw_preview.c:325
 #, fuzzy
 msgid "No more room for new curves."
 msgstr "新しいカーブに対する余地がありません"
 
-#: ufraw_preview.c:238 ufraw_preview.c:3784
+#: ufraw_preview.c:239 ufraw_preview.c:3819
 msgid "Load curve"
 msgstr "カーブの読込"
 
-#: ufraw_preview.c:254 ufraw_preview.c:356
+#: ufraw_preview.c:255 ufraw_preview.c:357
 msgid "All curve formats"
 msgstr "全カーブ形式"
 
-#: ufraw_preview.c:264 ufraw_preview.c:366
+#: ufraw_preview.c:265 ufraw_preview.c:367
 msgid "UFRaw curve format"
 msgstr "UFRawカーブ形式"
 
-#: ufraw_preview.c:270 ufraw_preview.c:372
+#: ufraw_preview.c:271 ufraw_preview.c:373
 msgid "Nikon curve format"
 msgstr "ニコンカーブ形式"
 
-#: ufraw_preview.c:341 ufraw_preview.c:3790
+#: ufraw_preview.c:342 ufraw_preview.c:3825
 msgid "Save curve"
 msgstr "カーブを保存"
 
-#: ufraw_preview.c:419 ufraw_preview.c:492
+#: ufraw_preview.c:420 ufraw_preview.c:493
 #, fuzzy
 msgid "No more room for new profiles."
 msgstr "新しいプロファイルのための余地がありません"
 
-#: ufraw_preview.c:423
+#: ufraw_preview.c:424
 msgid "Load color profile"
 msgstr "カラープロファイルの読込"
 
-#: ufraw_preview.c:441
+#: ufraw_preview.c:442
 msgid "Color Profiles"
 msgstr "カラープロファイル"
 
-#: ufraw_preview.c:528
+#: ufraw_preview.c:529
 #, fuzzy
 msgid "Luminosity (Y value)"
 msgstr "輝度カーブ"
 
-#: ufraw_preview.c:531
+#: ufraw_preview.c:532
 msgid "Adams' zone"
 msgstr ""
 
-#: ufraw_preview.c:879
+#: ufraw_preview.c:915
 #, c-format
 msgid "size %dx%d, zoom %2.f%%"
 msgstr "画像サイズ %dx%d, ズーム %2.f%%"
 
-#: ufraw_preview.c:883
+#: ufraw_preview.c:919
 #, c-format
 msgid "size %dx%d, scale 1/%d"
 msgstr "画像サイズ %dx%d, スケール 1/%d"
 
-#: ufraw_preview.c:936
+#: ufraw_preview.c:972
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "ブラックポイント: %0.3lf"
 
-#: ufraw_preview.c:1634
+#: ufraw_preview.c:1667
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "深刻なエラー: uf->conf->shrink<1"
 
-#: ufraw_preview.c:2290
+#: ufraw_preview.c:2322
 msgid "clip"
 msgstr "切り取る"
 
-#: ufraw_preview.c:2302
+#: ufraw_preview.c:2334
 msgid "restore in LCH space for soft details"
 msgstr "ソフトのディテールをLCH空間で復元する"
 
-#: ufraw_preview.c:2314
+#: ufraw_preview.c:2346
 msgid "restore in HSV space for sharp details"
 msgstr "シャープのディテールをHSV空間で復元する"
 
-#: ufraw_preview.c:2319
+#: ufraw_preview.c:2351
 #, fuzzy, c-format
 msgid ""
 "Restore details for negative EV\n"
@@ -789,15 +789,15 @@ msgstr ""
 "ネガティブEVの詳細を元に戻す\n"
 "現在の状態: %s"
 
-#: ufraw_preview.c:2346
+#: ufraw_preview.c:2378
 msgid "digital linear"
 msgstr "デジタル直線"
 
-#: ufraw_preview.c:2358
+#: ufraw_preview.c:2390
 msgid "soft film like"
 msgstr "フィルムのようにソフトに"
 
-#: ufraw_preview.c:2363
+#: ufraw_preview.c:2395
 #, fuzzy, c-format
 msgid ""
 "Clip highlights for positive EV\n"
@@ -806,53 +806,53 @@ msgstr ""
 "ハイライト切り出し\n"
 "現在の状態: %s"
 
-#: ufraw_preview.c:2694
+#: ufraw_preview.c:2724
 msgid "UFRaw options"
 msgstr "UFRawオプション"
 
-#: ufraw_preview.c:2707 ufraw_preview.c:2719
+#: ufraw_preview.c:2737 ufraw_preview.c:2749
 msgid "Settings"
 msgstr "設定"
 
-#: ufraw_preview.c:2711
+#: ufraw_preview.c:2741
 msgid "Input color profiles"
 msgstr "入力カラープロファイル"
 
-#: ufraw_preview.c:2713
+#: ufraw_preview.c:2743
 msgid "Output color profiles"
 msgstr "出力カラープロファイル"
 
-#: ufraw_preview.c:2715
+#: ufraw_preview.c:2745
 #, fuzzy
 msgid "Display color profiles"
 msgstr "入力カラープロファイル"
 
-#: ufraw_preview.c:2716
+#: ufraw_preview.c:2746
 msgid "Base Curves"
 msgstr "基本カーブ"
 
-#: ufraw_preview.c:2717
+#: ufraw_preview.c:2747
 msgid "Luminosity Curves"
 msgstr "輝度カーブ"
 
-#: ufraw_preview.c:2720
+#: ufraw_preview.c:2750
 msgid "Remote Gimp command"
 msgstr ""
 
-#: ufraw_preview.c:2733
+#: ufraw_preview.c:2763
 #, fuzzy
 msgid "Reset command to default"
 msgstr "ガンマをデフォルトに戻す"
 
-#: ufraw_preview.c:2738
+#: ufraw_preview.c:2768
 msgid "Configuration"
 msgstr "構成"
 
-#: ufraw_preview.c:2753
+#: ufraw_preview.c:2783
 msgid "Save image defaults "
 msgstr "デフォルトとして保存"
 
-#: ufraw_preview.c:2757 ufraw_saver.c:326
+#: ufraw_preview.c:2787 ufraw_saver.c:328
 msgid ""
 "Save current image manipulation parameters as defaults.\n"
 "The output parameters in this window are always saved."
@@ -860,39 +860,39 @@ msgstr ""
 "現在の画像操作パラメータをデフォルトとして保存。\n"
 "このウインドウの出力パラメータは常に保存されます。"
 
-#: ufraw_preview.c:2760 ufraw_saver.c:330
+#: ufraw_preview.c:2790 ufraw_saver.c:332
 msgid "Never again"
 msgstr "二度としない"
 
-#: ufraw_preview.c:2761 ufraw_saver.c:331
+#: ufraw_preview.c:2791 ufraw_saver.c:333
 msgid "Always"
 msgstr "常に"
 
-#: ufraw_preview.c:2762 ufraw_saver.c:332
+#: ufraw_preview.c:2792 ufraw_saver.c:334
 msgid "Just this once"
 msgstr "今回のみ"
 
-#: ufraw_preview.c:2769
+#: ufraw_preview.c:2799
 msgid "Save full configuration "
 msgstr "全ての設定を保存"
 
-#: ufraw_preview.c:2772
+#: ufraw_preview.c:2802
 msgid "Save resource file ($HOME/.ufrawrc)"
 msgstr "リソースファイルを保存 ($HOME/.ufrawrc)"
 
-#: ufraw_preview.c:2780
+#: ufraw_preview.c:2810
 msgid "Log"
 msgstr "ログ"
 
-#: ufraw_preview.c:2792
+#: ufraw_preview.c:2822
 msgid "Encoding conversion failed"
 msgstr "エンコーディングの変換に失敗"
 
-#: ufraw_preview.c:2796
+#: ufraw_preview.c:2826
 msgid "About"
 msgstr "UFRawについて"
 
-#: ufraw_preview.c:2807
+#: ufraw_preview.c:2837
 msgid ""
 "The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
 "to\n"
@@ -912,63 +912,63 @@ msgstr ""
 "ホームページ: http://ufraw.sourceforge.net/\n"
 "\n"
 
-#: ufraw_preview.c:3163
+#: ufraw_preview.c:3194
 #, c-format
 msgid "%s - UFRaw Photo Loader"
 msgstr "%s - UFRaw Photo Loader"
 
-#: ufraw_preview.c:3228 ufraw_preview.c:4191
+#: ufraw_preview.c:3263 ufraw_preview.c:4226
 #, fuzzy
 msgid "Linear"
 msgstr "直線"
 
-#: ufraw_preview.c:3237 ufraw_preview.c:4200
+#: ufraw_preview.c:3272 ufraw_preview.c:4235
 msgid "Logarithmic"
 msgstr "対数"
 
-#: ufraw_preview.c:3251 ufraw_preview.c:4214
+#: ufraw_preview.c:3286 ufraw_preview.c:4249
 msgid "96 Pixels"
 msgstr "96ピクセル"
 
-#: ufraw_preview.c:3260 ufraw_preview.c:4223
+#: ufraw_preview.c:3295 ufraw_preview.c:4258
 msgid "128 Pixels"
 msgstr "128ピクセル"
 
-#: ufraw_preview.c:3269 ufraw_preview.c:4232
+#: ufraw_preview.c:3304 ufraw_preview.c:4267
 msgid "192 Pixels"
 msgstr "192ピクセル"
 
-#: ufraw_preview.c:3278 ufraw_preview.c:4241
+#: ufraw_preview.c:3313 ufraw_preview.c:4276
 msgid "256 Pixels"
 msgstr "256ピクセル"
 
-#: ufraw_preview.c:3291
+#: ufraw_preview.c:3326
 msgid "Spot values:"
 msgstr "スポット値:"
 
-#: ufraw_preview.c:3298
+#: ufraw_preview.c:3333
 msgid "Exposure compensation in EV"
 msgstr "EV補償"
 
-#: ufraw_preview.c:3316
+#: ufraw_preview.c:3351
 msgid "Auto adjust exposure"
 msgstr "自動露出補正"
 
-#: ufraw_preview.c:3327
+#: ufraw_preview.c:3362
 msgid "Reset exposure to default"
 msgstr "露出をデフォルトに戻す"
 
 #. Start of White Balance setting page
-#: ufraw_preview.c:3340
+#: ufraw_preview.c:3375
 #, fuzzy
 msgid "White balance"
 msgstr "ホワイトバランス"
 
-#: ufraw_preview.c:3394
+#: ufraw_preview.c:3429
 msgid "White Balance"
 msgstr "ホワイトバランス"
 
-#: ufraw_preview.c:3419
+#: ufraw_preview.c:3454
 msgid ""
 "There are no white balance presets for your camera model.\n"
 "Check UFRaw's webpage for information on how to get your\n"
@@ -978,208 +978,208 @@ msgstr ""
 "UFRawのウェブページにてどうしたらあなたのカメラをサポート\n"
 "してもらえるかの情報を確認してください。"
 
-#: ufraw_preview.c:3425
+#: ufraw_preview.c:3460
 msgid "Reset white balance to initial value"
 msgstr "ホワイトバランスを初期値に戻す"
 
-#: ufraw_preview.c:3431
+#: ufraw_preview.c:3466
 msgid "Temperature"
 msgstr "色温度"
 
-#: ufraw_preview.c:3433
+#: ufraw_preview.c:3468
 msgid "White balance color temperature (K)"
 msgstr "ホワイトバランスの色温度 (K)"
 
-#: ufraw_preview.c:3434
+#: ufraw_preview.c:3469
 msgid "Green"
 msgstr "緑色"
 
-#: ufraw_preview.c:3436
+#: ufraw_preview.c:3471
 msgid "Green component"
 msgstr "緑色要素"
 
-#: ufraw_preview.c:3442
+#: ufraw_preview.c:3477
 msgid "Select a spot on the preview image to apply spot white balance"
 msgstr "選択した箇所を基本値として全体にホワイトバランスを適用します"
 
-#: ufraw_preview.c:3450
+#: ufraw_preview.c:3485
 msgid "Chan. multipliers:"
 msgstr "チャンネル乗数:"
 
-#: ufraw_preview.c:3474
+#: ufraw_preview.c:3509
 #, fuzzy
 msgid "Bayer pattern interpolation"
 msgstr "バイリニア補間"
 
-#: ufraw_preview.c:3481 ufraw_preview.c:3492
+#: ufraw_preview.c:3516 ufraw_preview.c:3527
 msgid "VNG four color interpolation"
 msgstr "VNG4色補間"
 
-#: ufraw_preview.c:3483 ufraw_preview.c:3496
+#: ufraw_preview.c:3518 ufraw_preview.c:3531
 msgid "Bilinear interpolation"
 msgstr "バイリニア補間"
 
-#: ufraw_preview.c:3486
+#: ufraw_preview.c:3521
 #, fuzzy
 msgid "EAHD interpolation"
 msgstr "AHD補間"
 
-#: ufraw_preview.c:3488
+#: ufraw_preview.c:3523
 msgid "AHD interpolation"
 msgstr "AHD補間"
 
-#: ufraw_preview.c:3490
+#: ufraw_preview.c:3525
 msgid "VNG interpolation"
 msgstr "VNG補間"
 
-#: ufraw_preview.c:3494
+#: ufraw_preview.c:3529
 #, fuzzy
 msgid "PPG interpolation"
 msgstr "VNG補間"
 
-#: ufraw_preview.c:3500
+#: ufraw_preview.c:3535
 msgid "Half-size interpolation"
 msgstr "ハーフサイズ補間"
 
-#: ufraw_preview.c:3512
+#: ufraw_preview.c:3547
 #, fuzzy
 msgid "No Bayer pattern"
 msgstr "バイリニア補間"
 
-#: ufraw_preview.c:3522
+#: ufraw_preview.c:3557
 msgid "Threshold"
 msgstr ""
 
-#: ufraw_preview.c:3524
+#: ufraw_preview.c:3559
 msgid "Threshold for wavelet denoising"
 msgstr ""
 
-#: ufraw_preview.c:3529
+#: ufraw_preview.c:3564
 #, fuzzy
 msgid "Reset denoise threshold to default"
 msgstr "露出をデフォルトに戻す"
 
-#: ufraw_preview.c:3540
+#: ufraw_preview.c:3575
 #, fuzzy
 msgid "Zoom:"
 msgstr "ズーム"
 
-#: ufraw_preview.c:3561 ufraw_preview.c:4354
+#: ufraw_preview.c:3596 ufraw_preview.c:4389
 msgid "Zoom percentage"
 msgstr ""
 
 #. End of White Balance setting page
 #. Start of Base Curve page
-#: ufraw_preview.c:3576
+#: ufraw_preview.c:3611
 #, fuzzy
 msgid "Base curve"
 msgstr "基本カーブ"
 
-#: ufraw_preview.c:3609
+#: ufraw_preview.c:3644
 msgid "Load base curve"
 msgstr "基本カーブを読み込む"
 
-#: ufraw_preview.c:3615
+#: ufraw_preview.c:3650
 msgid "Save base curve"
 msgstr "基本カーブを保存"
 
-#: ufraw_preview.c:3635
+#: ufraw_preview.c:3670
 msgid "Reset base curve to default"
 msgstr "基本カーブをデフォルトに戻す"
 
 #. End of Base Curve page
 #. Start of Color management page
-#: ufraw_preview.c:3645
+#: ufraw_preview.c:3680
 msgid "Color management"
 msgstr ""
 
-#: ufraw_preview.c:3658
+#: ufraw_preview.c:3693
 #, fuzzy
 msgid "Input ICC profile"
 msgstr "入力プロファイル"
 
-#: ufraw_preview.c:3659
+#: ufraw_preview.c:3694
 #, fuzzy
 msgid "Output ICC profile"
 msgstr "出力プロファイル"
 
-#: ufraw_preview.c:3660
+#: ufraw_preview.c:3695
 msgid "Display ICC profile"
 msgstr ""
 
-#: ufraw_preview.c:3684
+#: ufraw_preview.c:3719
 msgid "Use color matrix"
 msgstr "カラーマトリックスを使う"
 
-#: ufraw_preview.c:3695
+#: ufraw_preview.c:3730
 msgid "Gamma"
 msgstr "ガンマ"
 
-#: ufraw_preview.c:3698
+#: ufraw_preview.c:3733
 #, fuzzy
 msgid "Gamma correction for the input profile"
 msgstr "入力プロファイルにガンマ修正"
 
-#: ufraw_preview.c:3703
+#: ufraw_preview.c:3738
 msgid "Reset gamma to default"
 msgstr "ガンマをデフォルトに戻す"
 
-#: ufraw_preview.c:3708
+#: ufraw_preview.c:3743
 #, fuzzy
 msgid "Linearity"
 msgstr "リニアリティー"
 
-#: ufraw_preview.c:3711
+#: ufraw_preview.c:3746
 #, fuzzy
 msgid "Linear part of the gamma correction"
 msgstr "ガンマ修正の線形部"
 
-#: ufraw_preview.c:3716
+#: ufraw_preview.c:3751
 #, fuzzy
 msgid "Reset linearity to default"
 msgstr "リニアリティーをデフォルトに戻す"
 
-#: ufraw_preview.c:3721
+#: ufraw_preview.c:3756
 #, fuzzy
 msgid "Output intent"
 msgstr "出力オプション"
 
-#: ufraw_preview.c:3724 ufraw_preview.c:3736
+#: ufraw_preview.c:3759 ufraw_preview.c:3771
 msgid "Perceptual"
 msgstr "知覚的"
 
-#: ufraw_preview.c:3725 ufraw_preview.c:3737
+#: ufraw_preview.c:3760 ufraw_preview.c:3772
 msgid "Relative colorimetric"
 msgstr "相対比色"
 
-#: ufraw_preview.c:3726 ufraw_preview.c:3738 ufraw_preview.c:3752
-#: ufraw_preview.c:3754
+#: ufraw_preview.c:3761 ufraw_preview.c:3773 ufraw_preview.c:3787
+#: ufraw_preview.c:3789
 msgid "Saturation"
 msgstr "彩度"
 
-#: ufraw_preview.c:3727 ufraw_preview.c:3739
+#: ufraw_preview.c:3762 ufraw_preview.c:3774
 msgid "Absolute colorimetric"
 msgstr "絶対比色"
 
-#: ufraw_preview.c:3733
+#: ufraw_preview.c:3768
 msgid "Display intent"
 msgstr ""
 
-#: ufraw_preview.c:3740
+#: ufraw_preview.c:3775
 msgid "Disable soft proofing"
 msgstr ""
 
 #. End of Color management page
 #. Start of Corrections page
-#: ufraw_preview.c:3748
+#: ufraw_preview.c:3783
 msgid "Correct luminosity, saturation"
 msgstr ""
 
-#: ufraw_preview.c:3759
+#: ufraw_preview.c:3794
 msgid "Reset saturation to default"
 msgstr "彩度をデフォルトに戻す"
 
-#: ufraw_preview.c:3809
+#: ufraw_preview.c:3844
 msgid ""
 "Auto adjust curve\n"
 "(Flatten histogram)"
@@ -1187,209 +1187,209 @@ msgstr ""
 "カーブの自動調整\n"
 "(ヒストグラムを平らにします)"
 
-#: ufraw_preview.c:3819
+#: ufraw_preview.c:3854
 msgid "Reset curve to default"
 msgstr "カーブをデフォルトに戻す"
 
 # ブラックポイントをどう訳すか
-#: ufraw_preview.c:3825
+#: ufraw_preview.c:3860
 msgid "Black point: 0.000"
 msgstr "ブラックポイント: 0.000"
 
-#: ufraw_preview.c:3842
+#: ufraw_preview.c:3877
 msgid "Reset black-point to default"
 msgstr "ブラックポイントをデフォルトに戻す"
 
-#: ufraw_preview.c:3852
+#: ufraw_preview.c:3887
 msgid "Auto adjust black-point"
 msgstr "ブラックポイントを自動調整"
 
 #. End of Corrections page
 #. Start of transformations page
-#: ufraw_preview.c:3861
+#: ufraw_preview.c:3896
 msgid "Crop and rotate"
 msgstr ""
 
 #. Start of Crop controls
-#: ufraw_preview.c:3867
+#: ufraw_preview.c:3902
 msgid "Left:"
 msgstr ""
 
-#: ufraw_preview.c:3881
+#: ufraw_preview.c:3916
 msgid "Top:"
 msgstr ""
 
-#: ufraw_preview.c:3895
+#: ufraw_preview.c:3930
 msgid "Right:"
 msgstr ""
 
-#: ufraw_preview.c:3909
+#: ufraw_preview.c:3944
 #, fuzzy
 msgid "Bottom:"
 msgstr "ズーム"
 
-#: ufraw_preview.c:3928
+#: ufraw_preview.c:3963
 msgid "Reset the crop region"
 msgstr ""
 
-#: ufraw_preview.c:3937
+#: ufraw_preview.c:3972
 msgid "Aspect ratio:"
 msgstr ""
 
-#: ufraw_preview.c:3943
+#: ufraw_preview.c:3978
 msgid "Crop area aspect ratio"
 msgstr ""
 
-#: ufraw_preview.c:3961
+#: ufraw_preview.c:3996
 msgid "Lock aspect ratio"
 msgstr ""
 
-#: ufraw_preview.c:3976
+#: ufraw_preview.c:4011
 #, fuzzy
 msgid "Shrink factor"
 msgstr "縮小倍率"
 
-#: ufraw_preview.c:3991
+#: ufraw_preview.c:4026
 #, fuzzy
 msgid "Height"
 msgstr "\t高さ"
 
-#: ufraw_preview.c:4006
+#: ufraw_preview.c:4041
 #, fuzzy
 msgid "Width"
 msgstr "\t幅"
 
-#: ufraw_preview.c:4024
+#: ufraw_preview.c:4059
 msgid "Orientation:"
 msgstr ""
 
 #. End of transformation page
 #. Start of EXIF page
-#: ufraw_preview.c:4057
+#: ufraw_preview.c:4092
 msgid "EXIF"
 msgstr ""
 
-#: ufraw_preview.c:4082
+#: ufraw_preview.c:4117
 msgid "Tag"
 msgstr ""
 
-#: ufraw_preview.c:4087
+#: ufraw_preview.c:4122
 msgid "Value"
 msgstr ""
 
 #. Fill table with EXIF tags
-#: ufraw_preview.c:4092
+#: ufraw_preview.c:4127
 #, fuzzy
 msgid "Camera maker"
 msgstr "カメラカーブ"
 
-#: ufraw_preview.c:4093
+#: ufraw_preview.c:4128
 #, fuzzy
 msgid "Camera model"
 msgstr "カメラカーブ"
 
-#: ufraw_preview.c:4094
+#: ufraw_preview.c:4129
 #, fuzzy
 msgid "Timestamp"
 msgstr "撮影日時: %s\n"
 
-#: ufraw_preview.c:4095
+#: ufraw_preview.c:4130
 msgid "Exposure"
 msgstr ""
 
-#: ufraw_preview.c:4096
+#: ufraw_preview.c:4131
 #, fuzzy
 msgid "Aperture"
 msgstr "絞り値: %s\n"
 
-#: ufraw_preview.c:4097
+#: ufraw_preview.c:4132
 #, fuzzy
 msgid "ISO speed"
 msgstr "ISO感度: %s\n"
 
-#: ufraw_preview.c:4098
+#: ufraw_preview.c:4133
 #, fuzzy
 msgid "Focal length"
 msgstr "焦点距離: %s\n"
 
-#: ufraw_preview.c:4099
+#: ufraw_preview.c:4134
 #, fuzzy
 msgid "35mm focal length"
 msgstr "焦点距離: %s\n"
 
-#: ufraw_preview.c:4100
+#: ufraw_preview.c:4135
 #, fuzzy
 msgid "Lens"
 msgstr "レンズ: %s\n"
 
-#: ufraw_preview.c:4101 wb_presets.c:54
+#: ufraw_preview.c:4136 wb_presets.c:54
 msgid "Flash"
 msgstr "フラッシュ"
 
-#: ufraw_preview.c:4105
+#: ufraw_preview.c:4140
 #, fuzzy, c-format
 msgid "EXIF data read by %s"
 msgstr ""
 "\n"
 "%sでEXIFデータを読みました"
 
-#: ufraw_preview.c:4113
+#: ufraw_preview.c:4148
 msgid "Warning: EXIF data will not be sent to output"
 msgstr ""
 
-#: ufraw_preview.c:4138
+#: ufraw_preview.c:4173
 msgid "RGB histogram"
 msgstr "RGBヒストグラム"
 
-#: ufraw_preview.c:4147
+#: ufraw_preview.c:4182
 msgid "R+G+B histogram"
 msgstr "R+G+Bヒストグラム"
 
-#: ufraw_preview.c:4157
+#: ufraw_preview.c:4192
 msgid "Luminosity histogram"
 msgstr "輝度ヒストグラム"
 
-#: ufraw_preview.c:4167
+#: ufraw_preview.c:4202
 #, fuzzy
 msgid "Value (maximum) histogram"
 msgstr "明暗(最大)ヒストグラム"
 
-#: ufraw_preview.c:4177
+#: ufraw_preview.c:4212
 msgid "Saturation histogram"
 msgstr "彩度ヒストグラム"
 
-#: ufraw_preview.c:4253
+#: ufraw_preview.c:4288
 msgid "Average:"
 msgstr "平均:"
 
-#: ufraw_preview.c:4255
+#: ufraw_preview.c:4290
 msgid "Std. deviation:"
 msgstr "標準偏差:"
 
-#: ufraw_preview.c:4258
+#: ufraw_preview.c:4293
 msgid "Overexposed:"
 msgstr "露出過多:"
 
-#: ufraw_preview.c:4260 ufraw_preview.c:4271
+#: ufraw_preview.c:4295 ufraw_preview.c:4306
 msgid "Indicate"
 msgstr "表示"
 
-#: ufraw_preview.c:4268
+#: ufraw_preview.c:4303
 msgid "Underexposed:"
 msgstr "露出不足:"
 
-#: ufraw_preview.c:4391
+#: ufraw_preview.c:4426
 msgid "Options"
 msgstr "オプション"
 
-#: ufraw_preview.c:4434
+#: ufraw_preview.c:4469
 #, fuzzy, c-format
 msgid "Filename: %s%s"
 msgstr ""
 "ファイル名: %s\n"
 "サイズ: %d x %d%s"
 
-#: ufraw_preview.c:4435
+#: ufraw_preview.c:4470
 msgid ""
 "\n"
 "Create also ID file"
@@ -1397,7 +1397,7 @@ msgstr ""
 "\n"
 "IDファイルも作成します"
 
-#: ufraw_preview.c:4436
+#: ufraw_preview.c:4471
 msgid ""
 "\n"
 "Create only ID file"
@@ -1405,43 +1405,43 @@ msgstr ""
 "\n"
 "IDファイルだけ作成します"
 
-#: ufraw_preview.c:4463
+#: ufraw_preview.c:4498
 msgid "Send image to Gimp"
 msgstr ""
 
-#: ufraw_preview.c:4477
+#: ufraw_preview.c:4512
 msgid "Loading preview"
 msgstr "プレビュー画像を読み込んでいます"
 
-#: ufraw_routines.c:176
+#: ufraw_routines.c:178
 msgid "Fatal error setting C locale"
 msgstr "深刻なエラー : Cロケールの設定"
 
-#: ufraw_routines.c:288
+#: ufraw_routines.c:290
 #, c-format
 msgid "Curve version is not supported"
 msgstr "このバージョンのカーブはサポートされていません"
 
-#: ufraw_routines.c:355 ufraw_routines.c:429
+#: ufraw_routines.c:357 ufraw_routines.c:431
 #, c-format
 msgid "Invalid Nikon curve file '%s'"
 msgstr "ニコンカーブのファイルが不正です '%s'"
 
-#: ufraw_routines.c:371
+#: ufraw_routines.c:373
 #, c-format
 msgid "Error opening Curve file '%s': %s"
 msgstr "カーブファイルを開くのに失敗しました '%s': %s"
 
-#: ufraw_routines.c:438
+#: ufraw_routines.c:440
 #, c-format
 msgid "Error opening file '%s': %s"
 msgstr "ファイルを開くのに失敗しました '%s': %s"
 
-#: ufraw_saver.c:100
+#: ufraw_saver.c:102
 msgid "File exists"
 msgstr "ファイルが存在します"
 
-#: ufraw_saver.c:108
+#: ufraw_saver.c:110
 #, c-format
 msgid ""
 "File '%s' already exists.\n"
@@ -1450,97 +1450,97 @@ msgstr ""
 "ファイル'%s'はすでに存在します。\n"
 "上書きしますか？"
 
-#: ufraw_saver.c:140
+#: ufraw_saver.c:142
 msgid "Save image"
 msgstr "画像の保存"
 
-#: ufraw_saver.c:172
+#: ufraw_saver.c:174
 msgid "Output options"
 msgstr "出力オプション"
 
-#: ufraw_saver.c:181
+#: ufraw_saver.c:183
 msgid "Interpolation method set to AHD"
 msgstr ""
 
-#: ufraw_saver.c:185
+#: ufraw_saver.c:187
 msgid "8-bit ppm"
 msgstr "8-bit ppm"
 
-#: ufraw_saver.c:195
+#: ufraw_saver.c:197
 msgid "16-bit ppm"
 msgstr "16-bit ppm"
 
-#: ufraw_saver.c:208
+#: ufraw_saver.c:210
 msgid "8-bit TIFF"
 msgstr "8-bit TIFF"
 
-#: ufraw_saver.c:219
+#: ufraw_saver.c:221
 msgid "16-bit TIFF"
 msgstr "16-bit TIFF"
 
-#: ufraw_saver.c:227
+#: ufraw_saver.c:229
 msgid "ZIP Compress (lossless)"
 msgstr "ZIP圧縮 (画像の劣化無し)"
 
-#: ufraw_saver.c:246
+#: ufraw_saver.c:248
 msgid "Compression level"
 msgstr "圧縮比率"
 
-#: ufraw_saver.c:256
+#: ufraw_saver.c:258
 msgid "Progressive encoding"
 msgstr ""
 
-#: ufraw_saver.c:266
+#: ufraw_saver.c:268
 #, fuzzy
 msgid "8-bit PNG"
 msgstr "8-bit ppm"
 
-#: ufraw_saver.c:277
+#: ufraw_saver.c:279
 #, fuzzy
 msgid "16-bit PNG"
 msgstr "16-bit ppm"
 
-#: ufraw_saver.c:289
+#: ufraw_saver.c:291
 msgid "Flexible Image Transport System (FITS)"
 msgstr ""
 
-#: ufraw_saver.c:302
+#: ufraw_saver.c:304
 msgid "Embed EXIF data in JPEG or PNG files"
 msgstr ""
 
-#: ufraw_saver.c:312
+#: ufraw_saver.c:314
 msgid "Create ID file "
 msgstr "IDファイルを作成"
 
-#: ufraw_saver.c:315
+#: ufraw_saver.c:317
 msgid "No"
 msgstr "いいえ"
 
-#: ufraw_saver.c:316
+#: ufraw_saver.c:318
 msgid "Also"
 msgstr "IDファイルも"
 
-#: ufraw_saver.c:317
+#: ufraw_saver.c:319
 msgid "Only"
 msgstr "IDファイルのみ"
 
-#: ufraw_saver.c:322
+#: ufraw_saver.c:324
 msgid "\tSave image defaults "
 msgstr "\tデフォルトとして保存"
 
-#: ufraw_saver.c:339
+#: ufraw_saver.c:341
 msgid "Overwrite existing files without asking"
 msgstr "ファイルが存在しても質問無しで上書きする"
 
-#: ufraw_saver.c:430 ufraw_saver.c:438 ufraw_saver.c:450 ufraw_saver.c:457
-#: ufraw_saver.c:465
+#: ufraw_saver.c:432 ufraw_saver.c:440 ufraw_saver.c:452 ufraw_saver.c:459
+#: ufraw_saver.c:467
 #, fuzzy
 msgid "Error creating temporary file."
 msgstr ""
 "ファイル作成エラー '%s'.\n"
 "%s"
 
-#: ufraw_saver.c:477
+#: ufraw_saver.c:479
 #, fuzzy
 msgid "Error activating Gimp."
 msgstr ""
