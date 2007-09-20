@@ -3072,7 +3072,7 @@ GtkWidget *control_button(const char *stockImage, const char *tip,
 {
     GtkWidget *button = gtk_button_new();
 #if GTK_CHECK_VERSION(2,8,0)
-    gtk_button_set_image(GTK_BUTTON(gimpButton), gtk_image_new_from_stock(
+    gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(
 		stockImage, GTK_ICON_SIZE_BUTTON));
 #else
     GtkWidget *image = gtk_image_new_from_stock(stockImage,
