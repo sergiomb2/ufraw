@@ -18,7 +18,7 @@
 #include "ufraw.h"
 #include "icons/ufraw_icons.h"
 
-ufraw_private_function GdkPixbuf *load_icon(GtkIconFactory *factory,
+static GdkPixbuf *load_icon(GtkIconFactory *factory,
     const guint8 *icon,const char *name)
 {
     GdkPixbuf *pixbuf = gdk_pixbuf_new_from_inline(-1, icon, FALSE, NULL);

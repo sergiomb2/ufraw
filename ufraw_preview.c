@@ -3004,7 +3004,7 @@ void preview_progress(void *widget, char *text, double progress)
     while (gtk_events_pending()) gtk_main_iteration();
 }
 
-ufraw_private_function void control_button_event(GtkWidget *widget, long type)
+static void control_button_event(GtkWidget *widget, long type)
 {
     preview_data *data = get_preview_data(widget);
     if (data->FreezeDialog==TRUE) return;
@@ -3051,7 +3051,7 @@ ufraw_private_function void control_button_event(GtkWidget *widget, long type)
     gtk_widget_set_sensitive(data->Controls, TRUE);
 }
 
-ufraw_private_function gboolean control_button_key_press_event(
+static gboolean control_button_key_press_event(
     GtkWidget *widget, GdkEventKey *event, preview_data *data)
 {
     if (data->FreezeDialog==TRUE) return FALSE;
@@ -3136,8 +3136,7 @@ static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
     data->PageNum = page_num;
 }
 
-ufraw_private_function void list_store_add(GtkListStore *store,
-    char *name, char *var)
+static void list_store_add(GtkListStore *store, char *name, char *var)
 {
     if ( var!=NULL && strlen(var)>0 )
     {
@@ -3412,15 +3411,17 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     for (i=0; i<wb_preset_count; i++) {
         if (strcmp(wb_preset[i].make, "")==0) {
 	    /* Common presets */
-	    data->WBPresets = g_list_append(data->WBPresets, wb_preset[i].name);
+	    data->WBPresets = g_list_append(data->WBPresets,
+		    (void*)wb_preset[i].name);
 	    gtk_combo_box_append_text(data->WBCombo, _(wb_preset[i].name));
         } else if ( (strcmp(wb_preset[i].make, uf->conf->make)==0 ) &&
                     (strcmp(wb_preset[i].model, model)==0)) {
 	    /* Camera specific presets */
             make_model_match = TRUE;
 	    if ( lastPreset==NULL ||
-		 strcmp(wb_preset[i].name,lastPreset->name)!=0 ) {
-	    data->WBPresets = g_list_append(data->WBPresets, wb_preset[i].name);
+		strcmp(wb_preset[i].name,lastPreset->name)!=0 ) {
+		data->WBPresets = g_list_append(data->WBPresets,
+			(void*)wb_preset[i].name);
 		gtk_combo_box_append_text(data->WBCombo, _(wb_preset[i].name));
 	    } else {
 		/* Fine tuning presets */

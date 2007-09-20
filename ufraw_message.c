@@ -32,7 +32,7 @@ char *ufraw_get_message(ufraw_data *uf)
     return uf->message;
 }
 
-ufraw_private_function void message_append(ufraw_data *uf, char *message)
+static void message_append(ufraw_data *uf, char *message)
 {
     if ( message==NULL ) return;
     if ( uf->message==NULL ) {

@@ -42,8 +42,7 @@
 // Therefore the folloing code is not thread-safe. 
 static char ufraw_tiff_message[max_path];
 
-ufraw_private_function void tiff_messenger(const char *module,
-    const char *fmt, va_list ap)
+static void tiff_messenger(const char *module, const char *fmt, va_list ap)
 {
     (void)module;
     vsnprintf(ufraw_tiff_message, max_path, fmt, ap);
@@ -51,7 +50,7 @@ ufraw_private_function void tiff_messenger(const char *module,
 #endif /*HAVE_LIBTIFF*/
 
 #ifdef HAVE_LIBJPEG
-ufraw_private_function void jpeg_warning_handler(j_common_ptr cinfo)
+static void jpeg_warning_handler(j_common_ptr cinfo)
 {
     ufraw_data *uf = cinfo->client_data;
     ufraw_set_warning(uf,
@@ -62,7 +61,7 @@ ufraw_private_function void jpeg_warning_handler(j_common_ptr cinfo)
 	    cinfo->err->msg_parm.i[3]);
 }
 
-ufraw_private_function void jpeg_error_handler(j_common_ptr cinfo)
+static void jpeg_error_handler(j_common_ptr cinfo)
 {
     /* We ignore the SOI error if second byte is 0xd8 since Minolta's
      * SOI is known to be wrong */
@@ -87,7 +86,7 @@ ufraw_private_function void jpeg_error_handler(j_common_ptr cinfo)
 #endif /*HAVE_LIBJPEG*/
 
 #ifdef HAVE_LIBCFITSIO
-ufraw_private_function int fits_set_keys(
+static int fits_set_keys(
     fitsfile *ff, ufraw_data *uf, char *chan, float max, float min, int *status)
 {
     fits_update_key(ff, TSTRING, "CHANNEL", chan,
@@ -123,7 +122,7 @@ ufraw_private_function int fits_set_keys(
 #endif /* HAVE_LIBCFITSIO */
 
 #ifdef HAVE_LIBPNG
-ufraw_private_function void png_error_handler(png_structp png,
+static void png_error_handler(png_structp png,
     png_const_charp error_msg)
 {
     ufraw_data *uf = png_get_error_ptr(png);
@@ -131,14 +130,14 @@ ufraw_private_function void png_error_handler(png_structp png,
     longjmp(png_jmpbuf(png), 1);
 }
 
-ufraw_private_function void png_warning_handler(png_structp png,
+static void png_warning_handler(png_structp png,
     png_const_charp warning_msg)
 {
     ufraw_data *uf = png_get_error_ptr(png);
     ufraw_set_warning(uf, "%s.", warning_msg);
 }
 
-ufraw_private_function void PNGwriteRawProfile(png_struct *ping,
+static void PNGwriteRawProfile(png_struct *ping,
     png_info *ping_info, char *profile_type, guint8 *profile_data,
     png_uint_32 length);
 #endif /*HAVE_LIBPNG*/
@@ -606,7 +605,7 @@ int ufraw_write_image(ufraw_data *uf)
  */
 
 #ifdef HAVE_LIBPNG
-ufraw_private_function void PNGwriteRawProfile(png_struct *ping,
+static void PNGwriteRawProfile(png_struct *ping,
     png_info *ping_info, char *profile_type, guint8 *profile_data,
     png_uint_32 length)
 {
