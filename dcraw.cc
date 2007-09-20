@@ -550,6 +550,7 @@ void CLASS canon_a5_load_raw()
  */
 unsigned CLASS getbits (int nbits)
 {
+  // TODO: The following static variables are not thread-safe
   static unsigned bitbuf=0;
   static int vbits=0, reset=0;
   int c;
@@ -602,6 +603,7 @@ void CLASS init_decoder()
 uchar * CLASS make_decoder (const uchar *source, int level)
 {
   struct decode *cur;
+  // TODO: The following static variable is not thread-safe
   static int leaf;
   int i, next;
 
@@ -1541,6 +1543,7 @@ void CLASS phase_one_load_raw()
 
 unsigned CLASS ph1_bits (int nbits)
 {
+  // TODO: The following static variables are not thread-safe
   static UINT64 bitbuf=0;
   static int vbits=0;
 
@@ -1967,6 +1970,7 @@ const int * CLASS make_decoder_int (const int *source, int level)
 int CLASS radc_token (int tree)
 {
   int t;
+  // TODO: The following static variables are not thread-safe
   static struct decode *dstart[18], *dindex;
   static const int *s, source[] = {
     1,1, 2,3, 3,4, 4,2, 5,7, 6,5, 7,6, 7,8,
@@ -2085,6 +2089,7 @@ void CLASS kodak_jpeg_load_raw() {}
 METHODDEF(boolean)
 fill_input_buffer (j_decompress_ptr cinfo)
 {
+  // TODO: The following static variable is not thread-safe
   static uchar jpeg_buffer[4096];
   size_t nbytes;
   DCRaw *d = (DCRaw*)cinfo->client_data;
@@ -2346,6 +2351,7 @@ void CLASS kodak_thumb_load_raw()
 
 void CLASS sony_decrypt (unsigned *data, int len, int start, int key)
 {
+  // TODO: The following static variables are not thread-safe
   static unsigned pad[128], p;
 
   if (start) {
@@ -2559,6 +2565,7 @@ void CLASS smal_v9_load_raw()
 
 void CLASS foveon_decoder (unsigned size, unsigned code)
 {
+  // TODO: The following static variable is not thread-safe
   static unsigned huff[1024];
   struct decode *cur;
   unsigned i, len;
@@ -6146,7 +6153,7 @@ void CLASS identify()
   struct jhead jh;
   static const struct {
     unsigned fsize;
-    char make[12], model[19], withjpeg;
+    const char make[12], model[19], withjpeg;
   } table[] = {
     {    62464, "Kodak",    "DC20"       ,0 },
     {   124928, "Kodak",    "DC20"       ,0 },
@@ -7689,6 +7696,8 @@ void CLASS write_ppm_tiff (FILE *ofp)
 
 int CLASS main (int argc, const char **argv)
 {
+  // The following variables are static to supress clobbering warnings.
+  // The are not thread-safe, but main() should never be called in a thread.
   static int arg, status=0, user_flip=-1, user_black=-1, user_qual=-1;
   static int timestamp_only=0, thumbnail_only=0, identify_only=0;
   static int use_fuji_rotate=1, write_to_stdout=0, quality, i, c;

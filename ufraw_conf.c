@@ -1338,7 +1338,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
          *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL,
          *interpolationName=NULL, *darkframeFile=NULL,
 	 *restoreName=NULL, *clipName=NULL;
-    static struct option options[] = {
+    static const struct option options[] = {
         {"wb", 1, 0, 'w'},
         {"temperature", 1, 0, 't'},
         {"green", 1, 0, 'g'},

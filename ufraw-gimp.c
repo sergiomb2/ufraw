@@ -65,20 +65,20 @@ MAIN()
 
 void query()
 {
-    static GimpParamDef load_args[] = {
+    static const GimpParamDef load_args[] = {
 	{ GIMP_PDB_INT32,  "run_mode", "Interactive, non-interactive" },
 	{ GIMP_PDB_STRING, "filename", "The name of the file to load" },
 	{ GIMP_PDB_STRING, "raw_filename", "The name of the file to load" },
     };
-    static GimpParamDef load_return_vals[] = {
+    static const GimpParamDef load_return_vals[] = {
 	{ GIMP_PDB_IMAGE, "image", "Output image" },
     };
 #if GIMP_CHECK_VERSION(2,2,0)
-    static GimpParamDef thumb_args[] = {
+    static const GimpParamDef thumb_args[] = {
 	{ GIMP_PDB_STRING, "filename",     "The name of the file to load" },
 	{ GIMP_PDB_INT32,  "thumb_size",   "Preferred thumbnail size" }
     };
-    static GimpParamDef thumb_return_vals[] = {
+    static const GimpParamDef thumb_return_vals[] = {
 	{ GIMP_PDB_IMAGE,  "image",        "Thumbnail image" },
 	{ GIMP_PDB_INT32,  "image_width",  "Width of full-sized image" },
 	{ GIMP_PDB_INT32,  "image_height", "Height of full-sized image" }
@@ -144,6 +144,8 @@ void run(GIMP_CONST gchar *name,
 	gint *nreturn_vals,
 	GimpParam **return_vals)
 {
+    // TODO: Check if the static variable here is really needed.
+    // In any case this should cause no issues with threads.
     static GimpParam values[4];
     GimpRunMode run_mode;
     char *filename;

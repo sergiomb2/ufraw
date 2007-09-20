@@ -60,6 +60,8 @@ typedef struct {
 typedef enum { render_default, render_overexposed, render_underexposed
 	} RenderModeType;
 
+typedef enum { cancel_button, ok_button, save_button, save_as_button,
+	gimp_button, delete_button, num_buttons } ControlButtons;
 typedef enum { spot_cursor, crop_cursor,
     left_cursor, right_cursor, top_cursor, bottom_cursor,
     top_left_cursor, top_right_cursor, bottom_left_cursor, bottom_right_cursor,
@@ -74,8 +76,7 @@ const GdkCursorType Cursors[cursor_num] = {
 
 // Response can be any unique positive integer
 #define UFRAW_RESPONSE_DELETE 1
-#define UFRAW_RESPONSE_REDRAW 2
-#define UFRAW_NO_RESPONSE 3
+#define UFRAW_NO_RESPONSE 2
 
 /* All the "global" information is here: */
 typedef struct {
@@ -106,6 +107,8 @@ typedef struct {
     GtkWidget *ResetThresholdButton;
     GtkWidget *ResetBlackButton, *ResetBaseCurveButton, *ResetCurveButton;
     GtkWidget *UseMatrixButton;
+    GtkWidget *ControlButton[num_buttons];
+    guint16 ButtonMnemonic[num_buttons];
     GtkTooltips *ToolTips;
     GtkProgressBar *ProgressBar;
     GtkSpinButton *CropX1Spin;
@@ -534,48 +537,6 @@ colorLabels *color_labels_new(GtkTable *table, int x, int y, char *label,
     return l;
 }
 
-/*
- * XXX This code doesn't belong here.  We probably should be using
- * something in lcms instead.  The values being processed here should
- * probably be in the output colorspace (or working?) rather than the
- * display colorspace that I think they are in.
- */
-
-extern const double xyz_rgb[3][3];
-
-/*
- * Convert sRGB pixel value to 0-1 space, intending to reprsent,
- * absent contrast manipulation and color issues, luminance relative
- * to an 18% grey card at 0.18.
- */
-double pixel2value(double pixel)
-{
-    double pl = pixel / 255.0;
-    double r;
-
-    if (pl <= 0.04045)
-	r = pl/12.92;
-    else
-	r = pow((pl + 0.055)/1.055, 2.4);
-    return r;
-}
-
-/*
- * Convert pixel triplets to aggregate luminance.
- */
-double pixels2value(double r, double g, double b)
-{
-    double y;
-
-    /* Convert sRGB to Y of XYZ. */
-    y =
-	0.212671 * pixel2value(r) +
-	0.715160 * pixel2value(g) +
-	0.072169 * pixel2value(b);
-
-    return y;
-}
-
 /* Return numeric zone representation from 0-1 luminance value.
  * Unlike Adams, we use arabic for now. */
 double value2zone(double v)
@@ -634,11 +595,6 @@ void color_labels_set(colorLabels *l, double data[])
     snprintf(buf2, max_name, "<span foreground='%s'>%0.2f</span>",
 	    colorName[c], data[4]);
     gtk_label_set_markup(l->labels[c], buf2);
-#if 0
-    double value = pixels2value(data[0], data[1], data[2]);
-    double zone = value2zone(value);
-    printf("%0.3f %0.2f\n", value, zone);
-#endif
 }
 
 void redraw_navigation_image(preview_data *data)
@@ -1235,11 +1191,19 @@ gboolean render_spot(preview_data *data)
     }
     double rgb[5];
     for (c=0; c<3; c++) rgb[c] = outSum[c] / (spotWidth * spotHeight);
+    /*
+     * Convert RGB pixel value to 0-1 space, intending to reprsent,
+     * absent contrast manipulation and color issues, luminance relative
+     * to an 18% grey card at 0.18.
+     * The RGB color space is approximately linearized sRGB as it is not
+     * affected from the ICC profile.
+     */
     guint16 rawChannels[4], linearChannels[3];
     for (c=0; c<data->UF->colors; c++)
 	rawChannels[c] = rawSum[c] / (spotWidth * spotHeight);
     develop_linear(rawChannels, linearChannels, Developer);
     double yValue = 0.5;
+    extern const double xyz_rgb[3][3];
     for (c=0; c<3; c++)
         yValue += xyz_rgb[1][c] * linearChannels[c];
     yValue /= 0xFFFF;
@@ -3038,9 +3002,6 @@ void preview_progress(void *widget, char *text, double progress)
     while (gtk_events_pending()) gtk_main_iteration();
 }
 
-enum { cancel_button, ok_button, save_button, save_as_button,
-	gimp_button, delete_button };
-
 ufraw_private_function void control_button_event(GtkWidget *widget, long type)
 {
     preview_data *data = get_preview_data(widget);
@@ -3049,6 +3010,7 @@ ufraw_private_function void control_button_event(GtkWidget *widget, long type)
     GtkWindow *window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
     gtk_widget_set_sensitive(data->Controls, FALSE);
     long response = UFRAW_NO_RESPONSE;
+    int status = UFRAW_SUCCESS;
 
     switch (type) {
     case cancel_button:
@@ -3059,30 +3021,23 @@ ufraw_private_function void control_button_event(GtkWidget *widget, long type)
 	    response = UFRAW_RESPONSE_DELETE;
 	break;
     case save_as_button:
-	if ( ufraw_save_as(data->UF, widget)==UFRAW_SUCCESS )
-	    response = GTK_RESPONSE_OK;
-	else
-	    response = UFRAW_RESPONSE_REDRAW;
+	status = ufraw_save_as(data->UF, widget);
+	response = GTK_RESPONSE_OK;
 	break;
     case save_button:
-	if ( ufraw_save_now(data->UF, widget)==UFRAW_SUCCESS )
-	    response = GTK_RESPONSE_OK;
-	else
-	    response = UFRAW_RESPONSE_REDRAW;
+	status = ufraw_save_now(data->UF, widget);
+	response = GTK_RESPONSE_OK;
 	break;
     case gimp_button:
 	if ( ufraw_send_to_gimp(data->UF)==UFRAW_SUCCESS )
 	    response = GTK_RESPONSE_OK;
-	else
-	    response = UFRAW_RESPONSE_REDRAW;
 	break;
     case ok_button:
-	if ( (*data->SaveFunc)(data->UF, widget)==UFRAW_SUCCESS )
-	    response = GTK_RESPONSE_OK;
-	else
-	    response = UFRAW_RESPONSE_REDRAW;
+	status = (*data->SaveFunc)(data->UF, widget);
+	response = GTK_RESPONSE_OK;
     }
-    if ( response==UFRAW_RESPONSE_REDRAW ) {
+    // cases that set error status require redrawing of the preview image
+    if ( status!=UFRAW_SUCCESS ) {
 	preview_progress(widget, "", 0);
 	create_base_image(data);
     } else if ( response!=UFRAW_NO_RESPONSE ) {
@@ -3092,6 +3047,56 @@ ufraw_private_function void control_button_event(GtkWidget *widget, long type)
     }
     data->FreezeDialog = FALSE;
     gtk_widget_set_sensitive(data->Controls, TRUE);
+}
+
+ufraw_private_function gboolean control_button_key_press_event(
+    GtkWidget *widget, GdkEventKey *event, preview_data *data)
+{
+    if (data->FreezeDialog==TRUE) return FALSE;
+    (void)widget;
+    // Check that the Alt key is pressed
+    if ( !(event->state&GDK_MOD1_MASK) ) return FALSE;
+    int i;
+    for (i=0; i<num_buttons; i++) {
+	if ( data->ButtonMnemonic[i]==0 ) continue;
+	if ( gdk_keyval_to_lower(event->keyval)==data->ButtonMnemonic[i] ) {
+	    control_button_event(data->ControlButton[i], i);
+	    return TRUE;
+	}
+    }
+    return FALSE;
+}
+
+GtkWidget *control_button(const char *stockImage, const char *tip,
+    ControlButtons buttonEnum, preview_data *data)
+{
+    GtkWidget *button = gtk_button_new();
+#if GTK_CHECK_VERSION(2,8,0)
+    gtk_button_set_image(GTK_BUTTON(gimpButton), gtk_image_new_from_stock(
+		stockImage, GTK_ICON_SIZE_BUTTON));
+#else
+    GtkWidget *image = gtk_image_new_from_stock(stockImage,
+	    GTK_ICON_SIZE_BUTTON);
+    gtk_container_add(GTK_CONTAINER(button), image);
+    gtk_widget_show(image);
+#endif
+    g_signal_connect(G_OBJECT(button), "clicked",
+	    G_CALLBACK(control_button_event), (gpointer)buttonEnum);
+    char **tipParts = g_strsplit(tip, "_", 2);
+    if ( tipParts[0]==NULL || tipParts[1]==NULL ) {
+	// No mnemonic
+	gtk_tooltips_set_tip(data->ToolTips, button, tip, NULL);
+	return button;
+    }
+    char *tooltip = g_strdup_printf(_("%s%s (Alt-%c)"),
+	    tipParts[0], tipParts[1], tipParts[1][0]);
+    gtk_tooltips_set_tip(data->ToolTips, button, tooltip, NULL);
+    g_free(tooltip);
+    data->ButtonMnemonic[buttonEnum] = gdk_keyval_to_lower(
+	    gdk_unicode_to_keyval(tipParts[1][0]));
+    data->ControlButton[buttonEnum] = button;
+    g_strfreev(tipParts);
+    return button;
 }
 
 void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
@@ -3178,7 +3183,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->AspectRatio = 0.0;
     data->LockAspect = FALSE;
     data->BlinkTimer = 0;
-
+    for (i=0; i<num_buttons; i++) {
+	data->ControlButton[i] = NULL;
+	data->ButtonMnemonic[i] = 0;
+    }
     data->ToolTips = gtk_tooltips_new();
 #if GTK_CHECK_VERSION(2,10,0)
     g_object_ref_sink(GTK_OBJECT(data->ToolTips));
@@ -3214,6 +3222,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 		     G_CALLBACK(window_map_event), NULL);
     g_signal_connect(G_OBJECT(previewWindow), "unmap-event",
 		     G_CALLBACK(window_unmap_event), NULL);
+    g_signal_connect(G_OBJECT(previewWindow), "key-press-event",
+		     G_CALLBACK(control_button_key_press_event), data);
     g_object_set_data(G_OBJECT(previewWindow), "Preview-Data", data);
     ufraw_focus(previewWindow, TRUE);
     uf->widget = previewWindow;
@@ -4430,14 +4440,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
 
     if (!plugin) {
+	// Comment to translator: All control buttons
+	// "_Delete", "_Cancel", "_Save", "Save _As", "Send to _Gimp"
+	// should have unique mnemonics.
 	// Delete button:
-	button = gtk_button_new();
-	gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                GTK_STOCK_DELETE, GTK_ICON_SIZE_BUTTON));
-	gtk_tooltips_set_tip(data->ToolTips, button,
-		_("Delete raw file"), NULL);
-	g_signal_connect(G_OBJECT(button), "clicked",
-		G_CALLBACK(control_button_event), (gpointer)delete_button);
+	button = control_button(GTK_STOCK_DELETE, _("_Delete"),
+		delete_button, data);
 	gtk_box_pack_start(box, button, FALSE, FALSE, 0);
     }
     // Cancel button:
@@ -4476,28 +4484,15 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     }
     if ( plugin==0 ) {
 	// Save as button
-	saveAsButton = gtk_button_new_from_stock(GTK_STOCK_SAVE_AS);
+	saveAsButton = control_button(GTK_STOCK_SAVE_AS,
+		_("Save _As"), save_as_button, data);
         gtk_box_pack_start(box, saveAsButton, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(saveAsButton), "clicked",
-		G_CALLBACK(control_button_event), (gpointer)save_as_button);
         gtk_widget_grab_focus(saveAsButton);
 
 	// Send to Gimp button
-	GtkWidget *gimpButton = gtk_button_new();
-#if GTK_CHECK_VERSION(2,8,0)
-	gtk_button_set_image(GTK_BUTTON(gimpButton), gtk_image_new_from_stock(
-		"gimp", GTK_ICON_SIZE_BUTTON));
-#else
-	GtkWidget *gimpImage = gtk_image_new_from_stock("gimp",
-		GTK_ICON_SIZE_BUTTON);
-	gtk_container_add(GTK_CONTAINER(gimpButton), gimpImage);
-	gtk_widget_show(gimpImage);
-#endif
+	GtkWidget *gimpButton = control_button("gimp",
+		_("Send image to _Gimp"), gimp_button, data);
         gtk_box_pack_start(box, gimpButton, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(data->ToolTips, gimpButton,
-		_("Send image to Gimp"), NULL);
-	g_signal_connect(G_OBJECT(gimpButton), "clicked",
-		G_CALLBACK(control_button_event), (gpointer)gimp_button);
     }
     gtk_widget_show_all(previewWindow);
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);

@@ -135,6 +135,7 @@ void ufraw_batch_messenger(char *message)
 
 char *ufraw_message(int code, const char *format, ...)
 {
+    // TODO: The following static variables are not thread-safe
     static char *logBuffer = NULL;
     static char *errorBuffer = NULL;
     static gboolean errorFlag = FALSE;

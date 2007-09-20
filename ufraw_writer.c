@@ -39,6 +39,7 @@
 
 #ifdef HAVE_LIBTIFF
 // There seem to be no way to get the libtiff message without a static variable
+// Therefore the folloing code is not thread-safe. 
 static char ufraw_tiff_message[max_path];
 
 ufraw_private_function void tiff_messenger(const char *module,

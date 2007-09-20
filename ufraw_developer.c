@@ -416,6 +416,8 @@ void rgb_to_cielch(gint64 rgb[3], float lch[3])
 {
     int c, cc, i;
     float r, xyz[3], lab[3];
+    // The use of static varibles here should be thread safe.
+    // In the worst case cbrt[] will be calculated more than once.
     static gboolean firstRun = TRUE;
     static float cbrt[0x10000];
 
