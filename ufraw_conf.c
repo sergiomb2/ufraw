@@ -104,16 +104,16 @@ const conf_data conf_default = {
     "", "", "" /* timestamp, make, model */
 };
 
-const char *interpolationNames[] =
+static const char *interpolationNames[] =
     { "eahd", "ahd", "vng", "four-color", "ppg", "bilinear", "half", NULL };
-const char *restoreDetailsNames[] =
+static const char *restoreDetailsNames[] =
     { "clip", "lch", "hsv", NULL };
-const char *clipHighlightsNames[] =
+static const char *clipHighlightsNames[] =
     { "digital", "film", NULL };
-const char *intentNames[] =
+static const char *intentNames[] =
     { "perceptual", "relative", "saturation", "absolute", "disable", NULL };
 
-int conf_find_name(const char name[],const char *namesList[], int notFound)
+static int conf_find_name(const char name[],const char *namesList[], int notFound)
 {
     int i;
     for (i=0; namesList[i]!=NULL; i++) {
@@ -122,7 +122,7 @@ int conf_find_name(const char name[],const char *namesList[], int notFound)
     return notFound;
 }
 
-const char *conf_get_name(const char *namesList[], int index)
+static const char *conf_get_name(const char *namesList[], int index)
 {
     int i;
     for (i=0; namesList[i]!=NULL; i++)
@@ -130,8 +130,9 @@ const char *conf_get_name(const char *namesList[], int index)
     return "Error";
 }
 
-void conf_parse_start(GMarkupParseContext *context, const gchar *element,
-    const gchar **names, const gchar **values, gpointer user, GError **error)
+static void conf_parse_start(GMarkupParseContext *context,
+	const gchar *element, const gchar **names, const gchar **values,
+	gpointer user, GError **error)
 {
     conf_data *c = user;
     int int_value;
@@ -230,7 +231,7 @@ void conf_parse_start(GMarkupParseContext *context, const gchar *element,
 	c->profileCount[display_profile] = - 0;
 }
 
-void conf_parse_end(GMarkupParseContext *context, const gchar *element,
+static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
          gpointer user, GError **error)
 {
     conf_data *c = user;
@@ -278,8 +279,8 @@ void conf_parse_end(GMarkupParseContext *context, const gchar *element,
         c->profileCount[display_profile] = -c->profileCount[display_profile]+1;
 }
 
-void conf_parse_text(GMarkupParseContext *context, const gchar *text, gsize len,
-        gpointer user, GError **error)
+static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
+	gsize len, gpointer user, GError **error)
 {
     conf_data *c = user;
     const gchar *element = g_markup_parse_context_get_element(context);

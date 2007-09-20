@@ -40,7 +40,7 @@ typedef struct {
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
 
-void ufraw_radio_button_update(GtkWidget *button, int *valuep)
+static void ufraw_radio_button_update(GtkWidget *button, int *valuep)
 {
     GtkWidget *dialog = gtk_widget_get_ancestor(button, GTK_TYPE_DIALOG);
     if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
@@ -55,7 +55,7 @@ void ufraw_radio_button_update(GtkWidget *button, int *valuep)
     g_free(newname);
 }
 
-void ufraw_saver_set_type(GtkWidget *widget, save_as_dialog_data *data)
+static void ufraw_saver_set_type(GtkWidget *widget, save_as_dialog_data *data)
 {
     char *filename, *type;
     filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
@@ -95,7 +95,7 @@ void ufraw_saver_set_type(GtkWidget *widget, save_as_dialog_data *data)
     g_free(filename);
 }
 
-int ufraw_overwrite_dialog(char *filename, GtkWidget *widget)
+static int ufraw_overwrite_dialog(char *filename, GtkWidget *widget)
 {
     char message[max_path];
     int response;

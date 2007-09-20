@@ -53,7 +53,6 @@ enum { eahd_interpolation, ahd_interpolation,
        vng_interpolation, four_color_interpolation,
        ppg_interpolation, bilinear_interpolation, half_interpolation,
        num_interpolations };
-extern const char *interpolationNames[];
 enum { no_id, also_id, only_id, send_id };
 enum { manual_curve, linear_curve, custom_curve, camera_curve };
 enum { in_profile, out_profile, display_profile, profile_types};
@@ -72,9 +71,9 @@ typedef enum { ufraw_first_phase, ufraw_denoise_phase, ufraw_final_phase,
 	ufraw_phases_num } UFRawPhase;
 
 typedef struct {
-    char *make;
-    char *model;
-    char *name;
+    const char *make;
+    const char *model;
+    const char *name;
     int tuning;
     double channel[4];
 } wb_data;

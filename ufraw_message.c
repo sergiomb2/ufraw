@@ -111,7 +111,7 @@ int ufraw_is_error(ufraw_data *uf)
 
 // Old error handling, should be removed after being fully implemented.
 
-char *ufraw_message_buffer(char *buffer, char *message)
+static char *ufraw_message_buffer(char *buffer, char *message)
 {
 #ifdef UFRAW_DEBUG
     ufraw_batch_messenger(message);

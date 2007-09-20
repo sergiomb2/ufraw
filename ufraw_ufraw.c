@@ -458,6 +458,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 
     return UFRAW_SUCCESS;
 }
+
 /* Calculate dark frame hot pixel thresholds as the 99.99th percentile
  * value.  That is, the value at which 99.99% of the pixels are darker.
  * Pixels below this threshold are considered to be bias noise, and
@@ -497,7 +498,7 @@ static void calc_thresholds(dcraw_image_type thresholds,
  * method, only hot pixels (as determined by the threshold) are examined
  * and recalculated.
  */
-void ufraw_subtract_darkframe(ufraw_data *uf)
+static void ufraw_subtract_darkframe(ufraw_data *uf)
 {
     dcraw_data *df = uf->conf->darkframe->raw;
     dcraw_data *org = uf->raw;
@@ -823,7 +824,7 @@ int ufraw_convert_image_area(ufraw_data *uf,
     return UFRAW_SUCCESS;
 }
 
-int ufraw_flip_image_buffer(ufraw_image_data *img, int flip)
+static int ufraw_flip_image_buffer(ufraw_image_data *img, int flip)
 {
     /* Following code was copied from dcraw's flip_image()
      * and modified to work with any pixel depth. */
@@ -1083,7 +1084,7 @@ int ufraw_set_wb(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
-void ufraw_build_raw_luminosity_histogram(ufraw_data *uf)
+static void ufraw_build_raw_luminosity_histogram(ufraw_data *uf)
 {
     int i, c;
     gint64 max;

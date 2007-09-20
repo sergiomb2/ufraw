@@ -219,7 +219,7 @@ double profile_default_gamma(profile_data *p)
  * The generalization to 2000K < T < 4000K and the blackbody fits
  * are my own and should be taken with a grain of salt.
  */
-const double XYZ_to_RGB[3][3] = {
+static const double XYZ_to_RGB[3][3] = {
     { 3.24071,	-0.969258,  0.0556352 },
     {-1.53726,	1.87599,    -0.203996 },
     {-0.498571,	0.0415557,  1.05707 } };
@@ -272,8 +272,9 @@ void RGB_to_Temperature(double RGB[3], double *T, double *Green)
     *Green = (testRGB[1]/testRGB[0]) / (RGB[1]/RGB[0]);
 }
 
-void curve_parse_start(GMarkupParseContext *context, const gchar *element,
-    const gchar **names, const gchar **values, gpointer user, GError **error)
+static void curve_parse_start(GMarkupParseContext *context,
+    const gchar *element, const gchar **names, const gchar **values,
+    gpointer user, GError **error)
 {
     CurveData *c = user;
     int int_value;
@@ -301,7 +302,7 @@ void curve_parse_start(GMarkupParseContext *context, const gchar *element,
     }
 }
 
-void curve_parse_end(GMarkupParseContext *context, const gchar *element,
+static void curve_parse_end(GMarkupParseContext *context, const gchar *element,
          gpointer user, GError **error)
 {
     CurveData *c = user;
@@ -314,7 +315,7 @@ void curve_parse_end(GMarkupParseContext *context, const gchar *element,
     }
 }
 
-void curve_parse_text(GMarkupParseContext *context, const gchar *text,
+static void curve_parse_text(GMarkupParseContext *context, const gchar *text,
 	gsize len, gpointer user, GError **error)
 {
     CurveData *c = user;

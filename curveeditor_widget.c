@@ -35,7 +35,7 @@ typedef struct {
 /********************************************************
 curveeditor_point_exists:
 *********************************************************/
-gboolean curveeditor_point_exists(CurveData *curve, int selectedPoint, double x)
+static gboolean curveeditor_point_exists(CurveData *curve, int selectedPoint, double x)
 {
     int i;
     for(i = 0; i < curve->m_numAnchors; i++)
@@ -54,7 +54,7 @@ curveeditor_widget_qsort_compare:
     Comparator for qsort function call. This is a local helper
     function only.
 *********************************************************/
-int curveeditor_widget_qsort_compare( const void *arg1, const void *arg2 )
+static int curveeditor_widget_qsort_compare( const void *arg1, const void *arg2 )
 {
     /* Compare points. Must define all three return values! */
     if (((CurveAnchorPoint*)arg1)->x > ((CurveAnchorPoint*)arg2)->x)
@@ -72,7 +72,7 @@ int curveeditor_widget_qsort_compare( const void *arg1, const void *arg2 )
 /**********************************************
 Draws the curve on the drawing area.
 ***********************************************/
-void curveeditor_widget_draw(CurveEditorWidgetData *data)
+static void curveeditor_widget_draw(CurveEditorWidgetData *data)
 {
     if (data->pixmap==NULL) return;
 
@@ -224,7 +224,7 @@ void curveeditor_widget_draw(CurveEditorWidgetData *data)
 /********************************************************
 curveeditor_widget_on_focus_event:
 *********************************************************/
-gboolean curveeditor_widget_on_focus_event(GtkWidget *widget,
+static gboolean curveeditor_widget_on_focus_event(GtkWidget *widget,
 	GdkEventFocus *event, CurveEditorWidgetData *data)
 {
     widget = widget;
@@ -242,7 +242,7 @@ gboolean curveeditor_widget_on_focus_event(GtkWidget *widget,
 /********************************************************
 curveeditor_widget_on_button_press_event:
 *********************************************************/
-gboolean curveeditor_widget_on_button_press_event (GtkWidget * widget,
+static gboolean curveeditor_widget_on_button_press_event (GtkWidget * widget,
 	GdkEventButton * event, CurveEditorWidgetData *data)
 {
     int i;
@@ -307,7 +307,7 @@ gboolean curveeditor_widget_on_button_press_event (GtkWidget * widget,
 /********************************************************
 curveeditor_widget_on_show_event:
 *********************************************************/
-void curveeditor_widget_on_realize(GtkWidget *widget,
+static void curveeditor_widget_on_realize(GtkWidget *widget,
 	CurveEditorWidgetData *data)
 {
     /* We can create the pixmap only after widget is connected to
@@ -324,7 +324,7 @@ void curveeditor_widget_on_realize(GtkWidget *widget,
 /********************************************************
 curveeditor_widget_on_motion_notify_event:
 *********************************************************/
-gboolean curveeditor_widget_on_motion_notify_event(GtkWidget *widget,
+static gboolean curveeditor_widget_on_motion_notify_event(GtkWidget *widget,
 	GdkEventButton *event, CurveEditorWidgetData *data)
 {
     widget = widget;
@@ -386,7 +386,7 @@ gboolean curveeditor_widget_on_motion_notify_event(GtkWidget *widget,
 /********************************************************
 curveeditor_widget_on_key_press_event:
 *********************************************************/
-gboolean curveeditor_widget_on_key_press_event(GtkWidget *widget,
+static gboolean curveeditor_widget_on_key_press_event(GtkWidget *widget,
 	GdkEventKey * event, CurveEditorWidgetData *data)
 {
     int i;
@@ -538,7 +538,7 @@ gboolean curveeditor_widget_on_key_press_event(GtkWidget *widget,
 /********************************************************
 curveeditor_widget_on_destroy:
 *********************************************************/
-void curveeditor_widget_on_destroy(GtkWidget *widget,
+static void curveeditor_widget_on_destroy(GtkWidget *widget,
 	CurveEditorWidgetData *data)
 {
     widget = widget;

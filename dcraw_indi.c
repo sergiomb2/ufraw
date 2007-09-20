@@ -81,13 +81,13 @@ int CLASS fc_INDI (const unsigned filters, const int row, const int col)
   return filter[(row+8) & 15][(col+18) & 15];
 }
 
-void CLASS merror (void *ptr, char *where)
+static void CLASS merror (void *ptr, char *where)
 {
     if (ptr) return;
     g_error("Out of memory in %s\n", where);
 }
 
-void CLASS hat_transform (float *temp, float *base, int st, int size, int sc)
+static void CLASS hat_transform (float *temp, float *base, int st, int size, int sc)
 {
   int i;
   for (i=0; i < sc; i++)
@@ -683,7 +683,7 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 #define PIX_SORT(a,b) { if ((a)>(b)) PIX_SWAP((a),(b)); }
 #define PIX_SWAP(a,b) { int temp=(a);(a)=(b);(b)=temp; }
 
-inline int median9(int *p)
+static inline int median9(int *p)
 {
     PIX_SORT(p[1], p[2]) ; PIX_SORT(p[4], p[5]) ; PIX_SORT(p[7], p[8]) ; 
     PIX_SORT(p[0], p[1]) ; PIX_SORT(p[3], p[4]) ; PIX_SORT(p[6], p[7]) ; 
@@ -697,7 +697,7 @@ inline int median9(int *p)
 #undef PIX_SWAP
 #undef PIX_SORT
 
-inline ushort eahd_median(int row, int col, int color,
+static inline ushort eahd_median(int row, int col, int color,
 	      ushort (*image)[4],
    	      const int width) {
   

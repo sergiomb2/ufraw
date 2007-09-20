@@ -22,7 +22,7 @@
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
-gboolean silentMessenger;
+static gboolean silentMessenger;
 char *ufraw_binary;
 
 int ufraw_batch_saver(ufraw_data *uf);

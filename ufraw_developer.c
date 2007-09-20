@@ -21,7 +21,7 @@
 #include "nikon_curve.h"
 #include "ufraw.h"
 
-int lcms_message(int ErrorCode, const char *ErrorText)
+static int lcms_message(int ErrorCode, const char *ErrorText)
 {
     /* Possible ErrorCode:
      * LCMS_ERRC_WARNING        0x1000
@@ -104,7 +104,7 @@ void developer_profile(developer_data *d, int type, profile_data *p)
 #define CLAMP_AB_DOUBLE(ab) \
 	( (ab<-128.0) ? -128.0 : ( (ab>127.9961) ? +127.9961 : ab) )
 
-int saturation_sampler(register WORD In[], register WORD Out[],
+static int saturation_sampler(register WORD In[], register WORD Out[],
 	register LPVOID Cargo)
 {
     cmsCIELab Lab;
@@ -127,7 +127,7 @@ int saturation_sampler(register WORD In[], register WORD Out[],
 }
 
 /* Based on lcms' cmsCreateBCHSWabstractProfile() */
-cmsHPROFILE create_saturation_profile(double saturation)
+static cmsHPROFILE create_saturation_profile(double saturation)
 {
     cmsHPROFILE hICC;
     LPLUT Lut;
@@ -159,7 +159,7 @@ cmsHPROFILE create_saturation_profile(double saturation)
 
 /* Find a for which (1-exp(-a x)/(1-exp(-a)) has derivative b at x=0 */
 /* In other words, solve a/(1-exp(-a))==b */
-double findExpCoeff(double b)
+static double findExpCoeff(double b)
 {
     double a, bg;
     int try;
@@ -174,7 +174,7 @@ double findExpCoeff(double b)
     return a;
 }
 
-void developer_create_transform(developer_data *d, DeveloperMode mode)
+static void developer_create_transform(developer_data *d, DeveloperMode mode)
 {
     if ( mode==auto_developer ) {
 	/* For auto-tools we ignore all the output settings:
@@ -407,12 +407,12 @@ void developer_prepare(developer_data *d, conf_data *conf,
 }
 
 extern const double xyz_rgb[3][3];
-const double rgb_xyz[3][3] = {			/* RGB from XYZ */
+static const double rgb_xyz[3][3] = {			/* RGB from XYZ */
     { 3.24048, -1.53715, -0.498536 },
     { -0.969255, 1.87599, 0.0415559 },
     { 0.0556466, -0.204041, 1.05731 } };
 
-void rgb_to_cielch(gint64 rgb[3], float lch[3])
+static void rgb_to_cielch(gint64 rgb[3], float lch[3])
 {
     int c, cc, i;
     float r, xyz[3], lab[3];
@@ -443,7 +443,7 @@ void rgb_to_cielch(gint64 rgb[3], float lch[3])
     lch[2] = atan2(lab[2], lab[1]);
 }
 
-void cielch_to_rgb(float lch[3], gint64 rgb[3])
+static void cielch_to_rgb(float lch[3], gint64 rgb[3])
 {
     int c, cc;
     float xyz[3], fx, fy, fz, xr, yr, zr, kappa, epsilon, tmpf, lab[3];
@@ -471,7 +471,7 @@ void cielch_to_rgb(float lch[3], gint64 rgb[3])
     }
 }
 
-void MaxMidMin(gint64 p[3], int *maxc, int *midc, int *minc)
+static void MaxMidMin(gint64 p[3], int *maxc, int *midc, int *minc)
 {
     if (p[0] > p[1] && p[0] > p[2]) {
         *maxc = 0;

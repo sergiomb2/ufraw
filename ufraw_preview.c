@@ -38,8 +38,8 @@ void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
 
 /* Set to huge number so that the preview size is set by the screen size */
-const int def_preview_width = 9000;
-const int def_preview_height = 9000;
+static const int def_preview_width = 9000;
+static const int def_preview_height = 9000;
 #define raw_his_size 320
 #define live_his_size 256
 #define min_scale 2
@@ -48,7 +48,7 @@ const int def_preview_height = 9000;
 enum { pixel_format, percent_format };
 enum { without_zone, with_zone };
 
-char *expanderText[] = { N_("Raw histogram"), N_("Live histogram"), NULL };
+static char *expanderText[] = { N_("Raw histogram"), N_("Live histogram"), NULL };
 
 typedef struct {
     GtkLabel *labels[5];
@@ -67,7 +67,7 @@ typedef enum { spot_cursor, crop_cursor,
     top_left_cursor, top_right_cursor, bottom_left_cursor, bottom_right_cursor,
     move_cursor, cursor_num } CursorType;
 
-const GdkCursorType Cursors[cursor_num] = {
+static const GdkCursorType Cursors[cursor_num] = {
     GDK_HAND2, GDK_CROSSHAIR,
     GDK_LEFT_SIDE, GDK_RIGHT_SIDE, GDK_TOP_SIDE, GDK_BOTTOM_SIDE,
     GDK_TOP_LEFT_CORNER, GDK_TOP_RIGHT_CORNER,
@@ -174,7 +174,7 @@ typedef struct {
 
 enum { base_curve, luminosity_curve };
 
-preview_data *get_preview_data(void *object)
+static preview_data *get_preview_data(void *object)
 {
     GtkWidget *widget;
     if (GTK_IS_ADJUSTMENT(object)) {
@@ -224,7 +224,7 @@ void ufraw_messenger(char *message,  void *parentWindow)
     }
 }
 
-void load_curve(GtkWidget *widget, long curveType)
+static void load_curve(GtkWidget *widget, long curveType)
 {
     preview_data *data = get_preview_data(widget);
     GtkFileChooser *fileChooser;
@@ -332,7 +332,7 @@ void load_curve(GtkWidget *widget, long curveType)
     gtk_widget_destroy(GTK_WIDGET(fileChooser));
 }
 
-void save_curve(GtkWidget *widget, long curveType)
+static void save_curve(GtkWidget *widget, long curveType)
 {
     preview_data *data = get_preview_data(widget);
     GtkFileChooser *fileChooser;
@@ -409,7 +409,7 @@ void save_curve(GtkWidget *widget, long curveType)
     gtk_widget_destroy(GTK_WIDGET(fileChooser));
 }
 
-void load_profile(GtkWidget *widget, long type)
+static void load_profile(GtkWidget *widget, long type)
 {
     preview_data *data = get_preview_data(widget);
     GtkFileChooser *fileChooser;
@@ -500,8 +500,8 @@ void load_profile(GtkWidget *widget, long type)
     gtk_widget_destroy(GTK_WIDGET(fileChooser));
 }
 
-colorLabels *color_labels_new(GtkTable *table, int x, int y, char *label,
-        int format, int zonep, preview_data *data)
+static colorLabels *color_labels_new(GtkTable *table, int x, int y,
+	char *label, int format, int zonep, preview_data *data)
 {
     colorLabels *l;
     GtkWidget *lbl;
@@ -539,7 +539,7 @@ colorLabels *color_labels_new(GtkTable *table, int x, int y, char *label,
 
 /* Return numeric zone representation from 0-1 luminance value.
  * Unlike Adams, we use arabic for now. */
-double value2zone(double v)
+static double value2zone(double v)
 {
     const double zoneV = 0.18;
     double z_rel_V;
@@ -557,7 +557,7 @@ double value2zone(double v)
     return zone;
 }
 
-void color_labels_set(colorLabels *l, double data[])
+static void color_labels_set(colorLabels *l, double data[])
 {
     int c;
     char buf1[max_name], buf2[max_name];
@@ -597,7 +597,7 @@ void color_labels_set(colorLabels *l, double data[])
     gtk_label_set_markup(l->labels[c], buf2);
 }
 
-void redraw_navigation_image(preview_data *data)
+static void redraw_navigation_image(preview_data *data)
 {
 #if defined(HAVE_GTKIMAGEVIEW) && GTK_IMAGE_VIEW_DAMAGE_PIXELS==0
     GtkWidget *scroll =
@@ -615,7 +615,8 @@ void redraw_navigation_image(preview_data *data)
 #endif
 }
 
-void image_draw_area(preview_data *data, int x, int y, int width, int height)
+static void image_draw_area(preview_data *data, int x, int y,
+			    int width, int height)
 {
     GtkWidget *widget = data->PreviewWidget;
 #ifdef HAVE_GTKIMAGEVIEW
@@ -675,7 +676,8 @@ void image_draw_area(preview_data *data, int x, int y, int width, int height)
  * This approach makes computing width/height just a matter of
  * substracting X1 from X2 or Y1 from Y2.
  */
-void preview_draw_area(preview_data *data, int x, int y, int width, int height)
+static void preview_draw_area(preview_data *data, int x, int y,
+			      int width, int height)
 {
     int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
     if ( y<0 || y>=pixbufHeight )
@@ -750,7 +752,7 @@ void preview_draw_area(preview_data *data, int x, int y, int width, int height)
     image_draw_area(data, x, y, width, height);
 }
 
-gboolean switch_highlights(gpointer ptr)
+static gboolean switch_highlights(gpointer ptr)
 {
     preview_data *data = ptr;
     /* Only redraw the highlights in the default rendering mode. */
@@ -828,14 +830,14 @@ static void window_unmap_event(GtkWidget *widget, GdkEvent *event,
     (void)user_data;
 }
 
-void render_preview(preview_data *data);
-gboolean render_raw_histogram(preview_data *data);
-gboolean render_preview_image(preview_data *data);
-gboolean render_live_histogram(preview_data *data);
-gboolean render_spot(preview_data *data);
-void draw_spot(preview_data *data, gboolean draw);
+static void render_preview(preview_data *data);
+static gboolean render_raw_histogram(preview_data *data);
+static gboolean render_preview_image(preview_data *data);
+static gboolean render_live_histogram(preview_data *data);
+static gboolean render_spot(preview_data *data);
+static void draw_spot(preview_data *data, gboolean draw);
 
-void render_special_mode(GtkWidget *widget, long mode)
+static void render_special_mode(GtkWidget *widget, long mode)
 {
     preview_data *data = get_preview_data(widget);
     data->RenderMode = mode;
@@ -844,7 +846,7 @@ void render_special_mode(GtkWidget *widget, long mode)
     preview_draw_area(data, 0, 0, width, height);
 }
 
-void render_init(preview_data *data)
+static void render_init(preview_data *data)
 {
     /* Check if we need a new pixbuf */
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
@@ -880,7 +882,7 @@ void render_init(preview_data *data)
     }
 }
 
-void render_preview(preview_data *data)
+static void render_preview(preview_data *data)
 {
     if (data->FreezeDialog) return;
 
@@ -892,7 +894,7 @@ void render_preview(preview_data *data)
 	    (GSourceFunc)(render_raw_histogram), data, NULL);
 }
 
-gboolean render_raw_histogram(preview_data *data)
+static gboolean render_raw_histogram(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
     GdkPixbuf *pixbuf;
@@ -1023,7 +1025,7 @@ gboolean render_raw_histogram(preview_data *data)
     return FALSE;
 }
 
-gboolean render_preview_image(preview_data *data)
+static gboolean render_preview_image(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
 
@@ -1045,7 +1047,7 @@ gboolean render_preview_image(preview_data *data)
     return FALSE;
 }
 
-gboolean render_live_histogram(preview_data *data)
+static gboolean render_live_histogram(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
 
@@ -1151,7 +1153,7 @@ gboolean render_live_histogram(preview_data *data)
     return FALSE;
 }
 
-gboolean render_spot(preview_data *data)
+static gboolean render_spot(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
 
@@ -1223,7 +1225,7 @@ gboolean render_spot(preview_data *data)
     return FALSE;
 }
 
-void draw_spot(preview_data *data, gboolean draw)
+static void draw_spot(preview_data *data, gboolean draw)
 {
     if (data->SpotX1<0) return;
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
@@ -1244,10 +1246,10 @@ void draw_spot(preview_data *data, gboolean draw)
     preview_draw_area(data, SpotX2, SpotY1, 1, SpotY2-SpotY1+1);
 }
 
-void update_shrink_ranges(preview_data *data);
+static void update_shrink_ranges(preview_data *data);
 
 /* update the UI entries that could have changed automatically */
-void update_scales(preview_data *data)
+static void update_scales(preview_data *data)
 {
     if (data->FreezeDialog) return;
     data->FreezeDialog = TRUE;
@@ -1337,7 +1339,7 @@ void update_scales(preview_data *data)
     render_preview(data);
 }
 
-void curve_update(GtkWidget *widget, long curveType)
+static void curve_update(GtkWidget *widget, long curveType)
 {
     preview_data *data = get_preview_data(widget);
     if (curveType==base_curve) {
@@ -1355,7 +1357,7 @@ void curve_update(GtkWidget *widget, long curveType)
     update_scales(data);
 }
 
-void spot_wb_event(GtkWidget *widget, gpointer user_data)
+static void spot_wb_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     int spotStartX, spotStartY, spotWidth, spotHeight;
@@ -1402,7 +1404,7 @@ void spot_wb_event(GtkWidget *widget, gpointer user_data)
     update_scales(data);
 }
 
-void event_coordinate_rescale(gdouble *x, gdouble *y, preview_data *data)
+static void event_coordinate_rescale(gdouble *x, gdouble *y, preview_data *data)
 {
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
@@ -1433,7 +1435,7 @@ void event_coordinate_rescale(gdouble *x, gdouble *y, preview_data *data)
     *y = *y * data->UF->initialHeight / height;
 }
 
-gboolean preview_button_press(GtkWidget *event_box, GdkEventButton *event,
+static gboolean preview_button_press(GtkWidget *event_box, GdkEventButton *event,
 	gpointer user_data)
 {
     preview_data *data = get_preview_data(event_box);
@@ -1456,7 +1458,7 @@ gboolean preview_button_press(GtkWidget *event_box, GdkEventButton *event,
     return FALSE;
 }
 
-gboolean preview_button_release(GtkWidget *event_box, GdkEventButton *event,
+static gboolean preview_button_release(GtkWidget *event_box, GdkEventButton *event,
 	gpointer user_data)
 {
     preview_data *data = get_preview_data(event_box);
@@ -1466,12 +1468,12 @@ gboolean preview_button_release(GtkWidget *event_box, GdkEventButton *event,
     return TRUE;
 }
 
-void update_crop_ranges(preview_data *data);
-void fix_crop_aspect(preview_data *data, CursorType cursor);
-void set_new_aspect(preview_data *data);
-void refresh_aspect(preview_data *data);
+static void update_crop_ranges(preview_data *data);
+static void fix_crop_aspect(preview_data *data, CursorType cursor);
+static void set_new_aspect(preview_data *data);
+static void refresh_aspect(preview_data *data);
 
-gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
+static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 {
     event_coordinate_rescale(&event->x, &event->y, data);
     int x = event->x;
@@ -1567,7 +1569,7 @@ gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
     return TRUE;
 }
 
-gboolean preview_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
+static gboolean preview_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
 	gpointer user_data)
 {
     preview_data *data = get_preview_data(event_box);
@@ -1588,7 +1590,7 @@ gboolean preview_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
     return TRUE;
 }
 
-void create_base_image(preview_data *data)
+static void create_base_image(preview_data *data)
 {
     int shrinkSave = CFG->shrink;
     int sizeSave = CFG->size;
@@ -1609,7 +1611,7 @@ void create_base_image(preview_data *data)
     data->fromPhase = ufraw_denoise_phase;
 }
 
-void update_shrink_ranges(preview_data *data)
+static void update_shrink_ranges(preview_data *data)
 {
     if (data->FreezeDialog) return;
     data->FreezeDialog++;
@@ -1644,7 +1646,7 @@ void update_shrink_ranges(preview_data *data)
     data->FreezeDialog--;
 }
 
-void update_crop_ranges(preview_data *data)
+static void update_crop_ranges(preview_data *data)
 {
     if (data->FreezeDialog) return;
 
@@ -1724,7 +1726,7 @@ void update_crop_ranges(preview_data *data)
     redraw_navigation_image(data);
 }
 
-void crop_reset(GtkWidget *widget, gpointer user_data)
+static void crop_reset(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     user_data = user_data;
@@ -1738,7 +1740,7 @@ void crop_reset(GtkWidget *widget, gpointer user_data)
     set_new_aspect(data);
 }
 
-void zoom_in_event(GtkWidget *widget, gpointer user_data)
+static void zoom_in_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     const double prev_zoom = CFG->Zoom;
@@ -1761,7 +1763,7 @@ void zoom_in_event(GtkWidget *widget, gpointer user_data)
     }
 }
 
-void zoom_out_event(GtkWidget *widget, gpointer user_data)
+static void zoom_out_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     const double prev_zoom = CFG->Zoom;
@@ -1785,7 +1787,7 @@ void zoom_out_event(GtkWidget *widget, gpointer user_data)
 }
 
 #ifdef HAVE_GTKIMAGEVIEW
-void zoom_fit_event(GtkWidget *widget, gpointer user_data)
+static void zoom_fit_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     const double prev_zoom = CFG->Zoom;
@@ -1807,7 +1809,7 @@ void zoom_fit_event(GtkWidget *widget, gpointer user_data)
 }
 #endif
 
-void zoom_max_event(GtkWidget *widget, gpointer user_data)
+static void zoom_max_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     const double prev_zoom = CFG->Zoom;
@@ -1822,7 +1824,7 @@ void zoom_max_event(GtkWidget *widget, gpointer user_data)
     }
 }
 
-void flip_image(GtkWidget *widget, int flip)
+static void flip_image(GtkWidget *widget, int flip)
 {
     int temp;
     preview_data *data = get_preview_data(widget);
@@ -1884,7 +1886,7 @@ void flip_image(GtkWidget *widget, int flip)
     refresh_aspect(data);
 }
 
-void refresh_aspect(preview_data *data)
+static void refresh_aspect(preview_data *data)
 {
     const struct
     {
@@ -1924,7 +1926,7 @@ void refresh_aspect(preview_data *data)
     g_free(text);
 }
 
-void fix_crop_aspect(preview_data *data, CursorType cursor)
+static void fix_crop_aspect(preview_data *data, CursorType cursor)
 {
     float aspect;
 
@@ -2062,7 +2064,7 @@ void fix_crop_aspect(preview_data *data, CursorType cursor)
 }
 
 /* Modify current crop area so that it fits current aspect ratio */
-void set_new_aspect(preview_data *data)
+static void set_new_aspect(preview_data *data)
 {
     float cx, cy, dx, dy;
 
@@ -2118,13 +2120,13 @@ void set_new_aspect(preview_data *data)
     update_crop_ranges(data);
 }
 
-void lock_aspect(GtkWidget *widget)
+static void lock_aspect(GtkWidget *widget)
 {
     preview_data *data = get_preview_data(widget);
     data->LockAspect = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 }
 
-void aspect_changed(GtkWidget *widget, gpointer user_data)
+static void aspect_changed(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     if (data->FreezeDialog) return;
@@ -2148,8 +2150,8 @@ void aspect_changed(GtkWidget *widget, gpointer user_data)
     set_new_aspect (data);
 }
 
-GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text, char *icon,
-    GtkTooltips *tooltips)
+static GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text,
+    char *icon, GtkTooltips *tooltips)
 {
     GtkWidget *page = gtk_vbox_new(FALSE, 0);
     if ( icon==NULL ) {
@@ -2167,7 +2169,7 @@ GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text, char *icon,
     return page;
 }
 
-GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
+static GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
 {
     GtkWidget *frame, *expander;
     GtkWidget *table;
@@ -2189,7 +2191,7 @@ GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
     return table;
 }
 
-void button_update(GtkWidget *button, gpointer user_data)
+static void button_update(GtkWidget *button, gpointer user_data)
 {
     preview_data *data = get_preview_data(button);
     user_data = user_data;
@@ -2264,7 +2266,7 @@ void button_update(GtkWidget *button, gpointer user_data)
     return;
 }
 
-void restore_details_button_set(GtkButton *button, preview_data *data)
+static void restore_details_button_set(GtkButton *button, preview_data *data)
 {
 #if !GTK_CHECK_VERSION(2,6,0)
     GtkWidget *lastImage = gtk_bin_get_child(GTK_BIN(button));
@@ -2319,7 +2321,7 @@ void restore_details_button_set(GtkButton *button, preview_data *data)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
 }
 
-void clip_highlights_button_set(GtkButton *button, preview_data *data)
+static void clip_highlights_button_set(GtkButton *button, preview_data *data)
 {
 #if !GTK_CHECK_VERSION(2,6,0)
     GtkWidget *lastImage = gtk_bin_get_child(GTK_BIN(button));
@@ -2363,7 +2365,7 @@ void clip_highlights_button_set(GtkButton *button, preview_data *data)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
 }
 
-void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
+static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 {
     preview_data *data = get_preview_data(button);
     if (valuep==&CFG->restoreDetails) {
@@ -2400,7 +2402,7 @@ void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
     }
 }
 
-void toggle_button(GtkTable *table, int x, int y, char *label,
+static void toggle_button(GtkTable *table, int x, int y, char *label,
 	gboolean *valuep)
 {
     GtkWidget *widget, *align;
@@ -2416,7 +2418,7 @@ void toggle_button(GtkTable *table, int x, int y, char *label,
             G_CALLBACK(toggle_button_update), valuep);
 }
 
-void adjustment_update(GtkAdjustment *adj, double *valuep)
+static void adjustment_update(GtkAdjustment *adj, double *valuep)
 {
     preview_data *data = get_preview_data(adj);
     if (data->FreezeDialog) return;
@@ -2495,7 +2497,7 @@ void adjustment_update(GtkAdjustment *adj, double *valuep)
     update_scales(data);
 }
 
-GtkAdjustment *adjustment_scale(GtkTable *table,
+static GtkAdjustment *adjustment_scale(GtkTable *table,
     int x, int y, char *label, double value, double *valuep,
     double min, double max, double step, double jump, long accuracy, char *tip)
 {
@@ -2533,7 +2535,7 @@ GtkAdjustment *adjustment_scale(GtkTable *table,
     return adj;
 }
 
-void combo_update(GtkWidget *combo, gint *valuep)
+static void combo_update(GtkWidget *combo, gint *valuep)
 {
     preview_data *data = get_preview_data(combo);
     if (data->FreezeDialog) return;
@@ -2563,7 +2565,7 @@ void combo_update(GtkWidget *combo, gint *valuep)
     }
 }
 
-void radio_menu_update(GtkWidget *item, gint *valuep)
+static void radio_menu_update(GtkWidget *item, gint *valuep)
 {
     if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item))) {
 	preview_data *data = get_preview_data(item);
@@ -2573,13 +2575,13 @@ void radio_menu_update(GtkWidget *item, gint *valuep)
     }
 }
 
-void container_remove(GtkWidget *widget, gpointer user_data)
+static void container_remove(GtkWidget *widget, gpointer user_data)
 {
     GtkContainer *container = GTK_CONTAINER(user_data);
     gtk_container_remove(container, widget);
 }
 
-void delete_from_list(GtkWidget *widget, gpointer user_data)
+static void delete_from_list(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     GtkDialog *dialog;
@@ -2638,7 +2640,7 @@ void delete_from_list(GtkWidget *widget, gpointer user_data)
     gtk_dialog_response(dialog, GTK_RESPONSE_APPLY);
 }
 
-void configuration_save(GtkWidget *widget, gpointer user_data)
+static void configuration_save(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     user_data = user_data;
@@ -2646,18 +2648,18 @@ void configuration_save(GtkWidget *widget, gpointer user_data)
     data->SaveConfig = *data->UF->conf;
 }
 
-void gimp_entry_changed(GtkEntry *entry, char text[])
+static void gimp_entry_changed(GtkEntry *entry, char text[])
 {
     g_strlcpy(text, gtk_entry_get_text(entry), max_path);
 }
 
-void gimp_reset_clicked(GtkWidget *widget, GtkEntry *entry)
+static void gimp_reset_clicked(GtkWidget *widget, GtkEntry *entry)
 {
     (void)widget;
     gtk_entry_set_text(entry, conf_default.remoteGimpCommand);
 }
 
-void options_combo_update(GtkWidget *combo, gint *valuep)
+static void options_combo_update(GtkWidget *combo, gint *valuep)
 {
     GtkDialog *dialog;
 
@@ -2666,7 +2668,7 @@ void options_combo_update(GtkWidget *combo, gint *valuep)
     gtk_dialog_response(dialog, GTK_RESPONSE_APPLY);
 }
 
-void options_dialog(GtkWidget *widget, gpointer user_data)
+static void options_dialog(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     GtkWidget *optionsDialog, *profileTable[profile_types];
@@ -2954,7 +2956,7 @@ void options_dialog(GtkWidget *widget, gpointer user_data)
     }
 }
 
-gboolean window_delete_event(GtkWidget *widget, GdkEvent *event,
+static gboolean window_delete_event(GtkWidget *widget, GdkEvent *event,
 	gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
@@ -2967,7 +2969,7 @@ gboolean window_delete_event(GtkWidget *widget, GdkEvent *event,
     return TRUE;
 }
 
-void expander_state(GtkWidget *widget, gpointer user_data)
+static void expander_state(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     const char *text;
@@ -2983,7 +2985,7 @@ void expander_state(GtkWidget *widget, gpointer user_data)
             CFG->expander[i] = gtk_expander_get_expanded(GTK_EXPANDER(widget));
 }
 
-gboolean histogram_menu(GtkMenu *menu, GdkEventButton *event)
+static gboolean histogram_menu(GtkMenu *menu, GdkEventButton *event)
 {
     preview_data *data = get_preview_data(menu);
     if (data->FreezeDialog) return FALSE;
@@ -3067,7 +3069,7 @@ ufraw_private_function gboolean control_button_key_press_event(
     return FALSE;
 }
 
-GtkWidget *control_button(const char *stockImage, const char *tip,
+static GtkWidget *control_button(const char *stockImage, const char *tip,
     ControlButtons buttonEnum, preview_data *data)
 {
     GtkWidget *button = gtk_button_new();
@@ -3099,7 +3101,7 @@ GtkWidget *control_button(const char *stockImage, const char *tip,
     return button;
 }
 
-void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
+static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
 	guint page_num, gpointer user_data)
 {
     (void)page;

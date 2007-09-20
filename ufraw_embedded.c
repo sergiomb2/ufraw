@@ -31,7 +31,7 @@
 #include "ufraw.h"
 
 #ifdef HAVE_LIBJPEG
-void ufraw_jpeg_warning(j_common_ptr cinfo)
+static void ufraw_jpeg_warning(j_common_ptr cinfo)
 {
     ufraw_message(UFRAW_SET_WARNING,
 	    cinfo->err->jpeg_message_table[cinfo->err->msg_code],
@@ -40,7 +40,8 @@ void ufraw_jpeg_warning(j_common_ptr cinfo)
 	    cinfo->err->msg_parm.i[2],
 	    cinfo->err->msg_parm.i[3]);
 }
-void ufraw_jpeg_error(j_common_ptr cinfo)
+
+static void ufraw_jpeg_error(j_common_ptr cinfo)
 {
     /* We ignore the SOI error if second byte is 0xd8 since Minolta's
      * SOI is known to be wrong */
