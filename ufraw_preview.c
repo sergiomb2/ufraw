@@ -1886,25 +1886,35 @@ static void flip_image(GtkWidget *widget, int flip)
     refresh_aspect(data);
 }
 
+/*
+ * Used to offer choices of aspect ratios, and to show numbers
+ * as ratios.
+ */
+static const struct
+{
+    float val;
+    const char text[5];
+} predef_aspects [] =
+{
+    { 21.0/ 9.0, "21:9" },
+    { 16.0/ 9.0, "16:9" },
+    {  3.0/ 2.0, "3:2"  },
+    {  7.0/ 5.0, "7:5"  },
+    {  4.0/ 3.0, "4:3"  },
+    {  14.0/ 11.0, "14:11"  },
+    {  5.0/ 4.0, "5:4"  },
+    {  1.0/ 1.0, "1:1"  },
+    {  4.0/ 5.0, "4:5"  },
+    {  11.0/ 14.0, "11:14"  },
+    {  3.0/ 4.0, "3:4"  },
+    {  5.0/ 7.0, "5:7"  },
+    {  2.0/ 3.0, "2:3"  },
+    {  9.0/16.0, "9:16" },
+    {  9.0/21.0, "9:21" }
+};
+
 static void refresh_aspect(preview_data *data)
 {
-    const struct
-    {
-        float val;
-        const char text[5];
-    } predef_aspects [] =
-    {
-        { 21.0/ 9.0, "21:9" },
-        { 16.0/ 9.0, "16:9" },
-        {  3.0/ 2.0, "3:2"  },
-        {  4.0/ 3.0, "4:3"  },
-        {  1.0/ 1.0, "1:1"  },
-        {  3.0/ 4.0, "3:4"  },
-        {  2.0/ 3.0, "2:3"  },
-        {  9.0/16.0, "9:16" },
-        {  9.0/21.0, "9:21" }
-    };
-
     int dy = CFG->CropY2 - CFG->CropY1;
     data->AspectRatio = dy ? ((CFG->CropX2 - CFG->CropX1) / (float)dy) : 1.0;
 
@@ -3993,15 +4003,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_entry_set_width_chars (data->AspectEntry, 6);
     gtk_entry_set_alignment (data->AspectEntry, 0.5);
     gtk_table_attach(table, GTK_WIDGET (entry), 1, 2, 0, 1, 0, 0, 5, 0);
-    gtk_combo_box_append_text (GTK_COMBO_BOX(entry), "21:9");
-    gtk_combo_box_append_text (GTK_COMBO_BOX(entry), "16:9");
-    gtk_combo_box_append_text (GTK_COMBO_BOX(entry), "3:2");
-    gtk_combo_box_append_text (GTK_COMBO_BOX(entry), "4:3");
-    gtk_combo_box_append_text (GTK_COMBO_BOX(entry), "1:1");
-    gtk_combo_box_append_text (GTK_COMBO_BOX(entry), "3:4");
-    gtk_combo_box_append_text (GTK_COMBO_BOX(entry), "2:3");
-    gtk_combo_box_append_text (GTK_COMBO_BOX(entry), "9:16");
-    gtk_combo_box_append_text (GTK_COMBO_BOX(entry), "9:21");
+
+    size_t s;
+    for (s = 0; s < sizeof (predef_aspects) / sizeof (predef_aspects [0]); s++)
+    {
+	gtk_combo_box_append_text (GTK_COMBO_BOX(entry),
+				   predef_aspects [s].text);
+    }
+
     g_signal_connect(G_OBJECT(entry), "changed",
                      G_CALLBACK(aspect_changed), NULL);
 
