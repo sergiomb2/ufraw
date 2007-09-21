@@ -98,6 +98,7 @@ typedef struct {
     GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
     GtkComboBox *WBCombo, *BaseCurveCombo, *CurveCombo,
 		*ProfileCombo[profile_types];
+    GtkTable *SpotTable;
     GtkLabel *SpotPatch;
     colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
     GtkToggleButton *AutoExposureButton, *AutoBlackButton;
@@ -525,8 +526,7 @@ static colorLabels *color_labels_new(GtkTable *table, int x, int y,
 	l->labels[c] = GTK_LABEL(gtk_label_new(NULL));
 	GtkWidget *event_box = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(l->labels[c]));
-	gtk_table_attach_defaults(table, event_box,
-                x+i, x+i+1, y, y+1);
+	gtk_table_attach_defaults(table, event_box, x+i, x+i+1, y, y+1);
 	if ( c==3 )
 	    gtk_tooltips_set_tip(data->ToolTips, event_box,
                     _("Luminosity (Y value)"), NULL);
@@ -1219,10 +1219,20 @@ static gboolean render_spot(preview_data *data)
 	    "                    </span>",
 	    (int)rgb[0], (int)rgb[1], (int)rgb[2]);
     gtk_label_set_markup(data->SpotPatch, tmp);
+    gtk_widget_show(GTK_WIDGET(data->SpotTable));
     if ( data->PageNum!=4 )
 	draw_spot(data, TRUE);
 
     return FALSE;
+}
+
+static void close_spot(GtkWidget *widget, gpointer user_data)
+{
+    (void)user_data;
+    preview_data *data = get_preview_data(widget);
+    draw_spot(data, FALSE);
+    data->SpotX1 = -1;
+    gtk_widget_hide(GTK_WIDGET(data->SpotTable));
 }
 
 static void draw_spot(preview_data *data, gboolean draw)
@@ -3342,12 +3352,23 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(radio_menu_update), &CFG->rawHistogramHeight);
     gtk_widget_show_all(menu);
 
-    table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
-    data->SpotLabels = color_labels_new(table, 0, 1,
+    // Spot values:
+    data->SpotTable = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
+    data->SpotLabels = color_labels_new(data->SpotTable, 0, 0,
 	    _("Spot values:"), pixel_format, with_zone, data);
     data->SpotPatch = GTK_LABEL(gtk_label_new(NULL));
-    gtk_table_attach_defaults(table, GTK_WIDGET(data->SpotPatch), 6, 7, 1, 2);
+    gtk_table_attach_defaults(data->SpotTable, GTK_WIDGET(data->SpotPatch),
+	    6, 7, 0, 1);
 
+    button = gtk_button_new();
+    gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+    gtk_container_add(GTK_CONTAINER(button),
+	    gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU));
+    gtk_table_attach(data->SpotTable, button, 7, 8, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+	    G_CALLBACK(close_spot), NULL);
+
+    // Exposure:
     table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
     data->ExposureAdjustment = adjustment_scale(table, 0, 0, "exposure",
             CFG->exposure, &CFG->exposure,
@@ -4507,6 +4528,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
         gtk_box_pack_start(box, gimpButton, FALSE, FALSE, 0);
     }
     gtk_widget_show_all(previewWindow);
+    gtk_widget_hide(GTK_WIDGET(data->SpotTable));
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);
 #ifdef HAVE_GTKIMAGEVIEW
     /* After window size was set, the user may want to shrink it */
