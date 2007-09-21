@@ -7697,7 +7697,7 @@ void CLASS write_ppm_tiff (FILE *ofp)
 int CLASS main (int argc, const char **argv)
 {
   // The following variables are static to supress clobbering warnings.
-  // The are not thread-safe, but main() should never be called in a thread.
+  // They are not thread-safe, but main() should never be called in a thread.
   static int arg, status=0, user_flip=-1, user_black=-1, user_qual=-1;
   static int timestamp_only=0, thumbnail_only=0, identify_only=0;
   static int use_fuji_rotate=1, write_to_stdout=0, quality, i, c;
