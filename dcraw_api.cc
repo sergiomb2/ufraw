@@ -177,6 +177,32 @@ int dcraw_image_dimensions(dcraw_data *raw, int flip, int *height, int *width)
     return DCRAW_SUCCESS;
 }
 
+/* Calculate dark frame hot pixel thresholds as the 99.99th percentile
+ * value.  That is, the value at which 99.99% of the pixels are darker.
+ * Pixels below this threshold are considered to be bias noise, and
+ * those above are "hot". */
+static void calc_thresholds(dcraw_image_type thresholds,
+    const dcraw_image_data *img)
+{
+    int color;
+    int i;
+    long frequency[65536];
+    long sum;
+    long point = img->width * img->height / 10000;
+
+    for (color = 0; color < img->colors; ++color) {
+	memset(frequency, 0, sizeof frequency);
+	for (i = 0; i < img->width * img->height; ++i)
+	    frequency[img->image[i][color]]++;
+	for (sum = 0, i = 65535; i > 1; --i) {
+	    sum += frequency[i];
+	    if (sum >= point)
+		break;
+	}
+	thresholds[color] = i + 1;
+    }
+}
+
 int dcraw_load_raw(dcraw_data *h)
 {
     DCRaw *d = (DCRaw *)h->dcraw;
@@ -234,6 +260,7 @@ int dcraw_load_raw(dcraw_data *h)
     for (i=0; i<4; i++) for (j=0; j<3; j++)
 	rgb_cam_transpose[i][j] = d->rgb_cam[j][i];
     d->pseudoinverse (rgb_cam_transpose, h->cam_rgb, d->colors);
+    calc_thresholds(h->thresholds, &h->raw);
 
     h->message = d->messageBuffer;
     return d->lastStatus;
@@ -270,15 +297,55 @@ int dcraw_load_thumb(dcraw_data *h, dcraw_image_data *thumb)
     return d->lastStatus;
 }
 
-int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh, int scale)
+/* Grab a pixel from the raw data, doing dark frame removal on the fly.
+ *
+ * The most obvious algorithm for dark frame removal is to simply
+ * subtract the dark frame from the image (rounding negative values to
+ * zero).  However, this leaves holes in the resulting image that need
+ * to be interpolated from the surrounding pixels.
+ *
+ * The processing works by subtracting the dark frame as usual for most
+ * pixels.  For all pixels where the dark frame is brighter than a given
+ * threshold, the result is instead calculated as the average of the
+ * dark-adjusted values of the 4 surrounding pixels.  By this method,
+ * only hot pixels (as determined by the threshold) are examined and
+ * recalculated.
+ */
+static int get_dark_pixel(const dcraw_data *h, const dcraw_data *dark,
+			  int i, int cl)
+{
+    return MAX(h->raw.image[i][cl] - dark->raw.image[i][cl], 0);
+}
+
+static int get_pixel(const dcraw_data *h, const dcraw_data *dark,
+		     int r, int c, int cl, int pixels)
+{
+    int i = r * h->raw.width + c;
+    int pixel = h->raw.image[i][cl];
+    if (dark != 0) {
+	int w = h->raw.width;
+	pixel = (dark->raw.image[i][cl] <= dark->thresholds[cl])
+	    ? MAX(pixel - dark->raw.image[i][cl], 0)
+	    : (get_dark_pixel(h, dark, i + ((i >= 1) ? -1 : 1), cl) +
+	       get_dark_pixel(h, dark, i + ((i < pixels-1) ? 1 : -1), cl) +
+	       get_dark_pixel(h, dark, i + ((i >= w) ? -w : w), cl) +
+	       get_dark_pixel(h, dark, i + ((i < pixels-w) ? w : -w), cl))
+	    / 4;
+    }
+    return pixel;
+}
+
+int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
+			  dcraw_data *dark, int scale)
 {
     DCRaw *d = (DCRaw *)hh->dcraw;
-    int h, w, fujiWidth, r, c, ri, ci, cl, norm, s, recombine;
+    int h, w, fujiWidth, r, c, ri, ci, cl, norm, s, recombine, pixels;
     int f4, sum[4], count[4];
 
     g_free(d->messageBuffer);
     d->messageBuffer = NULL;
     d->lastStatus = DCRAW_SUCCESS;
+    pixels = hh->raw.width * hh->raw.height;
 
     recombine = ( hh->colors==3 && hh->raw.colors==4 );
     f->colors = hh->colors;
@@ -298,11 +365,10 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh, int scale)
 		for (cl=0; cl<hh->raw.colors; cl++) sum[cl] = count[cl] = 0;
 		for (ri=0; ri<scale; ri++)
 		    for (ci=0; ci<scale; ci++) {
+			cl = fc_INDI(f4, r*scale+ri, c*scale+ci);
 			sum[fc_INDI(f4, r*scale+ri, c*scale+ci)] +=
-			    hh->raw.image
-				[(r*scale+ri)/2*hh->raw.width+(c*scale+ci)/2]
-				[fc_INDI(f4, r*scale+ri, c*scale+ci)];
-			count[fc_INDI(f4, r*scale+ri, c*scale+ci)]++;
+			    get_pixel(hh, dark, r*scale+ri, c*scale+ci, cl, pixels);
+			count[cl]++;
 		    }
 		for (cl=0; cl<hh->raw.colors; cl++)
 		    f->image[r*w+c][cl] =
@@ -324,8 +390,7 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh, int scale)
 		for (cl=0; cl<hh->raw.colors; cl++) {
 		    for (ri=0, s=0; ri<scale; ri++)
 			for (ci=0; ci<scale; ci++)
-			    s += hh->raw.image
-				[(r*scale+ri)*hh->raw.width+c*scale+ci][cl];
+			    s += get_pixel(hh, dark, r*scale+ri, c*scale+ci, cl, pixels);
                     f->image[r*w+c][cl] = MAX(s/norm - hh->black,0);
 		}
 		if (recombine) f->image[r*w+c][1] =
@@ -481,15 +546,16 @@ int dcraw_wavelet_denoise_shrinked(dcraw_image_data *f,
 }
 
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
-	int interpolation, int rgbWB[4])
+	dcraw_data *dark, int interpolation, int rgbWB[4])
 {
     DCRaw *d = (DCRaw *)h->dcraw;
-    int fujiWidth, i, r, c, cl;
+    int fujiWidth, i, r, c, cl, pixels;
     unsigned ff, f4;
 
     g_free(d->messageBuffer);
     d->messageBuffer = NULL;
     d->lastStatus = DCRAW_SUCCESS;
+    pixels = h->raw.width * h->raw.height;
 
     f->width = h->width;
     f->height = h->height;
@@ -518,10 +584,12 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     f4 = h->fourColorFilters;
     if (h->colors==3) rgbWB[3] = rgbWB[1];
     for(r=0; r<h->height; r++)
-        for(c=0; c<h->width; c++)
+        for(c=0; c<h->width; c++) {
+	    cl = fc_INDI(f4,r,c);
             f->image[r*f->width+c][fc_INDI(ff,r,c)] = MIN( MAX( (gint64)
-                (h->raw.image[r/2*h->raw.width+c/2][fc_INDI(f4,r,c)] - h->black) *
-                rgbWB[fc_INDI(f4,r,c)]/0x10000, 0), 0xFFFF);
+                (get_pixel(h, dark, r/2, c/2, cl, pixels) - h->black) *
+		rgbWB[cl]/0x10000, 0), 0xFFFF);
+	}
 
     if (interpolation==dcraw_bilinear_interpolation)
 	lin_interpolate_INDI(f->image, ff, f->width, f->height, cl, d);

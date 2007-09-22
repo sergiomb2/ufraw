@@ -34,6 +34,7 @@ typedef struct {
     int flip, shrink;
     double pixel_aspect;
     dcraw_image_data raw;
+    dcraw_image_type thresholds;
     float pre_mul[4], post_mul[4], cam_mul[4], rgb_cam[3][4];
     double cam_rgb[4][3];
     int rgbMax, black, fuji_width;
@@ -54,7 +55,8 @@ enum { unknown_thumb_type, jpeg_thumb_type, ppm_thumb_type };
 int dcraw_open(dcraw_data *h, char *filename);
 int dcraw_load_raw(dcraw_data *h);
 int dcraw_load_thumb(dcraw_data *h, dcraw_image_data *thumb);
-int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *h, int scale);
+int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *h,
+			  dcraw_data *dark, int scale);
 int dcraw_image_resize(dcraw_image_data *image, int size);
 int dcraw_image_stretch(dcraw_image_data *image, double pixel_aspect);
 int dcraw_flip_image(dcraw_image_data *image, int flip);
@@ -63,7 +65,7 @@ int dcraw_wavelet_denoise(dcraw_data *h, float threshold);
 int dcraw_wavelet_denoise_shrinked(dcraw_image_data *f,
         dcraw_data *h, float threshold);
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
-	int interpolation, int rgbWB[4]);
+	dcraw_data *dark, int interpolation, int rgbWB[4]);
 void dcraw_close(dcraw_data *h);
 int dcraw_image_dimensions(dcraw_data *raw, int flip, int *height, int *width);
 

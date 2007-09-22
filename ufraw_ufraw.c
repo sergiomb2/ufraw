@@ -459,92 +459,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     return UFRAW_SUCCESS;
 }
 
-/* Calculate dark frame hot pixel thresholds as the 99.99th percentile
- * value.  That is, the value at which 99.99% of the pixels are darker.
- * Pixels below this threshold are considered to be bias noise, and
- * those above are "hot". */
-static void calc_thresholds(dcraw_image_type thresholds,
-    const dcraw_image_data *img)
-{
-    int color;
-    int i;
-    long frequency[65536];
-    long sum;
-    long point = img->width * img->height / 10000;
-
-    for (color = 0; color < img->colors; ++color) {
-	memset(frequency, 0, sizeof frequency);
-	for (i = 0; i < img->width * img->height; ++i)
-	    frequency[img->image[i][color]]++;
-	for (sum = 0, i = 65535; i > 1; --i) {
-	    sum += frequency[i];
-	    if (sum >= point)
-		break;
-	}
-	thresholds[color] = i + 1;
-    }
-}
-
-/* Remove dark frame noise from the original image.  The most obvious
- * algorithm here is to simply subtract the dark frame from the image
- * (rounding negative values to zero).  However, this leaves holes in
- * the resulting image that need to be interpolated from the surrounding
- * pixels.
- *
- * The processing works by subtracting the dark frame as usual, but then
- * a second pass is made over the processed data.  For any pixels where
- * the dark frame value is above the threshold calculated above, the
- * output pixel is interpolated from the 4 surrounding pixels.  By this
- * method, only hot pixels (as determined by the threshold) are examined
- * and recalculated.
- */
-static void ufraw_subtract_darkframe(ufraw_data *uf)
-{
-    dcraw_data *df = uf->conf->darkframe->raw;
-    dcraw_data *org = uf->raw;
-    int i, cl;
-    int pixels;
-    dcraw_image_type *orgimage = org->raw.image;
-    dcraw_image_type *dfimage = df->raw.image;
-    dcraw_image_type thresholds;
-    int width = org->raw.width;
-
-    if (org->raw.width!=df->raw.width &&
-	org->raw.height!=df->raw.height &&
-	org->raw.colors!=df->raw.colors){
-
-	ufraw_message(UFRAW_SET_WARNING,
-		_("Darkframe is incompatible with main image"));
-	return;
-    }
-    pixels = org->raw.height * org->raw.width;
-    for( i=0; i<pixels; i++ ) {
-	for( cl=0; cl<org->raw.colors; cl++ ) {
-	    orgimage[i][cl] = (orgimage[i][cl] >= dfimage[i][cl])
-		    ? (orgimage[i][cl] - dfimage[i][cl])
-		    : 0;
-	}
-    }
-    /* Try to eliminate black spots left by subtracting out hot pixels. */
-    calc_thresholds(thresholds, &df->raw);
-    for( i=0; i<pixels; i++ ) {
-	for( cl=0; cl<org->raw.colors; cl++ ) {
-	    if (dfimage[i][cl] > thresholds[cl])
-		orgimage[i][cl] =
-		    (orgimage[i + ((i >= 1) ? -1 : 1)][cl] +
-		     orgimage[i + ((i < pixels-1) ? 1 : -1)][cl] +
-		     orgimage[i + ((i >= width) ? -width : width)][cl] +
-		     orgimage[i + ((i < pixels-width) ? width : -width)][cl])
-			/ 4;
-	}
-    }
-    org->black = org->black >= df->black ?
-	    org->black - df->black :
-	    0;
-    ufraw_message(UFRAW_SET_LOG, "subtracted darkframe '%s'\n",
-	    uf->conf->darkframeFile);
-}
-
 int ufraw_load_raw(ufraw_data *uf)
 {
     int status;
@@ -565,11 +479,7 @@ int ufraw_load_raw(ufraw_data *uf)
         ufraw_message(status, raw->message);
         if (status!=DCRAW_WARNING) return status;
     }
-    /* raw->black can change in ufraw_subtract_darkframe() so we must
-     * calculate uf->rgbMax first */
     uf->rgbMax = raw->rgbMax - raw->black;
-    if (uf->conf->darkframe!=NULL)
-        ufraw_subtract_darkframe(uf);
     memcpy(uf->rgb_cam, raw->rgb_cam, sizeof uf->rgb_cam);
 
     /* Canon EOS cameras require special exposure normalization */
@@ -697,7 +607,9 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
     dcraw_image_data final;
 
     if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
-        dcraw_finalize_shrink(&final, raw, uf->ConvertShrink);
+        dcraw_finalize_shrink(&final, raw,
+                uf->conf->darkframe ? uf->conf->darkframe->raw : 0,
+		uf->ConvertShrink);
 
         uf->image.height = final.height;
         uf->image.width = final.width;
@@ -707,8 +619,9 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
 	if ( (status=dcraw_wavelet_denoise(raw,
 		uf->conf->threshold))!=DCRAW_SUCCESS )
 	    return status;
-        dcraw_finalize_interpolate(&final, raw, uf->conf->interpolation,
-		uf->developer->rgbWB);
+        dcraw_finalize_interpolate(&final, raw,
+		uf->conf->darkframe ? uf->conf->darkframe->raw : 0,
+                uf->conf->interpolation, uf->developer->rgbWB);
 	uf->developer->rgbMax = uf->developer->max;
         for (c=0; c<4; c++)
 	    uf->developer->rgbWB[c] = 0x10000;
