@@ -328,7 +328,7 @@ int ufraw_convert_embedded(ufraw_data *uf);
 int ufraw_write_embedded(ufraw_data *uf);
 
 /* prototype for functions in ufraw_chooser.c */
-void ufraw_chooser(conf_data *conf, char *defPath);
+void ufraw_chooser(conf_data *conf, const char *defPath);
 
 /* prototype for functions in ufraw_icons.c */
 void ufraw_icons_init();

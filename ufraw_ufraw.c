@@ -259,6 +259,7 @@ ufraw_data *ufraw_load_darkframe(char *darkframeFile)
             ufraw_message(UFRAW_ERROR, _("error loading darkframe '%s'\n"),
 		    uf->filename);
     }
+    // FIXME: make sure the darkframe matches the main data
     return NULL;
 }
 
@@ -605,11 +606,11 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
     int status, c;
     dcraw_data *raw = uf->raw;
     dcraw_image_data final;
+    dcraw_data *dark = uf->conf->darkframe
+	? uf->conf->darkframe->raw : NULL;
 
     if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
-        dcraw_finalize_shrink(&final, raw,
-                uf->conf->darkframe ? uf->conf->darkframe->raw : 0,
-		uf->ConvertShrink);
+        dcraw_finalize_shrink(&final, raw, dark, uf->ConvertShrink);
 
         uf->image.height = final.height;
         uf->image.width = final.width;
@@ -619,9 +620,8 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
 	if ( (status=dcraw_wavelet_denoise(raw,
 		uf->conf->threshold))!=DCRAW_SUCCESS )
 	    return status;
-        dcraw_finalize_interpolate(&final, raw,
-		uf->conf->darkframe ? uf->conf->darkframe->raw : 0,
-                uf->conf->interpolation, uf->developer->rgbWB);
+        dcraw_finalize_interpolate(&final, raw, dark, uf->conf->interpolation,
+		uf->developer->rgbWB);
 	uf->developer->rgbMax = uf->developer->max;
         for (c=0; c<4; c++)
 	    uf->developer->rgbWB[c] = 0x10000;

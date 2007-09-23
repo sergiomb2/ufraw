@@ -28,21 +28,28 @@ void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *fileChooser)
 }
 #endif
 
-void ufraw_chooser(conf_data *conf, char *defPath)
+/* Create a GtkFileChooser dialog for selecting raw files */
+GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
+				 const char *defPath,
+				 const gchar *label,
+				 GtkWindow *toplevel,
+				 const gchar *cancel,
+				 gboolean multiple)
 {
-    ufraw_data *uf;
     GtkFileChooser *fileChooser;
-    GSList *list, *saveList;
     GtkFileFilter *filter;
-    char *filename, *cp;
+    char *cp;
     char **extList, **l, ext[max_name];
 
-    fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new("UFRaw", NULL,
+    fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new(label, toplevel,
             GTK_FILE_CHOOSER_ACTION_OPEN,
-            GTK_STOCK_QUIT, GTK_RESPONSE_CANCEL,
+            cancel, GTK_RESPONSE_CANCEL,
             GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL));
-    gtk_window_set_type_hint(GTK_WINDOW(fileChooser),
-	    GDK_WINDOW_TYPE_HINT_NORMAL);
+    if (toplevel != NULL)
+	gtk_window_set_type_hint(GTK_WINDOW(fileChooser),
+				 GDK_WINDOW_TYPE_HINT_NORMAL);
+    else
+	ufraw_focus(fileChooser, TRUE);
 #if GTK_CHECK_VERSION(2,6,0)
     gtk_window_set_icon_name(GTK_WINDOW(fileChooser), "ufraw");
 #else
@@ -125,7 +132,8 @@ void ufraw_chooser(conf_data *conf, char *defPath)
 	    G_CALLBACK(ufraw_chooser_toggle), fileChooser);
     gtk_file_chooser_set_extra_widget(fileChooser, button);
 #endif
-    gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
+    if (multiple)
+	gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
     /* Add shortcut to folder of last opened file */
     if (strlen(conf->inputFilename)>0) {
         char *cp = g_path_get_dirname(conf->inputFilename);
@@ -133,6 +141,19 @@ void ufraw_chooser(conf_data *conf, char *defPath)
         g_free(cp);
     }
     gtk_widget_show(GTK_WIDGET(fileChooser));
+    return fileChooser;
+}
+
+void ufraw_chooser(conf_data *conf, const char *defPath)
+{
+    ufraw_data *uf;
+    GtkFileChooser *fileChooser;
+    GSList *list, *saveList;
+    char *filename;
+
+    fileChooser = ufraw_raw_chooser(conf, defPath, "UFRaw", NULL,
+				    GTK_STOCK_QUIT, TRUE);
+
     while (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
         for(list=saveList=gtk_file_chooser_get_filenames(fileChooser);
         list!=NULL; list=g_slist_next(list)) {

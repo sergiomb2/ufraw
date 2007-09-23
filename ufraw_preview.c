@@ -37,6 +37,13 @@
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
 
+extern GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
+					 const char *defPath,
+					 const gchar *label,
+					 GtkWindow *toplevel,
+					 const gchar *cancel,
+					 gboolean multiple);
+
 /* Set to huge number so that the preview size is set by the screen size */
 static const int def_preview_width = 9000;
 static const int def_preview_height = 9000;
@@ -95,6 +102,7 @@ typedef struct {
     GdkCursor *Cursor[cursor_num];
     /* Remember the Gtk Widgets that we need to access later */
     GtkWidget *Controls, *PreviewWidget, *RawHisto, *LiveHisto;
+    GtkLabel *DarkFrameLabel;
     GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
     GtkComboBox *WBCombo, *BaseCurveCombo, *CurveCombo,
 		*ProfileCombo[profile_types];
@@ -2170,6 +2178,84 @@ static void aspect_changed(GtkWidget *widget, gpointer user_data)
     set_new_aspect (data);
 }
 
+static void set_darkframe_label(preview_data *data)
+{
+    if (CFG->darkframeFile[0] != '\0') {
+	char *basename = g_path_get_basename(CFG->darkframeFile);
+	gtk_label_set_text(GTK_LABEL(data->DarkFrameLabel), basename);
+	g_free(basename);
+    } else {
+	// No darkframe file
+	gtk_label_set_text(GTK_LABEL(data->DarkFrameLabel), _("None"));
+    }
+}
+
+static void set_darkframe(preview_data *data)
+{
+    set_darkframe_label(data);
+    create_base_image(data);
+    render_preview(data);
+}
+
+static void free_darkframe(conf_data *conf)
+{
+    if (conf->darkframe != NULL) {
+	ufraw_close(conf->darkframe);
+	g_free(conf->darkframe);
+	conf->darkframe = NULL;
+	conf->darkframeFile[0] = '\0';
+    }
+}
+
+static void load_darkframe(GtkWidget *widget, void *unused)
+{
+    preview_data *data = get_preview_data(widget);
+    GtkFileChooser *fileChooser;
+    GSList *list, *saveList;
+    ufraw_data *uf;
+    char *basedir;
+
+    if (data->FreezeDialog) return;
+    basedir = g_path_get_dirname(CFG->darkframeFile);
+    fileChooser = ufraw_raw_chooser(CFG,
+				    basedir,
+				    _("Load dark frame"),
+				    GTK_WINDOW(gtk_widget_get_toplevel(widget)),
+				    GTK_STOCK_CANCEL,
+				    FALSE);
+    free(basedir);
+    
+    if (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
+	saveList = gtk_file_chooser_get_filenames(fileChooser);
+	for (list = saveList; list != NULL; list = g_slist_next(list)) {
+	    if ((uf = ufraw_load_darkframe(list->data)) != NULL) {
+		free_darkframe(CFG);
+		CFG->darkframe = uf;
+		g_strlcpy(CFG->darkframeFile, list->data, max_path);
+		set_darkframe(data);
+	    }
+	    // FIXME: handle errors?
+            g_free(list->data);
+        }
+        g_slist_free(saveList);
+    }
+    ufraw_focus(fileChooser, FALSE);
+    gtk_widget_destroy(GTK_WIDGET(fileChooser));
+    (void)unused;
+}
+
+static void reset_darkframe(GtkWidget *widget, void *unused)
+{
+    preview_data *data = get_preview_data(widget);
+
+    if (data->FreezeDialog) return;
+    if (CFG->darkframe == NULL) return;
+    
+    free_darkframe(CFG);
+    set_darkframe(data);
+    (void)unused;
+}
+
 static GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text,
     char *icon, GtkTooltips *tooltips)
 {
@@ -3648,6 +3734,37 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(zoom_in_event), NULL);
     gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
 #endif // !HAVE_GTKIMAGEVIEW
+
+    // Dark frame controls:
+    box = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    frame = gtk_frame_new(NULL);
+    gtk_box_pack_start(GTK_BOX(page), frame, FALSE, FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(box));
+
+    label = gtk_label_new(_("Dark Frame:"));
+    gtk_box_pack_start(box, label, FALSE, FALSE, 0);
+
+    label = gtk_label_new("");
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+    gtk_box_pack_start(box, label, TRUE, TRUE, 6);
+    data->DarkFrameLabel = GTK_LABEL(label);
+    set_darkframe_label(data);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+            GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
+    gtk_tooltips_set_tip(data->ToolTips, button, _("Load dark frame"), NULL);
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(load_darkframe), NULL);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+            GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
+    gtk_tooltips_set_tip(data->ToolTips, button, _("Reset dark frame"), NULL);
+    g_signal_connect(G_OBJECT(button), "clicked",
+            G_CALLBACK(reset_darkframe), NULL);
 
     /* End of White Balance setting page */
 
