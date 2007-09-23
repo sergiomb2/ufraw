@@ -1919,11 +1919,9 @@ static const struct
     {  3.0/ 2.0, "3:2"  },
     {  7.0/ 5.0, "7:5"  },
     {  4.0/ 3.0, "4:3"  },
-    { 14.0/11.0, "14:11"},
     {  5.0/ 4.0, "5:4"  },
     {  1.0/ 1.0, "1:1"  },
     {  4.0/ 5.0, "4:5"  },
-    { 11.0/14.0, "11:14"},
     {  3.0/ 4.0, "3:4"  },
     {  5.0/ 7.0, "5:7"  },
     {  2.0/ 3.0, "2:3"  },
@@ -2162,12 +2160,11 @@ static void aspect_changed(GtkWidget *widget, gpointer user_data)
     const gchar *text = gtk_entry_get_text(data->AspectEntry);
     if (text)
     {
-        float aspect = 0.0;
-        int aspect_div, aspect_quot;
-        if (sscanf(text, "%d : %d", &aspect_div, &aspect_quot) == 2)
+        float aspect = 0.0, aspect_div, aspect_quot;
+        if (sscanf(text, "%f : %f", &aspect_div, &aspect_quot) == 2)
         {
             if (aspect_quot)
-                aspect = (float)aspect_div / (float)aspect_quot;
+                aspect = aspect_div / aspect_quot;
         }
         else
             sscanf(text, "%g", &aspect);
@@ -4136,8 +4133,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     entry = gtk_combo_box_entry_new_text();
     data->AspectEntry = GTK_ENTRY (GTK_BIN (entry)->child);
     gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AspectEntry),
-                         _("Crop area aspect ratio"),
-                         NULL);
+	    _("Crop area aspect ratio.\n"
+	      "Can be entered in decimal notation (1.273)\n"
+	      "or as a ratio of two numbers (14:11)"), NULL);
     gtk_entry_set_width_chars (data->AspectEntry, 6);
     gtk_entry_set_alignment (data->AspectEntry, 0.5);
     gtk_table_attach(table, GTK_WIDGET (entry), 1, 2, 0, 1, 0, 0, 5, 0);
