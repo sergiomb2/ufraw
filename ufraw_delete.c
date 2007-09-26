@@ -14,14 +14,9 @@
 #include "config.h"
 #endif
 #include <string.h>
-#include <gtk/gtk.h>
-#if GLIB_CHECK_VERSION(2,6,0)
-#include <glib/gstdio.h>
-#endif
-#if !GLIB_CHECK_VERSION(2,10,0)
-#include <unistd.h> // For unlink
-#endif
+#include <uf_glib.h>
 #include <glib/gi18n.h>
+#include <gtk/gtk.h>
 #include "ufraw.h"
 
 // Response can be any unique positive integer

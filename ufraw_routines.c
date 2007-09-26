@@ -22,8 +22,7 @@
 #include <locale.h>
 #include <stdlib.h> /* needed for canonicalize_file_name() */
 #include <string.h>
-
-#include <glib.h>
+#include <uf_glib.h>
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
@@ -370,7 +369,7 @@ int curve_load(CurveData *cp, char *filename)
         GError *err = NULL;
 
         *cp = conf_default.curve[0];
-        if ( (in=fopen(filename, "r"))==NULL ) {
+        if ( (in=g_fopen(filename, "r"))==NULL ) {
             ufraw_message(UFRAW_ERROR, _("Error opening Curve file '%s': %s"),
 			    filename, strerror(errno));
 	    return UFRAW_ERROR;
@@ -437,7 +436,7 @@ int curve_save(CurveData *cp, char *filename)
         /* Save UFRaw's curve format */
         FILE *out;
 
-        if ( (out=fopen(filename, "w"))==NULL ) {
+        if ( (out=g_fopen(filename, "w"))==NULL ) {
             ufraw_message(UFRAW_ERROR, _("Error opening file '%s': %s"),
                         filename, g_strerror(errno));
             return UFRAW_ERROR;

@@ -17,13 +17,9 @@
 #include <stdio.h>	/* for printf */
 #include <errno.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <gtk/gtk.h>
-#if GLIB_CHECK_VERSION(2,6,0)
-#include <glib/gstdio.h>
-#endif
+#include <uf_glib.h>
 #include <glib/gi18n.h>
+#include <gtk/gtk.h>
 #include "ufraw.h"
 
 /* Global information for the 'Save As' dialog */
@@ -468,7 +464,7 @@ long ufraw_send_to_gimp(ufraw_data *uf)
 	return UFRAW_ERROR;
     }
     g_free(confFilename);
-    char *commandLine = g_strdup_printf("%s %s",
+    char *commandLine = g_strdup_printf("%s \"%s\"",
 	    uf->conf->remoteGimpCommand, fullConfFilename);
     g_free(fullConfFilename);
     /* gimp-remote starts the gimp in a fork().

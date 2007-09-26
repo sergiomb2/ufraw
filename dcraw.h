@@ -20,6 +20,24 @@
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 
+/*
+ * The following is somewhat ugly because of various requirements:
+ * 1. The stand-alone dcraw binary should not depend on glib
+ * 2. The amount of changes to dcraw source code should be minimal
+ * 3. On win32 fopen needs to be replaced by g_fopen
+ * 4. On other systems g_fopen is defined as a macro
+ * 5. g_fopen only exists since glib 2.6
+ */
+#if !defined(DCRAW_NOMAIN) && defined(WIN32)
+#include <glib.h>
+#if GLIB_CHECK_VERSION(2.6.0)
+extern "C" {
+#include <glib/gstdio.h>
+}
+#define fopen g_fopen
+#endif
+#endif
+
 class DCRaw { public:
 /* All dcraw's global variables are members of this class. */
 FILE *ifp;

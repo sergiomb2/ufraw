@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <lcms.h>
-#include <glib.h>
+#include <uf_glib.h>
 #include "nikon_curve.h"
 #include "ufraw.h"
 
@@ -85,8 +85,10 @@ void developer_profile(developer_data *d, int type, profile_data *p)
         if (!strcmp(d->profileFile[type],""))
             d->profile[type] = cmsCreate_sRGBProfile();
         else {
-            d->profile[type] =
-                    cmsOpenProfileFromFile(d->profileFile[type], "r");
+	    char *filename =
+		    uf_win32_locale_filename_from_utf8(d->profileFile[type]);
+            d->profile[type] = cmsOpenProfileFromFile(filename, "r");
+	    uf_win32_locale_filename_free(filename);
 	    if (d->profile[type]==NULL)
                 d->profile[type] = cmsCreate_sRGBProfile();
 	}

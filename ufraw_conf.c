@@ -19,7 +19,7 @@
 #include <math.h>
 #include <sys/stat.h> /* needed for fstat() */
 #include <getopt.h>
-#include <glib.h>
+#include <uf_glib.h>
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
@@ -94,7 +94,11 @@ const conf_data conf_default = {
     FALSE, /* underExp indicator */
     "", "", /* curvePath, profilePath */
     FALSE, /* silent */
+#ifdef WIN32
+    "gimp-win-remote gimp-2.2.exe", /* remoteGimpCommand */
+#else
     "gimp-remote", /* remoteGimpCommand */
+#endif
 
     /* EXIF data */
     -1, /* orientation */
@@ -570,14 +574,14 @@ int conf_load(conf_data *c, const char *IDFilename)
     if (IDFilename==NULL) {
         hd = uf_get_home_dir();
         confFilename = g_build_filename(hd, ".ufrawrc", NULL);
-        in=fopen(confFilename, "r");
+        in=g_fopen(confFilename, "r");
 	/* We don't mind if ~/.ufrawrc does not exist. */
         if (in==NULL) {
 	    g_free(confFilename);
             return UFRAW_SUCCESS;
 	}
     } else {
-        if ( (in=fopen(IDFilename, "r"))==NULL ) {
+        if ( (in=g_fopen(IDFilename, "r"))==NULL ) {
             ufraw_message(UFRAW_SET_ERROR,
                     _("Can't open ID file %s for reading\n%s\n"),
                     IDFilename, strerror(errno) );
@@ -967,7 +971,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
             confFilename = g_build_filename(hd, ".ufrawrc", NULL);
 	} else
 	    confFilename = g_strdup(IDFilename);
-        if ( (out=fopen(confFilename, "w"))==NULL ) {
+        if ( (out=g_fopen(confFilename, "w"))==NULL ) {
             ufraw_message(UFRAW_ERROR,
                     _("Can't open file %s for writing\n%s\n"),
                     confFilename, strerror(errno) );
@@ -1515,9 +1519,11 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     }
     cmd->BaseCurveIndex = -1;
     if (baseCurveFile!=NULL) {
+	baseCurveFile = uf_win32_locale_to_utf8(baseCurveFile);
         if (cmd->BaseCurveCount == max_curves) {
-            ufraw_message(UFRAW_ERROR,
-		    _("failed to load curve from %s, too many configured base curves"), baseCurveFile);
+            ufraw_message(UFRAW_ERROR, _("failed to load curve from %s, "
+		    "too many configured base curves"), baseCurveFile);
+	    uf_win32_locale_free(baseCurveFile);
             return -1;
         }
         cmd->BaseCurveIndex = cmd->BaseCurveCount;
@@ -1525,8 +1531,10 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 		== UFRAW_ERROR) {
             ufraw_message(UFRAW_ERROR,
                     _("failed to load curve from %s"), baseCurveFile);
+	    uf_win32_locale_free(baseCurveFile);
             return -1;
         }
+	uf_win32_locale_free(baseCurveFile);
         cmd->BaseCurveCount++;
     } else if (baseCurveName!=NULL) {
         if (!strcmp(baseCurveName, "manual"))
@@ -1554,9 +1562,11 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     }
     cmd->curveIndex = -1;
     if (curveFile!=NULL) {
+	curveFile = uf_win32_locale_to_utf8(curveFile);
         if (cmd->curveCount == max_curves) {
-            ufraw_message(UFRAW_ERROR,
-		    _("failed to load curve from %s, too many configured curves"), curveFile);
+            ufraw_message(UFRAW_ERROR, _("failed to load curve from %s, "
+		    "too many configured curves"), curveFile);
+	    uf_win32_locale_free(curveFile);
             return -1;
         }
         cmd->curveIndex = cmd->curveCount;
@@ -1564,8 +1574,10 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{
             ufraw_message(UFRAW_ERROR,
                     _("failed to load curve from %s"), curveFile);
+	    uf_win32_locale_free(curveFile);
             return -1;
         }
+	uf_win32_locale_free(curveFile);
         cmd->curveCount++;
     } else if (curveName!=NULL) {
         if (!strcmp(curveName, "manual")) cmd->curveIndex=manual_curve;
@@ -1729,10 +1741,13 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     }
     g_strlcpy(cmd->outputPath, "", max_path);
     if (outPath!=NULL) {
-        if (g_file_test(outPath, G_FILE_TEST_IS_DIR))
+	outPath = uf_win32_locale_to_utf8(outPath);
+        if (g_file_test(outPath, G_FILE_TEST_IS_DIR)) {
             g_strlcpy(cmd->outputPath, outPath, max_path);
-        else {
+	    uf_win32_locale_free(outPath);
+        } else {
             ufraw_message(UFRAW_ERROR, _("'%s' is not a valid path."), outPath);
+	    uf_win32_locale_free(outPath);
             return -1;
         }
     }
@@ -1743,12 +1758,16 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 		    _("cannot output more than one file to the same output"));
             return -1;
         }
+	output = uf_win32_locale_to_utf8(output);
         g_strlcpy(cmd->outputFilename, output, max_path);
+	uf_win32_locale_free(output);
     }
     g_strlcpy(cmd->darkframeFile, "", max_path);
     cmd->darkframe = NULL;
     if (darkframeFile!=NULL) {
+	darkframeFile = uf_win32_locale_to_utf8(darkframeFile);
 	char *df = uf_file_set_absolute(darkframeFile);
+	uf_win32_locale_free(darkframeFile);
 	cmd->darkframe = ufraw_load_darkframe(df);
         g_strlcpy(cmd->darkframeFile, df, max_path);
 	g_free(df);

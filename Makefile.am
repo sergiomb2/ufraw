@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.40 2007/08/14 23:55:46 udifuchs Exp $
+# $Id: Makefile.am,v 1.41 2007/09/26 21:06:07 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -112,7 +112,7 @@ windows-installer: ufraw-$(VERSION)-setup.exe
 
 ufraw-$(VERSION)-setup.exe: ufraw-setup.iss ufraw.exe ufraw-batch.exe \
     ufraw-gimp.exe ufraw-setup.bmp ufraw_icon.bmp ufraw_icon.ico \
-    $(PREFIX)/bin/liblcms-1-16-ufraw.dll
+    $(PREFIX)/bin/liblcms-1-ufraw.dll
 	strip ufraw.exe ufraw-batch.exe ufraw-gimp.exe
 	$(WINE) $(ISCC) ufraw-setup.iss
 

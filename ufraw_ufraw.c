@@ -14,8 +14,6 @@
 #include "config.h"
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h> /* for fstat() */
 #include <math.h>
@@ -27,7 +25,7 @@
 #ifdef HAVE_LIBBZ2
 #include <bzlib.h>
 #endif
-#include <glib.h>
+#include <uf_glib.h>
 #include <glib/gi18n.h>
 #include "dcraw_api.h"
 #include "nikon_curve.h"
@@ -57,38 +55,42 @@ static ssize_t writeall(int fd, const char *buf, ssize_t size)
 static char *decompress_gz(char *origfilename)
 {
 #ifdef HAVE_LIBZ
-    char *filename;
+    char *tempfilename;
     int tmpfd;
     gzFile gzfile;
     char buf[8192];
     ssize_t size;
-    if ((tmpfd = make_temporary(origfilename, &filename)) != -1) {
-	if ((gzfile = gzopen(origfilename, "rb")) != 0) {
-	    while ((size = gzread(gzfile, buf, sizeof buf)) > 0) {
-		if (writeall(tmpfd, buf, size) != size)
-		    break;
-	    }
-	    gzclose(gzfile);
-	    if (size == 0)
-		if (close(tmpfd) == 0)
-		    return filename;
+    if ( (tmpfd = make_temporary(origfilename, &tempfilename))==-1 )
+	return NULL;
+    char *filename = uf_win32_locale_filename_from_utf8(origfilename);
+    gzfile = gzopen(filename, "rb");
+    uf_win32_locale_filename_free(filename);
+    if ( gzfile!=NULL ) {
+	while ((size = gzread(gzfile, buf, sizeof buf)) > 0) {
+	    if (writeall(tmpfd, buf, size) != size)
+		break;
 	}
-	close(tmpfd);
-	unlink(filename);
-	free(filename);
+	gzclose(gzfile);
+	if (size == 0)
+	    if (close(tmpfd) == 0)
+		return tempfilename;
     }
+    close(tmpfd);
+    g_unlink(tempfilename);
+    g_free(tempfilename);
+    return NULL;
 #else
-    origfilename = origfilename;
+    (void)origfilename;
     ufraw_message(UFRAW_SET_ERROR,
 		  "Cannot open gzip compressed images.\n");
-#endif
     return NULL;
+#endif
 }
 
 static char *decompress_bz2(char *origfilename)
 {
 #ifdef HAVE_LIBBZ2
-    char *filename;
+    char *tempfilename;
     int tmpfd;
     FILE *compfile;
     BZFILE *bzfile;
@@ -96,32 +98,32 @@ static char *decompress_bz2(char *origfilename)
     char buf[8192];
     ssize_t size;
 
-    if ((tmpfd = make_temporary(origfilename, &filename)) != -1) {
-	if ((compfile = fopen(origfilename, "rb")) != 0) {
-	    if ((bzfile = BZ2_bzReadOpen(&bzerror, compfile,
-					 0, 0, 0, 0)) != 0) {
-	        while ((size = BZ2_bzRead(&bzerror, bzfile,
-					  buf, sizeof buf)) > 0)
-		    if (writeall(tmpfd, buf, size) != size)
-		        break;
-		BZ2_bzReadClose(&bzerror, bzfile);
-		fclose(compfile);
-		if (size == 0) {
-		    close(tmpfd);
-		    return filename;
-		}
+    if ( (tmpfd = make_temporary(origfilename, &tempfilename))==-1 )
+	return NULL;
+    compfile = g_fopen(origfilename, "rb");
+    if ( compfile!=NULL ) {
+	if ((bzfile = BZ2_bzReadOpen(&bzerror, compfile, 0, 0, 0, 0)) != 0) {
+	    while ((size = BZ2_bzRead(&bzerror, bzfile, buf, sizeof buf)) > 0)
+		if (writeall(tmpfd, buf, size) != size)
+		    break;
+	    BZ2_bzReadClose(&bzerror, bzfile);
+	    fclose(compfile);
+	    if (size == 0) {
+		close(tmpfd);
+		return tempfilename;
 	    }
 	}
-	close(tmpfd);
-	unlink(filename);
-	free(filename);
     }
+    close(tmpfd);
+    g_unlink(tempfilename);
+    g_free(tempfilename);
+    return NULL;
 #else
-    origfilename = origfilename;
+    (void)origfilename;
     ufraw_message(UFRAW_SET_ERROR,
 		  "Cannot open bzip2 compressed images.\n");
-#endif
     return NULL;
+#endif
 }
 
 ufraw_data *ufraw_open(char *filename)
@@ -165,7 +167,7 @@ ufraw_data *ufraw_open(char *filename)
 	if ( strcmp(inPath, outPath)==0 ) {
 	    char *path = g_path_get_dirname(filename);
 	    char *inName = g_path_get_basename(conf->inputFilename);
-	    char *inFile = g_strconcat(path, "/", inName, NULL);
+            char *inFile = g_build_filename(path, inName , NULL);
 	    if ( g_file_test(inFile, G_FILE_TEST_EXISTS) ) {
 		g_strlcpy(conf->inputFilename, inFile, max_path);
 	    }
@@ -197,8 +199,8 @@ ufraw_data *ufraw_open(char *filename)
     status = dcraw_open(raw, filename);
     if (filename != origfilename) {
 	g_file_get_contents(filename, &unzippedBuf, &unzippedBufLen, NULL);
-	unlink(filename);
-	free(filename);
+	g_unlink(filename);
+	g_free(filename);
 	filename = origfilename;
     }
     if ( status!=DCRAW_SUCCESS) {

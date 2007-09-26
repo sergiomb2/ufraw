@@ -15,7 +15,7 @@
 #endif
 
 extern "C" {
-#include <glib.h>
+#include <uf_glib.h>
 #include "ufraw.h"
 }
 
@@ -41,7 +41,9 @@ try {
 	image = Exiv2::ImageFactory::open(
 		(const Exiv2::byte*)uf->unzippedBuf, uf->unzippedBufLen);
     } else {
-	image = Exiv2::ImageFactory::open(uf->filename);
+	char *filename = uf_win32_locale_filename_from_utf8(uf->filename);
+	image = Exiv2::ImageFactory::open(filename);
+	uf_win32_locale_filename_free(filename);
     }
     assert(image.get() != 0);
     image->readMetadata();

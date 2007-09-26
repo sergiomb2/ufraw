@@ -48,7 +48,7 @@ Source: "po\fr.mo"; DestDir: "{app}\lib\locale\fr\LC_MESSAGES\"; DestName: "ufra
 Source: "po\ja.mo"; DestDir: "{app}\lib\locale\ja\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\pt.mo"; DestDir: "{app}\lib\locale\pt\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\ru.mo"; DestDir: "{app}\lib\locale\ru\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
-Source: "@DOSPREFIX@\bin\liblcms-1-16-ufraw.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\liblcms-1-ufraw.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\bzip2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "ufraw-gimp.exe"; DestDir: "{app}\lib\gimp\2.0\plug-ins"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
@@ -64,7 +64,7 @@ Root: HKLM; SubKey: "Software\Microsoft\Windows\CurrentVersion\App Paths\ufraw.e
 Root: HKLM; SubKey: "Software\Microsoft\Windows\CurrentVersion\App Paths\ufraw-batch.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\ufraw-batch.exe";
 Root: HKLM; SubKey: "Software\Microsoft\Windows\CurrentVersion\App Paths\ufraw-batch.exe"; ValueType: string; ValueName: "Path"; ValueData: "{app}\bin;{reg:HKLM\SOFTWARE\GTK\2.0,DllPath|none}";
 
-Root: HKCR; Subkey: ".ufraw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: UFRAWAssociation
+Root: HKCR; Subkey: ".ufraw"; ValueType: string; ValueName: ""; ValueData: "UFRawID"; Flags: uninsdeletevalue; Tasks: UFRAWAssociation
 Root: HKCR; Subkey: ".dng"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: DNGAssociation
 Root: HKCR; Subkey: ".crw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: CRWAssociation
 Root: HKCR; Subkey: ".cr2"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: CRWAssociation
@@ -73,6 +73,12 @@ Root: HKCR; Subkey: ".pef"; ValueType: string; ValueName: ""; ValueData: "UFRaw"
 Root: HKCR; Subkey: ".raf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: RAFAssociation
 Root: HKCR; Subkey: ".orf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ORFAssociation
 Root: HKCR; Subkey: ".mrw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: MRWAssociation
+
+Root: HKCR; Subkey: "UFRawID"; ValueType: string; ValueName: ""; ValueData: "UFRawID"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "UFRawID"; ValueType: string; ValueName: ""; ValueData: "UFRaw ID file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "UFRawID\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\ufraw.exe,0"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "UFRawID\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\ufraw.exe"" ""%1"""; Flags: uninsdeletevalue
+
 Root: HKCR; Subkey: "UFRaw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "UFRaw"; ValueType: string; ValueName: ""; ValueData: "UFRaw photo"; Flags: uninsdeletevalue
 Root: HKCR; Subkey: "UFRaw\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\ufraw.exe,0"; Flags: uninsdeletevalue
@@ -84,6 +90,7 @@ Filename: "{app}\bin\ufraw.exe"; Description: "{cm:LaunchProgram,UFRaw}"; Flags:
 [InstallDelete]
 Type: files; Name: {%USERPROFILE}\.gimp-2.0\plug-ins\ufraw-gimp.exe; Tasks: unplug
 Type: files; Name: {%USERPROFILE}\.gimp-2.2\plug-ins\ufraw-gimp.exe; Tasks: unplug
+Type: files; Name: {app}\bin\liblcms-1-16-ufraw.dll;
 
 [messages]
 SelectDirDesc=If you have the GIMP installed, [name] should be installed in the GIMP directory. Hopefully, the wizard will guess your GIMP directory correctly.

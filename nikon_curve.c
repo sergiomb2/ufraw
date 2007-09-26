@@ -24,11 +24,12 @@
 #include "nikon_curve.h"
 
 #ifdef __WITH_UFRAW__
-    #include <glib.h>
+    #include <uf_glib.h>
     #include "ufraw.h"
 #else
     #define MAX(a,b) ((a) > (b) ? (a) : (b))
     #define MIN(a,b) ((a) < (b) ? (a) : (b))
+    #define g_fopen fopen
 #endif
 
 /*************************************************
@@ -845,7 +846,7 @@ int LoadNikonData(char *fileName, NikonData *data)
     DEBUG_PRINT("DEBUG: OPENING FILE: %s\n",fileName);
 
     //open file for reading only!
-    input = fopen(fileName,"rb");
+    input = g_fopen(fileName,"rb");
 
     //make sure we have a valid file
     if (input == NULL)
@@ -1331,7 +1332,7 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
     unsigned char pad[32];
     memset(pad,0,32);
     
-    output = fopen(outfile,"wb+");
+    output = g_fopen(outfile,"wb+");
     if (!output)
     {
 	nc_message(NC_SET_ERROR, "Error creating curve file '%s': %s\n",
@@ -1635,7 +1636,7 @@ int SaveSampledNikonCurve(CurveSample *sample, char *outfile)
 	    "Output filename cannot be null or empty!\n");
     }
 
-    output = fopen(outfile,"wb+");
+    output = g_fopen(outfile,"wb+");
     
     if (!output)
     {
@@ -1861,7 +1862,7 @@ int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p)
     unsigned int offset = 0;
 
     //open the file
-    FILE *file = fopen(infile,"rb");
+    FILE *file = g_fopen(infile,"rb");
     
     //make sure we have a valid file
     if (file == NULL)

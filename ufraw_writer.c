@@ -14,10 +14,9 @@
 #include "config.h"
 #endif
 
-#include <stdio.h>	/* for printf */
 #include <errno.h>	/* for errno */
 #include <string.h>
-#include <glib.h>
+#include <uf_glib.h>
 #include <glib/gi18n.h>
 #ifdef HAVE_LIBTIFF
 #include <tiffio.h>
@@ -33,7 +32,6 @@
 #include "ufraw.h"
 
 #ifdef HAVE_LIBCFITSIO
-#include <unistd.h>
 #include "fitsio.h"
 #endif
 
@@ -177,11 +175,15 @@ int ufraw_write_image(ufraw_data *uf)
 	TIFFSetErrorHandler(tiff_messenger);
 	TIFFSetWarningHandler(tiff_messenger);
 	ufraw_tiff_message[0] = '\0';
-	if (!strcmp(uf->conf->outputFilename, "-"))
+	if (!strcmp(uf->conf->outputFilename, "-")) {
 	    out = TIFFFdOpen(fileno((FILE *)stdout),
 		    uf->conf->outputFilename, "w");
-	else
-	    out = TIFFOpen(uf->conf->outputFilename, "w");
+	} else {
+	    char *filename =
+		uf_win32_locale_filename_from_utf8(uf->conf->outputFilename);
+	    out = TIFFOpen(filename, "w");
+	    uf_win32_locale_filename_free(filename);
+	}
 	if (out==NULL ) {
 	    ufraw_set_error(uf, _("Error creating file."));
 	    ufraw_set_error(uf, ufraw_tiff_message);
@@ -195,7 +197,7 @@ int ufraw_write_image(ufraw_data *uf)
     if ( uf->conf->type==fits_type ) {
 	if ( strcmp(uf->conf->outputFilename, "-")!=0 ) {
 	    if ( g_file_test(uf->conf->outputFilename, G_FILE_TEST_EXISTS) ) {
-		if ( unlink(uf->conf->outputFilename) ) {
+		if ( g_unlink(uf->conf->outputFilename) ) {
 		    ufraw_set_error(uf, _("Error creating file '%s'."),
 			    uf->conf->outputFilename);
 		    ufraw_set_error(uf, g_strerror(errno));
@@ -204,7 +206,10 @@ int ufraw_write_image(ufraw_data *uf)
 	    }
 	}
 	int status;
-        fits_create_file(&fitsFile, uf->conf->outputFilename, &status);
+	char *filename =
+		uf_win32_locale_filename_from_utf8(uf->conf->outputFilename);
+        fits_create_file(&fitsFile, filename, &status);
+	uf_win32_locale_filename_free(filename);
         if ( status ) {
 	    ufraw_set_error(uf, _("Error creating file '%s'."),
 		    uf->conf->outputFilename);
@@ -221,7 +226,7 @@ int ufraw_write_image(ufraw_data *uf)
 	if (!strcmp(uf->conf->outputFilename, "-")) {
 	    out = stdout;
 	} else {
-	    if ( (out=fopen(uf->conf->outputFilename, "wb"))==NULL) {
+	    if ( (out=g_fopen(uf->conf->outputFilename, "wb"))==NULL) {
 		ufraw_set_error(uf, _("Error creating file '%s'."),
 			uf->conf->outputFilename);
 		ufraw_set_error(uf, g_strerror(errno));

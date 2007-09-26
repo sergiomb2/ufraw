@@ -14,11 +14,10 @@
 #include "config.h"
 #endif
 
-#include <stdio.h>     /* for printf */
 #include <errno.h>     /* for errno */
 #include <time.h>      /* for time_t */
 #include <string.h>
-#include <glib.h>
+#include <uf_glib.h>
 #include <glib/gi18n.h>
 #ifdef HAVE_LIBJPEG
 #include <jpeglib.h>
@@ -261,7 +260,7 @@ int ufraw_write_embedded(ufraw_data *uf)
     if (!strcmp(uf->conf->outputFilename, "-")) {
 	out = stdout;
     } else {
-	if ( (out=fopen(uf->conf->outputFilename, "wb"))==NULL) {
+	if ( (out=g_fopen(uf->conf->outputFilename, "wb"))==NULL) {
 	    ufraw_message(UFRAW_ERROR, _("Error creating file '%s': %s"),
 		    uf->conf->outputFilename, g_strerror(errno));
 	    return UFRAW_ERROR;

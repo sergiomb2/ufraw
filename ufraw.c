@@ -18,8 +18,9 @@
 #include <stdlib.h>    /* for exit */
 #include <errno.h>     /* for errno */
 #include <string.h>
-#include <gtk/gtk.h>
+#include <uf_glib.h>
 #include <glib/gi18n.h>
+#include <gtk/gtk.h>
 #include "ufraw.h"
 
 char *ufraw_binary;
@@ -33,8 +34,10 @@ int main (int argc, char **argv)
     int optInd;
     int plugin = 0;
 
-    ufraw_binary = g_path_get_basename(argv[0]);
-    uf_init_locale(argv[0]);
+    char *argFile = uf_win32_locale_to_utf8(argv[0]);
+    ufraw_binary = g_path_get_basename(argFile);
+    uf_init_locale(argFile);
+    uf_win32_locale_free(argFile);
     gtk_init(&argc, &argv);
     ufraw_icons_init();
 #ifdef WIN32
@@ -110,16 +113,21 @@ int main (int argc, char **argv)
     }
     /* If there only one argument and it is a directory, use it as the
      * default directory for the file-chooser */
-    if (optInd==argc-1 && g_file_test(argv[optInd],G_FILE_TEST_IS_DIR)) {
+    argFile = uf_win32_locale_to_utf8(argv[optInd]);
+    if (optInd==argc-1 && g_file_test(argFile,G_FILE_TEST_IS_DIR)) {
 	status = ufraw_config(NULL, &rc, &conf, &cmd);
 	if (status==UFRAW_ERROR) exit(1);
-        ufraw_chooser(&rc, argv[optInd]);
+        ufraw_chooser(&rc, argFile);
+	uf_win32_locale_free(argFile);
 //	ufraw_close(cmd.darkframe);
         exit(0);
     }
+    uf_win32_locale_free(argFile);
 	
     for (; optInd<argc; optInd++) {
-        uf = ufraw_open(argv[optInd]);
+	argFile = uf_win32_locale_to_utf8(argv[optInd]);
+        uf = ufraw_open(argFile);
+	uf_win32_locale_free(argFile);
         if (uf==NULL) {
             ufraw_message(UFRAW_REPORT, NULL);
             continue;

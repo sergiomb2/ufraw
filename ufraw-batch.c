@@ -14,11 +14,10 @@
 #include "config.h"
 #endif
 
-#include <stdio.h>     /* for printf */
 #include <stdlib.h>    /* for exit */
 #include <errno.h>     /* for errno */
 #include <string.h>
-#include <glib.h>
+#include <uf_glib.h>
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
@@ -33,8 +32,10 @@ int main (int argc, char **argv)
     conf_data rc, cmd, conf;
     int status;
 
-    ufraw_binary = g_path_get_basename(argv[0]);
-    uf_init_locale(argv[0]);
+    char *argFile = uf_win32_locale_to_utf8(argv[0]);
+    ufraw_binary = g_path_get_basename(argFile);
+    uf_init_locale(argFile);
+    uf_win32_locale_free(argFile);
 
     /* Load $HOME/.ufrawrc */
     conf_load(&rc, NULL);
@@ -73,7 +74,9 @@ int main (int argc, char **argv)
 	    ufraw_message(UFRAW_WARNING, _("No input file, nothing to do."));
     }
     for (; optInd<argc; optInd++) {
-        uf = ufraw_open(argv[optInd]);
+	argFile = uf_win32_locale_to_utf8(argv[optInd]);
+        uf = ufraw_open(argFile);
+	uf_win32_locale_free(argFile);
         if (uf==NULL) {
             ufraw_message(UFRAW_REPORT, NULL);
             continue;

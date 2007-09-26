@@ -17,15 +17,13 @@
 #include "config.h"
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <math.h> /* for sqrt() */
 #include <setjmp.h>
 #include <errno.h>
 #include <float.h>
-#include <glib.h>
+#include <uf_glib.h>
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /*For off_t */
@@ -80,7 +78,7 @@ int dcraw_open(dcraw_data *h,char *filename)
 	delete d;
         return DCRAW_ERROR;
     }
-    if (!(d->ifp = fopen (d->ifname, "rb"))) {
+    if (!(d->ifp = g_fopen (d->ifname, "rb"))) {
         d->dcraw_message(DCRAW_OPEN_ERROR,_("Cannot open file %s: %s\n"),
                 filename, strerror(errno));
         g_free(d->ifname);
