@@ -4954,6 +4954,7 @@ guess_cfa_pc:
 	pixel_aspect /= getrat();
 	break;
       case 50721:			/* ColorMatrix1 */
+	if (use_cm) break; /* Prioritize Matrix2 over Matrix1 (UF) */
       case 50722:			/* ColorMatrix2 */
 	FORCC for (j=0; j < 3; j++)
 	  cm[c][j] = getrat();
@@ -4963,6 +4964,7 @@ guess_cfa_pc:
       case 50724:			/* CameraCalibration2 */
 	for (i=0; i < colors; i++)
 	  FORCC cc[i][c] = getrat();
+	break;
       case 50727:			/* AnalogBalance */
 	FORCC ab[c] = getrat();
 	break;

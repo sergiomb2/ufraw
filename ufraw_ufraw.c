@@ -482,9 +482,6 @@ int ufraw_load_raw(ufraw_data *uf)
         ufraw_message(status, raw->message);
         if (status!=DCRAW_WARNING) return status;
     }
-    uf->rgbMax = raw->rgbMax - raw->black;
-    memcpy(uf->rgb_cam, raw->rgb_cam, sizeof uf->rgb_cam);
-
     /* Canon EOS cameras require special exposure normalization */
     if ( strcmp(uf->conf->make, "Canon")==0 &&
 	 strncmp(uf->conf->model, "EOS", 3)==0 ) {
@@ -502,7 +499,7 @@ int ufraw_load_raw(ufraw_data *uf)
 	     * ExposureNorm */
 	    if (uf->LoadingID && uf->conf->ExposureNorm==0)
 		uf->conf->exposure -= log(1.0*uf->rgbMax/max)/log(2);
-	    uf->conf->ExposureNorm = max;
+	    uf->conf->ExposureNorm = max * uf->rgbMax / 4095;
 	    ufraw_message(UFRAW_SET_LOG,
 		    "Exposure Normalization set to %d (%.2f EV)\n",
 		    uf->conf->ExposureNorm,
@@ -511,6 +508,9 @@ int ufraw_load_raw(ufraw_data *uf)
     } else {
 	uf->conf->ExposureNorm = 0;
     }
+    uf->rgbMax = raw->rgbMax - raw->black;
+    memcpy(uf->rgb_cam, raw->rgb_cam, sizeof uf->rgb_cam);
+
     /* Foveon image dimensions are knows only after load_raw()*/
     dcraw_image_dimensions(raw, uf->conf->orientation,
 	    &uf->initialHeight, &uf->initialWidth);
