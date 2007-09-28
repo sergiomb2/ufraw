@@ -25,6 +25,7 @@ extern "C" {
 #include <glib/gstdio.h>
 #else
 // Otherwise we define the gstdio functions as macros
+#include <stdio.h>
 #define g_fopen fopen
 #define g_unlink unlink
 #define g_rename rename
