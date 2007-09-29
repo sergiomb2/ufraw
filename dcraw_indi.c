@@ -374,7 +374,7 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   dcraw_message (dcraw, DCRAW_VERBOSE,_("VNG interpolation...\n")); /*UF*/
 
   if (filters == 1) prow = pcol = 15;
-  ip = (int *) calloc ((prow+1)*(pcol+1), 1280);
+  int *ipalloc = ip = (int *) calloc ((prow+1)*(pcol+1), 1280);
   merror (ip, "vng_interpolate()");
   for (row=0; row <= prow; row++)               /* Precalculate for VNG */
     for (col=0; col <= pcol; col++) {
@@ -462,6 +462,7 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
   memcpy (image[(row-1)*width+2], brow[1]+2, (width-4)*sizeof *image);
   free (brow[4]);
+  free(ipalloc);
 }
 
 /*

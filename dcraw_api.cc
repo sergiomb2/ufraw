@@ -583,10 +583,10 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     if (h->colors==3) rgbWB[3] = rgbWB[1];
     for(r=0; r<h->height; r++)
         for(c=0; c<h->width; c++) {
-	    cl = fc_INDI(f4,r,c);
+	    int cc = fc_INDI(f4,r,c);
             f->image[r*f->width+c][fc_INDI(ff,r,c)] = MIN( MAX( (gint64)
-                (get_pixel(h, dark, r/2, c/2, cl, pixels) - h->black) *
-		rgbWB[cl]/0x10000, 0), 0xFFFF);
+                (get_pixel(h, dark, r/2, c/2, cc, pixels) - h->black) *
+		rgbWB[cc]/0x10000, 0), 0xFFFF);
 	}
 
     if (interpolation==dcraw_bilinear_interpolation)
