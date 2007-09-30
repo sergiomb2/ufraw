@@ -236,33 +236,78 @@ ufraw_data *ufraw_open(char *filename)
     return uf;
 }
 
-ufraw_data *ufraw_load_darkframe(char *darkframeFile)
+int ufraw_load_darkframe(ufraw_data *uf)
 {
-    ufraw_data *uf;
-    if (strlen(darkframeFile)>0) {
-        uf = ufraw_open(darkframeFile);
-        if (!uf){
-            ufraw_message(UFRAW_ERROR,
-		    _("darkframe error: %s is not a raw file\n"),
-		    darkframeFile);
-            return NULL;
-        }
-	uf->conf = g_new(conf_data, 1);
-	*uf->conf = conf_default;
-	/* disable all auto settings on darkframe */
-	uf->conf->autoExposure = disabled_state;
-	uf->conf->autoBlack = disabled_state;
-        if (ufraw_load_raw(uf)==UFRAW_SUCCESS) {
-            ufraw_message(UFRAW_BATCH_MESSAGE, _("using darkframe '%s'\n"),
-		    uf->filename);
-            return uf;
-        }
-        else
-            ufraw_message(UFRAW_ERROR, _("error loading darkframe '%s'\n"),
-		    uf->filename);
+    if ( strlen(uf->conf->darkframeFile)==0 )
+	return UFRAW_SUCCESS;
+    if ( uf->conf->darkframe!=NULL ) {
+	// If the same file was already openned, there is nothing to do.
+	if ( strcmp(uf->conf->darkframeFile, uf->conf->darkframe->filename)==0 )
+	    return UFRAW_SUCCESS;
+	// Otherwise we need to close the previous darkframe
+	ufraw_close(uf->conf->darkframe);
     }
-    // FIXME: make sure the darkframe matches the main data
-    return NULL;
+    ufraw_data *dark = uf->conf->darkframe =
+	    ufraw_open(uf->conf->darkframeFile);
+    if ( dark==NULL ){
+        ufraw_message(UFRAW_ERROR, _("darkframe error: %s is not a raw file\n"),
+		    uf->conf->darkframeFile);
+	uf->conf->darkframeFile[0] = '\0';
+        return UFRAW_ERROR;
+    }
+    dark->conf = g_new(conf_data, 1);
+    *dark->conf = conf_default;
+    /* disable all auto settings on darkframe */
+    dark->conf->autoExposure = disabled_state;
+    dark->conf->autoBlack = disabled_state;
+    if (ufraw_load_raw(dark)!=UFRAW_SUCCESS) {
+        ufraw_message(UFRAW_ERROR, _("error loading darkframe '%s'\n"),
+		uf->conf->darkframeFile);
+	ufraw_close(dark);
+	g_free(dark);
+	uf->conf->darkframe = NULL;
+	uf->conf->darkframeFile[0] = '\0';
+	return UFRAW_ERROR;
+    }
+    // Make sure the darkframe matches the main data
+    dcraw_data *raw = uf->raw;
+    dcraw_data *darkRaw = dark->raw;
+    if ( raw->width!=darkRaw->width ||
+	 raw->height!=darkRaw->height ||
+	 raw->colors!=darkRaw->colors ) {
+	ufraw_message(UFRAW_WARNING,
+		_("Darkframe '%s' is incompatible with main image"),
+		uf->conf->darkframeFile);
+	ufraw_close(dark);
+	g_free(dark);
+	uf->conf->darkframe = NULL;
+	uf->conf->darkframeFile[0] = '\0';
+	return UFRAW_ERROR;
+    }
+    ufraw_message(UFRAW_BATCH_MESSAGE, _("using darkframe '%s'\n"),
+	    uf->conf->darkframeFile);
+    /* Calculate dark frame hot pixel thresholds as the 99.99th percentile
+     * value.  That is, the value at which 99.99% of the pixels are darker.
+     * Pixels below this threshold are considered to be bias noise, and
+     * those above are "hot". */
+    int color;
+    int i;
+    long frequency[65536];
+    long sum;
+    long point = darkRaw->raw.width * darkRaw->raw.height / 10000;
+
+    for (color = 0; color < darkRaw->raw.colors; ++color) {
+        memset(frequency, 0, sizeof frequency);
+        for (i = 0; i < darkRaw->raw.width * darkRaw->raw.height; ++i)
+            frequency[darkRaw->raw.image[i][color]]++;
+        for (sum = 0, i = 65535; i > 1; --i) {
+            sum += frequency[i];
+            if (sum >= point)
+                break;
+        }
+        darkRaw->thresholds[color] = i + 1;
+    }
+    return UFRAW_SUCCESS;
 }
 
 int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
@@ -444,12 +489,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 		uf->conf->BaseCurveIndex==camera_curve)
 	    uf->conf->BaseCurveIndex = linear_curve;
     }
-    /* Using DarkframeFile from the configuration is disabled since we still
-     * cannot open two raw files simultaniously */
-    /*
-    if (strcmp(uf->conf->darkframeFile, cmd->darkframeFile)!=0)
-	uf->conf->darkframe = ufraw_load_darkframe(uf->conf->darkframeFile);
-    */
+    ufraw_load_darkframe(uf);
 
     dcraw_image_dimensions(raw, uf->conf->orientation,
 	    &uf->initialHeight, &uf->initialWidth);
@@ -551,6 +591,10 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->thumb.buffer);
     developer_destroy(uf->developer);
     g_free(uf->RawLumHistogram);
+    if ( uf->conf->darkframe!=NULL ) {
+	ufraw_close(uf->conf->darkframe);
+	g_free(uf->conf->darkframe);
+    }
     ufraw_message_reset(uf);
     ufraw_message(UFRAW_CLEAN, NULL);
 }

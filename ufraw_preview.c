@@ -2195,22 +2195,10 @@ static void set_darkframe(preview_data *data)
     render_preview(data);
 }
 
-static void free_darkframe(conf_data *conf)
-{
-    if (conf->darkframe != NULL) {
-	ufraw_close(conf->darkframe);
-	g_free(conf->darkframe);
-	conf->darkframe = NULL;
-	conf->darkframeFile[0] = '\0';
-    }
-}
-
 static void load_darkframe(GtkWidget *widget, void *unused)
 {
     preview_data *data = get_preview_data(widget);
     GtkFileChooser *fileChooser;
-    GSList *list, *saveList;
-    ufraw_data *uf;
     char *basedir;
 
     if (data->FreezeDialog) return;
@@ -2224,18 +2212,11 @@ static void load_darkframe(GtkWidget *widget, void *unused)
     free(basedir);
     
     if (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
-	saveList = gtk_file_chooser_get_filenames(fileChooser);
-	for (list = saveList; list != NULL; list = g_slist_next(list)) {
-	    if ((uf = ufraw_load_darkframe(list->data)) != NULL) {
-		free_darkframe(CFG);
-		CFG->darkframe = uf;
-		g_strlcpy(CFG->darkframeFile, list->data, max_path);
-		set_darkframe(data);
-	    }
-	    // FIXME: handle errors?
-            g_free(list->data);
-        }
-        g_slist_free(saveList);
+        char *filename = gtk_file_chooser_get_filename(fileChooser);
+	g_strlcpy(CFG->darkframeFile, filename, max_path);
+	g_free(filename);
+	ufraw_load_darkframe(data->UF);
+	set_darkframe(data);
     }
     ufraw_focus(fileChooser, FALSE);
     gtk_widget_destroy(GTK_WIDGET(fileChooser));
@@ -2249,7 +2230,11 @@ static void reset_darkframe(GtkWidget *widget, void *unused)
     if (data->FreezeDialog) return;
     if (CFG->darkframe == NULL) return;
     
-    free_darkframe(CFG);
+    ufraw_close(CFG->darkframe);
+    g_free(CFG->darkframe);
+    CFG->darkframe = NULL;
+    CFG->darkframeFile[0] = '\0';
+
     set_darkframe(data);
     (void)unused;
 }

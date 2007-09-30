@@ -235,7 +235,7 @@ extern char *ufraw_binary;
 ufraw_data *ufraw_open(char *filename);
 int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf,conf_data *cmd);
 int ufraw_load_raw(ufraw_data *uf);
-ufraw_data *ufraw_load_darkframe(char *darkframeFilename);
+int ufraw_load_darkframe(ufraw_data *uf);
 int ufraw_convert_image(ufraw_data *uf);
 int ufraw_convert_image_init(ufraw_data *uf);
 int ufraw_convert_image_first_phase(ufraw_data *uf);

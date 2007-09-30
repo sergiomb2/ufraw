@@ -1774,7 +1774,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	darkframeFile = uf_win32_locale_to_utf8(darkframeFile);
 	char *df = uf_file_set_absolute(darkframeFile);
 	uf_win32_locale_free(darkframeFile);
-	cmd->darkframe = ufraw_load_darkframe(df);
         g_strlcpy(cmd->darkframeFile, df, max_path);
 	g_free(df);
     }
