@@ -701,6 +701,11 @@ static void preview_draw_area(preview_data *data, int x, int y,
     guint8 *pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
     guint8 *p8;
     ufraw_image_data img = data->UF->Images[ufraw_final_phase];
+    gboolean blinkOver = CFG->overExp &&
+	    ( !CFG->blinkOverUnder || (data->OverUnderTicker & 3) == 1 );
+    gboolean blinkUnder = CFG->underExp &&
+	    ( !CFG->blinkOverUnder || (data->OverUnderTicker & 3) == 3 );
+		
     /* Scale crop image coordinates to pixbuf coordinates */
     float scale_x = ((float)pixbufWidth) / data->UF->initialWidth;
     float scale_y = ((float)pixbufHeight) / data->UF->initialHeight;
@@ -742,13 +747,10 @@ static void preview_draw_area(preview_data *data, int x, int y,
 		continue;
 	    }
 	    if (data->RenderMode==render_default) {
-		if ( CFG->overExp && (data->OverUnderTicker & 3) == 1 &&
-		     (p8[0]==255 || p8[1]==255 || p8[2]==255) )
+		if ( blinkOver && (p8[0]==255 || p8[1]==255 || p8[2]==255) )
 		    p8[0] = p8[1] = p8[2] = 0;
-		else if ( CFG->underExp && (data->OverUnderTicker & 3) == 3 &&
-			  (p8[0]==0 || p8[1]==0 || p8[2]==0) )
+		else if ( blinkUnder && (p8[0]==0 || p8[1]==0 || p8[2]==0) )
 		    p8[0] = p8[1] = p8[2] = 255;
-		continue;
 	    } else if (data->RenderMode==render_overexposed) {
 		for (c=0; c<3; c++) if (p8[c]!=255) p8[c] = 0;
 	    } else if (data->RenderMode==render_underexposed) {
@@ -792,8 +794,8 @@ static gboolean switch_highlights(gpointer ptr)
 	data->OverUnderTicker++;
 	preview_draw_area(data, x, y, width, height);
     }
-    /* If no highlights are needed, disable this timeout function. */
-    if (!CFG->overExp && !CFG->underExp) {
+    /* If no blinking is needed, disable this timeout function. */
+    if (!CFG->blinkOverUnder || (!CFG->overExp && !CFG->underExp)) {
         data->BlinkTimer = 0;
 	return FALSE;
     }
@@ -802,8 +804,10 @@ static gboolean switch_highlights(gpointer ptr)
 
 static void start_blink(preview_data *data)
 {
-    if (!data->BlinkTimer) {
-	data->BlinkTimer = g_timeout_add(500, switch_highlights, data);
+    if ( CFG->blinkOverUnder && (CFG->overExp || CFG->underExp) ) {
+	if (!data->BlinkTimer) {
+	    data->BlinkTimer = g_timeout_add(500, switch_highlights, data);
+	}
     }
 }
 
@@ -821,10 +825,7 @@ static void window_map_event(GtkWidget *widget, GdkEvent *event,
 			     gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    if (CFG->overExp || CFG->underExp)
-	start_blink(data);
-    else
-	stop_blink(data);
+    start_blink(data);
     (void)event;
     (void)user_data;
 }
@@ -2497,8 +2498,8 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 		CFG->autoExposure = apply_state;
 	}
 	if ( valuep==&CFG->overExp || valuep==&CFG->underExp ) {
-	    if (CFG->overExp || CFG->underExp)
-		start_blink(data);
+	    start_blink(data);
+	    switch_highlights(data);
 	} else {
 	    render_preview(data);
 	}
@@ -2751,11 +2752,6 @@ static void configuration_save(GtkWidget *widget, gpointer user_data)
     data->SaveConfig = *data->UF->conf;
 }
 
-static void gimp_entry_changed(GtkEntry *entry, char text[])
-{
-    g_strlcpy(text, gtk_entry_get_text(entry), max_path);
-}
-
 static void gimp_reset_clicked(GtkWidget *widget, GtkEntry *entry)
 {
     (void)widget;
@@ -2816,6 +2812,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     curveTable = GTK_TABLE(table_with_frame(box, _("Luminosity Curves"), TRUE));
     GtkTable *settingsTable =
 	    GTK_TABLE(table_with_frame(box, _("Settings"), TRUE));
+    // Remote Gimp command entry
     label = gtk_label_new(_("Remote Gimp command"));
     gtk_table_attach(settingsTable, label, 0, 1, 0, 1, 0, 0, 0, 0);
     GtkEntry *gimpEntry = GTK_ENTRY(gtk_entry_new());
@@ -2823,8 +2820,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_entry_set_text(gimpEntry, data->UF->conf->remoteGimpCommand);
     gtk_table_attach(settingsTable, GTK_WIDGET(gimpEntry), 1, 2, 0, 1,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
-    g_signal_connect(G_OBJECT(gimpEntry), "changed",
-            G_CALLBACK(gimp_entry_changed), data->UF->conf->remoteGimpCommand);
+    // Remote Gimp command reset button
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
@@ -2833,6 +2829,12 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_table_attach(settingsTable, button, 2, 3, 0, 1, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(gimp_reset_clicked), gimpEntry);
+    // blinkOverUnder toggle button
+    GtkWidget *blinkButton = gtk_check_button_new_with_label(
+	    _("Blink Over/Underexposure Indicators"));
+    gtk_table_attach(settingsTable, blinkButton, 0, 2, 2, 3, GTK_FILL, 0, 0, 0);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(blinkButton),
+	    CFG->blinkOverUnder);
 
     label = gtk_label_new(_("Configuration"));
     box = gtk_vbox_new(FALSE, 0);
@@ -2965,9 +2967,21 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	/* APPLY only marks that something changed and we need to refresh */
 	if (response==GTK_RESPONSE_APPLY)
 	    continue;
+
+	if ( strcmp(CFG->remoteGimpCommand, gtk_entry_get_text(gimpEntry))!=0 )
+	    data->OptionsChanged = TRUE;
+	if ( CFG->blinkOverUnder!=
+	     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(blinkButton)) )
+	    data->OptionsChanged = TRUE;
+
 	if ( !data->OptionsChanged ) {
 	    /* If nothing changed there is nothing to do */
     	} else if ( response==GTK_RESPONSE_OK ) {
+	    g_strlcpy(CFG->remoteGimpCommand,
+		    gtk_entry_get_text(gimpEntry), max_path);
+	    g_strlcpy(RC.remoteGimpCommand, CFG->remoteGimpCommand, max_path);
+	    RC.blinkOverUnder = CFG->blinkOverUnder =
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(blinkButton));
 	    /* Copy profiles and curves from CFG to RC and save .ufrawrc */
 	    if ( memcmp(&RC.BaseCurve[RC.BaseCurveIndex],
 		    &CFG->BaseCurve[RC.BaseCurveIndex], sizeof(CurveData))!=0 )
@@ -3054,6 +3068,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	}
 	ufraw_focus(optionsDialog, FALSE);
         gtk_widget_destroy(optionsDialog);
+	start_blink(data);
 	render_preview(data);
         return;
     }
