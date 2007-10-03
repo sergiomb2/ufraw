@@ -1141,12 +1141,13 @@ static gboolean render_live_histogram(preview_data *data)
        }
 
     /* draw vertical line at quarters "behind" the live histogram */
-    for (y=-1; y<CFG->liveHistogramHeight+1; y++) for (x=64; x<255; x+=64)
-        if (pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+0]==0 &&
-            pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+1]==0 &&
-            pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+2]==0 )
-            for (c=0; c<3; c++)
-                pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+c]=64;
+    for (y=-1; y<CFG->liveHistogramHeight+1; y++) 
+        for (x=64; x<255; x+=64) {
+            guint8 *pix = pixies+(CFG->liveHistogramHeight-y)*rowstride+3*(x+1);
+            if (pix[0]==0 && pix[1]==0 && pix[2]==0 )
+                for (c=0; c<3; c++)
+                    pix[c]=96;	/* gray */
+	}
     gtk_widget_queue_draw(data->LiveHisto);
     for (c=0;c<3;c++) rgb[c] = sum[c]/height/width;
     color_labels_set(data->AvrLabels, rgb);
