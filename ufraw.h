@@ -41,10 +41,9 @@ enum { rgb_histogram, r_g_b_histogram, luminosity_histogram, value_histogram,
 enum { linear_histogram, log_histogram };
 /* The following enum should match the dcraw_interpolation enum
  * in dcraw_api.h. */
-enum { eahd_interpolation, ahd_interpolation,
-       vng_interpolation, four_color_interpolation,
+enum { ahd_interpolation, vng_interpolation, four_color_interpolation,
        ppg_interpolation, bilinear_interpolation, half_interpolation,
-       num_interpolations };
+       obsolete_eahd_interpolation, num_interpolations };
 enum { no_id, also_id, only_id, send_id };
 enum { manual_curve, linear_curve, custom_curve, camera_curve };
 enum { in_profile, out_profile, display_profile, profile_types};
@@ -149,6 +148,7 @@ typedef struct {
     profile_data profile[profile_types][max_profiles];
     Intent intent[profile_types];
     int interpolation;
+    int smoothing;
     char darkframeFile[max_path];
     struct ufraw_struct *darkframe;
     int CropX1, CropY1, CropX2, CropY2;

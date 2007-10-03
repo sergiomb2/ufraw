@@ -53,9 +53,8 @@ void vng_interpolate_INDI(gushort (*image)[4], const unsigned filters,
 void ahd_interpolate_INDI(gushort (*image)[4], const unsigned filters,
     const int width, const int height, const int colors, float rgb_cam[3][4],
     void *dcraw);
-void eahd_interpolate_INDI(gushort (*image)[4], const unsigned filters,
-    const int width, const int height, const int colors, float rgb_cam[3][4],
-    void *dcraw);
+void color_smooth(gushort (*image)[4], const int width, const int height,
+    const int passes);
 void ppg_interpolate_INDI(gushort (*image)[4], const unsigned filters,
     const int width, const int height, const int colors, void *dcraw);
 void flip_image_INDI(gushort (*image)[4], int *height_p, int *width_p,
@@ -518,7 +517,7 @@ int dcraw_wavelet_denoise_shrinked(dcraw_image_data *f,
 }
 
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
-	dcraw_data *dark, int interpolation, int rgbWB[4])
+	dcraw_data *dark, int interpolation, int smoothing, int rgbWB[4])
 {
     DCRaw *d = (DCRaw *)h->dcraw;
     int fujiWidth, i, r, c, cl, pixels;
@@ -550,10 +549,9 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 
     /* It might be better to report an error here: */
     /* (dcraw also forbids AHD for Fuji rotated images) */
-    if ((interpolation==dcraw_ahd_interpolation ||
-	 interpolation==dcraw_eahd_interpolation) && h->colors > 3)
+    if ( interpolation==dcraw_ahd_interpolation && h->colors > 3 )
 	interpolation = dcraw_vng_interpolation;
-    if (interpolation==dcraw_ppg_interpolation && h->colors > 3)
+    if ( interpolation==dcraw_ppg_interpolation && h->colors > 3 )
 	interpolation = dcraw_vng_interpolation;
     f4 = h->fourColorFilters;
     if (h->colors==3) rgbWB[3] = rgbWB[1];
@@ -564,19 +562,20 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
                 (get_pixel(h, dark, r/2, c/2, cc, pixels) - black) *
 		rgbWB[cc]/0x10000, 0), 0xFFFF);
 	}
-
+    int smoothPasses = 1;
     if (interpolation==dcraw_bilinear_interpolation)
 	lin_interpolate_INDI(f->image, ff, f->width, f->height, cl, d);
     else if (interpolation==dcraw_vng_interpolation)
 	vng_interpolate_INDI(f->image, ff, f->width, f->height, cl, 0xFFFF, d);
-    else if (interpolation==dcraw_ahd_interpolation)
+    else if (interpolation==dcraw_ahd_interpolation) {
 	ahd_interpolate_INDI(f->image, ff, f->width, f->height, cl,
 		h->rgb_cam, d);
-    else if (interpolation==dcraw_eahd_interpolation)
-	eahd_interpolate_INDI(f->image, ff, f->width, f->height, cl,
-		h->rgb_cam, d);
-    else if (interpolation==dcraw_ppg_interpolation)
+	smoothPasses = 3;
+    } else if (interpolation==dcraw_ppg_interpolation)
 	ppg_interpolate_INDI(f->image, ff, f->width, f->height, cl, d);
+
+    if ( smoothing )
+	color_smooth(f->image, f->width, f->height, smoothPasses);
 
     if (cl==4 && h->colors == 3) {
         for (i=0; i<f->height*f->width; i++)

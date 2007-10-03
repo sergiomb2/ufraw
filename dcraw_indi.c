@@ -729,25 +729,11 @@ static inline ushort eahd_median(int row, int col, int color,
   
 }
 
-/*
-   Adaptive Homogeneity-Directed interpolation is based on
-   the work of Keigo Hirakawa, Thomas Parks, and Paul Lee.
-   
-   Algorithm updated by Michael Goertz
-
- */
-#define TS 256		/* Tile Size */
-
-void CLASS eahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
-        const int width, const int height, const int colors,
-       	const float rgb_cam[3][4], void *dcraw)
+// Add the color smoothing from Kimmel as suggested in the AHD paper
+// Algorithm updated by Michael Goertz
+void CLASS color_smooth(ushort (*image)[4], const int width, const int height,
+    const int passes)
 {
-  ahd_interpolate_INDI(image, filters, width, height, colors, rgb_cam, dcraw);
-
-  /***********************
-  Add the color smoothing from Kimmel as suggested in the AHD paper
-  ************************/
-
   int row, col;
   int row_start = 2;
   int row_stop  = height-2;
@@ -758,7 +744,7 @@ void CLASS eahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 
   ushort *mpix;
   
-  for (count=0;count<3;count++) {
+  for (count=0; count<passes; count++) {
     //perform 3 iterations - seems to be a commonly settled upon number of iterations
     for (row=row_start; row < row_stop; row++) {
       for (col=col_start; col < col_stop; col++) {
@@ -772,8 +758,6 @@ void CLASS eahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
     }
   }
 }
-#undef TS
-
 
 void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
     int *width_p, int *fuji_width_p, const int colors, const double step,

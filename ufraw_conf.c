@@ -69,7 +69,7 @@ const conf_data conf_default = {
       { { N_("sRGB"), "", "", 0.0, 0.0, FALSE },
         { "Some ICC Profile", "", "", 0.0, 0.0, FALSE } } },
     { 0, 0, 0 }, /* intent */
-    ahd_interpolation, /* interpolation */
+    ahd_interpolation, 0, /* interpolation, smoothing */
     "", NULL, /* darkframeFile, darkframe */
     -1, -1, -1, -1, /* Crop X1,Y1,X2,Y2 */
     /* Save options */
@@ -110,7 +110,7 @@ const conf_data conf_default = {
 };
 
 static const char *interpolationNames[] =
-    { "eahd", "ahd", "vng", "four-color", "ppg", "bilinear", "half", NULL };
+    { "ahd", "vng", "four-color", "ppg", "bilinear", "half", "eahd", NULL };
 static const char *restoreDetailsNames[] =
     { "clip", "lch", "hsv", NULL };
 static const char *clipHighlightsNames[] =
@@ -449,8 +449,14 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	} else {
 	    c->interpolation = conf_find_name(temp, interpolationNames,
 		    conf_default.interpolation);
+	    if ( c->interpolation==obsolete_eahd_interpolation ) {
+		c->interpolation = ahd_interpolation;
+		c->smoothing = 3;
+	    }
 	}
     }
+    if (!strcmp("ColorSmoothing", element))
+            sscanf(temp, "%d", &c->smoothing);
     if (!strcmp("RawExpander", element))
             sscanf(temp, "%d", &c->expander[raw_expander]);
     if (!strcmp("LiveExpander", element))
@@ -739,6 +745,17 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     if (c->interpolation!=conf_default.interpolation)
         buf = uf_markup_buf(buf, "<Interpolation>%s</Interpolation>\n",
 		conf_get_name(interpolationNames, c->interpolation));
+    // 'smoothing' is boolean at the moment, but we keep the option
+    // to upgrade it to the number of color smoothing passes.
+    if (c->smoothing!=0) {
+	if ( c->interpolation==ahd_interpolation )
+	    c->smoothing = 3;
+	else
+	    c->smoothing = 1;
+    }
+    if (c->smoothing!=conf_default.smoothing)
+	buf = uf_markup_buf(buf, "<ColorSmoothing>%d</ColorSmoothing>\n",
+		c->smoothing);
     if (strcmp(c->wb, conf_default.wb))
 	buf = uf_markup_buf(buf, "<WB>%s</WB>\n", c->wb);
     if (c->WBTuning!=conf_default.WBTuning)
@@ -1001,6 +1018,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     int i, j;
 
     dst->interpolation = src->interpolation;
+    dst->smoothing = src->smoothing;
     g_strlcpy(dst->wb, src->wb, max_name);
     dst->WBTuning = src->WBTuning;
     dst->temperature = src->temperature;
@@ -1172,6 +1190,10 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 	conf->autoBlack = disabled_state;
     }
     if (cmd->interpolation>=0) conf->interpolation = cmd->interpolation;
+    if (cmd->interpolation==obsolete_eahd_interpolation) {
+	conf->interpolation = ahd_interpolation;
+	conf->smoothing = 3;
+    }
     if (cmd->shrink!=NULLF) {
         conf->shrink = cmd->shrink;
         conf->size = 0;
@@ -1262,7 +1284,7 @@ N_("--exposure=auto|EXPOSURE\n"
 "                      Auto exposure or exposure correction in EV (default 0).\n"),
 N_("--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"),
-N_("--interpolation=eahd|ahd|vng|four-color|ppg|bilinear\n"
+N_("--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"),
 "\n",
 N_("The options which are related to the final output are:\n"),
@@ -1606,12 +1628,14 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->interpolation = -1;
     if (interpolationName!=NULL) {
 	/* Keep compatebility with old numbers from ufraw-0.5 */
-        if (!strcmp(interpolationName, "full"))
+        /*if (!strcmp(interpolationName, "full"))
             cmd->interpolation = vng_interpolation;
         else if (!strcmp(interpolationName, "quick"))
             cmd->interpolation = bilinear_interpolation;
-	else cmd->interpolation = conf_find_name(interpolationName,
+	else */
+	cmd->interpolation = conf_find_name(interpolationName,
 		    interpolationNames, -1);
+	// "eahd" is being silently supported since ufraw-0.13.
 	if (cmd->interpolation<0 || cmd->interpolation==half_interpolation) {
             ufraw_message(UFRAW_ERROR,
                 _("'%s' is not a valid interpolation option."),

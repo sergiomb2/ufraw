@@ -48,7 +48,7 @@ typedef struct {
     int thumbType, thumbOffset, thumbBufferLength;
 } dcraw_data;
 
-enum { dcraw_eahd_interpolation, dcraw_ahd_interpolation,
+enum { dcraw_ahd_interpolation,
     dcraw_vng_interpolation, dcraw_four_color_interpolation,
     dcraw_ppg_interpolation, dcraw_bilinear_interpolation };
 enum { unknown_thumb_type, jpeg_thumb_type, ppm_thumb_type };
@@ -65,7 +65,7 @@ int dcraw_wavelet_denoise(dcraw_data *h, float threshold);
 int dcraw_wavelet_denoise_shrinked(dcraw_image_data *f,
         dcraw_data *h, float threshold);
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
-	dcraw_data *dark, int interpolation, int rgbWB[4]);
+	dcraw_data *dark, int interpolation, int smoothing, int rgbWB[4]);
 void dcraw_close(dcraw_data *h);
 int dcraw_image_dimensions(dcraw_data *raw, int flip, int *height, int *width);
 

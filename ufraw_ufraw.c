@@ -667,7 +667,7 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
 		uf->conf->threshold))!=DCRAW_SUCCESS )
 	    return status;
         dcraw_finalize_interpolate(&final, raw, dark, uf->conf->interpolation,
-		uf->developer->rgbWB);
+		uf->conf->smoothing, uf->developer->rgbWB);
 	uf->developer->rgbMax = uf->developer->max;
         for (c=0; c<4; c++)
 	    uf->developer->rgbWB[c] = 0x10000;

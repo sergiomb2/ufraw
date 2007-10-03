@@ -3645,8 +3645,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
 	    data->InterpolationTable[i++] = bilinear_interpolation;
 	} else {
-	    gtk_combo_box_append_text(combo, _("EAHD interpolation"));
-	    data->InterpolationTable[i++] = eahd_interpolation;
 	    gtk_combo_box_append_text(combo, _("AHD interpolation"));
 	    data->InterpolationTable[i++] = ahd_interpolation;
 	    gtk_combo_box_append_text(combo, _("VNG interpolation"));
@@ -3657,10 +3655,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    data->InterpolationTable[i++] = ppg_interpolation;
 	    gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
 	    data->InterpolationTable[i++] = bilinear_interpolation;
-	}
-	if ( plugin==1 ) {
-	    gtk_combo_box_append_text(combo, _("Half-size interpolation"));
-	    data->InterpolationTable[i++] = half_interpolation;
 	}
 	for (i--; i>=0; i--)
 	    if ( data->InterpolationTable[i]==CFG->interpolation )
@@ -3677,7 +3671,19 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     }
     gtk_table_attach(table, GTK_WIDGET(combo), 1, 2, 0, 1,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
-//    gtk_box_pack_start(box, GTK_WIDGET(combo), FALSE, FALSE, 0);
+    // Color smoothing button
+    button = gtk_toggle_button_new();
+    gtk_container_add(GTK_CONTAINER(button),
+	    gtk_image_new_from_stock(GTK_STOCK_CLEAR, GTK_ICON_SIZE_BUTTON));
+    gtk_tooltips_set_tip(data->ToolTips, button,
+	    _("Apply color smoothing"), NULL);
+    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
+	    CFG->smoothing);
+    g_signal_connect(G_OBJECT(button), "toggled",
+            G_CALLBACK(toggle_button_update), &CFG->smoothing);
+    if ( !data->UF->HaveFilters )
+	gtk_widget_set_sensitive(button, FALSE);
 
     /* Denoising is temporeraly in the WB page */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
