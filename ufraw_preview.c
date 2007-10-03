@@ -1827,7 +1827,6 @@ static void zoom_fit_event(GtkWidget *widget, gpointer user_data)
 	render_preview(data);
     }
 }
-#endif
 
 static void zoom_max_event(GtkWidget *widget, gpointer user_data)
 {
@@ -1843,6 +1842,7 @@ static void zoom_max_event(GtkWidget *widget, gpointer user_data)
 	render_preview(data);
     }
 }
+#endif
 
 static void flip_image(GtkWidget *widget, int flip)
 {
@@ -4480,13 +4480,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* Right side of the preview window */
     vBox = gtk_vbox_new(FALSE, 0);
     gtk_box_pack_start(previewHBox, vBox, TRUE, TRUE, 2);
-    data->PreviewPixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-            preview_width, preview_height);
     GtkWidget *PreviewEventBox = gtk_event_box_new();
 #ifdef HAVE_GTKIMAGEVIEW
     data->PreviewWidget = gtk_image_view_new();
-    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
-	    data->PreviewPixbuf, FALSE);
     gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
     gtk_event_box_set_above_child(GTK_EVENT_BOX(PreviewEventBox), TRUE);
 
@@ -4508,7 +4504,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     box = GTK_BOX(gtk_vbox_new(FALSE, 0));
     gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(box));
     gtk_box_pack_start(box, PreviewEventBox, FALSE, FALSE, 0);
+    data->PreviewPixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
+            preview_width, preview_height);
     data->PreviewWidget = gtk_image_new_from_pixbuf(data->PreviewPixbuf);
+    g_object_unref(data->PreviewPixbuf);
     gtk_misc_set_alignment(GTK_MISC(data->PreviewWidget), 0, 0);
     gtk_container_add(GTK_CONTAINER(PreviewEventBox), data->PreviewWidget);
 #endif
@@ -4520,7 +4519,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(PreviewEventBox), "motion-notify-event",
 	    G_CALLBACK(preview_motion_notify), NULL);
     gtk_widget_add_events(PreviewEventBox, GDK_POINTER_MOTION_MASK);
-    g_object_unref(data->PreviewPixbuf);
 
     data->ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
     gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(data->ProgressBar),
@@ -4649,18 +4647,48 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 		_("Send image to _Gimp"), gimp_button, data);
         gtk_box_pack_start(box, gimpButton, FALSE, FALSE, 0);
     }
+#ifdef HAVE_GTKIMAGEVIEW
+    // Apply WindowMaximized state from previous session
+    if ( CFG->WindowMaximized )
+	gtk_window_maximize(GTK_WINDOW(previewWindow));
+#endif
     gtk_widget_show_all(previewWindow);
     gtk_widget_hide(GTK_WIDGET(data->SpotTable));
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);
 #ifdef HAVE_GTKIMAGEVIEW
     /* After window size was set, the user may want to shrink it */
     gtk_widget_set_size_request(scroll, -1, -1);
+
+    // preview_progress() changes the size of the progress bar
+    // and processes the event queue. 
+    preview_progress(previewWindow, _("Loading preview"), 0.2);
+
+    if ( CFG->WindowMaximized ) {
+	// scroll widget is allocated size only after gtk_widget_show_all()
+	int scrollWidth = scroll->allocation.width;
+	int scrollHeight = scroll->allocation.height;
+	double wScale = (double)data->UF->initialWidth / scrollWidth;
+	double hScale = (double)data->UF->initialHeight / scrollHeight;
+	CFG->Zoom = 100/MAX(wScale, hScale);
+	CFG->Scale = 0;
+	preview_width = uf->initialWidth * CFG->Zoom/100;
+	preview_height = uf->initialHeight * CFG->Zoom/100;
+    }
+    // Allocate the preview pixbuf
+    data->PreviewPixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
+            preview_width, preview_height);
+    gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
+	    data->PreviewPixbuf, FALSE);
+    g_object_unref(data->PreviewPixbuf);
+    // Get the empty preview displayed
+    while (gtk_events_pending()) gtk_main_iteration();
 #endif
+    preview_progress(previewWindow, _("Loading preview"), 0.2);
+
     for (i=0; i<cursor_num; i++)
 	data->Cursor[i] = gdk_cursor_new(Cursors[i]);
     gdk_window_set_cursor(PreviewEventBox->window, data->Cursor[spot_cursor]);
     gtk_widget_set_sensitive(data->Controls, FALSE);
-    preview_progress(previewWindow, _("Loading preview"), 0.2);
     ufraw_load_raw(uf);
     gtk_widget_set_sensitive(data->Controls, TRUE);
 
@@ -4698,6 +4726,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             "WindowResponse");
     gtk_container_foreach(GTK_CONTAINER(previewVBox),
             (GtkCallback)(expander_state), NULL);
+
+    CFG->WindowMaximized =
+	    ( gdk_window_get_state(GTK_WIDGET(previewWindow)->window)
+	    & GDK_WINDOW_STATE_MAXIMIZED ) == GDK_WINDOW_STATE_MAXIMIZED;
+
     ufraw_focus(previewWindow, FALSE);
     gtk_widget_destroy(previewWindow);
     for (i=0; i<cursor_num; i++)

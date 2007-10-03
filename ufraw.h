@@ -169,6 +169,7 @@ typedef struct {
     int rawHistogramScale, rawHistogramHeight;
     int expander[expander_count];
     gboolean overExp, underExp, blinkOverUnder;
+    gboolean WindowMaximized;
     char curvePath[max_path];
     char profilePath[max_path];
     gboolean silent;

@@ -93,6 +93,7 @@ const conf_data conf_default = {
     FALSE, /* overExp indicator */
     FALSE, /* underExp indicator */
     TRUE, /* blinkOverUnder indicators */
+    FALSE, /* WindowMaximized */
     "", "", /* curvePath, profilePath */
     FALSE, /* silent */
 #ifdef WIN32
@@ -476,6 +477,8 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     if (!strcmp("UnderExposure", element)) sscanf(temp, "%d", &c->underExp);
     if (!strcmp("BlinkOverUnder", element))
 	    sscanf(temp, "%d", &c->blinkOverUnder);
+    if (!strcmp("WindowMaximized", element))
+	    sscanf(temp, "%d", &c->WindowMaximized);
     if (!strcmp("WB", element)) {
 	/* Keep compatebility with old numbers from ufraw-0.6 */
         if (sscanf(temp, "%d", &i)==1) {
@@ -724,6 +727,10 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
         if (c->blinkOverUnder!=conf_default.blinkOverUnder)
             buf = uf_markup_buf(buf,
 		    "<BlinkOverUnder>%d</BlinkOverUnder>\n", c->blinkOverUnder);
+        if (c->WindowMaximized!=conf_default.WindowMaximized)
+            buf = uf_markup_buf(buf,
+		    "<WindowMaximized>%d</WindowMaximized>\n",
+		    c->WindowMaximized);
         if ( strcmp(c->remoteGimpCommand, conf_default.remoteGimpCommand)!=0 )
             buf = uf_markup_buf(buf,
 		    "<RemoteGimpCommand>%s</RemoteGimpCommand>\n",
