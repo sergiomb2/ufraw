@@ -1794,9 +1794,3 @@ msgstr "Balance de la cámara"
 #: wb_presets.c:65
 msgid "Auto WB"
 msgstr "Balance automático"
-
-#~ msgid "EAHD interpolation"
-#~ msgstr "Interpolación EAHD"
-
-#~ msgid "Half-size interpolation"
-#~ msgstr "Interpolación de medio-tamaño"

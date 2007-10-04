@@ -1770,10 +1770,3 @@ msgstr "カメラWB"
 #: wb_presets.c:65
 msgid "Auto WB"
 msgstr "自動WB"
-
-#, fuzzy
-#~ msgid "EAHD interpolation"
-#~ msgstr "AHD補間"
-
-#~ msgid "Half-size interpolation"
-#~ msgstr "ハーフサイズ補間"

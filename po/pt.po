@@ -1786,10 +1786,3 @@ msgstr "WB da câmera"
 #: wb_presets.c:65
 msgid "Auto WB"
 msgstr "Auto WB"
-
-#, fuzzy
-#~ msgid "EAHD interpolation"
-#~ msgstr "Interpolação AHD"
-
-#~ msgid "Half-size interpolation"
-#~ msgstr "Interpolação de metade do tamanho"

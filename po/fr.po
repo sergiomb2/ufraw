@@ -1770,9 +1770,3 @@ msgstr "Bal. du Blanc Boitier"
 #: wb_presets.c:65
 msgid "Auto WB"
 msgstr "Bal. du Blanc Auto"
-
-#~ msgid "EAHD interpolation"
-#~ msgstr "Interpolation EAHD"
-
-#~ msgid "Half-size interpolation"
-#~ msgstr "Interpolation demi-taille"

@@ -1791,9 +1791,3 @@ msgstr "ББ камеры"
 #: wb_presets.c:65
 msgid "Auto WB"
 msgstr "Автоматический ББ"
-
-#~ msgid "EAHD interpolation"
-#~ msgstr "Интерполяция EAHD"
-
-#~ msgid "Half-size interpolation"
-#~ msgstr "Интерполяция половинного размера"
