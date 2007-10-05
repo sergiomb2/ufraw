@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.88 2007/09/16 13:21:16 udifuchs Exp $
+dnl $Id: configure.ac,v 1.89 2007/10/05 15:49:32 udifuchs Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -12,7 +12,10 @@ AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_RANLIB
 
-AC_CHECK_PROGS(POD2MAN, pod2man, , $PATH)
+AC_CHECK_PROGS(POD2MAN, pod2man,
+  [ echo pod2man is missing on this system; \
+    echo you can ignore this problem by typing: touch ufraw.1; \
+    echo cannot execute: pod2man], $PATH)
 AC_FUNC_FSEEKO
 
 UFRAW_CFLAGS="-ffast-math -fomit-frame-pointer"
