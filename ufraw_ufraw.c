@@ -25,6 +25,9 @@
 #ifdef HAVE_LIBBZ2
 #include <bzlib.h>
 #endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 #include <uf_glib.h>
 #include <glib/gi18n.h>
 #include "dcraw_api.h"
