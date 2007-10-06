@@ -17,7 +17,7 @@
 #include <stdio.h>	/* for printf */
 #include <errno.h>
 #include <string.h>
-#include <uf_glib.h>
+#include "uf_glib.h"
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include "ufraw.h"

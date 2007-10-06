@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <lcms.h>
-#include <uf_glib.h>
+#include "uf_glib.h"
 #include "nikon_curve.h"
 #include "ufraw.h"
 

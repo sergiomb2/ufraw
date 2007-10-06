@@ -16,7 +16,7 @@
 
 #include <errno.h>	/* for errno */
 #include <string.h>
-#include <uf_glib.h>
+#include "uf_glib.h"
 #include <glib/gi18n.h>
 #ifdef HAVE_LIBTIFF
 #include <tiffio.h>
@@ -32,7 +32,7 @@
 #include "ufraw.h"
 
 #ifdef HAVE_LIBCFITSIO
-#include "fitsio.h"
+#include <fitsio.h>
 #endif
 
 #ifdef HAVE_LIBTIFF

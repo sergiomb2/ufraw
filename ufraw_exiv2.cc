@@ -15,7 +15,7 @@
 #endif
 
 extern "C" {
-#include <uf_glib.h>
+#include "uf_glib.h"
 #include "ufraw.h"
 }
 

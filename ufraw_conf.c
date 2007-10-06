@@ -19,7 +19,7 @@
 #include <math.h>
 #include <sys/stat.h> /* needed for fstat() */
 #include <getopt.h>
-#include <uf_glib.h>
+#include "uf_glib.h"
 #include <glib/gi18n.h>
 #include "ufraw.h"
 

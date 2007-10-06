@@ -22,7 +22,7 @@
 #include <locale.h>
 #include <stdlib.h> /* needed for canonicalize_file_name() */
 #include <string.h>
-#include <uf_glib.h>
+#include "uf_glib.h"
 #include <glib/gi18n.h>
 #include "ufraw.h"
 

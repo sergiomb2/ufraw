@@ -36,7 +36,7 @@ typedef GimpRunModeType GimpRunMode;
 #define U16_RGB 0
 #define U16_RGB_IMAGE 0
 #endif
-#include <uf_glib.h>
+#include "uf_glib.h"
 #include <glib/gi18n.h>
 #include "ufraw.h"
 

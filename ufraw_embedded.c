@@ -17,7 +17,7 @@
 #include <errno.h>     /* for errno */
 #include <time.h>      /* for time_t */
 #include <string.h>
-#include <uf_glib.h>
+#include "uf_glib.h"
 #include <glib/gi18n.h>
 #ifdef HAVE_LIBJPEG
 #include <jpeglib.h>

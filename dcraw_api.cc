@@ -23,7 +23,7 @@
 #include <setjmp.h>
 #include <errno.h>
 #include <float.h>
-#include <uf_glib.h>
+#include "uf_glib.h"
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /*For off_t */

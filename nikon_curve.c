@@ -24,7 +24,7 @@
 #include "nikon_curve.h"
 
 #ifdef __WITH_UFRAW__
-    #include <uf_glib.h>
+    #include "uf_glib.h"
     #include "ufraw.h"
 #else
     #define MAX(a,b) ((a) > (b) ? (a) : (b))
