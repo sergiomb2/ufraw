@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.89 2007/10/05 15:49:32 udifuchs Exp $
+dnl $Id: configure.ac,v 1.90 2007/10/06 13:15:19 nkbj Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -162,8 +162,8 @@ have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
 ## output is not final yet. If you use this feature, you should be
 ## aware of the fact that future version of UFRaw would create
 ## different FITS files.
-#AC_CHECK_HEADER(fitsio.h,
-#  AC_CHECK_LIB(cfitsio, ffcmsg))
+AC_CHECK_HEADER(fitsio.h,
+  AC_CHECK_LIB(cfitsio, ffcmsg))
 have_fits=${ac_cv_lib_cfitsio_ffcmsg:-no}
 
 PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
