@@ -403,11 +403,16 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     }
     /* Set the EXIF data */
 #ifdef __MINGW32__
-    /* For MinG32 we don't have the thread safe ctime_r */
+    /* MinG32 does not have ctime_r(). */
     g_strlcpy(uf->conf->timestamp, ctime(&raw->timestamp), max_name);
 #elif defined(SOLARIS) && !defined(_POSIX_PTHREAD_SEMANTICS)
+    /*
+     * Some versions of Solaris followed a draft POSIX.1c standard
+     * where ctime_r took a third length argument.
+     */
     ctime_r(&raw->timestamp, uf->conf->timestamp, sizeof(uf->conf->timestamp));
 #else
+    /* POSIX.1c version of ctime_r() */
     ctime_r(&raw->timestamp, uf->conf->timestamp);
 #endif
     if (uf->conf->timestamp[strlen(uf->conf->timestamp)-1]=='\n')
