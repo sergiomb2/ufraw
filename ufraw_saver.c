@@ -123,10 +123,10 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
 #if defined(HAVE_LIBZ) && defined(HAVE_LIBTIFF)
     GtkWidget *losslessButton;
 #endif
-#ifdef HAVE_LIBJPEG
-#ifdef HAVE_EXIV2
+#if defined(HAVE_EXIV2) && (defined(HAVE_LIBJPEG) || defined(HAVE_LIBPNG))
     GtkWidget *exifButton;
 #endif
+#ifdef HAVE_LIBJPEG
     GtkAdjustment *compressAdj;
     GtkWidget *progressiveButton;
 #endif
@@ -294,7 +294,7 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
     gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);
 #endif
 
-#ifdef HAVE_EXIV2
+#if defined(HAVE_EXIV2) && (defined(HAVE_LIBJPEG) || defined(HAVE_LIBPNG))
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
     exifButton = gtk_check_button_new_with_label(
 	    _("Embed EXIF data in JPEG or PNG files"));
@@ -302,7 +302,7 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
 	    uf->conf->embedExif && uf->exifBuf!=NULL);
     gtk_widget_set_sensitive(exifButton, uf->exifBuf!=NULL);
     gtk_box_pack_start(GTK_BOX(box), exifButton, TRUE, TRUE, 0);
-#endif /*HAVE_EXIV2*/
+#endif /*HAVE_EXIV2 && (HAVE_LIBJPEG || HAVE_LIBPNG)*/
 
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
     table = gtk_table_new(1, 5, FALSE);
@@ -367,12 +367,12 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
 #endif
 #ifdef HAVE_LIBJPEG
 	uf->conf->compression = gtk_adjustment_get_value(compressAdj);
-#ifdef HAVE_EXIV2
-	uf->conf->embedExif = gtk_toggle_button_get_active(
-		GTK_TOGGLE_BUTTON(exifButton));
-#endif
 	uf->conf->progressiveJPEG = gtk_toggle_button_get_active(
 		GTK_TOGGLE_BUTTON(progressiveButton));
+#endif
+#if defined(HAVE_EXIV2) && (defined(HAVE_LIBJPEG) || defined(HAVE_LIBPNG))
+	uf->conf->embedExif = gtk_toggle_button_get_active(
+		GTK_TOGGLE_BUTTON(exifButton));
 #endif
 	if ( !uf->conf->overwrite && uf->conf->createID!=only_id
 	   && g_file_test(filename, G_FILE_TEST_EXISTS) ) {
