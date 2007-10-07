@@ -45,7 +45,7 @@ GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
             GTK_FILE_CHOOSER_ACTION_OPEN,
             cancel, GTK_RESPONSE_CANCEL,
             GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL));
-    if (toplevel != NULL)
+    if (toplevel == NULL)
 	gtk_window_set_type_hint(GTK_WINDOW(fileChooser),
 				 GDK_WINDOW_TYPE_HINT_NORMAL);
     else
