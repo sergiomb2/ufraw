@@ -765,15 +765,15 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
 {
   int height = *height_p, width = *width_p, fuji_width = *fuji_width_p; /*UF*/
   ushort (*image)[4] = *image_p; /*UF*/
-  int i, wide, high, row, col;
+  int i, row, col;
 //  double step;
   float r, c, fr, fc;
   int ur, uc;
-  ushort (*img)[4], (*pix)[4];
+  ushort wide, high, (*img)[4], (*pix)[4];
 
   if (!fuji_width) return;
   dcraw_message (dcraw, DCRAW_VERBOSE,_("Rotating image 45 degrees...\n"));
-//  fuji_width = (fuji_width - 1 + shrink) >> shrink;
+  fuji_width = (fuji_width - 1/* + shrink*/)/* >> shrink*/;
 //  step = sqrt(0.5);
   wide = (int)(fuji_width / step);
   high = (int)((height - fuji_width) / step);

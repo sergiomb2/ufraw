@@ -154,8 +154,8 @@ int dcraw_image_dimensions(dcraw_data *raw, int flip, int *height, int *width)
 {
     if (raw->fuji_width) {
         /* Copied from DCRaw's fuji_rotate() */
-        *width = (int)(raw->fuji_width / raw->fuji_step);
-        *height = (int)((raw->height - raw->fuji_width) / raw->fuji_step);
+        *width = (int)((raw->fuji_width - 1) / raw->fuji_step);
+        *height = (int)((raw->height - raw->fuji_width + 1) / raw->fuji_step);
     } else {
         if (raw->pixel_aspect < 1)
             *height = (int)(raw->height / raw->pixel_aspect + 0.5);
