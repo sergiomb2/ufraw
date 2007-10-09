@@ -19,7 +19,7 @@
 #include <string.h>
 #include "uf_glib.h"
 #include <glib/gi18n.h>
-#include <gtk/gtk.h>
+#include "uf_gtk.h"
 #include "ufraw.h"
 
 /* Global information for the 'Save As' dialog */
@@ -161,14 +161,6 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
     char *base = g_path_get_basename(uf->conf->outputFilename);
     gtk_file_chooser_set_current_name(fileChooser, base);
     g_free(base);
-
-    GtkTooltips *tips = gtk_tooltips_new();
-#if GTK_CHECK_VERSION(2,10,0)
-    g_object_ref_sink(GTK_OBJECT(tips));
-#else
-    g_object_ref(tips);
-    gtk_object_sink(GTK_OBJECT(tips));
-#endif
 
     expander = gtk_expander_new(_("Output options"));
     gtk_expander_set_expanded(GTK_EXPANDER(expander), TRUE);
@@ -323,9 +315,9 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
     label = gtk_label_new(_("\tSave image defaults "));
     event = gtk_event_box_new();
     gtk_container_add(GTK_CONTAINER(event), label);
-    gtk_tooltips_set_tip(tips, event,
+    uf_widget_set_tooltip(event,
 	    _("Save current image manipulation parameters as defaults.\n"
-	    "The output parameters in this window are always saved."), NULL);
+	    "The output parameters in this window are always saved."));
     gtk_table_attach(GTK_TABLE(table), event, 3, 4, 0, 1, 0, 0, 0, 0);
     confCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     gtk_combo_box_append_text(confCombo, _("Never again"));

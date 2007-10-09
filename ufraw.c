@@ -20,7 +20,7 @@
 #include <string.h>
 #include "uf_glib.h"
 #include <glib/gi18n.h>
-#include <gtk/gtk.h>
+#include "uf_gtk.h"
 #include "ufraw.h"
 
 char *ufraw_binary;
@@ -42,13 +42,7 @@ int main (int argc, char **argv)
     ufraw_icons_init();
 #ifdef WIN32
     dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-#if GTK_CHECK_VERSION(2,6,0)
-    gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
-#else
-    gtk_window_set_icon(GTK_WINDOW(dummyWindow),
-	    gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
-		    "ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
-#endif
+    uf_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
     ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
 #endif
     /* Load $HOME/.ufrawrc */
@@ -82,13 +76,7 @@ int main (int argc, char **argv)
     /* Create a dummyWindow for the GUI error messenger */
     if (dummyWindow==NULL) {
 	dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-#if GTK_CHECK_VERSION(2,6,0)
-	gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
-#else
-	gtk_window_set_icon(GTK_WINDOW(dummyWindow),
-		gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
-			"ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
-#endif
+	uf_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
 	ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
     }
     /* Load the --conf file. version==0 means ignore conf. */

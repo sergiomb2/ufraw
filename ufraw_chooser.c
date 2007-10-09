@@ -16,7 +16,7 @@
 
 #include <stdio.h>     /* for printf */
 #include <string.h>
-#include <gtk/gtk.h>
+#include "uf_gtk.h"
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
@@ -50,13 +50,7 @@ GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
 				 GDK_WINDOW_TYPE_HINT_NORMAL);
     else
 	ufraw_focus(fileChooser, TRUE);
-#if GTK_CHECK_VERSION(2,6,0)
-    gtk_window_set_icon_name(GTK_WINDOW(fileChooser), "ufraw");
-#else
-    gtk_window_set_icon(GTK_WINDOW(fileChooser),
-            gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
-                    "ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
-#endif
+    uf_window_set_icon_name(GTK_WINDOW(fileChooser), "ufraw");
     ufraw_message(UFRAW_SET_PARENT, (char *)fileChooser);
 
     if (defPath!=NULL) {

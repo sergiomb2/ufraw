@@ -24,7 +24,7 @@
 #include <string.h>
 #include <math.h>
 #include <errno.h>
-#include <gtk/gtk.h>
+#include "uf_gtk.h"
 #include <glib/gi18n.h>
 #include "ufraw.h"
 #include "curveeditor_widget.h"
@@ -118,7 +118,6 @@ typedef struct {
     GtkWidget *UseMatrixButton;
     GtkWidget *ControlButton[num_buttons];
     guint16 ButtonMnemonic[num_buttons];
-    GtkTooltips *ToolTips;
     GtkProgressBar *ProgressBar;
     GtkSpinButton *CropX1Spin;
     GtkSpinButton *CropY1Spin;
@@ -510,7 +509,7 @@ static void load_profile(GtkWidget *widget, long type)
 }
 
 static colorLabels *color_labels_new(GtkTable *table, int x, int y,
-	char *label, int format, int zonep, preview_data *data)
+	char *label, int format, int zonep)
 {
     colorLabels *l;
     GtkWidget *lbl;
@@ -536,11 +535,9 @@ static colorLabels *color_labels_new(GtkTable *table, int x, int y,
 	gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(l->labels[c]));
 	gtk_table_attach_defaults(table, event_box, x+i, x+i+1, y, y+1);
 	if ( c==3 )
-	    gtk_tooltips_set_tip(data->ToolTips, event_box,
-                    _("Luminosity (Y value)"), NULL);
+	    uf_widget_set_tooltip(event_box, _("Luminosity (Y value)"));
 	if ( c==4 )
-	    gtk_tooltips_set_tip(data->ToolTips, event_box,
-                              _("Adams' zone"), NULL);
+	    uf_widget_set_tooltip(event_box, _("Adams' zone"));
     }
     return l;
 }
@@ -2241,7 +2238,7 @@ static void reset_darkframe(GtkWidget *widget, void *unused)
 }
 
 static GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text,
-    char *icon, GtkTooltips *tooltips)
+    char *icon)
 {
     GtkWidget *page = gtk_vbox_new(FALSE, 0);
     if ( icon==NULL ) {
@@ -2252,9 +2249,9 @@ static GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text,
 	GtkWidget *image = gtk_image_new_from_stock(icon,
 		GTK_ICON_SIZE_SMALL_TOOLBAR);
 	gtk_container_add(GTK_CONTAINER(event_box), image);
-        gtk_tooltips_set_tip(tooltips, event_box, text, NULL);
         gtk_widget_show_all(event_box);
 	gtk_notebook_append_page(notebook, GTK_WIDGET(page), event_box);
+        uf_widget_set_tooltip(event_box, text);
     }
     return page;
 }
@@ -2358,47 +2355,18 @@ static void button_update(GtkWidget *button, gpointer user_data)
 
 static void restore_details_button_set(GtkButton *button, preview_data *data)
 {
-#if !GTK_CHECK_VERSION(2,6,0)
-    GtkWidget *lastImage = gtk_bin_get_child(GTK_BIN(button));
-    if ( lastImage!=NULL )
-	gtk_container_remove(GTK_CONTAINER(button), lastImage);
-    GtkWidget *image;
-#endif
     const char *state;
     switch (CFG->restoreDetails) {
     case clip_details:
-#if GTK_CHECK_VERSION(2,6,0)
-	gtk_button_set_image(button, gtk_image_new_from_stock(
-		GTK_STOCK_CUT, GTK_ICON_SIZE_BUTTON));
-#else
-	image = gtk_image_new_from_stock(GTK_STOCK_CUT, GTK_ICON_SIZE_BUTTON);
-	gtk_container_add(GTK_CONTAINER(button), image);
-	gtk_widget_show(image);
-#endif
+	uf_button_set_stock_image(button, GTK_STOCK_CUT);
 	state = _("clip");
 	break;
     case restore_lch_details:
-#if GTK_CHECK_VERSION(2,6,0)
-	gtk_button_set_image(button, gtk_image_new_from_stock(
-		"restore-highlights-lch", GTK_ICON_SIZE_BUTTON));
-#else
-	image = gtk_image_new_from_stock("restore-highlights-lch",
-		GTK_ICON_SIZE_BUTTON);
-	gtk_container_add(GTK_CONTAINER(button), image);
-	gtk_widget_show(image);
-#endif
+	uf_button_set_stock_image(button, "restore-highlights-lch");
 	state = _("restore in LCH space for soft details");
 	break;
     case restore_hsv_details:
-#if GTK_CHECK_VERSION(2,6,0)
-	gtk_button_set_image(button, gtk_image_new_from_stock(
-		"restore-highlights-hsv", GTK_ICON_SIZE_BUTTON));
-#else
-	image = gtk_image_new_from_stock("restore-highlights-hsv",
-		GTK_ICON_SIZE_BUTTON);
-	gtk_container_add(GTK_CONTAINER(button), image);
-	gtk_widget_show(image);
-#endif
+	uf_button_set_stock_image(button, "restore-highlights-hsv");
 	state = _("restore in HSV space for sharp details");
 	break;
     default:
@@ -2406,43 +2374,21 @@ static void restore_details_button_set(GtkButton *button, preview_data *data)
     }
     char *text = g_strdup_printf(_("Restore details for negative EV\n"
 	    "Current state: %s"), state);
-    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(button), text, NULL);
+    uf_widget_set_tooltip(GTK_WIDGET(button), text);
     g_free(text);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
 }
 
 static void clip_highlights_button_set(GtkButton *button, preview_data *data)
 {
-#if !GTK_CHECK_VERSION(2,6,0)
-    GtkWidget *lastImage = gtk_bin_get_child(GTK_BIN(button));
-    if ( lastImage!=NULL )
-	gtk_container_remove(GTK_CONTAINER(button), lastImage);
-    GtkWidget *image;
-#endif
     const char *state;
     switch (CFG->clipHighlights) {
     case digital_highlights:
-#if GTK_CHECK_VERSION(2,6,0)
-	gtk_button_set_image(button, gtk_image_new_from_stock(
-		"clip-highlights-digital", GTK_ICON_SIZE_BUTTON));
-#else
-	image = gtk_image_new_from_stock("clip-highlights-digital",
-		GTK_ICON_SIZE_BUTTON);
-	gtk_container_add(GTK_CONTAINER(button), image);
-	gtk_widget_show(image);
-#endif
+	uf_button_set_stock_image(button, "clip-highlights-digital");
 	state = _("digital linear");
 	break;
     case film_highlights:
-#if GTK_CHECK_VERSION(2,6,0)
-	gtk_button_set_image(button, gtk_image_new_from_stock(
-		"clip-highlights-film", GTK_ICON_SIZE_BUTTON));
-#else
-	image = gtk_image_new_from_stock("clip-highlights-film",
-		GTK_ICON_SIZE_BUTTON);
-	gtk_container_add(GTK_CONTAINER(button), image);
-	gtk_widget_show(image);
-#endif
+	uf_button_set_stock_image(button, "clip-highlights-film");
 	state = _("soft film like");
 	break;
     default:
@@ -2450,7 +2396,7 @@ static void clip_highlights_button_set(GtkButton *button, preview_data *data)
     }
     char *text = g_strdup_printf(_("Clip highlights for positive EV\n"
 	    "Current state: %s"), state);
-    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(button), text, NULL);
+    uf_widget_set_tooltip(GTK_WIDGET(button), text);
     g_free(text);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
 }
@@ -2591,7 +2537,6 @@ static GtkAdjustment *adjustment_scale(GtkTable *table,
     int x, int y, char *label, double value, double *valuep,
     double min, double max, double step, double jump, long accuracy, char *tip)
 {
-    preview_data *data = get_preview_data(table);
     GtkAdjustment *adj;
     GtkWidget *w, *l, *icon;
 
@@ -2604,24 +2549,24 @@ static GtkAdjustment *adjustment_scale(GtkTable *table,
 	gtk_misc_set_alignment(GTK_MISC(l), 1, 0.5);
 	gtk_container_add(GTK_CONTAINER(w), l);
     }
-    gtk_tooltips_set_tip(data->ToolTips, w, tip, NULL);
     gtk_table_attach(table, w, x, x+1, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
+    uf_widget_set_tooltip(w, tip);
     adj = GTK_ADJUSTMENT(gtk_adjustment_new(value, min, max, step, jump, 0));
     g_object_set_data(G_OBJECT(adj), "Adjustment-Accuracy",(gpointer)accuracy);
 
     w = gtk_hscale_new(adj);
     g_object_set_data(G_OBJECT(adj), "Parent-Widget", w);
     gtk_scale_set_draw_value(GTK_SCALE(w), FALSE);
-    gtk_tooltips_set_tip(data->ToolTips, w, tip, NULL);
     gtk_table_attach(table, w, x+1, x+5, y, y+1, GTK_EXPAND|GTK_FILL, 0, 0, 0);
+    uf_widget_set_tooltip(w, tip);
     g_signal_connect(G_OBJECT(adj), "value-changed",
             G_CALLBACK(adjustment_update), valuep);
 
     w = gtk_spin_button_new(adj, step, accuracy);
     gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON(w), FALSE);
     gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(w), GTK_UPDATE_IF_VALID);
-    gtk_tooltips_set_tip(data->ToolTips, w, tip, NULL);
     gtk_table_attach(table, w, x+5, x+7, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
+    uf_widget_set_tooltip(w, tip);
     return adj;
 }
 
@@ -2810,9 +2755,8 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, button,
-	    _("Reset command to default"), NULL);
     gtk_table_attach(settingsTable, button, 2, 3, 0, 1, 0, 0, 0, 0);
+    uf_widget_set_tooltip(button, _("Reset command to default"));
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(gimp_reset_clicked), gimpEntry);
     // blinkOverUnder toggle button
@@ -2840,9 +2784,10 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     label = gtk_label_new(_("Save image defaults "));
     event = gtk_event_box_new();
     gtk_container_add(GTK_CONTAINER(event), label);
-    gtk_tooltips_set_tip(data->ToolTips, event,
-	    _("Save current image manipulation parameters as defaults.\nThe output parameters in this window are always saved."), NULL);
     gtk_table_attach(GTK_TABLE(table), event, 0, 2, 0, 1, 0, 0, 0, 0);
+    uf_widget_set_tooltip(event,
+	    _("Save current image manipulation parameters as defaults.\n"
+	      "The output parameters in this window are always saved."));
     confCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     gtk_combo_box_append_text(confCombo, _("Never again"));
     gtk_combo_box_append_text(confCombo, _("Always"));
@@ -2855,10 +2800,9 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 
     label = gtk_label_new(_("Save full configuration "));
     event = gtk_event_box_new();
-    gtk_tooltips_set_tip(data->ToolTips, event,
-	    _("Save resource file ($HOME/.ufrawrc)"), NULL);
     gtk_container_add(GTK_CONTAINER(event), label);
     gtk_table_attach(GTK_TABLE(table), event, 0, 2, 1, 2, 0, 0, 0, 0);
+    uf_widget_set_tooltip(event, _("Save resource file ($HOME/.ufrawrc)"));
     button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(configuration_save), NULL);
@@ -3177,26 +3121,18 @@ static GtkWidget *control_button(const char *stockImage, const char *tip,
     ControlButtons buttonEnum, preview_data *data)
 {
     GtkWidget *button = gtk_button_new();
-#if GTK_CHECK_VERSION(2,8,0)
-    gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(
-		stockImage, GTK_ICON_SIZE_BUTTON));
-#else
-    GtkWidget *image = gtk_image_new_from_stock(stockImage,
-	    GTK_ICON_SIZE_BUTTON);
-    gtk_container_add(GTK_CONTAINER(button), image);
-    gtk_widget_show(image);
-#endif
+    uf_button_set_stock_image(GTK_BUTTON(button), stockImage);
     g_signal_connect(G_OBJECT(button), "clicked",
 	    G_CALLBACK(control_button_event), (gpointer)buttonEnum);
     char **tipParts = g_strsplit(tip, "_", 2);
     if ( tipParts[0]==NULL || tipParts[1]==NULL ) {
 	// No mnemonic
-	gtk_tooltips_set_tip(data->ToolTips, button, tip, NULL);
+	uf_widget_set_tooltip(button, tip);
 	return button;
     }
     char *tooltip = g_strdup_printf(_("%s%s (Alt-%c)"),
 	    tipParts[0], tipParts[1], tipParts[1][0]);
-    gtk_tooltips_set_tip(data->ToolTips, button, tooltip, NULL);
+    uf_widget_set_tooltip(button, tooltip);
     g_free(tooltip);
     data->ButtonMnemonic[buttonEnum] = gdk_keyval_to_lower(
 	    gdk_unicode_to_keyval(tipParts[1][0]));
@@ -3292,13 +3228,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	data->ControlButton[i] = NULL;
 	data->ButtonMnemonic[i] = 0;
     }
-    data->ToolTips = gtk_tooltips_new();
-#if GTK_CHECK_VERSION(2,10,0)
-    g_object_ref_sink(GTK_OBJECT(data->ToolTips));
-#else
-    g_object_ref(data->ToolTips);
-    gtk_object_sink(GTK_OBJECT(data->ToolTips));
-#endif
     previewWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
     char *utf8_filename = g_filename_to_utf8(uf->filename,
@@ -3311,13 +3240,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_free(utf8_filename);
 
     ufraw_icons_init();
-#if GTK_CHECK_VERSION(2,6,0)
-    gtk_window_set_icon_name(GTK_WINDOW(previewWindow), "ufraw");
-#else
-    gtk_window_set_icon(GTK_WINDOW(previewWindow),
-	    gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
-		    "ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
-#endif
+    uf_window_set_icon_name(GTK_WINDOW(previewWindow), "ufraw");
 #ifndef HAVE_GTKIMAGEVIEW
     gtk_window_set_resizable(GTK_WINDOW(previewWindow), FALSE);
 #endif
@@ -3439,7 +3362,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     // Spot values:
     data->SpotTable = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
     data->SpotLabels = color_labels_new(data->SpotTable, 0, 0,
-	    _("Spot values:"), pixel_format, with_zone, data);
+	    _("Spot values:"), pixel_format, with_zone);
     data->SpotPatch = GTK_LABEL(gtk_label_new(NULL));
     gtk_table_attach_defaults(data->SpotTable, GTK_WIDGET(data->SpotPatch),
 	    6, 7, 0, 1);
@@ -3459,24 +3382,24 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             -3, 3, 0.01, 1.0/6, 2, _("Exposure compensation in EV"));
 
     button = gtk_toggle_button_new();
-    restore_details_button_set(GTK_BUTTON(button), data);
     gtk_table_attach(table, button, 7, 8, 0, 1, 0, 0, 0, 0);
+    restore_details_button_set(GTK_BUTTON(button), data);
     g_signal_connect(G_OBJECT(button), "toggled",
             G_CALLBACK(toggle_button_update), &CFG->restoreDetails);
 
     button = gtk_toggle_button_new();
-    clip_highlights_button_set(GTK_BUTTON(button), data);
     gtk_table_attach(table, button, 8, 9, 0, 1, 0, 0, 0, 0);
+    clip_highlights_button_set(GTK_BUTTON(button), data);
     g_signal_connect(G_OBJECT(button), "toggled",
             G_CALLBACK(toggle_button_update), &CFG->clipHighlights);
 
     data->AutoExposureButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
     gtk_container_add(GTK_CONTAINER(data->AutoExposureButton),
 	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoExposureButton),
-	    _("Auto adjust exposure"), NULL);
     gtk_table_attach(table, GTK_WIDGET(data->AutoExposureButton), 9, 10, 0, 1,
 	    0, 0, 0, 0);
+    uf_widget_set_tooltip(GTK_WIDGET(data->AutoExposureButton),
+	    _("Auto adjust exposure"));
     gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
     g_signal_connect(G_OBJECT(data->AutoExposureButton), "clicked",
             G_CALLBACK(button_update), NULL);
@@ -3484,9 +3407,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->ResetExposureButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetExposureButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, data->ResetExposureButton,
-	    _("Reset exposure to default"), NULL);
     gtk_table_attach(table, data->ResetExposureButton, 10, 11, 0, 1, 0,0,0,0);
+    uf_widget_set_tooltip(data->ResetExposureButton,
+	    _("Reset exposure to default"));
     g_signal_connect(G_OBJECT(data->ResetExposureButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
@@ -3498,8 +3421,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    FALSE, FALSE, 0);
 
     /* Start of White Balance setting page */
-    page = notebook_page_new(notebook, _("White balance"),
-	    "white-balance", data->ToolTips);
+    page = notebook_page_new(notebook, _("White balance"), "white-balance");
     /* Set this page to be the opening page. */
     int openingPage = gtk_notebook_page_num(notebook, page);
 
@@ -3554,11 +3476,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(combo_update), CFG->wb);
     event_box = gtk_event_box_new();
     gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(data->WBCombo));
-    gtk_tooltips_set_tip(data->ToolTips, event_box, _("White Balance"), NULL);
     if ( make_model_fine_tuning || !make_model_match)
 	gtk_table_attach(subTable, event_box, 0, 6, 0, 1, GTK_FILL, 0, 0, 0);
     else
 	gtk_table_attach(subTable, event_box, 0, 7, 0, 1, GTK_FILL, 0, 0, 0);
+    uf_widget_set_tooltip(event_box, _("White Balance"));
 
     data->WBTuningAdjustment = NULL;
     if (make_model_fine_tuning) {
@@ -3578,15 +3500,17 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 		GTK_ICON_SIZE_BUTTON);
 	gtk_container_add(GTK_CONTAINER(event_box), label);
 	gtk_table_attach(subTable, event_box, 6, 7, 0, 1, GTK_FILL, 0, 0, 0);
-	gtk_tooltips_set_tip(data->ToolTips, event_box,
-	    _("There are no white balance presets for your camera model.\nCheck UFRaw's webpage for information on how to get your\ncamera supported."), NULL);
+	uf_widget_set_tooltip(event_box,
+	    _("There are no white balance presets for your camera model.\n"
+	      "Check UFRaw's webpage for information on how to get your\n"
+	      "camera supported."));
     }
     data->ResetWBButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetWBButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, data->ResetWBButton,
-	    _("Reset white balance to initial value"), NULL);
     gtk_table_attach(subTable, data->ResetWBButton, 7, 8, 0, 1, 0, 0, 0, 0);
+    uf_widget_set_tooltip(data->ResetWBButton,
+	    _("Reset white balance to initial value"));
     g_signal_connect(G_OBJECT(data->ResetWBButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
@@ -3601,10 +3525,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
                 GTK_STOCK_COLOR_PICKER, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, button,
-	    _("Select a spot on the preview image to apply spot white balance"),
-	    NULL);
     gtk_table_attach(subTable, button, 7, 8, 1, 3, 0, 0, 0, 0);
+    uf_widget_set_tooltip(button,
+	_("Select a spot on the preview image to apply spot white balance"));
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(spot_wb_event), NULL);
 
@@ -3633,9 +3556,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     GtkWidget *icon = gtk_image_new_from_stock("interpolation",
 	    GTK_ICON_SIZE_LARGE_TOOLBAR);
     gtk_container_add(GTK_CONTAINER(event_box), icon);
-    gtk_tooltips_set_tip(data->ToolTips, event_box,
-	    _("Bayer pattern interpolation"), NULL);
     gtk_table_attach(table, event_box, 0, 1, 0, 1, 0, 0, 0, 0);
+    uf_widget_set_tooltip(event_box, _("Bayer pattern interpolation"));
     combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     data->Interpolation = 0;
     if ( data->UF->HaveFilters ) {
@@ -3676,9 +3598,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     button = gtk_toggle_button_new();
     gtk_container_add(GTK_CONTAINER(button),
 	    gtk_image_new_from_stock(GTK_STOCK_CLEAR, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, button,
-	    _("Apply color smoothing"), NULL);
     gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
+    uf_widget_set_tooltip(button, _("Apply color smoothing"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
 	    CFG->smoothing);
     g_signal_connect(G_OBJECT(button), "toggled",
@@ -3694,9 +3615,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->ResetThresholdButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetThresholdButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, data->ResetThresholdButton,
-	    _("Reset denoise threshold to default"), NULL);
     gtk_table_attach(table, data->ResetThresholdButton, 7, 8, 0, 1, 0,0,0,0);
+    uf_widget_set_tooltip(data->ResetThresholdButton,
+	    _("Reset denoise threshold to default"));
     g_signal_connect(G_OBJECT(data->ResetThresholdButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
@@ -3726,9 +3647,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_object_set_data(G_OBJECT(data->ZoomAdjustment), "Parent-Widget", button);
     g_signal_connect(G_OBJECT(data->ZoomAdjustment), "value-changed",
 		G_CALLBACK(adjustment_update), &CFG->Zoom);
-    gtk_tooltips_set_tip(data->ToolTips, button,
-	    _("Zoom percentage"), NULL);
     gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
+    uf_widget_set_tooltip(button, _("Zoom percentage"));
 
     // Zoom in button:
     button = gtk_button_new();
@@ -3758,7 +3678,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    gtk_tooltips_set_tip(data->ToolTips, button, _("Load dark frame"), NULL);
+    uf_widget_set_tooltip(button, _("Load dark frame"));
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(load_darkframe), NULL);
 
@@ -3766,15 +3686,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    gtk_tooltips_set_tip(data->ToolTips, button, _("Reset dark frame"), NULL);
+    uf_widget_set_tooltip(button, _("Reset dark frame"));
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(reset_darkframe), NULL);
 
     /* End of White Balance setting page */
 
     /* Start of Base Curve page */
-    page = notebook_page_new(notebook, _("Base curve"),
-	    "base-curve", data->ToolTips);
+    page = notebook_page_new(notebook, _("Base curve"), "base-curve");
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     box = GTK_BOX(gtk_hbox_new(FALSE, 0));
@@ -3806,14 +3725,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    gtk_tooltips_set_tip(data->ToolTips, button, _("Load base curve"), NULL);
+    uf_widget_set_tooltip(button, _("Load base curve"));
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(load_curve), (gpointer)base_curve);
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, button, _("Save base curve"), NULL);
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
+    uf_widget_set_tooltip(button, _("Save base curve"));
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(save_curve), (gpointer)base_curve);
 
@@ -3831,19 +3750,19 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->ResetBaseCurveButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetBaseCurveButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetBaseCurveButton),
-	    _("Reset base curve to default"),NULL);
     align = gtk_alignment_new(0, 1, 1, 0);
     gtk_container_add(GTK_CONTAINER(align),
 	    GTK_WIDGET(data->ResetBaseCurveButton));
     gtk_box_pack_start(box, align, FALSE, FALSE, 0);
+    uf_widget_set_tooltip(GTK_WIDGET(data->ResetBaseCurveButton),
+	    _("Reset base curve to default"));
     g_signal_connect(G_OBJECT(data->ResetBaseCurveButton), "clicked",
             G_CALLBACK(button_update), NULL);
     /* End of Base Curve page */
 
     /* Start of Color management page */
     page = notebook_page_new(notebook, _("Color management"),
-	    "color-management", data->ToolTips);
+	    "color-management");
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     for (j=0; j<profile_types; j++) {
@@ -3854,11 +3773,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
                 j==display_profile ? "icc-profile-display" : "error",
 		GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_container_add(GTK_CONTAINER(event_box), icon);
-	gtk_tooltips_set_tip(data->ToolTips, event_box,
+        gtk_table_attach(table, event_box, 0, 1, 4*j+1, 4*j+2, 0, 0, 0, 0);
+	uf_widget_set_tooltip(event_box,
 		j==in_profile ? _("Input ICC profile") :
                 j==out_profile ? _("Output ICC profile") :
-                j==display_profile ? _("Display ICC profile") : "Error", NULL);
-        gtk_table_attach(table, event_box, 0, 1, 4*j+1, 4*j+2, 0, 0, 0, 0);
+                j==display_profile ? _("Display ICC profile") : "Error");
         data->ProfileCombo[j] = GTK_COMBO_BOX(gtk_combo_box_new_text());
         for (i=0; i<CFG->profileCount[j]; i++)
             if ( i==0 )
@@ -3899,9 +3818,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->ResetGammaButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetGammaButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, data->ResetGammaButton,
-	    _("Reset gamma to default"), NULL);
     gtk_table_attach(table, data->ResetGammaButton, 8, 9, 3, 4, 0, 0, 0, 0);
+    uf_widget_set_tooltip(data->ResetGammaButton, _("Reset gamma to default"));
     g_signal_connect(G_OBJECT(data->ResetGammaButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
@@ -3912,9 +3830,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->ResetLinearButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetLinearButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, data->ResetLinearButton,
-	    _("Reset linearity to default"), NULL);
     gtk_table_attach(table, data->ResetLinearButton, 8, 9, 4, 5, 0, 0, 0, 0);
+    uf_widget_set_tooltip(data->ResetLinearButton,
+	    _("Reset linearity to default"));
     g_signal_connect(G_OBJECT(data->ResetLinearButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
@@ -3946,7 +3864,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     /* Start of Corrections page */
     page = notebook_page_new(notebook, _("Correct luminosity, saturation"),
-	    "color-corrections", data->ToolTips);
+	    "color-corrections");
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     data->SaturationAdjustment = adjustment_scale(table, 0, 1, _("Saturation"),
@@ -3955,10 +3873,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->ResetSaturationButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetSaturationButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, data->ResetSaturationButton,
-	    _("Reset saturation to default"), NULL);
     gtk_table_attach(table, data->ResetSaturationButton, 9, 10, 1, 2,
 	    0, 0, 0, 0);
+    uf_widget_set_tooltip(data->ResetSaturationButton,
+	    _("Reset saturation to default"));
     g_signal_connect(G_OBJECT(data->ResetSaturationButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
@@ -3981,14 +3899,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    gtk_tooltips_set_tip(data->ToolTips, button, _("Load curve"), NULL);
+    uf_widget_set_tooltip(button, _("Load curve"));
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(load_curve), (gpointer)luminosity_curve);
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
             GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, button, _("Save curve"), NULL);
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
+    uf_widget_set_tooltip(button, _("Save curve"));
     g_signal_connect(G_OBJECT(button), "clicked",
             G_CALLBACK(save_curve), (gpointer)luminosity_curve);
 
@@ -4005,20 +3923,20 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->AutoCurveButton = GTK_BUTTON(gtk_button_new());
     gtk_container_add(GTK_CONTAINER(data->AutoCurveButton),
 	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoCurveButton),
-	    _("Auto adjust curve\n(Flatten histogram)"), NULL);
     gtk_table_attach(subTable, GTK_WIDGET(data->AutoCurveButton), 8, 9, 6, 7,
 	    0, 0, 0, 0);
+    uf_widget_set_tooltip(GTK_WIDGET(data->AutoCurveButton),
+	    _("Auto adjust curve\n(Flatten histogram)"));
     g_signal_connect(G_OBJECT(data->AutoCurveButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
     data->ResetCurveButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetCurveButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetCurveButton),
-	    _("Reset curve to default"),NULL);
     gtk_table_attach(subTable, GTK_WIDGET(data->ResetCurveButton), 8, 9, 7, 8,
 		0, 0, 0, 0);
+    uf_widget_set_tooltip(GTK_WIDGET(data->ResetCurveButton),
+	    _("Reset curve to default"));
     g_signal_connect(G_OBJECT(data->ResetCurveButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
@@ -4038,28 +3956,27 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->ResetBlackButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetBlackButton),
 	gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->ResetBlackButton),
-	    _("Reset black-point to default"),NULL);
     gtk_table_attach(subTable, GTK_WIDGET(data->ResetBlackButton), 0, 1, 7, 8,
 	    0, 0, 0, 0);
+    uf_widget_set_tooltip(GTK_WIDGET(data->ResetBlackButton),
+	    _("Reset black-point to default"));
     g_signal_connect(G_OBJECT(data->ResetBlackButton), "clicked",
             G_CALLBACK(button_update), NULL);
 
     data->AutoBlackButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
     gtk_container_add(GTK_CONTAINER(data->AutoBlackButton),
 	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AutoBlackButton),
-	    _("Auto adjust black-point"), NULL);
     gtk_table_attach(subTable, GTK_WIDGET(data->AutoBlackButton), 0, 1, 6, 7,
 	    0, GTK_SHRINK, 0, 0);
+    uf_widget_set_tooltip(GTK_WIDGET(data->AutoBlackButton),
+	    _("Auto adjust black-point"));
     gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
     g_signal_connect(G_OBJECT(data->AutoBlackButton), "clicked",
             G_CALLBACK(button_update), NULL);
     /* End of Corrections page */
 
     /* Start of transformations page */
-    page = notebook_page_new(notebook, _("Crop and rotate"),
-	    "crop", data->ToolTips);
+    page = notebook_page_new(notebook, _("Crop and rotate"), "crop");
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
@@ -4124,10 +4041,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
 	GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_tooltips_set_tip(data->ToolTips, button,
-	_("Reset the crop region"),
-	NULL);
     gtk_table_attach(table, button, 4, 5, 1, 2, 0, 0, 0, 0);
+    uf_widget_set_tooltip(button, _("Reset the crop region"));
     g_signal_connect(G_OBJECT(button), "clicked",
 	G_CALLBACK(crop_reset), NULL);
 
@@ -4139,13 +4054,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     entry = gtk_combo_box_entry_new_text();
     data->AspectEntry = GTK_ENTRY (GTK_BIN (entry)->child);
-    gtk_tooltips_set_tip(data->ToolTips, GTK_WIDGET(data->AspectEntry),
-	    _("Crop area aspect ratio.\n"
-	      "Can be entered in decimal notation (1.273)\n"
-	      "or as a ratio of two numbers (14:11)"), NULL);
     gtk_entry_set_width_chars (data->AspectEntry, 6);
     gtk_entry_set_alignment (data->AspectEntry, 0.5);
     gtk_table_attach(table, GTK_WIDGET (entry), 1, 2, 0, 1, 0, 0, 5, 0);
+    uf_widget_set_tooltip(GTK_WIDGET(data->AspectEntry),
+	    _("Crop area aspect ratio.\n"
+	      "Can be entered in decimal notation (1.273)\n"
+	      "or as a ratio of two numbers (14:11)"));
 
     size_t s;
     for (s = 0; s < sizeof (predef_aspects) / sizeof (predef_aspects [0]); s++)
@@ -4158,13 +4073,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
                      G_CALLBACK(aspect_changed), NULL);
 
     button = gtk_check_button_new();
-    gtk_tooltips_set_tip(data->ToolTips, button, _("Lock aspect ratio"), NULL);
     gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(button), FALSE);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
                 "object-lock", GTK_ICON_SIZE_BUTTON));
     //gtk_box_pack_start (hbox, button, FALSE, FALSE, 0);
     gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
+    uf_widget_set_tooltip(button, _("Lock aspect ratio"));
     g_signal_connect(G_OBJECT(button), "clicked",
 		     G_CALLBACK(lock_aspect), 0);
 
@@ -4254,7 +4169,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* End of transformation page */
 
     /* Start of EXIF page */
-    page = notebook_page_new(notebook, _("EXIF"), "exif", data->ToolTips);
+    page = notebook_page_new(notebook, _("EXIF"), "exif");
 
     frame = gtk_frame_new(NULL);
     gtk_box_pack_start(GTK_BOX(page), frame, TRUE, TRUE, 0);
@@ -4451,11 +4366,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     i = 2;
     data->AvrLabels = color_labels_new(table, 0, i++, _("Average:"),
-	    pixel_format, without_zone, data);
+	    pixel_format, without_zone);
     data->DevLabels = color_labels_new(table, 0, i++, _("Std. deviation:"),
-            pixel_format, without_zone, data);
+            pixel_format, without_zone);
     data->OverLabels = color_labels_new(table, 0, i,
-	    _("Overexposed:"), percent_format, without_zone, data);
+	    _("Overexposed:"), percent_format, without_zone);
     toggle_button(table, 4, i, NULL, &CFG->overExp);
     button = gtk_button_new_with_label(_("Indicate"));
     gtk_table_attach(table, button, 6, 7, i, i+1,
@@ -4466,7 +4381,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             G_CALLBACK(render_special_mode), (void *)render_default);
     i++;
     data->UnderLabels = color_labels_new(table, 0, i, _("Underexposed:"),
-            percent_format, without_zone, data);
+            percent_format, without_zone);
     toggle_button(table, 4, i, NULL, &CFG->underExp);
     button = gtk_button_new_with_label(_("Indicate"));
     gtk_table_attach(table, button, 6, 7, i, i+1,
@@ -4548,9 +4463,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_object_set_data(G_OBJECT(data->ZoomAdjustment), "Parent-Widget", button);
     g_signal_connect(G_OBJECT(data->ZoomAdjustment), "value-changed",
 		G_CALLBACK(adjustment_update), &CFG->Zoom);
-    gtk_tooltips_set_tip(data->ToolTips, button,
-	    _("Zoom percentage"), NULL);
     gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
+    uf_widget_set_tooltip(button, _("Zoom percentage"));
 
     // Zoom in button:
     button = gtk_button_new();
@@ -4632,7 +4546,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
                 CFG->createID==only_id ? _("\nCreate only ID file") : "");
         g_free(utf8);
         g_free(absFilename);
-	gtk_tooltips_set_tip(data->ToolTips, saveButton, text, NULL);
+	uf_widget_set_tooltip(saveButton, text);
 	g_free(text);
     }
     if ( plugin==0 ) {

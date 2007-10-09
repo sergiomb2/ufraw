@@ -20,6 +20,8 @@
 #endif
 
 #include <string.h>
+#include "uf_glib.h"
+#include "uf_gtk.h"
 #ifdef UFRAW_CINEPAINT
 /* Bypass a bug in CinePaint header files */
 #define RNH_FLOAT
@@ -36,7 +38,6 @@ typedef GimpRunModeType GimpRunMode;
 #define U16_RGB 0
 #define U16_RGB_IMAGE 0
 #endif
-#include "uf_glib.h"
 #include <glib/gi18n.h>
 #include "ufraw.h"
 
@@ -209,13 +210,7 @@ void run(GIMP_CONST gchar *name,
 
 	    ufraw_icons_init();
 	    GtkWidget *dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-#if GTK_CHECK_VERSION(2,6,0)
-	    gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
-#else
-	    gtk_window_set_icon(GTK_WINDOW(dummyWindow),
-		    gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
-			"ufraw", 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
-#endif
+	    uf_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
 	    ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
 
 	    ufraw_message(UFRAW_REPORT, NULL);
