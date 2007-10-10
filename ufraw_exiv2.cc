@@ -200,6 +200,11 @@ try {
 	std::stringstream str;
        	str << *pos;
 	g_strlcpy(uf->conf->lensText, str.str().c_str(), max_name);
+    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Canon.0x0095")))
+		!= exifData.end() ) {
+	std::stringstream str;
+	str << *pos;
+	g_strlcpy(uf->conf->lensText, str.str().c_str(), max_name);
     }
     /* Read flash mode */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.Flash")))
