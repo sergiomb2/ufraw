@@ -17,7 +17,6 @@
 #include <string.h>
 #include <sys/stat.h> /* for fstat() */
 #include <math.h>
-#include <time.h>
 #include <errno.h>
 #ifdef HAVE_LIBZ
 #include <zlib.h>
@@ -407,21 +406,25 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     /* Set the EXIF data */
 #ifdef __MINGW32__
     /* MinG32 does not have ctime_r(). */
-    g_strlcpy(uf->conf->timestamp, ctime(&raw->timestamp), max_name);
+    g_strlcpy(uf->conf->timestampText, ctime(&raw->timestamp), max_name);
 #elif defined(SOLARIS) && !defined(_POSIX_PTHREAD_SEMANTICS)
     /*
      * Some versions of Solaris followed a draft POSIX.1c standard
      * where ctime_r took a third length argument.
      */
-    ctime_r(&raw->timestamp, uf->conf->timestamp, sizeof(uf->conf->timestamp));
+    ctime_r(&raw->timestamp, uf->conf->timestampText,
+	    sizeof(uf->conf->timestampText));
 #else
     /* POSIX.1c version of ctime_r() */
-    ctime_r(&raw->timestamp, uf->conf->timestamp);
+    ctime_r(&raw->timestamp, uf->conf->timestampText);
 #endif
-    if (uf->conf->timestamp[strlen(uf->conf->timestamp)-1]=='\n')
-	uf->conf->timestamp[strlen(uf->conf->timestamp)-1] = '\0';
+    if (uf->conf->timestampText[strlen(uf->conf->timestampText)-1]=='\n')
+	uf->conf->timestampText[strlen(uf->conf->timestampText)-1] = '\0';
     g_strlcpy(uf->conf->make, raw->make, max_name);
     g_strlcpy(uf->conf->model, raw->model, max_name);
+
+    uf->conf->timestamp = raw->timestamp;
+
     if ( !uf->LoadingID || uf->conf->orientation<0 )
 	uf->conf->orientation = raw->flip;
     if (uf->exifBuf==NULL) {

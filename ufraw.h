@@ -14,6 +14,7 @@
 #define _UFRAW_H
 
 #include "nikon_curve.h"
+#include <time.h> // for time_t
 
 #define MAXOUT 255 /* Max output sample */
 
@@ -181,7 +182,8 @@ typedef struct {
     char exifSource[max_name], isoText[max_name], shutterText[max_name],
 	 apertureText[max_name], focalLenText[max_name],
 	 focalLen35Text[max_name], lensText[max_name], flashText[max_name];
-    char timestamp[max_name], make[max_name], model[max_name];
+    char timestampText[max_name], make[max_name], model[max_name];
+    time_t timestamp;
 } conf_data;
 
 typedef struct {

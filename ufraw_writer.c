@@ -37,7 +37,7 @@
 
 #ifdef HAVE_LIBTIFF
 // There seem to be no way to get the libtiff message without a static variable
-// Therefore the folloing code is not thread-safe. 
+// Therefore the folloing code is not thread-safe.
 static char ufraw_tiff_message[max_path];
 
 static void tiff_messenger(const char *module, const char *fmt, va_list ap)
@@ -82,42 +82,6 @@ static void jpeg_error_handler(j_common_ptr cinfo)
 	    cinfo->err->msg_parm.i[3]);
 }
 #endif /*HAVE_LIBJPEG*/
-
-#ifdef HAVE_LIBCFITSIO
-static int fits_set_keys(
-    fitsfile *ff, ufraw_data *uf, char *chan, float max, float min, int *status)
-{
-    fits_update_key(ff, TSTRING, "CHANNEL", chan,
-	    "red, green or blue channel", status);
-    fits_update_key(ff, TFLOAT, "DATAMIN", &min,
-	    "minimum data in the data set", status);
-    fits_update_key(ff, TFLOAT, "DATAMAX", &max,
-	    "maximum data in the data set", status);
-
-    // EXIF properties
-    fits_update_key(ff, TSTRING, "EXPOSURE", &uf->conf->shutterText,
-	    "Exposure Time", status);
-    fits_update_key(ff, TSTRING, "ISO", &uf->conf->isoText,
-	    "ISO Speed", status);
-    fits_update_key(ff, TSTRING, "APERTURE", &uf->conf->apertureText,
-	    "Aperture", status);
-    fits_update_key(ff, TSTRING, "FOCALLEN", &uf->conf->focalLenText,
-	    "Focal Length", status);
-    // TODO: This must be in special time format
-    fits_update_key(ff, TSTRING, "DATE-OBS", &uf->conf->timestamp,
-	    "Observation Date", status);
-    fits_update_key(ff, TSTRING, "MANUFRAC", &uf->conf->make,
-	    "Manufractor of the Camera", status);
-    fits_update_key(ff, TSTRING, "INSTRUME", &uf->conf->model,
-	    "Camera Model", status);
-
-    // Creator Ufraw
-    fits_update_key(ff, TSTRING, "CREATOR",  "UFRaw" VERSION,
-	    "Creator Software", status);
-
-    return *status;
-}
-#endif /* HAVE_LIBCFITSIO */
 
 #ifdef HAVE_LIBPNG
 static void png_error_handler(png_structp png,
@@ -205,12 +169,12 @@ int ufraw_write_image(ufraw_data *uf)
 		}
 	    }
 	}
-	int status;
+	int status = 0;
 	char *filename =
 		uf_win32_locale_filename_from_utf8(uf->conf->outputFilename);
-        fits_create_file(&fitsFile, filename, &status);
+	fits_create_file(&fitsFile, filename, &status);
 	uf_win32_locale_filename_free(filename);
-        if ( status ) {
+	if ( status ) {
 	    ufraw_set_error(uf, _("Error creating file '%s'."),
 		    uf->conf->outputFilename);
 	    char errBuffer[max_name];
@@ -219,7 +183,7 @@ int ufraw_write_image(ufraw_data *uf)
 	    while (fits_read_errmsg(errBuffer))
 		ufraw_set_error(uf, errBuffer);
 	    return ufraw_get_status(uf);
-        }
+	}
     } else
 #endif
     {
@@ -492,63 +456,136 @@ int ufraw_write_image(ufraw_data *uf)
 #ifdef HAVE_LIBCFITSIO
     } else if ( uf->conf->type==fits_type ) {
 
-        // image data and min/max values
-        guint16 *fr, *fg, *fb;
-        guint16 rmax, rmin, gmax, gmin, bmax, bmin;
-        rmin = gmin = bmin = 65535;
-        rmax = gmax = bmax = 0 ;
+	// image data and min/max values
+	guint16 *image;
+	guint16 max[3] = { 0, 0, 0 }, min[3] = { 65535, 65535, 65535 };
+	guint64 sum[3] = { 0, 0, 0 };
 
-        fr   = (guint16 *) malloc (width * height * sizeof(guint16));
-        fg   = (guint16 *) malloc (width * height * sizeof(guint16));
-        fb   = (guint16 *) malloc (width * height * sizeof(guint16));
+	// FITS Header (taken from cookbook.c)
+	int bitpix = USHORT_IMG;    // Use float format
+	int naxis  = 3;		    // 3-dimensional image
+	int status = 0;		    // status variable for fitsio
 
-        for (row=0; row<height; row++) {
-            if (row%100==99)
-                preview_progress(uf->widget, _("Saving image"),
-                    0.5 + 0.5*row/height);
-            develope(pixbuf16, rawImage[(top+row)*rowStride+left],
-                    uf->developer, 16, pixbuf16, width);
-            for (i=0; i < width; i++)
-            {
+	long naxes[3]  = { width, height, 3 };
+	long dim = width * height;
+	long offset = 0;
+
+	image = g_new(guint16, 3 * dim);
+
+	for (row=0; row<height; row++) {
+	    if (row%100==99)
+		preview_progress(uf->widget, _("Saving image"),
+			0.5 + 0.5*row/height);
+	    for (i=0; i < width; i++)
+	    {
+		offset = row*width + i;
 		develop_linear(rawImage[(top+row)*rowStride+left+i], pixbuf16,
 			uf->developer);
-                // red channel
-                fr[row*width + i] = pixbuf16[0];
-		rmax = MAX(pixbuf16[0], rmax);
-		rmin = MIN(pixbuf16[0], rmin);
+		int c;
+		for (c=0; c<3; c++) {
+		    sum[c] += image[c*dim + offset] = pixbuf16[c];
+		    max[c] = MAX(pixbuf16[c], max[c]);
+		    min[c] = MIN(pixbuf16[c], min[c]);
+		}
+	    }
+	}
+	// calculate averages
+	float average[3];
+	int c;
+	for (c=0; c<3; c++)
+	    average[c] = (float)sum[c] / dim;
 
-                // green channel
-                fg[row*width + i] = pixbuf16[1];
-		gmax = MAX(pixbuf16[1], gmax);
-		gmin = MIN(pixbuf16[1], gmin);
+	guint16 maxAll = MAX(MAX(max[0],max[1]),max[2]);
+	guint16 minAll = MIN(MIN(min[0],min[1]),min[2]);
 
-                // blue channel
-                fb[row*width + i] = pixbuf16[2];
-		bmax = MAX(pixbuf16[2], bmax);
-		bmin = MIN(pixbuf16[2], bmin);
-            }
-        }
-        // FITS Header (taken from cookbook.c)
-        int bitpix = USHORT_IMG;        // Use float format
-        int naxis  = 2;                 // 2-dimensional image
-        long naxes[2]  = { width, height };
-        int status = 0;                 // status variable for fitsio
+	fits_create_img(fitsFile, bitpix, naxis, naxes, &status);
 
-        fits_create_img(fitsFile, bitpix, naxis, naxes, &status);
-        fits_set_keys(fitsFile, uf, "RED", rmax, rmin, &status);
-        fits_write_img(fitsFile, TUSHORT, 1, width*height, fr, &status);
+	fits_write_img(fitsFile, TUSHORT, 1, 3*dim, image, &status);
+	g_free(image);
 
-        fits_create_img(fitsFile, bitpix, naxis, naxes, &status);
-        fits_set_keys(fitsFile, uf, "GREEN", gmax, gmin, &status);
-        fits_write_img(fitsFile, TUSHORT, 1, width*height, fg, &status);
+	fits_update_key(fitsFile, TUSHORT, "DATAMIN", &minAll,
+		"minimum data (overall)", &status);
+	fits_update_key(fitsFile, TUSHORT, "DATAMAX", &maxAll,
+		"maximum data (overall)", &status);
 
-        fits_create_img(fitsFile, bitpix, naxis, naxes, &status);
-        fits_set_keys(fitsFile, uf, "BLUE", bmax, bmin, &status);
-        fits_write_img(fitsFile, TUSHORT, 1, width*height, fb, &status);
+	fits_update_key(fitsFile, TUSHORT, "DATAMINR", &min[0],
+		"minimum data (red channel)", &status);
+	fits_update_key(fitsFile, TUSHORT, "DATAMAXR", &max[0],
+		"maximum data (red channel)", &status);
 
-        fits_close_file(fitsFile, &status);
+	fits_update_key(fitsFile, TUSHORT, "DATAMING", &min[1],
+		"minimum data (green channel)", &status);
+	fits_update_key(fitsFile, TUSHORT, "DATAMAXG", &max[1],
+		"maximum data (green channel)", &status);
 
-        if ( status ) {
+	fits_update_key(fitsFile, TUSHORT, "DATAMINB", &min[2],
+		"minimum data (blue channel)", &status);
+	fits_update_key(fitsFile, TUSHORT, "DATAMAXB", &max[2],
+		"maximum data (blue channel)", &status);
+
+	fits_update_key(fitsFile, TFLOAT, "AVERAGER", &average[0],
+		"average (red channel)", &status);
+	fits_update_key(fitsFile, TFLOAT, "AVERAGEG", &average[1],
+		"average (green channel)", &status);
+	fits_update_key(fitsFile, TFLOAT, "AVERAGEB", &average[2],
+		"average (blue channel)", &status);
+
+	// Save known EXIF properties
+	if ( strlen(uf->conf->shutterText) > 0 )
+	    fits_update_key(fitsFile, TSTRING, "EXPOSURE",
+		    &uf->conf->shutterText, "Exposure Time", &status);
+
+	if ( strlen(uf->conf->isoText) > 0 )
+	    fits_update_key(fitsFile, TSTRING, "ISO", &uf->conf->isoText,
+		    "ISO Speed", &status);
+
+	if (strlen(uf->conf->apertureText) > 0 )
+	    fits_update_key(fitsFile, TSTRING, "APERTURE",
+		    &uf->conf->apertureText, "Aperture", &status);
+
+	if (strlen(uf->conf->focalLenText) > 0 )
+	    fits_update_key(fitsFile, TSTRING, "FOCALLEN",
+		    &uf->conf->focalLenText, "Focal Length", &status);
+
+	if (strlen(uf->conf->focalLen35Text) > 0 )
+	    fits_update_key(fitsFile, TSTRING, "FOCALLE2",
+		    &uf->conf->focalLen35Text, "Focal Length (resp. 35mm)",
+		    &status);
+
+	if (strlen(uf->conf->lensText) > 0 )
+	    fits_update_key(fitsFile, TSTRING, "LENS",
+		    &uf->conf->lensText, "Lens", &status);
+
+	// formating the date according to the FITS standard
+	// http://archive.stsci.edu/fits/fits_standard/node40.html#s:dhist
+	if (uf->conf->timestamp != 0 ) {
+	    char *time = g_new(char, 40);
+	    struct tm tmStamp;
+	    strftime(time, 40, "%Y-%m-%dT%H:%M:%S",
+		    localtime_r(&uf->conf->timestamp, &tmStamp));
+	    fits_update_key(fitsFile, TSTRING, "DATE", time,
+		    "Image taken at this date", &status);
+	    g_free(time);
+	}
+
+	if (strlen(uf->conf->make) > 0 )
+	    fits_update_key(fitsFile, TSTRING, "MANUFRAC", &uf->conf->make,
+		    "Manufractor of the Camera", &status);
+
+	if (strlen(uf->conf->model) > 0 )
+	    fits_update_key(fitsFile, TSTRING, "INSTRUME", &uf->conf->model,
+		    "Camera Model", &status);
+
+	fits_write_comment(fitsFile, "This file contains one RGB color image.",
+		&status);
+
+	// Creator Ufraw
+	fits_update_key(fitsFile, TSTRING, "CREATOR",  "UFRaw " VERSION,
+		"Creator Software", &status);
+
+	fits_close_file(fitsFile, &status);
+
+	if ( status ) {
 	    ufraw_set_error(uf, _("Error creating file '%s'."),
 		    uf->conf->outputFilename);
 	    char errBuffer[max_name];
@@ -557,7 +594,7 @@ int ufraw_write_image(ufraw_data *uf)
 	    while (fits_read_errmsg(errBuffer))
 		ufraw_set_error(uf, errBuffer);
 	    return ufraw_get_status(uf);
-        }
+	}
 #endif /* HAVE_LIBCFITSIO */
     } else {
 	ufraw_set_error(uf, _("Error creating file '%s'."),
@@ -648,11 +685,11 @@ static void PNGwriteRawProfile(png_struct *ping,
 
     for (i=0; i < (long) length; i++)
     {
-        if (i%36 == 0)
-            *dp++='\n';
+	if (i%36 == 0)
+	    *dp++='\n';
 
-        *(dp++) = hex[((*sp >> 4) & 0x0f)];
-        *(dp++) = hex[((*sp++ ) & 0x0f)];
+	*(dp++) = hex[((*sp >> 4) & 0x0f)];
+	*(dp++) = hex[((*sp++ ) & 0x0f)];
     }
 
     *dp++='\n';
@@ -668,3 +705,7 @@ static void PNGwriteRawProfile(png_struct *ping,
     png_free(ping, text);
 }
 #endif /*HAVE_LIBPNG*/
+
+/* vim:set shiftwidth=4: */
+/* vim:set softtabstop=4: */
+/* emacs: -*- c-basic-offset: 4 -*- */

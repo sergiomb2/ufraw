@@ -107,7 +107,8 @@ const conf_data conf_default = {
     0.0, 0.0, 0.0, 0.0, /* iso_speed, shutter, aperture, focal_len */
     "", "", "", "", /* exifSource, isoText, shutterText, apertureText */
     "", "", "", "", /* focalLenText, focalLen35Text, lensText, flashText */
-    "", "", "" /* timestamp, make, model */
+    "", "", "", /* timestampText, make, model */
+    0 /* timestamp */
 };
 
 static const char *interpolationNames[] =
@@ -966,7 +967,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	if (strcmp(c->darkframeFile, conf_default.darkframeFile)!=0)
 	    buf = uf_markup_buf(buf,
 		    "<DarkframeFile>%s</DarkframeFile>\n", c->darkframeFile);
-	buf = uf_markup_buf(buf, "<Timestamp>%s</Timestamp>\n", c->timestamp);
+	buf = uf_markup_buf(buf, "<Timestamp>%s</Timestamp>\n",
+		c->timestampText);
 	buf = uf_markup_buf(buf, "<Orientation>%d</Orientation>\n",
 		c->orientation);
 	buf = uf_markup_buf(buf, "<ISOSpeed>%s</ISOSpeed>\n", c->isoText);

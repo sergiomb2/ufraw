@@ -4206,7 +4206,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     // Fill table with EXIF tags
     list_store_add(store, _("Camera maker"), CFG->make);
     list_store_add(store, _("Camera model"), CFG->model);
-    list_store_add(store, _("Timestamp"), CFG->timestamp);
+    list_store_add(store, _("Timestamp"), CFG->timestampText);
     list_store_add(store, _("Exposure"), CFG->shutterText);
     list_store_add(store, _("Aperture"), CFG->apertureText);
     list_store_add(store, _("ISO speed"), CFG->isoText);
