@@ -109,7 +109,8 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
   static const float noise[] =
   { 0.8002,0.2735,0.1202,0.0585,0.0291,0.0152,0.0080,0.0044 };
 
-  dcraw_message (dcraw, DCRAW_VERBOSE,_("Wavelet denoising...\n")); /*UF*/
+    (void)dcraw;
+//  dcraw_message (dcraw, DCRAW_VERBOSE,_("Wavelet denoising...\n")); /*UF*/
 
 /* Scaling is done somewhere else - NKBJ*/
 #if 0
