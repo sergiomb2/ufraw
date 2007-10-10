@@ -468,71 +468,107 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 /*
    Patterned Pixel Grouping Interpolation by Alain Desbiolles
 */
+#define UT(c1, c2, c3, g1, g3) \
+  CLIP((long)(((g1 +g3) >> 1) +((c2-c1 +c2-c3) >> 3)))
+
+#define UT1(v1, v2, v3, c1, c3) \
+  CLIP((long)(v2 +((c1 +c3 -v1 -v3) >> 1)))
+
 void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
         const int width, const int height, const int colors, void *dcraw)
 {
-  int gr[4], dir[5] = { 1, width, -1, -width, 1 };
-  int row, col, avg, diff[2], guess[2], c, d, i;
-  static const short sort[] = { 0,2,1,3,0,1,2,3 };
-  ushort (*pix)[4];
+  ushort (*pix)[4];            // Pixel matrix
+  ushort g2, c1, c2, cc1, cc2; // Simulated green and color
+  int    pm[3*3];              // Pixel matrix 3 x 3 for median filter
+  int    row, col, diff[2], guess[2], c, d, i;
+  int    dir[5]  = { 1, width, -1, -width, 1 };
+  int    m[3*3]  = { -1 -width, -width, 1 -width,
+                     -1, 0, 1,
+                     -1 +width, width, 1 +width };
+  static const unsigned char  t[42] = 
+    { 0,2, 0,1, 1,2, 3,5, 3,4, 4,5, 6,8, 6,7, 7,8, // Horizontal sort
+      0,6, 0,3, 3,6, 1,7, 1,4, 4,7, 2,8, 2,5, 5,8, // Vertical sort
+      6,2, 6,4, 4,2 };                             // Median sort
+  int    g[2][4] = {{ -1 -2*width, -1 +2*width,  1 -2*width, 1 +2*width },
+                    { -2 -width,    2 -width,   -2 +width,   2 +width   }};
 
-  border_interpolate_INDI (height, width, image, filters, colors, 3);
+  border_interpolate_INDI (height, width, image, filters, colors, 4);
   dcraw_message (dcraw, DCRAW_VERBOSE,_("PPG interpolation...\n")); /*UF*/
 
-/*  Fill in the green layer with gradients and pattern recognition: */
-  for (row=3; row < height-3; row++)
-    for (col=3+(FC(row,3) & 1), c=FC(row,col); col < width-3; col+=2) {
+  // Fill in the green layer with gradients from RGB color pattern simulation
+  for (row=3; row < height-4; row++) {
+    for (col=3+(FC(row,3) & 1), c=FC(row,col); col < width-4; col+=2) {
       pix = image + row*width+col;
-      for (avg=i=0; i < 4; i++)
-	avg += gr[i] = pix[dir[i]][1] << 2;
-      avg >>= 2;
-      for (i=0; i < 8; i+=2)
-	if (gr[sort[i]] > gr[sort[i+1]])
-	  SWAP(gr[sort[i]],gr[sort[i+1]])
-      for (d=0; d < 4; d++) {
-	for (i=-2; i < 2; i++)
-	  if (pix[i*dir[d] + (i+1)*dir[d+1]][1] <= avg) break;
-	if (i == 2) {
-	  pix[0][1] = (gr[1]+gr[2]) >> 3;
-	  goto next_pixel;
-	}
+
+      // Horizontaly and verticaly
+      for (i=0; d=dir[i], i < 2; i++) {
+
+        // Simulate RGB color pattern
+        guess[i] = UT (pix[-2*d][c], pix[0][c], pix[2*d][c],
+                       pix[-d][1], pix[d][1]);
+        g2       = UT (pix[0][c], pix[2*d][c], pix[4*d][c],
+                       pix[d][1], pix[3*d][1]);
+        c1       = UT1(pix[-2*d][1], pix[-d][1], guess[i],
+                       pix[-2*d][c], pix[0][c]);
+        c2       = UT1(guess[i], pix[d][1], g2,
+                       pix[0][c], pix[2*d][c]);
+        cc1      = UT (pix[g[i][0]][1], pix[-d][1], pix[g[i][1]][1],
+                       pix[-1-width][2-c], pix[1-width][2-c]);
+        cc2      = UT (pix[g[i][2]][1],  pix[d][1], pix[g[i][3]][1],
+                       pix[-1+width][2-c], pix[1+width][2-c]);
+
+        // Calculate gradient with RGB simulated color
+        diff[i]  = ((ABS(pix[-d][1] -pix[-3*d][1]) +
+                     ABS(pix[0][c]  -pix[-2*d][c]) +
+                     ABS(cc1        -cc2)          +
+                     ABS(pix[0][c]  -pix[2*d][c])  +
+                     ABS(pix[d][1]  -pix[3*d][1])) * 2 / 3) +
+                     ABS(guess[i]   -pix[-d][1])   +
+                     ABS(pix[0][c]  -c1)           +
+                     ABS(pix[0][c]  -c2)           +
+                     ABS(guess[i]   -pix[d][1]);
       }
-      for (i=0; (d=dir[i]) > 0; i++) {
-	guess[i] = (pix[-d][1] + pix[0][c] + pix[d][1]) * 2
-		      - pix[-2*d][c] - pix[2*d][c];
-	diff[i] = ( ABS(pix[-2*d][c] - pix[ 0][c]) +
-		    ABS(pix[ 2*d][c] - pix[ 0][c]) +
-		    ABS(pix[  -d][1] - pix[ d][1]) ) * 3 +
-		  ( ABS(pix[ 3*d][1] - pix[ d][1]) +
-		    ABS(pix[-3*d][1] - pix[-d][1]) ) * 2;
-      }
-      d = dir[i = diff[0] > diff[1]];
-      pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
-next_pixel: ;
+
+      // Then, select the best gradient
+      d = dir[diff[0] > diff[1]];
+      pix[0][1] = ULIM(guess[diff[0] > diff[1]], pix[-d][1], pix[d][1]);
     }
-/*  Calculate red and blue for each green pixel:		*/
+  }
+
+  // Calculate red and blue for each green pixel
   for (row=1; row < height-1; row++)
     for (col=1+(FC(row,2) & 1), c=FC(row,col+1); col < width-1; col+=2) {
       pix = image + row*width+col;
       for (i=0; (d=dir[i]) > 0; c=2-c, i++)
-	pix[0][c] = CLIP((pix[-d][c] + pix[d][c] + 2*pix[0][1]
-			- pix[-d][1] - pix[d][1]) >> 1);
+        pix[0][c] = UT1(pix[-d][1], pix[0][1], pix[d][1],
+                        pix[-d][c], pix[d][c]);
     }
-/*  Calculate blue for red pixels and vice versa:		*/
+
+  // Calculate blue for red pixels and vice versa
   for (row=1; row < height-1; row++)
     for (col=1+(FC(row,1) & 1), c=2-FC(row,col); col < width-1; col+=2) {
       pix = image + row*width+col;
       for (i=0; (d=dir[i]+dir[i+1]) > 0; i++) {
-	diff[i] = ABS(pix[-d][c] - pix[d][c]) +
-		  ABS(pix[-d][1] - pix[0][1]) +
-		  ABS(pix[ d][1] - pix[0][1]);
-	guess[i] = pix[-d][c] + pix[d][c] + 2*pix[0][1]
-		 - pix[-d][1] - pix[d][1];
+        diff[i]  = ABS(pix[-d][c] - pix[d][c]) +
+                   ABS(pix[-d][1] - pix[d][1]);
+        guess[i] = UT1(pix[-d][1], pix[0][1], pix[d][1],
+                       pix[-d][c], pix[d][c]);
       }
-      if (diff[0] != diff[1])
-	pix[0][c] = CLIP(guess[diff[0] > diff[1]] >> 1);
-      else
-	pix[0][c] = CLIP((guess[0]+guess[1]) >> 2);
+      pix[0][c] = CLIP(guess[diff[0] > diff[1]]);
+    }
+
+  // Apply a one pass median filter on red and blue layer
+  // for removing color artefact
+  for (row=2; row < height-2; row++)
+    for (col=2; col < width-1; col++) {
+      pix = image + row*width+col;
+      for (c=0; c < 3; c+=2) {
+	d=m[8];
+        for (i=0; i < 9; d=m[i], i++) pm[i]=pix[d][c] - pix[d][1];
+        for (i=0; i < (int)sizeof t; i+=2)
+          if (pm[t[i]] < pm[t[i+1]]) SWAP(pm[t[i]], pm[t[i+1]]);
+        pix[0][c] = CLIP(pm[4] + pix[0][1]);
+      }
     }
 }
 
