@@ -480,16 +480,8 @@ void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 {
   ushort (*pix)[4];            // Pixel matrix
   ushort g2, c1, c2, cc1, cc2; // Simulated green and color
-  int    pm[3*3];              // Pixel matrix 3 x 3 for median filter
   int    row, col, diff[2], guess[2], c, d, i;
   int    dir[5]  = { 1, width, -1, -width, 1 };
-  int    m[3*3]  = { -1 -width, -width, 1 -width,
-                     -1, 0, 1,
-                     -1 +width, width, 1 +width };
-  static const unsigned char  t[42] = 
-    { 0,2, 0,1, 1,2, 3,5, 3,4, 4,5, 6,8, 6,7, 7,8, // Horizontal sort
-      0,6, 0,3, 3,6, 1,7, 1,4, 4,7, 2,8, 2,5, 5,8, // Vertical sort
-      6,2, 6,4, 4,2 };                             // Median sort
   int    g[2][4] = {{ -1 -2*width, -1 +2*width,  1 -2*width, 1 +2*width },
                     { -2 -width,    2 -width,   -2 +width,   2 +width   }};
 
@@ -556,20 +548,6 @@ void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
                        pix[-d][c], pix[d][c]);
       }
       pix[0][c] = CLIP(guess[diff[0] > diff[1]]);
-    }
-
-  // Apply a one pass median filter on red and blue layer
-  // for removing color artefact
-  for (row=2; row < height-2; row++)
-    for (col=2; col < width-1; col++) {
-      pix = image + row*width+col;
-      for (c=0; c < 3; c+=2) {
-	d=m[8];
-        for (i=0; i < 9; d=m[i], i++) pm[i]=pix[d][c] - pix[d][1];
-        for (i=0; i < (int)sizeof t; i+=2)
-          if (pm[t[i]] < pm[t[i+1]]) SWAP(pm[t[i]], pm[t[i+1]]);
-        pix[0][c] = CLIP(pm[4] + pix[0][1]);
-      }
     }
 }
 
