@@ -3263,8 +3263,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
             (uf->initialHeight-1)/max_preview_height)+1;
     CFG->Scale = MAX(2, CFG->Scale);
     CFG->Zoom = 100.0 / CFG->Scale;
-    preview_width = uf->initialWidth / CFG->Scale;
-    preview_height = uf->initialHeight / CFG->Scale;
+    // Make preview size a tiny bit larger to prevent rounding errors
+    // that will make the scrollbars appear.
+    preview_width = (uf->initialWidth+1) / CFG->Scale;
+    preview_height = (uf->initialHeight+1) / CFG->Scale;
     /* With the following guesses the window usually fits into the screen.
      * There should be more intelegent settings to widget sizes. */
     curveeditorHeight = 256;
@@ -4570,12 +4572,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_widget_hide(GTK_WIDGET(data->SpotTable));
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);
 #ifdef HAVE_GTKIMAGEVIEW
-    /* After window size was set, the user may want to shrink it */
-    gtk_widget_set_size_request(scroll, -1, -1);
-
     // preview_progress() changes the size of the progress bar
     // and processes the event queue. 
     preview_progress(previewWindow, _("Loading preview"), 0.2);
+
+    /* After window size was set, the user may want to shrink it */
+    gtk_widget_set_size_request(scroll, -1, -1);
 
     if ( CFG->WindowMaximized ) {
 	// scroll widget is allocated size only after gtk_widget_show_all()
