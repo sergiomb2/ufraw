@@ -87,8 +87,8 @@ const conf_data conf_default = {
     25.0, 4, /* Zoom, Scale */
     enabled_state, /* saveConfiguration */
     rgb_histogram, /* histogram */
-    linear_histogram, 128, /* liveHistogramScale, liveHistogramHeight */
-    linear_histogram, 128, /* rawHistogramScale, rawHistogramHeight */
+    linear_histogram, /* liveHistogramScale */
+    linear_histogram, /* rawHistogramScale */
     { TRUE, TRUE }, /* expander[] */
     FALSE, /* overExp indicator */
     FALSE, /* underExp indicator */
@@ -466,12 +466,8 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     if (!strcmp("Histogram", element)) sscanf(temp, "%d", &c->histogram);
     if (!strcmp("LiveHistogramScale", element))
 	    sscanf(temp, "%d", &c->liveHistogramScale);
-    if (!strcmp("LiveHistogramheight", element))
-	    sscanf(temp, "%d", &c->liveHistogramHeight);
     if (!strcmp("RawHistogramScale", element))
 	    sscanf(temp, "%d", &c->rawHistogramScale);
-    if (!strcmp("RawHistogramheight", element))
-	    sscanf(temp, "%d", &c->rawHistogramHeight);
     if (!strcmp("RemoteGimpCommand", element))
 	    g_strlcpy(c->remoteGimpCommand, temp, max_path);
     if (!strcmp("OverExposure", element)) sscanf(temp, "%d", &c->overExp);
@@ -707,18 +703,10 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
             buf = uf_markup_buf(buf,
 		    "<LiveHistogramScale>%d</LiveHistogramScale>\n",
 		    c->liveHistogramScale);
-        if (c->liveHistogramHeight!=conf_default.liveHistogramHeight)
-            buf = uf_markup_buf(buf,
-		    "<LiveHistogramHeight>%d</LiveHistogramHeight>\n",
-		    c->liveHistogramHeight);
         if (c->rawHistogramScale!=conf_default.rawHistogramScale)
             buf = uf_markup_buf(buf,
 		    "<RawHistogramScale>%d</RawHistogramScale>\n",
 		    c->rawHistogramScale);
-        if (c->rawHistogramHeight!=conf_default.rawHistogramHeight)
-            buf = uf_markup_buf(buf,
-		    "<RawHistogramHeight>%d</RawHistogramHeight>\n",
-		    c->rawHistogramHeight);
         if (c->overExp!=conf_default.overExp)
             buf = uf_markup_buf(buf,
 		    "<OverExposure>%d</OverExposure>\n", c->overExp);

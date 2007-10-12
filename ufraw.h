@@ -166,8 +166,8 @@ typedef struct {
     double Zoom;
     int Scale;
     int saveConfiguration;
-    int histogram, liveHistogramScale, liveHistogramHeight;
-    int rawHistogramScale, rawHistogramHeight;
+    int histogram, liveHistogramScale;
+    int rawHistogramScale;
     int expander[expander_count];
     gboolean overExp, underExp, blinkOverUnder;
     gboolean WindowMaximized;

@@ -49,6 +49,7 @@ static const int def_preview_width = 9000;
 static const int def_preview_height = 9000;
 #define raw_his_size 320
 #define live_his_size 256
+static const int his_max_height = 256;
 #define min_scale 2
 #define max_scale 20
 
@@ -160,6 +161,7 @@ typedef struct {
     double shrink, height, width;
     gboolean OptionsChanged;
     int PageNum;
+    int HisMinHeight;
     /* Original aspect ratio (0) or actual aspect ratio */
     float AspectRatio;
     /* True if aspect ratio is locked */
@@ -533,7 +535,8 @@ static colorLabels *color_labels_new(GtkTable *table, int x, int y,
 	l->labels[c] = GTK_LABEL(gtk_label_new(NULL));
 	GtkWidget *event_box = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(l->labels[c]));
-	gtk_table_attach_defaults(table, event_box, x+i, x+i+1, y, y+1);
+	gtk_table_attach(table, event_box, x+i, x+i+1, y, y+1,
+		GTK_EXPAND|GTK_FILL, 0, 0, 0);
 	if ( c==3 )
 	    uf_widget_set_tooltip(event_box, _("Luminosity (Y value)"));
 	if ( c==4 )
@@ -837,6 +840,7 @@ static void window_unmap_event(GtkWidget *widget, GdkEvent *event,
 }
 
 static void render_preview(preview_data *data);
+static gboolean render_prepare(preview_data *data);
 static gboolean render_raw_histogram(preview_data *data);
 static gboolean render_preview_image(preview_data *data);
 static gboolean render_live_histogram(preview_data *data);
@@ -896,21 +900,21 @@ static void render_preview(preview_data *data)
     ufraw_convert_image_init_phase(data->UF);
     data->RenderLine = 0;
     g_idle_remove_by_data(data);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE-10,
+	    (GSourceFunc)(render_prepare), data, NULL);
     g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
 	    (GSourceFunc)(render_raw_histogram), data, NULL);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+10,
+            (GSourceFunc)(render_preview_image), data, NULL);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
+            (GSourceFunc)(render_live_histogram), data, NULL);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
+            (GSourceFunc)(render_spot), data, NULL);
 }
 
-static gboolean render_raw_histogram(preview_data *data)
+static gboolean render_prepare(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
-    GdkPixbuf *pixbuf;
-    guint8 *pixies;
-    int rowstride;
-    guint8 pix[99], *p8, pen[4][3];
-    guint16 pixtmp[9999];
-    image_type p16;
-    int x, c, cl, colors, y, y0, y1;
-    int raw_his[raw_his_size][4], raw_his_max;
 
     if (CFG->autoExposure == apply_state) {
 	ufraw_auto_expose(data->UF);
@@ -939,17 +943,31 @@ static gboolean render_raw_histogram(preview_data *data)
     developer_prepare(Developer, CFG,
 	    data->UF->rgbMax, data->UF->rgb_cam,
 	    data->UF->colors, data->UF->useMatrix, display_developer);
+    return FALSE;
+}
 
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->RawHisto));
-    if (gdk_pixbuf_get_height(pixbuf)!=CFG->rawHistogramHeight+2) {
+static gboolean render_raw_histogram(preview_data *data)
+{
+    if (data->FreezeDialog) return FALSE;
+    guint8 pix[99], *p8, pen[4][3];
+    guint16 pixtmp[9999];
+    image_type p16;
+    int x, c, cl, y, y0, y1;
+    int raw_his[raw_his_size][4], raw_his_max;
+
+    int hisHeight = data->RawHisto->allocation.height-2;
+    hisHeight = MAX(MIN(hisHeight, his_max_height), data->HisMinHeight);
+
+    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->RawHisto));
+    if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=hisHeight+2 ) {
         pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-	        raw_his_size+2, CFG->rawHistogramHeight+2);
+	        raw_his_size+2, hisHeight+2);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(data->RawHisto), pixbuf);
 	g_object_unref(pixbuf);
     }
-    colors = data->UF->colors;
-    pixies = gdk_pixbuf_get_pixels(pixbuf);
-    rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+    int colors = data->UF->colors;
+    guint8 *pixies = gdk_pixbuf_get_pixels(pixbuf);
+    int rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)*rowstride +
             gdk_pixbuf_get_width(pixbuf)*gdk_pixbuf_get_n_channels(pixbuf));
     /* Normalize raw histogram data */
@@ -987,21 +1005,21 @@ static gboolean render_raw_histogram(preview_data *data)
                           Developer->rgbWB[cl] / raw_his_size, 0xFFFF);
             develope(p8, p16, Developer, 8, pixtmp, 1);
             grayCurve[x][c] = MAX(MAX(p8[0],p8[1]),p8[2]) *
-		    (CFG->rawHistogramHeight-1) / MAXOUT;
+		    (hisHeight-1) / MAXOUT;
             /* Value for pixel x of pure color c */
             p16[0] = p16[1] = p16[2] = p16[3] = 0;
             p16[c] = MIN((guint64)x*Developer->rgbMax/raw_his_size, 0xFFFF);
             develope(p8, p16, Developer, 8, pixtmp, 1);
             pureCurve[x][c] = MAX(MAX(p8[0],p8[1]),p8[2]) *
-		    (CFG->rawHistogramHeight-1) / MAXOUT;
+		    (hisHeight-1) / MAXOUT;
 	}
     }
     for (x=0; x<raw_his_size; x++) {
 	/* draw the raw histogram */
         for (c=0, y0=0; c<colors; c++) {
-	    for (y=0; y<raw_his[x][c]*CFG->rawHistogramHeight/raw_his_max; y++)
+	    for (y=0; y<raw_his[x][c]*hisHeight/raw_his_max; y++)
 		for (cl=0; cl<3; cl++)
-		    pixies[(CFG->rawHistogramHeight-y-y0)*rowstride
+		    pixies[(hisHeight-y-y0)*rowstride
 			    + 3*(x+1)+cl] = pen[c][cl];
 	    y0 += y;
 	}
@@ -1011,23 +1029,18 @@ static gboolean render_raw_histogram(preview_data *data)
             y1 = grayCurve[x+1][c];
             for (; y<=y1; y++)
 		for (cl=0; cl<3; cl++)
-		    pixies[(CFG->rawHistogramHeight-y)*rowstride
-			    + 3*(x+1)+cl] = pen[c][cl];
+		    pixies[(hisHeight-y)*rowstride + 3*(x+1)+cl] = pen[c][cl];
             y1 = pureCurve[x][c];
             for (; y<y1; y++)
 		for (cl=0; cl<3; cl++)
-		    pixies[(CFG->rawHistogramHeight-y)*rowstride
-			    + 3*(x+1)+cl] = pen[c][cl]/2;
+		    pixies[(hisHeight-y)*rowstride + 3*(x+1)+cl] = pen[c][cl]/2;
             y1 = pureCurve[x+1][c];
             for (; y<=y1; y++)
 		for (cl=0; cl<3; cl++)
-		    pixies[(CFG->rawHistogramHeight-y)*rowstride
-			    + 3*(x+1)+cl] = pen[c][cl];
+		    pixies[(hisHeight-y)*rowstride + 3*(x+1)+cl] = pen[c][cl];
         }
     }
     gtk_widget_queue_draw(data->RawHisto);
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-            (GSourceFunc)(render_preview_image), data, NULL);
     return FALSE;
 }
 
@@ -1035,8 +1048,11 @@ static gboolean render_preview_image(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
 
-    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    if ( data->RenderLine>=height )
+	return FALSE;
+
+    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int tileHeight = MIN(height - data->RenderLine, 32);
     ufraw_convert_image_area(data->UF, 0, data->RenderLine, width, tileHeight,
 	    data->fromPhase);
@@ -1048,8 +1064,6 @@ static gboolean render_preview_image(preview_data *data)
     data->RenderLine = MAX(height, width);
     data->fromPhase = ufraw_final_phase;
     redraw_navigation_image(data);
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-            (GSourceFunc)(render_live_histogram), data, NULL);
     return FALSE;
 }
 
@@ -1082,10 +1096,13 @@ static gboolean render_live_histogram(preview_data *data)
             else live_his[255*(max-min)/max][3]++;
         }
     }
+    int hisHeight = MIN(data->LiveHisto->allocation.height-2, his_max_height);
+    hisHeight = MAX(hisHeight, data->HisMinHeight);
+
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
-    if (gdk_pixbuf_get_height(pixbuf)!=CFG->liveHistogramHeight+2) {
+    if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=hisHeight+2 ) {
         pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-	        live_his_size+2, CFG->liveHistogramHeight+2);
+	        live_his_size+2, hisHeight+2);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(data->LiveHisto), pixbuf);
 	g_object_unref(pixbuf);
     }
@@ -1113,34 +1130,32 @@ static gboolean render_live_histogram(preview_data *data)
 		    live_his[x][0]+live_his[x][1]+live_his[x][2]);
         else live_his_max = MAX(live_his_max, live_his[x][3]);
     }
-    for (x=0; x<live_his_size; x++) for (y=0; y<CFG->liveHistogramHeight; y++)
+    for (x=0; x<live_his_size; x++) for (y=0; y<hisHeight; y++)
         if (CFG->histogram==r_g_b_histogram) {
-            if (y*live_his_max < live_his[x][0]*CFG->liveHistogramHeight)
-                pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+0] = 255;
+            if (y*live_his_max < live_his[x][0]*hisHeight)
+                pixies[(hisHeight-y)*rowstride+3*(x+1)+0] = 255;
             else if (y*live_his_max <
-                    (live_his[x][0]+live_his[x][1])*CFG->liveHistogramHeight)
-                pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+1] = 255;
+                    (live_his[x][0]+live_his[x][1])*hisHeight)
+                pixies[(hisHeight-y)*rowstride+3*(x+1)+1] = 255;
             else if (y*live_his_max <
                     (live_his[x][0]+live_his[x][1]+live_his[x][2])
-                    *CFG->liveHistogramHeight)
-                pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+2] = 255;
+                    *hisHeight)
+                pixies[(hisHeight-y)*rowstride+3*(x+1)+2] = 255;
         } else {
             for (c=0; c<3; c++)
                 if (CFG->histogram==rgb_histogram) {
-                    if (y*live_his_max<live_his[x][c]*CFG->liveHistogramHeight)
-                        pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+c]
-			    = 255;
+                    if (y*live_his_max<live_his[x][c]*hisHeight)
+                        pixies[(hisHeight-y)*rowstride+3*(x+1)+c] = 255;
                 } else {
-                    if (y*live_his_max<live_his[x][3]*CFG->liveHistogramHeight)
-                        pixies[(CFG->liveHistogramHeight-y)*rowstride+3*(x+1)+c]
-			    = 255;
+                    if (y*live_his_max<live_his[x][3]*hisHeight)
+                        pixies[(hisHeight-y)*rowstride+3*(x+1)+c] = 255;
                 }
        }
 
     /* draw vertical line at quarters "behind" the live histogram */
-    for (y=-1; y<CFG->liveHistogramHeight+1; y++) 
+    for (y=-1; y<hisHeight+1; y++) 
         for (x=64; x<255; x+=64) {
-            guint8 *pix = pixies+(CFG->liveHistogramHeight-y)*rowstride+3*(x+1);
+            guint8 *pix = pixies+(hisHeight-y)*rowstride+3*(x+1);
             if (pix[0]==0 && pix[1]==0 && pix[2]==0 )
                 for (c=0; c<3; c++)
                     pix[c]=96;	/* gray */
@@ -1155,8 +1170,6 @@ static gboolean render_live_histogram(preview_data *data)
     for (c=0;c<3;c++) rgb[c] = 100.0*live_his[0][c]/height/width;
     color_labels_set(data->UnderLabels, rgb);
 
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-            (GSourceFunc)(render_spot), data, NULL);
     return FALSE;
 }
 
@@ -2256,25 +2269,35 @@ static GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text,
     return page;
 }
 
+static void expander_expanded(GtkExpander *expander,
+    GParamSpec *param_spec, gpointer user_data)
+{
+    (void)param_spec;
+    (void)user_data;
+    GtkBox *box = GTK_BOX(gtk_widget_get_parent(GTK_WIDGET(expander)));
+    if ( gtk_expander_get_expanded(expander) )
+	gtk_box_set_child_packing(box, GTK_WIDGET(expander),
+	    TRUE, TRUE, 0, GTK_PACK_START);
+    else
+	gtk_box_set_child_packing(box, GTK_WIDGET(expander),
+	    FALSE, FALSE, 0, GTK_PACK_START);
+}
+    
 static GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
 {
-    GtkWidget *frame, *expander;
-    GtkWidget *table;
-
+    GtkWidget *frame = gtk_frame_new(NULL);
     if (label!=NULL) {
-	table = gtk_table_new(10, 10, FALSE);
-        expander = gtk_expander_new(label);
-        gtk_expander_set_expanded(GTK_EXPANDER(expander), expand);
-        gtk_box_pack_start(GTK_BOX(box), expander, FALSE, FALSE, 0);
-        frame = gtk_frame_new(NULL);
-        gtk_container_add(GTK_CONTAINER(expander), GTK_WIDGET(frame));
-        gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(table));
+	GtkWidget *expander = gtk_expander_new(label);
+	gtk_expander_set_expanded(GTK_EXPANDER(expander), expand);
+	gtk_box_pack_start(GTK_BOX(box), expander, TRUE, TRUE, 0);
+	g_signal_connect (expander, "notify::expanded",
+		G_CALLBACK (expander_expanded), NULL);
+	gtk_container_add(GTK_CONTAINER(expander), frame);
     } else {
-	table = gtk_table_new(10, 10, FALSE);
-        frame = gtk_frame_new(NULL);
-        gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 0);
-        gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(table));
+	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 0);
     }
+    GtkWidget *table = gtk_table_new(10, 10, FALSE);
+    gtk_container_add(GTK_CONTAINER(frame), table);
     return table;
 }
 
@@ -3033,6 +3056,77 @@ static void expander_state(GtkWidget *widget, gpointer user_data)
             CFG->expander[i] = gtk_expander_get_expanded(GTK_EXPANDER(widget));
 }
 
+static void panel_size_allocate(GtkWidget *panel,
+    GtkAllocation *allocation, gpointer user_data)
+{
+    (void)user_data;
+    preview_data *data = get_preview_data(panel);
+
+    // Stop allocating space after maximum height was reached
+    int hisHeight = data->RawHisto->allocation.height-2;
+    if ( hisHeight>his_max_height ) {
+	GtkWidget *expander =
+		gtk_widget_get_ancestor(data->RawHisto, GTK_TYPE_EXPANDER);
+	gtk_box_set_child_packing(GTK_BOX(panel), expander,
+		FALSE, FALSE, 0, GTK_PACK_START);
+	gtk_widget_set_size_request(data->RawHisto,
+		data->RawHisto->allocation.width, his_max_height+2);
+	return;
+    }
+    // Stop allocating space after maximum height was reached
+    hisHeight = data->LiveHisto->allocation.height-2;
+    if ( hisHeight>his_max_height ) {
+	GtkWidget *expander =
+		gtk_widget_get_ancestor(data->LiveHisto, GTK_TYPE_EXPANDER);
+	gtk_box_set_child_packing(GTK_BOX(panel), expander,
+		FALSE, FALSE, 0, GTK_PACK_START);
+	gtk_widget_set_size_request(data->LiveHisto,
+		data->LiveHisto->allocation.width, his_max_height+2);
+	return;
+    }
+    GList *children = gtk_container_get_children(GTK_CONTAINER(panel));
+    int childAlloc = 0;
+    for (;children!=NULL; children=g_list_next(children))
+	childAlloc += GTK_WIDGET(children->data)->allocation.height;
+
+    // If there is no extra space in the box expandable widgets must
+    // be shrinkable
+    if ( allocation->height==childAlloc ) {
+	// Raw expander status
+	GtkWidget *rawExpander =
+		gtk_widget_get_ancestor(data->RawHisto, GTK_TYPE_EXPANDER);
+	gboolean rawExpanded =
+		gtk_expander_get_expanded(GTK_EXPANDER(rawExpander));
+	gboolean rawExpandable;
+	gtk_box_query_child_packing(GTK_BOX(panel), rawExpander,
+		&rawExpandable, NULL, NULL, NULL);
+	// Live expander status
+	GtkWidget *liveExpander =
+		gtk_widget_get_ancestor(data->LiveHisto, GTK_TYPE_EXPANDER);
+	gboolean liveExpanded =
+		gtk_expander_get_expanded(GTK_EXPANDER(liveExpander));
+	gboolean liveExpandable;
+	gtk_box_query_child_packing(GTK_BOX(panel), liveExpander,
+		&liveExpandable, NULL, NULL, NULL);
+	if ( !rawExpandable && rawExpanded ) {
+	    gtk_box_set_child_packing(GTK_BOX(panel), rawExpander,
+		    TRUE, TRUE, 0, GTK_PACK_START);
+	    gtk_widget_set_size_request(data->RawHisto,
+		    data->RawHisto->allocation.width, data->HisMinHeight);
+	}
+	if ( !liveExpandable && liveExpanded ) {
+	    gtk_box_set_child_packing(GTK_BOX(panel), liveExpander,
+		    TRUE, TRUE, 0, GTK_PACK_START);
+	    gtk_widget_set_size_request(data->LiveHisto,
+		    data->LiveHisto->allocation.width, data->HisMinHeight);
+	}
+    }
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	    (GSourceFunc)(render_raw_histogram), data, NULL);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
+	    (GSourceFunc)(render_live_histogram), data, NULL);
+}
+
 static gboolean histogram_menu(GtkMenu *menu, GdkEventButton *event)
 {
     preview_data *data = get_preview_data(menu);
@@ -3256,6 +3350,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     ufraw_focus(previewWindow, TRUE);
     uf->widget = previewWindow;
 
+    /* With the following guesses the window usually fits into the screen.
+     * There should be more intelligent settings to window size. */
     gdk_screen_get_monitor_geometry(gdk_screen_get_default(), 0, &screen);
     max_preview_width = MIN(def_preview_width, screen.width-416);
     max_preview_height = MIN(def_preview_height, screen.height-120);
@@ -3264,44 +3360,50 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     CFG->Scale = MAX(2, CFG->Scale);
     CFG->Zoom = 100.0 / CFG->Scale;
     // Make preview size a tiny bit larger to prevent rounding errors
-    // that will make the scrollbars appear.
+    // that will cause the scrollbars to appear.
     preview_width = (uf->initialWidth+1) / CFG->Scale;
     preview_height = (uf->initialHeight+1) / CFG->Scale;
-    /* With the following guesses the window usually fits into the screen.
-     * There should be more intelegent settings to widget sizes. */
-    curveeditorHeight = 256;
-    if (screen.height<801) {
-	if (CFG->liveHistogramHeight==conf_default.liveHistogramHeight)
-	    CFG->liveHistogramHeight = 96;
-	if (CFG->rawHistogramHeight==conf_default.rawHistogramHeight)
-	    CFG->rawHistogramHeight = 96;
-	if (screen.height<800) curveeditorHeight = 192;
+    if (screen.height<700) {
+	curveeditorHeight = 192;
+	data->HisMinHeight = 48;
+    } else if (screen.height<800) {
+	curveeditorHeight = 192;
+	data->HisMinHeight = 64;
+    } else {
+	curveeditorHeight = 256;
+	data->HisMinHeight = 96;
     }
     previewHBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
     gtk_container_add(GTK_CONTAINER(previewWindow), GTK_WIDGET(previewHBox));
     previewVBox = gtk_vbox_new(FALSE, 0);
     gtk_box_pack_start(previewHBox, previewVBox, FALSE, FALSE, 2);
+    g_signal_connect(G_OBJECT(previewVBox), "size-allocate",
+	    G_CALLBACK(panel_size_allocate), NULL);
 
     table = GTK_TABLE(table_with_frame(previewVBox,
 	    _(expanderText[raw_expander]), CFG->expander[raw_expander]));
     event_box = gtk_event_box_new();
-    gtk_table_attach(table, event_box, 0, 1, 1, 2, GTK_EXPAND, 0, 0, 0);
+    gtk_table_attach(table, event_box, 0, 1, 1, 2,
+	    GTK_EXPAND, GTK_EXPAND|GTK_FILL, 0, 0);
     pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-            raw_his_size+2, CFG->rawHistogramHeight+2);
+            raw_his_size+2, his_max_height+2);
     data->RawHisto = gtk_image_new_from_pixbuf(pixbuf);
+    gtk_widget_set_size_request(data->RawHisto,
+	    raw_his_size+2, data->HisMinHeight+2);
     g_object_unref(pixbuf);
     gtk_container_add(GTK_CONTAINER(event_box), data->RawHisto);
     pixies = gdk_pixbuf_get_pixels(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)* rowstride +
             gdk_pixbuf_get_width(pixbuf)*gdk_pixbuf_get_n_channels(pixbuf));
+
     menu = gtk_menu_new();
     g_object_set_data(G_OBJECT(menu), "Parent-Widget", event_box);
     g_signal_connect_swapped(G_OBJECT(event_box), "button_press_event",
             G_CALLBACK(histogram_menu), menu);
     group = NULL;
     menu_item = gtk_radio_menu_item_new_with_label(group, _("Linear"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 6, 7);
+    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 0, 1);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
 	    CFG->rawHistogramScale==linear_histogram);
@@ -3310,7 +3412,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->rawHistogramScale);
     menu_item = gtk_radio_menu_item_new_with_label(group, _("Logarithmic"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 7, 8);
+    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 1, 2);
     group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
 	    CFG->rawHistogramScale==log_histogram);
@@ -3318,47 +3420,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    (gpointer)log_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->rawHistogramScale);
-
-    menu_item = gtk_separator_menu_item_new();
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 8, 9);
-
-    group = NULL;
-    menu_item = gtk_radio_menu_item_new_with_label(group, _("96 Pixels"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 9, 10);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->rawHistogramHeight==96);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)96);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &CFG->rawHistogramHeight);
-    menu_item = gtk_radio_menu_item_new_with_label(group, _("128 Pixels"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 10, 11);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->rawHistogramHeight==128);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)128);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &CFG->rawHistogramHeight);
-    menu_item = gtk_radio_menu_item_new_with_label(group, _("192 Pixels"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 11, 12);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->rawHistogramHeight==192);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)192);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &CFG->rawHistogramHeight);
-    menu_item = gtk_radio_menu_item_new_with_label(group, _("256 Pixels"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 12, 13);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->rawHistogramHeight==256);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)256);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &CFG->rawHistogramHeight);
     gtk_widget_show_all(menu);
 
     // Spot values:
@@ -4237,16 +4298,20 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     table = GTK_TABLE(table_with_frame(previewVBox,
 	    _(expanderText[live_expander]), CFG->expander[live_expander]));
     event_box = gtk_event_box_new();
-    gtk_table_attach(table, event_box, 0, 7, 1, 2, 0, 0, 0, 0);
+    gtk_table_attach(table, event_box, 0, 7, 1, 2,
+	    0, GTK_EXPAND|GTK_FILL, 0, 0);
     pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-            live_his_size+2, CFG->liveHistogramHeight+2);
+            live_his_size+2, his_max_height+2);
     data->LiveHisto = gtk_image_new_from_pixbuf(pixbuf);
-    g_object_unref(pixbuf);
     gtk_container_add(GTK_CONTAINER(event_box), data->LiveHisto);
+    gtk_widget_set_size_request(data->LiveHisto,
+	    raw_his_size+2, data->HisMinHeight+2);
+    g_object_unref(pixbuf);
     pixies = gdk_pixbuf_get_pixels(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)* rowstride +
             gdk_pixbuf_get_width(pixbuf)*gdk_pixbuf_get_n_channels(pixbuf));
+
     menu = gtk_menu_new();
     g_object_set_data(G_OBJECT(menu), "Parent-Widget", event_box);
     g_signal_connect_swapped(G_OBJECT(event_box), "button_press_event",
@@ -4323,47 +4388,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    (gpointer)log_histogram);
     g_signal_connect(G_OBJECT(menu_item), "toggled",
             G_CALLBACK(radio_menu_update), &CFG->liveHistogramScale);
-
-    menu_item = gtk_separator_menu_item_new();
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 8, 9);
-
-    group = NULL;
-    menu_item = gtk_radio_menu_item_new_with_label(group, _("96 Pixels"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 9, 10);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->liveHistogramHeight==96);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)96);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &CFG->liveHistogramHeight);
-    menu_item = gtk_radio_menu_item_new_with_label(group, _("128 Pixels"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 10, 11);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->liveHistogramHeight==128);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)128);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &CFG->liveHistogramHeight);
-    menu_item = gtk_radio_menu_item_new_with_label(group, _("192 Pixels"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 11, 12);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->liveHistogramHeight==192);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)192);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &CFG->liveHistogramHeight);
-    menu_item = gtk_radio_menu_item_new_with_label(group, _("256 Pixels"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 12, 13);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->liveHistogramHeight==256);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)256);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-            G_CALLBACK(radio_menu_update), &CFG->liveHistogramHeight);
     gtk_widget_show_all(menu);
 
     i = 2;
