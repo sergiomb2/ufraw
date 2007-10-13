@@ -213,6 +213,13 @@ try {
        	str << *pos;
 	g_strlcpy(uf->conf->flashText, str.str().c_str(), max_name);
     }
+    /* Read White Balance Setting */
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.WhiteBalance")))
+	    != exifData.end() ) {
+	std::stringstream str;
+        str << *pos;
+	g_strlcpy(uf->conf->whiteBalanceText, str.str().c_str(), max_name);
+    }
     std::cerr.rdbuf(savecerr);
     ufraw_message(UFRAW_SET_LOG, "%s\n", stderror.str().c_str());
 

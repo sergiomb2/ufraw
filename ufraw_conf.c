@@ -107,6 +107,7 @@ const conf_data conf_default = {
     0.0, 0.0, 0.0, 0.0, /* iso_speed, shutter, aperture, focal_len */
     "", "", "", "", /* exifSource, isoText, shutterText, apertureText */
     "", "", "", "", /* focalLenText, focalLen35Text, lensText, flashText */
+    "", /* whiteBalanceText */
     "", "", "", /* timestampText, make, model */
     0 /* timestamp */
 };
