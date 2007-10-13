@@ -3062,7 +3062,7 @@ static void panel_size_allocate(GtkWidget *panel,
     (void)user_data;
     preview_data *data = get_preview_data(panel);
 
-    // Stop allocating space after maximum height was reached
+    // Stop allocating space to raw histogram after maximum height was reached
     int hisHeight = data->RawHisto->allocation.height-2;
     if ( hisHeight>his_max_height ) {
 	GtkWidget *expander =
@@ -3073,7 +3073,7 @@ static void panel_size_allocate(GtkWidget *panel,
 		data->RawHisto->allocation.width, his_max_height+2);
 	return;
     }
-    // Stop allocating space after maximum height was reached
+    // Stop allocating space to live histogram after maximum height was reached
     hisHeight = data->LiveHisto->allocation.height-2;
     if ( hisHeight>his_max_height ) {
 	GtkWidget *expander =
@@ -3121,10 +3121,18 @@ static void panel_size_allocate(GtkWidget *panel,
 		    data->LiveHisto->allocation.width, data->HisMinHeight);
 	}
     }
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-	    (GSourceFunc)(render_raw_histogram), data, NULL);
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
-	    (GSourceFunc)(render_live_histogram), data, NULL);
+    // Redraw histograms if size allocation has changed
+    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->RawHisto));
+    hisHeight = data->RawHisto->allocation.height;
+    if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=hisHeight )
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+		(GSourceFunc)(render_raw_histogram), data, NULL);
+
+    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
+    hisHeight = data->LiveHisto->allocation.height;
+    if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=hisHeight )
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
+		(GSourceFunc)(render_live_histogram), data, NULL);
 }
 
 static gboolean histogram_menu(GtkMenu *menu, GdkEventButton *event)
