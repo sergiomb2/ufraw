@@ -2274,13 +2274,26 @@ static void expander_expanded(GtkExpander *expander,
 {
     (void)param_spec;
     (void)user_data;
-    GtkBox *box = GTK_BOX(gtk_widget_get_parent(GTK_WIDGET(expander)));
-    if ( gtk_expander_get_expanded(expander) )
-	gtk_box_set_child_packing(box, GTK_WIDGET(expander),
-	    TRUE, TRUE, 0, GTK_PACK_START);
-    else
-	gtk_box_set_child_packing(box, GTK_WIDGET(expander),
+    preview_data *data = get_preview_data(expander);
+
+    GtkWidget *panel = gtk_widget_get_parent(GTK_WIDGET(expander));
+    if ( gtk_expander_get_expanded(expander) ) {
+	GtkWidget *histogram =
+		g_object_get_data(G_OBJECT(expander), "expander-histogram");
+	if ( histogram!=NULL ) {
+	    g_object_set_data(G_OBJECT(expander),
+		    "expander-maximized", (gpointer)FALSE);
+	    gtk_widget_set_size_request(histogram, -1, data->HisMinHeight);
+	}
+	gboolean expanderMaximized = (gboolean)
+		g_object_get_data(G_OBJECT(expander), "expander-maximized");
+	if ( !expanderMaximized )
+	    gtk_box_set_child_packing(GTK_BOX(panel), GTK_WIDGET(expander),
+		    TRUE, TRUE, 0, GTK_PACK_START);
+    } else {
+	gtk_box_set_child_packing(GTK_BOX(panel), GTK_WIDGET(expander),
 	    FALSE, FALSE, 0, GTK_PACK_START);
+    }
 }
     
 static GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
@@ -3062,28 +3075,53 @@ static void panel_size_allocate(GtkWidget *panel,
     (void)user_data;
     preview_data *data = get_preview_data(panel);
 
-    // Stop allocating space to raw histogram after maximum height was reached
-    int hisHeight = data->RawHisto->allocation.height-2;
-    if ( hisHeight>his_max_height ) {
-	GtkWidget *expander =
-		gtk_widget_get_ancestor(data->RawHisto, GTK_TYPE_EXPANDER);
-	gtk_box_set_child_packing(GTK_BOX(panel), expander,
+    // Raw expander status
+    GtkWidget *rawExpander =
+	    gtk_widget_get_ancestor(data->RawHisto, GTK_TYPE_EXPANDER);
+    gboolean rawMaximized = (gboolean)
+	    g_object_get_data(G_OBJECT(rawExpander), "expander-maximized");
+    int rawHisHeight = data->RawHisto->allocation.height-2;
+    gboolean rawExpanded =
+	    gtk_expander_get_expanded(GTK_EXPANDER(rawExpander));
+    // Live expander status
+    GtkWidget *liveExpander =
+	    gtk_widget_get_ancestor(data->LiveHisto, GTK_TYPE_EXPANDER);
+    gboolean liveMaximized = (gboolean)
+	    g_object_get_data(G_OBJECT(liveExpander), "expander-maximized");
+    int liveHisHeight = data->LiveHisto->allocation.height-2;
+    gboolean liveExpanded =
+	    gtk_expander_get_expanded(GTK_EXPANDER(liveExpander));
+
+    // Stop allocating space to histogram after maximum height was reached
+    gboolean maximizeAll = TRUE;
+    if ( rawExpanded && rawHisHeight<=his_max_height )
+	maximizeAll = FALSE;
+    if ( liveExpanded && liveHisHeight<=his_max_height )
+	maximizeAll = FALSE;
+
+    if ( maximizeAll && !rawMaximized ) {
+	gtk_box_set_child_packing(GTK_BOX(panel), rawExpander,
 		FALSE, FALSE, 0, GTK_PACK_START);
 	gtk_widget_set_size_request(data->RawHisto,
 		data->RawHisto->allocation.width, his_max_height+2);
-	return;
+	g_object_set_data(G_OBJECT(rawExpander),
+	    "expander-histogram", data->RawHisto);
+	g_object_set_data(G_OBJECT(rawExpander),
+	    "expander-maximized", (gpointer)TRUE);
     }
-    // Stop allocating space to live histogram after maximum height was reached
-    hisHeight = data->LiveHisto->allocation.height-2;
-    if ( hisHeight>his_max_height ) {
+    if ( maximizeAll && !liveMaximized ) {
 	GtkWidget *expander =
 		gtk_widget_get_ancestor(data->LiveHisto, GTK_TYPE_EXPANDER);
 	gtk_box_set_child_packing(GTK_BOX(panel), expander,
 		FALSE, FALSE, 0, GTK_PACK_START);
 	gtk_widget_set_size_request(data->LiveHisto,
 		data->LiveHisto->allocation.width, his_max_height+2);
-	return;
+	g_object_set_data(G_OBJECT(liveExpander),
+	    "expander-histogram", data->LiveHisto);
+	g_object_set_data(G_OBJECT(liveExpander),
+	    "expander-maximized", (gpointer)TRUE);
     }
+
     GList *children = gtk_container_get_children(GTK_CONTAINER(panel));
     int childAlloc = 0;
     for (;children!=NULL; children=g_list_next(children))
@@ -3092,45 +3130,43 @@ static void panel_size_allocate(GtkWidget *panel,
     // If there is no extra space in the box expandable widgets must
     // be shrinkable
     if ( allocation->height==childAlloc ) {
-	// Raw expander status
-	GtkWidget *rawExpander =
-		gtk_widget_get_ancestor(data->RawHisto, GTK_TYPE_EXPANDER);
-	gboolean rawExpanded =
-		gtk_expander_get_expanded(GTK_EXPANDER(rawExpander));
-	gboolean rawExpandable;
-	gtk_box_query_child_packing(GTK_BOX(panel), rawExpander,
-		&rawExpandable, NULL, NULL, NULL);
-	// Live expander status
-	GtkWidget *liveExpander =
-		gtk_widget_get_ancestor(data->LiveHisto, GTK_TYPE_EXPANDER);
-	gboolean liveExpanded =
-		gtk_expander_get_expanded(GTK_EXPANDER(liveExpander));
-	gboolean liveExpandable;
-	gtk_box_query_child_packing(GTK_BOX(panel), liveExpander,
-		&liveExpandable, NULL, NULL, NULL);
-	if ( !rawExpandable && rawExpanded ) {
-	    gtk_box_set_child_packing(GTK_BOX(panel), rawExpander,
-		    TRUE, TRUE, 0, GTK_PACK_START);
-	    gtk_widget_set_size_request(data->RawHisto,
-		    data->RawHisto->allocation.width, data->HisMinHeight);
+	if ( rawExpanded && rawMaximized ) {
+	    if ( data->RawHisto->requisition.height!=data->HisMinHeight )
+		gtk_widget_set_size_request(data->RawHisto,
+			data->RawHisto->allocation.width, data->HisMinHeight);
+	    gboolean rawExpandable;
+	    gtk_box_query_child_packing(GTK_BOX(panel), rawExpander,
+		    &rawExpandable, NULL, NULL, NULL);
+	    if ( !rawExpandable )
+		gtk_box_set_child_packing(GTK_BOX(panel), rawExpander,
+			TRUE, TRUE, 0, GTK_PACK_START);
+	    g_object_set_data(G_OBJECT(rawExpander),
+		    "expander-maximized", (gpointer)FALSE);
 	}
-	if ( !liveExpandable && liveExpanded ) {
-	    gtk_box_set_child_packing(GTK_BOX(panel), liveExpander,
-		    TRUE, TRUE, 0, GTK_PACK_START);
-	    gtk_widget_set_size_request(data->LiveHisto,
-		    data->LiveHisto->allocation.width, data->HisMinHeight);
+	if ( liveExpanded && liveMaximized ) {
+	    if ( data->LiveHisto->requisition.height!=data->HisMinHeight )
+		gtk_widget_set_size_request(data->LiveHisto,
+			data->LiveHisto->allocation.width, data->HisMinHeight);
+	    gboolean liveExpandable;
+	    gtk_box_query_child_packing(GTK_BOX(panel), liveExpander,
+		    &liveExpandable, NULL, NULL, NULL);
+	    if ( !liveExpandable )
+		gtk_box_set_child_packing(GTK_BOX(panel), liveExpander,
+			TRUE, TRUE, 0, GTK_PACK_START);
+	    g_object_set_data(G_OBJECT(liveExpander),
+		    "expander-maximized", (gpointer)FALSE);
 	}
     }
     // Redraw histograms if size allocation has changed
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->RawHisto));
-    hisHeight = data->RawHisto->allocation.height;
-    if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=hisHeight )
+    rawHisHeight = data->RawHisto->allocation.height;
+    if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=rawHisHeight )
 	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
 		(GSourceFunc)(render_raw_histogram), data, NULL);
 
     pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
-    hisHeight = data->LiveHisto->allocation.height;
-    if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=hisHeight )
+    liveHisHeight = data->LiveHisto->allocation.height;
+    if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=liveHisHeight )
 	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
 		(GSourceFunc)(render_live_histogram), data, NULL);
 }
