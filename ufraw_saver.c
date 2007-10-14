@@ -55,9 +55,8 @@ static void ufraw_saver_set_type(GtkWidget *widget, save_as_dialog_data *data)
 {
     char *filename, *type;
     filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
-    if (filename==NULL) {
+    if (filename==NULL)
 	return;
-    }
     type = strrchr(filename, '.');
     if (type==NULL) {
 	g_free(filename);
