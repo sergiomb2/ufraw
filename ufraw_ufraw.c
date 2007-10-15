@@ -407,9 +407,9 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 #ifdef __MINGW32__
     /* MinG32 does not have ctime_r(). */
     g_strlcpy(uf->conf->timestampText, ctime(&raw->timestamp), max_name);
-#elif defined(SOLARIS) && !defined(_POSIX_PTHREAD_SEMANTICS)
+#elif defined(__sun) /* Solaris */
     /*
-     * Some versions of Solaris followed a draft POSIX.1c standard
+     * Some (all?) versions of Solaris followed a draft POSIX.1c standard
      * where ctime_r took a third length argument.
      */
     ctime_r(&raw->timestamp, uf->conf->timestampText,
