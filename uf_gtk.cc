@@ -14,6 +14,7 @@
 
 extern "C" {
 
+#if !GTK_CHECK_VERSION(2,12,0)
 static void _uf_widget_set_tooltip_destroy_event(GObject *object,
     gpointer user_data)
 {
@@ -23,6 +24,7 @@ static void _uf_widget_set_tooltip_destroy_event(GObject *object,
     if ( Tooltips!=NULL )
 	g_object_unref(Tooltips);
 }
+#endif
 
 // Interface to gtk_widget_set_tooltip_text() introduced in 2.12
 // Should be called after widget has a toplevel to minimize number
