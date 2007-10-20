@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.91 2007/10/06 13:18:46 nkbj Exp $
+dnl $Id: configure.ac,v 1.92 2007/10/20 11:15:46 nkbj Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -21,7 +21,9 @@ AC_FUNC_FSEEKO
 UFRAW_CFLAGS="-ffast-math -fomit-frame-pointer"
 UFRAW_LDADD=""
 if test "x$GCC" = "xyes"; then
-    UFRAW_CFLAGS="$UFRAW_CFLAGS -W -Wall -O3"
+    CFLAGS="-g -O3"
+    CXXFLAGS="-g -O3"
+    UFRAW_CFLAGS="$UFRAW_CFLAGS -W -Wall"
 fi
 
 # windows will require some special attention
@@ -205,7 +207,7 @@ fi
 # XXX For binary package creation, adjusting for the build CPU is not
 # appropriate.
 case $host_cpu in
-  686)
+  i686)
     UFRAW_CFLAGS="$UFRAW_CFLAGS -march=i686"
     ;;
   powerpc* | ppc*)
