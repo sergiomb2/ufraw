@@ -688,12 +688,12 @@ static void preview_draw_area(preview_data *data, int x, int y,
 			      int width, int height)
 {
     int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    if ( y<0 || y>=pixbufHeight )
+    if ( y<0 || y>pixbufHeight )
 	g_error("preview_draw_area(): y:%d out of range 0 <= y < %d", y, pixbufHeight);
     if ( height==0 ) return; // Nothing to do
 
     int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    if ( x<0 || x>=pixbufWidth )
+    if ( x<0 || x>pixbufWidth )
 	g_error("preview_draw_area(): x:%d out of range 0 <= x < %d", x, pixbufWidth);
     if ( width==0 ) return; // Nothing to do
 
@@ -1265,11 +1265,11 @@ static void draw_spot(preview_data *data, gboolean draw)
     int SpotY1 = MAX(MIN(data->SpotY1, data->SpotY2)
 	    * height / data->UF->initialHeight - 1, 0);
     int SpotY2 = MIN(MAX(data->SpotY1, data->SpotY2)
-	    * height / data->UF->initialHeight + 1, height-1);
+	    * height / data->UF->initialHeight + 1, height);
     int SpotX1 = MAX(MIN(data->SpotX1, data->SpotX2)
 	    * width / data->UF->initialWidth - 1, 0);
     int SpotX2 = MIN(MAX(data->SpotX1, data->SpotX2)
-	    * width / data->UF->initialWidth + 1, width-1);
+	    * width / data->UF->initialWidth + 1, width);
     preview_draw_area(data, SpotX1, SpotY1, SpotX2-SpotX1+1, 1);
     preview_draw_area(data, SpotX1, SpotY2, SpotX2-SpotX1+1, 1);
     preview_draw_area(data, SpotX1, SpotY1, 1, SpotY2-SpotY1+1);
