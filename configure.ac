@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.92 2007/10/20 11:15:46 nkbj Exp $
+dnl $Id: configure.ac,v 1.93 2007/10/21 04:30:51 nkbj Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -219,7 +219,8 @@ esac
 ALL_LINGUAS="da es fr ja pt ru"
 AM_GLIB_GNU_GETTEXT
 LIBS="$LIBS $INTLLIBS"
-# The following is not compatible with autoconf 2.60
+# The following might not work with some combinations of autoconf and glib due
+# to a missing update of the glib-gettext.m4 file.
 #AM_GLIB_DEFINE_LOCALEDIR(UFRAW_LOCALEDIR)
 GETTEXT_PACKAGE=ufraw
 AC_SUBST(GETTEXT_PACKAGE)
