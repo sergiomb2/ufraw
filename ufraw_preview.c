@@ -688,13 +688,20 @@ static void preview_draw_area(preview_data *data, int x, int y,
 			      int width, int height)
 {
     int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    if ( y<0 || y>pixbufHeight )
-	g_error("preview_draw_area(): y:%d out of range 0 <= y < %d", y, pixbufHeight);
+    if ( y<0 || y>=pixbufHeight )
+	g_error("preview_draw_area(): y:%d out of range 0 <= y < %d",
+		y, pixbufHeight);
+    if ( y+height>pixbufHeight )
+	g_error("preview_draw_area(): y+height:%d out of range y+height <= %d",
+		y+height, pixbufHeight);
     if ( height==0 ) return; // Nothing to do
 
     int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    if ( x<0 || x>pixbufWidth )
+    if ( x<0 || x>=pixbufWidth )
 	g_error("preview_draw_area(): x:%d out of range 0 <= x < %d", x, pixbufWidth);
+    if ( x+width>pixbufWidth )
+	g_error("preview_draw_area(): x+width:%d out of range x+width <= %d",
+		x+width, pixbufWidth);
     if ( width==0 ) return; // Nothing to do
 
     int rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
@@ -1265,11 +1272,11 @@ static void draw_spot(preview_data *data, gboolean draw)
     int SpotY1 = MAX(MIN(data->SpotY1, data->SpotY2)
 	    * height / data->UF->initialHeight - 1, 0);
     int SpotY2 = MIN(MAX(data->SpotY1, data->SpotY2)
-	    * height / data->UF->initialHeight + 1, height);
+	    * height / data->UF->initialHeight + 1, height-1);
     int SpotX1 = MAX(MIN(data->SpotX1, data->SpotX2)
 	    * width / data->UF->initialWidth - 1, 0);
     int SpotX2 = MIN(MAX(data->SpotX1, data->SpotX2)
-	    * width / data->UF->initialWidth + 1, width);
+	    * width / data->UF->initialWidth + 1, width-1);
     preview_draw_area(data, SpotX1, SpotY1, SpotX2-SpotX1+1, 1);
     preview_draw_area(data, SpotX1, SpotY2, SpotX2-SpotX1+1, 1);
     preview_draw_area(data, SpotX1, SpotY1, 1, SpotY2-SpotY1+1);
@@ -1708,9 +1715,9 @@ static void update_crop_ranges(preview_data *data)
     float scale_y = ((float)pixbufHeight) / data->UF->initialHeight;
 
     CropX1 = floor (CropX1 * scale_x);
-    CropX2 =  ceil (CropX2 * scale_x);
+    CropX2 = MIN(ceil(CropX2 * scale_x), pixbufWidth-1);
     CropY1 = floor (CropY1 * scale_y);
-    CropY2 =  ceil (CropY2 * scale_y);
+    CropY2 = MIN(ceil(CropY2 * scale_y), pixbufHeight-1);
 
     int x1[4], x2[4], y1[4], y2[4], i=0;
     if (CropX1!=data->DrawnCropX1) {
