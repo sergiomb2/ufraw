@@ -794,9 +794,9 @@ static gboolean switch_highlights(gpointer ptr)
 	int height =  MAX(y2 - y, 0);
 #else
 	int x = floor(CFG->CropX1 * scale_x);
-	int width =  ceil(CFG->CropX2 * scale_x) - x;
+	int width =  MIN(ceil(CFG->CropX2 * scale_x), pixbufWidth-1) - x;
 	int y = floor (CFG->CropY1 * scale_y);
-	int height =  ceil(CFG->CropY2 * scale_x) - y;
+	int height =  MIN(ceil(CFG->CropY2 * scale_x), pixbufHeight-1) - y;
 #endif
 	data->OverUnderTicker++;
 	preview_draw_area(data, x, y, width, height);
