@@ -40,6 +40,8 @@ The UFRaw build process expects Perl to be present (for pod2man).
 A modern make is required.  GNU make and BSD make both work currently.
 In case of trouble, try GNU make.
 
+Building UFRaw on the PowerPC platform requires GCC version 3.4 or newer.
+
 The first step of the installation is to run the configure script:
 
 ./configure
@@ -196,7 +198,7 @@ To build Cygwin binaries you can use the development libraries from:
 http://cygwinports.dotsrc.org/
 
 Building UFRaw from CVS
-===================
+=======================
 The development version has the following caveats:
 
 autoconf and automake must be installed.
