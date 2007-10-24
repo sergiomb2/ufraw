@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.93 2007/10/21 04:30:51 nkbj Exp $
+dnl $Id: configure.ac,v 1.94 2007/10/24 04:05:28 nkbj Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -204,15 +204,10 @@ if test $ufraw_win32 = yes; then
   AC_SUBST(COMMENT_ICON)
 fi
 
-# XXX For binary package creation, adjusting for the build CPU is not
-# appropriate.
+# For binary package creation, adjusting for the build CPU is not appropriate.
 case $host_cpu in
   i686)
     UFRAW_CFLAGS="$UFRAW_CFLAGS -march=i686"
-    ;;
-  powerpc* | ppc*)
-# there is a -floop-optimize bug in gcc 3.3.2 on powerpc (resolved in gcc 3.4)
-    UFRAW_CFLAGS="$UFRAW_CFLAGS -fno-loop-optimize"
     ;;
 esac
 
