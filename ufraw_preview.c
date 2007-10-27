@@ -2893,7 +2893,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
             gtk_container_foreach(GTK_CONTAINER(profileTable[j]),
                     (GtkCallback)(container_remove), profileTable[j]);
             table = GTK_TABLE(profileTable[j]);
-            for (i=1; i<CFG->profileCount[j]; i++) {
+            for (i=conf_default.profileCount[j]; i<CFG->profileCount[j]; i++) {
                 snprintf(txt, max_name, "%s (%s)",
                         CFG->profile[j][i].name,
                         CFG->profile[j][i].productName);
@@ -3026,7 +3026,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 		    gtk_combo_box_remove_text(data->ProfileCombo[j], 0);
 		for (i=0; i<RC.profileCount[j]; i++) {
 		    CFG->profile[j][i] = RC.profile[j][i];
-		    if ( i==0 )
+		    if ( i<conf_default.profileCount[j] )
 			gtk_combo_box_append_text(data->ProfileCombo[j],
 				_(CFG->profile[j][i].name));
 		    else
@@ -3894,7 +3894,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
                 j==display_profile ? _("Display ICC profile") : "Error");
         data->ProfileCombo[j] = GTK_COMBO_BOX(gtk_combo_box_new_text());
         for (i=0; i<CFG->profileCount[j]; i++)
-            if ( i==0 )
+            if ( i<conf_default.profileCount[j] )
 		gtk_combo_box_append_text(data->ProfileCombo[j],
 			_(CFG->profile[j][i].name));
 	    else

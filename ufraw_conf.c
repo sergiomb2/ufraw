@@ -639,6 +639,11 @@ int conf_load(conf_data *c, const char *IDFilename)
     if (c->version==5) {
         c->version = conf_default.version;
     }
+    // Display profile should not be read from ID files.
+    if (IDFilename!=NULL)
+	c->profileIndex[display_profile] =
+		conf_default.profileIndex[display_profile];
+
     /* a few consistency settings */
     if (c->curveIndex>=c->curveCount) c->curveIndex = conf_default.curveIndex;
     return UFRAW_SUCCESS;
@@ -890,6 +895,9 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
         g_free(curveBuf);
     }
     for (j=0; j<profile_types; j++) {
+	// Display profile does not belong in ID files.
+	if (IDFilename!=NULL && j==display_profile)
+	    continue;
         type = j==in_profile ? "InputProfile" :
                 j==out_profile ? "OutputProfile" :
                 j==display_profile ? "DisplayProfile" : "Error";
@@ -1091,8 +1099,11 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
 	    dst->curveCount++;
 	}
     }
-    /* We only copy the current input/output/display profile */
+    /* We only copy the current input/output profile */
     for (j=0; j<profile_types; j++) {
+	// Ignore the display profile
+	if ( j==display_profile)
+	    continue;
 	if (src->profileIndex[j]==0) {
 	    dst->profileIndex[j] = src->profileIndex[j];
 	    dst->profile[j][0] = src->profile[j][0];
