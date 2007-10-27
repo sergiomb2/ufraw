@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.94 2007/10/24 04:05:28 nkbj Exp $
+dnl $Id: configure.ac,v 1.95 2007/10/27 17:38:36 udifuchs Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -18,12 +18,13 @@ AC_CHECK_PROGS(POD2MAN, pod2man,
     echo cannot execute: pod2man], $PATH)
 AC_FUNC_FSEEKO
 
+# UFRAW_CFLAGS is added to the preprocessor flags AM_CPPFLAGS,
+# affecting also the C and C++ compilers.
 UFRAW_CFLAGS="-ffast-math -fomit-frame-pointer"
+# UFRAW_LDADD is added to the linker flags LDADD.
 UFRAW_LDADD=""
 if test "x$GCC" = "xyes"; then
-    CFLAGS="-g -O3"
-    CXXFLAGS="-g -O3"
-    UFRAW_CFLAGS="$UFRAW_CFLAGS -W -Wall"
+    UFRAW_CFLAGS="$UFRAW_CFLAGS -W -Wall -O3"
 fi
 
 # windows will require some special attention
