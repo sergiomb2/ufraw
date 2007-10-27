@@ -4647,11 +4647,17 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_widget_show_all(previewWindow);
     gtk_widget_hide(GTK_WIDGET(data->SpotTable));
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);
-#ifdef HAVE_GTKIMAGEVIEW
+
     // preview_progress() changes the size of the progress bar
     // and processes the event queue. 
     preview_progress(previewWindow, _("Loading preview"), 0.2);
-
+#ifdef HAVE_GTKIMAGEVIEW
+#if !GTK_CHECK_VERSION(2,8,0)
+    /* There is a bug that causes the mouse location to be misplaced
+     * in the event-box. The following voodoo seems to fix the mapping. */
+    gtk_widget_set_size_request(scroll, preview_width+1, preview_height+1);
+    while (gtk_events_pending()) gtk_main_iteration();
+#endif
     /* After window size was set, the user may want to shrink it */
     gtk_widget_set_size_request(scroll, -1, -1);
 
@@ -4675,8 +4681,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     // Get the empty preview displayed
     while (gtk_events_pending()) gtk_main_iteration();
 #endif
-    preview_progress(previewWindow, _("Loading preview"), 0.2);
-
     for (i=0; i<cursor_num; i++)
 	data->Cursor[i] = gdk_cursor_new(Cursors[i]);
     gdk_window_set_cursor(PreviewEventBox->window, data->Cursor[spot_cursor]);
