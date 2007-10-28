@@ -56,7 +56,8 @@ static const int his_max_height = 256;
 enum { pixel_format, percent_format };
 enum { without_zone, with_zone };
 
-static char *expanderText[] = { N_("Raw histogram"), N_("Live histogram"), NULL };
+static char *expanderText[] = { N_("Raw histogram with conversion curves"),
+    N_("Live histogram"), NULL };
 
 typedef struct {
     GtkLabel *labels[5];
@@ -1499,7 +1500,8 @@ static gboolean preview_button_press(GtkWidget *event_box, GdkEventButton *event
 	draw_spot(data, FALSE);
 	data->SpotX1 = data->SpotX2 = event->x;
 	data->SpotY1 = data->SpotY2 = event->y;
-	render_spot(data);
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
+		(GSourceFunc)(render_spot), data, NULL);
 	return TRUE;
     }
     if ( data->PageNum==4 ) {
@@ -1637,7 +1639,8 @@ static gboolean preview_motion_notify(GtkWidget *event_box, GdkEventMotion *even
     event_coordinate_rescale(&event->x, &event->y, data);
     data->SpotX2 = event->x;
     data->SpotY2 = event->y;
-    render_spot(data);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
+            (GSourceFunc)(render_spot), data, NULL);
     return TRUE;
 }
 
@@ -4217,7 +4220,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* Size/shrink controls */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     label = gtk_label_new(_("Shrink factor"));
-    gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, 0, 0, 0, 0);
+    gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, 0, 0, 0, 0);
     data->ShrinkAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(CFG->shrink,
             1, 100, 1, 2, 3));
     g_object_set_data(G_OBJECT(data->ShrinkAdjustment),
@@ -4229,10 +4232,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->ShrinkAdjustment), "value-changed",
             G_CALLBACK(adjustment_update), &data->shrink);
     gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(data->ShrinkSpin),
-	    1, 2, 1, 2, 0, 0, 0, 0);
+	    1, 2, 0, 1, 0, 0, 0, 0);
 
     label = gtk_label_new(_("Height"));
-    gtk_table_attach(GTK_TABLE(table), label, 2, 3, 1, 2, 0, 0, 0, 0);
+    gtk_table_attach(GTK_TABLE(table), label, 1, 2, 1, 2, 0, 0, 0, 0);
+    data->height = 0;
     data->HeightAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(data->height,
             10, 0, 10, 100, 0));
     g_object_set_data(G_OBJECT(data->HeightAdjustment),
@@ -4244,10 +4248,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->HeightAdjustment), "value-changed",
             G_CALLBACK(adjustment_update), &data->height);
     gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(data->HeightSpin),
-		3, 4, 1, 2, 0, 0, 0, 0);
+		2, 3, 1, 2, 0, 0, 0, 0);
 
     label = gtk_label_new(_("Width"));
-    gtk_table_attach(GTK_TABLE(table), label, 4, 5, 1, 2, 0, 0, 0, 0);
+    gtk_table_attach(GTK_TABLE(table), label, 3, 4, 1, 2, 0, 0, 0, 0);
+    data->width = 0;
     data->WidthAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(data->width,
             10, 0, 10, 100, 0));
     g_object_set_data(G_OBJECT(data->WidthAdjustment),
@@ -4259,7 +4264,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->WidthAdjustment), "value-changed",
             G_CALLBACK(adjustment_update), &data->width);
     gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(data->WidthSpin),
-	    5, 6, 1, 2, 0, 0, 0, 0);
+	    4, 5, 1, 2, 0, 0, 0, 0);
 
     /* Orientation controls */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
