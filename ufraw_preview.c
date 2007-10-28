@@ -947,6 +947,20 @@ static gboolean render_prepare(preview_data *data)
     g_snprintf(text, max_name, _("Black point: %0.3lf"),
 	    CFG->curve[CFG->curveIndex].m_anchors[0].x);
     gtk_label_set_text(GTK_LABEL(data->BlackLabel), text);
+
+    if ( CFG->profileIndex[display_profile]==0 ) {
+	guint8 *displayProfile;
+	gint profileSize;
+	uf_get_display_profile(data->PreviewWidget, &displayProfile,
+		&profileSize);
+	developer_display_profile(Developer, displayProfile, profileSize,
+		CFG->profile[display_profile]
+			[CFG->profileIndex[display_profile]].productName);
+    } else {
+	developer_display_profile(Developer, NULL, 0,
+		CFG->profile[display_profile]
+			[CFG->profileIndex[display_profile]].productName);
+    }
     developer_prepare(Developer, CFG,
 	    data->UF->rgbMax, data->UF->rgb_cam,
 	    data->UF->colors, data->UF->useMatrix, display_developer);
@@ -2805,7 +2819,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     // blinkOverUnder toggle button
     GtkWidget *blinkButton = gtk_check_button_new_with_label(
 	    _("Blink Over/Underexposure Indicators"));
-    gtk_table_attach(settingsTable, blinkButton, 0, 2, 2, 3, GTK_FILL, 0, 0, 0);
+    gtk_table_attach(settingsTable, blinkButton, 0, 2, 1, 2, GTK_FILL, 0, 0, 0);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(blinkButton),
 	    CFG->blinkOverUnder);
 

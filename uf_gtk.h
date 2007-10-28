@@ -29,6 +29,10 @@ void uf_button_set_stock_image(GtkButton *button, const gchar *stock_image);
 // Interface to gtk_window_set_icon_name() introduced in 2.6
 void uf_window_set_icon_name(GtkWindow *window, const gchar *name);
 
+// Get the display ICC profile of the monitor associated with the widget.
+void uf_get_display_profile(GtkWidget *widget,
+     guint8 **buffer, gint *buffer_size);
+
 #ifdef  __cplusplus
 }
 #endif

@@ -75,10 +75,15 @@ void developer_destroy(developer_data *d)
     g_free(d);
 }
 
+static char *embedded_display_profile = "embedded display profile";
+
 /* Update the profile in the developer
  * and init values in the profile if needed */
 void developer_profile(developer_data *d, int type, profile_data *p)
 {
+    // embedded_display_profile were handled by developer_display_profile()
+    if ( strcmp(d->profileFile[type],embedded_display_profile)==0 )
+	return;
     if (strcmp(p->file, d->profileFile[type])) {
         g_strlcpy(d->profileFile[type], p->file, max_path);
         if (d->profile[type]!=NULL) cmsCloseProfile(d->profile[type]);
@@ -100,6 +105,39 @@ void developer_profile(developer_data *d, int type, profile_data *p)
                         max_name);
         else
             strcpy(p->productName, "");
+    }
+}
+
+void developer_display_profile(developer_data *d,
+    unsigned char *profile, int size, char productName[])
+{
+    int type = display_profile;
+    if ( profile!=NULL ) {
+	if (d->profile[type]!=NULL) cmsCloseProfile(d->profile[type]);
+	d->profile[type] = cmsOpenProfileFromMem(profile, size);
+	g_free(profile);
+	if (d->profile[type]==NULL)
+            d->profile[type] = cmsCreate_sRGBProfile();
+	if ( strcmp(d->profileFile[type], embedded_display_profile)!=0 ) {
+	    // start using embedded profile
+	    g_strlcpy(d->profileFile[type], embedded_display_profile, max_path);
+	    d->updateTransform = TRUE;
+	}
+    } else {
+	if ( strcmp(d->profileFile[type], embedded_display_profile)==0 ) {
+	    // embedded profile is no longer used
+	    if (d->profile[type]!=NULL) cmsCloseProfile(d->profile[type]);
+	    d->profile[type] = cmsCreate_sRGBProfile();
+	    strcpy(d->profileFile[type], "");
+	    d->updateTransform = TRUE;
+	}
+    }
+    if ( d->updateTransform ) {
+        if ( d->profile[type]!=NULL )
+            g_strlcpy(productName, cmsTakeProductName(d->profile[type]),
+                        max_name);
+        else
+            strcpy(productName, "");
     }
 }
 

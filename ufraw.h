@@ -303,6 +303,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc);
 developer_data *developer_init();
 void developer_destroy(developer_data *d);
 void developer_profile(developer_data *d, int type, profile_data *p);
+void developer_display_profile(developer_data *d,
+    unsigned char *profile, int size, char productName[]);
 void developer_prepare(developer_data *d, conf_data *conf,
     int rgbMax, float rgb_cam[3][4], int colors, int useMatrix,
     DeveloperMode mode);

@@ -60,14 +60,15 @@ const conf_data conf_default = {
       { N_("Linear curve"), TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } }
     },
-    { 0, 0, 0 } , { 1, 1, 1 }, /* profileIndex[], profileCount[] */
+    { 0, 0, 0 } , { 1, 1, 2 }, /* profileIndex[], profileCount[] */
     /* Profile data defaults */
     { { { N_("sRGB"), "", "", 0.45, 0.1, TRUE },
-        { "Some ICC Profile", "", "", 0.45, 0.0, FALSE } },
+	{ "Some ICC Profile", "", "", 0.45, 0.0, FALSE } },
       { { N_("sRGB"), "", "", 0.0, 0.0, FALSE },
-        { "Some ICC Profile", "", "", 0.0, 0.0, FALSE } },
-      { { N_("sRGB"), "", "", 0.0, 0.0, FALSE },
-        { "Some ICC Profile", "", "", 0.0, 0.0, FALSE } } },
+	{ "Some ICC Profile", "", "", 0.0, 0.0, FALSE } },
+      { { N_("System profile"), "", "", 0.0, 0.0, FALSE },
+	{ N_("sRGB"), "", "", 0.0, 0.0, FALSE },
+	{ "Some ICC Profile", "", "", 0.0, 0.0, FALSE } } },
     { 0, 0, 0 }, /* intent */
     ahd_interpolation, 0, /* interpolation, smoothing */
     "", NULL, /* darkframeFile, darkframe */
@@ -191,8 +192,10 @@ static void conf_parse_start(GMarkupParseContext *context,
                 c->profileIndex[in_profile] = 0;
             if (!strcmp("sRGBOutputProfile", element))
                 c->profileIndex[out_profile] = 0;
-            if (!strcmp("sRGBDisplayProfile", element))
+            if (!strcmp("SystemDisplayProfile", element))
                 c->profileIndex[display_profile] = 0;
+            if (!strcmp("sRGBDisplayProfile", element))
+                c->profileIndex[display_profile] = 1;
             if (!strcmp("InputProfile", element))
                 c->profileIndex[in_profile] = c->profileCount[in_profile];
             if (!strcmp("OutputProfile", element))
@@ -235,8 +238,10 @@ static void conf_parse_start(GMarkupParseContext *context,
 	c->profileCount[in_profile] = - 0;
     if ( !strcmp("sRGBOutputProfile", element) )
 	c->profileCount[out_profile] = - 0;
-    if ( !strcmp("sRGBDisplayProfile", element) )
+    if ( !strcmp("SystemDisplayProfile", element) )
 	c->profileCount[display_profile] = - 0;
+    if ( !strcmp("sRGBDisplayProfile", element) )
+	c->profileCount[display_profile] = - 1;
 }
 
 static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
@@ -275,8 +280,10 @@ static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
 	c->profileCount[in_profile] = 1;
     if ( !strcmp("sRGBOutputProfile", element) )
 	c->profileCount[out_profile] = 1;
-    if ( !strcmp("sRGBDisplayProfile", element) )
+    if ( !strcmp("SystemDisplayProfile", element) )
 	c->profileCount[display_profile] = 1;
+    if ( !strcmp("sRGBDisplayProfile", element) )
+	c->profileCount[display_profile] = 2;
     if ( c->profileCount[in_profile]<=0 && strcmp("InputProfile", element)==0 )
         c->profileCount[in_profile] = -c->profileCount[in_profile]+1;
     if ( c->profileCount[out_profile]<=0 &&
@@ -902,13 +909,17 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
                 j==out_profile ? "OutputProfile" :
                 j==display_profile ? "DisplayProfile" : "Error";
 	/* The default sRGB profile is conf_default.profile[j][0] */
-        if ( c->profileIndex[j]==0 || ( IDFilename==NULL &&
-             ( c->profile[j][0].gamma!=conf_default.profile[0][0].gamma ||
-               c->profile[j][0].linear!=conf_default.profile[0][0].linear ||
-               c->profile[j][0].useMatrix!=
-		   conf_default.profile[0][0].useMatrix ) ) ) {
+        if ( c->profileIndex[j]<conf_default.profileCount[j] ||
+	     ( IDFilename==NULL &&
+	       ( c->profile[j][0].gamma!=conf_default.profile[0][0].gamma ||
+		 c->profile[j][0].linear!=conf_default.profile[0][0].linear ||
+		 c->profile[j][0].useMatrix!=
+			conf_default.profile[0][0].useMatrix ) ) ) {
             current = c->profileIndex[j]==0 ? "yes" : "no";
-            buf = uf_markup_buf(buf, "<sRGB%s Current='%s'>\n", type, current);
+	    char *profile = ( j==display_profile && c->profileIndex[j]==0 ) ?
+		    "System" : "sRGB";
+            buf = uf_markup_buf(buf, "<%s%s Current='%s'>\n",
+		    profile, type, current);
             if (c->profile[j][0].gamma!=conf_default.profile[j][0].gamma)
                 buf = uf_markup_buf(buf,
 			"\t<Gamma>%lf</Gamma>\n", c->profile[j][0].gamma);
@@ -923,7 +934,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
             buf = uf_markup_buf(buf, "</sRGB%s>\n", type);
         }
 	/* While the default ICC profile is conf_default.profile[j][1] */
-        for (i=1; i<c->profileCount[j]; i++) {
+        for (i=conf_default.profileCount[j]; i<c->profileCount[j]; i++) {
 	    if (IDFilename!=NULL && i!=c->profileIndex[j])
 		continue;
             current = i==c->profileIndex[j]?"yes":"no";

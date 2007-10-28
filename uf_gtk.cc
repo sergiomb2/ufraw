@@ -12,6 +12,11 @@
 
 #include "uf_gtk.h"
 
+#ifdef G_OS_WIN32
+#define STRICT
+#include <windows.h>
+#endif
+
 extern "C" {
 
 #if !GTK_CHECK_VERSION(2,12,0)
@@ -81,6 +86,58 @@ void uf_window_set_icon_name(GtkWindow *window, const gchar *name)
     gtk_window_set_icon(window,
 	    gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
 		    name, 48, GTK_ICON_LOOKUP_USE_BUILTIN, NULL));
+#endif
+}
+
+// Get the display ICC profile of the monitor associated with the widget.
+// For X display, uses the ICC profile specifications version 0.2 from
+// http://burtonini.com/blog/computers/xicc
+// Based on code from Gimp's modules/cdisplay_lcms.c
+void uf_get_display_profile(GtkWidget *widget,
+    guint8 **buffer, gint *buffer_size)
+{
+    *buffer = NULL;
+    *buffer_size = 0;
+#if defined GDK_WINDOWING_X11
+    GdkScreen *screen = gtk_widget_get_screen(widget);
+    if ( screen==NULL )
+	screen = gdk_screen_get_default();
+    int monitor = gdk_screen_get_monitor_at_window (screen, widget->window);
+    char *atom_name;
+    if (monitor > 0)
+	atom_name = g_strdup_printf("_ICC_PROFILE_%d", monitor);
+    else
+	atom_name = g_strdup("_ICC_PROFILE");
+
+    GdkAtom type = GDK_NONE;
+    gint format = 0;
+    gdk_property_get(gdk_screen_get_root_window(screen),
+            gdk_atom_intern(atom_name, FALSE), GDK_NONE,
+            0, 64 * 1024 * 1024, FALSE,
+            &type, &format, buffer_size, buffer);
+    g_free(atom_name);
+
+#elif defined GDK_WINDOWING_QUARTZ
+    // FIXME: not implemented
+    (void)widget;
+
+#elif defined G_OS_WIN32
+    (void)widget;
+    HDC hdc = GetDC (NULL);
+    if ( hdc==NULL )
+	return;
+    
+    DWORD len = 0;
+    GetICMProfile (hdc, &len, NULL);
+    gchar *path = g_new (gchar, len);
+
+    if (GetICMProfile (hdc, &len, path)) {
+	gsize size;
+	g_file_get_contents(path, (gchar**)buffer, &size, NULL);
+	*buffer_size = size;
+    }
+    g_free (path);
+    ReleaseDC (NULL, hdc);
 #endif
 }
 

@@ -30,7 +30,7 @@ typedef unsigned short ushort;
  */
 #if !defined(DCRAW_NOMAIN) && defined(WIN32)
 #include <glib.h>
-#if GLIB_CHECK_VERSION(2.6.0)
+#if GLIB_CHECK_VERSION(2,6,0)
 extern "C" {
 #include <glib/gstdio.h>
 }
