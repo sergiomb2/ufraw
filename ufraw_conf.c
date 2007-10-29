@@ -66,7 +66,7 @@ const conf_data conf_default = {
 	{ "Some ICC Profile", "", "", 0.45, 0.0, FALSE } },
       { { N_("sRGB"), "", "", 0.0, 0.0, FALSE },
 	{ "Some ICC Profile", "", "", 0.0, 0.0, FALSE } },
-      { { N_("System profile"), "", "", 0.0, 0.0, FALSE },
+      { { N_("System default"), "", "", 0.0, 0.0, FALSE },
 	{ N_("sRGB"), "", "", 0.0, 0.0, FALSE },
 	{ "Some ICC Profile", "", "", 0.0, 0.0, FALSE } } },
     { 0, 0, 0 }, /* intent */
