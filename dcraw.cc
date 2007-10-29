@@ -6517,7 +6517,7 @@ void CLASS identify()
     width  = 3908;
     top_margin  = 18;
     left_margin = 30;
-    maximum = 0x3fff;
+    maximum = 0x3f60;
   } else if (is_canon && raw_width == 3948) {
     top_margin  = 18;
     left_margin = 42;
