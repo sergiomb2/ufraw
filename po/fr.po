@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-10-29 21:00+0100\n"
+"POT-Creation-Date: 2007-10-30 05:45+0100\n"
 "PO-Revision-Date: 2007-10-16 22:42+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -118,8 +118,9 @@ msgid "sRGB"
 msgstr "sRGB"
 
 #: ufraw_conf.c:69
-msgid "System profile"
-msgstr ""
+#, fuzzy
+msgid "System default"
+msgstr "Sauve réglages image par défaut"
 
 #: ufraw_conf.c:161
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"

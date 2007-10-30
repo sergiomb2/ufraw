@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-10-29 21:00+0100\n"
+"POT-Creation-Date: 2007-10-30 05:45+0100\n"
 "PO-Revision-Date: 2007-07-22 19:21+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@gnome.org>\n"
@@ -126,8 +126,9 @@ msgid "sRGB"
 msgstr "sRGB"
 
 #: ufraw_conf.c:69
-msgid "System profile"
-msgstr ""
+#, fuzzy
+msgid "System default"
+msgstr "Сохранять параметры снимков"
 
 #: ufraw_conf.c:161
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
