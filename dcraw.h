@@ -10,10 +10,6 @@
  
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
- 
-   Notice that the original dcraw.c is published under a different
-   license. Naturaly, the GPL license applies only to this derived
-   work.
  */
 
 #define ushort UshORt
