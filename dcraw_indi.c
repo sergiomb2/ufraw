@@ -314,7 +314,7 @@ void CLASS lin_interpolate_INDI(ushort (*image)[4], const unsigned filters,
       FORCC
 	if (c != fc_INDI(filters,row,col)) {
 	  *ip++ = c;
-	  *ip++ = sum[c];
+	  *ip++ = 256 / sum[c];
 	}
     }
   for (row=1; row < height-1; row++)
@@ -325,7 +325,7 @@ void CLASS lin_interpolate_INDI(ushort (*image)[4], const unsigned filters,
       for (i=8; i--; ip+=3)
 	sum[ip[2]] += pix[ip[0]] << ip[1];
       for (i=colors; --i; ip+=2)
-	pix[ip[0]] = sum[ip[0]] / ip[1];
+	pix[ip[0]] = sum[ip[0]] * ip[1] >> 8;
     }
 }
 
