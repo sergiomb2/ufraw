@@ -165,11 +165,7 @@ void quicktake_100_load_raw();
 const int * make_decoder_int (const int *source, int level);
 int radc_token (int tree);
 void kodak_radc_load_raw();
-#ifndef HAVE_LIBJPEG
 void kodak_jpeg_load_raw();
-#else
-void kodak_jpeg_load_raw();
-#endif
 void kodak_dc120_load_raw();
 void kodak_easy_load_raw();
 void kodak_262_load_raw();

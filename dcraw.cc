@@ -4188,7 +4188,7 @@ void CLASS ahd_interpolate()
 #undef TS
 /* End of functions copied to dcraw_indi.c (UF) */
 
-void CLASS median_filter ()
+void CLASS median_filter()
 {
   ushort (*pix)[4];
   int pass, c, i, j, k, med[9];
@@ -4197,8 +4197,7 @@ void CLASS median_filter ()
     0,3, 5,8, 4,7, 3,6, 1,4, 2,5, 4,7, 4,2, 6,4, 4,2 };
 
   for (pass=1; pass <= med_passes; pass++) {
-    if (verbose)
-      fprintf (stderr,_("Median filter pass %d...\n"), pass);
+    dcraw_message (DCRAW_VERBOSE,_("Median filter pass %d...\n"), pass); /*UF*/
     for (c=0; c < 3; c+=2) {
       for (pix = image; pix < image+width*height; pix++)
 	pix[0][3] = pix[0][c];
@@ -4513,11 +4512,13 @@ void CLASS parse_makernote (int base, int uptag)
       thumb_offset += base;
     if (tag == 0x89 && type == 4)
       thumb_length = get4();
-    if (tag == 0x8c || tag == 0x96) { /* NTC UF*/
+    if (tag == 0x8c || tag == 0x96) {
       meta_offset = ftell(ifp);
-      tone_curve_offset = ftell(ifp);
-      tone_curve_size = len;
-    } /* NTC UF*/
+      if (tag == 0x8c) { /* NTC UF*/
+        tone_curve_offset = ftell(ifp);
+        tone_curve_size = len;
+      } /* NTC UF*/
+    }
     if (tag == 0x97) {
       for (i=0; i < 4; i++)
 	ver97 = (ver97 << 4) + fgetc(ifp)-'0';
