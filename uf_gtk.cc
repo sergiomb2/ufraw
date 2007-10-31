@@ -12,6 +12,12 @@
 
 #include "uf_gtk.h"
 
+#ifdef GDK_WINDOWING_QUARTZ
+#include <Carbon/Carbon.h>
+#include <ApplicationServices/ApplicationServices.h>
+#include <CoreServices/CoreServices.h>
+#endif
+
 #ifdef G_OS_WIN32
 #define STRICT
 #include <windows.h>
@@ -93,6 +99,44 @@ void uf_window_set_icon_name(GtkWindow *window, const gchar *name)
 // For X display, uses the ICC profile specifications version 0.2 from
 // http://burtonini.com/blog/computers/xicc
 // Based on code from Gimp's modules/cdisplay_lcms.c
+#ifdef GDK_WINDOWING_QUARTZ
+typedef struct {
+    guchar *data;
+    gsize   len;
+} ProfileTransfer;
+
+enum {
+    openReadSpool  = 1, /* start read data process         */
+    openWriteSpool = 2, /* start write data process        */
+    readSpool      = 3, /* read specified number of bytes  */
+    writeSpool     = 4, /* write specified number of bytes */
+    closeSpool     = 5  /* complete data transfer process  */
+};
+
+static OSErr _uf_lcms_flatten_profile(SInt32  command,
+    SInt32 *size, void *data, void *refCon)
+{
+    ProfileTransfer *transfer = refCon;
+
+    switch (command)
+    {
+    case openWriteSpool:
+	g_return_val_if_fail(transfer->data==NULL && transfer->len==0, -1);
+	break;
+
+    case writeSpool:
+	transfer->data = g_realloc(transfer->data, transfer->len + *size);
+	memcpy(transfer->data + transfer->len, data, *size);
+	transfer->len += *size;
+	break;
+
+    default:
+	break;
+    }
+    return 0;
+}
+#endif /* GDK_WINDOWING_QUARTZ */
+
 void uf_get_display_profile(GtkWidget *widget,
     guint8 **buffer, gint *buffer_size)
 {
@@ -118,8 +162,23 @@ void uf_get_display_profile(GtkWidget *widget,
     g_free(atom_name);
 
 #elif defined GDK_WINDOWING_QUARTZ
-    // FIXME: not implemented
-    (void)widget;
+    GdkScreen *screen = gtk_widget_get_screen(widget);
+    if ( screen==NULL )
+	screen = gdk_screen_get_default();
+    int monitor = gdk_screen_get_monitor_at_window(screen, widget->window);
+
+    CMProfileRef prof = NULL;
+    CMGetProfileByAVID(monitor, &prof);
+    if ( prof==NULL )
+	return;
+
+    ProfileTransfer transfer = { NULL, 0 };
+    Boolean foo;
+    CMFlattenProfile(prof, 0, _uf_lcms_flatten_profile, &transfer, &foo);
+    CMCloseProfile(prof);
+
+    *buffer = transfer.data;
+    *buffer_size = transfer.len;
 
 #elif defined G_OS_WIN32
     (void)widget;
