@@ -40,13 +40,13 @@
 /*
    NO_LCMS disables the "-p" option.
  */
+#ifndef NO_LCMS
+#include <lcms.h>
+#endif
 #ifdef HAVE_LIBJPEG
 extern "C" {
 #include <jpeglib.h>
 }
-#endif
-#ifndef NO_LCMS
-#include <lcms.h>
 #endif
 //#ifdef LOCALEDIR
 //#include <libintl.h>
@@ -215,10 +215,10 @@ int CLASS fc (int row, int col)
 }
 
 #ifndef HAVE_MEMMEM
-char *memmem (char *haystack, size_t haystacklen,
-	      char *needle, size_t needlelen)
+const char *memmem (const char *haystack, size_t haystacklen,
+	      const char *needle, size_t needlelen)
 {
-  char *c;
+  const char *c;
   for (c = haystack; c <= haystack + haystacklen - needlelen; c++)
     if (!memcmp (c, needle, needlelen))
       return c;

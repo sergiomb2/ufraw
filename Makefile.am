@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.45 2007/11/01 00:08:59 udifuchs Exp $
+# $Id: Makefile.am,v 1.46 2007/11/01 22:04:46 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -66,7 +66,7 @@ ufraw_SOURCES = ufraw.c
 ufraw_LDADD = $(LDADD) $(GTK_LIBS)
 
 ufraw_batch_SOURCES = ufraw-batch.c
-ufraw_batch_LDFLAGS = @CONSOLE@
+ufraw_batch_LINK = $(CXXLINK) @CONSOLE@
 
 if MAKE_GIMP
   ufraw_gimp_SOURCES = ufraw-gimp.c
