@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.95 2007/10/27 17:38:36 udifuchs Exp $
+dnl $Id: configure.ac,v 1.96 2007/11/01 00:08:59 udifuchs Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -18,13 +18,24 @@ AC_CHECK_PROGS(POD2MAN, pod2man,
     echo cannot execute: pod2man], $PATH)
 AC_FUNC_FSEEKO
 
-# UFRAW_CFLAGS is added to the preprocessor flags AM_CPPFLAGS,
-# affecting also the C and C++ compilers.
-UFRAW_CFLAGS="-ffast-math -fomit-frame-pointer"
-# UFRAW_LDADD is added to the linker flags LDADD.
-UFRAW_LDADD=""
-if test "x$GCC" = "xyes"; then
-    UFRAW_CFLAGS="$UFRAW_CFLAGS -W -Wall -O3"
+# For binary package creation, adjusting for the build CPU is not appropriate.
+case $host_cpu in
+  i686)
+    UFRAW_MARCH="-march=i686"
+    ;;
+  * )
+    UFRAW_MARCH=""
+    ;;
+esac
+
+# default CFLAGS, CXXFLAGS for GCC in case they were not set by the user.
+if test "$GCC" = "yes"; then
+  if test "$ac_test_CFLAGS" != "set"; then
+    CFLAGS="-W -Wall -g -O3 -ffast-math -fomit-frame-pointer $UFRAW_MARCH"
+  fi
+  if test "$ac_test_CXXFLAGS" != "set"; then
+    CXXFLAGS="-W -Wall -g -O3 -ffast-math -fomit-frame-pointer $UFRAW_MARCH"
+  fi
 fi
 
 # windows will require some special attention
@@ -39,8 +50,8 @@ esac
 AM_CONDITIONAL(UFRAW_WIN32, test $ufraw_win32 = yes)
 
 if test $ufraw_win32 = yes; then
-  UFRAW_CFLAGS="$UFRAW_CFLAGS -mno-cygwin -mwindows -mms-bitfields"
-  UFRAW_LDADD="$UFRAW_LDADD -mno-cygwin -mwindows -mms-bitfields"
+  CFLAGS="$CFLAGS -mno-cygwin -mwindows -mms-bitfields"
+  CXXFLAGS="$CXXFLAGS -mno-cygwin -mwindows -mms-bitfields"
   CONSOLE="-mconsole"
 else
   CONSOLE=
@@ -65,14 +76,15 @@ AC_ARG_WITH(dosprefix,
   [ with_dosprefix=NONE ] )
 
 PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4)
-AC_SUBST(GTK_LIBS)
 PKG_CHECK_MODULES(GLIB, glib-2.0)
 PKG_CHECK_MODULES(LCMS, lcms)
 PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview >= 1.3,
   [ have_gtkimageview=yes
+    GTK_LIBS=$GTKIMAGEVIEW_LIBS
     AC_DEFINE(HAVE_GTKIMAGEVIEW, 1, have gtk image view) ],
   [ have_gtkimageview=no
     AC_MSG_RESULT($GIMP_PKG_ERRORS) ] )
+AC_SUBST(GTK_LIBS)
 PKG_CHECK_MODULES(gtk_image_view_damage_pixels, gtkimageview > 1.5.0,
   [ AC_DEFINE_UNQUOTED(GTK_IMAGE_VIEW_DAMAGE_PIXELS, 1, temporary) ],
   [ AC_DEFINE_UNQUOTED(GTK_IMAGE_VIEW_DAMAGE_PIXELS, 0, temporary) ])
@@ -108,7 +120,6 @@ PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.22,
 AM_CONDITIONAL(MAKE_CINEPAINT, test $have_cinepaint = yes)
 AC_SUBST(CINEPAINT_CFLAGS)
 AC_SUBST(CINEPAINT_LIBS)
-AC_SUBST(CINEPAINT_LIBDIR)
 AC_SUBST(CINEPAINT_PROGRAMPLUGINDIR)
 
 # Disable deprecated functions on tested versions of GTK
@@ -175,8 +186,13 @@ PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
   [ have_exiv2=no
     AC_MSG_RESULT($EXIV2_PKG_ERRORS) ] )
 
-UFRAW_CFLAGS="$UFRAW_CFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS $GTKIMAGEVIEW_CFLAGS"
-UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $GTKIMAGEVIEW_LIBS"
+# UFRAW_CPPFLAGS is added to the preprocessor flags AM_CPPFLAGS,
+# affecting also the C and C++ compilers.
+UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $LCMS_CFLAGS $GTKIMAGEVIEW_CFLAGS"
+AC_SUBST(UFRAW_CPPFLAGS)
+# UFRAW_LDADD is added to the linker flags LDADD.
+UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS"
+AC_SUBST(UFRAW_LDADD)
 
 if test $ufraw_win32 = yes; then
   AC_CHECK_PROGS(WINDRES, $target_alias-windres windres, , $PATH)
@@ -205,13 +221,6 @@ if test $ufraw_win32 = yes; then
   AC_SUBST(COMMENT_ICON)
 fi
 
-# For binary package creation, adjusting for the build CPU is not appropriate.
-case $host_cpu in
-  i686)
-    UFRAW_CFLAGS="$UFRAW_CFLAGS -march=i686"
-    ;;
-esac
-
 ALL_LINGUAS="da es fr ja pt ru"
 AM_GLIB_GNU_GETTEXT
 LIBS="$LIBS $INTLLIBS"
@@ -220,9 +229,6 @@ LIBS="$LIBS $INTLLIBS"
 #AM_GLIB_DEFINE_LOCALEDIR(UFRAW_LOCALEDIR)
 GETTEXT_PACKAGE=ufraw
 AC_SUBST(GETTEXT_PACKAGE)
-
-AC_SUBST(UFRAW_CFLAGS)
-AC_SUBST(UFRAW_LDADD)
 
 AC_MSG_CHECKING(whether to install mime types)
 AC_ARG_ENABLE(mime,

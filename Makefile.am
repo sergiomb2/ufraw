@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.44 2007/10/09 22:29:10 udifuchs Exp $
+# $Id: Makefile.am,v 1.45 2007/11/01 00:08:59 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -47,7 +47,7 @@ EXTRA_DIST = ufraw.desktop ufraw_icon.ico ufraw_icon.rc \
     ufraw-mime.xml generate_schemas.sh \
     ufraw-setup.jpg autogen.sh MANIFEST ufraw.pod ufraw.1
 
-AM_CPPFLAGS = $(UFRAW_CFLAGS) -DDCRAW_NOMAIN \
+AM_CPPFLAGS = $(UFRAW_CPPFLAGS) -DDCRAW_NOMAIN \
 		-DUFRAW_LOCALEDIR=\"$(datadir)/locale\"
 LDADD = libufraw.a $(UFRAW_ICON) $(UFRAW_LDADD)
 LINK = $(CXXLINK)
@@ -71,7 +71,7 @@ ufraw_batch_LDFLAGS = @CONSOLE@
 if MAKE_GIMP
   ufraw_gimp_SOURCES = ufraw-gimp.c
   ufraw_gimp_CPPFLAGS = $(AM_CPPFLAGS) $(GIMP_CFLAGS) 
-  ufraw_gimp_LDADD = $(LDADD) $(GIMP_LIBS)
+  ufraw_gimp_LDADD = $(LDADD) $(GIMP_LIBS) $(GTK_LIBS)
 endif
 
 if MAKE_CINEPAINT
@@ -83,12 +83,12 @@ endif
 
 if MAKE_EXTRAS
   dcraw_SOURCES = dcraw.cc
-  dcraw_CPPFLAGS = $(UFRAW_CFLAGS)
+  dcraw_CPPFLAGS = $(UFRAW_CPPFLAGS)
   dcraw_LDFLAGS = @CONSOLE@
   dcraw_LDADD = $(UFRAW_LDADD)
 
   nikon_curve_SOURCES = nikon_curve.c
-  nikon_curve_CFLAGS = $(UFRAW_CFLAGS) -D_STAND_ALONE_
+  nikon_curve_CFLAGS = $(UFRAW_CPPFLAGS) -D_STAND_ALONE_
   nikon_curve_LDFLAGS = @CONSOLE@
   nikon_curve_LDADD = $(UFRAW_LDADD)
 endif
