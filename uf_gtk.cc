@@ -11,6 +11,7 @@
  */
 
 #include "uf_gtk.h"
+#include <glib/gi18n.h>
 
 #ifdef GDK_WINDOWING_QUARTZ
 #include <Carbon/Carbon.h>
@@ -199,5 +200,8 @@ void uf_get_display_profile(GtkWidget *widget,
     ReleaseDC (NULL, hdc);
 #endif
 }
+
+// Translate text message from GtkImageView:
+const char *uf_gtkimageview_text = N_("Open the navigator window");
 
 } // extern "C"

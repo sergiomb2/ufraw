@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-01 23:31+0100\n"
+"POT-Creation-Date: 2007-11-01 23:59+0100\n"
 "PO-Revision-Date: 2007-07-22 19:21+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@gnome.org>\n"
@@ -21,6 +21,11 @@ msgstr ""
 "X-Generator: KBabel 1.11.4\n"
 "X-Poedit-Language: Russian\n"
 "X-Poedit-Country: RUSSIAN FEDERATION\n"
+
+#. Translate text message from GtkImageView:
+#: uf_gtk.cc:205
+msgid "Open the navigator window"
+msgstr ""
 
 #: ufraw-batch.c:74
 msgid "No input file, nothing to do."

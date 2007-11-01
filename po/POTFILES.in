@@ -1,6 +1,7 @@
 curveeditor_widget.c
 iccjpeg.c
 nikon_curve.c
+uf_gtk.cc
 ufraw-batch.c
 ufraw.c
 ufraw_chooser.c

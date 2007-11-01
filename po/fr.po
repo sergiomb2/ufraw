@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-01 23:31+0100\n"
-"PO-Revision-Date: 2007-10-16 22:42+0100\n"
+"POT-Creation-Date: 2007-11-01 23:59+0100\n"
+"PO-Revision-Date: 2007-11-02 00:06+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
@@ -13,6 +13,11 @@ msgstr ""
 "X-Poedit-Language: French\n"
 "X-Poedit-Country: FRANCE\n"
 "X-Poedit-Basepath: ~/sources/ufraw/ufraw-cvs/ufraw-20071002/po\n"
+
+#. Translate text message from GtkImageView:
+#: uf_gtk.cc:205
+msgid "Open the navigator window"
+msgstr ""
 
 #: ufraw-batch.c:74
 msgid "No input file, nothing to do."
