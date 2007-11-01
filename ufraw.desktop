@@ -5,11 +5,34 @@ GenericName[da]=Raw-billedbehandler
 GenericName[es]=Conversor de imágenes raw
 GenericName[ru]=Проявитель цифровых негативов
 GenericName[pt]=Conversor de imagens cruas
+GenericName[ko]=Raw 이미지 변환기
 Comment=A utility to read and manipulate raw images from digital cameras
 Comment[da]=Et program til at læse og behandle raw-billeder fra digitalkameraer
 Comment[es]=Programa para leer y manipular imágenes raw de cámaras digitales
 Comment[ru]=Проявка цифровых негативов и сохранение в TIFF/JPEG
 Comment[pt]=Programa para ler e manipular imagens de câmeras digitais
+Comment[ko]=디지털 카메라의 Raw 이미지를 읽고, 처리하는 프로그램
+
+Encoding=UTF-8
+Version=1.0
+
+Type=Application
+Categories=Graphics;Photography;GTK;
+
+Exec=ufraw %U
+TryExec=ufraw
+Terminal=false
+StartupNotify=true
+
+MimeType=application/x-ufraw;image/x-dcraw
+
+Icon=ufraw.png
+
+Comment=A utility to read and manipulate raw images from digital cameras
+Comment[da]=Et program til at læse og behandle raw-billeder fra digitalkameraer
+Comment[es]=Programa para leer y manipular imagenes raw de camaras digitales
+Comment[ru]=Проявка цифровых негативов и сохранение в TIFF/JPEG
+Comment[pt]=Programa para ler e manipular imagens de cameras digitais
 
 Encoding=UTF-8
 Version=1.0

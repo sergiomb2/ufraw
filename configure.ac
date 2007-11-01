@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.96 2007/11/01 00:08:59 udifuchs Exp $
+dnl $Id: configure.ac,v 1.97 2007/11/01 10:56:05 udifuchs Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -221,7 +221,7 @@ if test $ufraw_win32 = yes; then
   AC_SUBST(COMMENT_ICON)
 fi
 
-ALL_LINGUAS="da es fr ja pt ru"
+ALL_LINGUAS="da es fr ja ko pt ru"
 AM_GLIB_GNU_GETTEXT
 LIBS="$LIBS $INTLLIBS"
 # The following might not work with some combinations of autoconf and glib due
