@@ -329,7 +329,8 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
 	f->height = h = hh->height / scale;
 	f->width = w = hh->width / scale;
 	fujiWidth = hh->fuji_width / scale;
-	f->image = g_new0(dcraw_image_type, h * w);
+	f->image = (dcraw_image_type *)
+		g_realloc(f->image, h * w * sizeof(dcraw_image_type));
 	f4 = hh->fourColorFilters;
 	for(r=0; r<h; r++) {
 	    for(c=0; c<w; c++) {
@@ -354,7 +355,8 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
 	f->height = h = hh->raw.height / scale;
 	f->width = w = hh->raw.width / scale;
 	fujiWidth = ( (hh->fuji_width+hh->shrink) >> hh->shrink ) / scale;
-	f->image = g_new0(dcraw_image_type, h * w);
+	f->image = (dcraw_image_type *)g_realloc(
+			f->image, h * w * sizeof(dcraw_image_type));
 	norm = scale * scale;
 	for(r=0; r<h; r++) {
 	    for(c=0; c<w; c++) {
@@ -532,7 +534,9 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     f->height = h->height;
     fujiWidth = h->fuji_width;
     f->colors = h->colors;
-    f->image = g_new0(dcraw_image_type, f->height * f->width);
+    f->image = (dcraw_image_type *)
+	g_realloc(f->image, f->height * f->width * sizeof(dcraw_image_type));
+    memset(f->image, 0, f->height * f->width * sizeof(dcraw_image_type));
 
     if (h->filters==0)
 	return DCRAW_ERROR;

@@ -681,16 +681,12 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
     int status, c;
     dcraw_data *raw = uf->raw;
     dcraw_image_data final;
-    dcraw_data *dark = uf->conf->darkframe
-	? uf->conf->darkframe->raw : NULL;
+    // final.image memory will be realloc'd as needed
+    final.image = uf->image.image;
+    dcraw_data *dark = uf->conf->darkframe ? uf->conf->darkframe->raw : NULL;
 
     if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
         dcraw_finalize_shrink(&final, raw, dark, uf->ConvertShrink);
-
-        uf->image.height = final.height;
-        uf->image.width = final.width;
-	g_free(uf->image.image);
-        uf->image.image = final.image;
     } else {
 	if ( (status=dcraw_wavelet_denoise(raw,
 		uf->conf->threshold))!=DCRAW_SUCCESS )
@@ -700,8 +696,6 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
 	uf->developer->rgbMax = uf->developer->max;
         for (c=0; c<4; c++)
 	    uf->developer->rgbWB[c] = 0x10000;
-	g_free(uf->image.image);
-        uf->image.image = final.image;
     }
     dcraw_image_stretch(&final, raw->pixel_aspect);
     if (uf->conf->size==0 && uf->conf->shrink>1) {
@@ -725,8 +719,8 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
 	    dcraw_image_resize(&final, uf->conf->size * finalSize / cropSize);
 	}
     }
-    uf->image.image = final.image;
     dcraw_flip_image(&final, uf->conf->orientation);
+    uf->image.image = final.image;
     uf->image.height = final.height;
     uf->image.width = final.width;
 
