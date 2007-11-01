@@ -1,0 +1,1751 @@
+# Korean translation for UFRaw.
+# Copyright (C) 2006-2007 Udi Fuchs.
+# This file is distributed under the same license as the UFRaw package.
+# Homin,Lee <ff4500@gmail.com>, 2007.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: UFRaw\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-10-30 05:45+0100\n"
+"PO-Revision-Date: 2007-11-01 13:58+0900\n"
+"Last-Translator: Homin,Lee <ff4500@gmail.com>\n"
+"Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Korean\n"
+"X-Poedit-Country: KOREA, REPUBLIC OF\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: ufraw-batch.c:74
+msgid "No input file, nothing to do."
+msgstr "입력 파일이 없으므로 아무것도 하지 않습니다."
+
+#: ufraw-batch.c:95
+#, c-format
+msgid "loaded %s"
+msgstr "%s 불어옴"
+
+#: ufraw-batch.c:97
+#, c-format
+msgid "saved %s"
+msgstr "%s 저장됨"
+
+#. First letter of the word 'yes' for the y/n question
+#: ufraw-batch.c:112
+msgid "y"
+msgstr "y"
+
+#. First letter of the word 'no' for the y/n question
+#: ufraw-batch.c:114
+msgid "n"
+msgstr "n"
+
+#: ufraw-batch.c:115
+#, c-format
+msgid "%s: overwrite '%s'?"
+msgstr "%s: '%s'을(를) 덮어 쓸까요?"
+
+#: ufraw.c:66
+msgid "--silent option is valid only in batch mode"
+msgstr "--silent 옵션은 배치모드에서만 유효합니다."
+
+#: ufraw.c:70
+msgid "Extracting embedded image is not supported in interactive mode"
+msgstr "내장된 이미지 추출은 대화식 모드에서 지원되지 않습니다."
+
+#: ufraw_chooser.c:62
+msgid "Raw images"
+msgstr "Raw 이미지"
+
+#: ufraw_chooser.c:99
+msgid "UFRaw ID files"
+msgstr "UFRaw ID 파일"
+
+#: ufraw_chooser.c:105
+msgid "Raw jpg's"
+msgstr "Raw jpg's"
+
+#: ufraw_chooser.c:111
+msgid "Raw tif's"
+msgstr "Raw tif's"
+
+#: ufraw_chooser.c:117
+#: ufraw_preview.c:293
+#: ufraw_preview.c:395
+#: ufraw_preview.c:463
+msgid "All files"
+msgstr "모든 파일"
+
+#: ufraw_chooser.c:123
+#: ufraw_preview.c:262
+#: ufraw_preview.c:364
+#: ufraw_preview.c:447
+#: ufraw_saver.c:149
+msgid "Show hidden files"
+msgstr "숨겨진 파일 표시"
+
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. exposure, saturation, black
+#. ExposureNorm
+#. restoreDetails
+#. clipHighlights
+#. autoExposure
+#. autoBlack
+#. BaseCurveIndex, BaseCurveCount
+#. BaseCurve data defaults
+#. curveIndex, curveCount
+#. Curve data defaults
+#: ufraw_conf.c:47
+#: ufraw_conf.c:58
+msgid "Manual curve"
+msgstr "수동 곡선"
+
+#: ufraw_conf.c:49
+#: ufraw_conf.c:60
+msgid "Linear curve"
+msgstr "선형 곡선"
+
+#: ufraw_conf.c:51
+msgid "Custom curve"
+msgstr "맞춤 곡선"
+
+#: ufraw_conf.c:53
+msgid "Camera curve"
+msgstr "카메라 곡선"
+
+#. profileIndex[], profileCount[]
+#. Profile data defaults
+#: ufraw_conf.c:65
+#: ufraw_conf.c:67
+#: ufraw_conf.c:70
+msgid "sRGB"
+msgstr "sRGB"
+
+#: ufraw_conf.c:69
+msgid "System default"
+msgstr "시스템 기본 설정"
+
+#: ufraw_conf.c:161
+msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
+msgstr "UFRaw-0.4 혹은 이전 버젼으로 부터 .ufrawrc를 변경 시도 중"
+
+#: ufraw_conf.c:167
+msgid "Trying to convert .ufrawrc from UFRaw-0.6 or earlier"
+msgstr "UFRaw-0.6 혹은 이전 버젼으로 부터 .ufrawrc를 변경 시도 중"
+
+#: ufraw_conf.c:172
+#, c-format
+msgid "UFRaw version in .ufrawrc is not supported"
+msgstr ".ufrawrc의 UFRaw 버젼은 지원되지 않음"
+
+#: ufraw_conf.c:326
+#, c-format
+msgid "Too many anchors for curve '%s'"
+msgstr "곡선 '%s'에 너무 많은 고정점이 있음"
+
+#: ufraw_conf.c:603
+#, c-format
+msgid ""
+"Can't open ID file %s for reading\n"
+"%s\n"
+msgstr ""
+"ID 파일 %s을(를) 읽기 위해 열 수 없음\n"
+"%s\n"
+
+#: ufraw_conf.c:620
+#: ufraw_routines.c:384
+#, c-format
+msgid ""
+"Error parsing '%s'\n"
+"%s"
+msgstr ""
+"'%s' 파싱 오류\n"
+"%s"
+
+#: ufraw_conf.c:1016
+#, c-format
+msgid ""
+"Can't open file %s for writing\n"
+"%s\n"
+msgstr ""
+"ID 파일 %s을(를) 쓰기 위해 열 수 없음\n"
+"%s\n"
+
+#: ufraw_conf.c:1240
+msgid "cannot --create-id with stdout"
+msgstr "stdout과 함께 --create-id 할 수 없음"
+
+#: ufraw_conf.c:1252
+msgid "UFRaw "
+msgstr "UFRaw "
+
+#: ufraw_conf.c:1252
+msgid " - Unidentified Flying Raw converter for digital camera images.\n"
+msgstr " - Unidentified Flying Raw converter for digital camera images.\n"
+
+#: ufraw_conf.c:1254
+msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
+msgstr "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
+
+#: ufraw_conf.c:1255
+msgid "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
+msgstr "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
+
+#: ufraw_conf.c:1256
+msgid "       ufraw [ options ... ] [ default-directory ]\n"
+msgstr "       ufraw [ options ... ] [ default-directory ]\n"
+
+#: ufraw_conf.c:1258
+msgid ""
+"By default 'ufraw' displays a preview window for each raw image allowing\n"
+"the user to tweak the image parameters before saving. If no raw images\n"
+"are given at the command line, UFRaw will display a file chooser dialog.\n"
+"To process the images with no questions asked (and no preview) use\n"
+"'ufraw-batch'.\n"
+msgstr ""
+"기본 동작으로 'ufraw'는 사용자가 이미지들의 파라미터들을 조정하고\n"
+"저장하도록 각각의 raw 이미지에 대해 미리보기 창을 표시합니다.\n"
+"만약 raw 이미지들이 커맨드라인에 주어지지 않는다면 UFRaw는\n"
+"파일 선택 다이얼로그를 표시할 것 입니다.\n"
+"이미지에 대한 질문을 받지 않고(미리보기 없이) 처리하려면\n"
+"'ufraw-batch'를 사용하세요.\n"
+
+#: ufraw_conf.c:1264
+msgid ""
+"The input files can be either raw images or ufraw's ID files. ID files\n"
+"contain a raw image filename and the parameters for handling the image.\n"
+"One can also use an ID file with the option:\n"
+msgstr ""
+"입력 파일로는 raw 이미지나 ufraw의 ID 파일이 가능합니다.\n"
+"ID 파일은 raw 이미지의 파일 이름과 이미지를 처리하기 위한 조정값을 포함합니다.\n"
+"ID 파일과 함께 사용 가능한 옵션은 다음과 같습니다:\n"
+
+#: ufraw_conf.c:1268
+msgid "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+msgstr "--conf=ID-file        ID-file에 있는 파라미터를 다른 raw 이미지에 적용함.\n"
+
+#: ufraw_conf.c:1270
+msgid "The rest of the options are separated into two groups.\n"
+msgstr "나머지 옵션들은 두 그룹으로 분리 됩니다.\n"
+
+#: ufraw_conf.c:1271
+msgid "The options which are related to the image manipulation are:\n"
+msgstr "이미지 조정에 관련된 옵션들:\n"
+
+#: ufraw_conf.c:1273
+msgid "--wb=camera|auto      White balance setting.\n"
+msgstr "--wb=camera|auto      화이트 벨런스 설정.\n"
+
+#: ufraw_conf.c:1274
+msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
+msgstr "--temperature=TEMP    색온도 캘빈값 (2000 - 7000).\n"
+
+#: ufraw_conf.c:1275
+msgid "--green=GREEN         Green color normalization.\n"
+msgstr "--green=GREEN         녹색 정상화.\n"
+
+#: ufraw_conf.c:1276
+msgid ""
+"--base-curve=manual|linear|camera|custom|CURVE\n"
+"                      Type of base tone curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default camera if such exists, linear otherwise).\n"
+msgstr ""
+"--base-curve=manual|linear|camera|custom|CURVE\n"
+"                      Type of base tone curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default camera if such exists, linear otherwise).\n"
+
+#: ufraw_conf.c:1280
+msgid ""
+"--base-curve-file=file\n"
+"                      Use base tone curve included in specified file.\n"
+"                      Overrides --base-curve option.\n"
+msgstr ""
+"--base-curve-file=file\n"
+"                      지정한 파일의 기본 색조 곡선을 사용합니다.\n"
+"                      --base-curve option 설정값을 덮어씁니다.\n"
+
+#: ufraw_conf.c:1283
+msgid ""
+"--curve=manual|linear|CURVE\n"
+"                      Type of luminosity curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default linear).\n"
+msgstr ""
+"--curve=manual|linear|CURVE\n"
+"                      사용할 색조 곡선 타입. CURVE는 GUI에서 미리\n"
+"                      불러온 곡선 중에서 선택할 수 있다. \n"
+"                      (기본값 linear).\n"
+
+#: ufraw_conf.c:1287
+msgid ""
+"--curve-file=file     Use luminosity curve included in specified file.\n"
+"                      Overrides --curve option.\n"
+msgstr ""
+"--curve-file=file     지정한 파일의 색조 곡선을 사용\n"
+"                      --curve 옵션을 덮어씀.\n"
+
+#: ufraw_conf.c:1289
+msgid ""
+"--restore=clip|lch|hsv\n"
+"                      Restore details for negative EV.\n"
+"                      'clip' restores nothing - safe from artifacts.\n"
+"                      'lch' restores in LCH space - giving soft details.\n"
+"                      'hsv' restores in HSV space - giving sharp details.\n"
+"                      (default lch).\n"
+msgstr ""
+"--restore=clip|lch|hsv\n"
+"                      암부에서 디테일을 복원하는 방법.\n"
+"                      'clip' restores nothing - safe from artifacts.\n"
+"                      'lch' restores in LCH space - giving soft details.\n"
+"                      'hsv' restores in HSV space - giving sharp details.\n"
+"                      (default lch).\n"
+
+#: ufraw_conf.c:1295
+msgid ""
+"--clip=digital|film   Clip highlights for positive EV.\n"
+"                      'digital' linear digital sensor response.\n"
+"                      'film' emulate soft film response. (default digital).\n"
+msgstr ""
+"--clip=digital|film   명부에서 하이라이트를 잘라내는 방법.\n"
+"                      'digital' linear digital sensor response.\n"
+"                      'film' emulate soft film response. (default digital).\n"
+
+#: ufraw_conf.c:1298
+msgid "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+msgstr "--gamma=GAMMA         기본 곡선의 감마 보정값 (기본값 0.45).\n"
+
+#: ufraw_conf.c:1299
+msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
+msgstr "--linearity=LINEARITY 기본 곡선읜 선형도 (기본값 0.10).\n"
+
+#: ufraw_conf.c:1300
+msgid "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"
+msgstr "--saturation=SAT      채도 조정 (기본값 1.0, 흑백 사진을 원하면 0).\n"
+
+#: ufraw_conf.c:1301
+msgid ""
+"--wavelet-denoising-threshold=THRESHOLD\n"
+"                      Wavelet denoising threshold (default 0.0).\n"
+msgstr ""
+"--wavelet-denoising-threshold=THRESHOLD\n"
+"                      잔 노이즈 제거 임계값 (기본값 0.0).\n"
+
+#: ufraw_conf.c:1303
+msgid ""
+"--exposure=auto|EXPOSURE\n"
+"                      Auto exposure or exposure correction in EV (default 0).\n"
+msgstr ""
+"--exposure=auto|EXPOSURE\n"
+"                      자동 노출 보정| 노출 보정 값 EV (기본값 0).\n"
+
+#: ufraw_conf.c:1305
+msgid ""
+"--black-point=auto|BLACK\n"
+"                      Auto black-point or black-point value (default 0).\n"
+msgstr ""
+"--black-point=auto|BLACK\n"
+"                      자동 암부 | 암부 값 (기본값 0).\n"
+
+#: ufraw_conf.c:1307
+msgid ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Interpolation algorithm to use (default ahd).\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Interpolation algorithm to use (default ahd).\n"
+
+#: ufraw_conf.c:1310
+msgid "The options which are related to the final output are:\n"
+msgstr "최종 출력에 관련된 옵션들:\n"
+
+#: ufraw_conf.c:1312
+msgid "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
+msgstr "--shrink=FACTOR       이미지를 FACTOR 비율로 축소합니다 (기본값 1).\n"
+
+#: ufraw_conf.c:1313
+msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
+msgstr "--size=SIZE           최대 (height,width) 크기로 이미지를 줄임.\n"
+
+#: ufraw_conf.c:1314
+msgid ""
+"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
+"                      Output file format (default ppm8).\n"
+msgstr ""
+"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
+"                      출력 파일 포멧 (기본값 ppm8).\n"
+
+#: ufraw_conf.c:1316
+msgid ""
+"--create-id=no|also|only\n"
+"                      Create no|also|only ID file (default no).\n"
+msgstr ""
+"--create-id=no|also|only\n"
+"                      ID 파일 만들기 옵션. no|also|only (기본값 no).\n"
+
+#: ufraw_conf.c:1318
+msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
+msgstr "--compression=VALUE   JPEG 압축률 (0-100, 기본값 85).\n"
+
+#: ufraw_conf.c:1319
+msgid "--[no]exif            Embed EXIF in output JPEG or PNG (default embed EXIF).\n"
+msgstr "--[no]exif            JPEG or PNG 출력에 EXIF를 포함하기(기본값 exif).\n"
+
+#: ufraw_conf.c:1320
+msgid "--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"
+msgstr "--[no]zip             TIFF zip 압축을 활성[비활성] 하기 (기본값 nozip).\n"
+
+#: ufraw_conf.c:1321
+msgid ""
+"--embedded-image      Extract the preview image embedded in the raw file\n"
+"                      instead of converting the raw image.\n"
+msgstr ""
+"--embedded-image      raw파일을 변환하는 대신 raw파일에 포함된\n"
+"                      미리보기 이미지를 추출하기.\n"
+
+#: ufraw_conf.c:1323
+msgid "--out-path=PATH       PATH for output file (default use input file's path).\n"
+msgstr "--out-path=PATH       출력 파일의 경로 (기본값 입력 파일의 경로 사용).\n"
+
+#: ufraw_conf.c:1324
+msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
+msgstr "--output=FILE         출력 파일 이름, 표준출력으로 내보내려면 '-'를 사용하세요.\n"
+
+#: ufraw_conf.c:1325
+msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
+msgstr "--darkframe=FILE      핫픽셀 제거를 위한 다크프레임 파일.\n"
+
+#: ufraw_conf.c:1326
+msgid "--overwrite           Overwrite existing files without asking (default no).\n"
+msgstr "--overwrite           묻지 않고 기존 파일에 덮어 쓰기 (기본값 no).\n"
+
+#: ufraw_conf.c:1327
+msgid "--silent              Do not display any messages during batch conversion.\n"
+msgstr "--silent              변환하는 동안 아무 메세지도 표시하지 않음.\n"
+
+#: ufraw_conf.c:1329
+msgid ""
+"UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
+"Then, if an ID file is specified it setting are read. Next, the setting from\n"
+"the --conf option are taken, ignoring input/output filenames in the ID file.\n"
+"Lastly, the options from the command line are set. In batch mode, the second\n"
+"group of options is NOT read from the resource file.\n"
+msgstr ""
+"UFRaw는 가장 먼저 $HOME/.ufrawrc 파일에 있는 설정을 읽습니다.\n"
+"다음으로, 지정한 ID 파일에서 설정을 읽고, --conf 옵션으로 받은\n"
+"설정을 읽습니다. ID 파일의 입/출력 파일 이름은 무시합니다.\n"
+"마지막으로, 커맨드 라인으로 주어진 옵션들이 설정됩니다. 배치모드 에서는\n"
+"두번재 그룹의 옵션들은 리소스 파일에서 읽지 않습니다.\n"
+
+#: ufraw_conf.c:1335
+msgid ""
+"Last, but not least, --version displays the version number and compilation\n"
+"options for ufraw and --help displays this help message and exits.\n"
+msgstr ""
+"마지막, 하지만 하찮지 않은 정보, --version은 버젼번호와 ufraw의 컴파일\n"
+"옵션을 표시합니다. 그리고 --help는 이 도움말 메세지를 표시하고 마침니다.\n"
+
+#: ufraw_conf.c:1483
+#: ufraw_conf.c:1493
+#, c-format
+msgid "'%s' is not a valid value for the --%s option."
+msgstr "'%s'은(는) --%s의 유효한 값이 아닙니다."
+
+#: ufraw_conf.c:1522
+msgid "ufraw was build without ZIP support."
+msgstr "ufraw가 ZIP 지원이 빠진 채로 빌드됨."
+
+#: ufraw_conf.c:1541
+msgid "--batch is obselete. use ufraw-batch instead."
+msgstr "--batch는 더이상 사용되지 않습니다. 대신 ufraw-batch를 사용하세요."
+
+#: ufraw_conf.c:1546
+#, c-format
+msgid "getopt returned character code 0%o ??"
+msgstr "getopt가 문자코드 0%o ?? 를 반환하였습니다."
+
+#: ufraw_conf.c:1559
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "'%s'은(는) 유효한 화이트 벨런스 설정이 아님."
+
+#: ufraw_conf.c:1564
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "--temperature 와 --green 옵션은 --wb=%s 옵션을 덮어씁니다."
+
+#: ufraw_conf.c:1572
+#, c-format
+msgid "failed to load curve from %s, too many configured base curves"
+msgstr "%s(으)로 부터 곡선 불러오기 실패, 조정된 기본 곡선이 너무 많이 있음"
+
+#: ufraw_conf.c:1581
+#: ufraw_conf.c:1624
+#, c-format
+msgid "failed to load curve from %s"
+msgstr "%s(으)로 부터 곡선 불러오기 실패"
+
+#: ufraw_conf.c:1606
+#, c-format
+msgid "'%s' is not a valid base curve name."
+msgstr "'%s'(은)는 유효한 기본 곡선 이름이 아닙니다."
+
+#: ufraw_conf.c:1615
+#, c-format
+msgid "failed to load curve from %s, too many configured curves"
+msgstr "%s(으)로 부터 곡선 불러오기 실패. 조정된 곡선이 너무 많이 있음"
+
+#: ufraw_conf.c:1643
+#, c-format
+msgid "'%s' is not a valid curve name."
+msgstr "'%s'(은)는 유효한 곡선 이름이 아닙니다."
+
+#: ufraw_conf.c:1661
+#, c-format
+msgid "'%s' is not a valid interpolation option."
+msgstr "'%s'(은)는 유효한 보간 옵션이 아닙니다."
+
+#: ufraw_conf.c:1671
+#, c-format
+msgid "'%s' is not a valid restore option."
+msgstr "'%s'(은)는 유효한 복구 옵션이 아닙니다."
+
+#: ufraw_conf.c:1681
+#, c-format
+msgid "'%s' is not a valid clip option."
+msgstr "'%s'(은)는 유효한 잘라내기 옵션이 아닙니다."
+
+#: ufraw_conf.c:1688
+msgid "you can not specify both --shrink and --size"
+msgstr "--shrink와 --size를 둘다 설정 할 수 없습니다"
+
+#: ufraw_conf.c:1709
+#: ufraw_conf.c:1719
+msgid "ufraw was build without TIFF support."
+msgstr "ufraw가 TIFF 지원이 빠진 채로 빌드됨."
+
+#: ufraw_conf.c:1729
+#: ufraw_conf.c:1761
+msgid "ufraw was build without JPEG support."
+msgstr "ufraw가 JPEG 지원이 빠진 채로 빌드됨."
+
+#: ufraw_conf.c:1739
+#: ufraw_conf.c:1749
+msgid "ufraw was build without PNG support."
+msgstr "ufraw가 PNG 지원이 빠진 채로 빌드됨."
+
+#: ufraw_conf.c:1755
+#, c-format
+msgid "'%s' is not a valid output type."
+msgstr "'%s'(은)는 유효한 출력 타입이 아닙니다."
+
+#: ufraw_conf.c:1773
+#, c-format
+msgid "'%s' is not a valid output type for embedded image."
+msgstr "'%s'(은)는 이미지 내장을 위해 유효한 출력 타입이 아닙니다."
+
+#: ufraw_conf.c:1788
+#, c-format
+msgid "'%s' is not a valid create-id option."
+msgstr "'%s'(은)는 유효한 create-id 옵션이 아닙니다."
+
+#: ufraw_conf.c:1799
+#, c-format
+msgid "'%s' is not a valid path."
+msgstr "'%s'(은)는 유효한 경로가 아닙니다."
+
+#: ufraw_conf.c:1808
+msgid "cannot output more than one file to the same output"
+msgstr "하나 이상의 파일로 부터 같은 출력으로 출력할 수 없습니다"
+
+#: ufraw_delete.c:30
+#, c-format
+msgid "Raw file '%s' missing."
+msgstr "Raw 파일 '%s'(이)가 사라짐."
+
+#: ufraw_delete.c:35
+msgid "Delete raw file"
+msgstr "raw 파일 지우기"
+
+#: ufraw_delete.c:38
+msgid "_Delete selected"
+msgstr "선택된 것 지우기(_D)"
+
+#: ufraw_delete.c:39
+msgid "Delete _All"
+msgstr "전체 지우기(_A)"
+
+#: ufraw_delete.c:43
+msgid "Select files to delete"
+msgstr "지울 파일 선택"
+
+#: ufraw_delete.c:50
+#, c-format
+msgid "Error reading directory '%s'."
+msgstr "'%s' 디렉토리 읽기 오류."
+
+#: ufraw_delete.c:107
+#, c-format
+msgid "Error deleting '%s'"
+msgstr "'%s' 지우기 오류"
+
+#: ufraw_embedded.c:72
+msgid "Reading embedded image requires libjpeg."
+msgstr "내장된 이미지를 읽는 것은 libjpeg가 필요합니다."
+
+#: ufraw_embedded.c:76
+msgid "No embedded image found"
+msgstr "내장된 이미지를 찾을 수 없음"
+
+#: ufraw_embedded.c:94
+#, c-format
+msgid "Original size (%d) is smaller than the requested size (%d)"
+msgstr "원본 크기 (%d)이(가) 요청된 크기 (%d) 보다 작습니다"
+
+#: ufraw_embedded.c:107
+#, c-format
+msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
+msgstr "ppm 썸네일의 높이 %d, 넓이 %d이(가) 버퍼길이 %d와 맞지 않습니다."
+
+#: ufraw_embedded.c:128
+#, c-format
+msgid "JPEG thumb height %d different than expected %d."
+msgstr "JPEG 썸네일의 높이 %d이(가) 기대한 %d와 다릅니다."
+
+#: ufraw_embedded.c:134
+#, c-format
+msgid "JPEG thumb width %d different than expected %d."
+msgstr "JPEG 썸네일의 넓이 %d이(가) 기대한 %d와 다릅니다."
+
+#: ufraw_embedded.c:157
+#: ufraw_embedded.c:302
+#, c-format
+msgid ""
+"Error creating file '%s'.\n"
+"%s"
+msgstr ""
+"'%s'파일 만들기 오류.\n"
+"%s"
+
+#: ufraw_embedded.c:172
+#: ufraw_embedded.c:256
+msgid "No embedded image read"
+msgstr "읽어온 내장 이미지가 없음"
+
+#: ufraw_embedded.c:251
+#, c-format
+msgid "Error creating file '%s'. Unknown file type %d."
+msgstr "'%s'파일 만들기 오류. 알 수 없는 파일 타입 %d."
+
+#: ufraw_embedded.c:263
+#, c-format
+msgid "Error creating file '%s': %s"
+msgstr "'%s'파일 만들기 오류: %s"
+
+#: ufraw_embedded.c:320
+#, c-format
+msgid "Error writing '%s'"
+msgstr "'%s' 쓰기 오류"
+
+#: ufraw_embedded.c:361
+#, c-format
+msgid "Unsupported output type (%d) for embedded image"
+msgstr "이미지 내장을 지원하지 않는 파일 타입(%d)"
+
+#: ufraw-gimp.c:250
+#, c-format
+msgid "Loading raw file '%s'"
+msgstr "raw 파일 '%s' 불러오는 중"
+
+#: ufraw-gimp.c:332
+msgid "Can't allocate new image."
+msgstr "새 이미지를 할당할 수 없습니다."
+
+#. Create the "background" layer to hold the image...
+#: ufraw-gimp.c:338
+msgid "Background"
+msgstr "배경"
+
+#: ufraw-gimp.c:364
+msgid "Loading image"
+msgstr "이미지 불러오는 중"
+
+#: ufraw-gimp.c:398
+#: ufraw-gimp.c:432
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "출력 프로파일 '%s'을(를) 이미지에 내장 실패."
+
+#: ufraw-gimp.c:406
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored.\n"
+msgstr "EXIF 버퍼 길이 %d이(가) 너무 길어서 무시되었습니다.\n"
+
+#: ufraw_preview.c:59
+msgid "Raw histogram with conversion curves"
+msgstr "변환 곡선을 적용한 Raw 히스토그램"
+
+#: ufraw_preview.c:60
+msgid "Live histogram"
+msgstr "라이브 히스토그램"
+
+#: ufraw_preview.c:250
+#: ufraw_preview.c:339
+msgid "No more room for new curves."
+msgstr "새 곡선을 위한 저장 공간이 없습니다."
+
+#: ufraw_preview.c:253
+#: ufraw_preview.c:4033
+msgid "Load curve"
+msgstr "곡선 불러오기"
+
+#: ufraw_preview.c:269
+#: ufraw_preview.c:371
+msgid "All curve formats"
+msgstr "모든 곡선 포멧"
+
+#: ufraw_preview.c:279
+#: ufraw_preview.c:381
+msgid "UFRaw curve format"
+msgstr "UFRaw 곡선 포멧"
+
+#: ufraw_preview.c:285
+#: ufraw_preview.c:387
+msgid "Nikon curve format"
+msgstr "Nikon 곡선 포멧"
+
+#: ufraw_preview.c:356
+#: ufraw_preview.c:4040
+msgid "Save curve"
+msgstr "곡선 저장"
+
+#: ufraw_preview.c:434
+#: ufraw_preview.c:507
+msgid "No more room for new profiles."
+msgstr "더이상 새 프로파일을 저장할 장소가 없습니다."
+
+#: ufraw_preview.c:438
+msgid "Load color profile"
+msgstr "색 프로파일 불러오기"
+
+#: ufraw_preview.c:456
+msgid "Color Profiles"
+msgstr "색 프로파일"
+
+#: ufraw_preview.c:542
+msgid "Luminosity (Y value)"
+msgstr "조도 (Y 값)"
+
+#: ufraw_preview.c:544
+msgid "Adams' zone"
+msgstr "존 영역"
+
+#: ufraw_preview.c:891
+#, c-format
+msgid "size %dx%d, zoom %2.f%%"
+msgstr "사이즈 %dx%d, 확대 %2.f%%"
+
+#: ufraw_preview.c:895
+#, c-format
+msgid "size %dx%d, scale 1/%d"
+msgstr "사이즈 %dx%d, 스케일 1/%d"
+
+#: ufraw_preview.c:948
+#, c-format
+msgid "Black point: %0.3lf"
+msgstr "암부: %0.3lf"
+
+#: ufraw_preview.c:1687
+msgid "Fatal Error: uf->conf->shrink<1"
+msgstr "치명적인 오류: uf->conf->shrink<1"
+
+#. No darkframe file
+#: ufraw_preview.c:2222
+msgid "None"
+msgstr "없음"
+
+#: ufraw_preview.c:2243
+#: ufraw_preview.c:3812
+msgid "Load dark frame"
+msgstr "다크프레임 불러오기"
+
+#: ufraw_preview.c:2422
+msgid "clip"
+msgstr "잘라내기"
+
+#: ufraw_preview.c:2426
+msgid "restore in LCH space for soft details"
+msgstr "부드러운 디테일을 위해 LCH 색공간으로 부터 복원"
+
+#: ufraw_preview.c:2430
+msgid "restore in HSV space for sharp details"
+msgstr "날카로운 디테일을 위해 HSV 색공간으로 부터 복원"
+
+#: ufraw_preview.c:2435
+#, c-format
+msgid ""
+"Restore details for negative EV\n"
+"Current state: %s"
+msgstr ""
+"암부의 디테일 복원하기\n"
+"현재 상태: %s"
+
+#: ufraw_preview.c:2448
+msgid "digital linear"
+msgstr "디지털 선형화"
+
+#: ufraw_preview.c:2452
+msgid "soft film like"
+msgstr "부드러운 필름 효과"
+
+#: ufraw_preview.c:2457
+#, c-format
+msgid ""
+"Clip highlights for positive EV\n"
+"Current state: %s"
+msgstr ""
+"명부에서 하이라이트 잘라내기\n"
+"현재상태: %s"
+
+#: ufraw_preview.c:2780
+msgid "UFRaw options"
+msgstr "UFRaw 옵션들"
+
+#: ufraw_preview.c:2793
+#: ufraw_preview.c:2805
+msgid "Settings"
+msgstr "설정"
+
+#: ufraw_preview.c:2797
+msgid "Input color profiles"
+msgstr "입력 색 프로파일"
+
+#: ufraw_preview.c:2799
+msgid "Output color profiles"
+msgstr "출력 색 프로파일"
+
+#: ufraw_preview.c:2801
+msgid "Display color profiles"
+msgstr "화면 색 프로파일"
+
+#: ufraw_preview.c:2802
+msgid "Base Curves"
+msgstr "기본 곡선"
+
+#: ufraw_preview.c:2803
+msgid "Luminosity Curves"
+msgstr "광도 곡선"
+
+#. Remote Gimp command entry
+#: ufraw_preview.c:2807
+msgid "Remote Gimp command"
+msgstr "원격 Gimp 명령"
+
+#: ufraw_preview.c:2819
+msgid "Reset command to default"
+msgstr "명령을 기본값으로 되돌리기"
+
+#: ufraw_preview.c:2824
+msgid "Blink Over/Underexposure Indicators"
+msgstr "노출 부족/과다 영역 깜박임"
+
+#: ufraw_preview.c:2829
+msgid "Configuration"
+msgstr "설정"
+
+#: ufraw_preview.c:2844
+msgid "Save image defaults "
+msgstr "이미지 기본값 저장"
+
+#: ufraw_preview.c:2849
+#: ufraw_saver.c:318
+msgid ""
+"Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr ""
+"현재의 조정 값들을 기본값으로 저장합니다.\n"
+"이 윈도우의 출력 파라미터들은 항상 저장됩니다."
+
+#: ufraw_preview.c:2852
+#: ufraw_saver.c:322
+msgid "Never again"
+msgstr "다시 묻지 않음"
+
+#: ufraw_preview.c:2853
+#: ufraw_saver.c:323
+msgid "Always"
+msgstr "항상"
+
+#: ufraw_preview.c:2854
+#: ufraw_saver.c:324
+msgid "Just this once"
+msgstr "이번 한번 만"
+
+#: ufraw_preview.c:2861
+msgid "Save full configuration "
+msgstr "전체 설정 저장"
+
+#: ufraw_preview.c:2865
+msgid "Save resource file ($HOME/.ufrawrc)"
+msgstr "리소스 파일 저장 ($HOME/.ufrawrc)"
+
+#: ufraw_preview.c:2871
+msgid "Log"
+msgstr "로그"
+
+#: ufraw_preview.c:2883
+msgid "Encoding conversion failed"
+msgstr "인코딩 변황 실패"
+
+#: ufraw_preview.c:2887
+msgid "About"
+msgstr "정보"
+
+#: ufraw_preview.c:2898
+msgid ""
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility to\n"
+"read and manipulate raw images from digital cameras.\n"
+"UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"for the actual encoding of the raw images.\n"
+"\n"
+"Author: Udi Fuchs\n"
+"Homepage: http://ufraw.sourceforge.net/\n"
+"\n"
+msgstr ""
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility to\n"
+"read and manipulate raw images from digital cameras.\n"
+"UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"for the actual encoding of the raw images.\n"
+"\n"
+"Author: Udi Fuchs\n"
+"Homepage: http://ufraw.sourceforge.net/\n"
+"\n"
+
+#: ufraw_preview.c:3295
+#, c-format
+msgid "%s%s (Alt-%c)"
+msgstr "%s%s (Alt-%c)"
+
+#: ufraw_preview.c:3398
+#, c-format
+msgid "%s - UFRaw Photo Loader"
+msgstr "%s - UFRaw Photo Loader"
+
+#: ufraw_preview.c:3473
+#: ufraw_preview.c:4444
+msgid "Linear"
+msgstr "선형"
+
+#: ufraw_preview.c:3482
+#: ufraw_preview.c:4453
+msgid "Logarithmic"
+msgstr "대수"
+
+#: ufraw_preview.c:3496
+msgid "Spot values:"
+msgstr "스팟 값:"
+
+#: ufraw_preview.c:3513
+msgid "Exposure compensation in EV"
+msgstr "EV에서 노출 보정"
+
+#: ufraw_preview.c:3533
+msgid "Auto adjust exposure"
+msgstr "자동 노출 조정"
+
+#: ufraw_preview.c:3543
+msgid "Reset exposure to default"
+msgstr "노출을 기본값으로 되돌리기"
+
+#. Start of White Balance setting page
+#: ufraw_preview.c:3555
+#: ufraw_preview.c:4350
+msgid "White balance"
+msgstr "화이트 벨런스"
+
+#: ufraw_preview.c:3614
+msgid "White Balance"
+msgstr "화이트 벨런스"
+
+#: ufraw_preview.c:3635
+msgid ""
+"There are no white balance presets for your camera model.\n"
+"Check UFRaw's webpage for information on how to get your\n"
+"camera supported."
+msgstr ""
+"당신의 카메라 모델에는 화이트 벨러스 프리셋이 없습니다.\n"
+"어떻게 당신의 카메라를 지원하게 하는지에 대해서 UFRaw의\n"
+"웹페이지를 확인하세요."
+
+#: ufraw_preview.c:3644
+msgid "Reset white balance to initial value"
+msgstr "화이트 벨런스를 초기값으로 되돌리기"
+
+#: ufraw_preview.c:3649
+msgid "Temperature"
+msgstr "온도"
+
+#: ufraw_preview.c:3651
+msgid "White balance color temperature (K)"
+msgstr "화이트 벨런스 색 온도 (K)"
+
+#: ufraw_preview.c:3652
+msgid "Green"
+msgstr "녹색"
+
+#: ufraw_preview.c:3654
+msgid "Green component"
+msgstr "녹색 성분"
+
+#: ufraw_preview.c:3661
+msgid "Select a spot on the preview image to apply spot white balance"
+msgstr "스팟 화이트 벨런스를 적용하기 위해 미리보기 이미지 위에 한 점을 선택하세요"
+
+#: ufraw_preview.c:3667
+msgid "Chan. multipliers:"
+msgstr "재널 증폭:"
+
+#: ufraw_preview.c:3691
+msgid "Bayer pattern interpolation"
+msgstr "베이어 패턴 보간법"
+
+#: ufraw_preview.c:3697
+#: ufraw_preview.c:3706
+msgid "VNG four color interpolation"
+msgstr "VNG four color 보간법"
+
+#: ufraw_preview.c:3699
+#: ufraw_preview.c:3710
+msgid "Bilinear interpolation"
+msgstr "Bilinear 보간법"
+
+#: ufraw_preview.c:3702
+msgid "AHD interpolation"
+msgstr "AHD 보간법"
+
+#: ufraw_preview.c:3704
+msgid "VNG interpolation"
+msgstr "VNG 보간법"
+
+#: ufraw_preview.c:3708
+msgid "PPG interpolation"
+msgstr "PPG 보간법"
+
+#: ufraw_preview.c:3722
+msgid "No Bayer pattern"
+msgstr "베이어 패턴이 없음"
+
+#: ufraw_preview.c:3733
+msgid "Apply color smoothing"
+msgstr "색 고르게 하기 적용"
+
+#: ufraw_preview.c:3743
+msgid "Threshold"
+msgstr "임계값"
+
+#: ufraw_preview.c:3745
+msgid "Threshold for wavelet denoising"
+msgstr "잔 노이즈 제거를 위한 임계값"
+
+#: ufraw_preview.c:3751
+msgid "Reset denoise threshold to default"
+msgstr "노이즈제거를 위한 임계값을 원래대로 되돌립니다"
+
+#: ufraw_preview.c:3761
+msgid "Zoom:"
+msgstr "확대:"
+
+#: ufraw_preview.c:3782
+#: ufraw_preview.c:4564
+msgid "Zoom percentage"
+msgstr "확대 비율"
+
+#: ufraw_preview.c:3799
+msgid "Dark Frame:"
+msgstr "다크프레임:"
+
+#: ufraw_preview.c:3820
+msgid "Reset dark frame"
+msgstr "다크프레임 되돌리기"
+
+#. End of White Balance setting page
+#. Start of Base Curve page
+#: ufraw_preview.c:3827
+msgid "Base curve"
+msgstr "기본 곡선"
+
+#: ufraw_preview.c:3859
+msgid "Load base curve"
+msgstr "기본 곡선 불러오기"
+
+#: ufraw_preview.c:3866
+msgid "Save base curve"
+msgstr "기본 곡선 저장하기"
+
+#: ufraw_preview.c:3889
+msgid "Reset base curve to default"
+msgstr "기본 곡선을 기본값으로 되돌리기"
+
+#. End of Base Curve page
+#. Start of Color management page
+#: ufraw_preview.c:3895
+msgid "Color management"
+msgstr "색조 처리"
+
+#: ufraw_preview.c:3909
+msgid "Input ICC profile"
+msgstr "입력 ICC 프로파일"
+
+#: ufraw_preview.c:3910
+msgid "Output ICC profile"
+msgstr "출력 ICC 프로파일"
+
+#: ufraw_preview.c:3911
+msgid "Display ICC profile"
+msgstr "화면 ICC 프로파일"
+
+#: ufraw_preview.c:3934
+msgid "Use color matrix"
+msgstr "컬러 매트릭스 사용"
+
+#: ufraw_preview.c:3945
+msgid "Gamma"
+msgstr "감마"
+
+#: ufraw_preview.c:3948
+msgid "Gamma correction for the input profile"
+msgstr "프로파일 입력에 감마 조정"
+
+#: ufraw_preview.c:3953
+msgid "Reset gamma to default"
+msgstr "감마를 기본값으로 되돌리기"
+
+#: ufraw_preview.c:3957
+msgid "Linearity"
+msgstr "선형도"
+
+#: ufraw_preview.c:3960
+msgid "Linear part of the gamma correction"
+msgstr "감마 조정중 선형인 부분"
+
+#: ufraw_preview.c:3966
+msgid "Reset linearity to default"
+msgstr "선형도를 기본값으로 되돌리기"
+
+#: ufraw_preview.c:3970
+msgid "Output intent"
+msgstr "출력 의도"
+
+#: ufraw_preview.c:3973
+#: ufraw_preview.c:3985
+msgid "Perceptual"
+msgstr "Perceptual"
+
+#: ufraw_preview.c:3974
+#: ufraw_preview.c:3986
+msgid "Relative colorimetric"
+msgstr "Relative colorimetric"
+
+#: ufraw_preview.c:3975
+#: ufraw_preview.c:3987
+#: ufraw_preview.c:4001
+#: ufraw_preview.c:4003
+msgid "Saturation"
+msgstr "채도"
+
+#: ufraw_preview.c:3976
+#: ufraw_preview.c:3988
+msgid "Absolute colorimetric"
+msgstr "Absolute colorimetric"
+
+#: ufraw_preview.c:3982
+msgid "Display intent"
+msgstr "화면 의도"
+
+#: ufraw_preview.c:3989
+msgid "Disable soft proofing"
+msgstr "Soft proofing 해제"
+
+#. End of Color management page
+#. Start of Corrections page
+#: ufraw_preview.c:3997
+msgid "Correct luminosity, saturation"
+msgstr "조도, 채도 조정"
+
+#: ufraw_preview.c:4010
+msgid "Reset saturation to default"
+msgstr "채도를 기본값으로 되돌리기"
+
+#: ufraw_preview.c:4060
+msgid ""
+"Auto adjust curve\n"
+"(Flatten histogram)"
+msgstr ""
+"곡선 자동 조정\n"
+"(히스토그램 평탄화)"
+
+#: ufraw_preview.c:4070
+msgid "Reset curve to default"
+msgstr "곡선을 기본값으로 되돌리기"
+
+#: ufraw_preview.c:4074
+msgid "Black point: 0.000"
+msgstr "암부: 0.000"
+
+#: ufraw_preview.c:4093
+msgid "Reset black-point to default"
+msgstr "암부를 기본값으로 되돌리기"
+
+#: ufraw_preview.c:4103
+msgid "Auto adjust black-point"
+msgstr "암부 자동 조정"
+
+#. End of Corrections page
+#. Start of transformations page
+#: ufraw_preview.c:4110
+msgid "Crop and rotate"
+msgstr "잘라내기와 회전"
+
+#. Start of Crop controls
+#: ufraw_preview.c:4115
+msgid "Left:"
+msgstr "왼쪽:"
+
+#: ufraw_preview.c:4129
+msgid "Top:"
+msgstr "위:"
+
+#: ufraw_preview.c:4143
+msgid "Right:"
+msgstr "오른쪽:"
+
+#: ufraw_preview.c:4157
+msgid "Bottom:"
+msgstr "아래:"
+
+#: ufraw_preview.c:4176
+msgid "Reset the crop region"
+msgstr "잘라내기 영역을 초기화"
+
+#: ufraw_preview.c:4183
+msgid "Aspect ratio:"
+msgstr "종횡비:"
+
+#: ufraw_preview.c:4192
+msgid ""
+"Crop area aspect ratio.\n"
+"Can be entered in decimal notation (1.273)\n"
+"or as a ratio of two numbers (14:11)"
+msgstr ""
+"잘라내기 영역 종횡비.\n"
+"숫자 형식(1.273) 혹은 비율 형식 (14:11)\n"
+"으로 입력 할 수 있습니다"
+
+#: ufraw_preview.c:4213
+msgid "Lock aspect ratio"
+msgstr "종횡비 고정"
+
+#: ufraw_preview.c:4222
+msgid "Shrink factor"
+msgstr "축소 인자"
+
+#: ufraw_preview.c:4237
+msgid "Height"
+msgstr "높이"
+
+#: ufraw_preview.c:4253
+msgid "Width"
+msgstr "넓이"
+
+#: ufraw_preview.c:4272
+msgid "Orientation:"
+msgstr "기준:"
+
+#. End of transformation page
+#. Start of EXIF page
+#: ufraw_preview.c:4305
+msgid "EXIF"
+msgstr "EXIF"
+
+#: ufraw_preview.c:4330
+msgid "Tag"
+msgstr "테그"
+
+#: ufraw_preview.c:4335
+msgid "Value"
+msgstr "값"
+
+#. Fill table with EXIF tags
+#: ufraw_preview.c:4340
+msgid "Camera maker"
+msgstr "카메라 메이커"
+
+#: ufraw_preview.c:4341
+msgid "Camera model"
+msgstr "카메라 모델"
+
+#: ufraw_preview.c:4342
+msgid "Timestamp"
+msgstr "타임스탬프"
+
+#: ufraw_preview.c:4343
+msgid "Exposure"
+msgstr "노출시간"
+
+#: ufraw_preview.c:4344
+msgid "Aperture"
+msgstr "조리개"
+
+#: ufraw_preview.c:4345
+msgid "ISO speed"
+msgstr "ISO 감도"
+
+#: ufraw_preview.c:4346
+msgid "Focal length"
+msgstr "초점 거리"
+
+#: ufraw_preview.c:4347
+msgid "35mm focal length"
+msgstr "35mm 초첨 거리"
+
+#: ufraw_preview.c:4348
+msgid "Lens"
+msgstr "렌즈"
+
+#: ufraw_preview.c:4349
+#: wb_presets.c:54
+msgid "Flash"
+msgstr "플레쉬"
+
+#: ufraw_preview.c:4354
+#, c-format
+msgid "EXIF data read by %s"
+msgstr "'%s'(으)로 EXIF 데이타를 읽음"
+
+#: ufraw_preview.c:4362
+msgid "Warning: EXIF data will not be sent to output"
+msgstr "경고: EXIF 데이타가 출력에 포함되지 않을 것임"
+
+#: ufraw_preview.c:4391
+msgid "RGB histogram"
+msgstr "RGB 히스토그램"
+
+#: ufraw_preview.c:4400
+msgid "R+G+B histogram"
+msgstr "R+G+B 히스토그램"
+
+#: ufraw_preview.c:4410
+msgid "Luminosity histogram"
+msgstr "조도 히스토그램"
+
+#: ufraw_preview.c:4420
+msgid "Value (maximum) histogram"
+msgstr "값 (최대) 히스토그램"
+
+#: ufraw_preview.c:4430
+msgid "Saturation histogram"
+msgstr "채도 히스토그램"
+
+#: ufraw_preview.c:4465
+msgid "Average:"
+msgstr "평균:"
+
+#: ufraw_preview.c:4467
+msgid "Std. deviation:"
+msgstr "표준 편차:"
+
+#: ufraw_preview.c:4470
+msgid "Overexposed:"
+msgstr "노출과다:"
+
+#: ufraw_preview.c:4472
+#: ufraw_preview.c:4483
+msgid "Indicate"
+msgstr "표시"
+
+#: ufraw_preview.c:4480
+msgid "Underexposed:"
+msgstr "노출부족:"
+
+#: ufraw_preview.c:4600
+msgid "Options"
+msgstr "옵션"
+
+#. Comment to translator: All control buttons
+#. "_Delete", "_Cancel", "_Save", "Save _As", "Send to _Gimp"
+#. should have unique mnemonics.
+#. Delete button:
+#: ufraw_preview.c:4611
+msgid "_Delete"
+msgstr "지우기(_D)"
+
+#: ufraw_preview.c:4641
+#, c-format
+msgid "Filename: %s%s"
+msgstr "파일 이름: %s%s"
+
+#: ufraw_preview.c:4642
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+"\n"
+"ID파일을 같이 만들기"
+
+#: ufraw_preview.c:4643
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+"\n"
+"ID파일만 만들기"
+
+#: ufraw_preview.c:4652
+msgid "Save _As"
+msgstr "다른 이름으로 저장(_A)"
+
+#: ufraw_preview.c:4658
+msgid "Send image to _Gimp"
+msgstr "이미지를 Gimp로 전달(_G)"
+
+#. preview_progress() changes the size of the progress bar
+#. and processes the event queue.
+#: ufraw_preview.c:4672
+msgid "Loading preview"
+msgstr "미리보기 불러오는 중"
+
+#: ufraw_routines.c:177
+msgid "Fatal error setting C locale"
+msgstr "치명적인 오류 C 로케일 설정"
+
+#: ufraw_routines.c:290
+#, c-format
+msgid "Curve version is not supported"
+msgstr "지원되지 않는 곡선 버젼"
+
+#: ufraw_routines.c:357
+#: ufraw_routines.c:431
+#, c-format
+msgid "Invalid Nikon curve file '%s'"
+msgstr "유효하지 않은 Nikon 곡선 파일 '%s'"
+
+#: ufraw_routines.c:373
+#, c-format
+msgid "Error opening Curve file '%s': %s"
+msgstr "곡선 파일 '%s' 열기 오류: %s"
+
+#: ufraw_routines.c:440
+#, c-format
+msgid "Error opening file '%s': %s"
+msgstr "파일 '%s' 열기 오류: %s"
+
+#: ufraw_saver.c:100
+msgid "File exists"
+msgstr "파일이 존재함"
+
+#: ufraw_saver.c:108
+#, c-format
+msgid ""
+"File '%s' already exists.\n"
+"Overwrite?"
+msgstr ""
+"'%s'파일이 이미 존재합니다.\n"
+"덮어쓸까요?"
+
+#: ufraw_saver.c:140
+msgid "Save image"
+msgstr "이미지 저장"
+
+#: ufraw_saver.c:164
+msgid "Output options"
+msgstr "출력 옵션"
+
+#: ufraw_saver.c:173
+msgid "Interpolation method set to AHD"
+msgstr "보간방법이 AHD로 설정 되었습니다"
+
+#: ufraw_saver.c:177
+msgid "8-bit ppm"
+msgstr "8-bit ppm"
+
+#: ufraw_saver.c:187
+msgid "16-bit ppm"
+msgstr "16-bit ppm"
+
+#: ufraw_saver.c:200
+msgid "8-bit TIFF"
+msgstr "8-bit TIFF"
+
+#: ufraw_saver.c:211
+msgid "16-bit TIFF"
+msgstr "16-bit TIFF"
+
+#: ufraw_saver.c:219
+msgid "ZIP Compress (lossless)"
+msgstr "ZIP 압축 (무손실)"
+
+#: ufraw_saver.c:238
+msgid "Compression level"
+msgstr "압축률"
+
+#: ufraw_saver.c:248
+msgid "Progressive encoding"
+msgstr "프로그래시브 인코등"
+
+#: ufraw_saver.c:258
+msgid "8-bit PNG"
+msgstr "8-bit PNG"
+
+#: ufraw_saver.c:269
+msgid "16-bit PNG"
+msgstr "16-bit PNG"
+
+#: ufraw_saver.c:281
+msgid "Flexible Image Transport System (FITS)"
+msgstr "Flexible Image Transport System (FITS)"
+
+#: ufraw_saver.c:294
+msgid "Embed EXIF data in JPEG or PNG files"
+msgstr "JPEG나 PNG파일에 포함된 EXIF 데이타"
+
+#: ufraw_saver.c:304
+msgid "Create ID file "
+msgstr "ID 파일 만들기"
+
+#: ufraw_saver.c:307
+msgid "No"
+msgstr "아니요"
+
+#: ufraw_saver.c:308
+msgid "Also"
+msgstr "또한"
+
+#: ufraw_saver.c:309
+msgid "Only"
+msgstr "오직"
+
+#: ufraw_saver.c:314
+msgid "\tSave image defaults "
+msgstr "\t이미지 기본값 저장"
+
+#: ufraw_saver.c:331
+msgid "Overwrite existing files without asking"
+msgstr "묻지 않고 존재하는 파일에 덮어쓰기"
+
+#: ufraw_saver.c:422
+#: ufraw_saver.c:430
+#: ufraw_saver.c:442
+#: ufraw_saver.c:449
+#: ufraw_saver.c:457
+msgid "Error creating temporary file."
+msgstr "임시 파일 만들기 실패."
+
+#: ufraw_saver.c:469
+msgid "Error activating Gimp."
+msgstr "Gimp 실행 실패."
+
+#: ufraw_ufraw.c:146
+msgid "Remote URI is not supported"
+msgstr "원격 URI를 지원하지 않습니다"
+
+#: ufraw_ufraw.c:255
+#, c-format
+msgid "darkframe error: %s is not a raw file\n"
+msgstr "다크프레임 오류: %s(은)는 raw 파일이 아닙니다\n"
+
+#: ufraw_ufraw.c:266
+#, c-format
+msgid "error loading darkframe '%s'\n"
+msgstr "다크프레임 '%s'을(를) 불러오기 중 오류 발생\n"
+
+#: ufraw_ufraw.c:281
+#, c-format
+msgid "Darkframe '%s' is incompatible with main image"
+msgstr "다크프레임 '%s'(은)는 메인 이미지와 호환되지 않습니다."
+
+#: ufraw_ufraw.c:289
+#, c-format
+msgid "using darkframe '%s'\n"
+msgstr "다크프레임 '%s' 사용\n"
+
+#: ufraw_ufraw.c:462
+msgid "Error reading NEF curve"
+msgstr "NEF 곡선 읽기 실패"
+
+#: ufraw_ufraw.c:701
+#, c-format
+msgid "Can not downsize from %d to %d."
+msgstr "%d에서 %d(으)로 크기를 축소할 수 없습니다."
+
+#: ufraw_ufraw.c:951
+#: ufraw_ufraw.c:954
+msgid "Cannot use camera white balance, reverting to auto white balance."
+msgstr "카메라 화이트 벨런스를 사용할 수 없으므로, 자동 화이트 벨런스로 되돌립니다."
+
+#: ufraw_writer.c:126
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr "이미지의 파일 이름은 ID 파일 이름 '%s'와 같을 수 없습니다."
+
+#. 'errno' does seem to contain useful information
+#. Error was not already set before
+#: ufraw_writer.c:152
+#: ufraw_writer.c:291
+#: ufraw_writer.c:305
+#: ufraw_writer.c:611
+msgid "Error creating file."
+msgstr "파일 만들기 실패."
+
+#. Error was not already set before
+#: ufraw_writer.c:165
+#: ufraw_writer.c:178
+#: ufraw_writer.c:194
+#: ufraw_writer.c:222
+#: ufraw_writer.c:239
+#: ufraw_writer.c:372
+#: ufraw_writer.c:388
+#: ufraw_writer.c:589
+#: ufraw_writer.c:600
+#: ufraw_writer.c:627
+#, c-format
+msgid "Error creating file '%s'."
+msgstr "%s 파일 만들기 실패."
+
+#: ufraw_writer.c:217
+#: ufraw_writer.c:232
+#: ufraw_writer.c:285
+#: ufraw_writer.c:299
+#: ufraw_writer.c:362
+#: ufraw_writer.c:436
+#: ufraw_writer.c:446
+#: ufraw_writer.c:477
+msgid "Saving image"
+msgstr "이미지 저장중"
+
+#: ufraw_writer.c:276
+#: ufraw_writer.c:345
+#: ufraw_writer.c:423
+#, c-format
+msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "출력 프로파일 '%s'을(를) '%s'에 포함하는데 실패하였습니다."
+
+#: ufraw_writer.c:353
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "EXIF 버퍼 길이 %d이(가) 매우 길어 무시됩니다."
+
+#: ufraw_writer.c:602
+#, c-format
+msgid "Unknown file type %d."
+msgstr "알 수 없는 파일 타입 %d."
+
+#. Column 1 - "make" of the camera.
+#. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
+#. * Column 3 - WB name.
+#. * Column 4 - Fine tuning. MUST be in increasing order. 0 for no fine tuning.
+#. *	      It is enough to give only the extreme values, the other values
+#. *	      will be interpolated.
+#. * Column 5 - Channel multipliers.
+#. *
+#. * Minolta's ALPHA and MAXXUM models are treated as the DYNAX model.
+#. *
+#. * WB name is standardized to one of the following:
+#. "Sunlight" and other variation should be switched to this:
+#: wb_presets.c:36
+msgid "Daylight"
+msgstr "일광"
+
+#. Probably same as above:
+#: wb_presets.c:38
+msgid "Direct sunlight"
+msgstr "직 태양광"
+
+#: wb_presets.c:39
+msgid "Cloudy"
+msgstr "흐린날"
+
+#. "Shadows" should be switched to this:
+#: wb_presets.c:41
+msgid "Shade"
+msgstr "그림자"
+
+#: wb_presets.c:42
+msgid "Incandescent"
+msgstr "백열등"
+
+#: wb_presets.c:43
+msgid "Incandescent warm"
+msgstr "따뜻한 백열등"
+
+#. Same as "Incandescent":
+#: wb_presets.c:45
+msgid "Tungsten"
+msgstr "텅스텐"
+
+#: wb_presets.c:46
+msgid "Fluorescent"
+msgstr "조명"
+
+#. Only in Canon cameras:
+#: wb_presets.c:48
+msgid "Fluorescent high"
+msgstr "강한 조명"
+
+#: wb_presets.c:49
+msgid "Cool white fluorescent"
+msgstr "차가운 백색 조명"
+
+#: wb_presets.c:50
+msgid "Warm white fluorescent"
+msgstr "따뜻한 백색 조명"
+
+#: wb_presets.c:51
+msgid "Daylight fluorescent"
+msgstr "주광색 형광등"
+
+#: wb_presets.c:52
+msgid "Neutral fluorescent"
+msgstr "주백색 형광등"
+
+#: wb_presets.c:53
+msgid "White fluorescent"
+msgstr "백색 형광등"
+
+#. For Olympus with no real "Flash" preset:
+#: wb_presets.c:56
+msgid "Flash (auto mode)"
+msgstr "플래쉬 (자동 모드)"
+
+#: wb_presets.c:57
+msgid "Evening sun"
+msgstr "석양"
+
+#: wb_presets.c:58
+msgid "Underwater"
+msgstr "수중"
+
+#: wb_presets.c:59
+msgid "Black & white"
+msgstr "흑백"
+
+#: wb_presets.c:63
+msgid "Manual WB"
+msgstr "수동 화벨"
+
+#: wb_presets.c:64
+msgid "Camera WB"
+msgstr "카메라 화벨"
+
+#: wb_presets.c:65
+msgid "Auto WB"
+msgstr "자동 화벨"
+
