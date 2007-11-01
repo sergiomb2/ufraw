@@ -36,6 +36,7 @@ developer_data *developer_init()
 {
     int i;
     developer_data *d = g_new(developer_data,1);
+    d->mode = -1;
     d->gamma = -1;
     d->linear = -1;
     d->saturation = -1;
@@ -216,25 +217,20 @@ static double findExpCoeff(double b)
 
 static void developer_create_transform(developer_data *d, DeveloperMode mode)
 {
-    if ( mode==auto_developer ) {
-	/* For auto-tools we ignore all the output settings:
-	 * luminosity, saturation, output profile and proofing.
-	 * Instead we create an sRGB output. */
-	cmsHPROFILE *sRGBprofile = cmsCreate_sRGBProfile();
-	d->colorTransform = cmsCreateTransform(
-		d->profile[in_profile], TYPE_RGB_16,
-		sRGBprofile, TYPE_RGB_16, d->intent[out_profile], 0);
-        cmsCloseProfile(sRGBprofile);
+    if ( !d->updateTransform )
 	return;
-    }
+    d->updateTransform = FALSE;
+    if (d->colorTransform!=NULL)
+        cmsDeleteTransform(d->colorTransform);
+
     int targetProfile;
-    if ( mode==file_developer ) {
+    if ( mode==file_developer || mode==auto_developer ) {
 	targetProfile = out_profile;
     } else { /* mode==display_developer */
 	targetProfile = display_profile;
     }
     /* When softproofing is disabled, use the out_profile intent. */
-    if ( mode==file_developer ||
+    if ( mode==file_developer || mode==auto_developer ||
 	 d->intent[display_profile]==disable_intent ) {
 	/* No need for proofing transformation. */
 	if ( strcmp(d->profileFile[in_profile],"")==0 && 
@@ -307,8 +303,16 @@ void developer_prepare(developer_data *d, conf_data *conf,
     profile_data *in, *out, *display;
     CurveData *baseCurve, *curve;
 
+    if ( mode!=d->mode ) {
+	d->mode = mode;
+	d->updateTransform = TRUE;
+    }
     in = &conf->profile[in_profile][conf->profileIndex[in_profile]];
-    out = &conf->profile[out_profile][conf->profileIndex[out_profile]];
+    /* For auto-tools we create an sRGB output. */
+    if ( mode==auto_developer )
+	out = &conf->profile[out_profile][0];
+    else 
+	out = &conf->profile[out_profile][conf->profileIndex[out_profile]];
     display = &conf->profile[display_profile]
 		[conf->profileIndex[display_profile]];
     baseCurve = &conf->BaseCurve[conf->BaseCurveIndex];
@@ -395,11 +399,17 @@ void developer_prepare(developer_data *d, conf_data *conf,
     }
     developer_profile(d, in_profile, in);
     developer_profile(d, out_profile, out);
-    developer_profile(d, display_profile, display);
     if ( conf->intent[out_profile]!=d->intent[out_profile] ) {
         d->intent[out_profile] = conf->intent[out_profile];
         d->updateTransform = TRUE;
     }
+    /* For auto-tools we ignore all the output settings:
+     * luminosity, saturation, output profile and proofing. */
+    if ( mode==auto_developer ) {
+	developer_create_transform(d, mode);
+	return;
+    }
+    developer_profile(d, display_profile, display);
     if ( conf->intent[display_profile]!=d->intent[display_profile] ) {
         d->intent[display_profile] = conf->intent[display_profile];
         d->updateTransform = TRUE;
@@ -439,11 +449,7 @@ void developer_prepare(developer_data *d, conf_data *conf,
 	    d->saturationProfile = create_saturation_profile(d->saturation);
 	d->updateTransform = TRUE;
     }
-    if (d->updateTransform || mode==auto_developer) {
-        if (d->colorTransform!=NULL)
-            cmsDeleteTransform(d->colorTransform);
-	developer_create_transform(d, mode);
-    }
+    developer_create_transform(d, mode);
 }
 
 extern const double xyz_rgb[3][3];

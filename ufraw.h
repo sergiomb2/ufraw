@@ -71,6 +71,7 @@ typedef struct {
 } wb_data;
 
 typedef struct {
+    DeveloperMode mode;
     unsigned rgbMax, max, exposure, colors, useMatrix;
     int restoreDetails, clipHighlights;
     int rgbWB[4], colorMatrix[3][4];
@@ -215,6 +216,7 @@ typedef struct ufraw_struct {
     void *unzippedBuf;
     unsigned unzippedBufLen;
     developer_data *developer;
+    developer_data *AutoDeveloper;
     conf_data *conf;
     void *widget;
     guchar *exifBuf;
@@ -240,6 +242,7 @@ ufraw_data *ufraw_open(char *filename);
 int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf,conf_data *cmd);
 int ufraw_load_raw(ufraw_data *uf);
 int ufraw_load_darkframe(ufraw_data *uf);
+void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode);
 int ufraw_convert_image(ufraw_data *uf);
 int ufraw_convert_image_init(ufraw_data *uf);
 int ufraw_convert_image_first_phase(ufraw_data *uf);

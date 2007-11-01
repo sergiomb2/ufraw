@@ -949,6 +949,8 @@ static gboolean render_prepare(preview_data *data)
 	    CFG->curve[CFG->curveIndex].m_anchors[0].x);
     gtk_label_set_text(GTK_LABEL(data->BlackLabel), text);
 
+    ufraw_developer_prepare(data->UF, display_developer);
+
     if ( CFG->profileIndex[display_profile]==0 ) {
 	guint8 *displayProfile;
 	gint profileSize;
@@ -962,9 +964,6 @@ static gboolean render_prepare(preview_data *data)
 		CFG->profile[display_profile]
 			[CFG->profileIndex[display_profile]].productName);
     }
-    developer_prepare(Developer, CFG,
-	    data->UF->rgbMax, data->UF->rgb_cam,
-	    data->UF->colors, data->UF->useMatrix, display_developer);
     return FALSE;
 }
 

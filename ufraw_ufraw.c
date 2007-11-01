@@ -228,7 +228,8 @@ ufraw_data *ufraw_open(char *filename)
     uf->raw = raw;
     uf->colors = raw->colors;
     uf->raw_color = raw->raw_color;
-    uf->developer = developer_init();
+    uf->developer = NULL;
+    uf->AutoDeveloper = NULL;
     uf->widget = NULL;
     uf->RawLumHistogram = NULL;
     uf->HaveFilters = raw->filters!=0;
@@ -603,6 +604,7 @@ void ufraw_close(ufraw_data *uf)
 	g_free(uf->Images[i].buffer);
     g_free(uf->thumb.buffer);
     developer_destroy(uf->developer);
+    developer_destroy(uf->AutoDeveloper);
     g_free(uf->RawLumHistogram);
     if ( uf->conf->darkframe!=NULL ) {
 	ufraw_close(uf->conf->darkframe);
@@ -612,12 +614,25 @@ void ufraw_close(ufraw_data *uf)
     ufraw_message(UFRAW_CLEAN, NULL);
 }
 
+void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode)
+{
+    if ( mode==auto_developer ) {
+	if ( uf->AutoDeveloper==NULL )
+	    uf->AutoDeveloper = developer_init();
+	developer_prepare(uf->AutoDeveloper, uf->conf,
+	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, mode);
+    } else {
+	if ( uf->developer==NULL )
+	    uf->developer = developer_init();
+	developer_prepare(uf->developer, uf->conf,
+	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, mode);
+    }
+}
+
 int ufraw_convert_image_init(ufraw_data *uf)
 {
     dcraw_data *raw = uf->raw;
 
-    developer_prepare(uf->developer, uf->conf,
-	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, file_developer);
     /* We can do a simple interpolation in the following cases:
      * We shrink by an integer value.
      * If pixel_aspect<1 (e.g. NIKON D1X) shrink must be at least 4.
@@ -642,6 +657,7 @@ int ufraw_convert_image_init(ufraw_data *uf)
 
 int ufraw_convert_image(ufraw_data *uf)
 {
+    ufraw_developer_prepare(uf, file_developer);
     ufraw_convert_image_init(uf);
     ufraw_convert_image_first_phase(uf);
     if (uf->ConvertShrink>1) {
@@ -1103,8 +1119,7 @@ void ufraw_auto_expose(ufraw_data *uf)
     /* If we normalize the exposure then 0 EV also gets normalized */
     if ( uf->conf->ExposureNorm>0 )
 	uf->conf->exposure = -log(1.0*uf->rgbMax/uf->conf->ExposureNorm)/log(2);
-    developer_prepare(uf->developer, uf->conf,
-	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, auto_developer);
+    ufraw_developer_prepare(uf, auto_developer);
     /* Find the grey value that gives 99% luminosity */
     double maxChan = 0;
     for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
@@ -1112,7 +1127,7 @@ void ufraw_auto_expose(ufraw_data *uf)
     {
 	for (c=0; c<uf->colors; c++)
 	    pix[c] = MIN (p * maxChan/uf->conf->chanMul[c], uf->rgbMax);
-	develope(p16, pix, uf->developer, 16, pixtmp, 1);
+	develope(p16, pix, uf->AutoDeveloper, 16, pixtmp, 1);
 	for (c=0, wp=0; c<3; c++) wp = MAX(wp, p16[c]);
 	if (wp < 0x10000 * 99/100) pMin = p;
 	else pMax = p;
@@ -1144,8 +1159,7 @@ void ufraw_auto_black(ufraw_data *uf)
     if (uf->conf->autoBlack==disabled_state) return;
 
     /* Reset the luminosityCurve */
-    developer_prepare(uf->developer, uf->conf,
-	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, auto_developer);
+    ufraw_developer_prepare(uf, auto_developer);
     /* Calculate the black point */
     ufraw_build_raw_luminosity_histogram(uf);
     stop = uf->RawLumCount/256/4;
@@ -1155,7 +1169,7 @@ void ufraw_auto_black(ufraw_data *uf)
     for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
     for (c=0; c<uf->colors; c++)
 	pix[c] = MIN (bp * maxChan/uf->conf->chanMul[c], uf->rgbMax);
-    develope(p16, pix, uf->developer, 16, pixtmp, 1);
+    develope(p16, pix, uf->AutoDeveloper, 16, pixtmp, 1);
     for (c=0, bp=0; c<3; c++) bp = MAX(bp, p16[c]);
 
     CurveDataSetPoint(&uf->conf->curve[uf->conf->curveIndex],
@@ -1179,8 +1193,7 @@ void ufraw_auto_curve(ufraw_data *uf)
     double norm = (1-pow(decay,steps))/(1-decay);
 
     CurveDataReset(curve);
-    developer_prepare(uf->developer, uf->conf,
-	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, auto_developer);
+    ufraw_developer_prepare(uf, auto_developer);
     /* Calculate curve points */
     ufraw_build_raw_luminosity_histogram(uf);
     stop = uf->RawLumCount/256/4;
@@ -1191,7 +1204,7 @@ void ufraw_auto_curve(ufraw_data *uf)
             sum += uf->RawLumHistogram[bp];
 	for (c=0; c<uf->colors; c++)
 	    pix[c] = MIN (bp * maxChan/uf->conf->chanMul[c], uf->rgbMax);
-	develope(p16, pix, uf->developer, 16, pixtmp, 1);
+	develope(p16, pix, uf->AutoDeveloper, 16, pixtmp, 1);
 	for (c=0, p=0; c<3; c++) p = MAX(p, p16[c]);
 	stop += uf->RawLumCount * pow(decay,i) / norm;
 	/* Skeep adding point if slope is too big (more than 4) */

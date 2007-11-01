@@ -248,8 +248,8 @@ static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
          gpointer user, GError **error)
 {
     conf_data *c = user;
-    context = context;
-    error = error;
+    (void)context;
+    (void)error;
     if ( c->BaseCurveCount<=0 &&
 	 ( !strcmp("BaseManualCurve", element) ||
 	   !strcmp("BaseLinearCurve", element) ||
@@ -277,13 +277,17 @@ static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
         c->curveCount = - c->curveCount + 1;
     }
     if ( !strcmp("sRGBInputProfile", element) )
-	c->profileCount[in_profile] = 1;
+	c->profileCount[in_profile] =
+		conf_default.profileCount[in_profile];
     if ( !strcmp("sRGBOutputProfile", element) )
-	c->profileCount[out_profile] = 1;
+	c->profileCount[out_profile] =
+		conf_default.profileCount[out_profile];
     if ( !strcmp("SystemDisplayProfile", element) )
-	c->profileCount[display_profile] = 1;
+	c->profileCount[display_profile] =
+		conf_default.profileCount[display_profile];
     if ( !strcmp("sRGBDisplayProfile", element) )
-	c->profileCount[display_profile] = 2;
+	c->profileCount[display_profile] =
+		conf_default.profileCount[display_profile];
     if ( c->profileCount[in_profile]<=0 && strcmp("InputProfile", element)==0 )
         c->profileCount[in_profile] = -c->profileCount[in_profile]+1;
     if ( c->profileCount[out_profile]<=0 &&
@@ -931,7 +935,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
                 buf = uf_markup_buf(buf,
 			"\t<UseColorMatrix>%d</UseColorMatrix>\n",
                         c->profile[j][0].useMatrix);
-            buf = uf_markup_buf(buf, "</sRGB%s>\n", type);
+            buf = uf_markup_buf(buf, "</%s%s>\n", profile, type);
         }
 	/* While the default ICC profile is conf_default.profile[j][1] */
         for (i=conf_default.profileCount[j]; i<c->profileCount[j]; i++) {
