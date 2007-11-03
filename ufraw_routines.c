@@ -165,26 +165,37 @@ const char *file_type[] = { ".ppm", ".ppm", ".tif", ".tif", ".jpg",
 /* Set locale of LC_NUMERIC to "C" to make sure that printf behaves correctly.*/
 char *uf_set_locale_C()
 {
-    char test[max_name], *locale;
-    snprintf(test, max_name, "%.1f", 1234.5);
-    if (strcmp(test, "1234.5")) {
-	locale = setlocale(LC_NUMERIC, "C");
-	snprintf(test, max_name, "%.1f", 1234.5);
-	if (!strcmp(test, "1234.5")) {
-	    return locale;
+    char *locale = NULL;
+    char *test = g_markup_printf_escaped("%.1f", 1234.5);
+    if ( strcmp(test, "1234.5")!=0 ) {
+	locale = setlocale(LC_NUMERIC, NULL);
+	if ( locale!=NULL ) {
+	    locale = g_strdup(locale);
 	} else {
-	    setlocale(LC_NUMERIC, locale);
 	    ufraw_message(UFRAW_ERROR, _("Fatal error setting C locale"));
-	    return NULL;
 	}
-    } else {
-	return NULL;
+	setlocale(LC_NUMERIC, "C");
+	g_free(test);
+	test = g_markup_printf_escaped("%.1f", 1234.5);
+	if ( strcmp(test, "1234.5")!=0 ) {
+	    ufraw_message(UFRAW_ERROR, _("Fatal error setting C locale"));
+	    if ( locale!=NULL ) {
+		setlocale(LC_NUMERIC, locale);
+		g_free(locale);
+		locale = NULL;
+	    }
+	}
     }
+    g_free(test);
+    return locale;
 }
 
 void uf_reset_locale(char *locale)
 {
+    if ( locale==NULL )
+	return;
     setlocale(LC_NUMERIC, locale);
+    g_free(locale);
 }
 
 double profile_default_linear(profile_data *p)
@@ -387,6 +398,7 @@ int curve_load(CurveData *cp, char *filename)
 		uf_reset_locale(locale);
 		fclose(in);
 		g_error_free(err);
+		uf_reset_locale(locale);
                 return UFRAW_ERROR;
             }
             fgets(line, max_path, in);
