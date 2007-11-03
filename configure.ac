@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.98 2007/11/01 22:32:47 udifuchs Exp $
+dnl $Id: configure.ac,v 1.99 2007/11/03 00:03:05 udifuchs Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -125,7 +125,7 @@ AC_SUBST(CINEPAINT_PROGRAMPLUGINDIR)
 # Disable deprecated functions on tested versions of GTK
 # unless using an old gimp-dev package.
 if $PKG_CONFIG --atleast-version=2.2 gimpui-2.0; then
-  if $PKG_CONFIG --max-version=2.10.99 gtk+-2.0; then
+  if $PKG_CONFIG --max-version=2.12.99 gtk+-2.0; then
     AC_DEFINE(G_DISABLE_DEPRECATED, [], disable deprecated glib features)
     AC_DEFINE(GDK_DISABLE_DEPRECATED, [], disable deprecated gdk features)
     AC_DEFINE(GTK_DISABLE_DEPRECATED, [], disable deprecated gtk+ features)
