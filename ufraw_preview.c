@@ -399,10 +399,10 @@ static void save_curve(GtkWidget *widget, long curveType)
     if (strlen(CFG->curvePath)>0)
         gtk_file_chooser_set_current_folder(fileChooser, CFG->curvePath);
     if (curveType==base_curve)
-	snprintf(defFilename, max_name, "%s.curve",
+	g_snprintf(defFilename, max_name, "%s.curve",
 		CFG->BaseCurve[CFG->BaseCurveIndex].name);
     else
-	snprintf(defFilename, max_name, "%s.curve",
+	g_snprintf(defFilename, max_name, "%s.curve",
 		CFG->curve[CFG->curveIndex].name);
     gtk_file_chooser_set_current_name(fileChooser, defFilename);
     if (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
@@ -575,16 +575,16 @@ static void color_labels_set(colorLabels *l, double data[])
 
     for (c=0; c<3; c++) {
         switch (l->format) {
-        case pixel_format: snprintf(buf1, max_name, "%3.f", data[c]); break;
+        case pixel_format: g_snprintf(buf1, max_name, "%3.f", data[c]); break;
         case percent_format:
                       if (data[c]<10.0)
-                          snprintf(buf1, max_name, "%2.1f%%", data[c]);
+                          g_snprintf(buf1, max_name, "%2.1f%%", data[c]);
                       else
-                          snprintf(buf1, max_name, "%2.0f%%", data[c]);
+                          g_snprintf(buf1, max_name, "%2.0f%%", data[c]);
                       break;
-        default: snprintf(buf1, max_name, "ERR");
+        default: g_snprintf(buf1, max_name, "ERR");
         }
-        snprintf(buf2, max_name, "<span foreground='%s'>%s</span>",
+        g_snprintf(buf2, max_name, "<span foreground='%s'>%s</span>",
                 colorName[c], buf1);
         gtk_label_set_markup(l->labels[c], buf2);
     }
@@ -594,14 +594,14 @@ static void color_labels_set(colorLabels *l, double data[])
 
     /* Value */
     c = 3;
-    snprintf(buf2, max_name, "<span foreground='%s'>%0.3f</span>",
+    g_snprintf(buf2, max_name, "<span foreground='%s'>%0.3f</span>",
 	    colorName[c], data[3]);
     gtk_label_set_markup(l->labels[c], buf2);
 
     /* Zone */
     c = 4;
     /* 2 decimal places may be excessive */
-    snprintf(buf2, max_name, "<span foreground='%s'>%0.2f</span>",
+    g_snprintf(buf2, max_name, "<span foreground='%s'>%0.2f</span>",
 	    colorName[c], data[4]);
     gtk_label_set_markup(l->labels[c], buf2);
 }
@@ -888,11 +888,11 @@ static void render_init(preview_data *data)
     if (data->ProgressBar!=NULL) {
 	char progressText[max_name];
 	if (CFG->Scale==0)
-	    snprintf(progressText, max_name, _("size %dx%d, zoom %2.f%%"),
+	    g_snprintf(progressText, max_name, _("size %dx%d, zoom %2.f%%"),
 		    data->UF->initialWidth, data->UF->initialHeight,
 		    CFG->Zoom);
 	else
-	    snprintf(progressText, max_name, _("size %dx%d, scale 1/%d"),
+	    g_snprintf(progressText, max_name, _("size %dx%d, scale 1/%d"),
 		    data->UF->initialWidth, data->UF->initialHeight,
 		    CFG->Scale);
 	gtk_progress_bar_set_text(data->ProgressBar, progressText);
@@ -910,14 +910,6 @@ static void render_preview(preview_data *data)
     g_idle_remove_by_data(data);
     g_idle_add_full(G_PRIORITY_DEFAULT_IDLE-10,
 	    (GSourceFunc)(render_prepare), data, NULL);
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-	    (GSourceFunc)(render_raw_histogram), data, NULL);
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+10,
-            (GSourceFunc)(render_preview_image), data, NULL);
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
-            (GSourceFunc)(render_live_histogram), data, NULL);
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
-            (GSourceFunc)(render_spot), data, NULL);
 }
 
 static gboolean render_prepare(preview_data *data)
@@ -964,6 +956,17 @@ static gboolean render_prepare(preview_data *data)
 		CFG->profile[display_profile]
 			[CFG->profileIndex[display_profile]].productName);
     }
+    /* The reset of the rendering can be triggered only after the call to
+     * ufraw_developer_preare(). Otherwise error messages in this function
+     * would cause timing problems. */
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	    (GSourceFunc)(render_raw_histogram), data, NULL);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+10,
+            (GSourceFunc)(render_preview_image), data, NULL);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
+            (GSourceFunc)(render_live_histogram), data, NULL);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
+            (GSourceFunc)(render_spot), data, NULL);
     return FALSE;
 }
 
@@ -1256,7 +1259,7 @@ static gboolean render_spot(preview_data *data)
     rgb[4] = value2zone(yValue);
     color_labels_set(data->SpotLabels, rgb);
     char tmp[max_name];
-    snprintf(tmp, max_name, "<span background='#%02X%02X%02X'>"
+    g_snprintf(tmp, max_name, "<span background='#%02X%02X%02X'>"
 	    "                    </span>",
 	    (int)rgb[0], (int)rgb[1], (int)rgb[2]);
     gtk_label_set_markup(data->SpotPatch, tmp);
@@ -2910,7 +2913,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
                     (GtkCallback)(container_remove), profileTable[j]);
             table = GTK_TABLE(profileTable[j]);
             for (i=conf_default.profileCount[j]; i<CFG->profileCount[j]; i++) {
-                snprintf(txt, max_name, "%s (%s)",
+                g_snprintf(txt, max_name, "%s (%s)",
                         CFG->profile[j][i].name,
                         CFG->profile[j][i].productName);
                 label = gtk_label_new(txt);

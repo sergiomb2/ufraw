@@ -234,7 +234,7 @@ ufraw_data *ufraw_open(char *filename)
     uf->RawLumHistogram = NULL;
     uf->HaveFilters = raw->filters!=0;
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
-        uf->initialWidth, uf->initialHeight, raw->toneCurveSize);
+	    raw->width, raw->height, raw->toneCurveSize);
  
     return uf;
 }
