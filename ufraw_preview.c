@@ -1939,6 +1939,7 @@ static void flip_image(GtkWidget *widget, int flip)
 	 * We only need to draw the flipped image. */
 	render_special_mode(widget, render_default);
     }
+    update_crop_ranges(data);
     refresh_aspect(data);
 }
 
