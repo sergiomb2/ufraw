@@ -10,9 +10,9 @@ msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-11-04 16:08+0100\n"
-"PO-Revision-Date: 2007-07-22 19:21+0300\n"
+"PO-Revision-Date: 2007-11-06 07:45+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
-"Language-Team: Russian <gnome-cyr@gnome.org>\n"
+"Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,7 +25,7 @@ msgstr ""
 #. Translate text message from GtkImageView:
 #: uf_gtk.cc:205
 msgid "Open the navigator window"
-msgstr ""
+msgstr "Открыть окно навигатора"
 
 #: ufraw-batch.c:74
 msgid "No input file, nothing to do."
@@ -131,9 +131,8 @@ msgid "sRGB"
 msgstr "sRGB"
 
 #: ufraw_conf.c:69
-#, fuzzy
 msgid "System default"
-msgstr "Сохранять параметры снимков"
+msgstr "Системный профиль"
 
 #: ufraw_conf.c:161
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
@@ -378,12 +377,11 @@ msgstr ""
 "                      чёрного (по умолчанию = 0).\n"
 
 #: ufraw_conf.c:1312
-#, fuzzy
 msgid ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"
 msgstr ""
-"--interpolation=eahd|ahd|vng|four-color|ppg|bilinear\n"
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Используемый алгоритм интерполяции (по умолчанию — "
 "ahd).\n"
 
@@ -402,12 +400,11 @@ msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=РАЗМЕР         Уменьшить максимальный из размеров до РАЗМЕР.\n"
 
 #: ufraw_conf.c:1319
-#, fuzzy
 msgid ""
 "--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
 "                      Output file format (default ppm8).\n"
 msgstr ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
+"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg\n"
 "                      Формат выходного файла (по умолчанию — ppm8).\n"
 
 #: ufraw_conf.c:1321
@@ -424,12 +421,12 @@ msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=ЗНАЧ    сжатие JPEG (0-100, по умолчанию — 85).\n"
 
 #: ufraw_conf.c:1324
-#, fuzzy
 msgid ""
 "--[no]exif            Embed EXIF in output JPEG or PNG (default embed "
 "EXIF).\n"
 msgstr ""
-"--[no]exif            Встроить данные EXIF в выходное изображение JPEG\n"
+"--[no]exif            Встроить данные EXIF в выходное изображение JPEG или "
+"PNG\n"
 "                      (по умолчанию — встроить).\n"
 
 #: ufraw_conf.c:1325
@@ -588,9 +585,8 @@ msgid "ufraw was build without JPEG support."
 msgstr "ufraw был собран без поддержки JPEG."
 
 #: ufraw_conf.c:1744 ufraw_conf.c:1754
-#, fuzzy
 msgid "ufraw was build without PNG support."
-msgstr "ufraw был собран без поддержки JPEG."
+msgstr "UFRaw был собран без поддержки JPEG."
 
 #: ufraw_conf.c:1760
 #, c-format
@@ -619,37 +615,33 @@ msgstr "невозможно вывести более одного изобра
 #: ufraw_delete.c:30
 #, c-format
 msgid "Raw file '%s' missing."
-msgstr ""
+msgstr "RAW файл '%s' отсутствует."
 
 #: ufraw_delete.c:35
-#, fuzzy
 msgid "Delete raw file"
-msgstr "Создать ID-файл "
+msgstr "Создать файл RAW"
 
 #: ufraw_delete.c:38
 msgid "_Delete selected"
-msgstr ""
+msgstr "Удалить выбранное"
 
 #: ufraw_delete.c:39
-#, fuzzy
 msgid "Delete _All"
-msgstr "Создать ID-файл "
+msgstr "Удалить _все"
 
 #: ufraw_delete.c:43
 msgid "Select files to delete"
-msgstr ""
+msgstr "Выбрать файлы для удаления"
 
 #: ufraw_delete.c:50
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading directory '%s'."
-msgstr ""
-"Ошибка создания файла '%s'.\n"
-"%s"
+msgstr "Ошибка при чтении каталога '%s'."
 
 #: ufraw_delete.c:107
-#, fuzzy, c-format
+#, c-format
 msgid "Error deleting '%s'"
-msgstr "Ошибка записи '%s'"
+msgstr "Ошибка при удалении '%s'."
 
 #: ufraw_embedded.c:72
 msgid "Reading embedded image requires libjpeg."
@@ -715,11 +707,9 @@ msgstr ""
 "изображения"
 
 #: ufraw-gimp.c:250
-#, fuzzy, c-format
+#, c-format
 msgid "Loading raw file '%s'"
-msgstr ""
-"Ошибка создания файла '%s'.\n"
-"%s"
+msgstr "Загрузка файла RAW  '%s'"
 
 #: ufraw-gimp.c:332
 msgid "Can't allocate new image."
@@ -746,7 +736,7 @@ msgstr "буфер EXIF длиной %d, слишком длинный, прои
 
 #: ufraw_preview.c:59
 msgid "Raw histogram with conversion curves"
-msgstr ""
+msgstr "Гистограмма RAW с кривыми преобразования"
 
 #: ufraw_preview.c:60
 msgid "Live histogram"
@@ -809,7 +799,7 @@ msgstr "размер %dx%d, масштаб 1/%d"
 #: ufraw_preview.c:940
 #, c-format
 msgid "Black point: %0.3lf"
-msgstr "Чёрная точка: %0.3lf"
+msgstr "Черная точка: %0.3lf"
 
 #: ufraw_preview.c:1689
 msgid "Fatal Error: uf->conf->shrink<1"
@@ -817,14 +807,12 @@ msgstr "Критическая ошибка: uf->conf->shrink<1"
 
 #. No darkframe file
 #: ufraw_preview.c:2224
-#, fuzzy
 msgid "None"
 msgstr "Нет"
 
 #: ufraw_preview.c:2245 ufraw_preview.c:3814
-#, fuzzy
 msgid "Load dark frame"
-msgstr "Загрузить базовую кривую"
+msgstr "Загрузить тёмный кадр"
 
 #: ufraw_preview.c:2424
 msgid "clip"
@@ -895,16 +883,15 @@ msgstr "Кривые яркости"
 #. Remote Gimp command entry
 #: ufraw_preview.c:2809
 msgid "Remote Gimp command"
-msgstr ""
+msgstr "Удаленная команда ГИМП"
 
 #: ufraw_preview.c:2821
-#, fuzzy
 msgid "Reset command to default"
-msgstr "Сбросить значение гаммы до исходного"
+msgstr "Сбросить значение до исходного"
 
 #: ufraw_preview.c:2826
 msgid "Blink Over/Underexposure Indicators"
-msgstr ""
+msgstr "Мигать индикацией пере/недоэкспонирования"
 
 #: ufraw_preview.c:2831
 msgid "Configuration"
@@ -978,7 +965,7 @@ msgstr ""
 #: ufraw_preview.c:3297
 #, c-format
 msgid "%s%s (Alt-%c)"
-msgstr ""
+msgstr "%s%s (Alt-%c)"
 
 #: ufraw_preview.c:3400
 #, c-format
@@ -1087,7 +1074,7 @@ msgstr "Без баейеровской структуры"
 
 #: ufraw_preview.c:3735
 msgid "Apply color smoothing"
-msgstr ""
+msgstr "Применить цветовое сглаживание"
 
 #: ufraw_preview.c:3745
 msgid "Threshold"
@@ -1111,11 +1098,11 @@ msgstr "Масштаб в процентах"
 
 #: ufraw_preview.c:3801
 msgid "Dark Frame:"
-msgstr ""
+msgstr "Темный кадр:"
 
 #: ufraw_preview.c:3822
 msgid "Reset dark frame"
-msgstr ""
+msgstr "Обнулить тёмный кадр"
 
 #. End of White Balance setting page
 #. Start of Base Curve page
@@ -1273,7 +1260,7 @@ msgstr "Сбросить область кадрирования"
 
 #: ufraw_preview.c:4185
 msgid "Aspect ratio:"
-msgstr ""
+msgstr "Соотношение сторон:"
 
 #: ufraw_preview.c:4194
 msgid ""
@@ -1281,25 +1268,25 @@ msgid ""
 "Can be entered in decimal notation (1.273)\n"
 "or as a ratio of two numbers (14:11)"
 msgstr ""
+"Crop area aspect ratio.\n"
+"Can be entered in decimal notation (1.273)\n"
+"or as a ratio of two numbers (14:11)"
 
 #: ufraw_preview.c:4215
 msgid "Lock aspect ratio"
-msgstr ""
+msgstr "Зафиксировать соотношение сторон"
 
 #: ufraw_preview.c:4224
-#, fuzzy
 msgid "Shrink factor"
-msgstr "Коэффициент кадрирования"
+msgstr "Коэффициент масштаба"
 
 #: ufraw_preview.c:4239
-#, fuzzy
 msgid "Height"
-msgstr "\tВысота"
+msgstr "Высота"
 
 #: ufraw_preview.c:4255
-#, fuzzy
 msgid "Width"
-msgstr "\tШирина "
+msgstr "Ширина"
 
 #: ufraw_preview.c:4274
 msgid "Orientation:"
@@ -1313,71 +1300,61 @@ msgstr "EXIF"
 
 #: ufraw_preview.c:4332
 msgid "Tag"
-msgstr ""
+msgstr "Тег"
 
 #: ufraw_preview.c:4337
 msgid "Value"
-msgstr ""
+msgstr "Значение"
 
 #. Fill table with EXIF tags
 #: ufraw_preview.c:4342
-#, fuzzy
 msgid "Camera maker"
-msgstr "Кривая камеры"
+msgstr "Производитель"
 
 #: ufraw_preview.c:4343
-#, fuzzy
 msgid "Camera model"
-msgstr "Кривая камеры"
+msgstr "Модель камеры"
 
 #: ufraw_preview.c:4344
-#, fuzzy
 msgid "Timestamp"
-msgstr "Дата и время: %s\n"
+msgstr "Дата и время"
 
 #: ufraw_preview.c:4345
 msgid "Exposure"
-msgstr ""
+msgstr "Экспозиция"
 
 #: ufraw_preview.c:4346
-#, fuzzy
 msgid "Aperture"
-msgstr "Диафрагма: %s\n"
+msgstr "Диафрагма"
 
 #: ufraw_preview.c:4347
-#, fuzzy
 msgid "ISO speed"
-msgstr "Чувствительность ISO: %s\n"
+msgstr "Чувствительность ISO"
 
 #: ufraw_preview.c:4348
-#, fuzzy
 msgid "Focal length"
-msgstr "Фокусное расстояние: %s\n"
+msgstr "Фокусное расстояние"
 
 #: ufraw_preview.c:4349
-#, fuzzy
 msgid "35mm focal length"
-msgstr "Фокусное расстояние: %s\n"
+msgstr "Эквивалент 35мм"
 
 #: ufraw_preview.c:4350
-#, fuzzy
 msgid "Lens"
-msgstr "Объектив: %s\n"
+msgstr "Объектив"
 
 #: ufraw_preview.c:4351 wb_presets.c:54
 msgid "Flash"
 msgstr "Вспышка"
 
 #: ufraw_preview.c:4356
-#, fuzzy, c-format
+#, c-format
 msgid "EXIF data read by %s"
-msgstr ""
-"\n"
-"Данные EXIF прочитаны %s"
+msgstr "Данные EXIF прочитаны %s"
 
 #: ufraw_preview.c:4364
 msgid "Warning: EXIF data will not be sent to output"
-msgstr ""
+msgstr "Предупреждение: данные EXIF не будут посланы в вывод"
 
 #: ufraw_preview.c:4393
 msgid "RGB histogram"
@@ -1405,7 +1382,7 @@ msgstr "Среднее:"
 
 #: ufraw_preview.c:4469
 msgid "Std. deviation:"
-msgstr "Ср.квадр. отклонение:"
+msgstr "Станд. отклонение:"
 
 #: ufraw_preview.c:4472
 msgid "Overexposed:"
@@ -1428,16 +1405,13 @@ msgstr "Параметры"
 #. should have unique mnemonics.
 #. Delete button:
 #: ufraw_preview.c:4613
-#, fuzzy
 msgid "_Delete"
-msgstr "Создать ID-файл "
+msgstr "_Удалить"
 
 #: ufraw_preview.c:4643
-#, fuzzy, c-format
+#, c-format
 msgid "Filename: %s%s"
-msgstr ""
-"Имя файла: %s\n"
-"Размер: %d x %d%s"
+msgstr "Имя файла: %s%s"
 
 #: ufraw_preview.c:4644
 msgid ""
@@ -1456,13 +1430,12 @@ msgstr ""
 "Создать только ID-файл"
 
 #: ufraw_preview.c:4654
-#, fuzzy
 msgid "Save _As"
-msgstr "сохранён %s"
+msgstr "Сохранить _как"
 
 #: ufraw_preview.c:4660
 msgid "Send image to _Gimp"
-msgstr ""
+msgstr "Послать изображение в ГИМП"
 
 #. preview_progress() changes the size of the progress bar
 #. and processes the event queue.
@@ -1545,25 +1518,23 @@ msgstr "Уровень сжатия"
 
 #: ufraw_saver.c:248
 msgid "Progressive encoding"
-msgstr ""
+msgstr "Прогрессивное кодирование"
 
 #: ufraw_saver.c:258
-#, fuzzy
 msgid "8-bit PNG"
-msgstr "8-разрядные PPM"
+msgstr "8-разрядный PNG"
 
 #: ufraw_saver.c:269
-#, fuzzy
 msgid "16-bit PNG"
-msgstr "16-разрядные PPM"
+msgstr "16-разрядный PNG"
 
 #: ufraw_saver.c:281
 msgid "Flexible Image Transport System (FITS)"
-msgstr ""
+msgstr "Гибкая система передачи изображения (FITS)"
 
 #: ufraw_saver.c:294
 msgid "Embed EXIF data in JPEG or PNG files"
-msgstr ""
+msgstr "Встроить EXIG данные в JPG или PNG файлы"
 
 #: ufraw_saver.c:304
 msgid "Create ID file "
@@ -1591,18 +1562,12 @@ msgstr "Перезаписать существующие файлы без по
 
 #: ufraw_saver.c:422 ufraw_saver.c:430 ufraw_saver.c:442 ufraw_saver.c:449
 #: ufraw_saver.c:457
-#, fuzzy
 msgid "Error creating temporary file."
-msgstr ""
-"Ошибка создания файла '%s'.\n"
-"%s"
+msgstr "Ошибка при создании временного файла."
 
 #: ufraw_saver.c:469
-#, fuzzy
 msgid "Error activating Gimp."
-msgstr ""
-"Ошибка создания файла '%s'.\n"
-"%s"
+msgstr "Ошибка при активации GIMP."
 
 #: ufraw_ufraw.c:146
 msgid "Remote URI is not supported"
@@ -1619,9 +1584,9 @@ msgid "error loading darkframe '%s'\n"
 msgstr "Ошибка при загрузке тёмного кадра '%s'\n"
 
 #: ufraw_ufraw.c:282
-#, fuzzy, c-format
+#, c-format
 msgid "Darkframe '%s' is incompatible with main image"
-msgstr "Тёмный кадр не совместим с основным изображением"
+msgstr "Тёмный кадр '%s' не совместим с основным изображением"
 
 #: ufraw_ufraw.c:290
 #, c-format
@@ -1651,21 +1616,16 @@ msgstr "Имя файла не может совпадать с именем ID-
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
 #: ufraw_writer.c:152 ufraw_writer.c:291 ufraw_writer.c:305 ufraw_writer.c:611
-#, fuzzy
 msgid "Error creating file."
-msgstr ""
-"Ошибка создания файла '%s'.\n"
-"%s"
+msgstr "Ошибка при создании файла."
 
 #. Error was not already set before
 #: ufraw_writer.c:165 ufraw_writer.c:178 ufraw_writer.c:194 ufraw_writer.c:222
 #: ufraw_writer.c:239 ufraw_writer.c:372 ufraw_writer.c:388 ufraw_writer.c:589
 #: ufraw_writer.c:600 ufraw_writer.c:627
-#, fuzzy, c-format
+#, c-format
 msgid "Error creating file '%s'."
-msgstr ""
-"Ошибка создания файла '%s'.\n"
-"%s"
+msgstr "Ошибка при создании файла '%s'."
 
 #: ufraw_writer.c:217 ufraw_writer.c:232 ufraw_writer.c:285 ufraw_writer.c:299
 #: ufraw_writer.c:362 ufraw_writer.c:436 ufraw_writer.c:446 ufraw_writer.c:477
@@ -1673,19 +1633,19 @@ msgid "Saving image"
 msgstr "Сохраняется снимок"
 
 #: ufraw_writer.c:276 ufraw_writer.c:345 ufraw_writer.c:423
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
-msgstr "Не удалось встроить профиль вывода '%s' in '%s'"
+msgstr "Не удалось встроить профиль вывода '%s' в '%s'"
 
 #: ufraw_writer.c:353
-#, fuzzy, c-format
+#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
-msgstr "буфер EXIF длиной %d, слишком длинный, проигнорирован.\n"
+msgstr "Буфер EXIF длиной %d слишком велик, проигнорирован."
 
 #: ufraw_writer.c:602
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown file type %d."
-msgstr "Ошибка создания файла '%s'. Неизвестный тип файла %d."
+msgstr "Неизвестный тип данных %d."
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
