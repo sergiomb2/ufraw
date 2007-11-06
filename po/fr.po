@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-04 16:08+0100\n"
-"PO-Revision-Date: 2007-11-02 00:06+0100\n"
+"POT-Creation-Date: 2007-11-07 00:44+0100\n"
+"PO-Revision-Date: 2007-11-06 23:14+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
@@ -12,12 +12,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: French\n"
 "X-Poedit-Country: FRANCE\n"
-"X-Poedit-Basepath: ~/sources/ufraw/ufraw-cvs/ufraw-20071002/po\n"
+"X-Poedit-Basepath: ../\n"
 
 #. Translate text message from GtkImageView:
 #: uf_gtk.cc:205
 msgid "Open the navigator window"
-msgstr ""
+msgstr "Ouvrir la fenêtre de navigation"
 
 #: ufraw-batch.c:74
 msgid "No input file, nothing to do."
@@ -123,9 +123,8 @@ msgid "sRGB"
 msgstr "sRGB"
 
 #: ufraw_conf.c:69
-#, fuzzy
 msgid "System default"
-msgstr "Sauve réglages image par défaut"
+msgstr "Système par défaut"
 
 #: ufraw_conf.c:161
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
@@ -741,7 +740,7 @@ msgstr "Longueur du tampon EXIF %d, trop longue, ignorée.\n"
 
 #: ufraw_preview.c:59
 msgid "Raw histogram with conversion curves"
-msgstr ""
+msgstr "Histogramme brut avec courbes de conversion"
 
 #: ufraw_preview.c:60
 msgid "Live histogram"
@@ -751,7 +750,7 @@ msgstr "Histogramme dynamique"
 msgid "No more room for new curves."
 msgstr "Plus de place pour de nouvelles courbes."
 
-#: ufraw_preview.c:253 ufraw_preview.c:4035
+#: ufraw_preview.c:253 ufraw_preview.c:4036
 msgid "Load curve"
 msgstr "Charger courbe"
 
@@ -767,7 +766,7 @@ msgstr "Format de courbe UFRaw"
 msgid "Nikon curve format"
 msgstr "Format de courbe Nikon"
 
-#: ufraw_preview.c:356 ufraw_preview.c:4042
+#: ufraw_preview.c:356 ufraw_preview.c:4043
 msgid "Save curve"
 msgstr "Sauver courbe"
 
@@ -811,27 +810,27 @@ msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Erreur Fatale: uf->conf->shrink<1"
 
 #. No darkframe file
-#: ufraw_preview.c:2224
+#: ufraw_preview.c:2225
 msgid "None"
 msgstr "Aucun"
 
-#: ufraw_preview.c:2245 ufraw_preview.c:3814
+#: ufraw_preview.c:2246 ufraw_preview.c:3815
 msgid "Load dark frame"
 msgstr "Charger bruit de référence"
 
-#: ufraw_preview.c:2424
+#: ufraw_preview.c:2425
 msgid "clip"
 msgstr "écrêtées"
 
-#: ufraw_preview.c:2428
+#: ufraw_preview.c:2429
 msgid "restore in LCH space for soft details"
 msgstr "restaurer dans l'espace LCH pour des détails doux"
 
-#: ufraw_preview.c:2432
+#: ufraw_preview.c:2433
 msgid "restore in HSV space for sharp details"
 msgstr "restaurer dans l'espace HSV pour des détails piqués"
 
-#: ufraw_preview.c:2437
+#: ufraw_preview.c:2438
 #, c-format
 msgid ""
 "Restore details for negative EV\n"
@@ -840,15 +839,15 @@ msgstr ""
 "Restaure les détails pour les EV négatifs\n"
 "État actuel: %s"
 
-#: ufraw_preview.c:2450
+#: ufraw_preview.c:2451
 msgid "digital linear"
 msgstr "linéaire numérique"
 
-#: ufraw_preview.c:2454
+#: ufraw_preview.c:2455
 msgid "soft film like"
 msgstr "rendu film doux"
 
-#: ufraw_preview.c:2459
+#: ufraw_preview.c:2460
 #, c-format
 msgid ""
 "Clip highlights for positive EV\n"
@@ -857,56 +856,56 @@ msgstr ""
 "Écrêtage hautes lumières pour les EV positifs\n"
 "État courant: %s"
 
-#: ufraw_preview.c:2782
+#: ufraw_preview.c:2783
 msgid "UFRaw options"
 msgstr "Options d'UFRaw"
 
-#: ufraw_preview.c:2795 ufraw_preview.c:2807
+#: ufraw_preview.c:2796 ufraw_preview.c:2808
 msgid "Settings"
 msgstr "Paramètres"
 
-#: ufraw_preview.c:2799
+#: ufraw_preview.c:2800
 msgid "Input color profiles"
 msgstr "Profils couleurs d'entrée"
 
-#: ufraw_preview.c:2801
+#: ufraw_preview.c:2802
 msgid "Output color profiles"
 msgstr "Profils couleurs de sortie"
 
-#: ufraw_preview.c:2803
+#: ufraw_preview.c:2804
 msgid "Display color profiles"
 msgstr "Profils couleurs d'affichage"
 
-#: ufraw_preview.c:2804
+#: ufraw_preview.c:2805
 msgid "Base Curves"
 msgstr "Courbes de base"
 
-#: ufraw_preview.c:2805
+#: ufraw_preview.c:2806
 msgid "Luminosity Curves"
 msgstr "Courbes de luminosité"
 
 #. Remote Gimp command entry
-#: ufraw_preview.c:2809
+#: ufraw_preview.c:2810
 msgid "Remote Gimp command"
 msgstr "Commande distante pour Gimp"
 
-#: ufraw_preview.c:2821
+#: ufraw_preview.c:2822
 msgid "Reset command to default"
 msgstr "Retour à la commande par défaut"
 
-#: ufraw_preview.c:2826
+#: ufraw_preview.c:2827
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Clignotement des indicateurs Sur/Sous-exposition"
 
-#: ufraw_preview.c:2831
+#: ufraw_preview.c:2832
 msgid "Configuration"
 msgstr "Configuration"
 
-#: ufraw_preview.c:2846
+#: ufraw_preview.c:2847
 msgid "Save image defaults "
 msgstr "Sauve réglages image par défaut"
 
-#: ufraw_preview.c:2851 ufraw_saver.c:318
+#: ufraw_preview.c:2852 ufraw_saver.c:318
 msgid ""
 "Save current image manipulation parameters as defaults.\n"
 "The output parameters in this window are always saved."
@@ -914,39 +913,39 @@ msgstr ""
 "Sauve les réglages courant de l'image comme paramètres par défaut.\n"
 "Les paramètres de sortie dans cette fenêtre sont toujours sauvés."
 
-#: ufraw_preview.c:2854 ufraw_saver.c:322
+#: ufraw_preview.c:2855 ufraw_saver.c:322
 msgid "Never again"
 msgstr "Plus jamais"
 
-#: ufraw_preview.c:2855 ufraw_saver.c:323
+#: ufraw_preview.c:2856 ufraw_saver.c:323
 msgid "Always"
 msgstr "Toujours"
 
-#: ufraw_preview.c:2856 ufraw_saver.c:324
+#: ufraw_preview.c:2857 ufraw_saver.c:324
 msgid "Just this once"
 msgstr "Juste cette fois"
 
-#: ufraw_preview.c:2863
+#: ufraw_preview.c:2864
 msgid "Save full configuration "
 msgstr "Sauver toute la configuration"
 
-#: ufraw_preview.c:2867
+#: ufraw_preview.c:2868
 msgid "Save resource file ($HOME/.ufrawrc)"
 msgstr "Sauver le fichier ressource ($HOME/.ufrawrc)"
 
-#: ufraw_preview.c:2873
+#: ufraw_preview.c:2874
 msgid "Log"
 msgstr "Log"
 
-#: ufraw_preview.c:2885
+#: ufraw_preview.c:2886
 msgid "Encoding conversion failed"
 msgstr "Échec de la conversion du codage"
 
-#: ufraw_preview.c:2889
+#: ufraw_preview.c:2890
 msgid "About"
 msgstr "À propos"
 
-#: ufraw_preview.c:2900
+#: ufraw_preview.c:2901
 msgid ""
 "The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
 "to\n"
@@ -969,50 +968,50 @@ msgstr ""
 "Page web: http://ufraw.sourceforge.net/\n"
 "\n"
 
-#: ufraw_preview.c:3297
+#: ufraw_preview.c:3298
 #, c-format
 msgid "%s%s (Alt-%c)"
 msgstr "%s%s (Alt-%c)"
 
-#: ufraw_preview.c:3400
+#: ufraw_preview.c:3401
 #, c-format
 msgid "%s - UFRaw Photo Loader"
 msgstr "%s - UFRaw Chargeur de photo"
 
-#: ufraw_preview.c:3475 ufraw_preview.c:4446
+#: ufraw_preview.c:3476 ufraw_preview.c:4447
 msgid "Linear"
 msgstr "Linéaire"
 
-#: ufraw_preview.c:3484 ufraw_preview.c:4455
+#: ufraw_preview.c:3485 ufraw_preview.c:4456
 msgid "Logarithmic"
 msgstr "Logarithmique"
 
-#: ufraw_preview.c:3498
+#: ufraw_preview.c:3499
 msgid "Spot values:"
 msgstr "Valeurs spot:"
 
-#: ufraw_preview.c:3515
+#: ufraw_preview.c:3516
 msgid "Exposure compensation in EV"
 msgstr "Compensation d'exposition en EV"
 
-#: ufraw_preview.c:3535
+#: ufraw_preview.c:3536
 msgid "Auto adjust exposure"
 msgstr "Ajustement auto de l'exposition"
 
-#: ufraw_preview.c:3545
+#: ufraw_preview.c:3546
 msgid "Reset exposure to default"
 msgstr "RàZ de l'exposition"
 
 #. Start of White Balance setting page
-#: ufraw_preview.c:3557 ufraw_preview.c:4352
+#: ufraw_preview.c:3558 ufraw_preview.c:4353
 msgid "White balance"
 msgstr "Balance des Blancs"
 
-#: ufraw_preview.c:3616
+#: ufraw_preview.c:3617
 msgid "White Balance"
 msgstr "Balance des Blancs"
 
-#: ufraw_preview.c:3637
+#: ufraw_preview.c:3638
 msgid ""
 "There are no white balance presets for your camera model.\n"
 "Check UFRaw's webpage for information on how to get your\n"
@@ -1022,206 +1021,206 @@ msgstr ""
 "Consulter le site web d'UFRaw pour savoir que faire pour que votre\n"
 " boîtier soit supporté."
 
-#: ufraw_preview.c:3646
+#: ufraw_preview.c:3647
 msgid "Reset white balance to initial value"
 msgstr "RàZ de la balance des blancs"
 
-#: ufraw_preview.c:3651
+#: ufraw_preview.c:3652
 msgid "Temperature"
 msgstr "Température"
 
-#: ufraw_preview.c:3653
+#: ufraw_preview.c:3654
 msgid "White balance color temperature (K)"
 msgstr "Température de la couleur (K)"
 
-#: ufraw_preview.c:3654
+#: ufraw_preview.c:3655
 msgid "Green"
 msgstr "Vert"
 
-#: ufraw_preview.c:3656
+#: ufraw_preview.c:3657
 msgid "Green component"
 msgstr "Composante verte"
 
-#: ufraw_preview.c:3663
+#: ufraw_preview.c:3664
 msgid "Select a spot on the preview image to apply spot white balance"
 msgstr ""
 "Sélectionner un point, sur la pré-visualisation, à utiliser comme balance "
 "des blancs"
 
-#: ufraw_preview.c:3669
+#: ufraw_preview.c:3670
 msgid "Chan. multipliers:"
 msgstr ""
 "Multiplicateurs\n"
 "de canaux:"
 
-#: ufraw_preview.c:3693
+#: ufraw_preview.c:3694
 msgid "Bayer pattern interpolation"
 msgstr "Interpolation matrice de Bayer"
 
-#: ufraw_preview.c:3699 ufraw_preview.c:3708
+#: ufraw_preview.c:3700 ufraw_preview.c:3709
 msgid "VNG four color interpolation"
 msgstr "Interpolation VNG 4 couleurs"
 
-#: ufraw_preview.c:3701 ufraw_preview.c:3712
+#: ufraw_preview.c:3702 ufraw_preview.c:3713
 msgid "Bilinear interpolation"
 msgstr "Interpolation bilinéaire"
 
-#: ufraw_preview.c:3704
+#: ufraw_preview.c:3705
 msgid "AHD interpolation"
 msgstr "Interpolation AHD"
 
-#: ufraw_preview.c:3706
+#: ufraw_preview.c:3707
 msgid "VNG interpolation"
 msgstr "Interpolation VNG"
 
-#: ufraw_preview.c:3710
+#: ufraw_preview.c:3711
 msgid "PPG interpolation"
 msgstr "Interpolation PPG"
 
-#: ufraw_preview.c:3724
+#: ufraw_preview.c:3725
 msgid "No Bayer pattern"
 msgstr "Pas de matrice de Bayer"
 
-#: ufraw_preview.c:3735
+#: ufraw_preview.c:3736
 msgid "Apply color smoothing"
 msgstr "Appliquer le lissage des couleurs"
 
-#: ufraw_preview.c:3745
+#: ufraw_preview.c:3746
 msgid "Threshold"
 msgstr "Seuil"
 
-#: ufraw_preview.c:3747
+#: ufraw_preview.c:3748
 msgid "Threshold for wavelet denoising"
 msgstr "Seuil pour le débruitage par vaguelette"
 
-#: ufraw_preview.c:3753
+#: ufraw_preview.c:3754
 msgid "Reset denoise threshold to default"
 msgstr "RàZ du seuil de débruitage"
 
-#: ufraw_preview.c:3763
+#: ufraw_preview.c:3764
 msgid "Zoom:"
 msgstr "Zoom:"
 
-#: ufraw_preview.c:3784 ufraw_preview.c:4566
+#: ufraw_preview.c:3785 ufraw_preview.c:4567
 msgid "Zoom percentage"
 msgstr "Pourcentage du Zoom"
 
-#: ufraw_preview.c:3801
+#: ufraw_preview.c:3802
 msgid "Dark Frame:"
 msgstr "Bruit de référence:"
 
-#: ufraw_preview.c:3822
+#: ufraw_preview.c:3823
 msgid "Reset dark frame"
 msgstr "RàZ du bruit de référence"
 
 #. End of White Balance setting page
 #. Start of Base Curve page
-#: ufraw_preview.c:3829
+#: ufraw_preview.c:3830
 msgid "Base curve"
 msgstr "Courbe de base"
 
-#: ufraw_preview.c:3861
+#: ufraw_preview.c:3862
 msgid "Load base curve"
 msgstr "Charger courbe de base"
 
-#: ufraw_preview.c:3868
+#: ufraw_preview.c:3869
 msgid "Save base curve"
 msgstr "Sauver courbe de base"
 
-#: ufraw_preview.c:3891
+#: ufraw_preview.c:3892
 msgid "Reset base curve to default"
 msgstr "RàZ de la courbe de base"
 
 #. End of Base Curve page
 #. Start of Color management page
-#: ufraw_preview.c:3897
+#: ufraw_preview.c:3898
 msgid "Color management"
 msgstr "Gestion des couleurs"
 
-#: ufraw_preview.c:3911
+#: ufraw_preview.c:3912
 msgid "Input ICC profile"
 msgstr "Profil ICC d'entrée"
 
-#: ufraw_preview.c:3912
+#: ufraw_preview.c:3913
 msgid "Output ICC profile"
 msgstr "Profil ICC de sortie"
 
-#: ufraw_preview.c:3913
+#: ufraw_preview.c:3914
 msgid "Display ICC profile"
 msgstr "Afficher le profil ICC"
 
-#: ufraw_preview.c:3936
+#: ufraw_preview.c:3937
 msgid "Use color matrix"
 msgstr "Utiliser la matrice de couleurs"
 
-#: ufraw_preview.c:3947
+#: ufraw_preview.c:3948
 msgid "Gamma"
 msgstr "Gamma"
 
-#: ufraw_preview.c:3950
+#: ufraw_preview.c:3951
 msgid "Gamma correction for the input profile"
 msgstr "Correction gamma pour le profil d'entrée"
 
-#: ufraw_preview.c:3955
+#: ufraw_preview.c:3956
 msgid "Reset gamma to default"
 msgstr "RàZ du gamma"
 
-#: ufraw_preview.c:3959
+#: ufraw_preview.c:3960
 msgid "Linearity"
 msgstr "Linéarité"
 
-#: ufraw_preview.c:3962
+#: ufraw_preview.c:3963
 msgid "Linear part of the gamma correction"
 msgstr "Partie linéaire de la correction gamma"
 
-#: ufraw_preview.c:3968
+#: ufraw_preview.c:3969
 msgid "Reset linearity to default"
 msgstr "RàZ de la linéarité"
 
-#: ufraw_preview.c:3972
+#: ufraw_preview.c:3973
 msgid "Output intent"
 msgstr ""
 "Rendu\n"
 "de sortie"
 
-#: ufraw_preview.c:3975 ufraw_preview.c:3987
+#: ufraw_preview.c:3976 ufraw_preview.c:3988
 msgid "Perceptual"
 msgstr "Perceptuel"
 
-#: ufraw_preview.c:3976 ufraw_preview.c:3988
+#: ufraw_preview.c:3977 ufraw_preview.c:3989
 msgid "Relative colorimetric"
 msgstr "Colorimétrie relative"
 
-#: ufraw_preview.c:3977 ufraw_preview.c:3989 ufraw_preview.c:4003
-#: ufraw_preview.c:4005
+#: ufraw_preview.c:3978 ufraw_preview.c:3990 ufraw_preview.c:4004
+#: ufraw_preview.c:4006
 msgid "Saturation"
 msgstr "Saturation"
 
-#: ufraw_preview.c:3978 ufraw_preview.c:3990
+#: ufraw_preview.c:3979 ufraw_preview.c:3991
 msgid "Absolute colorimetric"
 msgstr "Colorimétrie absolue"
 
-#: ufraw_preview.c:3984
+#: ufraw_preview.c:3985
 msgid "Display intent"
 msgstr ""
 "Rendu\n"
 "d'affichage"
 
-#: ufraw_preview.c:3991
+#: ufraw_preview.c:3992
 msgid "Disable soft proofing"
 msgstr "Pas de pré-vue du rendu"
 
 #. End of Color management page
 #. Start of Corrections page
-#: ufraw_preview.c:3999
+#: ufraw_preview.c:4000
 msgid "Correct luminosity, saturation"
 msgstr "Corrections luminosité, saturation"
 
-#: ufraw_preview.c:4012
+#: ufraw_preview.c:4013
 msgid "Reset saturation to default"
 msgstr "RàZ saturation"
 
-#: ufraw_preview.c:4062
+#: ufraw_preview.c:4063
 msgid ""
 "Auto adjust curve\n"
 "(Flatten histogram)"
@@ -1229,54 +1228,54 @@ msgstr ""
 "Ajustement auto de la courbe\n"
 "(aplatir l'histogramme)"
 
-#: ufraw_preview.c:4072
+#: ufraw_preview.c:4073
 msgid "Reset curve to default"
 msgstr "RàZ de la courbe"
 
-#: ufraw_preview.c:4076
+#: ufraw_preview.c:4077
 msgid "Black point: 0.000"
 msgstr "Point Noir: 0.000"
 
-#: ufraw_preview.c:4095
+#: ufraw_preview.c:4096
 msgid "Reset black-point to default"
 msgstr "RàZ du point noir"
 
-#: ufraw_preview.c:4105
+#: ufraw_preview.c:4106
 msgid "Auto adjust black-point"
 msgstr "Ajustement automatique du point noir"
 
 #. End of Corrections page
 #. Start of transformations page
-#: ufraw_preview.c:4112
+#: ufraw_preview.c:4113
 msgid "Crop and rotate"
 msgstr "Découpe et rotation"
 
 #. Start of Crop controls
-#: ufraw_preview.c:4117
+#: ufraw_preview.c:4118
 msgid "Left:"
 msgstr "Gauche:"
 
-#: ufraw_preview.c:4131
+#: ufraw_preview.c:4132
 msgid "Top:"
 msgstr "Haut:"
 
-#: ufraw_preview.c:4145
+#: ufraw_preview.c:4146
 msgid "Right:"
 msgstr "Droite:"
 
-#: ufraw_preview.c:4159
+#: ufraw_preview.c:4160
 msgid "Bottom:"
 msgstr "Bas:"
 
-#: ufraw_preview.c:4178
+#: ufraw_preview.c:4179
 msgid "Reset the crop region"
 msgstr "RàZ de la zone de découpe"
 
-#: ufraw_preview.c:4185
+#: ufraw_preview.c:4186
 msgid "Aspect ratio:"
 msgstr "Proportions:"
 
-#: ufraw_preview.c:4194
+#: ufraw_preview.c:4195
 msgid ""
 "Crop area aspect ratio.\n"
 "Can be entered in decimal notation (1.273)\n"
@@ -1286,135 +1285,135 @@ msgstr ""
 "Peuvent être saisies soient en notation décimale (1.273)\n"
 "soient comme une fraction (14:11)"
 
-#: ufraw_preview.c:4215
+#: ufraw_preview.c:4216
 msgid "Lock aspect ratio"
 msgstr "Garder les proportions"
 
-#: ufraw_preview.c:4224
+#: ufraw_preview.c:4225
 msgid "Shrink factor"
 msgstr ""
 "Facteur de\n"
 "réduction"
 
-#: ufraw_preview.c:4239
+#: ufraw_preview.c:4240
 msgid "Height"
 msgstr "Hauteur"
 
-#: ufraw_preview.c:4255
+#: ufraw_preview.c:4256
 msgid "Width"
 msgstr "Largeur"
 
-#: ufraw_preview.c:4274
+#: ufraw_preview.c:4275
 msgid "Orientation:"
 msgstr "Orientation:"
 
 #. End of transformation page
 #. Start of EXIF page
-#: ufraw_preview.c:4307
+#: ufraw_preview.c:4308
 msgid "EXIF"
 msgstr "EXIF"
 
-#: ufraw_preview.c:4332
+#: ufraw_preview.c:4333
 msgid "Tag"
 msgstr "Marqueur"
 
-#: ufraw_preview.c:4337
+#: ufraw_preview.c:4338
 msgid "Value"
 msgstr "Valeur"
 
 #. Fill table with EXIF tags
-#: ufraw_preview.c:4342
+#: ufraw_preview.c:4343
 msgid "Camera maker"
 msgstr "Fabricant"
 
-#: ufraw_preview.c:4343
+#: ufraw_preview.c:4344
 msgid "Camera model"
 msgstr "Modèle"
 
-#: ufraw_preview.c:4344
+#: ufraw_preview.c:4345
 msgid "Timestamp"
 msgstr "Horodatage"
 
-#: ufraw_preview.c:4345
+#: ufraw_preview.c:4346
 msgid "Exposure"
 msgstr "Exposition"
 
-#: ufraw_preview.c:4346
+#: ufraw_preview.c:4347
 msgid "Aperture"
 msgstr "Ouverture"
 
-#: ufraw_preview.c:4347
+#: ufraw_preview.c:4348
 msgid "ISO speed"
 msgstr "Sensibilité"
 
-#: ufraw_preview.c:4348
+#: ufraw_preview.c:4349
 msgid "Focal length"
 msgstr "Focale"
 
-#: ufraw_preview.c:4349
+#: ufraw_preview.c:4350
 msgid "35mm focal length"
 msgstr "Focale 35mm"
 
-#: ufraw_preview.c:4350
+#: ufraw_preview.c:4351
 msgid "Lens"
 msgstr "Objectif"
 
-#: ufraw_preview.c:4351 wb_presets.c:54
+#: ufraw_preview.c:4352 wb_presets.c:54
 msgid "Flash"
 msgstr "Flash"
 
-#: ufraw_preview.c:4356
+#: ufraw_preview.c:4357
 #, c-format
 msgid "EXIF data read by %s"
 msgstr "Données EXIF lues par %s"
 
-#: ufraw_preview.c:4364
+#: ufraw_preview.c:4365
 msgid "Warning: EXIF data will not be sent to output"
 msgstr ""
 "Avertissement: les données EXIF ne seront pas\n"
 "               envoyées vers la sortie"
 
-#: ufraw_preview.c:4393
+#: ufraw_preview.c:4394
 msgid "RGB histogram"
 msgstr "Histogramme RGB"
 
-#: ufraw_preview.c:4402
+#: ufraw_preview.c:4403
 msgid "R+G+B histogram"
 msgstr "Histogramme R+G+B"
 
-#: ufraw_preview.c:4412
+#: ufraw_preview.c:4413
 msgid "Luminosity histogram"
 msgstr "Histogramme de luminosité"
 
-#: ufraw_preview.c:4422
+#: ufraw_preview.c:4423
 msgid "Value (maximum) histogram"
 msgstr "Histogramme par valeurs (maximum)"
 
-#: ufraw_preview.c:4432
+#: ufraw_preview.c:4433
 msgid "Saturation histogram"
 msgstr "Histogramme de saturation"
 
-#: ufraw_preview.c:4467
+#: ufraw_preview.c:4468
 msgid "Average:"
 msgstr "Moyenne:"
 
-#: ufraw_preview.c:4469
+#: ufraw_preview.c:4470
 msgid "Std. deviation:"
 msgstr "Déviation std.:"
 
-#: ufraw_preview.c:4472
+#: ufraw_preview.c:4473
 msgid "Overexposed:"
 msgstr "Sur-exposé:"
 
-#: ufraw_preview.c:4474 ufraw_preview.c:4485
+#: ufraw_preview.c:4475 ufraw_preview.c:4486
 msgid "Indicate"
 msgstr "Indiquer"
 
-#: ufraw_preview.c:4482
+#: ufraw_preview.c:4483
 msgid "Underexposed:"
 msgstr "Sous-exposé:"
 
-#: ufraw_preview.c:4602
+#: ufraw_preview.c:4603
 msgid "Options"
 msgstr "Options"
 
@@ -1422,16 +1421,16 @@ msgstr "Options"
 #. "_Delete", "_Cancel", "_Save", "Save _As", "Send to _Gimp"
 #. should have unique mnemonics.
 #. Delete button:
-#: ufraw_preview.c:4613
+#: ufraw_preview.c:4614
 msgid "_Delete"
 msgstr "_Effacer"
 
-#: ufraw_preview.c:4643
+#: ufraw_preview.c:4644
 #, c-format
 msgid "Filename: %s%s"
 msgstr "Fichier: %s%s"
 
-#: ufraw_preview.c:4644
+#: ufraw_preview.c:4645
 msgid ""
 "\n"
 "Create also ID file"
@@ -1439,7 +1438,7 @@ msgstr ""
 "\n"
 "Créer aussi un fichier ID"
 
-#: ufraw_preview.c:4645
+#: ufraw_preview.c:4646
 msgid ""
 "\n"
 "Create only ID file"
@@ -1447,17 +1446,17 @@ msgstr ""
 "\n"
 "Créer seulement un fichier ID"
 
-#: ufraw_preview.c:4654
+#: ufraw_preview.c:4655
 msgid "Save _As"
 msgstr "S_auver sous"
 
-#: ufraw_preview.c:4660
+#: ufraw_preview.c:4661
 msgid "Send image to _Gimp"
 msgstr "Envoyer l'image à _Gimp"
 
 #. preview_progress() changes the size of the progress bar
 #. and processes the event queue.
-#: ufraw_preview.c:4674
+#: ufraw_preview.c:4675
 msgid "Loading preview"
 msgstr "Charge la pré-visualisation"
 
