@@ -56,10 +56,10 @@ extern "C" {
 //#endif
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 //#define fgetc getc_unlocked
-#ifdef DJGPP
-#define fseeko fseek
-#define ftello ftell
-#endif
+//#ifdef DJGPP
+//#define fseeko fseek
+//#define ftello ftell
+//#endif
 #ifdef __CYGWIN__
 #include <io.h>
 #endif
@@ -4189,7 +4189,7 @@ void CLASS ahd_interpolate()
 #undef TS
 /* End of functions copied to dcraw_indi.c (UF) */
 
-void CLASS median_filter()
+void CLASS median_filter ()
 {
   ushort (*pix)[4];
   int pass, c, i, j, k, med[9];
