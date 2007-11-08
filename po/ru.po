@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-11-07 00:44+0100\n"
-"PO-Revision-Date: 2007-11-06 07:45+0300\n"
+"PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -883,7 +883,7 @@ msgstr "Кривые яркости"
 #. Remote Gimp command entry
 #: ufraw_preview.c:2810
 msgid "Remote Gimp command"
-msgstr "Удаленная команда ГИМП"
+msgstr "Удаленная команда GIMP"
 
 #: ufraw_preview.c:2822
 msgid "Reset command to default"
@@ -1435,7 +1435,7 @@ msgstr "Сохранить _как"
 
 #: ufraw_preview.c:4661
 msgid "Send image to _Gimp"
-msgstr "Послать изображение в ГИМП"
+msgstr "Передать изображение в GIMP"
 
 #. preview_progress() changes the size of the progress bar
 #. and processes the event queue.
@@ -1534,7 +1534,7 @@ msgstr "Гибкая система передачи изображения (FIT
 
 #: ufraw_saver.c:294
 msgid "Embed EXIF data in JPEG or PNG files"
-msgstr "Встроить EXIG данные в JPG или PNG файлы"
+msgstr "Встроить данные EXIF в файлы JPG или PNG"
 
 #: ufraw_saver.c:304
 msgid "Create ID file "
