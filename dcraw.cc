@@ -989,7 +989,7 @@ void CLASS canon_sraw_load_raw()
 
 void CLASS adobe_copy_pixel (int row, int col, ushort **rp)
 {
-  int r, c;
+  unsigned r, c;
 
   r = row -= top_margin;
   c = col -= left_margin;
@@ -999,12 +999,12 @@ void CLASS adobe_copy_pixel (int row, int col, ushort **rp)
       r = row + fuji_width - 1 - (col >> 1);
       c = row + ((col+1) >> 1);
     }
-    if (r < height && r>=0 && c < width && c>=0)
+    if (r < height && c < width)
       BAYER(r,c) = **rp < 0x1000 ? curve[**rp] : **rp;
     *rp += is_raw;
   } else {
-    if (r < height && r>=0 && c < width && c>=0)
-      for (c=0; c < (int) tiff_samples; c++)
+    if (r < height && c < width)
+      for (c=0; c < tiff_samples; c++)
 	image[row*width+col][c] = (*rp)[c] < 0x1000 ? curve[(*rp)[c]]:(*rp)[c];
     *rp += tiff_samples;
   }
@@ -1715,8 +1715,7 @@ void CLASS hasselblad_load_raw()
 void CLASS leaf_hdr_load_raw()
 {
   ushort *pixel;
-  int tile=0, r, row, col;
-  unsigned c;
+  unsigned tile=0, r, c, row, col;
 
   pixel = (ushort *) calloc (raw_width, sizeof *pixel);
   merror (pixel, "leaf_hdr_load_raw()");
@@ -1728,8 +1727,7 @@ void CLASS leaf_hdr_load_raw()
       }
       if (filters && c != shot_select) continue;
       read_shorts (pixel, raw_width);
-      row = r - top_margin;
-      if (row >= height || row < 0) continue;
+      if ((row = r - top_margin) >= height) continue;
       for (col=0; col < width; col++)
 	if (filters)  BAYER(row,col) = pixel[col];
 	else image[row*width+col][c] = pixel[col];
@@ -1747,7 +1745,7 @@ void CLASS leaf_hdr_load_raw()
 void CLASS sinar_4shot_load_raw()
 {
   ushort *pixel;
-  int shot, row, col, r, c;
+  unsigned shot, row, col, r, c;
 
   if ((shot = shot_select) || half_size) {
     if (shot) shot--;
@@ -1768,11 +1766,9 @@ void CLASS sinar_4shot_load_raw()
     fseek (ifp, get4(), SEEK_SET);
     for (row=0; row < raw_height; row++) {
       read_shorts (pixel, raw_width);
-      r = row-top_margin - (shot >> 1 & 1);
-      if (r >= height || r < 0) continue;
+      if ((r = row-top_margin - (shot >> 1 & 1)) >= height) continue;
       for (col=0; col < raw_width; col++) {
-	c = col-left_margin - (shot & 1);
-	if (c >= width || c < 0) continue;
+	if ((c = col-left_margin - (shot & 1)) >= width) continue;
         image[r*width+c][FC(row,col)] = pixel[col];
       }
     }
@@ -2236,14 +2232,13 @@ void CLASS kodak_dc120_load_raw()
 void CLASS eight_bit_load_raw()
 {
   uchar *pixel;
-  int row, col;
-  unsigned val, lblack=0;
+  unsigned row, col, val, lblack=0;
 
   pixel = (uchar *) calloc (raw_width, sizeof *pixel);
   merror (pixel, "eight_bit_load_raw()");
   fseek (ifp, top_margin*raw_width, SEEK_CUR);
   for (row=0; row < height; row++) {
-    if ((int)fread (pixel, 1, raw_width, ifp) < raw_width) derror();
+    if (fread (pixel, 1, raw_width, ifp) < raw_width) derror();
     for (col=0; col < raw_width; col++) {
       val = curve[pixel[col]];
       if ((unsigned) (col-left_margin) < width)
@@ -4511,13 +4506,12 @@ void CLASS parse_makernote (int base, int uptag)
       thumb_offset += base;
     if (tag == 0x89 && type == 4)
       thumb_length = get4();
-    if (tag == 0x8c || tag == 0x96) {
+    if (tag == 0x8c || tag == 0x96)
       meta_offset = ftell(ifp);
-      if (tag == 0x8c) { /* NTC UF*/
-        tone_curve_offset = ftell(ifp);
-        tone_curve_size = len;
-      } /* NTC UF*/
-    }
+    if (tag == 0x8c) { /* NTC UF*/
+      tone_curve_offset = ftell(ifp);
+      tone_curve_size = len;
+    } /* NTC UF*/
     if (tag == 0x97) {
       for (i=0; i < 4; i++)
 	ver97 = (ver97 << 4) + fgetc(ifp)-'0';
