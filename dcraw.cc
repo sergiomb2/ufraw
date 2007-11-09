@@ -34,9 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /*For off_t */
-#endif
+#include <sys/types.h>
 /*
    NO_LCMS disables the "-p" option.
  */

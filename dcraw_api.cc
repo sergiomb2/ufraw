@@ -25,9 +25,7 @@
 #include <float.h>
 #include "uf_glib.h"
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /*For off_t */
-#endif
+#include <sys/types.h>
 #include "dcraw_api.h"
 #include "dcraw.h"
 

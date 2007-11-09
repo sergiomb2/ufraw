@@ -38,8 +38,7 @@ class DCRaw { public:
 /* All dcraw's global variables are members of this class. */
 FILE *ifp;
 short order;
-char *ifname;
-char *meta_data;
+char *ifname, *meta_data;
 char cdesc[5], desc[512], make[64], model[64], model2[64], artist[64];
 float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
 time_t timestamp;
