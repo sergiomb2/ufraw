@@ -2455,7 +2455,7 @@ void CLASS sony_load_raw()
   pixel = (ushort *) calloc (raw_width, sizeof *pixel);
   merror (pixel, "sony_load_raw()");
   for (row=0; row < height; row++) {
-    if ((int)fread (pixel, 2, raw_width, ifp) < raw_width) derror();
+    if (fread (pixel, 2, raw_width, ifp) < raw_width) derror();
     sony_decrypt ((unsigned int *) pixel, raw_width/2, !row, key);
     for (col=9; col < left_margin; col++)
       black += ntohs(pixel[col]);
