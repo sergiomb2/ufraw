@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.99 2007/11/03 00:03:05 udifuchs Exp $
+dnl $Id: configure.ac,v 1.100 2007/11/10 07:10:16 nkbj Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -221,6 +221,8 @@ if test $ufraw_win32 = yes; then
   AC_SUBST(COMMENT_ICON)
 fi
 
+# Make sure MSGFMT_OPTS is defined for all combinations of autoconf and glib.
+MSGFMT_OPTS=
 ALL_LINGUAS="da es fr ja ko pl pt ru"
 AM_GLIB_GNU_GETTEXT
 LIBS="$LIBS $INTLLIBS"
@@ -229,6 +231,7 @@ LIBS="$LIBS $INTLLIBS"
 #AM_GLIB_DEFINE_LOCALEDIR(UFRAW_LOCALEDIR)
 GETTEXT_PACKAGE=ufraw
 AC_SUBST(GETTEXT_PACKAGE)
+AC_SUBST(MSGFMT_OPTS)
 
 AC_MSG_CHECKING(whether to install mime types)
 AC_ARG_ENABLE(mime,
