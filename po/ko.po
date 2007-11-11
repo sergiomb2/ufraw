@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-07 00:44+0100\n"
+"POT-Creation-Date: 2007-11-11 08:45+0100\n"
 "PO-Revision-Date: 2007-11-09 21:16+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -76,18 +76,13 @@ msgstr "Raw jpg's"
 msgid "Raw tif's"
 msgstr "Raw tif's"
 
-#: ufraw_chooser.c:117
-#: ufraw_preview.c:293
-#: ufraw_preview.c:395
-#: ufraw_preview.c:463
+#: ufraw_chooser.c:117 ufraw_preview.c:294 ufraw_preview.c:396
+#: ufraw_preview.c:464
 msgid "All files"
 msgstr "모든 파일"
 
-#: ufraw_chooser.c:123
-#: ufraw_preview.c:262
-#: ufraw_preview.c:364
-#: ufraw_preview.c:447
-#: ufraw_saver.c:149
+#: ufraw_chooser.c:123 ufraw_preview.c:263 ufraw_preview.c:365
+#: ufraw_preview.c:448 ufraw_saver.c:149
 msgid "Show hidden files"
 msgstr "숨겨진 파일 표시"
 
@@ -108,13 +103,11 @@ msgstr "숨겨진 파일 표시"
 #. BaseCurve data defaults
 #. curveIndex, curveCount
 #. Curve data defaults
-#: ufraw_conf.c:47
-#: ufraw_conf.c:58
+#: ufraw_conf.c:47 ufraw_conf.c:58
 msgid "Manual curve"
 msgstr "수동 곡선"
 
-#: ufraw_conf.c:49
-#: ufraw_conf.c:60
+#: ufraw_conf.c:49 ufraw_conf.c:60
 msgid "Linear curve"
 msgstr "직선"
 
@@ -128,9 +121,7 @@ msgstr "카메라 곡선"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
-#: ufraw_conf.c:65
-#: ufraw_conf.c:67
-#: ufraw_conf.c:70
+#: ufraw_conf.c:65 ufraw_conf.c:67 ufraw_conf.c:70
 msgid "sRGB"
 msgstr "sRGB"
 
@@ -165,8 +156,7 @@ msgstr ""
 "ID 파일 %s을(를) 읽기 위해 열 수 없음\n"
 "%s\n"
 
-#: ufraw_conf.c:624
-#: ufraw_routines.c:395
+#: ufraw_conf.c:624 ufraw_routines.c:395
 #, c-format
 msgid ""
 "Error parsing '%s'\n"
@@ -230,12 +220,15 @@ msgid ""
 "One can also use an ID file with the option:\n"
 msgstr ""
 "입력 파일로는 raw 이미지나 ufraw의 ID 파일이 가능합니다.\n"
-"ID 파일은 raw 이미지의 파일 이름과 이미지를 처리하기 위한 조정값을 포함합니다.\n"
+"ID 파일은 raw 이미지의 파일 이름과 이미지를 처리하기 위한 조정값을 포함합니"
+"다.\n"
 "ID 파일과 함께 사용 가능한 옵션은 다음과 같습니다:\n"
 
 #: ufraw_conf.c:1273
-msgid "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
-msgstr "--conf=ID-file        ID-file에 있는 파라미터를 다른 raw 이미지에 적용함.\n"
+msgid ""
+"--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+msgstr ""
+"--conf=ID-file        ID-file에 있는 파라미터를 다른 raw 이미지에 적용함.\n"
 
 #: ufraw_conf.c:1275
 msgid "The rest of the options are separated into two groups.\n"
@@ -326,7 +319,8 @@ msgstr ""
 "                      'film' emulate soft film response. (default digital).\n"
 
 #: ufraw_conf.c:1303
-msgid "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+msgid ""
+"--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 msgstr "--gamma=GAMMA         기본 곡선의 감마 보정값 (기본값 0.45).\n"
 
 #: ufraw_conf.c:1304
@@ -334,7 +328,9 @@ msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr "--linearity=LINEARITY 기본 곡선읜 선형도 (기본값 0.10).\n"
 
 #: ufraw_conf.c:1305
-msgid "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"
+msgid ""
+"--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
+"output).\n"
 msgstr "--saturation=SAT      채도 조정 (기본값 1.0, 흑백 사진을 원하면 0).\n"
 
 #: ufraw_conf.c:1306
@@ -348,7 +344,8 @@ msgstr ""
 #: ufraw_conf.c:1308
 msgid ""
 "--exposure=auto|EXPOSURE\n"
-"                      Auto exposure or exposure correction in EV (default 0).\n"
+"                      Auto exposure or exposure correction in EV (default "
+"0).\n"
 msgstr ""
 "--exposure=auto|EXPOSURE\n"
 "                      자동 노출 보정| 노출 보정 값 EV (기본값 0).\n"
@@ -402,12 +399,18 @@ msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   JPEG 압축률 (0-100, 기본값 85).\n"
 
 #: ufraw_conf.c:1324
-msgid "--[no]exif            Embed EXIF in output JPEG or PNG (default embed EXIF).\n"
-msgstr "--[no]exif            JPEG or PNG 출력에 EXIF를 포함하기(기본값 exif).\n"
+msgid ""
+"--[no]exif            Embed EXIF in output JPEG or PNG (default embed "
+"EXIF).\n"
+msgstr ""
+"--[no]exif            JPEG or PNG 출력에 EXIF를 포함하기(기본값 exif).\n"
 
 #: ufraw_conf.c:1325
-msgid "--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"
-msgstr "--[no]zip             TIFF zip 압축을 활성[비활성] 하기 (기본값 nozip).\n"
+msgid ""
+"--[no]zip             Enable [disable] TIFF zip compression (default "
+"nozip).\n"
+msgstr ""
+"--[no]zip             TIFF zip 압축을 활성[비활성] 하기 (기본값 nozip).\n"
 
 #: ufraw_conf.c:1326
 msgid ""
@@ -418,31 +421,40 @@ msgstr ""
 "                      미리보기 이미지를 추출하기.\n"
 
 #: ufraw_conf.c:1328
-msgid "--out-path=PATH       PATH for output file (default use input file's path).\n"
-msgstr "--out-path=PATH       출력 파일의 경로 (기본값 입력 파일의 경로 사용).\n"
+msgid ""
+"--out-path=PATH       PATH for output file (default use input file's path).\n"
+msgstr ""
+"--out-path=PATH       출력 파일의 경로 (기본값 입력 파일의 경로 사용).\n"
 
 #: ufraw_conf.c:1329
 msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
-msgstr "--output=FILE         출력 파일 이름, 표준출력으로 내보내려면 '-'를 사용하세요.\n"
+msgstr ""
+"--output=FILE         출력 파일 이름, 표준출력으로 내보내려면 '-'를 사용하세"
+"요.\n"
 
 #: ufraw_conf.c:1330
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
 msgstr "--darkframe=FILE      핫픽셀 제거를 위한 다크프레임 파일.\n"
 
 #: ufraw_conf.c:1331
-msgid "--overwrite           Overwrite existing files without asking (default no).\n"
+msgid ""
+"--overwrite           Overwrite existing files without asking (default no).\n"
 msgstr "--overwrite           묻지 않고 기존 파일에 덮어 쓰기 (기본값 no).\n"
 
 #: ufraw_conf.c:1332
-msgid "--silent              Do not display any messages during batch conversion.\n"
+msgid ""
+"--silent              Do not display any messages during batch conversion.\n"
 msgstr "--silent              변환하는 동안 아무 메세지도 표시하지 않음.\n"
 
 #: ufraw_conf.c:1334
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
-"Then, if an ID file is specified it setting are read. Next, the setting from\n"
-"the --conf option are taken, ignoring input/output filenames in the ID file.\n"
-"Lastly, the options from the command line are set. In batch mode, the second\n"
+"Then, if an ID file is specified it setting are read. Next, the setting "
+"from\n"
+"the --conf option are taken, ignoring input/output filenames in the ID "
+"file.\n"
+"Lastly, the options from the command line are set. In batch mode, the "
+"second\n"
 "group of options is NOT read from the resource file.\n"
 msgstr ""
 "UFRaw는 가장 먼저 $HOME/.ufrawrc 파일에 있는 설정을 읽습니다.\n"
@@ -459,8 +471,7 @@ msgstr ""
 "마지막, 하지만 하찮지 않은 정보, --version은 버젼번호와 ufraw의 컴파일\n"
 "옵션을 표시합니다. 그리고 --help는 이 도움말 메세지를 표시하고 마침니다.\n"
 
-#: ufraw_conf.c:1488
-#: ufraw_conf.c:1498
+#: ufraw_conf.c:1488 ufraw_conf.c:1498
 #, c-format
 msgid "'%s' is not a valid value for the --%s option."
 msgstr "'%s'은(는) --%s의 유효한 값이 아닙니다."
@@ -493,8 +504,7 @@ msgstr "--temperature 와 --green 옵션은 --wb=%s 옵션을 덮어씁니다."
 msgid "failed to load curve from %s, too many configured base curves"
 msgstr "%s(으)로 부터 곡선 불러오기 실패, 조정된 기본 곡선이 너무 많이 있음"
 
-#: ufraw_conf.c:1586
-#: ufraw_conf.c:1629
+#: ufraw_conf.c:1586 ufraw_conf.c:1629
 #, c-format
 msgid "failed to load curve from %s"
 msgstr "%s(으)로 부터 곡선 불러오기 실패"
@@ -533,18 +543,15 @@ msgstr "'%s'(은)는 유효한 잘라내기 옵션이 아닙니다."
 msgid "you can not specify both --shrink and --size"
 msgstr "--shrink와 --size를 둘다 설정 할 수 없습니다"
 
-#: ufraw_conf.c:1714
-#: ufraw_conf.c:1724
+#: ufraw_conf.c:1714 ufraw_conf.c:1724
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw가 TIFF 지원이 빠진 채로 빌드됨."
 
-#: ufraw_conf.c:1734
-#: ufraw_conf.c:1766
+#: ufraw_conf.c:1734 ufraw_conf.c:1766
 msgid "ufraw was build without JPEG support."
 msgstr "ufraw가 JPEG 지원이 빠진 채로 빌드됨."
 
-#: ufraw_conf.c:1744
-#: ufraw_conf.c:1754
+#: ufraw_conf.c:1744 ufraw_conf.c:1754
 msgid "ufraw was build without PNG support."
 msgstr "ufraw가 PNG 지원이 빠진 채로 빌드됨."
 
@@ -631,8 +638,7 @@ msgstr "JPEG 썸네일의 높이 %d이(가) 기대한 %d와 다릅니다."
 msgid "JPEG thumb width %d different than expected %d."
 msgstr "JPEG 썸네일의 넓이 %d이(가) 기대한 %d와 다릅니다."
 
-#: ufraw_embedded.c:157
-#: ufraw_embedded.c:302
+#: ufraw_embedded.c:157 ufraw_embedded.c:302
 #, c-format
 msgid ""
 "Error creating file '%s'.\n"
@@ -641,8 +647,7 @@ msgstr ""
 "'%s'파일 만들기 오류.\n"
 "%s"
 
-#: ufraw_embedded.c:172
-#: ufraw_embedded.c:256
+#: ufraw_embedded.c:172 ufraw_embedded.c:256
 msgid "No embedded image read"
 msgstr "읽어온 내장 이미지가 없음"
 
@@ -684,8 +689,7 @@ msgstr "배경"
 msgid "Loading image"
 msgstr "이미지 불러오는 중"
 
-#: ufraw-gimp.c:398
-#: ufraw-gimp.c:432
+#: ufraw-gimp.c:398 ufraw-gimp.c:432
 #, c-format
 msgid "Failed to embed output profile '%s' in image."
 msgstr "출력 프로파일 '%s'을(를) 이미지에 내장 실패."
@@ -703,99 +707,91 @@ msgstr "변환 곡선을 적용한 Raw 히스토그램"
 msgid "Live histogram"
 msgstr "라이브 히스토그램"
 
-#: ufraw_preview.c:250
-#: ufraw_preview.c:339
+#: ufraw_preview.c:251 ufraw_preview.c:340
 msgid "No more room for new curves."
 msgstr "새 곡선을 위한 저장 공간이 없습니다."
 
-#: ufraw_preview.c:253
-#: ufraw_preview.c:4036
+#: ufraw_preview.c:254 ufraw_preview.c:4037
 msgid "Load curve"
 msgstr "곡선 불러오기"
 
-#: ufraw_preview.c:269
-#: ufraw_preview.c:371
+#: ufraw_preview.c:270 ufraw_preview.c:372
 msgid "All curve formats"
 msgstr "모든 곡선 포멧"
 
-#: ufraw_preview.c:279
-#: ufraw_preview.c:381
+#: ufraw_preview.c:280 ufraw_preview.c:382
 msgid "UFRaw curve format"
 msgstr "UFRaw 곡선 포멧"
 
-#: ufraw_preview.c:285
-#: ufraw_preview.c:387
+#: ufraw_preview.c:286 ufraw_preview.c:388
 msgid "Nikon curve format"
 msgstr "Nikon 곡선 포멧"
 
-#: ufraw_preview.c:356
-#: ufraw_preview.c:4043
+#: ufraw_preview.c:357 ufraw_preview.c:4044
 msgid "Save curve"
 msgstr "곡선 저장"
 
-#: ufraw_preview.c:434
-#: ufraw_preview.c:507
+#: ufraw_preview.c:435 ufraw_preview.c:508
 msgid "No more room for new profiles."
 msgstr "더이상 새 프로파일을 저장할 장소가 없습니다."
 
-#: ufraw_preview.c:438
+#: ufraw_preview.c:439
 msgid "Load color profile"
 msgstr "색 프로파일 불러오기"
 
-#: ufraw_preview.c:456
+#: ufraw_preview.c:457
 msgid "Color Profiles"
 msgstr "색 프로파일"
 
-#: ufraw_preview.c:542
+#: ufraw_preview.c:543
 msgid "Luminosity (Y value)"
 msgstr "조도 (Y 값)"
 
-#: ufraw_preview.c:544
+#: ufraw_preview.c:545
 msgid "Adams' zone"
 msgstr "존 영역"
 
-#: ufraw_preview.c:891
+#: ufraw_preview.c:892
 #, c-format
 msgid "size %dx%d, zoom %2.f%%"
 msgstr "사이즈 %dx%d, 확대 %2.f%%"
 
-#: ufraw_preview.c:895
+#: ufraw_preview.c:896
 #, c-format
 msgid "size %dx%d, scale 1/%d"
 msgstr "사이즈 %dx%d, 스케일 1/%d"
 
-#: ufraw_preview.c:940
+#: ufraw_preview.c:941
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "암부: %0.3lf"
 
-#: ufraw_preview.c:1689
+#: ufraw_preview.c:1690
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "치명적인 오류: uf->conf->shrink<1"
 
 #. No darkframe file
-#: ufraw_preview.c:2225
+#: ufraw_preview.c:2226
 msgid "None"
 msgstr "없음"
 
-#: ufraw_preview.c:2246
-#: ufraw_preview.c:3815
+#: ufraw_preview.c:2247 ufraw_preview.c:3816
 msgid "Load dark frame"
 msgstr "다크프레임 불러오기"
 
-#: ufraw_preview.c:2425
+#: ufraw_preview.c:2426
 msgid "clip"
 msgstr "잘라내기"
 
-#: ufraw_preview.c:2429
+#: ufraw_preview.c:2430
 msgid "restore in LCH space for soft details"
 msgstr "부드러운 디테일을 위해 LCH 색공간으로 부터 복원"
 
-#: ufraw_preview.c:2433
+#: ufraw_preview.c:2434
 msgid "restore in HSV space for sharp details"
 msgstr "날카로운 디테일을 위해 HSV 색공간으로 부터 복원"
 
-#: ufraw_preview.c:2438
+#: ufraw_preview.c:2439
 #, c-format
 msgid ""
 "Restore details for negative EV\n"
@@ -804,15 +800,15 @@ msgstr ""
 "암부의 디테일 복원하기\n"
 "현재 상태: %s"
 
-#: ufraw_preview.c:2451
+#: ufraw_preview.c:2452
 msgid "digital linear"
 msgstr "디지털 선형화"
 
-#: ufraw_preview.c:2455
+#: ufraw_preview.c:2456
 msgid "soft film like"
 msgstr "부드러운 필름 효과"
 
-#: ufraw_preview.c:2460
+#: ufraw_preview.c:2461
 #, c-format
 msgid ""
 "Clip highlights for positive EV\n"
@@ -821,58 +817,56 @@ msgstr ""
 "명부에서 하이라이트 잘라내기\n"
 "현재상태: %s"
 
-#: ufraw_preview.c:2783
+#: ufraw_preview.c:2784
 msgid "UFRaw options"
 msgstr "UFRaw 옵션들"
 
-#: ufraw_preview.c:2796
-#: ufraw_preview.c:2808
+#: ufraw_preview.c:2797 ufraw_preview.c:2809
 msgid "Settings"
 msgstr "설정"
 
-#: ufraw_preview.c:2800
+#: ufraw_preview.c:2801
 msgid "Input color profiles"
 msgstr "입력 색 프로파일"
 
-#: ufraw_preview.c:2802
+#: ufraw_preview.c:2803
 msgid "Output color profiles"
 msgstr "출력 색 프로파일"
 
-#: ufraw_preview.c:2804
+#: ufraw_preview.c:2805
 msgid "Display color profiles"
 msgstr "화면 색 프로파일"
 
-#: ufraw_preview.c:2805
+#: ufraw_preview.c:2806
 msgid "Base Curves"
 msgstr "기본 곡선"
 
-#: ufraw_preview.c:2806
+#: ufraw_preview.c:2807
 msgid "Luminosity Curves"
 msgstr "광도 곡선"
 
 #. Remote Gimp command entry
-#: ufraw_preview.c:2810
+#: ufraw_preview.c:2811
 msgid "Remote Gimp command"
 msgstr "원격 Gimp 명령"
 
-#: ufraw_preview.c:2822
+#: ufraw_preview.c:2823
 msgid "Reset command to default"
 msgstr "명령을 기본값으로 되돌리기"
 
-#: ufraw_preview.c:2827
+#: ufraw_preview.c:2828
 msgid "Blink Over/Underexposure Indicators"
 msgstr "노출 부족/과다 영역 깜박임"
 
-#: ufraw_preview.c:2832
+#: ufraw_preview.c:2833
 msgid "Configuration"
 msgstr "설정"
 
-#: ufraw_preview.c:2847
+#: ufraw_preview.c:2848
 msgid "Save image defaults "
 msgstr "이미지 기본값 저장"
 
-#: ufraw_preview.c:2852
-#: ufraw_saver.c:318
+#: ufraw_preview.c:2853 ufraw_saver.c:318
 msgid ""
 "Save current image manipulation parameters as defaults.\n"
 "The output parameters in this window are always saved."
@@ -880,44 +874,42 @@ msgstr ""
 "현재의 조정 값들을 기본값으로 저장합니다.\n"
 "이 윈도우의 출력 파라미터들은 항상 저장됩니다."
 
-#: ufraw_preview.c:2855
-#: ufraw_saver.c:322
+#: ufraw_preview.c:2856 ufraw_saver.c:322
 msgid "Never again"
 msgstr "다시 묻지 않음"
 
-#: ufraw_preview.c:2856
-#: ufraw_saver.c:323
+#: ufraw_preview.c:2857 ufraw_saver.c:323
 msgid "Always"
 msgstr "항상"
 
-#: ufraw_preview.c:2857
-#: ufraw_saver.c:324
+#: ufraw_preview.c:2858 ufraw_saver.c:324
 msgid "Just this once"
 msgstr "이번 한번 만"
 
-#: ufraw_preview.c:2864
+#: ufraw_preview.c:2865
 msgid "Save full configuration "
 msgstr "전체 설정 저장"
 
-#: ufraw_preview.c:2868
+#: ufraw_preview.c:2869
 msgid "Save resource file ($HOME/.ufrawrc)"
 msgstr "리소스 파일 저장 ($HOME/.ufrawrc)"
 
-#: ufraw_preview.c:2874
+#: ufraw_preview.c:2875
 msgid "Log"
 msgstr "로그"
 
-#: ufraw_preview.c:2886
+#: ufraw_preview.c:2887
 msgid "Encoding conversion failed"
 msgstr "인코딩 변황 실패"
 
-#: ufraw_preview.c:2890
+#: ufraw_preview.c:2891
 msgid "About"
 msgstr "정보"
 
-#: ufraw_preview.c:2901
+#: ufraw_preview.c:2902
 msgid ""
-"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility to\n"
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
+"to\n"
 "read and manipulate raw images from digital cameras.\n"
 "UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
 "for the actual encoding of the raw images.\n"
@@ -926,7 +918,8 @@ msgid ""
 "Homepage: http://ufraw.sourceforge.net/\n"
 "\n"
 msgstr ""
-"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility to\n"
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
+"to\n"
 "read and manipulate raw images from digital cameras.\n"
 "UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
 "for the actual encoding of the raw images.\n"
@@ -935,53 +928,50 @@ msgstr ""
 "Homepage: http://ufraw.sourceforge.net/\n"
 "\n"
 
-#: ufraw_preview.c:3298
+#: ufraw_preview.c:3299
 #, c-format
 msgid "%s%s (Alt-%c)"
 msgstr "%s%s (Alt-%c)"
 
-#: ufraw_preview.c:3401
+#: ufraw_preview.c:3402
 #, c-format
 msgid "%s - UFRaw Photo Loader"
 msgstr "%s - UFRaw Photo Loader"
 
-#: ufraw_preview.c:3476
-#: ufraw_preview.c:4447
+#: ufraw_preview.c:3477 ufraw_preview.c:4448
 msgid "Linear"
 msgstr "선형"
 
-#: ufraw_preview.c:3485
-#: ufraw_preview.c:4456
+#: ufraw_preview.c:3486 ufraw_preview.c:4457
 msgid "Logarithmic"
 msgstr "대수"
 
-#: ufraw_preview.c:3499
+#: ufraw_preview.c:3500
 msgid "Spot values:"
 msgstr "스팟 값:"
 
-#: ufraw_preview.c:3516
+#: ufraw_preview.c:3517
 msgid "Exposure compensation in EV"
 msgstr "EV에서 노출 보정"
 
-#: ufraw_preview.c:3536
+#: ufraw_preview.c:3537
 msgid "Auto adjust exposure"
 msgstr "자동 노출 조정"
 
-#: ufraw_preview.c:3546
+#: ufraw_preview.c:3547
 msgid "Reset exposure to default"
 msgstr "노출을 기본값으로 되돌리기"
 
 #. Start of White Balance setting page
-#: ufraw_preview.c:3558
-#: ufraw_preview.c:4353
+#: ufraw_preview.c:3559 ufraw_preview.c:4354
 msgid "White balance"
 msgstr "화이트 벨런스"
 
-#: ufraw_preview.c:3617
+#: ufraw_preview.c:3618
 msgid "White Balance"
 msgstr "화이트 벨런스"
 
-#: ufraw_preview.c:3638
+#: ufraw_preview.c:3639
 msgid ""
 "There are no white balance presets for your camera model.\n"
 "Check UFRaw's webpage for information on how to get your\n"
@@ -991,206 +981,199 @@ msgstr ""
 "어떻게 당신의 카메라를 지원하게 하는지에 대해서 UFRaw의\n"
 "웹페이지를 확인하세요."
 
-#: ufraw_preview.c:3647
+#: ufraw_preview.c:3648
 msgid "Reset white balance to initial value"
 msgstr "화이트 벨런스를 초기값으로 되돌리기"
 
-#: ufraw_preview.c:3652
+#: ufraw_preview.c:3653
 msgid "Temperature"
 msgstr "온도"
 
-#: ufraw_preview.c:3654
+#: ufraw_preview.c:3655
 msgid "White balance color temperature (K)"
 msgstr "화이트 벨런스 색 온도 (K)"
 
-#: ufraw_preview.c:3655
+#: ufraw_preview.c:3656
 msgid "Green"
 msgstr "녹색"
 
-#: ufraw_preview.c:3657
+#: ufraw_preview.c:3658
 msgid "Green component"
 msgstr "녹색 성분"
 
-#: ufraw_preview.c:3664
+#: ufraw_preview.c:3665
 msgid "Select a spot on the preview image to apply spot white balance"
-msgstr "스팟 화이트 벨런스를 적용하기 위해 미리보기 이미지 위에 한 점을 선택하세요"
+msgstr ""
+"스팟 화이트 벨런스를 적용하기 위해 미리보기 이미지 위에 한 점을 선택하세요"
 
-#: ufraw_preview.c:3670
+#: ufraw_preview.c:3671
 msgid "Chan. multipliers:"
 msgstr "재널 증폭:"
 
-#: ufraw_preview.c:3694
+#: ufraw_preview.c:3695
 msgid "Bayer pattern interpolation"
 msgstr "베이어 패턴 보간법"
 
-#: ufraw_preview.c:3700
-#: ufraw_preview.c:3709
+#: ufraw_preview.c:3701 ufraw_preview.c:3710
 msgid "VNG four color interpolation"
 msgstr "VNG four color 보간법"
 
-#: ufraw_preview.c:3702
-#: ufraw_preview.c:3713
+#: ufraw_preview.c:3703 ufraw_preview.c:3714
 msgid "Bilinear interpolation"
 msgstr "Bilinear 보간법"
 
-#: ufraw_preview.c:3705
+#: ufraw_preview.c:3706
 msgid "AHD interpolation"
 msgstr "AHD 보간법"
 
-#: ufraw_preview.c:3707
+#: ufraw_preview.c:3708
 msgid "VNG interpolation"
 msgstr "VNG 보간법"
 
-#: ufraw_preview.c:3711
+#: ufraw_preview.c:3712
 msgid "PPG interpolation"
 msgstr "PPG 보간법"
 
-#: ufraw_preview.c:3725
+#: ufraw_preview.c:3726
 msgid "No Bayer pattern"
 msgstr "베이어 패턴이 없음"
 
-#: ufraw_preview.c:3736
+#: ufraw_preview.c:3737
 msgid "Apply color smoothing"
 msgstr "색 고르게 하기 적용"
 
-#: ufraw_preview.c:3746
+#: ufraw_preview.c:3747
 msgid "Threshold"
 msgstr "임계값"
 
-#: ufraw_preview.c:3748
+#: ufraw_preview.c:3749
 msgid "Threshold for wavelet denoising"
 msgstr "잔 노이즈 제거를 위한 임계값"
 
-#: ufraw_preview.c:3754
+#: ufraw_preview.c:3755
 msgid "Reset denoise threshold to default"
 msgstr "노이즈제거를 위한 임계값을 원래대로 되돌립니다"
 
-#: ufraw_preview.c:3764
+#: ufraw_preview.c:3765
 msgid "Zoom:"
 msgstr "확대:"
 
-#: ufraw_preview.c:3785
-#: ufraw_preview.c:4567
+#: ufraw_preview.c:3786 ufraw_preview.c:4568
 msgid "Zoom percentage"
 msgstr "확대 비율"
 
-#: ufraw_preview.c:3802
+#: ufraw_preview.c:3803
 msgid "Dark Frame:"
 msgstr "다크프레임:"
 
-#: ufraw_preview.c:3823
+#: ufraw_preview.c:3824
 msgid "Reset dark frame"
 msgstr "다크프레임 되돌리기"
 
 #. End of White Balance setting page
 #. Start of Base Curve page
-#: ufraw_preview.c:3830
+#: ufraw_preview.c:3831
 msgid "Base curve"
 msgstr "기본 곡선"
 
-#: ufraw_preview.c:3862
+#: ufraw_preview.c:3863
 msgid "Load base curve"
 msgstr "기본 곡선 불러오기"
 
-#: ufraw_preview.c:3869
+#: ufraw_preview.c:3870
 msgid "Save base curve"
 msgstr "기본 곡선 저장하기"
 
-#: ufraw_preview.c:3892
+#: ufraw_preview.c:3893
 msgid "Reset base curve to default"
 msgstr "기본 곡선을 기본값으로 되돌리기"
 
 #. End of Base Curve page
 #. Start of Color management page
-#: ufraw_preview.c:3898
+#: ufraw_preview.c:3899
 msgid "Color management"
 msgstr "색조 처리"
 
-#: ufraw_preview.c:3912
+#: ufraw_preview.c:3913
 msgid "Input ICC profile"
 msgstr "입력 ICC 프로파일"
 
-#: ufraw_preview.c:3913
+#: ufraw_preview.c:3914
 msgid "Output ICC profile"
 msgstr "출력 ICC 프로파일"
 
-#: ufraw_preview.c:3914
+#: ufraw_preview.c:3915
 msgid "Display ICC profile"
 msgstr "화면 ICC 프로파일"
 
-#: ufraw_preview.c:3937
+#: ufraw_preview.c:3938
 msgid "Use color matrix"
 msgstr "컬러 매트릭스 사용"
 
-#: ufraw_preview.c:3948
+#: ufraw_preview.c:3949
 msgid "Gamma"
 msgstr "감마"
 
-#: ufraw_preview.c:3951
+#: ufraw_preview.c:3952
 msgid "Gamma correction for the input profile"
 msgstr "프로파일 입력에 감마 조정"
 
-#: ufraw_preview.c:3956
+#: ufraw_preview.c:3957
 msgid "Reset gamma to default"
 msgstr "감마를 기본값으로 되돌리기"
 
-#: ufraw_preview.c:3960
+#: ufraw_preview.c:3961
 msgid "Linearity"
 msgstr "선형도"
 
-#: ufraw_preview.c:3963
+#: ufraw_preview.c:3964
 msgid "Linear part of the gamma correction"
 msgstr "감마 조정중 선형인 부분"
 
-#: ufraw_preview.c:3969
+#: ufraw_preview.c:3970
 msgid "Reset linearity to default"
 msgstr "선형도를 기본값으로 되돌리기"
 
-#: ufraw_preview.c:3973
+#: ufraw_preview.c:3974
 msgid "Output intent"
 msgstr "출력 의도"
 
-#: ufraw_preview.c:3976
-#: ufraw_preview.c:3988
+#: ufraw_preview.c:3977 ufraw_preview.c:3989
 msgid "Perceptual"
 msgstr "Perceptual"
 
-#: ufraw_preview.c:3977
-#: ufraw_preview.c:3989
+#: ufraw_preview.c:3978 ufraw_preview.c:3990
 msgid "Relative colorimetric"
 msgstr "Relative colorimetric"
 
-#: ufraw_preview.c:3978
-#: ufraw_preview.c:3990
-#: ufraw_preview.c:4004
-#: ufraw_preview.c:4006
+#: ufraw_preview.c:3979 ufraw_preview.c:3991 ufraw_preview.c:4005
+#: ufraw_preview.c:4007
 msgid "Saturation"
 msgstr "채도"
 
-#: ufraw_preview.c:3979
-#: ufraw_preview.c:3991
+#: ufraw_preview.c:3980 ufraw_preview.c:3992
 msgid "Absolute colorimetric"
 msgstr "Absolute colorimetric"
 
-#: ufraw_preview.c:3985
+#: ufraw_preview.c:3986
 msgid "Display intent"
 msgstr "화면 의도"
 
-#: ufraw_preview.c:3992
+#: ufraw_preview.c:3993
 msgid "Disable soft proofing"
 msgstr "Soft proofing 해제"
 
 #. End of Color management page
 #. Start of Corrections page
-#: ufraw_preview.c:4000
+#: ufraw_preview.c:4001
 msgid "Correct luminosity, saturation"
 msgstr "조도, 채도 조정"
 
-#: ufraw_preview.c:4013
+#: ufraw_preview.c:4014
 msgid "Reset saturation to default"
 msgstr "채도를 기본값으로 되돌리기"
 
-#: ufraw_preview.c:4063
+#: ufraw_preview.c:4064
 msgid ""
 "Auto adjust curve\n"
 "(Flatten histogram)"
@@ -1198,54 +1181,54 @@ msgstr ""
 "곡선 자동 조정\n"
 "(히스토그램 평탄화)"
 
-#: ufraw_preview.c:4073
+#: ufraw_preview.c:4074
 msgid "Reset curve to default"
 msgstr "곡선을 기본값으로 되돌리기"
 
-#: ufraw_preview.c:4077
+#: ufraw_preview.c:4078
 msgid "Black point: 0.000"
 msgstr "암부: 0.000"
 
-#: ufraw_preview.c:4096
+#: ufraw_preview.c:4097
 msgid "Reset black-point to default"
 msgstr "암부를 기본값으로 되돌리기"
 
-#: ufraw_preview.c:4106
+#: ufraw_preview.c:4107
 msgid "Auto adjust black-point"
 msgstr "암부 자동 조정"
 
 #. End of Corrections page
 #. Start of transformations page
-#: ufraw_preview.c:4113
+#: ufraw_preview.c:4114
 msgid "Crop and rotate"
 msgstr "잘라내기와 회전"
 
 #. Start of Crop controls
-#: ufraw_preview.c:4118
+#: ufraw_preview.c:4119
 msgid "Left:"
 msgstr "왼쪽:"
 
-#: ufraw_preview.c:4132
+#: ufraw_preview.c:4133
 msgid "Top:"
 msgstr "위:"
 
-#: ufraw_preview.c:4146
+#: ufraw_preview.c:4147
 msgid "Right:"
 msgstr "오른쪽:"
 
-#: ufraw_preview.c:4160
+#: ufraw_preview.c:4161
 msgid "Bottom:"
 msgstr "아래:"
 
-#: ufraw_preview.c:4179
+#: ufraw_preview.c:4180
 msgid "Reset the crop region"
 msgstr "잘라내기 영역을 초기화"
 
-#: ufraw_preview.c:4186
+#: ufraw_preview.c:4187
 msgid "Aspect ratio:"
 msgstr "종횡비:"
 
-#: ufraw_preview.c:4195
+#: ufraw_preview.c:4196
 msgid ""
 "Crop area aspect ratio.\n"
 "Can be entered in decimal notation (1.273)\n"
@@ -1255,133 +1238,131 @@ msgstr ""
 "숫자 형식(1.273) 혹은 비율 형식 (14:11)\n"
 "으로 입력 할 수 있습니다"
 
-#: ufraw_preview.c:4216
+#: ufraw_preview.c:4217
 msgid "Lock aspect ratio"
 msgstr "종횡비 고정"
 
-#: ufraw_preview.c:4225
+#: ufraw_preview.c:4226
 msgid "Shrink factor"
 msgstr "축소 인자"
 
-#: ufraw_preview.c:4240
+#: ufraw_preview.c:4241
 msgid "Height"
 msgstr "높이"
 
-#: ufraw_preview.c:4256
+#: ufraw_preview.c:4257
 msgid "Width"
 msgstr "넓이"
 
-#: ufraw_preview.c:4275
+#: ufraw_preview.c:4276
 msgid "Orientation:"
 msgstr "기준:"
 
 #. End of transformation page
 #. Start of EXIF page
-#: ufraw_preview.c:4308
+#: ufraw_preview.c:4309
 msgid "EXIF"
 msgstr "EXIF"
 
-#: ufraw_preview.c:4333
+#: ufraw_preview.c:4334
 msgid "Tag"
 msgstr "테그"
 
-#: ufraw_preview.c:4338
+#: ufraw_preview.c:4339
 msgid "Value"
 msgstr "값"
 
 #. Fill table with EXIF tags
-#: ufraw_preview.c:4343
+#: ufraw_preview.c:4344
 msgid "Camera maker"
 msgstr "카메라 메이커"
 
-#: ufraw_preview.c:4344
+#: ufraw_preview.c:4345
 msgid "Camera model"
 msgstr "카메라 모델"
 
-#: ufraw_preview.c:4345
+#: ufraw_preview.c:4346
 msgid "Timestamp"
 msgstr "타임스탬프"
 
-#: ufraw_preview.c:4346
+#: ufraw_preview.c:4347
 msgid "Exposure"
 msgstr "노출시간"
 
-#: ufraw_preview.c:4347
+#: ufraw_preview.c:4348
 msgid "Aperture"
 msgstr "조리개"
 
-#: ufraw_preview.c:4348
+#: ufraw_preview.c:4349
 msgid "ISO speed"
 msgstr "ISO 감도"
 
-#: ufraw_preview.c:4349
+#: ufraw_preview.c:4350
 msgid "Focal length"
 msgstr "초점 거리"
 
-#: ufraw_preview.c:4350
+#: ufraw_preview.c:4351
 msgid "35mm focal length"
 msgstr "35mm 초첨 거리"
 
-#: ufraw_preview.c:4351
+#: ufraw_preview.c:4352
 msgid "Lens"
 msgstr "렌즈"
 
-#: ufraw_preview.c:4352
-#: wb_presets.c:54
+#: ufraw_preview.c:4353 wb_presets.c:54
 msgid "Flash"
 msgstr "플레쉬"
 
-#: ufraw_preview.c:4357
+#: ufraw_preview.c:4358
 #, c-format
 msgid "EXIF data read by %s"
 msgstr "'%s'(으)로 EXIF 정보를 읽음"
 
-#: ufraw_preview.c:4365
+#: ufraw_preview.c:4366
 msgid "Warning: EXIF data will not be sent to output"
 msgstr "경고: EXIF 정보가 출력에 포함되지 않을 것임"
 
-#: ufraw_preview.c:4394
+#: ufraw_preview.c:4395
 msgid "RGB histogram"
 msgstr "RGB 히스토그램"
 
-#: ufraw_preview.c:4403
+#: ufraw_preview.c:4404
 msgid "R+G+B histogram"
 msgstr "R+G+B 히스토그램"
 
-#: ufraw_preview.c:4413
+#: ufraw_preview.c:4414
 msgid "Luminosity histogram"
 msgstr "조도 히스토그램"
 
-#: ufraw_preview.c:4423
+#: ufraw_preview.c:4424
 msgid "Value (maximum) histogram"
 msgstr "값 (최대) 히스토그램"
 
-#: ufraw_preview.c:4433
+#: ufraw_preview.c:4434
 msgid "Saturation histogram"
 msgstr "채도 히스토그램"
 
-#: ufraw_preview.c:4468
+#: ufraw_preview.c:4469
 msgid "Average:"
 msgstr "평균:"
 
-#: ufraw_preview.c:4470
+#: ufraw_preview.c:4471
 msgid "Std. deviation:"
 msgstr "표준 편차:"
 
-#: ufraw_preview.c:4473
+#: ufraw_preview.c:4474
 msgid "Overexposed:"
 msgstr "노출과다:"
 
-#: ufraw_preview.c:4475
-#: ufraw_preview.c:4486
+#: ufraw_preview.c:4476 ufraw_preview.c:4487
 msgid "Indicate"
 msgstr "표시"
 
-#: ufraw_preview.c:4483
+#: ufraw_preview.c:4484
 msgid "Underexposed:"
 msgstr "노출부족:"
 
-#: ufraw_preview.c:4603
+#: ufraw_preview.c:4604
 msgid "Options"
 msgstr "옵션"
 
@@ -1389,16 +1370,16 @@ msgstr "옵션"
 #. "_Delete", "_Cancel", "_Save", "Save _As", "Send to _Gimp"
 #. should have unique mnemonics.
 #. Delete button:
-#: ufraw_preview.c:4614
+#: ufraw_preview.c:4615
 msgid "_Delete"
 msgstr "지우기(_D)"
 
-#: ufraw_preview.c:4644
+#: ufraw_preview.c:4645
 #, c-format
 msgid "Filename: %s%s"
 msgstr "파일 이름: %s%s"
 
-#: ufraw_preview.c:4645
+#: ufraw_preview.c:4646
 msgid ""
 "\n"
 "Create also ID file"
@@ -1406,7 +1387,7 @@ msgstr ""
 "\n"
 "ID파일을 같이 만들기"
 
-#: ufraw_preview.c:4646
+#: ufraw_preview.c:4647
 msgid ""
 "\n"
 "Create only ID file"
@@ -1414,22 +1395,21 @@ msgstr ""
 "\n"
 "ID파일만 만들기"
 
-#: ufraw_preview.c:4655
+#: ufraw_preview.c:4656
 msgid "Save _As"
 msgstr "다른 이름으로 저장(_A)"
 
-#: ufraw_preview.c:4661
+#: ufraw_preview.c:4662
 msgid "Send image to _Gimp"
 msgstr "이미지를 Gimp로 전달(_G)"
 
 #. preview_progress() changes the size of the progress bar
 #. and processes the event queue.
-#: ufraw_preview.c:4675
+#: ufraw_preview.c:4676
 msgid "Loading preview"
 msgstr "미리보기 불러오는 중"
 
-#: ufraw_routines.c:175
-#: ufraw_routines.c:181
+#: ufraw_routines.c:175 ufraw_routines.c:181
 msgid "Fatal error setting C locale"
 msgstr "치명적인 오류 C 로케일 설정"
 
@@ -1438,8 +1418,7 @@ msgstr "치명적인 오류 C 로케일 설정"
 msgid "Curve version is not supported"
 msgstr "지원되지 않는 곡선 버젼"
 
-#: ufraw_routines.c:368
-#: ufraw_routines.c:443
+#: ufraw_routines.c:368 ufraw_routines.c:443
 #, c-format
 msgid "Invalid Nikon curve file '%s'"
 msgstr "유효하지 않은 Nikon 곡선 파일 '%s'"
@@ -1547,10 +1526,7 @@ msgstr "\t이미지 기본값 저장"
 msgid "Overwrite existing files without asking"
 msgstr "묻지 않고 존재하는 파일에 덮어쓰기"
 
-#: ufraw_saver.c:422
-#: ufraw_saver.c:430
-#: ufraw_saver.c:442
-#: ufraw_saver.c:449
+#: ufraw_saver.c:422 ufraw_saver.c:430 ufraw_saver.c:442 ufraw_saver.c:449
 #: ufraw_saver.c:457
 msgid "Error creating temporary file."
 msgstr "임시 파일 만들기 실패."
@@ -1592,10 +1568,10 @@ msgstr "NEF 곡선 읽기 실패"
 msgid "Can not downsize from %d to %d."
 msgstr "%d에서 %d(으)로 크기를 축소할 수 없습니다."
 
-#: ufraw_ufraw.c:961
-#: ufraw_ufraw.c:964
+#: ufraw_ufraw.c:961 ufraw_ufraw.c:964
 msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr "카메라 화이트 벨런스를 사용할 수 없으므로, 자동 화이트 벨런스로 되돌립니다."
+msgstr ""
+"카메라 화이트 벨런스를 사용할 수 없으므로, 자동 화이트 벨런스로 되돌립니다."
 
 #: ufraw_writer.c:126
 #, c-format
@@ -1604,42 +1580,24 @@ msgstr "이미지의 파일 이름은 ID 파일 이름 '%s'와 같을 수 없습
 
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
-#: ufraw_writer.c:152
-#: ufraw_writer.c:291
-#: ufraw_writer.c:305
-#: ufraw_writer.c:611
+#: ufraw_writer.c:152 ufraw_writer.c:291 ufraw_writer.c:305 ufraw_writer.c:611
 msgid "Error creating file."
 msgstr "파일 만들기 실패."
 
 #. Error was not already set before
-#: ufraw_writer.c:165
-#: ufraw_writer.c:178
-#: ufraw_writer.c:194
-#: ufraw_writer.c:222
-#: ufraw_writer.c:239
-#: ufraw_writer.c:372
-#: ufraw_writer.c:388
-#: ufraw_writer.c:589
-#: ufraw_writer.c:600
-#: ufraw_writer.c:627
+#: ufraw_writer.c:165 ufraw_writer.c:178 ufraw_writer.c:194 ufraw_writer.c:222
+#: ufraw_writer.c:239 ufraw_writer.c:372 ufraw_writer.c:388 ufraw_writer.c:589
+#: ufraw_writer.c:600 ufraw_writer.c:627
 #, c-format
 msgid "Error creating file '%s'."
 msgstr "%s 파일 만들기 실패."
 
-#: ufraw_writer.c:217
-#: ufraw_writer.c:232
-#: ufraw_writer.c:285
-#: ufraw_writer.c:299
-#: ufraw_writer.c:362
-#: ufraw_writer.c:436
-#: ufraw_writer.c:446
-#: ufraw_writer.c:477
+#: ufraw_writer.c:217 ufraw_writer.c:232 ufraw_writer.c:285 ufraw_writer.c:299
+#: ufraw_writer.c:362 ufraw_writer.c:436 ufraw_writer.c:446 ufraw_writer.c:477
 msgid "Saving image"
 msgstr "이미지 저장중"
 
-#: ufraw_writer.c:276
-#: ufraw_writer.c:345
-#: ufraw_writer.c:423
+#: ufraw_writer.c:276 ufraw_writer.c:345 ufraw_writer.c:423
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "출력 프로파일 '%s'을(를) '%s'에 포함하는데 실패하였습니다."
@@ -1754,4 +1712,3 @@ msgstr "카메라 화벨"
 #: wb_presets.c:65
 msgid "Auto WB"
 msgstr "자동 화벨"
-
