@@ -51,7 +51,7 @@ extern "C" {
 
 // On other platforms nothing is needed
 #else
-#define uf_win32_locale_filename_from_utf8(__some_string__) (__some_string__) 
+#define uf_win32_locale_filename_from_utf8(__some_string__) (__some_string__)
 #define uf_win32_locale_filename_free(__some_string__) (void)(__some_string__)
 
 #endif

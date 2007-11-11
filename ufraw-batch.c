@@ -66,7 +66,7 @@ int main (int argc, char **argv)
 	    strcpy(conf.outputFilename, "");
 	    strcpy(conf.outputPath, "");
 	} else {
-            ufraw_message(UFRAW_REPORT, NULL);
+	    ufraw_message(UFRAW_REPORT, NULL);
 	    conf.version = 0;
 	}
     }
@@ -75,29 +75,29 @@ int main (int argc, char **argv)
     }
     for (; optInd<argc; optInd++) {
 	argFile = uf_win32_locale_to_utf8(argv[optInd]);
-        uf = ufraw_open(argFile);
+	uf = ufraw_open(argFile);
 	uf_win32_locale_free(argFile);
-        if (uf==NULL) {
-            ufraw_message(UFRAW_REPORT, NULL);
-            continue;
-        }
-        status = ufraw_config(uf, &rc, &conf, &cmd);
+	if (uf==NULL) {
+	    ufraw_message(UFRAW_REPORT, NULL);
+	    continue;
+	}
+	status = ufraw_config(uf, &rc, &conf, &cmd);
 	if (status==UFRAW_ERROR) {
 	    ufraw_close(uf);
 	    g_free(uf);
 	    exit(1);
 	}
-        if (ufraw_load_raw(uf)!=UFRAW_SUCCESS) {
+	if (ufraw_load_raw(uf)!=UFRAW_SUCCESS) {
 	    ufraw_close(uf);
 	    g_free(uf);
-            continue;
+	    continue;
 	}
-        ufraw_message(UFRAW_MESSAGE, _("loaded %s"), uf->filename);
-        if (ufraw_batch_saver(uf)==UFRAW_SUCCESS)
-            ufraw_message(UFRAW_MESSAGE, _("saved %s"),
+	ufraw_message(UFRAW_MESSAGE, _("loaded %s"), uf->filename);
+	if (ufraw_batch_saver(uf)==UFRAW_SUCCESS)
+	    ufraw_message(UFRAW_MESSAGE, _("saved %s"),
 		    uf->conf->outputFilename);
-        ufraw_close(uf);
-        g_free(uf);
+	ufraw_close(uf);
+	g_free(uf);
     }
 //    ufraw_close(cmd.darkframe);
     exit(0);
@@ -107,38 +107,38 @@ int ufraw_batch_saver(ufraw_data *uf)
     if ( !uf->conf->overwrite && uf->conf->createID!=only_id
        && strcmp(uf->conf->outputFilename, "-")
        && g_file_test(uf->conf->outputFilename, G_FILE_TEST_EXISTS) ) {
-        char ans[max_name];
-        /* First letter of the word 'yes' for the y/n question */
-        gchar *yChar = g_utf8_strdown(_("y"), -1);
-        /* First letter of the word 'no' for the y/n question */
-        gchar *nChar = g_utf8_strup(_("n"), -1);
-        g_printerr(_("%s: overwrite '%s'?"), ufraw_binary,
-                uf->conf->outputFilename);
-        g_printerr(" [%s/%s] ", yChar, nChar);
-        if ( fgets(ans, max_name, stdin)==NULL ) ans[0] = '\0';
-        gchar *ans8 = g_utf8_strdown(ans, 1);
-        if ( g_utf8_collate(ans8, yChar)!=0 ) {
-            g_free(yChar);
-            g_free(nChar);
-            g_free(ans8);
-            return UFRAW_CANCEL;
-        }
-        g_free(yChar);
-        g_free(nChar);
-        g_free(ans8);
+	char ans[max_name];
+	/* First letter of the word 'yes' for the y/n question */
+	gchar *yChar = g_utf8_strdown(_("y"), -1);
+	/* First letter of the word 'no' for the y/n question */
+	gchar *nChar = g_utf8_strup(_("n"), -1);
+	g_printerr(_("%s: overwrite '%s'?"), ufraw_binary,
+		uf->conf->outputFilename);
+	g_printerr(" [%s/%s] ", yChar, nChar);
+	if ( fgets(ans, max_name, stdin)==NULL ) ans[0] = '\0';
+	gchar *ans8 = g_utf8_strdown(ans, 1);
+	if ( g_utf8_collate(ans8, yChar)!=0 ) {
+	    g_free(yChar);
+	    g_free(nChar);
+	    g_free(ans8);
+	    return UFRAW_CANCEL;
+	}
+	g_free(yChar);
+	g_free(nChar);
+	g_free(ans8);
     }
     if (strcmp(uf->conf->outputFilename, "-")) {
-        char *absname = uf_file_set_absolute(uf->conf->outputFilename);
-        g_strlcpy(uf->conf->outputFilename, absname, max_path);
-        g_free(absname);
+	char *absname = uf_file_set_absolute(uf->conf->outputFilename);
+	g_strlcpy(uf->conf->outputFilename, absname, max_path);
+	g_free(absname);
     }
     if (uf->conf->embeddedImage) {
-        int status = ufraw_convert_embedded(uf);
-        if (status!=UFRAW_SUCCESS) return status;
-        status = ufraw_write_embedded(uf);
-        return status;
+	int status = ufraw_convert_embedded(uf);
+	if (status!=UFRAW_SUCCESS) return status;
+	status = ufraw_write_embedded(uf);
+	return status;
     } else {
-        int status = ufraw_write_image(uf);
+	int status = ufraw_write_image(uf);
 	if ( status!=UFRAW_SUCCESS )
 	    ufraw_message(status, ufraw_get_message(uf));
 	return status;

@@ -133,7 +133,7 @@ char *gimp_get_progname()
 #endif
 
 gboolean sendToGimpMode;
- 
+
 void run(GIMP_CONST gchar *name,
 	gint nparams,
 	GIMP_CONST GimpParam *param,

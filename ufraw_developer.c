@@ -41,8 +41,8 @@ developer_data *developer_init()
     d->linear = -1;
     d->saturation = -1;
     for (i=0; i<profile_types; i++) {
-        d->profile[i] = NULL;
-        strcpy(d->profileFile[i],"no such file");
+	d->profile[i] = NULL;
+	strcpy(d->profileFile[i],"no such file");
     }
     memset(&d->baseCurveData, 0, sizeof(d->baseCurveData));
     d->baseCurveData.m_gamma = -1.0;
@@ -66,13 +66,13 @@ void developer_destroy(developer_data *d)
     int i;
     if (d==NULL) return;
     for (i=0; i<profile_types; i++)
-        if (d->profile[i]!=NULL) cmsCloseProfile(d->profile[i]);
+	if (d->profile[i]!=NULL) cmsCloseProfile(d->profile[i]);
     cmsCloseProfile(d->luminosityProfile);
     cmsFreeGamma(d->TransferFunction[0]);
     cmsFreeGamma(d->TransferFunction[1]);
     cmsCloseProfile(d->saturationProfile);
     if (d->colorTransform!=NULL)
-        cmsDeleteTransform(d->colorTransform);
+	cmsDeleteTransform(d->colorTransform);
     g_free(d);
 }
 
@@ -86,26 +86,26 @@ void developer_profile(developer_data *d, int type, profile_data *p)
     if ( strcmp(d->profileFile[type],embedded_display_profile)==0 )
 	return;
     if (strcmp(p->file, d->profileFile[type])) {
-        g_strlcpy(d->profileFile[type], p->file, max_path);
-        if (d->profile[type]!=NULL) cmsCloseProfile(d->profile[type]);
-        if (!strcmp(d->profileFile[type],""))
-            d->profile[type] = cmsCreate_sRGBProfile();
-        else {
+	g_strlcpy(d->profileFile[type], p->file, max_path);
+	if (d->profile[type]!=NULL) cmsCloseProfile(d->profile[type]);
+	if (!strcmp(d->profileFile[type],""))
+	    d->profile[type] = cmsCreate_sRGBProfile();
+	else {
 	    char *filename =
 		    uf_win32_locale_filename_from_utf8(d->profileFile[type]);
-            d->profile[type] = cmsOpenProfileFromFile(filename, "r");
+	    d->profile[type] = cmsOpenProfileFromFile(filename, "r");
 	    uf_win32_locale_filename_free(filename);
 	    if (d->profile[type]==NULL)
-                d->profile[type] = cmsCreate_sRGBProfile();
+		d->profile[type] = cmsCreate_sRGBProfile();
 	}
-        d->updateTransform = TRUE;
+	d->updateTransform = TRUE;
     }
     if (d->updateTransform) {
-        if (d->profile[type]!=NULL)
-            g_strlcpy(p->productName, cmsTakeProductName(d->profile[type]),
-                        max_name);
-        else
-            strcpy(p->productName, "");
+	if (d->profile[type]!=NULL)
+	    g_strlcpy(p->productName, cmsTakeProductName(d->profile[type]),
+		    max_name);
+	else
+	    strcpy(p->productName, "");
     }
 }
 
@@ -118,7 +118,7 @@ void developer_display_profile(developer_data *d,
 	d->profile[type] = cmsOpenProfileFromMem(profile, size);
 	g_free(profile);
 	if (d->profile[type]==NULL)
-            d->profile[type] = cmsCreate_sRGBProfile();
+	    d->profile[type] = cmsCreate_sRGBProfile();
 	if ( strcmp(d->profileFile[type], embedded_display_profile)!=0 ) {
 	    // start using embedded profile
 	    g_strlcpy(d->profileFile[type], embedded_display_profile, max_path);
@@ -134,11 +134,11 @@ void developer_display_profile(developer_data *d,
 	}
     }
     if ( d->updateTransform ) {
-        if ( d->profile[type]!=NULL )
-            g_strlcpy(productName, cmsTakeProductName(d->profile[type]),
-                        max_name);
-        else
-            strcpy(productName, "");
+	if ( d->profile[type]!=NULL )
+	    g_strlcpy(productName, cmsTakeProductName(d->profile[type]),
+		    max_name);
+	else
+	    strcpy(productName, "");
     }
 }
 
@@ -185,10 +185,10 @@ static cmsHPROFILE create_saturation_profile(double saturation)
     Lut = cmsAllocLUT();
     cmsAlloc3DGrid(Lut, 7, 3, 3);
     if (!cmsSample3DGrid(Lut, saturation_sampler, &saturation , 0)) {
-        // Shouldn't reach here
-        cmsFreeLUT(Lut);
-        cmsCloseProfile(hICC);
-        return NULL;
+	// Shouldn't reach here
+	cmsFreeLUT(Lut);
+	cmsCloseProfile(hICC);
+	return NULL;
     }
     // Create tags
     cmsAddTag(hICC, icSigMediaWhitePointTag, (LPVOID) cmsD50_XYZ());
@@ -221,7 +221,7 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
 	return;
     d->updateTransform = FALSE;
     if (d->colorTransform!=NULL)
-        cmsDeleteTransform(d->colorTransform);
+	cmsDeleteTransform(d->colorTransform);
 
     int targetProfile;
     if ( mode==file_developer || mode==auto_developer ) {
@@ -233,11 +233,11 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
     if ( mode==file_developer || mode==auto_developer ||
 	 d->intent[display_profile]==disable_intent ) {
 	/* No need for proofing transformation. */
-	if ( strcmp(d->profileFile[in_profile],"")==0 && 
+	if ( strcmp(d->profileFile[in_profile],"")==0 &&
 	     strcmp(d->profileFile[targetProfile],"")==0 &&
 	     d->luminosityProfile==NULL && d->saturationProfile==NULL ) {
 	    /* No transformation at all. */
-            d->colorTransform = NULL;
+	    d->colorTransform = NULL;
 #if defined(LCMS_VERSION) && LCMS_VERSION <= 113 /* Bypass a lcms 1.13 bug. */
 	} else if ( d->luminosityProfile==NULL && d->saturationProfile==NULL ) {
 	    d->colorTransform = cmsCreateTransform(
@@ -245,7 +245,7 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
 		    d->profile[targetProfile], TYPE_RGB_16,
 		    d->intent[out_profile], 0);
 #endif
-        } else {
+	} else {
 	    cmsHPROFILE prof[4];
 	    int i = 0;
 	    prof[i++] = d->profile[in_profile];
@@ -311,7 +311,7 @@ void developer_prepare(developer_data *d, conf_data *conf,
     /* For auto-tools we create an sRGB output. */
     if ( mode==auto_developer )
 	out = &conf->profile[out_profile][0];
-    else 
+    else
 	out = &conf->profile[out_profile][conf->profileIndex[out_profile]];
     display = &conf->profile[display_profile]
 		[conf->profileIndex[display_profile]];
@@ -336,7 +336,7 @@ void developer_prepare(developer_data *d, conf_data *conf,
 	for (i=0; i<3; i++)
 	    for (c=0; c<d->colors; c++)
 		d->colorMatrix[i][c] = rgb_cam[i][c]*0x10000;
- 
+
     d->restoreDetails = conf->restoreDetails;
     int clipHighlights = conf->clipHighlights;
     unsigned exposure = pow(2, conf->exposure) * 0x10000;
@@ -360,8 +360,8 @@ void developer_prepare(developer_data *d, conf_data *conf,
 	for (i=0; i<0x10000; i++) BaseCurve[i] = cs->m_Samples[i];
 	CurveSampleFree(cs);
 
-        d->gamma = in->gamma;
-        d->linear = in->linear;
+	d->gamma = in->gamma;
+	d->linear = in->linear;
 	d->exposure = exposure;
 	d->clipHighlights = clipHighlights;
 	guint16 FilmCurve[0x10000];
@@ -374,22 +374,22 @@ void developer_prepare(developer_data *d, conf_data *conf,
 	} else { /* digital highlights */
 	    for (i=0; i<0x10000; i++) FilmCurve[i] = i;
 	}
-        double a, b, c, g;
+	double a, b, c, g;
 	/* The parameters of the linearized gamma curve are set in a way that
 	 * keeps the curve continuous and smooth at the connecting point.
 	 * d->linear also changes the real gamma used for the curve (g) in
 	 * a way that keeps the derivative at i=0x10000 constant.
 	 * This way changing the linearity changes the curve behaviour in
 	 * the shadows, but has a minimal effect on the rest of the range. */
-        if (d->linear<1.0) {
-            g = d->gamma*(1.0-d->linear)/(1.0-d->gamma*d->linear);
-            a = 1.0/(1.0+d->linear*(g-1));
-            b = d->linear*(g-1)*a;
-            c = pow(a*d->linear+b, g)/d->linear;
-        } else {
-            a = b = g = 0.0;
-            c = 1.0;
-        }
+	if (d->linear<1.0) {
+	    g = d->gamma*(1.0-d->linear)/(1.0-d->gamma*d->linear);
+	    a = 1.0/(1.0+d->linear*(g-1));
+	    b = d->linear*(g-1)*a;
+	    c = pow(a*d->linear+b, g)/d->linear;
+	} else {
+	    a = b = g = 0.0;
+	    c = 1.0;
+	}
 	for (i=0; i<0x10000; i++)
 	    if (BaseCurve[FilmCurve[i]]<0x10000*d->linear)
 		d->gammaCurve[i] = MIN(c*BaseCurve[FilmCurve[i]], 0xFFFF);
@@ -400,8 +400,8 @@ void developer_prepare(developer_data *d, conf_data *conf,
     developer_profile(d, in_profile, in);
     developer_profile(d, out_profile, out);
     if ( conf->intent[out_profile]!=d->intent[out_profile] ) {
-        d->intent[out_profile] = conf->intent[out_profile];
-        d->updateTransform = TRUE;
+	d->intent[out_profile] = conf->intent[out_profile];
+	d->updateTransform = TRUE;
     }
     /* For auto-tools we ignore all the output settings:
      * luminosity, saturation, output profile and proofing. */
@@ -411,8 +411,8 @@ void developer_prepare(developer_data *d, conf_data *conf,
     }
     developer_profile(d, display_profile, display);
     if ( conf->intent[display_profile]!=d->intent[display_profile] ) {
-        d->intent[display_profile] = conf->intent[display_profile];
-        d->updateTransform = TRUE;
+	d->intent[display_profile] = conf->intent[display_profile];
+	d->updateTransform = TRUE;
     }
     /* Check if curve data has changed. */
     if (memcmp(curve, &d->luminosityCurveData, sizeof(CurveData))) {
@@ -520,17 +520,17 @@ static void cielch_to_rgb(float lch[3], gint64 rgb[3])
 static void MaxMidMin(gint64 p[3], int *maxc, int *midc, int *minc)
 {
     if (p[0] > p[1] && p[0] > p[2]) {
-        *maxc = 0;
-        if (p[1] > p[2]) { *midc = 1; *minc = 2; }
-        else { *midc = 2; *minc = 1; }
+	*maxc = 0;
+	if (p[1] > p[2]) { *midc = 1; *minc = 2; }
+	else { *midc = 2; *minc = 1; }
     } else if (p[1] > p[2]) {
-        *maxc = 1;
-        if (p[0] > p[2]) { *midc = 0; *minc = 2; }
-        else { *midc = 2; *minc = 0; }
+	*maxc = 1;
+	if (p[0] > p[2]) { *midc = 0; *minc = 2; }
+	else { *midc = 2; *minc = 0; }
     } else {
-        *maxc = 2;
-        if (p[0] > p[1]) { *midc = 0; *minc = 1; }
-        else { *midc = 1; *minc = 0; }
+	*maxc = 2;
+	if (p[0] > p[1]) { *midc = 0; *minc = 1; }
+	else { *midc = 1; *minc = 0; }
     }
 }
 
@@ -546,7 +546,7 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 	    buf[i*3+c] = d->gammaCurve[tmppix[c]];
     }
     if (d->colorTransform!=NULL)
-        cmsDoTransform(d->colorTransform, buf, buf, count);
+	cmsDoTransform(d->colorTransform, buf, buf, count);
 
     if (mode==16) for (i=0; i<3*count; i++) p16[i] = buf[i];
     else for (i=0; i<3*count; i++) p8[i] = buf[i] >> 8;

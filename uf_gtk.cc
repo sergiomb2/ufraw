@@ -60,7 +60,7 @@ void uf_widget_set_tooltip(GtkWidget *widget, const gchar *text)
 #endif
 	g_object_set_data(parentWindow, "UF-Tooltips", Tooltips);
 	g_signal_connect(parentWindow, "destroy",
-            G_CALLBACK(_uf_widget_set_tooltip_destroy_event), NULL);
+	    G_CALLBACK(_uf_widget_set_tooltip_destroy_event), NULL);
     }
     gtk_tooltips_set_tip(Tooltips, widget, text, NULL);
 #endif
@@ -70,7 +70,7 @@ void uf_button_set_stock_image(GtkButton *button, const gchar *stock_image)
 {
 #if GTK_CHECK_VERSION(2,8,0)
     gtk_button_set_image(button, gtk_image_new_from_stock(
-            stock_image, GTK_ICON_SIZE_BUTTON));
+	    stock_image, GTK_ICON_SIZE_BUTTON));
 #else
     GtkWidget *lastImage = gtk_bin_get_child(GTK_BIN(button));
     if ( lastImage!=NULL )
@@ -157,9 +157,9 @@ void uf_get_display_profile(GtkWidget *widget,
     GdkAtom type = GDK_NONE;
     gint format = 0;
     gdk_property_get(gdk_screen_get_root_window(screen),
-            gdk_atom_intern(atom_name, FALSE), GDK_NONE,
-            0, 64 * 1024 * 1024, FALSE,
-            &type, &format, buffer_size, buffer);
+	    gdk_atom_intern(atom_name, FALSE), GDK_NONE,
+	    0, 64 * 1024 * 1024, FALSE,
+	    &type, &format, buffer_size, buffer);
     g_free(atom_name);
 
 #elif defined GDK_WINDOWING_QUARTZ
@@ -186,7 +186,7 @@ void uf_get_display_profile(GtkWidget *widget,
     HDC hdc = GetDC (NULL);
     if ( hdc==NULL )
 	return;
-    
+
     DWORD len = 0;
     GetICMProfile (hdc, &len, NULL);
     gchar *path = g_new (gchar, len);

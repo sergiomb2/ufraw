@@ -70,18 +70,18 @@ int dcraw_open(dcraw_data *h,char *filename)
     d->verbose = 1;
     d->ifname = g_strdup(filename);
     if (setjmp(d->failure)) {
-        d->dcraw_message(DCRAW_ERROR,_("Fatal internal error\n"));
-        h->message = d->messageBuffer;
+	d->dcraw_message(DCRAW_ERROR,_("Fatal internal error\n"));
+	h->message = d->messageBuffer;
 	delete d;
-        return DCRAW_ERROR;
+	return DCRAW_ERROR;
     }
     if (!(d->ifp = g_fopen (d->ifname, "rb"))) {
-        d->dcraw_message(DCRAW_OPEN_ERROR,_("Cannot open file %s: %s\n"),
-                filename, strerror(errno));
-        g_free(d->ifname);
-        h->message = d->messageBuffer;
+	d->dcraw_message(DCRAW_OPEN_ERROR,_("Cannot open file %s: %s\n"),
+		filename, strerror(errno));
+	g_free(d->ifname);
+	h->message = d->messageBuffer;
 	delete d;
-        return DCRAW_OPEN_ERROR;
+	return DCRAW_OPEN_ERROR;
     }
     d->identify();
     /* We first check if dcraw recognizes the file, this is equivalent
@@ -89,22 +89,22 @@ int dcraw_open(dcraw_data *h,char *filename)
     if (!d->make[0]) {
 	d->dcraw_message(DCRAW_OPEN_ERROR,_("%s: unsupported file format.\n"),
 		d->ifname);
-        fclose(d->ifp);
-        g_free(d->ifname);
-        h->message = d->messageBuffer;
+	fclose(d->ifp);
+	g_free(d->ifname);
+	h->message = d->messageBuffer;
 	int lastStatus = d->lastStatus;
 	delete d;
-        return lastStatus;
+	return lastStatus;
     }
     /* Next we check if dcraw can decode the file */
     if (!d->is_raw) {
 	d->dcraw_message(DCRAW_OPEN_ERROR,_("Cannot decode file %s\n"), d->ifname);
-        fclose(d->ifp);
-        g_free(d->ifname);
-        h->message = d->messageBuffer;
+	fclose(d->ifp);
+	g_free(d->ifname);
+	h->message = d->messageBuffer;
 	int lastStatus = d->lastStatus;
 	delete d;
-        return lastStatus;
+	return lastStatus;
     }
     if (d->load_raw == &DCRaw::kodak_ycbcr_load_raw) {
 	d->height += d->height & 1;
@@ -126,9 +126,9 @@ int dcraw_open(dcraw_data *h,char *filename)
     h->pixel_aspect = d->pixel_aspect;
     /* copied from dcraw's main() */
     switch ((d->flip+3600) % 360) {
-        case 270: d->flip = 5; break;
-        case 180: d->flip = 3; break;
-        case  90: d->flip = 6;
+	case 270: d->flip = 5; break;
+	case 180: d->flip = 3; break;
+	case  90: d->flip = 6;
     }
     h->flip = d->flip;
     h->toneCurveSize = d->tone_curve_size;
@@ -151,23 +151,23 @@ int dcraw_open(dcraw_data *h,char *filename)
 int dcraw_image_dimensions(dcraw_data *raw, int flip, int *height, int *width)
 {
     if (raw->fuji_width) {
-        /* Copied from DCRaw's fuji_rotate() */
-        *width = (int)((raw->fuji_width - 1) / raw->fuji_step);
-        *height = (int)((raw->height - raw->fuji_width + 1) / raw->fuji_step);
+	/* Copied from DCRaw's fuji_rotate() */
+	*width = (int)((raw->fuji_width - 1) / raw->fuji_step);
+	*height = (int)((raw->height - raw->fuji_width + 1) / raw->fuji_step);
     } else {
-        if (raw->pixel_aspect < 1)
-            *height = (int)(raw->height / raw->pixel_aspect + 0.5);
-        else
-            *height = raw->height;
-        if (raw->pixel_aspect > 1)
-            *width = (int)(raw->width * raw->pixel_aspect + 0.5);
-        else
-            *width = raw->width;
+	if (raw->pixel_aspect < 1)
+	    *height = (int)(raw->height / raw->pixel_aspect + 0.5);
+	else
+	    *height = raw->height;
+	if (raw->pixel_aspect > 1)
+	    *width = (int)(raw->width * raw->pixel_aspect + 0.5);
+	else
+	    *width = raw->width;
     }
     if (flip & 4) {
-        int tmp = *height;
-        *height = *width;
-        *width = tmp;
+	int tmp = *height;
+	*height = *width;
+	*width = tmp;
     }
     return DCRAW_SUCCESS;
 }
@@ -182,10 +182,10 @@ int dcraw_load_raw(dcraw_data *h)
     d->messageBuffer = NULL;
     d->lastStatus = DCRAW_SUCCESS;
     if (setjmp(d->failure)) {
-        d->dcraw_message(DCRAW_ERROR,_("Fatal internal error\n"));
-        h->message = d->messageBuffer;
+	d->dcraw_message(DCRAW_ERROR,_("Fatal internal error\n"));
+	h->message = d->messageBuffer;
 	delete d;
-        return DCRAW_ERROR;
+	return DCRAW_ERROR;
     }
     h->raw.height = d->iheight = (h->height+h->shrink) >> h->shrink;
     h->raw.width = d->iwidth = (h->width+h->shrink) >> h->shrink;
@@ -194,21 +194,21 @@ int dcraw_load_raw(dcraw_data *h)
     d->meta_data = (char *) (d->image + d->iheight*d->iwidth);
     /* copied from the end of dcraw's identify() */
     if (d->filters && d->colors == 3) {
-        for (i=0; i < 32; i+=4) {
-            if ((d->filters >> i & 15) == 9) d->filters |= 2 << i;
-            if ((d->filters >> i & 15) == 6) d->filters |= 8 << i;
-        }
-        d->colors++;
+	for (i=0; i < 32; i+=4) {
+	    if ((d->filters >> i & 15) == 9) d->filters |= 2 << i;
+	    if ((d->filters >> i & 15) == 6) d->filters |= 8 << i;
+	}
+	d->colors++;
     }
     h->raw.colors = d->colors;
     h->fourColorFilters = d->filters;
     d->dcraw_message(DCRAW_VERBOSE,_("Loading %s %s image from %s ...\n"),
-                d->make, d->model, d->ifname);
+	    d->make, d->model, d->ifname);
     fseek (d->ifp, d->data_offset, SEEK_SET);
     (d->*d->load_raw)();
     d->bad_pixels();
     if (d->is_foveon) {
-        d->foveon_interpolate();
+	d->foveon_interpolate();
 	h->raw.width = h->width = d->width;
 	h->raw.height = h->height = d->height;
     }
@@ -323,7 +323,7 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
      * If scale is odd we need to "unshrink" it using the info in
      * hh->fourColorFilters before scaling it. */
     if (hh->filters!=0 && scale%2==1) {
-        /* I'm skiping the last row/column if it is not a full row/column */
+	/* I'm skiping the last row/column if it is not a full row/column */
 	f->height = h = hh->height / scale;
 	f->width = w = hh->width / scale;
 	fujiWidth = hh->fuji_width / scale;
@@ -349,7 +349,7 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
 	}
     } else {
 	if (hh->filters!=0) scale /= 2;
-        /* I'm skiping the last row/column if it is not a full row/column */
+	/* I'm skiping the last row/column if it is not a full row/column */
 	f->height = h = hh->raw.height / scale;
 	f->width = w = hh->raw.width / scale;
 	fujiWidth = ( (hh->fuji_width+hh->shrink) >> hh->shrink ) / scale;
@@ -362,7 +362,7 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
 		    for (ri=0, s=0; ri<scale; ri++)
 			for (ci=0; ci<scale; ci++)
 			    s += get_pixel(hh, dark, r*scale+ri, c*scale+ci, cl, pixels);
-                    f->image[r*w+c][cl] = MAX(s/norm - black,0);
+		    f->image[r*w+c][cl] = MAX(s/norm - black,0);
 		}
 		if (recombine) f->image[r*w+c][1] =
 		    (f->image[r*w+c][1] + f->image[r*w+c][3])>>1;
@@ -392,31 +392,31 @@ int dcraw_image_resize(dcraw_image_data *image, int size)
     norm = div * div;
 
     for(r=0; r<image->height; r++) {
-        /* r should be divided between ri and rii */
-        ri = r * mul / div;
-        rii = (r+1) * mul / div;
-        /* with weights riw and riiw (riw+riiw==mul) */
-        riw = rii * div - r * mul;
-        riiw = (r+1) * mul - rii * div;
-        if (rii>=h) {rii=h-1; riiw=0;}
-        if (ri>=h) {ri=h-1; riw=0;}
-        for(c=0; c<image->width; c++) {
-            ci = c * mul / div;
-            cii = (c+1) * mul / div;
-            ciw = cii * div - c * mul;
-            ciiw = (c+1) * mul - cii * div;
-            if (cii>=w) {cii=w-1; ciiw=0;}
-            if (ci>=w) {ci=w-1; ciw=0;}
-            for (cl=0; cl<image->colors; cl++) {
-                iBuf[ri *w+ci ][cl] += image->image[r*wid+c][cl]*riw *ciw ;
-                iBuf[ri *w+cii][cl] += image->image[r*wid+c][cl]*riw *ciiw;
-                iBuf[rii*w+ci ][cl] += image->image[r*wid+c][cl]*riiw*ciw ;
-                iBuf[rii*w+cii][cl] += image->image[r*wid+c][cl]*riiw*ciiw;
-            }
-        }
+	/* r should be divided between ri and rii */
+	ri = r * mul / div;
+	rii = (r+1) * mul / div;
+	/* with weights riw and riiw (riw+riiw==mul) */
+	riw = rii * div - r * mul;
+	riiw = (r+1) * mul - rii * div;
+	if (rii>=h) {rii=h-1; riiw=0;}
+	if (ri>=h) {ri=h-1; riw=0;}
+	for(c=0; c<image->width; c++) {
+	    ci = c * mul / div;
+	    cii = (c+1) * mul / div;
+	    ciw = cii * div - c * mul;
+	    ciiw = (c+1) * mul - cii * div;
+	    if (cii>=w) {cii=w-1; ciiw=0;}
+	    if (ci>=w) {ci=w-1; ciw=0;}
+	    for (cl=0; cl<image->colors; cl++) {
+		iBuf[ri *w+ci ][cl] += image->image[r*wid+c][cl]*riw *ciw ;
+		iBuf[ri *w+cii][cl] += image->image[r*wid+c][cl]*riw *ciiw;
+		iBuf[rii*w+ci ][cl] += image->image[r*wid+c][cl]*riiw*ciw ;
+		iBuf[rii*w+cii][cl] += image->image[r*wid+c][cl]*riiw*ciiw;
+	    }
+	}
     }
     for (c=0; c<h*w; c++) for (cl=0; cl<image->colors; cl++)
-        image->image[c][cl] = iBuf[c][cl]/norm;
+	image->image[c][cl] = iBuf[c][cl]/norm;
     g_free(iBuf);
     image->height = h;
     image->width = w;
@@ -466,7 +466,7 @@ int dcraw_image_stretch(dcraw_image_data *image, double pixel_aspect)
 int dcraw_flip_image(dcraw_image_data *image, int flip)
 {
     if (flip)
-        flip_image_INDI(image->image, &image->height, &image->width, flip);
+	flip_image_INDI(image->image, &image->height, &image->width, flip);
     return DCRAW_SUCCESS;
 }
 
@@ -478,11 +478,11 @@ int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB)
     d->lastStatus = DCRAW_SUCCESS;
     memcpy(h->post_mul, h->pre_mul, sizeof h->post_mul);
     if (!d->is_foveon) /* foveon_interpolate() do this. */
-        /* BUG white should not be global */
-        scale_colors_INDI(h->raw.image,
-                h->rgbMax-h->black, h->black, useAutoWB, useCameraWB,
-                h->cam_mul, h->raw.height, h->raw.width, h->raw.colors,
-                h->post_mul, h->filters, d->white, d->ifname, d);
+	/* BUG white should not be global */
+	scale_colors_INDI(h->raw.image,
+		h->rgbMax-h->black, h->black, useAutoWB, useCameraWB,
+		h->cam_mul, h->raw.height, h->raw.width, h->raw.colors,
+		h->post_mul, h->filters, d->white, d->ifname, d);
     h->message = d->messageBuffer;
     return d->lastStatus;
 }
@@ -542,7 +542,7 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     cl = h->colors;
     if (interpolation==dcraw_four_color_interpolation || h->colors == 4) {
 	ff = h->fourColorFilters;
-        cl = 4;
+	cl = 4;
 	interpolation = dcraw_vng_interpolation;
     } else {
 	ff = h->filters &= ~((h->filters & 0x55555555) << 1);
@@ -558,10 +558,10 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     f4 = h->fourColorFilters;
     if (h->colors==3) rgbWB[3] = rgbWB[1];
     for(r=0; r<h->height; r++)
-        for(c=0; c<h->width; c++) {
+	for(c=0; c<h->width; c++) {
 	    int cc = fc_INDI(f4,r,c);
-            f->image[r*f->width+c][fc_INDI(ff,r,c)] = MIN( MAX( (gint64)
-                (get_pixel(h, dark, r/2, c/2, cc, pixels) - black) *
+	    f->image[r*f->width+c][fc_INDI(ff,r,c)] = MIN( MAX( (gint64)
+		(get_pixel(h, dark, r/2, c/2, cc, pixels) - black) *
 		rgbWB[cc]/0x10000, 0), 0xFFFF);
 	}
     int smoothPasses = 1;
@@ -580,8 +580,8 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 	color_smooth(f->image, f->width, f->height, smoothPasses);
 
     if (cl==4 && h->colors == 3) {
-        for (i=0; i<f->height*f->width; i++)
-            f->image[i][1] = (f->image[i][1]+f->image[i][3])/2;
+	for (i=0; i<f->height*f->width; i++)
+	    f->image[i][1] = (f->image[i][1]+f->image[i][3])/2;
     }
     fuji_rotate_INDI(&f->image, &f->height, &f->width, &fujiWidth,
 	    f->colors, h->fuji_step, d);

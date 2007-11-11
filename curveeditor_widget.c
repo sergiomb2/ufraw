@@ -290,7 +290,7 @@ static gboolean curveeditor_widget_on_button_press_event (GtkWidget * widget,
 	data->selectedPoint = num;
 
 	curve->m_numAnchors = num + 1;
-          
+
 	//Make sure the selected point draws at the mouse location
 	//This is done by taking the point and raising it to the gamma.
 	//When the gamma is calculated later, the 1/gamma cancels this out
@@ -346,7 +346,7 @@ static gboolean curveeditor_widget_on_motion_notify_event(GtkWidget *widget,
     {
 	int i;
 	for (i = data->selectedPoint; i < curve->m_numAnchors - 1; i++)
-        {
+	{
 	    curve->m_anchors[i].x = curve->m_anchors[i + 1].x;
 	    curve->m_anchors[i].y = curve->m_anchors[i + 1].y;
 	}
@@ -438,7 +438,7 @@ static gboolean curveeditor_widget_on_key_press_event(GtkWidget *widget,
 	if (curve->m_numAnchors==2) return TRUE;
 
 	for (i = data->selectedPoint; i < curve->m_numAnchors - 1; i++)
-        {
+	{
 	    curve->m_anchors[i].x = curve->m_anchors[i + 1].x;
 	    curve->m_anchors[i].y = curve->m_anchors[i + 1].y;
 	}

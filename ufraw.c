@@ -68,7 +68,7 @@ int main (int argc, char **argv)
 	optInd = -1;
     }
     if ( cmd.embeddedImage ) {
-        ufraw_message(UFRAW_ERROR, _("Extracting embedded image is not supported in interactive mode"));
+	ufraw_message(UFRAW_ERROR, _("Extracting embedded image is not supported in interactive mode"));
 	optInd = -1;
     }
     if (optInd<0) exit(1);
@@ -89,7 +89,7 @@ int main (int argc, char **argv)
 	    strcpy(conf.outputFilename, "");
 	    strcpy(conf.outputPath, "");
 	} else {
-            ufraw_message(UFRAW_REPORT, NULL);
+	    ufraw_message(UFRAW_REPORT, NULL);
 	    conf.version = 0;
 	}
     }
@@ -106,28 +106,28 @@ int main (int argc, char **argv)
     if (optInd==argc-1 && g_file_test(argFile,G_FILE_TEST_IS_DIR)) {
 	status = ufraw_config(NULL, &rc, &conf, &cmd);
 	if (status==UFRAW_ERROR) exit(1);
-        ufraw_chooser(&rc, argFile);
+	ufraw_chooser(&rc, argFile);
 	uf_win32_locale_free(argFile);
 //	ufraw_close(cmd.darkframe);
-        exit(0);
+	exit(0);
     }
     uf_win32_locale_free(argFile);
 	
     for (; optInd<argc; optInd++) {
 	argFile = uf_win32_locale_to_utf8(argv[optInd]);
-        uf = ufraw_open(argFile);
+	uf = ufraw_open(argFile);
 	uf_win32_locale_free(argFile);
-        if (uf==NULL) {
-            ufraw_message(UFRAW_REPORT, NULL);
-            continue;
-        }
-        status = ufraw_config(uf, &rc, &conf, &cmd);
+	if (uf==NULL) {
+	    ufraw_message(UFRAW_REPORT, NULL);
+	    continue;
+	}
+	status = ufraw_config(uf, &rc, &conf, &cmd);
 	if (status==UFRAW_ERROR) {
 	    ufraw_close(uf);
 	    g_free(uf);
 	    exit(1);
 	}
-        ufraw_preview(uf, plugin, NULL);
+	ufraw_preview(uf, plugin, NULL);
 	rc = *uf->conf;
 	g_free(uf);
     }

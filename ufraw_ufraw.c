@@ -169,7 +169,7 @@ ufraw_data *ufraw_open(char *filename)
 	if ( strcmp(inPath, outPath)==0 ) {
 	    char *path = g_path_get_dirname(filename);
 	    char *inName = g_path_get_basename(conf->inputFilename);
-            char *inFile = g_build_filename(path, inName , NULL);
+	    char *inFile = g_build_filename(path, inName , NULL);
 	    if ( g_file_test(inFile, G_FILE_TEST_EXISTS) ) {
 		g_strlcpy(conf->inputFilename, inFile, max_path);
 	    }
@@ -206,8 +206,8 @@ ufraw_data *ufraw_open(char *filename)
 	filename = origfilename;
     }
     if ( status!=DCRAW_SUCCESS) {
-        /* Hold the message without displaying it */
-        ufraw_message(UFRAW_SET_WARNING, raw->message);
+	/* Hold the message without displaying it */
+	ufraw_message(UFRAW_SET_WARNING, raw->message);
 	if ( status!=DCRAW_WARNING) {
 	    g_free(raw);
 	    g_free(unzippedBuf);
@@ -235,7 +235,7 @@ ufraw_data *ufraw_open(char *filename)
     uf->HaveFilters = raw->filters!=0;
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
 	    raw->width, raw->height, raw->toneCurveSize);
- 
+
     return uf;
 }
 
@@ -253,10 +253,10 @@ int ufraw_load_darkframe(ufraw_data *uf)
     ufraw_data *dark = uf->conf->darkframe =
 	    ufraw_open(uf->conf->darkframeFile);
     if ( dark==NULL ){
-        ufraw_message(UFRAW_ERROR, _("darkframe error: %s is not a raw file\n"),
+	ufraw_message(UFRAW_ERROR, _("darkframe error: %s is not a raw file\n"),
 		    uf->conf->darkframeFile);
 	uf->conf->darkframeFile[0] = '\0';
-        return UFRAW_ERROR;
+	return UFRAW_ERROR;
     }
     dark->conf = g_new(conf_data, 1);
     *dark->conf = conf_default;
@@ -264,7 +264,7 @@ int ufraw_load_darkframe(ufraw_data *uf)
     dark->conf->autoExposure = disabled_state;
     dark->conf->autoBlack = disabled_state;
     if (ufraw_load_raw(dark)!=UFRAW_SUCCESS) {
-        ufraw_message(UFRAW_ERROR, _("error loading darkframe '%s'\n"),
+	ufraw_message(UFRAW_ERROR, _("error loading darkframe '%s'\n"),
 		uf->conf->darkframeFile);
 	ufraw_close(dark);
 	g_free(dark);
@@ -300,15 +300,15 @@ int ufraw_load_darkframe(ufraw_data *uf)
     long point = darkRaw->raw.width * darkRaw->raw.height / 10000;
 
     for (color = 0; color < darkRaw->raw.colors; ++color) {
-        memset(frequency, 0, sizeof frequency);
-        for (i = 0; i < darkRaw->raw.width * darkRaw->raw.height; ++i)
-            frequency[darkRaw->raw.image[i][color]]++;
-        for (sum = 0, i = 65535; i > 1; --i) {
-            sum += frequency[i];
-            if (sum >= point)
-                break;
-        }
-        darkRaw->thresholds[color] = i + 1;
+	memset(frequency, 0, sizeof frequency);
+	for (i = 0; i < darkRaw->raw.width * darkRaw->raw.height; ++i)
+	    frequency[darkRaw->raw.image[i][color]]++;
+	for (sum = 0, i = 65535; i > 1; --i) {
+	    sum += frequency[i];
+	    if (sum >= point)
+		break;
+	}
+	darkRaw->thresholds[color] = i + 1;
     }
     return UFRAW_SUCCESS;
 }
@@ -369,17 +369,17 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	uf->conf->CropY2 = -1;
     }
     if (strlen(uf->conf->outputFilename)==0) {
-        /* If output filename wasn't specified use input filename */
-        char *filename = uf_file_set_type(uf->filename,
-                        file_type[uf->conf->type]);
-        if (strlen(uf->conf->outputPath)>0) {
-            char *cp = g_path_get_basename(filename);
-            g_free(filename);
-            filename = g_build_filename(uf->conf->outputPath, cp , NULL);
-            g_free(cp);
-        }
-        g_strlcpy(uf->conf->outputFilename, filename, max_path);
-        g_free(filename);
+	/* If output filename wasn't specified use input filename */
+	char *filename = uf_file_set_type(uf->filename,
+			file_type[uf->conf->type]);
+	if (strlen(uf->conf->outputPath)>0) {
+	    char *cp = g_path_get_basename(filename);
+	    g_free(filename);
+	    filename = g_build_filename(uf->conf->outputPath, cp , NULL);
+	    g_free(cp);
+	}
+	g_strlcpy(uf->conf->outputFilename, filename, max_path);
+	g_free(filename);
     }
     /*Reset EXIF data text fields to avoid spill over between images.*/
     strcpy(uf->conf->isoText, "");
@@ -533,8 +533,8 @@ int ufraw_load_raw(ufraw_data *uf)
     }
     if ( (status=dcraw_load_raw(raw))!=DCRAW_SUCCESS ) {
 	ufraw_message(UFRAW_SET_LOG, raw->message);
-        ufraw_message(status, raw->message);
-        if (status!=DCRAW_WARNING) return status;
+	ufraw_message(status, raw->message);
+	if (status!=DCRAW_WARNING) return status;
     }
     /* Canon EOS cameras require special exposure normalization */
     if ( strcmp(uf->conf->make, "Canon")==0 &&
@@ -640,8 +640,8 @@ int ufraw_convert_image_init(ufraw_data *uf)
      * There are no filters (Foveon). */
     uf->ConvertShrink = 1;
     if ( uf->conf->interpolation==half_interpolation ||
-         ( uf->conf->size==0 && uf->conf->shrink>1 ) ||
-         ( uf->conf->size>0 &&
+	 ( uf->conf->size==0 && uf->conf->shrink>1 ) ||
+	 ( uf->conf->size>0 &&
 	   uf->conf->size<=MAX(raw->raw.height, raw->raw.width) ) ||
 	 !uf->HaveFilters ) {
 	if (uf->conf->size==0 && uf->conf->shrink>1 &&
@@ -663,9 +663,9 @@ int ufraw_convert_image(ufraw_data *uf)
     if (uf->ConvertShrink>1) {
 	dcraw_data *raw = uf->raw;
 	dcraw_image_data final;
-        final.height = uf->image.height;
-        final.width = uf->image.width;
-        final.image = uf->image.image;
+	final.height = uf->image.height;
+	final.width = uf->image.width;
+	final.image = uf->image.image;
 	/* Scale threshold according to shrink factor, as the effect of
 	 * neighbouring pixels decays about exponentially with distance. */
 	float threshold = uf->conf->threshold * exp(-(uf->ConvertShrink/2.0-1));
@@ -686,15 +686,15 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
     dcraw_data *dark = uf->conf->darkframe ? uf->conf->darkframe->raw : NULL;
 
     if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
-        dcraw_finalize_shrink(&final, raw, dark, uf->ConvertShrink);
+	dcraw_finalize_shrink(&final, raw, dark, uf->ConvertShrink);
     } else {
 	if ( (status=dcraw_wavelet_denoise(raw,
 		uf->conf->threshold))!=DCRAW_SUCCESS )
 	    return status;
-        dcraw_finalize_interpolate(&final, raw, dark, uf->conf->interpolation,
+	dcraw_finalize_interpolate(&final, raw, dark, uf->conf->interpolation,
 		uf->conf->smoothing, uf->developer->rgbWB);
 	uf->developer->rgbMax = uf->developer->max;
-        for (c=0; c<4; c++)
+	for (c=0; c<4; c++)
 	    uf->developer->rgbWB[c] = 0x10000;
     }
     dcraw_image_stretch(&final, raw->pixel_aspect);
@@ -870,7 +870,7 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
     if ( uf->conf->threshold>0 )
 	ufraw_flip_image_buffer(&uf->Images[ufraw_denoise_phase], flip);
     ufraw_flip_image_buffer(&uf->Images[ufraw_final_phase], flip);
- 
+
     return UFRAW_SUCCESS;
 }
 
@@ -943,34 +943,34 @@ int ufraw_set_wb(ufraw_data *uf)
 		}
 	    }
 	}
-        for (c=0; c<uf->colors; c++) {
+	for (c=0; c<uf->colors; c++) {
 	    gint64 sum = 0;
-            for (i=0; i<uf->rgbMax+1; i++)
-                sum += (gint64)i*histogram[i][c];
+	    for (i=0; i<uf->rgbMax+1; i++)
+		sum += (gint64)i*histogram[i][c];
 	    if (sum==0) uf->conf->chanMul[c] = 1.0;
-            else uf->conf->chanMul[c] = 1.0/sum;
-        }
+	    else uf->conf->chanMul[c] = 1.0/sum;
+	}
 	g_free(histogram);
 	uf->conf->WBTuning = 0;
     } else if ( !strcmp(uf->conf->wb, camera_wb) ) {
-        if ( (status=dcraw_set_color_scale(raw,
+	if ( (status=dcraw_set_color_scale(raw,
 		!strcmp(uf->conf->wb, auto_wb),
 		!strcmp(uf->conf->wb, camera_wb)))!=DCRAW_SUCCESS ) {
-            if (status==DCRAW_NO_CAMERA_WB) {
-                ufraw_message(UFRAW_BATCH_MESSAGE,
-                    _("Cannot use camera white balance, "
-                    "reverting to auto white balance."));
-                ufraw_message(UFRAW_INTERACTIVE_MESSAGE,
-                    _("Cannot use camera white balance, "
-                    "reverting to auto white balance."));
+	    if (status==DCRAW_NO_CAMERA_WB) {
+		ufraw_message(UFRAW_BATCH_MESSAGE,
+		    _("Cannot use camera white balance, "
+		    "reverting to auto white balance."));
+		ufraw_message(UFRAW_INTERACTIVE_MESSAGE,
+		    _("Cannot use camera white balance, "
+		    "reverting to auto white balance."));
 		g_strlcpy(uf->conf->wb, auto_wb, max_name);
 		return ufraw_set_wb(uf);
-            }
-            if (status!=DCRAW_SUCCESS)
+	    }
+	    if (status!=DCRAW_SUCCESS)
 		return status;
-        }
-        for (c=0; c<raw->colors; c++)
-            uf->conf->chanMul[c] = raw->post_mul[c];
+	}
+	for (c=0; c<raw->colors; c++)
+	    uf->conf->chanMul[c] = raw->post_mul[c];
 	uf->conf->WBTuning = 0;
     } else {
 	int lastTuning = -1;
@@ -1092,11 +1092,11 @@ static void ufraw_build_raw_luminosity_histogram(ufraw_data *uf)
     memset(uf->RawLumHistogram, 0, (uf->rgbMax+1)*sizeof(int));
     uf->RawLumCount = raw->raw.height*raw->raw.width;
     for (i=0; i<uf->RawLumCount; i++) {
-        for (c=0, max=0; c<raw->raw.colors; c++) {
-            max = MAX( (gint64)(raw->raw.image[i][c]-raw->black) *
+	for (c=0, max=0; c<raw->raw.colors; c++) {
+	    max = MAX( (gint64)(raw->raw.image[i][c]-raw->black) *
 			uf->RawLumChanMul[c], max);
-        }
-        uf->RawLumHistogram[MIN(max/0x10000,uf->rgbMax)]++;
+	}
+	uf->RawLumHistogram[MIN(max/0x10000,uf->rgbMax)]++;
     }
 }
 
@@ -1131,7 +1131,7 @@ void ufraw_auto_expose(ufraw_data *uf)
     stop = uf->RawLumCount * 1/100;
     /* Calculate the white point */
     for (wp=uf->rgbMax, sum=0; wp>1 && sum<stop; wp--)
-                sum += uf->RawLumHistogram[wp];
+	sum += uf->RawLumHistogram[wp];
     /* Set 99% of the luminosity values with luminosity below 99% */
     uf->conf->exposure = log((double)p/wp)/log(2);
     /* If we are going to normalize the exposure later,
@@ -1158,7 +1158,7 @@ void ufraw_auto_black(ufraw_data *uf)
     ufraw_build_raw_luminosity_histogram(uf);
     stop = uf->RawLumCount/256/4;
     for (bp=0, sum=0; bp<uf->rgbMax && sum<stop; bp++)
-                sum += uf->RawLumHistogram[bp];
+	sum += uf->RawLumHistogram[bp];
     double maxChan = 0;
     for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
     for (c=0; c<uf->colors; c++)
@@ -1167,7 +1167,7 @@ void ufraw_auto_black(ufraw_data *uf)
     for (c=0, bp=0; c<3; c++) bp = MAX(bp, p16[c]);
 
     CurveDataSetPoint(&uf->conf->curve[uf->conf->curveIndex],
-            0, (double)bp/0x10000, 0);
+	    0, (double)bp/0x10000, 0);
 
     uf->conf->autoBlack = enabled_state;
 //    ufraw_message(UFRAW_SET_LOG, "ufraw_auto_black: "
@@ -1195,7 +1195,7 @@ void ufraw_auto_curve(ufraw_data *uf)
     for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
     for (bp=0, sum=0, p=0, i=j=0; i<steps && bp<uf->rgbMax && p<0xFFFF; i++) {
 	for (; bp<uf->rgbMax && sum<stop; bp++)
-            sum += uf->RawLumHistogram[bp];
+	    sum += uf->RawLumHistogram[bp];
 	for (c=0; c<uf->colors; c++)
 	    pix[c] = MIN (bp * maxChan/uf->conf->chanMul[c], uf->rgbMax);
 	develope(p16, pix, uf->AutoDeveloper, 16, pixtmp, 1);

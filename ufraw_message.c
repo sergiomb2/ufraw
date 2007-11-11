@@ -64,10 +64,10 @@ void ufraw_set_error(ufraw_data *uf, const char *format, ...)
 {
     uf->status = UFRAW_ERROR;
     if (format!=NULL) {
-        va_list ap;
-        va_start(ap, format);
-        char *message = g_strdup_vprintf (format, ap);
-        va_end(ap);
+	va_list ap;
+	va_start(ap, format);
+	char *message = g_strdup_vprintf (format, ap);
+	va_end(ap);
 	message_append(uf, message);
 	g_free(message);
     }
@@ -78,10 +78,10 @@ void ufraw_set_warning(ufraw_data *uf, const char *format, ...)
     // Set warning only if no error was set before
     if ( uf->status!=UFRAW_ERROR ) uf->status = UFRAW_WARNING;
     if (format!=NULL) {
-        va_list ap;
-        va_start(ap, format);
-        char *message = g_strdup_vprintf (format, ap);
-        va_end(ap);
+	va_list ap;
+	va_start(ap, format);
+	char *message = g_strdup_vprintf (format, ap);
+	va_end(ap);
 	message_append(uf, message);
 	g_free(message);
     }
@@ -90,10 +90,10 @@ void ufraw_set_warning(ufraw_data *uf, const char *format, ...)
 void ufraw_set_info(ufraw_data *uf, const char *format, ...)
 {
     if (format!=NULL) {
-        va_list ap;
-        va_start(ap, format);
-        char *message = g_strdup_vprintf (format, ap);
-        va_end(ap);
+	va_list ap;
+	va_start(ap, format);
+	char *message = g_strdup_vprintf (format, ap);
+	va_end(ap);
 	message_append(uf, message);
 	g_free(message);
     }
@@ -144,56 +144,56 @@ char *ufraw_message(int code, const char *format, ...)
     void *saveParentWindow;
 
     if (code==UFRAW_SET_PARENT) {
-        saveParentWindow = parentWindow;
-        parentWindow = (void *)format;
-        return saveParentWindow;
+	saveParentWindow = parentWindow;
+	parentWindow = (void *)format;
+	return saveParentWindow;
     }
     if (format!=NULL) {
-        va_list ap;
-        va_start(ap, format);
-        message = g_strdup_vprintf (format, ap);
-        va_end(ap);
+	va_list ap;
+	va_start(ap, format);
+	message = g_strdup_vprintf (format, ap);
+	va_end(ap);
     }
     switch (code) {
     case UFRAW_SET_ERROR:
-                errorFlag = TRUE;
+		errorFlag = TRUE;
     case UFRAW_SET_WARNING:
-                errorBuffer = ufraw_message_buffer(errorBuffer, message);
+		errorBuffer = ufraw_message_buffer(errorBuffer, message);
     case UFRAW_SET_LOG:
     case UFRAW_DCRAW_SET_LOG:
-                logBuffer = ufraw_message_buffer(logBuffer, message);
-                g_free(message);
-                return NULL;
+		logBuffer = ufraw_message_buffer(logBuffer, message);
+		g_free(message);
+		return NULL;
     case UFRAW_GET_ERROR:
-                if (!errorFlag) return NULL;
+		if (!errorFlag) return NULL;
     case UFRAW_GET_WARNING:
-                return errorBuffer;
+		return errorBuffer;
     case UFRAW_GET_LOG:
-                return logBuffer;
+		return logBuffer;
     case UFRAW_CLEAN:
-                g_free(logBuffer);
-                logBuffer = NULL;
+		g_free(logBuffer);
+		logBuffer = NULL;
     case UFRAW_RESET:
-                g_free(errorBuffer);
-                errorBuffer = NULL;
-                errorFlag = FALSE;
-                return NULL;
+		g_free(errorBuffer);
+		errorBuffer = NULL;
+		errorFlag = FALSE;
+		return NULL;
     case UFRAW_BATCH_MESSAGE:
-                if (parentWindow==NULL)
-                    ufraw_messenger(message, parentWindow);
-                g_free(message);
-                return NULL;
-    case UFRAW_INTERACTIVE_MESSAGE:
-                if (parentWindow!=NULL)
+		if (parentWindow==NULL)
 		    ufraw_messenger(message, parentWindow);
-                g_free(message);
-                return NULL;
+		g_free(message);
+		return NULL;
+    case UFRAW_INTERACTIVE_MESSAGE:
+		if (parentWindow!=NULL)
+		    ufraw_messenger(message, parentWindow);
+		g_free(message);
+		return NULL;
     case UFRAW_REPORT:
-                ufraw_messenger(errorBuffer, parentWindow);
-                return NULL;
+		ufraw_messenger(errorBuffer, parentWindow);
+		return NULL;
     default:
-                ufraw_messenger(message, parentWindow);
-                g_free(message);
-                return NULL;
+		ufraw_messenger(message, parentWindow);
+		g_free(message);
+		return NULL;
     }
 }

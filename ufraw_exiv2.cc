@@ -50,9 +50,9 @@ try {
 
     Exiv2::ExifData &exifData = image->exifData();
     if (exifData.empty()) {
-        std::string error(uf->filename);
-        error += ": No Exif data found in the file";
-        throw Exiv2::Error(1, error);
+	std::string error(uf->filename);
+	error += ": No Exif data found in the file";
+	throw Exiv2::Error(1, error);
     }
     /* Reset orientation tag since UFRaw already rotates the image */
     Exiv2::ExifData::iterator pos;
@@ -217,7 +217,7 @@ try {
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.WhiteBalance")))
 	    != exifData.end() ) {
 	std::stringstream str;
-        str << *pos;
+	str << *pos;
 	g_strlcpy(uf->conf->whiteBalanceText, str.str().c_str(), max_name);
     }
     std::cerr.rdbuf(savecerr);

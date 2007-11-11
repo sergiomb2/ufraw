@@ -126,11 +126,11 @@
 	    I added the following:
 	    
 	      __MSVC__        : Define this if you are compiling with MSVC. This enables code that allows
-	                        the program to still print out debug information, though not quite as robust
-	                        as with using gcc.
+				the program to still print out debug information, though not quite as robust
+				as with using gcc.
 
 	    __WITH_UFRAW__    : Define this if this code is compiling with UFRaw, This allows for connecting
-	                        out to the UFRaw error handler.
+				out to the UFRaw error handler.
 
 	    In regards to these flags, the code has been changed around a little bit. I also moved some code
 	    to more "appropriate" locations, in keeping with the layout of these files.
@@ -304,66 +304,66 @@ Anchor Point Data: This is aligned on 8 byte boundries. However, the section mus
 ********************************************************************************/
 
 //DEFINES FOR WRITING OUT DATA (for ntc/ncv files)
-#define NCV_HEADER_SIZE                0x3E    //Combined header length for an NCV file
+#define NCV_HEADER_SIZE		    0x3E    //Combined header length for an NCV file
 #define NCV_SECOND_FILE_SIZE_OFFSET 0x3F    //4 bytes (int). File size - NCV_header
-#define NCV_UNKNOWN_HEADER_DATA        0x002    //2 bytes. (?)
+#define NCV_UNKNOWN_HEADER_DATA	    0x002    //2 bytes. (?)
 #define NCV_SECOND_HEADER_LENGTH    23
-#define NCV_FILE_TERMINATOR_LENGTH    23
+#define NCV_FILE_TERMINATOR_LENGTH  23
 
-#define NTC_FILE_HEADER_LENGTH        0x10    //16 bytes. Doesn't change
+#define NTC_FILE_HEADER_LENGTH	    0x10    //16 bytes. Doesn't change
 //This seemed to change when Nikon released an updated capture program
 //from 4.1 to 4.2. This may be an int but not sure.
 #define NCV_PATCH_OFFSET            0x3D    //2 bytes(?)
-#define NTC_PATCH_OFFSET            0x10    //2 bytes(?)                          
+#define NTC_PATCH_OFFSET            0x10    //2 bytes(?)
 #define FILE_SIZE_OFFSET            0x12    //4 bytes (int). File size - header.
 #define NTC_VERSION_OFFSET          0x16    //4 bytes (int).(?)
-	                                    //9 byte pad(?)
-	                                    //16 bytes. Another section header goes here. 
+					    //9 byte pad(?)
+					    //16 bytes. Another section header goes here. 
 
 //From here down repeats for every section
-#define NTC_SECTION_TYPE_OFFSET        0x00    //4 bytes (int) (0,1,2,3)
-	                                    
-#define NTC_UNKNOWN                    0x05    //2 bytes. Doesn't change but not sure what they do (0x03ff)
+#define NTC_SECTION_TYPE_OFFSET	    0x00    //4 bytes (int) (0,1,2,3)
+
+#define NTC_UNKNOWN		    0x05    //2 bytes. Doesn't change but not sure what they do (0x03ff)
 #define NTC_UNKNOWN_DATA            0x3FF    //
 
 #define NTC_RED_COMPONENT_OFFSET    0x08    //4 bytes (int) (0-255)
-#define NTC_GREEN_COMPONENT_OFFSET    0x0C    //4 bytes (int) (0-255)
-#define NTC_BLUE_COMPONENT_OFFSET    0x0F    //4 bytes (int) (0-255)
-	                                    //12 byte pad all zeros(align to 16?)
+#define NTC_GREEN_COMPONENT_OFFSET  0x0C    //4 bytes (int) (0-255)
+#define NTC_BLUE_COMPONENT_OFFSET   0x0F    //4 bytes (int) (0-255)
+					    //12 byte pad all zeros(align to 16?)
 
-#define NTC_RED_WEIGHT_OFFSET        0x1F    //4 bytes (int) (0-255)
-#define NTC_GREEN_WEIGHT_OFFSET        0x23    //4 bytes (int)    (0-255)
-#define NTC_BLUE_WEIGHT_OFFSET        0x27    //4 bytes (int)    (0-255)
+#define NTC_RED_WEIGHT_OFFSET	    0x1F    //4 bytes (int) (0-255)
+#define NTC_GREEN_WEIGHT_OFFSET	    0x23    //4 bytes (int)    (0-255)
+#define NTC_BLUE_WEIGHT_OFFSET	    0x27    //4 bytes (int)    (0-255)
 
-#define END_ANCHOR_DATA_PAD_LENGTH    0x08    //Always all zeros    
-#define NTC_SECTION_HEADER_LENGTH    0x10    //Doesn't change        
+#define END_ANCHOR_DATA_PAD_LENGTH  0x08    //Always all zeros    
+#define NTC_SECTION_HEADER_LENGTH   0x10    //Doesn't change        
 
 
 //DEFINES FOR READING IN DATA
-#define HEADER_SIZE                    0x10    //First characters may be unicode Japanese?
+#define HEADER_SIZE		    0x10    //First characters may be unicode Japanese?
 
-#define NTC_BOX_DATA                0x5C    //Start of box data
-#define NTC_NUM_ANCHOR_POINTS        0x84    //Number of anchor points plus 2 for start and end points
-#define NTC_ANCHOR_DATA_START        0x88    //Beginning of anchor point data
+#define NTC_BOX_DATA		    0x5C    //Start of box data
+#define NTC_NUM_ANCHOR_POINTS	    0x84    //Number of anchor points plus 2 for start and end points
+#define NTC_ANCHOR_DATA_START	    0x88    //Beginning of anchor point data
 
-#define NCV_BOX_DATA                0x89    //Start of box data
-#define NCV_NUM_ANCHOR_POINTS        0xB2    //Number of anchor points plus 2 for start and end points
-#define NCV_ANCHOR_DATA_START        0xB5    //Beginning of anchor point data
+#define NCV_BOX_DATA		    0x89    //Start of box data
+#define NCV_NUM_ANCHOR_POINTS	    0xB2    //Number of anchor points plus 2 for start and end points
+#define NCV_ANCHOR_DATA_START	    0xB5    //Beginning of anchor point data
 
 //array indices to retrive data
-#define PATCH_DATA          0
-#define BOX_DATA            1
-#define NUM_ANCHOR_POINTS    2
-#define ANCHOR_DATA            3
+#define PATCH_DATA	    0
+#define BOX_DATA	    1
+#define NUM_ANCHOR_POINTS   2
+#define ANCHOR_DATA	    3
 
 //Some data sections sizes for calculating offsets
-#define NEXT_SECTION_BOX_DATA_OFFSET    0x43    //after the anchor data, this is the offset to 
-	                                        //the beginning of the next section's box data
+#define NEXT_SECTION_BOX_DATA_OFFSET	0x43    //after the anchor data, this is the offset to 
+						//the beginning of the next section's box data
 
-#define NUM_POINTS_TO_ANCHOR_OFFSET        0x03    //number of bytes from the number of anchor points
-	                                        //byte to the start of anchor data.
+#define NUM_POINTS_TO_ANCHOR_OFFSET	0x03    //number of bytes from the number of anchor points
+						//byte to the start of anchor data.
 //Nikon version defines
-#define NIKON_VERSION_4_1    0x00000401
+#define NIKON_VERSION_4_1   0x00000401
 #define NIKON_PATCH_4       0x04ff
 #define NIKON_PATCH_5       0x05ff
 #define NIKON_MAX_ANCHORS   20
@@ -371,14 +371,14 @@ Anchor Point Data: This is aligned on 8 byte boundries. However, the section mus
 //file types
 #define NTC_FILE        0
 #define NCV_FILE        1
-#define NUM_FILE_TYPES    2
+#define NUM_FILE_TYPES  2
 
 //Curve Types
-#define TONE_CURVE        0
-#define RED_CURVE        1
-#define    GREEN_CURVE        2
-#define    BLUE_CURVE        3
-#define NUM_CURVE_TYPES    4
+#define TONE_CURVE      0
+#define RED_CURVE       1
+#define GREEN_CURVE     2
+#define BLUE_CURVE      3
+#define NUM_CURVE_TYPES 4
 
 //Maximum resoltuion allowed due to space considerations.
 #define MAX_RESOLUTION    65536
@@ -387,11 +387,11 @@ Anchor Point Data: This is aligned on 8 byte boundries. However, the section mus
 //NEF/TIFF MACROS AND DEFINES
 //////////////////////////////
 #define TIFF_TAG_EXIF_OFFSET        34665
-#define TIFF_TAG_MAKER_NOTE_OFFSET    37500
-#define    TIFF_TAG_CURVE_OFFSET        140
+#define TIFF_TAG_MAKER_NOTE_OFFSET  37500
+#define TIFF_TAG_CURVE_OFFSET       140
 
-#define TIFF_TYPE_UNDEFINED            7
-#define    TIFF_TYPE_LONG                4
+#define TIFF_TYPE_UNDEFINED         7
+#define TIFF_TYPE_LONG		    4
 
 
 ////////////////////////
@@ -399,10 +399,10 @@ Anchor Point Data: This is aligned on 8 byte boundries. However, the section mus
 //ERROR HANDLING
 ////////////////////////
 ////////////////////////
-#define NC_SUCCESS 0
-#define NC_ERROR 100
-#define NC_WARNING 104
-#define NC_SET_ERROR 200
+#define NC_SUCCESS	0
+#define NC_ERROR	100
+#define NC_WARNING	104
+#define NC_SET_ERROR	200
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -520,9 +520,8 @@ double *d3_np_fs ( int n, double a[], double b[] );
   
     returns the y value at the given tval point
 *********************************************************************/
-double *spline_cubic_set ( int n, double t[], double y[], int ibcbeg, double ybcbeg, 
-	                    int ibcend, double ybcend );
-
+double *spline_cubic_set ( int n, double t[], double y[], int ibcbeg,
+    double ybcbeg, int ibcend, double ybcend );
 /*******************************************************************
  spline_cubic_val:
    spline_cubic_val gets a value from spline curve.
@@ -538,7 +537,7 @@ double *spline_cubic_set ( int n, double t[], double y[], int ibcbeg, double ybc
     returns the y value at the given tval point
 *********************************************************************/
 double spline_cubic_val ( int n, double t[], double tval, double y[],
-	                      double ypp[], double *ypval, double *yppval );
+    double ypp[], double *ypval, double *yppval );
 
 
 /*********************************************
@@ -674,7 +673,7 @@ RipNikonNEFData:
     infile - The input file
     curve  - data structure to hold data in.
     sample_p -  pointer to the curve sample reference.
-                can be NULL if curve sample is not needed.
+		can be NULL if curve sample is not needed.
 ********************************************************/
 int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p);
 
@@ -687,7 +686,7 @@ RipNikonNEFCurve:
     infile -	Offset to retrieve the data
     curve  -	data structure to hold curve in.
     sample_p -  pointer to the curve sample reference.
-                can be NULL if curve sample is not needed.
+		can be NULL if curve sample is not needed.
 ********************************************************/
 int RipNikonNEFCurve(FILE *file, int offset, CurveData *data,
 	CurveSample **sample_p);

@@ -34,9 +34,9 @@ const char *uf_get_home_dir()
     const char *hd = g_get_home_dir();
     if (hd==NULL)
 #ifdef WIN32
-        hd = "C:\\";
+	hd = "C:\\";
 #else
-        hd = "/";
+	hd = "/";
 #endif
     return hd;
 }
@@ -59,7 +59,7 @@ void uf_init_locale(const char *exename)
     /* Try getting the localedir from the environment */
     char *localedir = g_strconcat(g_getenv("UFRAW_LOCALEDIR"), NULL);
     if (localedir==NULL) {
-        /* If that fails, there are two defaults: */
+	/* If that fails, there are two defaults: */
 #ifdef WIN32
 	/* In Windows the localedir is found relative to the exe file.
 	 * The exact location here should match ufraw-setup.iss.in */
@@ -240,7 +240,7 @@ void Temperature_to_RGB(double T, double RGB[3])
     double xD, yD, X, Y, Z, max;
     // Fit for CIE Daylight illuminant
     if (T<= 4000) {
-        xD = 0.27475e9/(T*T*T) - 0.98598e6/(T*T) + 1.17444e3/T + 0.145986;
+	xD = 0.27475e9/(T*T*T) - 0.98598e6/(T*T) + 1.17444e3/T + 0.145986;
     } else if (T<= 7000) {
 	xD = -4.6070e9/(T*T*T) + 2.9678e6/(T*T) + 0.09911e3/T + 0.244063;
     } else {
@@ -292,16 +292,16 @@ static void curve_parse_start(GMarkupParseContext *context,
 
     context = context;
     while (*names!=NULL) {
-        sscanf(*values, "%d", &int_value);
-        if (!strcmp(element, "Curve") && !strcmp(*names, "Version")) {
+	sscanf(*values, "%d", &int_value);
+	if (!strcmp(element, "Curve") && !strcmp(*names, "Version")) {
 	    /* We never changed the curve format so we support all
 	     * previous versions */
-            if (int_value>conf_default.version)
-                g_set_error(error, ufrawQuark, UFRAW_RC_VERSION,
-                    _("Curve version is not supported"));
-        }
-        names++;
-        values++;
+	    if (int_value>conf_default.version)
+		g_set_error(error, ufrawQuark, UFRAW_RC_VERSION,
+		    _("Curve version is not supported"));
+	}
+	names++;
+	values++;
     }
     if (!strcmp("Curve", element)) {
 	/* m_gamma==-1 marks that we are inside a XML Curve block.
@@ -313,7 +313,7 @@ static void curve_parse_start(GMarkupParseContext *context,
 }
 
 static void curve_parse_end(GMarkupParseContext *context, const gchar *element,
-         gpointer user, GError **error)
+	gpointer user, GError **error)
 {
     CurveData *c = user;
     context = context;
@@ -339,21 +339,21 @@ static void curve_parse_text(GMarkupParseContext *context, const gchar *text,
     strncpy(temp, text, len);
     temp[len] = '\0';
     if (!strcmp("Curve", element)) {
-        g_strlcpy(c->name, temp, max_name);
+	g_strlcpy(c->name, temp, max_name);
     }
     /* A negative gamma marks that we are in a Curve XML block */
     if (c->m_gamma < 0) {
-        if (!strcmp("MinXY", element))
-            sscanf(temp, "%lf %lf", &c->m_min_x, &c->m_min_y);
-        if (!strcmp("MaxXY", element))
-            sscanf(temp, "%lf %lf", &c->m_max_x, &c->m_max_y);
-        if (!strcmp("AnchorXY", element)) {
+	if (!strcmp("MinXY", element))
+	    sscanf(temp, "%lf %lf", &c->m_min_x, &c->m_min_y);
+	if (!strcmp("MaxXY", element))
+	    sscanf(temp, "%lf %lf", &c->m_max_x, &c->m_max_y);
+	if (!strcmp("AnchorXY", element)) {
 	    /* If one anchor is supplied then all anchors should be supplied */
-            sscanf(temp, "%lf %lf",
-                    &c->m_anchors[c->m_numAnchors].x,
-                    &c->m_anchors[c->m_numAnchors].y);
-            c->m_numAnchors++;
-        }
+	    sscanf(temp, "%lf %lf",
+		    &c->m_anchors[c->m_numAnchors].x,
+		    &c->m_anchors[c->m_numAnchors].y);
+	    c->m_numAnchors++;
+	}
     }
 }
 
@@ -363,50 +363,50 @@ int curve_load(CurveData *cp, char *filename)
 
     if ( !strcasecmp(filename + strlen(filename) - 4, ".ntc") ||
 	 !strcasecmp(filename + strlen(filename) - 4, ".ncv") ) {
-        /* Try loading ntc/ncv files */
-        if (LoadNikonData(filename, &data)!=UFRAW_SUCCESS) {
-            ufraw_message(UFRAW_ERROR, _("Invalid Nikon curve file '%s'"),
-                        filename);
-            return UFRAW_ERROR;
-        }
-        *cp = data.curves[TONE_CURVE];
+	/* Try loading ntc/ncv files */
+	if (LoadNikonData(filename, &data)!=UFRAW_SUCCESS) {
+	    ufraw_message(UFRAW_ERROR, _("Invalid Nikon curve file '%s'"),
+		    filename);
+	    return UFRAW_ERROR;
+	}
+	*cp = data.curves[TONE_CURVE];
     } else {
 	/* Load UFRaw's curve file format */
-        char line[max_path], *locale;
-        FILE *in;
-        GMarkupParser parser={&curve_parse_start, &curve_parse_end,
-                &curve_parse_text, NULL, NULL};
-        GMarkupParseContext *context;
-        GError *err = NULL;
+	char line[max_path], *locale;
+	FILE *in;
+	GMarkupParser parser={&curve_parse_start, &curve_parse_end,
+		&curve_parse_text, NULL, NULL};
+	GMarkupParseContext *context;
+	GError *err = NULL;
 
-        *cp = conf_default.curve[0];
-        if ( (in=g_fopen(filename, "r"))==NULL ) {
-            ufraw_message(UFRAW_ERROR, _("Error opening Curve file '%s': %s"),
+	*cp = conf_default.curve[0];
+	if ( (in=g_fopen(filename, "r"))==NULL ) {
+	    ufraw_message(UFRAW_ERROR, _("Error opening Curve file '%s': %s"),
 			    filename, strerror(errno));
 	    return UFRAW_ERROR;
 	}
 	locale = uf_set_locale_C();
-        context = g_markup_parse_context_new(&parser, 0, cp, NULL);
-        line[max_path-1] = '\0';
-        fgets(line, max_path-1, in);
-        while (!feof(in)) {
-            if (!g_markup_parse_context_parse(context, line,
-                    strlen(line), &err)) {
-                ufraw_message(UFRAW_ERROR, _("Error parsing '%s'\n%s"),
-                        filename, err->message);
+	context = g_markup_parse_context_new(&parser, 0, cp, NULL);
+	line[max_path-1] = '\0';
+	fgets(line, max_path-1, in);
+	while (!feof(in)) {
+	    if (!g_markup_parse_context_parse(context, line,
+		    strlen(line), &err)) {
+		ufraw_message(UFRAW_ERROR, _("Error parsing '%s'\n%s"),
+			filename, err->message);
 		g_markup_parse_context_free(context);
 		uf_reset_locale(locale);
 		fclose(in);
 		g_error_free(err);
 		uf_reset_locale(locale);
-                return UFRAW_ERROR;
-            }
-            fgets(line, max_path, in);
-        }
-        g_markup_parse_context_end_parse(context, NULL);
-        g_markup_parse_context_free(context);
+		return UFRAW_ERROR;
+	    }
+	    fgets(line, max_path, in);
+	}
+	g_markup_parse_context_end_parse(context, NULL);
+	g_markup_parse_context_free(context);
 	uf_reset_locale(locale);
-        fclose(in);
+	fclose(in);
     }
     char *base = g_path_get_basename(filename);
     char *name = uf_file_set_type(base, "");
@@ -425,50 +425,50 @@ int curve_save(CurveData *cp, char *filename)
 
     /* Try saving ntc/ncv format */
     if ( !strcasecmp(filename+strlen(filename)-4, ".ntc") )
-        nikon_file_type = NTC_FILE;
+	nikon_file_type = NTC_FILE;
     else if (!strcasecmp(filename+strlen(filename)-4, ".ncv") )
-        nikon_file_type = NCV_FILE;
+	nikon_file_type = NCV_FILE;
 
     //if it's ntc or ncv
     if (nikon_file_type != -1)  {
-        NikonData data;
+	NikonData data;
 
-        //clear it out
-        memset(&data,0,sizeof(NikonData));
+	//clear it out
+	memset(&data,0,sizeof(NikonData));
 
 	data.curves[TONE_CURVE] = *cp;
 
-        if (SaveNikonDataFile(&data, filename, nikon_file_type,
-                                NIKON_VERSION_4_1)!=UFRAW_SUCCESS) {
-            ufraw_message(UFRAW_ERROR, _("Invalid Nikon curve file '%s'"),
-                            filename);
-            return UFRAW_ERROR;
-        }
+	if (SaveNikonDataFile(&data, filename, nikon_file_type,
+			    NIKON_VERSION_4_1)!=UFRAW_SUCCESS) {
+	    ufraw_message(UFRAW_ERROR, _("Invalid Nikon curve file '%s'"),
+			filename);
+	    return UFRAW_ERROR;
+	}
     } else {
-        /* Save UFRaw's curve format */
-        FILE *out;
+	/* Save UFRaw's curve format */
+	FILE *out;
 
-        if ( (out=g_fopen(filename, "w"))==NULL ) {
-            ufraw_message(UFRAW_ERROR, _("Error opening file '%s': %s"),
-                        filename, g_strerror(errno));
-            return UFRAW_ERROR;
-        }
+	if ( (out=g_fopen(filename, "w"))==NULL ) {
+	    ufraw_message(UFRAW_ERROR, _("Error opening file '%s': %s"),
+			filename, g_strerror(errno));
+	    return UFRAW_ERROR;
+	}
 	char *locale = uf_set_locale_C();
 	fprintf(out, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-        char *base = g_path_get_basename(filename);
+	char *base = g_path_get_basename(filename);
 	char *name = uf_file_set_type(base, "");
 	char *utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
 	if (utf8==NULL) utf8 = strdup("Unknown file name");
-        fprintf(out, "<Curve Version='%d'>%s\n", conf_default.version, utf8);
+	fprintf(out, "<Curve Version='%d'>%s\n", conf_default.version, utf8);
 	g_free(utf8);
 	g_free(name);
-        g_free(base);
-        char *buf = curve_buffer(cp);
-        if (buf!=NULL) fprintf(out, buf);
-        g_free(buf);
-        fprintf(out, "</Curve>\n");
+	g_free(base);
+	char *buf = curve_buffer(cp);
+	if (buf!=NULL) fprintf(out, buf);
+	g_free(buf);
+	fprintf(out, "</Curve>\n");
 	uf_reset_locale(locale);
-        fclose(out);
+	fclose(out);
     }
     return UFRAW_SUCCESS;
 }
@@ -484,17 +484,17 @@ char *curve_buffer(CurveData *c)
 	buf = uf_markup_buf(buf,
 		"\t<MinXY>%lf %lf</MinXY>\n", c->m_min_x, c->m_min_y);
 	buf = uf_markup_buf(buf,
-                "\t<MaxXY>%lf %lf</MaxXY>\n", c->m_max_x, c->m_max_y);
+		"\t<MaxXY>%lf %lf</MaxXY>\n", c->m_max_x, c->m_max_y);
     }
     if ( c->m_numAnchors!=conf_default.curve[0].m_numAnchors ||
 	 c->m_anchors[0].x!=conf_default.curve[0].m_anchors[0].x ||
 	 c->m_anchors[0].y!=conf_default.curve[0].m_anchors[0].y ||
 	 c->m_anchors[1].x!=conf_default.curve[0].m_anchors[1].x ||
 	 c->m_anchors[1].y!=conf_default.curve[0].m_anchors[1].y ) {
-        for (i=0; i<c->m_numAnchors; i++)
+	for (i=0; i<c->m_numAnchors; i++)
 	    buf = uf_markup_buf(buf,
-                    "\t<AnchorXY>%lf %lf</AnchorXY>\n",
-                    c->m_anchors[i].x, c->m_anchors[i].y);
+		    "\t<AnchorXY>%lf %lf</AnchorXY>\n",
+		    c->m_anchors[i].x, c->m_anchors[i].y);
     }
     return buf;
 }

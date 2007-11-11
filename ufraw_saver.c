@@ -377,7 +377,7 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
 	g_free(filename);
 	status = ufraw_write_image(uf);
 	if ( status==UFRAW_ERROR ) {
-            ufraw_message(status, ufraw_get_message(uf));
+	    ufraw_message(status, ufraw_get_message(uf));
 	} else {
 	    if ( status==UFRAW_WARNING )
 		ufraw_message(status, ufraw_get_message(uf));
@@ -399,11 +399,11 @@ long ufraw_save_now(ufraw_data *uf, void *widget)
     }
     int status = ufraw_write_image(uf);
     if ( status==UFRAW_ERROR ) {
-        ufraw_message(status, ufraw_get_message(uf));
+	ufraw_message(status, ufraw_get_message(uf));
 	return UFRAW_ERROR;
     }
     if ( ufraw_get_message(uf)!=NULL )
-        ufraw_message(UFRAW_SET_LOG, ufraw_get_message(uf));
+	ufraw_message(UFRAW_SET_LOG, ufraw_get_message(uf));
     return UFRAW_SUCCESS;
 }
 
@@ -418,7 +418,7 @@ long ufraw_send_to_gimp(ufraw_data *uf)
     g_free(template);
     if ( fd==-1 ) {
 	g_free(confFilename);
-        ufraw_message(UFRAW_ERROR, "%s\n%s",
+	ufraw_message(UFRAW_ERROR, "%s\n%s",
 		_("Error creating temporary file."), err->message);
 	g_error_free(err);
 	return UFRAW_ERROR;
@@ -426,7 +426,7 @@ long ufraw_send_to_gimp(ufraw_data *uf)
     FILE *out = fdopen(fd, "w");
     if ( out==NULL ) {
 	g_free(confFilename);
-        ufraw_message(UFRAW_ERROR, "%s\n%s",
+	ufraw_message(UFRAW_ERROR, "%s\n%s",
 		_("Error creating temporary file."), g_strerror(errno));
 	return UFRAW_ERROR;
     }
@@ -438,14 +438,14 @@ long ufraw_send_to_gimp(ufraw_data *uf)
     if ( fwrite(buffer, strlen(buffer), 1, out)!=1 ) {
 	g_free(buffer);
 	g_free(confFilename);
-        ufraw_message(UFRAW_ERROR, "%s\n%s",
+	ufraw_message(UFRAW_ERROR, "%s\n%s",
 		_("Error creating temporary file."), g_strerror(errno));
 	return UFRAW_ERROR;
     }
     g_free(buffer);
     if ( fclose(out)!=0 ) {
 	g_free(confFilename);
-        ufraw_message(UFRAW_ERROR, "%s\n%s",
+	ufraw_message(UFRAW_ERROR, "%s\n%s",
 		_("Error creating temporary file."), g_strerror(errno));
 	return UFRAW_ERROR;
     }
@@ -453,7 +453,7 @@ long ufraw_send_to_gimp(ufraw_data *uf)
     if ( g_rename(confFilename, fullConfFilename)==-1 ) {
 	g_free(confFilename);
 	g_free(fullConfFilename);
-        ufraw_message(UFRAW_ERROR, "%s\n%s",
+	ufraw_message(UFRAW_ERROR, "%s\n%s",
 		_("Error creating temporary file."), g_strerror(errno));
 	return UFRAW_ERROR;
     }
@@ -465,7 +465,7 @@ long ufraw_send_to_gimp(ufraw_data *uf)
      * Therefore we must call it asynchronously. */
     if ( !g_spawn_command_line_async(commandLine, &err) ) {
 	g_free(commandLine);
-        ufraw_message(UFRAW_ERROR, "%s\n%s",
+	ufraw_message(UFRAW_ERROR, "%s\n%s",
 		_("Error activating Gimp."), err->message);
 	g_error_free(err);
 	return UFRAW_ERROR;

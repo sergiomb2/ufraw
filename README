@@ -8,7 +8,7 @@ It can be used by itself or as a GIMP or CinePaint plug-in.
 It reads raw images using Dave Coffin's raw conversion utility DCRaw.
 It supports basic color management using Little CMS, allowing the user to
 apply color profiles.
- 
+
 UFRaw was originally based on the GIMP plug-in by Dave Coffin
 http://www.cybercom.net/~dcoffin/
 and on Pawel T. Jochym's (jochym at ifj edu pl) GIMP plug-in.
@@ -222,7 +222,7 @@ half written features, therefore it is bound to have bugs...
 
 Source control of UFRaw via CVS
 ===============================
-UFRaw has a CVS repository on sourceforge. 
+UFRaw has a CVS repository on sourceforge.
 
 Using the CVS, new versions of dcraw.c can be easily updated. Copy the latest
 version of dcraw.c from Dave Coffin to a UFRaw working directory with the
@@ -337,7 +337,7 @@ History
 * When handling ID files save output image in same directory as ID file.
 * If input and output filenames in the ID file have the same path,
   then input filename is searched for in the path of the ID file.
-  This allows moving raw and ID files together between folders. 
+  This allows moving raw and ID files together between folders.
 * Add translations to French and Russian.
 * Some bug corrections.
 

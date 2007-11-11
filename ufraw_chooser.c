@@ -42,9 +42,9 @@ GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
     char **extList, **l, ext[max_name];
 
     fileChooser = GTK_FILE_CHOOSER(gtk_file_chooser_dialog_new(label, toplevel,
-            GTK_FILE_CHOOSER_ACTION_OPEN,
-            cancel, GTK_RESPONSE_CANCEL,
-            GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL));
+	    GTK_FILE_CHOOSER_ACTION_OPEN,
+	    cancel, GTK_RESPONSE_CANCEL,
+	    GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL));
     if (toplevel == NULL)
 	gtk_window_set_type_hint(GTK_WINDOW(fileChooser),
 				 GDK_WINDOW_TYPE_HINT_NORMAL);
@@ -62,36 +62,36 @@ GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
     gtk_file_filter_set_name(filter, _("Raw images"));
     extList = g_strsplit(raw_ext, ",", 100);
     for (l=extList; *l!=NULL; l++)
-        if (strcmp(*l, "jpg") && strcmp(*l, "tif") && strcmp(*l, "ufraw")) {
-            snprintf(ext, max_name, "*.%s", *l);
-            gtk_file_filter_add_pattern(filter, ext);
-            gtk_file_filter_add_pattern(filter, cp=g_ascii_strup(ext,-1));
-            g_free(cp);
+	if (strcmp(*l, "jpg") && strcmp(*l, "tif") && strcmp(*l, "ufraw")) {
+	    snprintf(ext, max_name, "*.%s", *l);
+	    gtk_file_filter_add_pattern(filter, ext);
+	    gtk_file_filter_add_pattern(filter, cp=g_ascii_strup(ext,-1));
+	    g_free(cp);
 #ifdef HAVE_LIBZ
-            snprintf(ext, max_name, "*.%s.gz", *l);
-            gtk_file_filter_add_pattern(filter, ext);
-            snprintf(ext, max_name, "*.%s.GZ", *l);
-            gtk_file_filter_add_pattern(filter, ext);
-            snprintf(ext, max_name, "*.%s.gz", cp=g_ascii_strup(*l,-1));
-            g_free(cp);
-            gtk_file_filter_add_pattern(filter, ext);
-            snprintf(ext, max_name, "*.%s.GZ", cp=g_ascii_strup(*l,-1));
-            g_free(cp);
-            gtk_file_filter_add_pattern(filter, ext);
+	    snprintf(ext, max_name, "*.%s.gz", *l);
+	    gtk_file_filter_add_pattern(filter, ext);
+	    snprintf(ext, max_name, "*.%s.GZ", *l);
+	    gtk_file_filter_add_pattern(filter, ext);
+	    snprintf(ext, max_name, "*.%s.gz", cp=g_ascii_strup(*l,-1));
+	    g_free(cp);
+	    gtk_file_filter_add_pattern(filter, ext);
+	    snprintf(ext, max_name, "*.%s.GZ", cp=g_ascii_strup(*l,-1));
+	    g_free(cp);
+	    gtk_file_filter_add_pattern(filter, ext);
 #endif
 #ifdef HAVE_LIBBZ2
-            snprintf(ext, max_name, "*.%s.bz2", *l);
-            gtk_file_filter_add_pattern(filter, ext);
-            snprintf(ext, max_name, "*.%s.BZ2", *l);
-            gtk_file_filter_add_pattern(filter, ext);
-            snprintf(ext, max_name, "*.%s.bz2", cp=g_ascii_strup(*l,-1));
-            g_free(cp);
-            gtk_file_filter_add_pattern(filter, ext);
-            snprintf(ext, max_name, "*.%s.BZ2", cp=g_ascii_strup(*l,-1));
-            g_free(cp);
-            gtk_file_filter_add_pattern(filter, ext);
+	    snprintf(ext, max_name, "*.%s.bz2", *l);
+	    gtk_file_filter_add_pattern(filter, ext);
+	    snprintf(ext, max_name, "*.%s.BZ2", *l);
+	    gtk_file_filter_add_pattern(filter, ext);
+	    snprintf(ext, max_name, "*.%s.bz2", cp=g_ascii_strup(*l,-1));
+	    g_free(cp);
+	    gtk_file_filter_add_pattern(filter, ext);
+	    snprintf(ext, max_name, "*.%s.BZ2", cp=g_ascii_strup(*l,-1));
+	    g_free(cp);
+	    gtk_file_filter_add_pattern(filter, ext);
 #endif
-        }
+	}
     g_strfreev(extList);
     gtk_file_chooser_add_filter(fileChooser, filter);
 
@@ -130,9 +130,9 @@ GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
 	gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
     /* Add shortcut to folder of last opened file */
     if (strlen(conf->inputFilename)>0) {
-        char *cp = g_path_get_dirname(conf->inputFilename);
-        gtk_file_chooser_add_shortcut_folder( fileChooser, cp, NULL);
-        g_free(cp);
+	char *cp = g_path_get_dirname(conf->inputFilename);
+	gtk_file_chooser_add_shortcut_folder( fileChooser, cp, NULL);
+	g_free(cp);
     }
     gtk_widget_show(GTK_WIDGET(fileChooser));
     return fileChooser;
@@ -149,20 +149,20 @@ void ufraw_chooser(conf_data *conf, const char *defPath)
 				    GTK_STOCK_QUIT, TRUE);
 
     while (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
-        for(list=saveList=gtk_file_chooser_get_filenames(fileChooser);
-        list!=NULL; list=g_slist_next(list)) {
-            filename = list->data;
-            uf = ufraw_open(filename);
-            if (uf==NULL) {
-                ufraw_message(UFRAW_REPORT, NULL);
-                continue;
-            }
-            ufraw_config(uf, conf, NULL, NULL);
-            ufraw_preview(uf, FALSE, NULL);
-            g_free(filename);
+	for(list=saveList=gtk_file_chooser_get_filenames(fileChooser);
+	list!=NULL; list=g_slist_next(list)) {
+	    filename = list->data;
+	    uf = ufraw_open(filename);
+	    if (uf==NULL) {
+		ufraw_message(UFRAW_REPORT, NULL);
+		continue;
+	    }
+	    ufraw_config(uf, conf, NULL, NULL);
+	    ufraw_preview(uf, FALSE, NULL);
+	    g_free(filename);
 	    *conf = *uf->conf;
-        }
-        g_slist_free(saveList);
+	}
+	g_slist_free(saveList);
     }
     gtk_widget_destroy(GTK_WIDGET(fileChooser));
     ufraw_message(UFRAW_SET_PARENT, NULL);

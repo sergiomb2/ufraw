@@ -14,12 +14,12 @@ UFRaw - Convert camera RAW images to standard image files.
 
 =head1 DESCRIPTION
 
-The Unidentified Flying Raw (UFRaw) is a utility to read and manipulate 
-raw images from digital cameras. It reads raw images using Dave Coffin's 
-raw conversion utility - DCRaw. UFRaw supports basic color management 
-using Little CMS, allowing the user to apply color profiles. For Nikon 
-users UFRaw has the advantage that it can read the camera's tone curves. 
-Even if you don't own a Nikon, you can still apply a Nikon curve to your 
+The Unidentified Flying Raw (UFRaw) is a utility to read and manipulate
+raw images from digital cameras. It reads raw images using Dave Coffin's
+raw conversion utility - DCRaw. UFRaw supports basic color management
+using Little CMS, allowing the user to apply color profiles. For Nikon
+users UFRaw has the advantage that it can read the camera's tone curves.
+Even if you don't own a Nikon, you can still apply a Nikon curve to your
 images.
 
 By default 'ufraw' displays a preview window for each raw image allowing
@@ -29,7 +29,7 @@ To process the images with no questions asked (and no preview) use
 the command 'ufraw-batch'.
 
 The input files can be either raw images or UFRaw ID-files.
-ID-files contain a raw image filename and the parameters for 
+ID-files contain a raw image filename and the parameters for
 handling the image.
 
 UFRaw can also work as a GIMP plug-in. To activate it simply open a raw
@@ -49,7 +49,7 @@ saving the final image.
 
 Display the version of UFRaw and exit.
 
-=item --help 
+=item --help
 
 Display a brief description of how to use UFRaw and exit.
 
@@ -61,7 +61,7 @@ Do not display any messages during batch conversion.
 
 Load all parameters from an ID-file. This feature
 can be used to tweak the parameters for one file using the GUI and
-using those parameters as the starting point for other images as well. 
+using those parameters as the starting point for other images as well.
 
 =back
 
@@ -77,10 +77,10 @@ have corresponding command-line options.
 
 =item --wb=camera|auto
 
-White balance setting. "camera" means that UFRaw tries to read the 
-color-temperature and green color component that the camera recorded 
-in the meta-information in the raw-file. This does not work for all 
-cameras. If UFRaw fails to read the white-balance information from the 
+White balance setting. "camera" means that UFRaw tries to read the
+color-temperature and green color component that the camera recorded
+in the meta-information in the raw-file. This does not work for all
+cameras. If UFRaw fails to read the white-balance information from the
 meta-information, it falls back to "auto".
 
 "auto" means that UFRaw calculates the color-temperature and green color
@@ -101,7 +101,7 @@ Green color component. Range 0.20 to 2.50.
 
 Gamma adjustment of the base curve. Range 0.10 to 1.00. Default 0.45.
 
-=item --linearity=LINEARITY 
+=item --linearity=LINEARITY
 
 Linearity of the base curve. Range 0.00 to 1.00. Default 0.10.
 
@@ -129,7 +129,7 @@ The default is 'digital'.
 
 =item --saturation=SAT
 
-Adjust the color saturation. Range 0.00 to 3.00. Default 1.0, 
+Adjust the color saturation. Range 0.00 to 3.00. Default 1.0,
 use 0 for black & white output.
 
 =item --base-curve=manual|linear|custom|camera|CURVE
@@ -139,21 +139,21 @@ curve corrected by the curve specified here.
 The base curve is applied to each channel of the raw data after the
 white balance and color matrix, but before the ICC transformation.
 
-"manual" means that a manual tone curve is used. 
+"manual" means that a manual tone curve is used.
 This is probably not very useful as a command-line option, since there
 is no way to specify what the curve should look like.
 
-"linear" means that no tone curve corrections is performed. 
+"linear" means that no tone curve corrections is performed.
 
 "custom" means that UFRaw shall use the curve supplied by the camera
-in the meta-information in the raw-file. 
+in the meta-information in the raw-file.
 
 "camera" means that UFRaw shall use the "custom" curve only if the camera
 was set to use it (according to the meta-information).
 Otherwise the "linear" curve is used.
- 
-CURVE can be the filename (without path) of any curve that was 
-previously loaded in the GUI. 
+
+CURVE can be the filename (without path) of any curve that was
+previously loaded in the GUI.
 
 The default is "camera" if such a curve exists, linear otherwise.
 
@@ -168,14 +168,14 @@ format or Nikon's NTC/NCV format.
 Type of luminosity curve to use. This curve is applied in HSV space
 and therefore hue and saturation should not be effected by it.
 
-"manual" means that a manual luminosity curve is used. 
+"manual" means that a manual luminosity curve is used.
 This is probably not very useful as a command-line option, since there
 is no way to specify what the curve should look like.
 
-"linear" means that no luminosity correction is performed. 
+"linear" means that no luminosity correction is performed.
 
-CURVE can be the filename (without path) of any curve that was 
-previously loaded in the GUI. 
+CURVE can be the filename (without path) of any curve that was
+previously loaded in the GUI.
 
 The default is "linear".
 
@@ -228,8 +228,8 @@ Downsize max(height,width) to SIZE.
 
 =item --out-type=ppm8|ppm16|tiff8|tiff16|jpeg
 
-Output file-format to use. ppm8 and tiff8 uses eight bits to encode each of 
-the  Red, Green and Blue components of each pixel. ppm16 and tiff16 uses 
+Output file-format to use. ppm8 and tiff8 uses eight bits to encode each of
+the  Red, Green and Blue components of each pixel. ppm16 and tiff16 uses
 16 bits. The jpeg-format only allows for eight bits for each color component.
 
 The raw-files contain more than eight bits of information for each color
@@ -295,7 +295,7 @@ Conversion settings are applied in the following priority order:
 
 =item 1. Command-line options
 
-=item 2. Settings from the configuration file specified with --conf=<ID-file> 
+=item 2. Settings from the configuration file specified with --conf=<ID-file>
 (ignoring any filenames in the ID-file).
 
 =item 3. Settings from an ID-file supplied as an input-file.
@@ -312,7 +312,7 @@ over all other options.
 The conversion settings can be changed in the GUI before the resulting
 image is saved.
 
-=for comment 
+=for comment
 In batch mode, the output options are NOT read from the resource file.
 
 =head1 FILES
