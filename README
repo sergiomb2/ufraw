@@ -273,6 +273,41 @@ date user guide.
 History
 =======
 
+12/11/2007 - UFRaw-0.13 release, based on DCRaw v 8.80.
+
+* Simplified output path logic - output path defaults to the path of the
+  input path.
+* Added 'System profile' option to read display ICC profile from the X display.
+  Based on code from Gimp.
+* Do not read/write display ICC profile from/to ID files.
+* Show camera white balance in EXIF page. Patch by Erik Burrows.
+* Automatically fit histograms to allocated height.
+* Read Canon lens from EXIF data. Patch by Andreas Steinel.
+* Improved PPG interpolation. Patch by Alain Desbiolles.
+* Remember maximized state of window between sessions.
+* Add color smoothing option to all interpolation. Based on patch by alexander
+  melkozerov. AHD+smoothing is exactly the same as the now obsolete EAHD.
+* Added darkframe to GUI (patch by Bruce Guenter).
+* Darkframe subtraction also handles hot pixels (patch by Bruce Guenter).
+* Show spot values only if spot is selected and allow unselecting spot values.
+* Add FITS output. Patch by Andreas Steinel. This option is disabled by default.
+* Progressive JPEG encoding. Patch by Bruce Guenter.
+* Blink over/under exposure in preview. Patch by Bruce Guenter.
+* Enable --output option for stand-alone tool. It forces the output filename
+  to the value specified. It is useful for F-Spot. Patch by Stephane Delcroix.
+* Reimplemented the EXIF page. Patch by Andrew Zabolotny.
+* Display flash mode in EXIF page.
+* Moved shrink/size controls from Save dialog to main window.
+* Added delete button to stand-alone tool.
+* Added 'send to Gimp' option to stand-alone tool.
+* Made the save-as button an icon only, to save space.
+* Added option to save as PNG 8 or 16 bits.
+* Write EXIF data to PNG files. Based on code from DigiKam.
+* Added aspect ratio control. Patch by Andrew Zabolotny.
+* New Spanish translation by Enrique Jorreto Ledesma.
+* New Polish translation by Tomasz Golinski.
+* New Korean translation by Homin Lee.
+
 10/08/2007 - UFRaw-0.12.1 release, based on DCRaw v 8.77.
 
 * Fixed handling of non integer shrink factors.

@@ -1,4 +1,4 @@
-$Id: TODO,v 1.28 2007/07/30 21:02:14 udifuchs Exp $
+$Id: TODO,v 1.29 2007/11/12 21:42:30 udifuchs Exp $
 
 These items are not ordered or prioritized, but are roughly grouped by
 kind of change.
@@ -13,7 +13,6 @@ For the future
 
 * Calculate width of the dialog control column
   and set raw histogram to that width.
-* Add a "Send to GIMP" option in the stand-alone tool.
 
 * Curve corrections per channel.
 * Show camera overexposures.
@@ -28,7 +27,6 @@ For the future
 * Spot query - mark on histograms.
 * Multi spot query (when pressing the control key).
 * Show WB spot/area values in HSV (in addition to output colorspace pixels).
-* Show WB spot/area values in Adam's exposure zones.
 * Add the ability to save a spot measurement, and then to adjust WB to
   make a new measurement match the old.  Usage is shooting a whitish
   wall with a white card, doing WB to card, saving wall, and then later
@@ -38,7 +36,6 @@ For the future
 * Leaf embedded profiles
 * fuji sqrt(0.5) factor in size
 * Canon 10D presets from ExifTool
-* g_fopen - UTF-8
 
 * Add the ability to have groups of saved values, perhaps one for flash
   and one not, so one can save 2 color temperatures and exposure
