@@ -11,15 +11,15 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.394 $
-   $Date: 2007/11/04 02:18:54 $
+   $Revision: 1.395 $
+   $Date: 2007/11/12 18:45:25 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.79"
+#define DCRAW_VERSION "8.80"
 
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
@@ -326,7 +326,6 @@ double CLASS getreal (int type)
     default: return fgetc(ifp);
   }
 }
-#define getrat() getreal(10)
 
 void CLASS read_shorts (ushort *pixel, unsigned count)
 {
@@ -1693,9 +1692,9 @@ void CLASS hasselblad_load_raw()
   if (!ljpeg_start (&jh, 0)) return;
   free (jh.row);
   ph1_bits(-1);
-  for (row=0; row < height; row++) {
+  for (row=-top_margin; row < height; row++) {
     pred[0] = pred[1] = 0x8000;
-    for (col=0; col < width; col+=2) {
+    for (col=-left_margin; col < raw_width-left_margin; col+=2) {
       for (i=0; i < 2; i++) {
 	for (dindex=jh.huff[0]; dindex->branch[0]; )
 	  dindex = dindex->branch[ph1_bits(1)];
@@ -1705,7 +1704,9 @@ void CLASS hasselblad_load_raw()
 	diff = ph1_bits(len[i]);
 	if ((diff & (1 << (len[i]-1))) == 0)
 	  diff -= (1 << len[i]) - 1;
-	BAYER(row,col+i) = pred[i] += diff;
+	pred[i] += diff;
+	if (row >= 0 && (unsigned)(col+i) < width)
+	  BAYER(row,col+i) = pred[i];
       }
     }
   }
@@ -4458,8 +4459,8 @@ void CLASS parse_makernote (int base, int uptag)
     if (tag == 9 && !strcmp(make,"Canon"))
       fread (artist, 64, 1, ifp);
     if (tag == 0xc && len == 4) {
-      cam_mul[0] = getrat();
-      cam_mul[2] = getrat();
+      cam_mul[0] = getreal(type);
+      cam_mul[2] = getreal(type);
     }
     if (tag == 0x10 && type == 4)
       unique_id = get4();
@@ -4657,15 +4658,15 @@ void CLASS parse_exif (int base)
   while (entries--) {
     tiff_get (base, &tag, &type, &len, &save);
     switch (tag) {
-      case 33434:  shutter = getrat();			break;
-      case 33437:  aperture = getrat();			break;
+      case 33434:  shutter = getreal(type);		break;
+      case 33437:  aperture = getreal(type);		break;
       case 34855:  iso_speed = get2();			break;
       case 36867:
       case 36868:  get_timestamp(0);			break;
-      case 37377:  if ((expo = -getrat()) < 128)
+      case 37377:  if ((expo = -getreal(type)) < 128)
 		     shutter = pow (2, expo);		break;
-      case 37378:  aperture = pow (2, getrat()/2);	break;
-      case 37386:  focal_len = getrat();		break;
+      case 37378:  aperture = pow (2, getreal(type)/2);	break;
+      case 37386:  focal_len = getreal(type);		break;
       case 37500:  parse_makernote (base, 0);		break;
       case 40962:  if (kodak) raw_width  = get4();	break;
       case 40963:  if (kodak) raw_height = get4();	break;
@@ -4972,10 +4973,10 @@ int CLASS parse_tiff_ifd (int base)
 	parse_kodak_ifd (base);
 	break;
       case 33434:			/* ExposureTime */
-	shutter = getrat();
+	shutter = getreal(type);
 	break;
       case 33437:			/* FNumber */
-	aperture = getrat();
+	aperture = getreal(type);
 	break;
       case 34306:			/* Leaf white balance */
 	FORC4 cam_mul[c ^ 1] = 4096.0 / get2();
@@ -5010,15 +5011,15 @@ int CLASS parse_tiff_ifd (int base)
 	kodak_cbpp = get4();
 	break;
       case 37386:			/* FocalLength */
-	focal_len = getrat();
+	focal_len = getreal(type);
 	break;
       case 37393:			/* ImageNumber */
 	shot_order = getint(type);
 	break;
       case 37400:			/* old Kodak KDC tag */
 	for (raw_color = i=0; i < 3; i++) {
-	  getrat();
-	  FORC3 rgb_cam[i][c] = getrat();
+	  getreal(type);
+	  FORC3 rgb_cam[i][c] = getreal(type);
 	}
 	break;
       case 46275:			/* Imacon tags */
@@ -5109,30 +5110,30 @@ guess_cfa_pc:
 	maximum = getint(type);
 	break;
       case 50718:			/* DefaultScale */
-	pixel_aspect  = getrat();
-	pixel_aspect /= getrat();
+	pixel_aspect  = getreal(type);
+	pixel_aspect /= getreal(type);
 	break;
       case 50721:			/* ColorMatrix1 */
 	if (use_cm) break; /* Prioritize Matrix2 over Matrix1 (UF) */
       case 50722:			/* ColorMatrix2 */
 	FORCC for (j=0; j < 3; j++)
-	  cm[c][j] = getrat();
+	  cm[c][j] = getreal(type);
 	use_cm = 1;
 	break;
       case 50723:			/* CameraCalibration1 */
       case 50724:			/* CameraCalibration2 */
 	for (i=0; i < colors; i++)
-	  FORCC cc[i][c] = getrat();
+	  FORCC cc[i][c] = getreal(type);
 	break;
       case 50727:			/* AnalogBalance */
-	FORCC ab[c] = getrat();
+	FORCC ab[c] = getreal(type);
 	break;
       case 50728:			/* AsShotNeutral */
 	FORCC asn[c] = getreal(type);
 	break;
       case 50729:			/* AsShotWhiteXY */
-	xyz[0] = getrat();
-	xyz[1] = getrat();
+	xyz[0] = getreal(type);
+	xyz[1] = getreal(type);
 	xyz[2] = 1 - xyz[0] - xyz[1];
 	FORC3 xyz[c] /= d65_white[c];
 	break;
@@ -7051,6 +7052,13 @@ konica_400z:
   } else if (!strcmp(make,"Hasselblad")) {
     if (load_raw == &CLASS lossless_jpeg_load_raw)
       load_raw = &CLASS hasselblad_load_raw;
+    if (raw_width == 7262) {
+      height = 5444;
+      width  = 7248;
+      top_margin  = 4;
+      left_margin = 7;
+      filters = 0x61616161;
+    }
   } else if (!strcmp(make,"Sinar")) {
     if (!memcmp(head,"8BPS",4)) {
       fseek (ifp, 14, SEEK_SET);
