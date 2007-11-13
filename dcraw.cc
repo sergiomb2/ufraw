@@ -20,7 +20,7 @@
    homepage qualifies as "full source code".
 
    $Revision: 1.395 $
-   $Date: 2007/11/12 18:45:25 $
+   $Date: 2007/11/12 20:28:32 $
  */
 
 #define VERSION "8.80"
@@ -6146,6 +6146,8 @@ void CLASS adobe_coeff (char *make, char *model)
 	{ -3746,10611,1665,9621,-1734,2114,-2389,7082,3064,3406,6116,-244 } },
     { "NIKON E995", 0,	/* copied from E5000 */
 	{ -5547,11762,2189,5814,-558,3342,-4924,9840,5949,688,9083,96 } },
+    { "NIKON E2100", 0,	/* copied from Z2, new white balance */
+	{ 13142,-4152,-1596,-4655,12374,2282,-1769,2696,6711} },
     { "NIKON E2500", 0,
 	{ -5547,11762,2189,5814,-558,3342,-4924,9840,5949,688,9083,96 } },
     { "NIKON E4300", 0, /* copied from Minolta DiMAGE Z2 */
@@ -6794,8 +6796,6 @@ canon_cr2:
     height = 1206;
     width  = 1616;
     load_raw = &CLASS nikon_e2100_load_raw;
-    pre_mul[0] = 1.945;
-    pre_mul[2] = 1.040;
   } else if (!strcmp(model,"E2500")) {
 cp_e2500:
     strcpy (model, "E2500");
