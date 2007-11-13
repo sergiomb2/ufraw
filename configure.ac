@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.101 2007/11/13 21:00:36 udifuchs Exp $
+dnl $Id: configure.ac,v 1.102 2007/11/13 21:20:59 udifuchs Exp $
 AC_INIT(UFRaw, 0.13)
 AC_PREREQ(2.57)
 
@@ -81,6 +81,7 @@ PKG_CHECK_MODULES(LCMS, lcms)
 PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview >= 1.3,
   [ have_gtkimageview=yes
     GTK_LIBS=$GTKIMAGEVIEW_LIBS
+    GTK_CFLAGS=$GTKIMAGEVIEW_CFLAGS
     AC_DEFINE(HAVE_GTKIMAGEVIEW, 1, have gtk image view) ],
   [ have_gtkimageview=no
     AC_MSG_RESULT($GIMP_PKG_ERRORS) ] )
@@ -137,7 +138,7 @@ fi
 AC_SEARCH_LIBS(getopt_long, gnugetopt, ,
   AC_MSG_ERROR(can not build UFRaw without getopt_long))
 
-# The ws2_32 library is required for the ntohs sybmol on WIN32. 
+# The ws2_32 library is required for the ntohs sybmol on WIN32.
 if test $ufraw_win32 = yes; then
   LIBS="$LIBS -lws2_32"
 fi
@@ -188,7 +189,7 @@ PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
 
 # UFRAW_CPPFLAGS is added to the preprocessor flags AM_CPPFLAGS,
 # affecting also the C and C++ compilers.
-UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $LCMS_CFLAGS $GTKIMAGEVIEW_CFLAGS"
+UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $LCMS_CFLAGS"
 AC_SUBST(UFRAW_CPPFLAGS)
 # UFRAW_LDADD is added to the linker flags LDADD.
 UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS"
