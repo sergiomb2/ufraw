@@ -11,8 +11,8 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.395 $
-   $Date: 2007/11/12 20:28:32 $
+   $Revision: 1.396 $
+   $Date: 2007/11/16 15:24:52 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -6768,6 +6768,9 @@ canon_cr2:
   } else if (!strcmp(model,"D2X")) {
     width -= 8;
     maximum = 0xf35;
+  } else if (!strcmp(model,"D3")) {
+    width -= 4;
+    left_margin = 2;
   } else if (!strcmp(model,"D300")) {
     width -= 32;
   } else if (fsize == 1581060) {
