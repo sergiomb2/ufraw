@@ -539,10 +539,19 @@ static colorLabels *color_labels_new(GtkTable *table, int x, int y,
 	gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(l->labels[c]));
 	gtk_table_attach(table, event_box, x+i, x+i+1, y, y+1,
 		GTK_EXPAND|GTK_FILL, 0, 0, 0);
-	if ( c==3 )
+	switch (c)
+	{
+	case 0: case 1: case 2:
+	    uf_label_set_width_chars(l->labels[c], 3);
+	    break;
+	case 3:
+	    uf_label_set_width_chars(l->labels[c], 5);
 	    uf_widget_set_tooltip(event_box, _("Luminosity (Y value)"));
-	if ( c==4 )
+	    break;
+	case 4:
+	    uf_label_set_width_chars(l->labels[c], 4);
 	    uf_widget_set_tooltip(event_box, _("Adams' zone"));
+	}
     }
     return l;
 }

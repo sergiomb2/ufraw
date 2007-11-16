@@ -26,6 +26,8 @@ void uf_widget_set_tooltip(GtkWidget *widget, const gchar *text);
 
 void uf_button_set_stock_image(GtkButton *button, const gchar *stock_image);
 
+void uf_label_set_width_chars(GtkLabel *label, gint n_chars);
+
 // Interface to gtk_window_set_icon_name() introduced in 2.6
 void uf_window_set_icon_name(GtkWindow *window, const gchar *name);
 

@@ -96,6 +96,16 @@ void uf_window_set_icon_name(GtkWindow *window, const gchar *name)
 #endif
 }
 
+void uf_label_set_width_chars(GtkLabel *label, gint n_chars)
+{
+#if GTK_CHECK_VERSION(2,6,0)
+    gtk_label_set_width_chars(label, n_chars);
+#else
+    (void)label;
+    (void)n_chars;
+#endif
+}
+
 // Get the display ICC profile of the monitor associated with the widget.
 // For X display, uses the ICC profile specifications version 0.2 from
 // http://burtonini.com/blog/computers/xicc
