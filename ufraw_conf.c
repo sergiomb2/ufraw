@@ -1573,7 +1573,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    return 0;
 	case 'b':
 	    ufraw_message(UFRAW_ERROR,
-		_("--batch is obselete. use ufraw-batch instead."));
+		_("--batch is obsolete. use ufraw-batch instead."));
 	    return -1;
 	case '?': /* invalid option. Warning printed by getopt() */
 	    return -1;

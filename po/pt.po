@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-19 00:26+0100\n"
+"POT-Creation-Date: 2007-11-19 00:39+0100\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -427,7 +427,8 @@ msgstr "'%s' não é um valor válido para a opção --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw foi compilado sem suporte a zip."
 
-msgid "--batch is obselete. use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. use ufraw-batch instead."
 msgstr "--batch é obsoleto. Use ufraw-batch para isso."
 
 #, c-format
@@ -809,9 +810,9 @@ msgstr ""
 msgid "%s%s (Alt-%c)"
 msgstr ""
 
-#, c-format
-msgid "%s - UFRaw Photo Loader"
-msgstr "%s - UFRaw carregador de fotos"
+#, fuzzy, c-format
+msgid "%s - UFRaw"
+msgstr "UFRaw"
 
 msgid "Linear"
 msgstr "Linear"
@@ -1104,7 +1105,7 @@ msgstr "Curva da câmera"
 msgid "Timestamp"
 msgstr "Registro de data: %s\n"
 
-msgid "Exposure"
+msgid "Shutter time"
 msgstr ""
 
 #, fuzzy
@@ -1453,6 +1454,9 @@ msgstr "WB da câmera"
 
 msgid "Auto WB"
 msgstr "Auto WB"
+
+#~ msgid "%s - UFRaw Photo Loader"
+#~ msgstr "%s - UFRaw carregador de fotos"
 
 #~ msgid "8-bit ppm"
 #~ msgstr "ppm de 8-bit"

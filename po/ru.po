@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-19 00:26+0100\n"
+"POT-Creation-Date: 2007-11-19 00:39+0100\n"
 "PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -439,7 +439,8 @@ msgstr "'%s' - некорректное значение для ключа --%s 
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw был собран без поддержки ZIP."
 
-msgid "--batch is obselete. use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. use ufraw-batch instead."
 msgstr "--batch устарел. Используйте ufraw-batch."
 
 #, c-format
@@ -813,9 +814,9 @@ msgstr ""
 msgid "%s%s (Alt-%c)"
 msgstr "%s%s (Alt-%c)"
 
-#, c-format
-msgid "%s - UFRaw Photo Loader"
-msgstr "%s – загрузчик фотографий UFRaw"
+#, fuzzy, c-format
+msgid "%s - UFRaw"
+msgstr "UFRaw "
 
 msgid "Linear"
 msgstr "Линейный масштаб"
@@ -1094,8 +1095,8 @@ msgstr "Модель камеры"
 msgid "Timestamp"
 msgstr "Дата и время"
 
-msgid "Exposure"
-msgstr "Экспозиция"
+msgid "Shutter time"
+msgstr ""
 
 msgid "Aperture"
 msgstr "Диафрагма"
@@ -1421,6 +1422,12 @@ msgstr "ББ камеры"
 
 msgid "Auto WB"
 msgstr "Автоматический ББ"
+
+#~ msgid "%s - UFRaw Photo Loader"
+#~ msgstr "%s – загрузчик фотографий UFRaw"
+
+#~ msgid "Exposure"
+#~ msgstr "Экспозиция"
 
 #~ msgid "8-bit ppm"
 #~ msgstr "8-разрядные PPM"

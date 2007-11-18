@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-19 00:26+0100\n"
+"POT-Creation-Date: 2007-11-19 00:39+0100\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -406,7 +406,8 @@ msgstr "'%s' は--%sオプションに対して正しくありません"
 msgid "ufraw was build without ZIP support."
 msgstr "ufrawはZIPサポート無しでビルドされました。"
 
-msgid "--batch is obselete. use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. use ufraw-batch instead."
 msgstr "--batchオプションでは無くufraw-batchプログラムを使ってください。"
 
 #, c-format
@@ -788,9 +789,9 @@ msgstr ""
 msgid "%s%s (Alt-%c)"
 msgstr ""
 
-#, c-format
-msgid "%s - UFRaw Photo Loader"
-msgstr "%s - UFRaw Photo Loader"
+#, fuzzy, c-format
+msgid "%s - UFRaw"
+msgstr "UFRaw "
 
 #, fuzzy
 msgid "Linear"
@@ -1088,7 +1089,7 @@ msgstr "カメラカーブ"
 msgid "Timestamp"
 msgstr "撮影日時: %s\n"
 
-msgid "Exposure"
+msgid "Shutter time"
 msgstr ""
 
 #, fuzzy
@@ -1437,6 +1438,9 @@ msgstr "カメラWB"
 
 msgid "Auto WB"
 msgstr "自動WB"
+
+#~ msgid "%s - UFRaw Photo Loader"
+#~ msgstr "%s - UFRaw Photo Loader"
 
 #~ msgid "8-bit ppm"
 #~ msgstr "8-bit ppm"

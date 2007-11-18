@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-19 00:26+0100\n"
+"POT-Creation-Date: 2007-11-19 00:39+0100\n"
 "PO-Revision-Date: 2007-11-06 23:23+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -427,7 +427,8 @@ msgstr "'%s' nie jest poprawn± warto¶ci± dla opcji --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw zosta³ skompilowany bez obs³ugi ZIP."
 
-msgid "--batch is obselete. use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. use ufraw-batch instead."
 msgstr "--batch jest przestarza³± opcj±. Proszê u¿ywaæ ufraw-batch."
 
 #, c-format
@@ -804,9 +805,9 @@ msgstr ""
 msgid "%s%s (Alt-%c)"
 msgstr "%s%s (Alt-%c)"
 
-#, c-format
-msgid "%s - UFRaw Photo Loader"
-msgstr "%s - UFRaw Photo Loader"
+#, fuzzy, c-format
+msgid "%s - UFRaw"
+msgstr "UFRaw "
 
 msgid "Linear"
 msgstr "Liniowy"
@@ -1085,8 +1086,8 @@ msgstr "Model aparatu"
 msgid "Timestamp"
 msgstr "Data"
 
-msgid "Exposure"
-msgstr "Czas"
+msgid "Shutter time"
+msgstr ""
 
 msgid "Aperture"
 msgstr "Przes³ona"
@@ -1411,6 +1412,12 @@ msgstr "Balans bieli aparatu"
 
 msgid "Auto WB"
 msgstr "Automatyczny balans bieli"
+
+#~ msgid "%s - UFRaw Photo Loader"
+#~ msgstr "%s - UFRaw Photo Loader"
+
+#~ msgid "Exposure"
+#~ msgstr "Czas"
 
 #~ msgid "8-bit ppm"
 #~ msgstr "8-bitowy ppm"

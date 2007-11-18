@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-19 00:26+0100\n"
+"POT-Creation-Date: 2007-11-19 00:39+0100\n"
 "PO-Revision-Date: 2007-11-06 23:14+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -445,7 +445,8 @@ msgstr "'%s' n'est pas une valeur valide pour l'option --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw a été compilé sans le support du ZIP."
 
-msgid "--batch is obselete. use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. use ufraw-batch instead."
 msgstr "--batch est obsolète. Utiliser ufraw-batch à la place."
 
 #, c-format
@@ -819,9 +820,9 @@ msgstr ""
 msgid "%s%s (Alt-%c)"
 msgstr "%s%s (Alt-%c)"
 
-#, c-format
-msgid "%s - UFRaw Photo Loader"
-msgstr "%s - UFRaw Chargeur de photo"
+#, fuzzy, c-format
+msgid "%s - UFRaw"
+msgstr "UFRaw"
 
 msgid "Linear"
 msgstr "Linéaire"
@@ -1111,8 +1112,8 @@ msgstr "Modèle"
 msgid "Timestamp"
 msgstr "Horodatage"
 
-msgid "Exposure"
-msgstr "Exposition"
+msgid "Shutter time"
+msgstr ""
 
 msgid "Aperture"
 msgstr "Ouverture"
@@ -1440,6 +1441,12 @@ msgstr "Bal. du Blanc Boitier"
 
 msgid "Auto WB"
 msgstr "Bal. du Blanc Auto"
+
+#~ msgid "%s - UFRaw Photo Loader"
+#~ msgstr "%s - UFRaw Chargeur de photo"
+
+#~ msgid "Exposure"
+#~ msgstr "Exposition"
 
 #~ msgid "8-bit ppm"
 #~ msgstr "8-bit ppm"

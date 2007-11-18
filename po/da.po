@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-19 00:26+0100\n"
+"POT-Creation-Date: 2007-11-19 00:39+0100\n"
 "PO-Revision-Date: 2007-11-03 08:40+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
@@ -426,7 +426,8 @@ msgstr "'%s' er ikke en legal værdi for tilvalget --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw blev bygget uden ZIP-understøttelse."
 
-msgid "--batch is obselete. use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. use ufraw-batch instead."
 msgstr "--batch er forældet. Anvend ufraw-batch i stedet for."
 
 #, c-format
@@ -796,9 +797,9 @@ msgstr ""
 msgid "%s%s (Alt-%c)"
 msgstr "%s%s (Alt-%c)"
 
-#, c-format
-msgid "%s - UFRaw Photo Loader"
-msgstr "%s - UFRaw Fotoindlæser"
+#, fuzzy, c-format
+msgid "%s - UFRaw"
+msgstr "UFRaw "
 
 msgid "Linear"
 msgstr "Lineær"
@@ -1076,8 +1077,8 @@ msgstr "Kameramodel"
 msgid "Timestamp"
 msgstr "Optagelsestidspunkt"
 
-msgid "Exposure"
-msgstr "Lukkertid"
+msgid "Shutter time"
+msgstr ""
 
 msgid "Aperture"
 msgstr "Blænde"
@@ -1402,6 +1403,12 @@ msgstr "Kamera-HB"
 
 msgid "Auto WB"
 msgstr "Automatisk HB"
+
+#~ msgid "%s - UFRaw Photo Loader"
+#~ msgstr "%s - UFRaw Fotoindlæser"
+
+#~ msgid "Exposure"
+#~ msgstr "Lukkertid"
 
 #~ msgid "8-bit ppm"
 #~ msgstr "8-bits ppm"

@@ -3418,7 +3418,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     char *utf8_filename = g_filename_to_utf8(uf->filename,
 	    -1, NULL, NULL, NULL);
     if (utf8_filename==NULL) utf8_filename = g_strdup("Unknown file name");
-    char *previewHeader = g_strdup_printf(_("%s - UFRaw Photo Loader"),
+    char *previewHeader = g_strdup_printf(_("%s - UFRaw"),
 	    utf8_filename);
     gtk_window_set_title(GTK_WINDOW(previewWindow), previewHeader);
     g_free(previewHeader);
@@ -4375,7 +4375,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     list_store_add(store, _("Camera maker"), CFG->make);
     list_store_add(store, _("Camera model"), CFG->model);
     list_store_add(store, _("Timestamp"), CFG->timestampText);
-    list_store_add(store, _("Exposure"), CFG->shutterText);
+    list_store_add(store, _("Shutter time"), CFG->shutterText);
     list_store_add(store, _("Aperture"), CFG->apertureText);
     list_store_add(store, _("ISO speed"), CFG->isoText);
     list_store_add(store, _("Focal length"), CFG->focalLenText);

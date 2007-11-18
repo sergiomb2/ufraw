@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-19 00:26+0100\n"
+"POT-Creation-Date: 2007-11-19 00:39+0100\n"
 "PO-Revision-Date: 2007-11-13 21:53+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -347,7 +347,8 @@ msgstr "\"%s\" är inte ett giltigt värde för flaggan --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw byggdes utan ZIP-stöd."
 
-msgid "--batch is obselete. use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. use ufraw-batch instead."
 msgstr "--batch är föråldrad. använd ufraw-batch istället."
 
 #, c-format
@@ -703,9 +704,9 @@ msgstr ""
 msgid "%s%s (Alt-%c)"
 msgstr "%s%s (Alt-%c)"
 
-#, c-format
-msgid "%s - UFRaw Photo Loader"
-msgstr "%s - UFRaw fotoinläsare"
+#, fuzzy, c-format
+msgid "%s - UFRaw"
+msgstr "UFRaw "
 
 msgid "Linear"
 msgstr "Linjär"
@@ -974,8 +975,9 @@ msgstr "Kameramodell"
 msgid "Timestamp"
 msgstr "Tidsstämpel"
 
-msgid "Exposure"
-msgstr "Exponering"
+#, fuzzy
+msgid "Shutter time"
+msgstr "Slutare: "
 
 msgid "Aperture"
 msgstr "Bländare"
@@ -1296,6 +1298,12 @@ msgstr "Kamera VB"
 msgid "Auto WB"
 msgstr "Automatisk VB"
 
+#~ msgid "%s - UFRaw Photo Loader"
+#~ msgstr "%s - UFRaw fotoinläsare"
+
+#~ msgid "Exposure"
+#~ msgstr "Exponering"
+
 #~ msgid "8-bit ppm"
 #~ msgstr "8-bitars ppm"
 
@@ -1430,9 +1438,6 @@ msgstr "Automatisk VB"
 
 #~ msgid "ISO speed: %d\n"
 #~ msgstr "ISO-hastighet: %d\n"
-
-#~ msgid "Shutter: "
-#~ msgstr "Slutare: "
 
 #~ msgid "%0.1f sec\n"
 #~ msgstr "%0.1f s\n"

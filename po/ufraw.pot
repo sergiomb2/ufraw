@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-19 00:26+0100\n"
+"POT-Creation-Date: 2007-11-19 00:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -341,7 +341,7 @@ msgstr ""
 msgid "ufraw was build without ZIP support."
 msgstr ""
 
-msgid "--batch is obselete. use ufraw-batch instead."
+msgid "--batch is obsolete. use ufraw-batch instead."
 msgstr ""
 
 #, c-format
@@ -695,7 +695,7 @@ msgid "%s%s (Alt-%c)"
 msgstr ""
 
 #, c-format
-msgid "%s - UFRaw Photo Loader"
+msgid "%s - UFRaw"
 msgstr ""
 
 msgid "Linear"
@@ -965,7 +965,7 @@ msgstr ""
 msgid "Timestamp"
 msgstr ""
 
-msgid "Exposure"
+msgid "Shutter time"
 msgstr ""
 
 msgid "Aperture"

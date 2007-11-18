@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-19 00:26+0100\n"
+"POT-Creation-Date: 2007-11-19 00:39+0100\n"
 "PO-Revision-Date: 2007-11-09 21:16+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -409,7 +409,8 @@ msgstr "'%s'은(는) --%s의 유효한 값이 아닙니다."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw가 ZIP 지원이 빠진 채로 빌드됨."
 
-msgid "--batch is obselete. use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. use ufraw-batch instead."
 msgstr "--batch는 더이상 사용되지 않습니다. 대신 ufraw-batch를 사용하세요."
 
 #, c-format
@@ -779,9 +780,9 @@ msgstr ""
 msgid "%s%s (Alt-%c)"
 msgstr "%s%s (Alt-%c)"
 
-#, c-format
-msgid "%s - UFRaw Photo Loader"
-msgstr "%s - UFRaw Photo Loader"
+#, fuzzy, c-format
+msgid "%s - UFRaw"
+msgstr "UFRaw "
 
 msgid "Linear"
 msgstr "선형"
@@ -1060,8 +1061,8 @@ msgstr "카메라 모델"
 msgid "Timestamp"
 msgstr "타임스탬프"
 
-msgid "Exposure"
-msgstr "노출시간"
+msgid "Shutter time"
+msgstr ""
 
 msgid "Aperture"
 msgstr "조리개"
@@ -1386,6 +1387,12 @@ msgstr "카메라 화벨"
 
 msgid "Auto WB"
 msgstr "자동 화벨"
+
+#~ msgid "%s - UFRaw Photo Loader"
+#~ msgstr "%s - UFRaw Photo Loader"
+
+#~ msgid "Exposure"
+#~ msgstr "노출시간"
 
 #~ msgid "8-bit ppm"
 #~ msgstr "8-bit ppm"
