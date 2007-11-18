@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-16 19:03+0100\n"
+"POT-Creation-Date: 2007-11-19 00:26+0100\n"
 "PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -339,12 +339,16 @@ msgstr ""
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=РАЗМЕР         Уменьшить максимальный из размеров до РАЗМЕР.\n"
 
+#, fuzzy
 msgid ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
-"                      Output file format (default ppm8).\n"
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Output file format (default ppm).\n"
 msgstr ""
 "--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg\n"
 "                      Формат выходного файла (по умолчанию — ppm8).\n"
+
+msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
+msgstr ""
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -488,6 +492,14 @@ msgstr "%s' не является корректным ключом обреза
 msgid "you can not specify both --shrink and --size"
 msgstr "Вы не можете одновременно указать --shrink и --size"
 
+#, fuzzy, c-format
+msgid "'%d' is not a valid bit depth."
+msgstr "'%s' не задаёт существующий каталог."
+
+#, c-format
+msgid "Output type '%s' is deprecated"
+msgstr ""
+
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw был собран без поддержки TIFF."
 
@@ -503,6 +515,10 @@ msgstr "'%s' не является корректным типом выходн�
 
 #, c-format
 msgid "'%s' is not a valid output type for embedded image."
+msgstr "'%s' не является корректным типом вывода для встроенного изображения."
+
+#, fuzzy, c-format
+msgid "'%d' is not a valid bit depth for embedded image."
 msgstr "'%s' не является корректным типом вывода для встроенного изображения."
 
 #, c-format
@@ -966,6 +982,16 @@ msgstr "Насыщенность"
 msgid "Absolute colorimetric"
 msgstr "Абс. колориметрическая"
 
+#, fuzzy
+msgid "Output bit depth"
+msgstr "Вывод"
+
+msgid "8"
+msgstr ""
+
+msgid "16"
+msgstr ""
+
 msgid "Display intent"
 msgstr "Монитор"
 
@@ -1204,17 +1230,11 @@ msgstr "Параметры вывода"
 msgid "Interpolation method set to AHD"
 msgstr "Используется способ интерполяции AHD"
 
-msgid "8-bit ppm"
-msgstr "8-разрядные PPM"
+msgid "ppm"
+msgstr ""
 
-msgid "16-bit ppm"
-msgstr "16-разрядные PPM"
-
-msgid "8-bit TIFF"
-msgstr "8-разрядные TIFF"
-
-msgid "16-bit TIFF"
-msgstr "16-разрядные TIFF"
+msgid "TIFF"
+msgstr ""
 
 msgid "ZIP Compress (lossless)"
 msgstr "Сжатие ZIP (без потерь в качестве)"
@@ -1225,11 +1245,8 @@ msgstr "Уровень сжатия"
 msgid "Progressive encoding"
 msgstr "Прогрессивное кодирование"
 
-msgid "8-bit PNG"
-msgstr "8-разрядный PNG"
-
-msgid "16-bit PNG"
-msgstr "16-разрядный PNG"
+msgid "PNG"
+msgstr ""
 
 msgid "Flexible Image Transport System (FITS)"
 msgstr "Гибкая система передачи изображения (FITS)"
@@ -1312,6 +1329,10 @@ msgstr "Сохраняется снимок"
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "Не удалось встроить профиль вывода '%s' в '%s'"
+
+#, c-format
+msgid "Unsupported bit depth '%d' ignored."
+msgstr ""
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
@@ -1400,3 +1421,21 @@ msgstr "ББ камеры"
 
 msgid "Auto WB"
 msgstr "Автоматический ББ"
+
+#~ msgid "8-bit ppm"
+#~ msgstr "8-разрядные PPM"
+
+#~ msgid "16-bit ppm"
+#~ msgstr "16-разрядные PPM"
+
+#~ msgid "8-bit TIFF"
+#~ msgstr "8-разрядные TIFF"
+
+#~ msgid "16-bit TIFF"
+#~ msgstr "16-разрядные TIFF"
+
+#~ msgid "8-bit PNG"
+#~ msgstr "8-разрядный PNG"
+
+#~ msgid "16-bit PNG"
+#~ msgstr "16-разрядный PNG"

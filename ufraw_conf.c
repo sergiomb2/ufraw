@@ -62,13 +62,13 @@ const conf_data conf_default = {
     },
     { 0, 0, 0 } , { 1, 1, 2 }, /* profileIndex[], profileCount[] */
     /* Profile data defaults */
-    { { { N_("sRGB"), "", "", 0.45, 0.1, TRUE },
-	{ "Some ICC Profile", "", "", 0.45, 0.0, FALSE } },
-      { { N_("sRGB"), "", "", 0.0, 0.0, FALSE },
-	{ "Some ICC Profile", "", "", 0.0, 0.0, FALSE } },
-      { { N_("System default"), "", "", 0.0, 0.0, FALSE },
-	{ N_("sRGB"), "", "", 0.0, 0.0, FALSE },
-	{ "Some ICC Profile", "", "", 0.0, 0.0, FALSE } } },
+    { { { N_("sRGB"), "", "", 0.45, 0.1, TRUE, 0 },
+	{ "Some ICC Profile", "", "", 0.45, 0.0, FALSE, 0 } },
+      { { N_("sRGB"), "", "", 0.0, 0.0, FALSE, 8 },
+	{ "Some ICC Profile", "", "", 0.0, 0.0, FALSE, 8 } },
+      { { N_("System default"), "", "", 0.0, 0.0, FALSE, 0 },
+	{ N_("sRGB"), "", "", 0.0, 0.0, FALSE, 0 },
+	{ "Some ICC Profile", "", "", 0.0, 0.0, FALSE, 0 } } },
     { 0, 0, 0 }, /* intent */
     ahd_interpolation, 0, /* interpolation, smoothing */
     "", NULL, /* darkframeFile, darkframe */
@@ -76,7 +76,7 @@ const conf_data conf_default = {
     /* Save options */
     "", "", "", /* inputFilename, outputFilename, outputPath */
     "", "", /* inputURI, inputModTime */
-    ppm8_type, 85, no_id, /* type, compression, createID */
+    ppm_type, 85, no_id, /* type, compression, createID */
     TRUE, /* embedExif */
     FALSE, /* progressiveJPEG */
     1, 0, /* shrink, size */
@@ -380,6 +380,8 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	}
 	if (!strcmp("ProductName", element))
 	    g_strlcpy(c->profile[out_profile][i].productName, temp, max_path);
+	if (!strcmp("BitDepth", element))
+	    sscanf(temp, "%d", &c->profile[out_profile][i].BitDepth);
 	return;
     }
     if (c->profileCount[display_profile]<=0) {
@@ -656,6 +658,19 @@ int conf_load(conf_data *c, const char *IDFilename)
 	c->profileIndex[display_profile] =
 		conf_default.profileIndex[display_profile];
 
+    // Support OutputType's deprecated in UFRaw-0.14
+    if ( c->type==ppm16_deprecated_type ) {
+	c->type = ppm_type;
+	c->profile[out_profile][c->profileIndex[out_profile]].BitDepth = 16;
+    }
+    if ( c->type==tiff16_deprecated_type ) {
+	c->type = tiff_type;
+	c->profile[out_profile][c->profileIndex[out_profile]].BitDepth = 16;
+    }
+    if ( c->type==png16_deprecated_type ) {
+	c->type = png_type;
+	c->profile[out_profile][c->profileIndex[out_profile]].BitDepth = 16;
+    }
     /* a few consistency settings */
     if (c->curveIndex>=c->curveCount) c->curveIndex = conf_default.curveIndex;
     return UFRAW_SUCCESS;
@@ -916,10 +931,12 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	/* The default sRGB profile is conf_default.profile[j][0] */
 	if ( c->profileIndex[j]<conf_default.profileCount[j] ||
 	     ( IDFilename==NULL &&
-	       ( c->profile[j][0].gamma!=conf_default.profile[0][0].gamma ||
-		 c->profile[j][0].linear!=conf_default.profile[0][0].linear ||
+	       ( c->profile[j][0].gamma!=conf_default.profile[j][0].gamma ||
+		 c->profile[j][0].linear!=conf_default.profile[j][0].linear ||
 		 c->profile[j][0].useMatrix!=
-			conf_default.profile[0][0].useMatrix ) ) ) {
+			conf_default.profile[j][0].useMatrix ||
+		 c->profile[j][0].BitDepth!=
+			conf_default.profile[j][0].BitDepth ) ) ) {
 	    current = c->profileIndex[j]==0 ? "yes" : "no";
 	    char *profile = ( j==display_profile && c->profileIndex[j]==0 ) ?
 		    "System" : "sRGB";
@@ -936,6 +953,9 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 		buf = uf_markup_buf(buf,
 			"\t<UseColorMatrix>%d</UseColorMatrix>\n",
 			c->profile[j][0].useMatrix);
+	    if (c->profile[j][0].BitDepth!= conf_default.profile[j][0].BitDepth)
+		buf = uf_markup_buf(buf, "\t<BitDepth>%d</BitDepth>\n",
+			c->profile[j][0].BitDepth);
 	    buf = uf_markup_buf(buf, "</%s%s>\n", profile, type);
 	}
 	/* While the default ICC profile is conf_default.profile[j][1] */
@@ -963,6 +983,9 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 		buf = uf_markup_buf(buf,
 			"\t<UseColorMatrix>%d</UseColorMatrix>\n",
 			c->profile[j][i].useMatrix);
+	    if (c->profile[j][i].BitDepth!= conf_default.profile[j][1].BitDepth)
+		buf = uf_markup_buf(buf, "\t<BitDepth>%d</BitDepth>\n",
+			c->profile[j][i].BitDepth);
 	    buf = uf_markup_buf(buf, "</%s>\n", type);
 	}
     }
@@ -1202,6 +1225,9 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     if (cmd->profile[0][0].linear!=NULLF)
 	conf->profile[0][conf->profileIndex[0]].linear =
 		cmd->profile[0][0].linear;
+    if (cmd->profile[1][0].BitDepth!=-1)
+	conf->profile[1][conf->profileIndex[1]].BitDepth =
+		cmd->profile[1][0].BitDepth;
     if (cmd->saturation!=NULLF)
 	conf->saturation=cmd->saturation;
     if (cmd->BaseCurveIndex>=0) conf->BaseCurveIndex = cmd->BaseCurveIndex;
@@ -1316,8 +1342,9 @@ N_("The options which are related to the final output are:\n"),
 "\n",
 N_("--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"),
 N_("--size=SIZE           Downsize max(height,width) to SIZE.\n"),
-N_("--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
-"                      Output file format (default ppm8).\n"),
+N_("--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Output file format (default ppm).\n"),
+N_("--out-depth=8|16      Output bit depth per channel (default 8).\n"),
 N_("--create-id=no|also|only\n"
 "                      Create no|also|only ID file (default no).\n"),
 N_("--compression=VALUE   JPEG compression (0-100, default 85).\n"),
@@ -1415,10 +1442,11 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{ "size", 1, 0, 'X'},
 	{ "compression", 1, 0, 'j'},
 	{ "out-type", 1, 0, 'T'},
+	{ "out-depth", 1, 0, 'd'},
 	{ "create-id", 1, 0, 'I'},
 	{ "out-path", 1, 0, 'p'},
 	{ "output", 1, 0, 'o'},
-	{ "darkframe",1,0,'a'},
+	{ "darkframe",1,0,'D'},
 	{ "restore", 1, 0, 'r'},
 	{ "clip", 1, 0, 'u'},
 	{ "conf", 1, 0, 'C'},
@@ -1441,13 +1469,15 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	&cmd->saturation, &cmd->threshold,
 	&cmd->exposure, &cmd->black, &interpolationName,
 	&cmd->shrink, &cmd->size, &cmd->compression,
-	&outTypeName, &createIDName, &outPath, &output, &darkframeFile,
+	&outTypeName, &cmd->profile[1][0].BitDepth,
+	&createIDName, &outPath, &output, &darkframeFile,
 	&restoreName, &clipName, &conf };
     cmd->autoExposure = disabled_state;
     cmd->autoBlack = disabled_state;
     cmd->losslessCompress=-1;
     cmd->overwrite=-1;
     cmd->embedExif=-1;
+    cmd->profile[1][0].BitDepth=-1;
     cmd->embeddedImage=FALSE;
     cmd->silent=FALSE;
     cmd->profile[0][0].gamma=NULLF;
@@ -1482,7 +1512,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'L':
 	case 's':
 	case 'n':
-	case 'd':
 	    if (sscanf(optarg, "%lf", (double *)optPointer[index])==0) {
 		ufraw_message(UFRAW_ERROR,
 			_("'%s' is not a valid value for the --%s option."),
@@ -1493,6 +1522,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'x':
 	case 'X':
 	case 'j':
+	case 'd':
 	    if (sscanf(optarg, "%d", (int *)optPointer[index])==0) {
 		ufraw_message(UFRAW_ERROR,
 			_("'%s' is not a valid value for the --%s option."),
@@ -1510,7 +1540,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'I':
 	case 'p':
 	case 'o':
-	case 'a':
+	case 'D':
 	case 'C':
 	case 'r':
 	case 'u':
@@ -1693,21 +1723,56 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 			_("you can not specify both --shrink and --size"));
 	return -1;
     }
+    if ( cmd->profile[1][0].BitDepth!=-1 ) {
+	if ( cmd->profile[1][0].BitDepth!=8 &&
+	     cmd->profile[1][0].BitDepth!=16 ) {
+	    ufraw_message(UFRAW_ERROR,
+		    _("'%d' is not a valid bit depth."),
+		    cmd->profile[1][0].BitDepth);
+	    return -1;
+	}
+    }
     cmd->type = -1;
     if (outTypeName!=NULL && !cmd->embeddedImage) {
-	if (!strcmp(outTypeName, "ppm8"))
-	    cmd->type = ppm8_type;
-	else if (!strcmp(outTypeName, "ppm16"))
-	    cmd->type = ppm16_type;
+	if ( strcmp(outTypeName, "ppm")==0 ) {
+	    cmd->type = ppm_type;
+	} else if ( strcmp(outTypeName, "ppm8")==0 ) {
+	    cmd->type = ppm_type;
+	    cmd->profile[1][0].BitDepth = 8;
+	    ufraw_message(UFRAW_WARNING,
+		    _("Output type '%s' is deprecated"), outTypeName);
+	} else if ( strcmp(outTypeName, "ppm16")==0 ) {
+	    cmd->type = ppm_type;
+	    cmd->profile[1][0].BitDepth = 16;
+	    ufraw_message(UFRAW_WARNING,
+		    _("Output type '%s' is deprecated"), outTypeName);
+	}
 #ifdef HAVE_LIBCFITSIO
-	else if (!strcmp(outTypeName, "fits"))
+	else if ( strcmp(outTypeName, "fits")==0 ) {
 	    cmd->type = fits_type;
+	}
 #endif
 
-	else if (!strcmp(outTypeName, "tiff8"))
-
+	else if (!strcmp(outTypeName, "tiff"))
 #ifdef HAVE_LIBTIFF
-	cmd->type = tiff8_type;
+	{
+	    cmd->type = tiff_type;
+	}
+#else
+	{
+	    ufraw_message(UFRAW_ERROR,
+		    _("ufraw was build without TIFF support."));
+	    return -1;
+	}
+#endif
+	else if (!strcmp(outTypeName, "tiff8"))
+#ifdef HAVE_LIBTIFF
+	{
+	    cmd->type = tiff_type;
+	    cmd->profile[1][0].BitDepth = 8;
+	    ufraw_message(UFRAW_WARNING,
+		    _("Output type '%s' is deprecated"), outTypeName);
+	}
 #else
 	{
 	    ufraw_message(UFRAW_ERROR,
@@ -1717,7 +1782,12 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 #endif
 	else if (!strcmp(outTypeName, "tiff16"))
 #ifdef HAVE_LIBTIFF
-	cmd->type = tiff16_type;
+	{
+	    cmd->type = tiff_type;
+	    cmd->profile[1][0].BitDepth = 16;
+	    ufraw_message(UFRAW_WARNING,
+		    _("Output type '%s' is deprecated"), outTypeName);
+	}
 #else
 	{
 	    ufraw_message(UFRAW_ERROR,
@@ -1735,9 +1805,26 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    return -1;
 	}
 #endif
+	else if (!strcmp(outTypeName, "png"))
+#ifdef HAVE_LIBPNG
+	{
+	    cmd->type = png_type;
+	}
+#else
+	{
+	    ufraw_message(UFRAW_ERROR,
+		    _("ufraw was build without PNG support."));
+	    return -1;
+	}
+#endif
 	else if (!strcmp(outTypeName, "png8"))
 #ifdef HAVE_LIBPNG
-	cmd->type = png8_type;
+	{
+	    cmd->type = png_type;
+	    cmd->profile[1][0].BitDepth = 8;
+	    ufraw_message(UFRAW_WARNING,
+		    _("Output type '%s' is deprecated"), outTypeName);
+	}
 #else
 	{
 	    ufraw_message(UFRAW_ERROR,
@@ -1747,7 +1834,12 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 #endif
 	else if (!strcmp(outTypeName, "png16"))
 #ifdef HAVE_LIBPNG
-	cmd->type = png16_type;
+	{
+	    cmd->type = png_type;
+	    cmd->profile[1][0].BitDepth = 16;
+	    ufraw_message(UFRAW_WARNING,
+		    _("Output type '%s' is deprecated"), outTypeName);
+	}
 #else
 	{
 	    ufraw_message(UFRAW_ERROR,
@@ -1777,6 +1869,13 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    ufraw_message(UFRAW_ERROR,
 		    _("'%s' is not a valid output type for embedded image."),
 		    outTypeName);
+	    return -1;
+	}
+	if ( cmd->profile[1][0].BitDepth!=-1 &&
+	     cmd->profile[1][0].BitDepth!=8 ) {
+	    ufraw_message(UFRAW_ERROR,
+		    _("'%d' is not a valid bit depth for embedded image."),
+		    cmd->profile[1][0].BitDepth);
 	    return -1;
 	}
     }

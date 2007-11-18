@@ -62,13 +62,13 @@ static void ufraw_saver_set_type(GtkWidget *widget, save_as_dialog_data *data)
 	g_free(filename);
 	return;
     }
-    if ( !strcmp(type,".ppm") && data->uf->conf->type!=ppm16_type ) {
-	data->uf->conf->type = ppm8_type;
+    if ( !strcmp(type,".ppm") ) {
+	data->uf->conf->type = ppm_type;
 	gtk_toggle_button_set_active(data->ppmButton, TRUE);
     }
 #ifdef HAVE_LIBTIFF
-    if ( !strcmp(type,".tif") && data->uf->conf->type!=tiff16_type ) {
-	data->uf->conf->type = tiff8_type;
+    if ( !strcmp(type,".tif") ) {
+	data->uf->conf->type = tiff_type;
 	gtk_toggle_button_set_active(data->tiffButton, TRUE);
     }
 #endif
@@ -80,7 +80,7 @@ static void ufraw_saver_set_type(GtkWidget *widget, save_as_dialog_data *data)
 #endif
 #ifdef HAVE_LIBPNG
     if ( !strcmp(type,".png") ) {
-	data->uf->conf->type = png8_type;
+	data->uf->conf->type = png_type;
 	gtk_toggle_button_set_active(data->pngButton, TRUE);
     }
 #endif
@@ -174,20 +174,11 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
     }
 
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
-    button = gtk_radio_button_new_with_label(NULL, _("8-bit ppm"));
+    button = gtk_radio_button_new_with_label(NULL, _("ppm"));
     data->ppmButton = GTK_TOGGLE_BUTTON(button);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-	    uf->conf->type==ppm8_type);
-    g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)ppm8_type);
-    g_signal_connect(G_OBJECT(button), "toggled",
-	    G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
-    gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);
-
-    button = gtk_radio_button_new_with_label_from_widget(
-	    GTK_RADIO_BUTTON(button), _("16-bit ppm"));
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-	    uf->conf->type==ppm16_type);
-    g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)ppm16_type);
+	    uf->conf->type==ppm_type);
+    g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)ppm_type);
     g_signal_connect(G_OBJECT(button), "toggled",
 	    G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
     gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);
@@ -197,24 +188,16 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
     table = gtk_table_new(5, 1, FALSE);
     gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
     button = gtk_radio_button_new_with_label_from_widget(
-	    GTK_RADIO_BUTTON(button), _("8-bit TIFF"));
+	    GTK_RADIO_BUTTON(button), _("TIFF"));
     data->tiffButton = GTK_TOGGLE_BUTTON(button);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-	    uf->conf->type==tiff8_type);
-    g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)tiff8_type);
+	    uf->conf->type==tiff_type);
+    g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)tiff_type);
     g_signal_connect(G_OBJECT(button), "toggled",
 	    G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
     align = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
     gtk_container_add(GTK_CONTAINER(align), button);
     gtk_table_attach(GTK_TABLE(table), align, 0, 1, 0, 1, GTK_FILL,0, 0, 0);
-    button = gtk_radio_button_new_with_label_from_widget(
-	    GTK_RADIO_BUTTON(button), _("16-bit TIFF"));
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-	    uf->conf->type==tiff16_type);
-    g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)tiff16_type);
-    g_signal_connect(G_OBJECT(button), "toggled",
-	    G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
-    gtk_table_attach(GTK_TABLE(table), button, 0, 1, 1, 2, 0, 0, 0, 0);
 #ifdef HAVE_LIBZ
     losslessButton = gtk_check_button_new_with_label(_("ZIP Compress (lossless)"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(losslessButton),
@@ -255,24 +238,16 @@ long ufraw_save_as(ufraw_data *uf, void *widget)
     table = gtk_table_new(5, 1, FALSE);
     gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
     button = gtk_radio_button_new_with_label_from_widget(
-	    GTK_RADIO_BUTTON(button), _("8-bit PNG"));
+	    GTK_RADIO_BUTTON(button), _("PNG"));
     data->pngButton = GTK_TOGGLE_BUTTON(button);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-	    uf->conf->type==png8_type);
-    g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)png8_type);
+	    uf->conf->type==png_type);
+    g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)png_type);
     g_signal_connect(G_OBJECT(button), "toggled",
 	    G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
     align = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
     gtk_container_add(GTK_CONTAINER(align), button);
     gtk_table_attach(GTK_TABLE(table), align, 0, 1, 0, 1, GTK_FILL,0, 0, 0);
-    button = gtk_radio_button_new_with_label_from_widget(
-	    GTK_RADIO_BUTTON(button), _("16-bit PNG"));
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-	    uf->conf->type==png16_type);
-    g_object_set_data(G_OBJECT(button), "ButtonValue", (gpointer)png16_type);
-    g_signal_connect(G_OBJECT(button), "toggled",
-	    G_CALLBACK(ufraw_radio_button_update), &uf->conf->type);
-    gtk_table_attach(GTK_TABLE(table), button, 0, 1, 1, 2, 0, 0, 0, 0);
 #endif /*HAVE_LIBPNG*/
 #ifdef HAVE_LIBCFITSIO
     gtk_box_pack_start(GTK_BOX(box), gtk_hseparator_new(), TRUE, TRUE, 0);
@@ -401,6 +376,9 @@ long ufraw_save_now(ufraw_data *uf, void *widget)
     if ( status==UFRAW_ERROR ) {
 	ufraw_message(status, ufraw_get_message(uf));
 	return UFRAW_ERROR;
+    }
+    if ( status==UFRAW_WARNING ) {
+	ufraw_message(status, ufraw_get_message(uf));
     }
     if ( ufraw_get_message(uf)!=NULL )
 	ufraw_message(UFRAW_SET_LOG, ufraw_get_message(uf));

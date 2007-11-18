@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-16 19:03+0100\n"
+"POT-Creation-Date: 2007-11-19 00:26+0100\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -316,11 +316,14 @@ msgstr "--size=SIZE           画像を縮小(高さ・幅の長辺側をSIZEに
 
 #, fuzzy
 msgid ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
-"                      Output file format (default ppm8).\n"
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Output file format (default ppm).\n"
 msgstr ""
 "--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
 "                      出力形式 (デフォルト ppm8)。\n"
+
+msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
+msgstr ""
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -453,6 +456,14 @@ msgstr "'%s' は正しいclipオプションではありません。"
 msgid "you can not specify both --shrink and --size"
 msgstr "--shrink と --sizeは同時に指定できません"
 
+#, fuzzy, c-format
+msgid "'%d' is not a valid bit depth."
+msgstr "'%s' は正しいパスではありません"
+
+#, c-format
+msgid "Output type '%s' is deprecated"
+msgstr ""
+
 msgid "ufraw was build without TIFF support."
 msgstr "ufrawはTIFFサポート無しでビルドされました。"
 
@@ -469,6 +480,10 @@ msgstr "'%s'は正しい出力形式ではありません"
 
 #, c-format
 msgid "'%s' is not a valid output type for embedded image."
+msgstr "'%s' は埋め込み画像として正しい出力形式ではありません"
+
+#, fuzzy, c-format
+msgid "'%d' is not a valid bit depth for embedded image."
 msgstr "'%s' は埋め込み画像として正しい出力形式ではありません"
 
 #, c-format
@@ -956,6 +971,16 @@ msgstr "彩度"
 msgid "Absolute colorimetric"
 msgstr "絶対比色"
 
+#, fuzzy
+msgid "Output bit depth"
+msgstr "出力オプション"
+
+msgid "8"
+msgstr ""
+
+msgid "16"
+msgstr ""
+
 msgid "Display intent"
 msgstr ""
 
@@ -1211,17 +1236,11 @@ msgstr "出力オプション"
 msgid "Interpolation method set to AHD"
 msgstr ""
 
-msgid "8-bit ppm"
-msgstr "8-bit ppm"
+msgid "ppm"
+msgstr ""
 
-msgid "16-bit ppm"
-msgstr "16-bit ppm"
-
-msgid "8-bit TIFF"
-msgstr "8-bit TIFF"
-
-msgid "16-bit TIFF"
-msgstr "16-bit TIFF"
+msgid "TIFF"
+msgstr ""
 
 msgid "ZIP Compress (lossless)"
 msgstr "ZIP圧縮 (画像の劣化無し)"
@@ -1232,13 +1251,8 @@ msgstr "圧縮比率"
 msgid "Progressive encoding"
 msgstr ""
 
-#, fuzzy
-msgid "8-bit PNG"
-msgstr "8-bit ppm"
-
-#, fuzzy
-msgid "16-bit PNG"
-msgstr "16-bit ppm"
+msgid "PNG"
+msgstr ""
 
 msgid "Flexible Image Transport System (FITS)"
 msgstr ""
@@ -1332,6 +1346,10 @@ msgstr "画像を保存しています"
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "出力プロファイル'%s'を'%s'へ埋め込むのに失敗しました"
 
+#, c-format
+msgid "Unsupported bit depth '%d' ignored."
+msgstr ""
+
 #, fuzzy, c-format
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIFバッファ長 %d が長すぎるので無視します\n"
@@ -1419,3 +1437,23 @@ msgstr "カメラWB"
 
 msgid "Auto WB"
 msgstr "自動WB"
+
+#~ msgid "8-bit ppm"
+#~ msgstr "8-bit ppm"
+
+#~ msgid "16-bit ppm"
+#~ msgstr "16-bit ppm"
+
+#~ msgid "8-bit TIFF"
+#~ msgstr "8-bit TIFF"
+
+#~ msgid "16-bit TIFF"
+#~ msgstr "16-bit TIFF"
+
+#, fuzzy
+#~ msgid "8-bit PNG"
+#~ msgstr "8-bit ppm"
+
+#, fuzzy
+#~ msgid "16-bit PNG"
+#~ msgstr "16-bit ppm"

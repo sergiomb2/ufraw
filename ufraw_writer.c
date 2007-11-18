@@ -135,7 +135,7 @@ int ufraw_write_image(ufraw_data *uf)
 	return status;
     }
 #ifdef HAVE_LIBTIFF
-    if (uf->conf->type==tiff8_type || uf->conf->type==tiff16_type) {
+    if ( uf->conf->type==tiff_type ) {
 	TIFFSetErrorHandler(tiff_messenger);
 	TIFFSetWarningHandler(tiff_messenger);
 	ufraw_tiff_message[0] = '\0';
@@ -202,6 +202,9 @@ int ufraw_write_image(ufraw_data *uf)
     ufraw_convert_image(uf);
     left = uf->conf->CropX1 * uf->image.width / uf->initialWidth;
     top = uf->conf->CropY1 * uf->image.height / uf->initialHeight;
+    volatile int BitDepth = uf->conf->profile[out_profile]
+			[uf->conf->profileIndex[out_profile]].BitDepth;
+    if ( BitDepth!=16 ) BitDepth = 8;
     width = (uf->conf->CropX2 - uf->conf->CropX1)
 	    * uf->image.width / uf->initialWidth;
     height = (uf->conf->CropY2 - uf->conf->CropY1)
@@ -209,7 +212,7 @@ int ufraw_write_image(ufraw_data *uf)
     rowStride = uf->image.width;
     rawImage = uf->image.image;
     pixbuf16 = g_new(guint16, width*3);
-    if (uf->conf->type==ppm8_type) {
+    if ( uf->conf->type==ppm_type && BitDepth==8 ) {
 	fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFF);
 	pixbuf8 = g_new(guint8, width*3);
 	for (row=0; row<height; row++) {
@@ -225,7 +228,7 @@ int ufraw_write_image(ufraw_data *uf)
 		break;
 	    }
 	}
-    } else if (uf->conf->type==ppm16_type) {
+    } else if ( uf->conf->type==ppm_type && BitDepth==16 ) {
 	fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFFFF);
 	for (row=0; row<height; row++) {
 	    if (row%100==99)
@@ -243,16 +246,12 @@ int ufraw_write_image(ufraw_data *uf)
 	    }
 	}
 #ifdef HAVE_LIBTIFF
-    } else if (uf->conf->type==tiff8_type ||
-	    uf->conf->type==tiff16_type) {
+    } else if ( uf->conf->type==tiff_type ) {
 	TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
 	TIFFSetField(out, TIFFTAG_IMAGELENGTH, height);
 	TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
 	TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, 3);
-	if (uf->conf->type==tiff8_type)
-	    TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 8);
-	else
-	    TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, 16);
+	TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, BitDepth);
 	TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
 	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 #ifdef HAVE_LIBZ
@@ -279,7 +278,7 @@ int ufraw_write_image(ufraw_data *uf)
 	    }
 	}
 	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, TIFFDefaultStripSize(out, 0));
-	if (uf->conf->type==tiff8_type) {
+	if ( BitDepth==8 ) {
 	    pixbuf8 = g_new(guint8, width*3);
 	    for (row=0; row<height; row++) {
 		if (row%100==99) preview_progress(uf->widget, _("Saving image"),
@@ -294,7 +293,7 @@ int ufraw_write_image(ufraw_data *uf)
 		    break;
 		}
 	    }
-	} else {
+	} else { // BitDepth==16
 	    for (row=0; row<height; row++) {
 		if (row%100==99) preview_progress(uf->widget, _("Saving image"),
 			    0.5+0.5*row/height);
@@ -312,6 +311,9 @@ int ufraw_write_image(ufraw_data *uf)
 #endif /*HAVE_LIBTIFF*/
 #ifdef HAVE_LIBJPEG
     } else if (uf->conf->type==jpeg_type) {
+	if ( BitDepth!=8 )
+		ufraw_set_warning(uf,
+			_("Unsupported bit depth '%d' ignored."), BitDepth);
 	struct jpeg_compress_struct cinfo;
 	struct jpeg_error_mgr jerr;
 
@@ -378,7 +380,7 @@ int ufraw_write_image(ufraw_data *uf)
 	jpeg_destroy_compress(&cinfo);
 #endif /*HAVE_LIBJPEG*/
 #ifdef HAVE_LIBPNG
-    } else if (uf->conf->type==png8_type || uf->conf->type==png16_type) {
+    } else if ( uf->conf->type==png_type ) {
 	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING,
 		uf, png_error_handler, png_warning_handler);
 	png_infop info = png_create_info_struct(png);
@@ -392,8 +394,7 @@ int ufraw_write_image(ufraw_data *uf)
 	    png_destroy_write_struct(&png, &info);
 	} else {
 	    png_init_io(png, out);
-	    int bit_depth = uf->conf->type==png8_type ? 8 : 16;
-	    png_set_IHDR(png, info, width, height, bit_depth,
+	    png_set_IHDR(png, info, width, height, BitDepth,
 		    PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
 		    PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 	    png_set_compression_level(png, Z_BEST_COMPRESSION);
@@ -429,7 +430,7 @@ int ufraw_write_image(ufraw_data *uf)
 		PNGwriteRawProfile(png, info, "exif",
 			uf->exifBuf, uf->exifBufLen);
 	    png_write_info(png, info);
-	    if (uf->conf->type==png8_type) {
+	    if ( BitDepth==8 ) {
 		pixbuf8 = g_new(guint8, width*3);
 		for (row=0; row<height; row++) {
 		    if (row%100==99) preview_progress(uf->widget,
@@ -438,7 +439,7 @@ int ufraw_write_image(ufraw_data *uf)
 			    uf->developer, 8, pixbuf16, width);
 		    png_write_row(png, pixbuf8);
 		}
-	    } else {
+	    } else { // BitDepth==16
 		if ( G_BYTE_ORDER==G_LITTLE_ENDIAN )
 		    png_set_swap(png); // Swap byte order to big-endian
 		for (row=0; row<height; row++) {
@@ -604,7 +605,7 @@ int ufraw_write_image(ufraw_data *uf)
     g_free(pixbuf16);
     g_free(pixbuf8);
 #ifdef HAVE_LIBTIFF
-    if (uf->conf->type==tiff8_type || uf->conf->type==tiff16_type) {
+    if ( uf->conf->type==tiff_type ) {
 	TIFFClose(out);
 	if ( ufraw_tiff_message[0]!='\0' ) {
 	    if ( !ufraw_is_error(uf) ) { // Error was not already set before
@@ -631,6 +632,8 @@ int ufraw_write_image(ufraw_data *uf)
 	    }
     }
     if (uf->conf->createID==also_id) {
+	if ( ufraw_get_message(uf)!=NULL )
+	    ufraw_message(UFRAW_SET_LOG, ufraw_get_message(uf));
 	// TODO: error handling
 	conf_save(uf->conf, confFilename, NULL);
 	g_free(confFilename);

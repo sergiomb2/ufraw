@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-16 19:03+0100\n"
+"POT-Creation-Date: 2007-11-19 00:26+0100\n"
 "PO-Revision-Date: 2007-11-13 21:53+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -272,12 +272,16 @@ msgstr ""
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr ""
 
+#, fuzzy
 msgid ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
-"                      Output file format (default ppm8).\n"
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Output file format (default ppm).\n"
 msgstr ""
 "--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
 "                      Filformat för utmatning (standard är ppm8).\n"
+
+msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
+msgstr ""
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -394,6 +398,14 @@ msgstr ""
 msgid "you can not specify both --shrink and --size"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "'%d' is not a valid bit depth."
+msgstr "\"%s\" är inte en giltig sökväg."
+
+#, c-format
+msgid "Output type '%s' is deprecated"
+msgstr ""
+
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw byggdes utan TIFF-stöd."
 
@@ -410,6 +422,10 @@ msgstr ""
 #, c-format
 msgid "'%s' is not a valid output type for embedded image."
 msgstr ""
+
+#, fuzzy, c-format
+msgid "'%d' is not a valid bit depth for embedded image."
+msgstr "\"%s\" är inte ett giltigt kurvnamn."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
@@ -852,6 +868,15 @@ msgstr "Färgmättnad"
 msgid "Absolute colorimetric"
 msgstr ""
 
+msgid "Output bit depth"
+msgstr ""
+
+msgid "8"
+msgstr ""
+
+msgid "16"
+msgstr ""
+
 msgid "Display intent"
 msgstr ""
 
@@ -1081,17 +1106,11 @@ msgstr ""
 msgid "Interpolation method set to AHD"
 msgstr ""
 
-msgid "8-bit ppm"
-msgstr "8-bitars ppm"
+msgid "ppm"
+msgstr ""
 
-msgid "16-bit ppm"
-msgstr "16-bitars ppm"
-
-msgid "8-bit TIFF"
-msgstr "8-bitars TIFF"
-
-msgid "16-bit TIFF"
-msgstr "16-bitars TIFF"
+msgid "TIFF"
+msgstr ""
 
 msgid "ZIP Compress (lossless)"
 msgstr ""
@@ -1102,11 +1121,8 @@ msgstr "Komprimeringsnivå"
 msgid "Progressive encoding"
 msgstr "Progressiv kodning"
 
-msgid "8-bit PNG"
-msgstr "8-bitars PNG"
-
-msgid "16-bit PNG"
-msgstr "16-bitars PNG"
+msgid "PNG"
+msgstr ""
 
 msgid "Flexible Image Transport System (FITS)"
 msgstr "Flexible Image Transport System (FITS)"
@@ -1186,6 +1202,10 @@ msgstr "Sparar bild"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
+msgstr ""
+
+#, c-format
+msgid "Unsupported bit depth '%d' ignored."
 msgstr ""
 
 #, c-format
@@ -1275,6 +1295,24 @@ msgstr "Kamera VB"
 
 msgid "Auto WB"
 msgstr "Automatisk VB"
+
+#~ msgid "8-bit ppm"
+#~ msgstr "8-bitars ppm"
+
+#~ msgid "16-bit ppm"
+#~ msgstr "16-bitars ppm"
+
+#~ msgid "8-bit TIFF"
+#~ msgstr "8-bitars TIFF"
+
+#~ msgid "16-bit TIFF"
+#~ msgstr "16-bitars TIFF"
+
+#~ msgid "8-bit PNG"
+#~ msgstr "8-bitars PNG"
+
+#~ msgid "16-bit PNG"
+#~ msgstr "16-bitars PNG"
 
 #~ msgid "%s: Out of memory in %s\n"
 #~ msgstr "%s: Slut på minne i %s\n"

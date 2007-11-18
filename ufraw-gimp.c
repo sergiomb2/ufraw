@@ -30,6 +30,7 @@
 /* Fix some compatibility issues between CinePaint and GIMP */
 #define GIMP_CHECK_VERSION(a,b,c) 0
 typedef GimpRunModeType GimpRunMode;
+#define PLUGIN_MODE 2
 #else
 #include <libgimp/gimp.h>
 #include <libgimp/gimpui.h>
@@ -37,6 +38,7 @@ typedef GimpRunModeType GimpRunMode;
 /* Missing and irrelevant definitions in GIMP */
 #define U16_RGB 0
 #define U16_RGB_IMAGE 0
+#define PLUGIN_MODE 1
 #endif
 #include <glib/gi18n.h>
 #include "ufraw.h"
@@ -244,7 +246,7 @@ void run(GIMP_CONST gchar *name,
 	 !loadThumbnail && !sendToGimpMode ) {
 	/* Show the preview in interactive mode, unless if we are
 	 * in thumbnail mode or 'send to gimp' mode. */
-	status = ufraw_preview(uf, 1, ufraw_save_gimp_image);
+	status = ufraw_preview(uf, PLUGIN_MODE, ufraw_save_gimp_image);
     } else {
 	if ( sendToGimpMode ) {
 	    char *text = g_strdup_printf(_("Loading raw file '%s'"),
@@ -321,7 +323,11 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 	top = uf->conf->CropY1 * uf->image.height / uf->initialHeight;
 	left = uf->conf->CropX1 * uf->image.width / uf->initialWidth;
 #ifdef UFRAW_CINEPAINT
-	depth = 6;
+	if ( uf->conf->profile[out_profile]
+			[uf->conf->profileIndex[out_profile]].BitDepth==16 )
+	    depth = 6;
+	else
+	    depth = 3;
 #else
 	depth = 3;
 #endif

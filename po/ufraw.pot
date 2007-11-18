@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-16 19:03+0100\n"
+"POT-Creation-Date: 2007-11-19 00:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -270,8 +270,11 @@ msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr ""
 
 msgid ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
-"                      Output file format (default ppm8).\n"
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Output file format (default ppm).\n"
+msgstr ""
+
+msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
 msgstr ""
 
 msgid ""
@@ -388,6 +391,14 @@ msgstr ""
 msgid "you can not specify both --shrink and --size"
 msgstr ""
 
+#, c-format
+msgid "'%d' is not a valid bit depth."
+msgstr ""
+
+#, c-format
+msgid "Output type '%s' is deprecated"
+msgstr ""
+
 msgid "ufraw was build without TIFF support."
 msgstr ""
 
@@ -403,6 +414,10 @@ msgstr ""
 
 #, c-format
 msgid "'%s' is not a valid output type for embedded image."
+msgstr ""
+
+#, c-format
+msgid "'%d' is not a valid bit depth for embedded image."
 msgstr ""
 
 #, c-format
@@ -844,6 +859,15 @@ msgstr ""
 msgid "Absolute colorimetric"
 msgstr ""
 
+msgid "Output bit depth"
+msgstr ""
+
+msgid "8"
+msgstr ""
+
+msgid "16"
+msgstr ""
+
 msgid "Display intent"
 msgstr ""
 
@@ -1071,16 +1095,10 @@ msgstr ""
 msgid "Interpolation method set to AHD"
 msgstr ""
 
-msgid "8-bit ppm"
+msgid "ppm"
 msgstr ""
 
-msgid "16-bit ppm"
-msgstr ""
-
-msgid "8-bit TIFF"
-msgstr ""
-
-msgid "16-bit TIFF"
+msgid "TIFF"
 msgstr ""
 
 msgid "ZIP Compress (lossless)"
@@ -1092,10 +1110,7 @@ msgstr ""
 msgid "Progressive encoding"
 msgstr ""
 
-msgid "8-bit PNG"
-msgstr ""
-
-msgid "16-bit PNG"
+msgid "PNG"
 msgstr ""
 
 msgid "Flexible Image Transport System (FITS)"
@@ -1176,6 +1191,10 @@ msgstr ""
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
+msgstr ""
+
+#, c-format
+msgid "Unsupported bit depth '%d' ignored."
 msgstr ""
 
 #, c-format

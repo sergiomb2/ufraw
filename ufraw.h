@@ -49,9 +49,9 @@ enum { no_id, also_id, only_id, send_id };
 enum { manual_curve, linear_curve, custom_curve, camera_curve };
 enum { in_profile, out_profile, display_profile, profile_types};
 enum { raw_expander, live_expander, expander_count };
-enum { ppm8_type, ppm16_type, tiff8_type, tiff16_type, jpeg_type,
-       png8_type, png16_type, embedded_jpeg_type, embedded_png_type,
-       fits_type};
+enum { ppm_type, ppm16_deprecated_type, tiff_type, tiff16_deprecated_type,
+       jpeg_type, png_type, png16_deprecated_type,
+       embedded_jpeg_type, embedded_png_type, fits_type};
 enum { clip_details, restore_lch_details, restore_hsv_details,
        restore_types };
 enum { digital_highlights, film_highlights, highlights_types };
@@ -97,6 +97,7 @@ typedef struct {
     char productName[max_name];
     double gamma, linear;
     gboolean useMatrix;
+    int BitDepth;
 } profile_data;
 
 /* conf_data holds the configuration data of UFRaw.

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-16 19:03+0100\n"
+"POT-Creation-Date: 2007-11-19 00:26+0100\n"
 "PO-Revision-Date: 2007-11-03 08:40+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
@@ -330,12 +330,16 @@ msgstr ""
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=STØRRELSE      Formindsk maks(højde,bredde) til STØRRELSE.\n"
 
+#, fuzzy
 msgid ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
-"                      Output file format (default ppm8).\n"
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Output file format (default ppm).\n"
 msgstr ""
 "--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
 "                      Uddatafilformat (standardværdi ppm8).\n"
+
+msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
+msgstr ""
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -472,6 +476,14 @@ msgstr "'%s' er ikke et legalt klipningstilvalg."
 msgid "you can not specify both --shrink and --size"
 msgstr "Du kan ikke anvende både --shrink og --size"
 
+#, fuzzy, c-format
+msgid "'%d' is not a valid bit depth."
+msgstr "'%s' er ikke en legal sti."
+
+#, c-format
+msgid "Output type '%s' is deprecated"
+msgstr ""
+
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw blev bygget uden TIFF-understøttelse."
 
@@ -487,6 +499,10 @@ msgstr "'%s' er ikke en legal uddatatype."
 
 #, c-format
 msgid "'%s' is not a valid output type for embedded image."
+msgstr "'%s' er ikke en legal uddatatype for indlejrede billeder."
+
+#, fuzzy, c-format
+msgid "'%d' is not a valid bit depth for embedded image."
 msgstr "'%s' er ikke en legal uddatatype for indlejrede billeder."
 
 #, c-format
@@ -948,6 +964,16 @@ msgstr "Farvemættet"
 msgid "Absolute colorimetric"
 msgstr "Absolut kolorimetrisk"
 
+#, fuzzy
+msgid "Output bit depth"
+msgstr "Uddatafarvegengivelse"
+
+msgid "8"
+msgstr ""
+
+msgid "16"
+msgstr ""
+
 msgid "Display intent"
 msgstr "Monitorfarvegengivelse"
 
@@ -1186,17 +1212,11 @@ msgstr "Uddatatilvalg"
 msgid "Interpolation method set to AHD"
 msgstr "Interpolationsmetode er sat til AHD"
 
-msgid "8-bit ppm"
-msgstr "8-bits ppm"
+msgid "ppm"
+msgstr ""
 
-msgid "16-bit ppm"
-msgstr "16-bits ppm"
-
-msgid "8-bit TIFF"
-msgstr "8-bits TIFF"
-
-msgid "16-bit TIFF"
-msgstr "16-bits TIFF"
+msgid "TIFF"
+msgstr ""
 
 msgid "ZIP Compress (lossless)"
 msgstr "ZIP-komprimering (tabsfri)"
@@ -1207,11 +1227,8 @@ msgstr "Komprimeringsniveau"
 msgid "Progressive encoding"
 msgstr "Progressiv indkodning"
 
-msgid "8-bit PNG"
-msgstr "8-bits PNG"
-
-msgid "16-bit PNG"
-msgstr "16-bits PNG"
+msgid "PNG"
+msgstr ""
 
 msgid "Flexible Image Transport System (FITS)"
 msgstr "Flexible Image Transport System (FITS)"
@@ -1293,6 +1310,10 @@ msgstr "Gemmer billede"
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "Fejl ved indlejring af uddataprofil '%s' i '%s'."
+
+#, c-format
+msgid "Unsupported bit depth '%d' ignored."
+msgstr ""
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
@@ -1381,3 +1402,21 @@ msgstr "Kamera-HB"
 
 msgid "Auto WB"
 msgstr "Automatisk HB"
+
+#~ msgid "8-bit ppm"
+#~ msgstr "8-bits ppm"
+
+#~ msgid "16-bit ppm"
+#~ msgstr "16-bits ppm"
+
+#~ msgid "8-bit TIFF"
+#~ msgstr "8-bits TIFF"
+
+#~ msgid "16-bit TIFF"
+#~ msgstr "16-bits TIFF"
+
+#~ msgid "8-bit PNG"
+#~ msgstr "8-bits PNG"
+
+#~ msgid "16-bit PNG"
+#~ msgstr "16-bits PNG"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-16 19:03+0100\n"
+"POT-Creation-Date: 2007-11-19 00:26+0100\n"
 "PO-Revision-Date: 2007-11-11 20:19+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -334,12 +334,16 @@ msgstr ""
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=TAMAÑO         Reduce el tamaño max(alto, ancho) a TAMAÑO.\n"
 
+#, fuzzy
 msgid ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
-"                      Output file format (default ppm8).\n"
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Output file format (default ppm).\n"
 msgstr ""
 "--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
 "                      Formato del archivo de salida (por defecto ppm8).\n"
+
+msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
+msgstr ""
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -485,6 +489,14 @@ msgstr "'%s' no es una opción válida de recorte."
 msgid "you can not specify both --shrink and --size"
 msgstr "no puedes especificar a la vez --shrink y --size"
 
+#, fuzzy, c-format
+msgid "'%d' is not a valid bit depth."
+msgstr "'%s' no es una ruta válida."
+
+#, c-format
+msgid "Output type '%s' is deprecated"
+msgstr ""
+
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw se compiló sin soporte para TIFF."
 
@@ -500,6 +512,10 @@ msgstr "'%s' no es un tipo de salida válido."
 
 #, c-format
 msgid "'%s' is not a valid output type for embedded image."
+msgstr "'%s' no es un tipo de salida válido para la imagen incrustada."
+
+#, fuzzy, c-format
+msgid "'%d' is not a valid bit depth for embedded image."
 msgstr "'%s' no es un tipo de salida válido para la imagen incrustada."
 
 #, c-format
@@ -966,6 +982,16 @@ msgstr "Saturación"
 msgid "Absolute colorimetric"
 msgstr "Colorimétrico absoluto"
 
+#, fuzzy
+msgid "Output bit depth"
+msgstr "Conv. de salida"
+
+msgid "8"
+msgstr ""
+
+msgid "16"
+msgstr ""
+
 msgid "Display intent"
 msgstr "Conv. de pantalla"
 
@@ -1204,17 +1230,11 @@ msgstr "Opciones de salida"
 msgid "Interpolation method set to AHD"
 msgstr "Método de interpolación ajustado a AHD"
 
-msgid "8-bit ppm"
-msgstr "ppm de 8-bit"
+msgid "ppm"
+msgstr ""
 
-msgid "16-bit ppm"
-msgstr "ppm de 16-bit"
-
-msgid "8-bit TIFF"
-msgstr "TIFF de 8-bit"
-
-msgid "16-bit TIFF"
-msgstr "TIFF de 16-bit"
+msgid "TIFF"
+msgstr ""
 
 msgid "ZIP Compress (lossless)"
 msgstr "Compresión ZIP (sin pérdidas)"
@@ -1225,11 +1245,8 @@ msgstr "Nivel de compresión"
 msgid "Progressive encoding"
 msgstr "Codificado progresivo"
 
-msgid "8-bit PNG"
-msgstr "PNG de 8-bit"
-
-msgid "16-bit PNG"
-msgstr "PNG de 16-bit"
+msgid "PNG"
+msgstr ""
 
 msgid "Flexible Image Transport System (FITS)"
 msgstr "Flexible Image Transport System (FITS)"
@@ -1314,6 +1331,10 @@ msgstr "Guardando imagen"
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "Fallo al incrustar perfil de salida '%s' en '%s'"
+
+#, c-format
+msgid "Unsupported bit depth '%d' ignored."
+msgstr ""
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
@@ -1402,3 +1423,21 @@ msgstr "Balance de la cámara"
 
 msgid "Auto WB"
 msgstr "Balance automático"
+
+#~ msgid "8-bit ppm"
+#~ msgstr "ppm de 8-bit"
+
+#~ msgid "16-bit ppm"
+#~ msgstr "ppm de 16-bit"
+
+#~ msgid "8-bit TIFF"
+#~ msgstr "TIFF de 8-bit"
+
+#~ msgid "16-bit TIFF"
+#~ msgstr "TIFF de 16-bit"
+
+#~ msgid "8-bit PNG"
+#~ msgstr "PNG de 8-bit"
+
+#~ msgid "16-bit PNG"
+#~ msgstr "PNG de 16-bit"

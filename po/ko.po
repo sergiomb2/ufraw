@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-16 19:03+0100\n"
+"POT-Creation-Date: 2007-11-19 00:26+0100\n"
 "PO-Revision-Date: 2007-11-09 21:16+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -318,12 +318,16 @@ msgstr "--shrink=FACTOR       이미지를 FACTOR 비율로 축소합니다 (기
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=SIZE           최대 (height,width) 크기로 이미지를 줄임.\n"
 
+#, fuzzy
 msgid ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
-"                      Output file format (default ppm8).\n"
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Output file format (default ppm).\n"
 msgstr ""
 "--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
 "                      출력 파일 포멧 (기본값 ppm8).\n"
+
+msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
+msgstr ""
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -455,6 +459,14 @@ msgstr "'%s'(은)는 유효한 잘라내기 옵션이 아닙니다."
 msgid "you can not specify both --shrink and --size"
 msgstr "--shrink와 --size를 둘다 설정 할 수 없습니다"
 
+#, fuzzy, c-format
+msgid "'%d' is not a valid bit depth."
+msgstr "'%s'(은)는 유효한 경로가 아닙니다."
+
+#, c-format
+msgid "Output type '%s' is deprecated"
+msgstr ""
+
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw가 TIFF 지원이 빠진 채로 빌드됨."
 
@@ -470,6 +482,10 @@ msgstr "'%s'(은)는 유효한 출력 타입이 아닙니다."
 
 #, c-format
 msgid "'%s' is not a valid output type for embedded image."
+msgstr "'%s'(은)는 이미지 내장을 위해 유효한 출력 타입이 아닙니다."
+
+#, fuzzy, c-format
+msgid "'%d' is not a valid bit depth for embedded image."
 msgstr "'%s'(은)는 이미지 내장을 위해 유효한 출력 타입이 아닙니다."
 
 #, c-format
@@ -932,6 +948,16 @@ msgstr "채도"
 msgid "Absolute colorimetric"
 msgstr "Absolute colorimetric"
 
+#, fuzzy
+msgid "Output bit depth"
+msgstr "출력 의도"
+
+msgid "8"
+msgstr ""
+
+msgid "16"
+msgstr ""
+
 msgid "Display intent"
 msgstr "화면 의도"
 
@@ -1170,17 +1196,11 @@ msgstr "출력 옵션"
 msgid "Interpolation method set to AHD"
 msgstr "보간방법이 AHD로 설정 되었습니다"
 
-msgid "8-bit ppm"
-msgstr "8-bit ppm"
+msgid "ppm"
+msgstr ""
 
-msgid "16-bit ppm"
-msgstr "16-bit ppm"
-
-msgid "8-bit TIFF"
-msgstr "8-bit TIFF"
-
-msgid "16-bit TIFF"
-msgstr "16-bit TIFF"
+msgid "TIFF"
+msgstr ""
 
 msgid "ZIP Compress (lossless)"
 msgstr "ZIP 압축 (무손실)"
@@ -1191,11 +1211,8 @@ msgstr "압축률"
 msgid "Progressive encoding"
 msgstr "프로그래시브 인코딩"
 
-msgid "8-bit PNG"
-msgstr "8-bit PNG"
-
-msgid "16-bit PNG"
-msgstr "16-bit PNG"
+msgid "PNG"
+msgstr ""
 
 msgid "Flexible Image Transport System (FITS)"
 msgstr "Flexible Image Transport System (FITS)"
@@ -1277,6 +1294,10 @@ msgstr "이미지 저장중"
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "출력 프로파일 '%s'을(를) '%s'에 포함하는데 실패하였습니다."
+
+#, c-format
+msgid "Unsupported bit depth '%d' ignored."
+msgstr ""
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
@@ -1365,3 +1386,21 @@ msgstr "카메라 화벨"
 
 msgid "Auto WB"
 msgstr "자동 화벨"
+
+#~ msgid "8-bit ppm"
+#~ msgstr "8-bit ppm"
+
+#~ msgid "16-bit ppm"
+#~ msgstr "16-bit ppm"
+
+#~ msgid "8-bit TIFF"
+#~ msgstr "8-bit TIFF"
+
+#~ msgid "16-bit TIFF"
+#~ msgstr "16-bit TIFF"
+
+#~ msgid "8-bit PNG"
+#~ msgstr "8-bit PNG"
+
+#~ msgid "16-bit PNG"
+#~ msgstr "16-bit PNG"

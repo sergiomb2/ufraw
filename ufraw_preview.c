@@ -2647,11 +2647,21 @@ static void combo_update(GtkWidget *combo, gint *valuep)
 {
     preview_data *data = get_preview_data(combo);
     if (data->FreezeDialog) return;
+
+    if ( valuep==&CFG->profile[1][0].BitDepth )
+	valuep = (void *)&CFG->profile[1][CFG->profileIndex[1]].BitDepth;
     if ((char *)valuep==CFG->wb) {
 	int i = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
 	g_strlcpy(CFG->wb, g_list_nth_data(data->WBPresets, i), max_name);
     } else {
 	*valuep = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
+    }
+    if ( valuep==&CFG->profile[1][CFG->profileIndex[1]].BitDepth ) {
+	switch (*valuep) {
+	case 1: *valuep=16; break;
+	case 0:
+	default: *valuep=8;
+	}
     }
     if (valuep==&CFG->BaseCurveIndex) {
 	if (!CFG_cameraCurve && CFG->BaseCurveIndex>camera_curve-2)
@@ -3992,6 +4002,18 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    G_CALLBACK(combo_update), &CFG->intent[out_profile]);
     gtk_table_attach(table, GTK_WIDGET(combo), 3, 8, 6, 7, GTK_FILL, 0, 0, 0);
 
+    label = gtk_label_new(_("Output bit depth"));
+    gtk_table_attach(table, label, 0, 4, 7, 8, 0, 0, 0, 0);
+    combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    gtk_combo_box_append_text(combo, _("8"));
+    if ( plugin!=1 )
+	gtk_combo_box_append_text(combo, _("16"));
+    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), 
+	    CFG->profile[1][CFG->profileIndex[1]].BitDepth==8 ? 0 : 1);
+    g_signal_connect(G_OBJECT(combo), "changed",
+	    G_CALLBACK(combo_update), &CFG->profile[1][0].BitDepth);
+    gtk_table_attach(table, GTK_WIDGET(combo), 4, 8, 7, 8, GTK_FILL, 0, 0, 0);
+
     label = gtk_label_new(_("Display intent"));
     gtk_table_attach(table, label, 0, 3, 10, 11, 0, 0, 0, 0);
     combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
@@ -4633,8 +4655,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     /* plugin=0 : Normal stand-alone
      * plugin=1 : Gimp plug-in
-     * plugin=2 : Stand-alone with --output option */
-    if ( plugin==1 ) {
+     * plugin=2 : Cinepaint plug-in
+     * plugin=3 : Stand-alone with --output option */
+    if ( plugin==1 || plugin==2 ) {
 	// OK button for the plug-in
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 	gtk_box_pack_start(box, saveButton, FALSE, FALSE, 0);
