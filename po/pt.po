@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-19 00:39+0100\n"
+"POT-Creation-Date: 2007-11-22 06:30+0100\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -428,7 +428,7 @@ msgid "ufraw was build without ZIP support."
 msgstr "ufraw foi compilado sem suporte a zip."
 
 #, fuzzy
-msgid "--batch is obsolete. use ufraw-batch instead."
+msgid "--batch is obsolete. Use ufraw-batch instead."
 msgstr "--batch é obsoleto. Use ufraw-batch para isso."
 
 #, c-format

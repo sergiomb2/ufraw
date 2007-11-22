@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw 0.13\n"
+"Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-19 00:39+0100\n"
-"PO-Revision-Date: 2007-11-03 08:40+0100\n"
+"POT-Creation-Date: 2007-11-22 06:30+0100\n"
+"PO-Revision-Date: 2007-11-22 06:40+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -330,16 +330,15 @@ msgstr ""
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=STØRRELSE      Formindsk maks(højde,bredde) til STØRRELSE.\n"
 
-#, fuzzy
 msgid ""
 "--out-type=ppm|tiff|png|jpeg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
-"                      Uddatafilformat (standardværdi ppm8).\n"
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Uddatafilformat (standardværdi ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
-msgstr ""
+msgstr "--out-depth=8|16      Uddatabitdybde pr. kanal (standardværdi 8).\n"
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -426,8 +425,7 @@ msgstr "'%s' er ikke en legal værdi for tilvalget --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw blev bygget uden ZIP-understøttelse."
 
-#, fuzzy
-msgid "--batch is obsolete. use ufraw-batch instead."
+msgid "--batch is obsolete. Use ufraw-batch instead."
 msgstr "--batch er forældet. Anvend ufraw-batch i stedet for."
 
 #, c-format
@@ -477,13 +475,13 @@ msgstr "'%s' er ikke et legalt klipningstilvalg."
 msgid "you can not specify both --shrink and --size"
 msgstr "Du kan ikke anvende både --shrink og --size"
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth."
-msgstr "'%s' er ikke en legal sti."
+msgstr "'%d' er ikke en legal bitdybde."
 
 #, c-format
 msgid "Output type '%s' is deprecated"
-msgstr ""
+msgstr "Uddatatype '%s' er forældet"
 
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw blev bygget uden TIFF-understøttelse."
@@ -502,9 +500,9 @@ msgstr "'%s' er ikke en legal uddatatype."
 msgid "'%s' is not a valid output type for embedded image."
 msgstr "'%s' er ikke en legal uddatatype for indlejrede billeder."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
-msgstr "'%s' er ikke en legal uddatatype for indlejrede billeder."
+msgstr "'%d' er ikke en legal bitdybde for indlejrede billeder."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
@@ -797,9 +795,9 @@ msgstr ""
 msgid "%s%s (Alt-%c)"
 msgstr "%s%s (Alt-%c)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s - UFRaw"
-msgstr "UFRaw "
+msgstr "%s - UFRaw"
 
 msgid "Linear"
 msgstr "Lineær"
@@ -965,15 +963,14 @@ msgstr "Farvemættet"
 msgid "Absolute colorimetric"
 msgstr "Absolut kolorimetrisk"
 
-#, fuzzy
 msgid "Output bit depth"
-msgstr "Uddatafarvegengivelse"
+msgstr "Uddatabitdybde"
 
 msgid "8"
-msgstr ""
+msgstr "8"
 
 msgid "16"
-msgstr ""
+msgstr "16"
 
 msgid "Display intent"
 msgstr "Monitorfarvegengivelse"
@@ -1078,7 +1075,7 @@ msgid "Timestamp"
 msgstr "Optagelsestidspunkt"
 
 msgid "Shutter time"
-msgstr ""
+msgstr "Lukkertid"
 
 msgid "Aperture"
 msgstr "Blænde"
@@ -1214,10 +1211,10 @@ msgid "Interpolation method set to AHD"
 msgstr "Interpolationsmetode er sat til AHD"
 
 msgid "ppm"
-msgstr ""
+msgstr "ppm"
 
 msgid "TIFF"
-msgstr ""
+msgstr "TIFF"
 
 msgid "ZIP Compress (lossless)"
 msgstr "ZIP-komprimering (tabsfri)"
@@ -1229,7 +1226,7 @@ msgid "Progressive encoding"
 msgstr "Progressiv indkodning"
 
 msgid "PNG"
-msgstr ""
+msgstr "PNG"
 
 msgid "Flexible Image Transport System (FITS)"
 msgstr "Flexible Image Transport System (FITS)"
@@ -1314,7 +1311,7 @@ msgstr "Fejl ved indlejring af uddataprofil '%s' i '%s'."
 
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
-msgstr ""
+msgstr "Ikke-understøttet bitdybde '%d' ignoreret."
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
@@ -1403,27 +1400,3 @@ msgstr "Kamera-HB"
 
 msgid "Auto WB"
 msgstr "Automatisk HB"
-
-#~ msgid "%s - UFRaw Photo Loader"
-#~ msgstr "%s - UFRaw Fotoindlæser"
-
-#~ msgid "Exposure"
-#~ msgstr "Lukkertid"
-
-#~ msgid "8-bit ppm"
-#~ msgstr "8-bits ppm"
-
-#~ msgid "16-bit ppm"
-#~ msgstr "16-bits ppm"
-
-#~ msgid "8-bit TIFF"
-#~ msgstr "8-bits TIFF"
-
-#~ msgid "16-bit TIFF"
-#~ msgstr "16-bits TIFF"
-
-#~ msgid "8-bit PNG"
-#~ msgstr "8-bits PNG"
-
-#~ msgid "16-bit PNG"
-#~ msgstr "16-bits PNG"
