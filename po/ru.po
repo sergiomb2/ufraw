@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-22 06:30+0100\n"
+"POT-Creation-Date: 2007-11-23 17:03+0100\n"
 "PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -986,12 +986,6 @@ msgstr "Абс. колориметрическая"
 #, fuzzy
 msgid "Output bit depth"
 msgstr "Вывод"
-
-msgid "8"
-msgstr ""
-
-msgid "16"
-msgstr ""
 
 msgid "Display intent"
 msgstr "Монитор"

@@ -4005,9 +4005,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     label = gtk_label_new(_("Output bit depth"));
     gtk_table_attach(table, label, 0, 4, 7, 8, 0, 0, 0, 0);
     combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    gtk_combo_box_append_text(combo, _("8"));
+    gtk_combo_box_append_text(combo, "8");
     if ( plugin!=1 )
-	gtk_combo_box_append_text(combo, _("16"));
+	gtk_combo_box_append_text(combo, "16");
     gtk_combo_box_set_active(GTK_COMBO_BOX(combo), 
 	    CFG->profile[1][CFG->profileIndex[1]].BitDepth==8 ? 0 : 1);
     g_signal_connect(G_OBJECT(combo), "changed",

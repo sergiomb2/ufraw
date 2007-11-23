@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-22 06:30+0100\n"
+"POT-Creation-Date: 2007-11-23 17:03+0100\n"
 "PO-Revision-Date: 2007-11-06 23:23+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -977,12 +977,6 @@ msgstr "Kolorymetryczny absolutny"
 #, fuzzy
 msgid "Output bit depth"
 msgstr "Sposób konwersji"
-
-msgid "8"
-msgstr ""
-
-msgid "16"
-msgstr ""
 
 msgid "Display intent"
 msgstr "Sposób konwersji"

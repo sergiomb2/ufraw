@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-22 06:30+0100\n"
+"POT-Creation-Date: 2007-11-23 17:03+0100\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -992,12 +992,6 @@ msgstr "Absoluto colorimétrico"
 #, fuzzy
 msgid "Output bit depth"
 msgstr "Opções de saída"
-
-msgid "8"
-msgstr ""
-
-msgid "16"
-msgstr ""
 
 msgid "Display intent"
 msgstr ""
