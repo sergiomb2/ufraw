@@ -106,6 +106,34 @@ void uf_label_set_width_chars(GtkLabel *label, gint n_chars)
 #endif
 }
 
+static void _uf_toggle_button_toggled(GtkToggleButton *button, gboolean *valuep)
+{
+    *valuep = gtk_toggle_button_get_active(button);
+}
+
+// Create a GtkCheckButton with a label an a value that gets updated
+GtkWidget *uf_check_button_new(const char *label, gboolean *valuep)
+{
+    GtkWidget *button = gtk_check_button_new_with_label(label);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), *valuep);
+    g_signal_connect(G_OBJECT(button), "toggled",
+	    G_CALLBACK(_uf_toggle_button_toggled), valuep);
+    return button;
+}
+
+static void _uf_combo_changed(GtkComboBox *combo, int *valuep)
+{
+    *valuep = gtk_combo_box_get_active(combo);
+}
+
+// Set combo box data and keep it up to date
+void uf_combo_box_set_data(GtkComboBox *combo, int *valuep)
+{
+    gtk_combo_box_set_active(combo, *valuep);
+    g_signal_connect(G_OBJECT(combo), "changed",
+                G_CALLBACK(_uf_combo_changed), valuep);
+}
+
 // Get the display ICC profile of the monitor associated with the widget.
 // For X display, uses the ICC profile specifications version 0.2 from
 // http://burtonini.com/blog/computers/xicc

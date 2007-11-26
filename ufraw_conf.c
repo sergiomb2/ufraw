@@ -94,6 +94,7 @@ const conf_data conf_default = {
     FALSE, /* overExp indicator */
     FALSE, /* underExp indicator */
     TRUE, /* blinkOverUnder indicators */
+    FALSE, /* RememberOutputPath */
     FALSE, /* WindowMaximized */
     "", "", /* curvePath, profilePath */
     FALSE, /* silent */
@@ -488,6 +489,8 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     if (!strcmp("UnderExposure", element)) sscanf(temp, "%d", &c->underExp);
     if (!strcmp("BlinkOverUnder", element))
 	sscanf(temp, "%d", &c->blinkOverUnder);
+    if (!strcmp("RememberOutputPath", element))
+	sscanf(temp, "%d", &c->RememberOutputPath);
     if (!strcmp("WindowMaximized", element))
 	sscanf(temp, "%d", &c->WindowMaximized);
     if (!strcmp("WB", element)) {
@@ -749,6 +752,10 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	if (c->blinkOverUnder!=conf_default.blinkOverUnder)
 	    buf = uf_markup_buf(buf,
 		    "<BlinkOverUnder>%d</BlinkOverUnder>\n", c->blinkOverUnder);
+	if (c->RememberOutputPath!=conf_default.RememberOutputPath)
+	    buf = uf_markup_buf(buf,
+		    "<RememberOutputPath>%d</RememberOutputPath>\n",
+		    c->RememberOutputPath);
 	if (c->WindowMaximized!=conf_default.WindowMaximized)
 	    buf = uf_markup_buf(buf,
 		    "<WindowMaximized>%d</WindowMaximized>\n",

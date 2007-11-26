@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.104 2007/11/18 23:24:53 udifuchs Exp $
+dnl $Id: configure.ac,v 1.105 2007/11/26 22:04:23 udifuchs Exp $
 AC_INIT(UFRaw, 0.14)
 AC_PREREQ(2.57)
 
@@ -75,7 +75,7 @@ AC_ARG_WITH(dosprefix,
   [ with_dosprefix=$withval],
   [ with_dosprefix=NONE ] )
 
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4)
+PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.6)
 PKG_CHECK_MODULES(GLIB, glib-2.0)
 PKG_CHECK_MODULES(LCMS, lcms)
 PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview >= 1.3,

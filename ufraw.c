@@ -53,7 +53,8 @@ int main (int argc, char **argv)
     if (rc.interpolation==half_interpolation)
 	rc.interpolation = ahd_interpolation;
 
-    g_strlcpy(rc.outputPath, "", max_path);
+    if ( !rc.RememberOutputPath )
+	g_strlcpy(rc.outputPath, "", max_path);
     g_strlcpy(rc.inputFilename, "", max_path);
     g_strlcpy(rc.outputFilename, "", max_path);
 

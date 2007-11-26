@@ -63,13 +63,15 @@ void uf_init_locale(const char *exename)
 #ifdef WIN32
 	/* In Windows the localedir is found relative to the exe file.
 	 * The exact location here should match ufraw-setup.iss.in */
-	if ( strcasecmp(g_path_get_basename(exename), "ufraw-gimp.exe")==0 ) {
+	char *basename = g_path_get_basename(exename);
+	if ( strcasecmp(basename, "ufraw-gimp.exe")==0 ) {
 	    localedir = g_strconcat(g_path_get_dirname(exename),
 		    "/../../../locale", NULL);
 	} else {
 	    localedir = g_strconcat(g_path_get_dirname(exename),
 		    "/../lib/locale", NULL);
 	}
+	g_free(basename);
 #else
 	exename = exename; /* suppress warning */
 	/* In other environments localedir is set at compile time */
@@ -113,18 +115,13 @@ char *uf_file_set_absolute(const char *filename)
 	return g_strdup(filename);
     } else {
 #ifdef HAVE_CANONICALIZE_FILE_NAME
-	char *path = g_path_get_dirname(filename);
-	char *base = g_path_get_basename(filename);
-	char *canon = canonicalize_file_name(path);
-	char *abs;
-	if ( canon==NULL )
-	    abs = g_strdup(filename);
-	else
-	    abs = g_build_filename(canon, base, NULL);
-	g_free(path);
-	g_free(base);
-	g_free(canon);
-	return abs;
+	char *canon = canonicalize_file_name(filename);
+	if ( canon==NULL ) {
+	    // We should never reach this code
+	    g_message("Error in canonicalize_file_name(""%s"")", filename);
+	    canon = g_strdup(filename);
+	}
+	return canon;
 #else
 	// We could use realpath(filename, NULL)
 	// if we add a check that it is not buggy

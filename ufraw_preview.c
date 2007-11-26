@@ -69,7 +69,7 @@ typedef struct {
 typedef enum { render_default, render_overexposed, render_underexposed
 	} RenderModeType;
 
-typedef enum { cancel_button, ok_button, save_button, save_as_button,
+typedef enum { cancel_button, ok_button, save_button,
 	gimp_button, delete_button, num_buttons } ControlButtons;
 typedef enum { spot_cursor, crop_cursor,
     left_cursor, right_cursor, top_cursor, bottom_cursor,
@@ -100,6 +100,7 @@ typedef struct {
     int InterpolationTable[num_interpolations];
     /* combobox index */
     int Interpolation;
+    int TypeComboMap[num_types];
     GdkPixbuf *PreviewPixbuf;
     GdkCursor *Cursor[cursor_num];
     /* Remember the Gtk Widgets that we need to access later */
@@ -107,7 +108,7 @@ typedef struct {
     GtkLabel *DarkFrameLabel;
     GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
     GtkComboBox *WBCombo, *BaseCurveCombo, *CurveCombo,
-		*ProfileCombo[profile_types];
+		*ProfileCombo[profile_types], *TypeCombo;
     GtkTable *SpotTable;
     GtkLabel *SpotPatch;
     colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
@@ -118,6 +119,7 @@ typedef struct {
     GtkWidget *ResetThresholdButton;
     GtkWidget *ResetBlackButton, *ResetBaseCurveButton, *ResetCurveButton;
     GtkWidget *UseMatrixButton;
+    GtkWidget *SaveButton;
     GtkWidget *ControlButton[num_buttons];
     guint16 ButtonMnemonic[num_buttons];
     GtkProgressBar *ProgressBar;
@@ -169,6 +171,8 @@ typedef struct {
     gboolean LockAspect;
     /* The aspect ratio entry field */
     GtkEntry *AspectEntry;
+    /* Output base filename (without the path) */
+    GtkEntry *OutFileEntry;
     /* Mouse coordinates in previous frame (used when dragging crop area) */
     int OldMouseX, OldMouseY;
     int OverUnderTicker;
@@ -2527,6 +2531,11 @@ static void toggle_button(GtkTable *table, int x, int y, char *label,
 	    G_CALLBACK(toggle_button_update), valuep);
 }
 
+static void adjustment_update_int(GtkAdjustment *adj, int *valuep)
+{
+    *valuep = (int)floor(gtk_adjustment_get_value(adj) + 0.5);
+} 
+
 static void adjustment_update(GtkAdjustment *adj, double *valuep)
 {
     preview_data *data = get_preview_data(adj);
@@ -2641,6 +2650,100 @@ static GtkAdjustment *adjustment_scale(GtkTable *table,
     gtk_table_attach(table, w, x+5, x+7, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
     uf_widget_set_tooltip(w, tip);
     return adj;
+}
+
+static void set_save_tooltip(preview_data *data)
+{
+    char *absFilename = uf_file_set_absolute(CFG->outputFilename);
+    char *utf8 = g_filename_to_utf8(absFilename, -1, NULL, NULL, NULL);
+    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+    char *text = g_strdup_printf(_("Filename: %s%s"), utf8,
+	    CFG->createID==also_id ? _("\nCreate also ID file") :
+	    CFG->createID==only_id ? _("\nCreate only ID file") : "");
+    g_free(utf8);
+    g_free(absFilename);
+    uf_widget_set_tooltip(data->SaveButton, text);
+    g_free(text);
+}
+
+static void outpath_chooser_changed(GtkFileChooser *chooser, gpointer user_data)
+{
+    (void)user_data;
+    preview_data *data = get_preview_data(chooser);
+    if (data->FreezeDialog) return;
+
+    char *path = gtk_file_chooser_get_filename(chooser);
+    if ( path==NULL ) {
+	// We should never get here
+	g_warning("No output path in chooser");
+	return;
+    }
+    // Set the chosen path in the output filename
+    char *basename = g_path_get_basename(CFG->outputFilename);
+    char *filename = g_build_filename(path, basename , NULL);
+    g_free(basename);
+    g_strlcpy(CFG->outputFilename, filename, max_path);
+    g_free(filename);
+
+    // Set the chosen path as the output path,
+    // only if it is different from the input path
+    char *dirname = g_path_get_dirname(CFG->inputFilename);
+    if ( strcmp(path, dirname)==0 ) {
+	g_strlcpy(CFG->outputPath, "", max_path);
+    } else {
+	g_strlcpy(CFG->outputPath, path, max_path);
+    }
+    g_free(dirname);
+    g_free(path);
+
+    set_save_tooltip(data);
+}
+
+static void outfile_entry_changed(GtkEntry *entry, gpointer user_data)
+{
+    (void)user_data;
+    preview_data *data = get_preview_data(entry);
+    if (data->FreezeDialog) return;
+
+    char *dirname = g_path_get_dirname(CFG->outputFilename);
+    char *filename = g_build_filename(dirname, gtk_entry_get_text(entry), NULL);
+    g_strlcpy(CFG->outputFilename, filename, max_path);
+    g_free(filename);
+    g_free(dirname);
+
+    // Update the output type combo
+    char *type = strrchr(CFG->outputFilename, '.');
+    if (type==NULL)
+        return;
+    int i;
+    for (i=0; data->TypeComboMap[i]>=0; i++) {
+	if ( strcasecmp(type, file_type[data->TypeComboMap[i]])==0 )
+	    gtk_combo_box_set_active(data->TypeCombo, i);
+    }
+    set_save_tooltip(data);
+}
+
+static void type_combo_changed(GtkComboBox *combo, gpointer *user_data)
+{
+    (void)user_data;
+    preview_data *data = get_preview_data(combo);
+    if (data->FreezeDialog) return;
+
+    int i = gtk_combo_box_get_active(combo);
+    CFG->type = data->TypeComboMap[i];
+    // If type has not changed, do nothing
+    char *type = strrchr(CFG->outputFilename, '.');
+    if ( type!=NULL && strcasecmp(type, file_type[CFG->type])==0 )
+	return;
+    char *outfile =
+	    uf_file_set_type(CFG->outputFilename, file_type[CFG->type]);
+    g_strlcpy(CFG->outputFilename, outfile, max_path);
+    g_free(outfile);
+    char *basename = g_path_get_basename(CFG->outputFilename);
+    gtk_entry_set_text(data->OutFileEntry, basename);
+    g_free(basename);
+
+    set_save_tooltip(data);
 }
 
 static void combo_update(GtkWidget *combo, gint *valuep)
@@ -2772,22 +2875,12 @@ static void gimp_reset_clicked(GtkWidget *widget, GtkEntry *entry)
     gtk_entry_set_text(entry, conf_default.remoteGimpCommand);
 }
 
-static void options_combo_update(GtkWidget *combo, gint *valuep)
-{
-    GtkDialog *dialog;
-
-    *valuep = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
-    dialog = GTK_DIALOG(gtk_widget_get_ancestor(combo, GTK_TYPE_DIALOG));
-    gtk_dialog_response(dialog, GTK_RESPONSE_APPLY);
-}
-
 static void options_dialog(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     GtkWidget *optionsDialog, *profileTable[profile_types];
-    GtkComboBox *confCombo;
-    GtkWidget *notebook, *label, *page, *button, *text, *box, *image, *event;
-    GtkTable *baseCurveTable, *curveTable, *table;
+    GtkWidget *notebook, *label, *page, *button, *text, *box, *image;
+    GtkTable *baseCurveTable, *curveTable;
     GtkTextBuffer *confBuffer, *buffer;
     char txt[max_name], *buf;
     long i, j, response;
@@ -2862,34 +2955,14 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text), FALSE);
     confBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
 
-    table = GTK_TABLE(gtk_table_new(10, 10, FALSE));
-    gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(table), FALSE, FALSE, 0);
-    label = gtk_label_new(_("Save image defaults "));
-    event = gtk_event_box_new();
-    gtk_container_add(GTK_CONTAINER(event), label);
-    gtk_table_attach(GTK_TABLE(table), event, 0, 2, 0, 1, 0, 0, 0, 0);
-    uf_widget_set_tooltip(event,
-	    _("Save current image manipulation parameters as defaults.\n"
-	      "The output parameters in this window are always saved."));
-    confCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    gtk_combo_box_append_text(confCombo, _("Never again"));
-    gtk_combo_box_append_text(confCombo, _("Always"));
-    gtk_combo_box_append_text(confCombo, _("Just this once"));
-    gtk_combo_box_set_active(confCombo, CFG->saveConfiguration);
-    g_signal_connect(G_OBJECT(confCombo), "changed",
-	    G_CALLBACK(options_combo_update), &CFG->saveConfiguration);
-    gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(confCombo), 2, 4, 0, 1,
-	    0, 0, 0, 0);
-
-    label = gtk_label_new(_("Save full configuration "));
-    event = gtk_event_box_new();
-    gtk_container_add(GTK_CONTAINER(event), label);
-    gtk_table_attach(GTK_TABLE(table), event, 0, 2, 1, 2, 0, 0, 0, 0);
-    uf_widget_set_tooltip(event, _("Save resource file ($HOME/.ufrawrc)"));
-    button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+    GtkWidget *hBox = gtk_hbox_new(FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box), hBox, FALSE, FALSE, 0);
+    button = gtk_button_new_with_label(_("Save configuration"));
+    gtk_box_pack_start(GTK_BOX(hBox), button, FALSE, FALSE, 0);
+    uf_widget_set_tooltip(button,
+	    _("Save configuration to resource file ($HOME/.ufrawrc)"));
     g_signal_connect(G_OBJECT(button), "clicked",
 	    G_CALLBACK(configuration_save), NULL);
-    gtk_table_attach(table, button, 2, 3, 1, 2, 0, 0, 0, 0);
 
     label = gtk_label_new(_("Log"));
     page = gtk_scrolled_window_new(NULL, NULL);
@@ -2932,7 +3005,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	for (j=0; j<profile_types; j++) {
 	    gtk_container_foreach(GTK_CONTAINER(profileTable[j]),
 		    (GtkCallback)(container_remove), profileTable[j]);
-	    table = GTK_TABLE(profileTable[j]);
+	    GtkTable *table = GTK_TABLE(profileTable[j]);
 	    for (i=conf_default.profileCount[j]; i<CFG->profileCount[j]; i++) {
 		g_snprintf(txt, max_name, "%s (%s)",
 			CFG->profile[j][i].name,
@@ -2948,29 +3021,27 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	}
 	gtk_container_foreach(GTK_CONTAINER(baseCurveTable),
 		(GtkCallback)(container_remove), baseCurveTable);
-	table = baseCurveTable;
 	for (i=camera_curve+1; i<CFG->BaseCurveCount; i++) {
 	    label = gtk_label_new(CFG->BaseCurve[i].name);
-	    gtk_table_attach_defaults(table, label, 0, 1, i, i+1);
+	    gtk_table_attach_defaults(baseCurveTable, label, 0, 1, i, i+1);
 	    button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	    g_object_set_data(G_OBJECT(button), "Type",
 		    (gpointer)profile_types+base_curve);
 	    g_signal_connect(G_OBJECT(button), "clicked",
 		    G_CALLBACK(delete_from_list), (gpointer)i);
-	    gtk_table_attach(table, button, 1, 2, i, i+1, 0, 0, 0, 0);
+	    gtk_table_attach(baseCurveTable, button, 1, 2, i, i+1, 0, 0, 0, 0);
 	}
 	gtk_container_foreach(GTK_CONTAINER(curveTable),
 		(GtkCallback)(container_remove), curveTable);
-	table = curveTable;
 	for (i=linear_curve+1; i<CFG->curveCount; i++) {
 	    label = gtk_label_new(CFG->curve[i].name);
-	    gtk_table_attach_defaults(table, label, 0, 1, i, i+1);
+	    gtk_table_attach_defaults(curveTable, label, 0, 1, i, i+1);
 	    button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	    g_object_set_data(G_OBJECT(button), "Type",
 		    (gpointer)profile_types+luminosity_curve);
 	    g_signal_connect(G_OBJECT(button), "clicked",
 		    G_CALLBACK(delete_from_list), (gpointer)i);
-	    gtk_table_attach(table, button, 1, 2, i, i+1, 0, 0, 0, 0);
+	    gtk_table_attach(curveTable, button, 1, 2, i, i+1, 0, 0, 0, 0);
 	}
 	conf_save(CFG, NULL, &buf);
 	gtk_text_buffer_set_text(confBuffer, buf, -1);
@@ -3255,10 +3326,6 @@ static void control_button_event(GtkWidget *widget, long type)
 	if ( ufraw_delete(widget, data->UF)==UFRAW_SUCCESS )
 	    response = UFRAW_RESPONSE_DELETE;
 	break;
-    case save_as_button:
-	status = ufraw_save_as(data->UF, widget);
-	response = GTK_RESPONSE_OK;
-	break;
     case save_button:
 	status = ufraw_save_now(data->UF, widget);
 	response = GTK_RESPONSE_OK;
@@ -3377,8 +3444,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     GtkTable *table, *subTable;
     GtkBox *previewHBox, *box, *hbox;
     GtkComboBox *combo;
-    GtkWidget *button, *saveButton, *saveAsButton=NULL, *event_box, *align,
-	    *label, *vBox, *page, *menu, *menu_item, *frame, *entry;
+    GtkWidget *button, *event_box, *align,
+	    *label, *vBox, *hBox, *page, *menu, *menu_item, *frame, *entry;
     GSList *group;
     GdkPixbuf *pixbuf;
     GdkRectangle screen;
@@ -4336,6 +4403,161 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 		     G_CALLBACK(flip_image), (gpointer)2);
     /* End of transformation page */
 
+    if ( plugin==0  || plugin==3 ) {
+	/* Start of Save page */
+	page = notebook_page_new(notebook, _("Save"), GTK_STOCK_SAVE_AS);
+    
+	frame = gtk_frame_new(NULL);
+	gtk_box_pack_start(GTK_BOX(page), frame, FALSE, FALSE, 0);
+	vBox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(vBox));
+
+	hBox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vBox), hBox, FALSE, FALSE, 0);
+	label = gtk_label_new(_("Path"));
+	gtk_box_pack_start(GTK_BOX(hBox), label, FALSE, FALSE, 0);
+	GtkWidget *chooser = gtk_file_chooser_button_new(
+		_("Select output path"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+	/* Add shortcut to path of input file */
+	if ( strlen(CFG->inputFilename)>0 ) {
+	    char *cp = g_path_get_dirname(CFG->inputFilename);
+	    gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(chooser),
+		    cp, NULL);
+	    g_free(cp);
+	}
+	// Set a small width to make sure the combo-box is not too big.
+	// The final size is set by the EXPAND|FILL options.
+	gtk_widget_set_size_request(chooser, 0, -1);
+	char *absFilename = uf_file_set_absolute(CFG->outputFilename);
+	gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(chooser),
+		absFilename);
+	g_free(absFilename);
+	gtk_box_pack_start(GTK_BOX(hBox), chooser, TRUE, TRUE, 0);
+	g_signal_connect(G_OBJECT(chooser), "selection-changed",
+		G_CALLBACK(outpath_chooser_changed), NULL);
+	if ( plugin==3 )
+	    gtk_widget_set_sensitive(chooser, FALSE);
+
+	hBox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vBox), hBox, FALSE, FALSE, 0);
+	label = gtk_label_new(_("Filename"));
+	gtk_box_pack_start(GTK_BOX(hBox), label, FALSE, FALSE, 0);
+	data->OutFileEntry = GTK_ENTRY(gtk_entry_new());
+	char *basename = g_path_get_basename(CFG->outputFilename);
+	gtk_entry_set_text(data->OutFileEntry, basename);
+	g_free(basename);
+	gtk_box_pack_start(GTK_BOX(hBox), GTK_WIDGET(data->OutFileEntry),
+		TRUE, TRUE, 0);
+	g_signal_connect(G_OBJECT(data->OutFileEntry), "changed",
+		G_CALLBACK(outfile_entry_changed), NULL);
+	if ( plugin==3 )
+	    gtk_widget_set_sensitive(GTK_WIDGET(data->OutFileEntry), FALSE);
+	data->TypeCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+	i = 0;
+	gtk_combo_box_append_text(data->TypeCombo, "PPM");
+	data->TypeComboMap[i++] = ppm_type;
+#ifdef HAVE_LIBPNG
+	gtk_combo_box_append_text(data->TypeCombo, "PNG");
+	data->TypeComboMap[i++] = png_type;
+#endif
+#ifdef HAVE_LIBTIFF
+	gtk_combo_box_append_text(data->TypeCombo, "TIFF");
+	data->TypeComboMap[i++] = tiff_type;
+#endif
+#ifdef HAVE_LIBJPEG
+	gtk_combo_box_append_text(data->TypeCombo, "JPEG");
+	data->TypeComboMap[i++] = jpeg_type;
+#endif
+#ifdef HAVE_LIBFITSIO
+	gtk_combo_box_append_text(data->TypeCombo, "FITS");
+	data->TypeComboMap[i++] = fits_type;
+#endif
+	data->TypeComboMap[i] = -1;
+	for (i=0; data->TypeComboMap[i]>=0; i++)
+	    if ( data->TypeComboMap[i]==CFG->type )
+		gtk_combo_box_set_active(data->TypeCombo, i);
+	gtk_box_pack_start(GTK_BOX(hBox), GTK_WIDGET(data->TypeCombo),
+		FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(data->TypeCombo), "changed",
+		G_CALLBACK(type_combo_changed), &CFG->type);
+	if ( plugin==3 )
+	    gtk_widget_set_sensitive(GTK_WIDGET(data->TypeCombo), FALSE);
+
+	gtk_box_pack_start(GTK_BOX(vBox), gtk_hseparator_new(),
+		FALSE, FALSE, 0);
+
+#ifdef HAVE_LIBJPEG
+	hBox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vBox), hBox, FALSE, FALSE, 0);
+	label = gtk_label_new(_("JPEG compression level"));
+	gtk_box_pack_start(GTK_BOX(hBox), label, FALSE, FALSE, 0);
+	GtkAdjustment *compressAdj =
+		GTK_ADJUSTMENT(gtk_adjustment_new(CFG->compression,
+		0, 100, 5, 10, 0));
+	GtkWidget *scale = gtk_hscale_new(compressAdj);
+	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
+	gtk_box_pack_start(GTK_BOX(hBox), scale, TRUE, TRUE, 0);
+	button = gtk_spin_button_new(compressAdj, 5, 0);
+	gtk_box_pack_start(GTK_BOX(hBox), button, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(compressAdj), "value-changed",
+		G_CALLBACK(adjustment_update_int), &CFG->compression);
+
+	button = uf_check_button_new( _("JPEG progressive encoding"),
+		&CFG->progressiveJPEG);
+	gtk_box_pack_start(GTK_BOX(vBox), button, FALSE, FALSE, 0);
+#endif // HAVE_LIBJPEG
+
+#if defined(HAVE_LIBTIFF) && defined(HAVE_LIBZ)
+	button = uf_check_button_new( _("TIFF lossless Compress"),
+		&CFG->losslessCompress);
+	gtk_box_pack_start(GTK_BOX(vBox), button, FALSE, FALSE, 0);
+#endif // HAVE_LIBTIFF && HAVE_LIBZ
+
+#if defined(HAVE_EXIV2) && (defined(HAVE_LIBJPEG) || defined(HAVE_LIBPNG))
+	button = uf_check_button_new( _("Embed EXIF data in JPEG or PNG files"),
+		&CFG->embedExif);
+	gtk_widget_set_sensitive(button, data->UF->exifBuf!=NULL);
+	gtk_box_pack_start(GTK_BOX(vBox), button, FALSE, FALSE, 0);
+#endif // HAVE_EXIV2 && (HAVE_LIBJPEG || HAVE_LIBPNG)
+
+	hBox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vBox), hBox, FALSE, FALSE, 0);
+	label = gtk_label_new(_("Create ID file "));
+	gtk_box_pack_start(GTK_BOX(hBox), label, FALSE, FALSE, 0);
+	GtkComboBox *idCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+	gtk_combo_box_append_text(idCombo, _("No"));
+	gtk_combo_box_append_text(idCombo, _("Also"));
+	gtk_combo_box_append_text(idCombo, _("Only"));
+	uf_combo_box_set_data(idCombo, &CFG->createID);
+	gtk_box_pack_start(GTK_BOX(hBox), GTK_WIDGET(idCombo), FALSE, FALSE, 0);
+
+	hBox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vBox), hBox, FALSE, FALSE, 0);
+	event_box = gtk_event_box_new();
+	gtk_box_pack_start(GTK_BOX(hBox), event_box, FALSE, FALSE, 0);
+	label = gtk_label_new(_("Save image defaults "));
+	gtk_container_add(GTK_CONTAINER(event_box), label);
+	uf_widget_set_tooltip(event_box,
+		_("Save current image manipulation parameters as defaults.\n"
+		  "The output parameters in this window are always saved."));
+	GtkComboBox *confCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+	gtk_combo_box_append_text(confCombo, _("Never again"));
+	gtk_combo_box_append_text(confCombo, _("Always"));
+	gtk_combo_box_append_text(confCombo, _("Just this once"));
+	uf_combo_box_set_data(confCombo, &CFG->saveConfiguration);
+	gtk_box_pack_start(GTK_BOX(hBox), GTK_WIDGET(confCombo),
+		FALSE, FALSE, 0);
+
+	button = uf_check_button_new( _("Remember output path"),
+		&CFG->RememberOutputPath);
+	gtk_box_pack_start(GTK_BOX(vBox), button, FALSE, FALSE, 0);
+
+	button = uf_check_button_new(
+		_("Overwrite existing files without asking"), &CFG->overwrite);
+	gtk_box_pack_start(GTK_BOX(vBox), button, FALSE, FALSE, 0);
+	/* End of Save page */
+    }
+
     /* Start of EXIF page */
     page = notebook_page_new(notebook, _("EXIF"), "exif");
 
@@ -4659,36 +4881,20 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
      * plugin=3 : Stand-alone with --output option */
     if ( plugin==1 || plugin==2 ) {
 	// OK button for the plug-in
-	saveButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	gtk_box_pack_start(box, saveButton, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(saveButton), "clicked",
+	data->SaveButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	gtk_box_pack_start(box, data->SaveButton, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(data->SaveButton), "clicked",
 		G_CALLBACK(control_button_event), (gpointer)ok_button);
-	gtk_widget_grab_focus(saveButton);
+	gtk_widget_grab_focus(data->SaveButton);
     } else {
 	// Save button for the stand-alone tool
-	saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	gtk_box_pack_start(box, saveButton, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(saveButton), "clicked",
+	data->SaveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	gtk_box_pack_start(box, data->SaveButton, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(data->SaveButton), "clicked",
 		G_CALLBACK(control_button_event), (gpointer)save_button);
-
-    	char *absFilename = uf_file_set_absolute(CFG->outputFilename);
-	char *utf8 = g_filename_to_utf8(absFilename, -1, NULL, NULL, NULL);
-	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
-	char *text = g_strdup_printf(_("Filename: %s%s"), utf8,
-		CFG->createID==also_id ? _("\nCreate also ID file") :
-		CFG->createID==only_id ? _("\nCreate only ID file") : "");
-	g_free(utf8);
-	g_free(absFilename);
-	uf_widget_set_tooltip(saveButton, text);
-	g_free(text);
+	set_save_tooltip(data);
     }
     if ( plugin==0 ) {
-	// Save as button
-	saveAsButton = control_button(GTK_STOCK_SAVE_AS,
-		_("Save _As"), save_as_button, data);
-	gtk_box_pack_start(box, saveAsButton, FALSE, FALSE, 0);
-	gtk_widget_grab_focus(saveAsButton);
-
 	// Send to Gimp button
 	GtkWidget *gimpButton = control_button("gimp",
 		_("Send image to _Gimp"), gimp_button, data);
@@ -4792,21 +4998,22 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	g_source_remove(data->BlinkTimer);
 	data->BlinkTimer = 0;
     }
-    /* In interactive mode outputPath is taken into account only once */
-    strcpy(uf->conf->outputPath, "");
 
     if ( status==GTK_RESPONSE_OK ) {
+	RC.RememberOutputPath = CFG->RememberOutputPath;
+	if ( !CFG->RememberOutputPath )
+	    g_strlcpy(CFG->outputPath, "", max_path);
+	g_strlcpy(RC.outputPath, CFG->outputPath, max_path);
+
 	if ( CFG->saveConfiguration==enabled_state ) {
-	    /* Keep output path in saved configuration. */
-	    char *cp = g_path_get_dirname(CFG->outputFilename);
-	    strcpy(CFG->outputPath, cp);
-	    g_free(cp);
 	    /* Save configuration from CFG, but not the output filename. */
 	    strcpy(CFG->outputFilename, "");
 	    conf_save(CFG, NULL, NULL);
 	/* If save 'only this once' was chosen, then so be it */
 	} else if ( CFG->saveConfiguration==apply_state ) {
 	    CFG->saveConfiguration = disabled_state;
+	    /* Save configuration from CFG, but not the output filename. */
+	    strcpy(CFG->outputFilename, "");
 	    conf_save(CFG, NULL, NULL);
 	} else if ( CFG->saveConfiguration==disabled_state ) {
 	    /* If save 'never again' was set in this session, we still

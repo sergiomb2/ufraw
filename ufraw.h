@@ -51,7 +51,7 @@ enum { in_profile, out_profile, display_profile, profile_types};
 enum { raw_expander, live_expander, expander_count };
 enum { ppm_type, ppm16_deprecated_type, tiff_type, tiff16_deprecated_type,
        jpeg_type, png_type, png16_deprecated_type,
-       embedded_jpeg_type, embedded_png_type, fits_type};
+       embedded_jpeg_type, embedded_png_type, fits_type, num_types };
 enum { clip_details, restore_lch_details, restore_hsv_details,
        restore_types };
 enum { digital_highlights, film_highlights, highlights_types };
@@ -172,6 +172,7 @@ typedef struct {
     int rawHistogramScale;
     int expander[expander_count];
     gboolean overExp, underExp, blinkOverUnder;
+    gboolean RememberOutputPath;
     gboolean WindowMaximized;
     char curvePath[max_path];
     char profilePath[max_path];
@@ -317,7 +318,6 @@ void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 void develop_linear(guint16 in[4], guint16 out[3], developer_data *d);
 
 /* prototype for functions in ufraw_saver.c */
-long ufraw_save_as(ufraw_data *uf, void *widget);
 long ufraw_save_now(ufraw_data *uf, void *widget);
 long ufraw_send_to_gimp(ufraw_data *uf);
 

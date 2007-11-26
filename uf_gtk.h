@@ -31,6 +31,12 @@ void uf_label_set_width_chars(GtkLabel *label, gint n_chars);
 // Interface to gtk_window_set_icon_name() introduced in 2.6
 void uf_window_set_icon_name(GtkWindow *window, const gchar *name);
 
+// Create a GtkCheckButton with a label an a value that gets updated
+GtkWidget *uf_check_button_new(const char *label, gboolean *valuep);
+
+// Set combo box data and keep it up to date
+void uf_combo_box_set_data(GtkComboBox *combo, int *valuep);
+
 // Get the display ICC profile of the monitor associated with the widget.
 void uf_get_display_profile(GtkWidget *widget,
      guint8 **buffer, gint *buffer_size);
