@@ -115,13 +115,25 @@ char *uf_file_set_absolute(const char *filename)
 	return g_strdup(filename);
     } else {
 #ifdef HAVE_CANONICALIZE_FILE_NAME
-	char *canon = canonicalize_file_name(filename);
+	char *path = g_path_get_dirname(filename);
+	char *canon = canonicalize_file_name(path);
 	if ( canon==NULL ) {
 	    // We should never reach this code
-	    g_message("Error in canonicalize_file_name(""%s"")", filename);
-	    canon = g_strdup(filename);
+	    g_message("Error in canonicalize_file_name(""%s""): %s",
+		    path, strerror(errno));
+	    g_free(path);
+	    return g_strdup(filename);
 	}
-	return canon;
+	if ( strlen(path)==strlen(filename)-1 ) {
+	    g_free(path);
+	    return canon;
+	}
+	g_free(path);
+	char *base = g_path_get_basename(filename);
+	char *abs = g_build_filename(canon, base, NULL);
+	g_free(base);
+	g_free(canon);
+	return abs;
 #else
 	// We could use realpath(filename, NULL)
 	// if we add a check that it is not buggy
