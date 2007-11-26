@@ -115,6 +115,8 @@ char *uf_file_set_absolute(const char *filename)
 	return g_strdup(filename);
     } else {
 #ifdef HAVE_CANONICALIZE_FILE_NAME
+	// canonicalize_file_name() requires the file to exist.
+	// This is why we need to split 'filename' to dirname and basename.
 	char *path = g_path_get_dirname(filename);
 	char *canon = canonicalize_file_name(path);
 	if ( canon==NULL ) {
@@ -124,6 +126,7 @@ char *uf_file_set_absolute(const char *filename)
 	    g_free(path);
 	    return g_strdup(filename);
 	}
+	// If filename ends with a separator there is no basename
 	if ( strlen(path)==strlen(filename)-1 ) {
 	    g_free(path);
 	    return canon;
