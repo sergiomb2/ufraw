@@ -329,6 +329,10 @@ int ufraw_write_image(ufraw_data *uf)
 	cinfo.in_color_space = JCS_RGB;
 	jpeg_set_defaults(&cinfo);
 	jpeg_set_quality(&cinfo, uf->conf->compression, TRUE);
+	if ( uf->conf->compression>90 )
+	    cinfo.comp_info[0].v_samp_factor = 1;
+	if ( uf->conf->compression>92 )
+	    cinfo.comp_info[0].h_samp_factor = 1;
 	if (uf->conf->progressiveJPEG)
 	    jpeg_simple_progression(&cinfo);
 
