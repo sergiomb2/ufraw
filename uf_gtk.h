@@ -34,6 +34,19 @@ void uf_window_set_icon_name(GtkWindow *window, const gchar *name);
 // Create a GtkCheckButton with a label an a value that gets updated
 GtkWidget *uf_check_button_new(const char *label, gboolean *valuep);
 
+// Create a new ComboBox text with small width.
+// The widget must be added with GTK_EXPAND|GTK_FILL.
+GtkWidget *uf_combo_box_new_text();
+
+// Append text with data to combo box
+void uf_combo_box_append_text(GtkComboBox *combo, const char *text, void *data);
+
+// activate combo box according to data or index, if there is no data
+void uf_combo_box_set_active(GtkComboBox *combo, int value);
+
+// remove combo box entry according to data or index, if there is no data
+void uf_combo_box_remove_text(GtkComboBox *combo, int value);
+
 // Set combo box data and keep it up to date
 void uf_combo_box_set_data(GtkComboBox *combo, int *valuep);
 

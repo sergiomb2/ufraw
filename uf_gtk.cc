@@ -121,17 +121,97 @@ GtkWidget *uf_check_button_new(const char *label, gboolean *valuep)
     return button;
 }
 
+// Create a new ComboBox text with small width.
+// The widget must be added with GTK_EXPAND|GTK_FILL.
+GtkWidget *uf_combo_box_new_text()
+{
+    GtkWidget *combo = gtk_combo_box_new_text();
+    gtk_widget_set_size_request(combo, 50, -1);
+    return combo;
+}
+
+// Append text with data to combo box
+void uf_combo_box_append_text(GtkComboBox *combo, const char *text, void *data)
+{
+    gtk_combo_box_append_text(combo, text);
+    GList *list = static_cast<GList *>(
+	    g_object_get_data(G_OBJECT(combo), "uf-combo-list"));
+    list = g_list_append(list, data);
+    g_object_set_data(G_OBJECT(combo), "uf-combo-list", list);
+}
+
+// activate combo box according to data or index, if there is no data
+void uf_combo_box_set_active(GtkComboBox *combo, int value)
+{
+    GList *list = static_cast<GList *>(
+	    g_object_get_data(G_OBJECT(combo), "uf-combo-list"));
+    if ( list!=NULL ) {
+	int i;
+	for (i=0; list!=NULL; i++, list=g_list_next(list)) {
+	    if ( value==(int)list->data ) {
+		gtk_combo_box_set_active(combo, i);
+		return;
+	    }
+	}
+	// If value not found set activate first entry
+	gtk_combo_box_set_active(combo, 0);
+    } else {
+	gtk_combo_box_set_active(combo, value);
+    }
+}
+
 static void _uf_combo_changed(GtkComboBox *combo, int *valuep)
 {
-    *valuep = gtk_combo_box_get_active(combo);
+    GList *list = static_cast<GList *>(
+	    g_object_get_data(G_OBJECT(combo), "uf-combo-list"));
+    if ( list!=NULL ) {
+	int i = gtk_combo_box_get_active(combo);
+	*valuep = reinterpret_cast<int>(g_list_nth_data(list, i));
+    } else {
+	*valuep = gtk_combo_box_get_active(combo);
+    }
 }
 
 // Set combo box data and keep it up to date
 void uf_combo_box_set_data(GtkComboBox *combo, int *valuep)
 {
-    gtk_combo_box_set_active(combo, *valuep);
-    g_signal_connect(G_OBJECT(combo), "changed",
-                G_CALLBACK(_uf_combo_changed), valuep);
+    gulong handler_id = reinterpret_cast<gulong>(
+	    g_object_get_data(G_OBJECT(combo), "uf-combo-handler-id"));
+    if ( handler_id!=0 )
+	g_signal_handler_disconnect(G_OBJECT(combo), handler_id);
+
+    uf_combo_box_set_active(combo, *valuep);
+    if ( gtk_combo_box_get_active(combo)==0 ) {
+	// If value was not found in uf-combo-list, set it to first entry
+	GList *list = static_cast<GList *>(
+		g_object_get_data(G_OBJECT(combo), "uf-combo-list"));
+	if ( list!=NULL )
+	    *valuep = reinterpret_cast<int>(list->data);
+    }
+    handler_id = g_signal_connect(G_OBJECT(combo), "changed",
+	    G_CALLBACK(_uf_combo_changed), valuep);
+    g_object_set_data(G_OBJECT(combo), "uf-combo-handler-id",
+	    reinterpret_cast<gpointer>(handler_id));
+}
+
+// remove combo box entry according to data or index, if there is no data
+void uf_combo_box_remove_text(GtkComboBox *combo, int value)
+{
+    GList *list = static_cast<GList *>(
+	    g_object_get_data(G_OBJECT(combo), "uf-combo-list"));
+    if ( list!=NULL ) {
+	int i;
+	for (i=0; list!=NULL; i++, list=g_list_next(list)) {
+	    if ( value==(int)list->data ) {
+		gtk_combo_box_remove_text(combo, i);
+		list = g_list_remove(list, list->data);
+		g_object_set_data(G_OBJECT(combo), "uf-combo-list", list);
+		return;
+	    }
+	}
+    } else {
+	gtk_combo_box_remove_text(combo, value);
+    }
 }
 
 // Get the display ICC profile of the monitor associated with the widget.

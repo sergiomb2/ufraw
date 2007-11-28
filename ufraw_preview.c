@@ -96,10 +96,6 @@ typedef struct {
     double initialChanMul[4];
     int raw_his[raw_his_size][4];
     GList *WBPresets; /* List of WB presets in WBCombo*/
-    /* Map from interpolation combobox index to real values */
-    int InterpolationTable[num_interpolations];
-    /* combobox index */
-    int Interpolation;
     int TypeComboMap[num_types];
     GdkPixbuf *PreviewPixbuf;
     GdkCursor *Cursor[cursor_num];
@@ -108,7 +104,7 @@ typedef struct {
     GtkLabel *DarkFrameLabel;
     GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
     GtkComboBox *WBCombo, *BaseCurveCombo, *CurveCombo,
-		*ProfileCombo[profile_types], *TypeCombo;
+		*ProfileCombo[profile_types], *BitDepthCombo, *TypeCombo;
     GtkTable *SpotTable;
     GtkLabel *SpotPatch;
     colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
@@ -1356,6 +1352,8 @@ static void update_scales(preview_data *data)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->UseMatrixButton),
 		data->UF->useMatrix);
     }
+    uf_combo_box_set_data(data->BitDepthCombo,
+	&CFG->profile[out_profile][CFG->profileIndex[out_profile]].BitDepth);
     gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
     gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
     curveeditor_widget_set_curve(data->CurveWidget,
@@ -2751,20 +2749,11 @@ static void combo_update(GtkWidget *combo, gint *valuep)
     preview_data *data = get_preview_data(combo);
     if (data->FreezeDialog) return;
 
-    if ( valuep==&CFG->profile[1][0].BitDepth )
-	valuep = (void *)&CFG->profile[1][CFG->profileIndex[1]].BitDepth;
     if ((char *)valuep==CFG->wb) {
 	int i = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
 	g_strlcpy(CFG->wb, g_list_nth_data(data->WBPresets, i), max_name);
     } else {
 	*valuep = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
-    }
-    if ( valuep==&CFG->profile[1][CFG->profileIndex[1]].BitDepth ) {
-	switch (*valuep) {
-	case 1: *valuep=16; break;
-	case 0:
-	default: *valuep=8;
-	}
     }
     if (valuep==&CFG->BaseCurveIndex) {
 	if (!CFG_cameraCurve && CFG->BaseCurveIndex>camera_curve-2)
@@ -2777,13 +2766,20 @@ static void combo_update(GtkWidget *combo, gint *valuep)
     } else if ((char *)valuep==CFG->wb) {
 	ufraw_set_wb(data->UF);
     }
-    if ( valuep==&data->Interpolation ) {
-	CFG->interpolation = data->InterpolationTable[data->Interpolation];
-    } else {
-	if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
-	if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
-	update_scales(data);
-    }
+    if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
+    if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
+    update_scales(data);
+}
+
+static void combo_update_simple(GtkWidget *combo, gpointer user_data)
+{
+    (void)user_data;
+    preview_data *data = get_preview_data(combo);
+    if (data->FreezeDialog) return;
+
+    if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
+    if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
+    update_scales(data);
 }
 
 static void radio_menu_update(GtkWidget *item, gint *valuep)
@@ -3585,8 +3581,11 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->SpotLabels = color_labels_new(data->SpotTable, 0, 0,
 	    _("Spot values:"), pixel_format, with_zone);
     data->SpotPatch = GTK_LABEL(gtk_label_new(NULL));
-    gtk_table_attach_defaults(data->SpotTable, GTK_WIDGET(data->SpotPatch),
-	    6, 7, 0, 1);
+    // Set a small width to make sure the combo-box is not too big.
+    // The final size is set by the EXPAND|FILL options.
+    gtk_widget_set_size_request(GTK_WIDGET(data->SpotPatch), 50, -1);
+    gtk_table_attach(data->SpotTable, GTK_WIDGET(data->SpotPatch),
+	    6, 7, 0, 1, GTK_EXPAND|GTK_FILL, 0, 0, 0);
 
     button = gtk_button_new();
     gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
@@ -3652,7 +3651,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 //    label = gtk_label_new("White balance");
 //    gtk_table_attach(subTable, label, 0, 1, 0 , 1, 0, 0, 0, 0);
-    data->WBCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    data->WBCombo = GTK_COMBO_BOX(uf_combo_box_new_text());
     data->WBPresets = NULL;
     const wb_data *lastPreset = NULL;
     gboolean make_model_match = FALSE, make_model_fine_tuning = FALSE;
@@ -3779,35 +3778,26 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_container_add(GTK_CONTAINER(event_box), icon);
     gtk_table_attach(table, event_box, 0, 1, 0, 1, 0, 0, 0, 0);
     uf_widget_set_tooltip(event_box, _("Bayer pattern interpolation"));
-    combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    data->Interpolation = 0;
+    combo = GTK_COMBO_BOX(uf_combo_box_new_text());
     if ( data->UF->HaveFilters ) {
-	int i = 0;
 	if ( data->UF->colors==4 ) {
-	    gtk_combo_box_append_text(combo, _("VNG four color interpolation"));
-	    data->InterpolationTable[i++] = four_color_interpolation;
-	    gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
-	    data->InterpolationTable[i++] = bilinear_interpolation;
+	    uf_combo_box_append_text(combo, _("VNG four color interpolation"),
+		    (void*)four_color_interpolation);
+	    uf_combo_box_append_text(combo, _("Bilinear interpolation"),
+		    (void*)bilinear_interpolation);
 	} else {
-	    gtk_combo_box_append_text(combo, _("AHD interpolation"));
-	    data->InterpolationTable[i++] = ahd_interpolation;
-	    gtk_combo_box_append_text(combo, _("VNG interpolation"));
-	    data->InterpolationTable[i++] = vng_interpolation;
-	    gtk_combo_box_append_text(combo, _("VNG four color interpolation"));
-	    data->InterpolationTable[i++] = four_color_interpolation;
-	    gtk_combo_box_append_text(combo, _("PPG interpolation"));
-	    data->InterpolationTable[i++] = ppg_interpolation;
-	    gtk_combo_box_append_text(combo, _("Bilinear interpolation"));
-	    data->InterpolationTable[i++] = bilinear_interpolation;
+	    uf_combo_box_append_text(combo, _("AHD interpolation"),
+		    (void*)ahd_interpolation);
+	    uf_combo_box_append_text(combo, _("VNG interpolation"),
+		    (void*)vng_interpolation);
+	    uf_combo_box_append_text(combo, _("VNG four color interpolation"),
+		    (void*)four_color_interpolation);
+	    uf_combo_box_append_text(combo, _("PPG interpolation"),
+		    (void*)ppg_interpolation);
+	    uf_combo_box_append_text(combo, _("Bilinear interpolation"),
+		    (void*)bilinear_interpolation);
 	}
-	for (i--; i>=0; i--)
-	    if ( data->InterpolationTable[i]==CFG->interpolation )
-		data->Interpolation = i;
-	/* Make sure that CFG->interpolation is set to a valid one */
-	CFG->interpolation = data->InterpolationTable[data->Interpolation];
-	gtk_combo_box_set_active(combo, data->Interpolation);
-	g_signal_connect(G_OBJECT(combo), "changed",
-		G_CALLBACK(combo_update), &data->Interpolation);
+	uf_combo_box_set_data(combo, &CFG->interpolation);
     } else {
 	gtk_combo_box_append_text(combo, _("No Bayer pattern"));
 	gtk_combo_box_set_active(combo, 0);
@@ -3921,7 +3911,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_table_attach(table, GTK_WIDGET(box), 0, 9, 0, 1,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 
-    data->BaseCurveCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    data->BaseCurveCombo = GTK_COMBO_BOX(uf_combo_box_new_text());
     /* Fill in the curve names, skipping custom and camera curves if there is
      * no cameraCurve. This will make some mess later with the counting */
     for (i=0; i<CFG->BaseCurveCount; i++) {
@@ -3999,7 +3989,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 		j==in_profile ? _("Input ICC profile") :
 		j==out_profile ? _("Output ICC profile") :
 		j==display_profile ? _("Display ICC profile") : "Error");
-	data->ProfileCombo[j] = GTK_COMBO_BOX(gtk_combo_box_new_text());
+	data->ProfileCombo[j] = GTK_COMBO_BOX(uf_combo_box_new_text());
 	for (i=0; i<CFG->profileCount[j]; i++)
 	    if ( i<conf_default.profileCount[j] )
 		gtk_combo_box_append_text(data->ProfileCombo[j],
@@ -4007,9 +3997,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    else
 		gtk_combo_box_append_text(data->ProfileCombo[j],
 			CFG->profile[j][i].name);
-	gtk_combo_box_set_active(data->ProfileCombo[j], CFG->profileIndex[j]);
-	g_signal_connect(G_OBJECT(data->ProfileCombo[j]), "changed",
-		G_CALLBACK(combo_update), &CFG->profileIndex[j]);
+	uf_combo_box_set_data(data->ProfileCombo[j], &CFG->profileIndex[j]);
+	g_signal_connect_after(G_OBJECT(data->ProfileCombo[j]), "changed",
+		G_CALLBACK(combo_update_simple), NULL);
 	gtk_table_attach(table, GTK_WIDGET(data->ProfileCombo[j]),
 		1, 8, 4*j+1, 4*j+2, GTK_FILL, GTK_FILL, 0, 0);
 	button = gtk_button_new();
@@ -4059,39 +4049,42 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     label = gtk_label_new(_("Output intent"));
     gtk_table_attach(table, label, 0, 3, 6, 7, 0, 0, 0, 0);
-    combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    combo = GTK_COMBO_BOX(uf_combo_box_new_text());
     gtk_combo_box_append_text(combo, _("Perceptual"));
     gtk_combo_box_append_text(combo, _("Relative colorimetric"));
     gtk_combo_box_append_text(combo, _("Saturation"));
     gtk_combo_box_append_text(combo, _("Absolute colorimetric"));
-    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), CFG->intent[out_profile]);
-    g_signal_connect(G_OBJECT(combo), "changed",
-	    G_CALLBACK(combo_update), &CFG->intent[out_profile]);
+    uf_combo_box_set_data(GTK_COMBO_BOX(combo),
+	    (int*)&CFG->intent[out_profile]);
+    g_signal_connect_after(G_OBJECT(combo), "changed",
+	    G_CALLBACK(combo_update_simple), NULL);
     gtk_table_attach(table, GTK_WIDGET(combo), 3, 8, 6, 7, GTK_FILL, 0, 0, 0);
 
     label = gtk_label_new(_("Output bit depth"));
     gtk_table_attach(table, label, 0, 4, 7, 8, 0, 0, 0, 0);
-    combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-    gtk_combo_box_append_text(combo, "8");
+    data->BitDepthCombo = GTK_COMBO_BOX(uf_combo_box_new_text());
+    uf_combo_box_append_text(data->BitDepthCombo, "8", (void*)8);
     if ( plugin!=1 )
-	gtk_combo_box_append_text(combo, "16");
-    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), 
-	    CFG->profile[1][CFG->profileIndex[1]].BitDepth==8 ? 0 : 1);
-    g_signal_connect(G_OBJECT(combo), "changed",
-	    G_CALLBACK(combo_update), &CFG->profile[1][0].BitDepth);
-    gtk_table_attach(table, GTK_WIDGET(combo), 4, 8, 7, 8, GTK_FILL, 0, 0, 0);
+	uf_combo_box_append_text(data->BitDepthCombo, "16", (void*)16);
+    uf_combo_box_set_data(GTK_COMBO_BOX(data->BitDepthCombo),
+	&CFG->profile[out_profile][CFG->profileIndex[out_profile]].BitDepth);
+    g_signal_connect_after(G_OBJECT(data->BitDepthCombo), "changed",
+	    G_CALLBACK(combo_update_simple), NULL);
+    gtk_table_attach(table, GTK_WIDGET(data->BitDepthCombo), 4, 5, 7, 8,
+	    0, 0, 0, 0);
 
     label = gtk_label_new(_("Display intent"));
     gtk_table_attach(table, label, 0, 3, 10, 11, 0, 0, 0, 0);
-    combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    combo = GTK_COMBO_BOX(uf_combo_box_new_text());
     gtk_combo_box_append_text(combo, _("Perceptual"));
     gtk_combo_box_append_text(combo, _("Relative colorimetric"));
     gtk_combo_box_append_text(combo, _("Saturation"));
     gtk_combo_box_append_text(combo, _("Absolute colorimetric"));
     gtk_combo_box_append_text(combo, _("Disable soft proofing"));
-    gtk_combo_box_set_active(GTK_COMBO_BOX(combo),CFG->intent[display_profile]);
-    g_signal_connect(G_OBJECT(combo), "changed",
-	    G_CALLBACK(combo_update), &CFG->intent[display_profile]);
+    uf_combo_box_set_data(GTK_COMBO_BOX(combo),
+	    (int*)&CFG->intent[display_profile]);
+    g_signal_connect_after(G_OBJECT(combo), "changed",
+	    G_CALLBACK(combo_update_simple), NULL);
     gtk_table_attach(table, GTK_WIDGET(combo), 3, 8, 10, 11, GTK_FILL, 0, 0, 0);
     /* End of Color management page */
 
@@ -4117,7 +4110,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     box = GTK_BOX(gtk_hbox_new(FALSE, 0));
     gtk_table_attach(table, GTK_WIDGET(box), 0, 9, 0, 1,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
-    data->CurveCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
+    data->CurveCombo = GTK_COMBO_BOX(uf_combo_box_new_text());
     /* Fill in the curve names */
     for (i=0; i<CFG->curveCount; i++)
 	if ( i<=linear_curve )
@@ -4427,7 +4420,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	}
 	// Set a small width to make sure the combo-box is not too big.
 	// The final size is set by the EXPAND|FILL options.
-	gtk_widget_set_size_request(chooser, 0, -1);
+	gtk_widget_set_size_request(chooser, 50, -1);
 	char *absFilename = uf_file_set_absolute(CFG->outputFilename);
 	gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(chooser),
 		absFilename);
