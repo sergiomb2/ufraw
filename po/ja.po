@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-23 17:03+0100\n"
+"POT-Creation-Date: 2007-11-30 16:55+0100\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -696,6 +696,26 @@ msgstr ""
 "ハイライト切り出し\n"
 "現在の状態: %s"
 
+#, fuzzy, c-format
+msgid "Filename: %s%s"
+msgstr ""
+"ファイル名: %s\n"
+"サイズ: %d x %d%s"
+
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+"\n"
+"IDファイルも作成します"
+
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+"\n"
+"IDファイルだけ作成します"
+
 msgid "UFRaw options"
 msgstr "UFRawオプション"
 
@@ -732,29 +752,12 @@ msgstr ""
 msgid "Configuration"
 msgstr "構成"
 
-msgid "Save image defaults "
-msgstr "デフォルトとして保存"
-
-msgid ""
-"Save current image manipulation parameters as defaults.\n"
-"The output parameters in this window are always saved."
-msgstr ""
-"現在の画像操作パラメータをデフォルトとして保存。\n"
-"このウインドウの出力パラメータは常に保存されます。"
-
-msgid "Never again"
-msgstr "二度としない"
-
-msgid "Always"
-msgstr "常に"
-
-msgid "Just this once"
-msgstr "今回のみ"
-
-msgid "Save full configuration "
+#, fuzzy
+msgid "Save configuration"
 msgstr "全ての設定を保存"
 
-msgid "Save resource file ($HOME/.ufrawrc)"
+#, fuzzy
+msgid "Save configuration to resource file ($HOME/.ufrawrc)"
 msgstr "リソースファイルを保存 ($HOME/.ufrawrc)"
 
 msgid "Log"
@@ -1059,7 +1062,73 @@ msgstr "\t幅"
 msgid "Orientation:"
 msgstr ""
 
-#. End of transformation page
+#. Start of Save page
+#, fuzzy
+msgid "Save"
+msgstr "保存しました %s"
+
+msgid "Path"
+msgstr ""
+
+msgid "Select output path"
+msgstr ""
+
+#, fuzzy
+msgid "Filename"
+msgstr ""
+"ファイル名: %s\n"
+"サイズ: %d x %d%s"
+
+#, fuzzy
+msgid "JPEG compression level"
+msgstr "圧縮比率"
+
+msgid "JPEG progressive encoding"
+msgstr ""
+
+msgid "TIFF lossless Compress"
+msgstr ""
+
+msgid "Embed EXIF data in JPEG or PNG files"
+msgstr ""
+
+msgid "Create ID file "
+msgstr "IDファイルを作成"
+
+msgid "No"
+msgstr "いいえ"
+
+msgid "Also"
+msgstr "IDファイルも"
+
+msgid "Only"
+msgstr "IDファイルのみ"
+
+msgid "Save image defaults "
+msgstr "デフォルトとして保存"
+
+msgid ""
+"Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr ""
+"現在の画像操作パラメータをデフォルトとして保存。\n"
+"このウインドウの出力パラメータは常に保存されます。"
+
+msgid "Never again"
+msgstr "二度としない"
+
+msgid "Always"
+msgstr "常に"
+
+msgid "Just this once"
+msgstr "今回のみ"
+
+msgid "Remember output path"
+msgstr ""
+
+msgid "Overwrite existing files without asking"
+msgstr "ファイルが存在しても質問無しで上書きする"
+
 #. Start of EXIF page
 msgid "EXIF"
 msgstr ""
@@ -1160,30 +1229,6 @@ msgstr "オプション"
 msgid "_Delete"
 msgstr "IDファイルを作成"
 
-#, fuzzy, c-format
-msgid "Filename: %s%s"
-msgstr ""
-"ファイル名: %s\n"
-"サイズ: %d x %d%s"
-
-msgid ""
-"\n"
-"Create also ID file"
-msgstr ""
-"\n"
-"IDファイルも作成します"
-
-msgid ""
-"\n"
-"Create only ID file"
-msgstr ""
-"\n"
-"IDファイルだけ作成します"
-
-#, fuzzy
-msgid "Save _As"
-msgstr "保存しました %s"
-
 msgid "Send image to _Gimp"
 msgstr ""
 
@@ -1221,57 +1266,6 @@ msgid ""
 msgstr ""
 "ファイル'%s'はすでに存在します。\n"
 "上書きしますか？"
-
-msgid "Save image"
-msgstr "画像の保存"
-
-msgid "Output options"
-msgstr "出力オプション"
-
-msgid "Interpolation method set to AHD"
-msgstr ""
-
-msgid "ppm"
-msgstr ""
-
-msgid "TIFF"
-msgstr ""
-
-msgid "ZIP Compress (lossless)"
-msgstr "ZIP圧縮 (画像の劣化無し)"
-
-msgid "Compression level"
-msgstr "圧縮比率"
-
-msgid "Progressive encoding"
-msgstr ""
-
-msgid "PNG"
-msgstr ""
-
-msgid "Flexible Image Transport System (FITS)"
-msgstr ""
-
-msgid "Embed EXIF data in JPEG or PNG files"
-msgstr ""
-
-msgid "Create ID file "
-msgstr "IDファイルを作成"
-
-msgid "No"
-msgstr "いいえ"
-
-msgid "Also"
-msgstr "IDファイルも"
-
-msgid "Only"
-msgstr "IDファイルのみ"
-
-msgid "\tSave image defaults "
-msgstr "\tデフォルトとして保存"
-
-msgid "Overwrite existing files without asking"
-msgstr "ファイルが存在しても質問無しで上書きする"
 
 #, fuzzy
 msgid "Error creating temporary file."
@@ -1432,6 +1426,18 @@ msgstr "カメラWB"
 
 msgid "Auto WB"
 msgstr "自動WB"
+
+#~ msgid "Save image"
+#~ msgstr "画像の保存"
+
+#~ msgid "Output options"
+#~ msgstr "出力オプション"
+
+#~ msgid "ZIP Compress (lossless)"
+#~ msgstr "ZIP圧縮 (画像の劣化無し)"
+
+#~ msgid "\tSave image defaults "
+#~ msgstr "\tデフォルトとして保存"
 
 #~ msgid "%s - UFRaw Photo Loader"
 #~ msgstr "%s - UFRaw Photo Loader"

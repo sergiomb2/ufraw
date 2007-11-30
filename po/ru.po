@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-23 17:03+0100\n"
+"POT-Creation-Date: 2007-11-30 16:55+0100\n"
 "PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -722,6 +722,24 @@ msgstr ""
 "Восстановление пересвеченных участков\n"
 "Текущее состояние: %s"
 
+#, c-format
+msgid "Filename: %s%s"
+msgstr "Имя файла: %s%s"
+
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+"\n"
+"Дополнительно создать ID-файл"
+
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+"\n"
+"Создать только ID-файл"
+
 msgid "UFRaw options"
 msgstr "Параметры UFRaw"
 
@@ -756,29 +774,12 @@ msgstr "Мигать индикацией пере/недоэкспониров�
 msgid "Configuration"
 msgstr "Настройка"
 
-msgid "Save image defaults "
-msgstr "Сохранять параметры снимков"
-
-msgid ""
-"Save current image manipulation parameters as defaults.\n"
-"The output parameters in this window are always saved."
-msgstr ""
-"Сохранить текущие параметры снимка как исходные.\n"
-"Параметры экспорта в этом окне всегда будут сохраняться."
-
-msgid "Never again"
-msgstr "Никогда больше"
-
-msgid "Always"
-msgstr "Всегда"
-
-msgid "Just this once"
-msgstr "Только в этот раз"
-
-msgid "Save full configuration "
+#, fuzzy
+msgid "Save configuration"
 msgstr "Сохранение всех параметров"
 
-msgid "Save resource file ($HOME/.ufrawrc)"
+#, fuzzy
+msgid "Save configuration to resource file ($HOME/.ufrawrc)"
 msgstr "Сохранить файл настроек ($HOME/.ufrawrc)"
 
 msgid "Log"
@@ -1068,7 +1069,72 @@ msgstr "Ширина"
 msgid "Orientation:"
 msgstr "Ориентация:"
 
-#. End of transformation page
+#. Start of Save page
+#, fuzzy
+msgid "Save"
+msgstr "Сохранить _как"
+
+msgid "Path"
+msgstr ""
+
+msgid "Select output path"
+msgstr ""
+
+#, fuzzy
+msgid "Filename"
+msgstr "Имя файла: %s%s"
+
+#, fuzzy
+msgid "JPEG compression level"
+msgstr "Уровень сжатия"
+
+#, fuzzy
+msgid "JPEG progressive encoding"
+msgstr "Прогрессивное кодирование"
+
+msgid "TIFF lossless Compress"
+msgstr ""
+
+msgid "Embed EXIF data in JPEG or PNG files"
+msgstr "Встроить данные EXIF в файлы JPG или PNG"
+
+msgid "Create ID file "
+msgstr "Создать ID-файл "
+
+msgid "No"
+msgstr "Нет"
+
+msgid "Also"
+msgstr "Также"
+
+msgid "Only"
+msgstr "Только"
+
+msgid "Save image defaults "
+msgstr "Сохранять параметры снимков"
+
+msgid ""
+"Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr ""
+"Сохранить текущие параметры снимка как исходные.\n"
+"Параметры экспорта в этом окне всегда будут сохраняться."
+
+msgid "Never again"
+msgstr "Никогда больше"
+
+msgid "Always"
+msgstr "Всегда"
+
+msgid "Just this once"
+msgstr "Только в этот раз"
+
+msgid "Remember output path"
+msgstr ""
+
+msgid "Overwrite existing files without asking"
+msgstr "Перезаписать существующие файлы без подтверждения"
+
 #. Start of EXIF page
 msgid "EXIF"
 msgstr "EXIF"
@@ -1157,27 +1223,6 @@ msgstr "Параметры"
 msgid "_Delete"
 msgstr "_Удалить"
 
-#, c-format
-msgid "Filename: %s%s"
-msgstr "Имя файла: %s%s"
-
-msgid ""
-"\n"
-"Create also ID file"
-msgstr ""
-"\n"
-"Дополнительно создать ID-файл"
-
-msgid ""
-"\n"
-"Create only ID file"
-msgstr ""
-"\n"
-"Создать только ID-файл"
-
-msgid "Save _As"
-msgstr "Сохранить _как"
-
 msgid "Send image to _Gimp"
 msgstr "Передать изображение в GIMP"
 
@@ -1215,57 +1260,6 @@ msgid ""
 msgstr ""
 "Файл '%s' уже существует.\n"
 "Перезаписать его?"
-
-msgid "Save image"
-msgstr "Сохранить снимок"
-
-msgid "Output options"
-msgstr "Параметры вывода"
-
-msgid "Interpolation method set to AHD"
-msgstr "Используется способ интерполяции AHD"
-
-msgid "ppm"
-msgstr ""
-
-msgid "TIFF"
-msgstr ""
-
-msgid "ZIP Compress (lossless)"
-msgstr "Сжатие ZIP (без потерь в качестве)"
-
-msgid "Compression level"
-msgstr "Уровень сжатия"
-
-msgid "Progressive encoding"
-msgstr "Прогрессивное кодирование"
-
-msgid "PNG"
-msgstr ""
-
-msgid "Flexible Image Transport System (FITS)"
-msgstr "Гибкая система передачи изображения (FITS)"
-
-msgid "Embed EXIF data in JPEG or PNG files"
-msgstr "Встроить данные EXIF в файлы JPG или PNG"
-
-msgid "Create ID file "
-msgstr "Создать ID-файл "
-
-msgid "No"
-msgstr "Нет"
-
-msgid "Also"
-msgstr "Также"
-
-msgid "Only"
-msgstr "Только"
-
-msgid "\tSave image defaults "
-msgstr "\tСохранить эти параметры как исходные "
-
-msgid "Overwrite existing files without asking"
-msgstr "Перезаписать существующие файлы без подтверждения"
 
 msgid "Error creating temporary file."
 msgstr "Ошибка при создании временного файла."
@@ -1416,6 +1410,24 @@ msgstr "ББ камеры"
 
 msgid "Auto WB"
 msgstr "Автоматический ББ"
+
+#~ msgid "Save image"
+#~ msgstr "Сохранить снимок"
+
+#~ msgid "Output options"
+#~ msgstr "Параметры вывода"
+
+#~ msgid "Interpolation method set to AHD"
+#~ msgstr "Используется способ интерполяции AHD"
+
+#~ msgid "ZIP Compress (lossless)"
+#~ msgstr "Сжатие ZIP (без потерь в качестве)"
+
+#~ msgid "Flexible Image Transport System (FITS)"
+#~ msgstr "Гибкая система передачи изображения (FITS)"
+
+#~ msgid "\tSave image defaults "
+#~ msgstr "\tСохранить эти параметры как исходные "
 
 #~ msgid "%s - UFRaw Photo Loader"
 #~ msgstr "%s – загрузчик фотографий UFRaw"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-23 17:03+0100\n"
+"POT-Creation-Date: 2007-11-30 16:55+0100\n"
 "PO-Revision-Date: 2007-11-13 21:53+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -622,6 +622,20 @@ msgid ""
 "Current state: %s"
 msgstr ""
 
+#, c-format
+msgid "Filename: %s%s"
+msgstr "Filnamn: %s%s"
+
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+
 msgid "UFRaw options"
 msgstr ""
 
@@ -656,27 +670,12 @@ msgstr ""
 msgid "Configuration"
 msgstr "Konfiguration"
 
-msgid "Save image defaults "
-msgstr "Spara standardbildvärden"
-
-msgid ""
-"Save current image manipulation parameters as defaults.\n"
-"The output parameters in this window are always saved."
-msgstr ""
-
-msgid "Never again"
-msgstr "Aldrig igen"
-
-msgid "Always"
-msgstr "Alltid"
-
-msgid "Just this once"
-msgstr "Bara denna gång"
-
-msgid "Save full configuration "
+#, fuzzy
+msgid "Save configuration"
 msgstr "Spara fullständig konfiguration"
 
-msgid "Save resource file ($HOME/.ufrawrc)"
+#, fuzzy
+msgid "Save configuration to resource file ($HOME/.ufrawrc)"
 msgstr "Spara resursfil ($HOME/.ufrawrc)"
 
 msgid "Log"
@@ -948,7 +947,70 @@ msgstr "Bredd"
 msgid "Orientation:"
 msgstr "Orientering:"
 
-#. End of transformation page
+#. Start of Save page
+#, fuzzy
+msgid "Save"
+msgstr "Spara s_om"
+
+msgid "Path"
+msgstr ""
+
+msgid "Select output path"
+msgstr ""
+
+#, fuzzy
+msgid "Filename"
+msgstr "Filnamn: %s%s"
+
+#, fuzzy
+msgid "JPEG compression level"
+msgstr "Komprimeringsnivå"
+
+#, fuzzy
+msgid "JPEG progressive encoding"
+msgstr "Progressiv kodning"
+
+msgid "TIFF lossless Compress"
+msgstr ""
+
+msgid "Embed EXIF data in JPEG or PNG files"
+msgstr "Bädda in EXIF-data i JPEG eller PNG-filer"
+
+msgid "Create ID file "
+msgstr "Skapa ID-fil "
+
+msgid "No"
+msgstr "Nej"
+
+msgid "Also"
+msgstr ""
+
+msgid "Only"
+msgstr "Endast"
+
+msgid "Save image defaults "
+msgstr "Spara standardbildvärden"
+
+msgid ""
+"Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr ""
+
+msgid "Never again"
+msgstr "Aldrig igen"
+
+msgid "Always"
+msgstr "Alltid"
+
+msgid "Just this once"
+msgstr "Bara denna gång"
+
+msgid "Remember output path"
+msgstr ""
+
+msgid "Overwrite existing files without asking"
+msgstr "Skriv över befintliga filer utan att fråga"
+
 #. Start of EXIF page
 msgid "EXIF"
 msgstr "EXIF"
@@ -1038,23 +1100,6 @@ msgstr "Alternativ"
 msgid "_Delete"
 msgstr "_Ta bort"
 
-#, c-format
-msgid "Filename: %s%s"
-msgstr "Filnamn: %s%s"
-
-msgid ""
-"\n"
-"Create also ID file"
-msgstr ""
-
-msgid ""
-"\n"
-"Create only ID file"
-msgstr ""
-
-msgid "Save _As"
-msgstr "Spara s_om"
-
 msgid "Send image to _Gimp"
 msgstr "Spara bild till _Gimp"
 
@@ -1092,57 +1137,6 @@ msgid ""
 msgstr ""
 "Filen \"%s\" finns redan.\n"
 "Skriv över?"
-
-msgid "Save image"
-msgstr "Spara bild"
-
-msgid "Output options"
-msgstr ""
-
-msgid "Interpolation method set to AHD"
-msgstr ""
-
-msgid "ppm"
-msgstr ""
-
-msgid "TIFF"
-msgstr ""
-
-msgid "ZIP Compress (lossless)"
-msgstr ""
-
-msgid "Compression level"
-msgstr "Komprimeringsnivå"
-
-msgid "Progressive encoding"
-msgstr "Progressiv kodning"
-
-msgid "PNG"
-msgstr ""
-
-msgid "Flexible Image Transport System (FITS)"
-msgstr "Flexible Image Transport System (FITS)"
-
-msgid "Embed EXIF data in JPEG or PNG files"
-msgstr "Bädda in EXIF-data i JPEG eller PNG-filer"
-
-msgid "Create ID file "
-msgstr "Skapa ID-fil "
-
-msgid "No"
-msgstr "Nej"
-
-msgid "Also"
-msgstr ""
-
-msgid "Only"
-msgstr "Endast"
-
-msgid "\tSave image defaults "
-msgstr "\tSpara standardbildvärden "
-
-msgid "Overwrite existing files without asking"
-msgstr "Skriv över befintliga filer utan att fråga"
 
 msgid "Error creating temporary file."
 msgstr "Fel vid skapandet av temporärfil."
@@ -1291,6 +1285,15 @@ msgstr "Kamera VB"
 
 msgid "Auto WB"
 msgstr "Automatisk VB"
+
+#~ msgid "Save image"
+#~ msgstr "Spara bild"
+
+#~ msgid "Flexible Image Transport System (FITS)"
+#~ msgstr "Flexible Image Transport System (FITS)"
+
+#~ msgid "\tSave image defaults "
+#~ msgstr "\tSpara standardbildvärden "
 
 #~ msgid "%s - UFRaw Photo Loader"
 #~ msgstr "%s - UFRaw fotoinläsare"

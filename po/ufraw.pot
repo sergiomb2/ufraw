@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-23 17:03+0100\n"
+"POT-Creation-Date: 2007-11-30 16:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -612,6 +612,20 @@ msgid ""
 "Current state: %s"
 msgstr ""
 
+#, c-format
+msgid "Filename: %s%s"
+msgstr ""
+
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+
 msgid "UFRaw options"
 msgstr ""
 
@@ -646,27 +660,10 @@ msgstr ""
 msgid "Configuration"
 msgstr ""
 
-msgid "Save image defaults "
+msgid "Save configuration"
 msgstr ""
 
-msgid ""
-"Save current image manipulation parameters as defaults.\n"
-"The output parameters in this window are always saved."
-msgstr ""
-
-msgid "Never again"
-msgstr ""
-
-msgid "Always"
-msgstr ""
-
-msgid "Just this once"
-msgstr ""
-
-msgid "Save full configuration "
-msgstr ""
-
-msgid "Save resource file ($HOME/.ufrawrc)"
+msgid "Save configuration to resource file ($HOME/.ufrawrc)"
 msgstr ""
 
 msgid "Log"
@@ -938,7 +935,66 @@ msgstr ""
 msgid "Orientation:"
 msgstr ""
 
-#. End of transformation page
+#. Start of Save page
+msgid "Save"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Select output path"
+msgstr ""
+
+msgid "Filename"
+msgstr ""
+
+msgid "JPEG compression level"
+msgstr ""
+
+msgid "JPEG progressive encoding"
+msgstr ""
+
+msgid "TIFF lossless Compress"
+msgstr ""
+
+msgid "Embed EXIF data in JPEG or PNG files"
+msgstr ""
+
+msgid "Create ID file "
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Also"
+msgstr ""
+
+msgid "Only"
+msgstr ""
+
+msgid "Save image defaults "
+msgstr ""
+
+msgid ""
+"Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr ""
+
+msgid "Never again"
+msgstr ""
+
+msgid "Always"
+msgstr ""
+
+msgid "Just this once"
+msgstr ""
+
+msgid "Remember output path"
+msgstr ""
+
+msgid "Overwrite existing files without asking"
+msgstr ""
+
 #. Start of EXIF page
 msgid "EXIF"
 msgstr ""
@@ -1027,23 +1083,6 @@ msgstr ""
 msgid "_Delete"
 msgstr ""
 
-#, c-format
-msgid "Filename: %s%s"
-msgstr ""
-
-msgid ""
-"\n"
-"Create also ID file"
-msgstr ""
-
-msgid ""
-"\n"
-"Create only ID file"
-msgstr ""
-
-msgid "Save _As"
-msgstr ""
-
 msgid "Send image to _Gimp"
 msgstr ""
 
@@ -1078,57 +1117,6 @@ msgstr ""
 msgid ""
 "File '%s' already exists.\n"
 "Overwrite?"
-msgstr ""
-
-msgid "Save image"
-msgstr ""
-
-msgid "Output options"
-msgstr ""
-
-msgid "Interpolation method set to AHD"
-msgstr ""
-
-msgid "ppm"
-msgstr ""
-
-msgid "TIFF"
-msgstr ""
-
-msgid "ZIP Compress (lossless)"
-msgstr ""
-
-msgid "Compression level"
-msgstr ""
-
-msgid "Progressive encoding"
-msgstr ""
-
-msgid "PNG"
-msgstr ""
-
-msgid "Flexible Image Transport System (FITS)"
-msgstr ""
-
-msgid "Embed EXIF data in JPEG or PNG files"
-msgstr ""
-
-msgid "Create ID file "
-msgstr ""
-
-msgid "No"
-msgstr ""
-
-msgid "Also"
-msgstr ""
-
-msgid "Only"
-msgstr ""
-
-msgid "\tSave image defaults "
-msgstr ""
-
-msgid "Overwrite existing files without asking"
 msgstr ""
 
 msgid "Error creating temporary file."

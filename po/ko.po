@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-23 17:03+0100\n"
+"POT-Creation-Date: 2007-11-30 16:55+0100\n"
 "PO-Revision-Date: 2007-11-09 21:16+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -687,6 +687,24 @@ msgstr ""
 "명부에서 하이라이트 잘라내기\n"
 "현재상태: %s"
 
+#, c-format
+msgid "Filename: %s%s"
+msgstr "파일 이름: %s%s"
+
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+"\n"
+"ID파일을 같이 만들기"
+
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+"\n"
+"ID파일만 만들기"
+
 msgid "UFRaw options"
 msgstr "UFRaw 옵션들"
 
@@ -721,29 +739,12 @@ msgstr "노출 부족/과다 영역 깜박임"
 msgid "Configuration"
 msgstr "설정"
 
-msgid "Save image defaults "
-msgstr "이미지 기본값 저장"
-
-msgid ""
-"Save current image manipulation parameters as defaults.\n"
-"The output parameters in this window are always saved."
-msgstr ""
-"현재의 조정 값들을 기본값으로 저장합니다.\n"
-"이 윈도우의 출력 파라미터들은 항상 저장됩니다."
-
-msgid "Never again"
-msgstr "다시 묻지 않음"
-
-msgid "Always"
-msgstr "항상"
-
-msgid "Just this once"
-msgstr "이번 한번 만"
-
-msgid "Save full configuration "
+#, fuzzy
+msgid "Save configuration"
 msgstr "전체 설정 저장"
 
-msgid "Save resource file ($HOME/.ufrawrc)"
+#, fuzzy
+msgid "Save configuration to resource file ($HOME/.ufrawrc)"
 msgstr "리소스 파일 저장 ($HOME/.ufrawrc)"
 
 msgid "Log"
@@ -1034,7 +1035,72 @@ msgstr "넓이"
 msgid "Orientation:"
 msgstr "기준:"
 
-#. End of transformation page
+#. Start of Save page
+#, fuzzy
+msgid "Save"
+msgstr "다른 이름으로 저장(_A)"
+
+msgid "Path"
+msgstr ""
+
+msgid "Select output path"
+msgstr ""
+
+#, fuzzy
+msgid "Filename"
+msgstr "파일 이름: %s%s"
+
+#, fuzzy
+msgid "JPEG compression level"
+msgstr "압축률"
+
+#, fuzzy
+msgid "JPEG progressive encoding"
+msgstr "프로그래시브 인코딩"
+
+msgid "TIFF lossless Compress"
+msgstr ""
+
+msgid "Embed EXIF data in JPEG or PNG files"
+msgstr "JPEG나 PNG파일에 EXIF 정보 포함하기"
+
+msgid "Create ID file "
+msgstr "ID 파일 만들기"
+
+msgid "No"
+msgstr "아니요"
+
+msgid "Also"
+msgstr "또한"
+
+msgid "Only"
+msgstr "오직"
+
+msgid "Save image defaults "
+msgstr "이미지 기본값 저장"
+
+msgid ""
+"Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr ""
+"현재의 조정 값들을 기본값으로 저장합니다.\n"
+"이 윈도우의 출력 파라미터들은 항상 저장됩니다."
+
+msgid "Never again"
+msgstr "다시 묻지 않음"
+
+msgid "Always"
+msgstr "항상"
+
+msgid "Just this once"
+msgstr "이번 한번 만"
+
+msgid "Remember output path"
+msgstr ""
+
+msgid "Overwrite existing files without asking"
+msgstr "묻지 않고 존재하는 파일에 덮어쓰기"
+
 #. Start of EXIF page
 msgid "EXIF"
 msgstr "EXIF"
@@ -1123,27 +1189,6 @@ msgstr "옵션"
 msgid "_Delete"
 msgstr "지우기(_D)"
 
-#, c-format
-msgid "Filename: %s%s"
-msgstr "파일 이름: %s%s"
-
-msgid ""
-"\n"
-"Create also ID file"
-msgstr ""
-"\n"
-"ID파일을 같이 만들기"
-
-msgid ""
-"\n"
-"Create only ID file"
-msgstr ""
-"\n"
-"ID파일만 만들기"
-
-msgid "Save _As"
-msgstr "다른 이름으로 저장(_A)"
-
 msgid "Send image to _Gimp"
 msgstr "이미지를 Gimp로 전달(_G)"
 
@@ -1181,57 +1226,6 @@ msgid ""
 msgstr ""
 "'%s'파일이 이미 존재합니다.\n"
 "덮어쓸까요?"
-
-msgid "Save image"
-msgstr "이미지 저장"
-
-msgid "Output options"
-msgstr "출력 옵션"
-
-msgid "Interpolation method set to AHD"
-msgstr "보간방법이 AHD로 설정 되었습니다"
-
-msgid "ppm"
-msgstr ""
-
-msgid "TIFF"
-msgstr ""
-
-msgid "ZIP Compress (lossless)"
-msgstr "ZIP 압축 (무손실)"
-
-msgid "Compression level"
-msgstr "압축률"
-
-msgid "Progressive encoding"
-msgstr "프로그래시브 인코딩"
-
-msgid "PNG"
-msgstr ""
-
-msgid "Flexible Image Transport System (FITS)"
-msgstr "Flexible Image Transport System (FITS)"
-
-msgid "Embed EXIF data in JPEG or PNG files"
-msgstr "JPEG나 PNG파일에 EXIF 정보 포함하기"
-
-msgid "Create ID file "
-msgstr "ID 파일 만들기"
-
-msgid "No"
-msgstr "아니요"
-
-msgid "Also"
-msgstr "또한"
-
-msgid "Only"
-msgstr "오직"
-
-msgid "\tSave image defaults "
-msgstr "\t이미지 기본값 저장"
-
-msgid "Overwrite existing files without asking"
-msgstr "묻지 않고 존재하는 파일에 덮어쓰기"
 
 msgid "Error creating temporary file."
 msgstr "임시 파일 만들기 실패."
@@ -1381,6 +1375,24 @@ msgstr "카메라 화벨"
 
 msgid "Auto WB"
 msgstr "자동 화벨"
+
+#~ msgid "Save image"
+#~ msgstr "이미지 저장"
+
+#~ msgid "Output options"
+#~ msgstr "출력 옵션"
+
+#~ msgid "Interpolation method set to AHD"
+#~ msgstr "보간방법이 AHD로 설정 되었습니다"
+
+#~ msgid "ZIP Compress (lossless)"
+#~ msgstr "ZIP 압축 (무손실)"
+
+#~ msgid "Flexible Image Transport System (FITS)"
+#~ msgstr "Flexible Image Transport System (FITS)"
+
+#~ msgid "\tSave image defaults "
+#~ msgstr "\t이미지 기본값 저장"
 
 #~ msgid "%s - UFRaw Photo Loader"
 #~ msgstr "%s - UFRaw Photo Loader"

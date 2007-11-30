@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-23 17:03+0100\n"
+"POT-Creation-Date: 2007-11-30 16:55+0100\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -715,6 +715,26 @@ msgstr ""
 "Clipa superexposições para EV positivo\n"
 "Estado atual: %s"
 
+#, fuzzy, c-format
+msgid "Filename: %s%s"
+msgstr ""
+"Nome de arquivo: %s\n"
+"Tamanho: %d x %d%s"
+
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+"\n"
+"Criar também arquivo ID"
+
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+"\n"
+"Criar somente arquivo ID"
+
 msgid "UFRaw options"
 msgstr "Opções UFRaw"
 
@@ -751,29 +771,12 @@ msgstr ""
 msgid "Configuration"
 msgstr "Configuração"
 
-msgid "Save image defaults "
-msgstr "Padrões para salvar imagens"
-
-msgid ""
-"Save current image manipulation parameters as defaults.\n"
-"The output parameters in this window are always saved."
-msgstr ""
-"Salva parâmetros de manipulação de imagem atuais como padrão.\n"
-"Os parâmetros de saída nesta janela são sempre salvos."
-
-msgid "Never again"
-msgstr "Nunca mais"
-
-msgid "Always"
-msgstr "Sempre"
-
-msgid "Just this once"
-msgstr "Somente esta vez"
-
-msgid "Save full configuration "
+#, fuzzy
+msgid "Save configuration"
 msgstr "Salva toda a configuração"
 
-msgid "Save resource file ($HOME/.ufrawrc)"
+#, fuzzy
+msgid "Save configuration to resource file ($HOME/.ufrawrc)"
 msgstr "Salva o arquivo de recursos ($HOME/.ufrawrc)"
 
 msgid "Log"
@@ -1075,7 +1078,73 @@ msgstr "\tLargura "
 msgid "Orientation:"
 msgstr ""
 
-#. End of transformation page
+#. Start of Save page
+#, fuzzy
+msgid "Save"
+msgstr "salvou %s"
+
+msgid "Path"
+msgstr ""
+
+msgid "Select output path"
+msgstr ""
+
+#, fuzzy
+msgid "Filename"
+msgstr ""
+"Nome de arquivo: %s\n"
+"Tamanho: %d x %d%s"
+
+#, fuzzy
+msgid "JPEG compression level"
+msgstr "Nível de compressão"
+
+msgid "JPEG progressive encoding"
+msgstr ""
+
+msgid "TIFF lossless Compress"
+msgstr ""
+
+msgid "Embed EXIF data in JPEG or PNG files"
+msgstr ""
+
+msgid "Create ID file "
+msgstr "Criar arquivo ID"
+
+msgid "No"
+msgstr "Não"
+
+msgid "Also"
+msgstr "Também"
+
+msgid "Only"
+msgstr "Somente"
+
+msgid "Save image defaults "
+msgstr "Padrões para salvar imagens"
+
+msgid ""
+"Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr ""
+"Salva parâmetros de manipulação de imagem atuais como padrão.\n"
+"Os parâmetros de saída nesta janela são sempre salvos."
+
+msgid "Never again"
+msgstr "Nunca mais"
+
+msgid "Always"
+msgstr "Sempre"
+
+msgid "Just this once"
+msgstr "Somente esta vez"
+
+msgid "Remember output path"
+msgstr ""
+
+msgid "Overwrite existing files without asking"
+msgstr "Sobrescrever arquivos existentes sem perguntar"
+
 #. Start of EXIF page
 msgid "EXIF"
 msgstr ""
@@ -1175,30 +1244,6 @@ msgstr "Opções"
 msgid "_Delete"
 msgstr "Criar arquivo ID"
 
-#, fuzzy, c-format
-msgid "Filename: %s%s"
-msgstr ""
-"Nome de arquivo: %s\n"
-"Tamanho: %d x %d%s"
-
-msgid ""
-"\n"
-"Create also ID file"
-msgstr ""
-"\n"
-"Criar também arquivo ID"
-
-msgid ""
-"\n"
-"Create only ID file"
-msgstr ""
-"\n"
-"Criar somente arquivo ID"
-
-#, fuzzy
-msgid "Save _As"
-msgstr "salvou %s"
-
 msgid "Send image to _Gimp"
 msgstr ""
 
@@ -1236,57 +1281,6 @@ msgid ""
 msgstr ""
 "O arquivo '%s' já existe.\n"
 "Sobrescrever?"
-
-msgid "Save image"
-msgstr "Salvar imagem"
-
-msgid "Output options"
-msgstr "Opções de saída"
-
-msgid "Interpolation method set to AHD"
-msgstr ""
-
-msgid "ppm"
-msgstr ""
-
-msgid "TIFF"
-msgstr ""
-
-msgid "ZIP Compress (lossless)"
-msgstr "Compressão ZIP (sem perdas)"
-
-msgid "Compression level"
-msgstr "Nível de compressão"
-
-msgid "Progressive encoding"
-msgstr ""
-
-msgid "PNG"
-msgstr ""
-
-msgid "Flexible Image Transport System (FITS)"
-msgstr ""
-
-msgid "Embed EXIF data in JPEG or PNG files"
-msgstr ""
-
-msgid "Create ID file "
-msgstr "Criar arquivo ID"
-
-msgid "No"
-msgstr "Não"
-
-msgid "Also"
-msgstr "Também"
-
-msgid "Only"
-msgstr "Somente"
-
-msgid "\tSave image defaults "
-msgstr "\tSalvar padrões de imagem"
-
-msgid "Overwrite existing files without asking"
-msgstr "Sobrescrever arquivos existentes sem perguntar"
 
 #, fuzzy
 msgid "Error creating temporary file."
@@ -1448,6 +1442,18 @@ msgstr "WB da câmera"
 
 msgid "Auto WB"
 msgstr "Auto WB"
+
+#~ msgid "Save image"
+#~ msgstr "Salvar imagem"
+
+#~ msgid "Output options"
+#~ msgstr "Opções de saída"
+
+#~ msgid "ZIP Compress (lossless)"
+#~ msgstr "Compressão ZIP (sem perdas)"
+
+#~ msgid "\tSave image defaults "
+#~ msgstr "\tSalvar padrões de imagem"
 
 #~ msgid "%s - UFRaw Photo Loader"
 #~ msgstr "%s - UFRaw carregador de fotos"

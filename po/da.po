@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-23 17:03+0100\n"
-"PO-Revision-Date: 2007-11-22 06:40+0100\n"
+"POT-Creation-Date: 2007-11-30 16:55+0100\n"
+"PO-Revision-Date: 2007-11-30 17:00+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -702,6 +702,24 @@ msgstr ""
 "Klip højlys for positive LV\n"
 "Nuværende tilstand: %s"
 
+#, c-format
+msgid "Filename: %s%s"
+msgstr "Filnavn: %s%s"
+
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+"\n"
+"Dan også ID-fil"
+
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+"\n"
+"Dan kun ID-fil"
+
 msgid "UFRaw options"
 msgstr "UFRaw tilvalg"
 
@@ -736,30 +754,11 @@ msgstr "Blinkende over-/undereksponeringsindikatorer"
 msgid "Configuration"
 msgstr "Konfiguration"
 
-msgid "Save image defaults "
-msgstr "Gem billedstandardværdier "
+msgid "Save configuration"
+msgstr "Gem konfiguration"
 
-msgid ""
-"Save current image manipulation parameters as defaults.\n"
-"The output parameters in this window are always saved."
-msgstr ""
-"Gem nuværende billedbehandlingsparametre som standardværdier.\n"
-"Uddataparametrene i dette vindue gemmes altid."
-
-msgid "Never again"
-msgstr "Aldrig igen"
-
-msgid "Always"
-msgstr "Altid"
-
-msgid "Just this once"
-msgstr "Kun denne ene gang"
-
-msgid "Save full configuration "
-msgstr "Gem fuld konfiguration "
-
-msgid "Save resource file ($HOME/.ufrawrc)"
-msgstr "Gem ressourcefil ($HOME/.ufrawrc)"
+msgid "Save configuration to resource file ($HOME/.ufrawrc)"
+msgstr "Gem konfiguration i ressourcefil ($HOME/.ufrawrc)"
 
 msgid "Log"
 msgstr "Log"
@@ -1047,7 +1046,68 @@ msgstr "Bredde"
 msgid "Orientation:"
 msgstr "Orientering:"
 
-#. End of transformation page
+#. Start of Save page
+msgid "Save"
+msgstr "Gem"
+
+msgid "Path"
+msgstr "Sti"
+
+msgid "Select output path"
+msgstr "Vælg uddatasti"
+
+msgid "Filename"
+msgstr "Filnavn"
+
+msgid "JPEG compression level"
+msgstr "JPEG komprimeringsniveau"
+
+msgid "JPEG progressive encoding"
+msgstr "JPEG progressiv indkodning"
+
+msgid "TIFF lossless Compress"
+msgstr "TIFF tabsfri komprimering"
+
+msgid "Embed EXIF data in JPEG or PNG files"
+msgstr "Indlejr EXIF-data i JPEG- eller PNG-filer"
+
+msgid "Create ID file "
+msgstr "Dan ID-fil "
+
+msgid "No"
+msgstr "Ingen"
+
+msgid "Also"
+msgstr "Også"
+
+msgid "Only"
+msgstr "Kun"
+
+msgid "Save image defaults "
+msgstr "Gem billedstandardværdier "
+
+msgid ""
+"Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr ""
+"Gem nuværende billedbehandlingsparametre som standardværdier.\n"
+"Uddataparametrene i dette vindue gemmes altid."
+
+msgid "Never again"
+msgstr "Aldrig igen"
+
+msgid "Always"
+msgstr "Altid"
+
+msgid "Just this once"
+msgstr "Kun denne ene gang"
+
+msgid "Remember output path"
+msgstr "Husk uddatasti"
+
+msgid "Overwrite existing files without asking"
+msgstr "Overskriv eksisterende filer uden at spørge"
+
 #. Start of EXIF page
 msgid "EXIF"
 msgstr "EXIF"
@@ -1136,27 +1196,6 @@ msgstr "Tilvalg"
 msgid "_Delete"
 msgstr "_Slet"
 
-#, c-format
-msgid "Filename: %s%s"
-msgstr "Filnavn: %s%s"
-
-msgid ""
-"\n"
-"Create also ID file"
-msgstr ""
-"\n"
-"Dan også ID-fil"
-
-msgid ""
-"\n"
-"Create only ID file"
-msgstr ""
-"\n"
-"Dan kun ID-fil"
-
-msgid "Save _As"
-msgstr "Gem so_m"
-
 msgid "Send image to _Gimp"
 msgstr "Send _billede til Gimp"
 
@@ -1194,57 +1233,6 @@ msgid ""
 msgstr ""
 "Filen '%s' findes allerede.\n"
 "Overskriv?"
-
-msgid "Save image"
-msgstr "Gem billede"
-
-msgid "Output options"
-msgstr "Uddatatilvalg"
-
-msgid "Interpolation method set to AHD"
-msgstr "Interpolationsmetode er sat til AHD"
-
-msgid "ppm"
-msgstr "ppm"
-
-msgid "TIFF"
-msgstr "TIFF"
-
-msgid "ZIP Compress (lossless)"
-msgstr "ZIP-komprimering (tabsfri)"
-
-msgid "Compression level"
-msgstr "Komprimeringsniveau"
-
-msgid "Progressive encoding"
-msgstr "Progressiv indkodning"
-
-msgid "PNG"
-msgstr "PNG"
-
-msgid "Flexible Image Transport System (FITS)"
-msgstr "Flexible Image Transport System (FITS)"
-
-msgid "Embed EXIF data in JPEG or PNG files"
-msgstr "Indlejr EXIF-data i JPEG- eller PNG-filer"
-
-msgid "Create ID file "
-msgstr "Dan ID-fil "
-
-msgid "No"
-msgstr "Ingen"
-
-msgid "Also"
-msgstr "Også"
-
-msgid "Only"
-msgstr "Kun"
-
-msgid "\tSave image defaults "
-msgstr "\tGem billedstandardværdier "
-
-msgid "Overwrite existing files without asking"
-msgstr "Overskriv eksisterende filer uden at spørge"
 
 msgid "Error creating temporary file."
 msgstr "Fejl ved dannelse af midlertidig fil."
@@ -1394,9 +1382,3 @@ msgstr "Kamera-HB"
 
 msgid "Auto WB"
 msgstr "Automatisk HB"
-
-#~ msgid "8"
-#~ msgstr "8"
-
-#~ msgid "16"
-#~ msgstr "16"
