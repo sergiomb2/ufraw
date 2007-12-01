@@ -1,4 +1,4 @@
-$Id: README-documentation.txt,v 1.1 2007/04/29 14:47:00 lexort Exp $
+$Id: README-documentation.txt,v 1.2 2007/12/01 01:58:58 lexort Exp $
 
 This file gives pointers to all UFRaw documentation.  It does not
 contain documentation itself.
@@ -16,7 +16,12 @@ contain documentation itself.
 
 * (sources) ufraw.1
 
-This is a man page, with a brief description of options.
+  This is a man page, with a brief description of options.
+
+* (sources) README-processing.txt
+
+   This is asciidoc source for a work-in-progress document that aims
+   to describe, very precisely, all aspects of raw processing.
 
 * web page: http://ufraw.sourceforge.net/
 
