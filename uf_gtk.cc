@@ -148,7 +148,7 @@ void uf_combo_box_set_active(GtkComboBox *combo, int value)
     if ( list!=NULL ) {
 	int i;
 	for (i=0; list!=NULL; i++, list=g_list_next(list)) {
-	    if ( value==(int)list->data ) {
+	    if ( value==GPOINTER_TO_INT(list->data) ) {
 		gtk_combo_box_set_active(combo, i);
 		return;
 	    }
@@ -166,7 +166,7 @@ static void _uf_combo_changed(GtkComboBox *combo, int *valuep)
 	    g_object_get_data(G_OBJECT(combo), "uf-combo-list"));
     if ( list!=NULL ) {
 	int i = gtk_combo_box_get_active(combo);
-	*valuep = reinterpret_cast<int>(g_list_nth_data(list, i));
+	*valuep = GPOINTER_TO_INT(g_list_nth_data(list, i));
     } else {
 	*valuep = gtk_combo_box_get_active(combo);
     }
@@ -186,7 +186,7 @@ void uf_combo_box_set_data(GtkComboBox *combo, int *valuep)
 	GList *list = static_cast<GList *>(
 		g_object_get_data(G_OBJECT(combo), "uf-combo-list"));
 	if ( list!=NULL )
-	    *valuep = reinterpret_cast<int>(list->data);
+	    *valuep = GPOINTER_TO_INT(list->data);
     }
     handler_id = g_signal_connect(G_OBJECT(combo), "changed",
 	    G_CALLBACK(_uf_combo_changed), valuep);
@@ -202,7 +202,7 @@ void uf_combo_box_remove_text(GtkComboBox *combo, int value)
     if ( list!=NULL ) {
 	int i;
 	for (i=0; list!=NULL; i++, list=g_list_next(list)) {
-	    if ( value==(int)list->data ) {
+	    if ( value==GPOINTER_TO_INT(list->data) ) {
 		gtk_combo_box_remove_text(combo, i);
 		list = g_list_remove(list, list->data);
 		g_object_set_data(G_OBJECT(combo), "uf-combo-list", list);
