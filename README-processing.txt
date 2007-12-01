@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.3 2007/07/29 20:56:19 lexort Exp $
+$Id: README-processing.txt,v 1.4 2007/12/01 15:52:30 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -15,6 +15,12 @@ This document assumes that the reader is generally familiar with computer
 image processing, and understands the issues surrounding Bayer arrays,
 white balance, and color management.
 
+== References
+
+The following references may be helpful.
+
+http://www.xs4all.nl/~tindeman/raw/color_reproduction.html
+
 == Reading Raw files
 
 The raw file is read and per-pixel sensor values extracted.
@@ -22,6 +28,7 @@ Each pixel is represented by integer number which is between
 8 and 16 bits in size.
 Most cameras (2007) use 12 bits, including Nikon and Canon amateur and
 professional DSLRs.
+Newer semi-professional and professional bodies use 14-bit A/D convertors.
 Some old cameras use 8 bits.
 Some cameras, such as medium format digital backs, use 16 bits.
 
@@ -48,13 +55,52 @@ image to that produced in the camera.
 
 TODO: discuss Nikon's Capture NX in light of the above.
 
+== Processing Pipeline
+
+=== Input color processing
+
+ufraw, via dcraw, supports two methods of input color processing: ICC
+profiles and color matrices.  These two methods solve the same
+problem, and it is not sensible to use both of them at once.
+
+Any input color processing method is intrinsically for a particular
+illuminant, as cameras process color stimuli (light) rather than
+object-color stimuli (objects that reflect an illuminant).  See the
+section on white balance for more discussion.
+
+TODO: figure out if this step is going to sRGB, or XYZ, and what the
+working colorspace is.
+
+==== Input profiles
+
+ufraw can use an input profile, which specifies the relationship of
+the camera's device color space to a standard color space.  Cameras
+typically have R, G, and B filters, but these do not exactly
+correspond to the primaries of sRGB.
+
+==== Color matrices
+
+ufraw can use a "color matrix", which are 3x3 matrices that transform
+from the camera device colorspace to XYZ.
+See dcraw.cc:adobe_coeff and dcraw.cc:cam_xyz_coeff.
+
+The color matrix approach assumes that the camera sensor is perfectly linear
+
+=== White balance
+
+ufraw applies multipliers on the R G and B channels to cause white
+objects to appear white for pictures taken under different lighting
+conditions.
+
+This white balance is an approximation and assumes that one can
+decompose the camera's response into an input profile and a white
+balance, rather than producing an input profile for every illuminant.
+
 == TODO
 
 input profiles
 
 working color space, and what the gamma means on the input
-
-white balance
 
 clipping (highlights)
 
@@ -73,8 +119,6 @@ black point compensation
 saturation
 
 display profile
-
-
 
 == Writing output files
 
