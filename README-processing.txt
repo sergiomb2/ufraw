@@ -1,9 +1,8 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.4 2007/12/01 15:52:30 lexort Exp $
+$Id: README-processing.txt,v 1.5 2007/12/02 20:48:29 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
-
 
 == Introduction
 
@@ -96,11 +95,40 @@ This white balance is an approximation and assumes that one can
 decompose the camera's response into an input profile and a white
 balance, rather than producing an input profile for every illuminant.
 
+=== Gamma
+
+Gamma processing is done to convert from the linear data present in
+the RAW files to a gamma-encoded colorspace.  The exact curve that is
+applied can be controlled by the "gamma" and "linearity" options.
+
+The curve is
+
+c * x              if x < linearity
+(a * x + b) ^ g    if x >= linearity
+
+where "x" is the input value in the [0,1] range and
+g = gamma * (1 - linearity)/ (1 - gamma * linearity)
+a = 1 / (1 + linearity * (g - 1))
+b = linearity * (g - 1) * a
+c = ((a * linearity + b)^g)/linearity
+
+The default values are TODO.
+
+This is apparently intended to convert from a linear representation to
+the sRGB gamma represenation.  TODO: confirm.
+
+TODO: Explain why this step makes sense.  If we are converting to
+sRGB, then there is a single correct way to do this, described in the
+sRGB specification.  Are we doing that?  Are we doing someting else?
+Why would one set different  values?  If this transform is used for
+another purpsose, should that purpose be more explicit?
 == TODO
 
 input profiles
 
-working color space, and what the gamma means on the input
+working color space
+
+film-like curves
 
 clipping (highlights)
 
