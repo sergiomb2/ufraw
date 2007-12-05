@@ -73,7 +73,9 @@ int main (int argc, char **argv)
     if (optInd==argc) {
 	    ufraw_message(UFRAW_WARNING, _("No input file, nothing to do."));
     }
-    for (; optInd<argc; optInd++) {
+    int fileCount = argc - optInd;
+    int fileIndex = 1;
+    for (; optInd<argc; optInd++, fileIndex++) {
 	argFile = uf_win32_locale_to_utf8(argv[optInd]);
 	uf = ufraw_open(argFile);
 	uf_win32_locale_free(argFile);
@@ -92,10 +94,15 @@ int main (int argc, char **argv)
 	    g_free(uf);
 	    continue;
 	}
-	ufraw_message(UFRAW_MESSAGE, _("loaded %s"), uf->filename);
+	char stat[max_name];
+	if ( fileCount>1 )
+	    g_snprintf(stat, max_name, "[%d/%d]", fileIndex, fileCount);
+	else
+	    stat[0] = '\0';
+	ufraw_message(UFRAW_MESSAGE, _("Loaded %s%s"), uf->filename, stat);
 	if (ufraw_batch_saver(uf)==UFRAW_SUCCESS)
-	    ufraw_message(UFRAW_MESSAGE, _("saved %s"),
-		    uf->conf->outputFilename);
+	    ufraw_message(UFRAW_MESSAGE, _("Saved %s%s"),
+		    uf->conf->outputFilename, stat);
 	ufraw_close(uf);
 	g_free(uf);
     }
