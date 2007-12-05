@@ -3,12 +3,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-30 16:55+0100\n"
-"PO-Revision-Date: 2007-11-06 23:14+0100\n"
+"POT-Creation-Date: 2007-12-05 22:48+0100\n"
+"PO-Revision-Date: 2007-12-04 00:24+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: French\n"
 "X-Poedit-Country: FRANCE\n"
@@ -338,16 +338,17 @@ msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr ""
 "--size=TAILLE         Réduit la dimension max(hauteur,largeur) à TAILLE.\n"
 
-#, fuzzy
 msgid ""
 "--out-type=ppm|tiff|png|jpeg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16jpeg|fits\n"
-"                      Format du fichier de sortie (défaut ppm8).\n"
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Format du fichier de sortie (défaut ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
 msgstr ""
+"--out-depth=8|16      Profondeur de couleur par canal de la sortie (défaut "
+"8).\n"
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -445,7 +446,6 @@ msgstr "'%s' n'est pas une valeur valide pour l'option --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw a été compilé sans le support du ZIP."
 
-#, fuzzy
 msgid "--batch is obsolete. Use ufraw-batch instead."
 msgstr "--batch est obsolète. Utiliser ufraw-batch à la place."
 
@@ -497,13 +497,13 @@ msgstr "'%s' n'est pas une option valide pour '--clip'."
 msgid "you can not specify both --shrink and --size"
 msgstr "Vous ne pouvez pas utiliser --shrink et --size en même temps"
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth."
-msgstr "'%s' n'est pas un chemin valide."
+msgstr "'%d' n'est pas une profondeur de couleur valide."
 
 #, c-format
 msgid "Output type '%s' is deprecated"
-msgstr ""
+msgstr "Le type de sortie '%s' est déprécié"
 
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw a été généré sans le support du TIFF."
@@ -522,9 +522,9 @@ msgstr "'%s' n'est pas un type de sortie valide."
 msgid "'%s' is not a valid output type for embedded image."
 msgstr "'%s' n'est pas un type de sortie valide pour l'image incluse."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
-msgstr "'%s' n'est pas un type de sortie valide pour l'image incluse."
+msgstr "'%d' n'est pas une profondeur de couleur valide pour l'image incluse."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
@@ -778,13 +778,11 @@ msgstr "Clignotement des indicateurs Sur/Sous-exposition"
 msgid "Configuration"
 msgstr "Configuration"
 
-#, fuzzy
 msgid "Save configuration"
-msgstr "Sauver toute la configuration"
+msgstr "Sauver la configuration"
 
-#, fuzzy
 msgid "Save configuration to resource file ($HOME/.ufrawrc)"
-msgstr "Sauver le fichier ressource ($HOME/.ufrawrc)"
+msgstr "Sauver la configuration dans le fichier ressource ($HOME/.ufrawrc)"
 
 msgid "Log"
 msgstr "Log"
@@ -821,9 +819,9 @@ msgstr ""
 msgid "%s%s (Alt-%c)"
 msgstr "%s%s (Alt-%c)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s - UFRaw"
-msgstr "UFRaw"
+msgstr "%s - UFRaw"
 
 msgid "Linear"
 msgstr "Linéaire"
@@ -995,11 +993,10 @@ msgstr "Saturation"
 msgid "Absolute colorimetric"
 msgstr "Colorimétrie absolue"
 
-#, fuzzy
 msgid "Output bit depth"
 msgstr ""
-"Rendu\n"
-"de sortie"
+"Profondeur de \n"
+"couleur de sortie"
 
 msgid "Display intent"
 msgstr ""
@@ -1087,36 +1084,36 @@ msgid "Orientation:"
 msgstr "Orientation:"
 
 #. Start of Save page
-#, fuzzy
 msgid "Save"
-msgstr "S_auver sous"
+msgstr "Sauver"
 
 msgid "Path"
-msgstr ""
+msgstr "Chemin"
 
 msgid "Select output path"
-msgstr ""
+msgstr "Sélectionner le chemin de sortie"
 
-#, fuzzy
 msgid "Filename"
-msgstr "Fichier: %s%s"
+msgstr ""
+"Nom du\n"
+"fichier"
 
-#, fuzzy
 msgid "JPEG compression level"
-msgstr "Niveau de compression"
+msgstr "Niveau compression JPEG"
 
-#, fuzzy
 msgid "JPEG progressive encoding"
-msgstr "Encodage progressif"
+msgstr "Encodage progressif JPEG"
 
 msgid "TIFF lossless Compress"
-msgstr ""
+msgstr "Compression sans perte TIFF"
 
 msgid "Embed EXIF data in JPEG or PNG files"
-msgstr "Inclure les données EXIF dans les fichiers JPEG ou PNG"
+msgstr ""
+"Inclure les données EXIF dans les\n"
+"fichiers JPEG ou PNG"
 
 msgid "Create ID file "
-msgstr "Créer un fichier ID"
+msgstr "Créer un fichier ID "
 
 msgid "No"
 msgstr "Non"
@@ -1128,7 +1125,9 @@ msgid "Only"
 msgstr "Seulement"
 
 msgid "Save image defaults "
-msgstr "Sauve réglages image par défaut"
+msgstr ""
+"Sauver réglages \n"
+"image par défaut "
 
 msgid ""
 "Save current image manipulation parameters as defaults.\n"
@@ -1147,7 +1146,7 @@ msgid "Just this once"
 msgstr "Juste cette fois"
 
 msgid "Remember output path"
-msgstr ""
+msgstr "Mémoriser le chemin de sortie"
 
 msgid "Overwrite existing files without asking"
 msgstr "Écraser les fichiers existants sans demander"
@@ -1173,7 +1172,7 @@ msgid "Timestamp"
 msgstr "Horodatage"
 
 msgid "Shutter time"
-msgstr ""
+msgstr "Vitesse"
 
 msgid "Aperture"
 msgstr "Ouverture"
@@ -1340,7 +1339,7 @@ msgstr "Échoue à inclure le profil de sortie '%s' dans '%s'"
 
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
-msgstr ""
+msgstr "La profondeur de couleur '%d' est ignorée."
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
@@ -1430,6 +1429,12 @@ msgstr "Bal. du Blanc Boitier"
 msgid "Auto WB"
 msgstr "Bal. du Blanc Auto"
 
+#~ msgid "8"
+#~ msgstr "8"
+
+#~ msgid "16"
+#~ msgstr "16"
+
 #~ msgid "Save image"
 #~ msgstr "Sauver l'image"
 
@@ -1439,8 +1444,17 @@ msgstr "Bal. du Blanc Auto"
 #~ msgid "Interpolation method set to AHD"
 #~ msgstr "Méthode·d'interpolation·réglée·à·AHD"
 
+#~ msgid "ppm"
+#~ msgstr "ppm"
+
+#~ msgid "TIFF"
+#~ msgstr "TIFF"
+
 #~ msgid "ZIP Compress (lossless)"
 #~ msgstr "Compression ZIP (sans perte)"
+
+#~ msgid "PNG"
+#~ msgstr "PNG"
 
 #~ msgid "Flexible Image Transport System (FITS)"
 #~ msgstr "Flexible Image Transport System (FITS)"
