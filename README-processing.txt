@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.6 2007/12/06 13:51:52 lexort Exp $
+$Id: README-processing.txt,v 1.7 2007/12/06 13:54:13 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -127,7 +127,32 @@ a = 1 / (1 + linearity * (g - 1))
 b = linearity * (g - 1) * a
 c = ((a * linearity + b)^g)/linearity
 
-The default values are TODO.
+The default values are gamma = 0.45 (1/2.2) and linearity = 0.10.
+
+The standard curve (why it is not used?) is
+
+if not sRGB:
+  x ^ gamma
+else
+  12.92 * x                    if x <= 0.0031308
+  1.055 * x ^ (1/2.4) - 0.055  if x >  0.0031308
+
+In the case we are using dcraw matrices, it might be better to use its gamma curve:
+r <= 0.018 ? r*4.5 : pow(r,0.45)*1.099-0.099 );
+
+probably the best way to do this is to use lcms to do all of the color
+space match. Both the matrix and the gamma. It is not practical to
+store a lot of small icc profiles, but they can be created at run
+time.
+
+The interface could then just provide a drop down menu for the input
+profile where one of the options is builtin. Note the sRGB would never
+be an option here. No camera produces images in sRGB.
+
+The handling for the "builtin" profile would be:
+1) find the RGB -> XYZ table provided by dcraw
+2) use this table and the above dcraw gamma curve to create a temp icc profile.
+3) use this icc profile as the input profile
 
 This is apparently intended to convert from a linear representation to
 the sRGB gamma represenation.  TODO: confirm.
