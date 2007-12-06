@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-30 16:55+0100\n"
+"POT-Creation-Date: 2007-12-06 06:00+0100\n"
 "PO-Revision-Date: 2007-11-09 21:16+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -25,12 +25,12 @@ msgstr "네비게이션 창 열기"
 msgid "No input file, nothing to do."
 msgstr "입력 파일이 없으므로 아무것도 하지 않습니다."
 
-#, c-format
-msgid "loaded %s"
+#, fuzzy, c-format
+msgid "Loaded %s%s"
 msgstr "%s 불러옴"
 
-#, c-format
-msgid "saved %s"
+#, fuzzy, c-format
+msgid "Saved %s%s"
 msgstr "%s 저장됨"
 
 #. First letter of the word 'yes' for the y/n question
@@ -1375,45 +1375,3 @@ msgstr "카메라 화벨"
 
 msgid "Auto WB"
 msgstr "자동 화벨"
-
-#~ msgid "Save image"
-#~ msgstr "이미지 저장"
-
-#~ msgid "Output options"
-#~ msgstr "출력 옵션"
-
-#~ msgid "Interpolation method set to AHD"
-#~ msgstr "보간방법이 AHD로 설정 되었습니다"
-
-#~ msgid "ZIP Compress (lossless)"
-#~ msgstr "ZIP 압축 (무손실)"
-
-#~ msgid "Flexible Image Transport System (FITS)"
-#~ msgstr "Flexible Image Transport System (FITS)"
-
-#~ msgid "\tSave image defaults "
-#~ msgstr "\t이미지 기본값 저장"
-
-#~ msgid "%s - UFRaw Photo Loader"
-#~ msgstr "%s - UFRaw Photo Loader"
-
-#~ msgid "Exposure"
-#~ msgstr "노출시간"
-
-#~ msgid "8-bit ppm"
-#~ msgstr "8-bit ppm"
-
-#~ msgid "16-bit ppm"
-#~ msgstr "16-bit ppm"
-
-#~ msgid "8-bit TIFF"
-#~ msgstr "8-bit TIFF"
-
-#~ msgid "16-bit TIFF"
-#~ msgstr "16-bit TIFF"
-
-#~ msgid "8-bit PNG"
-#~ msgstr "8-bit PNG"
-
-#~ msgid "16-bit PNG"
-#~ msgstr "16-bit PNG"

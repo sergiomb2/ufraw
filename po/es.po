@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-30 16:55+0100\n"
+"POT-Creation-Date: 2007-12-06 06:00+0100\n"
 "PO-Revision-Date: 2007-11-11 20:19+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -23,12 +23,12 @@ msgstr "Abrir la ventana del navegador"
 msgid "No input file, nothing to do."
 msgstr "No hay archivo de entrada, nada que hacer."
 
-#, c-format
-msgid "loaded %s"
+#, fuzzy, c-format
+msgid "Loaded %s%s"
 msgstr "cargado %s"
 
-#, c-format
-msgid "saved %s"
+#, fuzzy, c-format
+msgid "Saved %s%s"
 msgstr "guardado %s"
 
 #. First letter of the word 'yes' for the y/n question
@@ -1412,45 +1412,3 @@ msgstr "Balance de la cámara"
 
 msgid "Auto WB"
 msgstr "Balance automático"
-
-#~ msgid "Save image"
-#~ msgstr "Guardar imagen"
-
-#~ msgid "Output options"
-#~ msgstr "Opciones de salida"
-
-#~ msgid "Interpolation method set to AHD"
-#~ msgstr "Método de interpolación ajustado a AHD"
-
-#~ msgid "ZIP Compress (lossless)"
-#~ msgstr "Compresión ZIP (sin pérdidas)"
-
-#~ msgid "Flexible Image Transport System (FITS)"
-#~ msgstr "Flexible Image Transport System (FITS)"
-
-#~ msgid "\tSave image defaults "
-#~ msgstr "\tGuardar valores por defecto de la imagen "
-
-#~ msgid "%s - UFRaw Photo Loader"
-#~ msgstr "%s - Cargador de Fotos UFRaw"
-
-#~ msgid "Exposure"
-#~ msgstr "Exposición"
-
-#~ msgid "8-bit ppm"
-#~ msgstr "ppm de 8-bit"
-
-#~ msgid "16-bit ppm"
-#~ msgstr "ppm de 16-bit"
-
-#~ msgid "8-bit TIFF"
-#~ msgstr "TIFF de 8-bit"
-
-#~ msgid "16-bit TIFF"
-#~ msgstr "TIFF de 16-bit"
-
-#~ msgid "8-bit PNG"
-#~ msgstr "PNG de 8-bit"
-
-#~ msgid "16-bit PNG"
-#~ msgstr "PNG de 16-bit"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-30 16:55+0100\n"
+"POT-Creation-Date: 2007-12-06 06:00+0100\n"
 "PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -29,12 +29,12 @@ msgstr "Открыть окно навигатора"
 msgid "No input file, nothing to do."
 msgstr "Нет файла на входе, нечего обрабатывать."
 
-#, c-format
-msgid "loaded %s"
+#, fuzzy, c-format
+msgid "Loaded %s%s"
 msgstr "загружен %s"
 
-#, c-format
-msgid "saved %s"
+#, fuzzy, c-format
+msgid "Saved %s%s"
 msgstr "сохранён %s"
 
 #. First letter of the word 'yes' for the y/n question
@@ -1410,45 +1410,3 @@ msgstr "ББ камеры"
 
 msgid "Auto WB"
 msgstr "Автоматический ББ"
-
-#~ msgid "Save image"
-#~ msgstr "Сохранить снимок"
-
-#~ msgid "Output options"
-#~ msgstr "Параметры вывода"
-
-#~ msgid "Interpolation method set to AHD"
-#~ msgstr "Используется способ интерполяции AHD"
-
-#~ msgid "ZIP Compress (lossless)"
-#~ msgstr "Сжатие ZIP (без потерь в качестве)"
-
-#~ msgid "Flexible Image Transport System (FITS)"
-#~ msgstr "Гибкая система передачи изображения (FITS)"
-
-#~ msgid "\tSave image defaults "
-#~ msgstr "\tСохранить эти параметры как исходные "
-
-#~ msgid "%s - UFRaw Photo Loader"
-#~ msgstr "%s – загрузчик фотографий UFRaw"
-
-#~ msgid "Exposure"
-#~ msgstr "Экспозиция"
-
-#~ msgid "8-bit ppm"
-#~ msgstr "8-разрядные PPM"
-
-#~ msgid "16-bit ppm"
-#~ msgstr "16-разрядные PPM"
-
-#~ msgid "8-bit TIFF"
-#~ msgstr "8-разрядные TIFF"
-
-#~ msgid "16-bit TIFF"
-#~ msgstr "16-разрядные TIFF"
-
-#~ msgid "8-bit PNG"
-#~ msgstr "8-разрядный PNG"
-
-#~ msgid "16-bit PNG"
-#~ msgstr "16-разрядный PNG"

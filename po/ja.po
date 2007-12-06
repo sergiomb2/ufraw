@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-30 16:55+0100\n"
+"POT-Creation-Date: 2007-12-06 06:00+0100\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -21,12 +21,12 @@ msgstr ""
 msgid "No input file, nothing to do."
 msgstr "入力ファイルが無いので、何もしません"
 
-#, c-format
-msgid "loaded %s"
+#, fuzzy, c-format
+msgid "Loaded %s%s"
 msgstr "読み込みました %s"
 
-#, c-format
-msgid "saved %s"
+#, fuzzy, c-format
+msgid "Saved %s%s"
 msgstr "保存しました %s"
 
 #. First letter of the word 'yes' for the y/n question
@@ -1426,38 +1426,3 @@ msgstr "カメラWB"
 
 msgid "Auto WB"
 msgstr "自動WB"
-
-#~ msgid "Save image"
-#~ msgstr "画像の保存"
-
-#~ msgid "Output options"
-#~ msgstr "出力オプション"
-
-#~ msgid "ZIP Compress (lossless)"
-#~ msgstr "ZIP圧縮 (画像の劣化無し)"
-
-#~ msgid "\tSave image defaults "
-#~ msgstr "\tデフォルトとして保存"
-
-#~ msgid "%s - UFRaw Photo Loader"
-#~ msgstr "%s - UFRaw Photo Loader"
-
-#~ msgid "8-bit ppm"
-#~ msgstr "8-bit ppm"
-
-#~ msgid "16-bit ppm"
-#~ msgstr "16-bit ppm"
-
-#~ msgid "8-bit TIFF"
-#~ msgstr "8-bit TIFF"
-
-#~ msgid "16-bit TIFF"
-#~ msgstr "16-bit TIFF"
-
-#, fuzzy
-#~ msgid "8-bit PNG"
-#~ msgstr "8-bit ppm"
-
-#, fuzzy
-#~ msgid "16-bit PNG"
-#~ msgstr "16-bit ppm"

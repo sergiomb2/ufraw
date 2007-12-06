@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-30 16:55+0100\n"
+"POT-Creation-Date: 2007-12-06 06:00+0100\n"
 "PO-Revision-Date: 2007-11-06 23:23+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -25,12 +25,12 @@ msgstr "Otwiera okno nawigacji"
 msgid "No input file, nothing to do."
 msgstr "Brak pliku wej¶ciowego, nic do roboty."
 
-#, c-format
-msgid "loaded %s"
+#, fuzzy, c-format
+msgid "Loaded %s%s"
 msgstr "wczytano %s"
 
-#, c-format
-msgid "saved %s"
+#, fuzzy, c-format
+msgid "Saved %s%s"
 msgstr "zapisano %s"
 
 #. First letter of the word 'yes' for the y/n question
@@ -1400,45 +1400,3 @@ msgstr "Balans bieli aparatu"
 
 msgid "Auto WB"
 msgstr "Automatyczny balans bieli"
-
-#~ msgid "Save image"
-#~ msgstr "Zapisz obraz"
-
-#~ msgid "Output options"
-#~ msgstr "Format zapisu"
-
-#~ msgid "Interpolation method set to AHD"
-#~ msgstr "Wybrano interpolacjê metod± AHD"
-
-#~ msgid "ZIP Compress (lossless)"
-#~ msgstr "Kompresja ZIP (bezstratna)"
-
-#~ msgid "Flexible Image Transport System (FITS)"
-#~ msgstr "Flexible Image Transport System (FITS)"
-
-#~ msgid "\tSave image defaults "
-#~ msgstr "\tZapisz domy¶lne ustawienia"
-
-#~ msgid "%s - UFRaw Photo Loader"
-#~ msgstr "%s - UFRaw Photo Loader"
-
-#~ msgid "Exposure"
-#~ msgstr "Czas"
-
-#~ msgid "8-bit ppm"
-#~ msgstr "8-bitowy ppm"
-
-#~ msgid "16-bit ppm"
-#~ msgstr "16-bitowy ppm"
-
-#~ msgid "8-bit TIFF"
-#~ msgstr "8-bitowy TIFF"
-
-#~ msgid "16-bit TIFF"
-#~ msgstr "16-bitowy TIFF"
-
-#~ msgid "8-bit PNG"
-#~ msgstr "8-bitowy PNG"
-
-#~ msgid "16-bit PNG"
-#~ msgstr "16-bitowy PNG"

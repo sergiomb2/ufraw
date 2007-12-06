@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-30 16:55+0100\n"
-"PO-Revision-Date: 2007-11-30 17:00+0100\n"
+"POT-Creation-Date: 2007-12-06 06:00+0100\n"
+"PO-Revision-Date: 2007-12-06 06:00+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -23,12 +23,12 @@ msgid "No input file, nothing to do."
 msgstr "Ingen inddatafil, ikke noget at lave."
 
 #, c-format
-msgid "loaded %s"
-msgstr "indlæst %s"
+msgid "Loaded %s%s"
+msgstr "Indlæst %s%s"
 
 #, c-format
-msgid "saved %s"
-msgstr "gemt %s"
+msgid "Saved %s%s"
+msgstr "Gemt %s%s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
