@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.5 2007/12/02 20:48:29 lexort Exp $
+$Id: README-processing.txt,v 1.6 2007/12/06 13:51:52 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -16,9 +16,24 @@ white balance, and color management.
 
 == References
 
-The following references may be helpful.
+These are links that those wanting to understand raw conversion
+details are likely to find interesting.
+
+=== general
 
 http://www.xs4all.nl/~tindeman/raw/color_reproduction.html
+
+=== raw files
+
+http://www.majid.info/mylos/weblog/2004/05/02-1.html
+http://www.cambridgeincolour.com/tutorials/RAW-file-format.htm
+http://regex.info/blog/photo-tech/nef-compression/
+http://www.luminous-landscape.com/tutorials/understanding-series/u-raw-files.shtml
+
+=== color spaces
+
+http://regex.info/blog/2006-12-08/303
+http://regex.info/blog/photo-tech/color-spaces-page1/
 
 == Reading Raw files
 
