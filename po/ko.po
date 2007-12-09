@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-06 06:00+0100\n"
+"POT-Creation-Date: 2007-12-09 03:15+0100\n"
 "PO-Revision-Date: 2007-11-09 21:16+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -1335,7 +1335,7 @@ msgstr "텅스텐"
 msgid "Fluorescent"
 msgstr "조명"
 
-#. Only in Canon cameras:
+#. In Canon cameras and Nikon D300:
 msgid "Fluorescent high"
 msgstr "강한 조명"
 
@@ -1353,6 +1353,18 @@ msgstr "주백색 형광등"
 
 msgid "White fluorescent"
 msgstr "백색 형광등"
+
+#. In Nikon D300
+#, fuzzy
+msgid "Sodium-vapor fluorescent"
+msgstr "주백색 형광등"
+
+#, fuzzy
+msgid "Day white fluorescent"
+msgstr "따뜻한 백색 조명"
+
+msgid "High temp. mercury-vapor fluorescent"
+msgstr ""
 
 #. For Olympus with no real "Flash" preset:
 msgid "Flash (auto mode)"

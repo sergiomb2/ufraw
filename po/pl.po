@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-06 06:00+0100\n"
+"POT-Creation-Date: 2007-12-09 03:15+0100\n"
 "PO-Revision-Date: 2007-11-06 23:23+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -1360,7 +1360,7 @@ msgstr "¯arówka"
 msgid "Fluorescent"
 msgstr "Jarzeniowe"
 
-#. Only in Canon cameras:
+#. In Canon cameras and Nikon D300:
 msgid "Fluorescent high"
 msgstr "Jarzeniowe wysokie"
 
@@ -1378,6 +1378,18 @@ msgstr "Neutralne jarzeniowe"
 
 msgid "White fluorescent"
 msgstr "Bia³e jarzeniowe"
+
+#. In Nikon D300
+#, fuzzy
+msgid "Sodium-vapor fluorescent"
+msgstr "Neutralne jarzeniowe"
+
+#, fuzzy
+msgid "Day white fluorescent"
+msgstr "Ciep³e bia³e jarzeniowe"
+
+msgid "High temp. mercury-vapor fluorescent"
+msgstr ""
 
 #. For Olympus with no real "Flash" preset:
 msgid "Flash (auto mode)"

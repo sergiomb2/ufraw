@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-06 06:00+0100\n"
+"POT-Creation-Date: 2007-12-09 03:15+0100\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -1386,7 +1386,7 @@ msgstr "タングステン灯"
 msgid "Fluorescent"
 msgstr "蛍光灯"
 
-#. Only in Canon cameras:
+#. In Canon cameras and Nikon D300:
 msgid "Fluorescent high"
 msgstr "蛍光高圧水銀灯"
 
@@ -1404,6 +1404,18 @@ msgstr "自然色蛍光灯"
 
 msgid "White fluorescent"
 msgstr "白色蛍光灯"
+
+#. In Nikon D300
+#, fuzzy
+msgid "Sodium-vapor fluorescent"
+msgstr "自然色蛍光灯"
+
+#, fuzzy
+msgid "Day white fluorescent"
+msgstr "温白色蛍光灯"
+
+msgid "High temp. mercury-vapor fluorescent"
+msgstr ""
 
 #. For Olympus with no real "Flash" preset:
 msgid "Flash (auto mode)"

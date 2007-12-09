@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-06 06:00+0100\n"
+"POT-Creation-Date: 2007-12-09 03:15+0100\n"
 "PO-Revision-Date: 2007-11-13 21:53+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -1245,7 +1245,7 @@ msgstr "Glödlampa"
 msgid "Fluorescent"
 msgstr "Ljusrör"
 
-#. Only in Canon cameras:
+#. In Canon cameras and Nikon D300:
 msgid "Fluorescent high"
 msgstr "Ljusrör (hög)"
 
@@ -1263,6 +1263,18 @@ msgstr "Neutralt ljusrör"
 
 msgid "White fluorescent"
 msgstr "Vitt ljusrör"
+
+#. In Nikon D300
+#, fuzzy
+msgid "Sodium-vapor fluorescent"
+msgstr "Neutralt ljusrör"
+
+#, fuzzy
+msgid "Day white fluorescent"
+msgstr "Varmvitt ljusrör"
+
+msgid "High temp. mercury-vapor fluorescent"
+msgstr ""
 
 #. For Olympus with no real "Flash" preset:
 msgid "Flash (auto mode)"

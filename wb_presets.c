@@ -44,13 +44,18 @@ static const char IncandescentWarm[] = N_("Incandescent warm");
 // Same as "Incandescent":
 static const char Tungsten[] = N_("Tungsten");
 static const char Fluorescent[] = N_("Fluorescent");
-// Only in Canon cameras:
+// In Canon cameras and Nikon D300:
 static const char FluorescentHigh[] = N_("Fluorescent high");
 static const char CoolWhiteFluorescent[] = N_("Cool white fluorescent");
 static const char WarmWhiteFluorescent[] = N_("Warm white fluorescent");
 static const char DaylightFluorescent[] = N_("Daylight fluorescent");
 static const char NeutralFluorescent[] = N_("Neutral fluorescent");
 static const char WhiteFluorescent[] = N_("White fluorescent");
+// In Nikon D300
+static const char SodiumVaporFluorescent[] = N_("Sodium-vapor fluorescent");
+static const char DayWhiteFluorescent[] = N_("Day white fluorescent");
+static const char HighTempMercuryVaporFluorescent[] = N_("High temp. mercury-vapor fluorescent");
+
 static const char Flash[] = N_("Flash");
 // For Olympus with no real "Flash" preset:
 static const char FlashAuto[] = N_("Flash (auto mode)");
@@ -942,6 +947,43 @@ const wb_data wb_preset[] = {
   { "NIKON", "D200", "8300K", 0,		{ 2.277344, 1, 1.109375, 0 } },
   { "NIKON", "D200", "9300K", 0,		{ 2.367188, 1, 1.070313, 0 } },
   { "NIKON", "D200", "10000K", 0,		{ 2.453125, 1, 1.035156, 0 } },
+
+  { "NIKON", "D300", Incandescent, -6,			{ 1.097656, 1.000000, 1.898438, 0 } },
+  { "NIKON", "D300", Incandescent, 0,			{ 1.019531, 1.000000, 2.109375, 0 } },
+  { "NIKON", "D300", Incandescent, 6,			{ 1.000000, 1.000000, 2.335938, 0 } },
+  { "NIKON", "D300", SodiumVaporFluorescent, -6,	{ 1.031250, 1.000000, 2.101563, 0 } },
+  { "NIKON", "D300", SodiumVaporFluorescent, 0,		{ 1.000000, 1.053498, 2.444444, 0 } },
+  { "NIKON", "D300", SodiumVaporFluorescent, 6,		{ 1.000000, 1.053498, 2.753086, 0 } },
+  { "NIKON", "D300", WarmWhiteFluorescent, -6,		{ 1.128906, 1.000000, 1.847656, 0 } },
+  { "NIKON", "D300", WarmWhiteFluorescent, 0,		{ 1.046875, 1.000000, 1.960937, 0 } },
+  { "NIKON", "D300", WarmWhiteFluorescent, 6,		{ 1.000000, 1.000000, 2.062500, 0 } },
+  { "NIKON", "D300", WhiteFluorescent, -6,		{ 1.453125, 1.000000, 2.050781, 0 } },
+  { "NIKON", "D300", WhiteFluorescent, 0,		{ 1.191406, 1.000000, 2.304688, 0 } },
+  { "NIKON", "D300", WhiteFluorescent, 6,		{ 1.000000, 1.000000, 2.582031, 0 } },
+  { "NIKON", "D300", CoolWhiteFluorescent, -6,		{ 1.667969, 1.000000, 1.800781, 0 } },
+  { "NIKON", "D300", CoolWhiteFluorescent, 0,		{ 1.468750, 1.000000, 2.035156, 0 } },
+  { "NIKON", "D300", CoolWhiteFluorescent, 6,		{ 1.210938, 1.000000, 2.289063, 0 } },
+  { "NIKON", "D300", DayWhiteFluorescent, -6,		{ 1.625000, 1.000000, 1.195312, 0 } },
+  { "NIKON", "D300", DayWhiteFluorescent, 0,		{ 1.492187, 1.000000, 1.363281, 0 } },
+  { "NIKON", "D300", DayWhiteFluorescent, 6,		{ 1.375000, 1.000000, 1.519531, 0 } },
+  { "NIKON", "D300", DaylightFluorescent, -6,		{ 1.851563, 1.000000, 1.000000, 0 } },
+  { "NIKON", "D300", DaylightFluorescent, 0,		{ 1.699219, 1.000000, 1.101562, 0 } },
+  { "NIKON", "D300", DaylightFluorescent, 6,		{ 1.562500, 1.000000, 1.273438, 0 } },
+  { "NIKON", "D300", HighTempMercuryVaporFluorescent,-6,{ 2.039063, 1.000000, 1.156250, 0 } },
+  { "NIKON", "D300", HighTempMercuryVaporFluorescent, 0,{ 1.960937, 1.000000, 1.328125, 0 } },
+  { "NIKON", "D300", HighTempMercuryVaporFluorescent, 6,{ 1.855469, 1.000000, 1.523438, 0 } },
+  { "NIKON", "D300", DirectSunlight, -6,		{ 1.687500, 1.000000, 1.167969, 0 } },
+  { "NIKON", "D300", DirectSunlight, 0,			{ 1.562500, 1.000000, 1.308594, 0 } },
+  { "NIKON", "D300", DirectSunlight, 6,			{ 1.429687, 1.000000, 1.457031, 0 } },
+  { "NIKON", "D300", Flash, -6,				{ 1.910156, 1.000000, 1.058594, 0 } },
+  { "NIKON", "D300", Flash, 0,				{ 1.687500, 1.000000, 1.152344, 0 } },
+  { "NIKON", "D300", Flash, 6,				{ 1.554688, 1.000000, 1.246094, 0 } },
+  { "NIKON", "D300", Cloudy, -6,			{ 1.820313, 1.000000, 1.093750, 0 } },
+  { "NIKON", "D300", Cloudy, 0,				{ 1.664062, 1.000000, 1.187500, 0 } },
+  { "NIKON", "D300", Cloudy, 6,				{ 1.542969, 1.000000, 1.335938, 0 } },
+  { "NIKON", "D300", Shade, -6,				{ 2.156250, 1.000000, 1.000000, 0 } },
+  { "NIKON", "D300", Shade, 0,				{ 1.902344, 1.000000, 1.066406, 0 } },
+  { "NIKON", "D300", Shade, 6,				{ 1.722656, 1.000000, 1.140625, 0 } },
 
   { "NIKON", "D40", Incandescent, -3,		{ 1.492188, 1, 2.164063, 0 } },
   { "NIKON", "D40", Incandescent, -2,		{ 1.437500, 1, 2.367188, 0 } },
