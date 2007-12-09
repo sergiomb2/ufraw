@@ -231,7 +231,7 @@ ufraw_data *ufraw_open(char *filename)
     uf->developer = NULL;
     uf->AutoDeveloper = NULL;
     uf->widget = NULL;
-    uf->RawLumHistogram = NULL;
+    uf->RawHistogram = NULL;
     uf->HaveFilters = raw->filters!=0;
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
 	    raw->width, raw->height, raw->toneCurveSize);
@@ -605,7 +605,7 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->thumb.buffer);
     developer_destroy(uf->developer);
     developer_destroy(uf->AutoDeveloper);
-    g_free(uf->RawLumHistogram);
+    g_free(uf->RawHistogram);
     if ( uf->conf->darkframe!=NULL ) {
 	ufraw_close(uf->conf->darkframe);
 	g_free(uf->conf->darkframe);
@@ -1066,38 +1066,37 @@ int ufraw_set_wb(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
-static void ufraw_build_raw_luminosity_histogram(ufraw_data *uf)
+static void ufraw_build_raw_histogram(ufraw_data *uf)
 {
     int i, c;
-    gint64 max;
-    double maxChan = 0;
     dcraw_data *raw = uf->raw;
     gboolean updateHistogram = FALSE;
 
-    if (uf->RawLumHistogram==NULL) {
-	uf->RawLumHistogram = g_new(int, uf->rgbMax+1);
+    if (uf->RawHistogram==NULL) {
+	uf->RawHistogram = g_new(int, uf->rgbMax+1);
 	updateHistogram = TRUE;
     }
+    double maxChan = 0;
     for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
     for (c=0; c<uf->colors; c++) {
 	int tmp = floor(uf->conf->chanMul[c]/maxChan*0x10000);
-	if (uf->RawLumChanMul[c]!=tmp) {
+	if (uf->RawChanMul[c]!=tmp) {
 	    updateHistogram = TRUE;
-	    uf->RawLumChanMul[c] = tmp;
+	    uf->RawChanMul[c] = tmp;
 	}
     }
     if (!updateHistogram) return;
 
-    if (uf->colors==3) uf->RawLumChanMul[3] = uf->RawLumChanMul[1];
-    memset(uf->RawLumHistogram, 0, (uf->rgbMax+1)*sizeof(int));
-    uf->RawLumCount = raw->raw.height*raw->raw.width;
-    for (i=0; i<uf->RawLumCount; i++) {
-	for (c=0, max=0; c<raw->raw.colors; c++) {
-	    max = MAX( (gint64)(raw->raw.image[i][c]-raw->black) *
-			uf->RawLumChanMul[c], max);
-	}
-	uf->RawLumHistogram[MIN(max/0x10000,uf->rgbMax)]++;
-    }
+    if (uf->colors==3) uf->RawChanMul[3] = uf->RawChanMul[1];
+    memset(uf->RawHistogram, 0, (uf->rgbMax+1)*sizeof(int));
+    int count = raw->raw.height*raw->raw.width;
+    for (i=0; i<count; i++)
+	for (c=0; c<raw->raw.colors; c++)
+	    uf->RawHistogram[MIN(
+		    (gint64)MAX(raw->raw.image[i][c]-raw->black, 0) *
+		    uf->RawChanMul[c] / 0x10000, uf->rgbMax)]++;
+
+    uf->RawCount = count * raw->raw.colors;
 }
 
 void ufraw_auto_expose(ufraw_data *uf)
@@ -1127,11 +1126,11 @@ void ufraw_auto_expose(ufraw_data *uf)
 	else pMax = p;
     }
     /* set cutoff at 99% of the histogram */
-    ufraw_build_raw_luminosity_histogram(uf);
-    stop = uf->RawLumCount * 1/100;
+    ufraw_build_raw_histogram(uf);
+    stop = uf->RawCount * 1/100;
     /* Calculate the white point */
     for (wp=uf->rgbMax, sum=0; wp>1 && sum<stop; wp--)
-	sum += uf->RawLumHistogram[wp];
+	sum += uf->RawHistogram[wp];
     /* Set 99% of the luminosity values with luminosity below 99% */
     uf->conf->exposure = log((double)p/wp)/log(2);
     /* If we are going to normalize the exposure later,
@@ -1155,10 +1154,10 @@ void ufraw_auto_black(ufraw_data *uf)
     /* Reset the luminosityCurve */
     ufraw_developer_prepare(uf, auto_developer);
     /* Calculate the black point */
-    ufraw_build_raw_luminosity_histogram(uf);
-    stop = uf->RawLumCount/256/4;
+    ufraw_build_raw_histogram(uf);
+    stop = uf->RawCount/256/4;
     for (bp=0, sum=0; bp<uf->rgbMax && sum<stop; bp++)
-	sum += uf->RawLumHistogram[bp];
+	sum += uf->RawHistogram[bp];
     double maxChan = 0;
     for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
     for (c=0; c<uf->colors; c++)
@@ -1189,18 +1188,18 @@ void ufraw_auto_curve(ufraw_data *uf)
     CurveDataReset(curve);
     ufraw_developer_prepare(uf, auto_developer);
     /* Calculate curve points */
-    ufraw_build_raw_luminosity_histogram(uf);
-    stop = uf->RawLumCount/256/4;
+    ufraw_build_raw_histogram(uf);
+    stop = uf->RawCount/256/4;
     double maxChan = 0;
     for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
     for (bp=0, sum=0, p=0, i=j=0; i<steps && bp<uf->rgbMax && p<0xFFFF; i++) {
 	for (; bp<uf->rgbMax && sum<stop; bp++)
-	    sum += uf->RawLumHistogram[bp];
+	    sum += uf->RawHistogram[bp];
 	for (c=0; c<uf->colors; c++)
 	    pix[c] = MIN (bp * maxChan/uf->conf->chanMul[c], uf->rgbMax);
 	develope(p16, pix, uf->AutoDeveloper, 16, pixtmp, 1);
 	for (c=0, p=0; c<3; c++) p = MAX(p, p16[c]);
-	stop += uf->RawLumCount * pow(decay,i) / norm;
+	stop += uf->RawCount * pow(decay,i) / norm;
 	/* Skeep adding point if slope is too big (more than 4) */
 	if (j>0 && p - curve->m_anchors[j-1].x*0x10000 < (i+1-j)*0x04000/steps)
 	    continue;

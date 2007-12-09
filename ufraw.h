@@ -224,9 +224,9 @@ typedef struct ufraw_struct {
     guchar *exifBuf;
     guint exifBufLen;
     int gimpImage;
-    int *RawLumHistogram;
-    int RawLumChanMul[4];
-    int RawLumCount;
+    int *RawHistogram;
+    int RawChanMul[4];
+    int RawCount;
 } ufraw_data;
 
 extern const conf_data conf_default;
