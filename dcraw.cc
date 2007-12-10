@@ -11,15 +11,15 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.396 $
-   $Date: 2007/11/16 15:24:52 $
+   $Revision: 1.397 $
+   $Date: 2007/12/10 07:43:31 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.80"
+#define DCRAW_VERSION "8.81"
 
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
@@ -119,7 +119,7 @@ shot_select=0, multi_out=0, aber[0] = aber[1] = aber[2] = aber[3] = 1;
 bright=1, user_mul[0] = user_mul[1] = user_mul[2] = user_mul[3] = 0;
 threshold=0, half_size=0, four_color_rgb=0, document_mode=0, highlight=0;
 verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_matrix=-1;
-output_color=1, output_bps=8, output_tiff=0, med_passes=0;
+output_color=1, output_bps=8, output_tiff=0, med_passes=0, no_auto_bright=0;
 greybox[0] = greybox[1] = 0, greybox[2] = greybox[3] = UINT_MAX;
 tone_curve_size = 0, tone_curve_offset = 0; /* Nikon Tone Curves UF*/
 messageBuffer = NULL;
@@ -1820,6 +1820,41 @@ void CLASS unpacked_load_raw()
       if ((BAYER2(row,col) = pixel[col]) >> bits) derror();
   }
   free (pixel);
+}
+
+unsigned CLASS pana_bits (int nbits)
+{
+  static uchar buf[16], vbits=0;
+
+  if (!vbits && fread (buf, 1, 16, ifp) < 16) derror();
+  vbits = (vbits - nbits) & 127;
+  return (buf[(vbits >> 3)+1] << 8 | buf[vbits >> 3])
+	>> (vbits & 7) & ~(-1 << nbits);
+}
+
+void CLASS panasonic_load_raw()
+{
+  int row, col, i, j, sh=0, pred[2], nonz[2];
+
+  raw_width = (raw_width+13)/14*14;
+  for (row=0; row < height; row++)
+    for (col=0; col < raw_width; col++) {
+      if ((i = col % 14) < 2)
+	nonz[i] = pred[i] = pana_bits(12);
+      else {
+	if (i % 3 == 2) sh = 4 >> (3 - pana_bits(2));
+	if ((j = pana_bits(8))) {
+	  if ((pred[i & 1] -= 0x80 << sh) < 0 || sh == 4)
+	       pred[i & 1] &= ~(-1 << sh);
+	  pred[i & 1] += nonz[i & 1] ? j << sh : j;
+	  nonz[i & 1] = 1;
+	}
+      }
+      if (col < width)
+	if ((BAYER(row,col) = pred[col & 1]) >> 12) derror();
+    }
+  maximum = 0xf96;
+  black = 15;
 }
 
 void CLASS olympus_e300_load_raw()
@@ -5943,6 +5978,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 6018,-617,-965,-8645,15881,2975,-1530,1719,7642 } },
     { "Canon EOS 400D", 0,
 	{ 7054,-1501,-990,-8156,15544,2812,-1278,1414,7796 } },
+    { "Canon EOS-1Ds Mark III", 0,
+	{ 5859,-211,-930,-8255,16017,2353,-1732,1887,7448 } },
     { "Canon EOS-1Ds Mark II", 0,
 	{ 6517,-602,-867,-8180,15926,2378,-1618,1771,7633 } },
     { "Canon EOS-1D Mark II N", 0,
@@ -5972,7 +6009,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
     { "Canon PowerShot G6", 0,
 	{ 9877,-3775,-871,-7613,14807,3072,-1448,1305,7485 } },
     { "Canon PowerShot G9", 0,
-	{ 10823,-3042,-1842,-4562,13656,900,-1311,1670,3556 } },
+	{ 7368,-2141,-598,-5621,13254,2625,-1418,1696,5743 } },
     { "Canon PowerShot Pro1", 0,
 	{ 10062,-3522,-999,-7643,15117,2730,-765,817,7323 } },
     { "Canon PowerShot Pro70", 34,
@@ -6219,6 +6256,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 10593,-3607,-1010,-5881,13127,3084,-1200,1805,6721 } },
     { "OLYMPUS SP550UZ", 0,
 	{ 11597,-4006,-1049,-5432,12799,2957,-1029,1750,6516 } },
+    { "OLYMPUS SP560UZ", 0,
+	{ 10915,-3677,-982,-5587,12986,2911,-1168,1968,6223 } },
     { "PENTAX *ist DL2", 0,
 	{ 10504,-2438,-1189,-8603,16207,2531,-1022,863,12242 } },
     { "PENTAX *ist DL", 0,
@@ -6241,6 +6280,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 10976,-4029,-1141,-7918,15491,2600,-1670,2071,8246 } },
     { "Panasonic DMC-FZ50", 0,	/* aka "LEICA V-LUX1" */
 	{ 7906,-2709,-594,-6231,13351,3220,-1922,2631,6537 } },
+    { "Panasonic DMC-L10", 0,
+	{ 8025,-1942,-1050,-7920,15904,2100,-2456,3005,7039 } },
     { "Panasonic DMC-L1", 0,	/* aka "LEICA DIGILUX 3" */
 	{ 8054,-1885,-1025,-8349,16367,2040,-2805,3542,7629 } },
     { "Panasonic DMC-LC1", 0,	/* aka "LEICA DIGILUX 2" */
@@ -7111,6 +7152,8 @@ konica_400z:
     }
   } else if (!strcmp(make,"LEICA") || !strcmp(make,"Panasonic")) {
     maximum = 0xfff0;
+    if ((fsize-data_offset) / (width*8/7) == height)
+      load_raw = &CLASS panasonic_load_raw;
     if (!load_raw) load_raw = &CLASS unpacked_load_raw;
     switch (width) {
       case 2568:
@@ -7164,6 +7207,10 @@ fz18:	if (height > 2480)
 	left_margin += 17;
 	zero_is_bad = 1;
 	adobe_coeff ("Panasonic","DMC-FZ50");  break;
+      case 3710:
+	width = 3682;
+	filters = 0x49494949;
+	break;
       case 3880:
 	width -= 22;
 	left_margin = 6;
@@ -7755,9 +7802,9 @@ void CLASS gamma_lut (uchar lut[0x10000])
   int perc, c, val, total, i;
   float white=0, r;
 
-  perc = (int)(width * height * 0.01);	/* 99th percentile white point */
+  perc = (int)(width * height * 0.01);	/* 99th percentile white level */
   if (fuji_width) perc /= 2;
-  if (highlight && highlight != 2) perc = -1;
+  if ((highlight & ~2) || no_auto_bright) perc = -1;
   FORCC {
     for (val=0x2000, total=0; --val > 32; )
       if ((total += histogram[c][val]) > perc) break;
@@ -7978,9 +8025,8 @@ int CLASS main (int argc, const char **argv)
     puts(_("-r <r g b g> Set custom white balance"));
     puts(_("+M/-M     Use/don't use an embedded color matrix"));
     puts(_("-C <r b>  Correct chromatic aberration"));
-    puts(_("-b <num>  Adjust brightness (default = 1.0)"));
     puts(_("-n <num>  Set threshold for wavelet denoising"));
-    puts(_("-k <num>  Set black point"));
+    puts(_("-k <num>  Set the black level"));
     puts(_("-K <file> Subtract dark frame (16-bit raw PGM)"));
     puts(_("-H [0-9]  Highlight mode (0=clip, 1=unclip, 2=blend, 3+=rebuild)"));
     puts(_("-t [0-7]  Flip image (0=none, 3=180, 5=90CCW, 6=90CW)"));
@@ -7992,6 +8038,8 @@ int CLASS main (int argc, const char **argv)
     puts(_("-d        Document mode (no color, no interpolation)"));
     puts(_("-D        Document mode without scaling (totally raw)"));
     puts(_("-j        Don't stretch or rotate raw pixels"));
+    puts(_("-W        Don't automatically brighten the image"));
+    puts(_("-b <num>  Adjust brightness (default = 1.0)"));
     puts(_("-q [0-3]  Set the interpolation quality"));
     puts(_("-h        Half-size color image (twice as fast as \"-q 0\")"));
     puts(_("-f        Interpolate RGGB as four colors"));
@@ -8052,6 +8100,7 @@ int CLASS main (int argc, const char **argv)
       case 'D':
       case 'd':  document_mode = 1 + (opt == 'D');
       case 'j':  use_fuji_rotate   = 0;  break;
+      case 'W':  no_auto_bright    = 1;  break;
       case 'T':  output_tiff       = 1;  break;
       case '4':  output_bps       = 16;  break;
       default:
