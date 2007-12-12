@@ -1743,6 +1743,27 @@ const wb_data wb_preset[] = {
   { "SONY", "DSLR-A100", Flash, 0,		{ 1.859375, 1, 1.746094, 0 } },
   { "SONY", "DSLR-A100", Flash, 3,		{ 2.046875, 1, 1.542969, 0 } },
 
+  /* Sony a700 presets - firmware v2 */
+  { "SONY", "DSLR-A700", Daylight, -3,		{ 1.937500, 1, 1.640625, 0 } },
+  { "SONY", "DSLR-A700", Daylight, 0,		{ 2.101563, 1, 1.484375, 0 } },
+  { "SONY", "DSLR-A700", Daylight, 3,		{ 2.273437, 1, 1.343750, 0 } },
+  { "SONY", "DSLR-A700", Shade, -3,		{ 2.257812, 1, 1.359375, 0 } },
+  { "SONY", "DSLR-A700", Shade, 0,		{ 2.445313, 1, 1.226563, 0 } },
+  { "SONY", "DSLR-A700", Shade, 3,		{ 2.652344, 1, 1.113281, 0 } },
+  { "SONY", "DSLR-A700", Cloudy, -3,		{ 2.070312, 1, 1.507812, 0 } },
+  { "SONY", "DSLR-A700", Cloudy, 0,		{ 2.250000, 1, 1.367188, 0 } },
+  { "SONY", "DSLR-A700", Cloudy, 3,		{ 2.429688, 1, 1.234375, 0 } },
+  { "SONY", "DSLR-A700", Tungsten, -3,		{ 1.230469, 1, 2.859375, 0 } },
+  { "SONY", "DSLR-A700", Tungsten, 0,		{ 1.335938, 1, 2.597656, 0 } },
+  { "SONY", "DSLR-A700", Tungsten, 3,		{ 1.449219, 1, 2.343750, 0 } },
+  { "SONY", "DSLR-A700", Fluorescent, -2,	{ 1.292969, 1, 3.199219, 0 } },
+  { "SONY", "DSLR-A700", Fluorescent, 0,	{ 1.878906, 1, 2.152344, 0 } },
+  { "SONY", "DSLR-A700", Fluorescent, 3,	{ 2.433594, 1, 1.539063, 0 } },
+  { "SONY", "DSLR-A700", Fluorescent, 4,	{ 2.273437, 1, 1.347656, 0 } },
+  { "SONY", "DSLR-A700", Flash, -3,		{ 2.128906, 1, 1.460937, 0 } },
+  { "SONY", "DSLR-A700", Flash, 0,		{ 2.277344, 1, 1.312500, 0 } },
+  { "SONY", "DSLR-A700", Flash, 3,		{ 2.496094, 1, 1.199219, 0 } },
+
 };
 
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
