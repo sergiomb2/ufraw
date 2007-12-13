@@ -216,7 +216,7 @@ typedef struct ufraw_struct {
     void *raw;
     gboolean HaveFilters;
     void *unzippedBuf;
-    unsigned unzippedBufLen;
+    gsize unzippedBufLen;
     developer_data *developer;
     developer_data *AutoDeveloper;
     conf_data *conf;

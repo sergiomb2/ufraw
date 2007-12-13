@@ -2324,8 +2324,8 @@ static void expander_expanded(GtkExpander *expander,
 		    "expander-maximized", (gpointer)FALSE);
 	    gtk_widget_set_size_request(histogram, -1, data->HisMinHeight);
 	}
-	gboolean expanderMaximized = (gboolean)
-		g_object_get_data(G_OBJECT(expander), "expander-maximized");
+	gboolean expanderMaximized = GPOINTER_TO_INT(
+		g_object_get_data(G_OBJECT(expander), "expander-maximized"));
 	if ( !expanderMaximized )
 	    gtk_box_set_child_packing(GTK_BOX(panel), GTK_WIDGET(expander),
 		    TRUE, TRUE, 0, GTK_PACK_START);
@@ -3192,16 +3192,16 @@ static void panel_size_allocate(GtkWidget *panel,
     // Raw expander status
     GtkWidget *rawExpander =
 	    gtk_widget_get_ancestor(data->RawHisto, GTK_TYPE_EXPANDER);
-    gboolean rawMaximized = (gboolean)
-	    g_object_get_data(G_OBJECT(rawExpander), "expander-maximized");
+    gboolean rawMaximized = GPOINTER_TO_INT(
+	    g_object_get_data(G_OBJECT(rawExpander), "expander-maximized"));
     int rawHisHeight = data->RawHisto->allocation.height-2;
     gboolean rawExpanded =
 	    gtk_expander_get_expanded(GTK_EXPANDER(rawExpander));
     // Live expander status
     GtkWidget *liveExpander =
 	    gtk_widget_get_ancestor(data->LiveHisto, GTK_TYPE_EXPANDER);
-    gboolean liveMaximized = (gboolean)
-	    g_object_get_data(G_OBJECT(liveExpander), "expander-maximized");
+    gboolean liveMaximized = GPOINTER_TO_INT(
+	    g_object_get_data(G_OBJECT(liveExpander), "expander-maximized"));
     int liveHisHeight = data->LiveHisto->allocation.height-2;
     gboolean liveExpanded =
 	    gtk_expander_get_expanded(GTK_EXPANDER(liveExpander));

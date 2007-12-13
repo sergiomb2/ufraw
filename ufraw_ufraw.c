@@ -138,7 +138,7 @@ ufraw_data *ufraw_open(char *filename)
     char *fname, *hostname;
     char *origfilename;
     gchar *unzippedBuf = NULL;
-    unsigned unzippedBufLen = 0;
+    gsize unzippedBufLen = 0;
 
     fname = g_filename_from_uri(filename, &hostname, NULL);
     if (fname!=NULL) {
