@@ -1,0 +1,1394 @@
+# Czech translation for UFRaw package.
+# Copyright (C) 2006-2007 Udi Fuchs.
+# This file is distributed under the same license as the UFRaw package.
+# Milan Knizek <knizek@volny.cz>, 2007.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ufraw 0.14\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-12-17 22:19+0100\n"
+"PO-Revision-Date: 2007-12-23 12:15+0010\n"
+"Last-Translator: Milan Knizek <knizek@volny.cz>\n"
+"Language-Team: Czech <cs@li.cz>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Translate text message from GtkImageView:
+msgid "Open the navigator window"
+msgstr "Otevřít okno navigátoru"
+
+msgid "No input file, nothing to do."
+msgstr "Žádný vstupní soubor, nic ke zpracování."
+
+#, c-format
+msgid "Loaded %s%s"
+msgstr "Načteno %s%s"
+
+#, c-format
+msgid "Saved %s%s"
+msgstr "Uloženo %s%s"
+
+#. First letter of the word 'yes' for the y/n question
+msgid "y"
+msgstr "a"
+
+#. First letter of the word 'no' for the y/n question
+msgid "n"
+msgstr "n"
+
+#, c-format
+msgid "%s: overwrite '%s'?"
+msgstr "%s: přepsat '%s'?"
+
+msgid "--silent option is valid only in batch mode"
+msgstr "--silent volba je platná pouze v dávkovém režimu"
+
+msgid "Extracting embedded image is not supported in interactive mode"
+msgstr "Vyjmutí vloženého snímku není podporováno v interaktivním režimu"
+
+msgid "Raw images"
+msgstr "Raw snímky"
+
+msgid "UFRaw ID files"
+msgstr "UFRaw ID soubory"
+
+msgid "Raw jpg's"
+msgstr "Raw JPEGy"
+
+msgid "Raw tif's"
+msgstr "Raw TIFFy"
+
+msgid "All files"
+msgstr "Všechny soubory"
+
+msgid "Show hidden files"
+msgstr "Ukázat skryté soubory"
+
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. exposure, saturation, black
+#. ExposureNorm
+#. restoreDetails
+#. clipHighlights
+#. autoExposure
+#. autoBlack
+#. BaseCurveIndex, BaseCurveCount
+#. BaseCurve data defaults
+#. curveIndex, curveCount
+#. Curve data defaults
+msgid "Manual curve"
+msgstr "Ruční křivka"
+
+msgid "Linear curve"
+msgstr "Lineární křivka"
+
+msgid "Custom curve"
+msgstr "Upravená křivka"
+
+msgid "Camera curve"
+msgstr "Křivka fotoaparátu"
+
+#. profileIndex[], profileCount[]
+#. Profile data defaults
+msgid "sRGB"
+msgstr "sRGB"
+
+msgid "System default"
+msgstr "Standardní"
+
+msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
+msgstr "Zkouším konvertovat .ufrawrc z UFRaw-0.4 nebo staršího"
+
+msgid "Trying to convert .ufrawrc from UFRaw-0.6 or earlier"
+msgstr "Zkouším konvertovat .ufrawrc z UFRaw-0.6 nebo staršího"
+
+#, c-format
+msgid "UFRaw version in .ufrawrc is not supported"
+msgstr "UFRaw verze v .ufrawrc není podporována"
+
+#, c-format
+msgid "Too many anchors for curve '%s'"
+msgstr "Příliš mnoho kotev pro křivku '%s'"
+
+#, c-format
+msgid ""
+"Can't open ID file %s for reading\n"
+"%s\n"
+msgstr ""
+"Nemohu otevřít ID soubor %s pro čtení\n"
+"%s\n"
+
+#, c-format
+msgid ""
+"Error parsing '%s'\n"
+"%s"
+msgstr ""
+"Chyba při analýze '%s'\n"
+"%s"
+
+#, c-format
+msgid ""
+"Can't open file %s for writing\n"
+"%s\n"
+msgstr ""
+"Nemohu otevřít soubor %s pro zápis\n"
+"%s\n"
+
+msgid "cannot --create-id with stdout"
+msgstr "nemohu použít --create-id pro stdout"
+
+msgid "UFRaw "
+msgstr "UFRaw "
+
+msgid " - Unidentified Flying Raw converter for digital camera images.\n"
+msgstr " - Unidentified Flying Raw konvertor pro digitální snímky.\n"
+
+msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
+msgstr "Použití: ufraw [ volby ... ] [ raw-snímky ... ]\n"
+
+msgid "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
+msgstr "       ufraw-batch [ volby ... ] [ raw-snímky ... ]\n"
+
+msgid "       ufraw [ options ... ] [ default-directory ]\n"
+msgstr "       ufraw [ volby ... ] [ standardní-adresář ]\n"
+
+msgid ""
+"By default 'ufraw' displays a preview window for each raw image allowing\n"
+"the user to tweak the image parameters before saving. If no raw images\n"
+"are given at the command line, UFRaw will display a file chooser dialog.\n"
+"To process the images with no questions asked (and no preview) use\n"
+"'ufraw-batch'.\n"
+msgstr ""
+"Standardně 'ufraw' zobrazí okno náhledu pro každý raw snímek a umožní\n"
+"uživateli měnit parametry snímku před uložením. Pokud na příkazové řádce\n"
+"nejsou zadány žádné raw snímky, UFRaw zobrazí dialog pro výběr souboru.\n"
+"Pro zpracování snímků bez dalších otázek (a bez náhledu) lze použít\n"
+"'ufraw-batch'.\n"
+
+msgid ""
+"The input files can be either raw images or ufraw's ID files. ID files\n"
+"contain a raw image filename and the parameters for handling the image.\n"
+"One can also use an ID file with the option:\n"
+msgstr ""
+"Vstupní soubory mohou být buď raw snímky nebo ID soubory ufraw. ID soubory\n"
+"obsahují jméno raw snímku a parametry pro nakládání se snímkem.\n"
+"Lze též použít ID soubor pomocí volby:\n"
+
+msgid ""
+"--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+msgstr ""
+"--conf=ID-soubor        Použít parametry v ID-souboru pro ostatní raw "
+"snímky.\n"
+
+msgid "The rest of the options are separated into two groups.\n"
+msgstr "Ostatní volby jsou odděleny do dvou skupin.\n"
+
+msgid "The options which are related to the image manipulation are:\n"
+msgstr "Volby, které se týkají manipulace se snímkem, jsou:\n"
+
+msgid "--wb=camera|auto      White balance setting.\n"
+msgstr "--wb=camera|auto      Nastavení vyvážení bílé.\n"
+
+msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
+msgstr "--temperature=TEPLOTA Barevná teplota v Kelvinech (2000 - 7000).\n"
+
+msgid "--green=GREEN         Green color normalization.\n"
+msgstr "--green=ZELENÁ        Normalizace zelené barvy.\n"
+
+msgid ""
+"--base-curve=manual|linear|camera|custom|CURVE\n"
+"                      Type of base tone curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default camera if such exists, linear otherwise).\n"
+msgstr ""
+"--base-curve=manual|linear|camera|custom|KŘIVKA\n"
+"                      Typ základní tónové křivky. KŘIVKA může být jakákoliv\n"
+"                      křivka, která byla dříve načtena v GUI (uživatelském "
+"rozhraní).\n"
+"                      (standardně 'camera', pokud existuje, jinak "
+"'linear'.)\n"
+
+msgid ""
+"--base-curve-file=file\n"
+"                      Use base tone curve included in specified file.\n"
+"                      Overrides --base-curve option.\n"
+msgstr ""
+"--base-curve-file=soubor\n"
+"                      Použít základní tónovou křivku uloženou v uvedeném "
+"souboru.\n"
+"                      Potlačí volbu --base-curve.\n"
+
+msgid ""
+"--curve=manual|linear|CURVE\n"
+"                      Type of luminosity curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default linear).\n"
+msgstr ""
+"--curve=manual|linear|KŘIVKA\n"
+"                      Typ jasové křivky. KŘIVKA může být jakákoliv křivka,\n"
+"                      která byla dříve načtena v GUI (uživatelském "
+"rozhraní).\n"
+"                      (Standardně 'linear'.)\n"
+
+msgid ""
+"--curve-file=file     Use luminosity curve included in specified file.\n"
+"                      Overrides --curve option.\n"
+msgstr ""
+"--curve-file=soubor   Použít jasovou křivku uloženou v uvedeném souboru.\n"
+"                      Potlačí volbu --curve.\n"
+
+msgid ""
+"--restore=clip|lch|hsv\n"
+"                      Restore details for negative EV.\n"
+"                      'clip' restores nothing - safe from artifacts.\n"
+"                      'lch' restores in LCH space - giving soft details.\n"
+"                      'hsv' restores in HSV space - giving sharp details.\n"
+"                      (default lch).\n"
+msgstr ""
+"--restore=clip|lch|hsv\n"
+"                      Obnovit detaily pro záporné EV.\n"
+"                      'clip' neobnoví nic - zabrání artefaktům.\n"
+"                      'lch' obnoví v LCH prostoru - pro jemné detaily.\n"
+"                      'hsv' obnoví v HSV prostoru - pro ostré detaily.\n"
+"                      (Standardně lch.)\n"
+
+msgid ""
+"--clip=digital|film   Clip highlights for positive EV.\n"
+"                      'digital' linear digital sensor response.\n"
+"                      'film' emulate soft film response. (default digital).\n"
+msgstr ""
+"--clip=digital|film   Oříznout světla pro kladné EV.\n"
+"                      'digital' lineární odezva digitálního senzoru.\n"
+"                      'film' napodobit charakteristickou křivku filmu. "
+"(Standardně 'digital'.)\n"
+
+msgid ""
+"--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+msgstr ""
+"--gamma=GAMMA         Gamma korekce základní křivky (standardně 0.45).\n"
+
+msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
+msgstr "--linearity=LINEARITA Linearita základní křivky (standardně 0.10).\n"
+
+msgid ""
+"--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
+"output).\n"
+msgstr ""
+"--saturation=SAT      Korekce saturace (standardně 1.0, 0 pro ČB výstup).\n"
+
+msgid ""
+"--wavelet-denoising-threshold=THRESHOLD\n"
+"                      Wavelet denoising threshold (default 0.0).\n"
+msgstr ""
+"--wavelet-denoising-threshold=PRÁH\n"
+"                      Práh metody vlnkového odstranění šumu (standardně "
+"0.0).\n"
+
+msgid ""
+"--exposure=auto|EXPOSURE\n"
+"                      Auto exposure or exposure correction in EV (default "
+"0).\n"
+msgstr ""
+"--exposure=auto|EXPOZICE\n"
+"                      Automatická expozice nebo korekce expozice v EV "
+"(standardně 0).\n"
+
+msgid ""
+"--black-point=auto|BLACK\n"
+"                      Auto black-point or black-point value (default 0).\n"
+msgstr ""
+"--black-point=auto|ČERNÁ\n"
+"                      Automatické nastavení černého bodu nebo hodnota "
+"černého bodu (standardně 0).\n"
+
+msgid ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Interpolation algorithm to use (default ahd).\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Interpolační algoritmus (standardně ahd).\n"
+
+msgid "The options which are related to the final output are:\n"
+msgstr "Volby, které se týkají konečného výstupu, jsou:\n"
+
+msgid "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
+msgstr "--shrink=FAKTOR       Zmenšit snímek o faktor (standardně 1).\n"
+
+msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
+msgstr "--size=VELIKOST       Zmenšit maximum(výška, šířka) na VELIKOST.\n"
+
+msgid ""
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Output file format (default ppm).\n"
+msgstr ""
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Formát výstupního souboru (standardně ppm).\n"
+
+msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
+msgstr ""
+"--out-depth=8|16      Výstupní bitová hloubka pro každý kanál (standardně "
+"8).\n"
+
+msgid ""
+"--create-id=no|also|only\n"
+"                      Create no|also|only ID file (default no).\n"
+msgstr ""
+"--create-id=no|also|only\n"
+"                      Vytvořit ne|také|pouze ID soubor (standardně ne).\n"
+
+msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
+msgstr "--compression=HODNOTA JPEG komprese (0-100, standardně 85).\n"
+
+msgid ""
+"--[no]exif            Embed EXIF in output JPEG or PNG (default embed "
+"EXIF).\n"
+msgstr ""
+"--[no]exif            [Ne]vložit EXIF do výstupního JPEG nebo PNG "
+"(standardně vložit EXIF).\n"
+
+msgid ""
+"--[no]zip             Enable [disable] TIFF zip compression (default "
+"nozip).\n"
+msgstr ""
+"--[no]zip             [Ne]aktivní zip komprese TIFF (standardně neaktivní).\n"
+
+msgid ""
+"--embedded-image      Extract the preview image embedded in the raw file\n"
+"                      instead of converting the raw image.\n"
+msgstr ""
+"--embedded-image      Extrahovat náhled snímku vloženého v raw souboru\n"
+"                      místo konvertování raw souboru.\n"
+
+msgid ""
+"--out-path=PATH       PATH for output file (default use input file's path).\n"
+msgstr ""
+"--out-path=CESTA      CESTA pro výstupní soubor (standardně cesta dle "
+"vstupního souboru).\n"
+
+msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
+msgstr ""
+"--output=SOUBOR       Jméno výstupního souboru, použít '-' pro standardní "
+"výstup (stdout).\n"
+
+msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
+msgstr ""
+"--darkframe=SOUBOR    Použít SOUBOR pro odečtení černého snímku z raw.\n"
+
+msgid ""
+"--overwrite           Overwrite existing files without asking (default no).\n"
+msgstr ""
+"--overwrite           Přepsat existující soubory bez vyzvání (standardně "
+"nepřepisovat).\n"
+
+msgid ""
+"--silent              Do not display any messages during batch conversion.\n"
+msgstr ""
+"--silent              Nezobrazovat žádné zprávy během dávkové konverze.\n"
+
+msgid ""
+"UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
+"Then, if an ID file is specified it setting are read. Next, the setting "
+"from\n"
+"the --conf option are taken, ignoring input/output filenames in the ID "
+"file.\n"
+"Lastly, the options from the command line are set. In batch mode, the "
+"second\n"
+"group of options is NOT read from the resource file.\n"
+msgstr ""
+"UFRaw nejprve čte nastavení z konfiguračního souboru $HOME/.ufrawrc.\n"
+"Poté, pokud je specifikován ID soubour, jsou přečtena jeho nastavení. Dále\n"
+"je použito nastavení z volby --conf (vstupní/výstupní jména souborů z ID "
+"souboru jsou ignorována).\n"
+"Nakonec jsou nastaveny volby z příkazové řádky. V dávkovém režimu není druhá "
+"skupina\n"
+"voleb čtena z konfiguračního souboru.\n"
+
+msgid ""
+"Last, but not least, --version displays the version number and compilation\n"
+"options for ufraw and --help displays this help message and exits.\n"
+msgstr ""
+"Poslední, neméně důležité, --version zobrazí číslo verze a kompilační volby\n"
+"pro ufraw a --help zobrazí tuto nápovědu a ukončí program.\n"
+
+#, c-format
+msgid "'%s' is not a valid value for the --%s option."
+msgstr "'%s' není platná hodnota pro volbu --%s."
+
+msgid "ufraw was build without ZIP support."
+msgstr "ufraw byl kompilován bez ZIP podpory."
+
+msgid "--batch is obsolete. Use ufraw-batch instead."
+msgstr "--batch je zastaralá volba. Použijte ufraw-batch."
+
+#, c-format
+msgid "getopt returned character code 0%o ??"
+msgstr "getopt vrátil znakový kód 0%o ??"
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "'%s' není platné nastavení vyvážení bílé."
+
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "volby --temperature a --green potlačí volbu --wb=%s."
+
+#, c-format
+msgid "failed to load curve from %s, too many configured base curves"
+msgstr "chyba při čtení křivky z %s, příliš mnoho základních křivek"
+
+#, c-format
+msgid "failed to load curve from %s"
+msgstr "chyba při čtení křivky z %s"
+
+#, c-format
+msgid "'%s' is not a valid base curve name."
+msgstr "'%s' není platné jméno základní křivky."
+
+#, c-format
+msgid "failed to load curve from %s, too many configured curves"
+msgstr "chyba při čtení křivky z %s, příliš mnoho křivek"
+
+#, c-format
+msgid "'%s' is not a valid curve name."
+msgstr "'%s' není platné jméno křivky."
+
+#, c-format
+msgid "'%s' is not a valid interpolation option."
+msgstr "'%s' není platná volba interpolace."
+
+#, c-format
+msgid "'%s' is not a valid restore option."
+msgstr "'%s' není platná volba obnovení světel."
+
+#, c-format
+msgid "'%s' is not a valid clip option."
+msgstr "'%s' není platná volba oříznutí světel."
+
+msgid "you can not specify both --shrink and --size"
+msgstr "nemůžete specifikovat současně --shrink a --size"
+
+#, c-format
+msgid "'%d' is not a valid bit depth."
+msgstr "'%d' není platná bitová hloubka."
+
+#, c-format
+msgid "Output type '%s' is deprecated"
+msgstr "Výstupní typ '%s' je nepoužívaný"
+
+msgid "ufraw was build without TIFF support."
+msgstr "ufraw byl kompilován bez TIFF podpory."
+
+msgid "ufraw was build without JPEG support."
+msgstr "ufraw byl kompilován bez JPEG podpory."
+
+msgid "ufraw was build without PNG support."
+msgstr "ufraw byl kompilován bez PNG podpory."
+
+#, c-format
+msgid "'%s' is not a valid output type."
+msgstr "'%s' není platný výstupní typ."
+
+#, c-format
+msgid "'%s' is not a valid output type for embedded image."
+msgstr "'%s' není platný výstupní typ pro vložený snímek."
+
+#, c-format
+msgid "'%d' is not a valid bit depth for embedded image."
+msgstr "'%d' není platná bitová hloubka pro vložený snímek."
+
+#, c-format
+msgid "'%s' is not a valid create-id option."
+msgstr "'%s' není platné pro volbu create-id."
+
+#, c-format
+msgid "'%s' is not a valid path."
+msgstr "'%s' není platná cesta."
+
+msgid "cannot output more than one file to the same output"
+msgstr "nemohu vytvořit více než jeden soubor pro stejný výstup"
+
+#, c-format
+msgid "Raw file '%s' missing."
+msgstr "Chybí '%s' raw soubor."
+
+msgid "Delete raw file"
+msgstr "Smazat raw soubor"
+
+msgid "_Delete selected"
+msgstr "_Smazat vybrané"
+
+msgid "Delete _All"
+msgstr "Smazat _Vše"
+
+msgid "Select files to delete"
+msgstr "Vybrat soubory ke smazání"
+
+#, c-format
+msgid "Error reading directory '%s'."
+msgstr "Chyba při čtení adresáře '%s'."
+
+#, c-format
+msgid "Error deleting '%s'"
+msgstr "Chyba při mazání '%s'"
+
+msgid "Reading embedded image requires libjpeg."
+msgstr "Čtení vloženého snímku vyžaduje libjpeg."
+
+msgid "No embedded image found"
+msgstr "Nenalezen vložený snímek."
+
+#, c-format
+msgid "Original size (%d) is smaller than the requested size (%d)"
+msgstr "Původní velikost (%d) je menší než požadovaná velikost (%d)"
+
+#, c-format
+msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
+msgstr "Nesoulad ppm náhledu, výška %d, šířka %d, zatímco buffer %d."
+
+#, c-format
+msgid "JPEG thumb height %d different than expected %d."
+msgstr "Výška %d JPEG náhledu jiná než očekávaná %d."
+
+#, c-format
+msgid "JPEG thumb width %d different than expected %d."
+msgstr "Šířka %d JPEG náhledu jiná než očekávaná %d."
+
+#, c-format
+msgid ""
+"Error creating file '%s'.\n"
+"%s"
+msgstr ""
+"Chyba při vytváření souboru '%s'.\n"
+"%s"
+
+msgid "No embedded image read"
+msgstr "Nepřečten žádný vložený snímek"
+
+#, c-format
+msgid "Error creating file '%s'. Unknown file type %d."
+msgstr "Chyba při vytváření souboru '%s'. Neznámý typ souboru %d."
+
+#, c-format
+msgid "Error creating file '%s': %s"
+msgstr "Chyba při vytváření souboru '%s': %s"
+
+#, c-format
+msgid "Error writing '%s'"
+msgstr "Chyba při zápisu '%s'"
+
+#, c-format
+msgid "Unsupported output type (%d) for embedded image"
+msgstr "Nepodporovaný výstupní typ (%d) pro vložený snímek"
+
+#, c-format
+msgid "Loading raw file '%s'"
+msgstr "Načítám raw soubor '%s'"
+
+msgid "Can't allocate new image."
+msgstr "Nemohu nalézet nový snímek."
+
+#. Create the "background" layer to hold the image...
+msgid "Background"
+msgstr "Pozadí"
+
+msgid "Loading image"
+msgstr "Načítám snímek"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "Selhalo vložení výstupní profilu'%s' do snímku."
+
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored.\n"
+msgstr "Délka %d EXIF bufferu příliš dlouhá, ignorováno.\n"
+
+msgid "Raw histogram with conversion curves"
+msgstr "Raw histogram s konverzními křivkami"
+
+msgid "Live histogram"
+msgstr "Aktuální histogram"
+
+msgid "No more room for new curves."
+msgstr "Není více místa pro nové křivky."
+
+msgid "Load curve"
+msgstr "Načíst křivku"
+
+msgid "All curve formats"
+msgstr "Všechny formáty křivek"
+
+msgid "UFRaw curve format"
+msgstr "UFRaw formát křivek"
+
+msgid "Nikon curve format"
+msgstr "Nikon formát křivek"
+
+msgid "Save curve"
+msgstr "Uložit křivku"
+
+msgid "No more room for new profiles."
+msgstr "Není více místa pro nové profily."
+
+msgid "Load color profile"
+msgstr "Načíst barvové profily"
+
+msgid "Color Profiles"
+msgstr "Barvové profily"
+
+msgid "Luminosity (Y value)"
+msgstr "Jas (Y hodnota)"
+
+msgid "Adams' zone"
+msgstr "Zóna dle Adamse"
+
+#, c-format
+msgid "size %dx%d, zoom %2.f%%"
+msgstr "velikost %dx%d, přiblížení %2.f%%"
+
+#, c-format
+msgid "size %dx%d, scale 1/%d"
+msgstr "velikost %dx%d, měřítko 1/%d"
+
+#, c-format
+msgid "Black point: %0.3lf"
+msgstr "Černý bod: %0.3lf"
+
+msgid "Fatal Error: uf->conf->shrink<1"
+msgstr "Fatální chyba: uf->conf->shrink<1"
+
+#. No darkframe file
+msgid "None"
+msgstr "Žádný"
+
+msgid "Load dark frame"
+msgstr "Načíst černý snímek"
+
+msgid "clip"
+msgstr "oříznout"
+
+msgid "restore in LCH space for soft details"
+msgstr "obnovit v LCH prostoru pro jemné detaily"
+
+msgid "restore in HSV space for sharp details"
+msgstr "obnovit v HSV prostoru pro ostré detaily"
+
+#, c-format
+msgid ""
+"Restore details for negative EV\n"
+"Current state: %s"
+msgstr ""
+"Obnovit detaily pro záporné EV\n"
+"Současný stav: %s"
+
+msgid "digital linear"
+msgstr "digitální lineární"
+
+msgid "soft film like"
+msgstr "měkká jako u filmu"
+
+#, c-format
+msgid ""
+"Clip highlights for positive EV\n"
+"Current state: %s"
+msgstr ""
+"Oříznout světla pro kladná EV\n"
+"Současný stav: %s"
+
+#, c-format
+msgid "Filename: %s%s"
+msgstr "Jméno souboru: %s%s"
+
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+"\n"
+"Vytvořit také ID soubor"
+
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+"\n"
+"Vytvořit pouze ID soubor"
+
+msgid "UFRaw options"
+msgstr "Volby UFRaw"
+
+msgid "Settings"
+msgstr "Nastavení"
+
+msgid "Input color profiles"
+msgstr "Vstupní barvové profily"
+
+msgid "Output color profiles"
+msgstr "Výstupní barvové profily"
+
+msgid "Display color profiles"
+msgstr "Barvové profily monitoru"
+
+msgid "Base Curves"
+msgstr "Základní křivky"
+
+msgid "Luminosity Curves"
+msgstr "Jasové křivky"
+
+#. Remote Gimp command entry
+msgid "Remote Gimp command"
+msgstr "Příkaz pro 'remote Gimp'"
+
+msgid "Reset command to default"
+msgstr "Příkaz nastavení na standardní hodnoty"
+
+msgid "Blink Over/Underexposure Indicators"
+msgstr "Blikat indikátory pře/podexpozice"
+
+msgid "Configuration"
+msgstr "Konfigurace"
+
+msgid "Save configuration"
+msgstr "Uložit konfiguraci"
+
+msgid "Save configuration to resource file ($HOME/.ufrawrc)"
+msgstr "Uložit nastavení to konfiguračního souboru ($HOME/.ufrawrc)"
+
+msgid "Log"
+msgstr "Log"
+
+msgid "Encoding conversion failed"
+msgstr "Selhala konverze kódování"
+
+msgid "About"
+msgstr "O"
+
+msgid ""
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
+"to\n"
+"read and manipulate raw images from digital cameras.\n"
+"UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"for the actual encoding of the raw images.\n"
+"\n"
+"Author: Udi Fuchs\n"
+"Homepage: http://ufraw.sourceforge.net/\n"
+"\n"
+msgstr ""
+"<b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) je nástroj ke\n"
+"čtení a manipulaci raw snímků z digitálních fotoaparátů.\n"
+"UFRaw spoléhá na <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"při kódování raw snímků.\n"
+"\n"
+"Autor: Udi Fuchs\n"
+"Domovská stránka: http://ufraw.sourceforge.net/\n"
+"\n"
+
+#, c-format
+msgid "%s%s (Alt-%c)"
+msgstr "%s%s (Alt-%c)"
+
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw"
+
+msgid "Linear"
+msgstr "Lineární"
+
+msgid "Logarithmic"
+msgstr "Logaritmické"
+
+msgid "Spot values:"
+msgstr "Bodové hodnoty:"
+
+msgid "Exposure compensation in EV"
+msgstr "Kompenzace expozice v EV"
+
+msgid "Auto adjust exposure"
+msgstr "Automaticky upravit expozici"
+
+msgid "Reset exposure to default"
+msgstr "Nastavit expozici na standardní"
+
+#. Start of White Balance setting page
+msgid "White balance"
+msgstr "Vyvážení bílé"
+
+msgid "White Balance"
+msgstr "Vyvážení bílé"
+
+msgid ""
+"There are no white balance presets for your camera model.\n"
+"Check UFRaw's webpage for information on how to get your\n"
+"camera supported."
+msgstr ""
+"Neexistují žádná přednastavená vyvážení bílé pro Váš typ fotoaparátu.\n"
+"Zkontrolujte webovou stránku UFRaw ohledně informace jak získat\n"
+"podporu pro Váš typ fotoaparátu."
+
+msgid "Reset white balance to initial value"
+msgstr "Nastavit vyvážení bílé na počáteční hodnotu"
+
+msgid "Temperature"
+msgstr "Teplota"
+
+msgid "White balance color temperature (K)"
+msgstr "Barevná teplota vyvážení bílé (K)"
+
+msgid "Green"
+msgstr "Zelená"
+
+msgid "Green component"
+msgstr "Zelená složka"
+
+msgid "Select a spot on the preview image to apply spot white balance"
+msgstr "Před nastavením bodového vyvážení bílé zvolte bod na snímku náhledu"
+
+msgid "Chan. multipliers:"
+msgstr "Násobitele kanálů:"
+
+msgid "Bayer pattern interpolation"
+msgstr "Interpolace Bayerovy matice"
+
+msgid "VNG four color interpolation"
+msgstr "VNG Interpolace čtyř barev"
+
+msgid "Bilinear interpolation"
+msgstr "Bilineární interpolace"
+
+msgid "AHD interpolation"
+msgstr "AHD interpolace"
+
+msgid "VNG interpolation"
+msgstr "VNG interpolace"
+
+msgid "PPG interpolation"
+msgstr "PPG interpolace"
+
+msgid "No Bayer pattern"
+msgstr "Žádná Baeyrova matice"
+
+msgid "Apply color smoothing"
+msgstr "Nastavit vyhlazení barev"
+
+msgid "Threshold"
+msgstr "Práh"
+
+msgid "Threshold for wavelet denoising"
+msgstr "Práh pro vlnkové odstranění šumu"
+
+msgid "Reset denoise threshold to default"
+msgstr "Nastavit práh odstranění šumu na standardní"
+
+msgid "Zoom:"
+msgstr "Přiblížení:"
+
+msgid "Zoom percentage"
+msgstr "Procento přiblížení"
+
+msgid "Dark Frame:"
+msgstr "Černý snímek:"
+
+msgid "Reset dark frame"
+msgstr "Odstranit černý snímek"
+
+#. End of White Balance setting page
+#. Start of Base Curve page
+msgid "Base curve"
+msgstr "Základní křivka"
+
+msgid "Load base curve"
+msgstr "Načíst základní křivku"
+
+msgid "Save base curve"
+msgstr "Uložit základní křivku"
+
+msgid "Reset base curve to default"
+msgstr "Nastavit základní křivku na standardní"
+
+#. End of Base Curve page
+#. Start of Color management page
+msgid "Color management"
+msgstr "Správa barev"
+
+msgid "Input ICC profile"
+msgstr "Vstupní ICC profil"
+
+msgid "Output ICC profile"
+msgstr "Výstupní ICC profil"
+
+msgid "Display ICC profile"
+msgstr "ICC profil monitoru"
+
+msgid "Use color matrix"
+msgstr "Použít matici barev"
+
+msgid "Gamma"
+msgstr "Gamma"
+
+msgid "Gamma correction for the input profile"
+msgstr "Gamma korekce pro vstupní profil"
+
+msgid "Reset gamma to default"
+msgstr "Nastavit gamma na standardní"
+
+msgid "Linearity"
+msgstr "Linearita"
+
+msgid "Linear part of the gamma correction"
+msgstr "Lineární část gamma korekce"
+
+msgid "Reset linearity to default"
+msgstr "Nastavit linearitu na implicitní"
+
+msgid "Output intent"
+msgstr "Výstupní záměr"
+
+msgid "Perceptual"
+msgstr "Perceptuální"
+
+msgid "Relative colorimetric"
+msgstr "Relativní kolorimetrický"
+
+msgid "Saturation"
+msgstr "Saturace"
+
+msgid "Absolute colorimetric"
+msgstr "Absolutní kolorimetrický"
+
+msgid "Output bit depth"
+msgstr "Výstupní bitová hloubka"
+
+msgid "Display intent"
+msgstr "Záměr monitoru"
+
+msgid "Disable soft proofing"
+msgstr "Vypnout soft proofing"
+
+#. End of Color management page
+#. Start of Corrections page
+msgid "Correct luminosity, saturation"
+msgstr "Upravit jas, saturaci"
+
+msgid "Reset saturation to default"
+msgstr "Nastavit saturaci na standardní"
+
+msgid ""
+"Auto adjust curve\n"
+"(Flatten histogram)"
+msgstr ""
+"Automaticky upravit křivku\n"
+"(zploštit histogram)"
+
+msgid "Reset curve to default"
+msgstr "Nastavit křivku na standardní"
+
+msgid "Black point: 0.000"
+msgstr "Černý bod: 0.000"
+
+msgid "Reset black-point to default"
+msgstr "Nastavit černý bod na standardní"
+
+msgid "Auto adjust black-point"
+msgstr "Automaticky upravit černý bod"
+
+#. End of Corrections page
+#. Start of transformations page
+msgid "Crop and rotate"
+msgstr "Ořez a otočení"
+
+#. Start of Crop controls
+msgid "Left:"
+msgstr "Vlevo:"
+
+msgid "Top:"
+msgstr "Nahoře:"
+
+msgid "Right:"
+msgstr "Vpravo:"
+
+msgid "Bottom:"
+msgstr "Dole:"
+
+msgid "Reset the crop region"
+msgstr "Obnovit původní ořez"
+
+msgid "Aspect ratio:"
+msgstr "Poměr stran:"
+
+msgid ""
+"Crop area aspect ratio.\n"
+"Can be entered in decimal notation (1.273)\n"
+"or as a ratio of two numbers (14:11)"
+msgstr ""
+"Poměr stran ořezu.\n"
+"Může být vložen v desetiné notaci (1.273)\n"
+"nebo jako poměr dvou čísel (14:11)"
+
+msgid "Lock aspect ratio"
+msgstr "Uzamknout poměr stran"
+
+msgid "Shrink factor"
+msgstr "Faktor zmenšení"
+
+msgid "Height"
+msgstr "Výška"
+
+msgid "Width"
+msgstr "Šířka"
+
+msgid "Orientation:"
+msgstr "Orientace:"
+
+#. Start of Save page
+msgid "Save"
+msgstr "Uložit"
+
+msgid "Path"
+msgstr "Cesta"
+
+msgid "Select output path"
+msgstr "Zvolit výstupní cestu"
+
+msgid "Filename"
+msgstr "Jméno souboru"
+
+msgid "JPEG compression level"
+msgstr "Úroveň JPEG komprese"
+
+msgid "JPEG progressive encoding"
+msgstr "Progresívní JPEG kódování"
+
+msgid "TIFF lossless Compress"
+msgstr "Bezztrátová TIFF komprese"
+
+msgid "Embed EXIF data in JPEG or PNG files"
+msgstr "Vložit EXIF údaje do JPEG nebo PNG souborů"
+
+msgid "Create ID file "
+msgstr "Vytvořit ID soubor "
+
+msgid "No"
+msgstr "Ne"
+
+msgid "Also"
+msgstr "Také"
+
+msgid "Only"
+msgstr "Pouze"
+
+msgid "Save image defaults "
+msgstr "Uložit implicitní nastavení snímku "
+
+msgid ""
+"Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr ""
+"Uložit parametry úprav stávajícího snímku jako standardní.\n"
+"Výstupní parametry v tomto okně jsou vždy uloženy."
+
+msgid "Never again"
+msgstr "Nikdy více"
+
+msgid "Always"
+msgstr "Vždy"
+
+msgid "Just this once"
+msgstr "Pouze tentokrát"
+
+msgid "Remember output path"
+msgstr "Pamatovat si výstupní cestu"
+
+msgid "Overwrite existing files without asking"
+msgstr "Přepsat existující soubory bez vyzvání"
+
+#. Start of EXIF page
+msgid "EXIF"
+msgstr "EXIF"
+
+msgid "Tag"
+msgstr "Tag"
+
+msgid "Value"
+msgstr "Hodnota"
+
+#. Fill table with EXIF tags
+msgid "Camera maker"
+msgstr "Výrobce"
+
+msgid "Camera model"
+msgstr "Model"
+
+msgid "Timestamp"
+msgstr "Časový otisk"
+
+msgid "Shutter time"
+msgstr "Závěrka"
+
+msgid "Aperture"
+msgstr "Clona"
+
+msgid "ISO speed"
+msgstr "ISO"
+
+msgid "Focal length"
+msgstr "Ohnisková vzdálenost"
+
+msgid "35mm focal length"
+msgstr "35mm ohnisková vzdálenost"
+
+msgid "Lens"
+msgstr "Objektiv"
+
+msgid "Flash"
+msgstr "Blesk"
+
+#, c-format
+msgid "EXIF data read by %s"
+msgstr "EXIF údaje přečteny %s"
+
+msgid "Warning: EXIF data will not be sent to output"
+msgstr "Upozornění: EXIF údaje nebudou předány na výstup"
+
+msgid "RGB histogram"
+msgstr "RGB histogram"
+
+msgid "R+G+B histogram"
+msgstr "R+G+B histogram"
+
+msgid "Luminosity histogram"
+msgstr "Jasový histogram"
+
+msgid "Value (maximum) histogram"
+msgstr "Hodnota (maximum) histogram"
+
+msgid "Saturation histogram"
+msgstr "Histogram saturace"
+
+msgid "Average:"
+msgstr "Průměr:"
+
+msgid "Std. deviation:"
+msgstr "Std. odchylka:"
+
+msgid "Overexposed:"
+msgstr "Přeexponováno:"
+
+msgid "Indicate"
+msgstr "Ukázat"
+
+msgid "Underexposed:"
+msgstr "Podexponováno:"
+
+msgid "Options"
+msgstr "Volby"
+
+#. Comment to translator: All control buttons
+#. "_Delete", "_Cancel", "_Save", "Save _As", "Send to _Gimp"
+#. should have unique mnemonics.
+#. Delete button:
+msgid "_Delete"
+msgstr "_Smazat"
+
+msgid "Send image to _Gimp"
+msgstr "Odeslat do _Gimpu"
+
+#. preview_progress() changes the size of the progress bar
+#. and processes the event queue.
+msgid "Loading preview"
+msgstr "Načítám náhled"
+
+msgid "Fatal error setting C locale"
+msgstr "Fatální chyba nastavení C locale"
+
+#, c-format
+msgid "Curve version is not supported"
+msgstr "Verze křivky není podporována"
+
+#, c-format
+msgid "Invalid Nikon curve file '%s'"
+msgstr "Neplatný soubor Nikon křivek '%s'"
+
+#, c-format
+msgid "Error opening Curve file '%s': %s"
+msgstr "Chyba při otevírání souboru křivek '%s': %s"
+
+#, c-format
+msgid "Error opening file '%s': %s"
+msgstr "Chyba při otevírání souboru '%s': %s"
+
+msgid "File exists"
+msgstr "Soubor existuje"
+
+#, c-format
+msgid ""
+"File '%s' already exists.\n"
+"Overwrite?"
+msgstr ""
+"Soubor '%s' již existuje.\n"
+"Přepsat?"
+
+msgid "Error creating temporary file."
+msgstr "Chyba při vytváření dočasného souboru."
+
+msgid "Error activating Gimp."
+msgstr "Chyba při spouštění Gimpu."
+
+msgid "Remote URI is not supported"
+msgstr "Vzdálený URI není podporován"
+
+#, c-format
+msgid "darkframe error: %s is not a raw file\n"
+msgstr "chyba černého snímku: %s není raw soubor\n"
+
+#, c-format
+msgid "error loading darkframe '%s'\n"
+msgstr "chyba při čtení černého snímku '%s'\n"
+
+#, c-format
+msgid "Darkframe '%s' is incompatible with main image"
+msgstr "Černý snímek '%s' je nekompatibilní s hlavním snímkem"
+
+#, c-format
+msgid "using darkframe '%s'\n"
+msgstr "používám černý snímek '%s'\n"
+
+msgid "Error reading NEF curve"
+msgstr "Chyba při čtení NEF křivky"
+
+#, c-format
+msgid "Can not downsize from %d to %d."
+msgstr "Nemohu zmenšit velikost z %d na %d."
+
+msgid "Cannot use camera white balance, reverting to auto white balance."
+msgstr ""
+"Nemohu použít nastavení bílé dle fotoaparátu, nastavuji automatické vyvážení "
+"bílé."
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr "Jméno souboru se snímkem nemůže být shodné se jménem ID souboru '%s'"
+
+#. 'errno' does seem to contain useful information
+#. Error was not already set before
+msgid "Error creating file."
+msgstr "Chyba při vytváření souboru."
+
+#. Error was not already set before
+#, c-format
+msgid "Error creating file '%s'."
+msgstr "Chyba při vytváření souboru '%s'."
+
+msgid "Saving image"
+msgstr "Ukládám snímek"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "Selhalo vložení výstupního profilu '%s' v '%s'."
+
+#, c-format
+msgid "Unsupported bit depth '%d' ignored."
+msgstr "Nepodporovaná bitová hloubka '%d' ignorována."
+
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "Délka %d EXIF bufferu příliš dlouhá, ignorováno."
+
+#, c-format
+msgid "Unknown file type %d."
+msgstr "Neznámý typ souboru %d."
+
+#. Column 1 - "make" of the camera.
+#. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
+#. * Column 3 - WB name.
+#. * Column 4 - Fine tuning. MUST be in increasing order. 0 for no fine tuning.
+#. *	      It is enough to give only the extreme values, the other values
+#. *	      will be interpolated.
+#. * Column 5 - Channel multipliers.
+#. *
+#. * Minolta's ALPHA and MAXXUM models are treated as the DYNAX model.
+#. *
+#. * WB name is standardized to one of the following:
+#. "Sunlight" and other variation should be switched to this:
+msgid "Daylight"
+msgstr "Denní světlo"
+
+#. Probably same as above:
+msgid "Direct sunlight"
+msgstr "Přímé sluneční světlo"
+
+msgid "Cloudy"
+msgstr "Zataženo"
+
+#. "Shadows" should be switched to this:
+msgid "Shade"
+msgstr "Stín"
+
+msgid "Incandescent"
+msgstr "Žárovka"
+
+msgid "Incandescent warm"
+msgstr "Teplá žárovka"
+
+#. Same as "Incandescent":
+msgid "Tungsten"
+msgstr "Žárovka"
+
+msgid "Fluorescent"
+msgstr "Zářivka"
+
+#. In Canon cameras and Nikon D300:
+msgid "Fluorescent high"
+msgstr "Zářivka vysoká"
+
+msgid "Cool white fluorescent"
+msgstr "Chladná bílá zářivka"
+
+msgid "Warm white fluorescent"
+msgstr "Teplá bílá zářivka"
+
+msgid "Daylight fluorescent"
+msgstr "Denní zářivka"
+
+msgid "Neutral fluorescent"
+msgstr "Neutrální zářivka"
+
+msgid "White fluorescent"
+msgstr "Bílá zářivka"
+
+#. In Nikon D300
+msgid "Sodium-vapor fluorescent"
+msgstr "Sodium-vapor zářivka"
+
+msgid "Day white fluorescent"
+msgstr "Denní bílá zářivka"
+
+msgid "High temp. mercury-vapor fluorescent"
+msgstr "Vysoká tep. mercury-vapor zářivka"
+
+#. For Olympus with no real "Flash" preset:
+msgid "Flash (auto mode)"
+msgstr "Blesk (auto režim)"
+
+msgid "Evening sun"
+msgstr "Večerní slunce"
+
+msgid "Underwater"
+msgstr "Pod vodou"
+
+msgid "Black & white"
+msgstr "Černobílá"
+
+msgid "Manual WB"
+msgstr "Ruční vyvážení"
+
+msgid "Camera WB"
+msgstr "Dle fotoaparátu"
+
+msgid "Auto WB"
+msgstr "Automatické"
