@@ -1743,7 +1743,7 @@ const wb_data wb_preset[] = {
   { "SONY", "DSLR-A100", Flash, 0,		{ 1.859375, 1, 1.746094, 0 } },
   { "SONY", "DSLR-A100", Flash, 3,		{ 2.046875, 1, 1.542969, 0 } },
 
-  /* Sony a700 presets - firmware v2 */
+  /* Sony A700 presets - firmware v2 */
   { "SONY", "DSLR-A700", Daylight, -3,		{ 1.937500, 1, 1.640625, 0 } },
   { "SONY", "DSLR-A700", Daylight, 0,		{ 2.101563, 1, 1.484375, 0 } },
   { "SONY", "DSLR-A700", Daylight, 3,		{ 2.273437, 1, 1.343750, 0 } },
