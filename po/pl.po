@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-12-09 03:15+0100\n"
-"PO-Revision-Date: 2007-11-06 23:23+0100\n"
+"PO-Revision-Date: 2007-12-27 01:29+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
 "MIME-Version: 1.0\n"
@@ -25,13 +25,13 @@ msgstr "Otwiera okno nawigacji"
 msgid "No input file, nothing to do."
 msgstr "Brak pliku wej¶ciowego, nic do roboty."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Loaded %s%s"
-msgstr "wczytano %s"
+msgstr "Wczytano %s%s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Saved %s%s"
-msgstr "zapisano %s"
+msgstr "Zapisano %s%s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -327,16 +327,15 @@ msgstr "--shrink=FACTOR       Zmniejszenie obrazu FACTOR razy (domy¶lnie 1).\n"
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=SIZE           Zmniejsz max(szeroko¶æ,wysoko¶æ) do SIZE.\n"
 
-#, fuzzy
 msgid ""
 "--out-type=ppm|tiff|png|jpeg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
-"                      Format pliku wyj¶ciowego (domyslnie ppm8).\n"
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Format pliku wyj¶ciowego (domy¶lnie ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
-msgstr ""
+msgstr "--out-depth=8|16      Ilo¶æ blitów pliku wyj¶ciowego (domy¶lnie 8).\n"
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -427,7 +426,6 @@ msgstr "'%s' nie jest poprawn± warto¶ci± dla opcji --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw zosta³ skompilowany bez obs³ugi ZIP."
 
-#, fuzzy
 msgid "--batch is obsolete. Use ufraw-batch instead."
 msgstr "--batch jest przestarza³± opcj±. Proszê u¿ywaæ ufraw-batch."
 
@@ -481,13 +479,13 @@ msgstr "'%s' nie jest poprawnym ustawieniem ucinania."
 msgid "you can not specify both --shrink and --size"
 msgstr "nie mo¿na jednocze¶nie u¿yæ --shrink i --size"
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth."
-msgstr "'%s' nie jest poprawn± ¶cie¿k±."
+msgstr "'%d' nie jest poprawn± ilo¶ci± bitów."
 
 #, c-format
 msgid "Output type '%s' is deprecated"
-msgstr ""
+msgstr "Typ pliku wyj¶ciowego '%s' jest niepoprawny."
 
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw zosta³ skompilowany bez obs³ugi TIFF."
@@ -507,10 +505,9 @@ msgid "'%s' is not a valid output type for embedded image."
 msgstr ""
 "'%s' nie jest poprawnym typem pliku wyj¶ciowego dla do³±czonego obrazu."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
-msgstr ""
-"'%s' nie jest poprawnym typem pliku wyj¶ciowego dla do³±czonego obrazu."
+msgstr "'%d' nie jest poprawn± ilo¶ci± bitów dla do³±czonego obrazu."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
@@ -763,13 +760,11 @@ msgstr "Mruganie wska¼ników prze/niedo¶wietlenia"
 msgid "Configuration"
 msgstr "Konfiguracja"
 
-#, fuzzy
 msgid "Save configuration"
-msgstr "Zapisz pe³n± konfiguracjê "
+msgstr "Zapisz konfiguracjê "
 
-#, fuzzy
 msgid "Save configuration to resource file ($HOME/.ufrawrc)"
-msgstr "Zapisz plik ustawieñ ($HOME/.ufrawrc)"
+msgstr "Zapisz konfiguracjê do pliku ustawieñ ($HOME/.ufrawrc)"
 
 msgid "Log"
 msgstr "Log"
@@ -806,9 +801,9 @@ msgstr ""
 msgid "%s%s (Alt-%c)"
 msgstr "%s%s (Alt-%c)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s - UFRaw"
-msgstr "UFRaw "
+msgstr "%s - UFRaw "
 
 msgid "Linear"
 msgstr "Liniowy"
@@ -975,9 +970,8 @@ msgstr "Nasycony"
 msgid "Absolute colorimetric"
 msgstr "Kolorymetryczny absolutny"
 
-#, fuzzy
 msgid "Output bit depth"
-msgstr "Sposób konwersji"
+msgstr "Ilo¶æ bitów pliku wyj¶ciowego"
 
 msgid "Display intent"
 msgstr "Sposób konwersji"
@@ -1061,30 +1055,26 @@ msgid "Orientation:"
 msgstr "Orientacja:"
 
 #. Start of Save page
-#, fuzzy
 msgid "Save"
-msgstr "Zapisz _jako"
+msgstr "Zapisz"
 
 msgid "Path"
-msgstr ""
+msgstr "¦cie¿ka"
 
 msgid "Select output path"
-msgstr ""
+msgstr "Wybierz ¶cie¿kê wyj¶cia"
 
-#, fuzzy
 msgid "Filename"
-msgstr "Zapisz pod nazw± %s%s"
+msgstr "Nazwa pliku"
 
-#, fuzzy
 msgid "JPEG compression level"
-msgstr "Stopieñ kompresji"
+msgstr "Stopieñ kompresji JPEG"
 
-#, fuzzy
 msgid "JPEG progressive encoding"
-msgstr "Kodowanie progresywne"
+msgstr "Kodowanie progresywne JPEG"
 
 msgid "TIFF lossless Compress"
-msgstr ""
+msgstr "Bezstratna kompresja TIFF"
 
 msgid "Embed EXIF data in JPEG or PNG files"
 msgstr "Do³±cz dane EXIF do pliku JPEG lub PNG"
@@ -1121,7 +1111,7 @@ msgid "Just this once"
 msgstr "Tylko tym razem"
 
 msgid "Remember output path"
-msgstr ""
+msgstr "Zapamiêtaj wyj¶ciow± ¶cie¿kê"
 
 msgid "Overwrite existing files without asking"
 msgstr "Nadpisz istniej±ce pliki bez pytania"
@@ -1147,7 +1137,7 @@ msgid "Timestamp"
 msgstr "Data"
 
 msgid "Shutter time"
-msgstr ""
+msgstr "Czas"
 
 msgid "Aperture"
 msgstr "Przes³ona"
@@ -1311,7 +1301,7 @@ msgstr "Nie uda³o siê do³±czyæ profilu wyj¶ciowego '%s' w '%s'."
 
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
-msgstr ""
+msgstr "Niepoprawna ilo¶æ bitów '%d' zignorowana."
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
@@ -1380,16 +1370,14 @@ msgid "White fluorescent"
 msgstr "Bia³e jarzeniowe"
 
 #. In Nikon D300
-#, fuzzy
 msgid "Sodium-vapor fluorescent"
-msgstr "Neutralne jarzeniowe"
+msgstr "Sodowe"
 
-#, fuzzy
 msgid "Day white fluorescent"
-msgstr "Ciep³e bia³e jarzeniowe"
+msgstr "Dzienne bia³e jarzeniowe"
 
 msgid "High temp. mercury-vapor fluorescent"
-msgstr ""
+msgstr "Wys.temp. rtêciowe"
 
 #. For Olympus with no real "Flash" preset:
 msgid "Flash (auto mode)"
