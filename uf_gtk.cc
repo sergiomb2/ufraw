@@ -235,7 +235,7 @@ enum {
 static OSErr _uf_lcms_flatten_profile(SInt32  command,
     SInt32 *size, void *data, void *refCon)
 {
-    ProfileTransfer *transfer = refCon;
+    ProfileTransfer *transfer = static_cast<ProfileTransfer*>(refCon);
 
     switch (command)
     {
@@ -244,7 +244,8 @@ static OSErr _uf_lcms_flatten_profile(SInt32  command,
 	break;
 
     case writeSpool:
-	transfer->data = g_realloc(transfer->data, transfer->len + *size);
+	transfer->data = static_cast<guchar*>(
+		g_realloc(transfer->data, transfer->len + *size));
 	memcpy(transfer->data + transfer->len, data, *size);
 	transfer->len += *size;
 	break;
