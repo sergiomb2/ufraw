@@ -3820,7 +3820,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     /* Denoising is temporeraly in the WB page */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
-    data->ThresholdAdjustment = adjustment_scale(table, 0, 0, _("Threshold"),
+    data->ThresholdAdjustment = adjustment_scale(table, 0, 0, _("Denoise"),
 	    CFG->threshold, &CFG->threshold, 0.0, 1000.0, 10, 50, 0,
 	    _("Threshold for wavelet denoising"));
     data->ResetThresholdButton = gtk_button_new();
