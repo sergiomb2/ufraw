@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.7 2007/12/06 13:54:13 lexort Exp $
+$Id: README-processing.txt,v 1.8 2007/12/30 01:07:14 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -25,6 +25,20 @@ http://www.xs4all.nl/~tindeman/raw/color_reproduction.html
 
 === raw files
 
+A lot of these references talk about "gamma correction", say that raw
+data has a "linear gamma" (which makes little sense), or that it has a
+gamma of 1.0.  They mean simply that the number correspond to
+luminance, rather than some compressed function of luminance.
+
+Then, many go on to say that such "linear gamma" images look dark, and
+some even show screenshots.  Surely these screenshots are produced by
+taking a file with a linear encoding and displaying it on an output
+device which has the sRGB gamma encoding, which is 256 roughly equal
+perceptual steps - nowhere near linear in luminance.  So while it
+"looks dark", they've made a non-sensical transformation.
+
+http://www.adobe.com/digitalimag/pdfs/understanding_digitalrawcapture.pdf
+http://www.adobe.com/digitalimag/pdfs/linear_gamma.pdf
 http://www.majid.info/mylos/weblog/2004/05/02-1.html
 http://www.cambridgeincolour.com/tutorials/RAW-file-format.htm
 http://regex.info/blog/photo-tech/nef-compression/
@@ -40,16 +54,19 @@ http://regex.info/blog/photo-tech/color-spaces-page1/
 The raw file is read and per-pixel sensor values extracted.
 Each pixel is represented by integer number which is between
 8 and 16 bits in size.
-Most cameras (2007) use 12 bits, including Nikon and Canon amateur and
-professional DSLRs.
+Most cameras (2007) use 12 bits, including Nikon and Canon amateur 
+DSLRs.
 Newer semi-professional and professional bodies use 14-bit A/D convertors.
+
+The following is unconfirmed:
 Some old cameras use 8 bits.
 Some cameras, such as medium format digital backs, use 16 bits.
 
 === Canon raw file encoding
 
-Canon's raw files are different, in that only 11 of the 12 bits are
-apparently used.  TODO (See ufraw_develop.cc for details).
+Canon's raw files are slightly, in that normal exposure uses the lower
+half of the space, apparently to leave highlight headroom.  TODO (See
+ufraw_develop.cc for details).
 
 == Comparison with in-camera processing
 
@@ -98,7 +115,9 @@ ufraw can use a "color matrix", which are 3x3 matrices that transform
 from the camera device colorspace to XYZ.
 See dcraw.cc:adobe_coeff and dcraw.cc:cam_xyz_coeff.
 
-The color matrix approach assumes that the camera sensor is perfectly linear
+The color matrix approach assumes that the camera sensor is perfectly
+linear.  CCDs are intrinsically quite linear, so this is a reasonable
+assumption.
 
 === White balance
 
