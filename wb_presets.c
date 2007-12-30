@@ -336,6 +336,13 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "FinePix S7000", CoolWhiteFluorescent, 0, { 1.836957, 1, 2.130435, 0 } },
   { "FUJIFILM", "FinePix S7000", Incandescent, 0, { 1.221239, 1, 2.548673, 0 } },
 
+  { "FUJIFILM", "FinePix S9100", Daylight, 0,	{ 1.506250, 1, 1.318750 } },
+  { "FUJIFILM", "FinePix S9100", Cloudy, 0,	{ 1.587500, 1, 1.128125 } },
+  { "FUJIFILM", "FinePix S9100", DaylightFluorescent, 0, { 1.777174, 1, 1.138587 } },
+  { "FUJIFILM", "FinePix S9100", WarmWhiteFluorescent, 0, { 1.521739, 1, 1.380435 } },
+  { "FUJIFILM", "FinePix S9100", CoolWhiteFluorescent, 0, { 1.437500, 1, 1.720109 } },
+  { "FUJIFILM", "FinePix S9100", Incandescent, 0, { 1, 1.024943, 2.113379 } },
+
   { "FUJIFILM", "FinePix S9500", Daylight, 0,	{ 1.618750, 1, 1.231250, 0 } },
   { "FUJIFILM", "FinePix S9500", Cloudy, 0,	{ 1.700000, 1, 1.046875, 0 } },
   { "FUJIFILM", "FinePix S9500", DaylightFluorescent, 0, { 1.902174, 1, 1.057065, 0 } },
