@@ -83,6 +83,7 @@ const conf_data conf_default = {
     FALSE, /* overwrite existing files without asking */
     FALSE, /* losslessCompress */
     FALSE, /* load embedded preview image */
+    TRUE, /* rotate to camera's setting */
 
     /* GUI settings */
     25.0, 4, /* Zoom, Scale */
@@ -1211,6 +1212,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 	conf->losslessCompress = cmd->losslessCompress;
     if (cmd->embedExif!=-1) conf->embedExif = cmd->embedExif;
     if (cmd->embeddedImage!=-1) conf->embeddedImage = cmd->embeddedImage;
+    if (cmd->rotate!=-1) conf->rotate = cmd->rotate;
     if (cmd->silent!=-1) conf->silent = cmd->silent;
     if (cmd->compression!=NULLF) conf->compression = cmd->compression;
     if (cmd->autoExposure) {
@@ -1359,6 +1361,8 @@ N_("--[no]exif            Embed EXIF in output JPEG or PNG (default embed EXIF).
 N_("--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"),
 N_("--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"),
+N_("--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
+"                      the image (default camera).\n"),
 N_("--out-path=PATH       PATH for output file (default use input file's path).\n"),
 N_("--output=FILE         Output file name, use '-' to output to stdout.\n"),
 N_("--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"),
@@ -1426,7 +1430,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     char *base;
     char *wbName=NULL;
     char *baseCurveName=NULL, *baseCurveFile=NULL,
-	 *curveName=NULL, *curveFile=NULL, *outTypeName=NULL,
+	 *curveName=NULL, *curveFile=NULL, *outTypeName=NULL, *rotateName=NULL,
 	 *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL,
 	 *interpolationName=NULL, *darkframeFile=NULL,
 	 *restoreName=NULL, *clipName=NULL;
@@ -1450,6 +1454,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{ "compression", 1, 0, 'j'},
 	{ "out-type", 1, 0, 'T'},
 	{ "out-depth", 1, 0, 'd'},
+	{ "rotate", 1, 0, 'R'},
 	{ "create-id", 1, 0, 'I'},
 	{ "out-path", 1, 0, 'p'},
 	{ "output", 1, 0, 'o'},
@@ -1476,7 +1481,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	&cmd->saturation, &cmd->threshold,
 	&cmd->exposure, &cmd->black, &interpolationName,
 	&cmd->shrink, &cmd->size, &cmd->compression,
-	&outTypeName, &cmd->profile[1][0].BitDepth,
+	&outTypeName, &cmd->profile[1][0].BitDepth, &rotateName,
 	&createIDName, &outPath, &output, &darkframeFile,
 	&restoreName, &clipName, &conf };
     cmd->autoExposure = disabled_state;
@@ -1544,6 +1549,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'f':
 	case 'i':
 	case 'T':
+	case 'R':
 	case 'I':
 	case 'p':
 	case 'o':
@@ -1883,6 +1889,18 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    ufraw_message(UFRAW_ERROR,
 		    _("'%d' is not a valid bit depth for embedded image."),
 		    cmd->profile[1][0].BitDepth);
+	    return -1;
+	}
+    }
+    cmd->rotate = -1;
+    if ( rotateName!=NULL ) {
+	if ( strcmp(rotateName, "camera")==0 )
+	    cmd->rotate = TRUE;
+	else if ( strcmp(rotateName, "no")==0 )
+	    cmd->rotate = FALSE;
+	else {
+	    ufraw_message(UFRAW_ERROR,
+		    _("'%s' is not a valid rotate option."), rotateName);
 	    return -1;
 	}
     }

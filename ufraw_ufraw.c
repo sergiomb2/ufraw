@@ -430,6 +430,8 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 
     if ( !uf->LoadingID || uf->conf->orientation<0 )
 	uf->conf->orientation = raw->flip;
+    if ( !uf->conf->rotate )
+	uf->conf->orientation = 1;
     if (uf->exifBuf==NULL) {
 	g_strlcpy(uf->conf->exifSource, "DCRaw", max_name);
 	uf->conf->iso_speed = raw->iso_speed;

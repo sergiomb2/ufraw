@@ -163,6 +163,7 @@ typedef struct {
     int type, compression, createID, embedExif, progressiveJPEG;
     int shrink, size;
     gboolean overwrite, losslessCompress, embeddedImage;
+    gboolean rotate;
 
     /* GUI settings */
     double Zoom;

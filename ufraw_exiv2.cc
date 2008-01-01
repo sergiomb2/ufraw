@@ -54,13 +54,15 @@ try {
 	error += ": No Exif data found in the file";
 	throw Exiv2::Error(1, error);
     }
-    /* Reset orientation tag since UFRaw already rotates the image */
     Exiv2::ExifData::iterator pos;
-    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.Orientation")))
-	    != exifData.end() ) {
-	ufraw_message(UFRAW_SET_LOG, "Reseting %s from '%d'  to '1'\n",
-		pos->key().c_str(), pos->value().toLong());
-	pos->setValue("1"); /* 1 = Normal orientation */
+    if ( uf->conf->rotate ) {
+	/* Reset orientation tag since UFRaw already rotates the image */
+	if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.Orientation")))
+		!= exifData.end() ) {
+	    ufraw_message(UFRAW_SET_LOG, "Reseting %s from '%d'  to '1'\n",
+		    pos->key().c_str(), pos->value().toLong());
+	    pos->setValue("1"); /* 1 = Normal orientation */
+	}
     }
     /* Delete original TIFF data, which is irrelevant*/
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.StripOffsets")))
