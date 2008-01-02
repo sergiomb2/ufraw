@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-30 06:00+0100\n"
+"POT-Creation-Date: 2008-01-02 06:00+0100\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -42,6 +42,10 @@ msgid "%s: overwrite '%s'?"
 msgstr "%s: 上書きしますか '%s'?"
 
 msgid "--silent option is valid only in batch mode"
+msgstr "--silent オプションはバッチモードのみで有効です"
+
+#, fuzzy
+msgid "--rotate option is valid only in batch mode"
 msgstr "--silent オプションはバッチモードのみで有効です"
 
 msgid "Extracting embedded image is not supported in interactive mode"
@@ -354,6 +358,11 @@ msgstr ""
 "                      rawファイルに埋込まれているプレビュー画像を抽出\n"
 
 msgid ""
+"--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
+"                      the image (default camera).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=PATH       出力ファイルをPATHにする\n"
@@ -486,6 +495,10 @@ msgstr "'%s' は埋め込み画像として正しい出力形式ではありま�
 #, fuzzy, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
 msgstr "'%s' は埋め込み画像として正しい出力形式ではありません"
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid rotate option."
+msgstr "'%s' は正しいcreate-idのオプションではありません"
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

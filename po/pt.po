@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-30 06:00+0100\n"
+"POT-Creation-Date: 2008-01-02 06:00+0100\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -43,6 +43,10 @@ msgid "%s: overwrite '%s'?"
 msgstr "%s: sobrescrever '%s'?"
 
 msgid "--silent option is valid only in batch mode"
+msgstr "opção --silent é válida somente em modo em lotes"
+
+#, fuzzy
+msgid "--rotate option is valid only in batch mode"
 msgstr "opção --silent é válida somente em modo em lotes"
 
 msgid "Extracting embedded image is not supported in interactive mode"
@@ -367,6 +371,11 @@ msgstr ""
 "                      em vez de convertê-la.\n"
 
 msgid ""
+"--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
+"                      the image (default camera).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=CAMINHO       CAMINHO para o arquivo de saída (padrão é usar o "
@@ -507,6 +516,10 @@ msgstr "'%s' não é um tipo válido de saída para imagem embutida."
 #, fuzzy, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
 msgstr "'%s' não é um tipo válido de saída para imagem embutida."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid rotate option."
+msgstr "'%s' não é uma opção válida de create-id"
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

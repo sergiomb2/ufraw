@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-30 06:00+0100\n"
+"POT-Creation-Date: 2008-01-02 06:00+0100\n"
 "PO-Revision-Date: 2007-11-13 21:53+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -43,6 +43,9 @@ msgid "%s: overwrite '%s'?"
 msgstr "%s: skriv över \"%s\"?"
 
 msgid "--silent option is valid only in batch mode"
+msgstr ""
+
+msgid "--rotate option is valid only in batch mode"
 msgstr ""
 
 msgid "Extracting embedded image is not supported in interactive mode"
@@ -307,6 +310,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
+"                      the image (default camera).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 
@@ -427,6 +435,10 @@ msgstr ""
 #, fuzzy, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
 msgstr "\"%s\" är inte ett giltigt kurvnamn."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid rotate option."
+msgstr "\"%s\" är inte en giltig sökväg."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

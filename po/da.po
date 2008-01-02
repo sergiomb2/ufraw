@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-30 06:00+0100\n"
-"PO-Revision-Date: 2007-12-30 06:00+0100\n"
+"POT-Creation-Date: 2008-01-02 06:00+0100\n"
+"PO-Revision-Date: 2008-01-02 06:05+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -44,6 +44,9 @@ msgstr "%s: overskriv '%s'?"
 
 msgid "--silent option is valid only in batch mode"
 msgstr "Tilvalget --silent kan kun anvendes i batch-modus"
+
+msgid "--rotate option is valid only in batch mode"
+msgstr "Tilvalget --rotate kan kun anvendes i batch-modus"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
@@ -372,6 +375,13 @@ msgstr ""
 "                      i stedet for at konvertere raw-billedet.\n"
 
 msgid ""
+"--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
+"                      the image (default camera).\n"
+msgstr ""
+"--rotate=camera|no    Roter billedet efter kameraets indstilling eller lad\n"
+"                      være med at rotere billedet (standardværdi camera).\n"
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=STI        STI for uddatafil (som standardværdi bruges\n"
@@ -503,6 +513,10 @@ msgstr "'%s' er ikke en legal uddatatype for indlejrede billeder."
 #, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
 msgstr "'%d' er ikke en legal bitdybde for indlejrede billeder."
+
+#, c-format
+msgid "'%s' is not a valid rotate option."
+msgstr "'%s' er ikke et legalt rotate-tilvalg."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
