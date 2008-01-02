@@ -1,14 +1,16 @@
-# Italian translation of Ufraw.
-# Copyright (C) 2007 Udi Fuchs.
+# LANGUAGE translation of Ufraw.
+# Copyright (C) 2007 THE Ufraw'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the Ufraw package.
 # daniele <dmedri@SPAMgmail.com>, 2007.
+# , fuzzy
+# 
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ufraw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-01-02 06:00+0100\n"
-"PO-Revision-Date: 2007-12-30 23:52+0100\n"
+"PO-Revision-Date: 2007-12-30 18:56+0100\n"
 "Last-Translator: Daniele Medri <dmedri@SPAMgmail.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -60,10 +62,10 @@ msgid "UFRaw ID files"
 msgstr "File con ID UFRaw"
 
 msgid "Raw jpg's"
-msgstr "Raw jpeg"
+msgstr "Raw jpg"
 
 msgid "Raw tif's"
-msgstr "Raw Tiff"
+msgstr "Raw Tif"
 
 msgid "All files"
 msgstr "Tutti i file"
@@ -89,10 +91,10 @@ msgstr "Mostra file nascosti"
 #. curveIndex, curveCount
 #. Curve data defaults
 msgid "Manual curve"
-msgstr "Curva Manuale"
+msgstr "Curva manuale"
 
 msgid "Linear curve"
-msgstr "Curva Lineare"
+msgstr "Curva lineare"
 
 msgid "Custom curve"
 msgstr "Curva predefinita"
@@ -814,7 +816,7 @@ msgstr ""
 "<b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) è uno strumento\n"
 "per leggere e manipolare immagini raw da fotocamere digitali.\n"
 "UFRaw si appoggia su <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
-"per la codifica delle immagini raw..\n"
+"per la codifica delle immagini raw.\n"
 "\n"
 "Autore: Udi Fuchs\n"
 "Homepage: http://ufraw.sourceforge.net/\n"
@@ -863,7 +865,7 @@ msgstr ""
 "supporto per i modelli non supportati."
 
 msgid "Reset white balance to initial value"
-msgstr "Ripristina il bilanciamento del bianco iniziale"
+msgstr "Ripristina bilanciamento del bianco iniziale"
 
 msgid "Temperature"
 msgstr "Temperatura"
@@ -983,7 +985,7 @@ msgid "Output intent"
 msgstr "Intento di output"
 
 msgid "Perceptual"
-msgstr "Percettuale"
+msgstr "Percettiva"
 
 msgid "Relative colorimetric"
 msgstr "Colorimetrico relativo"
@@ -1294,7 +1296,7 @@ msgstr "Cornice di scuro '%s' incompatibile con l'immagine principale"
 
 #, c-format
 msgid "using darkframe '%s'\n"
-msgstr "utilizzo di cornice nera '%s'\n"
+msgstr "utilizzo cornice nera '%s'\n"
 
 msgid "Error reading NEF curve"
 msgstr "Errore durante la lettura della curva NEF"
@@ -1433,3 +1435,48 @@ msgstr "Bilanciamento del bianco - Fotocamera"
 
 msgid "Auto WB"
 msgstr "Bilanciamento del bianco - Automatico"
+
+#~ msgid "%s - UFRaw Photo Loader"
+#~ msgstr "%s - Visualizzatore foto UFRaw"
+
+#~ msgid "Threshold"
+#~ msgstr "Soglia"
+
+#~ msgid "Exposure"
+#~ msgstr "Esposizione"
+
+#~ msgid "Save image"
+#~ msgstr "Salva immagine"
+
+#~ msgid "Output options"
+#~ msgstr "Opzioni di output"
+
+#~ msgid "Interpolation method set to AHD"
+#~ msgstr "Impostato metodo di interpolazione AHD"
+
+#~ msgid "8-bit ppm"
+#~ msgstr "8-bit ppm"
+
+#~ msgid "16-bit ppm"
+#~ msgstr "16-bit ppm"
+
+#~ msgid "8-bit TIFF"
+#~ msgstr "8-bit TIFF"
+
+#~ msgid "16-bit TIFF"
+#~ msgstr "16-bit TIFF"
+
+#~ msgid "ZIP Compress (lossless)"
+#~ msgstr "Compressione ZIP (senza perdita)"
+
+#~ msgid "8-bit PNG"
+#~ msgstr "8-bit PNG"
+
+#~ msgid "16-bit PNG"
+#~ msgstr "16-bit PNG"
+
+#~ msgid "Flexible Image Transport System (FITS)"
+#~ msgstr "Flexible Image Transport System (FITS)"
+
+#~ msgid "\tSave image defaults "
+#~ msgstr "\tSalva impostazioni predefinite "
