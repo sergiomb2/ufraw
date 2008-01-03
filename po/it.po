@@ -1,16 +1,14 @@
-# LANGUAGE translation of Ufraw.
-# Copyright (C) 2007 THE Ufraw'S COPYRIGHT HOLDER
+# Italian translation of Ufraw.
+# Copyright (C) 2007 Udifuchs
 # This file is distributed under the same license as the Ufraw package.
 # daniele <dmedri@SPAMgmail.com>, 2007.
-# , fuzzy
-# 
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ufraw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-01-02 06:00+0100\n"
-"PO-Revision-Date: 2007-12-30 18:56+0100\n"
+"PO-Revision-Date: 2008-01-03 01:51+0100\n"
 "Last-Translator: Daniele Medri <dmedri@SPAMgmail.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
