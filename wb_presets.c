@@ -351,7 +351,6 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "FinePix S9500", CoolWhiteFluorescent, 0, { 1.546196, 1, 1.622283, 0 } },
   { "FUJIFILM", "FinePix S9500", Incandescent, 0, { 1.064159, 1, 1.960177, 0 } },
 
- /* The S9100 and S9600 are the same camera */
   { "FUJIFILM", "FinePix S9100", Daylight, 0,	{ 1.506250, 1, 1.318750 } },
   { "FUJIFILM", "FinePix S9100", Cloudy, 0,	{ 1.587500, 1, 1.128125 } },
   { "FUJIFILM", "FinePix S9100", DaylightFluorescent, 0, { 1.777174, 1, 1.138587 } },
@@ -359,12 +358,12 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "FinePix S9100", CoolWhiteFluorescent, 0, { 1.437500, 1, 1.720109 } },
   { "FUJIFILM", "FinePix S9100", Incandescent, 0, { 1, 1.024943, 2.113379 } },
 
-  { "FUJIFILM", "FinePix S9600", Daylight, 0,	{ 1.506250, 1, 1.318750 } },
-  { "FUJIFILM", "FinePix S9600", Cloudy, 0,	{ 1.587500, 1, 1.128125 } },
-  { "FUJIFILM", "FinePix S9600", DaylightFluorescent, 0, { 1.777174, 1, 1.138587 } },
-  { "FUJIFILM", "FinePix S9600", WarmWhiteFluorescent, 0, { 1.521739, 1, 1.380435 } },
-  { "FUJIFILM", "FinePix S9600", CoolWhiteFluorescent, 0, { 1.437500, 1, 1.720109 } },
-  { "FUJIFILM", "FinePix S9600", Incandescent, 0, { 1, 1.024943, 2.113379 } },
+  { "FUJIFILM", "FinePix S9600", Daylight, 0,	{ 1.534375, 1, 1.300000 } },
+  { "FUJIFILM", "FinePix S9600", Shade, 0,	{ 1.615625, 1, 1.112500 } },
+  { "FUJIFILM", "FinePix S9600", DaylightFluorescent, 0, { 1.809783, 1, 1.122283 } },
+  { "FUJIFILM", "FinePix S9600", WarmWhiteFluorescent, 0, { 1.551630, 1, 1.361413 } },
+  { "FUJIFILM", "FinePix S9600", CoolWhiteFluorescent, 0, { 1.467391, 1, 1.692935 } },
+  { "FUJIFILM", "FinePix S9600", Incandescent, 0, { 1, 1.004444, 2.040000 } },
 
   { "KODAK", "P850 ZOOM", Daylight, 0,		{ 1.859375, 1, 1.566406, 0 } },
   { "KODAK", "P850 ZOOM", Cloudy, 0,		{ 1.960938, 1, 1.570313, 0 } },
