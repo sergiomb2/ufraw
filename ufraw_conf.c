@@ -608,6 +608,12 @@ int conf_load(conf_data *c, const char *IDFilename)
 	    return UFRAW_SUCCESS;
 	}
     } else {
+	if ( !g_file_test(IDFilename, G_FILE_TEST_IS_REGULAR) ) {
+	    ufraw_message(UFRAW_SET_ERROR,
+		    _("ID file %s does not appear to be a regular file\n%s\n"),
+		    IDFilename, strerror(errno) );
+	    return UFRAW_ERROR;
+	}
 	if ( (in=g_fopen(IDFilename, "r"))==NULL ) {
 	    ufraw_message(UFRAW_SET_ERROR,
 		    _("Can't open ID file %s for reading\n%s\n"),

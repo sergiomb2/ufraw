@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-02 06:00+0100\n"
+"POT-Creation-Date: 2008-01-04 16:00+0100\n"
 "PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -128,6 +128,12 @@ msgstr "Версия UFRaw в .ufrawrc не поддерживается"
 #, c-format
 msgid "Too many anchors for curve '%s'"
 msgstr "Слишком много узлов для кривой '%s'"
+
+#, c-format
+msgid ""
+"ID file %s does not appear to be a regular file\n"
+"%s\n"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -824,8 +830,8 @@ msgstr ""
 "Сайт проекта: http://ufraw.sourceforge.net/\n"
 "\n"
 
-#, c-format
-msgid "%s%s (Alt-%c)"
+#, fuzzy, c-format
+msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%c)"
 
 #, fuzzy, c-format

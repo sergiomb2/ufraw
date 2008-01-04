@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-02 06:00+0100\n"
+"POT-Creation-Date: 2008-01-04 16:00+0100\n"
 "PO-Revision-Date: 2007-12-23 12:15+0010\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -121,6 +121,12 @@ msgstr "UFRaw verze v .ufrawrc není podporována"
 #, c-format
 msgid "Too many anchors for curve '%s'"
 msgstr "Příliš mnoho kotev pro křivku '%s'"
+
+#, c-format
+msgid ""
+"ID file %s does not appear to be a regular file\n"
+"%s\n"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -802,8 +808,8 @@ msgstr ""
 "Domovská stránka: http://ufraw.sourceforge.net/\n"
 "\n"
 
-#, c-format
-msgid "%s%s (Alt-%c)"
+#, fuzzy, c-format
+msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%c)"
 
 #, c-format

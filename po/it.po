@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ufraw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-02 06:00+0100\n"
+"POT-Creation-Date: 2008-01-04 16:00+0100\n"
 "PO-Revision-Date: 2008-01-03 01:51+0100\n"
 "Last-Translator: Daniele Medri <dmedri@SPAMgmail.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -121,6 +121,12 @@ msgstr "Versione di UFRaw in .ufrawrc non supportata"
 #, c-format
 msgid "Too many anchors for curve '%s'"
 msgstr "Troppi punti di ancoraggio per la curva '%s'"
+
+#, c-format
+msgid ""
+"ID file %s does not appear to be a regular file\n"
+"%s\n"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -820,8 +826,8 @@ msgstr ""
 "Homepage: http://ufraw.sourceforge.net/\n"
 "Traduttore: Daniele Medri\n"
 
-#, c-format
-msgid "%s%s (Alt-%c)"
+#, fuzzy, c-format
+msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%c)"
 
 #, fuzzy, c-format
@@ -1433,48 +1439,3 @@ msgstr "Bilanciamento del bianco - Fotocamera"
 
 msgid "Auto WB"
 msgstr "Bilanciamento del bianco - Automatico"
-
-#~ msgid "%s - UFRaw Photo Loader"
-#~ msgstr "%s - Visualizzatore foto UFRaw"
-
-#~ msgid "Threshold"
-#~ msgstr "Soglia"
-
-#~ msgid "Exposure"
-#~ msgstr "Esposizione"
-
-#~ msgid "Save image"
-#~ msgstr "Salva immagine"
-
-#~ msgid "Output options"
-#~ msgstr "Opzioni di output"
-
-#~ msgid "Interpolation method set to AHD"
-#~ msgstr "Impostato metodo di interpolazione AHD"
-
-#~ msgid "8-bit ppm"
-#~ msgstr "8-bit ppm"
-
-#~ msgid "16-bit ppm"
-#~ msgstr "16-bit ppm"
-
-#~ msgid "8-bit TIFF"
-#~ msgstr "8-bit TIFF"
-
-#~ msgid "16-bit TIFF"
-#~ msgstr "16-bit TIFF"
-
-#~ msgid "ZIP Compress (lossless)"
-#~ msgstr "Compressione ZIP (senza perdita)"
-
-#~ msgid "8-bit PNG"
-#~ msgstr "8-bit PNG"
-
-#~ msgid "16-bit PNG"
-#~ msgstr "16-bit PNG"
-
-#~ msgid "Flexible Image Transport System (FITS)"
-#~ msgstr "Flexible Image Transport System (FITS)"
-
-#~ msgid "\tSave image defaults "
-#~ msgstr "\tSalva impostazioni predefinite "

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-02 06:00+0100\n"
+"POT-Creation-Date: 2008-01-04 16:00+0100\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -121,6 +121,12 @@ msgstr "A versão do UFRaw em .ufrawrc não é suportada"
 #, c-format
 msgid "Too many anchors for curve '%s'"
 msgstr "Muitas âncoras para a curva '$%s'"
+
+#, c-format
+msgid ""
+"ID file %s does not appear to be a regular file\n"
+"%s\n"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -823,7 +829,7 @@ msgstr ""
 "\n"
 
 #, c-format
-msgid "%s%s (Alt-%c)"
+msgid "%s%s (Alt-%s)"
 msgstr ""
 
 #, fuzzy, c-format

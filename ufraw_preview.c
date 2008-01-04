@@ -3378,12 +3378,18 @@ static GtkWidget *control_button(const char *stockImage, const char *tip,
 	uf_widget_set_tooltip(button, tip);
 	return button;
     }
-    char *tooltip = g_strdup_printf(_("%s%s (Alt-%c)"),
-	    tipParts[0], tipParts[1], tipParts[1][0]);
+
+    char hot_char [7];
+    int hot_char_len = g_utf8_next_char (tipParts[1]) - tipParts[1];
+    memcpy (hot_char, tipParts[1], hot_char_len);
+    hot_char [hot_char_len] = 0;
+
+    char *tooltip = g_strdup_printf(_("%s%s (Alt-%s)"),
+	    tipParts[0], tipParts[1], hot_char);
     uf_widget_set_tooltip(button, tooltip);
     g_free(tooltip);
     data->ButtonMnemonic[buttonEnum] = gdk_keyval_to_lower(
-	    gdk_unicode_to_keyval(tipParts[1][0]));
+	    gdk_unicode_to_keyval(g_utf8_get_char (tipParts[1])));
     data->ControlButton[buttonEnum] = button;
     g_strfreev(tipParts);
     return button;

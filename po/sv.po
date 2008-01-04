@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-02 06:00+0100\n"
+"POT-Creation-Date: 2008-01-04 16:00+0100\n"
 "PO-Revision-Date: 2007-11-13 21:53+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -118,6 +118,12 @@ msgstr "UFRaw-version i .ufrawrc stöds inte"
 
 #, c-format
 msgid "Too many anchors for curve '%s'"
+msgstr ""
+
+#, c-format
+msgid ""
+"ID file %s does not appear to be a regular file\n"
+"%s\n"
 msgstr ""
 
 #, c-format
@@ -711,8 +717,8 @@ msgid ""
 "\n"
 msgstr ""
 
-#, c-format
-msgid "%s%s (Alt-%c)"
+#, fuzzy, c-format
+msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%c)"
 
 #, fuzzy, c-format
