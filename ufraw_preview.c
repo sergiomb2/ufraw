@@ -4467,7 +4467,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	gtk_combo_box_append_text(data->TypeCombo, "JPEG");
 	data->TypeComboMap[i++] = jpeg_type;
 #endif
-#ifdef HAVE_LIBFITSIO
+#ifdef HAVE_LIBCFITSIO
 	gtk_combo_box_append_text(data->TypeCombo, "FITS");
 	data->TypeComboMap[i++] = fits_type;
 #endif
