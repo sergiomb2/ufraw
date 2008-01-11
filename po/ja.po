@@ -813,7 +813,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "%s - UFRaw"
-msgstr "UFRaw "
+msgstr "%s - UFRaw"
 
 #, fuzzy
 msgid "Linear"

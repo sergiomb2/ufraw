@@ -826,13 +826,13 @@ msgstr ""
 "Homepage: http://ufraw.sourceforge.net/\n"
 "Traduttore: Daniele Medri\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s%s (Alt-%s)"
-msgstr "%s%s (Alt-%c)"
+msgstr "%s%s (Alt-%s)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s - UFRaw"
-msgstr "UFRaw "
+msgstr "%s - UFRaw "
 
 msgid "Linear"
 msgstr "Lineare"

@@ -782,7 +782,7 @@ msgstr "Кривые яркости"
 
 #. Remote Gimp command entry
 msgid "Remote Gimp command"
-msgstr "Удаленная команда GIMP"
+msgstr "Команда для управления GIMP"
 
 msgid "Reset command to default"
 msgstr "Сбросить значение до исходного"
@@ -830,13 +830,13 @@ msgstr ""
 "Сайт проекта: http://ufraw.sourceforge.net/\n"
 "\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s%s (Alt-%s)"
-msgstr "%s%s (Alt-%c)"
+msgstr "%s%s (Alt-%s)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s - UFRaw"
-msgstr "UFRaw "
+msgstr "%s - UFRaw"
 
 msgid "Linear"
 msgstr "Линейный масштаб"
@@ -1243,7 +1243,7 @@ msgid "_Delete"
 msgstr "_Удалить"
 
 msgid "Send image to _Gimp"
-msgstr "Передать изображение в GIMP"
+msgstr "Открыть изображение в _GIMP"
 
 #. preview_progress() changes the size of the progress bar
 #. and processes the event queue.
@@ -1284,7 +1284,7 @@ msgid "Error creating temporary file."
 msgstr "Ошибка при создании временного файла."
 
 msgid "Error activating Gimp."
-msgstr "Ошибка при активации GIMP."
+msgstr "Ошибка при запуске GIMP."
 
 msgid "Remote URI is not supported"
 msgstr "Удалённый URI не поддерживается"

@@ -808,9 +808,9 @@ msgstr ""
 "Domovská stránka: http://ufraw.sourceforge.net/\n"
 "\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s%s (Alt-%s)"
-msgstr "%s%s (Alt-%c)"
+msgstr "%s%s (Alt-%s)"
 
 #, c-format
 msgid "%s - UFRaw"

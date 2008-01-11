@@ -830,11 +830,11 @@ msgstr ""
 
 #, c-format
 msgid "%s%s (Alt-%s)"
-msgstr ""
+msgstr "%s%s (Alt-%s)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s - UFRaw"
-msgstr "UFRaw"
+msgstr "%s - UFRaw"
 
 msgid "Linear"
 msgstr "Linear"
