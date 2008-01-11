@@ -811,7 +811,7 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s - UFRaw"
 msgstr "%s - UFRaw"
 
