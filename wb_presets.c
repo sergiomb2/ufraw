@@ -1778,6 +1778,15 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K100D", Tungsten, 0,		{ 1, 1.015873, 2.055556, 0 } },
   { "PENTAX", "K100D", Flash, 0,		{ 1.527344, 1, 1, 0 } },
 
+  { "PENTAX", "K100D Super", Daylight, 0,	{ 1.593750, 1, 1.011719, 0 } },
+  { "PENTAX", "K100D Super", Shade, 0,		{ 1.917969, 1, 1, 0 } },
+  { "PENTAX", "K100D Super", Cloudy, 0,		{ 1.703125, 1, 1.015625, 0 } },
+  { "PENTAX", "K100D Super", DaylightFluorescent, 0, { 1.708502, 1.036437, 1, 0 } },
+  { "PENTAX", "K100D Super", NeutralFluorescent, 0, { 1.634538, 1.028112, 1, 0 } },
+  { "PENTAX", "K100D Super", WhiteFluorescent, 0, { 1.425781, 1, 1.136719, 0 } },
+  { "PENTAX", "K100D Super", Tungsten, 0,	{ 1.015625, 1, 2.046875, 0 } },
+  { "PENTAX", "K100D Super", Flash, 0,		{ 1.670588, 1.003922, 1, 0 } },
+
   { "PENTAX", "K110D", Daylight, 0,		{ 1.468750, 1, 1.023438, 0 } },
   { "PENTAX", "K110D", Shade, 0,		{ 1.769531, 1, 1, 0 } },
   { "PENTAX", "K110D", Cloudy, 0,		{ 1.589844, 1, 1, 0 } },
