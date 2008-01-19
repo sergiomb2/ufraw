@@ -119,8 +119,6 @@ int ufraw_write_image(ufraw_data *uf)
     char * volatile confFilename=NULL;
     ufraw_message_reset(uf);
 
-    ufraw_prepare_output_exif(uf);
-
     if ( uf->conf->createID==only_id ||
 	    uf->conf->createID==also_id) {
 	confFilename = uf_file_set_type(uf->conf->outputFilename, ".ufraw");
@@ -355,6 +353,7 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->conf->outputFilename);
 	    }
 	}
+	ufraw_prepare_output_exif(uf);
 	if (uf->outputExifBuf!=NULL && uf->conf->embedExif) {
 	    if (uf->outputExifBufLen>65533) {
 		ufraw_set_warning(uf,
@@ -432,6 +431,7 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->conf->outputFilename);
 		}
 	    }
+	    ufraw_prepare_output_exif(uf);
 	    if (uf->outputExifBuf!=NULL && uf->conf->embedExif)
 		PNGwriteRawProfile(png, info, "exif",
 			uf->outputExifBuf, uf->outputExifBufLen);
