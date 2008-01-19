@@ -25,7 +25,7 @@ extern "C" {
 #include <sstream>
 #include <cassert>
 
-/**
+/*
  * Helper function to copy a string to a buffer, converting it from
  * current locale (in which exiv2 often returns strings) to UTF-8.
  */
@@ -44,7 +44,7 @@ static void strlcpy_to_utf8 (char *dest, size_t dest_max, Exiv2::ExifData::itera
 		g_strlcpy (dest, str.str ().c_str (), dest_max);
 }
 
-extern "C" int ufraw_exif_from_exiv2(ufraw_data *uf)
+extern "C" int ufraw_read_input_exif(ufraw_data *uf)
 {
     /* Redirect exiv2 errors to a string buffer */
     std::ostringstream stderror;
@@ -52,8 +52,8 @@ extern "C" int ufraw_exif_from_exiv2(ufraw_data *uf)
     std::cerr.rdbuf(stderror.rdbuf());
 
 try {
-    uf->exifBuf = NULL;
-    uf->exifBufLen = 0;
+    uf->inputExifBuf = NULL;
+    uf->inputExifBufLen = 0;
 
     Exiv2::Image::AutoPtr image;
     if ( uf->unzippedBuf!=NULL ) {
@@ -73,56 +73,9 @@ try {
 	error += ": No Exif data found in the file";
 	throw Exiv2::Error(1, error);
     }
-    Exiv2::ExifData::iterator pos;
-    if ( uf->conf->rotate ) {
-	/* Reset orientation tag since UFRaw already rotates the image */
-	if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.Orientation")))
-		!= exifData.end() ) {
-	    ufraw_message(UFRAW_SET_LOG, "Reseting %s from '%d'  to '1'\n",
-		    pos->key().c_str(), pos->value().toLong());
-	    pos->setValue("1"); /* 1 = Normal orientation */
-	}
-    }
-    /* Delete original TIFF data, which is irrelevant*/
-    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.StripOffsets")))
-	    != exifData.end() )
-	exifData.erase(pos);
-    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.RowsPerStrip")))
-	    != exifData.end() )
-	exifData.erase(pos);
-    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.StripByteCounts")))
-	    != exifData.end() )
-	exifData.erase(pos);
-
-    Exiv2::DataBuf buf(exifData.copy());
-    const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
-    /* If buffer too big for JPEG, try deleting some stuff. */
-    if ( buf.size_+sizeof(ExifHeader)>65533 ) {
-	if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.MakerNote")))
-		!= exifData.end() ) {
-	    exifData.erase(pos);
-	    ufraw_message(UFRAW_SET_LOG,
-		    "buflen %d too big, erasing Exif.Photo.MakerNote\n",
-		    buf.size_+sizeof(ExifHeader));
-	    buf = exifData.copy();
-	}
-    }
-    if ( buf.size_+sizeof(ExifHeader)>65533 ) {
-	exifData.eraseThumbnail();
-	ufraw_message(UFRAW_SET_LOG,
-		"buflen %d too big, erasing Thumbnail\n",
-		buf.size_+sizeof(ExifHeader));
-	buf = exifData.copy();
-    }
-    uf->exifBufLen = buf.size_ + sizeof(ExifHeader);
-    uf->exifBuf = g_new(unsigned char, uf->exifBufLen);
-    memcpy(uf->exifBuf, ExifHeader, sizeof(ExifHeader));
-    memcpy(uf->exifBuf+sizeof(ExifHeader), buf.pData_, buf.size_);
-    ufraw_message(UFRAW_SET_LOG, "EXIF data read using exiv2, buflen %d\n",
-	    uf->exifBufLen);
-    g_strlcpy(uf->conf->exifSource, EXV_PACKAGE_STRING, max_name);
 
     /* List of tag names taken from exiv2's printSummary() in actions.cpp */
+    Exiv2::ExifData::iterator pos;
     /* Read shutter time */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.ExposureTime")))
 	    != exifData.end() ) {
@@ -208,6 +161,98 @@ try {
 	    != exifData.end() ) {
 	strlcpy_to_utf8(uf->conf->whiteBalanceText, max_name, pos);
     }
+
+    /* Store all EXIF data read in. */
+    Exiv2::DataBuf buf(exifData.copy());
+    uf->inputExifBufLen = buf.size_;
+    uf->inputExifBuf = g_new(unsigned char, uf->inputExifBufLen);
+    memcpy(uf->inputExifBuf, buf.pData_, buf.size_);
+    ufraw_message(UFRAW_SET_LOG, "EXIF data read using exiv2, buflen %d\n",
+	    uf->inputExifBufLen);
+    g_strlcpy(uf->conf->exifSource, EXV_PACKAGE_STRING, max_name);
+
+    std::cerr.rdbuf(savecerr);
+    ufraw_message(UFRAW_SET_LOG, "%s\n", stderror.str().c_str());
+
+    return UFRAW_SUCCESS;
+}
+catch (Exiv2::AnyError& e) {
+    std::cerr.rdbuf(savecerr);
+    std::string s(e.what());
+    ufraw_message(UFRAW_SET_WARNING, "%s\n", s.c_str());
+    return UFRAW_ERROR;
+}
+
+}
+
+extern "C" int ufraw_prepare_output_exif(ufraw_data *uf)
+{
+    /* Redirect exiv2 errors to a string buffer */
+    std::ostringstream stderror;
+    std::streambuf *savecerr = std::cerr.rdbuf();
+    std::cerr.rdbuf(stderror.rdbuf());
+
+try {
+    uf->outputExifBuf = NULL;
+    uf->outputExifBufLen = 0;
+
+    Exiv2::ExifData exifData = Exiv2::ExifData();
+
+    /* Start from the input EXIF data */
+    exifData.load(uf->inputExifBuf, uf->inputExifBufLen);
+
+    Exiv2::ExifData::iterator pos;
+    if ( uf->conf->rotate ) {
+	/* Reset orientation tag since UFRaw already rotates the image */
+	if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.Orientation")))
+		!= exifData.end() ) {
+	    ufraw_message(UFRAW_SET_LOG, "Resetting %s from '%d' to '1'\n",
+		    pos->key().c_str(), pos->value().toLong());
+	    pos->setValue("1"); /* 1 = Normal orientation */
+	}
+    }
+
+    /* Delete original TIFF data, which is irrelevant*/
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.StripOffsets")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.RowsPerStrip")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.StripByteCounts")))
+	    != exifData.end() )
+	exifData.erase(pos);
+
+    /* Write appropriate color space tag if using sRGB output */
+    if (!strcmp(uf->developer->profileFile[out_profile], ""))
+	exifData["Exif.Photo.ColorSpace"] = uint16_t(1); /* sRGB */
+
+    Exiv2::DataBuf buf(exifData.copy());
+    const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
+    /* If buffer too big for JPEG, try deleting some stuff. */
+    if ( buf.size_+sizeof(ExifHeader)>65533 ) {
+	Exiv2::ExifData::iterator pos;
+	if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.MakerNote")))
+		!= exifData.end() ) {
+	    exifData.erase(pos);
+	    ufraw_message(UFRAW_SET_LOG,
+		    "buflen %d too big, erasing Exif.Photo.MakerNote\n",
+		    buf.size_+sizeof(ExifHeader));
+	    buf = exifData.copy();
+	}
+    }
+    if ( buf.size_+sizeof(ExifHeader)>65533 ) {
+	exifData.eraseThumbnail();
+	ufraw_message(UFRAW_SET_LOG,
+		"buflen %d too big, erasing Thumbnail\n",
+		buf.size_+sizeof(ExifHeader));
+	buf = exifData.copy();
+    }
+    uf->outputExifBufLen = buf.size_ + sizeof(ExifHeader);
+    uf->outputExifBuf = g_new(unsigned char, uf->outputExifBufLen);
+    memcpy(uf->outputExifBuf, ExifHeader, sizeof(ExifHeader));
+    memcpy(uf->outputExifBuf+sizeof(ExifHeader), buf.pData_, buf.size_);
+
     std::cerr.rdbuf(savecerr);
     ufraw_message(UFRAW_SET_LOG, "%s\n", stderror.str().c_str());
 
@@ -222,10 +267,16 @@ catch (Exiv2::AnyError& e) {
 
 }
 #else
-extern "C" int ufraw_exif_from_exiv2(ufraw_data *uf)
+extern "C" int ufraw_read_input_exif(ufraw_data *uf)
 {
     uf = uf;
     ufraw_message(UFRAW_SET_LOG, "ufraw built without EXIF support\n");
+    return UFRAW_ERROR;
+}
+
+extern "C" int ufraw_prepare_output_exif(ufraw_data *uf)
+{
+    uf = uf;
     return UFRAW_ERROR;
 }
 #endif /* HAVE_EXIV2 */

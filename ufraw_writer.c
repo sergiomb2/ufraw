@@ -119,6 +119,8 @@ int ufraw_write_image(ufraw_data *uf)
     char * volatile confFilename=NULL;
     ufraw_message_reset(uf);
 
+    ufraw_prepare_output_exif(uf);
+
     if ( uf->conf->createID==only_id ||
 	    uf->conf->createID==also_id) {
 	confFilename = uf_file_set_type(uf->conf->outputFilename, ".ufraw");
@@ -353,14 +355,14 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->conf->outputFilename);
 	    }
 	}
-	if (uf->exifBuf!=NULL && uf->conf->embedExif) {
-	    if (uf->exifBufLen>65533) {
+	if (uf->outputExifBuf!=NULL && uf->conf->embedExif) {
+	    if (uf->outputExifBufLen>65533) {
 		ufraw_set_warning(uf,
 			_("EXIF buffer length %d, too long, ignored."),
-			uf->exifBufLen);
+			uf->outputExifBufLen);
 	    } else {
 		jpeg_write_marker(&cinfo, JPEG_APP0+1,
-			uf->exifBuf, uf->exifBufLen);
+			uf->outputExifBuf, uf->outputExifBufLen);
 	    }
 	}
 	pixbuf8 = g_new(guint8, width*3);
@@ -430,9 +432,9 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->conf->outputFilename);
 		}
 	    }
-	    if (uf->exifBuf!=NULL && uf->conf->embedExif)
+	    if (uf->outputExifBuf!=NULL && uf->conf->embedExif)
 		PNGwriteRawProfile(png, info, "exif",
-			uf->exifBuf, uf->exifBufLen);
+			uf->outputExifBuf, uf->outputExifBufLen);
 	    png_write_info(png, info);
 	    if ( BitDepth==8 ) {
 		pixbuf8 = g_new(guint8, width*3);

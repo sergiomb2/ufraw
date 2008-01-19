@@ -222,8 +222,10 @@ typedef struct ufraw_struct {
     developer_data *AutoDeveloper;
     conf_data *conf;
     void *widget;
-    guchar *exifBuf;
-    guint exifBufLen;
+    guchar *inputExifBuf;
+    guint inputExifBufLen;
+    guchar *outputExifBuf;
+    guint outputExifBufLen;
     int gimpImage;
     int *RawHistogram;
     int RawChanMul[4];
@@ -340,7 +342,8 @@ void ufraw_chooser(conf_data *conf, const char *defPath);
 void ufraw_icons_init();
 
 /* prototype for functions in ufraw_exiv2.cc */
-int ufraw_exif_from_exiv2(ufraw_data *uf);
+int ufraw_read_input_exif(ufraw_data *uf);
+int ufraw_prepare_output_exif(ufraw_data *uf);
 
 /* status numbers from DCRaw and UFRaw */
 #define UFRAW_SUCCESS 0

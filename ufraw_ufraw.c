@@ -390,7 +390,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     strcpy(uf->conf->lensText, "");
     strcpy(uf->conf->flashText, "");
     if ( !uf->conf->embeddedImage ) {
-	if ( ufraw_exif_from_exiv2(uf)!=UFRAW_SUCCESS ) {
+	if ( ufraw_read_input_exif(uf)!=UFRAW_SUCCESS ) {
 	    ufraw_message(UFRAW_SET_LOG, "Error reading EXIF data from %s\n",
 		    uf->filename);
 	}
@@ -432,7 +432,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	uf->conf->orientation = raw->flip;
     if ( !uf->conf->rotate )
 	uf->conf->orientation = 1;
-    if (uf->exifBuf==NULL) {
+    if (uf->inputExifBuf==NULL) {
 	g_strlcpy(uf->conf->exifSource, "DCRaw", max_name);
 	uf->conf->iso_speed = raw->iso_speed;
 	g_snprintf(uf->conf->isoText, max_name, "%d", (int)uf->conf->iso_speed);
@@ -599,7 +599,8 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->raw);
     /* We cannot free uf->conf since it might be accessed after the close */
 //    g_free(uf->conf);
-    g_free(uf->exifBuf);
+    g_free(uf->inputExifBuf);
+    g_free(uf->outputExifBuf);
     g_free(uf->image.image);
     int i;
     for (i=ufraw_first_phase+1; i<ufraw_phases_num; i++)

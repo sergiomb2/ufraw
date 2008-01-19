@@ -406,15 +406,16 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 	}
     }
 #else
-    if (uf->exifBuf!=NULL) {
-	if (uf->exifBufLen>65533) {
+    ufraw_prepare_output_exif(uf);
+    if (uf->outputExifBuf!=NULL) {
+	if (uf->outputExifBufLen>65533) {
 	    ufraw_message(UFRAW_SET_WARNING,
 		    _("EXIF buffer length %d, too long, ignored.\n"),
-		    uf->exifBufLen);
+		    uf->outputExifBufLen);
 	} else {
 	    GimpParasite *exif_parasite;
 	    exif_parasite = gimp_parasite_new ("exif-data",
-		    GIMP_PARASITE_PERSISTENT, uf->exifBufLen, uf->exifBuf);
+		    GIMP_PARASITE_PERSISTENT, uf->outputExifBufLen, uf->outputExifBuf);
 	    gimp_image_parasite_attach (uf->gimpImage, exif_parasite);
 	    gimp_parasite_free (exif_parasite);
 	}

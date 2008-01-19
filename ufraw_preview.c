@@ -4515,7 +4515,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 #if defined(HAVE_EXIV2) && (defined(HAVE_LIBJPEG) || defined(HAVE_LIBPNG))
 	button = uf_check_button_new( _("Embed EXIF data in JPEG or PNG files"),
 		&CFG->embedExif);
-	gtk_widget_set_sensitive(button, data->UF->exifBuf!=NULL);
+	gtk_widget_set_sensitive(button, data->UF->inputExifBuf!=NULL);
 	gtk_box_pack_start(GTK_BOX(vBox), button, FALSE, FALSE, 0);
 #endif // HAVE_EXIV2 && (HAVE_LIBJPEG || HAVE_LIBPNG)
 
@@ -4611,7 +4611,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_label_set_markup(GTK_LABEL(label), message->str);
     gtk_box_pack_start(GTK_BOX (vBox), label, FALSE, FALSE, 0);
 
-    if (uf->exifBuf==NULL)
+    if (uf->inputExifBuf==NULL)
     {
 	label = gtk_label_new(NULL);
 	char *text = g_strdup_printf("<span foreground='red'>%s</span>",
