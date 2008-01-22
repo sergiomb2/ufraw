@@ -213,6 +213,24 @@ try {
     }
 
     /* Delete original TIFF data, which is irrelevant*/
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.ImageWidth")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.ImageLength")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.BitsPerSample")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.Compression")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.PhotometricInterpretation")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.SamplesPerPixel")))
+	    != exifData.end() )
+	exifData.erase(pos);
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.StripOffsets")))
 	    != exifData.end() )
 	exifData.erase(pos);
@@ -222,10 +240,67 @@ try {
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.StripByteCounts")))
 	    != exifData.end() )
 	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.PlanarConfiguration")))
+	    != exifData.end() )
+	exifData.erase(pos);
+
+    /* Delete various MakerNote fields only applicable to the raw file */
+
+#if EXIV2_TEST_VERSION(0,15,0)
+    // Nikon thumbnail data
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.Preview")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.NEFThumbnailSize")))
+	    != exifData.end() )
+	exifData.erase(pos);
+#endif
+
+#if EXIV2_TEST_VERSION(0,16,0)
+    // Pentax thumbnail data
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.PreviewResolution")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.PreviewLength")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.PreviewOffset")))
+	    != exifData.end() )
+	exifData.erase(pos);
+#endif
+
+    // Minolta thumbnail data
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Minolta.Thumbnail")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Minolta.ThumbnailOffset")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Minolta.ThumbnailLength")))
+	    != exifData.end() )
+	exifData.erase(pos);
+
+#if EXIV2_TEST_VERSION(0,16,0)
+    // Olympus thumbnail data
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Olympus.Thumbnail")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Olympus.ThumbnailOffset")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Olympus.ThumbnailLength")))
+	    != exifData.end() )
+	exifData.erase(pos);
+#endif
 
     /* Write appropriate color space tag if using sRGB output */
     if (!strcmp(uf->developer->profileFile[out_profile], ""))
 	exifData["Exif.Photo.ColorSpace"] = uint16_t(1); /* sRGB */
+
+#if EXIV2_TEST_VERSION(0,15,0)
+    /* Add "UFRaw" and version used to output file as processing software. */
+    exifData["Exif.Image.ProcessingSoftware"] = "UFRaw " VERSION;
+#endif
 
     Exiv2::DataBuf buf(exifData.copy());
     const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
