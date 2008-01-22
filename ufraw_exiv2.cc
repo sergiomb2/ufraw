@@ -246,6 +246,7 @@ try {
 
     /* Delete various MakerNote fields only applicable to the raw file */
 
+#ifdef EXIV2_TEST_VERSION
 #if EXIV2_TEST_VERSION(0,15,0)
     // Nikon thumbnail data
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.Preview")))
@@ -268,6 +269,7 @@ try {
 	    != exifData.end() )
 	exifData.erase(pos);
 #endif
+#endif
 
     // Minolta thumbnail data
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Minolta.Thumbnail")))
@@ -280,6 +282,7 @@ try {
 	    != exifData.end() )
 	exifData.erase(pos);
 
+#ifdef EXIV2_TEST_VERSION
 #if EXIV2_TEST_VERSION(0,16,0)
     // Olympus thumbnail data
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Olympus.Thumbnail")))
@@ -292,14 +295,17 @@ try {
 	    != exifData.end() )
 	exifData.erase(pos);
 #endif
+#endif
 
     /* Write appropriate color space tag if using sRGB output */
     if (!strcmp(uf->developer->profileFile[out_profile], ""))
 	exifData["Exif.Photo.ColorSpace"] = uint16_t(1); /* sRGB */
 
+#ifdef EXIV2_TEST_VERSION
 #if EXIV2_TEST_VERSION(0,15,0)
     /* Add "UFRaw" and version used to output file as processing software. */
     exifData["Exif.Image.ProcessingSoftware"] = "UFRaw " VERSION;
+#endif
 #endif
 
     Exiv2::DataBuf buf(exifData.copy());
