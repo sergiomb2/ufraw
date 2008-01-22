@@ -1,5 +1,18 @@
 #!/usr/bin/env perl
-# $Id: wb_extract.pl,v 1.3 2008/01/22 12:15:26 lexort Exp $
+# $Id: wb_extract.pl,v 1.4 2008/01/22 12:24:18 lexort Exp $
+
+# This program helps to prepare white balance preset lines for
+# wb_presets.c.  To add a new camera, take exposures with every white
+# balance preset setting in the natural order.  Natural is either
+# lower color temperature to higher, or the order in which the camera
+# scrolls through the setting (usually these are close).  Named
+# settings like "DirectSunlight" come first, and then "Kelvin
+# settings".  For each named setting, the entire range of adjustments
+# should be obtained in numerical order; a typical set is -3 -2 -1 0 1
+# 2 3.  If you do not have time to produce all the values, just doing
+# the fine tune 0 named values is quite useful.  You should also note
+# the firmware and revision level in a comment if that's reasonably
+# easy to do.
 
 use warnings;
 use strict;
