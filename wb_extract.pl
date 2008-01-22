@@ -1,4 +1,7 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
+# $Id: wb_extract.pl,v 1.3 2008/01/22 12:15:26 lexort Exp $
+
+use warnings;
 use strict;
 
 if (@ARGV < 1) {
@@ -64,4 +67,3 @@ for my $file (@ARGV) {
 #ColorBalance1   1.234375 2.136719 1 1
 #WhiteBalance    Incandescent
 #WhiteBalanceFineTune    -3
-
