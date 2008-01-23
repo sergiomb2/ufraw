@@ -262,7 +262,7 @@ try {
 	    != exifData.end() )
 	exifData.erase(pos);
 
-#if EXIV2_TEST_VERSION(0,16,0)
+#if EXIV2_TEST_VERSION(0,15,99)		/* Exiv2 0.16-pre1 */
     // Pentax thumbnail data
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.PreviewResolution")))
 	    != exifData.end() )
