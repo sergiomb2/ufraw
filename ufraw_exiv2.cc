@@ -25,6 +25,12 @@ extern "C" {
 #include <sstream>
 #include <cassert>
 
+// EXIV2_TEST_VERSION is defined in Exiv2 0.15 and newer.
+#ifndef EXIV2_TEST_VERSION
+# define EXIV2_TEST_VERSION(major,minor,patch) \
+	( EXIV2_VERSION >= EXIV2_MAKE_VERSION(major,minor,patch) )
+#endif
+
 /*
  * Helper function to copy a string to a buffer, converting it from
  * current locale (in which exiv2 often returns strings) to UTF-8.
@@ -246,16 +252,15 @@ try {
 
     /* Delete various MakerNote fields only applicable to the raw file */
 
-#ifdef EXIV2_TEST_VERSION
-#if EXIV2_TEST_VERSION(0,15,0)
     // Nikon thumbnail data
+#if EXIV2_TEST_VERSION(0,13,0)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.Preview")))
 	    != exifData.end() )
 	exifData.erase(pos);
+#endif
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.NEFThumbnailSize")))
 	    != exifData.end() )
 	exifData.erase(pos);
-#endif
 
 #if EXIV2_TEST_VERSION(0,16,0)
     // Pentax thumbnail data
@@ -269,7 +274,6 @@ try {
 	    != exifData.end() )
 	exifData.erase(pos);
 #endif
-#endif
 
     // Minolta thumbnail data
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Minolta.Thumbnail")))
@@ -282,8 +286,7 @@ try {
 	    != exifData.end() )
 	exifData.erase(pos);
 
-#ifdef EXIV2_TEST_VERSION
-#if EXIV2_TEST_VERSION(0,16,0)
+#if EXIV2_TEST_VERSION(0,13,0)
     // Olympus thumbnail data
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Olympus.Thumbnail")))
 	    != exifData.end() )
@@ -295,17 +298,14 @@ try {
 	    != exifData.end() )
 	exifData.erase(pos);
 #endif
-#endif
 
     /* Write appropriate color space tag if using sRGB output */
     if (!strcmp(uf->developer->profileFile[out_profile], ""))
 	exifData["Exif.Photo.ColorSpace"] = uint16_t(1); /* sRGB */
 
-#ifdef EXIV2_TEST_VERSION
-#if EXIV2_TEST_VERSION(0,15,0)
+#if EXIV2_TEST_VERSION(0,14,0)
     /* Add "UFRaw" and version used to output file as processing software. */
     exifData["Exif.Image.ProcessingSoftware"] = "UFRaw " VERSION;
-#endif
 #endif
 
     Exiv2::DataBuf buf(exifData.copy());

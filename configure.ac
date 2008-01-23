@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.108 2008/01/22 18:50:11 nkbj Exp $
+dnl $Id: configure.ac,v 1.109 2008/01/23 13:45:09 nkbj Exp $
 AC_INIT(UFRaw, 0.14)
 AC_PREREQ(2.57)
 
@@ -181,7 +181,7 @@ have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
 #  AC_CHECK_LIB(cfitsio, ffcmsg))
 have_fits=${ac_cv_lib_cfitsio_ffcmsg:-no}
 
-PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.12,
+PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
   [ have_exiv2=yes
     AC_DEFINE(HAVE_EXIV2, 1, have exiv2) ],
   [ have_exiv2=no
