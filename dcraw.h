@@ -197,7 +197,7 @@ void foveon_make_curves
 	(short **curvep, float dq[3], float div[3], float filt);
 int foveon_apply_curve (short *curve, int i);
 void foveon_interpolate();
-void bad_pixels();
+void bad_pixels(char *fname);
 void subtract(const char *fname);
 void pseudoinverse (double (*in)[3], double (*out)[3], int size);
 void cam_xyz_coeff (double cam_xyz[4][3]);
