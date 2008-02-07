@@ -206,7 +206,7 @@ int dcraw_load_raw(dcraw_data *h)
 	    d->make, d->model, d->ifname);
     fseek (d->ifp, d->data_offset, SEEK_SET);
     (d->*d->load_raw)();
-    d->bad_pixels();
+//    d->bad_pixels();
     if (d->is_foveon) {
 	d->foveon_interpolate();
 	h->raw.width = h->width = d->width;
