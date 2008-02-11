@@ -3530,7 +3530,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	curveeditorHeight = 192;
 	data->HisMinHeight = 64;
     } else if (screen.height<900) {
-	curveeditorHeight = 192;
+	curveeditorHeight = 224;
 	data->HisMinHeight = 80;
     } else {
 	curveeditorHeight = 256;
