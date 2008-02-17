@@ -35,6 +35,44 @@
 #include <fitsio.h>
 #endif
 
+int ppm8_row_writer(
+    ufraw_data *uf,
+    void * volatile out,
+    void * pixbuf,
+    int row, int width)
+{
+    row=row;
+    if ((int)fwrite(pixbuf, 3, width, out)<width) {
+	ufraw_set_error(uf, _("Error creating file '%s'."),
+        uf->conf->outputFilename);
+	ufraw_set_error(uf, g_strerror(errno));
+	return UFRAW_ERROR;
+    } else {
+	return UFRAW_SUCCESS;
+    }
+}
+
+int ppm16_row_writer(
+    ufraw_data *uf,
+    void * volatile out,
+    void * pixbuf,
+    int row, int width)
+{
+    row=row;
+    guint16 *pixbuf16 = (guint16 *) pixbuf;
+    int i;
+    for (i=0; i<3*width; i++)
+	pixbuf16[i] = g_htons(pixbuf16[i]);
+    if ((int)fwrite(pixbuf16, 6, width, out)<width) {
+	ufraw_set_error(uf, _("Error creating file '%s'."),
+	uf->conf->outputFilename);
+	ufraw_set_error(uf, g_strerror(errno));
+	return UFRAW_ERROR;
+    } else {
+	return UFRAW_SUCCESS;
+    }
+}
+
 #ifdef HAVE_LIBTIFF
 // There seem to be no way to get the libtiff message without a static variable
 // Therefore the folloing code is not thread-safe.
@@ -44,6 +82,24 @@ static void tiff_messenger(const char *module, const char *fmt, va_list ap)
 {
     (void)module;
     vsnprintf(ufraw_tiff_message, max_path, fmt, ap);
+}
+
+int tiff_row_writer(
+    ufraw_data *uf,
+    void * volatile out,
+    void * pixbuf,
+    int row, int width)
+{
+    width=width;
+    if (TIFFWriteScanline(out, pixbuf, row, 0)<0) {
+	// 'errno' does seem to contain useful information
+	ufraw_set_error(uf, _("Error creating file."));
+	ufraw_set_error(uf, ufraw_tiff_message);
+	ufraw_tiff_message[0] = '\0';
+	return UFRAW_ERROR;
+    } else {
+	return UFRAW_SUCCESS;
+    }
 }
 #endif /*HAVE_LIBTIFF*/
 
@@ -81,6 +137,21 @@ static void jpeg_error_handler(j_common_ptr cinfo)
 	    cinfo->err->msg_parm.i[2],
 	    cinfo->err->msg_parm.i[3]);
 }
+
+int jpeg_row_writer(
+    ufraw_data *uf,
+    void * volatile out,
+    void * pixbuf,
+    int row, int width)
+{
+    row=row; width=width;
+    guint8 *pixbuf8 = pixbuf;
+    jpeg_write_scanlines((struct jpeg_compress_struct *)out, &pixbuf8, 1);
+    if ( ufraw_is_error(uf) )
+	return UFRAW_ERROR;
+    else
+	return UFRAW_SUCCESS;
+}
 #endif /*HAVE_LIBJPEG*/
 
 #ifdef HAVE_LIBPNG
@@ -102,7 +173,56 @@ static void png_warning_handler(png_structp png,
 static void PNGwriteRawProfile(png_struct *ping,
     png_info *ping_info, char *profile_type, guint8 *profile_data,
     png_uint_32 length);
+
+int png_row_writer(
+    ufraw_data *uf,
+    void * volatile out,
+    void * pixbuf,
+    int row, int width)
+{
+    uf=uf; row=row; width=width;
+
+    png_write_row(out, (guint8 *)pixbuf);
+
+    return UFRAW_SUCCESS;
+}
 #endif /*HAVE_LIBPNG*/
+
+void write_image_data(
+    ufraw_data *uf,
+    void * volatile out,
+    int width, int height, int left, int top, int bitDepth,
+    int (*row_writer) (ufraw_data *, void * volatile, void *, int, int))
+{
+    int row, rowStride;
+    guint16 *pixbuf16;
+    guint8 *pixbuf8;
+    image_type *rawImage;
+    rowStride = uf->image.width;
+    rawImage = uf->image.image;
+    void *pixbuf;
+
+    pixbuf16 = g_new(guint16, width*3);
+    pixbuf8 = g_new(guint8, width*3);
+
+    if (bitDepth > 8)
+	pixbuf = pixbuf16;
+    else
+	pixbuf = pixbuf8;
+
+    for (row=0; row<height; row++) {
+        if (row%100==99)
+	    preview_progress(uf->widget, _("Saving image"),
+		    0.5 + 0.5*row/height);
+	develope(pixbuf, rawImage[(top+row)*rowStride+left],
+	        uf->developer, bitDepth, pixbuf16, width);
+	if (row_writer(uf, out, pixbuf, row, width) != UFRAW_SUCCESS)
+	    break;
+    }
+
+    g_free(pixbuf16);
+    g_free(pixbuf8);
+}
 
 int ufraw_write_image(ufraw_data *uf)
 {
@@ -111,11 +231,7 @@ int ufraw_write_image(ufraw_data *uf)
 #ifdef HAVE_LIBCFITSIO
     fitsfile *fitsFile;
 #endif
-    int width, height, row, rowStride, i;
-    int left, top;
-    image_type *rawImage;
-    guint8 *pixbuf8=NULL;
-    guint16 *pixbuf16;
+    int width, height, left, top;
     char * volatile confFilename=NULL;
     ufraw_message_reset(uf);
 
@@ -209,42 +325,12 @@ int ufraw_write_image(ufraw_data *uf)
 	    * uf->image.width / uf->initialWidth;
     height = (uf->conf->CropY2 - uf->conf->CropY1)
 	    * uf->image.height / uf->initialHeight;
-    rowStride = uf->image.width;
-    rawImage = uf->image.image;
-    pixbuf16 = g_new(guint16, width*3);
     if ( uf->conf->type==ppm_type && BitDepth==8 ) {
 	fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFF);
-	pixbuf8 = g_new(guint8, width*3);
-	for (row=0; row<height; row++) {
-	    if (row%100==99)
-		preview_progress(uf->widget, _("Saving image"),
-			0.5 + 0.5*row/height);
-	    develope(pixbuf8, rawImage[(top+row)*rowStride+left],
-		    uf->developer, 8, pixbuf16, width);
-	    if ((int)fwrite(pixbuf8, 3, width, out)<width) {
-		ufraw_set_error(uf, _("Error creating file '%s'."),
-			uf->conf->outputFilename);
-		ufraw_set_error(uf, g_strerror(errno));
-		break;
-	    }
-	}
+	write_image_data(uf, out, width, height, left, top, BitDepth, ppm8_row_writer);
     } else if ( uf->conf->type==ppm_type && BitDepth==16 ) {
 	fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFFFF);
-	for (row=0; row<height; row++) {
-	    if (row%100==99)
-		preview_progress(uf->widget, _("Saving image"),
-			0.5 + 0.5*row/height);
-	    develope(pixbuf16, rawImage[(top+row)*rowStride+left],
-		    uf->developer, 16, pixbuf16, width);
-	    for (i=0; i<3*width; i++)
-		pixbuf16[i] = g_htons(pixbuf16[i]);
-	    if ((int)fwrite(pixbuf16, 6, width, out)<width) {
-		ufraw_set_error(uf, _("Error creating file '%s'."),
-			uf->conf->outputFilename);
-		ufraw_set_error(uf, g_strerror(errno));
-		break;
-	    }
-	}
+	write_image_data(uf, out, width, height, left, top, BitDepth, ppm16_row_writer);
 #ifdef HAVE_LIBTIFF
     } else if ( uf->conf->type==tiff_type ) {
 	TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
@@ -278,36 +364,9 @@ int ufraw_write_image(ufraw_data *uf)
 	    }
 	}
 	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, TIFFDefaultStripSize(out, 0));
-	if ( BitDepth==8 ) {
-	    pixbuf8 = g_new(guint8, width*3);
-	    for (row=0; row<height; row++) {
-		if (row%100==99) preview_progress(uf->widget, _("Saving image"),
-			    0.5+0.5*row/height);
-		develope(pixbuf8, rawImage[(top+row)*rowStride+left],
-			uf->developer, 8, pixbuf16, width);
-		if (TIFFWriteScanline(out, pixbuf8, row, 0)<0) {
-		    // 'errno' does seem to contain useful information
-		    ufraw_set_error(uf, _("Error creating file."));
-		    ufraw_set_error(uf, ufraw_tiff_message);
-		    ufraw_tiff_message[0] = '\0';
-		    break;
-		}
-	    }
-	} else { // BitDepth==16
-	    for (row=0; row<height; row++) {
-		if (row%100==99) preview_progress(uf->widget, _("Saving image"),
-			    0.5+0.5*row/height);
-		develope(pixbuf16, rawImage[(top+row)*rowStride+left],
-			uf->developer, 16, pixbuf16, width);
-		if (TIFFWriteScanline(out, pixbuf16, row, 0)<0) {
-		    // 'errno' does seem to contain useful information
-		    ufraw_set_error(uf, _("Error creating file."));
-		    ufraw_set_error(uf, ufraw_tiff_message);
-		    ufraw_tiff_message[0] = '\0';
-		    break;
-		}
-	    }
-	}
+
+	write_image_data(uf, out, width, height, left, top, BitDepth, tiff_row_writer);
+
 #endif /*HAVE_LIBTIFF*/
 #ifdef HAVE_LIBJPEG
     } else if (uf->conf->type==jpeg_type) {
@@ -364,15 +423,9 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->outputExifBuf, uf->outputExifBufLen);
 	    }
 	}
-	pixbuf8 = g_new(guint8, width*3);
-	for (row=0; row<height; row++) {
-	    if (row%100==99) preview_progress(uf->widget, _("Saving image"),
-			0.5 + 0.5*row/height);
-	    develope(pixbuf8, rawImage[(top+row)*rowStride+left],
-		    uf->developer, 8, pixbuf16, width);
-	    jpeg_write_scanlines(&cinfo, &pixbuf8, 1);
-	    if ( ufraw_is_error(uf) ) break;
-	}
+
+	write_image_data(uf, &cinfo, width, height, left, top, 8, jpeg_row_writer);
+
 	if ( ufraw_is_error(uf) ) {
 	    char *message = g_strdup(ufraw_get_message(uf));
 	    ufraw_message_reset(uf);
@@ -436,26 +489,11 @@ int ufraw_write_image(ufraw_data *uf)
 		PNGwriteRawProfile(png, info, "exif",
 			uf->outputExifBuf, uf->outputExifBufLen);
 	    png_write_info(png, info);
-	    if ( BitDepth==8 ) {
-		pixbuf8 = g_new(guint8, width*3);
-		for (row=0; row<height; row++) {
-		    if (row%100==99) preview_progress(uf->widget,
-			    _("Saving image"), 0.5+0.5*row/height);
-		    develope(pixbuf8, rawImage[(top+row)*rowStride+left],
-			    uf->developer, 8, pixbuf16, width);
-		    png_write_row(png, pixbuf8);
-		}
-	    } else { // BitDepth==16
-		if ( G_BYTE_ORDER==G_LITTLE_ENDIAN )
-		    png_set_swap(png); // Swap byte order to big-endian
-		for (row=0; row<height; row++) {
-		    if (row%100==99) preview_progress(uf->widget,
-			    _("Saving image"), 0.5+0.5*row/height);
-		    develope(pixbuf16, rawImage[(top+row)*rowStride+left],
-			    uf->developer, 16, pixbuf16, width);
-		    png_write_row(png, (guint8 *)pixbuf16);
-		}
-	    }
+	    if (BitDepth != 8 && G_BYTE_ORDER==G_LITTLE_ENDIAN )
+		png_set_swap(png); // Swap byte order to big-endian
+
+	    write_image_data(uf, png, width, height, left, top, BitDepth, png_row_writer);
+
 	    png_write_end(png, NULL);
 	    png_destroy_write_struct(&png, &info);
 	}
@@ -478,6 +516,12 @@ int ufraw_write_image(ufraw_data *uf)
 	long offset = 0;
 
 	image = g_new(guint16, 3 * dim);
+
+	int row;
+	int i;
+	image_type *rawImage = uf->image.image;
+	int rowStride = uf->image.width;
+	guint16 pixbuf16[3];
 
 	for (row=0; row<height; row++) {
 	    if (row%100==99)
@@ -608,8 +652,6 @@ int ufraw_write_image(ufraw_data *uf)
 		uf->conf->outputFilename);
 	ufraw_set_error(uf, _("Unknown file type %d."), uf->conf->type);
     }
-    g_free(pixbuf16);
-    g_free(pixbuf8);
 #ifdef HAVE_LIBTIFF
     if ( uf->conf->type==tiff_type ) {
 	TIFFClose(out);
