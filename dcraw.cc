@@ -6319,6 +6319,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 9437,-2811,-774,-8405,16215,2290,-710,596,7181 } },
     { "SONY DSLR-A200", 0,
 	{ 9847,-3091,-928,-8485,16345,2225,-715,595,7103 } },
+    { "SONY DSLR-A350", 0, /* copied from above */ 
+	{ 9847,-3091,-928,-8485,16345,2225,-715,595,7103 } }, 
     { "SONY DSLR-A700", 254,
 	{ 5775,-805,-359,-8574,16295,2391,-1943,2341,7249 } }
   };
@@ -7316,6 +7318,10 @@ e410: load_raw = &CLASS olympus_e410_load_raw;
   } else if (!strcmp(model,"DSLR-A200")) {
     height = raw_height += 8;
     load_raw = &CLASS sony_arw_load_raw;
+  } else if (!strcmp(model,"DSLR-A350")) { 
+    height = (raw_height += 8) - 4; 
+    load_raw = &CLASS sony_arw_load_raw; 
+    maximum = 0x1ffe; 
   } else if (!strncmp(model,"P850",4)) {
     maximum = 0xf7c;
   } else if (!strcmp(model,"C330")) {
