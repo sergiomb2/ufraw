@@ -1900,6 +1900,19 @@ const wb_data wb_preset[] = {
   { "Panasonic", "DMC-LX1", Cloudy, 0,		{ 2.003788, 1, 1.310606, 0 } },
   { "Panasonic", "DMC-LX1", Fluorescent, 0,	{ 1.098485, 1, 2.272727, 0 } },
 
+  { "Panasonic", "DMC-LX2", Daylight, -3, 	{ 2.456274, 1, 1.806084, 0 } },
+  { "Panasonic", "DMC-LX2", Daylight, 0, 	{ 2.114068, 1, 1.726236, 0 } },
+  { "Panasonic", "DMC-LX2", Daylight, 3, 	{ 1.916350, 1, 1.585551, 0 } },
+  { "Panasonic", "DMC-LX2", Cloudy, -3, 	{ 2.714829, 1, 1.650190, 0 } },
+  { "Panasonic", "DMC-LX2", Cloudy, 0, 		{ 2.338403, 1, 1.577947, 0 } },
+  { "Panasonic", "DMC-LX2", Cloudy, 3, 		{ 2.121673, 1, 1.448669, 0 } },
+  { "Panasonic", "DMC-LX2", Shade, -3, 		{ 2.939163, 1, 1.577947, 0 } },
+  { "Panasonic", "DMC-LX2", Shade, 0, 		{ 2.532319, 1, 1.509506, 0 } },
+  { "Panasonic", "DMC-LX2", Shade, 3, 		{ 2.292776, 1, 1.384030, 0 } },
+  { "Panasonic", "DMC-LX2", Fluorescent, -3, 	{ 1.581749, 1, 2.524715, 0 } },
+  { "Panasonic", "DMC-LX2", Fluorescent, 0, 	{ 1.365019, 1, 2.410646, 0 } },
+  { "Panasonic", "DMC-LX2", Fluorescent, 3, 	{ 1.235741, 1, 2.212928, 0 } },
+
   /* It seems that the *ist D WB settings are not really presets. */
   { "PENTAX", "*ist D", Daylight, 0,		{ 1.460938, 1, 1.019531, 0 } },
   { "PENTAX", "*ist D", Shade, 0,		{ 1.734375, 1, 1.000000, 0 } },
