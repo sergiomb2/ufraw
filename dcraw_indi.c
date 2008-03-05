@@ -31,9 +31,10 @@ extern const float d65_white[3];
 
 #define CLASS
 
-#define FORC3 for (c=0; c < 3; c++)
-#define FORC4 for (c=0; c < 4; c++)
-#define FORCC for (c=0; c < colors; c++)
+#define FORC(cnt) for (c=0; c < cnt; c++)
+#define FORC3 FORC(3)
+#define FORC4 FORC(4)
+#define FORCC FORC(colors)
 
 #define SQR(x) ((x)*(x))
 #define LIM(x,min,max) MAX(min,MIN(x,max))
