@@ -985,7 +985,7 @@ const wb_data wb_preset[] = {
   { "NIKON", "D200", "9300K", 0,		{ 2.367188, 1, 1.070313, 0 } },
   { "NIKON", "D200", "10000K", 0,		{ 2.453125, 1, 1.035156, 0 } },
 
-  /* D200 basic + fine tune WB presets */
+  /* D300 basic + fine tune WB presets */
   { "NIKON", "D300", Incandescent, -6,        { 1.097656, 1, 1.898438, 0 } },
   { "NIKON", "D300", Incandescent, -5,        { 1.085938, 1, 1.929687, 0 } },
   { "NIKON", "D300", Incandescent, -4,        { 1.070313, 1, 1.964844, 0 } },
