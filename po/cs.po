@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ufraw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-01-04 16:00+0100\n"
-"PO-Revision-Date: 2007-12-23 12:15+0010\n"
+"PO-Revision-Date: 2008-03-06 19:15+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
 "MIME-Version: 1.0\n"
@@ -46,12 +46,11 @@ msgstr "%s: přepsat '%s'?"
 msgid "--silent option is valid only in batch mode"
 msgstr "--silent volba je platná pouze v dávkovém režimu"
 
-#, fuzzy
 msgid "--rotate option is valid only in batch mode"
-msgstr "--silent volba je platná pouze v dávkovém režimu"
+msgstr "--rotate volba je platná pouze v dávkovém režimu"
 
 msgid "Extracting embedded image is not supported in interactive mode"
-msgstr "Vyjmutí vloženého snímku není podporováno v interaktivním režimu"
+msgstr "Vyjmutí vloženého snímku není v interaktivním režimu podporováno"
 
 msgid "Raw images"
 msgstr "Raw snímky"
@@ -127,6 +126,8 @@ msgid ""
 "ID file %s does not appear to be a regular file\n"
 "%s\n"
 msgstr ""
+"ID soubor %s nevypadá jako platný soubor\n"
+"%s\n"
 
 #, c-format
 msgid ""
@@ -381,6 +382,8 @@ msgid ""
 "--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
 "                      the image (default camera).\n"
 msgstr ""
+"--rotate=camera|no    Otočit snímek podle nastavení fotoaparátu nebo\n"
+"                      neotáčet snímek (standardně dle fotoaparátu).\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -481,14 +484,14 @@ msgstr "'%s' není platná volba interpolace."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
-msgstr "'%s' není platná volba obnovení světel."
+msgstr "'%s' není platná volba rekonstrukci světel."
 
 #, c-format
 msgid "'%s' is not a valid clip option."
 msgstr "'%s' není platná volba oříznutí světel."
 
 msgid "you can not specify both --shrink and --size"
-msgstr "nemůžete specifikovat současně --shrink a --size"
+msgstr "nemůžete použít současně --shrink a --size"
 
 #, c-format
 msgid "'%d' is not a valid bit depth."
@@ -496,7 +499,7 @@ msgstr "'%d' není platná bitová hloubka."
 
 #, c-format
 msgid "Output type '%s' is deprecated"
-msgstr "Výstupní typ '%s' je nepoužívaný"
+msgstr "Výstupní typ '%s' je již nepoužívaný"
 
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw byl kompilován bez TIFF podpory."
@@ -519,9 +522,9 @@ msgstr "'%s' není platný výstupní typ pro vložený snímek."
 msgid "'%d' is not a valid bit depth for embedded image."
 msgstr "'%d' není platná bitová hloubka pro vložený snímek."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid rotate option."
-msgstr "'%s' není platné pro volbu create-id."
+msgstr "'%s' není platné pro volbu rotate."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
@@ -765,7 +768,7 @@ msgid "Remote Gimp command"
 msgstr "Příkaz pro 'remote Gimp'"
 
 msgid "Reset command to default"
-msgstr "Příkaz nastavení na standardní hodnoty"
+msgstr "Nastavení na standardní hodnoty"
 
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Blikat indikátory pře/podexpozice"
@@ -893,7 +896,7 @@ msgid "No Bayer pattern"
 msgstr "Žádná Baeyrova matice"
 
 msgid "Apply color smoothing"
-msgstr "Nastavit vyhlazení barev"
+msgstr "Použít vyhlazení barev"
 
 msgid "Denoise"
 msgstr ""
@@ -975,7 +978,7 @@ msgid "Relative colorimetric"
 msgstr "Relativní kolorimetrický"
 
 msgid "Saturation"
-msgstr "Saturace"
+msgstr "Sytost"
 
 msgid "Absolute colorimetric"
 msgstr "Absolutní kolorimetrický"
@@ -992,10 +995,10 @@ msgstr "Vypnout soft proofing"
 #. End of Color management page
 #. Start of Corrections page
 msgid "Correct luminosity, saturation"
-msgstr "Upravit jas, saturaci"
+msgstr "Upravit jas, sytost"
 
 msgid "Reset saturation to default"
-msgstr "Nastavit saturaci na standardní"
+msgstr "Nastavit sytost na standardní"
 
 msgid ""
 "Auto adjust curve\n"
@@ -1102,7 +1105,7 @@ msgid "Only"
 msgstr "Pouze"
 
 msgid "Save image defaults "
-msgstr "Uložit implicitní nastavení snímku "
+msgstr "Uložit konfiguraci ufraw "
 
 msgid ""
 "Save current image manipulation parameters as defaults.\n"
@@ -1175,34 +1178,34 @@ msgid "Warning: EXIF data will not be sent to output"
 msgstr "Upozornění: EXIF údaje nebudou předány na výstup"
 
 msgid "RGB histogram"
-msgstr "RGB histogram"
+msgstr "Histogram dle RGB"
 
 msgid "R+G+B histogram"
-msgstr "R+G+B histogram"
+msgstr "Histogram dle R+G+B"
 
 msgid "Luminosity histogram"
-msgstr "Jasový histogram"
+msgstr "Histogram dle jasu"
 
 msgid "Value (maximum) histogram"
-msgstr "Hodnota (maximum) histogram"
+msgstr "Histogram dle hodnoty (maximum)"
 
 msgid "Saturation histogram"
-msgstr "Histogram saturace"
+msgstr "Histogram dle sytosti barev"
 
 msgid "Average:"
 msgstr "Průměr:"
 
 msgid "Std. deviation:"
-msgstr "Std. odchylka:"
+msgstr "Std. odch.:"
 
 msgid "Overexposed:"
-msgstr "Přeexponováno:"
+msgstr "Přeexp.:"
 
 msgid "Indicate"
 msgstr "Ukázat"
 
 msgid "Underexposed:"
-msgstr "Podexponováno:"
+msgstr "Podexp.:"
 
 msgid "Options"
 msgstr "Volby"
