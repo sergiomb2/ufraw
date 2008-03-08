@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-04 16:00+0100\n"
-"PO-Revision-Date: 2007-12-27 01:29+0100\n"
+"POT-Creation-Date: 2008-03-09 00:21+0100\n"
+"PO-Revision-Date: 2008-01-13 11:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
 "MIME-Version: 1.0\n"
@@ -48,12 +48,12 @@ msgstr "%s: nadpisaæ '%s'?"
 msgid "--silent option is valid only in batch mode"
 msgstr "opcja --silent dzia³a tylko w trybie batch"
 
-#, fuzzy
 msgid "--rotate option is valid only in batch mode"
-msgstr "opcja --silent dzia³a tylko w trybie batch"
+msgstr "opcja --rotate dzia³a tylko w trybie batch"
 
 msgid "Extracting embedded image is not supported in interactive mode"
-msgstr "Ekstrakcja do³±czonego obrazu nie jest "
+msgstr ""
+"Ekstrakcja do³±czonego obrazu nie jest obs³ugiwana w trybie interaktywnym"
 
 msgid "Raw images"
 msgstr "Zdjêcia RAW"
@@ -129,6 +129,8 @@ msgid ""
 "ID file %s does not appear to be a regular file\n"
 "%s\n"
 msgstr ""
+"Plik ID %s nie wydaje siê byæ poprawnym plikiem\n"
+"%s\n"
 
 #, c-format
 msgid ""
@@ -382,6 +384,9 @@ msgid ""
 "--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
 "                      the image (default camera).\n"
 msgstr ""
+"--rotate=camera|no    Obróciæ zdjêcie zgodnie z danymi aparatu albo nie "
+"obracaæ\n"
+"                      (domy¶lnie obróciæ).\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -524,9 +529,9 @@ msgstr ""
 msgid "'%d' is not a valid bit depth for embedded image."
 msgstr "'%d' nie jest poprawn± ilo¶ci± bitów dla do³±czonego obrazu."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid rotate option."
-msgstr "'%s' nie jest poprawn± opcj± tworzenia plików ID."
+msgstr "'%s' nie jest poprawn± opcj± obrotu."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
@@ -905,7 +910,7 @@ msgid "Apply color smoothing"
 msgstr "Zastosuj wyg³adzanie kolorów"
 
 msgid "Denoise"
-msgstr ""
+msgstr "Odszumianie"
 
 msgid "Threshold for wavelet denoising"
 msgstr "Próg falkowego odszumiania"
@@ -1297,22 +1302,22 @@ msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr ""
 "Nie mogê u¿yæ balansu bieli aparatu, stosujê automatyczny balans bieli."
 
+#. Error was not already set before
 #, c-format
-msgid "Image filename can not be the same as ID filename '%s'"
-msgstr "Nazwa pliku obrazu nie mo¿e byæ taka sama jak pliku ID '%s'"
+msgid "Error creating file '%s'."
+msgstr "B³±d tworzenia pliku '%s'."
 
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "B³±d tworzenia pliku."
 
-#. Error was not already set before
-#, c-format
-msgid "Error creating file '%s'."
-msgstr "B³±d tworzenia pliku '%s'."
-
 msgid "Saving image"
 msgstr "Zapisywanie obrazu"
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr "Nazwa pliku obrazu nie mo¿e byæ taka sama jak pliku ID '%s'"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
