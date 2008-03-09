@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.8 2007/12/30 01:07:14 lexort Exp $
+$Id: README-processing.txt,v 1.9 2008/03/09 13:55:45 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -48,6 +48,10 @@ http://www.luminous-landscape.com/tutorials/understanding-series/u-raw-files.sht
 
 http://regex.info/blog/2006-12-08/303
 http://regex.info/blog/photo-tech/color-spaces-page1/
+
+=== other converters
+
+http://www.rawtherapee.com/data/RT-Internal-Workflow_2.3.pdf
 
 == Reading Raw files
 
