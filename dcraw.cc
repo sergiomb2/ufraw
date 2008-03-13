@@ -5371,6 +5371,7 @@ void CLASS parse_tiff (int base)
       is_raw = 0;
   if (!dng_version && tiff_bps == 8 && tiff_compress == 1 &&
 	tiff_ifd[raw].phint == 1) is_raw = 0;
+  if (tiff_bps == 8 && tiff_samples == 4) is_raw = 0;
   for (i=0; i < (int) tiff_nifds; i++)
     if (i != raw && tiff_ifd[i].samples == max_samp &&
 	tiff_ifd[i].width * tiff_ifd[i].height / SQR(tiff_ifd[i].bps+1) >
