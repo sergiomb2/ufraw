@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-03-14 16:15+0100\n"
-"PO-Revision-Date: 2008-03-14 10:41+0100\n"
+"PO-Revision-Date: 2008-03-14 17:10+0100\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -291,7 +291,7 @@ msgstr ""
 
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr ""
-"--linearity=LINEARITY Lineairiteit van de basiscurve (standaard 0.10).\n"
+"--linearity=LINEARITY Lineariteit van de basiscurve (standaard 0.10).\n"
 
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
@@ -806,7 +806,7 @@ msgid ""
 "Homepage: http://ufraw.sourceforge.net/\n"
 "\n"
 msgstr ""
-"De <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is een "
+"<b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is een "
 "programma om\n"
 "raw afbeeldingen van digitale cameras te lezen en manipuleren.\n"
 "UFRaw gebruikt <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
@@ -877,7 +877,7 @@ msgid "Select a spot on the preview image to apply spot white balance"
 msgstr "Selecteer een plek in het voorbeeld voor \"spot\" witbalans"
 
 msgid "Chan. multipliers:"
-msgstr "Kan. multiplicatoren:"
+msgstr "Kanaal multiplicatoren:"
 
 msgid "Bayer pattern interpolation"
 msgstr "Bayer patroon interpolatie"
@@ -1077,7 +1077,7 @@ msgid "Save"
 msgstr "Opslaan"
 
 msgid "Path"
-msgstr "Pad"
+msgstr "Pad "
 
 msgid "Select output path"
 msgstr "Kies output pad"
@@ -1101,16 +1101,16 @@ msgid "Create ID file "
 msgstr "Maak ID bestand "
 
 msgid "No"
-msgstr "Geen"
+msgstr "Nee"
 
 msgid "Also"
-msgstr "Ook"
+msgstr "Allebei"
 
 msgid "Only"
 msgstr "Alleen"
 
 msgid "Save image defaults "
-msgstr "Opslaan afbeeldings verstekwaarden"
+msgstr "Afbeeldings instellingen bewaren "
 
 msgid ""
 "Save current image manipulation parameters as defaults.\n"
@@ -1126,7 +1126,7 @@ msgid "Always"
 msgstr "Altijd"
 
 msgid "Just this once"
-msgstr "Voor deze keer dan"
+msgstr "Alleen deze keer"
 
 msgid "Remember output path"
 msgstr "Bewaar output pad"
@@ -1146,7 +1146,7 @@ msgstr "Waarde"
 
 #. Fill table with EXIF tags
 msgid "Camera maker"
-msgstr ""
+msgstr "Camera merk"
 
 msgid "Camera model"
 msgstr ""
