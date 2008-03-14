@@ -43,11 +43,18 @@ Name: "MRWAssociation"; Description: "MRW - Minolta Raw"; GroupDescription: "Ass
 [Files]
 Source: "ufraw.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "ufraw-batch.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "po\cs.mo"; DestDir: "{app}\lib\locale\cs\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\da.mo"; DestDir: "{app}\lib\locale\da\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
+Source: "po\es.mo"; DestDir: "{app}\lib\locale\es\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\fr.mo"; DestDir: "{app}\lib\locale\fr\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
+Source: "po\it.mo"; DestDir: "{app}\lib\locale\it\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\ja.mo"; DestDir: "{app}\lib\locale\ja\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
+Source: "po\ko.mo"; DestDir: "{app}\lib\locale\ko\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
+Source: "po\nl.mo"; DestDir: "{app}\lib\locale\nl\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
+Source: "po\pl.mo"; DestDir: "{app}\lib\locale\pl\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\pt.mo"; DestDir: "{app}\lib\locale\pt\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\ru.mo"; DestDir: "{app}\lib\locale\ru\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
+Source: "po\sv.mo"; DestDir: "{app}\lib\locale\sv\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\liblcms-1-ufraw.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\bzip2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "ufraw-gimp.exe"; DestDir: "{app}\lib\gimp\2.0\plug-ins"; Flags: ignoreversion
