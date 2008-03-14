@@ -2,6 +2,7 @@
 Name=UFRaw
 GenericName=Raw image converter
 GenericName[cs]=Konvertor raw snímků
+GenericName[nl]=Camera Raw Conversie
 GenericName[da]=Raw-billedbehandler
 GenericName[es]=Conversor de imágenes raw
 GenericName[it]=Convertitore per immagini Raw
@@ -11,6 +12,7 @@ GenericName[pt]=Conversor de imagens cruas
 GenericName[ru]=Проявитель цифровых негативов
 Comment=A utility to read and manipulate raw images from digital cameras
 Comment[cs]=Program ke čtení a manipulaci raw snímků z digitálních fotoaparátů
+Comment[nl]=Programma om digitale camera RAW bestanden te bewerken en converteren
 Comment[da]=Et program til at læse og behandle raw-billeder fra digitalkameraer
 Comment[es]=Programa para leer y manipular imágenes raw de cámaras digitales
 Comment[it]=Gestione immagini Raw realizzate con fotocamere digitali
