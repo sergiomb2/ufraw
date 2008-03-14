@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-04 16:00+0100\n"
+"POT-Creation-Date: 2008-03-14 16:15+0100\n"
 "PO-Revision-Date: 2008-01-04 16:05+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
@@ -1292,22 +1292,22 @@ msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr ""
 "Kamerahvidbalance kan ikke anvendes, skifter to automatisk hvidbalance."
 
+#. Error was not already set before
 #, c-format
-msgid "Image filename can not be the same as ID filename '%s'"
-msgstr "Billedfilnavnet kan ikke være det samme som ID-filnavnet '%s'"
+msgid "Error creating file '%s'."
+msgstr "Fejl ved dannelse af fil '%s'."
 
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "Fejl ved dannelse af fil."
 
-#. Error was not already set before
-#, c-format
-msgid "Error creating file '%s'."
-msgstr "Fejl ved dannelse af fil '%s'."
-
 msgid "Saving image"
 msgstr "Gemmer billede"
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr "Billedfilnavnet kan ikke være det samme som ID-filnavnet '%s'"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."

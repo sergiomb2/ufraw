@@ -1,77 +1,75 @@
-# Polish translation
-# Copyright (C) 2007
-# This file is distributed under the same license as the UFRaw package.
-# Tomasz Goliñski tomaszg@alpha.uwb.edu.pl, 2007.
-# 
+# translation of nl.po to Nederlands
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Simon Oosthoek <simon@margo.student.utwente.nl>, 2008.
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw 0.13\n"
+"Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-03-14 16:15+0100\n"
-"PO-Revision-Date: 2008-01-13 11:58+0100\n"
-"Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
-"Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
+"PO-Revision-Date: 2008-03-14 10:41+0100\n"
+"Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
+"Language-Team: Nederlands <en@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Polish\n"
-"X-Poedit-Country: POLAND\n"
-"X-Poedit-Basepath: /root/src/gimp/gadzety/ufraw-cvs\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
-msgstr "Otwiera okno nawigacji"
+msgstr "Open het navigator window "
 
 msgid "No input file, nothing to do."
-msgstr "Brak pliku wej¶ciowego, nic do roboty."
+msgstr "Geen input file, niks te doen"
 
 #, c-format
 msgid "Loaded %s%s"
-msgstr "Wczytano %s%s"
+msgstr "Ingelezen %s%s"
 
 #, c-format
 msgid "Saved %s%s"
-msgstr "Zapisano %s%s"
+msgstr "Opgeslagen %s%s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
-msgstr "t"
+msgstr "j"
 
 #. First letter of the word 'no' for the y/n question
 msgid "n"
-msgstr "n"
+msgstr ""
 
 #, c-format
 msgid "%s: overwrite '%s'?"
-msgstr "%s: nadpisaæ '%s'?"
+msgstr "%s: overschrijven '%s'?"
 
 msgid "--silent option is valid only in batch mode"
-msgstr "opcja --silent dzia³a tylko w trybie batch"
+msgstr "--silent parameter is alleen geldig in batch modus"
 
 msgid "--rotate option is valid only in batch mode"
-msgstr "opcja --rotate dzia³a tylko w trybie batch"
+msgstr "--rotate optie is alleen geldig in batch modus"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
-"Ekstrakcja do³±czonego obrazu nie jest obs³ugiwana w trybie interaktywnym"
+"Ingebedde afbeelding uitpakken is niet ondersteund in interactieve modus"
 
 msgid "Raw images"
-msgstr "Zdjêcia RAW"
+msgstr "RAW afbeeldingen"
 
 msgid "UFRaw ID files"
-msgstr "Pliki UFRaw ID"
+msgstr "UFRaw ID bestanden"
 
 msgid "Raw jpg's"
-msgstr "Raw jpg's"
+msgstr "RAW jpg's"
 
 msgid "Raw tif's"
-msgstr "Raw tif's"
+msgstr "RAW tif's"
 
 msgid "All files"
-msgstr "Wszystkie pliki"
+msgstr "Alle bestanden"
 
 msgid "Show hidden files"
-msgstr "Poka¿ ukryte pliki"
+msgstr "Laat onzichtbare bestanden zien"
 
 #. Internal data
 #. confSize, version
@@ -91,45 +89,45 @@ msgstr "Poka¿ ukryte pliki"
 #. curveIndex, curveCount
 #. Curve data defaults
 msgid "Manual curve"
-msgstr "Krzywa manualna"
+msgstr "Handmatige curve"
 
 msgid "Linear curve"
-msgstr "Krzywa liniowa"
+msgstr "Lineaire curve"
 
 msgid "Custom curve"
-msgstr "Krzywa u¿ytkownika"
+msgstr "Custom curve"
 
 msgid "Camera curve"
-msgstr "Krzywa z aparatu"
+msgstr "Camera curve"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
 msgid "sRGB"
-msgstr "sRGB"
+msgstr ""
 
 msgid "System default"
-msgstr "Domy¶lny systemowy"
+msgstr "Systeem standaardwaarde"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
-msgstr "Próbujê skonwertowaæ .ufrawrc z wersji UFRaw-0.4 lub wcze¶niejszej"
+msgstr "Proberen oudere .ufrawrc (0.4 of ouder) te converteren"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.6 or earlier"
-msgstr "Próbujê skonwertowaæ .ufrawrc z wersji UFRaw-0.6 lub wcze¶niejszej"
+msgstr "Proberen oudere .ufrawrc (0.6 of ouder) te converteren"
 
 #, c-format
 msgid "UFRaw version in .ufrawrc is not supported"
-msgstr "Wersja UFRaw w pliku .ufrawrc nie jest obs³ugiwana"
+msgstr "UFRaw versie in .ufrawrc wordt niet ondersteund"
 
 #, c-format
 msgid "Too many anchors for curve '%s'"
-msgstr "Za du¿o wêz³ów krzywej '%s'"
+msgstr "Teveel ijkpunten voor curve '%s'"
 
 #, c-format
 msgid ""
 "ID file %s does not appear to be a regular file\n"
 "%s\n"
 msgstr ""
-"Plik ID %s nie wydaje siê byæ poprawnym plikiem\n"
+"ID bestand %s lijkt geen normale file te zijn\n"
 "%s\n"
 
 #, c-format
@@ -137,7 +135,7 @@ msgid ""
 "Can't open ID file %s for reading\n"
 "%s\n"
 msgstr ""
-"Nie mogê odczytaæ pliku ID %s\n"
+"Kan ID bestand %s niet lezen\n"
 "%s\n"
 
 #, c-format
@@ -145,7 +143,7 @@ msgid ""
 "Error parsing '%s'\n"
 "%s"
 msgstr ""
-"B³±d przetwarzania '%s'\n"
+"Fout bij interpreteren van '%s'\n"
 "%s"
 
 #, c-format
@@ -153,26 +151,27 @@ msgid ""
 "Can't open file %s for writing\n"
 "%s\n"
 msgstr ""
-"Nie mogê zapisaæ pliku %s\n"
+"Kan bestand %s niet schrijven\n"
 "%s\n"
 
 msgid "cannot --create-id with stdout"
-msgstr "nie mo¿na utworzyæ pliku ID (--create-id) ze standardowym wyj¶ciem"
+msgstr "kan optie --create-id niet uitvoeren zonder stdout"
 
 msgid "UFRaw "
-msgstr "UFRaw "
+msgstr ""
 
 msgid " - Unidentified Flying Raw converter for digital camera images.\n"
-msgstr " - Unidentified Flying Raw konwerter zdjêæ z aparatów cyfrowych\n"
+msgstr ""
+" - Unidentified Flying Raw converter voor digitale camera afbeeldingen.\n"
 
 msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
-msgstr "Sk³adnia: ufraw [ opcje ... ] [ pliki-raw ... ]\n"
+msgstr "Gebruik: ufraw [ opties ... ] [ raw-afbeeldingsbestanden ... ]\n"
 
 msgid "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
-msgstr "          ufraw-batch [ opcje ... ] [ pliki-raw ... ]\n"
+msgstr "       ufraw-batch [ opties ... ] [ raw-afbeeldingsbestanden ... ]\n"
 
 msgid "       ufraw [ options ... ] [ default-directory ]\n"
-msgstr "          ufraw [ opcje ... ] [ domy¶lny-katalog ]\n"
+msgstr "       ufraw [ opties ... ] [ bij-verstek-map ]\n"
 
 msgid ""
 "By default 'ufraw' displays a preview window for each raw image allowing\n"
@@ -181,42 +180,44 @@ msgid ""
 "To process the images with no questions asked (and no preview) use\n"
 "'ufraw-batch'.\n"
 msgstr ""
-"Domy¶lnie 'ufraw' wy¶wietla okno podgl±du dla ka¿dego pliku raw "
-"umo¿liwiaj±c\n"
-"u¿ytkownikowi dopasowanie parametrów obrazu przez zapisaniem. Je¿eli nie "
-"podano\n"
-"plików RAW w linii poleceñ, UFRaw wy¶wietli okno wyboru pliku. Aby "
-"przetwarzaæ\n"
-"zdjêcia bez pytañ (i bez podgl±du) proszê u¿yæ 'ufraw-batch'.\n"
+"Standaard laat 'ufraw' een voorbeeldvenster zien voor elke RAW afbeelding,\n"
+" zodat de gebruiker de parameters kan afstemmen voor het opslaan. Als er "
+"geen\n"
+"RAW afbeeldingen mee zijn gegeven vanaf de commandoregel zal UFRAW\n"
+"een bestandskeuze venster laten zien.\n"
+"Als deze interactiviteit niet gewenst is, gebruik dan 'ufraw-batch'.\n"
 
 msgid ""
 "The input files can be either raw images or ufraw's ID files. ID files\n"
 "contain a raw image filename and the parameters for handling the image.\n"
 "One can also use an ID file with the option:\n"
 msgstr ""
-"Plikami wej¶ciowymi mog± byæ albo pliki RAW albo pliki ID ufrawa. Pliki ID\n"
-"zawieraj± nazwê pliku RAW i parametry obróbki obrazu.\n"
-"Mo¿na tak¿e u¿yæ pliku ID z opcj±:\n"
+"De invoerbestanden kunnen RAW bestanden zijn, of ufraw ID bestanden.\n"
+"ID bestanden bevatten de RAW bestandsnaam en de parameters om deze te "
+"interpreteren.\n"
+"Het is ook mogelijk om een ID bestand te gebruiken met de optie:\n"
 
 msgid ""
 "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
 msgstr ""
-"--conf=ID-file        Zastosuj parametry z pliku ID do innych plików RAW.\n"
+"--conf=ID-bestand        Pas de parameters in het ID-bestand toe op andere "
+"raw bestanden.\n"
 
 msgid "The rest of the options are separated into two groups.\n"
-msgstr "Pozosta³e opcje podzielone s± na dwie grupy.\n"
+msgstr "Verdere opties zijn onderverdeeld in twee groepen.\n"
 
 msgid "The options which are related to the image manipulation are:\n"
-msgstr "Opcje zwi±zane z parametrami obrazu:\n"
+msgstr ""
+"De opties die betrekking hebben op de verandering van de afbeelding zijn:\n"
 
 msgid "--wb=camera|auto      White balance setting.\n"
-msgstr "--wb=camera|auto      Ustawienie balansu bieli.\n"
+msgstr "--wb=camera|auto      Wit balans instelling.\n"
 
 msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
-msgstr "--temperature=TEMP    Temperatura koloru w  kelwinach (2000 - 7000).\n"
+msgstr "--temperature=TEMP    Kleurtemperatuur in Kelvin (2000 - 7000).\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
-msgstr "--green=GREEN         Normalizacja zielonego kana³u.\n"
+msgstr "--green=GROEN         Groen kleur normalisatie.\n"
 
 msgid ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
@@ -225,20 +226,19 @@ msgid ""
 "                      (default camera if such exists, linear otherwise).\n"
 msgstr ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
-"                      Typ krzywej bazowej. CURVE mo¿e byæ dowln±\n"
-"                      krzyw±, która by³a uprzednio za³adowana w GUI.\n"
-"                      (domy¶lna jest krzywa z aparatu, je¿eli taka "
-"istnieje,\n"
-"                      liniowa w przeciwnym wypadku).\n"
+"                      Te gebruiken type basis toon curve. CURVE kan elke "
+"curve\n"
+"                      zijn die eerder in de GUI was geladen.\n"
+"                      (camera curve, indien aanwezig, anders lineair).\n"
 
 msgid ""
 "--base-curve-file=file\n"
 "                      Use base tone curve included in specified file.\n"
 "                      Overrides --base-curve option.\n"
 msgstr ""
-"--base-curve-file=plik\n"
-"                      U¿yj krzyw± bazow± z podanego pliku.\n"
-"                      Anuluje opcjê --base-curve.\n"
+"--base-curve-file=bestand\n"
+"                      Gebruik basis toon curve in bestand.\n"
+"                      Heeft prioriteit boven --base-curve optie.\n"
 
 msgid ""
 "--curve=manual|linear|CURVE\n"
@@ -247,16 +247,16 @@ msgid ""
 "                      (default linear).\n"
 msgstr ""
 "--curve=manual|linear|CURVE\n"
-"                      Typ krzywej luminancji. CURVE mo¿e byæ dowln±\n"
-"                      krzyw±, która by³a uprzednio za³adowana w GUI.\n"
-"                      (domy¶lna jest krzywa liniowa).\n"
+"                      Type of luminosity curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default linear).\n"
 
 msgid ""
 "--curve-file=file     Use luminosity curve included in specified file.\n"
 "                      Overrides --curve option.\n"
 msgstr ""
-"--curve-file=file     U¿yj krzyw± luminancji z podanego pliku.\n"
-"                      Anuluje opcjê --curve.\n"
+"--curve-file=bestand     Gebruik helderheids curve in bestand.\n"
+"                      Heeft prioriteit boven --curve optie.\n"
 
 msgid ""
 "--restore=clip|lch|hsv\n"
@@ -267,151 +267,150 @@ msgid ""
 "                      (default lch).\n"
 msgstr ""
 "--restore=clip|lch|hsv\n"
-"                      Przywróæ detale dla ujemnych korekt EV.\n"
-"                      'clip' nie przywraca niczego - brak artefaktów.\n"
-"                      'lch' przywraca w przestrzeni LCH - miêkkie detale.\n"
-"                      'hsv' przywraca w przestrzni HSV - ostre detale.\n"
-"                      (domy¶lnie lch).\n"
+"                      Herstel details voor negatieve EV.\n"
+"                      'clip' herstelt niets - zonder "
+"artefacten.                      'lch' herstelt in LCH space - geeft zachte "
+"details.\n"
+"                      'hsv' herstelt in HSV space - geeft scherpe details.\n"
+"                      (standaard: lch).\n"
 
 msgid ""
 "--clip=digital|film   Clip highlights for positive EV.\n"
 "                      'digital' linear digital sensor response.\n"
 "                      'film' emulate soft film response. (default digital).\n"
 msgstr ""
-"--clip=digital|film   Ucinanie ¶wiate³ dla dodatnich korekt EV.\n"
-"                      'digital' - liniowa charakterystyka cyfrowego "
-"sensora.\n"
-"                      'film' - emuluje miêkk± charakterystykê kliszy. "
-"(domy¶lnie digital).\n"
+"--clip=digital|film   Clip highlights voor positieve EV.\n"
+"                      'digital' lineaire digitale sensor response.\n"
+"                      'film' emuleert soft film response. (standaard: "
+"digital).\n"
 
 msgid ""
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 msgstr ""
-"--gamma=GAMMA         Korekta gamma krzywej bazowej (domy¶lnie 0.45).\n"
+"--gamma=GAMMA         Gamma instelling van de basiscurve (standaard 0.45).\n"
 
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
-msgstr "--linearity=LINEARITY Liniowo¶æ krzywej bazowej (domy¶lnie 0.10).\n"
+msgstr ""
+"--linearity=LINEARITY Lineairiteit van de basiscurve (standaard 0.10).\n"
 
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
 msgstr ""
-"--saturation=SAT      Korekta satuacji (domy¶lnie 1.0, 0 odpowiada plikowi "
-"czarno-bia³emu).\n"
+"--saturation=SAT      Verzadigings aanpassing (standaard 1.0, 0 voor  "
+"Zwartwit output).\n"
 
 msgid ""
 "--wavelet-denoising-threshold=THRESHOLD\n"
 "                      Wavelet denoising threshold (default 0.0).\n"
 msgstr ""
-"--wavelet-denoising-threshold=THRESHOLD\n"
-"                      Próg odszumiania falkowego (domy¶lnie 0.0).\n"
+"--wavelet-denoising-threshold=DREMPELWAARDE\n"
+"                      Wavelet ontruis drempelwaarde (standaard 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
 "                      Auto exposure or exposure correction in EV (default "
 "0).\n"
 msgstr ""
-"--exposure=auto|EXPOSURE\n"
-"                      Automatyczna korekta ekspozycji lub korekta ekspozycji "
-"w EV (domy¶lnie 0).\n"
+"--exposure=auto|BELICHTING\n"
+"                      Auto belichting of belichting aanpassen met BELICHTING "
+"in EV (standaard: 0).\n"
 
 msgid ""
 "--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"
 msgstr ""
-"--black-point=auto|BLACK\n"
-"                      Automatyczne dopasowanie punktu czerni lub warto¶æ "
-"punktu czerni (domy¶lnie 0).\n"
+"--black-point=auto|ZWART\n"
+"                      Auto zwart-punt of zwart-punt waarde (standaard: 0).\n"
 
 msgid ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"
 msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
-"                      Stosowany algorytm interpolacji (domy¶lnie ahd).\n"
+"                      Interpolatie algoritme (standaard: ahd).\n"
 
 msgid "The options which are related to the final output are:\n"
-msgstr "Opcje zwi±zane z plikiem wynikowym:\n"
+msgstr "De opties van toepassing op de uiteindelijke output zijn:\n"
 
 msgid "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
-msgstr "--shrink=FACTOR       Zmniejszenie obrazu FACTOR razy (domy¶lnie 1).\n"
+msgstr "--shrink=FACTOR       Krimp de afbeelding met FACTOR (standaard: 1).\n"
 
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
-msgstr "--size=SIZE           Zmniejsz max(szeroko¶æ,wysoko¶æ) do SIZE.\n"
+msgstr "--size=MAAT           Schaal max(hoogte, breedte) terug tot MAAT.\n"
 
 msgid ""
 "--out-type=ppm|tiff|png|jpeg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
 "--out-type=ppm|tiff|png|jpeg|fits\n"
-"                      Format pliku wyj¶ciowego (domy¶lnie ppm).\n"
+"                      Output bestandsformaat (standaard ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
-msgstr "--out-depth=8|16      Ilo¶æ blitów pliku wyj¶ciowego (domy¶lnie 8).\n"
+msgstr "--out-depth=8|16      Output bit diepte per kanaal (standaard: 8).\n"
 
 msgid ""
 "--create-id=no|also|only\n"
 "                      Create no|also|only ID file (default no).\n"
 msgstr ""
 "--create-id=no|also|only\n"
-"                      Utwórz plik ID nie|tak¿e|tylko  (domy¶lnie no).\n"
+"                      ID bestand aanmaken; nee|ook|alleen (standaard: no).\n"
 
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
-msgstr "--compression=VALUE   Kompresja JPEG (0-100, domyslnie 85).\n"
+msgstr "--compression=WAARDE   JPEG compressie (0-100, standaard 85).\n"
 
 msgid ""
 "--[no]exif            Embed EXIF in output JPEG or PNG (default embed "
 "EXIF).\n"
 msgstr ""
-"--[no]exif            Do³±cz EXIF do wyj¶ciowego pliku JPEG lub PNG "
-"(domy¶lnie - do³±cz).\n"
+"--[no]exif            Embed EXIF in output JPEG of PNG (standaard embed "
+"EXIF).\n"
 
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
 "nozip).\n"
 msgstr ""
-"--[no]zip             W³±cz [wy³±cz] kompresjê zip pliku TIFF (domy¶lnie "
-"nozip).\n"
+"--[no]zip             Gebruik [geen] TIFF zip (deflate) compressie "
+"(standaard: nozip).\n"
 
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"
 msgstr ""
-"--embedded-image      Zapisz obraz podgl±du za³±czony w pliku RAW\n"
-"                      zamiast konwertowaæ obraz RAW.\n"
+"--embedded-image      Extraheer de voorbeeld afbeelding uit het raw bestand\n"
+"                      in plaats van het raw bestand te converteren.\n"
 
 msgid ""
 "--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
 "                      the image (default camera).\n"
 msgstr ""
-"--rotate=camera|no    Obróciæ zdjêcie zgodnie z danymi aparatu albo nie "
-"obracaæ\n"
-"                      (domy¶lnie obróciæ).\n"
+"--rotate=camera|no    Roteer afbeelding volgens de camera's instelling of \n"
+"                      geen rotatie toepassen (standaard: camera).\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
-"--out-path=PATH       ¦cie¿ka pliku wyj¶ciowego (domy¶lnie - ¶cie¿ka pliku "
-"wej¶ciowego).\n"
+"--out-path=PAD       PAD voor output bestand (gebruik standaard hetzelfde "
+"pad als input bestand).\n"
 
 msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
 msgstr ""
-"--output=FILE         Nazwa pliku wyj¶ciowego, u¿yj  '-' by zapisaæ do "
-"standardowego wyj¶cia.\n"
+"--output=BESTAND      Output bestandsnaam, gebruik '-' voor output naar "
+"stdout.\n"
 
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
-msgstr "--darkframe=FILE      U¿yj FILE do usuniêcia ciemnej klatki.\n"
+msgstr "--darkframe=BESTAND   Gebruik BESTAND voor raw zwartbeeld reductie.\n"
 
 msgid ""
 "--overwrite           Overwrite existing files without asking (default no).\n"
 msgstr ""
-"--overwrite           Nadpisz istniej±ce pliki bez pytania (domy¶lnie nie).\n"
+"--overwrite           Overschrijf bestaande bestanden zonder vragen "
+"(standaard: wel vragen).\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
 msgstr ""
-"--silent              Nie wy¶wietlaj ¿adnych komunikatów w trakcie "
-"konwersji.\n"
+"--silent              Geef geen berichten weer tijdens batch conversie.\n"
 
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
@@ -423,381 +422,378 @@ msgid ""
 "second\n"
 "group of options is NOT read from the resource file.\n"
 msgstr ""
-"UFRaw najpierw odczytuje ustawienia z pliku $HOME/.ufrawrc.\n"
-"Nastêpnie, je¿eli podany by³ plik ID, odczytywane s± ustawienia w nim "
-"zawarte.\n"
-"Nastêpnie z opcji --conf s± uwzglêdniane ignoruj±c nazwy plików wej¶cia/"
-"wyj¶cia z pliku ID.\n"
-"Na koniec, opcje z linii poleceñ s± uwzglêdniane. W trybie wsadowym (batch) "
-"druga grupa \n"
-"opcji NIE jest wczytywana z pliku z zasobami.\n"
+"UFRaw leest eerst de instellingen uit configuratiebestand $HOME/.ufrawrc.\n"
+"Vervolgens, als een ID bestand is opgegeven, worden die instellingen "
+"gelezen.\n"
+"Daarna worden de instellingen uit de --conf optie genomen, waarbij de input/"
+"output bestandsnamen in het ID bestand genegeerd worden.\n"
+"Als laatste worden de opties van de commandoregel toegevoegd. In batch modus "
+"worden opties uit de tweede groep NIET gelezen uit het configuratiebestand.\n"
 
 msgid ""
 "Last, but not least, --version displays the version number and compilation\n"
 "options for ufraw and --help displays this help message and exits.\n"
 msgstr ""
-"Na koniec, --version wy¶wietla  numer wersji i opcje kompilacji ufrawa, a --"
-"help wy¶wietla ten ekran.\n"
+"De laatste opties;\n"
+" --version laat het versienummer en de opties voor compileren van ufraw "
+"zien, en\n"
+"--help vertoont deze boodschap en stopt.\n"
 
 #, c-format
 msgid "'%s' is not a valid value for the --%s option."
-msgstr "'%s' nie jest poprawn± warto¶ci± dla opcji --%s."
+msgstr "'%s' is geen geldige waarde voor de optie --%s."
 
 msgid "ufraw was build without ZIP support."
-msgstr "ufraw zosta³ skompilowany bez obs³ugi ZIP."
+msgstr "ufraw is gemaakt zonder ZIP ondersteuning."
 
 msgid "--batch is obsolete. Use ufraw-batch instead."
-msgstr "--batch jest przestarza³± opcj±. Proszê u¿ywaæ ufraw-batch."
+msgstr "--batch is achterhaald. Gebruik ufraw-batch in plaats van deze optie."
 
 #, c-format
 msgid "getopt returned character code 0%o ??"
-msgstr "getopt zwróci³ znak o kodzie  0%o ??"
+msgstr "getopt geeft character code 0%o ??"
 
 #, c-format
 msgid "'%s' is not a valid white balance setting."
-msgstr "'%s' nie jest poprawnym ustawieniem balansu bieli."
+msgstr "'%s' is geen geldige witbalans instelling."
 
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
-msgstr "opcje --temperature i --green anuluj± opcjê --wb=%s."
+msgstr "--temperature en --green opties gaan boven de --wb=%s optie."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
-msgstr ""
-"b³±d wczytywania krzywej z pliku  %s, za du¿o skonfigurowanych krzywych "
-"bazowych."
+msgstr "fout bij inlezen curve van %s, teveel basis curves ingesteld"
 
 #, c-format
 msgid "failed to load curve from %s"
-msgstr "b³±d wczytywania krzywej z pliku  %s."
+msgstr "fout bij inlezen curve van %s"
 
 #, c-format
 msgid "'%s' is not a valid base curve name."
-msgstr "'%s' nie jest poprawn± nazw± krzywej bazowej."
+msgstr "'%s' is geen geldige basis curve naam."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured curves"
-msgstr ""
-"b³±d wczytywania krzywej z pliku  %s, za du¿o skonfigurowanych krzywych."
+msgstr "fout bij inlezen curve van %s, teveel curves ingesteld"
 
 #, c-format
 msgid "'%s' is not a valid curve name."
-msgstr "'%s' nie jest poprawn± nazw± krzywej."
+msgstr "'%s' is geen geldige curve naam."
 
 #, c-format
 msgid "'%s' is not a valid interpolation option."
-msgstr "'%s' nie jest poprawnym ustawieniem interpolacji."
+msgstr "'%s' is geen geldige interpolatie optie."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
-msgstr "'%s' nie jest poprawnym ustawieniem przywracania."
+msgstr "'%s' is geen geldige herstel optie."
 
 #, c-format
 msgid "'%s' is not a valid clip option."
-msgstr "'%s' nie jest poprawnym ustawieniem ucinania."
+msgstr "'%s' is geen geldige clip optie."
 
 msgid "you can not specify both --shrink and --size"
-msgstr "nie mo¿na jednocze¶nie u¿yæ --shrink i --size"
+msgstr "de opties --shrink en --size sluiten elkaar uit"
 
 #, c-format
 msgid "'%d' is not a valid bit depth."
-msgstr "'%d' nie jest poprawn± ilo¶ci± bitów."
+msgstr "'%d'  is geen geldige bit diepte."
 
 #, c-format
 msgid "Output type '%s' is deprecated"
-msgstr "Typ pliku wyj¶ciowego '%s' jest niepoprawny."
+msgstr "Output type '%s' is achterhaald"
 
 msgid "ufraw was build without TIFF support."
-msgstr "ufraw zosta³ skompilowany bez obs³ugi TIFF."
+msgstr "ufraw is gemaakt zonder TIFF ondersteuning."
 
 msgid "ufraw was build without JPEG support."
-msgstr "ufraw zosta³ skompilowany bez obs³ugi JPEG."
+msgstr "ufraw is gemaakt zonder JPEG ondersteuning."
 
 msgid "ufraw was build without PNG support."
-msgstr "ufraw zosta³ skompilowany bez obs³ugi PNG."
+msgstr "ufraw is gemaakt zonder PNG ondersteuning."
 
 #, c-format
 msgid "'%s' is not a valid output type."
-msgstr "'%s' nie jest poprawnym typem pliku wyj¶ciowego."
+msgstr "'%s' is geen geldig output type."
 
 #, c-format
 msgid "'%s' is not a valid output type for embedded image."
-msgstr ""
-"'%s' nie jest poprawnym typem pliku wyj¶ciowego dla do³±czonego obrazu."
+msgstr "'%s' is geen geldig output type voor embedded afbeeldingen."
 
 #, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
-msgstr "'%d' nie jest poprawn± ilo¶ci± bitów dla do³±czonego obrazu."
+msgstr "'%d' is geen geldige bit diepte voor embedded afbeeldingen."
 
 #, c-format
 msgid "'%s' is not a valid rotate option."
-msgstr "'%s' nie jest poprawn± opcj± obrotu."
+msgstr "'%s' is geen geldige rotatie optie."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
-msgstr "'%s' nie jest poprawn± opcj± tworzenia plików ID."
+msgstr "'%s' is geen geldige create-id optie."
 
 #, c-format
 msgid "'%s' is not a valid path."
-msgstr "'%s' nie jest poprawn± ¶cie¿k±."
+msgstr "'%s' is geen geldig pad."
 
 msgid "cannot output more than one file to the same output"
-msgstr "nie mo¿na utworzyæ wiêcej ni¿ jednego pliku z t± sam± nazw±."
+msgstr "kan niet meer dan een bestand naar dezelfde output sturen"
 
 #, c-format
 msgid "Raw file '%s' missing."
-msgstr "Plik RAW  '%s' nie istnieje."
+msgstr "Raw bestand '%s' niet gevonden."
 
 msgid "Delete raw file"
-msgstr "Usuñ plik RAW"
+msgstr "Verwijder raw bestand"
 
 msgid "_Delete selected"
-msgstr "_Usuñ zaznaczone"
+msgstr "_Delete geselecteerd"
 
 msgid "Delete _All"
-msgstr "Usuñ _Wszystkie"
+msgstr "Delete _All"
 
 msgid "Select files to delete"
-msgstr "Wybierz pliki do usuniêcia"
+msgstr "Selecteer bestanden om te verwijderen"
 
 #, c-format
 msgid "Error reading directory '%s'."
-msgstr "B³±d odczytu katalogu '%s'."
+msgstr "Fout bij lezen van map '%s'."
 
 #, c-format
 msgid "Error deleting '%s'"
-msgstr "B³ad usuwania '%s'"
+msgstr "Fout bij verwijderen '%s'"
 
 msgid "Reading embedded image requires libjpeg."
-msgstr "Odczyt do³±czonego obrazu wymaga biblioteki libjpeg."
+msgstr "Lezen van embedded afbeelding vereist libjpeg."
 
 msgid "No embedded image found"
-msgstr "Nie znaleziono do³±czonego obrazu."
+msgstr "Geen embedded afbeelding gevonden"
 
 #, c-format
 msgid "Original size (%d) is smaller than the requested size (%d)"
-msgstr "Oryginalny rozmiar (%d) jest mniejszy ni¿ podany rozmiar (%d)."
+msgstr ""
+"Oorspronkelijke afmeting (%d) is kleiner dan de gevraagde afmeting (%d)"
 
 #, c-format
 msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
-msgstr ""
-"Niezgodno¶æ miniatury ppm, wysoko¶æ %d, szeroko¶æ %d, podczas gdy bufor  %d."
+msgstr "ppm thumb mismatch, height %d, width %d, while buffer %d."
 
 #, c-format
 msgid "JPEG thumb height %d different than expected %d."
-msgstr "Wysoko¶æ miniatury JPEG %d inna ni¿ oczekiwana %d."
+msgstr "JPEG thumb hoogte %d anders dan verwacht %d."
 
 #, c-format
 msgid "JPEG thumb width %d different than expected %d."
-msgstr "Szeroko¶æ miniatury JPEG %d inna ni¿ oczekiwana %d."
+msgstr "JPEG thumb breedte %d anders dan verwacht %d."
 
 #, c-format
 msgid ""
 "Error creating file '%s'.\n"
 "%s"
 msgstr ""
-"B³±d tworzenia pliku '%s'.\n"
+"Fout bij aanmaken bestand '%s'.\n"
 "%s"
 
 msgid "No embedded image read"
-msgstr "Nie odczytano do³±czonego obrazu."
+msgstr "Geen embedded afbeelding gelezen"
 
 #, c-format
 msgid "Error creating file '%s'. Unknown file type %d."
-msgstr "B³±d tworzenia pliku '%s'. Nieznany typ pliku %d."
+msgstr "Fout bij aanmaken bestand '%s'. Onbekend bestandstype %d."
 
 #, c-format
 msgid "Error creating file '%s': %s"
-msgstr "B³±d tworzenia pliku '%s': %s"
+msgstr "Fout bij aanmaken bestand '%s': %s"
 
 #, c-format
 msgid "Error writing '%s'"
-msgstr "B³±d zapisu '%s'"
+msgstr "Fout bij schrijven naar '%s'"
 
 #, c-format
 msgid "Unsupported output type (%d) for embedded image"
-msgstr "Nieobs³ugiwany typ pliku wyj¶ciowego (%d) dla do³±czonego obrazu"
+msgstr "Niet ondersteund output type (%d) voor embedded afbeelding"
 
 #, c-format
 msgid "Loading raw file '%s'"
-msgstr "Wczytywanie pliku RAW '%s'"
+msgstr "Inlezen raw bestand '%s'"
 
 msgid "Can't allocate new image."
-msgstr "Nie mogê utworzyæ nowego obrazu."
+msgstr "Kan geen nieuwe afbeelding alloceren."
 
 #. Create the "background" layer to hold the image...
 msgid "Background"
-msgstr "T³o"
+msgstr "Achtergrond"
 
 msgid "Loading image"
-msgstr "Wczytywanie zdjêcia"
+msgstr "Inlezen afbeelding"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in image."
-msgstr "B³±d osadzenia profilu wyj¶ciowego '%s' w obrazie."
+msgstr "Niet gelukt het output profiel '%s' te embedden in afbeelding."
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "D³ugo¶æ bufora EXIF %d za du¿a, zignorowano.\n"
+msgstr "EXIF buffer lengte %d, te groot, genegeerd.\n"
 
 msgid "Raw histogram with conversion curves"
-msgstr "Histogram RAW z krzywymi konwersji"
+msgstr "Raw histogram met conversie curves"
 
 msgid "Live histogram"
-msgstr "Histogram live"
+msgstr "Live histogram"
 
 msgid "No more room for new curves."
-msgstr "Brak miejsca na nowe krzywe."
+msgstr "Geen ruimte voor nieuwe curves."
 
 msgid "Load curve"
-msgstr "Wczytaj krzyw±"
+msgstr "Inlezen curve"
 
 msgid "All curve formats"
-msgstr "Wszystkie formaty krzywych"
+msgstr "Alle curve formaten"
 
 msgid "UFRaw curve format"
-msgstr "Format krzywej UFRaw"
+msgstr "UFRaw curve formaat"
 
 msgid "Nikon curve format"
-msgstr "Format krzywej Nikona"
+msgstr "Nikon curve formaat"
 
 msgid "Save curve"
-msgstr "Zapisz krzyw±"
+msgstr "Curve opslaan"
 
 msgid "No more room for new profiles."
-msgstr "Brak miejsca na nowe profile."
+msgstr "Geen ruimte voor meer profielen."
 
 msgid "Load color profile"
-msgstr "Wczytaj profil kolorów"
+msgstr "Inlezen kleurprofiel"
 
 msgid "Color Profiles"
-msgstr "Profile kolorów"
+msgstr "Kleur Profielen"
 
 msgid "Luminosity (Y value)"
-msgstr "Luminancja (warto¶æ Y)"
+msgstr "Helderheid (Y waarde)"
 
 msgid "Adams' zone"
-msgstr "Strefy Adamsa"
+msgstr "Adams' zone"
 
 #, c-format
 msgid "size %dx%d, zoom %2.f%%"
-msgstr "rozmiar %dx%d, powiêkszenie %2.f%%"
+msgstr "afmeting %dx%d, zoom %2.f%%"
 
 #, c-format
 msgid "size %dx%d, scale 1/%d"
-msgstr "rozmiar %dx%d, skala 1/%d"
+msgstr "afmeting %dx%d, schaal 1/%d"
 
 #, c-format
 msgid "Black point: %0.3lf"
-msgstr "Punkt czerni: %0.3lf"
+msgstr "Zwartpunt: %0.3lf"
 
 msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "B³±d krytyczny: uf->conf->shrink<1"
+msgstr "Fatale fout: uf->conf->shrink<1"
 
 #. No darkframe file
 msgid "None"
-msgstr "Brak"
+msgstr "Geen"
 
 msgid "Load dark frame"
-msgstr "Wczytaj ciemn± klatkê"
+msgstr "Inlezen zwartbeeld"
 
 msgid "clip"
-msgstr "utnij"
+msgstr "clip"
 
 msgid "restore in LCH space for soft details"
-msgstr "przywróæ miêkkie detale w przestrzeni LCH"
+msgstr "herstel in LCH ruimte voor zachte details"
 
 msgid "restore in HSV space for sharp details"
-msgstr "przywróæ ostre detale w przestrzeni LCH"
+msgstr "herstel in HSV ruimte voor scherpe details "
 
 #, c-format
 msgid ""
 "Restore details for negative EV\n"
 "Current state: %s"
 msgstr ""
-"Przywróæ detale dla ujemnych korekt EV\n"
-"Wybrana opcja: %s"
+"Herstel details voor negatieve EV\n"
+"status: %s"
 
 msgid "digital linear"
-msgstr "cyfrowo liniowo"
+msgstr "digitaal lineair"
 
 msgid "soft film like"
-msgstr "miêkko kliszowo"
+msgstr "zacht film-achtig"
 
 #, c-format
 msgid ""
 "Clip highlights for positive EV\n"
 "Current state: %s"
 msgstr ""
-"Ucinanie ¶wiate³ dla dodatnich korekt EV\n"
-"Wybrana opcja: %s"
+"Clip highlights voor positieve EV\n"
+"status: %s"
 
 #, c-format
 msgid "Filename: %s%s"
-msgstr "Zapisz pod nazw± %s%s"
+msgstr "Bestandsnaam: %s%s"
 
 msgid ""
 "\n"
 "Create also ID file"
 msgstr ""
 "\n"
-"Utwórz tak¿e plik ID"
+"Maak ook ID bestand"
 
 msgid ""
 "\n"
 "Create only ID file"
 msgstr ""
 "\n"
-"utwórz tylko plik ID"
+"Maak alleen ID bestand"
 
 msgid "UFRaw options"
-msgstr "Opcje UFRaw"
+msgstr "UFRaw opties"
 
 msgid "Settings"
-msgstr "Ustawienia"
+msgstr "Instellingen"
 
 msgid "Input color profiles"
-msgstr "Wej¶ciowe profile kolorów"
+msgstr "Input kleurprofielen"
 
 msgid "Output color profiles"
-msgstr "Wyj¶ciowe profile kolorów"
+msgstr "Output kleurprofielen"
 
 msgid "Display color profiles"
-msgstr "Profile kolorów monitora"
+msgstr "Display kleurprofielen"
 
 msgid "Base Curves"
-msgstr "Krzywe bazowe"
+msgstr "Basis Curves"
 
 msgid "Luminosity Curves"
-msgstr "Krzywe luminancji"
+msgstr "Helderheids Curves"
 
 #. Remote Gimp command entry
 msgid "Remote Gimp command"
-msgstr "Polecenie 'gimp-remote' "
+msgstr "Opstartcommando voor Gimp"
 
 msgid "Reset command to default"
-msgstr "Ustaw polecenie domy¶lne"
+msgstr "Reset commando naar verstekwaarde"
 
 msgid "Blink Over/Underexposure Indicators"
-msgstr "Mruganie wska¼ników prze/niedo¶wietlenia"
+msgstr "Knipper Over/Onderbelichtings Indicatoren"
 
 msgid "Configuration"
-msgstr "Konfiguracja"
+msgstr "Configuratie"
 
 msgid "Save configuration"
-msgstr "Zapisz konfiguracjê "
+msgstr "Bewaar configuratie"
 
 msgid "Save configuration to resource file ($HOME/.ufrawrc)"
-msgstr "Zapisz konfiguracjê do pliku ustawieñ ($HOME/.ufrawrc)"
+msgstr "Bewaar configuratie in configuratiebestand ($HOME/.ufrawrc)"
 
 msgid "Log"
-msgstr "Log"
+msgstr ""
 
 msgid "Encoding conversion failed"
-msgstr "B³±d konwersji kodowania"
+msgstr "Codering conversie mislukt"
 
 msgid "About"
-msgstr "O UFRaw"
+msgstr "Over"
 
 msgid ""
 "The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
@@ -810,530 +806,528 @@ msgid ""
 "Homepage: http://ufraw.sourceforge.net/\n"
 "\n"
 msgstr ""
-"<b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) - "
-"Niezidentyfikowany RAW Lataj±cy\n"
-"jest programem do odczytu i korekty zdjêæ w formacie RAW z aparatów "
-"cyfrowych.\n"
-"UFRaw opiera siê na  <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
-"jako narzêdziu do dekodowania obrazów RAW.\n"
+"De <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is een "
+"programma om\n"
+"raw afbeeldingen van digitale cameras te lezen en manipuleren.\n"
+"UFRaw gebruikt <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"voor de daadwerkelijke interpretatie van de raw afbeeldingen.\n"
 "\n"
-"Autor: Udi Fuchs\n"
-"Strona domowa: http://ufraw.sourceforge.net/\n"
+"Programmeur: Udi Fuchs\n"
+"Homepage: http://ufraw.sourceforge.net/\n"
 "\n"
 
 #, c-format
 msgid "%s%s (Alt-%s)"
-msgstr "%s%s (Alt-%s)"
+msgstr ""
 
 #, c-format
 msgid "%s - UFRaw"
-msgstr "%s - UFRaw "
+msgstr ""
 
 msgid "Linear"
-msgstr "Liniowy"
+msgstr "Lineair"
 
 msgid "Logarithmic"
-msgstr "Logarytmiczny"
+msgstr "Logaritmisch"
 
 msgid "Spot values:"
-msgstr "Warto¶ci punktowe"
+msgstr "Spot waardes:"
 
 msgid "Exposure compensation in EV"
-msgstr "Korekta ekspozycji w EV"
+msgstr "Belichtings compensatie in EV"
 
 msgid "Auto adjust exposure"
-msgstr "Autodopasowanie ekspozycji"
+msgstr "Belichting automatisch aanpassen"
 
 msgid "Reset exposure to default"
-msgstr "Ustawienie domy¶lnej korekty ekspozycji"
+msgstr "Reset belichting naar verstekwaarde"
 
 #. Start of White Balance setting page
 msgid "White balance"
-msgstr "Balans bieli"
+msgstr "Witbalans"
 
 msgid "White Balance"
-msgstr "Balans bieli"
+msgstr "Witbalans"
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
 "Check UFRaw's webpage for information on how to get your\n"
 "camera supported."
 msgstr ""
-"Brak ustawieñ balansu bieli dla tego aparatu.\n"
-"Zajrzyj na stronê UFRaw, ¿eby siê dowiedzieæ jak uzyskaæ wsparcie\n"
-"dla tego aparatu."
+"Er zijn geen witbalans presets voor uw camera model.\n"
+"Kijk op UFRaw's webpagina voor informatie om uw camera\n"
+"ondersteund te krijgen."
 
 msgid "Reset white balance to initial value"
-msgstr "Ustaw pocz±tkow± warto¶æ balansu bieli"
+msgstr "Reset witbalans naar beginwaarde"
 
 msgid "Temperature"
-msgstr "Temperatura"
+msgstr "Temperatuur"
 
 msgid "White balance color temperature (K)"
-msgstr "Temperatura barwowa balansu bieli"
+msgstr "Witbalans kleur temperatuur (K)"
 
 msgid "Green"
-msgstr "Zielony"
+msgstr "Groen"
 
 msgid "Green component"
-msgstr "Zielona sk³adowa"
+msgstr "Groen component"
 
 msgid "Select a spot on the preview image to apply spot white balance"
-msgstr ""
-"Wybierz obszar na podgl±dzie zdjêcia by zastosowaæ punktowy balans bieli"
+msgstr "Selecteer een plek in het voorbeeld voor \"spot\" witbalans"
 
 msgid "Chan. multipliers:"
-msgstr "Mno¿niki kana³ów:"
+msgstr "Kan. multiplicatoren:"
 
 msgid "Bayer pattern interpolation"
-msgstr "Interpolacja wzorca Bayera"
+msgstr "Bayer patroon interpolatie"
 
 msgid "VNG four color interpolation"
-msgstr "Interpolacja VNG (czterokolorowa)"
+msgstr "VNG vier kleuren interpolatie"
 
 msgid "Bilinear interpolation"
-msgstr "Interpolacja dwuliniowa"
+msgstr "Bilineaire interpolatie"
 
 msgid "AHD interpolation"
-msgstr "Interpolacja AHD"
+msgstr "AHD interpolatie"
 
 msgid "VNG interpolation"
-msgstr "Interpolacja VNG"
+msgstr "VNG interpolatie"
 
 msgid "PPG interpolation"
-msgstr "Interpolacja PPG"
+msgstr "PPG interpolatie"
 
 msgid "No Bayer pattern"
-msgstr "Brak wzorca Bayera"
+msgstr "Geen Bayer patroon"
 
 msgid "Apply color smoothing"
-msgstr "Zastosuj wyg³adzanie kolorów"
+msgstr "Pas kleur vereffening toe"
 
 msgid "Denoise"
-msgstr "Odszumianie"
+msgstr "Ontruis"
 
 msgid "Threshold for wavelet denoising"
-msgstr "Próg falkowego odszumiania"
+msgstr "Drempelwaarde voor wavelet ontruising"
 
 msgid "Reset denoise threshold to default"
-msgstr "Ustaw domy¶lny próg odszumiania"
+msgstr "Reset ontruis drempelwaarde naar verstekwaarde"
 
 msgid "Zoom:"
-msgstr "Powiêkszenie:"
+msgstr ""
 
 msgid "Zoom percentage"
-msgstr "Procent powiêkszenia"
+msgstr ""
 
 msgid "Dark Frame:"
-msgstr "Ciemna klatka:"
+msgstr "Zwartbeeld:"
 
 msgid "Reset dark frame"
-msgstr "Zresetuj ciemn± klatkê"
+msgstr "Reset zwartbeeld"
 
 #. End of White Balance setting page
 #. Start of Base Curve page
 msgid "Base curve"
-msgstr "Krzywa bazowa"
+msgstr "Basis curve"
 
 msgid "Load base curve"
-msgstr "Wczytaj krzyw± bazow±"
+msgstr "Inlezen basis curve"
 
 msgid "Save base curve"
-msgstr "Zapisz krzyw± bazow±"
+msgstr "Opslaan basis curve"
 
 msgid "Reset base curve to default"
-msgstr "Ustaw domy¶ln± krzyw± bazow±"
+msgstr "Reset basis curve naar verstekwaarde"
 
 #. End of Base Curve page
 #. Start of Color management page
 msgid "Color management"
-msgstr "Zarz±dzanie kolorem"
+msgstr "Kleur management"
 
 msgid "Input ICC profile"
-msgstr "Wej¶ciowy profil ICC"
+msgstr "Input ICC profiel"
 
 msgid "Output ICC profile"
-msgstr "Wyj¶ciowy profil ICC"
+msgstr "Output ICC profiel"
 
 msgid "Display ICC profile"
-msgstr "Profil ICC monitora"
+msgstr "Scherm ICC profiel"
 
 msgid "Use color matrix"
-msgstr "Zastosuj macie¿ kolorów"
+msgstr "Gebruik kleurmatrix"
 
 msgid "Gamma"
-msgstr "Gamma"
+msgstr ""
 
 msgid "Gamma correction for the input profile"
-msgstr "Korekcja gamma dla profilu wej¶ciowego"
+msgstr "Gamma correctie voor het input profiel"
 
 msgid "Reset gamma to default"
-msgstr "Ustaw domy¶ln± gammê"
+msgstr "Reset gamma naar verstekwaarde"
 
 msgid "Linearity"
-msgstr "Liniowo¶æ"
+msgstr "Lineariteit"
 
 msgid "Linear part of the gamma correction"
-msgstr "Liniowa czê¶æ korekcji gamma"
+msgstr "Lineair deel van de gamma correctie"
 
 msgid "Reset linearity to default"
-msgstr "Ustaw domy¶ln± liniowo¶æ"
+msgstr "Reset lineariteit naar verstekwaarde"
 
 msgid "Output intent"
-msgstr "Sposób konwersji"
+msgstr "Output doel"
 
 msgid "Perceptual"
-msgstr "Wizualny"
+msgstr ""
 
 msgid "Relative colorimetric"
-msgstr "Kolorymetryczny wzglêdny"
+msgstr "Relatief colorimetric"
 
 msgid "Saturation"
-msgstr "Nasycony"
+msgstr "Verzadiging"
 
 msgid "Absolute colorimetric"
-msgstr "Kolorymetryczny absolutny"
+msgstr "Absoluut colorimetric"
 
 msgid "Output bit depth"
-msgstr "Ilo¶æ bitów pliku wyj¶ciowego"
+msgstr "Output bit diepte"
 
 msgid "Display intent"
-msgstr "Sposób konwersji"
+msgstr "Display doel"
 
 msgid "Disable soft proofing"
-msgstr "Wy³±cz programowy proof"
+msgstr "Uitschakelen soft proofing"
 
 #. End of Color management page
 #. Start of Corrections page
 msgid "Correct luminosity, saturation"
-msgstr "Korekta luminancji, saturacji"
+msgstr "Corrigeer helderheid, verzadiging"
 
 msgid "Reset saturation to default"
-msgstr "Ustaw domy¶ln± saturacjê"
+msgstr "Reset verzadiging naar verstekwaarde"
 
 msgid ""
 "Auto adjust curve\n"
 "(Flatten histogram)"
 msgstr ""
-"Automatycznie dopasuj krzyw±\n"
-"(Sp³aszcz histogram)"
+"Automatische curve\n"
+"(vervlak histogram)"
 
 msgid "Reset curve to default"
-msgstr "Ustaw domy¶ln± krzyw±"
+msgstr "Reset curve naar verstekwaarde"
 
 msgid "Black point: 0.000"
-msgstr "Punkt czerni: 0.000"
+msgstr "Zwartpunt: 0.000"
 
 msgid "Reset black-point to default"
-msgstr "Ustaw domy¶lny punkt czerni"
+msgstr "Reset zwartpunt naar verstekwaarde"
 
 msgid "Auto adjust black-point"
-msgstr "Automatycznie dopasuj punkt czerni"
+msgstr "Automatisch zwartpunt"
 
 #. End of Corrections page
 #. Start of transformations page
 msgid "Crop and rotate"
-msgstr "Kadrowanie i obrót"
+msgstr "Uitsnijden en roteren"
 
 #. Start of Crop controls
 msgid "Left:"
-msgstr "Lewo"
+msgstr "Links:"
 
 msgid "Top:"
-msgstr "Góra:"
+msgstr "Boven:"
 
 msgid "Right:"
-msgstr "Prawo:"
+msgstr "Rechts:"
 
 msgid "Bottom:"
-msgstr "Dó³"
+msgstr "Onder:"
 
 msgid "Reset the crop region"
-msgstr "Zresetuj kadrowanie"
+msgstr "Reset de uitsnijgrenzen"
 
 msgid "Aspect ratio:"
-msgstr "Stosunek boków"
+msgstr ""
 
 msgid ""
 "Crop area aspect ratio.\n"
 "Can be entered in decimal notation (1.273)\n"
 "or as a ratio of two numbers (14:11)"
 msgstr ""
-"Stosunek boków obszaru kadrowania.\n"
-"Mo¿e byæ wprowadzony jako liczba dziesiêtna (1.273)\n"
-"lub jako stosunek dwóch liczb (14:11)"
+"Uitsnijvlak aspect ratio.\n"
+"Kan in decimale notatie (1.273)\n"
+"of als ratio van twee getallen (14:11)"
 
 msgid "Lock aspect ratio"
-msgstr "Zablokuj stosunek boków"
+msgstr "Bevries aspect ratio"
 
 msgid "Shrink factor"
-msgstr "Zmniejszenie"
+msgstr "Krimp factor"
 
 msgid "Height"
-msgstr "Wys."
+msgstr "Hoogte"
 
 msgid "Width"
-msgstr "Szer."
+msgstr "Breedte"
 
 msgid "Orientation:"
-msgstr "Orientacja:"
+msgstr "Orientatie:"
 
 #. Start of Save page
 msgid "Save"
-msgstr "Zapisz"
+msgstr "Opslaan"
 
 msgid "Path"
-msgstr "¦cie¿ka"
+msgstr "Pad"
 
 msgid "Select output path"
-msgstr "Wybierz ¶cie¿kê wyj¶cia"
+msgstr "Kies output pad"
 
 msgid "Filename"
-msgstr "Nazwa pliku"
+msgstr "Bestandsnaam"
 
 msgid "JPEG compression level"
-msgstr "Stopieñ kompresji JPEG"
+msgstr "JPEG compressie niveau"
 
 msgid "JPEG progressive encoding"
-msgstr "Kodowanie progresywne JPEG"
+msgstr "JPEG progressieve codering"
 
 msgid "TIFF lossless Compress"
-msgstr "Bezstratna kompresja TIFF"
+msgstr "TIFF lossless Compressie"
 
 msgid "Embed EXIF data in JPEG or PNG files"
-msgstr "Do³±cz dane EXIF do pliku JPEG lub PNG"
+msgstr "Embed EXIF data in JPEG of PNG bestanden"
 
 msgid "Create ID file "
-msgstr "Utwórz plik ID"
+msgstr "Maak ID bestand "
 
 msgid "No"
-msgstr "Nie"
+msgstr "Geen"
 
 msgid "Also"
-msgstr "Tak¿e"
+msgstr "Ook"
 
 msgid "Only"
-msgstr "Tylko"
+msgstr "Alleen"
 
 msgid "Save image defaults "
-msgstr "Zapis ustawieñ domy¶lnych "
+msgstr "Opslaan afbeeldings verstekwaarden"
 
 msgid ""
 "Save current image manipulation parameters as defaults.\n"
 "The output parameters in this window are always saved."
 msgstr ""
-"Zapisz bie¿±ce ustawienia parametrów obrazu jako domy¶lne.\n"
-"Opcje z tego okna s± zawsze zapisywane."
+"Huidige afbeeldingsbewerkingen opslaan als verstekwaarden.\n"
+"De output parameters in dit venster worden altijd bewaard."
 
 msgid "Never again"
-msgstr "Nigdy"
+msgstr "Nooit meer"
 
 msgid "Always"
-msgstr "Zawsze"
+msgstr "Altijd"
 
 msgid "Just this once"
-msgstr "Tylko tym razem"
+msgstr "Voor deze keer dan"
 
 msgid "Remember output path"
-msgstr "Zapamiêtaj wyj¶ciow± ¶cie¿kê"
+msgstr "Bewaar output pad"
 
 msgid "Overwrite existing files without asking"
-msgstr "Nadpisz istniej±ce pliki bez pytania"
+msgstr "Overschrijf bestaande bestanden zonder vragen"
 
 #. Start of EXIF page
 msgid "EXIF"
-msgstr "EXIF"
+msgstr ""
 
 msgid "Tag"
-msgstr "Tag"
+msgstr ""
 
 msgid "Value"
-msgstr "Warto¶æ"
+msgstr "Waarde"
 
 #. Fill table with EXIF tags
 msgid "Camera maker"
-msgstr "Producent aparatu"
+msgstr ""
 
 msgid "Camera model"
-msgstr "Model aparatu"
+msgstr ""
 
 msgid "Timestamp"
-msgstr "Data"
+msgstr "Tijdmarkering"
 
 msgid "Shutter time"
-msgstr "Czas"
+msgstr "Sluitertijd"
 
 msgid "Aperture"
-msgstr "Przes³ona"
+msgstr "Diafragma"
 
 msgid "ISO speed"
-msgstr "Czu³o¶æ ISO"
+msgstr "ISO snelheid"
 
 msgid "Focal length"
-msgstr "Ogniskowa"
+msgstr "Brandpuntsafstand"
 
 msgid "35mm focal length"
-msgstr "Odpowiednik ogniskowej na 35mm"
+msgstr "35mm brandpuntsafstand"
 
 msgid "Lens"
-msgstr "Obiektyw"
+msgstr ""
 
 msgid "Flash"
-msgstr "Lampa b³yskowa"
+msgstr "Flits"
 
 #, c-format
 msgid "EXIF data read by %s"
-msgstr "Dane EXIF odczytane przez %s"
+msgstr "EXIF data gelezen door %s"
 
 msgid "Warning: EXIF data will not be sent to output"
-msgstr "Uwaga: dane EXIF nie zostan± zapisane"
+msgstr "Let op: EXIF data wordt niet naar output gestuurd"
 
 msgid "RGB histogram"
-msgstr "Histogram RGB"
+msgstr ""
 
 msgid "R+G+B histogram"
-msgstr "Histogram R+G+B"
+msgstr ""
 
 msgid "Luminosity histogram"
-msgstr "Histogram luminancji"
+msgstr "Helderheids histogram"
 
 msgid "Value (maximum) histogram"
-msgstr "Histogram jasno¶ci (maksimum)"
+msgstr "Waarde (maximum) histogram"
 
 msgid "Saturation histogram"
-msgstr "Histogram jasno¶ci"
+msgstr "Verzadigings histogram"
 
 msgid "Average:"
-msgstr "¦rednia:"
+msgstr "Gemiddeld:"
 
 msgid "Std. deviation:"
-msgstr "Std. odchylenie:"
+msgstr "Standaardafwijking:"
 
 msgid "Overexposed:"
-msgstr "Prze¶wietlone:"
+msgstr "Overbelicht:"
 
 msgid "Indicate"
-msgstr "Poka¿"
+msgstr "Toon"
 
 msgid "Underexposed:"
-msgstr "Niedo¶wietlone:"
+msgstr "Onderbelicht:"
 
 msgid "Options"
-msgstr "Opcje"
+msgstr "Opties"
 
 #. Comment to translator: All control buttons
 #. "_Delete", "_Cancel", "_Save", "Save _As", "Send to _Gimp"
 #. should have unique mnemonics.
 #. Delete button:
 msgid "_Delete"
-msgstr "_Usuñ"
+msgstr ""
 
 msgid "Send image to _Gimp"
-msgstr "Wy¶lij obraz do _Gimpa"
+msgstr "Stuur afbeelding naar _Gimp"
 
 #. preview_progress() changes the size of the progress bar
 #. and processes the event queue.
 msgid "Loading preview"
-msgstr "Wczytywanie podgl±du"
+msgstr "Inlezen voorbeeld"
 
 msgid "Fatal error setting C locale"
-msgstr "B³±d krytyczny ustawienia C locale"
+msgstr "Fatale fout instellen C locale"
 
 #, c-format
 msgid "Curve version is not supported"
-msgstr "Niebs³ugiwana wersja krzywej"
+msgstr "Curve versie wordt niet ondersteund"
 
 #, c-format
 msgid "Invalid Nikon curve file '%s'"
-msgstr "Niepoprawna plik krzywej Nikona '%s'"
+msgstr "Ongeldig Nikon curve bestand '%s'"
 
 #, c-format
 msgid "Error opening Curve file '%s': %s"
-msgstr "B³ad odczytu pliku krzywej '%s': %s"
+msgstr "Fout bij openen Curve bestand'%s': %s"
 
 #, c-format
 msgid "Error opening file '%s': %s"
-msgstr "B³ad odczytu pliku '%s': %s"
+msgstr "Fout bij openen bestand '%s': %s"
 
 msgid "File exists"
-msgstr "Plik istnieje"
+msgstr "Bestand bestaat"
 
 #, c-format
 msgid ""
 "File '%s' already exists.\n"
 "Overwrite?"
 msgstr ""
-"Plik '%s' istnieje.\n"
-"Nadpisaæ?"
+"Bestand '%s' bestaat al.\n"
+"Overschrijven?"
 
 msgid "Error creating temporary file."
-msgstr "B³±d tworzenia tymczasowego pliku."
+msgstr "Fout bij aanmaken tijdelijk bestand."
 
 msgid "Error activating Gimp."
-msgstr "B³±d uruchomienia Gimpa"
+msgstr "Fout bij opstarten van Gimp"
 
 msgid "Remote URI is not supported"
-msgstr "Zdalny URI nie jest obs³ugiwany"
+msgstr "Remote URI wordt niet ondersteund"
 
 #, c-format
 msgid "darkframe error: %s is not a raw file\n"
-msgstr "b³±d ciemnej klatki: %s nie jest plikiem RAW\n"
+msgstr "zwartbeeld fout: %s is geen raw bestand\n"
 
 #, c-format
 msgid "error loading darkframe '%s'\n"
-msgstr "b³±d wczytywania ciemnej klatki '%s'\n"
+msgstr "fout bij inlezen zwartbeeld '%s'\n"
 
 #, c-format
 msgid "Darkframe '%s' is incompatible with main image"
-msgstr "Ciemna klatka '%s' jest niekompatybilna z g³ównym obrazem"
+msgstr "Zwartbeeld '%s' is incompatibel met afbeelding"
 
 #, c-format
 msgid "using darkframe '%s'\n"
-msgstr "u¿ywam ciemnej klatki '%s'\n"
+msgstr "zwartbeeld '%s' in gebruik\n"
 
 msgid "Error reading NEF curve"
-msgstr "B³±d odczytu krzywej NEF"
+msgstr "Fout bij inlezen NEF curve"
 
 #, c-format
 msgid "Can not downsize from %d to %d."
-msgstr "Nie mogê zmniejszyæ z %d do %d."
+msgstr "Kan niet terugschalen van %d naar %d."
 
 msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
-"Nie mogê u¿yæ balansu bieli aparatu, stosujê automatyczny balans bieli."
+msgstr "Kan camera witbalans niet gebruiken, verder met auto witbalans."
 
 #. Error was not already set before
 #, c-format
 msgid "Error creating file '%s'."
-msgstr "B³±d tworzenia pliku '%s'."
+msgstr "Fout bij aanmaken van bestand '%s'."
 
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
 msgid "Error creating file."
-msgstr "B³±d tworzenia pliku."
+msgstr "Fout bij aanmaken van bestand"
 
 msgid "Saving image"
-msgstr "Zapisywanie obrazu"
+msgstr "Bewaren afbeelding"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"
-msgstr "Nazwa pliku obrazu nie mo¿e byæ taka sama jak pliku ID '%s'"
+msgstr ""
+"Afbeeldingsbestandsnaam kan niet gelijk zijn aan de ID bestandsnaam '%s'"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
-msgstr "Nie uda³o siê do³±czyæ profilu wyj¶ciowego '%s' w '%s'."
+msgstr "Mislukt om output profiel '%s' te embedden  in '%s'."
 
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
-msgstr "Niepoprawna ilo¶æ bitów '%d' zignorowana."
+msgstr "Niet ondersteunde bitdiepte '%d' genegeerd."
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
-msgstr "D³ugo¶æ bufora EXIF %d za du¿a, zignorowano."
+msgstr "EXIF buffer lengte %d, te lang, genegeerd."
 
 #, c-format
 msgid "Unknown file type %d."
-msgstr "Nieznany typ pliku %d."
+msgstr "Onbekend bestandstype %d."
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
@@ -1348,79 +1342,79 @@ msgstr "Nieznany typ pliku %d."
 #. * WB name is standardized to one of the following:
 #. "Sunlight" and other variation should be switched to this:
 msgid "Daylight"
-msgstr "Dzienne"
+msgstr "Daglicht"
 
 #. Probably same as above:
 msgid "Direct sunlight"
-msgstr "Bezpo¶rednie ¶wiat³o s³oneczne"
+msgstr "Direct zonlicht"
 
 msgid "Cloudy"
-msgstr "Zachmurzone"
+msgstr "Bewolkt"
 
 #. "Shadows" should be switched to this:
 msgid "Shade"
-msgstr "Cieñ"
+msgstr "Schaduw"
 
 msgid "Incandescent"
-msgstr "¯arówka"
+msgstr "Vlammend licht"
 
 msgid "Incandescent warm"
-msgstr "¯arowe ciep³e"
+msgstr "Vlammend warm licht"
 
 #. Same as "Incandescent":
 msgid "Tungsten"
-msgstr "¯arówka"
+msgstr "Wolfraam"
 
 msgid "Fluorescent"
-msgstr "Jarzeniowe"
+msgstr "Fluoriserend"
 
 #. In Canon cameras and Nikon D300:
 msgid "Fluorescent high"
-msgstr "Jarzeniowe wysokie"
+msgstr "Fluoriserend hoog"
 
 msgid "Cool white fluorescent"
-msgstr "Ch³odna bia³a jarzeniówka"
+msgstr "Koel wit fluoriserend"
 
 msgid "Warm white fluorescent"
-msgstr "Ciep³e bia³e jarzeniowe"
+msgstr "Warm wit fluoriserend"
 
 msgid "Daylight fluorescent"
-msgstr "Dzienne jarzeniowe"
+msgstr "Daglicht fluoriserend"
 
 msgid "Neutral fluorescent"
-msgstr "Neutralne jarzeniowe"
+msgstr "Neutraal Fluoriserend"
 
 msgid "White fluorescent"
-msgstr "Bia³e jarzeniowe"
+msgstr "Wit fluoriserend"
 
 #. In Nikon D300
 msgid "Sodium-vapor fluorescent"
-msgstr "Sodowe"
+msgstr "Natriumdamp fluoriserend"
 
 msgid "Day white fluorescent"
-msgstr "Dzienne bia³e jarzeniowe"
+msgstr "Dagwit fluoriserend"
 
 msgid "High temp. mercury-vapor fluorescent"
-msgstr "Wys.temp. rtêciowe"
+msgstr "Hoge temp. kwikdamp fluoriserend"
 
 #. For Olympus with no real "Flash" preset:
 msgid "Flash (auto mode)"
-msgstr "¦wiat³o b³yskowe (tryb auto)"
+msgstr "Flits (auto modus)"
 
 msgid "Evening sun"
-msgstr "Wieczorne s³oñce"
+msgstr "Avondzon"
 
 msgid "Underwater"
-msgstr "Podwodne"
+msgstr "Onderwater"
 
 msgid "Black & white"
-msgstr "Czarno-bia³y"
+msgstr "Zwart Wit"
 
 msgid "Manual WB"
-msgstr "Manualny balans bieli"
+msgstr "Handmatige WB"
 
 msgid "Camera WB"
-msgstr "Balans bieli aparatu"
+msgstr ""
 
 msgid "Auto WB"
-msgstr "Automatyczny balans bieli"
+msgstr ""

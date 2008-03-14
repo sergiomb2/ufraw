@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-04 16:00+0100\n"
+"POT-Creation-Date: 2008-03-14 16:15+0100\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -1328,9 +1328,12 @@ msgstr "%d から %d へダウンサイズできません。"
 msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr "カメラのホワイトバランスが使えないので自動ホワイトバランスに戻ります。"
 
-#, c-format
-msgid "Image filename can not be the same as ID filename '%s'"
-msgstr "画像のファイル名はIDのファイル名と同じにはできません '%s'"
+#. Error was not already set before
+#, fuzzy, c-format
+msgid "Error creating file '%s'."
+msgstr ""
+"ファイル作成エラー '%s'.\n"
+"%s"
 
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
@@ -1340,15 +1343,12 @@ msgstr ""
 "ファイル作成エラー '%s'.\n"
 "%s"
 
-#. Error was not already set before
-#, fuzzy, c-format
-msgid "Error creating file '%s'."
-msgstr ""
-"ファイル作成エラー '%s'.\n"
-"%s"
-
 msgid "Saving image"
 msgstr "画像を保存しています"
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr "画像のファイル名はIDのファイル名と同じにはできません '%s'"
 
 #, fuzzy, c-format
 msgid "Failed to embed output profile '%s' in '%s'."

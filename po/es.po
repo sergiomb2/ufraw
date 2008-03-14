@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-04 16:00+0100\n"
+"POT-Creation-Date: 2008-03-14 16:15+0100\n"
 "PO-Revision-Date: 2007-11-11 20:19+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -1317,24 +1317,24 @@ msgstr ""
 "No puedo usar el balance de blancos de la cámara, usando balance de blancos "
 "automático"
 
+#. Error was not already set before
 #, c-format
-msgid "Image filename can not be the same as ID filename '%s'"
-msgstr ""
-"El nombre de archivo de la imagen no puede ser el mismo que el del archivo "
-"ID '%s'"
+msgid "Error creating file '%s'."
+msgstr "Error al crear el archivo '%s'."
 
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "Error al crear el archivo."
 
-#. Error was not already set before
-#, c-format
-msgid "Error creating file '%s'."
-msgstr "Error al crear el archivo '%s'."
-
 msgid "Saving image"
 msgstr "Guardando imagen"
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr ""
+"El nombre de archivo de la imagen no puede ser el mismo que el del archivo "
+"ID '%s'"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."

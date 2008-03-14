@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-04 16:00+0100\n"
+"POT-Creation-Date: 2008-03-14 16:15+0100\n"
 "PO-Revision-Date: 2008-03-06 19:15+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -1292,22 +1292,22 @@ msgstr ""
 "Nemohu použít nastavení bílé dle fotoaparátu, nastavuji automatické vyvážení "
 "bílé."
 
+#. Error was not already set before
 #, c-format
-msgid "Image filename can not be the same as ID filename '%s'"
-msgstr "Jméno souboru se snímkem nemůže být shodné se jménem ID souboru '%s'"
+msgid "Error creating file '%s'."
+msgstr "Chyba při vytváření souboru '%s'."
 
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "Chyba při vytváření souboru."
 
-#. Error was not already set before
-#, c-format
-msgid "Error creating file '%s'."
-msgstr "Chyba při vytváření souboru '%s'."
-
 msgid "Saving image"
 msgstr "Ukládám snímek"
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr "Jméno souboru se snímkem nemůže být shodné se jménem ID souboru '%s'"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."

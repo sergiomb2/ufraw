@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-04 16:00+0100\n"
+"POT-Creation-Date: 2008-03-14 16:15+0100\n"
 "PO-Revision-Date: 2008-01-03 00:27+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -1335,24 +1335,24 @@ msgstr "Ne peux pas réduire la taille de %d à %d."
 msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr "Balance des blancs boiter non utilisable, retour à la balance auto."
 
+#. Error was not already set before
 #, c-format
-msgid "Image filename can not be the same as ID filename '%s'"
-msgstr ""
-"Le nom de fichier de l'image ne peut pas être le même que celui du fichier "
-"d'ID '%s'"
+msgid "Error creating file '%s'."
+msgstr "Erreur en créant le fichier '%s'."
 
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "Erreur en créant le fichier."
 
-#. Error was not already set before
-#, c-format
-msgid "Error creating file '%s'."
-msgstr "Erreur en créant le fichier '%s'."
-
 msgid "Saving image"
 msgstr "Sauver l'image"
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr ""
+"Le nom de fichier de l'image ne peut pas être le même que celui du fichier "
+"d'ID '%s'"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."

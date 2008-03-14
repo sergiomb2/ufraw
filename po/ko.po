@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-04 16:00+0100\n"
+"POT-Creation-Date: 2008-03-14 16:15+0100\n"
 "PO-Revision-Date: 2007-11-09 21:16+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -1282,22 +1282,22 @@ msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr ""
 "카메라 화이트 벨런스를 사용할 수 없으므로, 자동 화이트 벨런스로 되돌립니다."
 
+#. Error was not already set before
 #, c-format
-msgid "Image filename can not be the same as ID filename '%s'"
-msgstr "이미지의 파일 이름은 ID 파일 이름 '%s'와 같을 수 없습니다."
+msgid "Error creating file '%s'."
+msgstr "%s 파일 만들기 실패."
 
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "파일 만들기 실패."
 
-#. Error was not already set before
-#, c-format
-msgid "Error creating file '%s'."
-msgstr "%s 파일 만들기 실패."
-
 msgid "Saving image"
 msgstr "이미지 저장중"
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr "이미지의 파일 이름은 ID 파일 이름 '%s'와 같을 수 없습니다."
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
