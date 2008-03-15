@@ -339,6 +339,10 @@ static gboolean curveeditor_widget_on_motion_notify_event(GtkWidget *widget,
     double x = (double)event->x / (double)(w-1);
     double y = pow( (double)(h - event->y) / (double)(h-1), curve->m_gamma);
 
+if (y>1 || y<0)
+printf("y %f %d %f\n",event->y,h,y);
+if (x>1 || x<0)
+printf("x %f %d %f\n",event->x,w,x);
     // If point is dragged outside of the editor, delete it.
     if ( (event->x < -10 || event->x > w+10) &&
 	    data->selectedPoint>0 &&

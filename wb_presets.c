@@ -909,6 +909,13 @@ const wb_data wb_preset[] = {
   { "NIKON", "D2X", "9100K", 0,			{ 2.09766, 1, 1.24609, 0 } },
   { "NIKON", "D2X", "10000K", 0,		{ 2.17578, 1, 1.18359, 0 } },
 
+  { "NIKON", "D3", Daylight, 0, 		{ 1.816, 1, 1.355, 0 } },
+  { "NIKON", "D3", Flash, 0,			{ 2.039, 1, 1.172, 0 } },
+  { "NIKON", "D3", Cloudy, 0,			{ 1.949, 1, 1.223, 0 } },
+  { "NIKON", "D3", Shade, 0,			{ 2.246, 1, 1.086, 0 } },
+  { "NIKON", "D3", Incandescent, 0, 		{ 1.168, 1, 2.316, 0 } },
+  { "NIKON", "D3", Fluorescent, 0, 		{ 1.688, 1, 2.102, 0 } },
+
   /* D200 basic + fine tune WB presets */
   { "NIKON", "D200", Incandescent, -2,		{ 1.199219, 1, 2.238281, 0 } },
   { "NIKON", "D200", Incandescent, -1,		{ 1.183594, 1, 2.289063, 0 } },
