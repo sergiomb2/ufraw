@@ -69,6 +69,12 @@ const wb_data wb_preset[] = {
   { "", "", N_("Camera WB"), 0,	{ 0, 0, 0, 0 } },
   { "", "", N_("Auto WB"), 0,	{ 0, 0, 0, 0 } },
 
+  { "Canon", "PowerShot A630", Daylight, 0,	{ 1.831422, 1, 1.245671, 0 } },
+  { "Canon", "PowerShot A630", Cloudy, 0,	{ 1.669924, 1, 1.326299, 0 } },
+  { "Canon", "PowerShot A630", Tungsten, 0,	{ 1.696768, 1, 1.268658, 0 } },
+  { "Canon", "PowerShot A630", Fluorescent, 0,	{ 1.869859, 1, 1.209110, 0 } },
+  { "Canon", "PowerShot A630", FluorescentHigh, 0, { 1.855491, 1, 1.206855, 0 } },
+
   { "Canon", "PowerShot G2", Daylight, 0,	{ 2.011483, 1, 1.299522, 0 } },
   { "Canon", "PowerShot G2", Cloudy, 0,		{ 2.032505, 1, 1.285851, 0 } },
   { "Canon", "PowerShot G2", Tungsten, 0,	{ 1.976008, 1, 1.332054, 0 } },
