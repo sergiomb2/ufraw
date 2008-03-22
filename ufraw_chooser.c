@@ -160,7 +160,8 @@ void ufraw_chooser(conf_data *conf, const char *defPath)
 	    ufraw_config(uf, conf, NULL, NULL);
 	    ufraw_preview(uf, FALSE, NULL);
 	    g_free(filename);
-	    *conf = *uf->conf;
+	    conf_copy_image(conf, uf->conf);
+	    conf_copy_save(conf, uf->conf);
 	}
 	g_slist_free(saveList);
     }

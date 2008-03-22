@@ -1088,10 +1088,6 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     g_strlcpy(dst->make, src->make, max_name);
     g_strlcpy(dst->model, src->model, max_name);
     dst->orientation = src->orientation;
-    dst->CropX1 = src->CropX1;
-    dst->CropY1 = src->CropY1;
-    dst->CropX2 = src->CropX2;
-    dst->CropY2 = src->CropY2;
     dst->threshold = src->threshold;
     dst->exposure = src->exposure;
     dst->ExposureNorm = src->ExposureNorm;
@@ -1184,6 +1180,16 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     }
     dst->intent[out_profile] = src->intent[out_profile];
     dst->intent[display_profile] = src->intent[display_profile];
+}
+
+/* Copy the transformation information from *src to *dst. */
+void conf_copy_transform(conf_data *dst, const conf_data *src)
+{
+    dst->orientation = src->orientation;
+    dst->CropX1 = src->CropX1;
+    dst->CropY1 = src->CropY1;
+    dst->CropX2 = src->CropX2;
+    dst->CropY2 = src->CropY2;
 }
 
 /* Copy the 'save options' from *src to *dst */

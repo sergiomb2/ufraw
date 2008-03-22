@@ -134,7 +134,8 @@ int main (int argc, char **argv)
 	    exit(1);
 	}
 	ufraw_preview(uf, plugin, NULL);
-	rc = *uf->conf;
+	conf_copy_image(&rc, uf->conf);
+	conf_copy_save(&rc, uf->conf);
 	g_free(uf);
     }
     if (dummyWindow!=NULL) gtk_widget_destroy(dummyWindow);

@@ -302,6 +302,8 @@ int conf_load(conf_data *c, const char *confFilename);
 int conf_save(conf_data *c, char *confFilename, char **confBuffer);
 /* Copy the image manipulation options from *src to *dst */
 void conf_copy_image(conf_data *dst, const conf_data *src);
+/* Copy the transformation options from *src to *dst */
+void conf_copy_transform(conf_data *dst, const conf_data *src);
 /* Copy the 'save options' from *src to *dst */
 void conf_copy_save(conf_data *dst, const conf_data *src);
 int conf_set_cmd(conf_data *conf, const conf_data *cmd);
