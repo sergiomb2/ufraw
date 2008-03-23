@@ -1209,6 +1209,8 @@ void conf_copy_save(conf_data *dst, const conf_data *src)
     dst->shrink = src->shrink;
     dst->size = src->size;
     dst->overwrite = src->overwrite;
+    dst->RememberOutputPath = src->RememberOutputPath;
+    dst->progressiveJPEG = src->progressiveJPEG;
     dst->losslessCompress = src->losslessCompress;
     dst->embeddedImage = src->embeddedImage;
 }
