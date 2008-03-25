@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.9 2008/03/09 13:55:45 lexort Exp $
+$Id: README-processing.txt,v 1.10 2008/03/25 19:06:47 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -52,6 +52,10 @@ http://regex.info/blog/photo-tech/color-spaces-page1/
 === other converters
 
 http://www.rawtherapee.com/data/RT-Internal-Workflow_2.3.pdf
+
+=== processing issues
+
+http://www.4p8.com/eric.brasseur/gamma.html
 
 == Reading Raw files
 
