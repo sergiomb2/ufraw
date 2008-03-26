@@ -327,7 +327,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	    uf->LoadingID = TRUE;
 	    conf_data tmp = *rc;
 	    conf_copy_image(&tmp, uf->conf);
-	    conf_copy_transform(&tmp, uf->conf);
 	    conf_copy_save(&tmp, uf->conf);
 	    g_strlcpy(tmp.outputFilename, uf->conf->outputFilename, max_path);
 	    g_strlcpy(tmp.outputPath, uf->conf->outputPath, max_path);
@@ -362,6 +361,12 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	struct stat s;
 	fstat(fileno(raw->ifp), &s);
 	g_snprintf(uf->conf->inputModTime, max_name, "%d", (int)s.st_mtime);
+
+	/*Reset crop coordinates between images.*/
+	uf->conf->CropX1 = -1;
+	uf->conf->CropY1 = -1;
+	uf->conf->CropX2 = -1;
+	uf->conf->CropY2 = -1;
     }
     if (strlen(uf->conf->outputFilename)==0) {
 	/* If output filename wasn't specified use input filename */
