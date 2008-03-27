@@ -1,13 +1,13 @@
-# Portuguese (Brazil) translation for UFRaw package
-# Copyright (C) 2007 by Udi Fuchs
+# Portuguese (Brazil) translation for UFRaw.
+# Copyright (C) 2006-2008 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-#
 # Bruno Buys <brunobuys@gmail.com>, 2007.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-14 16:15+0100\n"
+"POT-Creation-Date: 2008-03-27 05:00+0100\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"

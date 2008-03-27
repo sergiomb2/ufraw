@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * dcraw_indi.c - DCRaw functions made independent
- * Copyright 2004-2007 by Udi Fuchs
+ * Copyright 2004-2008 by Udi Fuchs
  *
  * based on dcraw by Dave Coffin
  * http://www.cybercom.net/~dcoffin/

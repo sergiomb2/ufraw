@@ -1,5 +1,5 @@
 # Swedish translation for UFRaw.
-# Copyright (C) 2006-2007 Udi Fuchs.
+# Copyright (C) 2006-2008 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 # Daniel Nylander <info@danielnylander.se>, 2007.
 #
@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-14 16:15+0100\n"
+"POT-Creation-Date: 2008-03-27 05:00+0100\n"
 "PO-Revision-Date: 2007-11-13 21:53+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"

@@ -1,13 +1,13 @@
-# translation of nl.po to Nederlands
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-#
+# Dutch translation for UFRaw.
+# Copyright (C) 2006-2008 Udi Fuchs.
+# This file is distributed under the same license as the UFRaw package.
 # Simon Oosthoek <simon@margo.student.utwente.nl>, 2008.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-14 16:15+0100\n"
+"POT-Creation-Date: 2008-03-27 05:00+0100\n"
 "PO-Revision-Date: 2008-03-14 17:10+0100\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
@@ -806,8 +806,8 @@ msgid ""
 "Homepage: http://ufraw.sourceforge.net/\n"
 "\n"
 msgstr ""
-"<b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is een "
-"programma om\n"
+"<b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is een programma "
+"om\n"
 "raw afbeeldingen van digitale cameras te lezen en manipuleren.\n"
 "UFRaw gebruikt <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
 "voor de daadwerkelijke interpretatie van de raw afbeeldingen.\n"

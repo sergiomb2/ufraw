@@ -1,15 +1,15 @@
-# Russian translation for UFRaw package
-# Copyright (C) 2007 by Udi Fuchs
+# Russian translation for UFRaw.
+# Copyright (C) 2006-2008 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-#
 # Alexey Voinov <voins@voins.program.ru>, 2006.
 # Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net.by>, 2006, 2007.
-# Andrew Zabolotny <andyz@users.sourceforge.net>, 2007
+# Andrew Zabolotny <andyz@users.sourceforge.net>, 2007.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-14 16:15+0100\n"
+"POT-Creation-Date: 2008-03-27 05:00+0100\n"
 "PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"

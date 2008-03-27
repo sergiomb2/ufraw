@@ -1,5 +1,5 @@
 # Norwegian translation for UFRaw.
-# Copyright (C) 2006-2007 Udi Fuchs.
+# Copyright (C) 2006-2008 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 # Alvin Brattli <alvin.brattli@gmail.com>, 2008.
 #
@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-04 16:00+0100\n"
+"POT-Creation-Date: 2008-03-27 05:00+0100\n"
 "PO-Revision-Date: 2008-03-01 15:31+0100\n"
 "Last-Translator: Alvin Brattli <alvin.brattli@gmail.com>\n"
 "Language-Team: Norwegian <no@li.org>\n"
@@ -159,7 +159,8 @@ msgid "UFRaw "
 msgstr "UFRaw "
 
 msgid " - Unidentified Flying Raw converter for digital camera images.\n"
-msgstr " - Uidentifisert Flyvende Raw-konverterer for bilder fra digitalkamera.\n"
+msgstr ""
+" - Uidentifisert Flyvende Raw-konverterer for bilder fra digitalkamera.\n"
 
 msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
 msgstr "Bruk: ufraw [ alternativer ... ] [ raw-bildefiler ... ]\n"
@@ -192,7 +193,8 @@ msgstr ""
 "inneholder filnavnet til et raw-bilde og parametrene for behandling av\n"
 "bildet. Man kan også bruke en ID-fil med alternativet:\n"
 
-msgid "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+msgid ""
+"--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
 msgstr "--conf=ID-fil         Bruk parametrene i ID-fil på andre raw-bilder.\n"
 
 msgid "The rest of the options are separated into two groups.\n"
@@ -260,8 +262,10 @@ msgstr ""
 "--restore=clip|lch|hsv\n"
 "                      Gjenopprett detaljer for negative EV.\n"
 "                      «clip» gjenoppretter ingenting. Ingen detaljer mistes.\n"
-"                      «lch» gjenoppretter i LCH-fargerommet (bløte detaljer).\n"
-"                      «hsv» gjenoppretter i HSV-fargerommet (skarpe detaljer).\n"
+"                      «lch» gjenoppretter i LCH-fargerommet (bløte "
+"detaljer).\n"
+"                      «hsv» gjenoppretter i HSV-fargerommet (skarpe "
+"detaljer).\n"
 "                      (standardverdi: lch)\n"
 
 msgid ""
@@ -274,8 +278,10 @@ msgstr ""
 "                      «film» etterligner blød filmkurve.\n"
 "                      (standardverdi: digital).\n"
 
-msgid "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
-msgstr "--gamma=GAMMA         Gammajustering for basiskurven (standardverdi: 0.45).\n"
+msgid ""
+"--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+msgstr ""
+"--gamma=GAMMA         Gammajustering for basiskurven (standardverdi: 0.45).\n"
 
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr ""
@@ -294,7 +300,8 @@ msgid ""
 "                      Wavelet denoising threshold (default 0.0).\n"
 msgstr ""
 "--wavelet-denoising-threshold=VERDI\n"
-"                      Terskel for wavelet støyreduksjon (standardverdi: 0.0).\n"
+"                      Terskel for wavelet støyreduksjon (standardverdi: "
+"0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -302,7 +309,8 @@ msgid ""
 "0).\n"
 msgstr ""
 "--exposure=auto|EKSPONERING\n"
-"                      Automatisk eksponering eller eksponeringskorreksjon i EV\n"
+"                      Automatisk eksponering eller eksponeringskorreksjon i "
+"EV\n"
 "                      (standardverdi: 0).\n"
 
 msgid ""
@@ -337,7 +345,8 @@ msgstr ""
 "                      Filformat for utdata (standardverdi: ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
-msgstr "--out-depth=8|16      Bitdybde for hver kanal i utdata (standardverdi: 8).\n"
+msgstr ""
+"--out-depth=8|16      Bitdybde for hver kanal i utdata (standardverdi: 8).\n"
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -374,10 +383,12 @@ msgid ""
 "--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
 "                      the image (default camera).\n"
 msgstr ""
-"--rotate=camera|no    Roter bildet i henhold til kameraets innstilling eller\n"
+"--rotate=camera|no    Roter bildet i henhold til kameraets innstilling "
+"eller\n"
 "                      la være å rotere bildet (standardverdi: camera).\n"
 
-msgid "--out-path=PATH       PATH for output file (default use input file's path).\n"
+msgid ""
+"--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=STI        STI for utdatafil (som standardverdi brukes\n"
 "                      inndatafilens sti).\n"
@@ -388,12 +399,14 @@ msgstr "--output=FIL          Utdatafilens navn, bruk «-» for standardutdata.\
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
 msgstr "--darkframe=FIL       Bruk FIL for raw-sortbildesubtraksjon.\n"
 
-msgid "--overwrite           Overwrite existing files without asking (default no).\n"
+msgid ""
+"--overwrite           Overwrite existing files without asking (default no).\n"
 msgstr ""
 "--overwrite           Overskriv eksisterende filer uten å spørre\n"
 "                      (standardverdi: nei).\n"
 
-msgid "--silent              Do not display any messages during batch conversion.\n"
+msgid ""
+"--silent              Do not display any messages during batch conversion.\n"
 msgstr "--silent              Vær helt stille under satsvis konvertering.\n"
 
 msgid ""
@@ -441,7 +454,8 @@ msgstr "«%s» er ikke en gyldig innstilling for hvitbalanse."
 
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
-msgstr "Alternativene --temperature og --green overkjører alternativet --wb=%s. "
+msgstr ""
+"Alternativene --temperature og --green overkjører alternativet --wb=%s. "
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -558,7 +572,8 @@ msgstr "Originalstørrelsen (%d) er mindre enn den valgte størrelsen (%d)"
 
 #, c-format
 msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
-msgstr "Uoverensstemmelse i inkludert ppm; høyde %d, bredde %d, mens buffer er %d."
+msgstr ""
+"Uoverensstemmelse i inkludert ppm; høyde %d, bredde %d, mens buffer er %d."
 
 #, c-format
 msgid "JPEG thumb height %d different than expected %d."
@@ -1274,24 +1289,25 @@ msgid "Can not downsize from %d to %d."
 msgstr "Kan ikke forminske fra %d til %d."
 
 msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr "Kan ikke bruke kameraets hvitbalanse, bruker automatisk hvitbalanse isteden."
-
-#, c-format
-msgid "Image filename can not be the same as ID filename '%s'"
-msgstr "Bildets filnavn kan ikke være det samme som ID-filnavnet «%s»"
-
-#. 'errno' does seem to contain useful information
-#. Error was not already set before
-msgid "Error creating file."
-msgstr "Feil ved oppretting av fil."
+msgstr ""
+"Kan ikke bruke kameraets hvitbalanse, bruker automatisk hvitbalanse isteden."
 
 #. Error was not already set before
 #, c-format
 msgid "Error creating file '%s'."
 msgstr "Feil ved oppretting av filen «%s»."
 
+#. 'errno' does seem to contain useful information
+#. Error was not already set before
+msgid "Error creating file."
+msgstr "Feil ved oppretting av fil."
+
 msgid "Saving image"
 msgstr "Lagrer bildet"
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr "Bildets filnavn kan ikke være det samme som ID-filnavnet «%s»"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
@@ -1398,4 +1414,3 @@ msgstr "Kameraets HB"
 
 msgid "Auto WB"
 msgstr "Automatisk HB"
-
