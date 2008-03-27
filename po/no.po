@@ -1,0 +1,1401 @@
+# Norwegian translation for UFRaw.
+# Copyright (C) 2006-2007 Udi Fuchs.
+# This file is distributed under the same license as the UFRaw package.
+# Alvin Brattli <alvin.brattli@gmail.com>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: UFRaw 0.14\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-01-04 16:00+0100\n"
+"PO-Revision-Date: 2008-03-01 15:31+0100\n"
+"Last-Translator: Alvin Brattli <alvin.brattli@gmail.com>\n"
+"Language-Team: Norwegian <no@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Translate text message from GtkImageView:
+msgid "Open the navigator window"
+msgstr "Åpne navigasjonsvinduet"
+
+msgid "No input file, nothing to do."
+msgstr "Ingen inndatafil, ingenting å gjøre."
+
+#, c-format
+msgid "Loaded %s%s"
+msgstr "Lastet inn %s%s"
+
+#, c-format
+msgid "Saved %s%s"
+msgstr "Lagret %s%s"
+
+#. First letter of the word 'yes' for the y/n question
+msgid "y"
+msgstr "j"
+
+#. First letter of the word 'no' for the y/n question
+msgid "n"
+msgstr "n"
+
+#, c-format
+msgid "%s: overwrite '%s'?"
+msgstr "%s: overskriv «%s»?"
+
+msgid "--silent option is valid only in batch mode"
+msgstr "Alternativet --silent kan bare brukes i batch-modus"
+
+msgid "--rotate option is valid only in batch mode"
+msgstr "Alternativet --rotate kan bare brukes i batch-modus"
+
+msgid "Extracting embedded image is not supported in interactive mode"
+msgstr "Utpakking av inkludert bilde er ikke støttet i interaktiv modus"
+
+msgid "Raw images"
+msgstr "Raw-bilder"
+
+msgid "UFRaw ID files"
+msgstr "UFRaw ID-filer"
+
+msgid "Raw jpg's"
+msgstr "Raw jpg-er"
+
+msgid "Raw tif's"
+msgstr "Raw tif-er"
+
+msgid "All files"
+msgstr "Alle filer"
+
+msgid "Show hidden files"
+msgstr "Vis skjulte filer"
+
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. exposure, saturation, black
+#. ExposureNorm
+#. restoreDetails
+#. clipHighlights
+#. autoExposure
+#. autoBlack
+#. BaseCurveIndex, BaseCurveCount
+#. BaseCurve data defaults
+#. curveIndex, curveCount
+#. Curve data defaults
+msgid "Manual curve"
+msgstr "Manuell kurve"
+
+msgid "Linear curve"
+msgstr "Lineær kurve"
+
+msgid "Custom curve"
+msgstr "Selvvalgt kurve"
+
+msgid "Camera curve"
+msgstr "Kamerakurve"
+
+#. profileIndex[], profileCount[]
+#. Profile data defaults
+msgid "sRGB"
+msgstr "sRGB"
+
+msgid "System default"
+msgstr "Systemets standardverdi"
+
+msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
+msgstr "Prøver å konvertere .ufrawrc fra UFRaw-0.4 eller tidligere"
+
+msgid "Trying to convert .ufrawrc from UFRaw-0.6 or earlier"
+msgstr "Prøver å konvertere .ufrawrc fra UFRaw-0.6 eller tidligere"
+
+#, c-format
+msgid "UFRaw version in .ufrawrc is not supported"
+msgstr "UFRaw-versjonen i .ufrawrc er ikke støttet"
+
+#, c-format
+msgid "Too many anchors for curve '%s'"
+msgstr "For mange ankerpunkter i kurven «%s»"
+
+#, c-format
+msgid ""
+"ID file %s does not appear to be a regular file\n"
+"%s\n"
+msgstr ""
+"ID-filen %s ser ikke ut som en alminnelig fil\n"
+"%s\n"
+
+#, c-format
+msgid ""
+"Can't open ID file %s for reading\n"
+"%s\n"
+msgstr ""
+"Kan ikke åpne ID-filen %s for lesing\n"
+"%s\n"
+
+#, c-format
+msgid ""
+"Error parsing '%s'\n"
+"%s"
+msgstr ""
+"Feil ved tolking av «%s»\n"
+"%s"
+
+#, c-format
+msgid ""
+"Can't open file %s for writing\n"
+"%s\n"
+msgstr ""
+"Kan ikke åpne filen %s for skriving\n"
+"%s\n"
+
+msgid "cannot --create-id with stdout"
+msgstr "Kan ikke --create-id til standardutdata"
+
+msgid "UFRaw "
+msgstr "UFRaw "
+
+msgid " - Unidentified Flying Raw converter for digital camera images.\n"
+msgstr " - Uidentifisert Flyvende Raw-konverterer for bilder fra digitalkamera.\n"
+
+msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
+msgstr "Bruk: ufraw [ alternativer ... ] [ raw-bildefiler ... ]\n"
+
+msgid "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
+msgstr "       ufraw-batch [ alternativer ... ] [ raw-bildefiler ... ]\n"
+
+msgid "       ufraw [ options ... ] [ default-directory ]\n"
+msgstr "       ufraw [ alternativer ... ] [ standardmappe ]\n"
+
+msgid ""
+"By default 'ufraw' displays a preview window for each raw image allowing\n"
+"the user to tweak the image parameters before saving. If no raw images\n"
+"are given at the command line, UFRaw will display a file chooser dialog.\n"
+"To process the images with no questions asked (and no preview) use\n"
+"'ufraw-batch'.\n"
+msgstr ""
+"Normalt viser «ufraw» et forhåndsvisningsvindu for hvert raw-bilde.\n"
+"Dette lar brukeren finjustere bildeparametrene før bildet lagres. UFRaw\n"
+"viser en filvalgsdialog hvis det ikke er angitt noen raw-bilder på\n"
+"kommandolinjen. Bruk «ufraw-batch» for å behandle bilder uten å måtte\n"
+"svare på spørsmål (og uten forhåndsvisning).\n"
+
+msgid ""
+"The input files can be either raw images or ufraw's ID files. ID files\n"
+"contain a raw image filename and the parameters for handling the image.\n"
+"One can also use an ID file with the option:\n"
+msgstr ""
+"Inndatafilene kan være enten raw-bilder eller ufraws ID-filer. ID-filer\n"
+"inneholder filnavnet til et raw-bilde og parametrene for behandling av\n"
+"bildet. Man kan også bruke en ID-fil med alternativet:\n"
+
+msgid "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+msgstr "--conf=ID-fil         Bruk parametrene i ID-fil på andre raw-bilder.\n"
+
+msgid "The rest of the options are separated into two groups.\n"
+msgstr "Resten av alternativene er delt i to grupper.\n"
+
+msgid "The options which are related to the image manipulation are:\n"
+msgstr "Alternativene knyttet til bildebehandling er:\n"
+
+msgid "--wb=camera|auto      White balance setting.\n"
+msgstr "--wb=camera|auto      Innstilling for hvitbalanse.\n"
+
+msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
+msgstr "--temperature=TEMP    Fargetemperatur i Kelvin (2000-7000).\n"
+
+msgid "--green=GREEN         Green color normalization.\n"
+msgstr "--green=GRØNN         Grønn fargenormalisering.\n"
+
+msgid ""
+"--base-curve=manual|linear|camera|custom|CURVE\n"
+"                      Type of base tone curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default camera if such exists, linear otherwise).\n"
+msgstr ""
+"--base-curve=manual|linear|camera|custom|KURVE\n"
+"                      Kurvetype for basistone. KURVE kan være en hvilken\n"
+"                      som helst kurve som har vært lest inn i det grafiske\n"
+"                      brukergrensesnittet (standardverdi camera, om den\n"
+"                      eksisterer, ellers linear).\n"
+
+msgid ""
+"--base-curve-file=file\n"
+"                      Use base tone curve included in specified file.\n"
+"                      Overrides --base-curve option.\n"
+msgstr ""
+"--base-curve-file=fil\n"
+"                      Bruk basistonekurve fra den angitte filen.\n"
+"                      Overkjører alternativet --base-curve.\n"
+
+msgid ""
+"--curve=manual|linear|CURVE\n"
+"                      Type of luminosity curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default linear).\n"
+msgstr ""
+"--curve=manual|linear|KURVE\n"
+"                      Kurvetype for lysstyrke. KURVE kan være en hvilken\n"
+"                      som helst kurve som har vært lest inn i det grafiske\n"
+"                      brukergrensesnittet (standardverdi: linear).\n"
+
+msgid ""
+"--curve-file=file     Use luminosity curve included in specified file.\n"
+"                      Overrides --curve option.\n"
+msgstr ""
+"--curve-file=fil      Bruk lysstyrkekurve fra angitt fil.\n"
+"                      Overkjører alternativet --curve.\n"
+
+msgid ""
+"--restore=clip|lch|hsv\n"
+"                      Restore details for negative EV.\n"
+"                      'clip' restores nothing - safe from artifacts.\n"
+"                      'lch' restores in LCH space - giving soft details.\n"
+"                      'hsv' restores in HSV space - giving sharp details.\n"
+"                      (default lch).\n"
+msgstr ""
+"--restore=clip|lch|hsv\n"
+"                      Gjenopprett detaljer for negative EV.\n"
+"                      «clip» gjenoppretter ingenting. Ingen detaljer mistes.\n"
+"                      «lch» gjenoppretter i LCH-fargerommet (bløte detaljer).\n"
+"                      «hsv» gjenoppretter i HSV-fargerommet (skarpe detaljer).\n"
+"                      (standardverdi: lch)\n"
+
+msgid ""
+"--clip=digital|film   Clip highlights for positive EV.\n"
+"                      'digital' linear digital sensor response.\n"
+"                      'film' emulate soft film response. (default digital).\n"
+msgstr ""
+"--clip=digital|film   Klipp høylys for positive EV.\n"
+"                      «digital» lineær digitalsensorkurve.\n"
+"                      «film» etterligner blød filmkurve.\n"
+"                      (standardverdi: digital).\n"
+
+msgid "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+msgstr "--gamma=GAMMA         Gammajustering for basiskurven (standardverdi: 0.45).\n"
+
+msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
+msgstr ""
+"--linearity=LINEARITET\n"
+"                      Basiskurvens linearitet (standardverdi: 0.10).\n"
+
+msgid ""
+"--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
+"output).\n"
+msgstr ""
+"--saturation=METNING  Justering av fargemetning (standardverdi 1.0,\n"
+"                      0 for svarthvit utdata).\n"
+
+msgid ""
+"--wavelet-denoising-threshold=THRESHOLD\n"
+"                      Wavelet denoising threshold (default 0.0).\n"
+msgstr ""
+"--wavelet-denoising-threshold=VERDI\n"
+"                      Terskel for wavelet støyreduksjon (standardverdi: 0.0).\n"
+
+msgid ""
+"--exposure=auto|EXPOSURE\n"
+"                      Auto exposure or exposure correction in EV (default "
+"0).\n"
+msgstr ""
+"--exposure=auto|EKSPONERING\n"
+"                      Automatisk eksponering eller eksponeringskorreksjon i EV\n"
+"                      (standardverdi: 0).\n"
+
+msgid ""
+"--black-point=auto|BLACK\n"
+"                      Auto black-point or black-point value (default 0).\n"
+msgstr ""
+"--black-point=auto|SORT\n"
+"                      Automatisk sortpunkt eller sortpunktsverdi\n"
+"                      (standardverdi: 0).\n"
+
+msgid ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Interpolation algorithm to use (default ahd).\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Algoritme for interpolasjon (standardverdi: ahd).\n"
+
+msgid "The options which are related to the final output are:\n"
+msgstr "Alternativene knyttet til endelige utdata er:\n"
+
+msgid "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
+msgstr "--shrink=FAKTOR       Forminsk bildet med FAKTOR (standardverdi: 1).\n"
+
+msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
+msgstr "--size=STØRRELSE      Forminsk maks(højde,bredde) til STØRRELSE.\n"
+
+msgid ""
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Output file format (default ppm).\n"
+msgstr ""
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Filformat for utdata (standardverdi: ppm).\n"
+
+msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
+msgstr "--out-depth=8|16      Bitdybde for hver kanal i utdata (standardverdi: 8).\n"
+
+msgid ""
+"--create-id=no|also|only\n"
+"                      Create no|also|only ID file (default no).\n"
+msgstr ""
+"--create-id=no|also|only\n"
+"                      Lag ikke|også|kun ID-fil (standardverdi: ikke).\n"
+
+msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
+msgstr "--compression=VERDI   JPEG-komprimering (0-100, standardverdi: 85).\n"
+
+msgid ""
+"--[no]exif            Embed EXIF in output JPEG or PNG (default embed "
+"EXIF).\n"
+msgstr ""
+"--[no]exif            [Ikke] inkluder EXIF i JPEG- eller PNG-utdata\n"
+"                      (standardverdi: inkluder EXIF).\n"
+
+msgid ""
+"--[no]zip             Enable [disable] TIFF zip compression (default "
+"nozip).\n"
+msgstr ""
+"--[no]zip             Slå på [slå av] zip-komprimering for TIFF\n"
+"                      (standardverdi: slå av).\n"
+
+msgid ""
+"--embedded-image      Extract the preview image embedded in the raw file\n"
+"                      instead of converting the raw image.\n"
+msgstr ""
+"--embedded-image      Pakk ut forhåndsvisningsbildet inkludert i raw-filen\n"
+"                      i stedet for å konvertere raw-bildet.\n"
+
+msgid ""
+"--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
+"                      the image (default camera).\n"
+msgstr ""
+"--rotate=camera|no    Roter bildet i henhold til kameraets innstilling eller\n"
+"                      la være å rotere bildet (standardverdi: camera).\n"
+
+msgid "--out-path=PATH       PATH for output file (default use input file's path).\n"
+msgstr ""
+"--out-path=STI        STI for utdatafil (som standardverdi brukes\n"
+"                      inndatafilens sti).\n"
+
+msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
+msgstr "--output=FIL          Utdatafilens navn, bruk «-» for standardutdata.\n"
+
+msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
+msgstr "--darkframe=FIL       Bruk FIL for raw-sortbildesubtraksjon.\n"
+
+msgid "--overwrite           Overwrite existing files without asking (default no).\n"
+msgstr ""
+"--overwrite           Overskriv eksisterende filer uten å spørre\n"
+"                      (standardverdi: nei).\n"
+
+msgid "--silent              Do not display any messages during batch conversion.\n"
+msgstr "--silent              Vær helt stille under satsvis konvertering.\n"
+
+msgid ""
+"UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
+"Then, if an ID file is specified it setting are read. Next, the setting "
+"from\n"
+"the --conf option are taken, ignoring input/output filenames in the ID "
+"file.\n"
+"Lastly, the options from the command line are set. In batch mode, the "
+"second\n"
+"group of options is NOT read from the resource file.\n"
+msgstr ""
+"UFRaw leser først innstillinger fra ressursfilen $HOME/.ufrawrc.\n"
+"Så leses innstillinger fra en ID-fil, om en slik er angitt.\n"
+"Deretter hentes innstillinger fra alternativet --conf, hvor filnavn\n"
+"for inn- og utdata fra ID-filen ignoreres. Til slutt brukes alternativene\n"
+"fra kommandolinjen. I satsvis modus vil den andre gruppen med opsjoner\n"
+"IKKE bli lest fra ressursfilen.\n"
+
+msgid ""
+"Last, but not least, --version displays the version number and compilation\n"
+"options for ufraw and --help displays this help message and exits.\n"
+msgstr ""
+"Sist, men ikke minst, viser --version versjonsnummer og alternativer\n"
+"brukt under kompilering av ufraw, mens --help viser denne hjelpeteksten\n"
+"og stopper programmet.\n"
+
+#, c-format
+msgid "'%s' is not a valid value for the --%s option."
+msgstr "«%s» er ikke en gyldig verdi for alternativet --%s."
+
+msgid "ufraw was build without ZIP support."
+msgstr "ufraw ble bygget uten støtte for ZIP."
+
+msgid "--batch is obsolete. Use ufraw-batch instead."
+msgstr "--batch er avlegs. Bruk ufraw-batch istedenfor."
+
+#, c-format
+msgid "getopt returned character code 0%o ??"
+msgstr "getopt gav tilbake tegnkode 0%o ??"
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "«%s» er ikke en gyldig innstilling for hvitbalanse."
+
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "Alternativene --temperature og --green overkjører alternativet --wb=%s. "
+
+#, c-format
+msgid "failed to load curve from %s, too many configured base curves"
+msgstr "kunne ikke lese basiskurve fra %s, for mange kurver allerede satt opp"
+
+#, c-format
+msgid "failed to load curve from %s"
+msgstr "kunne ikke lese inn kurve fra %s"
+
+#, c-format
+msgid "'%s' is not a valid base curve name."
+msgstr "«%s» er ikke et gyldig navn på en basiskurve."
+
+#, c-format
+msgid "failed to load curve from %s, too many configured curves"
+msgstr "kunne ikke lese inn kurve fra %s, for mange kurver allerede lest inn"
+
+#, c-format
+msgid "'%s' is not a valid curve name."
+msgstr "«%s» er et ugyldig kurvenavn."
+
+#, c-format
+msgid "'%s' is not a valid interpolation option."
+msgstr "«%s» er et ugyldig alternativ for interpolasjon."
+
+#, c-format
+msgid "'%s' is not a valid restore option."
+msgstr "«%s» er ikke et gyldig alternativ for gjenoppretting."
+
+#, c-format
+msgid "'%s' is not a valid clip option."
+msgstr "«%s» er et ugyldig alternativ for klipping."
+
+msgid "you can not specify both --shrink and --size"
+msgstr "du kan ikke angi både --shrink og --size"
+
+#, c-format
+msgid "'%d' is not a valid bit depth."
+msgstr "«%d» er en ugyldig bitdybde."
+
+#, c-format
+msgid "Output type '%s' is deprecated"
+msgstr "Utdatatype «%s» er foreldet"
+
+msgid "ufraw was build without TIFF support."
+msgstr "ufraw ble bygget uten støtte for TIFF."
+
+msgid "ufraw was build without JPEG support."
+msgstr "ufraw ble bygget uten støtte for JPEG."
+
+msgid "ufraw was build without PNG support."
+msgstr "ufraw ble bygget uten støtte for PNG."
+
+#, c-format
+msgid "'%s' is not a valid output type."
+msgstr "«%s» er en ugyldig utdatatype."
+
+#, c-format
+msgid "'%s' is not a valid output type for embedded image."
+msgstr "«%s» er en ugyldig utdatatype for inkluderte bilder."
+
+#, c-format
+msgid "'%d' is not a valid bit depth for embedded image."
+msgstr "«%d» er en ugyldig bitdybde for inkluderte bilder."
+
+#, c-format
+msgid "'%s' is not a valid rotate option."
+msgstr "«%s» er et ugyldig alternativ for rotate."
+
+#, c-format
+msgid "'%s' is not a valid create-id option."
+msgstr "«%s» er et ugyldig alternative for create-id."
+
+#, c-format
+msgid "'%s' is not a valid path."
+msgstr "«%s» er ikke en gyldig sti."
+
+msgid "cannot output more than one file to the same output"
+msgstr "kan ikke skrive mer enn en fil til samme utdata"
+
+#, c-format
+msgid "Raw file '%s' missing."
+msgstr "Raw-filen «%s» eksisterer ikke."
+
+msgid "Delete raw file"
+msgstr "Slett raw-fil"
+
+msgid "_Delete selected"
+msgstr "_Slett valgte"
+
+msgid "Delete _All"
+msgstr "Slett _alle"
+
+msgid "Select files to delete"
+msgstr "Velg filer som skal slettes"
+
+#, c-format
+msgid "Error reading directory '%s'."
+msgstr "Kunne ikke lese mappen «%s»."
+
+#, c-format
+msgid "Error deleting '%s'"
+msgstr "Kunne ikke slette «%s»"
+
+msgid "Reading embedded image requires libjpeg."
+msgstr "Må ha libjpeg for å kunne lese inkluderte bilder."
+
+msgid "No embedded image found"
+msgstr "Fant ikke inkludert bilde"
+
+#, c-format
+msgid "Original size (%d) is smaller than the requested size (%d)"
+msgstr "Originalstørrelsen (%d) er mindre enn den valgte størrelsen (%d)"
+
+#, c-format
+msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
+msgstr "Uoverensstemmelse i inkludert ppm; høyde %d, bredde %d, mens buffer er %d."
+
+#, c-format
+msgid "JPEG thumb height %d different than expected %d."
+msgstr "Høyde på inkludert JPEG (%d) er forskjellig fra forventet (%d)."
+
+#, c-format
+msgid "JPEG thumb width %d different than expected %d."
+msgstr "Bredde på inkludert JPEG (%d) er forskjellig fra forventet (%d)."
+
+#, c-format
+msgid ""
+"Error creating file '%s'.\n"
+"%s"
+msgstr ""
+"Feil ved oppretting av filen «%s».\n"
+"%s"
+
+msgid "No embedded image read"
+msgstr "Inkludert bilde ble ikke lest inn"
+
+#, c-format
+msgid "Error creating file '%s'. Unknown file type %d."
+msgstr "Feil ved oppretting av filen «%s». Ukjent filtype %d."
+
+#, c-format
+msgid "Error creating file '%s': %s"
+msgstr "Feil ved oppretting av filen «%s»: %s"
+
+#, c-format
+msgid "Error writing '%s'"
+msgstr "Feil ved skriving til «%s»"
+
+#, c-format
+msgid "Unsupported output type (%d) for embedded image"
+msgstr "Ikke støttet utdatatype (%d) for inkludert bilde"
+
+#, c-format
+msgid "Loading raw file '%s'"
+msgstr "Leser inn raw-filen «%s»"
+
+msgid "Can't allocate new image."
+msgstr "Kan ikke reservere plass til nytt bilde."
+
+#. Create the "background" layer to hold the image...
+msgid "Background"
+msgstr "Bakgrunn"
+
+msgid "Loading image"
+msgstr "Leser inn bilde"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "Feil ved inkludering av utdataprofilen «%s» i bildet."
+
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored.\n"
+msgstr "Ignorerer for lang EXIF-buffer (lengde %d).\n"
+
+msgid "Raw histogram with conversion curves"
+msgstr "Raw-histogram med konverteringskurver"
+
+msgid "Live histogram"
+msgstr "Sanntidshistogram"
+
+msgid "No more room for new curves."
+msgstr "Ikke mere plass til nye kurver."
+
+msgid "Load curve"
+msgstr "Les inn kurve"
+
+msgid "All curve formats"
+msgstr "Alle kurveformater"
+
+msgid "UFRaw curve format"
+msgstr "UFRaw kurveformat"
+
+msgid "Nikon curve format"
+msgstr "Nikon kurveformat"
+
+msgid "Save curve"
+msgstr "Lagre kurve"
+
+msgid "No more room for new profiles."
+msgstr "Ikke mere plass til nye profiler."
+
+msgid "Load color profile"
+msgstr "Les inn fargeprofil"
+
+msgid "Color Profiles"
+msgstr "Fargeprofiler"
+
+msgid "Luminosity (Y value)"
+msgstr "Lysstyrke (Y-verdi)"
+
+msgid "Adams' zone"
+msgstr "Adams' sone"
+
+#, c-format
+msgid "size %dx%d, zoom %2.f%%"
+msgstr "størrelse %dx%d, zoom %2.f%%"
+
+#, c-format
+msgid "size %dx%d, scale 1/%d"
+msgstr "størrelse %dx%d, skala 1/%d"
+
+#, c-format
+msgid "Black point: %0.3lf"
+msgstr "Sortpunkt: %0.3lf"
+
+msgid "Fatal Error: uf->conf->shrink<1"
+msgstr "Fatal feil: uf->conf->shrink<1"
+
+#. No darkframe file
+msgid "None"
+msgstr "Ingen"
+
+msgid "Load dark frame"
+msgstr "Les inn sortbilde"
+
+msgid "clip"
+msgstr "klipp"
+
+msgid "restore in LCH space for soft details"
+msgstr "gjenopprett i LCH-fargerom for myke detaljer"
+
+msgid "restore in HSV space for sharp details"
+msgstr "gjenopprett i HSV-fargerom for skarpe detaljer"
+
+#, c-format
+msgid ""
+"Restore details for negative EV\n"
+"Current state: %s"
+msgstr ""
+"Gjenopprett detaljer for negative EV\n"
+"Nåværende tilstand: %s"
+
+msgid "digital linear"
+msgstr "digital lineær"
+
+msgid "soft film like"
+msgstr "myk filmlignende"
+
+#, c-format
+msgid ""
+"Clip highlights for positive EV\n"
+"Current state: %s"
+msgstr ""
+"Klipp høylys for positive EV\n"
+"Nåværende tilstand: %s"
+
+#, c-format
+msgid "Filename: %s%s"
+msgstr "Filnavn: %s%s"
+
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+"\n"
+"Opprett også ID-fil"
+
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+"\n"
+"Opprett bare ID-fil"
+
+msgid "UFRaw options"
+msgstr "UFRaw alternativer"
+
+msgid "Settings"
+msgstr "Innstillinger"
+
+msgid "Input color profiles"
+msgstr "Fargeprofiler for inndata"
+
+msgid "Output color profiles"
+msgstr "Fargeprofiler for utdata"
+
+msgid "Display color profiles"
+msgstr "Fargeprofiler for skjerm"
+
+msgid "Base Curves"
+msgstr "Basiskurver"
+
+msgid "Luminosity Curves"
+msgstr "Lysstyrkekurver"
+
+#. Remote Gimp command entry
+msgid "Remote Gimp command"
+msgstr "Ekstern Gimp-kommando"
+
+msgid "Reset command to default"
+msgstr "Sett kommando tilbake til standardverdi"
+
+msgid "Blink Over/Underexposure Indicators"
+msgstr "Blinkende indikatorer for over- og undereksponering"
+
+msgid "Configuration"
+msgstr "Oppsett"
+
+msgid "Save configuration"
+msgstr "Lagre oppsett"
+
+msgid "Save configuration to resource file ($HOME/.ufrawrc)"
+msgstr "Lagre oppsett til ressursfil ($HOME/.ufrawrc)"
+
+msgid "Log"
+msgstr "Logg"
+
+msgid "Encoding conversion failed"
+msgstr "Konvertering av koding mislyktes"
+
+msgid "About"
+msgstr "Om"
+
+msgid ""
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
+"to\n"
+"read and manipulate raw images from digital cameras.\n"
+"UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"for the actual encoding of the raw images.\n"
+"\n"
+"Author: Udi Fuchs\n"
+"Homepage: http://ufraw.sourceforge.net/\n"
+"\n"
+msgstr ""
+"<b>U</b>identifisert <b>F</b>lyvende <b>Raw</b> (<b>UFRaw</b>) er et "
+"program\n"
+"for å lese og behandle raw-bilder fra digitalkameraer.\n"
+"UFRaw bruker <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"til den egentlige kodingen av raw-bilder.\n"
+"\n"
+"Programforfatter: Udi Fuchs\n"
+"Hjemmeside: http://ufraw.sourceforge.net/\n"
+"\n"
+
+#, c-format
+msgid "%s%s (Alt-%s)"
+msgstr "%s%s (Alt-%s)"
+
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw"
+
+msgid "Linear"
+msgstr "Lineær"
+
+msgid "Logarithmic"
+msgstr "Logaritmisk"
+
+msgid "Spot values:"
+msgstr "Punktverdier:"
+
+msgid "Exposure compensation in EV"
+msgstr "Eksponeringskompensasjon i EV"
+
+msgid "Auto adjust exposure"
+msgstr "Automatisk eksponeringsinnstilling"
+
+msgid "Reset exposure to default"
+msgstr "Sett eksponering tilbake til standardverdi"
+
+#. Start of White Balance setting page
+msgid "White balance"
+msgstr "Hvitbalanse"
+
+msgid "White Balance"
+msgstr "Hvitbalanse"
+
+msgid ""
+"There are no white balance presets for your camera model.\n"
+"Check UFRaw's webpage for information on how to get your\n"
+"camera supported."
+msgstr ""
+"Det finnes ingen forvalg for hvitbalanse for din kameramodell.\n"
+"Se på UFRaws hjemmeside for informasjon om hvordan du kan få\n"
+"støtte for ditt kamera."
+
+msgid "Reset white balance to initial value"
+msgstr "Sett hvitbalanse tilbake til startverdien"
+
+msgid "Temperature"
+msgstr "Temperatur"
+
+msgid "White balance color temperature (K)"
+msgstr "Hvitbalansens fargetemperatur (K)"
+
+msgid "Green"
+msgstr "Grønn"
+
+msgid "Green component"
+msgstr "Grønn komponent"
+
+msgid "Select a spot on the preview image to apply spot white balance"
+msgstr "Velg et punkt på forhåndsvisningsbildet for å måle punkthvitbalanse"
+
+msgid "Chan. multipliers:"
+msgstr "Kanalmultiplikatorer:"
+
+msgid "Bayer pattern interpolation"
+msgstr "Bayermønsterinterpolasjon"
+
+msgid "VNG four color interpolation"
+msgstr "VNG firefargers interpolasjon"
+
+msgid "Bilinear interpolation"
+msgstr "Bilineær interpolasjon"
+
+msgid "AHD interpolation"
+msgstr "AHD-interpolasjon"
+
+msgid "VNG interpolation"
+msgstr "VNG-interpolasjon"
+
+msgid "PPG interpolation"
+msgstr "PPG-interpolasjon"
+
+msgid "No Bayer pattern"
+msgstr "Intet Bayermønster"
+
+msgid "Apply color smoothing"
+msgstr "Bruk fargeutjevning"
+
+msgid "Denoise"
+msgstr "Støyreduksjon"
+
+msgid "Threshold for wavelet denoising"
+msgstr "Terskelverdi for wavelet støyreduksjon"
+
+msgid "Reset denoise threshold to default"
+msgstr "Sett terskelverdi for støyreduksjon tilbake til standardverdi"
+
+msgid "Zoom:"
+msgstr "Zoom:"
+
+msgid "Zoom percentage"
+msgstr "Zoom-prosent"
+
+msgid "Dark Frame:"
+msgstr "Sortbilde:"
+
+msgid "Reset dark frame"
+msgstr "Tilbakestill sortbilde"
+
+#. End of White Balance setting page
+#. Start of Base Curve page
+msgid "Base curve"
+msgstr "Basiskurve"
+
+msgid "Load base curve"
+msgstr "Les inn basiskurve"
+
+msgid "Save base curve"
+msgstr "Lagre basiskurve"
+
+msgid "Reset base curve to default"
+msgstr "Sett basiskurve tilbake til standardverdi"
+
+#. End of Base Curve page
+#. Start of Color management page
+msgid "Color management"
+msgstr "Fargestyring"
+
+msgid "Input ICC profile"
+msgstr "ICC-profil for inndata"
+
+msgid "Output ICC profile"
+msgstr "ICC-profil for utdata"
+
+msgid "Display ICC profile"
+msgstr "ICC-profil for skjerm"
+
+msgid "Use color matrix"
+msgstr "Bruk fargematrise"
+
+msgid "Gamma"
+msgstr "Gamma"
+
+msgid "Gamma correction for the input profile"
+msgstr "Gammakorreksjon for inndataprofilen"
+
+msgid "Reset gamma to default"
+msgstr "Sett gamma tilbake til standardverdi"
+
+msgid "Linearity"
+msgstr "Linearitet"
+
+msgid "Linear part of the gamma correction"
+msgstr "Lineær del av gammakorreksjonen"
+
+msgid "Reset linearity to default"
+msgstr "Sett linearitet tilbake til standardverdi"
+
+msgid "Output intent"
+msgstr "Fargetilpasning for utdata"
+
+msgid "Perceptual"
+msgstr "Sansningsmessig"
+
+msgid "Relative colorimetric"
+msgstr "Relativ kolorimetrisk"
+
+msgid "Saturation"
+msgstr "Fargemetning"
+
+msgid "Absolute colorimetric"
+msgstr "Absolutt kolorimetrisk"
+
+msgid "Output bit depth"
+msgstr "Bitdybde for utdata"
+
+msgid "Display intent"
+msgstr "Fargetilpasning for skjerm"
+
+msgid "Disable soft proofing"
+msgstr "Ingen programkorrektur"
+
+#. End of Color management page
+#. Start of Corrections page
+msgid "Correct luminosity, saturation"
+msgstr "Korriger lysstyrke, fargemetning"
+
+msgid "Reset saturation to default"
+msgstr "Sett fargemetning tilbake til standardverdi"
+
+msgid ""
+"Auto adjust curve\n"
+"(Flatten histogram)"
+msgstr ""
+"Automatisk kurveinnstilling\n"
+"(Flat ut histogram)"
+
+msgid "Reset curve to default"
+msgstr "Sett kurve tilbake til standardverdi"
+
+msgid "Black point: 0.000"
+msgstr "Sortpunkt: 0,000"
+
+msgid "Reset black-point to default"
+msgstr "Sett sortpunkt tilbake til standardverdi"
+
+msgid "Auto adjust black-point"
+msgstr "Automatisk innstilling av sortpunkt"
+
+#. End of Corrections page
+#. Start of transformations page
+msgid "Crop and rotate"
+msgstr "Beskjær og roter"
+
+#. Start of Crop controls
+msgid "Left:"
+msgstr "Venstre:"
+
+msgid "Top:"
+msgstr "Topp:"
+
+msgid "Right:"
+msgstr "Høyre:"
+
+msgid "Bottom:"
+msgstr "Bunn:"
+
+msgid "Reset the crop region"
+msgstr "Tilbakesett beskjæringsareal"
+
+msgid "Aspect ratio:"
+msgstr "Høyde/bredde-forhold:"
+
+msgid ""
+"Crop area aspect ratio.\n"
+"Can be entered in decimal notation (1.273)\n"
+"or as a ratio of two numbers (14:11)"
+msgstr ""
+"Høyde/bredde-forhold for beskjæring.\n"
+"Kan angis som desimaltall (1.273)\n"
+"eller som et forhold mellom to tall (14:11)"
+
+msgid "Lock aspect ratio"
+msgstr "Lås høyde/bredde-forhold"
+
+msgid "Shrink factor"
+msgstr "Forminskelsesfaktor"
+
+msgid "Height"
+msgstr "Høyde"
+
+msgid "Width"
+msgstr "Bredde"
+
+msgid "Orientation:"
+msgstr "Orientering:"
+
+#. Start of Save page
+msgid "Save"
+msgstr "Lagre"
+
+msgid "Path"
+msgstr "Sti"
+
+msgid "Select output path"
+msgstr "Velg sti for utdata"
+
+msgid "Filename"
+msgstr "Filnavn"
+
+msgid "JPEG compression level"
+msgstr "JPEG komprimeringsnivå"
+
+msgid "JPEG progressive encoding"
+msgstr "JPEG progressiv koding"
+
+msgid "TIFF lossless Compress"
+msgstr "TIFF tapsfri komprimering"
+
+msgid "Embed EXIF data in JPEG or PNG files"
+msgstr "Inkluder EXIF-data i JPEG- eller PNG-filer"
+
+msgid "Create ID file "
+msgstr "Opprett ID-fil "
+
+msgid "No"
+msgstr "Nei"
+
+msgid "Also"
+msgstr "Også"
+
+msgid "Only"
+msgstr "Bare"
+
+msgid "Save image defaults "
+msgstr "Lagre standardverdier for bilder "
+
+msgid ""
+"Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr ""
+"Lagre valgte parametre for bildebehandling som standardverdier.\n"
+"Parametrene for utdata i dette vinduet lagres alltid."
+
+msgid "Never again"
+msgstr "Aldri igjen"
+
+msgid "Always"
+msgstr "Alltid"
+
+msgid "Just this once"
+msgstr "Bare denne gangen"
+
+msgid "Remember output path"
+msgstr "Husk sti for utdata"
+
+msgid "Overwrite existing files without asking"
+msgstr "Skriv over eksisterende filer uten å spørre"
+
+#. Start of EXIF page
+msgid "EXIF"
+msgstr "EXIF"
+
+msgid "Tag"
+msgstr "Tagg"
+
+msgid "Value"
+msgstr "Verdi"
+
+#. Fill table with EXIF tags
+msgid "Camera maker"
+msgstr "Kamerafabrikant"
+
+msgid "Camera model"
+msgstr "Kameramodell"
+
+msgid "Timestamp"
+msgstr "Tidsstempel"
+
+msgid "Shutter time"
+msgstr "Lukkertid"
+
+msgid "Aperture"
+msgstr "Blender"
+
+msgid "ISO speed"
+msgstr "ISO-følsomhet"
+
+msgid "Focal length"
+msgstr "Brennvidde"
+
+msgid "35mm focal length"
+msgstr "35mm brennvidde"
+
+msgid "Lens"
+msgstr "Objektiv"
+
+msgid "Flash"
+msgstr "Blits"
+
+#, c-format
+msgid "EXIF data read by %s"
+msgstr "EXIF-data lest av %s"
+
+msgid "Warning: EXIF data will not be sent to output"
+msgstr "Advarsel: EXIF-data vil ikke bli sendt til utdata"
+
+msgid "RGB histogram"
+msgstr "RGB-histogram"
+
+msgid "R+G+B histogram"
+msgstr "R+G+B-histogram"
+
+msgid "Luminosity histogram"
+msgstr "Lysstyrkehistogram"
+
+msgid "Value (maximum) histogram"
+msgstr "Maksimalverdihistogram"
+
+msgid "Saturation histogram"
+msgstr "Fargemetningshistogram"
+
+msgid "Average:"
+msgstr "Gjennomsnitt:"
+
+msgid "Std. deviation:"
+msgstr "Standardavvik:"
+
+msgid "Overexposed:"
+msgstr "Overeksponert:"
+
+msgid "Indicate"
+msgstr "Vis"
+
+msgid "Underexposed:"
+msgstr "Undereksponert:"
+
+msgid "Options"
+msgstr "Alternativer"
+
+#. Comment to translator: All control buttons
+#. "_Delete", "_Cancel", "_Save", "Save _As", "Send to _Gimp"
+#. should have unique mnemonics.
+#. Delete button:
+msgid "_Delete"
+msgstr "_Slett"
+
+msgid "Send image to _Gimp"
+msgstr "Send bildet til _Gimp"
+
+#. preview_progress() changes the size of the progress bar
+#. and processes the event queue.
+msgid "Loading preview"
+msgstr "Leser inn forhåndsvisning"
+
+msgid "Fatal error setting C locale"
+msgstr "Uopprettelig feil ved innstilling av C-lokalisering"
+
+#, c-format
+msgid "Curve version is not supported"
+msgstr "Kurveversjon er ikke støttet"
+
+#, c-format
+msgid "Invalid Nikon curve file '%s'"
+msgstr "Ugyldig Nikon kurvefil «%s»"
+
+#, c-format
+msgid "Error opening Curve file '%s': %s"
+msgstr "Feil ved åpning av kurvefil «%s»: %s"
+
+#, c-format
+msgid "Error opening file '%s': %s"
+msgstr "Feil ved åpning av filen «%s»: %s"
+
+msgid "File exists"
+msgstr "Filen finnes"
+
+#, c-format
+msgid ""
+"File '%s' already exists.\n"
+"Overwrite?"
+msgstr ""
+"Filen «%s» finnes allerede.\n"
+"Overskriv?"
+
+msgid "Error creating temporary file."
+msgstr "Feil ved opprettelse av midlertidig fil."
+
+msgid "Error activating Gimp."
+msgstr "Kunne ikke starte Gimp."
+
+msgid "Remote URI is not supported"
+msgstr "Ekstern URI er ikke støttet"
+
+#, c-format
+msgid "darkframe error: %s is not a raw file\n"
+msgstr "sortbildefeil: %s er ikke en raw-fil\n"
+
+#, c-format
+msgid "error loading darkframe '%s'\n"
+msgstr "kunne ikke lese inn sortbilde «%s»\n"
+
+#, c-format
+msgid "Darkframe '%s' is incompatible with main image"
+msgstr "Sortbildet «%s» passer ikke til hovedbildet"
+
+#, c-format
+msgid "using darkframe '%s'\n"
+msgstr "bruker sortbildet «%s»\n"
+
+msgid "Error reading NEF curve"
+msgstr "Det oppstod en feil ved innlesing av NEF-kurven"
+
+#, c-format
+msgid "Can not downsize from %d to %d."
+msgstr "Kan ikke forminske fra %d til %d."
+
+msgid "Cannot use camera white balance, reverting to auto white balance."
+msgstr "Kan ikke bruke kameraets hvitbalanse, bruker automatisk hvitbalanse isteden."
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr "Bildets filnavn kan ikke være det samme som ID-filnavnet «%s»"
+
+#. 'errno' does seem to contain useful information
+#. Error was not already set before
+msgid "Error creating file."
+msgstr "Feil ved oppretting av fil."
+
+#. Error was not already set before
+#, c-format
+msgid "Error creating file '%s'."
+msgstr "Feil ved oppretting av filen «%s»."
+
+msgid "Saving image"
+msgstr "Lagrer bildet"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "Kunne ikke inkludere utdataprofilen «%s» i «%s»."
+
+#, c-format
+msgid "Unsupported bit depth '%d' ignored."
+msgstr "Ikke støttet bitdybde «%d» ignorert."
+
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "EXIF-buffer med lengde %d er for lang, ignorert."
+
+#, c-format
+msgid "Unknown file type %d."
+msgstr "Ukjent filtype %d."
+
+#. Column 1 - "make" of the camera.
+#. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
+#. * Column 3 - WB name.
+#. * Column 4 - Fine tuning. MUST be in increasing order. 0 for no fine tuning.
+#. *	      It is enough to give only the extreme values, the other values
+#. *	      will be interpolated.
+#. * Column 5 - Channel multipliers.
+#. *
+#. * Minolta's ALPHA and MAXXUM models are treated as the DYNAX model.
+#. *
+#. * WB name is standardized to one of the following:
+#. "Sunlight" and other variation should be switched to this:
+msgid "Daylight"
+msgstr "Dagslys"
+
+#. Probably same as above:
+msgid "Direct sunlight"
+msgstr "Direkte sollys"
+
+msgid "Cloudy"
+msgstr "Overskyet"
+
+#. "Shadows" should be switched to this:
+msgid "Shade"
+msgstr "Skygge"
+
+msgid "Incandescent"
+msgstr "Glødelampe"
+
+msgid "Incandescent warm"
+msgstr "Varm glødelampe"
+
+#. Same as "Incandescent":
+msgid "Tungsten"
+msgstr "Glødelampe"
+
+msgid "Fluorescent"
+msgstr "Fluoriserende"
+
+#. In Canon cameras and Nikon D300:
+msgid "Fluorescent high"
+msgstr "Fluoriserende høy"
+
+msgid "Cool white fluorescent"
+msgstr "Kald hvit fluoriserende"
+
+msgid "Warm white fluorescent"
+msgstr "Varm hvit fluoriserende"
+
+msgid "Daylight fluorescent"
+msgstr "Dagslysfluoriserende"
+
+msgid "Neutral fluorescent"
+msgstr "Nøytral fluoriserende"
+
+msgid "White fluorescent"
+msgstr "Hvit fluoriserende"
+
+#. In Nikon D300
+msgid "Sodium-vapor fluorescent"
+msgstr "Natriumlampe"
+
+msgid "Day white fluorescent"
+msgstr "Hvit dagslysfluoriserende"
+
+msgid "High temp. mercury-vapor fluorescent"
+msgstr "Høytemperatur kvikksølvlampe"
+
+#. For Olympus with no real "Flash" preset:
+msgid "Flash (auto mode)"
+msgstr "Blits (auto-modus)"
+
+msgid "Evening sun"
+msgstr "Kveldssol"
+
+msgid "Underwater"
+msgstr "Under vann"
+
+msgid "Black & white"
+msgstr "Svarthvit"
+
+msgid "Manual WB"
+msgstr "Manuell HB"
+
+msgid "Camera WB"
+msgstr "Kameraets HB"
+
+msgid "Auto WB"
+msgstr "Automatisk HB"
+
