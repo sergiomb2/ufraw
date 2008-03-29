@@ -620,8 +620,8 @@ int ufraw_write_image(ufraw_data *uf)
 	}
 
 	if (strlen(uf->conf->make) > 0 )
-	    fits_update_key(fitsFile, TSTRING, "MANUFRAC", &uf->conf->make,
-		    "Manufractor of the Camera", &status);
+	    fits_update_key(fitsFile, TSTRING, "MANUFACT", &uf->conf->make,
+		    "Camera Manufacturer", &status);
 
 	if (strlen(uf->conf->model) > 0 )
 	    fits_update_key(fitsFile, TSTRING, "INSTRUME", &uf->conf->model,
