@@ -313,6 +313,28 @@ int ufraw_load_darkframe(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
+void ufraw_update_rotated_dimensions(ufraw_data *uf)
+{
+    double rotationRadians = (uf->conf->rotationAngle * 2 * M_PI) / 360;
+    uf->rotatedWidth = ceil((uf->initialHeight * sin(rotationRadians))
+	+ (uf->initialWidth * cos(rotationRadians)));
+    uf->rotatedHeight = ceil((uf->initialWidth * sin(rotationRadians))
+	+ (uf->initialHeight * cos(rotationRadians)));
+}
+
+void ufraw_get_image_dimensions(dcraw_data *raw, ufraw_data *uf)
+{
+    dcraw_image_dimensions(raw, uf->conf->orientation,
+	    &uf->initialHeight, &uf->initialWidth);
+
+    ufraw_update_rotated_dimensions(uf);
+
+    if (uf->conf->CropX1 < 0) uf->conf->CropX1 = 0;
+    if (uf->conf->CropY1 < 0) uf->conf->CropY1 = 0;
+    if (uf->conf->CropX2 < 0) uf->conf->CropX2 = uf->rotatedWidth;
+    if (uf->conf->CropY2 < 0) uf->conf->CropY2 = uf->rotatedHeight;
+}
+
 int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 {
     int status;
@@ -428,10 +450,26 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 
     uf->conf->timestamp = raw->timestamp;
 
-    if ( !uf->LoadingID || uf->conf->orientation<0 )
-	uf->conf->orientation = raw->flip;
-    if ( !uf->conf->rotate )
+    if ( !uf->conf->rotate ) {
 	uf->conf->orientation = 1;
+	uf->conf->rotationAngle = 0;
+    } else {
+	if ( !uf->LoadingID || uf->conf->orientation<0 )
+	    uf->conf->orientation = raw->flip;
+
+	// Normalise rotations to a flip, then rotation of 0 < a < 90 degrees.
+	uf->conf->rotationAngle = fmod(uf->conf->rotationAngle, 360.0);
+	int angle, flip = 0;
+	angle = floor(uf->conf->rotationAngle/90)*90;
+	switch (angle) {
+	    case  90: flip = 6; break;
+	    case 180: flip = 3; break;
+	    case 270: flip = 5; break;
+	}
+	ufraw_flip_orientation(uf, flip);
+	uf->conf->rotationAngle -= angle;
+    }
+
     if (uf->inputExifBuf==NULL) {
 	g_strlcpy(uf->conf->exifSource, "DCRaw", max_name);
 	uf->conf->iso_speed = raw->iso_speed;
@@ -507,13 +545,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     }
     ufraw_load_darkframe(uf);
 
-    dcraw_image_dimensions(raw, uf->conf->orientation,
-	    &uf->initialHeight, &uf->initialWidth);
-    // Check crop co-ordinates.
-    if (uf->conf->CropX1 < 0) uf->conf->CropX1 = 0;
-    if (uf->conf->CropY1 < 0) uf->conf->CropY1 = 0;
-    if (uf->conf->CropX2 < 0) uf->conf->CropX2 = uf->initialWidth;
-    if (uf->conf->CropY2 < 0) uf->conf->CropY2 = uf->initialHeight;
+    ufraw_get_image_dimensions(raw, uf);
 
     return UFRAW_SUCCESS;
 }
@@ -568,12 +600,8 @@ int ufraw_load_raw(ufraw_data *uf)
     memcpy(uf->rgb_cam, raw->rgb_cam, sizeof uf->rgb_cam);
 
     /* Foveon image dimensions are knows only after load_raw()*/
-    dcraw_image_dimensions(raw, uf->conf->orientation,
-	    &uf->initialHeight, &uf->initialWidth);
-    if (uf->conf->CropX2 > uf->initialWidth)
-	uf->conf->CropX2 = uf->initialWidth;
-    if (uf->conf->CropY2 > uf->initialHeight)
-	uf->conf->CropY2 = uf->initialHeight;
+    ufraw_get_image_dimensions(raw, uf);
+
     /* chanMul[0]<0 signals that we need to recalculate the WB */
     if (uf->conf->chanMul[0]<0) ufraw_set_wb(uf);
     else {
@@ -855,7 +883,7 @@ static int ufraw_flip_image_buffer(ufraw_image_data *img, int flip)
     return UFRAW_SUCCESS;
 }
 
-int ufraw_flip_image(ufraw_data *uf, int flip)
+void ufraw_flip_orientation(ufraw_data *uf, int flip)
 {
     const int flipMatrix[8][8] = {
 	{ 0, 1, 2, 3, 4, 5, 6, 7 }, /* No flip */
@@ -868,6 +896,11 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
 	{ 7, 5, 6, 4, 3, 1, 2, 0 }  /* Flip over diagonal "/" */
     };
     uf->conf->orientation = flipMatrix[uf->conf->orientation][flip];
+}
+
+int ufraw_flip_image(ufraw_data *uf, int flip)
+{
+    ufraw_flip_orientation(uf, flip);
 
     ufraw_flip_image_buffer(&uf->Images[ufraw_first_phase], flip);
     if ( uf->conf->threshold>0 )
@@ -1226,5 +1259,60 @@ void ufraw_auto_curve(ufraw_data *uf)
 	    curve->m_anchors[j].y = 1.0;
 	}
 	curve->m_numAnchors = j+1;
+    }
+}
+
+void ufraw_rotate_row(image_data *image, void *pixbuf, double angle,
+		      int bitDepth, int row, int offset, int width)
+{
+    int col, ur, uc, i, j, in_image;
+    float r, c, fr, fc;
+    guint16 (*input)[3] = (guint16 (*)[3]) image->buffer;
+    guint16 (*iPix[2][2])[3];
+    guint16 pixValue;
+    guint8 (*oPix8)[3] = (guint8 (*)[3]) pixbuf;
+    guint16 (*oPix16)[3] = (guint16 (*)[3]) pixbuf;
+    double rotationRadians = (angle * 2 * M_PI) / 360;
+    double sine = sin(rotationRadians);
+    double cosine = cos(rotationRadians);
+    guint16 bgcolor[3] = {0, 0, 0};
+
+    for (col = 0; col < width; col++) {
+	// Find co-ordinates of output pixel in input image:
+	// c, r are the ideal subpixel co-ordinates.
+	// uc, ur are the integer co-ordinates to the top and left of c, r.
+	uc = (int)floor(c = row*sine + (offset+col)*cosine
+			    - image->height*sine*cosine);
+	ur = (int)floor(r = row*cosine -(offset+col)*sine
+			    + image->height*sine*sine);
+	// Differences between the ideal and integer co-ordinates, for weighting.
+	fr = r - ur;
+	fc = c - uc;
+	// Whether this pixel is within the image at all. Set in next loop.
+	in_image = 0;
+	// Find pointers to the four pixels surrouding the ideal co-ordinate,
+	// either from the input image or the background color.
+	for (i = 0; i < 2; i++)
+	    for (j = 0; j < 2; j++)
+		if (((uc+i) >= 0) && ((uc+i) <= image->width - 1) &&
+		    ((ur+j) >= 0) && ((ur+j) <= image->height - 1)) {
+		    iPix[i][j] = &input[(ur+j)*image->width + uc+i];
+		    in_image = 1;
+		} else iPix[i][j] = &bgcolor;
+	// Write output pixel.
+	for (i = 0; i < 3; i++) {
+	    if (in_image)
+		pixValue = (guint16)(
+		    ((*iPix[0][0])[i]*(1-fc) + (*iPix[1][0])[i]*fc) * (1-fr)
+		  + ((*iPix[0][1])[i]*(1-fc) + (*iPix[1][1])[i]*fc) * fr);
+	    else
+		// Shortcut some floating point work if outside image.
+		pixValue = bgcolor[i];
+
+	    if (bitDepth > 8)
+		oPix16[col][i] = pixValue;
+	    else
+		oPix8[col][i] = pixValue >> 8;
+	}
     }
 }

@@ -210,16 +210,47 @@ void write_image_data(
     else
 	pixbuf = pixbuf8;
 
-    for (row=0; row<height; row++) {
-        if (row%100==99)
-	    preview_progress(uf->widget, _("Saving image"),
+    if (uf->conf->rotationAngle != 0) {
+	// Buffer for unrotated image.
+	image_data image;
+	image.width = uf->image.width;
+	image.height = uf->image.height;
+	image.depth = 6;
+	image.rowstride = image.width * image.depth;
+	image.buffer = g_new(guint8, image.height * image.rowstride);
+	// Develop complete raw image into buffer.
+	guint8 *rowbuf;
+	for (row = 0; row < image.height; row++) {
+	    rowbuf = &image.buffer[row*image.rowstride];
+	    if (row % 25 == 0)
+		preview_progress(uf->widget, _("Converting image"),
+		    0.5 * row/image.height);
+	    develope(rowbuf, rawImage[row*rowStride],
+		uf->developer, 16, (guint16 *)rowbuf, image.width);
+	}
+	// Write rotated image to output.
+	for (row = 0; row < height; row++) {
+	    if (row % 25 == 0)
+		preview_progress(uf->widget, _("Saving image"),
 		    0.5 + 0.5*row/height);
-	develope(pixbuf, rawImage[(top+row)*rowStride+left],
+	    ufraw_rotate_row(&image, pixbuf, uf->conf->rotationAngle,
+		bitDepth, top+row, left, width);
+	    if (row_writer(uf, out, pixbuf, row, width) != UFRAW_SUCCESS)
+		break;
+	}
+	g_free(image.buffer);
+    } else {
+	// No rotation required. Develop straight to output.
+	for (row=0; row<height; row++) {
+	    if (row % 25 == 0)
+		preview_progress(uf->widget, _("Saving image"),
+		    0.5 + 0.5*row/height);
+	    develope(pixbuf, rawImage[(top+row)*rowStride+left],
 	        uf->developer, bitDepth, pixbuf16, width);
-	if (row_writer(uf, out, pixbuf, row, width) != UFRAW_SUCCESS)
-	    break;
+	    if (row_writer(uf, out, pixbuf, row, width) != UFRAW_SUCCESS)
+		break;
+	}
     }
-
     g_free(pixbuf16);
     g_free(pixbuf8);
 }
@@ -316,8 +347,8 @@ int ufraw_write_image(ufraw_data *uf)
     }
     // TODO: error handling
     ufraw_convert_image(uf);
-    left = uf->conf->CropX1 * uf->image.width / uf->initialWidth;
-    top = uf->conf->CropY1 * uf->image.height / uf->initialHeight;
+    left = uf->conf->CropX1 * uf->image.width / uf->rotatedWidth;
+    top = uf->conf->CropY1 * uf->image.height / uf->rotatedHeight;
     volatile int BitDepth = uf->conf->profile[out_profile]
 			[uf->conf->profileIndex[out_profile]].BitDepth;
     if ( BitDepth!=16 ) BitDepth = 8;

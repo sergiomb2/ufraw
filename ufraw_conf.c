@@ -73,6 +73,7 @@ const conf_data conf_default = {
     ahd_interpolation, 0, /* interpolation, smoothing */
     "", NULL, /* darkframeFile, darkframe */
     -1, -1, -1, -1, /* Crop X1,Y1,X2,Y2 */
+    0, /* rotationAngle */
     /* Save options */
     "", "", "", /* inputFilename, outputFilename, outputPath */
     "", "", /* inputURI, inputModTime */
@@ -574,6 +575,7 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     if (!strcmp("Orientation", element)) sscanf(temp, "%d", &c->orientation);
     if (!strcmp("Crop", element)) sscanf(temp, "%d %d %d %d",
 	    &c->CropX1, &c->CropY1, &c->CropX2, &c->CropY2);
+    if (!strcmp("Rotation", element)) sscanf(temp, "%lf", &c->rotationAngle);
     if (!strcmp("Shrink", element)) sscanf(temp, "%d", &c->shrink);
     if (!strcmp("Size", element)) sscanf(temp, "%d", &c->size);
     if (!strcmp("OutputType", element)) sscanf(temp, "%d", &c->type);
@@ -1034,6 +1036,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 		c->exifSource);
 	buf = uf_markup_buf(buf, "<Crop>%d %d %d %d</Crop>\n",
 		c->CropX1, c->CropY1, c->CropX2, c->CropY2);
+	buf = uf_markup_buf(buf, "<Rotation>%lf</Rotation>\n", c->rotationAngle);
 	char *log = ufraw_message(UFRAW_GET_LOG, NULL);
 	if (log!=NULL) {
 	    char *utf8 = g_filename_to_utf8(log, -1, NULL, NULL, NULL);
@@ -1092,6 +1095,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->CropY1 = src->CropY1;
     dst->CropX2 = src->CropX2;
     dst->CropY2 = src->CropY2;
+    dst->rotationAngle = src->rotationAngle;
     dst->threshold = src->threshold;
     dst->exposure = src->exposure;
     dst->ExposureNorm = src->ExposureNorm;
@@ -1219,6 +1223,11 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     if (cmd->embedExif!=-1) conf->embedExif = cmd->embedExif;
     if (cmd->embeddedImage!=-1) conf->embeddedImage = cmd->embeddedImage;
     if (cmd->rotate!=-1) conf->rotate = cmd->rotate;
+    if (cmd->rotationAngle!=NULLF) conf->rotationAngle = cmd->rotationAngle;
+    if (cmd->CropX1 !=-1) conf->CropX1 = cmd->CropX1;
+    if (cmd->CropY1 !=-1) conf->CropY1 = cmd->CropY1;
+    if (cmd->CropX2 !=-1) conf->CropX2 = cmd->CropX2;
+    if (cmd->CropY2 !=-1) conf->CropY2 = cmd->CropY2;
     if (cmd->silent!=-1) conf->silent = cmd->silent;
     if (cmd->compression!=NULLF) conf->compression = cmd->compression;
     if (cmd->autoExposure) {
@@ -1367,8 +1376,12 @@ N_("--[no]exif            Embed EXIF in output JPEG or PNG (default embed EXIF).
 N_("--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"),
 N_("--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"),
-N_("--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
-"                      the image (default camera).\n"),
+N_("--rotate=camera|ANGLE|no\n"
+"                      Rotate image to camera's setting, by ANGLE degrees\n"
+"                      clockwise, or do not rotate the image (default camera).\n"),
+N_("--crop-(left|right|top|bottom)=PIXELS\n"
+"                      Crop the output to the given pixel range, relative to the\n"
+"                      raw image after rotation but before any scaling.\n"),
 N_("--out-path=PATH       PATH for output file (default use input file's path).\n"),
 N_("--output=FILE         Output file name, use '-' to output to stdout.\n"),
 N_("--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"),
@@ -1468,6 +1481,10 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{ "restore", 1, 0, 'r'},
 	{ "clip", 1, 0, 'u'},
 	{ "conf", 1, 0, 'C'},
+	{ "crop-left", 1, 0, '1'},
+	{ "crop-top", 1, 0, '2'},
+	{ "crop-right", 1, 0, '3'},
+	{ "crop-bottom", 1, 0, '4'},
 /* Binary flags that don't have a value are here at the end */
 	{ "zip", 0, 0, 'z'},
 	{ "nozip", 0, 0, 'Z'},
@@ -1489,7 +1506,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	&cmd->shrink, &cmd->size, &cmd->compression,
 	&outTypeName, &cmd->profile[1][0].BitDepth, &rotateName,
 	&createIDName, &outPath, &output, &darkframeFile,
-	&restoreName, &clipName, &conf };
+	&restoreName, &clipName, &conf,
+	&cmd->CropX1, &cmd->CropY1, &cmd->CropX2, &cmd->CropY2 };
     cmd->autoExposure = disabled_state;
     cmd->autoBlack = disabled_state;
     cmd->losslessCompress=-1;
@@ -1509,6 +1527,11 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->shrink = NULLF;
     cmd->size = NULLF;
     cmd->compression=NULLF;
+    cmd->rotationAngle=NULLF;
+    cmd->CropX1 = -1;
+    cmd->CropY1 = -1;
+    cmd->CropX2 = -1;
+    cmd->CropY2 = -1;
 
     while (1) {
 	c = getopt_long (*argc, *argv, "h", options, &index);
@@ -1541,6 +1564,10 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'X':
 	case 'j':
 	case 'd':
+	case '1':
+	case '2':
+	case '3':
+	case '4':
 	    if (sscanf(optarg, "%d", (int *)optPointer[index])==0) {
 		ufraw_message(UFRAW_ERROR,
 			_("'%s' is not a valid value for the --%s option."),
@@ -1904,7 +1931,9 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    cmd->rotate = TRUE;
 	else if ( strcmp(rotateName, "no")==0 )
 	    cmd->rotate = FALSE;
-	else {
+	else if (sscanf(rotateName, "%lf", &cmd->rotationAngle) == 1) {
+	    cmd->rotate = TRUE;
+	} else {
 	    ufraw_message(UFRAW_ERROR,
 		    _("'%s' is not a valid rotate option."), rotateName);
 	    return -1;

@@ -155,6 +155,7 @@ typedef struct {
     char darkframeFile[max_path];
     struct ufraw_struct *darkframe;
     int CropX1, CropY1, CropX2, CropY2;
+    double rotationAngle;
 
     /* SAVE options */
     char inputFilename[max_path], outputFilename[max_path],
@@ -208,6 +209,7 @@ typedef struct ufraw_struct {
     char *message;
     char filename[max_path];
     int initialHeight, initialWidth, rgbMax, colors, raw_color, useMatrix;
+    int rotatedHeight, rotatedWidth;
     gboolean LoadingID; /* Indication that we are loading an ID file */
     float rgb_cam[3][4];
     int ConvertShrink;
@@ -255,11 +257,14 @@ int ufraw_convert_image_init_phase(ufraw_data *uf);
 int ufraw_convert_image_area(ufraw_data *uf,
 	int x, int y, int width, int height, UFRawPhase fromPhase);
 void ufraw_close(ufraw_data *uf);
+void ufraw_flip_orientation(ufraw_data *uf, int flip);
 int ufraw_flip_image(ufraw_data *uf, int flip);
 int ufraw_set_wb(ufraw_data *uf);
 void ufraw_auto_expose(ufraw_data *uf);
 void ufraw_auto_black(ufraw_data *uf);
 void ufraw_auto_curve(ufraw_data *uf);
+void ufraw_rotate_row(image_data *image, void *pixbuf, double angle,
+		      int bitDepth, int row, int offset, int width);
 
 /* prototypes for functions in ufraw_message.c */
 char *ufraw_get_message(ufraw_data *uf);

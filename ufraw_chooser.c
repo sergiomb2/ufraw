@@ -161,6 +161,9 @@ void ufraw_chooser(conf_data *conf, const char *defPath)
 	    ufraw_preview(uf, FALSE, NULL);
 	    g_free(filename);
 	    *conf = *uf->conf;
+	    /* Reset crop and rotation settings between images. */
+	    conf->CropX1 = conf->CropY1 = conf->CropX2 = conf->CropY2 = -1;
+	    conf->rotationAngle = 0;
 	}
 	g_slist_free(saveList);
     }
