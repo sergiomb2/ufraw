@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.111 2008/03/27 03:15:52 nkbj Exp $
+dnl $Id: configure.ac,v 1.112 2008/04/06 04:40:30 nkbj Exp $
 AC_INIT(UFRaw, 0.14)
 AC_PREREQ(2.57)
 
@@ -172,13 +172,8 @@ AC_CHECK_HEADER(tiffio.h,
 have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
 
 # Check for fits headers and library.
-## You need to un-comment the next two lines to enable FITS support.
-## The reason for disabling this feature in hardcode is that the FITS
-## output is not final yet. If you use this feature, you should be
-## aware of the fact that future version of UFRaw would create
-## different FITS files.
-#AC_CHECK_HEADER(fitsio.h,
-#  AC_CHECK_LIB(cfitsio, ffcmsg))
+AC_CHECK_HEADER(fitsio.h,
+  AC_CHECK_LIB(cfitsio, ffcmsg))
 have_fits=${ac_cv_lib_cfitsio_ffcmsg:-no}
 
 PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
