@@ -2145,12 +2145,6 @@ static void set_new_aspect(preview_data *data)
 {
     float cx, cy, dx, dy;
 
-    if (data->AspectRatio == 0)
-    {
-	data->AspectRatio = ((float)data->UF->initialWidth) / data->UF->initialHeight;
-	refresh_aspect (data);
-    }
-
     /* Crop area center never changes */
     cx = (CFG->CropX1 + CFG->CropX2) / 2.0;
     cy = (CFG->CropY1 + CFG->CropY2) / 2.0;
@@ -4318,8 +4312,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(button), "clicked",
 		     G_CALLBACK(lock_aspect), 0);
 
-    /* Set current aspect ratio */
-    set_new_aspect (data);
+    /* Get initial aspect ratio */
+    data->AspectRatio = ((float)data->UF->initialWidth) / data->UF->initialHeight;
+    refresh_aspect (data);
 
     /* Size/shrink controls */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));

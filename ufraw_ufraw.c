@@ -383,12 +383,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	struct stat s;
 	fstat(fileno(raw->ifp), &s);
 	g_snprintf(uf->conf->inputModTime, max_name, "%d", (int)s.st_mtime);
-
-	/*Reset crop coordinates between images.*/
-	uf->conf->CropX1 = -1;
-	uf->conf->CropY1 = -1;
-	uf->conf->CropX2 = -1;
-	uf->conf->CropY2 = -1;
     }
     if (strlen(uf->conf->outputFilename)==0) {
 	/* If output filename wasn't specified use input filename */
