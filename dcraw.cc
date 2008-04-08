@@ -11,15 +11,15 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.400 $
-   $Date: 2008/04/06 01:18:43 $
+   $Revision: 1.401 $
+   $Date: 2008/04/07 19:25:08 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.84"
+#define DCRAW_VERSION "8.85"
 
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
@@ -7396,6 +7396,9 @@ fz18:	if (height > 2480)
 	maximum = 0xf790;
     } else if (!strcmp(model,"E-3")) {
       maximum = 0xf99;
+      goto e410;
+    } else if (!strcmp(model,"E-420")) {
+      maximum = 0xfd7;
       goto e410;
     } else if (!strcmp(model,"E-410") ||
 	       !strcmp(model,"E-510")) {
