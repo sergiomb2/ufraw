@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.10 2008/03/25 19:06:47 lexort Exp $
+$Id: README-processing.txt,v 1.11 2008/04/11 13:44:58 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -48,6 +48,9 @@ http://www.luminous-landscape.com/tutorials/understanding-series/u-raw-files.sht
 
 http://regex.info/blog/2006-12-08/303
 http://regex.info/blog/photo-tech/color-spaces-page1/
+
+http://lists.freedesktop.org/archives/openicc/2006q3/000775.html
+(an AdobeRGB-compatible profile)
 
 === other converters
 
