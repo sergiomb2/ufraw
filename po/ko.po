@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-27 05:00+0100\n"
-"PO-Revision-Date: 2007-11-09 21:16+0900\n"
+"POT-Creation-Date: 2008-04-12 07:45+0200\n"
+"PO-Revision-Date: 2008-04-10 19:56+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
 "MIME-Version: 1.0\n"
@@ -25,13 +25,13 @@ msgstr "네비게이션 창 열기"
 msgid "No input file, nothing to do."
 msgstr "입력 파일이 없으므로 아무것도 하지 않습니다."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Loaded %s%s"
-msgstr "%s 불러옴"
+msgstr "%s%s 불러옴"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Saved %s%s"
-msgstr "%s 저장됨"
+msgstr "%s%s 저장됨"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -48,9 +48,8 @@ msgstr "%s: '%s'을(를) 덮어 쓸까요?"
 msgid "--silent option is valid only in batch mode"
 msgstr "--silent 옵션은 배치모드에서만 유효합니다."
 
-#, fuzzy
 msgid "--rotate option is valid only in batch mode"
-msgstr "--silent 옵션은 배치모드에서만 유효합니다."
+msgstr "--rotate 옵션은 배치모드에서만 유효합니다"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr "내장된 이미지 추출은 대화식 모드에서 지원되지 않습니다."
@@ -80,6 +79,7 @@ msgstr "숨겨진 파일 표시"
 #. temperature, green
 #. chanMul[]
 #. wavelet denoising threshold
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -111,31 +111,33 @@ msgid "System default"
 msgstr "시스템 기본 설정"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
-msgstr "UFRaw-0.4 혹은 이전 버젼으로 부터 .ufrawrc를 변경 시도 중"
+msgstr "UFRaw-0.4 혹은 이전 버전으로 부터 .ufrawrc를 변경 시도 중"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.6 or earlier"
-msgstr "UFRaw-0.6 혹은 이전 버젼으로 부터 .ufrawrc를 변경 시도 중"
+msgstr "UFRaw-0.6 혹은 이전 버전으로 부터 .ufrawrc를 변경 시도 중"
 
 #, c-format
 msgid "UFRaw version in .ufrawrc is not supported"
-msgstr ".ufrawrc의 UFRaw 버젼은 지원되지 않음"
+msgstr ".ufrawrc 안의 UFRaw 버전은 지원되지 않습니다"
 
 #, c-format
 msgid "Too many anchors for curve '%s'"
-msgstr "곡선 '%s'에 너무 많은 고정점이 있음"
+msgstr "곡선 '%s'에 너무 많은 고정점이 있습니다"
 
 #, c-format
 msgid ""
 "ID file %s does not appear to be a regular file\n"
 "%s\n"
 msgstr ""
+"ID 파일 %s이(가) 정상적인 파일 같지 않습니다\n"
+"%s\n"
 
 #, c-format
 msgid ""
 "Can't open ID file %s for reading\n"
 "%s\n"
 msgstr ""
-"ID 파일 %s을(를) 읽기 위해 열 수 없음\n"
+"ID 파일 %s을(를) 읽기 위해 열 수 없습니다\n"
 "%s\n"
 
 #, c-format
@@ -151,11 +153,11 @@ msgid ""
 "Can't open file %s for writing\n"
 "%s\n"
 msgstr ""
-"ID 파일 %s을(를) 쓰기 위해 열 수 없음\n"
+"ID 파일 %s을(를) 쓰기 위해 열 수 없습니다\n"
 "%s\n"
 
 msgid "cannot --create-id with stdout"
-msgstr "stdout과 함께 --create-id 할 수 없음"
+msgstr "stdout과 함께 --create-id를 사용 할 수 없습니다"
 
 msgid "UFRaw "
 msgstr "UFRaw "
@@ -164,7 +166,7 @@ msgid " - Unidentified Flying Raw converter for digital camera images.\n"
 msgstr " - Unidentified Flying Raw converter for digital camera images.\n"
 
 msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
-msgstr "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
+msgstr "사용법: ufraw [ options ... ] [ raw-image-files ... ]\n"
 
 msgid "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
 msgstr "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
@@ -285,6 +287,10 @@ msgstr "--gamma=GAMMA         기본 곡선의 감마 보정값 (기본값 0.45)
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr "--linearity=LINEARITY 기본 곡선읜 선형도 (기본값 0.10).\n"
 
+#, fuzzy
+msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
+msgstr "--saturation=SAT      채도 조정 (기본값 1.0, 흑백 사진을 원하면 0).\n"
+
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
@@ -328,16 +334,15 @@ msgstr "--shrink=FACTOR       이미지를 FACTOR 비율로 축소합니다 (기
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=SIZE           최대 (height,width) 크기로 이미지를 줄임.\n"
 
-#, fuzzy
 msgid ""
 "--out-type=ppm|tiff|png|jpeg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
-"                      출력 파일 포멧 (기본값 ppm8).\n"
+"--out-type=ppm8|ppm16|tiff|png|jpeg|fits\n"
+"                      출력 파일 포멧 (기본값 ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
-msgstr ""
+msgstr "--out-depth=8|16      채널 별 출력 비트 (default 8).\n"
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -368,9 +373,21 @@ msgstr ""
 "--embedded-image      raw파일을 변환하는 대신 raw파일에 포함된\n"
 "                      미리보기 이미지를 추출하기.\n"
 
+#, fuzzy
 msgid ""
-"--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
-"                      the image (default camera).\n"
+"--rotate=camera|ANGLE|no\n"
+"                      Rotate image to camera's setting, by ANGLE degrees\n"
+"                      clockwise, or do not rotate the image (default "
+"camera).\n"
+msgstr ""
+"--rotate=camera|no    카메라의 설정에 따라 이미지 회전|회전하지 않음\n"
+"                      (기본값 camera).\n"
+
+msgid ""
+"--crop-(left|right|top|bottom)=PIXELS\n"
+"                      Crop the output to the given pixel range, relative to "
+"the\n"
+"                      raw image after rotation but before any scaling.\n"
 msgstr ""
 
 msgid ""
@@ -414,7 +431,7 @@ msgid ""
 "Last, but not least, --version displays the version number and compilation\n"
 "options for ufraw and --help displays this help message and exits.\n"
 msgstr ""
-"마지막, 하지만 하찮지 않은 정보, --version은 버젼번호와 ufraw의 컴파일\n"
+"마지막, 하지만 하찮지 않은 정보, --version은 버전번호와 ufraw의 컴파일\n"
 "옵션을 표시합니다. 그리고 --help는 이 도움말 메세지를 표시하고 마침니다.\n"
 
 #, c-format
@@ -424,7 +441,6 @@ msgstr "'%s'은(는) --%s의 유효한 값이 아닙니다."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw가 ZIP 지원이 빠진 채로 빌드됨."
 
-#, fuzzy
 msgid "--batch is obsolete. Use ufraw-batch instead."
 msgstr "--batch는 더이상 사용되지 않습니다. 대신 ufraw-batch를 사용하세요."
 
@@ -450,7 +466,7 @@ msgstr "%s(으)로 부터 곡선 불러오기 실패"
 
 #, c-format
 msgid "'%s' is not a valid base curve name."
-msgstr "'%s'(은)는 유효한 기본 곡선 이름이 아닙니다."
+msgstr "'%s'은(는) 유효한 기본 곡선 이름이 아닙니다."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured curves"
@@ -458,30 +474,30 @@ msgstr "%s(으)로 부터 곡선 불러오기 실패. 조정된 곡선이 너무
 
 #, c-format
 msgid "'%s' is not a valid curve name."
-msgstr "'%s'(은)는 유효한 곡선 이름이 아닙니다."
+msgstr "'%s'은(는) 유효한 곡선 이름이 아닙니다."
 
 #, c-format
 msgid "'%s' is not a valid interpolation option."
-msgstr "'%s'(은)는 유효한 보간 옵션이 아닙니다."
+msgstr "'%s'은(는) 유효한 보간 옵션이 아닙니다."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
-msgstr "'%s'(은)는 유효한 복구 옵션이 아닙니다."
+msgstr "'%s'은(는) 유효한 복구 옵션이 아닙니다."
 
 #, c-format
 msgid "'%s' is not a valid clip option."
-msgstr "'%s'(은)는 유효한 잘라내기 옵션이 아닙니다."
+msgstr "'%s'은(는) 유효한 잘라내기 옵션이 아닙니다."
 
 msgid "you can not specify both --shrink and --size"
-msgstr "--shrink와 --size를 둘다 설정 할 수 없습니다"
+msgstr "--shrink와 --size를 둘다 설정할 수 없습니다"
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth."
-msgstr "'%s'(은)는 유효한 경로가 아닙니다."
+msgstr "'%d'은(는) 유효한 비트수가 아닙니다."
 
 #, c-format
 msgid "Output type '%s' is deprecated"
-msgstr ""
+msgstr "출력 타입 '%s'을(를) 사용할 수 없습니다"
 
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw가 TIFF 지원이 빠진 채로 빌드됨."
@@ -494,27 +510,27 @@ msgstr "ufraw가 PNG 지원이 빠진 채로 빌드됨."
 
 #, c-format
 msgid "'%s' is not a valid output type."
-msgstr "'%s'(은)는 유효한 출력 타입이 아닙니다."
+msgstr "'%s'은(는) 유효한 출력 타입이 아닙니다."
 
 #, c-format
 msgid "'%s' is not a valid output type for embedded image."
-msgstr "'%s'(은)는 이미지 내장을 위해 유효한 출력 타입이 아닙니다."
+msgstr "'%s'은(는) 내장된 이미지에 유효한 출력 타입이 아닙니다."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
-msgstr "'%s'(은)는 이미지 내장을 위해 유효한 출력 타입이 아닙니다."
+msgstr "'%d'은(는) 내장된 이미지에 유효한 비트수가 아닙니다."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid rotate option."
-msgstr "'%s'(은)는 유효한 create-id 옵션이 아닙니다."
+msgstr "'%s'은(는) 유효한 회전 옵션이 아닙니다."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
-msgstr "'%s'(은)는 유효한 create-id 옵션이 아닙니다."
+msgstr "'%s'은(는) 유효한 create-id 옵션이 아닙니다."
 
 #, c-format
 msgid "'%s' is not a valid path."
-msgstr "'%s'(은)는 유효한 경로가 아닙니다."
+msgstr "'%s'은(는) 유효한 경로가 아닙니다."
 
 msgid "cannot output more than one file to the same output"
 msgstr "하나 이상의 파일로 부터 같은 출력으로 출력할 수 없습니다"
@@ -524,7 +540,7 @@ msgid "Raw file '%s' missing."
 msgstr "Raw 파일 '%s'(이)가 사라짐."
 
 msgid "Delete raw file"
-msgstr "raw 파일 지우기"
+msgstr "Raw 파일 지우기"
 
 msgid "_Delete selected"
 msgstr "선택된 것 지우기(_D)"
@@ -547,7 +563,7 @@ msgid "Reading embedded image requires libjpeg."
 msgstr "내장된 이미지를 읽는 것은 libjpeg가 필요합니다."
 
 msgid "No embedded image found"
-msgstr "내장된 이미지를 찾을 수 없음"
+msgstr "내장된 이미지를 찾을 수 없습니다"
 
 #, c-format
 msgid "Original size (%d) is smaller than the requested size (%d)"
@@ -555,7 +571,7 @@ msgstr "원본 크기 (%d)이(가) 요청된 크기 (%d) 보다 작습니다"
 
 #, c-format
 msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
-msgstr "ppm 썸네일의 높이 %d, 넓이 %d이(가) 버퍼길이 %d와 맞지 않습니다."
+msgstr "ppm 썸네일의 높이 %d, 너비 %d이(가) 버퍼길이 %d와 맞지 않습니다."
 
 #, c-format
 msgid "JPEG thumb height %d different than expected %d."
@@ -563,7 +579,7 @@ msgstr "JPEG 썸네일의 높이 %d이(가) 기대한 %d와 다릅니다."
 
 #, c-format
 msgid "JPEG thumb width %d different than expected %d."
-msgstr "JPEG 썸네일의 넓이 %d이(가) 기대한 %d와 다릅니다."
+msgstr "JPEG 썸네일의 너비 %d이(가) 기대한 %d와 다릅니다."
 
 #, c-format
 msgid ""
@@ -574,7 +590,7 @@ msgstr ""
 "%s"
 
 msgid "No embedded image read"
-msgstr "읽어온 내장 이미지가 없음"
+msgstr "읽어온 내장 이미지가 없습니다"
 
 #, c-format
 msgid "Error creating file '%s'. Unknown file type %d."
@@ -590,7 +606,7 @@ msgstr "'%s' 쓰기 오류"
 
 #, c-format
 msgid "Unsupported output type (%d) for embedded image"
-msgstr "이미지 내장을 지원하지 않는 파일 타입(%d)"
+msgstr "이미지 내장을 지원하지 않는 파일 타입 (%d)"
 
 #, c-format
 msgid "Loading raw file '%s'"
@@ -633,7 +649,7 @@ msgid "UFRaw curve format"
 msgstr "UFRaw 곡선 포멧"
 
 msgid "Nikon curve format"
-msgstr "Nikon 곡선 포멧"
+msgstr "니콘 곡선 포멧"
 
 msgid "Save curve"
 msgstr "곡선 저장"
@@ -651,7 +667,7 @@ msgid "Luminosity (Y value)"
 msgstr "조도 (Y 값)"
 
 msgid "Adams' zone"
-msgstr "존 영역"
+msgstr "존 영역(Adam's zone)"
 
 #, c-format
 msgid "size %dx%d, zoom %2.f%%"
@@ -747,7 +763,7 @@ msgstr "광도 곡선"
 
 #. Remote Gimp command entry
 msgid "Remote Gimp command"
-msgstr "원격 Gimp 명령"
+msgstr "김프 호출 명령"
 
 msgid "Reset command to default"
 msgstr "명령을 기본값으로 되돌리기"
@@ -758,13 +774,11 @@ msgstr "노출 부족/과다 영역 깜박임"
 msgid "Configuration"
 msgstr "설정"
 
-#, fuzzy
 msgid "Save configuration"
-msgstr "전체 설정 저장"
+msgstr "설정 저장"
 
-#, fuzzy
 msgid "Save configuration to resource file ($HOME/.ufrawrc)"
-msgstr "리소스 파일 저장 ($HOME/.ufrawrc)"
+msgstr "설정을 리소스 파일로 저장 ($HOME/.ufrawrc)"
 
 msgid "Log"
 msgstr "로그"
@@ -834,7 +848,7 @@ msgid ""
 "Check UFRaw's webpage for information on how to get your\n"
 "camera supported."
 msgstr ""
-"당신의 카메라 모델에는 화이트 벨러스 프리셋이 없습니다.\n"
+"당신의 카메라 모델의 화이트 벨런스 프리셋이 없습니다.\n"
 "어떻게 당신의 카메라를 지원하게 하는지에 대해서 UFRaw의\n"
 "웹페이지를 확인하세요."
 
@@ -882,10 +896,10 @@ msgid "No Bayer pattern"
 msgstr "베이어 패턴이 없음"
 
 msgid "Apply color smoothing"
-msgstr "색 고르게 하기 적용"
+msgstr "색 부드럽게 하기"
 
 msgid "Denoise"
-msgstr ""
+msgstr "노이즈제거"
 
 msgid "Threshold for wavelet denoising"
 msgstr "잔 노이즈 제거를 위한 임계값"
@@ -949,7 +963,7 @@ msgid "Linearity"
 msgstr "선형도"
 
 msgid "Linear part of the gamma correction"
-msgstr "감마 조정중 선형인 부분"
+msgstr "감마 조정값 중 선형인 부분"
 
 msgid "Reset linearity to default"
 msgstr "선형도를 기본값으로 되돌리기"
@@ -969,20 +983,29 @@ msgstr "채도"
 msgid "Absolute colorimetric"
 msgstr "Absolute colorimetric"
 
-#, fuzzy
 msgid "Output bit depth"
-msgstr "출력 의도"
+msgstr "지원하지 않는 비트"
 
 msgid "Display intent"
 msgstr "화면 의도"
 
 msgid "Disable soft proofing"
-msgstr "Soft proofing 해제"
+msgstr "소프트 프루핑 해제"
 
 #. End of Color management page
 #. Start of Corrections page
 msgid "Correct luminosity, saturation"
 msgstr "조도, 채도 조정"
+
+msgid "Contrast"
+msgstr ""
+
+msgid "Global contrast adjustment"
+msgstr ""
+
+#, fuzzy
+msgid "Reset global contrast to default"
+msgstr "암부를 기본값으로 되돌리기"
 
 msgid "Reset saturation to default"
 msgstr "채도를 기본값으로 되돌리기"
@@ -1036,7 +1059,7 @@ msgid ""
 "or as a ratio of two numbers (14:11)"
 msgstr ""
 "잘라내기 영역 종횡비.\n"
-"숫자 형식(1.273) 혹은 비율 형식 (14:11)\n"
+"숫자 형식(1.273) 혹은 비율 형식(14:11)\n"
 "으로 입력 할 수 있습니다"
 
 msgid "Lock aspect ratio"
@@ -1049,36 +1072,32 @@ msgid "Height"
 msgstr "높이"
 
 msgid "Width"
-msgstr "넓이"
+msgstr "너비"
 
 msgid "Orientation:"
 msgstr "기준:"
 
 #. Start of Save page
-#, fuzzy
 msgid "Save"
-msgstr "다른 이름으로 저장(_A)"
+msgstr "저장"
 
 msgid "Path"
-msgstr ""
+msgstr "경로"
 
 msgid "Select output path"
-msgstr ""
+msgstr "출력 경로 선택"
 
-#, fuzzy
 msgid "Filename"
-msgstr "파일 이름: %s%s"
+msgstr "파일 이름"
 
-#, fuzzy
 msgid "JPEG compression level"
-msgstr "압축률"
+msgstr "JPEG 압축률"
 
-#, fuzzy
 msgid "JPEG progressive encoding"
-msgstr "프로그래시브 인코딩"
+msgstr "JPEG 프로그래시브 인코딩"
 
 msgid "TIFF lossless Compress"
-msgstr ""
+msgstr "TIFF 무손실 압축"
 
 msgid "Embed EXIF data in JPEG or PNG files"
 msgstr "JPEG나 PNG파일에 EXIF 정보 포함하기"
@@ -1087,13 +1106,13 @@ msgid "Create ID file "
 msgstr "ID 파일 만들기"
 
 msgid "No"
-msgstr "아니요"
+msgstr "만들지 않음"
 
 msgid "Also"
-msgstr "또한"
+msgstr "이미지와 함께"
 
 msgid "Only"
-msgstr "오직"
+msgstr "ID파일만"
 
 msgid "Save image defaults "
 msgstr "이미지 기본값 저장"
@@ -1115,7 +1134,7 @@ msgid "Just this once"
 msgstr "이번 한번 만"
 
 msgid "Remember output path"
-msgstr ""
+msgstr "출력 경로 기억"
 
 msgid "Overwrite existing files without asking"
 msgstr "묻지 않고 존재하는 파일에 덮어쓰기"
@@ -1125,7 +1144,7 @@ msgid "EXIF"
 msgstr "EXIF"
 
 msgid "Tag"
-msgstr "테그"
+msgstr "태그"
 
 msgid "Value"
 msgstr "값"
@@ -1141,7 +1160,7 @@ msgid "Timestamp"
 msgstr "타임스탬프"
 
 msgid "Shutter time"
-msgstr ""
+msgstr "셔터 속도"
 
 msgid "Aperture"
 msgstr "조리개"
@@ -1166,7 +1185,7 @@ msgid "EXIF data read by %s"
 msgstr "'%s'(으)로 EXIF 정보를 읽음"
 
 msgid "Warning: EXIF data will not be sent to output"
-msgstr "경고: EXIF 정보가 출력에 포함되지 않을 것임"
+msgstr "경고: EXIF 정보가 출력에 포함되지 않을 것입니다"
 
 msgid "RGB histogram"
 msgstr "RGB 히스토그램"
@@ -1209,7 +1228,7 @@ msgid "_Delete"
 msgstr "지우기(_D)"
 
 msgid "Send image to _Gimp"
-msgstr "이미지를 Gimp로 전달(_G)"
+msgstr "이미지를 김프로 전달(_G)"
 
 #. preview_progress() changes the size of the progress bar
 #. and processes the event queue.
@@ -1217,15 +1236,15 @@ msgid "Loading preview"
 msgstr "미리보기 불러오는 중"
 
 msgid "Fatal error setting C locale"
-msgstr "치명적인 오류 C 로케일 설정"
+msgstr "C 로캘 설정 중 치명적인 오류"
 
 #, c-format
 msgid "Curve version is not supported"
-msgstr "지원되지 않는 곡선 버젼"
+msgstr "지원되지 않는 곡선 버전"
 
 #, c-format
 msgid "Invalid Nikon curve file '%s'"
-msgstr "유효하지 않은 Nikon 곡선 파일 '%s'"
+msgstr "유효하지 않은 니콘 곡선 파일 '%s'"
 
 #, c-format
 msgid "Error opening Curve file '%s': %s"
@@ -1250,22 +1269,22 @@ msgid "Error creating temporary file."
 msgstr "임시 파일 만들기 실패."
 
 msgid "Error activating Gimp."
-msgstr "Gimp 실행 실패."
+msgstr "김프 실행 중 오류 발생."
 
 msgid "Remote URI is not supported"
-msgstr "원격 URI를 지원하지 않습니다"
+msgstr "원격 URI는 지원하지 않습니다"
 
 #, c-format
 msgid "darkframe error: %s is not a raw file\n"
-msgstr "다크프레임 오류: %s(은)는 raw 파일이 아닙니다\n"
+msgstr "다크프레임 오류: %s은(는) raw 파일이 아닙니다\n"
 
 #, c-format
 msgid "error loading darkframe '%s'\n"
-msgstr "다크프레임 '%s'을(를) 불러오기 중 오류 발생\n"
+msgstr "다크프레임 '%s'을(를) 불러오는 중 오류 발생\n"
 
 #, c-format
 msgid "Darkframe '%s' is incompatible with main image"
-msgstr "다크프레임 '%s'(은)는 메인 이미지와 호환되지 않습니다."
+msgstr "다크프레임 '%s'은(는) 메인 이미지와 호환되지 않습니다."
 
 #, c-format
 msgid "using darkframe '%s'\n"
@@ -1292,8 +1311,12 @@ msgstr "%s 파일 만들기 실패."
 msgid "Error creating file."
 msgstr "파일 만들기 실패."
 
+#, fuzzy
+msgid "Converting image"
+msgstr "이미지 저장 중"
+
 msgid "Saving image"
-msgstr "이미지 저장중"
+msgstr "이미지 저장 중"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"
@@ -1305,7 +1328,7 @@ msgstr "출력 프로파일 '%s'을(를) '%s'에 포함하는데 실패하였습
 
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
-msgstr ""
+msgstr "비트 '%d'은(는) 지원하지 않습니다."
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
@@ -1352,38 +1375,36 @@ msgid "Tungsten"
 msgstr "텅스텐"
 
 msgid "Fluorescent"
-msgstr "조명"
+msgstr "형광등"
 
 #. In Canon cameras and Nikon D300:
 msgid "Fluorescent high"
 msgstr "강한 조명"
 
 msgid "Cool white fluorescent"
-msgstr "차가운 백색 조명"
+msgstr "차가운 백색 형광등"
 
 msgid "Warm white fluorescent"
-msgstr "따뜻한 백색 조명"
+msgstr "따뜻한 백색 형광등"
 
 msgid "Daylight fluorescent"
 msgstr "주광색 형광등"
 
 msgid "Neutral fluorescent"
-msgstr "주백색 형광등"
+msgstr "자연광 형광등"
 
 msgid "White fluorescent"
 msgstr "백색 형광등"
 
 #. In Nikon D300
-#, fuzzy
 msgid "Sodium-vapor fluorescent"
+msgstr "소듐 형광등"
+
+msgid "Day white fluorescent"
 msgstr "주백색 형광등"
 
-#, fuzzy
-msgid "Day white fluorescent"
-msgstr "따뜻한 백색 조명"
-
 msgid "High temp. mercury-vapor fluorescent"
-msgstr ""
+msgstr "고온(K)의 수은 형광등"
 
 #. For Olympus with no real "Flash" preset:
 msgid "Flash (auto mode)"

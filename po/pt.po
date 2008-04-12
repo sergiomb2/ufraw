@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-27 05:00+0100\n"
+"POT-Creation-Date: 2008-04-12 07:45+0200\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -77,6 +77,7 @@ msgstr "Exibir arquivos ocultos"
 #. temperature, green
 #. chanMul[]
 #. wavelet denoising threshold
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -288,6 +289,12 @@ msgstr "--gamma=GAMMA         Ajuste de gamma da curva base (padrão é 0.45).\n
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr "--linearity=LINEARITY Linearidade da curva base (padrão é 0.10).\n"
 
+#, fuzzy
+msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
+msgstr ""
+"--saturation=SAT      Ajuste de saturação (o padrão é 1.0, 0 para saída em "
+"P&B).\n"
+
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
@@ -377,8 +384,17 @@ msgstr ""
 "                      em vez de convertê-la.\n"
 
 msgid ""
-"--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
-"                      the image (default camera).\n"
+"--rotate=camera|ANGLE|no\n"
+"                      Rotate image to camera's setting, by ANGLE degrees\n"
+"                      clockwise, or do not rotate the image (default "
+"camera).\n"
+msgstr ""
+
+msgid ""
+"--crop-(left|right|top|bottom)=PIXELS\n"
+"                      Crop the output to the given pixel range, relative to "
+"the\n"
+"                      raw image after rotation but before any scaling.\n"
 msgstr ""
 
 msgid ""
@@ -1026,6 +1042,16 @@ msgstr ""
 msgid "Correct luminosity, saturation"
 msgstr ""
 
+msgid "Contrast"
+msgstr ""
+
+msgid "Global contrast adjustment"
+msgstr ""
+
+#, fuzzy
+msgid "Reset global contrast to default"
+msgstr "Redefine o ponto de preto para o padrão"
+
 msgid "Reset saturation to default"
 msgstr "Redefine saturação para o padrão"
 
@@ -1358,6 +1384,10 @@ msgid "Error creating file."
 msgstr ""
 "Erro criando arquivo '%s'\n"
 "%s"
+
+#, fuzzy
+msgid "Converting image"
+msgstr "Salvando a imagem"
 
 msgid "Saving image"
 msgstr "Salvando a imagem"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-27 05:00+0100\n"
+"POT-Creation-Date: 2008-04-12 07:45+0200\n"
 "PO-Revision-Date: 2007-11-13 21:53+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -76,6 +76,7 @@ msgstr "Visa dolda filer"
 #. temperature, green
 #. chanMul[]
 #. wavelet denoising threshold
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -246,6 +247,9 @@ msgstr ""
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr ""
 
+msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
+msgstr ""
+
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
@@ -316,8 +320,17 @@ msgid ""
 msgstr ""
 
 msgid ""
-"--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
-"                      the image (default camera).\n"
+"--rotate=camera|ANGLE|no\n"
+"                      Rotate image to camera's setting, by ANGLE degrees\n"
+"                      clockwise, or do not rotate the image (default "
+"camera).\n"
+msgstr ""
+
+msgid ""
+"--crop-(left|right|top|bottom)=PIXELS\n"
+"                      Crop the output to the given pixel range, relative to "
+"the\n"
+"                      raw image after rotation but before any scaling.\n"
 msgstr ""
 
 msgid ""
@@ -900,6 +913,16 @@ msgstr ""
 msgid "Correct luminosity, saturation"
 msgstr ""
 
+msgid "Contrast"
+msgstr ""
+
+msgid "Global contrast adjustment"
+msgstr ""
+
+#, fuzzy
+msgid "Reset global contrast to default"
+msgstr "Nollställ svartpunkt till standard"
+
 msgid "Reset saturation to default"
 msgstr ""
 
@@ -1200,6 +1223,10 @@ msgstr "Fel när filen \"%s\" skapades."
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "Fel vid skapande av fil."
+
+#, fuzzy
+msgid "Converting image"
+msgstr "Sparar bild"
 
 msgid "Saving image"
 msgstr "Sparar bild"

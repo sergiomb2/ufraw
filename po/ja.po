@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-27 05:00+0100\n"
+"POT-Creation-Date: 2008-04-12 07:45+0200\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -82,6 +82,7 @@ msgstr "隠しファイルを表示する"
 #. temperature, green
 #. chanMul[]
 #. wavelet denoising threshold
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -285,6 +286,11 @@ msgstr "--gamma=GAMMA         基本カーブのガンマ調整 (デフォルト
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr "--linearity=LINEARITY 基本カーブのリニアリティー (デフォルト 0.10).\n"
 
+#, fuzzy
+msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
+msgstr ""
+"--saturation=SAT      彩度調整 (デフォルトは1.0、0にすると白黒出力)。\n"
+
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
@@ -368,8 +374,17 @@ msgstr ""
 "                      rawファイルに埋込まれているプレビュー画像を抽出\n"
 
 msgid ""
-"--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
-"                      the image (default camera).\n"
+"--rotate=camera|ANGLE|no\n"
+"                      Rotate image to camera's setting, by ANGLE degrees\n"
+"                      clockwise, or do not rotate the image (default "
+"camera).\n"
+msgstr ""
+
+msgid ""
+"--crop-(left|right|top|bottom)=PIXELS\n"
+"                      Crop the output to the given pixel range, relative to "
+"the\n"
+"                      raw image after rotation but before any scaling.\n"
 msgstr ""
 
 msgid ""
@@ -1013,6 +1028,16 @@ msgstr ""
 msgid "Correct luminosity, saturation"
 msgstr ""
 
+msgid "Contrast"
+msgstr ""
+
+msgid "Global contrast adjustment"
+msgstr ""
+
+#, fuzzy
+msgid "Reset global contrast to default"
+msgstr "ブラックポイントをデフォルトに戻す"
+
 msgid "Reset saturation to default"
 msgstr "彩度をデフォルトに戻す"
 
@@ -1346,6 +1371,10 @@ msgid "Error creating file."
 msgstr ""
 "ファイル作成エラー '%s'.\n"
 "%s"
+
+#, fuzzy
+msgid "Converting image"
+msgstr "画像を保存しています"
 
 msgid "Saving image"
 msgstr "画像を保存しています"
