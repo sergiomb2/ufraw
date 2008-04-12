@@ -7311,6 +7311,8 @@ konica_400z:
 	maximum = 0xf7f0;
 	zero_is_bad = 1;
 	adobe_coeff ("Panasonic","DMC-FZ8");  break;
+      case 3213:
+	width -= 27;
       case 3177:
 	width -= 10;
 	filters = 0x49494949;
