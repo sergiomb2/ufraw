@@ -108,7 +108,7 @@ typedef struct {
     GtkTable *SpotTable;
     GtkLabel *SpotPatch;
     colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
-    GtkToggleButton *AutoExposureButton, *AutoBlackButton;
+    GtkToggleButton *AutoExposureButton, *AutoBlackButton, *LockAspectButton;
     GtkButton *AutoCurveButton;
     GtkWidget *ResetWBButton, *ResetGammaButton, *ResetLinearButton;
     GtkWidget *ResetExposureButton, *ResetSaturationButton;
@@ -2223,6 +2223,8 @@ static void aspect_changed(GtkWidget *widget, gpointer user_data)
 	    data->AspectRatio = aspect;
     }
     set_new_aspect (data);
+    data->LockAspect = TRUE;
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->LockAspectButton), TRUE);
 }
 
 static void set_darkframe_label(preview_data *data)
@@ -4333,6 +4335,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     uf_widget_set_tooltip(button, _("Lock aspect ratio"));
     g_signal_connect(G_OBJECT(button), "clicked",
 		     G_CALLBACK(lock_aspect), 0);
+    data->LockAspectButton = GTK_TOGGLE_BUTTON(button);
 
     /* Get initial aspect ratio */
     data->AspectRatio = ((float)data->UF->initialWidth) / data->UF->initialHeight;
