@@ -113,6 +113,7 @@ typedef struct {
     GtkWidget *ResetWBButton, *ResetGammaButton, *ResetLinearButton;
     GtkWidget *ResetExposureButton, *ResetSaturationButton;
     GtkWidget *ResetThresholdButton;
+    GtkWidget *ResetContrastButton;
     GtkWidget *ResetBlackButton, *ResetBaseCurveButton, *ResetCurveButton;
     GtkWidget *UseMatrixButton;
     GtkWidget *SaveButton;
@@ -136,6 +137,7 @@ typedef struct {
     GtkAdjustment *ExposureAdjustment;
     GtkAdjustment *ThresholdAdjustment;
     GtkAdjustment *SaturationAdjustment;
+    GtkAdjustment *ContrastAdjustment;
     GtkAdjustment *CropX1Adjustment;
     GtkAdjustment *CropY1Adjustment;
     GtkAdjustment *CropX2Adjustment;
@@ -1337,6 +1339,7 @@ static void update_scales(preview_data *data)
     gtk_adjustment_set_value(data->GreenAdjustment, CFG->green);
     gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
     gtk_adjustment_set_value(data->ThresholdAdjustment, CFG->threshold);
+    gtk_adjustment_set_value(data->ContrastAdjustment, CFG->contrast);
     gtk_adjustment_set_value(data->SaturationAdjustment, CFG->saturation);
     gtk_adjustment_set_value(data->GammaAdjustment,
 	    CFG->profile[0][CFG->profileIndex[0]].gamma);
@@ -1377,6 +1380,8 @@ static void update_scales(preview_data *data)
 	    fabs( conf_default.exposure - CFG->exposure) > 0.001);
     gtk_widget_set_sensitive(data->ResetThresholdButton,
 	    fabs( conf_default.threshold - CFG->threshold) > 1);
+    gtk_widget_set_sensitive(data->ResetContrastButton,
+	    fabs( conf_default.contrast - CFG->contrast) > 0.001);
     gtk_widget_set_sensitive(data->ResetSaturationButton,
 	    fabs( conf_default.saturation - CFG->saturation) > 0.001);
     gtk_widget_set_sensitive(data->ResetBaseCurveButton,
@@ -2362,6 +2367,9 @@ static void button_update(GtkWidget *button, gpointer user_data)
     if (button==data->ResetGammaButton) {
 	CFG->profile[0][CFG->profileIndex[0]].gamma =
 		profile_default_gamma(&CFG->profile[0][CFG->profileIndex[0]]);
+    }
+    if (button==data->ResetContrastButton) {
+        CFG->contrast = conf_default.contrast;
     }
     if (button==data->ResetLinearButton) {
 	CFG->profile[0][CFG->profileIndex[0]].linear =
@@ -3524,7 +3532,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	curveeditorHeight = 192;
 	data->HisMinHeight = 64;
     } else if (screen.height<900) {
-	curveeditorHeight = 224;
+	curveeditorHeight = 192;
 	data->HisMinHeight = 80;
     } else {
 	curveeditorHeight = 256;
@@ -4095,7 +4103,21 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     page = notebook_page_new(notebook, _("Correct luminosity, saturation"),
 	    "color-corrections");
 
+    /* Contrast and Saturation adjustments */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+
+    data->ContrastAdjustment = adjustment_scale(table, 0, 0, _("Contrast"),
+	    CFG->contrast, &CFG->contrast, 0, 5.0, 0.01, 0.1, 2,
+	    _("Global contrast adjustment"));
+    data->ResetContrastButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetContrastButton),
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_table_attach(table, data->ResetContrastButton, 9, 10, 0, 1, 0,0,0,0);
+    uf_widget_set_tooltip(data->ResetContrastButton,
+	    _("Reset global contrast to default"));
+    g_signal_connect(G_OBJECT(data->ResetContrastButton), "clicked",
+	    G_CALLBACK(button_update), NULL);
+
     data->SaturationAdjustment = adjustment_scale(table, 0, 1, _("Saturation"),
 	    CFG->saturation, &CFG->saturation,
 	    0.0, 3.0, 0.01, 0.1, 2, _("Saturation"));

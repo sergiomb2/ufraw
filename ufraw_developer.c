@@ -40,6 +40,7 @@ developer_data *developer_init()
     d->gamma = -1;
     d->linear = -1;
     d->saturation = -1;
+    d->contrast = -1;
     for (i=0; i<profile_types; i++) {
 	d->profile[i] = NULL;
 	strcpy(d->profileFile[i],"no such file");
@@ -142,36 +143,60 @@ void developer_display_profile(developer_data *d,
     }
 }
 
-#define CLAMP_AB_DOUBLE(ab) \
-	( (ab<-128.0) ? -128.0 : ( (ab>127.9961) ? +127.9961 : ab) )
+static double clamp(double in, double min, double max)
+{
+    return (in < min) ? min : (in > max) ? max : in;
+}
 
-static int saturation_sampler(register WORD In[], register WORD Out[],
-	register LPVOID Cargo)
+struct contrast_saturation
+{
+  double contrast;
+  double saturation;
+};
+
+/* Scale in along a curve from min to max by scale */
+static double scale_curve(double in, double min, double max, double scale)
+{
+  double halfrange = (max - min) / 2.0;
+  /* Normalize in to [ -1, 1 ] */
+  double value = clamp((in - min) / halfrange - 1.0, -1.0, 1.0);
+  /* Linear scaling makes more visual sense for low contrast values. */
+  if (scale > 1.0) {
+    double n = fabs(value);
+    if (n > 1.0)
+      n = 1.0;
+    scale = n <= 0.0 ? 0.0 : ( 1.0 - pow( 1.0 - n, scale ) ) / n;
+  }
+  return clamp((value * scale + 1.0) * halfrange + min, min, max);
+}
+
+static const double max_luminance = 100.0;
+static const double max_colorfulness = 181.019336; /* sqrt(128*128+128*128) */
+
+static int contrast_saturation_sampler(WORD In[], WORD Out[], LPVOID Cargo)
 {
     cmsCIELab Lab;
-    double saturation = *(double *)Cargo;
+    cmsCIELCh LCh;
+    const struct contrast_saturation* cs = Cargo;
 
     cmsLabEncoded2Float(&Lab, In);
-
-    if ( Lab.a!=0.0 || Lab.b!=0.0 ) {
-
-	/* Normalized Chroma of current color (0.0 to 1.0) */
-	double Cn = MAX( fabs(Lab.a), fabs(Lab.b) ) / 128.0;
-
-	double scale = ( 1.0 - pow( 1.0 - Cn , saturation ) ) / Cn;
-	Lab.a = CLAMP_AB_DOUBLE(Lab.a * scale);
-	Lab.b = CLAMP_AB_DOUBLE(Lab.b * scale);
-    }
+    cmsLab2LCh(&LCh, &Lab);
+    LCh.L = scale_curve(LCh.L, 0.0, max_luminance, cs->contrast);
+    LCh.C = scale_curve(LCh.C, -max_colorfulness, max_colorfulness,
+			cs->saturation);
+    cmsLCh2Lab(&Lab, &LCh);
     cmsFloat2LabEncoded(Out, &Lab);
 
     return TRUE;
 }
 
 /* Based on lcms' cmsCreateBCHSWabstractProfile() */
-static cmsHPROFILE create_saturation_profile(double saturation)
+static cmsHPROFILE create_contrast_saturation_profile(double contrast,
+						      double saturation)
 {
     cmsHPROFILE hICC;
     LPLUT Lut;
+    struct contrast_saturation cs = { contrast, saturation };
 
     hICC = _cmsCreateProfilePlaceholder();
     if (hICC==NULL) return NULL;// can't allocate
@@ -183,8 +208,8 @@ static cmsHPROFILE create_saturation_profile(double saturation)
 
     // Creates a LUT with 3D grid only
     Lut = cmsAllocLUT();
-    cmsAlloc3DGrid(Lut, 7, 3, 3);
-    if (!cmsSample3DGrid(Lut, saturation_sampler, &saturation , 0)) {
+    cmsAlloc3DGrid(Lut, 11, 3, 3);
+    if (!cmsSample3DGrid(Lut, contrast_saturation_sampler, &cs , 0)) {
 	// Shouldn't reach here
 	cmsFreeLUT(Lut);
 	cmsCloseProfile(hICC);
@@ -440,13 +465,15 @@ void developer_prepare(developer_data *d, conf_data *conf,
 	}
 	d->updateTransform = TRUE;
     }
-    if ( conf->saturation!=d->saturation ) {
+    if ( conf->saturation!=d->saturation || conf->contrast!=d->contrast) {
+        d->contrast = conf->contrast;
 	d->saturation = conf->saturation;
 	cmsCloseProfile(d->saturationProfile);
-	if (d->saturation==1)
+	if (d->saturation==1.0 && d->contrast==1.0)
 	    d->saturationProfile = NULL;
 	else
-	    d->saturationProfile = create_saturation_profile(d->saturation);
+	    d->saturationProfile = create_contrast_saturation_profile(
+	      d->contrast, d->saturation);
 	d->updateTransform = TRUE;
     }
     developer_create_transform(d, mode);

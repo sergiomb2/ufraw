@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.11 2008/04/11 13:44:58 lexort Exp $
+$Id: README-processing.txt,v 1.12 2008/04/12 05:45:20 nkbj Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -214,7 +214,7 @@ corrections curve
 
 black point compensation
 
-saturation
+contrast and saturation
 
 display profile
 
