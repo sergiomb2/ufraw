@@ -5424,7 +5424,7 @@ void CLASS parse_minolta (int base)
 	break;
       case 0x574247:				/* WBG */
 	get4();
-	i = strstr(model,"A200") ? 3:0;
+	i = strcmp(model,"DiMAGE A200") ? 0:3;
 	FORC4 cam_mul[c ^ (c >> 1) ^ i] = get2();
 	break;
       case 0x545457:				/* TTW */
