@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-12 07:45+0200\n"
+"POT-Creation-Date: 2008-04-19 16:00+0200\n"
 "PO-Revision-Date: 2008-03-01 15:31+0100\n"
 "Last-Translator: Alvin Brattli <alvin.brattli@gmail.com>\n"
 "Language-Team: Norwegian <no@li.org>\n"
@@ -336,6 +336,14 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algoritme for interpolasjon (standardverdi: ahd).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale=none|average|lightness|luminance|value|filter\n"
+"                      Grayscale conversion algorithm to use (default none.\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Algoritme for interpolasjon (standardverdi: ahd).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Alternativene knyttet til endelige utdata er:\n"
 
@@ -499,6 +507,10 @@ msgstr "«%s» er et ugyldig kurvenavn."
 #, c-format
 msgid "'%s' is not a valid interpolation option."
 msgstr "«%s» er et ugyldig alternativ for interpolasjon."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale option."
+msgstr "«%s» er et ugyldig alternativ for rotate."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -706,6 +718,7 @@ msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Fatal feil: uf->conf->shrink<1"
 
 #. No darkframe file
+#. Fill in the grayscale mode names
 msgid "None"
 msgstr "Ingen"
 
@@ -1050,6 +1063,33 @@ msgid "Auto adjust black-point"
 msgstr "Automatisk innstilling av sortpunkt"
 
 #. End of Corrections page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Mode:"
+msgstr ""
+
+#, fuzzy
+msgid "Average"
+msgstr "Gjennomsnitt:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "Verdi"
+
+msgid "Filter color"
+msgstr ""
+
+msgid "Filter color:"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Beskjær og roter"
@@ -1165,9 +1205,6 @@ msgstr "EXIF"
 
 msgid "Tag"
 msgstr "Tagg"
-
-msgid "Value"
-msgstr "Verdi"
 
 #. Fill table with EXIF tags
 msgid "Camera maker"

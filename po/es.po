@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-12 07:45+0200\n"
+"POT-Creation-Date: 2008-04-19 16:00+0200\n"
 "PO-Revision-Date: 2007-11-11 20:19+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -341,6 +341,14 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algoritmo de interpolación a usar (por defecto: ahd).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale=none|average|lightness|luminance|value|filter\n"
+"                      Grayscale conversion algorithm to use (default none.\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Algoritmo de interpolación a usar (por defecto: ahd).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Las opciones relacionadas con la salida final son:\n"
 
@@ -509,6 +517,10 @@ msgstr "'%s' no es un nombre válido para una curva."
 #, c-format
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' no es una opción válida de interpolación."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale option."
+msgstr "'%s' no es una opción válida para 'create-id'."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -717,6 +729,7 @@ msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Error fatal: uf->conf->shrink<1"
 
 #. No darkframe file
+#. Fill in the grayscale mode names
 msgid "None"
 msgstr "Ninguno"
 
@@ -1067,6 +1080,33 @@ msgid "Auto adjust black-point"
 msgstr "Auto ajustar punto negro"
 
 #. End of Corrections page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Mode:"
+msgstr ""
+
+#, fuzzy
+msgid "Average"
+msgstr "Media:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "Valor"
+
+msgid "Filter color"
+msgstr ""
+
+msgid "Filter color:"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Recortar y rotar"
@@ -1186,9 +1226,6 @@ msgstr "EXIF"
 
 msgid "Tag"
 msgstr "Etiqueta"
-
-msgid "Value"
-msgstr "Valor"
 
 #. Fill table with EXIF tags
 msgid "Camera maker"

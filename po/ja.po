@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-12 07:45+0200\n"
+"POT-Creation-Date: 2008-04-19 16:00+0200\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -325,6 +325,14 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|bilinear\n"
 "                      使用する補間アルゴリズム (デフォルトahd)。\n"
 
+#, fuzzy
+msgid ""
+"--grayscale=none|average|lightness|luminance|value|filter\n"
+"                      Grayscale conversion algorithm to use (default none.\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|bilinear\n"
+"                      使用する補間アルゴリズム (デフォルトahd)。\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "最終出力に関連するオプション:\n"
 
@@ -479,6 +487,10 @@ msgstr "'%s' はカーブ名として正しくありません。"
 #, c-format
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' は正しい補間オプションではありません"
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale option."
+msgstr "'%s' は正しいcreate-idのオプションではありません"
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -695,6 +707,7 @@ msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "深刻なエラー: uf->conf->shrink<1"
 
 #. No darkframe file
+#. Fill in the grayscale mode names
 #, fuzzy
 msgid "None"
 msgstr "いいえ"
@@ -1062,6 +1075,33 @@ msgid "Auto adjust black-point"
 msgstr "ブラックポイントを自動調整"
 
 #. End of Corrections page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Mode:"
+msgstr ""
+
+#, fuzzy
+msgid "Average"
+msgstr "平均:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "Filter color"
+msgstr ""
+
+msgid "Filter color:"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr ""
@@ -1182,9 +1222,6 @@ msgid "EXIF"
 msgstr ""
 
 msgid "Tag"
-msgstr ""
-
-msgid "Value"
 msgstr ""
 
 #. Fill table with EXIF tags

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ufraw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-12 07:45+0200\n"
+"POT-Creation-Date: 2008-04-19 16:00+0200\n"
 "PO-Revision-Date: 2008-01-03 01:51+0100\n"
 "Last-Translator: Daniele Medri <dmedri@SPAMgmail.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -337,6 +337,15 @@ msgstr ""
 "                      Algoritmo di interpolazione da utilizzare "
 "(predefinito: ahd).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale=none|average|lightness|luminance|value|filter\n"
+"                      Grayscale conversion algorithm to use (default none.\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Algoritmo di interpolazione da utilizzare "
+"(predefinito: ahd).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Le opzioni relative all'output finale sono:\n"
 
@@ -507,6 +516,10 @@ msgstr "'%s' non è un nome valido per la curva."
 #, c-format
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' non è una valida opzione per l'interpolazione."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale option."
+msgstr "'%s' non è un'opzione valida per create-id."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -716,6 +729,7 @@ msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Errore: uf->conf->shrink<1"
 
 #. No darkframe file
+#. Fill in the grayscale mode names
 msgid "None"
 msgstr "nessuna"
 
@@ -1064,6 +1078,33 @@ msgid "Auto adjust black-point"
 msgstr "Aggiustamento punto di nero"
 
 #. End of Corrections page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Mode:"
+msgstr ""
+
+#, fuzzy
+msgid "Average"
+msgstr "Media:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "Valore"
+
+msgid "Filter color"
+msgstr ""
+
+msgid "Filter color:"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Taglia e ruota"
@@ -1183,9 +1224,6 @@ msgstr "EXIF"
 
 msgid "Tag"
 msgstr "Tag"
-
-msgid "Value"
-msgstr "Valore"
 
 #. Fill table with EXIF tags
 msgid "Camera maker"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-12 07:45+0200\n"
+"POT-Creation-Date: 2008-04-19 16:00+0200\n"
 "PO-Revision-Date: 2008-04-10 19:56+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -325,6 +325,14 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale=none|average|lightness|luminance|value|filter\n"
+"                      Grayscale conversion algorithm to use (default none.\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Interpolation algorithm to use (default ahd).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "최종 출력에 관련된 옵션들:\n"
 
@@ -479,6 +487,10 @@ msgstr "'%s'은(는) 유효한 곡선 이름이 아닙니다."
 #, c-format
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s'은(는) 유효한 보간 옵션이 아닙니다."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale option."
+msgstr "'%s'은(는) 유효한 회전 옵션이 아닙니다."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -685,6 +697,7 @@ msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "치명적인 오류: uf->conf->shrink<1"
 
 #. No darkframe file
+#. Fill in the grayscale mode names
 msgid "None"
 msgstr "없음"
 
@@ -1030,6 +1043,33 @@ msgid "Auto adjust black-point"
 msgstr "암부 자동 조정"
 
 #. End of Corrections page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Mode:"
+msgstr ""
+
+#, fuzzy
+msgid "Average"
+msgstr "평균:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "값"
+
+msgid "Filter color"
+msgstr ""
+
+msgid "Filter color:"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "잘라내기와 회전"
@@ -1145,9 +1185,6 @@ msgstr "EXIF"
 
 msgid "Tag"
 msgstr "태그"
-
-msgid "Value"
-msgstr "값"
 
 #. Fill table with EXIF tags
 msgid "Camera maker"

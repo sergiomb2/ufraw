@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-12 07:45+0200\n"
+"POT-Creation-Date: 2008-04-19 16:00+0200\n"
 "PO-Revision-Date: 2008-01-13 11:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -337,6 +337,14 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Stosowany algorytm interpolacji (domy¶lnie ahd).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale=none|average|lightness|luminance|value|filter\n"
+"                      Grayscale conversion algorithm to use (default none.\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Stosowany algorytm interpolacji (domy¶lnie ahd).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Opcje zwi±zane z plikiem wynikowym:\n"
 
@@ -504,6 +512,10 @@ msgstr "'%s' nie jest poprawn± nazw± krzywej."
 #, c-format
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' nie jest poprawnym ustawieniem interpolacji."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale option."
+msgstr "'%s' nie jest poprawn± opcj± obrotu."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -712,6 +724,7 @@ msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "B³±d krytyczny: uf->conf->shrink<1"
 
 #. No darkframe file
+#. Fill in the grayscale mode names
 msgid "None"
 msgstr "Brak"
 
@@ -1058,6 +1071,33 @@ msgid "Auto adjust black-point"
 msgstr "Automatycznie dopasuj punkt czerni"
 
 #. End of Corrections page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Mode:"
+msgstr ""
+
+#, fuzzy
+msgid "Average"
+msgstr "¦rednia:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "Warto¶æ"
+
+msgid "Filter color"
+msgstr ""
+
+msgid "Filter color:"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Kadrowanie i obrót"
@@ -1173,9 +1213,6 @@ msgstr "EXIF"
 
 msgid "Tag"
 msgstr "Tag"
-
-msgid "Value"
-msgstr "Warto¶æ"
 
 #. Fill table with EXIF tags
 msgid "Camera maker"

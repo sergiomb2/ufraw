@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-12 07:45+0200\n"
+"POT-Creation-Date: 2008-04-19 16:00+0200\n"
 "PO-Revision-Date: 2007-11-13 21:53+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -276,6 +276,11 @@ msgid ""
 "                      Interpolation algorithm to use (default ahd).\n"
 msgstr ""
 
+msgid ""
+"--grayscale=none|average|lightness|luminance|value|filter\n"
+"                      Grayscale conversion algorithm to use (default none.\n"
+msgstr ""
+
 msgid "The options which are related to the final output are:\n"
 msgstr ""
 
@@ -414,6 +419,10 @@ msgstr "\"%s\" är inte ett giltigt kurvnamn."
 #, c-format
 msgid "'%s' is not a valid interpolation option."
 msgstr ""
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale option."
+msgstr "\"%s\" är inte en giltig sökväg."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -620,6 +629,7 @@ msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Ödesdigert fel: uf->conf->shrink<1"
 
 #. No darkframe file
+#. Fill in the grayscale mode names
 msgid "None"
 msgstr "Ingen"
 
@@ -944,6 +954,33 @@ msgid "Auto adjust black-point"
 msgstr ""
 
 #. End of Corrections page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Mode:"
+msgstr ""
+
+#, fuzzy
+msgid "Average"
+msgstr "Genomsnitt:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "Värde"
+
+msgid "Filter color"
+msgstr ""
+
+msgid "Filter color:"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Beskär och rotera"
@@ -1058,9 +1095,6 @@ msgstr "EXIF"
 
 msgid "Tag"
 msgstr "Tagg"
-
-msgid "Value"
-msgstr "Värde"
 
 #. Fill table with EXIF tags
 msgid "Camera maker"

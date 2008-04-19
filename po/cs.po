@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-12 07:45+0200\n"
+"POT-Creation-Date: 2008-04-19 16:00+0200\n"
 "PO-Revision-Date: 2008-03-06 19:15+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -333,6 +333,14 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolační algoritmus (standardně ahd).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale=none|average|lightness|luminance|value|filter\n"
+"                      Grayscale conversion algorithm to use (default none.\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Interpolační algoritmus (standardně ahd).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Volby, které se týkají konečného výstupu, jsou:\n"
 
@@ -497,6 +505,10 @@ msgstr "'%s' není platné jméno křivky."
 #, c-format
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' není platná volba interpolace."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale option."
+msgstr "'%s' není platné pro volbu rotate."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -703,6 +715,7 @@ msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Fatální chyba: uf->conf->shrink<1"
 
 #. No darkframe file
+#. Fill in the grayscale mode names
 msgid "None"
 msgstr "Žádný"
 
@@ -1046,6 +1059,33 @@ msgid "Auto adjust black-point"
 msgstr "Automaticky upravit černý bod"
 
 #. End of Corrections page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Mode:"
+msgstr ""
+
+#, fuzzy
+msgid "Average"
+msgstr "Průměr:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "Hodnota"
+
+msgid "Filter color"
+msgstr ""
+
+msgid "Filter color:"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Ořez a otočení"
@@ -1161,9 +1201,6 @@ msgstr "EXIF"
 
 msgid "Tag"
 msgstr "Tag"
-
-msgid "Value"
-msgstr "Hodnota"
 
 #. Fill table with EXIF tags
 msgid "Camera maker"

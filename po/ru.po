@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-12 07:45+0200\n"
+"POT-Creation-Date: 2008-04-19 16:00+0200\n"
 "PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -344,6 +344,15 @@ msgstr ""
 "                      Используемый алгоритм интерполяции (по умолчанию — "
 "ahd).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale=none|average|lightness|luminance|value|filter\n"
+"                      Grayscale conversion algorithm to use (default none.\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Используемый алгоритм интерполяции (по умолчанию — "
+"ahd).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Ключи, относящиеся к конечному результату:\n"
 
@@ -511,6 +520,10 @@ msgstr "'%s' не является названием существующей �
 #, c-format
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' не является правильным идентификатором алгоритма интерполяции."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale option."
+msgstr "%s' не является корректным ключом create-id."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -719,6 +732,7 @@ msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Критическая ошибка: uf->conf->shrink<1"
 
 #. No darkframe file
+#. Fill in the grayscale mode names
 msgid "None"
 msgstr "Нет"
 
@@ -1066,6 +1080,33 @@ msgid "Auto adjust black-point"
 msgstr "Автоматически скорректировать чёрную точку"
 
 #. End of Corrections page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Mode:"
+msgstr ""
+
+#, fuzzy
+msgid "Average"
+msgstr "Среднее:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "Значение"
+
+msgid "Filter color"
+msgstr ""
+
+msgid "Filter color:"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Кадрирование и вращение"
@@ -1185,9 +1226,6 @@ msgstr "EXIF"
 
 msgid "Tag"
 msgstr "Тег"
-
-msgid "Value"
-msgstr "Значение"
 
 #. Fill table with EXIF tags
 msgid "Camera maker"
