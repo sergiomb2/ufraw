@@ -35,14 +35,28 @@
 #include <fitsio.h>
 #endif
 
-int ppm8_row_writer(
+static void grayscale_8bit(guint8 *graybuf, const guint8 *pixbuf, int width)
+{
+    int i;
+    for (i = 0; i < width; ++i, ++graybuf, pixbuf += 3)
+        *graybuf = pixbuf[1];
+}
+
+static void grayscale_16bit(guint16 *graybuf, const guint16 *pixbuf, int width)
+{
+    int i;
+    for (i = 0; i < width; ++i, ++graybuf, pixbuf += 3)
+        *graybuf = pixbuf[1];
+}
+
+static int ppm8_row_writer(
     ufraw_data *uf,
     void * volatile out,
     void * pixbuf,
-    int row, int width)
+    int row, int width, int grayscale)
 {
     row=row;
-    if ((int)fwrite(pixbuf, 3, width, out)<width) {
+    if ((int)fwrite(pixbuf, grayscale ? 1 : 3, width, out)<width) {
 	ufraw_set_error(uf, _("Error creating file '%s'."),
         uf->conf->outputFilename);
 	ufraw_set_error(uf, g_strerror(errno));
@@ -52,18 +66,18 @@ int ppm8_row_writer(
     }
 }
 
-int ppm16_row_writer(
+static int ppm16_row_writer(
     ufraw_data *uf,
     void * volatile out,
     void * pixbuf,
-    int row, int width)
+    int row, int width, int grayscale)
 {
     row=row;
     guint16 *pixbuf16 = (guint16 *) pixbuf;
     int i;
     for (i=0; i<3*width; i++)
 	pixbuf16[i] = g_htons(pixbuf16[i]);
-    if ((int)fwrite(pixbuf16, 6, width, out)<width) {
+    if ((int)fwrite(pixbuf16, grayscale ? 2 : 6, width, out)<width) {
 	ufraw_set_error(uf, _("Error creating file '%s'."),
 	uf->conf->outputFilename);
 	ufraw_set_error(uf, g_strerror(errno));
@@ -88,9 +102,9 @@ int tiff_row_writer(
     ufraw_data *uf,
     void * volatile out,
     void * pixbuf,
-    int row, int width)
+    int row, int width, int grayscale)
 {
-    width=width;
+    width=width; grayscale=grayscale;
     if (TIFFWriteScanline(out, pixbuf, row, 0)<0) {
 	// 'errno' does seem to contain useful information
 	ufraw_set_error(uf, _("Error creating file."));
@@ -138,13 +152,13 @@ static void jpeg_error_handler(j_common_ptr cinfo)
 	    cinfo->err->msg_parm.i[3]);
 }
 
-int jpeg_row_writer(
+static int jpeg_row_writer(
     ufraw_data *uf,
     void * volatile out,
     void * pixbuf,
-    int row, int width)
+    int row, int width, int grayscale)
 {
-    row=row; width=width;
+    row=row; width=width; grayscale=grayscale;
     guint8 *pixbuf8 = pixbuf;
     jpeg_write_scanlines((struct jpeg_compress_struct *)out, &pixbuf8, 1);
     if ( ufraw_is_error(uf) )
@@ -178,9 +192,9 @@ int png_row_writer(
     ufraw_data *uf,
     void * volatile out,
     void * pixbuf,
-    int row, int width)
+    int row, int width, int grayscale)
 {
-    uf=uf; row=row; width=width;
+    uf=uf; row=row; width=width; grayscale=grayscale;
 
     png_write_row(out, (guint8 *)pixbuf);
 
@@ -191,24 +205,20 @@ int png_row_writer(
 void write_image_data(
     ufraw_data *uf,
     void * volatile out,
-    int width, int height, int left, int top, int bitDepth,
-    int (*row_writer) (ufraw_data *, void * volatile, void *, int, int))
+    int width, int height, int left, int top, int bitDepth, int grayscaleMode,
+    int (*row_writer) (ufraw_data *, void * volatile, void *, int, int, int))
 {
     int row, rowStride;
-    guint16 *pixbuf16;
-    guint8 *pixbuf8;
     image_type *rawImage;
     rowStride = uf->image.width;
     rawImage = uf->image.image;
-    void *pixbuf;
+    guint16 *graybuf;
+    guint16 *pixbuf;
+    guint16 *finalbuf;
 
-    pixbuf16 = g_new(guint16, width*3);
-    pixbuf8 = g_new(guint8, width*3);
-
-    if (bitDepth > 8)
-	pixbuf = pixbuf16;
-    else
-	pixbuf = pixbuf8;
+    pixbuf = g_new(guint16, width*3);
+    graybuf = g_new(guint16, width);
+    finalbuf = grayscaleMode ? graybuf : pixbuf;
 
     if (uf->conf->rotationAngle != 0) {
 	// Buffer for unrotated image.
@@ -235,7 +245,13 @@ void write_image_data(
 		    0.5 + 0.5*row/height);
 	    ufraw_rotate_row(&image, pixbuf, uf->conf->rotationAngle,
 		bitDepth, top+row, left, width);
-	    if (row_writer(uf, out, pixbuf, row, width) != UFRAW_SUCCESS)
+	    if (grayscaleMode) {
+	      if (bitDepth > 8)
+		grayscale_16bit(graybuf, pixbuf, width);
+	      else
+		grayscale_8bit((guint8*)graybuf, (guint8*)pixbuf, width);
+	    }
+	    if (row_writer(uf, out, finalbuf, row, width, grayscaleMode) != UFRAW_SUCCESS)
 		break;
 	}
 	g_free(image.buffer);
@@ -246,13 +262,19 @@ void write_image_data(
 		preview_progress(uf->widget, _("Saving image"),
 		    0.5 + 0.5*row/height);
 	    develope(pixbuf, rawImage[(top+row)*rowStride+left],
-	        uf->developer, bitDepth, pixbuf16, width);
-	    if (row_writer(uf, out, pixbuf, row, width) != UFRAW_SUCCESS)
+	        uf->developer, bitDepth, pixbuf, width);
+	    if (grayscaleMode) {
+	      if (bitDepth > 8)
+		grayscale_16bit(graybuf, pixbuf, width);
+	      else
+		grayscale_8bit((guint8*)graybuf, (guint8*)pixbuf, width);
+	    }
+	    if (row_writer(uf, out, finalbuf, row, width, grayscaleMode) != UFRAW_SUCCESS)
 		break;
 	}
     }
-    g_free(pixbuf16);
-    g_free(pixbuf8);
+    g_free(pixbuf);
+    g_free(graybuf);
 }
 
 int ufraw_write_image(ufraw_data *uf)
@@ -264,6 +286,7 @@ int ufraw_write_image(ufraw_data *uf)
 #endif
     int width, height, left, top;
     char * volatile confFilename=NULL;
+    int grayscaleMode = uf->conf->grayscaleMode != grayscale_none;
     ufraw_message_reset(uf);
 
     if ( uf->conf->createID==only_id ||
@@ -357,20 +380,25 @@ int ufraw_write_image(ufraw_data *uf)
     height = (uf->conf->CropY2 - uf->conf->CropY1)
 	    * uf->image.height / uf->initialHeight;
     if ( uf->conf->type==ppm_type && BitDepth==8 ) {
-	fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFF);
-	write_image_data(uf, out, width, height, left, top, BitDepth, ppm8_row_writer);
+	fprintf(out, "P%c\n%d %d\n%d\n",
+		grayscaleMode ? '5' : '6', width, height, 0xFF);
+	write_image_data(uf, out, width, height, left, top,
+			 BitDepth, grayscaleMode, ppm8_row_writer);
     } else if ( uf->conf->type==ppm_type && BitDepth==16 ) {
-	fprintf(out, "P6\n%d %d\n%d\n", width, height, 0xFFFF);
-	write_image_data(uf, out, width, height, left, top, BitDepth, ppm16_row_writer);
+	fprintf(out, "P%c\n%d %d\n%d\n",
+		grayscaleMode ? '5' : '6', width, height, 0xFFFF);
+	write_image_data(uf, out, width, height, left, top,
+			 BitDepth, grayscaleMode, ppm16_row_writer);
 #ifdef HAVE_LIBTIFF
     } else if ( uf->conf->type==tiff_type ) {
 	TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
 	TIFFSetField(out, TIFFTAG_IMAGELENGTH, height);
 	TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
-	TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, 3);
+	TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, grayscaleMode ? 1 : 3);
 	TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, BitDepth);
 	TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+	TIFFSetField(out, TIFFTAG_PHOTOMETRIC, grayscaleMode
+		     ? PHOTOMETRIC_MINISBLACK : PHOTOMETRIC_RGB);
 #ifdef HAVE_LIBZ
 	if (uf->conf->losslessCompress) {
 	    TIFFSetField(out, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
@@ -396,7 +424,8 @@ int ufraw_write_image(ufraw_data *uf)
 	}
 	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, TIFFDefaultStripSize(out, 0));
 
-	write_image_data(uf, out, width, height, left, top, BitDepth, tiff_row_writer);
+	write_image_data(uf, out, width, height, left, top,
+			 BitDepth, grayscaleMode, tiff_row_writer);
 
 #endif /*HAVE_LIBTIFF*/
 #ifdef HAVE_LIBJPEG
@@ -415,8 +444,14 @@ int ufraw_write_image(ufraw_data *uf)
 	jpeg_stdio_dest(&cinfo, out);
 	cinfo.image_width = width;
 	cinfo.image_height = height;
-	cinfo.input_components = 3;
-	cinfo.in_color_space = JCS_RGB;
+	if (grayscaleMode) {
+	    cinfo.input_components = 1;
+	    cinfo.in_color_space = JCS_GRAYSCALE;
+	}
+	else {
+	    cinfo.input_components = 3;
+	    cinfo.in_color_space = JCS_RGB;
+	}
 	jpeg_set_defaults(&cinfo);
 	jpeg_set_quality(&cinfo, uf->conf->compression, TRUE);
 	if ( uf->conf->compression>90 )
@@ -455,7 +490,8 @@ int ufraw_write_image(ufraw_data *uf)
 	    }
 	}
 
-	write_image_data(uf, &cinfo, width, height, left, top, 8, jpeg_row_writer);
+	write_image_data(uf, &cinfo, width, height, left, top,
+			 8, grayscaleMode, jpeg_row_writer);
 
 	if ( ufraw_is_error(uf) ) {
 	    char *message = g_strdup(ufraw_get_message(uf));
@@ -484,8 +520,9 @@ int ufraw_write_image(ufraw_data *uf)
 	} else {
 	    png_init_io(png, out);
 	    png_set_IHDR(png, info, width, height, BitDepth,
-		    PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
-		    PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+		    grayscaleMode ? PNG_COLOR_TYPE_GRAY : PNG_COLOR_TYPE_RGB,
+		    PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE,
+		    PNG_FILTER_TYPE_BASE);
 	    png_set_compression_level(png, Z_BEST_COMPRESSION);
 	    png_text text[2];
 	    text[0].compression = PNG_TEXT_COMPRESSION_NONE;
@@ -523,7 +560,8 @@ int ufraw_write_image(ufraw_data *uf)
 	    if (BitDepth != 8 && G_BYTE_ORDER==G_LITTLE_ENDIAN )
 		png_set_swap(png); // Swap byte order to big-endian
 
-	    write_image_data(uf, png, width, height, left, top, BitDepth, png_row_writer);
+	    write_image_data(uf, png, width, height, left, top,
+			     BitDepth, grayscaleMode, png_row_writer);
 
 	    png_write_end(png, NULL);
 	    png_destroy_write_struct(&png, &info);

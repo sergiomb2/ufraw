@@ -61,6 +61,9 @@ typedef enum { perceptual_intent, relative_intent, saturation_intent,
 	absolute_intent, disable_intent } Intent;
 typedef enum { ufraw_first_phase, ufraw_denoise_phase, ufraw_final_phase,
 	ufraw_phases_num } UFRawPhase;
+typedef enum { grayscale_none, grayscale_average, grayscale_lightness,
+	       grayscale_luminance, grayscale_value, grayscale_filter }
+	GrayscaleMode;
 
 typedef struct {
     const char *make;
@@ -88,6 +91,8 @@ typedef struct {
     void *luminosityProfile;
     void *TransferFunction[3];
     void *saturationProfile;
+    GrayscaleMode grayscaleMode;
+    double grayscaleFilter[3];
 } developer_data;
 
 typedef guint16 image_type[4];
@@ -158,6 +163,8 @@ typedef struct {
     struct ufraw_struct *darkframe;
     int CropX1, CropY1, CropX2, CropY2;
     double rotationAngle;
+    int grayscaleMode;
+    int grayscaleFilter[3];
 
     /* SAVE options */
     char inputFilename[max_path], outputFilename[max_path],

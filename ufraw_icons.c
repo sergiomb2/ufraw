@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw_icons.c - load icons for UFRaw's GUI.
- * Copyright 2004-2007 by Udi Fuchs
+ * Copyright 2004-2008 by Udi Fuchs
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2
@@ -57,4 +57,5 @@ void ufraw_icons_init()
     load_icon(factory, crop_24, "crop");
     load_icon(factory, rectify_24, "rectify");
     load_icon(factory, gimp_24, "gimp");
+    load_icon(factory, grayscale_24, "grayscale");
 }

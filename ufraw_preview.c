@@ -53,6 +53,9 @@ static const int his_max_height = 256;
 #define min_scale 2
 #define max_scale 20
 
+#define page_num_spot 0
+#define page_num_crop 5
+
 enum { pixel_format, percent_format };
 enum { without_zone, with_zone };
 
@@ -105,6 +108,7 @@ typedef struct {
     GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
     GtkComboBox *WBCombo, *BaseCurveCombo, *CurveCombo,
 		*ProfileCombo[profile_types], *BitDepthCombo, *TypeCombo;
+    GtkComboBox *GrayscaleCombo;
     GtkTable *SpotTable;
     GtkLabel *SpotPatch;
     colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
@@ -117,6 +121,7 @@ typedef struct {
     GtkWidget *ResetBlackButton, *ResetBaseCurveButton, *ResetCurveButton;
     GtkWidget *UseMatrixButton;
     GtkWidget *SaveButton;
+    GtkWidget *GrayscaleFilter;
     GtkWidget *ControlButton[num_buttons];
     guint16 ButtonMnemonic[num_buttons];
     GtkProgressBar *ProgressBar;
@@ -1276,7 +1281,7 @@ static gboolean render_spot(preview_data *data)
 	    (int)rgb[0], (int)rgb[1], (int)rgb[2]);
     gtk_label_set_markup(data->SpotPatch, tmp);
     gtk_widget_show(GTK_WIDGET(data->SpotTable));
-    if ( data->PageNum!=4 )
+    if ( data->PageNum!=page_num_crop )
 	draw_spot(data, TRUE);
 
     return FALSE;
@@ -1397,6 +1402,8 @@ static void update_scales(preview_data *data)
 	    CFG->curve[CFG->curveIndex].m_numAnchors>2 ||
 	    CFG->curve[CFG->curveIndex].m_anchors[1].x!=1.0 ||
 	    CFG->curve[CFG->curveIndex].m_anchors[1].y!=1.0 );
+    gtk_widget_set_sensitive(data->GrayscaleFilter,
+			     CFG->grayscaleMode == grayscale_filter);
 
     if ( fabs(data->shrink-floor(data->shrink+0.0005))<0.0005 ) {
 	CFG->shrink = floor(data->shrink+0.0005);
@@ -1514,7 +1521,7 @@ static gboolean preview_button_press(GtkWidget *event_box, GdkEventButton *event
     if (data->FreezeDialog) return FALSE;
     if (event->button!=1) return FALSE;
     event_coordinate_rescale(&event->x, &event->y, data);
-    if ( data->PageNum==0 ) {
+    if ( data->PageNum==page_num_spot ) {
 	data->PreviewButtonPressed = TRUE;
 	draw_spot(data, FALSE);
 	data->SpotX1 = data->SpotX2 = event->x;
@@ -1523,7 +1530,7 @@ static gboolean preview_button_press(GtkWidget *event_box, GdkEventButton *event
 		(GSourceFunc)(render_spot), data, NULL);
 	return TRUE;
     }
-    if ( data->PageNum==4 ) {
+    if ( data->PageNum==page_num_crop ) {
 	data->PreviewButtonPressed = TRUE;
 	return TRUE;
     }
@@ -1650,7 +1657,7 @@ static gboolean preview_motion_notify(GtkWidget *event_box, GdkEventMotion *even
 #ifdef HAVE_GTKIMAGEVIEW
     if (!gtk_event_box_get_above_child(GTK_EVENT_BOX(event_box))) return FALSE;
 #endif
-    if ( data->PageNum==4 )
+    if ( data->PageNum==page_num_crop )
 	return crop_motion_notify(data, event);
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
     if ( !data->PreviewButtonPressed ) return FALSE;
@@ -2425,6 +2432,13 @@ static void button_update(GtkWidget *button, gpointer user_data)
 	} else {
 	    CFG->curveIndex = linear_curve;
 	}
+    }
+    if (button==data->GrayscaleFilter) {
+      GdkColor color;
+      gtk_color_button_get_color(GTK_COLOR_BUTTON(data->GrayscaleFilter), &color);
+      CFG->grayscaleFilter[0] = color.red;
+      CFG->grayscaleFilter[1] = color.green;
+      CFG->grayscaleFilter[2] = color.blue;
     }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
@@ -3410,11 +3424,11 @@ static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
     GtkWidget *event_box =
 	    gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_EVENT_BOX);
 #ifdef HAVE_GTKIMAGEVIEW
-    if ( page_num==0 ) {
+    if ( page_num==page_num_spot ) {
 	gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), TRUE);
 	gdk_window_set_cursor(event_box->window, data->Cursor[spot_cursor]);
 	draw_spot(data, TRUE);
-    } else if ( page_num==4 ) {
+    } else if ( page_num==page_num_crop ) {
 	gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), TRUE);
 	gdk_window_set_cursor(event_box->window, data->Cursor[crop_cursor]);
 	draw_spot(data, FALSE);
@@ -3423,7 +3437,7 @@ static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
 	draw_spot(data, TRUE);
     }
 #else
-    if ( page_num==4 ) {
+    if ( page_num==page_num_crop ) {
 	gdk_window_set_cursor(event_box->window, data->Cursor[crop_cursor]);
 	draw_spot(data, FALSE);
     } else {
@@ -3473,7 +3487,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->SpotY2 = -1;
     data->SpotDraw = FALSE;
     data->FreezeDialog = TRUE;
-    data->PageNum = 0;
+    data->PageNum = page_num_spot;
     data->DrawnCropX1 = 0;
     data->DrawnCropX2 = 99999;
     data->DrawnCropY1 = 0;
@@ -4227,6 +4241,45 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->AutoBlackButton), "clicked",
 	    G_CALLBACK(button_update), NULL);
     /* End of Corrections page */
+
+    /* Start of Grayscale page */
+    page = notebook_page_new(notebook, _("Grayscale"), "grayscale");
+    
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+
+    label = gtk_label_new(_("Mode:"));
+    gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
+    data->GrayscaleCombo = GTK_COMBO_BOX(uf_combo_box_new_text());
+    /* Fill in the grayscale mode names */
+    gtk_combo_box_append_text(data->GrayscaleCombo, _("None"));
+    gtk_combo_box_append_text(data->GrayscaleCombo, _("Average"));
+    gtk_combo_box_append_text(data->GrayscaleCombo, _("Lightness"));
+    gtk_combo_box_append_text(data->GrayscaleCombo, _("Luminance"));
+    gtk_combo_box_append_text(data->GrayscaleCombo, _("Value"));
+    gtk_combo_box_append_text(data->GrayscaleCombo, _("Filter color"));
+    gtk_combo_box_set_active(data->GrayscaleCombo, CFG->grayscaleMode);
+    gtk_table_attach(table, GTK_WIDGET(data->GrayscaleCombo),
+		     1, 2, 0, 1, GTK_EXPAND|GTK_FILL, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->GrayscaleCombo), "changed",
+		     G_CALLBACK(combo_update), &CFG->grayscaleMode);
+
+    label = gtk_label_new(_("Filter color:"));
+    gtk_table_attach(table, label, 0, 1, 8, 9, GTK_EXPAND|GTK_FILL, 0, 0, 0);
+    data->GrayscaleFilter = gtk_color_button_new();
+    {
+        GdkColor color;
+	color.red = CFG->grayscaleFilter[0];
+	color.green = CFG->grayscaleFilter[1];
+	color.blue = CFG->grayscaleFilter[2];
+	gtk_color_button_set_color(GTK_COLOR_BUTTON(data->GrayscaleFilter), &color);
+    }
+    gtk_color_button_set_title(GTK_COLOR_BUTTON(data->GrayscaleFilter),
+			       "Set filter color for grayscale conversion");
+    gtk_table_attach(table, data->GrayscaleFilter,
+		     1, 2, 8, 9, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->GrayscaleFilter), "color-set",
+		     G_CALLBACK(button_update), &CFG->grayscaleFilter);
+    /* End of Grayscale page */
 
     /* Start of transformations page */
     page = notebook_page_new(notebook, _("Crop and rotate"), "crop");

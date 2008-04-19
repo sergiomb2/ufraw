@@ -75,6 +75,8 @@ const conf_data conf_default = {
     "", NULL, /* darkframeFile, darkframe */
     -1, -1, -1, -1, /* Crop X1,Y1,X2,Y2 */
     0, /* rotationAngle */
+    grayscale_none, /* grayscale mode */
+    { 65535, 0, 0 }, /* grayscale filter */
     /* Save options */
     "", "", "", /* inputFilename, outputFilename, outputPath */
     "", "", /* inputURI, inputModTime */
@@ -125,6 +127,8 @@ static const char *clipHighlightsNames[] =
     { "digital", "film", NULL };
 static const char *intentNames[] =
     { "perceptual", "relative", "saturation", "absolute", "disable", NULL };
+static const char *grayscaleModeNames[] =
+    { "none", "average", "lightness", "luminance", "value", "filter", NULL };
 
 static int conf_find_name(const char name[],const char *namesList[], int notFound)
 {
@@ -558,6 +562,16 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	else c->intent[out_profile] = conf_find_name(temp, intentNames,
 		    conf_default.intent[out_profile]);
     }
+    if ( strcmp("GrayscaleMode", element)==0 ) {
+        c->grayscaleMode = (sscanf(temp, "%d", &i)==1)
+	  ? i
+	  : conf_find_name(temp, grayscaleModeNames,
+			   conf_default.grayscaleMode);
+    }
+    if ( strcmp("GrayscaleFilter", element)==0 ) {
+        sscanf(temp, "%d %d %d", &c->grayscaleFilter[0],
+	       &c->grayscaleFilter[1], &c->grayscaleFilter[2]);
+    }
     /* OutputIntent replaces Intent starting from ufraw-0.12. */
     if ( strcmp("OutputIntent", element)==0 )
 	c->intent[out_profile] = conf_find_name(temp, intentNames,
@@ -850,6 +864,16 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     if (c->saturation!=conf_default.saturation)
 	buf = uf_markup_buf(buf,
 		"<Saturation>%lf</Saturation>\n", c->saturation);
+    if (c->grayscaleMode!=conf_default.grayscaleMode)
+        buf = uf_markup_buf(buf,
+		"<GrayscaleMode>%s</GrayscaleMode>\n",
+		grayscaleModeNames[c->grayscaleMode]);
+    if (c->grayscaleMode==grayscale_filter)
+        buf = uf_markup_buf(buf,
+		"<GrayscaleFilter>%d %d %d</GrayscaleFilter>\n",
+		c->grayscaleFilter[0],
+		c->grayscaleFilter[1],
+		c->grayscaleFilter[2]);
     if (c->size!=conf_default.size)
 	buf = uf_markup_buf(buf, "<Size>%d</Size>\n", c->size);
     if (c->shrink!=conf_default.shrink)
@@ -1112,6 +1136,9 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->autoBlack = src->autoBlack;
     dst->restoreDetails = src->restoreDetails;
     dst->clipHighlights = src->clipHighlights;
+    dst->grayscaleMode = src->grayscaleMode;
+    memcpy(dst->grayscaleFilter, src->grayscaleFilter,
+	   sizeof dst->grayscaleFilter);
     g_strlcpy(dst->darkframeFile, src->darkframeFile, max_path);
     /* We only copy the current BaseCurve */
     if (src->BaseCurveIndex<=camera_curve) {
@@ -1262,6 +1289,8 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 		cmd->profile[1][0].BitDepth;
     if (cmd->saturation!=NULLF)
 	conf->saturation=cmd->saturation;
+    if (cmd->grayscaleMode!=NULLF)
+      conf->grayscaleMode=cmd->grayscaleMode;
     if (cmd->BaseCurveIndex>=0) conf->BaseCurveIndex = cmd->BaseCurveIndex;
     if (cmd->curveIndex>=0) conf->curveIndex = cmd->curveIndex;
     if (cmd->autoBlack) {
@@ -1370,6 +1399,8 @@ N_("--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"),
 N_("--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"),
+N_("--grayscale=none|average|lightness|luminance|value|filter\n"
+"                      Grayscale conversion algorithm to use (default none.\n"),
 "\n",
 N_("The options which are related to the final output are:\n"),
 "\n",
@@ -1461,7 +1492,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	 *curveName=NULL, *curveFile=NULL, *outTypeName=NULL, *rotateName=NULL,
 	 *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL,
 	 *interpolationName=NULL, *darkframeFile=NULL,
-	 *restoreName=NULL, *clipName=NULL;
+	 *restoreName=NULL, *clipName=NULL, *grayscaleName=NULL;
     static const struct option options[] = {
 	{ "wb", 1, 0, 'w'},
 	{ "temperature", 1, 0, 't'},
@@ -1478,6 +1509,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{ "exposure", 1, 0, 'e'},
 	{ "black-point", 1, 0, 'k'},
 	{ "interpolation", 1, 0, 'i'},
+	{ "grayscale", 1, 0, 'Y'},
 	{ "shrink", 1, 0, 'x'},
 	{ "size", 1, 0, 'X'},
 	{ "compression", 1, 0, 'j'},
@@ -1512,7 +1544,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	&baseCurveName, &baseCurveFile, &curveName, &curveFile,
 	&cmd->profile[0][0].gamma, &cmd->profile[0][0].linear,
 	&cmd->saturation, &cmd->contrast, &cmd->threshold,
-	&cmd->exposure, &cmd->black, &interpolationName,
+	&cmd->exposure, &cmd->black, &interpolationName, &grayscaleName,
 	&cmd->shrink, &cmd->size, &cmd->compression,
 	&outTypeName, &cmd->profile[1][0].BitDepth, &rotateName,
 	&createIDName, &outPath, &output, &darkframeFile,
@@ -1602,6 +1634,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'C':
 	case 'r':
 	case 'u':
+	case 'Y':
 	    *(char **)optPointer[index] = optarg;
 	    break;
 	case 'O': cmd->overwrite = TRUE; break;
@@ -1753,6 +1786,17 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    ufraw_message(UFRAW_ERROR,
 		_("'%s' is not a valid interpolation option."),
 		interpolationName);
+	    return -1;
+	}
+    }
+    cmd->grayscaleMode = NULLF;
+    if (grayscaleName!=NULL) {
+      cmd->grayscaleMode = conf_find_name(grayscaleName, grayscaleModeNames,
+					  conf_default.grayscaleMode);
+      if (cmd->grayscaleMode==-1) {
+	    ufraw_message(UFRAW_ERROR,
+		_("'%s' is not a valid grayscale option."),
+		grayscaleName);
 	    return -1;
 	}
     }

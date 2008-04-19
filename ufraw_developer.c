@@ -58,6 +58,8 @@ developer_data *developer_init()
     d->intent[display_profile] = -1;
     d->updateTransform = TRUE;
     d->colorTransform = NULL;
+    d->grayscaleMode = -1;
+    d->grayscaleFilter[0] = d->grayscaleFilter[1] = d->grayscaleFilter[2] = -1;
     cmsSetErrorHandler(lcms_message);
     return d;
 }
@@ -327,6 +329,7 @@ void developer_prepare(developer_data *d, conf_data *conf,
     unsigned c, i;
     profile_data *in, *out, *display;
     CurveData *baseCurve, *curve;
+    double total;
 
     if ( mode!=d->mode ) {
 	d->mode = mode;
@@ -361,6 +364,39 @@ void developer_prepare(developer_data *d, conf_data *conf,
 	for (i=0; i<3; i++)
 	    for (c=0; c<d->colors; c++)
 		d->colorMatrix[i][c] = rgb_cam[i][c]*0x10000;
+
+    switch (conf->grayscaleMode) {
+
+    case grayscale_filter:
+        /* The grayscale filter is based on gamma encoded colors, but is
+	 * applied to linear data.  It should ideally be decoded from
+	 * either sRGB (easy) or the display profile (most correct) into
+	 * linear values.  In reality this will make little difference
+	 * in the result, particularly for filters where the components
+	 * are equal or zero. */
+        d->grayscaleMode = grayscale_filter;
+	for (c = 0, total = 0.0; c < 3; ++c)
+	    total += conf->grayscaleFilter[c];
+	if (total == 0.0)
+	    total = 1.0;
+	for (c = 0; c < 3; ++c)
+	    d->grayscaleFilter[c] = conf->grayscaleFilter[c] / total;
+	break;
+
+    case grayscale_average:
+        d->grayscaleMode = grayscale_filter;
+	for (c = 0; c < 3; ++c)
+	    d->grayscaleFilter[c] = 1.0 / 3.0;
+	break;
+
+    case grayscale_lightness:
+    case grayscale_value:
+        d->grayscaleMode = conf->grayscaleMode;
+	break;
+
+    default:
+        d->grayscaleMode = grayscale_none;
+    }
 
     d->restoreDetails = conf->restoreDetails;
     int clipHighlights = conf->clipHighlights;
@@ -465,9 +501,11 @@ void developer_prepare(developer_data *d, conf_data *conf,
 	}
 	d->updateTransform = TRUE;
     }
-    if ( conf->saturation!=d->saturation || conf->contrast!=d->contrast) {
+    if ( conf->saturation!=d->saturation || conf->contrast!=d->contrast
+         || conf->grayscaleMode == grayscale_luminance ) {
         d->contrast = conf->contrast;
-	d->saturation = conf->saturation;
+	d->saturation = (conf->grayscaleMode == grayscale_luminance)
+	    ? 0 : conf->saturation;
 	cmsCloseProfile(d->saturationProfile);
 	if (d->saturation==1.0 && d->contrast==1.0)
 	    d->saturationProfile = NULL;
@@ -577,6 +615,42 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 
     if (mode==16) for (i=0; i<3*count; i++) p16[i] = buf[i];
     else for (i=0; i<3*count; i++) p8[i] = buf[i] >> 8;
+}
+
+static void develop_grayscale(guint16 *pixel, const developer_data *d)
+{
+    guint16 spot;
+    guint16 min;
+    guint16 max;
+
+    switch (d->grayscaleMode) {
+
+    case grayscale_filter:
+        spot = pixel[0] * d->grayscaleFilter[0]
+	  + pixel[1] * d->grayscaleFilter[1]
+	  + pixel[2] * d->grayscaleFilter[2];
+	break;
+
+    case grayscale_lightness:
+        min = max = pixel[0];
+	if (pixel[1] > max) max = pixel[1];
+	if (pixel[2] > max) max = pixel[2];
+	if (pixel[1] < min) min = pixel[1];
+	if (pixel[2] < min) min = pixel[2];
+	spot = ((int)min + (int)max) / 2;
+	break;
+
+    case grayscale_value:
+        max = pixel[0];
+	if (pixel[1] > max) max = pixel[1];
+	if (pixel[2] > max) max = pixel[2];
+	spot = max;
+	break;
+
+    default:
+        return;
+    }
+    pixel[0] = pixel[1] = pixel[2] = spot;
 }
 
 void develop_linear(guint16 in[4], guint16 out[3], developer_data *d)
@@ -697,4 +771,5 @@ void develop_linear(guint16 in[4], guint16 out[3], developer_data *d)
     }
     for (c=0; c<3; c++)
 	out[c] = MIN(MAX(tmppix[c], 0), 0xFFFF);
+    develop_grayscale(out, d);
 }
