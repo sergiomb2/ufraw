@@ -6,16 +6,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-19 16:00+0200\n"
-"PO-Revision-Date: 2008-01-03 00:27+0100\n"
+"POT-Creation-Date: 2008-03-27 05:00+0100\n"
+"PO-Revision-Date: 2008-04-06 19:50+0200\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: French\n"
-"X-Poedit-Country: FRANCE\n"
-"X-Poedit-Basepath: ../\n"
+"Content-Transfer-Encoding: 8bit"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
@@ -80,7 +77,6 @@ msgstr "Voir fichiers cachés"
 #. temperature, green
 #. chanMul[]
 #. wavelet denoising threshold
-#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -129,7 +125,8 @@ msgstr "Trop de points pour la courbe '%s'"
 msgid ""
 "ID file %s does not appear to be a regular file\n"
 "%s\n"
-msgstr ""
+msgstr "Le fichier ID %s n'est pas un fichier régulier\n"
+"%s\n"
 
 #, c-format
 msgid ""
@@ -305,12 +302,6 @@ msgstr ""
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr "--linearity=LINÉARITÉ Linéarité de la courbe de base (défaut 0.10).\n"
 
-#, fuzzy
-msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
-msgstr ""
-"--saturation=SAT      Ajustement de la saturation (défaut 1.0, 0 pour \n"
-"                      sortie N&B).\n"
-
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
@@ -344,14 +335,6 @@ msgstr ""
 msgid ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"
-msgstr ""
-"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
-"                      Algorithme d'interpolation à utiliser (défaut ahd).\n"
-
-#, fuzzy
-msgid ""
-"--grayscale=none|average|lightness|luminance|value|filter\n"
-"                      Grayscale conversion algorithm to use (default none.\n"
 msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algorithme d'interpolation à utiliser (défaut ahd).\n"
@@ -410,22 +393,12 @@ msgstr ""
 "(raw)\n"
 "                      plutôt que de convertir l'image brute.\n"
 
-#, fuzzy
 msgid ""
-"--rotate=camera|ANGLE|no\n"
-"                      Rotate image to camera's setting, by ANGLE degrees\n"
-"                      clockwise, or do not rotate the image (default "
-"camera).\n"
+"--rotate=camera|no    Rotate image to camera's setting or do not rotate\n"
+"                      the image (default camera).\n"
 msgstr ""
 "--rotate=camera|no    Pivote l'image selon le réglage boîtier ou non\n"
 "                      (défaut camera).\n"
-
-msgid ""
-"--crop-(left|right|top|bottom)=PIXELS\n"
-"                      Crop the output to the given pixel range, relative to "
-"the\n"
-"                      raw image after rotation but before any scaling.\n"
-msgstr ""
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -530,10 +503,6 @@ msgstr "'%s' n'est pas un nom de courbe valide."
 #, c-format
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' n'est pas une option d'interpolation valide."
-
-#, fuzzy, c-format
-msgid "'%s' is not a valid grayscale option."
-msgstr "'%s' n'est pas une option valide pour '--rotate'."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -742,7 +711,6 @@ msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Erreur Fatale: uf->conf->shrink<1"
 
 #. No darkframe file
-#. Fill in the grayscale mode names
 msgid "None"
 msgstr "Aucun"
 
@@ -1065,16 +1033,6 @@ msgstr "Pas de pré-vue du rendu"
 msgid "Correct luminosity, saturation"
 msgstr "Corrections luminosité, saturation"
 
-msgid "Contrast"
-msgstr ""
-
-msgid "Global contrast adjustment"
-msgstr ""
-
-#, fuzzy
-msgid "Reset global contrast to default"
-msgstr "RàZ du point noir"
-
 msgid "Reset saturation to default"
 msgstr "RàZ saturation"
 
@@ -1098,33 +1056,6 @@ msgid "Auto adjust black-point"
 msgstr "Ajustement automatique du point noir"
 
 #. End of Corrections page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr ""
-
-msgid "Mode:"
-msgstr ""
-
-#, fuzzy
-msgid "Average"
-msgstr "Moyenne:"
-
-msgid "Lightness"
-msgstr ""
-
-msgid "Luminance"
-msgstr ""
-
-msgid "Value"
-msgstr "Valeur"
-
-msgid "Filter color"
-msgstr ""
-
-msgid "Filter color:"
-msgstr ""
-
-#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Découpe et rotation"
@@ -1248,6 +1179,9 @@ msgstr "EXIF"
 
 msgid "Tag"
 msgstr "Marqueur"
+
+msgid "Value"
+msgstr "Valeur"
 
 #. Fill table with EXIF tags
 msgid "Camera maker"
@@ -1412,10 +1346,6 @@ msgstr "Erreur en créant le fichier '%s'."
 msgid "Error creating file."
 msgstr "Erreur en créant le fichier."
 
-#, fuzzy
-msgid "Converting image"
-msgstr "Sauver l'image"
-
 msgid "Saving image"
 msgstr "Sauver l'image"
 
@@ -1530,3 +1460,4 @@ msgstr "Bal. du Blanc Boitier"
 
 msgid "Auto WB"
 msgstr "Bal. du Blanc Auto"
+
