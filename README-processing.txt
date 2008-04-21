@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.12 2008/04/12 05:45:20 nkbj Exp $
+$Id: README-processing.txt,v 1.13 2008/04/21 14:39:03 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -51,6 +51,16 @@ http://regex.info/blog/photo-tech/color-spaces-page1/
 
 http://lists.freedesktop.org/archives/openicc/2006q3/000775.html
 (an AdobeRGB-compatible profile)
+
+=== B&W conversion
+
+http://docs.gimp.org/en/plug-in-colors-channel-mixer.html
+http://www.youtube.com/watch?v=7QH1ho8Dv98
+http://lightroom-news.com/2007/08/24/tips-for-better-black-and-white-conversions/
+http://www.shutterbug.com/equipmentreviews/software_computers/0208aperture/
+
+http://schani.wordpress.com/2007/06/26/new-job/
+http://schani.wordpress.com/2006/05/23/my-digital-bw-workflow/
 
 === other converters
 
