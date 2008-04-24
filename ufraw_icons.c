@@ -58,4 +58,7 @@ void ufraw_icons_init()
     load_icon(factory, rectify_24, "rectify");
     load_icon(factory, gimp_24, "gimp");
     load_icon(factory, grayscale_24, "grayscale");
+    load_icon(factory, channel_blue_24, "channel-blue");
+    load_icon(factory, channel_green_24, "channel-green");
+    load_icon(factory, channel_red_24, "channel-red");
 }

@@ -76,7 +76,8 @@ const conf_data conf_default = {
     -1, -1, -1, -1, /* Crop X1,Y1,X2,Y2 */
     0, /* rotationAngle */
     grayscale_none, /* grayscale mode */
-    { 65535, 0, 0 }, /* grayscale filter */
+    { 100.0, 0.0, 0.0 }, /* grayscale mixer */
+    TRUE, /* grayscale mixer normalize */
     /* Save options */
     "", "", "", /* inputFilename, outputFilename, outputPath */
     "", "", /* inputURI, inputModTime */
@@ -128,7 +129,7 @@ static const char *clipHighlightsNames[] =
 static const char *intentNames[] =
     { "perceptual", "relative", "saturation", "absolute", "disable", NULL };
 static const char *grayscaleModeNames[] =
-    { "none", "average", "lightness", "luminance", "value", "filter", NULL };
+    { "none", "average", "lightness", "luminance", "value", "mixer", NULL };
 
 static int conf_find_name(const char name[],const char *namesList[], int notFound)
 {
@@ -568,10 +569,12 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	  : conf_find_name(temp, grayscaleModeNames,
 			   conf_default.grayscaleMode);
     }
-    if ( strcmp("GrayscaleFilter", element)==0 ) {
-        sscanf(temp, "%d %d %d", &c->grayscaleFilter[0],
-	       &c->grayscaleFilter[1], &c->grayscaleFilter[2]);
+    if ( strcmp("GrayscaleMixer", element)==0 ) {
+        sscanf(temp, "%lf %lf %lf", &c->grayscaleMixer[0],
+	       &c->grayscaleMixer[1], &c->grayscaleMixer[2]);
     }
+    if ( strcmp("GrayscaleMixerNormalize", element) == 0 )
+        sscanf(temp, "%d", &c->grayscaleMixerNormalize);
     /* OutputIntent replaces Intent starting from ufraw-0.12. */
     if ( strcmp("OutputIntent", element)==0 )
 	c->intent[out_profile] = conf_find_name(temp, intentNames,
@@ -868,12 +871,16 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
         buf = uf_markup_buf(buf,
 		"<GrayscaleMode>%s</GrayscaleMode>\n",
 		grayscaleModeNames[c->grayscaleMode]);
-    if (c->grayscaleMode==grayscale_filter)
+    if (c->grayscaleMode==grayscale_mixer) {
         buf = uf_markup_buf(buf,
-		"<GrayscaleFilter>%d %d %d</GrayscaleFilter>\n",
-		c->grayscaleFilter[0],
-		c->grayscaleFilter[1],
-		c->grayscaleFilter[2]);
+		"<GrayscaleMixer>%.0f %.0f %.0f</GrayscaleMixer>\n",
+		c->grayscaleMixer[0],
+		c->grayscaleMixer[1],
+		c->grayscaleMixer[2]);
+	buf = uf_markup_buf(buf,
+		"<GrayscaleMixerNormalize>%d</GrayscaleMixerNormalize>\n",
+		c->grayscaleMixerNormalize);
+    }
     if (c->size!=conf_default.size)
 	buf = uf_markup_buf(buf, "<Size>%d</Size>\n", c->size);
     if (c->shrink!=conf_default.shrink)
@@ -1137,8 +1144,9 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->restoreDetails = src->restoreDetails;
     dst->clipHighlights = src->clipHighlights;
     dst->grayscaleMode = src->grayscaleMode;
-    memcpy(dst->grayscaleFilter, src->grayscaleFilter,
-	   sizeof dst->grayscaleFilter);
+    memcpy(dst->grayscaleMixer, src->grayscaleMixer,
+	   sizeof dst->grayscaleMixer);
+    dst->grayscaleMixerNormalize = src->grayscaleMixerNormalize;
     g_strlcpy(dst->darkframeFile, src->darkframeFile, max_path);
     /* We only copy the current BaseCurve */
     if (src->BaseCurveIndex<=camera_curve) {
@@ -1399,7 +1407,7 @@ N_("--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"),
 N_("--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"),
-N_("--grayscale=none|average|lightness|luminance|value|filter\n"
+N_("--grayscale=none|average|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none.\n"),
 "\n",
 N_("The options which are related to the final output are:\n"),

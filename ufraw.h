@@ -62,7 +62,7 @@ typedef enum { perceptual_intent, relative_intent, saturation_intent,
 typedef enum { ufraw_first_phase, ufraw_denoise_phase, ufraw_final_phase,
 	ufraw_phases_num } UFRawPhase;
 typedef enum { grayscale_none, grayscale_average, grayscale_lightness,
-	       grayscale_luminance, grayscale_value, grayscale_filter }
+	       grayscale_luminance, grayscale_value, grayscale_mixer }
 	GrayscaleMode;
 
 typedef struct {
@@ -92,7 +92,7 @@ typedef struct {
     void *TransferFunction[3];
     void *saturationProfile;
     GrayscaleMode grayscaleMode;
-    double grayscaleFilter[3];
+    double grayscaleMixer[3];
 } developer_data;
 
 typedef guint16 image_type[4];
@@ -164,7 +164,8 @@ typedef struct {
     int CropX1, CropY1, CropX2, CropY2;
     double rotationAngle;
     int grayscaleMode;
-    int grayscaleFilter[3];
+    double grayscaleMixer[3];
+    gboolean grayscaleMixerNormalize;
 
     /* SAVE options */
     char inputFilename[max_path], outputFilename[max_path],

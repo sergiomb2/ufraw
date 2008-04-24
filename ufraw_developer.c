@@ -59,7 +59,7 @@ developer_data *developer_init()
     d->updateTransform = TRUE;
     d->colorTransform = NULL;
     d->grayscaleMode = -1;
-    d->grayscaleFilter[0] = d->grayscaleFilter[1] = d->grayscaleFilter[2] = -1;
+    d->grayscaleMixer[0] = d->grayscaleMixer[1] = d->grayscaleMixer[2] = -1;
     cmsSetErrorHandler(lcms_message);
     return d;
 }
@@ -367,26 +367,20 @@ void developer_prepare(developer_data *d, conf_data *conf,
 
     switch (conf->grayscaleMode) {
 
-    case grayscale_filter:
-        /* The grayscale filter is based on gamma encoded colors, but is
-	 * applied to linear data.  It should ideally be decoded from
-	 * either sRGB (easy) or the display profile (most correct) into
-	 * linear values.  In reality this will make little difference
-	 * in the result, particularly for filters where the components
-	 * are equal or zero. */
-        d->grayscaleMode = grayscale_filter;
+    case grayscale_mixer:
+        d->grayscaleMode = grayscale_mixer;
 	for (c = 0, total = 0.0; c < 3; ++c)
-	    total += conf->grayscaleFilter[c];
-	if (total == 0.0)
-	    total = 1.0;
+	    total += conf->grayscaleMixer[c];
+	total = (total == 0.0 || !conf->grayscaleMixerNormalize)
+	  ? 100.0 : fabs(total);
 	for (c = 0; c < 3; ++c)
-	    d->grayscaleFilter[c] = conf->grayscaleFilter[c] / total;
+	    d->grayscaleMixer[c] = conf->grayscaleMixer[c] / total;
 	break;
 
     case grayscale_average:
-        d->grayscaleMode = grayscale_filter;
+        d->grayscaleMode = grayscale_mixer;
 	for (c = 0; c < 3; ++c)
-	    d->grayscaleFilter[c] = 1.0 / 3.0;
+	    d->grayscaleMixer[c] = 1.0 / 3.0;
 	break;
 
     case grayscale_lightness:
@@ -619,16 +613,18 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 
 static void develop_grayscale(guint16 *pixel, const developer_data *d)
 {
-    guint16 spot;
+    gint32 spot;
     guint16 min;
     guint16 max;
 
     switch (d->grayscaleMode) {
 
-    case grayscale_filter:
-        spot = pixel[0] * d->grayscaleFilter[0]
-	  + pixel[1] * d->grayscaleFilter[1]
-	  + pixel[2] * d->grayscaleFilter[2];
+    case grayscale_mixer:
+        spot = pixel[0] * d->grayscaleMixer[0]
+	  + pixel[1] * d->grayscaleMixer[1]
+	  + pixel[2] * d->grayscaleMixer[2];
+	if (spot > 65535) spot = 65535;
+	else if (spot < 0) spot = 0;
 	break;
 
     case grayscale_lightness:
