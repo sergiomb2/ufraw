@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-19 16:00+0200\n"
+"POT-Creation-Date: 2008-04-26 12:35+0200\n"
 "PO-Revision-Date: 2008-03-01 15:31+0100\n"
 "Last-Translator: Alvin Brattli <alvin.brattli@gmail.com>\n"
 "Language-Team: Norwegian <no@li.org>\n"
@@ -338,8 +338,8 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"--grayscale=none|average|lightness|luminance|value|filter\n"
-"                      Grayscale conversion algorithm to use (default none.\n"
+"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algoritme for interpolasjon (standardverdi: ahd).\n"
@@ -669,6 +669,37 @@ msgstr "Raw-histogram med konverteringskurver"
 msgid "Live histogram"
 msgstr "Sanntidshistogram"
 
+#. No darkframe file
+msgid "None"
+msgstr "Ingen"
+
+#, fuzzy
+msgid "Average"
+msgstr "Gjennomsnitt:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "Verdi"
+
+msgid "Channel Mixer"
+msgstr ""
+
+msgid "Red:"
+msgstr ""
+
+#, fuzzy
+msgid "Green:"
+msgstr "Grønn"
+
+#, fuzzy
+msgid "Blue:"
+msgstr "Verdi"
+
 msgid "No more room for new curves."
 msgstr "Ikke mere plass til nye kurver."
 
@@ -716,11 +747,6 @@ msgstr "Sortpunkt: %0.3lf"
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Fatal feil: uf->conf->shrink<1"
-
-#. No darkframe file
-#. Fill in the grayscale mode names
-msgid "None"
-msgstr "Ingen"
 
 msgid "Load dark frame"
 msgstr "Les inn sortbilde"
@@ -953,6 +979,17 @@ msgid "Reset dark frame"
 msgstr "Tilbakestill sortbilde"
 
 #. End of White Balance setting page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Grayscale Mode:"
+msgstr ""
+
+msgid "Preserve luminosity"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of Base Curve page
 msgid "Base curve"
 msgstr "Basiskurve"
@@ -1063,33 +1100,6 @@ msgid "Auto adjust black-point"
 msgstr "Automatisk innstilling av sortpunkt"
 
 #. End of Corrections page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr ""
-
-msgid "Mode:"
-msgstr ""
-
-#, fuzzy
-msgid "Average"
-msgstr "Gjennomsnitt:"
-
-msgid "Lightness"
-msgstr ""
-
-msgid "Luminance"
-msgstr ""
-
-msgid "Value"
-msgstr "Verdi"
-
-msgid "Filter color"
-msgstr ""
-
-msgid "Filter color:"
-msgstr ""
-
-#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Beskjær og roter"

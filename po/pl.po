@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-19 16:00+0200\n"
+"POT-Creation-Date: 2008-04-26 12:35+0200\n"
 "PO-Revision-Date: 2008-01-13 11:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -339,8 +339,8 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"--grayscale=none|average|lightness|luminance|value|filter\n"
-"                      Grayscale conversion algorithm to use (default none.\n"
+"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Stosowany algorytm interpolacji (domy¶lnie ahd).\n"
@@ -675,6 +675,37 @@ msgstr "Histogram RAW z krzywymi konwersji"
 msgid "Live histogram"
 msgstr "Histogram live"
 
+#. No darkframe file
+msgid "None"
+msgstr "Brak"
+
+#, fuzzy
+msgid "Average"
+msgstr "¦rednia:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "Warto¶æ"
+
+msgid "Channel Mixer"
+msgstr ""
+
+msgid "Red:"
+msgstr ""
+
+#, fuzzy
+msgid "Green:"
+msgstr "Zielony"
+
+#, fuzzy
+msgid "Blue:"
+msgstr "Warto¶æ"
+
 msgid "No more room for new curves."
 msgstr "Brak miejsca na nowe krzywe."
 
@@ -722,11 +753,6 @@ msgstr "Punkt czerni: %0.3lf"
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "B³±d krytyczny: uf->conf->shrink<1"
-
-#. No darkframe file
-#. Fill in the grayscale mode names
-msgid "None"
-msgstr "Brak"
 
 msgid "Load dark frame"
 msgstr "Wczytaj ciemn± klatkê"
@@ -961,6 +987,17 @@ msgid "Reset dark frame"
 msgstr "Zresetuj ciemn± klatkê"
 
 #. End of White Balance setting page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Grayscale Mode:"
+msgstr ""
+
+msgid "Preserve luminosity"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of Base Curve page
 msgid "Base curve"
 msgstr "Krzywa bazowa"
@@ -1071,33 +1108,6 @@ msgid "Auto adjust black-point"
 msgstr "Automatycznie dopasuj punkt czerni"
 
 #. End of Corrections page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr ""
-
-msgid "Mode:"
-msgstr ""
-
-#, fuzzy
-msgid "Average"
-msgstr "¦rednia:"
-
-msgid "Lightness"
-msgstr ""
-
-msgid "Luminance"
-msgstr ""
-
-msgid "Value"
-msgstr "Warto¶æ"
-
-msgid "Filter color"
-msgstr ""
-
-msgid "Filter color:"
-msgstr ""
-
-#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Kadrowanie i obrót"

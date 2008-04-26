@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-19 16:00+0200\n"
+"POT-Creation-Date: 2008-04-26 12:35+0200\n"
 "PO-Revision-Date: 2007-11-13 21:53+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -277,8 +277,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"--grayscale=none|average|lightness|luminance|value|filter\n"
-"                      Grayscale conversion algorithm to use (default none.\n"
+"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
 
 msgid "The options which are related to the final output are:\n"
@@ -580,6 +580,37 @@ msgstr ""
 msgid "Live histogram"
 msgstr "Levande histogram"
 
+#. No darkframe file
+msgid "None"
+msgstr "Ingen"
+
+#, fuzzy
+msgid "Average"
+msgstr "Genomsnitt:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "Värde"
+
+msgid "Channel Mixer"
+msgstr ""
+
+msgid "Red:"
+msgstr ""
+
+#, fuzzy
+msgid "Green:"
+msgstr "Grön"
+
+#, fuzzy
+msgid "Blue:"
+msgstr "Värde"
+
 msgid "No more room for new curves."
 msgstr "Ingen plats för nya kurvor."
 
@@ -627,11 +658,6 @@ msgstr "Svartpunkt: %0.3lf"
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Ödesdigert fel: uf->conf->shrink<1"
-
-#. No darkframe file
-#. Fill in the grayscale mode names
-msgid "None"
-msgstr "Ingen"
 
 msgid "Load dark frame"
 msgstr ""
@@ -846,6 +872,17 @@ msgid "Reset dark frame"
 msgstr ""
 
 #. End of White Balance setting page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Grayscale Mode:"
+msgstr ""
+
+msgid "Preserve luminosity"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of Base Curve page
 msgid "Base curve"
 msgstr "Baskurva"
@@ -954,33 +991,6 @@ msgid "Auto adjust black-point"
 msgstr ""
 
 #. End of Corrections page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr ""
-
-msgid "Mode:"
-msgstr ""
-
-#, fuzzy
-msgid "Average"
-msgstr "Genomsnitt:"
-
-msgid "Lightness"
-msgstr ""
-
-msgid "Luminance"
-msgstr ""
-
-msgid "Value"
-msgstr "Värde"
-
-msgid "Filter color"
-msgstr ""
-
-msgid "Filter color:"
-msgstr ""
-
-#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Beskär och rotera"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-19 16:00+0200\n"
+"POT-Creation-Date: 2008-04-26 12:35+0200\n"
 "PO-Revision-Date: 2008-04-10 19:56+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -327,8 +327,8 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"--grayscale=none|average|lightness|luminance|value|filter\n"
-"                      Grayscale conversion algorithm to use (default none.\n"
+"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"
@@ -648,6 +648,37 @@ msgstr "변환 곡선을 적용한 Raw 히스토그램"
 msgid "Live histogram"
 msgstr "라이브 히스토그램"
 
+#. No darkframe file
+msgid "None"
+msgstr "없음"
+
+#, fuzzy
+msgid "Average"
+msgstr "평균:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "값"
+
+msgid "Channel Mixer"
+msgstr ""
+
+msgid "Red:"
+msgstr ""
+
+#, fuzzy
+msgid "Green:"
+msgstr "녹색"
+
+#, fuzzy
+msgid "Blue:"
+msgstr "값"
+
 msgid "No more room for new curves."
 msgstr "새 곡선을 위한 저장 공간이 없습니다."
 
@@ -695,11 +726,6 @@ msgstr "암부: %0.3lf"
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "치명적인 오류: uf->conf->shrink<1"
-
-#. No darkframe file
-#. Fill in the grayscale mode names
-msgid "None"
-msgstr "없음"
 
 msgid "Load dark frame"
 msgstr "다크프레임 불러오기"
@@ -933,6 +959,17 @@ msgid "Reset dark frame"
 msgstr "다크프레임 되돌리기"
 
 #. End of White Balance setting page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Grayscale Mode:"
+msgstr ""
+
+msgid "Preserve luminosity"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of Base Curve page
 msgid "Base curve"
 msgstr "기본 곡선"
@@ -1043,33 +1080,6 @@ msgid "Auto adjust black-point"
 msgstr "암부 자동 조정"
 
 #. End of Corrections page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr ""
-
-msgid "Mode:"
-msgstr ""
-
-#, fuzzy
-msgid "Average"
-msgstr "평균:"
-
-msgid "Lightness"
-msgstr ""
-
-msgid "Luminance"
-msgstr ""
-
-msgid "Value"
-msgstr "값"
-
-msgid "Filter color"
-msgstr ""
-
-msgid "Filter color:"
-msgstr ""
-
-#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "잘라내기와 회전"

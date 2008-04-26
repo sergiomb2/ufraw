@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-19 16:00+0200\n"
+"POT-Creation-Date: 2008-04-26 12:35+0200\n"
 "PO-Revision-Date: 2007-11-11 20:19+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -343,8 +343,8 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"--grayscale=none|average|lightness|luminance|value|filter\n"
-"                      Grayscale conversion algorithm to use (default none.\n"
+"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algoritmo de interpolación a usar (por defecto: ahd).\n"
@@ -680,6 +680,37 @@ msgstr "Histograma raw con curvas de conversion"
 msgid "Live histogram"
 msgstr "Histograma de salida"
 
+#. No darkframe file
+msgid "None"
+msgstr "Ninguno"
+
+#, fuzzy
+msgid "Average"
+msgstr "Media:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "Valor"
+
+msgid "Channel Mixer"
+msgstr ""
+
+msgid "Red:"
+msgstr ""
+
+#, fuzzy
+msgid "Green:"
+msgstr "Verde"
+
+#, fuzzy
+msgid "Blue:"
+msgstr "Valor"
+
 msgid "No more room for new curves."
 msgstr "No hay más espacio para nuevas curvas"
 
@@ -727,11 +758,6 @@ msgstr "Punto negro: %0.3lf"
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Error fatal: uf->conf->shrink<1"
-
-#. No darkframe file
-#. Fill in the grayscale mode names
-msgid "None"
-msgstr "Ninguno"
 
 msgid "Load dark frame"
 msgstr "Cargar dark frame"
@@ -969,6 +995,17 @@ msgid "Reset dark frame"
 msgstr "Reiniciar dark frame"
 
 #. End of White Balance setting page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Grayscale Mode:"
+msgstr ""
+
+msgid "Preserve luminosity"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of Base Curve page
 msgid "Base curve"
 msgstr "Curva base"
@@ -1080,33 +1117,6 @@ msgid "Auto adjust black-point"
 msgstr "Auto ajustar punto negro"
 
 #. End of Corrections page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr ""
-
-msgid "Mode:"
-msgstr ""
-
-#, fuzzy
-msgid "Average"
-msgstr "Media:"
-
-msgid "Lightness"
-msgstr ""
-
-msgid "Luminance"
-msgstr ""
-
-msgid "Value"
-msgstr "Valor"
-
-msgid "Filter color"
-msgstr ""
-
-msgid "Filter color:"
-msgstr ""
-
-#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Recortar y rotar"

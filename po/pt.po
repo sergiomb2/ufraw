@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-19 16:00+0200\n"
+"POT-Creation-Date: 2008-04-26 12:35+0200\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -334,8 +334,8 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"--grayscale=none|average|lightness|luminance|value|filter\n"
-"                      Grayscale conversion algorithm to use (default none.\n"
+"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
 "--interpolation=ahd|vng|four-color|bilinear\n"
 "                      Algoritmo de interpolação a ser usado (padrão é ahd).\n"
@@ -673,6 +673,37 @@ msgstr ""
 msgid "Live histogram"
 msgstr "Histograma ao vivo"
 
+#. No darkframe file
+#, fuzzy
+msgid "None"
+msgstr "Não"
+
+#, fuzzy
+msgid "Average"
+msgstr "Média:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "Channel Mixer"
+msgstr ""
+
+msgid "Red:"
+msgstr ""
+
+#, fuzzy
+msgid "Green:"
+msgstr "Verde"
+
+msgid "Blue:"
+msgstr ""
+
 msgid "No more room for new curves."
 msgstr "Não há mais espaço para novas curvas"
 
@@ -721,12 +752,6 @@ msgstr "Ponto preto: %0.3lf"
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Erro fatal: uf->conf->shrink<1"
-
-#. No darkframe file
-#. Fill in the grayscale mode names
-#, fuzzy
-msgid "None"
-msgstr "Não"
 
 #, fuzzy
 msgid "Load dark frame"
@@ -973,6 +998,17 @@ msgid "Reset dark frame"
 msgstr ""
 
 #. End of White Balance setting page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Grayscale Mode:"
+msgstr ""
+
+msgid "Preserve luminosity"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of Base Curve page
 #, fuzzy
 msgid "Base curve"
@@ -1088,33 +1124,6 @@ msgid "Auto adjust black-point"
 msgstr "Auto ajusta o ponto de preto"
 
 #. End of Corrections page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr ""
-
-msgid "Mode:"
-msgstr ""
-
-#, fuzzy
-msgid "Average"
-msgstr "Média:"
-
-msgid "Lightness"
-msgstr ""
-
-msgid "Luminance"
-msgstr ""
-
-msgid "Value"
-msgstr ""
-
-msgid "Filter color"
-msgstr ""
-
-msgid "Filter color:"
-msgstr ""
-
-#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr ""

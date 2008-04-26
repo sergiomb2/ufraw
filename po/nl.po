@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-19 16:00+0200\n"
+"POT-Creation-Date: 2008-04-26 12:35+0200\n"
 "PO-Revision-Date: 2008-03-14 17:10+0100\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
@@ -339,8 +339,8 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"--grayscale=none|average|lightness|luminance|value|filter\n"
-"                      Grayscale conversion algorithm to use (default none.\n"
+"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolatie algoritme (standaard: ahd).\n"
@@ -671,6 +671,37 @@ msgstr "Raw histogram met conversie curves"
 msgid "Live histogram"
 msgstr "Live histogram"
 
+#. No darkframe file
+msgid "None"
+msgstr "Geen"
+
+#, fuzzy
+msgid "Average"
+msgstr "Gemiddeld:"
+
+msgid "Lightness"
+msgstr ""
+
+msgid "Luminance"
+msgstr ""
+
+msgid "Value"
+msgstr "Waarde"
+
+msgid "Channel Mixer"
+msgstr ""
+
+msgid "Red:"
+msgstr ""
+
+#, fuzzy
+msgid "Green:"
+msgstr "Groen"
+
+#, fuzzy
+msgid "Blue:"
+msgstr "Waarde"
+
 msgid "No more room for new curves."
 msgstr "Geen ruimte voor nieuwe curves."
 
@@ -718,11 +749,6 @@ msgstr "Zwartpunt: %0.3lf"
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Fatale fout: uf->conf->shrink<1"
-
-#. No darkframe file
-#. Fill in the grayscale mode names
-msgid "None"
-msgstr "Geen"
 
 msgid "Load dark frame"
 msgstr "Inlezen zwartbeeld"
@@ -955,6 +981,17 @@ msgid "Reset dark frame"
 msgstr "Reset zwartbeeld"
 
 #. End of White Balance setting page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr ""
+
+msgid "Grayscale Mode:"
+msgstr ""
+
+msgid "Preserve luminosity"
+msgstr ""
+
+#. End of Grayscale page
 #. Start of Base Curve page
 msgid "Base curve"
 msgstr "Basis curve"
@@ -1065,33 +1102,6 @@ msgid "Auto adjust black-point"
 msgstr "Automatisch zwartpunt"
 
 #. End of Corrections page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr ""
-
-msgid "Mode:"
-msgstr ""
-
-#, fuzzy
-msgid "Average"
-msgstr "Gemiddeld:"
-
-msgid "Lightness"
-msgstr ""
-
-msgid "Luminance"
-msgstr ""
-
-msgid "Value"
-msgstr "Waarde"
-
-msgid "Filter color"
-msgstr ""
-
-msgid "Filter color:"
-msgstr ""
-
-#. End of Grayscale page
 #. Start of transformations page
 msgid "Crop and rotate"
 msgstr "Uitsnijden en roteren"

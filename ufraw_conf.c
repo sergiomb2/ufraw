@@ -1408,7 +1408,7 @@ N_("--black-point=auto|BLACK\n"
 N_("--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"),
 N_("--grayscale=none|average|lightness|luminance|value|mixer\n"
-"                      Grayscale conversion algorithm to use (default none.\n"),
+"                      Grayscale conversion algorithm to use (default none).\n"),
 "\n",
 N_("The options which are related to the final output are:\n"),
 "\n",
