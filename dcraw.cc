@@ -11,8 +11,8 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.402 $
-   $Date: 2008/04/20 08:09:37 $
+   $Revision: 1.403 $
+   $Date: 2008/04/29 18:18:53 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -916,7 +916,7 @@ void CLASS lossless_jpeg_load_raw()
     for (jcol=0; jcol < jwide; jcol++) {
       val = *rp++;
       if (jh.bits <= 12)
-	val = curve[val];
+	val = curve[val & 0xfff];
       if (cr2_slice[0]) {
 	jidx = jrow*jwide + jcol;
 	i = jidx / (cr2_slice[1]*jh.high);
@@ -5954,7 +5954,8 @@ void CLASS parse_foveon()
 	  data_offset = off+24;
 	}
 	fseek (ifp, off+28, SEEK_SET);
-	if (fgetc(ifp) == 0xff && fgetc(ifp) == 0xd8) {
+	if (fgetc(ifp) == 0xff && fgetc(ifp) == 0xd8
+		&& thumb_length < (unsigned)(len-28)) {
 	  thumb_offset = off+28;
 	  thumb_length = len-28;
 	  write_thumb = &CLASS jpeg_thumb;
