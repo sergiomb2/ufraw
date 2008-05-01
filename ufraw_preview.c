@@ -185,8 +185,6 @@ typedef struct {
     int HisMinHeight;
     /* Original aspect ratio (0) or actual aspect ratio */
     float AspectRatio;
-    /* True if aspect ratio is locked */
-    gboolean LockAspect;
     /* The aspect ratio entry field */
     GtkEntry *AspectEntry;
     /* Output base filename (without the path) */
@@ -1657,7 +1655,7 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 	{
 	    fix_crop_aspect(data, data->CropMotionType);
 	    update_crop_ranges(data);
-	    if (!data->LockAspect) refresh_aspect(data);
+	    if (!CFG->LockAspect) refresh_aspect(data);
 	}
     }
 
@@ -1834,7 +1832,7 @@ static void crop_reset(GtkWidget *widget, gpointer user_data)
     CFG->CropY1 = 0;
     CFG->CropX2 = data->UF->initialWidth;
     CFG->CropY2 = data->UF->initialHeight;
-    data->AspectRatio = 0.0;
+    data->AspectRatio = ((float)data->UF->initialWidth) / data->UF->initialHeight;
 
     set_new_aspect(data);
 }
@@ -2052,7 +2050,7 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
     if (CFG->CropY2 > data->UF->initialHeight)
 	CFG->CropY2 = data->UF->initialHeight;
 
-    if (!data->LockAspect)
+    if (!CFG->LockAspect)
 	return;
 
     if (data->AspectRatio == 0)
@@ -2225,7 +2223,7 @@ static void set_new_aspect(preview_data *data)
 static void lock_aspect(GtkWidget *widget)
 {
     preview_data *data = get_preview_data(widget);
-    data->LockAspect = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+    CFG->LockAspect = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 }
 
 static void aspect_changed(GtkWidget *widget, gpointer user_data)
@@ -2249,7 +2247,7 @@ static void aspect_changed(GtkWidget *widget, gpointer user_data)
 	    data->AspectRatio = aspect;
     }
     set_new_aspect (data);
-    data->LockAspect = TRUE;
+    CFG->LockAspect = TRUE;
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->LockAspectButton), TRUE);
 }
 
@@ -2598,7 +2596,7 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
 	if ( (int *)valuep==&CFG->CropY2) cursor = bottom_cursor;
 	fix_crop_aspect(data, cursor);
 	update_crop_ranges(data);
-	if (!data->LockAspect) refresh_aspect(data);
+	if (!CFG->LockAspect) refresh_aspect(data);
 	return;
     }
     /* Do noting if value didn't really change */
@@ -3521,7 +3519,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->DrawnCropY2 = 99999;
 
     data->AspectRatio = 0.0;
-    data->LockAspect = FALSE;
     data->BlinkTimer = 0;
     for (i=0; i<num_buttons; i++) {
 	data->ControlButton[i] = NULL;
@@ -4416,9 +4413,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(entry), "changed",
 	    G_CALLBACK(aspect_changed), NULL);
 
-    button = gtk_check_button_new();
-    gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(button), FALSE);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
+    button = gtk_toggle_button_new();
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), CFG->LockAspect);
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
 	    "object-lock", GTK_ICON_SIZE_BUTTON));
     //gtk_box_pack_start (hbox, button, FALSE, FALSE, 0);

@@ -91,7 +91,7 @@ const conf_data conf_default = {
     TRUE, /* rotate to camera's setting */
 
     /* GUI settings */
-    25.0, 4, /* Zoom, Scale */
+    25.0, 4, TRUE, /* Zoom, Scale, LockAspect */
     enabled_state, /* saveConfiguration */
     rgb_histogram, /* histogram */
     linear_histogram, /* liveHistogramScale */
@@ -493,6 +493,7 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	sscanf(temp, "%d", &c->rawHistogramScale);
     if (!strcmp("RemoteGimpCommand", element))
 	g_strlcpy(c->remoteGimpCommand, temp, max_path);
+    if (!strcmp("LockAspectRatio", element)) sscanf(temp, "%d", &c->LockAspect);
     if (!strcmp("OverExposure", element)) sscanf(temp, "%d", &c->overExp);
     if (!strcmp("UnderExposure", element)) sscanf(temp, "%d", &c->underExp);
     if (!strcmp("BlinkOverUnder", element))
@@ -772,6 +773,9 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	    buf = uf_markup_buf(buf,
 		    "<RawHistogramScale>%d</RawHistogramScale>\n",
 		    c->rawHistogramScale);
+	if (c->LockAspect!=conf_default.LockAspect)
+	    buf = uf_markup_buf(buf,
+		    "<LockAspectRatio>%d</LockAspectRatio>\n", c->LockAspect);
 	if (c->overExp!=conf_default.overExp)
 	    buf = uf_markup_buf(buf,
 		    "<OverExposure>%d</OverExposure>\n", c->overExp);

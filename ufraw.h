@@ -179,6 +179,7 @@ typedef struct {
     /* GUI settings */
     double Zoom;
     int Scale;
+    gboolean LockAspect;
     int saveConfiguration;
     int histogram, liveHistogramScale;
     int rawHistogramScale;
