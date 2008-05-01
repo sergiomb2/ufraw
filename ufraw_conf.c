@@ -307,6 +307,8 @@ static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
 	c->profileCount[display_profile] = -c->profileCount[display_profile]+1;
 }
 
+#define LIM(x,min,max) MAX(min,MIN(x,max))
+
 static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	gsize len, gpointer user, GError **error)
 {
@@ -329,10 +331,16 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	    if (curve_load(&c->curve[i], temp)!=UFRAW_SUCCESS)
 		c->curveCount = - c->curveCount;
 	}
-	if (!strcmp("MinXY", element))
+	if (!strcmp("MinXY", element)) {
 	    sscanf(temp, "%lf %lf", &c->curve[i].m_min_x, &c->curve[i].m_min_y);
-	if (!strcmp("MaxXY", element))
+	    c->curve[i].m_min_x = LIM(c->curve[i].m_min_x, 0, 1);
+	    c->curve[i].m_min_y = LIM(c->curve[i].m_min_y, 0, 1);
+	}
+	if (!strcmp("MaxXY", element)) {
 	    sscanf(temp, "%lf %lf", &c->curve[i].m_max_x, &c->curve[i].m_max_y);
+	    c->curve[i].m_max_x = LIM(c->curve[i].m_max_x, 0, 1);
+	    c->curve[i].m_max_y = LIM(c->curve[i].m_max_y, 0, 1);
+	}
 	if (!strcmp("AnchorXY", element)) {
 	    if (c->curve[i].m_numAnchors==max_anchors) {
 		ufraw_message(UFRAW_WARNING,
@@ -344,6 +352,10 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	    sscanf(temp, "%lf %lf",
 		    &c->curve[i].m_anchors[c->curve[i].m_numAnchors].x,
 		    &c->curve[i].m_anchors[c->curve[i].m_numAnchors].y);
+	    c->curve[i].m_anchors[c->curve[i].m_numAnchors].x =
+	    	LIM(c->curve[i].m_anchors[c->curve[i].m_numAnchors].x, 0, 1);
+	    c->curve[i].m_anchors[c->curve[i].m_numAnchors].y =
+	    	LIM(c->curve[i].m_anchors[c->curve[i].m_numAnchors].y, 0, 1);
 	    c->curve[i].m_numAnchors++;
 	}
 	return;
@@ -351,15 +363,25 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 
     if (c->BaseCurveCount<=0) {
 	i = - c->BaseCurveCount;
-	if (!strcmp("MinXY", element))
+	if (!strcmp("MinXY", element)) {
 	    sscanf(temp, "%lf %lf", &c->BaseCurve[i].m_min_x, &c->BaseCurve[i].m_min_y);
-	if (!strcmp("MaxXY", element))
+	    c->BaseCurve[i].m_min_x = LIM(c->BaseCurve[i].m_min_x, 0, 1);
+	    c->BaseCurve[i].m_min_y = LIM(c->BaseCurve[i].m_min_y, 0, 1);
+	}
+	if (!strcmp("MaxXY", element)) {
 	    sscanf(temp, "%lf %lf", &c->BaseCurve[i].m_max_x, &c->BaseCurve[i].m_max_y);
+	    c->BaseCurve[i].m_max_x = LIM(c->BaseCurve[i].m_max_x, 0, 1);
+	    c->BaseCurve[i].m_max_y = LIM(c->BaseCurve[i].m_max_y, 0, 1);
+	}
 	if (!strcmp("AnchorXY", element)) {
 	    /* If one anchor is supplied then all anchors should be supplied */
 	    sscanf(temp, "%lf %lf",
 		    &c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].x,
 		    &c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].y);
+	    c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].x =
+	    	LIM(c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].x, 0, 1);
+	    c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].y =
+	    	LIM(c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].y, 0, 1);
 	    c->BaseCurve[i].m_numAnchors++;
 	}
 	return;

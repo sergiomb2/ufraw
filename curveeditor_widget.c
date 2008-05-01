@@ -336,9 +336,6 @@ static gboolean curveeditor_widget_on_motion_notify_event(GtkWidget *widget,
     
     if (data->selectedPoint < 0) return TRUE;
 
-    double x = (double)event->x / (double)(w-1);
-    double y = pow( (double)(h - event->y) / (double)(h-1), curve->m_gamma);
-
     // If point is dragged outside of the editor, delete it.
     if ( (event->x < -10 || event->x > w+10) &&
 	    data->selectedPoint>0 &&
@@ -360,12 +357,15 @@ static gboolean curveeditor_widget_on_motion_notify_event(GtkWidget *widget,
 
 	return TRUE;
     }
-    if (event->x < 0) x = 0;
-    if (event->x > w) x = 1;
+    double x = (double)event->x / (double)(w-1);
+    double y = pow( (double)(h - event->y) / (double)(h-1), curve->m_gamma);
 
-    if (event->y < 0) y = 1;
-    if (event->y > h) y = 0;
-	
+    if (x < 0) x = 0;
+    if (x > 1) x = 1;
+
+    if (y < 0) y = 0;
+    if (y > 1) y = 1;
+
     // Don't allow a draging point to exceed or preceed neighbors or
     // else the spline algorithm will explode.
     // Also prevent moving central points beyond the two end points.
