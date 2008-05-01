@@ -134,7 +134,6 @@ typedef struct {
     GtkWidget *ResetThresholdButton;
     GtkWidget *ResetContrastButton;
     GtkWidget *ResetBlackButton, *ResetBaseCurveButton, *ResetCurveButton;
-    GtkWidget *UseMatrixButton;
     GtkWidget *SaveButton;
     GtkWidget *ControlButton[num_buttons];
     guint16 ButtonMnemonic[num_buttons];
@@ -1368,11 +1367,6 @@ static void update_scales(preview_data *data)
 		CFG->chanMul[i]);
     gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
 
-    if (GTK_WIDGET_SENSITIVE(data->UseMatrixButton)) {
-	data->UF->useMatrix = CFG->profile[0][CFG->profileIndex[0]].useMatrix;
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->UseMatrixButton),
-		data->UF->useMatrix);
-    }
     uf_combo_box_set_data(data->BitDepthCombo,
 	&CFG->profile[out_profile][CFG->profileIndex[out_profile]].BitDepth);
     gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
@@ -2541,11 +2535,6 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	}
     } else {
 	*valuep = gtk_toggle_button_get_active(button);
-	if (valuep==&data->UF->useMatrix) {
-	    CFG->profile[0][CFG->profileIndex[0]].useMatrix = *valuep;
-	    if (CFG->autoExposure==enabled_state)
-		CFG->autoExposure = apply_state;
-	}
 	if ( valuep==&CFG->overExp || valuep==&CFG->underExp ) {
 	    start_blink(data);
 	    switch_highlights(data);
@@ -4092,12 +4081,13 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 		j==display_profile ? _("Display ICC profile") : "Error");
 	data->ProfileCombo[j] = GTK_COMBO_BOX(uf_combo_box_new_text());
 	for (i=0; i<CFG->profileCount[j]; i++)
-	    if ( i<conf_default.profileCount[j] )
+	    if ( i<conf_default.profileCount[j] ) {
 		gtk_combo_box_append_text(data->ProfileCombo[j],
 			_(CFG->profile[j][i].name));
-	    else
+	    } else {
 		gtk_combo_box_append_text(data->ProfileCombo[j],
 			CFG->profile[j][i].name);
+	    }
 	uf_combo_box_set_data(data->ProfileCombo[j], &CFG->profileIndex[j]);
 	g_signal_connect_after(G_OBJECT(data->ProfileCombo[j]), "changed",
 		G_CALLBACK(combo_update_simple), NULL);
@@ -4111,18 +4101,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	g_signal_connect(G_OBJECT(button), "clicked",
 		G_CALLBACK(load_profile), (void *)j);
     }
-    data->UseMatrixButton = gtk_check_button_new_with_label(
-	    _("Use color matrix"));
-    align = gtk_alignment_new(0, 0, 0, 0);
-    gtk_container_add(GTK_CONTAINER(align), data->UseMatrixButton);
-    gtk_table_attach(table, align, 1, 8, 2, 3, GTK_EXPAND|GTK_FILL, 0, 0, 0);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->UseMatrixButton),
-	    data->UF->useMatrix);
-    g_signal_connect(G_OBJECT(data->UseMatrixButton), "toggled",
-	    G_CALLBACK(toggle_button_update), &data->UF->useMatrix);
-    if (data->UF->raw_color || data->UF->colors==4)
-	gtk_widget_set_sensitive(data->UseMatrixButton, FALSE);
-
     data->GammaAdjustment = adjustment_scale(table, 1, 3, _("Gamma"),
 	    CFG->profile[0][CFG->profileIndex[0]].gamma,
 	    &CFG->profile[0][0].gamma, 0.1, 1.0, 0.01, 0.05, 2,

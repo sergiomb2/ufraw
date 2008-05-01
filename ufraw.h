@@ -102,7 +102,6 @@ typedef struct {
     char file[max_path];
     char productName[max_name];
     double gamma, linear;
-    gboolean useMatrix;
     int BitDepth;
 } profile_data;
 

@@ -61,15 +61,16 @@ const conf_data conf_default = {
       { N_("Linear curve"), TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } }
     },
-    { 0, 0, 0 } , { 1, 1, 2 }, /* profileIndex[], profileCount[] */
+    { 1, 0, 0 } , { 2, 1, 2 }, /* profileIndex[], profileCount[] */
     /* Profile data defaults */
-    { { { N_("sRGB"), "", "", 0.45, 0.1, TRUE, 0 },
-	{ "Some ICC Profile", "", "", 0.45, 0.0, FALSE, 0 } },
-      { { N_("sRGB"), "", "", 0.0, 0.0, FALSE, 8 },
-	{ "Some ICC Profile", "", "", 0.0, 0.0, FALSE, 8 } },
-      { { N_("System default"), "", "", 0.0, 0.0, FALSE, 0 },
-	{ N_("sRGB"), "", "", 0.0, 0.0, FALSE, 0 },
-	{ "Some ICC Profile", "", "", 0.0, 0.0, FALSE, 0 } } },
+    { { { N_("No profile"), "", "", 0.45, 0.1, 0 },
+	{ N_("Color matrix"), "", "", 0.45, 0.1, 0 },
+	{ "Some ICC Profile", "", "", 0.45, 0.0, 0 } },
+      { { N_("sRGB"), "", "", 0.0, 0.0, 8 },
+	{ "Some ICC Profile", "", "", 0.0, 0.0, 8 } },
+      { { N_("System default"), "", "", 0.0, 0.0, 0 },
+	{ N_("sRGB"), "", "", 0.0, 0.0, 0 },
+	{ "Some ICC Profile", "", "", 0.0, 0.0, 0 } } },
     { 0, 0, 0 }, /* intent */
     ahd_interpolation, 0, /* interpolation, smoothing */
     "", NULL, /* darkframeFile, darkframe */
@@ -197,8 +198,13 @@ static void conf_parse_start(GMarkupParseContext *context,
 		c->curveIndex = linear_curve;
 	    if (!strcmp("Curve", element))
 		c->curveIndex = c->curveCount;
+	    // For compatibility with ufraw-0.13 or older
 	    if (!strcmp("sRGBInputProfile", element))
 		c->profileIndex[in_profile] = 0;
+	    if (!strcmp("NoInputProfile", element))
+		c->profileIndex[in_profile] = 0;
+	    if (!strcmp("MatrixInputProfile", element))
+		c->profileIndex[in_profile] = 1;
 	    if (!strcmp("sRGBOutputProfile", element))
 		c->profileIndex[out_profile] = 0;
 	    if (!strcmp("SystemDisplayProfile", element))
@@ -243,8 +249,13 @@ static void conf_parse_start(GMarkupParseContext *context,
 	c->curveCount = - linear_curve;
 	c->curve[-c->curveCount].m_numAnchors = 0;
     }
-    if ( !strcmp("sRGBInputProfile", element) )
+    if ( !strcmp("NoInputProfile", element) )
 	c->profileCount[in_profile] = - 0;
+    if ( !strcmp("MatrixInputProfile", element) )
+	c->profileCount[in_profile] = - 1;
+    // For compatibility with ufraw-0.13 or older
+    if ( !strcmp("sRGBInputProfile", element) )
+	c->profileCount[in_profile] = - 1;
     if ( !strcmp("sRGBOutputProfile", element) )
 	c->profileCount[out_profile] = - 0;
     if ( !strcmp("SystemDisplayProfile", element) )
@@ -285,7 +296,14 @@ static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
 	    c->curve[-c->curveCount].m_numAnchors = 2;
 	c->curveCount = - c->curveCount + 1;
     }
+    // For compatibility with ufraw-0.13 or older
     if ( !strcmp("sRGBInputProfile", element) )
+	c->profileCount[in_profile] =
+		conf_default.profileCount[in_profile];
+    if ( !strcmp("NoInputProfile", element) )
+	c->profileCount[in_profile] =
+		conf_default.profileCount[in_profile];
+    if ( !strcmp("MatrixInputProfile", element) )
 	c->profileCount[in_profile] =
 		conf_default.profileCount[in_profile];
     if ( !strcmp("sRGBOutputProfile", element) )
@@ -397,8 +415,11 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	    sscanf(temp, "%lf", &c->profile[in_profile][i].gamma);
 	if (!strcmp("Linearity", element))
 	    sscanf(temp, "%lf", &c->profile[in_profile][i].linear);
-	if (!strcmp("UseColorMatrix", element))
-	    sscanf(temp, "%d", &c->profile[in_profile][i].useMatrix);
+	if (!strcmp("UseColorMatrix", element)) {
+	    gboolean useMatrix;
+	    sscanf(temp, "%d", &useMatrix);
+	    // TODO: choose between 'No profile' and 'Color matrix'
+	}
 	return;
     }
     if (c->profileCount[out_profile]<=0) {
@@ -1012,8 +1033,6 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	     ( IDFilename==NULL &&
 	       ( c->profile[j][0].gamma!=conf_default.profile[j][0].gamma ||
 		 c->profile[j][0].linear!=conf_default.profile[j][0].linear ||
-		 c->profile[j][0].useMatrix!=
-			conf_default.profile[j][0].useMatrix ||
 		 c->profile[j][0].BitDepth!=
 			conf_default.profile[j][0].BitDepth ) ) ) {
 	    current = c->profileIndex[j]==0 ? "yes" : "no";
@@ -1027,11 +1046,6 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	    if (c->profile[j][0].linear!=conf_default.profile[j][0].linear)
 		buf = uf_markup_buf(buf, "\t<Linearity>%lf</Linearity>\n",
 			c->profile[j][0].linear);
-	    if (c->profile[j][0].useMatrix!=
-		    conf_default.profile[j][0].useMatrix)
-		buf = uf_markup_buf(buf,
-			"\t<UseColorMatrix>%d</UseColorMatrix>\n",
-			c->profile[j][0].useMatrix);
 	    if (c->profile[j][0].BitDepth!= conf_default.profile[j][0].BitDepth)
 		buf = uf_markup_buf(buf, "\t<BitDepth>%d</BitDepth>\n",
 			c->profile[j][0].BitDepth);
@@ -1057,11 +1071,6 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	    if (c->profile[j][i].linear!=conf_default.profile[j][1].linear)
 		buf = uf_markup_buf(buf, "\t<Linearity>%lf</Linearity>\n",
 			c->profile[j][i].linear);
-	    if (c->profile[j][i].useMatrix!=
-		    conf_default.profile[j][1].useMatrix)
-		buf = uf_markup_buf(buf,
-			"\t<UseColorMatrix>%d</UseColorMatrix>\n",
-			c->profile[j][i].useMatrix);
 	    if (c->profile[j][i].BitDepth!= conf_default.profile[j][1].BitDepth)
 		buf = uf_markup_buf(buf, "\t<BitDepth>%d</BitDepth>\n",
 			c->profile[j][i].BitDepth);

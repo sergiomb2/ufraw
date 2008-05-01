@@ -482,10 +482,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	g_snprintf(uf->conf->focalLenText, max_name, "%0.1f mm",
 		uf->conf->focal_len);
     }
-    /* Always set useMatrix if colors=4
-     * Always reset useMatrix if 'raw_color' */
-    uf->useMatrix = ( uf->conf->profile[0][uf->conf->profileIndex[0]].useMatrix
-	    && !uf->raw_color ) || uf->colors==4;
 
     /* If there is an embeded curve we "turn on" the custom/camera curve
      * mechanism */
@@ -641,16 +637,18 @@ void ufraw_close(ufraw_data *uf)
 
 void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode)
 {
+    int useMatrix = uf->conf->profileIndex[0] == 1 || uf->colors==4;
+
     if ( mode==auto_developer ) {
 	if ( uf->AutoDeveloper==NULL )
 	    uf->AutoDeveloper = developer_init();
 	developer_prepare(uf->AutoDeveloper, uf->conf,
-	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, mode);
+	    uf->rgbMax, uf->rgb_cam, uf->colors, useMatrix, mode);
     } else {
 	if ( uf->developer==NULL )
 	    uf->developer = developer_init();
 	developer_prepare(uf->developer, uf->conf,
-	    uf->rgbMax, uf->rgb_cam, uf->colors, uf->useMatrix, mode);
+	    uf->rgbMax, uf->rgb_cam, uf->colors, useMatrix, mode);
     }
 }
 
