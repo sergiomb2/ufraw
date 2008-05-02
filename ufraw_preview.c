@@ -489,7 +489,7 @@ static void load_profile(GtkWidget *widget, long type)
 	    list=g_slist_next(list))
 	{
 	    filename = list->data;
-	    p = conf_default.profile[type][1];
+	    p = conf_default.profile[type][conf_default.profileCount[type]];
 	    g_strlcpy(p.file, filename, max_path);
 	    /* Make sure we update product name */
 	    Developer->updateTransform = TRUE;
