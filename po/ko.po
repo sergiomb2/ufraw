@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-26 12:35+0200\n"
+"POT-Creation-Date: 2008-05-08 05:45+0200\n"
 "PO-Revision-Date: 2008-04-10 19:56+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -104,6 +104,14 @@ msgstr "카메라 곡선"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
+#, fuzzy
+msgid "No profile"
+msgstr "색 프로파일"
+
+#, fuzzy
+msgid "Color matrix"
+msgstr "컬러 매트릭스 사용"
+
 msgid "sRGB"
 msgstr "sRGB"
 
@@ -996,9 +1004,6 @@ msgstr "출력 ICC 프로파일"
 
 msgid "Display ICC profile"
 msgstr "화면 ICC 프로파일"
-
-msgid "Use color matrix"
-msgstr "컬러 매트릭스 사용"
 
 msgid "Gamma"
 msgstr "감마"

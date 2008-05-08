@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-26 12:35+0200\n"
+"POT-Creation-Date: 2008-05-08 05:45+0200\n"
 "PO-Revision-Date: 2008-03-01 15:31+0100\n"
 "Last-Translator: Alvin Brattli <alvin.brattli@gmail.com>\n"
 "Language-Team: Norwegian <no@li.org>\n"
@@ -101,6 +101,14 @@ msgstr "Kamerakurve"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
+#, fuzzy
+msgid "No profile"
+msgstr "Fargeprofiler"
+
+#, fuzzy
+msgid "Color matrix"
+msgstr "Bruk fargematrise"
+
 msgid "sRGB"
 msgstr "sRGB"
 
@@ -1016,9 +1024,6 @@ msgstr "ICC-profil for utdata"
 
 msgid "Display ICC profile"
 msgstr "ICC-profil for skjerm"
-
-msgid "Use color matrix"
-msgstr "Bruk fargematrise"
 
 msgid "Gamma"
 msgstr "Gamma"

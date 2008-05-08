@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-26 12:35+0200\n"
+"POT-Creation-Date: 2008-05-08 05:45+0200\n"
 "PO-Revision-Date: 2008-04-28 21:38+0200\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
@@ -50,7 +50,8 @@ msgid "--rotate option is valid only in batch mode"
 msgstr "--rotate optie is alleen geldig in batch modus"
 
 msgid "Extracting embedded image is not supported in interactive mode"
-msgstr "Ingebedde afbeelding uitpakken is niet ondersteund in interactieve modus"
+msgstr ""
+"Ingebedde afbeelding uitpakken is niet ondersteund in interactieve modus"
 
 msgid "Raw images"
 msgstr "RAW afbeeldingen"
@@ -102,6 +103,14 @@ msgstr "Camera curve"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
+#, fuzzy
+msgid "No profile"
+msgstr "Kleur Profielen"
+
+#, fuzzy
+msgid "Color matrix"
+msgstr "Gebruik kleurmatrix"
+
 msgid "sRGB"
 msgstr "sRGB"
 
@@ -161,7 +170,8 @@ msgid "UFRaw "
 msgstr "UFRaw "
 
 msgid " - Unidentified Flying Raw converter for digital camera images.\n"
-msgstr " - Unidentified Flying Raw converter voor digitale camera afbeeldingen.\n"
+msgstr ""
+" - Unidentified Flying Raw converter voor digitale camera afbeeldingen.\n"
 
 msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
 msgstr "Gebruik: ufraw [ opties ... ] [ raw-afbeeldingsbestanden ... ]\n"
@@ -196,7 +206,8 @@ msgstr ""
 "interpreteren.\n"
 "Het is ook mogelijk om een ID bestand te gebruiken met de optie:\n"
 
-msgid "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+msgid ""
+"--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
 msgstr ""
 "--conf=ID-bestand        Pas de parameters in het ID-bestand toe op andere "
 "raw bestanden.\n"
@@ -205,7 +216,8 @@ msgid "The rest of the options are separated into two groups.\n"
 msgstr "Verdere opties zijn onderverdeeld in twee groepen.\n"
 
 msgid "The options which are related to the image manipulation are:\n"
-msgstr "De opties die betrekking hebben op de verandering van de afbeelding zijn:\n"
+msgstr ""
+"De opties die betrekking hebben op de verandering van de afbeelding zijn:\n"
 
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr "--wb=camera|auto      Wit balans instelling.\n"
@@ -265,10 +277,8 @@ msgid ""
 msgstr ""
 "--restore=clip|lch|hsv\n"
 "                      Herstel details voor negatieve EV.\n"
-"                      'clip' herstelt niets - zonder "
-"artefacten.\n"
-"                      'lch' herstelt in LCH space - geeft zachte "
-"details.\n"
+"                      'clip' herstelt niets - zonder artefacten.\n"
+"                      'lch' herstelt in LCH space - geeft zachte details.\n"
 "                      'hsv' herstelt in HSV space - geeft scherpe details.\n"
 "                      (standaard: lch).\n"
 
@@ -282,11 +292,14 @@ msgstr ""
 "                      'film' emuleert soft film response. (standaard: "
 "digital).\n"
 
-msgid "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
-msgstr "--gamma=GAMMA         Gamma instelling van de basiscurve (standaard 0.45).\n"
+msgid ""
+"--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+msgstr ""
+"--gamma=GAMMA         Gamma instelling van de basiscurve (standaard 0.45).\n"
 
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
-msgstr "--linearity=LINEARITY Lineariteit van de basiscurve (standaard 0.10).\n"
+msgstr ""
+"--linearity=LINEARITY Lineariteit van de basiscurve (standaard 0.10).\n"
 
 msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
 msgstr "--saturation=SAT      Verzadigings aanpassing (standaard 1.0).\n"
@@ -393,7 +406,8 @@ msgid ""
 msgstr ""
 "--rotate=camera|HOEK|no\n"
 "                      Roteer afbeelding volgens de camera's instelling, \n"
-"                      met HOEK graden of geen rotatie toepassen (standaard: camera).\n"
+"                      met HOEK graden of geen rotatie toepassen (standaard: "
+"camera).\n"
 
 msgid ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
@@ -403,9 +417,11 @@ msgid ""
 msgstr ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
 "                      Snij de output volgens de opgegeven pixel maat,\n"
-"                      toegepast op de RAW foto na rotatie, maar voor verkleining.\n"
+"                      toegepast op de RAW foto na rotatie, maar voor "
+"verkleining.\n"
 
-msgid "--out-path=PATH       PATH for output file (default use input file's path).\n"
+msgid ""
+"--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=PAD        PAD voor output bestand (gebruik standaard hetzelfde "
 "pad als input bestand).\n"
@@ -418,13 +434,16 @@ msgstr ""
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
 msgstr "--darkframe=BESTAND   Gebruik BESTAND voor raw zwartbeeld reductie.\n"
 
-msgid "--overwrite           Overwrite existing files without asking (default no).\n"
+msgid ""
+"--overwrite           Overwrite existing files without asking (default no).\n"
 msgstr ""
 "--overwrite           Overschrijf bestaande bestanden zonder vragen "
 "(standaard: wel vragen).\n"
 
-msgid "--silent              Do not display any messages during batch conversion.\n"
-msgstr "--silent              Geef geen berichten weer tijdens batch conversie.\n"
+msgid ""
+"--silent              Do not display any messages during batch conversion.\n"
+msgstr ""
+"--silent              Geef geen berichten weer tijdens batch conversie.\n"
 
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
@@ -439,9 +458,11 @@ msgstr ""
 "UFRaw leest eerst de instellingen uit configuratiebestand $HOME/.ufrawrc.\n"
 "Vervolgens, als een ID bestand is opgegeven, worden die instellingen "
 "gelezen.\n"
-"Daarna worden de instellingen uit de --conf optie genomen, waarbij de input/output\n"
+"Daarna worden de instellingen uit de --conf optie genomen, waarbij de input/"
+"output\n"
 "bestandsnamen in het ID bestand genegeerd worden.\n"
-"Als laatste worden de opties van de commandoregel toegevoegd. In batch modus\n"
+"Als laatste worden de opties van de commandoregel toegevoegd. In batch "
+"modus\n"
 "worden opties uit de tweede groep NIET gelezen uit het configuratiebestand.\n"
 
 msgid ""
@@ -590,7 +611,8 @@ msgstr "Geen embedded afbeelding gevonden"
 
 #, c-format
 msgid "Original size (%d) is smaller than the requested size (%d)"
-msgstr "Oorspronkelijke afmeting (%d) is kleiner dan de gevraagde afmeting (%d)"
+msgstr ""
+"Oorspronkelijke afmeting (%d) is kleiner dan de gevraagde afmeting (%d)"
 
 #, c-format
 msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
@@ -1004,9 +1026,6 @@ msgstr "Output ICC profiel"
 msgid "Display ICC profile"
 msgstr "Scherm ICC profiel"
 
-msgid "Use color matrix"
-msgstr "Gebruik kleurmatrix"
-
 msgid "Gamma"
 msgstr "Gamma"
 
@@ -1371,7 +1390,8 @@ msgstr "Bewaren afbeelding"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"
-msgstr "Afbeeldingsbestandsnaam kan niet gelijk zijn aan de ID bestandsnaam '%s'"
+msgstr ""
+"Afbeeldingsbestandsnaam kan niet gelijk zijn aan de ID bestandsnaam '%s'"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
@@ -1478,4 +1498,3 @@ msgstr "Camera WB"
 
 msgid "Auto WB"
 msgstr "Auto WB"
-

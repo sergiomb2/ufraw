@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-26 12:35+0200\n"
+"POT-Creation-Date: 2008-05-08 05:45+0200\n"
 "PO-Revision-Date: 2008-01-13 11:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -105,6 +105,14 @@ msgstr "Krzywa z aparatu"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
+#, fuzzy
+msgid "No profile"
+msgstr "Profile kolorów"
+
+#, fuzzy
+msgid "Color matrix"
+msgstr "Zastosuj macie¿ kolorów"
+
 msgid "sRGB"
 msgstr "sRGB"
 
@@ -1024,9 +1032,6 @@ msgstr "Wyj¶ciowy profil ICC"
 
 msgid "Display ICC profile"
 msgstr "Profil ICC monitora"
-
-msgid "Use color matrix"
-msgstr "Zastosuj macie¿ kolorów"
 
 msgid "Gamma"
 msgstr "Gamma"

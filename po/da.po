@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-26 12:35+0200\n"
-"PO-Revision-Date: 2008-04-26 12:35+0200\n"
+"POT-Creation-Date: 2008-05-08 05:45+0200\n"
+"PO-Revision-Date: 2008-05-08 05:50+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -102,6 +102,12 @@ msgstr "Kamerakurve"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
+msgid "No profile"
+msgstr "Ingen profil"
+
+msgid "Color matrix"
+msgstr "Farvematrice"
+
 msgid "sRGB"
 msgstr "sRGB"
 
@@ -1012,9 +1018,6 @@ msgstr "Uddata-ICC-profil"
 
 msgid "Display ICC profile"
 msgstr "Monitor-ICC-profil"
-
-msgid "Use color matrix"
-msgstr "Brug farvematrice"
 
 msgid "Gamma"
 msgstr "Gamma"

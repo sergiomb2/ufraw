@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-26 12:35+0200\n"
+"POT-Creation-Date: 2008-05-08 05:45+0200\n"
 "PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -110,6 +110,14 @@ msgstr "Кривая камеры"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
+#, fuzzy
+msgid "No profile"
+msgstr "Цветовые профили"
+
+#, fuzzy
+msgid "Color matrix"
+msgstr "Использовать матрицу цвета"
+
 msgid "sRGB"
 msgstr "sRGB"
 
@@ -1032,9 +1040,6 @@ msgstr "ICC-профиль устройства вывода"
 
 msgid "Display ICC profile"
 msgstr "ICC-профиль монитора"
-
-msgid "Use color matrix"
-msgstr "Использовать матрицу цвета"
 
 msgid "Gamma"
 msgstr "Гамма"

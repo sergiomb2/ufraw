@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-26 12:35+0200\n"
+"POT-Creation-Date: 2008-05-08 05:45+0200\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -102,6 +102,14 @@ msgstr "Curva da câmera"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
+#, fuzzy
+msgid "No profile"
+msgstr "Perfis de cor"
+
+#, fuzzy
+msgid "Color matrix"
+msgstr "Usar matriz de cores"
+
 msgid "sRGB"
 msgstr "sRGB"
 
@@ -1038,9 +1046,6 @@ msgstr "Perfil de saída"
 
 msgid "Display ICC profile"
 msgstr ""
-
-msgid "Use color matrix"
-msgstr "Usar matriz de cores"
 
 msgid "Gamma"
 msgstr "Gamma"

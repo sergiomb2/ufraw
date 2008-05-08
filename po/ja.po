@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-26 12:35+0200\n"
+"POT-Creation-Date: 2008-05-08 05:45+0200\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -107,6 +107,14 @@ msgstr "カメラカーブ"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
+#, fuzzy
+msgid "No profile"
+msgstr "カラープロファイル"
+
+#, fuzzy
+msgid "Color matrix"
+msgstr "カラーマトリックスを使う"
+
 msgid "sRGB"
 msgstr "sRGB"
 
@@ -1020,9 +1028,6 @@ msgstr "出力プロファイル"
 
 msgid "Display ICC profile"
 msgstr ""
-
-msgid "Use color matrix"
-msgstr "カラーマトリックスを使う"
 
 msgid "Gamma"
 msgstr "ガンマ"
