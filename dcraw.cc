@@ -46,13 +46,17 @@ extern "C" {
 #include <jpeglib.h>
 }
 #endif
-//#ifdef LOCALEDIR
-//#include <libintl.h>
-//#define _(String) gettext(String)
-//#else
-//#define _(String) (String)
-//#endif
+#ifndef DCRAW_NOMAIN
+#ifdef LOCALEDIR
+#include <libintl.h>
+#define _(String) gettext(String)
+#else
+#define _(String) (String)
+#endif
+#else
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
+#endif
+/*fseeko() is handled by the configuration system - NKBJ*/
 //#ifdef DJGPP
 //#define fseeko fseek
 //#define ftello ftell
@@ -133,10 +137,11 @@ lastStatus = DCRAW_SUCCESS;
 #define FORCC FORC(colors)
 
 #define SQR(x) ((x)*(x))
-/*ABS, MIN and MAX are defined in glib/gmacros.h - NKBJ*/
-//#define ABS(x) (((int)(x) ^ ((int)(x) >> 31)) - ((int)(x) >> 31))
-//#define MIN(a,b) ((a) < (b) ? (a) : (b))
-//#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#ifndef DCRAW_NOMAIN
+#define ABS(x) (((int)(x) ^ ((int)(x) >> 31)) - ((int)(x) >> 31))
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#endif
 #define LIM(x,min,max) MAX(min,MIN(x,max))
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 #define CLIP(x) LIM(x,0,65535)
