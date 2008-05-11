@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.15 2008/05/11 00:29:56 lexort Exp $
+$Id: README-processing.txt,v 1.16 2008/05/11 13:14:18 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -238,3 +238,9 @@ Note that "color space" is a separable issue from encoding.  sRGB
 implies both a set of primaries and a specific gamma encoding.  When
 sRGB is written as 16-bit linear TIFF, the color space is the same but
 the gamma encoding is omitted.
+
+==== PPM
+
+PPM output is specified to use the primaries and gamma encoding of
+ITU-R Recommendation BT.709:
+http://netpbm.sourceforge.net/doc/ppm.html
