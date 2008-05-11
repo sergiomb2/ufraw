@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.14 2008/04/23 00:09:20 lexort Exp $
+$Id: README-processing.txt,v 1.15 2008/05/11 00:29:56 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -119,6 +119,14 @@ ufraw can use an input profile, which specifies the relationship of
 the camera's device color space to a standard color space.  Cameras
 typically have R, G, and B filters, but these do not exactly
 correspond to the primaries of sRGB.
+
+The lprof site has a discussion of how to create an input profile for
+ufraw with an IT8.7 target.  This discussion includes comments about
+setting the linearity and gamma values, but the key point is that the
+same linearity and gamma values used for profile creation must be set
+when the profile is used.
+
+http://lprof.sourceforge.net/help/ufraw.html
 
 ==== Color matrices
 
