@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.16 2008/05/11 13:14:18 lexort Exp $
+$Id: README-processing.txt,v 1.17 2008/05/12 18:48:27 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -53,6 +53,12 @@ http://lists.freedesktop.org/archives/openicc/2006q3/000775.html
 (an AdobeRGB-compatible profile)
 
 === other converters
+
+Discussion of sensor saturation levels and highlight recovery in
+dcraw:
+
+http://www.guillermoluijk.com/tutorial/dcraw/index_en.htm
+
 
 http://www.rawtherapee.com/data/RT-Internal-Workflow_2.3.pdf
 
