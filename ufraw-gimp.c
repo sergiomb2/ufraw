@@ -172,6 +172,10 @@ void run(GIMP_CONST gchar *name,
 	return;
     }
     gboolean loadThumbnail = size>0;
+    char *gtkrcfile = g_build_filename(uf_get_home_dir(),
+	".ufraw-gtkrc", NULL);
+    gtk_rc_add_default_file(gtkrcfile);
+    g_free(gtkrcfile);
     gimp_ui_init("ufraw-gimp", TRUE);
 
     uf = ufraw_open(filename);

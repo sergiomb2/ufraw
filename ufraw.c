@@ -38,6 +38,10 @@ int main (int argc, char **argv)
     ufraw_binary = g_path_get_basename(argFile);
     uf_init_locale(argFile);
     uf_win32_locale_free(argFile);
+    char *gtkrcfile = g_build_filename(uf_get_home_dir(),
+	".ufraw-gtkrc", NULL);
+    gtk_rc_add_default_file(gtkrcfile);
+    g_free(gtkrcfile);
     gtk_init(&argc, &argv);
     ufraw_icons_init();
 #ifdef WIN32
