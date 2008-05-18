@@ -61,9 +61,8 @@ typedef enum { perceptual_intent, relative_intent, saturation_intent,
 	absolute_intent, disable_intent } Intent;
 typedef enum { ufraw_first_phase, ufraw_denoise_phase, ufraw_final_phase,
 	ufraw_phases_num } UFRawPhase;
-typedef enum { grayscale_none, grayscale_average, grayscale_lightness,
-	       grayscale_luminance, grayscale_value, grayscale_mixer }
-	GrayscaleMode;
+typedef enum { grayscale_none, grayscale_lightness, grayscale_luminance,
+	grayscale_value, grayscale_mixer } GrayscaleMode;
 
 typedef struct {
     const char *make;

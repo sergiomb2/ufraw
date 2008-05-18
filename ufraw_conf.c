@@ -77,7 +77,7 @@ const conf_data conf_default = {
     -1, -1, -1, -1, /* Crop X1,Y1,X2,Y2 */
     0, /* rotationAngle */
     grayscale_none, /* grayscale mode */
-    { 100.0, 0.0, 0.0 }, /* grayscale mixer */
+    { 100.0, 100.0, 100.0 }, /* grayscale mixer */
     TRUE, /* grayscale mixer normalize */
     /* Save options */
     "", "", "", /* inputFilename, outputFilename, outputPath */
@@ -130,7 +130,7 @@ static const char *clipHighlightsNames[] =
 static const char *intentNames[] =
     { "perceptual", "relative", "saturation", "absolute", "disable", NULL };
 static const char *grayscaleModeNames[] =
-    { "none", "average", "lightness", "luminance", "value", "mixer", NULL };
+    { "none", "lightness", "luminance", "value", "mixer", NULL };
 
 static int conf_find_name(const char name[],const char *namesList[], int notFound)
 {
@@ -1442,7 +1442,7 @@ N_("--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"),
 N_("--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"),
-N_("--grayscale=none|average|lightness|luminance|value|mixer\n"
+N_("--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"),
 "\n",
 N_("The options which are related to the final output are:\n"),

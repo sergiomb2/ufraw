@@ -87,16 +87,12 @@ static const GdkCursorType Cursors[cursor_num] = {
     GDK_BOTTOM_LEFT_CORNER, GDK_BOTTOM_RIGHT_CORNER,
     GDK_FLEUR };
 
-static const char *grayscaleModeNames[6] = {
+static const char *grayscaleModeNames[5] = {
     N_("None"),
-    N_("Average"),
     N_("Lightness"),
     N_("Luminance"),
     N_("Value"),
     N_("Channel Mixer")
-};
-static const char *colorNames[3] = {
-    N_("Red:"), N_("Green:"), N_("Blue:")
 };
 
 // Response can be any unique positive integer
@@ -125,6 +121,7 @@ typedef struct {
     GtkWidget *GrayscaleNormalizeButton;
     GtkTable *SpotTable;
     GtkTable *GrayscaleMixerTable;
+    GtkLabel *GrayscaleMixerColor;
     GtkLabel *SpotPatch;
     colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
     GtkToggleButton *AutoExposureButton, *AutoBlackButton, *LockAspectButton;
@@ -134,6 +131,7 @@ typedef struct {
     GtkWidget *ResetThresholdButton;
     GtkWidget *ResetContrastButton;
     GtkWidget *ResetBlackButton, *ResetBaseCurveButton, *ResetCurveButton;
+    GtkWidget *ResetGrayscaleChannelMixerButton;
     GtkWidget *SaveButton;
     GtkWidget *ControlButton[num_buttons];
     guint16 ButtonMnemonic[num_buttons];
@@ -1345,6 +1343,9 @@ static void update_scales(preview_data *data)
 
     int i;
     GList *l;
+    double max;
+    char tmp[max_name];
+
     gtk_combo_box_set_active(data->WBCombo, 0);
     for (i=0, l=data->WBPresets; l!=NULL; i++, l=g_list_next(l))
 	if (!strcmp(CFG->wb, l->data))
@@ -1412,8 +1413,22 @@ static void update_scales(preview_data *data)
     for (i = 0; i < 3; ++i)
         gtk_adjustment_set_value(data->GrayscaleMixers[i],
 				 CFG->grayscaleMixer[i]);
+    gtk_widget_set_sensitive(GTK_WIDGET(data->ResetGrayscaleChannelMixerButton),
+	(CFG->grayscaleMixer[0] != conf_default.grayscaleMixer[0])
+	|| (CFG->grayscaleMixer[1] != conf_default.grayscaleMixer[1])
+	|| (CFG->grayscaleMixer[2] != conf_default.grayscaleMixer[2])
+	|| (CFG->grayscaleMixerNormalize != conf_default.grayscaleMixerNormalize));
     gtk_widget_set_sensitive(GTK_WIDGET(data->GrayscaleMixerTable),
 			     CFG->grayscaleMode == grayscale_mixer);
+
+    for (max = 1, i = 0; i < 3; ++i)
+        max = MAX(max, CFG->grayscaleMixer[i]);
+    g_snprintf(tmp, max_name, "<span background='#%02X%02X%02X'>"
+	    "                    </span>",
+	       (int)(MAX(CFG->grayscaleMixer[0], 0) / max * 255),
+	       (int)(MAX(CFG->grayscaleMixer[1], 0) / max * 255),
+	       (int)(MAX(CFG->grayscaleMixer[2], 0) / max * 255));
+    gtk_label_set_markup(data->GrayscaleMixerColor, tmp);
 
     if ( fabs(data->shrink-floor(data->shrink+0.0005))<0.0005 ) {
 	CFG->shrink = floor(data->shrink+0.0005);
@@ -2444,6 +2459,12 @@ static void button_update(GtkWidget *button, gpointer user_data)
 	    CFG->curveIndex = linear_curve;
 	}
     }
+    if (button==data->ResetGrayscaleChannelMixerButton) {
+        CFG->grayscaleMixer[0] = conf_default.grayscaleMixer[0];
+        CFG->grayscaleMixer[1] = conf_default.grayscaleMixer[1];
+        CFG->grayscaleMixer[2] = conf_default.grayscaleMixer[2];
+        CFG->grayscaleMixerNormalize = conf_default.grayscaleMixerNormalize;
+    }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     update_scales(data);
@@ -2651,17 +2672,19 @@ static GtkAdjustment *adjustment_scale(GtkTable *table,
     GtkAdjustment *adj;
     GtkWidget *w, *l, *icon;
 
-    w = gtk_event_box_new();
-    if ( strcmp(label, "exposure")==0 ) {
-	icon = gtk_image_new_from_stock(label, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_container_add(GTK_CONTAINER(w), icon);
-    } else {
-	l = gtk_label_new(label);
-	gtk_misc_set_alignment(GTK_MISC(l), 1, 0.5);
-	gtk_container_add(GTK_CONTAINER(w), l);
+    if ( label!=NULL ) {
+	w = gtk_event_box_new();
+	if ( strcmp(label, "exposure")==0 ) {
+	    icon = gtk_image_new_from_stock(label, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	    gtk_container_add(GTK_CONTAINER(w), icon);
+	} else {
+	    l = gtk_label_new(label);
+	    gtk_misc_set_alignment(GTK_MISC(l), 1, 0.5);
+	    gtk_container_add(GTK_CONTAINER(w), l);
+	}
+	gtk_table_attach(table, w, x, x+1, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
+	uf_widget_set_tooltip(w, tip);
     }
-    gtk_table_attach(table, w, x, x+1, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
-    uf_widget_set_tooltip(w, tip);
     adj = GTK_ADJUSTMENT(gtk_adjustment_new(value, min, max, step, jump, 0));
     g_object_set_data(G_OBJECT(adj), "Adjustment-Accuracy",(gpointer)accuracy);
 
@@ -3951,7 +3974,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     label = gtk_label_new(_("Grayscale Mode:"));
     gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
 
-    for (i = 0; i < 6; ++i) {
+    for (i = 0; i < 5; ++i) {
         data->GrayscaleButtons[i] = gtk_radio_button_new_with_label_from_widget(
 	    (i > 0) ? GTK_RADIO_BUTTON(data->GrayscaleButtons[0]) : NULL,
 	    _(grayscaleModeNames[i]));
@@ -3977,20 +4000,37 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	0, 1, 2, 3, 0, 0, 0, 0);
     for (i = 0; i < 3; ++i) {
         data->GrayscaleMixers[i] = adjustment_scale(
-	    data->GrayscaleMixerTable, 1, i, _(colorNames[i]),
+	    data->GrayscaleMixerTable, 0, i, NULL,
 	    CFG->grayscaleMixer[i], &CFG->grayscaleMixer[i],
 	    -200, 200, 1, 10, 0, NULL);
     }
+
+    data->GrayscaleMixerColor = GTK_LABEL(gtk_label_new(NULL));
+    gtk_widget_set_size_request(GTK_WIDGET(data->GrayscaleMixerColor), 99, -1);
+    gtk_table_attach(data->GrayscaleMixerTable,
+	GTK_WIDGET(data->GrayscaleMixerColor),
+	0, 6, 3, 4, GTK_EXPAND|GTK_FILL, 0, 0, 0);
+/*
     data->GrayscaleNormalizeButton = gtk_check_button_new_with_label(
         _("Preserve luminosity"));
     gtk_table_attach(data->GrayscaleMixerTable, data->GrayscaleNormalizeButton,
-		     0, 9, 3, 4, GTK_EXPAND|GTK_FILL, 0, 0, 0);
+		     0, 6, 4, 5, GTK_EXPAND|GTK_FILL, 0, 0, 0);
     gtk_toggle_button_set_active(
 	GTK_TOGGLE_BUTTON(data->GrayscaleNormalizeButton),
 	CFG->grayscaleMixerNormalize);
     g_signal_connect(G_OBJECT(data->GrayscaleNormalizeButton), "toggled",
 	G_CALLBACK(toggle_button_update),
 	&CFG->grayscaleMixerNormalize);
+*/
+    data->ResetGrayscaleChannelMixerButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetGrayscaleChannelMixerButton),
+	gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_table_attach(data->GrayscaleMixerTable,
+	data->ResetGrayscaleChannelMixerButton, 6, 7, 3, 4, 0, 0, 0, 0);
+    uf_widget_set_tooltip(data->ResetGrayscaleChannelMixerButton,
+	_("Reset channel mixer"));
+    g_signal_connect(G_OBJECT(data->ResetGrayscaleChannelMixerButton),
+	"clicked", G_CALLBACK(button_update), NULL);
     /* End of Grayscale page */
 
     /* Start of Base Curve page */

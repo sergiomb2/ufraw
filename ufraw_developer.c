@@ -377,12 +377,6 @@ void developer_prepare(developer_data *d, conf_data *conf,
 	    d->grayscaleMixer[c] = conf->grayscaleMixer[c] / total;
 	break;
 
-    case grayscale_average:
-        d->grayscaleMode = grayscale_mixer;
-	for (c = 0; c < 3; ++c)
-	    d->grayscaleMixer[c] = 1.0 / 3.0;
-	break;
-
     case grayscale_lightness:
     case grayscale_value:
         d->grayscaleMode = conf->grayscaleMode;
