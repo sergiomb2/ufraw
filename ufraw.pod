@@ -323,6 +323,9 @@ recommended not to edit this file. This file is updated from the GUI when
 you save an image, or when you explicitly ask to save this file in the
 'Options' menu.
 
+$HOME/.ufraw-gtkrc - An optional file for setting up a specific GTK theme
+for UFRaw.
+
 =head1 ONLINE RESOURCES
 
 =over 4
