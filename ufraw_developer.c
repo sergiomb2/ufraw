@@ -370,9 +370,8 @@ void developer_prepare(developer_data *d, conf_data *conf,
     case grayscale_mixer:
         d->grayscaleMode = grayscale_mixer;
 	for (c = 0, total = 0.0; c < 3; ++c)
-	    total += conf->grayscaleMixer[c];
-	total = (total == 0.0 || !conf->grayscaleMixerNormalize)
-	  ? 100.0 : fabs(total);
+	    total += fabs(conf->grayscaleMixer[c]);
+	total = total == 0.0 ? 100.0 : total;
 	for (c = 0; c < 3; ++c)
 	    d->grayscaleMixer[c] = conf->grayscaleMixer[c] / total;
 	break;

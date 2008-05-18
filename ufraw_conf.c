@@ -78,7 +78,6 @@ const conf_data conf_default = {
     0, /* rotationAngle */
     grayscale_none, /* grayscale mode */
     { 100.0, 100.0, 100.0 }, /* grayscale mixer */
-    TRUE, /* grayscale mixer normalize */
     /* Save options */
     "", "", "", /* inputFilename, outputFilename, outputPath */
     "", "", /* inputURI, inputModTime */
@@ -617,8 +616,6 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
         sscanf(temp, "%lf %lf %lf", &c->grayscaleMixer[0],
 	       &c->grayscaleMixer[1], &c->grayscaleMixer[2]);
     }
-    if ( strcmp("GrayscaleMixerNormalize", element) == 0 )
-        sscanf(temp, "%d", &c->grayscaleMixerNormalize);
     /* OutputIntent replaces Intent starting from ufraw-0.12. */
     if ( strcmp("OutputIntent", element)==0 )
 	c->intent[out_profile] = conf_find_name(temp, intentNames,
@@ -924,9 +921,6 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 		c->grayscaleMixer[0],
 		c->grayscaleMixer[1],
 		c->grayscaleMixer[2]);
-	buf = uf_markup_buf(buf,
-		"<GrayscaleMixerNormalize>%d</GrayscaleMixerNormalize>\n",
-		c->grayscaleMixerNormalize);
     }
     if (c->size!=conf_default.size)
 	buf = uf_markup_buf(buf, "<Size>%d</Size>\n", c->size);
@@ -1181,7 +1175,6 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->grayscaleMode = src->grayscaleMode;
     memcpy(dst->grayscaleMixer, src->grayscaleMixer,
 	   sizeof dst->grayscaleMixer);
-    dst->grayscaleMixerNormalize = src->grayscaleMixerNormalize;
     g_strlcpy(dst->darkframeFile, src->darkframeFile, max_path);
     /* We only copy the current BaseCurve */
     if (src->BaseCurveIndex<=camera_curve) {

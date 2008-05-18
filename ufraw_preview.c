@@ -1416,8 +1416,7 @@ static void update_scales(preview_data *data)
     gtk_widget_set_sensitive(GTK_WIDGET(data->ResetGrayscaleChannelMixerButton),
 	(CFG->grayscaleMixer[0] != conf_default.grayscaleMixer[0])
 	|| (CFG->grayscaleMixer[1] != conf_default.grayscaleMixer[1])
-	|| (CFG->grayscaleMixer[2] != conf_default.grayscaleMixer[2])
-	|| (CFG->grayscaleMixerNormalize != conf_default.grayscaleMixerNormalize));
+	|| (CFG->grayscaleMixer[2] != conf_default.grayscaleMixer[2]));
     gtk_widget_set_sensitive(GTK_WIDGET(data->GrayscaleMixerTable),
 			     CFG->grayscaleMode == grayscale_mixer);
 
@@ -2463,7 +2462,6 @@ static void button_update(GtkWidget *button, gpointer user_data)
         CFG->grayscaleMixer[0] = conf_default.grayscaleMixer[0];
         CFG->grayscaleMixer[1] = conf_default.grayscaleMixer[1];
         CFG->grayscaleMixer[2] = conf_default.grayscaleMixer[2];
-        CFG->grayscaleMixerNormalize = conf_default.grayscaleMixerNormalize;
     }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
@@ -4010,18 +4008,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_table_attach(data->GrayscaleMixerTable,
 	GTK_WIDGET(data->GrayscaleMixerColor),
 	0, 6, 3, 4, GTK_EXPAND|GTK_FILL, 0, 0, 0);
-/*
-    data->GrayscaleNormalizeButton = gtk_check_button_new_with_label(
-        _("Preserve luminosity"));
-    gtk_table_attach(data->GrayscaleMixerTable, data->GrayscaleNormalizeButton,
-		     0, 6, 4, 5, GTK_EXPAND|GTK_FILL, 0, 0, 0);
-    gtk_toggle_button_set_active(
-	GTK_TOGGLE_BUTTON(data->GrayscaleNormalizeButton),
-	CFG->grayscaleMixerNormalize);
-    g_signal_connect(G_OBJECT(data->GrayscaleNormalizeButton), "toggled",
-	G_CALLBACK(toggle_button_update),
-	&CFG->grayscaleMixerNormalize);
-*/
+
     data->ResetGrayscaleChannelMixerButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetGrayscaleChannelMixerButton),
 	gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));

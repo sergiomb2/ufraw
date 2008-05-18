@@ -163,7 +163,6 @@ typedef struct {
     double rotationAngle;
     int grayscaleMode;
     double grayscaleMixer[3];
-    gboolean grayscaleMixerNormalize;
 
     /* SAVE options */
     char inputFilename[max_path], outputFilename[max_path],
