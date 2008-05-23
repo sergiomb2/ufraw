@@ -27,6 +27,7 @@
 #include "uf_gtk.h"
 #include <glib/gi18n.h>
 #include "ufraw.h"
+#include "ufraw_ui.h"
 #include "curveeditor_widget.h"
 //#undef HAVE_GTKIMAGEVIEW
 #ifdef HAVE_GTKIMAGEVIEW
@@ -47,11 +48,7 @@ extern GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
 /* Set to huge number so that the preview size is set by the screen size */
 static const int def_preview_width = 9000;
 static const int def_preview_height = 9000;
-#define raw_his_size 320
-#define live_his_size 256
 static const int his_max_height = 256;
-#define min_scale 2
-#define max_scale 20
 
 #define page_num_spot 0
 #define page_num_gray 1
@@ -62,23 +59,6 @@ enum { without_zone, with_zone };
 
 static char *expanderText[] = { N_("Raw histogram with conversion curves"),
     N_("Live histogram"), NULL };
-
-typedef struct {
-    GtkLabel *labels[5];
-    int num;
-    int format;
-    gboolean zonep; /* non-zero to display value/zone */
-} colorLabels;
-
-typedef enum { render_default, render_overexposed, render_underexposed
-	} RenderModeType;
-
-typedef enum { cancel_button, ok_button, save_button,
-	gimp_button, delete_button, num_buttons } ControlButtons;
-typedef enum { spot_cursor, crop_cursor,
-    left_cursor, right_cursor, top_cursor, bottom_cursor,
-    top_left_cursor, top_right_cursor, bottom_left_cursor, bottom_right_cursor,
-    move_cursor, cursor_num } CursorType;
 
 static const GdkCursorType Cursors[cursor_num] = {
     GDK_HAND2, GDK_CROSSHAIR,
@@ -95,114 +75,7 @@ static const char *grayscaleModeNames[5] = {
     N_("Channel Mixer")
 };
 
-// Response can be any unique positive integer
-#define UFRAW_RESPONSE_DELETE 1
-#define UFRAW_NO_RESPONSE 2
-
-/* All the "global" information is here: */
-typedef struct {
-    ufraw_data *UF;
-    conf_data SaveConfig;
-    char initialWB[max_name];
-    double initialTemperature, initialGreen;
-    double initialChanMul[4];
-    int raw_his[raw_his_size][4];
-    GList *WBPresets; /* List of WB presets in WBCombo*/
-    int TypeComboMap[num_types];
-    GdkPixbuf *PreviewPixbuf;
-    GdkCursor *Cursor[cursor_num];
-    /* Remember the Gtk Widgets that we need to access later */
-    GtkWidget *Controls, *PreviewWidget, *RawHisto, *LiveHisto;
-    GtkLabel *DarkFrameLabel;
-    GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
-    GtkComboBox *WBCombo, *BaseCurveCombo, *CurveCombo,
-		*ProfileCombo[profile_types], *BitDepthCombo, *TypeCombo;
-    GtkWidget *GrayscaleButtons[6];
-    GtkWidget *GrayscaleNormalizeButton;
-    GtkTable *SpotTable;
-    GtkTable *GrayscaleMixerTable;
-    GtkLabel *GrayscaleMixerColor;
-    GtkLabel *SpotPatch;
-    colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
-    GtkToggleButton *AutoExposureButton, *AutoBlackButton, *LockAspectButton;
-    GtkButton *AutoCurveButton;
-    GtkWidget *ResetWBButton, *ResetGammaButton, *ResetLinearButton;
-    GtkWidget *ResetExposureButton, *ResetSaturationButton;
-    GtkWidget *ResetThresholdButton;
-    GtkWidget *ResetContrastButton;
-    GtkWidget *ResetBlackButton, *ResetBaseCurveButton, *ResetCurveButton;
-    GtkWidget *ResetGrayscaleChannelMixerButton;
-    GtkWidget *SaveButton;
-    GtkWidget *ControlButton[num_buttons];
-    guint16 ButtonMnemonic[num_buttons];
-    GtkProgressBar *ProgressBar;
-    GtkSpinButton *CropX1Spin;
-    GtkSpinButton *CropY1Spin;
-    GtkSpinButton *CropX2Spin;
-    GtkSpinButton *CropY2Spin;
-    GtkSpinButton *ShrinkSpin;
-    GtkSpinButton *HeightSpin;
-    GtkSpinButton *WidthSpin;
-    /* We need the adjustments for update_scale() */
-    GtkAdjustment *WBTuningAdjustment;
-    GtkAdjustment *TemperatureAdjustment;
-    GtkAdjustment *GreenAdjustment;
-    GtkAdjustment *ChannelAdjustment[4];
-    GtkAdjustment *GammaAdjustment;
-    GtkAdjustment *LinearAdjustment;
-    GtkAdjustment *ExposureAdjustment;
-    GtkAdjustment *ThresholdAdjustment;
-    GtkAdjustment *SaturationAdjustment;
-    GtkAdjustment *ContrastAdjustment;
-    GtkAdjustment *CropX1Adjustment;
-    GtkAdjustment *CropY1Adjustment;
-    GtkAdjustment *CropX2Adjustment;
-    GtkAdjustment *CropY2Adjustment;
-    GtkAdjustment *ZoomAdjustment;
-    GtkAdjustment *ShrinkAdjustment;
-    GtkAdjustment *HeightAdjustment;
-    GtkAdjustment *WidthAdjustment;
-    GtkAdjustment *GrayscaleMixers[3];
-    long (*SaveFunc)();
-    RenderModeType RenderMode;
-    int RenderLine;
-    UFRawPhase fromPhase;
-    /* Some actions update the progress bar while working, but meanwhile we
-     * want to freeze all other actions. After we thaw the dialog we must
-     * call update_scales() which was also frozen. */
-    gboolean FreezeDialog;
-    /* Since the event-box can be larger than the preview pixbuf we need: */
-    gboolean PreviewButtonPressed, SpotDraw;
-    int SpotX1, SpotY1, SpotX2, SpotY2;
-    CursorType CropMotionType;
-    int DrawnCropX1, DrawnCropX2, DrawnCropY1, DrawnCropY2;
-    double shrink, height, width;
-    gboolean OptionsChanged;
-    int PageNum;
-    int HisMinHeight;
-    /* Original aspect ratio (0) or actual aspect ratio */
-    float AspectRatio;
-    /* The aspect ratio entry field */
-    GtkEntry *AspectEntry;
-    /* Output base filename (without the path) */
-    GtkEntry *OutFileEntry;
-    /* Mouse coordinates in previous frame (used when dragging crop area) */
-    int OldMouseX, OldMouseY;
-    int OverUnderTicker;
-    /* The event source number when the highlight blink function is enabled. */
-    guint BlinkTimer;
-} preview_data;
-
-
-/* These #defines are not very elegant, but otherwise things get tooo long */
-#define CFG data->UF->conf
-#define RC data->SaveConfig
-#define Developer data->UF->developer
-#define CFG_cameraCurve (CFG->BaseCurve[camera_curve].m_numAnchors>0)
-
-enum { base_curve, luminosity_curve };
-
-static preview_data *get_preview_data(void *object)
+preview_data *get_preview_data(void *object)
 {
     GtkWidget *widget;
     if (GTK_IS_ADJUSTMENT(object)) {
@@ -712,8 +585,8 @@ static void image_draw_area(preview_data *data, int x, int y,
  * This approach makes computing width/height just a matter of
  * substracting X1 from X2 or Y1 from Y2.
  */
-static void preview_draw_area(preview_data *data, int x, int y,
-			      int width, int height)
+static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
+                                  int x, int y, int width, int height)
 {
     int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
     if ( y<0 || y>=pixbufHeight )
@@ -735,7 +608,6 @@ static void preview_draw_area(preview_data *data, int x, int y,
     int rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
     guint8 *pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
     guint8 *p8;
-    ufraw_image_data img = data->UF->Images[ufraw_final_phase];
     gboolean blinkOver = CFG->overExp &&
 	    ( !CFG->blinkOverUnder || (data->OverUnderTicker & 3) == 1 );
     gboolean blinkUnder = CFG->underExp &&
@@ -758,7 +630,7 @@ static void preview_draw_area(preview_data *data, int x, int y,
     int xx, yy, c;
     for (yy=y; yy<y+height; yy++) {
 	p8 = pixies+yy*rowstride+x*3;
-	memcpy(p8, img.buffer + yy*img.rowstride + x*img.depth, width*img.depth);
+	memcpy(p8, img->buffer + yy*img->rowstride + x*img->depth, width*img->depth);
 	for (xx=x; xx<x+width; xx++, p8+=3) {
 	    if ( data->SpotDraw &&
 		( ((yy==SpotY1-1 || yy==SpotY2) && xx>=SpotX1-1 && xx<=SpotX2) ||
@@ -797,6 +669,14 @@ static void preview_draw_area(preview_data *data, int x, int y,
     image_draw_area(data, x, y, width, height);
 }
 
+static void preview_draw_area(preview_data *data, int x, int y,
+                              int width, int height)
+{
+    preview_draw_img_area (
+        data, ufraw_convert_image_area (data->UF, -1, ufraw_phases_num - 1),
+        x, y, width, height);
+}
+
 static gboolean switch_highlights(gpointer ptr)
 {
     preview_data *data = ptr;
@@ -805,7 +685,7 @@ static gboolean switch_highlights(gpointer ptr)
 	return TRUE;
     int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    if (data->RenderLine==MAX(pixbufHeight, pixbufWidth)) {
+    if (data->RenderSubArea == -1) {
 	float scale_x = ((float)pixbufWidth) / data->UF->initialWidth;
 	float scale_y = ((float)pixbufHeight) / data->UF->initialHeight;
 	/* Set the area to redraw based on the crop rectangle and view port. */
@@ -874,7 +754,6 @@ static void window_unmap_event(GtkWidget *widget, GdkEvent *event,
     (void)user_data;
 }
 
-static void render_preview(preview_data *data);
 static gboolean render_prepare(preview_data *data);
 static gboolean render_raw_histogram(preview_data *data);
 static gboolean render_preview_image(preview_data *data);
@@ -927,13 +806,19 @@ static void render_init(preview_data *data)
     }
 }
 
-static void render_preview(preview_data *data)
+void preview_invalidate_layer (preview_data *data, UFRawPhase phase)
+{
+    for (; phase < ufraw_phases_num; phase++)
+	data->UF->Images [phase].valid = 0;
+}
+
+void render_preview(preview_data *data)
 {
     if (data->FreezeDialog) return;
 
     render_init(data);
     ufraw_convert_image_init_phase(data->UF);
-    data->RenderLine = 0;
+    data->RenderSubArea = 0;
     g_idle_remove_by_data(data);
     g_idle_add_full(G_PRIORITY_DEFAULT_IDLE-10,
 	    (GSourceFunc)(render_prepare), data, NULL);
@@ -1099,23 +984,27 @@ static gboolean render_preview_image(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
 
-    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    if ( data->RenderLine>=height )
-	return FALSE;
+    if (data->RenderSubArea < 0)
+        return FALSE;
 
-    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    int tileHeight = MIN(height - data->RenderLine, 32);
-    ufraw_convert_image_area(data->UF, 0, data->RenderLine, width, tileHeight,
-	    data->fromPhase);
-    preview_draw_area(data, 0, data->RenderLine, width, tileHeight);
-    data->RenderLine += tileHeight;
-    if ( data->RenderLine<height )
-	return TRUE;
+    ufraw_image_data *img = ufraw_convert_image_area (
+        data->UF, data->RenderSubArea & 31, ufraw_phases_num - 1);
+    if (!img)
+        return FALSE;
 
-    data->RenderLine = MAX(height, width);
-    data->fromPhase = ufraw_final_phase;
-    redraw_navigation_image(data);
-    return FALSE;
+    int x, y, w, h;
+    ufraw_img_get_subarea_coord (img, data->RenderSubArea, &x, &y, &w, &h);
+    preview_draw_img_area (data, img, x, y, w, h);
+
+    data->RenderSubArea++;
+    if (data->RenderSubArea > 31)
+    {
+        data->RenderSubArea = -1;
+        redraw_navigation_image(data);
+        return FALSE;
+    }
+
+    return TRUE;
 }
 
 static gboolean render_live_histogram(preview_data *data)
@@ -1126,7 +1015,7 @@ static gboolean render_live_histogram(preview_data *data)
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
     int i, x, y, c, min, max;
     guint8 *p8;
-    ufraw_image_data img = data->UF->Images[ufraw_final_phase];
+    ufraw_image_data img = data->UF->Images[ufraw_develop_phase];
     double rgb[3];
     guint64 sum[3], sqr[3];
     int live_his[live_his_size][4];
@@ -1231,14 +1120,14 @@ static gboolean render_spot(preview_data *data)
     if (data->SpotX1<0) return FALSE;
     if ( data->SpotX1>=data->UF->initialWidth ||
 	 data->SpotY1>=data->UF->initialHeight ) return FALSE;
-    int width = data->UF->Images[ufraw_final_phase].width;
-    int height = data->UF->Images[ufraw_final_phase].height;
-    int outDepth = data->UF->Images[ufraw_final_phase].depth;
-    void *outBuffer = data->UF->Images[ufraw_final_phase].buffer;
+    int width = data->UF->Images[ufraw_develop_phase].width;
+    int height = data->UF->Images[ufraw_develop_phase].height;
+    int outDepth = data->UF->Images[ufraw_develop_phase].depth;
+    void *outBuffer = data->UF->Images[ufraw_develop_phase].buffer;
     int rawDepth = data->UF->Images[ufraw_first_phase].depth;
     void *rawBuffer = data->UF->Images[ufraw_first_phase].buffer;
     /* We assume that first_phase and final_phase buffer sizes are the same. */
-    /* Scale image coordinates to Images[ufraw_final_phase] coordinates */
+    /* Scale image coordinates to Images[ufraw_develop_phase] coordinates */
     int spotHeight = abs(data->SpotY1 - data->SpotY2)
 	    * height / data->UF->initialHeight + 1;
     int spotStartY = MIN(data->SpotY1, data->SpotY2)
@@ -1456,6 +1345,7 @@ static void curve_update(GtkWidget *widget, long curveType)
 	    *curveeditor_widget_get_curve(data->CurveWidget);
 	CFG->autoBlack = FALSE;
     }
+    preview_invalidate_layer (data, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -1503,6 +1393,7 @@ static void spot_wb_event(GtkWidget *widget, gpointer user_data)
     ufraw_set_wb(data->UF);
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
+    preview_invalidate_layer (data, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -1709,11 +1600,11 @@ static void create_base_image(preview_data *data)
 	CFG->size = 0;
 	CFG->shrink = CFG->Scale;
     }
+    preview_invalidate_layer (data, ufraw_denoise_phase);
     ufraw_convert_image_init(data->UF);
-    ufraw_convert_image_first_phase(data->UF);
+    ufraw_convert_image_first_phase(data->UF, FALSE);
     CFG->shrink = shrinkSave;
     CFG->size = sizeSave;
-    data->fromPhase = ufraw_denoise_phase;
 }
 
 static void update_shrink_ranges(preview_data *data)
@@ -1977,12 +1868,10 @@ static void flip_image(GtkWidget *widget, int flip)
 	}
     }
     render_init(data);
-    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    if ( data->RenderLine<MAX(height,width) ) {
+    if ( data->RenderSubArea >= 0 ) {
 	/* We are in the middle or a rendering scan,
 	 * so just start from the beginning. */
-	data->RenderLine = 0;
+	data->RenderSubArea = 0;
     } else {
 	/* Full image was already rendered.
 	 * We only need to draw the flipped image. */
@@ -2322,8 +2211,7 @@ static void reset_darkframe(GtkWidget *widget, void *unused)
     (void)unused;
 }
 
-static GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text,
-    char *icon)
+GtkWidget *notebook_page_new(GtkNotebook *notebook, char *text, char *icon)
 {
     GtkWidget *page = gtk_vbox_new(FALSE, 0);
     if ( icon==NULL ) {
@@ -2368,7 +2256,7 @@ static void expander_expanded(GtkExpander *expander,
     }
 }
 
-static GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
+GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
 {
     GtkWidget *frame = gtk_frame_new(NULL);
     if (label!=NULL) {
@@ -2480,6 +2368,7 @@ static void grayscale_update(GtkWidget *button, gpointer user_data)
 	  CFG->grayscaleMode = i;
 
   update_scales(data);
+  preview_invalidate_layer (data, ufraw_develop_phase);
   (void)user_data;
 }
 
@@ -2541,6 +2430,7 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    CFG->restoreDetails =
 		    (CFG->restoreDetails+1) % restore_types;
 	    restore_details_button_set(GTK_BUTTON(button), data);
+            preview_invalidate_layer (data, ufraw_develop_phase);
 	    update_scales(data);
 	}
     } else if (valuep==&CFG->clipHighlights) {
@@ -2550,6 +2440,7 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    CFG->clipHighlights =
 		    (CFG->clipHighlights+1) % highlights_types;
 	    clip_highlights_button_set(GTK_BUTTON(button), data);
+            preview_invalidate_layer (data, ufraw_develop_phase);
 	    update_scales(data);
 	}
     } else {
@@ -2558,6 +2449,7 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    start_blink(data);
 	    switch_highlights(data);
 	} else {
+            preview_invalidate_layer (data, ufraw_develop_phase);
 	    render_preview(data);
 	}
     }
@@ -2617,63 +2509,75 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
     else
 	*valuep = gtk_adjustment_get_value(adj);
 
-    if (valuep==&CFG->temperature || valuep==&CFG->green) {
+    if (valuep==&CFG->temperature || valuep==&CFG->green)
+    {
 	g_strlcpy(CFG->wb, manual_wb, max_name);
 	ufraw_set_wb(data->UF);
     }
-    if (valuep>=&CFG->chanMul[0] && valuep<=&CFG->chanMul[3]) {
+    else if (valuep>=&CFG->chanMul[0] && valuep<=&CFG->chanMul[3])
+    {
 	g_strlcpy(CFG->wb, spot_wb, max_name);
 	ufraw_set_wb(data->UF);
     }
-    if (valuep==&CFG->WBTuning) {
-	if ( strcmp(data->UF->conf->wb, auto_wb)==0 ||
-	     strcmp(data->UF->conf->wb, camera_wb)==0 ) {
-	    /* Prevent recalculation of Camera/Auto WB on WBTuning events */
-	    data->UF->conf->WBTuning = 0;
-	} else {
+    else if (valuep==&CFG->WBTuning)
+    {
+        if (strcmp(data->UF->conf->wb, auto_wb)==0 ||
+            strcmp(data->UF->conf->wb, camera_wb)==0)
+            /* Prevent recalculation of Camera/Auto WB on WBTuning events */
+            data->UF->conf->WBTuning = 0;
+        else
 	    ufraw_set_wb(data->UF);
-	}
     }
-    if (valuep==&CFG->exposure) {
-	CFG->autoExposure = FALSE;
-    }
-    if (valuep==&CFG->Zoom) {
+    else if (valuep==&CFG->exposure)
+        CFG->autoExposure = FALSE;
+    else if (valuep==&CFG->Zoom)
+    {
 	CFG->Scale = 0;
 	create_base_image(data);
-    } else if (valuep==&CFG->threshold) {
-	data->fromPhase = ufraw_denoise_phase;
-    } else {
-	if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
-	if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     }
+    else if (valuep==&CFG->threshold)
+        preview_invalidate_layer (data, ufraw_denoise_phase);
+    else
+    {
+        if (CFG->autoExposure==enabled_state)
+            CFG->autoExposure = apply_state;
+        if (CFG->autoBlack==enabled_state)
+            CFG->autoBlack = apply_state;
+    }
+
     int croppedWidth = CFG->CropX2 - CFG->CropX1;
     int croppedHeight = CFG->CropY2 - CFG->CropY1;
-    if ( valuep==&data->shrink ) {
-	data->height = croppedHeight / data->shrink;
-	data->width = croppedWidth / data->shrink;
+    if (valuep==&data->shrink)
+    {
+        data->height = croppedHeight / data->shrink;
+        data->width = croppedWidth / data->shrink;
     }
-    if ( valuep==&data->height ) {
-	data->width = data->height * croppedWidth / croppedHeight;
-	data->shrink = (double)croppedHeight / data->height;
+    if (valuep==&data->height)
+    {
+        data->width = data->height * croppedWidth / croppedHeight;
+        data->shrink = (double)croppedHeight / data->height;
     }
-    if ( valuep==&data->width ) {
-	data->height = data->width * croppedHeight / croppedWidth;
-	data->shrink = (double)croppedWidth / data->width;
+    if (valuep==&data->width)
+    {
+        data->height = data->width * croppedHeight / croppedWidth;
+        data->shrink = (double)croppedWidth / data->width;
     }
-    update_scales(data);
+
+    preview_invalidate_layer (data, ufraw_develop_phase);
+    update_scales (data);
 }
 
-static GtkAdjustment *adjustment_scale(GtkTable *table,
-    int x, int y, char *label, double value, double *valuep,
-    double min, double max, double step, double jump, long accuracy, char *tip)
+GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y, const char *label,
+    double value, void *valuep, double min, double max, double step, double jump,
+    long accuracy, const char *tip, GCallback callback)
 {
     GtkAdjustment *adj;
     GtkWidget *w, *l, *icon;
 
     if ( label!=NULL ) {
 	w = gtk_event_box_new();
-	if ( strcmp(label, "exposure")==0 ) {
-	    icon = gtk_image_new_from_stock(label, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	if (label [0] == '@') {
+	    icon = gtk_image_new_from_stock(label + 1, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	    gtk_container_add(GTK_CONTAINER(w), icon);
 	} else {
 	    l = gtk_label_new(label);
@@ -2691,8 +2595,7 @@ static GtkAdjustment *adjustment_scale(GtkTable *table,
     gtk_scale_set_draw_value(GTK_SCALE(w), FALSE);
     gtk_table_attach(table, w, x+1, x+5, y, y+1, GTK_EXPAND|GTK_FILL, 0, 0, 0);
     uf_widget_set_tooltip(w, tip);
-    g_signal_connect(G_OBJECT(adj), "value-changed",
-	    G_CALLBACK(adjustment_update), valuep);
+    g_signal_connect(G_OBJECT(adj), "value-changed", callback, valuep);
 
     w = gtk_spin_button_new(adj, step, accuracy);
     gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON(w), FALSE);
@@ -2756,10 +2659,13 @@ static void outfile_entry_changed(GtkEntry *entry, gpointer user_data)
     if (data->FreezeDialog) return;
 
     char *dirname = g_path_get_dirname(CFG->outputFilename);
-    char *filename = g_build_filename(dirname, gtk_entry_get_text(entry), NULL);
+    char *fne = g_filename_from_utf8 (gtk_entry_get_text(entry),
+                                      -1, NULL, NULL, NULL);
+    char *filename = g_build_filename(dirname, fne, NULL);
     g_strlcpy(CFG->outputFilename, filename, max_path);
     g_free(filename);
     g_free(dirname);
+    g_free (fne);
 
     // Update the output type combo
     char *type = strrchr(CFG->outputFilename, '.');
@@ -2820,6 +2726,7 @@ static void combo_update(GtkWidget *combo, gint *valuep)
     }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
+    preview_invalidate_layer (data, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -2831,6 +2738,7 @@ static void combo_update_simple(GtkWidget *combo, gpointer user_data)
 
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
+    preview_invalidate_layer (data, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -3201,6 +3109,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	ufraw_focus(optionsDialog, FALSE);
 	gtk_widget_destroy(optionsDialog);
 	start_blink(data);
+        preview_invalidate_layer (data, ufraw_develop_phase);
 	render_preview(data);
 	return;
     }
@@ -3512,6 +3421,9 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     preview_data PreviewData;
     preview_data *data = &PreviewData;
 
+    /* Fill the whole structure with zeros, to avoid surprises */
+    memset (&PreviewData, 0, sizeof (PreviewData));
+
     data->UF = uf;
     data->SaveFunc = save_func;
 
@@ -3658,9 +3570,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     // Exposure:
     table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
-    data->ExposureAdjustment = adjustment_scale(table, 0, 0, "exposure",
+    data->ExposureAdjustment = adjustment_scale(table, 0, 0, "@exposure",
 	    CFG->exposure, &CFG->exposure,
-	    -3, 3, 0.01, 1.0/6, 2, _("Exposure compensation in EV"));
+	    -3, 3, 0.01, 1.0/6, 2, _("Exposure compensation in EV"),
+	    G_CALLBACK(adjustment_update));
 
     button = gtk_toggle_button_new();
     gtk_table_attach(table, button, 7, 8, 0, 1, 0, 0, 0, 0);
@@ -3798,10 +3711,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->TemperatureAdjustment = adjustment_scale(subTable, 0, 1,
 	    _("Temperature"), CFG->temperature, &CFG->temperature,
 	    2000, 12000, 50, 200, 0,
-	    _("White balance color temperature (K)"));
+	    _("White balance color temperature (K)"),
+	    G_CALLBACK(adjustment_update));
     data->GreenAdjustment = adjustment_scale(subTable, 0, 2, _("Green"),
 	    CFG->green, &CFG->green, 0.2, 2.5, 0.010, 0.050, 3,
-	    _("Green component"));
+	    _("Green component"),
+	    G_CALLBACK(adjustment_update));
     // Spot WB button:
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
@@ -3858,6 +3773,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    uf_combo_box_append_text(combo, _("Bilinear interpolation"),
 		    (void*)bilinear_interpolation);
 	}
+#ifdef ENABLE_INTERP_NONE
+	uf_combo_box_append_text(combo, _("No interpolation"),
+	    (void*)none_interpolation);
+#endif
 	uf_combo_box_set_data(combo, &CFG->interpolation);
     } else {
 	gtk_combo_box_append_text(combo, _("No Bayer pattern"));
@@ -3883,7 +3802,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     data->ThresholdAdjustment = adjustment_scale(table, 0, 0, _("Denoise"),
 	    CFG->threshold, &CFG->threshold, 0.0, 1000.0, 10, 50, 0,
-	    _("Threshold for wavelet denoising"));
+	    _("Threshold for wavelet denoising"),
+	    G_CALLBACK(adjustment_update));
     data->ResetThresholdButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetThresholdButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
@@ -4000,7 +3920,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
         data->GrayscaleMixers[i] = adjustment_scale(
 	    data->GrayscaleMixerTable, 0, i, NULL,
 	    CFG->grayscaleMixer[i], &CFG->grayscaleMixer[i],
-	    -200, 200, 1, 10, 0, NULL);
+	    -200, 200, 1, 10, 0, NULL, G_CALLBACK(adjustment_update));
     }
 
     data->GrayscaleMixerColor = GTK_LABEL(gtk_label_new(NULL));
@@ -4019,6 +3939,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->ResetGrayscaleChannelMixerButton),
 	"clicked", G_CALLBACK(button_update), NULL);
     /* End of Grayscale page */
+
+#ifdef HAVE_LENSFUN
+    /* Lens correction page */
+    page = notebook_page_new(notebook, _("Lens correction"), "lens");
+    lens_fill_interface (data, page);
+#endif /* HAVE_LENSFUN */
 
     /* Start of Base Curve page */
     page = notebook_page_new(notebook, _("Base curve"), "base-curve");
@@ -4131,7 +4057,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->GammaAdjustment = adjustment_scale(table, 1, 3, _("Gamma"),
 	    CFG->profile[0][CFG->profileIndex[0]].gamma,
 	    &CFG->profile[0][0].gamma, 0.1, 1.0, 0.01, 0.05, 2,
-	    _("Gamma correction for the input profile"));
+	    _("Gamma correction for the input profile"),
+	    G_CALLBACK(adjustment_update));
     data->ResetGammaButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetGammaButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
@@ -4143,7 +4070,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->LinearAdjustment = adjustment_scale(table, 1, 4, _("Linearity"),
 	    CFG->profile[0][CFG->profileIndex[0]].linear,
 	    &CFG->profile[0][0].linear, 0.0, 1.0, 0.01, 0.05, 2,
-	    _("Linear part of the gamma correction"));
+	    _("Linear part of the gamma correction"),
+	    G_CALLBACK(adjustment_update));
     data->ResetLinearButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetLinearButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
@@ -4203,7 +4131,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     data->ContrastAdjustment = adjustment_scale(table, 0, 0, _("Contrast"),
 	    CFG->contrast, &CFG->contrast, 0, 5.0, 0.01, 0.1, 2,
-	    _("Global contrast adjustment"));
+	    _("Global contrast adjustment"), G_CALLBACK(adjustment_update));
     data->ResetContrastButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetContrastButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
@@ -4215,7 +4143,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     data->SaturationAdjustment = adjustment_scale(table, 0, 1, _("Saturation"),
 	    CFG->saturation, &CFG->saturation,
-	    0.0, 3.0, 0.01, 0.1, 2, _("Saturation"));
+	    0.0, 3.0, 0.01, 0.1, 2, _("Saturation"),
+	    G_CALLBACK(adjustment_update));
     data->ResetSaturationButton = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(data->ResetSaturationButton),
 	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
@@ -4331,15 +4260,15 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_table_attach(table, label, 0, 1, 1, 2, 0, 0, 0, 0);
 
     data->CropX1Adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
-	CFG->CropX1, 0, data->UF->initialWidth, 1, 1, 0));
+        CFG->CropX1, 0, data->UF->initialWidth, 1, 1, 0));
     data->CropX1Spin = GTK_SPIN_BUTTON(gtk_spin_button_new(
 	data->CropX1Adjustment, 1, 0));
     g_object_set_data(G_OBJECT(data->CropX1Adjustment),
-	"Parent-Widget", data->CropX1Spin);
-    gtk_table_attach(table,
-	GTK_WIDGET(data->CropX1Spin), 1, 2, 1, 2, 0, 0, 0, 0);
+        "Parent-Widget", data->CropX1Spin);
+    gtk_table_attach(
+        table, GTK_WIDGET(data->CropX1Spin), 1, 2, 1, 2, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(data->CropX1Adjustment), "value-changed",
-	G_CALLBACK(adjustment_update), &CFG->CropX1);
+        G_CALLBACK(adjustment_update), &CFG->CropX1);
 
     label = gtk_label_new(_("Top:"));
     gtk_table_attach(table, label, 1, 2, 0, 1, 0, 0, 0, 0);
@@ -4557,8 +4486,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	label = gtk_label_new(_("Filename"));
 	gtk_box_pack_start(GTK_BOX(hBox), label, FALSE, FALSE, 0);
 	data->OutFileEntry = GTK_ENTRY(gtk_entry_new());
-	char *basename = g_path_get_basename(CFG->outputFilename);
-	gtk_entry_set_text(data->OutFileEntry, basename);
+        char *basename = g_path_get_basename(CFG->outputFilename);
+        char *basename_dn = g_filename_display_name (basename);
+        gtk_entry_set_text(data->OutFileEntry, basename_dn);
+        g_free(basename_dn);
 	g_free(basename);
 	gtk_box_pack_start(GTK_BOX(hBox), GTK_WIDGET(data->OutFileEntry),
 		TRUE, TRUE, 0);
@@ -4721,10 +4652,10 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     list_store_add(store, _("White balance"), CFG->whiteBalanceText);
 
     label = gtk_label_new(NULL);
-    GString *message = g_string_new("");
-    g_string_append_printf(message, _("EXIF data read by %s"), CFG->exifSource);
-    gtk_label_set_markup(GTK_LABEL(label), message->str);
+    gchar *message = g_strdup_printf (_("EXIF data read by %s"), CFG->exifSource);
+    gtk_label_set_markup(GTK_LABEL(label), message);
     gtk_box_pack_start(GTK_BOX (vBox), label, FALSE, FALSE, 0);
+    g_free (message);
 
     if (uf->inputExifBuf==NULL)
     {

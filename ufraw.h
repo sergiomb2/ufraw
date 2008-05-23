@@ -13,6 +13,10 @@
 #ifndef _UFRAW_H
 #define _UFRAW_H
 
+#ifdef HAVE_LENSFUN
+#include <lensfun.h>
+#endif /* HAVE_LENSFUN */
+
 #include "nikon_curve.h"
 #include <time.h> // for time_t
 
@@ -43,8 +47,8 @@ enum { linear_histogram, log_histogram };
 /* The following enum should match the dcraw_interpolation enum
  * in dcraw_api.h. */
 enum { ahd_interpolation, vng_interpolation, four_color_interpolation,
-       ppg_interpolation, bilinear_interpolation, half_interpolation,
-       obsolete_eahd_interpolation, num_interpolations };
+       ppg_interpolation, bilinear_interpolation, none_interpolation,
+       half_interpolation, obsolete_eahd_interpolation, num_interpolations };
 enum { no_id, also_id, only_id, send_id };
 enum { manual_curve, linear_curve, custom_curve, camera_curve };
 enum { in_profile, out_profile, display_profile, profile_types};
@@ -59,8 +63,8 @@ typedef enum { display_developer, file_developer, auto_developer }
 	DeveloperMode;
 typedef enum { perceptual_intent, relative_intent, saturation_intent,
 	absolute_intent, disable_intent } Intent;
-typedef enum { ufraw_first_phase, ufraw_denoise_phase, ufraw_final_phase,
-	ufraw_phases_num } UFRawPhase;
+typedef enum { ufraw_first_phase, ufraw_denoise_phase, ufraw_develop_phase,
+        ufraw_lensfun_phase, ufraw_phases_num } UFRawPhase;
 typedef enum { grayscale_none, grayscale_lightness, grayscale_luminance,
 	grayscale_value, grayscale_mixer } GrayscaleMode;
 
@@ -176,7 +180,7 @@ typedef struct {
     /* GUI settings */
     double Zoom;
     int Scale;
-    gboolean LockAspect;
+    gboolean LockAspect; /* True if aspect ratio is locked */
     int saveConfiguration;
     int histogram, liveHistogramScale;
     int rawHistogramScale;
@@ -191,18 +195,37 @@ typedef struct {
 
     /* EXIF data */
     int orientation;
-    float iso_speed, shutter, aperture, focal_len;
+    float iso_speed, shutter, aperture, focal_len, subject_distance, crop_factor;
     char exifSource[max_name], isoText[max_name], shutterText[max_name],
 	 apertureText[max_name], focalLenText[max_name],
 	 focalLen35Text[max_name], lensText[max_name],
 	 flashText[max_name], whiteBalanceText[max_name];
     char timestampText[max_name], make[max_name], model[max_name];
     time_t timestamp;
+    /* Unfortunately dcraw strips make and model, but we need originals too */
+    char real_make[max_name], real_model[max_name];
+
+#ifdef HAVE_LENSFUN
+    lfDatabase *lensdb; /* mount/camera/lens database */
+    lfCamera *camera; /* camera description */
+    lfLens *lens; /* lens description */
+    lfLensCalibDistortion lens_distortion; /* lens distortion parameters */
+    lfLensCalibTCA lens_tca; /* lens tca parameters */
+    lfLensCalibVignetting lens_vignetting; /* lens vignetting parameters */
+    lfLensType cur_lens_type;
+    float lens_scale; /* Additional lens postprocessing scale power-of-two, default 0 */
+#endif /* HAVE_LENSFUN */
 } conf_data;
 
 typedef struct {
     guint8 *buffer;
     int height, width, depth, rowstride;
+    /* This bit field marks valid pieces of the image with 1's.
+       The variable contains a fixed 4x8 matrix of bits, every bit containing
+       the validity of the respective subarea of the whole image. The subarea
+       sizes are determined by dividing the width by 4 and height by 8.
+       This field must always contain at least 32 bits. */
+    long valid;
 } ufraw_image_data;
 
 /* image_data should be phased out and replaced by ufraw_image_data */
@@ -240,9 +263,13 @@ typedef struct ufraw_struct {
     int *RawHistogram;
     int RawChanMul[4];
     int RawCount;
+#ifdef HAVE_LENSFUN
+    int postproc_ops; /* postprocessing operations (LF_MODIFY_XXX) */
+    lfModifier *modifier;
+#endif
 } ufraw_data;
 
-extern const conf_data conf_default;
+extern conf_data conf_default;
 extern const wb_data wb_preset[];
 extern const int wb_preset_count;
 extern const char raw_ext[];
@@ -260,10 +287,9 @@ int ufraw_load_darkframe(ufraw_data *uf);
 void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode);
 int ufraw_convert_image(ufraw_data *uf);
 int ufraw_convert_image_init(ufraw_data *uf);
-int ufraw_convert_image_first_phase(ufraw_data *uf);
+int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix);
 int ufraw_convert_image_init_phase(ufraw_data *uf);
-int ufraw_convert_image_area(ufraw_data *uf,
-	int x, int y, int width, int height, UFRawPhase fromPhase);
+ufraw_image_data *ufraw_convert_image_area (ufraw_data *uf, int saidx, UFRawPhase phase);
 void ufraw_close(ufraw_data *uf);
 void ufraw_flip_orientation(ufraw_data *uf, int flip);
 int ufraw_flip_image(ufraw_data *uf, int flip);
@@ -273,6 +299,10 @@ void ufraw_auto_black(ufraw_data *uf);
 void ufraw_auto_curve(ufraw_data *uf);
 void ufraw_rotate_row(image_data *image, void *pixbuf, double angle,
 		      int bitDepth, int row, int offset, int width);
+
+void ufraw_img_get_subarea_coord (ufraw_image_data *img, unsigned saidx,
+                                  int *x, int *y, int *w, int *h);
+unsigned ufraw_img_get_subarea_idx (ufraw_image_data *img, int x, int y);
 
 /* prototypes for functions in ufraw_message.c */
 char *ufraw_get_message(ufraw_data *uf);
@@ -309,6 +339,10 @@ void RGB_to_Temperature(double RGB[3], double *T, double *Green);
 int curve_load(CurveData *cp, char *filename);
 int curve_save(CurveData *cp, char *filename);
 char *curve_buffer(CurveData *cp);
+/* Useful functions for handling the underappreciated Glib ptr arrays */
+int ptr_array_insert_sorted (GPtrArray *array, const void *item, GCompareFunc compare);
+int ptr_array_find_sorted (const GPtrArray *array, const void *item, GCompareFunc compare);
+void ptr_array_insert_index (GPtrArray *array, const void *item, int index);
 
 /* prototypes for functions in ufraw_conf.c */
 int conf_load(conf_data *c, const char *confFilename);

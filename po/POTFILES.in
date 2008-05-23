@@ -16,4 +16,5 @@ ufraw_routines.c
 ufraw_saver.c
 ufraw_ufraw.c
 ufraw_writer.c
+ufraw_lens_ui.c
 wb_presets.c

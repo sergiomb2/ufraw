@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-08 05:45+0200\n"
+"POT-Creation-Date: 2008-05-23 00:42+0400\n"
 "PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -29,13 +29,13 @@ msgstr "Открыть окно навигатора"
 msgid "No input file, nothing to do."
 msgstr "Нет файла на входе, нечего обрабатывать."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Loaded %s%s"
-msgstr "загружен %s"
+msgstr "Загружено %s%s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Saved %s%s"
-msgstr "сохранён %s"
+msgstr "Сохранёно %s%s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -52,9 +52,8 @@ msgstr "%s: переписать '%s'?"
 msgid "--silent option is valid only in batch mode"
 msgstr "ключ --silent используется только в пакетном режиме"
 
-#, fuzzy
 msgid "--rotate option is valid only in batch mode"
-msgstr "ключ --silent используется только в пакетном режиме"
+msgstr "ключ --rotate используется только в пакетном режиме"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
@@ -110,13 +109,11 @@ msgstr "Кривая камеры"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
-#, fuzzy
 msgid "No profile"
-msgstr "Цветовые профили"
+msgstr "Нет профиля"
 
-#, fuzzy
 msgid "Color matrix"
-msgstr "Использовать матрицу цвета"
+msgstr "Матрица цвета"
 
 msgid "sRGB"
 msgstr "sRGB"
@@ -143,6 +140,8 @@ msgid ""
 "ID file %s does not appear to be a regular file\n"
 "%s\n"
 msgstr ""
+"Файл %s не похож на обычный файл\n"
+"%s\n"
 
 #, c-format
 msgid ""
@@ -309,10 +308,8 @@ msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr ""
 "--linearity=LINEARITY Линейность базовой кривой (по умолчанию = 0.10).\n"
 
-#, fuzzy
 msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
-msgstr ""
-"--saturation=ЗНАЧ    Коррекция насыщенности (по умолчанию 1.0, 0 для Ч/Б)\n"
+msgstr "--contrast=ЗНАЧ       Коррекция контраста (по умолчанию 1.0)\n"
 
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
@@ -352,14 +349,13 @@ msgstr ""
 "                      Используемый алгоритм интерполяции (по умолчанию — "
 "ahd).\n"
 
-#, fuzzy
 msgid ""
-"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
-"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
-"                      Используемый алгоритм интерполяции (по умолчанию — "
-"ahd).\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Алгоритм перевода в уровни серого (по умолчанию "
+"none).\n"
 
 msgid "The options which are related to the final output are:\n"
 msgstr "Ключи, относящиеся к конечному результату:\n"
@@ -372,16 +368,16 @@ msgstr ""
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=РАЗМЕР         Уменьшить максимальный из размеров до РАЗМЕР.\n"
 
-#, fuzzy
 msgid ""
 "--out-type=ppm|tiff|png|jpeg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg\n"
-"                      Формат выходного файла (по умолчанию — ppm8).\n"
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Формат выходного файла (по умолчанию — ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
 msgstr ""
+"--out-depth=8|16      Бит на канал в выходном файле (по умолчанию 8).\n"
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -486,9 +482,8 @@ msgstr "'%s' - некорректное значение для ключа --%s 
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw был собран без поддержки ZIP."
 
-#, fuzzy
 msgid "--batch is obsolete. Use ufraw-batch instead."
-msgstr "--batch устарел. Используйте ufraw-batch."
+msgstr "Опция --batch устарела. Взамен используйте ufraw-batch."
 
 #, c-format
 msgid "getopt returned character code 0%o ??"
@@ -529,9 +524,9 @@ msgstr "'%s' не является названием существующей �
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' не является правильным идентификатором алгоритма интерполяции."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid grayscale option."
-msgstr "%s' не является корректным ключом create-id."
+msgstr "%s' не идентифицирует алгоритм перевода в оттенки серого."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -544,13 +539,13 @@ msgstr "%s' не является корректным ключом обреза
 msgid "you can not specify both --shrink and --size"
 msgstr "Вы не можете одновременно указать --shrink и --size"
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth."
-msgstr "'%s' не задаёт существующий каталог."
+msgstr "'%d' бит на пиксел не поддерживается."
 
 #, c-format
 msgid "Output type '%s' is deprecated"
-msgstr ""
+msgstr "Выходной формат '%s' устарел"
 
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw был собран без поддержки TIFF."
@@ -569,13 +564,13 @@ msgstr "'%s' не является корректным типом выходн�
 msgid "'%s' is not a valid output type for embedded image."
 msgstr "'%s' не является корректным типом вывода для встроенного изображения."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
-msgstr "'%s' не является корректным типом вывода для встроенного изображения."
+msgstr "'%d' бит на пиксель не поддерживается для встроенного изображения."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid rotate option."
-msgstr "%s' не является корректным ключом create-id."
+msgstr "Режим вращения '%s' не поддерживается."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
@@ -660,12 +655,11 @@ msgstr "Ошибка записи '%s'"
 #, c-format
 msgid "Unsupported output type (%d) for embedded image"
 msgstr ""
-"Неподдерживаемый тип конечного формата файлов (%d) для встроенного "
-"изображения"
+"Неподдерживаемый выходной формат файлов (%d) для встроенного изображения"
 
 #, c-format
 msgid "Loading raw file '%s'"
-msgstr "Загрузка файла RAW  '%s'"
+msgstr "Загрузка файла RAW '%s'"
 
 msgid "Can't allocate new image."
 msgstr "Невозможно создать новое изображение."
@@ -695,32 +689,17 @@ msgstr "Динамическая гистограмма"
 msgid "None"
 msgstr "Нет"
 
-#, fuzzy
-msgid "Average"
-msgstr "Среднее:"
-
 msgid "Lightness"
-msgstr ""
+msgstr "Яркость"
 
 msgid "Luminance"
-msgstr ""
+msgstr "Светимость"
 
 msgid "Value"
 msgstr "Значение"
 
 msgid "Channel Mixer"
-msgstr ""
-
-msgid "Red:"
-msgstr ""
-
-#, fuzzy
-msgid "Green:"
-msgstr "Зелёный"
-
-#, fuzzy
-msgid "Blue:"
-msgstr "Значение"
+msgstr "Микшер каналов"
 
 msgid "No more room for new curves."
 msgstr "Не хватает места для новых кривых."
@@ -856,13 +835,11 @@ msgstr "Мигать индикацией пере/недоэкспониров�
 msgid "Configuration"
 msgstr "Настройка"
 
-#, fuzzy
 msgid "Save configuration"
-msgstr "Сохранение всех параметров"
+msgstr "Сохранение конфигурации"
 
-#, fuzzy
 msgid "Save configuration to resource file ($HOME/.ufrawrc)"
-msgstr "Сохранить файл настроек ($HOME/.ufrawrc)"
+msgstr "Сохранить конфигурацию в файл ($HOME/.ufrawrc)"
 
 msgid "Log"
 msgstr "Журнал"
@@ -975,6 +952,9 @@ msgstr "Интерполяция VNG"
 msgid "PPG interpolation"
 msgstr "Интерполяция PPG"
 
+msgid "No interpolation"
+msgstr "Без интерполяции"
+
 msgid "No Bayer pattern"
 msgstr "Без баейеровской структуры"
 
@@ -982,7 +962,7 @@ msgid "Apply color smoothing"
 msgstr "Применить цветовое сглаживание"
 
 msgid "Denoise"
-msgstr ""
+msgstr "Шумодав"
 
 msgid "Threshold for wavelet denoising"
 msgstr "Порог для вейвлетного подавления шума"
@@ -1005,15 +985,18 @@ msgstr "Обнулить тёмный кадр"
 #. End of White Balance setting page
 #. Start of Grayscale page
 msgid "Grayscale"
-msgstr ""
+msgstr "Уровни серого"
 
 msgid "Grayscale Mode:"
-msgstr ""
+msgstr "Уровни серого:"
 
-msgid "Preserve luminosity"
-msgstr ""
+msgid "Reset channel mixer"
+msgstr "Сброс смесителя каналов"
 
-#. End of Grayscale page
+#. Lens correction page
+msgid "Lens correction"
+msgstr "Коррекция дефектов объектива"
+
 #. Start of Base Curve page
 msgid "Base curve"
 msgstr "Базовая кривая"
@@ -1074,9 +1057,8 @@ msgstr "Насыщенность"
 msgid "Absolute colorimetric"
 msgstr "Абс. колориметрическая"
 
-#, fuzzy
 msgid "Output bit depth"
-msgstr "Вывод"
+msgstr "Глубина цвета"
 
 msgid "Display intent"
 msgstr "Монитор"
@@ -1090,14 +1072,13 @@ msgid "Correct luminosity, saturation"
 msgstr "Изменить освещенность, насыщенность"
 
 msgid "Contrast"
-msgstr ""
+msgstr "Контраст"
 
 msgid "Global contrast adjustment"
-msgstr ""
+msgstr "Глобальная коррекция контраста"
 
-#, fuzzy
 msgid "Reset global contrast to default"
-msgstr "Сбросить значение чёрной точки до исходного"
+msgstr "Сбросить глобальный контраст"
 
 msgid "Reset saturation to default"
 msgstr "Сбросить значение насыщенности до исходного"
@@ -1170,30 +1151,26 @@ msgid "Orientation:"
 msgstr "Ориентация:"
 
 #. Start of Save page
-#, fuzzy
 msgid "Save"
-msgstr "Сохранить _как"
+msgstr "Сохранить"
 
 msgid "Path"
-msgstr ""
+msgstr "Путь"
 
 msgid "Select output path"
-msgstr ""
+msgstr "Выберите каталог результата"
 
-#, fuzzy
 msgid "Filename"
-msgstr "Имя файла: %s%s"
+msgstr "Имя файла"
 
-#, fuzzy
 msgid "JPEG compression level"
-msgstr "Уровень сжатия"
+msgstr "Уровень сжатия JPEG"
 
-#, fuzzy
 msgid "JPEG progressive encoding"
-msgstr "Прогрессивное кодирование"
+msgstr "Прогрессивное кодирование JPEG"
 
 msgid "TIFF lossless Compress"
-msgstr ""
+msgstr "Сжатие без потерь TIFF"
 
 msgid "Embed EXIF data in JPEG or PNG files"
 msgstr "Встроить данные EXIF в файлы JPG или PNG"
@@ -1230,7 +1207,7 @@ msgid "Just this once"
 msgstr "Только в этот раз"
 
 msgid "Remember output path"
-msgstr ""
+msgstr "Запомнить каталог результата"
 
 msgid "Overwrite existing files without asking"
 msgstr "Перезаписать существующие файлы без подтверждения"
@@ -1253,7 +1230,7 @@ msgid "Timestamp"
 msgstr "Дата и время"
 
 msgid "Shutter time"
-msgstr ""
+msgstr "Выдержка"
 
 msgid "Aperture"
 msgstr "Диафрагма"
@@ -1267,6 +1244,7 @@ msgstr "Фокусное расстояние"
 msgid "35mm focal length"
 msgstr "Эквивалент 35мм"
 
+#. Lens selector
 msgid "Lens"
 msgstr "Объектив"
 
@@ -1392,8 +1370,8 @@ msgstr "Невозможно уменьшить размер из %d в %d."
 
 msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr ""
-"Невозможно использовать баланс белого камеры, возврат к автоматическому \n"
-"балансу белого"
+"Невозможно использовать баланс белого камеры,\n"
+"возврат к автоматическому балансу белого"
 
 #. Error was not already set before
 #, c-format
@@ -1405,9 +1383,8 @@ msgstr "Ошибка при создании файла '%s'."
 msgid "Error creating file."
 msgstr "Ошибка при создании файла."
 
-#, fuzzy
 msgid "Converting image"
-msgstr "Сохраняется снимок"
+msgstr "Преобразуется снимок"
 
 msgid "Saving image"
 msgstr "Сохраняется снимок"
@@ -1422,7 +1399,7 @@ msgstr "Не удалось встроить профиль вывода '%s' в
 
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
-msgstr ""
+msgstr "Игнорируется неподдерживаемая глубина цвета '%d'."
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
@@ -1431,6 +1408,119 @@ msgstr "Буфер EXIF длиной %d слишком велик, проигн�
 #, c-format
 msgid "Unknown file type %d."
 msgstr "Неизвестный тип данных %d."
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+"Производитель:\t%s\n"
+"Модель:\t\t\t%s%s\n"
+"Крепление:\t\t%s\n"
+"Кроп фактор:\t%.1f"
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+"Производитель:\t%s\n"
+"Модель:\t\t\t%s\n"
+"Диапазон ф.р:\t%s\n"
+"Диафрагма:\t\t%s\n"
+"Кроп фактор:\t%.1f\n"
+"Тип:\t\t\t\t%s\n"
+"Крепление:\t\t%s"
+
+msgid "Focal"
+msgstr "Фокус"
+
+msgid "Lens focal distance"
+msgstr "Фокусное расстояние"
+
+msgid "Lens aperture"
+msgstr "Диафрагма"
+
+msgid "Distance"
+msgstr "Расстояние"
+
+msgid "Distance to subject"
+msgstr "Расстояние до объекта"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "Модель:"
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "Математическая модель хроматических аберраций"
+
+msgid "Parameters"
+msgstr "Параметры"
+
+msgid "Optical vignetting mathematical model"
+msgstr "Математическая модель виньетирования"
+
+msgid "Lens distortion mathematical model"
+msgstr "Математическая модель оптических искажений"
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr "Геометрия объектива:"
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "Геометрия объектива, которым производилась съёмка"
+
+msgid "Target geometry:"
+msgstr "Целевая геометрия:"
+
+msgid "The target geometry for output image"
+msgstr "Геометрия для выходного изображения"
+
+msgid "Camera"
+msgstr "Камера"
+
+msgid "Search for camera using the entered pattern"
+msgstr "Поиск камеры по введённым ключевым словам"
+
+msgid "Choose camera from a complete list"
+msgstr "Выбрать камеру из полного списка"
+
+msgid "Search for lens using the entered pattern"
+msgstr "Поиск объектива по введённым ключевым словам"
+
+msgid "Choose lens from a list of possible variants"
+msgstr "Выбрать объектив из полного списка"
+
+msgid "Scale"
+msgstr "Масштаб"
+
+msgid "Image scale power-of-two"
+msgstr "Масштаб (степень двойки)"
+
+msgid "Reset image scale to default"
+msgstr "Сбросить масштаб"
+
+msgid "Autoscale the image for best fit"
+msgstr "Автоподбор масштаба"
+
+msgid "Lateral chromatic aberration"
+msgstr "Хроматические аберрации"
+
+msgid "Optical vignetting"
+msgstr "Оптическое виньетирование"
+
+msgid "Lens distortion"
+msgstr "Искажения объектива"
+
+msgid "Lens geometry"
+msgstr "Геометрия объектива"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
@@ -1491,16 +1581,14 @@ msgid "White fluorescent"
 msgstr "Белый флюоресцентный"
 
 #. In Nikon D300
-#, fuzzy
 msgid "Sodium-vapor fluorescent"
-msgstr "Нейтральный флюоресцентный"
+msgstr "Натриевый флюоресцентный"
 
-#, fuzzy
 msgid "Day white fluorescent"
-msgstr "Теплый белый флюоресцентный"
+msgstr "Флюоресцентный дневного света"
 
 msgid "High temp. mercury-vapor fluorescent"
-msgstr ""
+msgstr "Высокотемпературный ртутный флюоресцентный"
 
 #. For Olympus with no real "Flash" preset:
 msgid "Flash (auto mode)"

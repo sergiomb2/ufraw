@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.10 2008/04/24 18:16:43 udifuchs Exp $
+# $Id: Makefile.am,v 1.11 2008/05/23 21:32:32 udifuchs Exp $
 
 noinst_HEADERS = ufraw_icons.h
 icon_DATA = ufraw.png
@@ -13,13 +13,15 @@ UFRAW_ICONS = ufraw.png exposure-24.png film-24.png digital-24.png \
     icc-profile-display-24.png curve-24.png grayscale-24.png \
     flip-horiz-24.png flip-vert-24.png rotate-90-24.png rotate-270-24.png \
     lock-24.png exif-24.png crop-24.png rectify-24.png gimp-24.png \
-    channel-blue-24.png channel-green-24.png channel-red-24.png
+    channel-blue-24.png channel-green-24.png channel-red-24.png \
+    lens-24.png tca-24.png vignetting-24.png geometry-24.png
 
 EXTRA_DIST = $(UFRAW_ICONS) exposure.svg film.svg digital.svg \
     restore-lch.svg restore-hsv.svg interpolation.svg \
     white-balance.svg color-corrections.svg \
     icc-profile-output.svg icc-profile-display.svg curve.svg \
-    lock.svg exif.svg crop.svg rectify.svg grayscale.svg
+    lock.svg exif.svg crop.svg rectify.svg grayscale.svg \
+    lens.svg tca.svg vignetting.svg distortion.svg geometry.svg
 
 ufraw_icons.h: $(UFRAW_ICONS)
 	gdk-pixbuf-csource --build-list  ufraw_icon $(srcdir)/ufraw.png \
@@ -40,6 +42,7 @@ ufraw_icons.h: $(UFRAW_ICONS)
 		exif_24 $(srcdir)/exif-24.png \
 		crop_24 $(srcdir)/crop-24.png \
 		rectify_24 $(srcdir)/rectify-24.png \
+		lens_24 $(srcdir)/lens-24.png \
 		flip_horiz_24 $(srcdir)/flip-horiz-24.png \
 		flip_vert_24 $(srcdir)/flip-vert-24.png \
 		rotate_90_24 $(srcdir)/rotate-90-24.png \
@@ -49,4 +52,8 @@ ufraw_icons.h: $(UFRAW_ICONS)
 		channel_blue_24 $(srcdir)/channel-blue-24.png \
 		channel_green_24 $(srcdir)/channel-green-24.png \
 		channel_red_24 $(srcdir)/channel-red-24.png \
+		tca_24 $(srcdir)/tca-24.png \
+		distortion_24 $(srcdir)/distortion-24.png \
+		vignetting_24 $(srcdir)/vignetting-24.png \
+		geometry_24 $(srcdir)/geometry-24.png \
 		> $@ || rm -f $@

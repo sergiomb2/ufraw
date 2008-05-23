@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.112 2008/04/06 04:40:30 nkbj Exp $
+dnl $Id: configure.ac,v 1.113 2008/05/23 21:32:32 udifuchs Exp $
 AC_INIT(UFRaw, 0.14)
 AC_PREREQ(2.57)
 
@@ -47,7 +47,7 @@ case $host_os in
     ufraw_win32=no
     ;;
 esac
-AM_CONDITIONAL(UFRAW_WIN32, test $ufraw_win32 = yes)
+AM_CONDITIONAL(UFRAW_WIN32, test x$ufraw_win32 = xyes)
 
 if test $ufraw_win32 = yes; then
   CFLAGS="$CFLAGS -mno-cygwin -mwindows -mms-bitfields"
@@ -182,12 +182,19 @@ PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
   [ have_exiv2=no
     AC_MSG_RESULT($EXIV2_PKG_ERRORS) ] )
 
+# Check for the lensfun library
+PKG_CHECK_MODULES(LENSFUN, lensfun >= 0.2,
+  [ have_lensfun=yes
+    AC_DEFINE(HAVE_LENSFUN, 1, have lensfun library) ],
+  [ have_lensfun=no
+    AC_MSG_RESULT($LENSFUN_PKG_ERRORS) ] )
+
 # UFRAW_CPPFLAGS is added to the preprocessor flags AM_CPPFLAGS,
 # affecting also the C and C++ compilers.
-UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $LCMS_CFLAGS"
+UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS"
 AC_SUBST(UFRAW_CPPFLAGS)
 # UFRAW_LDADD is added to the linker flags LDADD.
-UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS"
+UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS"
 AC_SUBST(UFRAW_LDADD)
 
 if test $ufraw_win32 = yes; then
@@ -243,6 +250,13 @@ AC_ARG_ENABLE(extras,
 AC_MSG_RESULT($enable_extras)
 AM_CONDITIONAL(MAKE_EXTRAS, test $enable_extras = yes)
 
+AC_MSG_CHECKING(whether to enable 'None' interpolation)
+AC_ARG_ENABLE(interp_none,
+  [  --enable-interp-none    enable 'None' interpolation (mostly for debugging)],
+  AC_DEFINE(ENABLE_INTERP_NONE, 1, 'None' interpolation enabled),
+  enable_interp_none=no)
+AC_MSG_RESULT($enable_interp_none)
+
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(icons/Makefile)
 AC_CONFIG_FILES(po/Makefile.in)
@@ -260,3 +274,4 @@ AC_MSG_NOTICE(TIFF support: $have_tiff)
 AC_MSG_NOTICE(gzip compressed raw support: $have_zlib)
 AC_MSG_NOTICE(bzip2 compressed raw support: $have_libbz2)
 AC_MSG_NOTICE(Scrolling in preview using GtkImageView: $have_gtkimageview)
+AC_MSG_NOTICE(Lens defects correction via lensfun: $have_lensfun)

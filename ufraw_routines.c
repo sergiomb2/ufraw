@@ -521,3 +521,83 @@ char *curve_buffer(CurveData *c)
     }
     return buf;
 }
+
+int ptr_array_insert_sorted (
+    GPtrArray *array, const void *item, GCompareFunc compare)
+{
+    int length = array->len;
+    g_ptr_array_set_size (array, length + 1);
+    const void **root = (const void **)array->pdata;
+
+    int m = 0, l = 0, r = length - 1;
+
+    // Skip trailing NULL, if any
+    if (l <= r && !root [r])
+        r--;
+    
+    while (l <= r)
+    {
+        m = (l + r) / 2;
+        int cmp = compare (root [m], item);
+
+        if (cmp == 0)
+        {
+            ++m;
+            goto done;
+        }
+        else if (cmp < 0)
+            l = m + 1;
+        else
+            r = m - 1;
+    }
+    if (r == m)
+        m++;
+
+done:
+    memmove (root + m + 1, root + m, (length - m) * sizeof (void *));
+    root [m] = item;
+    return m;
+}
+
+int ptr_array_find_sorted (
+    const GPtrArray *array, const void *item, GCompareFunc compare)
+{
+    int length = array->len;
+    void **root = array->pdata;
+
+    int l = 0, r = length - 1;
+    int m = 0, cmp = 0;
+
+    if (!length)
+        return -1;
+
+    // Skip trailing NULL, if any
+    if (!root [r])
+        r--;
+
+    while (l <= r)
+    {
+        m = (l + r) / 2;
+        cmp = compare (root [m], item);
+
+        if (cmp == 0)
+            return m;
+        else if (cmp < 0)
+            l = m + 1;
+        else
+            r = m - 1;
+    }
+    
+    return -1;
+}
+
+void ptr_array_insert_index (
+    GPtrArray *array, const void *item, int index)
+{
+    const void **root;
+    int length = array->len;
+    g_ptr_array_set_size (array, length + 1);
+    root = (const void **)array->pdata;
+    memmove (root + index + 1, root + index, (length - index) * sizeof (void *));
+    root [index] = item;
+}

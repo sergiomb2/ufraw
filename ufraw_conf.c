@@ -27,7 +27,7 @@
 #include <exiv2/exv_conf.h>
 #endif
 
-const conf_data conf_default = {
+conf_data conf_default = {
     /* Internal data */
     sizeof(conf_data), 7, /* confSize, version */
 
@@ -112,16 +112,26 @@ const conf_data conf_default = {
 
     /* EXIF data */
     -1, /* orientation */
-    0.0, 0.0, 0.0, 0.0, /* iso_speed, shutter, aperture, focal_len */
+    0.0, 0.0, 0.0, 0.0, 1.0, 1.0, /* iso_speed, shutter, aperture, focal_len, subject_dist, crop_factor */
     "", "", "", "", /* exifSource, isoText, shutterText, apertureText */
     "", "", "", "", /* focalLenText, focalLen35Text, lensText, flashText */
     "", /* whiteBalanceText */
-    "", "", "", /* timestampText, make, model */
-    0 /* timestamp */
+    "", "", "", /* timestamp, make, model */
+    0, /* timestamp */
+    "", "", /* real_make, real_model */
+
+#ifdef HAVE_LENSFUN
+    NULL,                         /* mount/camera/lens database */
+    NULL,                         /* camera description */
+    NULL,                         /* lens description */
+    { LF_DIST_MODEL_NONE },       /* lens distortion parameters */
+    { LF_TCA_MODEL_NONE },        /* lens tca parameters */
+    { LF_VIGNETTING_MODEL_NONE }, /* lens vignetting parameters */
+#endif
 };
 
 static const char *interpolationNames[] =
-    { "ahd", "vng", "four-color", "ppg", "bilinear", "half", "eahd", NULL };
+    { "ahd", "vng", "four-color", "ppg", "bilinear", "none", "half", "eahd", NULL };
 static const char *restoreDetailsNames[] =
     { "clip", "lch", "hsv", NULL };
 static const char *clipHighlightsNames[] =
@@ -130,6 +140,21 @@ static const char *intentNames[] =
     { "perceptual", "relative", "saturation", "absolute", "disable", NULL };
 static const char *grayscaleModeNames[] =
     { "none", "lightness", "luminance", "value", "mixer", NULL };
+
+static void init_default_conf ()
+{
+#ifdef HAVE_LENSFUN
+    static int inited = 0;
+
+    if (!inited)
+    {
+        inited = 1;
+        /* Load lens database */
+        conf_default.lensdb = lf_db_new ();
+        lf_db_load (conf_default.lensdb);
+    }
+#endif
+}
 
 static int conf_find_name(const char name[],const char *namesList[], int notFound)
 {
@@ -660,6 +685,7 @@ int conf_load(conf_data *c, const char *IDFilename)
     GError *err = NULL;
     int i;
 
+    init_default_conf ();
     *c = conf_default;
     if (IDFilename==NULL) {
 	hd = uf_get_home_dir();
@@ -1258,6 +1284,23 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     }
     dst->intent[out_profile] = src->intent[out_profile];
     dst->intent[display_profile] = src->intent[display_profile];
+
+#ifdef HAVE_LENSFUN
+    dst->lensdb = src->lensdb;
+    if (src->camera)
+    {
+        dst->camera = lf_camera_new ();
+        lf_camera_copy (dst->camera, src->camera);
+    }
+    if (src->lens)
+    {
+        dst->lens = lf_lens_new ();
+        lf_lens_copy (dst->lens, src->lens);
+    }
+    dst->lens_distortion = src->lens_distortion;
+    dst->lens_tca = src->lens_tca;
+    dst->lens_vignetting = src->lens_vignetting;
+#endif /* HAVE_LENSFUN */
 }
 
 /* Copy the 'save options' from *src to *dst */

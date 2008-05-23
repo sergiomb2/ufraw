@@ -168,6 +168,15 @@ try {
 	strlcpy_to_utf8(uf->conf->whiteBalanceText, max_name, pos);
     }
 
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.Make")))
+	    != exifData.end() ) {
+        strlcpy_to_utf8(uf->conf->real_make, max_name, pos);
+    }
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.Model")))
+	    != exifData.end() ) {
+        strlcpy_to_utf8(uf->conf->real_model, max_name, pos);
+    }
+
     /* Store all EXIF data read in. */
     Exiv2::DataBuf buf(exifData.copy());
     uf->inputExifBufLen = buf.size_;

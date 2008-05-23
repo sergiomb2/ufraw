@@ -13,6 +13,10 @@
  * a copy of the license along with this program.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -714,7 +718,8 @@ static inline int median9(int *p)
 #undef PIX_SWAP
 #undef PIX_SORT
 
-static ushort eahd_median(int row, int col, int color,
+// Just making this function inline speeds up ahd_interpolate_INDI() up to 15%
+static inline ushort eahd_median(int row, int col, int color,
     ushort (*image)[4], const int width)
 {
   //declare the pixel array

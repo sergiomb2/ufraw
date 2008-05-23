@@ -635,6 +635,32 @@ void ufraw_close(ufraw_data *uf)
     ufraw_message(UFRAW_CLEAN, NULL);
 }
 
+/* Return the coordinates and the size of given image subarea.
+ * There are always 32 subareas, numbered 0 to 31, ordered in a 4x8 matrix.
+ */
+void ufraw_img_get_subarea_coord (
+    ufraw_image_data *img, unsigned saidx, int *x, int *y, int *w, int *h)
+{
+    int saw = (img->width + 3) / 4;
+    int sah = (img->height + 7) / 8;
+    int sax = saidx % 4;
+    int say = saidx / 4;
+    *x = saw * sax;
+    *y = sah * say;
+    *w = (sax < 3) ? saw : (img->width - saw * 3);
+    *h = (say < 7) ? sah : (img->height - sah * 7);
+}
+
+/* Return the subarea index given some X,Y image coordinates.
+ */
+unsigned ufraw_img_get_subarea_idx (
+    ufraw_image_data *img, int x, int y)
+{
+    int saw = (img->width + 3) / 4;
+    int sah = (img->height + 7) / 8;
+    return (x / saw) + (y / sah) * 4;
+}
+
 void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode)
 {
     int useMatrix = uf->conf->profileIndex[0] == 1 || uf->colors==4;
@@ -682,7 +708,7 @@ int ufraw_convert_image(ufraw_data *uf)
 {
     ufraw_developer_prepare(uf, file_developer);
     ufraw_convert_image_init(uf);
-    ufraw_convert_image_first_phase(uf);
+    ufraw_convert_image_first_phase(uf, TRUE);
     if (uf->ConvertShrink>1) {
 	dcraw_data *raw = uf->raw;
 	dcraw_image_data final;
@@ -697,14 +723,188 @@ int ufraw_convert_image(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
+#ifdef HAVE_LENSFUN
+
+/* Lanczos kernel is precomputed in a table with this resolution
+ * The value below seems to be enough for HQ upscaling up to eight times
+ */
+#define LANCZOS_TABLE_RES  256
+/* A support of 3 gives an overall sharper looking image, but
+ * it is a) slower b) gives more sharpening artefacts
+ */
+#define LANCZOS_SUPPORT    2
+/* Define this to use a floating-point implementation of Lanczos interpolation.
+ * The integer implementation is a little bit less accurate, but MUCH faster
+ * (even on machines with FPU - ~2.5 times faster on Core2); besides, it will
+ * run a hell lot faster on computers without a FPU (e.g. PDAs).
+ */
+//#define LANCZOS_DATA_FLOAT
+#ifdef LANCZOS_DATA_FLOAT
+#define LANCZOS_DATA_TYPE float
+#define LANCZOS_DATA_ONE 1.0
+#else
+#define LANCZOS_DATA_TYPE int
+#define LANCZOS_DATA_ONE 4096
+#endif
+
+void ufraw_lensfun_modify (
+    dcraw_image_data *img, lfModifier *modifier, int modflags)
+{
+    /* Apply vignetting correction first, before distorting the image */
+    if (modflags & LF_MODIFY_VIGNETTING)
+        lf_modifier_apply_color_modification (
+            modifier, img->image, 0.0, 0.0, img->width, img->height,
+            LF_CR_4 (RED, GREEN, BLUE, UNKNOWN),
+            img->width * sizeof (dcraw_image_type));
+
+    /* Now apply distortion, TCA and geometry in a single pass */
+    if (modflags & (LF_MODIFY_TCA | LF_MODIFY_DISTORTION |
+                    LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE))
+    {
+        dcraw_image_type *image2 = g_new (dcraw_image_type, img->height * img->width);
+        dcraw_image_type *cur = image2;
+        dcraw_image_type *tmp;
+        int i, x, y, c;
+
+        /* Precompute the Lanczos kernel */
+        LANCZOS_DATA_TYPE lanczos_func [LANCZOS_SUPPORT * LANCZOS_SUPPORT * LANCZOS_TABLE_RES];
+        for (i = 0; i < LANCZOS_SUPPORT * LANCZOS_SUPPORT * LANCZOS_TABLE_RES; i++)
+            if (i == 0)
+                lanczos_func [i] = LANCZOS_DATA_ONE;
+            else
+            {
+                float d = sqrt (((float)i) / LANCZOS_TABLE_RES);
+                lanczos_func [i] = (LANCZOS_DATA_TYPE)
+                    ((LANCZOS_DATA_ONE * LANCZOS_SUPPORT *
+                      sin (M_PI * d) * sin ((M_PI / LANCZOS_SUPPORT) * d)) /
+                     (M_PI * M_PI * d * d));
+            }
+
+        float *buff = g_new (float, img->width * 3 * 2);
+        for (y = 0; y < img->height; y++)
+        {
+            if (!lf_modifier_apply_subpixel_geometry_distortion (
+                modifier, 0, y, img->width, 1, buff))
+                goto no_distortion; /* should not happen */
+
+            float *modcoord = buff;
+            for (x = 0; x < img->width; x++, cur++)
+                for (c = 0; c < 3; c++, modcoord += 2)
+                {
+#ifdef LANCZOS_DATA_FLOAT
+                    float xs = ceilf  (modcoord [0]) - LANCZOS_SUPPORT;
+                    float xe = floorf (modcoord [0]) + LANCZOS_SUPPORT;
+                    float ys = ceilf  (modcoord [1]) - LANCZOS_SUPPORT;
+                    float ye = floorf (modcoord [1]) + LANCZOS_SUPPORT;
+                    int dsrc = img->width - (xe - xs) - 1;
+                    int r = 0;
+                    if (xs >= 0 && ys >= 0 && xe < img->width && ye < img->height)
+                    {
+                        dcraw_image_type *src = img->image +
+                            (((long)ys) * img->width + ((long)xs));
+
+                        float norm = 0.0;
+                        float sum = 0.0;
+
+                        float _dx = modcoord [0] - xs;
+                        float dy = modcoord [1] - ys;
+                        for (; ys <= ye; ys += 1.0, dy -= 1.0)
+                        {
+                            float xc, dx = _dx;
+                            for (xc = xs; xc <= xe; xc += 1.0, dx -= 1.0, src++)
+                            {
+                                float d = dx * dx + dy * dy;
+                                if (d >= LANCZOS_SUPPORT * LANCZOS_SUPPORT)
+                                    continue;
+
+                                d = lanczos_func [(int)(d * LANCZOS_TABLE_RES)];
+                                norm += d;
+                                sum += d * src [0][c];
+                            }
+                            src += dsrc;
+                        }
+
+                        if (norm != 0.0)
+                        {
+                            r = (int)sum / norm;
+                            if (r > 0xffff)
+                                r = 0xffff;
+                            else if (r < 0)
+                                r = 0;
+                        }
+                    }
+                    cur [0][c] = r;
+#else
+                    /* Do it in integer arithmetic, it's faster */
+                    int xx = (int)modcoord [0];
+                    int yy = (int)modcoord [1];
+                    int xs = xx + 1 - LANCZOS_SUPPORT;
+                    int xe = xx     + LANCZOS_SUPPORT;
+                    int ys = yy + 1 - LANCZOS_SUPPORT;
+                    int ye = yy     + LANCZOS_SUPPORT;
+                    int dsrc = img->width - (xe - xs) - 1;
+                    int r = 0;
+                    if (xs >= 0 && ys >= 0 && xe < img->width && ye < img->height)
+                    {
+                        dcraw_image_type *src = img->image + (ys * img->width + xs);
+
+                        int norm = 0;
+                        int sum = 0;
+
+                        int _dx = (int)(modcoord [0] * 4096.0) - (xs << 12);
+                        int dy = (int)(modcoord [1] * 4096.0) - (ys << 12);
+                        for (; ys <= ye; ys++, dy -= 4096)
+                        {
+                            int xc, dx = _dx;
+                            for (xc = xs; xc <= xe; xc++, src++, dx -= 4096)
+                            {
+                                int d = (dx * dx + dy * dy) >> 12;
+                                if (d >= 4096 * LANCZOS_SUPPORT * LANCZOS_SUPPORT)
+                                    continue;
+
+                                d = lanczos_func [(d * LANCZOS_TABLE_RES) >> 12];
+                                norm += d;
+                                sum += d * src [0][c];
+                            }
+                            src += dsrc;
+                        }
+
+                        if (norm != 0)
+                        {
+                            r = sum / norm;
+                            if (r > 0xffff)
+                                r = 0xffff;
+                            else if (r < 0)
+                                r = 0;
+                        }
+                    }
+                    cur [0][c] = r;
+#endif
+                }
+        }
+
+        /* Exchange the original image and the modified one */
+        tmp = img->image;
+        img->image = image2;
+        image2 = tmp;
+
+no_distortion:
+        /* Intermediate buffers not needed anymore */
+        g_free (buff);
+        g_free (image2);
+    }
+}
+
+#endif // HAVE_LENSFUN
+
 /* This is the part of the conversion which is not supported by
  * ufraw_convert_image_area() */
-int ufraw_convert_image_first_phase(ufraw_data *uf)
+int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
 {
     int status, c;
     dcraw_data *raw = uf->raw;
+    // final->image memory will be realloc'd as needed
     dcraw_image_data final;
-    // final.image memory will be realloc'd as needed
     final.image = uf->image.image;
     dcraw_data *dark = uf->conf->darkframe ? uf->conf->darkframe->raw : NULL;
 
@@ -720,6 +920,35 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
 	for (c=0; c<4; c++)
 	    uf->developer->rgbWB[c] = 0x10000;
     }
+
+    // Flip the image to final position before doing anything else
+    dcraw_flip_image(&final, uf->conf->orientation);
+
+#ifdef HAVE_LENSFUN
+    if (lensfix && uf->conf->lens)
+    {
+        lfModifier *modifier = lensfix ? lf_modifier_new (
+            uf->conf->lens, uf->conf->crop_factor, final.width, final.height) : NULL;
+
+        if (modifier)
+        {
+            float real_scale = pow (2.0, uf->conf->lens_scale);
+            const int modflags = LF_MODIFY_TCA | LF_MODIFY_VIGNETTING |
+                LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE;
+
+            int finmodflags = lf_modifier_initialize (
+                modifier, uf->conf->lens, LF_PF_U16,
+                uf->conf->focal_len, uf->conf->aperture,
+                uf->conf->subject_distance, real_scale,
+                uf->conf->cur_lens_type, modflags, FALSE);
+            if (finmodflags & modflags)
+                ufraw_lensfun_modify (&final, modifier, finmodflags);
+
+            lf_modifier_destroy (modifier);
+        }
+    }
+#endif // HAVE_LENSFUN
+
     dcraw_image_stretch(&final, raw->pixel_aspect);
     if (uf->conf->size==0 && uf->conf->shrink>1) {
 	dcraw_image_resize(&final,
@@ -742,7 +971,7 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
 	    dcraw_image_resize(&final, uf->conf->size * finalSize / cropSize);
 	}
     }
-    dcraw_flip_image(&final, uf->conf->orientation);
+
     uf->image.image = final.image;
     uf->image.height = final.height;
     uf->image.width = final.width;
@@ -753,6 +982,7 @@ int ufraw_convert_image_first_phase(ufraw_data *uf)
     FirstImage->depth = sizeof(dcraw_image_type);
     FirstImage->rowstride = FirstImage->width * FirstImage->depth;
     FirstImage->buffer = (guint8 *)uf->image.image;
+    FirstImage->valid = 0xffffffff;
 
     return UFRAW_SUCCESS;
 }
@@ -761,72 +991,277 @@ int ufraw_convert_image_init_phase(ufraw_data *uf)
 {
     ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
     ufraw_image_data *img;
-    if ( uf->conf->threshold>0 ) {
-	img = &uf->Images[ufraw_denoise_phase];
-	img->height = FirstImage->height;
-	img->width = FirstImage->width;
-	img->depth = sizeof(dcraw_image_type);
-	img->rowstride = img->width * img->depth;
-	img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
+
+    /* Denoise image layer */
+    img = &uf->Images[ufraw_denoise_phase];
+    if (uf->conf->threshold > 0)
+    {
+        /* Mark layer invalid if we're resizing */
+        if (img->height != FirstImage->height ||
+            img->width != FirstImage->width ||
+            !img->buffer)
+            img->valid = 0;
+
+        img->height = FirstImage->height;
+        img->width = FirstImage->width;
+        img->depth = sizeof(dcraw_image_type);
+        img->rowstride = img->width * img->depth;
+        img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
     }
-    img = &uf->Images[ufraw_final_phase];
+    else
+        img->valid = 0;
+
+    /* Development image layer */
+    img = &uf->Images[ufraw_develop_phase];
+    if (img->height != FirstImage->height ||
+        img->width != FirstImage->width ||
+        !img->buffer)
+        img->valid = 0;
+
     img->height = FirstImage->height;
     img->width = FirstImage->width;
     img->depth = 3;
     img->rowstride = img->width * img->depth;
     img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
 
+#ifdef HAVE_LENSFUN
+    /* Postprocessing image layer */
+    img = &uf->Images[ufraw_lensfun_phase];
+    if (img->height != FirstImage->height ||
+        img->width != FirstImage->width ||
+        !img->buffer || !uf->modifier)
+        img->valid = 0;
+
+    img->height = FirstImage->height;
+    img->width = FirstImage->width;
+    img->depth = 3;
+    img->rowstride = img->width * img->depth;
+
+    if (uf->modifier)
+        lf_modifier_destroy (uf->modifier);
+
+    uf->modifier = lf_modifier_new (
+        uf->conf->lens, uf->conf->crop_factor, img->width, img->height);
+
+    float real_scale = pow (2.0, uf->conf->lens_scale);
+    uf->postproc_ops = lf_modifier_initialize (
+        uf->modifier, uf->conf->lens, LF_PF_U8,
+        uf->conf->focal_len, uf->conf->aperture,
+        uf->conf->subject_distance, real_scale,
+        uf->conf->cur_lens_type, LF_MODIFY_TCA | LF_MODIFY_VIGNETTING |
+        LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE, FALSE);
+
+    if (uf->postproc_ops & (LF_MODIFY_TCA | LF_MODIFY_VIGNETTING |
+                            LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY |
+                            LF_MODIFY_SCALE))
+        img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
+    else
+    {
+        lf_modifier_destroy (uf->modifier);
+        uf->modifier = NULL;
+        img->valid = 0;
+    }
+#endif
+
     return UFRAW_SUCCESS;
 }
 
-int ufraw_convert_image_area(ufraw_data *uf,
-	int x, int y, int width, int height, UFRawPhase fromPhase)
+ufraw_image_data *ufraw_convert_image_area (
+    ufraw_data *uf, int saidx, UFRawPhase phase)
 {
-    dcraw_data *raw = uf->raw;
-    ufraw_image_data in = uf->Images[ufraw_first_phase];
-    int yy;
+    int x = 0, y = 0, w = 0, h = 0;
+    ufraw_image_data *out = &uf->Images [phase];
 
-    if ( fromPhase<=ufraw_denoise_phase && uf->conf->threshold>0 ) {
-	dcraw_image_data tmp;
-	/* With shrink==2 the border should be 16 pixels */
-	int border = 16 * 2 / uf->ConvertShrink;
-	int bx = MAX(x-border, 0);
-	int by = MAX(y-border, 0);
-	tmp.width = MIN(width + x-bx + border, in.width - bx);
-	if ( tmp.width<16 ) {
-	    bx = bx + tmp.width - 16; // We assume in.width>16
-	    tmp.width = 16;
-	}
-	tmp.height = MIN(height + y-by + border, in.height - by);
-	if ( tmp.height<16 ) {
-	    by = by + tmp.height - 16; // We assume in.height>16
-	    tmp.height = 16;
-	}
-	tmp.image = g_new(dcraw_image_type, tmp.height * tmp.width);
-	for (yy=0; yy<tmp.height; yy++)
-	    memcpy(tmp.image[yy*tmp.width],
-		    in.buffer + ((by+yy)*in.width + bx)*in.depth,
-		    tmp.width * in.depth);
-	/* Scale threshold according to shrink factor, as the effect of
-	 * neighbouring pixels decays about exponentially with distance. */
-	float threshold = uf->conf->threshold * exp(-(uf->ConvertShrink/2.0-1));
-	dcraw_wavelet_denoise_shrinked(&tmp, raw, threshold);
-	ufraw_image_data denoise = uf->Images[ufraw_denoise_phase];
-	for (yy=0; yy<height; yy++)
-	    memcpy(denoise.buffer + ((y+yy)*denoise.width + x)*denoise.depth,
-		    tmp.image[(yy+y-by)*width+x-bx], width*denoise.depth);
-	g_free(tmp.image);
+    if (saidx >= 0)
+    {
+        if (out->valid & (1 << saidx))
+            return out; // the subarea has been already computed
+
+        /* Get subarea coordinates */
+        ufraw_img_get_subarea_coord (out, saidx, &x, &y, &w, &h);
     }
-    if ( uf->conf->threshold>0 ) in = uf->Images[ufraw_denoise_phase];
-    guint16 *pixtmp = g_new(guint16, width*3);
-    ufraw_image_data out = uf->Images[ufraw_final_phase];
-    for (yy=y; yy<y+height; yy++) {
-	develope(out.buffer + (yy*out.width + x)*out.depth,
-		(void*)in.buffer + (yy*in.width + x)*in.depth,
-		uf->developer, 8, pixtmp, width);
+
+    /* Get the subarea image for previous phase */
+    ufraw_image_data *in = (phase > ufraw_first_phase) ?
+        ufraw_convert_image_area (uf, saidx, phase - 1) :
+        &uf->Images [ufraw_first_phase];
+
+    switch (phase)
+    {
+        case ufraw_denoise_phase:
+            {
+                if (uf->conf->threshold == 0)
+                    // No denoise phase, return the image from previous phase
+                    return in;
+
+                if (saidx < 0)
+                    return out;
+
+                dcraw_image_data tmp;
+                /* With shrink==2 the border should be 16 pixels */
+                int border = 16 * 2 / uf->ConvertShrink;
+                int bx = MAX (x - border, 0);
+                int by = MAX (y - border, 0);
+                tmp.width = MIN ((x - bx) + w + border, in->width - bx);
+                if (tmp.width < 16)
+                {
+                    bx = bx + tmp.width - 16; // We assume in->width>16
+                    tmp.width = 16;
+                }
+                tmp.height = MIN ((y - by) + h + border, in->height - by);
+                if (tmp.height < 16)
+                {
+                    by = by + tmp.height - 16; // We assume in->height>16
+                    tmp.height = 16;
+                }
+                tmp.image = g_new (dcraw_image_type, tmp.height * tmp.width);
+                int yy;
+                for (yy = 0; yy < tmp.height; yy++)
+                    memcpy (tmp.image [yy * tmp.width],
+                            in->buffer + ((by + yy) * in->width + bx) * in->depth,
+                            tmp.width * in->depth);
+                /* Scale threshold according to shrink factor, as the effect of
+                 * neighbouring pixels decays about exponentially with distance. */
+                float threshold = uf->conf->threshold * exp(1.0 - uf->ConvertShrink / 2.0);
+                dcraw_wavelet_denoise_shrinked (&tmp, uf->raw, threshold);
+                for (yy = 0; yy < h; yy++)
+                    memcpy (out->buffer + ((y + yy) * out->width + x) * out->depth,
+                            tmp.image [(yy + y - by) * tmp.width + x - bx], w * out->depth);
+                g_free (tmp.image);
+            }
+            break;
+
+        case ufraw_develop_phase:
+            {
+                if (saidx < 0)
+                    return out;
+
+                guint16 *pixtmp = g_new (guint16, w * 3);
+                int yy;
+                for (yy = y; yy < y + h; yy++)
+                {
+                    guint8 *dest = out->buffer + (yy * out->width + x) * out->depth;
+                    develope (
+                        dest, (void *)(in->buffer + (yy * in->width + x) * in->depth),
+                        uf->developer, 8, pixtmp, w);
+
+#ifdef HAVE_LENSFUN
+                    if (uf->modifier &&
+                        (uf->postproc_ops & LF_MODIFY_VIGNETTING))
+                    {
+                        /* Apply de-vignetting filter here, to avoid
+                         * creating a separate pass for it which will
+                         * take a lot of memory ... */
+                        lf_modifier_apply_color_modification (
+                            uf->modifier, dest, x, yy, w, 1,
+                            LF_CR_3 (RED, GREEN, BLUE),
+                            out->width * out->depth);
+                    }
+#endif
+                }
+                g_free (pixtmp);
+            }
+            break;
+
+        case ufraw_lensfun_phase:
+#ifdef HAVE_LENSFUN
+            {
+                if (!uf->modifier ||
+                    !(uf->postproc_ops & (LF_MODIFY_TCA | LF_MODIFY_DISTORTION |
+                                          LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)))
+                    return in;
+
+                if (saidx < 0)
+                    return out;
+
+                int yy;
+                float *buff = g_new (float, (w < 8) ? 8 * 2 * 3 : w * 2 * 3);
+
+                // Compute the previous stage subareas, if needed
+                lf_modifier_apply_subpixel_geometry_distortion (
+                    uf->modifier, x, y, 1, 1, buff);
+                lf_modifier_apply_subpixel_geometry_distortion (
+                    uf->modifier, x + w/2, y, 1, 1, buff + 2 * 3);
+                lf_modifier_apply_subpixel_geometry_distortion (
+                    uf->modifier, x + w-1, y, 1, 1, buff + 4 * 3);
+                lf_modifier_apply_subpixel_geometry_distortion (
+                    uf->modifier, x, y + h/2, 1, 1, buff + 6 * 3);
+                lf_modifier_apply_subpixel_geometry_distortion (
+                    uf->modifier, x + w-1, y + h/2, 1, 1, buff + 8 * 3);
+                lf_modifier_apply_subpixel_geometry_distortion (
+                    uf->modifier, x, y + h-1, 1, 1, buff + 10 * 3);
+                lf_modifier_apply_subpixel_geometry_distortion (
+                    uf->modifier, x + w/2, y + h-1, 1, 1, buff + 12 * 3);
+                lf_modifier_apply_subpixel_geometry_distortion (
+                    uf->modifier, x + w-1, y + h-1, 1, 1, buff + 14 * 3);
+
+                for (yy = 0; yy < 8 * 2 * 3; yy += 2)
+                {
+                    int idx = ufraw_img_get_subarea_idx (in, buff [yy], buff [yy + 1]);
+                    if (idx >= 0 && idx <= 31)
+                        ufraw_convert_image_area (uf, idx, phase - 1);
+                }
+
+                for (yy = 0; yy < h; yy++)
+                {
+                    if (!lf_modifier_apply_subpixel_geometry_distortion (
+                        uf->modifier, x, y + yy, w, 1, buff))
+                        break; // huh?? should never happen
+
+                    guint8 *out_buf = out->buffer + (y + yy) * out->rowstride + x * out->depth;
+
+                    float *cur, *end = buff + w * 2 * 3;
+                    for (cur = buff; cur < end; cur += 2 * 3, out_buf += out->depth)
+                    {
+                        // roundf() and truncf() are C99 and gcc warns on them
+                        // if used without -std=c99... oh well...
+                        unsigned xx = cur [0] + 0.5;
+                        unsigned yy = cur [1] + 0.5;
+                        if (xx >= in->width || yy >= in->height)
+                            out_buf [0] = 0;
+                        else
+                            /* Nearest interpolation: don't spend time
+                               for high-quality interpolation for preview */
+                            out_buf [0] = (in->buffer + yy * in->rowstride +
+                                           xx * in->depth) [0];
+
+                        xx = cur [2] + 0.5;
+                        yy = cur [3] + 0.5;
+                        if (xx >= in->width || yy >= in->height)
+                            out_buf [1] = 0;
+                        else
+                            /* Nearest interpolation: don't spend time
+                               for high-quality interpolation for preview */
+                            out_buf [1] = (in->buffer + yy * in->rowstride +
+                                           xx * in->depth) [1];
+
+                        xx = cur [4] + 0.5;
+                        yy = cur [5] + 0.5;
+                        if (xx >= in->width || yy >= in->height)
+                            out_buf [2] = 0;
+                        else
+                            /* Nearest interpolation: don't spend time
+                               for high-quality interpolation for preview */
+                            out_buf [2] = (in->buffer + yy * in->rowstride +
+                                           xx * in->depth) [2];
+                    }
+                }
+
+                g_free (buff);
+            }
+            break;
+#else
+            // fallback
+#endif
+
+        default:
+            return in;
     }
-    g_free(pixtmp);
-    return UFRAW_SUCCESS;
+
+    // Mark the subarea as valid
+    out->valid |= (1 << saidx);
+
+    return out;
 }
 
 static int ufraw_flip_image_buffer(ufraw_image_data *img, int flip)
@@ -877,7 +1312,7 @@ static int ufraw_flip_image_buffer(ufraw_image_data *img, int flip)
 
 void ufraw_flip_orientation(ufraw_data *uf, int flip)
 {
-    const int flipMatrix[8][8] = {
+    const char flipMatrix[8][8] = {
 	{ 0, 1, 2, 3, 4, 5, 6, 7 }, /* No flip */
 	{ 1, 0, 3, 2, 5, 4, 7, 6 }, /* Flip horizontal */
 	{ 2, 3, 0, 1, 6, 7, 4, 5 }, /* Flip vertical */
@@ -897,7 +1332,7 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
     ufraw_flip_image_buffer(&uf->Images[ufraw_first_phase], flip);
     if ( uf->conf->threshold>0 )
 	ufraw_flip_image_buffer(&uf->Images[ufraw_denoise_phase], flip);
-    ufraw_flip_image_buffer(&uf->Images[ufraw_final_phase], flip);
+    ufraw_flip_image_buffer(&uf->Images[ufraw_develop_phase], flip);
 
     return UFRAW_SUCCESS;
 }

@@ -16,6 +16,10 @@
 #ifndef _DCRAW_API_H
 #define _DCRAW_API_H
 
+#ifdef HAVE_LENSFUN
+#include <lensfun.h>
+#endif /* HAVE_LENSFUN */
+
 #ifdef  __cplusplus
 extern "C" {
 #endif
@@ -50,7 +54,8 @@ typedef struct {
 
 enum { dcraw_ahd_interpolation,
     dcraw_vng_interpolation, dcraw_four_color_interpolation,
-    dcraw_ppg_interpolation, dcraw_bilinear_interpolation };
+    dcraw_ppg_interpolation, dcraw_bilinear_interpolation,
+    dcraw_none_interpolation };
 enum { unknown_thumb_type, jpeg_thumb_type, ppm_thumb_type };
 int dcraw_open(dcraw_data *h, char *filename);
 int dcraw_load_raw(dcraw_data *h);

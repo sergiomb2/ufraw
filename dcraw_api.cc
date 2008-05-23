@@ -567,6 +567,10 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     int smoothPasses = 1;
     if (interpolation==dcraw_bilinear_interpolation)
 	lin_interpolate_INDI(f->image, ff, f->width, f->height, cl, d);
+#ifdef ENABLE_INTERP_NONE
+    else if (interpolation==dcraw_none_interpolation)
+        smoothing = 0;
+#endif
     else if (interpolation==dcraw_vng_interpolation)
 	vng_interpolate_INDI(f->image, ff, f->width, f->height, cl, 0xFFFF, d);
     else if (interpolation==dcraw_ahd_interpolation) {
