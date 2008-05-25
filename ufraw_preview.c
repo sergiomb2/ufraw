@@ -2353,6 +2353,7 @@ static void button_update(GtkWidget *button, gpointer user_data)
     }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
+    preview_invalidate_layer (data, ufraw_develop_phase);
     update_scales(data);
     return;
 }
