@@ -52,7 +52,7 @@ static const int his_max_height = 256;
 
 #define page_num_spot 0
 #define page_num_gray 1
-#define page_num_crop 5
+#define page_num_crop 6
 
 enum { pixel_format, percent_format };
 enum { without_zone, with_zone };
