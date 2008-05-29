@@ -132,6 +132,10 @@ The default is 'digital'.
 Adjust the color saturation. Range 0.00 to 3.00. Default 1.0,
 use 0 for black & white output.
 
+=item ---wavelet-denoising-threshold=THRESHOLD
+
+Wavelet denoising threshold (default 0.0).
+
 =item --base-curve=manual|linear|custom|camera|CURVE
 
 Type of tone curve to use. The base curve is a combination of the gamma
@@ -226,19 +230,33 @@ Shrink the image by FACTOR (default 1).
 
 Downsize max(height,width) to SIZE.
 
-=item --out-type=ppm8|ppm16|tiff8|tiff16|jpeg
+=item --rotate=camera|ANGLE|no
 
-Output file-format to use. ppm8 and tiff8 uses eight bits to encode each of
-the  Red, Green and Blue components of each pixel. ppm16 and tiff16 uses
-16 bits. The jpeg-format only allows for eight bits for each color component.
+Rotate image to camera's setting, by ANGLE degrees clockwise,
+or do not rotate the image (default camera)
+
+=item --crop-(left|right|top|bottom)=PIXELS
+
+Crop the output to the given pixel range, relative to the raw image
+after rotation but before any scaling.
+
+=item --out-type=ppm|tiff|png|jpeg|fits
+
+Output file-format to use.
+The default output file-format is ppm.
+
+=item --out-depth=8|16
+
+Output bit depth per channel.
+ppm, tiff, png and fits output formats can uses either 8 bits or 16 bits
+to encode each of the  Red, Green and Blue components of each pixel.
+The jpeg format only allows for 8 bits for each color component.
 
 The raw-files contain more than eight bits of information for each color
 component. This means that by using an eight bit format, you are actually
 discarding some of the information supplied by the camera. This is not
 a problem if you only plan to view the image on screen. For prints you
 should consider a 16 bits workflow.
-
-The default output file-format is ppm8.
 
 =item --compression=VALUE
 
