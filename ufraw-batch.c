@@ -31,6 +31,7 @@ int main (int argc, char **argv)
     ufraw_data *uf;
     conf_data rc, cmd, conf;
     int status;
+    int exitCode = 0;
 
     char *argFile = uf_win32_locale_to_utf8(argv[0]);
     ufraw_binary = g_path_get_basename(argFile);
@@ -80,16 +81,19 @@ int main (int argc, char **argv)
 	uf = ufraw_open(argFile);
 	uf_win32_locale_free(argFile);
 	if (uf==NULL) {
+	    exitCode = 1;
 	    ufraw_message(UFRAW_REPORT, NULL);
 	    continue;
 	}
 	status = ufraw_config(uf, &rc, &conf, &cmd);
 	if (status==UFRAW_ERROR) {
+	    exitCode = 1;
 	    ufraw_close(uf);
 	    g_free(uf);
 	    exit(1);
 	}
 	if (ufraw_load_raw(uf)!=UFRAW_SUCCESS) {
+	    exitCode = 1;
 	    ufraw_close(uf);
 	    g_free(uf);
 	    continue;
@@ -103,11 +107,13 @@ int main (int argc, char **argv)
 	if (ufraw_batch_saver(uf)==UFRAW_SUCCESS)
 	    ufraw_message(UFRAW_MESSAGE, _("Saved %s%s"),
 		    uf->conf->outputFilename, stat);
+	else
+	    exitCode = 1;
 	ufraw_close(uf);
 	g_free(uf);
     }
 //    ufraw_close(cmd.darkframe);
-    exit(0);
+    exit(exitCode);
 }
 int ufraw_batch_saver(ufraw_data *uf)
 {

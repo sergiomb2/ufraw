@@ -122,12 +122,14 @@ int main (int argc, char **argv)
 	exit(0);
     }
     uf_win32_locale_free(argFile);
-	
+
+    int exitCode = 0;
     for (; optInd<argc; optInd++) {
 	argFile = uf_win32_locale_to_utf8(argv[optInd]);
 	uf = ufraw_open(argFile);
 	uf_win32_locale_free(argFile);
 	if (uf==NULL) {
+	    exitCode = 1;
 	    ufraw_message(UFRAW_REPORT, NULL);
 	    continue;
 	}
@@ -147,5 +149,5 @@ int main (int argc, char **argv)
     if (dummyWindow!=NULL) gtk_widget_destroy(dummyWindow);
 
 //    ufraw_close(cmd.darkframe);
-    exit(0);
+    exit(exitCode);
 }
