@@ -924,30 +924,33 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
     // Flip the image to final position before doing anything else
     dcraw_flip_image(&final, uf->conf->orientation);
 
-#ifdef HAVE_LENSFUN
-    if (lensfix && uf->conf->lens)
+    if (lensfix)
     {
-        lfModifier *modifier = lensfix ? lf_modifier_new (
-            uf->conf->lens, uf->conf->crop_factor, final.width, final.height) : NULL;
-
-        if (modifier)
+#ifdef HAVE_LENSFUN
+        if (uf->conf->lens)
         {
-            float real_scale = pow (2.0, uf->conf->lens_scale);
-            const int modflags = LF_MODIFY_TCA | LF_MODIFY_VIGNETTING |
-                LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE;
+            lfModifier *modifier = lensfix ? lf_modifier_new (
+                uf->conf->lens, uf->conf->crop_factor, final.width, final.height) : NULL;
 
-            int finmodflags = lf_modifier_initialize (
-                modifier, uf->conf->lens, LF_PF_U16,
-                uf->conf->focal_len, uf->conf->aperture,
-                uf->conf->subject_distance, real_scale,
-                uf->conf->cur_lens_type, modflags, FALSE);
-            if (finmodflags & modflags)
-                ufraw_lensfun_modify (&final, modifier, finmodflags);
+            if (modifier)
+            {
+                float real_scale = pow (2.0, uf->conf->lens_scale);
+                const int modflags = LF_MODIFY_TCA | LF_MODIFY_VIGNETTING |
+                    LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE;
 
-            lf_modifier_destroy (modifier);
+                int finmodflags = lf_modifier_initialize (
+                    modifier, uf->conf->lens, LF_PF_U16,
+                    uf->conf->focal_len, uf->conf->aperture,
+                    uf->conf->subject_distance, real_scale,
+                    uf->conf->cur_lens_type, modflags, FALSE);
+                if (finmodflags & modflags)
+                    ufraw_lensfun_modify (&final, modifier, finmodflags);
+
+                lf_modifier_destroy (modifier);
+            }
         }
-    }
 #endif // HAVE_LENSFUN
+    }
 
     dcraw_image_stretch(&final, raw->pixel_aspect);
     if (uf->conf->size==0 && uf->conf->shrink>1) {

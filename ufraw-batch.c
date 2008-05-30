@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw-batch.c - The standalone interface to UFRaw in batch mode.
- * Copyright 2004-2007 by Udi Fuchs
+ * Copyright 2004-2008 by Udi Fuchs
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2

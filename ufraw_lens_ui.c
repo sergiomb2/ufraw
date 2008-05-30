@@ -3,7 +3,7 @@
  *
  * ufraw_lens_ui.c - User interface for interaction with lensfun,
  *                   a lens defect correction library.
- * Copyright 2007 by Andrew Zabolotny
+ * Copyright 2007-2008 by Andrew Zabolotny
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2
