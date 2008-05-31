@@ -26,7 +26,7 @@
 long ufraw_delete(void *widget, ufraw_data *uf)
 {
     if ( !g_file_test(uf->filename, G_FILE_TEST_EXISTS) ) {
-	char *ufile = g_filename_to_utf8(uf->filename, -1, NULL, NULL, NULL);
+	char *ufile = g_filename_display_name(uf->filename);
 	ufraw_message(UFRAW_ERROR, _("Raw file '%s' missing."), ufile);
 	g_free(ufile);
 	return UFRAW_ERROR;
@@ -46,7 +46,7 @@ long ufraw_delete(void *widget, ufraw_data *uf)
     char *path = g_path_get_dirname(uf->filename);
     GDir *dir = g_dir_open(path, 0, NULL);
     if ( dir==NULL ) {
-	char *upath = g_filename_to_utf8(path, -1, NULL, NULL, NULL);
+	char *upath = g_filename_display_name(path);
 	ufraw_message(UFRAW_ERROR, _("Error reading directory '%s'."), upath);
 	g_free(upath);
 	g_free(path);
@@ -67,7 +67,7 @@ long ufraw_delete(void *widget, ufraw_data *uf)
     GList *fileList = NULL;
 
     // Check button for raw file
-    char *ufile = g_filename_to_utf8(uf->filename, -1, NULL, NULL, NULL);
+    char *ufile = g_filename_display_name(uf->filename);
     GtkWidget *button = gtk_check_button_new_with_label(ufile);
     buttonList = g_list_append(buttonList, button);
     g_free(ufile);
@@ -81,7 +81,7 @@ long ufraw_delete(void *widget, ufraw_data *uf)
 	if ( strncmp(file, rawBase, rawBaseLen)==0 &&
 	     strcmp(file, base)!=0 ) {
 	    char *filename = g_build_filename(dirname, file, NULL);
-	    char *ufile = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
+	    char *ufile = g_filename_display_name(filename);
 	    button = gtk_check_button_new_with_label(ufile);
 	    buttonList = g_list_append(buttonList, button);
 	    g_free(ufile);
@@ -102,8 +102,7 @@ long ufraw_delete(void *widget, ufraw_data *uf)
 	       gtk_toggle_button_get_active(
 			GTK_TOGGLE_BUTTON(buttonList->data)) ) ) {
 	    if ( g_unlink(fileList->data)!=0 ) {
-		char *ufile = g_filename_to_utf8(fileList->data,
-			-1, NULL, NULL, NULL);
+		char *ufile = g_filename_display_name(fileList->data);
 		ufraw_message(UFRAW_ERROR, _("Error deleting '%s'"), ufile);
 		g_free(ufile);
 	    } else if (strcmp(fileList->data, uf->filename)==0 ) {

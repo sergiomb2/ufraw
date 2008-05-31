@@ -433,8 +433,7 @@ int curve_load(CurveData *cp, char *filename)
     }
     char *base = g_path_get_basename(filename);
     char *name = uf_file_set_type(base, "");
-    char *utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
-    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+    char *utf8 = g_filename_display_name(name);
     g_strlcpy(cp->name, utf8, max_name);
     g_free(utf8);
     g_free(name);
@@ -480,8 +479,7 @@ int curve_save(CurveData *cp, char *filename)
 	fprintf(out, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 	char *base = g_path_get_basename(filename);
 	char *name = uf_file_set_type(base, "");
-	char *utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
-	if (utf8==NULL) utf8 = strdup("Unknown file name");
+	char *utf8 = g_filename_display_name(name);
 	fprintf(out, "<Curve Version='%d'>%s\n", conf_default.version, utf8);
 	g_free(utf8);
 	g_free(name);

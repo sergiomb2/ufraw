@@ -129,6 +129,14 @@ greybox[0] = greybox[1] = 0, greybox[2] = greybox[3] = UINT_MAX;
 tone_curve_size = 0, tone_curve_offset = 0; /* Nikon Tone Curves UF*/
 messageBuffer = NULL;
 lastStatus = DCRAW_SUCCESS;
+ifname = NULL;
+ifname_display = NULL;
+}
+
+CLASS ~DCRaw()
+{
+free(ifname);
+free(ifname_display);
 }
 
 #define FORC(cnt) for (c=0; c < cnt; c++)
@@ -246,14 +254,14 @@ void CLASS dcraw_message(int code, const char *format, ...) {
 void CLASS merror (void *ptr, const char *where)
 {
   if (ptr) return;
-  dcraw_message (DCRAW_ERROR,_("%s: Out of memory in %s\n"), ifname, where); /*UF*/
+  dcraw_message (DCRAW_ERROR,_("%s: Out of memory in %s\n"), ifname_display, where); /*UF*/
   longjmp (failure, 1);
 }
 
 void CLASS derror()
 {
   if (!data_error) {
-    dcraw_message (DCRAW_WARNING, "%s: ", ifname);
+    dcraw_message (DCRAW_WARNING, "%s: ", ifname_display);
     if (feof(ifp))
       dcraw_message (DCRAW_WARNING,_("Unexpected end of file\n"));
     else
@@ -615,7 +623,7 @@ uchar * CLASS make_decoder (const uchar *source, int level)
   if (level==0) leaf=0;
   cur = free_decode++;
   if (free_decode > first_decode+2048) {
-    dcraw_message (DCRAW_ERROR,_("%s: decoder table overflow\n"), ifname); /*UF*/
+    dcraw_message (DCRAW_ERROR,_("%s: decoder table overflow\n"), ifname_display); /*UF*/
     longjmp (failure, 2);
   }
   for (i=next=0; i <= leaf && next < 16; )
@@ -2254,7 +2262,7 @@ void CLASS kodak_jpeg_load_raw()
   if ((cinfo.output_width      != width  ) ||
       (cinfo.output_height*2   != height ) ||
       (cinfo.output_components != 3      )) {
-    dcraw_message (DCRAW_ERROR,_("%s: incorrect JPEG dimensions\n"), ifname); /*UF*/
+    dcraw_message (DCRAW_ERROR,_("%s: incorrect JPEG dimensions\n"), ifname_display); /*UF*/
     jpeg_destroy_decompress (&cinfo);
     longjmp (failure, 3);
   }
@@ -2749,7 +2757,7 @@ void CLASS foveon_decoder (unsigned size, unsigned code)
   }
   cur = free_decode++;
   if (free_decode > first_decode+2048) {
-    dcraw_message (DCRAW_ERROR,_("%s: decoder table overflow\n"), ifname); /*UF*/
+    dcraw_message (DCRAW_ERROR,_("%s: decoder table overflow\n"), ifname_display); /*UF*/
     longjmp (failure, 2);
   }
   if (code)
@@ -2911,7 +2919,7 @@ void * CLASS foveon_camf_matrix (unsigned dim[3], const char *name)
 	mat[i] = sget4(dp + i*2) & 0xffff;
     return mat;
   }
-  dcraw_message (DCRAW_ERROR,_("%s: \"%s\" matrix not found!\n"), ifname, name); /*UF*/
+  dcraw_message (DCRAW_ERROR,_("%s: \"%s\" matrix not found!\n"), ifname_display, name); /*UF*/
   return 0;
 }
 
@@ -3023,7 +3031,7 @@ void CLASS foveon_interpolate()
     }
 
   if (!(cp = foveon_camf_param ("WhiteBalanceIlluminants", model2)))
-  { dcraw_message (DCRAW_ERROR,_("%s: Invalid white balance \"%s\"\n"), ifname, model2); /*UF*/
+  { dcraw_message (DCRAW_ERROR,_("%s: Invalid white balance \"%s\"\n"), ifname_display, model2); /*UF*/
     return; }
   foveon_fixed (cam_xyz, 9, cp);
   foveon_fixed (correct, 9,
@@ -3761,7 +3769,7 @@ skip_block: ;
       memcpy (pre_mul, cam_mul, sizeof pre_mul);
     else
       dcraw_message (DCRAW_NO_CAMERA_WB,
-	      _("%s: Cannot use camera white balance.\n"), ifname); /*UF*/
+	      _("%s: Cannot use camera white balance.\n"), ifname_display); /*UF*/
   }
   if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
   dark = black;
@@ -7654,7 +7662,7 @@ dng_skip:
 #ifndef HAVE_LIBJPEG
   if (load_raw == &CLASS kodak_jpeg_load_raw) {
     dcraw_message (DCRAW_ERROR,_("%s: You must link dcraw with libjpeg!!\n"),
-	    ifname); /*UF*/
+	    ifname_display); /*UF*/
     is_raw = 0;
   }
 #endif
@@ -7694,7 +7702,7 @@ void CLASS apply_profile (const char *input, const char *output)
     hInProfile = cmsOpenProfileFromMem (prof, profile_length);
     free (prof);
   } else
-    dcraw_message (DCRAW_ERROR,_("%s has no embedded profile.\n"), ifname); /*UF*/
+    dcraw_message (DCRAW_ERROR,_("%s has no embedded profile.\n"), ifname_display); /*UF*/
   if (!hInProfile) return;
   if (!output)
     hOutProfile = cmsCreate_sRGBProfile();
@@ -8284,6 +8292,7 @@ int CLASS main (int argc, const char **argv)
       goto cleanup;
     }
     ifname = const_cast<char*>(argv[arg]);
+    ifname_display = ifname;
     if (!(ifp = fopen (ifname, "rb"))) {
       perror (ifname);
       continue;
@@ -8495,6 +8504,9 @@ cleanup:
       else shot_select = 0;
     }
   }
+  /* Make sure ifname are not free()'d (UF) */
+  ifname = NULL;
+  ifname_display = NULL;
   return status;
 }
 

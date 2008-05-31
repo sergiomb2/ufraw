@@ -449,8 +449,7 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     if (c->profileCount[out_profile]<=0) {
 	i = - c->profileCount[out_profile];
 	if (!strcmp("File", element)) {
-	    char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
-	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+	    char *utf8 = g_filename_display_name(temp);
 	    g_strlcpy(c->profile[out_profile][i].file, utf8, max_path);
 	    g_free(utf8);
 	}
@@ -463,8 +462,7 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     if (c->profileCount[display_profile]<=0) {
 	i = - c->profileCount[display_profile];
 	if (!strcmp("File", element)) {
-	    char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
-	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+	    char *utf8 = g_filename_display_name(temp);
 	    g_strlcpy(c->profile[display_profile][i].file, utf8, max_path);
 	    g_free(utf8);
 	}
@@ -785,21 +783,18 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     buf = uf_markup_buf(buf, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
     buf = uf_markup_buf(buf, "<UFRaw Version='%d'>\n", c->version);
     if (strlen(c->inputFilename)>0 && IDFilename!=NULL) {
-	char *utf8 = g_filename_to_utf8(c->inputFilename, -1, NULL, NULL, NULL);
-	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+	char *utf8 = g_filename_display_name(c->inputFilename);
 	buf = uf_markup_buf(buf, "<InputFilename>%s</InputFilename>\n", utf8);
 	g_free(utf8);
     }
     if (strlen(c->outputFilename)>0 && IDFilename!=NULL) {
-	char *utf8=g_filename_to_utf8(c->outputFilename, -1, NULL, NULL, NULL);
-	if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+	char *utf8=g_filename_display_name(c->outputFilename);
 	buf = uf_markup_buf(buf, "<OutputFilename>%s</OutputFilename>\n", utf8);
 	g_free(utf8);
     }
     if (strlen(c->outputPath)>0) {
-	char *utf8=g_filename_to_utf8(c->outputPath, -1, NULL, NULL, NULL);
-	if (utf8!=NULL)
-	    buf = uf_markup_buf(buf, "<OutputPath>%s</OutputPath>\n", utf8);
+	char *utf8=g_filename_display_name(c->outputPath);
+	buf = uf_markup_buf(buf, "<OutputPath>%s</OutputPath>\n", utf8);
 	g_free(utf8);
     } else {
 	/* Guess outputPath */
@@ -807,9 +802,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	char *outPath = g_path_get_dirname(c->outputFilename);
 	if ( strcmp(outPath,".") && strcmp(inPath, outPath) ) {
 	    g_strlcpy(c->outputPath, outPath, max_path);
-	    char *utf8=g_filename_to_utf8(outPath, -1, NULL, NULL, NULL);
-	    if (utf8!=NULL)
-		buf = uf_markup_buf(buf, "<OutputPath>%s</OutputPath>\n", utf8);
+	    char *utf8=g_filename_display_name(outPath);
+	    buf = uf_markup_buf(buf, "<OutputPath>%s</OutputPath>\n", utf8);
 	    g_free(utf8);
 	}
 	g_free(outPath);
@@ -864,16 +858,13 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 		    "<RemoteGimpCommand>%s</RemoteGimpCommand>\n",
 			    c->remoteGimpCommand);
 	if (strlen(c->curvePath)>0) {
-	    char *utf8 = g_filename_to_utf8(c->curvePath, -1, NULL, NULL, NULL);
-	    if (utf8!=NULL)
-		buf = uf_markup_buf(buf, "<CurvePath>%s</CurvePath>\n", utf8);
+	    char *utf8 = g_filename_display_name(c->curvePath);
+	    buf = uf_markup_buf(buf, "<CurvePath>%s</CurvePath>\n", utf8);
 	    g_free(utf8);
 	}
 	if (strlen(c->profilePath)>0) {
-	    char *utf8 = g_filename_to_utf8(c->profilePath, -1,NULL,NULL,NULL);
-	    if (utf8!=NULL)
-		buf = uf_markup_buf(buf,
-			"<ProfilePath>%s</ProfilePath>\n", utf8);
+	    char *utf8 = g_filename_display_name(c->profilePath);
+	    buf = uf_markup_buf(buf, "<ProfilePath>%s</ProfilePath>\n", utf8);
 	    g_free(utf8);
 	}
     }
@@ -1078,9 +1069,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	    current = i==c->profileIndex[j]?"yes":"no";
 	    buf = uf_markup_buf(buf, "<%s Current='%s'>%s\n",
 		    type, current, c->profile[j][i].name);
-	    char *utf8 = g_filename_to_utf8(c->profile[j][i].file,
-		    -1, NULL, NULL, NULL);
-	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+	    char *utf8 = g_filename_display_name(c->profile[j][i].file);
 	    buf = uf_markup_buf(buf, "\t<File>%s</File>\n", utf8);
 	    g_free(utf8);
 	    buf = uf_markup_buf(buf, "\t<ProductName>%s</ProductName>\n",
@@ -1131,9 +1120,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	buf = uf_markup_buf(buf, "<Rotation>%lf</Rotation>\n", c->rotationAngle);
 	char *log = ufraw_message(UFRAW_GET_LOG, NULL);
 	if (log!=NULL) {
-	    char *utf8 = g_filename_to_utf8(log, -1, NULL, NULL, NULL);
-	    if (utf8!=NULL)
-		buf = uf_markup_buf(buf, "<Log>\n%s</Log>\n", utf8);
+	    char *utf8 = g_filename_display_name(log);
+	    buf = uf_markup_buf(buf, "<Log>\n%s</Log>\n", utf8);
 	    g_free(utf8);
 	}
 	/* As long as darkframe is not in the GUI we save it only to ID files.*/

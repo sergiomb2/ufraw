@@ -189,7 +189,7 @@ void CLASS scale_colors_INDI(ushort (*image)[4], int maximum, const int black,
        const int use_auto_wb, const int use_camera_wb, const float cam_mul[4],
        const int iheight, const int iwidth, const int colors, float pre_mul[4],
        const unsigned filters, /*const*/ ushort white[8][8],
-       const char *ifname, void *dcraw)
+       const char *ifname_display, void *dcraw)
 {
   int dblack, row, col, x, y, c, val, sum[8];
   double dsum[8], dmin, dmax;
@@ -233,7 +233,7 @@ skip_block:
       memcpy (pre_mul, cam_mul, 4*sizeof(float));
     else
       dcraw_message (dcraw, DCRAW_NO_CAMERA_WB,
-	      _("%s: Cannot use camera white balance.\n"), ifname);
+	      _("%s: Cannot use camera white balance.\n"), ifname_display);
   }
 //  if (user_mul[0])
 //    memcpy (pre_mul, user_mul, sizeof pre_mul);

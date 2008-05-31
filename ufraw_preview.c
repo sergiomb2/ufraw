@@ -371,8 +371,7 @@ static void load_profile(GtkWidget *widget, long type)
 	    }
 	    char *base = g_path_get_basename(filename);
 	    char *name = uf_file_set_type(base, "");
-	    char *utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
-	    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+	    char *utf8 = g_filename_display_name(name);
 	    g_strlcpy(p.name, utf8, max_name);
 	    g_free(utf8);
 	    g_free(name);
@@ -2609,8 +2608,7 @@ GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y, const char *label
 static void set_save_tooltip(preview_data *data)
 {
     char *absFilename = uf_file_set_absolute(CFG->outputFilename);
-    char *utf8 = g_filename_to_utf8(absFilename, -1, NULL, NULL, NULL);
-    if (utf8==NULL) utf8 = g_strdup("Unknown file name");
+    char *utf8 = g_filename_display_name(absFilename);
     char *text = g_strdup_printf(_("Filename: %s%s"), utf8,
 	    CFG->createID==also_id ? _("\nCreate also ID file") :
 	    CFG->createID==only_id ? _("\nCreate only ID file") : "");
@@ -2932,8 +2930,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
     char *log = ufraw_message(UFRAW_GET_LOG, NULL);
     if (log!=NULL) {
-	char *utf8_log = g_filename_to_utf8(log, -1, NULL, NULL, NULL);
-	if (utf8_log==NULL) utf8_log = g_strdup(_("Encoding conversion failed"));
+	char *utf8_log = g_filename_display_name(log);
 	gtk_text_buffer_set_text(buffer, utf8_log, -1);
 	g_free(utf8_log);
     }
@@ -3449,11 +3446,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     }
     previewWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-    char *utf8_filename = g_filename_to_utf8(uf->filename,
-	    -1, NULL, NULL, NULL);
-    if (utf8_filename==NULL) utf8_filename = g_strdup("Unknown file name");
-    char *previewHeader = g_strdup_printf(_("%s - UFRaw"),
-	    utf8_filename);
+    char *utf8_filename = g_filename_display_name(uf->filename);
+    char *previewHeader = g_strdup_printf(_("%s - UFRaw"), utf8_filename);
     gtk_window_set_title(GTK_WINDOW(previewWindow), previewHeader);
     g_free(previewHeader);
     g_free(utf8_filename);

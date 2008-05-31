@@ -38,7 +38,7 @@ class DCRaw { public:
 /* All dcraw's global variables are members of this class. */
 FILE *ifp;
 short order;
-char *ifname, *meta_data;
+char *ifname, *ifname_display, *meta_data;
 char cdesc[5], desc[512], make[64], model[64], model2[64], artist[64];
 float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
 time_t timestamp;
@@ -91,6 +91,7 @@ int lastStatus;
 
 /* Initialization of the variables is done here */
 DCRaw();
+~DCRaw();
 void dcraw_message(int code, const char *format, ...);
 /* All dcraw functions with the CLASS prefix are members of this class. */
 int fc (int row, int col);
