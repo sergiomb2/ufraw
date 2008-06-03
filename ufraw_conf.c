@@ -27,7 +27,7 @@
 #include <exiv2/exv_conf.h>
 #endif
 
-conf_data conf_default = {
+const conf_data conf_default = {
     /* Internal data */
     sizeof(conf_data), 7, /* confSize, version */
 
@@ -112,7 +112,7 @@ conf_data conf_default = {
 
     /* EXIF data */
     -1, /* orientation */
-    0.0, 0.0, 0.0, 0.0, 1.0, 1.0, /* iso_speed, shutter, aperture, focal_len, subject_dist, crop_factor */
+    0.0, 0.0, 0.0, 0.0, 1.0, /* iso_speed, shutter, aperture, focal_len, subject_dist */
     "", "", "", "", /* exifSource, isoText, shutterText, apertureText */
     "", "", "", "", /* focalLenText, focalLen35Text, lensText, flashText */
     "", /* whiteBalanceText */
@@ -141,18 +141,24 @@ static const char *intentNames[] =
 static const char *grayscaleModeNames[] =
     { "none", "lightness", "luminance", "value", "mixer", NULL };
 
-static void init_default_conf ()
+
+void conf_init (conf_data *c)
 {
 #ifdef HAVE_LENSFUN
-    static int inited = 0;
+    static lfDatabase *lensdb = NULL;
 
-    if (!inited)
+    if (!lensdb)
     {
-        inited = 1;
         /* Load lens database */
-        conf_default.lensdb = lf_db_new ();
-        lf_db_load (conf_default.lensdb);
+        lensdb = lf_db_new ();
+        lf_db_load (lensdb);
     }
+#endif
+
+    *c = conf_default;
+
+#ifdef HAVE_LENSFUN
+    c->lensdb = lensdb;
 #endif
 }
 
@@ -683,8 +689,7 @@ int conf_load(conf_data *c, const char *IDFilename)
     GError *err = NULL;
     int i;
 
-    init_default_conf ();
-    *c = conf_default;
+    conf_init (c);
     if (IDFilename==NULL) {
 	hd = uf_get_home_dir();
 	confFilename = g_build_filename(hd, ".ufrawrc", NULL);

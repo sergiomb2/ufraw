@@ -259,7 +259,7 @@ int ufraw_load_darkframe(ufraw_data *uf)
 	return UFRAW_ERROR;
     }
     dark->conf = g_new(conf_data, 1);
-    *dark->conf = conf_default;
+    conf_init (dark->conf);
     /* disable all auto settings on darkframe */
     dark->conf->autoExposure = disabled_state;
     dark->conf->autoBlack = disabled_state;
@@ -924,33 +924,32 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
     // Flip the image to final position before doing anything else
     dcraw_flip_image(&final, uf->conf->orientation);
 
-    if (lensfix)
-    {
 #ifdef HAVE_LENSFUN
-        if (uf->conf->lens)
+    if (lensfix && uf->conf->camera && uf->conf->lens)
+    {
+        lfModifier *modifier = lensfix ? lf_modifier_new (
+            uf->conf->lens, uf->conf->camera->CropFactor, final.width, final.height) : NULL;
+
+        if (modifier)
         {
-            lfModifier *modifier = lensfix ? lf_modifier_new (
-                uf->conf->lens, uf->conf->crop_factor, final.width, final.height) : NULL;
+            float real_scale = pow (2.0, uf->conf->lens_scale);
+            const int modflags = LF_MODIFY_TCA | LF_MODIFY_VIGNETTING |
+                LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE;
 
-            if (modifier)
-            {
-                float real_scale = pow (2.0, uf->conf->lens_scale);
-                const int modflags = LF_MODIFY_TCA | LF_MODIFY_VIGNETTING |
-                    LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE;
+            int finmodflags = lf_modifier_initialize (
+                modifier, uf->conf->lens, LF_PF_U16,
+                uf->conf->focal_len, uf->conf->aperture,
+                uf->conf->subject_distance, real_scale,
+                uf->conf->cur_lens_type, modflags, FALSE);
+            if (finmodflags & modflags)
+                ufraw_lensfun_modify (&final, modifier, finmodflags);
 
-                int finmodflags = lf_modifier_initialize (
-                    modifier, uf->conf->lens, LF_PF_U16,
-                    uf->conf->focal_len, uf->conf->aperture,
-                    uf->conf->subject_distance, real_scale,
-                    uf->conf->cur_lens_type, modflags, FALSE);
-                if (finmodflags & modflags)
-                    ufraw_lensfun_modify (&final, modifier, finmodflags);
-
-                lf_modifier_destroy (modifier);
-            }
+            lf_modifier_destroy (modifier);
         }
-#endif // HAVE_LENSFUN
     }
+#else
+    (void)lensfix;
+#endif // HAVE_LENSFUN
 
     dcraw_image_stretch(&final, raw->pixel_aspect);
     if (uf->conf->size==0 && uf->conf->shrink>1) {
@@ -1044,7 +1043,7 @@ int ufraw_convert_image_init_phase(ufraw_data *uf)
         lf_modifier_destroy (uf->modifier);
 
     uf->modifier = lf_modifier_new (
-        uf->conf->lens, uf->conf->crop_factor, img->width, img->height);
+        uf->conf->lens, uf->conf->camera->CropFactor, img->width, img->height);
 
     float real_scale = pow (2.0, uf->conf->lens_scale);
     uf->postproc_ops = lf_modifier_initialize (

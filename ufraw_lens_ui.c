@@ -150,6 +150,7 @@ static void camera_set (preview_data *data, const lfCamera *cam)
 {
     gchar *fm;
     const char *maker, *model, *variant;
+    char _variant [100];
 
     lf_camera_copy (CFG->camera, cam);
     if (!cam)
@@ -159,21 +160,20 @@ static void camera_set (preview_data *data, const lfCamera *cam)
         return;
     }
 
-    if (cam->Model)
-    {
-        if (cam->Maker)
-            fm = g_strdup_printf ("%s | %s", cam->Maker, cam->Model);
-        else
-            fm = g_strdup_printf ("%s", cam->Model);
-        gtk_entry_set_text(GTK_ENTRY(data->CameraModel), fm);
-        g_free (fm);
-    }
-
     maker = lf_mlstr_get (cam->Maker);
     model = lf_mlstr_get (cam->Model);
     variant = lf_mlstr_get (cam->Variant);
 
-    char _variant [100];
+    if (model)
+    {
+        if (maker)
+            fm = g_strdup_printf ("%s, %s", maker, model);
+        else
+            fm = g_strdup_printf ("%s", model);
+        gtk_entry_set_text (GTK_ENTRY (data->CameraModel), fm);
+        g_free (fm);
+    }
+
     if (variant)
         snprintf (_variant, sizeof (_variant), " (%s)", variant);
     else
@@ -264,7 +264,7 @@ static void parse_maker_model (
 
     while (txt [0] && isspace (txt [0]))
         txt++;
-    sep = strchr (txt, '|');
+    sep = strchr (txt, ',');
     if (sep)
     {
         int len = sep - txt;
@@ -304,7 +304,7 @@ static void camera_search_clicked(
 
     parse_maker_model (txt, make, sizeof (make), model, sizeof (model));
 
-    camlist = lf_db_find_cameras (CFG->lensdb, make, model);
+    camlist = lf_db_find_cameras_ext (CFG->lensdb, make, model);
     if (!camlist)
         return;
 
@@ -403,7 +403,7 @@ static void lens_set (preview_data *data, const lfLens *lens)
     int i;
     static gdouble focal_values [] =
     {
-        4.5, 8, 10, 12, 14, 15, 16, 18, 20, 24, 28, 30, 31, 35, 38, 40, 43,
+        4.5, 8, 10, 12, 14, 15, 16, 17, 18, 20, 24, 28, 30, 31, 35, 38, 40, 43,
         45, 50, 55, 60, 70, 75, 77, 80, 85, 90, 100, 105, 110, 120, 135,
         150, 200, 210, 240, 250, 300, 400, 500, 600, 800, 1000
     };
@@ -422,13 +422,16 @@ static void lens_set (preview_data *data, const lfLens *lens)
 
     lf_lens_copy (CFG->lens, lens);
 
-    if (lens->Model)
+    maker = lf_mlstr_get (lens->Maker);
+    model = lf_mlstr_get (lens->Model);
+
+    if (model)
     {
-        if (lens->Maker)
-            fm = g_strdup_printf ("%s | %s", lens->Maker, lens->Model);
+        if (maker)
+            fm = g_strdup_printf ("%s, %s", maker, model);
         else
-            fm = g_strdup_printf ("%s", lens->Model);
-        gtk_entry_set_text(GTK_ENTRY(data->LensModel), fm);
+            fm = g_strdup_printf ("%s", model);
+        gtk_entry_set_text (GTK_ENTRY (data->LensModel), fm);
         g_free (fm);
     }
 
@@ -452,8 +455,6 @@ static void lens_set (preview_data *data, const lfLens *lens)
             g_strlcat (mounts, lens->Mounts [i], sizeof (mounts));
         }
 
-    maker = lf_mlstr_get (lens->Maker);
-    model = lf_mlstr_get (lens->Model);
     fm = g_strdup_printf (_("Maker:\t\t%s\n"
                             "Model:\t\t%s\n"
                             "Focal range:\t%s\n"
@@ -479,10 +480,10 @@ static void lens_set (preview_data *data, const lfLens *lens)
         if (focal_values [i] > lens->MaxFocal && fli == -1)
             fli = i;
     }
+    if (lens->MaxFocal == 0 || fli < 0)
+        fli = sizeof (focal_values) / sizeof (gdouble);
     if (fli < ffi)
         fli = ffi + 1;
-    if (lens->MaxFocal == 0)
-        fli = sizeof (focal_values) / sizeof (gdouble);
     cbe = combo_entry_numeric (
         data->LensParamBox, 0, 0, _("Focal"), _("Lens focal distance"),
         CFG->focal_len, 10.0, focal_values + ffi, fli - ffi);
@@ -1157,7 +1158,9 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button),
                       gtk_image_new_from_stock(GTK_STOCK_FIND, GTK_ICON_SIZE_BUTTON));
-    uf_widget_set_tooltip(button, _("Search for camera using the entered pattern"));
+    uf_widget_set_tooltip(button,
+                          _("Search for camera using a pattern\n"
+                            "Format: [Maker, ][Model]"));
     gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
                      G_CALLBACK(camera_search_clicked), data);
@@ -1183,7 +1186,9 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button),
                       gtk_image_new_from_stock(GTK_STOCK_FIND, GTK_ICON_SIZE_BUTTON));
-    uf_widget_set_tooltip(button, _("Search for lens using the entered pattern"));
+    uf_widget_set_tooltip(button,
+                          _("Search for lens using a pattern\n"
+                            "Format: [Maker, ][Model]"));
     gtk_table_attach(table, button, 2, 3, 1, 2, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
                      G_CALLBACK(lens_search_clicked), data);
@@ -1204,12 +1209,12 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
 
     data->LensScaleAdjustment = adjustment_scale (
         subTable, 0, 0, _("Scale"), CFG->lens_scale, &CFG->lens_scale,
-	    -3, 3, 0.001, 0.1, 3, _("Image scale power-of-two"),
+        -3, 3, 0.001, 0.1, 3, _("Image scale power-of-two"),
         G_CALLBACK (lens_scale_update));
 
     data->LensScaleResetButton = gtk_button_new ();
     gtk_container_add (GTK_CONTAINER (data->LensScaleResetButton),
-	    gtk_image_new_from_stock (GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+        gtk_image_new_from_stock (GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
     gtk_table_attach (subTable, data->LensScaleResetButton, 7, 8, 0, 1, 0,0,0,0);
     uf_widget_set_tooltip (data->LensScaleResetButton,
                            _("Reset image scale to default"));
@@ -1218,7 +1223,7 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
 
     data->LensAutoScaleButton = gtk_button_new ();
     gtk_container_add (GTK_CONTAINER (data->LensAutoScaleButton),
-	    gtk_image_new_from_stock (GTK_STOCK_ZOOM_FIT, GTK_ICON_SIZE_BUTTON));
+        gtk_image_new_from_stock (GTK_STOCK_ZOOM_FIT, GTK_ICON_SIZE_BUTTON));
     gtk_table_attach (subTable, data->LensAutoScaleButton, 8, 9, 0, 1, 0,0,0,0);
     uf_widget_set_tooltip (data->LensAutoScaleButton,
                            _("Autoscale the image for best fit"));

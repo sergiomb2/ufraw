@@ -195,7 +195,7 @@ typedef struct {
 
     /* EXIF data */
     int orientation;
-    float iso_speed, shutter, aperture, focal_len, subject_distance, crop_factor;
+    float iso_speed, shutter, aperture, focal_len, subject_distance;
     char exifSource[max_name], isoText[max_name], shutterText[max_name],
 	 apertureText[max_name], focalLenText[max_name],
 	 focalLen35Text[max_name], lensText[max_name],
@@ -269,7 +269,7 @@ typedef struct ufraw_struct {
 #endif
 } ufraw_data;
 
-extern conf_data conf_default;
+extern const conf_data conf_default;
 extern const wb_data wb_preset[];
 extern const int wb_preset_count;
 extern const char raw_ext[];
@@ -347,6 +347,8 @@ void ptr_array_insert_index (GPtrArray *array, const void *item, int index);
 /* prototypes for functions in ufraw_conf.c */
 int conf_load(conf_data *c, const char *confFilename);
 int conf_save(conf_data *c, char *confFilename, char **confBuffer);
+/* copy default config to given instance and initialize non-const fields */
+void conf_init (conf_data *c);
 /* Copy the image manipulation options from *src to *dst */
 void conf_copy_image(conf_data *dst, const conf_data *src);
 /* Copy the 'save options' from *src to *dst */

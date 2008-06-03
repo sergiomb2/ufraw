@@ -138,8 +138,7 @@ typedef struct {
 #endif
     long (*SaveFunc)();
     RenderModeType RenderMode;
-    /* Current subarea index (0-31 for subareas within the viewport, 32-63 for all areas).
-       If negative, rendering has stopped */
+    /* Current subarea index (0-31). If negative, rendering has stopped */
     int RenderSubArea;
     /* Some actions update the progress bar while working, but meanwhile we
      * want to freeze all other actions. After we thaw the dialog we must

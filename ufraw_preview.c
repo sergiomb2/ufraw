@@ -981,27 +981,100 @@ static gboolean render_raw_histogram(preview_data *data)
 
 static gboolean render_preview_image(preview_data *data)
 {
+    int i, x, y, w, h;
+    ufraw_image_data *img;
+    int subarea;
+
     if (data->FreezeDialog) return FALSE;
 
     if (data->RenderSubArea < 0)
         return FALSE;
 
-    ufraw_image_data *img = ufraw_convert_image_area (
-        data->UF, data->RenderSubArea & 31, ufraw_phases_num - 1);
-    if (!img)
-        return FALSE;
+#ifdef HAVE_GTKIMAGEVIEW
+    /* First of all, find the maximally visible yet unrendered subarea.
+     * Refreshing visible subareas in the first place improves visual
+     * feedback and overall user experience.
+     */
+    img = ufraw_convert_image_area (data->UF, -1, ufraw_phases_num - 1);
 
-    int x, y, w, h;
-    ufraw_img_get_subarea_coord (img, data->RenderSubArea, &x, &y, &w, &h);
-    preview_draw_img_area (data, img, x, y, w, h);
+    GdkRectangle viewport;
+    gtk_image_view_get_viewport (
+        GTK_IMAGE_VIEW (data->PreviewWidget), &viewport);
 
-    data->RenderSubArea++;
-    if (data->RenderSubArea > 31)
+    int max_area = -1;
+    subarea = -1;
+
+    for (i = 0; i < 32; i++)
+    {
+        /* Skip valid subareas */
+        if (img->valid & (1 << i))
+            continue;
+
+        ufraw_img_get_subarea_coord (img, i, &x, &y, &w, &h);
+
+        gboolean noclip = TRUE;
+        if (x < viewport.x)
+        {
+            w -= (viewport.x - x);
+            x = viewport.x;
+            noclip = FALSE;
+        }
+        if (x + w > viewport.x + viewport.width)
+        {
+            w = viewport.x + viewport.width - x;
+            noclip = FALSE;
+        }
+        if (y < viewport.y)
+        {
+            h -= (viewport.y - y);
+            y = viewport.y;
+            noclip = FALSE;
+        }
+        if (y + h > viewport.y + viewport.height)
+        {
+            h = viewport.y + viewport.height - y;
+            noclip = FALSE;
+        }
+
+        /* Compute the visible area of the subarea */
+        int area = (w > 0 && h > 0) ? w * h : 0;
+
+        if (area > max_area)
+        {
+            max_area = area;
+            subarea = i;
+            /* If this area is fully visible, stop searching */
+            if (noclip)
+                break;
+        }
+    }
+
+    if (subarea < 0)
     {
         data->RenderSubArea = -1;
         redraw_navigation_image(data);
         return FALSE;
     }
+#else
+    subarea = data->RenderSubArea++;
+    bool last_subimage = (data->RenderSubArea > 31);
+#endif
+
+    img = ufraw_convert_image_area (data->UF, subarea, ufraw_phases_num - 1);
+    if (!img)
+        return FALSE;
+
+    ufraw_img_get_subarea_coord (img, subarea, &x, &y, &w, &h);
+    preview_draw_img_area (data, img, x, y, w, h);
+
+#ifndef HAVE_GTKIMAGEVIEW
+    if (last_subimage)
+    {
+        data->RenderSubArea = -1;
+        redraw_navigation_image(data);
+        return FALSE;
+    }
+#endif
 
     return TRUE;
 }
