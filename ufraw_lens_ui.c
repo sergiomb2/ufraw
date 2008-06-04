@@ -485,7 +485,7 @@ static void lens_set (preview_data *data, const lfLens *lens)
     if (fli < ffi)
         fli = ffi + 1;
     cbe = combo_entry_numeric (
-        data->LensParamBox, 0, 0, _("Focal"), _("Lens focal distance"),
+        data->LensParamBox, 0, 0, _("Focal"), _("Focal length"),
         CFG->focal_len, 10.0, focal_values + ffi, fli - ffi);
     g_signal_connect (G_OBJECT(cbe), "changed",
                       G_CALLBACK(lens_comboentry_update), &CFG->focal_len);
@@ -495,7 +495,7 @@ static void lens_set (preview_data *data, const lfLens *lens)
         if (aperture_values [i] < lens->MinAperture)
             ffi = i + 1;
     cbe = combo_entry_numeric (
-        data->LensParamBox, 0, 0, _("Aperture"), _("Lens aperture"),
+        data->LensParamBox, 0, 0, _("F"), _("F-number (Aperture)"),
         CFG->aperture, 10.0, aperture_values + ffi, sizeof (aperture_values) / sizeof (gdouble) - ffi);
     g_signal_connect (G_OBJECT(cbe), "changed",
                       G_CALLBACK(lens_comboentry_update), &CFG->aperture);
@@ -811,6 +811,8 @@ static void fill_tca_page (preview_data *data)
 
     data->LensTCADesc = gtk_label_new ("");
     gtk_label_set_line_wrap (GTK_LABEL (data->LensTCADesc), TRUE);
+    gtk_label_set_ellipsize(GTK_LABEL(data->LensTCADesc), PANGO_ELLIPSIZE_END);
+    gtk_label_set_selectable(GTK_LABEL(data->LensTCADesc), TRUE);
     gtk_box_pack_start (GTK_BOX (data->LensTCAPage), data->LensTCADesc, FALSE, FALSE, 0);
 
     gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensTCAModel), active_index);
@@ -926,6 +928,9 @@ static void fill_vignetting_page (preview_data *data)
 
     data->LensVignettingDesc = gtk_label_new ("");
     gtk_label_set_line_wrap (GTK_LABEL (data->LensVignettingDesc), TRUE);
+    gtk_label_set_ellipsize(GTK_LABEL(data->LensVignettingDesc),
+	    PANGO_ELLIPSIZE_END);
+    gtk_label_set_selectable(GTK_LABEL(data->LensVignettingDesc), TRUE);
     gtk_box_pack_start (GTK_BOX (data->LensVignettingPage), data->LensVignettingDesc, FALSE, FALSE, 0);
 
     gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensVignettingModel), active_index);
@@ -1040,6 +1045,9 @@ static void fill_distortion_page (preview_data *data)
 
     data->LensDistortionDesc = gtk_label_new ("");
     gtk_label_set_line_wrap (GTK_LABEL (data->LensDistortionDesc), TRUE);
+    gtk_label_set_ellipsize(GTK_LABEL(data->LensDistortionDesc),
+	    PANGO_ELLIPSIZE_END);
+    gtk_label_set_selectable(GTK_LABEL(data->LensDistortionDesc), TRUE);
     gtk_box_pack_start (GTK_BOX (data->LensDistortionPage),
                         data->LensDistortionDesc, FALSE, FALSE, 0);
 
@@ -1090,12 +1098,16 @@ static void fill_geometry_page (preview_data *data)
     gtk_table_attach (GTK_TABLE (data->LensGeometryTable), label,
                       0, 1, 0, 1, GTK_FILL, 0, 5, 0);
     data->LensFromGeometrySel = gtk_combo_box_new_text ();
-    uf_widget_set_tooltip(data->LensFromGeometrySel, _("The geometry of the lens used to make the shot"));
+    uf_widget_set_tooltip(data->LensFromGeometrySel,
+	    _("The geometry of the lens used to make the shot"));
     gtk_table_attach (GTK_TABLE (data->LensGeometryTable), data->LensFromGeometrySel,
                       1, 2, 0, 1, GTK_EXPAND | GTK_FILL, 0, 0, 0);
 
     data->LensFromGeometryDesc = gtk_label_new ("");
     gtk_label_set_line_wrap (GTK_LABEL (data->LensFromGeometryDesc), TRUE);
+    gtk_label_set_ellipsize(GTK_LABEL(data->LensFromGeometryDesc),
+	    PANGO_ELLIPSIZE_END);
+    gtk_label_set_selectable(GTK_LABEL(data->LensFromGeometryDesc), TRUE);
     gtk_misc_set_alignment (GTK_MISC (data->LensFromGeometryDesc), 0.5, 0.5);
     gtk_table_attach (GTK_TABLE (data->LensGeometryTable), data->LensFromGeometryDesc,
                       0, 2, 1, 2, GTK_EXPAND | GTK_FILL, 0, 0, 10);
@@ -1105,12 +1117,16 @@ static void fill_geometry_page (preview_data *data)
     gtk_table_attach (GTK_TABLE (data->LensGeometryTable), label,
                       0, 1, 2, 3, GTK_FILL, 0, 5, 0);
     data->LensToGeometrySel = gtk_combo_box_new_text ();
-    uf_widget_set_tooltip(data->LensToGeometrySel, _("The target geometry for output image"));
+    uf_widget_set_tooltip(data->LensToGeometrySel,
+	    _("The target geometry for output image"));
     gtk_table_attach (GTK_TABLE (data->LensGeometryTable), data->LensToGeometrySel,
                       1, 2, 2, 3, GTK_EXPAND | GTK_FILL, 0, 0, 0);
 
     data->LensToGeometryDesc = gtk_label_new ("");
     gtk_label_set_line_wrap (GTK_LABEL (data->LensToGeometryDesc), TRUE);
+    gtk_label_set_ellipsize(GTK_LABEL(data->LensToGeometryDesc),
+	    PANGO_ELLIPSIZE_END);
+    gtk_label_set_selectable(GTK_LABEL(data->LensToGeometryDesc), TRUE);
     gtk_misc_set_alignment (GTK_MISC (data->LensToGeometryDesc), 0.5, 0.5);
     gtk_table_attach (GTK_TABLE (data->LensGeometryTable), data->LensToGeometryDesc,
                       0, 2, 3, 4, GTK_EXPAND | GTK_FILL, 0, 0, 10);
@@ -1168,7 +1184,7 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button),
                       gtk_image_new_from_stock(GTK_STOCK_INDEX, GTK_ICON_SIZE_BUTTON));
-    uf_widget_set_tooltip(button, _("Choose camera from a complete list"));
+    uf_widget_set_tooltip(button, _("Choose camera from complete list"));
     gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
                      G_CALLBACK(camera_list_clicked), data);
@@ -1196,7 +1212,7 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button),
                       gtk_image_new_from_stock(GTK_STOCK_INDEX, GTK_ICON_SIZE_BUTTON));
-    uf_widget_set_tooltip(button, _("Choose lens from a list of possible variants"));
+    uf_widget_set_tooltip(button, _("Choose lens from list of possible variants"));
     gtk_table_attach(table, button, 3, 4, 1, 2, 0, 0, 0, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
                      G_CALLBACK(lens_list_clicked), data);
