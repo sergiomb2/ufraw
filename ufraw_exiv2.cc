@@ -156,6 +156,12 @@ try {
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Canon.0x0095")))
 		!= exifData.end() ) {
 	strlcpy_to_utf8(uf->conf->lensText, max_name, pos);
+    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Minolta.LensID")))
+		!= exifData.end() ) {
+	strlcpy_to_utf8(uf->conf->lensText, max_name, pos);
+    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.LensType")))
+		!= exifData.end() ) {
+	strlcpy_to_utf8(uf->conf->lensText, max_name, pos);
     }
     /* Read flash mode */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.Flash")))
