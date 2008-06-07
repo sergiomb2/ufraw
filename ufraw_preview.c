@@ -985,7 +985,10 @@ static gboolean render_raw_histogram(preview_data *data)
 
 static gboolean render_preview_image(preview_data *data)
 {
-    int i, x, y, w, h;
+#ifdef HAVE_GTKIMAGEVIEW
+    int i;
+#endif
+    int x, y, w, h;
     ufraw_image_data *img;
     int subarea;
 
@@ -1061,7 +1064,7 @@ static gboolean render_preview_image(preview_data *data)
     }
 #else
     subarea = data->RenderSubArea++;
-    bool last_subimage = (data->RenderSubArea > 31);
+    gboolean last_subimage = (data->RenderSubArea > 31);
 #endif
 
     img = ufraw_convert_image_area (data->UF, subarea, ufraw_phases_num - 1);
