@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-08 05:45+0200\n"
+"POT-Creation-Date: 2008-06-07 08:30+0200\n"
 "PO-Revision-Date: 2008-05-12 14:55+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
@@ -117,10 +117,12 @@ msgid "System default"
 msgstr "Podrazumevano u sistemu"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
-msgstr "Pokušavam prevođenje .ufrawrc datoteke iz NLRaw-0.4 ili ranijeg izdanja"
+msgstr ""
+"Pokušavam prevođenje .ufrawrc datoteke iz NLRaw-0.4 ili ranijeg izdanja"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.6 or earlier"
-msgstr "Pokušavam prevođenje .ufrawrc datoteke iz NLRaw-0.6 ili ranijeg izdanja"
+msgstr ""
+"Pokušavam prevođenje .ufrawrc datoteke iz NLRaw-0.6 ili ranijeg izdanja"
 
 #, c-format
 msgid "UFRaw version in .ufrawrc is not supported"
@@ -169,7 +171,8 @@ msgid "UFRaw "
 msgstr "NLRaw "
 
 msgid " - Unidentified Flying Raw converter for digital camera images.\n"
-msgstr " - Neidentifikovani Leteći Raw prevodilac za slike sa digitalnih kamera.\n"
+msgstr ""
+" - Neidentifikovani Leteći Raw prevodilac za slike sa digitalnih kamera.\n"
 
 msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
 msgstr "Upotreba: ufraw [ mogućnosti ... ] [ raw_datoteke ... ]\n"
@@ -189,8 +192,10 @@ msgid ""
 msgstr ""
 "Podrazumevano, „ufraw“ prikazuje prozorče za pregled svake raw slike, \n"
 "dajući korisniku mogućnost podešavanja parametara slike pre njenog čuvanja.\n"
-"Ukoliko nisu date raw slike u komandnoj liniji, NLRaw će prikazati prozorče.\n"
-"za izbor datoteke. Za obradu fotografija bez ikakvih pitanja (i bez pregleda)\n"
+"Ukoliko nisu date raw slike u komandnoj liniji, NLRaw će prikazati "
+"prozorče.\n"
+"za izbor datoteke. Za obradu fotografija bez ikakvih pitanja (i bez "
+"pregleda)\n"
 "koristite „ufraw-batch“.\n"
 
 msgid ""
@@ -205,7 +210,8 @@ msgstr ""
 msgid ""
 "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
 msgstr ""
-"--conf=IB_datoteka    Primenjuje parametre iz IB datoteke na ostale raw slike.\n"
+"--conf=IB_datoteka    Primenjuje parametre iz IB datoteke na ostale raw "
+"slike.\n"
 
 msgid "The rest of the options are separated into two groups.\n"
 msgstr "Ostale mogućnosti su razdvojene u dve grupe.\n"
@@ -217,11 +223,13 @@ msgid "--wb=camera|auto      White balance setting.\n"
 msgstr "--wb=camera|auto      Podešavanje ravnoteže bele.\n"
 
 msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
-msgstr "--temperature=Temperatura\n"
+msgstr ""
+"--temperature=Temperatura\n"
 "                      Temperatura boje u Kelvinima (2000 - 7000).\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
-msgstr "--green=Zelena        Ujednačenje zelene komponente u ravnoteži bele.\n"
+msgstr ""
+"--green=Zelena        Ujednačenje zelene komponente u ravnoteži bele.\n"
 
 msgid ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
@@ -231,7 +239,8 @@ msgid ""
 msgstr ""
 "--base-curve=manual|linear|camera|custom|Kriva\n"
 "                      Vrsta osnovne krive. „Kriva“ može da bude bilo koja\n"
-"                      kriva koja je prethodno učitana u grafičkom okruženju.\n"
+"                      kriva koja je prethodno učitana u grafičkom "
+"okruženju.\n"
 "                      (podrazumevana kriva iz kamere ukoliko postoji,\n"
 "                      a u suprotnom linearna).\n"
 
@@ -259,7 +268,8 @@ msgid ""
 "--curve-file=file     Use luminosity curve included in specified file.\n"
 "                      Overrides --curve option.\n"
 msgstr ""
-"--curve-file=Datoteka Koristi krivu za kanal sa luminansom iz zasebne datoteke.\n"
+"--curve-file=Datoteka Koristi krivu za kanal sa luminansom iz zasebne "
+"datoteke.\n"
 "                      Ova mogućnost ima prednost nad --curve.\n"
 
 msgid ""
@@ -284,16 +294,19 @@ msgid ""
 msgstr ""
 "--clip=digital|film   Isecanje svetlih delove na pozitivan EV.\n"
 "                      „digital“ linearni digitalni zapis senzora.\n"
-"                      „film“ simulira blagi zapis film (podrazumevano je digital).\n"
+"                      „film“ simulira blagi zapis film (podrazumevano je "
+"digital).\n"
 
 msgid ""
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 msgstr ""
-"--gamma=Gama          Podešavanje Gama vrednosti osnovne krive (podrazumevano je\n"
+"--gamma=Gama          Podešavanje Gama vrednosti osnovne krive "
+"(podrazumevano je\n"
 "                      0.45).\n"
 
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
-msgstr "--linearity=Lin.      Linearnost osnovne krive (podrazumevano je 0.10).\n"
+msgstr ""
+"--linearity=Lin.      Linearnost osnovne krive (podrazumevano je 0.10).\n"
 
 msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
 msgstr "--contrast=Kontrast   Podešavanje kontrasta (podrazumevano je 1.0).\n"
@@ -303,7 +316,8 @@ msgid ""
 "output).\n"
 msgstr ""
 "--saturation=Zasićenost\n"
-"                      Podešavanje zasićenosti (podrazumevano je 1.0, odnosno\n"
+"                      Podešavanje zasićenosti (podrazumevano je 1.0, "
+"odnosno\n"
 "                      0 za crno-bele slike).\n"
 
 msgid ""
@@ -311,7 +325,8 @@ msgid ""
 "                      Wavelet denoising threshold (default 0.0).\n"
 msgstr ""
 "--wavelet-denoising-threshold=Osetljivost\n"
-"                      Osetljivost za talasno uklanjanje šuma (podrazumevano je 0.0).\n"
+"                      Osetljivost za talasno uklanjanje šuma (podrazumevano "
+"je 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -337,8 +352,9 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algoritam za interpolaciju(podrazumevani je ahd).\n"
 
+#, fuzzy
 msgid ""
-"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
 "--grayscale=none|average|lightness|luminance|value|mixer\n"
@@ -349,10 +365,13 @@ msgid "The options which are related to the final output are:\n"
 msgstr "Mogućnosti vezane za krajnji izlaz su:\n"
 
 msgid "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
-msgstr "--shrink=Faktor       Sužavanje slike za određeni faktor (podrazumevano je 1).\n"
+msgstr ""
+"--shrink=Faktor       Sužavanje slike za određeni faktor (podrazumevano je "
+"1).\n"
 
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
-msgstr "--size=Veličina       Smanjivanje slike (visina,širina) na „Veličina“.\n"
+msgstr ""
+"--size=Veličina       Smanjivanje slike (visina,širina) na „Veličina“.\n"
 
 msgid ""
 "--out-type=ppm|tiff|png|jpeg|fits\n"
@@ -372,22 +391,23 @@ msgstr ""
 "                      Pravljenje IB datoteke (podrazumevano je ne pravi).\n"
 
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
-msgstr "--compression=Vrednost\n"
+msgstr ""
+"--compression=Vrednost\n"
 "                      JPEG kompresija (0-100, podrazumevano je 85).\n"
 
 msgid ""
 "--[no]exif            Embed EXIF in output JPEG or PNG (default embed "
 "EXIF).\n"
 msgstr ""
-"--[no]exif            Umetanje EXIF podataka u izlazni JPEG ili PNG\n" 
+"--[no]exif            Umetanje EXIF podataka u izlazni JPEG ili PNG\n"
 "                      (podrazumevano umeće EXIF).\n"
 
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
 "nozip).\n"
 msgstr ""
-"--[no]zip             Zip pakovanje TIFF datoteka (podrazumevano ne "
-"pakuje u Zip).\n"
+"--[no]zip             Zip pakovanje TIFF datoteka (podrazumevano ne pakuje u "
+"Zip).\n"
 
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
@@ -414,32 +434,35 @@ msgid ""
 "                      raw image after rotation but before any scaling.\n"
 msgstr ""
 "--crop-(left|right|top|bottom)=Piksela\n"
-"                      Iseca izlaz za zadatu vrednost u pikselima, u odnosu na "
-"raw\n"
+"                      Iseca izlaz za zadatu vrednost u pikselima, u odnosu "
+"na raw\n"
 "                      sliku nakon rotacije, ali pre promene veličine.\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
-"--out-path=Putanja     „Putanja“ za izlaznu datoteku (podrazumevano je u putanji\n"
+"--out-path=Putanja     „Putanja“ za izlaznu datoteku (podrazumevano je u "
+"putanji\n"
 "                      ulazne datoteke).\n"
 
 msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
-msgstr "--output=Datoteka     Ime datoteke na izlazu, koristite „-“ za ispis na\n"
+msgstr ""
+"--output=Datoteka     Ime datoteke na izlazu, koristite „-“ za ispis na\n"
 "                            standardni izlaz.\n"
 
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
-msgstr "--darkframe=Datoteka  Koristi zadatu datoteku za oduzimanje tamnim kadrom.\n"
+msgstr ""
+"--darkframe=Datoteka  Koristi zadatu datoteku za oduzimanje tamnim kadrom.\n"
 
 msgid ""
 "--overwrite           Overwrite existing files without asking (default no).\n"
 msgstr ""
-"--overwrite           Prepisuje postojeće datoteke bez pitanja (nije podrazumevano).\n"
+"--overwrite           Prepisuje postojeće datoteke bez pitanja (nije "
+"podrazumevano).\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
-msgstr ""
-"--silent              Ne prikazuje nikakve poruke u paketnom režimu.\n"
+msgstr "--silent              Ne prikazuje nikakve poruke u paketnom režimu.\n"
 
 # Šta je zapravo second group of options?
 msgid ""
@@ -462,7 +485,8 @@ msgid ""
 "Last, but not least, --version displays the version number and compilation\n"
 "options for ufraw and --help displays this help message and exits.\n"
 msgstr ""
-"Poslednja mogućnost, --version prikazuje izdanje programa i mogućnosti koje su \n"
+"Poslednja mogućnost, --version prikazuje izdanje programa i mogućnosti koje "
+"su \n"
 "uključene tokom izgradnje programa, dok --help ispisuje ovu poruku.\n"
 
 #, c-format
@@ -675,9 +699,6 @@ msgstr "Živi histogram"
 msgid "None"
 msgstr "Ništa"
 
-msgid "Average"
-msgstr "Prosečno"
-
 msgid "Lightness"
 msgstr "Osvetljenost"
 
@@ -689,15 +710,6 @@ msgstr "Vrednost"
 
 msgid "Channel Mixer"
 msgstr "Mikser kanala"
-
-msgid "Red:"
-msgstr "Crvena:"
-
-msgid "Green:"
-msgstr "Zelena:"
-
-msgid "Blue:"
-msgstr "Plava:"
 
 msgid "No more room for new curves."
 msgstr "Nema prostora za nove krive."
@@ -842,9 +854,6 @@ msgstr "Sačuvaj podešavanje u datoteku ($HOME/.ufrawrc)"
 msgid "Log"
 msgstr "Dnevnik"
 
-msgid "Encoding conversion failed"
-msgstr "Prevođenje kodiranja nije uspelo"
-
 msgid "About"
 msgstr "O programu"
 
@@ -861,7 +870,8 @@ msgid ""
 msgstr ""
 "<b>N</b>eidentifikovani <b>L</b>eteći <b>Raw</b> (<b>NLRaw</b>) je alat za\n"
 "čitanje i obradu raw slika iz digitalnih kamera.\n"
-"NLRaw se oslanja na <b>Raw</b> za <b>D</b>igitalne <b>K</b>amere (<b>DCRaw</b>)\n"
+"NLRaw se oslanja na <b>Raw</b> za <b>D</b>igitalne <b>K</b>amere (<b>DCRaw</"
+"b>)\n"
 "za samo prevođenje raw slika.\n"
 "\n"
 "Autor: Udi Fuchs\n"
@@ -926,7 +936,8 @@ msgid "Green component"
 msgstr "Zelena komponenta"
 
 msgid "Select a spot on the preview image to apply spot white balance"
-msgstr "Izaberite tačku na pregledu slike na osnovi koje se primenjuje ravnoteža bele"
+msgstr ""
+"Izaberite tačku na pregledu slike na osnovi koje se primenjuje ravnoteža bele"
 
 msgid "Chan. multipliers:"
 msgstr "Množioci kanala:"
@@ -948,6 +959,10 @@ msgstr "VNG interpolacija"
 
 msgid "PPG interpolation"
 msgstr "PPG interpolacija"
+
+#, fuzzy
+msgid "No interpolation"
+msgstr "VNG interpolacija"
 
 msgid "No Bayer pattern"
 msgstr "Ne postoji Bajerova mustra"
@@ -984,10 +999,14 @@ msgstr "Sivi tonovi"
 msgid "Grayscale Mode:"
 msgstr "Režim sivih tonova:"
 
-msgid "Preserve luminosity"
-msgstr "Očuvaj luminansu"
+#, fuzzy
+msgid "Reset channel mixer"
+msgstr "Mikser kanala"
 
-#. End of Grayscale page
+#. Lens correction page
+msgid "Lens correction"
+msgstr ""
+
 #. Start of Base Curve page
 msgid "Base curve"
 msgstr "Osnovna kriva"
@@ -1235,6 +1254,7 @@ msgstr "Žižna daljina"
 msgid "35mm focal length"
 msgstr "Žižna daljina na 35mm"
 
+#. Lens selector
 msgid "Lens"
 msgstr "Objektiv"
 
@@ -1379,7 +1399,8 @@ msgstr "Čuvam sliku"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"
-msgstr "Naziv datoteke sa slikom ne može da bude isti kao i naziv IB datoteke „%s“."
+msgstr ""
+"Naziv datoteke sa slikom ne može da bude isti kao i naziv IB datoteke „%s“."
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
@@ -1396,6 +1417,115 @@ msgstr "EXIF bafera je prevelik (%d).  Ignorišem."
 #, c-format
 msgid "Unknown file type %d."
 msgstr "Nepoznata vrsta datoteke %d."
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+
+msgid "Focal"
+msgstr ""
+
+msgid "F"
+msgstr ""
+
+msgid "F-number (Aperture)"
+msgstr ""
+
+msgid "Distance"
+msgstr ""
+
+msgid "Distance to subject"
+msgstr ""
+
+#. Add the model combobox
+msgid "Model:"
+msgstr ""
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr ""
+
+msgid "Parameters"
+msgstr ""
+
+msgid "Optical vignetting mathematical model"
+msgstr ""
+
+msgid "Lens distortion mathematical model"
+msgstr ""
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr ""
+
+msgid "The geometry of the lens used to make the shot"
+msgstr ""
+
+msgid "Target geometry:"
+msgstr ""
+
+msgid "The target geometry for output image"
+msgstr ""
+
+#, fuzzy
+msgid "Camera"
+msgstr "Ravnoteža bele iz kamere"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+
+msgid "Choose camera from complete list"
+msgstr ""
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+
+msgid "Choose lens from list of possible variants"
+msgstr ""
+
+#, fuzzy
+msgid "Scale"
+msgstr "Sačuvaj"
+
+msgid "Image scale power-of-two"
+msgstr ""
+
+#, fuzzy
+msgid "Reset image scale to default"
+msgstr "Vrati osnovnu krivu na podrazumevano"
+
+msgid "Autoscale the image for best fit"
+msgstr ""
+
+msgid "Lateral chromatic aberration"
+msgstr ""
+
+msgid "Optical vignetting"
+msgstr ""
+
+msgid "Lens distortion"
+msgstr ""
+
+msgid "Lens geometry"
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-08 05:45+0200\n"
-"PO-Revision-Date: 2008-05-08 05:50+0200\n"
+"POT-Creation-Date: 2008-06-07 08:30+0200\n"
+"PO-Revision-Date: 2008-06-07 08:50+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -342,10 +342,10 @@ msgstr ""
 "                      Interpolationsalgoritme (standardværdi ahd).\n"
 
 msgid ""
-"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
-"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Gråtonekonverteringsalgoritme (standardværdi none).\n"
 
 msgid "The options which are related to the final output are:\n"
@@ -678,9 +678,6 @@ msgstr "Sandtidshistogram"
 msgid "None"
 msgstr "Ingen"
 
-msgid "Average"
-msgstr "Gennemsnit"
-
 msgid "Lightness"
 msgstr "Lyshed"
 
@@ -692,15 +689,6 @@ msgstr "Værdi"
 
 msgid "Channel Mixer"
 msgstr "Farvekanalmixer"
-
-msgid "Red:"
-msgstr "Rød:"
-
-msgid "Green:"
-msgstr "Grøn:"
-
-msgid "Blue:"
-msgstr "Blå:"
 
 msgid "No more room for new curves."
 msgstr "Ikke mere plads til nye kurver."
@@ -845,9 +833,6 @@ msgstr "Gem konfiguration i ressourcefil ($HOME/.ufrawrc)"
 msgid "Log"
 msgstr "Log"
 
-msgid "Encoding conversion failed"
-msgstr "Indkodningskonvertering fejlede"
-
 msgid "About"
 msgstr "Om"
 
@@ -953,6 +938,9 @@ msgstr "VNG-interpolation"
 msgid "PPG interpolation"
 msgstr "PPG-interpolation"
 
+msgid "No interpolation"
+msgstr "Ingen interpolation"
+
 msgid "No Bayer pattern"
 msgstr "Intet Bayermønster"
 
@@ -988,10 +976,13 @@ msgstr "Gråtoneskala"
 msgid "Grayscale Mode:"
 msgstr "Gråtoneskalamodus:"
 
-msgid "Preserve luminosity"
-msgstr "Bevar lysstyrke"
+msgid "Reset channel mixer"
+msgstr "Resæt farvekanalmixer"
 
-#. End of Grayscale page
+#. Lens correction page
+msgid "Lens correction"
+msgstr ""
+
 #. Start of Base Curve page
 msgid "Base curve"
 msgstr "Basiskurve"
@@ -1239,6 +1230,7 @@ msgstr "Brændvidde"
 msgid "35mm focal length"
 msgstr "35mm brændvidde"
 
+#. Lens selector
 msgid "Lens"
 msgstr "Objektiv"
 
@@ -1401,6 +1393,127 @@ msgstr "EXIF-buffer længde %d, for lang, ignoreret."
 #, c-format
 msgid "Unknown file type %d."
 msgstr "Ukendt filtype %d."
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+"Fabrikat:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Fatning:\t\t%s\n"
+"Forlængelsesfaktor:\t%.1f"
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+"Fabrikat:\t\t%s\n"
+"Model:\t\t%s\n"
+"Brændviddeområde:\t%s\n"
+"Blænde:\t\t%s\n"
+"Forlængelsesfaktor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Fatninger:\t\t%s"
+
+msgid "Focal"
+msgstr "Brændvidde"
+
+msgid "F"
+msgstr "F"
+
+msgid "F-number (Aperture)"
+msgstr "F-tal (Blænde)"
+
+msgid "Distance"
+msgstr "Afstand"
+
+msgid "Distance to subject"
+msgstr "Motivafstand"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "Model:"
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "Matematisk model for kromatisk aberration"
+
+msgid "Parameters"
+msgstr "Parametre"
+
+msgid "Optical vignetting mathematical model"
+msgstr "Matematisk model for optisk vignettering"
+
+msgid "Lens distortion mathematical model"
+msgstr "Matematisk model for objektivforvrængning"
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr "Objektivgeometri:"
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "Geometrien i det objektiv, der blev brugt ved optagelsen"
+
+msgid "Target geometry:"
+msgstr "Motivgeometri:"
+
+msgid "The target geometry for output image"
+msgstr "Den motivgeometry, der ønskes i det færdige billede"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Søg efter kamera ved hjælp af et mønster\n"
+"Format: [Fabrikant, ][Model]"
+
+msgid "Choose camera from complete list"
+msgstr "Vælg kamera fra fuldstændig liste"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Søg efter objektiv ved hjælp af et mønster\n"
+"Format: [Fabrikant, ][Model]"
+
+msgid "Choose lens from list of possible variants"
+msgstr "Vælg objektiv fra liste over mulige varianter"
+
+msgid "Scale"
+msgstr "Skala"
+
+msgid "Image scale power-of-two"
+msgstr "Billedskala to-tals-potens"
+
+msgid "Reset image scale to default"
+msgstr "Resæt billedskala til standardværdi"
+
+msgid "Autoscale the image for best fit"
+msgstr "Autoskaler billedet til bedste værdi"
+
+msgid "Lateral chromatic aberration"
+msgstr "Lateral kromatisk aberration"
+
+msgid "Optical vignetting"
+msgstr "Optisk vignettering"
+
+msgid "Lens distortion"
+msgstr "Objektivforvrængning"
+
+msgid "Lens geometry"
+msgstr "Objektivgeometri"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

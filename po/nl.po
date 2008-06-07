@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-08 05:45+0200\n"
+"POT-Creation-Date: 2008-06-07 08:30+0200\n"
 "PO-Revision-Date: 2008-04-28 21:38+0200\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
@@ -341,8 +341,9 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolatie algoritme (standaard: ahd).\n"
 
+#, fuzzy
 msgid ""
-"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
@@ -685,9 +686,6 @@ msgstr "Live histogram"
 msgid "None"
 msgstr "Geen"
 
-msgid "Average"
-msgstr "Gemiddeld"
-
 msgid "Lightness"
 msgstr "Lightness"
 
@@ -699,15 +697,6 @@ msgstr "Waarde"
 
 msgid "Channel Mixer"
 msgstr "Channel Mixer"
-
-msgid "Red:"
-msgstr "Rood:"
-
-msgid "Green:"
-msgstr "Groen:"
-
-msgid "Blue:"
-msgstr "Blauw:"
 
 msgid "No more room for new curves."
 msgstr "Geen ruimte voor nieuwe curves."
@@ -852,9 +841,6 @@ msgstr "Bewaar configuratie in configuratiebestand ($HOME/.ufrawrc)"
 msgid "Log"
 msgstr "Log"
 
-msgid "Encoding conversion failed"
-msgstr "Codering conversie mislukt"
-
 msgid "About"
 msgstr "Over UFRaw"
 
@@ -960,6 +946,10 @@ msgstr "VNG interpolatie"
 msgid "PPG interpolation"
 msgstr "PPG interpolatie"
 
+#, fuzzy
+msgid "No interpolation"
+msgstr "VNG interpolatie"
+
 msgid "No Bayer pattern"
 msgstr "Geen Bayer patroon"
 
@@ -995,10 +985,14 @@ msgstr "Grijsschaal"
 msgid "Grayscale Mode:"
 msgstr "Grijsschaal Modus:"
 
-msgid "Preserve luminosity"
-msgstr "Behoud luminosity"
+#, fuzzy
+msgid "Reset channel mixer"
+msgstr "Channel Mixer"
 
-#. End of Grayscale page
+#. Lens correction page
+msgid "Lens correction"
+msgstr ""
+
 #. Start of Base Curve page
 msgid "Base curve"
 msgstr "Basis curve"
@@ -1246,6 +1240,7 @@ msgstr "Brandpuntsafstand"
 msgid "35mm focal length"
 msgstr "35mm brandpuntsafstand"
 
+#. Lens selector
 msgid "Lens"
 msgstr "Lens"
 
@@ -1408,6 +1403,115 @@ msgstr "EXIF buffer lengte %d, te lang, genegeerd."
 #, c-format
 msgid "Unknown file type %d."
 msgstr "Onbekend bestandstype %d."
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+
+msgid "Focal"
+msgstr ""
+
+msgid "F"
+msgstr ""
+
+msgid "F-number (Aperture)"
+msgstr ""
+
+msgid "Distance"
+msgstr ""
+
+msgid "Distance to subject"
+msgstr ""
+
+#. Add the model combobox
+msgid "Model:"
+msgstr ""
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr ""
+
+msgid "Parameters"
+msgstr ""
+
+msgid "Optical vignetting mathematical model"
+msgstr ""
+
+msgid "Lens distortion mathematical model"
+msgstr ""
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr ""
+
+msgid "The geometry of the lens used to make the shot"
+msgstr ""
+
+msgid "Target geometry:"
+msgstr ""
+
+msgid "The target geometry for output image"
+msgstr ""
+
+#, fuzzy
+msgid "Camera"
+msgstr "Camera WB"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+
+msgid "Choose camera from complete list"
+msgstr ""
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+
+msgid "Choose lens from list of possible variants"
+msgstr ""
+
+#, fuzzy
+msgid "Scale"
+msgstr "Opslaan"
+
+msgid "Image scale power-of-two"
+msgstr ""
+
+#, fuzzy
+msgid "Reset image scale to default"
+msgstr "Reset basis curve naar verstekwaarde"
+
+msgid "Autoscale the image for best fit"
+msgstr ""
+
+msgid "Lateral chromatic aberration"
+msgstr ""
+
+msgid "Optical vignetting"
+msgstr ""
+
+msgid "Lens distortion"
+msgstr ""
+
+msgid "Lens geometry"
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

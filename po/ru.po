@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-02 00:59+0400\n"
+"POT-Creation-Date: 2008-06-07 08:30+0200\n"
 "PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -844,9 +844,6 @@ msgstr "Сохранить конфигурацию в файл ($HOME/.ufrawrc)
 msgid "Log"
 msgstr "Журнал"
 
-msgid "Encoding conversion failed"
-msgstr "Преобразование текста не удалось"
-
 msgid "About"
 msgstr "О программе"
 
@@ -1442,11 +1439,11 @@ msgstr ""
 msgid "Focal"
 msgstr "Фокус"
 
-msgid "Lens focal distance"
-msgstr "Фокусное расстояние"
+msgid "F"
+msgstr ""
 
-msgid "Lens aperture"
-msgstr "Диафрагма"
+msgid "F-number (Aperture)"
+msgstr ""
 
 msgid "Distance"
 msgstr "Расстояние"
@@ -1493,7 +1490,8 @@ msgstr ""
 "Поиск камеры по ключевым словам\n"
 "Формат: [Производитель, ][Модель]"
 
-msgid "Choose camera from a complete list"
+#, fuzzy
+msgid "Choose camera from complete list"
 msgstr "Выбрать камеру из полного списка"
 
 msgid ""
@@ -1503,7 +1501,8 @@ msgstr ""
 "Поиск объектива по ключевым словам\n"
 "Формат: [Производитель, ][Модель]"
 
-msgid "Choose lens from a list of possible variants"
+#, fuzzy
+msgid "Choose lens from list of possible variants"
 msgstr "Выбрать объектив из полного списка"
 
 msgid "Scale"

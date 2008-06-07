@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-08 05:45+0200\n"
+"POT-Creation-Date: 2008-06-07 08:30+0200\n"
 "PO-Revision-Date: 2007-11-11 20:19+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -351,7 +351,7 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
@@ -692,10 +692,6 @@ msgstr "Histograma de salida"
 msgid "None"
 msgstr "Ninguno"
 
-#, fuzzy
-msgid "Average"
-msgstr "Media:"
-
 msgid "Lightness"
 msgstr ""
 
@@ -707,17 +703,6 @@ msgstr "Valor"
 
 msgid "Channel Mixer"
 msgstr ""
-
-msgid "Red:"
-msgstr ""
-
-#, fuzzy
-msgid "Green:"
-msgstr "Verde"
-
-#, fuzzy
-msgid "Blue:"
-msgstr "Valor"
 
 msgid "No more room for new curves."
 msgstr "No hay más espacio para nuevas curvas"
@@ -864,9 +849,6 @@ msgstr "Guardar archivo de ajustes ($HOME/.ufrawrc)"
 msgid "Log"
 msgstr "Registro"
 
-msgid "Encoding conversion failed"
-msgstr "Falló la conversión de codificación"
-
 msgid "About"
 msgstr "Acerca de"
 
@@ -975,6 +957,10 @@ msgstr "Interpolación VNG"
 msgid "PPG interpolation"
 msgstr "Interpolación PPG"
 
+#, fuzzy
+msgid "No interpolation"
+msgstr "Interpolación VNG"
+
 msgid "No Bayer pattern"
 msgstr "Sin patrón Bayer"
 
@@ -1010,10 +996,13 @@ msgstr ""
 msgid "Grayscale Mode:"
 msgstr ""
 
-msgid "Preserve luminosity"
+msgid "Reset channel mixer"
 msgstr ""
 
-#. End of Grayscale page
+#. Lens correction page
+msgid "Lens correction"
+msgstr ""
+
 #. Start of Base Curve page
 msgid "Base curve"
 msgstr "Curva base"
@@ -1267,6 +1256,7 @@ msgstr "Distancia focal"
 msgid "35mm focal length"
 msgstr "Distancia focal equiv. 35mm"
 
+#. Lens selector
 msgid "Lens"
 msgstr "Lente"
 
@@ -1433,6 +1423,115 @@ msgstr "longitud del buffer EXIF %d, demasiado grande, ignorado."
 #, c-format
 msgid "Unknown file type %d."
 msgstr "Tipo de archivo desconocido %d."
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+
+msgid "Focal"
+msgstr ""
+
+msgid "F"
+msgstr ""
+
+msgid "F-number (Aperture)"
+msgstr ""
+
+msgid "Distance"
+msgstr ""
+
+msgid "Distance to subject"
+msgstr ""
+
+#. Add the model combobox
+msgid "Model:"
+msgstr ""
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr ""
+
+msgid "Parameters"
+msgstr ""
+
+msgid "Optical vignetting mathematical model"
+msgstr ""
+
+msgid "Lens distortion mathematical model"
+msgstr ""
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr ""
+
+msgid "The geometry of the lens used to make the shot"
+msgstr ""
+
+msgid "Target geometry:"
+msgstr ""
+
+msgid "The target geometry for output image"
+msgstr ""
+
+#, fuzzy
+msgid "Camera"
+msgstr "Balance de la cámara"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+
+msgid "Choose camera from complete list"
+msgstr ""
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+
+msgid "Choose lens from list of possible variants"
+msgstr ""
+
+#, fuzzy
+msgid "Scale"
+msgstr "Guardar _como"
+
+msgid "Image scale power-of-two"
+msgstr ""
+
+#, fuzzy
+msgid "Reset image scale to default"
+msgstr "Restaurar a curva base por defecto"
+
+msgid "Autoscale the image for best fit"
+msgstr ""
+
+msgid "Lateral chromatic aberration"
+msgstr ""
+
+msgid "Optical vignetting"
+msgstr ""
+
+msgid "Lens distortion"
+msgstr ""
+
+msgid "Lens geometry"
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
