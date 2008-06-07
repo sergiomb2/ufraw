@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.114 2008/05/25 13:07:03 udifuchs Exp $
+dnl $Id: configure.ac,v 1.115 2008/06/07 00:22:29 udifuchs Exp $
 AC_INIT(UFRaw, 0.14)
 AC_PREREQ(2.57)
 
@@ -84,7 +84,7 @@ PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview >= 1.3,
     GTK_CFLAGS=$GTKIMAGEVIEW_CFLAGS
     AC_DEFINE(HAVE_GTKIMAGEVIEW, 1, have gtk image view) ],
   [ have_gtkimageview=no
-    AC_MSG_RESULT($GIMP_PKG_ERRORS) ] )
+    AC_MSG_RESULT($GTKIMAGEVIEW_PKG_ERRORS) ] )
 AC_SUBST(GTK_LIBS)
 PKG_CHECK_MODULES(gtk_image_view_damage_pixels, gtkimageview > 1.5.0,
   [ AC_DEFINE_UNQUOTED(GTK_IMAGE_VIEW_DAMAGE_PIXELS, 1, temporary) ],
@@ -161,10 +161,11 @@ AC_CHECK_HEADER(jpeglib.h,
   AC_CHECK_LIB(jpeg, jpeg_CreateCompress))
 have_jpeg=${ac_cv_lib_jpeg_jpeg_CreateCompress:-no}
 
-# Check for png headers and library.
-AC_CHECK_HEADER(png.h,
-  AC_CHECK_LIB(png, png_create_info_struct))
-have_png=${ac_cv_lib_png_png_create_info_struct:-no}
+PKG_CHECK_MODULES(LIBPNG, libpng,
+  [ have_png=yes
+    AC_DEFINE(HAVE_LIBPNG, 1, have the png library) ],
+  [ have_png=no
+    AC_MSG_RESULT($LIBPNG_PKG_ERRORS) ] )
 
 # Check for tiff headers and library.
 AC_CHECK_HEADER(tiffio.h,
@@ -191,10 +192,10 @@ PKG_CHECK_MODULES(LENSFUN, lensfun >= 0.2,
 
 # UFRAW_CPPFLAGS is added to the preprocessor flags AM_CPPFLAGS,
 # affecting also the C and C++ compilers.
-UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS"
+UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS $LIBPNG_CFLAGS"
 AC_SUBST(UFRAW_CPPFLAGS)
 # UFRAW_LDADD is added to the linker flags LDADD.
-UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS"
+UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS $LIBPNG_LIBS"
 AC_SUBST(UFRAW_LDADD)
 
 if test $ufraw_win32 = yes; then
