@@ -159,9 +159,11 @@ try {
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Minolta.LensID")))
 		!= exifData.end() ) {
 	strlcpy_to_utf8(uf->conf->lensText, max_name, pos);
+#if EXIV2_TEST_VERSION(0,15,99)		/* Exiv2 0.16-pre1 */
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.LensType")))
 		!= exifData.end() ) {
 	strlcpy_to_utf8(uf->conf->lensText, max_name, pos);
+#endif
     }
     /* Read flash mode */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.Flash")))
