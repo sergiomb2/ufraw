@@ -124,9 +124,12 @@ const conf_data conf_default = {
     NULL,                         /* mount/camera/lens database */
     NULL,                         /* camera description */
     NULL,                         /* lens description */
-    { LF_DIST_MODEL_NONE },       /* lens distortion parameters */
-    { LF_TCA_MODEL_NONE },        /* lens tca parameters */
-    { LF_VIGNETTING_MODEL_NONE }, /* lens vignetting parameters */
+    { LF_DIST_MODEL_NONE, 0, { 0, 0, 0 } }, /* lens distortion parameters */
+    { LF_TCA_MODEL_NONE, 0, { 0, 0 } }, /* lens tca parameters */
+    /* lens vignetting parameters */ 
+    { LF_VIGNETTING_MODEL_NONE, 0, 0, 0, { 0, 0, 0 } },
+    LF_UNKNOWN,                   /* lens type */
+    0,                            /* lens postprocessing scale power-of-two */ 
 #endif
 };
 
