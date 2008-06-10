@@ -267,7 +267,7 @@ static void parse_maker_model (
     sep = strchr (txt, ',');
     if (sep)
     {
-        int len = sep - txt;
+        size_t len = sep - txt;
         if (len > sz_make - 1)
             len = sz_make - 1;
         memcpy (make, txt, len);
@@ -283,7 +283,7 @@ static void parse_maker_model (
     }
     else
     {
-        int len = strlen (txt);
+        size_t len = strlen (txt);
         if (len > sz_model - 1)
             len = sz_model - 1;
         memcpy (model, txt, len);
@@ -400,7 +400,7 @@ static void lens_set (preview_data *data, const lfLens *lens)
     gchar *fm;
     const char *maker, *model;
     GtkComboBoxEntry *cbe;
-    int i;
+    unsigned i;
     static gdouble focal_values [] =
     {
         4.5, 8, 10, 12, 14, 15, 16, 17, 18, 20, 24, 28, 30, 31, 35, 38, 40, 43,

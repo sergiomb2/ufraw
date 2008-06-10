@@ -1217,8 +1217,8 @@ ufraw_image_data *ufraw_convert_image_area (
                     {
                         // roundf() and truncf() are C99 and gcc warns on them
                         // if used without -std=c99... oh well...
-                        unsigned xx = cur [0] + 0.5;
-                        unsigned yy = cur [1] + 0.5;
+                        int xx = cur [0] + 0.5;
+                        int yy = cur [1] + 0.5;
                         if (xx >= in->width || yy >= in->height)
                             out_buf [0] = 0;
                         else
