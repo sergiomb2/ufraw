@@ -77,7 +77,7 @@ const conf_data conf_default = {
     -1, -1, -1, -1, /* Crop X1,Y1,X2,Y2 */
     0, /* rotationAngle */
     grayscale_none, /* grayscale mode */
-    { 100.0, 100.0, 100.0 }, /* grayscale mixer */
+    { 1.0, 1.0, 1.0 }, /* grayscale mixer */
     /* Save options */
     "", "", "", /* inputFilename, outputFilename, outputPath */
     "", "", /* inputURI, inputModTime */

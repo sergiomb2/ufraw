@@ -3982,20 +3982,12 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->GrayscaleMixerTable = GTK_TABLE(gtk_table_new(3, 3, FALSE));
     gtk_table_attach(table, GTK_WIDGET(data->GrayscaleMixerTable), 0, 2, 6, 7,
 		     GTK_EXPAND|GTK_FILL, 0, 0, 0);
-    gtk_table_attach(data->GrayscaleMixerTable,
-	gtk_image_new_from_stock("channel-red", GTK_ICON_SIZE_BUTTON),
-	0, 1, 0, 1, 0, 0, 0, 0);
-    gtk_table_attach(data->GrayscaleMixerTable,
-	gtk_image_new_from_stock("channel-green", GTK_ICON_SIZE_BUTTON),
-	0, 1, 1, 2, 0, 0, 0, 0);
-    gtk_table_attach(data->GrayscaleMixerTable,
-	gtk_image_new_from_stock("channel-blue", GTK_ICON_SIZE_BUTTON),
-	0, 1, 2, 3, 0, 0, 0, 0);
     for (i = 0; i < 3; ++i) {
         data->GrayscaleMixers[i] = adjustment_scale(
-	    data->GrayscaleMixerTable, 0, i, NULL,
+	    data->GrayscaleMixerTable, 0, i,
+	    i==0 ? "@channel-red" : i==1 ? "@channel-green" : "@channel-blue",
 	    CFG->grayscaleMixer[i], &CFG->grayscaleMixer[i],
-	    -200, 200, 1, 10, 0, NULL, G_CALLBACK(adjustment_update));
+	    -2.0, 2.0, .01, 0.10, 2, NULL, G_CALLBACK(adjustment_update));
     }
 
     data->GrayscaleMixerColor = GTK_LABEL(gtk_label_new(NULL));

@@ -57,7 +57,6 @@ typedef struct {
     GtkComboBox *WBCombo, *BaseCurveCombo, *CurveCombo,
 		*ProfileCombo[profile_types], *BitDepthCombo, *TypeCombo;
     GtkWidget *GrayscaleButtons[6];
-    GtkWidget *GrayscaleNormalizeButton;
     GtkTable *SpotTable;
     GtkTable *GrayscaleMixerTable;
     GtkLabel *GrayscaleMixerColor;
