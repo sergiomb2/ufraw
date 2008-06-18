@@ -304,7 +304,7 @@ static void camera_search_clicked(
 
     parse_maker_model (txt, make, sizeof (make), model, sizeof (model));
 
-    camlist = lf_db_find_cameras_ext (CFG->lensdb, make, model);
+    camlist = lf_db_find_cameras_ext (CFG->lensdb, make, model, 0);
     if (!camlist)
         return;
 
@@ -587,7 +587,7 @@ static void lens_search_clicked(
     parse_maker_model (txt, make, sizeof (make), model, sizeof (model));
     lenslist = lf_db_find_lenses_hd (CFG->lensdb, CFG->camera,
                                      make [0] ? make : NULL,
-                                     model [0] ? model : NULL);
+                                     model [0] ? model : NULL, 0);
     if (!lenslist)
         return;
 
@@ -608,7 +608,7 @@ static void lens_list_clicked(
     if (CFG->camera)
     {
         const lfLens **lenslist = lf_db_find_lenses_hd (
-            CFG->lensdb, CFG->camera, NULL, NULL);
+            CFG->lensdb, CFG->camera, NULL, NULL, 0);
         if (!lenslist)
             return;
         lens_menu_fill (data, lenslist);
