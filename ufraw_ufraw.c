@@ -1217,35 +1217,35 @@ ufraw_image_data *ufraw_convert_image_area (
                     {
                         // roundf() and truncf() are C99 and gcc warns on them
                         // if used without -std=c99... oh well...
-                        int xx = cur [0] + 0.5;
-                        int yy = cur [1] + 0.5;
-                        if (xx >= in->width || yy >= in->height)
+                        int xi = cur [0] + 0.5;
+                        int yi = cur [1] + 0.5;
+                        if (xi<0 || xi >= in->width || yi<0 || yi >= in->height)
                             out_buf [0] = 0;
                         else
                             /* Nearest interpolation: don't spend time
                                for high-quality interpolation for preview */
-                            out_buf [0] = (in->buffer + yy * in->rowstride +
-                                           xx * in->depth) [0];
+                            out_buf [0] = (in->buffer + yi * in->rowstride +
+                                           xi * in->depth) [0];
 
-                        xx = cur [2] + 0.5;
-                        yy = cur [3] + 0.5;
-                        if (xx >= in->width || yy >= in->height)
+                        xi = cur [2] + 0.5;
+                        yi = cur [3] + 0.5;
+                        if (xi<0 || xi >= in->width || yi<0 || yi >= in->height)
                             out_buf [1] = 0;
                         else
                             /* Nearest interpolation: don't spend time
                                for high-quality interpolation for preview */
-                            out_buf [1] = (in->buffer + yy * in->rowstride +
-                                           xx * in->depth) [1];
+                            out_buf [1] = (in->buffer + yi * in->rowstride +
+                                           xi * in->depth) [1];
 
-                        xx = cur [4] + 0.5;
-                        yy = cur [5] + 0.5;
-                        if (xx >= in->width || yy >= in->height)
+                        xi = cur [4] + 0.5;
+                        yi = cur [5] + 0.5;
+                        if (xi<0 || xi >= in->width || yi<0 || yi >= in->height)
                             out_buf [2] = 0;
                         else
                             /* Nearest interpolation: don't spend time
                                for high-quality interpolation for preview */
-                            out_buf [2] = (in->buffer + yy * in->rowstride +
-                                           xx * in->depth) [2];
+                            out_buf [2] = (in->buffer + yi * in->rowstride +
+                                           xi * in->depth) [2];
                     }
                 }
 
