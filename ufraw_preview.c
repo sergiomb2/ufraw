@@ -1672,8 +1672,10 @@ static gboolean (*gtk_image_view_scroll_event)(GtkWidget *widget,
 static gboolean preview_scroll_event(GtkWidget *widget, GdkEventScroll *event)
 {
     // GtkImageView only knows how to handle scroll up or down
-    if ( event->direction==GDK_SCROLL_UP ||
-	 event->direction==GDK_SCROLL_DOWN )
+    // We also disable Ctrl+scroll which activates the zoom
+    if ( ( event->direction==GDK_SCROLL_UP ||
+	   event->direction==GDK_SCROLL_DOWN ) &&
+	 event->state & GDK_CONTROL_MASK )
 	(*gtk_image_view_scroll_event)(widget, event);
     return TRUE;
 }
