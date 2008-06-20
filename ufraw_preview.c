@@ -25,6 +25,7 @@
 #include <math.h>
 #include <errno.h>
 #include "uf_gtk.h"
+#include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
 #include "ufraw.h"
 #include "ufraw_ui.h"
@@ -1507,8 +1508,8 @@ static void event_coordinate_rescale(gdouble *x, gdouble *y, preview_data *data)
     *y = *y * data->UF->initialHeight / height;
 }
 
-static gboolean preview_button_press(GtkWidget *event_box, GdkEventButton *event,
-	gpointer user_data)
+static gboolean preview_button_press_event(GtkWidget *event_box,
+	GdkEventButton *event, gpointer user_data)
 {
     preview_data *data = get_preview_data(event_box);
     (void)user_data;
@@ -1532,8 +1533,8 @@ static gboolean preview_button_press(GtkWidget *event_box, GdkEventButton *event
     return FALSE;
 }
 
-static gboolean preview_button_release(GtkWidget *event_box, GdkEventButton *event,
-	gpointer user_data)
+static gboolean preview_button_release_event(GtkWidget *event_box,
+	GdkEventButton *event, gpointer user_data)
 {
     preview_data *data = get_preview_data(event_box);
     (void)user_data;
@@ -1643,8 +1644,8 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
     return TRUE;
 }
 
-static gboolean preview_motion_notify(GtkWidget *event_box, GdkEventMotion *event,
-	gpointer user_data)
+static gboolean preview_motion_notify_event(GtkWidget *event_box,
+	GdkEventMotion *event, gpointer user_data)
 {
     preview_data *data = get_preview_data(event_box);
 
@@ -1662,6 +1663,18 @@ static gboolean preview_motion_notify(GtkWidget *event_box, GdkEventMotion *even
     data->SpotY2 = event->y;
     g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
 	    (GSourceFunc)(render_spot), data, NULL);
+    return TRUE;
+}
+
+static gboolean (*gtk_image_view_scroll_event)(GtkWidget *widget,
+	GdkEventScroll *event);
+
+static gboolean preview_scroll_event(GtkWidget *widget, GdkEventScroll *event)
+{
+    // GtkImageView only knows how to handle scroll up or down
+    if ( event->direction==GDK_SCROLL_UP ||
+	 event->direction==GDK_SCROLL_DOWN )
+	(*gtk_image_view_scroll_event)(widget, event);
     return TRUE;
 }
 
@@ -4894,12 +4907,30 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 #endif
     data->PreviewButtonPressed = FALSE;
     g_signal_connect(G_OBJECT(PreviewEventBox), "button-press-event",
-	    G_CALLBACK(preview_button_press), NULL);
+	    G_CALLBACK(preview_button_press_event), NULL);
     g_signal_connect(G_OBJECT(PreviewEventBox), "button-release-event",
-	    G_CALLBACK(preview_button_release), NULL);
+	    G_CALLBACK(preview_button_release_event), NULL);
     g_signal_connect(G_OBJECT(PreviewEventBox), "motion-notify-event",
-	    G_CALLBACK(preview_motion_notify), NULL);
+	    G_CALLBACK(preview_motion_notify_event), NULL);
     gtk_widget_add_events(PreviewEventBox, GDK_POINTER_MOTION_MASK);
+
+    // Hide zoom key bindings from GtkImageView
+    GtkImageViewClass *klass =
+	    GTK_IMAGE_VIEW_GET_CLASS(GTK_IMAGE_VIEW(data->PreviewWidget));
+    GtkBindingSet *binding_set = gtk_binding_set_by_class(klass);
+    gtk_binding_entry_remove(binding_set, GDK_1, 0);
+    gtk_binding_entry_remove(binding_set, GDK_2, 0);
+    gtk_binding_entry_remove(binding_set, GDK_3, 0);
+    gtk_binding_entry_remove(binding_set, GDK_plus, 0);
+    gtk_binding_entry_remove(binding_set, GDK_equal, 0);
+    gtk_binding_entry_remove(binding_set, GDK_KP_Add, 0);
+    gtk_binding_entry_remove(binding_set, GDK_minus, 0);
+    gtk_binding_entry_remove(binding_set, GDK_KP_Subtract, 0);
+    gtk_binding_entry_remove(binding_set, GDK_x, 0);
+    // GtkImageView should only get the scoll up/down events
+    GtkWidgetClass *widget_class = (GtkWidgetClass *)klass;
+    gtk_image_view_scroll_event = widget_class->scroll_event;
+    widget_class->scroll_event = preview_scroll_event;
 
     data->ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
     gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(data->ProgressBar),
