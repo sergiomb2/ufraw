@@ -4916,6 +4916,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    G_CALLBACK(preview_motion_notify_event), NULL);
     gtk_widget_add_events(PreviewEventBox, GDK_POINTER_MOTION_MASK);
 
+#ifdef HAVE_GTKIMAGEVIEW
     // Hide zoom key bindings from GtkImageView
     GtkImageViewClass *klass =
 	    GTK_IMAGE_VIEW_GET_CLASS(GTK_IMAGE_VIEW(data->PreviewWidget));
@@ -4933,6 +4934,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     GtkWidgetClass *widget_class = (GtkWidgetClass *)klass;
     gtk_image_view_scroll_event = widget_class->scroll_event;
     widget_class->scroll_event = preview_scroll_event;
+#endif
 
     data->ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
     gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(data->ProgressBar),
