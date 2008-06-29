@@ -1294,6 +1294,19 @@ const wb_data wb_preset[] = {
   { "NIKON", "D50", Flash, 0,			{ 2.398438, 1, 1.339844, 0 } },
   { "NIKON", "D50", Shade, 0,			{ 2.746094, 1, 1.156250, 0 } },
 
+  { "NIKON", "D60", DirectSunlight, 0,		{ 1.792969, 1, 1.371094, 0 } },
+  { "NIKON", "D60", Flash, 0,			{ 2.007813, 1, 1.187500, 0 } },
+  { "NIKON", "D60", Cloudy, 0,			{ 1.960937, 1, 1.253906, 0 } },
+  { "NIKON", "D60", Shade, 0,			{ 2.277344, 1, 1.089844, 0 } },
+  { "NIKON", "D60", Incandescent, 0,		{ 1.148437, 1, 2.382812, 0 } },
+  { "NIKON", "D60", SodiumVaporFluorescent, 0,	{ 1.035156, 1, 2.468750, 0 } },
+  { "NIKON", "D60", WarmWhiteFluorescent, 0,	{ 1.136719, 1, 2.167969, 0 } },
+  { "NIKON", "D60", WhiteFluorescent, 0,	{ 1.343750, 1, 2.480469, 0 } },
+  { "NIKON", "D60", CoolWhiteFluorescent, 0,	{ 1.683594, 1, 2.117187, 0 } },
+  { "NIKON", "D60", DayWhiteFluorescent, 0,	{ 1.679688, 1, 1.414063, 0 } },
+  { "NIKON", "D60", DaylightFluorescent, 0,	{ 1.953125, 1, 1.121094, 0 } },
+  { "NIKON", "D60", HighTempMercuryVaporFluorescent, 0, { 2.296875, 1, 1.398438, 0 } },
+
   { "NIKON", "D70", Incandescent, -3,		{ 1.429688, 1, 2.539062, 0 } },
   { "NIKON", "D70", Incandescent, 0,		{ 1.343750, 1, 2.816406, 0 } }, /*3000K*/
   { "NIKON", "D70", Incandescent, 3,		{ 1.253906, 1, 3.250000, 0 } },
