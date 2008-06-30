@@ -1650,6 +1650,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->CropY1 = -1;
     cmd->CropX2 = -1;
     cmd->CropY2 = -1;
+    cmd->rotate = -1;
 
     while (1) {
 	c = getopt_long (*argc, *argv, "h", options, &index);
@@ -2056,7 +2057,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    return -1;
 	}
     }
-    cmd->rotate = -1;
     if ( rotateName!=NULL ) {
 	if ( strcmp(rotateName, "camera")==0 )
 	    cmd->rotate = TRUE;
