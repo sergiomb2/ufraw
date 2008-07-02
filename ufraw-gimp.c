@@ -410,7 +410,7 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 	}
     }
 #else
-    ufraw_prepare_output_exif(uf);
+    ufraw_exif_prepare_output(uf);
     if (uf->outputExifBuf!=NULL) {
 	if (uf->outputExifBufLen>65533) {
 	    ufraw_message(UFRAW_SET_WARNING,

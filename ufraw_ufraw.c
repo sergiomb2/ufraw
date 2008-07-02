@@ -406,7 +406,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     strcpy(uf->conf->lensText, "");
     strcpy(uf->conf->flashText, "");
     if ( !uf->conf->embeddedImage ) {
-	if ( ufraw_read_input_exif(uf)!=UFRAW_SUCCESS ) {
+	if ( ufraw_exif_read_input(uf)!=UFRAW_SUCCESS ) {
 	    ufraw_message(UFRAW_SET_LOG, "Error reading EXIF data from %s\n",
 		    uf->filename);
 	}

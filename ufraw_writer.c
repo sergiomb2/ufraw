@@ -478,15 +478,17 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->conf->outputFilename);
 	    }
 	}
-	ufraw_prepare_output_exif(uf);
-	if (uf->outputExifBuf!=NULL && uf->conf->embedExif) {
-	    if (uf->outputExifBufLen>65533) {
-		ufraw_set_warning(uf,
-			_("EXIF buffer length %d, too long, ignored."),
-			uf->outputExifBufLen);
-	    } else {
-		jpeg_write_marker(&cinfo, JPEG_APP0+1,
-			uf->outputExifBuf, uf->outputExifBufLen);
+	if ( uf->conf->embedExif ) {
+	    ufraw_exif_prepare_output(uf);
+	    if ( uf->outputExifBuf!=NULL ) {
+		if (uf->outputExifBufLen>65533) {
+		    ufraw_set_warning(uf,
+			    _("EXIF buffer length %d, too long, ignored."),
+			    uf->outputExifBufLen);
+		} else {
+		    jpeg_write_marker(&cinfo, JPEG_APP0+1,
+			    uf->outputExifBuf, uf->outputExifBufLen);
+		}
 	    }
 	}
 
@@ -552,10 +554,12 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->conf->outputFilename);
 		}
 	    }
-	    ufraw_prepare_output_exif(uf);
-	    if (uf->outputExifBuf!=NULL && uf->conf->embedExif)
-		PNGwriteRawProfile(png, info, "exif",
-			uf->outputExifBuf, uf->outputExifBufLen);
+	    if ( uf->conf->embedExif ) {
+		ufraw_exif_prepare_output(uf);
+		if ( uf->outputExifBuf!=NULL )
+		    PNGwriteRawProfile(png, info, "exif",
+			    uf->outputExifBuf, uf->outputExifBufLen);
+	    }
 	    png_write_info(png, info);
 	    if (BitDepth != 8 && G_BYTE_ORDER==G_LITTLE_ENDIAN )
 		png_set_swap(png); // Swap byte order to big-endian
@@ -730,6 +734,9 @@ int ufraw_write_image(ufraw_data *uf)
 		ufraw_set_error(uf, ufraw_tiff_message);
 	    }
 	    ufraw_tiff_message[0] = '\0';
+	} else { 
+	    if ( uf->conf->embedExif )
+		ufraw_exif_write(uf);
 	}
     } else
 #endif

@@ -391,8 +391,9 @@ void ufraw_chooser(conf_data *conf, const char *defPath);
 void ufraw_icons_init();
 
 /* prototype for functions in ufraw_exiv2.cc */
-int ufraw_read_input_exif(ufraw_data *uf);
-int ufraw_prepare_output_exif(ufraw_data *uf);
+int ufraw_exif_read_input(ufraw_data *uf);
+int ufraw_exif_prepare_output(ufraw_data *uf);
+int ufraw_exif_write(ufraw_data *uf);
 
 /* status numbers from DCRaw and UFRaw */
 #define UFRAW_SUCCESS 0

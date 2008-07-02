@@ -37,22 +37,23 @@ extern "C" {
  * Helper function to copy a string to a buffer, converting it from
  * current locale (in which exiv2 often returns strings) to UTF-8.
  */
-static void strlcpy_to_utf8 (char *dest, size_t dest_max, Exiv2::ExifData::iterator pos)
+static void strlcpy_to_utf8(char *dest, size_t dest_max,
+	Exiv2::ExifData::iterator pos)
 {
-	std::stringstream str;
-	str << *pos;
+    std::stringstream str;
+    str << *pos;
 
-	char *s = g_locale_to_utf8 (str.str ().c_str (), str.str ().length (),
-				    NULL, NULL, NULL);
-	if (s) {
-		g_strlcpy (dest, s, dest_max);
-		g_free (s);
-	}
-	else
-		g_strlcpy (dest, str.str ().c_str (), dest_max);
+    char *s = g_locale_to_utf8(str.str().c_str(), str.str().length(),
+				NULL, NULL, NULL);
+    if ( s!=NULL ) {
+	g_strlcpy(dest, s, dest_max);
+	g_free(s);
+    } else {
+	g_strlcpy (dest, str.str ().c_str (), dest_max);
+    }
 }
 
-extern "C" int ufraw_read_input_exif(ufraw_data *uf)
+extern "C" int ufraw_exif_read_input(ufraw_data *uf)
 {
     /* Redirect exiv2 errors to a string buffer */
     std::ostringstream stderror;
@@ -188,10 +189,18 @@ try {
     }
 
     /* Store all EXIF data read in. */
+#if EXIV2_TEST_VERSION(0,17,91)
+    Exiv2::Blob blob;
+    Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
+    uf->inputExifBufLen = blob.size();
+    uf->inputExifBuf = g_new(unsigned char, uf->inputExifBufLen);
+    memcpy(uf->inputExifBuf, &blob[0], blob.size());
+#else
     Exiv2::DataBuf buf(exifData.copy());
     uf->inputExifBufLen = buf.size_;
     uf->inputExifBuf = g_new(unsigned char, uf->inputExifBufLen);
     memcpy(uf->inputExifBuf, buf.pData_, buf.size_);
+#endif
     ufraw_message(UFRAW_SET_LOG, "EXIF data read using exiv2, buflen %d\n",
 	    uf->inputExifBufLen);
     g_strlcpy(uf->conf->exifSource, EXV_PACKAGE_STRING, max_name);
@@ -210,22 +219,16 @@ catch (Exiv2::AnyError& e) {
 
 }
 
-extern "C" int ufraw_prepare_output_exif(ufraw_data *uf)
+static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
 {
-    /* Redirect exiv2 errors to a string buffer */
-    std::ostringstream stderror;
-    std::streambuf *savecerr = std::cerr.rdbuf();
-    std::cerr.rdbuf(stderror.rdbuf());
-
-try {
-    uf->outputExifBuf = NULL;
-    uf->outputExifBufLen = 0;
-
     Exiv2::ExifData exifData = Exiv2::ExifData();
 
     /* Start from the input EXIF data */
+#if EXIV2_TEST_VERSION(0,17,91)
+    Exiv2::ExifParser::decode(exifData, uf->inputExifBuf, uf->inputExifBufLen);
+#else
     exifData.load(uf->inputExifBuf, uf->inputExifBufLen);
-
+#endif
     Exiv2::ExifData::iterator pos;
     if ( uf->conf->rotate ) {
 	/* Reset orientation tag since UFRaw already rotates the image */
@@ -326,33 +329,75 @@ try {
     /* Add "UFRaw" and version used to output file as processing software. */
     exifData["Exif.Image.ProcessingSoftware"] = "UFRaw " VERSION;
 #endif
+    return exifData;
+}
 
+extern "C" int ufraw_exif_prepare_output(ufraw_data *uf)
+{
+    /* Redirect exiv2 errors to a string buffer */
+    std::ostringstream stderror;
+    std::streambuf *savecerr = std::cerr.rdbuf();
+    std::cerr.rdbuf(stderror.rdbuf());
+try {
+    uf->outputExifBuf = NULL;
+    uf->outputExifBufLen = 0;
+
+    Exiv2::ExifData exifData = ufraw_prepare_exifdata(uf);
+
+    int size;
+#if EXIV2_TEST_VERSION(0,17,91)
+    Exiv2::Blob blob;
+    Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
+    size = blob.size();
+#else
     Exiv2::DataBuf buf(exifData.copy());
+    size = buf.size_;
+#endif
     const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
     /* If buffer too big for JPEG, try deleting some stuff. */
-    if ( buf.size_+sizeof(ExifHeader)>65533 ) {
+    if ( size+sizeof(ExifHeader)>65533 ) {
 	Exiv2::ExifData::iterator pos;
 	if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.MakerNote")))
 		!= exifData.end() ) {
 	    exifData.erase(pos);
 	    ufraw_message(UFRAW_SET_LOG,
 		    "buflen %d too big, erasing Exif.Photo.MakerNote\n",
-		    buf.size_+sizeof(ExifHeader));
+		    size+sizeof(ExifHeader));
+#if EXIV2_TEST_VERSION(0,17,91)
+	    Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
+	    size = blob.size();
+#else
 	    buf = exifData.copy();
+	    size = buf.size_;
+#endif
 	}
     }
-    if ( buf.size_+sizeof(ExifHeader)>65533 ) {
+    if ( size+sizeof(ExifHeader)>65533 ) {
+#if EXIV2_TEST_VERSION(0,17,91)
+	Exiv2::ExifThumb thumb(exifData);
+	thumb.erase();
+#else
 	exifData.eraseThumbnail();
+#endif
 	ufraw_message(UFRAW_SET_LOG,
 		"buflen %d too big, erasing Thumbnail\n",
-		buf.size_+sizeof(ExifHeader));
+		size+sizeof(ExifHeader));
+#if EXIV2_TEST_VERSION(0,17,91)
+	Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
+	size = blob.size();
+#else
 	buf = exifData.copy();
+	size = buf.size_;
+#endif
     }
-    uf->outputExifBufLen = buf.size_ + sizeof(ExifHeader);
+    uf->outputExifBufLen = size + sizeof(ExifHeader);
     uf->outputExifBuf = g_new(unsigned char, uf->outputExifBufLen);
     memcpy(uf->outputExifBuf, ExifHeader, sizeof(ExifHeader));
+#if EXIV2_TEST_VERSION(0,17,91)
+    memcpy(uf->outputExifBuf+sizeof(ExifHeader), &blob[0], blob.size());
+#else
     memcpy(uf->outputExifBuf+sizeof(ExifHeader), buf.pData_, buf.size_);
-
+#endif
     std::cerr.rdbuf(savecerr);
     ufraw_message(UFRAW_SET_LOG, "%s\n", stderror.str().c_str());
 
@@ -366,17 +411,74 @@ catch (Exiv2::AnyError& e) {
 }
 
 }
-#else
-extern "C" int ufraw_read_input_exif(ufraw_data *uf)
+
+extern "C" int ufraw_exif_write(ufraw_data *uf)
 {
-    uf = uf;
+#if EXIV2_TEST_VERSION(0,17,91)
+    /* Redirect exiv2 errors to a string buffer */
+    std::ostringstream stderror;
+    std::streambuf *savecerr = std::cerr.rdbuf();
+    std::cerr.rdbuf(stderror.rdbuf());
+try {
+    Exiv2::ExifData rawExifData = ufraw_prepare_exifdata(uf);
+
+    char *filename =
+	uf_win32_locale_filename_from_utf8(uf->conf->outputFilename);
+    Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(filename);
+    uf_win32_locale_filename_free(filename);
+    assert(image.get()!=0);
+
+    image->readMetadata();
+    Exiv2::ExifData &outExifData = image->exifData();
+    // Temporary check
+    if ( outExifData.empty() ) {
+	std::cout << "Failed to read EXIF from TIFF.\n";
+	std::cerr.rdbuf(savecerr);
+	ufraw_message(UFRAW_SET_LOG, "%s\n", stderror.str().c_str());
+	return UFRAW_ERROR;
+    }
+    Exiv2::ExifData::iterator pos = rawExifData.begin();
+    while ( !rawExifData.empty() ) {
+	outExifData.add(*pos);
+	pos = rawExifData.erase(pos);
+    }
+    image->setExifData(outExifData);
+    image->writeMetadata();
+
+    std::cerr.rdbuf(savecerr);
+    ufraw_message(UFRAW_SET_LOG, "%s\n", stderror.str().c_str());
+
+    return UFRAW_SUCCESS;
+}
+catch (Exiv2::AnyError& e) {
+    std::cerr.rdbuf(savecerr);
+    std::string s(e.what());
+    ufraw_message(UFRAW_SET_WARNING, "%s\n", s.c_str());
+    return UFRAW_ERROR;
+}
+#else
+    (void)uf;
+    return UFRAW_SUCCESS;
+#endif
+}
+
+#else
+extern "C" int ufraw_exif_read_input(ufraw_data *uf)
+{
+    (void)uf;
     ufraw_message(UFRAW_SET_LOG, "ufraw built without EXIF support\n");
     return UFRAW_ERROR;
 }
 
-extern "C" int ufraw_prepare_output_exif(ufraw_data *uf)
+extern "C" int ufraw_exif_prepare_output(ufraw_data *uf)
 {
-    uf = uf;
+    (void)uf;
+    return UFRAW_ERROR;
+}
+
+extern "C" int ufraw_exif_write(ufraw_data *uf)
+{
+    (void)uf;
     return UFRAW_ERROR;
 }
 #endif /* HAVE_EXIV2 */
