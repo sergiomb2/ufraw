@@ -1946,6 +1946,9 @@ static void flip_image(GtkWidget *widget, int flip)
 	temp = data->UF->initialWidth;
 	data->UF->initialWidth = data->UF->initialHeight;
 	data->UF->initialHeight = temp;
+	temp = data->UF->rotatedWidth;
+	data->UF->rotatedWidth = data->UF->rotatedHeight;
+	data->UF->rotatedHeight = temp;
 	temp = CFG->CropX1;
 	CFG->CropX1 = CFG->CropY1;
 	CFG->CropY1 = temp;
