@@ -1953,6 +1953,12 @@ const wb_data wb_preset[] = {
   { "Panasonic", "DMC-FZ8", Incandescent, 0,	{ 1.247148, 1, 2.288973, 0 } },
   { "Panasonic", "DMC-FZ8", Flash, 0,		{ 2.072243, 1, 1.456274, 0 } },
 
+  { "Panasonic", "DMC-FZ18", Daylight, 0,	{ 1.783270, 1, 1.889734, 0 } },
+  { "Panasonic", "DMC-FZ18", Cloudy, 0,		{ 1.946768, 1, 1.680608, 0 } },
+  { "Panasonic", "DMC-FZ18", Shade, 0,		{ 2.117871, 1, 1.558935, 0 } },
+  { "Panasonic", "DMC-FZ18", Incandescent, 0,	{ 1.140684, 1, 2.627376, 0 } },
+  { "Panasonic", "DMC-FZ18", Flash, 0,		{ 1.882129, 1, 1.703422, 0 } },
+
   { "Panasonic", "DMC-FZ30", Daylight, 0,	{ 1.757576, 1, 1.446970, 0 } },
   { "Panasonic", "DMC-FZ30", Cloudy, 0,		{ 1.943182, 1, 1.276515, 0 } },
   { "Panasonic", "DMC-FZ30", Incandescent, 0,	{ 1.098485, 1, 2.106061, 0 } },
