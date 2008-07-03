@@ -6947,9 +6947,10 @@ canon_cr2:
 	     !strcmp(model,"D80")) {
     height -= 3;
     width  -= 4;
-  } else if (!strncmp(model,"D40",3) ||
-	     !strncmp(model,"D50",3) ||
-	     !strncmp(model,"D70",3)) {
+  } else if (!strcmp(model,"D40") ||
+	     !strcmp(model,"D50") ||
+	     !strcmp(model,"D70") ||
+	     !strcmp(model,"D70s")) {
     width--;
   } else if (!strcmp(model,"D100")) {
     if (tiff_compress == 34713 && !nikon_is_compressed()) {
@@ -6966,7 +6967,8 @@ canon_cr2:
   } else if (!strncmp(model,"D2X",3)) {
     if (width == 3264) width -= 32;
     else width -= 8;
-  } else if (!strcmp(model,"D3")) {
+  } else if (!strcmp(model,"D3") ||
+	     !strcmp(model,"D700")) {
     width -= 4;
     left_margin = 2;
   } else if (!strcmp(model,"D300")) {
