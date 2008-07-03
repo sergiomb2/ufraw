@@ -921,7 +921,29 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
 	    uf->developer->rgbWB[c] = 0x10000;
     }
 
-    // Flip the image to final position before doing anything else
+    dcraw_image_stretch(&final, raw->pixel_aspect);
+    if (uf->conf->size==0 && uf->conf->shrink>1) {
+	dcraw_image_resize(&final,
+	    uf->ConvertShrink*MAX(final.height, final.width)/uf->conf->shrink);
+	uf->ConvertShrink = uf->conf->shrink;
+    }
+    if (uf->conf->size>0) {
+	int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
+	int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
+	int cropSize = MAX(cropHeight, cropWidth);
+	if ( uf->conf->size > cropSize ) {
+	    ufraw_message(UFRAW_ERROR, _("Can not downsize from %d to %d."),
+		    cropSize, uf->conf->size);
+	} else {
+	    /* uf->conf->size holds the size of the cropped image.
+	     * We need to calculate from it the desired size of
+	     * th uncropped image. */
+	    int finalSize = uf->ConvertShrink * MAX(final.height, final.width);
+	    uf->ConvertShrink = cropSize / uf->conf->size;
+	    dcraw_image_resize(&final, uf->conf->size * finalSize / cropSize);
+	}
+    }
+
     dcraw_flip_image(&final, uf->conf->orientation);
 
 #ifdef HAVE_LENSFUN
@@ -950,29 +972,6 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
 #else
     (void)lensfix;
 #endif // HAVE_LENSFUN
-
-    dcraw_image_stretch(&final, raw->pixel_aspect);
-    if (uf->conf->size==0 && uf->conf->shrink>1) {
-	dcraw_image_resize(&final,
-	    uf->ConvertShrink*MAX(final.height, final.width)/uf->conf->shrink);
-	uf->ConvertShrink = uf->conf->shrink;
-    }
-    if (uf->conf->size>0) {
-	int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
-	int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
-	int cropSize = MAX(cropHeight, cropWidth);
-	if ( uf->conf->size > cropSize ) {
-	    ufraw_message(UFRAW_ERROR, _("Can not downsize from %d to %d."),
-		    cropSize, uf->conf->size);
-	} else {
-	    /* uf->conf->size holds the size of the cropped image.
-	     * We need to calculate from it the desired size of
-	     * th uncropped image. */
-	    int finalSize = uf->ConvertShrink * MAX(final.height, final.width);
-	    uf->ConvertShrink = cropSize / uf->conf->size;
-	    dcraw_image_resize(&final, uf->conf->size * finalSize / cropSize);
-	}
-    }
 
     uf->image.image = final.image;
     uf->image.height = final.height;
