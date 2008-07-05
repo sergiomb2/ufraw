@@ -1125,12 +1125,6 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 		c->exifSource);
 	buf = uf_markup_buf(buf, "<Crop>%d %d %d %d</Crop>\n",
 		c->CropX1, c->CropY1, c->CropX2, c->CropY2);
-	if (c->orientation!=1 && c->rotationAngle==0)
-	    switch (c->orientation) {
-		case 3: c->rotationAngle = 180; break;
-		case 5: c->rotationAngle = 270; break;
-		case 6: c->rotationAngle =  90; break;
-	    }
 	buf = uf_markup_buf(buf, "<Rotation>%lf</Rotation>\n", c->rotationAngle);
 	char *log = ufraw_message(UFRAW_GET_LOG, NULL);
 	if (log!=NULL) {
