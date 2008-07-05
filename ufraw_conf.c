@@ -283,18 +283,18 @@ static void conf_parse_start(GMarkupParseContext *context,
 	c->curve[-c->curveCount].m_numAnchors = 0;
     }
     if ( !strcmp("NoInputProfile", element) )
-	c->profileCount[in_profile] = - 0;
+	c->profileCount[in_profile] = 0;
     if ( !strcmp("MatrixInputProfile", element) )
-	c->profileCount[in_profile] = - 1;
+	c->profileCount[in_profile] = -1;
     // For compatibility with ufraw-0.13 or older
     if ( !strcmp("sRGBInputProfile", element) )
-	c->profileCount[in_profile] = - 1;
+	c->profileCount[in_profile] = -1;
     if ( !strcmp("sRGBOutputProfile", element) )
-	c->profileCount[out_profile] = - 0;
+	c->profileCount[out_profile] = 0;
     if ( !strcmp("SystemDisplayProfile", element) )
-	c->profileCount[display_profile] = - 0;
+	c->profileCount[display_profile] = 0;
     if ( !strcmp("sRGBDisplayProfile", element) )
-	c->profileCount[display_profile] = - 1;
+	c->profileCount[display_profile] = -1;
 }
 
 static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
@@ -1065,7 +1065,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	    if (c->profile[j][0].linear!=conf_default.profile[j][0].linear)
 		buf = uf_markup_buf(buf, "\t<Linearity>%lf</Linearity>\n",
 			c->profile[j][0].linear);
-	    if (c->profile[j][0].BitDepth!= conf_default.profile[j][0].BitDepth)
+	    if (c->profile[j][0].BitDepth!=conf_default.profile[j][0].BitDepth)
 		buf = uf_markup_buf(buf, "\t<BitDepth>%d</BitDepth>\n",
 			c->profile[j][0].BitDepth);
 	    buf = uf_markup_buf(buf, "</%s%s>\n", profile, type);
