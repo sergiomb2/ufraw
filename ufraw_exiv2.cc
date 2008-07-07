@@ -256,6 +256,9 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.PhotometricInterpretation")))
 	    != exifData.end() )
 	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.FillOrder")))
+	    != exifData.end() )
+	exifData.erase(pos);
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.SamplesPerPixel")))
 	    != exifData.end() )
 	exifData.erase(pos);
@@ -268,7 +271,16 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.StripByteCounts")))
 	    != exifData.end() )
 	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.XResolution")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.YResolution")))
+	    != exifData.end() )
+	exifData.erase(pos);
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.PlanarConfiguration")))
+	    != exifData.end() )
+	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.ResolutionUnit")))
 	    != exifData.end() )
 	exifData.erase(pos);
 
@@ -430,13 +442,7 @@ try {
 
     image->readMetadata();
     Exiv2::ExifData &outExifData = image->exifData();
-    // Temporary check
-    if ( outExifData.empty() ) {
-	std::cout << "Failed to read EXIF from TIFF.\n";
-	std::cerr.rdbuf(savecerr);
-	ufraw_message(UFRAW_SET_LOG, "%s\n", stderror.str().c_str());
-	return UFRAW_ERROR;
-    }
+ 
     Exiv2::ExifData::iterator pos = rawExifData.begin();
     while ( !rawExifData.empty() ) {
 	outExifData.add(*pos);
