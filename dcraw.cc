@@ -57,7 +57,7 @@ extern "C" {
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 #endif
 /*fseeko() is handled by the configuration system - NKBJ*/
-//#ifdef DJGPP
+//#if defined(DJGPP) || defined(__MINGW32__)
 //#define fseeko fseek
 //#define ftello ftell
 //#else
@@ -5491,7 +5491,7 @@ void CLASS parse_external_jpeg()
     }
   if (strcmp (jname, ifname)) {
     if ((ifp = fopen (jname, "rb"))) {
-      dcraw_message (DCRAW_VERBOSE,_("Reading metadata from %s ...\n"), jname);/*UF*/
+      dcraw_message (DCRAW_VERBOSE,_("Reading metadata from %s...\n"), jname);/*UF*/
       parse_tiff (12);
       thumb_offset = 0;
       is_raw = 1;
@@ -8419,7 +8419,7 @@ next:
       meta_data = (char *) malloc (meta_length);
       merror (meta_data, "main()");
     }
-    dcraw_message (DCRAW_VERBOSE,_("Loading %s %s image from %s ...\n"),
+    dcraw_message (DCRAW_VERBOSE,_("Loading %s %s image from %s...\n"),
 	make, model, ifname); /*UF*/
     if (shot_select >= is_raw)
       dcraw_message (DCRAW_ERROR,
@@ -8492,7 +8492,7 @@ thumbnail:
 	goto cleanup;
       }
     }
-    dcraw_message (DCRAW_VERBOSE,_("Writing data to %s ...\n"), ofname); /*UF*/
+    dcraw_message (DCRAW_VERBOSE,_("Writing data to %s...\n"), ofname); /*UF*/
     (*this.*write_fun)(ofp);
     fclose(ifp);
     if (ofp != stdout) fclose(ofp);
