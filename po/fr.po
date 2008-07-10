@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-07 08:30+0200\n"
-"PO-Revision-Date: 2008-05-01 23:01+0100\n"
+"POT-Creation-Date: 2008-07-11 00:41+0200\n"
+"PO-Revision-Date: 2008-07-05 21:36+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
@@ -102,13 +102,11 @@ msgstr "Courbe de l'appareil"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
-#, fuzzy
 msgid "No profile"
-msgstr "Profils couleur"
+msgstr "Pas de profil"
 
-#, fuzzy
 msgid "Color matrix"
-msgstr "Utiliser la matrice de couleurs"
+msgstr "Matrice de couleurs"
 
 msgid "sRGB"
 msgstr "sRGB"
@@ -352,12 +350,11 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algorithme d'interpolation à utiliser (défaut ahd).\n"
 
-#, fuzzy
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
-"--greyscale=none|average|lightness|luminance|value|mixer\n"
+"--greyscale=none|lightness|luminance|value|mixer\n"
 "                      Algorithme de conversion en niveaux de gris à "
 "utiliser\n"
 "                      (défaut none).\n"
@@ -973,9 +970,8 @@ msgstr "Interpolation VNG"
 msgid "PPG interpolation"
 msgstr "Interpolation PPG"
 
-#, fuzzy
 msgid "No interpolation"
-msgstr "Interpolation VNG"
+msgstr "Pas d'interpolation"
 
 msgid "No Bayer pattern"
 msgstr "Pas de matrice de Bayer"
@@ -1014,13 +1010,12 @@ msgstr ""
 "Mode\n"
 "niveaux de gris:"
 
-#, fuzzy
 msgid "Reset channel mixer"
-msgstr "Mélangeur de couches"
+msgstr "RàZ Mélangeur de couches"
 
 #. Lens correction page
 msgid "Lens correction"
-msgstr ""
+msgstr "Corrections de l'objectif"
 
 #. Start of Base Curve page
 msgid "Base curve"
@@ -1457,6 +1452,10 @@ msgid ""
 "Mount:\t\t%s\n"
 "Crop factor:\t%.1f"
 msgstr ""
+"Fabricant:\t\t\t%s\n"
+"Modèle:\t\t\t\t%s%s\n"
+"Monture:\t\t\t\t%s\n"
+"Facteur re-cadrage:\t%.1f"
 
 #, c-format
 msgid ""
@@ -1468,96 +1467,106 @@ msgid ""
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
+"Fabricant:\t\t%s\n"
+"Modèle:\t\t\t%s\n"
+"Plage focales:\t\t%s\n"
+"Ouverture:\t\t%s\n"
+"Facteur recadrage:\t%.1f\n"
+"Type:\t\t\t%s\n"
+"Monture:\t\t\t%s"
 
 msgid "Focal"
-msgstr ""
+msgstr "Focale"
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "F-number (Aperture)"
-msgstr ""
+msgstr "nombre F (ouverture)"
 
 msgid "Distance"
-msgstr ""
+msgstr "Distance"
 
 msgid "Distance to subject"
-msgstr ""
+msgstr "Distance au sujet"
 
 #. Add the model combobox
 msgid "Model:"
-msgstr ""
+msgstr "Modèle:"
 
 msgid "Chromatic Aberrations mathematical model"
-msgstr ""
+msgstr "Modèle mathématique des aberrations chromatiques"
 
 msgid "Parameters"
-msgstr ""
+msgstr "Paramètres"
 
 msgid "Optical vignetting mathematical model"
-msgstr ""
+msgstr "Modèle mathématique du vignettage optique"
 
 msgid "Lens distortion mathematical model"
-msgstr ""
+msgstr "Modèle mathématique de la distortion de l'objectif"
 
 #. Add the model combobox
 msgid "Lens geometry:"
 msgstr ""
+"Géométrie\n"
+"de l'objectif:"
 
 msgid "The geometry of the lens used to make the shot"
-msgstr ""
+msgstr "Géométrie de l'objectif utilisé lors de la prise de vue"
 
 msgid "Target geometry:"
-msgstr ""
+msgstr "Géométrie cible:"
 
 msgid "The target geometry for output image"
-msgstr ""
+msgstr "Géométrie cible pour l'image de sortie"
 
-#, fuzzy
 msgid "Camera"
-msgstr "Bal. du Blanc Boitier"
+msgstr "Boîtier"
 
 msgid ""
 "Search for camera using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Recherche d'un boîtier par motif\n"
+"Format: [Fabricant, ][Modèle]"
 
 msgid "Choose camera from complete list"
-msgstr ""
+msgstr "Choisir le boîtier depuis la liste complète"
 
 msgid ""
 "Search for lens using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Recherche d'un objectif par motif\n"
+"Format: [Fabricant, ][Modèle]"
 
 msgid "Choose lens from list of possible variants"
-msgstr ""
+msgstr "Choisir l'objectif depuis une liste de variantes possibles"
 
-#, fuzzy
 msgid "Scale"
-msgstr "Sauver"
+msgstr "Échelle"
 
 msgid "Image scale power-of-two"
-msgstr ""
+msgstr "Échelle de l'image en puissance de 2"
 
-#, fuzzy
 msgid "Reset image scale to default"
-msgstr "RàZ de la courbe de base"
+msgstr "RàZ de l'échelle"
 
 msgid "Autoscale the image for best fit"
-msgstr ""
+msgstr "Mise à l'échelle auto pour limiter les pertes"
 
 msgid "Lateral chromatic aberration"
-msgstr ""
+msgstr "Aberration chromatiques latérales"
 
 msgid "Optical vignetting"
-msgstr ""
+msgstr "Vignettage optique"
 
 msgid "Lens distortion"
-msgstr ""
+msgstr "Distortion de l'objectif"
 
 msgid "Lens geometry"
-msgstr ""
+msgstr "Géométrie de l'objectif"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
