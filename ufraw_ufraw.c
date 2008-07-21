@@ -1664,7 +1664,7 @@ void ufraw_auto_curve(ufraw_data *uf)
 	develope(p16, pix, uf->AutoDeveloper, 16, pixtmp, 1);
 	for (c=0, p=0; c<3; c++) p = MAX(p, p16[c]);
 	stop += uf->RawCount * pow(decay,i) / norm;
-	/* Skeep adding point if slope is too big (more than 4) */
+	/* Skip adding point if slope is too big (more than 4) */
 	if (j>0 && p - curve->m_anchors[j-1].x*0x10000 < (i+1-j)*0x04000/steps)
 	    continue;
 	curve->m_anchors[j].x = (double)p/0x10000;
@@ -1675,7 +1675,7 @@ void ufraw_auto_curve(ufraw_data *uf)
 	curve->m_numAnchors = j;
     } else {
 	curve->m_anchors[j].x = 1.0;
-	/* The last point can be up to twice the hight of a linear
+	/* The last point can be up to twice the height of a linear
 	 * interpolation of the last two points */
 	if (j>1) {
 	    curve->m_anchors[j].y = curve->m_anchors[j-1].y +
