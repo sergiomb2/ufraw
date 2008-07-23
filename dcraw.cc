@@ -5491,7 +5491,7 @@ void CLASS parse_external_jpeg()
     }
   if (strcmp (jname, ifname)) {
     if ((ifp = fopen (jname, "rb"))) {
-      dcraw_message (DCRAW_VERBOSE,_("Reading metadata from %s...\n"), jname);/*UF*/
+      dcraw_message (DCRAW_VERBOSE,_("Reading metadata from %s ...\n"), jname);/*UF*/
       parse_tiff (12);
       thumb_offset = 0;
       is_raw = 1;
@@ -6339,7 +6339,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 8136,-1968,-299,-5481,13742,1871,-2556,4205,6630 } },
     { "OLYMPUS E-510", 0, 0xf6a,
 	{ 8785,-2529,-1033,-7639,15624,2112,-1783,2300,7817 } },
-    { "OLYMPUS E-520", 0, 0xfd7, /* copied from above */
+    { "OLYMPUS E-520", 0, 0xfd7, /* copied from above - NKBJ */
 	{ 8785,-2529,-1033,-7639,15624,2112,-1783,2300,7817 } },
     { "OLYMPUS SP350", 0, 0,
 	{ 12078,-4836,-1069,-6671,14306,2578,-786,939,7418 } },
@@ -8421,7 +8421,7 @@ next:
       meta_data = (char *) malloc (meta_length);
       merror (meta_data, "main()");
     }
-    dcraw_message (DCRAW_VERBOSE,_("Loading %s %s image from %s...\n"),
+    dcraw_message (DCRAW_VERBOSE,_("Loading %s %s image from %s ...\n"),
 	make, model, ifname); /*UF*/
     if (shot_select >= is_raw)
       dcraw_message (DCRAW_ERROR,
@@ -8494,7 +8494,7 @@ thumbnail:
 	goto cleanup;
       }
     }
-    dcraw_message (DCRAW_VERBOSE,_("Writing data to %s...\n"), ofname); /*UF*/
+    dcraw_message (DCRAW_VERBOSE,_("Writing data to %s ...\n"), ofname); /*UF*/
     (*this.*write_fun)(ofp);
     fclose(ifp);
     if (ofp != stdout) fclose(ofp);
