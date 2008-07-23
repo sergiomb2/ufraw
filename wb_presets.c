@@ -44,14 +44,14 @@ static const char IncandescentWarm[] = N_("Incandescent warm");
 // Same as "Incandescent":
 static const char Tungsten[] = N_("Tungsten");
 static const char Fluorescent[] = N_("Fluorescent");
-// In Canon cameras and Nikon D300:
+// In Canon cameras and Nikon D60 and D300:
 static const char FluorescentHigh[] = N_("Fluorescent high");
 static const char CoolWhiteFluorescent[] = N_("Cool white fluorescent");
 static const char WarmWhiteFluorescent[] = N_("Warm white fluorescent");
 static const char DaylightFluorescent[] = N_("Daylight fluorescent");
 static const char NeutralFluorescent[] = N_("Neutral fluorescent");
 static const char WhiteFluorescent[] = N_("White fluorescent");
-// In Nikon D300
+// In Nikon D60 and D300
 static const char SodiumVaporFluorescent[] = N_("Sodium-vapor fluorescent");
 static const char DayWhiteFluorescent[] = N_("Day white fluorescent");
 static const char HighTempMercuryVaporFluorescent[] = N_("High temp. mercury-vapor fluorescent");
