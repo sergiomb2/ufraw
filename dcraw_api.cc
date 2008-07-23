@@ -203,7 +203,7 @@ int dcraw_load_raw(dcraw_data *h)
     }
     h->raw.colors = d->colors;
     h->fourColorFilters = d->filters;
-    d->dcraw_message(DCRAW_VERBOSE,_("Loading %s %s image from %s...\n"),
+    d->dcraw_message(DCRAW_VERBOSE,_("Loading %s %s image from %s ...\n"),
 	    d->make, d->model, d->ifname_display);
     fseek (d->ifp, d->data_offset, SEEK_SET);
     (d->*d->load_raw)();
