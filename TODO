@@ -1,4 +1,4 @@
-$Id: TODO,v 1.29 2007/11/12 21:42:30 udifuchs Exp $
+$Id: TODO,v 1.30 2008/07/25 13:12:49 lexort Exp $
 
 These items are not ordered or prioritized, but are roughly grouped by
 kind of change.
@@ -19,6 +19,7 @@ For the future
 
 * Add the UFRaw parameters used to the Exif data in saved images.
 * Display "exposure value" in Exif (Av, Tv, and also with ISO).
+
 * Display scene zones and scene luminance (raw data with input profile
   but no other adjustments.
 * Display "developed raw zone", which is zone relative to the working
@@ -43,5 +44,7 @@ For the future
 
 * Automatic profile selection based on camera model and serial#.
 
-* Understand differences between ufraw with defaults and in-camera with
-  defaults.  Document them, or fix them as bugs.
+* Understand differences between ufraw with defaults and in-camera
+  with defaults.  Document them, or fix them as bugs.  In particular,
+  exposure compensation of 0 should probably approximate in-camera
+  processing, and there are significant variations.
