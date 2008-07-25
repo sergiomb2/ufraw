@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-07 08:30+0200\n"
+"POT-Creation-Date: 2008-07-25 15:45+0200\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -1589,7 +1589,7 @@ msgstr "タングステン灯"
 msgid "Fluorescent"
 msgstr "蛍光灯"
 
-#. In Canon cameras and Nikon D300:
+#. In Canon cameras and Nikon D60 and D300:
 msgid "Fluorescent high"
 msgstr "蛍光高圧水銀灯"
 
@@ -1608,7 +1608,7 @@ msgstr "自然色蛍光灯"
 msgid "White fluorescent"
 msgstr "白色蛍光灯"
 
-#. In Nikon D300
+#. In Nikon D60 and D300
 #, fuzzy
 msgid "Sodium-vapor fluorescent"
 msgstr "自然色蛍光灯"

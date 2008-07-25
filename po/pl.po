@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-07 08:30+0200\n"
+"POT-Creation-Date: 2008-07-25 15:45+0200\n"
 "PO-Revision-Date: 2008-01-13 11:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -1556,7 +1556,7 @@ msgstr "¯arówka"
 msgid "Fluorescent"
 msgstr "Jarzeniowe"
 
-#. In Canon cameras and Nikon D300:
+#. In Canon cameras and Nikon D60 and D300:
 msgid "Fluorescent high"
 msgstr "Jarzeniowe wysokie"
 
@@ -1575,7 +1575,7 @@ msgstr "Neutralne jarzeniowe"
 msgid "White fluorescent"
 msgstr "Bia³e jarzeniowe"
 
-#. In Nikon D300
+#. In Nikon D60 and D300
 msgid "Sodium-vapor fluorescent"
 msgstr "Sodowe"
 

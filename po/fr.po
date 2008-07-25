@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-11 00:41+0200\n"
+"POT-Creation-Date: 2008-07-25 15:45+0200\n"
 "PO-Revision-Date: 2008-07-05 21:36+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -1607,7 +1607,7 @@ msgstr "Tungstène"
 msgid "Fluorescent"
 msgstr "Fluorescent"
 
-#. In Canon cameras and Nikon D300:
+#. In Canon cameras and Nikon D60 and D300:
 msgid "Fluorescent high"
 msgstr "Fluorescent \"haut\""
 
@@ -1626,7 +1626,7 @@ msgstr "Fluorescent neutre"
 msgid "White fluorescent"
 msgstr "Fluorescent blanc"
 
-#. In Nikon D300
+#. In Nikon D60 and D300
 msgid "Sodium-vapor fluorescent"
 msgstr "Fluorescent vapeur de sodium"
 

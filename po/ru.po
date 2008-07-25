@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-07 08:30+0200\n"
+"POT-Creation-Date: 2008-07-25 15:45+0200\n"
 "PO-Revision-Date: 2007-11-08 23:07+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -1568,7 +1568,7 @@ msgstr "Лампа накаливания (вольфрам)"
 msgid "Fluorescent"
 msgstr "Флюоресцентная лампа"
 
-#. In Canon cameras and Nikon D300:
+#. In Canon cameras and Nikon D60 and D300:
 msgid "Fluorescent high"
 msgstr "Высоко флюоресцентные"
 
@@ -1587,7 +1587,7 @@ msgstr "Нейтральный флюоресцентный"
 msgid "White fluorescent"
 msgstr "Белый флюоресцентный"
 
-#. In Nikon D300
+#. In Nikon D60 and D300
 msgid "Sodium-vapor fluorescent"
 msgstr "Натриевый флюоресцентный"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-07 08:30+0200\n"
+"POT-Creation-Date: 2008-07-25 15:45+0200\n"
 "PO-Revision-Date: 2008-03-06 19:15+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -1545,7 +1545,7 @@ msgstr "Žárovka"
 msgid "Fluorescent"
 msgstr "Zářivka"
 
-#. In Canon cameras and Nikon D300:
+#. In Canon cameras and Nikon D60 and D300:
 msgid "Fluorescent high"
 msgstr "Zářivka vysoká"
 
@@ -1564,7 +1564,7 @@ msgstr "Neutrální zářivka"
 msgid "White fluorescent"
 msgstr "Bílá zářivka"
 
-#. In Nikon D300
+#. In Nikon D60 and D300
 msgid "Sodium-vapor fluorescent"
 msgstr "Sodium-vapor zářivka"
 

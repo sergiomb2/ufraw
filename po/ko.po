@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-07 08:30+0200\n"
+"POT-Creation-Date: 2008-07-25 15:45+0200\n"
 "PO-Revision-Date: 2008-04-10 19:56+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -1528,7 +1528,7 @@ msgstr "텅스텐"
 msgid "Fluorescent"
 msgstr "형광등"
 
-#. In Canon cameras and Nikon D300:
+#. In Canon cameras and Nikon D60 and D300:
 msgid "Fluorescent high"
 msgstr "강한 조명"
 
@@ -1547,7 +1547,7 @@ msgstr "자연광 형광등"
 msgid "White fluorescent"
 msgstr "백색 형광등"
 
-#. In Nikon D300
+#. In Nikon D60 and D300
 msgid "Sodium-vapor fluorescent"
 msgstr "소듐 형광등"
 

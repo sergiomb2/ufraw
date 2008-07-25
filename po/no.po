@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-07 08:30+0200\n"
+"POT-Creation-Date: 2008-07-25 15:45+0200\n"
 "PO-Revision-Date: 2008-03-01 15:31+0100\n"
 "Last-Translator: Alvin Brattli <alvin.brattli@gmail.com>\n"
 "Language-Team: Norwegian <no@li.org>\n"
@@ -270,8 +270,7 @@ msgid ""
 msgstr ""
 "--restore=clip|lch|hsv\n"
 "                      Gjenopprett detaljer for negative EV.\n"
-"                      «clip» gjenoppretter ingenting. Ingen detaljer "
-"mistes.\n"
+"                      «clip» gjenoppretter ingenting. Ingen detaljer mistes.\n"
 "                      «lch» gjenoppretter i LCH-fargerommet (bløte "
 "detaljer).\n"
 "                      «hsv» gjenoppretter i HSV-fargerommet (skarpe "
@@ -428,8 +427,7 @@ msgstr ""
 "                      inndatafilens sti).\n"
 
 msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
-msgstr ""
-"--output=FIL          Utdatafilens navn, bruk «-» for standardutdata.\n"
+msgstr "--output=FIL          Utdatafilens navn, bruk «-» for standardutdata.\n"
 
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
 msgstr "--darkframe=FIL       Bruk FIL for raw-sortbildesubtraksjon.\n"
@@ -1548,7 +1546,7 @@ msgstr "Glødelampe"
 msgid "Fluorescent"
 msgstr "Fluoriserende"
 
-#. In Canon cameras and Nikon D300:
+#. In Canon cameras and Nikon D60 and D300:
 msgid "Fluorescent high"
 msgstr "Fluoriserende høy"
 
@@ -1567,7 +1565,7 @@ msgstr "Nøytral fluoriserende"
 msgid "White fluorescent"
 msgstr "Hvit fluoriserende"
 
-#. In Nikon D300
+#. In Nikon D60 and D300
 msgid "Sodium-vapor fluorescent"
 msgstr "Natriumlampe"
 
