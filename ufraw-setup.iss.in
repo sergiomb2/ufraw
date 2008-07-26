@@ -39,6 +39,7 @@ Name: "PEFAssociation"; Description: "PEF - Pentax Electronic Format"; GroupDesc
 Name: "RAFAssociation"; Description: "RAF - Fuji Raw Format"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "ORFAssociation"; Description: "ORF - Olympus Raw Format"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "MRWAssociation"; Description: "MRW - Minolta Raw"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "ARWAssociation"; Description: "ARW - Sony DSLR Raw"; GroupDescription: "Associate the following file types with UFRaw:"
 
 [Files]
 Source: "ufraw.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -55,6 +56,8 @@ Source: "po\no.mo"; DestDir: "{app}\lib\locale\no\LC_MESSAGES\"; DestName: "ufra
 Source: "po\pl.mo"; DestDir: "{app}\lib\locale\pl\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\pt.mo"; DestDir: "{app}\lib\locale\pt\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\ru.mo"; DestDir: "{app}\lib\locale\ru\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
+Source: "po\sr@latin.mo"; DestDir: "{app}\lib\locale\sr@latin\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
+Source: "po\sr.mo"; DestDir: "{app}\lib\locale\sr\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\sv.mo"; DestDir: "{app}\lib\locale\sv\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\liblcms-1-ufraw.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\bzip2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -81,6 +84,7 @@ Root: HKCR; Subkey: ".pef"; ValueType: string; ValueName: ""; ValueData: "UFRaw"
 Root: HKCR; Subkey: ".raf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: RAFAssociation
 Root: HKCR; Subkey: ".orf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ORFAssociation
 Root: HKCR; Subkey: ".mrw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: MRWAssociation
+Root: HKCR; Subkey: ".arw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ARWAssociation
 
 Root: HKCR; Subkey: "UFRawID"; ValueType: string; ValueName: ""; ValueData: "UFRawID"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "UFRawID"; ValueType: string; ValueName: ""; ValueData: "UFRaw ID file"; Flags: uninsdeletevalue
