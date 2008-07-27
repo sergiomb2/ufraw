@@ -1685,7 +1685,7 @@ static void create_base_image(preview_data *data)
     int shrinkSave = CFG->shrink;
     int sizeSave = CFG->size;
     // Prevent a crash related to having an out-of-range CFG->Zoom
-    CFG->Zoom = LIM(CFG->Zoom, 100.0/min_scale, 100.0/max_scale);
+    CFG->Zoom = LIM(CFG->Zoom, 100.0/max_scale, 100.0/min_scale);
     if (CFG->Scale==0) {
 	int cropHeight = data->UF->conf->CropY2 - data->UF->conf->CropY1;
 	int cropWidth = data->UF->conf->CropX2 - data->UF->conf->CropX1;
