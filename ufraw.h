@@ -20,6 +20,11 @@
 #include "nikon_curve.h"
 #include <time.h> // for time_t
 
+/* macro to clamp a number between two values */
+#ifndef LIM
+#define LIM(x,min,max) MAX(min,MIN(x,max))
+#endif
+
 #define MAXOUT 255 /* Max output sample */
 
 #define max_curves 20

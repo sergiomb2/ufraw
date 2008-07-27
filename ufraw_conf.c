@@ -358,8 +358,6 @@ static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
 	c->profileCount[display_profile] = -c->profileCount[display_profile]+1;
 }
 
-#define LIM(x,min,max) MAX(min,MIN(x,max))
-
 static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	gsize len, gpointer user, GError **error)
 {
