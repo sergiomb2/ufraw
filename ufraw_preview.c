@@ -1684,8 +1684,6 @@ static void create_base_image(preview_data *data)
 {
     int shrinkSave = CFG->shrink;
     int sizeSave = CFG->size;
-    // Prevent a crash related to having an out-of-range CFG->Zoom
-    CFG->Zoom = LIM(CFG->Zoom, 100.0/max_scale, 100.0/min_scale);
     if (CFG->Scale==0) {
 	int cropHeight = data->UF->conf->CropY2 - data->UF->conf->CropY1;
 	int cropWidth = data->UF->conf->CropX2 - data->UF->conf->CropX1;
@@ -1845,8 +1843,7 @@ static void zoom_in_event(GtkWidget *widget, gpointer user_data)
     } else {
 	CFG->Scale--;
     }
-    if (CFG->Scale<min_scale) CFG->Scale = min_scale;
-    if (CFG->Scale>max_scale) CFG->Scale = max_scale;
+    CFG->Scale = LIM(CFG->Scale, min_scale, max_scale);
     CFG->Zoom = 100.0/CFG->Scale;
     if (prev_zoom != CFG->Zoom) {
 	create_base_image(data);
@@ -1868,8 +1865,7 @@ static void zoom_out_event(GtkWidget *widget, gpointer user_data)
     } else {
 	CFG->Scale++;
     }
-    if (CFG->Scale<min_scale) CFG->Scale = min_scale;
-    if (CFG->Scale>max_scale) CFG->Scale = max_scale;
+    CFG->Scale = LIM(CFG->Scale, min_scale, max_scale);
     CFG->Zoom = 100.0/CFG->Scale;
     if (prev_zoom != CFG->Zoom) {
 	create_base_image(data);
@@ -1891,7 +1887,7 @@ static void zoom_fit_event(GtkWidget *widget, gpointer user_data)
     int previewHeight = preview->allocation.height;
     double wScale = (double)data->UF->initialWidth / previewWidth;
     double hScale = (double)data->UF->initialHeight / previewHeight;
-    CFG->Zoom = 100/MAX(wScale, hScale);
+    CFG->Zoom = 100.0/LIM(MAX(wScale, hScale), min_scale, max_scale);
     CFG->Scale = 0;
     if (prev_zoom != CFG->Zoom) {
 	create_base_image(data);

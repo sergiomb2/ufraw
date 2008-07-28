@@ -692,7 +692,7 @@ int ufraw_convert_image_init(ufraw_data *uf)
     if ( uf->conf->interpolation==half_interpolation ||
 	 ( uf->conf->size==0 && uf->conf->shrink>1 ) ||
 	 ( uf->conf->size>0 &&
-	   uf->conf->size<=MAX(raw->raw.height, raw->raw.width) ) ||
+	   uf->conf->size<=MAX(uf->initialHeight, uf->initialWidth) ) ||
 	 !uf->HaveFilters ) {
 	if (uf->conf->size==0 && uf->conf->shrink>1 &&
 		(int)(uf->conf->shrink*raw->pixel_aspect)%2==0)
@@ -1107,13 +1107,13 @@ ufraw_image_data *ufraw_convert_image_area (
                 tmp.width = MIN ((x - bx) + w + border, in->width - bx);
                 if (tmp.width < 16)
                 {
-                    bx = bx + tmp.width - 16; // We assume in->width>16
+                    bx = bx + in->width - 16; // We assume in->width>16
                     tmp.width = 16;
                 }
                 tmp.height = MIN ((y - by) + h + border, in->height - by);
                 if (tmp.height < 16)
                 {
-                    by = by + tmp.height - 16; // We assume in->height>16
+                    by = by + in->height - 16; // We assume in->height>16
                     tmp.height = 16;
                 }
                 tmp.image = g_new (dcraw_image_type, tmp.height * tmp.width);
