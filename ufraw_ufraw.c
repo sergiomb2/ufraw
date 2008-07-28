@@ -592,6 +592,10 @@ int ufraw_load_raw(ufraw_data *uf)
 
     /* Foveon image dimensions are knows only after load_raw()*/
     ufraw_get_image_dimensions(raw, uf);
+    if (uf->conf->CropX2 > uf->rotatedWidth)
+	uf->conf->CropX2 = uf->rotatedWidth;
+    if (uf->conf->CropY2 > uf->rotatedHeight)
+	uf->conf->CropY2 = uf->rotatedHeight;
 
     /* chanMul[0]<0 signals that we need to recalculate the WB */
     if (uf->conf->chanMul[0]<0) ufraw_set_wb(uf);
