@@ -1176,12 +1176,6 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
      * since on different make and model ChanMul are meaningless */
     g_strlcpy(dst->make, src->make, max_name);
     g_strlcpy(dst->model, src->model, max_name);
-    dst->orientation = src->orientation;
-    dst->CropX1 = src->CropX1;
-    dst->CropY1 = src->CropY1;
-    dst->CropX2 = src->CropX2;
-    dst->CropY2 = src->CropY2;
-    dst->rotationAngle = src->rotationAngle;
     dst->threshold = src->threshold;
     dst->exposure = src->exposure;
     dst->contrast = src->contrast;
@@ -1297,6 +1291,17 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
 #endif /* HAVE_LENSFUN */
 }
 
+/* Copy the transformation information from *src to *dst. */
+void conf_copy_transform(conf_data *dst, const conf_data *src)
+{
+    dst->orientation = src->orientation;
+    dst->CropX1 = src->CropX1;
+    dst->CropY1 = src->CropY1;
+    dst->CropX2 = src->CropX2;
+    dst->CropY2 = src->CropY2;
+    dst->rotationAngle = src->rotationAngle;
+}
+
 /* Copy the 'save options' from *src to *dst */
 void conf_copy_save(conf_data *dst, const conf_data *src)
 {
@@ -1314,6 +1319,8 @@ void conf_copy_save(conf_data *dst, const conf_data *src)
     dst->shrink = src->shrink;
     dst->size = src->size;
     dst->overwrite = src->overwrite;
+    dst->RememberOutputPath = src->RememberOutputPath;
+    dst->progressiveJPEG = src->progressiveJPEG;
     dst->losslessCompress = src->losslessCompress;
     dst->embeddedImage = src->embeddedImage;
 }
