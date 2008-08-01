@@ -2919,7 +2919,7 @@ void * CLASS foveon_camf_matrix (unsigned dim[3], const char *name)
 	mat[i] = sget4(dp + i*2) & 0xffff;
     return mat;
   }
-  dcraw_message (DCRAW_ERROR,_("%s: \"%s\" matrix not found!\n"), ifname_display, name); /*UF*/
+  dcraw_message (DCRAW_WARNING,_("%s: \"%s\" matrix not found!\n"), ifname_display, name); /*UF*/
   return 0;
 }
 
@@ -5499,7 +5499,7 @@ void CLASS parse_external_jpeg()
     }
   }
   if (!timestamp)
-    dcraw_message (DCRAW_ERROR,_("Failed to read metadata from %s\n"), jname);/*UF*/
+    dcraw_message (DCRAW_WARNING,_("Failed to read metadata from %s\n"), jname);/*UF*/
   free (jname);
   ifp = save;
 }
