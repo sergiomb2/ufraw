@@ -171,6 +171,7 @@ void kodak_radc_load_raw();
 void kodak_jpeg_load_raw();
 void kodak_dc120_load_raw();
 void kodak_easy_load_raw();
+void kodak_yrgb_load_raw();
 void kodak_262_load_raw();
 int kodak_65000_decode (short *out, int bsize);
 void kodak_65000_load_raw();
