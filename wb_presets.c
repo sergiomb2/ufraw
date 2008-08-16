@@ -2237,9 +2237,9 @@ const wb_data wb_preset[] = {
   { "SONY", "DSLR-A300", Fluorescent, 2,	{ 1.546875, 1, 1.769531, 0 } },
   { "SONY", "DSLR-A300", Fluorescent, 3,	{ 2.070312, 1, 1.796875, 0 } },
   { "SONY", "DSLR-A300", Fluorescent, 4,	{ 1.761719, 1, 1.527344, 0 } },
-//  { "SONY", "DSLR-A300", Flash, -3,		{ 1.710938, 1, 1.988281, 0 } },
-//  { "SONY", "DSLR-A300", Flash, 0,		{ 1.859375, 1, 1.746094, 0 } },
-//  { "SONY", "DSLR-A300", Flash, 3,		{ 2.046875, 1, 1.542969, 0 } },
+  { "SONY", "DSLR-A300", Flash, -3,		{ 1.714844, 1, 1.632812, 0 } },
+  { "SONY", "DSLR-A300", Flash, 0,		{ 1.882812, 1, 1.441406, 0 } },
+  { "SONY", "DSLR-A300", Flash, 3,		{ 2.070312, 1, 1.273438, 0 } },
 
   /* Sony A700 presets - firmware v2 */
   { "SONY", "DSLR-A700", Daylight, -3,		{ 1.937500, 1, 1.640625, 0 } },
