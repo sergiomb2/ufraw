@@ -916,7 +916,8 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
 
 void CLASS lossless_jpeg_load_raw()
 {
-  int jwide, jrow, jcol, val, jidx, i, j, row=0, col=0;
+  int jwide, jrow, jcol, val, jidx, c, i, j, row=0, col=0;
+  double dark[2] = { 0,0 };
   struct jhead jh;
   int min=INT_MAX;
   ushort *rp;
@@ -945,15 +946,21 @@ void CLASS lossless_jpeg_load_raw()
 	if ((unsigned) (col-left_margin) < width) {
 	  BAYER(row-top_margin,col-left_margin) = val;
 	  if (min > val) min = val;
-	} else black += val;
+	} else dark[(col-left_margin) & 1] += val;
       }
       if (++col >= raw_width)
 	col = (row++,0);
     }
   }
   free (jh.row);
-  if (raw_width > width)
-    black /= (raw_width - width) * height;
+  if (raw_width > width) {
+    FORC(2) dark[c] /= (raw_width - width) * height >> 1;
+    black = dark[0] + 0.5;
+    if ((val = dark[0] - dark[1] + 0.5))
+      for (row=0; row < height; row++)
+	for (col=1; col < width; col+=2)
+	  BAYER(row,col) += val;
+  }
   if (!strcasecmp(make,"KODAK"))
     black = min;
 }
