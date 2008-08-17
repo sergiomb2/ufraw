@@ -1,0 +1,1561 @@
+# Cataln translation for UFRaw.
+# Traducció al català de UFRaw Convertidor de Dades en Cru No Identificades per a imatges de càmeres digitals.
+# Copyright (C) 2008, Udi Fuchs & Paco Rivière
+# This file is distributed under the same license as the UFRaw package.
+# Paco Rivière http://pacoriviere.cat/, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.70\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-07-25 15:45+0200\n"
+"PO-Revision-Date: 2008-08-17 18:20-0500\n"
+"Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
+"Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Catalan\n"
+"X-Poedit-Country: ANDORRA\n"
+
+#. Translate text message from GtkImageView:
+msgid "Open the navigator window"
+msgstr "Obre la finestra del Navegador"
+
+msgid "No input file, nothing to do."
+msgstr "No s'ha indicat cap fitxer, res a fer."
+
+#, c-format
+msgid "Loaded %s%s"
+msgstr "S'ha carregat %s%s"
+
+#, c-format
+msgid "Saved %s%s"
+msgstr "S'ha desat %s%s"
+
+#. First letter of the word 'yes' for the y/n question
+msgid "y"
+msgstr "s"
+
+#. First letter of the word 'no' for the y/n question
+msgid "n"
+msgstr "n"
+
+#, c-format
+msgid "%s: overwrite '%s'?"
+msgstr "%s: voleu sobreescriure '%s'? "
+
+msgid "--silent option is valid only in batch mode"
+msgstr "--silent aquesta opció només és vàlida al mode per lots"
+
+msgid "--rotate option is valid only in batch mode"
+msgstr "--rotate aquesta opció només és vàlida al mode per lots"
+
+msgid "Extracting embedded image is not supported in interactive mode"
+msgstr "El mode interactiu no permet extreure imatges incrustades"
+
+msgid "Raw images"
+msgstr "Imatges en cru"
+
+msgid "UFRaw ID files"
+msgstr "Fitxers de identificació de UFRaw"
+
+msgid "Raw jpg's"
+msgstr "JPGs en cru"
+
+msgid "Raw tif's"
+msgstr "TIFs en cru"
+
+msgid "All files"
+msgstr "Tots els fitxers"
+
+msgid "Show hidden files"
+msgstr "Mostra els fitxers ocults"
+
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. global contrast
+#. exposure, saturation, black
+#. ExposureNorm
+#. restoreDetails
+#. clipHighlights
+#. autoExposure
+#. autoBlack
+#. BaseCurveIndex, BaseCurveCount
+#. BaseCurve data defaults
+#. curveIndex, curveCount
+#. Curve data defaults
+msgid "Manual curve"
+msgstr "Corba manual"
+
+msgid "Linear curve"
+msgstr "Corba lineal"
+
+msgid "Custom curve"
+msgstr "Corba personalitzada"
+
+msgid "Camera curve"
+msgstr "Corba de la càmera"
+
+#. profileIndex[], profileCount[]
+#. Profile data defaults
+msgid "No profile"
+msgstr "sense perfil"
+
+msgid "Color matrix"
+msgstr "Matriu de color"
+
+msgid "sRGB"
+msgstr "sRGB"
+
+msgid "System default"
+msgstr "Valor per defecte del sistema"
+
+msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
+msgstr "S'esta intentant convertir el fitxer de configuració .ufrawrc des de la versió UFRaw-0.4 o anteriors"
+
+msgid "Trying to convert .ufrawrc from UFRaw-0.6 or earlier"
+msgstr "S'està intentant convertir el fitxer de configuració .ufrawrc des de la versió UFRaw-0.6 o anteriors"
+
+#, c-format
+msgid "UFRaw version in .ufrawrc is not supported"
+msgstr "Aquesta versió del fitxer de configuració .ufrawrc no està permesa"
+
+#, c-format
+msgid "Too many anchors for curve '%s'"
+msgstr "Hi ha masses nanses per a la corba '%s'"
+
+#, c-format
+msgid ""
+"ID file %s does not appear to be a regular file\n"
+"%s\n"
+msgstr ""
+"Sembla que el fitxer %s no és un fitxer normal\n"
+"%s\n"
+
+#, c-format
+msgid ""
+"Can't open ID file %s for reading\n"
+"%s\n"
+msgstr ""
+"No es pot obrir el fitxer de identificació %s per llegir-lo\n"
+"%s\n"
+
+#, c-format
+msgid ""
+"Error parsing '%s'\n"
+"%s"
+msgstr ""
+"S'ha produït un error en analitzar '%s'\n"
+"%s"
+
+#, c-format
+msgid ""
+"Can't open file %s for writing\n"
+"%s\n"
+msgstr ""
+"No es pot obrir el fitxer %s per escriure-hi\n"
+"%s\n"
+
+msgid "cannot --create-id with stdout"
+msgstr "No es pot crear un identificador a la sortida"
+
+msgid "UFRaw "
+msgstr "UFRaw "
+
+msgid " - Unidentified Flying Raw converter for digital camera images.\n"
+msgstr " - Convertidor de Dades en Cru No Identificades per a imatges de càmeres digitals.\n"
+
+msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
+msgstr "Ús: ufraw [ opcions ... ] [ fitxers d'imatge en cru ... ]\n"
+
+msgid "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
+msgstr "       ufraw-batch [ opcions ... ]  [ fitxers d'imatge en cru ... ]\n"
+
+msgid "       ufraw [ options ... ] [ default-directory ]\n"
+msgstr "       ufraw [ opcions ... ] [ directori-per-omissió ]\n"
+
+msgid ""
+"By default 'ufraw' displays a preview window for each raw image allowing\n"
+"the user to tweak the image parameters before saving. If no raw images\n"
+"are given at the command line, UFRaw will display a file chooser dialog.\n"
+"To process the images with no questions asked (and no preview) use\n"
+"'ufraw-batch'.\n"
+msgstr ""
+"Per omissió 'ufraw mostra una finestra de previsualització que permet\n"
+"a l'usuari jugar amb els paràmetres de la imatge abans de desar-la. Si no\n"
+"es donen imatges en cru a la línia d'ordres, UFRaw mostrarà un diàleg\n"
+"per triar fitxers. Per processar la imatge sense preguntes (ni previsua-\n"
+"lització, podeu fer servir 'ufraw-batch'.\n"
+
+msgid ""
+"The input files can be either raw images or ufraw's ID files. ID files\n"
+"contain a raw image filename and the parameters for handling the image.\n"
+"One can also use an ID file with the option:\n"
+msgstr "Els fitxers d'entrada poden ser bé fitxers d'imatge en cru o fitxers de identificació de ufraw\n"
+
+msgid "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+msgstr "--conf=FITXER-DE-IDENTIFICACIÓ       Aplica els paràmetres del FITXER-DE-IDENTIFICACIÓ a les altres imatges en cru.\n"
+
+msgid "The rest of the options are separated into two groups.\n"
+msgstr "La resta de les opcions es separen en dos grups.\n"
+
+msgid "The options which are related to the image manipulation are:\n"
+msgstr "Les opcions relacionades amb la manipulació de la imatge són:\n"
+
+msgid "--wb=camera|auto      White balance setting.\n"
+msgstr "--wb=camera|auto      Configuració de l'equilibri de blanc.\n"
+
+msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
+msgstr "--temperatura=TEMP    Temperature de color en graus Kelvin (2000 - 7000).\n"
+
+msgid "--green=GREEN         Green color normalization.\n"
+msgstr "--green=VERD         Normalització del color verd.\n"
+
+msgid ""
+"--base-curve=manual|linear|camera|custom|CURVE\n"
+"                      Type of base tone curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default camera if such exists, linear otherwise).\n"
+msgstr ""
+"--base-curve=manual|linear|camera|custom|CORBA\n"
+"                      Tipus de corba tonal base que es farà servir. CORBA pot ser\n"
+"                      qualsevol corba carregada prèviament a la interfície.\n"
+"                      (per omissió la de la càmera, si hi ha, sinó lineal).\n"
+
+msgid ""
+"--base-curve-file=file\n"
+"                      Use base tone curve included in specified file.\n"
+"                      Overrides --base-curve option.\n"
+msgstr ""
+"--base-curve-file=fitxer\n"
+"                      Fes servir la corba tonal base inclosa al fitxer indicat.\n"
+"                      Té prioritat sobre l'opció --base-curve.\n"
+
+msgid ""
+"--curve=manual|linear|CURVE\n"
+"                      Type of luminosity curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default linear).\n"
+msgstr ""
+"--curve=manual|linear|CORBA\n"
+"                      Tipus de corba de lluminositat que es farà servir. CORBA pot ser\n"
+"                      qualsevol corba carregada prèviament a la interfície.\n"
+"                      (per omissió lineal).\n"
+
+msgid ""
+"--curve-file=file     Use luminosity curve included in specified file.\n"
+"                      Overrides --curve option.\n"
+msgstr ""
+"--curve-file=fitxer   Fes servir la corba de lluminositat inclosa al fitxer indicat.\n"
+"                      Té prioritat sobre l'opció --curve.\n"
+
+msgid ""
+"--restore=clip|lch|hsv\n"
+"                      Restore details for negative EV.\n"
+"                      'clip' restores nothing - safe from artifacts.\n"
+"                      'lch' restores in LCH space - giving soft details.\n"
+"                      'hsv' restores in HSV space - giving sharp details.\n"
+"                      (default lch).\n"
+msgstr ""
+"--restore=clip|lch|hsv\n"
+"                      Restaura els detalls pel negatiu EV.\n"
+"                      'clip' no restaura res - l'opció segura.\n"
+"                      'lch' restaura a l'espai LCH - permet obtenir detalls suaus.\n"
+"                      'hsv' restaura a l'espai HSV - permet obtenir detalls nítids.\n"
+"                      (per omissió lch).\n"
+
+msgid ""
+"--clip=digital|film   Clip highlights for positive EV.\n"
+"                      'digital' linear digital sensor response.\n"
+"                      'film' emulate soft film response. (default digital).\n"
+msgstr ""
+"--clip=digital|film   Marca pel EV positiu.\n"
+"                      'digital' resposta lineal del sensor digital.\n"
+"                      'film' emula la resposta d'una pel·lícula tradicional. (per omissió digital).\n"
+
+msgid "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+msgstr "--gamma=GAMA         Configuració de gama de la corba base (per omissió 0.45).\n"
+
+msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
+msgstr "--linearity=LINEARITAT Linearitat de la corba base (per omissió 0.10).\n"
+
+msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
+msgstr "--contrast=CONT       Configuració del contrast (per omissió 1.0).\n"
+
+msgid "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"
+msgstr "--saturation=SAT      Configuració de la saturació (per omissió 1.0, 0 per la sortida en blanc i negre).\n"
+
+msgid ""
+"--wavelet-denoising-threshold=THRESHOLD\n"
+"                      Wavelet denoising threshold (default 0.0).\n"
+msgstr ""
+"--wavelet-denoising-threshold=LLINDAR\n"
+"                      Llindar del filtre de soroll per ondetes (per omissiót 0.0).\n"
+
+msgid ""
+"--exposure=auto|EXPOSURE\n"
+"                      Auto exposure or exposure correction in EV (default 0).\n"
+msgstr ""
+"--exposure=auto|EXPOSICIÓ\n"
+"                      Exposició automàtica o correcció de l'exposició en EV (per omissió 0).\n"
+
+msgid ""
+"--black-point=auto|BLACK\n"
+"                      Auto black-point or black-point value (default 0).\n"
+msgstr ""
+"--black-point=auto|NEGRE\n"
+"                      Punt negre automàtic o valor del punt negre (per omissió 0).\n"
+
+msgid ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Interpolation algorithm to use (default ahd).\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Algoriisme d'interpolació que es farà servir (per omissió ahd).\n"
+
+msgid ""
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Grayscale conversion algorithm to use (default none).\n"
+msgstr ""
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Algorisme de conversió d'escala de grisos que es farà servir (per omissió none).\n"
+
+msgid "The options which are related to the final output are:\n"
+msgstr "Les opcions relacionades amb la sortida final són:\n"
+
+msgid "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
+msgstr "--shrink=FACTOR       Redueix la imatge en un FACTOR (per omissió 1).\n"
+
+msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
+msgstr "--size=MIDA           Redueix la màxima (alçada, amplada) a MIDA.\n"
+
+msgid ""
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Output file format (default ppm).\n"
+msgstr ""
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Format del fitxer de sortida (per omissió ppm).\n"
+
+msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
+msgstr "--out-depth=8|16      Profunditat de bits per canal (per omissió 8).\n"
+
+msgid ""
+"--create-id=no|also|only\n"
+"                      Create no|also|only ID file (default no).\n"
+msgstr ""
+"--create-id=no|also|only\n"
+"                      No creis|també|només l'arxiu d'identificació (per omissió  no).\n"
+
+msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
+msgstr "--compression=VALOR   Compressió JPEG (0-100, per omissió 85).\n"
+
+msgid "--[no]exif            Embed EXIF in output JPEG or PNG (default embed EXIF).\n"
+msgstr "--[no]exif            Inclou les dades EXIF a la sortida JPEG o PNG (per omissió inclou les dades EXIF).\n"
+
+msgid "--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"
+msgstr "--[no]zip             Habilita [inhabilita] la compressió zip als fitxers TIFF (per omissió nozip).\n"
+
+msgid ""
+"--embedded-image      Extract the preview image embedded in the raw file\n"
+"                      instead of converting the raw image.\n"
+msgstr ""
+"--embedded-image      Extract the preview image embedded in the raw file\n"
+"                      instead of converting the raw image.\n"
+
+msgid ""
+"--rotate=camera|ANGLE|no\n"
+"                      Rotate image to camera's setting, by ANGLE degrees\n"
+"                      clockwise, or do not rotate the image (default camera).\n"
+msgstr ""
+"--rotate=camera|ANGLE|no\n"
+"                      Gira la imatge a l'ajustament de la càmera, en ANGLE graus\n"
+"                      en sentit del rellotge, o bé no gira la imatge (per omissió camera).\n"
+
+msgid ""
+"--crop-(left|right|top|bottom)=PIXELS\n"
+"                      Crop the output to the given pixel range, relative to the\n"
+"                      raw image after rotation but before any scaling.\n"
+msgstr ""
+"--crop-(left|right|top|bottom)=PIXELS\n"
+"                      Escapça el rang de píxels donats de la sortida, relatius a la\n"
+"                      imatge en cru després de girar-la, però abans d'escalar-la.\n"
+
+msgid "--out-path=PATH       PATH for output file (default use input file's path).\n"
+msgstr "--out-path=RUTA       RUTA del fitxer de sortida (per omissió és la ruta del fitxer d'entrada).\n"
+
+msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
+msgstr "--output=FITXER         Nom del fitxer de sortida, useu '-' per fer servir la sortida estàndard.\n"
+
+msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
+msgstr "--darkframe=FITXER      Usa el FITXER per la substracció del marc fosc en cru.\n"
+
+msgid "--overwrite           Overwrite existing files without asking (default no).\n"
+msgstr "--overwrite           Sobreescriu els fitxers sense confirmació (per omissió no).\n"
+
+msgid "--silent              Do not display any messages during batch conversion.\n"
+msgstr "--silent              No mostris cap missatge durant la conversió per lots.\n"
+
+msgid ""
+"UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
+"Then, if an ID file is specified it setting are read. Next, the setting from\n"
+"the --conf option are taken, ignoring input/output filenames in the ID file.\n"
+"Lastly, the options from the command line are set. In batch mode, the second\n"
+"group of options is NOT read from the resource file.\n"
+msgstr ""
+"Primer UFRaw llegeix la configuració de l'arxiu de recursos $HOME/.ufrawrc.\n"
+"Llavors, si s'indica un arxiu de identificació, es llegeix. Llavors es prenen les\n"
+"opcions de  --conf, ignorant els noms dels arxius d'entrada i sortida de l'arxiu\n"
+"de identificació. Finalment, es segueixen les opcions de la línia d'ordres. En\n"
+"mode per lots, el segon grup d'opcions, NO es llegeix del fitxer de recursos.\n"
+
+msgid ""
+"Last, but not least, --version displays the version number and compilation\n"
+"options for ufraw and --help displays this help message and exits.\n"
+msgstr ""
+"Finalment, --version mostra el número de versió i les opcions de compilació\n"
+"de ufraw i --help mostra aquest missatge d'ajuda i surt.\n"
+
+#, c-format
+msgid "'%s' is not a valid value for the --%s option."
+msgstr "'%s' no és valor correcte per l'opció --%s."
+
+msgid "ufraw was build without ZIP support."
+msgstr "ufraw ha estat compilat sense suport ZIP."
+
+msgid "--batch is obsolete. Use ufraw-batch instead."
+msgstr "--batch Aquesta opció és obsoleta. En el seu lloc feu servir ufraw-batch."
+
+#, c-format
+msgid "getopt returned character code 0%o ??"
+msgstr "getopt() ha retornat 0%o com a codi de caràcter??"
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "'%s' no és una opció vàlida per la configuració de l'equilibri de blanc."
+
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "les opcions --temperature i --green passen per davant de l'opció --wb=%s."
+
+#, c-format
+msgid "failed to load curve from %s, too many configured base curves"
+msgstr "no ha estat possible carregar la corba de %s, hi ha masses corbes base"
+
+#, c-format
+msgid "failed to load curve from %s"
+msgstr "No s'ha pogut carregar la corba de %s"
+
+#, c-format
+msgid "'%s' is not a valid base curve name."
+msgstr "Error: %s no és un nom de corba base vàlid."
+
+#, c-format
+msgid "failed to load curve from %s, too many configured curves"
+msgstr "no ha estat possible carregar la corba de %s, hi ha masses corbes configurades"
+
+#, c-format
+msgid "'%s' is not a valid curve name."
+msgstr "%s no és un nom de corba vàlid."
+
+#, c-format
+msgid "'%s' is not a valid interpolation option."
+msgstr "Error: L'opció %s no és una opció d'interpolació vàlida."
+
+#, c-format
+msgid "'%s' is not a valid grayscale option."
+msgstr "'%s' no és una opció d'escala de grisos vàlida."
+
+#, c-format
+msgid "'%s' is not a valid restore option."
+msgstr "'%s' no és una opció de restauració vàlida."
+
+#, c-format
+msgid "'%s' is not a valid clip option."
+msgstr "L'opció '%s' no és una opció de tall vàlida."
+
+msgid "you can not specify both --shrink and --size"
+msgstr "no podeu indicar ambdues --shrink i --size"
+
+#, c-format
+msgid "'%d' is not a valid bit depth."
+msgstr "'%d' no és una profunditat de bits vàlida."
+
+#, c-format
+msgid "Output type '%s' is deprecated"
+msgstr "El tipus de sortida '%s' és obsolet"
+
+msgid "ufraw was build without TIFF support."
+msgstr "ufraw s'ha compilat sense suport per a fitxers TIFF."
+
+msgid "ufraw was build without JPEG support."
+msgstr "ufraw s'ha compilat sense suport per a fitxers JPEG."
+
+msgid "ufraw was build without PNG support."
+msgstr "ufraw s'ha compilat sense suport per a fitxers PNG."
+
+#, c-format
+msgid "'%s' is not a valid output type."
+msgstr "'%s' no és un tipus de sortida vàlida."
+
+#, c-format
+msgid "'%s' is not a valid output type for embedded image."
+msgstr "'%s' no és una sortida vàlida per la imatge incrustada."
+
+#, c-format
+msgid "'%d' is not a valid bit depth for embedded image."
+msgstr "'%d' no és una profunditat de bits vàlida per la imatge incrustada."
+
+#, c-format
+msgid "'%s' is not a valid rotate option."
+msgstr "'%s' no és una opció de rotació vàlida."
+
+#, c-format
+msgid "'%s' is not a valid create-id option."
+msgstr "L'opció '%s' no és una opció de creació d'identificador vàlida."
+
+#, c-format
+msgid "'%s' is not a valid path."
+msgstr "'%s' no és un camí vàlid."
+
+msgid "cannot output more than one file to the same output"
+msgstr "no es pot treure més d'una imatge a la mateixa sortida"
+
+#, c-format
+msgid "Raw file '%s' missing."
+msgstr "Manca el fitxer en cru '%s'."
+
+msgid "Delete raw file"
+msgstr "Suprimeix el fitxer en cru"
+
+msgid "_Delete selected"
+msgstr "Esborra la _selecció"
+
+msgid "Delete _All"
+msgstr "Suprimeix-ho _tot"
+
+msgid "Select files to delete"
+msgstr "Trieu els fitxers que voleu suprimir"
+
+#, c-format
+msgid "Error reading directory '%s'."
+msgstr "S'ha produït un error en llegir el directori '%s'"
+
+#, c-format
+msgid "Error deleting '%s'"
+msgstr "S'ha produït un error en eliminar '%s'"
+
+msgid "Reading embedded image requires libjpeg."
+msgstr "Per llegir les imatges incrustades cal la llibreria libjpeg."
+
+msgid "No embedded image found"
+msgstr "No s'ha trobat cap imatge incrustada"
+
+#, c-format
+msgid "Original size (%d) is smaller than the requested size (%d)"
+msgstr "La mida del fitxer original (%d) és més petita que la mida demanada (%d)"
+
+#, c-format
+msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
+msgstr "la miniatura ppm no correspon, alçada %d, amplada %d, mentre al buffer hi ha %d."
+
+#, c-format
+msgid "JPEG thumb height %d different than expected %d."
+msgstr "L'alçada %d de la miniatura JPEG és diferent de l'esperada %d."
+
+#, c-format
+msgid "JPEG thumb width %d different than expected %d."
+msgstr "L'amplada %d de la miniatura JPEG és diferent de l'esperada %d."
+
+#, c-format
+msgid ""
+"Error creating file '%s'.\n"
+"%s"
+msgstr ""
+"S'ha produït un error creant el fitxer '%s'.\n"
+"%s"
+
+msgid "No embedded image read"
+msgstr "No s'ha llegit cap imatge inclosa"
+
+#, c-format
+msgid "Error creating file '%s'. Unknown file type %d."
+msgstr "No s'ha pogut desar l'arxiu '%s'. Tipus de fitxer desconegut %d."
+
+#, c-format
+msgid "Error creating file '%s': %s"
+msgstr "S'ha produït un error creant el fitxer '%s': %s'"
+
+#, c-format
+msgid "Error writing '%s'"
+msgstr "S'ha produït un error en escriure '%s'"
+
+#, c-format
+msgid "Unsupported output type (%d) for embedded image"
+msgstr "E tipus d'imatge de la sortida (%d) no està permés"
+
+#, c-format
+msgid "Loading raw file '%s'"
+msgstr "S'està carregant el fitxer en cru '%s'"
+
+msgid "Can't allocate new image."
+msgstr "No es pot crear una imatge nova."
+
+#. Create the "background" layer to hold the image...
+msgid "Background"
+msgstr "Fons"
+
+msgid "Loading image"
+msgstr "S'està carregant la imatge"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "No ha estat possible incloure el perfil de sortida '%s' a la imatge."
+
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored.\n"
+msgstr "La longitud %d, del buffer EXIF és massa gran, s'ignorarà.\n"
+
+msgid "Raw histogram with conversion curves"
+msgstr "Histograma en cru amb corbes de conversió"
+
+msgid "Live histogram"
+msgstr "Histograma continu"
+
+#. No darkframe file
+msgid "None"
+msgstr "Cap"
+
+msgid "Lightness"
+msgstr "Lluminositat"
+
+msgid "Luminance"
+msgstr "Luminància"
+
+msgid "Value"
+msgstr "Valor"
+
+msgid "Channel Mixer"
+msgstr "Mesclador de canal"
+
+msgid "No more room for new curves."
+msgstr "No hi ha espai per a més corbes."
+
+msgid "Load curve"
+msgstr "Carrega la corba"
+
+msgid "All curve formats"
+msgstr "Formats de les corbes"
+
+msgid "UFRaw curve format"
+msgstr "Forma de corba de UFRaw"
+
+msgid "Nikon curve format"
+msgstr "Forma de corba de Nikon"
+
+msgid "Save curve"
+msgstr "Desa la corba"
+
+msgid "No more room for new profiles."
+msgstr "No hi ha espai per a més perfils."
+
+msgid "Load color profile"
+msgstr "Carrega el perfil de color"
+
+msgid "Color Profiles"
+msgstr "Perfils de color"
+
+msgid "Luminosity (Y value)"
+msgstr "Lluminositat (valor Y)"
+
+msgid "Adams' zone"
+msgstr "Zona d'Adam"
+
+#, c-format
+msgid "size %dx%d, zoom %2.f%%"
+msgstr "mida %dx%d, ampliació %2.f%%"
+
+#, c-format
+msgid "size %dx%d, scale 1/%d"
+msgstr "mida %dx%d, escala 1/%d"
+
+#, c-format
+msgid "Black point: %0.3lf"
+msgstr "Punt negre: %0.3lf"
+
+msgid "Fatal Error: uf->conf->shrink<1"
+msgstr "S'ha produït un error que no es pot recuperar: uf->conf->shrink<1"
+
+msgid "Load dark frame"
+msgstr "Carrega el marc fosc"
+
+msgid "clip"
+msgstr "talla"
+
+msgid "restore in LCH space for soft details"
+msgstr "restaura a l'espai LCH per als detalls suaus"
+
+msgid "restore in HSV space for sharp details"
+msgstr "restaura a l'espai LCH per als detalls nítids"
+
+#, c-format
+msgid ""
+"Restore details for negative EV\n"
+"Current state: %s"
+msgstr ""
+"Restaura el detalls pel negatiu EV\n"
+"Estat actual: %s"
+
+msgid "digital linear"
+msgstr "lineal digital"
+
+msgid "soft film like"
+msgstr "Com si fos una pel·lícula de programari"
+
+#, c-format
+msgid ""
+"Clip highlights for positive EV\n"
+"Current state: %s"
+msgstr ""
+"Talla el que està marcat pel positiu EV\n"
+"Estat actual: %s"
+
+#, c-format
+msgid "Filename: %s%s"
+msgstr "Nom del fitxer: %s%s"
+
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+"\n"
+"Crea també el fitxer de identificació"
+
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+"\n"
+"Crea sols el fitxer de identificació"
+
+msgid "UFRaw options"
+msgstr "Opcions del UFRaw"
+
+msgid "Settings"
+msgstr "Paràmetres"
+
+msgid "Input color profiles"
+msgstr "Perfils de color d'entrad"
+
+msgid "Output color profiles"
+msgstr "Perfils de color de sortida"
+
+msgid "Display color profiles"
+msgstr "Mostra els perfils de color"
+
+msgid "Base Curves"
+msgstr "Corbes de Base"
+
+msgid "Luminosity Curves"
+msgstr "Corbes de lluminositat"
+
+#. Remote Gimp command entry
+msgid "Remote Gimp command"
+msgstr "Ordre Gimp remota"
+
+msgid "Reset command to default"
+msgstr "Reinicia l'ordre per omissió"
+
+msgid "Blink Over/Underexposure Indicators"
+msgstr "Indicadors parpallejants de sobre/infraexposició"
+
+msgid "Configuration"
+msgstr "Configuració"
+
+msgid "Save configuration"
+msgstr "Desa la configuració"
+
+msgid "Save configuration to resource file ($HOME/.ufrawrc)"
+msgstr "Desa la configuració a l'arxiu de recursos ($HOME/.ufrawrc)"
+
+msgid "Log"
+msgstr "Registre"
+
+msgid "About"
+msgstr "Quant a"
+
+msgid ""
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility to\n"
+"read and manipulate raw images from digital cameras.\n"
+"UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"for the actual encoding of the raw images.\n"
+"\n"
+"Author: Udi Fuchs\n"
+"Homepage: http://ufraw.sourceforge.net/\n"
+"\n"
+msgstr ""
+"<b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) és una eina per\n"
+"llegir i manipular imatges en cru de càmeres digitals.\n"
+"UFRaw fa servir <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"per codificar les imatges en cru.\n"
+"\n"
+"Autor: Udi Fuchs\n"
+"Pàgina web: http://ufraw.sourceforge.net/\n"
+"\n"
+
+#, c-format
+msgid "%s%s (Alt-%s)"
+msgstr "%s%s (Alt-%s)"
+
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw"
+
+msgid "Linear"
+msgstr "Lineal"
+
+msgid "Logarithmic"
+msgstr "Logarítmic"
+
+msgid "Spot values:"
+msgstr "Valors dels punts:"
+
+msgid "Exposure compensation in EV"
+msgstr "Compensació de l'exposició en EV"
+
+msgid "Auto adjust exposure"
+msgstr "Ajusta l'exposició de forma automàtica"
+
+msgid "Reset exposure to default"
+msgstr "Reinicia l'exposició per omissió"
+
+#. Start of White Balance setting page
+msgid "White balance"
+msgstr "Equilibri de blanc"
+
+msgid "White Balance"
+msgstr "Equilibri de Blanc"
+
+msgid ""
+"There are no white balance presets for your camera model.\n"
+"Check UFRaw's webpage for information on how to get your\n"
+"camera supported."
+msgstr ""
+"No hi ha cap configuració d'equilibri de blancs pel vostre model\n"
+"de càmera. Veieu a la pàgina web de UFRaw com obtenir suport\n"
+"per la vostra càmera."
+
+msgid "Reset white balance to initial value"
+msgstr "Reinicia l'equilibri de blanc al valor inicial"
+
+msgid "Temperature"
+msgstr "Temperatura"
+
+msgid "White balance color temperature (K)"
+msgstr "Equilibri de blanc de la temperatura de colors (K)"
+
+msgid "Green"
+msgstr "Verd"
+
+msgid "Green component"
+msgstr "Component verd"
+
+msgid "Select a spot on the preview image to apply spot white balance"
+msgstr "Trieu una zona de la imatge previsualitzada per aplicar l'equilibri de blancs"
+
+msgid "Chan. multipliers:"
+msgstr "Multiplicadors en cadena:"
+
+msgid "Bayer pattern interpolation"
+msgstr "Interpolació del model Bayer"
+
+msgid "VNG four color interpolation"
+msgstr "Interpolació VNG de quatre colors"
+
+msgid "Bilinear interpolation"
+msgstr "Interpolació bilineal"
+
+msgid "AHD interpolation"
+msgstr "Interpolació AHD"
+
+msgid "VNG interpolation"
+msgstr "Interpolació VNG"
+
+msgid "PPG interpolation"
+msgstr "Interpolació PPG"
+
+msgid "No interpolation"
+msgstr "Sense interpolació"
+
+msgid "No Bayer pattern"
+msgstr "No hi ha cap patró Bayer"
+
+msgid "Apply color smoothing"
+msgstr "Fes que els colors siguin suaus"
+
+msgid "Denoise"
+msgstr "Filtra el soroll"
+
+msgid "Threshold"
+msgstr "Llindar"
+
+msgid "Threshold for wavelet denoising"
+msgstr "Llindar per al filtratge de soroll per ondetes"
+
+msgid "Reset denoise threshold to default"
+msgstr "Reinicia el llindar de soroll per omissió"
+
+msgid "Zoom:"
+msgstr "Ampliació:"
+
+msgid "Zoom percentage"
+msgstr "Percentatge del zoom"
+
+msgid "Dark Frame:"
+msgstr "Marc Fosc:"
+
+msgid "Reset dark frame"
+msgstr "Reinicia el marc fosc"
+
+#. End of White Balance setting page
+#. Start of Grayscale page
+msgid "Grayscale"
+msgstr "Escala de grisos"
+
+msgid "Grayscale Mode:"
+msgstr "Mode escala de grisos:"
+
+msgid "Reset channel mixer"
+msgstr "Reinicia el canal de la mescla"
+
+#. Lens correction page
+msgid "Lens correction"
+msgstr "Correcció de la lent"
+
+#. Start of Base Curve page
+msgid "Base curve"
+msgstr "Corba base"
+
+msgid "Load base curve"
+msgstr "Carrega la corba base"
+
+msgid "Save base curve"
+msgstr "Desa  la corba base"
+
+msgid "Reset base curve to default"
+msgstr "Reinicia la corba base per omissió"
+
+#. End of Base Curve page
+#. Start of Color management page
+msgid "Color management"
+msgstr "Gestió del color"
+
+msgid "Input ICC profile"
+msgstr "Perfil de color ICC d'entrada"
+
+msgid "Output ICC profile"
+msgstr "Perfil de color ICC"
+
+msgid "Display ICC profile"
+msgstr "Mostra el perfil de color ICC"
+
+msgid "Gamma"
+msgstr "Gamma"
+
+msgid "Gamma correction for the input profile"
+msgstr "Correcció de gama per al perfil d'entrada"
+
+msgid "Reset gamma to default"
+msgstr "Reinicia la gama per omissió"
+
+msgid "Linearity"
+msgstr "Linealitat"
+
+msgid "Linear part of the gamma correction"
+msgstr "Part lineal de la correcció gamma"
+
+msgid "Reset linearity to default"
+msgstr "Reinicia la linealitat per omissió"
+
+msgid "Output intent"
+msgstr "Prova de sortida"
+
+msgid "Perceptual"
+msgstr "Perceptual"
+
+msgid "Relative colorimetric"
+msgstr "Mètrica de color relativa"
+
+msgid "Saturation"
+msgstr "Saturació"
+
+msgid "Absolute colorimetric"
+msgstr "Mètrica de color absoluta"
+
+msgid "Output bit depth"
+msgstr "Profunditat dels bits de sortida"
+
+msgid "Display intent"
+msgstr "Prova de reproducció"
+
+msgid "Disable soft proofing"
+msgstr "Inhabilita les proves suaus"
+
+#. End of Color management page
+#. Start of Corrections page
+msgid "Correct luminosity, saturation"
+msgstr "Corregeix la lluminositat, saturació"
+
+msgid "Contrast"
+msgstr "Contrast"
+
+msgid "Global contrast adjustment"
+msgstr "Ajustament global del contrast"
+
+msgid "Reset global contrast to default"
+msgstr "Reinicia el contrast global per omissió"
+
+msgid "Reset saturation to default"
+msgstr "Reinicia la saturació per omissió"
+
+msgid ""
+"Auto adjust curve\n"
+"(Flatten histogram)"
+msgstr ""
+"Ajustament automàtic de la corba\n"
+"(Histograma pla)"
+
+msgid "Reset curve to default"
+msgstr "Reinicia la corba per omissió"
+
+msgid "Black point: 0.000"
+msgstr "Punt negre: 0.000"
+
+msgid "Reset black-point to default"
+msgstr "Reinicia el punt negre per omissió"
+
+msgid "Auto adjust black-point"
+msgstr "Ajustament automàtic del punt negre"
+
+#. End of Corrections page
+#. Start of transformations page
+msgid "Crop and rotate"
+msgstr "Retalla i gira"
+
+#. Start of Crop controls
+msgid "Left:"
+msgstr "Esquerra:"
+
+msgid "Top:"
+msgstr "Superior:"
+
+msgid "Right:"
+msgstr "Dreta:"
+
+msgid "Bottom:"
+msgstr "Inferior:"
+
+msgid "Reset the crop region"
+msgstr "Reinicia la zona de escapçament"
+
+msgid "Aspect ratio:"
+msgstr "Relació de l'aspecte"
+
+msgid ""
+"Crop area aspect ratio.\n"
+"Can be entered in decimal notation (1.273)\n"
+"or as a ratio of two numbers (14:11)"
+msgstr ""
+"Relació d'aspecte de l'àrea a escapça.\n"
+"Es pot escriure en notació decimal (1.273)\n"
+"o com a relació de dos nombres (14:11)"
+
+msgid "Lock aspect ratio"
+msgstr "Manté la relació de l'aspecte"
+
+msgid "Shrink factor"
+msgstr "Factor de reducció"
+
+msgid "Height"
+msgstr "Alçada"
+
+msgid "Width"
+msgstr "Amplada"
+
+msgid "Orientation:"
+msgstr "Orientació:"
+
+#. Start of Save page
+msgid "Save"
+msgstr "Desa"
+
+msgid "Path"
+msgstr "Ruta"
+
+msgid "Select output path"
+msgstr "Selecciona el camí de sortida"
+
+msgid "Filename"
+msgstr "Nom del fitxer"
+
+msgid "JPEG compression level"
+msgstr "Nivell de compressió de JPEG"
+
+msgid "JPEG progressive encoding"
+msgstr "Codificació JPEG progressiva"
+
+msgid "TIFF lossless Compress"
+msgstr "Compressió TIFF sense pèrdua"
+
+msgid "Embed EXIF data in JPEG or PNG files"
+msgstr "Inclou les dades EXIF als fitxers JPEG o PNG"
+
+msgid "Create ID file "
+msgstr "Crea el fitxer de identificació"
+
+msgid "No"
+msgstr "No"
+
+msgid "Also"
+msgstr "Vegeu també"
+
+msgid "Only"
+msgstr "Només"
+
+msgid "Save image defaults "
+msgstr "Desa el paràmetres per omissió de la imatge"
+
+msgid ""
+"Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr ""
+"Desa el paràmetres de manipulació de la imatge actual com per omissió.\n"
+"Sempre es desen els paràmetres de sortida d'aquesta finestra."
+
+msgid "Never again"
+msgstr "Mai més"
+
+msgid "Always"
+msgstr "Sempre"
+
+msgid "Just this once"
+msgstr "Només per a aquest cop"
+
+msgid "Remember output path"
+msgstr "Recorda el camí de sortida"
+
+msgid "Overwrite existing files without asking"
+msgstr "S'estant sobreescribint els fitxers sense confirmació"
+
+#. Start of EXIF page
+msgid "EXIF"
+msgstr "EXIF"
+
+msgid "Tag"
+msgstr "Etiqueta"
+
+#. Fill table with EXIF tags
+msgid "Camera maker"
+msgstr "Fabricant de la càmera"
+
+msgid "Camera model"
+msgstr "Model de la càmera"
+
+msgid "Timestamp"
+msgstr "Marca horària"
+
+msgid "Shutter time"
+msgstr "Temps de l'obturador"
+
+msgid "Aperture"
+msgstr "Obertura"
+
+msgid "Exposure"
+msgstr "Exposició"
+
+msgid "ISO speed"
+msgstr "Velocitat ISO"
+
+msgid "Focal length"
+msgstr "Longitud focal"
+
+msgid "35mm focal length"
+msgstr "Distància focal de l'ocular de 35mm"
+
+#. Lens selector
+msgid "Lens"
+msgstr "Lent"
+
+msgid "Flash"
+msgstr "Flaix"
+
+#, c-format
+msgid "EXIF data read by %s"
+msgstr "%s ha llegit les dades EXIF"
+
+msgid "Warning: EXIF data will not be sent to output"
+msgstr "Avís: les dades EXIF no s'inclouran a la sortida"
+
+msgid "RGB histogram"
+msgstr "Histograma RGB"
+
+msgid "R+G+B histogram"
+msgstr "Histograma R+G+B"
+
+msgid "Luminosity histogram"
+msgstr "Histograma de lluminositat"
+
+msgid "Value (maximum) histogram"
+msgstr "Valor (màxim) de l'histograma"
+
+msgid "Saturation histogram"
+msgstr "Histograma de saturació"
+
+msgid "Average:"
+msgstr "Mitjana:"
+
+msgid "Std. deviation:"
+msgstr "Desviació típica:"
+
+msgid "Overexposed:"
+msgstr "Sobreexposat:"
+
+msgid "Indicate"
+msgstr "Indica"
+
+msgid "Underexposed:"
+msgstr "Infraexoposat:"
+
+msgid "Options"
+msgstr "Opcions"
+
+#. Comment to translator: All control buttons
+#. "_Delete", "_Cancel", "_Save", "Save _As", "Send to _Gimp"
+#. should have unique mnemonics.
+#. Delete button:
+msgid "_Delete"
+msgstr "_Suprimeix"
+
+msgid "Send image to _Gimp"
+msgstr "Envia la imatge al _GIMP"
+
+#. preview_progress() changes the size of the progress bar
+#. and processes the event queue.
+msgid "Loading preview"
+msgstr "S'està carregant la previsualització"
+
+msgid "Fatal error setting C locale"
+msgstr "S'ha produït un error al establir el locale C"
+
+#, c-format
+msgid "Curve version is not supported"
+msgstr "No es permet l'ús d'aquesta versió del fitxer de corba"
+
+#, c-format
+msgid "Invalid Nikon curve file '%s'"
+msgstr "El fitxer de corba Nikon '%s' és incorrecte"
+
+#, c-format
+msgid "Error opening Curve file '%s': %s"
+msgstr "S'ha produït un error en obrir el fitxer de Corba '%s': %s"
+
+#, c-format
+msgid "Error opening file '%s': %s"
+msgstr "S'ha produït un error en obrir el fitxer '%s': %s"
+
+msgid "File exists"
+msgstr "El fitxer ja existeix"
+
+#, c-format
+msgid ""
+"File '%s' already exists.\n"
+"Overwrite?"
+msgstr ""
+"El fitxer '%s' ja existeix. \n"
+"Voleu sobreescriure'l?"
+
+msgid "Error creating temporary file."
+msgstr "S'ha produït un error en escriure el fitxer temporal."
+
+msgid "Error activating Gimp."
+msgstr "S'ha produït un error mentre s'activava el GIMP."
+
+msgid "Remote URI is not supported"
+msgstr "No se suporta l'esquema URI"
+
+#, c-format
+msgid "darkframe error: %s is not a raw file\n"
+msgstr "S'ha produït un error del marc fosc: El fitxer %s no és un fitxer d'imatges en cru\n"
+
+#, c-format
+msgid "error loading darkframe '%s'\n"
+msgstr "S'ha produït un error en carregar el marc negre '%s'\n"
+
+#, c-format
+msgid "Darkframe '%s' is incompatible with main image"
+msgstr "El marc fosc '%s' no és compatible amb la imatge principal"
+
+#, c-format
+msgid "using darkframe '%s'\n"
+msgstr "S'està usant el marc fosc '%s'\n"
+
+msgid "Error reading NEF curve"
+msgstr "S'ha produït un error en llegir la corba NEF"
+
+#, c-format
+msgid "Can not downsize from %d to %d."
+msgstr "No s'ha pogut reduïr de %d a %d."
+
+msgid "Cannot use camera white balance, reverting to auto white balance."
+msgstr "No es pot fer servir l'equilibri de blanc de la càmera, es farà servir l'equilibri de blanc automàtic."
+
+#. Error was not already set before
+#, c-format
+msgid "Error creating file '%s'."
+msgstr "Error creant el fitxer %s'"
+
+#. 'errno' does seem to contain useful information
+#. Error was not already set before
+msgid "Error creating file."
+msgstr "Error creant el fitxer."
+
+msgid "Converting image"
+msgstr "S'està convertint la imatge"
+
+msgid "Saving image"
+msgstr "S'està desant la imatge"
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr "El nom de la imatge no pot coincidir amb el del fitxer de identificació '%s'"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "No ha estat possible incloure el perfil '%s' a '%s'."
+
+#, c-format
+msgid "Unsupported bit depth '%d' ignored."
+msgstr "S'ignorarà la profunditat de bits '%d' no suportada."
+
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "La longitud %d, del buffer EXIF és massa gran, s'ignorarà."
+
+#, c-format
+msgid "Unknown file type %d."
+msgstr "El tipus de fitxer %d és desconegut."
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+"Marca:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Muntatge:\t\t%s\n"
+"Factor d'escapçament:\t%.1f"
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+"Marca:\t\t%s\n"
+"Model:\t\t%s\n"
+"Rang focal:\t%s\n"
+"Obertura:\t\t%s\n"
+"Factor d'escapçament:\t%.1f\n"
+"Tipus:\t\t%s\n"
+"Muntatges:\t\t%s"
+
+msgid "Focal"
+msgstr "Longitud focal"
+
+msgid "F"
+msgstr "F"
+
+msgid "F-number (Aperture)"
+msgstr "Valor F de l'obertura"
+
+msgid "Distance"
+msgstr "Distància"
+
+msgid "Distance to subject"
+msgstr "Distància fins al subjecte"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "Model:"
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "Model matemàtic d'Aberracions cromàtiques"
+
+msgid "Parameters"
+msgstr "Paràmetres"
+
+msgid "Optical vignetting mathematical model"
+msgstr "Model matemàtic del vinyetatge òptic"
+
+msgid "Lens distortion mathematical model"
+msgstr "Model matemàtic de la distorsió de la lent"
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr "Geometria de la lent:"
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "La geometria de la lent que s'ha fet servir per fer la foto"
+
+msgid "Target geometry:"
+msgstr "Geometria desitjada:"
+
+msgid "The target geometry for output image"
+msgstr "La sortida desitjada per la d'imatge de la sortida"
+
+msgid "Camera"
+msgstr "Càmera"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Cerqueu la càmera amb un patró\n"
+"Format: [Marca, ][Model]"
+
+msgid "Choose camera from complete list"
+msgstr "Escolliu la càmera de la llista"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr "Cerqueu "
+
+msgid "Choose lens from list of possible variants"
+msgstr "Trieu la lent de la llista de possibles variant"
+
+msgid "Scale"
+msgstr "Escala"
+
+msgid "Image scale power-of-two"
+msgstr "Escala la mida de la imatge en potències de dos"
+
+msgid "Reset image scale to default"
+msgstr "Reinicia la escala de la imatge al valor per omissió"
+
+msgid "Autoscale the image for best fit"
+msgstr "Escala automàticament la imatge al millor ajust"
+
+msgid "Lateral chromatic aberration"
+msgstr "Aberració cromàtica lateral"
+
+msgid "Optical vignetting"
+msgstr "Vinyetatge òptic"
+
+msgid "Lens distortion"
+msgstr "Distorsió de la lent"
+
+msgid "Lens geometry"
+msgstr "Geometria de la lent"
+
+#. Column 1 - "make" of the camera.
+#. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
+#. * Column 3 - WB name.
+#. * Column 4 - Fine tuning. MUST be in increasing order. 0 for no fine tuning.
+#. *	      It is enough to give only the extreme values, the other values
+#. *	      will be interpolated.
+#. * Column 5 - Channel multipliers.
+#. *
+#. * Minolta's ALPHA and MAXXUM models are treated as the DYNAX model.
+#. *
+#. * WB name is standardized to one of the following:
+#. "Sunlight" and other variation should be switched to this:
+msgid "Daylight"
+msgstr "Llum de dia"
+
+#. Probably same as above:
+msgid "Direct sunlight"
+msgstr "Llum solar directe"
+
+msgid "Cloudy"
+msgstr "Nubolat"
+
+#. "Shadows" should be switched to this:
+msgid "Shade"
+msgstr "Ombra"
+
+msgid "Incandescent"
+msgstr "Llum incandescent"
+
+msgid "Incandescent warm"
+msgstr "Llum incandescent càlida"
+
+#. Same as "Incandescent":
+msgid "Tungsten"
+msgstr "Llum de tungstè"
+
+msgid "Fluorescent"
+msgstr "Llum fluorescent"
+
+#. In Canon cameras and Nikon D60 and D300:
+msgid "Fluorescent high"
+msgstr "Llum fluorescent alta"
+
+msgid "Cool white fluorescent"
+msgstr "Llum fluorescent de blanc fred"
+
+msgid "Warm white fluorescent"
+msgstr "Llum fluorescent de blanc càlid"
+
+msgid "Daylight fluorescent"
+msgstr "Fluorescent de llum de dia"
+
+msgid "Neutral fluorescent"
+msgstr "Llum fluorescent neutre"
+
+msgid "White fluorescent"
+msgstr "Llum fluorescent negre"
+
+#. In Nikon D60 and D300
+msgid "Sodium-vapor fluorescent"
+msgstr "Llum fluorescent de vapor de sodi"
+
+msgid "Day white fluorescent"
+msgstr "Llum fluorescent de blanc de dia"
+
+msgid "High temp. mercury-vapor fluorescent"
+msgstr "Fluorescent de vapor de mercuri d'alta temperatura"
+
+#. For Olympus with no real "Flash" preset:
+msgid "Flash (auto mode)"
+msgstr "Flaix (mode automàtic)"
+
+msgid "Evening sun"
+msgstr "Sol del capvespre"
+
+msgid "Underwater"
+msgstr "Sota de l'aigua"
+
+msgid "Black & white"
+msgstr "Blanc i negre"
+
+msgid "Manual WB"
+msgstr "Equilibri de blanc manual"
+
+msgid "Camera WB"
+msgstr "Equilibri de blanc de la càmera"
+
+msgid "Auto WB"
+msgstr "Equilibri de blanc automàtic"
+

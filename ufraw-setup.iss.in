@@ -44,6 +44,7 @@ Name: "ARWAssociation"; Description: "ARW - Sony DSLR Raw"; GroupDescription: "A
 [Files]
 Source: "ufraw.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "ufraw-batch.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "po\ca.mo"; DestDir: "{app}\lib\locale\ca\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\cs.mo"; DestDir: "{app}\lib\locale\cs\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\da.mo"; DestDir: "{app}\lib\locale\da\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\es.mo"; DestDir: "{app}\lib\locale\es\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
@@ -58,6 +59,7 @@ Source: "po\pt.mo"; DestDir: "{app}\lib\locale\pt\LC_MESSAGES\"; DestName: "ufra
 Source: "po\ru.mo"; DestDir: "{app}\lib\locale\ru\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\sr@latin.mo"; DestDir: "{app}\lib\locale\sr@latin\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\sr.mo"; DestDir: "{app}\lib\locale\sr\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
+Source: "po\sr@latin.mo"; DestDir: "{app}\lib\locale\sr@latin\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\sv.mo"; DestDir: "{app}\lib\locale\sv\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\liblcms-1-ufraw.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\bzip2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
