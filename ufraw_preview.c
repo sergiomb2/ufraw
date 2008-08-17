@@ -1666,6 +1666,7 @@ static gboolean preview_motion_notify_event(GtkWidget *event_box,
     return TRUE;
 }
 
+#ifdef HAVE_GTKIMAGEVIEW
 static gboolean (*gtk_image_view_scroll_event)(GtkWidget *widget,
 	GdkEventScroll *event);
 
@@ -1679,6 +1680,7 @@ static gboolean preview_scroll_event(GtkWidget *widget, GdkEventScroll *event)
 	(*gtk_image_view_scroll_event)(widget, event);
     return TRUE;
 }
+#endif
 
 static void create_base_image(preview_data *data)
 {
@@ -3552,9 +3554,6 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     ufraw_icons_init();
     uf_window_set_icon_name(GTK_WINDOW(previewWindow), "ufraw");
-#ifndef HAVE_GTKIMAGEVIEW
-    gtk_window_set_resizable(GTK_WINDOW(previewWindow), FALSE);
-#endif
     g_signal_connect(G_OBJECT(previewWindow), "delete-event",
 	    G_CALLBACK(window_delete_event), NULL);
     g_signal_connect(G_OBJECT(previewWindow), "map-event",
