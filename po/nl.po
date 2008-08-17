@@ -1,14 +1,15 @@
+# translation of nl.po to Nederlands
 # Translation of UFRaw to Nederlands.
 # Copyright (C) 2006-2008 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-# Simon Oosthoek <simon@margo.student.utwente.nl>, 2008.
 #
+# Simon Oosthoek <simon@margo.student.utwente.nl>, 2008.
 msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-25 15:45+0200\n"
-"PO-Revision-Date: 2008-04-28 21:38+0200\n"
+"POT-Creation-Date: 2008-08-17 18:00-0500\n"
+"PO-Revision-Date: 2008-08-17 16:31+0200\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -18,7 +19,7 @@ msgstr ""
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
-msgstr "Open het navigator window "
+msgstr "Open het navigatorscherm"
 
 msgid "No input file, nothing to do."
 msgstr "Geen input file, niks te doen"
@@ -51,7 +52,7 @@ msgstr "--rotate optie is alleen geldig in batch modus"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
-"Ingebedde afbeelding uitpakken is niet ondersteund in interactieve modus"
+"Ingebedde afbeelding uitpakken wordt niet ondersteund in interactieve modus"
 
 msgid "Raw images"
 msgstr "RAW afbeeldingen"
@@ -103,13 +104,11 @@ msgstr "Camera curve"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
-#, fuzzy
 msgid "No profile"
-msgstr "Kleur Profielen"
+msgstr "Geen Profiel"
 
-#, fuzzy
 msgid "Color matrix"
-msgstr "Gebruik kleurmatrix"
+msgstr "Kleurmatrix"
 
 msgid "sRGB"
 msgstr "sRGB"
@@ -341,13 +340,13 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolatie algoritme (standaard: ahd).\n"
 
-#, fuzzy
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
-"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
-"                      Interpolatie algoritme (standaard: ahd).\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Te gebruiken grijswaarden conversie algoritme "
+"(standaard: none).\n"
 
 msgid "The options which are related to the final output are:\n"
 msgstr "De opties van toepassing op de uiteindelijke output zijn:\n"
@@ -946,9 +945,8 @@ msgstr "VNG interpolatie"
 msgid "PPG interpolation"
 msgstr "PPG interpolatie"
 
-#, fuzzy
 msgid "No interpolation"
-msgstr "VNG interpolatie"
+msgstr "Geen interpolatie"
 
 msgid "No Bayer pattern"
 msgstr "Geen Bayer patroon"
@@ -985,13 +983,12 @@ msgstr "Grijsschaal"
 msgid "Grayscale Mode:"
 msgstr "Grijsschaal Modus:"
 
-#, fuzzy
 msgid "Reset channel mixer"
-msgstr "Channel Mixer"
+msgstr "Reset Kanaalmixer"
 
 #. Lens correction page
 msgid "Lens correction"
-msgstr ""
+msgstr "Lens correctie"
 
 #. Start of Base Curve page
 msgid "Base curve"
@@ -1411,6 +1408,10 @@ msgid ""
 "Mount:\t\t%s\n"
 "Crop factor:\t%.1f"
 msgstr ""
+"Merk:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Vatting:\t\t%s\n"
+"Crop factor:\t%.1f"
 
 #, c-format
 msgid ""
@@ -1422,96 +1423,104 @@ msgid ""
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
+"Merk:\t\t%s\n"
+"Model:\t\t%s\n"
+"Brandpuntsafstand:\t%s\n"
+"Diafragma:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Vattingen:\t\t%s"
 
 msgid "Focal"
-msgstr ""
+msgstr "Brandpunt"
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "F-number (Aperture)"
-msgstr ""
+msgstr "F-getal (Diafragma)"
 
 msgid "Distance"
-msgstr ""
+msgstr "Afstand"
 
 msgid "Distance to subject"
-msgstr ""
+msgstr "Afstand tot onderwerp"
 
 #. Add the model combobox
 msgid "Model:"
-msgstr ""
+msgstr "Model:"
 
 msgid "Chromatic Aberrations mathematical model"
-msgstr ""
+msgstr "Chromatische Aberratie wiskundig model"
 
 msgid "Parameters"
-msgstr ""
+msgstr "Parameters"
 
 msgid "Optical vignetting mathematical model"
-msgstr ""
+msgstr "Wiskundig model voor optische vignettering "
 
 msgid "Lens distortion mathematical model"
-msgstr ""
+msgstr "Wiskundig model voor lens vervorming"
 
 #. Add the model combobox
 msgid "Lens geometry:"
-msgstr ""
+msgstr "Lens geometrie:"
 
 msgid "The geometry of the lens used to make the shot"
-msgstr ""
+msgstr "De geometrie van de lens gebruikt voor de foto"
 
 msgid "Target geometry:"
-msgstr ""
+msgstr "Doel geometrie:"
 
 msgid "The target geometry for output image"
-msgstr ""
+msgstr "De doel geometrie voor de output afbeelding"
 
-#, fuzzy
 msgid "Camera"
-msgstr "Camera WB"
+msgstr "Camera"
 
 msgid ""
 "Search for camera using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Zoek een camera met sjabloon\n"
+"Vorm: [Merk, ][Model]"
 
 msgid "Choose camera from complete list"
-msgstr ""
+msgstr "Kies camera uit de complete lijst"
 
 msgid ""
 "Search for lens using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Zoek een lens met een sjabloon\n"
+"Vorm: [Merk, ][Model]"
 
 msgid "Choose lens from list of possible variants"
-msgstr ""
+msgstr "Kies een lens uit de lijst van mogelijke varianten"
 
-#, fuzzy
 msgid "Scale"
-msgstr "Opslaan"
+msgstr "Schaal"
 
 msgid "Image scale power-of-two"
-msgstr ""
+msgstr "Afbeeldingsschaal macht-van-twee"
 
-#, fuzzy
 msgid "Reset image scale to default"
-msgstr "Reset basis curve naar verstekwaarde"
+msgstr "Reset afbeeldingsschaal naar verstekwaarde"
 
 msgid "Autoscale the image for best fit"
-msgstr ""
+msgstr "Automatisch schalen voor beste passing"
 
 msgid "Lateral chromatic aberration"
-msgstr ""
+msgstr "Laterale chromatische aberratie"
 
 msgid "Optical vignetting"
-msgstr ""
+msgstr "Optische vignettering"
 
 msgid "Lens distortion"
-msgstr ""
+msgstr "Lens vervorming"
 
 msgid "Lens geometry"
-msgstr ""
+msgstr "Lens geometrie"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
