@@ -207,6 +207,7 @@ int dcraw_load_raw(dcraw_data *h)
 	    d->make, d->model, d->ifname_display);
     fseek (d->ifp, d->data_offset, SEEK_SET);
     (d->*d->load_raw)();
+    if (d->zero_is_bad) d->remove_zeroes();
     d->bad_pixels(NULL);
     if (d->is_foveon) {
 	d->foveon_interpolate();
