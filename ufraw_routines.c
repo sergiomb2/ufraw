@@ -211,7 +211,8 @@ void uf_reset_locale(char *locale)
 
 double profile_default_linear(profile_data *p)
 {
-    if ( !strcmp(p->name, "sRGB") )
+    if ( !strcmp(p->name, "No profile")
+       || !strcmp(p->name, "Color matrix") )
 	return 0.1;
     else
 	return 0.0;
@@ -219,7 +220,8 @@ double profile_default_linear(profile_data *p)
 
 double profile_default_gamma(profile_data *p)
 {
-    if ( !strcmp(p->name, "sRGB") )
+    if ( !strcmp(p->name, "No profile")
+       || !strcmp(p->name, "Color matrix") )
 	return 0.45;
     else if ( !strncmp(p->productName, "Nikon DBase for NEF", 19) /*For D100*/
 	    || !strncmp(p->productName, "Nikon D1 for NEF", 16)
