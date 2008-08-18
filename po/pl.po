@@ -1,4 +1,4 @@
-# Polish translation for UFRaw.
+# Polish translation for UFRaw
 # Copyright (C) 2006-2008 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 # Tomasz Goliñski tomaszg@alpha.uwb.edu.pl, 2007-2008.
@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.13\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-25 15:45+0200\n"
-"PO-Revision-Date: 2008-01-13 11:58+0100\n"
+"POT-Creation-Date: 2008-08-17 21:41-0500\n"
+"PO-Revision-Date: 2008-08-17 21:43-0500\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
 "MIME-Version: 1.0\n"
@@ -62,10 +62,10 @@ msgid "UFRaw ID files"
 msgstr "Pliki UFRaw ID"
 
 msgid "Raw jpg's"
-msgstr "Raw jpg's"
+msgstr ""
 
 msgid "Raw tif's"
-msgstr "Raw tif's"
+msgstr ""
 
 msgid "All files"
 msgstr "Wszystkie pliki"
@@ -105,13 +105,11 @@ msgstr "Krzywa z aparatu"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
-#, fuzzy
 msgid "No profile"
-msgstr "Profile kolorów"
+msgstr "Brak profilu"
 
-#, fuzzy
 msgid "Color matrix"
-msgstr "Zastosuj macie¿ kolorów"
+msgstr "Macierz kolorów"
 
 msgid "sRGB"
 msgstr "sRGB"
@@ -301,11 +299,8 @@ msgstr ""
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr "--linearity=LINEARITY Liniowo¶æ krzywej bazowej (domy¶lnie 0.10).\n"
 
-#, fuzzy
 msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
-msgstr ""
-"--saturation=SAT      Korekta satuacji (domy¶lnie 1.0, 0 odpowiada plikowi "
-"czarno-bia³emu).\n"
+msgstr "--contrast=CONT     Ustawienie kontrastu (domy¶lnie 1.0).\n"
 
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
@@ -345,13 +340,13 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Stosowany algorytm interpolacji (domy¶lnie ahd).\n"
 
-#, fuzzy
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
-"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
-"                      Stosowany algorytm interpolacji (domy¶lnie ahd).\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Algorytm konwersji do skali szaro¶ci (domy¶lnie "
+"none).\n"
 
 msgid "The options which are related to the final output are:\n"
 msgstr "Opcje zwi±zane z plikiem wynikowym:\n"
@@ -403,16 +398,15 @@ msgstr ""
 "--embedded-image      Zapisz obraz podgl±du za³±czony w pliku RAW\n"
 "                      zamiast konwertowaæ obraz RAW.\n"
 
-#, fuzzy
 msgid ""
 "--rotate=camera|ANGLE|no\n"
 "                      Rotate image to camera's setting, by ANGLE degrees\n"
 "                      clockwise, or do not rotate the image (default "
 "camera).\n"
 msgstr ""
-"--rotate=camera|no    Obróciæ zdjêcie zgodnie z danymi aparatu albo nie "
-"obracaæ\n"
-"                      (domy¶lnie obróciæ).\n"
+"--rotate=camera|K¡T|no    Obróciæ zdjêcie zgodnie z danymi aparatu, o K¡T "
+"stopni zgodnie z ruchem zegara, albo nie obracaæ\n"
+"                      (domy¶lnie zgodnie z danymi aparatu).\n"
 
 msgid ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
@@ -420,6 +414,10 @@ msgid ""
 "the\n"
 "                      raw image after rotation but before any scaling.\n"
 msgstr ""
+"--crop-(left|right|top|bottom)=PIKSELE\n"
+"                      Wykadruj wynikowe zdjêcie o podan± ilo¶æ pikseli "
+"wzglêdem\n"
+"                      pliku raw po obróceniu, ale przed skalowaniem.\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -521,9 +519,9 @@ msgstr "'%s' nie jest poprawn± nazw± krzywej."
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' nie jest poprawnym ustawieniem interpolacji."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid grayscale option."
-msgstr "'%s' nie jest poprawn± opcj± obrotu."
+msgstr "'%s' nie jest poprawn± opcj± trybu skali szaro¶ci."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -688,16 +686,16 @@ msgid "None"
 msgstr "Brak"
 
 msgid "Lightness"
-msgstr ""
+msgstr "Jasno¶æ"
 
 msgid "Luminance"
-msgstr ""
+msgstr "Luminancja"
 
 msgid "Value"
 msgstr "Warto¶æ"
 
 msgid "Channel Mixer"
-msgstr ""
+msgstr "Mikser kana³ów"
 
 msgid "No more room for new curves."
 msgstr "Brak miejsca na nowe krzywe."
@@ -949,9 +947,8 @@ msgstr "Interpolacja VNG"
 msgid "PPG interpolation"
 msgstr "Interpolacja PPG"
 
-#, fuzzy
 msgid "No interpolation"
-msgstr "Interpolacja VNG"
+msgstr "Bez interpolacji"
 
 msgid "No Bayer pattern"
 msgstr "Brak wzorca Bayera"
@@ -983,17 +980,17 @@ msgstr "Zresetuj ciemn± klatkê"
 #. End of White Balance setting page
 #. Start of Grayscale page
 msgid "Grayscale"
-msgstr ""
+msgstr "Skala szaro¶ci"
 
 msgid "Grayscale Mode:"
-msgstr ""
+msgstr "Tryb skali szaro¶ci:"
 
 msgid "Reset channel mixer"
-msgstr ""
+msgstr "Zresetuj mikser kana³ów"
 
 #. Lens correction page
 msgid "Lens correction"
-msgstr ""
+msgstr "Korekcja obiektywu"
 
 #. Start of Base Curve page
 msgid "Base curve"
@@ -1070,14 +1067,13 @@ msgid "Correct luminosity, saturation"
 msgstr "Korekta luminancji, saturacji"
 
 msgid "Contrast"
-msgstr ""
+msgstr "Kontrast"
 
 msgid "Global contrast adjustment"
-msgstr ""
+msgstr "Globalna korekta kontrastu"
 
-#, fuzzy
 msgid "Reset global contrast to default"
-msgstr "Ustaw domy¶lny punkt czerni"
+msgstr "Ustaw domy¶lny kontrast"
 
 msgid "Reset saturation to default"
 msgstr "Ustaw domy¶ln± saturacjê"
@@ -1108,7 +1104,7 @@ msgstr "Kadrowanie i obrót"
 
 #. Start of Crop controls
 msgid "Left:"
-msgstr "Lewo"
+msgstr "Lewo:"
 
 msgid "Top:"
 msgstr "Góra:"
@@ -1117,7 +1113,7 @@ msgid "Right:"
 msgstr "Prawo:"
 
 msgid "Bottom:"
-msgstr "Dó³"
+msgstr "Dó³:"
 
 msgid "Reset the crop region"
 msgstr "Zresetuj kadrowanie"
@@ -1381,9 +1377,8 @@ msgstr "B³±d tworzenia pliku '%s'."
 msgid "Error creating file."
 msgstr "B³±d tworzenia pliku."
 
-#, fuzzy
 msgid "Converting image"
-msgstr "Zapisywanie obrazu"
+msgstr "Konwertowanie obrazu"
 
 msgid "Saving image"
 msgstr "Zapisywanie obrazu"
@@ -1415,6 +1410,10 @@ msgid ""
 "Mount:\t\t%s\n"
 "Crop factor:\t%.1f"
 msgstr ""
+"Firma:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Bagnet:\t\t%s\n"
+"Crop:\t%.1f"
 
 #, c-format
 msgid ""
@@ -1426,96 +1425,104 @@ msgid ""
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
+"Firma:\t\t%s\n"
+"Model:\t\t%s\n"
+"Zakres ogniskowych:\t%s\n"
+"Przes³ona:\t\t%s\n"
+"Crop:\t%.1f\n"
+"Typ:\t\t%s\n"
+"Bagnet:\t\t%s"
 
 msgid "Focal"
-msgstr ""
+msgstr "Ogniskowa"
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "F-number (Aperture)"
-msgstr ""
+msgstr "Przes³ona"
 
 msgid "Distance"
-msgstr ""
+msgstr "Odleg³o¶æ"
 
 msgid "Distance to subject"
-msgstr ""
+msgstr "Odleg³o¶æ przedmiotowa"
 
 #. Add the model combobox
 msgid "Model:"
-msgstr ""
+msgstr "Model:"
 
 msgid "Chromatic Aberrations mathematical model"
-msgstr ""
+msgstr "Model matematyczny aberracji chromatycznej"
 
 msgid "Parameters"
-msgstr ""
+msgstr "Parametry"
 
 msgid "Optical vignetting mathematical model"
-msgstr ""
+msgstr "Model matematyczny winietowania"
 
 msgid "Lens distortion mathematical model"
-msgstr ""
+msgstr "Model matematyczny dystorsji"
 
 #. Add the model combobox
 msgid "Lens geometry:"
-msgstr ""
+msgstr "Geometria obiektywu"
 
 msgid "The geometry of the lens used to make the shot"
-msgstr ""
+msgstr "Geometria obiektywu u¿ytego do zrobienia zdjêcia"
 
 msgid "Target geometry:"
-msgstr ""
+msgstr "Docelowa geometria"
 
 msgid "The target geometry for output image"
-msgstr ""
+msgstr "Docelowa geometria zdjêcia wynikowego"
 
-#, fuzzy
 msgid "Camera"
-msgstr "Balans bieli aparatu"
+msgstr "Aparat"
 
 msgid ""
 "Search for camera using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Szukaj aparatu u¿ywaj±c wzorca\n"
+"Format: [Producent, ][Model]"
 
 msgid "Choose camera from complete list"
-msgstr ""
+msgstr "Wybierz aparat z pe³nej listy"
 
 msgid ""
 "Search for lens using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Szukaj obiektywu u¿ywaj±c wzorca\n"
+"Format: [Producent, ][Model]"
 
 msgid "Choose lens from list of possible variants"
-msgstr ""
+msgstr "Wybierz obiektyw z listy dostêpnych mo¿liwo¶ci"
 
-#, fuzzy
 msgid "Scale"
-msgstr "Zapisz"
+msgstr "Skala"
 
 msgid "Image scale power-of-two"
-msgstr ""
+msgstr "Skalowanie obrazu (jako potêga dwójki)"
 
-#, fuzzy
 msgid "Reset image scale to default"
-msgstr "Ustaw domy¶ln± krzyw± bazow±"
+msgstr "Ustaw domy¶ln± skalê"
 
 msgid "Autoscale the image for best fit"
-msgstr ""
+msgstr "Automatycznie dopasuj rozmiar zdjêcia"
 
 msgid "Lateral chromatic aberration"
-msgstr ""
+msgstr "Boczna aberracja chromatyczna"
 
 msgid "Optical vignetting"
-msgstr ""
+msgstr "Winietowanie"
 
 msgid "Lens distortion"
-msgstr ""
+msgstr "Dystorsja"
 
 msgid "Lens geometry"
-msgstr ""
+msgstr "Geometria obiektywu"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
