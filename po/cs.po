@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-18 05:35+0200\n"
-"PO-Revision-Date: 2008-03-06 19:15+0100\n"
+"POT-Creation-Date: 2008-07-25 15:45+0200\n"
+"PO-Revision-Date: 2008-08-18 22:38+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
 "MIME-Version: 1.0\n"
@@ -102,13 +102,11 @@ msgstr "Křivka fotoaparátu"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
-#, fuzzy
 msgid "No profile"
-msgstr "Barvové profily"
+msgstr "Žádný profil"
 
-#, fuzzy
 msgid "Color matrix"
-msgstr "Použít matici barev"
+msgstr "Matice barev"
 
 msgid "sRGB"
 msgstr "sRGB"
@@ -202,11 +200,8 @@ msgstr ""
 "obsahují jméno raw snímku a parametry pro nakládání se snímkem.\n"
 "Lze též použít ID soubor pomocí volby:\n"
 
-msgid ""
-"--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
-msgstr ""
-"--conf=ID-soubor        Použít parametry v ID-souboru pro ostatní raw "
-"snímky.\n"
+msgid "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+msgstr "--conf=ID-soubor        Použít parametry v ID-souboru pro ostatní raw snímky.\n"
 
 msgid "The rest of the options are separated into two groups.\n"
 msgstr "Ostatní volby jsou odděleny do dvou skupin.\n"
@@ -231,10 +226,8 @@ msgid ""
 msgstr ""
 "--base-curve=manual|linear|camera|custom|KŘIVKA\n"
 "                      Typ základní tónové křivky. KŘIVKA může být jakákoliv\n"
-"                      křivka, která byla dříve načtena v GUI (uživatelském "
-"rozhraní).\n"
-"                      (standardně 'camera', pokud existuje, jinak "
-"'linear'.)\n"
+"                      křivka, která byla dříve načtena v GUI (uživatelském rozhraní).\n"
+"                      (standardně 'camera', pokud existuje, jinak 'linear'.)\n"
 
 msgid ""
 "--base-curve-file=file\n"
@@ -242,8 +235,7 @@ msgid ""
 "                      Overrides --base-curve option.\n"
 msgstr ""
 "--base-curve-file=soubor\n"
-"                      Použít základní tónovou křivku uloženou v uvedeném "
-"souboru.\n"
+"                      Použít základní tónovou křivku uloženou v uvedeném souboru.\n"
 "                      Potlačí volbu --base-curve.\n"
 
 msgid ""
@@ -254,8 +246,7 @@ msgid ""
 msgstr ""
 "--curve=manual|linear|KŘIVKA\n"
 "                      Typ jasové křivky. KŘIVKA může být jakákoliv křivka,\n"
-"                      která byla dříve načtena v GUI (uživatelském "
-"rozhraní).\n"
+"                      která byla dříve načtena v GUI (uživatelském rozhraní).\n"
 "                      (Standardně 'linear'.)\n"
 
 msgid ""
@@ -287,52 +278,40 @@ msgid ""
 msgstr ""
 "--clip=digital|film   Oříznout světla pro kladné EV.\n"
 "                      'digital' lineární odezva digitálního senzoru.\n"
-"                      'film' napodobit charakteristickou křivku filmu. "
-"(Standardně 'digital'.)\n"
+"                      'film' napodobit charakteristickou křivku filmu. (Standardně 'digital'.)\n"
 
-msgid ""
-"--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
-msgstr ""
-"--gamma=GAMMA         Gamma korekce základní křivky (standardně 0.45).\n"
+msgid "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+msgstr "--gamma=GAMMA         Gamma korekce základní křivky (standardně 0.45).\n"
 
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr "--linearity=LINEARITA Linearita základní křivky (standardně 0.10).\n"
 
-#, fuzzy
 msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
-msgstr ""
-"--saturation=SAT      Korekce saturace (standardně 1.0, 0 pro ČB výstup).\n"
+msgstr "--contrast=CONT       Korekce kontrastu (standardně 1.0).\n"
 
-msgid ""
-"--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
-"output).\n"
-msgstr ""
-"--saturation=SAT      Korekce saturace (standardně 1.0, 0 pro ČB výstup).\n"
+msgid "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"
+msgstr "--saturation=SAT      Korekce saturace (standardně 1.0, 0 pro ČB výstup).\n"
 
 msgid ""
 "--wavelet-denoising-threshold=THRESHOLD\n"
 "                      Wavelet denoising threshold (default 0.0).\n"
 msgstr ""
 "--wavelet-denoising-threshold=PRÁH\n"
-"                      Práh metody vlnkového odstranění šumu (standardně "
-"0.0).\n"
+"                      Práh metody vlnkového odstranění šumu (standardně 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
-"                      Auto exposure or exposure correction in EV (default "
-"0).\n"
+"                      Auto exposure or exposure correction in EV (default 0).\n"
 msgstr ""
 "--exposure=auto|EXPOZICE\n"
-"                      Automatická expozice nebo korekce expozice v EV "
-"(standardně 0).\n"
+"                      Automatická expozice nebo korekce expozice v EV (standardně 0).\n"
 
 msgid ""
 "--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"
 msgstr ""
 "--black-point=auto|ČERNÁ\n"
-"                      Automatické nastavení černého bodu nebo hodnota "
-"černého bodu (standardně 0).\n"
+"                      Automatické nastavení černého bodu nebo hodnota černého bodu (standardně 0).\n"
 
 msgid ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
@@ -341,13 +320,14 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolační algoritmus (standardně ahd).\n"
 
-#, fuzzy
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
-"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
-"                      Interpolační algoritmus (standardně ahd).\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Algoritmus pro převod do šedé škály (standardně none).\n"
+"                      none - žádný, lightness - světlost,\n"
+"                      luminance - jas, mixer - mixér kanálů.\n"
 
 msgid "The options which are related to the final output are:\n"
 msgstr "Volby, které se týkají konečného výstupu, jsou:\n"
@@ -366,9 +346,7 @@ msgstr ""
 "                      Formát výstupního souboru (standardně ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
-msgstr ""
-"--out-depth=8|16      Výstupní bitová hloubka pro každý kanál (standardně "
-"8).\n"
+msgstr "--out-depth=8|16      Výstupní bitová hloubka pro každý kanál (standardně 8).\n"
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -380,18 +358,11 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=HODNOTA JPEG komprese (0-100, standardně 85).\n"
 
-msgid ""
-"--[no]exif            Embed EXIF in output JPEG or PNG (default embed "
-"EXIF).\n"
-msgstr ""
-"--[no]exif            [Ne]vložit EXIF do výstupního JPEG nebo PNG "
-"(standardně vložit EXIF).\n"
+msgid "--[no]exif            Embed EXIF in output JPEG or PNG (default embed EXIF).\n"
+msgstr "--[no]exif            [Ne]vložit EXIF do výstupního JPEG nebo PNG (standardně vložit EXIF).\n"
 
-msgid ""
-"--[no]zip             Enable [disable] TIFF zip compression (default "
-"nozip).\n"
-msgstr ""
-"--[no]zip             [Ne]aktivní zip komprese TIFF (standardně neaktivní).\n"
+msgid "--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"
+msgstr "--[no]zip             [Ne]aktivní zip komprese TIFF (standardně neaktivní).\n"
 
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
@@ -400,65 +371,52 @@ msgstr ""
 "--embedded-image      Extrahovat náhled snímku vloženého v raw souboru\n"
 "                      místo konvertování raw souboru.\n"
 
-#, fuzzy
 msgid ""
 "--rotate=camera|ANGLE|no\n"
 "                      Rotate image to camera's setting, by ANGLE degrees\n"
-"                      clockwise, or do not rotate the image (default "
-"camera).\n"
+"                      clockwise, or do not rotate the image (default camera).\n"
 msgstr ""
-"--rotate=camera|no    Otočit snímek podle nastavení fotoaparátu nebo\n"
-"                      neotáčet snímek (standardně dle fotoaparátu).\n"
+"--rotate=camera|ÚHEL|no\n"
+"                      Otočit snímek podle nastavení fotoaparátu (camera),\n"
+"                      podle ÚHLU ve stupních ve směru hod. ručiček nebo\n"
+"                      neotáčet (no) snímek (standardně dle fotoaparátu).\n"
 
 msgid ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
-"                      Crop the output to the given pixel range, relative to "
-"the\n"
+"                      Crop the output to the given pixel range, relative to the\n"
 "                      raw image after rotation but before any scaling.\n"
 msgstr ""
+"--crop-(left|right|top|bottom)=PIXELY\n"
+"                      Oříznout výstup dle určených parametrů, relativně k\n"
+"                      raw snímku po rotaci, ale před změnou velikosti.\n"
+"                      left - vlevo, right - vpravo, top - nahoře, bottom - dole\n"
 
-msgid ""
-"--out-path=PATH       PATH for output file (default use input file's path).\n"
-msgstr ""
-"--out-path=CESTA      CESTA pro výstupní soubor (standardně cesta dle "
-"vstupního souboru).\n"
+msgid "--out-path=PATH       PATH for output file (default use input file's path).\n"
+msgstr "--out-path=CESTA      CESTA pro výstupní soubor (standardně cesta dle vstupního souboru).\n"
 
 msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
-msgstr ""
-"--output=SOUBOR       Jméno výstupního souboru, použít '-' pro standardní "
-"výstup (stdout).\n"
+msgstr "--output=SOUBOR       Jméno výstupního souboru, použít '-' pro standardní výstup (stdout).\n"
 
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
-msgstr ""
-"--darkframe=SOUBOR    Použít SOUBOR pro odečtení černého snímku z raw.\n"
+msgstr "--darkframe=SOUBOR    Použít SOUBOR pro odečtení černého snímku z raw.\n"
 
-msgid ""
-"--overwrite           Overwrite existing files without asking (default no).\n"
-msgstr ""
-"--overwrite           Přepsat existující soubory bez vyzvání (standardně "
-"nepřepisovat).\n"
+msgid "--overwrite           Overwrite existing files without asking (default no).\n"
+msgstr "--overwrite           Přepsat existující soubory bez vyzvání (standardně nepřepisovat).\n"
 
-msgid ""
-"--silent              Do not display any messages during batch conversion.\n"
-msgstr ""
-"--silent              Nezobrazovat žádné zprávy během dávkové konverze.\n"
+msgid "--silent              Do not display any messages during batch conversion.\n"
+msgstr "--silent              Nezobrazovat žádné zprávy během dávkové konverze.\n"
 
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
-"Then, if an ID file is specified it setting are read. Next, the setting "
-"from\n"
-"the --conf option are taken, ignoring input/output filenames in the ID "
-"file.\n"
-"Lastly, the options from the command line are set. In batch mode, the "
-"second\n"
+"Then, if an ID file is specified it setting are read. Next, the setting from\n"
+"the --conf option are taken, ignoring input/output filenames in the ID file.\n"
+"Lastly, the options from the command line are set. In batch mode, the second\n"
 "group of options is NOT read from the resource file.\n"
 msgstr ""
 "UFRaw nejprve čte nastavení z konfiguračního souboru $HOME/.ufrawrc.\n"
 "Poté, pokud je specifikován ID soubour, jsou přečtena jeho nastavení. Dále\n"
-"je použito nastavení z volby --conf (vstupní/výstupní jména souborů z ID "
-"souboru jsou ignorována).\n"
-"Nakonec jsou nastaveny volby z příkazové řádky. V dávkovém režimu není druhá "
-"skupina\n"
+"je použito nastavení z volby --conf (vstupní/výstupní jména souborů z ID souboru jsou ignorována).\n"
+"Nakonec jsou nastaveny volby z příkazové řádky. V dávkovém režimu není druhá skupina\n"
 "voleb čtena z konfiguračního souboru.\n"
 
 msgid ""
@@ -514,9 +472,9 @@ msgstr "'%s' není platné jméno křivky."
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' není platná volba interpolace."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid grayscale option."
-msgstr "'%s' není platné pro volbu rotate."
+msgstr "'%s' není platné pro volbu grayscale."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -679,16 +637,16 @@ msgid "None"
 msgstr "Žádný"
 
 msgid "Lightness"
-msgstr ""
+msgstr "Světlost"
 
 msgid "Luminance"
-msgstr ""
+msgstr "Jas"
 
 msgid "Value"
 msgstr "Hodnota"
 
 msgid "Channel Mixer"
-msgstr ""
+msgstr "Mixér kanálů"
 
 msgid "No more room for new curves."
 msgstr "Není více místa pro nové křivky."
@@ -837,8 +795,7 @@ msgid "About"
 msgstr "O"
 
 msgid ""
-"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
-"to\n"
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility to\n"
 "read and manipulate raw images from digital cameras.\n"
 "UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
 "for the actual encoding of the raw images.\n"
@@ -937,9 +894,8 @@ msgstr "VNG interpolace"
 msgid "PPG interpolation"
 msgstr "PPG interpolace"
 
-#, fuzzy
 msgid "No interpolation"
-msgstr "VNG interpolace"
+msgstr "Žádná interpolace"
 
 msgid "No Bayer pattern"
 msgstr "Žádná Baeyrova matice"
@@ -948,7 +904,7 @@ msgid "Apply color smoothing"
 msgstr "Použít vyhlazení barev"
 
 msgid "Denoise"
-msgstr ""
+msgstr "Odstranit šum"
 
 msgid "Threshold for wavelet denoising"
 msgstr "Práh pro vlnkové odstranění šumu"
@@ -971,17 +927,17 @@ msgstr "Odstranit černý snímek"
 #. End of White Balance setting page
 #. Start of Grayscale page
 msgid "Grayscale"
-msgstr ""
+msgstr "Šedá škála"
 
 msgid "Grayscale Mode:"
-msgstr ""
+msgstr "Režim šedé škály:"
 
 msgid "Reset channel mixer"
-msgstr ""
+msgstr "Obnovit mixér kanálů"
 
 #. Lens correction page
 msgid "Lens correction"
-msgstr ""
+msgstr "Korekce objektivu"
 
 #. Start of Base Curve page
 msgid "Base curve"
@@ -1058,14 +1014,13 @@ msgid "Correct luminosity, saturation"
 msgstr "Upravit jas, sytost"
 
 msgid "Contrast"
-msgstr ""
+msgstr "Kontrast"
 
 msgid "Global contrast adjustment"
-msgstr ""
+msgstr "Globální úprava kontrastu"
 
-#, fuzzy
 msgid "Reset global contrast to default"
-msgstr "Nastavit černý bod na standardní"
+msgstr "Nastavit globální kontrast na standardní"
 
 msgid "Reset saturation to default"
 msgstr "Nastavit sytost na standardní"
@@ -1356,9 +1311,7 @@ msgid "Can not downsize from %d to %d."
 msgstr "Nemohu zmenšit velikost z %d na %d."
 
 msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
-"Nemohu použít nastavení bílé dle fotoaparátu, nastavuji automatické vyvážení "
-"bílé."
+msgstr "Nemohu použít nastavení bílé dle fotoaparátu, nastavuji automatické vyvážení bílé."
 
 #. Error was not already set before
 #, c-format
@@ -1370,9 +1323,8 @@ msgstr "Chyba při vytváření souboru '%s'."
 msgid "Error creating file."
 msgstr "Chyba při vytváření souboru."
 
-#, fuzzy
 msgid "Converting image"
-msgstr "Ukládám snímek"
+msgstr "Konvertuji snímek"
 
 msgid "Saving image"
 msgstr "Ukládám snímek"
@@ -1404,6 +1356,10 @@ msgid ""
 "Mount:\t\t%s\n"
 "Crop factor:\t%.1f"
 msgstr ""
+"Výrobce:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Bajonet:\t\t%s\n"
+"Faktor ořezu:\t%.1f"
 
 #, c-format
 msgid ""
@@ -1415,96 +1371,104 @@ msgid ""
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
+"Výrobce:\t\t%s\n"
+"Model:\t\t%s\n"
+"Rozsah ohnisek:\t%s\n"
+"Clona:\t\t%s\n"
+"Faktor ořezu:\t%.1f\n"
+"Typ:\t\t%s\n"
+"Bajonety:\t\t%s"
 
 msgid "Focal"
-msgstr ""
+msgstr "Ohnisko"
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "F-number (Aperture)"
-msgstr ""
+msgstr "F-číslo (clona)"
 
 msgid "Distance"
-msgstr ""
+msgstr "Vzdálenost"
 
 msgid "Distance to subject"
-msgstr ""
+msgstr "Vzdálenost k předmětu"
 
 #. Add the model combobox
 msgid "Model:"
-msgstr ""
+msgstr "Model:"
 
 msgid "Chromatic Aberrations mathematical model"
-msgstr ""
+msgstr "Matematický model pro chromatickou vadu"
 
 msgid "Parameters"
-msgstr ""
+msgstr "Parametry"
 
 msgid "Optical vignetting mathematical model"
-msgstr ""
+msgstr "Matematický model pro optickou vinětaci"
 
 msgid "Lens distortion mathematical model"
-msgstr ""
+msgstr "Matematický model pro zkreslení objektivu"
 
 #. Add the model combobox
 msgid "Lens geometry:"
-msgstr ""
+msgstr "Projekce objektivu:"
 
 msgid "The geometry of the lens used to make the shot"
-msgstr ""
+msgstr "Projekce (zobrazení) objektivu použitého pro vyfocení snímku"
 
 msgid "Target geometry:"
-msgstr ""
+msgstr "Cílové projekce:"
 
 msgid "The target geometry for output image"
-msgstr ""
+msgstr "Cílová projekce pro výstupní snímek"
 
-#, fuzzy
 msgid "Camera"
-msgstr "Dle fotoaparátu"
+msgstr "Fotoaparát"
 
 msgid ""
 "Search for camera using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Hledat fotoaparát pomocí dotazu\n"
+"Formát: [Výrobce, ][Model]"
 
 msgid "Choose camera from complete list"
-msgstr ""
+msgstr "Vybrat fotoaparát z úplného seznamu"
 
 msgid ""
 "Search for lens using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Hledat objektiv pomocí dotazu\n"
+"Formát: [Výrobce, ][Model]"
 
 msgid "Choose lens from list of possible variants"
-msgstr ""
+msgstr "Vybrat objektiv ze seznamu možných variant"
 
-#, fuzzy
 msgid "Scale"
-msgstr "Uložit"
+msgstr "Měřítko"
 
 msgid "Image scale power-of-two"
-msgstr ""
+msgstr "Velikost snímku mocnina-na-druhou"
 
-#, fuzzy
 msgid "Reset image scale to default"
-msgstr "Nastavit základní křivku na standardní"
+msgstr "Nastavit měřítko na standardní"
 
 msgid "Autoscale the image for best fit"
-msgstr ""
+msgstr "Automatická velikost snímku"
 
 msgid "Lateral chromatic aberration"
-msgstr ""
+msgstr "Postranní chromatická vada"
 
 msgid "Optical vignetting"
-msgstr ""
+msgstr "Optická vinětace"
 
 msgid "Lens distortion"
-msgstr ""
+msgstr "Zkreslení objektivu"
 
 msgid "Lens geometry"
-msgstr ""
+msgstr "Projekce objektivu"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
@@ -1595,3 +1559,4 @@ msgstr "Dle fotoaparátu"
 
 msgid "Auto WB"
 msgstr "Automatické"
+
