@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.117 2008/08/21 12:45:08 nkbj Exp $
+dnl $Id: configure.ac,v 1.118 2008/08/21 15:00:18 nkbj Exp $
 AC_INIT(UFRaw, 0.14)
 AC_PREREQ(2.57)
 
@@ -251,12 +251,12 @@ AC_ARG_ENABLE(extras,
 AC_MSG_RESULT($enable_extras)
 AM_CONDITIONAL(MAKE_EXTRAS, test $enable_extras = yes)
 
-AC_MSG_CHECKING(whether to enable local time for file timestamps)
-AC_ARG_ENABLE(local_time,
-  [  --enable-local-time     enable local time (with DST) for file timestamps],
-  AC_DEFINE(LOCALTIME, 1, local time enabled),
-  enable_local_time=no)
-AC_MSG_RESULT($enable_local_time)
+AC_MSG_CHECKING(whether to enable DST correction for file timestamps)
+AC_ARG_ENABLE(dst_correction,
+  [  --enable-dst-correction enable DST correction for file timestamps],
+  AC_DEFINE(LOCALTIME, 1, DST correction enabled),
+  enable_dst_correction=no)
+AC_MSG_RESULT($enable_dst_correction)
 
 AC_MSG_CHECKING(whether to enable 'None' interpolation)
 AC_ARG_ENABLE(interp_none,
