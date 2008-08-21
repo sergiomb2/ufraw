@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.116 2008/08/17 23:36:26 udifuchs Exp $
+dnl $Id: configure.ac,v 1.117 2008/08/21 12:45:08 nkbj Exp $
 AC_INIT(UFRaw, 0.14)
 AC_PREREQ(2.57)
 
@@ -239,7 +239,7 @@ AC_SUBST(MSGFMT_OPTS)
 
 AC_MSG_CHECKING(whether to install mime types)
 AC_ARG_ENABLE(mime,
-  [  --enable-mime         install mime files, see README for more information],
+  [  --enable-mime           install mime files, see README for more information],
   , enable_mime=no)
 AC_MSG_RESULT($enable_mime)
 AM_CONDITIONAL(INSTALL_MIME, test $enable_mime = yes)
@@ -250,6 +250,13 @@ AC_ARG_ENABLE(extras,
   enable_extras=no)
 AC_MSG_RESULT($enable_extras)
 AM_CONDITIONAL(MAKE_EXTRAS, test $enable_extras = yes)
+
+AC_MSG_CHECKING(whether to enable local time for file timestamps)
+AC_ARG_ENABLE(local_time,
+  [  --enable-local-time     enable local time (with DST) for file timestamps],
+  AC_DEFINE(LOCALTIME, 1, local time enabled),
+  enable_local_time=no)
+AC_MSG_RESULT($enable_local_time)
 
 AC_MSG_CHECKING(whether to enable 'None' interpolation)
 AC_ARG_ENABLE(interp_none,

@@ -17,6 +17,7 @@
 #include "config.h"
 #endif
 
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <math.h> /* for sqrt() */
@@ -60,10 +61,13 @@ void flip_image_INDI(gushort (*image)[4], int *height_p, int *width_p,
 void fuji_rotate_INDI(gushort (**image_p)[4], int *height_p, int *width_p,
     int *fuji_width_p, const int colors, const double step, void *dcraw);
 
-int dcraw_open(dcraw_data *h,char *filename)
+int dcraw_open(dcraw_data *h, char *filename)
 {
     DCRaw *d = new DCRaw;
 
+#ifndef LOCALTIME
+    putenv (const_cast<char *>("TZ=UTC"));
+#endif
     g_free(d->messageBuffer);
     d->messageBuffer = NULL;
     d->lastStatus = DCRAW_SUCCESS;
