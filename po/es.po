@@ -6,15 +6,15 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ufraw 0.13\n"
+"Project-Id-Version: ufraw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-29 17:30+0200\n"
-"PO-Revision-Date: 2007-11-11 20:19+0100\n"
+"POT-Creation-Date: 2008-08-18 05:35+0200\n"
+"PO-Revision-Date: 2008-08-29 21:12+0200\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-15\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: 8bit"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
@@ -23,13 +23,13 @@ msgstr "Abrir la ventana del navegador"
 msgid "No input file, nothing to do."
 msgstr "No hay archivo de entrada, nada que hacer."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Loaded %s%s"
-msgstr "cargado %s"
+msgstr "cargado %s%s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Saved %s%s"
-msgstr "guardado %s"
+msgstr "Guardado %s%s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -46,13 +46,11 @@ msgstr "%s: ¿sobreescribir '%s'?"
 msgid "--silent option is valid only in batch mode"
 msgstr "la opcion --silent solo es válida en modo por lotes"
 
-#, fuzzy
 msgid "--rotate option is valid only in batch mode"
-msgstr "la opcion --silent solo es válida en modo por lotes"
+msgstr "la opcion --rotate solo es válida en modo por lotes"
 
 msgid "Extracting embedded image is not supported in interactive mode"
-msgstr ""
-"La extracción de la imagen incrustada no esta soportada en modo interactivo"
+msgstr "La extracción de la imagen incrustada no esta soportada en modo interactivo"
 
 msgid "Raw images"
 msgstr "Imágenes RAW"
@@ -104,13 +102,11 @@ msgstr "Curva de la cámara"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
-#, fuzzy
 msgid "No profile"
-msgstr "Perfiles de color"
+msgstr "Sin perfil"
 
-#, fuzzy
 msgid "Color matrix"
-msgstr "Utilizar matriz de color"
+msgstr "Matriz de color"
 
 msgid "sRGB"
 msgstr "sRGB"
@@ -137,6 +133,8 @@ msgid ""
 "ID file %s does not appear to be a regular file\n"
 "%s\n"
 msgstr ""
+"El archivo ID %s no parece ser un archivo normal\n"
+"%s\n"
 
 #, c-format
 msgid ""
@@ -219,11 +217,11 @@ msgid "The options which are related to the image manipulation are:\n"
 msgstr "Las opciones relacionadas con la manipulación de la imagen son:\n"
 
 msgid "--wb=camera|auto      White balance setting.\n"
-msgstr "--wb=camera|auto      Ajust de balance de blancos.\n"
+msgstr "--wb=camera|auto      Ajuste de balance de blancos.\n"
 
 msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
 msgstr ""
-"--temperature=TEMP    Temperatura de color en grados Kelvin (2000 - 7000).\n"
+"--temperature=TEMP    Temperatura de color en Kelvin (2000 - 7000).\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
 msgstr "--green=VERDE         Normalización del color verde.\n"
@@ -304,18 +302,15 @@ msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr ""
 "--linearity=LINEAL.   Linealidad de la curva base (por defecto 0.10).\n"
 
-#, fuzzy
 msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
-msgstr ""
-"--saturation=SAT      Ajuste de saturación (por defecto: 1.0, 0 para salida\n"
-"                     en B&N)\n"
+msgstr "--contrast=CONT       Ajuste de contraste (por defecto: 1.0)\n"
 
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
 msgstr ""
 "--saturation=SAT      Ajuste de saturación (por defecto: 1.0, 0 para salida\n"
-"                     en B&N)\n"
+"                      en B&N)\n"
 
 msgid ""
 "--wavelet-denoising-threshold=THRESHOLD\n"
@@ -349,13 +344,12 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algoritmo de interpolación a usar (por defecto: ahd).\n"
 
-#, fuzzy
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
-"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
-"                      Algoritmo de interpolación a usar (por defecto: ahd).\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Algoritmo de conversión a escala de grises (por defecto ninguno).\n"
 
 msgid "The options which are related to the final output are:\n"
 msgstr "Las opciones relacionadas con la salida final son:\n"
@@ -367,16 +361,15 @@ msgstr ""
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=TAMAÑO         Reduce el tamaño max(alto, ancho) a TAMAÑO.\n"
 
-#, fuzzy
 msgid ""
 "--out-type=ppm|tiff|png|jpeg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|png8|png16|jpeg|fits\n"
-"                      Formato del archivo de salida (por defecto ppm8).\n"
+"--out-type=ppm|tiff|png|jpeg|fits\n"
+"                      Formato del archivo de salida (por defecto ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
-msgstr ""
+msgstr "--out-depth=8|16      Profundidad de bits de salida por canal (por defecto 8).\n"
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -416,6 +409,9 @@ msgid ""
 "                      clockwise, or do not rotate the image (default "
 "camera).\n"
 msgstr ""
+"--rotate=camera|ANGLE|no\n"
+"                      Rotar la imagen según el ajuste de la cámara, ANGLE grados\n"
+"                      en sentido horario, o no rotar la imagen (por defecto usar ajuste de cámara).\n"
 
 msgid ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
@@ -423,6 +419,9 @@ msgid ""
 "the\n"
 "                      raw image after rotation but before any scaling.\n"
 msgstr ""
+"--crop-(left|right|top|bottom)=PIXELS\n"
+"                      Recortar la salida por el lado seleccionado, respecto\n"
+"                      a la imagen raw despues de la rotación, pero antes del escalado.\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -486,7 +485,6 @@ msgstr "'%s' no es un valor válido para la opción  --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw fue compilado sin soporte para ZIP"
 
-#, fuzzy
 msgid "--batch is obsolete. Use ufraw-batch instead."
 msgstr "--batch está obsoleta. Utilice ufraw-batch en su lugar."
 
@@ -526,9 +524,9 @@ msgstr "'%s' no es un nombre válido para una curva."
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' no es una opción válida de interpolación."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid grayscale option."
-msgstr "'%s' no es una opción válida para 'create-id'."
+msgstr "'%s' no es una opción válida para escala de grises"
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -541,13 +539,13 @@ msgstr "'%s' no es una opción válida de recorte."
 msgid "you can not specify both --shrink and --size"
 msgstr "no puedes especificar a la vez --shrink y --size"
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth."
-msgstr "'%s' no es una ruta válida."
+msgstr "'%d' no es una profundidad de bits válida."
 
 #, c-format
 msgid "Output type '%s' is deprecated"
-msgstr ""
+msgstr "El tipo de salida '%s' está obsoleto"
 
 msgid "ufraw was build without TIFF support."
 msgstr "ufraw se compiló sin soporte para TIFF."
@@ -566,13 +564,13 @@ msgstr "'%s' no es un tipo de salida válido."
 msgid "'%s' is not a valid output type for embedded image."
 msgstr "'%s' no es un tipo de salida válido para la imagen incrustada."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
-msgstr "'%s' no es un tipo de salida válido para la imagen incrustada."
+msgstr "'%d' no es una profundidad de bits válida para la imagen incrustada."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid rotate option."
-msgstr "'%s' no es una opción válida para 'create-id'."
+msgstr "'%s' no es una opción válida para rotar."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
@@ -693,16 +691,16 @@ msgid "None"
 msgstr "Ninguno"
 
 msgid "Lightness"
-msgstr ""
+msgstr "Luminosidad"
 
 msgid "Luminance"
-msgstr ""
+msgstr "Luminancia"
 
 msgid "Value"
 msgstr "Valor"
 
 msgid "Channel Mixer"
-msgstr ""
+msgstr "Mezclador de canales"
 
 msgid "No more room for new curves."
 msgstr "No hay más espacio para nuevas curvas"
@@ -838,11 +836,9 @@ msgstr "Indicadores parpadeantes de Sobre/Subexposición"
 msgid "Configuration"
 msgstr "Configuración"
 
-#, fuzzy
 msgid "Save configuration"
-msgstr "Guardar toda la configuración"
+msgstr "Guardar configuración"
 
-#, fuzzy
 msgid "Save configuration to resource file ($HOME/.ufrawrc)"
 msgstr "Guardar archivo de ajustes ($HOME/.ufrawrc)"
 
@@ -957,9 +953,8 @@ msgstr "Interpolación VNG"
 msgid "PPG interpolation"
 msgstr "Interpolación PPG"
 
-#, fuzzy
 msgid "No interpolation"
-msgstr "Interpolación VNG"
+msgstr "Sin interpolación"
 
 msgid "No Bayer pattern"
 msgstr "Sin patrón Bayer"
@@ -968,7 +963,7 @@ msgid "Apply color smoothing"
 msgstr "Aplicar suavizado de color"
 
 msgid "Denoise"
-msgstr ""
+msgstr "Reducción de ruido"
 
 msgid "Threshold for wavelet denoising"
 msgstr "Umbral para reducción de ruido"
@@ -991,17 +986,17 @@ msgstr "Reiniciar dark frame"
 #. End of White Balance setting page
 #. Start of Grayscale page
 msgid "Grayscale"
-msgstr ""
+msgstr "Escala de grises"
 
 msgid "Grayscale Mode:"
-msgstr ""
+msgstr "Modo de escala de grises:"
 
 msgid "Reset channel mixer"
-msgstr ""
+msgstr "Resetear mezclador de canales"
 
 #. Lens correction page
 msgid "Lens correction"
-msgstr ""
+msgstr "Corrección de lente"
 
 #. Start of Base Curve page
 msgid "Base curve"
@@ -1063,9 +1058,8 @@ msgstr "Saturación"
 msgid "Absolute colorimetric"
 msgstr "Colorimétrico absoluto"
 
-#, fuzzy
 msgid "Output bit depth"
-msgstr "Conv. de salida"
+msgstr "Profundidad de bits de salida"
 
 msgid "Display intent"
 msgstr "Conv. de pantalla"
@@ -1079,14 +1073,13 @@ msgid "Correct luminosity, saturation"
 msgstr "Corregir luminosidad, saturación"
 
 msgid "Contrast"
-msgstr ""
+msgstr "Contraste"
 
 msgid "Global contrast adjustment"
-msgstr ""
+msgstr "Ajuste global del contraste"
 
-#, fuzzy
 msgid "Reset global contrast to default"
-msgstr "Restaurar punto negro al valor por defecto"
+msgstr "Restaurar contraste global al valor por defecto"
 
 msgid "Reset saturation to default"
 msgstr "Restaurar saturación al valor por defecto"
@@ -1147,42 +1140,38 @@ msgid "Lock aspect ratio"
 msgstr "Bloquear razón de aspecto"
 
 msgid "Shrink factor"
-msgstr "Factor de encogimiento"
+msgstr "Factor de encogido"
 
 msgid "Height"
-msgstr "Altura"
+msgstr "Alto"
 
 msgid "Width"
-msgstr "Anchura"
+msgstr "Ancho"
 
 msgid "Orientation:"
 msgstr "Orientación:"
 
 #. Start of Save page
-#, fuzzy
 msgid "Save"
-msgstr "Guardar _como"
+msgstr "Guardar"
 
 msgid "Path"
-msgstr ""
+msgstr "Ruta"
 
 msgid "Select output path"
-msgstr ""
+msgstr "Seleccionar ruta de salida"
 
-#, fuzzy
 msgid "Filename"
-msgstr "Archivo: %s%s"
+msgstr "Nombre de archivo"
 
-#, fuzzy
 msgid "JPEG compression level"
-msgstr "Nivel de compresión"
+msgstr "Nivel de compresión JPEG"
 
-#, fuzzy
 msgid "JPEG progressive encoding"
-msgstr "Codificado progresivo"
+msgstr "Codificado progresivo JPEG"
 
 msgid "TIFF lossless Compress"
-msgstr ""
+msgstr "TIFF comprimido sin pérdida"
 
 msgid "Embed EXIF data in JPEG or PNG files"
 msgstr "Incrustar datos EXIF en archivos JPEG o PNG"
@@ -1219,7 +1208,7 @@ msgid "Just this once"
 msgstr "Sólo esta vez"
 
 msgid "Remember output path"
-msgstr ""
+msgstr "Recordar ruta de salida"
 
 msgid "Overwrite existing files without asking"
 msgstr "Sobreescribir archivos existentes sin preguntar"
@@ -1242,7 +1231,7 @@ msgid "Timestamp"
 msgstr "Marca de tiempo"
 
 msgid "Shutter time"
-msgstr ""
+msgstr "Tiempo de exposición"
 
 msgid "Aperture"
 msgstr "Apertura"
@@ -1395,9 +1384,8 @@ msgstr "Error al crear el archivo '%s'."
 msgid "Error creating file."
 msgstr "Error al crear el archivo."
 
-#, fuzzy
 msgid "Converting image"
-msgstr "Guardando imagen"
+msgstr "Convirtiendo imagen"
 
 msgid "Saving image"
 msgstr "Guardando imagen"
@@ -1414,7 +1402,7 @@ msgstr "Fallo al incrustar perfil de salida '%s' en '%s'"
 
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
-msgstr ""
+msgstr "Profundidad de bits no soportada '%d' ignorada."
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
@@ -1431,6 +1419,10 @@ msgid ""
 "Mount:\t\t%s\n"
 "Crop factor:\t%.1f"
 msgstr ""
+"Fabricante:\t\t%s\n"
+"Modelo:\t\t%s%s\n"
+"Montura:\t\t%s\n"
+"Factor de recorte:\t%.1f"
 
 #, c-format
 msgid ""
@@ -1442,96 +1434,104 @@ msgid ""
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
+"Fabricante:\t\t%s\n"
+"Modelo:\t\t%s\n"
+"Rango focal:\t%s\n"
+"Apertura:\t\t%s\n"
+"Factor de recorte:\t%.1f\n"
+"Tipo:\t\t%s\n"
+"Monturas:\t\t%s"
 
 msgid "Focal"
-msgstr ""
+msgstr "Focal"
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "F-number (Aperture)"
-msgstr ""
+msgstr "Número F (Apertura)"
 
 msgid "Distance"
-msgstr ""
+msgstr "Distancia"
 
 msgid "Distance to subject"
-msgstr ""
+msgstr "Distancia al sujeto"
 
 #. Add the model combobox
 msgid "Model:"
-msgstr ""
+msgstr "Modelo:"
 
 msgid "Chromatic Aberrations mathematical model"
-msgstr ""
+msgstr "Modelo matemático de aberraciones cromáticas"
 
 msgid "Parameters"
-msgstr ""
+msgstr "Parámetros"
 
 msgid "Optical vignetting mathematical model"
-msgstr ""
+msgstr "Modelo matemático de viñeteo óptico"
 
 msgid "Lens distortion mathematical model"
-msgstr ""
+msgstr "Modelo matemático de distorsión de lente"
 
 #. Add the model combobox
 msgid "Lens geometry:"
-msgstr ""
+msgstr "Geometría de lente:"
 
 msgid "The geometry of the lens used to make the shot"
-msgstr ""
+msgstr "La geometría de la lente utilizada para tomar la captura"
 
 msgid "Target geometry:"
-msgstr ""
+msgstr "Geometria destino:"
 
 msgid "The target geometry for output image"
-msgstr ""
+msgstr "La geometría destino para la imagen de salida"
 
-#, fuzzy
 msgid "Camera"
-msgstr "Balance de la cámara"
+msgstr "Cámara"
 
 msgid ""
 "Search for camera using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Buscar una cámara usando un patrón\n"
+"Formato: [Fabricante, ][Modelo]"
 
 msgid "Choose camera from complete list"
-msgstr ""
+msgstr "Elegir cámara de una lista completa"
 
 msgid ""
 "Search for lens using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Buscar una lente utilizando un patrón\n"
+"Formato: [Fabricante, ][Modelo]"
 
 msgid "Choose lens from list of possible variants"
-msgstr ""
+msgstr "Elegir una lente de una lista de posibles variantes"
 
-#, fuzzy
 msgid "Scale"
-msgstr "Guardar _como"
+msgstr "Escala"
 
 msgid "Image scale power-of-two"
-msgstr ""
+msgstr "Escala de imagen en potencias de dos"
 
-#, fuzzy
 msgid "Reset image scale to default"
-msgstr "Restaurar a curva base por defecto"
+msgstr "Restaurar a escala de imagen por defecto"
 
 msgid "Autoscale the image for best fit"
-msgstr ""
+msgstr "Autoescalar la imagen para el mejor ajuste"
 
 msgid "Lateral chromatic aberration"
-msgstr ""
+msgstr "Aberración cromática lateral"
 
 msgid "Optical vignetting"
-msgstr ""
+msgstr "Viñeteo óptico"
 
 msgid "Lens distortion"
-msgstr ""
+msgstr "Distorsion de lente"
 
 msgid "Lens geometry"
-msgstr ""
+msgstr "Geometría de lente"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
@@ -1592,16 +1592,14 @@ msgid "White fluorescent"
 msgstr "Fluorescente blanco"
 
 #. In Nikon D60 and D300
-#, fuzzy
 msgid "Sodium-vapor fluorescent"
-msgstr "Fluorescente neutral"
+msgstr "Fluorescente de vapor de sodio"
 
-#, fuzzy
 msgid "Day white fluorescent"
-msgstr "Fluorescente blanco cálido"
+msgstr "Fluorescente blanco"
 
 msgid "High temp. mercury-vapor fluorescent"
-msgstr ""
+msgstr "Fluorescente de vapor de mercurio de alta temperatura"
 
 #. For Olympus with no real "Flash" preset:
 msgid "Flash (auto mode)"
@@ -1624,3 +1622,4 @@ msgstr "Balance de la cámara"
 
 msgid "Auto WB"
 msgstr "Balance automático"
+
