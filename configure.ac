@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.118 2008/08/21 15:00:18 nkbj Exp $
+dnl $Id: configure.ac,v 1.119 2008/08/29 23:43:53 udifuchs Exp $
 AC_INIT(UFRaw, 0.14)
 AC_PREREQ(2.57)
 
@@ -184,11 +184,16 @@ PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
     AC_MSG_RESULT($EXIV2_PKG_ERRORS) ] )
 
 # Check for the lensfun library
-PKG_CHECK_MODULES(LENSFUN, lensfun >= 0.2,
-  [ have_lensfun=yes
-    AC_DEFINE(HAVE_LENSFUN, 1, have lensfun library) ],
+AC_MSG_CHECKING(whether to use lensfun)
+AC_ARG_WITH(lensfun,
+  [  --with-lensfun          use the lensfun library - experimental feature,
+              read http://ufraw.sourceforge.net/lensfun.html before using it. ],
+  [ AC_MSG_RESULT(yes)
+    PKG_CHECK_MODULES(LENSFUN, lensfun >= 0.2,
+      [ have_lensfun=yes
+        AC_DEFINE(HAVE_LENSFUN, 1, have lensfun library) ] ) ],
   [ have_lensfun=no
-    AC_MSG_RESULT($LENSFUN_PKG_ERRORS) ] )
+    AC_MSG_RESULT($have_lensfun) ] )
 
 # UFRAW_CPPFLAGS is added to the preprocessor flags AM_CPPFLAGS,
 # affecting also the C and C++ compilers.
