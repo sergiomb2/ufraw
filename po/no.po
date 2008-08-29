@@ -1,3 +1,4 @@
+# translation of no.po to
 # Norwegian translation for UFRaw.
 # Copyright (C) 2006-2008 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
@@ -5,15 +6,16 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw 0.14\n"
+"Project-Id-Version: no\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-29 17:30+0200\n"
-"PO-Revision-Date: 2008-03-01 15:31+0100\n"
-"Last-Translator: Alvin Brattli <alvin.brattli@gmail.com>\n"
-"Language-Team: Norwegian <no@li.org>\n"
+"POT-Creation-Date: 2008-08-18 05:35+0200\n"
+"PO-Revision-Date: 2008-08-29 17:42-0500\n"
+"Last-Translator: Alvin Brattli\n"
+"Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
@@ -101,13 +103,11 @@ msgstr "Kamerakurve"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
-#, fuzzy
 msgid "No profile"
-msgstr "Fargeprofiler"
+msgstr "Ingen profil"
 
-#, fuzzy
 msgid "Color matrix"
-msgstr "Bruk fargematrise"
+msgstr "Fargematrise"
 
 msgid "sRGB"
 msgstr "sRGB"
@@ -168,8 +168,7 @@ msgid "UFRaw "
 msgstr "UFRaw "
 
 msgid " - Unidentified Flying Raw converter for digital camera images.\n"
-msgstr ""
-" - Uidentifisert Flyvende Raw-konverterer for bilder fra digitalkamera.\n"
+msgstr " - Uidentifisert Flyvende Raw-konverterer for bilder fra digitalkamera.\n"
 
 msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
 msgstr "Bruk: ufraw [ alternativer ... ] [ raw-bildefiler ... ]\n"
@@ -202,8 +201,7 @@ msgstr ""
 "inneholder filnavnet til et raw-bilde og parametrene for behandling av\n"
 "bildet. Man kan også bruke en ID-fil med alternativet:\n"
 
-msgid ""
-"--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+msgid "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
 msgstr "--conf=ID-fil         Bruk parametrene i ID-fil på andre raw-bilder.\n"
 
 msgid "The rest of the options are separated into two groups.\n"
@@ -271,10 +269,8 @@ msgstr ""
 "--restore=clip|lch|hsv\n"
 "                      Gjenopprett detaljer for negative EV.\n"
 "                      «clip» gjenoppretter ingenting. Ingen detaljer mistes.\n"
-"                      «lch» gjenoppretter i LCH-fargerommet (bløte "
-"detaljer).\n"
-"                      «hsv» gjenoppretter i HSV-fargerommet (skarpe "
-"detaljer).\n"
+"                      «lch» gjenoppretter i LCH-fargerommet (bløte detaljer).\n"
+"                      «hsv» gjenoppretter i HSV-fargerommet (skarpe detaljer).\n"
 "                      (standardverdi: lch)\n"
 
 msgid ""
@@ -287,21 +283,16 @@ msgstr ""
 "                      «film» etterligner blød filmkurve.\n"
 "                      (standardverdi: digital).\n"
 
-msgid ""
-"--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
-msgstr ""
-"--gamma=GAMMA         Gammajustering for basiskurven (standardverdi: 0.45).\n"
+msgid "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+msgstr "--gamma=GAMMA         Gammajustering for basiskurven (standardverdi: 0.45).\n"
 
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr ""
 "--linearity=LINEARITET\n"
 "                      Basiskurvens linearitet (standardverdi: 0.10).\n"
 
-#, fuzzy
 msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
-msgstr ""
-"--saturation=METNING  Justering av fargemetning (standardverdi 1.0,\n"
-"                      0 for svarthvit utdata).\n"
+msgstr "--contrast=KONTRAST   Kontrastjustering (standardverdi 1.0).\n"
 
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
@@ -315,8 +306,7 @@ msgid ""
 "                      Wavelet denoising threshold (default 0.0).\n"
 msgstr ""
 "--wavelet-denoising-threshold=VERDI\n"
-"                      Terskel for wavelet støyreduksjon (standardverdi: "
-"0.0).\n"
+"                      Terskel for wavelet støyreduksjon (standardverdi: 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -343,13 +333,12 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algoritme for interpolasjon (standardverdi: ahd).\n"
 
-#, fuzzy
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
-"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
-"                      Algoritme for interpolasjon (standardverdi: ahd).\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Algoritme for konvertering av gråtoner (standardverdi none).\n"
 
 msgid "The options which are related to the final output are:\n"
 msgstr "Alternativene knyttet til endelige utdata er:\n"
@@ -368,8 +357,7 @@ msgstr ""
 "                      Filformat for utdata (standardverdi: ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
-msgstr ""
-"--out-depth=8|16      Bitdybde for hver kanal i utdata (standardverdi: 8).\n"
+msgstr "--out-depth=8|16      Bitdybde for hver kanal i utdata (standardverdi: 8).\n"
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -402,16 +390,15 @@ msgstr ""
 "--embedded-image      Pakk ut forhåndsvisningsbildet inkludert i raw-filen\n"
 "                      i stedet for å konvertere raw-bildet.\n"
 
-#, fuzzy
 msgid ""
 "--rotate=camera|ANGLE|no\n"
 "                      Rotate image to camera's setting, by ANGLE degrees\n"
 "                      clockwise, or do not rotate the image (default "
 "camera).\n"
 msgstr ""
-"--rotate=camera|no    Roter bildet i henhold til kameraets innstilling "
-"eller\n"
-"                      la være å rotere bildet (standardverdi: camera).\n"
+"--rotate=camera|VINKEL|no\n"
+"                      Roter bildet i henhold til kameraets innstilling, VINKEL\n"
+"                      grader med klokka eller ingen rotasjon (standardverdi: camera).\n"
 
 msgid ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
@@ -419,9 +406,11 @@ msgid ""
 "the\n"
 "                      raw image after rotation but before any scaling.\n"
 msgstr ""
+"--crop-(left|right|top|bottom)=PIKSLER\n"
+"                      Beskjær utdata med oppgitt antall piksler i forhold til"
+"                      raw-bildet etter rotasjon, men før skalering.\n"
 
-msgid ""
-"--out-path=PATH       PATH for output file (default use input file's path).\n"
+msgid "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=STI        STI for utdatafil (som standardverdi brukes\n"
 "                      inndatafilens sti).\n"
@@ -432,14 +421,12 @@ msgstr "--output=FIL          Utdatafilens navn, bruk «-» for standardutdata.\
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
 msgstr "--darkframe=FIL       Bruk FIL for raw-sortbildesubtraksjon.\n"
 
-msgid ""
-"--overwrite           Overwrite existing files without asking (default no).\n"
+msgid "--overwrite           Overwrite existing files without asking (default no).\n"
 msgstr ""
 "--overwrite           Overskriv eksisterende filer uten å spørre\n"
 "                      (standardverdi: nei).\n"
 
-msgid ""
-"--silent              Do not display any messages during batch conversion.\n"
+msgid "--silent              Do not display any messages during batch conversion.\n"
 msgstr "--silent              Vær helt stille under satsvis konvertering.\n"
 
 msgid ""
@@ -487,8 +474,7 @@ msgstr "«%s» er ikke en gyldig innstilling for hvitbalanse."
 
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
-msgstr ""
-"Alternativene --temperature og --green overkjører alternativet --wb=%s. "
+msgstr "Alternativene --temperature og --green overkjører alternativet --wb=%s. "
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -500,7 +486,7 @@ msgstr "kunne ikke lese inn kurve fra %s"
 
 #, c-format
 msgid "'%s' is not a valid base curve name."
-msgstr "«%s» er ikke et gyldig navn på en basiskurve."
+msgstr "«%s» er et ugyldig navn på en basiskurve."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured curves"
@@ -514,13 +500,13 @@ msgstr "«%s» er et ugyldig kurvenavn."
 msgid "'%s' is not a valid interpolation option."
 msgstr "«%s» er et ugyldig alternativ for interpolasjon."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid grayscale option."
-msgstr "«%s» er et ugyldig alternativ for rotate."
+msgstr "«%s» er et ugyldig alternativ for gråtone"
 
 #, c-format
 msgid "'%s' is not a valid restore option."
-msgstr "«%s» er ikke et gyldig alternativ for gjenoppretting."
+msgstr "«%s» er et ugyldig alternativ for gjenoppretting."
 
 #, c-format
 msgid "'%s' is not a valid clip option."
@@ -609,8 +595,7 @@ msgstr "Originalstørrelsen (%d) er mindre enn den valgte størrelsen (%d)"
 
 #, c-format
 msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
-msgstr ""
-"Uoverensstemmelse i inkludert ppm; høyde %d, bredde %d, mens buffer er %d."
+msgstr "Uoverensstemmelse i inkludert ppm; høyde %d, bredde %d, mens buffer er %d."
 
 #, c-format
 msgid "JPEG thumb height %d different than expected %d."
@@ -680,16 +665,16 @@ msgid "None"
 msgstr "Ingen"
 
 msgid "Lightness"
-msgstr ""
+msgstr "Lyshet"
 
 msgid "Luminance"
-msgstr ""
+msgstr "Luminans"
 
 msgid "Value"
 msgstr "Verdi"
 
 msgid "Channel Mixer"
-msgstr ""
+msgstr "Fargekanalmikser"
 
 msgid "No more room for new curves."
 msgstr "Ikke mere plass til nye kurver."
@@ -848,8 +833,7 @@ msgid ""
 "Homepage: http://ufraw.sourceforge.net/\n"
 "\n"
 msgstr ""
-"<b>U</b>identifisert <b>F</b>lyvende <b>Raw</b> (<b>UFRaw</b>) er et "
-"program\n"
+"<b>U</b>identifisert <b>F</b>lyvende <b>Raw</b> (<b>UFRaw</b>) er et program\n"
 "for å lese og behandle raw-bilder fra digitalkameraer.\n"
 "UFRaw bruker <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
 "til den egentlige kodingen av raw-bilder.\n"
@@ -939,9 +923,8 @@ msgstr "VNG-interpolasjon"
 msgid "PPG interpolation"
 msgstr "PPG-interpolasjon"
 
-#, fuzzy
 msgid "No interpolation"
-msgstr "VNG-interpolasjon"
+msgstr "Ingen interpolasjon"
 
 msgid "No Bayer pattern"
 msgstr "Intet Bayermønster"
@@ -973,17 +956,17 @@ msgstr "Tilbakestill sortbilde"
 #. End of White Balance setting page
 #. Start of Grayscale page
 msgid "Grayscale"
-msgstr ""
+msgstr "Gråtoneskala"
 
 msgid "Grayscale Mode:"
-msgstr ""
+msgstr "Modus for gråtoneskala:"
 
 msgid "Reset channel mixer"
-msgstr ""
+msgstr "Tilbakestill fargekanalmikser"
 
 #. Lens correction page
 msgid "Lens correction"
-msgstr ""
+msgstr "Korriger for objektiv"
 
 #. Start of Base Curve page
 msgid "Base curve"
@@ -1060,14 +1043,13 @@ msgid "Correct luminosity, saturation"
 msgstr "Korriger lysstyrke, fargemetning"
 
 msgid "Contrast"
-msgstr ""
+msgstr "Kontrast"
 
 msgid "Global contrast adjustment"
-msgstr ""
+msgstr "Global kontrastjustering"
 
-#, fuzzy
 msgid "Reset global contrast to default"
-msgstr "Sett sortpunkt tilbake til standardverdi"
+msgstr "Sett global kontrast tilbake til standardverdi"
 
 msgid "Reset saturation to default"
 msgstr "Sett fargemetning tilbake til standardverdi"
@@ -1358,8 +1340,7 @@ msgid "Can not downsize from %d to %d."
 msgstr "Kan ikke forminske fra %d til %d."
 
 msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
-"Kan ikke bruke kameraets hvitbalanse, bruker automatisk hvitbalanse isteden."
+msgstr "Kan ikke bruke kameraets hvitbalanse, bruker automatisk hvitbalanse isteden."
 
 #. Error was not already set before
 #, c-format
@@ -1371,9 +1352,8 @@ msgstr "Feil ved oppretting av filen «%s»."
 msgid "Error creating file."
 msgstr "Feil ved oppretting av fil."
 
-#, fuzzy
 msgid "Converting image"
-msgstr "Lagrer bildet"
+msgstr "Konverterer bildet"
 
 msgid "Saving image"
 msgstr "Lagrer bildet"
@@ -1405,6 +1385,10 @@ msgid ""
 "Mount:\t\t%s\n"
 "Crop factor:\t%.1f"
 msgstr ""
+"Fabrikat:\t\t%s\n"
+"Modell:\t\t%s%s\n"
+"Fatning:\t\t%s\n"
+"Forlengelsesfaktor:\t%.1f"
 
 #, c-format
 msgid ""
@@ -1416,96 +1400,104 @@ msgid ""
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
+"Fabrikat:\t\t%s\n"
+"Modell:\t\t\t%s\n"
+"Brennviddeområde:\t%s\n"
+"Blender:\t\t%s\n"
+"Forlengelsesfaktor:\t%.1f\n"
+"Type:\t\t\t%s\n"
+"Fatninger:\t\t%s"
 
 msgid "Focal"
-msgstr ""
+msgstr "Brennvidde"
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "F-number (Aperture)"
-msgstr ""
+msgstr "F-tall (blender)"
 
 msgid "Distance"
-msgstr ""
+msgstr "Avstand"
 
 msgid "Distance to subject"
-msgstr ""
+msgstr "Avstand til motiv"
 
 #. Add the model combobox
 msgid "Model:"
-msgstr ""
+msgstr "Modell:"
 
 msgid "Chromatic Aberrations mathematical model"
-msgstr ""
+msgstr "Matematisk modell for kromatisk aberrasjon"
 
 msgid "Parameters"
-msgstr ""
+msgstr "Parametre"
 
 msgid "Optical vignetting mathematical model"
-msgstr ""
+msgstr "Matematisk modell for optisk vignettering"
 
 msgid "Lens distortion mathematical model"
-msgstr ""
+msgstr "Matematisk modell for forvrengning i objektiv"
 
 #. Add the model combobox
 msgid "Lens geometry:"
-msgstr ""
+msgstr "Objektivgeometri:"
 
 msgid "The geometry of the lens used to make the shot"
-msgstr ""
+msgstr "Geometrien i objektivet som ble brukt for å ta bildet"
 
 msgid "Target geometry:"
-msgstr ""
+msgstr "Motivgeometri:"
 
 msgid "The target geometry for output image"
-msgstr ""
+msgstr "Ønsket motivgeometri i det ferdige bildet"
 
-#, fuzzy
 msgid "Camera"
-msgstr "Kameraets HB"
+msgstr "Kamera"
 
 msgid ""
 "Search for camera using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Let etter kamera ved hjelp av et mønster\n"
+"Format: [fabrikant, ][modell]"
 
 msgid "Choose camera from complete list"
-msgstr ""
+msgstr "Velg kamera fra fullstendig liste"
 
 msgid ""
 "Search for lens using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Let etter objektiv ved hjelp av et mønster\n"
+"Format: [fabrikant, ][modell]"
 
 msgid "Choose lens from list of possible variants"
-msgstr ""
+msgstr "Velg objektiv fra liste over mulige varianter"
 
-#, fuzzy
 msgid "Scale"
-msgstr "Lagre"
+msgstr "Skala"
 
 msgid "Image scale power-of-two"
-msgstr ""
+msgstr "Bildeskala angitt med toerpotens"
 
-#, fuzzy
 msgid "Reset image scale to default"
-msgstr "Sett basiskurve tilbake til standardverdi"
+msgstr "Sett bildeskala tilbake til standardverdi"
 
 msgid "Autoscale the image for best fit"
-msgstr ""
+msgstr "Autoskaler bildet til beste størrelse"
 
 msgid "Lateral chromatic aberration"
-msgstr ""
+msgstr "Sidelengs kromatisk aberrasjon"
 
 msgid "Optical vignetting"
-msgstr ""
+msgstr "Optisk vignettering"
 
 msgid "Lens distortion"
-msgstr ""
+msgstr "Objektivets forvrengning"
 
 msgid "Lens geometry"
-msgstr ""
+msgstr "Objektivets geometri"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
@@ -1596,3 +1588,4 @@ msgstr "Kameraets HB"
 
 msgid "Auto WB"
 msgstr "Automatisk HB"
+
