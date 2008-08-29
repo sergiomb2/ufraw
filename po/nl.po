@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-08-29 17:30+0200\n"
-"PO-Revision-Date: 2008-08-17 16:31+0200\n"
+"PO-Revision-Date: 2008-08-18 22:09+0200\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -51,8 +51,7 @@ msgid "--rotate option is valid only in batch mode"
 msgstr "--rotate optie is alleen geldig in batch modus"
 
 msgid "Extracting embedded image is not supported in interactive mode"
-msgstr ""
-"Ingebedde afbeelding uitpakken wordt niet ondersteund in interactieve modus"
+msgstr "Ingebedde afbeelding uitpakken wordt niet ondersteund in interactieve modus"
 
 msgid "Raw images"
 msgstr "RAW afbeeldingen"
@@ -70,7 +69,7 @@ msgid "All files"
 msgstr "Alle bestanden"
 
 msgid "Show hidden files"
-msgstr "Laat onzichtbare bestanden zien"
+msgstr "Laat verborgen bestanden zien"
 
 #. Internal data
 #. confSize, version
@@ -97,7 +96,7 @@ msgid "Linear curve"
 msgstr "Lineaire curve"
 
 msgid "Custom curve"
-msgstr "Custom curve"
+msgstr "Speciale curve"
 
 msgid "Camera curve"
 msgstr "Camera curve"
@@ -128,7 +127,7 @@ msgstr "UFRaw versie in .ufrawrc wordt niet ondersteund"
 
 #, c-format
 msgid "Too many anchors for curve '%s'"
-msgstr "Teveel ijkpunten voor curve '%s'"
+msgstr "Teveel ankerpunten voor curve '%s'"
 
 #, c-format
 msgid ""
@@ -169,8 +168,7 @@ msgid "UFRaw "
 msgstr "UFRaw "
 
 msgid " - Unidentified Flying Raw converter for digital camera images.\n"
-msgstr ""
-" - Unidentified Flying Raw converter voor digitale camera afbeeldingen.\n"
+msgstr " - Unidentified Flying Raw converter voor digitale camera afbeeldingen.\n"
 
 msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
 msgstr "Gebruik: ufraw [ opties ... ] [ raw-afbeeldingsbestanden ... ]\n"
@@ -205,8 +203,7 @@ msgstr ""
 "interpreteren.\n"
 "Het is ook mogelijk om een ID bestand te gebruiken met de optie:\n"
 
-msgid ""
-"--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+msgid "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
 msgstr ""
 "--conf=ID-bestand        Pas de parameters in het ID-bestand toe op andere "
 "raw bestanden.\n"
@@ -215,8 +212,7 @@ msgid "The rest of the options are separated into two groups.\n"
 msgstr "Verdere opties zijn onderverdeeld in twee groepen.\n"
 
 msgid "The options which are related to the image manipulation are:\n"
-msgstr ""
-"De opties die betrekking hebben op de verandering van de afbeelding zijn:\n"
+msgstr "De opties die betrekking hebben op de verandering van de afbeelding zijn:\n"
 
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr "--wb=camera|auto      Wit balans instelling.\n"
@@ -255,9 +251,9 @@ msgid ""
 "                      (default linear).\n"
 msgstr ""
 "--curve=manual|linear|CURVE\n"
-"                      Type of luminosity curve to use. CURVE can be any\n"
-"                      curve that was previously loaded in the GUI.\n"
-"                      (default linear).\n"
+"                      Te gebruiken type helderheidscurve. CURVE kan elke curve zijn\n"
+"                      die al eerder in de Grafische omgeving geladen is geweest.\n"
+"                      (standaard: linear).\n"
 
 msgid ""
 "--curve-file=file     Use luminosity curve included in specified file.\n"
@@ -287,28 +283,25 @@ msgid ""
 "                      'film' emulate soft film response. (default digital).\n"
 msgstr ""
 "--clip=digital|film   Clip highlights voor positieve EV.\n"
-"                      'digital' lineaire digitale sensor response.\n"
-"                      'film' emuleert soft film response. (standaard: "
+"                      'digital' lineaire digitale sensorreactie.\n"
+"                      'film' streeft zachte filmreactie na. (standaard: "
 "digital).\n"
 
-msgid ""
-"--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
-msgstr ""
-"--gamma=GAMMA         Gamma instelling van de basiscurve (standaard 0.45).\n"
+msgid "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+msgstr "--gamma=GAMMA         Gamma instelling van de basiscurve (standaard 0.45).\n"
 
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
-msgstr ""
-"--linearity=LINEARITY Lineariteit van de basiscurve (standaard 0.10).\n"
+msgstr "--linearity=LINEARITY Lineariteit van de basiscurve (standaard 0.10).\n"
 
 msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
-msgstr "--saturation=SAT      Verzadigings aanpassing (standaard 1.0).\n"
+msgstr "--contrast=CONT      Contrastaanpassing (standaard 1.0).\n"
 
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
 msgstr ""
 "--saturation=SAT      Verzadigings aanpassing (standaard 1.0, 0 voor  "
-"Zwartwit output).\n"
+"Z/W output).\n"
 
 msgid ""
 "--wavelet-denoising-threshold=THRESHOLD\n"
@@ -352,7 +345,7 @@ msgid "The options which are related to the final output are:\n"
 msgstr "De opties van toepassing op de uiteindelijke output zijn:\n"
 
 msgid "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
-msgstr "--shrink=FACTOR       Krimp de afbeelding met FACTOR (standaard: 1).\n"
+msgstr "--shrink=FACTOR       Verklein de afbeelding met FACTOR (standaard: 1).\n"
 
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=MAAT           Schaal max(hoogte, breedte) terug tot MAAT.\n"
@@ -395,7 +388,7 @@ msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"
 msgstr ""
-"--embedded-image      Extraheer de voorbeeld afbeelding uit het raw bestand\n"
+"--embedded-image      Extraheer de voorbeeldafbeelding uit het raw bestand\n"
 "                      in plaats van het raw bestand te converteren.\n"
 
 msgid ""
@@ -420,8 +413,7 @@ msgstr ""
 "                      toegepast op de RAW foto na rotatie, maar voor "
 "verkleining.\n"
 
-msgid ""
-"--out-path=PATH       PATH for output file (default use input file's path).\n"
+msgid "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=PAD        PAD voor output bestand (gebruik standaard hetzelfde "
 "pad als input bestand).\n"
@@ -434,16 +426,13 @@ msgstr ""
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
 msgstr "--darkframe=BESTAND   Gebruik BESTAND voor raw zwartbeeld reductie.\n"
 
-msgid ""
-"--overwrite           Overwrite existing files without asking (default no).\n"
+msgid "--overwrite           Overwrite existing files without asking (default no).\n"
 msgstr ""
 "--overwrite           Overschrijf bestaande bestanden zonder vragen "
 "(standaard: wel vragen).\n"
 
-msgid ""
-"--silent              Do not display any messages during batch conversion.\n"
-msgstr ""
-"--silent              Geef geen berichten weer tijdens batch conversie.\n"
+msgid "--silent              Do not display any messages during batch conversion.\n"
+msgstr "--silent              Geef geen berichten weer tijdens batch conversie.\n"
 
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
@@ -537,7 +526,7 @@ msgstr "de opties --shrink en --size sluiten elkaar uit"
 
 #, c-format
 msgid "'%d' is not a valid bit depth."
-msgstr "'%d'  is geen geldige bit diepte."
+msgstr "'%d' is geen geldige bit diepte."
 
 #, c-format
 msgid "Output type '%s' is deprecated"
@@ -577,7 +566,7 @@ msgid "'%s' is not a valid path."
 msgstr "'%s' is geen geldig pad."
 
 msgid "cannot output more than one file to the same output"
-msgstr "kan niet meer dan een bestand naar dezelfde output sturen"
+msgstr "kan niet meer dan één bestand naar dezelfde output sturen"
 
 #, c-format
 msgid "Raw file '%s' missing."
@@ -611,12 +600,11 @@ msgstr "Geen embedded afbeelding gevonden"
 
 #, c-format
 msgid "Original size (%d) is smaller than the requested size (%d)"
-msgstr ""
-"Oorspronkelijke afmeting (%d) is kleiner dan de gevraagde afmeting (%d)"
+msgstr "Oorspronkelijke afmeting (%d) is kleiner dan de gevraagde afmeting (%d)"
 
 #, c-format
 msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
-msgstr "ppm thumb mismatch, height %d, width %d, while buffer %d."
+msgstr "ppm thumb mismatch, hoogte %d, breedte %d, terwijl buffer %d."
 
 #, c-format
 msgid "JPEG thumb height %d different than expected %d."
@@ -679,23 +667,23 @@ msgid "Raw histogram with conversion curves"
 msgstr "Raw histogram met conversie curves"
 
 msgid "Live histogram"
-msgstr "Live histogram"
+msgstr "Actueel histogram"
 
 #. No darkframe file
 msgid "None"
 msgstr "Geen"
 
 msgid "Lightness"
-msgstr "Lightness"
+msgstr "Lichtheid"
 
 msgid "Luminance"
-msgstr "Luminance"
+msgstr "Helderheid"
 
 msgid "Value"
 msgstr "Waarde"
 
 msgid "Channel Mixer"
-msgstr "Channel Mixer"
+msgstr "Kleur Mixer"
 
 msgid "No more room for new curves."
 msgstr "Geen ruimte voor nieuwe curves."
@@ -728,7 +716,7 @@ msgid "Luminosity (Y value)"
 msgstr "Helderheid (Y waarde)"
 
 msgid "Adams' zone"
-msgstr "Adams' zone"
+msgstr "Ansel Adams zone"
 
 #, c-format
 msgid "size %dx%d, zoom %2.f%%"
@@ -762,7 +750,7 @@ msgid ""
 "Restore details for negative EV\n"
 "Current state: %s"
 msgstr ""
-"Herstel details voor negatieve EV\n"
+"Details herstellen bij negatieve EV\n"
 "status: %s"
 
 msgid "digital linear"
@@ -776,7 +764,7 @@ msgid ""
 "Clip highlights for positive EV\n"
 "Current state: %s"
 msgstr ""
-"Clip highlights voor positieve EV\n"
+"Clip highlights bij positieve EV\n"
 "status: %s"
 
 #, c-format
@@ -810,7 +798,7 @@ msgid "Output color profiles"
 msgstr "Output kleurprofielen"
 
 msgid "Display color profiles"
-msgstr "Display kleurprofielen"
+msgstr "Toon kleurprofielen"
 
 msgid "Base Curves"
 msgstr "Basis Curves"
@@ -981,10 +969,10 @@ msgid "Grayscale"
 msgstr "Grijsschaal"
 
 msgid "Grayscale Mode:"
-msgstr "Grijsschaal Modus:"
+msgstr "Grijsschaal algoritme:"
 
 msgid "Reset channel mixer"
-msgstr "Reset Kanaalmixer"
+msgstr "Reset Kleurmixer"
 
 #. Lens correction page
 msgid "Lens correction"
@@ -1276,7 +1264,7 @@ msgid "Overexposed:"
 msgstr "Overbelicht:"
 
 msgid "Indicate"
-msgstr "Toon"
+msgstr "Aangeven"
 
 msgid "Underexposed:"
 msgstr "Onderbelicht:"
@@ -1382,8 +1370,7 @@ msgstr "Bewaren afbeelding"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"
-msgstr ""
-"Afbeeldingsbestandsnaam kan niet gelijk zijn aan de ID bestandsnaam '%s'"
+msgstr "Afbeeldingsbestandsnaam kan niet gelijk zijn aan de ID bestandsnaam '%s'"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
@@ -1611,3 +1598,4 @@ msgstr "Camera WB"
 
 msgid "Auto WB"
 msgstr "Auto WB"
+
