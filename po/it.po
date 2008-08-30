@@ -5,15 +5,15 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Ufraw 0.13\n"
+"Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-25 15:45+0200\n"
-"PO-Revision-Date: 2008-08-18 16:50+0200\n"
+"POT-Creation-Date: 2008-08-29 17:30+0200\n"
+"PO-Revision-Date: 2008-08-30 06:30+0200\n"
 "Last-Translator: Daniele Medri <dmedri@SPAMgmail.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
@@ -24,11 +24,11 @@ msgstr "Nessun file input, niente da fare."
 
 #, c-format
 msgid "Loaded %s%s"
-msgstr "Caricato %s"
+msgstr "Caricato %s%s"
 
 #, c-format
 msgid "Saved %s%s"
-msgstr "Salvato %s"
+msgstr "Salvato %s%s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -301,8 +301,7 @@ msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr "--linearity=LINEARITY Linearità della curva base (predefinito 0.10).\n"
 
 msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
-msgstr ""
-"--contrast=CONT      Aggiustamento contrasto (predefinito 1.0).\n"
+msgstr "--contrast=CONT      Aggiustamento contrasto (predefinito 1.0).\n"
 
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
@@ -347,7 +346,8 @@ msgid ""
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
-"                      Algoritmo per la conversione della scala di grigio (predefinito nessuno).\n"
+"                      Algoritmo per la conversione della scala di grigio "
+"(predefinito nessuno).\n"
 
 msgid "The options which are related to the final output are:\n"
 msgstr "Le opzioni relative all'output finale sono:\n"
@@ -370,7 +370,8 @@ msgstr ""
 "                      Formato di uscita (predefinito ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
-msgstr "--out-depth=8|16      Profondità bit di uscita per canale (predefinito 8).\n"
+msgstr ""
+"--out-depth=8|16      Profondità bit di uscita per canale (predefinito 8).\n"
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -535,7 +536,7 @@ msgstr "non è possibile specificare contemporaneamente --shrink e --size"
 
 #, c-format
 msgid "'%d' is not a valid bit depth."
-msgstr "'%s' non è un bit valido per la profondità."
+msgstr "'%d' non è un bit valido per la profondità."
 
 #, c-format
 msgid "Output type '%s' is deprecated"
@@ -560,7 +561,7 @@ msgstr "'%s' non è un tipo di output valido per immagini integrate."
 
 #, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
-msgstr "'%s' non è un valido bit di profondità per le immagini integrate."
+msgstr "'%d' non è un valido bit di profondità per le immagini integrate."
 
 #, c-format
 msgid "'%s' is not a valid rotate option."
@@ -1607,4 +1608,3 @@ msgstr "Bilanciamento del bianco - Fotocamera"
 
 msgid "Auto WB"
 msgstr "Bilanciamento del bianco - Automatico"
-
