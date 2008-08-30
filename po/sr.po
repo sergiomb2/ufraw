@@ -1,5 +1,5 @@
 # Serbian translation of UFRaw
-# Courtesy of Prevod.org team (http://prevod.org/) -- 2006, 2007.
+# Courtesy of Prevod.org team (http://prevod.org/) -- 2006, 2007, 2008.
 # 
 # This file is distributed under the same license as the ufraw package.
 # 
