@@ -36,7 +36,9 @@ const conf_data conf_default = {
     6500, 1.0, /* temperature, green */
     { -1.0, -1.0, -1.0, -1.0 }, /* chanMul[] */
     0.0, /* wavelet denoising threshold */
+#ifdef UFRAW_CONTRAST
     1.0, /* global contrast */
+#endif
     0.0, 1.0, 0.0, /* exposure, saturation, black */
     0, /* ExposureNorm */
     restore_lch_details, /* restoreDetails */
@@ -604,8 +606,10 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     }
     if (!strcmp("WaveletDenoisingThreshold", element))
 	sscanf(temp, "%lf", &c->threshold);
+#ifdef UFRAW_CONTRAST
     if (!strcmp("Contrast", element))
         sscanf(temp, "%lf", &c->contrast);
+#endif
     if (!strcmp("Exposure", element)) sscanf(temp, "%lf", &c->exposure);
     if (!strcmp("ExposureNorm", element)) sscanf(temp, "%d", &c->ExposureNorm);
     if (!strcmp("Saturation", element)) sscanf(temp, "%lf", &c->saturation);
@@ -912,9 +916,11 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	buf = uf_markup_buf(buf,
 		"<WaveletDenoisingThreshold>%d</WaveletDenoisingThreshold>\n",
 		(int)floor(c->threshold));
+#ifdef UFRAW_CONTRAST
     if (c->contrast!=conf_default.contrast)
         buf = uf_markup_buf(buf,
 		"<Contrast>%f</Contrast>\n", c->contrast);
+#endif
     if (c->exposure!=conf_default.exposure)
 	buf = uf_markup_buf(buf, "<Exposure>%lf</Exposure>\n", c->exposure);
     if (c->ExposureNorm!=conf_default.ExposureNorm)
@@ -1178,7 +1184,9 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     g_strlcpy(dst->model, src->model, max_name);
     dst->threshold = src->threshold;
     dst->exposure = src->exposure;
+#ifdef UFRAW_CONTRAST
     dst->contrast = src->contrast;
+#endif
     dst->ExposureNorm = src->ExposureNorm;
     dst->saturation = src->saturation;
     dst->black = src->black;
@@ -1348,7 +1356,9 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 	conf->autoExposure = cmd->autoExposure;
     }
     if (cmd->threshold!=NULLF) conf->threshold = cmd->threshold;
+#ifdef UFRAW_CONTRAST
     if (cmd->contrast!=NULLF) conf->contrast = cmd->contrast;
+#endif
     if (cmd->exposure!=NULLF) {
 	conf->exposure = cmd->exposure;
 	conf->autoExposure = disabled_state;
@@ -1469,7 +1479,9 @@ N_("--clip=digital|film   Clip highlights for positive EV.\n"
    "                      'film' emulate soft film response. (default digital).\n"),
 N_("--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"),
 N_("--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"),
+#ifdef UFRAW_CONTRAST
 N_("--contrast=CONT       Contrast adjustment (default 1.0).\n"),
+#endif
 N_("--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"),
 N_("--wavelet-denoising-threshold=THRESHOLD\n"
 "                      Wavelet denoising threshold (default 0.0).\n"),
@@ -1584,7 +1596,9 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{ "gamma", 1, 0, 'G'},
 	{ "linearity", 1, 0, 'L'},
 	{ "saturation", 1, 0, 's'},
+#ifdef UFRAW_CONTRAST
 	{ "contrast", 1, 0, 'y'},
+#endif
 	{ "wavelet-denoising-threshold", 1, 0, 'n'},
 	{ "exposure", 1, 0, 'e'},
 	{ "black-point", 1, 0, 'k'},
@@ -1623,7 +1637,11 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     void *optPointer[] = { &wbName, &cmd->temperature, &cmd->green,
 	&baseCurveName, &baseCurveFile, &curveName, &curveFile,
 	&cmd->profile[0][0].gamma, &cmd->profile[0][0].linear,
-	&cmd->saturation, &cmd->contrast, &cmd->threshold,
+	&cmd->saturation,
+#ifdef UFRAW_CONTRAST
+	&cmd->contrast,
+#endif
+	&cmd->threshold,
 	&cmd->exposure, &cmd->black, &interpolationName, &grayscaleName,
 	&cmd->shrink, &cmd->size, &cmd->compression,
 	&outTypeName, &cmd->profile[1][0].BitDepth, &rotateName,
@@ -1640,7 +1658,9 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->silent=FALSE;
     cmd->profile[0][0].gamma=NULLF;
     cmd->profile[0][0].linear=NULLF;
+#ifdef UFRAW_CONTRAST
     cmd->contrast=NULLF;
+#endif
     cmd->saturation=NULLF;
     cmd->black=NULLF;
     cmd->threshold=NULLF;

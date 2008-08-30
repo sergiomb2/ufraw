@@ -40,7 +40,9 @@ developer_data *developer_init()
     d->gamma = -1;
     d->linear = -1;
     d->saturation = -1;
+#ifdef UFRAW_CONTRAST
     d->contrast = -1;
+#endif
     for (i=0; i<profile_types; i++) {
 	d->profile[i] = NULL;
 	strcpy(d->profileFile[i],"no such file");
@@ -488,17 +490,31 @@ void developer_prepare(developer_data *d, conf_data *conf,
 	}
 	d->updateTransform = TRUE;
     }
-    if ( conf->saturation!=d->saturation || conf->contrast!=d->contrast
+    if ( conf->saturation!=d->saturation
+#ifdef UFRAW_CONTRAST
+	 || conf->contrast!=d->contrast
+#endif
          || conf->grayscaleMode == grayscale_luminance ) {
+#ifdef UFRAW_CONTRAST
         d->contrast = conf->contrast;
+#endif
 	d->saturation = (conf->grayscaleMode == grayscale_luminance)
 	    ? 0 : conf->saturation;
 	cmsCloseProfile(d->saturationProfile);
-	if (d->saturation==1.0 && d->contrast==1.0)
+	if (d->saturation==1.0
+#ifdef UFRAW_CONTRAST
+	    && d->contrast==1.0
+#endif
+	   )
 	    d->saturationProfile = NULL;
 	else
 	    d->saturationProfile = create_contrast_saturation_profile(
-	      d->contrast, d->saturation);
+#ifdef UFRAW_CONTRAST
+		    d->contrast,
+#else
+		    1.0,
+#endif
+		    d->saturation);
 	d->updateTransform = TRUE;
     }
     developer_create_transform(d, mode);

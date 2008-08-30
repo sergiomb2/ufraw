@@ -1326,7 +1326,9 @@ static void update_scales(preview_data *data)
     gtk_adjustment_set_value(data->GreenAdjustment, CFG->green);
     gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
     gtk_adjustment_set_value(data->ThresholdAdjustment, CFG->threshold);
+#ifdef UFRAW_CONTRAST
     gtk_adjustment_set_value(data->ContrastAdjustment, CFG->contrast);
+#endif
     gtk_adjustment_set_value(data->SaturationAdjustment, CFG->saturation);
     gtk_adjustment_set_value(data->GammaAdjustment,
 	    CFG->profile[0][CFG->profileIndex[0]].gamma);
@@ -1362,8 +1364,10 @@ static void update_scales(preview_data *data)
 	    fabs( conf_default.exposure - CFG->exposure) > 0.001);
     gtk_widget_set_sensitive(data->ResetThresholdButton,
 	    fabs( conf_default.threshold - CFG->threshold) > 1);
+#ifdef UFRAW_CONTRAST
     gtk_widget_set_sensitive(data->ResetContrastButton,
 	    fabs( conf_default.contrast - CFG->contrast) > 0.001);
+#endif
     gtk_widget_set_sensitive(data->ResetSaturationButton,
 	    fabs( conf_default.saturation - CFG->saturation) > 0.001);
     gtk_widget_set_sensitive(data->ResetBaseCurveButton,
@@ -2386,9 +2390,11 @@ static void button_update(GtkWidget *button, gpointer user_data)
 	CFG->profile[0][CFG->profileIndex[0]].gamma =
 		profile_default_gamma(&CFG->profile[0][CFG->profileIndex[0]]);
     }
+#ifdef UFRAW_CONTRAST
     if (button==data->ResetContrastButton) {
         CFG->contrast = conf_default.contrast;
     }
+#endif
     if (button==data->ResetLinearButton) {
 	CFG->profile[0][CFG->profileIndex[0]].linear =
 		profile_default_linear(&CFG->profile[0][CFG->profileIndex[0]]);
@@ -4210,6 +4216,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     /* Contrast and Saturation adjustments */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
+#ifdef UFRAW_CONTRAST
     data->ContrastAdjustment = adjustment_scale(table, 0, 0, _("Contrast"),
 	    CFG->contrast, &CFG->contrast, 0, 5.0, 0.01, 0.1, 2,
 	    _("Global contrast adjustment"), G_CALLBACK(adjustment_update));
@@ -4221,7 +4228,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    _("Reset global contrast to default"));
     g_signal_connect(G_OBJECT(data->ResetContrastButton), "clicked",
 	    G_CALLBACK(button_update), NULL);
-
+#endif
     data->SaturationAdjustment = adjustment_scale(table, 0, 1, _("Saturation"),
 	    CFG->saturation, &CFG->saturation,
 	    0.0, 3.0, 0.01, 0.1, 2, _("Saturation"),

@@ -93,7 +93,9 @@ typedef struct {
     gboolean updateTransform;
     void *colorTransform;
     double saturation;
+#ifdef UFRAW_CONTRAST
     double contrast;
+#endif
     CurveData baseCurveData, luminosityCurveData;
     guint16 gammaCurve[0x10000];
     void *luminosityProfile;
@@ -152,7 +154,9 @@ typedef struct {
     double temperature, green;
     double chanMul[4];
     double threshold;
+#ifdef UFRAW_CONTRAST
     double contrast;
+#endif
     double exposure, saturation, black; /* black is only used in CMD */
     int ExposureNorm;
     int restoreDetails, clipHighlights;
