@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-29 17:30+0200\n"
-"PO-Revision-Date: 2008-06-07 08:50+0200\n"
+"POT-Creation-Date: 2008-09-05 05:15+0200\n"
+"PO-Revision-Date: 2008-09-05 05:15+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -24,11 +24,11 @@ msgstr "Ingen inddatafil, ikke noget at lave."
 
 #, c-format
 msgid "Loaded %s%s"
-msgstr "Indlæste %s%s"
+msgstr "Indlæst %s%s"
 
 #, c-format
 msgid "Saved %s%s"
-msgstr "Gemte %s%s"
+msgstr "Gemt %s%s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -70,14 +70,6 @@ msgstr "Alle filer"
 msgid "Show hidden files"
 msgstr "Vis skjulte filer"
 
-#. Internal data
-#. confSize, version
-#. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
-#. wavelet denoising threshold
-#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-29 17:30+0200\n"
+"POT-Creation-Date: 2008-09-05 05:15+0200\n"
 "PO-Revision-Date: 2008-04-10 19:56+0900\n"
 "Last-Translator: homin,Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -72,14 +72,6 @@ msgstr "모든 파일"
 msgid "Show hidden files"
 msgstr "숨겨진 파일 표시"
 
-#. Internal data
-#. confSize, version
-#. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
-#. wavelet denoising threshold
-#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails

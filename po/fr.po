@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-29 17:30+0200\n"
+"POT-Creation-Date: 2008-09-05 05:15+0200\n"
 "PO-Revision-Date: 2008-07-05 21:36+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -70,14 +70,6 @@ msgstr "Tous les fichiers"
 msgid "Show hidden files"
 msgstr "Voir fichiers cachés"
 
-#. Internal data
-#. confSize, version
-#. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
-#. wavelet denoising threshold
-#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails

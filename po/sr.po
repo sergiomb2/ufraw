@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-29 17:30+0200\n"
+"POT-Creation-Date: 2008-09-05 05:15+0200\n"
 "PO-Revision-Date: 2008-05-12 14:55+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
@@ -72,14 +72,6 @@ msgstr "Све датотеке"
 msgid "Show hidden files"
 msgstr "Прикажи скривене датотеке"
 
-#. Internal data
-#. confSize, version
-#. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
-#. wavelet denoising threshold
-#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
