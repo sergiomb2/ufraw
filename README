@@ -108,6 +108,8 @@ Other options for the configuration script are:
 
 --enable-dst-correction: enable DST correction for file timestamps.
 
+--enable-contrast: enable the contrast setting option.
+
 --enable-interp-none: enable 'None' interpolation (mostly for debugging).
 
 --with-prefix=PREFIX: use also PREFIX as input prefix for the build.

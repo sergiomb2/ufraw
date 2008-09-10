@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.119 2008/08/29 23:43:53 udifuchs Exp $
+dnl $Id: configure.ac,v 1.120 2008/09/10 14:00:05 nkbj Exp $
 AC_INIT(UFRaw, 0.14)
 AC_PREREQ(2.57)
 
@@ -262,6 +262,13 @@ AC_ARG_ENABLE(dst_correction,
   AC_DEFINE(LOCALTIME, 1, DST correction enabled),
   enable_dst_correction=no)
 AC_MSG_RESULT($enable_dst_correction)
+
+AC_MSG_CHECKING(whether to enable the contrast setting option)
+AC_ARG_ENABLE(contrast,
+  [  --enable-contrast       enable the contrast setting option],
+  AC_DEFINE(UFRAW_CONTRAST, 1, Contrast setting option enabled),
+  enable_contrast=no)
+AC_MSG_RESULT($enable_contrast)
 
 AC_MSG_CHECKING(whether to enable 'None' interpolation)
 AC_ARG_ENABLE(interp_none,
