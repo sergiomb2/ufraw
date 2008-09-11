@@ -107,6 +107,7 @@ Type: files; Name: {%USERPROFILE}\.gimp-2.2\plug-ins\ufraw-gimp.exe; Tasks: unpl
 Type: files; Name: {app}\bin\liblcms-1-16-ufraw.dll;
 
 [messages]
-SelectDirDesc=If you have the GIMP installed, [name] should be installed in the GIMP directory. Hopefully, the wizard will guess your GIMP directory correctly.
+SelectDirDesc=[name] should be installed in the GIMP directory. Hopefully, the wizard will guess your GIMP directory correctly.
+SelectDirLabel3=Setup will install [name] into the following folder. Do not change this folder unless you really know what you are doing.
 WelcomeLabel2=%nThis wizard will install [name/ver] on your computer.%n%nYou must install GIMP (at least version 2.4.6) before installing [name]. GIMP can be downloaded from http://gimp-win.sourceforge.net/%n%nIt is recommended that you will not run the GIMP application during this installation.
 SelectTasksLabel2=Select the additional tasks you would like to perform while installing UFRaw:
