@@ -696,7 +696,7 @@ int ufraw_convert_image_init(ufraw_data *uf)
     if ( uf->conf->interpolation==half_interpolation ||
 	 ( uf->conf->size==0 && uf->conf->shrink>1 ) ||
 	 ( uf->conf->size>0 &&
-	   uf->conf->size<=MAX(uf->initialHeight, uf->initialWidth) ) ||
+	   uf->conf->size<=MAX(raw->raw.height, raw->raw.width) ) ||
 	 !uf->HaveFilters ) {
 	if (uf->conf->size==0 && uf->conf->shrink>1 &&
 		(int)(uf->conf->shrink*raw->pixel_aspect)%2==0)
