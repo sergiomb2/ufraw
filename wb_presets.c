@@ -1894,6 +1894,14 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "E-400", DaylightFluorescent, 0,	{ 2.445313, 1, 1.195313, 0 } },
   { "OLYMPUS", "E-400", DaylightFluorescent, 7,	{ 3.293478, 1.391304, 1, 0 } },
 
+  { "OLYMPUS", "E-410", Daylight, 0,		{ 1.914063, 1, 1.367188, 0 } }, /*5300K*/
+  { "OLYMPUS", "E-410", Cloudy, 0,		{ 2.054688, 1, 1.250000, 0 } }, /*6000K*/
+  { "OLYMPUS", "E-410", Shade, 0,		{ 2.304688, 1, 1.031250, 0 } }, /*7500K*/
+  { "OLYMPUS", "E-410", Incandescent, 0,	{ 1.062500, 1, 2.781250, 0 } }, /*3000K*/
+  { "OLYMPUS", "E-410", WhiteFluorescent, 0,	{ 1.726562, 1, 2.226562, 0 } }, /*4000K*/
+  { "OLYMPUS", "E-410", NeutralFluorescent, 0,	{ 1.703125, 1, 1.796875, 0 } }, /*4500K*/
+  { "OLYMPUS", "E-410", DaylightFluorescent, 0,	{ 2.039063, 1, 1.476562, 0 } }, /*6600K*/
+
   { "OLYMPUS", "E-500", Daylight, 0,		{ 1.898438, 1, 1.359375, 0 } }, /*5300K*/
   { "OLYMPUS", "E-500", Cloudy, 0,		{ 1.992188, 1, 1.265625, 0 } }, /*6000K*/
   { "OLYMPUS", "E-500", Shade, 0,		{ 2.148438, 1, 1.125000, 0 } }, /*7500K*/
