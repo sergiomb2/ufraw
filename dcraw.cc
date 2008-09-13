@@ -355,12 +355,12 @@ void CLASS canon_black (double dark[2])
 
   if (raw_width < width+4) return;
   FORC(2) dark[c] /= (raw_width-width-2) * height >> 1;
-  if ((diff = dark[0] - dark[1]))
+  if ((diff = (int)(dark[0] - dark[1])))
     for (row=0; row < height; row++)
       for (col=1; col < width; col+=2)
 	BAYER(row,col) += diff;
   dark[1] += diff;
-  black = (dark[0] + dark[1] + 1) / 2;
+  black = (unsigned)((dark[0] + dark[1] + 1) / 2);
 }
 
 void CLASS canon_600_fixed_wb (int temp)
