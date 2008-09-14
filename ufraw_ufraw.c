@@ -686,6 +686,16 @@ void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode)
 int ufraw_convert_image_init(ufraw_data *uf)
 {
     dcraw_data *raw = uf->raw;
+    int temp_height, temp_width;
+    // This code is copied from dcraw_image_dimensions().
+    if (raw->pixel_aspect < 1)
+	temp_height = (int)(raw->height / raw->pixel_aspect + 0.5);
+    else
+	temp_height = raw->height;
+    if (raw->pixel_aspect > 1)
+	temp_width = (int)(raw->width * raw->pixel_aspect + 0.5);
+    else
+	temp_width = raw->width;
 
     /* We can do a simple interpolation in the following cases:
      * We shrink by an integer value.
@@ -696,8 +706,7 @@ int ufraw_convert_image_init(ufraw_data *uf)
     if ( uf->conf->interpolation==half_interpolation ||
 	 ( uf->conf->size==0 && uf->conf->shrink>1 ) ||
 	 ( uf->conf->size>0 &&
-	   uf->conf->size<=MAX(raw->raw.height,
-			       raw->raw.width * raw->pixel_aspect) ) ||
+	   uf->conf->size<=MAX(temp_height, temp_width) ) ||
 	 !uf->HaveFilters ) {
 	if (uf->conf->size==0 && uf->conf->shrink>1 &&
 		(int)(uf->conf->shrink*raw->pixel_aspect)%2==0)
