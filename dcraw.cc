@@ -3808,9 +3808,9 @@ skip_block: ;
 	  if (uc > (unsigned)(iwidth-2)) continue;
 	  fc -= uc;
 	  pix = img + ur*iwidth + uc;
-	  image[row*iwidth+col][c] = (ushort)
-	    ((pix[     0]*(1-fc) + pix[       1]*fc) * (1-fr) +
-	     (pix[iwidth]*(1-fc) + pix[iwidth+1]*fc) * fr);
+	  image[row*iwidth+col][c] = (ushort)(
+	    (pix[     0]*(1-fc) + pix[       1]*fc) * (1-fr) +
+	    (pix[iwidth]*(1-fc) + pix[iwidth+1]*fc) * fr);
 	}
       }
       free(img);
