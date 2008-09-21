@@ -3573,7 +3573,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
      * There should be more intelligent settings to window size. */
     gdk_screen_get_monitor_geometry(gdk_screen_get_default(), 0, &screen);
     max_preview_width = MIN(def_preview_width, screen.width-416);
-    max_preview_height = MIN(def_preview_height, screen.height-120);
+    max_preview_height = MIN(def_preview_height, screen.height-152);
     CFG->Scale = MAX((uf->initialWidth-1)/max_preview_width,
 	    (uf->initialHeight-1)/max_preview_height)+1;
     CFG->Scale = MAX(2, CFG->Scale);
