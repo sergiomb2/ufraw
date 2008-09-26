@@ -5153,11 +5153,17 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     }
 
     if ( status==GTK_RESPONSE_OK ) {
-	RC.RememberOutputPath = CFG->RememberOutputPath;
+	gboolean SaveRC = FALSE;
+	if ( RC.RememberOutputPath!=CFG->RememberOutputPath ) {
+	    RC.RememberOutputPath = CFG->RememberOutputPath;
+	    SaveRC = TRUE;
+	}
 	if ( !CFG->RememberOutputPath )
 	    g_strlcpy(CFG->outputPath, "", max_path);
-	g_strlcpy(RC.outputPath, CFG->outputPath, max_path);
-
+	if ( strncmp(RC.outputPath, CFG->outputPath, max_path)!=0 ) {
+	    g_strlcpy(RC.outputPath, CFG->outputPath, max_path);
+	    SaveRC = TRUE;
+	}
 	if ( CFG->saveConfiguration==enabled_state ) {
 	    /* Save configuration from CFG, but not the output filename. */
 	    strcpy(CFG->outputFilename, "");
@@ -5173,6 +5179,8 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	     * need to save this setting */
 	    if ( RC.saveConfiguration!=disabled_state ) {
 		RC.saveConfiguration = disabled_state;
+		conf_save(&RC, NULL, NULL);
+	    } else if ( SaveRC ) {
 		conf_save(&RC, NULL, NULL);
 	    }
 	    strcpy(RC.inputFilename, "");

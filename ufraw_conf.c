@@ -806,6 +806,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	char *utf8=g_filename_display_name(c->outputPath);
 	buf = uf_markup_buf(buf, "<OutputPath>%s</OutputPath>\n", utf8);
 	g_free(utf8);
+#if 0
+    // Now that outputPath is a GUI entry there is no need to guess it anymore.
     } else {
 	/* Guess outputPath */
 	char *inPath = g_path_get_dirname(c->inputFilename);
@@ -818,6 +820,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	}
 	g_free(outPath);
 	g_free(inPath);
+#endif
     }
 
     /* GUI settings are only saved to .ufrawrc */
