@@ -214,6 +214,8 @@ will be used instead.
 
 Grayscale conversion algorithm to use (default none).
 
+=back
+
 =item --darkframe=FILE
 
 Use FILE for raw darkframe subtraction.
