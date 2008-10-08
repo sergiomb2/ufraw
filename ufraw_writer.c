@@ -403,6 +403,7 @@ int ufraw_write_image(ufraw_data *uf)
 	if (uf->conf->losslessCompress) {
 	    TIFFSetField(out, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
 	    TIFFSetField(out, TIFFTAG_ZIPQUALITY, 9);
+	    TIFFSetField(out, TIFFTAG_PREDICTOR, 2);
 	}
 	else
 #endif
