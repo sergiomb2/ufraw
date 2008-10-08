@@ -785,7 +785,7 @@ int conf_load(conf_data *c, const char *IDFilename)
 
 int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 {
-    char *buf=NULL, *type, *current;
+    char *buf=NULL;
     int i, j;
 
     char *locale = uf_set_locale_C();
@@ -981,7 +981,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	/* But ALWAYS write the current curve */
 	if ( c->BaseCurveIndex==i || (curveBuf!=NULL && IDFilename==NULL) ) {
 	    if (curveBuf==NULL) curveBuf = g_strdup("");
-	    current = i==c->BaseCurveIndex?"yes":"no";
+	    char *current = i==c->BaseCurveIndex?"yes":"no";
 	    switch (i) {
 		case manual_curve:
 			buf = uf_markup_buf(buf,
@@ -1023,7 +1023,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	/* But ALWAYS write the current curve */
 	if ( c->curveIndex==i || (curveBuf!=NULL && IDFilename==NULL) ) {
 	    if (curveBuf==NULL) curveBuf = g_strdup("");
-	    current = i==c->curveIndex?"yes":"no";
+	    char *current = i==c->curveIndex?"yes":"no";
 	    switch (i) {
 		case manual_curve:
 			buf = uf_markup_buf(buf,
@@ -1051,44 +1051,39 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	// Display profile does not belong in ID files.
 	if (IDFilename!=NULL && j==display_profile)
 	    continue;
-	type = j==in_profile ? "InputProfile" :
-		j==out_profile ? "OutputProfile" :
+	 char *type = j==in_profile ? "InputProfile" :
+	        j==out_profile ? "OutputProfile" :
 		j==display_profile ? "DisplayProfile" : "Error";
-	/* The default sRGB profile is conf_default.profile[j][0] */
-	if ( c->profileIndex[j]<conf_default.profileCount[j] ||
-	     ( IDFilename==NULL &&
-	       ( c->profile[j][0].gamma!=conf_default.profile[j][0].gamma ||
-		 c->profile[j][0].linear!=conf_default.profile[j][0].linear ||
-		 c->profile[j][0].BitDepth!=
-			conf_default.profile[j][0].BitDepth ) ) ) {
-	    current = c->profileIndex[j]==0 ? "yes" : "no";
-	    char *profile = ( j==display_profile && c->profileIndex[j]==0 ) ?
-		    "System" : "sRGB";
-	    buf = uf_markup_buf(buf, "<%s%s Current='%s'>\n",
-		    profile, type, current);
-	    if (c->profile[j][0].gamma!=conf_default.profile[j][0].gamma)
-		buf = uf_markup_buf(buf,
-			"\t<Gamma>%lf</Gamma>\n", c->profile[j][0].gamma);
-	    if (c->profile[j][0].linear!=conf_default.profile[j][0].linear)
-		buf = uf_markup_buf(buf, "\t<Linearity>%lf</Linearity>\n",
-			c->profile[j][0].linear);
-	    if (c->profile[j][0].BitDepth!=conf_default.profile[j][0].BitDepth)
-		buf = uf_markup_buf(buf, "\t<BitDepth>%d</BitDepth>\n",
-			c->profile[j][0].BitDepth);
-	    buf = uf_markup_buf(buf, "</%s%s>\n", profile, type);
-	}
-	/* While the default ICC profile is conf_default.profile[j][1] */
-	for (i=conf_default.profileCount[j]; i<c->profileCount[j]; i++) {
-	    if (IDFilename!=NULL && i!=c->profileIndex[j])
+
+	for (i=0; i<c->profileCount[j]; i++) {
+
+	    gboolean current = i==c->profileIndex[j];
+	    /* In ID files we only save the current profiles */
+	    if ( IDFilename!=NULL && !current )
 		continue;
-	    current = i==c->profileIndex[j]?"yes":"no";
-	    buf = uf_markup_buf(buf, "<%s Current='%s'>%s\n",
-		    type, current, c->profile[j][i].name);
-	    char *utf8 = g_filename_display_name(c->profile[j][i].file);
-	    buf = uf_markup_buf(buf, "\t<File>%s</File>\n", utf8);
-	    g_free(utf8);
-	    buf = uf_markup_buf(buf, "\t<ProductName>%s</ProductName>\n",
-		    c->profile[j][i].productName);
+	    /* For the default profiles, if it is not the current profile
+	     * and nothing change, do not write it. */
+	    if ( i < conf_default.profileCount[j] && !current &&
+		 ( c->profile[j][i].gamma==conf_default.profile[j][i].gamma &&
+		   c->profile[j][i].linear==conf_default.profile[j][i].linear &&
+		   c->profile[j][i].BitDepth==
+			    conf_default.profile[j][i].BitDepth ) )
+		continue;
+	    char *profile = "";
+	    if ( j==in_profile && i==0 ) profile = "No";
+	    if ( j==in_profile && i==1 ) profile = "Matrix";
+	    if ( j==out_profile && i==0 ) profile = "sRGB";
+	    if ( j==display_profile && i==0 ) profile = "System";
+	    if ( j==display_profile && i==1 ) profile = "sRGB";
+	    buf = uf_markup_buf(buf, "<%s%s Current='%s'>%s\n",
+		    profile, type, current?"yes":"no", c->profile[j][i].name);
+	    if ( i >= conf_default.profileCount[j] ) {
+		char *utf8 = g_filename_display_name(c->profile[j][i].file);
+		buf = uf_markup_buf(buf, "\t<File>%s</File>\n", utf8);
+		g_free(utf8);
+		buf = uf_markup_buf(buf, "\t<ProductName>%s</ProductName>\n",
+			c->profile[j][i].productName);
+	    }
 	    if (c->profile[j][i].gamma!=conf_default.profile[j][1].gamma)
 		buf = uf_markup_buf(buf,
 			"\t<Gamma>%lf</Gamma>\n", c->profile[j][i].gamma);
@@ -1098,7 +1093,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	    if (c->profile[j][i].BitDepth!= conf_default.profile[j][1].BitDepth)
 		buf = uf_markup_buf(buf, "\t<BitDepth>%d</BitDepth>\n",
 			c->profile[j][i].BitDepth);
-	    buf = uf_markup_buf(buf, "</%s>\n", type);
+	    buf = uf_markup_buf(buf, "</%s%s>\n", profile, type);
 	}
     }
     if (c->intent[out_profile]!=conf_default.intent[out_profile])
