@@ -292,6 +292,11 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
 	    != exifData.end() )
 	exifData.erase(pos);
 #endif
+#if EXIV2_TEST_VERSION(0,17,91)
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.NikonPreview")))
+	    != exifData.end() )
+	exifData.erase(pos);
+#endif
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.NEFThumbnailSize")))
 	    != exifData.end() )
 	exifData.erase(pos);
