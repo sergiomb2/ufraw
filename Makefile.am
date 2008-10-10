@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.47 2008/05/23 21:32:32 udifuchs Exp $
+# $Id: Makefile.am,v 1.48 2008/10/10 08:05:57 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -61,7 +61,7 @@ libufraw_a_SOURCES = \
     ufraw_preview.c ufraw_saver.c ufraw_delete.c \
     ufraw_chooser.c ufraw_icons.c icons/ufraw_icons.h \
     curveeditor_widget.c curveeditor_widget.h \
-    ufraw_lens_ui.c
+    ufraw_lens_ui.c ufraw_ui.h
 
 ufraw_SOURCES = ufraw.c
 ufraw_LDADD = $(LDADD) $(GTK_LIBS)
