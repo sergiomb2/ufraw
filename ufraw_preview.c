@@ -3805,7 +3805,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     data->TemperatureAdjustment = adjustment_scale(subTable, 0, 1,
 	    _("Temperature"), CFG->temperature, &CFG->temperature,
-	    2000, 12000, 50, 200, 0,
+	    2000, 15000, 50, 200, 0,
 	    _("White balance color temperature (K)"),
 	    G_CALLBACK(adjustment_update));
     data->GreenAdjustment = adjustment_scale(subTable, 0, 2, _("Green"),

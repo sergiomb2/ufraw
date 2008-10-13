@@ -238,7 +238,7 @@ double profile_default_gamma(profile_data *p)
 
 /* Convert between Temperature and RGB.
  * Base on information from http://www.brucelindbloom.com/
- * The fit for D-illuminant between 4000K and 12000K are from CIE
+ * The fit for D-illuminant between 4000K and 15000K are from CIE
  * The generalization to 2000K < T < 4000K and the blackbody fits
  * are my own and should be taken with a grain of salt.
  */
@@ -284,7 +284,7 @@ void RGB_to_Temperature(double RGB[3], double *T, double *Green)
 {
     double Tmax, Tmin, testRGB[3];
     Tmin = 2000;
-    Tmax = 12000;
+    Tmax = 15000;
     for (*T=(Tmax+Tmin)/2; Tmax-Tmin>10; *T=(Tmax+Tmin)/2) {
 	Temperature_to_RGB(*T, testRGB);
 	if (testRGB[2]/testRGB[0] > RGB[2]/RGB[0])
