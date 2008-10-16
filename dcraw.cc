@@ -4902,6 +4902,11 @@ int CLASS parse_tiff_ifd (int base)
   while (entries--) {
     tiff_get (base, &tag, &type, &len, &save);
     switch (tag) {
+      case 11:				/* Processing Software */
+	fgets (software, 64, ifp);
+	if (!strncmp(software,"UFRaw",5))
+	  is_raw = 0;
+	break;
       case 17: case 18:
 	if (type == 3 && len == 1)
 	  cam_mul[(tag-17)*2] = get2() / 256.0;
