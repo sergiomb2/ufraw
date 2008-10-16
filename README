@@ -13,7 +13,7 @@ UFRaw was originally based on the GIMP plug-in by Dave Coffin
 http://www.cybercom.net/~dcoffin/
 and on Pawel T. Jochym's (jochym at ifj edu pl) GIMP plug-in.
 
-UFRaw is licensed under the GNU General Public License.
+UFRaw is licensed under the GNU General Public License version 2 or later.
 
 Terminology
 ===========
@@ -57,16 +57,17 @@ configure: build CinePaint plug-in: no
 configure: EXIF support using exiv2: yes
 configure: JPEG support: yes
 configure: PNG support: yes
+configure: FITS support: no
 configure: TIFF support: yes
 configure: gzip compressed raw support: yes
 configure: bzip2 compressed raw support: yes
 configure: Scrolling in preview using GtkImageView: yes
+configure: Lens defects correction via lensfun: no
 
 If some of the lines end with 'no' instead of 'yes', UFRaw can still
 be built, but the named option will be disabled.
 
-With GTK+ >= 2.6 you will get the extra option of seeing hidden files
-in the file chooser dialogs.
+GTK+ version 2.6 or higher is required for the GUI.
 
 The exiv2 development package is required for reading the EXIF data.
 Supported formats are Canon (CRW, CR2), Fuji (RAF), Minolta (MRW),
@@ -111,6 +112,9 @@ Other options for the configuration script are:
 --enable-contrast: enable the contrast setting option.
 
 --enable-interp-none: enable 'None' interpolation (mostly for debugging).
+
+--with-lensfun: use the lensfun library - experimental feature,
+		read http://ufraw.sourceforge.net/lensfun.html before using it.
 
 --with-prefix=PREFIX: use also PREFIX as input prefix for the build.
 
@@ -278,6 +282,41 @@ date user guide.
 
 History
 =======
+
+10/10/2008 - UFRaw-0.14 release, based on DCRaw v 8.88.
+
+* Change license from 'GPLv2' to 'GPLv2 or later'.
+* Move save-as dialog controls to main window.
+* Add a 'remember output path' option.
+* Grayscale conversion. Patch by Bruce Guenter.
+* Experimental lensfun support. Patch by  Andrew Zabolotny.
+  Enable with './configure --with-lensfun'.
+  Read http://ufraw.sourceforge.net/lensfun.html before using it.
+* Experimental contrast adjustment. Patch by Bruce Guenter.
+  Enabled with './configure --enable-contrast'.
+* Added --enable-dst-correction configuration option to use local time
+  (with DST) for file timestamps.
+* Arbitrary rotation support for ufraw-batch. Patch by Martin Ling.
+* Write EXIF data to TIFF files. Requires the soon to be released Exiv2-0.18.
+* Load private resource file $HOME/.ufraw-gtkrc at startup.
+* Replace the "use matrix" check box with a "Color matrix" profile.
+  Patch by Rafael Espindola.
+* Remove misleading or irrelevant EXIF fields. Patch by Martin Ling.
+* Added --rotate=no to ufraw-batch. This is useful for creating
+  contact sheets. Patch by Serge Droz.
+* Improved auto-exposure/black/curve tools by using normalized raw histogram
+  instead of raw luminosity histogram.
+* For JPEG output, 2x2 sampling for the luminance components was used by
+  default. Now for compression>90 we use 2x1 sampling and for
+  compression>92 we use 1x1  sampling.
+* Use predictor value 2 when saving deflated TIFFs for much better compression.
+* New Swedish translation by Daniel Nylander.
+* New Czech translation by Milan Knizek.
+* New Italian translation by Daniele Medri.
+* New Dutch translation by Simon Oosthoek.
+* New Norwegian translation by Alvin Brattli.
+* New Serbian translation (Cyrillic and Latin) by Milos Popovic.
+* New Catalan translation by Paco Riviere.
 
 12/11/2007 - UFRaw-0.13 release, based on DCRaw v 8.80.
 
