@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.121 2008/09/13 16:25:10 nkbj Exp $
+dnl $Id: configure.ac,v 1.122 2008/10/16 18:27:31 udifuchs Exp $
 AC_INIT(UFRaw, 0.14)
 AC_PREREQ(2.57)
 
@@ -191,7 +191,7 @@ AC_ARG_WITH(lensfun,
   [  --with-lensfun          use the lensfun library - experimental feature,
               read http://ufraw.sourceforge.net/lensfun.html before using it. ],
   [ AC_MSG_RESULT(yes)
-    PKG_CHECK_MODULES(LENSFUN, lensfun >= 0.2,
+    PKG_CHECK_MODULES(LENSFUN, lensfun >= 0.2.3,
       [ have_lensfun=yes
         AC_DEFINE(HAVE_LENSFUN, 1, have lensfun library) ] ) ],
   [ have_lensfun=no
