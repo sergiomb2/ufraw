@@ -306,7 +306,7 @@ History
   contact sheets. Patch by Serge Droz.
 * Improved auto-exposure/black/curve tools by using normalized raw histogram
   instead of raw luminosity histogram.
-* For JPEG output, 2x2 sampling for the luminance components was used by
+* For JPEG output, 2x2 sampling for the chrominance components was used by
   default. Now for compression>90 we use 2x1 sampling and for
   compression>92 we use 1x1  sampling.
 * Use predictor value 2 when saving deflated TIFFs for much better compression.
