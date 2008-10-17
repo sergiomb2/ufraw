@@ -118,16 +118,41 @@ long ufraw_send_to_gimp(ufraw_data *uf)
     g_free(confFilename);
     char *commandLine = g_strdup_printf("%s \"%s\"",
 	    uf->conf->remoteGimpCommand, fullConfFilename);
-    g_free(fullConfFilename);
     /* gimp-remote starts the gimp in a fork().
      * Therefore we must call it asynchronously. */
     if ( !g_spawn_command_line_async(commandLine, &err) ) {
 	g_free(commandLine);
-	ufraw_message(UFRAW_ERROR, "%s\n%s",
-		_("Error activating Gimp."), err->message);
-	g_error_free(err);
-	return UFRAW_ERROR;
+#ifdef WIN32
+	if ( strcmp(uf->conf->remoteGimpCommand,
+		    conf_default.remoteGimpCommand)==0 ) {
+	    /* If the user didn't play with the remoteGimpCommand,
+	     * try to run Gimp-2.6 instead of Gimp-2.4 */
+	    g_strlcpy(uf->conf->remoteGimpCommand, "gimp-2.6.exe", max_path);
+	    commandLine = g_strdup_printf("%s \"%s\"",
+		    uf->conf->remoteGimpCommand, fullConfFilename);
+	    g_error_free(err);
+	    err = NULL;
+	    /* gimp-remote starts the gimp in a fork().
+	     * Therefore we must call it asynchronously. */
+	    if ( !g_spawn_command_line_async(commandLine, &err) ) {
+		g_free(commandLine);
+		g_free(fullConfFilename);
+		ufraw_message(UFRAW_ERROR, "%s\n%s",
+			_("Error activating Gimp."), err->message);
+		g_error_free(err);
+		return UFRAW_ERROR;
+	    }
+	} else
+#endif
+	{
+	    g_free(fullConfFilename);
+	    ufraw_message(UFRAW_ERROR, "%s\n%s",
+		    _("Error activating Gimp."), err->message);
+	    g_error_free(err);
+	    return UFRAW_ERROR;
+	}
     }
+    g_free(fullConfFilename);
     g_free(commandLine);
     // Sleep for 0.2 seconds, giving time for gimp-remote to do the X query.
     g_usleep(200*1000);

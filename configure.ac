@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.122 2008/10/16 18:27:31 udifuchs Exp $
+dnl $Id: configure.ac,v 1.123 2008/10/17 01:12:55 udifuchs Exp $
 AC_INIT(UFRaw, 0.14)
 AC_PREREQ(2.57)
 
@@ -111,6 +111,11 @@ AM_CONDITIONAL(MAKE_GIMP, test $have_gimp = yes)
 AC_SUBST(GIMP_CFLAGS)
 AC_SUBST(GIMP_LIBS)
 AC_SUBST(GIMP_LIBDIR)
+if test "$have_gimp" = "yes"; then
+  PKG_CHECK_MODULES(GIMP_2_6, gimpui-2.0 >= 2.6.0,
+    [ AC_DEFINE_UNQUOTED(HAVE_GIMP_2_6, 1, have Gimp 2.6 or later) ],
+    [ AC_DEFINE_UNQUOTED(HAVE_GIMP_2_6, 0, have Gimp 2.6 or later) ])
+fi
 
 PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.22,
   [ have_cinepaint=yes
