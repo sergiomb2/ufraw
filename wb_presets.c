@@ -2099,6 +2099,12 @@ const wb_data wb_preset[] = {
   { "Panasonic", "DMC-LX2", Incandescent, 0, 	{ 1.365019, 1, 2.410646, 0 } },
   { "Panasonic", "DMC-LX2", Incandescent, 3, 	{ 1.235741, 1, 2.212928, 0 } },
 
+  { "Panasonic", "DMC-LX3", Daylight, 0,	{ 2.022814, 1, 1.623574, 0 } },
+  { "Panasonic", "DMC-LX3", Cloudy, 0,		{ 2.224335, 1, 1.520913, 0 } },
+  { "Panasonic", "DMC-LX3", Shade, 0,		{ 2.475285, 1, 1.399240, 0 } },
+  { "Panasonic", "DMC-LX3", Flash, 0,		{ 2.296578, 1, 1.482890, 0 } },
+  { "Panasonic", "DMC-LX3", Incandescent, 0,	{ 1.346008, 1, 2.269962, 0 } },
+
   /* It seems that the *ist D WB settings are not really presets. */
   { "PENTAX", "*ist D", Daylight, 0,		{ 1.460938, 1, 1.019531, 0 } },
   { "PENTAX", "*ist D", Shade, 0,		{ 1.734375, 1, 1.000000, 0 } },
