@@ -294,7 +294,7 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
 		    d->profile[in_profile], TYPE_RGB_16,
 		    d->profile[display_profile], TYPE_RGB_16,
 		    d->profile[out_profile],
-		    d->intent[display_profile], d->intent[out_profile],
+		    d->intent[out_profile], d->intent[display_profile],
 		    cmsFLAGS_SOFTPROOFING);
 	} else {
 	    /* Following code imitates the function
@@ -309,7 +309,7 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
 		prof[i++] = d->saturationProfile;
 	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
 		    TYPE_RGB_16, NOCOLORSPACECHECK(TYPE_RGB_16),
-		    d->intent[display_profile], cmsFLAGS_SOFTPROOFING);
+		    d->intent[out_profile], cmsFLAGS_SOFTPROOFING);
 
 	    prof[0] = cmsTransform2DeviceLink(d->colorTransform,
 		    cmsFLAGS_GUESSDEVICECLASS);
@@ -318,7 +318,7 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
 		    prof[0], TYPE_RGB_16,
 		    d->profile[display_profile], TYPE_RGB_16,
 		    d->profile[out_profile],
-		    d->intent[display_profile], d->intent[out_profile],
+		    d->intent[out_profile], d->intent[display_profile],
 		    cmsFLAGS_SOFTPROOFING);
 	}
     }
