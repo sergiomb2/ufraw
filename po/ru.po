@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the UFRaw package.
 # Alexey Voinov <voins@voins.program.ru>, 2006.
 # Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net.by>, 2006, 2007.
-# Andrew Zabolotny <andyz@users.sourceforge.net>, 2007.
+# Andrew Zabolotny <andyz@users.sourceforge.net>, 2007, 2008.
 #
 msgid ""
 msgstr ""
