@@ -283,7 +283,14 @@ date user guide.
 History
 =======
 
-10/10/2008 - UFRaw-0.14 release, based on DCRaw v 8.88.
+19/10/2008 - UFRaw-0.14.1 release, based on DCRaw v 8.88.
+
+* Fix the "Send to Gimp" option to work with Gimp-2.6 that no longer ships
+  the remote-gimp command.
+* Output and Display intents where switched when a proofing transformation was
+  used.
+
+16/10/2008 - UFRaw-0.14 release, based on DCRaw v 8.88.
 
 * Change license from 'GPLv2' to 'GPLv2 or later'.
 * Move save-as dialog controls to main window.
