@@ -37,11 +37,16 @@ extern "C" {
  * Helper function to copy a string to a buffer, converting it from
  * current locale (in which exiv2 often returns strings) to UTF-8.
  */
-static void strlcpy_to_utf8(char *dest, size_t dest_max,
-	Exiv2::ExifData::iterator pos)
+static void uf_strlcpy_to_utf8(char *dest, size_t dest_max,
+	Exiv2::ExifData::iterator pos, Exiv2::ExifData& exifData)
 {
+#if EXIV2_TEST_VERSION(0,17,99)		/* Exiv2 0.18-pre1 */
+    std::stringstream str = pos->print(exifData);
+#else
+    (void)exifData;
     std::stringstream str;
     str << *pos;
+#endif
 
     char *s = g_locale_to_utf8(str.str().c_str(), str.str().length(),
 				NULL, NULL, NULL);
@@ -49,7 +54,7 @@ static void strlcpy_to_utf8(char *dest, size_t dest_max,
 	g_strlcpy(dest, s, dest_max);
 	g_free(s);
     } else {
-	g_strlcpy (dest, str.str ().c_str (), dest_max);
+	g_strlcpy(dest, str.str().c_str(), dest_max);
     }
 }
 
@@ -88,104 +93,108 @@ try {
     /* Read shutter time */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.ExposureTime")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->shutterText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->shutterText, max_name, pos, exifData);
 	uf->conf->shutter = pos->toFloat ();
     } else if ( (pos=exifData.findKey(
 		    Exiv2::ExifKey("Exif.Photo.ShutterSpeedValue")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->shutterText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->shutterText, max_name, pos, exifData);
 	uf->conf->shutter = 1.0 / pos->toFloat ();
     }
     /* Read aperture */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.FNumber")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->apertureText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->apertureText, max_name, pos, exifData);
 	uf->conf->aperture = pos->toFloat ();
     } else if ( (pos=exifData.findKey(
 		    Exiv2::ExifKey("Exif.Photo.ApertureValue")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->apertureText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->apertureText, max_name, pos, exifData);
 	uf->conf->aperture = pos->toFloat ();
     }
     /* Read ISO speed */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.ISOSpeedRatings")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->isoText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey(
 			"Exif.CanonSi.ISOSpeed"))) != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->isoText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon1.ISOSpeed")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->isoText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon2.ISOSpeed")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->isoText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.ISOSpeed")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->isoText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
     } else if ( (pos=exifData.findKey(
 		    Exiv2::ExifKey("Exif.MinoltaCsNew.ISOSpeed")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->isoText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
     } else if ( (pos=exifData.findKey(
 		    Exiv2::ExifKey("Exif.MinoltaCsOld.ISOSpeed")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->isoText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
     } else if ( (pos=exifData.findKey(
 		    Exiv2::ExifKey("Exif.MinoltaCs5D.ISOSpeed")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->isoText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey(
 			"Exif.MinoltaCs7D.ISOSpeed")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->isoText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
     }
     /* Read focal length */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.FocalLength")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->focalLenText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->focalLenText, max_name, pos, exifData);
 	uf->conf->focal_len = pos->toFloat ();
     }
     /* Read focal length in 35mm equivalent */
     if ( (pos=exifData.findKey(Exiv2::ExifKey(
 		"Exif.Photo.FocalLengthIn35mmFilm")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->focalLen35Text, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->focalLen35Text, max_name, pos, exifData);
     }
     /* Read lens name */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.Lens")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->lensText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
+    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.CanonCs.LensType")))
+		!= exifData.end() ) {
+	std::string str = pos->print(&exifData);
+	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Canon.0x0095")))
 		!= exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->lensText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Minolta.LensID")))
 		!= exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->lensText, max_name, pos);
-#if EXIV2_TEST_VERSION(0,15,99)		/* Exiv2 0.16-pre1 */
+	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
+#if EXIV2_TEST_VERSION(0,16,0)
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.LensType")))
 		!= exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->lensText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
 #endif
     }
     /* Read flash mode */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.Flash")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->flashText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->flashText, max_name, pos, exifData);
     }
     /* Read White Balance Setting */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.WhiteBalance")))
 	    != exifData.end() ) {
-	strlcpy_to_utf8(uf->conf->whiteBalanceText, max_name, pos);
+	uf_strlcpy_to_utf8(uf->conf->whiteBalanceText, max_name, pos, exifData);
     }
 
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.Make")))
 	    != exifData.end() ) {
-        strlcpy_to_utf8(uf->conf->real_make, max_name, pos);
+        uf_strlcpy_to_utf8(uf->conf->real_make, max_name, pos, exifData);
     }
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.Model")))
 	    != exifData.end() ) {
-        strlcpy_to_utf8(uf->conf->real_model, max_name, pos);
+        uf_strlcpy_to_utf8(uf->conf->real_model, max_name, pos, exifData);
     }
 
     /* Store all EXIF data read in. */
@@ -301,7 +310,7 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
 	    != exifData.end() )
 	exifData.erase(pos);
 
-#if EXIV2_TEST_VERSION(0,15,99)		/* Exiv2 0.16-pre1 */
+#if EXIV2_TEST_VERSION(0,16,0)
     // Pentax thumbnail data
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.PreviewResolution")))
 	    != exifData.end() )
