@@ -51,14 +51,6 @@ static const int def_preview_width = 9000;
 static const int def_preview_height = 9000;
 static const int his_max_height = 256;
 
-#define page_num_spot 0
-#define page_num_gray 1
-#ifdef HAVE_LENSFUN
-#define page_num_crop 6
-#else
-#define page_num_crop 5
-#endif
-
 enum { pixel_format, percent_format };
 enum { without_zone, with_zone };
 
@@ -1260,7 +1252,7 @@ static gboolean render_spot(preview_data *data)
 	    (int)rgb[0], (int)rgb[1], (int)rgb[2]);
     gtk_label_set_markup(data->SpotPatch, tmp);
     gtk_widget_show(GTK_WIDGET(data->SpotTable));
-    if ( data->PageNum!=page_num_crop )
+    if ( data->PageNum!=data->PageNumCrop )
 	draw_spot(data, TRUE);
 
     return FALSE;
@@ -1520,8 +1512,8 @@ static gboolean preview_button_press_event(GtkWidget *event_box,
     if (data->FreezeDialog) return FALSE;
     if (event->button!=1) return FALSE;
     event_coordinate_rescale(&event->x, &event->y, data);
-    if ( data->PageNum==page_num_spot ||
-	 data->PageNum==page_num_gray ) {
+    if ( data->PageNum==data->PageNumSpot ||
+	 data->PageNum==data->PageNumGray ) {
 	data->PreviewButtonPressed = TRUE;
 	draw_spot(data, FALSE);
 	data->SpotX1 = data->SpotX2 = event->x;
@@ -1530,7 +1522,7 @@ static gboolean preview_button_press_event(GtkWidget *event_box,
 		(GSourceFunc)(render_spot), data, NULL);
 	return TRUE;
     }
-    if ( data->PageNum==page_num_crop ) {
+    if ( data->PageNum==data->PageNumCrop ) {
 	data->PreviewButtonPressed = TRUE;
 	return TRUE;
     }
@@ -1657,7 +1649,7 @@ static gboolean preview_motion_notify_event(GtkWidget *event_box,
 #ifdef HAVE_GTKIMAGEVIEW
     if (!gtk_event_box_get_above_child(GTK_EVENT_BOX(event_box))) return FALSE;
 #endif
-    if ( data->PageNum==page_num_crop )
+    if ( data->PageNum==data->PageNumCrop )
 	return crop_motion_notify(data, event);
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
     if ( !data->PreviewButtonPressed ) return FALSE;
@@ -3458,7 +3450,7 @@ static GtkWidget *control_button(const char *stockImage, const char *tip,
 }
 
 static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
-	guint page_num, gpointer user_data)
+	int page_num, gpointer user_data)
 {
     (void)page;
     (void)user_data;
@@ -3468,12 +3460,12 @@ static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
     GtkWidget *event_box =
 	    gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_EVENT_BOX);
 #ifdef HAVE_GTKIMAGEVIEW
-    if ( page_num==page_num_spot ||
-	 page_num==page_num_gray ) {
+    if ( page_num==data->PageNumSpot ||
+	 page_num==data->PageNumGray ) {
 	gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), TRUE);
 	gdk_window_set_cursor(event_box->window, data->Cursor[spot_cursor]);
 	draw_spot(data, TRUE);
-    } else if ( page_num==page_num_crop ) {
+    } else if ( page_num==data->PageNumCrop ) {
 	gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), TRUE);
 	gdk_window_set_cursor(event_box->window, data->Cursor[crop_cursor]);
 	draw_spot(data, FALSE);
@@ -3482,7 +3474,7 @@ static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
 	draw_spot(data, TRUE);
     }
 #else
-    if ( page_num==page_num_crop ) {
+    if ( page_num==data->PageNumCrop ) {
 	gdk_window_set_cursor(event_box->window, data->Cursor[crop_cursor]);
 	draw_spot(data, FALSE);
     } else {
@@ -3503,107 +3495,17 @@ static void list_store_add(GtkListStore *store, char *name, char *var)
     }
 }
 
-int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
+static void rawhistogram_fill_interface(preview_data *data,
+					GtkTable* table)
 {
-    GtkWidget *previewWindow, *previewVBox;
-    GtkTable *table, *subTable;
-    GtkBox *previewHBox, *box, *hbox;
-    GtkComboBox *combo;
-    GtkWidget *button, *event_box, *align,
-	    *label, *vBox, *hBox, *page, *menu, *menu_item, *frame, *entry;
-    GSList *group;
+    GtkWidget *event_box;
     GdkPixbuf *pixbuf;
-    GdkRectangle screen;
-    int max_preview_width, max_preview_height;
-    int preview_width, preview_height, i, c;
-    long j;
-    int status, rowstride, curveeditorHeight;
     guint8 *pixies;
-    preview_data PreviewData;
-    preview_data *data = &PreviewData;
+    GtkWidget *menu;
+    GSList *group;
+    GtkWidget *menu_item;
+    int rowstride;
 
-    /* Fill the whole structure with zeros, to avoid surprises */
-    memset (&PreviewData, 0, sizeof (PreviewData));
-
-    data->UF = uf;
-    data->SaveFunc = save_func;
-
-    data->SaveConfig = *uf->conf;
-    data->SpotX1 = -1;
-    data->SpotX2 = -1;
-    data->SpotY1 = -1;
-    data->SpotY2 = -1;
-    data->SpotDraw = FALSE;
-    data->FreezeDialog = TRUE;
-    data->PageNum = page_num_spot;
-    data->DrawnCropX1 = 0;
-    data->DrawnCropX2 = 99999;
-    data->DrawnCropY1 = 0;
-    data->DrawnCropY2 = 99999;
-
-    data->AspectRatio = 0.0;
-    data->BlinkTimer = 0;
-    for (i=0; i<num_buttons; i++) {
-	data->ControlButton[i] = NULL;
-	data->ButtonMnemonic[i] = 0;
-    }
-    previewWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-    char *utf8_filename = g_filename_display_name(uf->filename);
-    char *previewHeader = g_strdup_printf(_("%s - UFRaw"), utf8_filename);
-    gtk_window_set_title(GTK_WINDOW(previewWindow), previewHeader);
-    g_free(previewHeader);
-    g_free(utf8_filename);
-
-    ufraw_icons_init();
-    uf_window_set_icon_name(GTK_WINDOW(previewWindow), "ufraw");
-    g_signal_connect(G_OBJECT(previewWindow), "delete-event",
-	    G_CALLBACK(window_delete_event), NULL);
-    g_signal_connect(G_OBJECT(previewWindow), "map-event",
-		     G_CALLBACK(window_map_event), NULL);
-    g_signal_connect(G_OBJECT(previewWindow), "unmap-event",
-		     G_CALLBACK(window_unmap_event), NULL);
-    g_signal_connect(G_OBJECT(previewWindow), "key-press-event",
-		     G_CALLBACK(control_button_key_press_event), data);
-    g_object_set_data(G_OBJECT(previewWindow), "Preview-Data", data);
-    ufraw_focus(previewWindow, TRUE);
-    uf->widget = previewWindow;
-
-    /* With the following guesses the window usually fits into the screen.
-     * There should be more intelligent settings to window size. */
-    gdk_screen_get_monitor_geometry(gdk_screen_get_default(), 0, &screen);
-    max_preview_width = MIN(def_preview_width, screen.width-416);
-    max_preview_height = MIN(def_preview_height, screen.height-152);
-    CFG->Scale = MAX((uf->initialWidth-1)/max_preview_width,
-	    (uf->initialHeight-1)/max_preview_height)+1;
-    CFG->Scale = MAX(2, CFG->Scale);
-    CFG->Zoom = 100.0 / CFG->Scale;
-    // Make preview size a tiny bit larger to prevent rounding errors
-    // that will cause the scrollbars to appear.
-    preview_width = (uf->initialWidth+1) / CFG->Scale;
-    preview_height = (uf->initialHeight+1) / CFG->Scale;
-    if (screen.height<700) {
-	curveeditorHeight = 192;
-	data->HisMinHeight = 48;
-    } else if (screen.height<800) {
-	curveeditorHeight = 192;
-	data->HisMinHeight = 64;
-    } else if (screen.height<900) {
-	curveeditorHeight = 192;
-	data->HisMinHeight = 80;
-    } else {
-	curveeditorHeight = 256;
-	data->HisMinHeight = 96;
-    }
-    previewHBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
-    gtk_container_add(GTK_CONTAINER(previewWindow), GTK_WIDGET(previewHBox));
-    previewVBox = gtk_vbox_new(FALSE, 0);
-    gtk_box_pack_start(previewHBox, previewVBox, FALSE, FALSE, 2);
-    g_signal_connect(G_OBJECT(previewVBox), "size-allocate",
-	    G_CALLBACK(panel_size_allocate), NULL);
-
-    table = GTK_TABLE(table_with_frame(previewVBox,
-	    _(expanderText[raw_expander]), CFG->expander[raw_expander]));
     event_box = gtk_event_box_new();
     gtk_table_attach(table, event_box, 0, 1, 1, 2,
 	    GTK_EXPAND, GTK_EXPAND|GTK_FILL, 0, 0);
@@ -3643,76 +3545,157 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(menu_item), "toggled",
 	    G_CALLBACK(radio_menu_update), &CFG->rawHistogramScale);
     gtk_widget_show_all(menu);
+}
 
-    // Spot values:
-    data->SpotTable = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
-    data->SpotLabels = color_labels_new(data->SpotTable, 0, 0,
-	    _("Spot values:"), pixel_format, with_zone);
-    data->SpotPatch = GTK_LABEL(gtk_label_new(NULL));
-    // Set a small width to make sure the combo-box is not too big.
-    // The final size is set by the EXPAND|FILL options.
-    gtk_widget_set_size_request(GTK_WIDGET(data->SpotPatch), 50, -1);
-    gtk_table_attach(data->SpotTable, GTK_WIDGET(data->SpotPatch),
-	    6, 7, 0, 1, GTK_EXPAND|GTK_FILL, 0, 0, 0);
+static void livehistogram_fill_interface(preview_data *data,
+					 GtkTable *table)
+{
+    GtkWidget *event_box;
+    GdkPixbuf *pixbuf;
+    guint8 *pixies;
+    GtkWidget *menu;
+    GSList *group;
+    GtkWidget *menu_item;
+    GtkWidget *button;
+    int rowstride;
+    int i;
 
-    button = gtk_button_new();
-    gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-    gtk_container_add(GTK_CONTAINER(button),
-	    gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU));
-    gtk_table_attach(data->SpotTable, button, 7, 8, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-	    G_CALLBACK(close_spot), NULL);
+    event_box = gtk_event_box_new();
+    gtk_table_attach(table, event_box, 0, 7, 1, 2,
+	    0, GTK_EXPAND|GTK_FILL, 0, 0);
+    pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
+	    live_his_size+2, his_max_height+2);
+    data->LiveHisto = gtk_image_new_from_pixbuf(pixbuf);
+    gtk_container_add(GTK_CONTAINER(event_box), data->LiveHisto);
+    gtk_widget_set_size_request(data->LiveHisto,
+	    raw_his_size+2, data->HisMinHeight+2);
+    g_object_unref(pixbuf);
+    pixies = gdk_pixbuf_get_pixels(pixbuf);
+    rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+    memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)* rowstride +
+	    gdk_pixbuf_get_width(pixbuf)*gdk_pixbuf_get_n_channels(pixbuf));
 
-    // Exposure:
-    table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
-    data->ExposureAdjustment = adjustment_scale(table, 0, 0, "@exposure",
-	    CFG->exposure, &CFG->exposure,
-	    -3, 3, 0.01, 1.0/6, 2, _("Exposure compensation in EV"),
-	    G_CALLBACK(adjustment_update));
+    menu = gtk_menu_new();
+    g_object_set_data(G_OBJECT(menu), "Parent-Widget", event_box);
+    g_signal_connect_swapped(G_OBJECT(event_box), "button_press_event",
+	    G_CALLBACK(histogram_menu), menu);
+    group = NULL;
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("RGB histogram"));
+    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 0, 1);
+    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
+	    CFG->histogram==rgb_histogram);
+    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
+	    (gpointer)rgb_histogram);
+    g_signal_connect(G_OBJECT(menu_item), "toggled",
+	    G_CALLBACK(radio_menu_update), &CFG->histogram);
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("R+G+B histogram"));
+    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 1, 2);
+    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
+	    CFG->histogram==r_g_b_histogram);
+    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
+	    (gpointer)r_g_b_histogram);
+    g_signal_connect(G_OBJECT(menu_item), "toggled",
+	    G_CALLBACK(radio_menu_update), &CFG->histogram);
+    menu_item = gtk_radio_menu_item_new_with_label(group,
+	    _("Luminosity histogram"));
+    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 2, 3);
+    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
+	    CFG->histogram==luminosity_histogram);
+    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
+	    (gpointer)luminosity_histogram);
+    g_signal_connect(G_OBJECT(menu_item), "toggled",
+	    G_CALLBACK(radio_menu_update), &CFG->histogram);
+    menu_item = gtk_radio_menu_item_new_with_label(group,
+	    _("Value (maximum) histogram"));
+    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 3, 4);
+    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
+	    CFG->histogram==value_histogram);
+    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
+	    (gpointer)value_histogram);
+    g_signal_connect(G_OBJECT(menu_item), "toggled",
+	    G_CALLBACK(radio_menu_update), &CFG->histogram);
+    menu_item = gtk_radio_menu_item_new_with_label(group,
+	    _("Saturation histogram"));
+    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 4, 5);
+    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
+	    CFG->histogram==saturation_histogram);
+    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
+	    (gpointer)saturation_histogram);
+    g_signal_connect(G_OBJECT(menu_item), "toggled",
+	    G_CALLBACK(radio_menu_update), &CFG->histogram);
 
-    button = gtk_toggle_button_new();
-    gtk_table_attach(table, button, 7, 8, 0, 1, 0, 0, 0, 0);
-    restore_details_button_set(GTK_BUTTON(button), data);
-    g_signal_connect(G_OBJECT(button), "toggled",
-	    G_CALLBACK(toggle_button_update), &CFG->restoreDetails);
+    menu_item = gtk_separator_menu_item_new();
+    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 5, 6);
 
-    button = gtk_toggle_button_new();
-    gtk_table_attach(table, button, 8, 9, 0, 1, 0, 0, 0, 0);
-    clip_highlights_button_set(GTK_BUTTON(button), data);
-    g_signal_connect(G_OBJECT(button), "toggled",
-	    G_CALLBACK(toggle_button_update), &CFG->clipHighlights);
+    group = NULL;
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("Linear"));
+    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 6, 7);
+    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
+	    CFG->liveHistogramScale==linear_histogram);
+    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
+	    (gpointer)linear_histogram);
+    g_signal_connect(G_OBJECT(menu_item), "toggled",
+	    G_CALLBACK(radio_menu_update), &CFG->liveHistogramScale);
+    menu_item = gtk_radio_menu_item_new_with_label(group, _("Logarithmic"));
+    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 7, 8);
+    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
+	    CFG->liveHistogramScale==log_histogram);
+    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
+	    (gpointer)log_histogram);
+    g_signal_connect(G_OBJECT(menu_item), "toggled",
+	    G_CALLBACK(radio_menu_update), &CFG->liveHistogramScale);
+    gtk_widget_show_all(menu);
 
-    data->AutoExposureButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
-    gtk_container_add(GTK_CONTAINER(data->AutoExposureButton),
-	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
-    gtk_table_attach(table, GTK_WIDGET(data->AutoExposureButton), 9, 10, 0, 1,
-	    0, 0, 0, 0);
-    uf_widget_set_tooltip(GTK_WIDGET(data->AutoExposureButton),
-	    _("Auto adjust exposure"));
-    gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
-    g_signal_connect(G_OBJECT(data->AutoExposureButton), "clicked",
-	    G_CALLBACK(button_update), NULL);
+    i = 2;
+    data->AvrLabels = color_labels_new(table, 0, i++, _("Average:"),
+	    pixel_format, without_zone);
+    data->DevLabels = color_labels_new(table, 0, i++, _("Std. deviation:"),
+	    pixel_format, without_zone);
+    data->OverLabels = color_labels_new(table, 0, i,
+	    _("Overexposed:"), percent_format, without_zone);
+    toggle_button(table, 4, i, NULL, &CFG->overExp);
+    button = gtk_button_new_with_label(_("Indicate"));
+    gtk_table_attach(table, button, 6, 7, i, i+1,
+	    GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
+    g_signal_connect(G_OBJECT(button), "pressed",
+	    G_CALLBACK(render_special_mode), (void *)render_overexposed);
+    g_signal_connect(G_OBJECT(button), "released",
+	    G_CALLBACK(render_special_mode), (void *)render_default);
+    i++;
+    data->UnderLabels = color_labels_new(table, 0, i, _("Underexposed:"),
+	    percent_format, without_zone);
+    toggle_button(table, 4, i, NULL, &CFG->underExp);
+    button = gtk_button_new_with_label(_("Indicate"));
+    gtk_table_attach(table, button, 6, 7, i, i+1,
+	    GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
+    g_signal_connect(G_OBJECT(button), "pressed",
+	    G_CALLBACK(render_special_mode), (void *)render_underexposed);
+    g_signal_connect(G_OBJECT(button), "released",
+	    G_CALLBACK(render_special_mode), (void *)render_default);
+}
 
-    data->ResetExposureButton = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(data->ResetExposureButton),
-	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_table_attach(table, data->ResetExposureButton, 10, 11, 0, 1, 0,0,0,0);
-    uf_widget_set_tooltip(data->ResetExposureButton,
-	    _("Reset exposure to default"));
-    g_signal_connect(G_OBJECT(data->ResetExposureButton), "clicked",
-	    G_CALLBACK(button_update), NULL);
-
-    GtkNotebook *notebook = GTK_NOTEBOOK(gtk_notebook_new());
-    g_signal_connect(G_OBJECT(notebook), "switch-page",
-	    G_CALLBACK(notebook_switch_page), NULL);
-    data->Controls = GTK_WIDGET(notebook);
-    gtk_box_pack_start(GTK_BOX(previewVBox), GTK_WIDGET(notebook),
-	    FALSE, FALSE, 0);
+static void whitebalance_fill_interface(preview_data *data,
+					GtkWidget *page)
+{
+    GtkTable *table;
+    GtkTable *subTable;
+    int i;
+    GtkWidget *event_box;
+    GtkWidget *button;
+    GtkWidget *label;
+    GtkComboBox *combo;
+    GtkBox *box;
+    GtkWidget *frame;
+    ufraw_data *uf = data->UF;
 
     /* Start of White Balance setting page */
-    page = notebook_page_new(notebook, _("White balance"), "white-balance");
-    /* Set this page to be the opening page. */
-    int openingPage = gtk_notebook_page_num(notebook, page);
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     subTable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
@@ -3725,7 +3708,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     const wb_data *lastPreset = NULL;
     gboolean make_model_match = FALSE, make_model_fine_tuning = FALSE;
     char model[max_name];
-    if ( strcmp(uf->conf->make,"MINOLTA")==0 &&
+    if ( strcmp(data->UF->conf->make,"MINOLTA")==0 &&
 	    ( strncmp(uf->conf->model, "ALPHA", 5)==0 ||
 	      strncmp(uf->conf->model, "MAXXUM", 6)==0 ) ) {
 	/* Canonize Minolta model names (copied from dcraw) */
@@ -3908,6 +3891,37 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->ResetThresholdButton), "clicked",
 	    G_CALLBACK(button_update), NULL);
 
+    // Dark frame controls:
+    box = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    frame = gtk_frame_new(NULL);
+    gtk_box_pack_start(GTK_BOX(page), frame, FALSE, FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(box));
+
+    label = gtk_label_new(_("Dark Frame:"));
+    gtk_box_pack_start(box, label, FALSE, FALSE, 0);
+
+    label = gtk_label_new("");
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+    gtk_box_pack_start(box, label, TRUE, TRUE, 6);
+    data->DarkFrameLabel = GTK_LABEL(label);
+    set_darkframe_label(data);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+	    GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
+    uf_widget_set_tooltip(button, _("Load dark frame"));
+    g_signal_connect(G_OBJECT(button), "clicked",
+	    G_CALLBACK(load_darkframe), NULL);
+
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+	    GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
+    uf_widget_set_tooltip(button, _("Reset dark frame"));
+    g_signal_connect(G_OBJECT(button), "clicked",
+	    G_CALLBACK(reset_darkframe), NULL);
+
     /* Without GtkImageView, zoom controls cannot be bellow the image because
      * if the image is zoomed in too much the controls will be out of
      * the screen and it would be impossible to zoom out again. */
@@ -3946,42 +3960,17 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
 #endif // !HAVE_GTKIMAGEVIEW
 
-    // Dark frame controls:
-    box = GTK_BOX(gtk_hbox_new(FALSE, 0));
-    frame = gtk_frame_new(NULL);
-    gtk_box_pack_start(GTK_BOX(page), frame, FALSE, FALSE, 0);
-    gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(box));
-
-    label = gtk_label_new(_("Dark Frame:"));
-    gtk_box_pack_start(box, label, FALSE, FALSE, 0);
-
-    label = gtk_label_new("");
-    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-    gtk_box_pack_start(box, label, TRUE, TRUE, 6);
-    data->DarkFrameLabel = GTK_LABEL(label);
-    set_darkframe_label(data);
-
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
-    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    uf_widget_set_tooltip(button, _("Load dark frame"));
-    g_signal_connect(G_OBJECT(button), "clicked",
-	    G_CALLBACK(load_darkframe), NULL);
-
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    uf_widget_set_tooltip(button, _("Reset dark frame"));
-    g_signal_connect(G_OBJECT(button), "clicked",
-	    G_CALLBACK(reset_darkframe), NULL);
-
     /* End of White Balance setting page */
+}
+
+static void grayscale_fill_interface(preview_data *data,
+				     GtkWidget *page)
+{
+    GtkTable *table;
+    GtkWidget *label;
+    int i;
 
     /* Start of Grayscale page */
-    page = notebook_page_new(notebook, _("Grayscale"), "grayscale");
-    
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
     label = gtk_label_new(_("Grayscale Mode:"));
@@ -4026,16 +4015,19 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->ResetGrayscaleChannelMixerButton),
 	"clicked", G_CALLBACK(button_update), NULL);
     /* End of Grayscale page */
+}
 
-#ifdef HAVE_LENSFUN
-    /* Lens correction page */
-    page = notebook_page_new(notebook, _("Lens correction"), "lens");
-    lens_fill_interface (data, page);
-#endif /* HAVE_LENSFUN */
+static void basecurve_fill_interface(preview_data *data,
+				     GtkWidget *page,
+				     int curveeditorHeight)
+{
+    GtkTable *table;
+    GtkBox *box;
+    GtkWidget *align;
+    GtkWidget *button;
+    int i;
 
     /* Start of Base Curve page */
-    page = notebook_page_new(notebook, _("Base curve"), "base-curve");
-
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     box = GTK_BOX(gtk_hbox_new(FALSE, 0));
     gtk_table_attach(table, GTK_WIDGET(box), 0, 9, 0, 1,
@@ -4100,11 +4092,22 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->ResetBaseCurveButton), "clicked",
 	    G_CALLBACK(button_update), NULL);
     /* End of Base Curve page */
+}
+
+static void colormgmt_fill_interface(preview_data *data,
+				     GtkWidget *page,
+				     int plugin)
+{
+    GtkTable *table;
+    GtkWidget *button;
+    GtkWidget *event_box;
+    GtkWidget *icon;
+    GtkWidget *label;
+    GtkComboBox *combo;
+    int i;
+    long j;
 
     /* Start of Color management page */
-    page = notebook_page_new(notebook, _("Color management"),
-	    "color-management");
-
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     for (j=0; j<profile_types; j++) {
 	event_box = gtk_event_box_new();
@@ -4208,10 +4211,19 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    G_CALLBACK(combo_update_simple), NULL);
     gtk_table_attach(table, GTK_WIDGET(combo), 3, 8, 10, 11, GTK_FILL, 0, 0, 0);
     /* End of Color management page */
+}
+
+static void corrections_fill_interface(preview_data *data,
+				       GtkWidget *page,
+				       int curveeditorHeight)
+{
+    GtkTable *table;
+    GtkWidget *button;
+    GtkBox *box;
+    GtkTable *subTable;
+    int i;
 
     /* Start of Corrections page */
-    page = notebook_page_new(notebook, _("Correct luminosity, saturation"),
-	    "color-corrections");
 
     /* Contrast and Saturation adjustments */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
@@ -4337,10 +4349,17 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(data->AutoBlackButton), "clicked",
 	    G_CALLBACK(button_update), NULL);
     /* End of Corrections page */
+}
+
+static void transformations_fill_interface(preview_data *data,
+					   GtkWidget *page)
+{
+    GtkTable *table;
+    GtkWidget *button;
+    GtkWidget *entry;
+    GtkWidget *label;
 
     /* Start of transformations page */
-    page = notebook_page_new(notebook, _("Crop and rotate"), "crop");
-
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
     /* Start of Crop controls */
@@ -4533,11 +4552,21 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     g_signal_connect(G_OBJECT(button), "clicked",
 		     G_CALLBACK(flip_image), (gpointer)2);
     /* End of transformation page */
+}
 
-    if ( plugin==0  || plugin==3 ) {
+static void save_fill_interface(preview_data *data,
+				GtkWidget *page,
+				int plugin)
+{
+    GtkWidget *button;
+    GtkWidget *frame;
+    GtkWidget *vBox;
+    GtkWidget *hBox;
+    GtkWidget *label;
+    GtkWidget *event_box;
+    int i;
+
 	/* Start of Save page */
-	page = notebook_page_new(notebook, _("Save"), GTK_STOCK_SAVE_AS);
-    
 	frame = gtk_frame_new(NULL);
 	gtk_box_pack_start(GTK_BOX(page), frame, FALSE, FALSE, 0);
 	vBox = gtk_vbox_new(FALSE, 0);
@@ -4689,11 +4718,18 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 		_("Overwrite existing files without asking"), &CFG->overwrite);
 	gtk_box_pack_start(GTK_BOX(vBox), button, FALSE, FALSE, 0);
 	/* End of Save page */
-    }
+}
+
+static void exif_fill_interface(preview_data *data,
+				GtkWidget *page)
+{
+    GtkWidget *align;
+    GtkWidget *frame;
+    GtkWidget *vBox;
+    GtkWidget *label;
+    ufraw_data *uf = data->UF;
 
     /* Start of EXIF page */
-    page = notebook_page_new(notebook, _("EXIF"), "exif");
-
     frame = gtk_frame_new(NULL);
     gtk_box_pack_start(GTK_BOX(page), frame, TRUE, TRUE, 0);
     vBox = gtk_vbox_new(FALSE, 0);
@@ -4755,129 +4791,211 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	gtk_box_pack_start(GTK_BOX (vBox), label, FALSE, FALSE, 0);
     }
     /* End of EXIF page */
+}
+
+int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
+{
+    GtkWidget *previewWindow, *previewVBox;
+    GtkTable *table;
+    GtkBox *previewHBox, *box, *hbox;
+    GtkWidget *button, *vBox, *page;
+    GdkRectangle screen;
+    int max_preview_width, max_preview_height;
+    int preview_width, preview_height, i, c;
+    int status, curveeditorHeight;
+    preview_data PreviewData;
+    preview_data *data = &PreviewData;
+
+    /* Fill the whole structure with zeros, to avoid surprises */
+    memset (&PreviewData, 0, sizeof (PreviewData));
+
+    data->UF = uf;
+    data->SaveFunc = save_func;
+
+    data->SaveConfig = *uf->conf;
+    data->SpotX1 = -1;
+    data->SpotX2 = -1;
+    data->SpotY1 = -1;
+    data->SpotY2 = -1;
+    data->SpotDraw = FALSE;
+    data->FreezeDialog = TRUE;
+    data->DrawnCropX1 = 0;
+    data->DrawnCropX2 = 99999;
+    data->DrawnCropY1 = 0;
+    data->DrawnCropY2 = 99999;
+
+    data->AspectRatio = 0.0;
+    data->BlinkTimer = 0;
+    for (i=0; i<num_buttons; i++) {
+	data->ControlButton[i] = NULL;
+	data->ButtonMnemonic[i] = 0;
+    }
+    previewWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+    char *utf8_filename = g_filename_display_name(uf->filename);
+    char *previewHeader = g_strdup_printf(_("%s - UFRaw"), utf8_filename);
+    gtk_window_set_title(GTK_WINDOW(previewWindow), previewHeader);
+    g_free(previewHeader);
+    g_free(utf8_filename);
+
+    ufraw_icons_init();
+    uf_window_set_icon_name(GTK_WINDOW(previewWindow), "ufraw");
+    g_signal_connect(G_OBJECT(previewWindow), "delete-event",
+	    G_CALLBACK(window_delete_event), NULL);
+    g_signal_connect(G_OBJECT(previewWindow), "map-event",
+		     G_CALLBACK(window_map_event), NULL);
+    g_signal_connect(G_OBJECT(previewWindow), "unmap-event",
+		     G_CALLBACK(window_unmap_event), NULL);
+    g_signal_connect(G_OBJECT(previewWindow), "key-press-event",
+		     G_CALLBACK(control_button_key_press_event), data);
+    g_object_set_data(G_OBJECT(previewWindow), "Preview-Data", data);
+    ufraw_focus(previewWindow, TRUE);
+    uf->widget = previewWindow;
+
+    /* With the following guesses the window usually fits into the screen.
+     * There should be more intelligent settings to window size. */
+    gdk_screen_get_monitor_geometry(gdk_screen_get_default(), 0, &screen);
+    max_preview_width = MIN(def_preview_width, screen.width-416);
+    max_preview_height = MIN(def_preview_height, screen.height-152);
+    CFG->Scale = MAX((uf->initialWidth-1)/max_preview_width,
+	    (uf->initialHeight-1)/max_preview_height)+1;
+    CFG->Scale = MAX(2, CFG->Scale);
+    CFG->Zoom = 100.0 / CFG->Scale;
+    // Make preview size a tiny bit larger to prevent rounding errors
+    // that will cause the scrollbars to appear.
+    preview_width = (uf->initialWidth+1) / CFG->Scale;
+    preview_height = (uf->initialHeight+1) / CFG->Scale;
+    if (screen.height<700) {
+	curveeditorHeight = 192;
+	data->HisMinHeight = 48;
+    } else if (screen.height<800) {
+	curveeditorHeight = 192;
+	data->HisMinHeight = 64;
+    } else if (screen.height<900) {
+	curveeditorHeight = 192;
+	data->HisMinHeight = 80;
+    } else {
+	curveeditorHeight = 256;
+	data->HisMinHeight = 96;
+    }
+    previewHBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    gtk_container_add(GTK_CONTAINER(previewWindow), GTK_WIDGET(previewHBox));
+    previewVBox = gtk_vbox_new(FALSE, 0);
+    gtk_box_pack_start(previewHBox, previewVBox, FALSE, FALSE, 2);
+    g_signal_connect(G_OBJECT(previewVBox), "size-allocate",
+	    G_CALLBACK(panel_size_allocate), NULL);
+
+    table = GTK_TABLE(table_with_frame(previewVBox,
+	    _(expanderText[raw_expander]), CFG->expander[raw_expander]));
+    rawhistogram_fill_interface(data, table);
+
+    // Spot values:
+    data->SpotTable = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
+    data->SpotLabels = color_labels_new(data->SpotTable, 0, 0,
+	    _("Spot values:"), pixel_format, with_zone);
+    data->SpotPatch = GTK_LABEL(gtk_label_new(NULL));
+    // Set a small width to make sure the combo-box is not too big.
+    // The final size is set by the EXPAND|FILL options.
+    gtk_widget_set_size_request(GTK_WIDGET(data->SpotPatch), 50, -1);
+    gtk_table_attach(data->SpotTable, GTK_WIDGET(data->SpotPatch),
+	    6, 7, 0, 1, GTK_EXPAND|GTK_FILL, 0, 0, 0);
+
+    button = gtk_button_new();
+    gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+    gtk_container_add(GTK_CONTAINER(button),
+	    gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU));
+    gtk_table_attach(data->SpotTable, button, 7, 8, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(button), "clicked",
+	    G_CALLBACK(close_spot), NULL);
+
+    // Exposure:
+    table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
+    data->ExposureAdjustment = adjustment_scale(table, 0, 0, "@exposure",
+	    CFG->exposure, &CFG->exposure,
+	    -3, 3, 0.01, 1.0/6, 2, _("Exposure compensation in EV"),
+	    G_CALLBACK(adjustment_update));
+
+    button = gtk_toggle_button_new();
+    gtk_table_attach(table, button, 7, 8, 0, 1, 0, 0, 0, 0);
+    restore_details_button_set(GTK_BUTTON(button), data);
+    g_signal_connect(G_OBJECT(button), "toggled",
+	    G_CALLBACK(toggle_button_update), &CFG->restoreDetails);
+
+    button = gtk_toggle_button_new();
+    gtk_table_attach(table, button, 8, 9, 0, 1, 0, 0, 0, 0);
+    clip_highlights_button_set(GTK_BUTTON(button), data);
+    g_signal_connect(G_OBJECT(button), "toggled",
+	    G_CALLBACK(toggle_button_update), &CFG->clipHighlights);
+
+    data->AutoExposureButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
+    gtk_container_add(GTK_CONTAINER(data->AutoExposureButton),
+	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
+    gtk_table_attach(table, GTK_WIDGET(data->AutoExposureButton), 9, 10, 0, 1,
+	    0, 0, 0, 0);
+    uf_widget_set_tooltip(GTK_WIDGET(data->AutoExposureButton),
+	    _("Auto adjust exposure"));
+    gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
+    g_signal_connect(G_OBJECT(data->AutoExposureButton), "clicked",
+	    G_CALLBACK(button_update), NULL);
+
+    data->ResetExposureButton = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(data->ResetExposureButton),
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    gtk_table_attach(table, data->ResetExposureButton, 10, 11, 0, 1, 0,0,0,0);
+    uf_widget_set_tooltip(data->ResetExposureButton,
+	    _("Reset exposure to default"));
+    g_signal_connect(G_OBJECT(data->ResetExposureButton), "clicked",
+	    G_CALLBACK(button_update), NULL);
+
+    GtkNotebook *notebook = GTK_NOTEBOOK(gtk_notebook_new());
+    g_signal_connect(G_OBJECT(notebook), "switch-page",
+	    G_CALLBACK(notebook_switch_page), NULL);
+    data->Controls = GTK_WIDGET(notebook);
+    gtk_box_pack_start(GTK_BOX(previewVBox), GTK_WIDGET(notebook),
+	    FALSE, FALSE, 0);
+
+    page = notebook_page_new(notebook, _("White balance"), "white-balance");
+    /* Set this page to be the opening page. */
+    data->PageNumSpot = gtk_notebook_page_num(notebook, page);
+    data->PageNum = data->PageNumSpot;
+    whitebalance_fill_interface(data, page);
+
+    page = notebook_page_new(notebook, _("Grayscale"), "grayscale");
+    data->PageNumGray = gtk_notebook_page_num(notebook, page);
+    grayscale_fill_interface(data, page);
+
+#ifdef HAVE_LENSFUN
+    /* Lens correction page */
+    page = notebook_page_new(notebook, _("Lens correction"), "lens");
+    lens_fill_interface (data, page);
+#endif /* HAVE_LENSFUN */
+
+    page = notebook_page_new(notebook, _("Base curve"), "base-curve");
+    basecurve_fill_interface(data, page, curveeditorHeight);
+
+    page = notebook_page_new(notebook, _("Color management"),
+	    "color-management");
+    colormgmt_fill_interface(data, page, plugin);
+
+    page = notebook_page_new(notebook, _("Correct luminosity, saturation"),
+	    "color-corrections");
+    corrections_fill_interface(data, page, curveeditorHeight);
+
+    page = notebook_page_new(notebook, _("Crop and rotate"), "crop");
+    data->PageNumCrop = gtk_notebook_page_num(notebook, page);
+    transformations_fill_interface(data, page);
+
+    if ( plugin==0  || plugin==3 ) {
+	page = notebook_page_new(notebook, _("Save"), GTK_STOCK_SAVE_AS);
+	save_fill_interface(data, page, plugin);
+    }
+
+    page = notebook_page_new(notebook, _("EXIF"), "exif");
+    exif_fill_interface(data, page);
 
     table = GTK_TABLE(table_with_frame(previewVBox,
 	    _(expanderText[live_expander]), CFG->expander[live_expander]));
-    event_box = gtk_event_box_new();
-    gtk_table_attach(table, event_box, 0, 7, 1, 2,
-	    0, GTK_EXPAND|GTK_FILL, 0, 0);
-    pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-	    live_his_size+2, his_max_height+2);
-    data->LiveHisto = gtk_image_new_from_pixbuf(pixbuf);
-    gtk_container_add(GTK_CONTAINER(event_box), data->LiveHisto);
-    gtk_widget_set_size_request(data->LiveHisto,
-	    raw_his_size+2, data->HisMinHeight+2);
-    g_object_unref(pixbuf);
-    pixies = gdk_pixbuf_get_pixels(pixbuf);
-    rowstride = gdk_pixbuf_get_rowstride(pixbuf);
-    memset(pixies, 0, (gdk_pixbuf_get_height(pixbuf)-1)* rowstride +
-	    gdk_pixbuf_get_width(pixbuf)*gdk_pixbuf_get_n_channels(pixbuf));
-
-    menu = gtk_menu_new();
-    g_object_set_data(G_OBJECT(menu), "Parent-Widget", event_box);
-    g_signal_connect_swapped(G_OBJECT(event_box), "button_press_event",
-	    G_CALLBACK(histogram_menu), menu);
-    group = NULL;
-    menu_item = gtk_radio_menu_item_new_with_label(group, _("RGB histogram"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 0, 1);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->histogram==rgb_histogram);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)rgb_histogram);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-	    G_CALLBACK(radio_menu_update), &CFG->histogram);
-    menu_item = gtk_radio_menu_item_new_with_label(group, _("R+G+B histogram"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 1, 2);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->histogram==r_g_b_histogram);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)r_g_b_histogram);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-	    G_CALLBACK(radio_menu_update), &CFG->histogram);
-    menu_item = gtk_radio_menu_item_new_with_label(group,
-	    _("Luminosity histogram"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 2, 3);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->histogram==luminosity_histogram);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)luminosity_histogram);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-	    G_CALLBACK(radio_menu_update), &CFG->histogram);
-    menu_item = gtk_radio_menu_item_new_with_label(group,
-	    _("Value (maximum) histogram"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 3, 4);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->histogram==value_histogram);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)value_histogram);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-	    G_CALLBACK(radio_menu_update), &CFG->histogram);
-    menu_item = gtk_radio_menu_item_new_with_label(group,
-	    _("Saturation histogram"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 4, 5);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->histogram==saturation_histogram);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)saturation_histogram);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-	    G_CALLBACK(radio_menu_update), &CFG->histogram);
-
-    menu_item = gtk_separator_menu_item_new();
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 5, 6);
-
-    group = NULL;
-    menu_item = gtk_radio_menu_item_new_with_label(group, _("Linear"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 6, 7);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->liveHistogramScale==linear_histogram);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)linear_histogram);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-	    G_CALLBACK(radio_menu_update), &CFG->liveHistogramScale);
-    menu_item = gtk_radio_menu_item_new_with_label(group, _("Logarithmic"));
-    gtk_menu_attach(GTK_MENU(menu), menu_item, 0, 1, 7, 8);
-    group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item),
-	    CFG->liveHistogramScale==log_histogram);
-    g_object_set_data(G_OBJECT(menu_item), "Radio-Value",
-	    (gpointer)log_histogram);
-    g_signal_connect(G_OBJECT(menu_item), "toggled",
-	    G_CALLBACK(radio_menu_update), &CFG->liveHistogramScale);
-    gtk_widget_show_all(menu);
-
-    i = 2;
-    data->AvrLabels = color_labels_new(table, 0, i++, _("Average:"),
-	    pixel_format, without_zone);
-    data->DevLabels = color_labels_new(table, 0, i++, _("Std. deviation:"),
-	    pixel_format, without_zone);
-    data->OverLabels = color_labels_new(table, 0, i,
-	    _("Overexposed:"), percent_format, without_zone);
-    toggle_button(table, 4, i, NULL, &CFG->overExp);
-    button = gtk_button_new_with_label(_("Indicate"));
-    gtk_table_attach(table, button, 6, 7, i, i+1,
-	    GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
-    g_signal_connect(G_OBJECT(button), "pressed",
-	    G_CALLBACK(render_special_mode), (void *)render_overexposed);
-    g_signal_connect(G_OBJECT(button), "released",
-	    G_CALLBACK(render_special_mode), (void *)render_default);
-    i++;
-    data->UnderLabels = color_labels_new(table, 0, i, _("Underexposed:"),
-	    percent_format, without_zone);
-    toggle_button(table, 4, i, NULL, &CFG->underExp);
-    button = gtk_button_new_with_label(_("Indicate"));
-    gtk_table_attach(table, button, 6, 7, i, i+1,
-	    GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
-    g_signal_connect(G_OBJECT(button), "pressed",
-	    G_CALLBACK(render_special_mode), (void *)render_underexposed);
-    g_signal_connect(G_OBJECT(button), "released",
-	    G_CALLBACK(render_special_mode), (void *)render_default);
-    i++;
+    livehistogram_fill_interface(data, table);
 
     /* Right side of the preview window */
     vBox = gtk_vbox_new(FALSE, 0);
@@ -4901,7 +5019,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	    GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
     gtk_box_pack_start(GTK_BOX(vBox), scroll, TRUE, TRUE, 0);
 #else
-    align = gtk_alignment_new(0.5, 0.5, 0, 0);
+    GtkWidget *align = gtk_alignment_new(0.5, 0.5, 0, 0);
     gtk_box_pack_start(GTK_BOX(vBox), align, TRUE, TRUE, 0);
     box = GTK_BOX(gtk_vbox_new(FALSE, 0));
     gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(box));
@@ -5060,7 +5178,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 #endif
     gtk_widget_show_all(previewWindow);
     gtk_widget_hide(GTK_WIDGET(data->SpotTable));
-    gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), openingPage);
+    gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), data->PageNumSpot);
 
     // preview_progress() changes the size of the progress bar
     // and processes the event queue.

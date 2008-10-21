@@ -155,6 +155,9 @@ typedef struct {
     double shrink, height, width;
     gboolean OptionsChanged;
     int PageNum;
+    int PageNumSpot;
+    int PageNumGray;
+    int PageNumCrop;
     int HisMinHeight;
     /* Original aspect ratio (0) or actual aspect ratio */
     float AspectRatio;
