@@ -1,10 +1,10 @@
-# $Id: Makefile.am,v 1.11 2008/05/23 21:32:32 udifuchs Exp $
+# $Id: Makefile.am,v 1.12 2008/10/21 03:00:47 udifuchs Exp $
 
 noinst_HEADERS = ufraw_icons.h
 icon_DATA = ufraw.png
 icondir = $(datadir)/pixmaps
 
-CLEANFILES = ufraw_icons.h
+DISTCLEANFILES = ufraw_icons.h
 
 UFRAW_ICONS = ufraw.png exposure-24.png film-24.png digital-24.png \
     restore-lch-24.png restore-hsv-24.png interpolation-24.png \
@@ -23,7 +23,7 @@ EXTRA_DIST = $(UFRAW_ICONS) exposure.svg film.svg digital.svg \
     lock.svg exif.svg crop.svg rectify.svg grayscale.svg \
     lens.svg tca.svg vignetting.svg distortion.svg geometry.svg
 
-ufraw_icons.h: $(UFRAW_ICONS)
+ufraw_icons.h: $(UFRAW_ICONS) Makefile.am
 	gdk-pixbuf-csource --build-list  ufraw_icon $(srcdir)/ufraw.png \
 		exposure_24 $(srcdir)/exposure-24.png \
 		film_24 $(srcdir)/film-24.png \
@@ -56,4 +56,4 @@ ufraw_icons.h: $(UFRAW_ICONS)
 		distortion_24 $(srcdir)/distortion-24.png \
 		vignetting_24 $(srcdir)/vignetting-24.png \
 		geometry_24 $(srcdir)/geometry-24.png \
-		> $@ || rm -f $@
+		> $@ || { rm -f $@; exit 1; }
