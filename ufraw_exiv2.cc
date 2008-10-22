@@ -163,7 +163,6 @@ try {
 	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.CanonCs.LensType")))
 		!= exifData.end() ) {
-	std::string str = pos->print(&exifData);
 	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Canon.0x0095")))
 		!= exifData.end() ) {
