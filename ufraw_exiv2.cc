@@ -40,21 +40,22 @@ extern "C" {
 static void uf_strlcpy_to_utf8(char *dest, size_t dest_max,
 	Exiv2::ExifData::iterator pos, Exiv2::ExifData& exifData)
 {
-#if EXIV2_TEST_VERSION(0,17,99)		/* Exiv2 0.18-pre1 */
-    std::stringstream str = pos->print(exifData);
+#if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
+    std::string str = pos->print(&exifData);
 #else
     (void)exifData;
-    std::stringstream str;
-    str << *pos;
+    std::stringstream strm;
+    strm << *pos;
+    std::string str = strm.str();
 #endif
 
-    char *s = g_locale_to_utf8(str.str().c_str(), str.str().length(),
+    char *s = g_locale_to_utf8(str.c_str(), str.length(),
 				NULL, NULL, NULL);
     if ( s!=NULL ) {
 	g_strlcpy(dest, s, dest_max);
 	g_free(s);
     } else {
-	g_strlcpy(dest, str.str().c_str(), dest_max);
+	g_strlcpy(dest, str.c_str(), dest_max);
     }
 }
 
