@@ -951,7 +951,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 		grayscaleModeNames[c->grayscaleMode]);
     if (c->grayscaleMode==grayscale_mixer) {
         buf = uf_markup_buf(buf,
-		"<GrayscaleMixer>%.0f %.0f %.0f</GrayscaleMixer>\n",
+		"<GrayscaleMixer>%f %f %f</GrayscaleMixer>\n",
 		c->grayscaleMixer[0],
 		c->grayscaleMixer[1],
 		c->grayscaleMixer[2]);
