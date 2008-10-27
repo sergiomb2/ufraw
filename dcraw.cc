@@ -6024,6 +6024,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 9805,-2689,-1312,-5803,13064,3068,-2438,3075,8775 } },
     { "Canon EOS D60", 0, 0xfa0,
 	{ 6188,-1341,-890,-7168,14489,2937,-2640,3228,8483 } },
+    { "Canon EOS 5D Mark II", 0, 0x3200, /* copied from the 5D */
+	{ 6347,-479,-972,-8297,15954,2480,-1968,2131,7649 } },
     { "Canon EOS 5D", 0, 0xe6c,
 	{ 6347,-479,-972,-8297,15954,2480,-1968,2131,7649 } },
     { "Canon EOS 10D", 0, 0xfa0,
@@ -6947,6 +6949,11 @@ void CLASS identify()
     left_margin = 62;
     raw_width = width *= 4;
     maximum = 0x3d93;
+    goto canon_cr2;
+  } else if (is_canon && raw_width == 1448) {
+    top_margin  = 51;
+    left_margin = 158;
+    raw_width = width *= 4;
     goto canon_cr2;
   } else if (is_canon && raw_width == 5108) {
     top_margin  = 13;
