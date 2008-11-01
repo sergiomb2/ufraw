@@ -162,9 +162,11 @@ try {
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.Lens")))
 	    != exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
+#if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.CanonCs.LensType")))
 		!= exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
+#endif
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Canon.0x0095")))
 		!= exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
