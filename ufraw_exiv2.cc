@@ -200,7 +200,7 @@ try {
     }
 
     /* Store all EXIF data read in. */
-#if EXIV2_TEST_VERSION(0,17,91)
+#if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
     Exiv2::Blob blob;
     Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
     uf->inputExifBufLen = blob.size();
@@ -235,7 +235,7 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
     Exiv2::ExifData exifData = Exiv2::ExifData();
 
     /* Start from the input EXIF data */
-#if EXIV2_TEST_VERSION(0,17,91)
+#if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
     Exiv2::ExifParser::decode(exifData, uf->inputExifBuf, uf->inputExifBufLen);
 #else
     exifData.load(uf->inputExifBuf, uf->inputExifBufLen);
@@ -303,7 +303,7 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
 	    != exifData.end() )
 	exifData.erase(pos);
 #endif
-#if EXIV2_TEST_VERSION(0,17,91)
+#if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.NikonPreview.JPEGInterchangeFormat")))
 	    != exifData.end() )
 	exifData.erase(pos);
@@ -373,7 +373,7 @@ try {
     Exiv2::ExifData exifData = ufraw_prepare_exifdata(uf);
 
     int size;
-#if EXIV2_TEST_VERSION(0,17,91)
+#if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
     Exiv2::Blob blob;
     Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
     size = blob.size();
@@ -391,7 +391,7 @@ try {
 	    ufraw_message(UFRAW_SET_LOG,
 		    "buflen %d too big, erasing Exif.Photo.MakerNote\n",
 		    size+sizeof(ExifHeader));
-#if EXIV2_TEST_VERSION(0,17,91)
+#if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
 	    Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
 	    size = blob.size();
 #else
@@ -401,7 +401,7 @@ try {
 	}
     }
     if ( size+sizeof(ExifHeader)>65533 ) {
-#if EXIV2_TEST_VERSION(0,17,91)
+#if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
 	Exiv2::ExifThumb thumb(exifData);
 	thumb.erase();
 #else
@@ -410,7 +410,7 @@ try {
 	ufraw_message(UFRAW_SET_LOG,
 		"buflen %d too big, erasing Thumbnail\n",
 		size+sizeof(ExifHeader));
-#if EXIV2_TEST_VERSION(0,17,91)
+#if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
 	Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
 	size = blob.size();
 #else
@@ -421,7 +421,7 @@ try {
     uf->outputExifBufLen = size + sizeof(ExifHeader);
     uf->outputExifBuf = g_new(unsigned char, uf->outputExifBufLen);
     memcpy(uf->outputExifBuf, ExifHeader, sizeof(ExifHeader));
-#if EXIV2_TEST_VERSION(0,17,91)
+#if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
     memcpy(uf->outputExifBuf+sizeof(ExifHeader), &blob[0], blob.size());
 #else
     memcpy(uf->outputExifBuf+sizeof(ExifHeader), buf.pData_, buf.size_);
@@ -442,7 +442,7 @@ catch (Exiv2::AnyError& e) {
 
 extern "C" int ufraw_exif_write(ufraw_data *uf)
 {
-#if EXIV2_TEST_VERSION(0,17,91)
+#if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
     /* Redirect exiv2 errors to a string buffer */
     std::ostringstream stderror;
     std::streambuf *savecerr = std::cerr.rdbuf();
