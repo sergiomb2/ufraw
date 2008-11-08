@@ -418,6 +418,20 @@ try {
 	size = buf.size_;
 #endif
     }
+#if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
+    if ( size+sizeof(ExifHeader)>65533 ) {
+	Exiv2::ExifData::iterator pos;
+	if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Canon.0x4005")))
+		!= exifData.end() ) {
+	    exifData.erase(pos);
+	    ufraw_message(UFRAW_SET_LOG,
+		    "buflen %d too big, erasing Exif.Canon.0x4005\n",
+		    size+sizeof(ExifHeader));
+	    Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
+	    size = blob.size();
+	}
+    }
+#endif
     uf->outputExifBufLen = size + sizeof(ExifHeader);
     uf->outputExifBuf = g_new(unsigned char, uf->outputExifBufLen);
     memcpy(uf->outputExifBuf, ExifHeader, sizeof(ExifHeader));
