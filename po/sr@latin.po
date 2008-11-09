@@ -1,8 +1,8 @@
 # Serbian translation of UFRaw
 # Courtesy of Prevod.org team (http://prevod.org/) -- 2006, 2007, 2008.
-#
+# 
 # This file is distributed under the same license as the ufraw package.
-#
+# 
 # Miloš Popović <gpopac@gmail.com>
 msgid ""
 msgstr ""
@@ -109,12 +109,10 @@ msgid "System default"
 msgstr "Podrazumevano u sistemu"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
-msgstr ""
-"Pokušavam prevođenje .ufrawrc datoteke iz NLRaw-0.4 ili ranijeg izdanja"
+msgstr "Pokušavam prevođenje .ufrawrc datoteke iz NLRaw-0.4 ili ranijeg izdanja"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.6 or earlier"
-msgstr ""
-"Pokušavam prevođenje .ufrawrc datoteke iz NLRaw-0.6 ili ranijeg izdanja"
+msgstr "Pokušavam prevođenje .ufrawrc datoteke iz NLRaw-0.6 ili ranijeg izdanja"
 
 #, c-format
 msgid "UFRaw version in .ufrawrc is not supported"
@@ -220,8 +218,7 @@ msgstr ""
 "                      Temperatura boje u Kelvinima (2000 - 7000).\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
-msgstr ""
-"--green=Zelena        Ujednačenje zelene komponente u ravnoteži bele.\n"
+msgstr "--green=Zelena        Ujednačenje zelene komponente u ravnoteži bele.\n"
 
 msgid ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
@@ -231,8 +228,7 @@ msgid ""
 msgstr ""
 "--base-curve=manual|linear|camera|custom|Kriva\n"
 "                      Vrsta osnovne krive. „Kriva“ može da bude bilo koja\n"
-"                      kriva koja je prethodno učitana u grafičkom "
-"okruženju.\n"
+"                      kriva koja je prethodno učitana u grafičkom okruženju.\n"
 "                      (podrazumevana kriva iz kamere ukoliko postoji,\n"
 "                      a u suprotnom linearna).\n"
 
@@ -292,8 +288,8 @@ msgstr ""
 msgid ""
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 msgstr ""
-"--gamma=Gama          Podešavanje Gama vrednosti osnovne krive "
-"(podrazumevano je\n"
+"--gamma=Gama          Podešavanje Gama vrednosti osnovne krive (podrazumevano "
+"je\n"
 "                      0.45).\n"
 
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
@@ -308,8 +304,7 @@ msgid ""
 "output).\n"
 msgstr ""
 "--saturation=Zasićenost\n"
-"                      Podešavanje zasićenosti (podrazumevano je 1.0, "
-"odnosno\n"
+"                      Podešavanje zasićenosti (podrazumevano je 1.0, odnosno\n"
 "                      0 za crno-bele slike).\n"
 
 msgid ""
@@ -317,8 +312,8 @@ msgid ""
 "                      Wavelet denoising threshold (default 0.0).\n"
 msgstr ""
 "--wavelet-denoising-threshold=Osetljivost\n"
-"                      Osetljivost za talasno uklanjanje šuma (podrazumevano "
-"je 0.0).\n"
+"                      Osetljivost za talasno uklanjanje šuma (podrazumevano je "
+"0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -344,12 +339,11 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algoritam za interpolaciju(podrazumevani je ahd).\n"
 
-#, fuzzy
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
-"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Algoritam za prevod u sive tonove (podrazumevano ne\n"
 "                      koristi ni jedan).\n"
 
@@ -362,8 +356,7 @@ msgstr ""
 "1).\n"
 
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
-msgstr ""
-"--size=Veličina       Smanjivanje slike (visina,širina) na „Veličina“.\n"
+msgstr "--size=Veličina       Smanjivanje slike (visina,širina) na „Veličina“.\n"
 
 msgid ""
 "--out-type=ppm|tiff|png|jpeg|fits\n"
@@ -952,9 +945,8 @@ msgstr "VNG interpolacija"
 msgid "PPG interpolation"
 msgstr "PPG interpolacija"
 
-#, fuzzy
 msgid "No interpolation"
-msgstr "VNG interpolacija"
+msgstr "Bez interpolacije"
 
 msgid "No Bayer pattern"
 msgstr "Ne postoji Bajerova mustra"
@@ -991,13 +983,12 @@ msgstr "Sivi tonovi"
 msgid "Grayscale Mode:"
 msgstr "Režim sivih tonova:"
 
-#, fuzzy
 msgid "Reset channel mixer"
-msgstr "Mikser kanala"
+msgstr "Resetuj mikser kanala"
 
 #. Lens correction page
 msgid "Lens correction"
-msgstr ""
+msgstr "Korekcija sočiva"
 
 #. Start of Base Curve page
 msgid "Base curve"
@@ -1417,6 +1408,10 @@ msgid ""
 "Mount:\t\t%s\n"
 "Crop factor:\t%.1f"
 msgstr ""
+"Tvorac:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Stativ:\t\t%s\n"
+"Faktor isecanja:\t%.1f"
 
 #, c-format
 msgid ""
@@ -1428,96 +1423,104 @@ msgid ""
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
+"Tvorac:\t\t%s\n"
+"Model:\t\t%s\n"
+"Žižna daljina:\t%s\n"
+"Otvor blende:\t\t%s\n"
+"Faktor isecanja:\t%.1f\n"
+"Vrsta:\t\t%s\n"
+"Stativi:\t\t%s"
 
 msgid "Focal"
-msgstr ""
+msgstr "Žiža"
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "F-number (Aperture)"
-msgstr ""
+msgstr "F-broj (otvor blende)"
 
 msgid "Distance"
-msgstr ""
+msgstr "Udaljenost"
 
 msgid "Distance to subject"
-msgstr ""
+msgstr "Udaljenost od motiva"
 
 #. Add the model combobox
 msgid "Model:"
-msgstr ""
+msgstr "Model:"
 
 msgid "Chromatic Aberrations mathematical model"
-msgstr ""
+msgstr "Matematički model hromatskih aberacija"
 
 msgid "Parameters"
-msgstr ""
+msgstr "Parametri"
 
 msgid "Optical vignetting mathematical model"
-msgstr ""
+msgstr "Matematički model optičkog vinjetarenja"
 
 msgid "Lens distortion mathematical model"
-msgstr ""
+msgstr "matematički model izobličenja sočiva"
 
 #. Add the model combobox
 msgid "Lens geometry:"
-msgstr ""
+msgstr "Geometrija sočiva:"
 
 msgid "The geometry of the lens used to make the shot"
-msgstr ""
+msgstr "Geometrija sočiva kojim je snimak napravljen"
 
 msgid "Target geometry:"
-msgstr ""
+msgstr "Ciljna geometrija:"
 
 msgid "The target geometry for output image"
-msgstr ""
+msgstr "Ciljna geometrija izlazne slike"
 
-#, fuzzy
 msgid "Camera"
-msgstr "Ravnoteža bele iz kamere"
+msgstr "Kamera"
 
 msgid ""
 "Search for camera using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Traži kameru na osnovu mustre\n"
+"Format: [Tvorac, ][Model]"
 
 msgid "Choose camera from complete list"
-msgstr ""
+msgstr "Bira kameru iz celokupnog spiska"
 
 msgid ""
 "Search for lens using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Traži objektiv na osnovu mustre\n"
+"Format: [Tvorac, ][Model]"
 
 msgid "Choose lens from list of possible variants"
-msgstr ""
+msgstr "Bira objektiv iz celokupnog spiska"
 
-#, fuzzy
 msgid "Scale"
-msgstr "Sačuvaj"
+msgstr "Povećanje"
 
 msgid "Image scale power-of-two"
-msgstr ""
+msgstr "Promena veličine na drugi stepen"
 
-#, fuzzy
 msgid "Reset image scale to default"
-msgstr "Vrati osnovnu krivu na podrazumevano"
+msgstr "Vraća veličinu slike na početnu vrednost"
 
 msgid "Autoscale the image for best fit"
-msgstr ""
+msgstr "Povećava sliku na najbolju vrednost"
 
 msgid "Lateral chromatic aberration"
-msgstr ""
+msgstr "Bočne hromatske aberacije"
 
 msgid "Optical vignetting"
-msgstr ""
+msgstr "Optičko vinjetarenje"
 
 msgid "Lens distortion"
-msgstr ""
+msgstr "Izobličenja sočiva"
 
 msgid "Lens geometry"
-msgstr ""
+msgstr "Geometrija sočiva"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

@@ -339,12 +339,11 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Алгоритам за интерполацију(подразумевани је ahd).\n"
 
-#, fuzzy
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
-"--grayscale=none|average|lightness|luminance|value|mixer\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Алгоритам за превод у сиве тонове (подразумевано не\n"
 "                      користи ни један).\n"
 
@@ -946,9 +945,8 @@ msgstr "VNG интерполација"
 msgid "PPG interpolation"
 msgstr "PPG интерполација"
 
-#, fuzzy
 msgid "No interpolation"
-msgstr "VNG интерполација"
+msgstr "Без интерполације"
 
 msgid "No Bayer pattern"
 msgstr "Не постоји Бајерова мустра"
@@ -985,13 +983,12 @@ msgstr "Сиви тонови"
 msgid "Grayscale Mode:"
 msgstr "Режим сивих тонова:"
 
-#, fuzzy
 msgid "Reset channel mixer"
-msgstr "Миксер канала"
+msgstr "Ресетуј миксер канала"
 
 #. Lens correction page
 msgid "Lens correction"
-msgstr ""
+msgstr "Корекција сочива"
 
 #. Start of Base Curve page
 msgid "Base curve"
@@ -1411,6 +1408,10 @@ msgid ""
 "Mount:\t\t%s\n"
 "Crop factor:\t%.1f"
 msgstr ""
+"Творац:\t\t%s\n"
+"Модел:\t\t%s%s\n"
+"Статив:\t\t%s\n"
+"Фактор исецања:\t%.1f"
 
 #, c-format
 msgid ""
@@ -1422,96 +1423,104 @@ msgid ""
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
+"Творац:\t\t%s\n"
+"Модел:\t\t%s\n"
+"Жижна даљина:\t%s\n"
+"Отвор бленде:\t\t%s\n"
+"Фактор исецања:\t%.1f\n"
+"Врста:\t\t%s\n"
+"Стативи:\t\t%s"
 
 msgid "Focal"
-msgstr ""
+msgstr "Жижа"
 
 msgid "F"
-msgstr ""
+msgstr "Ф"
 
 msgid "F-number (Aperture)"
-msgstr ""
+msgstr "Ф-број (отвор бленде)"
 
 msgid "Distance"
-msgstr ""
+msgstr "Удаљеност"
 
 msgid "Distance to subject"
-msgstr ""
+msgstr "Удаљеност од мотива"
 
 #. Add the model combobox
 msgid "Model:"
-msgstr ""
+msgstr "Модел:"
 
 msgid "Chromatic Aberrations mathematical model"
-msgstr ""
+msgstr "Математички модел хроматских аберација"
 
 msgid "Parameters"
-msgstr ""
+msgstr "Параметри"
 
 msgid "Optical vignetting mathematical model"
-msgstr ""
+msgstr "Математички модел оптичког вињетарења"
 
 msgid "Lens distortion mathematical model"
-msgstr ""
+msgstr "математички модел изобличења сочива"
 
 #. Add the model combobox
 msgid "Lens geometry:"
-msgstr ""
+msgstr "Геометрија сочива:"
 
 msgid "The geometry of the lens used to make the shot"
-msgstr ""
+msgstr "Геометрија сочива којим је снимак направљен"
 
 msgid "Target geometry:"
-msgstr ""
+msgstr "Циљна геометрија:"
 
 msgid "The target geometry for output image"
-msgstr ""
+msgstr "Циљна геометрија излазне слике"
 
-#, fuzzy
 msgid "Camera"
-msgstr "Равнотежа беле из камере"
+msgstr "Камера"
 
 msgid ""
 "Search for camera using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Тражи камеру на основу мустре\n"
+"Формат: [Творац, ][Модел]"
 
 msgid "Choose camera from complete list"
-msgstr ""
+msgstr "Бира камеру из целокупног списка"
 
 msgid ""
 "Search for lens using a pattern\n"
 "Format: [Maker, ][Model]"
 msgstr ""
+"Тражи објектив на основу мустре\n"
+"Формат: [Творац, ][Модел]"
 
 msgid "Choose lens from list of possible variants"
-msgstr ""
+msgstr "Бира објектив из целокупног списка"
 
-#, fuzzy
 msgid "Scale"
-msgstr "Сачувај"
+msgstr "Повећање"
 
 msgid "Image scale power-of-two"
-msgstr ""
+msgstr "Промена величине на други степен"
 
-#, fuzzy
 msgid "Reset image scale to default"
-msgstr "Врати основну криву на подразумевано"
+msgstr "Враћа величину слике на почетну вредност"
 
 msgid "Autoscale the image for best fit"
-msgstr ""
+msgstr "Повећава слику на најбољу вредност"
 
 msgid "Lateral chromatic aberration"
-msgstr ""
+msgstr "Бочне хроматске аберације"
 
 msgid "Optical vignetting"
-msgstr ""
+msgstr "Оптичко вињетарење"
 
 msgid "Lens distortion"
-msgstr ""
+msgstr "Изобличења сочива"
 
 msgid "Lens geometry"
-msgstr ""
+msgstr "Геометрија сочива"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
