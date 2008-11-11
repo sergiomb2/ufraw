@@ -1,14 +1,14 @@
 # Serbian translation of UFRaw
 # Courtesy of Prevod.org team (http://prevod.org/) -- 2006, 2007, 2008.
-# 
+#
 # This file is distributed under the same license as the ufraw package.
-# 
+#
 # Miloš Popović <gpopac@gmail.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 08:00+0200\n"
+"POT-Creation-Date: 2008-11-11 06:30+0100\n"
 "PO-Revision-Date: 2008-05-12 14:55+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
@@ -109,10 +109,12 @@ msgid "System default"
 msgstr "Podrazumevano u sistemu"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
-msgstr "Pokušavam prevođenje .ufrawrc datoteke iz NLRaw-0.4 ili ranijeg izdanja"
+msgstr ""
+"Pokušavam prevođenje .ufrawrc datoteke iz NLRaw-0.4 ili ranijeg izdanja"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.6 or earlier"
-msgstr "Pokušavam prevođenje .ufrawrc datoteke iz NLRaw-0.6 ili ranijeg izdanja"
+msgstr ""
+"Pokušavam prevođenje .ufrawrc datoteke iz NLRaw-0.6 ili ranijeg izdanja"
 
 #, c-format
 msgid "UFRaw version in .ufrawrc is not supported"
@@ -218,7 +220,8 @@ msgstr ""
 "                      Temperatura boje u Kelvinima (2000 - 7000).\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
-msgstr "--green=Zelena        Ujednačenje zelene komponente u ravnoteži bele.\n"
+msgstr ""
+"--green=Zelena        Ujednačenje zelene komponente u ravnoteži bele.\n"
 
 msgid ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
@@ -228,7 +231,8 @@ msgid ""
 msgstr ""
 "--base-curve=manual|linear|camera|custom|Kriva\n"
 "                      Vrsta osnovne krive. „Kriva“ može da bude bilo koja\n"
-"                      kriva koja je prethodno učitana u grafičkom okruženju.\n"
+"                      kriva koja je prethodno učitana u grafičkom "
+"okruženju.\n"
 "                      (podrazumevana kriva iz kamere ukoliko postoji,\n"
 "                      a u suprotnom linearna).\n"
 
@@ -288,8 +292,8 @@ msgstr ""
 msgid ""
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 msgstr ""
-"--gamma=Gama          Podešavanje Gama vrednosti osnovne krive (podrazumevano "
-"je\n"
+"--gamma=Gama          Podešavanje Gama vrednosti osnovne krive "
+"(podrazumevano je\n"
 "                      0.45).\n"
 
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
@@ -304,7 +308,8 @@ msgid ""
 "output).\n"
 msgstr ""
 "--saturation=Zasićenost\n"
-"                      Podešavanje zasićenosti (podrazumevano je 1.0, odnosno\n"
+"                      Podešavanje zasićenosti (podrazumevano je 1.0, "
+"odnosno\n"
 "                      0 za crno-bele slike).\n"
 
 msgid ""
@@ -312,8 +317,8 @@ msgid ""
 "                      Wavelet denoising threshold (default 0.0).\n"
 msgstr ""
 "--wavelet-denoising-threshold=Osetljivost\n"
-"                      Osetljivost za talasno uklanjanje šuma (podrazumevano je "
-"0.0).\n"
+"                      Osetljivost za talasno uklanjanje šuma (podrazumevano "
+"je 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -356,7 +361,8 @@ msgstr ""
 "1).\n"
 
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
-msgstr "--size=Veličina       Smanjivanje slike (visina,širina) na „Veličina“.\n"
+msgstr ""
+"--size=Veličina       Smanjivanje slike (visina,širina) na „Veličina“.\n"
 
 msgid ""
 "--out-type=ppm|tiff|png|jpeg|fits\n"
@@ -867,31 +873,41 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%s)"
 
-#, c-format
-msgid "%s - UFRaw"
-msgstr "%s - NLRaw"
-
 msgid "Linear"
 msgstr "Linearno"
 
 msgid "Logarithmic"
 msgstr "Logaritamski"
 
-msgid "Spot values:"
-msgstr "Vrednosti tačke:"
+msgid "RGB histogram"
+msgstr "RGB histogram"
 
-msgid "Exposure compensation in EV"
-msgstr "Kompenzacija ekspozicije u EV"
+msgid "R+G+B histogram"
+msgstr "R+G+B histogram"
 
-msgid "Auto adjust exposure"
-msgstr "Sam podesi ekspoziciju"
+msgid "Luminosity histogram"
+msgstr "Histogram luminanse"
 
-msgid "Reset exposure to default"
-msgstr "Vrati ekspoziciju na podrazumevanu vrednost"
+msgid "Value (maximum) histogram"
+msgstr "Histogram (najveće) vrednosti"
 
-#. Start of White Balance setting page
-msgid "White balance"
-msgstr "Ravnoteža bele"
+msgid "Saturation histogram"
+msgstr "Histogram zasićenosti"
+
+msgid "Average:"
+msgstr "Prosek:"
+
+msgid "Std. deviation:"
+msgstr "St. devijacija:"
+
+msgid "Overexposed:"
+msgstr "Preeksponirano:"
+
+msgid "Indicate"
+msgstr "Pokaži"
+
+msgid "Underexposed:"
+msgstr "Podeksponirano:"
 
 msgid "White Balance"
 msgstr "Ravnoteža bele"
@@ -963,36 +979,23 @@ msgstr "Osetljivost za talasno uklanjanje šuma"
 msgid "Reset denoise threshold to default"
 msgstr "Vrati podrazumevanu vrednost osetljivosti na šum"
 
-msgid "Zoom:"
-msgstr "Uvećanje:"
-
-msgid "Zoom percentage"
-msgstr "Uvećanje u procentima"
-
 msgid "Dark Frame:"
 msgstr "Tamni kadar:"
 
 msgid "Reset dark frame"
 msgstr "Poništi tamni kadar"
 
-#. End of White Balance setting page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr "Sivi tonovi"
+msgid "Zoom:"
+msgstr "Uvećanje:"
+
+msgid "Zoom percentage"
+msgstr "Uvećanje u procentima"
 
 msgid "Grayscale Mode:"
 msgstr "Režim sivih tonova:"
 
 msgid "Reset channel mixer"
 msgstr "Resetuj mikser kanala"
-
-#. Lens correction page
-msgid "Lens correction"
-msgstr "Korekcija sočiva"
-
-#. Start of Base Curve page
-msgid "Base curve"
-msgstr "Osnovna kriva"
 
 msgid "Load base curve"
 msgstr "Učitaj osnovnu krivu"
@@ -1002,11 +1005,6 @@ msgstr "Sačuvaj osnovnu krivu"
 
 msgid "Reset base curve to default"
 msgstr "Vrati osnovnu krivu na podrazumevano"
-
-#. End of Base Curve page
-#. Start of Color management page
-msgid "Color management"
-msgstr "Upravljanje bojama"
 
 msgid "Input ICC profile"
 msgstr "Ulazni ICC profil"
@@ -1059,11 +1057,6 @@ msgstr "Prikazna namera"
 msgid "Disable soft proofing"
 msgstr "Onemogući korekciju iz programa"
 
-#. End of Color management page
-#. Start of Corrections page
-msgid "Correct luminosity, saturation"
-msgstr "Ispravka luminanse i zasićenosti"
-
 msgid "Contrast"
 msgstr "Kontrast"
 
@@ -1094,11 +1087,6 @@ msgstr "Vrati crnu tačku na podrazumevano"
 
 msgid "Auto adjust black-point"
 msgstr "Sam podesi crnu tačku"
-
-#. End of Corrections page
-#. Start of transformations page
-msgid "Crop and rotate"
-msgstr "Isecanje i rotiranje"
 
 #. Start of Crop controls
 msgid "Left:"
@@ -1143,10 +1131,6 @@ msgstr "Širina"
 msgid "Orientation:"
 msgstr "Okretanje:"
 
-#. Start of Save page
-msgid "Save"
-msgstr "Sačuvaj"
-
 msgid "Path"
 msgstr "Putanja"
 
@@ -1161,6 +1145,9 @@ msgstr "Nivo JPEG kompresije"
 
 msgid "JPEG progressive encoding"
 msgstr "Progresivno JPEG kodiranje"
+
+msgid "JPEG size optimization"
+msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "TIFF kompresija bez gubitka"
@@ -1205,10 +1192,6 @@ msgstr "Zapamti izlaznu putanju"
 msgid "Overwrite existing files without asking"
 msgstr "Prepiši postojeće datoteke bez pitanja"
 
-#. Start of EXIF page
-msgid "EXIF"
-msgstr "EXIF podaci"
-
 msgid "Tag"
 msgstr "Oznaka"
 
@@ -1244,6 +1227,9 @@ msgstr "Objektiv"
 msgid "Flash"
 msgstr "Blic"
 
+msgid "White balance"
+msgstr "Ravnoteža bele"
+
 #, c-format
 msgid "EXIF data read by %s"
 msgstr "EXIF podaci su pročitani pomoću %s"
@@ -1251,35 +1237,46 @@ msgstr "EXIF podaci su pročitani pomoću %s"
 msgid "Warning: EXIF data will not be sent to output"
 msgstr "Upozorenje: EXIF podaci neće biti poslati u izlazu"
 
-msgid "RGB histogram"
-msgstr "RGB histogram"
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - NLRaw"
 
-msgid "R+G+B histogram"
-msgstr "R+G+B histogram"
+msgid "Spot values:"
+msgstr "Vrednosti tačke:"
 
-msgid "Luminosity histogram"
-msgstr "Histogram luminanse"
+msgid "Exposure compensation in EV"
+msgstr "Kompenzacija ekspozicije u EV"
 
-msgid "Value (maximum) histogram"
-msgstr "Histogram (najveće) vrednosti"
+msgid "Auto adjust exposure"
+msgstr "Sam podesi ekspoziciju"
 
-msgid "Saturation histogram"
-msgstr "Histogram zasićenosti"
+msgid "Reset exposure to default"
+msgstr "Vrati ekspoziciju na podrazumevanu vrednost"
 
-msgid "Average:"
-msgstr "Prosek:"
+msgid "Grayscale"
+msgstr "Sivi tonovi"
 
-msgid "Std. deviation:"
-msgstr "St. devijacija:"
+#. Lens correction page
+msgid "Lens correction"
+msgstr "Korekcija sočiva"
 
-msgid "Overexposed:"
-msgstr "Preeksponirano:"
+msgid "Base curve"
+msgstr "Osnovna kriva"
 
-msgid "Indicate"
-msgstr "Pokaži"
+msgid "Color management"
+msgstr "Upravljanje bojama"
 
-msgid "Underexposed:"
-msgstr "Podeksponirano:"
+msgid "Correct luminosity, saturation"
+msgstr "Ispravka luminanse i zasićenosti"
+
+msgid "Crop and rotate"
+msgstr "Isecanje i rotiranje"
+
+msgid "Save"
+msgstr "Sačuvaj"
+
+msgid "EXIF"
+msgstr "EXIF podaci"
 
 msgid "Options"
 msgstr "Postavke"

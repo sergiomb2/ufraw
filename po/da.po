@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 08:00+0200\n"
-"PO-Revision-Date: 2008-10-19 08:00+0200\n"
+"POT-Creation-Date: 2008-11-11 06:30+0100\n"
+"PO-Revision-Date: 2008-11-11 06:30+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -853,31 +853,41 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%s)"
 
-#, c-format
-msgid "%s - UFRaw"
-msgstr "%s - UFRaw"
-
 msgid "Linear"
 msgstr "Lineær"
 
 msgid "Logarithmic"
 msgstr "Logaritmisk"
 
-msgid "Spot values:"
-msgstr "Punktværdier:"
+msgid "RGB histogram"
+msgstr "RGB-histogram"
 
-msgid "Exposure compensation in EV"
-msgstr "Eksponeringskompensation i LV"
+msgid "R+G+B histogram"
+msgstr "R+G+B-histogram"
 
-msgid "Auto adjust exposure"
-msgstr "Automatisk eksponeringsindstilling"
+msgid "Luminosity histogram"
+msgstr "Lysstyrkehistogram"
 
-msgid "Reset exposure to default"
-msgstr "Resæt eksponering til standardværdi"
+msgid "Value (maximum) histogram"
+msgstr "Maksimumsværdihistogram"
 
-#. Start of White Balance setting page
-msgid "White balance"
-msgstr "Hvidbalance"
+msgid "Saturation histogram"
+msgstr "Farvemætningshistogram"
+
+msgid "Average:"
+msgstr "Gennemsnit:"
+
+msgid "Std. deviation:"
+msgstr "Standardafvigelse:"
+
+msgid "Overexposed:"
+msgstr "Overeksponeret:"
+
+msgid "Indicate"
+msgstr "Vis"
+
+msgid "Underexposed:"
+msgstr "Undereksponeret:"
 
 msgid "White Balance"
 msgstr "Hvidbalance"
@@ -948,36 +958,23 @@ msgstr "Tærskelværdi for wavelet-støjreduktion"
 msgid "Reset denoise threshold to default"
 msgstr "Resæt strøjreduktionstærskelværdi til standardværdi"
 
-msgid "Zoom:"
-msgstr "Zoom:"
-
-msgid "Zoom percentage"
-msgstr "Zoom-procent"
-
 msgid "Dark Frame:"
 msgstr "Sortbillede:"
 
 msgid "Reset dark frame"
 msgstr "Resæt sortbillede"
 
-#. End of White Balance setting page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr "Gråtoneskala"
+msgid "Zoom:"
+msgstr "Zoom:"
+
+msgid "Zoom percentage"
+msgstr "Zoom-procent"
 
 msgid "Grayscale Mode:"
 msgstr "Gråtoneskalamodus:"
 
 msgid "Reset channel mixer"
 msgstr "Resæt farvekanalmixer"
-
-#. Lens correction page
-msgid "Lens correction"
-msgstr ""
-
-#. Start of Base Curve page
-msgid "Base curve"
-msgstr "Basiskurve"
 
 msgid "Load base curve"
 msgstr "Indlæs basiskurve"
@@ -987,11 +984,6 @@ msgstr "Gem basiskurve"
 
 msgid "Reset base curve to default"
 msgstr "Resæt basiskurve til standardværdi"
-
-#. End of Base Curve page
-#. Start of Color management page
-msgid "Color management"
-msgstr "Farvestyring"
 
 msgid "Input ICC profile"
 msgstr "Inddata-ICC-profil"
@@ -1044,11 +1036,6 @@ msgstr "Monitorfarvegengivelse"
 msgid "Disable soft proofing"
 msgstr "Fravælg softwarekorrektur"
 
-#. End of Color management page
-#. Start of Corrections page
-msgid "Correct luminosity, saturation"
-msgstr "Korriger lysstyrke, farvemætning"
-
 msgid "Contrast"
 msgstr "Kontrast"
 
@@ -1079,11 +1066,6 @@ msgstr "Resæt sortpunkt til standardværdi"
 
 msgid "Auto adjust black-point"
 msgstr "Automatisk sortpunktsindstilling"
-
-#. End of Corrections page
-#. Start of transformations page
-msgid "Crop and rotate"
-msgstr "Beskær og roter"
 
 #. Start of Crop controls
 msgid "Left:"
@@ -1128,10 +1110,6 @@ msgstr "Bredde"
 msgid "Orientation:"
 msgstr "Orientering:"
 
-#. Start of Save page
-msgid "Save"
-msgstr "Gem"
-
 msgid "Path"
 msgstr "Sti"
 
@@ -1146,6 +1124,9 @@ msgstr "JPEG komprimeringsniveau"
 
 msgid "JPEG progressive encoding"
 msgstr "JPEG progressiv indkodning"
+
+msgid "JPEG size optimization"
+msgstr "JPEG størrelsesoptimering"
 
 msgid "TIFF lossless Compress"
 msgstr "TIFF tabsfri komprimering"
@@ -1190,10 +1171,6 @@ msgstr "Husk uddatasti"
 msgid "Overwrite existing files without asking"
 msgstr "Overskriv eksisterende filer uden at spørge"
 
-#. Start of EXIF page
-msgid "EXIF"
-msgstr "EXIF"
-
 msgid "Tag"
 msgstr "Etiket"
 
@@ -1229,6 +1206,9 @@ msgstr "Objektiv"
 msgid "Flash"
 msgstr "Flash"
 
+msgid "White balance"
+msgstr "Hvidbalance"
+
 #, c-format
 msgid "EXIF data read by %s"
 msgstr "EXIF-data læst af %s"
@@ -1236,35 +1216,46 @@ msgstr "EXIF-data læst af %s"
 msgid "Warning: EXIF data will not be sent to output"
 msgstr "Advarsel: EXIF-data vil ikke blive sendt til uddata"
 
-msgid "RGB histogram"
-msgstr "RGB-histogram"
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw"
 
-msgid "R+G+B histogram"
-msgstr "R+G+B-histogram"
+msgid "Spot values:"
+msgstr "Punktværdier:"
 
-msgid "Luminosity histogram"
-msgstr "Lysstyrkehistogram"
+msgid "Exposure compensation in EV"
+msgstr "Eksponeringskompensation i LV"
 
-msgid "Value (maximum) histogram"
-msgstr "Maksimumsværdihistogram"
+msgid "Auto adjust exposure"
+msgstr "Automatisk eksponeringsindstilling"
 
-msgid "Saturation histogram"
-msgstr "Farvemætningshistogram"
+msgid "Reset exposure to default"
+msgstr "Resæt eksponering til standardværdi"
 
-msgid "Average:"
-msgstr "Gennemsnit:"
+msgid "Grayscale"
+msgstr "Gråtoneskala"
 
-msgid "Std. deviation:"
-msgstr "Standardafvigelse:"
+#. Lens correction page
+msgid "Lens correction"
+msgstr ""
 
-msgid "Overexposed:"
-msgstr "Overeksponeret:"
+msgid "Base curve"
+msgstr "Basiskurve"
 
-msgid "Indicate"
-msgstr "Vis"
+msgid "Color management"
+msgstr "Farvestyring"
 
-msgid "Underexposed:"
-msgstr "Undereksponeret:"
+msgid "Correct luminosity, saturation"
+msgstr "Korriger lysstyrke, farvemætning"
+
+msgid "Crop and rotate"
+msgstr "Beskær og roter"
+
+msgid "Save"
+msgstr "Gem"
+
+msgid "EXIF"
+msgstr "EXIF"
 
 msgid "Options"
 msgstr "Tilvalg"

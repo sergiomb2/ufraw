@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 08:00+0200\n"
+"POT-Creation-Date: 2008-11-11 06:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -738,30 +738,40 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr ""
 
-#, c-format
-msgid "%s - UFRaw"
-msgstr ""
-
 msgid "Linear"
 msgstr ""
 
 msgid "Logarithmic"
 msgstr ""
 
-msgid "Spot values:"
+msgid "RGB histogram"
 msgstr ""
 
-msgid "Exposure compensation in EV"
+msgid "R+G+B histogram"
 msgstr ""
 
-msgid "Auto adjust exposure"
+msgid "Luminosity histogram"
 msgstr ""
 
-msgid "Reset exposure to default"
+msgid "Value (maximum) histogram"
 msgstr ""
 
-#. Start of White Balance setting page
-msgid "White balance"
+msgid "Saturation histogram"
+msgstr ""
+
+msgid "Average:"
+msgstr ""
+
+msgid "Std. deviation:"
+msgstr ""
+
+msgid "Overexposed:"
+msgstr ""
+
+msgid "Indicate"
+msgstr ""
+
+msgid "Underexposed:"
 msgstr ""
 
 msgid "White Balance"
@@ -830,35 +840,22 @@ msgstr ""
 msgid "Reset denoise threshold to default"
 msgstr ""
 
-msgid "Zoom:"
-msgstr ""
-
-msgid "Zoom percentage"
-msgstr ""
-
 msgid "Dark Frame:"
 msgstr ""
 
 msgid "Reset dark frame"
 msgstr ""
 
-#. End of White Balance setting page
-#. Start of Grayscale page
-msgid "Grayscale"
+msgid "Zoom:"
+msgstr ""
+
+msgid "Zoom percentage"
 msgstr ""
 
 msgid "Grayscale Mode:"
 msgstr ""
 
 msgid "Reset channel mixer"
-msgstr ""
-
-#. Lens correction page
-msgid "Lens correction"
-msgstr ""
-
-#. Start of Base Curve page
-msgid "Base curve"
 msgstr ""
 
 msgid "Load base curve"
@@ -868,11 +865,6 @@ msgid "Save base curve"
 msgstr ""
 
 msgid "Reset base curve to default"
-msgstr ""
-
-#. End of Base Curve page
-#. Start of Color management page
-msgid "Color management"
 msgstr ""
 
 msgid "Input ICC profile"
@@ -926,11 +918,6 @@ msgstr ""
 msgid "Disable soft proofing"
 msgstr ""
 
-#. End of Color management page
-#. Start of Corrections page
-msgid "Correct luminosity, saturation"
-msgstr ""
-
 msgid "Contrast"
 msgstr ""
 
@@ -958,11 +945,6 @@ msgid "Reset black-point to default"
 msgstr ""
 
 msgid "Auto adjust black-point"
-msgstr ""
-
-#. End of Corrections page
-#. Start of transformations page
-msgid "Crop and rotate"
 msgstr ""
 
 #. Start of Crop controls
@@ -1005,10 +987,6 @@ msgstr ""
 msgid "Orientation:"
 msgstr ""
 
-#. Start of Save page
-msgid "Save"
-msgstr ""
-
 msgid "Path"
 msgstr ""
 
@@ -1022,6 +1000,9 @@ msgid "JPEG compression level"
 msgstr ""
 
 msgid "JPEG progressive encoding"
+msgstr ""
+
+msgid "JPEG size optimization"
 msgstr ""
 
 msgid "TIFF lossless Compress"
@@ -1065,10 +1046,6 @@ msgstr ""
 msgid "Overwrite existing files without asking"
 msgstr ""
 
-#. Start of EXIF page
-msgid "EXIF"
-msgstr ""
-
 msgid "Tag"
 msgstr ""
 
@@ -1104,6 +1081,9 @@ msgstr ""
 msgid "Flash"
 msgstr ""
 
+msgid "White balance"
+msgstr ""
+
 #, c-format
 msgid "EXIF data read by %s"
 msgstr ""
@@ -1111,34 +1091,45 @@ msgstr ""
 msgid "Warning: EXIF data will not be sent to output"
 msgstr ""
 
-msgid "RGB histogram"
+#, c-format
+msgid "%s - UFRaw"
 msgstr ""
 
-msgid "R+G+B histogram"
+msgid "Spot values:"
 msgstr ""
 
-msgid "Luminosity histogram"
+msgid "Exposure compensation in EV"
 msgstr ""
 
-msgid "Value (maximum) histogram"
+msgid "Auto adjust exposure"
 msgstr ""
 
-msgid "Saturation histogram"
+msgid "Reset exposure to default"
 msgstr ""
 
-msgid "Average:"
+msgid "Grayscale"
 msgstr ""
 
-msgid "Std. deviation:"
+#. Lens correction page
+msgid "Lens correction"
 msgstr ""
 
-msgid "Overexposed:"
+msgid "Base curve"
 msgstr ""
 
-msgid "Indicate"
+msgid "Color management"
 msgstr ""
 
-msgid "Underexposed:"
+msgid "Correct luminosity, saturation"
+msgstr ""
+
+msgid "Crop and rotate"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "EXIF"
 msgstr ""
 
 msgid "Options"

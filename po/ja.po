@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 08:00+0200\n"
+"POT-Creation-Date: 2008-11-11 06:30+0100\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -851,10 +851,6 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr ""
 
-#, c-format
-msgid "%s - UFRaw"
-msgstr "%s - UFRaw"
-
 #, fuzzy
 msgid "Linear"
 msgstr "直線"
@@ -862,22 +858,36 @@ msgstr "直線"
 msgid "Logarithmic"
 msgstr "対数"
 
-msgid "Spot values:"
-msgstr "スポット値:"
+msgid "RGB histogram"
+msgstr "RGBヒストグラム"
 
-msgid "Exposure compensation in EV"
-msgstr "EV補償"
+msgid "R+G+B histogram"
+msgstr "R+G+Bヒストグラム"
 
-msgid "Auto adjust exposure"
-msgstr "自動露出補正"
+msgid "Luminosity histogram"
+msgstr "輝度ヒストグラム"
 
-msgid "Reset exposure to default"
-msgstr "露出をデフォルトに戻す"
-
-#. Start of White Balance setting page
 #, fuzzy
-msgid "White balance"
-msgstr "ホワイトバランス"
+msgid "Value (maximum) histogram"
+msgstr "明暗(最大)ヒストグラム"
+
+msgid "Saturation histogram"
+msgstr "彩度ヒストグラム"
+
+msgid "Average:"
+msgstr "平均:"
+
+msgid "Std. deviation:"
+msgstr "標準偏差:"
+
+msgid "Overexposed:"
+msgstr "露出過多:"
+
+msgid "Indicate"
+msgstr "表示"
+
+msgid "Underexposed:"
+msgstr "露出不足:"
 
 msgid "White Balance"
 msgstr "ホワイトバランス"
@@ -953,6 +963,12 @@ msgstr ""
 msgid "Reset denoise threshold to default"
 msgstr "露出をデフォルトに戻す"
 
+msgid "Dark Frame:"
+msgstr ""
+
+msgid "Reset dark frame"
+msgstr ""
+
 #, fuzzy
 msgid "Zoom:"
 msgstr "ズーム"
@@ -960,31 +976,11 @@ msgstr "ズーム"
 msgid "Zoom percentage"
 msgstr ""
 
-msgid "Dark Frame:"
-msgstr ""
-
-msgid "Reset dark frame"
-msgstr ""
-
-#. End of White Balance setting page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr ""
-
 msgid "Grayscale Mode:"
 msgstr ""
 
 msgid "Reset channel mixer"
 msgstr ""
-
-#. Lens correction page
-msgid "Lens correction"
-msgstr ""
-
-#. Start of Base Curve page
-#, fuzzy
-msgid "Base curve"
-msgstr "基本カーブ"
 
 msgid "Load base curve"
 msgstr "基本カーブを読み込む"
@@ -994,11 +990,6 @@ msgstr "基本カーブを保存"
 
 msgid "Reset base curve to default"
 msgstr "基本カーブをデフォルトに戻す"
-
-#. End of Base Curve page
-#. Start of Color management page
-msgid "Color management"
-msgstr ""
 
 #, fuzzy
 msgid "Input ICC profile"
@@ -1059,11 +1050,6 @@ msgstr ""
 msgid "Disable soft proofing"
 msgstr ""
 
-#. End of Color management page
-#. Start of Corrections page
-msgid "Correct luminosity, saturation"
-msgstr ""
-
 msgid "Contrast"
 msgstr ""
 
@@ -1096,11 +1082,6 @@ msgstr "ブラックポイントをデフォルトに戻す"
 
 msgid "Auto adjust black-point"
 msgstr "ブラックポイントを自動調整"
-
-#. End of Corrections page
-#. Start of transformations page
-msgid "Crop and rotate"
-msgstr ""
 
 #. Start of Crop controls
 msgid "Left:"
@@ -1146,11 +1127,6 @@ msgstr "\t幅"
 msgid "Orientation:"
 msgstr ""
 
-#. Start of Save page
-#, fuzzy
-msgid "Save"
-msgstr "保存しました %s"
-
 msgid "Path"
 msgstr ""
 
@@ -1168,6 +1144,9 @@ msgid "JPEG compression level"
 msgstr "圧縮比率"
 
 msgid "JPEG progressive encoding"
+msgstr ""
+
+msgid "JPEG size optimization"
 msgstr ""
 
 msgid "TIFF lossless Compress"
@@ -1213,10 +1192,6 @@ msgstr ""
 msgid "Overwrite existing files without asking"
 msgstr "ファイルが存在しても質問無しで上書きする"
 
-#. Start of EXIF page
-msgid "EXIF"
-msgstr ""
-
 msgid "Tag"
 msgstr ""
 
@@ -1260,6 +1235,10 @@ msgstr "レンズ: %s\n"
 msgid "Flash"
 msgstr "フラッシュ"
 
+#, fuzzy
+msgid "White balance"
+msgstr "ホワイトバランス"
+
 #, fuzzy, c-format
 msgid "EXIF data read by %s"
 msgstr ""
@@ -1269,36 +1248,48 @@ msgstr ""
 msgid "Warning: EXIF data will not be sent to output"
 msgstr ""
 
-msgid "RGB histogram"
-msgstr "RGBヒストグラム"
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw"
 
-msgid "R+G+B histogram"
-msgstr "R+G+Bヒストグラム"
+msgid "Spot values:"
+msgstr "スポット値:"
 
-msgid "Luminosity histogram"
-msgstr "輝度ヒストグラム"
+msgid "Exposure compensation in EV"
+msgstr "EV補償"
+
+msgid "Auto adjust exposure"
+msgstr "自動露出補正"
+
+msgid "Reset exposure to default"
+msgstr "露出をデフォルトに戻す"
+
+msgid "Grayscale"
+msgstr ""
+
+#. Lens correction page
+msgid "Lens correction"
+msgstr ""
 
 #, fuzzy
-msgid "Value (maximum) histogram"
-msgstr "明暗(最大)ヒストグラム"
+msgid "Base curve"
+msgstr "基本カーブ"
 
-msgid "Saturation histogram"
-msgstr "彩度ヒストグラム"
+msgid "Color management"
+msgstr ""
 
-msgid "Average:"
-msgstr "平均:"
+msgid "Correct luminosity, saturation"
+msgstr ""
 
-msgid "Std. deviation:"
-msgstr "標準偏差:"
+msgid "Crop and rotate"
+msgstr ""
 
-msgid "Overexposed:"
-msgstr "露出過多:"
+#, fuzzy
+msgid "Save"
+msgstr "保存しました %s"
 
-msgid "Indicate"
-msgstr "表示"
-
-msgid "Underexposed:"
-msgstr "露出不足:"
+msgid "EXIF"
+msgstr ""
 
 msgid "Options"
 msgstr "オプション"

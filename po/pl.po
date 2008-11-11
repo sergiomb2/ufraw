@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 08:00+0200\n"
+"POT-Creation-Date: 2008-11-11 06:30+0100\n"
 "PO-Revision-Date: 2008-08-17 21:43-0500\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -861,31 +861,41 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%s)"
 
-#, c-format
-msgid "%s - UFRaw"
-msgstr "%s - UFRaw "
-
 msgid "Linear"
 msgstr "Liniowy"
 
 msgid "Logarithmic"
 msgstr "Logarytmiczny"
 
-msgid "Spot values:"
-msgstr "Warto¶ci punktowe"
+msgid "RGB histogram"
+msgstr "Histogram RGB"
 
-msgid "Exposure compensation in EV"
-msgstr "Korekta ekspozycji w EV"
+msgid "R+G+B histogram"
+msgstr "Histogram R+G+B"
 
-msgid "Auto adjust exposure"
-msgstr "Autodopasowanie ekspozycji"
+msgid "Luminosity histogram"
+msgstr "Histogram luminancji"
 
-msgid "Reset exposure to default"
-msgstr "Ustawienie domy¶lnej korekty ekspozycji"
+msgid "Value (maximum) histogram"
+msgstr "Histogram jasno¶ci (maksimum)"
 
-#. Start of White Balance setting page
-msgid "White balance"
-msgstr "Balans bieli"
+msgid "Saturation histogram"
+msgstr "Histogram jasno¶ci"
+
+msgid "Average:"
+msgstr "¦rednia:"
+
+msgid "Std. deviation:"
+msgstr "Std. odchylenie:"
+
+msgid "Overexposed:"
+msgstr "Prze¶wietlone:"
+
+msgid "Indicate"
+msgstr "Poka¿"
+
+msgid "Underexposed:"
+msgstr "Niedo¶wietlone:"
 
 msgid "White Balance"
 msgstr "Balans bieli"
@@ -957,36 +967,23 @@ msgstr "Próg falkowego odszumiania"
 msgid "Reset denoise threshold to default"
 msgstr "Ustaw domy¶lny próg odszumiania"
 
-msgid "Zoom:"
-msgstr "Powiêkszenie:"
-
-msgid "Zoom percentage"
-msgstr "Procent powiêkszenia"
-
 msgid "Dark Frame:"
 msgstr "Ciemna klatka:"
 
 msgid "Reset dark frame"
 msgstr "Zresetuj ciemn± klatkê"
 
-#. End of White Balance setting page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr "Skala szaro¶ci"
+msgid "Zoom:"
+msgstr "Powiêkszenie:"
+
+msgid "Zoom percentage"
+msgstr "Procent powiêkszenia"
 
 msgid "Grayscale Mode:"
 msgstr "Tryb skali szaro¶ci:"
 
 msgid "Reset channel mixer"
 msgstr "Zresetuj mikser kana³ów"
-
-#. Lens correction page
-msgid "Lens correction"
-msgstr "Korekcja obiektywu"
-
-#. Start of Base Curve page
-msgid "Base curve"
-msgstr "Krzywa bazowa"
 
 msgid "Load base curve"
 msgstr "Wczytaj krzyw± bazow±"
@@ -996,11 +993,6 @@ msgstr "Zapisz krzyw± bazow±"
 
 msgid "Reset base curve to default"
 msgstr "Ustaw domy¶ln± krzyw± bazow±"
-
-#. End of Base Curve page
-#. Start of Color management page
-msgid "Color management"
-msgstr "Zarz±dzanie kolorem"
 
 msgid "Input ICC profile"
 msgstr "Wej¶ciowy profil ICC"
@@ -1053,11 +1045,6 @@ msgstr "Sposób konwersji"
 msgid "Disable soft proofing"
 msgstr "Wy³±cz programowy proof"
 
-#. End of Color management page
-#. Start of Corrections page
-msgid "Correct luminosity, saturation"
-msgstr "Korekta luminancji, saturacji"
-
 msgid "Contrast"
 msgstr "Kontrast"
 
@@ -1088,11 +1075,6 @@ msgstr "Ustaw domy¶lny punkt czerni"
 
 msgid "Auto adjust black-point"
 msgstr "Automatycznie dopasuj punkt czerni"
-
-#. End of Corrections page
-#. Start of transformations page
-msgid "Crop and rotate"
-msgstr "Kadrowanie i obrót"
 
 #. Start of Crop controls
 msgid "Left:"
@@ -1137,10 +1119,6 @@ msgstr "Szer."
 msgid "Orientation:"
 msgstr "Orientacja:"
 
-#. Start of Save page
-msgid "Save"
-msgstr "Zapisz"
-
 msgid "Path"
 msgstr "¦cie¿ka"
 
@@ -1155,6 +1133,9 @@ msgstr "Stopieñ kompresji JPEG"
 
 msgid "JPEG progressive encoding"
 msgstr "Kodowanie progresywne JPEG"
+
+msgid "JPEG size optimization"
+msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "Bezstratna kompresja TIFF"
@@ -1199,10 +1180,6 @@ msgstr "Zapamiêtaj wyj¶ciow± ¶cie¿kê"
 msgid "Overwrite existing files without asking"
 msgstr "Nadpisz istniej±ce pliki bez pytania"
 
-#. Start of EXIF page
-msgid "EXIF"
-msgstr "EXIF"
-
 msgid "Tag"
 msgstr "Tag"
 
@@ -1238,6 +1215,9 @@ msgstr "Obiektyw"
 msgid "Flash"
 msgstr "Lampa b³yskowa"
 
+msgid "White balance"
+msgstr "Balans bieli"
+
 #, c-format
 msgid "EXIF data read by %s"
 msgstr "Dane EXIF odczytane przez %s"
@@ -1245,35 +1225,46 @@ msgstr "Dane EXIF odczytane przez %s"
 msgid "Warning: EXIF data will not be sent to output"
 msgstr "Uwaga: dane EXIF nie zostan± zapisane"
 
-msgid "RGB histogram"
-msgstr "Histogram RGB"
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw "
 
-msgid "R+G+B histogram"
-msgstr "Histogram R+G+B"
+msgid "Spot values:"
+msgstr "Warto¶ci punktowe"
 
-msgid "Luminosity histogram"
-msgstr "Histogram luminancji"
+msgid "Exposure compensation in EV"
+msgstr "Korekta ekspozycji w EV"
 
-msgid "Value (maximum) histogram"
-msgstr "Histogram jasno¶ci (maksimum)"
+msgid "Auto adjust exposure"
+msgstr "Autodopasowanie ekspozycji"
 
-msgid "Saturation histogram"
-msgstr "Histogram jasno¶ci"
+msgid "Reset exposure to default"
+msgstr "Ustawienie domy¶lnej korekty ekspozycji"
 
-msgid "Average:"
-msgstr "¦rednia:"
+msgid "Grayscale"
+msgstr "Skala szaro¶ci"
 
-msgid "Std. deviation:"
-msgstr "Std. odchylenie:"
+#. Lens correction page
+msgid "Lens correction"
+msgstr "Korekcja obiektywu"
 
-msgid "Overexposed:"
-msgstr "Prze¶wietlone:"
+msgid "Base curve"
+msgstr "Krzywa bazowa"
 
-msgid "Indicate"
-msgstr "Poka¿"
+msgid "Color management"
+msgstr "Zarz±dzanie kolorem"
 
-msgid "Underexposed:"
-msgstr "Niedo¶wietlone:"
+msgid "Correct luminosity, saturation"
+msgstr "Korekta luminancji, saturacji"
+
+msgid "Crop and rotate"
+msgstr "Kadrowanie i obrót"
+
+msgid "Save"
+msgstr "Zapisz"
+
+msgid "EXIF"
+msgstr "EXIF"
 
 msgid "Options"
 msgstr "Opcje"

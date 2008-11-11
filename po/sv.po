@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 08:00+0200\n"
+"POT-Creation-Date: 2008-11-11 06:30+0100\n"
 "PO-Revision-Date: 2007-11-13 21:53+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -752,31 +752,41 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%s)"
 
-#, c-format
-msgid "%s - UFRaw"
-msgstr "%s - UFRaw "
-
 msgid "Linear"
 msgstr "Linjär"
 
 msgid "Logarithmic"
 msgstr "Logaritmisk"
 
-msgid "Spot values:"
-msgstr "Punktvärden:"
+msgid "RGB histogram"
+msgstr "RGB-histogram"
 
-msgid "Exposure compensation in EV"
-msgstr "Exponeringskompensation i EV"
+msgid "R+G+B histogram"
+msgstr "R+G+B-histogram"
 
-msgid "Auto adjust exposure"
+msgid "Luminosity histogram"
+msgstr "Luminanshistogram"
+
+msgid "Value (maximum) histogram"
 msgstr ""
 
-msgid "Reset exposure to default"
-msgstr "Nollställ exponering till standardvärde"
+msgid "Saturation histogram"
+msgstr ""
 
-#. Start of White Balance setting page
-msgid "White balance"
-msgstr "Vitbalans"
+msgid "Average:"
+msgstr "Genomsnitt:"
+
+msgid "Std. deviation:"
+msgstr "Std. avvikelse:"
+
+msgid "Overexposed:"
+msgstr "Överexponerad:"
+
+msgid "Indicate"
+msgstr "Indikera"
+
+msgid "Underexposed:"
+msgstr "Underexponerad:"
 
 msgid "White Balance"
 msgstr "Vitbalans"
@@ -845,36 +855,23 @@ msgstr ""
 msgid "Reset denoise threshold to default"
 msgstr ""
 
-msgid "Zoom:"
-msgstr "Zoom:"
-
-msgid "Zoom percentage"
-msgstr "Zoom procentandel"
-
 msgid "Dark Frame:"
 msgstr ""
 
 msgid "Reset dark frame"
 msgstr ""
 
-#. End of White Balance setting page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr ""
+msgid "Zoom:"
+msgstr "Zoom:"
+
+msgid "Zoom percentage"
+msgstr "Zoom procentandel"
 
 msgid "Grayscale Mode:"
 msgstr ""
 
 msgid "Reset channel mixer"
 msgstr ""
-
-#. Lens correction page
-msgid "Lens correction"
-msgstr ""
-
-#. Start of Base Curve page
-msgid "Base curve"
-msgstr "Baskurva"
 
 msgid "Load base curve"
 msgstr "Läs in baskurva"
@@ -884,11 +881,6 @@ msgstr "Spara baskurva"
 
 msgid "Reset base curve to default"
 msgstr ""
-
-#. End of Base Curve page
-#. Start of Color management page
-msgid "Color management"
-msgstr "Färghantering"
 
 msgid "Input ICC profile"
 msgstr ""
@@ -941,11 +933,6 @@ msgstr ""
 msgid "Disable soft proofing"
 msgstr ""
 
-#. End of Color management page
-#. Start of Corrections page
-msgid "Correct luminosity, saturation"
-msgstr ""
-
 msgid "Contrast"
 msgstr ""
 
@@ -975,11 +962,6 @@ msgstr "Nollställ svartpunkt till standard"
 
 msgid "Auto adjust black-point"
 msgstr ""
-
-#. End of Corrections page
-#. Start of transformations page
-msgid "Crop and rotate"
-msgstr "Beskär och rotera"
 
 #. Start of Crop controls
 msgid "Left:"
@@ -1021,11 +1003,6 @@ msgstr "Bredd"
 msgid "Orientation:"
 msgstr "Orientering:"
 
-#. Start of Save page
-#, fuzzy
-msgid "Save"
-msgstr "Spara s_om"
-
 msgid "Path"
 msgstr ""
 
@@ -1043,6 +1020,9 @@ msgstr "Komprimeringsnivå"
 #, fuzzy
 msgid "JPEG progressive encoding"
 msgstr "Progressiv kodning"
+
+msgid "JPEG size optimization"
+msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr ""
@@ -1085,10 +1065,6 @@ msgstr ""
 msgid "Overwrite existing files without asking"
 msgstr "Skriv över befintliga filer utan att fråga"
 
-#. Start of EXIF page
-msgid "EXIF"
-msgstr "EXIF"
-
 msgid "Tag"
 msgstr "Tagg"
 
@@ -1125,6 +1101,9 @@ msgstr "Lins"
 msgid "Flash"
 msgstr "Blixt"
 
+msgid "White balance"
+msgstr "Vitbalans"
+
 #, c-format
 msgid "EXIF data read by %s"
 msgstr ""
@@ -1132,35 +1111,47 @@ msgstr ""
 msgid "Warning: EXIF data will not be sent to output"
 msgstr "Varning: EXIF-data kommer inte att skickas ut utmatning"
 
-msgid "RGB histogram"
-msgstr "RGB-histogram"
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw "
 
-msgid "R+G+B histogram"
-msgstr "R+G+B-histogram"
+msgid "Spot values:"
+msgstr "Punktvärden:"
 
-msgid "Luminosity histogram"
-msgstr "Luminanshistogram"
+msgid "Exposure compensation in EV"
+msgstr "Exponeringskompensation i EV"
 
-msgid "Value (maximum) histogram"
+msgid "Auto adjust exposure"
 msgstr ""
 
-msgid "Saturation histogram"
+msgid "Reset exposure to default"
+msgstr "Nollställ exponering till standardvärde"
+
+msgid "Grayscale"
 msgstr ""
 
-msgid "Average:"
-msgstr "Genomsnitt:"
+#. Lens correction page
+msgid "Lens correction"
+msgstr ""
 
-msgid "Std. deviation:"
-msgstr "Std. avvikelse:"
+msgid "Base curve"
+msgstr "Baskurva"
 
-msgid "Overexposed:"
-msgstr "Överexponerad:"
+msgid "Color management"
+msgstr "Färghantering"
 
-msgid "Indicate"
-msgstr "Indikera"
+msgid "Correct luminosity, saturation"
+msgstr ""
 
-msgid "Underexposed:"
-msgstr "Underexponerad:"
+msgid "Crop and rotate"
+msgstr "Beskär och rotera"
+
+#, fuzzy
+msgid "Save"
+msgstr "Spara s_om"
+
+msgid "EXIF"
+msgstr "EXIF"
 
 msgid "Options"
 msgstr "Alternativ"

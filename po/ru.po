@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 08:00+0200\n"
+"POT-Creation-Date: 2008-11-11 06:30+0100\n"
 "PO-Revision-Date: 2008-10-18 17:36+0300\n"
 "Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net."
 "by>\n"
@@ -872,31 +872,41 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%s)"
 
-#, c-format
-msgid "%s - UFRaw"
-msgstr "%s - UFRaw"
-
 msgid "Linear"
 msgstr "Линейный масштаб"
 
 msgid "Logarithmic"
 msgstr "Логарифмический масштаб"
 
-msgid "Spot values:"
-msgstr "Значения в точке:"
+msgid "RGB histogram"
+msgstr "Гистограмма RGB"
 
-msgid "Exposure compensation in EV"
-msgstr "Компенсация экспозиции в EV"
+msgid "R+G+B histogram"
+msgstr "Гистограмма R+G+B"
 
-msgid "Auto adjust exposure"
-msgstr "Автоматически скорректировать экспозицию"
+msgid "Luminosity histogram"
+msgstr "Гистограмма освещенности"
 
-msgid "Reset exposure to default"
-msgstr "Сбросить значение экспозиции до исходного"
+msgid "Value (maximum) histogram"
+msgstr "Гистограмма значений (максимума)"
 
-#. Start of White Balance setting page
-msgid "White balance"
-msgstr "Баланс белого"
+msgid "Saturation histogram"
+msgstr "Гистограмма насыщенности"
+
+msgid "Average:"
+msgstr "Среднее:"
+
+msgid "Std. deviation:"
+msgstr "Станд. отклонение:"
+
+msgid "Overexposed:"
+msgstr "Переэкспонировано:"
+
+msgid "Indicate"
+msgstr "Показать"
+
+msgid "Underexposed:"
+msgstr "Недоэкспонировано:"
 
 msgid "White Balance"
 msgstr "Баланс белого"
@@ -968,36 +978,23 @@ msgstr "Порог для вейвлетного подавления шума"
 msgid "Reset denoise threshold to default"
 msgstr "Сбросить порог шумоподавления"
 
-msgid "Zoom:"
-msgstr "Масштаб:"
-
-msgid "Zoom percentage"
-msgstr "Масштаб в процентах"
-
 msgid "Dark Frame:"
 msgstr "Темный кадр:"
 
 msgid "Reset dark frame"
 msgstr "Обнулить тёмный кадр"
 
-#. End of White Balance setting page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr "Уровни серого"
+msgid "Zoom:"
+msgstr "Масштаб:"
+
+msgid "Zoom percentage"
+msgstr "Масштаб в процентах"
 
 msgid "Grayscale Mode:"
 msgstr "Уровни серого:"
 
 msgid "Reset channel mixer"
 msgstr "Сброс смесителя каналов"
-
-#. Lens correction page
-msgid "Lens correction"
-msgstr "Коррекция дефектов объектива"
-
-#. Start of Base Curve page
-msgid "Base curve"
-msgstr "Базовая кривая"
 
 msgid "Load base curve"
 msgstr "Загрузить базовую кривую"
@@ -1007,11 +1004,6 @@ msgstr "Сохранить базовую кривую"
 
 msgid "Reset base curve to default"
 msgstr "Сбросить базовую кривую до исходной"
-
-#. End of Base Curve page
-#. Start of Color management page
-msgid "Color management"
-msgstr "Управление цветом"
 
 msgid "Input ICC profile"
 msgstr "ICC-профиль устройства ввода"
@@ -1064,11 +1056,6 @@ msgstr "Монитор"
 msgid "Disable soft proofing"
 msgstr "Отключить экранную цветопробу"
 
-#. End of Color management page
-#. Start of Corrections page
-msgid "Correct luminosity, saturation"
-msgstr "Изменить освещенность, насыщенность"
-
 msgid "Contrast"
 msgstr "Контраст"
 
@@ -1099,11 +1086,6 @@ msgstr "Сбросить значение чёрной точки до исхо�
 
 msgid "Auto adjust black-point"
 msgstr "Автоматически скорректировать чёрную точку"
-
-#. End of Corrections page
-#. Start of transformations page
-msgid "Crop and rotate"
-msgstr "Кадрирование и вращение"
 
 #. Start of Crop controls
 msgid "Left:"
@@ -1148,10 +1130,6 @@ msgstr "Ширина"
 msgid "Orientation:"
 msgstr "Ориентация:"
 
-#. Start of Save page
-msgid "Save"
-msgstr "Сохранить"
-
 msgid "Path"
 msgstr "Путь"
 
@@ -1166,6 +1144,9 @@ msgstr "Уровень сжатия JPEG"
 
 msgid "JPEG progressive encoding"
 msgstr "Прогрессивное кодирование JPEG"
+
+msgid "JPEG size optimization"
+msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "Сжатие без потерь TIFF"
@@ -1210,10 +1191,6 @@ msgstr "Запомнить каталог результата"
 msgid "Overwrite existing files without asking"
 msgstr "Перезаписать существующие файлы без подтверждения"
 
-#. Start of EXIF page
-msgid "EXIF"
-msgstr "EXIF"
-
 msgid "Tag"
 msgstr "Тег"
 
@@ -1249,6 +1226,9 @@ msgstr "Объектив"
 msgid "Flash"
 msgstr "Вспышка"
 
+msgid "White balance"
+msgstr "Баланс белого"
+
 #, c-format
 msgid "EXIF data read by %s"
 msgstr "Данные EXIF прочитаны %s"
@@ -1256,35 +1236,46 @@ msgstr "Данные EXIF прочитаны %s"
 msgid "Warning: EXIF data will not be sent to output"
 msgstr "Предупреждение: данные EXIF не будут посланы в вывод"
 
-msgid "RGB histogram"
-msgstr "Гистограмма RGB"
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw"
 
-msgid "R+G+B histogram"
-msgstr "Гистограмма R+G+B"
+msgid "Spot values:"
+msgstr "Значения в точке:"
 
-msgid "Luminosity histogram"
-msgstr "Гистограмма освещенности"
+msgid "Exposure compensation in EV"
+msgstr "Компенсация экспозиции в EV"
 
-msgid "Value (maximum) histogram"
-msgstr "Гистограмма значений (максимума)"
+msgid "Auto adjust exposure"
+msgstr "Автоматически скорректировать экспозицию"
 
-msgid "Saturation histogram"
-msgstr "Гистограмма насыщенности"
+msgid "Reset exposure to default"
+msgstr "Сбросить значение экспозиции до исходного"
 
-msgid "Average:"
-msgstr "Среднее:"
+msgid "Grayscale"
+msgstr "Уровни серого"
 
-msgid "Std. deviation:"
-msgstr "Станд. отклонение:"
+#. Lens correction page
+msgid "Lens correction"
+msgstr "Коррекция дефектов объектива"
 
-msgid "Overexposed:"
-msgstr "Переэкспонировано:"
+msgid "Base curve"
+msgstr "Базовая кривая"
 
-msgid "Indicate"
-msgstr "Показать"
+msgid "Color management"
+msgstr "Управление цветом"
 
-msgid "Underexposed:"
-msgstr "Недоэкспонировано:"
+msgid "Correct luminosity, saturation"
+msgstr "Изменить освещенность, насыщенность"
+
+msgid "Crop and rotate"
+msgstr "Кадрирование и вращение"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "EXIF"
+msgstr "EXIF"
 
 msgid "Options"
 msgstr "Параметры"

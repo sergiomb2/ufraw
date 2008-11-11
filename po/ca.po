@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 08:00+0200\n"
+"POT-Creation-Date: 2008-11-11 06:30+0100\n"
 "PO-Revision-Date: 2008-08-17 18:20-0500\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -881,31 +881,41 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%s)"
 
-#, c-format
-msgid "%s - UFRaw"
-msgstr "%s - UFRaw"
-
 msgid "Linear"
 msgstr "Lineal"
 
 msgid "Logarithmic"
 msgstr "Logarítmic"
 
-msgid "Spot values:"
-msgstr "Valors dels punts:"
+msgid "RGB histogram"
+msgstr "Histograma RGB"
 
-msgid "Exposure compensation in EV"
-msgstr "Compensació de l'exposició en EV"
+msgid "R+G+B histogram"
+msgstr "Histograma R+G+B"
 
-msgid "Auto adjust exposure"
-msgstr "Ajusta l'exposició de forma automàtica"
+msgid "Luminosity histogram"
+msgstr "Histograma de lluminositat"
 
-msgid "Reset exposure to default"
-msgstr "Reinicia l'exposició per omissió"
+msgid "Value (maximum) histogram"
+msgstr "Valor (màxim) de l'histograma"
 
-#. Start of White Balance setting page
-msgid "White balance"
-msgstr "Equilibri de blanc"
+msgid "Saturation histogram"
+msgstr "Histograma de saturació"
+
+msgid "Average:"
+msgstr "Mitjana:"
+
+msgid "Std. deviation:"
+msgstr "Desviació típica:"
+
+msgid "Overexposed:"
+msgstr "Sobreexposat:"
+
+msgid "Indicate"
+msgstr "Indica"
+
+msgid "Underexposed:"
+msgstr "Infraexoposat:"
 
 msgid "White Balance"
 msgstr "Equilibri de Blanc"
@@ -977,36 +987,23 @@ msgstr "Llindar per al filtratge de soroll per ondetes"
 msgid "Reset denoise threshold to default"
 msgstr "Reinicia el llindar de soroll per omissió"
 
-msgid "Zoom:"
-msgstr "Ampliació:"
-
-msgid "Zoom percentage"
-msgstr "Percentatge del zoom"
-
 msgid "Dark Frame:"
 msgstr "Marc Fosc:"
 
 msgid "Reset dark frame"
 msgstr "Reinicia el marc fosc"
 
-#. End of White Balance setting page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr "Escala de grisos"
+msgid "Zoom:"
+msgstr "Ampliació:"
+
+msgid "Zoom percentage"
+msgstr "Percentatge del zoom"
 
 msgid "Grayscale Mode:"
 msgstr "Mode escala de grisos:"
 
 msgid "Reset channel mixer"
 msgstr "Reinicia el canal de la mescla"
-
-#. Lens correction page
-msgid "Lens correction"
-msgstr "Correcció de la lent"
-
-#. Start of Base Curve page
-msgid "Base curve"
-msgstr "Corba base"
 
 msgid "Load base curve"
 msgstr "Carrega la corba base"
@@ -1016,11 +1013,6 @@ msgstr "Desa  la corba base"
 
 msgid "Reset base curve to default"
 msgstr "Reinicia la corba base per omissió"
-
-#. End of Base Curve page
-#. Start of Color management page
-msgid "Color management"
-msgstr "Gestió del color"
 
 msgid "Input ICC profile"
 msgstr "Perfil de color ICC d'entrada"
@@ -1073,11 +1065,6 @@ msgstr "Prova de reproducció"
 msgid "Disable soft proofing"
 msgstr "Inhabilita les proves suaus"
 
-#. End of Color management page
-#. Start of Corrections page
-msgid "Correct luminosity, saturation"
-msgstr "Corregeix la lluminositat, saturació"
-
 msgid "Contrast"
 msgstr "Contrast"
 
@@ -1108,11 +1095,6 @@ msgstr "Reinicia el punt negre per omissió"
 
 msgid "Auto adjust black-point"
 msgstr "Ajustament automàtic del punt negre"
-
-#. End of Corrections page
-#. Start of transformations page
-msgid "Crop and rotate"
-msgstr "Retalla i gira"
 
 #. Start of Crop controls
 msgid "Left:"
@@ -1157,10 +1139,6 @@ msgstr "Amplada"
 msgid "Orientation:"
 msgstr "Orientació:"
 
-#. Start of Save page
-msgid "Save"
-msgstr "Desa"
-
 msgid "Path"
 msgstr "Ruta"
 
@@ -1175,6 +1153,9 @@ msgstr "Nivell de compressió de JPEG"
 
 msgid "JPEG progressive encoding"
 msgstr "Codificació JPEG progressiva"
+
+msgid "JPEG size optimization"
+msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "Compressió TIFF sense pèrdua"
@@ -1219,10 +1200,6 @@ msgstr "Recorda el camí de sortida"
 msgid "Overwrite existing files without asking"
 msgstr "S'estant sobreescribint els fitxers sense confirmació"
 
-#. Start of EXIF page
-msgid "EXIF"
-msgstr "EXIF"
-
 msgid "Tag"
 msgstr "Etiqueta"
 
@@ -1258,6 +1235,9 @@ msgstr "Lent"
 msgid "Flash"
 msgstr "Flaix"
 
+msgid "White balance"
+msgstr "Equilibri de blanc"
+
 #, c-format
 msgid "EXIF data read by %s"
 msgstr "%s ha llegit les dades EXIF"
@@ -1265,35 +1245,46 @@ msgstr "%s ha llegit les dades EXIF"
 msgid "Warning: EXIF data will not be sent to output"
 msgstr "Avís: les dades EXIF no s'inclouran a la sortida"
 
-msgid "RGB histogram"
-msgstr "Histograma RGB"
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw"
 
-msgid "R+G+B histogram"
-msgstr "Histograma R+G+B"
+msgid "Spot values:"
+msgstr "Valors dels punts:"
 
-msgid "Luminosity histogram"
-msgstr "Histograma de lluminositat"
+msgid "Exposure compensation in EV"
+msgstr "Compensació de l'exposició en EV"
 
-msgid "Value (maximum) histogram"
-msgstr "Valor (màxim) de l'histograma"
+msgid "Auto adjust exposure"
+msgstr "Ajusta l'exposició de forma automàtica"
 
-msgid "Saturation histogram"
-msgstr "Histograma de saturació"
+msgid "Reset exposure to default"
+msgstr "Reinicia l'exposició per omissió"
 
-msgid "Average:"
-msgstr "Mitjana:"
+msgid "Grayscale"
+msgstr "Escala de grisos"
 
-msgid "Std. deviation:"
-msgstr "Desviació típica:"
+#. Lens correction page
+msgid "Lens correction"
+msgstr "Correcció de la lent"
 
-msgid "Overexposed:"
-msgstr "Sobreexposat:"
+msgid "Base curve"
+msgstr "Corba base"
 
-msgid "Indicate"
-msgstr "Indica"
+msgid "Color management"
+msgstr "Gestió del color"
 
-msgid "Underexposed:"
-msgstr "Infraexoposat:"
+msgid "Correct luminosity, saturation"
+msgstr "Corregeix la lluminositat, saturació"
+
+msgid "Crop and rotate"
+msgstr "Retalla i gira"
+
+msgid "Save"
+msgstr "Desa"
+
+msgid "EXIF"
+msgstr "EXIF"
 
 msgid "Options"
 msgstr "Opcions"

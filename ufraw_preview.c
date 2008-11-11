@@ -4667,6 +4667,10 @@ static void save_fill_interface(preview_data *data,
 	button = uf_check_button_new( _("JPEG progressive encoding"),
 		&CFG->progressiveJPEG);
 	gtk_box_pack_start(GTK_BOX(vBox), button, FALSE, FALSE, 0);
+
+	button = uf_check_button_new( _("JPEG size optimization"),
+		&CFG->optimizeJPEG);
+	gtk_box_pack_start(GTK_BOX(vBox), button, FALSE, FALSE, 0);
 #endif // HAVE_LIBJPEG
 
 #if defined(HAVE_LIBTIFF) && defined(HAVE_LIBZ)

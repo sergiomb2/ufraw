@@ -1,14 +1,14 @@
 # Serbian translation of UFRaw
 # Courtesy of Prevod.org team (http://prevod.org/) -- 2006, 2007, 2008.
-# 
+#
 # This file is distributed under the same license as the ufraw package.
-# 
+#
 # Милош Поповић <gpopac@gmail.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 08:00+0200\n"
+"POT-Creation-Date: 2008-11-11 06:30+0100\n"
 "PO-Revision-Date: 2008-05-12 14:55+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
@@ -867,31 +867,41 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%s)"
 
-#, c-format
-msgid "%s - UFRaw"
-msgstr "%s - НЛRaw"
-
 msgid "Linear"
 msgstr "Линеарно"
 
 msgid "Logarithmic"
 msgstr "Логаритамски"
 
-msgid "Spot values:"
-msgstr "Вредности тачке:"
+msgid "RGB histogram"
+msgstr "RGB хистограм"
 
-msgid "Exposure compensation in EV"
-msgstr "Компензација експозиције у EV"
+msgid "R+G+B histogram"
+msgstr "R+G+B хистограм"
 
-msgid "Auto adjust exposure"
-msgstr "Сам подеси експозицију"
+msgid "Luminosity histogram"
+msgstr "Хистограм луминансе"
 
-msgid "Reset exposure to default"
-msgstr "Врати експозицију на подразумевану вредност"
+msgid "Value (maximum) histogram"
+msgstr "Хистограм (највеће) вредности"
 
-#. Start of White Balance setting page
-msgid "White balance"
-msgstr "Равнотежа беле"
+msgid "Saturation histogram"
+msgstr "Хистограм засићености"
+
+msgid "Average:"
+msgstr "Просек:"
+
+msgid "Std. deviation:"
+msgstr "Ст. девијација:"
+
+msgid "Overexposed:"
+msgstr "Преекспонирано:"
+
+msgid "Indicate"
+msgstr "Покажи"
+
+msgid "Underexposed:"
+msgstr "Подекспонирано:"
 
 msgid "White Balance"
 msgstr "Равнотежа беле"
@@ -963,36 +973,23 @@ msgstr "Осетљивост за таласно уклањање шума"
 msgid "Reset denoise threshold to default"
 msgstr "Врати подразумевану вредност осетљивости на шум"
 
-msgid "Zoom:"
-msgstr "Увећање:"
-
-msgid "Zoom percentage"
-msgstr "Увећање у процентима"
-
 msgid "Dark Frame:"
 msgstr "Тамни кадар:"
 
 msgid "Reset dark frame"
 msgstr "Поништи тамни кадар"
 
-#. End of White Balance setting page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr "Сиви тонови"
+msgid "Zoom:"
+msgstr "Увећање:"
+
+msgid "Zoom percentage"
+msgstr "Увећање у процентима"
 
 msgid "Grayscale Mode:"
 msgstr "Режим сивих тонова:"
 
 msgid "Reset channel mixer"
 msgstr "Ресетуј миксер канала"
-
-#. Lens correction page
-msgid "Lens correction"
-msgstr "Корекција сочива"
-
-#. Start of Base Curve page
-msgid "Base curve"
-msgstr "Основна крива"
 
 msgid "Load base curve"
 msgstr "Учитај основну криву"
@@ -1002,11 +999,6 @@ msgstr "Сачувај основну криву"
 
 msgid "Reset base curve to default"
 msgstr "Врати основну криву на подразумевано"
-
-#. End of Base Curve page
-#. Start of Color management page
-msgid "Color management"
-msgstr "Управљање бојама"
 
 msgid "Input ICC profile"
 msgstr "Улазни ICC профил"
@@ -1059,11 +1051,6 @@ msgstr "Приказна намера"
 msgid "Disable soft proofing"
 msgstr "Онемогући корекцију из програма"
 
-#. End of Color management page
-#. Start of Corrections page
-msgid "Correct luminosity, saturation"
-msgstr "Исправка луминансе и засићености"
-
 msgid "Contrast"
 msgstr "Контраст"
 
@@ -1094,11 +1081,6 @@ msgstr "Врати црну тачку на подразумевано"
 
 msgid "Auto adjust black-point"
 msgstr "Сам подеси црну тачку"
-
-#. End of Corrections page
-#. Start of transformations page
-msgid "Crop and rotate"
-msgstr "Исецање и ротирање"
 
 #. Start of Crop controls
 msgid "Left:"
@@ -1143,10 +1125,6 @@ msgstr "Ширина"
 msgid "Orientation:"
 msgstr "Окретање:"
 
-#. Start of Save page
-msgid "Save"
-msgstr "Сачувај"
-
 msgid "Path"
 msgstr "Путања"
 
@@ -1161,6 +1139,9 @@ msgstr "Ниво JPEG компресије"
 
 msgid "JPEG progressive encoding"
 msgstr "Прогресивно JPEG кодирање"
+
+msgid "JPEG size optimization"
+msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "TIFF компресија без губитка"
@@ -1205,10 +1186,6 @@ msgstr "Запамти излазну путању"
 msgid "Overwrite existing files without asking"
 msgstr "Препиши постојеће датотеке без питања"
 
-#. Start of EXIF page
-msgid "EXIF"
-msgstr "EXIF подаци"
-
 msgid "Tag"
 msgstr "Ознака"
 
@@ -1244,6 +1221,9 @@ msgstr "Објектив"
 msgid "Flash"
 msgstr "Блиц"
 
+msgid "White balance"
+msgstr "Равнотежа беле"
+
 #, c-format
 msgid "EXIF data read by %s"
 msgstr "EXIF подаци су прочитани помоћу %s"
@@ -1251,35 +1231,46 @@ msgstr "EXIF подаци су прочитани помоћу %s"
 msgid "Warning: EXIF data will not be sent to output"
 msgstr "Упозорење: EXIF подаци неће бити послати у излазу"
 
-msgid "RGB histogram"
-msgstr "RGB хистограм"
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - НЛRaw"
 
-msgid "R+G+B histogram"
-msgstr "R+G+B хистограм"
+msgid "Spot values:"
+msgstr "Вредности тачке:"
 
-msgid "Luminosity histogram"
-msgstr "Хистограм луминансе"
+msgid "Exposure compensation in EV"
+msgstr "Компензација експозиције у EV"
 
-msgid "Value (maximum) histogram"
-msgstr "Хистограм (највеће) вредности"
+msgid "Auto adjust exposure"
+msgstr "Сам подеси експозицију"
 
-msgid "Saturation histogram"
-msgstr "Хистограм засићености"
+msgid "Reset exposure to default"
+msgstr "Врати експозицију на подразумевану вредност"
 
-msgid "Average:"
-msgstr "Просек:"
+msgid "Grayscale"
+msgstr "Сиви тонови"
 
-msgid "Std. deviation:"
-msgstr "Ст. девијација:"
+#. Lens correction page
+msgid "Lens correction"
+msgstr "Корекција сочива"
 
-msgid "Overexposed:"
-msgstr "Преекспонирано:"
+msgid "Base curve"
+msgstr "Основна крива"
 
-msgid "Indicate"
-msgstr "Покажи"
+msgid "Color management"
+msgstr "Управљање бојама"
 
-msgid "Underexposed:"
-msgstr "Подекспонирано:"
+msgid "Correct luminosity, saturation"
+msgstr "Исправка луминансе и засићености"
+
+msgid "Crop and rotate"
+msgstr "Исецање и ротирање"
+
+msgid "Save"
+msgstr "Сачувај"
+
+msgid "EXIF"
+msgstr "EXIF подаци"
 
 msgid "Options"
 msgstr "Поставке"

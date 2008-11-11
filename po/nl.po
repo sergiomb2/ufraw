@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 08:00+0200\n"
+"POT-Creation-Date: 2008-11-11 06:30+0100\n"
 "PO-Revision-Date: 2008-08-18 22:09+0200\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
@@ -863,31 +863,41 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%s)"
 
-#, c-format
-msgid "%s - UFRaw"
-msgstr "%s - UFRaw"
-
 msgid "Linear"
 msgstr "Lineair"
 
 msgid "Logarithmic"
 msgstr "Logaritmisch"
 
-msgid "Spot values:"
-msgstr "Spot waardes:"
+msgid "RGB histogram"
+msgstr "RGB histogram"
 
-msgid "Exposure compensation in EV"
-msgstr "Belichtings compensatie in EV"
+msgid "R+G+B histogram"
+msgstr "R+G+B histogram"
 
-msgid "Auto adjust exposure"
-msgstr "Belichting automatisch aanpassen"
+msgid "Luminosity histogram"
+msgstr "Helderheids histogram"
 
-msgid "Reset exposure to default"
-msgstr "Reset belichting naar verstekwaarde"
+msgid "Value (maximum) histogram"
+msgstr "Waarde (maximum) histogram"
 
-#. Start of White Balance setting page
-msgid "White balance"
-msgstr "Witbalans"
+msgid "Saturation histogram"
+msgstr "Verzadigings histogram"
+
+msgid "Average:"
+msgstr "Gemiddeld:"
+
+msgid "Std. deviation:"
+msgstr "Standaardafwijking:"
+
+msgid "Overexposed:"
+msgstr "Overbelicht:"
+
+msgid "Indicate"
+msgstr "Aangeven"
+
+msgid "Underexposed:"
+msgstr "Onderbelicht:"
 
 msgid "White Balance"
 msgstr "Witbalans"
@@ -958,36 +968,23 @@ msgstr "Drempelwaarde voor wavelet ontruising"
 msgid "Reset denoise threshold to default"
 msgstr "Reset ontruis drempelwaarde naar verstekwaarde"
 
-msgid "Zoom:"
-msgstr "Zoom:"
-
-msgid "Zoom percentage"
-msgstr "Zoom percentage"
-
 msgid "Dark Frame:"
 msgstr "Zwartbeeld:"
 
 msgid "Reset dark frame"
 msgstr "Reset zwartbeeld"
 
-#. End of White Balance setting page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr "Grijsschaal"
+msgid "Zoom:"
+msgstr "Zoom:"
+
+msgid "Zoom percentage"
+msgstr "Zoom percentage"
 
 msgid "Grayscale Mode:"
 msgstr "Grijsschaal algoritme:"
 
 msgid "Reset channel mixer"
 msgstr "Reset Kleurmixer"
-
-#. Lens correction page
-msgid "Lens correction"
-msgstr "Lens correctie"
-
-#. Start of Base Curve page
-msgid "Base curve"
-msgstr "Basis curve"
 
 msgid "Load base curve"
 msgstr "Inlezen basis curve"
@@ -997,11 +994,6 @@ msgstr "Opslaan basis curve"
 
 msgid "Reset base curve to default"
 msgstr "Reset basis curve naar verstekwaarde"
-
-#. End of Base Curve page
-#. Start of Color management page
-msgid "Color management"
-msgstr "Kleur management"
 
 msgid "Input ICC profile"
 msgstr "Input ICC profiel"
@@ -1054,11 +1046,6 @@ msgstr "Display doel"
 msgid "Disable soft proofing"
 msgstr "Uitschakelen soft proofing"
 
-#. End of Color management page
-#. Start of Corrections page
-msgid "Correct luminosity, saturation"
-msgstr "Corrigeer helderheid, verzadiging"
-
 msgid "Contrast"
 msgstr "Contrast"
 
@@ -1089,11 +1076,6 @@ msgstr "Reset zwartpunt naar verstekwaarde"
 
 msgid "Auto adjust black-point"
 msgstr "Automatisch zwartpunt"
-
-#. End of Corrections page
-#. Start of transformations page
-msgid "Crop and rotate"
-msgstr "Uitsnijden en roteren"
 
 #. Start of Crop controls
 msgid "Left:"
@@ -1138,10 +1120,6 @@ msgstr "Breedte"
 msgid "Orientation:"
 msgstr "Orientatie:"
 
-#. Start of Save page
-msgid "Save"
-msgstr "Opslaan"
-
 msgid "Path"
 msgstr "Pad "
 
@@ -1156,6 +1134,9 @@ msgstr "JPEG compressie niveau"
 
 msgid "JPEG progressive encoding"
 msgstr "JPEG progressieve codering"
+
+msgid "JPEG size optimization"
+msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "TIFF lossless Compressie"
@@ -1200,10 +1181,6 @@ msgstr "Bewaar output pad"
 msgid "Overwrite existing files without asking"
 msgstr "Overschrijf bestaande bestanden zonder vragen"
 
-#. Start of EXIF page
-msgid "EXIF"
-msgstr "EXIF"
-
 msgid "Tag"
 msgstr "Tag"
 
@@ -1239,6 +1216,9 @@ msgstr "Lens"
 msgid "Flash"
 msgstr "Flits"
 
+msgid "White balance"
+msgstr "Witbalans"
+
 #, c-format
 msgid "EXIF data read by %s"
 msgstr "EXIF data gelezen door %s"
@@ -1246,35 +1226,46 @@ msgstr "EXIF data gelezen door %s"
 msgid "Warning: EXIF data will not be sent to output"
 msgstr "Let op: EXIF data wordt niet naar output gestuurd"
 
-msgid "RGB histogram"
-msgstr "RGB histogram"
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw"
 
-msgid "R+G+B histogram"
-msgstr "R+G+B histogram"
+msgid "Spot values:"
+msgstr "Spot waardes:"
 
-msgid "Luminosity histogram"
-msgstr "Helderheids histogram"
+msgid "Exposure compensation in EV"
+msgstr "Belichtings compensatie in EV"
 
-msgid "Value (maximum) histogram"
-msgstr "Waarde (maximum) histogram"
+msgid "Auto adjust exposure"
+msgstr "Belichting automatisch aanpassen"
 
-msgid "Saturation histogram"
-msgstr "Verzadigings histogram"
+msgid "Reset exposure to default"
+msgstr "Reset belichting naar verstekwaarde"
 
-msgid "Average:"
-msgstr "Gemiddeld:"
+msgid "Grayscale"
+msgstr "Grijsschaal"
 
-msgid "Std. deviation:"
-msgstr "Standaardafwijking:"
+#. Lens correction page
+msgid "Lens correction"
+msgstr "Lens correctie"
 
-msgid "Overexposed:"
-msgstr "Overbelicht:"
+msgid "Base curve"
+msgstr "Basis curve"
 
-msgid "Indicate"
-msgstr "Aangeven"
+msgid "Color management"
+msgstr "Kleur management"
 
-msgid "Underexposed:"
-msgstr "Onderbelicht:"
+msgid "Correct luminosity, saturation"
+msgstr "Corrigeer helderheid, verzadiging"
+
+msgid "Crop and rotate"
+msgstr "Uitsnijden en roteren"
+
+msgid "Save"
+msgstr "Opslaan"
+
+msgid "EXIF"
+msgstr "EXIF"
 
 msgid "Options"
 msgstr "Opties"

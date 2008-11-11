@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 08:00+0200\n"
+"POT-Creation-Date: 2008-11-11 06:30+0100\n"
 "PO-Revision-Date: 2008-10-16 16:39+0900\n"
 "Last-Translator: Homin Lee <ff4500@gamil.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -836,31 +836,41 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%s)"
 
-#, c-format
-msgid "%s - UFRaw"
-msgstr "%s - UFRaw "
-
 msgid "Linear"
 msgstr "선형"
 
 msgid "Logarithmic"
 msgstr "대수"
 
-msgid "Spot values:"
-msgstr "스팟 값:"
+msgid "RGB histogram"
+msgstr "RGB 히스토그램"
 
-msgid "Exposure compensation in EV"
-msgstr "EV에서 노출 보정"
+msgid "R+G+B histogram"
+msgstr "R+G+B 히스토그램"
 
-msgid "Auto adjust exposure"
-msgstr "자동 노출 조정"
+msgid "Luminosity histogram"
+msgstr "조도 히스토그램"
 
-msgid "Reset exposure to default"
-msgstr "노출값 초기화"
+msgid "Value (maximum) histogram"
+msgstr "값 (최대) 히스토그램"
 
-#. Start of White Balance setting page
-msgid "White balance"
-msgstr "화이트 벨런스"
+msgid "Saturation histogram"
+msgstr "채도 히스토그램"
+
+msgid "Average:"
+msgstr "평균:"
+
+msgid "Std. deviation:"
+msgstr "표준편차:"
+
+msgid "Overexposed:"
+msgstr "노출과다:"
+
+msgid "Indicate"
+msgstr "표시"
+
+msgid "Underexposed:"
+msgstr "노출부족:"
 
 msgid "White Balance"
 msgstr "화이트 벨런스"
@@ -932,36 +942,23 @@ msgstr "잔 노이즈 제거를 위한 임계값"
 msgid "Reset denoise threshold to default"
 msgstr "노이즈제거 임계값 초기화"
 
-msgid "Zoom:"
-msgstr "확대:"
-
-msgid "Zoom percentage"
-msgstr "확대 비율"
-
 msgid "Dark Frame:"
 msgstr "다크프레임:"
 
 msgid "Reset dark frame"
 msgstr "다크프레임 초기화"
 
-#. End of White Balance setting page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr "그레이스케일"
+msgid "Zoom:"
+msgstr "확대:"
+
+msgid "Zoom percentage"
+msgstr "확대 비율"
 
 msgid "Grayscale Mode:"
 msgstr "그레이스케일 모드:"
 
 msgid "Reset channel mixer"
 msgstr "채널 믹서 초기화"
-
-#. Lens correction page
-msgid "Lens correction"
-msgstr "렌즈 보정"
-
-#. Start of Base Curve page
-msgid "Base curve"
-msgstr "기본 곡선"
 
 msgid "Load base curve"
 msgstr "기본 곡선 불러오기"
@@ -971,11 +968,6 @@ msgstr "기본 곡선 저장하기"
 
 msgid "Reset base curve to default"
 msgstr "기본 곡선 초기화"
-
-#. End of Base Curve page
-#. Start of Color management page
-msgid "Color management"
-msgstr "색조 처리"
 
 msgid "Input ICC profile"
 msgstr "입력 ICC 프로파일"
@@ -1028,11 +1020,6 @@ msgstr "화면 의도"
 msgid "Disable soft proofing"
 msgstr "소프트 프루핑 해제"
 
-#. End of Color management page
-#. Start of Corrections page
-msgid "Correct luminosity, saturation"
-msgstr "조도, 채도 조정"
-
 msgid "Contrast"
 msgstr "대비"
 
@@ -1063,11 +1050,6 @@ msgstr "암부(black-point) 초기화"
 
 msgid "Auto adjust black-point"
 msgstr "암부 자동 조정"
-
-#. End of Corrections page
-#. Start of transformations page
-msgid "Crop and rotate"
-msgstr "잘라내기와 회전"
 
 #. Start of Crop controls
 msgid "Left:"
@@ -1112,10 +1094,6 @@ msgstr "너비"
 msgid "Orientation:"
 msgstr "기준:"
 
-#. Start of Save page
-msgid "Save"
-msgstr "저장"
-
 msgid "Path"
 msgstr "경로"
 
@@ -1130,6 +1108,9 @@ msgstr "JPEG 압축률"
 
 msgid "JPEG progressive encoding"
 msgstr "JPEG 프로그래시브 인코딩"
+
+msgid "JPEG size optimization"
+msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "TIFF 무손실 압축"
@@ -1174,10 +1155,6 @@ msgstr "출력 경로 기억"
 msgid "Overwrite existing files without asking"
 msgstr "기존 파일에 덮어쓰기"
 
-#. Start of EXIF page
-msgid "EXIF"
-msgstr "EXIF"
-
 msgid "Tag"
 msgstr "태그"
 
@@ -1213,6 +1190,9 @@ msgstr "렌즈"
 msgid "Flash"
 msgstr "플레쉬"
 
+msgid "White balance"
+msgstr "화이트 벨런스"
+
 #, c-format
 msgid "EXIF data read by %s"
 msgstr "'%s'(으)로 EXIF 정보를 읽음"
@@ -1220,35 +1200,46 @@ msgstr "'%s'(으)로 EXIF 정보를 읽음"
 msgid "Warning: EXIF data will not be sent to output"
 msgstr "경고: EXIF 정보가 출력에 포함되지 않을 것입니다"
 
-msgid "RGB histogram"
-msgstr "RGB 히스토그램"
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw "
 
-msgid "R+G+B histogram"
-msgstr "R+G+B 히스토그램"
+msgid "Spot values:"
+msgstr "스팟 값:"
 
-msgid "Luminosity histogram"
-msgstr "조도 히스토그램"
+msgid "Exposure compensation in EV"
+msgstr "EV에서 노출 보정"
 
-msgid "Value (maximum) histogram"
-msgstr "값 (최대) 히스토그램"
+msgid "Auto adjust exposure"
+msgstr "자동 노출 조정"
 
-msgid "Saturation histogram"
-msgstr "채도 히스토그램"
+msgid "Reset exposure to default"
+msgstr "노출값 초기화"
 
-msgid "Average:"
-msgstr "평균:"
+msgid "Grayscale"
+msgstr "그레이스케일"
 
-msgid "Std. deviation:"
-msgstr "표준편차:"
+#. Lens correction page
+msgid "Lens correction"
+msgstr "렌즈 보정"
 
-msgid "Overexposed:"
-msgstr "노출과다:"
+msgid "Base curve"
+msgstr "기본 곡선"
 
-msgid "Indicate"
-msgstr "표시"
+msgid "Color management"
+msgstr "색조 처리"
 
-msgid "Underexposed:"
-msgstr "노출부족:"
+msgid "Correct luminosity, saturation"
+msgstr "조도, 채도 조정"
+
+msgid "Crop and rotate"
+msgstr "잘라내기와 회전"
+
+msgid "Save"
+msgstr "저장"
+
+msgid "EXIF"
+msgstr "EXIF"
 
 msgid "Options"
 msgstr "옵션"

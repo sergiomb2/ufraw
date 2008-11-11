@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 08:00+0200\n"
+"POT-Creation-Date: 2008-11-11 06:30+0100\n"
 "PO-Revision-Date: 2008-08-18 22:38+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -856,31 +856,41 @@ msgstr ""
 msgid "%s%s (Alt-%s)"
 msgstr "%s%s (Alt-%s)"
 
-#, c-format
-msgid "%s - UFRaw"
-msgstr "%s - UFRaw"
-
 msgid "Linear"
 msgstr "Lineární"
 
 msgid "Logarithmic"
 msgstr "Logaritmické"
 
-msgid "Spot values:"
-msgstr "Bodové hodnoty:"
+msgid "RGB histogram"
+msgstr "Histogram dle RGB"
 
-msgid "Exposure compensation in EV"
-msgstr "Kompenzace expozice v EV"
+msgid "R+G+B histogram"
+msgstr "Histogram dle R+G+B"
 
-msgid "Auto adjust exposure"
-msgstr "Automaticky upravit expozici"
+msgid "Luminosity histogram"
+msgstr "Histogram dle jasu"
 
-msgid "Reset exposure to default"
-msgstr "Nastavit expozici na standardní"
+msgid "Value (maximum) histogram"
+msgstr "Histogram dle hodnoty (maximum)"
 
-#. Start of White Balance setting page
-msgid "White balance"
-msgstr "Vyvážení bílé"
+msgid "Saturation histogram"
+msgstr "Histogram dle sytosti barev"
+
+msgid "Average:"
+msgstr "Průměr:"
+
+msgid "Std. deviation:"
+msgstr "Std. odch.:"
+
+msgid "Overexposed:"
+msgstr "Přeexp.:"
+
+msgid "Indicate"
+msgstr "Ukázat"
+
+msgid "Underexposed:"
+msgstr "Podexp.:"
 
 msgid "White Balance"
 msgstr "Vyvážení bílé"
@@ -951,36 +961,23 @@ msgstr "Práh pro vlnkové odstranění šumu"
 msgid "Reset denoise threshold to default"
 msgstr "Nastavit práh odstranění šumu na standardní"
 
-msgid "Zoom:"
-msgstr "Přiblížení:"
-
-msgid "Zoom percentage"
-msgstr "Procento přiblížení"
-
 msgid "Dark Frame:"
 msgstr "Černý snímek:"
 
 msgid "Reset dark frame"
 msgstr "Odstranit černý snímek"
 
-#. End of White Balance setting page
-#. Start of Grayscale page
-msgid "Grayscale"
-msgstr "Šedá škála"
+msgid "Zoom:"
+msgstr "Přiblížení:"
+
+msgid "Zoom percentage"
+msgstr "Procento přiblížení"
 
 msgid "Grayscale Mode:"
 msgstr "Režim šedé škály:"
 
 msgid "Reset channel mixer"
 msgstr "Obnovit mixér kanálů"
-
-#. Lens correction page
-msgid "Lens correction"
-msgstr "Korekce objektivu"
-
-#. Start of Base Curve page
-msgid "Base curve"
-msgstr "Základní křivka"
 
 msgid "Load base curve"
 msgstr "Načíst základní křivku"
@@ -990,11 +987,6 @@ msgstr "Uložit základní křivku"
 
 msgid "Reset base curve to default"
 msgstr "Nastavit základní křivku na standardní"
-
-#. End of Base Curve page
-#. Start of Color management page
-msgid "Color management"
-msgstr "Správa barev"
 
 msgid "Input ICC profile"
 msgstr "Vstupní ICC profil"
@@ -1047,11 +1039,6 @@ msgstr "Záměr monitoru"
 msgid "Disable soft proofing"
 msgstr "Vypnout soft proofing"
 
-#. End of Color management page
-#. Start of Corrections page
-msgid "Correct luminosity, saturation"
-msgstr "Upravit jas, sytost"
-
 msgid "Contrast"
 msgstr "Kontrast"
 
@@ -1082,11 +1069,6 @@ msgstr "Nastavit černý bod na standardní"
 
 msgid "Auto adjust black-point"
 msgstr "Automaticky upravit černý bod"
-
-#. End of Corrections page
-#. Start of transformations page
-msgid "Crop and rotate"
-msgstr "Ořez a otočení"
 
 #. Start of Crop controls
 msgid "Left:"
@@ -1131,10 +1113,6 @@ msgstr "Šířka"
 msgid "Orientation:"
 msgstr "Orientace:"
 
-#. Start of Save page
-msgid "Save"
-msgstr "Uložit"
-
 msgid "Path"
 msgstr "Cesta"
 
@@ -1149,6 +1127,9 @@ msgstr "Úroveň JPEG komprese"
 
 msgid "JPEG progressive encoding"
 msgstr "Progresívní JPEG kódování"
+
+msgid "JPEG size optimization"
+msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "Bezztrátová TIFF komprese"
@@ -1193,10 +1174,6 @@ msgstr "Pamatovat si výstupní cestu"
 msgid "Overwrite existing files without asking"
 msgstr "Přepsat existující soubory bez vyzvání"
 
-#. Start of EXIF page
-msgid "EXIF"
-msgstr "EXIF"
-
 msgid "Tag"
 msgstr "Tag"
 
@@ -1232,6 +1209,9 @@ msgstr "Objektiv"
 msgid "Flash"
 msgstr "Blesk"
 
+msgid "White balance"
+msgstr "Vyvážení bílé"
+
 #, c-format
 msgid "EXIF data read by %s"
 msgstr "EXIF údaje přečteny %s"
@@ -1239,35 +1219,46 @@ msgstr "EXIF údaje přečteny %s"
 msgid "Warning: EXIF data will not be sent to output"
 msgstr "Upozornění: EXIF údaje nebudou předány na výstup"
 
-msgid "RGB histogram"
-msgstr "Histogram dle RGB"
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw"
 
-msgid "R+G+B histogram"
-msgstr "Histogram dle R+G+B"
+msgid "Spot values:"
+msgstr "Bodové hodnoty:"
 
-msgid "Luminosity histogram"
-msgstr "Histogram dle jasu"
+msgid "Exposure compensation in EV"
+msgstr "Kompenzace expozice v EV"
 
-msgid "Value (maximum) histogram"
-msgstr "Histogram dle hodnoty (maximum)"
+msgid "Auto adjust exposure"
+msgstr "Automaticky upravit expozici"
 
-msgid "Saturation histogram"
-msgstr "Histogram dle sytosti barev"
+msgid "Reset exposure to default"
+msgstr "Nastavit expozici na standardní"
 
-msgid "Average:"
-msgstr "Průměr:"
+msgid "Grayscale"
+msgstr "Šedá škála"
 
-msgid "Std. deviation:"
-msgstr "Std. odch.:"
+#. Lens correction page
+msgid "Lens correction"
+msgstr "Korekce objektivu"
 
-msgid "Overexposed:"
-msgstr "Přeexp.:"
+msgid "Base curve"
+msgstr "Základní křivka"
 
-msgid "Indicate"
-msgstr "Ukázat"
+msgid "Color management"
+msgstr "Správa barev"
 
-msgid "Underexposed:"
-msgstr "Podexp.:"
+msgid "Correct luminosity, saturation"
+msgstr "Upravit jas, sytost"
+
+msgid "Crop and rotate"
+msgstr "Ořez a otočení"
+
+msgid "Save"
+msgstr "Uložit"
+
+msgid "EXIF"
+msgstr "EXIF"
 
 msgid "Options"
 msgstr "Volby"
