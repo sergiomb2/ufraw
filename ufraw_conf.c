@@ -1503,7 +1503,7 @@ N_("The options which are related to the final output are:\n"),
 "\n",
 N_("--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"),
 N_("--size=SIZE           Downsize max(height,width) to SIZE.\n"),
-N_("--out-type=ppm|tiff|png|jpeg|fits\n"
+N_("--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Output file format (default ppm).\n"),
 N_("--out-depth=8|16      Output bit depth per channel (default 8).\n"),
 N_("--create-id=no|also|only\n"
@@ -1961,7 +1961,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	}
 #endif
 
-	else if (!strcmp(outTypeName, "tiff"))
+	else if (!strcmp(outTypeName, "tiff") || !strcmp(outTypeName, "tif"))
 #ifdef HAVE_LIBTIFF
 	{
 	    cmd->type = tiff_type;
@@ -2003,7 +2003,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    return -1;
 	}
 #endif
-	else if (!strcmp(outTypeName, "jpeg"))
+	else if (!strcmp(outTypeName, "jpeg") || !strcmp(outTypeName, "jpg"))
 #ifdef HAVE_LIBJPEG
 	cmd->type = jpeg_type;
 #else
@@ -2066,7 +2066,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	ufraw_message(UFRAW_ERROR, _("ufraw was build without JPEG support."));
 	return -1;
 #endif
-	if ( outTypeName==NULL || strcmp(outTypeName, "jpeg")==0 )
+	if ( outTypeName==NULL || !strcmp(outTypeName, "jpeg") ||
+		!strcmp(outTypeName, "jpg"))
 	    cmd->type = embedded_jpeg_type;
 #ifdef HAVE_LIBPNG
 	else if ( strcmp(outTypeName, "png")==0 )

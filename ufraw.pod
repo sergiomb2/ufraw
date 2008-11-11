@@ -246,7 +246,7 @@ or do not rotate the image (default camera)
 Crop the output to the given pixel range, relative to the raw image
 after rotation but before any scaling.
 
-=item --out-type=ppm|tiff|png|jpeg|fits
+=item --out-type=ppm|tiff|tif|png|jpeg|jpg|fits
 
 Output file-format to use.
 The default output file-format is ppm.
