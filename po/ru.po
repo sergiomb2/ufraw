@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-11 06:50+0100\n"
+"POT-Creation-Date: 2008-11-14 06:15+0100\n"
 "PO-Revision-Date: 2008-10-18 17:36+0300\n"
 "Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net."
 "by>\n"
@@ -1145,9 +1145,6 @@ msgstr "Уровень сжатия JPEG"
 
 msgid "JPEG progressive encoding"
 msgstr "Прогрессивное кодирование JPEG"
-
-msgid "JPEG size optimization"
-msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "Сжатие без потерь TIFF"

@@ -461,8 +461,8 @@ int ufraw_write_image(ufraw_data *uf)
 	    cinfo.comp_info[0].h_samp_factor = 1;
 	if (uf->conf->progressiveJPEG)
 	    jpeg_simple_progression(&cinfo);
-	if (uf->conf->optimizeJPEG)
-	    cinfo.optimize_coding = 1;
+
+	cinfo.optimize_coding = 1;
 
 	jpeg_start_compress(&cinfo, TRUE);
 

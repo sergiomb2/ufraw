@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: no\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-11 06:50+0100\n"
+"POT-Creation-Date: 2008-11-14 06:15+0100\n"
 "PO-Revision-Date: 2008-08-29 17:42-0500\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -1127,9 +1127,6 @@ msgstr "JPEG komprimeringsnivå"
 
 msgid "JPEG progressive encoding"
 msgstr "JPEG progressiv koding"
-
-msgid "JPEG size optimization"
-msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "TIFF tapsfri komprimering"

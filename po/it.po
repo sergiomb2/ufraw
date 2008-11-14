@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-11 06:50+0100\n"
+"POT-Creation-Date: 2008-11-14 06:15+0100\n"
 "PO-Revision-Date: 2008-08-30 06:30+0200\n"
 "Last-Translator: Daniele Medri <dmedri@SPAMgmail.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -1134,9 +1134,6 @@ msgstr "Livello di compressione JPEG"
 
 msgid "JPEG progressive encoding"
 msgstr "Codifica progressiva JPEG"
-
-msgid "JPEG size optimization"
-msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "Compressione TIFF senza perdita"

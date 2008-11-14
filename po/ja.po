@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-11 06:50+0100\n"
+"POT-Creation-Date: 2008-11-14 06:15+0100\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -1144,9 +1144,6 @@ msgid "JPEG compression level"
 msgstr "圧縮比率"
 
 msgid "JPEG progressive encoding"
-msgstr ""
-
-msgid "JPEG size optimization"
 msgstr ""
 
 msgid "TIFF lossless Compress"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-11 06:50+0100\n"
+"POT-Creation-Date: 2008-11-14 06:15+0100\n"
 "PO-Revision-Date: 2008-08-17 18:20-0500\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -1154,9 +1154,6 @@ msgstr "Nivell de compressió de JPEG"
 
 msgid "JPEG progressive encoding"
 msgstr "Codificació JPEG progressiva"
-
-msgid "JPEG size optimization"
-msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "Compressió TIFF sense pèrdua"

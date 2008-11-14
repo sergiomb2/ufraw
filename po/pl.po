@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-11 06:50+0100\n"
+"POT-Creation-Date: 2008-11-14 06:15+0100\n"
 "PO-Revision-Date: 2008-08-17 21:43-0500\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -1134,9 +1134,6 @@ msgstr "Stopieñ kompresji JPEG"
 
 msgid "JPEG progressive encoding"
 msgstr "Kodowanie progresywne JPEG"
-
-msgid "JPEG size optimization"
-msgstr ""
 
 msgid "TIFF lossless Compress"
 msgstr "Bezstratna kompresja TIFF"

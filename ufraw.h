@@ -181,7 +181,7 @@ typedef struct {
     char inputFilename[max_path], outputFilename[max_path],
 	 outputPath[max_path];
     char inputURI[max_path], inputModTime[max_name];
-    int type, compression, createID, embedExif, progressiveJPEG, optimizeJPEG;
+    int type, compression, createID, embedExif, progressiveJPEG;
     int shrink, size;
     gboolean overwrite, losslessCompress, embeddedImage;
     gboolean rotate;

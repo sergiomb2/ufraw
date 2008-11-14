@@ -86,7 +86,6 @@ const conf_data conf_default = {
     ppm_type, 85, no_id, /* type, compression, createID */
     TRUE, /* embedExif */
     FALSE, /* progressiveJPEG */
-    TRUE, /* optimizeJPEG */
     1, 0, /* shrink, size */
     FALSE, /* overwrite existing files without asking */
     FALSE, /* losslessCompress */
@@ -680,7 +679,6 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     if (!strcmp("CreateID", element)) sscanf(temp, "%d", &c->createID);
     if (!strcmp("EmbedExif", element)) sscanf(temp, "%d", &c->embedExif);
     if (!strcmp("ProgressiveJPEG", element)) sscanf(temp, "%d", &c->progressiveJPEG);
-    if (!strcmp("OptimizeJPEG", element)) sscanf(temp, "%d", &c->optimizeJPEG);
     if (!strcmp("Compression", element)) sscanf(temp, "%d", &c->compression);
     if (!strcmp("Overwrite", element)) sscanf(temp, "%d", &c->overwrite);
     if (!strcmp("LosslessCompression", element))
@@ -970,8 +968,6 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	buf = uf_markup_buf(buf, "<EmbedExif>%d</EmbedExif>\n", c->embedExif);
     if (c->progressiveJPEG!=conf_default.progressiveJPEG)
     	buf = uf_markup_buf(buf, "<ProgressiveJPEG>%d</ProgressiveJPEG>\n", c->progressiveJPEG);
-    if (c->optimizeJPEG!=conf_default.optimizeJPEG)
-    	buf = uf_markup_buf(buf, "<OptimizeJPEG>%d</OptimizeJPEG>\n", c->optimizeJPEG);
     if (c->compression!=conf_default.compression)
 	buf = uf_markup_buf(buf,
 		"<Compression>%d</Compression>\n", c->compression);
@@ -1333,7 +1329,6 @@ void conf_copy_save(conf_data *dst, const conf_data *src)
     dst->overwrite = src->overwrite;
     dst->RememberOutputPath = src->RememberOutputPath;
     dst->progressiveJPEG = src->progressiveJPEG;
-    dst->optimizeJPEG = src->optimizeJPEG;
     dst->losslessCompress = src->losslessCompress;
     dst->embeddedImage = src->embeddedImage;
 }
