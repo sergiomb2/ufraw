@@ -223,13 +223,7 @@ double profile_default_gamma(profile_data *p)
     if ( !strcmp(p->name, "No profile")
        || !strcmp(p->name, "Color matrix") )
 	return 0.45;
-    else if ( !strncmp(p->productName, "Nikon DBase for NEF", 19) /*For D100*/
-	    || !strncmp(p->productName, "Nikon D1 for NEF", 16)
-	    || !strncmp(p->productName, "Nikon D1/H/X for NEF", 20)
-	    || !strncmp(p->productName, "Nikon D50 for NEF", 17)
-	    || !strncmp(p->productName, "Nikon D70 for NEF", 17)
-	    || !strncmp(p->productName, "Nikon D80 for NEF", 17)
-	    || !strncmp(p->productName, "Nikon D100 for NEF", 18)
+    else if ( !strncmp(p->productName, "Nikon D", 7)
 	    || !strncmp(p->productName, "Adobe RGB (1998)", 16) )
 	return 0.45;
     else
