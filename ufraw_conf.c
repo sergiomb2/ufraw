@@ -14,6 +14,13 @@
 #include "config.h"
 #endif
 
+/* Fix compiler warnings about warn_unused_result in gcc 3.4.x and higher. */
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 3)
+#include <features.h>
+#undef __wur
+#define __wur
+#endif
+
 #include <string.h>
 #include <errno.h>
 #include <math.h>

@@ -18,6 +18,13 @@
 #define _GNU_SOURCE /* needed for canonicalize_file_name() */
 #endif
 
+/* Fix compiler warnings about warn_unused_result in gcc 3.4.x and higher. */
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 3)
+#include <features.h>
+#undef __wur
+#define __wur
+#endif
+
 #include <errno.h>
 #include <locale.h>
 #include <stdlib.h> /* needed for canonicalize_file_name() */
@@ -479,7 +486,7 @@ int curve_save(CurveData *cp, char *filename)
 	g_free(name);
 	g_free(base);
 	char *buf = curve_buffer(cp);
-	if (buf!=NULL) fprintf(out, buf);
+	if (buf!=NULL) fprintf(out, "%s", buf);
 	g_free(buf);
 	fprintf(out, "</Curve>\n");
 	uf_reset_locale(locale);

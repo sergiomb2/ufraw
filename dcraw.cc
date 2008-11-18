@@ -23,6 +23,14 @@
 
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
+
+/* Fix compiler warnings about warn_unused_result in gcc 3.4.x and higher. */
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 3)
+#include <features.h>
+#undef __wur
+#define __wur
+#endif
+
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -1637,7 +1645,7 @@ void CLASS phase_one_load_raw_c()
 	len[0] = len[1] = 14;
       else if ((col & 7) == 0)
 	for (i=0; i < 2; i++) {
-	  for (j=0; j < 5 && !ph1_bits(1); j++);
+	  for (j=0; j < 5 && !ph1_bits(1); j++) {};
 	  if (j--) len[i] = length[j*2 + ph1_bits(1)];
 	}
       if ((i = len[col & 1]) == 14)
@@ -1806,7 +1814,7 @@ void CLASS unpacked_load_raw()
   ushort *pixel;
   int row, col, bits=0;
 
-  while (1 << ++bits < (int) maximum);
+  while (1 << ++bits < (int) maximum) {};
   fseek (ifp, (top_margin*raw_width + left_margin) * 2, SEEK_CUR);
   pixel = (ushort *) calloc (width, sizeof *pixel);
   merror (pixel, "unpacked_load_raw()");
@@ -1921,7 +1929,7 @@ void CLASS olympus_e410_load_raw()
     for (col=0; col < width; col++) {
       carry = acarry[col & 1];
       i = 2 * (carry[2] < 3);
-      for (nbits=2+i; (ushort) carry[0] >> (nbits+i); nbits++);
+      for (nbits=2+i; (ushort) carry[0] >> (nbits+i); nbits++) {};
       sign = getbits(1) * -1;
       low  = getbits(2);
       for (high=0; high < 12; high++)
@@ -2574,7 +2582,7 @@ void CLASS sony_arw2_load_raw()
 	min = 0x7ff & val >> 11;
 	imax = 0x0f & val >> 22;
 	imin = 0x0f & val >> 26;
-	for (sh=0; sh < 4 && 0x80 << sh <= max-min; sh++);
+	for (sh=0; sh < 4 && 0x80 << sh <= max-min; sh++) {};
 	for (bit=30, i=0; i < 16; i++)
 	  if      (i == imax) pix[i] = max;
 	  else if (i == imin) pix[i] = min;
@@ -2628,11 +2636,11 @@ void CLASS smal_decode_segment (unsigned seg[2][2], int holes)
 	carry = nbits - 8;
       }
       count = ((((data-range+1) & 0xffff) << 2) - 1) / (high >> 4);
-      for (bin=0; hist[s][bin+5] > count; bin++);
+      for (bin=0; hist[s][bin+5] > count; bin++) {};
 		low = hist[s][bin+5] * (high >> 4) >> 2;
       if (bin) high = hist[s][bin+4] * (high >> 4) >> 2;
       high -= low;
-      for (nbits=0; high << nbits < 128; nbits++);
+      for (nbits=0; high << nbits < 128; nbits++) {};
       range = (range+low) << nbits;
       high <<= nbits;
       next = hist[s][1];
@@ -3414,7 +3422,7 @@ void CLASS bad_pixels (char *fname)
       strcpy (cp, "/.badpixels");
       if ((fp = fopen (fname, "r"))) break;
       if (cp == fname) break;
-      while (*--cp != '/');
+      while (*--cp != '/') {};
     }
     free (fname);
   }
@@ -5691,7 +5699,7 @@ void CLASS parse_sinar_ia()
 
 void CLASS parse_phase_one (int base)
 {
-  unsigned entries, tag, type, len, data, save, i, c;
+  unsigned entries, tag, type, len, data, save, i, j, c;
   float romm_cam[3][3];
   char *cp;
 
@@ -5712,8 +5720,9 @@ void CLASS parse_phase_one (int base)
     switch (tag) {
       case 0x100:  flip = "0653"[data & 3]-'0';  break;
       case 0x106:
-	for (i=0; i < 9; i++)
-	  romm_cam[0][i] = getreal(11);
+	for (i=0; i < 3; i++)
+	  for (j=0; j < 3; j++)
+	    romm_cam[i][j] = getreal(11);
 	romm_coeff (romm_cam);
 	break;
       case 0x107:
@@ -5831,7 +5840,7 @@ void CLASS parse_riff()
     memset (&t, 0, sizeof t);
     if (sscanf (date, "%*s %s %d %d:%d:%d %d", month, &t.tm_mday,
 	&t.tm_hour, &t.tm_min, &t.tm_sec, &t.tm_year) == 6) {
-      for (i=0; i < 12 && strcasecmp(mon[i],month); i++);
+      for (i=0; i < 12 && strcasecmp(mon[i],month); i++) {};
       t.tm_mon = i;
       t.tm_year -= 1900;
       if (mktime(&t) > 0)
@@ -6419,15 +6428,16 @@ void CLASS adobe_coeff (const char *make, const char *model)
   };
   double cam_xyz[4][3];
   char name[130];
-  int i, j;
+  int i, j, k;
 
   sprintf (name, "%s %s", make, model);
   for (i=0; i < (int) sizeof table / (int) sizeof *table; i++)
     if (!strncmp (name, table[i].prefix, strlen(table[i].prefix))) {
       if (table[i].black)   black   = (ushort) table[i].black;
       if (table[i].maximum) maximum = (ushort) table[i].maximum;
-      for (j=0; j < 12; j++)
-	cam_xyz[0][j] = table[i].trans[j] / 10000.0;
+      for (j=0; j < 4; j++)
+	for (k=0; k < 3; k++)
+	  cam_xyz[j][k] = table[i].trans[3*j+k] / 10000.0;
       cam_xyz_coeff (cam_xyz);
       break;
     }

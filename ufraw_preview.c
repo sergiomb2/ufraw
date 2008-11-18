@@ -117,7 +117,7 @@ void ufraw_messenger(char *message,  void *parentWindow)
     } else {
 	dialog = GTK_DIALOG(gtk_message_dialog_new(GTK_WINDOW(parentWindow),
 		GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, message));
+		GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", message));
 	gtk_dialog_run(dialog);
 	gtk_widget_destroy(GTK_WIDGET(dialog));
     }

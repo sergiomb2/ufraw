@@ -15,6 +15,13 @@
 
 ****************************************************/
 
+/* Fix compiler warnings about warn_unused_result in gcc 3.4.x and higher. */
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 3)
+#include <features.h>
+#undef __wur
+#define __wur
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -193,7 +200,7 @@ void nc_message(int code, char *format, ...)
 #ifdef _STAND_ALONE_    //if we're running standalone mode
 
     code = code;
-    fprintf(stderr, message);
+    fprintf(stderr, "%s", message);
     fflush(stderr);
 
 #else
