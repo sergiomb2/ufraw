@@ -11,8 +11,8 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.406 $
-   $Date: 2008/11/26 08:39:39 $
+   $Revision: 1.407 $
+   $Date: 2008/12/02 01:50:56 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -1014,10 +1014,14 @@ void CLASS canon_sraw_load_raw()
     if (row & (jh.sraw >> 1))
       for (col=0; col < width; col+=2)
 	for (c=1; c < 3; c++)
-	  ip[col][c] = (ip[col-width][c] + ip[col+width][c] + 1) >> 1;
-    for (col=1; col < width-1; col+=2)
+	  if (row == height-1)
+	       ip[col][c] =  ip[col-width][c];
+	  else ip[col][c] = (ip[col-width][c] + ip[col+width][c] + 1) >> 1;
+    for (col=1; col < width; col+=2)
       for (c=1; c < 3; c++)
-	ip[col][c] = (ip[col-1][c] + ip[col+1][c] + 1) >> 1;
+	if (col == width-1)
+	     ip[col][c] =  ip[col-1][c];
+	else ip[col][c] = (ip[col-1][c] + ip[col+1][c] + 1) >> 1;
   }
   for ( ; rp < ip[0]; rp+=4) {
     if (unique_id < 0x80000200) {
