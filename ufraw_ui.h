@@ -41,7 +41,7 @@ enum { base_curve, luminosity_curve };
 /* All the "global" information is here: */
 typedef struct {
     ufraw_data *UF;
-    conf_data SaveConfig;
+    conf_data *rc;
     char initialWB[max_name];
     double initialTemperature, initialGreen;
     double initialChanMul[4];
@@ -178,7 +178,7 @@ typedef struct {
 
 /* These #defines are not very elegant, but otherwise things get tooo long */
 #define CFG data->UF->conf
-#define RC data->SaveConfig
+#define RC data->rc
 #define Developer data->UF->developer
 #define CFG_cameraCurve (CFG->BaseCurve[camera_curve].m_numAnchors>0)
 

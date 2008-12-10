@@ -138,14 +138,15 @@ GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
     return fileChooser;
 }
 
-void ufraw_chooser(conf_data *conf, const char *defPath)
+void ufraw_chooser(conf_data *rc, conf_data *conf, conf_data *cmd,
+	const char *defPath)
 {
     ufraw_data *uf;
     GtkFileChooser *fileChooser;
     GSList *list, *saveList;
     char *filename;
 
-    fileChooser = ufraw_raw_chooser(conf, defPath, "UFRaw", NULL,
+    fileChooser = ufraw_raw_chooser(rc, defPath, "UFRaw", NULL,
 				    GTK_STOCK_QUIT, TRUE);
 
     while (gtk_dialog_run(GTK_DIALOG(fileChooser))==GTK_RESPONSE_ACCEPT) {
@@ -157,11 +158,14 @@ void ufraw_chooser(conf_data *conf, const char *defPath)
 		ufraw_message(UFRAW_REPORT, NULL);
 		continue;
 	    }
-	    ufraw_config(uf, conf, NULL, NULL);
-	    ufraw_preview(uf, FALSE, NULL);
+	    int status = ufraw_config(uf, rc, conf, cmd);
+	    if (status==UFRAW_ERROR) {
+		ufraw_close(uf);
+	    } else {
+		ufraw_preview(uf, rc, FALSE, NULL);
+	    }
+            g_free(uf);
 	    g_free(filename);
-	    conf_copy_image(conf, uf->conf);
-	    conf_copy_save(conf, uf->conf);
 	}
 	g_slist_free(saveList);
     }

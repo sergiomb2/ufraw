@@ -104,9 +104,7 @@ int main (int argc, char **argv)
 	}
     }
     if (optInd==argc) {
-	status = ufraw_config(NULL, &rc, &conf, &cmd);
-	if (status==UFRAW_ERROR) exit(1);
-	ufraw_chooser(&rc, NULL);
+	ufraw_chooser(&rc, &conf, &cmd, NULL);
 //	ufraw_close(cmd.darkframe);
 	exit(0);
     }
@@ -114,9 +112,7 @@ int main (int argc, char **argv)
      * default directory for the file-chooser */
     argFile = uf_win32_locale_to_utf8(argv[optInd]);
     if (optInd==argc-1 && g_file_test(argFile,G_FILE_TEST_IS_DIR)) {
-	status = ufraw_config(NULL, &rc, &conf, &cmd);
-	if (status==UFRAW_ERROR) exit(1);
-	ufraw_chooser(&rc, argFile);
+	ufraw_chooser(&rc, &conf, &cmd, argFile);
 	uf_win32_locale_free(argFile);
 //	ufraw_close(cmd.darkframe);
 	exit(0);
@@ -139,9 +135,7 @@ int main (int argc, char **argv)
 	    g_free(uf);
 	    exit(1);
 	}
-	ufraw_preview(uf, plugin, NULL);
-	conf_copy_image(&rc, uf->conf);
-	conf_copy_save(&rc, uf->conf);
+	ufraw_preview(uf, &rc, plugin, NULL);
 	g_free(uf);
     }
     if (dummyWindow!=NULL) gtk_widget_destroy(dummyWindow);

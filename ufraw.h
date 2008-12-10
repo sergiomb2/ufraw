@@ -328,7 +328,8 @@ char *ufraw_message(int code, const char *format, ...);
 void ufraw_batch_messenger(char *message);
 
 /* prototypes for functions in ufraw_preview.c */
-int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)());
+int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
+	long (*save_func)());
 void ufraw_focus(void *window, gboolean focus);
 void ufraw_messenger(char *message, void *parentWindow);
 void preview_progress(void *widget, char *text, double progress);
@@ -396,7 +397,8 @@ int ufraw_convert_embedded(ufraw_data *uf);
 int ufraw_write_embedded(ufraw_data *uf);
 
 /* prototype for functions in ufraw_chooser.c */
-void ufraw_chooser(conf_data *conf, const char *defPath);
+void ufraw_chooser(conf_data *conf, conf_data *rc, conf_data *cmd,
+	const char *defPath);
 
 /* prototype for functions in ufraw_icons.c */
 void ufraw_icons_init();

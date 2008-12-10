@@ -197,8 +197,8 @@ static void load_curve(GtkWidget *widget, long curveType)
 		CFG->BaseCurveIndex = CFG->BaseCurveCount;
 		CFG->BaseCurveCount++;
 		/* Add curve to .ufrawrc but don't make it default */
-		RC.BaseCurve[RC.BaseCurveCount++] = c;
-		RC.BaseCurveCount++;
+		RC->BaseCurve[RC->BaseCurveCount++] = c;
+		RC->BaseCurveCount++;
 		if (CFG_cameraCurve)
 		    gtk_combo_box_set_active(data->BaseCurveCombo,
 			    CFG->BaseCurveIndex);
@@ -212,14 +212,14 @@ static void load_curve(GtkWidget *widget, long curveType)
 		CFG->curveIndex = CFG->curveCount;
 		CFG->curveCount++;
 		/* Add curve to .ufrawrc but don't make it default */
-		RC.curve[RC.curveCount++] = c;
-		RC.curveCount++;
+		RC->curve[RC->curveCount++] = c;
+		RC->curveCount++;
 		gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
 	    }
 	    cp = g_path_get_dirname(list->data);
 	    g_strlcpy(CFG->curvePath, cp, max_path);
-	    g_strlcpy(RC.curvePath, cp, max_path);
-	    conf_save(&RC, NULL, NULL);
+	    g_strlcpy(RC->curvePath, cp, max_path);
+	    conf_save(RC, NULL, NULL);
 	    g_free(cp);
 	    g_free(list->data);
 	}
@@ -382,9 +382,9 @@ static void load_profile(GtkWidget *widget, long type)
 	    cp = g_path_get_dirname(list->data);
 	    g_strlcpy(CFG->profilePath, cp, max_path);
 	    /* Add profile to .ufrawrc but don't make it default */
-	    RC.profile[type][RC.profileCount[type]++] = p;
-	    g_strlcpy(RC.profilePath, cp, max_path);
-	    conf_save(&RC, NULL, NULL);
+	    RC->profile[type][RC->profileCount[type]++] = p;
+	    g_strlcpy(RC->profilePath, cp, max_path);
+	    conf_save(RC, NULL, NULL);
 	    g_free(cp);
 	    g_free(list->data);
 	}
@@ -1339,7 +1339,7 @@ static void update_scales(preview_data *data)
 	    &CFG->curve[CFG->curveIndex]);
 
     gtk_widget_set_sensitive(data->ResetWBButton,
-	    ( strcmp(CFG->wb, data->SaveConfig.wb)
+	    ( strcmp(CFG->wb, data->initialWB)
 	    ||fabs(CFG->temperature-data->initialTemperature)>1
 	    ||fabs(CFG->green-data->initialGreen)>0.001
 	    ||CFG->chanMul[0]!=data->initialChanMul[0]
@@ -2916,7 +2916,7 @@ static void configuration_save(GtkWidget *widget, gpointer user_data)
     preview_data *data = get_preview_data(widget);
     user_data = user_data;
     conf_save(CFG, NULL, NULL);
-    data->SaveConfig = *data->UF->conf;
+    *RC = *data->UF->conf;
 }
 
 static void gimp_reset_clicked(GtkWidget *widget, GtkEntry *entry)
@@ -3112,42 +3112,42 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     	} else if ( response==GTK_RESPONSE_OK ) {
 	    g_strlcpy(CFG->remoteGimpCommand,
 		    gtk_entry_get_text(gimpEntry), max_path);
-	    g_strlcpy(RC.remoteGimpCommand, CFG->remoteGimpCommand, max_path);
-	    RC.blinkOverUnder = CFG->blinkOverUnder =
+	    g_strlcpy(RC->remoteGimpCommand, CFG->remoteGimpCommand, max_path);
+	    RC->blinkOverUnder = CFG->blinkOverUnder =
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(blinkButton));
 	    /* Copy profiles and curves from CFG to RC and save .ufrawrc */
-	    if ( memcmp(&RC.BaseCurve[RC.BaseCurveIndex],
-		    &CFG->BaseCurve[RC.BaseCurveIndex], sizeof(CurveData))!=0 )
-		RC.BaseCurveIndex = CFG->BaseCurveIndex;
+	    if ( memcmp(&RC->BaseCurve[RC->BaseCurveIndex],
+		    &CFG->BaseCurve[RC->BaseCurveIndex], sizeof(CurveData))!=0 )
+		RC->BaseCurveIndex = CFG->BaseCurveIndex;
 	    for (i=0; i<CFG->BaseCurveCount; i++)
-		RC.BaseCurve[i] = CFG->BaseCurve[i];
-	    RC.BaseCurveCount = CFG->BaseCurveCount;
+		RC->BaseCurve[i] = CFG->BaseCurve[i];
+	    RC->BaseCurveCount = CFG->BaseCurveCount;
 
-	    if ( memcmp(&RC.curve[RC.curveIndex],
-		    &CFG->curve[RC.curveIndex], sizeof(CurveData))!=0 )
-		RC.curveIndex = CFG->curveIndex;
+	    if ( memcmp(&RC->curve[RC->curveIndex],
+		    &CFG->curve[RC->curveIndex], sizeof(CurveData))!=0 )
+		RC->curveIndex = CFG->curveIndex;
 	    for (i=0; i<CFG->curveCount; i++)
-		RC.curve[i] = CFG->curve[i];
-	    RC.curveCount = CFG->curveCount;
+		RC->curve[i] = CFG->curve[i];
+	    RC->curveCount = CFG->curveCount;
 
 	    for (i=0; i<profile_types; i++) {
-		if ( memcmp(&RC.profile[i][RC.profileIndex[i]],
-			&CFG->profile[i][RC.profileIndex[i]],
+		if ( memcmp(&RC->profile[i][RC->profileIndex[i]],
+			&CFG->profile[i][RC->profileIndex[i]],
 			sizeof(profile_data))!=0 )
-		    RC.profileIndex[i] = CFG->profileIndex[i];
+		    RC->profileIndex[i] = CFG->profileIndex[i];
 		for (j=0; j<CFG->profileCount[i]; j++)
-		    RC.profile[i][j] = CFG->profile[i][j];
-		RC.profileCount[i] = CFG->profileCount[i];
+		    RC->profile[i][j] = CFG->profile[i][j];
+		RC->profileCount[i] = CFG->profileCount[i];
 	    }
-	    conf_save(&RC, NULL, NULL);
+	    conf_save(RC, NULL, NULL);
 	} else { /* response==GTK_RESPONSE_CANCEL or window closed */
 	    /* Copy profiles and curves from RC to CFG */
 
 	    /* We might remove 'too much' here, but it causes no harm */
 	    for (i=0; i<CFG->BaseCurveCount; i++)
 		gtk_combo_box_remove_text(data->BaseCurveCombo, 0);
-	    for (i=0; i<RC.BaseCurveCount; i++) {
-		CFG->BaseCurve[i] = RC.BaseCurve[i];
+	    for (i=0; i<RC->BaseCurveCount; i++) {
+		CFG->BaseCurve[i] = RC->BaseCurve[i];
 		if ( (i==custom_curve || i==camera_curve) && !CFG_cameraCurve )
 		    continue;
 		if ( i<=camera_curve )
@@ -3157,7 +3157,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 		    gtk_combo_box_append_text(data->BaseCurveCombo,
 			    CFG->BaseCurve[i].name);
 	    }
-	    CFG->BaseCurveCount = RC.BaseCurveCount;
+	    CFG->BaseCurveCount = RC->BaseCurveCount;
 	    CFG->BaseCurveIndex = saveBaseCurveIndex;
 	    if (CFG->BaseCurveIndex>camera_curve && !CFG_cameraCurve)
 		gtk_combo_box_set_active(data->BaseCurveCombo,
@@ -3168,8 +3168,8 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 
 	    for (i=0; i<CFG->curveCount; i++)
 		gtk_combo_box_remove_text(data->CurveCombo, 0);
-	    for (i=0; i<RC.curveCount; i++) {
-		CFG->curve[i] = RC.curve[i];
+	    for (i=0; i<RC->curveCount; i++) {
+		CFG->curve[i] = RC->curve[i];
 		if ( i<=linear_curve )
 		    gtk_combo_box_append_text(data->CurveCombo,
 			    _(CFG->curve[i].name));
@@ -3177,15 +3177,15 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 		    gtk_combo_box_append_text(data->CurveCombo,
 			    CFG->curve[i].name);
 	    }
-	    CFG->curveCount = RC.curveCount;
+	    CFG->curveCount = RC->curveCount;
 	    CFG->curveIndex = saveCurveIndex;
 	    gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
 
 	    for (j=0; j<profile_types; j++) {
 		for (i=0; i<CFG->profileCount[j]; i++)
 		    gtk_combo_box_remove_text(data->ProfileCombo[j], 0);
-		for (i=0; i<RC.profileCount[j]; i++) {
-		    CFG->profile[j][i] = RC.profile[j][i];
+		for (i=0; i<RC->profileCount[j]; i++) {
+		    CFG->profile[j][i] = RC->profile[j][i];
 		    if ( i<conf_default.profileCount[j] )
 			gtk_combo_box_append_text(data->ProfileCombo[j],
 				_(CFG->profile[j][i].name));
@@ -3193,7 +3193,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 			gtk_combo_box_append_text(data->ProfileCombo[j],
 				CFG->profile[j][i].name);
 		}
-		CFG->profileCount[j] = RC.profileCount[j];
+		CFG->profileCount[j] = RC->profileCount[j];
 		CFG->profileIndex[j] = saveProfileIndex[j];
 		gtk_combo_box_set_active(data->ProfileCombo[j],
 			CFG->profileIndex[j]);
@@ -4793,7 +4793,8 @@ static void exif_fill_interface(preview_data *data,
     /* End of EXIF page */
 }
 
-int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
+int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
+	long (*save_func)())
 {
     GtkWidget *previewWindow, *previewVBox;
     GtkTable *table;
@@ -4812,7 +4813,7 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
     data->UF = uf;
     data->SaveFunc = save_func;
 
-    data->SaveConfig = *uf->conf;
+    data->rc = rc;
     data->SpotX1 = -1;
     data->SpotX2 = -1;
     data->SpotY1 = -1;
@@ -5272,14 +5273,14 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 
     if ( status==GTK_RESPONSE_OK ) {
 	gboolean SaveRC = FALSE;
-	if ( RC.RememberOutputPath!=CFG->RememberOutputPath ) {
-	    RC.RememberOutputPath = CFG->RememberOutputPath;
+	if ( RC->RememberOutputPath!=CFG->RememberOutputPath ) {
+	    RC->RememberOutputPath = CFG->RememberOutputPath;
 	    SaveRC = TRUE;
 	}
 	if ( !CFG->RememberOutputPath )
 	    g_strlcpy(CFG->outputPath, "", max_path);
-	if ( strncmp(RC.outputPath, CFG->outputPath, max_path)!=0 ) {
-	    g_strlcpy(RC.outputPath, CFG->outputPath, max_path);
+	if ( strncmp(RC->outputPath, CFG->outputPath, max_path)!=0 ) {
+	    g_strlcpy(RC->outputPath, CFG->outputPath, max_path);
 	    SaveRC = TRUE;
 	}
 	if ( CFG->saveConfiguration==enabled_state ) {
@@ -5295,20 +5296,18 @@ int ufraw_preview(ufraw_data *uf, int plugin, long (*save_func)())
 	} else if ( CFG->saveConfiguration==disabled_state ) {
 	    /* If save 'never again' was set in this session, we still
 	     * need to save this setting */
-	    if ( RC.saveConfiguration!=disabled_state ) {
-		RC.saveConfiguration = disabled_state;
-		conf_save(&RC, NULL, NULL);
+	    if ( RC->saveConfiguration!=disabled_state ) {
+		RC->saveConfiguration = disabled_state;
+		conf_save(RC, NULL, NULL);
 	    } else if ( SaveRC ) {
-		conf_save(&RC, NULL, NULL);
+		conf_save(RC, NULL, NULL);
 	    }
-	    strcpy(RC.inputFilename, "");
-	    strcpy(RC.outputFilename, "");
-	    *CFG = RC;
+	    strcpy(RC->inputFilename, "");
+	    strcpy(RC->outputFilename, "");
 	}
     } else {
-	strcpy(RC.inputFilename, "");
-	strcpy(RC.outputFilename, "");
-	*CFG = RC;
+	strcpy(RC->inputFilename, "");
+	strcpy(RC->outputFilename, "");
     }
     // UFRAW_RESPONSE_DELETE requires no special action
     ufraw_close(data->UF);

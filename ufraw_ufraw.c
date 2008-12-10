@@ -350,36 +350,37 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     if (rc->autoExposure==enabled_state) rc->autoExposure = apply_state;
     if (rc->autoBlack==enabled_state) rc->autoBlack = apply_state;
 
+    g_assert(uf!=NULL);
+
     /* Check if we are loading an ID file */
-    if (uf!=NULL) {
-	if (uf->conf!=NULL) {
-	    uf->LoadingID = TRUE;
-	    conf_data tmp = *rc;
-	    conf_copy_image(&tmp, uf->conf);
-	    conf_copy_transform(&tmp, uf->conf);
-	    conf_copy_save(&tmp, uf->conf);
-	    g_strlcpy(tmp.outputFilename, uf->conf->outputFilename, max_path);
-	    g_strlcpy(tmp.outputPath, uf->conf->outputPath, max_path);
-	    *uf->conf = tmp;
-	} else {
-	    uf->LoadingID = FALSE;
-	    uf->conf = g_new(conf_data, 1);
-	    *uf->conf = *rc;
-	}
-	rc = uf->conf;
+    if (uf->conf!=NULL) {
+	/* ID file configuration is put "on top" of the rc data */
+	uf->LoadingID = TRUE;
+	conf_data tmp = *rc;
+	conf_copy_image(&tmp, uf->conf);
+	conf_copy_transform(&tmp, uf->conf);
+	conf_copy_save(&tmp, uf->conf);
+	g_strlcpy(tmp.outputFilename, uf->conf->outputFilename, max_path);
+	g_strlcpy(tmp.outputPath, uf->conf->outputPath, max_path);
+	*uf->conf = tmp;
+    } else {
+	uf->LoadingID = FALSE;
+	uf->conf = g_new(conf_data, 1);
+	*uf->conf = *rc;
     }
     if (conf!=NULL && conf->version!=0) {
-	conf_copy_image(rc, conf);
-	conf_copy_save(rc, conf);
-	if (strcmp(rc->wb, spot_wb)) rc->chanMul[0] = -1.0;
-	if (rc->autoExposure==enabled_state) rc->autoExposure = apply_state;
-	if (rc->autoBlack==enabled_state) rc->autoBlack = apply_state;
+	conf_copy_image(uf->conf, conf);
+	conf_copy_save(uf->conf, conf);
+	if (strcmp(uf->conf->wb, spot_wb)) uf->conf->chanMul[0] = -1.0;
+	if (uf->conf->autoExposure==enabled_state)
+	    uf->conf->autoExposure = apply_state;
+	if (uf->conf->autoBlack==enabled_state)
+	    uf->conf->autoBlack = apply_state;
     }
     if (cmd!=NULL) {
-	status = conf_set_cmd(rc, cmd);
+	status = conf_set_cmd(uf->conf, cmd);
 	if (status!=UFRAW_SUCCESS) return status;
     }
-    if (uf==NULL) return UFRAW_SUCCESS;
 
     dcraw_data *raw = uf->raw;
     char *absname = uf_file_set_absolute(uf->filename);

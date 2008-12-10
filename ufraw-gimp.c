@@ -149,7 +149,7 @@ void run(GIMP_CONST gchar *name,
     char *filename;
     int size;
     ufraw_data *uf;
-    conf_data conf;
+    conf_data rc;
     int status;
 
     ufraw_binary = g_path_get_basename(gimp_get_progname());
@@ -229,9 +229,9 @@ void run(GIMP_CONST gchar *name,
 	}
     }
     /* Load $HOME/.ufrawrc */
-    conf_load(&conf, NULL);
+    conf_load(&rc, NULL);
 
-    ufraw_config(uf, &conf, NULL, NULL);
+    ufraw_config(uf, &rc, NULL, NULL);
     sendToGimpMode = (uf->conf->createID==send_id);
 #if GIMP_CHECK_VERSION(2,2,0)
     if ( loadThumbnail ) {
@@ -250,7 +250,7 @@ void run(GIMP_CONST gchar *name,
 	 !loadThumbnail && !sendToGimpMode ) {
 	/* Show the preview in interactive mode, unless if we are
 	 * in thumbnail mode or 'send to gimp' mode. */
-	status = ufraw_preview(uf, PLUGIN_MODE, ufraw_save_gimp_image);
+	status = ufraw_preview(uf, &rc, PLUGIN_MODE, ufraw_save_gimp_image);
     } else {
 	if ( sendToGimpMode ) {
 	    char *text = g_strdup_printf(_("Loading raw file '%s'"),
