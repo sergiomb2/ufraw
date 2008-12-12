@@ -108,7 +108,7 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
        const int colors, const int shrink, float pre_mul[4],
        const float threshold, const unsigned filters, void *dcraw)
 {
-  float *fimg, *temp, thold, mul[2], avg, diff;
+  float *fimg, thold, mul[2], avg, diff;
   int /*scale=1,*/ size, lev, hpass, lpass, row, col, nc, c, i, wlast;
   ushort *window[4];
   static const float noise[] =
@@ -124,37 +124,44 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
   black <<= scale;
 #endif
   size = iheight*iwidth;
-  fimg = (float *) malloc ((size*3 + iheight + iwidth) * sizeof *fimg);
-  merror (fimg, "wavelet_denoise()");
-  temp = fimg + size*3;
   if ((nc = colors) == 3 && filters) nc++;
+  fimg = (float *) malloc (nc * (size*3 + iheight + iwidth) * sizeof *fimg);
+  merror (fimg, "wavelet_denoise()");
+#ifdef _OPENMP
+#pragma omp parallel for				\
+  default(none)						\
+  shared(nc,image,size,fimg)				\
+  private(c,i,hpass,lev,lpass,row,col,thold)
+#endif
   for (c=0; c < nc; c++) {      /* denoise R,G1,B,G3 individually */
+    float *fimgc = fimg + c * (size*3 + iheight + iwidth);
+    float *temp = fimgc + size*3;
     for (i=0; i < size; i++)
-      fimg[i] = sqrt((unsigned) (image[i][c] << (/*scale+*/16)));
+      fimgc[i] = sqrt((unsigned) (image[i][c] << (/*scale+*/16)));
     for (hpass=lev=0; lev < 5; lev++) {
       lpass = size*((lev & 1)+1);
       for (row=0; row < iheight; row++) {
-	hat_transform (temp, fimg+hpass+row*iwidth, 1, iwidth, 1 << lev);
+	hat_transform (temp, fimgc+hpass+row*iwidth, 1, iwidth, 1 << lev);
 	for (col=0; col < iwidth; col++)
-	  fimg[lpass + row*iwidth + col] = temp[col] * 0.25;
+	  fimgc[lpass + row*iwidth + col] = temp[col] * 0.25;
       }
       for (col=0; col < iwidth; col++) {
-	hat_transform (temp, fimg+lpass+col, iwidth, iheight, 1 << lev);
+	hat_transform (temp, fimgc+lpass+col, iwidth, iheight, 1 << lev);
 	for (row=0; row < iheight; row++)
-	  fimg[lpass + row*iwidth + col] = temp[row] * 0.25;
+	  fimgc[lpass + row*iwidth + col] = temp[row] * 0.25;
       }
       thold = threshold * noise[lev];
       for (i=0; i < size; i++) {
-	fimg[hpass+i] -= fimg[lpass+i];
-	if      (fimg[hpass+i] < -thold) fimg[hpass+i] += thold;
-	else if (fimg[hpass+i] >  thold) fimg[hpass+i] -= thold;
-	else     fimg[hpass+i] = 0;
-	if (hpass) fimg[i] += fimg[hpass+i];
+	fimgc[hpass+i] -= fimgc[lpass+i];
+	if      (fimgc[hpass+i] < -thold) fimgc[hpass+i] += thold;
+	else if (fimgc[hpass+i] >  thold) fimgc[hpass+i] -= thold;
+	else     fimgc[hpass+i] = 0;
+	if (hpass) fimgc[i] += fimgc[hpass+i];
       }
       hpass = lpass;
     }
     for (i=0; i < size; i++)
-      image[i][c] = CLIP((ushort)(SQR(fimg[i]+fimg[lpass+i])/0x10000));
+      image[i][c] = CLIP((ushort)(SQR(fimgc[i]+fimgc[lpass+i])/0x10000));
   }
   if (filters && colors == 3) {  /* pull G1 and G3 closer together */
     for (row=0; row < 2; row++)
@@ -322,6 +329,9 @@ void CLASS lin_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 	  *ip++ = 256 / sum[c];
 	}
     }
+#ifdef _OPENMP
+#pragma omp parallel for default(shared) private(row,col,pix,ip,sum,i)
+#endif
   for (row=1; row < height-1; row++)
     for (col=1; col < width-1; col++) {
       pix = image[row*width+col];
@@ -493,7 +503,17 @@ void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   border_interpolate_INDI (height, width, image, filters, colors, 4);
   dcraw_message (dcraw, DCRAW_VERBOSE,_("PPG interpolation...\n")); /*UF*/
 
+#ifdef _OPENMP
+#pragma omp parallel						\
+  default(none)							\
+  shared(image,dir,g)						\
+  private(row,col,i,d,c,pix,diff,guess,g2,c1,c2,cc1,cc2)
+#endif
+  {
   // Fill in the green layer with gradients from RGB color pattern simulation
+#ifdef _OPENMP
+#pragma omp for
+#endif
   for (row=3; row < height-4; row++) {
     for (col=3+(FC(row,3) & 1), c=FC(row,col); col < width-4; col+=2) {
       pix = image + row*width+col;
@@ -534,6 +554,9 @@ void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   }
 
   // Calculate red and blue for each green pixel
+#ifdef _OPENMP
+#pragma omp for
+#endif
   for (row=1; row < height-1; row++)
     for (col=1+(FC(row,2) & 1), c=FC(row,col+1); col < width-1; col+=2) {
       pix = image + row*width+col;
@@ -543,6 +566,9 @@ void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
     }
 
   // Calculate blue for red pixels and vice versa
+#ifdef _OPENMP
+#pragma omp for
+#endif
   for (row=1; row < height-1; row++)
     for (col=1+(FC(row,1) & 1), c=2-FC(row,col); col < width-1; col+=2) {
       pix = image + row*width+col;
@@ -554,6 +580,7 @@ void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
       }
       pix[0][c] = CLIP(guess[diff[0] > diff[1]]);
     }
+  }
 }
 
 /*
@@ -577,10 +604,22 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 
   dcraw_message (dcraw, DCRAW_VERBOSE,_("AHD interpolation...\n")); /*UF*/
 
+#ifdef _OPENMP
+#pragma omp parallel							\
+  default(shared)							\
+  private(top, left, row, col, pix, rix, lix, c, xyz, val, d, tc, tr, i, j, k, ldiff, abdiff, leps, abeps, hm, buffer, rgb, lab, homo, r)
+#endif
+  {
+#ifdef _OPENMP
+#pragma omp for schedule(static) nowait
+#endif
   for (i=0; i < 0x10000; i++) {
     r = i / 65535.0;
     cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
   }
+#ifdef _OPENMP
+#pragma omp for
+#endif
   for (i=0; i < 3; i++)
     for (j=0; j < colors; j++)
       for (xyz_cam[i][j] = k=0; k < 3; k++)
@@ -593,6 +632,9 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   lab  = (short (*)[TS][TS][3])(buffer + 12*TS*TS);
   homo = (char  (*)[TS][TS])   (buffer + 24*TS*TS);
 
+#ifdef _OPENMP
+#pragma omp for
+#endif
   for (top=2; top < height-5; top += TS-6)
     for (left=2; left < width-5; left += TS-6) {
 
@@ -686,6 +728,7 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
       }
     }
   free (buffer);
+  }
 }
 #undef TS
 
@@ -766,6 +809,9 @@ void CLASS color_smooth(ushort (*image)[4], const int width, const int height,
 
   for (count=0; count<passes; count++) {
     //perform 3 iterations - seems to be a commonly settled upon number of iterations
+#ifdef _OPENMP
+#pragma omp parallel for default(shared) private(row,col,mpix)
+#endif
     for (row=row_start; row < row_stop; row++) {
       for (col=col_start; col < col_stop; col++) {
 	//calculate the median only over the red and blue
@@ -799,6 +845,10 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
   img = (ushort (*)[4]) calloc (wide*high, sizeof *img);
   merror (img, "fuji_rotate()");
 
+#ifdef _OPENMP
+#pragma omp parallel for default(shared) \
+  private(row,col,ur,uc,r,c,fr,fc,pix,i)
+#endif
   for (row=0; row < high; row++)
     for (col=0; col < wide; col++) {
       ur = (int)(r = fuji_width + (row-col)*step);

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.124 2008/10/18 01:01:16 udifuchs Exp $
+dnl $Id: configure.ac,v 1.125 2008/12/12 08:36:58 udifuchs Exp $
 AC_INIT(UFRaw, 0.14.1)
 AC_PREREQ(2.57)
 
@@ -37,6 +37,11 @@ if test "$GCC" = "yes"; then
     CXXFLAGS="-W -Wall -g -O3 -ffast-math -fomit-frame-pointer $UFRAW_MARCH"
   fi
 fi
+
+m4_include(ac_openmp.m4)
+AC_OPENMP
+CFLAGS="$CFLAGS $OPENMP_CFLAGS"
+CXXFLAGS="$CXXFLAGS $OPENMP_CFLAGS"
 
 # windows will require some special attention
 case $host_os in

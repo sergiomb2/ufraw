@@ -14,6 +14,10 @@
 #include "config.h"
 #endif
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <stdio.h>
 #include <math.h>
 #include <lcms.h>
@@ -608,6 +612,27 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     guint8 *p8 = po;
     guint16 *p16 = po, c, tmppix[3];
     int i;
+
+#ifdef _OPENMP
+#pragma omp parallel				\
+    if (count > 16)				\
+    default(none)				\
+    shared(d, buf, count, pix)			\
+    private(i, tmppix, c)
+    {
+	int chunk = count / omp_get_num_threads() + 1;
+	int offset = chunk * omp_get_thread_num();
+	int width = (chunk > count - offset) ? count - offset : chunk;
+	for (i=offset; i<offset+width; i++) {
+	    develop_linear(pix+i*4, tmppix, d);
+	    for (c=0; c<3; c++)
+		buf[i*3+c] = d->gammaCurve[tmppix[c]];
+	}
+	if (d->colorTransform!=NULL)
+	    cmsDoTransform(d->colorTransform,
+			   buf + offset*3, buf + offset*3, width);
+    }
+#else
     for (i=0; i<count; i++) {
 	develop_linear(pix+i*4, tmppix, d);
 	for (c=0; c<3; c++)
@@ -615,6 +640,7 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
     }
     if (d->colorTransform!=NULL)
 	cmsDoTransform(d->colorTransform, buf, buf, count);
+#endif
 
     if (mode==16) for (i=0; i<3*count; i++) p16[i] = buf[i];
     else for (i=0; i<3*count; i++) p8[i] = buf[i] >> 8;
