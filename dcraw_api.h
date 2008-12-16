@@ -58,6 +58,9 @@ enum { dcraw_ahd_interpolation,
     dcraw_none_interpolation };
 enum { unknown_thumb_type, jpeg_thumb_type, ppm_thumb_type };
 int dcraw_open(dcraw_data *h, char *filename);
+void dcraw_set_progress_handle(dcraw_data *h,
+	void (*progressHandle)(void *user_data, double progress),
+	void *progressUserData);
 int dcraw_load_raw(dcraw_data *h);
 int dcraw_load_thumb(dcraw_data *h, dcraw_image_data *thumb);
 int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *h,

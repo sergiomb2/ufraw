@@ -89,6 +89,23 @@ int tone_mode_offset, tone_mode_size; /* Nikon ToneComp UF*/
 char *messageBuffer;
 int lastStatus;
 
+unsigned ifpReadCount;
+unsigned ifpSize;
+unsigned ifpStepProgress;
+#define STEPS 50
+void (*progressHandle)(void *user_data, double progress);
+void *progressUserData;
+void ifpProgress(unsigned readCount);
+// Override standard io function for integrity checks and progress report
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
+size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream);
+char *fgets(char *s, int size, FILE *stream);
+int fgetc(FILE *stream);
+// dcraw only calls fscanf for single variables
+int fscanf(FILE *stream, const char *format, void *ptr);
+// calling with more variables would triger a link error
+int fscanf(FILE *stream, const char *format, void *ptr1, void *ptr2, ...);
+
 /* Initialization of the variables is done here */
 DCRaw();
 ~DCRaw();

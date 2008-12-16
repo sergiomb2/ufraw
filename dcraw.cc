@@ -24,13 +24,6 @@
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
 
-/* Fix compiler warnings about warn_unused_result in gcc 3.4.x and higher. */
-#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 3)
-#include <features.h>
-#undef __wur
-#define __wur
-#endif
-
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -139,12 +132,65 @@ messageBuffer = NULL;
 lastStatus = DCRAW_SUCCESS;
 ifname = NULL;
 ifname_display = NULL;
+ifpReadCount = 0;
+ifpSize = 0;
+ifpStepProgress = 0;
+progressHandle = NULL;
 }
 
 CLASS ~DCRaw()
 {
 free(ifname);
 free(ifname_display);
+}
+
+void CLASS ifpProgress(unsigned readCount) {
+    ifpReadCount += readCount;
+    if (ifpSize==0) return;
+    unsigned newStepProgress = STEPS * ifpReadCount / ifpSize;
+    if (newStepProgress!=ifpStepProgress && progressHandle!=NULL )
+        (*progressHandle)(progressUserData, (double)ifpReadCount/ifpSize);
+    ifpStepProgress = newStepProgress;
+}
+
+size_t CLASS fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+    size_t num = ::fread(ptr, size, nmemb, stream);
+    if ( num != nmemb )
+        dcraw_message(DCRAW_WARNING, "%s: fread %d != %d\n",
+                ifname_display, num, nmemb);
+    if (stream==ifp) ifpProgress(size*nmemb);
+    return num;
+}
+
+size_t CLASS fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
+    size_t num = ::fwrite(ptr, size, nmemb, stream);
+    if ( num != nmemb )
+        dcraw_message(DCRAW_WARNING, "%s: fwrite %d != %d\n",
+                ifname_display, num, nmemb);
+    return num;
+}
+
+char *CLASS fgets(char *s, int size, FILE *stream) {
+    char *str = ::fgets(s, size, stream);
+    if ( str==NULL )
+        dcraw_message(DCRAW_WARNING, "%s: fgets returned NULL\n",
+                ifname_display);
+    if (stream==ifp) ifpProgress(strlen(s));
+    return str;
+}
+
+int CLASS fgetc(FILE *stream) {
+    int chr = ::fgetc(stream);
+    if (stream==ifp) ifpProgress(1);
+    return chr;
+}
+
+int CLASS fscanf(FILE *stream, const char *format, void *ptr) {
+    int count = ::fscanf(stream, format, ptr);
+    if ( count != 1 )
+        dcraw_message(DCRAW_WARNING, "%s: fscanf %d != 1\n",
+                ifname_display, count);
+    return 1;
 }
 
 #define FORC(cnt) for (c=0; c < cnt; c++)

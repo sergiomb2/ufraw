@@ -153,6 +153,15 @@ int dcraw_open(dcraw_data *h, char *filename)
     return d->lastStatus;
 }
 
+void dcraw_set_progress_handle(dcraw_data *h,
+	void (*progressHandle)(void *user_data, double progress),
+	void *progressUserData)
+{
+    DCRaw *d = (DCRaw *)h->dcraw;
+    d->progressHandle = progressHandle;
+    d->progressUserData = progressUserData;
+}
+
 int dcraw_image_dimensions(dcraw_data *raw, int flip, int *height, int *width)
 {
     if (raw->fuji_width) {
@@ -209,7 +218,9 @@ int dcraw_load_raw(dcraw_data *h)
     h->fourColorFilters = d->filters;
     d->dcraw_message(DCRAW_VERBOSE,_("Loading %s %s image from %s ...\n"),
 	    d->make, d->model, d->ifname_display);
-    fseek (d->ifp, d->data_offset, SEEK_SET);
+    fseek(d->ifp, 0, SEEK_END);
+    d->ifpSize = ftell(d->ifp);
+    fseek(d->ifp, d->data_offset, SEEK_SET);
     (d->*d->load_raw)();
     if (d->zero_is_bad) d->remove_zeroes();
     d->bad_pixels(NULL);

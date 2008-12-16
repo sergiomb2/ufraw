@@ -549,6 +549,11 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     return UFRAW_SUCCESS;
 }
 
+static void ufraw_load_raw_progress(void *user_data, double progress)
+{
+    preview_progress(user_data, _("Loading preview"), progress);
+}
+
 int ufraw_load_raw(ufraw_data *uf)
 {
     int status;
@@ -564,6 +569,7 @@ int ufraw_load_raw(ufraw_data *uf)
 	uf->thumb.width = thumb.width;
 	return ufraw_read_embedded(uf);
     }
+    dcraw_set_progress_handle(raw, ufraw_load_raw_progress, uf->widget);
     if ( (status=dcraw_load_raw(raw))!=DCRAW_SUCCESS ) {
 	ufraw_message(UFRAW_SET_LOG, raw->message);
 	ufraw_message(status, raw->message);
