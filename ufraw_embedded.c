@@ -14,13 +14,6 @@
 #include "config.h"
 #endif
 
-/* Fix compiler warnings about warn_unused_result in gcc 3.4.x and higher. */
-#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 3)
-#include <features.h>
-#undef __wur
-#define __wur
-#endif
-
 #include <errno.h>     /* for errno */
 #include <string.h>
 #include "uf_glib.h"
@@ -89,7 +82,11 @@ int ufraw_read_embedded(ufraw_data *uf)
 	 uf->conf->type==embedded_jpeg_type &&
 	 raw->thumbType==jpeg_thumb_type) {
 	uf->thumb.buffer = g_new(unsigned char, raw->thumbBufferLength);
-	fread(uf->thumb.buffer, 1, raw->thumbBufferLength, raw->ifp);
+	size_t num = fread(uf->thumb.buffer, 1, raw->thumbBufferLength,
+		raw->ifp);
+	if ( num != raw->thumbBufferLength )
+	    ufraw_message(UFRAW_WARNING, "fread %d != %d",
+		    num, raw->thumbBufferLength);
 	uf->thumb.buffer[0] = 0xff;
     } else {
 	unsigned srcHeight = uf->thumb.height, srcWidth = uf->thumb.width;
@@ -117,7 +114,11 @@ int ufraw_read_embedded(ufraw_data *uf)
 		return UFRAW_ERROR;
 	    }
 	    uf->thumb.buffer = g_new(guint8, raw->thumbBufferLength);
-	    fread(uf->thumb.buffer, 1, raw->thumbBufferLength, raw->ifp);
+	    size_t num = fread(uf->thumb.buffer, 1, raw->thumbBufferLength,
+		    raw->ifp);
+	    if ( num != raw->thumbBufferLength )
+		ufraw_message(UFRAW_WARNING, "fread %d != %d",
+			num, raw->thumbBufferLength);
 	} else {
 #ifdef HAVE_LIBJPEG
 	    struct jpeg_decompress_struct srcinfo;
@@ -275,7 +276,10 @@ int ufraw_write_embedded(ufraw_data *uf)
     if ( uf->conf->shrink<2 && uf->conf->size==0 && uf->conf->orientation==0 &&
 	 uf->conf->type==embedded_jpeg_type &&
 	 raw->thumbType==jpeg_thumb_type) {
-	fwrite(uf->thumb.buffer, 1, raw->thumbBufferLength, out);
+	size_t num = fwrite(uf->thumb.buffer, 1, raw->thumbBufferLength, out);
+	if ( num != raw->thumbBufferLength )
+	    ufraw_message(UFRAW_WARNING, "fwrite %d != %d",
+		    num, raw->thumbBufferLength);
     } else if ( uf->conf->type==embedded_jpeg_type ) {
 #ifdef HAVE_LIBJPEG
 	struct jpeg_compress_struct dstinfo;

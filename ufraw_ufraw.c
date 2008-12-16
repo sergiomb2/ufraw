@@ -14,13 +14,6 @@
 #include "config.h"
 #endif
 
-/* Fix compiler warnings about warn_unused_result in gcc 3.4.x and higher. */
-#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 3)
-#include <features.h>
-#undef __wur
-#define __wur
-#endif
-
 #include <string.h>
 #include <sys/stat.h> /* for fstat() */
 #include <math.h>
@@ -515,7 +508,9 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	    char buf[9];
 	    fseek(raw->ifp, raw->toneModeOffset, SEEK_SET);
 	    // read it in.
-	    fread(&buf, 9, 1, raw->ifp);
+	    size_t num = fread(&buf, 9, 1, raw->ifp);
+	    if ( num!=9 )
+		ufraw_message(UFRAW_WARNING, "fread %d != %d\n", num, 9);
 	    fseek(raw->ifp, pos, SEEK_SET);
 
 	    if (!strncmp(buf, "CS      ", sizeof(buf)))  use_custom_curve=1;

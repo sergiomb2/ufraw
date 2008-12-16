@@ -18,13 +18,6 @@
 #define _GNU_SOURCE /* needed for canonicalize_file_name() */
 #endif
 
-/* Fix compiler warnings about warn_unused_result in gcc 3.4.x and higher. */
-#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 3)
-#include <features.h>
-#undef __wur
-#define __wur
-#endif
-
 #include <errno.h>
 #include <locale.h>
 #include <stdlib.h> /* needed for canonicalize_file_name() */
@@ -412,7 +405,7 @@ int curve_load(CurveData *cp, char *filename)
 	locale = uf_set_locale_C();
 	context = g_markup_parse_context_new(&parser, 0, cp, NULL);
 	line[max_path-1] = '\0';
-	fgets(line, max_path-1, in);
+	char *dummy = fgets(line, max_path-1, in);
 	while (!feof(in)) {
 	    if (!g_markup_parse_context_parse(context, line,
 		    strlen(line), &err)) {
@@ -425,7 +418,7 @@ int curve_load(CurveData *cp, char *filename)
 		uf_reset_locale(locale);
 		return UFRAW_ERROR;
 	    }
-	    fgets(line, max_path, in);
+	    dummy = fgets(line, max_path, in);
 	}
 	g_markup_parse_context_end_parse(context, NULL);
 	g_markup_parse_context_free(context);

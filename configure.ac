@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.125 2008/12/12 08:36:58 udifuchs Exp $
+dnl $Id: configure.ac,v 1.126 2008/12/16 06:58:54 udifuchs Exp $
 AC_INIT(UFRaw, 0.14.1)
 AC_PREREQ(2.57)
 
@@ -31,10 +31,10 @@ esac
 # default CFLAGS, CXXFLAGS for GCC in case they were not set by the user.
 if test "$GCC" = "yes"; then
   if test "$ac_test_CFLAGS" != "set"; then
-    CFLAGS="-W -Wall -g -O3 -ffast-math -fomit-frame-pointer $UFRAW_MARCH"
+    CFLAGS="-W -Wall -g -O3 -ffast-math -fomit-frame-pointer -D_FORTIFY_SOURCE=2 $UFRAW_MARCH"
   fi
   if test "$ac_test_CXXFLAGS" != "set"; then
-    CXXFLAGS="-W -Wall -g -O3 -ffast-math -fomit-frame-pointer $UFRAW_MARCH"
+    CXXFLAGS="-W -Wall -g -O3 -ffast-math -fomit-frame-pointer -D_FORTIFY_SOURCE=2 $UFRAW_MARCH"
   fi
 fi
 

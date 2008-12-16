@@ -15,13 +15,6 @@
 
 ****************************************************/
 
-/* Fix compiler warnings about warn_unused_result in gcc 3.4.x and higher. */
-#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 3)
-#include <features.h>
-#undef __wur
-#define __wur
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -249,6 +242,22 @@ void nc_merror(void *ptr, char *where)
     fprintf(stderr, "Out of memory in %s\n", where);
     exit(1);
 #endif
+}
+
+size_t nc_fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+    size_t num = fread(ptr, size, nmemb, stream);
+    if ( num!=nmemb )
+	nc_message(NC_WARNING, "WARNING: fread %d != %d\n", num, nmemb);
+    return num;
+}
+
+size_t nc_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+    size_t num = nc_fwrite(ptr, size, nmemb, stream);
+    if ( num!=nmemb )
+	nc_message(NC_WARNING, "WARNING: nc_fwrite %d != %d\n", num, nmemb);
+    return num;
 }
 
 // Assert something at compile time (must use this inside a function);
@@ -805,7 +814,7 @@ int GetNikonFileType(FILE *file)
     int i = 0, j = 0;
     int found = 1;
 
-    fread(buff,HEADER_SIZE,1,file);
+    nc_fread(buff,HEADER_SIZE,1,file);
 
     for(i = 0; i < NUM_FILE_TYPES; i++)
     {
@@ -892,7 +901,7 @@ int LoadNikonData(char *fileName, NikonData *data)
 
     //read patch version
     fseek(input,FileOffsets[data->m_fileType][PATCH_DATA],SEEK_SET);
-    fread(&data->m_patch_version,sizeof(unsigned short),1,input);
+    nc_fread(&data->m_patch_version,sizeof(unsigned short),1,input);
     data->m_patch_version = ShortVal(data->m_patch_version);
 
     // read all tone curves data follow from here
@@ -907,23 +916,23 @@ int LoadNikonData(char *fileName, NikonData *data)
 	//get box data
 	fseek(input, curveFilePos[i][0], curveFilePos[i][1]);
 
-	fread(&curve->m_min_x,sizeof(double),1,input);
+	nc_fread(&curve->m_min_x,sizeof(double),1,input);
 	curve->m_min_x = DoubleVal(curve->m_min_x);
 
-	fread(&curve->m_max_x,sizeof(double),1,input);
+	nc_fread(&curve->m_max_x,sizeof(double),1,input);
 	curve->m_max_x = DoubleVal(curve->m_max_x);
 
-	fread(&curve->m_gamma,sizeof(double),1,input);
+	nc_fread(&curve->m_gamma,sizeof(double),1,input);
 	curve->m_gamma = DoubleVal(curve->m_gamma);
 
-	fread(&curve->m_min_y,sizeof(double),1,input);
+	nc_fread(&curve->m_min_y,sizeof(double),1,input);
 	curve->m_min_y = DoubleVal(curve->m_min_y);
 
-	fread(&curve->m_max_y,sizeof(double),1,input);
+	nc_fread(&curve->m_max_y,sizeof(double),1,input);
 	curve->m_max_y = DoubleVal(curve->m_max_y);
 
 	//get number of anchors (always located after box data)
-	fread(&curve->m_numAnchors,1,1,input);
+	nc_fread(&curve->m_numAnchors,1,1,input);
 
 	// It seems that if there is no curve then the 62 bytes in the buffer
 	// are either all 0x00 (D70) or 0xFF (D2H).
@@ -962,7 +971,7 @@ int LoadNikonData(char *fileName, NikonData *data)
 	fseek(input, curveFilePos[i][2], curveFilePos[i][3]);
 
 	//read in the anchor points
-	int rs = fread(curve->m_anchors, sizeof(CurveAnchorPoint),
+	int rs = nc_fread(curve->m_anchors, sizeof(CurveAnchorPoint),
 		curve->m_numAnchors, input);
 	if (curve->m_numAnchors != rs) {
 	    nc_message(NC_SET_ERROR, "Error reading all anchor points\n");
@@ -1348,26 +1357,26 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
     }
 
     //write out file header
-    fwrite(FileTypeHeaders[filetype],HEADER_SIZE,1,output);
+    nc_fwrite(FileTypeHeaders[filetype],HEADER_SIZE,1,output);
 
     if (filetype == NCV_FILE)
     {
 	//write out unknown header bytes
 	short_tmp = ShortVal(NCV_UNKNOWN_HEADER_DATA);
-	fwrite(&short_tmp, 2, 1, output);
+	nc_fwrite(&short_tmp, 2, 1, output);
 
 	//write out file size - header
 	//Placeholder.The real filesize is written at the end.
 	//NCV files have two size location, one here and one in the
 	//NTC section of the file
 	long_tmp = 0;
-	fwrite(&long_tmp, 4, 1, output);
+	nc_fwrite(&long_tmp, 4, 1, output);
 
 	//write second header chunk
-	fwrite(NCVSecondFileHeader,1,NCV_SECOND_HEADER_LENGTH,output);
+	nc_fwrite(NCVSecondFileHeader,1,NCV_SECOND_HEADER_LENGTH,output);
 
 	//From here until almost the end, the file is an NTC file
-	fwrite(NTCFileHeader,NTC_FILE_HEADER_LENGTH,1,output);
+	nc_fwrite(NTCFileHeader,NTC_FILE_HEADER_LENGTH,1,output);
     }
 
     //patch version? (still unsure about this one)
@@ -1376,36 +1385,36 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 	    data->m_patch_version = NIKON_PATCH_5;
     }
     short_tmp = ShortVal(data->m_patch_version);
-    fwrite(&short_tmp, 2, 1, output);
+    nc_fwrite(&short_tmp, 2, 1, output);
 
     //write out file size - header
     //Placeholder.The real filesize is written at the end.
     long_tmp = 0;
-    fwrite(&long_tmp, 4, 1, output);
+    nc_fwrite(&long_tmp, 4, 1, output);
 
     //write out version
     unsigned int forced_ver = ShortVal(NIKON_VERSION_4_1);
-    fwrite(&forced_ver, 4, 1, output);
+    nc_fwrite(&forced_ver, 4, 1, output);
 
     //write out pad (this is a 7 byte pad)
-    fwrite(&pad,1,7,output);
+    nc_fwrite(&pad,1,7,output);
 
     //now wash and repeat for the four sections of data
     for(i = 0; i < 4; i++)
     {
 	//write out section header (same as NTC file header)
-	fwrite(FileSectionHeader,1,NTC_FILE_HEADER_LENGTH,output);
+	nc_fwrite(FileSectionHeader,1,NTC_FILE_HEADER_LENGTH,output);
 
 	//write out section type
 	long_tmp = LongVal(i);
-	fwrite(&long_tmp,4,1,output);
+	nc_fwrite(&long_tmp,4,1,output);
 
 	//write out unknown data
 	short_tmp = ShortVal(NTC_UNKNOWN_DATA);
-	fwrite(&short_tmp,2,1,output);
+	nc_fwrite(&short_tmp,2,1,output);
 
 	//write out pad byte
-	fwrite(pad,1,1,output);
+	nc_fwrite(pad,1,1,output);
 
 	//write out components
 	switch (i)
@@ -1431,16 +1440,16 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 	}
 
 	long_tmp = LongVal(r);
-	fwrite(&long_tmp,4,1,output);
+	nc_fwrite(&long_tmp,4,1,output);
 
 	long_tmp = LongVal(g);
-	fwrite(&long_tmp,4,1,output);
+	nc_fwrite(&long_tmp,4,1,output);
 
 	long_tmp = LongVal(b);
-	fwrite(&long_tmp,4,1,output);
+	nc_fwrite(&long_tmp,4,1,output);
 
 	//write out pad (12 byte pad)
-	fwrite(pad,12,1,output);
+	nc_fwrite(pad,12,1,output);
 
 	//write out rgb weights
 	switch (i)
@@ -1466,13 +1475,13 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 	}
 
 	long_tmp = LongVal(r);
-	fwrite(&long_tmp,4,1,output);
+	nc_fwrite(&long_tmp,4,1,output);
 
 	long_tmp = LongVal(g);
-	fwrite(&long_tmp,4,1,output);
+	nc_fwrite(&long_tmp,4,1,output);
 
 	long_tmp = LongVal(b);
-	fwrite(&long_tmp,4,1,output);
+	nc_fwrite(&long_tmp,4,1,output);
 
 	curve = &data->curves[i];
 	//write out curve data
@@ -1480,25 +1489,25 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 	{
 	    //we have a legit curve, use the data as is
 	    double_tmp = DoubleVal(curve->m_min_x);
-	    fwrite(&double_tmp,sizeof(double),1,output);
+	    nc_fwrite(&double_tmp,sizeof(double),1,output);
 
 	    double_tmp = DoubleVal(curve->m_max_x);
-	    fwrite(&double_tmp,sizeof(double),1,output);
+	    nc_fwrite(&double_tmp,sizeof(double),1,output);
 
 	    double_tmp = DoubleVal(curve->m_gamma);
-	    fwrite(&double_tmp,sizeof(double),1,output);
+	    nc_fwrite(&double_tmp,sizeof(double),1,output);
 
 	    double_tmp = DoubleVal(curve->m_min_y);
-	    fwrite(&double_tmp,sizeof(double),1,output);
+	    nc_fwrite(&double_tmp,sizeof(double),1,output);
 
 	    double_tmp = DoubleVal(curve->m_max_y);
-	    fwrite(&double_tmp,sizeof(double),1,output);
+	    nc_fwrite(&double_tmp,sizeof(double),1,output);
 
 	    //write out number of anchor points (minimum is two)
-	    fwrite(&curve->m_numAnchors,1,1,output);
+	    nc_fwrite(&curve->m_numAnchors,1,1,output);
 
 	    //write out pad
-	    fwrite(pad,NUM_POINTS_TO_ANCHOR_OFFSET,1,output);
+	    nc_fwrite(pad,NUM_POINTS_TO_ANCHOR_OFFSET,1,output);
 
 	    //write out anchor point data
 	    if (curve->m_anchors)
@@ -1507,9 +1516,9 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 		for (i = 0; i < curve->m_numAnchors; i++)
 		{
 		    double_tmp = DoubleVal(curve->m_anchors[i].x);
-		    fwrite(&double_tmp,sizeof(double),1,output);
+		    nc_fwrite(&double_tmp,sizeof(double),1,output);
 		    double_tmp = DoubleVal(curve->m_anchors[i].y);
-		    fwrite(&double_tmp,sizeof(double),1,output);
+		    nc_fwrite(&double_tmp,sizeof(double),1,output);
 		}
 	    }
 	    else
@@ -1525,42 +1534,42 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 	    //This curve either has not been correctly initialized or is empty.
 	    //Force defaults.
 	    double default_val = 0;
-	    fwrite(&default_val,sizeof(double),1,output); //min x
+	    nc_fwrite(&default_val,sizeof(double),1,output); //min x
 	    default_val = DoubleVal(1.0);
-	    fwrite(&default_val,sizeof(double),1,output); //max_x
+	    nc_fwrite(&default_val,sizeof(double),1,output); //max_x
 	    //gamma has a default of 1
 	    default_val = DoubleVal(1.0);
-	    fwrite(&default_val,sizeof(double),1,output); //gamma
+	    nc_fwrite(&default_val,sizeof(double),1,output); //gamma
 	    default_val = 0;
-	    fwrite(&default_val,sizeof(double),1,output); //min y
+	    nc_fwrite(&default_val,sizeof(double),1,output); //min y
 	    default_val = DoubleVal(1.0);
-	    fwrite(&default_val,sizeof(double),1,output); //max y
+	    nc_fwrite(&default_val,sizeof(double),1,output); //max y
 
 	    //force the number of anchors to be 2
 	    unsigned char num = 2;
-	    fwrite(&num,1,1,output);
+	    nc_fwrite(&num,1,1,output);
 
 	    //write out pad
-	    fwrite(pad,NUM_POINTS_TO_ANCHOR_OFFSET,1,output);
+	    nc_fwrite(pad,NUM_POINTS_TO_ANCHOR_OFFSET,1,output);
 
 	    //if the number of anchors was < 2, force default values.
 	    default_val = 0;
-	    fwrite(&default_val,sizeof(double),1,output); //min x
-	    fwrite(&default_val,sizeof(double),1,output); //min y
+	    nc_fwrite(&default_val,sizeof(double),1,output); //min x
+	    nc_fwrite(&default_val,sizeof(double),1,output); //min y
 	    default_val = DoubleVal(1.0);
-	    fwrite(&default_val,sizeof(double),1,output); //max x
-	    fwrite(&default_val,sizeof(double),1,output); //max y
+	    nc_fwrite(&default_val,sizeof(double),1,output); //max x
+	    nc_fwrite(&default_val,sizeof(double),1,output); //max y
 
 	}
 
 	//write out pad
-	fwrite(pad,END_ANCHOR_DATA_PAD_LENGTH,1,output);
+	nc_fwrite(pad,END_ANCHOR_DATA_PAD_LENGTH,1,output);
     }
 
     if (filetype == NCV_FILE)
     {
 	//write out the file terminator if this is an NCV file
-	fwrite(NCVFileTerminator,NCV_FILE_TERMINATOR_LENGTH,1,output);
+	nc_fwrite(NCVFileTerminator,NCV_FILE_TERMINATOR_LENGTH,1,output);
     }
 
     //calculate the file size
@@ -1572,7 +1581,7 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 
     //write out the file size
     size = LongVal(size);
-    fwrite(&size,4,1,output);
+    nc_fwrite(&size,4,1,output);
 
     if (filetype == NCV_FILE)
     {
@@ -1584,7 +1593,7 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
 	    //I'm assuming it is more than coincedence that those bytes match the last 6 bytes
 	    //of the NCV second file header. I've yet to determine their significance.
 	    size = LongVal(size - NCV_HEADER_SIZE - 6);
-	    fwrite(&size,4,1,output);
+	    nc_fwrite(&size,4,1,output);
 
     }
     fclose(output);
@@ -1880,7 +1889,7 @@ int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p)
     }
 
     //gets the byte order
-    fread(&byte_order,2,1,file);
+    nc_fread(&byte_order,2,1,file);
     byte_order = ShortVal(byte_order);
     if (byte_order != 0x4d4d)
     {
@@ -1891,7 +1900,7 @@ int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p)
     }
 
     //get the version
-    //fread(&version,2,1,file);
+    //nc_fread(&version,2,1,file);
     version = (fgetc(file)<<8)|fgetc(file);
     if (version != 0x002a)
     {
@@ -1938,7 +1947,7 @@ int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p)
 
     //Check the name. If it isn't Nikon then we can't do anything with this file.
     char name[6];
-    fread(name,6,1,file);
+    nc_fread(name,6,1,file);
     if (strcmp(name,"Nikon") != 0)
     {
 	nc_message(NC_SET_ERROR,
@@ -1951,7 +1960,7 @@ int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p)
     unsigned long pos = ftell(file);
 
     //get byte order (use a regular fread)
-    fread(&byte_order,2,1,file);
+    nc_fread(&byte_order,2,1,file);
     byte_order = ShortVal(byte_order);
     if (byte_order != 0x4d4d)
     {
@@ -2057,7 +2066,7 @@ int RipNikonNEFCurve(FILE *file, int offset, CurveData *data,
     }
 
     //get number of anchor points (there should be at least 2
-    fread(&data->m_numAnchors,1,1,file);
+    nc_fread(&data->m_numAnchors,1,1,file);
     DEBUG_PRINT("DEBUG: NEF NUMBER OF ANCHORS -> %u\n",data->m_numAnchors);
     if (data->m_numAnchors==255) {
 	data->m_numAnchors = 0;

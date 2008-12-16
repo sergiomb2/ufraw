@@ -14,13 +14,6 @@
 #include "config.h"
 #endif
 
-/* Fix compiler warnings about warn_unused_result in gcc 3.4.x and higher. */
-#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 3)
-#include <features.h>
-#undef __wur
-#define __wur
-#endif
-
 #include <string.h>
 #include <errno.h>
 #include <math.h>
@@ -736,7 +729,7 @@ int conf_load(conf_data *c, const char *IDFilename)
     locale = uf_set_locale_C();
     context = g_markup_parse_context_new(&parser, 0, c, NULL);
     line[max_path-1] = '\0';
-    fgets(line, max_path-1, in);
+    char *dummy = fgets(line, max_path-1, in);
     while (!feof(in)) {
 	if (!g_markup_parse_context_parse(context, line, strlen(line), &err)) {
 	    ufraw_message(UFRAW_ERROR, _("Error parsing '%s'\n%s"),
@@ -752,7 +745,7 @@ int conf_load(conf_data *c, const char *IDFilename)
 	    uf_reset_locale(locale);
 	    return UFRAW_ERROR;
 	}
-	fgets(line, max_path, in);
+	dummy = fgets(line, max_path, in);
     }
     g_markup_parse_context_end_parse(context, NULL);
     g_markup_parse_context_free(context);
