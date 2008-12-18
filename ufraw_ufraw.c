@@ -509,7 +509,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	    fseek(raw->ifp, raw->toneModeOffset, SEEK_SET);
 	    // read it in.
 	    size_t num = fread(&buf, 9, 1, raw->ifp);
-	    if ( num!=9 )
+	    if ( num!=1 )
 		ufraw_message(UFRAW_WARNING, "fread %d != %d\n", num, 9);
 	    fseek(raw->ifp, pos, SEEK_SET);
 
