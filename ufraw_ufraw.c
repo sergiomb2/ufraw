@@ -510,7 +510,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	    // read it in.
 	    size_t num = fread(&buf, 9, 1, raw->ifp);
 	    if ( num!=1 )
-		ufraw_message(UFRAW_WARNING, "fread %d != %d\n", num, 9);
+		ufraw_message(UFRAW_WARNING, "fread %d != %d\n", num, 1);
 	    fseek(raw->ifp, pos, SEEK_SET);
 
 	    if (!strncmp(buf, "CS      ", sizeof(buf)))  use_custom_curve=1;
