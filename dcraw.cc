@@ -3491,7 +3491,7 @@ void CLASS bad_pixels (char *fname)
     free (fname);
   }
   if (!fp) return;
-  while (fgets (line, 128, fp)) {
+  while (::fgets (line, 128, fp)) {
     cp = strchr (line, '#');
     if (cp) *cp = 0;
     if (sscanf (line, "%d %d %d", &col, &row, &time) != 3) continue;
