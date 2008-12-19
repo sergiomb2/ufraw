@@ -29,24 +29,36 @@
 #ifdef HAVE_LIBPNG
 #include <png.h>
 #endif
+
+#ifdef _OPENMP
+#include <omp.h>
+#define uf_omp_get_thread_num() omp_get_thread_num() 
+#else
+#define uf_omp_get_thread_num() 0
+#endif
+   
 #include "ufraw.h"
 
 #ifdef HAVE_LIBCFITSIO
 #include <fitsio.h>
 #endif
 
-static void grayscale_8bit(guint8 *graybuf, const guint8 *pixbuf, int width)
-{
-    int i;
-    for (i = 0; i < width; ++i, ++graybuf, pixbuf += 3)
-        *graybuf = pixbuf[1];
-}
+#define DEVELOP_BATCH 64
 
-static void grayscale_16bit(guint16 *graybuf, const guint16 *pixbuf, int width)
+static void grayscale_buffer(void *graybuf, int width, int bitDepth)
 {
     int i;
-    for (i = 0; i < width; ++i, ++graybuf, pixbuf += 3)
-        *graybuf = pixbuf[1];
+    if (bitDepth > 8) {
+	guint16 *pixbuf16 = graybuf;
+	guint16 *graybuf16 = graybuf;
+	for (i = 0; i < width; ++i, ++graybuf16, pixbuf16 += 3)
+	    *graybuf16 = pixbuf16[1];
+    } else {
+	guint8 *pixbuf8 = graybuf;
+	guint8 *graybuf8 = graybuf;
+	for (i = 0; i < width; ++i, ++graybuf8, pixbuf8 += 3)
+	    *graybuf8 = pixbuf8[1];
+    }
 }
 
 static int ppm8_row_writer(
@@ -208,17 +220,11 @@ void write_image_data(
     int width, int height, int left, int top, int bitDepth, int grayscaleMode,
     int (*row_writer) (ufraw_data *, void * volatile, void *, int, int, int))
 {
-    int row, rowStride;
+    int row, row0, rowStride;
     image_type *rawImage;
     rowStride = uf->image.width;
     rawImage = uf->image.image;
-    guint16 *graybuf;
-    guint16 *pixbuf;
-    guint16 *finalbuf;
-
-    pixbuf = g_new(guint16, width*3);
-    graybuf = g_new(guint16, width);
-    finalbuf = grayscaleMode ? graybuf : pixbuf;
+    guint16 pixbuf[rowStride * 3 * DEVELOP_BATCH];
 
     if (uf->conf->rotationAngle != 0) {
 	// Buffer for unrotated image.
@@ -229,52 +235,66 @@ void write_image_data(
 	image.rowstride = image.width * image.depth;
 	image.buffer = g_new(guint8, image.height * image.rowstride);
 	// Develop complete raw image into buffer.
-	guint8 *rowbuf;
-	for (row = 0; row < image.height; row++) {
-	    rowbuf = &image.buffer[row*image.rowstride];
-	    if (row % 25 == 0)
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static,1) default(shared) private(row0)
+#endif
+	for (row0 = 0; row0 < image.height; row0 += DEVELOP_BATCH) {
+	    if (uf_omp_get_thread_num() == 0)
 		preview_progress(uf->widget, _("Converting image"),
-		    0.5 * row/image.height);
-	    develope(rowbuf, rawImage[row*rowStride],
-		uf->developer, 16, (guint16 *)rowbuf, image.width);
+		    0.5 * row0/image.height);
+	    guint8 *rowbuf = &image.buffer[row0*image.rowstride];
+	    develope(rowbuf, rawImage[row0*rowStride],
+		     uf->developer, 16, (guint16*)rowbuf,
+		     MIN(image.height - row0, DEVELOP_BATCH) * image.width);
 	}
 	// Write rotated image to output.
-	for (row = 0; row < height; row++) {
-	    if (row % 25 == 0)
-		preview_progress(uf->widget, _("Saving image"),
-		    0.5 + 0.5*row/height);
-	    ufraw_rotate_row(&image, pixbuf, uf->conf->rotationAngle,
-		bitDepth, top+row, left, width);
-	    if (grayscaleMode) {
-	      if (bitDepth > 8)
-		grayscale_16bit(graybuf, pixbuf, width);
-	      else
-		grayscale_8bit((guint8*)graybuf, (guint8*)pixbuf, width);
+	for (row0 = 0; row0 < height; row0 += DEVELOP_BATCH) {
+	    preview_progress(uf->widget, _("Saving image"),
+		0.5 + 0.5*row0/height);
+#ifdef _OPENMP
+#pragma omp parallel for default(shared) private(row)
+#endif
+	    for (row = 0; row < DEVELOP_BATCH; row++) {
+		if (row + row0 >= height)
+		    continue;
+		guint16 *rowbuf = &pixbuf[row * rowStride * 3];
+		ufraw_rotate_row(&image, rowbuf, uf->conf->rotationAngle,
+		    bitDepth, top+row+row0, left, width);
+		if (grayscaleMode)
+		    grayscale_buffer(rowbuf, width, bitDepth);
 	    }
-	    if (row_writer(uf, out, finalbuf, row, width, grayscaleMode) != UFRAW_SUCCESS)
-		break;
+	    for (row = row0; row < height && row < row0 + DEVELOP_BATCH; row++) {
+		guint16 *rowbuf = &pixbuf[(row-row0) * rowStride * 3];
+		if (row_writer(uf, out, rowbuf, row, width, grayscaleMode) != UFRAW_SUCCESS)
+		    break;
+	    }
 	}
 	g_free(image.buffer);
     } else {
+	guint16 *rowbuf;
 	// No rotation required. Develop straight to output.
-	for (row=0; row<height; row++) {
-	    if (row % 25 == 0)
-		preview_progress(uf->widget, _("Saving image"),
-		    0.5 + 0.5*row/height);
-	    develope(pixbuf, rawImage[(top+row)*rowStride+left],
-	        uf->developer, bitDepth, pixbuf, width);
-	    if (grayscaleMode) {
-	      if (bitDepth > 8)
-		grayscale_16bit(graybuf, pixbuf, width);
-	      else
-		grayscale_8bit((guint8*)graybuf, (guint8*)pixbuf, width);
+	for (row0 = 0; row0 < height; row0 += DEVELOP_BATCH) {
+	    preview_progress(uf->widget, _("Saving image"),
+		0.5 + 0.5*row0/height);
+#ifdef _OPENMP
+#pragma omp parallel for default(shared) private(row, rowbuf)
+#endif
+	    for (row = 0; row < DEVELOP_BATCH; row++) {
+		if (row + row0 >= height)
+		    continue;
+		rowbuf = &pixbuf[row * rowStride * 3];
+		develope(rowbuf, rawImage[(top+row+row0)*rowStride+left],
+	            uf->developer, bitDepth, rowbuf, width);
+		if (grayscaleMode)
+		    grayscale_buffer(rowbuf, width, bitDepth);
 	    }
-	    if (row_writer(uf, out, finalbuf, row, width, grayscaleMode) != UFRAW_SUCCESS)
-		break;
+	    for (row = row0; row < height && row < row0 + DEVELOP_BATCH; row++) {
+		rowbuf = &pixbuf[(row-row0) * rowStride * 3];
+		if (row_writer(uf, out, rowbuf, row, width, grayscaleMode) != UFRAW_SUCCESS)
+		    break;
+	    }
 	}
     }
-    g_free(pixbuf);
-    g_free(graybuf);
 }
 
 int ufraw_write_image(ufraw_data *uf)
