@@ -2948,6 +2948,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	    GTK_DIALOG_DESTROY_WITH_PARENT,
 	    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 	    GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+    gtk_window_resize(GTK_WINDOW(optionsDialog), 600, 400);
     g_object_set_data(G_OBJECT(optionsDialog), "Preview-Data", data);
     ufraw_focus(optionsDialog, TRUE);
     gtk_dialog_set_default_response(GTK_DIALOG(optionsDialog),
@@ -2956,9 +2957,15 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_container_add(GTK_CONTAINER(GTK_DIALOG(optionsDialog)->vbox),
 	    notebook);
 
-    label =gtk_label_new(_("Settings"));
+    label = gtk_label_new(_("Settings"));
+    page = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(page),
+            GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), page, label);
+
     box = gtk_vbox_new(FALSE, 0);
-    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, label);
+    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(page), box);
+
     profileTable[in_profile] =
 	    table_with_frame(box, _("Input color profiles"), TRUE);
     profileTable[out_profile] =
@@ -2993,13 +3000,11 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	    CFG->blinkOverUnder);
 
     label = gtk_label_new(_("Configuration"));
-    box = gtk_vbox_new(FALSE, 0);
-    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), box, label);
-
     page = gtk_scrolled_window_new(NULL, NULL);
-    gtk_box_pack_start(GTK_BOX(box), page, TRUE, TRUE, 0);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(page),
 	    GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), page, label);
+
     text = gtk_text_view_new();
     gtk_container_add(GTK_CONTAINER(page), text);
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text), FALSE);
