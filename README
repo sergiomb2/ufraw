@@ -103,6 +103,9 @@ GNU C is "-W -Wall -g -O3 -ffast-math -fomit-frame-pointer".
 
 Other options for the configuration script are:
 
+--disable-openmp: don't try to use OpenMP support even if it is
+		  apparently present.
+
 --enable-extras: build the extra binaries - dcraw, nikon-curve.
 
 --enable-mime: install mime files (see mime section later on).
