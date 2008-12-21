@@ -7,12 +7,12 @@ msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-11-14 06:15+0100\n"
-"PO-Revision-Date: 2008-07-05 21:36+0100\n"
+"PO-Revision-Date: 2008-12-20 02:50+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: 8bit"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
@@ -361,12 +361,11 @@ msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr ""
 "--size=TAILLE         Réduit la dimension max(hauteur,largeur) à TAILLE.\n"
 
-#, fuzzy
 msgid ""
 "--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm|tiff|png|jpeg|fits\n"
+"--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Format du fichier de sortie (défaut ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
@@ -1638,3 +1637,4 @@ msgstr "Bal. du Blanc Boitier"
 
 msgid "Auto WB"
 msgstr "Bal. du Blanc Auto"
+
