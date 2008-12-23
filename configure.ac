@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.127 2008/12/19 07:03:37 udifuchs Exp $
+dnl $Id: configure.ac,v 1.128 2008/12/23 06:32:42 udifuchs Exp $
 AC_INIT(UFRaw, 0.15)
 AC_PREREQ(2.57)
 
@@ -244,7 +244,7 @@ fi
 
 # Make sure MSGFMT_OPTS is defined for all combinations of autoconf and glib.
 MSGFMT_OPTS=
-ALL_LINGUAS="ca cs da es fr it ja ko nl no pl pt ru sr sr@latin sv"
+ALL_LINGUAS="ca cs da es fr it ja ko nb nl pl pt ru sr sr@latin sv"
 AM_GLIB_GNU_GETTEXT
 LIBS="$LIBS $INTLLIBS"
 # The following might not work with some combinations of autoconf and glib due
