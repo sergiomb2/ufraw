@@ -85,7 +85,7 @@ int ufraw_read_embedded(ufraw_data *uf)
 	size_t num = fread(uf->thumb.buffer, 1, raw->thumbBufferLength,
 		raw->ifp);
 	if ( num != raw->thumbBufferLength )
-	    ufraw_message(UFRAW_WARNING, "fread %d != %d",
+	    ufraw_message(UFRAW_WARNING, "Corrupt thumbnail (fread %d != %d)",
 		    num, raw->thumbBufferLength);
 	uf->thumb.buffer[0] = 0xff;
     } else {
@@ -117,7 +117,8 @@ int ufraw_read_embedded(ufraw_data *uf)
 	    size_t num = fread(uf->thumb.buffer, 1, raw->thumbBufferLength,
 		    raw->ifp);
 	    if ( num != raw->thumbBufferLength )
-		ufraw_message(UFRAW_WARNING, "fread %d != %d",
+		ufraw_message(UFRAW_WARNING,
+			"Corrupt thumbnail (fread %d != %d)",
 			num, raw->thumbBufferLength);
 	} else {
 #ifdef HAVE_LIBJPEG
@@ -277,9 +278,12 @@ int ufraw_write_embedded(ufraw_data *uf)
 	 uf->conf->type==embedded_jpeg_type &&
 	 raw->thumbType==jpeg_thumb_type) {
 	size_t num = fwrite(uf->thumb.buffer, 1, raw->thumbBufferLength, out);
-	if ( num != raw->thumbBufferLength )
-	    ufraw_message(UFRAW_WARNING, "fwrite %d != %d",
-		    num, raw->thumbBufferLength);
+	if ( num != raw->thumbBufferLength ) {
+	    ufraw_message(UFRAW_ERROR, _("Error writing '%s'"),
+		    uf->conf->outputFilename);
+	    fclose(out);
+	    return UFRAW_ERROR;
+	}
     } else if ( uf->conf->type==embedded_jpeg_type ) {
 #ifdef HAVE_LIBJPEG
 	struct jpeg_compress_struct dstinfo;
@@ -373,6 +377,7 @@ int ufraw_write_embedded(ufraw_data *uf)
 		uf->conf->type);
 	status = UFRAW_ERROR;
     }
+    // TODO: Before fclose() we should fflush() and check for errors.
     if ( strcmp(uf->conf->outputFilename, "-") )
 	fclose(out);
 

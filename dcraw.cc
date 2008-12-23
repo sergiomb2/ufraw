@@ -156,7 +156,8 @@ void CLASS ifpProgress(unsigned readCount) {
 size_t CLASS fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
     size_t num = ::fread(ptr, size, nmemb, stream);
     if ( num != nmemb )
-        dcraw_message(DCRAW_WARNING, "%s: fread %d != %d\n",
+//	Maybe this should be a DCRAW_WARNING
+        dcraw_message(DCRAW_VERBOSE, "%s: fread %d != %d\n",
                 ifname_display, num, nmemb);
     if (stream==ifp) ifpProgress(size*nmemb);
     return num;
@@ -173,7 +174,8 @@ size_t CLASS fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
 char *CLASS fgets(char *s, int size, FILE *stream) {
     char *str = ::fgets(s, size, stream);
     if ( str==NULL )
-        dcraw_message(DCRAW_WARNING, "%s: fgets returned NULL\n",
+//	Maybe this should be a DCRAW_WARNING
+        dcraw_message(DCRAW_VERBOSE, "%s: fgets returned NULL\n",
                 ifname_display);
     if (stream==ifp) ifpProgress(strlen(s));
     return str;

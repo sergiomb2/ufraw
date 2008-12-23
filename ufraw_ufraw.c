@@ -510,7 +510,9 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	    // read it in.
 	    size_t num = fread(&buf, 9, 1, raw->ifp);
 	    if ( num!=1 )
-		ufraw_message(UFRAW_WARNING, "fread %d != %d\n", num, 1);
+		// Maybe this should be a UFRAW_WARNING
+		ufraw_message(UFRAW_SET_LOG,
+			"Warning: tone mode fread %d != %d\n", num, 1);
 	    fseek(raw->ifp, pos, SEEK_SET);
 
 	    if (!strncmp(buf, "CS      ", sizeof(buf)))  use_custom_curve=1;
