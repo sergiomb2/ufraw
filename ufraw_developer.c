@@ -85,7 +85,7 @@ void developer_destroy(developer_data *d)
     g_free(d);
 }
 
-static char *embedded_display_profile = "embedded display profile";
+static const char *embedded_display_profile = "embedded display profile";
 
 /* Update the profile in the developer
  * and init values in the profile if needed */
@@ -126,6 +126,7 @@ void developer_display_profile(developer_data *d,
 	if (d->profile[type]!=NULL) cmsCloseProfile(d->profile[type]);
 	d->profile[type] = cmsOpenProfileFromMem(profile, size);
 	g_free(profile);
+	// If embedded profile is invalid fall-back to sRGB
 	if (d->profile[type]==NULL)
 	    d->profile[type] = cmsCreate_sRGBProfile();
 	if ( strcmp(d->profileFile[type], embedded_display_profile)!=0 ) {
