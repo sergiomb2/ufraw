@@ -286,6 +286,15 @@ date user guide.
 History
 =======
 
+24/12/2008 - UFRaw-0.15 released, based on DCRaw v 8.89.
+
+* Multiprocessing support using OpenMP. Patch by Bruce Guenter.
+* Add progress report during the loading of raw files.
+* Add JPEG optimization to reduce the file size without effecting image quality.
+* Compatibility with the just released Exiv2-0.18.
+* Support sRAW1 and sRAW2 formats of the Canon 50D and 5D Mark II.
+* Some annoying bugs got squashed.
+
 19/10/2008 - UFRaw-0.14.1 release, based on DCRaw v 8.88.
 
 * Fix the "Send to Gimp" option to work with Gimp-2.6 that no longer ships
