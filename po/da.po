@@ -1,14 +1,14 @@
 # Danish translation for UFRaw.
-# Copyright (C) 2006-2008 Udi Fuchs.
+# Copyright (C) 2006-2009 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-# Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>, 2006-2008.
+# Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>, 2006-2009.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-14 06:15+0100\n"
-"PO-Revision-Date: 2008-12-20 07:30+0100\n"
+"POT-Creation-Date: 2009-01-01 11:00+0100\n"
+"PO-Revision-Date: 2009-01-01 11:00+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1515,37 +1515,37 @@ msgid "Direct sunlight"
 msgstr "Direkte sollys"
 
 msgid "Cloudy"
-msgstr "Skyet"
+msgstr "Overskyet"
 
 #. "Shadows" should be switched to this:
 msgid "Shade"
 msgstr "Skygge"
 
 msgid "Incandescent"
-msgstr "Glødelamper"
+msgstr "Glødelampe"
 
 msgid "Incandescent warm"
-msgstr "Varme glødelamper"
+msgstr "Varm glødelampe"
 
 #. Same as "Incandescent":
 msgid "Tungsten"
-msgstr "Glødelamper"
+msgstr "Glødelampe"
 
 msgid "Fluorescent"
 msgstr "Fluorescerende"
 
-#. In Canon cameras and Nikon D60 and D300:
+#. In Canon cameras and some newer Nikon cameras:
 msgid "Fluorescent high"
-msgstr "Fluorescerende høj"
+msgstr "Højtemperatur fluorescerende"
 
 msgid "Cool white fluorescent"
-msgstr "Koldt hvidt fluorescerende"
+msgstr "Koldt, hvidt fluorescerende"
 
 msgid "Warm white fluorescent"
-msgstr "Varmt hvidt fluorescerende"
+msgstr "Varmt, hvidt fluorescerende"
 
 msgid "Daylight fluorescent"
-msgstr "Dagslysfluorescerende"
+msgstr "Fluorescerende i dagslys"
 
 msgid "Neutral fluorescent"
 msgstr "Neutralt fluorescerende"
@@ -1553,15 +1553,15 @@ msgstr "Neutralt fluorescerende"
 msgid "White fluorescent"
 msgstr "Hvidt fluorescerende"
 
-#. In Nikon D60 and D300
+#. In some newer Nikon cameras:
 msgid "Sodium-vapor fluorescent"
-msgstr "Natriumlamper"
+msgstr "Natriumdamplampe"
 
 msgid "Day white fluorescent"
-msgstr "Hvidt dagslysfluorescerende"
+msgstr "Hvidt fluorescerende i dagslys"
 
 msgid "High temp. mercury-vapor fluorescent"
-msgstr "Højtemperatur-kviksølvlamper"
+msgstr "Højtemperatur-kviksølvdamplampe"
 
 #. For Olympus with no real "Flash" preset:
 msgid "Flash (auto mode)"
@@ -1574,7 +1574,7 @@ msgid "Underwater"
 msgstr "Under vandet"
 
 msgid "Black & white"
-msgstr "Sort & hvid"
+msgstr "Sort/hvid"
 
 msgid "Manual WB"
 msgstr "Manuel HB"

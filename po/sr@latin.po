@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-14 06:15+0100\n"
+"POT-Creation-Date: 2009-01-01 11:00+0100\n"
 "PO-Revision-Date: 2008-05-12 14:55+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
@@ -1556,7 +1556,7 @@ msgstr "Sijalica"
 msgid "Fluorescent"
 msgstr "Neonka"
 
-#. In Canon cameras and Nikon D60 and D300:
+#. In Canon cameras and some newer Nikon cameras:
 msgid "Fluorescent high"
 msgstr "Visoko florescentna neonka"
 
@@ -1575,7 +1575,7 @@ msgstr "Neutralna neonka"
 msgid "White fluorescent"
 msgstr "Bela neonka"
 
-#. In Nikon D60 and D300
+#. In some newer Nikon cameras:
 msgid "Sodium-vapor fluorescent"
 msgstr "Neonka sa natrijumovom parom"
 

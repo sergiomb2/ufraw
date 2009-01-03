@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-14 06:15+0100\n"
+"POT-Creation-Date: 2009-01-01 11:00+0100\n"
 "PO-Revision-Date: 2008-08-29 21:12+0200\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -1559,7 +1559,7 @@ msgstr "Tungsteno"
 msgid "Fluorescent"
 msgstr "Fluorescente"
 
-#. In Canon cameras and Nikon D60 and D300:
+#. In Canon cameras and some newer Nikon cameras:
 msgid "Fluorescent high"
 msgstr "Fluorescente alto"
 
@@ -1578,7 +1578,7 @@ msgstr "Fluorescente neutral"
 msgid "White fluorescent"
 msgstr "Fluorescente blanco"
 
-#. In Nikon D60 and D300
+#. In some newer Nikon cameras:
 msgid "Sodium-vapor fluorescent"
 msgstr "Fluorescente de vapor de sodio"
 
