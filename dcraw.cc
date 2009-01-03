@@ -1,7 +1,7 @@
 /*
    dcraw.cc - Dave Coffin's raw photo decoder - C++ adaptation
    Copyright 1997-2008 by Dave Coffin, dcoffin a cybercom o net
-   Copyright 2004-2008 by Udi Fuchs, udifuchs a gmail o com
+   Copyright 2004-2009 by Udi Fuchs, udifuchs a gmail o com
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -11,8 +11,8 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.409 $
-   $Date: 2008/12/11 06:56:09 $
+   $Revision: 1.410 $
+   $Date: 2009/01/01 09:10:46 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -1742,6 +1742,7 @@ void CLASS hasselblad_load_raw()
 
   if (!ljpeg_start (&jh, 0)) return;
   free (jh.row);
+  order = 0x4949;
   ph1_bits(-1);
   for (row=-top_margin; row < height; row++) {
     pred[0] = pred[1] = 0x8000;
@@ -1755,6 +1756,7 @@ void CLASS hasselblad_load_raw()
 	diff = ph1_bits(len[i]);
 	if ((diff & (1 << (len[i]-1))) == 0)
 	  diff -= (1 << len[i]) - 1;
+	if (diff == 65535) diff = -32768;
 	pred[i] += diff;
 	if (row >= 0 && (unsigned)(col+i) < width)
 	  BAYER(row,col+i) = pred[i];
@@ -5192,6 +5194,7 @@ int CLASS parse_tiff_ifd (int base)
 	ima_len = len;
 	break;
       case 46279:
+	if (!ima_len) break;
 	fseek (ifp, 78, SEEK_CUR);
 	raw_width  = get4();
 	raw_height = get4();
