@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * wb_presets.c - White balance preset values for various cameras
- * Copyright 2004-2008 by Udi Fuchs
+ * Copyright 2004-2009 by Udi Fuchs
  *
  * Thanks goes for all the people who sent in the preset values
  * for their cameras.
@@ -44,14 +44,14 @@ static const char IncandescentWarm[] = N_("Incandescent warm");
 // Same as "Incandescent":
 static const char Tungsten[] = N_("Tungsten");
 static const char Fluorescent[] = N_("Fluorescent");
-// In Canon cameras and Nikon D60 and D300:
+// In Canon cameras and some newer Nikon cameras:
 static const char FluorescentHigh[] = N_("Fluorescent high");
 static const char CoolWhiteFluorescent[] = N_("Cool white fluorescent");
 static const char WarmWhiteFluorescent[] = N_("Warm white fluorescent");
 static const char DaylightFluorescent[] = N_("Daylight fluorescent");
 static const char NeutralFluorescent[] = N_("Neutral fluorescent");
 static const char WhiteFluorescent[] = N_("White fluorescent");
-// In Nikon D60 and D300
+// In some newer Nikon cameras:
 static const char SodiumVaporFluorescent[] = N_("Sodium-vapor fluorescent");
 static const char DayWhiteFluorescent[] = N_("Day white fluorescent");
 static const char HighTempMercuryVaporFluorescent[] = N_("High temp. mercury-vapor fluorescent");
@@ -1353,7 +1353,7 @@ const wb_data wb_preset[] = {
   { "NIKON", "D700", "9090K", 0,		{ 2.382812, 1, 1.035156, 0 } },
   { "NIKON", "D700", "10000K", 0,		{ 2.480469, 1, 1.000000, 0 } },
 
-{ "NIKON", "D40", Incandescent, -3,		{ 1.492188, 1, 2.164063, 0 } },
+  { "NIKON", "D40", Incandescent, -3,		{ 1.492188, 1, 2.164063, 0 } },
   { "NIKON", "D40", Incandescent, -2,		{ 1.437500, 1, 2.367188, 0 } },
   { "NIKON", "D40", Incandescent, -1,		{ 1.417969, 1, 2.414062, 0 } },
   { "NIKON", "D40", Incandescent, 0,		{ 1.375000, 1, 2.511719, 0 } },
@@ -1494,19 +1494,73 @@ const wb_data wb_preset[] = {
   { "NIKON", "D80", "5000K", 0,			{ 1.746094, 1, 1.410156, 0 } },
   { "NIKON", "D80", "5900K", 0,			{ 1.941406, 1, 1.265625, 0 } },
 
-  { "NIKON", "D90", Daylight, 0,		{ 1.800781, 1, 1.308594, 0 } },
-  { "NIKON", "D90", Incandescent, 0,		{ 1.167969, 1, 2.132812, 0 } },
-  { "NIKON", "D90", Fluorescent, 0,		{ 1.644531, 1, 1.937500, 0 } },
-  { "NIKON", "D90", Flash, 0,			{ 1.976562, 1, 1.152344, 0 } },
-  { "NIKON", "D90", Cloudy, 0,			{ 1.917969, 1, 1.187500, 0 } },
-  { "NIKON", "D90", Shade, 0,			{ 2.183594, 1, 1.062500, 0 } },
+  { "NIKON", "D90", Incandescent, -6,		{ 1.273438, 1, 1.906250, 0 } },
+  { "NIKON", "D90", Incandescent, 0,		{ 1.179688, 1, 2.097656, 0 } },
+  { "NIKON", "D90", Incandescent, 6,		{ 1.113281, 1, 2.320313, 0 } },
+  { "NIKON", "D90", SodiumVaporFluorescent, -6,	{ 1.164063, 1, 2.058594, 0 } },
   { "NIKON", "D90", SodiumVaporFluorescent, 0,	{ 1.062500, 1, 2.289063, 0 } },
+  { "NIKON", "D90", SodiumVaporFluorescent, 6,	{ 1.000000, 1, 2.554688, 0 } },
+  { "NIKON", "D90", WarmWhiteFluorescent, -6,	{ 1.285156, 1, 1.761719, 0 } },
   { "NIKON", "D90", WarmWhiteFluorescent, 0,	{ 1.191406, 1, 1.871094, 0 } },
+  { "NIKON", "D90", WarmWhiteFluorescent, 6,	{ 1.105469, 1, 1.968750, 0 } },
+  { "NIKON", "D90", WhiteFluorescent, -6,	{ 1.628906, 1, 1.953125, 0 } },
   { "NIKON", "D90", WhiteFluorescent, 0,	{ 1.343750, 1, 2.183594, 0 } },
+  { "NIKON", "D90", WhiteFluorescent, 6,	{ 1.000000, 1, 2.429688, 0 } },
+  { "NIKON", "D90", CoolWhiteFluorescent, -6,	{ 1.867188, 1, 1.722656, 0 } },
   { "NIKON", "D90", CoolWhiteFluorescent, 0,	{ 1.644531, 1, 1.937500, 0 } },
+  { "NIKON", "D90", CoolWhiteFluorescent, 6,	{ 1.363281, 1, 2.167969, 0 } },
+  { "NIKON", "D90", DayWhiteFluorescent, -6,	{ 1.843750, 1, 1.160156, 0 } },
   { "NIKON", "D90", DayWhiteFluorescent, 0,	{ 1.695313, 1, 1.312500, 0 } },
+  { "NIKON", "D90", DayWhiteFluorescent, 6,	{ 1.562500, 1, 1.457031, 0 } },
+  { "NIKON", "D90", DaylightFluorescent, -6,	{ 2.089844, 1, 1.000000, 0 } },
   { "NIKON", "D90", DaylightFluorescent, 0,	{ 1.925781, 1, 1.074219, 0 } },
+  { "NIKON", "D90", DaylightFluorescent, 6,	{ 1.773438, 1, 1.234375, 0 } },
+  { "NIKON", "D90", HighTempMercuryVaporFluorescent, -6, { 2.308594, 1, 1.132813, 0 } },
   { "NIKON", "D90", HighTempMercuryVaporFluorescent, 0, { 2.207031, 1, 1.292969, 0 } },
+  { "NIKON", "D90", HighTempMercuryVaporFluorescent, 6, { 2.085938, 1, 1.468750, 0 } },
+  { "NIKON", "D90", DirectSunlight, -6,		{ 1.949219, 1, 1.171875, 0 } },
+  { "NIKON", "D90", DirectSunlight, 0,		{ 1.800781, 1, 1.308594, 0 } },
+  { "NIKON", "D90", DirectSunlight, 6,		{ 1.640625, 1, 1.457031, 0 } },
+  { "NIKON", "D90", Flash, -6,			{ 2.218750, 1, 1.062500, 0 } },
+  { "NIKON", "D90", Flash, 0,			{ 1.976563, 1, 1.152344, 0 } },
+  { "NIKON", "D90", Flash, 6,			{ 1.789063, 1, 1.253906, 0 } },
+  { "NIKON", "D90", Cloudy, -6,			{ 2.093750, 1, 1.093750, 0 } },
+  { "NIKON", "D90", Cloudy, 0,			{ 1.917969, 1, 1.187500, 0 } },
+  { "NIKON", "D90", Cloudy, 6,			{ 1.765625, 1, 1.332031, 0 } },
+  { "NIKON", "D90", Shade, -6,			{ 2.453125, 1, 1.000000, 0 } },
+  { "NIKON", "D90", Shade, 0,			{ 2.183594, 1, 1.062500, 0 } },
+  { "NIKON", "D90", Shade, 6,			{ 1.984375, 1, 1.140625, 0 } },
+  { "NIKON", "D90", "2500K", 0,			{ 1.023438, 1, 2.644531, 0 } },
+  { "NIKON", "D90", "2560K", 0,			{ 1.046875, 1, 2.554688, 0 } },
+  { "NIKON", "D90", "2630K", 0,			{ 1.070313, 1, 2.464844, 0 } },
+  { "NIKON", "D90", "2700K", 0,			{ 1.093750, 1, 2.378906, 0 } },
+  { "NIKON", "D90", "2780K", 0,			{ 1.117188, 1, 2.296875, 0 } },
+  { "NIKON", "D90", "2860K", 0,			{ 1.140625, 1, 2.218750, 0 } },
+  { "NIKON", "D90", "2940K", 0,			{ 1.164063, 1, 2.144531, 0 } },
+  { "NIKON", "D90", "3030K", 0,			{ 1.187500, 1, 2.078125, 0 } },
+  { "NIKON", "D90", "3130K", 0,			{ 1.218750, 1, 2.011719, 0 } },
+  { "NIKON", "D90", "3230K", 0,			{ 1.250000, 1, 1.949219, 0 } },
+  { "NIKON", "D90", "3330K", 0,			{ 1.285156, 1, 1.886719, 0 } },
+  { "NIKON", "D90", "3450K", 0,			{ 1.324219, 1, 1.828125, 0 } },
+  { "NIKON", "D90", "3570K", 0,			{ 1.359375, 1, 1.769531, 0 } },
+  { "NIKON", "D90", "3700K", 0,			{ 1.398438, 1, 1.707031, 0 } },
+  { "NIKON", "D90", "3850K", 0,			{ 1.437500, 1, 1.636719, 0 } },
+  { "NIKON", "D90", "4000K", 0,			{ 1.480469, 1, 1.562500, 0 } },
+  { "NIKON", "D90", "4170K", 0,			{ 1.535156, 1, 1.519531, 0 } },
+  { "NIKON", "D90", "4350K", 0,			{ 1.593750, 1, 1.488281, 0 } },
+  { "NIKON", "D90", "4550K", 0,			{ 1.652344, 1, 1.445313, 0 } },
+  { "NIKON", "D90", "4760K", 0,			{ 1.707031, 1, 1.398438, 0 } },
+  { "NIKON", "D90", "5000K", 0,			{ 1.761719, 1, 1.347656, 0 } },
+  { "NIKON", "D90", "5260K", 0,			{ 1.808594, 1, 1.296875, 0 } },
+  { "NIKON", "D90", "5560K", 0,			{ 1.859375, 1, 1.250000, 0 } },
+  { "NIKON", "D90", "5880K", 0,			{ 1.910156, 1, 1.207031, 0 } },
+  { "NIKON", "D90", "6250K", 0,			{ 1.960938, 1, 1.164063, 0 } },
+  { "NIKON", "D90", "6670K", 0,			{ 2.011719, 1, 1.128906, 0 } },
+  { "NIKON", "D90", "7140K", 0,			{ 2.074219, 1, 1.097656, 0 } },
+  { "NIKON", "D90", "7690K", 0,			{ 2.140625, 1, 1.074219, 0 } },
+  { "NIKON", "D90", "8330K", 0,			{ 2.218750, 1, 1.050781, 0 } },
+  { "NIKON", "D90", "9090K", 0,			{ 2.308594, 1, 1.027344, 0 } },
+  { "NIKON", "D90", "10000K", 0,		{ 2.414063, 1, 1.007813, 0 } },
 
   { "NIKON", "E5400", Daylight, -3,		{ 2.046875, 1, 1.449219, 0 } },
   { "NIKON", "E5400", Daylight, 0,		{ 1.800781, 1, 1.636719, 0 } },
