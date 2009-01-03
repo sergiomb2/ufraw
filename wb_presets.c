@@ -189,12 +189,12 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 20D", Fluorescent, 0,		{ 1.752709, 1, 2.060098, 0 } },
   { "Canon", "EOS 20D", Flash, 0,		{ 2.145813, 1, 1.293596, 0 } },
 
-  { "Canon", "EOS 30D", DirectSunlight, 0,	{ 1.920898, 1, 1.514648, 0 } },
-  { "Canon", "EOS 30D", Shade, 0,		{ 2.211914, 1, 1.251953, 0 } },
-  { "Canon", "EOS 30D", Cloudy, 0,		{ 2.073242, 1, 1.373047, 0 } },
-  { "Canon", "EOS 30D", Tungsten, 0,		{ 1.340369, 1, 2.383465, 0 } },
-  { "Canon", "EOS 30D", Fluorescent, 0,		{ 1.684063, 1, 2.245107, 0 } },
-  { "Canon", "EOS 30D", Flash, 0,		{ 2.093750, 1, 1.330078, 0 } },
+  { "Canon", "EOS 30D", Daylight, 0,		{ 2.032227, 1, 1.537109, 0 } },
+  { "Canon", "EOS 30D", Shade, 0,		{ 2.354492, 1, 1.264648, 0 } },
+  { "Canon", "EOS 30D", Cloudy, 0,		{ 2.197266, 1, 1.389648, 0 } },
+  { "Canon", "EOS 30D", Tungsten, 0,		{ 1.411084, 1, 2.447477, 0 } },
+  { "Canon", "EOS 30D", Fluorescent, 0,		{ 1.761601, 1, 2.303913, 0 } },
+  { "Canon", "EOS 30D", Flash, 0,		{ 2.226562, 1, 1.347656, 0 } },
 
   { "Canon", "EOS 40D", Daylight, 0,		{ 2.197266, 1, 1.438477, 0 } },
   { "Canon", "EOS 40D", Shade, 0,		{ 2.546875, 1, 1.185547, 0 } },
