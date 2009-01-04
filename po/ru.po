@@ -1,5 +1,5 @@
 # Russian translation for UFRaw.
-# Copyright (C) 2006-2008 Udi Fuchs.
+# Copyright (C) 2006-2009 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 # Alexey Voinov <voins@voins.program.ru>, 2006.
 # Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net.by>, 2006, 2007.
@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-01 11:00+0100\n"
-"PO-Revision-Date: 2008-10-18 17:36+0300\n"
+"POT-Creation-Date: 2009-01-04 06:00+0100\n"
+"PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net."
 "by>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -362,12 +362,11 @@ msgstr ""
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=РАЗМЕР         Уменьшить максимальный из размеров до РАЗМЕР.\n"
 
-#, fuzzy
 msgid ""
 "--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm|tiff|png|jpeg|fits\n"
+"--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Формат выходного файла (по умолчанию — ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"

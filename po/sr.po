@@ -1,15 +1,15 @@
 # Serbian translation of UFRaw
 # Courtesy of Prevod.org team (http://prevod.org/) -- 2006, 2007, 2008.
 #
-# This file is distributed under the same license as the ufraw package.
+# This file is distributed under the same license as the UFRaw package.
 #
 # Милош Поповић <gpopac@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: ufraw\n"
+"Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-01 11:00+0100\n"
-"PO-Revision-Date: 2008-05-12 14:55+0100\n"
+"POT-Creation-Date: 2009-01-04 06:00+0100\n"
+"PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
 "MIME-Version: 1.0\n"
@@ -358,12 +358,11 @@ msgstr ""
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=Величина       Смањивање слике (висина,ширина) на „Величина“.\n"
 
-#, fuzzy
 msgid ""
 "--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm|tiff|png|jpeg|fits\n"
+"--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Излазни формат слике (подразумевани је ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"

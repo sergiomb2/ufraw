@@ -1,14 +1,14 @@
 # Italian translation of Ufraw.
-# Copyright (C) 2006-2008 Udi Fuchs.
+# Copyright (C) 2006-2009 Udi Fuchs.
 # This file is distributed under the same license as the Ufraw package.
 # daniele <dmedri@SPAMgmail.com>, 2007-2008.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw 0.14\n"
+"Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-01 11:00+0100\n"
-"PO-Revision-Date: 2008-08-30 06:30+0200\n"
+"POT-Creation-Date: 2009-01-04 06:00+0100\n"
+"PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniele Medri <dmedri@SPAMgmail.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -354,12 +354,11 @@ msgstr ""
 "--size=SIZE           Ridimensiona (per altezza e larghezza) al valore "
 "indicato.\n"
 
-#, fuzzy
 msgid ""
 "--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm|tiff|png|jpeg|fits\n"
+"--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Formato di uscita (predefinito ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"

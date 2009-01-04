@@ -1,6 +1,6 @@
 # Cataln translation for UFRaw.
 # Traducció al català de UFRaw Convertidor de Dades en Cru No Identificades per a imatges de càmeres digitals.
-# Copyright (C) 2008, Udi Fuchs & Paco Rivière
+# Copyright (C) 2008-2009, Udi Fuchs & Paco Rivière
 # This file is distributed under the same license as the UFRaw package.
 # Paco Rivière http://pacoriviere.cat/, 2008.
 #
@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-01 11:00+0100\n"
-"PO-Revision-Date: 2008-08-17 18:20-0500\n"
+"POT-Creation-Date: 2009-01-04 06:00+0100\n"
+"PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
 "MIME-Version: 1.0\n"
@@ -361,12 +361,11 @@ msgstr ""
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=MIDA           Redueix la màxima (alçada, amplada) a MIDA.\n"
 
-#, fuzzy
 msgid ""
 "--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm|tiff|png|jpeg|fits\n"
+"--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Format del fitxer de sortida (per omissió ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
