@@ -7518,13 +7518,13 @@ konica_400z:
       case 3690:
 	height += 36;
 	left_margin = (ushort)-14;
-	filters = 0x49494949;
 	maximum = 0xf7f0;
       case 3770:
 	width = 3672;
 	if ((height -= 39) == 2760)
 	  top_margin = 15;
 	left_margin += 17;
+	filters = 0x49494949;
 	zero_is_bad = 1;
 	adobe_coeff ("Panasonic","DMC-FZ50");  break;
       case 3710:
