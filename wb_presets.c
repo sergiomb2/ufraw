@@ -111,6 +111,15 @@ const wb_data wb_preset[] = {
   { "Canon", "PowerShot G9", Flash, 0,		{ 2.461538, 1, 1.498834, 0 } },
   { "Canon", "PowerShot G9", Underwater, 0,	{ 2.237327, 1, 1.661290, 0 } },
 
+  /* Does the Canon PowerShot G10 support native WB presets? Please test. */
+  { "Canon", "PowerShot G10", Daylight, 0,	{ 1.598980, 1, 1.830612, 0 } },
+  { "Canon", "PowerShot G10", Cloudy, 0,	{ 1.738120, 1, 1.722281, 0 } },
+  { "Canon", "PowerShot G10", Tungsten, 0,	{ 1, 1.035550, 3.569954, 0 } },
+  { "Canon", "PowerShot G10", Fluorescent, 0,	{ 1.341633, 1, 2.434263, 0 } },
+  { "Canon", "PowerShot G10", FluorescentHigh, 0, { 1.749171, 1, 1.907182, 0 } },
+  { "Canon", "PowerShot G10", Flash, 0,		{ 1.926829, 1, 1.501591, 0 } },
+  { "Canon", "PowerShot G10", Underwater, 0,	{ 1.822314, 1, 1.841942, 0 } },
+
   /* Canon PowerShot S3 IS does not support native WB presets. These are made
      as custom WB presets. */
   { "Canon", "PowerShot S3 IS", Daylight, 0,	{ 1.627271, 1, 1.823491, 0 } },
