@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw_ui.h - Common definitions for UFRaw's GUI.
- * Copyright 2004-2008 by Udi Fuchs
+ * Copyright 2004-2009 by Udi Fuchs
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +138,7 @@ typedef struct {
     GtkWidget *LensScaleResetButton;
     /* The button that automatically computes the optimal scale */
     GtkWidget *LensAutoScaleButton;
-#endif
+#endif /* HAVE_LENSFUN */
     long (*SaveFunc)();
     RenderModeType RenderMode;
     /* Current subarea index (0-31). If negative, rendering has stopped */

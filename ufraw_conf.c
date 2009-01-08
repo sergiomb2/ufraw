@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw_conf.c - handle configuration issues
- * Copyright 2004-2008 by Udi Fuchs
+ * Copyright 2004-2009 by Udi Fuchs
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ const conf_data conf_default = {
     { LF_VIGNETTING_MODEL_NONE, 0, 0, 0, { 0, 0, 0 } },
     LF_UNKNOWN,                   /* lens type */
     0,                            /* lens postprocessing scale power-of-two */ 
-#endif
+#endif /* HAVE_LENSFUN */
 };
 
 static const char *interpolationNames[] =
@@ -160,13 +160,13 @@ void conf_init (conf_data *c)
         lensdb = lf_db_new ();
         lf_db_load (lensdb);
     }
-#endif
+#endif /* HAVE_LENSFUN */
 
     *c = conf_default;
 
 #ifdef HAVE_LENSFUN
     c->lensdb = lensdb;
-#endif
+#endif /* HAVE_LENSFUN */
 }
 
 static int conf_find_name(const char name[],const char *namesList[], int notFound)

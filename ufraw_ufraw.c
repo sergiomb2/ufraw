@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw_ufraw.c - program interface to all the components
- * Copyright 2004-2008 by Udi Fuchs
+ * Copyright 2004-2009 by Udi Fuchs
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -921,7 +921,7 @@ no_distortion:
     }
 }
 
-#endif // HAVE_LENSFUN
+#endif /* HAVE_LENSFUN */
 
 /* This is the part of the conversion which is not supported by
  * ufraw_convert_image_area() */
@@ -959,7 +959,7 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
     }
 #else
     (void)lensfix;
-#endif // HAVE_LENSFUN
+#endif /* HAVE_LENSFUN */
 
     if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
 	dcraw_finalize_shrink(&final, raw, dark, uf->ConvertShrink);
@@ -1088,7 +1088,7 @@ int ufraw_convert_image_init_phase(ufraw_data *uf)
         uf->modifier = NULL;
         img->valid = 0;
     }
-#endif
+#endif /* HAVE_LENSFUN */
 
     return UFRAW_SUCCESS;
 }
@@ -1184,7 +1184,7 @@ ufraw_image_data *ufraw_convert_image_area (
                             LF_CR_3 (RED, GREEN, BLUE),
                             out->width * out->depth);
                     }
-#endif
+#endif /* HAVE_LENSFUN */
                 }
                 g_free (pixtmp);
             }
@@ -1277,9 +1277,7 @@ ufraw_image_data *ufraw_convert_image_area (
                 g_free (buff);
             }
             break;
-#else
-            // fallback
-#endif
+#endif /* HAVE_LENSFUN */
 
         default:
             return in;

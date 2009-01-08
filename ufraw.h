@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw.h - Common definitions for UFRaw.
- * Copyright 2004-2008 by Udi Fuchs
+ * Copyright 2004-2009 by Udi Fuchs
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -275,7 +275,7 @@ typedef struct ufraw_struct {
 #ifdef HAVE_LENSFUN
     int postproc_ops; /* postprocessing operations (LF_MODIFY_XXX) */
     lfModifier *modifier;
-#endif
+#endif /* HAVE_LENSFUN */
 } ufraw_data;
 
 extern const conf_data conf_default;
