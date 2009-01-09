@@ -68,7 +68,7 @@ const conf_data conf_default = {
     { { { N_("No profile"), "", "", 0.45, 0.1, 0 },
 	{ N_("Color matrix"), "", "", 0.45, 0.1, 0 },
 	{ "Some ICC Profile", "", "", 0.45, 0.0, 0 } },
-      { { N_("sRGB"), "", "", 0.0, 0.0, 8 },
+      { { N_("sRGB built-in - (lcms internal)"), "", "", 0.0, 0.0, 8 },
 	{ "Some ICC Profile", "", "", 0.0, 0.0, 8 } },
       { { N_("System default"), "", "", 0.0, 0.0, 0 },
 	{ N_("sRGB"), "", "", 0.0, 0.0, 0 },

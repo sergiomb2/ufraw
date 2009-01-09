@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-04 06:00+0100\n"
+"POT-Creation-Date: 2009-01-09 11:15+0100\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -102,12 +102,15 @@ msgstr "Perfis de cor"
 msgid "Color matrix"
 msgstr "Usar matriz de cores"
 
-msgid "sRGB"
-msgstr "sRGB"
+msgid "sRGB built-in - (lcms internal)"
+msgstr ""
 
 #, fuzzy
 msgid "System default"
 msgstr "Padrões para salvar imagens"
+
+msgid "sRGB"
+msgstr "sRGB"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
 msgstr "Tentando converter .ufrawrc do UFRaw-0.4 ou anterior"

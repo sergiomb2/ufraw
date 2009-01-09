@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw_writer.c - functions to output image files in different formats.
- * Copyright 2004-2008 by Udi Fuchs
+ * Copyright 2004-2009 by Udi Fuchs
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 
 #include <errno.h>	/* for errno */
 #include <string.h>
+#include <lcms.h>
 #include "uf_glib.h"
 #include <glib/gi18n.h>
 #ifdef HAVE_LIBTIFF
@@ -442,6 +443,25 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->developer->profileFile[out_profile],
 			uf->conf->outputFilename);
 	    }
+	} else {
+	    cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
+	    unsigned char *buf;
+	    char profileName[] = "sRGB built-in - (lcms internal)";
+	    gsize len = 0;
+	    _cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
+	    if (len > 0) {
+		if ((buf = g_malloc(len))) {
+		    _cmsSaveProfileToMem(hOutProfile, buf, &len);
+		    TIFFSetField(out, TIFFTAG_ICCPROFILE, len, buf);
+		    g_free(buf);
+		} else {
+                    ufraw_set_warning(uf,
+                        _("Failed to embed output profile '%s' in '%s'."),
+			profileName,
+                        uf->conf->outputFilename);
+		}
+	    }
+	    cmsCloseProfile(hOutProfile);
 	}
 	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, TIFFDefaultStripSize(out, 0));
 
@@ -500,6 +520,25 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->developer->profileFile[out_profile],
 			uf->conf->outputFilename);
 	    }
+	} else {
+	    cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
+	    unsigned char *buf;
+	    char profileName[] = "sRGB built-in - (lcms internal)";
+	    gsize len = 0;
+	    _cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
+	    if (len > 0) {
+		if ((buf = g_malloc(len))) {
+		    _cmsSaveProfileToMem(hOutProfile, buf, &len);
+		    write_icc_profile(&cinfo, buf, len);
+		    g_free(buf);
+		} else {
+                    ufraw_set_warning(uf,
+                        _("Failed to embed output profile '%s' in '%s'."),
+			profileName,
+                        uf->conf->outputFilename);
+		}
+	    }
+	    cmsCloseProfile(hOutProfile);
 	}
 	if ( uf->conf->embedExif ) {
 	    ufraw_exif_prepare_output(uf);
@@ -576,6 +615,28 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->developer->profileFile[out_profile],
 			uf->conf->outputFilename);
 		}
+	    } else {
+		cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
+		char *buf;
+	        char profileName[] = "sRGB built-in - (lcms internal)";
+		gsize len = 0;
+		_cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
+		if (len > 0) {
+		    if ((buf = g_malloc(len))) {
+			_cmsSaveProfileToMem(hOutProfile, buf, &len);
+			png_set_iCCP(png, info,
+			    profileName,
+			    PNG_COMPRESSION_TYPE_BASE,
+			    buf, len);
+			g_free(buf);
+		    } else {
+			ufraw_set_warning(uf,
+			    _("Failed to embed output profile '%s' in '%s'."),
+			    profileName,
+			    uf->conf->outputFilename);
+		    }
+		}
+		cmsCloseProfile(hOutProfile);
 	    }
 	    if ( uf->conf->embedExif ) {
 		ufraw_exif_prepare_output(uf);
