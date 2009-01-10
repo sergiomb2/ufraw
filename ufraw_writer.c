@@ -446,7 +446,8 @@ int ufraw_write_image(ufraw_data *uf)
 	} else {
 	    cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
 	    unsigned char *buf;
-	    char profileName[] = "sRGB built-in - (lcms internal)";
+	    static const char profileName[] =
+		N_("sRGB built-in - (lcms internal)");
 	    gsize len = 0;
 	    _cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
 	    if (len > 0) {
@@ -523,7 +524,8 @@ int ufraw_write_image(ufraw_data *uf)
 	} else {
 	    cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
 	    unsigned char *buf;
-	    char profileName[] = "sRGB built-in - (lcms internal)";
+	    static const char profileName[] =
+		N_("sRGB built-in - (lcms internal)");
 	    gsize len = 0;
 	    _cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
 	    if (len > 0) {
@@ -618,7 +620,8 @@ int ufraw_write_image(ufraw_data *uf)
 	    } else {
 		cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
 		char *buf;
-	        char profileName[] = "sRGB built-in - (lcms internal)";
+	        static char profileName[] =
+		    N_("sRGB built-in - (lcms internal)");
 		gsize len = 0;
 		_cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
 		if (len > 0) {
