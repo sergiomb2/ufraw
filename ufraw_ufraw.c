@@ -932,6 +932,8 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
     // final->image memory will be realloc'd as needed
     dcraw_image_data final;
     final.image = uf->image.image;
+    final.width = uf->image.width;
+    final.height = uf->image.height;
     dcraw_data *dark = uf->conf->darkframe ? uf->conf->darkframe->raw : NULL;
 
 #ifdef HAVE_LENSFUN
