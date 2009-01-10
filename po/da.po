@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-09 11:15+0100\n"
-"PO-Revision-Date: 2009-01-09 11:15+0100\n"
+"POT-Creation-Date: 2009-01-10 09:15+0100\n"
+"PO-Revision-Date: 2009-01-10 09:20+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1364,6 +1364,10 @@ msgstr "Billedfilnavnet kan ikke være det samme som ID-filnavnet '%s'"
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "Fejl ved indlejring af uddataprofil '%s' i '%s'."
+
+#, c-format
+msgid "Failed to create output profile '%s'."
+msgstr "Fejl ved dannelse af uddataprofil '%s'."
 
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."

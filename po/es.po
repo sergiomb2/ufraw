@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-09 11:15+0100\n"
+"POT-Creation-Date: 2009-01-10 09:15+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -1387,6 +1387,10 @@ msgstr ""
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "Fallo al incrustar perfil de salida '%s' en '%s'"
+
+#, fuzzy, c-format
+msgid "Failed to create output profile '%s'."
 msgstr "Fallo al incrustar perfil de salida '%s' en '%s'"
 
 #, c-format

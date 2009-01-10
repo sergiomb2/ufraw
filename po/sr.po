@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-09 11:15+0100\n"
+"POT-Creation-Date: 2009-01-10 09:15+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
@@ -1378,6 +1378,10 @@ msgstr ""
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "Не могу да уметнем излазни профил „%s“ у „%s“."
+
+#, fuzzy, c-format
+msgid "Failed to create output profile '%s'."
 msgstr "Не могу да уметнем излазни профил „%s“ у „%s“."
 
 #, c-format

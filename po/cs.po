@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-09 11:15+0100\n"
+"POT-Creation-Date: 2009-01-10 09:15+0100\n"
 "PO-Revision-Date: 2008-12-21 07:05+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -1367,6 +1367,10 @@ msgstr "Jméno souboru se snímkem nemůže být shodné se jménem ID souboru '
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "Selhalo vložení výstupního profilu '%s' v '%s'."
+
+#, fuzzy, c-format
+msgid "Failed to create output profile '%s'."
 msgstr "Selhalo vložení výstupního profilu '%s' v '%s'."
 
 #, c-format

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-09 11:15+0100\n"
+"POT-Creation-Date: 2009-01-10 09:15+0100\n"
 "PO-Revision-Date: 2008-12-23 00:00-0500\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -1365,6 +1365,10 @@ msgstr "Bildets filnavn kan ikke være det samme som ID-filnavnet «%s»"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "Kunne ikke inkludere utdataprofilen «%s» i «%s»."
+
+#, fuzzy, c-format
+msgid "Failed to create output profile '%s'."
 msgstr "Kunne ikke inkludere utdataprofilen «%s» i «%s»."
 
 #, c-format

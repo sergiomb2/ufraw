@@ -446,8 +446,6 @@ int ufraw_write_image(ufraw_data *uf)
 	} else {
 	    cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
 	    unsigned char *buf;
-	    static const char profileName[] =
-		N_("sRGB built-in - (lcms internal)");
 	    gsize len = 0;
 	    _cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
 	    if (len > 0) {
@@ -458,9 +456,13 @@ int ufraw_write_image(ufraw_data *uf)
 		} else {
                     ufraw_set_warning(uf,
                         _("Failed to embed output profile '%s' in '%s'."),
-			profileName,
+			uf->conf->profile[out_profile][0].name,
                         uf->conf->outputFilename);
 		}
+	    } else {
+		ufraw_set_warning(uf,
+		    _("Failed to create output profile '%s'."),
+		    uf->conf->profile[out_profile][0].name); 
 	    }
 	    cmsCloseProfile(hOutProfile);
 	}
@@ -524,8 +526,6 @@ int ufraw_write_image(ufraw_data *uf)
 	} else {
 	    cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
 	    unsigned char *buf;
-	    static const char profileName[] =
-		N_("sRGB built-in - (lcms internal)");
 	    gsize len = 0;
 	    _cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
 	    if (len > 0) {
@@ -536,9 +536,13 @@ int ufraw_write_image(ufraw_data *uf)
 		} else {
                     ufraw_set_warning(uf,
                         _("Failed to embed output profile '%s' in '%s'."),
-			profileName,
+			uf->conf->profile[out_profile][0].name,
                         uf->conf->outputFilename);
 		}
+	    } else {
+		ufraw_set_warning(uf,
+		    _("Failed to create output profile '%s'."),
+		    uf->conf->profile[out_profile][0].name); 
 	    }
 	    cmsCloseProfile(hOutProfile);
 	}
@@ -620,24 +624,26 @@ int ufraw_write_image(ufraw_data *uf)
 	    } else {
 		cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
 		char *buf;
-	        static char profileName[] =
-		    N_("sRGB built-in - (lcms internal)");
 		gsize len = 0;
 		_cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
 		if (len > 0) {
 		    if ((buf = g_malloc(len))) {
 			_cmsSaveProfileToMem(hOutProfile, buf, &len);
 			png_set_iCCP(png, info,
-			    profileName,
+			    uf->conf->profile[out_profile][0].name,
 			    PNG_COMPRESSION_TYPE_BASE,
 			    buf, len);
 			g_free(buf);
 		    } else {
 			ufraw_set_warning(uf,
 			    _("Failed to embed output profile '%s' in '%s'."),
-			    profileName,
+			    uf->conf->profile[out_profile][0].name,
 			    uf->conf->outputFilename);
 		    }
+		} else {
+		    ufraw_set_warning(uf,
+			_("Failed to create output profile '%s'."),
+			uf->conf->profile[out_profile][0].name); 
 		}
 		cmsCloseProfile(hOutProfile);
 	    }

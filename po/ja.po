@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-09 11:15+0100\n"
+"POT-Creation-Date: 2009-01-10 09:15+0100\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -1410,6 +1410,10 @@ msgstr "画像のファイル名はIDのファイル名と同じにはできま�
 
 #, fuzzy, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "出力プロファイル'%s'を'%s'へ埋め込むのに失敗しました"
+
+#, fuzzy, c-format
+msgid "Failed to create output profile '%s'."
 msgstr "出力プロファイル'%s'を'%s'へ埋め込むのに失敗しました"
 
 #, c-format

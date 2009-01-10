@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-09 11:15+0100\n"
+"POT-Creation-Date: 2009-01-10 09:15+0100\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -1423,6 +1423,10 @@ msgstr "O nome do arquivo de imagem não pode ser o mesmo que o arquivo ID '%s'"
 
 #, fuzzy, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "Falhou ao embutir perfil de saída '%s' em '%s'"
+
+#, fuzzy, c-format
+msgid "Failed to create output profile '%s'."
 msgstr "Falhou ao embutir perfil de saída '%s' em '%s'"
 
 #, c-format

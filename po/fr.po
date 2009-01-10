@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-09 11:15+0100\n"
+"POT-Creation-Date: 2009-01-10 09:15+0100\n"
 "PO-Revision-Date: 2008-12-20 02:50+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -1414,6 +1414,10 @@ msgstr ""
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "Échoue à inclure le profil de sortie '%s' dans '%s'"
+
+#, fuzzy, c-format
+msgid "Failed to create output profile '%s'."
 msgstr "Échoue à inclure le profil de sortie '%s' dans '%s'"
 
 #, c-format

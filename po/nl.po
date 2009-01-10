@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-09 11:15+0100\n"
+"POT-Creation-Date: 2009-01-10 09:15+0100\n"
 "PO-Revision-Date: 2008-12-23 00:00-0600\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
@@ -1373,6 +1373,10 @@ msgstr ""
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "Mislukt om output profiel '%s' te embedden  in '%s'."
+
+#, fuzzy, c-format
+msgid "Failed to create output profile '%s'."
 msgstr "Mislukt om output profiel '%s' te embedden  in '%s'."
 
 #, c-format

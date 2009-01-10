@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-09 11:15+0100\n"
+"POT-Creation-Date: 2009-01-10 09:15+0100\n"
 "PO-Revision-Date: 2008-10-16 16:39+0900\n"
 "Last-Translator: Homin Lee <ff4500@gamil.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -1347,6 +1347,10 @@ msgstr "이미지의 파일 이름은 ID 파일 이름 '%s'와 같을 수 없습
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "출력 프로파일 '%s'을(를) '%s'에 포함하는데 실패하였습니다."
+
+#, fuzzy, c-format
+msgid "Failed to create output profile '%s'."
 msgstr "출력 프로파일 '%s'을(를) '%s'에 포함하는데 실패하였습니다."
 
 #, c-format
