@@ -465,7 +465,7 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	    g_free(utf8);
 	}
 	if (!strcmp("ProductName", element))
-	    g_strlcpy(c->profile[out_profile][i].productName, temp, max_path);
+	    g_strlcpy(c->profile[out_profile][i].productName, temp, max_name);
 	if (!strcmp("BitDepth", element))
 	    sscanf(temp, "%d", &c->profile[out_profile][i].BitDepth);
 	return;
@@ -479,7 +479,7 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	}
 	if (!strcmp("ProductName", element))
 	    g_strlcpy(c->profile[display_profile][i].productName, temp,
-		    max_path);
+		    max_name);
 	return;
     }
     if (!strcmp("BaseCurve", element)) {
