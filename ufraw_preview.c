@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw_preview.c - GUI for controlling all the image manipulations
- * Copyright 2004-2008 by Udi Fuchs
+ * Copyright 2004-2009 by Udi Fuchs
  *
  * based on the GIMP plug-in by Pawel T. Jochym jochym at ifj edu pl,
  *
@@ -4482,7 +4482,7 @@ static void transformations_fill_interface(preview_data *data,
     label = gtk_label_new(_("Shrink factor"));
     gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, 0, 0, 0, 0);
     data->ShrinkAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(CFG->shrink,
-	    1, 100, 1, 2, 3));
+	    1, 100, 1, 2, 0));
     g_object_set_data(G_OBJECT(data->ShrinkAdjustment),
 		"Adjustment-Accuracy", (gpointer)0);
     data->ShrinkSpin = GTK_SPIN_BUTTON(gtk_spin_button_new(
