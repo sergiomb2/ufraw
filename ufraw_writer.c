@@ -429,7 +429,7 @@ int ufraw_write_image(ufraw_data *uf)
 	else
 #endif
 	    TIFFSetField(out, TIFFTAG_COMPRESSION, COMPRESSION_NONE);
-	/* Embed output profile if it is not the internal sRGB*/
+	/* Embed output profile if it is not the internal sRGB. */
 	if (strcmp(uf->developer->profileFile[out_profile], "")) {
 	    char *buf;
 	    gsize len;
@@ -443,9 +443,7 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->developer->profileFile[out_profile],
 			uf->conf->outputFilename);
 	    }
-	} else if (!strcmp(uf->conf->profile[out_profile]
-		[uf->conf->profileIndex[out_profile]].name,
-		"sRGB (embedded)")) {
+	} else if (uf->conf->profileIndex[out_profile]==1) { // Embed sRGB.
 	    cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
 	    unsigned char *buf;
 	    gsize len = 0;
@@ -513,7 +511,7 @@ int ufraw_write_image(ufraw_data *uf)
 
 	jpeg_start_compress(&cinfo, TRUE);
 
-	/* Embed output profile if it is not the internal sRGB*/
+	/* Embed output profile if it is not the internal sRGB. */
 	if (strcmp(uf->developer->profileFile[out_profile], "")) {
 	    char *buf;
 	    gsize len;
@@ -527,9 +525,7 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->developer->profileFile[out_profile],
 			uf->conf->outputFilename);
 	    }
-	} else if (!strcmp(uf->conf->profile[out_profile]
-		[uf->conf->profileIndex[out_profile]].name,
-		"sRGB (embedded)")) {
+	} else if (uf->conf->profileIndex[out_profile]==1) { // Embed sRGB.
 	    cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
 	    unsigned char *buf;
 	    gsize len = 0;
@@ -612,7 +608,7 @@ int ufraw_write_image(ufraw_data *uf)
 		    uf->conf->make, uf->conf->model);
 	    png_set_text(png, info, text, 2);
 	    g_free(text[1].text);
-	    /* Embed output profile if it is not the internal sRGB*/
+	    /* Embed output profile if it is not the internal sRGB. */
 	    if (strcmp(uf->developer->profileFile[out_profile], "")) {
 		char *buf;
 		gsize len;
@@ -629,9 +625,7 @@ int ufraw_write_image(ufraw_data *uf)
 			uf->developer->profileFile[out_profile],
 			uf->conf->outputFilename);
 		}
-	    } else if (!strcmp(uf->conf->profile[out_profile]
-		    [uf->conf->profileIndex[out_profile]].name,
-		    "sRGB (embedded)")) {
+	    } else if (uf->conf->profileIndex[out_profile]==1) { // Embed sRGB.
 		cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
 		char *buf;
 		gsize len = 0;
