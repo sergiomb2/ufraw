@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-10 09:15+0100\n"
+"POT-Creation-Date: 2009-01-11 04:00+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
@@ -102,14 +102,14 @@ msgstr "Nema profila"
 msgid "Color matrix"
 msgstr "Matrica boja"
 
-msgid "sRGB built-in - (lcms internal)"
+msgid "sRGB"
+msgstr "sRGB"
+
+msgid "sRGB (embedded)"
 msgstr ""
 
 msgid "System default"
 msgstr "Podrazumevano u sistemu"
-
-msgid "sRGB"
-msgstr "sRGB"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
 msgstr ""

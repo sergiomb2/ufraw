@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-10 09:15+0100\n"
+"POT-Creation-Date: 2009-01-11 04:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,13 +100,13 @@ msgstr ""
 msgid "Color matrix"
 msgstr ""
 
-msgid "sRGB built-in - (lcms internal)"
+msgid "sRGB"
+msgstr ""
+
+msgid "sRGB (embedded)"
 msgstr ""
 
 msgid "System default"
-msgstr ""
-
-msgid "sRGB"
 msgstr ""
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-10 09:15+0100\n"
+"POT-Creation-Date: 2009-01-11 04:00+0100\n"
 "PO-Revision-Date: 2008-12-20 02:50+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -100,14 +100,14 @@ msgstr "Pas de profil"
 msgid "Color matrix"
 msgstr "Matrice de couleurs"
 
-msgid "sRGB built-in - (lcms internal)"
+msgid "sRGB"
+msgstr "sRGB"
+
+msgid "sRGB (embedded)"
 msgstr ""
 
 msgid "System default"
 msgstr "Système par défaut"
-
-msgid "sRGB"
-msgstr "sRGB"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
 msgstr "Essaie de convertir .ufrawrc depuis UFRaw-0.4 ou plus récent"

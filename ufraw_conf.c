@@ -63,12 +63,13 @@ const conf_data conf_default = {
       { N_("Linear curve"), TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
 	  2 , { { 0.0, 0.0 }, { 1.0, 1.0 } } }
     },
-    { 1, 0, 0 } , { 2, 1, 2 }, /* profileIndex[], profileCount[] */
+    { 1, 0, 0 } , { 2, 2, 2 }, /* profileIndex[], profileCount[] */
     /* Profile data defaults */
     { { { N_("No profile"), "", "", 0.45, 0.1, 0 },
 	{ N_("Color matrix"), "", "", 0.45, 0.1, 0 },
 	{ "Some ICC Profile", "", "", 0.45, 0.0, 0 } },
-      { { N_("sRGB built-in - (lcms internal)"), "", "", 0.0, 0.0, 8 },
+      { { N_("sRGB"), "", "", 0.0, 0.0, 8 },
+	{ N_("sRGB (embedded)"), "", "", 0.0, 0.0, 8 },
 	{ "Some ICC Profile", "", "", 0.0, 0.0, 8 } },
       { { N_("System default"), "", "", 0.0, 0.0, 0 },
 	{ N_("sRGB"), "", "", 0.0, 0.0, 0 },
@@ -244,6 +245,8 @@ static void conf_parse_start(GMarkupParseContext *context,
 		c->profileIndex[in_profile] = 1;
 	    if (!strcmp("sRGBOutputProfile", element))
 		c->profileIndex[out_profile] = 0;
+	    if (!strcmp("sRGBEmbeddedOutputProfile", element))
+		c->profileIndex[out_profile] = 1;
 	    if (!strcmp("SystemDisplayProfile", element))
 		c->profileIndex[display_profile] = 0;
 	    if (!strcmp("sRGBDisplayProfile", element))
@@ -295,6 +298,8 @@ static void conf_parse_start(GMarkupParseContext *context,
 	c->profileCount[in_profile] = -1;
     if ( !strcmp("sRGBOutputProfile", element) )
 	c->profileCount[out_profile] = 0;
+    if ( !strcmp("sRGBEmbeddedOutputProfile", element) )
+	c->profileCount[out_profile] = -1;
     if ( !strcmp("SystemDisplayProfile", element) )
 	c->profileCount[display_profile] = 0;
     if ( !strcmp("sRGBDisplayProfile", element) )
@@ -344,6 +349,9 @@ static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
 	c->profileCount[in_profile] =
 		conf_default.profileCount[in_profile];
     if ( !strcmp("sRGBOutputProfile", element) )
+	c->profileCount[out_profile] =
+		conf_default.profileCount[out_profile];
+    if ( !strcmp("sRGBEmbeddedOutputProfile", element) )
 	c->profileCount[out_profile] =
 		conf_default.profileCount[out_profile];
     if ( !strcmp("SystemDisplayProfile", element) )
@@ -1075,6 +1083,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	    if ( j==in_profile && i==0 ) profile = "No";
 	    if ( j==in_profile && i==1 ) profile = "Matrix";
 	    if ( j==out_profile && i==0 ) profile = "sRGB";
+	    if ( j==out_profile && i==1 ) profile = "sRGBEmbedded";
 	    if ( j==display_profile && i==0 ) profile = "System";
 	    if ( j==display_profile && i==1 ) profile = "sRGB";
 	    buf = uf_markup_buf(buf, "<%s%s Current='%s'>%s\n",

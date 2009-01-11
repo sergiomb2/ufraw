@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-10 09:15+0100\n"
+"POT-Creation-Date: 2009-01-11 04:00+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net."
 "by>\n"
@@ -108,14 +108,14 @@ msgstr "Нет профиля"
 msgid "Color matrix"
 msgstr "Матрица цвета"
 
-msgid "sRGB built-in - (lcms internal)"
+msgid "sRGB"
+msgstr "sRGB"
+
+msgid "sRGB (embedded)"
 msgstr ""
 
 msgid "System default"
 msgstr "Системный профиль"
-
-msgid "sRGB"
-msgstr "sRGB"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
 msgstr "Попытка преобразовать .ufrawrc из UFRaw-0.4 или более раннего"
