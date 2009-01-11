@@ -445,26 +445,18 @@ int ufraw_write_image(ufraw_data *uf)
 	    }
 	} else if (uf->conf->profileIndex[out_profile]==1) { // Embed sRGB.
 	    cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
-	    unsigned char *buf;
 	    gsize len = 0;
 	    _cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
 	    if (len > 0) {
-		if ((buf = g_malloc(len))) {
-		    _cmsSaveProfileToMem(hOutProfile, buf, &len);
-		    TIFFSetField(out, TIFFTAG_ICCPROFILE, len, buf);
-		    g_free(buf);
-		} else {
-                    ufraw_set_warning(uf,
-                        _("Failed to embed output profile '%s' in '%s'."),
-			uf->conf->profile[out_profile]
-				[uf->conf->profileIndex[out_profile]].name,
-                        uf->conf->outputFilename);
-		}
+		unsigned char buf[len];
+		_cmsSaveProfileToMem(hOutProfile, buf, &len);
+		TIFFSetField(out, TIFFTAG_ICCPROFILE, len, buf);
 	    } else {
-		ufraw_set_warning(uf,
-		    _("Failed to create output profile '%s'."),
+                ufraw_set_warning(uf,
+                    _("Failed to embed output profile '%s' in '%s'."),
 		    uf->conf->profile[out_profile]
-			    [uf->conf->profileIndex[out_profile]].name); 
+			    [uf->conf->profileIndex[out_profile]].name,
+                    uf->conf->outputFilename);
 	    }
 	    cmsCloseProfile(hOutProfile);
 	}
@@ -527,26 +519,18 @@ int ufraw_write_image(ufraw_data *uf)
 	    }
 	} else if (uf->conf->profileIndex[out_profile]==1) { // Embed sRGB.
 	    cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
-	    unsigned char *buf;
 	    gsize len = 0;
 	    _cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
 	    if (len > 0) {
-		if ((buf = g_malloc(len))) {
-		    _cmsSaveProfileToMem(hOutProfile, buf, &len);
-		    write_icc_profile(&cinfo, buf, len);
-		    g_free(buf);
-		} else {
-                    ufraw_set_warning(uf,
-                        _("Failed to embed output profile '%s' in '%s'."),
-			uf->conf->profile[out_profile]
-				[uf->conf->profileIndex[out_profile]].name,
-                        uf->conf->outputFilename);
-		}
+		unsigned char buf[len];
+		_cmsSaveProfileToMem(hOutProfile, buf, &len);
+		write_icc_profile(&cinfo, buf, len);
 	    } else {
-		ufraw_set_warning(uf,
-		    _("Failed to create output profile '%s'."),
+                ufraw_set_warning(uf,
+                    _("Failed to embed output profile '%s' in '%s'."),
 		    uf->conf->profile[out_profile]
-			    [uf->conf->profileIndex[out_profile]].name); 
+			    [uf->conf->profileIndex[out_profile]].name,
+                    uf->conf->outputFilename);
 	    }
 	    cmsCloseProfile(hOutProfile);
 	}
@@ -627,30 +611,22 @@ int ufraw_write_image(ufraw_data *uf)
 		}
 	    } else if (uf->conf->profileIndex[out_profile]==1) { // Embed sRGB.
 		cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
-		char *buf;
 		gsize len = 0;
 		_cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
 		if (len > 0) {
-		    if ((buf = g_malloc(len))) {
-			_cmsSaveProfileToMem(hOutProfile, buf, &len);
-			png_set_iCCP(png, info,
+		    char buf[len];
+		    _cmsSaveProfileToMem(hOutProfile, buf, &len);
+		    png_set_iCCP(png, info,
 			    uf->conf->profile[out_profile]
 				    [uf->conf->profileIndex[out_profile]].name,
 			    PNG_COMPRESSION_TYPE_BASE,
 			    buf, len);
-			g_free(buf);
-		    } else {
-			ufraw_set_warning(uf,
-			    _("Failed to embed output profile '%s' in '%s'."),
-			    uf->conf->profile[out_profile]
-				    [uf->conf->profileIndex[out_profile]].name,
-			    uf->conf->outputFilename);
-		    }
 		} else {
 		    ufraw_set_warning(uf,
-			_("Failed to create output profile '%s'."),
+			_("Failed to embed output profile '%s' in '%s'."),
 			uf->conf->profile[out_profile]
-				[uf->conf->profileIndex[out_profile]].name); 
+				[uf->conf->profileIndex[out_profile]].name,
+			uf->conf->outputFilename);
 		}
 		cmsCloseProfile(hOutProfile);
 	    }
