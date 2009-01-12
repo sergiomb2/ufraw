@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-11 04:00+0100\n"
+"POT-Creation-Date: 2009-01-12 18:55+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -445,6 +445,9 @@ msgid ""
 msgstr ""
 "--overwrite           Sobreescribir archivos existentes sin preguntar.\n"
 "                      (por defecto: no).\n"
+
+msgid "--maximize-window     Force window to be maximized.\n"
+msgstr ""
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -1389,10 +1392,6 @@ msgstr ""
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "Fallo al incrustar perfil de salida '%s' en '%s'"
 
-#, fuzzy, c-format
-msgid "Failed to create output profile '%s'."
-msgstr "Fallo al incrustar perfil de salida '%s' en '%s'"
-
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Profundidad de bits no soportada '%d' ignorada."
@@ -1615,3 +1614,7 @@ msgstr "Balance de la cámara"
 
 msgid "Auto WB"
 msgstr "Balance automático"
+
+#, fuzzy
+#~ msgid "Failed to create output profile '%s'."
+#~ msgstr "Fallo al incrustar perfil de salida '%s' en '%s'"

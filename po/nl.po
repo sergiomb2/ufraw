@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-11 04:00+0100\n"
+"POT-Creation-Date: 2009-01-12 18:55+0100\n"
 "PO-Revision-Date: 2008-12-23 00:00-0600\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
@@ -437,6 +437,9 @@ msgid ""
 msgstr ""
 "--overwrite           Overschrijf bestaande bestanden zonder vragen "
 "(standaard: wel vragen).\n"
+
+msgid "--maximize-window     Force window to be maximized.\n"
+msgstr ""
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -1375,10 +1378,6 @@ msgstr ""
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "Mislukt om output profiel '%s' te embedden  in '%s'."
 
-#, fuzzy, c-format
-msgid "Failed to create output profile '%s'."
-msgstr "Mislukt om output profiel '%s' te embedden  in '%s'."
-
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Niet ondersteunde bitdiepte '%d' genegeerd."
@@ -1601,3 +1600,7 @@ msgstr "Camera WB"
 
 msgid "Auto WB"
 msgstr "Auto WB"
+
+#, fuzzy
+#~ msgid "Failed to create output profile '%s'."
+#~ msgstr "Mislukt om output profiel '%s' te embedden  in '%s'."

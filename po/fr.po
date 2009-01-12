@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-11 04:00+0100\n"
+"POT-Creation-Date: 2009-01-12 18:55+0100\n"
 "PO-Revision-Date: 2008-12-20 02:50+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -451,6 +451,9 @@ msgid ""
 msgstr ""
 "--overwrite           Écraser les fichiers existants sans demander (défaut "
 "no).\n"
+
+msgid "--maximize-window     Force window to be maximized.\n"
+msgstr ""
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -1416,10 +1419,6 @@ msgstr ""
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "Échoue à inclure le profil de sortie '%s' dans '%s'"
 
-#, fuzzy, c-format
-msgid "Failed to create output profile '%s'."
-msgstr "Échoue à inclure le profil de sortie '%s' dans '%s'"
-
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "La profondeur de couleur '%d' est ignorée."
@@ -1644,3 +1643,7 @@ msgstr "Bal. du Blanc Boitier"
 
 msgid "Auto WB"
 msgstr "Bal. du Blanc Auto"
+
+#, fuzzy
+#~ msgid "Failed to create output profile '%s'."
+#~ msgstr "Échoue à inclure le profil de sortie '%s' dans '%s'"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-11 04:00+0100\n"
+"POT-Creation-Date: 2009-01-12 18:55+0100\n"
 "PO-Revision-Date: 2008-12-23 00:00-0500\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -433,6 +433,9 @@ msgid ""
 msgstr ""
 "--overwrite           Overskriv eksisterende filer uten å spørre\n"
 "                      (standardverdi: nei).\n"
+
+msgid "--maximize-window     Force window to be maximized.\n"
+msgstr ""
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -1367,10 +1370,6 @@ msgstr "Bildets filnavn kan ikke være det samme som ID-filnavnet «%s»"
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "Kunne ikke inkludere utdataprofilen «%s» i «%s»."
 
-#, fuzzy, c-format
-msgid "Failed to create output profile '%s'."
-msgstr "Kunne ikke inkludere utdataprofilen «%s» i «%s»."
-
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Ikke støttet bitdybde «%d» ignorert."
@@ -1593,3 +1592,7 @@ msgstr "Kameraets HB"
 
 msgid "Auto WB"
 msgstr "Automatisk HB"
+
+#, fuzzy
+#~ msgid "Failed to create output profile '%s'."
+#~ msgstr "Kunne ikke inkludere utdataprofilen «%s» i «%s»."

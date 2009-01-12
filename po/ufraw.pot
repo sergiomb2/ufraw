@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-11 04:00+0100\n"
+"POT-Creation-Date: 2009-01-12 18:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -345,6 +345,9 @@ msgstr ""
 
 msgid ""
 "--overwrite           Overwrite existing files without asking (default no).\n"
+msgstr ""
+
+msgid "--maximize-window     Force window to be maximized.\n"
 msgstr ""
 
 msgid ""
@@ -1235,10 +1238,6 @@ msgstr ""
 
 #, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
-msgstr ""
-
-#, c-format
-msgid "Failed to create output profile '%s'."
 msgstr ""
 
 #, c-format

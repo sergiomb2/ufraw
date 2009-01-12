@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-11 04:00+0100\n"
+"POT-Creation-Date: 2009-01-12 18:55+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -451,6 +451,9 @@ msgid ""
 msgstr ""
 "--overwrite           Sobreescriu els fitxers sense confirmació (per omissió "
 "no).\n"
+
+msgid "--maximize-window     Force window to be maximized.\n"
+msgstr ""
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -1398,10 +1401,6 @@ msgstr ""
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "No ha estat possible incloure el perfil '%s' a '%s'."
 
-#, fuzzy, c-format
-msgid "Failed to create output profile '%s'."
-msgstr "No ha estat possible incloure el perfil '%s' a '%s'."
-
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "S'ignorarà la profunditat de bits '%d' no suportada."
@@ -1622,3 +1621,7 @@ msgstr "Equilibri de blanc de la càmera"
 
 msgid "Auto WB"
 msgstr "Equilibri de blanc automàtic"
+
+#, fuzzy
+#~ msgid "Failed to create output profile '%s'."
+#~ msgstr "No ha estat possible incloure el perfil '%s' a '%s'."

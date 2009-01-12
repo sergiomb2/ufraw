@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-11 04:00+0100\n"
-"PO-Revision-Date: 2009-01-11 04:00+0100\n"
+"POT-Creation-Date: 2009-01-12 18:55+0100\n"
+"PO-Revision-Date: 2009-01-12 19:00+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -434,6 +434,9 @@ msgid ""
 msgstr ""
 "--overwrite           Overskriv eksisterende filer uden at spørge\n"
 "                      (standardværdi nej).\n"
+
+msgid "--maximize-window     Force window to be maximized.\n"
+msgstr "--maximize-window     Tving vinduet til at være maksimeret.\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -1366,10 +1369,6 @@ msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "Fejl ved indlejring af uddataprofil '%s' i '%s'."
 
 #, c-format
-msgid "Failed to create output profile '%s'."
-msgstr "Fejl ved dannelse af uddataprofil '%s'."
-
-#, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Ikke-understøttet bitdybde '%d' ignoreret."
 
@@ -1591,3 +1590,6 @@ msgstr "Kamera-HB"
 
 msgid "Auto WB"
 msgstr "Automatisk HB"
+
+#~ msgid "Failed to create output profile '%s'."
+#~ msgstr "Fejl ved dannelse af uddataprofil '%s'."

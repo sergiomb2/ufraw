@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-11 04:00+0100\n"
+"POT-Creation-Date: 2009-01-12 18:55+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
@@ -447,6 +447,9 @@ msgid ""
 msgstr ""
 "--overwrite           Преписује постојеће датотеке без питања (није "
 "подразумевано).\n"
+
+msgid "--maximize-window     Force window to be maximized.\n"
+msgstr ""
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -1380,10 +1383,6 @@ msgstr ""
 msgid "Failed to embed output profile '%s' in '%s'."
 msgstr "Не могу да уметнем излазни профил „%s“ у „%s“."
 
-#, fuzzy, c-format
-msgid "Failed to create output profile '%s'."
-msgstr "Не могу да уметнем излазни профил „%s“ у „%s“."
-
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Занемарен је неподржан број битова „%d“"
@@ -1606,3 +1605,7 @@ msgstr "Равнотежа беле из камере"
 
 msgid "Auto WB"
 msgstr "Сам одреди равнотежу беле"
+
+#, fuzzy
+#~ msgid "Failed to create output profile '%s'."
+#~ msgstr "Не могу да уметнем излазни профил „%s“ у „%s“."

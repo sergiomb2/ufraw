@@ -1345,6 +1345,7 @@ void conf_copy_save(conf_data *dst, const conf_data *src)
 int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 {
     if (cmd->overwrite!=-1) conf->overwrite = cmd->overwrite;
+    if (cmd->WindowMaximized!=-1) conf->WindowMaximized = cmd->WindowMaximized;
     if (cmd->restoreDetails!=-1)
 	conf->restoreDetails = cmd->restoreDetails;
     if (cmd->clipHighlights!=-1)
@@ -1527,6 +1528,7 @@ N_("--out-path=PATH       PATH for output file (default use input file's path).\
 N_("--output=FILE         Output file name, use '-' to output to stdout.\n"),
 N_("--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"),
 N_("--overwrite           Overwrite existing files without asking (default no).\n"),
+N_("--maximize-window     Force window to be maximized.\n"),
 N_("--silent              Do not display any messages during batch conversion.\n"),
 "\n",
 N_("UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
@@ -1634,6 +1636,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{ "zip", 0, 0, 'z'},
 	{ "nozip", 0, 0, 'Z'},
 	{ "overwrite", 0, 0, 'O'},
+	{ "maximize-window", 0, 0, 'W'},
 	{ "exif", 0, 0, 'E'},
 	{ "noexif", 0, 0, 'F'},
 	{ "embedded-image", 0, 0, 'm'},
@@ -1661,6 +1664,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->autoBlack = disabled_state;
     cmd->losslessCompress=-1;
     cmd->overwrite=-1;
+    cmd->WindowMaximized=-1;
     cmd->embedExif=-1;
     cmd->profile[1][0].BitDepth=-1;
     cmd->embeddedImage=FALSE;
@@ -1748,6 +1752,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    *(char **)optPointer[index] = optarg;
 	    break;
 	case 'O': cmd->overwrite = TRUE; break;
+	case 'W': cmd->WindowMaximized = TRUE; break;
 	case 'm': cmd->embeddedImage = TRUE; break;
 	case 'q': cmd->silent = TRUE; break;
 	case 'z':
