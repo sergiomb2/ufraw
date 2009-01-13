@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-12 18:55+0100\n"
+"POT-Creation-Date: 2009-01-13 11:50+0100\n"
 "PO-Revision-Date: 2008-10-16 16:39+0900\n"
 "Last-Translator: Homin Lee <ff4500@gamil.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -1574,7 +1574,3 @@ msgstr "카메라 화벨"
 
 msgid "Auto WB"
 msgstr "자동 화벨"
-
-#, fuzzy
-#~ msgid "Failed to create output profile '%s'."
-#~ msgstr "출력 프로파일 '%s'을(를) '%s'에 포함하는데 실패하였습니다."

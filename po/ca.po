@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-12 18:55+0100\n"
+"POT-Creation-Date: 2009-01-13 11:50+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -1621,7 +1621,3 @@ msgstr "Equilibri de blanc de la càmera"
 
 msgid "Auto WB"
 msgstr "Equilibri de blanc automàtic"
-
-#, fuzzy
-#~ msgid "Failed to create output profile '%s'."
-#~ msgstr "No ha estat possible incloure el perfil '%s' a '%s'."

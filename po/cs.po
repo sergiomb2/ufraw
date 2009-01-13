@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-12 18:55+0100\n"
+"POT-Creation-Date: 2009-01-13 11:50+0100\n"
 "PO-Revision-Date: 2008-12-21 07:05+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -1594,7 +1594,3 @@ msgstr "Dle fotoaparátu"
 
 msgid "Auto WB"
 msgstr "Automatické"
-
-#, fuzzy
-#~ msgid "Failed to create output profile '%s'."
-#~ msgstr "Selhalo vložení výstupního profilu '%s' v '%s'."

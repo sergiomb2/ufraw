@@ -5329,7 +5329,3 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     if (status!=GTK_RESPONSE_OK) return UFRAW_CANCEL;
     return UFRAW_SUCCESS;
 }
-
-/* vim:set shiftwidth=4: */
-/* vim:set softtabstop=4: */
-/* emacs: -*- c-basic-offset: 4 -*- */

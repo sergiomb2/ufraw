@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-12 18:55+0100\n"
+"POT-Creation-Date: 2009-01-13 11:50+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net."
 "by>\n"
@@ -1611,7 +1611,3 @@ msgstr "ББ камеры"
 
 msgid "Auto WB"
 msgstr "Автоматический ББ"
-
-#, fuzzy
-#~ msgid "Failed to create output profile '%s'."
-#~ msgstr "Не удалось встроить профиль вывода '%s' в '%s'"

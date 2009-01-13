@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-12 18:55+0100\n"
+"POT-Creation-Date: 2009-01-13 11:50+0100\n"
 "PO-Revision-Date: 2008-12-23 00:00-0600\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
@@ -1600,7 +1600,3 @@ msgstr "Camera WB"
 
 msgid "Auto WB"
 msgstr "Auto WB"
-
-#, fuzzy
-#~ msgid "Failed to create output profile '%s'."
-#~ msgstr "Mislukt om output profiel '%s' te embedden  in '%s'."

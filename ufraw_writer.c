@@ -909,7 +909,3 @@ static void PNGwriteRawProfile(png_struct *ping,
     png_free(ping, text);
 }
 #endif /*HAVE_LIBPNG*/
-
-/* vim:set shiftwidth=4: */
-/* vim:set softtabstop=4: */
-/* emacs: -*- c-basic-offset: 4 -*- */
