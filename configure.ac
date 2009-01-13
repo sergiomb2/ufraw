@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.128 2008/12/23 06:32:42 udifuchs Exp $
+dnl $Id: configure.ac,v 1.129 2009/01/13 03:15:03 nkbj Exp $
 AC_INIT(UFRaw, 0.15)
 AC_PREREQ(2.57)
 
@@ -9,6 +9,7 @@ AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_RANLIB
 
@@ -43,13 +44,19 @@ AC_OPENMP
 CFLAGS="$CFLAGS $OPENMP_CFLAGS"
 CXXFLAGS="$CXXFLAGS $OPENMP_CFLAGS"
 
-# windows will require some special attention
+# Windows and Darwin (Mac OS X) will require some special attention.
 case $host_os in
   *mingw* )
     ufraw_win32=yes
+    ufraw_darwin=no
+    ;;
+  *darwin* )
+    ufraw_win32=no
+    ufraw_darwin=yes
     ;;
   * )
     ufraw_win32=no
+    ufraw_darwin=no
     ;;
 esac
 AM_CONDITIONAL(UFRAW_WIN32, test x$ufraw_win32 = xyes)
@@ -62,6 +69,23 @@ else
   CONSOLE=
 fi
 AC_SUBST(CONSOLE)
+
+# Check for the Apple Carbon framework (needed for GDK_WINDOWING_QUARTZ). 
+CARBON_LIBS=
+if test $ufraw_darwin = yes; then
+  carbon_ok=no
+  AC_MSG_CHECKING([for Mac OS X Carbon support])
+  AC_TRY_CPP([
+  #include <Carbon/Carbon.h>
+  #include <ApplicationServices/ApplicationServices.h>
+  #include <CoreServices/CoreServices.h>
+  ], carbon_ok=yes)
+  AC_MSG_RESULT($carbon_ok)
+  if test "x$carbon_ok" = "xyes"; then
+    CARBON_LIBS="-framework Carbon -framework Cocoa"
+  fi
+fi
+AC_SUBST(CARBON_LIBS)
 
 # point to programs/libraries installed in a non-default place
 AC_ARG_WITH(prefix,
@@ -212,7 +236,7 @@ AC_ARG_WITH(lensfun,
 UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS $LIBPNG_CFLAGS"
 AC_SUBST(UFRAW_CPPFLAGS)
 # UFRAW_LDADD is added to the linker flags LDADD.
-UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS $LIBPNG_LIBS"
+UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS $LIBPNG_LIBS $CARBON_LIBS"
 AC_SUBST(UFRAW_LDADD)
 
 if test $ufraw_win32 = yes; then
