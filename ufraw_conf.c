@@ -149,7 +149,6 @@ static const char *intentNames[] =
 static const char *grayscaleModeNames[] =
     { "none", "lightness", "luminance", "value", "mixer", NULL };
 
-
 void conf_init (conf_data *c)
 {
 #ifdef HAVE_LENSFUN
@@ -157,9 +156,9 @@ void conf_init (conf_data *c)
 
     if (!lensdb)
     {
-        /* Load lens database */
-        lensdb = lf_db_new ();
-        lf_db_load (lensdb);
+	/* Load lens database */
+	lensdb = lf_db_new ();
+	lf_db_load (lensdb);
     }
 #endif /* HAVE_LENSFUN */
 
@@ -816,21 +815,6 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	char *utf8=g_filename_display_name(c->outputPath);
 	buf = uf_markup_buf(buf, "<OutputPath>%s</OutputPath>\n", utf8);
 	g_free(utf8);
-#if 0
-    // Now that outputPath is a GUI entry there is no need to guess it anymore.
-    } else {
-	/* Guess outputPath */
-	char *inPath = g_path_get_dirname(c->inputFilename);
-	char *outPath = g_path_get_dirname(c->outputFilename);
-	if ( strcmp(outPath,".") && strcmp(inPath, outPath) ) {
-	    g_strlcpy(c->outputPath, outPath, max_path);
-	    char *utf8=g_filename_display_name(outPath);
-	    buf = uf_markup_buf(buf, "<OutputPath>%s</OutputPath>\n", utf8);
-	    g_free(utf8);
-	}
-	g_free(outPath);
-	g_free(inPath);
-#endif
     }
 
     /* GUI settings are only saved to .ufrawrc */
@@ -1294,13 +1278,13 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->lensdb = src->lensdb;
     if (src->camera)
     {
-        dst->camera = lf_camera_new ();
-        lf_camera_copy (dst->camera, src->camera);
+	dst->camera = lf_camera_new ();
+	lf_camera_copy (dst->camera, src->camera);
     }
     if (src->lens)
     {
-        dst->lens = lf_lens_new ();
-        lf_lens_copy (dst->lens, src->lens);
+	dst->lens = lf_lens_new ();
+	lf_lens_copy (dst->lens, src->lens);
     }
     dst->lens_distortion = src->lens_distortion;
     dst->lens_tca = src->lens_tca;
