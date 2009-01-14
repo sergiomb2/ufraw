@@ -4921,7 +4921,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
     data->ExposureAdjustment = adjustment_scale(table, 0, 0, "@exposure",
 	    CFG->exposure, &CFG->exposure,
-	    -3, 3, 0.01, 1.0/6, 2, _("Exposure compensation in EV"),
+	    -8, 8, 0.01, 1.0/16, 2, _("Exposure compensation in EV"),
 	    G_CALLBACK(adjustment_update));
 
     button = gtk_toggle_button_new();
