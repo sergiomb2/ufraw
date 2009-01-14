@@ -158,10 +158,11 @@ try {
 	    != exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->focalLen35Text, max_name, pos, exifData);
     }
-    /* Read lens name */
-    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.Lens")))
+    /* Read full lens name */
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.LensData")))
 	    != exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
+
 #if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.CanonCs.LensType")))
 		!= exifData.end() ) {
