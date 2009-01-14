@@ -162,7 +162,16 @@ try {
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.LensData")))
 	    != exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
-
+	/* Read short lens name if full lens name if not defined */
+	if ( isdigit(uf->conf->lensText[0]) ) {
+	    ufraw_message(UFRAW_SET_LOG,
+		    "Value of EXIF tag 'Exif.Nikon3.LensData' is not defined. "
+		    "Reading 'Exif.Nikon3.Lens'.\n");
+	    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.Lens")))
+		    != exifData.end() ) {
+		uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
+	    }
+	}
 #if EXIV2_TEST_VERSION(0,17,91)		/* Exiv2 0.18-pre1 */
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.CanonCs.LensType")))
 		!= exifData.end() ) {
