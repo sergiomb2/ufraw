@@ -4684,7 +4684,7 @@ static void save_fill_interface(preview_data *data,
 #endif // HAVE_LIBTIFF && HAVE_LIBZ
 
 #if defined(HAVE_EXIV2) && (defined(HAVE_LIBJPEG) || defined(HAVE_LIBPNG))
-	button = uf_check_button_new( _("Embed EXIF data in JPEG or PNG files"),
+	button = uf_check_button_new( _("Embed EXIF data in output"),
 		&CFG->embedExif);
 	gtk_widget_set_sensitive(button, data->UF->inputExifBuf!=NULL);
 	gtk_box_pack_start(GTK_BOX(vBox), button, FALSE, FALSE, 0);
