@@ -11,8 +11,8 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.415 $
-   $Date: 2009/01/14 17:46:50 $
+   $Revision: 1.416 $
+   $Date: 2009/01/15 22:10:18 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -3735,7 +3735,7 @@ void CLASS wavelet_denoise()
   if ((nc = colors) == 3 && filters) nc++;
   FORC(nc) {			/* denoise R,G1,B,G3 individually */
     for (i=0; i < size; i++)
-      fimg[i] = sqrt((unsigned) (image[i][c] << (scale+16)));
+      fimg[i] = 256 * sqrt(image[i][c] << scale);
     for (hpass=lev=0; lev < 5; lev++) {
       lpass = size*((lev & 1)+1);
       for (row=0; row < iheight; row++) {
