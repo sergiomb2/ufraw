@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-13 11:50+0100\n"
+"POT-Creation-Date: 2009-01-16 05:15+0100\n"
 "PO-Revision-Date: 2008-10-16 16:39+0900\n"
 "Last-Translator: Homin Lee <ff4500@gamil.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -361,9 +361,8 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   JPEG 압축률 (0-100, 기본값 85).\n"
 
-msgid ""
-"--[no]exif            Embed EXIF in output JPEG or PNG (default embed "
-"EXIF).\n"
+#, fuzzy
+msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
 "--[no]exif            JPEG or PNG 출력에 EXIF를 포함하기(기본값 exif).\n"
 
@@ -1118,7 +1117,8 @@ msgstr "JPEG 프로그래시브 인코딩"
 msgid "TIFF lossless Compress"
 msgstr "TIFF 무손실 압축"
 
-msgid "Embed EXIF data in JPEG or PNG files"
+#, fuzzy
+msgid "Embed EXIF data in output"
 msgstr "JPEG나 PNG파일에 EXIF 정보 포함하기"
 
 msgid "Create ID file "

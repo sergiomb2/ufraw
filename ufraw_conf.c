@@ -1498,7 +1498,7 @@ N_("--out-depth=8|16      Output bit depth per channel (default 8).\n"),
 N_("--create-id=no|also|only\n"
 "                      Create no|also|only ID file (default no).\n"),
 N_("--compression=VALUE   JPEG compression (0-100, default 85).\n"),
-N_("--[no]exif            Embed EXIF in output JPEG or PNG (default embed EXIF).\n"),
+N_("--[no]exif            Embed EXIF in output (default embed EXIF).\n"),
 N_("--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"),
 N_("--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"),

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-13 11:50+0100\n"
+"POT-Creation-Date: 2009-01-16 05:15+0100\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -374,9 +374,7 @@ msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALOR   compressão JPEG (0-100, padrão é 85).\n"
 
 #, fuzzy
-msgid ""
-"--[no]exif            Embed EXIF in output JPEG or PNG (default embed "
-"EXIF).\n"
+msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
 "--[no]exif            Insere EXIF no JPEG de saída (padrão é inserir EXIF).\n"
 
@@ -1167,7 +1165,7 @@ msgstr ""
 msgid "TIFF lossless Compress"
 msgstr ""
 
-msgid "Embed EXIF data in JPEG or PNG files"
+msgid "Embed EXIF data in output"
 msgstr ""
 
 msgid "Create ID file "

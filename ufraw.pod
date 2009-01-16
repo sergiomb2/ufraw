@@ -272,8 +272,8 @@ relevant if the output file-format is jpeg.
 
 =item --[no]exif
 
-Embed exif in output JPEG. Default embed exif. Exif information can only
-be embedded in jpeg-files.
+Embed exif in output. Default embed exif. Exif is currently embedded in JPEG,
+PNG and TIFF output.
 
 =item --[no]zip
 

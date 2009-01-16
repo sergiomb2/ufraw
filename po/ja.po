@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-13 11:50+0100\n"
+"POT-Creation-Date: 2009-01-16 05:15+0100\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -367,9 +367,7 @@ msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   JPEG圧縮 (0-100, デフォルト85)。\n"
 
 #, fuzzy
-msgid ""
-"--[no]exif            Embed EXIF in output JPEG or PNG (default embed "
-"EXIF).\n"
+msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr "--[no]exif            exif情報をJPEG出力に埋込(デフォルト埋めこむ)\n"
 
 msgid ""
@@ -1155,7 +1153,7 @@ msgstr ""
 msgid "TIFF lossless Compress"
 msgstr ""
 
-msgid "Embed EXIF data in JPEG or PNG files"
+msgid "Embed EXIF data in output"
 msgstr ""
 
 msgid "Create ID file "
