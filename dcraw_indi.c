@@ -117,7 +117,7 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
        const int colors, const int shrink, float pre_mul[4],
        const float threshold, const unsigned filters, void *dcraw)
 {
-  float *fimg=0, *temp, thold, mul[2], avg, diff;
+  float *fimg, thold, mul[2], avg, diff;
   int /*scale=1,*/ size, lev, hpass, lpass, row, col, nc, c, i, wlast;
   ushort *window[4];
   static const float noise[] =
@@ -132,44 +132,45 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
   maximum <<= --scale;
   black <<= scale;
 #endif
-  if ((size = iheight*iwidth) < 0x15550000)
-    fimg = (float *) malloc ((size*3 + iheight + iwidth) * sizeof *fimg);
-  merror (fimg, "wavelet_denoise()");
-  temp = fimg + size*3;
+  size = iheight*iwidth;
   if ((nc = colors) == 3 && filters) nc++;
+  fimg = (float *) malloc (nc * (size*3 + iheight + iwidth) * sizeof *fimg);
+  merror (fimg, "wavelet_denoise()");
 #ifdef _OPENMP
 #pragma omp parallel for				\
   default(none)						\
-  shared(nc,image,size,fimg,temp)			\
+  shared(nc,image,size,fimg)				\
   private(c,i,hpass,lev,lpass,row,col,thold)
 #endif
-  FORC(nc) {			/* denoise R,G1,B,G3 individually */
+  for (c=0; c < nc; c++) {      /* denoise R,G1,B,G3 individually */
+    float *fimgc = fimg + c * (size*3 + iheight + iwidth);
+    float *temp = fimgc + size*3;
     for (i=0; i < size; i++)
-      fimg[i] = 256 * sqrt(image[i][c] /*<< scale*/);
+      fimgc[i] = sqrt((unsigned) (image[i][c] << (/*scale+*/16)));
     for (hpass=lev=0; lev < 5; lev++) {
       lpass = size*((lev & 1)+1);
       for (row=0; row < iheight; row++) {
-	hat_transform (temp, fimg+hpass+row*iwidth, 1, iwidth, 1 << lev);
-        for (col=0; col < iwidth; col++)
-	  fimg[lpass + row*iwidth + col] = temp[col] * 0.25;
+	hat_transform (temp, fimgc+hpass+row*iwidth, 1, iwidth, 1 << lev);
+	for (col=0; col < iwidth; col++)
+	  fimgc[lpass + row*iwidth + col] = temp[col] * 0.25;
       }
       for (col=0; col < iwidth; col++) {
-	hat_transform (temp, fimg+lpass+col, iwidth, iheight, 1 << lev);
+	hat_transform (temp, fimgc+lpass+col, iwidth, iheight, 1 << lev);
 	for (row=0; row < iheight; row++)
-	  fimg[lpass + row*iwidth + col] = temp[row] * 0.25;
+	  fimgc[lpass + row*iwidth + col] = temp[row] * 0.25;
       }
       thold = threshold * noise[lev];
       for (i=0; i < size; i++) {
-	fimg[hpass+i] -= fimg[lpass+i];
-	if	(fimg[hpass+i] < -thold) fimg[hpass+i] += thold;
-	else if (fimg[hpass+i] >  thold) fimg[hpass+i] -= thold;
-	else	 fimg[hpass+i] = 0;
-	if (hpass) fimg[i] += fimg[hpass+i];
+	fimgc[hpass+i] -= fimgc[lpass+i];
+	if      (fimgc[hpass+i] < -thold) fimgc[hpass+i] += thold;
+	else if (fimgc[hpass+i] >  thold) fimgc[hpass+i] -= thold;
+	else     fimgc[hpass+i] = 0;
+	if (hpass) fimgc[i] += fimgc[hpass+i];
       }
       hpass = lpass;
     }
     for (i=0; i < size; i++)
-      image[i][c] = CLIP((ushort)(SQR(fimg[i]+fimg[lpass+i])/0x10000));
+      image[i][c] = CLIP((ushort)(SQR(fimgc[i]+fimgc[lpass+i])/0x10000));
   }
   if (filters && colors == 3) {  /* pull G1 and G3 closer together */
     for (row=0; row < 2; row++)
