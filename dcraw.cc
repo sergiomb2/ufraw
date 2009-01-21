@@ -11,8 +11,8 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.416 $
-   $Date: 2009/01/15 22:10:18 $
+   $Revision: 1.417 $
+   $Date: 2009/01/21 01:19:45 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -5115,6 +5115,9 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 29443:
 	FORC4 cam_mul[c ^ (c < 2)] = get2();
+	break;
+      case 29459:
+	FORC4 cam_mul[c ^ (c >> 1)] = get2();
 	break;
       case 33405:			/* Model2 */
 	fgets (model2, 64, ifp);
