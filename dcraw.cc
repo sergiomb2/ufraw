@@ -23,7 +23,6 @@
 
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
-
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>

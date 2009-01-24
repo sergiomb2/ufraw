@@ -358,7 +358,8 @@ void CLASS lin_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 
    "Interpolation using a Threshold-based variable number of gradients"
 
-   described in http://www-ise.stanford.edu/~tingchen/algodep/vargra.html
+   described in http://scien.stanford.edu/class/psych221/projects/99/tingchen/al
+godep/vargra.html
 
    I've extended the basic idea to work with non-Bayer filter arrays.
    Gradients are numbered clockwise from NW=0 to W=7.
@@ -654,7 +655,7 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   for (top=2; top < height-5; top += TS-6)
     for (left=2; left < width-5; left += TS-6) {
 
-/*  Interpolate green horizontally and vertically:              */
+/*  Interpolate green horizontally and vertically:		*/
       for (row = top; row < top+TS && row < height-2; row++) {
 	col = left + (FC(row,left) & 1);
 	for (c = FC(row,col); col < left+TS && col < width-2; col+=2) {
