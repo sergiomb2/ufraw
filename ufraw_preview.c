@@ -1828,6 +1828,7 @@ static void crop_reset(GtkWidget *widget, gpointer user_data)
     CFG->CropY2 = data->UF->initialHeight;
     data->AspectRatio = ((float)data->UF->initialWidth) / data->UF->initialHeight;
 
+    refresh_aspect(data);
     set_new_aspect(data);
 }
 
