@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-16 05:15+0100\n"
+"POT-Creation-Date: 2009-01-25 19:00+0100\n"
 "PO-Revision-Date: 2007-03-06 05:13+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -327,6 +327,9 @@ msgid ""
 msgstr ""
 "--interpolation=ahd|vng|four-color|bilinear\n"
 "                      使用する補間アルゴリズム (デフォルトahd)。\n"
+
+msgid "--color-smoothing     Apply color smoothing.\n"
+msgstr ""
 
 #, fuzzy
 msgid ""

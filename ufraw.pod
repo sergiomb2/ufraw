@@ -210,6 +210,10 @@ AHD interpolation is not supported for cameras with four color filters,
 such as the Sony-828 RGBE filter. In such cases, VNG interpolation
 will be used instead.
 
+=item --color-smoothing
+
+Apply color smoothing.
+
 =item --grayscale=none|lightness|luminance|value|mixer
 
 Grayscale conversion algorithm to use (default none).

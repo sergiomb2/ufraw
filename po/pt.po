@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-16 05:15+0100\n"
+"POT-Creation-Date: 2009-01-25 19:00+0100\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -334,6 +334,9 @@ msgid ""
 msgstr ""
 "--interpolation=ahd|vng|four-color|bilinear\n"
 "                      Algoritmo de interpolação a ser usado (padrão é ahd).\n"
+
+msgid "--color-smoothing     Apply color smoothing.\n"
+msgstr ""
 
 #, fuzzy
 msgid ""

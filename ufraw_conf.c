@@ -1385,6 +1385,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 		0, cmd->black, 0);
 	conf->autoBlack = disabled_state;
     }
+    if (cmd->smoothing!=-1) conf->smoothing = cmd->smoothing;
     if (cmd->interpolation>=0) conf->interpolation = cmd->interpolation;
     if (cmd->interpolation==obsolete_eahd_interpolation) {
 	conf->interpolation = ahd_interpolation;
@@ -1485,6 +1486,7 @@ N_("--black-point=auto|BLACK\n"
 "                      Auto black-point or black-point value (default 0).\n"),
 N_("--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"),
+N_("--color-smoothing     Apply color smoothing.\n"),
 N_("--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"),
 "\n",
@@ -1620,6 +1622,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{ "zip", 0, 0, 'z'},
 	{ "nozip", 0, 0, 'Z'},
 	{ "overwrite", 0, 0, 'O'},
+	{ "color-smoothing", 0, 0, 'M' },
 	{ "maximize-window", 0, 0, 'W'},
 	{ "exif", 0, 0, 'E'},
 	{ "noexif", 0, 0, 'F'},
@@ -1673,6 +1676,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->CropX2 = -1;
     cmd->CropY2 = -1;
     cmd->rotate = -1;
+    cmd->smoothing = -1;
 
     while (1) {
 	c = getopt_long (*argc, *argv, "h", options, &index);
@@ -1738,6 +1742,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'O': cmd->overwrite = TRUE; break;
 	case 'W': cmd->WindowMaximized = TRUE; break;
 	case 'm': cmd->embeddedImage = TRUE; break;
+	case 'M': cmd->smoothing = TRUE; break;
 	case 'q': cmd->silent = TRUE; break;
 	case 'z':
 #ifdef HAVE_LIBZ
@@ -1887,6 +1892,12 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 		interpolationName);
 	    return -1;
 	}
+    }
+    if (cmd->smoothing!=-1) {
+	if ( cmd->interpolation==ahd_interpolation )
+	    cmd->smoothing = 3;
+	else
+	    cmd->smoothing = 1;
     }
     cmd->grayscaleMode = NULLF;
     if (grayscaleName!=NULL) {
