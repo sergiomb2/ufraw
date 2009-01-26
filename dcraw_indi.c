@@ -153,7 +153,7 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
       lpass = size*((lev & 1)+1);
       for (row=0; row < iheight; row++) {
 	hat_transform (temp, fimg+hpass+row*iwidth, 1, iwidth, 1 << lev);
-	for (col=0; col < iwidth; col++)
+        for (col=0; col < iwidth; col++)
 	  fimg[lpass + row*iwidth + col] = temp[col] * 0.25;
       }
       for (col=0; col < iwidth; col++) {
@@ -164,9 +164,9 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
       thold = threshold * noise[lev];
       for (i=0; i < size; i++) {
 	fimg[hpass+i] -= fimg[lpass+i];
-	if      (fimg[hpass+i] < -thold) fimg[hpass+i] += thold;
+	if	(fimg[hpass+i] < -thold) fimg[hpass+i] += thold;
 	else if (fimg[hpass+i] >  thold) fimg[hpass+i] -= thold;
-	else     fimg[hpass+i] = 0;
+	else	 fimg[hpass+i] = 0;
 	if (hpass) fimg[i] += fimg[hpass+i];
       }
       hpass = lpass;
