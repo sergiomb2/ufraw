@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-01-25 19:00+0100\n"
-"PO-Revision-Date: 2007-03-06 05:13+0900\n"
+"PO-Revision-Date: 2009-01-16 23:44+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -20,18 +20,18 @@ msgstr ""
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
-msgstr ""
+msgstr "ナビゲータウインドウを開く"
 
 msgid "No input file, nothing to do."
 msgstr "入力ファイルが無いので、何もしません"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Loaded %s%s"
-msgstr "読み込みました %s"
+msgstr "読み込みました %s%s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Saved %s%s"
-msgstr "保存しました %s"
+msgstr "保存しました %s%s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -289,10 +289,8 @@ msgstr "--gamma=GAMMA         基本カーブのガンマ調整 (デフォルト
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr "--linearity=LINEARITY 基本カーブのリニアリティー (デフォルト 0.10).\n"
 
-#, fuzzy
 msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
-msgstr ""
-"--saturation=SAT      彩度調整 (デフォルトは1.0、0にすると白黒出力)。\n"
+msgstr "--contrast=CONT       コントラスト調整 (default 1.0).\n"
 
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
@@ -304,6 +302,8 @@ msgid ""
 "--wavelet-denoising-threshold=THRESHOLD\n"
 "                      Wavelet denoising threshold (default 0.0).\n"
 msgstr ""
+"--wavelet-denoising-threshold=しきい値\n"
+"                      Waveletノイズ除去のしきい値 (デフォルト 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -320,24 +320,22 @@ msgstr ""
 "--black-point=auto|BLACK\n"
 "\t\t      自動ブラックポイントかブラックポイント値 (デフォルトは0)。\n"
 
-#, fuzzy
 msgid ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"
 msgstr ""
 "--interpolation=ahd|vng|four-color|bilinear\n"
-"                      使用する補間アルゴリズム (デフォルトahd)。\n"
+"                      使用する補間方式 (デフォルトahd)。\n"
 
 msgid "--color-smoothing     Apply color smoothing.\n"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
-"--interpolation=ahd|vng|four-color|bilinear\n"
-"                      使用する補間アルゴリズム (デフォルトahd)。\n"
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      グレースケールの変換方式 (デフォルトnone).\n"
 
 msgid "The options which are related to the final output are:\n"
 msgstr "最終出力に関連するオプション:\n"
@@ -348,13 +346,12 @@ msgstr "--shrink=FACTOR       画像を-FACTOR倍に縮小(デフォルト 1)。
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=SIZE           画像を縮小(高さ・幅の長辺側をSIZEに)。\n"
 
-#, fuzzy
 msgid ""
 "--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm8|ppm16|tiff8|tiff16|jpeg\n"
-"                      出力形式 (デフォルト ppm8)。\n"
+"--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
+"                      出力ファイル形式 (デフォルト ppm)。\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
 msgstr ""
@@ -479,7 +476,7 @@ msgstr "%sからカーブを読み込むのに失敗しました、基本カー�
 msgid "failed to load curve from %s"
 msgstr "%sからカーブを読み込むのに失敗しました"
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid base curve name."
 msgstr "'%s' は基本カーブ名として正しくありません。"
 
@@ -487,7 +484,7 @@ msgstr "'%s' は基本カーブ名として正しくありません。"
 msgid "failed to load curve from %s, too many configured curves"
 msgstr "%sからカーブを読み込むのに失敗しました、カーブの構成が多すぎます"
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid curve name."
 msgstr "'%s' はカーブ名として正しくありません。"
 
@@ -495,9 +492,9 @@ msgstr "'%s' はカーブ名として正しくありません。"
 msgid "'%s' is not a valid interpolation option."
 msgstr "'%s' は正しい補間オプションではありません"
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid grayscale option."
-msgstr "'%s' は正しいcreate-idのオプションではありません"
+msgstr "'%s' は正しいグレースケールオプションではありません。"
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -514,9 +511,9 @@ msgstr "--shrink と --sizeは同時に指定できません"
 msgid "'%d' is not a valid bit depth."
 msgstr "'%s' は正しいパスではありません"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Output type '%s' is deprecated"
-msgstr ""
+msgstr "出力形式 '%s' は廃止されます。"
 
 msgid "ufraw was build without TIFF support."
 msgstr "ufrawはTIFFサポート無しでビルドされました。"
@@ -540,9 +537,9 @@ msgstr "'%s' は埋め込み画像として正しい出力形式ではありま�
 msgid "'%d' is not a valid bit depth for embedded image."
 msgstr "'%s' は埋め込み画像として正しい出力形式ではありません"
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid rotate option."
-msgstr "'%s' は正しいcreate-idのオプションではありません"
+msgstr "'%s' は正しい回転オプションではありません。"
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
@@ -557,7 +554,7 @@ msgstr "一つ以上のファイルを同じ出力に出力できません"
 
 #, c-format
 msgid "Raw file '%s' missing."
-msgstr ""
+msgstr "Rawファイル '%s' が見つかりません。"
 
 #, fuzzy
 msgid "Delete raw file"
@@ -643,7 +640,7 @@ msgstr "新しい画像を割り当てられません。"
 
 #. Create the "background" layer to hold the image...
 msgid "Background"
-msgstr ""
+msgstr "背景"
 
 msgid "Loading image"
 msgstr "画像を読み込んでいます"
@@ -671,13 +668,14 @@ msgid "Lightness"
 msgstr ""
 
 msgid "Luminance"
-msgstr ""
+msgstr "輝度"
 
+# 値？
 msgid "Value"
 msgstr ""
 
 msgid "Channel Mixer"
-msgstr ""
+msgstr "チャンネルミキサー"
 
 #, fuzzy
 msgid "No more room for new curves."
@@ -765,11 +763,9 @@ msgstr ""
 "ハイライト切り出し\n"
 "現在の状態: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Filename: %s%s"
-msgstr ""
-"ファイル名: %s\n"
-"サイズ: %d x %d%s"
+msgstr "ファイル名: %s%s"
 
 msgid ""
 "\n"
@@ -797,9 +793,8 @@ msgstr "入力カラープロファイル"
 msgid "Output color profiles"
 msgstr "出力カラープロファイル"
 
-#, fuzzy
 msgid "Display color profiles"
-msgstr "入力カラープロファイル"
+msgstr "カラープロファイル表示"
 
 msgid "Base Curves"
 msgstr "基本カーブ"
@@ -821,9 +816,8 @@ msgstr ""
 msgid "Configuration"
 msgstr "構成"
 
-#, fuzzy
 msgid "Save configuration"
-msgstr "全ての設定を保存"
+msgstr "設定を保存"
 
 #, fuzzy
 msgid "Save configuration to resource file ($HOME/.ufrawrc)"
@@ -961,10 +955,10 @@ msgid "Apply color smoothing"
 msgstr ""
 
 msgid "Denoise"
-msgstr ""
+msgstr "ノイズ除去"
 
 msgid "Threshold for wavelet denoising"
-msgstr ""
+msgstr "waveletノイズ除去のしきい値"
 
 #, fuzzy
 msgid "Reset denoise threshold to default"
@@ -976,18 +970,18 @@ msgstr ""
 msgid "Reset dark frame"
 msgstr ""
 
-#, fuzzy
 msgid "Zoom:"
-msgstr "ズーム"
+msgstr "ズーム:"
 
 msgid "Zoom percentage"
-msgstr ""
+msgstr "表示倍率（パーセント）"
 
 msgid "Grayscale Mode:"
-msgstr ""
+msgstr "グレースケールモード："
 
+#, fuzzy
 msgid "Reset channel mixer"
-msgstr ""
+msgstr "チャンネルミキサーをリセット"
 
 msgid "Load base curve"
 msgstr "基本カーブを読み込む"
@@ -1000,14 +994,13 @@ msgstr "基本カーブをデフォルトに戻す"
 
 #, fuzzy
 msgid "Input ICC profile"
-msgstr "入力プロファイル"
+msgstr "入力のICCプロファイル"
 
-#, fuzzy
 msgid "Output ICC profile"
-msgstr "出力プロファイル"
+msgstr "出力するICCプロファイル"
 
 msgid "Display ICC profile"
-msgstr ""
+msgstr "表示のICCプロファイル"
 
 msgid "Gamma"
 msgstr "ガンマ"
@@ -1019,13 +1012,11 @@ msgstr "入力プロファイルにガンマ修正"
 msgid "Reset gamma to default"
 msgstr "ガンマをデフォルトに戻す"
 
-#, fuzzy
 msgid "Linearity"
 msgstr "リニアリティー"
 
-#, fuzzy
 msgid "Linear part of the gamma correction"
-msgstr "ガンマ修正の線形部"
+msgstr "ガンマ修正の直線部分"
 
 #, fuzzy
 msgid "Reset linearity to default"
@@ -1058,7 +1049,7 @@ msgid "Disable soft proofing"
 msgstr ""
 
 msgid "Contrast"
-msgstr ""
+msgstr "コントラスト"
 
 msgid "Global contrast adjustment"
 msgstr ""
@@ -1092,23 +1083,22 @@ msgstr "ブラックポイントを自動調整"
 
 #. Start of Crop controls
 msgid "Left:"
-msgstr ""
+msgstr "左:"
 
 msgid "Top:"
-msgstr ""
+msgstr "上:"
 
 msgid "Right:"
-msgstr ""
+msgstr "右:"
 
-#, fuzzy
 msgid "Bottom:"
-msgstr "ズーム"
+msgstr "下:"
 
 msgid "Reset the crop region"
 msgstr ""
 
 msgid "Aspect ratio:"
-msgstr ""
+msgstr "アスペクト比："
 
 msgid ""
 "Crop area aspect ratio.\n"
@@ -1119,36 +1109,29 @@ msgstr ""
 msgid "Lock aspect ratio"
 msgstr ""
 
-#, fuzzy
 msgid "Shrink factor"
-msgstr "縮小倍率"
+msgstr "縮小倍数"
 
-#, fuzzy
 msgid "Height"
-msgstr "\t高さ"
+msgstr "縦"
 
-#, fuzzy
 msgid "Width"
-msgstr "\t幅"
+msgstr "横"
 
 msgid "Orientation:"
-msgstr ""
+msgstr "変換:"
 
 msgid "Path"
-msgstr ""
+msgstr "パス"
 
 msgid "Select output path"
 msgstr ""
 
-#, fuzzy
 msgid "Filename"
-msgstr ""
-"ファイル名: %s\n"
-"サイズ: %d x %d%s"
+msgstr "ファイル名"
 
-#, fuzzy
 msgid "JPEG compression level"
-msgstr "圧縮比率"
+msgstr "JPEG圧縮比率"
 
 msgid "JPEG progressive encoding"
 msgstr ""
@@ -1156,8 +1139,9 @@ msgstr ""
 msgid "TIFF lossless Compress"
 msgstr ""
 
+#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr ""
+msgstr "JPEG又はPNGに埋め込まれたEXIFデータ"
 
 msgid "Create ID file "
 msgstr "IDファイルを作成"
@@ -1197,57 +1181,46 @@ msgid "Overwrite existing files without asking"
 msgstr "ファイルが存在しても質問無しで上書きする"
 
 msgid "Tag"
-msgstr ""
+msgstr "タグ"
 
 #. Fill table with EXIF tags
-#, fuzzy
 msgid "Camera maker"
-msgstr "カメラカーブ"
+msgstr "カメラメーカー"
 
-#, fuzzy
 msgid "Camera model"
-msgstr "カメラカーブ"
+msgstr "カメラモデル"
 
-#, fuzzy
 msgid "Timestamp"
-msgstr "撮影日時: %s\n"
+msgstr "タイムスタンプ"
 
 msgid "Shutter time"
 msgstr ""
 
-#, fuzzy
 msgid "Aperture"
-msgstr "絞り値: %s\n"
+msgstr "絞り値"
 
-#, fuzzy
 msgid "ISO speed"
-msgstr "ISO感度: %s\n"
+msgstr "ISO感度"
 
-#, fuzzy
 msgid "Focal length"
-msgstr "焦点距離: %s\n"
+msgstr "焦点距離"
 
-#, fuzzy
 msgid "35mm focal length"
-msgstr "焦点距離: %s\n"
+msgstr "35mmとしての焦点距離"
 
 #. Lens selector
-#, fuzzy
 msgid "Lens"
-msgstr "レンズ: %s\n"
+msgstr "レンズ"
 
 msgid "Flash"
 msgstr "フラッシュ"
 
-#, fuzzy
 msgid "White balance"
 msgstr "ホワイトバランス"
 
-#, fuzzy, c-format
+#, c-format
 msgid "EXIF data read by %s"
-msgstr ""
-"\n"
-"%sでEXIFデータを読みました"
+msgstr "%sでEXIFデータを読みました"
 
 msgid "Warning: EXIF data will not be sent to output"
 msgstr ""
@@ -1269,31 +1242,30 @@ msgid "Reset exposure to default"
 msgstr "露出をデフォルトに戻す"
 
 msgid "Grayscale"
-msgstr ""
+msgstr "グレースケール"
 
 #. Lens correction page
 msgid "Lens correction"
 msgstr ""
 
-#, fuzzy
 msgid "Base curve"
 msgstr "基本カーブ"
 
 msgid "Color management"
-msgstr ""
+msgstr "カラーマネジメント"
 
 msgid "Correct luminosity, saturation"
 msgstr ""
 
 msgid "Crop and rotate"
-msgstr ""
+msgstr "切り抜きと回転"
 
 #, fuzzy
 msgid "Save"
-msgstr "保存しました %s"
+msgstr "保存しました"
 
 msgid "EXIF"
-msgstr ""
+msgstr "EXIF"
 
 msgid "Options"
 msgstr "オプション"
@@ -1387,23 +1359,17 @@ msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr "カメラのホワイトバランスが使えないので自動ホワイトバランスに戻ります。"
 
 #. Error was not already set before
-#, fuzzy, c-format
+#, c-format
 msgid "Error creating file '%s'."
-msgstr ""
-"ファイル作成エラー '%s'.\n"
-"%s"
+msgstr "ファイル作成エラー '%s'."
 
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
-#, fuzzy
 msgid "Error creating file."
-msgstr ""
-"ファイル作成エラー '%s'.\n"
-"%s"
+msgstr "ファイル作成エラー。"
 
-#, fuzzy
 msgid "Converting image"
-msgstr "画像を保存しています"
+msgstr "画像を変換しています"
 
 msgid "Saving image"
 msgstr "画像を保存しています"
@@ -1424,9 +1390,9 @@ msgstr ""
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIFバッファ長 %d が長すぎるので無視します\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown file type %d."
-msgstr "ファイル作成エラー '%s'. %dのファイルタイプが不明です。"
+msgstr "%dのファイルタイプが不明です。"
 
 #, c-format
 msgid ""
@@ -1451,10 +1417,10 @@ msgid "Focal"
 msgstr ""
 
 msgid "F"
-msgstr ""
+msgstr "F"
 
 msgid "F-number (Aperture)"
-msgstr ""
+msgstr "F-値(絞り値)"
 
 msgid "Distance"
 msgstr ""
@@ -1464,13 +1430,13 @@ msgstr ""
 
 #. Add the model combobox
 msgid "Model:"
-msgstr ""
+msgstr "モデル:"
 
 msgid "Chromatic Aberrations mathematical model"
 msgstr ""
 
 msgid "Parameters"
-msgstr ""
+msgstr "パラメータ"
 
 msgid "Optical vignetting mathematical model"
 msgstr ""
@@ -1491,9 +1457,8 @@ msgstr ""
 msgid "The target geometry for output image"
 msgstr ""
 
-#, fuzzy
 msgid "Camera"
-msgstr "カメラWB"
+msgstr "カメラ"
 
 msgid ""
 "Search for camera using a pattern\n"
@@ -1511,9 +1476,8 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr ""
 
-#, fuzzy
 msgid "Scale"
-msgstr "保存しました %s"
+msgstr ""
 
 msgid "Image scale power-of-two"
 msgstr ""
