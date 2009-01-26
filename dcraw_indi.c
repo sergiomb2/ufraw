@@ -146,7 +146,7 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
   private(c,i,hpass,lev,lpass,row,col,thold,fimg,temp)
 #endif
   FORC(nc) {			/* denoise R,G1,B,G3 individually */
-    fimg = (float*)malloc(size*3*4);
+    fimg = (float*)malloc(size*3 * sizeof *fimg);
     for (i=0; i < size; i++)
       fimg[i] = 256 * sqrt(image[i][c] /*<< scale*/);
     for (hpass=lev=0; lev < 5; lev++) {
