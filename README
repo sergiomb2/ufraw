@@ -257,9 +257,9 @@ have to be resolved. But even if there are no conflicts, one should check
 if there are new global variables or functions and add them to dcraw.h.
 One should also check if there where changes to the functions hat_transform(),
 wavelet_denoise(), scale_colors(), pre_interpolate(), border_interpolate(),
-lin_interpolate(), vng_interpolate(), ahd_interpolate(), convert_to_rgb(),
-fuji_rotate() or main(). Such changes could affect dcraw_indi.c or
-dcraw_api.cc.
+lin_interpolate(), vng_interpolate(), ppg_interpolate(), ahd_interpolate(),
+convert_to_rgb(), fuji_rotate() or main(). Such changes could affect
+dcraw_indi.c or dcraw_api.cc.
 
 For Packagers
 =============

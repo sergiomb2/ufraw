@@ -142,11 +142,11 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
 #ifdef _OPENMP
 #pragma omp parallel for				\
   default(none)						\
-  shared(nc,image,size)			\
+  shared(nc,image,size)					\
   private(c,i,hpass,lev,lpass,row,col,thold,fimg,temp)
 #endif
   FORC(nc) {			/* denoise R,G1,B,G3 individually */
-    fimg = (float*)malloc(size*3 * sizeof *fimg);
+    fimg = (float *) malloc (size*3 * sizeof *fimg);
     for (i=0; i < size; i++)
       fimg[i] = 256 * sqrt(image[i][c] /*<< scale*/);
     for (hpass=lev=0; lev < 5; lev++) {
@@ -180,7 +180,7 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
       mul[row] = 0.125 * pre_mul[FC(row+1,0) | 1] / pre_mul[FC(row,0) | 1];
     ushort window_mem[4][width];
     for (i=0; i < 4; i++)
-      window[i] = window_mem[i]; /* (ushort *) fimg + width*i;*/
+      window[i] = window_mem[i]; /*(ushort *) fimg + width*i;*/
     for (wlast=-1, row=1; row < height-1; row++) {
       while (wlast < row+1) {
 	for (wlast++, i=0; i < 4; i++)
@@ -437,9 +437,9 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
       }
     }
 #ifdef _OPENMP
-#pragma omp parallel \
-    default(none) \
-    shared(image,code,prow,pcol) \
+#pragma omp parallel					\
+    default(none)					\
+    shared(image,code,prow,pcol)			\
     private(row,col,g,brow,rowtmp,pix,ip,gval,diff,gmin,gmax,thold,sum,color,num,c,t)
 #endif
   {
@@ -504,76 +504,43 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 /*
    Patterned Pixel Grouping Interpolation by Alain Desbiolles
 */
-#define UT(c1, c2, c3, g1, g3) \
-  CLIP((long)(((g1 +g3) >> 1) +((c2-c1 +c2-c3) >> 3)))
-
-#define UT1(v1, v2, v3, c1, c3) \
-  CLIP((long)(v2 +((c1 +c3 -v1 -v3) >> 1)))
-
 void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 	const int width, const int height, const int colors, void *dcraw)
 {
-  ushort (*pix)[4];            // Pixel matrix
-  ushort g2, c1, c2, cc1, cc2; // Simulated green and color
-  int    row, col, diff[2], guess[2], c, d, i;
-  int    dir[5]  = { 1, width, -1, -width, 1 };
-  int    g[2][4] = {{ -1 -2*width, -1 +2*width,  1 -2*width, 1 +2*width },
-		    { -2 -width,    2 -width,   -2 +width,   2 +width   }};
+  int dir[5] = { 1, width, -1, -width, 1 };
+  int row, col, diff[2], guess[2], c, d, i;
+  ushort (*pix)[4];
 
-  border_interpolate_INDI (height, width, image, filters, colors, 4);
+  border_interpolate_INDI (height, width, image, filters, colors, 3);
   dcraw_message (dcraw, DCRAW_VERBOSE,_("PPG interpolation...\n")); /*UF*/
 
 #ifdef _OPENMP
-#pragma omp parallel						\
-  default(none)							\
-  shared(image,dir,g)						\
-  private(row,col,i,d,c,pix,diff,guess,g2,c1,c2,cc1,cc2)
+#pragma omp parallel					\
+  default(none)						\
+  shared(image,dir)					\
+  private(row,col,i,d,c,pix,diff,guess)
 #endif
   {
-  // Fill in the green layer with gradients from RGB color pattern simulation
+/*  Fill in the green layer with gradients and pattern recognition: */
 #ifdef _OPENMP
 #pragma omp for
 #endif
-  for (row=3; row < height-4; row++) {
-    for (col=3+(FC(row,3) & 1), c=FC(row,col); col < width-4; col+=2) {
+  for (row=3; row < height-3; row++)
+    for (col=3+(FC(row,3) & 1), c=FC(row,col); col < width-3; col+=2) {
       pix = image + row*width+col;
-
-      // Horizontaly and verticaly
-      for (i=0; d=dir[i], i < 2; i++) {
-
-	// Simulate RGB color pattern
-	guess[i] = UT (pix[-2*d][c], pix[0][c], pix[2*d][c],
-		       pix[-d][1], pix[d][1]);
-	g2       = UT (pix[0][c], pix[2*d][c], pix[4*d][c],
-		       pix[d][1], pix[3*d][1]);
-	c1       = UT1(pix[-2*d][1], pix[-d][1], guess[i],
-		       pix[-2*d][c], pix[0][c]);
-	c2       = UT1(guess[i], pix[d][1], g2,
-		       pix[0][c], pix[2*d][c]);
-	cc1      = UT (pix[g[i][0]][1], pix[-d][1], pix[g[i][1]][1],
-		       pix[-1-width][2-c], pix[1-width][2-c]);
-	cc2      = UT (pix[g[i][2]][1],  pix[d][1], pix[g[i][3]][1],
-		       pix[-1+width][2-c], pix[1+width][2-c]);
-
-	// Calculate gradient with RGB simulated color
-	diff[i]  = ((ABS(pix[-d][1] -pix[-3*d][1]) +
-		     ABS(pix[0][c]  -pix[-2*d][c]) +
-		     ABS(cc1        -cc2)          +
-		     ABS(pix[0][c]  -pix[2*d][c])  +
-		     ABS(pix[d][1]  -pix[3*d][1])) * 2 / 3) +
-		     ABS(guess[i]   -pix[-d][1])   +
-		     ABS(pix[0][c]  -c1)           +
-		     ABS(pix[0][c]  -c2)           +
-		     ABS(guess[i]   -pix[d][1]);
+      for (i=0; (d=dir[i]) > 0; i++) {
+	guess[i] = (pix[-d][1] + pix[0][c] + pix[d][1]) * 2
+		      - pix[-2*d][c] - pix[2*d][c];
+	diff[i] = ( ABS(pix[-2*d][c] - pix[ 0][c]) +
+		    ABS(pix[ 2*d][c] - pix[ 0][c]) +
+		    ABS(pix[  -d][1] - pix[ d][1]) ) * 3 +
+		  ( ABS(pix[ 3*d][1] - pix[ d][1]) +
+		    ABS(pix[-3*d][1] - pix[-d][1]) ) * 2;
       }
-
-      // Then, select the best gradient
-      d = dir[diff[0] > diff[1]];
-      pix[0][1] = ULIM(guess[diff[0] > diff[1]], pix[-d][1], pix[d][1]);
+      d = dir[i = diff[0] > diff[1]];
+      pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
     }
-  }
-
-  // Calculate red and blue for each green pixel
+/*  Calculate red and blue for each green pixel:		*/
 #ifdef _OPENMP
 #pragma omp for
 #endif
@@ -581,11 +548,10 @@ void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
     for (col=1+(FC(row,2) & 1), c=FC(row,col+1); col < width-1; col+=2) {
       pix = image + row*width+col;
       for (i=0; (d=dir[i]) > 0; c=2-c, i++)
-	pix[0][c] = UT1(pix[-d][1], pix[0][1], pix[d][1],
-			pix[-d][c], pix[d][c]);
+	pix[0][c] = CLIP((pix[-d][c] + pix[d][c] + 2*pix[0][1]
+			- pix[-d][1] - pix[d][1]) >> 1);
     }
-
-  // Calculate blue for red pixels and vice versa
+/*  Calculate blue for red pixels and vice versa:		*/
 #ifdef _OPENMP
 #pragma omp for
 #endif
@@ -593,12 +559,16 @@ void CLASS ppg_interpolate_INDI(ushort (*image)[4], const unsigned filters,
     for (col=1+(FC(row,1) & 1), c=2-FC(row,col); col < width-1; col+=2) {
       pix = image + row*width+col;
       for (i=0; (d=dir[i]+dir[i+1]) > 0; i++) {
-	diff[i]  = ABS(pix[-d][c] - pix[d][c]) +
-		   ABS(pix[-d][1] - pix[d][1]);
-	guess[i] = UT1(pix[-d][1], pix[0][1], pix[d][1],
-		       pix[-d][c], pix[d][c]);
+	diff[i] = ABS(pix[-d][c] - pix[d][c]) +
+		  ABS(pix[-d][1] - pix[0][1]) +
+		  ABS(pix[ d][1] - pix[0][1]);
+	guess[i] = pix[-d][c] + pix[d][c] + 2*pix[0][1]
+		 - pix[-d][1] - pix[d][1];
       }
-      pix[0][c] = CLIP(guess[diff[0] > diff[1]]);
+      if (diff[0] != diff[1])
+	pix[0][c] = CLIP(guess[diff[0] > diff[1]] >> 1);
+      else
+	pix[0][c] = CLIP((guess[0]+guess[1]) >> 2);
     }
   }
 }
@@ -625,8 +595,8 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   dcraw_message (dcraw, DCRAW_VERBOSE,_("AHD interpolation...\n")); /*UF*/
 
 #ifdef _OPENMP
-#pragma omp parallel							\
-  default(shared)							\
+#pragma omp parallel					\
+  default(shared)					\
   private(top, left, row, col, pix, rix, lix, c, xyz, val, d, tc, tr, i, j, k, ldiff, abdiff, leps, abeps, hm, buffer, rgb, lab, homo, r)
 #endif
   {
@@ -866,8 +836,7 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
   merror (img, "fuji_rotate()");
 
 #ifdef _OPENMP
-#pragma omp parallel for default(shared) \
-  private(row,col,ur,uc,r,c,fr,fc,pix,i)
+#pragma omp parallel for default(shared) private(row,col,ur,uc,r,c,fr,fc,pix,i)
 #endif
   for (row=0; row < high; row++)
     for (col=0; col < wide; col++) {
