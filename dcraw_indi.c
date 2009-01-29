@@ -135,9 +135,10 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
     fimg = (float *) malloc ((size*3 + iheight + iwidth) * sizeof *fimg);
   merror (fimg, "wavelet_denoise()");
   temp = fimg + size*3;
-#endif
+#else
   size = iheight*iwidth;
   float temp[iheight + iwidth];
+#endif
   if ((nc = colors) == 3 && filters) nc++;
 #ifdef _OPENMP
 #pragma omp parallel for				\
@@ -202,38 +203,55 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
       }
     }
   }
-  /* free (fimg); */
+#if 0
+  free (fimg);
+#endif
 }
 
 void CLASS scale_colors_INDI(ushort (*image)[4], int maximum, const int black,
        const int use_auto_wb, const int use_camera_wb, const float cam_mul[4],
-       const int iheight, const int iwidth, const int colors, float pre_mul[4],
-       const unsigned filters, /*const*/ ushort white[8][8],
-       const char *ifname_display, void *dcraw)
+       const unsigned iheight, const unsigned iwidth, const int colors,
+       float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
+       const int shrink, const char *ifname_display, void *dcraw)
 {
-  int dblack, row, col, x, y, c, val, sum[8];
+  unsigned /*bottom, right, size,*/ row, col, /*ur, uc, i,*/ x, y, c, sum[8];
+  int val, dark, sat;
   double dsum[8], dmin, dmax;
-  float scale_mul[4];
+  float scale_mul[4]/*, fr, fc*/;
+#if 0
+  ushort *img=0, *pix;
 
+  if (user_mul[0])
+    memcpy (pre_mul, user_mul, sizeof pre_mul);
+#endif
   if (use_auto_wb || (use_camera_wb && cam_mul[0] == -1)) {
     memset (dsum, 0, sizeof dsum);
+#if 0
+    bottom = MIN (greybox[1]+greybox[3], height);
+    right  = MIN (greybox[0]+greybox[2], width);
+    for (row=greybox[1]; row < bottom; row += 8)
+      for (col=greybox[0]; col < right; col += 8) {
+#else
     for (row=0; row < iheight-7; row += 8)
       for (col=0; col < iwidth-7; col += 8) {
-       memset (sum, 0, sizeof sum);
-       for (y=row; y < row+8; y++)
-	 for (x=col; x < col+8; x++)
-	   FORC4 {
-	     val = image[y*iwidth+x][c];
-	     if (!val) continue;
-	     if (val > maximum-25) goto skip_block;
-	     val -= black;
-	     if (val < 0) val = 0;
-	     sum[c] += val;
-	     sum[c+4]++;
-	   }
-       for (c=0; c < 8; c++) dsum[c] += sum[c];
-skip_block:
-       continue;
+#endif
+	memset (sum, 0, sizeof sum);
+	for (y=row; y < row+8 /*&& y < bottom*/; y++)
+	  for (x=col; x < col+8 /*&& x < right*/; x++)
+	    FORC4 {
+	      if (filters) {
+		c = FC(y,x);
+		val = BAYER(y,x);
+	      } else
+		val = image[y*iwidth+x][c];
+	      if (val > maximum-25) goto skip_block;
+	      if ((val -= black) < 0) val = 0;
+	      sum[c] += val;
+	      sum[c+4]++;
+	      if (filters) break;
+	    }
+	FORC(8) dsum[c] += sum[c];
+skip_block: ;
       }
     FORC4 if (dsum[c]) pre_mul[c] = dsum[c+4] / dsum[c];
   }
@@ -255,11 +273,12 @@ skip_block:
       dcraw_message (dcraw, DCRAW_NO_CAMERA_WB,
 	      _("%s: Cannot use camera white balance.\n"), ifname_display);
   }
-//  if (user_mul[0])
-//    memcpy (pre_mul, user_mul, sizeof pre_mul);
   if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
-  dblack = black;
-//  if (threshold) wavelet_denoise();
+  dark = black;
+  sat = maximum;
+#if 0
+  if (threshold) wavelet_denoise();
+#endif
   maximum -= black;
   for (dmin=DBL_MAX, dmax=c=0; c < 4; c++) {
     if (dmin > pre_mul[c])
@@ -267,24 +286,51 @@ skip_block:
     if (dmax < pre_mul[c])
 	dmax = pre_mul[c];
   }
-//  if (!highlight) dmax = dmin;
+#if 0
+  if (!highlight) dmax = dmin;
+#endif
   FORC4 scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / maximum;
-  dcraw_message(dcraw, DCRAW_VERBOSE,_("Scaling with black %d, multipliers"),
-	  dblack);
+  dcraw_message(dcraw, DCRAW_VERBOSE,
+      _("Scaling with darkness %d, saturation %d, and\nmultipliers"),
+      dark, sat);
   FORC4 dcraw_message(dcraw, DCRAW_VERBOSE, " %f", pre_mul[c]);
   dcraw_message(dcraw, DCRAW_VERBOSE, "\n");
 
 /* The rest of the scaling is done somewhere else UF*/
 #if 0
-  for (row=0; row < iheight; row++)
-    for (col=0; col < iwidth; col++)
-      FORC4 {
-	val = image[row*iwidth+col][c];
-	if (!val) continue;
-	val -= black;
-	val = (int)(val*scale_mul[c]);
-	image[row*iwidth+col][c] = CLIP(val);
+  size = iheight*iwidth;
+  for (i=0; i < size*4; i++) {
+    val = image[0][i];
+    if (!val) continue;
+    val -= black;
+    val = (int)(val*scale_mul[i & 3]);
+    image[0][i] = CLIP(val);
+  }
+  if ((aber[0] != 1 || aber[2] != 1) && colors == 3) {
+    dcraw_message (DCRAW_VERBOSE,_("Correcting chromatic aberration...\n"));
+    for (c=0; c < 4; c+=2) {
+      if (aber[c] == 1) continue;
+      img = (ushort *) malloc (size * sizeof *img);
+      merror (img, "scale_colors()");
+      for (i=0; i < size; i++)
+	img[i] = image[i][c];
+      for (row=0; row < iheight; row++) {
+	fr = (row - iheight*0.5) * aber[c] + iheight*0.5; ur = (unsigned)fr;
+	if (ur > (unsigned)(iheight-2)) continue;
+	fr -= ur;
+	for (col=0; col < iwidth; col++) {
+	  fc = (col - iwidth*0.5) * aber[c] + iwidth*0.5; uc = (unsigned)fc;
+	  if (uc > (unsigned)(iwidth-2)) continue;
+	  fc -= uc;
+	  pix = img + ur*iwidth + uc;
+	  image[row*iwidth+col][c] = (ushort)(
+	    (pix[     0]*(1-fc) + pix[       1]*fc) * (1-fr) +
+	    (pix[iwidth]*(1-fc) + pix[iwidth+1]*fc) * fr);
+	}
       }
+      free(img);
+    }
+  }
 #endif
 }
 

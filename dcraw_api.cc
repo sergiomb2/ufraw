@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * dcraw_api.cc - API for DCRaw
- * Copyright 2004-2008 by Udi Fuchs
+ * Copyright 2004-2009 by Udi Fuchs
  *
  * based on dcraw by Dave Coffin
  * http://www.cybercom.net/~dcoffin/
@@ -41,9 +41,9 @@ void wavelet_denoise_INDI(gushort (*image)[4], const int black,
     const float threshold, const unsigned filters, void *dcraw);
 void scale_colors_INDI(gushort (*image)[4], const int maximum, const int black,
     const int use_auto_wb, const int use_camera_wb, const float cam_mul[4],
-    const int iheight, const int iwidth, const int colors, float pre_mul[4],
-    const unsigned filters, /*const*/ gushort white[8][8],
-    const char *ifname_display, void *dcraw);
+    const unsigned iheight, const unsigned iwidth, const int colors,
+    float pre_mul[4], const unsigned filters, /*const*/ gushort white[8][8],
+    const int shrink, const char *ifname_display, void *dcraw);
 void lin_interpolate_INDI(gushort (*image)[4], const unsigned filters,
     const int width, const int height, const int colors, void *dcraw);
 void vng_interpolate_INDI(gushort (*image)[4], const unsigned filters,
@@ -501,7 +501,8 @@ int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB)
 	scale_colors_INDI(h->raw.image,
 		h->rgbMax-h->black, h->black, useAutoWB, useCameraWB,
 		h->cam_mul, h->raw.height, h->raw.width, h->raw.colors,
-		h->post_mul, h->filters, d->white, d->ifname_display, d);
+		h->post_mul, h->filters, d->white, h->shrink, 
+		d->ifname_display, d);
     h->message = d->messageBuffer;
     return d->lastStatus;
 }
