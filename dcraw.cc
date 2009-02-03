@@ -1,6 +1,6 @@
 /*
    dcraw.cc - Dave Coffin's raw photo decoder - C++ adaptation
-   Copyright 1997-2008 by Dave Coffin, dcoffin a cybercom o net
+   Copyright 1997-2009 by Dave Coffin, dcoffin a cybercom o net
    Copyright 2004-2009 by Udi Fuchs, udifuchs a gmail o com
 
    This program is free software; you can redistribute it and/or modify
@@ -11,15 +11,15 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.417 $
-   $Date: 2009/01/21 01:19:45 $
+   $Revision: 1.418 $
+   $Date: 2009/02/03 04:42:52 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.90"
+#define DCRAW_VERSION "8.91"
 
 //#define _GNU_SOURCE
 #define _USE_MATH_DEFINES
@@ -5234,6 +5234,9 @@ int CLASS parse_tiff_ifd (int base)
 	    sscanf (cp+8, "%f %f %f", cam_mul, cam_mul+1, cam_mul+2);
 	free (cbuf);
 	break;
+      case 50458:
+	if (!make[0]) strcpy (make, "Hasselblad");
+	break;
       case 50459:			/* Hasselblad tag */
 	i = order;
 	j = ftell(ifp);
@@ -7434,6 +7437,11 @@ konica_400z:
       width  = 7248;
       top_margin  = 4;
       left_margin = 7;
+      filters = 0x61616161;
+    } else if (raw_width == 4090) {
+      strcpy (model, "V96C");
+      height -= (top_margin = 6);
+      width -= (left_margin = 3) + 7;
       filters = 0x61616161;
     }
   } else if (!strcmp(make,"Sinar")) {
