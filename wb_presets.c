@@ -191,12 +191,12 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 5D", Shade, 0,		{ 2.300781, 1, 1.208008, 0 } }, /*7200K*/
   { "Canon", "EOS 5D", Daylight, 0,		{ 1.988281, 1, 1.457031, 0 } }, /*5250K*/
 
-  { "Canon", "EOS 5D Mark II", Daylight, 0, 	{ 2.188477, 1, 1.686523, 0 } }, /* 5200K */
-  { "Canon", "EOS 5D Mark II", Shade, 0, 	{ 2.515625, 1, 1.391602, 0 } }, /* 7000K */
-  { "Canon", "EOS 5D Mark II", Cloudy, 0, 	{ 2.354492, 1, 1.519531, 0 } }, /* 6000K */
-  { "Canon", "EOS 5D Mark II", Tungsten, 0, 	{ 1.564033, 1, 2.665758, 0 } }, /* 3200K */
-  { "Canon", "EOS 5D Mark II", Fluorescent, 0, 	{ 1.877243, 1, 2.479698, 0 } }, /* 4000K */
-  { "Canon", "EOS 5D Mark II", Flash, 0, 	{ 2.370117, 1, 1.503906, 0 } }, /* 5621K */
+  { "Canon", "EOS 5D Mark II", Daylight, 0,	{ 2.188477, 1, 1.686523, 0 } }, /* 5200K */
+  { "Canon", "EOS 5D Mark II", Shade, 0,	{ 2.515625, 1, 1.391602, 0 } }, /* 7000K */
+  { "Canon", "EOS 5D Mark II", Cloudy, 0,	{ 2.354492, 1, 1.519531, 0 } }, /* 6000K */
+  { "Canon", "EOS 5D Mark II", Tungsten, 0,	{ 1.564033, 1, 2.665758, 0 } }, /* 3200K */
+  { "Canon", "EOS 5D Mark II", Fluorescent, 0,	{ 1.877243, 1, 2.479698, 0 } }, /* 4000K */
+  { "Canon", "EOS 5D Mark II", Flash, 0,	{ 2.370117, 1, 1.503906, 0 } }, /* 5621K */
 
 
   { "Canon", "EOS 10D", Daylight, 0,		{ 2.159856, 1, 1.218750, 0 } },
@@ -2545,6 +2545,29 @@ const wb_data wb_preset[] = {
   { "SONY", "DSLR-A300", Flash, -3,		{ 1.714844, 1, 1.632812, 0 } },
   { "SONY", "DSLR-A300", Flash, 0,		{ 1.882812, 1, 1.441406, 0 } },
   { "SONY", "DSLR-A300", Flash, 3,		{ 2.070312, 1, 1.273438, 0 } },
+
+  { "SONY", "DSLR-A350", Daylight, -3,		{ 2.316406, 1, 1.886719, 0 } },
+  { "SONY", "DSLR-A350", Daylight, 0,		{ 2.531250, 1, 1.648437, 0 } },
+  { "SONY", "DSLR-A350", Daylight, 3,		{ 2.750000, 1, 1.437500, 0 } },
+  { "SONY", "DSLR-A350", Shade, -3,		{ 2.722656, 1, 1.468750, 0 } },
+  { "SONY", "DSLR-A350", Shade, 0,		{ 2.960937, 1, 1.281250, 0 } },
+  { "SONY", "DSLR-A350", Shade, 3,		{ 3.222656, 1, 1.109375, 0 } },
+  { "SONY", "DSLR-A350", Cloudy, -3,		{ 2.496094, 1, 1.691406, 0 } },
+  { "SONY", "DSLR-A350", Cloudy, 0,		{ 2.722656, 1, 1.476562, 0 } },
+  { "SONY", "DSLR-A350", Cloudy, 3,		{ 2.960937, 1, 1.281250, 0 } },
+  { "SONY", "DSLR-A350", Tungsten, -3,		{ 1.445313, 1, 3.722656, 0 } },
+  { "SONY", "DSLR-A350", Tungsten, 0,		{ 1.578125, 1, 3.289062, 0 } },
+  { "SONY", "DSLR-A350", Tungsten, 3,		{ 1.726562, 1, 2.910156, 0 } },
+  { "SONY", "DSLR-A350", Flash, -3,		{ 2.644531, 1, 1.558594, 0 } },
+  { "SONY", "DSLR-A350", Flash, 0,		{ 2.875000, 1, 1.355469, 0 } },
+  { "SONY", "DSLR-A350", Flash, 3,		{ 3.136719, 1, 1.175781, 0 } },
+  { "SONY", "DSLR-A350", CoolWhiteFluorescent, 0, { 2.226563, 1, 2.355469, 0 } },
+  { "SONY", "DSLR-A350", Fluorescent, 0,	{ 1.554687, 1, 3.984375, 0 } },
+  { "SONY", "DSLR-A350", WarmWhiteFluorescent, 0, { 1.816406, 1, 3.207031, 0 } },
+  { "SONY", "DSLR-A350", DayWhiteFluorescent, 0, { 2.511719, 1, 1.957031, 0 } },
+//  { "SONY", "DSLR-A350", DayWhiteFluorescent, 0, { 2.484375, 1, 1.683594, 0 } },
+  { "SONY", "DSLR-A350", DaylightFluorescent, 0, { 3.023437, 1, 1.671875, 0 } },
+//  { "SONY", "DSLR-A350", DaylightFluorescent, 0, { 2.773438, 1, 1.441406, 0 } },
 
   /* Sony A700 presets - firmware v2 */
   { "SONY", "DSLR-A700", Daylight, -3,		{ 1.937500, 1, 1.640625, 0 } },
