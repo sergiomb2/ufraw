@@ -191,6 +191,14 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 5D", Shade, 0,		{ 2.300781, 1, 1.208008, 0 } }, /*7200K*/
   { "Canon", "EOS 5D", Daylight, 0,		{ 1.988281, 1, 1.457031, 0 } }, /*5250K*/
 
+  { "Canon", "EOS 5D Mark II", Daylight, 0, 	{ 2.188477, 1, 1.686523, 0 } }, /* 5200K */
+  { "Canon", "EOS 5D Mark II", Shade, 0, 	{ 2.515625, 1, 1.391602, 0 } }, /* 7000K */
+  { "Canon", "EOS 5D Mark II", Cloudy, 0, 	{ 2.354492, 1, 1.519531, 0 } }, /* 6000K */
+  { "Canon", "EOS 5D Mark II", Tungsten, 0, 	{ 1.564033, 1, 2.665758, 0 } }, /* 3200K */
+  { "Canon", "EOS 5D Mark II", Fluorescent, 0, 	{ 1.877243, 1, 2.479698, 0 } }, /* 4000K */
+  { "Canon", "EOS 5D Mark II", Flash, 0, 	{ 2.370117, 1, 1.503906, 0 } }, /* 5621K */
+
+
   { "Canon", "EOS 10D", Daylight, 0,		{ 2.159856, 1, 1.218750, 0 } },
   { "Canon", "EOS 10D", Shade, 0,		{ 2.533654, 1, 1.036058, 0 } },
   { "Canon", "EOS 10D", Cloudy, 0,		{ 2.348558, 1, 1.116587, 0 } },
