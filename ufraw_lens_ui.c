@@ -420,7 +420,8 @@ static void lens_set (preview_data *data, const lfLens *lens)
         return;
     }
 
-    lf_lens_copy (CFG->lens, lens);
+    if (CFG->lens!= lens)
+	lf_lens_copy (CFG->lens, lens);
 
     maker = lf_mlstr_get (lens->Maker);
     model = lf_mlstr_get (lens->Model);
@@ -1284,7 +1285,15 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
     fill_distortion_page (data);
     fill_geometry_page (data);
 
-    lens_set (data, CFG->lens);
+    const lfLens **lenses = NULL;
+    if (strlen(CFG->lensText) > 0)
+	lenses = lf_db_find_lenses_hd(CFG->lensdb,
+		CFG->camera, NULL, CFG->lensText, 0);
+    if (lenses!=NULL) {
+	lf_lens_copy(CFG->lens, lenses[0]);
+	lf_free(lenses);
+    }
+    lens_set(data, CFG->lens);
 }
 
 #endif /* HAVE_LENSFUN */
