@@ -668,6 +668,7 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 		conf_default.intent[display_profile]);
     if (!strcmp("Make", element)) g_strlcpy(c->make, temp, max_name);
     if (!strcmp("Model", element)) g_strlcpy(c->model, temp, max_name);
+    if (!strcmp("Lens", element)) g_strlcpy(c->lensText, temp, max_name);
     if (!strcmp("DarkframeFile", element))
 	g_strlcpy(c->darkframeFile, temp, max_path);
     if (!strcmp("ProfilePath", element)) {
