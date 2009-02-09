@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-25 19:00+0100\n"
+"POT-Creation-Date: 2009-02-09 06:45+0100\n"
 "PO-Revision-Date: 2008-10-16 16:39+0900\n"
 "Last-Translator: Homin Lee <ff4500@gamil.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -963,6 +963,15 @@ msgstr "확대:"
 msgid "Zoom percentage"
 msgstr "확대 비율"
 
+#, fuzzy
+msgid "Select a spot on the preview image to choose hue"
+msgstr ""
+"스팟 화이트 벨런스를 적용하기 위해 미리보기 이미지 중 스팟(부분)을 선택하세요"
+
+#, fuzzy
+msgid "Reset adjustment"
+msgstr "전체 대비 조정"
+
 msgid "Grayscale Mode:"
 msgstr "그레이스케일 모드:"
 
@@ -1238,6 +1247,10 @@ msgstr "색조 처리"
 
 msgid "Correct luminosity, saturation"
 msgstr "조도, 채도 조정"
+
+#, fuzzy
+msgid "Lightness Adjustments"
+msgstr "밝기"
 
 msgid "Crop and rotate"
 msgstr "잘라내기와 회전"

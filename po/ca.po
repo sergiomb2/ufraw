@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-25 19:00+0100\n"
+"POT-Creation-Date: 2009-02-09 06:45+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -1008,6 +1008,15 @@ msgstr "Ampliació:"
 msgid "Zoom percentage"
 msgstr "Percentatge del zoom"
 
+#, fuzzy
+msgid "Select a spot on the preview image to choose hue"
+msgstr ""
+"Trieu una zona de la imatge previsualitzada per aplicar l'equilibri de blancs"
+
+#, fuzzy
+msgid "Reset adjustment"
+msgstr "Ajustament global del contrast"
+
 msgid "Grayscale Mode:"
 msgstr "Mode escala de grisos:"
 
@@ -1283,6 +1292,10 @@ msgstr "Gestió del color"
 
 msgid "Correct luminosity, saturation"
 msgstr "Corregeix la lluminositat, saturació"
+
+#, fuzzy
+msgid "Lightness Adjustments"
+msgstr "Lluminositat"
 
 msgid "Crop and rotate"
 msgstr "Retalla i gira"

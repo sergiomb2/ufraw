@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-25 19:00+0100\n"
+"POT-Creation-Date: 2009-02-09 06:45+0100\n"
 "PO-Revision-Date: 2008-12-20 02:50+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -1011,6 +1011,16 @@ msgstr "Zoom:"
 msgid "Zoom percentage"
 msgstr "Pourcentage du Zoom"
 
+#, fuzzy
+msgid "Select a spot on the preview image to choose hue"
+msgstr ""
+"Sélectionner un point, sur la pré-visualisation, à utiliser comme balance "
+"des blancs"
+
+#, fuzzy
+msgid "Reset adjustment"
+msgstr "Ajustement du contraste global"
+
 msgid "Grayscale Mode:"
 msgstr ""
 "Mode\n"
@@ -1304,6 +1314,9 @@ msgstr "Gestion des couleurs"
 
 msgid "Correct luminosity, saturation"
 msgstr "Corrections luminosité, saturation"
+
+msgid "Lightness Adjustments"
+msgstr ""
 
 msgid "Crop and rotate"
 msgstr "Découpe et rotation"

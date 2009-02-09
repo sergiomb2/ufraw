@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-25 19:00+0100\n"
+"POT-Creation-Date: 2009-02-09 06:45+0100\n"
 "PO-Revision-Date: 2008-12-23 00:00-0500\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -981,6 +981,14 @@ msgstr "Zoom:"
 msgid "Zoom percentage"
 msgstr "Zoom-prosent"
 
+#, fuzzy
+msgid "Select a spot on the preview image to choose hue"
+msgstr "Velg et punkt på forhåndsvisningsbildet for å måle punkthvitbalanse"
+
+#, fuzzy
+msgid "Reset adjustment"
+msgstr "Global kontrastjustering"
+
 msgid "Grayscale Mode:"
 msgstr "Modus for gråtoneskala:"
 
@@ -1256,6 +1264,10 @@ msgstr "Fargestyring"
 
 msgid "Correct luminosity, saturation"
 msgstr "Korriger lysstyrke, fargemetning"
+
+#, fuzzy
+msgid "Lightness Adjustments"
+msgstr "Lyshet"
 
 msgid "Crop and rotate"
 msgstr "Beskjær og roter"

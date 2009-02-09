@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-25 19:00+0100\n"
+"POT-Creation-Date: 2009-02-09 06:45+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -988,6 +988,15 @@ msgstr "Powiêkszenie:"
 msgid "Zoom percentage"
 msgstr "Procent powiêkszenia"
 
+#, fuzzy
+msgid "Select a spot on the preview image to choose hue"
+msgstr ""
+"Wybierz obszar na podgl±dzie zdjêcia by zastosowaæ punktowy balans bieli"
+
+#, fuzzy
+msgid "Reset adjustment"
+msgstr "Globalna korekta kontrastu"
+
 msgid "Grayscale Mode:"
 msgstr "Tryb skali szaro¶ci:"
 
@@ -1263,6 +1272,10 @@ msgstr "Zarz±dzanie kolorem"
 
 msgid "Correct luminosity, saturation"
 msgstr "Korekta luminancji, saturacji"
+
+#, fuzzy
+msgid "Lightness Adjustments"
+msgstr "Jasno¶æ"
 
 msgid "Crop and rotate"
 msgstr "Kadrowanie i obrót"

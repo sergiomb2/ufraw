@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-25 19:00+0100\n"
+"POT-Creation-Date: 2009-02-09 06:45+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net."
 "by>\n"
@@ -999,6 +999,15 @@ msgstr "Масштаб:"
 msgid "Zoom percentage"
 msgstr "Масштаб в процентах"
 
+#, fuzzy
+msgid "Select a spot on the preview image to choose hue"
+msgstr ""
+"Выберите область на изображении для применения баланса белого по области"
+
+#, fuzzy
+msgid "Reset adjustment"
+msgstr "Глобальная коррекция контраста"
+
 msgid "Grayscale Mode:"
 msgstr "Уровни серого:"
 
@@ -1274,6 +1283,10 @@ msgstr "Управление цветом"
 
 msgid "Correct luminosity, saturation"
 msgstr "Изменить освещенность, насыщенность"
+
+#, fuzzy
+msgid "Lightness Adjustments"
+msgstr "Яркость"
 
 msgid "Crop and rotate"
 msgstr "Кадрирование и вращение"

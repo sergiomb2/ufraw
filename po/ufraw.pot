@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-25 19:00+0100\n"
+"POT-Creation-Date: 2009-02-09 06:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -859,6 +859,12 @@ msgstr ""
 msgid "Zoom percentage"
 msgstr ""
 
+msgid "Select a spot on the preview image to choose hue"
+msgstr ""
+
+msgid "Reset adjustment"
+msgstr ""
+
 msgid "Grayscale Mode:"
 msgstr ""
 
@@ -1125,6 +1131,9 @@ msgid "Color management"
 msgstr ""
 
 msgid "Correct luminosity, saturation"
+msgstr ""
+
+msgid "Lightness Adjustments"
 msgstr ""
 
 msgid "Crop and rotate"

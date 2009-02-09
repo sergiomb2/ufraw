@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-25 19:00+0100\n"
+"POT-Creation-Date: 2009-02-09 06:45+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
@@ -994,6 +994,15 @@ msgstr "Увећање:"
 msgid "Zoom percentage"
 msgstr "Увећање у процентима"
 
+#, fuzzy
+msgid "Select a spot on the preview image to choose hue"
+msgstr ""
+"Изаберите тачку на прегледу слике на основи које се примењује равнотежа беле"
+
+#, fuzzy
+msgid "Reset adjustment"
+msgstr "Глобално подешавање контраста"
+
 msgid "Grayscale Mode:"
 msgstr "Режим сивих тонова:"
 
@@ -1269,6 +1278,10 @@ msgstr "Управљање бојама"
 
 msgid "Correct luminosity, saturation"
 msgstr "Исправка луминансе и засићености"
+
+#, fuzzy
+msgid "Lightness Adjustments"
+msgstr "Осветљеност"
 
 msgid "Crop and rotate"
 msgstr "Исецање и ротирање"

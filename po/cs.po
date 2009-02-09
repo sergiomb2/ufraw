@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-25 19:00+0100\n"
+"POT-Creation-Date: 2009-02-09 06:45+0100\n"
 "PO-Revision-Date: 2008-12-21 07:05+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -982,6 +982,14 @@ msgstr "Přiblížení:"
 msgid "Zoom percentage"
 msgstr "Procento přiblížení"
 
+#, fuzzy
+msgid "Select a spot on the preview image to choose hue"
+msgstr "Před nastavením bodového vyvážení bílé zvolte bod na snímku náhledu"
+
+#, fuzzy
+msgid "Reset adjustment"
+msgstr "Globální úprava kontrastu"
+
 msgid "Grayscale Mode:"
 msgstr "Režim šedé škály:"
 
@@ -1257,6 +1265,10 @@ msgstr "Správa barev"
 
 msgid "Correct luminosity, saturation"
 msgstr "Upravit jas, sytost"
+
+#, fuzzy
+msgid "Lightness Adjustments"
+msgstr "Světlost"
 
 msgid "Crop and rotate"
 msgstr "Ořez a otočení"
