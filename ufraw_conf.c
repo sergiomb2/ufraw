@@ -79,6 +79,8 @@ const conf_data conf_default = {
     "", NULL, /* darkframeFile, darkframe */
     -1, -1, -1, -1, /* Crop X1,Y1,X2,Y2 */
     0, /* rotationAngle */
+    { 0, 120, 240 }, /* lightness hues */
+    { 1, 1, 1 }, /* lightness adjustments */
     grayscale_none, /* grayscale mode */
     { 1.0, 1.0, 1.0 }, /* grayscale mixer */
     /* Save options */
@@ -649,6 +651,18 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	else c->intent[out_profile] = conf_find_name(temp, intentNames,
 		    conf_default.intent[out_profile]);
     }
+    if ( strcmp("LightnessHues", element) == 0 ) {
+        sscanf(temp, "%lf %lf %lf",
+	       &c->lightnessHue[0],
+	       &c->lightnessHue[1],
+	       &c->lightnessHue[2]);
+    }
+    if ( strcmp("LightnessAdjustments", element) == 0 ) {
+        sscanf(temp, "%lf %lf %lf",
+	       &c->lightnessAdjustment[0],
+	       &c->lightnessAdjustment[1],
+	       &c->lightnessAdjustment[2]);
+    }
     if ( strcmp("GrayscaleMode", element)==0 ) {
         c->grayscaleMode = (sscanf(temp, "%d", &i)==1)
 	  ? i
@@ -938,6 +952,26 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     if (c->saturation!=conf_default.saturation)
 	buf = uf_markup_buf(buf,
 		"<Saturation>%lf</Saturation>\n", c->saturation);
+    for (i = 0; i < adjustment_steps; ++i) {
+        if (fabs(c->lightnessHue[i] - conf_default.lightnessHue[i]) > 1.0) {
+	    buf = uf_markup_buf(buf, "<LightnessHues>");
+	    for (i = 0; i < adjustment_steps; ++i)
+	        buf = uf_markup_buf(buf, " %f" + (i==0),
+				    c->lightnessHue[i]);
+	    buf = uf_markup_buf(buf, "</LightnessHues>\n");
+	    break;
+	}
+    }
+    for (i = 0; i < adjustment_steps; ++i) {
+        if (fabs(c->lightnessAdjustment[i] - conf_default.lightnessAdjustment[i]) > 0.01) {
+	    buf = uf_markup_buf(buf, "<LightnessAdjustments>");
+	    for (i = 0; i < adjustment_steps; ++i)
+	        buf = uf_markup_buf(buf, " %f" + (i==0),
+				    c->lightnessAdjustment[i]);
+	    buf = uf_markup_buf(buf, "</LightnessAdjustments>\n");
+	    break;
+	}
+    }
     if (c->grayscaleMode!=conf_default.grayscaleMode)
         buf = uf_markup_buf(buf,
 		"<GrayscaleMode>%s</GrayscaleMode>\n",

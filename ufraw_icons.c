@@ -66,4 +66,5 @@ void ufraw_icons_init()
     load_icon(factory, vignetting_24, "vignetting");
     load_icon(factory, distortion_24, "distortion");
     load_icon(factory, geometry_24, "geometry");
+    load_icon(factory, hueadjust_24, "hueadjust");
 }

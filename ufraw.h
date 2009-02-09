@@ -32,6 +32,7 @@
 #define max_profiles 20
 #define max_path 200
 #define max_name 80
+#define adjustment_steps 3
 
 /* An impossible value for conf float values */
 #define NULLF -10000.0
@@ -101,8 +102,12 @@ typedef struct {
     void *luminosityProfile;
     void *TransferFunction[3];
     void *saturationProfile;
+    void *adjustmentProfile;
     GrayscaleMode grayscaleMode;
     double grayscaleMixer[3];
+    int adjustLightness;
+    double lightnessHue[adjustment_steps];
+    double lightnessAdjustment[adjustment_steps];
 } developer_data;
 
 typedef guint16 image_type[4];
@@ -174,6 +179,8 @@ typedef struct {
     struct ufraw_struct *darkframe;
     int CropX1, CropY1, CropX2, CropY2;
     double rotationAngle;
+    double lightnessHue[adjustment_steps];
+    double lightnessAdjustment[adjustment_steps];
     int grayscaleMode;
     double grayscaleMixer[3];
 
@@ -369,6 +376,10 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd);
 int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc);
 
 /* prototype for functions in ufraw_developer.c */
+// Convert linear RGB to CIE-LCh
+void uf_rgb_to_cielch(gint64 rgb[3], float lch[3]);
+// Convert CIE-LCh to linear RGB
+void uf_cielch_to_rgb(float lch[3], gint64 rgb[3]);
 developer_data *developer_init();
 void developer_destroy(developer_data *d);
 void developer_profile(developer_data *d, int type, profile_data *p);

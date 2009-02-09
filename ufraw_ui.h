@@ -96,6 +96,10 @@ typedef struct {
 #ifdef UFRAW_CONTRAST
     GtkAdjustment *ContrastAdjustment;
 #endif
+    GtkAdjustment *LightnessHueAdjustment[adjustment_steps];
+    GtkWidget *LightnessHueSelectButton[adjustment_steps];
+    GtkAdjustment *LightnessAdjustment[adjustment_steps];
+    GtkWidget *ResetLightnessAdjustmentButton[adjustment_steps];
     GtkAdjustment *CropX1Adjustment;
     GtkAdjustment *CropY1Adjustment;
     GtkAdjustment *CropX2Adjustment;
@@ -150,6 +154,7 @@ typedef struct {
     /* Since the event-box can be larger than the preview pixbuf we need: */
     gboolean PreviewButtonPressed, SpotDraw;
     int SpotX1, SpotY1, SpotX2, SpotY2;
+    double SpotHue;
     CursorType CropMotionType;
     int DrawnCropX1, DrawnCropX2, DrawnCropY1, DrawnCropY2;
     double shrink, height, width;
@@ -157,6 +162,7 @@ typedef struct {
     int PageNum;
     int PageNumSpot;
     int PageNumGray;
+    int PageNumLightness;
     int PageNumCrop;
     int HisMinHeight;
     /* Original aspect ratio (0) or actual aspect ratio */

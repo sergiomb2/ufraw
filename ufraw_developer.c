@@ -60,6 +60,7 @@ developer_data *developer_init()
     TransferFunction[0] = cmsAllocGamma(0x100);
     TransferFunction[1] = TransferFunction[2] = cmsBuildGamma(0x100, 1.0);
     d->saturationProfile = NULL;
+    d->adjustmentProfile = NULL;
     d->intent[out_profile] = -1;
     d->intent[display_profile] = -1;
     d->updateTransform = TRUE;
@@ -80,6 +81,7 @@ void developer_destroy(developer_data *d)
     cmsFreeGamma(d->TransferFunction[0]);
     cmsFreeGamma(d->TransferFunction[1]);
     cmsCloseProfile(d->saturationProfile);
+    cmsCloseProfile(d->adjustmentProfile);
     if (d->colorTransform!=NULL)
 	cmsDeleteTransform(d->colorTransform);
     g_free(d);
@@ -232,6 +234,69 @@ static cmsHPROFILE create_contrast_saturation_profile(double contrast,
     return hICC;
 }
 
+static int luminance_adjustment_sampler(WORD In[], WORD Out[], LPVOID Cargo)
+{
+    cmsCIELab Lab;
+    cmsCIELCh LCh;
+    const developer_data *d = Cargo;
+
+    cmsLabEncoded2Float(&Lab, In);
+    cmsLab2LCh(&LCh, &Lab);
+
+    const double hueWidth = 60.0;
+    double adj = 0.0;
+    int i;
+    for (i=0; i<adjustment_steps; i++) {
+	double deltaHue = LCh.h - d->lightnessHue[i];
+	if (deltaHue > 180.0) deltaHue -= 360.0;
+	if (deltaHue < -180.0) deltaHue += 360.0;
+	if (abs(deltaHue) > hueWidth)
+	    continue;
+	/* This assigns the scales on a nice curve. */
+	double scale = cos(deltaHue / hueWidth * (M_PI / 2) );
+	scale *= scale;
+	adj += (d->lightnessAdjustment[i] - 1) * scale;
+    }
+    adj = adj * LCh.C / max_colorfulness + 1;
+    LCh.L *= adj;
+
+    cmsLCh2Lab(&Lab, &LCh);
+    cmsFloat2LabEncoded(Out, &Lab);
+
+    return TRUE;
+}
+
+/* Based on lcms' cmsCreateBCHSWabstractProfile() */
+static cmsHPROFILE create_adjustment_profile(const developer_data *d)
+{
+    cmsHPROFILE hICC;
+    LPLUT Lut;
+
+    hICC = _cmsCreateProfilePlaceholder();
+    if (hICC==NULL) return NULL;// can't allocate
+
+    cmsSetDeviceClass(hICC, icSigAbstractClass);
+    cmsSetColorSpace(hICC, icSigLabData);
+    cmsSetPCS(hICC, icSigLabData);
+    cmsSetRenderingIntent(hICC, INTENT_PERCEPTUAL);
+
+    // Creates a LUT with 3D grid only
+    Lut = cmsAllocLUT();
+    cmsAlloc3DGrid(Lut, 33, 3, 3);
+    if (!cmsSample3DGrid(Lut, luminance_adjustment_sampler, (void*)d, 0)) {
+	// Shouldn't reach here
+	cmsFreeLUT(Lut);
+	cmsCloseProfile(hICC);
+	return NULL;
+    }
+    // Create tags
+    cmsAddTag(hICC, icSigMediaWhitePointTag, (LPVOID) cmsD50_XYZ());
+    cmsAddTag(hICC, icSigAToB0Tag, (LPVOID) Lut);
+    // LUT is already on virtual profile
+    cmsFreeLUT(Lut);
+    return hICC;
+}
+
 /* Find a for which (1-exp(-a x)/(1-exp(-a)) has derivative b at x=0 */
 /* In other words, solve a/(1-exp(-a))==b */
 static double findExpCoeff(double b)
@@ -269,22 +334,28 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
 	/* No need for proofing transformation. */
 	if ( strcmp(d->profileFile[in_profile],"")==0 &&
 	     strcmp(d->profileFile[targetProfile],"")==0 &&
-	     d->luminosityProfile==NULL && d->saturationProfile==NULL ) {
+	     d->luminosityProfile==NULL &&
+	     d->adjustmentProfile==NULL &&
+	     d->saturationProfile==NULL ) {
 	    /* No transformation at all. */
 	    d->colorTransform = NULL;
 #if defined(LCMS_VERSION) && LCMS_VERSION <= 113 /* Bypass a lcms 1.13 bug. */
-	} else if ( d->luminosityProfile==NULL && d->saturationProfile==NULL ) {
+	} else if ( d->luminosityProfile==NULL
+		    && d->adjustmentProfile==NULL
+		    && d->saturationProfile==NULL ) {
 	    d->colorTransform = cmsCreateTransform(
 		    d->profile[in_profile], TYPE_RGB_16,
 		    d->profile[targetProfile], TYPE_RGB_16,
 		    d->intent[out_profile], 0);
 #endif
 	} else {
-	    cmsHPROFILE prof[4];
+	    cmsHPROFILE prof[5];
 	    int i = 0;
 	    prof[i++] = d->profile[in_profile];
 	    if ( d->luminosityProfile!=NULL )
 		prof[i++] = d->luminosityProfile;
+	    if ( d->adjustmentProfile!=NULL )
+		prof[i++] = d->adjustmentProfile;
 	    if ( d->saturationProfile!=NULL )
 		prof[i++] = d->saturationProfile;
 	    prof[i++] = d->profile[targetProfile];
@@ -293,7 +364,9 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
 	}
     } else {
 	/* Create a proofing profile */
-	if ( d->luminosityProfile==NULL && d->saturationProfile==NULL ) {
+	if ( d->luminosityProfile==NULL
+	     && d->adjustmentProfile==NULL
+	     && d->saturationProfile==NULL ) {
 	    /* No intermediate profiles, we can use lcms proofing directly. */
 	    d->colorTransform = cmsCreateProofingTransform(
 		    d->profile[in_profile], TYPE_RGB_16,
@@ -305,11 +378,13 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
 	    /* Following code imitates the function
 	     * cmsCreateMultiprofileProofingTransform(),
 	     * which does not exist in lcms. */
-	    cmsHPROFILE prof[3];
+	    cmsHPROFILE prof[4];
 	    int i = 0;
 	    prof[i++] = d->profile[in_profile];
 	    if ( d->luminosityProfile!=NULL )
 		prof[i++] = d->luminosityProfile;
+	    if ( d->adjustmentProfile!=NULL )
+		prof[i++] = d->adjustmentProfile;
 	    if ( d->saturationProfile!=NULL )
 		prof[i++] = d->saturationProfile;
 	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
@@ -327,6 +402,26 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
 		    cmsFLAGS_SOFTPROOFING);
 	}
     }
+}
+
+static gboolean cmp_adjustments(const gdouble a[adjustment_steps],
+				const gdouble b[adjustment_steps])
+{
+    int i;
+    for (i = 0; i < adjustment_steps; ++i)
+	if (a[i] != b[i])
+	    return TRUE;
+    return FALSE;
+}
+
+static gboolean test_adjustments(const gdouble values[adjustment_steps],
+				 gdouble reference, gdouble threshold)
+{
+    int i;
+    for (i = 0; i < adjustment_steps; ++i)
+	if (fabs(values[i] - reference) >= threshold)
+	    return TRUE;
+    return FALSE;
 }
 
 void developer_prepare(developer_data *d, conf_data *conf,
@@ -495,6 +590,20 @@ void developer_prepare(developer_data *d, conf_data *conf,
 	}
 	d->updateTransform = TRUE;
     }
+    if (cmp_adjustments(d->lightnessHue, conf->lightnessHue) ||
+	cmp_adjustments(d->lightnessAdjustment, conf->lightnessAdjustment)) {
+	/* Adjustments have changed, need to update them. */
+	d->updateTransform = TRUE;
+	memcpy(d->lightnessHue, conf->lightnessHue,
+	       sizeof d->lightnessHue);
+	memcpy(d->lightnessAdjustment, conf->lightnessAdjustment,
+	       sizeof d->lightnessAdjustment);
+	cmsCloseProfile(d->adjustmentProfile);
+	d->adjustmentProfile = test_adjustments(d->lightnessAdjustment, 1.0, 0.01)
+	    ? create_adjustment_profile(d)
+	    : NULL;
+    }
+
     if ( conf->saturation!=d->saturation
 #ifdef UFRAW_CONTRAST
 	 || conf->contrast!=d->contrast
@@ -531,7 +640,8 @@ static const double rgb_xyz[3][3] = {			/* RGB from XYZ */
     { -0.969255, 1.87599, 0.0415559 },
     { 0.0556466, -0.204041, 1.05731 } };
 
-static void rgb_to_cielch(gint64 rgb[3], float lch[3])
+// Convert linear RGB to CIE-LCh
+void uf_rgb_to_cielch(gint64 rgb[3], float lch[3])
 {
     int c, cc, i;
     float r, xyz[3], lab[3];
@@ -562,7 +672,8 @@ static void rgb_to_cielch(gint64 rgb[3], float lch[3])
     lch[2] = atan2(lab[2], lab[1]);
 }
 
-static void cielch_to_rgb(float lch[3], gint64 rgb[3])
+// Convert CIE-LCh to linear RGB
+void uf_cielch_to_rgb(float lch[3], gint64 rgb[3])
 {
     int c, cc;
     float xyz[3], fx, fy, fz, xr, yr, zr, kappa, epsilon, tmpf, lab[3];
@@ -590,21 +701,36 @@ static void cielch_to_rgb(float lch[3], gint64 rgb[3])
     }
 }
 
-static void MaxMidMin(gint64 p[3], int *maxc, int *midc, int *minc)
+static void MaxMidMin(const gint64 p[3], int *maxc, int *midc, int *minc)
 {
-    if (p[0] > p[1] && p[0] > p[2]) {
-	*maxc = 0;
-	if (p[1] > p[2]) { *midc = 1; *minc = 2; }
-	else { *midc = 2; *minc = 1; }
-    } else if (p[1] > p[2]) {
-	*maxc = 1;
-	if (p[0] > p[2]) { *midc = 0; *minc = 2; }
-	else { *midc = 2; *minc = 0; }
-    } else {
-	*maxc = 2;
-	if (p[0] > p[1]) { *midc = 0; *minc = 1; }
-	else { *midc = 1; *minc = 0; }
+    gint64 a = p[0];
+    gint64 b = p[1];
+    gint64 c = p[2];
+    int max = 0;
+    int mid = 1;
+    int min = 2;
+
+    if (a < b) {
+	gint64 tmp = b;
+	b = a;
+	a = tmp;
+	max = 1;
+	mid = 0;
     }
+    if (b < c) {
+	b = c;
+	min = mid;
+	mid = 2;
+	if (a < b) {
+	    int tmp = max;
+	    max = mid;
+	    mid = tmp;
+	}
+    }
+
+    *maxc = max;
+    *midc = mid;
+    *minc = min;
 }
 
 inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
@@ -732,13 +858,13 @@ void develop_linear(guint16 in[4], guint16 out[3], developer_data *d)
 	}
 	if ( d->restoreDetails==restore_lch_details ) {
 	    float lch[3], clippedLch[3], unclippedLch[3];
-	    rgb_to_cielch(unclippedPix, unclippedLch);
-	    rgb_to_cielch(clippedPix, clippedLch);
+	    uf_rgb_to_cielch(unclippedPix, unclippedLch);
+	    uf_rgb_to_cielch(clippedPix, clippedLch);
 	    //lch[0] = clippedLch[0] + (unclippedLch[0]-clippedLch[0]) * x;
 	    lch[0] = unclippedLch[0];
 	    lch[1] = clippedLch[1];
 	    lch[2] = clippedLch[2];
-	    cielch_to_rgb(lch, tmppix);
+	    uf_cielch_to_rgb(lch, tmppix);
 	} else { /* restore_hsv_details */
 	    int maxc, midc, minc;
 	    MaxMidMin(unclippedPix, &maxc, &midc, &minc);

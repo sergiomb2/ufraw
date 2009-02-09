@@ -1258,6 +1258,14 @@ static gboolean render_spot(preview_data *data)
     if ( data->PageNum!=data->PageNumCrop )
 	draw_spot(data, TRUE);
 
+    // Calculate hue for future use
+    gint64 rgb64[3];
+    for (c=0; c<3; c++) rgb64[c] = linearChannels[c];
+    float lch[3];
+    uf_rgb_to_cielch(rgb64, lch);
+    data->SpotHue = lch[2] * 180 / M_PI;
+    if (data->SpotHue < 0.0) data->SpotHue += 360;
+
     return FALSE;
 }
 
@@ -1267,6 +1275,7 @@ static void close_spot(GtkWidget *widget, gpointer user_data)
     preview_data *data = get_preview_data(widget);
     draw_spot(data, FALSE);
     data->SpotX1 = -1;
+    data->SpotHue = -1.0;
     gtk_widget_hide(GTK_WIDGET(data->SpotTable));
 }
 
@@ -1289,6 +1298,35 @@ static void draw_spot(preview_data *data, gboolean draw)
     preview_draw_area(data, SpotX1, SpotY2, SpotX2-SpotX1+1, 1);
     preview_draw_area(data, SpotX1, SpotY1, 1, SpotY2-SpotY1+1);
     preview_draw_area(data, SpotX2, SpotY1, 1, SpotY2-SpotY1+1);
+}
+
+static void lch_to_color(float lch[3], GdkColor *color)
+{
+    gint64 rgb[3];
+    uf_cielch_to_rgb(lch, rgb);
+    color->red = pow((double)MIN(rgb[0], 0xFFFF)/0xFFFF, 0.45) * 0xFFFF;
+    color->green = pow((double)MIN(rgb[1], 0xFFFF)/0xFFFF, 0.45) * 0xFFFF;
+    color->blue = pow((double)MIN(rgb[2], 0xFFFF)/0xFFFF, 0.45) * 0xFFFF;
+}
+
+static void widget_set_hue(GtkWidget *widget, double hue)
+{
+    float lch[3];
+    GdkColor hueColor;
+    lch[1] = 181.019336; // max_colorfulness = sqrt(128*128+128*128)
+    lch[2] = hue * M_PI / 180;
+
+    lch[0] = 0.75 * 100.0; // max_luminance = 100
+    lch_to_color(lch, &hueColor);
+    gtk_widget_modify_bg(widget, GTK_STATE_NORMAL, &hueColor);
+
+    lch[0] = 1.0 * 100.0; // max_luminance = 100
+    lch_to_color(lch, &hueColor);
+    gtk_widget_modify_bg(widget, GTK_STATE_PRELIGHT, &hueColor);
+
+    lch[0] = 0.5 * 100.0; // max_luminance = 100
+    lch_to_color(lch, &hueColor);
+    gtk_widget_modify_bg(widget, GTK_STATE_ACTIVE, &hueColor);
 }
 
 static void update_shrink_ranges(preview_data *data);
@@ -1381,6 +1419,15 @@ static void update_scales(preview_data *data)
     for (i = 0; i < 3; ++i)
         gtk_adjustment_set_value(data->GrayscaleMixers[i],
 				 CFG->grayscaleMixer[i]);
+    for (i = 0; i < adjustment_steps; ++i) {
+	gtk_adjustment_set_value(data->LightnessHueAdjustment[i],
+	    CFG->lightnessHue[i]);
+	widget_set_hue(data->LightnessHueSelectButton[i], CFG->lightnessHue[i]);
+	gtk_adjustment_set_value(data->LightnessAdjustment[i],
+	    CFG->lightnessAdjustment[i]);
+	gtk_widget_set_sensitive(data->ResetLightnessAdjustmentButton[i],
+	    fabs(CFG->lightnessAdjustment[i] - 1.0) >= 0.01);
+    }
     gtk_widget_set_sensitive(GTK_WIDGET(data->ResetGrayscaleChannelMixerButton),
 	(CFG->grayscaleMixer[0] != conf_default.grayscaleMixer[0])
 	|| (CFG->grayscaleMixer[1] != conf_default.grayscaleMixer[1])
@@ -1476,6 +1523,20 @@ static void spot_wb_event(GtkWidget *widget, gpointer user_data)
     update_scales(data);
 }
 
+static void select_hue_event(GtkWidget *widget, gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    long i = (long)user_data;
+
+    if (data->FreezeDialog) return;
+    if (data->SpotHue < 0.0) return;
+
+    CFG->lightnessHue[i] = data->SpotHue;
+
+    preview_invalidate_layer (data, ufraw_develop_phase);
+    update_scales(data);
+}
+
 static void event_coordinate_rescale(gdouble *x, gdouble *y, preview_data *data)
 {
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
@@ -1516,6 +1577,7 @@ static gboolean preview_button_press_event(GtkWidget *event_box,
     if (event->button!=1) return FALSE;
     event_coordinate_rescale(&event->x, &event->y, data);
     if ( data->PageNum==data->PageNumSpot ||
+	 data->PageNum==data->PageNumLightness ||
 	 data->PageNum==data->PageNumGray ) {
 	data->PreviewButtonPressed = TRUE;
 	draw_spot(data, FALSE);
@@ -2374,6 +2436,7 @@ static void button_update(GtkWidget *button, gpointer user_data)
 {
     preview_data *data = get_preview_data(button);
     user_data = user_data;
+    int i;
 
     if (button==data->ResetWBButton) {
 	int c;
@@ -2448,6 +2511,12 @@ static void button_update(GtkWidget *button, gpointer user_data)
         CFG->grayscaleMixer[0] = conf_default.grayscaleMixer[0];
         CFG->grayscaleMixer[1] = conf_default.grayscaleMixer[1];
         CFG->grayscaleMixer[2] = conf_default.grayscaleMixer[2];
+    }
+    for (i = 0; i < adjustment_steps; ++i) {
+	if (button == data->ResetLightnessAdjustmentButton[i]) {
+	    CFG->lightnessAdjustment[i] = 1.0;
+	    break;
+	}
     }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
@@ -2701,6 +2770,7 @@ GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y, const char *label
     gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(w), GTK_UPDATE_IF_VALID);
     gtk_table_attach(table, w, x+5, x+7, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
     uf_widget_set_tooltip(w, tip);
+
     return adj;
 }
 
@@ -3470,6 +3540,7 @@ static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
 	    gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_EVENT_BOX);
 #ifdef HAVE_GTKIMAGEVIEW
     if ( page_num==data->PageNumSpot ||
+	 page_num==data->PageNumLightness ||
 	 page_num==data->PageNumGray ) {
 	gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), TRUE);
 	gdk_window_set_cursor(event_box->window, data->Cursor[spot_cursor]);
@@ -3970,6 +4041,51 @@ static void whitebalance_fill_interface(preview_data *data,
 #endif // !HAVE_GTKIMAGEVIEW
 
     /* End of White Balance setting page */
+}
+
+static void lightness_fill_interface(preview_data *data, GtkWidget *page)
+{
+    GtkTable *table;
+    long i;
+
+    /* Start of Lightness Adjustments page */
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+
+    for (i = 0; i < adjustment_steps; ++i) {
+        data->LightnessHueAdjustment[i] = adjustment_scale(
+		table, 0, 2*i, NULL,
+		CFG->lightnessHue[i], &CFG->lightnessHue[i],
+		0, 360, 1, 10, 0, NULL,
+		G_CALLBACK(adjustment_update));
+
+	// Hue select button:
+	data->LightnessHueSelectButton[i] = gtk_button_new();
+	gtk_container_add(GTK_CONTAINER(data->LightnessHueSelectButton[i]),
+		gtk_image_new_from_stock(GTK_STOCK_COLOR_PICKER,
+			GTK_ICON_SIZE_BUTTON));
+	gtk_table_attach(table, data->LightnessHueSelectButton[i],
+		7, 8, 2*i, 2*i+1, 0, 0, 0, 0);
+	uf_widget_set_tooltip(data->LightnessHueSelectButton[i],
+		_("Select a spot on the preview image to choose hue"));
+	g_signal_connect(G_OBJECT(data->LightnessHueSelectButton[i]), "clicked",
+		G_CALLBACK(select_hue_event), (gpointer)i);
+
+        data->LightnessAdjustment[i] = adjustment_scale(
+		table, 0, 2*i+1, NULL,
+		CFG->lightnessAdjustment[i], &CFG->lightnessAdjustment[i],
+		0, 2, 0.01, 0.10, 2, NULL,
+		G_CALLBACK(adjustment_update));
+	data->ResetLightnessAdjustmentButton[i] = gtk_button_new();
+	gtk_container_add(GTK_CONTAINER(data->ResetLightnessAdjustmentButton[i]),
+		gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+	gtk_table_attach(table, data->ResetLightnessAdjustmentButton[i],
+		7, 8, 2*i+1, 2*i+2, 0, 0, 0, 0);
+	uf_widget_set_tooltip(data->ResetLightnessAdjustmentButton[i],
+		_("Reset adjustment"));
+	g_signal_connect(G_OBJECT(data->ResetLightnessAdjustmentButton[i]),
+		"clicked", G_CALLBACK(button_update), NULL);
+    }
+    /* End of Lightness Adjustments page */
 }
 
 static void grayscale_fill_interface(preview_data *data,
@@ -4827,6 +4943,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     data->SpotX2 = -1;
     data->SpotY1 = -1;
     data->SpotY2 = -1;
+    data->SpotHue = -1.0;
     data->SpotDraw = FALSE;
     data->FreezeDialog = TRUE;
     data->DrawnCropX1 = 0;
@@ -4990,6 +5107,10 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     page = notebook_page_new(notebook, _("Correct luminosity, saturation"),
 	    "color-corrections");
     corrections_fill_interface(data, page, curveeditorHeight);
+
+    page = notebook_page_new(notebook, _("Lightness Adjustments"), "hueadjust");
+    data->PageNumLightness = gtk_notebook_page_num(notebook, page);
+    lightness_fill_interface(data, page);
 
     page = notebook_page_new(notebook, _("Crop and rotate"), "crop");
     data->PageNumCrop = gtk_notebook_page_num(notebook, page);

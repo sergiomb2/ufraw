@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.12 2008/10/21 03:00:47 udifuchs Exp $
+# $Id: Makefile.am,v 1.13 2009/02/09 05:03:29 udifuchs Exp $
 
 noinst_HEADERS = ufraw_icons.h
 icon_DATA = ufraw.png
@@ -14,14 +14,14 @@ UFRAW_ICONS = ufraw.png exposure-24.png film-24.png digital-24.png \
     flip-horiz-24.png flip-vert-24.png rotate-90-24.png rotate-270-24.png \
     lock-24.png exif-24.png crop-24.png rectify-24.png gimp-24.png \
     channel-blue-24.png channel-green-24.png channel-red-24.png \
-    lens-24.png tca-24.png vignetting-24.png geometry-24.png
+    lens-24.png tca-24.png vignetting-24.png geometry-24.png hueadjust-24.png
 
 EXTRA_DIST = $(UFRAW_ICONS) exposure.svg film.svg digital.svg \
     restore-lch.svg restore-hsv.svg interpolation.svg \
     white-balance.svg color-corrections.svg \
     icc-profile-output.svg icc-profile-display.svg curve.svg \
     lock.svg exif.svg crop.svg rectify.svg grayscale.svg \
-    lens.svg tca.svg vignetting.svg distortion.svg geometry.svg
+    lens.svg tca.svg vignetting.svg distortion.svg geometry.svg hueadjust.svg
 
 ufraw_icons.h: $(UFRAW_ICONS) Makefile.am
 	gdk-pixbuf-csource --build-list  ufraw_icon $(srcdir)/ufraw.png \
@@ -56,4 +56,5 @@ ufraw_icons.h: $(UFRAW_ICONS) Makefile.am
 		distortion_24 $(srcdir)/distortion-24.png \
 		vignetting_24 $(srcdir)/vignetting-24.png \
 		geometry_24 $(srcdir)/geometry-24.png \
+		hueadjust_24 $(srcdir)/hueadjust-24.png \
 		> $@ || { rm -f $@; exit 1; }
