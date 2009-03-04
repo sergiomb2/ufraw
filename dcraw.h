@@ -54,7 +54,7 @@ unsigned tile_width, tile_length, gpsdata[32], load_flags;
 ushort raw_height, raw_width, height, width, top_margin, left_margin;
 ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
 int flip, tiff_flip, colors;
-double pixel_aspect, aber[4];
+double pixel_aspect, aber[4], gamm[5];
 ushort (*image)[4], white[8][8], curve[0x4001], cr2_slice[3], sraw_mul[4];
 float bright, user_mul[4], threshold;
 int half_size, four_color_rgb, document_mode, highlight;
