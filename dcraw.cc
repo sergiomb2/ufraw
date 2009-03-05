@@ -1058,7 +1058,7 @@ void CLASS canon_sraw_load_raw()
       }
     }
   }
-  for (cp=model2; *cp && !isdigit(*cp); cp++);
+  for (cp=model2; *cp && !isdigit(*cp); cp++) {};
   sscanf (cp, "%d.%d.%d", v, v+1, v+2);
   ver = (v[0]*1000 + v[1])*1000 + v[2];
   hue = (jh.sraw+1) << 2;
