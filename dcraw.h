@@ -145,6 +145,7 @@ void canon_sraw_load_raw();
 void adobe_copy_pixel (int row, int col, ushort **rp);
 void adobe_dng_load_raw_lj();
 void adobe_dng_load_raw_nc();
+void pentax_tree();
 void pentax_k10_load_raw();
 void nikon_compressed_load_raw();
 int nikon_is_compressed();
