@@ -1,11 +1,16 @@
-# $Id: Makefile.am,v 1.48 2008/10/10 08:05:57 udifuchs Exp $
+# $Id: Makefile.am,v 1.49 2009/03/12 05:51:16 udifuchs Exp $
 
 SUBDIRS=po icons
 
 if MAKE_EXTRAS
-  bin_PROGRAMS = ufraw ufraw-batch dcraw nikon-curve
+  bin_PROGRAMS = ufraw-batch dcraw nikon-curve
 else
-  bin_PROGRAMS = ufraw ufraw-batch
+  bin_PROGRAMS = ufraw-batch
+endif
+
+if MAKE_GTK
+  gtk_PROGRAMS = ufraw
+  gtkdir = $(bindir)
 endif
 
 if MAKE_GIMP
@@ -52,7 +57,8 @@ AM_CPPFLAGS = $(UFRAW_CPPFLAGS) -DDCRAW_NOMAIN \
 LDADD = libufraw.a $(UFRAW_ICON) $(UFRAW_LDADD)
 LINK = $(CXXLINK)
 
-libufraw_a_SOURCES = \
+if MAKE_GTK
+  libufraw_a_SOURCES = \
     dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
     ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw_message.c ufraw.h \
     wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
@@ -62,13 +68,24 @@ libufraw_a_SOURCES = \
     ufraw_chooser.c ufraw_icons.c icons/ufraw_icons.h \
     curveeditor_widget.c curveeditor_widget.h \
     ufraw_lens_ui.c ufraw_ui.h
+else
+ libufraw_a_SOURCES = \
+    dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
+    ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw_message.c ufraw.h \
+    wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
+    nikon_curve.c nikon_curve.h \
+    uf_glib.h ufraw_exiv2.cc iccjpeg.c iccjpeg.h
+endif
 
-ufraw_SOURCES = ufraw.c
-ufraw_LDADD = $(LDADD) $(GTK_LIBS)
-
-ufraw_batch_SOURCES = ufraw-batch.c
 ufraw_batch_LINK = $(CXXLINK) @CONSOLE@
 
+if MAKE_GTK
+	ufraw_SOURCES = ufraw.c
+  	ufraw_CPPFLAGS = $(UFRAW_CPPFLAGS)
+	ufraw_LDADD = $(LDADD) $(GTK_LIBS)
+endif
+
+ufraw_batch_SOURCES = ufraw-batch.c
 if MAKE_GIMP
   ufraw_gimp_SOURCES = ufraw-gimp.c
   ufraw_gimp_CPPFLAGS = $(AM_CPPFLAGS) $(GIMP_CFLAGS) 

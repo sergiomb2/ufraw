@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.131 2009/02/17 14:35:08 nkbj Exp $
+dnl $Id: configure.ac,v 1.132 2009/03/12 05:51:14 udifuchs Exp $
 AC_INIT(UFRaw, 0.15)
 AC_PREREQ(2.57)
 
@@ -104,112 +104,112 @@ AC_ARG_WITH(dosprefix,
   [ with_dosprefix=$withval],
   [ with_dosprefix=NONE ] )
 
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.6)
 PKG_CHECK_MODULES(GLIB, glib-2.0)
 PKG_CHECK_MODULES(LCMS, lcms)
 
-AC_ARG_WITH([gtkimageview],
-  [AS_HELP_STRING([--with-gtkimageview],
-  [use gtkimageview for previews @<:@default=check@:>@])],
+AC_ARG_WITH([gtk],
+  [AS_HELP_STRING([--with-gtk],
+  [build the GTK GUI @<:@default=check@:>@])],
   [],
-  [with_gtkimageview=check])
+  [with_gtk=check])
 
-have_gtkimageview=no
-AS_IF([test "x$with_gtkimageview" != xno],
-  [PKG_CHECK_MODULES(GTKIMAGEVIEW, gtkimageview >= 1.3,
-    [ have_gtkimageview=yes
-      GTK_LIBS=$GTKIMAGEVIEW_LIBS
-      GTK_CFLAGS=$GTKIMAGEVIEW_CFLAGS
-      AC_DEFINE(HAVE_GTKIMAGEVIEW, 1, have gtk image view) ],
-    [ have_gtkimageview=no
-      if test "x$with_gtkimageview" != xcheck; then
+have_gtk=no
+AS_IF([test "x$with_gtk" != xno],
+  [PKG_CHECK_MODULES(GTKBASE, gtk+-2.0 >= 2.6,
+    [ have_gtk=yes ],
+    [ have_gtk=no
+      if test "x$with_gtk" != xcheck; then
         AC_MSG_FAILURE(
-          [--with-gtkimageview was given, but test for gtkimageview failed])
+          [--with-gtk was given, but test for gtk failed])
       fi
     ] ) ] )
 
-AC_SUBST(GTK_LIBS)
-if test "$have_gtkimageview" = "yes"; then
+have_gimp=no
+have_cinepaint=no
+if test "$have_gtk" = "yes"; then
+  PKG_CHECK_MODULES(GTK, gtkimageview >= 1.3)
+  AC_DEFINE(HAVE_GTKIMAGEVIEW, 1, have gtk image view)
+
   PKG_CHECK_MODULES(gtk_image_view_damage_pixels, gtkimageview > 1.5.0,
     [ AC_DEFINE_UNQUOTED(GTK_IMAGE_VIEW_DAMAGE_PIXELS, 1, temporary) ],
     [ AC_DEFINE_UNQUOTED(GTK_IMAGE_VIEW_DAMAGE_PIXELS, 0, temporary) ])
-fi
 
 # It is not clear if we should install the GIMP and Cinepaint plugins
 # in the corresponding place in our prefix, or in GIMP's or
 # Cinepaint's lib dir in their prefixes.  Currently, we install the
 # plugin in our prefix.  (If the gimp/cinepaint prefix and the
 # configured ufraw prefix are the same, this doesn't matter.)
-pkg_prefix="$PKG_CONFIG"
-test $prefix = NONE || pkg_prefix="$pkg_prefix --define-variable=prefix=$prefix"
-test $exec_prefix = NONE || pkg_prefix="$pkg_prefix --define-variable=exec_prefix=$exec_prefix"
+  pkg_prefix="$PKG_CONFIG"
+  test $prefix = NONE || pkg_prefix="$pkg_prefix --define-variable=prefix=$prefix"
+  test $exec_prefix = NONE || pkg_prefix="$pkg_prefix --define-variable=exec_prefix=$exec_prefix"
 
-AC_ARG_WITH([gimp],
-  [AS_HELP_STRING([--with-gimp],
-  [build gimp plugin @<:@default=check@:>@])],
-  [],
-  [with_gimp=check])
+  AC_ARG_WITH([gimp],
+    [AS_HELP_STRING([--with-gimp],
+    [build gimp plugin @<:@default=check@:>@])],
+    [],
+    [with_gimp=check])
 
-have_gimp=no
-AS_IF([test "x$with_gimp" != xno],
-  [PKG_CHECK_MODULES(GIMP, gimpui-2.0,
-    [ have_gimp=yes
-      GIMP_LIBDIR=`$pkg_prefix --variable=gimplibdir gimp-2.0` ],
-    [ have_gimp=no
-      GIMP_LIBDIR=
-      if test "x$with_gimp" != xcheck; then
-        AC_MSG_FAILURE(
-          [--with-gimp was given, but test for gimp failed])
-      fi
-    ] ) ] )
+  AS_IF([test "x$with_gimp" != xno],
+    [PKG_CHECK_MODULES(GIMP, gimpui-2.0,
+      [ have_gimp=yes
+        GIMP_LIBDIR=`$pkg_prefix --variable=gimplibdir gimp-2.0` ],
+      [ have_gimp=no
+        GIMP_LIBDIR=
+        if test "x$with_gimp" != xcheck; then
+          AC_MSG_FAILURE(
+            [--with-gimp was given, but test for gimp failed])
+        fi
+      ] ) ] )
+  if test "$have_gimp" = "yes"; then
+    PKG_CHECK_MODULES(GIMP_2_6, gimpui-2.0 >= 2.6.0,
+      [ AC_DEFINE_UNQUOTED(HAVE_GIMP_2_6, 1, have Gimp 2.6 or later) ],
+      [ AC_DEFINE_UNQUOTED(HAVE_GIMP_2_6, 0, have Gimp 2.6 or later) ])
+  fi
+
+  AC_ARG_WITH([cinepaint],
+    [AS_HELP_STRING([--with-cinepaint],
+    [build cinepaint plugin @<:@default=check@:>@])],
+    [],
+    [with_cinepaint=check])
+
+  AS_IF([test "x$with_cinepaint" != xno],
+    [PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.22,
+      [ have_cinepaint=yes
+        CINEPAINT_LIBDIR=`$pkg_prefix --variable=libdir cinepaint-gtk`
+        CINEPAINT_PROGRAMPLUGINDIR=`$pkg_prefix --variable=programplugindir cinepaint-gtk` ],
+      [ have_cinepaint=no
+        CINEPAINT_LIBDIR=
+        CINEPAINT_PROGRAMPLUGINDIR=
+        if test "x$with_cinepaint" != xcheck; then
+          AC_MSG_FAILURE(
+            [--with-cinepaint was given, but test for cinepaint failed])
+        fi
+      ] ) ] )
+
+  # Disable deprecated functions on tested versions of GTK
+  # unless using an old gimp-dev package.
+  if $PKG_CONFIG --atleast-version=2.2 gimpui-2.0; then
+    if $PKG_CONFIG --max-version=2.14.99 gtk+-2.0; then
+      AC_DEFINE(G_DISABLE_DEPRECATED, [], disable deprecated glib features)
+      AC_DEFINE(GDK_DISABLE_DEPRECATED, [], disable deprecated gdk features)
+      AC_DEFINE(GTK_DISABLE_DEPRECATED, [], disable deprecated gtk+ features)
+      AC_DEFINE(GTK_DISABLE_SINGLE_INCLUDES, [], disable deprecated gtk headers)
+      AC_DEFINE(GDK_PIXBUF_DISABLE_SINGLE_INCLUDES, [], disable deprecated gdk headers)
+    fi
+  fi
+fi
+AM_CONDITIONAL(MAKE_GTK, test $have_gtk = yes)
+AC_SUBST(GTK_LIBS)
 
 AM_CONDITIONAL(MAKE_GIMP, test $have_gimp = yes)
 AC_SUBST(GIMP_CFLAGS)
 AC_SUBST(GIMP_LIBS)
 AC_SUBST(GIMP_LIBDIR)
-if test "$have_gimp" = "yes"; then
-  PKG_CHECK_MODULES(GIMP_2_6, gimpui-2.0 >= 2.6.0,
-    [ AC_DEFINE_UNQUOTED(HAVE_GIMP_2_6, 1, have Gimp 2.6 or later) ],
-    [ AC_DEFINE_UNQUOTED(HAVE_GIMP_2_6, 0, have Gimp 2.6 or later) ])
-fi
-
-AC_ARG_WITH([cinepaint],
-  [AS_HELP_STRING([--with-cinepaint],
-  [build cinepaint plugin @<:@default=check@:>@])],
-  [],
-  [with_cinepaint=check])
-
-have_cinepaint=no
-AS_IF([test "x$with_cinepaint" != xno],
-  [PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.22,
-    [ have_cinepaint=yes
-      CINEPAINT_LIBDIR=`$pkg_prefix --variable=libdir cinepaint-gtk`
-      CINEPAINT_PROGRAMPLUGINDIR=`$pkg_prefix --variable=programplugindir cinepaint-gtk` ],
-    [ have_cinepaint=no
-      CINEPAINT_LIBDIR=
-      CINEPAINT_PROGRAMPLUGINDIR=
-      if test "x$with_cinepaint" != xcheck; then
-        AC_MSG_FAILURE(
-          [--with-cinepaint was given, but test for cinepaint failed])
-      fi
-    ] ) ] )
 
 AM_CONDITIONAL(MAKE_CINEPAINT, test $have_cinepaint = yes)
 AC_SUBST(CINEPAINT_CFLAGS)
 AC_SUBST(CINEPAINT_LIBS)
 AC_SUBST(CINEPAINT_PROGRAMPLUGINDIR)
-
-# Disable deprecated functions on tested versions of GTK
-# unless using an old gimp-dev package.
-if $PKG_CONFIG --atleast-version=2.2 gimpui-2.0; then
-  if $PKG_CONFIG --max-version=2.14.99 gtk+-2.0; then
-    AC_DEFINE(G_DISABLE_DEPRECATED, [], disable deprecated glib features)
-    AC_DEFINE(GDK_DISABLE_DEPRECATED, [], disable deprecated gdk features)
-    AC_DEFINE(GTK_DISABLE_DEPRECATED, [], disable deprecated gtk+ features)
-    AC_DEFINE(GTK_DISABLE_SINGLE_INCLUDES, [], disable deprecated gtk headers)
-    AC_DEFINE(GDK_PIXBUF_DISABLE_SINGLE_INCLUDES, [], disable deprecated gdk headers)
-  fi
-fi
 
 # Ensure that getopt_long is available.  It is included in GNU libc and
 # in at least most BSD libcs.  If not found, search for it in libgnugetopt.
@@ -295,7 +295,7 @@ AS_IF([test "x$with_lensfun" != xno],
 
 # UFRAW_CPPFLAGS is added to the preprocessor flags AM_CPPFLAGS,
 # affecting also the C and C++ compilers.
-UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS $LIBPNG_CFLAGS"
+UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS $LIBPNG_CFLAGS"
 AC_SUBST(UFRAW_CPPFLAGS)
 # UFRAW_LDADD is added to the linker flags LDADD.
 UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS $LIBPNG_LIBS $CARBON_LIBS"
@@ -382,6 +382,7 @@ AC_CONFIG_FILES(ufraw-setup.iss)
 AC_OUTPUT
 
 AC_MSG_NOTICE(====================== summary =====================)
+AC_MSG_NOTICE(build GTK GUI: $have_gtk)
 AC_MSG_NOTICE(build GIMP plug-in: $have_gimp)
 AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint)
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
@@ -391,5 +392,4 @@ AC_MSG_NOTICE(FITS support: $have_fits)
 AC_MSG_NOTICE(TIFF support: $have_tiff)
 AC_MSG_NOTICE(gzip compressed raw support: $have_zlib)
 AC_MSG_NOTICE(bzip2 compressed raw support: $have_libbz2)
-AC_MSG_NOTICE(Scrolling in preview using GtkImageView: $have_gtkimageview)
 AC_MSG_NOTICE(Lens defects correction via lensfun: $have_lensfun)
