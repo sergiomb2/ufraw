@@ -222,7 +222,7 @@ int dcraw_load_raw(dcraw_data *h)
     d->ifpSize = ftell(d->ifp);
     fseek(d->ifp, d->data_offset, SEEK_SET);
     (d->*d->load_raw)();
-    if (d->data_error) lastStatus = DCRAW_ERROR;
+    if (d->data_error) d->lastStatus = DCRAW_ERROR;
     if (d->zero_is_bad) d->remove_zeroes();
     d->bad_pixels(NULL);
     if (d->is_foveon) {
