@@ -2697,7 +2697,10 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
 	    ufraw_set_wb(data->UF);
     }
     else if (valuep==&CFG->exposure)
+    {
         CFG->autoExposure = FALSE;
+        if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
+    }
     else if (valuep==&CFG->Zoom)
     {
 	CFG->Scale = 0;
@@ -2707,10 +2710,8 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
         preview_invalidate_layer (data, ufraw_denoise_phase);
     else
     {
-        if (CFG->autoExposure==enabled_state)
-            CFG->autoExposure = apply_state;
-        if (CFG->autoBlack==enabled_state)
-            CFG->autoBlack = apply_state;
+        if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
+        if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     }
 
     int croppedWidth = CFG->CropX2 - CFG->CropX1;
