@@ -1222,6 +1222,10 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->autoBlack = src->autoBlack;
     dst->restoreDetails = src->restoreDetails;
     dst->clipHighlights = src->clipHighlights;
+    for (i=0; i<adjustment_steps; i++) {
+	dst->lightnessHue[i] = src->lightnessHue[i];
+	dst->lightnessAdjustment[i] = src->lightnessAdjustment[i];
+    }
     dst->grayscaleMode = src->grayscaleMode;
     memcpy(dst->grayscaleMixer, src->grayscaleMixer,
 	   sizeof dst->grayscaleMixer);
