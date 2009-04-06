@@ -1,4 +1,4 @@
-$Id: TODO,v 1.30 2008/07/25 13:12:49 lexort Exp $
+$Id: TODO,v 1.31 2009/04/06 12:32:34 lexort Exp $
 
 These items are not ordered or prioritized, but are roughly grouped by
 kind of change.
@@ -43,6 +43,10 @@ For the future
   adjustments for a batch of photos.
 
 * Automatic profile selection based on camera model and serial#.
+
+* Understand why the default gamma/linearity values are pleasing,
+  despite them being different from the sRGB standard.  Resolve those
+  issues, and then link gamma/linearity to profile selection.
 
 * Understand differences between ufraw with defaults and in-camera
   with defaults.  Document them, or fix them as bugs.  In particular,
