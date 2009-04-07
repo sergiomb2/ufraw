@@ -1,4 +1,4 @@
-$Id: TODO,v 1.31 2009/04/06 12:32:34 lexort Exp $
+$Id: TODO,v 1.32 2009/04/07 23:34:28 lexort Exp $
 
 These items are not ordered or prioritized, but are roughly grouped by
 kind of change.
@@ -44,6 +44,8 @@ For the future
 
 * Automatic profile selection based on camera model and serial#.
 
+* Create or obtain an input profile which uses the sRGB primaries but
+  is linear.
 * Understand why the default gamma/linearity values are pleasing,
   despite them being different from the sRGB standard.  Resolve those
   issues, and then link gamma/linearity to profile selection.
