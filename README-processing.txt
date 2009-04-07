@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.17 2008/05/12 18:48:27 lexort Exp $
+$Id: README-processing.txt,v 1.18 2009/04/07 01:02:13 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -59,12 +59,13 @@ dcraw:
 
 http://www.guillermoluijk.com/tutorial/dcraw/index_en.htm
 
-
 http://www.rawtherapee.com/data/RT-Internal-Workflow_2.3.pdf
 
 === processing issues
 
 http://www.4p8.com/eric.brasseur/gamma.html
+
+http://www.21stcenturyshoebox.com/essays/color_reproduction.html
 
 == Reading Raw files
 
