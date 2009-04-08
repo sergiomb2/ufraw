@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.18 2009/04/07 01:02:13 lexort Exp $
+$Id: README-processing.txt,v 1.19 2009/04/08 22:21:49 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -60,6 +60,8 @@ dcraw:
 http://www.guillermoluijk.com/tutorial/dcraw/index_en.htm
 
 http://www.rawtherapee.com/data/RT-Internal-Workflow_2.3.pdf
+
+http://dlraw.sourceforge.net/Processing.shtml
 
 === processing issues
 
