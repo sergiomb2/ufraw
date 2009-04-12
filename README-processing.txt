@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.22 2009/04/12 11:49:09 lexort Exp $
+$Id: README-processing.txt,v 1.23 2009/04/12 12:17:16 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -255,9 +255,34 @@ link it to the sRGB profile to get a combination profile to go from
 This is blocked until the image quality issues are resolved because
 currently it would be a functional step backwards.
 
-== TODO
+=== Highlight processing
 
-input profiles
+Highlight processing has two fundamentally different operations.
+
+One is guessing at color when one of the sensor channels has
+saturated.  In this case the color information is lost, and all that
+is known for certain is that the region is very bright and in some
+subset of the color space.
+
+Another operation is mapping input levels which are within the sensor
+range and thus known to representable values in the output space.
+
+gdt thinks that both of these operations should be independent of EV
+compensation.
+
+Robert Krawitz has posted an image which results in incorrect colors
+with the color matrix enabled:
+
+  ftp://66.92.65.9/pub/crw_3888.crw
+
+It that the matrix operations are somehow interfering with color
+recovery in the sensor saturation case.
+
+TODO: Explain whether ufraw does color recovery on pixels with sensor
+values that are saturated, or something else, and why the scheme used
+will get a reasonable outcome.
+
+=== TODO for processing pipeline
 
 working color space
 
