@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.19 2009/04/08 22:21:49 lexort Exp $
+$Id: README-processing.txt,v 1.20 2009/04/12 01:36:06 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -209,6 +209,21 @@ sRGB, then there is a single correct way to do this, described in the
 sRGB specification.  Are we doing that?  Are we doing someting else?
 Why would one set different  values?  If this transform is used for
 another purpsose, should that purpose be more explicit?
+
+==== Role of gamma
+
+See this thread for a summary:
+
+http://sourceforge.net/mailarchive/message.php?msg_name=481D7313.10009%40telenet.be
+
+on 2009-04-11, Martin Ling posted to ufraw-devel and hypothesized (or
+pointed our his earlier hypothes) that unpleasing fogginess when the
+objectively correct gamma processing is done is due to fixed-point
+quantization errors in lcms.
+
+Probably ufraw should use a linear-encoded connection space and avoid
+most of this.
+
 == TODO
 
 input profiles
