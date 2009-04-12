@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.20 2009/04/12 01:36:06 lexort Exp $
+$Id: README-processing.txt,v 1.21 2009/04/12 01:38:48 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -210,7 +210,7 @@ sRGB specification.  Are we doing that?  Are we doing someting else?
 Why would one set different  values?  If this transform is used for
 another purpsose, should that purpose be more explicit?
 
-==== Role of gamma
+==== Role of gamma and color mmnagement accuracy
 
 See this thread for a summary:
 
@@ -223,6 +223,11 @@ quantization errors in lcms.
 
 Probably ufraw should use a linear-encoded connection space and avoid
 most of this.
+
+Argyll CMS uses LUTs that intend to be equally spaced perceptually and
+linear encodings break this assumption:
+
+http://www.freelists.org/post/argyllcms/icclink-G-and-source-gamuts-profiles,5
 
 == TODO
 
