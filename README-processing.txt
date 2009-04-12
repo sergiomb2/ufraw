@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.21 2009/04/12 01:38:48 lexort Exp $
+$Id: README-processing.txt,v 1.22 2009/04/12 11:49:09 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -108,11 +108,33 @@ TODO: discuss Nikon's Capture NX in light of the above.
 
 == Processing Pipeline
 
+=== Camera Tone curves
+
+==== Nikon
+
+Udi wrote to the list in 2007:
+
+The Nikon curve tag contains two curves. One is a set of points that
+need to be interpolated, this is what you are talking about. The other
+is a table mapping the 4096 CCD values to a number between 0 and 255,
+this is what I am talking about. If the first curve is the default
+linear curve, the second curve will contain a gamma curve which is
+approximately like UFRaw's Gamma=0.45, Linearity=0.10 curve.
+
+Then there is a third relevant curve, which is relevant when you want
+to use the Nikon ICC profiles. These profiles assume that their input
+is not the linear CCD input, but the CCD with a Gamma=0.45,
+Linearity=0.00 applied to it. My guess is that Nikon did it so that
+they could do all the CMS calculations in 8 bits. This should be
+mostly useful for the in camera manipulations which are limited by the
+camera's hardware.
+
 === Input color processing
 
 ufraw, via dcraw, supports two methods of input color processing: ICC
 profiles and color matrices.  These two methods solve the same
-problem, and it is not sensible to use both of them at once.
+problem, and it is not sensible to use both of them at once.  (The UI
+no longer allows mixing them.)
 
 Any input color processing method is intrinsically for a particular
 illuminant, as cameras process color stimuli (light) rather than
@@ -140,8 +162,8 @@ http://lprof.sourceforge.net/help/ufraw.html
 ==== Color matrices
 
 ufraw can use a "color matrix", which are 3x3 matrices that transform
-from the camera device colorspace to XYZ.
-See dcraw.cc:adobe_coeff and dcraw.cc:cam_xyz_coeff.
+from the camera device colorspace to XYZ, as an alternative to an ICC
+input profile.  See dcraw.cc:adobe_coeff and dcraw.cc:cam_xyz_coeff.
 
 The color matrix approach assumes that the camera sensor is perfectly
 linear.  CCDs are intrinsically quite linear, so this is a reasonable
@@ -156,59 +178,43 @@ conditions.
 This white balance is an approximation and assumes that one can
 decompose the camera's response into an input profile and a white
 balance, rather than producing an input profile for every illuminant.
+Surely this is not quite true but we are neglecting the errors.
 
 === Gamma
 
 Gamma processing is done to convert from the linear data present in
-the RAW files to a gamma-encoded colorspace.  The exact curve that is
-applied can be controlled by the "gamma" and "linearity" options.
+the RAW files to a gamma-encoded colorspace.  Ufraw supports gamma
+encoding with a  linear part, generalized from the sRGB rules.
+Precisely
 
-The curve is
-
-c * x              if x < linearity
-(a * x + b) ^ g    if x >= linearity
+  c * x              if x < linearity
+  (a * x + b) ^ g    if x >= linearity
 
 where "x" is the input value in the [0,1] range and
-g = gamma * (1 - linearity)/ (1 - gamma * linearity)
-a = 1 / (1 + linearity * (g - 1))
-b = linearity * (g - 1) * a
-c = ((a * linearity + b)^g)/linearity
 
-The default values are gamma = 0.45 (1/2.2) and linearity = 0.10.
+  g = gamma * (1 - linearity)/ (1 - gamma * linearity)
+  a = 1 / (1 + linearity * (g - 1))
+  b = linearity * (g - 1) * a
+  c = ((a * linearity + b)^g)/linearity
 
-The standard curve (why it is not used?) is
+The default values depend on the input profile.  For a color matrix,
+or no profile, the defaults are gamma = 0.45 (1/2.2) and linearity =
+0.10.  For profiles, the defaults appear (TODO) to come from the
+profile.
 
-if not sRGB:
-  x ^ gamma
-else
+The gamma encoding specificed by sRGB can be specified by gamma 0.417
+(1/2.4) and linearity 0.0031 (with an implicit scaling to 255):
+
   12.92 * x                    if x <= 0.0031308
   1.055 * x ^ (1/2.4) - 0.055  if x >  0.0031308
 
-In the case we are using dcraw matrices, it might be better to use its gamma curve:
-r <= 0.018 ? r*4.5 : pow(r,0.45)*1.099-0.099 );
-
-probably the best way to do this is to use lcms to do all of the color
-space match. Both the matrix and the gamma. It is not practical to
-store a lot of small icc profiles, but they can be created at run
-time.
-
-The interface could then just provide a drop down menu for the input
-profile where one of the options is builtin. Note the sRGB would never
-be an option here. No camera produces images in sRGB.
-
-The handling for the "builtin" profile would be:
-1) find the RGB -> XYZ table provided by dcraw
-2) use this table and the above dcraw gamma curve to create a temp icc profile.
-3) use this icc profile as the input profile
-
-This is apparently intended to convert from a linear representation to
-the sRGB gamma represenation.  TODO: confirm.
-
-TODO: Explain why this step makes sense.  If we are converting to
-sRGB, then there is a single correct way to do this, described in the
-sRGB specification.  Are we doing that?  Are we doing someting else?
-Why would one set different  values?  If this transform is used for
-another purpsose, should that purpose be more explicit?
+dcraw uses a different gamma encoding and primaries following ITU
+Recommendation BT.709 because dcraw generates PPM files.  However, the
+PPM man page notes that a common variation is to use the sRGB
+colorspace.  (Probably those concerned at this level would use tiff,
+so we will treat the precise details of ppm as unimportant.)
+  r <= 0.018 ? r*4.5 : pow(r,0.45)*1.099-0.099 );
+  http://netpbm.sourceforge.net/doc/ppm.html
 
 ==== Role of gamma and color mmnagement accuracy
 
@@ -222,12 +228,32 @@ objectively correct gamma processing is done is due to fixed-point
 quantization errors in lcms.
 
 Probably ufraw should use a linear-encoded connection space and avoid
-most of this.
+most of this, but that's a separate issue.
 
 Argyll CMS uses LUTs that intend to be equally spaced perceptually and
 linear encodings break this assumption:
 
 http://www.freelists.org/post/argyllcms/icclink-G-and-source-gamuts-profiles,5
+
+==== Way Forward
+
+There has been ongoing discussion on ufraw-devel about the validity of
+using a gamma encoding different from the sRGB specification and then
+assuming the pixels are in sRGB.  It is generally agreed that this is
+not strictly correct, but that images produced this way are more
+pleasing than images with the ostensibly correct values.  Martin Ling
+has hypothesized that the 0.45/0.10 encoding compensates for
+quantization noise in fixed-point lcms code.
+
+As part of the discussion, a goal of some is to use lcms to apply the
+input profile mapping even in the case of Color Matrices, and to
+remove the gamma controls entirely.  The basic idea is to use the
+RGB->XYZ matrix to create a profile from camera space to XYZ and then
+link it to the sRGB profile to get a combination profile to go from
+(linear) camera space to sRGB with the standard encoding.
+
+This is blocked until the image quality issues are resolved because
+currently it would be a functional step backwards.
 
 == TODO
 
