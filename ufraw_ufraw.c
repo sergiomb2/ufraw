@@ -936,33 +936,6 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
     final.height = uf->image.height;
     dcraw_data *dark = uf->conf->darkframe ? uf->conf->darkframe->raw : NULL;
 
-#ifdef HAVE_LENSFUN
-    if (lensfix && uf->conf->camera && uf->conf->lens)
-    {
-        lfModifier *modifier = lensfix ? lf_modifier_new (
-            uf->conf->lens, uf->conf->camera->CropFactor, final.width, final.height) : NULL;
-
-        if (modifier)
-        {
-            float real_scale = pow (2.0, uf->conf->lens_scale);
-            const int modflags = LF_MODIFY_TCA | LF_MODIFY_VIGNETTING |
-                LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE;
-
-            int finmodflags = lf_modifier_initialize (
-                modifier, uf->conf->lens, LF_PF_U16,
-                uf->conf->focal_len, uf->conf->aperture,
-                uf->conf->subject_distance, real_scale,
-                uf->conf->cur_lens_type, modflags, FALSE);
-            if (finmodflags & modflags)
-                ufraw_lensfun_modify (&final, modifier, finmodflags);
-
-            lf_modifier_destroy (modifier);
-        }
-    }
-#else
-    (void)lensfix;
-#endif /* HAVE_LENSFUN */
-
     if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
 	dcraw_finalize_shrink(&final, raw, dark, uf->ConvertShrink);
     } else {
@@ -1000,6 +973,33 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
     }
 
     dcraw_flip_image(&final, uf->conf->orientation);
+
+#ifdef HAVE_LENSFUN
+    if (lensfix && uf->conf->camera && uf->conf->lens)
+    {
+        lfModifier *modifier = lensfix ? lf_modifier_new (
+            uf->conf->lens, uf->conf->camera->CropFactor, final.width, final.height) : NULL;
+
+        if (modifier)
+        {
+            float real_scale = pow (2.0, uf->conf->lens_scale);
+            const int modflags = LF_MODIFY_TCA | LF_MODIFY_VIGNETTING |
+                LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE;
+
+            int finmodflags = lf_modifier_initialize (
+                modifier, uf->conf->lens, LF_PF_U16,
+                uf->conf->focal_len, uf->conf->aperture,
+                uf->conf->subject_distance, real_scale,
+                uf->conf->cur_lens_type, modflags, FALSE);
+            if (finmodflags & modflags)
+                ufraw_lensfun_modify (&final, modifier, finmodflags);
+
+            lf_modifier_destroy (modifier);
+        }
+    }
+#else
+    (void)lensfix;
+#endif /* HAVE_LENSFUN */
 
     uf->image.image = final.image;
     uf->image.height = final.height;
