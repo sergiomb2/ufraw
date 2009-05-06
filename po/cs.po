@@ -1,19 +1,19 @@
 # Czech translation for UFRaw package.
 # Copyright (C) 2006-2008 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-# Milan Knizek <knizek@volny.cz>, 2007-2008.
+# Milan Knizek <knizek@volny.cz>, 2007-2009.
 #
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-09 06:45+0100\n"
-"PO-Revision-Date: 2008-12-21 07:05+0100\n"
+"POT-Creation-Date: 2009-05-05 22:36-0500\n"
+"PO-Revision-Date: 2009-05-04 21:03+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #. Translate text message from GtkImageView:
@@ -104,7 +104,7 @@ msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (vložený)"
 
 msgid "System default"
 msgstr "Standardní"
@@ -332,9 +332,8 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolační algoritmus (standardně ahd).\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "Použít vyhlazení barev"
+msgstr "--color-smoothing     Použít vyhlazení barev.\n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -359,7 +358,7 @@ msgid ""
 "--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
 "                      Output file format (default ppm).\n"
 msgstr ""
-"--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
+"--out-type=ppm|tiff|tif|png|jpeg|fits\n"
 "                      Formát výstupního souboru (standardně ppm).\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
@@ -377,11 +376,10 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=HODNOTA JPEG komprese (0-100, standardně 85).\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
-"--[no]exif            [Ne]vložit EXIF do výstupního JPEG nebo PNG "
-"(standardně vložit EXIF).\n"
+"--[no]exif            [Ne]vložit EXIF do výstupního souboru (standardně "
+"vložit EXIF).\n"
 
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
@@ -441,7 +439,7 @@ msgstr ""
 "nepřepisovat).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     Vnutit maximální velikost okna.\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -982,13 +980,11 @@ msgstr "Přiblížení:"
 msgid "Zoom percentage"
 msgstr "Procento přiblížení"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
-msgstr "Před nastavením bodového vyvážení bílé zvolte bod na snímku náhledu"
+msgstr "Před nastavením odstínu zvolte bod na snímku náhledu"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "Globální úprava kontrastu"
+msgstr "Obnovit nastavení"
 
 msgid "Grayscale Mode:"
 msgstr "Režim šedé škály:"
@@ -1148,9 +1144,8 @@ msgstr "Progresívní JPEG kódování"
 msgid "TIFF lossless Compress"
 msgstr "Bezztrátová TIFF komprese"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr "Vložit EXIF údaje do JPEG nebo PNG souborů"
+msgstr "Vložit EXIF údaje do výstupního souboru"
 
 msgid "Create ID file "
 msgstr "Vytvořit ID soubor "
@@ -1266,9 +1261,8 @@ msgstr "Správa barev"
 msgid "Correct luminosity, saturation"
 msgstr "Upravit jas, sytost"
 
-#, fuzzy
 msgid "Lightness Adjustments"
-msgstr "Světlost"
+msgstr "Úpravy tonality"
 
 msgid "Crop and rotate"
 msgstr "Ořez a otočení"
