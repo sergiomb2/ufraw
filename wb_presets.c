@@ -2309,6 +2309,18 @@ const wb_data wb_preset[] = {
   { "Panasonic", "DMC-FZ18", Incandescent, 0,	{ 1.140684, 1, 2.627376, 0 } },
   { "Panasonic", "DMC-FZ18", Flash, 0,		{ 1.882129, 1, 1.703422, 0 } },
 
+  { "Panasonic", "DMC-FZ28", Daylight, 0,	{ 1.684411, 1, 1.802281, 0 } },
+  { "Panasonic", "DMC-FZ28", Cloudy, 0,		{ 1.825095, 1, 1.676806, 0 } },
+  { "Panasonic", "DMC-FZ28", Shade, 0,		{ 1.996198, 1, 1.566540, 0 } },
+  { "Panasonic", "DMC-FZ28", Incandescent, 0,	{ 1.117871, 1, 2.558935 , 0 } },
+  { "Panasonic", "DMC-FZ28", Flash, 0,		{ 1.939164, 1, 1.596958, 0 } },
+  { "Panasonic", "DMC-FZ28", "3000K", 0,	{ 1.015209, 1, 2.771863, 0 } },
+  { "Panasonic", "DMC-FZ28", "4000K", 0,	{ 1.277566, 1, 2.171103, 0 } },
+  { "Panasonic", "DMC-FZ28", "5000K", 0,	{ 1.585551, 1, 1.889734, 0 } },
+  { "Panasonic", "DMC-FZ28", "6000K", 0,	{ 1.764258, 1, 1.737642, 0 } },
+  { "Panasonic", "DMC-FZ28", "7000K", 0,	{ 1.939164, 1, 1.596958, 0 } },
+  { "Panasonic", "DMC-FZ28", "8000K", 0,	{ 2.049430, 1, 1.528517, 0 } },
+
   { "Panasonic", "DMC-FZ30", Daylight, 0,	{ 1.757576, 1, 1.446970, 0 } },
   { "Panasonic", "DMC-FZ30", Cloudy, 0,		{ 1.943182, 1, 1.276515, 0 } },
   { "Panasonic", "DMC-FZ30", Incandescent, 0,	{ 1.098485, 1, 2.106061, 0 } },
