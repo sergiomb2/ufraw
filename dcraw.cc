@@ -351,7 +351,7 @@ void CLASS canon_black (double dark[2], int nblack)
 {
   int c, diff, row, col;
 
-  if (!nblack) return;
+  if (!nblack || document_mode > 1) return;
   FORC(2) dark[c] /= nblack >> 1;
   if ((diff = dark[0] - dark[1]))
     for (row=0; row < height; row++)
@@ -2213,7 +2213,7 @@ void CLASS kodak_radc_load_raw()
 	  BAYER(y,x) = val;
 	}
   }
-  for (i=0; i < height*width*4; i++)
+  for (i=0; i < iheight*iwidth*4; i++)
     image[0][i] = curve[image[0][i]];
   maximum = 0x3fff;
 }
