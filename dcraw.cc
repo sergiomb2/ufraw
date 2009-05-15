@@ -2281,10 +2281,8 @@ void CLASS kodak_radc_load_raw()
 	  BAYER(y,x) = val;
 	}
   }
-#ifndef DCRAW_NOMAIN // XXX Temporary fix for segfault with Kodak DC50 images.
-  for (i=0; i < height*width*4; i++)
+  for (i=0; i < iheight*iwidth*4; i++)
     image[0][i] = curve[image[0][i]];
-#endif
   maximum = 0x3fff;
 }
 
