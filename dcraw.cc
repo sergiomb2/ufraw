@@ -411,7 +411,7 @@ void CLASS canon_black (double dark[2], int nblack)
 {
   int c, diff, row, col;
 
-  if (!nblack) return;
+  if (!nblack || document_mode > 1) return;
   FORC(2) dark[c] /= nblack >> 1;
   if ((diff = dark[0] - dark[1]))
     for (row=0; row < height; row++)
