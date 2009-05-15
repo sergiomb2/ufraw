@@ -110,10 +110,6 @@ const double xyz_rgb[3][3] = {			/* XYZ from RGB */
 extern
 #endif
 const float d65_white[3] = { 0.950456, 1, 1.088754 };
-int histogram[4][0x2000];
-void (*write_thumb)(), (*write_fun)();
-void (*load_raw)(), (*thumb_load_raw)();
-jmp_buf failure;
 
 #define DCRAW_SUCCESS 0		/* Centralize the error handling - UF*/
 #define DCRAW_ERROR 1
