@@ -123,7 +123,7 @@ unsigned getint (int type);
 float int_to_float (int i);
 double getreal (int type);
 void read_shorts (ushort *pixel, unsigned count);
-void canon_black (double dark[2]);
+void canon_black (double dark[2], int nblack);
 void canon_600_fixed_wb (int temp);
 int canon_600_color (int ratio[2], int mar);
 void canon_600_auto_wb();
