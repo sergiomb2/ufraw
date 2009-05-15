@@ -864,7 +864,8 @@ void CLASS canon_compressed_load_raw()
 	icol = col - left_margin;
 	if (icol < width)
 	  BAYER(irow,icol) = pixel[r*raw_width+col];
-	else if (col > 1 && col-left_margin+2 > width+3)
+	else if (col > 1 && (unsigned) (col-left_margin+2) >
+		  (unsigned) (width+3))
 	  dark[icol & 1] += (nblack++,pixel[r*raw_width+col]);
       }
     }
@@ -1019,7 +1020,8 @@ void CLASS lossless_jpeg_load_raw()
 	if ((unsigned) (col-left_margin) < width) {
 	  BAYER(row-top_margin,col-left_margin) = val;
 	  if (min > val) min = val;
-	} else if (col > 1 && col-left_margin+2 > width+3)
+	} else if (col > 1 && (unsigned) (col-left_margin+2) >
+		    (unsigned) (width+3))
 	  dark[(col-left_margin) & 1] += (nblack++,val);
       }
       if (++col >= raw_width)
@@ -2279,8 +2281,10 @@ void CLASS kodak_radc_load_raw()
 	  BAYER(y,x) = val;
 	}
   }
+#ifndef DCRAW_NOMAIN // XXX Temporary fix for segfault with Kodak DC50 images.
   for (i=0; i < height*width*4; i++)
     image[0][i] = curve[image[0][i]];
+#endif
   maximum = 0x3fff;
 }
 
