@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw_routines.c - general routines
- * Copyright 2004-2008 by Udi Fuchs
+ * Copyright 2004-2009 by Udi Fuchs
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ char *uf_markup_buf(char *buffer, const char *format, ...)
 
 const char raw_ext[]= "3fr,arw,bay,bmq,cine,cr2,crw,cs1,dc2,dcr,dng,erf,fff,"
 	"hdr,ia,jpg,k25,kc2,kdc,mdc,mef,mos,mrw,nef,nrw,orf,pef,pxn,qtk,raf,"
-	"raw,rdc,rw2,sr2,srf,sti,tif,ufraw,x3f";
+	"raw,rdc,rw2,rwl,sr2,srf,sti,tif,ufraw,x3f";
 
 const char *file_type[] = { ".ppm", ".ppm", ".tif", ".tif", ".jpg",
 	".png", ".png", ".embedded.jpg", ".embedded.png", ".fits" };
