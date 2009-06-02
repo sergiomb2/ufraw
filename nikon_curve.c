@@ -111,7 +111,7 @@ int ProcessArgs(int num_args, char *args[])
 	    printf("NOTE: If a resolution is not specified, a default one will be used.\n");
 	    printf("      If the -o option is not specified, default files will be used.\n\n");
 	    printf("Example:\n");
-	    printf("NikonCurveGenerator -sr 65536 -or 256 curveFile -o exportFile\n");
+	    printf("%s -sr 65536 -or 256 curveFile -o exportFile\n", args[0]);
 
 	    //signal that processing cannot occur
 	    return NC_ERROR;
