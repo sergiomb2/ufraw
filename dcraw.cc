@@ -12,7 +12,7 @@
    It can work as either a command-line tool or called by other programs.
 
    $Revision: 1.424 $
-   $Date: 2009/06/09 03:08:11 $
+   $Date: 2009/06/09 05:43:45 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -1997,8 +1997,8 @@ void CLASS olympus_e410_load_raw()
       carry = acarry[col & 1];
       i = 2 * (carry[2] < 3);
       for (nbits=2+i; (ushort) carry[0] >> (nbits+i); nbits++) {};
-      sign = getbits(1) * -1;
-      low  = getbits(2);
+      low = (sign = getbits(3)) & 3;
+      sign = sign << 29 >> 31;
       if ((high = getbithuff(12,huff)) == 12)
 	high = getbits(16-nbits) >> 1;
       carry[0] = (high << nbits) | getbits(nbits);
@@ -2585,16 +2585,19 @@ void CLASS sony_load_raw()
 
 void CLASS sony_arw_load_raw()
 {
-  int col, row, len, diff, sum=0;
+  ushort huff[32768];
+  static const ushort tab[18] =
+  { 0xf11,0xf10,0xe0f,0xd0e,0xc0d,0xb0c,0xa0b,0x90a,0x809,
+    0x708,0x607,0x506,0x405,0x304,0x303,0x300,0x202,0x201 };
+  int i, c, n, col, row, len, diff, sum=0;
 
+  for (n=i=0; i < 18; i++)
+    FORC(32768 >> (tab[i] >> 8)) huff[n++] = tab[i];
   getbits(-1);
   for (col = raw_width; col--; )
     for (row=0; row < raw_height+1; row+=2) {
       if (row == raw_height) row = 1;
-      len = 4 - getbits(2);
-      if (len == 3 && getbits(1)) len = 0;
-      if (len == 4)
-	while (len < 17 && !getbits(1)) len++;
+      len = getbithuff(15,huff);
       diff = getbits(len);
       if ((diff & (1 << (len-1))) == 0)
 	diff -= (1 << len) - 1;
