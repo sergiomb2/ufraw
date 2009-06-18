@@ -7114,11 +7114,6 @@ void CLASS identify()
     left_margin = 158;
     raw_width = width *= 4;
     goto canon_cr2;
-  } else if (is_canon && raw_width == 1448) {
-    top_margin  = 51;
-    left_margin = 158;
-    raw_width = width *= 4;
-    goto canon_cr2;
   } else if (is_canon && raw_width == 5108) {
     top_margin  = 13;
     left_margin = 98;
