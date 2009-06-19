@@ -105,7 +105,7 @@ int fgetc(FILE *stream);
 // dcraw only calls fscanf for single variables
 int fscanf(FILE *stream, const char *format, void *ptr);
 // calling with more variables would triger a link error
-int fscanf(FILE *stream, const char *format, void *ptr1, void *ptr2, ...);
+//int fscanf(FILE *stream, const char *format, void *ptr1, void *ptr2, ...);
 
 /* Initialization of the variables is done here */
 DCRaw();
@@ -113,8 +113,8 @@ DCRaw();
 void dcraw_message(int code, const char *format, ...);
 /* All dcraw functions with the CLASS prefix are members of this class. */
 int fc (int row, int col);
-void derror();
 void merror (void *ptr, const char *where);
+void derror();
 ushort sget2 (uchar *s);
 ushort get2();
 unsigned sget4 (uchar *s);
@@ -156,7 +156,6 @@ void nikon_3700();
 int minolta_z2();
 void nikon_e900_load_raw();
 void fuji_load_raw();
-void jpeg_thumb ();
 void ppm_thumb ();
 void layer_thumb ();
 void rollei_thumb ();
@@ -177,15 +176,13 @@ void nokia_load_raw();
 unsigned pana_bits (int nbits);
 void panasonic_load_raw();
 void olympus_e410_load_raw();
-void olympus_cseries_load_raw();
 void minolta_rd175_load_raw();
-void eight_bit_load_raw();
 void casio_qv5700_load_raw();
 void quicktake_100_load_raw();
 void kodak_radc_load_raw();
 void kodak_jpeg_load_raw();
 void kodak_dc120_load_raw();
-void kodak_easy_load_raw();
+void eight_bit_load_raw();
 void kodak_yrgb_load_raw();
 void kodak_262_load_raw();
 int kodak_65000_decode (short *out, int bsize);
@@ -243,8 +240,8 @@ void parse_gps (int base);
 void romm_coeff (float romm_cam[3][3]);
 void parse_mos (int offset);
 void linear_table (unsigned len);
-int parse_tiff_ifd (int base);
 void parse_kodak_ifd (int base);
+int parse_tiff_ifd (int base);
 void parse_tiff (int base);
 void parse_minolta (int base);
 void parse_external_jpeg();
@@ -264,18 +261,17 @@ void adobe_coeff (const char *make, const char *model);
 void simple_coeff (int index);
 short guess_byte_order (int words);
 void identify();
+#ifndef NO_LCMS
 void apply_profile (const char *input, const char *output);
+#endif
 void convert_to_rgb();
 void fuji_rotate();
 void stretch();
 int flip_index (int row, int col);
-void gamma_lut (uchar lut[0x10000]);
 void tiff_set (ushort *ntag,
 	        ushort tag, ushort type, int count, int val);
 void tiff_head (struct tiff_hdr *th, int full);
+void jpeg_thumb ();
 void write_ppm_tiff ();
-void write_ppm ();
-void write_ppm16 ();
-void write_psd ();
 int main (int argc, const char **argv);
 };
