@@ -1,7 +1,7 @@
 /***************************************************
  nikon_curve.c - read Nikon NTC/NCV files
 
- Copyright 2004-2008 by Shawn Freeman, Udi Fuchs
+ Copyright 2004-2009 by Shawn Freeman, Udi Fuchs
 
  This program reads in a Nikon NTC/NCV file,
  interperates it's tone curve, and writes out a
@@ -254,7 +254,7 @@ size_t nc_fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 
 size_t nc_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
-    size_t num = nc_fwrite(ptr, size, nmemb, stream);
+    size_t num = fwrite(ptr, size, nmemb, stream);
     if ( num!=nmemb )
 	nc_message(NC_WARNING, "WARNING: nc_fwrite %d != %d\n", num, nmemb);
     return num;
