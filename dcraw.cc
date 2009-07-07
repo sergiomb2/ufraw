@@ -8440,7 +8440,7 @@ int CLASS main (int argc, const char **argv)
   argv[argc] = "";
   for (arg=1; (((opm = argv[arg][0]) - 2) | 2) == '+'; ) {
     opt = argv[arg++][1];
-    if ((cp = strchr (sp="nbrkStqmHACg", opt)))
+    if ((cp = (char *)strchr (sp="nbrkStqmHACg", opt)))
       for (i=0; i < "114111111422"[cp-sp]-'0'; i++)
 	if (!isdigit(argv[arg+i][0])) {
 	  dcraw_message (DCRAW_ERROR,_("Non-numeric argument to \"-%c\"\n"), opt);
@@ -8531,7 +8531,7 @@ int CLASS main (int argc, const char **argv)
       status = 1;
       goto cleanup;
     }
-    ifname = const_cast<char*>(argv[arg]);
+    ifname = const_cast<char *>(argv[arg]);
     ifname_display = ifname;
     if (!(ifp = fopen (ifname, "rb"))) {
       perror (ifname);
