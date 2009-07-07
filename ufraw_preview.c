@@ -4993,7 +4993,10 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     // that will cause the scrollbars to appear.
     preview_width = (uf->initialWidth+1) / CFG->Scale;
     preview_height = (uf->initialHeight+1) / CFG->Scale;
-    if (screen.height<700) {
+    if (screen.height<=600) {
+	curveeditorHeight = 192;
+	data->HisMinHeight = 0;
+    } else if (screen.height<700) {
 	curveeditorHeight = 192;
 	data->HisMinHeight = 48;
     } else if (screen.height<800) {
