@@ -455,6 +455,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 
 	// Normalise rotations to a flip, then rotation of 0 < a < 90 degrees.
 	uf->conf->rotationAngle = fmod(uf->conf->rotationAngle, 360.0);
+	if (uf->conf->rotationAngle < 0.0) uf->conf->rotationAngle += 360.0;
 	int angle, flip = 0;
 	angle = floor(uf->conf->rotationAngle/90)*90;
 	switch (angle) {
