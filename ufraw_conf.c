@@ -79,8 +79,12 @@ const conf_data conf_default = {
     "", NULL, /* darkframeFile, darkframe */
     -1, -1, -1, -1, /* Crop X1,Y1,X2,Y2 */
     0, /* rotationAngle */
-    { 0, 120, 240 }, /* lightness hues */
-    { 1, 1, 1 }, /* lightness adjustments */
+    0, /* lightness adjustment count */
+    {
+	{ 1, 0 },
+	{ 1, 120 },
+	{ 1, 240 },
+    }, /* lightness adjustments */
     grayscale_none, /* grayscale mode */
     { 1.0, 1.0, 1.0 }, /* grayscale mixer */
     /* Save options */
@@ -651,17 +655,16 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	else c->intent[out_profile] = conf_find_name(temp, intentNames,
 		    conf_default.intent[out_profile]);
     }
-    if ( strcmp("LightnessHues", element) == 0 ) {
-        sscanf(temp, "%lf %lf %lf",
-	       &c->lightnessHue[0],
-	       &c->lightnessHue[1],
-	       &c->lightnessHue[2]);
-    }
-    if ( strcmp("LightnessAdjustments", element) == 0 ) {
-        sscanf(temp, "%lf %lf %lf",
-	       &c->lightnessAdjustment[0],
-	       &c->lightnessAdjustment[1],
-	       &c->lightnessAdjustment[2]);
+    if ( strcmp("LightnessAdjustment", element) == 0 ) {
+	if (c->lightnessAdjustmentCount < max_adjustments) {
+	    lightness_adjustment *a = &c->lightnessAdjustment[c->lightnessAdjustmentCount];
+	    sscanf(temp, "%lf %lf", &a->adjustment, &a->hue);
+	    c->lightnessAdjustmentCount++;
+	}
+	else {
+	    ufraw_message(UFRAW_SET_ERROR,
+			  _("Too many lightness adjustments in the ID file, ignored\n"));
+	}
     }
     if ( strcmp("GrayscaleMode", element)==0 ) {
         c->grayscaleMode = (sscanf(temp, "%d", &i)==1)
@@ -952,24 +955,10 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     if (c->saturation!=conf_default.saturation)
 	buf = uf_markup_buf(buf,
 		"<Saturation>%lf</Saturation>\n", c->saturation);
-    for (i = 0; i < adjustment_steps; ++i) {
-        if (fabs(c->lightnessHue[i] - conf_default.lightnessHue[i]) > 1.0) {
-	    buf = uf_markup_buf(buf, "<LightnessHues>");
-	    for (i = 0; i < adjustment_steps; ++i)
-	        buf = uf_markup_buf(buf, " %f" + (i==0),
-				    c->lightnessHue[i]);
-	    buf = uf_markup_buf(buf, "</LightnessHues>\n");
-	    break;
-	}
-    }
-    for (i = 0; i < adjustment_steps; ++i) {
-        if (fabs(c->lightnessAdjustment[i] - conf_default.lightnessAdjustment[i]) > 0.01) {
-	    buf = uf_markup_buf(buf, "<LightnessAdjustments>");
-	    for (i = 0; i < adjustment_steps; ++i)
-	        buf = uf_markup_buf(buf, " %f" + (i==0),
-				    c->lightnessAdjustment[i]);
-	    buf = uf_markup_buf(buf, "</LightnessAdjustments>\n");
-	    break;
+    for (i = 0; i < max_adjustments; ++i) {
+	if (fabs(c->lightnessAdjustment[i].adjustment - conf_default.lightnessAdjustment[i].adjustment) > 0.01) {
+	    buf = uf_markup_buf(buf, "<LightnessAdjustment>%f %f</LightnessAdjustment>\n",
+				c->lightnessAdjustment[i].adjustment, c->lightnessAdjustment[i].hue);
 	}
     }
     if (c->grayscaleMode!=conf_default.grayscaleMode)
@@ -1222,10 +1211,8 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->autoBlack = src->autoBlack;
     dst->restoreDetails = src->restoreDetails;
     dst->clipHighlights = src->clipHighlights;
-    for (i=0; i<adjustment_steps; i++) {
-	dst->lightnessHue[i] = src->lightnessHue[i];
-	dst->lightnessAdjustment[i] = src->lightnessAdjustment[i];
-    }
+    memcpy(dst->lightnessAdjustment, src->lightnessAdjustment,
+	   sizeof dst->lightnessAdjustment);
     dst->grayscaleMode = src->grayscaleMode;
     memcpy(dst->grayscaleMixer, src->grayscaleMixer,
 	   sizeof dst->grayscaleMixer);

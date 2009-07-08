@@ -1419,14 +1419,12 @@ static void update_scales(preview_data *data)
     for (i = 0; i < 3; ++i)
         gtk_adjustment_set_value(data->GrayscaleMixers[i],
 				 CFG->grayscaleMixer[i]);
-    for (i = 0; i < adjustment_steps; ++i) {
-	gtk_adjustment_set_value(data->LightnessHueAdjustment[i],
-	    CFG->lightnessHue[i]);
-	widget_set_hue(data->LightnessHueSelectButton[i], CFG->lightnessHue[i]);
+    for (i = 0; i < max_adjustments; ++i) {
+	widget_set_hue(data->LightnessHueSelectButton[i], CFG->lightnessAdjustment[i].hue);
 	gtk_adjustment_set_value(data->LightnessAdjustment[i],
-	    CFG->lightnessAdjustment[i]);
+	    CFG->lightnessAdjustment[i].adjustment);
 	gtk_widget_set_sensitive(data->ResetLightnessAdjustmentButton[i],
-	    fabs(CFG->lightnessAdjustment[i] - 1.0) >= 0.01);
+	    fabs(CFG->lightnessAdjustment[i].adjustment - 1.0) >= 0.01);
     }
     gtk_widget_set_sensitive(GTK_WIDGET(data->ResetGrayscaleChannelMixerButton),
 	(CFG->grayscaleMixer[0] != conf_default.grayscaleMixer[0])
@@ -1531,7 +1529,7 @@ static void select_hue_event(GtkWidget *widget, gpointer user_data)
     if (data->FreezeDialog) return;
     if (data->SpotHue < 0.0) return;
 
-    CFG->lightnessHue[i] = data->SpotHue;
+    CFG->lightnessAdjustment[i].hue = data->SpotHue;
 
     preview_invalidate_layer (data, ufraw_develop_phase);
     update_scales(data);
@@ -2512,9 +2510,9 @@ static void button_update(GtkWidget *button, gpointer user_data)
         CFG->grayscaleMixer[1] = conf_default.grayscaleMixer[1];
         CFG->grayscaleMixer[2] = conf_default.grayscaleMixer[2];
     }
-    for (i = 0; i < adjustment_steps; ++i) {
+    for (i = 0; i < max_adjustments; ++i) {
 	if (button == data->ResetLightnessAdjustmentButton[i]) {
-	    CFG->lightnessAdjustment[i] = 1.0;
+	    CFG->lightnessAdjustment[i].adjustment = 1.0;
 	    break;
 	}
     }
@@ -4052,28 +4050,23 @@ static void lightness_fill_interface(preview_data *data, GtkWidget *page)
     /* Start of Lightness Adjustments page */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
-    for (i = 0; i < adjustment_steps; ++i) {
-        data->LightnessHueAdjustment[i] = adjustment_scale(
-		table, 0, 2*i, NULL,
-		CFG->lightnessHue[i], &CFG->lightnessHue[i],
-		0, 360, 1, 10, 0, NULL,
-		G_CALLBACK(adjustment_update), NULL, NULL, NULL);
-
+    for (i = 0; i < max_adjustments; ++i) {
 	// Hue select button:
 	data->LightnessHueSelectButton[i] = gtk_button_new();
 	gtk_container_add(GTK_CONTAINER(data->LightnessHueSelectButton[i]),
 		gtk_image_new_from_stock(GTK_STOCK_COLOR_PICKER,
 			GTK_ICON_SIZE_BUTTON));
 	gtk_table_attach(table, data->LightnessHueSelectButton[i],
-		7, 8, 2*i, 2*i+1, 0, 0, 0, 0);
+		8, 9, i, i+1, 0, 0, 0, 0);
 	uf_widget_set_tooltip(data->LightnessHueSelectButton[i],
 		_("Select a spot on the preview image to choose hue"));
 	g_signal_connect(G_OBJECT(data->LightnessHueSelectButton[i]), "clicked",
 		G_CALLBACK(select_hue_event), (gpointer)i);
 
         data->LightnessAdjustment[i] = adjustment_scale(
-		table, 0, 2*i+1, NULL,
-		CFG->lightnessAdjustment[i], &CFG->lightnessAdjustment[i],
+		table, 0, i, NULL,
+		CFG->lightnessAdjustment[i].adjustment,
+		&CFG->lightnessAdjustment[i].adjustment,
 		0, 2, 0.01, 0.10, 2, NULL,
 		G_CALLBACK(adjustment_update),
 		&data->ResetLightnessAdjustmentButton[i],

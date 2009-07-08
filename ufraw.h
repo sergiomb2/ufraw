@@ -32,7 +32,7 @@
 #define max_profiles 20
 #define max_path 200
 #define max_name 80
-#define adjustment_steps 3
+#define max_adjustments 3
 
 /* An impossible value for conf float values */
 #define NULLF -10000.0
@@ -83,6 +83,11 @@ typedef struct {
 } wb_data;
 
 typedef struct {
+    double adjustment;
+    double hue;
+} lightness_adjustment;
+
+typedef struct {
     DeveloperMode mode;
     unsigned rgbMax, max, exposure, colors, useMatrix;
     int restoreDetails, clipHighlights;
@@ -106,8 +111,7 @@ typedef struct {
     GrayscaleMode grayscaleMode;
     double grayscaleMixer[3];
     int adjustLightness;
-    double lightnessHue[adjustment_steps];
-    double lightnessAdjustment[adjustment_steps];
+    lightness_adjustment lightnessAdjustment[max_adjustments];
 } developer_data;
 
 typedef guint16 image_type[4];
@@ -179,8 +183,8 @@ typedef struct {
     struct ufraw_struct *darkframe;
     int CropX1, CropY1, CropX2, CropY2;
     double rotationAngle;
-    double lightnessHue[adjustment_steps];
-    double lightnessAdjustment[adjustment_steps];
+    int lightnessAdjustmentCount;
+    lightness_adjustment lightnessAdjustment[max_adjustments];
     int grayscaleMode;
     double grayscaleMixer[3];
 

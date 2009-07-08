@@ -239,6 +239,7 @@ static int luminance_adjustment_sampler(WORD In[], WORD Out[], LPVOID Cargo)
     cmsCIELab Lab;
     cmsCIELCh LCh;
     const developer_data *d = Cargo;
+    const lightness_adjustment *a;
 
     cmsLabEncoded2Float(&Lab, In);
     cmsLab2LCh(&LCh, &Lab);
@@ -246,8 +247,8 @@ static int luminance_adjustment_sampler(WORD In[], WORD Out[], LPVOID Cargo)
     const double hueWidth = 60.0;
     double adj = 0.0;
     int i;
-    for (i=0; i<adjustment_steps; i++) {
-	double deltaHue = LCh.h - d->lightnessHue[i];
+    for (i=0, a=d->lightnessAdjustment; i<max_adjustments; i++, a++) {
+	double deltaHue = LCh.h - a->hue;
 	if (deltaHue > 180.0) deltaHue -= 360.0;
 	if (deltaHue < -180.0) deltaHue += 360.0;
 	if (abs(deltaHue) > hueWidth)
@@ -255,7 +256,7 @@ static int luminance_adjustment_sampler(WORD In[], WORD Out[], LPVOID Cargo)
 	/* This assigns the scales on a nice curve. */
 	double scale = cos(deltaHue / hueWidth * (M_PI / 2) );
 	scale *= scale;
-	adj += (d->lightnessAdjustment[i] - 1) * scale;
+	adj += (a->adjustment - 1) * scale;
     }
     adj = adj * LCh.C / max_colorfulness + 1;
     LCh.L *= adj;
@@ -404,22 +405,12 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
     }
 }
 
-static gboolean cmp_adjustments(const gdouble a[adjustment_steps],
-				const gdouble b[adjustment_steps])
-{
-    int i;
-    for (i = 0; i < adjustment_steps; ++i)
-	if (a[i] != b[i])
-	    return TRUE;
-    return FALSE;
-}
-
-static gboolean test_adjustments(const gdouble values[adjustment_steps],
+static gboolean test_adjustments(const lightness_adjustment values[max_adjustments],
 				 gdouble reference, gdouble threshold)
 {
     int i;
-    for (i = 0; i < adjustment_steps; ++i)
-	if (fabs(values[i] - reference) >= threshold)
+    for (i = 0; i < max_adjustments; ++i)
+	if (fabs(values[i].adjustment - reference) >= threshold)
 	    return TRUE;
     return FALSE;
 }
@@ -590,12 +581,10 @@ void developer_prepare(developer_data *d, conf_data *conf,
 	}
 	d->updateTransform = TRUE;
     }
-    if (cmp_adjustments(d->lightnessHue, conf->lightnessHue) ||
-	cmp_adjustments(d->lightnessAdjustment, conf->lightnessAdjustment)) {
+    if (memcmp(d->lightnessAdjustment, conf->lightnessAdjustment,
+	       sizeof d->lightnessAdjustment) != 0) {
 	/* Adjustments have changed, need to update them. */
 	d->updateTransform = TRUE;
-	memcpy(d->lightnessHue, conf->lightnessHue,
-	       sizeof d->lightnessHue);
 	memcpy(d->lightnessAdjustment, conf->lightnessAdjustment,
 	       sizeof d->lightnessAdjustment);
 	cmsCloseProfile(d->adjustmentProfile);
