@@ -202,9 +202,12 @@ GtkWidget *table_with_frame (GtkWidget *box, char *label, gboolean expand);
 
 GtkWidget *notebook_page_new (GtkNotebook *notebook, char *text, char *icon);
 
+GtkWidget *reset_button (const char *tip, GCallback callback, void *data);
+
 GtkAdjustment *adjustment_scale (
     GtkTable *table, int x, int y, const char *label, double value, void *valuep,
     double min, double max, double step, double jump, long accuracy, const char *tip,
-    GCallback callback);
+    GCallback callback, GtkWidget **resetButton, const char *resetTip,
+    void (*resetCallback)());
 
 #endif /* _UFRAW_UI_H */

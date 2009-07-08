@@ -656,7 +656,8 @@ static GtkAdjustment *append_term (
 
     GtkAdjustment *adj = adjustment_scale (
         GTK_TABLE (table), 0, y, param->Name, *term, term,
-        param->Min, param->Max, step, page, accuracy, NULL, callback);
+        param->Min, param->Max, step, page, accuracy, NULL, callback,
+	NULL, NULL, NULL);
 
     GtkWidget *button = gtk_button_new ();
     gtk_container_add (GTK_CONTAINER (button),
@@ -1227,7 +1228,7 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
     data->LensScaleAdjustment = adjustment_scale (
         subTable, 0, 0, _("Scale"), CFG->lens_scale, &CFG->lens_scale,
         -3, 3, 0.001, 0.1, 3, _("Image scale power-of-two"),
-        G_CALLBACK (lens_scale_update));
+        G_CALLBACK (lens_scale_update), NULL, NULL, NULL);
 
     data->LensScaleResetButton = gtk_button_new ();
     gtk_container_add (GTK_CONTAINER (data->LensScaleResetButton),
