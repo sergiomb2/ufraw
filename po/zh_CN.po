@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-14 06:15+0100\n"
+"POT-Creation-Date: 2009-07-08 07:00+0200\n"
 "PO-Revision-Date: 2009-06-15 00:00+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -104,6 +104,9 @@ msgstr "颜色矩阵 (Color matrix)"
 msgid "sRGB"
 msgstr "sRGB"
 
+msgid "sRGB (embedded)"
+msgstr ""
+
 msgid "System default"
 msgstr "系统默认"
 
@@ -178,7 +181,8 @@ msgid ""
 "To process the images with no questions asked (and no preview) use\n"
 "'ufraw-batch'.\n"
 msgstr ""
-"默认情况下 'ufraw' 为每个 RAW 图像显示预览窗口，使用户可以在保存之前调整图像参\n"
+"默认情况下 'ufraw' 为每个 RAW 图像显示预览窗口，使用户可以在保存之前调整图像"
+"参\n"
 "数。如果没有在命令行中给定 RAW 图像，UFRaw 会显示一个文件选择对话框。要进行\n"
 "非交互式图片处理(没有预览)请使用'ufraw-batch'。\n"
 
@@ -187,13 +191,13 @@ msgid ""
 "contain a raw image filename and the parameters for handling the image.\n"
 "One can also use an ID file with the option:\n"
 msgstr ""
-"输入文件可以是 RAW 图像或 ufraw 的 ID 文件。ID 文件包含原始图像的文件名和参数，\n"
+"输入文件可以是 RAW 图像或 ufraw 的 ID 文件。ID 文件包含原始图像的文件名和参"
+"数，\n"
 "以处理图像。也可以使用的 ID 文件的选项： \n"
 
 msgid ""
 "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
-msgstr ""
-"--conf=ID-file        应用ID文件参数到其他raw图像。\n"
+msgstr "--conf=ID-file        应用ID文件参数到其他raw图像。\n"
 
 msgid "The rest of the options are separated into two groups.\n"
 msgstr "其余选项分为两组。\n"
@@ -219,6 +223,7 @@ msgstr ""
 "--base-curve=manual|linear|camera|custom|CURVE\n"
 "                      使用基础色调曲线类型。CURVE 可以是先前加载GUI中的任何\n"
 "                      曲线。(如果设置了默认相机，linear 无效)。\n"
+
 msgid ""
 "--base-curve-file=file\n"
 "                      Use base tone curve included in specified file.\n"
@@ -227,6 +232,7 @@ msgstr ""
 "--base-curve-file=file\n"
 "                      使用包含在指定文件中的基础色调曲线。\n"
 "                      不接受-基础曲线-选项。\n"
+
 msgid ""
 "--curve=manual|linear|CURVE\n"
 "                      Type of luminosity curve to use. CURVE can be any\n"
@@ -269,8 +275,7 @@ msgstr ""
 
 msgid ""
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
-msgstr ""
-"--gamma=GAMMA         基础曲线的Gamma调整 (默认 0.45)。\n"
+msgstr "--gamma=GAMMA         基础曲线的Gamma调整 (默认 0.45)。\n"
 
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr "--linearity=LINEARITY 基础曲线的线性 (默认 0.10)。\n"
@@ -281,8 +286,7 @@ msgstr "--contrast=CONT       调整对比度 (默认 1.0).\n"
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
 "output).\n"
-msgstr ""
-"--saturation=SAT      调整饱和度 (默认 1.0, 0 为黑白输出)。\n"
+msgstr "--saturation=SAT      调整饱和度 (默认 1.0, 0 为黑白输出)。\n"
 
 msgid ""
 "--wavelet-denoising-threshold=THRESHOLD\n"
@@ -312,6 +316,10 @@ msgid ""
 msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      使用插值算法 (默认 ahd)。\n"
+
+#, fuzzy
+msgid "--color-smoothing     Apply color smoothing.\n"
+msgstr "应用颜色平滑"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -349,23 +357,21 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   JPEG压缩值 (0-100, 默认 85)。\n"
 
-msgid ""
-"--[no]exif            Embed EXIF in output JPEG or PNG (default embed "
-"EXIF).\n"
-msgstr ""
-"--[no]exif            JPEG或PNG中是否嵌入EXIF (默认嵌入 EXIF)。\n"
+#, fuzzy
+msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
+msgstr "--[no]exif            JPEG或PNG中是否嵌入EXIF (默认嵌入 EXIF)。\n"
 
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
 "nozip).\n"
-msgstr ""
-"--[no]zip             启用 [禁用] TIFF zip 压缩 (默认 nozip)。\n"
+msgstr "--[no]zip             启用 [禁用] TIFF zip 压缩 (默认 nozip)。\n"
 
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"
 msgstr ""
-"--embedded-image      提取嵌入在 raw 文件中的预览图像，而不是转换 raw 图像。\n"
+"--embedded-image      提取嵌入在 raw 文件中的预览图像，而不是转换 raw 图"
+"像。\n"
 
 msgid ""
 "--rotate=camera|ANGLE|no\n"
@@ -374,7 +380,8 @@ msgid ""
 "camera).\n"
 msgstr ""
 "--rotate=camera|ANGLE|no\n"
-"                      旋转图像。 camera 为根据相机设置； ANGLE 为顺时针方向角度； \n"
+"                      旋转图像。 camera 为根据相机设置； ANGLE 为顺时针方向角"
+"度； \n"
 "                      no 为不旋转 (默认 camera)。\n"
 
 msgid ""
@@ -384,7 +391,8 @@ msgid ""
 "                      raw image after rotation but before any scaling.\n"
 msgstr ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
-"                      根据给定的像素范围裁剪输出。此操作在原始图像旋转后和缩放比例之\n"
+"                      根据给定的像素范围裁剪输出。此操作在原始图像旋转后和缩"
+"放比例之\n"
 "                      前生效。\n"
 
 msgid ""
@@ -400,13 +408,14 @@ msgstr "--darkframe=文件名    使用Raw黑色帧消减文件。\n"
 
 msgid ""
 "--overwrite           Overwrite existing files without asking (default no).\n"
+msgstr "--overwrite           覆盖现有文件而不询问(默认 no)。\n"
+
+msgid "--maximize-window     Force window to be maximized.\n"
 msgstr ""
-"--overwrite           覆盖现有文件而不询问(默认 no)。\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
-msgstr ""
-"--silent              批量转换时不显示任何信息。\n"
+msgstr "--silent              批量转换时不显示任何信息。\n"
 
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
@@ -426,7 +435,8 @@ msgid ""
 "Last, but not least, --version displays the version number and compilation\n"
 "options for ufraw and --help displays this help message and exits.\n"
 msgstr ""
-"最后，但并非不重要，--version 显示 ufraw 的版本号和编译选项，--help 显示此帮助信\n"
+"最后，但并非不重要，--version 显示 ufraw 的版本号和编译选项，--help 显示此帮"
+"助信\n"
 "息并退出。\n"
 
 #, c-format
@@ -936,6 +946,14 @@ msgstr "缩放："
 msgid "Zoom percentage"
 msgstr "缩放比例"
 
+#, fuzzy
+msgid "Select a spot on the preview image to choose hue"
+msgstr "在图像上选择一点以对白平衡进行实时预览"
+
+#, fuzzy
+msgid "Reset adjustment"
+msgstr "总体对比度调整"
+
 msgid "Grayscale Mode:"
 msgstr "灰阶模式："
 
@@ -1094,7 +1112,8 @@ msgstr "JPEG 渐进编码"
 msgid "TIFF lossless Compress"
 msgstr "TIFF 无损压缩"
 
-msgid "Embed EXIF data in JPEG or PNG files"
+#, fuzzy
+msgid "Embed EXIF data in output"
 msgstr "将 EXIF 数据嵌入 JPEG 或 PNG 文件"
 
 msgid "Create ID file "
@@ -1173,7 +1192,7 @@ msgid "White balance"
 msgstr "白平衡"
 
 #, c-format
-msgid "EXIF data read by"
+msgid "EXIF data read by %s"
 msgstr ""
 
 msgid "Warning: EXIF data will not be sent to output"
@@ -1210,6 +1229,10 @@ msgstr "色彩管理"
 
 msgid "Correct luminosity, saturation"
 msgstr "校正亮度，饱和度"
+
+#, fuzzy
+msgid "Lightness Adjustments"
+msgstr "亮度"
 
 msgid "Crop and rotate"
 msgstr "裁剪、旋转"
@@ -1296,8 +1319,8 @@ msgstr "使用黑色帧(darkframe) '%s'\n"
 msgid "Error reading NEF curve"
 msgstr "读取 NEF 曲线出错"
 
-#, c-format
-msgid "Can not downsize fromto."
+#, fuzzy, c-format
+msgid "Can not downsize from %d to %d."
 msgstr "无法缩小 。"
 
 msgid "Cannot use camera white balance, reverting to auto white balance."
@@ -1499,7 +1522,7 @@ msgstr "钨-白炽灯"
 msgid "Fluorescent"
 msgstr "荧光灯"
 
-#. In Canon cameras and Nikon D60 and D300:
+#. In Canon cameras and some newer Nikon cameras:
 msgid "Fluorescent high"
 msgstr "高荧光灯"
 
@@ -1518,7 +1541,7 @@ msgstr "中性荧光灯"
 msgid "White fluorescent"
 msgstr "白色荧光灯"
 
-#. In Nikon D60 and D300
+#. In some newer Nikon cameras:
 msgid "Sodium-vapor fluorescent"
 msgstr "钠蒸气荧光灯"
 
@@ -1549,5 +1572,3 @@ msgstr "相机白平衡"
 
 msgid "Auto WB"
 msgstr "自动白平衡"
-
- 	  	 
