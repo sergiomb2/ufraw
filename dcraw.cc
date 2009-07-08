@@ -4909,7 +4909,7 @@ void CLASS parse_kodak_ifd (int base)
 {
   unsigned entries, tag, type, len, save;
   int i, c, wbi=-2, wbtemp=6500;
-  float mul[3], num;
+  static float mul[3]; float num;
 
   entries = get2();
   if (entries > 1024) return;

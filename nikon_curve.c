@@ -272,12 +272,15 @@ isBigEndian:
 int isBigEndian()
 {
     STATIC_ASSERT(sizeof(short)==2);
-    short x;
-    unsigned char EndianTest[2] = { 1, 0 };
+    union {
+	unsigned char c[2];
+	short x;
+    } EndianTest;
 
-    x = *(short *) EndianTest;
+    EndianTest.c[0] = 1;
+    EndianTest.c[1] = 0;
 
-    return (x!=1);
+    return (EndianTest.x!=1);
 }
 
 /***********************************************************************
