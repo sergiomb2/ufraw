@@ -13,6 +13,7 @@ GenericName[pt]=Conversor de imagens cruas
 GenericName[ru]=Проявитель цифровых негативов
 GenericName[sr]=Преводилац Raw слика
 GenericName[sr@latin]=Prevodilac Raw slika
+GenericName[zh_CN]=Raw 图像转换器
 
 Comment=A utility to read and manipulate raw images from digital cameras
 Comment[cs]=Program ke čtení a manipulaci raw snímků z digitálních fotoaparátů
@@ -27,6 +28,7 @@ Comment[pt]=Programa para ler e manipular imagens de câmeras digitais
 Comment[ru]=Проявка цифровых негативов и сохранение в TIFF/JPEG
 Comment[sr]=Алат за читање и обраду raw слика из дигиталних камера
 Comment[sr@latin]=Alat za čitanje i obradu raw slika iz digitalnih kamera
+Comment[zh_CN]=一个从数码相机中读取并处理原始图像的工具
 
 Encoding=UTF-8
 Version=1.0
