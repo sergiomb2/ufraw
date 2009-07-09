@@ -1,0 +1,1628 @@
+# German translation for UFRaw.
+# Copyright (C) 2006-2009, Udi Fuchs, Matthias Urlichs and Chris Leick
+# This file is distributed under the same license as the ufraw package.
+# Chris Leick <c.leick@vollbio.de>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.16\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-07-06 07:15+0200\n"
+"PO-Revision-Date: 2009-05-13 12:19+0100\n"
+"Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
+"Language-Team: German <debian-l10n-german@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. Translate text message from GtkImageView:
+msgid "Open the navigator window"
+msgstr "Das Navigatorfenster öffnen"
+
+msgid "No input file, nothing to do."
+msgstr "Keine Eingabedatei, nichts zu tun."
+
+#, c-format
+msgid "Loaded %s%s"
+msgstr "%s%s geladen"
+
+#, c-format
+msgid "Saved %s%s"
+msgstr "%s%s gesichert"
+
+#. First letter of the word 'yes' for the y/n question
+msgid "y"
+msgstr "j"
+
+#. First letter of the word 'no' for the y/n question
+msgid "n"
+msgstr "n"
+
+#, c-format
+msgid "%s: overwrite '%s'?"
+msgstr "%s: »%s« überschreiben?"
+
+msgid "--silent option is valid only in batch mode"
+msgstr "--silent-Option ist nur im Stapelverarbeitungsmodus gültig"
+
+msgid "--rotate option is valid only in batch mode"
+msgstr "--rotate-Option ist nur im Stapelverarbeitungsmodus gültig"
+
+msgid "Extracting embedded image is not supported in interactive mode"
+msgstr ""
+"Entpacken eingebetteter Bilder wird im interaktiven Modus nicht unterstützt"
+
+msgid "Raw images"
+msgstr "Raw-Bilder"
+
+msgid "UFRaw ID files"
+msgstr "UFRaw-ID-Dateien"
+
+msgid "Raw jpg's"
+msgstr "Raw-jpgs"
+
+msgid "Raw tif's"
+msgstr "Raw-tifs"
+
+msgid "All files"
+msgstr "Alle Dateien"
+
+msgid "Show hidden files"
+msgstr "Versteckte Dateien anzeigen"
+
+#. exposure, saturation, black
+#. ExposureNorm
+#. restoreDetails
+#. clipHighlights
+#. autoExposure
+#. autoBlack
+#. BaseCurveIndex, BaseCurveCount
+#. BaseCurve data defaults
+#. curveIndex, curveCount
+#. Curve data defaults
+msgid "Manual curve"
+msgstr "Manuelle Kurve"
+
+msgid "Linear curve"
+msgstr "Lineare Kurve"
+
+msgid "Custom curve"
+msgstr "Benutzerdefinierte Kurve"
+
+msgid "Camera curve"
+msgstr "Kamerakurve"
+
+#. profileIndex[], profileCount[]
+#. Profile data defaults
+msgid "No profile"
+msgstr "Kein Profil"
+
+msgid "Color matrix"
+msgstr "Farbmatrix"
+
+msgid "sRGB"
+msgstr "sRGB"
+
+msgid "sRGB (embedded)"
+msgstr ""
+
+msgid "System default"
+msgstr "Systemstandard"
+
+msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
+msgstr "Es wird versucht .ufrawrc von UFRaw-0.4 oder früher zu konvertieren"
+
+msgid "Trying to convert .ufrawrc from UFRaw-0.6 or earlier"
+msgstr "Es wird versucht .ufrawrc von UFRaw-0.6 oder früher zu konvertieren"
+
+#, c-format
+msgid "UFRaw version in .ufrawrc is not supported"
+msgstr "UFRaw-Version in .ufrawrc wird nicht unterstützt"
+
+#, c-format
+msgid "Too many anchors for curve '%s'"
+msgstr "Zu viele Anker für Kurve »%s«"
+
+#, c-format
+msgid ""
+"ID file %s does not appear to be a regular file\n"
+"%s\n"
+msgstr ""
+"ID-Datei %s scheint keine reguläre Datei zu sein\n"
+"%s\n"
+
+#, c-format
+msgid ""
+"Can't open ID file %s for reading\n"
+"%s\n"
+msgstr ""
+"ID-Datei %s kann nicht zum Lesen geöffnet werden\n"
+"%s\n"
+
+#, c-format
+msgid ""
+"Error parsing '%s'\n"
+"%s"
+msgstr ""
+"Fehler beim Analysieren von »%s«\n"
+"%s"
+
+#, c-format
+msgid ""
+"Can't open file %s for writing\n"
+"%s\n"
+msgstr ""
+"Datei %s kann nicht zum Schreiben geöffnet werden\n"
+"%s\n"
+
+msgid "cannot --create-id with stdout"
+msgstr "--create-id kann ID nicht mit stdout erzeugen"
+
+msgid "UFRaw "
+msgstr "UFRaw "
+
+msgid " - Unidentified Flying Raw converter for digital camera images.\n"
+msgstr " - »Unidentified Flying Raw«-Konverter für Digitalkamerafotos.\n"
+
+msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
+msgstr "Aufruf: ufraw [ Optionen ... ] [ raw-Bilddateien ... ]\n"
+
+msgid "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
+msgstr "       ufraw-batch [ Optionen ... ] [ raw-Bilddateien ... ]\n"
+
+msgid "       ufraw [ options ... ] [ default-directory ]\n"
+msgstr "       ufraw [ Optionen ... ] [ Standardverzeichnis ]\n"
+
+msgid ""
+"By default 'ufraw' displays a preview window for each raw image allowing\n"
+"the user to tweak the image parameters before saving. If no raw images\n"
+"are given at the command line, UFRaw will display a file chooser dialog.\n"
+"To process the images with no questions asked (and no preview) use\n"
+"'ufraw-batch'.\n"
+msgstr ""
+"Standardmäßig zeigt »ufraw« ein Vorschaufenster für jedes raw-Bild. Dies\n"
+"erlaubt es dem Benutzer, die Bildparameter vor dem Speichern zu\n"
+"optimieren. Wenn in einer Befehlszeile keine raw-Bilder angegeben sind,\n"
+"zeigt UFRaw einen Dateiauswahldialog. Benutzen Sie »ufraw-batch«, um\n"
+"Bilder ohne Nachfragen (und ohne Vorschau) zu verarbeiten.\n"
+
+msgid ""
+"The input files can be either raw images or ufraw's ID files. ID files\n"
+"contain a raw image filename and the parameters for handling the image.\n"
+"One can also use an ID file with the option:\n"
+msgstr ""
+"Die Eingabedateien können entweder raw-Bilder oder ufraws ID-Dateien\n"
+"sein. ID-Dateien enthalten einen Raw-Bilddateinamen und die Parameter\n"
+"zur Handhabung des Bildes. ID-Dateien können außerdem auch mit der\n"
+"folgenden Option verwandt werden:\n"
+
+msgid ""
+"--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+msgstr ""
+"--conf=ID-Datei       Die Parameter in der ID-Datei auf andere\n"
+"                      raw-Bilder anwenden.\n"
+
+msgid "The rest of the options are separated into two groups.\n"
+msgstr "Die restlichen Optionen sind in zwei Gruppen unterteilt.\n"
+
+msgid "The options which are related to the image manipulation are:\n"
+msgstr "Die Optionen, die zu den Bildmanipulation gehören, sind:\n"
+
+msgid "--wb=camera|auto      White balance setting.\n"
+msgstr "--wb=camera|auto      Weißabgleich-Einstellungen.\n"
+
+msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
+msgstr "--temperature=TEMP    Farbtemperatur in Kelvin (2000 - 7000).\n"
+
+msgid "--green=GREEN         Green color normalization.\n"
+msgstr "--green=GREEN         Normierung grüner Farbe.\n"
+
+msgid ""
+"--base-curve=manual|linear|camera|custom|CURVE\n"
+"                      Type of base tone curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default camera if such exists, linear otherwise).\n"
+msgstr ""
+"--base-curve=manual|linear|camera|custom|CURVE\n"
+"                      Typ der zu benutzenden Basistonkurve. CURVE kann\n"
+"                      jede Kurve sein, die vorher in das GUI geladen\n"
+"                      wurde. (Standardkamera, wenn eine solche\n"
+"                      existiert, andernfalls linear).\n"
+
+msgid ""
+"--base-curve-file=file\n"
+"                      Use base tone curve included in specified file.\n"
+"                      Overrides --base-curve option.\n"
+msgstr ""
+"--base-curve-file=Datei\n"
+"                      Basistonkurve, die in der angegebenen Datei\n"
+"                      enthalten ist, wird benutzt. Setzt --base-curve-\n"
+"                      Option außer Kraft.\n"
+
+msgid ""
+"--curve=manual|linear|CURVE\n"
+"                      Type of luminosity curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default linear).\n"
+msgstr ""
+"--curve=manual|linear|CURVE\n"
+"                      Typ der zu benutzenden Lichtstärkekurve. CURVE\n"
+"                      kann jede Kurve sein, die vorher in das GUI\n"
+"                      geladen wurde. (Standard: linear)\n"
+
+msgid ""
+"--curve-file=file     Use luminosity curve included in specified file.\n"
+"                      Overrides --curve option.\n"
+msgstr ""
+"--curve-file=Datei    Lichtstärkekurve, die in der angegebenen Datei\n"
+"                      enthalten ist, wird benutzt. Setzt --curve-Option\n"
+"                      außer Kraft.\n"
+
+# EV = Exposure value
+msgid ""
+"--restore=clip|lch|hsv\n"
+"                      Restore details for negative EV.\n"
+"                      'clip' restores nothing - safe from artifacts.\n"
+"                      'lch' restores in LCH space - giving soft details.\n"
+"                      'hsv' restores in HSV space - giving sharp details.\n"
+"                      (default lch).\n"
+msgstr ""
+"--restore=clip|lch|hsv\n"
+"                      Details für negativen EV wiederherstellen.\n"
+"                      »clip« stellt nichts wieder her, sicher vor\n"
+"                      Artefakten.\n"
+"                      »lch« stellt im LCH-Raum wieder her, gibt weiche\n"
+"                      Details.\n"
+"                      »hsv« stellt im HSV-Raum wieder her, gibt scharfe\n"
+"                      Details.\n"
+"                      (Standard: lch).\n"
+
+msgid ""
+"--clip=digital|film   Clip highlights for positive EV.\n"
+"                      'digital' linear digital sensor response.\n"
+"                      'film' emulate soft film response. (default digital).\n"
+msgstr ""
+"--clip=digital|film   Clip-Hervorhebung für positiven EV.\n"
+"                      »digital« linear-digitale Sensor-Antwort.\n"
+"                      »film« bildet weiche Filmantwort nach.\n"
+"                      (Standard: digital).\n"
+
+msgid ""
+"--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+msgstr ""
+"--gamma=GAMMA         Gamma-Anpassung der Basiskurve (Standard: 0,45).\n"
+
+msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
+msgstr "--linearity=LINEARITÄT Linearität der Basiskurve (Standard: 0,10).\n"
+
+msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
+msgstr "--contrast=CONT       Kontrastanpassung (Standard: 1,0).\n"
+
+msgid ""
+"--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
+"output).\n"
+msgstr ""
+"--saturation=SAT      Sättigungsanpassung (Standard: 1,0, 0 für SW-"
+"Ausgabe).\n"
+
+# http://de.wikipedia.org/wiki/Wavelet
+msgid ""
+"--wavelet-denoising-threshold=THRESHOLD\n"
+"                      Wavelet denoising threshold (default 0.0).\n"
+msgstr ""
+"--wavelet-denoising-threshold=SCHWELLENWERT\n"
+"                      Schwelle für Wavelet-Rauschunterdrückung\n"
+"                      (Standard: 0,0).\n"
+
+msgid ""
+"--exposure=auto|EXPOSURE\n"
+"                      Auto exposure or exposure correction in EV (default "
+"0).\n"
+msgstr ""
+"--exposure=auto|EXPOSURE\n"
+"                      Automatische Belichtung oder Belichtungskorrektur\n"
+"                      in EV (Standard: 0).\n"
+
+# http://de.wikipedia.org/wiki/Farbwert
+msgid ""
+"--black-point=auto|BLACK\n"
+"                      Auto black-point or black-point value (default 0).\n"
+msgstr ""
+"--black-point=auto|BLACK\n"
+"                      Automatischer Schwarzpunkt oder Schwarzpunktwert\n"
+"                      (Standard: 0).\n"
+
+msgid ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Interpolation algorithm to use (default ahd).\n"
+msgstr ""
+"--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Zu benutzender Interpolationsalgorithmus\n"
+"                      (Standard: ahd).\n"
+
+#, fuzzy
+msgid "--color-smoothing     Apply color smoothing.\n"
+msgstr "Farbglättung übernehmen"
+
+msgid ""
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Grayscale conversion algorithm to use (default none).\n"
+msgstr ""
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Zu benutzender Grausstufen-Umwandlungsalgorithmus\n"
+"                      (Standard: none).\n"
+
+msgid "The options which are related to the final output are:\n"
+msgstr "Die Optionen, die zu der endgültigen Ausgabe gehören, sind:\n"
+
+msgid "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
+msgstr "--shrink=FAKTOR       Das Bild um FAKTOR schrumpfen (Standard: 1).\n"
+
+msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
+msgstr "--size=GRÖßE           Verkleinerung maximal(Höhe, Breite) auf GRÖßE\n"
+
+msgid ""
+"--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
+"                      Output file format (default ppm).\n"
+msgstr ""
+"--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
+"                      Format der Ausgabedatei (Standard: ppm).\n"
+
+msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
+msgstr "--out-depth=8|16      Ausgabe-Bit-Tiefe pro Kanal (Standard: 8).\n"
+
+msgid ""
+"--create-id=no|also|only\n"
+"                      Create no|also|only ID file (default no).\n"
+msgstr ""
+"--create-id=no|also|only\n"
+"                      »no|also|only«-ID-Datei erstellen (Standard: no).\n"
+
+msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
+msgstr "--compression=WERT   JPEG-Komprimierung (0-100, Standard: 85).\n"
+
+#, fuzzy
+msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
+msgstr ""
+"--[no]exif            EXIF in Ausgabe-JPEG oder -PNG einbetten\n"
+"                      (Standard: EXIF einbetten).\n"
+
+msgid ""
+"--[no]zip             Enable [disable] TIFF zip compression (default "
+"nozip).\n"
+msgstr ""
+"--[no]zip             Einschalten [ausschalten] der\n"
+"                      TIFF-zip-Komprimierung (Standard: nozip).\n"
+
+msgid ""
+"--embedded-image      Extract the preview image embedded in the raw file\n"
+"                      instead of converting the raw image.\n"
+msgstr ""
+"--embedded-image      Das in der raw-Datei eingebettete Vorschaubild\n"
+"                      entpacken, anstatt das raw-Bild zu konvertieren.\n"
+
+msgid ""
+"--rotate=camera|ANGLE|no\n"
+"                      Rotate image to camera's setting, by ANGLE degrees\n"
+"                      clockwise, or do not rotate the image (default "
+"camera).\n"
+msgstr ""
+"--rotate=camera|WINKEL|no\n"
+"                      Bild auf Einstellung der Kamera drehen, um WINKEL\n"
+"                      Grad im Uhrzeigersinn drehen oder das Bild nicht\n"
+"                      drehen (Standard: camera).\n"
+
+msgid ""
+"--crop-(left|right|top|bottom)=PIXELS\n"
+"                      Crop the output to the given pixel range, relative to "
+"the\n"
+"                      raw image after rotation but before any scaling.\n"
+msgstr ""
+"--crop-(left|right|top|bottom)=PUNKTE\n"
+"                      Die Ausgabe auf den gegebenen Punktebereich\n"
+"                      kürzen, relativ zum raw-Bild nach der Drehung aber\n"
+"                      vor jeglicher Skalierung.\n"
+
+msgid ""
+"--out-path=PATH       PATH for output file (default use input file's path).\n"
+msgstr ""
+"--out-path=PFAD       PFAD für Ausgabedatei (Standardmäßig wird Pfad der\n"
+"                      Eingabedatei benutzt).\n"
+
+msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
+msgstr ""
+"--output=DATEI        Ausgabedateiname, benutzen Sie »-« für Ausgabe auf\n"
+"                      stdout.\n"
+
+# http://astrofotografie.hohmann-edv.de/aufnahmetechniken/
+#                                                 toucam.dunkelbildabzug.php
+msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
+msgstr "--darkframe=DATEI      DATEI für Dunkelbildabzug benutzen.\n"
+
+msgid ""
+"--overwrite           Overwrite existing files without asking (default no).\n"
+msgstr ""
+"--overwrite           Existierende Dateien ohne Nachfrage überschreiben\n"
+"                      (Standard: Nein).\n"
+
+msgid "--maximize-window     Force window to be maximized.\n"
+msgstr ""
+
+msgid ""
+"--silent              Do not display any messages during batch conversion.\n"
+msgstr ""
+"--silent              Während der Stapelkonvertierung keine Nachrichten\n"
+"                      anzeigen.\n"
+
+msgid ""
+"UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
+"Then, if an ID file is specified it setting are read. Next, the setting "
+"from\n"
+"the --conf option are taken, ignoring input/output filenames in the ID "
+"file.\n"
+"Lastly, the options from the command line are set. In batch mode, the "
+"second\n"
+"group of options is NOT read from the resource file.\n"
+msgstr ""
+"UFRaw liest zuerst die Einstellung aus der Einstellungsdatei\n"
+"$HOME/.ufrawrc. Dann, wenn eine ID-Datei angegeben ist, wird deren\n"
+"Einstellung gelesen. Als nächstes wird die Einstellung aus der\n"
+"--conf-Option genommen, wobei die Eingabe-/Ausgabedateinamen in der\n"
+"ID-Datei ignoriert werden. Als letztes werden die Optionen von der\n"
+"Befehlszeile gesetzt. Im Stapelverarbeitungsmodus wird die zweite Gruppe\n"
+"von Optionen NICHT aus der Quelldatei gelesen.\n"
+
+msgid ""
+"Last, but not least, --version displays the version number and compilation\n"
+"options for ufraw and --help displays this help message and exits.\n"
+msgstr ""
+"Zu guter Letzt zeigt --version die Versionsnummer und\n"
+"Kompilierungsoptionen für ufraw an. --help zeigt diese Hilfenachricht\n"
+"und endet.\n"
+
+#, c-format
+msgid "'%s' is not a valid value for the --%s option."
+msgstr "»%s« ist kein gültiger Wert für die --%s-Option."
+
+msgid "ufraw was build without ZIP support."
+msgstr "ufraw wurde ohne ZIP-Unterstützung erstellt."
+
+msgid "--batch is obsolete. Use ufraw-batch instead."
+msgstr "--batch ist veraltet. Benutzen Sie anstelle dessen ufraw-batch."
+
+#, c-format
+msgid "getopt returned character code 0%o ??"
+msgstr "getopt gab Zeichenkode 0%o zurück?"
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "»%s« ist keine gültige Weißabgleich-Einstellung."
+
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "--temperature- und --green-Optionen überschreiben die Option --wb=%s."
+
+#, c-format
+msgid "failed to load curve from %s, too many configured base curves"
+msgstr ""
+"Kurve von %s zu laden fehlgeschlagen, zu viele konfigurierte Basiskurven"
+
+#, c-format
+msgid "failed to load curve from %s"
+msgstr "Kurve von %s zu laden fehlgeschlagen"
+
+#, c-format
+msgid "'%s' is not a valid base curve name."
+msgstr "»%s« ist kein gültiger Basiskurvenname."
+
+#, c-format
+msgid "failed to load curve from %s, too many configured curves"
+msgstr "Kurve von %s zu laden fehlgeschlagen, zu viele konfigurierte Kurven"
+
+#, c-format
+msgid "'%s' is not a valid curve name."
+msgstr "»%s« ist kein gültiger Kurvenname."
+
+#, c-format
+msgid "'%s' is not a valid interpolation option."
+msgstr "»%s« ist keine gültige Interpolationsoption."
+
+#, c-format
+msgid "'%s' is not a valid grayscale option."
+msgstr "»%s« ist keine gültige Graustufenoption."
+
+#, c-format
+msgid "'%s' is not a valid restore option."
+msgstr "»%s« ist keine gültige Wiederherstellungsoption."
+
+#, c-format
+msgid "'%s' is not a valid clip option."
+msgstr "»%s« ist keine gültige Clip-Option."
+
+msgid "you can not specify both --shrink and --size"
+msgstr "Sie können --shrink und --size nicht zusammen angeben"
+
+#, c-format
+msgid "'%d' is not a valid bit depth."
+msgstr "»%d« ist keine gültige Bit-Tiefe."
+
+#, c-format
+msgid "Output type '%s' is deprecated"
+msgstr "Ausgabetyp »%s« ist missbilligt"
+
+msgid "ufraw was build without TIFF support."
+msgstr "ufraw wurde ohne TIFF-Unterstützung erstellt."
+
+msgid "ufraw was build without JPEG support."
+msgstr "ufraw wurde ohne JPEG-Unterstützung erstellt."
+
+msgid "ufraw was build without PNG support."
+msgstr "ufraw wurde ohne PNG-Unterstützung erstellt."
+
+#, c-format
+msgid "'%s' is not a valid output type."
+msgstr "»%s« ist kein gültiger Ausgabetyp."
+
+#, c-format
+msgid "'%s' is not a valid output type for embedded image."
+msgstr "»%s« ist kein gültiger Ausgabetyp für eingebettetes Bild."
+
+#, c-format
+msgid "'%d' is not a valid bit depth for embedded image."
+msgstr "»%d« ist keine gültige Bit-Tiefe für eingebettetes Bild."
+
+#, c-format
+msgid "'%s' is not a valid rotate option."
+msgstr "»%s« ist keine gültige Drehoption."
+
+#, c-format
+msgid "'%s' is not a valid create-id option."
+msgstr "»%s« ist keine gültige create-id-Option."
+
+#, c-format
+msgid "'%s' is not a valid path."
+msgstr "»%s« ist kein gültiger Pfad."
+
+msgid "cannot output more than one file to the same output"
+msgstr ""
+"es kann nicht mehr als eine Datei auf der gleiche Ausgabe ausgegeben werden"
+
+#, c-format
+msgid "Raw file '%s' missing."
+msgstr "Raw-Datei »%s« fehlt."
+
+msgid "Delete raw file"
+msgstr "Raw-Datei löschen"
+
+msgid "_Delete selected"
+msgstr "Auswahl _Löschen"
+
+msgid "Delete _All"
+msgstr "_Alle löschen"
+
+msgid "Select files to delete"
+msgstr "Dateien zum Löschen auswählen"
+
+#, c-format
+msgid "Error reading directory '%s'."
+msgstr "Fehler beim Lesen von Verzeichnis »%s«."
+
+#, c-format
+msgid "Error deleting '%s'"
+msgstr "Fehler beim Löschen von »%s«"
+
+msgid "Reading embedded image requires libjpeg."
+msgstr "Zum Lesen des eingebetteten Bildes wird libjpeg benötigt."
+
+msgid "No embedded image found"
+msgstr "Kein eingebettetes Bild gefunden"
+
+#, c-format
+msgid "Original size (%d) is smaller than the requested size (%d)"
+msgstr "Originalgröße (%d) ist kleiner als die angeforderte Größe (%d)"
+
+#, c-format
+msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
+msgstr ""
+"ppm-Vorschaubild stimmt nicht überein, Höhe %d, Breite %d, während Puffer %d "
+"ist."
+
+#, c-format
+msgid "JPEG thumb height %d different than expected %d."
+msgstr "Höhe von JPEG-Vorschaubild %d verschieden von erwartetem %d."
+
+#, c-format
+msgid "JPEG thumb width %d different than expected %d."
+msgstr "Breite von JPEG-Vorschaubild %d verschieden von erwartetem %d."
+
+#, c-format
+msgid ""
+"Error creating file '%s'.\n"
+"%s"
+msgstr ""
+"Fehler beim Erstellen der Datei »%s«.\n"
+"%s"
+
+msgid "No embedded image read"
+msgstr "Kein eingebettetes Bild gelesen"
+
+#, c-format
+msgid "Error creating file '%s'. Unknown file type %d."
+msgstr "Fehler beim Erstellen der Datei »%s«. Unbekannter Dateityp %d."
+
+#, c-format
+msgid "Error creating file '%s': %s"
+msgstr "Fehler beim Erstellen der Datei »%s«: %s"
+
+#, c-format
+msgid "Error writing '%s'"
+msgstr "Fehler beim Schreiben von »%s«"
+
+#, c-format
+msgid "Unsupported output type (%d) for embedded image"
+msgstr "Nicht unterstützter Ausgabetyp (%d) für eingebettetes Bild"
+
+#, c-format
+msgid "Loading raw file '%s'"
+msgstr "Raw-Datei »%s« wird geladen"
+
+msgid "Can't allocate new image."
+msgstr "Neues Bild kann nicht allokiert werden."
+
+#. Create the "background" layer to hold the image...
+msgid "Background"
+msgstr "Hintergrund"
+
+msgid "Loading image"
+msgstr "Bild wird geladen"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "Einbetten von Ausgabeprofil »%s« in Bild fehlgeschlagen."
+
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored.\n"
+msgstr "EXIF-Pufferlänge %d zu lang, ignoriert.\n"
+
+msgid "Raw histogram with conversion curves"
+msgstr "Raw-Histogramm mit Konvertierungskurven"
+
+msgid "Live histogram"
+msgstr "Live-Histogramm"
+
+#. No darkframe file
+msgid "None"
+msgstr "Keine"
+
+msgid "Lightness"
+msgstr "Helligkeit"
+
+msgid "Luminance"
+msgstr "Leuchtdichte"
+
+msgid "Value"
+msgstr "Wert"
+
+msgid "Channel Mixer"
+msgstr "Kanalmixer"
+
+msgid "No more room for new curves."
+msgstr "Kein Platz mehr für neue Kurven."
+
+msgid "Load curve"
+msgstr "Kurve laden"
+
+msgid "All curve formats"
+msgstr "Alle Kurvenformate"
+
+msgid "UFRaw curve format"
+msgstr "UFRaw-Kurvenformat"
+
+msgid "Nikon curve format"
+msgstr "Nikon-Kurvenformat"
+
+msgid "Save curve"
+msgstr "Kurve speichern"
+
+msgid "No more room for new profiles."
+msgstr "Kein Platz mehr für neue Profile."
+
+msgid "Load color profile"
+msgstr "Farbprofil laden"
+
+msgid "Color Profiles"
+msgstr "Farbprofile"
+
+msgid "Luminosity (Y value)"
+msgstr "Leuchtkraft (Y-Wert)"
+
+msgid "Adams' zone"
+msgstr "Adams' Zone"
+
+#, c-format
+msgid "size %dx%d, zoom %2.f%%"
+msgstr "Größe %dx%d, Zoom %2.f%%"
+
+#, c-format
+msgid "size %dx%d, scale 1/%d"
+msgstr "Größe %dx%d, Skala 1/%d"
+
+#, c-format
+msgid "Black point: %0.3lf"
+msgstr "Schwarzpunkt: %0.3lf"
+
+msgid "Fatal Error: uf->conf->shrink<1"
+msgstr "Schwerwiegender Fehler: uf->conf->shrink<1"
+
+msgid "Load dark frame"
+msgstr "Dunkelbild laden"
+
+msgid "clip"
+msgstr "Clip"
+
+msgid "restore in LCH space for soft details"
+msgstr "im LCH-Raum wiederherstellen für weiche Details"
+
+msgid "restore in HSV space for sharp details"
+msgstr "im HSV-Raum wiederherstellen für scharfe Details"
+
+#, c-format
+msgid ""
+"Restore details for negative EV\n"
+"Current state: %s"
+msgstr ""
+"Details für negativen EV wiederherstellen\n"
+"Derzeitiger Status: %s"
+
+msgid "digital linear"
+msgstr "digital linear"
+
+msgid "soft film like"
+msgstr "wie weicher Film"
+
+#, c-format
+msgid ""
+"Clip highlights for positive EV\n"
+"Current state: %s"
+msgstr ""
+"Clip-Hervorhebungen für positiven EV\n"
+"Derzeitiger Status: %s"
+
+#, c-format
+msgid "Filename: %s%s"
+msgstr "Dateiname: %s%s"
+
+msgid ""
+"\n"
+"Create also ID file"
+msgstr ""
+"\n"
+"Außerdem ID-Datei erstellen"
+
+msgid ""
+"\n"
+"Create only ID file"
+msgstr ""
+"\n"
+"Nur ID-Datei erstellen"
+
+msgid "UFRaw options"
+msgstr "UFRaw-Optionen"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Input color profiles"
+msgstr "Eingabe-Farbprofile"
+
+msgid "Output color profiles"
+msgstr "Ausgabe-Farbprofile"
+
+msgid "Display color profiles"
+msgstr "Farbprofile anzeigen"
+
+msgid "Base Curves"
+msgstr "Basiskurven"
+
+msgid "Luminosity Curves"
+msgstr "Leuchtkraftkurven"
+
+#. Remote Gimp command entry
+msgid "Remote Gimp command"
+msgstr "Gimp-Befehl aus der Ferne"
+
+msgid "Reset command to default"
+msgstr "Befehl auf Standard zurücksetzen"
+
+msgid "Blink Over/Underexposure Indicators"
+msgstr "Über-/Unterbelichtungsindikatoren für Blinken"
+
+msgid "Configuration"
+msgstr "Konfiguration"
+
+msgid "Save configuration"
+msgstr "Konfiguration sichern"
+
+msgid "Save configuration to resource file ($HOME/.ufrawrc)"
+msgstr "Konfiguration in Einstellungsdatei ($HOME/.ufrawrc) sichern"
+
+msgid "Log"
+msgstr "Protokoll"
+
+msgid "About"
+msgstr "Über"
+
+msgid ""
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
+"to\n"
+"read and manipulate raw images from digital cameras.\n"
+"UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"for the actual encoding of the raw images.\n"
+"\n"
+"Author: Udi Fuchs\n"
+"Homepage: http://ufraw.sourceforge.net/\n"
+"\n"
+msgstr ""
+"Das <b>U</b>nidentifizierte <b>F</b>liegende <b>Raw</b> (<b>UFRaw</b>)\n"
+"ist ein Dienstprogramm, um raw-Bilder von Digitalkameras zu lesen und zu\n"
+"manipulieren.\n"
+"UFRaw beruht auf <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"\n"
+"Autor: Udi Fuchs\n"
+"Homepage: http://ufraw.sourceforge.net/\n"
+"\n"
+
+#, c-format
+msgid "%s%s (Alt-%s)"
+msgstr "%s%s (Alt-%s)"
+
+msgid "Linear"
+msgstr "Linear"
+
+msgid "Logarithmic"
+msgstr "Logarithmisch"
+
+msgid "RGB histogram"
+msgstr "RGB-Histogramm"
+
+msgid "R+G+B histogram"
+msgstr "R+G+B-Histogramm"
+
+msgid "Luminosity histogram"
+msgstr "Leuchtkrafthistogramm"
+
+msgid "Value (maximum) histogram"
+msgstr "Werte-(Maximum)-Histogramm"
+
+msgid "Saturation histogram"
+msgstr "Sättigungshistogramm"
+
+msgid "Average:"
+msgstr "Durchschnitt:"
+
+msgid "Std. deviation:"
+msgstr "Standardabweichung:"
+
+msgid "Overexposed:"
+msgstr "Überbelichtet:"
+
+msgid "Indicate"
+msgstr "Andeuten"
+
+msgid "Underexposed:"
+msgstr "Unterbelichtet:"
+
+msgid "White Balance"
+msgstr "Weißabgleich"
+
+msgid ""
+"There are no white balance presets for your camera model.\n"
+"Check UFRaw's webpage for information on how to get your\n"
+"camera supported."
+msgstr ""
+"Für Ihr Kameramodell gibt es keine Voreinstellung des Weißabgleichs.\n"
+"Prüfen Sie die Webseite von UFRaw, um Informationen darüber zu erhalten,\n"
+"wie Ihre Kamera unterstützt werden kann."
+
+msgid "Reset white balance to initial value"
+msgstr "Weißabgleich auf Anfangswert zurücksetzen"
+
+msgid "Temperature"
+msgstr "Temperatur"
+
+msgid "White balance color temperature (K)"
+msgstr "Farbtemperatur (K) für Weißabgleich"
+
+msgid "Green"
+msgstr "Grün"
+
+msgid "Green component"
+msgstr "Grüne Komponente"
+
+msgid "Select a spot on the preview image to apply spot white balance"
+msgstr ""
+"Wählen Sie einen Punkt auf dem Vorschaubild, um den Weißabgleichspunkt "
+"anzuwenden."
+
+msgid "Chan. multipliers:"
+msgstr "Kanalmultiplikatoren:"
+
+msgid "Bayer pattern interpolation"
+msgstr "Bayer-Musterinterpolation"
+
+msgid "VNG four color interpolation"
+msgstr "VNG-Vierfarbinterpolation"
+
+msgid "Bilinear interpolation"
+msgstr "Bilineare Interpolation"
+
+msgid "AHD interpolation"
+msgstr "AHD-Interpolation"
+
+msgid "VNG interpolation"
+msgstr "VNG-Interpolation"
+
+msgid "PPG interpolation"
+msgstr "PPG-Interpolation"
+
+msgid "No interpolation"
+msgstr "Keine Interpolation"
+
+msgid "No Bayer pattern"
+msgstr "Kein Bayer-Muster"
+
+msgid "Apply color smoothing"
+msgstr "Farbglättung übernehmen"
+
+msgid "Denoise"
+msgstr "Rauschunterdrückung"
+
+msgid "Threshold for wavelet denoising"
+msgstr "Schwelle für Wavelet-Rauschunterdrückung"
+
+msgid "Reset denoise threshold to default"
+msgstr "Grenzwert für Rauschunterdrückung auf Standard setzen"
+
+msgid "Dark Frame:"
+msgstr "Dunkelbild:"
+
+msgid "Reset dark frame"
+msgstr "Dunkelbild zurücksetzen"
+
+msgid "Zoom:"
+msgstr "Zoom:"
+
+msgid "Zoom percentage"
+msgstr "Zoom-Prozentsatz"
+
+#, fuzzy
+msgid "Select a spot on the preview image to choose hue"
+msgstr ""
+"Wählen Sie einen Punkt auf dem Vorschaubild, um den Weißabgleichspunkt "
+"anzuwenden."
+
+#, fuzzy
+msgid "Reset adjustment"
+msgstr "Globale Kontrastanpassung"
+
+msgid "Grayscale Mode:"
+msgstr "Graustufenmodus:"
+
+msgid "Reset channel mixer"
+msgstr "Kanalmixer zurücksetzen"
+
+msgid "Load base curve"
+msgstr "Basiskurve laden"
+
+msgid "Save base curve"
+msgstr "Basiskurve sichern"
+
+msgid "Reset base curve to default"
+msgstr "Basiskurve auf Standard zurücksetzen"
+
+msgid "Input ICC profile"
+msgstr "Eingabe-ICC-Profil"
+
+msgid "Output ICC profile"
+msgstr "Ausgabe-ICC-Profil"
+
+msgid "Display ICC profile"
+msgstr "ICC-Profil anzeigen"
+
+msgid "Gamma"
+msgstr "Gamma"
+
+msgid "Gamma correction for the input profile"
+msgstr "Gamma-Korrektur für das Eingabeprofil"
+
+msgid "Reset gamma to default"
+msgstr "Gamma auf Standard zurücksetzen"
+
+msgid "Linearity"
+msgstr "Linearität"
+
+msgid "Linear part of the gamma correction"
+msgstr "Linearer Teil der Gamma-Korrektur"
+
+msgid "Reset linearity to default"
+msgstr "Linearität auf Standard zurücksetzen"
+
+msgid "Output intent"
+msgstr "Ausgabezweck"
+
+msgid "Perceptual"
+msgstr "Wahrnehmend"
+
+msgid "Relative colorimetric"
+msgstr "Relativ kolorimetrisch"
+
+msgid "Saturation"
+msgstr "Sättigung"
+
+msgid "Absolute colorimetric"
+msgstr "Absolut kolorimetrisch"
+
+msgid "Output bit depth"
+msgstr "Ausgabe-Bit-Tiefe"
+
+msgid "Display intent"
+msgstr "Eingabezweck"
+
+msgid "Disable soft proofing"
+msgstr "Weichen Korrekturabzug ausschalten"
+
+msgid "Contrast"
+msgstr "Kontrast"
+
+msgid "Global contrast adjustment"
+msgstr "Globale Kontrastanpassung"
+
+msgid "Reset global contrast to default"
+msgstr "Globale Kontrasteinstellung auf Standard zurücksetzen"
+
+msgid "Reset saturation to default"
+msgstr "Sättigung auf Standard zurücksetzen"
+
+msgid ""
+"Auto adjust curve\n"
+"(Flatten histogram)"
+msgstr ""
+"Automatisch angepasste Kurve\n"
+"(Histogramm abflachen)"
+
+msgid "Reset curve to default"
+msgstr "Kurve auf Standard zurücksetzen"
+
+msgid "Black point: 0.000"
+msgstr "Schwarzpunkt: 0,000"
+
+msgid "Reset black-point to default"
+msgstr "Schwarzpunkt auf Standard zurücksetzen"
+
+msgid "Auto adjust black-point"
+msgstr "Automatisch angepasster Schwarzpunkt"
+
+#. Start of Crop controls
+msgid "Left:"
+msgstr "Links:"
+
+msgid "Top:"
+msgstr "Kopfende:"
+
+msgid "Right:"
+msgstr "Rechts:"
+
+msgid "Bottom:"
+msgstr "Fußende:"
+
+msgid "Reset the crop region"
+msgstr "Schnittregion zurücksetzen"
+
+msgid "Aspect ratio:"
+msgstr "Aspektverhältnis:"
+
+msgid ""
+"Crop area aspect ratio.\n"
+"Can be entered in decimal notation (1.273)\n"
+"or as a ratio of two numbers (14:11)"
+msgstr ""
+"Aspektverhältnis der Schnittregion.\n"
+"Kann in dezimaler Schreibweise (1,273)\n"
+"oder als Verhältnis von zwei Zahlen (14:11) eingegeben werden."
+
+msgid "Lock aspect ratio"
+msgstr "Aspektverhältnis sperren"
+
+msgid "Shrink factor"
+msgstr "Schrumpffaktor"
+
+msgid "Height"
+msgstr "Höhe"
+
+msgid "Width"
+msgstr "Breite"
+
+msgid "Orientation:"
+msgstr "Ausrichtung:"
+
+msgid "Path"
+msgstr "Pfad"
+
+msgid "Select output path"
+msgstr "Ausgabepfad wählen"
+
+msgid "Filename"
+msgstr "Dateiname"
+
+msgid "JPEG compression level"
+msgstr "JPEG-Komprimierungsstufe"
+
+msgid "JPEG progressive encoding"
+msgstr "fortlaufende JPEG-Kodierung"
+
+msgid "TIFF lossless Compress"
+msgstr "verlustfreie TIFF-Komprimierung"
+
+#, fuzzy
+msgid "Embed EXIF data in output"
+msgstr "EXIF-Datein in JPEG- oder PNG-Dateien einbetten"
+
+msgid "Create ID file "
+msgstr "ID-Datei erzeugen"
+
+msgid "No"
+msgstr "Nein"
+
+msgid "Also"
+msgstr "Außerdem"
+
+msgid "Only"
+msgstr "Nur"
+
+msgid "Save image defaults "
+msgstr "Bildstandards sichern"
+
+msgid ""
+"Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr ""
+"Derzeitige Bild-Manipulationsparameter als Standards sichern.\n"
+"Die Ausgabeparameter in diesem Fenster werden immer gesichert."
+
+msgid "Never again"
+msgstr "Niemals wieder"
+
+msgid "Always"
+msgstr "Immer"
+
+msgid "Just this once"
+msgstr "Nur dieses eine Mal"
+
+msgid "Remember output path"
+msgstr "An Ausgabepfad erinnern"
+
+msgid "Overwrite existing files without asking"
+msgstr "Existierende Dateien ohne Nachfrage überschreiben"
+
+msgid "Tag"
+msgstr "Markierung"
+
+#. Fill table with EXIF tags
+msgid "Camera maker"
+msgstr "Kamerahersteller"
+
+msgid "Camera model"
+msgstr "Kameramodell"
+
+msgid "Timestamp"
+msgstr "Zeitstempel"
+
+msgid "Shutter time"
+msgstr "Verschlusszeit"
+
+msgid "Aperture"
+msgstr "Blende"
+
+msgid "ISO speed"
+msgstr "ISO-Geschwindigkeit"
+
+msgid "Focal length"
+msgstr "Brennweite"
+
+msgid "35mm focal length"
+msgstr "35mm Brennweite"
+
+#. Lens selector
+msgid "Lens"
+msgstr "Linse"
+
+msgid "Flash"
+msgstr "Blitz"
+
+msgid "White balance"
+msgstr "Weißabgleich"
+
+#, c-format
+msgid "EXIF data read by %s"
+msgstr "EXIF-Daten von %s gelesen"
+
+msgid "Warning: EXIF data will not be sent to output"
+msgstr "Warnung: EXIF-Daten werden nicht an die Ausgabe gesendet"
+
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw"
+
+msgid "Spot values:"
+msgstr "Punktwerte:"
+
+msgid "Exposure compensation in EV"
+msgstr "Belichtungsausgleich in EV"
+
+msgid "Auto adjust exposure"
+msgstr "Automatisch angepasster Ausgleich"
+
+msgid "Reset exposure to default"
+msgstr "Ausgleich auf Standard zurücksetzen"
+
+msgid "Grayscale"
+msgstr "Graustufen"
+
+#. Lens correction page
+msgid "Lens correction"
+msgstr "Linsenkorrektur"
+
+msgid "Base curve"
+msgstr "Basiskurve"
+
+msgid "Color management"
+msgstr "Farbverwaltung"
+
+msgid "Correct luminosity, saturation"
+msgstr "Leuchtstärke und Sättigung korrigieren"
+
+#, fuzzy
+msgid "Lightness Adjustments"
+msgstr "Helligkeit"
+
+msgid "Crop and rotate"
+msgstr "Schneiden und drehen"
+
+msgid "Save"
+msgstr "Sichern"
+
+msgid "EXIF"
+msgstr "EXIF"
+
+msgid "Options"
+msgstr "Optionen"
+
+#. Comment to translator: All control buttons
+#. "_Delete", "_Cancel", "_Save", "Save _As", "Send to _Gimp"
+#. should have unique mnemonics.
+#. Delete button:
+msgid "_Delete"
+msgstr "_Löschen"
+
+msgid "Send image to _Gimp"
+msgstr "Bild an _Gimp senden"
+
+#. preview_progress() changes the size of the progress bar
+#. and processes the event queue.
+msgid "Loading preview"
+msgstr "Vorschau laden"
+
+msgid "Fatal error setting C locale"
+msgstr "Schwerwiegender Fehler beim Einstellen von C-Sprachumgebung"
+
+#, c-format
+msgid "Curve version is not supported"
+msgstr "Kurvenversion wird nicht unterstützt"
+
+#, c-format
+msgid "Invalid Nikon curve file '%s'"
+msgstr "Falsche Nikon-Kurvendatei »%s«"
+
+#, c-format
+msgid "Error opening Curve file '%s': %s"
+msgstr "Fehler beim Öffnen der Kurvendatei »%s«: %s"
+
+#, c-format
+msgid "Error opening file '%s': %s"
+msgstr "Fehler beim Öffnen der Datei »%s«: %s"
+
+msgid "File exists"
+msgstr "Datei existiert"
+
+#, c-format
+msgid ""
+"File '%s' already exists.\n"
+"Overwrite?"
+msgstr ""
+"Datei »%s« existiert bereits.\n"
+"Überschreiben?"
+
+msgid "Error creating temporary file."
+msgstr "Fehler beim Erstellen der temporären Datei."
+
+msgid "Error activating Gimp."
+msgstr "Fehler bei der Aktivierung von Gimp."
+
+msgid "Remote URI is not supported"
+msgstr "URI in der Ferne wird nicht unterstützt"
+
+#, c-format
+msgid "darkframe error: %s is not a raw file\n"
+msgstr "Dunkelbild-Fehler: %s ist keine raw-Datei\n"
+
+#, c-format
+msgid "error loading darkframe '%s'\n"
+msgstr "Fehler beim Laden von Dunkelbild »%s«\n"
+
+#, c-format
+msgid "Darkframe '%s' is incompatible with main image"
+msgstr "Dunkelbild »%s« ist inkompatibel zu Hauptbild"
+
+#, c-format
+msgid "using darkframe '%s'\n"
+msgstr "Dunkelbild »%s« wird benutzt\n"
+
+msgid "Error reading NEF curve"
+msgstr "Fehler beim Lesen der NEF-Kurve"
+
+#, c-format
+msgid "Can not downsize from %d to %d."
+msgstr "Es kann nicht von %d auf %d verkleinert werden."
+
+msgid "Cannot use camera white balance, reverting to auto white balance."
+msgstr ""
+"Der Weißabgleich der Kamera kann nicht verwendet werden, es wird zum "
+"automatischen Weißabgleich zurückgekehrt."
+
+#. Error was not already set before
+#, c-format
+msgid "Error creating file '%s'."
+msgstr "Fehler beim Erstellen der Datei »%s«."
+
+#. 'errno' does seem to contain useful information
+#. Error was not already set before
+msgid "Error creating file."
+msgstr "Fehler beim Erstellen der Datei."
+
+msgid "Converting image"
+msgstr "Bild umwandeln"
+
+msgid "Saving image"
+msgstr "Bild speichern"
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr "Bilddateiname kann nicht gleich dem ID-Dateinamen »%s« sein"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "Einbetten des Ausgabeprofils »%s« in »%s« fehlgeschlagen."
+
+#, c-format
+msgid "Unsupported bit depth '%d' ignored."
+msgstr "Nicht unterstützte Bit-Tiefe »%d« ignoriert."
+
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "EXIF-Pufferlänge %d zu lang, ignoriert."
+
+#, c-format
+msgid "Unknown file type %d."
+msgstr "Unbekannter Dateityp %d."
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+"Hersteller:\t\t%s\n"
+"Modell:\t\t%s%s\n"
+"Eingehängt:\t\t%s\n"
+"Schnittfaktor:\t%.1f"
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+"Hersteller:\t\t%s\n"
+"Modell:\t\t%s\n"
+"Brennweitenbereich:\t%s\n"
+"Blende:\t\t%s\n"
+"Schnittfaktor:\t%.1f\n"
+"Typ:\t\t%s\n"
+"Einhängungen:\t\t%s"
+
+msgid "Focal"
+msgstr "Brennweite"
+
+msgid "F"
+msgstr "F"
+
+msgid "F-number (Aperture)"
+msgstr "F-Nummer (Blende)"
+
+msgid "Distance"
+msgstr "Entfernung"
+
+msgid "Distance to subject"
+msgstr "Entfernung zum Objekt"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "Modell:"
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "Mathematisches Modell farblicher Aberrationen"
+
+msgid "Parameters"
+msgstr "Parameter"
+
+msgid "Optical vignetting mathematical model"
+msgstr "Mathematisches Modell optischer Eckenabschattung"
+
+msgid "Lens distortion mathematical model"
+msgstr "Mathematisches Modell der Linsenverzerrung"
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr "Linsengeometrie:"
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "Die Geometrie der Linse, die benutzt wurde, um diesen Schuss zu machen"
+
+msgid "Target geometry:"
+msgstr "Zielgeometrie:"
+
+msgid "The target geometry for output image"
+msgstr "Die Zielgeometrie für das Ausgabebild"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Unter Benutzung eines Musters nach einer Kamera suchen\n"
+"Format: [Hersteller, ][Modell]"
+
+msgid "Choose camera from complete list"
+msgstr "Kamera aus kompletter Liste auswählen"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Unter Benutzung eines Musters nach einer Linse suchen\n"
+"Format: [Hersteller, ][Modell]"
+
+msgid "Choose lens from list of possible variants"
+msgstr "Linse aus einer Liste mit möglichen Varianten auswählen"
+
+msgid "Scale"
+msgstr "Skala"
+
+msgid "Image scale power-of-two"
+msgstr "Bildskala-Zweierpotenz"
+
+msgid "Reset image scale to default"
+msgstr "Bildskala auf Standard zurücksetzen"
+
+msgid "Autoscale the image for best fit"
+msgstr "Das Bild für beste Passform automatisch skalieren"
+
+msgid "Lateral chromatic aberration"
+msgstr "Seitliche farbliche Aberration"
+
+msgid "Optical vignetting"
+msgstr "optische Eckenabschattung"
+
+msgid "Lens distortion"
+msgstr "Linsenverzerrung"
+
+msgid "Lens geometry"
+msgstr "Linsengeometrie"
+
+#. Column 1 - "make" of the camera.
+#. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
+#. * Column 3 - WB name.
+#. * Column 4 - Fine tuning. MUST be in increasing order. 0 for no fine tuning.
+#. *	      It is enough to give only the extreme values, the other values
+#. *	      will be interpolated.
+#. * Column 5 - Channel multipliers.
+#. *
+#. * Minolta's ALPHA and MAXXUM models are treated as the DYNAX model.
+#. *
+#. * WB name is standardized to one of the following:
+#. "Sunlight" and other variation should be switched to this:
+msgid "Daylight"
+msgstr "Tageslicht"
+
+#. Probably same as above:
+msgid "Direct sunlight"
+msgstr "Direkte Sonneneinstrahlung"
+
+msgid "Cloudy"
+msgstr "Wolkig"
+
+#. "Shadows" should be switched to this:
+msgid "Shade"
+msgstr "Schatten"
+
+msgid "Incandescent"
+msgstr "Strahlend"
+
+msgid "Incandescent warm"
+msgstr "Strahlend warm"
+
+#. Same as "Incandescent":
+msgid "Tungsten"
+msgstr "Wolfram"
+
+msgid "Fluorescent"
+msgstr "Fluoreszierend"
+
+#. In Canon cameras and some newer Nikon cameras:
+msgid "Fluorescent high"
+msgstr "Hoch fluoreszierend"
+
+msgid "Cool white fluorescent"
+msgstr "Kalt weiß fluoreszierend"
+
+msgid "Warm white fluorescent"
+msgstr "Warm weiß fluoreszierend"
+
+msgid "Daylight fluorescent"
+msgstr "Tageslicht-fluoreszierend"
+
+msgid "Neutral fluorescent"
+msgstr "Neutral fluoreszierend"
+
+msgid "White fluorescent"
+msgstr "Weiß fluoreszierend"
+
+#. In some newer Nikon cameras:
+msgid "Sodium-vapor fluorescent"
+msgstr "Natriumdampf-fluoreszierend"
+
+msgid "Day white fluorescent"
+msgstr "Tagesweiß-fluoreszierend"
+
+msgid "High temp. mercury-vapor fluorescent"
+msgstr "Hochtemperatur-Quecksilberdampf-fluoreszierend"
+
+#. For Olympus with no real "Flash" preset:
+msgid "Flash (auto mode)"
+msgstr "Blitz (automatischer Modus)"
+
+msgid "Evening sun"
+msgstr "Abendsonne"
+
+msgid "Underwater"
+msgstr "Unter Wasser"
+
+msgid "Black & white"
+msgstr "Schwarz & Weiß"
+
+msgid "Manual WB"
+msgstr "Manuelles SW"
+
+msgid "Camera WB"
+msgstr "Kamera-SW"
+
+msgid "Auto WB"
+msgstr "Automatisches SW"

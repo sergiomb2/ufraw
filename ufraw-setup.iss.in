@@ -47,6 +47,7 @@ Source: "ufraw-batch.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "po\ca.mo"; DestDir: "{app}\lib\locale\ca\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\cs.mo"; DestDir: "{app}\lib\locale\cs\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\da.mo"; DestDir: "{app}\lib\locale\da\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
+Source: "po\de.mo"; DestDir: "{app}\lib\locale\de\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\es.mo"; DestDir: "{app}\lib\locale\es\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\fr.mo"; DestDir: "{app}\lib\locale\fr\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\it.mo"; DestDir: "{app}\lib\locale\it\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
