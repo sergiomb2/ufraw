@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw-batch.c - The standalone interface to UFRaw in batch mode.
- * Copyright 2004-2008 by Udi Fuchs
+ * Copyright 2004-2009 by Udi Fuchs
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,8 @@ int main (int argc, char **argv)
 	else
 	    stat[0] = '\0';
 	ufraw_message(UFRAW_MESSAGE, _("Loaded %s%s"), uf->filename, stat);
-	if (ufraw_batch_saver(uf)==UFRAW_SUCCESS)
+	status = ufraw_batch_saver(uf);
+	if (status==UFRAW_SUCCESS || status==UFRAW_WARNING)
 	    ufraw_message(UFRAW_MESSAGE, _("Saved %s%s"),
 		    uf->conf->outputFilename, stat);
 	else
