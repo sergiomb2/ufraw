@@ -1361,6 +1361,13 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
     if ( uf->conf->threshold>0 )
 	ufraw_flip_image_buffer(&uf->Images[ufraw_denoise_phase], flip);
     ufraw_flip_image_buffer(&uf->Images[ufraw_develop_phase], flip);
+#ifdef HAVE_LENSFUN
+    if (uf->modifier &&
+	(uf->postproc_ops & (LF_MODIFY_TCA | LF_MODIFY_DISTORTION |
+			     LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)))
+	ufraw_flip_image_buffer(&uf->Images[ufraw_lensfun_phase], flip);
+#endif
+ 
 
     return UFRAW_SUCCESS;
 }
