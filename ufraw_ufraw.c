@@ -638,7 +638,7 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->outputExifBuf);
     g_free(uf->image.image);
     int i;
-    for (i=ufraw_first_phase+1; i<ufraw_phases_num; i++)
+    for (i=ufraw_first_phase; i<ufraw_phases_num; i++)
 	g_free(uf->Images[i].buffer);
     g_free(uf->thumb.buffer);
     developer_destroy(uf->developer);
@@ -1011,7 +1011,7 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
     FirstImage->width = uf->image.width;
     FirstImage->depth = sizeof(dcraw_image_type);
     FirstImage->rowstride = FirstImage->width * FirstImage->depth;
-    FirstImage->buffer = (guint8 *)uf->image.image;
+    FirstImage->buffer = g_memdup(uf->image.image, FirstImage->height * FirstImage->rowstride);
     FirstImage->valid = 0xffffffff;
 
     return UFRAW_SUCCESS;
@@ -1777,4 +1777,72 @@ void ufraw_rotate_row(image_data *image, void *pixbuf, double angle,
 		oPix8[col][i] = pixValue >> 8;
 	}
     }
+}
+
+/*
+ * Rotate an 8 or 16 bits per color image 0-90 degrees. The output pixel is
+ * calculated as a weighted average of the 4 nearest input pixels.
+ */
+void ufraw_rotate_image_buffer(ufraw_image_data *img, double angle)
+{
+    double sine, cosine, movecol, moverow;
+    int oldwidth, oldheight, oldrowstride;
+    int width, height, depth, rowstride;
+    int col, row, uc, ur, i;
+    float c, r, fc, fr;
+    guint8 *in, *in_00, *in_01, *in_10, *in_11, *out;
+
+    if (!angle)
+	return;
+    sine = sin(angle * 2 * M_PI / 360);
+    cosine = cos(angle * 2 * M_PI / 360);
+    depth = img->depth;
+    oldwidth = img->width;
+    oldheight = img->height;
+    oldrowstride = img->rowstride;
+    width = ceil((oldheight * sine) + (oldwidth * cosine));
+    height = ceil((oldwidth * sine) + (oldheight * cosine));
+    rowstride = width * depth;
+    in = img->buffer;
+    out = g_new0(guint8, height * rowstride);
+    img->buffer = out;
+    img->width = width;
+    img->height = height;
+    img->rowstride = rowstride;
+    movecol = -oldheight * sine * cosine;
+    moverow = oldheight * sine * sine;
+    for (row = 0; row < height; ++row) {
+	for (col = 0; col < width; col++) {
+	    // (c,r) are the float input subpixel coordinates. fc,fr are the
+	    // weighting factors for integer coordinates (uc,ur)..(uc+1,ur+1)
+	    // around (c,r)
+	    c = (col * cosine) + (row * sine) + movecol;
+	    r = (row * cosine) - (col * sine) + moverow;
+	    uc = (int)floor(c);
+	    ur = (int)floor(r);
+	    if (uc >= 0 && uc + 1 < oldwidth && ur >= 0 && ur + 1 < oldheight) {
+		fc = c - uc;
+		fr = r - ur;
+		in_00 = in + ((ur * oldwidth) + uc) * depth;	// (uc,ur)
+		in_01 = in_00 + depth;				// (uc+1,ur)
+		in_10 = in_00 + oldrowstride;			// (uc,ur+1)
+		in_11 = in_10 + depth;				// (uc+1,ur+1)
+		if (depth > 4) {
+		    for (i = 0; i < 3; ++i) {
+			((guint16 *)out)[i] =
+			    (((guint16 *)in_00)[i] * (1 - fc) + ((guint16 *)in_01)[i] * fc) * (1 - fr) +
+			    (((guint16 *)in_10)[i] * (1 - fc) + ((guint16 *)in_11)[i] * fc) * fr;
+		    }
+		} else {
+		    for (i = 0; i < 3; ++i) {
+			out[i] =
+			    (in_00[i] * (1 - fc) + in_01[i] * fc) * (1 - fr) +
+			    (in_10[i] * (1 - fc) + in_11[i] * fc) * fr;
+		    }
+		}
+	    }
+	    out += depth;
+	}
+    }
+    g_free(in);
 }

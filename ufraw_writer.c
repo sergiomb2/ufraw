@@ -391,8 +391,8 @@ int ufraw_write_image(ufraw_data *uf)
     }
     // TODO: error handling
     ufraw_convert_image(uf);
-    left = uf->conf->CropX1 * uf->image.width / uf->rotatedWidth;
-    top = uf->conf->CropY1 * uf->image.height / uf->rotatedHeight;
+    left = uf->conf->CropX1 * uf->image.width / uf->initialWidth;
+    top = uf->conf->CropY1 * uf->image.height / uf->initialHeight;
     volatile int BitDepth = uf->conf->profile[out_profile]
 			[uf->conf->profileIndex[out_profile]].BitDepth;
     if ( BitDepth!=16 ) BitDepth = 8;

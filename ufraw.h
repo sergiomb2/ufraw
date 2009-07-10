@@ -319,6 +319,7 @@ void ufraw_auto_black(ufraw_data *uf);
 void ufraw_auto_curve(ufraw_data *uf);
 void ufraw_rotate_row(image_data *image, void *pixbuf, double angle,
 		      int bitDepth, int row, int offset, int width);
+void ufraw_rotate_image_buffer(ufraw_image_data *img, double angle);
 
 void ufraw_img_get_subarea_coord (ufraw_image_data *img, unsigned saidx,
                                   int *x, int *y, int *w, int *h);
