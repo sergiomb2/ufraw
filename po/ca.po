@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-08 07:00+0200\n"
+"POT-Creation-Date: 2009-07-10 06:15+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -128,6 +128,9 @@ msgstr "Aquesta versió del fitxer de configuració .ufrawrc no està permesa"
 #, c-format
 msgid "Too many anchors for curve '%s'"
 msgstr "Hi ha masses nanses per a la corba '%s'"
+
+msgid "Too many lightness adjustments in the ID file, ignored\n"
+msgstr ""
 
 #, c-format
 msgid ""

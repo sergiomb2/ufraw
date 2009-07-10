@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-08 07:00+0200\n"
+"POT-Creation-Date: 2009-07-10 06:15+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniele Medri <dmedri@SPAMgmail.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -122,6 +122,9 @@ msgstr "Versione di UFRaw in .ufrawrc non supportata"
 #, c-format
 msgid "Too many anchors for curve '%s'"
 msgstr "Troppi punti di ancoraggio per la curva '%s'"
+
+msgid "Too many lightness adjustments in the ID file, ignored\n"
+msgstr ""
 
 #, c-format
 msgid ""
