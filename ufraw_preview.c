@@ -2447,11 +2447,6 @@ static void button_update(GtkWidget *button, gpointer user_data)
 	CFG->profile[0][CFG->profileIndex[0]].gamma =
 		profile_default_gamma(&CFG->profile[0][CFG->profileIndex[0]]);
     }
-#ifdef UFRAW_CONTRAST
-    if (button==data->ResetContrastButton) {
-        CFG->contrast = conf_default.contrast;
-    }
-#endif
     if (button==data->ResetLinearButton) {
 	CFG->profile[0][CFG->profileIndex[0]].linear =
 		profile_default_linear(&CFG->profile[0][CFG->profileIndex[0]]);
@@ -2467,6 +2462,11 @@ static void button_update(GtkWidget *button, gpointer user_data)
     if (button==data->ResetThresholdButton) {
 	CFG->threshold = conf_default.threshold;
     }
+#ifdef UFRAW_CONTRAST
+    if (button==data->ResetContrastButton) {
+        CFG->contrast = conf_default.contrast;
+    }
+#endif
     if (button==data->ResetSaturationButton) {
 	CFG->saturation = conf_default.saturation;
     }
@@ -4322,15 +4322,14 @@ static void corrections_fill_interface(preview_data *data,
 
 #ifdef UFRAW_CONTRAST
     data->ContrastAdjustment = adjustment_scale(table, 0, 0, _("Contrast"),
-	    CFG->contrast, &CFG->contrast, 0, 5.0, 0.01, 0.1, 2,
+	    CFG->contrast, &CFG->contrast, 0, 8.0, 0.01, 0.1, 2,
 	    _("Global contrast adjustment"), G_CALLBACK(adjustment_update),
 	    &data->ResetContrastButton, _("Reset global contrast to default"),
 	    G_CALLBACK(button_update));
 #endif
     data->SaturationAdjustment = adjustment_scale(table, 0, 1, _("Saturation"),
-	    CFG->saturation, &CFG->saturation,
-	    0.0, 3.0, 0.01, 0.1, 2, _("Saturation"),
-	    G_CALLBACK(adjustment_update),
+	    CFG->saturation, &CFG->saturation, 0.0, 8.0, 0.01, 0.1, 2,
+	    _("Saturation"), G_CALLBACK(adjustment_update),
 	    &data->ResetSaturationButton, _("Reset saturation to default"),
 	    G_CALLBACK(button_update));
 
