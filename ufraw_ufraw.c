@@ -1366,8 +1366,7 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
 	(uf->postproc_ops & (LF_MODIFY_TCA | LF_MODIFY_DISTORTION |
 			     LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)))
 	ufraw_flip_image_buffer(&uf->Images[ufraw_lensfun_phase], flip);
-#endif
- 
+#endif /* HAVE_LENSFUN */
 
     return UFRAW_SUCCESS;
 }
