@@ -1530,6 +1530,7 @@ static void select_hue_event(GtkWidget *widget, gpointer user_data)
     if (data->SpotHue < 0.0) return;
 
     CFG->lightnessAdjustment[i].hue = data->SpotHue;
+    CFG->lightnessAdjustment[i].hueWidth = 60;
 
     preview_invalidate_layer (data, ufraw_develop_phase);
     update_scales(data);

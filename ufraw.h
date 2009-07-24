@@ -85,6 +85,7 @@ typedef struct {
 typedef struct {
     double adjustment;
     double hue;
+    double hueWidth;
 } lightness_adjustment;
 
 typedef struct {

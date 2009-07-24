@@ -81,9 +81,9 @@ const conf_data conf_default = {
     0, /* rotationAngle */
     0, /* lightness adjustment count */
     {
-	{ 1, 0 },
-	{ 1, 120 },
-	{ 1, 240 },
+	{ 1, 0, 60 },
+	{ 1, 120, 60 },
+	{ 1, 240, 60 },
     }, /* lightness adjustments */
     grayscale_none, /* grayscale mode */
     { 1.0, 1.0, 1.0 }, /* grayscale mixer */
@@ -658,7 +658,8 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     if ( strcmp("LightnessAdjustment", element) == 0 ) {
 	if (c->lightnessAdjustmentCount < max_adjustments) {
 	    lightness_adjustment *a = &c->lightnessAdjustment[c->lightnessAdjustmentCount];
-	    sscanf(temp, "%lf %lf", &a->adjustment, &a->hue);
+	    sscanf(temp, "%lf %lf %lf",
+		   &a->adjustment, &a->hue, &a->hueWidth);
 	    c->lightnessAdjustmentCount++;
 	}
 	else {
@@ -956,9 +957,10 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	buf = uf_markup_buf(buf,
 		"<Saturation>%lf</Saturation>\n", c->saturation);
     for (i = 0; i < max_adjustments; ++i) {
-	if (fabs(c->lightnessAdjustment[i].adjustment - conf_default.lightnessAdjustment[i].adjustment) > 0.01) {
-	    buf = uf_markup_buf(buf, "<LightnessAdjustment>%f %f</LightnessAdjustment>\n",
-				c->lightnessAdjustment[i].adjustment, c->lightnessAdjustment[i].hue);
+	lightness_adjustment *a = &c->lightnessAdjustment[i];
+	if (fabs(a->adjustment - conf_default.lightnessAdjustment[i].adjustment) > 0.01) {
+	    buf = uf_markup_buf(buf, "<LightnessAdjustment>%f %f %f</LightnessAdjustment>\n",
+				a->adjustment, a->hue, a->hueWidth);
 	}
     }
     if (c->grayscaleMode!=conf_default.grayscaleMode)

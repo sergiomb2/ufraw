@@ -244,11 +244,11 @@ static int luminance_adjustment_sampler(WORD In[], WORD Out[], LPVOID Cargo)
     cmsLabEncoded2Float(&Lab, In);
     cmsLab2LCh(&LCh, &Lab);
 
-    const double hueWidth = 60.0;
     double adj = 0.0;
     int i;
     for (i=0, a=d->lightnessAdjustment; i<max_adjustments; i++, a++) {
 	double deltaHue = LCh.h - a->hue;
+	double hueWidth = a->hueWidth;
 	if (deltaHue > 180.0) deltaHue -= 360.0;
 	if (deltaHue < -180.0) deltaHue += 360.0;
 	if (abs(deltaHue) > hueWidth)
