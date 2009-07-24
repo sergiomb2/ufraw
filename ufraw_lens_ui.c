@@ -659,13 +659,10 @@ static GtkAdjustment *append_term (
         param->Min, param->Max, step, page, accuracy, NULL, callback,
 	NULL, NULL, NULL);
 
-    GtkWidget *button = gtk_button_new ();
-    gtk_container_add (GTK_CONTAINER (button),
-                       gtk_image_new_from_stock (GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    GtkWidget *button = stock_icon_button(GTK_STOCK_REFRESH, NULL,
+                      G_CALLBACK (reset_adjustment_value), (void *)param);
     gtk_table_attach (GTK_TABLE (table), button, 7, 8, y, y + 1, 0, 0, 0, 0);
     g_object_set_data (G_OBJECT(button), "Adjustment", adj);
-    g_signal_connect (G_OBJECT (button), "clicked",
-                      G_CALLBACK (reset_adjustment_value), (void *)param);
 
     return adj;
 }
@@ -1173,23 +1170,16 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
     gtk_table_attach(table, data->CameraModel, 1, 2, 0, 1,
                      GTK_EXPAND|GTK_FILL, 0, 2, 0);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button),
-                      gtk_image_new_from_stock(GTK_STOCK_FIND, GTK_ICON_SIZE_BUTTON));
-    uf_widget_set_tooltip(button,
+    button = stock_icon_button(GTK_STOCK_FIND,
                           _("Search for camera using a pattern\n"
-                            "Format: [Maker, ][Model]"));
-    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
+                            "Format: [Maker, ][Model]"),
                      G_CALLBACK(camera_search_clicked), data);
+    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button),
-                      gtk_image_new_from_stock(GTK_STOCK_INDEX, GTK_ICON_SIZE_BUTTON));
-    uf_widget_set_tooltip(button, _("Choose camera from complete list"));
-    gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_INDEX,
+		    _("Choose camera from complete list"),
                      G_CALLBACK(camera_list_clicked), data);
+    gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
 
     /* Lens selector */
     label = gtk_label_new(_("Lens"));
@@ -1201,23 +1191,16 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
     gtk_table_attach(table, data->LensModel, 1, 2, 1, 2,
                      GTK_EXPAND|GTK_FILL, 0, 2, 0);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button),
-                      gtk_image_new_from_stock(GTK_STOCK_FIND, GTK_ICON_SIZE_BUTTON));
-    uf_widget_set_tooltip(button,
+    button = stock_icon_button(GTK_STOCK_FIND,
                           _("Search for lens using a pattern\n"
-                            "Format: [Maker, ][Model]"));
-    gtk_table_attach(table, button, 2, 3, 1, 2, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
+                            "Format: [Maker, ][Model]"),
                      G_CALLBACK(lens_search_clicked), data);
+    gtk_table_attach(table, button, 2, 3, 1, 2, 0, 0, 0, 0);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button),
-                      gtk_image_new_from_stock(GTK_STOCK_INDEX, GTK_ICON_SIZE_BUTTON));
-    uf_widget_set_tooltip(button, _("Choose lens from list of possible variants"));
-    gtk_table_attach(table, button, 3, 4, 1, 2, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_INDEX,
+		     _("Choose lens from list of possible variants"),
                      G_CALLBACK(lens_list_clicked), data);
+    gtk_table_attach(table, button, 3, 4, 1, 2, 0, 0, 0, 0);
 
     data->LensParamBox = gtk_hbox_new (FALSE, 0);
     gtk_box_pack_start (GTK_BOX (page), data->LensParamBox, FALSE, FALSE, 2);
@@ -1230,23 +1213,15 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
         -3, 3, 0.001, 0.1, 3, _("Image scale power-of-two"),
         G_CALLBACK (lens_scale_update), NULL, NULL, NULL);
 
-    data->LensScaleResetButton = gtk_button_new ();
-    gtk_container_add (GTK_CONTAINER (data->LensScaleResetButton),
-        gtk_image_new_from_stock (GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    data->LensScaleResetButton = stock_icon_button(
+	GTK_STOCK_REFRESH, _("Reset image scale to default"),
+	G_CALLBACK (lens_scale_reset), NULL);
     gtk_table_attach (subTable, data->LensScaleResetButton, 7, 8, 0, 1, 0,0,0,0);
-    uf_widget_set_tooltip (data->LensScaleResetButton,
-                           _("Reset image scale to default"));
-    g_signal_connect(G_OBJECT(data->LensScaleResetButton), "clicked",
-                     G_CALLBACK (lens_scale_reset), NULL);
 
-    data->LensAutoScaleButton = gtk_button_new ();
-    gtk_container_add (GTK_CONTAINER (data->LensAutoScaleButton),
-        gtk_image_new_from_stock (GTK_STOCK_ZOOM_FIT, GTK_ICON_SIZE_BUTTON));
+    data->LensAutoScaleButton = stock_icon_button(
+        GTK_STOCK_ZOOM_FIT, _("Autoscale the image for best fit"),
+	G_CALLBACK (lens_autoscale), NULL);
     gtk_table_attach (subTable, data->LensAutoScaleButton, 8, 9, 0, 1, 0,0,0,0);
-    uf_widget_set_tooltip (data->LensAutoScaleButton,
-                           _("Autoscale the image for best fit"));
-    g_signal_connect(G_OBJECT(data->LensAutoScaleButton), "clicked",
-                     G_CALLBACK (lens_autoscale), NULL);
 
     GtkNotebook *subnb = GTK_NOTEBOOK(gtk_notebook_new());
     gtk_box_pack_start(GTK_BOX(page), GTK_WIDGET(subnb),

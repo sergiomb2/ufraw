@@ -2477,7 +2477,7 @@ static void button_update(GtkWidget *button, gpointer user_data)
 		conf_default.black, 0);
 	CFG->autoBlack = FALSE;
     }
-    if (button==GTK_WIDGET(data->AutoCurveButton)) {
+    if (button==data->AutoCurveButton) {
 	CFG->curveIndex = manual_curve;
 	ufraw_auto_curve(data->UF);
     }
@@ -2732,15 +2732,29 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
     update_scales (data);
 }
 
-GtkWidget *reset_button(const char *tip, GCallback callback, void *data)
+GtkWidget *stock_image_button(const gchar *stock_id, GtkIconSize size,
+			      const char *tip, GCallback callback, void *data)
 {
     GtkWidget *button;
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button),
-	gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
-    uf_widget_set_tooltip(button, tip);
+	gtk_image_new_from_stock(stock_id, size));
+    if (tip != NULL)
+	uf_widget_set_tooltip(button, tip);
     g_signal_connect(G_OBJECT(button), "clicked", callback, data);
     return button;
+}
+
+GtkWidget *stock_icon_button(const gchar *stock_id,
+			     const char *tip, GCallback callback, void *data)
+{
+    return stock_image_button(stock_id, GTK_ICON_SIZE_BUTTON,
+			      tip, callback, data);
+}
+
+GtkWidget *reset_button(const char *tip, GCallback callback, void *data)
+{
+    return stock_icon_button(GTK_STOCK_REFRESH, tip, callback, data);
 }
 
 GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y, const char *label,
@@ -3883,14 +3897,10 @@ static void whitebalance_fill_interface(preview_data *data,
 	    _("Green component"),
 	    G_CALLBACK(adjustment_update), NULL, NULL, NULL);
     // Spot WB button:
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_COLOR_PICKER, GTK_ICON_SIZE_BUTTON));
+    button = stock_icon_button(GTK_STOCK_COLOR_PICKER,
+	_("Select a spot on the preview image to apply spot white balance"),
+	G_CALLBACK(spot_wb_event), NULL);
     gtk_table_attach(subTable, button, 7, 8, 1, 3, 0, 0, 0, 0);
-    uf_widget_set_tooltip(button,
-	_("Select a spot on the preview image to apply spot white balance"));
-    g_signal_connect(G_OBJECT(button), "clicked",
-	    G_CALLBACK(spot_wb_event), NULL);
 
     GtkBox *subbox = GTK_BOX(gtk_hbox_new(0,0));
     gtk_table_attach(table, GTK_WIDGET(subbox), 0, 1, 1, 2, 0, 0, 0, 0);
@@ -3987,13 +3997,9 @@ static void whitebalance_fill_interface(preview_data *data,
     data->DarkFrameLabel = GTK_LABEL(label);
     set_darkframe_label(data);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
-    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    uf_widget_set_tooltip(button, _("Load dark frame"));
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_OPEN, _("Load dark frame"),
 	    G_CALLBACK(load_darkframe), NULL);
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
 
     button = reset_button(
 	_("Reset dark frame"), G_CALLBACK(reset_darkframe), NULL);
@@ -4009,10 +4015,7 @@ static void whitebalance_fill_interface(preview_data *data,
     gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
 
     // Zoom out button:
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_ZOOM_OUT, GTK_ICON_SIZE_BUTTON));
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_ZOOM_OUT, NULL,
 	    G_CALLBACK(zoom_out_event), NULL);
     gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
 
@@ -4029,10 +4032,7 @@ static void whitebalance_fill_interface(preview_data *data,
     uf_widget_set_tooltip(button, _("Zoom percentage"));
 
     // Zoom in button:
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_ZOOM_IN, GTK_ICON_SIZE_BUTTON));
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_ZOOM_IN, NULL,
 	    G_CALLBACK(zoom_in_event), NULL);
     gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
 #endif // !HAVE_GTKIMAGEVIEW
@@ -4050,16 +4050,12 @@ static void lightness_fill_interface(preview_data *data, GtkWidget *page)
 
     for (i = 0; i < max_adjustments; ++i) {
 	// Hue select button:
-	data->LightnessHueSelectButton[i] = gtk_button_new();
-	gtk_container_add(GTK_CONTAINER(data->LightnessHueSelectButton[i]),
-		gtk_image_new_from_stock(GTK_STOCK_COLOR_PICKER,
-			GTK_ICON_SIZE_BUTTON));
+	data->LightnessHueSelectButton[i] = stock_icon_button(
+		GTK_STOCK_COLOR_PICKER,
+		_("Select a spot on the preview image to choose hue"),
+		G_CALLBACK(select_hue_event), (gpointer)i);
 	gtk_table_attach(table, data->LightnessHueSelectButton[i],
 		8, 9, i, i+1, 0, 0, 0, 0);
-	uf_widget_set_tooltip(data->LightnessHueSelectButton[i],
-		_("Select a spot on the preview image to choose hue"));
-	g_signal_connect(G_OBJECT(data->LightnessHueSelectButton[i]), "clicked",
-		G_CALLBACK(select_hue_event), (gpointer)i);
 
         data->LightnessAdjustment[i] = adjustment_scale(
 		table, 0, i, NULL,
@@ -4160,20 +4156,12 @@ static void basecurve_fill_interface(preview_data *data,
     g_signal_connect(G_OBJECT(data->BaseCurveCombo), "changed",
 	    G_CALLBACK(combo_update), &CFG->BaseCurveIndex);
     gtk_box_pack_start(box, GTK_WIDGET(data->BaseCurveCombo), TRUE, TRUE, 0);
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
-    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    uf_widget_set_tooltip(button, _("Load base curve"));
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_OPEN, _("Load base curve"),
 	    G_CALLBACK(load_curve), (gpointer)base_curve);
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_BUTTON));
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    uf_widget_set_tooltip(button, _("Save base curve"));
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_SAVE_AS, _("Save base curve"),
 	    G_CALLBACK(save_curve), (gpointer)base_curve);
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
 
     box = GTK_BOX(gtk_hbox_new(FALSE, 0));
     gtk_table_attach(table, GTK_WIDGET(box), 0, 9, 1, 2,
@@ -4237,13 +4225,10 @@ static void colormgmt_fill_interface(preview_data *data,
 		G_CALLBACK(combo_update_simple), NULL);
 	gtk_table_attach(table, GTK_WIDGET(data->ProfileCombo[j]),
 		1, 8, 4*j+1, 4*j+2, GTK_FILL, GTK_FILL, 0, 0);
-	button = gtk_button_new();
-	gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-		GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
+	button = stock_icon_button(GTK_STOCK_OPEN, NULL,
+		G_CALLBACK(load_profile), (void *)j);
 	gtk_table_attach(table, button, 8, 9, 4*j+1, 4*j+2,
 		GTK_SHRINK, GTK_FILL, 0, 0);
-	g_signal_connect(G_OBJECT(button), "clicked",
-		G_CALLBACK(load_profile), (void *)j);
     }
     data->GammaAdjustment = adjustment_scale(table, 1, 3, _("Gamma"),
 	    CFG->profile[0][CFG->profileIndex[0]].gamma,
@@ -4346,20 +4331,12 @@ static void corrections_fill_interface(preview_data *data,
     g_signal_connect(G_OBJECT(data->CurveCombo), "changed",
 	    G_CALLBACK(combo_update), &CFG->curveIndex);
     gtk_box_pack_start(box, GTK_WIDGET(data->CurveCombo), TRUE, TRUE, 0);
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON));
-    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    uf_widget_set_tooltip(button, _("Load curve"));
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_OPEN, _("Load curve"),
 	    G_CALLBACK(load_curve), (gpointer)luminosity_curve);
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_BUTTON));
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-    uf_widget_set_tooltip(button, _("Save curve"));
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_SAVE_AS, _("Save curve"),
 	    G_CALLBACK(save_curve), (gpointer)luminosity_curve);
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
 
     subTable = GTK_TABLE(gtk_table_new(9, 9, FALSE));
     gtk_table_attach(table, GTK_WIDGET(subTable), 0, 1, 1 , 2,
@@ -4371,20 +4348,14 @@ static void corrections_fill_interface(preview_data *data,
     gtk_table_attach(subTable, data->CurveWidget, 1, 8, 1, 8,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 
-    data->AutoCurveButton = GTK_BUTTON(gtk_button_new());
-    gtk_container_add(GTK_CONTAINER(data->AutoCurveButton),
-	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
-    gtk_table_attach(subTable, GTK_WIDGET(data->AutoCurveButton), 8, 9, 6, 7,
-	    0, 0, 0, 0);
-    uf_widget_set_tooltip(GTK_WIDGET(data->AutoCurveButton),
-	    _("Auto adjust curve\n(Flatten histogram)"));
-    g_signal_connect(G_OBJECT(data->AutoCurveButton), "clicked",
+    data->AutoCurveButton = stock_icon_button(GTK_STOCK_EXECUTE,
+	    _("Auto adjust curve\n(Flatten histogram)"),
 	    G_CALLBACK(button_update), NULL);
+    gtk_table_attach(subTable, data->AutoCurveButton, 8, 9, 6, 7, 0, 0, 0, 0);
 
     data->ResetCurveButton = reset_button(
 	_("Reset curve to default"), G_CALLBACK(button_update), NULL);
-    gtk_table_attach(subTable, GTK_WIDGET(data->ResetCurveButton), 8, 9, 7, 8,
-		0, 0, 0, 0);
+    gtk_table_attach(subTable, data->ResetCurveButton, 8, 9, 7, 8, 0, 0, 0, 0);
 
     data->BlackLabel = gtk_label_new(_("Black point: 0.000"));
 #if GTK_CHECK_VERSION(2,6,0)
@@ -4586,33 +4557,21 @@ static void transformations_fill_interface(preview_data *data,
     label = gtk_label_new(_("Orientation:"));
     gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    "object-rotate-right", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    button = stock_image_button("object-rotate-right", GTK_ICON_SIZE_LARGE_TOOLBAR,
+				NULL, G_CALLBACK(flip_image), (gpointer)6);
     gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(flip_image), (gpointer)6);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    "object-rotate-left", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    button = stock_image_button("object-rotate-left", GTK_ICON_SIZE_LARGE_TOOLBAR,
+				NULL, G_CALLBACK(flip_image), (gpointer)5);
     gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(flip_image), (gpointer)5);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    "object-flip-horizontal", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    button = stock_image_button("object-flip-horizontal", GTK_ICON_SIZE_LARGE_TOOLBAR,
+				NULL, G_CALLBACK(flip_image), (gpointer)1);
     gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(flip_image), (gpointer)1);
 
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    "object-flip-vertical", GTK_ICON_SIZE_LARGE_TOOLBAR));
+    button = stock_image_button("object-flip-vertical", GTK_ICON_SIZE_LARGE_TOOLBAR,
+				NULL, G_CALLBACK(flip_image), (gpointer)2);
     gtk_table_attach(table, button, 4, 5, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(flip_image), (gpointer)2);
     /* End of transformation page */
 }
 
@@ -4967,13 +4926,10 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     gtk_table_attach(data->SpotTable, GTK_WIDGET(data->SpotPatch),
 	    6, 7, 0, 1, GTK_EXPAND|GTK_FILL, 0, 0, 0);
 
-    button = gtk_button_new();
+    button = stock_image_button(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU,
+				NULL, G_CALLBACK(close_spot), NULL);
     gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-    gtk_container_add(GTK_CONTAINER(button),
-	    gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU));
     gtk_table_attach(data->SpotTable, button, 7, 8, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-	    G_CALLBACK(close_spot), NULL);
 
     // Exposure:
     table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
@@ -5138,10 +5094,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     gtk_box_pack_start(ControlsBox, GTK_WIDGET(ZoomBox), TRUE, FALSE, 0);
 #ifdef HAVE_GTKIMAGEVIEW
     // Zoom out button:
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_ZOOM_OUT, GTK_ICON_SIZE_BUTTON));
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_ZOOM_OUT, NULL,
 	    G_CALLBACK(zoom_out_event), NULL);
     gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
 
@@ -5158,26 +5111,17 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     uf_widget_set_tooltip(button, _("Zoom percentage"));
 
     // Zoom in button:
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_ZOOM_IN, GTK_ICON_SIZE_BUTTON));
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_ZOOM_IN, NULL,
 	    G_CALLBACK(zoom_in_event), NULL);
     gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
 
     // Zoom fit button:
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_ZOOM_FIT, GTK_ICON_SIZE_BUTTON));
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_ZOOM_FIT, NULL,
 	    G_CALLBACK(zoom_fit_event), NULL);
     gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
 
     // Zoom max button:
-    button = gtk_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    GTK_STOCK_ZOOM_100, GTK_ICON_SIZE_BUTTON));
-    g_signal_connect(G_OBJECT(button), "clicked",
+    button = stock_icon_button(GTK_STOCK_ZOOM_100, NULL,
 	    G_CALLBACK(zoom_max_event), NULL);
     gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
 #endif // HAVE_GTKIMAGEVIEW

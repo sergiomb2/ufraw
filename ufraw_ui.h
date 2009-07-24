@@ -63,7 +63,7 @@ typedef struct {
     GtkLabel *SpotPatch;
     colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
     GtkToggleButton *AutoExposureButton, *AutoBlackButton, *LockAspectButton;
-    GtkButton *AutoCurveButton;
+    GtkWidget *AutoCurveButton;
     GtkWidget *ResetWBButton, *ResetGammaButton, *ResetLinearButton;
     GtkWidget *ResetExposureButton, *ResetSaturationButton;
     GtkWidget *ResetThresholdButton;
@@ -201,6 +201,10 @@ GtkWidget *table_with_frame (GtkWidget *box, char *label, gboolean expand);
 
 GtkWidget *notebook_page_new (GtkNotebook *notebook, char *text, char *icon);
 
+GtkWidget *stock_image_button(const gchar *stock_id, GtkIconSize size,
+			      const char *tip, GCallback callback, void *data);
+GtkWidget *stock_icon_button(const gchar *stock_id,
+			     const char *tip, GCallback callback, void *data);
 GtkWidget *reset_button (const char *tip, GCallback callback, void *data);
 
 GtkAdjustment *adjustment_scale (
