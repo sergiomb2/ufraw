@@ -39,6 +39,9 @@
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
 
+static void adjustment_update(GtkAdjustment *adj, double *valuep);
+static void button_update(GtkWidget *button, gpointer user_data);
+
 extern GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
 					 const char *defPath,
 					 const gchar *label,
@@ -1419,8 +1422,7 @@ static void update_scales(preview_data *data)
     for (i = 0; i < 3; ++i)
         gtk_adjustment_set_value(data->GrayscaleMixers[i],
 				 CFG->grayscaleMixer[i]);
-    for (i = 0; i < max_adjustments; ++i) {
-	widget_set_hue(data->LightnessHueSelectButton[i], CFG->lightnessAdjustment[i].hue);
+    for (i = 0; i < CFG->lightnessAdjustmentCount; ++i) {
 	gtk_adjustment_set_value(data->LightnessAdjustment[i],
 	    CFG->lightnessAdjustment[i].adjustment);
 	gtk_widget_set_sensitive(data->ResetLightnessAdjustmentButton[i],
@@ -1521,6 +1523,24 @@ static void spot_wb_event(GtkWidget *widget, gpointer user_data)
     update_scales(data);
 }
 
+static void remove_hue_event(GtkWidget *widget, gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    long i = (long)user_data;
+
+    for (;i<CFG->lightnessAdjustmentCount-1; i++) {
+	CFG->lightnessAdjustment[i] = CFG->lightnessAdjustment[i+1];
+    	widget_set_hue(data->LightnessHueSelectButton[i],
+		CFG->lightnessAdjustment[i].hue);
+    }
+    CFG->lightnessAdjustment[i] = conf_default.lightnessAdjustment[i];
+    gtk_widget_hide(GTK_WIDGET(data->LightnessAdjustmentTable[i]));
+    CFG->lightnessAdjustmentCount--;
+
+    preview_invalidate_layer (data, ufraw_develop_phase);
+    update_scales(data);
+}
+
 static void select_hue_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
@@ -1529,8 +1549,19 @@ static void select_hue_event(GtkWidget *widget, gpointer user_data)
     if (data->FreezeDialog) return;
     if (data->SpotHue < 0.0) return;
 
+    if (i < 0) {
+	if (CFG->lightnessAdjustmentCount >= max_adjustments) {
+	    ufraw_message(UFRAW_ERROR, _("No more room for new lightness adjustments."));
+	    return;
+	}
+	i = CFG->lightnessAdjustmentCount++;
+    }
+
     CFG->lightnessAdjustment[i].hue = data->SpotHue;
     CFG->lightnessAdjustment[i].hueWidth = 60;
+
+    widget_set_hue(data->LightnessHueSelectButton[i], data->SpotHue);
+    gtk_widget_show_all(GTK_WIDGET(data->LightnessAdjustmentTable[i]));
 
     preview_invalidate_layer (data, ufraw_develop_phase);
     update_scales(data);
@@ -4043,30 +4074,49 @@ static void whitebalance_fill_interface(preview_data *data,
 
 static void lightness_fill_interface(preview_data *data, GtkWidget *page)
 {
-    GtkTable *table;
     long i;
 
     /* Start of Lightness Adjustments page */
-    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+    GtkTable *table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
     for (i = 0; i < max_adjustments; ++i) {
-	// Hue select button:
-	data->LightnessHueSelectButton[i] = stock_icon_button(
-		GTK_STOCK_COLOR_PICKER,
-		_("Select a spot on the preview image to choose hue"),
-		G_CALLBACK(select_hue_event), (gpointer)i);
-	gtk_table_attach(table, data->LightnessHueSelectButton[i],
-		8, 9, i, i+1, 0, 0, 0, 0);
-
-        data->LightnessAdjustment[i] = adjustment_scale(
-		table, 0, i, NULL,
+    	GtkTable *subTable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
+	gtk_table_attach(table, GTK_WIDGET(subTable), 0, 10, i, i+1,
+		GTK_EXPAND|GTK_FILL, 0, 0, 0);
+    	data->LightnessAdjustmentTable[i] = subTable;
+	data->LightnessAdjustment[i] = adjustment_scale(subTable, 0, 0, NULL,
 		CFG->lightnessAdjustment[i].adjustment,
 		&CFG->lightnessAdjustment[i].adjustment,
 		0, 2, 0.01, 0.10, 2, NULL,
 		G_CALLBACK(adjustment_update),
 		&data->ResetLightnessAdjustmentButton[i],
 		_("Reset adjustment"), G_CALLBACK(button_update));
+
+	data->LightnessHueSelectButton[i] = stock_icon_button(
+		GTK_STOCK_COLOR_PICKER,
+		_("Select a spot on the preview image to choose hue"),
+		G_CALLBACK(select_hue_event), (gpointer)i);
+    	widget_set_hue(data->LightnessHueSelectButton[i],
+		CFG->lightnessAdjustment[i].hue);
+	gtk_table_attach(subTable, data->LightnessHueSelectButton[i],
+		8, 9, 0, 1, 0, 0, 0, 0);
+
+	data->LightnessHueRemoveButton[i] = stock_icon_button(
+		GTK_STOCK_CANCEL,
+		_("Remove adjustment"),
+		G_CALLBACK(remove_hue_event), (gpointer)i);
+	gtk_table_attach(subTable, data->LightnessHueRemoveButton[i],
+		9, 10, 0, 1, 0, 0, 0, 0);
     }
+
+    // Hue select button:
+    data->LightnessHueSelectNewButton = stock_icon_button(
+	GTK_STOCK_COLOR_PICKER,
+	_("Select a spot on the preview image to choose hue"),
+	G_CALLBACK(select_hue_event), (gpointer)-1);
+    gtk_table_attach(table, data->LightnessHueSelectNewButton,
+		0, 1, max_adjustments, max_adjustments+1, 0, 0, 0, 0);
+
     /* End of Lightness Adjustments page */
 }
 
@@ -5189,6 +5239,8 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 #endif
     gtk_widget_show_all(previewWindow);
     gtk_widget_hide(GTK_WIDGET(data->SpotTable));
+    for (i=CFG->lightnessAdjustmentCount; i<max_adjustments; i++)
+	gtk_widget_hide(GTK_WIDGET(data->LightnessAdjustmentTable[i]));
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), data->PageNumSpot);
 
     // preview_progress() changes the size of the progress bar

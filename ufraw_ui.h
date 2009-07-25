@@ -96,9 +96,12 @@ typedef struct {
 #ifdef UFRAW_CONTRAST
     GtkAdjustment *ContrastAdjustment;
 #endif
-    GtkWidget *LightnessHueSelectButton[max_adjustments];
+    GtkWidget *LightnessHueSelectNewButton;
+    GtkTable *LightnessAdjustmentTable[max_adjustments];
     GtkAdjustment *LightnessAdjustment[max_adjustments];
     GtkWidget *ResetLightnessAdjustmentButton[max_adjustments];
+    GtkWidget *LightnessHueSelectButton[max_adjustments];
+    GtkWidget *LightnessHueRemoveButton[max_adjustments];
     GtkAdjustment *CropX1Adjustment;
     GtkAdjustment *CropY1Adjustment;
     GtkAdjustment *CropX2Adjustment;
