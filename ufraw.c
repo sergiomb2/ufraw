@@ -72,11 +72,6 @@ int main (int argc, char **argv)
 		_("--silent option is valid only in batch mode"));
 	optInd = -1;
     }
-    if ( cmd.rotate!=-1 ) {
-	ufraw_message(UFRAW_ERROR,
-		_("--rotate option is valid only in batch mode"));
-	optInd = -1;
-    }
     if ( cmd.embeddedImage ) {
 	ufraw_message(UFRAW_ERROR, _("Extracting embedded image is not supported in interactive mode"));
 	optInd = -1;

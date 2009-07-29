@@ -2054,6 +2054,24 @@ static void flip_image(GtkWidget *widget, int flip)
 	    data->SpotY2 = temp;
 	}
     }
+    ++data->FreezeDialog;
+    switch (flip) {
+	case 6:
+	    gtk_adjustment_set_value(data->RotationAdjustment,
+		    data->unnormalized_angle + 90);
+	    break;
+	case 5:
+	    gtk_adjustment_set_value(data->RotationAdjustment,
+		    data->unnormalized_angle - 90);
+	    break;
+	case 1:
+	case 2:
+	    data->reference_orientation ^= flip;
+	    gtk_adjustment_set_value(data->RotationAdjustment,
+		    -data->unnormalized_angle);
+	    break;
+    }
+    --data->FreezeDialog;
     render_init(data);
     if ( data->RenderSubArea >= 0 ) {
 	/* We are in the middle or a rendering scan,
@@ -2782,6 +2800,68 @@ GtkWidget *stock_icon_button(const gchar *stock_id,
 {
     return stock_image_button(stock_id, GTK_ICON_SIZE_BUTTON,
 			      tip, callback, data);
+}
+
+/*
+ * Crop and spot area cannot be rotated but we make sure their coordinates
+ * are valid. Try to preserve them over a rotate forth and back and try to
+ * preserve their geometry.
+ */
+static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
+{
+    preview_data *data = get_preview_data(adj);
+    int d;
+
+    (void)user_data;
+    data->unnormalized_angle = gtk_adjustment_get_value(adj);
+    /* Normalize the "unnormalized" value displayed to the user to
+     * -180 < a <= 180, though we later normalize to an orientation
+     * and flip plus 0 <= a < 90 rotation for processing.  */
+    data->unnormalized_angle = remainder(data->unnormalized_angle, 360);
+    gtk_adjustment_set_value(adj, data->unnormalized_angle);
+    if (data->FreezeDialog)
+       return;
+    CFG->rotationAngle = data->unnormalized_angle;
+    CFG->orientation = data->reference_orientation;
+    ufraw_normalize_rotation(data->UF);
+    ufraw_get_image_dimensions(data->UF->raw, data->UF);
+    d = MIN(CFG->CropX1, CFG->CropX2 - data->UF->rotatedWidth);
+    if (d > 0) {
+       CFG->CropX1 -= d;
+       CFG->CropX2 -= d;
+    }
+    d = MIN(CFG->CropY1, CFG->CropY2 - data->UF->rotatedHeight);
+    if (d > 0) {
+       CFG->CropY1 -= d;
+       CFG->CropY2 -= d;
+    }
+    d = MIN(data->SpotX1, data->SpotX2 - data->UF->rotatedWidth);
+    if (d > 0) {
+       data->SpotX1 -= d;
+       data->SpotX2 -= d;
+    }
+    d = MIN(data->SpotY1, data->SpotY2 - data->UF->rotatedHeight);
+    if (d > 0) {
+       data->SpotY1 -= d;
+       data->SpotY2 -= d;
+    }
+    if (data->SpotX2 > data->UF->rotatedWidth ||
+       data->SpotY2 > data->UF->rotatedHeight) {
+       data->SpotDraw = FALSE;
+       data->SpotX1 = -1;
+       data->SpotX2 = -1;
+       data->SpotY1 = -1;
+       data->SpotY2 = -1;
+    }
+    create_base_image(data);
+    if (CFG->CropX2 > data->UF->rotatedWidth)
+       fix_crop_aspect(data, top_right_cursor);
+    else if (CFG->CropY2 > data->UF->rotatedHeight)
+       fix_crop_aspect(data, bottom_left_cursor);
+    update_crop_ranges(data);
+    if (!CFG->LockAspect)
+       refresh_aspect(data);
+    update_scales(data);
 }
 
 GtkWidget *reset_button(const char *tip, GCallback callback, void *data)
@@ -4623,6 +4703,24 @@ static void transformations_fill_interface(preview_data *data,
     button = stock_image_button("object-flip-vertical", GTK_ICON_SIZE_LARGE_TOOLBAR,
 				NULL, G_CALLBACK(flip_image), (gpointer)2);
     gtk_table_attach(table, button, 4, 5, 0, 1, 0, 0, 0, 0);
+
+    /* Rotation controls */
+    data->unnormalized_angle = CFG->rotationAngle;
+    data->reference_orientation = CFG->orientation;
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+    label = gtk_label_new(_("Rotation"));
+    gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, 0, 0, 0, 0);
+    data->RotationAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
+	    data->unnormalized_angle, -1e100, 1e100, 0.5, 5, 0));
+    data->RotationSpin = GTK_SPIN_BUTTON(gtk_spin_button_new(
+	    data->RotationAdjustment, 0.5, 3));
+    g_object_set_data(G_OBJECT(data->RotationAdjustment), "Parent-Widget",
+	    data->RotationSpin);
+    g_signal_connect(G_OBJECT(data->RotationAdjustment), "value-changed",
+	    G_CALLBACK(adjustment_update_rotation), NULL);
+    gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(data->RotationSpin),
+	    1, 2, 0, 1, 0, 0, 0, 0);
+
     /* End of transformation page */
 }
 

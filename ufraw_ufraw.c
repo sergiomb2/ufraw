@@ -313,6 +313,26 @@ int ufraw_load_darkframe(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
+/*
+ * Normalize arbitrary rotations into a 0..90 degree range.
+ */
+void ufraw_normalize_rotation(ufraw_data *uf)
+{
+    int angle, flip = 0;
+
+    uf->conf->rotationAngle = fmod(uf->conf->rotationAngle, 360.0);
+    if (uf->conf->rotationAngle < 0.0)
+       uf->conf->rotationAngle += 360.0;
+    angle = floor(uf->conf->rotationAngle / 90) * 90;
+    switch (angle) {
+       case  90: flip = 6; break;
+       case 180: flip = 3; break;
+       case 270: flip = 5; break;
+    }
+    ufraw_flip_orientation(uf, flip);
+    uf->conf->rotationAngle -= angle;
+}
+
 void ufraw_update_rotated_dimensions(ufraw_data *uf)
 {
     double rotationRadians = (uf->conf->rotationAngle * 2 * M_PI) / 360;
@@ -452,19 +472,8 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     } else {
 	if ( !uf->LoadingID || uf->conf->orientation<0 )
 	    uf->conf->orientation = raw->flip;
-
+	ufraw_normalize_rotation(uf);
 	// Normalise rotations to a flip, then rotation of 0 < a < 90 degrees.
-	uf->conf->rotationAngle = fmod(uf->conf->rotationAngle, 360.0);
-	if (uf->conf->rotationAngle < 0.0) uf->conf->rotationAngle += 360.0;
-	int angle, flip = 0;
-	angle = floor(uf->conf->rotationAngle/90)*90;
-	switch (angle) {
-	    case  90: flip = 6; break;
-	    case 180: flip = 3; break;
-	    case 270: flip = 5; break;
-	}
-	ufraw_flip_orientation(uf, flip);
-	uf->conf->rotationAngle -= angle;
     }
 
     if (uf->inputExifBuf==NULL) {
