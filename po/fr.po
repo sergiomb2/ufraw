@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
-"PO-Revision-Date: 2008-12-20 02:50+0100\n"
+"POT-Creation-Date: 2009-07-08 07:00+0200\n"
+"PO-Revision-Date: 2009-07-08 22:31+0200\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
@@ -104,7 +104,7 @@ msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (embarqué)"
 
 msgid "System default"
 msgstr "Système par défaut"
@@ -122,9 +122,6 @@ msgstr "La version d'UFRaw de .ufrawrc n'est pas supporté"
 #, c-format
 msgid "Too many anchors for curve '%s'"
 msgstr "Trop de points pour la courbe '%s'"
-
-msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
 
 #, c-format
 msgid ""
@@ -348,9 +345,8 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algorithme d'interpolation à utiliser (défaut ahd).\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "Appliquer le lissage des couleurs"
+msgstr "--color-smoothing     Appliquer le lissage des couleurs.\n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -393,11 +389,10 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   Compression JPEG (0-100, défaut 85).\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
-"--[no]exif            Copie les exif dans le fichier de sortie JPEG ou PNG\n"
-"                      (défaut exif).\n"
+"--[no]exif            Copie les exif dans le fichier de sortie (défaut "
+"exif).\n"
 
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
@@ -459,7 +454,7 @@ msgstr ""
 "no).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     Force la fenêtre maximisée.\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -710,7 +705,7 @@ msgid "None"
 msgstr "Aucun"
 
 msgid "Lightness"
-msgstr ""
+msgstr "Clarté"
 
 msgid "Luminance"
 msgstr "Luminance"
@@ -1014,15 +1009,12 @@ msgstr "Zoom:"
 msgid "Zoom percentage"
 msgstr "Pourcentage du Zoom"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
 msgstr ""
-"Sélectionner un point, sur la pré-visualisation, à utiliser comme balance "
-"des blancs"
+"Sélectionner un point sur la pré-visualisation pour choisir la tonalité"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "Ajustement du contraste global"
+msgstr "R-à-Z Ajustement"
 
 msgid "Grayscale Mode:"
 msgstr ""
@@ -1194,11 +1186,8 @@ msgstr "Encodage progressif JPEG"
 msgid "TIFF lossless Compress"
 msgstr "Compression sans perte TIFF"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr ""
-"Inclure les données EXIF dans les\n"
-"fichiers JPEG ou PNG"
+msgstr "Inclure les données EXIF dans la sortie"
 
 msgid "Create ID file "
 msgstr "Créer un fichier ID "
@@ -1319,7 +1308,7 @@ msgid "Correct luminosity, saturation"
 msgstr "Corrections luminosité, saturation"
 
 msgid "Lightness Adjustments"
-msgstr ""
+msgstr "Ajustement Clarté"
 
 msgid "Crop and rotate"
 msgstr "Découpe et rotation"
