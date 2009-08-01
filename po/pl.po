@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -47,9 +47,6 @@ msgstr "%s: nadpisaæ '%s'?"
 
 msgid "--silent option is valid only in batch mode"
 msgstr "opcja --silent dzia³a tylko w trybie batch"
-
-msgid "--rotate option is valid only in batch mode"
-msgstr "opcja --rotate dzia³a tylko w trybie batch"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
@@ -746,6 +743,10 @@ msgstr "rozmiar %dx%d, skala 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Punkt czerni: %0.3lf"
 
+#, fuzzy
+msgid "No more room for new lightness adjustments."
+msgstr "Brak miejsca na nowe krzywe."
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "B³±d krytyczny: uf->conf->shrink<1"
 
@@ -992,12 +993,16 @@ msgid "Zoom percentage"
 msgstr "Procent powiêkszenia"
 
 #, fuzzy
+msgid "Reset adjustment"
+msgstr "Globalna korekta kontrastu"
+
+#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
 msgstr ""
 "Wybierz obszar na podgl±dzie zdjêcia by zastosowaæ punktowy balans bieli"
 
 #, fuzzy
-msgid "Reset adjustment"
+msgid "Remove adjustment"
 msgstr "Globalna korekta kontrastu"
 
 msgid "Grayscale Mode:"
@@ -1139,6 +1144,10 @@ msgstr "Szer."
 
 msgid "Orientation:"
 msgstr "Orientacja:"
+
+#, fuzzy
+msgid "Rotation"
+msgstr "Nasycony"
 
 msgid "Path"
 msgstr "¦cie¿ka"

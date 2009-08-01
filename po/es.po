@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -45,9 +45,6 @@ msgstr "%s: ¿sobreescribir '%s'?"
 
 msgid "--silent option is valid only in batch mode"
 msgstr "la opcion --silent solo es válida en modo por lotes"
-
-msgid "--rotate option is valid only in batch mode"
-msgstr "la opcion --rotate solo es válida en modo por lotes"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
@@ -757,6 +754,10 @@ msgstr "tamaño %dx%d, escala 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Punto negro: %0.3lf"
 
+#, fuzzy
+msgid "No more room for new lightness adjustments."
+msgstr "No hay más espacio para nuevas curvas"
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Error fatal: uf->conf->shrink<1"
 
@@ -1004,13 +1005,17 @@ msgid "Zoom percentage"
 msgstr "Porcentaje de zoom"
 
 #, fuzzy
+msgid "Reset adjustment"
+msgstr "Ajuste global del contraste"
+
+#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
 msgstr ""
 "Selecciona un punto en la previsualización para aplicar balance de blancos "
 "puntual"
 
 #, fuzzy
-msgid "Reset adjustment"
+msgid "Remove adjustment"
 msgstr "Ajuste global del contraste"
 
 msgid "Grayscale Mode:"
@@ -1152,6 +1157,10 @@ msgstr "Ancho"
 
 msgid "Orientation:"
 msgstr "Orientación:"
+
+#, fuzzy
+msgid "Rotation"
+msgstr "Saturación"
 
 msgid "Path"
 msgstr "Ruta"

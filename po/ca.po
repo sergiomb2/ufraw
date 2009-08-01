@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -47,9 +47,6 @@ msgstr "%s: voleu sobreescriure '%s'? "
 
 msgid "--silent option is valid only in batch mode"
 msgstr "--silent aquesta opció només és vàlida al mode per lots"
-
-msgid "--rotate option is valid only in batch mode"
-msgstr "--rotate aquesta opció només és vàlida al mode per lots"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr "El mode interactiu no permet extreure imatges incrustades"
@@ -768,6 +765,10 @@ msgstr "mida %dx%d, escala 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Punt negre: %0.3lf"
 
+#, fuzzy
+msgid "No more room for new lightness adjustments."
+msgstr "No hi ha espai per a més corbes."
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "S'ha produït un error que no es pot recuperar: uf->conf->shrink<1"
 
@@ -1012,12 +1013,16 @@ msgid "Zoom percentage"
 msgstr "Percentatge del zoom"
 
 #, fuzzy
+msgid "Reset adjustment"
+msgstr "Ajustament global del contrast"
+
+#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
 msgstr ""
 "Trieu una zona de la imatge previsualitzada per aplicar l'equilibri de blancs"
 
 #, fuzzy
-msgid "Reset adjustment"
+msgid "Remove adjustment"
 msgstr "Ajustament global del contrast"
 
 msgid "Grayscale Mode:"
@@ -1159,6 +1164,10 @@ msgstr "Amplada"
 
 msgid "Orientation:"
 msgstr "Orientació:"
+
+#, fuzzy
+msgid "Rotation"
+msgstr "Saturació"
 
 msgid "Path"
 msgstr "Ruta"

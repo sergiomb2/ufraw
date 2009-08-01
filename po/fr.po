@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-08 07:00+0200\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
 "PO-Revision-Date: 2009-07-08 22:31+0200\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -44,10 +44,6 @@ msgstr "%s: écraser '%s'?"
 msgid "--silent option is valid only in batch mode"
 msgstr ""
 "--silent cette option est valable uniquement en mode de traitement par lot"
-
-msgid "--rotate option is valid only in batch mode"
-msgstr ""
-"--rotate cette option est valable uniquement en mode de traitement par lot"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr "L'extraction de l'image incluse n'est pas supporté en mode interactif"
@@ -122,6 +118,9 @@ msgstr "La version d'UFRaw de .ufrawrc n'est pas supporté"
 #, c-format
 msgid "Too many anchors for curve '%s'"
 msgstr "Trop de points pour la courbe '%s'"
+
+msgid "Too many lightness adjustments in the ID file, ignored\n"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -761,6 +760,10 @@ msgstr "taille %dx%d, échelle 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Point noir: %0.3lf"
 
+#, fuzzy
+msgid "No more room for new lightness adjustments."
+msgstr "Plus de place pour de nouvelles courbes."
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Erreur Fatale: uf->conf->shrink<1"
 
@@ -1009,11 +1012,15 @@ msgstr "Zoom:"
 msgid "Zoom percentage"
 msgstr "Pourcentage du Zoom"
 
+msgid "Reset adjustment"
+msgstr "R-à-Z Ajustement"
+
 msgid "Select a spot on the preview image to choose hue"
 msgstr ""
 "Sélectionner un point sur la pré-visualisation pour choisir la tonalité"
 
-msgid "Reset adjustment"
+#, fuzzy
+msgid "Remove adjustment"
 msgstr "R-à-Z Ajustement"
 
 msgid "Grayscale Mode:"
@@ -1165,6 +1172,10 @@ msgstr "Largeur"
 
 msgid "Orientation:"
 msgstr "Orientation:"
+
+#, fuzzy
+msgid "Rotation"
+msgstr "Saturation"
 
 msgid "Path"
 msgstr "Chemin"

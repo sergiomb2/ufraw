@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
 "PO-Revision-Date: 2009-06-15 00:00+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -46,9 +46,6 @@ msgstr "%s: 覆盖 '%s'?"
 
 msgid "--silent option is valid only in batch mode"
 msgstr "--沉默选项，只适用于批处理模式"
-
-msgid "--rotate option is valid only in batch mode"
-msgstr "--旋转选项，只适用于批处理模式"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr "嵌入式图像提取，不支持交互模式"
@@ -709,6 +706,10 @@ msgstr "尺寸 %dx%d, 比例 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "黑色控制点: %0.3lf"
 
+#, fuzzy
+msgid "No more room for new lightness adjustments."
+msgstr "没有足够的空间给新的曲线"
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "致命错误: uf->conf->shrink<1"
 
@@ -950,11 +951,15 @@ msgid "Zoom percentage"
 msgstr "缩放比例"
 
 #, fuzzy
+msgid "Reset adjustment"
+msgstr "总体对比度调整"
+
+#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
 msgstr "在图像上选择一点以对白平衡进行实时预览"
 
 #, fuzzy
-msgid "Reset adjustment"
+msgid "Remove adjustment"
 msgstr "总体对比度调整"
 
 msgid "Grayscale Mode:"
@@ -1096,6 +1101,10 @@ msgstr "宽度"
 
 msgid "Orientation:"
 msgstr "定位："
+
+#, fuzzy
+msgid "Rotation"
+msgstr "饱和度"
 
 msgid "Path"
 msgstr "路径"

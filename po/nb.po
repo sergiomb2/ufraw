@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
 "PO-Revision-Date: 2008-12-23 00:00-0500\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -46,9 +46,6 @@ msgstr "%s: overskriv «%s»?"
 
 msgid "--silent option is valid only in batch mode"
 msgstr "Alternativet --silent kan bare brukes i batch-modus"
-
-msgid "--rotate option is valid only in batch mode"
-msgstr "Alternativet --rotate kan bare brukes i batch-modus"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr "Utpakking av inkludert bilde er ikke støttet i interaktiv modus"
@@ -741,6 +738,10 @@ msgstr "størrelse %dx%d, skala 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Sortpunkt: %0.3lf"
 
+#, fuzzy
+msgid "No more room for new lightness adjustments."
+msgstr "Ikke mere plass til nye kurver."
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Fatal feil: uf->conf->shrink<1"
 
@@ -985,11 +986,15 @@ msgid "Zoom percentage"
 msgstr "Zoom-prosent"
 
 #, fuzzy
+msgid "Reset adjustment"
+msgstr "Global kontrastjustering"
+
+#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
 msgstr "Velg et punkt på forhåndsvisningsbildet for å måle punkthvitbalanse"
 
 #, fuzzy
-msgid "Reset adjustment"
+msgid "Remove adjustment"
 msgstr "Global kontrastjustering"
 
 msgid "Grayscale Mode:"
@@ -1131,6 +1136,10 @@ msgstr "Bredde"
 
 msgid "Orientation:"
 msgstr "Orientering:"
+
+#, fuzzy
+msgid "Rotation"
+msgstr "Fargemetning"
 
 msgid "Path"
 msgstr "Sti"

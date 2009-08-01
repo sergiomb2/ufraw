@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
 "PO-Revision-Date: 2008-12-23 00:00-0600\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
@@ -46,9 +46,6 @@ msgstr "%s: overschrijven '%s'?"
 
 msgid "--silent option is valid only in batch mode"
 msgstr "--silent parameter is alleen geldig in batch modus"
-
-msgid "--rotate option is valid only in batch mode"
-msgstr "--rotate optie is alleen geldig in batch modus"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
@@ -749,6 +746,10 @@ msgstr "afmeting %dx%d, schaal 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Zwartpunt: %0.3lf"
 
+#, fuzzy
+msgid "No more room for new lightness adjustments."
+msgstr "Geen ruimte voor nieuwe curves."
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Fatale fout: uf->conf->shrink<1"
 
@@ -993,11 +994,15 @@ msgid "Zoom percentage"
 msgstr "Zoom percentage"
 
 #, fuzzy
+msgid "Reset adjustment"
+msgstr "Globale contrast aanpassing"
+
+#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
 msgstr "Selecteer een plek in het voorbeeld voor \"spot\" witbalans"
 
 #, fuzzy
-msgid "Reset adjustment"
+msgid "Remove adjustment"
 msgstr "Globale contrast aanpassing"
 
 msgid "Grayscale Mode:"
@@ -1139,6 +1144,10 @@ msgstr "Breedte"
 
 msgid "Orientation:"
 msgstr "Orientatie:"
+
+#, fuzzy
+msgid "Rotation"
+msgstr "Verzadiging"
 
 msgid "Path"
 msgstr "Pad "

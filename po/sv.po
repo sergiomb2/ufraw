@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -43,9 +43,6 @@ msgid "%s: overwrite '%s'?"
 msgstr "%s: skriv över \"%s\"?"
 
 msgid "--silent option is valid only in batch mode"
-msgstr ""
-
-msgid "--rotate option is valid only in batch mode"
 msgstr ""
 
 msgid "Extracting embedded image is not supported in interactive mode"
@@ -651,6 +648,10 @@ msgstr "storlek %dx%d, skala 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Svartpunkt: %0.3lf"
 
+#, fuzzy
+msgid "No more room for new lightness adjustments."
+msgstr "Ingen plats för nya kurvor."
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Ödesdigert fel: uf->conf->shrink<1"
 
@@ -877,10 +878,13 @@ msgstr "Zoom:"
 msgid "Zoom percentage"
 msgstr "Zoom procentandel"
 
+msgid "Reset adjustment"
+msgstr ""
+
 msgid "Select a spot on the preview image to choose hue"
 msgstr ""
 
-msgid "Reset adjustment"
+msgid "Remove adjustment"
 msgstr ""
 
 msgid "Grayscale Mode:"
@@ -1018,6 +1022,10 @@ msgstr "Bredd"
 
 msgid "Orientation:"
 msgstr "Orientering:"
+
+#, fuzzy
+msgid "Rotation"
+msgstr "Färgmättnad"
 
 msgid "Path"
 msgstr ""

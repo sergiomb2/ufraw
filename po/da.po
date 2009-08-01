@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
-"PO-Revision-Date: 2009-07-10 06:15+0100\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
+"PO-Revision-Date: 2009-08-01 05:45+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -44,9 +44,6 @@ msgstr "%s: overskriv '%s'?"
 
 msgid "--silent option is valid only in batch mode"
 msgstr "Tilvalget --silent kan kun anvendes i batch-modus"
-
-msgid "--rotate option is valid only in batch mode"
-msgstr "Tilvalget --rotate kan kun anvendes i batch-modus"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
@@ -124,7 +121,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "For mange ankerpunkter i kurve '%s'"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr "For mange lysværdiindstillinger i ID-filen, ignoreret\n"
+msgstr "For mange lysværdijusteringer i ID-filen, ignoreret\n"
 
 #, c-format
 msgid ""
@@ -736,6 +733,9 @@ msgstr "størrelse %dx%d, skala 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Sortpunkt: %0.3lf"
 
+msgid "No more room for new lightness adjustments."
+msgstr "Ikke mere plads til nye lysværdijusteringer."
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Fatal fejl: uf->conf->shrink<1"
 
@@ -979,11 +979,14 @@ msgstr "Zoom:"
 msgid "Zoom percentage"
 msgstr "Zoom-procent"
 
+msgid "Reset adjustment"
+msgstr "Resæt justering"
+
 msgid "Select a spot on the preview image to choose hue"
 msgstr "Vælg et punkt på forhåndsvisningsbilledet for at vælge farvetone"
 
-msgid "Reset adjustment"
-msgstr "Resæt ændring"
+msgid "Remove adjustment"
+msgstr "Fjern justering"
 
 msgid "Grayscale Mode:"
 msgstr "Gråtoneskalamodus:"
@@ -1125,6 +1128,9 @@ msgstr "Bredde"
 msgid "Orientation:"
 msgstr "Orientering:"
 
+msgid "Rotation"
+msgstr "Rotation"
+
 msgid "Path"
 msgstr "Sti"
 
@@ -1261,7 +1267,7 @@ msgid "Correct luminosity, saturation"
 msgstr "Korriger lysstyrke, farvemætning"
 
 msgid "Lightness Adjustments"
-msgstr "Lyshedsindstillinger"
+msgstr "Lysværdijusteringer"
 
 msgid "Crop and rotate"
 msgstr "Beskær og roter"

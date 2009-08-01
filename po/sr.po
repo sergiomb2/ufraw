@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
@@ -47,9 +47,6 @@ msgstr "%s: да препишем „%s“?"
 
 msgid "--silent option is valid only in batch mode"
 msgstr "--silent могућност се користи само у пакетном режиму"
-
-msgid "--rotate option is valid only in batch mode"
-msgstr "--rotate могућност се користи само у пакетном режиму"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr "Извлачење уметнуте слике није подржано у упитном режиму"
@@ -753,6 +750,10 @@ msgstr "величина %dx%d, у размери 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Црна тачка: %0.3lf"
 
+#, fuzzy
+msgid "No more room for new lightness adjustments."
+msgstr "Нема простора за нове криве."
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Кобан грешка: uf->conf->shrink<1"
 
@@ -998,12 +999,16 @@ msgid "Zoom percentage"
 msgstr "Увећање у процентима"
 
 #, fuzzy
+msgid "Reset adjustment"
+msgstr "Глобално подешавање контраста"
+
+#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
 msgstr ""
 "Изаберите тачку на прегледу слике на основи које се примењује равнотежа беле"
 
 #, fuzzy
-msgid "Reset adjustment"
+msgid "Remove adjustment"
 msgstr "Глобално подешавање контраста"
 
 msgid "Grayscale Mode:"
@@ -1145,6 +1150,10 @@ msgstr "Ширина"
 
 msgid "Orientation:"
 msgstr "Окретање:"
+
+#, fuzzy
+msgid "Rotation"
+msgstr "Засићеност"
 
 msgid "Path"
 msgstr "Путања"

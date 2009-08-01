@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
 "PO-Revision-Date: 2009-05-13 12:19+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -45,9 +45,6 @@ msgstr "%s: »%s« überschreiben?"
 
 msgid "--silent option is valid only in batch mode"
 msgstr "--silent-Option ist nur im Stapelverarbeitungsmodus gültig"
-
-msgid "--rotate option is valid only in batch mode"
-msgstr "--rotate-Option ist nur im Stapelverarbeitungsmodus gültig"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
@@ -755,6 +752,10 @@ msgstr "Größe %dx%d, Skala 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Schwarzpunkt: %0.3lf"
 
+#, fuzzy
+msgid "No more room for new lightness adjustments."
+msgstr "Kein Platz mehr für neue Kurven."
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Schwerwiegender Fehler: uf->conf->shrink<1"
 
@@ -1000,13 +1001,17 @@ msgid "Zoom percentage"
 msgstr "Zoom-Prozentsatz"
 
 #, fuzzy
+msgid "Reset adjustment"
+msgstr "Globale Kontrastanpassung"
+
+#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
 msgstr ""
 "Wählen Sie einen Punkt auf dem Vorschaubild, um den Weißabgleichspunkt "
 "anzuwenden."
 
 #, fuzzy
-msgid "Reset adjustment"
+msgid "Remove adjustment"
 msgstr "Globale Kontrastanpassung"
 
 msgid "Grayscale Mode:"
@@ -1148,6 +1153,10 @@ msgstr "Breite"
 
 msgid "Orientation:"
 msgstr "Ausrichtung:"
+
+#, fuzzy
+msgid "Rotation"
+msgstr "Sättigung"
 
 msgid "Path"
 msgstr "Pfad"

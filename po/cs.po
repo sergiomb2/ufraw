@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
 "PO-Revision-Date: 2009-05-04 21:03+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -45,9 +45,6 @@ msgstr "%s: přepsat '%s'?"
 
 msgid "--silent option is valid only in batch mode"
 msgstr "--silent volba je platná pouze v dávkovém režimu"
-
-msgid "--rotate option is valid only in batch mode"
-msgstr "--rotate volba je platná pouze v dávkovém režimu"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr "Vyjmutí vloženého snímku není v interaktivním režimu podporováno"
@@ -741,6 +738,10 @@ msgstr "velikost %dx%d, měřítko 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Černý bod: %0.3lf"
 
+#, fuzzy
+msgid "No more room for new lightness adjustments."
+msgstr "Není více místa pro nové křivky."
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Fatální chyba: uf->conf->shrink<1"
 
@@ -983,10 +984,14 @@ msgstr "Přiblížení:"
 msgid "Zoom percentage"
 msgstr "Procento přiblížení"
 
+msgid "Reset adjustment"
+msgstr "Obnovit nastavení"
+
 msgid "Select a spot on the preview image to choose hue"
 msgstr "Před nastavením odstínu zvolte bod na snímku náhledu"
 
-msgid "Reset adjustment"
+#, fuzzy
+msgid "Remove adjustment"
 msgstr "Obnovit nastavení"
 
 msgid "Grayscale Mode:"
@@ -1128,6 +1133,10 @@ msgstr "Šířka"
 
 msgid "Orientation:"
 msgstr "Orientace:"
+
+#, fuzzy
+msgid "Rotation"
+msgstr "Sytost"
 
 msgid "Path"
 msgstr "Cesta"

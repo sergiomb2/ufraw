@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 02:00+0200\n"
+"POT-Creation-Date: 2009-08-01 05:30+0200\n"
 "PO-Revision-Date: 2008-10-16 16:39+0900\n"
 "Last-Translator: Homin Lee <ff4500@gamil.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -47,9 +47,6 @@ msgstr "%s: '%s'을(를) 덮어 쓸까요?"
 
 msgid "--silent option is valid only in batch mode"
 msgstr "--silent 옵션은 배치모드에서만 유효합니다."
-
-msgid "--rotate option is valid only in batch mode"
-msgstr "--rotate 옵션은 배치모드에서만 유효합니다"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr "내장된 이미지 추출은 대화식 모드에서 지원되지 않습니다."
@@ -722,6 +719,10 @@ msgstr "사이즈 %dx%d, 스케일 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "암부: %0.3lf"
 
+#, fuzzy
+msgid "No more room for new lightness adjustments."
+msgstr "새 곡선을 위한 저장 공간이 없습니다."
+
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "치명적인 오류: uf->conf->shrink<1"
 
@@ -967,12 +968,16 @@ msgid "Zoom percentage"
 msgstr "확대 비율"
 
 #, fuzzy
+msgid "Reset adjustment"
+msgstr "전체 대비 조정"
+
+#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
 msgstr ""
 "스팟 화이트 벨런스를 적용하기 위해 미리보기 이미지 중 스팟(부분)을 선택하세요"
 
 #, fuzzy
-msgid "Reset adjustment"
+msgid "Remove adjustment"
 msgstr "전체 대비 조정"
 
 msgid "Grayscale Mode:"
@@ -1114,6 +1119,10 @@ msgstr "너비"
 
 msgid "Orientation:"
 msgstr "기준:"
+
+#, fuzzy
+msgid "Rotation"
+msgstr "채도"
 
 msgid "Path"
 msgstr "경로"
