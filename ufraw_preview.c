@@ -2039,6 +2039,9 @@ static void flip_image(GtkWidget *widget, int flip)
 	temp = data->UF->rotatedWidth;
 	data->UF->rotatedWidth = data->UF->rotatedHeight;
 	data->UF->rotatedHeight = temp;
+	temp = data->UF->initialWidth;
+	data->UF->initialWidth = data->UF->initialHeight;
+	data->UF->initialHeight = temp;
 	temp = CFG->CropX1;
 	CFG->CropX1 = CFG->CropY1;
 	CFG->CropY1 = temp;
@@ -2820,47 +2823,47 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
     data->unnormalized_angle = remainder(data->unnormalized_angle, 360);
     gtk_adjustment_set_value(adj, data->unnormalized_angle);
     if (data->FreezeDialog)
-       return;
+	return;
     CFG->rotationAngle = data->unnormalized_angle;
     CFG->orientation = data->reference_orientation;
     ufraw_normalize_rotation(data->UF);
     ufraw_get_image_dimensions(data->UF->raw, data->UF);
     d = MIN(CFG->CropX1, CFG->CropX2 - data->UF->rotatedWidth);
     if (d > 0) {
-       CFG->CropX1 -= d;
-       CFG->CropX2 -= d;
+	CFG->CropX1 -= d;
+	CFG->CropX2 -= d;
     }
     d = MIN(CFG->CropY1, CFG->CropY2 - data->UF->rotatedHeight);
     if (d > 0) {
-       CFG->CropY1 -= d;
-       CFG->CropY2 -= d;
+	CFG->CropY1 -= d;
+	CFG->CropY2 -= d;
     }
     d = MIN(data->SpotX1, data->SpotX2 - data->UF->rotatedWidth);
     if (d > 0) {
-       data->SpotX1 -= d;
-       data->SpotX2 -= d;
+	data->SpotX1 -= d;
+	data->SpotX2 -= d;
     }
     d = MIN(data->SpotY1, data->SpotY2 - data->UF->rotatedHeight);
     if (d > 0) {
-       data->SpotY1 -= d;
-       data->SpotY2 -= d;
+	data->SpotY1 -= d;
+	data->SpotY2 -= d;
     }
     if (data->SpotX2 > data->UF->rotatedWidth ||
-       data->SpotY2 > data->UF->rotatedHeight) {
-       data->SpotDraw = FALSE;
-       data->SpotX1 = -1;
-       data->SpotX2 = -1;
-       data->SpotY1 = -1;
-       data->SpotY2 = -1;
+	data->SpotY2 > data->UF->rotatedHeight) {
+	data->SpotDraw = FALSE;
+	data->SpotX1 = -1;
+	data->SpotX2 = -1;
+	data->SpotY1 = -1;
+	data->SpotY2 = -1;
     }
     create_base_image(data);
     if (CFG->CropX2 > data->UF->rotatedWidth)
-       fix_crop_aspect(data, top_right_cursor);
+	fix_crop_aspect(data, top_right_cursor);
     else if (CFG->CropY2 > data->UF->rotatedHeight)
-       fix_crop_aspect(data, bottom_left_cursor);
+	fix_crop_aspect(data, bottom_left_cursor);
     update_crop_ranges(data);
     if (!CFG->LockAspect)
-       refresh_aspect(data);
+	refresh_aspect(data);
     update_scales(data);
 }
 

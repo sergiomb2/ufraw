@@ -322,12 +322,12 @@ void ufraw_normalize_rotation(ufraw_data *uf)
 
     uf->conf->rotationAngle = fmod(uf->conf->rotationAngle, 360.0);
     if (uf->conf->rotationAngle < 0.0)
-       uf->conf->rotationAngle += 360.0;
+	uf->conf->rotationAngle += 360.0;
     angle = floor(uf->conf->rotationAngle / 90) * 90;
     switch (angle) {
-       case  90: flip = 6; break;
-       case 180: flip = 3; break;
-       case 270: flip = 5; break;
+	case  90: flip = 6; break;
+	case 180: flip = 3; break;
+	case 270: flip = 5; break;
     }
     ufraw_flip_orientation(uf, flip);
     uf->conf->rotationAngle -= angle;
