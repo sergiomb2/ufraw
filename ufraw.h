@@ -151,7 +151,7 @@ typedef struct {
  * CONF|ID: curve/profile are added to the list from RC.
  * CONF: inputFilename, outputFilename are ignored.
  * outputPath can only be specified in CMD or guessed in interactive mode.
- * ID: createID==only_id is switched to also_id.
+ * ID: createID==only_id is switched to also_id in case of ufraw-batch.
  * ID: chanMul[] override wb, green, temperature.
  */
 typedef struct {

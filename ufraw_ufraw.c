@@ -159,7 +159,6 @@ ufraw_data *ufraw_open(char *filename)
 	    g_free(conf);
 	    return NULL;
 	}
-	if (conf->createID==only_id) conf->createID = also_id;
 
 	/* If inputFilename and outputFilename have the same path,
 	 * then inputFilename is searched for in the path of the ID file.

@@ -79,6 +79,8 @@ int main (int argc, char **argv)
     for (; optInd<argc; optInd++, fileIndex++) {
 	argFile = uf_win32_locale_to_utf8(argv[optInd]);
 	uf = ufraw_open(argFile);
+	if (uf->conf && uf->conf->createID == only_id)
+	    uf->conf->createID = also_id;
 	uf_win32_locale_free(argFile);
 	if (uf==NULL) {
 	    exitCode = 1;
