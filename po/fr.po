@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-08-01 05:30+0200\n"
-"PO-Revision-Date: 2009-07-08 22:31+0200\n"
+"PO-Revision-Date: 2009-07-31 22:26+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
@@ -120,7 +120,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "Trop de points pour la courbe '%s'"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "Trop d'ajustement de clarté dans le fichier ID, ignorés\n"
 
 #, c-format
 msgid ""
@@ -1663,3 +1663,7 @@ msgstr "Bal. du Blanc Boitier"
 
 msgid "Auto WB"
 msgstr "Bal. du Blanc Auto"
+
+#~ msgid "--rotate option is valid only in batch mode"
+#~ msgstr ""
+#~ "--rotate cette option est valable uniquement en mode de traitement par lot"
