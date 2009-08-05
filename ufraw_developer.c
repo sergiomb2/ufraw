@@ -65,6 +65,7 @@ developer_data *developer_init()
     d->intent[display_profile] = -1;
     d->updateTransform = TRUE;
     d->colorTransform = NULL;
+    d->rgbtolabTransform = NULL;
     d->grayscaleMode = -1;
     d->grayscaleMixer[0] = d->grayscaleMixer[1] = d->grayscaleMixer[2] = -1;
     cmsSetErrorHandler(lcms_message);
@@ -84,6 +85,8 @@ void developer_destroy(developer_data *d)
     cmsCloseProfile(d->adjustmentProfile);
     if (d->colorTransform!=NULL)
 	cmsDeleteTransform(d->colorTransform);
+    if (d->rgbtolabTransform!=NULL)
+	cmsDeleteTransform(d->rgbtolabTransform);
     g_free(d);
 }
 
@@ -322,6 +325,8 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
     d->updateTransform = FALSE;
     if (d->colorTransform!=NULL)
 	cmsDeleteTransform(d->colorTransform);
+    if (d->rgbtolabTransform!=NULL)
+	cmsDeleteTransform(d->rgbtolabTransform);
 
     int targetProfile;
     if ( mode==file_developer || mode==auto_developer ) {
@@ -403,6 +408,11 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
 		    cmsFLAGS_SOFTPROOFING);
 	}
     }
+    d->rgbtolabTransform = cmsCreateTransform(d->profile[in_profile], 
+					      TYPE_RGB_16,
+					      cmsCreateLabProfile(cmsD50_xyY()),
+					      TYPE_Lab_16,
+					      INTENT_ABSOLUTE_COLORIMETRIC, 0);
 }
 
 static gboolean test_adjustments(const lightness_adjustment values[max_adjustments],
@@ -623,6 +633,30 @@ void developer_prepare(developer_data *d, conf_data *conf,
     developer_create_transform(d, mode);
 }
 
+static void apply_matrix(const developer_data *d,
+			 const gint64 in[4],
+			 gint64 out[3])
+{
+    gint64 tmp;
+    unsigned c, cc;
+    for (cc=0; cc<3; cc++) {
+	tmp = 0;
+	for (c=0; c<d->colors; c++)
+	    tmp += in[c] * d->colorMatrix[cc][c];
+	out[cc] = MAX(tmp/0x10000, 0);
+    }
+}
+
+static void cond_apply_matrix(const developer_data *d,
+			      const gint64 in[4],
+			      gint64 out[3])
+{
+    if (d->useMatrix)
+	apply_matrix(d, in, out);
+    else
+	memcpy(out, in, 3 * sizeof out[0]);
+}
+
 extern const double xyz_rgb[3][3];
 static const double rgb_xyz[3][3] = {			/* RGB from XYZ */
     { 3.24048, -1.53715, -0.498536 },
@@ -688,6 +722,32 @@ void uf_cielch_to_rgb(float lch[3], gint64 rgb[3])
 	    tmpf += rgb_xyz[c][cc] * xyz[cc];
 	rgb[c] = MAX(tmpf, 0);
     }
+}
+
+void uf_raw_to_cielch(const developer_data *d,
+		      const guint16 raw[4],
+		      float lch[3])
+{
+    gint64 tmp[4];
+    guint16 rgbpixel[3];
+    guint16 labpixel[3];
+    cmsCIELab Lab;
+    cmsCIELCh LCh;
+    unsigned int c;
+
+    for (c = 0; c < d->colors; ++c)
+	tmp[c] = (guint64)raw[c] * d->rgbWB[c] / 0x10000;
+    cond_apply_matrix(d, tmp, tmp);
+    for (c = 0; c < 3; ++c)
+	rgbpixel[c] = tmp[c];
+
+    cmsDoTransform(d->rgbtolabTransform, rgbpixel, labpixel, 1);
+
+    cmsLabEncoded2Float(&Lab, labpixel);
+    cmsLab2LCh(&LCh, &Lab);
+    lch[0] = LCh.L;
+    lch[1] = LCh.C;
+    lch[2] = LCh.h;
 }
 
 static void MaxMidMin(const gint64 p[3], int *maxc, int *midc, int *minc)
@@ -802,8 +862,8 @@ static void develop_grayscale(guint16 *pixel, const developer_data *d)
 
 void develop_linear(guint16 in[4], guint16 out[3], developer_data *d)
 {
-    unsigned c, cc;
-    gint64 tmppix[4], tmp;
+    unsigned c;
+    gint64 tmppix[4];
     gboolean clipped = FALSE;
     for (c=0; c<d->colors; c++) {
 	/* Set WB, normalizing tmppix[c]<0x10000 */
@@ -826,25 +886,9 @@ void develop_linear(guint16 in[4], guint16 out[3], developer_data *d)
 	 * to "1.0" (full exposure). Still the maximal value can be
 	 * d->exposure * 0x10000 / d->max */
 	gint64 unclippedPix[3], clippedPix[3];
-	if ( d->useMatrix ) {
-	    for (cc=0; cc<3; cc++) {
-		for (c=0, tmp=0; c<d->colors; c++)
-		    tmp += tmppix[c] * d->colorMatrix[cc][c];
-		unclippedPix[cc] = MAX(tmp/0x10000, 0);
-	    }
-	} else {
-	    for (c=0; c<3; c++) unclippedPix[c] = tmppix[c];
-	}
+	cond_apply_matrix(d, tmppix, unclippedPix);
 	for (c=0; c<3; c++) tmppix[c] = MIN(tmppix[c], d->exposure);
-	if ( d->useMatrix ) {
-	    for (cc=0; cc<3; cc++) {
-		for (c=0, tmp=0; c<d->colors; c++)
-		    tmp += tmppix[c] * d->colorMatrix[cc][c];
-		clippedPix[cc] = MAX(tmp/0x10000, 0);
-	    }
-	} else {
-	    for (c=0; c<3; c++) clippedPix[c] = tmppix[c];
-	}
+	cond_apply_matrix(d, tmppix, clippedPix);
 	if ( d->restoreDetails==restore_lch_details ) {
 	    float lch[3], clippedLch[3], unclippedLch[3];
 	    uf_rgb_to_cielch(unclippedPix, unclippedLch);
@@ -899,14 +943,8 @@ void develop_linear(guint16 in[4], guint16 out[3], developer_data *d)
 	    tmppix[midc] = lum * (0x10000-sat + sat*hue/0x10000) / 0x10000;
 	}
     } else { /* !clipped */
-	if (d->useMatrix) {
-	    gint64 tmp[3];
-	    for (cc=0; cc<3; cc++) {
-		for (c=0, tmp[cc]=0; c<d->colors; c++)
-		    tmp[cc] += tmppix[c] * d->colorMatrix[cc][c];
-	    }
-	    for (c=0; c<3; c++) tmppix[c] = MAX(tmp[c]/0x10000, 0);
-	}
+	if (d->useMatrix)
+	    apply_matrix(d, tmppix, tmppix);
 	gint64 max = tmppix[0];
 	for (c=1; c<3; c++) max = MAX(tmppix[c], max);
 	if (max > 0xFFFF) {

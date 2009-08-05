@@ -100,6 +100,7 @@ typedef struct {
     Intent intent[profile_types];
     gboolean updateTransform;
     void *colorTransform;
+    void *rgbtolabTransform;
     double saturation;
 #ifdef UFRAW_CONTRAST
     double contrast;
@@ -389,6 +390,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc);
 void uf_rgb_to_cielch(gint64 rgb[3], float lch[3]);
 // Convert CIE-LCh to linear RGB
 void uf_cielch_to_rgb(float lch[3], gint64 rgb[3]);
+void uf_raw_to_cielch(const developer_data *d,
+		      const guint16 raw[4], float lch[3]);
 developer_data *developer_init();
 void developer_destroy(developer_data *d);
 void developer_profile(developer_data *d, int type, profile_data *p);

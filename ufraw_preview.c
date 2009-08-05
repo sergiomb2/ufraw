@@ -1238,10 +1238,10 @@ static gboolean render_spot(preview_data *data)
      * The RGB color space is approximately linearized sRGB as it is not
      * affected from the ICC profile.
      */
-    guint16 rawChannels[4], linearChannels[3];
+    guint16 linearChannels[3];
     for (c=0; c<data->UF->colors; c++)
-	rawChannels[c] = rawSum[c] / (spotWidth * spotHeight);
-    develop_linear(rawChannels, linearChannels, Developer);
+	data->SpotRaw[c] = rawSum[c] / (spotWidth * spotHeight);
+    develop_linear(data->SpotRaw, linearChannels, Developer);
     double yValue = 0.5;
     extern const double xyz_rgb[3][3];
     for (c=0; c<3; c++)
@@ -1261,14 +1261,6 @@ static gboolean render_spot(preview_data *data)
     if ( data->PageNum!=data->PageNumCrop )
 	draw_spot(data, TRUE);
 
-    // Calculate hue for future use
-    gint64 rgb64[3];
-    for (c=0; c<3; c++) rgb64[c] = linearChannels[c];
-    float lch[3];
-    uf_rgb_to_cielch(rgb64, lch);
-    data->SpotHue = lch[2] * 180 / M_PI;
-    if (data->SpotHue < 0.0) data->SpotHue += 360;
-
     return FALSE;
 }
 
@@ -1278,7 +1270,6 @@ static void close_spot(GtkWidget *widget, gpointer user_data)
     preview_data *data = get_preview_data(widget);
     draw_spot(data, FALSE);
     data->SpotX1 = -1;
-    data->SpotHue = -1.0;
     gtk_widget_hide(GTK_WIDGET(data->SpotTable));
 }
 
@@ -1545,9 +1536,12 @@ static void select_hue_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     long i = (long)user_data;
+    float lch[3];
 
     if (data->FreezeDialog) return;
-    if (data->SpotHue < 0.0) return;
+    if (data->SpotX1 == -1) return;
+
+    uf_raw_to_cielch(Developer, data->SpotRaw, lch);
 
     if (i < 0) {
 	if (CFG->lightnessAdjustmentCount >= max_adjustments) {
@@ -1557,10 +1551,10 @@ static void select_hue_event(GtkWidget *widget, gpointer user_data)
 	i = CFG->lightnessAdjustmentCount++;
     }
 
-    CFG->lightnessAdjustment[i].hue = data->SpotHue;
+    CFG->lightnessAdjustment[i].hue = lch[2];
     CFG->lightnessAdjustment[i].hueWidth = 60;
 
-    widget_set_hue(data->LightnessHueSelectButton[i], data->SpotHue);
+    widget_set_hue(data->LightnessHueSelectButton[i], lch[2]);
     gtk_widget_show_all(GTK_WIDGET(data->LightnessAdjustmentTable[i]));
 
     preview_invalidate_layer (data, ufraw_develop_phase);
@@ -4991,7 +4985,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     data->SpotX2 = -1;
     data->SpotY1 = -1;
     data->SpotY2 = -1;
-    data->SpotHue = -1.0;
     data->SpotDraw = FALSE;
     data->FreezeDialog = TRUE;
     data->DrawnCropX1 = 0;
