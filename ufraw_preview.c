@@ -1191,6 +1191,37 @@ static gboolean render_live_histogram(preview_data *data)
     return FALSE;
 }
 
+struct spot
+{
+    int StartY;
+    int EndY;
+    int StartX;
+    int EndX;
+    int Size;
+};
+
+static void calculate_spot(preview_data *data, struct spot *spot,
+			   int width, int height)
+{
+    int spotHeight = abs(data->SpotY1 - data->SpotY2)
+	    * height / data->UF->rotatedHeight + 1;
+    spot->StartY = MIN(data->SpotY1, data->SpotY2)
+	    * height / data->UF->rotatedHeight;
+    if (spotHeight + spot->StartY > height)
+	spot->StartY = height - spotHeight;
+    spot->EndY = spot->StartY + spotHeight;
+
+    int spotWidth = abs(data->SpotX1 - data->SpotX2)
+	    * width / data->UF->rotatedWidth + 1;
+    spot->StartX = MIN(data->SpotX1, data->SpotX2)
+	    * width / data->UF->rotatedWidth;
+    if (spotWidth + spot->StartX > width)
+	spot->StartX = width - spotWidth;
+    spot->EndX = spot->StartX + spotWidth;
+
+    spot->Size = spotWidth * spotHeight;
+}
+
 static gboolean render_spot(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
@@ -1206,31 +1237,25 @@ static gboolean render_spot(preview_data *data)
     void *rawBuffer = data->UF->Images[ufraw_first_phase].buffer;
     /* We assume that first_phase and final_phase buffer sizes are the same. */
     /* Scale image coordinates to Images[ufraw_develop_phase] coordinates */
-    int spotHeight = abs(data->SpotY1 - data->SpotY2)
-	    * height / data->UF->rotatedHeight + 1;
-    int spotStartY = MIN(data->SpotY1, data->SpotY2)
-	    * height / data->UF->rotatedHeight;
-    if (spotHeight+spotStartY>height) spotStartY = height - spotHeight;
-    int spotWidth = abs(data->SpotX1 - data->SpotX2)
-	    * width / data->UF->rotatedWidth + 1;
-    int spotStartX = MIN(data->SpotX1, data->SpotX2)
-	    * width / data->UF->rotatedWidth;
-    if (spotWidth+spotStartX>width) spotStartX = width - spotWidth;
+    struct spot spot;
+    calculate_spot(data, &spot, width, height);
     guint64 rawSum[4], outSum[3];
     int c, y, x;
     for (c=0; c<3; c++) rawSum[c] = outSum[c] = 0;
-    for (y=spotStartY; y<spotStartY+spotHeight; y++) {
-	for (x=spotStartX; x<spotStartX+spotWidth; x++) {
-	    guint16 *rawPixie = rawBuffer + (y*width + x)*rawDepth;
+    for (y=spot.StartY; y<spot.EndY; y++) {
+	guint16 *rawPixie = rawBuffer + (y*width + spot.StartX)*rawDepth;
+	guint8 *outPixie = outBuffer + (y*width + spot.StartX)*outDepth;
+	for (x=spot.StartX;
+	     x<spot.EndX;
+	     x++, rawPixie += rawDepth, outPixie += outDepth) {
 	    for (c=0; c<data->UF->colors; c++)
 		rawSum[c] += rawPixie[c];
-	    guint8 *outPixie = outBuffer + (y*width + x)*outDepth;
 	    for (c=0; c<3; c++)
 		outSum[c] += outPixie[c];
 	}
     }
     double rgb[5];
-    for (c=0; c<3; c++) rgb[c] = outSum[c] / (spotWidth * spotHeight);
+    for (c=0; c<3; c++) rgb[c] = outSum[c] / spot.Size;
     /*
      * Convert RGB pixel value to 0-1 space, intending to reprsent,
      * absent contrast manipulation and color issues, luminance relative
@@ -1238,10 +1263,10 @@ static gboolean render_spot(preview_data *data)
      * The RGB color space is approximately linearized sRGB as it is not
      * affected from the ICC profile.
      */
-    guint16 linearChannels[3];
+    guint16 rawChannels[4], linearChannels[3];
     for (c=0; c<data->UF->colors; c++)
-	data->SpotRaw[c] = rawSum[c] / (spotWidth * spotHeight);
-    develop_linear(data->SpotRaw, linearChannels, Developer);
+	rawChannels[c] = rawSum[c] / spot.Size;
+    develop_linear(rawChannels, linearChannels, Developer);
     double yValue = 0.5;
     extern const double xyz_rgb[3][3];
     for (c=0; c<3; c++)
@@ -1469,7 +1494,7 @@ static void curve_update(GtkWidget *widget, long curveType)
 static void spot_wb_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    int spotStartX, spotStartY, spotWidth, spotHeight;
+    struct spot spot;
     int width, height, x, y, c;
     guint64 rgb[4];
 
@@ -1480,19 +1505,12 @@ static void spot_wb_event(GtkWidget *widget, gpointer user_data)
     width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     height = gdk_pixbuf_get_height(data->PreviewPixbuf);
     /* Scale image coordinates to pixbuf coordinates */
-    spotHeight = abs(data->SpotY1 - data->SpotY2)
-	    * height / data->UF->rotatedHeight + 1;
-    spotStartY = MIN(data->SpotY1, data->SpotY2)
-	    *height / data->UF->rotatedHeight;
-    spotWidth = abs(data->SpotX1 - data->SpotX2)
-	    * width / data->UF->rotatedWidth + 1;
-    spotStartX = MIN(data->SpotX1, data->SpotX2)
-	    * width / data->UF->rotatedWidth;
+    calculate_spot(data, &spot, width, height);
     ufraw_image_data *image = &data->UF->Images[ufraw_first_phase];
 
     for (c=0; c<4; c++) rgb[c] = 0;
-    for (y=spotStartY; y<spotStartY+spotHeight; y++)
-	for (x=spotStartX; x<spotStartX+spotWidth; x++) {
+    for (y=spot.StartY; y<spot.EndY; y++)
+	for (x=spot.StartX; x<spot.EndX; x++) {
 	    guint16 *pixie = (guint16*)(image->buffer +
 		    (y*image->width + x)*image->depth);
 	    for (c=0; c<data->UF->colors; c++)
@@ -1500,8 +1518,7 @@ static void spot_wb_event(GtkWidget *widget, gpointer user_data)
 	}
     for (c=0; c<4; c++) rgb[c] = MAX(rgb[c], 1);
     for (c=0; c<data->UF->colors; c++)
-	CFG->chanMul[c] = (double)spotWidth * spotHeight * data->UF->rgbMax
-		/ rgb[c];
+	CFG->chanMul[c] = (double)spot.Size * data->UF->rgbMax / rgb[c];
     if (data->UF->colors<4) CFG->chanMul[3] = 0.0;
     ufraw_message(UFRAW_SET_LOG,
 	    "spot_wb: channel multipliers = { %.0f, %.0f, %.0f, %.0f }\n",
@@ -1532,16 +1549,59 @@ static void remove_hue_event(GtkWidget *widget, gpointer user_data)
     update_scales(data);
 }
 
+static void calculate_hue(preview_data *data, int i)
+{
+    float lch[3];
+    int width = data->UF->Images[ufraw_develop_phase].width;
+    int height = data->UF->Images[ufraw_develop_phase].height;
+    int rawDepth = data->UF->Images[ufraw_first_phase].depth;
+    void *rawBuffer = data->UF->Images[ufraw_first_phase].buffer;
+    /* We assume that first_phase and final_phase buffer sizes are the same. */
+    /* Scale image coordinates to Images[ufraw_develop_phase] coordinates */
+    struct spot spot;
+    calculate_spot(data, &spot, width, height);
+
+    guint64 rawSum[4];
+    int c, y, x;
+    for (c=0; c<3; c++) rawSum[c] = 0;
+    for (y=spot.StartY; y<spot.EndY; y++) {
+	guint16 *rawPixie = rawBuffer + (y*width + spot.StartX)*rawDepth;
+	for (x=spot.StartX; x<spot.EndX; x++, rawPixie += rawDepth) {
+	    for (c=0; c<data->UF->colors; c++)
+		rawSum[c] += rawPixie[c];
+	}
+    }
+    guint16 rawChannels[4];
+    for (c=0; c<data->UF->colors; c++)
+	rawChannels[c] = rawSum[c] / spot.Size;
+
+    uf_raw_to_cielch(Developer, rawChannels, lch);
+    CFG->lightnessAdjustment[i].hue = lch[2];
+
+    double hue = lch[2];
+    double sum = 0;
+    for (y=spot.StartY; y<spot.EndY; y++) {
+	guint16 *rawPixie = rawBuffer + (y*width + spot.StartX)*rawDepth;
+	for (x=spot.StartX; x<spot.EndX; x++, rawPixie += rawDepth) {
+	    uf_raw_to_cielch(Developer, rawPixie, lch);
+	    double diff = fabs(hue - lch[2]);
+	    if (diff > 180.0)
+		diff = 360.0 - diff;
+	    sum += diff * diff;
+	}
+    }
+    double stddev = sqrt(sum / spot.Size);
+
+    CFG->lightnessAdjustment[i].hueWidth = MIN(stddev * 2, 60);
+}
+
 static void select_hue_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     long i = (long)user_data;
-    float lch[3];
 
     if (data->FreezeDialog) return;
     if (data->SpotX1 == -1) return;
-
-    uf_raw_to_cielch(Developer, data->SpotRaw, lch);
 
     if (i < 0) {
 	if (CFG->lightnessAdjustmentCount >= max_adjustments) {
@@ -1551,10 +1611,9 @@ static void select_hue_event(GtkWidget *widget, gpointer user_data)
 	i = CFG->lightnessAdjustmentCount++;
     }
 
-    CFG->lightnessAdjustment[i].hue = lch[2];
-    CFG->lightnessAdjustment[i].hueWidth = 60;
-
-    widget_set_hue(data->LightnessHueSelectButton[i], lch[2]);
+    calculate_hue(data, i);
+    widget_set_hue(data->LightnessHueSelectButton[i],
+		   CFG->lightnessAdjustment[i].hue);
     gtk_widget_show_all(GTK_WIDGET(data->LightnessAdjustmentTable[i]));
 
     preview_invalidate_layer (data, ufraw_develop_phase);

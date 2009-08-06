@@ -158,7 +158,6 @@ typedef struct {
     /* Since the event-box can be larger than the preview pixbuf we need: */
     gboolean PreviewButtonPressed, SpotDraw;
     int SpotX1, SpotY1, SpotX2, SpotY2;
-    guint16 SpotRaw[4];
     CursorType CropMotionType;
     int DrawnCropX1, DrawnCropX2, DrawnCropY1, DrawnCropY2;
     double unnormalized_angle;

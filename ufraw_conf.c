@@ -81,9 +81,9 @@ const conf_data conf_default = {
     0, /* rotationAngle */
     0, /* lightness adjustment count */
     {
-	{ 1, 0, 60 },
-	{ 1, 120, 60 },
-	{ 1, 240, 60 },
+	{ 1, 0, 0 },
+	{ 1, 0, 0 },
+	{ 1, 0, 0 },
     }, /* lightness adjustments */
     grayscale_none, /* grayscale mode */
     { 1.0, 1.0, 1.0 }, /* grayscale mixer */

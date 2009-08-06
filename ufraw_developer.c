@@ -250,18 +250,21 @@ static int luminance_adjustment_sampler(WORD In[], WORD Out[], LPVOID Cargo)
     double adj = 0.0;
     int i;
     for (i=0, a=d->lightnessAdjustment; i<max_adjustments; i++, a++) {
-	double deltaHue = LCh.h - a->hue;
-	double hueWidth = a->hueWidth;
-	if (deltaHue > 180.0) deltaHue -= 360.0;
-	if (deltaHue < -180.0) deltaHue += 360.0;
-	if (abs(deltaHue) > hueWidth)
+	double deltaHue = fabs(LCh.h - a->hue);
+	double hueWidth = MAX(a->hueWidth, 360.0/33.0);
+	if (deltaHue > 180.0)
+	    deltaHue = 360.0 - deltaHue;
+	if (deltaHue > hueWidth)
 	    continue;
 	/* This assigns the scales on a nice curve. */
 	double scale = cos(deltaHue / hueWidth * (M_PI / 2) );
-	scale *= scale;
-	adj += (a->adjustment - 1) * scale;
+	adj += (a->adjustment - 1) * (scale * scale);
     }
-    adj = adj * LCh.C / max_colorfulness + 1;
+    /* The adjustment is scaled based on the colorfulness of the point,
+     * since uncolored pixels should not be adjusted.  However, few
+     * (s)RGB colors have a colorfulness value larger than 1/2 of
+     * max_colorfulness, so use that as an actual maximum colorfulness. */
+    adj = adj * MIN(LCh.C / (max_colorfulness / 2), 1.0) + 1;
     LCh.L *= adj;
 
     cmsLCh2Lab(&Lab, &LCh);
