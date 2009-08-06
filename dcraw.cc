@@ -1186,13 +1186,13 @@ void CLASS pentax_k10_load_raw()
   huff[0] = 12;
   fseek (ifp, data_offset, SEEK_SET);
   getbits(-1);
-  for (row=0; row < height; row++)
+  for (row=0; row < raw_height; row++)
     for (col=0; col < raw_width; col++) {
       diff = ljpeg_diff (huff);
       if (col < 2) hpred[col] = vpred[row & 1][col] += diff;
       else	   hpred[col & 1] += diff;
-      if (col < width)
-	BAYER(row,col) = hpred[col & 1];
+      if ((unsigned) (row-top_margin) < height && col < width)
+	BAYER(row-top_margin,col) = hpred[col & 1];
       if (hpred[col & 1] >> 12) derror();
     }
 }
@@ -6481,6 +6481,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 11057,-3604,-1155,-5152,13046,2329,-282,375,8104 } },
     { "PENTAX K-m", 0, 0,
 	{ 11057,-3604,-1155,-5152,13046,2329,-282,375,8104 } },
+    { "PENTAX K-7", 0, 0,
+	{ 9142,-2947,-678,-8648,16967,1663,-2224,2898,8615 } },
     { "Panasonic DMC-FZ8", 0, 0xf7f0,
 	{ 8986,-2755,-802,-6341,13575,3077,-1476,2144,6379 } },
     { "Panasonic DMC-FZ18", 0, 0,
@@ -6839,6 +6841,9 @@ void CLASS identify()
     { height  = 2616;   width  = 3896; }
   if (height == 3136 && width == 4864)	/* Pentax K20D */
     { height  = 3124;   width  = 4688; }
+  if (height == 3136 && width == 4736)	/* Pentax K-7 */
+    { height  = 3122;   width  = 4684;
+      top_margin = 2;  filters = 0x16161616; }
   if (height == 3014 && width == 4096)	/* Ricoh GX200 */
 			width  = 4014;
   if (dng_version) {
