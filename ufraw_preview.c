@@ -655,11 +655,18 @@ static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
 	    /* Shade out the thirds lines */
 	    else if (data->RenderMode==render_default) {
 		if ( CFG->drawLines &&
-		     ( (yy-CropY1)%LineDeltaY == 0 ||
-		       (xx-CropX1)%LineDeltaX == 0 ) ) {
+		     ( (yy!=0 && (yy-CropY1)%LineDeltaY == 0) ||
+		       (xx!=0 && (xx-CropX1)%LineDeltaX == 0) ) ) {
 		    p8[0] /= 2;
 		    p8[1] /= 2;
 		    p8[2] /= 2;
+		}
+		if ( CFG->drawLines &&
+		     ( (yy!=1 && (yy-CropY1)%LineDeltaY == 1) ||
+		       (xx!=1 && (xx-CropX1)%LineDeltaX == 1) ) ) {
+		    p8[0] = 255 - (255-p8[0])/2;
+		    p8[1] = 255 - (255-p8[1])/2;
+		    p8[2] = 255 - (255-p8[2])/2;
 		}
 		else if ( blinkOver && (p8[0]==255 || p8[1]==255 || p8[2]==255) )
 		    p8[0] = p8[1] = p8[2] = 0;
