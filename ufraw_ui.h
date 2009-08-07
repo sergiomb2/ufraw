@@ -83,7 +83,6 @@ typedef struct {
     GtkSpinButton *ShrinkSpin;
     GtkSpinButton *HeightSpin;
     GtkSpinButton *WidthSpin;
-    GtkSpinButton *RotationSpin;
     /* We need the adjustments for update_scale() */
     GtkAdjustment *WBTuningAdjustment;
     GtkAdjustment *TemperatureAdjustment;
@@ -112,6 +111,7 @@ typedef struct {
     GtkAdjustment *HeightAdjustment;
     GtkAdjustment *WidthAdjustment;
     GtkAdjustment *RotationAdjustment;
+    GtkWidget *ResetRotationAdjustment;
     GtkAdjustment *GrayscaleMixers[3];
 #ifdef HAVE_LENSFUN
     /* The GtkEntry with camera maker/model name */
