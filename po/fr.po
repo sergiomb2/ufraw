@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-01 05:30+0200\n"
+"POT-Creation-Date: 2009-08-07 07:00+0200\n"
 "PO-Revision-Date: 2009-07-31 22:26+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -849,6 +849,12 @@ msgstr "Retour à la commande par défaut"
 
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Clignotement des indicateurs Sur/Sous-exposition"
+
+msgid "Alignment Line Count"
+msgstr ""
+
+msgid "Number of alignment lines to overlay over the crop area"
+msgstr ""
 
 msgid "Configuration"
 msgstr "Configuration"

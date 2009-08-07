@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-01 05:30+0200\n"
+"POT-Creation-Date: 2009-08-07 07:00+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniele Medri <dmedri@SPAMgmail.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -833,6 +833,12 @@ msgstr "Ripristina comando predefinito"
 
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Indicatori lampeggianti per la sovra/sottoesposizione"
+
+msgid "Alignment Line Count"
+msgstr ""
+
+msgid "Number of alignment lines to overlay over the crop area"
+msgstr ""
 
 msgid "Configuration"
 msgstr "Configurazione"
