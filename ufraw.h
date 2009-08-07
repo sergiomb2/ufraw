@@ -211,6 +211,7 @@ typedef struct {
     gboolean overExp, underExp, blinkOverUnder;
     gboolean RememberOutputPath;
     gboolean WindowMaximized;
+    int drawLines;
     char curvePath[max_path];
     char profilePath[max_path];
     gboolean silent;

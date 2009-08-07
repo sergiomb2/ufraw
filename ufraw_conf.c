@@ -111,6 +111,7 @@ const conf_data conf_default = {
     TRUE, /* blinkOverUnder indicators */
     FALSE, /* RememberOutputPath */
     FALSE, /* WindowMaximized */
+    0, /* number of helper lines to draw */
     "", "", /* curvePath, profilePath */
     FALSE, /* silent */
 #ifdef WIN32
@@ -587,6 +588,8 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     if (!strcmp("UnderExposure", element)) sscanf(temp, "%d", &c->underExp);
     if (!strcmp("BlinkOverUnder", element))
 	sscanf(temp, "%d", &c->blinkOverUnder);
+    if (!strcmp("DrawLines", element))
+	sscanf(temp, "%d", &c->drawLines);
     if (!strcmp("RememberOutputPath", element))
 	sscanf(temp, "%d", &c->RememberOutputPath);
     if (!strcmp("WindowMaximized", element))
@@ -871,6 +874,9 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	if (c->blinkOverUnder!=conf_default.blinkOverUnder)
 	    buf = uf_markup_buf(buf,
 		    "<BlinkOverUnder>%d</BlinkOverUnder>\n", c->blinkOverUnder);
+	if (c->drawLines!=conf_default.drawLines)
+	    buf = uf_markup_buf(buf,
+		    "<DrawLines>%d</DrawLines>\n", c->drawLines);
 	if (c->RememberOutputPath!=conf_default.RememberOutputPath)
 	    buf = uf_markup_buf(buf,
 		    "<RememberOutputPath>%d</RememberOutputPath>\n",

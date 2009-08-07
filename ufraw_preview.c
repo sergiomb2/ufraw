@@ -620,6 +620,8 @@ static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
     int CropY2 =  ceil (CFG->CropY2 * scale_y);
     int CropX1 = floor (CFG->CropX1 * scale_x);
     int CropX2 =  ceil (CFG->CropX2 * scale_x);
+    int LineDeltaX = (CropX2 - CropX1) / (CFG->drawLines + 1);
+    int LineDeltaY = (CropY2 - CropY1) / (CFG->drawLines + 1);
 
     /* Scale spot image coordinates to pixbuf coordinates */
     int SpotY1 = floor (MIN(data->SpotY1, data->SpotY2) * scale_y);
@@ -645,15 +647,21 @@ static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
 		 ((xx==CropX1-1 || xx==CropX2) && yy>=CropY1-1 && yy<=CropY2) )
 	    {
 		p8[0] = p8[1] = p8[2] = 255;
-		continue;
 	    }
 	    /* Shade the cropped out area */
-	    if ( yy<CropY1 || yy>=CropY2 || xx<CropX1 || xx>=CropX2 ) {
+	    else if ( yy<CropY1 || yy>=CropY2 || xx<CropX1 || xx>=CropX2 ) {
 		for (c=0; c<3; c++) p8[c] = p8[c]/4;
-		continue;
 	    }
-	    if (data->RenderMode==render_default) {
-		if ( blinkOver && (p8[0]==255 || p8[1]==255 || p8[2]==255) )
+	    /* Shade out the thirds lines */
+	    else if (data->RenderMode==render_default) {
+		if ( CFG->drawLines &&
+		     ( (yy-CropY1)%LineDeltaY == 0 ||
+		       (xx-CropX1)%LineDeltaX == 0 ) ) {
+		    p8[0] /= 2;
+		    p8[1] /= 2;
+		    p8[2] /= 2;
+		}
+		else if ( blinkOver && (p8[0]==255 || p8[1]==255 || p8[2]==255) )
 		    p8[0] = p8[1] = p8[2] = 0;
 		else if ( blinkUnder && (p8[0]==0 || p8[1]==0 || p8[2]==0) )
 		    p8[0] = p8[1] = p8[2] = 255;
@@ -3265,6 +3273,13 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_table_attach(settingsTable, blinkButton, 0, 2, 1, 2, GTK_FILL, 0, 0, 0);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(blinkButton),
 	    CFG->blinkOverUnder);
+    // drawLines toggle button
+    double drawLines = CFG->drawLines;
+    GtkAdjustment *drawLinesAdjustment = adjustment_scale(
+	settingsTable, 0, 2, _("Alignment Line Count"),
+	drawLines, &drawLines, 0, 21, 1, 1, 0,
+	_("Number of alignment lines to overlay over the crop area"),
+	G_CALLBACK(adjustment_update), NULL, NULL, NULL);
 
     label = gtk_label_new(_("Configuration"));
     page = gtk_scrolled_window_new(NULL, NULL);
@@ -3378,6 +3393,8 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	if ( CFG->blinkOverUnder!=
 	     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(blinkButton)) )
 	    data->OptionsChanged = TRUE;
+	if ( CFG->drawLines!= gtk_adjustment_get_value(drawLinesAdjustment) )
+	    data->OptionsChanged = TRUE;
 
 	if ( !data->OptionsChanged ) {
 	    /* If nothing changed there is nothing to do */
@@ -3387,6 +3404,9 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	    g_strlcpy(RC->remoteGimpCommand, CFG->remoteGimpCommand, max_path);
 	    RC->blinkOverUnder = CFG->blinkOverUnder =
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(blinkButton));
+	    RC->drawLines = CFG->drawLines =
+		gtk_adjustment_get_value(drawLinesAdjustment);
+
 	    /* Copy profiles and curves from CFG to RC and save .ufrawrc */
 	    if ( memcmp(&RC->BaseCurve[RC->BaseCurveIndex],
 		    &CFG->BaseCurve[RC->BaseCurveIndex], sizeof(CurveData))!=0 )
