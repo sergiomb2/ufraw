@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 07:00+0200\n"
+"POT-Creation-Date: 2009-08-07 18:45+0200\n"
 "PO-Revision-Date: 2009-05-04 21:03+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -1143,6 +1143,13 @@ msgstr "Orientace:"
 #, fuzzy
 msgid "Rotation"
 msgstr "Sytost"
+
+#, fuzzy
+msgid "Rotation Angle"
+msgstr "Sytost"
+
+msgid "Reset Rotation Angle"
+msgstr ""
 
 msgid "Path"
 msgstr "Cesta"

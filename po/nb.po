@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 07:00+0200\n"
+"POT-Creation-Date: 2009-08-07 18:45+0200\n"
 "PO-Revision-Date: 2008-12-23 00:00-0500\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -1146,6 +1146,13 @@ msgstr "Orientering:"
 #, fuzzy
 msgid "Rotation"
 msgstr "Fargemetning"
+
+#, fuzzy
+msgid "Rotation Angle"
+msgstr "Fargemetning"
+
+msgid "Reset Rotation Angle"
+msgstr ""
 
 msgid "Path"
 msgstr "Sti"

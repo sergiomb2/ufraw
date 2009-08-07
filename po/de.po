@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 07:00+0200\n"
+"POT-Creation-Date: 2009-08-07 18:45+0200\n"
 "PO-Revision-Date: 2009-05-13 12:19+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -1163,6 +1163,13 @@ msgstr "Ausrichtung:"
 #, fuzzy
 msgid "Rotation"
 msgstr "Sättigung"
+
+#, fuzzy
+msgid "Rotation Angle"
+msgstr "Sättigung"
+
+msgid "Reset Rotation Angle"
+msgstr ""
 
 msgid "Path"
 msgstr "Pfad"

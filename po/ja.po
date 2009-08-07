@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 07:00+0200\n"
+"POT-Creation-Date: 2009-08-07 18:45+0200\n"
 "PO-Revision-Date: 2009-01-16 23:44+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -1143,6 +1143,13 @@ msgstr "変換:"
 #, fuzzy
 msgid "Rotation"
 msgstr "彩度"
+
+#, fuzzy
+msgid "Rotation Angle"
+msgstr "彩度"
+
+msgid "Reset Rotation Angle"
+msgstr ""
 
 msgid "Path"
 msgstr "パス"

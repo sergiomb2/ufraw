@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 07:00+0200\n"
+"POT-Creation-Date: 2009-08-07 18:45+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
@@ -1166,6 +1166,13 @@ msgstr "Okretanje:"
 #, fuzzy
 msgid "Rotation"
 msgstr "Zasićenost"
+
+#, fuzzy
+msgid "Rotation Angle"
+msgstr "Zasićenost"
+
+msgid "Reset Rotation Angle"
+msgstr ""
 
 msgid "Path"
 msgstr "Putanja"

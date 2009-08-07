@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 07:00+0200\n"
+"POT-Creation-Date: 2009-08-07 18:45+0200\n"
 "PO-Revision-Date: 2007-02-27 21:01+0100\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese <brunobuys@gmail.com>\n"
@@ -1170,6 +1170,13 @@ msgstr ""
 #, fuzzy
 msgid "Rotation"
 msgstr "Saturação"
+
+#, fuzzy
+msgid "Rotation Angle"
+msgstr "Saturação"
+
+msgid "Reset Rotation Angle"
+msgstr ""
 
 msgid "Path"
 msgstr ""

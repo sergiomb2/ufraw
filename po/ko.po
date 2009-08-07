@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 07:00+0200\n"
+"POT-Creation-Date: 2009-08-07 18:45+0200\n"
 "PO-Revision-Date: 2008-10-16 16:39+0900\n"
 "Last-Translator: Homin Lee <ff4500@gamil.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -1129,6 +1129,13 @@ msgstr "기준:"
 #, fuzzy
 msgid "Rotation"
 msgstr "채도"
+
+#, fuzzy
+msgid "Rotation Angle"
+msgstr "채도"
+
+msgid "Reset Rotation Angle"
+msgstr ""
 
 msgid "Path"
 msgstr "경로"
