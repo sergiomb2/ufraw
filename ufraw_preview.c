@@ -2784,7 +2784,7 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
 	if (!CFG->LockAspect) refresh_aspect(data);
 	return;
     }
-    /* Do noting if value didn't really change */
+    /* Do nothing if value didn't really change */
     long accuracy =
 	(long)g_object_get_data(G_OBJECT(adj), "Adjustment-Accuracy");
     float change = fabs(*valuep-gtk_adjustment_get_value(adj));
@@ -4467,7 +4467,7 @@ static void colormgmt_fill_interface(preview_data *data,
 
     data->LinearAdjustment = adjustment_scale(table, 1, 4, _("Linearity"),
 	    CFG->profile[0][CFG->profileIndex[0]].linear,
-	    &CFG->profile[0][0].linear, 0.0, 1.0, 0.01, 0.05, 2,
+	    &CFG->profile[0][0].linear, 0.0, 1.0, 0.01, 0.05, 3,
 	    _("Linear part of the gamma correction"),
 	    G_CALLBACK(adjustment_update),
 	    &data->ResetLinearButton, _("Reset linearity to default"),
