@@ -682,6 +682,9 @@ static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
 	    }
 	}
     }
+#ifdef _OPENMP
+#pragma omp critical
+#endif
     /* Redraw the changed areas */
     image_draw_area(data, x, y, width, height);
 }
@@ -1002,12 +1005,9 @@ static gboolean render_raw_histogram(preview_data *data)
 
 static gboolean render_preview_image(preview_data *data)
 {
-#ifdef HAVE_GTKIMAGEVIEW
-    int i;
-#endif
-    int x, y, w, h;
     ufraw_image_data *img;
-    int subarea;
+    gboolean again = TRUE;
+    int i = -1;
 
     if (data->FreezeDialog) return FALSE;
 
@@ -1025,10 +1025,18 @@ static gboolean render_preview_image(preview_data *data)
     gtk_image_view_get_viewport (
         GTK_IMAGE_VIEW (data->PreviewWidget), &viewport);
 
+#ifdef _OPENMP
+#pragma omp parallel shared(i) reduction(||:again)
+#endif
+    {
     int max_area = -1;
-    subarea = -1;
+    int subarea = -1;
+    int x, y, w, h;
 
-    for (i = 0; i < 32; i++)
+#ifdef _OPENMP
+#pragma omp critical
+#endif
+    for (i++; i < 32; i++)
     {
         /* Skip valid subareas */
         if (img->valid & (1 << i))
@@ -1073,34 +1081,36 @@ static gboolean render_preview_image(preview_data *data)
         }
     }
 
+#else
+#ifdef _OPENMP
+#pragma omp critical
+#endif
+    subarea = data->RenderSubArea++;
+    if (subarea > 31)
+	subarea = -1;
+#endif
+
     if (subarea < 0)
     {
         data->RenderSubArea = -1;
         redraw_navigation_image(data);
-        return FALSE;
+        again = FALSE;
     }
-#else
-    subarea = data->RenderSubArea++;
-    gboolean last_subimage = (data->RenderSubArea > 31);
-#endif
+    else {
+	ufraw_image_data *img1 = ufraw_convert_image_area (
+	    data->UF, subarea, ufraw_phases_num - 1);
+	if (!img1)
+	    again = FALSE;
 
-    img = ufraw_convert_image_area (data->UF, subarea, ufraw_phases_num - 1);
-    if (!img)
-        return FALSE;
-
-    ufraw_img_get_subarea_coord (img, subarea, &x, &y, &w, &h);
-    preview_draw_img_area (data, img, x, y, w, h);
-
-#ifndef HAVE_GTKIMAGEVIEW
-    if (last_subimage)
-    {
-        data->RenderSubArea = -1;
-        redraw_navigation_image(data);
-        return FALSE;
+	else {
+	    ufraw_img_get_subarea_coord (img1, subarea, &x, &y, &w, &h);
+	    preview_draw_img_area (data, img1, x, y, w, h);
+	}
     }
-#endif
 
-    return TRUE;
+    }
+
+    return again;
 }
 
 static gboolean render_live_histogram(preview_data *data)

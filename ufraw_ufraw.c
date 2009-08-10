@@ -1294,6 +1294,9 @@ ufraw_image_data *ufraw_convert_image_area (
             return in;
     }
 
+#ifdef _OPENMP
+#pragma omp critical
+#endif
     // Mark the subarea as valid
     out->valid |= (1 << saidx);
 
