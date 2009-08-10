@@ -652,23 +652,26 @@ static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
 	    else if ( yy<CropY1 || yy>=CropY2 || xx<CropX1 || xx>=CropX2 ) {
 		for (c=0; c<3; c++) p8[c] = p8[c]/4;
 	    }
-	    /* Shade out the thirds lines */
 	    else if (data->RenderMode==render_default) {
+		/* Shade out the alignment lines */
 		if ( CFG->drawLines &&
-		     ( (yy!=0 && (yy-CropY1)%LineDeltaY == 0) ||
-		       (xx!=0 && (xx-CropX1)%LineDeltaX == 0) ) ) {
-		    p8[0] /= 2;
-		    p8[1] /= 2;
-		    p8[2] /= 2;
+		     yy > CropY1 + 1 && yy < CropY2 - 2 &&
+		     xx > CropX1 + 1 && xx < CropX2 - 2 ) {
+		    int dx = (xx - CropX1) % LineDeltaX;
+		    int dy = (yy - CropY1) % LineDeltaY;
+		    if (dx == 0 || dy == 0) {
+			p8[0] /= 2;
+			p8[1] /= 2;
+			p8[2] /= 2;
+		    }
+		    else if (dx == 1 || dy == 1) {
+			p8[0] = 255 - (255-p8[0])/2;
+			p8[1] = 255 - (255-p8[1])/2;
+			p8[2] = 255 - (255-p8[2])/2;
+		    }
 		}
-		if ( CFG->drawLines &&
-		     ( (yy!=1 && (yy-CropY1)%LineDeltaY == 1) ||
-		       (xx!=1 && (xx-CropX1)%LineDeltaX == 1) ) ) {
-		    p8[0] = 255 - (255-p8[0])/2;
-		    p8[1] = 255 - (255-p8[1])/2;
-		    p8[2] = 255 - (255-p8[2])/2;
-		}
-		else if ( blinkOver && (p8[0]==255 || p8[1]==255 || p8[2]==255) )
+		/* Blink the overexposed/underexposed spots */
+		if ( blinkOver && (p8[0]==255 || p8[1]==255 || p8[2]==255) )
 		    p8[0] = p8[1] = p8[2] = 0;
 		else if ( blinkUnder && (p8[0]==0 || p8[1]==0 || p8[2]==0) )
 		    p8[0] = p8[1] = p8[2] = 255;
