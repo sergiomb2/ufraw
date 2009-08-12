@@ -998,7 +998,10 @@ static void distortion_model_changed (GtkComboBox *widget, preview_data *data)
     gtk_label_set_text (GTK_LABEL (data->LensDistortionDesc), details);
     gtk_widget_show_all (data->LensDistortionTable);
 
-    preview_invalidate_layer (data, ufraw_lensfun_phase);
+    if (CFG->lens_distortion.Model == LF_DIST_MODEL_NONE)
+	preview_invalidate_layer (data, ufraw_develop_phase);
+    else
+	preview_invalidate_layer (data, ufraw_lensfun_phase);
     render_preview (data);
 }
 
