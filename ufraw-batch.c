@@ -79,8 +79,6 @@ int main (int argc, char **argv)
     for (; optInd<argc; optInd++, fileIndex++) {
 	argFile = uf_win32_locale_to_utf8(argv[optInd]);
 	uf = ufraw_open(argFile);
-	if (uf->conf && uf->conf->createID == only_id)
-	    uf->conf->createID = also_id;
 	uf_win32_locale_free(argFile);
 	if (uf==NULL) {
 	    exitCode = 1;
@@ -88,6 +86,8 @@ int main (int argc, char **argv)
 	    continue;
 	}
 	status = ufraw_config(uf, &rc, &conf, &cmd);
+	if (uf->conf && uf->conf->createID == only_id)
+	    uf->conf->createID = also_id;
 	if (status==UFRAW_ERROR) {
 	    exitCode = 1;
 	    ufraw_close(uf);
