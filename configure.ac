@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.135 2009/07/09 01:57:32 udifuchs Exp $
+dnl $Id: configure.ac,v 1.136 2009/08/13 16:05:15 nkbj Exp $
 AC_INIT(UFRaw, 0.16)
 AC_PREREQ(2.57)
 
@@ -39,7 +39,7 @@ if test "$GCC" = "yes"; then
   fi
 fi
 
-m4_include(ac_openmp.m4)
+m4_ifndef([AC_OPENMP], [m4_include([ac_openmp.m4])])
 AC_OPENMP
 CFLAGS="$CFLAGS $OPENMP_CFLAGS"
 CXXFLAGS="$CXXFLAGS $OPENMP_CFLAGS"
