@@ -489,62 +489,62 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
     private(row,col,g,brow,rowtmp,pix,ip,gval,diff,gmin,gmax,thold,sum,color,num,c,t)
 #endif
   {
-  int slice = (height - 4) / uf_omp_get_num_threads();
-  int start_row = 2 + slice * uf_omp_get_thread_num();
-  int end_row = MIN(start_row + slice, height - 2);
-  for (row=start_row; row < end_row; row++) {	/* Do VNG interpolation */
-    for (g = 0; g < 4; g++)
-      brow[g] = &rowtmp[(row + g - 2) % 4];
-    for (col=2; col < width-2; col++) {
-      pix = image[row*width+col];
-      ip = code[row & prow][col & pcol];
-      memset (gval, 0, sizeof gval);
-      while ((g = ip[0]) != INT_MAX) {		/* Calculate gradients */
-	diff = ABS(pix[g] - pix[ip[1]]) << ip[2];
-	gval[ip[3]] += diff;
-	ip += 5;
-	if ((g = ip[-1]) == -1) continue;
-	gval[g] += diff;
-	while ((g = *ip++) != -1)
+    int slice = (height - 4) / uf_omp_get_num_threads();
+    int start_row = 2 + slice * uf_omp_get_thread_num();
+    int end_row = MIN(start_row + slice, height - 2);
+    for (row=start_row; row < end_row; row++) {	/* Do VNG interpolation */
+      for (g = 0; g < 4; g++)
+	brow[g] = &rowtmp[(row + g - 2) % 4];
+      for (col=2; col < width-2; col++) {
+	pix = image[row*width+col];
+	ip = code[row & prow][col & pcol];
+	memset (gval, 0, sizeof gval);
+	while ((g = ip[0]) != INT_MAX) {	/* Calculate gradients */
+	  diff = ABS(pix[g] - pix[ip[1]]) << ip[2];
+	  gval[ip[3]] += diff;
+	  ip += 5;
+	  if ((g = ip[-1]) == -1) continue;
 	  gval[g] += diff;
-      }
-      ip++;
-      gmin = gmax = gval[0];			/* Choose a threshold */
-      for (g=1; g < 8; g++) {
-	if (gmin > gval[g]) gmin = gval[g];
-	if (gmax < gval[g]) gmax = gval[g];
-      }
-      if (gmax == 0) {
-	memcpy (brow[2][col], pix, sizeof *image);
-	continue;
-      }
-      thold = gmin + (gmax >> 1);
-      memset (sum, 0, sizeof sum);
-      color = fc_INDI(filters,row,col);
-      for (num=g=0; g < 8; g++,ip+=2) {		/* Average the neighbors */
-	if (gval[g] <= thold) {
-	  FORCC
-	    if (c == color && ip[1])
-	      sum[c] += (pix[c] + pix[ip[1]]) >> 1;
-	    else
-	      sum[c] += pix[ip[0] + c];
-	  num++;
+	  while ((g = *ip++) != -1)
+	    gval[g] += diff;
+	}
+	ip++;
+	gmin = gmax = gval[0];			/* Choose a threshold */
+	for (g=1; g < 8; g++) {
+	  if (gmin > gval[g]) gmin = gval[g];
+	  if (gmax < gval[g]) gmax = gval[g];
+	}
+	if (gmax == 0) {
+	  memcpy (brow[2][col], pix, sizeof *image);
+	  continue;
+	}
+	thold = gmin + (gmax >> 1);
+	memset (sum, 0, sizeof sum);
+	color = fc_INDI(filters,row,col);
+	for (num=g=0; g < 8; g++,ip+=2) {	/* Average the neighbors */
+	  if (gval[g] <= thold) {
+	    FORCC
+	      if (c == color && ip[1])
+		sum[c] += (pix[c] + pix[ip[1]]) >> 1;
+	      else
+		sum[c] += pix[ip[0] + c];
+	    num++;
+	  }
+	}
+	FORCC {					/* Save to buffer */
+	  t = pix[color];
+	  if (c != color)
+	    t += (sum[c] - sum[color]) / num;
+	  brow[2][col][c] = CLIP(t);
 	}
       }
-      FORCC {					/* Save to buffer */
-	t = pix[color];
-	if (c != color)
-	  t += (sum[c] - sum[color]) / num;
-	brow[2][col][c] = CLIP(t);
-      }
+      if (row > start_row+1)			/* Write buffer to image */
+	memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
     }
-    if (row > start_row+1)			/* Write buffer to image */
+    if (row == height - 2) {
       memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
-  }
-  if (row == height - 2) {
-    memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
-    memcpy (image[(row-1)*width+2], brow[1]+2, (width-4)*sizeof *image);
-  }
+      memcpy (image[(row-1)*width+2], brow[1]+2, (width-4)*sizeof *image);
+    }
   }
   free(ipalloc);
 }
