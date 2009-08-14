@@ -20,7 +20,7 @@
    homepage qualifies as "full source code".
 
    $Revision: 1.426 $
-   $Date: 2009/08/14 02:50:45 $
+   $Date: 2009/08/14 04:51:38 $
  */
 
 #define VERSION "8.96"
@@ -1766,14 +1766,13 @@ void CLASS imacon_full_load_raw()
 
 void CLASS packed_load_raw()
 {
-  int vbits=0, rbits=0, bwide, bite, irow, row, col, val, i;
+  int vbits=0, bwide, pwide, rbits, bite, irow, row, col, val, i;
   UINT64 bitbuf=0;
 
-  if (raw_width * 8 >= width * tiff_bps) { /* If raw_width is in bytes, */
-    rbits = (bwide = raw_width) * 8;
-    raw_width = raw_width * 8 / tiff_bps;  /* convert it to pixels and  */
-    rbits -= raw_width * tiff_bps;	   /* save the remainder.       */
-  } else bwide = raw_width * tiff_bps / 8;
+  if (raw_width * 8 >= width * tiff_bps)	/* Is raw_width in bytes? */
+       pwide = (bwide = raw_width) * 8 / tiff_bps;
+  else bwide = (pwide = raw_width) * tiff_bps / 8;
+  rbits = bwide * 8 - pwide * tiff_bps;
   if (load_flags & 1) bwide = bwide * 16 / 15;
   fseek (ifp, top_margin*bwide, SEEK_CUR);
   bite = 8 + (load_flags & 24);
@@ -1789,7 +1788,7 @@ void CLASS packed_load_raw()
 	fseek (ifp, ftell(ifp)/2, SEEK_SET);
       }
     }
-    for (col=0; col < raw_width; col++) {
+    for (col=0; col < pwide; col++) {
       for (vbits -= tiff_bps; vbits < 0; vbits += bite) {
 	bitbuf <<= bite;
 	for (i=0; i < bite; i+=8)
@@ -1806,8 +1805,8 @@ void CLASS packed_load_raw()
     }
     vbits -= rbits;
   }
-  if (load_flags & 32 && raw_width > width)
-    black /= (raw_width - width) * height;
+  if (load_flags & 32 && pwide > width)
+    black /= (pwide - width) * height;
 }
 
 void CLASS unpacked_load_raw()
