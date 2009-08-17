@@ -1003,18 +1003,14 @@ static gboolean render_raw_histogram(preview_data *data)
     return FALSE;
 }
 
-static gboolean render_preview_image(preview_data *data)
+static int choose_subarea(preview_data *data, int* chosen)
 {
-    ufraw_image_data *img;
-    gboolean again = TRUE;
-    int i = -1;
-
-    if (data->FreezeDialog) return FALSE;
-
-    if (data->RenderSubArea < 0)
-        return FALSE;
-
+    int subarea = -1;
 #ifdef HAVE_GTKIMAGEVIEW
+    int max_area = -1;
+    int i, x, y, w, h;
+    ufraw_image_data *img;
+
     /* First of all, find the maximally visible yet unrendered subarea.
      * Refreshing visible subareas in the first place improves visual
      * feedback and overall user experience.
@@ -1025,22 +1021,14 @@ static gboolean render_preview_image(preview_data *data)
     gtk_image_view_get_viewport (
         GTK_IMAGE_VIEW (data->PreviewWidget), &viewport);
 
-#ifdef _OPENMP
-#pragma omp parallel shared(i) reduction(||:again)
-#endif
-    {
-    int max_area = -1;
-    int subarea = -1;
-    int x, y, w, h;
-
-#ifdef _OPENMP
-#pragma omp critical
-#endif
-    for (i++; i < 32; i++)
+    for (i = 0; i < 32; i++)
     {
         /* Skip valid subareas */
         if (img->valid & (1 << i))
             continue;
+	/* Skip areas chosen by other threads */
+	if (*chosen & (1 << i))
+	    continue;
 
         ufraw_img_get_subarea_coord (img, i, &x, &y, &w, &h);
 
@@ -1082,33 +1070,56 @@ static gboolean render_preview_image(preview_data *data)
     }
 
 #else
-#ifdef _OPENMP
-#pragma omp critical
-#endif
-    subarea = data->RenderSubArea++;
+
+    do {
+	subarea = data->RenderSubArea++;
+    } while (*chosen & (1 << subarea));
     if (subarea > 31)
 	subarea = -1;
+
 #endif
 
+    if (subarea >= 0)
+	*chosen |= 1 << subarea;
+    return subarea;
+}
+
+static gboolean render_preview_image(preview_data *data)
+{
+    gboolean again = FALSE;
+    int chosen = 0;
+    int subarea;
+
+    if (data->FreezeDialog) return FALSE;
+
+    if (data->RenderSubArea < 0)
+        return FALSE;
+
+#ifdef _OPENMP
+#pragma omp parallel shared(chosen,data) private(subarea) reduction(||:again)
+    {
+#pragma omp critical
+#endif
+    subarea = choose_subarea(data, &chosen);
     if (subarea < 0)
     {
         data->RenderSubArea = -1;
         redraw_navigation_image(data);
-        again = FALSE;
     }
     else {
 	ufraw_image_data *img1 = ufraw_convert_image_area (
 	    data->UF, subarea, ufraw_phases_num - 1);
-	if (!img1)
-	    again = FALSE;
-
-	else {
+	if (img1) {
+	    int x, y, w, h;
 	    ufraw_img_get_subarea_coord (img1, subarea, &x, &y, &w, &h);
 	    preview_draw_img_area (data, img1, x, y, w, h);
+	    again = TRUE;
 	}
     }
 
+#ifdef _OPENMP
     }
+#endif
 
     return again;
 }
