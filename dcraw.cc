@@ -4874,6 +4874,7 @@ void CLASS parse_kodak_ifd (int base)
   unsigned entries, tag, type, len, save;
   int i, c, wbi=-2, wbtemp=6500;
   static float mul[3]; float num;
+  static const unsigned wbtag[]={ 0xfa25,0xfa28,0xfa27,0xfa29,-1,-1,0xfa2a };
 
   entries = get2();
   if (entries > 1024) return;
@@ -4896,6 +4897,9 @@ void CLASS parse_kodak_ifd (int base)
       }
     if (tag == 2317) linear_table (len);
     if (tag == 6020) iso_speed = getint(type);
+    if (tag == 0xfa0d) wbi = fgetc(ifp);
+    if ((unsigned) wbi < 7 && tag == wbtag[wbi])
+      FORC3 cam_mul[c] = get4();
     fseek (ifp, save, SEEK_SET);
   }
 }
@@ -5079,6 +5083,7 @@ int CLASS parse_tiff_ifd (int base)
 	if (cfa == 072) memcpy (cfa_pc,"\005\003\004\001",4);	/* GMCY */
 	goto guess_cfa_pc;
       case 33424:
+      case 65024:
 	fseek (ifp, get4()+base, SEEK_SET);
 	parse_kodak_ifd (base);
 	break;
@@ -6828,7 +6833,8 @@ void CLASS identify()
     if (strstr (make, corp[i]))		/* Simplify company names */
 	strcpy (make, corp[i]);
   if (!strncmp (make,"KODAK",5) &&
-	((cp = strcasestr(model," DIGITAL CAMERA")) ||
+	((cp = strstr(model," DIGITAL CAMERA")) ||
+	 (cp = strstr(model," Digital Camera")) ||
 	 (cp = strstr(model,"FILE VERSION"))))
      *cp = 0;
   cp = make + strlen(make);		/* Remove trailing spaces */

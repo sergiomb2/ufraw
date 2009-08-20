@@ -513,6 +513,11 @@ const wb_data wb_preset[] = {
   { "KODAK", "P850 ZOOM", Tungsten, 0,		{ 1.140625, 1, 2.726563, 0 } },
   { "KODAK", "P850 ZOOM", Fluorescent, 0,	{ 1.113281, 1, 2.949219, 0 } },
 
+  { "KODAK", "EASYSHARE Z1015 IS", Daylight, 0,	{ 1.546875, 1, 2.082031, 0 } },
+  { "KODAK", "EASYSHARE Z1015 IS", Tungsten, 0,	{ 1, 1.024000, 3.384000, 0 } },
+  { "KODAK", "EASYSHARE Z1015 IS", Fluorescent, 0, { 1.562500, 1, 2.515625, 0 } },
+  { "KODAK", "EASYSHARE Z1015 IS", Shade, 0,	{ 1.820313, 1, 1.789062, 0 } },
+
   { "Leica Camera AG", "M8 Digital Camera", Cloudy, 0, { 2.136719, 1, 1.168213, 0 } },
   { "Leica Camera AG", "M8 Digital Camera", Daylight, 0, { 2.007996, 1, 1.268982, 0 } },
   { "Leica Camera AG", "M8 Digital Camera", Flash, 0, { 2.164490, 1, 1.177795, 0 } },
