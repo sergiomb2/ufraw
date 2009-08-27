@@ -4140,7 +4140,7 @@ static void whitebalance_fill_interface(preview_data *data,
     gtk_box_pack_start(subbox, label, 0, 0, 0);
     for (i=0; i<data->UF->colors; i++) {
 	data->ChannelAdjustment[i] = GTK_ADJUSTMENT(gtk_adjustment_new(
-		CFG->chanMul[i], 0.5, 9.0, 0.001, 0.001, 0));
+		CFG->chanMul[i], 0.5, 99.999, 0.001, 0.001, 0));
 	g_object_set_data(G_OBJECT(data->ChannelAdjustment[i]),
 		"Adjustment-Accuracy",(gpointer)3);
 	button = gtk_spin_button_new(data->ChannelAdjustment[i], 0.001, 3);
