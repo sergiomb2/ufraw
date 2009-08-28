@@ -215,7 +215,7 @@ int png_row_writer(
 }
 #endif /*HAVE_LIBPNG*/
 
-void write_image_data(
+void ufraw_write_image_data(
     ufraw_data *uf,
     void * volatile out,
     int width, int height, int left, int top, int bitDepth, int grayscaleMode,
@@ -403,12 +403,12 @@ int ufraw_write_image(ufraw_data *uf)
     if ( uf->conf->type==ppm_type && BitDepth==8 ) {
 	fprintf(out, "P%c\n%d %d\n%d\n",
 		grayscaleMode ? '5' : '6', width, height, 0xFF);
-	write_image_data(uf, out, width, height, left, top,
+	ufraw_write_image_data(uf, out, width, height, left, top,
 			 BitDepth, grayscaleMode, ppm8_row_writer);
     } else if ( uf->conf->type==ppm_type && BitDepth==16 ) {
 	fprintf(out, "P%c\n%d %d\n%d\n",
 		grayscaleMode ? '5' : '6', width, height, 0xFFFF);
-	write_image_data(uf, out, width, height, left, top,
+	ufraw_write_image_data(uf, out, width, height, left, top,
 			 BitDepth, grayscaleMode, ppm16_row_writer);
 #ifdef HAVE_LIBTIFF
     } else if ( uf->conf->type==tiff_type ) {
@@ -462,7 +462,7 @@ int ufraw_write_image(ufraw_data *uf)
 	}
 	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, TIFFDefaultStripSize(out, 0));
 
-	write_image_data(uf, out, width, height, left, top,
+	ufraw_write_image_data(uf, out, width, height, left, top,
 			 BitDepth, grayscaleMode, tiff_row_writer);
 
 #endif /*HAVE_LIBTIFF*/
@@ -548,7 +548,7 @@ int ufraw_write_image(ufraw_data *uf)
 	    }
 	}
 
-	write_image_data(uf, &cinfo, width, height, left, top,
+	ufraw_write_image_data(uf, &cinfo, width, height, left, top,
 			 8, grayscaleMode, jpeg_row_writer);
 
 	if ( ufraw_is_error(uf) ) {
@@ -640,7 +640,7 @@ int ufraw_write_image(ufraw_data *uf)
 	    if (BitDepth != 8 && G_BYTE_ORDER==G_LITTLE_ENDIAN )
 		png_set_swap(png); // Swap byte order to big-endian
 
-	    write_image_data(uf, png, width, height, left, top,
+	    ufraw_write_image_data(uf, png, width, height, left, top,
 			     BitDepth, grayscaleMode, png_row_writer);
 
 	    png_write_end(png, NULL);

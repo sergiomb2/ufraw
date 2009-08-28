@@ -411,6 +411,11 @@ long ufraw_send_to_gimp(ufraw_data *uf);
 
 /* prototype for functions in ufraw_writer.c */
 int ufraw_write_image(ufraw_data *uf);
+void ufraw_write_image_data(
+    ufraw_data *uf,
+    void * volatile out,
+    int width, int height, int left, int top, int bitDepth, int grayscaleMode,
+    int (*row_writer) (ufraw_data *, void * volatile, void *, int, int, int));
 
 /* prototype for functions in ufraw_delete.c */
 long ufraw_delete(void *widget, ufraw_data *uf);

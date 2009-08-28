@@ -297,15 +297,27 @@ void run(GIMP_CONST gchar *name,
     }
 }
 
+int gimp_row_writer(
+    ufraw_data *uf,
+    void * volatile out,
+    void * pixbuf,
+    int row, int width, int grayscale)
+{
+    (void)uf;
+    (void)grayscale;
+
+    gimp_pixel_rgn_set_rect(out, pixbuf, 0, row, width, 1);
+
+    return UFRAW_SUCCESS;
+}
+
 long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 {
     GimpDrawable *drawable;
     GimpPixelRgn pixel_region;
     gint32 layer;
-    guint8 *pixbuf;
-    guint16 *pixtmp;
-    int height, width, top, left, depth, tile_height, row, nrows, rowStride, y;
-    image_type *rawImage;
+    int height, width, top, left, depth, tile_height, row, nrows;
+    (void)widget;
 
     uf->gimpImage = -1;
 
@@ -363,25 +375,9 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 		    uf->thumb.buffer+3*row*width, 0, row, width, nrows);
 	}
     } else {
-	pixbuf = g_new(guint8, tile_height * width * depth);
-	pixtmp = g_new(guint16, tile_height * width * 3);
-	rowStride = uf->image.width;
-	rawImage = uf->image.image;
-	for (row = 0; row < height; row += tile_height) {
-	    if ( sendToGimpMode )
-		gimp_progress_update(0.5 + 0.5*row/height);
-	    else
-		preview_progress(widget, _("Loading image"),
-			0.5 + 0.5*row/height);
-	    nrows = MIN(height-row, tile_height);
-	    for (y=0 ; y<nrows; y++)
-		develope(&pixbuf[y*width*depth], rawImage[(top+row+y)*rowStride+left],
-			uf->developer, depth==3 ? 8 : 16, pixtmp, width);
-	    gimp_pixel_rgn_set_rect(&pixel_region, pixbuf, 0, row,
-		    width, nrows);
-	}
-	g_free(pixbuf);
-	g_free(pixtmp);
+	ufraw_write_image_data(uf, &pixel_region, width, height, left, top,
+		depth==3 ? 8 : 16, uf->conf->grayscaleMode != grayscale_none,
+		gimp_row_writer);
     }
     gimp_drawable_flush(drawable);
     gimp_drawable_detach(drawable);
