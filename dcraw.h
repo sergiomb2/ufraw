@@ -153,7 +153,6 @@ int nikon_e995();
 int nikon_e2100();
 void nikon_3700();
 int minolta_z2();
-void nikon_e900_load_raw();
 void fuji_load_raw();
 void ppm_thumb ();
 void layer_thumb ();

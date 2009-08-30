@@ -6543,7 +6543,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
       if (table[i].trans[0]) {
 	for (j=0; j < 4; j++)
 	  for (k=0; k < 3; k++)
-	    cam_xyz[0][j] = table[i].trans[3*j+k] / 10000.0;
+	    cam_xyz[j][k] = table[i].trans[3*j+k] / 10000.0;
 	cam_xyz_coeff (cam_xyz);
       }
       break;
