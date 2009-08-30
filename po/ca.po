@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 18:45+0200\n"
+"POT-Creation-Date: 2009-08-30 18:40+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -686,9 +686,6 @@ msgstr "No es pot crear una imatge nova."
 #. Create the "background" layer to hold the image...
 msgid "Background"
 msgstr "Fons"
-
-msgid "Loading image"
-msgstr "S'està carregant la imatge"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in image."

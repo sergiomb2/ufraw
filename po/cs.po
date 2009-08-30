@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 18:45+0200\n"
+"POT-Creation-Date: 2009-08-30 18:40+0200\n"
 "PO-Revision-Date: 2009-05-04 21:03+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -659,9 +659,6 @@ msgstr "Nemohu nalézet nový snímek."
 #. Create the "background" layer to hold the image...
 msgid "Background"
 msgstr "Pozadí"
-
-msgid "Loading image"
-msgstr "Načítám snímek"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in image."

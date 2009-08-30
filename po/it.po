@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 18:45+0200\n"
+"POT-Creation-Date: 2009-08-30 18:40+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniele Medri <dmedri@SPAMgmail.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -665,9 +665,6 @@ msgstr "Non è possibile allocare una nuova immagine."
 #. Create the "background" layer to hold the image...
 msgid "Background"
 msgstr "Sfondo"
-
-msgid "Loading image"
-msgstr "Caricamento immagine"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in image."

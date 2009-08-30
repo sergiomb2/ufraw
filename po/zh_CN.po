@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 18:45+0200\n"
+"POT-Creation-Date: 2009-08-30 18:40+0200\n"
 "PO-Revision-Date: 2009-06-15 00:00+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -627,9 +627,6 @@ msgstr "无法分配新的图象。"
 #. Create the "background" layer to hold the image...
 msgid "Background"
 msgstr "背景"
-
-msgid "Loading image"
-msgstr "载入图像"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in image."

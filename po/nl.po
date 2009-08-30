@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 18:45+0200\n"
+"POT-Creation-Date: 2009-08-30 18:40+0200\n"
 "PO-Revision-Date: 2008-12-23 00:00-0600\n"
 "Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
 "Language-Team: Nederlands <en@li.org>\n"
@@ -667,9 +667,6 @@ msgstr "Kan geen nieuwe afbeelding alloceren."
 #. Create the "background" layer to hold the image...
 msgid "Background"
 msgstr "Achtergrond"
-
-msgid "Loading image"
-msgstr "Inlezen afbeelding"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in image."

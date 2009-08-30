@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 18:45+0200\n"
+"POT-Creation-Date: 2009-08-30 18:40+0200\n"
 "PO-Revision-Date: 2009-01-16 23:44+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -640,9 +640,6 @@ msgstr "新しい画像を割り当てられません。"
 #. Create the "background" layer to hold the image...
 msgid "Background"
 msgstr "背景"
-
-msgid "Loading image"
-msgstr "画像を読み込んでいます"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in image."

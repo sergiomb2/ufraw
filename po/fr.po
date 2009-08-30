@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 18:45+0200\n"
+"POT-Creation-Date: 2009-08-30 18:40+0200\n"
 "PO-Revision-Date: 2009-07-31 22:26+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -681,9 +681,6 @@ msgstr "Ne peut allouer une nouvelle image."
 #. Create the "background" layer to hold the image...
 msgid "Background"
 msgstr "Fond"
-
-msgid "Loading image"
-msgstr "Charge l'image"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in image."

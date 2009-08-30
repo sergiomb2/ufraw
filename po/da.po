@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-07 18:45+0200\n"
+"POT-Creation-Date: 2009-08-30 18:40+0200\n"
 "PO-Revision-Date: 2009-08-07 19:00+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
@@ -654,9 +654,6 @@ msgstr "Kan ikke allokere nyt billede."
 #. Create the "background" layer to hold the image...
 msgid "Background"
 msgstr "Baggrund"
-
-msgid "Loading image"
-msgstr "Indlæser billede"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in image."
