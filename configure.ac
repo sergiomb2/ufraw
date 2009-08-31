@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.136 2009/08/13 16:05:15 nkbj Exp $
+dnl $Id: configure.ac,v 1.137 2009/08/31 16:35:06 nkbj Exp $
 AC_INIT(UFRaw, 0.16)
 AC_PREREQ(2.57)
 
@@ -250,10 +250,11 @@ AC_CHECK_HEADER(tiffio.h,
   AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
 have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
 
-# Check for fits headers and library.
-AC_CHECK_HEADER(fitsio.h,
-  AC_CHECK_LIB(cfitsio, ffcmsg))
-have_fits=${ac_cv_lib_cfitsio_ffcmsg:-no}
+PKG_CHECK_MODULES(CFITSIO, cfitsio,
+  [ have_cfitsio=yes
+    AC_DEFINE(HAVE_LIBCFITSIO, 1, have the cfitsio library) ],
+  [ have_cfitsio=no
+    AC_MSG_RESULT($CFITSIO_PKG_ERRORS) ] )
 
 # check for exiv2 library
 AC_ARG_WITH([exiv2],
@@ -295,10 +296,10 @@ AS_IF([test "x$with_lensfun" != xno],
 
 # UFRAW_CPPFLAGS is added to the preprocessor flags AM_CPPFLAGS,
 # affecting also the C and C++ compilers.
-UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS $LIBPNG_CFLAGS"
+UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS $LIBPNG_CFLAGS $CFITSIO_CFLAGS"
 AC_SUBST(UFRAW_CPPFLAGS)
 # UFRAW_LDADD is added to the linker flags LDADD.
-UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS $LIBPNG_LIBS $CARBON_LIBS"
+UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS $LIBPNG_LIBS $CFITSIO_LIBS $CARBON_LIBS"
 AC_SUBST(UFRAW_LDADD)
 
 if test $ufraw_win32 = yes; then
@@ -388,7 +389,7 @@ AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint)
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(PNG support: $have_png)
-AC_MSG_NOTICE(FITS support: $have_fits)
+AC_MSG_NOTICE(FITS support: $have_cfitsio)
 AC_MSG_NOTICE(TIFF support: $have_tiff)
 AC_MSG_NOTICE(gzip compressed raw support: $have_zlib)
 AC_MSG_NOTICE(bzip2 compressed raw support: $have_libbz2)
