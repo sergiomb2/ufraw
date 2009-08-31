@@ -11,8 +11,8 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.427 $
-   $Date: 2009/08/28 23:09:34 $
+   $Revision: 1.428 $
+   $Date: 2009/08/31 15:23:49 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -6330,8 +6330,6 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 10231,-2769,-1255,-8301,15900,2552,-797,680,7148 } },
     { "NIKON D3000", 0, 0,
 	{ 8736,-2458,-935,-9075,16894,2251,-1354,1242,8263 } },
-    { "NIKON D300S", 0, 0,	/* copied */
-	{ 9030,-1992,-715,-8465,16302,2255,-2689,3217,8069 } },
     { "NIKON D300", 0, 0,
 	{ 9030,-1992,-715,-8465,16302,2255,-2689,3217,8069 } },
     { "NIKON D3X", 0, 0,
@@ -7205,8 +7203,7 @@ canon_cr2:
   } else if (!strncmp(model,"D2X",3)) {
     if (width == 3264) width -= 32;
     else width -= 8;
-  } else if (!strcmp(model,"D300") ||
-	     !strcmp(model,"D300S")) {
+  } else if (!strncmp(model,"D300",4)) {
     width -= 32;
   } else if (!strcmp(model,"COOLPIX P6000")) {
     load_flags = 24;
