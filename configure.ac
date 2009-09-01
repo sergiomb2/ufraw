@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.138 2009/09/01 08:30:06 nkbj Exp $
+dnl $Id: configure.ac,v 1.139 2009/09/01 19:13:25 udifuchs Exp $
 AC_INIT(UFRaw, 0.16)
 AC_PREREQ(2.57)
 
@@ -6,6 +6,7 @@ AC_PREREQ(2.57)
 AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AM_CONFIG_HEADER(config.h)
 AC_PROG_CC
 AC_PROG_CXX
