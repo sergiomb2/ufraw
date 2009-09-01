@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.137 2009/08/31 16:35:06 nkbj Exp $
+dnl $Id: configure.ac,v 1.138 2009/09/01 08:30:06 nkbj Exp $
 AC_INIT(UFRaw, 0.16)
 AC_PREREQ(2.57)
 
@@ -255,6 +255,11 @@ PKG_CHECK_MODULES(CFITSIO, cfitsio,
     AC_DEFINE(HAVE_LIBCFITSIO, 1, have the cfitsio library) ],
   [ have_cfitsio=no
     AC_MSG_RESULT($CFITSIO_PKG_ERRORS) ] )
+if test "$have_cfitsio" = "no"; then
+  AC_CHECK_HEADER(fitsio.h,
+    AC_CHECK_LIB(cfitsio, ffcmsg))
+  have_cfitsio=${ac_cv_lib_cfitsio_ffcmsg:-no}
+fi
 
 # check for exiv2 library
 AC_ARG_WITH([exiv2],
