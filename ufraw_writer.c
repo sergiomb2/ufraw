@@ -207,10 +207,9 @@ void ufraw_write_image_data(
     int width, int height, int left, int top, int bitDepth, int grayscaleMode,
     int (*row_writer) (ufraw_data *, void * volatile, void *, int, int, int, int, int))
 {
-    int row, row0, rowStride;
-    image_type *rawImage;
-    rowStride = uf->image.width;
-    rawImage = uf->image.image;
+    int row, row0;
+    int rowStride = uf->image.width;
+    image_type *rawImage = uf->image.image;
     int byteDepth = (bitDepth+7)/8;
     guint8 pixbuf8[rowStride * 3 * byteDepth * DEVELOP_BATCH];
 
@@ -245,7 +244,7 @@ void ufraw_write_image_data(
 	    for (row = 0; row < DEVELOP_BATCH; row++) {
 		if (row + row0 >= height)
 		    continue;
-		guint8 *rowbuf = &pixbuf8[row * rowStride * 3 * byteDepth];
+		guint8 *rowbuf = &pixbuf8[row * width * 3 * byteDepth];
 		ufraw_rotate_row(&image, rowbuf, uf->conf->rotationAngle,
 		    bitDepth, top+row+row0, left, width);
 		if (grayscaleMode)
@@ -268,7 +267,7 @@ void ufraw_write_image_data(
 	    for (row = 0; row < DEVELOP_BATCH; row++) {
 		if (row + row0 >= height)
 		    continue;
-		guint8 *rowbuf = &pixbuf8[row * rowStride * 3 * byteDepth];
+		guint8 *rowbuf = &pixbuf8[row * width * 3 * byteDepth];
 		develop(rowbuf, rawImage[(top+row+row0)*rowStride+left],
 	            uf->developer, bitDepth, width);
 		if (grayscaleMode)

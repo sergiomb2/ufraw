@@ -4830,7 +4830,7 @@ static void transformations_fill_interface(preview_data *data,
     data->RotationAdjustment = adjustment_scale(
 	table, 0, 0, _("Rotation"),
 	data->unnormalized_angle, &data->unnormalized_angle,
-	-360, 360, 0.1, 1, 2, _("Rotation Angle"),
+	-180, 180, 0.1, 1, 2, _("Rotation Angle"),
 	G_CALLBACK(adjustment_update_rotation),
 	&data->ResetRotationAdjustment, _("Reset Rotation Angle"),
 	G_CALLBACK(adjustment_reset_rotation));
