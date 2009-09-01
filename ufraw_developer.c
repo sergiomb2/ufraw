@@ -785,12 +785,12 @@ static void MaxMidMin(const gint64 p[3], int *maxc, int *midc, int *minc)
     *minc = min;
 }
 
-inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
-    guint16 *buf, int count)
+void develop(void *po, guint16 pix[4], developer_data *d, int mode, int count)
 {
-    guint8 *p8 = po;
-    guint16 *p16 = po, c, tmppix[3];
+    guint16 c, tmppix[3], *buf;
     int i;
+    if (mode==16) buf = po;
+    else buf = g_alloca(count*6);
 
 #ifdef _OPENMP
 #pragma omp parallel				\
@@ -821,8 +821,10 @@ inline void develope(void *po, guint16 pix[4], developer_data *d, int mode,
 	cmsDoTransform(d->colorTransform, buf, buf, count);
 #endif
 
-    if (mode==16) for (i=0; i<3*count; i++) p16[i] = buf[i];
-    else for (i=0; i<3*count; i++) p8[i] = buf[i] >> 8;
+    if (mode!=16) {
+	guint8 *p8 = po;
+	for (i=0; i<3*count; i++) p8[i] = buf[i] >> 8;
+    }
 }
 
 static void develop_grayscale(guint16 *pixel, const developer_data *d)

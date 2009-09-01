@@ -62,37 +62,20 @@ static void grayscale_buffer(void *graybuf, int width, int bitDepth)
     }
 }
 
-static int ppm8_row_writer(
-    ufraw_data *uf,
-    void * volatile out,
-    void * pixbuf,
-    int row, int width, int grayscale)
+static int ppm_row_writer(ufraw_data *uf, void *volatile out, void *pixbuf,
+    int row, int width, int height, int grayscale, int bitDepth)
 {
-    row=row;
-    if ((int)fwrite(pixbuf, grayscale ? 1 : 3, width, out)<width) {
+    (void)row;
+    int rowStride = width * (grayscale ? 1 : 3) * (bitDepth>8 ? 2 : 1);
+    if ( bitDepth>8 ) {
+	guint16 *pixbuf16 = (guint16 *)pixbuf;
+	int i;
+	for (i=0; i<3*width*height; i++)
+	    pixbuf16[i] = g_htons(pixbuf16[i]);
+    }
+    if ((int)fwrite(pixbuf, rowStride, height, out)<height) {
 	ufraw_set_error(uf, _("Error creating file '%s'."),
         uf->conf->outputFilename);
-	ufraw_set_error(uf, g_strerror(errno));
-	return UFRAW_ERROR;
-    } else {
-	return UFRAW_SUCCESS;
-    }
-}
-
-static int ppm16_row_writer(
-    ufraw_data *uf,
-    void * volatile out,
-    void * pixbuf,
-    int row, int width, int grayscale)
-{
-    row=row;
-    guint16 *pixbuf16 = (guint16 *) pixbuf;
-    int i;
-    for (i=0; i<3*width; i++)
-	pixbuf16[i] = g_htons(pixbuf16[i]);
-    if ((int)fwrite(pixbuf16, grayscale ? 2 : 6, width, out)<width) {
-	ufraw_set_error(uf, _("Error creating file '%s'."),
-	uf->conf->outputFilename);
 	ufraw_set_error(uf, g_strerror(errno));
 	return UFRAW_ERROR;
     } else {
@@ -111,22 +94,22 @@ static void tiff_messenger(const char *module, const char *fmt, va_list ap)
     vsnprintf(ufraw_tiff_message, max_path, fmt, ap);
 }
 
-int tiff_row_writer(
-    ufraw_data *uf,
-    void * volatile out,
-    void * pixbuf,
-    int row, int width, int grayscale)
+int tiff_row_writer(ufraw_data *uf, void *volatile out, void *pixbuf,
+    int row, int width, int height, int grayscale, int bitDepth)
 {
-    width=width; grayscale=grayscale;
-    if (TIFFWriteScanline(out, pixbuf, row, 0)<0) {
-	// 'errno' does seem to contain useful information
-	ufraw_set_error(uf, _("Error creating file."));
-	ufraw_set_error(uf, ufraw_tiff_message);
-	ufraw_tiff_message[0] = '\0';
-	return UFRAW_ERROR;
-    } else {
-	return UFRAW_SUCCESS;
+    (void)grayscale;
+    int rowStride = width*( bitDepth>8 ? 6 : 3);
+    int i;
+    for (i=0; i<height; i++) {
+	if (TIFFWriteScanline(out, pixbuf+i*rowStride, row+i, 0)<0) {
+	    // 'errno' does seem to contain useful information
+	    ufraw_set_error(uf, _("Error creating file."));
+	    ufraw_set_error(uf, ufraw_tiff_message);
+	    ufraw_tiff_message[0] = '\0';
+	    return UFRAW_ERROR;
+	}
     }
+    return UFRAW_SUCCESS;
 }
 #endif /*HAVE_LIBTIFF*/
 
@@ -165,19 +148,20 @@ static void jpeg_error_handler(j_common_ptr cinfo)
 	    cinfo->err->msg_parm.i[3]);
 }
 
-static int jpeg_row_writer(
-    ufraw_data *uf,
-    void * volatile out,
-    void * pixbuf,
-    int row, int width, int grayscale)
+static int jpeg_row_writer(ufraw_data *uf, void *volatile out, void *pixbuf,
+    int row, int width, int height, int grayscale, int bitDepth)
 {
-    row=row; width=width; grayscale=grayscale;
-    guint8 *pixbuf8 = pixbuf;
-    jpeg_write_scanlines((struct jpeg_compress_struct *)out, &pixbuf8, 1);
-    if ( ufraw_is_error(uf) )
-	return UFRAW_ERROR;
-    else
-	return UFRAW_SUCCESS;
+    (void)row;
+    (void)grayscale;
+    (void)bitDepth;
+    int i;
+    for (i=0; i<height; i++) {
+	guint8 *pixbuf8 = pixbuf + 3*width*i;
+	jpeg_write_scanlines((struct jpeg_compress_struct *)out, &pixbuf8, 1);
+	if ( ufraw_is_error(uf) )
+	    return UFRAW_ERROR;
+    }
+    return UFRAW_SUCCESS;
 }
 #endif /*HAVE_LIBJPEG*/
 
@@ -201,15 +185,17 @@ static void PNGwriteRawProfile(png_struct *ping,
     png_info *ping_info, char *profile_type, guint8 *profile_data,
     png_uint_32 length);
 
-int png_row_writer(
-    ufraw_data *uf,
-    void * volatile out,
-    void * pixbuf,
-    int row, int width, int grayscale)
+int png_row_writer(ufraw_data *uf, void *volatile out, void *pixbuf,
+    int row, int width, int height, int grayscale, int bitDepth)
 {
-    uf=uf; row=row; width=width; grayscale=grayscale;
+    (void)uf;
+    (void)row;
+    (void)grayscale;
+    int rowStride = width * (bitDepth>8 ? 6 : 3);
 
-    png_write_row(out, (guint8 *)pixbuf);
+    int i;
+    for (i=0; i<height; i++)
+	png_write_row(out, (guint8 *)pixbuf + rowStride*i);
 
     return UFRAW_SUCCESS;
 }
@@ -219,13 +205,14 @@ void ufraw_write_image_data(
     ufraw_data *uf,
     void * volatile out,
     int width, int height, int left, int top, int bitDepth, int grayscaleMode,
-    int (*row_writer) (ufraw_data *, void * volatile, void *, int, int, int))
+    int (*row_writer) (ufraw_data *, void * volatile, void *, int, int, int, int, int))
 {
     int row, row0, rowStride;
     image_type *rawImage;
     rowStride = uf->image.width;
     rawImage = uf->image.image;
-    guint16 pixbuf[rowStride * 3 * DEVELOP_BATCH];
+    int byteDepth = (bitDepth+7)/8;
+    guint8 pixbuf8[rowStride * 3 * byteDepth * DEVELOP_BATCH];
 
     if (uf->conf->rotationAngle != 0) {
 	// Buffer for unrotated image.
@@ -244,8 +231,8 @@ void ufraw_write_image_data(
 		preview_progress(uf->widget, _("Converting image"),
 		    0.5 * row0/image.height);
 	    guint8 *rowbuf = &image.buffer[row0*image.rowstride];
-	    develope(rowbuf, rawImage[row0*rowStride],
-		     uf->developer, 16, (guint16*)rowbuf,
+	    develop(rowbuf, rawImage[row0*rowStride],
+		     uf->developer, 16,
 		     MIN(image.height - row0, DEVELOP_BATCH) * image.width);
 	}
 	// Write rotated image to output.
@@ -258,42 +245,39 @@ void ufraw_write_image_data(
 	    for (row = 0; row < DEVELOP_BATCH; row++) {
 		if (row + row0 >= height)
 		    continue;
-		guint16 *rowbuf = &pixbuf[row * rowStride * 3];
+		guint8 *rowbuf = &pixbuf8[row * rowStride * 3 * byteDepth];
 		ufraw_rotate_row(&image, rowbuf, uf->conf->rotationAngle,
 		    bitDepth, top+row+row0, left, width);
 		if (grayscaleMode)
 		    grayscale_buffer(rowbuf, width, bitDepth);
 	    }
-	    for (row = row0; row < height && row < row0 + DEVELOP_BATCH; row++) {
-		guint16 *rowbuf = &pixbuf[(row-row0) * rowStride * 3];
-		if (row_writer(uf, out, rowbuf, row, width, grayscaleMode) != UFRAW_SUCCESS)
-		    break;
-	    }
+	    int batchHeight = MIN(height-row0, DEVELOP_BATCH);
+	    if ( row_writer(uf, out, pixbuf8, row0, width, batchHeight,
+		    grayscaleMode, bitDepth) != UFRAW_SUCCESS )
+		break;
 	}
 	g_free(image.buffer);
     } else {
-	guint16 *rowbuf;
 	// No rotation required. Develop straight to output.
 	for (row0 = 0; row0 < height; row0 += DEVELOP_BATCH) {
 	    preview_progress(uf->widget, _("Saving image"),
 		0.5 + 0.5*row0/height);
 #ifdef _OPENMP
-#pragma omp parallel for default(shared) private(row, rowbuf)
+#pragma omp parallel for default(shared) private(row)
 #endif
 	    for (row = 0; row < DEVELOP_BATCH; row++) {
 		if (row + row0 >= height)
 		    continue;
-		rowbuf = &pixbuf[row * rowStride * 3];
-		develope(rowbuf, rawImage[(top+row+row0)*rowStride+left],
-	            uf->developer, bitDepth, rowbuf, width);
+		guint8 *rowbuf = &pixbuf8[row * rowStride * 3 * byteDepth];
+		develop(rowbuf, rawImage[(top+row+row0)*rowStride+left],
+	            uf->developer, bitDepth, width);
 		if (grayscaleMode)
 		    grayscale_buffer(rowbuf, width, bitDepth);
 	    }
-	    for (row = row0; row < height && row < row0 + DEVELOP_BATCH; row++) {
-		rowbuf = &pixbuf[(row-row0) * rowStride * 3];
-		if (row_writer(uf, out, rowbuf, row, width, grayscaleMode) != UFRAW_SUCCESS)
-		    break;
-	    }
+	    int batchHeight = MIN(height-row0, DEVELOP_BATCH);
+	    if ( row_writer(uf, out, pixbuf8, row0, width, batchHeight,
+		    grayscaleMode, bitDepth) != UFRAW_SUCCESS )
+		break;
 	}
     }
 }
@@ -404,12 +388,12 @@ int ufraw_write_image(ufraw_data *uf)
 	fprintf(out, "P%c\n%d %d\n%d\n",
 		grayscaleMode ? '5' : '6', width, height, 0xFF);
 	ufraw_write_image_data(uf, out, width, height, left, top,
-			 BitDepth, grayscaleMode, ppm8_row_writer);
+			 BitDepth, grayscaleMode, ppm_row_writer);
     } else if ( uf->conf->type==ppm_type && BitDepth==16 ) {
 	fprintf(out, "P%c\n%d %d\n%d\n",
 		grayscaleMode ? '5' : '6', width, height, 0xFFFF);
 	ufraw_write_image_data(uf, out, width, height, left, top,
-			 BitDepth, grayscaleMode, ppm16_row_writer);
+			 BitDepth, grayscaleMode, ppm_row_writer);
 #ifdef HAVE_LIBTIFF
     } else if ( uf->conf->type==tiff_type ) {
 	TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);

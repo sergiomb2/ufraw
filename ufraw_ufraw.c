@@ -1174,14 +1174,13 @@ ufraw_image_data *ufraw_convert_image_area (
                 if (saidx < 0)
                     return out;
 
-                guint16 *pixtmp = g_new (guint16, w * 3);
                 int yy;
                 for (yy = y; yy < y + h; yy++)
                 {
                     guint8 *dest = out->buffer + (yy * out->width + x) * out->depth;
-                    develope (
+                    develop(
                         dest, (void *)(in->buffer + (yy * in->width + x) * in->depth),
-                        uf->developer, 8, pixtmp, w);
+                        uf->developer, 8, w);
 
 #ifdef HAVE_LENSFUN
                     if (uf->modifier &&
@@ -1197,7 +1196,6 @@ ufraw_image_data *ufraw_convert_image_area (
                     }
 #endif /* HAVE_LENSFUN */
                 }
-                g_free (pixtmp);
             }
             break;
 
@@ -1611,7 +1609,7 @@ void ufraw_auto_expose(ufraw_data *uf)
 {
     int sum, stop, wp, c, pMax, pMin, p;
     image_type pix;
-    guint16 p16[3], pixtmp[3];
+    guint16 p16[3];
 
     if (uf->conf->autoExposure!=apply_state) return;
 
@@ -1628,7 +1626,7 @@ void ufraw_auto_expose(ufraw_data *uf)
     {
 	for (c=0; c<uf->colors; c++)
 	    pix[c] = MIN (p * maxChan/uf->conf->chanMul[c], uf->rgbMax);
-	develope(p16, pix, uf->AutoDeveloper, 16, pixtmp, 1);
+	develop(p16, pix, uf->AutoDeveloper, 16, 1);
 	for (c=0, wp=0; c<3; c++) wp = MAX(wp, p16[c]);
 	if (wp < 0x10000 * 99/100) pMin = p;
 	else pMax = p;
@@ -1655,7 +1653,7 @@ void ufraw_auto_black(ufraw_data *uf)
 {
     int sum, stop, bp, c;
     image_type pix;
-    guint16 p16[3], pixtmp[3];
+    guint16 p16[3];
 
     if (uf->conf->autoBlack==disabled_state) return;
 
@@ -1670,7 +1668,7 @@ void ufraw_auto_black(ufraw_data *uf)
     for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
     for (c=0; c<uf->colors; c++)
 	pix[c] = MIN (bp * maxChan/uf->conf->chanMul[c], uf->rgbMax);
-    develope(p16, pix, uf->AutoDeveloper, 16, pixtmp, 1);
+    develop(p16, pix, uf->AutoDeveloper, 16, 1);
     for (c=0, bp=0; c<3; c++) bp = MAX(bp, p16[c]);
 
     CurveDataSetPoint(&uf->conf->curve[uf->conf->curveIndex],
@@ -1688,7 +1686,7 @@ void ufraw_auto_curve(ufraw_data *uf)
 {
     int sum, stop, steps=8, bp, p, i, j, c;
     image_type pix;
-    guint16 p16[3], pixtmp[3];
+    guint16 p16[3];
     CurveData *curve = &uf->conf->curve[uf->conf->curveIndex];
     double decay = 0.90;
     double norm = (1-pow(decay,steps))/(1-decay);
@@ -1705,7 +1703,7 @@ void ufraw_auto_curve(ufraw_data *uf)
 	    sum += uf->RawHistogram[bp];
 	for (c=0; c<uf->colors; c++)
 	    pix[c] = MIN (bp * maxChan/uf->conf->chanMul[c], uf->rgbMax);
-	develope(p16, pix, uf->AutoDeveloper, 16, pixtmp, 1);
+	develop(p16, pix, uf->AutoDeveloper, 16, 1);
 	for (c=0, p=0; c<3; c++) p = MAX(p, p16[c]);
 	stop += uf->RawCount * pow(decay,i) / norm;
 	/* Skip adding point if slope is too big (more than 4) */

@@ -909,7 +909,6 @@ static gboolean render_raw_histogram(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
     guint8 pix[99], *p8, pen[4][3];
-    guint16 pixtmp[9999];
     image_type p16;
     int x, c, cl, y, y0, y1;
     int raw_his[raw_his_size][4], raw_his_max;
@@ -946,7 +945,7 @@ static gboolean render_raw_histogram(preview_data *data)
 	for (cl=0; cl<colors; cl++) p16[cl] = 0;
 	p16[c] = Developer->max * 0x08000 / Developer->rgbWB[c] *
 		0x10000 / Developer->exposure;
-	develope(pen[c], p16, Developer, 8, pixtmp, 1);
+	develop(pen[c], p16, Developer, 8, 1);
 	guint8 max=1;
 	for (cl=0; cl<3; cl++) max = MAX(pen[c][cl], max);
 	for (cl=0; cl<3; cl++) pen[c][cl] = pen[c][cl] * 0xff / max;
@@ -962,13 +961,13 @@ static gboolean render_raw_histogram(preview_data *data)
 		p16[cl] = MIN((guint64)x*Developer->rgbMax *
 			  Developer->rgbWB[c] /
 			  Developer->rgbWB[cl] / raw_his_size, 0xFFFF);
-	    develope(p8, p16, Developer, 8, pixtmp, 1);
+	    develop(p8, p16, Developer, 8, 1);
 	    grayCurve[x][c] = MAX(MAX(p8[0],p8[1]),p8[2]) *
 		    (hisHeight-1) / MAXOUT;
 	    /* Value for pixel x of pure color c */
 	    p16[0] = p16[1] = p16[2] = p16[3] = 0;
 	    p16[c] = MIN((guint64)x*Developer->rgbMax/raw_his_size, 0xFFFF);
-	    develope(p8, p16, Developer, 8, pixtmp, 1);
+	    develop(p8, p16, Developer, 8, 1);
 	    pureCurve[x][c] = MAX(MAX(p8[0],p8[1]),p8[2]) *
 		    (hisHeight-1) / MAXOUT;
 	}

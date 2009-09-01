@@ -297,16 +297,14 @@ void run(GIMP_CONST gchar *name,
     }
 }
 
-int gimp_row_writer(
-    ufraw_data *uf,
-    void * volatile out,
-    void * pixbuf,
-    int row, int width, int grayscale)
+int gimp_row_writer(ufraw_data *uf, void *volatile out, void *pixbuf,
+    int row, int width, int height, int grayscale, int bitDepth)
 {
     (void)uf;
     (void)grayscale;
+    (void)bitDepth;
 
-    gimp_pixel_rgn_set_rect(out, pixbuf, 0, row, width, 1);
+    gimp_pixel_rgn_set_rect(out, pixbuf, 0, row, width, height);
 
     return UFRAW_SUCCESS;
 }

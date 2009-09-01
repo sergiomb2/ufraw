@@ -401,8 +401,7 @@ void developer_display_profile(developer_data *d,
 void developer_prepare(developer_data *d, conf_data *conf,
     int rgbMax, float rgb_cam[3][4], int colors, int useMatrix,
     DeveloperMode mode);
-void develope(void *po, guint16 pix[4], developer_data *d, int mode,
-    guint16 *buf, int count);
+void develop(void *po, guint16 pix[4], developer_data *d, int mode, int count);
 void develop_linear(guint16 in[4], guint16 out[3], developer_data *d);
 
 /* prototype for functions in ufraw_saver.c */
@@ -415,7 +414,7 @@ void ufraw_write_image_data(
     ufraw_data *uf,
     void * volatile out,
     int width, int height, int left, int top, int bitDepth, int grayscaleMode,
-    int (*row_writer) (ufraw_data *, void * volatile, void *, int, int, int));
+    int (*row_writer) (ufraw_data *, void * volatile, void *, int, int, int, int, int));
 
 /* prototype for functions in ufraw_delete.c */
 long ufraw_delete(void *widget, ufraw_data *uf);
