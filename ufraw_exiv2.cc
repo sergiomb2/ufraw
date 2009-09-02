@@ -317,6 +317,9 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.NikonPreview.JPEGInterchangeFormat")))
 	    != exifData.end() )
 	exifData.erase(pos);
+    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.DNGPrivateData")))
+	    != exifData.end() )
+	exifData.erase(pos);
 #endif
 
 #if EXIV2_TEST_VERSION(0,16,0)
