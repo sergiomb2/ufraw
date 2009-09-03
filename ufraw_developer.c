@@ -640,14 +640,15 @@ static void apply_matrix(const developer_data *d,
 			 const gint64 in[4],
 			 gint64 out[3])
 {
-    gint64 tmp;
+    gint64 tmp[3];
     unsigned c, cc;
     for (cc=0; cc<3; cc++) {
-	tmp = 0;
+	tmp[cc] = 0;
 	for (c=0; c<d->colors; c++)
-	    tmp += in[c] * d->colorMatrix[cc][c];
-	out[cc] = MAX(tmp/0x10000, 0);
+	    tmp[cc] += in[c] * d->colorMatrix[cc][c];
     }
+    for (cc=0; cc<3; cc++)
+	out[cc] = MAX(tmp[cc]/0x10000, 0);
 }
 
 static void cond_apply_matrix(const developer_data *d,
