@@ -1990,6 +1990,9 @@ static void update_crop_ranges(preview_data *data)
 	data->DrawnCropY2 = CropY2;
 	i++;
     }
+    // It is better not to draw lines than to draw partial lines:
+    int saveDrawLines = CFG->drawLines;
+    CFG->drawLines = 0;
     for (i--; i>=0; i--) {
 	x1[i] = MAX (x1[i] - 1, 0);
 	x2[i] = MIN (x2[i] + 1, pixbufWidth);
@@ -1997,6 +2000,11 @@ static void update_crop_ranges(preview_data *data)
 	y2[i] = MIN (y2[i] + 1, pixbufHeight);
 	preview_draw_area (data, x1[i], y1[i], x2[i]-x1[i], y2[i]-y1[i]);
     }
+    CFG->drawLines = saveDrawLines;
+    // Draw lines when idle if necessary
+    if (CFG->drawLines>0 && data->BlinkTimer==0)
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+30,
+		(GSourceFunc)(switch_highlights), data, NULL);
     update_shrink_ranges(data);
     redraw_navigation_image(data);
 }
