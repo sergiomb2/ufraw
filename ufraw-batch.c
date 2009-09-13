@@ -86,7 +86,7 @@ int main (int argc, char **argv)
 	    continue;
 	}
 	status = ufraw_config(uf, &rc, &conf, &cmd);
-	if (uf->conf && uf->conf->createID == only_id)
+	if (uf->conf && uf->conf->createID == only_id && cmd.createID!=only_id)
 	    uf->conf->createID = also_id;
 	if (status==UFRAW_ERROR) {
 	    exitCode = 1;
@@ -107,11 +107,13 @@ int main (int argc, char **argv)
 	    stat[0] = '\0';
 	ufraw_message(UFRAW_MESSAGE, _("Loaded %s%s"), uf->filename, stat);
 	status = ufraw_batch_saver(uf);
-	if (status==UFRAW_SUCCESS || status==UFRAW_WARNING)
-	    ufraw_message(UFRAW_MESSAGE, _("Saved %s%s"),
-		    uf->conf->outputFilename, stat);
-	else
+	if (status==UFRAW_SUCCESS || status==UFRAW_WARNING) {
+	    if (uf->conf->createID!=only_id)
+		ufraw_message(UFRAW_MESSAGE, _("Saved %s%s"),
+			uf->conf->outputFilename, stat);
+	} else {
 	    exitCode = 1;
+	}
 	ufraw_close(uf);
 	g_free(uf);
     }
