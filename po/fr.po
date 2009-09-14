@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-30 18:40+0200\n"
-"PO-Revision-Date: 2009-07-31 22:26+0100\n"
+"POT-Creation-Date: 2009-09-13 20:01-0500\n"
+"PO-Revision-Date: 2009-09-13 14:34+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
@@ -757,9 +757,8 @@ msgstr "taille %dx%d, échelle 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Point noir: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "Plus de place pour de nouvelles courbes."
+msgstr "Plus de place pour de nouveaux ajustements de clarté."
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Erreur Fatale: uf->conf->shrink<1"
@@ -848,10 +847,10 @@ msgid "Blink Over/Underexposure Indicators"
 msgstr "Clignotement des indicateurs Sur/Sous-exposition"
 
 msgid "Alignment Line Count"
-msgstr ""
+msgstr "Décompte des lignes d'alignement"
 
 msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
+msgstr "Nombre de lignes d'alignement en surimpression de la zone de découpe"
 
 msgid "Configuration"
 msgstr "Configuration"
@@ -1022,9 +1021,8 @@ msgid "Select a spot on the preview image to choose hue"
 msgstr ""
 "Sélectionner un point sur la pré-visualisation pour choisir la tonalité"
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "R-à-Z Ajustement"
+msgstr "Retirer le réglage"
 
 msgid "Grayscale Mode:"
 msgstr ""
@@ -1176,16 +1174,14 @@ msgstr "Largeur"
 msgid "Orientation:"
 msgstr "Orientation:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "Saturation"
+msgstr "Rotation"
 
-#, fuzzy
 msgid "Rotation Angle"
-msgstr "Saturation"
+msgstr "Angle de rotation"
 
 msgid "Reset Rotation Angle"
-msgstr ""
+msgstr "RàZ de l'angle de rotation"
 
 msgid "Path"
 msgstr "Chemin"
