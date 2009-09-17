@@ -11,15 +11,15 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.428 $
-   $Date: 2009/08/31 15:23:49 $
+   $Revision: 1.429 $
+   $Date: 2009/09/17 03:52:31 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
 
-#define DCRAW_VERSION "8.97"
+#define DCRAW_VERSION "8.98"
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -6072,6 +6072,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 4716,603,-830,-7798,15474,2480,-1496,1937,6651 } },
     { "Canon EOS 5D", 0, 0xe6c,
 	{ 6347,-479,-972,-8297,15954,2480,-1968,2131,7649 } },
+    { "Canon EOS 7D", 0, 0x3510,	/* DJC */
+	{ 7956,-1490,-850,-2896,10428,2469,-827,1800,5680 } },
     { "Canon EOS 10D", 0, 0xfa0,
 	{ 8197,-2000,-1118,-6714,14335,2592,-2536,3178,8266 } },
     { "Canon EOS 20Da", 0, 0,
@@ -6688,6 +6690,7 @@ void CLASS identify()
     {  7753344, "CASIO",    "EX-Z55"          ,1 },
     {  7816704, "CASIO",    "EX-Z60"          ,1 },
     { 10843712, "CASIO",    "EX-Z75"          ,1 },
+    { 12310144, "CASIO",    "EX-Z850"         ,1 },
     {  7426656, "CASIO",    "EX-P505"         ,1 },
     {  9313536, "CASIO",    "EX-P600"         ,1 },
     { 10979200, "CASIO",    "EX-P700"         ,1 },
@@ -7146,6 +7149,11 @@ canon_a5:
     raw_width = width *= 4;
     if (unique_id == 0x80000252)
       adobe_coeff ("Canon","EOS 500D");
+    goto canon_cr2;
+  } else if (is_canon && raw_width == 1340) {
+    top_margin = 51;
+    left_margin = 158;
+    raw_width = width *= 4;
     goto canon_cr2;
   } else if (is_canon && raw_width == 1448) {
     top_margin  = 51;
@@ -7964,6 +7972,12 @@ ezshare:
     height = 2321;
     width  = 3089;
     raw_width = 4672;
+    maximum = 0xfff;
+  } else if (!strcmp(model,"EX-Z850")) {
+    height = 2468;
+    width  = 3279;
+    raw_width = 4928;
+    maximum = 0xfff;
   } else if (!strcmp(model,"EX-P505")) {
     height = 1928;
     width  = 2568;
