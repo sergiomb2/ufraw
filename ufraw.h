@@ -93,7 +93,7 @@ typedef struct {
     DeveloperMode mode;
     unsigned rgbMax, max, exposure, colors, useMatrix;
     int restoreDetails, clipHighlights;
-    int rgbWB[4], colorMatrix[3][4];
+    int doWB, rgbWB[4], colorMatrix[3][4];
     double gamma, linear;
     char profileFile[profile_types][max_path];
     void *profile[profile_types];

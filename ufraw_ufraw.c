@@ -936,7 +936,7 @@ no_distortion:
  * ufraw_convert_image_area() */
 int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
 {
-    int status, c;
+    int status;
     dcraw_data *raw = uf->raw;
     // final->image memory will be realloc'd as needed
     dcraw_image_data final;
@@ -947,15 +947,14 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
 
     if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
 	dcraw_finalize_shrink(&final, raw, dark, uf->ConvertShrink);
+	uf->developer->doWB = 1;
     } else {
 	if ( (status=dcraw_wavelet_denoise(raw,
 		uf->conf->threshold))!=DCRAW_SUCCESS )
 	    return status;
 	dcraw_finalize_interpolate(&final, raw, dark, uf->conf->interpolation,
 		uf->conf->smoothing, uf->developer->rgbWB);
-	uf->developer->rgbMax = uf->developer->max;
-	for (c=0; c<4; c++)
-	    uf->developer->rgbWB[c] = 0x10000;
+	uf->developer->doWB = 0;
     }
 
     dcraw_image_stretch(&final, raw->pixel_aspect);

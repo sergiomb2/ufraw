@@ -873,9 +873,6 @@ static gboolean render_prepare(preview_data *data)
 	    CFG->curve[CFG->curveIndex].m_anchors[0].x);
     gtk_label_set_text(GTK_LABEL(data->BlackLabel), text);
 
-    if ( Developer==NULL )
-            Developer = developer_init();
-
     if ( CFG->profileIndex[display_profile]==0 ) {
 	guint8 *displayProfile;
 	gint profileSize;
@@ -941,6 +938,8 @@ static gboolean render_raw_histogram(preview_data *data)
     }
     /* Prepare pen color, which is not effected by exposure.
      * Use a small value to avoid highlights and then normalize. */
+    /* we use the developer for our own purpose so enable WB */
+    data->UF->developer->doWB++;
     for (c=0; c<colors; c++) {
 	for (cl=0; cl<colors; cl++) p16[cl] = 0;
 	p16[c] = Developer->max * 0x08000 / Developer->rgbWB[c] *
@@ -972,6 +971,7 @@ static gboolean render_raw_histogram(preview_data *data)
 		    (hisHeight-1) / MAXOUT;
 	}
     }
+    data->UF->developer->doWB--;
     for (x=0; x<raw_his_size; x++) {
 	/* draw the raw histogram */
 	for (c=0, y0=0; c<colors; c++) {
@@ -1879,6 +1879,7 @@ static void create_base_image(preview_data *data)
 	CFG->shrink = CFG->Scale;
     }
     preview_invalidate_layer (data, ufraw_denoise_phase);
+    ufraw_developer_prepare(data->UF, display_developer);
     ufraw_convert_image_init(data->UF);
     ufraw_convert_image_first_phase(data->UF, FALSE);
     ufraw_rotate_image_buffer(&data->UF->Images[ufraw_first_phase], data->UF->conf->rotationAngle);
@@ -4260,7 +4261,7 @@ static void whitebalance_fill_interface(preview_data *data,
 
     // Zoom percentage spin button:
     data->ZoomAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
-		CFG->Zoom, 5, 50, 1, 1, 0));
+		CFG->Zoom, 100/max_scale, 100/min_scale, 1, 1, 0));
     g_object_set_data(G_OBJECT(data->ZoomAdjustment),
 		"Adjustment-Accuracy", (gpointer)0);
     button = gtk_spin_button_new(data->ZoomAdjustment, 1, 0);
@@ -5152,7 +5153,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     max_preview_height = MIN(def_preview_height, screen.height-152);
     CFG->Scale = MAX((uf->rotatedWidth-1)/max_preview_width,
 	    (uf->rotatedHeight-1)/max_preview_height)+1;
-    CFG->Scale = MAX(2, CFG->Scale);
+    CFG->Scale = MAX(min_scale, CFG->Scale);
     CFG->Zoom = 100.0 / CFG->Scale;
     // Make preview size a tiny bit larger to prevent rounding errors
     // that will cause the scrollbars to appear.
@@ -5370,7 +5371,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 
     // Zoom percentage spin button:
     data->ZoomAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
-		CFG->Zoom, 5, 50, 1, 1, 0));
+		CFG->Zoom, 100/min_scale, 100/max_scale, 1, 1, 0));
     g_object_set_data(G_OBJECT(data->ZoomAdjustment),
 		"Adjustment-Accuracy", (gpointer)0);
     button = gtk_spin_button_new(data->ZoomAdjustment, 1, 0);
