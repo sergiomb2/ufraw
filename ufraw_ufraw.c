@@ -709,13 +709,13 @@ int ufraw_convert_image_init(ufraw_data *uf)
     int temp_height, temp_width;
     // This code is copied from dcraw_image_dimensions().
     if (raw->pixel_aspect < 1)
-	temp_height = (int)(raw->height / raw->pixel_aspect + 0.5);
+	temp_height = (int)(raw->raw.height / raw->pixel_aspect + 0.5);
     else
-	temp_height = raw->height;
+	temp_height = raw->raw.height;
     if (raw->pixel_aspect > 1)
-	temp_width = (int)(raw->width * raw->pixel_aspect + 0.5);
+	temp_width = (int)(raw->raw.width * raw->pixel_aspect + 0.5);
     else
-	temp_width = raw->width;
+	temp_width = raw->raw.width;
 
     /* We can do a simple interpolation in the following cases:
      * We shrink by an integer value.
