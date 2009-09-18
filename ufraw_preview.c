@@ -5371,7 +5371,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 
     // Zoom percentage spin button:
     data->ZoomAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
-		CFG->Zoom, 100/min_scale, 100/max_scale, 1, 1, 0));
+		CFG->Zoom, 100/max_scale, 100/min_scale, 1, 1, 0));
     g_object_set_data(G_OBJECT(data->ZoomAdjustment),
 		"Adjustment-Accuracy", (gpointer)0);
     button = gtk_spin_button_new(data->ZoomAdjustment, 1, 0);
