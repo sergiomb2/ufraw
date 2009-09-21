@@ -1083,6 +1083,8 @@ static int choose_subarea(preview_data *data, int* chosen)
     return subarea;
 }
 
+static void create_base_image(preview_data *data);
+
 static gboolean render_preview_image(preview_data *data)
 {
     gboolean again = FALSE;
@@ -1091,6 +1093,11 @@ static gboolean render_preview_image(preview_data *data)
 
     if (data->FreezeDialog) return FALSE;
 
+    if (data->UF->Images[ufraw_first_phase].valid==0) {
+	create_base_image(data);
+	render_init(data);
+	ufraw_convert_image_init_phase(data->UF);
+    }
     if (data->RenderSubArea < 0)
         return FALSE;
 
@@ -2041,8 +2048,8 @@ static void zoom_in_event(GtkWidget *widget, gpointer user_data)
     CFG->Scale = LIM(CFG->Scale, min_scale, max_scale);
     CFG->Zoom = 100.0/CFG->Scale;
     if (prev_zoom != CFG->Zoom) {
-	create_base_image(data);
 	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+	preview_invalidate_layer(data, ufraw_first_phase);
 	render_preview(data);
     }
 }
@@ -2063,8 +2070,8 @@ static void zoom_out_event(GtkWidget *widget, gpointer user_data)
     CFG->Scale = LIM(CFG->Scale, min_scale, max_scale);
     CFG->Zoom = 100.0/CFG->Scale;
     if (prev_zoom != CFG->Zoom) {
-	create_base_image(data);
 	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+	preview_invalidate_layer(data, ufraw_first_phase);
 	render_preview(data);
     }
 }
@@ -2085,8 +2092,8 @@ static void zoom_fit_event(GtkWidget *widget, gpointer user_data)
     CFG->Zoom = 100.0/LIM(MAX(wScale, hScale), min_scale, max_scale);
     CFG->Scale = 0;
     if (prev_zoom != CFG->Zoom) {
-	create_base_image(data);
 	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+	preview_invalidate_layer(data, ufraw_first_phase);
 	render_preview(data);
     }
 }
@@ -2100,8 +2107,8 @@ static void zoom_max_event(GtkWidget *widget, gpointer user_data)
     CFG->Scale = min_scale;
     CFG->Zoom = 100.0/CFG->Scale;
     if (prev_zoom != CFG->Zoom) {
-	create_base_image(data);
 	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+	preview_invalidate_layer(data, ufraw_first_phase);
 	render_preview(data);
     }
 }
@@ -2470,7 +2477,7 @@ static void set_darkframe_label(preview_data *data)
 static void set_darkframe(preview_data *data)
 {
     set_darkframe_label(data);
-    create_base_image(data);
+    preview_invalidate_layer(data, ufraw_first_phase);
     render_preview(data);
 }
 
@@ -2593,6 +2600,11 @@ static void button_update(GtkWidget *button, gpointer user_data)
 	CFG->temperature = data->initialTemperature;
 	CFG->green = data->initialGreen;
 	for (c=0; c<4; c++) CFG->chanMul[c] = data->initialChanMul[c];
+
+	UFRawPhase phase = Developer!=NULL && Developer->doWB ?
+		ufraw_develop_phase : ufraw_first_phase;
+	for (; phase < ufraw_phases_num; phase++)
+	    data->UF->Images[phase].valid = 0;
     }
     if (button==data->ResetGammaButton) {
 	CFG->profile[0][CFG->profileIndex[0]].gamma =
@@ -2853,7 +2865,7 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
     else if (valuep==&CFG->Zoom)
     {
 	CFG->Scale = 0;
-	create_base_image(data);
+	preview_invalidate_layer(data, ufraw_first_phase);
     }
     else if (valuep==&CFG->threshold)
         preview_invalidate_layer (data, ufraw_denoise_phase);
@@ -2955,7 +2967,7 @@ static void set_rotation_angle(preview_data *data, double angle)
 	data->SpotY1 = -1;
 	data->SpotY2 = -1;
     }
-    create_base_image(data);
+    preview_invalidate_layer(data, ufraw_first_phase);
     if (CFG->CropX2 > data->UF->rotatedWidth)
 	fix_crop_aspect(data, top_right_cursor);
     else if (CFG->CropY2 > data->UF->rotatedHeight)

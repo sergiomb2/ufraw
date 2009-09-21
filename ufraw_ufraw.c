@@ -1385,6 +1385,11 @@ int ufraw_set_wb(ufraw_data *uf)
     double rgbWB[3];
     int status, c, cc, i;
 
+    UFRawPhase phase = uf->developer!=NULL && uf->developer->doWB ?
+	    ufraw_develop_phase : ufraw_first_phase;
+    for (; phase < ufraw_phases_num; phase++)
+	uf->Images[phase].valid = 0;
+
     /* For manual_wb we calculate chanMul from the temperature/green. */
     /* For all other it is the other way around. */
     if (!strcmp(uf->conf->wb, manual_wb)) {
