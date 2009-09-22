@@ -35,19 +35,16 @@
 #include <gtkimageview/gtkimagescrollwin.h>
 #include <gtkimageview/gtkimageview.h>
 #endif
-#if GTK_CHECK_VERSION(2,6,0)
+#if GTK_CHECK_VERSION(2, 6, 0)
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
 
 static void adjustment_update(GtkAdjustment *adj, double *valuep);
 static void button_update(GtkWidget *button, gpointer user_data);
 
-extern GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
-					 const char *defPath,
-					 const gchar *label,
-					 GtkWindow *toplevel,
-					 const gchar *cancel,
-					 gboolean multiple);
+extern GtkFileChooser *ufraw_raw_chooser(conf_data *conf, const char *defPath,
+	const gchar *label, GtkWindow *toplevel, const gchar *cancel,
+	gboolean multiple);
 
 /* Set to huge number so that the preview size is set by the screen size */
 static const int def_preview_width = 9000;
@@ -97,7 +94,7 @@ preview_data *get_preview_data(void *object)
 void ufraw_focus(void *window, gboolean focus)
 {
     if (focus) {
-	GtkWindow *parentWindow = 
+	GtkWindow *parentWindow =
 		(void *)ufraw_message(UFRAW_SET_PARENT, (char *)window);
 	g_object_set_data(G_OBJECT(window), "WindowParent", parentWindow);
 	if (parentWindow!=NULL)
@@ -148,7 +145,7 @@ static void load_curve(GtkWidget *widget, long curveType)
 	    GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL));
     ufraw_focus(fileChooser, TRUE);
     gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
-#if GTK_CHECK_VERSION(2,6,0)
+#if GTK_CHECK_VERSION(2, 6, 0)
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
     GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
@@ -250,7 +247,7 @@ static void save_curve(GtkWidget *widget, long curveType)
 	    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 	    GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL));
     ufraw_focus(fileChooser, TRUE);
-#if GTK_CHECK_VERSION(2,6,0)
+#if GTK_CHECK_VERSION(2, 6, 0)
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
     GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
@@ -333,7 +330,7 @@ static void load_profile(GtkWidget *widget, long type)
 	    GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL));
     ufraw_focus(fileChooser, TRUE);
     gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
-#if GTK_CHECK_VERSION(2,6,0)
+#if GTK_CHECK_VERSION(2, 6, 0)
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
     GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
@@ -414,7 +411,7 @@ static colorLabels *color_labels_new(GtkTable *table, int x, int y,
 
     numlabels = (zonep == with_zone ? 5 : 3);
 
-    if (label!=NULL){
+    if (label!=NULL) {
 	lbl = gtk_label_new(label);
 	gtk_misc_set_alignment(GTK_MISC(lbl), 1, 0.5);
 	gtk_table_attach(table, lbl, x, x+1, y, y+1,
@@ -598,7 +595,8 @@ static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
 
     int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
     if ( x<0 || x>=pixbufWidth )
-	g_error("preview_draw_area(): x:%d out of range 0 <= x < %d", x, pixbufWidth);
+	g_error("preview_draw_area(): x:%d out of range 0 <= x < %d",
+		x, pixbufWidth);
     if ( x+width>pixbufWidth )
 	g_error("preview_draw_area(): x+width:%d out of range x+width <= %d",
 		x+width, pixbufWidth);
@@ -611,31 +609,35 @@ static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
 	    ( !CFG->blinkOverUnder || (data->OverUnderTicker & 3) == 1 );
     gboolean blinkUnder = CFG->underExp &&
 	    ( !CFG->blinkOverUnder || (data->OverUnderTicker & 3) == 3 );
-		
+
     /* Scale crop image coordinates to pixbuf coordinates */
     float scale_x = ((float)pixbufWidth) / data->UF->rotatedWidth;
     float scale_y = ((float)pixbufHeight) / data->UF->rotatedHeight;
 
-    int CropY1 = floor (CFG->CropY1 * scale_y);
-    int CropY2 =  ceil (CFG->CropY2 * scale_y);
-    int CropX1 = floor (CFG->CropX1 * scale_x);
-    int CropX2 =  ceil (CFG->CropX2 * scale_x);
+    int CropY1 = floor(CFG->CropY1 * scale_y);
+    int CropY2 =  ceil(CFG->CropY2 * scale_y);
+    int CropX1 = floor(CFG->CropX1 * scale_x);
+    int CropX2 =  ceil(CFG->CropX2 * scale_x);
     int LineDeltaX = (CropX2 - CropX1) / (CFG->drawLines + 1);
     int LineDeltaY = (CropY2 - CropY1) / (CFG->drawLines + 1);
 
     /* Scale spot image coordinates to pixbuf coordinates */
-    int SpotY1 = floor (MIN(data->SpotY1, data->SpotY2) * scale_y);
-    int SpotY2 =  ceil (MAX(data->SpotY1, data->SpotY2) * scale_y);
-    int SpotX1 = floor (MIN(data->SpotX1, data->SpotX2) * scale_x);
-    int SpotX2 =  ceil (MAX(data->SpotX1, data->SpotX2) * scale_x);
+    int SpotY1 = floor(MIN(data->SpotY1, data->SpotY2) * scale_y);
+    int SpotY2 =  ceil(MAX(data->SpotY1, data->SpotY2) * scale_y);
+    int SpotX1 = floor(MIN(data->SpotX1, data->SpotX2) * scale_x);
+    int SpotX2 =  ceil(MAX(data->SpotX1, data->SpotX2) * scale_x);
     int xx, yy, c;
     for (yy=y; yy<y+height; yy++) {
 	p8 = pixies+yy*rowstride+x*3;
-	memcpy(p8, img->buffer + yy*img->rowstride + x*img->depth, width*img->depth);
+	memcpy(p8, img->buffer + yy*img->rowstride + x*img->depth,
+		width*img->depth);
 	for (xx=x; xx<x+width; xx++, p8+=3) {
 	    if ( data->SpotDraw &&
-		( ((yy==SpotY1-1 || yy==SpotY2) && xx>=SpotX1-1 && xx<=SpotX2) ||
-		  ((xx==SpotX1-1 || xx==SpotX2) && yy>=SpotY1-1 && yy<=SpotY2) ) ) {
+	         ( ((yy==SpotY1-1 || yy==SpotY2) && xx>=SpotX1-1 && xx<=SpotX2)
+		   ||
+		   ((xx==SpotX1-1 || xx==SpotX2) && yy>=SpotY1-1 && yy<=SpotY2)
+		 )
+	       ) {
 		if ( ((xx+yy) & 7) >= 4 )
 		    p8[0] = p8[1] = p8[2] = 0;
 		else
@@ -651,8 +653,7 @@ static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
 	    /* Shade the cropped out area */
 	    else if ( yy<CropY1 || yy>=CropY2 || xx<CropX1 || xx>=CropX2 ) {
 		for (c=0; c<3; c++) p8[c] = p8[c]/4;
-	    }
-	    else if (data->RenderMode==render_default) {
+	    } else if (data->RenderMode==render_default) {
 		/* Shade out the alignment lines */
 		if ( CFG->drawLines &&
 		     yy > CropY1 + 1 && yy < CropY2 - 2 &&
@@ -663,8 +664,7 @@ static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
 			p8[0] /= 2;
 			p8[1] /= 2;
 			p8[2] /= 2;
-		    }
-		    else if (dx == 1 || dy == 1) {
+		    } else if (dx == 1 || dy == 1) {
 			p8[0] = 255 - (255-p8[0])/2;
 			p8[1] = 255 - (255-p8[1])/2;
 			p8[2] = 255 - (255-p8[2])/2;
@@ -692,8 +692,8 @@ static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
 static void preview_draw_area(preview_data *data, int x, int y,
                               int width, int height)
 {
-    preview_draw_img_area (
-        data, ufraw_convert_image_area (data->UF, -1, ufraw_phases_num - 1),
+    preview_draw_img_area(
+        data, ufraw_convert_image_area(data->UF, -1, ufraw_phases_num - 1),
         x, y, width, height);
 }
 
@@ -713,18 +713,18 @@ static gboolean switch_highlights(gpointer ptr)
 	GdkRectangle viewRect;
 	gtk_image_view_get_viewport(GTK_IMAGE_VIEW(data->PreviewWidget),
 		&viewRect);
-	
+
 	int x = MAX(viewRect.x, floor(CFG->CropX1 * scale_x));
 	int x2 = MIN(viewRect.x+viewRect.width, ceil(CFG->CropX2 * scale_x));
-	int width =  MAX(x2 - x, 0);
-	int y = MAX(viewRect.y, floor (CFG->CropY1 * scale_y));
+	int width = MAX(x2 - x, 0);
+	int y = MAX(viewRect.y, floor(CFG->CropY1 * scale_y));
 	int y2 = MIN(viewRect.y+viewRect.height, ceil(CFG->CropY2 * scale_y));
-	int height =  MAX(y2 - y, 0);
+	int height = MAX(y2 - y, 0);
 #else
 	int x = floor(CFG->CropX1 * scale_x);
-	int width =  MIN(ceil(CFG->CropX2 * scale_x), pixbufWidth-1) - x;
-	int y = floor (CFG->CropY1 * scale_y);
-	int height =  MIN(ceil(CFG->CropY2 * scale_x), pixbufHeight-1) - y;
+	int width = MIN(ceil(CFG->CropX2 * scale_x), pixbufWidth-1) - x;
+	int y = floor(CFG->CropY1 * scale_y);
+	int height = MIN(ceil(CFG->CropY2 * scale_x), pixbufHeight-1) - y;
 #endif
 	data->OverUnderTicker++;
 	preview_draw_area(data, x, y, width, height);
@@ -757,7 +757,7 @@ static void stop_blink(preview_data *data)
 }
 
 static void window_map_event(GtkWidget *widget, GdkEvent *event,
-			     gpointer user_data)
+	gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     start_blink(data);
@@ -766,7 +766,7 @@ static void window_map_event(GtkWidget *widget, GdkEvent *event,
 }
 
 static void window_unmap_event(GtkWidget *widget, GdkEvent *event,
-			       gpointer user_data)
+	gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     stop_blink(data);
@@ -800,7 +800,7 @@ static void render_init(preview_data *data)
 	data->PreviewPixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
 					    image->width, image->height);
 	/* Clear the pixbuffer to avoid displaying garbage */
-	gdk_pixbuf_fill (data->PreviewPixbuf, 0);
+	gdk_pixbuf_fill(data->PreviewPixbuf, 0);
 #ifdef HAVE_GTKIMAGEVIEW
 	gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
 		data->PreviewPixbuf, FALSE);
@@ -826,10 +826,10 @@ static void render_init(preview_data *data)
     }
 }
 
-void preview_invalidate_layer (preview_data *data, UFRawPhase phase)
+void preview_invalidate_layer(preview_data *data, UFRawPhase phase)
 {
     for (; phase < ufraw_phases_num; phase++)
-	data->UF->Images [phase].valid = 0;
+	data->UF->Images[phase].valid = 0;
 }
 
 void render_preview(preview_data *data)
@@ -916,7 +916,7 @@ static gboolean render_raw_histogram(preview_data *data)
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->RawHisto));
     if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=hisHeight+2 ) {
 	pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-	        raw_his_size+2, hisHeight+2);
+		raw_his_size+2, hisHeight+2);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(data->RawHisto), pixbuf);
 	g_object_unref(pixbuf);
     }
@@ -945,7 +945,7 @@ static gboolean render_raw_histogram(preview_data *data)
 	p16[c] = Developer->max * 0x08000 / Developer->rgbWB[c] *
 		0x10000 / Developer->exposure;
 	develop(pen[c], p16, Developer, 8, 1);
-	guint8 max=1;
+	guint8 max = 1;
 	for (cl=0; cl<3; cl++) max = MAX(pen[c][cl], max);
 	for (cl=0; cl<3; cl++) pen[c][cl] = pen[c][cl] * 0xff / max;
     }
@@ -961,13 +961,13 @@ static gboolean render_raw_histogram(preview_data *data)
 			  Developer->rgbWB[c] /
 			  Developer->rgbWB[cl] / raw_his_size, 0xFFFF);
 	    develop(p8, p16, Developer, 8, 1);
-	    grayCurve[x][c] = MAX(MAX(p8[0],p8[1]),p8[2]) *
+	    grayCurve[x][c] = MAX(MAX(p8[0], p8[1]), p8[2]) *
 		    (hisHeight-1) / MAXOUT;
 	    /* Value for pixel x of pure color c */
 	    p16[0] = p16[1] = p16[2] = p16[3] = 0;
 	    p16[c] = MIN((guint64)x*Developer->rgbMax/raw_his_size, 0xFFFF);
 	    develop(p8, p16, Developer, 8, 1);
-	    pureCurve[x][c] = MAX(MAX(p8[0],p8[1]),p8[2]) *
+	    pureCurve[x][c] = MAX(MAX(p8[0], p8[1]), p8[2]) *
 		    (hisHeight-1) / MAXOUT;
 	}
     }
@@ -1002,7 +1002,7 @@ static gboolean render_raw_histogram(preview_data *data)
     return FALSE;
 }
 
-static int choose_subarea(preview_data *data, int* chosen)
+static int choose_subarea(preview_data *data, int *chosen)
 {
     int subarea = -1;
 #ifdef HAVE_GTKIMAGEVIEW
@@ -1014,14 +1014,13 @@ static int choose_subarea(preview_data *data, int* chosen)
      * Refreshing visible subareas in the first place improves visual
      * feedback and overall user experience.
      */
-    img = ufraw_convert_image_area (data->UF, -1, ufraw_phases_num - 1);
+    img = ufraw_convert_image_area(data->UF, -1, ufraw_phases_num - 1);
 
     GdkRectangle viewport;
-    gtk_image_view_get_viewport (
-        GTK_IMAGE_VIEW (data->PreviewWidget), &viewport);
+    gtk_image_view_get_viewport(
+        GTK_IMAGE_VIEW(data->PreviewWidget), &viewport);
 
-    for (i = 0; i < 32; i++)
-    {
+    for (i = 0; i < 32; i++) {
         /* Skip valid subareas */
         if (img->valid & (1 << i))
             continue;
@@ -1029,28 +1028,24 @@ static int choose_subarea(preview_data *data, int* chosen)
 	if (*chosen & (1 << i))
 	    continue;
 
-        ufraw_img_get_subarea_coord (img, i, &x, &y, &w, &h);
+        ufraw_img_get_subarea_coord(img, i, &x, &y, &w, &h);
 
         gboolean noclip = TRUE;
-        if (x < viewport.x)
-        {
+        if (x < viewport.x) {
             w -= (viewport.x - x);
             x = viewport.x;
             noclip = FALSE;
         }
-        if (x + w > viewport.x + viewport.width)
-        {
+        if (x + w > viewport.x + viewport.width) {
             w = viewport.x + viewport.width - x;
             noclip = FALSE;
         }
-        if (y < viewport.y)
-        {
+        if (y < viewport.y) {
             h -= (viewport.y - y);
             y = viewport.y;
             noclip = FALSE;
         }
-        if (y + h > viewport.y + viewport.height)
-        {
+        if (y + h > viewport.y + viewport.height) {
             h = viewport.y + viewport.height - y;
             noclip = FALSE;
         }
@@ -1058,8 +1053,7 @@ static int choose_subarea(preview_data *data, int* chosen)
         /* Compute the visible area of the subarea */
         int area = (w > 0 && h > 0) ? w * h : 0;
 
-        if (area > max_area)
-        {
+        if (area > max_area) {
             max_area = area;
             subarea = i;
             /* If this area is fully visible, stop searching */
@@ -1107,18 +1101,16 @@ static gboolean render_preview_image(preview_data *data)
 #pragma omp critical
 #endif
     subarea = choose_subarea(data, &chosen);
-    if (subarea < 0)
-    {
+    if (subarea < 0) {
         data->RenderSubArea = -1;
         redraw_navigation_image(data);
-    }
-    else {
-	ufraw_image_data *img1 = ufraw_convert_image_area (
+    } else {
+	ufraw_image_data *img1 = ufraw_convert_image_area(
 	    data->UF, subarea, ufraw_phases_num - 1);
 	if (img1) {
 	    int x, y, w, h;
-	    ufraw_img_get_subarea_coord (img1, subarea, &x, &y, &w, &h);
-	    preview_draw_img_area (data, img1, x, y, w, h);
+	    ufraw_img_get_subarea_coord(img1, subarea, &x, &y, &w, &h);
+	    preview_draw_img_area(data, img1, x, y, w, h);
 	    again = TRUE;
 	}
     }
@@ -1165,7 +1157,7 @@ static gboolean render_live_histogram(preview_data *data)
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
     if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=hisHeight+2 ) {
 	pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-	        live_his_size+2, hisHeight+2);
+		live_his_size+2, hisHeight+2);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(data->LiveHisto), pixbuf);
 	g_object_unref(pixbuf);
     }
@@ -1221,16 +1213,20 @@ static gboolean render_live_histogram(preview_data *data)
 	    guint8 *pix = pixies+(hisHeight-y)*rowstride+3*(x+1);
 	    if (pix[0]==0 && pix[1]==0 && pix[2]==0 )
 		for (c=0; c<3; c++)
-		    pix[c]=96;	/* gray */
+		    pix[c] = 96; /* gray */
 	}
     gtk_widget_queue_draw(data->LiveHisto);
-    for (c=0;c<3;c++) rgb[c] = sum[c]/height/width;
+    for (c=0; c<3; c++)
+	rgb[c] = sum[c]/height/width;
     color_labels_set(data->AvrLabels, rgb);
-    for (c=0;c<3;c++) rgb[c] = sqrt(sqr[c]/height/width-rgb[c]*rgb[c]);
+    for (c=0; c<3; c++)
+	rgb[c] = sqrt(sqr[c]/height/width-rgb[c]*rgb[c]);
     color_labels_set(data->DevLabels, rgb);
-    for (c=0;c<3;c++) rgb[c] = 100.0*live_his[live_his_size-1][c]/height/width;
+    for (c=0; c<3; c++)
+	rgb[c] = 100.0*live_his[live_his_size-1][c]/height/width;
     color_labels_set(data->OverLabels, rgb);
-    for (c=0;c<3;c++) rgb[c] = 100.0*live_his[0][c]/height/width;
+    for (c=0; c<3; c++)
+	rgb[c] = 100.0*live_his[0][c]/height/width;
     color_labels_set(data->UnderLabels, rgb);
 
     return FALSE;
@@ -1246,7 +1242,7 @@ struct spot
 };
 
 static void calculate_spot(preview_data *data, struct spot *spot,
-			   int width, int height)
+	int width, int height)
 {
     int spotHeight = abs(data->SpotY1 - data->SpotY2)
 	    * height / data->UF->rotatedHeight + 1;
@@ -1482,7 +1478,7 @@ static void update_scales(preview_data *data)
 	    CFG->curve[CFG->curveIndex].m_anchors[1].y!=1.0 );
     for (i = 0; i < 3; ++i)
         gtk_adjustment_set_value(data->GrayscaleMixers[i],
-				 CFG->grayscaleMixer[i]);
+		CFG->grayscaleMixer[i]);
     for (i = 0; i < CFG->lightnessAdjustmentCount; ++i) {
 	gtk_adjustment_set_value(data->LightnessAdjustment[i],
 	    CFG->lightnessAdjustment[i].adjustment);
@@ -1494,7 +1490,7 @@ static void update_scales(preview_data *data)
 	|| (CFG->grayscaleMixer[1] != conf_default.grayscaleMixer[1])
 	|| (CFG->grayscaleMixer[2] != conf_default.grayscaleMixer[2]));
     gtk_widget_set_sensitive(GTK_WIDGET(data->GrayscaleMixerTable),
-			     CFG->grayscaleMode == grayscale_mixer);
+	    CFG->grayscaleMode == grayscale_mixer);
 
     for (max = 1, i = 0; i < 3; ++i)
         max = MAX(max, CFG->grayscaleMixer[i]);
@@ -1532,7 +1528,7 @@ static void curve_update(GtkWidget *widget, long curveType)
 	    *curveeditor_widget_get_curve(data->CurveWidget);
 	CFG->autoBlack = FALSE;
     }
-    preview_invalidate_layer (data, ufraw_develop_phase);
+    preview_invalidate_layer(data, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -1572,7 +1568,7 @@ static void spot_wb_event(GtkWidget *widget, gpointer user_data)
     ufraw_set_wb(data->UF);
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
-    preview_invalidate_layer (data, ufraw_develop_phase);
+    preview_invalidate_layer(data, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -1581,7 +1577,7 @@ static void remove_hue_event(GtkWidget *widget, gpointer user_data)
     preview_data *data = get_preview_data(widget);
     long i = (long)user_data;
 
-    for (;i<CFG->lightnessAdjustmentCount-1; i++) {
+    for (; i<CFG->lightnessAdjustmentCount-1; i++) {
 	CFG->lightnessAdjustment[i] = CFG->lightnessAdjustment[i+1];
     	widget_set_hue(data->LightnessHueSelectButton[i],
 		CFG->lightnessAdjustment[i].hue);
@@ -1590,7 +1586,7 @@ static void remove_hue_event(GtkWidget *widget, gpointer user_data)
     gtk_widget_hide(GTK_WIDGET(data->LightnessAdjustmentTable[i]));
     CFG->lightnessAdjustmentCount--;
 
-    preview_invalidate_layer (data, ufraw_develop_phase);
+    preview_invalidate_layer(data, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -1650,7 +1646,8 @@ static void select_hue_event(GtkWidget *widget, gpointer user_data)
 
     if (i < 0) {
 	if (CFG->lightnessAdjustmentCount >= max_adjustments) {
-	    ufraw_message(UFRAW_ERROR, _("No more room for new lightness adjustments."));
+	    ufraw_message(UFRAW_ERROR,
+		    _("No more room for new lightness adjustments."));
 	    return;
 	}
 	i = CFG->lightnessAdjustmentCount++;
@@ -1658,10 +1655,10 @@ static void select_hue_event(GtkWidget *widget, gpointer user_data)
 
     calculate_hue(data, i);
     widget_set_hue(data->LightnessHueSelectButton[i],
-		   CFG->lightnessAdjustment[i].hue);
+	    CFG->lightnessAdjustment[i].hue);
     gtk_widget_show_all(GTK_WIDGET(data->LightnessAdjustmentTable[i]));
 
-    preview_invalidate_layer (data, ufraw_develop_phase);
+    preview_invalidate_layer(data, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -1750,8 +1747,7 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 	    (CFG->CropY2-CFG->CropY1)/3);
 
     if ( (event->state&GDK_BUTTON1_MASK)==0 ) {
-	const CursorType tr_cursor [16] =
-	{
+	const CursorType tr_cursor[16] = {
 	    crop_cursor, crop_cursor, crop_cursor, crop_cursor,
 	    crop_cursor, top_left_cursor, left_cursor, bottom_left_cursor,
 	    crop_cursor, top_cursor, move_cursor, bottom_cursor,
@@ -1759,8 +1755,7 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 	};
 
 	int sel_cursor = 0;
-	if (y >= CFG->CropY1 - 1)
-	{
+	if (y >= CFG->CropY1 - 1) {
 	    if (y < CFG->CropY1 + sideSizeY)
 		sel_cursor |= 1;
 	    else if (y <= CFG->CropY2 - sideSizeY)
@@ -1768,8 +1763,7 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 	    else if (y <= CFG->CropY2)
 		sel_cursor |= 3;
 	}
-	if (x >= CFG->CropX1 - 1)
-	{
+	if (x >= CFG->CropX1 - 1) {
 	    if (x < CFG->CropX1 + sideSizeX)
 		sel_cursor |= 4;
 	    else if (x <= CFG->CropX2 - sideSizeX)
@@ -1778,7 +1772,7 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 		sel_cursor |= 12;
 	}
 
-	data->CropMotionType = tr_cursor [sel_cursor];
+	data->CropMotionType = tr_cursor[sel_cursor];
 
 	GtkWidget *event_box =
 	    gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_EVENT_BOX);
@@ -1801,8 +1795,7 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 	     data->CropMotionType==top_right_cursor ||
 	     data->CropMotionType==bottom_right_cursor )
 	    if (x>CFG->CropX1) CFG->CropX2 = x;
-	if ( data->CropMotionType==move_cursor )
-	{
+	if ( data->CropMotionType==move_cursor ) {
 	    int d = x - data->OldMouseX;
 	    if (CFG->CropX1 + d < 0)
 		d = -CFG->CropX1;
@@ -1819,8 +1812,7 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 	    CFG->CropY1 += d;
 	    CFG->CropY2 += d;
 	}
-	if ( data->CropMotionType!=crop_cursor )
-	{
+	if ( data->CropMotionType!=crop_cursor ) {
 	    fix_crop_aspect(data, data->CropMotionType);
 	    update_crop_ranges(data);
 	    if (!CFG->LockAspect) refresh_aspect(data);
@@ -1885,11 +1877,12 @@ static void create_base_image(preview_data *data)
 	CFG->size = 0;
 	CFG->shrink = CFG->Scale;
     }
-    preview_invalidate_layer (data, ufraw_denoise_phase);
+    preview_invalidate_layer(data, ufraw_denoise_phase);
     ufraw_developer_prepare(data->UF, display_developer);
     ufraw_convert_image_init(data->UF);
     ufraw_convert_image_first_phase(data->UF, FALSE);
-    ufraw_rotate_image_buffer(&data->UF->Images[ufraw_first_phase], data->UF->conf->rotationAngle);
+    ufraw_rotate_image_buffer(&data->UF->Images[ufraw_first_phase],
+	    data->UF->conf->rotationAngle);
     CFG->shrink = shrinkSave;
     CFG->size = sizeSave;
 }
@@ -1960,12 +1953,12 @@ static void update_crop_ranges(preview_data *data)
     float scale_x = ((float)pixbufWidth) / data->UF->rotatedWidth;
     float scale_y = ((float)pixbufHeight) / data->UF->rotatedHeight;
 
-    CropX1 = floor (CropX1 * scale_x);
+    CropX1 = floor(CropX1 * scale_x);
     CropX2 = MIN(ceil(CropX2 * scale_x), pixbufWidth-1);
-    CropY1 = floor (CropY1 * scale_y);
+    CropY1 = floor(CropY1 * scale_y);
     CropY2 = MIN(ceil(CropY2 * scale_y), pixbufHeight-1);
 
-    int x1[4], x2[4], y1[4], y2[4], i=0;
+    int x1[4], x2[4], y1[4], y2[4], i = 0;
     if (CropX1!=data->DrawnCropX1) {
 	x1[i] = MIN(CropX1, data->DrawnCropX1);
 	x2[i] = MAX(CropX1, data->DrawnCropX1);
@@ -2002,11 +1995,11 @@ static void update_crop_ranges(preview_data *data)
     int saveDrawLines = CFG->drawLines;
     CFG->drawLines = 0;
     for (i--; i>=0; i--) {
-	x1[i] = MAX (x1[i] - 1, 0);
-	x2[i] = MIN (x2[i] + 1, pixbufWidth);
-	y1[i] = MAX (y1[i] - 1, 0);
-	y2[i] = MIN (y2[i] + 1, pixbufHeight);
-	preview_draw_area (data, x1[i], y1[i], x2[i]-x1[i], y2[i]-y1[i]);
+	x1[i] = MAX(x1[i] - 1, 0);
+	x2[i] = MIN(x2[i] + 1, pixbufWidth);
+	y1[i] = MAX(y1[i] - 1, 0);
+	y2[i] = MIN(y2[i] + 1, pixbufHeight);
+	preview_draw_area(data, x1[i], y1[i], x2[i]-x1[i], y2[i]-y1[i]);
     }
     CFG->drawLines = saveDrawLines;
     // Draw lines when idle if necessary
@@ -2026,7 +2019,8 @@ static void crop_reset(GtkWidget *widget, gpointer user_data)
     CFG->CropY1 = 0;
     CFG->CropX2 = data->UF->rotatedWidth;
     CFG->CropY2 = data->UF->rotatedHeight;
-    data->AspectRatio = ((float)data->UF->rotatedWidth) / data->UF->rotatedHeight;
+    data->AspectRatio = ((float)data->UF->rotatedWidth) /
+	    data->UF->rotatedHeight;
 
     refresh_aspect(data);
     set_new_aspect(data);
@@ -2204,7 +2198,7 @@ static const struct
 {
     float val;
     const char text[5];
-} predef_aspects [] =
+} predef_aspects[] =
 {
     { 21.0/ 9.0, "21:9"  },
     { 16.0/10.0, "16:10" },
@@ -2227,18 +2221,17 @@ static void refresh_aspect(preview_data *data)
 
     // Look through a predefined list of aspect ratios
     size_t i;
-    for (i = 0; i < sizeof (predef_aspects) / sizeof (predef_aspects [0]); i++)
-	if (data->AspectRatio >= predef_aspects [i].val * 0.999 &&
-	    data->AspectRatio <= predef_aspects [i].val * 1.001)
-	{
+    for (i = 0; i < sizeof (predef_aspects) / sizeof (predef_aspects[0]); i++)
+	if (data->AspectRatio >= predef_aspects[i].val * 0.999 &&
+	    data->AspectRatio <= predef_aspects[i].val * 1.001) {
 	    data->FreezeDialog++;
-	    gtk_entry_set_text (data->AspectEntry, predef_aspects [i].text);
+	    gtk_entry_set_text(data->AspectEntry, predef_aspects[i].text);
 	    data->FreezeDialog--;
 	    return;
 	}
-    char *text = g_strdup_printf ("%.4g", data->AspectRatio);
+    char *text = g_strdup_printf("%.4g", data->AspectRatio);
     data->FreezeDialog++;
-    gtk_entry_set_text (data->AspectEntry, text);
+    gtk_entry_set_text(data->AspectEntry, text);
     data->FreezeDialog--;
     g_free(text);
 }
@@ -2283,16 +2276,15 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
 		    dy = cy, fix_dx++;
 		if (cy + dy > data->UF->rotatedHeight)
 		    dy = data->UF->rotatedHeight - cy, fix_dx++;
-		if (fix_dx)
-		{
-		    float dx = rint (dy * 2.0 * aspect);
+		if (fix_dx) {
+		    float dx = rint(dy * 2.0 * aspect);
 		    if (cursor == left_cursor)
 			CFG->CropX1 = CFG->CropX2 - dx;
 		    else
 			CFG->CropX2 = CFG->CropX1 + dx;
 		}
-		CFG->CropY1 = rint (cy - dy);
-		CFG->CropY2 = rint (cy + dy);
+		CFG->CropY1 = rint(cy - dy);
+		CFG->CropY2 = rint(cy + dy);
 	    }
 	    break;
 	case top_cursor:
@@ -2307,9 +2299,8 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
 		    dx = cx, fix_dy++;
 		if (cx + dx > data->UF->rotatedWidth)
 		    dx = data->UF->rotatedWidth - cx, fix_dy++;
-		if (fix_dy)
-		{
-		    float dy = rint (dx * 2.0 / aspect);
+		if (fix_dy) {
+		    float dy = rint(dx * 2.0 / aspect);
 		    if (cursor == top_cursor)
 			CFG->CropY1 = CFG->CropY2 - dy;
 		    else
@@ -2331,17 +2322,13 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
 		float dy, dx = sqrt(aspect * (CFG->CropX2 - CFG->CropX1) *
 				    (CFG->CropY2 - CFG->CropY1));
 
-		for (;;)
-		{
+		for (;;) {
 		    if (cursor == top_left_cursor ||
-			cursor == bottom_left_cursor)
-		    {
+			cursor == bottom_left_cursor) {
 			if (CFG->CropX2 < dx)
 			    dx = CFG->CropX2;
 			CFG->CropX1 = CFG->CropX2 - dx;
-		    }
-		    else
-		    {
+		    } else {
 			if (CFG->CropX1 + dx > data->UF->rotatedWidth)
 			    dx = data->UF->rotatedWidth - CFG->CropX1;
 			CFG->CropX2 = CFG->CropX1 + dx;
@@ -2350,20 +2337,16 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
 		    dy = dx / aspect;
 
 		    if (cursor == top_left_cursor ||
-			cursor == top_right_cursor)
-		    {
-			if (CFG->CropY2 < dy)
-			{
+			cursor == top_right_cursor) {
+			if (CFG->CropY2 < dy) {
 			    dx = CFG->CropY2 * aspect;
 			    continue;
 			}
 			CFG->CropY1 = CFG->CropY2 - dy;
-		    }
-		    else
-		    {
-			if (CFG->CropY1 + dy > data->UF->rotatedHeight)
-			{
-			    dx = (data->UF->rotatedHeight - CFG->CropY1) * aspect;
+		    } else {
+			if (CFG->CropY1 + dy > data->UF->rotatedHeight) {
+			    dx = (data->UF->rotatedHeight - CFG->CropY1) *
+				    aspect;
 			    continue;
 			}
 			CFG->CropY2 = CFG->CropY1 + dy;
@@ -2401,32 +2384,28 @@ static void set_new_aspect(preview_data *data)
     else
 	dx = dy * data->AspectRatio;
 
-    if (dx > cx)
-    {
+    if (dx > cx) {
 	dx = cx;
 	dy = dx / data->AspectRatio;
     }
-    if (cx + dx > data->UF->rotatedWidth)
-    {
+    if (cx + dx > data->UF->rotatedWidth) {
 	dx = data->UF->rotatedWidth - cx;
 	dy = dx / data->AspectRatio;
     }
 
-    if (dy > cy)
-    {
+    if (dy > cy) {
 	dy = cy;
 	dx = dy * data->AspectRatio;
     }
-    if (cy + dy > data->UF->rotatedHeight)
-    {
+    if (cy + dy > data->UF->rotatedHeight) {
 	dy = data->UF->rotatedHeight - cy;
 	dx = dy * data->AspectRatio;
     }
 
-    CFG->CropX1 = rint (cx - dx);
-    CFG->CropX2 = rint (cx + dx);
-    CFG->CropY1 = rint (cy - dy);
-    CFG->CropY2 = rint (cy + dy);
+    CFG->CropX1 = rint(cx - dx);
+    CFG->CropX2 = rint(cx + dx);
+    CFG->CropY1 = rint(cy - dy);
+    CFG->CropY2 = rint(cy + dy);
 
     update_crop_ranges(data);
 }
@@ -2443,23 +2422,21 @@ static void aspect_changed(GtkWidget *widget, gpointer user_data)
     if (data->FreezeDialog) return;
     (void)user_data;
     const gchar *text = gtk_entry_get_text(data->AspectEntry);
-    if (text)
-    {
+    if (text) {
 	float aspect = 0.0, aspect_div, aspect_quot;
-	if (sscanf(text, "%f : %f", &aspect_div, &aspect_quot) == 2)
-	{
+	if (sscanf(text, "%f : %f", &aspect_div, &aspect_quot) == 2) {
 	    if (aspect_quot)
 		aspect = aspect_div / aspect_quot;
-	}
-	else
+	} else {
 	    sscanf(text, "%g", &aspect);
-
+	}
 	if (aspect >= 0.1 && aspect <= 10.0)
 	    data->AspectRatio = aspect;
     }
-    set_new_aspect (data);
+    set_new_aspect(data);
     CFG->LockAspect = TRUE;
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->LockAspectButton), TRUE);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->LockAspectButton),
+	    TRUE);
 }
 
 static void set_darkframe_label(preview_data *data)
@@ -2577,8 +2554,8 @@ GtkWidget *table_with_frame(GtkWidget *box, char *label, gboolean expand)
 	GtkWidget *expander = gtk_expander_new(label);
 	gtk_expander_set_expanded(GTK_EXPANDER(expander), expand);
 	gtk_box_pack_start(GTK_BOX(box), expander, TRUE, TRUE, 0);
-	g_signal_connect (expander, "notify::expanded",
-		G_CALLBACK (expander_expanded), NULL);
+	g_signal_connect(expander, "notify::expanded",
+		G_CALLBACK(expander_expanded), NULL);
 	gtk_container_add(GTK_CONTAINER(expander), frame);
     } else {
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 0);
@@ -2681,24 +2658,23 @@ static void button_update(GtkWidget *button, gpointer user_data)
     }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
-    preview_invalidate_layer (data, ufraw_develop_phase);
+    preview_invalidate_layer(data, ufraw_develop_phase);
     update_scales(data);
-    return;
 }
 
 static void grayscale_update(GtkWidget *button, gpointer user_data)
 {
-  int i;
-  preview_data *data = get_preview_data(button);
+    int i;
+    preview_data *data = get_preview_data(button);
 
-  for (i = 0; i < 6; ++i)
-      if (button == data->GrayscaleButtons[i]
-	  && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
-	  CFG->grayscaleMode = i;
+    for (i = 0; i < 6; ++i)
+	if (button == data->GrayscaleButtons[i] &&
+	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
+	    CFG->grayscaleMode = i;
 
-  update_scales(data);
-  preview_invalidate_layer (data, ufraw_develop_phase);
-  (void)user_data;
+    update_scales(data);
+    preview_invalidate_layer(data, ufraw_develop_phase);
+    (void)user_data;
 }
 
 static void restore_details_button_set(GtkButton *button, preview_data *data)
@@ -2759,7 +2735,7 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    CFG->restoreDetails =
 		    (CFG->restoreDetails+1) % restore_types;
 	    restore_details_button_set(GTK_BUTTON(button), data);
-            preview_invalidate_layer (data, ufraw_develop_phase);
+            preview_invalidate_layer(data, ufraw_develop_phase);
 	    update_scales(data);
 	}
     } else if (valuep==&CFG->clipHighlights) {
@@ -2769,7 +2745,7 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    CFG->clipHighlights =
 		    (CFG->clipHighlights+1) % highlights_types;
 	    clip_highlights_button_set(GTK_BUTTON(button), data);
-            preview_invalidate_layer (data, ufraw_develop_phase);
+            preview_invalidate_layer(data, ufraw_develop_phase);
 	    update_scales(data);
 	}
     } else {
@@ -2778,7 +2754,7 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    start_blink(data);
 	    switch_highlights(data);
 	} else {
-            preview_invalidate_layer (data, ufraw_develop_phase);
+            preview_invalidate_layer(data, ufraw_develop_phase);
 	    render_preview(data);
 	}
     }
@@ -2803,7 +2779,7 @@ static void toggle_button(GtkTable *table, int x, int y, char *label,
 static void adjustment_update_int(GtkAdjustment *adj, int *valuep)
 {
     *valuep = (int)floor(gtk_adjustment_get_value(adj) + 0.5);
-} 
+}
 
 static void adjustment_update(GtkAdjustment *adj, double *valuep)
 {
@@ -2832,73 +2808,59 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
     long accuracy =
 	(long)g_object_get_data(G_OBJECT(adj), "Adjustment-Accuracy");
     float change = fabs(*valuep-gtk_adjustment_get_value(adj));
-    float min_change = pow(10,-accuracy)/2;
+    float min_change = pow(10, -accuracy)/2;
     if ( change < min_change )
 	return;
     else
 	*valuep = gtk_adjustment_get_value(adj);
 
-    if (valuep==&CFG->temperature || valuep==&CFG->green)
-    {
+    if (valuep==&CFG->temperature || valuep==&CFG->green) {
 	g_strlcpy(CFG->wb, manual_wb, max_name);
 	ufraw_set_wb(data->UF);
-    }
-    else if (valuep>=&CFG->chanMul[0] && valuep<=&CFG->chanMul[3])
-    {
+    } else if (valuep>=&CFG->chanMul[0] && valuep<=&CFG->chanMul[3]) {
 	g_strlcpy(CFG->wb, spot_wb, max_name);
 	ufraw_set_wb(data->UF);
-    }
-    else if (valuep==&CFG->WBTuning)
-    {
+    } else if (valuep==&CFG->WBTuning) {
         if (strcmp(data->UF->conf->wb, auto_wb)==0 ||
             strcmp(data->UF->conf->wb, camera_wb)==0)
             /* Prevent recalculation of Camera/Auto WB on WBTuning events */
             data->UF->conf->WBTuning = 0;
         else
 	    ufraw_set_wb(data->UF);
-    }
-    else if (valuep==&CFG->exposure)
-    {
+    } else if (valuep==&CFG->exposure) {
         CFG->autoExposure = FALSE;
         if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
-    }
-    else if (valuep==&CFG->Zoom)
-    {
+    } else if (valuep==&CFG->Zoom) {
 	CFG->Scale = 0;
 	preview_invalidate_layer(data, ufraw_first_phase);
-    }
-    else if (valuep==&CFG->threshold)
-        preview_invalidate_layer (data, ufraw_denoise_phase);
-    else
-    {
+    } else if (valuep==&CFG->threshold) {
+	preview_invalidate_layer (data, ufraw_denoise_phase);
+    } else {
         if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
         if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     }
 
     int croppedWidth = CFG->CropX2 - CFG->CropX1;
     int croppedHeight = CFG->CropY2 - CFG->CropY1;
-    if (valuep==&data->shrink)
-    {
+    if (valuep==&data->shrink) {
         data->height = croppedHeight / data->shrink;
         data->width = croppedWidth / data->shrink;
     }
-    if (valuep==&data->height)
-    {
+    if (valuep==&data->height) {
         data->width = data->height * croppedWidth / croppedHeight;
         data->shrink = (double)croppedHeight / data->height;
     }
-    if (valuep==&data->width)
-    {
+    if (valuep==&data->width) {
         data->height = data->width * croppedHeight / croppedWidth;
         data->shrink = (double)croppedWidth / data->width;
     }
 
-    preview_invalidate_layer (data, ufraw_develop_phase);
-    update_scales (data);
+    preview_invalidate_layer(data, ufraw_develop_phase);
+    update_scales(data);
 }
 
 GtkWidget *stock_image_button(const gchar *stock_id, GtkIconSize size,
-			      const char *tip, GCallback callback, void *data)
+	const char *tip, GCallback callback, void *data)
 {
     GtkWidget *button;
     button = gtk_button_new();
@@ -2911,10 +2873,10 @@ GtkWidget *stock_image_button(const gchar *stock_id, GtkIconSize size,
 }
 
 GtkWidget *stock_icon_button(const gchar *stock_id,
-			     const char *tip, GCallback callback, void *data)
+	const char *tip, GCallback callback, void *data)
 {
     return stock_image_button(stock_id, GTK_ICON_SIZE_BUTTON,
-			      tip, callback, data);
+	    tip, callback, data);
 }
 
 /*
@@ -2934,7 +2896,7 @@ static void set_rotation_angle(preview_data *data, double angle)
      * and flip plus 0 <= a < 90 rotation for processing.  */
     data->unnormalized_angle = remainder(angle, 360);
     gtk_adjustment_set_value(data->RotationAdjustment,
-			     data->unnormalized_angle);
+	    data->unnormalized_angle);
     CFG->rotationAngle = data->unnormalized_angle;
     CFG->orientation = data->reference_orientation;
     ufraw_normalize_rotation(data->UF);
@@ -2997,29 +2959,32 @@ GtkWidget *reset_button(const char *tip, GCallback callback, void *data)
     return stock_icon_button(GTK_STOCK_REFRESH, tip, callback, data);
 }
 
-GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y, const char *label,
-    double value, void *valuep, double min, double max, double step, double jump,
-    long accuracy, const char *tip, GCallback callback,
-    GtkWidget **resetButton, const char *resetTip, GCallback resetCallback)
+GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y,
+    const char *label, double value, void *valuep, double min, double max,
+    double step, double jump, long accuracy, const char *tip,
+    GCallback callback, GtkWidget **resetButton, const char *resetTip,
+    GCallback resetCallback)
 {
     GtkAdjustment *adj;
     GtkWidget *w, *l, *icon;
 
     if ( label!=NULL ) {
 	w = gtk_event_box_new();
-	if (label [0] == '@') {
-	    icon = gtk_image_new_from_stock(label + 1, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	if (label[0] == '@') {
+	    icon = gtk_image_new_from_stock(label + 1,
+		    GTK_ICON_SIZE_LARGE_TOOLBAR);
 	    gtk_container_add(GTK_CONTAINER(w), icon);
 	} else {
 	    l = gtk_label_new(label);
 	    gtk_misc_set_alignment(GTK_MISC(l), 1, 0.5);
 	    gtk_container_add(GTK_CONTAINER(w), l);
 	}
-	gtk_table_attach(table, w, x, x+1, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
+	gtk_table_attach(table, w, x, x+1, y, y+1,
+		GTK_SHRINK|GTK_FILL, 0, 0, 0);
 	uf_widget_set_tooltip(w, tip);
     }
     adj = GTK_ADJUSTMENT(gtk_adjustment_new(value, min, max, step, jump, 0));
-    g_object_set_data(G_OBJECT(adj), "Adjustment-Accuracy",(gpointer)accuracy);
+    g_object_set_data(G_OBJECT(adj), "Adjustment-Accuracy", (gpointer)accuracy);
 
     w = gtk_hscale_new(adj);
     g_object_set_data(G_OBJECT(adj), "Parent-Widget", w);
@@ -3069,7 +3034,7 @@ static void outpath_chooser_changed(GtkFileChooser *chooser, gpointer user_data)
     }
     // Set the chosen path in the output filename
     char *basename = g_path_get_basename(CFG->outputFilename);
-    char *filename = g_build_filename(path, basename , NULL);
+    char *filename = g_build_filename(path, basename, NULL);
     g_free(basename);
     g_strlcpy(CFG->outputFilename, filename, max_path);
     g_free(filename);
@@ -3095,13 +3060,13 @@ static void outfile_entry_changed(GtkEntry *entry, gpointer user_data)
     if (data->FreezeDialog) return;
 
     char *dirname = g_path_get_dirname(CFG->outputFilename);
-    char *fne = g_filename_from_utf8 (gtk_entry_get_text(entry),
+    char *fne = g_filename_from_utf8(gtk_entry_get_text(entry),
                                       -1, NULL, NULL, NULL);
     char *filename = g_build_filename(dirname, fne, NULL);
     g_strlcpy(CFG->outputFilename, filename, max_path);
     g_free(filename);
     g_free(dirname);
-    g_free (fne);
+    g_free(fne);
 
     // Update the output type combo
     char *type = strrchr(CFG->outputFilename, '.');
@@ -3162,7 +3127,7 @@ static void combo_update(GtkWidget *combo, gint *valuep)
     }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
-    preview_invalidate_layer (data, ufraw_develop_phase);
+    preview_invalidate_layer(data, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -3174,7 +3139,7 @@ static void combo_update_simple(GtkWidget *combo, gpointer user_data)
 
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
-    preview_invalidate_layer (data, ufraw_develop_phase);
+    preview_invalidate_layer(data, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -3558,7 +3523,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	ufraw_focus(optionsDialog, FALSE);
 	gtk_widget_destroy(optionsDialog);
 	start_blink(data);
-        preview_invalidate_layer (data, ufraw_develop_phase);
+        preview_invalidate_layer(data, ufraw_develop_phase);
 	render_preview(data);
 	return;
     }
@@ -3648,7 +3613,7 @@ static void panel_size_allocate(GtkWidget *panel,
 
     GList *children = gtk_container_get_children(GTK_CONTAINER(panel));
     int childAlloc = 0;
-    for (;children!=NULL; children=g_list_next(children))
+    for (; children!=NULL; children=g_list_next(children))
 	childAlloc += GTK_WIDGET(children->data)->allocation.height;
 
     // If there is no extra space in the box expandable widgets must
@@ -3789,17 +3754,17 @@ static GtkWidget *control_button(const char *stockImage, const char *tip,
 	return button;
     }
 
-    char hot_char [7];
-    int hot_char_len = g_utf8_next_char (tipParts[1]) - tipParts[1];
-    memcpy (hot_char, tipParts[1], hot_char_len);
-    hot_char [hot_char_len] = 0;
+    char hot_char[7];
+    int hot_char_len = g_utf8_next_char(tipParts[1]) - tipParts[1];
+    memcpy(hot_char, tipParts[1], hot_char_len);
+    hot_char[hot_char_len] = 0;
 
     char *tooltip = g_strdup_printf(_("%s%s (Alt-%s)"),
 	    tipParts[0], tipParts[1], hot_char);
     uf_widget_set_tooltip(button, tooltip);
     g_free(tooltip);
     data->ButtonMnemonic[buttonEnum] = gdk_keyval_to_lower(
-	    gdk_unicode_to_keyval(g_utf8_get_char (tipParts[1])));
+	    gdk_unicode_to_keyval(g_utf8_get_char(tipParts[1])));
     data->ControlButton[buttonEnum] = button;
     g_strfreev(tipParts);
     return button;
@@ -3844,11 +3809,10 @@ static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
 
 static void list_store_add(GtkListStore *store, char *name, char *var)
 {
-    if ( var!=NULL && strlen(var)>0 )
-    {
+    if ( var!=NULL && strlen(var)>0 ) {
 	GtkTreeIter iter;
-	gtk_list_store_append (store, &iter);
-	gtk_list_store_set (store, &iter, 0, name, 1, var, -1);
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter, 0, name, 1, var, -1);
     }
 }
 
@@ -3905,7 +3869,7 @@ static void rawhistogram_fill_interface(preview_data *data,
 }
 
 static void livehistogram_fill_interface(preview_data *data,
-					 GtkTable *table)
+	GtkTable *table)
 {
     GtkWidget *event_box;
     GdkPixbuf *pixbuf;
@@ -4056,7 +4020,7 @@ static void whitebalance_fill_interface(preview_data *data,
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     subTable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
-    gtk_table_attach(table, GTK_WIDGET(subTable), 0, 1, 0 , 1,
+    gtk_table_attach(table, GTK_WIDGET(subTable), 0, 1, 0, 1,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 //    label = gtk_label_new("White balance");
 //    gtk_table_attach(subTable, label, 0, 1, 0 , 1, 0, 0, 0, 0);
@@ -4065,7 +4029,7 @@ static void whitebalance_fill_interface(preview_data *data,
     const wb_data *lastPreset = NULL;
     gboolean make_model_match = FALSE, make_model_fine_tuning = FALSE;
     char model[max_name];
-    if ( strcmp(data->UF->conf->make,"MINOLTA")==0 &&
+    if ( strcmp(data->UF->conf->make, "MINOLTA")==0 &&
 	    ( strncmp(uf->conf->model, "ALPHA", 5)==0 ||
 	      strncmp(uf->conf->model, "MAXXUM", 6)==0 ) ) {
 	/* Canonize Minolta model names (copied from dcraw) */
@@ -4085,7 +4049,7 @@ static void whitebalance_fill_interface(preview_data *data,
 	    /* Camera specific presets */
 	    make_model_match = TRUE;
 	    if ( lastPreset==NULL ||
-		strcmp(wb_preset[i].name,lastPreset->name)!=0 ) {
+		strcmp(wb_preset[i].name, lastPreset->name)!=0 ) {
 		data->WBPresets = g_list_append(data->WBPresets,
 			(void*)wb_preset[i].name);
 		gtk_combo_box_append_text(data->WBCombo, _(wb_preset[i].name));
@@ -4116,7 +4080,7 @@ static void whitebalance_fill_interface(preview_data *data,
 	data->WBTuningAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
 		CFG->WBTuning, -9, 9, 1, 1, 0));
 	g_object_set_data(G_OBJECT(data->WBTuningAdjustment),
-		"Adjustment-Accuracy",(gpointer)0);
+		"Adjustment-Accuracy", (gpointer)0);
 	button = gtk_spin_button_new(data->WBTuningAdjustment, 1, 0);
     	g_object_set_data(G_OBJECT(data->WBTuningAdjustment),
 		"Parent-Widget", button);
@@ -4154,7 +4118,7 @@ static void whitebalance_fill_interface(preview_data *data,
 	G_CALLBACK(spot_wb_event), NULL);
     gtk_table_attach(subTable, button, 7, 8, 1, 3, 0, 0, 0, 0);
 
-    GtkBox *subbox = GTK_BOX(gtk_hbox_new(0,0));
+    GtkBox *subbox = GTK_BOX(gtk_hbox_new(0, 0));
     gtk_table_attach(table, GTK_WIDGET(subbox), 0, 1, 1, 2, 0, 0, 0, 0);
     label = gtk_label_new(_("Chan. multipliers:"));
     gtk_box_pack_start(subbox, label, 0, 0, 0);
@@ -4162,7 +4126,7 @@ static void whitebalance_fill_interface(preview_data *data,
 	data->ChannelAdjustment[i] = GTK_ADJUSTMENT(gtk_adjustment_new(
 		CFG->chanMul[i], 0.5, 99.999, 0.001, 0.001, 0));
 	g_object_set_data(G_OBJECT(data->ChannelAdjustment[i]),
-		"Adjustment-Accuracy",(gpointer)3);
+		"Adjustment-Accuracy", (gpointer)3);
 	button = gtk_spin_button_new(data->ChannelAdjustment[i], 0.001, 3);
     	g_object_set_data(G_OBJECT(data->ChannelAdjustment[i]),
 		"Parent-Widget", button);
@@ -4341,7 +4305,7 @@ static void lightness_fill_interface(preview_data *data, GtkWidget *page)
 }
 
 static void grayscale_fill_interface(preview_data *data,
-				     GtkWidget *page)
+	GtkWidget *page)
 {
     GtkTable *table;
     GtkWidget *label;
@@ -4360,14 +4324,14 @@ static void grayscale_fill_interface(preview_data *data,
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(
 	    data->GrayscaleButtons[i]), CFG->grayscaleMode == i);
         gtk_table_attach(table, data->GrayscaleButtons[i],
-			 1, 2, i, i+1, GTK_EXPAND|GTK_FILL, 0, 0, 0);
+		1, 2, i, i+1, GTK_EXPAND|GTK_FILL, 0, 0, 0);
 	g_signal_connect(G_OBJECT(data->GrayscaleButtons[i]), "toggled",
-			 G_CALLBACK(grayscale_update), NULL);
+		G_CALLBACK(grayscale_update), NULL);
     }
 
     data->GrayscaleMixerTable = GTK_TABLE(gtk_table_new(3, 3, FALSE));
     gtk_table_attach(table, GTK_WIDGET(data->GrayscaleMixerTable), 0, 2, 6, 7,
-		     GTK_EXPAND|GTK_FILL, 0, 0, 0);
+	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
     for (i = 0; i < 3; ++i) {
         data->GrayscaleMixers[i] = adjustment_scale(
 	    data->GrayscaleMixerTable, 0, i,
@@ -4390,9 +4354,8 @@ static void grayscale_fill_interface(preview_data *data,
     /* End of Grayscale page */
 }
 
-static void basecurve_fill_interface(preview_data *data,
-				     GtkWidget *page,
-				     int curveeditorHeight)
+static void basecurve_fill_interface(preview_data *data, GtkWidget *page,
+	int curveeditorHeight)
 {
     GtkTable *table;
     GtkBox *box;
@@ -4454,9 +4417,8 @@ static void basecurve_fill_interface(preview_data *data,
     /* End of Base Curve page */
 }
 
-static void colormgmt_fill_interface(preview_data *data,
-				     GtkWidget *page,
-				     int plugin)
+static void colormgmt_fill_interface(preview_data *data, GtkWidget *page,
+	int plugin)
 {
     GtkTable *table;
     GtkWidget *button;
@@ -4525,7 +4487,7 @@ static void colormgmt_fill_interface(preview_data *data,
     gtk_combo_box_append_text(combo, _("Saturation"));
     gtk_combo_box_append_text(combo, _("Absolute colorimetric"));
     uf_combo_box_set_data(GTK_COMBO_BOX(combo),
-	    (int*)&CFG->intent[out_profile]);
+	    (int *)&CFG->intent[out_profile]);
     g_signal_connect_after(G_OBJECT(combo), "changed",
 	    G_CALLBACK(combo_update_simple), NULL);
     gtk_table_attach(table, GTK_WIDGET(combo), 3, 8, 6, 7, GTK_FILL, 0, 0, 0);
@@ -4552,16 +4514,15 @@ static void colormgmt_fill_interface(preview_data *data,
     gtk_combo_box_append_text(combo, _("Absolute colorimetric"));
     gtk_combo_box_append_text(combo, _("Disable soft proofing"));
     uf_combo_box_set_data(GTK_COMBO_BOX(combo),
-	    (int*)&CFG->intent[display_profile]);
+	    (int *)&CFG->intent[display_profile]);
     g_signal_connect_after(G_OBJECT(combo), "changed",
 	    G_CALLBACK(combo_update_simple), NULL);
     gtk_table_attach(table, GTK_WIDGET(combo), 3, 8, 10, 11, GTK_FILL, 0, 0, 0);
     /* End of Color management page */
 }
 
-static void corrections_fill_interface(preview_data *data,
-				       GtkWidget *page,
-				       int curveeditorHeight)
+static void corrections_fill_interface(preview_data *data, GtkWidget *page,
+	int curveeditorHeight)
 {
     GtkTable *table;
     GtkWidget *button;
@@ -4610,7 +4571,7 @@ static void corrections_fill_interface(preview_data *data,
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
 
     subTable = GTK_TABLE(gtk_table_new(9, 9, FALSE));
-    gtk_table_attach(table, GTK_WIDGET(subTable), 0, 1, 1 , 2,
+    gtk_table_attach(table, GTK_WIDGET(subTable), 0, 1, 1, 2,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
     data->CurveWidget = curveeditor_widget_new(curveeditorHeight, 256,
 	    curve_update, (gpointer)luminosity_curve);
@@ -4629,7 +4590,7 @@ static void corrections_fill_interface(preview_data *data,
     gtk_table_attach(subTable, data->ResetCurveButton, 8, 9, 7, 8, 0, 0, 0, 0);
 
     data->BlackLabel = gtk_label_new(_("Black point: 0.000"));
-#if GTK_CHECK_VERSION(2,6,0)
+#if GTK_CHECK_VERSION(2, 6, 0)
     gtk_misc_set_alignment(GTK_MISC(data->BlackLabel), 0.5, 1.0);
     gtk_label_set_angle(GTK_LABEL(data->BlackLabel), 90);
     gtk_table_attach(subTable, data->BlackLabel, 0, 1, 5, 6,
@@ -4659,8 +4620,7 @@ static void corrections_fill_interface(preview_data *data,
     /* End of Corrections page */
 }
 
-static void transformations_fill_interface(preview_data *data,
-					   GtkWidget *page)
+static void transformations_fill_interface(preview_data *data, GtkWidget *page)
 {
     GtkTable *table;
     GtkWidget *button;
@@ -4739,20 +4699,19 @@ static void transformations_fill_interface(preview_data *data,
     gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
 
     entry = gtk_combo_box_entry_new_text();
-    data->AspectEntry = GTK_ENTRY (GTK_BIN (entry)->child);
-    gtk_entry_set_width_chars (data->AspectEntry, 6);
-    gtk_entry_set_alignment (data->AspectEntry, 0.5);
-    gtk_table_attach(table, GTK_WIDGET (entry), 1, 2, 0, 1, 0, 0, 5, 0);
+    data->AspectEntry = GTK_ENTRY(GTK_BIN(entry)->child);
+    gtk_entry_set_width_chars(data->AspectEntry, 6);
+    gtk_entry_set_alignment(data->AspectEntry, 0.5);
+    gtk_table_attach(table, GTK_WIDGET(entry), 1, 2, 0, 1, 0, 0, 5, 0);
     uf_widget_set_tooltip(GTK_WIDGET(data->AspectEntry),
 	    _("Crop area aspect ratio.\n"
 	      "Can be entered in decimal notation (1.273)\n"
 	      "or as a ratio of two numbers (14:11)"));
 
     size_t s;
-    for (s = 0; s < sizeof (predef_aspects) / sizeof (predef_aspects [0]); s++)
-    {
-	gtk_combo_box_append_text (GTK_COMBO_BOX(entry),
-				   predef_aspects [s].text);
+    for (s = 0; s < sizeof(predef_aspects) / sizeof(predef_aspects[0]); s++) {
+	gtk_combo_box_append_text(GTK_COMBO_BOX(entry),
+		predef_aspects[s].text);
     }
 
     g_signal_connect(G_OBJECT(entry), "changed",
@@ -4762,16 +4721,17 @@ static void transformations_fill_interface(preview_data *data,
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), CFG->LockAspect);
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
 	    "object-lock", GTK_ICON_SIZE_BUTTON));
-    //gtk_box_pack_start (hbox, button, FALSE, FALSE, 0);
+    //gtk_box_pack_start(hbox, button, FALSE, FALSE, 0);
     gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
     uf_widget_set_tooltip(button, _("Lock aspect ratio"));
     g_signal_connect(G_OBJECT(button), "clicked",
-		     G_CALLBACK(lock_aspect), 0);
+	    G_CALLBACK(lock_aspect), 0);
     data->LockAspectButton = GTK_TOGGLE_BUTTON(button);
 
     /* Get initial aspect ratio */
-    data->AspectRatio = ((float)data->UF->rotatedWidth) / data->UF->rotatedHeight;
-    refresh_aspect (data);
+    data->AspectRatio = ((float)data->UF->rotatedWidth) /
+	    data->UF->rotatedHeight;
+    refresh_aspect(data);
 
     /* Size/shrink controls */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
@@ -4828,20 +4788,24 @@ static void transformations_fill_interface(preview_data *data,
     label = gtk_label_new(_("Orientation:"));
     gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
 
-    button = stock_image_button("object-rotate-right", GTK_ICON_SIZE_LARGE_TOOLBAR,
-				NULL, G_CALLBACK(flip_image), (gpointer)6);
+    button = stock_image_button("object-rotate-right",
+	    GTK_ICON_SIZE_LARGE_TOOLBAR, NULL,
+	    G_CALLBACK(flip_image), (gpointer)6);
     gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
 
-    button = stock_image_button("object-rotate-left", GTK_ICON_SIZE_LARGE_TOOLBAR,
-				NULL, G_CALLBACK(flip_image), (gpointer)5);
+    button = stock_image_button("object-rotate-left",
+	    GTK_ICON_SIZE_LARGE_TOOLBAR, NULL,
+	    G_CALLBACK(flip_image), (gpointer)5);
     gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
 
-    button = stock_image_button("object-flip-horizontal", GTK_ICON_SIZE_LARGE_TOOLBAR,
-				NULL, G_CALLBACK(flip_image), (gpointer)1);
+    button = stock_image_button("object-flip-horizontal",
+	    GTK_ICON_SIZE_LARGE_TOOLBAR, NULL,
+	    G_CALLBACK(flip_image), (gpointer)1);
     gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
 
-    button = stock_image_button("object-flip-vertical", GTK_ICON_SIZE_LARGE_TOOLBAR,
-				NULL, G_CALLBACK(flip_image), (gpointer)2);
+    button = stock_image_button("object-flip-vertical",
+	    GTK_ICON_SIZE_LARGE_TOOLBAR, NULL,
+	    G_CALLBACK(flip_image), (gpointer)2);
     gtk_table_attach(table, button, 4, 5, 0, 1, 0, 0, 0, 0);
 
     /* Rotation controls */
@@ -4909,7 +4873,7 @@ static void save_fill_interface(preview_data *data,
 	gtk_box_pack_start(GTK_BOX(hBox), label, FALSE, FALSE, 0);
 	data->OutFileEntry = GTK_ENTRY(gtk_entry_new());
         char *basename = g_path_get_basename(CFG->outputFilename);
-        char *basename_dn = g_filename_display_name (basename);
+        char *basename_dn = g_filename_display_name(basename);
         gtk_entry_set_text(data->OutFileEntry, basename_dn);
         g_free(basename_dn);
 	g_free(basename);
@@ -5041,31 +5005,31 @@ static void exif_fill_interface(preview_data *data,
     gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(vBox));
 
     GtkListStore *store;
-    store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+    store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 
     align = gtk_scrolled_window_new(NULL, NULL);
-    gtk_box_pack_start(GTK_BOX (vBox), align, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(vBox), align, TRUE, TRUE, 0);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(align),
 	    GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-    GtkWidget *treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
-    gtk_tree_view_set_search_column (GTK_TREE_VIEW (treeview), 0);
-    gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (treeview), TRUE);
+    GtkWidget *treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+    gtk_tree_view_set_search_column(GTK_TREE_VIEW(treeview), 0);
+    gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
     // does not work???
-    gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (treeview), FALSE);
-    g_object_unref (store);
+    gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(treeview), FALSE);
+    g_object_unref(store);
 
-    gtk_container_add(GTK_CONTAINER (align), treeview);
+    gtk_container_add(GTK_CONTAINER(align), treeview);
 
-    GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes (
-	    _("Tag"), gtk_cell_renderer_text_new (), "text", 0, NULL);
-    gtk_tree_view_column_set_sort_column_id (column, 0);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), column);
+    GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes(
+	    _("Tag"), gtk_cell_renderer_text_new(), "text", 0, NULL);
+    gtk_tree_view_column_set_sort_column_id(column, 0);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
-    column = gtk_tree_view_column_new_with_attributes (
-	    _("Value"), gtk_cell_renderer_text_new (), "text", 1, NULL);
-    gtk_tree_view_column_set_sort_column_id (column, 1);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), column);
+    column = gtk_tree_view_column_new_with_attributes(
+	    _("Value"), gtk_cell_renderer_text_new(), "text", 1, NULL);
+    gtk_tree_view_column_set_sort_column_id(column, 1);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
     // Fill table with EXIF tags
     list_store_add(store, _("Camera maker"), CFG->make);
@@ -5081,19 +5045,19 @@ static void exif_fill_interface(preview_data *data,
     list_store_add(store, _("White balance"), CFG->whiteBalanceText);
 
     label = gtk_label_new(NULL);
-    gchar *message = g_strdup_printf (_("EXIF data read by %s"), CFG->exifSource);
+    gchar *message = g_strdup_printf(_("EXIF data read by %s"),
+	    CFG->exifSource);
     gtk_label_set_markup(GTK_LABEL(label), message);
-    gtk_box_pack_start(GTK_BOX (vBox), label, FALSE, FALSE, 0);
-    g_free (message);
+    gtk_box_pack_start(GTK_BOX(vBox), label, FALSE, FALSE, 0);
+    g_free(message);
 
-    if (uf->inputExifBuf==NULL)
-    {
+    if (uf->inputExifBuf==NULL) {
 	label = gtk_label_new(NULL);
 	char *text = g_strdup_printf("<span foreground='red'>%s</span>",
 			_("Warning: EXIF data will not be sent to output"));
 	gtk_label_set_markup(GTK_LABEL(label), text);
 	g_free(text);
-	gtk_box_pack_start(GTK_BOX (vBox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vBox), label, FALSE, FALSE, 0);
     }
     /* End of EXIF page */
 }
@@ -5113,7 +5077,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     preview_data *data = &PreviewData;
 
     /* Fill the whole structure with zeros, to avoid surprises */
-    memset (&PreviewData, 0, sizeof (PreviewData));
+    memset(&PreviewData, 0, sizeof(PreviewData));
 
     data->UF = uf;
     data->SaveFunc = save_func;
@@ -5149,11 +5113,11 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     g_signal_connect(G_OBJECT(previewWindow), "delete-event",
 	    G_CALLBACK(window_delete_event), NULL);
     g_signal_connect(G_OBJECT(previewWindow), "map-event",
-		     G_CALLBACK(window_map_event), NULL);
+	    G_CALLBACK(window_map_event), NULL);
     g_signal_connect(G_OBJECT(previewWindow), "unmap-event",
-		     G_CALLBACK(window_unmap_event), NULL);
+	    G_CALLBACK(window_unmap_event), NULL);
     g_signal_connect(G_OBJECT(previewWindow), "key-press-event",
-		     G_CALLBACK(control_button_key_press_event), data);
+	    G_CALLBACK(control_button_key_press_event), data);
     g_object_set_data(G_OBJECT(previewWindow), "Preview-Data", data);
     ufraw_focus(previewWindow, TRUE);
     uf->widget = previewWindow;
@@ -5244,9 +5208,10 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     g_signal_connect(G_OBJECT(data->AutoExposureButton), "clicked",
 	    G_CALLBACK(button_update), NULL);
 
-    data->ResetExposureButton = reset_button(
-	_("Reset exposure to default"), G_CALLBACK(button_update), NULL);
-    gtk_table_attach(table, data->ResetExposureButton, 10, 11, 0, 1, 0,0,0,0);
+    data->ResetExposureButton = reset_button(_("Reset exposure to default"),
+	    G_CALLBACK(button_update), NULL);
+    gtk_table_attach(table, data->ResetExposureButton, 10, 11, 0, 1,
+	    0, 0, 0, 0);
 
     GtkNotebook *notebook = GTK_NOTEBOOK(gtk_notebook_new());
     g_signal_connect(G_OBJECT(notebook), "switch-page",
@@ -5268,7 +5233,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 #ifdef HAVE_LENSFUN
     /* Lens correction page */
     page = notebook_page_new(notebook, _("Lens correction"), "lens");
-    lens_fill_interface (data, page);
+    lens_fill_interface(data, page);
 #endif /* HAVE_LENSFUN */
 
     page = notebook_page_new(notebook, _("Base curve"), "base-curve");
@@ -5290,7 +5255,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     data->PageNumCrop = gtk_notebook_page_num(notebook, page);
     transformations_fill_interface(data, page);
 
-    if ( plugin==0  || plugin==3 ) {
+    if ( plugin==0 || plugin==3 ) {
 	page = notebook_page_new(notebook, _("Save"), GTK_STOCK_SAVE_AS);
 	save_fill_interface(data, page, plugin);
     }
@@ -5479,7 +5444,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     // and processes the event queue.
     preview_progress(previewWindow, _("Loading preview"), 0.2);
 #ifdef HAVE_GTKIMAGEVIEW
-#if !GTK_CHECK_VERSION(2,8,0)
+#if !GTK_CHECK_VERSION(2, 8, 0)
     /* There is a bug that causes the mouse location to be misplaced
      * in the event-box. The following voodoo seems to fix the mapping. */
     gtk_widget_set_size_request(scroll, preview_width+1, preview_height+1);
