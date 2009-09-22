@@ -466,7 +466,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     uf->conf->timestamp = raw->timestamp;
 
     if ( !uf->conf->rotate ) {
-	uf->conf->orientation = 1;
+	uf->conf->orientation = 0;
 	uf->conf->rotationAngle = 0;
     } else {
 	if ( !uf->LoadingID || uf->conf->orientation<0 )
