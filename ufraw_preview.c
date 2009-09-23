@@ -939,7 +939,7 @@ static gboolean render_raw_histogram(preview_data *data)
     /* Prepare pen color, which is not effected by exposure.
      * Use a small value to avoid highlights and then normalize. */
     /* we use the developer for our own purpose so enable WB */
-    data->UF->developer->doWB++;
+    Developer->doWB++;
     for (c=0; c<colors; c++) {
 	for (cl=0; cl<colors; cl++) p16[cl] = 0;
 	p16[c] = Developer->max * 0x08000 / Developer->rgbWB[c] *
@@ -971,7 +971,7 @@ static gboolean render_raw_histogram(preview_data *data)
 		    (hisHeight-1) / MAXOUT;
 	}
     }
-    data->UF->developer->doWB--;
+    Developer->doWB--;
     for (x=0; x<raw_his_size; x++) {
 	/* draw the raw histogram */
 	for (c=0, y0=0; c<colors; c++) {
@@ -2578,7 +2578,7 @@ static void button_update(GtkWidget *button, gpointer user_data)
 	CFG->green = data->initialGreen;
 	for (c=0; c<4; c++) CFG->chanMul[c] = data->initialChanMul[c];
 
-	UFRawPhase phase = Developer!=NULL && Developer->doWB ?
+	UFRawPhase phase = Developer->doWB ?
 		ufraw_develop_phase : ufraw_first_phase;
 	for (; phase < ufraw_phases_num; phase++)
 	    data->UF->Images[phase].valid = 0;

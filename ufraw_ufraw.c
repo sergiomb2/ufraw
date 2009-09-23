@@ -1385,7 +1385,7 @@ int ufraw_set_wb(ufraw_data *uf)
     double rgbWB[3];
     int status, c, cc, i;
 
-    UFRawPhase phase = uf->developer!=NULL && uf->developer->doWB ?
+    UFRawPhase phase = uf->developer->doWB ?
 	    ufraw_develop_phase : ufraw_first_phase;
     for (; phase < ufraw_phases_num; phase++)
 	uf->Images[phase].valid = 0;
