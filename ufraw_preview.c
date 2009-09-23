@@ -35,7 +35,7 @@
 #include <gtkimageview/gtkimagescrollwin.h>
 #include <gtkimageview/gtkimageview.h>
 #endif
-#if GTK_CHECK_VERSION(2, 6, 0)
+#if GTK_CHECK_VERSION(2,6,0)
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
 
@@ -145,7 +145,7 @@ static void load_curve(GtkWidget *widget, long curveType)
 	    GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL));
     ufraw_focus(fileChooser, TRUE);
     gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
-#if GTK_CHECK_VERSION(2, 6, 0)
+#if GTK_CHECK_VERSION(2,6,0)
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
     GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
@@ -247,7 +247,7 @@ static void save_curve(GtkWidget *widget, long curveType)
 	    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 	    GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL));
     ufraw_focus(fileChooser, TRUE);
-#if GTK_CHECK_VERSION(2, 6, 0)
+#if GTK_CHECK_VERSION(2,6,0)
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
     GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
@@ -330,7 +330,7 @@ static void load_profile(GtkWidget *widget, long type)
 	    GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL));
     ufraw_focus(fileChooser, TRUE);
     gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
-#if GTK_CHECK_VERSION(2, 6, 0)
+#if GTK_CHECK_VERSION(2,6,0)
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
     GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
@@ -4134,7 +4134,7 @@ static void whitebalance_fill_interface(preview_data *data,
 	g_signal_connect(G_OBJECT(data->ChannelAdjustment[i]), "value-changed",
 		G_CALLBACK(adjustment_update), &CFG->chanMul[i]);
     }
-    /* Interpolation is temporeraly in the WB page */
+    /* Interpolation is temporarily in the WB page */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 //    box = GTK_BOX(gtk_hbox_new(FALSE, 6));
 //    gtk_table_attach(table, GTK_WIDGET(box), 0, 1, 0, 1,
@@ -4189,7 +4189,7 @@ static void whitebalance_fill_interface(preview_data *data,
     if ( !data->UF->HaveFilters )
 	gtk_widget_set_sensitive(button, FALSE);
 
-    /* Denoising is temporeraly in the WB page */
+    /* Denoising is temporarily in the WB page */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     data->ThresholdAdjustment = adjustment_scale(table, 0, 0, _("Denoise"),
 	    CFG->threshold, &CFG->threshold, 0.0, 1000.0, 10, 50, 0,
@@ -4590,7 +4590,7 @@ static void corrections_fill_interface(preview_data *data, GtkWidget *page,
     gtk_table_attach(subTable, data->ResetCurveButton, 8, 9, 7, 8, 0, 0, 0, 0);
 
     data->BlackLabel = gtk_label_new(_("Black point: 0.000"));
-#if GTK_CHECK_VERSION(2, 6, 0)
+#if GTK_CHECK_VERSION(2,6,0)
     gtk_misc_set_alignment(GTK_MISC(data->BlackLabel), 0.5, 1.0);
     gtk_label_set_angle(GTK_LABEL(data->BlackLabel), 90);
     gtk_table_attach(subTable, data->BlackLabel, 0, 1, 5, 6,
@@ -5444,7 +5444,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     // and processes the event queue.
     preview_progress(previewWindow, _("Loading preview"), 0.2);
 #ifdef HAVE_GTKIMAGEVIEW
-#if !GTK_CHECK_VERSION(2, 8, 0)
+#if !GTK_CHECK_VERSION(2,8,0)
     /* There is a bug that causes the mouse location to be misplaced
      * in the event-box. The following voodoo seems to fix the mapping. */
     gtk_widget_set_size_request(scroll, preview_width+1, preview_height+1);
