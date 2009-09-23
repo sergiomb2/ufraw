@@ -11,8 +11,8 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.430 $
-   $Date: 2009/09/19 05:00:03 $
+   $Revision: 1.431 $
+   $Date: 2009/09/22 16:06:07 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -59,7 +59,7 @@ extern "C" {
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 #endif
 /*fseeko() is handled by the configuration system - NKBJ*/
-//#if defined(DJGPP) || defined(__MINGW32__)
+//#ifdef DJGPP
 //#define fseeko fseek
 //#define ftello ftell
 //#else
@@ -330,7 +330,7 @@ void CLASS derror()
       dcraw_message (DCRAW_WARNING,_("Corrupt data near 0x%lx\n"), ftell(ifp));
 #endif
   }
-  data_error = 1;
+  data_error++;
 }
 
 ushort CLASS sget2 (uchar *s)
@@ -7390,6 +7390,8 @@ konica_400z:
       maximum = 0x3df;
       order = 0x4d4d;
     }
+  } else if (!strcmp(model,"*ist D")) {
+    data_error = -1;
   } else if (!strcmp(model,"*ist DS")) {
     height -= 2;
   } else if (!strcmp(model,"K20D")) {
