@@ -211,7 +211,7 @@ void ufraw_write_image_data(
     int rowStride = uf->image.width;
     image_type *rawImage = uf->image.image;
     int byteDepth = (bitDepth+7)/8;
-    guint8 pixbuf8[rowStride * 3 * byteDepth * DEVELOP_BATCH];
+    guint8 pixbuf8[width * 3 * byteDepth * DEVELOP_BATCH];
 
     if (uf->conf->rotationAngle != 0) {
 	// Buffer for unrotated image.
