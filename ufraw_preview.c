@@ -2576,8 +2576,7 @@ static void button_update(GtkWidget *button, gpointer user_data)
 
 	UFRawPhase phase = Developer->doWB ?
 		ufraw_develop_phase : ufraw_first_phase;
-	for (; phase < ufraw_phases_num; phase++)
-	    data->UF->Images[phase].valid = 0;
+    	preview_invalidate_layer(data, phase);
     }
     if (button==data->ResetGammaButton) {
 	CFG->profile[0][CFG->profileIndex[0]].gamma =
@@ -2749,8 +2748,9 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	if ( valuep==&CFG->overExp || valuep==&CFG->underExp ) {
 	    start_blink(data);
 	    switch_highlights(data);
-	} else {
-            preview_invalidate_layer(data, ufraw_develop_phase);
+	} else if ( valuep==&CFG->smoothing ) {
+	    if (!Developer->doWB) // !doWB means do interpolate
+        	preview_invalidate_layer(data, ufraw_first_phase);
 	    render_preview(data);
 	}
     }
@@ -3127,15 +3127,18 @@ static void combo_update(GtkWidget *combo, gint *valuep)
     update_scales(data);
 }
 
-static void combo_update_simple(GtkWidget *combo, gpointer user_data)
+static void combo_update_simple(GtkWidget *combo, UFRawPhase phase)
 {
-    (void)user_data;
     preview_data *data = get_preview_data(combo);
     if (data->FreezeDialog) return;
 
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
-    preview_invalidate_layer(data, ufraw_develop_phase);
+
+    if (phase==ufraw_first_phase && Developer->doWB)
+	// doWB means don't interpolate
+	phase = ufraw_develop_phase;
+    preview_invalidate_layer(data, phase);
     update_scales(data);
 }
 
@@ -4165,6 +4168,8 @@ static void whitebalance_fill_interface(preview_data *data,
 	    (void*)none_interpolation);
 #endif
 	uf_combo_box_set_data(combo, &CFG->interpolation);
+	g_signal_connect_after(G_OBJECT(combo), "changed",
+		G_CALLBACK(combo_update_simple), (gpointer)ufraw_first_phase);
     } else {
 	gtk_combo_box_append_text(combo, _("No Bayer pattern"));
 	gtk_combo_box_set_active(combo, 0);
@@ -4451,7 +4456,7 @@ static void colormgmt_fill_interface(preview_data *data, GtkWidget *page,
 	    }
 	uf_combo_box_set_data(data->ProfileCombo[j], &CFG->profileIndex[j]);
 	g_signal_connect_after(G_OBJECT(data->ProfileCombo[j]), "changed",
-		G_CALLBACK(combo_update_simple), NULL);
+		G_CALLBACK(combo_update_simple), (gpointer)ufraw_develop_phase);
 	gtk_table_attach(table, GTK_WIDGET(data->ProfileCombo[j]),
 		1, 8, 4*j+1, 4*j+2, GTK_FILL, GTK_FILL, 0, 0);
 	button = stock_icon_button(GTK_STOCK_OPEN, NULL,
@@ -4485,7 +4490,7 @@ static void colormgmt_fill_interface(preview_data *data, GtkWidget *page,
     uf_combo_box_set_data(GTK_COMBO_BOX(combo),
 	    (int *)&CFG->intent[out_profile]);
     g_signal_connect_after(G_OBJECT(combo), "changed",
-	    G_CALLBACK(combo_update_simple), NULL);
+	    G_CALLBACK(combo_update_simple), (gpointer)ufraw_develop_phase);
     gtk_table_attach(table, GTK_WIDGET(combo), 3, 8, 6, 7, GTK_FILL, 0, 0, 0);
 
     label = gtk_label_new(_("Output bit depth"));
@@ -4497,7 +4502,7 @@ static void colormgmt_fill_interface(preview_data *data, GtkWidget *page,
     uf_combo_box_set_data(GTK_COMBO_BOX(data->BitDepthCombo),
 	&CFG->profile[out_profile][CFG->profileIndex[out_profile]].BitDepth);
     g_signal_connect_after(G_OBJECT(data->BitDepthCombo), "changed",
-	    G_CALLBACK(combo_update_simple), NULL);
+	    G_CALLBACK(combo_update_simple), (gpointer)ufraw_develop_phase);
     gtk_table_attach(table, GTK_WIDGET(data->BitDepthCombo), 4, 5, 7, 8,
 	    0, 0, 0, 0);
 
@@ -4512,7 +4517,7 @@ static void colormgmt_fill_interface(preview_data *data, GtkWidget *page,
     uf_combo_box_set_data(GTK_COMBO_BOX(combo),
 	    (int *)&CFG->intent[display_profile]);
     g_signal_connect_after(G_OBJECT(combo), "changed",
-	    G_CALLBACK(combo_update_simple), NULL);
+	    G_CALLBACK(combo_update_simple), (gpointer)ufraw_develop_phase);
     gtk_table_attach(table, GTK_WIDGET(combo), 3, 8, 10, 11, GTK_FILL, 0, 0, 0);
     /* End of Color management page */
 }
