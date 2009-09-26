@@ -581,8 +581,8 @@ static void image_draw_area(preview_data *data, int x, int y,
  * This approach makes computing width/height just a matter of
  * substracting X1 from X2 or Y1 from Y2.
  */
-static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
-                                  int x, int y, int width, int height)
+static void preview_draw_area(preview_data *data,
+	int x, int y, int width, int height)
 {
     int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
     if ( y<0 || y>=pixbufHeight )
@@ -627,6 +627,9 @@ static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
     int SpotX1 = floor(MIN(data->SpotX1, data->SpotX2) * scale_x);
     int SpotX2 =  ceil(MAX(data->SpotX1, data->SpotX2) * scale_x);
     int xx, yy, c;
+
+    ufraw_image_data *img = ufraw_convert_get_final_image(data->UF);
+
     for (yy=y; yy<y+height; yy++) {
 	p8 = pixies+yy*rowstride+x*3;
 	memcpy(p8, img->buffer + yy*img->rowstride + x*img->depth,
@@ -687,14 +690,6 @@ static void preview_draw_img_area(preview_data *data, ufraw_image_data *img,
 #endif
     /* Redraw the changed areas */
     image_draw_area(data, x, y, width, height);
-}
-
-static void preview_draw_area(preview_data *data, int x, int y,
-                              int width, int height)
-{
-    preview_draw_img_area(
-        data, ufraw_convert_image_area(data->UF, -1, ufraw_phases_num - 1),
-        x, y, width, height);
 }
 
 static gboolean switch_highlights(gpointer ptr)
@@ -1008,13 +1003,12 @@ static int choose_subarea(preview_data *data, int *chosen)
 #ifdef HAVE_GTKIMAGEVIEW
     int max_area = -1;
     int i, x, y, w, h;
-    ufraw_image_data *img;
 
     /* First of all, find the maximally visible yet unrendered subarea.
      * Refreshing visible subareas in the first place improves visual
      * feedback and overall user experience.
      */
-    img = ufraw_convert_image_area(data->UF, -1, ufraw_phases_num - 1);
+    ufraw_image_data *img = ufraw_convert_get_final_image(data->UF);
 
     GdkRectangle viewport;
     gtk_image_view_get_viewport(
@@ -1083,7 +1077,6 @@ static gboolean render_preview_image(preview_data *data)
 {
     gboolean again = FALSE;
     int chosen = 0;
-    int subarea;
 
     if (data->FreezeDialog) return FALSE;
 
@@ -1096,8 +1089,11 @@ static gboolean render_preview_image(preview_data *data)
         return FALSE;
 
 #ifdef _OPENMP
-#pragma omp parallel shared(chosen,data) private(subarea) reduction(||:again)
+#pragma omp parallel shared(chosen,data) reduction(||:again)
     {
+#endif
+    int subarea;
+#ifdef _OPENMP
 #pragma omp critical
 #endif
     subarea = choose_subarea(data, &chosen);
@@ -1110,7 +1106,7 @@ static gboolean render_preview_image(preview_data *data)
 	if (img1) {
 	    int x, y, w, h;
 	    ufraw_img_get_subarea_coord(img1, subarea, &x, &y, &w, &h);
-	    preview_draw_img_area(data, img1, x, y, w, h);
+	    preview_draw_area(data, x, y, w, h);
 	    again = TRUE;
 	}
     }

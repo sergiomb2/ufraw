@@ -313,7 +313,9 @@ int ufraw_convert_image(ufraw_data *uf);
 int ufraw_convert_image_init(ufraw_data *uf);
 int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix);
 int ufraw_convert_image_init_phase(ufraw_data *uf);
-ufraw_image_data *ufraw_convert_image_area (ufraw_data *uf, int saidx, UFRawPhase phase);
+ufraw_image_data *ufraw_convert_get_final_image(ufraw_data *uf);
+ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
+	UFRawPhase phase);
 void ufraw_close(ufraw_data *uf);
 void ufraw_flip_orientation(ufraw_data *uf, int flip);
 int ufraw_flip_image(ufraw_data *uf, int flip);

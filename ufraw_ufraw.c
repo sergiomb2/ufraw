@@ -1103,25 +1103,33 @@ int ufraw_convert_image_init_phase(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
-ufraw_image_data *ufraw_convert_image_area (
-    ufraw_data *uf, int saidx, UFRawPhase phase)
+ufraw_image_data *ufraw_convert_get_final_image(ufraw_data *uf)
+{
+#ifdef HAVE_LENSFUN
+    if (uf->modifier &&
+	(uf->postproc_ops & (LF_MODIFY_TCA | LF_MODIFY_DISTORTION |
+			     LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)))
+	return &uf->Images[ufraw_lensfun_phase];
+#endif /* HAVE_LENSFUN */
+    return &uf->Images[ufraw_develop_phase];
+}
+
+ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
+	UFRawPhase phase)
 {
     int x = 0, y = 0, w = 0, h = 0;
     ufraw_image_data *out = &uf->Images [phase];
 
-    if (saidx >= 0)
-    {
-        if (out->valid & (1 << saidx))
-            return out; // the subarea has been already computed
-
-        /* Get subarea coordinates */
-        ufraw_img_get_subarea_coord (out, saidx, &x, &y, &w, &h);
-    }
+    if (out->valid & (1 << saidx))
+        return out; // the subarea has been already computed
 
     /* Get the subarea image for previous phase */
     ufraw_image_data *in = (phase > ufraw_first_phase) ?
         ufraw_convert_image_area (uf, saidx, phase - 1) :
         &uf->Images [ufraw_first_phase];
+
+    /* Get subarea coordinates */
+    ufraw_img_get_subarea_coord(out, saidx, &x, &y, &w, &h);
 
     switch (phase)
     {
@@ -1130,9 +1138,6 @@ ufraw_image_data *ufraw_convert_image_area (
                 if (uf->conf->threshold == 0)
                     // No denoise phase, return the image from previous phase
                     return in;
-
-                if (saidx < 0)
-                    return out;
 
                 dcraw_image_data tmp;
                 /* With shrink==2 the border should be 16 pixels */
@@ -1170,9 +1175,6 @@ ufraw_image_data *ufraw_convert_image_area (
 
         case ufraw_develop_phase:
             {
-                if (saidx < 0)
-                    return out;
-
                 int yy;
                 for (yy = y; yy < y + h; yy++)
                 {
@@ -1206,9 +1208,6 @@ ufraw_image_data *ufraw_convert_image_area (
                                           LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)))
                     return in;
 
-                if (saidx < 0)
-                    return out;
-
                 int yy;
                 float *buff = g_new (float, (w < 8) ? 8 * 2 * 3 : w * 2 * 3);
 
@@ -1233,7 +1232,7 @@ ufraw_image_data *ufraw_convert_image_area (
                 for (yy = 0; yy < 8 * 2 * 3; yy += 2)
                 {
                     int idx = ufraw_img_get_subarea_idx (in, buff [yy], buff [yy + 1]);
-                    if (idx >= 0 && idx <= 31)
+                    if (idx <= 31)
                         ufraw_convert_image_area (uf, idx, phase - 1);
                 }
 
