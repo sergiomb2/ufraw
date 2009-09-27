@@ -745,7 +745,6 @@ int ufraw_convert_image(ufraw_data *uf)
     ufraw_convert_image_init(uf);
     ufraw_convert_image_first_phase(uf, TRUE);
     if (uf->ConvertShrink>1) {
-	dcraw_data *raw = uf->raw;
 	dcraw_image_data final;
 	final.height = uf->image.height;
 	final.width = uf->image.width;
@@ -753,7 +752,7 @@ int ufraw_convert_image(ufraw_data *uf)
 	/* Scale threshold according to shrink factor, as the effect of
 	 * neighbouring pixels decays about exponentially with distance. */
 	float threshold = uf->conf->threshold * exp(-(uf->ConvertShrink/2.0-1));
-	dcraw_wavelet_denoise_shrinked(&final, raw, threshold);
+	dcraw_wavelet_denoise_shrinked(&final, threshold);
     }
     return UFRAW_SUCCESS;
 }
@@ -936,7 +935,6 @@ no_distortion:
  * ufraw_convert_image_area() */
 int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
 {
-    int status;
     dcraw_data *raw = uf->raw;
     // final->image memory will be realloc'd as needed
     dcraw_image_data final;
@@ -949,11 +947,21 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
 	dcraw_finalize_shrink(&final, raw, dark, uf->ConvertShrink);
 	uf->developer->doWB = 1;
     } else {
-	if ( (status=dcraw_wavelet_denoise(raw,
-		uf->conf->threshold))!=DCRAW_SUCCESS )
-	    return status;
-	dcraw_finalize_interpolate(&final, raw, dark, uf->conf->interpolation,
-		uf->conf->smoothing, uf->developer->rgbWB);
+	if (uf->conf->threshold>0) {
+	    dcraw_image_type *tmp = raw->raw.image;
+	    raw->raw.image = g_memdup(tmp, raw->raw.height * raw->raw.width *
+		    sizeof (dcraw_image_type));
+	    dcraw_wavelet_denoise(raw, uf->conf->threshold);
+	    dcraw_finalize_interpolate(&final, raw, dark,
+		uf->conf->interpolation, uf->conf->smoothing,
+		uf->developer->rgbWB);
+	    g_free(raw->raw.image);
+	    raw->raw.image = tmp;
+	} else {
+	    dcraw_finalize_interpolate(&final, raw, dark,
+		uf->conf->interpolation, uf->conf->smoothing,
+		uf->developer->rgbWB);
+	}
 	uf->developer->doWB = 0;
     }
 
@@ -1024,6 +1032,12 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
     return UFRAW_SUCCESS;
 }
 
+static gboolean ufraw_do_denoise_phase(ufraw_data *uf)
+{
+    // !doWB means denoise was done in first phase
+    return uf->conf->threshold>0 && uf->developer->doWB;
+}
+
 int ufraw_convert_image_init_phase(ufraw_data *uf)
 {
     ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
@@ -1031,8 +1045,7 @@ int ufraw_convert_image_init_phase(ufraw_data *uf)
 
     /* Denoise image layer */
     img = &uf->Images[ufraw_denoise_phase];
-    if (uf->conf->threshold > 0)
-    {
+    if (ufraw_do_denoise_phase(uf)) {
         /* Mark layer invalid if we're resizing */
         if (img->height != FirstImage->height ||
             img->width != FirstImage->width ||
@@ -1135,7 +1148,7 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
     {
         case ufraw_denoise_phase:
             {
-                if (uf->conf->threshold == 0)
+		if (!ufraw_do_denoise_phase(uf))
                     // No denoise phase, return the image from previous phase
                     return in;
 
@@ -1165,7 +1178,7 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
                 /* Scale threshold according to shrink factor, as the effect of
                  * neighbouring pixels decays about exponentially with distance. */
                 float threshold = uf->conf->threshold * exp(1.0 - uf->ConvertShrink / 2.0);
-                dcraw_wavelet_denoise_shrinked (&tmp, uf->raw, threshold);
+                dcraw_wavelet_denoise_shrinked(&tmp, threshold);
                 for (yy = 0; yy < h; yy++)
                     memcpy (out->buffer + ((y + yy) * out->width + x) * out->depth,
                             tmp.image [(yy + y - by) * tmp.width + x - bx], w * out->depth);
@@ -1365,7 +1378,7 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
     ufraw_flip_orientation(uf, flip);
 
     ufraw_flip_image_buffer(&uf->Images[ufraw_first_phase], flip);
-    if ( uf->conf->threshold>0 )
+    if (ufraw_do_denoise_phase(uf))
 	ufraw_flip_image_buffer(&uf->Images[ufraw_denoise_phase], flip);
     ufraw_flip_image_buffer(&uf->Images[ufraw_develop_phase], flip);
 #ifdef HAVE_LENSFUN

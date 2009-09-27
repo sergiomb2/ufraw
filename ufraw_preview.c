@@ -823,6 +823,9 @@ static void render_init(preview_data *data)
 
 void preview_invalidate_layer(preview_data *data, UFRawPhase phase)
 {
+    if (phase==ufraw_denoise_phase && !Developer->doWB)
+	// !doWB means denoise should be done in first phase
+	phase = ufraw_first_phase;
     for (; phase < ufraw_phases_num; phase++)
 	data->UF->Images[phase].valid = 0;
 }
@@ -1873,7 +1876,7 @@ static void create_base_image(preview_data *data)
 	CFG->size = 0;
 	CFG->shrink = CFG->Scale;
     }
-    preview_invalidate_layer(data, ufraw_denoise_phase);
+    preview_invalidate_layer(data, ufraw_first_phase);
     ufraw_developer_prepare(data->UF, display_developer);
     ufraw_convert_image_init(data->UF);
     ufraw_convert_image_first_phase(data->UF, FALSE);
@@ -2596,6 +2599,7 @@ static void button_update(GtkWidget *button, gpointer user_data)
     }
     if (button==data->ResetThresholdButton) {
 	CFG->threshold = conf_default.threshold;
+	preview_invalidate_layer(data, ufraw_denoise_phase);
     }
 #ifdef UFRAW_CONTRAST
     if (button==data->ResetContrastButton) {
@@ -2830,7 +2834,7 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
 	CFG->Scale = 0;
 	preview_invalidate_layer(data, ufraw_first_phase);
     } else if (valuep==&CFG->threshold) {
-	preview_invalidate_layer (data, ufraw_denoise_phase);
+	preview_invalidate_layer(data, ufraw_denoise_phase);
     } else {
         if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
         if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;

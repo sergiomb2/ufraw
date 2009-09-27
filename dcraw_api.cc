@@ -37,8 +37,8 @@ extern "C" {
 int fc_INDI (const unsigned filters, const int row, const int col);
 void wavelet_denoise_INDI(gushort (*image)[4], const int black,
     const int iheight, const int iwidth, const int height, const int width,
-    const int colors, const int shrink, float pre_mul[4],
-    const float threshold, const unsigned filters, void *dcraw);
+    const int colors, const int shrink, const float pre_mul[4],
+    const float threshold, const unsigned filters);
 void scale_colors_INDI(gushort (*image)[4], const int maximum, const int black,
     const int use_auto_wb, const int use_camera_wb, const float cam_mul[4],
     const unsigned iheight, const unsigned iwidth, const int colors,
@@ -508,33 +508,19 @@ int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB)
     return d->lastStatus;
 }
 
-int dcraw_wavelet_denoise(dcraw_data *h, float threshold)
+void dcraw_wavelet_denoise(dcraw_data *h, float threshold)
 {
-    DCRaw *d = (DCRaw *)h->dcraw;
-    g_free(d->messageBuffer);
-    d->messageBuffer = NULL;
-    d->lastStatus = DCRAW_SUCCESS;
-    memcpy(h->post_mul, h->pre_mul, sizeof h->post_mul);
     if (threshold)
 	wavelet_denoise_INDI(h->raw.image, h->black, h->raw.height,
 		h->raw.width, h->height, h->width, h->raw.colors, h->shrink,
-		h->post_mul, threshold, h->filters, d);
-    h->message = d->messageBuffer;
-    return d->lastStatus;
+		h->pre_mul, threshold, h->filters);
 }
 
-int dcraw_wavelet_denoise_shrinked(dcraw_image_data *f,
-	dcraw_data *h, float threshold)
+void dcraw_wavelet_denoise_shrinked(dcraw_image_data *f, float threshold)
 {
-    DCRaw *d = (DCRaw *)h->dcraw;
-    g_free(d->messageBuffer);
-    d->messageBuffer = NULL;
-    d->lastStatus = DCRAW_SUCCESS;
     if (threshold)
 	wavelet_denoise_INDI(f->image, 0, f->height, f->width, 0, 0, 4, 0,
-		NULL, threshold, 0, d);
-    h->message = d->messageBuffer;
-    return d->lastStatus;
+		NULL, threshold, 0);
 }
 
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,

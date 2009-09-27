@@ -15,7 +15,7 @@
 
 #define raw_his_size 320
 #define live_his_size 256
-#define min_scale 2
+#define min_scale 1
 #define max_scale 20
 
 typedef struct {

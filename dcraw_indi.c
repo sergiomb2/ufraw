@@ -114,8 +114,8 @@ static void CLASS hat_transform (float *temp, float *base, int st, int size, int
 
 void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
        const int iheight, const int iwidth, const int height, const int width,
-       const int colors, const int shrink, float pre_mul[4],
-       const float threshold, const unsigned filters, void *dcraw)
+       const int colors, const int shrink, const float pre_mul[4],
+       const float threshold, const unsigned filters)
 {
   float *fimg=0, /* *temp,*/ thold, mul[2], avg, diff;
   int /*scale=1,*/ size, lev, hpass, lpass, row, col, nc, c, i, wlast;
@@ -123,7 +123,6 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
   static const float noise[] =
   { 0.8002,0.2735,0.1202,0.0585,0.0291,0.0152,0.0080,0.0044 };
 
-    (void)dcraw;
 //  dcraw_message (dcraw, DCRAW_VERBOSE,_("Wavelet denoising...\n")); /*UF*/
 
 /* Scaling is done somewhere else - NKBJ*/
