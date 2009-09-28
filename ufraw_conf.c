@@ -1553,7 +1553,7 @@ N_("--maximize-window     Force window to be maximized.\n"),
 N_("--silent              Do not display any messages during batch conversion.\n"),
 "\n",
 N_("UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
-"Then, if an ID file is specified it setting are read. Next, the setting from\n"
+"Then, if an ID file is specified, its setting are read. Next, the setting from\n"
 "the --conf option are taken, ignoring input/output filenames in the ID file.\n"
 "Lastly, the options from the command line are set. In batch mode, the second\n"
 "group of options is NOT read from the resource file.\n"),
