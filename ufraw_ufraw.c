@@ -704,31 +704,25 @@ void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode)
 int ufraw_convert_image_init(ufraw_data *uf)
 {
     dcraw_data *raw = uf->raw;
-    int temp_height, temp_width;
-    // This code is copied from dcraw_image_dimensions().
-    if (raw->pixel_aspect < 1)
-	temp_height = (int)(raw->raw.height / raw->pixel_aspect + 0.5);
-    else
-	temp_height = raw->raw.height;
-    if (raw->pixel_aspect > 1)
-	temp_width = (int)(raw->raw.width * raw->pixel_aspect + 0.5);
-    else
-	temp_width = raw->raw.width;
 
     uf->ConvertShrink = 1;
     /* We can do a simple interpolation in the following cases:
      * We shrink by an integer value.
      * If pixel_aspect<1 (e.g. NIKON D1X) shrink must be at least 4. */
-    if (uf->conf->size==0 && uf->conf->shrink>1)
-	uf->ConvertShrink = uf->conf->shrink * raw->pixel_aspect;
-    else if (uf->conf->interpolation==half_interpolation)
+    if (uf->conf->size==0 && uf->conf->shrink>1) {
+	double pixel_aspect = MIN(raw->pixel_aspect, 1/raw->pixel_aspect);
+	uf->ConvertShrink = uf->conf->shrink * pixel_aspect;
+    } else if (uf->conf->interpolation==half_interpolation) {
 	uf->ConvertShrink = 2;
     /* Wanted size is smaller than raw size (size is after a raw->shrink)
      * (assuming there are filters). */
-    else if ( uf->conf->size>0 && uf->HaveFilters &&
-	      uf->conf->size<=MAX(temp_height, temp_width) )
-	uf->ConvertShrink = 2;
-
+    } else if (uf->conf->size>0 && uf->HaveFilters) {
+	int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
+	int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
+	int cropSize = MAX(cropHeight, cropWidth);
+	if (cropSize/uf->conf->size >= 2)
+	    uf->ConvertShrink = 2;
+    }
     return UFRAW_SUCCESS;
 }
 
@@ -1043,7 +1037,7 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
 	} else {
 	    /* uf->conf->size holds the size of the cropped image.
 	     * We need to calculate from it the desired size of
-	     * th uncropped image. */
+	     * the uncropped image. */
 	    int finalSize = uf->ConvertShrink * MAX(final.height, final.width);
 	    uf->ConvertShrink = cropSize / uf->conf->size;
 	    dcraw_image_resize(&final, uf->conf->size * finalSize / cropSize);
