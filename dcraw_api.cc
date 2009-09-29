@@ -357,7 +357,7 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
 		    for (ci=0; ci<scale; ci++) {
 			cl = fc_INDI(f4, r*scale+ri, c*scale+ci);
 			sum[cl] += get_pixel(hh, dark,
-				r*scale+ri, c*scale+ci, cl, pixels);
+				(r*scale+ri)/2, (c*scale+ci)/2, cl, pixels);
 			count[cl]++;
 		    }
 		for (cl=0; cl<hh->raw.colors; cl++)
@@ -368,10 +368,10 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
 	    }
 	}
     } else {
-	if (hh->filters!=0) scale /= 2;
 	/* I'm skiping the last row/column if it is not a full row/column */
-	f->height = h = hh->raw.height / scale;
-	f->width = w = hh->raw.width / scale;
+	f->height = h = hh->height / scale;
+	f->width = w = hh->width / scale;
+	if (hh->filters!=0) scale /= 2;
 	fujiWidth = ( (hh->fuji_width+hh->shrink) >> hh->shrink ) / scale;
 	f->image = (dcraw_image_type *)g_realloc(
 			f->image, h * w * sizeof(dcraw_image_type));
