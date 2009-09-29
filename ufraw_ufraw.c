@@ -715,25 +715,20 @@ int ufraw_convert_image_init(ufraw_data *uf)
     else
 	temp_width = raw->raw.width;
 
+    uf->ConvertShrink = 1;
     /* We can do a simple interpolation in the following cases:
      * We shrink by an integer value.
-     * If pixel_aspect<1 (e.g. NIKON D1X) shrink must be at least 4.
-     * Wanted size is smaller than raw size (size is after a raw->shrink).
-     * There are no filters (Foveon). */
-    uf->ConvertShrink = 1;
-    if ( uf->conf->interpolation==half_interpolation ||
-	 ( uf->conf->size==0 && uf->conf->shrink>1 ) ||
-	 ( uf->conf->size>0 &&
-	   uf->conf->size<=MAX(temp_height, temp_width) ) ||
-	 !uf->HaveFilters ) {
-	if (uf->conf->size==0 && uf->conf->shrink>1 &&
-		(int)(uf->conf->shrink*raw->pixel_aspect)%2==0)
-	    uf->ConvertShrink = uf->conf->shrink * raw->pixel_aspect;
-	else if (uf->conf->interpolation==half_interpolation)
-	    uf->ConvertShrink = 2;
-	else if ( uf->HaveFilters)
-	    uf->ConvertShrink = 2;
-    }
+     * If pixel_aspect<1 (e.g. NIKON D1X) shrink must be at least 4. */
+    if (uf->conf->size==0 && uf->conf->shrink>1)
+	uf->ConvertShrink = uf->conf->shrink * raw->pixel_aspect;
+    else if (uf->conf->interpolation==half_interpolation)
+	uf->ConvertShrink = 2;
+    /* Wanted size is smaller than raw size (size is after a raw->shrink)
+     * (assuming there are filters). */
+    else if ( uf->conf->size>0 && uf->HaveFilters &&
+	      uf->conf->size<=MAX(temp_height, temp_width) )
+	uf->ConvertShrink = 2;
+
     return UFRAW_SUCCESS;
 }
 
