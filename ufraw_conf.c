@@ -36,6 +36,9 @@ const conf_data conf_default = {
     6500, 1.0, /* temperature, green */
     { -1.0, -1.0, -1.0, -1.0 }, /* chanMul[] */
     0.0, /* wavelet denoising threshold */
+#ifdef UFRAW_HOTPIXELS
+    0.0, /* hotpixel sensitivity */
+#endif
 #ifdef UFRAW_CONTRAST
     1.0, /* global contrast */
 #endif
@@ -624,6 +627,10 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     }
     if (!strcmp("WaveletDenoisingThreshold", element))
 	sscanf(temp, "%lf", &c->threshold);
+#ifdef UFRAW_HOTPIXELS
+    if (!strcmp("HotpixelSensitivity", element))
+	sscanf(temp, "%lf", &c->hotpixel);
+#endif
 #ifdef UFRAW_CONTRAST
     if (!strcmp("Contrast", element))
         sscanf(temp, "%lf", &c->contrast);
@@ -938,6 +945,12 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 	buf = uf_markup_buf(buf,
 		"<WaveletDenoisingThreshold>%d</WaveletDenoisingThreshold>\n",
 		(int)floor(c->threshold));
+#ifdef UFRAW_HOTPIXELS
+    if (c->hotpixel!=conf_default.hotpixel)
+	buf = uf_markup_buf(buf,
+		"<HotpixelSensitivity>%f</HotpixelSensitivity>\n",
+		c->hotpixel);
+#endif
 #ifdef UFRAW_CONTRAST
     if (c->contrast!=conf_default.contrast)
         buf = uf_markup_buf(buf,
@@ -1209,6 +1222,9 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     g_strlcpy(dst->model, src->model, max_name);
     dst->threshold = src->threshold;
     dst->exposure = src->exposure;
+#ifdef UFRAW_HOTPIXELS
+    dst->hotpixel = src->hotpixel;
+#endif
 #ifdef UFRAW_CONTRAST
     dst->contrast = src->contrast;
 #endif
@@ -1385,6 +1401,9 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 	conf->autoExposure = cmd->autoExposure;
     }
     if (cmd->threshold!=NULLF) conf->threshold = cmd->threshold;
+#ifdef UFRAW_HOTPIXELS
+    if (cmd->hotpixel!=NULLF) conf->hotpixel = cmd->hotpixel;
+#endif
 #ifdef UFRAW_CONTRAST
     if (cmd->contrast!=NULLF) conf->contrast = cmd->contrast;
 #endif
@@ -1515,6 +1534,10 @@ N_("--contrast=CONT       Contrast adjustment (default 1.0).\n"),
 N_("--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"),
 N_("--wavelet-denoising-threshold=THRESHOLD\n"
 "                      Wavelet denoising threshold (default 0.0).\n"),
+#ifdef UFRAW_HOTPIXELS
+N_("--hotpixel-sensitivity=VALUE\n"
+"                      Sensitivity for detecting and shaving hot pixels (default 0.0).\n"),
+#endif
 N_("--exposure=auto|EXPOSURE\n"
 "                      Auto exposure or exposure correction in EV (default 0).\n"),
 N_("--black-point=auto|BLACK\n"
@@ -1628,6 +1651,9 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{ "gamma", 1, 0, 'G'},
 	{ "linearity", 1, 0, 'L'},
 	{ "saturation", 1, 0, 's'},
+#ifdef UFRAW_HOTPIXELS
+	{ "hotpixel-sensitivity", 1, 0, 'H'},
+#endif
 #ifdef UFRAW_CONTRAST
 	{ "contrast", 1, 0, 'y'},
 #endif
@@ -1672,6 +1698,9 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	&baseCurveName, &baseCurveFile, &curveName, &curveFile,
 	&cmd->profile[0][0].gamma, &cmd->profile[0][0].linear,
 	&cmd->saturation,
+#ifdef UFRAW_HOTPIXELS
+	&cmd->hotpixel,
+#endif
 #ifdef UFRAW_CONTRAST
 	&cmd->contrast,
 #endif
@@ -1693,6 +1722,9 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->silent=FALSE;
     cmd->profile[0][0].gamma=NULLF;
     cmd->profile[0][0].linear=NULLF;
+#ifdef UFRAW_HOTPIXELS
+    cmd->hotpixel=NULLF;
+#endif
 #ifdef UFRAW_CONTRAST
     cmd->contrast=NULLF;
 #endif
@@ -1732,7 +1764,12 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'G':
 	case 'L':
 	case 's':
+#ifdef UFRAW_HOTPIXELS
+	case 'H':
+#endif
+#ifdef UFRAW_CONTRAST
 	case 'y':
+#endif
 	case 'n':
 	    if (sscanf(optarg, "%lf", (double *)optPointer[index])==0) {
 		ufraw_message(UFRAW_ERROR,

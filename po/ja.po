@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-28 17:40-0500\n"
+"POT-Creation-Date: 2009-09-29 18:30+0200\n"
 "PO-Revision-Date: 2009-01-16 23:44+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -303,6 +303,12 @@ msgid ""
 msgstr ""
 "--wavelet-denoising-threshold=しきい値\n"
 "                      Waveletノイズ除去のしきい値 (デフォルト 0.0).\n"
+
+msgid ""
+"--hotpixel-sensitivity=VALUE\n"
+"                      Sensitivity for detecting and shaving hot pixels "
+"(default 0.0).\n"
+msgstr ""
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -865,6 +871,15 @@ msgstr "直線"
 
 msgid "Logarithmic"
 msgstr "対数"
+
+msgid "Hot pixels: "
+msgstr ""
+
+msgid "Hot pixel sensitivity"
+msgstr ""
+
+msgid "Reset hot pixel sensitivity"
+msgstr ""
 
 msgid "RGB histogram"
 msgstr "RGBヒストグラム"

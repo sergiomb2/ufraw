@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-28 17:40-0500\n"
+"POT-Creation-Date: 2009-09-29 18:30+0200\n"
 "PO-Revision-Date: 2009-09-13 14:34+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -320,6 +320,12 @@ msgid ""
 msgstr ""
 "--wavelet-denoising-threshold=SEUIL\n"
 "                      Seuil débruitage par vaguelette (défaut 0.0).\n"
+
+msgid ""
+"--hotpixel-sensitivity=VALUE\n"
+"                      Sensitivity for detecting and shaving hot pixels "
+"(default 0.0).\n"
+msgstr ""
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -899,6 +905,15 @@ msgstr "Linéaire"
 
 msgid "Logarithmic"
 msgstr "Logarithmique"
+
+msgid "Hot pixels: "
+msgstr ""
+
+msgid "Hot pixel sensitivity"
+msgstr ""
+
+msgid "Reset hot pixel sensitivity"
+msgstr ""
 
 msgid "RGB histogram"
 msgstr "Histogramme RGB"

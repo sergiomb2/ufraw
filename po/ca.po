@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-28 17:40-0500\n"
+"POT-Creation-Date: 2009-09-29 18:30+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -320,6 +320,12 @@ msgstr ""
 "--wavelet-denoising-threshold=LLINDAR\n"
 "                      Llindar del filtre de soroll per ondetes (per omissiót "
 "0.0).\n"
+
+msgid ""
+"--hotpixel-sensitivity=VALUE\n"
+"                      Sensitivity for detecting and shaving hot pixels "
+"(default 0.0).\n"
+msgstr ""
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -903,6 +909,15 @@ msgstr "Lineal"
 
 msgid "Logarithmic"
 msgstr "Logarítmic"
+
+msgid "Hot pixels: "
+msgstr ""
+
+msgid "Hot pixel sensitivity"
+msgstr ""
+
+msgid "Reset hot pixel sensitivity"
+msgstr ""
 
 msgid "RGB histogram"
 msgstr "Histograma RGB"

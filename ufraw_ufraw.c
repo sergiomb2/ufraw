@@ -734,6 +734,9 @@ int ufraw_convert_image_init(ufraw_data *uf)
 
 int ufraw_convert_image(ufraw_data *uf)
 {
+#ifdef UFRAW_HOTPIXELS
+    uf->mark_hotpixels = FALSE;
+#endif
     ufraw_developer_prepare(uf, file_developer);
     ufraw_convert_image_init(uf);
     ufraw_convert_image_first_phase(uf, TRUE);
@@ -925,12 +928,78 @@ no_distortion:
 
 #endif /* HAVE_LENSFUN */
 
+#ifdef UFRAW_HOTPIXELS
+/*
+ * A pixel with a significantly larger value than all of its four direct
+ * neighbours is considered "hot". It will be replaced by the maximum value
+ * of its neighbours. For simplicity border pixels are not considered.
+ *
+ * Reasonable values for uf->conf->hotpixel are in the range 0.5-10.
+ */
+static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
+	int width, int height, int colors, unsigned rgbMax)
+{
+    int w, h, c, i;
+    unsigned delta, t, v, hi;
+    dcraw_image_type *p;
+
+    uf->hotpixels = 0;
+    if (uf->conf->hotpixel <= 0.0)
+	return;
+    delta = rgbMax / (uf->conf->hotpixel + 1.0);
+    for (h = 1; h < height - 1; ++h) {
+	p = img + 1 + h * width;
+	for (w = 1; w < width - 1; ++w, ++p) {
+	    for (c = 0; c < colors; ++c) {
+		t = p[0][c];
+		if (t <= delta)
+		    continue;
+		t -= delta;
+		v = p[-1][c];
+		if (v > t)
+		    continue;
+		hi = v;
+		v = p[1][c];
+		if (v > t)
+		    continue;
+		if (v > hi)
+		    hi = v;
+		v = p[-w][c];
+		if (v > t)
+		    continue;
+		if (v > hi)
+		    hi = v;
+		v = p[w][c];
+		if (v > t)
+		    continue;
+		if (v > hi)
+		    hi = v;
+#if 0
+		if (uf->hotpixels < 100)
+		    printf("%u %u %u: %u->%u\t\n", w, h, c, p[0][c], hi);
+#endif
+		/* mark the pixel using the original hot value */
+		if (uf->mark_hotpixels) {
+		    for (i = -10; i >= -20 && w + i >= 0; --i)
+			memcpy(p[i], p[0], sizeof (p[i]));
+		    for (i = 10; i <= 20 && w + i < width; ++i)
+			memcpy(p[i], p[0], sizeof (p[i]));
+		}
+		p[0][c] = hi;
+		++uf->hotpixels;
+	    }
+	}
+    }
+}
+#endif
+
 /* This is the part of the conversion which is not supported by
  * ufraw_convert_image_area() */
 int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
 {
     ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
     dcraw_data *raw = uf->raw;
+    dcraw_image_type *rawimage;
     // final->image memory will be realloc'd as needed
     dcraw_image_data final;
     final.image = (image_type *)FirstImage->buffer;
@@ -938,27 +1007,25 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
     final.height = FirstImage->height;
     dcraw_data *dark = uf->conf->darkframe ? uf->conf->darkframe->raw : NULL;
 
+    rawimage = raw->raw.image;
+    raw->raw.image = g_memdup(rawimage, raw->raw.height * raw->raw.width *
+	    sizeof (dcraw_image_type));
+#ifdef UFRAW_HOTPIXELS
+    ufraw_shave_hotpixels(uf, raw->raw.image, raw->raw.width, raw->raw.height,
+	    raw->raw.colors, raw->rgbMax);
+#endif
     if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
 	dcraw_finalize_shrink(&final, raw, dark, uf->ConvertShrink);
 	uf->developer->doWB = 1;
     } else {
-	if (uf->conf->threshold>0) {
-	    dcraw_image_type *tmp = raw->raw.image;
-	    raw->raw.image = g_memdup(tmp, raw->raw.height * raw->raw.width *
-		    sizeof (dcraw_image_type));
-	    dcraw_wavelet_denoise(raw, uf->conf->threshold);
-	    dcraw_finalize_interpolate(&final, raw, dark,
-		uf->conf->interpolation, uf->conf->smoothing,
-		uf->developer->rgbWB);
-	    g_free(raw->raw.image);
-	    raw->raw.image = tmp;
-	} else {
-	    dcraw_finalize_interpolate(&final, raw, dark,
-		uf->conf->interpolation, uf->conf->smoothing,
-		uf->developer->rgbWB);
-	}
+	dcraw_wavelet_denoise(raw, uf->conf->threshold);
+	dcraw_finalize_interpolate(&final, raw, dark,
+	    uf->conf->interpolation, uf->conf->smoothing,
+	    uf->developer->rgbWB);
 	uf->developer->doWB = 0;
     }
+    g_free(raw->raw.image);
+    raw->raw.image = rawimage;
 
     dcraw_image_stretch(&final, raw->pixel_aspect);
     if (uf->conf->size==0 && uf->conf->shrink>1) {

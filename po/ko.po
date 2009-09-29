@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-28 17:40-0500\n"
+"POT-Creation-Date: 2009-09-29 18:30+0200\n"
 "PO-Revision-Date: 2008-10-16 16:39+0900\n"
 "Last-Translator: Homin Lee <ff4500@gamil.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -302,6 +302,12 @@ msgid ""
 msgstr ""
 "--wavelet-denoising-threshold=THRESHOLD\n"
 "                      잔 노이즈 제거 임계값 (기본값 0.0).\n"
+
+msgid ""
+"--hotpixel-sensitivity=VALUE\n"
+"                      Sensitivity for detecting and shaving hot pixels "
+"(default 0.0).\n"
+msgstr ""
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -858,6 +864,15 @@ msgstr "선형"
 
 msgid "Logarithmic"
 msgstr "대수"
+
+msgid "Hot pixels: "
+msgstr ""
+
+msgid "Hot pixel sensitivity"
+msgstr ""
+
+msgid "Reset hot pixel sensitivity"
+msgstr ""
 
 msgid "RGB histogram"
 msgstr "RGB 히스토그램"

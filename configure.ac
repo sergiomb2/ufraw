@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.139 2009/09/01 19:13:25 udifuchs Exp $
+dnl $Id: configure.ac,v 1.140 2009/09/29 16:45:35 nkbj Exp $
 AC_INIT(UFRaw, 0.16)
 AC_PREREQ(2.57)
 
@@ -374,6 +374,13 @@ AC_ARG_ENABLE(contrast,
   AC_DEFINE(UFRAW_CONTRAST, 1, Contrast setting option enabled),
   enable_contrast=no)
 AC_MSG_RESULT($enable_contrast)
+
+AC_MSG_CHECKING(whether to enable hot pixel elimination)
+AC_ARG_ENABLE(hotpixels,
+  [  --enable-hotpixels      enable hot pixel elimination],
+  AC_DEFINE(UFRAW_HOTPIXELS, 1, Hot pixel elimination enabled),
+  enable_hotpixels=no)
+AC_MSG_RESULT($enable_hotpixels)
 
 AC_MSG_CHECKING(whether to enable 'None' interpolation)
 AC_ARG_ENABLE(interp_none,

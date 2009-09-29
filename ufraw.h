@@ -166,6 +166,9 @@ typedef struct {
     double temperature, green;
     double chanMul[4];
     double threshold;
+#ifdef UFRAW_HOTPIXELS
+    double hotpixel;
+#endif
 #ifdef UFRAW_CONTRAST
     double contrast;
 #endif
@@ -283,6 +286,10 @@ typedef struct ufraw_struct {
     int postproc_ops; /* postprocessing operations (LF_MODIFY_XXX) */
     lfModifier *modifier;
 #endif /* HAVE_LENSFUN */
+#ifdef UFRAW_HOTPIXELS
+    int hotpixels;
+    gboolean mark_hotpixels;
+#endif
 } ufraw_data;
 
 extern const conf_data conf_default;

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-28 17:40-0500\n"
+"POT-Creation-Date: 2009-09-29 18:30+0200\n"
 "PO-Revision-Date: 2008-12-23 00:00-0500\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -309,6 +309,12 @@ msgstr ""
 "--wavelet-denoising-threshold=VERDI\n"
 "                      Terskel for wavelet støyreduksjon (standardverdi: "
 "0.0).\n"
+
+msgid ""
+"--hotpixel-sensitivity=VALUE\n"
+"                      Sensitivity for detecting and shaving hot pixels "
+"(default 0.0).\n"
+msgstr ""
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -877,6 +883,15 @@ msgstr "Lineær"
 
 msgid "Logarithmic"
 msgstr "Logaritmisk"
+
+msgid "Hot pixels: "
+msgstr ""
+
+msgid "Hot pixel sensitivity"
+msgstr ""
+
+msgid "Reset hot pixel sensitivity"
+msgstr ""
 
 msgid "RGB histogram"
 msgstr "RGB-histogram"
