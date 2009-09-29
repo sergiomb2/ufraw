@@ -219,7 +219,6 @@ ufraw_data *ufraw_open(char *filename)
     uf->unzippedBufLen = unzippedBufLen;
     uf->conf = conf;
     g_strlcpy(uf->filename, filename, max_path);
-    uf->image.image = NULL;
     int i;
     for (i=ufraw_first_phase; i<ufraw_phases_num; i++)
 	uf->Images[i].buffer = NULL;
@@ -644,7 +643,6 @@ void ufraw_close(ufraw_data *uf)
 //    g_free(uf->conf);
     g_free(uf->inputExifBuf);
     g_free(uf->outputExifBuf);
-    g_free(uf->image.image);
     int i;
     for (i=ufraw_first_phase; i<ufraw_phases_num; i++)
 	g_free(uf->Images[i].buffer);
@@ -745,10 +743,11 @@ int ufraw_convert_image(ufraw_data *uf)
     ufraw_convert_image_init(uf);
     ufraw_convert_image_first_phase(uf, TRUE);
     if (uf->ConvertShrink>1) {
+	ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
 	dcraw_image_data final;
-	final.height = uf->image.height;
-	final.width = uf->image.width;
-	final.image = uf->image.image;
+	final.height = FirstImage->height;
+	final.width = FirstImage->width;
+	final.image = (image_type *)FirstImage->buffer;
 	/* Scale threshold according to shrink factor, as the effect of
 	 * neighbouring pixels decays about exponentially with distance. */
 	float threshold = uf->conf->threshold * exp(-(uf->ConvertShrink/2.0-1));
@@ -935,12 +934,13 @@ no_distortion:
  * ufraw_convert_image_area() */
 int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
 {
+    ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
     dcraw_data *raw = uf->raw;
     // final->image memory will be realloc'd as needed
     dcraw_image_data final;
-    final.image = uf->image.image;
-    final.width = uf->image.width;
-    final.height = uf->image.height;
+    final.image = (image_type *)FirstImage->buffer;
+    final.width = FirstImage->width;
+    final.height = FirstImage->height;
     dcraw_data *dark = uf->conf->darkframe ? uf->conf->darkframe->raw : NULL;
 
     if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
@@ -1017,16 +1017,11 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
     (void)lensfix;
 #endif /* HAVE_LENSFUN */
 
-    uf->image.image = final.image;
-    uf->image.height = final.height;
-    uf->image.width = final.width;
-
-    ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
-    FirstImage->height = uf->image.height;
-    FirstImage->width = uf->image.width;
+    FirstImage->height = final.height;
+    FirstImage->width = final.width;
     FirstImage->depth = sizeof(dcraw_image_type);
     FirstImage->rowstride = FirstImage->width * FirstImage->depth;
-    FirstImage->buffer = g_memdup(uf->image.image, FirstImage->height * FirstImage->rowstride);
+    FirstImage->buffer = (guint8 *)final.image;
     FirstImage->valid = 0xffffffff;
 
     return UFRAW_SUCCESS;
@@ -1748,7 +1743,7 @@ void ufraw_auto_curve(ufraw_data *uf)
     }
 }
 
-void ufraw_rotate_row(image_data *image, void *pixbuf, double angle,
+void ufraw_rotate_row(ufraw_image_data *image, void *pixbuf, double angle,
 		      int bitDepth, int row, int offset, int width)
 {
     int col, ur, uc, i, j, in_image;

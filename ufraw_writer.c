@@ -208,16 +208,16 @@ void ufraw_write_image_data(
     int (*row_writer) (ufraw_data *, void * volatile, void *, int, int, int, int, int))
 {
     int row, row0;
-    int rowStride = uf->image.width;
-    image_type *rawImage = uf->image.image;
+    int rowStride = uf->Images[ufraw_first_phase].width;
+    image_type *rawImage = (image_type *)uf->Images[ufraw_first_phase].buffer;
     int byteDepth = (bitDepth+7)/8;
     guint8 pixbuf8[width * 3 * byteDepth * DEVELOP_BATCH];
 
     if (uf->conf->rotationAngle != 0) {
 	// Buffer for unrotated image.
-	image_data image;
-	image.width = uf->image.width;
-	image.height = uf->image.height;
+	ufraw_image_data image;
+	image.width = uf->Images[ufraw_first_phase].width;
+	image.height = uf->Images[ufraw_first_phase].height;
 	image.depth = 6;
 	image.rowstride = image.width * image.depth;
 	image.buffer = g_new(guint8, image.height * image.rowstride);
@@ -374,15 +374,16 @@ int ufraw_write_image(ufraw_data *uf)
     }
     // TODO: error handling
     ufraw_convert_image(uf);
-    left = uf->conf->CropX1 * uf->image.width / uf->initialWidth;
-    top = uf->conf->CropY1 * uf->image.height / uf->initialHeight;
+    ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
+    left = uf->conf->CropX1 * FirstImage->width / uf->initialWidth;
+    top = uf->conf->CropY1 * FirstImage->height / uf->initialHeight;
     volatile int BitDepth = uf->conf->profile[out_profile]
 			[uf->conf->profileIndex[out_profile]].BitDepth;
     if ( BitDepth!=16 ) BitDepth = 8;
     width = (uf->conf->CropX2 - uf->conf->CropX1)
-	    * uf->image.width / uf->initialWidth;
+	    * FirstImage->width / uf->initialWidth;
     height = (uf->conf->CropY2 - uf->conf->CropY1)
-	    * uf->image.height / uf->initialHeight;
+	    * FirstImage->height / uf->initialHeight;
     if ( uf->conf->type==ppm_type && BitDepth==8 ) {
 	fprintf(out, "P%c\n%d %d\n%d\n",
 		grayscaleMode ? '5' : '6', width, height, 0xFF);
@@ -651,8 +652,9 @@ int ufraw_write_image(ufraw_data *uf)
 
 	int row;
 	int i;
-	image_type *rawImage = uf->image.image;
-	int rowStride = uf->image.width;
+	image_type *rawImage =
+		(image_type *)uf->Images[ufraw_first_phase].buffer;
+	int rowStride = uf->Images[ufraw_first_phase].width;
 	guint16 pixbuf16[3];
 
 	for (row=0; row<height; row++) {

@@ -252,13 +252,6 @@ typedef struct {
     long valid;
 } ufraw_image_data;
 
-/* image_data should be phased out and replaced by ufraw_image_data */
-typedef struct {
-    image_type *image;
-    guint8 *buffer;
-    int height, width, depth, rowstride;
-} image_data;
-
 typedef struct ufraw_struct {
     int status;
     char *message;
@@ -269,8 +262,7 @@ typedef struct ufraw_struct {
     float rgb_cam[3][4];
     int ConvertShrink;
     ufraw_image_data Images[ufraw_phases_num];
-    image_data image;
-    image_data thumb;
+    ufraw_image_data thumb;
     void *raw;
     gboolean HaveFilters;
     void *unzippedBuf;
@@ -323,7 +315,7 @@ int ufraw_set_wb(ufraw_data *uf);
 void ufraw_auto_expose(ufraw_data *uf);
 void ufraw_auto_black(ufraw_data *uf);
 void ufraw_auto_curve(ufraw_data *uf);
-void ufraw_rotate_row(image_data *image, void *pixbuf, double angle,
+void ufraw_rotate_row(ufraw_image_data *image, void *pixbuf, double angle,
 		      int bitDepth, int row, int offset, int width);
 void ufraw_rotate_image_buffer(ufraw_image_data *img, double angle);
 void ufraw_normalize_rotation(ufraw_data *uf);
