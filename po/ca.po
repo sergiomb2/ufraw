@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
-"PO-Revision-Date: 2009-01-04 06:00+0100\n"
+"POT-Creation-Date: 2009-09-30 16:55-0500\n"
+"PO-Revision-Date: 2009-09-30 19:24+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
 "MIME-Version: 1.0\n"
@@ -103,7 +103,7 @@ msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (incrustat)"
 
 msgid "System default"
 msgstr "Valor per defecte del sistema"
@@ -127,7 +127,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "Hi ha masses nanses per a la corba '%s'"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "Hi ha massa ajustaments de lluminositat a l'arxiu ID, s'han ignorat\n"
 
 #, c-format
 msgid ""
@@ -326,6 +326,9 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=VALUE\n"
+"                      Sensitivitat per a detectar i eliminar píxels "
+"defectuosos (per omissió 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -352,9 +355,8 @@ msgstr ""
 "                      Algoriisme d'interpolació que es farà servir (per "
 "omissió ahd).\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "Fes que els colors siguin suaus"
+msgstr "--color-smoothing Aplica un suvitzat dels colors.\n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -395,7 +397,6 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALOR   Compressió JPEG (0-100, per omissió 85).\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
 "--[no]exif            Inclou les dades EXIF a la sortida JPEG o PNG (per "
@@ -462,14 +463,13 @@ msgstr ""
 "no).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     Fés que la finestre sigui màxima.\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
 msgstr ""
 "--silent              No mostris cap missatge durant la conversió per lots.\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -769,9 +769,8 @@ msgstr "mida %dx%d, escala 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Punt negre: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "No hi ha espai per a més corbes."
+msgstr "No hi ha espai per a més ajustaments de lluminositat."
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "S'ha produït un error que no es pot recuperar: uf->conf->shrink<1"
@@ -859,12 +858,6 @@ msgstr "Reinicia l'ordre per omissió"
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Indicadors parpallejants de sobre/infraexposició"
 
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
-
 msgid "Configuration"
 msgstr "Configuració"
 
@@ -911,13 +904,13 @@ msgid "Logarithmic"
 msgstr "Logarítmic"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "Píxels defectuosos:"
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "Sensitivitat de píxels defectuosos"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "rwinicia la sensitivitat de píxels defectuosos"
 
 msgid "RGB histogram"
 msgstr "Histograma RGB"
@@ -1031,18 +1024,15 @@ msgstr "Ampliació:"
 msgid "Zoom percentage"
 msgstr "Percentatge del zoom"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "Ajustament global del contrast"
+msgstr "Reinicia l'ajustament"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
 msgstr ""
 "Trieu una zona de la imatge previsualitzada per aplicar l'equilibri de blancs"
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "Ajustament global del contrast"
+msgstr "Suprimeix l'ajust"
 
 msgid "Grayscale Mode:"
 msgstr "Mode escala de grisos:"
@@ -1184,16 +1174,21 @@ msgstr "Amplada"
 msgid "Orientation:"
 msgstr "Orientació:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "Saturació"
+msgstr "Rotació"
 
-#, fuzzy
 msgid "Rotation Angle"
-msgstr "Saturació"
+msgstr "Angle de rotació"
 
 msgid "Reset Rotation Angle"
-msgstr ""
+msgstr "Reinicia l'angle de rotació"
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr "Número de línia d'aliniament"
+
+msgid "Number of alignment lines to overlay over the crop area"
+msgstr "Número de línies d'aliniament per a superposar a l'àrea que es retalla"
 
 msgid "Path"
 msgstr "Ruta"
@@ -1213,9 +1208,8 @@ msgstr "Codificació JPEG progressiva"
 msgid "TIFF lossless Compress"
 msgstr "Compressió TIFF sense pèrdua"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr "Inclou les dades EXIF als fitxers JPEG o PNG"
+msgstr "Inclou les dades EXIF a la sortida"
 
 msgid "Create ID file "
 msgstr "Crea el fitxer de identificació"
@@ -1331,9 +1325,8 @@ msgstr "Gestió del color"
 msgid "Correct luminosity, saturation"
 msgstr "Corregeix la lluminositat, saturació"
 
-#, fuzzy
 msgid "Lightness Adjustments"
-msgstr "Lluminositat"
+msgstr "Ajustaments de lluminositat"
 
 msgid "Crop and rotate"
 msgstr "Retalla i gira"
