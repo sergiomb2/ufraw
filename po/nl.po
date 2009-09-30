@@ -124,7 +124,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "Teveel ankerpunten voor curve '%s'"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr "Te veel lightness aanpassingen in het ID bestand, niet toegepast\n"
+msgstr "Te veel lichtwaarde aanpassingen in het ID bestand, niet toegepast\n"
 
 #, c-format
 msgid ""
@@ -752,7 +752,7 @@ msgid "Black point: %0.3lf"
 msgstr "Zwartpunt: %0.3lf"
 
 msgid "No more room for new lightness adjustments."
-msgstr "Geen ruimte voor nieuwe lightness aanpassingen."
+msgstr "Geen ruimte voor nieuwe lichtwaarde aanpassingen."
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Fatale fout: uf->conf->shrink<1"
@@ -841,10 +841,10 @@ msgid "Blink Over/Underexposure Indicators"
 msgstr "Knipper Over/Onderbelichtings Indicatoren"
 
 msgid "Alignment Line Count"
-msgstr ""
+msgstr "Aantal hulplijnen"
 
 msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
+msgstr "Aantal hulplijnen op het uitsnede gebied"
 
 msgid "Configuration"
 msgstr "Configuratie"
