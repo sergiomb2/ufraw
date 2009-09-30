@@ -151,6 +151,12 @@ try {
 	    != exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->focalLenText, max_name, pos, exifData);
 	uf->conf->focal_len = pos->toFloat ();
+#if EXIV2_TEST_VERSION(0,18,1)
+    } else if ( (pos=exifData.findKey(Exiv2::ExifKey(
+			"Exif.Canon.FocalLength"))) != exifData.end() ) {
+	uf_strlcpy_to_utf8(uf->conf->focalLenText, max_name, pos, exifData);
+	uf->conf->focal_len = pos->toFloat ();
+#endif
     }
     /* Read focal length in 35mm equivalent */
     if ( (pos=exifData.findKey(Exiv2::ExifKey(
