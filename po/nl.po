@@ -3,19 +3,20 @@
 # Copyright (C) 2006-2008 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 #
-# Simon Oosthoek <simon@margo.student.utwente.nl>, 2008.
+# Simon Oosthoek <simon@margo.student.utwente.nl>, 2008, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-09-29 18:30+0200\n"
-"PO-Revision-Date: 2008-12-23 00:00-0600\n"
-"Last-Translator: Simon Oosthoek <simon@margo.student.utwente.nl>\n"
-"Language-Team: Nederlands <en@li.org>\n"
+"PO-Revision-Date: 2009-09-30 13:16+0200\n"
+"Last-Translator: \n"
+"Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11.4\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
@@ -103,7 +104,7 @@ msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (embedded)"
 
 msgid "System default"
 msgstr "Systeem standaardwaarde"
@@ -123,7 +124,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "Teveel ankerpunten voor curve '%s'"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "Te veel lightness aanpassingen in het ID bestand, niet toegepast\n"
 
 #, c-format
 msgid ""
@@ -319,6 +320,9 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=VALUE\n"
+"                      Gevoeligheid voor waarnemen en afvlakken van hot-pixels"
+"(standaard 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -343,9 +347,8 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolatie algoritme (standaard: ahd).\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "Pas kleur vereffening toe"
+msgstr "--color-smoothing     Pas kleur vereffening toe\n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -385,10 +388,9 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=WAARDE  JPEG compressie (0-100, standaard 85).\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
-"--[no]exif            Embed EXIF in output JPEG of PNG (standaard embed "
+"--[no]exif            Embed EXIF in output (standaard embed "
 "EXIF).\n"
 
 msgid ""
@@ -448,14 +450,13 @@ msgstr ""
 "(standaard: wel vragen).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     Forceer schermvullend venster.\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
 msgstr ""
 "--silent              Geef geen berichten weer tijdens batch conversie.\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -472,7 +473,7 @@ msgstr ""
 "Daarna worden de instellingen uit de --conf optie genomen, waarbij de input/"
 "output\n"
 "bestandsnamen in het ID bestand genegeerd worden.\n"
-"Als laatste worden de opties van de commandoregel toegevoegd. In batch "
+"Als laatste worden de opties van de commandoregel gezet. In batch "
 "modus\n"
 "worden opties uit de tweede groep NIET gelezen uit het configuratiebestand.\n"
 
@@ -750,9 +751,8 @@ msgstr "afmeting %dx%d, schaal 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Zwartpunt: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "Geen ruimte voor nieuwe curves."
+msgstr "Geen ruimte voor nieuwe lightness aanpassingen."
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Fatale fout: uf->conf->shrink<1"
@@ -893,13 +893,13 @@ msgid "Logarithmic"
 msgstr "Logaritmisch"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "Hot pixels: "
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "Hot pixel gevoeligheid"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "Reset hot pixel gevoeligheid"
 
 msgid "RGB histogram"
 msgstr "RGB histogram"
@@ -1012,17 +1012,14 @@ msgstr "Zoom:"
 msgid "Zoom percentage"
 msgstr "Zoom percentage"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "Globale contrast aanpassing"
+msgstr "Reset aanpassing"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
-msgstr "Selecteer een plek in het voorbeeld voor \"spot\" witbalans"
+msgstr "Selecteer een plek in het voorbeeld voor tint selectie"
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "Globale contrast aanpassing"
+msgstr "Verwijder aanpassing"
 
 msgid "Grayscale Mode:"
 msgstr "Grijsschaal algoritme:"
@@ -1164,16 +1161,14 @@ msgstr "Breedte"
 msgid "Orientation:"
 msgstr "Orientatie:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "Verzadiging"
+msgstr "Rotatie"
 
-#, fuzzy
 msgid "Rotation Angle"
-msgstr "Verzadiging"
+msgstr "Rotatiehoek"
 
 msgid "Reset Rotation Angle"
-msgstr ""
+msgstr "Reset Rotatiehoek"
 
 msgid "Path"
 msgstr "Pad "
@@ -1193,9 +1188,8 @@ msgstr "JPEG progressieve codering"
 msgid "TIFF lossless Compress"
 msgstr "TIFF lossless Compressie"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr "Embed EXIF data in JPEG of PNG bestanden"
+msgstr "Embed EXIF data in uitvoerbestanden"
 
 msgid "Create ID file "
 msgstr "Maak ID bestand "
@@ -1311,9 +1305,8 @@ msgstr "Kleur management"
 msgid "Correct luminosity, saturation"
 msgstr "Corrigeer helderheid, verzadiging"
 
-#, fuzzy
 msgid "Lightness Adjustments"
-msgstr "Lichtheid"
+msgstr "Lightness Aanpassing"
 
 msgid "Crop and rotate"
 msgstr "Uitsnijden en roteren"
