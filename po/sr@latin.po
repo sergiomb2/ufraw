@@ -1,17 +1,17 @@
 # Serbian translation of UFRaw
-# Courtesy of Prevod.org team (http://prevod.org/) -- 2006, 2007, 2008.
+# Courtesy of Prevod.org team (http://prevod.org/) -- 2008, 2009.
 #
-# This file is distributed under the same license as the UFRaw package.
+# This file is distributed under the same license as the ufraw package.
 #
 # Miloš Popović <gpopac@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw\n"
+"Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
-"PO-Revision-Date: 2009-01-04 06:00+0100\n"
+"POT-Creation-Date: 2009-09-30 11:14-0500\n"
+"PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
-"Language-Team: Serbian <gnom@prevod.org>\n"
+"Language-Team: Serbian <gnome@prevod.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -103,7 +103,7 @@ msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (umetniti)"
 
 msgid "System default"
 msgstr "Podrazumevano u sistemu"
@@ -125,7 +125,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "Previše veza za krivu „%s“"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "Previše podešavanja za osvetnjenost u IB datotecu, zanemarujem\n"
 
 #, c-format
 msgid ""
@@ -328,6 +328,9 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=VREDNOST\n"
+"                      Osetljivost pri traženju i čuvanju pregorelih piksela "
+"(podrazumevano je 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -353,9 +356,8 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algoritam za interpolaciju(podrazumevani je ahd).\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "Primeni prelaz između boja"
+msgstr "--color-smoothing     Primenjuje uglađivanje boja.\n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -399,11 +401,10 @@ msgstr ""
 "--compression=Vrednost\n"
 "                      JPEG kompresija (0-100, podrazumevano je 85).\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
-"--[no]exif            Umetanje EXIF podataka u izlazni JPEG ili PNG\n"
-"                      (podrazumevano umeće EXIF).\n"
+"--[no]exif            Umeće EXIF u razvijenu sliku (podrazumevano umeće "
+"EXIF).\n"
 
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
@@ -464,14 +465,13 @@ msgstr ""
 "podrazumevano).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     Pokreće program u uvećanom prozor.\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
 msgstr "--silent              Ne prikazuje nikakve poruke u paketnom režimu.\n"
 
 # Šta je zapravo second group of options?
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -482,11 +482,12 @@ msgid ""
 "second\n"
 "group of options is NOT read from the resource file.\n"
 msgstr ""
-"NLRaw najpre čita podešavanja iz $HOME/.ufrawrc datoteke. Nakon toga,\n"
-"ukoliko je zadata IB datoteka, čita ta podešavanja. Slede podešavanja data\n"
-"kroz --conf mogućnost, zanemarujući izlazne/izlazne nazive datoteka u IB\n"
-"datoteci. Na kraju se postavljaju mogućnosti iz komandne linije. U paketnom\n"
-"režimu druga grupa mogućnosti se NE čita iz datoteke.\n"
+"NLRaw najpre čita podešavanja iz $HOME/.ufrawrc datoteke. \n"
+"Nakon toga, ukoliko je zadata IB datoteka, čita ta podešavanja.\n"
+"Slede podešavanja data kroz --conf opciju, zanemarujući \n"
+"ulazne/izlazne nazive datoteka iz IB datoteke.\n"
+"Na kraju se postavljaju opcije iz komandne linije. U paketnom\n"
+"režimu druga grupa opcija se NE čita iz datoteke.\n"
 
 msgid ""
 "Last, but not least, --version displays the version number and compilation\n"
@@ -716,7 +717,7 @@ msgid "Channel Mixer"
 msgstr "Mikser kanala"
 
 msgid "No more room for new curves."
-msgstr "Nema prostora za nove krive."
+msgstr "Nema mesta za nove krive."
 
 msgid "Load curve"
 msgstr "Učitaj krivu"
@@ -760,9 +761,8 @@ msgstr "veličina %dx%d, u razmeri 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Crna tačka: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "Nema prostora za nove krive."
+msgstr "Nema mesta za nova podešavanja osvetljenja."
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Koban greška: uf->conf->shrink<1"
@@ -851,10 +851,10 @@ msgid "Blink Over/Underexposure Indicators"
 msgstr "Trepteći indikatori pre/podeksponiranih delova"
 
 msgid "Alignment Line Count"
-msgstr ""
+msgstr "Broj linija za poravnanje"
 
 msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
+msgstr "Broj linija za poravnanje prikazanih iznad oblasti za isecanje"
 
 msgid "Configuration"
 msgstr "Podešavanje"
@@ -903,13 +903,13 @@ msgid "Logarithmic"
 msgstr "Logaritamski"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "Pregoreli pikseli:"
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "Osetljivost na pregorevanje"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "Vraća osetljivost za pregorele piksele"
 
 msgid "RGB histogram"
 msgstr "RGB histogram"
@@ -970,7 +970,7 @@ msgstr "Zelena komponenta"
 
 msgid "Select a spot on the preview image to apply spot white balance"
 msgstr ""
-"Izaberite tačku na pregledu slike na osnovi koje se primenjuje ravnoteža bele"
+"Izaberite tačku u pregledu slike na osnovu koje se primenjuje ravnoteža bele"
 
 msgid "Chan. multipliers:"
 msgstr "Množioci kanala:"
@@ -1000,7 +1000,7 @@ msgid "No Bayer pattern"
 msgstr "Ne postoji Bajerova mustra"
 
 msgid "Apply color smoothing"
-msgstr "Primeni prelaz između boja"
+msgstr "Primeljuje uglađivanje boja"
 
 msgid "Denoise"
 msgstr "Uklanjanje šuma"
@@ -1023,18 +1023,14 @@ msgstr "Uvećanje:"
 msgid "Zoom percentage"
 msgstr "Uvećanje u procentima"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "Globalno podešavanje kontrasta"
+msgstr "Poništi podešavanja"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
-msgstr ""
-"Izaberite tačku na pregledu slike na osnovi koje se primenjuje ravnoteža bele"
+msgstr "Izaberite tačku u pregledu slike na osnovi koje se primenjuje nijansa"
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "Globalno podešavanje kontrasta"
+msgstr "Ukloni podešavanje"
 
 msgid "Grayscale Mode:"
 msgstr "Režim sivih tonova:"
@@ -1176,16 +1172,14 @@ msgstr "Širina"
 msgid "Orientation:"
 msgstr "Okretanje:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "Zasićenost"
+msgstr "Rotacija"
 
-#, fuzzy
 msgid "Rotation Angle"
-msgstr "Zasićenost"
+msgstr "Ugao rotacije"
 
 msgid "Reset Rotation Angle"
-msgstr ""
+msgstr "Poništi ugao rotacije"
 
 msgid "Path"
 msgstr "Putanja"
@@ -1205,9 +1199,8 @@ msgstr "Progresivno JPEG kodiranje"
 msgid "TIFF lossless Compress"
 msgstr "TIFF kompresija bez gubitka"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr "Umetni EXIF podatke u JPEG ili PNG datoteke"
+msgstr "Umetni EXIF podatke u razvijenu sliku"
 
 msgid "Create ID file "
 msgstr "Napravi IB datoteku "
@@ -1323,9 +1316,8 @@ msgstr "Upravljanje bojama"
 msgid "Correct luminosity, saturation"
 msgstr "Ispravka luminanse i zasićenosti"
 
-#, fuzzy
 msgid "Lightness Adjustments"
-msgstr "Osvetljenost"
+msgstr "Podešavanje osvetljenosti"
 
 msgid "Crop and rotate"
 msgstr "Isecanje i rotiranje"
@@ -1666,3 +1658,9 @@ msgstr "Ravnoteža bele iz kamere"
 
 msgid "Auto WB"
 msgstr "Sam odredi ravnotežu bele"
+
+#~ msgid "Loading image"
+#~ msgstr "Učitavam sliku"
+
+#~ msgid "--rotate option is valid only in batch mode"
+#~ msgstr "--rotate mogućnost se koristi samo u paketnom režimu"
