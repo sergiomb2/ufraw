@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
-"PO-Revision-Date: 2009-01-04 06:00+0100\n"
+"POT-Creation-Date: 2009-09-30 11:14-0500\n"
+"PO-Revision-Date: 2009-09-30 14:48+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
 "MIME-Version: 1.0\n"
@@ -50,7 +50,7 @@ msgstr "opcja --silent dzia³a tylko w trybie batch"
 
 msgid "Extracting embedded image is not supported in interactive mode"
 msgstr ""
-"Ekstrakcja do³±czonego obrazu nie jest obs³ugiwana w trybie interaktywnym"
+"Ekstrakcja do³±czonego zdjêcia nie jest obs³ugiwana w trybie interaktywnym"
 
 msgid "Raw images"
 msgstr "Zdjêcia RAW"
@@ -104,7 +104,7 @@ msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (do³±czony)"
 
 msgid "System default"
 msgstr "Domy¶lny systemowy"
@@ -124,7 +124,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "Za du¿o wêz³ów krzywej '%s'"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "Za du¿o poprawek jasno¶ci w pliku ID, zignorowano\n"
 
 #, c-format
 msgid ""
@@ -185,7 +185,7 @@ msgid ""
 msgstr ""
 "Domy¶lnie 'ufraw' wy¶wietla okno podgl±du dla ka¿dego pliku raw "
 "umo¿liwiaj±c\n"
-"u¿ytkownikowi dopasowanie parametrów obrazu przez zapisaniem. Je¿eli nie "
+"u¿ytkownikowi dopasowanie parametrów zdjêcia przez zapisaniem. Je¿eli nie "
 "podano\n"
 "plików RAW w linii poleceñ, UFRaw wy¶wietli okno wyboru pliku. Aby "
 "przetwarzaæ\n"
@@ -197,7 +197,7 @@ msgid ""
 "One can also use an ID file with the option:\n"
 msgstr ""
 "Plikami wej¶ciowymi mog± byæ albo pliki RAW albo pliki ID ufrawa. Pliki ID\n"
-"zawieraj± nazwê pliku RAW i parametry obróbki obrazu.\n"
+"zawieraj± nazwê pliku RAW i parametry obróbki zdjêcia.\n"
 "Mo¿na tak¿e u¿yæ pliku ID z opcj±:\n"
 
 msgid ""
@@ -209,7 +209,7 @@ msgid "The rest of the options are separated into two groups.\n"
 msgstr "Pozosta³e opcje podzielone s± na dwie grupy.\n"
 
 msgid "The options which are related to the image manipulation are:\n"
-msgstr "Opcje zwi±zane z parametrami obrazu:\n"
+msgstr "Opcje zwi±zane z parametrami manipulacj± zdjêciem:\n"
 
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr "--wb=camera|auto      Ustawienie balansu bieli.\n"
@@ -316,6 +316,9 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=WARTOSC\n"
+"                      Czu³o¶æ wykrywania i usuwania hot pikseli (domy¶lnie "
+"0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -341,9 +344,8 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Stosowany algorytm interpolacji (domy¶lnie ahd).\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "Zastosuj wyg³adzanie kolorów"
+msgstr "--color-smoothing     Zastosuj wyg³adzanie kolorów.\n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -357,7 +359,8 @@ msgid "The options which are related to the final output are:\n"
 msgstr "Opcje zwi±zane z plikiem wynikowym:\n"
 
 msgid "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
-msgstr "--shrink=FACTOR       Zmniejszenie obrazu FACTOR razy (domy¶lnie 1).\n"
+msgstr ""
+"--shrink=FACTOR       Zmniejszenie zdjêcia FACTOR razy (domy¶lnie 1).\n"
 
 msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
 msgstr "--size=SIZE           Zmniejsz max(szeroko¶æ,wysoko¶æ) do SIZE.\n"
@@ -382,11 +385,10 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   Kompresja JPEG (0-100, domyslnie 85).\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
-"--[no]exif            Do³±cz EXIF do wyj¶ciowego pliku JPEG lub PNG "
-"(domy¶lnie - do³±cz).\n"
+"--[no]exif            Do³±cz EXIF do wyj¶ciowego pliku (domy¶lnie - "
+"do³±cz).\n"
 
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
@@ -399,8 +401,8 @@ msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"
 msgstr ""
-"--embedded-image      Zapisz obraz podgl±du za³±czony w pliku RAW\n"
-"                      zamiast konwertowaæ obraz RAW.\n"
+"--embedded-image      Zapisz zdjêcie do³±czone do pliku RAW\n"
+"                      zamiast konwertowaæ RAW.\n"
 
 msgid ""
 "--rotate=camera|ANGLE|no\n"
@@ -443,7 +445,7 @@ msgstr ""
 "--overwrite           Nadpisz istniej±ce pliki bez pytania (domy¶lnie nie).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     Wymu¶ maksymalizacjê okna.\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -451,7 +453,6 @@ msgstr ""
 "--silent              Nie wy¶wietlaj ¿adnych komunikatów w trakcie "
 "konwersji.\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -566,11 +567,11 @@ msgstr "'%s' nie jest poprawnym typem pliku wyj¶ciowego."
 #, c-format
 msgid "'%s' is not a valid output type for embedded image."
 msgstr ""
-"'%s' nie jest poprawnym typem pliku wyj¶ciowego dla do³±czonego obrazu."
+"'%s' nie jest poprawnym typem pliku wyj¶ciowego dla do³±czonego zdjêcia."
 
 #, c-format
 msgid "'%d' is not a valid bit depth for embedded image."
-msgstr "'%d' nie jest poprawn± ilo¶ci± bitów dla do³±czonego obrazu."
+msgstr "'%d' nie jest poprawn± ilo¶ci± bitów dla do³±czonego zdjêcia."
 
 #, c-format
 msgid "'%s' is not a valid rotate option."
@@ -612,10 +613,10 @@ msgid "Error deleting '%s'"
 msgstr "B³ad usuwania '%s'"
 
 msgid "Reading embedded image requires libjpeg."
-msgstr "Odczyt do³±czonego obrazu wymaga biblioteki libjpeg."
+msgstr "Odczyt do³±czonego zdjêcia wymaga biblioteki libjpeg."
 
 msgid "No embedded image found"
-msgstr "Nie znaleziono do³±czonego obrazu."
+msgstr "Nie znaleziono do³±czonego zdjêcia."
 
 #, c-format
 msgid "Original size (%d) is smaller than the requested size (%d)"
@@ -643,7 +644,7 @@ msgstr ""
 "%s"
 
 msgid "No embedded image read"
-msgstr "Nie odczytano do³±czonego obrazu."
+msgstr "Nie odczytano do³±czonego zdjêcia."
 
 #, c-format
 msgid "Error creating file '%s'. Unknown file type %d."
@@ -659,7 +660,7 @@ msgstr "B³±d zapisu '%s'"
 
 #, c-format
 msgid "Unsupported output type (%d) for embedded image"
-msgstr "Nieobs³ugiwany typ pliku wyj¶ciowego (%d) dla do³±czonego obrazu"
+msgstr "Nieobs³ugiwany typ pliku wyj¶ciowego (%d) dla do³±czonego zdjêcia"
 
 #, c-format
 msgid "Loading raw file '%s'"
@@ -674,7 +675,7 @@ msgstr "T³o"
 
 #, c-format
 msgid "Failed to embed output profile '%s' in image."
-msgstr "B³±d osadzenia profilu wyj¶ciowego '%s' w obrazie."
+msgstr "B³±d osadzenia profilu wyj¶ciowego '%s' w pliku."
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored.\n"
@@ -747,9 +748,8 @@ msgstr "rozmiar %dx%d, skala 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Punkt czerni: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "Brak miejsca na nowe krzywe."
+msgstr "Brak miejsca na nowe poprawki jasno¶ci."
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "B³±d krytyczny: uf->conf->shrink<1"
@@ -838,10 +838,10 @@ msgid "Blink Over/Underexposure Indicators"
 msgstr "Mruganie wska¼ników prze/niedo¶wietlenia"
 
 msgid "Alignment Line Count"
-msgstr ""
+msgstr "Ilo¶æ linii kadrowania"
 
 msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
+msgstr "Ilo¶æ linii u³atwiaj±cych kadrowanie do wy¶wietlenia na zdjêciu"
 
 msgid "Configuration"
 msgstr "Konfiguracja"
@@ -874,7 +874,7 @@ msgstr ""
 "jest programem do odczytu i korekty zdjêæ w formacie RAW z aparatów "
 "cyfrowych.\n"
 "UFRaw opiera siê na  <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
-"jako narzêdziu do dekodowania obrazów RAW.\n"
+"jako narzêdziu do dekodowania RAWów.\n"
 "\n"
 "Autor: Udi Fuchs\n"
 "Strona domowa: http://ufraw.sourceforge.net/\n"
@@ -891,13 +891,13 @@ msgid "Logarithmic"
 msgstr "Logarytmiczny"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "Hot piksele:"
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "Czu³o¶æ hot pikseli"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "Zresetuj czu³o¶æ hot pikseli"
 
 msgid "RGB histogram"
 msgstr "Histogram RGB"
@@ -1011,18 +1011,14 @@ msgstr "Powiêkszenie:"
 msgid "Zoom percentage"
 msgstr "Procent powiêkszenia"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "Globalna korekta kontrastu"
+msgstr "Zresetuj poprawkê"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
-msgstr ""
-"Wybierz obszar na podgl±dzie zdjêcia by zastosowaæ punktowy balans bieli"
+msgstr "Wybierz obszar na podgl±dzie zdjêcia z potrzebnym odcieniem koloru"
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "Globalna korekta kontrastu"
+msgstr "Usuñ poprawkê"
 
 msgid "Grayscale Mode:"
 msgstr "Tryb skali szaro¶ci:"
@@ -1164,16 +1160,14 @@ msgstr "Szer."
 msgid "Orientation:"
 msgstr "Orientacja:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "Nasycony"
+msgstr "Obrót"
 
-#, fuzzy
 msgid "Rotation Angle"
-msgstr "Nasycony"
+msgstr "K±t obrotu"
 
 msgid "Reset Rotation Angle"
-msgstr ""
+msgstr "Zresetuj k±t obrotu"
 
 msgid "Path"
 msgstr "¦cie¿ka"
@@ -1193,9 +1187,8 @@ msgstr "Kodowanie progresywne JPEG"
 msgid "TIFF lossless Compress"
 msgstr "Bezstratna kompresja TIFF"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr "Do³±cz dane EXIF do pliku JPEG lub PNG"
+msgstr "Do³±cz dane EXIF do pliku wyj¶ciowego"
 
 msgid "Create ID file "
 msgstr "Utwórz plik ID"
@@ -1216,7 +1209,7 @@ msgid ""
 "Save current image manipulation parameters as defaults.\n"
 "The output parameters in this window are always saved."
 msgstr ""
-"Zapisz bie¿±ce ustawienia parametrów obrazu jako domy¶lne.\n"
+"Zapisz bie¿±ce ustawienia parametrów zdjêcia jako domy¶lne.\n"
 "Opcje z tego okna s± zawsze zapisywane."
 
 msgid "Never again"
@@ -1311,9 +1304,8 @@ msgstr "Zarz±dzanie kolorem"
 msgid "Correct luminosity, saturation"
 msgstr "Korekta luminancji, saturacji"
 
-#, fuzzy
 msgid "Lightness Adjustments"
-msgstr "Jasno¶æ"
+msgstr "Poprawki jasno¶ci"
 
 msgid "Crop and rotate"
 msgstr "Kadrowanie i obrót"
@@ -1335,7 +1327,7 @@ msgid "_Delete"
 msgstr "_Usuñ"
 
 msgid "Send image to _Gimp"
-msgstr "Wy¶lij obraz do _Gimpa"
+msgstr "Wy¶lij zdjêcie do _Gimpa"
 
 #. preview_progress() changes the size of the progress bar
 #. and processes the event queue.
@@ -1391,7 +1383,7 @@ msgstr "b³±d wczytywania ciemnej klatki '%s'\n"
 
 #, c-format
 msgid "Darkframe '%s' is incompatible with main image"
-msgstr "Ciemna klatka '%s' jest niekompatybilna z g³ównym obrazem"
+msgstr "Ciemna klatka '%s' jest niekompatybilna z g³ównym zdjêciem"
 
 #, c-format
 msgid "using darkframe '%s'\n"
@@ -1419,10 +1411,10 @@ msgid "Error creating file."
 msgstr "B³±d tworzenia pliku."
 
 msgid "Converting image"
-msgstr "Konwertowanie obrazu"
+msgstr "Konwertowanie zdjêcia"
 
 msgid "Saving image"
-msgstr "Zapisywanie obrazu"
+msgstr "Zapisywanie zdjêcia"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"
@@ -1545,7 +1537,7 @@ msgid "Scale"
 msgstr "Skala"
 
 msgid "Image scale power-of-two"
-msgstr "Skalowanie obrazu (jako potêga dwójki)"
+msgstr "Skalowanie zdjêcia (jako potêga dwójki)"
 
 msgid "Reset image scale to default"
 msgstr "Ustaw domy¶ln± skalê"
