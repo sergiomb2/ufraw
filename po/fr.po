@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
-"PO-Revision-Date: 2009-09-13 14:34+0100\n"
+"POT-Creation-Date: 2009-09-30 16:55-0500\n"
+"PO-Revision-Date: 2009-10-01 00:14+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
@@ -326,6 +326,10 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=VALEUR\n"
+"                      Sensibilité de détection et égalisation des pixels "
+"chauds\n"
+"                      (défaut 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -467,7 +471,6 @@ msgstr ""
 "--silent              N'afficher aucun message durant le traitement par "
 "lot.\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -853,12 +856,6 @@ msgstr "Retour à la commande par défaut"
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Clignotement des indicateurs Sur/Sous-exposition"
 
-msgid "Alignment Line Count"
-msgstr "Décompte des lignes d'alignement"
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr "Nombre de lignes d'alignement en surimpression de la zone de découpe"
-
 msgid "Configuration"
 msgstr "Configuration"
 
@@ -907,13 +904,13 @@ msgid "Logarithmic"
 msgstr "Logarithmique"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "Pixels chauds:"
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "Sensibilité pixel chaud"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "RàZ sensibilité pixel chaud"
 
 msgid "RGB histogram"
 msgstr "Histogramme RGB"
@@ -1198,6 +1195,13 @@ msgstr "Angle de rotation"
 
 msgid "Reset Rotation Angle"
 msgstr "RàZ de l'angle de rotation"
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr "Décompte des lignes d'alignement"
+
+msgid "Number of alignment lines to overlay over the crop area"
+msgstr "Nombre de lignes d'alignement en surimpression de la zone de découpe"
 
 msgid "Path"
 msgstr "Chemin"
