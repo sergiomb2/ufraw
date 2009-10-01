@@ -2,13 +2,13 @@
 # Copyright (C) 2006-2009 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 # Tomasz Goliñski tomaszg@alpha.uwb.edu.pl, 2007-2008.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-30 11:14-0500\n"
-"PO-Revision-Date: 2009-09-30 14:48+0100\n"
+"POT-Creation-Date: 2009-10-01 13:52-0500\n"
+"PO-Revision-Date: 2009-10-01 10:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
 "MIME-Version: 1.0\n"
@@ -59,10 +59,10 @@ msgid "UFRaw ID files"
 msgstr "Pliki UFRaw ID"
 
 msgid "Raw jpg's"
-msgstr ""
+msgstr "Jpgi RAW "
 
 msgid "Raw tif's"
-msgstr ""
+msgstr "Tify RAW"
 
 msgid "All files"
 msgstr "Wszystkie pliki"
@@ -837,12 +837,6 @@ msgstr "Ustaw polecenie domy¶lne"
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Mruganie wska¼ników prze/niedo¶wietlenia"
 
-msgid "Alignment Line Count"
-msgstr "Ilo¶æ linii kadrowania"
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr "Ilo¶æ linii u³atwiaj±cych kadrowanie do wy¶wietlenia na zdjêciu"
-
 msgid "Configuration"
 msgstr "Konfiguracja"
 
@@ -1168,6 +1162,13 @@ msgstr "K±t obrotu"
 
 msgid "Reset Rotation Angle"
 msgstr "Zresetuj k±t obrotu"
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr "Ilo¶æ linii kadrowania"
+
+msgid "Number of alignment lines to overlay over the crop area"
+msgstr "Ilo¶æ linii u³atwiaj±cych kadrowanie do wy¶wietlenia na zdjêciu"
 
 msgid "Path"
 msgstr "¦cie¿ka"
