@@ -2171,23 +2171,30 @@ static void flip_image(GtkWidget *widget, int flip)
 	    data->SpotY2 = temp;
 	}
     }
-    ++data->FreezeDialog;
     switch (flip) {
 	case 6:
-	    gtk_adjustment_set_value(data->RotationAdjustment,
-		    data->unnormalized_angle + 90);
+	    data->unnormalized_angle += 90;
 	    break;
 	case 5:
-	    gtk_adjustment_set_value(data->RotationAdjustment,
-		    data->unnormalized_angle - 90);
+	    data->unnormalized_angle -= 90;
 	    break;
 	case 1:
-	case 2:
-	    data->reference_orientation ^= flip;
-	    gtk_adjustment_set_value(data->RotationAdjustment,
-		    -data->unnormalized_angle);
+	    data->unnormalized_angle = 180-data->unnormalized_angle;
+	    if ( (data->reference_orientation&4) == 4)
+		data->unnormalized_angle += 180;
 	    break;
+	case 2:
+	    data->unnormalized_angle = -data->unnormalized_angle;
+	    if ( (data->reference_orientation&4) == 4)
+		data->unnormalized_angle += 180;
+	    break;
+	default:
+	    g_error("flip_image(): flip:%d invalid", flip);
     }
+    data->unnormalized_angle = remainder(data->unnormalized_angle, 360);
+    ++data->FreezeDialog;
+    gtk_adjustment_set_value(data->RotationAdjustment,
+	    data->unnormalized_angle);
     --data->FreezeDialog;
     render_init(data);
     if ( data->RenderSubArea >= 0 ) {
