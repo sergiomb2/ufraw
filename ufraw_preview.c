@@ -618,8 +618,9 @@ static void preview_draw_area(preview_data *data,
     int CropY2 =  ceil(CFG->CropY2 * scale_y);
     int CropX1 = floor(CFG->CropX1 * scale_x);
     int CropX2 =  ceil(CFG->CropX2 * scale_x);
-    int LineDeltaX = (CropX2 - CropX1) / (CFG->drawLines + 1);
-    int LineDeltaY = (CropY2 - CropY1) / (CFG->drawLines + 1);
+    int CropWidth = CropX2 - CropX1;
+    int CropHeight = CropY2 - CropY1;
+    int drawLines = CFG->drawLines + 1;
 
     /* Scale spot image coordinates to pixbuf coordinates */
     int SpotY1 = floor(MIN(data->SpotY1, data->SpotY2) * scale_y);
@@ -661,8 +662,8 @@ static void preview_draw_area(preview_data *data,
 		if ( CFG->drawLines &&
 		     yy > CropY1 + 1 && yy < CropY2 - 2 &&
 		     xx > CropX1 + 1 && xx < CropX2 - 2 ) {
-		    int dx = (xx - CropX1) % LineDeltaX;
-		    int dy = (yy - CropY1) % LineDeltaY;
+		    int dx = (xx - CropX1) * drawLines % CropWidth / drawLines;
+		    int dy = (yy - CropY1) * drawLines % CropHeight / drawLines;
 		    if (dx == 0 || dy == 0) {
 			p8[0] /= 2;
 			p8[1] /= 2;
@@ -690,6 +691,31 @@ static void preview_draw_area(preview_data *data,
 #endif
     /* Redraw the changed areas */
     image_draw_area(data, x, y, width, height);
+}
+
+static void preview_draw_all(preview_data *data)
+{
+    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    preview_draw_area(data, 0, 0, width, height);
+}
+
+static gboolean  preview_draw_crop(preview_data *data)
+{
+    /* Scale crop image coordinates to pixbuf coordinates */
+    int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
+    float scale_x = ((float)pixbufWidth) / data->UF->rotatedWidth;
+    float scale_y = ((float)pixbufHeight) / data->UF->rotatedHeight;
+
+    int CropY1 = floor(CFG->CropY1 * scale_y);
+    int CropY2 =  ceil(CFG->CropY2 * scale_y);
+    int CropX1 = floor(CFG->CropX1 * scale_x);
+    int CropX2 =  ceil(CFG->CropX2 * scale_x);
+
+    preview_draw_area(data, CropX1, CropY1, CropX2-CropX1, CropY2-CropY1);
+
+    return FALSE;
 }
 
 static gboolean switch_highlights(gpointer ptr)
@@ -780,9 +806,7 @@ static void render_special_mode(GtkWidget *widget, long mode)
 {
     preview_data *data = get_preview_data(widget);
     data->RenderMode = mode;
-    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    preview_draw_area(data, 0, 0, width, height);
+    preview_draw_crop(data);
 }
 
 static void render_init(preview_data *data)
@@ -2016,9 +2040,11 @@ static void update_crop_ranges(preview_data *data)
     }
     CFG->drawLines = saveDrawLines;
     // Draw lines when idle if necessary
-    if (CFG->drawLines>0 && data->BlinkTimer==0)
+    if (CFG->drawLines>0 && data->BlinkTimer==0) {
+	g_idle_remove_by_data(data);
 	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+30,
-		(GSourceFunc)(switch_highlights), data, NULL);
+		(GSourceFunc)(preview_draw_crop), data, NULL);
+    }
     update_shrink_ranges(data);
     redraw_navigation_image(data);
 }
@@ -2204,7 +2230,7 @@ static void flip_image(GtkWidget *widget, int flip)
     } else {
 	/* Full image was already rendered.
 	 * We only need to draw the flipped image. */
-	render_special_mode(widget, render_default);
+    	preview_draw_all(data);
     }
     update_crop_ranges(data);
     refresh_aspect(data);
@@ -2812,7 +2838,18 @@ static void toggle_button(GtkTable *table, int x, int y, char *label,
 
 static void adjustment_update_int(GtkAdjustment *adj, int *valuep)
 {
-    *valuep = (int)floor(gtk_adjustment_get_value(adj) + 0.5);
+    int value = (int)floor(gtk_adjustment_get_value(adj) + 0.5);
+    if (value==*valuep)
+	return;
+    *valuep = value;
+
+    preview_data *data = get_preview_data(adj);
+    if (data->FreezeDialog) return;
+
+    if (valuep==&CFG->drawLines) {
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+30,
+		(GSourceFunc)(preview_draw_crop), data, NULL);
+    }
 }
 
 static void adjustment_update(GtkAdjustment *adj, double *valuep)
@@ -3343,13 +3380,6 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     gtk_table_attach(settingsTable, blinkButton, 0, 2, 1, 2, GTK_FILL, 0, 0, 0);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(blinkButton),
 	    CFG->blinkOverUnder);
-    // drawLines toggle button
-    double drawLines = CFG->drawLines;
-    GtkAdjustment *drawLinesAdjustment = adjustment_scale(
-	settingsTable, 0, 2, _("Alignment Line Count"),
-	drawLines, &drawLines, 0, 21, 1, 1, 0,
-	_("Number of alignment lines to overlay over the crop area"),
-	G_CALLBACK(adjustment_update), NULL, NULL, NULL);
 
     label = gtk_label_new(_("Configuration"));
     page = gtk_scrolled_window_new(NULL, NULL);
@@ -3463,8 +3493,6 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	if ( CFG->blinkOverUnder!=
 	     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(blinkButton)) )
 	    data->OptionsChanged = TRUE;
-	if ( CFG->drawLines!= gtk_adjustment_get_value(drawLinesAdjustment) )
-	    data->OptionsChanged = TRUE;
 
 	if ( !data->OptionsChanged ) {
 	    /* If nothing changed there is nothing to do */
@@ -3474,8 +3502,6 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	    g_strlcpy(RC->remoteGimpCommand, CFG->remoteGimpCommand, max_path);
 	    RC->blinkOverUnder = CFG->blinkOverUnder =
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(blinkButton));
-	    RC->drawLines = CFG->drawLines =
-		gtk_adjustment_get_value(drawLinesAdjustment);
 
 	    /* Copy profiles and curves from CFG to RC and save .ufrawrc */
 	    if ( memcmp(&RC->BaseCurve[RC->BaseCurveIndex],
@@ -4912,6 +4938,15 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
 	G_CALLBACK(adjustment_update_rotation),
 	&data->ResetRotationAdjustment, _("Reset Rotation Angle"),
 	G_CALLBACK(adjustment_reset_rotation));
+
+    // drawLines toggle button
+    GtkWidget *subtable = gtk_table_new(10, 10, FALSE);
+    gtk_table_attach(table, subtable, 0, 7, 1, 2, GTK_FILL, 0, 0, 0);
+    // TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+    adjustment_scale(GTK_TABLE(subtable), 0, 0, _("Alignment Line Count"),
+	CFG->drawLines, &CFG->drawLines, 0, 20, 1, 1, 0,
+	_("Number of alignment lines to overlay over the crop area"),
+	G_CALLBACK(adjustment_update_int), NULL, NULL, NULL);
 
     /* End of transformation page */
 }
