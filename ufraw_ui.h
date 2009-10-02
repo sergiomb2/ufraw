@@ -224,7 +224,7 @@ GtkWidget *reset_button (const char *tip, GCallback callback, void *data);
 
 GtkAdjustment *adjustment_scale (GtkTable *table, int x, int y,
     const char *label, double value, void *valuep, double min, double max,
-    double step, double jump, long accuracy, const gboolean wrap,
+    double step, double jump, long accuracy, const gboolean wrap_spinner,
     const char *tip, GCallback callback, GtkWidget **resetButton,
     const char *resetTip, void (*resetCallback)());
 

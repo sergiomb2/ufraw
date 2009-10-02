@@ -3034,7 +3034,7 @@ GtkWidget *reset_button(const char *tip, GCallback callback, void *data)
 
 GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y,
     const char *label, double value, void *valuep, double min, double max,
-    double step, double jump, long accuracy, const gboolean wrap,
+    double step, double jump, long accuracy, const gboolean wrap_spinner,
     const char *tip, GCallback callback, GtkWidget **resetButton,
     const char *resetTip, GCallback resetCallback)
 {
@@ -3069,7 +3069,7 @@ GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y,
     w = gtk_spin_button_new(adj, step, accuracy);
     gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON(w), FALSE);
     gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(w), GTK_UPDATE_IF_VALID);
-    gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(w), wrap);
+    gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(w), wrap_spinner);
     gtk_table_attach(table, w, x+5, x+7, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
     uf_widget_set_tooltip(w, tip);
 
