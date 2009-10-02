@@ -2205,14 +2205,9 @@ static void flip_image(GtkWidget *widget, int flip)
 	    data->unnormalized_angle -= 90;
 	    break;
 	case 1:
-	    data->unnormalized_angle = 180-data->unnormalized_angle;
-	    if ( (data->reference_orientation&4) == 4)
-		data->unnormalized_angle += 180;
-	    break;
 	case 2:
+	    data->reference_orientation ^= flip;
 	    data->unnormalized_angle = -data->unnormalized_angle;
-	    if ( (data->reference_orientation&4) == 4)
-		data->unnormalized_angle += 180;
 	    break;
 	default:
 	    g_error("flip_image(): flip:%d invalid", flip);
@@ -2963,18 +2958,19 @@ static void set_rotation_angle(preview_data *data, double angle)
 {
     int d;
 
-    if (data->FreezeDialog)
-	return;
-
     /* Normalize the "unnormalized" value displayed to the user to
      * -180 < a <= 180, though we later normalize to an orientation
      * and flip plus 0 <= a < 90 rotation for processing.  */
     data->unnormalized_angle = remainder(angle, 360);
-    gtk_adjustment_set_value(data->RotationAdjustment,
-	    data->unnormalized_angle);
     CFG->rotationAngle = data->unnormalized_angle;
     CFG->orientation = data->reference_orientation;
     ufraw_normalize_rotation(data->UF);
+    if (data->FreezeDialog)
+	return;
+    gtk_adjustment_set_value(data->RotationAdjustment,
+	    data->unnormalized_angle);
+    gtk_widget_set_sensitive(data->ResetRotationAdjustment,
+	    data->unnormalized_angle != 0);
     ufraw_get_image_dimensions(data->UF->raw, data->UF);
     d = MIN(CFG->CropX1, CFG->CropX2 - data->UF->rotatedWidth);
     if (d > 0) {
@@ -3018,15 +3014,17 @@ static void set_rotation_angle(preview_data *data, double angle)
 static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
 {
     preview_data *data = get_preview_data(adj);
-    set_rotation_angle(data, gtk_adjustment_get_value(adj));
+
     (void)user_data;
+    set_rotation_angle(data, gtk_adjustment_get_value(adj));
 }
 
 static void adjustment_reset_rotation(GtkAdjustment *adj, gpointer user_data)
 {
     preview_data *data = get_preview_data(adj);
-    set_rotation_angle(data, 0);
+
     (void)user_data;
+    gtk_adjustment_set_value(data->RotationAdjustment, 0);
 }
 
 GtkWidget *reset_button(const char *tip, GCallback callback, void *data)
@@ -3036,9 +3034,9 @@ GtkWidget *reset_button(const char *tip, GCallback callback, void *data)
 
 GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y,
     const char *label, double value, void *valuep, double min, double max,
-    double step, double jump, long accuracy, const char *tip,
-    GCallback callback, GtkWidget **resetButton, const char *resetTip,
-    GCallback resetCallback)
+    double step, double jump, long accuracy, const gboolean wrap,
+    const char *tip, GCallback callback, GtkWidget **resetButton,
+    const char *resetTip, GCallback resetCallback)
 {
     GtkAdjustment *adj;
     GtkWidget *w, *l, *icon;
@@ -3071,6 +3069,7 @@ GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y,
     w = gtk_spin_button_new(adj, step, accuracy);
     gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON(w), FALSE);
     gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(w), GTK_UPDATE_IF_VALID);
+    gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(w), wrap);
     gtk_table_attach(table, w, x+5, x+7, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
     uf_widget_set_tooltip(w, tip);
 
@@ -4217,11 +4216,11 @@ static void whitebalance_fill_interface(preview_data *data,
 
     data->TemperatureAdjustment = adjustment_scale(subTable, 0, 1,
 	    _("Temperature"), CFG->temperature, &CFG->temperature,
-	    2000, 15000, 50, 200, 0,
+	    2000, 15000, 50, 200, 0, FALSE,
 	    _("White balance color temperature (K)"),
 	    G_CALLBACK(adjustment_update), NULL, NULL, NULL);
     data->GreenAdjustment = adjustment_scale(subTable, 0, 2, _("Green"),
-	    CFG->green, &CFG->green, 0.2, 2.5, 0.010, 0.050, 3,
+	    CFG->green, &CFG->green, 0.2, 2.5, 0.010, 0.050, 3, FALSE,
 	    _("Green component"),
 	    G_CALLBACK(adjustment_update), NULL, NULL, NULL);
     // Spot WB button:
@@ -4306,7 +4305,7 @@ static void whitebalance_fill_interface(preview_data *data,
     /* Denoising is temporarily in the WB page */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     data->ThresholdAdjustment = adjustment_scale(table, 0, 0, _("Denoise"),
-	    CFG->threshold, &CFG->threshold, 0.0, 1000.0, 10, 50, 0,
+	    CFG->threshold, &CFG->threshold, 0.0, 1000.0, 10, 50, 0, FALSE,
 	    _("Threshold for wavelet denoising"),
 	    G_CALLBACK(adjustment_update),
 	    &data->ResetThresholdButton,
@@ -4390,7 +4389,7 @@ static void lightness_fill_interface(preview_data *data, GtkWidget *page)
 	data->LightnessAdjustment[i] = adjustment_scale(subTable, 0, 0, NULL,
 		CFG->lightnessAdjustment[i].adjustment,
 		&CFG->lightnessAdjustment[i].adjustment,
-		0, 2, 0.01, 0.10, 2, NULL,
+		0, 2, 0.01, 0.10, 2, FALSE, NULL,
 		G_CALLBACK(adjustment_update),
 		&data->ResetLightnessAdjustmentButton[i],
 		_("Reset adjustment"), G_CALLBACK(button_update));
@@ -4456,7 +4455,7 @@ static void grayscale_fill_interface(preview_data *data,
 	    data->GrayscaleMixerTable, 0, i,
 	    i==0 ? "@channel-red" : i==1 ? "@channel-green" : "@channel-blue",
 	    CFG->grayscaleMixer[i], &CFG->grayscaleMixer[i],
-	    -2.0, 2.0, .01, 0.10, 2, NULL, G_CALLBACK(adjustment_update),
+	    -2.0, 2.0, .01, 0.10, 2, FALSE, NULL, G_CALLBACK(adjustment_update),
 	    NULL, NULL, NULL);
     }
 
@@ -4584,7 +4583,7 @@ static void colormgmt_fill_interface(preview_data *data, GtkWidget *page,
     }
     data->GammaAdjustment = adjustment_scale(table, 1, 3, _("Gamma"),
 	    CFG->profile[0][CFG->profileIndex[0]].gamma,
-	    &CFG->profile[0][0].gamma, 0.1, 1.0, 0.01, 0.05, 2,
+	    &CFG->profile[0][0].gamma, 0.1, 1.0, 0.01, 0.05, 2, FALSE,
 	    _("Gamma correction for the input profile"),
 	    G_CALLBACK(adjustment_update),
 	    &data->ResetGammaButton, _("Reset gamma to default"),
@@ -4592,7 +4591,7 @@ static void colormgmt_fill_interface(preview_data *data, GtkWidget *page,
 
     data->LinearAdjustment = adjustment_scale(table, 1, 4, _("Linearity"),
 	    CFG->profile[0][CFG->profileIndex[0]].linear,
-	    &CFG->profile[0][0].linear, 0.0, 1.0, 0.01, 0.05, 3,
+	    &CFG->profile[0][0].linear, 0.0, 1.0, 0.01, 0.05, 3, FALSE,
 	    _("Linear part of the gamma correction"),
 	    G_CALLBACK(adjustment_update),
 	    &data->ResetLinearButton, _("Reset linearity to default"),
@@ -4656,13 +4655,13 @@ static void corrections_fill_interface(preview_data *data, GtkWidget *page,
 
 #ifdef UFRAW_CONTRAST
     data->ContrastAdjustment = adjustment_scale(table, 0, 0, _("Contrast"),
-	    CFG->contrast, &CFG->contrast, 0, 8.0, 0.01, 0.1, 2,
+	    CFG->contrast, &CFG->contrast, 0, 8.0, 0.01, 0.1, 2, FALSE,
 	    _("Global contrast adjustment"), G_CALLBACK(adjustment_update),
 	    &data->ResetContrastButton, _("Reset global contrast to default"),
 	    G_CALLBACK(button_update));
 #endif
     data->SaturationAdjustment = adjustment_scale(table, 0, 1, _("Saturation"),
-	    CFG->saturation, &CFG->saturation, 0.0, 8.0, 0.01, 0.1, 2,
+	    CFG->saturation, &CFG->saturation, 0.0, 8.0, 0.01, 0.1, 2, FALSE,
 	    _("Saturation"), G_CALLBACK(adjustment_update),
 	    &data->ResetSaturationButton, _("Reset saturation to default"),
 	    G_CALLBACK(button_update));
@@ -4934,17 +4933,19 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
     data->RotationAdjustment = adjustment_scale(
 	table, 0, 0, _("Rotation"),
 	data->unnormalized_angle, &data->unnormalized_angle,
-	-180, 180, 0.1, 1, 2, _("Rotation Angle"),
+	-180, 180, 0.1, 1, 2, TRUE, _("Rotation Angle"),
 	G_CALLBACK(adjustment_update_rotation),
 	&data->ResetRotationAdjustment, _("Reset Rotation Angle"),
 	G_CALLBACK(adjustment_reset_rotation));
+    gtk_widget_set_sensitive(data->ResetRotationAdjustment,
+	    data->unnormalized_angle != 0);
 
     // drawLines toggle button
     GtkWidget *subtable = gtk_table_new(10, 10, FALSE);
     gtk_table_attach(table, subtable, 0, 7, 1, 2, GTK_FILL, 0, 0, 0);
     // TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
     adjustment_scale(GTK_TABLE(subtable), 0, 0, _("Alignment Line Count"),
-	CFG->drawLines, &CFG->drawLines, 0, 20, 1, 1, 0,
+	CFG->drawLines, &CFG->drawLines, 0, 20, 1, 1, 0, FALSE,
 	_("Number of alignment lines to overlay over the crop area"),
 	G_CALLBACK(adjustment_update_int), NULL, NULL, NULL);
 
@@ -5310,7 +5311,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     table = GTK_TABLE(table_with_frame(previewVBox, NULL, FALSE));
     data->ExposureAdjustment = adjustment_scale(table, 0, 0, "@exposure",
 	    CFG->exposure, &CFG->exposure,
-	    -6, 6, 0.01, 1.0/6, 2, _("Exposure compensation in EV"),
+	    -6, 6, 0.01, 1.0/6, 2, FALSE, _("Exposure compensation in EV"),
 	    G_CALLBACK(adjustment_update), NULL, NULL, NULL);
 
     button = gtk_toggle_button_new();
