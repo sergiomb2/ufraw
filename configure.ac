@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.140 2009/09/29 16:45:35 nkbj Exp $
+dnl $Id: configure.ac,v 1.141 2009/10/03 08:30:07 nkbj Exp $
 AC_INIT(UFRaw, 0.16)
 AC_PREREQ(2.57)
 
@@ -295,8 +295,8 @@ AS_IF([test "x$with_lensfun" != xno],
       AC_DEFINE(HAVE_LENSFUN, 1, have lensfun library) ],
     [ have_lensfun=no
       if test "x$with_lensfun" != xcheck; then
-        AC_MSG_FAILURE(
-          [--with-lensfun was given, but test for lensfun failed])
+        AC_MSG_WARN(
+          [--with-lensfun was given, but test for lensfun failed. UFRaw will be built without lensfun support.])
       fi
     ] ) ] )
 
