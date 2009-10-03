@@ -3006,9 +3006,13 @@ static void adjustment_reset_rotation(GtkWidget *widget, gpointer user_data)
     (void)user_data;
     CFG->orientation = CFG->CameraOrientation;
     CFG->rotationAngle = 0;
+
+    data->FreezeDialog++;
     ufraw_unnormalize_rotation(data->UF);
     gtk_adjustment_set_value(data->RotationAdjustment, CFG->rotationAngle);
     ufraw_normalize_rotation(data->UF);
+    data->FreezeDialog--;
+    gtk_adjustment_value_changed(data->RotationAdjustment);
 }
 
 GtkWidget *reset_button(const char *tip, GCallback callback, void *data)

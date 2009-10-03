@@ -1460,6 +1460,11 @@ void ufraw_unnormalize_rotation(ufraw_data *uf)
 int ufraw_flip_image(ufraw_data *uf, int flip)
 {
     ufraw_flip_orientation(uf, flip);
+    /* Usually orientation is applied before rotationAngle.
+     * Here we are flipping after rotationAngle was applied.
+     * We need to correct rotationAngle for this since these
+     * operations do no commute.
+     */
     if (flip==1 || flip==2 || flip==4 || flip==7) {
 	uf->conf->rotationAngle = -uf->conf->rotationAngle;
 	ufraw_normalize_rotation(uf);
