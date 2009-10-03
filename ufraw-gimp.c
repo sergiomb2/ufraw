@@ -375,8 +375,7 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 	}
     } else {
 	ufraw_write_image_data(uf, &pixel_region, width, height, left, top,
-		depth==3 ? 8 : 16, uf->conf->grayscaleMode != grayscale_none,
-		gimp_row_writer);
+		depth==3 ? 8 : 16, 0, gimp_row_writer);
     }
     gimp_drawable_flush(drawable);
     gimp_drawable_detach(drawable);
