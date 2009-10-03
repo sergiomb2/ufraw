@@ -188,6 +188,7 @@ typedef struct {
     char darkframeFile[max_path];
     struct ufraw_struct *darkframe;
     int CropX1, CropY1, CropX2, CropY2;
+    int orientation;
     double rotationAngle;
     int lightnessAdjustmentCount;
     lightness_adjustment lightnessAdjustment[max_adjustments];
@@ -221,7 +222,7 @@ typedef struct {
     char remoteGimpCommand[max_path];
 
     /* EXIF data */
-    int orientation;
+    int CameraOrientation;
     float iso_speed, shutter, aperture, focal_len, subject_distance;
     char exifSource[max_name], isoText[max_name], shutterText[max_name],
 	 apertureText[max_name], focalLenText[max_name],
@@ -316,7 +317,6 @@ ufraw_image_data *ufraw_convert_get_final_image(ufraw_data *uf);
 ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 	UFRawPhase phase);
 void ufraw_close(ufraw_data *uf);
-void ufraw_flip_orientation(ufraw_data *uf, int flip);
 int ufraw_flip_image(ufraw_data *uf, int flip);
 int ufraw_set_wb(ufraw_data *uf);
 void ufraw_auto_expose(ufraw_data *uf);
@@ -326,6 +326,7 @@ void ufraw_rotate_row(ufraw_image_data *image, void *pixbuf, double angle,
 		      int bitDepth, int row, int offset, int width);
 void ufraw_rotate_image_buffer(ufraw_image_data *img, double angle);
 void ufraw_normalize_rotation(ufraw_data *uf);
+void ufraw_unnormalize_rotation(ufraw_data *uf);
 void ufraw_get_image_dimensions(dcraw_data *raw, ufraw_data *uf);
 
 void ufraw_img_get_subarea_coord (ufraw_image_data *img, unsigned saidx,

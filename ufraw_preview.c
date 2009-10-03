@@ -2176,12 +2176,6 @@ static void flip_image(GtkWidget *widget, int flip)
 	}
     }
     if (flip & 4) {
-	temp = data->UF->rotatedWidth;
-	data->UF->rotatedWidth = data->UF->rotatedHeight;
-	data->UF->rotatedHeight = temp;
-	temp = data->UF->initialWidth;
-	data->UF->initialWidth = data->UF->initialHeight;
-	data->UF->initialHeight = temp;
 	temp = CFG->CropX1;
 	CFG->CropX1 = CFG->CropY1;
 	CFG->CropY1 = temp;
@@ -2197,26 +2191,20 @@ static void flip_image(GtkWidget *widget, int flip)
 	    data->SpotY2 = temp;
 	}
     }
-    switch (flip) {
-	case 6:
-	    data->unnormalized_angle += 90;
-	    break;
-	case 5:
-	    data->unnormalized_angle -= 90;
-	    break;
-	case 1:
-	case 2:
-	    data->reference_orientation ^= flip;
-	    data->unnormalized_angle = -data->unnormalized_angle;
-	    break;
-	default:
-	    g_error("flip_image(): flip:%d invalid", flip);
-    }
-    data->unnormalized_angle = remainder(data->unnormalized_angle, 360);
+    // image dimensions cannot really change here,
+    // yet width and height might be flipped (independent of flip&4).
+    ufraw_get_image_dimensions(data->UF->raw, data->UF);
+
     ++data->FreezeDialog;
+    ufraw_unnormalize_rotation(data->UF);
     gtk_adjustment_set_value(data->RotationAdjustment,
-	    data->unnormalized_angle);
+	    CFG->rotationAngle);
+    ufraw_normalize_rotation(data->UF);
+    gtk_widget_set_sensitive(data->ResetRotationAdjustment,
+	    CFG->rotationAngle != 0 ||
+	    CFG->orientation != CFG->CameraOrientation);
     --data->FreezeDialog;
+
     render_init(data);
     if ( data->RenderSubArea >= 0 ) {
 	/* We are in the middle or a rendering scan,
@@ -2954,25 +2942,25 @@ GtkWidget *stock_icon_button(const gchar *stock_id,
  * are valid. Try to preserve them over a rotate forth and back and try to
  * preserve their geometry.
  */
-static void set_rotation_angle(preview_data *data, double angle)
+static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
 {
-    int d;
+    preview_data *data = get_preview_data(adj);
+    (void)user_data;
 
     /* Normalize the "unnormalized" value displayed to the user to
      * -180 < a <= 180, though we later normalize to an orientation
      * and flip plus 0 <= a < 90 rotation for processing.  */
-    data->unnormalized_angle = remainder(angle, 360);
-    CFG->rotationAngle = data->unnormalized_angle;
-    CFG->orientation = data->reference_orientation;
-    ufraw_normalize_rotation(data->UF);
     if (data->FreezeDialog)
 	return;
-    gtk_adjustment_set_value(data->RotationAdjustment,
-	    data->unnormalized_angle);
+    
+    ufraw_unnormalize_rotation(data->UF);
+    CFG->rotationAngle = gtk_adjustment_get_value(data->RotationAdjustment);
+    ufraw_normalize_rotation(data->UF);
     gtk_widget_set_sensitive(data->ResetRotationAdjustment,
-	    data->unnormalized_angle != 0);
+	    CFG->rotationAngle != 0 ||
+	    CFG->orientation != CFG->CameraOrientation);
     ufraw_get_image_dimensions(data->UF->raw, data->UF);
-    d = MIN(CFG->CropX1, CFG->CropX2 - data->UF->rotatedWidth);
+    int d = MIN(CFG->CropX1, CFG->CropX2 - data->UF->rotatedWidth);
     if (d > 0) {
 	CFG->CropX1 -= d;
 	CFG->CropX2 -= d;
@@ -3011,20 +2999,16 @@ static void set_rotation_angle(preview_data *data, double angle)
     update_scales(data);
 }
 
-static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
+static void adjustment_reset_rotation(GtkWidget *widget, gpointer user_data)
 {
-    preview_data *data = get_preview_data(adj);
+    preview_data *data = get_preview_data(widget);
 
     (void)user_data;
-    set_rotation_angle(data, gtk_adjustment_get_value(adj));
-}
-
-static void adjustment_reset_rotation(GtkAdjustment *adj, gpointer user_data)
-{
-    preview_data *data = get_preview_data(adj);
-
-    (void)user_data;
-    gtk_adjustment_set_value(data->RotationAdjustment, 0);
+    CFG->orientation = CFG->CameraOrientation;
+    CFG->rotationAngle = 0;
+    ufraw_unnormalize_rotation(data->UF);
+    gtk_adjustment_set_value(data->RotationAdjustment, CFG->rotationAngle);
+    ufraw_normalize_rotation(data->UF);
 }
 
 GtkWidget *reset_button(const char *tip, GCallback callback, void *data)
@@ -4927,18 +4911,19 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
     gtk_table_attach(table, button, 4, 5, 0, 1, 0, 0, 0, 0);
 
     /* Rotation controls */
-    data->unnormalized_angle = CFG->rotationAngle;
-    data->reference_orientation = CFG->orientation;
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+    ufraw_unnormalize_rotation(data->UF);
     data->RotationAdjustment = adjustment_scale(
 	table, 0, 0, _("Rotation"),
-	data->unnormalized_angle, &data->unnormalized_angle,
+	CFG->rotationAngle, NULL,
 	-180, 180, 0.1, 1, 2, TRUE, _("Rotation Angle"),
 	G_CALLBACK(adjustment_update_rotation),
 	&data->ResetRotationAdjustment, _("Reset Rotation Angle"),
 	G_CALLBACK(adjustment_reset_rotation));
+    ufraw_normalize_rotation(data->UF);
     gtk_widget_set_sensitive(data->ResetRotationAdjustment,
-	    data->unnormalized_angle != 0);
+	    CFG->rotationAngle != 0 ||
+	    CFG->orientation != CFG->CameraOrientation);
 
     // drawLines toggle button
     GtkWidget *subtable = gtk_table_new(10, 10, FALSE);

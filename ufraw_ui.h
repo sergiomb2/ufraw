@@ -169,8 +169,6 @@ typedef struct {
     int SpotX1, SpotY1, SpotX2, SpotY2;
     CursorType CropMotionType;
     int DrawnCropX1, DrawnCropX2, DrawnCropY1, DrawnCropY2;
-    double unnormalized_angle;
-    int reference_orientation;
     double shrink, height, width;
     gboolean OptionsChanged;
     int PageNum;

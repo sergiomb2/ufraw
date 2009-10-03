@@ -311,41 +311,17 @@ int ufraw_load_darkframe(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
-/*
- * Normalize arbitrary rotations into a 0..90 degree range.
- */
-void ufraw_normalize_rotation(ufraw_data *uf)
-{
-    int angle, flip = 0;
-
-    uf->conf->rotationAngle = fmod(uf->conf->rotationAngle, 360.0);
-    if (uf->conf->rotationAngle < 0.0)
-	uf->conf->rotationAngle += 360.0;
-    angle = floor(uf->conf->rotationAngle / 90) * 90;
-    switch (angle) {
-	case  90: flip = 6; break;
-	case 180: flip = 3; break;
-	case 270: flip = 5; break;
-    }
-    ufraw_flip_orientation(uf, flip);
-    uf->conf->rotationAngle -= angle;
-}
-
-void ufraw_update_rotated_dimensions(ufraw_data *uf)
-{
-    double rotationRadians = (uf->conf->rotationAngle * 2 * M_PI) / 360;
-    uf->rotatedWidth = ceil((uf->initialHeight * sin(rotationRadians))
-	+ (uf->initialWidth * cos(rotationRadians)));
-    uf->rotatedHeight = ceil((uf->initialWidth * sin(rotationRadians))
-	+ (uf->initialHeight * cos(rotationRadians)));
-}
-
 void ufraw_get_image_dimensions(dcraw_data *raw, ufraw_data *uf)
 {
     dcraw_image_dimensions(raw, uf->conf->orientation,
 	    &uf->initialHeight, &uf->initialWidth);
 
-    ufraw_update_rotated_dimensions(uf);
+    // update rotated dimensions
+    double rotationRadians = (uf->conf->rotationAngle * 2 * M_PI) / 360;
+    uf->rotatedWidth = ceil((uf->initialHeight * sin(rotationRadians))
+	+ (uf->initialWidth * cos(rotationRadians)));
+    uf->rotatedHeight = ceil((uf->initialWidth * sin(rotationRadians))
+	+ (uf->initialHeight * cos(rotationRadians)));
 
     if (uf->conf->CropX1 < 0) uf->conf->CropX1 = 0;
     if (uf->conf->CropY1 < 0) uf->conf->CropY1 = 0;
@@ -464,14 +440,16 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 
     uf->conf->timestamp = raw->timestamp;
 
+    uf->conf->CameraOrientation = raw->flip;
+
     if ( !uf->conf->rotate ) {
 	uf->conf->orientation = 0;
 	uf->conf->rotationAngle = 0;
     } else {
 	if ( !uf->LoadingID || uf->conf->orientation<0 )
-	    uf->conf->orientation = raw->flip;
-	ufraw_normalize_rotation(uf);
+	    uf->conf->orientation = uf->conf->CameraOrientation;
 	// Normalise rotations to a flip, then rotation of 0 < a < 90 degrees.
+	ufraw_normalize_rotation(uf);
     }
 
     if (uf->inputExifBuf==NULL) {
@@ -1409,7 +1387,7 @@ static int ufraw_flip_image_buffer(ufraw_image_data *img, int flip)
     return UFRAW_SUCCESS;
 }
 
-void ufraw_flip_orientation(ufraw_data *uf, int flip)
+static void ufraw_flip_orientation(ufraw_data *uf, int flip)
 {
     const char flipMatrix[8][8] = {
 	{ 0, 1, 2, 3, 4, 5, 6, 7 }, /* No flip */
@@ -1424,10 +1402,68 @@ void ufraw_flip_orientation(ufraw_data *uf, int flip)
     uf->conf->orientation = flipMatrix[uf->conf->orientation][flip];
 }
 
+/*
+ * Normalize arbitrary rotations into a 0..90 degree range.
+ */
+void ufraw_normalize_rotation(ufraw_data *uf)
+{
+    int angle, flip = 0;
+
+    uf->conf->rotationAngle = fmod(uf->conf->rotationAngle, 360.0);
+    if (uf->conf->rotationAngle < 0.0)
+	uf->conf->rotationAngle += 360.0;
+    angle = floor(uf->conf->rotationAngle / 90) * 90;
+    switch (angle) {
+	case  90: flip = 6; break;
+	case 180: flip = 3; break;
+	case 270: flip = 5; break;
+    }
+    ufraw_flip_orientation(uf, flip);
+    uf->conf->rotationAngle -= angle;
+}
+
+/*
+ * Unnormalize a normalized rotaion into a -180..180 degree range,
+ * while orientation can be either 0 (normal) or 1 (flipped).
+ * All image processing code assumes normalized rotation, therefore
+ * each call to ufraw_unnormalize_rotation() must be followed by a call
+ * to ufraw_normalize_rotation().
+ */
+void ufraw_unnormalize_rotation(ufraw_data *uf)
+{
+    switch (uf->conf->orientation) {
+    case 5: /* Rotate 270 */
+	uf->conf->rotationAngle += 90;
+    case 3: /* Rotate 180 */
+	uf->conf->rotationAngle += 90;
+    case 6: /* Rotate 90 */
+	uf->conf->rotationAngle += 90;
+	uf->conf->orientation = 0;
+    case 0: /* No flip */
+	break;
+    case 4: /* Flip over diagonal "\" */
+	uf->conf->rotationAngle += 90;
+    case 2: /* Flip vertical */
+	uf->conf->rotationAngle += 90;
+    case 7: /* Flip over diagonal "/" */
+	uf->conf->rotationAngle += 90;
+	uf->conf->orientation = 1;
+    case 1: /* Flip horizontal */
+	break;
+    default:
+	g_error("ufraw_unnormalized_roation(): orientation=%d out of range",
+		uf->conf->orientation);
+    }
+    uf->conf->rotationAngle = remainder(uf->conf->rotationAngle, 360.0);
+}
+
 int ufraw_flip_image(ufraw_data *uf, int flip)
 {
     ufraw_flip_orientation(uf, flip);
-
+    if (flip==1 || flip==2 || flip==4 || flip==7) {
+	uf->conf->rotationAngle = -uf->conf->rotationAngle;
+	ufraw_normalize_rotation(uf);
+    }
     ufraw_flip_image_buffer(&uf->Images[ufraw_first_phase], flip);
     if (ufraw_do_denoise_phase(uf))
 	ufraw_flip_image_buffer(&uf->Images[ufraw_denoise_phase], flip);

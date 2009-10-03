@@ -81,6 +81,7 @@ const conf_data conf_default = {
     ahd_interpolation, 0, /* interpolation, smoothing */
     "", NULL, /* darkframeFile, darkframe */
     -1, -1, -1, -1, /* Crop X1,Y1,X2,Y2 */
+    -1, /* orientation */
     0, /* rotationAngle */
     0, /* lightness adjustment count */
     {
@@ -126,7 +127,7 @@ const conf_data conf_default = {
 #endif
 
     /* EXIF data */
-    -1, /* orientation */
+    0, /* CameraOrientation */
     0.0, 0.0, 0.0, 0.0, 1.0, /* iso_speed, shutter, aperture, focal_len, subject_dist */
     "", "", "", "", /* exifSource, isoText, shutterText, apertureText */
     "", "", "", "", /* focalLenText, focalLen35Text, lensText, flashText */
