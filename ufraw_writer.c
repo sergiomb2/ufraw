@@ -67,20 +67,21 @@ static int ppm_row_writer(ufraw_data *uf, void *volatile out, void *pixbuf,
 {
     (void)row;
     int rowStride = width * (grayscale ? 1 : 3) * (bitDepth>8 ? 2 : 1);
+    int i;
     if ( bitDepth>8 ) {
 	guint16 *pixbuf16 = (guint16 *)pixbuf;
-	int i;
 	for (i=0; i<3*width*height; i++)
 	    pixbuf16[i] = g_htons(pixbuf16[i]);
     }
-    if ((int)fwrite(pixbuf, rowStride, height, out)<height) {
-	ufraw_set_error(uf, _("Error creating file '%s'."),
-        uf->conf->outputFilename);
-	ufraw_set_error(uf, g_strerror(errno));
-	return UFRAW_ERROR;
-    } else {
-	return UFRAW_SUCCESS;
+    for (i=0; i<height; i++) {
+	if ((int)fwrite(pixbuf+i*width*(bitDepth>8?6:3), rowStride, 1, out)<1) {
+	    ufraw_set_error(uf, _("Error creating file '%s'."),
+            uf->conf->outputFilename);
+	    ufraw_set_error(uf, g_strerror(errno));
+	    return UFRAW_ERROR;
+	}
     }
+    return UFRAW_SUCCESS;
 }
 
 #ifdef HAVE_LIBTIFF
