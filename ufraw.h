@@ -113,7 +113,6 @@ typedef struct {
     void *adjustmentProfile;
     GrayscaleMode grayscaleMode;
     double grayscaleMixer[3];
-    int adjustLightness;
     lightness_adjustment lightnessAdjustment[max_adjustments];
 } developer_data;
 

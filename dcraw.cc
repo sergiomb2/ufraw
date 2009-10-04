@@ -122,6 +122,7 @@ const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
 CLASS DCRaw()
 {
+order=0; /* Suppress valgrind error. */
 shot_select=0, multi_out=0, aber[0] = aber[1] = aber[2] = aber[3] = 1;
 gamm[0] = 0.45, gamm[1] = 4.5, gamm[2] = gamm[3] = gamm[4] = gamm[5] = 0;
 bright=1, user_mul[0] = user_mul[1] = user_mul[2] = user_mul[3] = 0;
@@ -6738,7 +6739,6 @@ void CLASS identify()
   colors = 3;
   for (i=0; i < 0x4000; i++) curve[i] = i;
   tone_curve_offset = tone_curve_size = 0; /*UF*/
-  order = 0; // Suppress a valgrind error
 
   order = get2();
   hlen = get4();

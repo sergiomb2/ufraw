@@ -69,6 +69,11 @@ developer_data *developer_init()
     d->rgbtolabTransform = NULL;
     d->grayscaleMode = -1;
     d->grayscaleMixer[0] = d->grayscaleMixer[1] = d->grayscaleMixer[2] = -1;
+    for (i=0; i<max_adjustments; i++) { /* Suppress valgrind error. */
+	d->lightnessAdjustment[i].adjustment = 0.0;
+	d->lightnessAdjustment[i].hue = 0.0;
+	d->lightnessAdjustment[i].hueWidth = 0.0;
+    }
     cmsSetErrorHandler(lcms_message);
     return d;
 }
