@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
-"PO-Revision-Date: 2009-05-04 21:03+0100\n"
+"POT-Creation-Date: 2009-10-04 23:59-0500\n"
+"PO-Revision-Date: 2009-10-04 10:41+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
 "MIME-Version: 1.0\n"
@@ -121,7 +121,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "Příliš mnoho kotev pro křivku '%s'"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "Příliš mnoho úprav světlosti v ID souboru, ignorováno\n"
 
 #, c-format
 msgid ""
@@ -313,6 +313,9 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=HODNOTA\n"
+"                      Citlivost pro detekci a odstranění hot pixels "
+"(standardní 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -452,7 +455,6 @@ msgid ""
 msgstr ""
 "--silent              Nezobrazovat žádné zprávy během dávkové konverze.\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -464,12 +466,12 @@ msgid ""
 "group of options is NOT read from the resource file.\n"
 msgstr ""
 "UFRaw nejprve čte nastavení z konfiguračního souboru $HOME/.ufrawrc.\n"
-"Poté, pokud je specifikován ID soubour, jsou přečtena jeho nastavení. Dále\n"
+"Poté, pokud je specifikován ID soubor, jsou přečtena jeho nastavení. Dále\n"
 "je použito nastavení z volby --conf (vstupní/výstupní jména souborů z ID "
 "souboru jsou ignorována).\n"
-"Nakonec jsou nastaveny volby z příkazové řádky. V dávkovém režimu není druhá "
-"skupina\n"
-"voleb čtena z konfiguračního souboru.\n"
+"Nakonec jsou nastaveny volby z příkazové řádky. V dávkovém režimu druhá "
+"skupina voleb\n"
+"NENÍ čtena z konfiguračního souboru.\n"
 
 msgid ""
 "Last, but not least, --version displays the version number and compilation\n"
@@ -742,9 +744,8 @@ msgstr "velikost %dx%d, měřítko 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Černý bod: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "Není více místa pro nové křivky."
+msgstr "Není více místa pro nové úpravy světlosti."
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Fatální chyba: uf->conf->shrink<1"
@@ -832,12 +833,6 @@ msgstr "Nastavení na standardní hodnoty"
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Blikat indikátory pře/podexpozice"
 
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
-
 msgid "Configuration"
 msgstr "Konfigurace"
 
@@ -884,13 +879,13 @@ msgid "Logarithmic"
 msgstr "Logaritmické"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "Hot pixels: "
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "Citlivost hot pixels"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "Obnovit citlivost pro hot pixels"
 
 msgid "RGB histogram"
 msgstr "Histogram dle RGB"
@@ -1009,9 +1004,8 @@ msgstr "Obnovit nastavení"
 msgid "Select a spot on the preview image to choose hue"
 msgstr "Před nastavením odstínu zvolte bod na snímku náhledu"
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "Obnovit nastavení"
+msgstr "Odstranit nastavení"
 
 msgid "Grayscale Mode:"
 msgstr "Režim šedé škály:"
@@ -1153,16 +1147,21 @@ msgstr "Šířka"
 msgid "Orientation:"
 msgstr "Orientace:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "Sytost"
+msgstr "Otočení"
 
-#, fuzzy
 msgid "Rotation Angle"
-msgstr "Sytost"
+msgstr "Úhel otočení"
 
 msgid "Reset Rotation Angle"
-msgstr ""
+msgstr "Nastavit standardní úhel otočení"
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr "Počet čar pro vyrovnání"
+
+msgid "Number of alignment lines to overlay over the crop area"
+msgstr "Počet čar pro vyrovnání, které mají být zobrazeny přes oblast výřezu"
 
 msgid "Path"
 msgstr "Cesta"
@@ -1642,3 +1641,9 @@ msgstr "Dle fotoaparátu"
 
 msgid "Auto WB"
 msgstr "Automatické"
+
+#~ msgid "--rotate option is valid only in batch mode"
+#~ msgstr "--rotate volba je platná pouze v dávkovém režimu"
+
+#~ msgid "Loading image"
+#~ msgstr "Načítám snímek"
