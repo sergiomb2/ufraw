@@ -5047,6 +5047,7 @@ static void save_fill_interface(preview_data *data,
 	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
 	gtk_box_pack_start(GTK_BOX(hBox), scale, TRUE, TRUE, 0);
 	button = gtk_spin_button_new(compressAdj, 5, 0);
+	g_object_set_data(G_OBJECT(compressAdj), "Parent-Widget", button);
 	gtk_box_pack_start(GTK_BOX(hBox), button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(compressAdj), "value-changed",
 		G_CALLBACK(adjustment_update_int), &CFG->compression);
