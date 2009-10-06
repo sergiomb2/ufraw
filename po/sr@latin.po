@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-30 11:14-0500\n"
+"POT-Creation-Date: 2009-10-06 04:15+0200\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -26,12 +26,12 @@ msgid "No input file, nothing to do."
 msgstr "Nema ulazne datoteke."
 
 #, c-format
-msgid "Loaded %s%s"
-msgstr "Učitano %s%s"
+msgid "Loaded %s %s"
+msgstr "Učitano %s %s"
 
 #, c-format
-msgid "Saved %s%s"
-msgstr "Sačuvano %s%s"
+msgid "Saved %s %s"
+msgstr "Sačuvano %s %s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -850,12 +850,6 @@ msgstr "Vrati komandu na podrazumevanu vrednost"
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Trepteći indikatori pre/podeksponiranih delova"
 
-msgid "Alignment Line Count"
-msgstr "Broj linija za poravnanje"
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr "Broj linija za poravnanje prikazanih iznad oblasti za isecanje"
-
 msgid "Configuration"
 msgstr "Podešavanje"
 
@@ -1180,6 +1174,13 @@ msgstr "Ugao rotacije"
 
 msgid "Reset Rotation Angle"
 msgstr "Poništi ugao rotacije"
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr "Broj linija za poravnanje"
+
+msgid "Number of alignment lines to overlay over the crop area"
+msgstr "Broj linija za poravnanje prikazanih iznad oblasti za isecanje"
 
 msgid "Path"
 msgstr "Putanja"

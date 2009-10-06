@@ -105,11 +105,11 @@ int main (int argc, char **argv)
 	    g_snprintf(stat, max_name, "[%d/%d]", fileIndex, fileCount);
 	else
 	    stat[0] = '\0';
-	ufraw_message(UFRAW_MESSAGE, _("Loaded %s%s"), uf->filename, stat);
+	ufraw_message(UFRAW_MESSAGE, _("Loaded %s %s"), uf->filename, stat);
 	status = ufraw_batch_saver(uf);
 	if (status==UFRAW_SUCCESS || status==UFRAW_WARNING) {
 	    if (uf->conf->createID!=only_id)
-		ufraw_message(UFRAW_MESSAGE, _("Saved %s%s"),
+		ufraw_message(UFRAW_MESSAGE, _("Saved %s %s"),
 			uf->conf->outputFilename, stat);
 	} else {
 	    exitCode = 1;

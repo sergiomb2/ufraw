@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-30 16:55-0500\n"
+"POT-Creation-Date: 2009-10-06 04:15+0200\n"
 "PO-Revision-Date: 2009-10-01 00:14+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -22,12 +22,12 @@ msgid "No input file, nothing to do."
 msgstr "Pas de fichier en entrée, rien à faire."
 
 #, c-format
-msgid "Loaded %s%s"
-msgstr "Chargée %s%s"
+msgid "Loaded %s %s"
+msgstr "Chargée %s %s"
 
 #, c-format
-msgid "Saved %s%s"
-msgstr "Sauvé %s%s"
+msgid "Saved %s %s"
+msgstr "Sauvé %s %s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
+"POT-Creation-Date: 2009-10-06 04:15+0200\n"
 "PO-Revision-Date: 2009-01-16 23:44+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -26,12 +26,12 @@ msgid "No input file, nothing to do."
 msgstr "入力ファイルが無いので、何もしません"
 
 #, c-format
-msgid "Loaded %s%s"
-msgstr "読み込みました %s%s"
+msgid "Loaded %s %s"
+msgstr "読み込みました %s %s"
 
 #, c-format
-msgid "Saved %s%s"
-msgstr "保存しました %s%s"
+msgid "Saved %s %s"
+msgstr "保存しました %s %s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -820,12 +820,6 @@ msgstr "ガンマをデフォルトに戻す"
 msgid "Blink Over/Underexposure Indicators"
 msgstr ""
 
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
-
 msgid "Configuration"
 msgstr "構成"
 
@@ -1162,6 +1156,13 @@ msgid "Rotation Angle"
 msgstr "彩度"
 
 msgid "Reset Rotation Angle"
+msgstr ""
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr ""
+
+msgid "Number of alignment lines to overlay over the crop area"
 msgstr ""
 
 msgid "Path"

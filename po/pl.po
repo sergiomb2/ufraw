@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-01 13:52-0500\n"
+"POT-Creation-Date: 2009-10-06 04:15+0200\n"
 "PO-Revision-Date: 2009-10-01 10:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -26,12 +26,12 @@ msgid "No input file, nothing to do."
 msgstr "Brak pliku wej¶ciowego, nic do roboty."
 
 #, c-format
-msgid "Loaded %s%s"
-msgstr "Wczytano %s%s"
+msgid "Loaded %s %s"
+msgstr "Wczytano %s %s"
 
 #, c-format
-msgid "Saved %s%s"
-msgstr "Zapisano %s%s"
+msgid "Saved %s %s"
+msgstr "Zapisano %s %s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"

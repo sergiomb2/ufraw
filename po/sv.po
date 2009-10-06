@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
+"POT-Creation-Date: 2009-10-06 04:15+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -22,13 +22,13 @@ msgstr "Öppna navigatorfönstret"
 msgid "No input file, nothing to do."
 msgstr "Ingen inmatningsfil, ingenting att göra."
 
-#, fuzzy, c-format
-msgid "Loaded %s%s"
-msgstr "läste in %s"
+#, c-format
+msgid "Loaded %s %s"
+msgstr "Läste in %s %s"
 
-#, fuzzy, c-format
-msgid "Saved %s%s"
-msgstr "sparade %s"
+#, c-format
+msgid "Saved %s %s"
+msgstr "Sparade %s %s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -733,12 +733,6 @@ msgstr ""
 msgid "Blink Over/Underexposure Indicators"
 msgstr ""
 
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
-
 msgid "Configuration"
 msgstr "Konfiguration"
 
@@ -1050,6 +1044,13 @@ msgid "Rotation Angle"
 msgstr "Färgmättnad"
 
 msgid "Reset Rotation Angle"
+msgstr ""
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr ""
+
+msgid "Number of alignment lines to overlay over the crop area"
 msgstr ""
 
 msgid "Path"

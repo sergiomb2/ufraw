@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
+"POT-Creation-Date: 2009-10-06 04:15+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -24,12 +24,12 @@ msgid "No input file, nothing to do."
 msgstr "No hay archivo de entrada, nada que hacer."
 
 #, c-format
-msgid "Loaded %s%s"
-msgstr "cargado %s%s"
+msgid "Loaded %s %s"
+msgstr "cargado %s %s"
 
 #, c-format
-msgid "Saved %s%s"
-msgstr "Guardado %s%s"
+msgid "Saved %s %s"
+msgstr "Guardado %s %s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -848,12 +848,6 @@ msgstr "Reiniciar comando a valor por defecto"
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Indicadores parpadeantes de Sobre/Subexposición"
 
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
-
 msgid "Configuration"
 msgstr "Configuración"
 
@@ -1186,6 +1180,13 @@ msgid "Rotation Angle"
 msgstr "Saturación"
 
 msgid "Reset Rotation Angle"
+msgstr ""
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr ""
+
+msgid "Number of alignment lines to overlay over the crop area"
 msgstr ""
 
 msgid "Path"

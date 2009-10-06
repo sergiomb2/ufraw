@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
+"POT-Creation-Date: 2009-10-06 04:15+0200\n"
 "PO-Revision-Date: 2008-10-16 16:39+0900\n"
 "Last-Translator: Homin Lee <ff4500@gamil.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -26,12 +26,12 @@ msgid "No input file, nothing to do."
 msgstr "입력 파일이 없으므로 아무것도 하지 않습니다."
 
 #, c-format
-msgid "Loaded %s%s"
-msgstr "%s%s 불러옴"
+msgid "Loaded %s %s"
+msgstr "%s %s 불러옴"
 
 #, c-format
-msgid "Saved %s%s"
-msgstr "%s%s 저장됨"
+msgid "Saved %s %s"
+msgstr "%s %s 저장됨"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -813,12 +813,6 @@ msgstr "명령 초기화"
 msgid "Blink Over/Underexposure Indicators"
 msgstr "노출 부족/과다 영역 깜박임"
 
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
-
 msgid "Configuration"
 msgstr "설정"
 
@@ -1148,6 +1142,13 @@ msgid "Rotation Angle"
 msgstr "채도"
 
 msgid "Reset Rotation Angle"
+msgstr ""
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr ""
+
+msgid "Number of alignment lines to overlay over the crop area"
 msgstr ""
 
 msgid "Path"

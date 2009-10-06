@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
+"POT-Creation-Date: 2009-10-06 04:15+0200\n"
 "PO-Revision-Date: 2009-05-13 12:19+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -24,12 +24,12 @@ msgid "No input file, nothing to do."
 msgstr "Keine Eingabedatei, nichts zu tun."
 
 #, c-format
-msgid "Loaded %s%s"
-msgstr "%s%s geladen"
+msgid "Loaded %s %s"
+msgstr "%s %s geladen"
 
 #, c-format
-msgid "Saved %s%s"
-msgstr "%s%s gesichert"
+msgid "Saved %s %s"
+msgstr "%s %s gesichert"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -846,12 +846,6 @@ msgstr "Befehl auf Standard zurücksetzen"
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Über-/Unterbelichtungsindikatoren für Blinken"
 
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
-
 msgid "Configuration"
 msgstr "Konfiguration"
 
@@ -1182,6 +1176,13 @@ msgid "Rotation Angle"
 msgstr "Sättigung"
 
 msgid "Reset Rotation Angle"
+msgstr ""
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr ""
+
+msgid "Number of alignment lines to overlay over the crop area"
 msgstr ""
 
 msgid "Path"

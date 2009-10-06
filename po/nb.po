@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
+"POT-Creation-Date: 2009-10-06 04:15+0200\n"
 "PO-Revision-Date: 2008-12-23 00:00-0500\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -25,12 +25,12 @@ msgid "No input file, nothing to do."
 msgstr "Ingen inndatafil, ingenting å gjøre."
 
 #, c-format
-msgid "Loaded %s%s"
-msgstr "Lastet inn %s%s"
+msgid "Loaded %s %s"
+msgstr "Lastet inn %s %s"
 
 #, c-format
-msgid "Saved %s%s"
-msgstr "Lagret %s%s"
+msgid "Saved %s %s"
+msgstr "Lagret %s %s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -832,12 +832,6 @@ msgstr "Sett kommando tilbake til standardverdi"
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Blinkende indikatorer for over- og undereksponering"
 
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
-
 msgid "Configuration"
 msgstr "Oppsett"
 
@@ -1165,6 +1159,13 @@ msgid "Rotation Angle"
 msgstr "Fargemetning"
 
 msgid "Reset Rotation Angle"
+msgstr ""
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr ""
+
+msgid "Number of alignment lines to overlay over the crop area"
 msgstr ""
 
 msgid "Path"

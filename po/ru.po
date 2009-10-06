@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
+"POT-Creation-Date: 2009-10-06 04:15+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net."
 "by>\n"
@@ -31,12 +31,12 @@ msgid "No input file, nothing to do."
 msgstr "Нет файла на входе, нечего обрабатывать."
 
 #, c-format
-msgid "Loaded %s%s"
-msgstr "Загружен %s%s"
+msgid "Loaded %s %s"
+msgstr "Загружен %s %s"
 
 #, c-format
-msgid "Saved %s%s"
-msgstr "Сохранен %s%s"
+msgid "Saved %s %s"
+msgstr "Сохранен %s %s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -850,12 +850,6 @@ msgstr "Сбросить значение до исходного"
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Мигать индикацией пере/недоэкспонирования"
 
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
-
 msgid "Configuration"
 msgstr "Настройка"
 
@@ -1184,6 +1178,13 @@ msgid "Rotation Angle"
 msgstr "Насыщенность"
 
 msgid "Reset Rotation Angle"
+msgstr ""
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr ""
+
+msgid "Number of alignment lines to overlay over the crop area"
 msgstr ""
 
 msgid "Path"

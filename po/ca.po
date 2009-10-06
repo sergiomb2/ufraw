@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-30 16:55-0500\n"
+"POT-Creation-Date: 2009-10-06 04:15+0200\n"
 "PO-Revision-Date: 2009-09-30 19:24+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -26,12 +26,12 @@ msgid "No input file, nothing to do."
 msgstr "No s'ha indicat cap fitxer, res a fer."
 
 #, c-format
-msgid "Loaded %s%s"
-msgstr "S'ha carregat %s%s"
+msgid "Loaded %s %s"
+msgstr "S'ha carregat %s %s"
 
 #, c-format
-msgid "Saved %s%s"
-msgstr "S'ha desat %s%s"
+msgid "Saved %s %s"
+msgstr "S'ha desat %s %s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"

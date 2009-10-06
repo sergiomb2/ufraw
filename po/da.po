@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-29 18:30+0200\n"
-"PO-Revision-Date: 2009-09-30 16:30+0200\n"
+"POT-Creation-Date: 2009-10-06 04:15+0200\n"
+"PO-Revision-Date: 2009-10-06 04:30+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -23,12 +23,12 @@ msgid "No input file, nothing to do."
 msgstr "Ingen inddatafil, ikke noget at lave."
 
 #, c-format
-msgid "Loaded %s%s"
-msgstr "Indlæst %s%s"
+msgid "Loaded %s %s"
+msgstr "%s %s indlæst"
 
 #, c-format
-msgid "Saved %s%s"
-msgstr "Gemt %s%s"
+msgid "Saved %s %s"
+msgstr "%s %s gemt"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -310,7 +310,8 @@ msgid ""
 "                      Wavelet denoising threshold (default 0.0).\n"
 msgstr ""
 "--wavelet-denoising-threshold=TÆRSKELVÆRDI\n"
-"                      Wavelet støjreduktionstærskelværdi (standardværdi 0.0).\n"
+"                      Wavelet støjreduktionstærskelværdi (standardværdi "
+"0.0).\n"
 
 msgid ""
 "--hotpixel-sensitivity=VALUE\n"
@@ -828,12 +829,6 @@ msgstr "Resæt kommando til standardværdi"
 msgid "Blink Over/Underexposure Indicators"
 msgstr "Blinkende over-/undereksponeringsindikatorer"
 
-msgid "Alignment Line Count"
-msgstr "Antal opretningslinjer"
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr "Antallet af opretningslinjer, der lægges over beskæringsområdet"
-
 msgid "Configuration"
 msgstr "Konfiguration"
 
@@ -1157,6 +1152,13 @@ msgstr "Rotationsvinkel"
 
 msgid "Reset Rotation Angle"
 msgstr "Resæt rotationsvinkel"
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr "Antal opretningslinjer"
+
+msgid "Number of alignment lines to overlay over the crop area"
+msgstr "Antallet af opretningslinjer, der lægges over beskæringsområdet"
 
 msgid "Path"
 msgstr "Sti"
