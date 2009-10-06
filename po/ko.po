@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-06 04:15+0200\n"
-"PO-Revision-Date: 2008-10-16 16:39+0900\n"
-"Last-Translator: Homin Lee <ff4500@gamil.com>\n"
+"POT-Creation-Date: 2009-10-04 23:59-0500\n"
+"PO-Revision-Date: 2009-10-06 09:38+0900\n"
+"Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -49,7 +49,7 @@ msgid "--silent option is valid only in batch mode"
 msgstr "--silent 옵션은 배치모드에서만 유효합니다."
 
 msgid "Extracting embedded image is not supported in interactive mode"
-msgstr "내장된 이미지 추출은 대화식 모드에서 지원되지 않습니다."
+msgstr "내장 이미지 추출은 대화식 모드에서 지원되지 않습니다."
 
 msgid "Raw images"
 msgstr "Raw 이미지"
@@ -103,7 +103,7 @@ msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (내장)"
 
 msgid "System default"
 msgstr "시스템 기본 설정"
@@ -123,7 +123,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "곡선 '%s'에 너무 많은 고정점이 있습니다"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "ID 파일에 밝기 조정이 너무 많아 무시되었습니다\n"
 
 #, c-format
 msgid ""
@@ -308,6 +308,8 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=VALUE\n"
+"                      핫픽셀을 감지하고 제거하기 위한 감도 (기본값 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -331,9 +333,8 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Interpolation algorithm to use (default ahd).\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "색 부드럽게 하기"
+msgstr "--color-smoothing     색 부드럽게 하기.\n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -371,10 +372,8 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   JPEG 압축률 (0-100, 기본값 85).\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
-msgstr ""
-"--[no]exif            JPEG or PNG 출력에 EXIF를 포함하기(기본값 exif).\n"
+msgstr "--[no]exif            출력에 EXIF 포함 여부(기본값 exif).\n"
 
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
@@ -429,13 +428,12 @@ msgid ""
 msgstr "--overwrite           기존 파일에 덮어 쓰기 (기본값 no).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     창 크기를 강제로 최대화 하기.\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
-msgstr "--silent              변환하는 동안 아무 메세지도 표시하지 않음.\n"
+msgstr "--silent              변환하는 동안 아무 메시지도 표시하지 않음.\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -446,9 +444,9 @@ msgid ""
 "second\n"
 "group of options is NOT read from the resource file.\n"
 msgstr ""
-"UFRaw는 가장 먼저 $HOME/.ufrawrc 파일에 있는 설정을 읽습니다.\n"
-"다음으로, 지정한 ID 파일에서 설정을 읽고, --conf 옵션으로 받은\n"
-"설정을 읽습니다. ID 파일의 입/출력 파일 이름은 무시합니다.\n"
+"UFRaw는 가장 먼저 $HOME/.ufrawrc 리소스 파일의 설정들을 읽습니다.\n"
+"다음으로, 지정한 ID파일(이 있으면) 에서 설정을 읽고, --conf 옵션으로 받은\n"
+"설정을 읽습니다. ID파일의 입/출력 파일 이름은 무시합니다.\n"
 "마지막으로, 커맨드 라인으로 주어진 옵션들이 설정됩니다. 배치모드 에서는\n"
 "두번재 그룹의 옵션들은 리소스 파일에서 읽지 않습니다.\n"
 
@@ -457,7 +455,7 @@ msgid ""
 "options for ufraw and --help displays this help message and exits.\n"
 msgstr ""
 "마지막, 하지만 하찮지 않은 정보, --version은 버전번호와 ufraw의 컴파일\n"
-"옵션을 표시합니다. 그리고 --help는 이 도움말 메세지를 표시하고 마침니다.\n"
+"옵션을 표시합니다. 그리고 --help는 이 도움말 메시지를 표시하고 마침니다.\n"
 
 #, c-format
 msgid "'%s' is not a valid value for the --%s option."
@@ -569,24 +567,24 @@ msgid "Raw file '%s' missing."
 msgstr "Raw 파일 '%s'(을)를 찾을 수 없습니다."
 
 msgid "Delete raw file"
-msgstr "Raw 파일 지우기"
+msgstr "Raw 파일 삭제"
 
 msgid "_Delete selected"
-msgstr "선택된 것 지우기(_D)"
+msgstr "선택된 것 삭제(_D)"
 
 msgid "Delete _All"
-msgstr "전체 지우기(_A)"
+msgstr "전체 삭제(_A)"
 
 msgid "Select files to delete"
 msgstr "지울 파일 선택"
 
 #, c-format
 msgid "Error reading directory '%s'."
-msgstr "'%s' 디렉토리 읽기 오류."
+msgstr "'%s' 디렉터리 읽기 오류."
 
 #, c-format
 msgid "Error deleting '%s'"
-msgstr "'%s' 지우기 오류"
+msgstr "'%s' 삭제 오류"
 
 msgid "Reading embedded image requires libjpeg."
 msgstr "내장 이미지를 읽기 위해서는 libjpeg가 필요합니다."
@@ -679,7 +677,7 @@ msgid "Channel Mixer"
 msgstr "채널 믹서"
 
 msgid "No more room for new curves."
-msgstr "새 곡선을 위한 저장 공간이 없습니다."
+msgstr "새 곡선을 저장할 공간이 없습니다."
 
 msgid "Load curve"
 msgstr "곡선 불러오기"
@@ -697,7 +695,7 @@ msgid "Save curve"
 msgstr "곡선 저장"
 
 msgid "No more room for new profiles."
-msgstr "더이상 새 프로파일을 저장할 장소가 없습니다."
+msgstr "새 프로파일을 저장할 공간이 없습니다."
 
 msgid "Load color profile"
 msgstr "색 프로파일 불러오기"
@@ -723,9 +721,8 @@ msgstr "사이즈 %dx%d, 스케일 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "암부: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "새 곡선을 위한 저장 공간이 없습니다."
+msgstr "새 밝기 조정을 저장할 공간이 없습니다."
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "치명적인 오류: uf->conf->shrink<1"
@@ -860,13 +857,13 @@ msgid "Logarithmic"
 msgstr "대수"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "핫픽셀: "
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "핫픽셀 감도"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "핫픽셀 감도 초기화"
 
 msgid "RGB histogram"
 msgstr "RGB 히스토그램"
@@ -980,18 +977,14 @@ msgstr "확대:"
 msgid "Zoom percentage"
 msgstr "확대 비율"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "전체 대비 조정"
+msgstr "조정 초기화"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
-msgstr ""
-"스팟 화이트 벨런스를 적용하기 위해 미리보기 이미지 중 스팟(부분)을 선택하세요"
+msgstr "색조를 선택하기 위해 미리보기 이미지 중 스팟(부분)을 선택하세요"
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "전체 대비 조정"
+msgstr "조정 제거"
 
 msgid "Grayscale Mode:"
 msgstr "그레이스케일 모드:"
@@ -1133,16 +1126,21 @@ msgstr "너비"
 msgid "Orientation:"
 msgstr "기준:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "채도"
+msgstr "회전"
 
-#, fuzzy
 msgid "Rotation Angle"
-msgstr "채도"
+msgstr "회전 각"
 
 msgid "Reset Rotation Angle"
-msgstr ""
+msgstr "회전 각 초기화"
+
+#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
+msgid "Alignment Line Count"
+msgstr "조정 선 개수"
+
+msgid "Number of alignment lines to overlay over the crop area"
+msgstr "크롭 영역과 겹치는 조정 선의 개수"
 
 #. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
 msgid "Alignment Line Count"
@@ -1169,9 +1167,8 @@ msgstr "JPEG 프로그래시브 인코딩"
 msgid "TIFF lossless Compress"
 msgstr "TIFF 무손실 압축"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr "JPEG나 PNG파일에 EXIF 정보 포함하기"
+msgstr "출력에 EXIF 정보 포함"
 
 msgid "Create ID file "
 msgstr "ID 파일 만들기"
@@ -1287,9 +1284,8 @@ msgstr "색조 처리"
 msgid "Correct luminosity, saturation"
 msgstr "조도, 채도 조정"
 
-#, fuzzy
 msgid "Lightness Adjustments"
-msgstr "밝기"
+msgstr "밝기 조정"
 
 msgid "Crop and rotate"
 msgstr "잘라내기와 회전"
@@ -1308,7 +1304,7 @@ msgstr "옵션"
 #. should have unique mnemonics.
 #. Delete button:
 msgid "_Delete"
-msgstr "지우기(_D)"
+msgstr "삭제(_D)"
 
 msgid "Send image to _Gimp"
 msgstr "이미지를 김프로 전달(_G)"
