@@ -1142,13 +1142,6 @@ msgstr "조정 선 개수"
 msgid "Number of alignment lines to overlay over the crop area"
 msgstr "크롭 영역과 겹치는 조정 선의 개수"
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
-
 msgid "Path"
 msgstr "경로"
 
