@@ -131,6 +131,7 @@ verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_matrix=-1;
 output_color=1, output_bps=8, output_tiff=0, med_passes=0, no_auto_bright=0;
 greybox[0] = greybox[1] = 0, greybox[2] = greybox[3] = UINT_MAX;
 tone_curve_size = 0, tone_curve_offset = 0; /* Nikon Tone Curves UF*/
+tone_mode_offset = 0, tone_mode_size = 0; /* Nikon ToneComp UF*/
 messageBuffer = NULL;
 lastStatus = DCRAW_SUCCESS;
 ifname = NULL;
@@ -6738,7 +6739,6 @@ void CLASS identify()
   }
   colors = 3;
   for (i=0; i < 0x4000; i++) curve[i] = i;
-  tone_curve_offset = tone_curve_size = 0; /*UF*/
 
   order = get2();
   hlen = get4();
@@ -6840,9 +6840,9 @@ void CLASS identify()
 	 (cp = strstr(model,"FILE VERSION"))))
      *cp = 0;
   cp = make + strlen(make);		/* Remove trailing spaces */
-  while (*--cp == ' ') *cp = 0;
+  while (make[0] != 0 && *--cp == ' ') *cp = 0;
   cp = model + strlen(model);
-  while (*--cp == ' ') *cp = 0;
+  while (model[0] != 0 && *--cp == ' ') *cp = 0;
   i = strlen(make);			/* Remove make from model */
   if (!strncasecmp (model, make, i) && model[i++] == ' ')
     memmove (model, model+i, 64-i);
