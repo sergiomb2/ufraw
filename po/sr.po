@@ -1653,9 +1653,3 @@ msgstr "Равнотежа беле из камере"
 
 msgid "Auto WB"
 msgstr "Сам одреди равнотежу беле"
-
-#~ msgid "Loading image"
-#~ msgstr "Учитавам слику"
-
-#~ msgid "--rotate option is valid only in batch mode"
-#~ msgstr "--rotate могућност се користи само у пакетном режиму"

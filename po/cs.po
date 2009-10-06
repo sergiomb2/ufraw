@@ -1641,9 +1641,3 @@ msgstr "Dle fotoaparátu"
 
 msgid "Auto WB"
 msgstr "Automatické"
-
-#~ msgid "--rotate option is valid only in batch mode"
-#~ msgstr "--rotate volba je platná pouze v dávkovém režimu"
-
-#~ msgid "Loading image"
-#~ msgstr "Načítám snímek"
