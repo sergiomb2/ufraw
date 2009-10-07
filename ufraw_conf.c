@@ -104,7 +104,7 @@ const conf_data conf_default = {
     TRUE, /* rotate to camera's setting */
 
     /* GUI settings */
-    25.0, 4, TRUE, /* Zoom, Scale, LockAspect */
+    25.0, TRUE, /* Zoom, LockAspect */
     enabled_state, /* saveConfiguration */
     rgb_histogram, /* histogram */
     linear_histogram, /* liveHistogramScale */
