@@ -242,6 +242,11 @@ int dcraw_load_raw(dcraw_data *h)
     if (h->colors==3) h->pre_mul[3] = 0;
     memcpy(h->cam_mul, d->cam_mul, sizeof d->cam_mul);
     memcpy(h->rgb_cam, d->rgb_cam, sizeof d->rgb_cam);
+    // set post_mul in case wavelet_denoise() is called and scale_colors()
+    // was never called.
+    memcpy(h->post_mul, h->pre_mul, sizeof h->post_mul);
+    if (h->post_mul[3] == 0)
+	h->post_mul[3] = h->colors < 4 ? h->post_mul[1] : 1;
 
     double rgb_cam_transpose[4][3];
     for (i=0; i<4; i++) for (j=0; j<3; j++)
@@ -513,8 +518,8 @@ void dcraw_wavelet_denoise(dcraw_data *h, float threshold)
 {
     if (threshold)
 	wavelet_denoise_INDI(h->raw.image, h->black, h->raw.height,
-		h->raw.width, h->height, h->width, h->raw.colors, h->shrink,
-		h->pre_mul, threshold, h->fourColorFilters);
+		h->raw.width, h->height, h->width, h->colors, h->shrink,
+		h->post_mul, threshold, h->fourColorFilters);
 }
 
 void dcraw_wavelet_denoise_shrinked(dcraw_image_data *f, float threshold)
