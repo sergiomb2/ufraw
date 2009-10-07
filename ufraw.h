@@ -205,7 +205,6 @@ typedef struct {
 
     /* GUI settings */
     double Zoom;
-    int Scale;
     gboolean LockAspect; /* True if aspect ratio is locked */
     int saveConfiguration;
     int histogram, liveHistogramScale;

@@ -404,6 +404,7 @@ int dcraw_image_resize(dcraw_image_data *image, int size)
     int mul=size, div=MAX(image->height, image->width);
 
     if (mul > div) return DCRAW_ERROR;
+    if (mul == div) return DCRAW_SUCCESS;
     /* I'm skiping the last row/column if it is not a full row/column */
     h = image->height * mul / div;
     w = image->width * mul / div;
@@ -513,7 +514,7 @@ void dcraw_wavelet_denoise(dcraw_data *h, float threshold)
     if (threshold)
 	wavelet_denoise_INDI(h->raw.image, h->black, h->raw.height,
 		h->raw.width, h->height, h->width, h->raw.colors, h->shrink,
-		h->pre_mul, threshold, h->filters);
+		h->pre_mul, threshold, h->fourColorFilters);
 }
 
 void dcraw_wavelet_denoise_shrinked(dcraw_image_data *f, float threshold)
