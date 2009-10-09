@@ -2280,7 +2280,7 @@ static void refresh_aspect(preview_data *data)
 
 static void fix_crop_aspect(preview_data *data, CursorType cursor)
 {
-    float aspect;
+    double aspect;
 
     /* Sanity checks first */
     if (CFG->CropX2 < CFG->CropX1)
@@ -2300,7 +2300,7 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
 	return;
 
     if (data->AspectRatio == 0)
-	aspect = ((float)data->UF->rotatedWidth) / data->UF->rotatedHeight;
+	aspect = ((double)data->UF->rotatedWidth) / data->UF->rotatedHeight;
     else
 	aspect = data->AspectRatio;
 
@@ -2311,15 +2311,15 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
 	    {
 		/* Try to expand the rectangle evenly vertically,
 		 * if space permits */
-		float cy = (CFG->CropY1 + CFG->CropY2) / 2.0;
-		float dy = (CFG->CropX2 - CFG->CropX1) * 0.5 / aspect;
+		double cy = (CFG->CropY1 + CFG->CropY2) / 2.0;
+		double dy = (CFG->CropX2 - CFG->CropX1) * 0.5 / aspect;
 		int fix_dx = 0;
 		if (dy > cy)
 		    dy = cy, fix_dx++;
 		if (cy + dy > data->UF->rotatedHeight)
 		    dy = data->UF->rotatedHeight - cy, fix_dx++;
 		if (fix_dx) {
-		    float dx = rint(dy * 2.0 * aspect);
+		    double dx = rint(dy * 2.0 * aspect);
 		    if (cursor == left_cursor)
 			CFG->CropX1 = CFG->CropX2 - dx;
 		    else
@@ -2334,15 +2334,15 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
 	    {
 		/* Try to expand the rectangle evenly horizontally,
 		 * if space permits */
-		float cx = (CFG->CropX1 + CFG->CropX2) / 2.0;
-		float dx = (CFG->CropY2 - CFG->CropY1) * 0.5 * aspect;
+		double cx = (CFG->CropX1 + CFG->CropX2) / 2.0;
+		double dx = (CFG->CropY2 - CFG->CropY1) * 0.5 * aspect;
 		int fix_dy = 0;
 		if (dx > cx)
 		    dx = cx, fix_dy++;
 		if (cx + dx > data->UF->rotatedWidth)
 		    dx = data->UF->rotatedWidth - cx, fix_dy++;
 		if (fix_dy) {
-		    float dy = rint(dx * 2.0 / aspect);
+		    double dy = rint(dx * 2.0 / aspect);
 		    if (cursor == top_cursor)
 			CFG->CropY1 = CFG->CropY2 - dy;
 		    else
@@ -2361,10 +2361,10 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
 		/* Adjust rectangle width/height according to aspect ratio
 		 * trying to preserve the area of the crop rectangle.
 		 * See the comment in set_new_aspect() */
-		float dy, dx = sqrt(aspect * (CFG->CropX2 - CFG->CropX1) *
+		double dy, dx = sqrt(aspect * (CFG->CropX2 - CFG->CropX1) *
 				    (CFG->CropY2 - CFG->CropY1));
-
-		for (;;) {
+		int i;
+		for (i=0;i<10;i++) {
 		    if (cursor == top_left_cursor ||
 			cursor == bottom_left_cursor) {
 			if (CFG->CropX2 < dx)
@@ -2395,6 +2395,11 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
 		    }
 		    break;
 		}
+		if (i==10)
+		    g_warning("fix_crop_aspect(): loop not converging. "
+			    "aspect:%f dx:%f dy:%f X1:%d X2:%d Y1:%d Y2:%d\n",
+			    aspect, dx, dy, CFG->CropX1, CFG->CropX2,
+			    CFG->CropY1, CFG->CropY2);
 	    }
 	    break;
 
@@ -2965,6 +2970,9 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
     if (data->FreezeDialog)
 	return;
     
+    gboolean FullCrop =
+	CFG->CropX1==0 && CFG->CropX2==data->UF->rotatedWidth &&
+	CFG->CropY1==0 && CFG->CropY2==data->UF->rotatedHeight;
     ufraw_unnormalize_rotation(data->UF);
     CFG->rotationAngle = gtk_adjustment_get_value(data->RotationAdjustment);
     ufraw_normalize_rotation(data->UF);
@@ -2972,6 +2980,21 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
 	    CFG->rotationAngle != 0 ||
 	    CFG->orientation != CFG->CameraOrientation);
     ufraw_get_image_dimensions(data->UF->raw, data->UF);
+    if (FullCrop) {
+	if (CFG->LockAspect) {
+	    double newAspect = (double)data->UF->rotatedWidth /
+		    data->UF->rotatedHeight;
+	    // Allow 1/aspect switch even if aspect is locked.
+	    if (fabs(data->AspectRatio - 1/newAspect) < 0.0001) {
+		CFG->CropX2 = data->UF->rotatedWidth;
+		CFG->CropY2 = data->UF->rotatedHeight;
+		refresh_aspect(data);
+	    }
+	} else { // Keep full crop
+	    CFG->CropX2 = data->UF->rotatedWidth;
+	    CFG->CropY2 = data->UF->rotatedHeight;
+	}
+    }
     int d = MIN(CFG->CropX1, CFG->CropX2 - data->UF->rotatedWidth);
     if (d > 0) {
 	CFG->CropX1 -= d;
