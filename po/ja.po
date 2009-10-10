@@ -1,17 +1,17 @@
 # Japanese translation for UFRaw.
-# Copyright (C) 2006-2008 Udi Fuchs.
+# Copyright (C) 2006-2009 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-06 04:15+0200\n"
-"PO-Revision-Date: 2009-01-16 23:44+0900\n"
+"POT-Creation-Date: 2009-10-09 22:56-0500\n"
+"PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Japanese\n"
 "X-Poedit-Country: JAPAN\n"
@@ -27,11 +27,11 @@ msgstr "入力ファイルが無いので、何もしません"
 
 #, c-format
 msgid "Loaded %s %s"
-msgstr "読み込みました %s %s"
+msgstr "読み込みました %s%s"
 
 #, c-format
 msgid "Saved %s %s"
-msgstr "保存しました %s %s"
+msgstr "保存しました %s%s"
 
 #. First letter of the word 'yes' for the y/n question
 msgid "y"
@@ -95,23 +95,20 @@ msgstr "カメラカーブ"
 
 #. profileIndex[], profileCount[]
 #. Profile data defaults
-#, fuzzy
 msgid "No profile"
-msgstr "カラープロファイル"
+msgstr "プロファイル無し"
 
-#, fuzzy
 msgid "Color matrix"
-msgstr "カラーマトリックスを使う"
+msgstr "カラーマトリックス"
 
 msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (埋込み)"
 
-#, fuzzy
 msgid "System default"
-msgstr "デフォルトとして保存"
+msgstr "システムデフォルト"
 
 msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
 msgstr "UFRaw-0.4以前の.ufrawrcの変換を試みます"
@@ -128,13 +125,15 @@ msgid "Too many anchors for curve '%s'"
 msgstr "カーブにアンカーが多すぎます '%s'"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "IDファイルの明度調整が多すぎるので無視します。\n"
 
 #, c-format
 msgid ""
 "ID file %s does not appear to be a regular file\n"
 "%s\n"
 msgstr ""
+"IDファイル %s は正しいファイルとして認識できません\n"
+"%s\n"
 
 #, c-format
 msgid ""
@@ -309,6 +308,8 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=VALUE\n"
+"                      ホットピクセルの検出と軽減の感度設定 (初期値 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -359,7 +360,7 @@ msgstr ""
 "                      出力ファイル形式 (デフォルト ppm)。\n"
 
 msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
-msgstr ""
+msgstr "--out-depth=8|16      出力画像のチャンネルあたりの色深度 (初期値 8).\n"
 
 msgid ""
 "--create-id=no|also|only\n"
@@ -371,9 +372,8 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   JPEG圧縮 (0-100, デフォルト85)。\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
-msgstr "--[no]exif            exif情報をJPEG出力に埋込(デフォルト埋めこむ)\n"
+msgstr "--[no]exif            EXIF情報を出力に埋込(デフォルト EXIFを埋込む)\n"
 
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
@@ -393,6 +393,9 @@ msgid ""
 "                      clockwise, or do not rotate the image (default "
 "camera).\n"
 msgstr ""
+"--rotate=camera|ANGLE|no\n"
+"                      カメラの設定に応じ画像を回転(camera), 時計回り\n"
+"                      角度(ANGLE), 又は回転しない(no) (初期値 camera).\n"
 
 msgid ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
@@ -400,6 +403,9 @@ msgid ""
 "the\n"
 "                      raw image after rotation but before any scaling.\n"
 msgstr ""
+"--crop-(left|right|top|bottom)=PIXELS\n"
+"                      回転後で拡大縮小前のRaw画像からピクセル単位で\n"
+"                      指定した範囲を切り出す。\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -426,7 +432,6 @@ msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
 msgstr "--silent              バッチ処理の間なにもメッセージを表示しません。\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -513,11 +518,11 @@ msgstr "'%s' は正しいclipオプションではありません。"
 msgid "you can not specify both --shrink and --size"
 msgstr "--shrink と --sizeは同時に指定できません"
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%d' is not a valid bit depth."
-msgstr "'%s' は正しいパスではありません"
+msgstr "'%d' は正しい色数(bit depth)ではありません。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Output type '%s' is deprecated"
 msgstr "出力形式 '%s' は廃止されます。"
 
@@ -527,9 +532,8 @@ msgstr "ufrawはTIFFサポート無しでビルドされました。"
 msgid "ufraw was build without JPEG support."
 msgstr "ufrawはJPEGサポート無しでビルドされました。"
 
-#, fuzzy
 msgid "ufraw was build without PNG support."
-msgstr "ufrawはJPEGサポート無しでビルドされました。"
+msgstr "ufrawはPNGサポート無しでビルドされました。"
 
 #, c-format
 msgid "'%s' is not a valid output type."
@@ -562,29 +566,25 @@ msgstr "一つ以上のファイルを同じ出力に出力できません"
 msgid "Raw file '%s' missing."
 msgstr "Rawファイル '%s' が見つかりません。"
 
-#, fuzzy
 msgid "Delete raw file"
-msgstr "IDファイルを作成"
+msgstr "Rawファイルを削除"
 
 msgid "_Delete selected"
 msgstr ""
 
-#, fuzzy
 msgid "Delete _All"
-msgstr "IDファイルを作成"
+msgstr "すべて削除"
 
 msgid "Select files to delete"
-msgstr ""
+msgstr "削除するファイルを選択"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading directory '%s'."
-msgstr ""
-"ファイル作成エラー '%s'.\n"
-"%s"
+msgstr "ディレクトリ '%s' の読み込み失敗"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error deleting '%s'"
-msgstr "書き込みエラー '%s'"
+msgstr "削除失敗 '%s'"
 
 msgid "Reading embedded image requires libjpeg."
 msgstr "埋め込まれた画像を読み込むにはlibjpegが必要です。"
@@ -635,11 +635,9 @@ msgstr "書き込みエラー '%s'"
 msgid "Unsupported output type (%d) for embedded image"
 msgstr "'%d'は埋め込み画像としてサポートしていない出力形式です"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Loading raw file '%s'"
-msgstr ""
-"ファイル作成エラー '%s'.\n"
-"%s"
+msgstr "Rawファイル '%s' を読み込んでいます"
 
 msgid "Can't allocate new image."
 msgstr "新しい画像を割り当てられません。"
@@ -652,9 +650,9 @@ msgstr "背景"
 msgid "Failed to embed output profile '%s' in image."
 msgstr "出力プロファイル'%s'を画像に埋め込むのに失敗しました。"
 
-#, c-format
+#, fuzzy, c-format
 msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "EXIFバッファ長 %d が長すぎるので無視します\n"
+msgstr "EXIFバッファ長 %d, が長すぎるので無視します"
 
 msgid "Raw histogram with conversion curves"
 msgstr ""
@@ -663,19 +661,18 @@ msgid "Live histogram"
 msgstr "動的ヒストグラム"
 
 #. No darkframe file
-#, fuzzy
 msgid "None"
-msgstr "いいえ"
+msgstr "無し"
 
 msgid "Lightness"
-msgstr ""
+msgstr "明度"
 
 msgid "Luminance"
 msgstr "輝度"
 
 # 値？
 msgid "Value"
-msgstr ""
+msgstr "値"
 
 msgid "Channel Mixer"
 msgstr "チャンネルミキサー"
@@ -735,9 +732,8 @@ msgstr "新しいカーブに対する余地がありません"
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "深刻なエラー: uf->conf->shrink<1"
 
-#, fuzzy
 msgid "Load dark frame"
-msgstr "基本カーブを読み込む"
+msgstr "ダークフレームを読み込む"
 
 msgid "clip"
 msgstr "切り取る"
@@ -811,14 +807,13 @@ msgstr "輝度カーブ"
 
 #. Remote Gimp command entry
 msgid "Remote Gimp command"
-msgstr ""
+msgstr "リモートのGimpコマンド"
 
-#, fuzzy
 msgid "Reset command to default"
-msgstr "ガンマをデフォルトに戻す"
+msgstr "コマンドをデフォルトに戻す"
 
 msgid "Blink Over/Underexposure Indicators"
-msgstr ""
+msgstr "白飛び・黒つぶれ表示を点滅"
 
 msgid "Configuration"
 msgstr "構成"
@@ -826,9 +821,8 @@ msgstr "構成"
 msgid "Save configuration"
 msgstr "設定を保存"
 
-#, fuzzy
 msgid "Save configuration to resource file ($HOME/.ufrawrc)"
-msgstr "リソースファイルを保存 ($HOME/.ufrawrc)"
+msgstr "リソースファイルに設定を保存 ($HOME/.ufrawrc)"
 
 msgid "Log"
 msgstr "ログ"
@@ -857,23 +851,23 @@ msgstr ""
 
 #, c-format
 msgid "%s%s (Alt-%s)"
-msgstr ""
+msgstr "%s%s (Alt-%s)"
 
 #, fuzzy
 msgid "Linear"
-msgstr "直線"
+msgstr "線形"
 
 msgid "Logarithmic"
 msgstr "対数"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "ホットピクセル:"
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "ホットピクセル感度"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "ホットピクセル感度をリセット"
 
 msgid "RGB histogram"
 msgstr "RGBヒストグラム"
@@ -939,9 +933,8 @@ msgstr "選択した箇所を基本値として全体にホワイトバランス
 msgid "Chan. multipliers:"
 msgstr "チャンネル乗数:"
 
-#, fuzzy
 msgid "Bayer pattern interpolation"
-msgstr "バイリニア補間"
+msgstr "Bayerパターン補間"
 
 msgid "VNG four color interpolation"
 msgstr "VNG4色補間"
@@ -955,17 +948,14 @@ msgstr "AHD補間"
 msgid "VNG interpolation"
 msgstr "VNG補間"
 
-#, fuzzy
 msgid "PPG interpolation"
-msgstr "VNG補間"
+msgstr "PPG補間"
 
-#, fuzzy
 msgid "No interpolation"
-msgstr "VNG補間"
+msgstr "補間無し"
 
-#, fuzzy
 msgid "No Bayer pattern"
-msgstr "バイリニア補間"
+msgstr "Bayerパターン無し"
 
 msgid "Apply color smoothing"
 msgstr ""
@@ -976,15 +966,14 @@ msgstr "ノイズ除去"
 msgid "Threshold for wavelet denoising"
 msgstr "waveletノイズ除去のしきい値"
 
-#, fuzzy
 msgid "Reset denoise threshold to default"
-msgstr "露出をデフォルトに戻す"
+msgstr "ノイズ除去のしきい値を初期化"
 
 msgid "Dark Frame:"
-msgstr ""
+msgstr "ダークフレーム:"
 
 msgid "Reset dark frame"
-msgstr ""
+msgstr "ダークフレームをリセット"
 
 msgid "Zoom:"
 msgstr "ズーム:"
@@ -993,7 +982,7 @@ msgid "Zoom percentage"
 msgstr "表示倍率（パーセント）"
 
 msgid "Reset adjustment"
-msgstr ""
+msgstr "調整をリセット"
 
 #, fuzzy
 msgid "Select a spot on the preview image to choose hue"
@@ -1005,7 +994,6 @@ msgstr ""
 msgid "Grayscale Mode:"
 msgstr "グレースケールモード："
 
-#, fuzzy
 msgid "Reset channel mixer"
 msgstr "チャンネルミキサーをリセット"
 
@@ -1018,7 +1006,6 @@ msgstr "基本カーブを保存"
 msgid "Reset base curve to default"
 msgstr "基本カーブをデフォルトに戻す"
 
-#, fuzzy
 msgid "Input ICC profile"
 msgstr "入力のICCプロファイル"
 
@@ -1031,7 +1018,6 @@ msgstr "表示のICCプロファイル"
 msgid "Gamma"
 msgstr "ガンマ"
 
-#, fuzzy
 msgid "Gamma correction for the input profile"
 msgstr "入力プロファイルにガンマ修正"
 
@@ -1048,9 +1034,8 @@ msgstr "ガンマ修正の直線部分"
 msgid "Reset linearity to default"
 msgstr "リニアリティーをデフォルトに戻す"
 
-#, fuzzy
 msgid "Output intent"
-msgstr "出力オプション"
+msgstr "出力意図"
 
 msgid "Perceptual"
 msgstr "知覚的"
@@ -1064,15 +1049,14 @@ msgstr "彩度"
 msgid "Absolute colorimetric"
 msgstr "絶対比色"
 
-#, fuzzy
 msgid "Output bit depth"
-msgstr "出力オプション"
+msgstr "出力色数"
 
 msgid "Display intent"
-msgstr ""
+msgstr "表示意図"
 
 msgid "Disable soft proofing"
-msgstr ""
+msgstr "ソフト校正無効"
 
 msgid "Contrast"
 msgstr "コントラスト"
@@ -1080,9 +1064,8 @@ msgstr "コントラスト"
 msgid "Global contrast adjustment"
 msgstr ""
 
-#, fuzzy
 msgid "Reset global contrast to default"
-msgstr "ブラックポイントをデフォルトに戻す"
+msgstr ""
 
 msgid "Reset saturation to default"
 msgstr "彩度をデフォルトに戻す"
@@ -1131,9 +1114,12 @@ msgid ""
 "Can be entered in decimal notation (1.273)\n"
 "or as a ratio of two numbers (14:11)"
 msgstr ""
+"切り抜き範囲の縦横比は、\n"
+"10進数の小数点表記(1.273)\n"
+"又は2値による表記(14:11)"
 
 msgid "Lock aspect ratio"
-msgstr ""
+msgstr "縦横比を固定"
 
 msgid "Shrink factor"
 msgstr "縮小倍数"
@@ -1147,16 +1133,14 @@ msgstr "横"
 msgid "Orientation:"
 msgstr "変換:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "彩度"
+msgstr "回転"
 
-#, fuzzy
 msgid "Rotation Angle"
-msgstr "彩度"
+msgstr "アングルの回転"
 
 msgid "Reset Rotation Angle"
-msgstr ""
+msgstr "アングルの回転をリセット"
 
 #. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
 msgid "Alignment Line Count"
@@ -1169,7 +1153,7 @@ msgid "Path"
 msgstr "パス"
 
 msgid "Select output path"
-msgstr ""
+msgstr "出力場所を選択"
 
 msgid "Filename"
 msgstr "ファイル名"
@@ -1178,14 +1162,13 @@ msgid "JPEG compression level"
 msgstr "JPEG圧縮比率"
 
 msgid "JPEG progressive encoding"
-msgstr ""
+msgstr "JPEGプログレッシブ"
 
 msgid "TIFF lossless Compress"
-msgstr ""
+msgstr "TIFF劣化無し圧縮"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr "JPEG又はPNGに埋め込まれたEXIFデータ"
+msgstr "出力にEXIF情報を埋め込む"
 
 msgid "Create ID file "
 msgstr "IDファイルを作成"
@@ -1219,7 +1202,7 @@ msgid "Just this once"
 msgstr "今回のみ"
 
 msgid "Remember output path"
-msgstr ""
+msgstr "出力場所を記憶"
 
 msgid "Overwrite existing files without asking"
 msgstr "ファイルが存在しても質問無しで上書きする"
@@ -1238,7 +1221,7 @@ msgid "Timestamp"
 msgstr "タイムスタンプ"
 
 msgid "Shutter time"
-msgstr ""
+msgstr "露光時間"
 
 msgid "Aperture"
 msgstr "絞り値"
@@ -1267,7 +1250,7 @@ msgid "EXIF data read by %s"
 msgstr "%sでEXIFデータを読みました"
 
 msgid "Warning: EXIF data will not be sent to output"
-msgstr ""
+msgstr "警告：EXIF情報が出力に入りませんでした。"
 
 #, c-format
 msgid "%s - UFRaw"
@@ -1290,7 +1273,7 @@ msgstr "グレースケール"
 
 #. Lens correction page
 msgid "Lens correction"
-msgstr ""
+msgstr "レンズ補正"
 
 msgid "Base curve"
 msgstr "基本カーブ"
@@ -1299,17 +1282,16 @@ msgid "Color management"
 msgstr "カラーマネジメント"
 
 msgid "Correct luminosity, saturation"
-msgstr ""
+msgstr "輝度・彩度の補正"
 
 msgid "Lightness Adjustments"
-msgstr ""
+msgstr "明度調整"
 
 msgid "Crop and rotate"
 msgstr "切り抜きと回転"
 
-#, fuzzy
 msgid "Save"
-msgstr "保存しました"
+msgstr "保存"
 
 msgid "EXIF"
 msgstr "EXIF"
@@ -1321,12 +1303,11 @@ msgstr "オプション"
 #. "_Delete", "_Cancel", "_Save", "Save _As", "Send to _Gimp"
 #. should have unique mnemonics.
 #. Delete button:
-#, fuzzy
 msgid "_Delete"
-msgstr "IDファイルを作成"
+msgstr "_削除"
 
 msgid "Send image to _Gimp"
-msgstr ""
+msgstr "イメージを_Gimpへ送る"
 
 #. preview_progress() changes the size of the progress bar
 #. and processes the event queue.
@@ -1363,37 +1344,30 @@ msgstr ""
 "ファイル'%s'はすでに存在します。\n"
 "上書きしますか？"
 
-#, fuzzy
 msgid "Error creating temporary file."
-msgstr ""
-"ファイル作成エラー '%s'.\n"
-"%s"
+msgstr "一時ファイル作成エラー"
 
-#, fuzzy
 msgid "Error activating Gimp."
 msgstr ""
-"ファイル作成エラー '%s'.\n"
-"%s"
 
 msgid "Remote URI is not supported"
 msgstr "リモートのURIはサポートしていません"
 
-# ダークフレームをどう訳すか
-#, fuzzy, c-format
+#, c-format
 msgid "darkframe error: %s is not a raw file\n"
 msgstr "ダークフレームエラー: %sはrawファイルではありません\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "error loading darkframe '%s'\n"
 msgstr "ダークフレーム'%s'の読込に失敗しました\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Darkframe '%s' is incompatible with main image"
-msgstr "ダークフレームはメイン画像と互換性がありません"
+msgstr "ダークフレーム '%s' はメイン画像と互換性がありません"
 
-#, fuzzy, c-format
+#, c-format
 msgid "using darkframe '%s'\n"
-msgstr "ダークフレーム'%s'を使用します\n"
+msgstr "ダークフレーム'%s'を使用\n"
 
 msgid "Error reading NEF curve"
 msgstr "NEFカーブの読込に失敗しました"
@@ -1425,17 +1399,17 @@ msgstr "画像を保存しています"
 msgid "Image filename can not be the same as ID filename '%s'"
 msgstr "画像のファイル名はIDのファイル名と同じにはできません '%s'"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to embed output profile '%s' in '%s'."
-msgstr "出力プロファイル'%s'を'%s'へ埋め込むのに失敗しました"
+msgstr "出力プロファイル'%s'を'%s'へ埋込むのに失敗しました"
 
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
-msgstr ""
+msgstr "'%d' はサポートされない色深度なので無視しました。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
-msgstr "EXIFバッファ長 %d が長すぎるので無視します\n"
+msgstr "EXIFバッファ長 %d, が長すぎるので無視します"
 
 #, c-format
 msgid "Unknown file type %d."
@@ -1470,7 +1444,7 @@ msgid "F-number (Aperture)"
 msgstr "F-値(絞り値)"
 
 msgid "Distance"
-msgstr ""
+msgstr "距離"
 
 msgid "Distance to subject"
 msgstr ""
@@ -1513,7 +1487,7 @@ msgid ""
 msgstr ""
 
 msgid "Choose camera from complete list"
-msgstr ""
+msgstr "完成したリストからカメラを選ぶ"
 
 msgid ""
 "Search for lens using a pattern\n"
@@ -1524,14 +1498,13 @@ msgid "Choose lens from list of possible variants"
 msgstr ""
 
 msgid "Scale"
-msgstr ""
+msgstr "拡大縮小"
 
 msgid "Image scale power-of-two"
 msgstr ""
 
-#, fuzzy
 msgid "Reset image scale to default"
-msgstr "基本カーブをデフォルトに戻す"
+msgstr "画像の大きさを初期値に戻す"
 
 msgid "Autoscale the image for best fit"
 msgstr ""
@@ -1543,7 +1516,7 @@ msgid "Optical vignetting"
 msgstr ""
 
 msgid "Lens distortion"
-msgstr ""
+msgstr "レンズの歪曲収差"
 
 msgid "Lens geometry"
 msgstr ""
@@ -1607,13 +1580,11 @@ msgid "White fluorescent"
 msgstr "白色蛍光灯"
 
 #. In some newer Nikon cameras:
-#, fuzzy
 msgid "Sodium-vapor fluorescent"
-msgstr "自然色蛍光灯"
+msgstr "ナトリウム灯混合光"
 
-#, fuzzy
 msgid "Day white fluorescent"
-msgstr "温白色蛍光灯"
+msgstr "昼白色蛍光灯"
 
 msgid "High temp. mercury-vapor fluorescent"
 msgstr ""
@@ -1639,3 +1610,10 @@ msgstr "カメラWB"
 
 msgid "Auto WB"
 msgstr "自動WB"
+
+#, fuzzy
+#~ msgid "--rotate option is valid only in batch mode"
+#~ msgstr "--silent オプションはバッチモードのみで有効です"
+
+#~ msgid "Loading image"
+#~ msgstr "画像を読み込んでいます"
