@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-06 04:15+0200\n"
+"POT-Creation-Date: 2009-10-09 22:56-0500\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net."
 "by>\n"
@@ -109,7 +109,7 @@ msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (встроенный)"
 
 msgid "System default"
 msgstr "Системный профиль"
@@ -129,7 +129,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "Слишком много узлов для кривой '%s'"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "Слишом много настроек яркости в ID файле, проигнорировано\n"
 
 #, c-format
 msgid ""
@@ -326,6 +326,9 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=ЗНАЧЕНИЕ\n"
+"                      чувствительность для определения и сглаживания горячих "
+"пикселов (по умолчанию 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -462,7 +465,7 @@ msgstr ""
 "                      (по умолчанию — спрашивать подтверждение).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     Сделать окно развенутым.\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -896,13 +899,13 @@ msgid "Logarithmic"
 msgstr "Логарифмический масштаб"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "Горячие пикселы:"
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "Чувствительность к горячим пикселам"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "Сбросить чувствительность к горячим пикселам"
 
 msgid "RGB histogram"
 msgstr "Гистограмма RGB"
@@ -1178,14 +1181,14 @@ msgid "Rotation Angle"
 msgstr "Насыщенность"
 
 msgid "Reset Rotation Angle"
-msgstr ""
+msgstr "Сбросить угол поворота"
 
 #. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
 msgid "Alignment Line Count"
-msgstr ""
+msgstr "Число линий выравнивания"
 
 msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
+msgstr "Число линий выравнивания, лежащих на вырезаемой области"
 
 msgid "Path"
 msgstr "Путь"
