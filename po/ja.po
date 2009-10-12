@@ -1610,10 +1610,3 @@ msgstr "カメラWB"
 
 msgid "Auto WB"
 msgstr "自動WB"
-
-#, fuzzy
-#~ msgid "--rotate option is valid only in batch mode"
-#~ msgstr "--silent オプションはバッチモードのみで有効です"
-
-#~ msgid "Loading image"
-#~ msgstr "画像を読み込んでいます"
