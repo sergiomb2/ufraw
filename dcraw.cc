@@ -7320,7 +7320,9 @@ cp_e2500:
     load_flags = 30;
   } else if (!strcmp(model,"FinePix S5100") ||
 	     !strcmp(model,"FinePix S5500")) {
+#ifdef DCRAW_NOMAIN
     height -= top_margin = 6;
+#endif
     load_raw = &CLASS unpacked_load_raw;
   } else if (!strcmp(make,"FUJIFILM")) {
     if (!strcmp(model+7,"S2Pro")) {
@@ -7390,7 +7392,7 @@ konica_400z:
       maximum = 0x3df;
       order = 0x4d4d;
     }
-#if 0
+#ifndef DCRAW_NOMAIN
   } else if (!strcmp(model,"*ist D")) {
     data_error = -1;
 #endif
