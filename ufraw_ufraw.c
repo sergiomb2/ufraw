@@ -907,6 +907,13 @@ no_distortion:
  * of its neighbours. For simplicity border pixels are not considered.
  *
  * Reasonable values for uf->conf->hotpixel are in the range 0.5-10.
+ *
+ * OpenMP notes
+ * ------------
+ * The hot pixel count is updated atomically but this is merely for proof
+ * of concept: objdump -Sd shows a "lock addl $0x1,0x1f4(%edx) sequence.
+ * The algorithm uses pixel values from previous and next row anyway and
+ * whether or not pixels are marked makes a difference already.
  */
 static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
 	int width, int height, int colors, unsigned rgbMax)
@@ -919,6 +926,11 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
     if (uf->conf->hotpixel <= 0.0)
 	return;
     delta = rgbMax / (uf->conf->hotpixel + 1.0);
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static,64) default(none) \
+  shared(uf,img,width,height,colors,rgbMax,delta) \
+  private(h,p,w,c,t,v,hi,i)
+#endif
     for (h = 1; h < height - 1; ++h) {
 	p = img + 1 + h * width;
 	for (w = 1; w < width - 1; ++w, ++p) {
@@ -958,6 +970,9 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
 			memcpy(p[i], p[0], sizeof (p[i]));
 		}
 		p[0][c] = hi;
+#ifdef _OPENMP
+#pragma omp atomic
+#endif
 		++uf->hotpixels;
 	    }
 	}
