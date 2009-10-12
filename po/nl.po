@@ -1,6 +1,6 @@
 # translation of nl.po to Nederlands
 # Translation of UFRaw to Nederlands.
-# Copyright (C) 2006-2008 Udi Fuchs.
+# Copyright (C) 2006-2009 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 #
 # Simon Oosthoek <simon@margo.student.utwente.nl>, 2008, 2009.

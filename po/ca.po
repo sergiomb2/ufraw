@@ -2,7 +2,7 @@
 # Traducció al català de UFRaw Convertidor de Dades en Cru No Identificades per a imatges de càmeres digitals.
 # Copyright (C) 2008-2009, Udi Fuchs & Paco Rivière
 # This file is distributed under the same license as the UFRaw package.
-# Paco Rivière http://pacoriviere.cat/, 2008.
+# Paco Rivière http://pacoriviere.cat/, 2008, 2009.
 #
 msgid ""
 msgstr ""

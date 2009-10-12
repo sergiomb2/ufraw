@@ -1,5 +1,5 @@
 # French translation for UFRaw.
-# Copyright (C) 2006-2008 Udi Fuchs.
+# Copyright (C) 2006-2009 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 #
 msgid ""

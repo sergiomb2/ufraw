@@ -1,7 +1,7 @@
 # Swedish translation for UFRaw.
 # Copyright (C) 2006-2009 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-# Daniel Nylander <info@danielnylander.se>, 2007.
+# Daniel Nylander <info@danielnylander.se>, 2007, 2009.
 #
 msgid ""
 msgstr ""

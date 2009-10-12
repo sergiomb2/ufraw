@@ -1,7 +1,7 @@
 # Italian translation of Ufraw.
 # Copyright (C) 2006-2009 Udi Fuchs.
 # This file is distributed under the same license as the Ufraw package.
-# daniele <dmedri@SPAMgmail.com>, 2007-2008.
+# daniele <dmedri@SPAMgmail.com>, 2007-2009.
 #
 msgid ""
 msgstr ""

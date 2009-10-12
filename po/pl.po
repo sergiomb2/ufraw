@@ -1,7 +1,7 @@
 # Polish translation for UFRaw
 # Copyright (C) 2006-2009 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-# Tomasz Goliñski tomaszg@alpha.uwb.edu.pl, 2007-2008.
+# Tomasz Goliñski tomaszg@alpha.uwb.edu.pl, 2007-2009.
 # 
 msgid ""
 msgstr ""
