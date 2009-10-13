@@ -4,19 +4,18 @@
 # Alexey Voinov <voins@voins.program.ru>, 2006.
 # Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net.by>, 2006, 2007, 2009.
 # Andrew Zabolotny <andyz@users.sourceforge.net>, 2007, 2008.
-#
+# Alexandre Prokoudine <alexandre.prokoudine@gmail.com>, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-10-12 22:11-0500\n"
-"PO-Revision-Date: 2009-01-04 06:00+0100\n"
-"Last-Translator: Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net."
-"by>\n"
+"PO-Revision-Date: 2009-10-13 18:45+0400\n"
+"Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: UTF-8\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: KBabel 1.11.4\n"
@@ -355,9 +354,8 @@ msgstr ""
 "                      Используемый алгоритм интерполяции (по умолчанию — "
 "ahd).\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "Применить цветовое сглаживание"
+msgstr "--color-smoothing     Применить цветовое сглаживание\n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -400,11 +398,10 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=ЗНАЧ    сжатие JPEG (0-100, по умолчанию — 85).\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
-"--[no]exif            Встроить данные EXIF в выходное изображение JPEG или "
-"PNG\n"
+"--[no]exif            Встроить данные Exif в сохраняемое изображение JPEG "
+"или PNG\n"
 "                      (по умолчанию — встроить).\n"
 
 msgid ""
@@ -471,7 +468,6 @@ msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
 msgstr "--silent              Ничего не выводить при пакетной обработке.\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -482,10 +478,11 @@ msgid ""
 "second\n"
 "group of options is NOT read from the resource file.\n"
 msgstr ""
-"UFRaw сначала читает установки из файла ресурсов $HOME/.ufrawrc.\n"
-"Затем, если указан ID-файл, читаются настройки из него. Затем берутся\n"
-"настройки из ключа --conf, игнорируя входные/выходные имена файлов\n"
-"в ID-файле. Наконец, устанавливаются ключи из командной строки.\n"
+"UFRaw сначала читает параметры из файла ресурсов $HOME/.ufrawrc.\n"
+"Затем, если указан ID-файл, параметры читаются из него. Далее берутся\n"
+"параметры из ключа --conf, причём входные/выходные имена файлов\n"
+"в ID-файле игнорируются. Наконец, устанавливаются ключи из командной "
+"строки.\n"
 "В пакетном режиме вторая группа ключей НЕ читается из файла ресурсов.\n"
 
 msgid ""
@@ -763,9 +760,8 @@ msgstr "размер %dx%d, масштаб 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Черная точка: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "Не хватает места для новых кривых."
+msgstr "Не хватает места для последующей коррекции светлоты"
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Критическая ошибка: uf->conf->shrink<1"
@@ -1022,18 +1018,14 @@ msgstr "Масштаб:"
 msgid "Zoom percentage"
 msgstr "Масштаб в процентах"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "Глобальная коррекция контраста"
+msgstr "Обнулить коррекцию"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
-msgstr ""
-"Выберите область на изображении для применения баланса белого по области"
+msgstr "Выделите область изображения, содержащую нужный оттенок"
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "Глобальная коррекция контраста"
+msgstr "Удалить коррекцию"
 
 msgid "Grayscale Mode:"
 msgstr "Уровни серого:"
@@ -1175,13 +1167,11 @@ msgstr "Ширина"
 msgid "Orientation:"
 msgstr "Ориентация:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "Насыщенность"
+msgstr "Вращение"
 
-#, fuzzy
 msgid "Rotation Angle"
-msgstr "Насыщенность"
+msgstr "Угол вращения"
 
 msgid "Reset Rotation Angle"
 msgstr "Сбросить угол поворота"
@@ -1209,11 +1199,10 @@ msgid "JPEG progressive encoding"
 msgstr "Прогрессивное кодирование JPEG"
 
 msgid "TIFF lossless Compress"
-msgstr "Сжатие без потерь TIFF"
+msgstr "Сжатие TIFF без потери качества"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr "Встроить данные EXIF в файлы JPG или PNG"
+msgstr "Встроить данные Exif"
 
 msgid "Create ID file "
 msgstr "Создать ID-файл "
@@ -1329,9 +1318,8 @@ msgstr "Управление цветом"
 msgid "Correct luminosity, saturation"
 msgstr "Изменить освещенность, насыщенность"
 
-#, fuzzy
 msgid "Lightness Adjustments"
-msgstr "Яркость"
+msgstr "Избирательная коррекция светлоты"
 
 msgid "Crop and rotate"
 msgstr "Кадрирование и вращение"
