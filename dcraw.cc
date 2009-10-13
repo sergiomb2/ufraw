@@ -5374,13 +5374,13 @@ void CLASS parse_tiff (int base)
       case 262:
 	load_raw = &CLASS kodak_262_load_raw;			break;
       case 32767:
+	if (tiff_ifd[raw].bytes == raw_width*raw_height) {
+	  tiff_bps = 12;
+	  load_raw = &CLASS sony_arw2_load_raw;			break;
+	}
 	if (tiff_ifd[raw].bytes*8 != (int)(raw_width*raw_height*tiff_bps)) {
 	  raw_height += 8;
 	  load_raw = &CLASS sony_arw_load_raw;			break;
-	}
-	if (tiff_bps == 8) {
-	  tiff_bps = 12;
-	  load_raw = &CLASS sony_arw2_load_raw;			break;
 	}
 	load_flags = 79;
       case 32769:
@@ -6532,6 +6532,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 6038,-1484,-578,-9146,16746,2513,-875,746,7217 } },
     { "SONY DSLR-A380", 0, 0,
 	{ 6038,-1484,-579,-9145,16746,2512,-875,746,7218 } },
+    { "SONY DSLR-A5", 254, 0x1ffe,
+	{ 0 } },
     { "SONY DSLR-A700", 254, 0x1ffe,
 	{ 5775,-805,-359,-8574,16295,2391,-1943,2341,7249 } },
     { "SONY DSLR-A850", 256, 0x1ffe,
