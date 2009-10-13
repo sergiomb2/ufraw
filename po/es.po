@@ -9,12 +9,12 @@ msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-10-12 22:11-0500\n"
-"PO-Revision-Date: 2009-01-04 06:00+0100\n"
+"PO-Revision-Date: 2009-10-13 21:13+0200\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-15\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: 8bit"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
@@ -102,7 +102,7 @@ msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (incrustado)"
 
 msgid "System default"
 msgstr "Valor por defecto del sistema"
@@ -122,7 +122,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "Demasiados anclajes para la curva '%s'"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "Demasiados ajustes de iluminación en el archivo ID, ignorado\n"
 
 #, c-format
 msgid ""
@@ -319,6 +319,9 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=VALOR\n"
+"                      Sensibilidad para detectar y eliminar píxeles calientes "
+"(por defecto 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -345,9 +348,8 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algoritmo de interpolación a usar (por defecto: ahd).\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "Aplicar suavizado de color"
+msgstr "--color-smoothing     Aplicar suavizado de color \n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -389,10 +391,9 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALOR   compresión JPEG (0-100, por defecto 85).\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
-"--[no]exif            Incrustar EXIF en el JPEG o PNG de salida.\n"
+"--[no]exif            Incrustar EXIF en el archivo de salida.\n"
 "                      (por defecto: incrustar EXIF).\n"
 
 msgid ""
@@ -456,7 +457,7 @@ msgstr ""
 "                      (por defecto: no).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     Forzar que la ventana sea maximizada.\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -464,7 +465,6 @@ msgstr ""
 "--silent              No mostrar ningún mensaje durante el procesado por "
 "lotes.\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -758,9 +758,8 @@ msgstr "tamaño %dx%d, escala 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Punto negro: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "No hay más espacio para nuevas curvas"
+msgstr "No hay más espacio para nuevos ajustes de luminosidad"
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Error fatal: uf->conf->shrink<1"
@@ -895,16 +894,16 @@ msgid "Logarithmic"
 msgstr "Logarítmica"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "Píxeles calientes: "
 
 msgid "mark"
-msgstr ""
+msgstr "marca"
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "Sensibilidad a píxeles calientes"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "Reiniciar sensibilidad a píxeles calientes"
 
 msgid "RGB histogram"
 msgstr "Histograma RGB"
@@ -1020,19 +1019,14 @@ msgstr "Zoom:"
 msgid "Zoom percentage"
 msgstr "Porcentaje de zoom"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "Ajuste global del contraste"
+msgstr "Reiniciar ajuste"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
-msgstr ""
-"Selecciona un punto en la previsualización para aplicar balance de blancos "
-"puntual"
+msgstr "Selecciona un punto en la previsualización para elegir tono"
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "Ajuste global del contraste"
+msgstr "Quitar ajustes"
 
 msgid "Grayscale Mode:"
 msgstr "Modo de escala de grises:"
@@ -1174,23 +1168,21 @@ msgstr "Ancho"
 msgid "Orientation:"
 msgstr "Orientación:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "Saturación"
+msgstr "Rotación"
 
-#, fuzzy
 msgid "Rotation Angle"
-msgstr "Saturación"
+msgstr "Ángulo de rotación"
 
 msgid "Reset Rotation Angle"
-msgstr ""
+msgstr "Reiniciar ángulo de rotación"
 
 #. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
 msgid "Alignment Line Count"
-msgstr ""
+msgstr "Número de líneas de alineación"
 
 msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
+msgstr "Número de líneas de alineación a superponer sobre el area de recorte"
 
 msgid "Path"
 msgstr "Ruta"
@@ -1210,9 +1202,8 @@ msgstr "Codificado progresivo JPEG"
 msgid "TIFF lossless Compress"
 msgstr "TIFF comprimido sin pérdida"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr "Incrustar datos EXIF en archivos JPEG o PNG"
+msgstr "Incrustar datos EXIF en archivo de salida"
 
 msgid "Create ID file "
 msgstr "Crear archivo ID"
@@ -1328,9 +1319,8 @@ msgstr "Gestión de color"
 msgid "Correct luminosity, saturation"
 msgstr "Corregir luminosidad, saturación"
 
-#, fuzzy
 msgid "Lightness Adjustments"
-msgstr "Luminosidad"
+msgstr "Ajustes de Luminosidad"
 
 msgid "Crop and rotate"
 msgstr "Recortar y rotar"
@@ -1674,3 +1664,4 @@ msgstr "Balance de la cámara"
 
 msgid "Auto WB"
 msgstr "Balance automático"
+
