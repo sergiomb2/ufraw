@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-09 22:56-0500\n"
+"POT-Creation-Date: 2009-10-12 22:11-0500\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -862,6 +862,9 @@ msgstr "対数"
 
 msgid "Hot pixels: "
 msgstr "ホットピクセル:"
+
+msgid "mark"
+msgstr ""
 
 msgid "Hot pixel sensitivity"
 msgstr "ホットピクセル感度"

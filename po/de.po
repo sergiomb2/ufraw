@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-06 04:15+0200\n"
+"POT-Creation-Date: 2009-10-12 22:11-0500\n"
 "PO-Revision-Date: 2009-05-13 12:19+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -892,6 +892,9 @@ msgid "Logarithmic"
 msgstr "Logarithmisch"
 
 msgid "Hot pixels: "
+msgstr ""
+
+msgid "mark"
 msgstr ""
 
 msgid "Hot pixel sensitivity"

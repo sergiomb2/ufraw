@@ -3974,7 +3974,7 @@ static void hotpixel_fill_interface(preview_data *data, GtkWidget *page)
 
     data->HotpixelCount = GTK_LABEL(gtk_label_new(NULL));
     gtk_box_pack_start(box, GTK_WIDGET(data->HotpixelCount), FALSE, FALSE, 0);
-    button = gtk_check_button_new_with_label("mark");
+    button = gtk_check_button_new_with_label(_("mark"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
 	    data->UF->mark_hotpixels);
     g_signal_connect(G_OBJECT(button), "toggled",

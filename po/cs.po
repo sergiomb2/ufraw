@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-06 04:15+0200\n"
+"POT-Creation-Date: 2009-10-12 22:11-0500\n"
 "PO-Revision-Date: 2009-10-04 10:41+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -880,6 +880,9 @@ msgstr "Logaritmické"
 
 msgid "Hot pixels: "
 msgstr "Hot pixels: "
+
+msgid "mark"
+msgstr ""
 
 msgid "Hot pixel sensitivity"
 msgstr "Citlivost hot pixels"

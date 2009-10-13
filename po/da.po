@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-06 04:15+0200\n"
+"POT-Creation-Date: 2009-10-12 22:11-0500\n"
 "PO-Revision-Date: 2009-10-06 04:30+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
@@ -877,6 +877,9 @@ msgstr "Logaritmisk"
 
 msgid "Hot pixels: "
 msgstr "Defekte pixels: "
+
+msgid "mark"
+msgstr ""
 
 msgid "Hot pixel sensitivity"
 msgstr "Følsomhed for defekte pixels"

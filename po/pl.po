@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-06 04:15+0200\n"
+"POT-Creation-Date: 2009-10-12 22:11-0500\n"
 "PO-Revision-Date: 2009-10-01 10:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -886,6 +886,9 @@ msgstr "Logarytmiczny"
 
 msgid "Hot pixels: "
 msgstr "Hot piksele:"
+
+msgid "mark"
+msgstr ""
 
 msgid "Hot pixel sensitivity"
 msgstr "Czu³o¶æ hot pikseli"
