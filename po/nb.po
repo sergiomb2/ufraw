@@ -445,7 +445,7 @@ msgstr ""
 "                      (standardverdi: nei).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     Tving vinduet til å være maksimalisert.\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -881,7 +881,7 @@ msgid "Hot pixels: "
 msgstr "Defekte piksler: "
 
 msgid "mark"
-msgstr ""
+msgstr "marker"
 
 msgid "Hot pixel sensitivity"
 msgstr "Følsomhet for defekte piksler"
