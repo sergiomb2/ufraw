@@ -1,15 +1,14 @@
-# translation of no.po to
-# Norwegian Bokm�l translation for UFRaw.
-# Copyright (C) 2006-2008 Udi Fuchs.
+# Norwegian Bokm�l translation for UFRaw.
+# Copyright (C) 2006-2009 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-# Alvin Brattli <alvin.brattli@gmail.com>, 2008.
+# Alvin Brattli <alvin.brattli@gmail.com>, 2008-2009.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: nb\n"
+"Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-10-06 04:15+0200\n"
-"PO-Revision-Date: 2008-12-23 00:00-0500\n"
+"PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -102,7 +101,7 @@ msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (innebygd)"
 
 msgid "System default"
 msgstr "Systemets standardverdi"
@@ -122,7 +121,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "For mange ankerpunkter i kurven «%s»"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "For mange lysverdijusteringer i ID-filen, ignorert\n"
 
 #, c-format
 msgid ""
@@ -270,7 +269,7 @@ msgstr ""
 "detaljer).\n"
 "                      «hsv» gjenoppretter i HSV-fargerommet (skarpe "
 "detaljer).\n"
-"                      (standardverdi: lch)\n"
+"                      (standardverdi: lch).\n"
 
 msgid ""
 "--clip=digital|film   Clip highlights for positive EV.\n"
@@ -315,6 +314,9 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=VERDI\n"
+"                      Følsomhet for deteksjon og reduksjon av\n"
+"                      defekte piksler (standardverdi: 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -341,17 +343,16 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      Algoritme for interpolasjon (standardverdi: ahd).\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "Bruk fargeutjevning"
+msgstr "--color-smoothing     Bruk fargeutjevning.\n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"
 msgstr ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
-"                      Algoritme for konvertering av gråtoner (standardverdi "
-"none).\n"
+"                      Algoritme for konvertering av gråtoner\n"
+"                      (standardverdi none).\n"
 
 msgid "The options which are related to the final output are:\n"
 msgstr "Alternativene knyttet til endelige utdata er:\n"
@@ -383,7 +384,6 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VERDI   JPEG-komprimering (0-100, standardverdi: 85).\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
 "--[no]exif            [Ikke] inkluder EXIF i JPEG- eller PNG-utdata\n"
@@ -423,7 +423,8 @@ msgid ""
 msgstr ""
 "--crop-(left|right|top|bottom)=PIKSLER\n"
 "                      Beskjær utdata med oppgitt antall piksler i forhold "
-"til                      raw-bildet etter rotasjon, men før skalering.\n"
+"til\n"
+"                      raw-bildet etter rotasjon, men før skalering.\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -450,7 +451,6 @@ msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
 msgstr "--silent              Vær helt stille under satsvis konvertering.\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -525,7 +525,7 @@ msgstr "«%s» er et ugyldig alternativ for interpolasjon."
 
 #, c-format
 msgid "'%s' is not a valid grayscale option."
-msgstr "«%s» er et ugyldig alternativ for gråtone"
+msgstr "«%s» er et ugyldig alternativ for gråtone."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -742,9 +742,8 @@ msgstr "størrelse %dx%d, skala 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "Sortpunkt: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "Ikke mere plass til nye kurver."
+msgstr "Ikke mere plass til nye lysverdijusteringer."
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Fatal feil: uf->conf->shrink<1"
@@ -879,13 +878,13 @@ msgid "Logarithmic"
 msgstr "Logaritmisk"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "Defekte piksler: "
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "Følsomhet for defekte piksler"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "Tilbakestill følsomhet for defekte piksler"
 
 msgid "RGB histogram"
 msgstr "RGB-histogram"
@@ -998,17 +997,14 @@ msgstr "Zoom:"
 msgid "Zoom percentage"
 msgstr "Zoom-prosent"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "Global kontrastjustering"
+msgstr "Tilbakestill justering"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
-msgstr "Velg et punkt på forhåndsvisningsbildet for å måle punkthvitbalanse"
+msgstr "Velg et punkt på forhåndsvisningsbildet for å velge fargetone"
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "Global kontrastjustering"
+msgstr "Fjern justering"
 
 msgid "Grayscale Mode:"
 msgstr "Modus for gråtoneskala:"
@@ -1121,7 +1117,7 @@ msgid "Bottom:"
 msgstr "Bunn:"
 
 msgid "Reset the crop region"
-msgstr "Tilbakesett beskjæringsareal"
+msgstr "Tilbakestill beskjæringsareal"
 
 msgid "Aspect ratio:"
 msgstr "Høyde/bredde-forhold:"
@@ -1150,23 +1146,21 @@ msgstr "Bredde"
 msgid "Orientation:"
 msgstr "Orientering:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "Fargemetning"
+msgstr "Rotasjon"
 
-#, fuzzy
 msgid "Rotation Angle"
-msgstr "Fargemetning"
+msgstr "Rotasjonsvinkel"
 
 msgid "Reset Rotation Angle"
-msgstr ""
+msgstr "Tilbakestill rotasjonsvinkel"
 
 #. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
 msgid "Alignment Line Count"
-msgstr ""
+msgstr "Antall justeringslinjer"
 
 msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
+msgstr "Antall justeringslinjer som legges over beskjæringsområdet"
 
 msgid "Path"
 msgstr "Sti"
@@ -1186,7 +1180,6 @@ msgstr "JPEG progressiv koding"
 msgid "TIFF lossless Compress"
 msgstr "TIFF tapsfri komprimering"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
 msgstr "Inkluder EXIF-data i JPEG- eller PNG-filer"
 
@@ -1304,9 +1297,8 @@ msgstr "Fargestyring"
 msgid "Correct luminosity, saturation"
 msgstr "Korriger lysstyrke, fargemetning"
 
-#, fuzzy
 msgid "Lightness Adjustments"
-msgstr "Lyshet"
+msgstr "Lysverdijusteringer"
 
 msgid "Crop and rotate"
 msgstr "Beskjær og roter"
