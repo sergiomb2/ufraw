@@ -286,6 +286,26 @@ date user guide.
 History
 =======
 
+15/10/2009 - UFRaw-0.16 released, based on DCRaw v 8.98.
+
+* New German translation by Matthias Urlichs and Chris Leick.
+* New Simplified Chinese translation.
+* Added --with-gtk configuration option to make GTK optional.
+* When GTK is used, the GtkImageView library is mandatory.
+* Added lightness adjustmens by hue. Based on patch by Bruce Guenter.
+* Added --color-smoothing command line option.
+* Added --maximize-window command line switch.
+* Configurable frame lines overlay. Patch by Bruce Guenter.
+* OpenMP support for preview redrawing. Patch by Bruce Guenter.
+* OpenMP support for VNG interpolation. Patch by Bruce Guenter.
+* Added rotation control to the transformations page of the GUI.
+  Patch by Frank van Maarseveen.
+* Initial implementation of 100% preview. Based on patches
+  by Frank van Maarseveen.
+* Added support for hot pixel elimination. It is an experimental feature
+  enabled by the configuration switch --enable-hotpixels.
+  Based on patch by Frank van Maarseveen.
+
 24/12/2008 - UFRaw-0.15 released, based on DCRaw v 8.89.
 
 * Multiprocessing support using OpenMP. Patch by Bruce Guenter.
