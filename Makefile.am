@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.50 2009/10/15 18:45:45 nkbj Exp $
+# $Id: Makefile.am,v 1.51 2009/10/15 19:00:32 nkbj Exp $
 
 SUBDIRS=po icons
 
@@ -28,7 +28,7 @@ man_MANS = ufraw.1
 
 noinst_LIBRARIES = libufraw.a
 
-DISTCLEANFILES = ufraw.1
+MAINTAINERCLEANFILES = ufraw.1
 
 CLEANFILES = ufraw.schemas ufraw_icon.opc ufraw-setup.bmp
 

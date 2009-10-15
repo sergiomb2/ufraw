@@ -1,10 +1,10 @@
-# $Id: Makefile.am,v 1.14 2009/10/15 16:45:42 nkbj Exp $
+# $Id: Makefile.am,v 1.15 2009/10/15 19:00:32 nkbj Exp $
 
 noinst_HEADERS = ufraw_icons.h
 icon_DATA = ufraw.png
 icondir = $(datadir)/pixmaps
 
-DISTCLEANFILES = ufraw_icons.h
+MAINTAINERCLEANFILES = ufraw_icons.h
 
 UFRAW_ICONS = ufraw.png exposure-24.png film-24.png digital-24.png \
     restore-lch-24.png restore-hsv-24.png interpolation-24.png \
@@ -17,7 +17,7 @@ UFRAW_ICONS = ufraw.png exposure-24.png film-24.png digital-24.png \
     lens-24.png tca-24.png vignetting-24.png distortion-24.png \
     geometry-24.png hueadjust-24.png
 
-EXTRA_DIST = $(UFRAW_ICONS) exposure.svg film.svg digital.svg \
+EXTRA_DIST = $(UFRAW_ICONS) ufraw_icons.h exposure.svg film.svg digital.svg \
     restore-lch.svg restore-hsv.svg interpolation.svg \
     white-balance.svg color-corrections.svg \
     icc-profile-output.svg icc-profile-display.svg curve.svg \
