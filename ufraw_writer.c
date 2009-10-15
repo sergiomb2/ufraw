@@ -658,6 +658,9 @@ int ufraw_write_image(ufraw_data *uf)
 	int rowStride = uf->Images[ufraw_first_phase].width;
 	guint16 pixbuf16[3];
 
+	// Avoid FITS images being saved upside down
+	ufraw_flip_image(uf, 2);
+
 	for (row=0; row<height; row++) {
 	    if (row%100==99)
 		preview_progress(uf->widget, _("Saving image"),
