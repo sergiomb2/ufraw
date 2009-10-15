@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.49 2009/03/12 05:51:16 udifuchs Exp $
+# $Id: Makefile.am,v 1.50 2009/10/15 18:45:45 nkbj Exp $
 
 SUBDIRS=po icons
 
@@ -28,7 +28,9 @@ man_MANS = ufraw.1
 
 noinst_LIBRARIES = libufraw.a
 
-CLEANFILES = ufraw.1 ufraw.schemas ufraw_icon.opc ufraw-setup.bmp
+DISTCLEANFILES = ufraw.1
+
+CLEANFILES = ufraw.schemas ufraw_icon.opc ufraw-setup.bmp
 
 if INSTALL_MIME
   app_DATA = ufraw.desktop
