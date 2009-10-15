@@ -908,17 +908,14 @@ no_distortion:
  *
  * Reasonable values for uf->conf->hotpixel are in the range 0.5-10.
  *
- * OpenMP notes
- * ------------
- * The hot pixel count is updated atomically but this is merely for proof
- * of concept: objdump -Sd shows a "lock addl $0x1,0x1f4(%edx) sequence.
- * The algorithm uses pixel values from previous and next row anyway and
- * whether or not pixels are marked makes a difference already.
+ * Note that the algorithm uses pixel values from previous (processed) and
+ * next (unprocessed) row and whether or not pixels are marked makes a
+ * difference for the hot pixel count.
  */
 static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
 	int width, int height, int colors, unsigned rgbMax)
 {
-    int w, h, c, i;
+    int w, h, c, i, count;
     unsigned delta, t, v, hi;
     dcraw_image_type *p;
 
@@ -926,9 +923,11 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
     if (uf->conf->hotpixel <= 0.0)
 	return;
     delta = rgbMax / (uf->conf->hotpixel + 1.0);
+    count = 0;
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static,64) default(none) \
   shared(uf,img,width,height,colors,rgbMax,delta) \
+  reduction(+:count) \
   private(h,p,w,c,t,v,hi,i)
 #endif
     for (h = 1; h < height - 1; ++h) {
@@ -970,13 +969,11 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
 			memcpy(p[i], p[0], sizeof (p[i]));
 		}
 		p[0][c] = hi;
-#ifdef _OPENMP
-#pragma omp atomic
-#endif
-		++uf->hotpixels;
+		++count;
 	    }
 	}
     }
+    uf->hotpixels = count;
 }
 #endif
 
