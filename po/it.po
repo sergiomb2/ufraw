@@ -2,14 +2,15 @@
 # Copyright (C) 2006-2009 Udi Fuchs.
 # This file is distributed under the same license as the Ufraw package.
 # daniele <dmedri@SPAMgmail.com>, 2007-2009.
+# eugenio <eugeniob@SPAMracine.ra.it>, 2009.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw 0.15\n"
+"Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-10-12 22:11-0500\n"
-"PO-Revision-Date: 2009-01-04 06:00+0100\n"
-"Last-Translator: Daniele Medri <dmedri@SPAMgmail.com>\n"
+"PO-Revision-Date: 2009-10-14 06:00+0100\n"
+"Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1175,10 +1176,10 @@ msgstr ""
 
 #. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
 msgid "Alignment Line Count"
-msgstr ""
+msgstr "Contatore linee guida"
 
 msgid "Number of alignment lines to overlay over the crop area"
-msgstr ""
+msgstr "Numero di linee guida per sovrapporre l'area tagliata"
 
 msgid "Path"
 msgstr "Posizione"
@@ -1392,7 +1393,7 @@ msgstr "errore della cornice di scuro: %s non è un file raw\n"
 
 #, c-format
 msgid "error loading darkframe '%s'\n"
-msgstr "errore durante l'apertura della cornice scura '%s'\n"
+msgstr "errore durante l'apertura della cornice di scuro '%s'\n"
 
 #, c-format
 msgid "Darkframe '%s' is incompatible with main image"
@@ -1400,7 +1401,7 @@ msgstr "Cornice di scuro '%s' incompatibile con l'immagine principale"
 
 #, c-format
 msgid "using darkframe '%s'\n"
-msgstr "utilizzo cornice nera '%s'\n"
+msgstr "utilizzo cornice di scuro '%s'\n"
 
 msgid "Error reading NEF curve"
 msgstr "Errore durante la lettura della curva NEF"
@@ -1441,7 +1442,7 @@ msgstr "Non è stato possibile integrare il profilo di output '%s' in '%s'."
 
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
-msgstr "Ignorata profondità bit '%d' non supportata."
+msgstr "Ignorata,  profondità bit '%d' non supportata."
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
@@ -1473,6 +1474,13 @@ msgid ""
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
+"Produttore:\t\t%s\n"
+"Modello:\t\t%s\n"
+"Estensione Focale:\t%s\n"
+"Apertura:\t\t%s\n"
+"Fattore riduzione:\t%.1f\n"
+"Tipo:\t\t%s\n"
+"Posizione:\t\t%s"
 
 msgid "Focal"
 msgstr "Focale"
@@ -1491,10 +1499,10 @@ msgstr "Distanza dal soggetto"
 
 #. Add the model combobox
 msgid "Model:"
-msgstr "Modelo:"
+msgstr "Modello:"
 
 msgid "Chromatic Aberrations mathematical model"
-msgstr ""
+msgstr "Modello matematico aberrazione cromatica"
 
 msgid "Parameters"
 msgstr "Parametri"
@@ -1503,7 +1511,7 @@ msgid "Optical vignetting mathematical model"
 msgstr "Modello matematico per la vignettatura ottica"
 
 msgid "Lens distortion mathematical model"
-msgstr ""
+msgstr "Modello matamatico distorsione ottica"
 
 #. Add the model combobox
 msgid "Lens geometry:"
@@ -1513,10 +1521,10 @@ msgid "The geometry of the lens used to make the shot"
 msgstr "Geometria delle lenti utilizzate per la foto"
 
 msgid "Target geometry:"
-msgstr "Geometria target:"
+msgstr "Geometria obiettivo:"
 
 msgid "The target geometry for output image"
-msgstr ""
+msgstr "La geometria obiettivo per immagine di output"
 
 msgid "Camera"
 msgstr "Fotocamera"
@@ -1545,7 +1553,7 @@ msgid "Scale"
 msgstr "Ridimensiona"
 
 msgid "Image scale power-of-two"
-msgstr ""
+msgstr "Scala Immagine potenza di due"
 
 msgid "Reset image scale to default"
 msgstr "Ripristina formato immagine predefinito"
@@ -1631,7 +1639,7 @@ msgid "Day white fluorescent"
 msgstr "Fluorescente bianca"
 
 msgid "High temp. mercury-vapor fluorescent"
-msgstr ""
+msgstr "Alta temp. fluorescente ai vapori di mercurio"
 
 #. For Olympus with no real "Flash" preset:
 msgid "Flash (auto mode)"
