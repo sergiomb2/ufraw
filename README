@@ -292,8 +292,8 @@ History
 * New Simplified Chinese translation.
 * Added --with-gtk configuration option to make GTK optional.
 * When GTK is used, the GtkImageView library is mandatory.
-* Added lightness adjustmens by hue. Based on patch by Bruce Guenter.
-* Added --color-smoothing command line option.
+* Added lightness adjustments by hue. Based on patch by Bruce Guenter.
+* Added --color-smoothing command line switch.
 * Added --maximize-window command line switch.
 * Configurable frame lines overlay. Patch by Bruce Guenter.
 * OpenMP support for preview redrawing. Patch by Bruce Guenter.
