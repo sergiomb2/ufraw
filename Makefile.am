@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.52 2009/10/16 01:50:06 udifuchs Exp $
+# $Id: Makefile.am,v 1.53 2009/10/16 02:25:09 nkbj Exp $
 
 SUBDIRS=po icons
 
@@ -52,7 +52,7 @@ endif
 
 EXTRA_DIST = ufraw.desktop ufraw_icon.ico ufraw_icon.rc \
     ufraw-mime.xml generate_schemas.sh ac_openmp.m4 \
-    ufraw-setup.jpg autogen.sh MANIFEST ufraw.pod ufraw.1
+    ufraw-setup.jpg autogen.sh mkinstalldirs MANIFEST ufraw.pod ufraw.1
 
 AM_CPPFLAGS = $(UFRAW_CPPFLAGS) -DDCRAW_NOMAIN \
 		-DUFRAW_LOCALEDIR=\"$(datadir)/locale\"
