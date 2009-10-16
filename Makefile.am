@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.51 2009/10/15 19:00:32 nkbj Exp $
+# $Id: Makefile.am,v 1.52 2009/10/16 01:50:06 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -51,7 +51,7 @@ else
 endif
 
 EXTRA_DIST = ufraw.desktop ufraw_icon.ico ufraw_icon.rc \
-    ufraw-mime.xml generate_schemas.sh \
+    ufraw-mime.xml generate_schemas.sh ac_openmp.m4 \
     ufraw-setup.jpg autogen.sh MANIFEST ufraw.pod ufraw.1
 
 AM_CPPFLAGS = $(UFRAW_CPPFLAGS) -DDCRAW_NOMAIN \
