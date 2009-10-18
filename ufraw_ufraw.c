@@ -909,7 +909,7 @@ no_distortion:
  * Reasonable values for uf->conf->hotpixel are in the range 0.5-10.
  *
  * Note that the algorithm uses pixel values from previous (processed) and
- * next (unprocessed) row and whether or not pixels are marked makes a
+ * next (unprocessed) row and whether or not pixels are marked may make a
  * difference for the hot pixel count.
  */
 static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
@@ -947,20 +947,16 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
 		    continue;
 		if (v > hi)
 		    hi = v;
-		v = p[-w][c];
+		v = p[-width][c];
 		if (v > t)
 		    continue;
 		if (v > hi)
 		    hi = v;
-		v = p[w][c];
+		v = p[width][c];
 		if (v > t)
 		    continue;
 		if (v > hi)
 		    hi = v;
-#if 0
-		if (uf->hotpixels < 100)
-		    printf("%u %u %u: %u->%u\t\n", w, h, c, p[0][c], hi);
-#endif
 		/* mark the pixel using the original hot value */
 		if (uf->mark_hotpixels) {
 		    for (i = -10; i >= -20 && w + i >= 0; --i)
