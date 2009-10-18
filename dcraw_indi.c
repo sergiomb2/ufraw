@@ -172,7 +172,7 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
       hpass = lpass;
     }
     for (i=0; i < size; i++)
-      image[i][c] = CLIP((ushort)(SQR(fimg[i]+fimg[lpass+i])/0x10000));
+      image[i][c] = CLIP(SQR(fimg[i]+fimg[lpass+i])/0x10000);
     free(fimg);
   }
   if (filters && colors == 3) {  /* pull G1 and G3 closer together */
@@ -198,7 +198,7 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
 	if      (diff < -thold) diff += thold;
 	else if (diff >  thold) diff -= thold;
 	else diff = 0;
-	BAYER(row,col) = CLIP((ushort)(SQR(avg+diff) + 0.5));
+	BAYER(row,col) = CLIP(SQR(avg+diff) + 0.5);
       }
     }
   }
@@ -314,17 +314,17 @@ skip_block: ;
       for (i=0; i < size; i++)
 	img[i] = image[i][c];
       for (row=0; row < iheight; row++) {
-	fr = (row - iheight*0.5) * aber[c] + iheight*0.5; ur = (unsigned)fr;
+	ur = fr = (row - iheight*0.5) * aber[c] + iheight*0.5;
 	if (ur > (unsigned)(iheight-2)) continue;
 	fr -= ur;
 	for (col=0; col < iwidth; col++) {
-	  fc = (col - iwidth*0.5) * aber[c] + iwidth*0.5; uc = (unsigned)fc;
+	  uc = fc = (col - iwidth*0.5) * aber[c] + iwidth*0.5;
 	  if (uc > (unsigned)(iwidth-2)) continue;
 	  fc -= uc;
 	  pix = img + ur*iwidth + uc;
-	  image[row*iwidth+col][c] = (ushort)(
+	  image[row*iwidth+col][c] =
 	    (pix[     0]*(1-fc) + pix[       1]*fc) * (1-fr) +
-	    (pix[iwidth]*(1-fc) + pix[iwidth+1]*fc) * fr);
+	    (pix[iwidth]*(1-fc) + pix[iwidth+1]*fc) * fr;
 	}
       }
       free(img);
@@ -719,9 +719,9 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 	    xyz[0] = cbrt[CLIP((int) xyz[0])];
 	    xyz[1] = cbrt[CLIP((int) xyz[1])];
 	    xyz[2] = cbrt[CLIP((int) xyz[2])];
-	    lix[0][0] = (short)(64 * (116 * xyz[1] - 16));
-	    lix[0][1] = (short)(64 * 500 * (xyz[0] - xyz[1]));
-	    lix[0][2] = (short)(64 * 200 * (xyz[1] - xyz[2]));
+	    lix[0][0] = 64 * (116 * xyz[1] - 16);
+	    lix[0][1] = 64 * 500 * (xyz[0] - xyz[1]);
+	    lix[0][2] = 64 * 200 * (xyz[1] - xyz[2]);
 	  }
 /*  Build homogeneity maps from the CIELab images:		*/
       memset (homo, 0, 2*TS*TS);
@@ -877,8 +877,8 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
   dcraw_message (dcraw, DCRAW_VERBOSE,_("Rotating image 45 degrees...\n"));
   fuji_width = (fuji_width - 1/* + shrink*/)/* >> shrink*/;
 //  step = sqrt(0.5);
-  wide = (int)(fuji_width / step);
-  high = (int)((height - fuji_width) / step);
+  wide = fuji_width / step;
+  high = (height - fuji_width) / step;
   img = (ushort (*)[4]) calloc (wide*high, sizeof *img);
   merror (img, "fuji_rotate()");
 
@@ -887,16 +887,16 @@ void CLASS fuji_rotate_INDI(ushort (**image_p)[4], int *height_p,
 #endif
   for (row=0; row < high; row++)
     for (col=0; col < wide; col++) {
-      ur = (int)(r = fuji_width + (row-col)*step);
-      uc = (int)(c = (row+col)*step);
+      ur = r = fuji_width + (row-col)*step;
+      uc = c = (row+col)*step;
       if (ur > height-2 || uc > width-2) continue;
       fr = r - ur;
       fc = c - uc;
       pix = image + ur*width + uc;
       for (i=0; i < colors; i++)
-	img[row*wide+col][i] = (ushort)(
+	img[row*wide+col][i] =
 	  (pix[    0][i]*(1-fc) + pix[      1][i]*fc) * (1-fr) +
-	  (pix[width][i]*(1-fc) + pix[width+1][i]*fc) * fr);
+	  (pix[width][i]*(1-fc) + pix[width+1][i]*fc) * fr;
     }
   free (image);
   width  = wide;

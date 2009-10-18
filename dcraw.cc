@@ -420,7 +420,7 @@ void CLASS canon_black (double dark[2], int nblack)
       for (col=1; col < width; col+=2)
 	BAYER(row,col) += diff;
   dark[1] += diff;
-  black = (unsigned)((dark[0] + dark[1] + 1) / 2);
+  black = (dark[0] + dark[1] + 1) / 2;
 }
 
 void CLASS canon_600_fixed_wb (int temp)
@@ -479,7 +479,7 @@ void CLASS canon_600_auto_wb()
   int test[8], total[2][8], ratio[2][2], stat[2];
 
   memset (&total, 0, sizeof total);
-  i = (int)(canon_ev + 0.5);
+  i = canon_ev + 0.5;
   if      (i < 10) mar = 150;
   else if (i > 12) mar = 20;
   else mar = 280 - 20 * i;
@@ -1473,7 +1473,7 @@ void CLASS phase_one_flat_field (int is_float, int nc)
 	for (col = cend-head[4]; col < width && col < cend; col++) {
 	  c = nc > 2 ? FC(row,col) : 0;
 	  if (!(c & 1)) {
-	    c = (int)(BAYER(row,col) * mult[c]);
+	    c = BAYER(row,col) * mult[c];
 	    BAYER(row,col) = LIM(c,0,65535);
 	  }
 	  for (c=0; c < nc; c+=2)
@@ -1518,7 +1518,7 @@ void CLASS phase_one_correct()
       poly[3] += (ph1.tag_210 - poly[7]) * poly[6] + 1;
       for (i=0; i < 0x10000; i++) {
 	num = (poly[5]*i + poly[3])*i + poly[1];
-	curve[i] = (int)LIM(num,0,65535);
+	curve[i] = LIM(num,0,65535);
       } goto apply;				/* apply to right half */
     } else if (tag == 0x41a) {			/* Polynomial curve */
       for (i=0; i < 4; i++)
@@ -1526,7 +1526,7 @@ void CLASS phase_one_correct()
       for (i=0; i < 0x10000; i++) {
 	for (num=0, j=4; j--; )
 	  num = num * i + poly[j];
-	curve[i] = (int)LIM(num+i,0,65535);
+	curve[i] = LIM(num+i,0,65535);
       } apply:					/* apply to whole image */
       for (row=0; row < height; row++)
 	for (col = (tag & 1)*ph1.split_col; col < width; col++)
@@ -1546,12 +1546,12 @@ void CLASS phase_one_correct()
 		dev[i] = abs((val[i] << 2) - sum);
 		if (dev[max] < dev[i]) max = i;
 	      }
-	      BAYER(row,col) = (int)((sum - val[max])/3.0 + 0.5);
+	      BAYER(row,col) = (sum - val[max])/3.0 + 0.5;
 	    } else {
 	      for (sum=0, i=8; i < 12; i++)
 		sum += bayer (row+dir[i][0], col+dir[i][1]);
-	      BAYER(row,col) = (int)(0.5 + sum * 0.0732233 +
-		(bayer(row,col-2) + bayer(row,col+2)) * 0.3535534);
+	      BAYER(row,col) = 0.5 + sum * 0.0732233 +
+		(bayer(row,col-2) + bayer(row,col+2)) * 0.3535534;
 	    }
 	else if (type == 129) {			/* Bad pixel */
 	  if (row >= height) continue;
@@ -1595,7 +1595,7 @@ void CLASS phase_one_correct()
     for (row=0; row < height; row++)
       for (col=0; col < width; col++) {
 	cfrac = (float) col * head[3] / raw_width;
-	cfrac -= cip = (int)cfrac;
+	cfrac -= cip = cfrac;
 	num = BAYER(row,col) * 0.5;
 	for (i=cip; i < cip+2; i++) {
 	  for (k=j=0; j < head[1]; j++)
@@ -1604,8 +1604,8 @@ void CLASS phase_one_correct()
 		(xval[0][k] - num) / (xval[0][k] - xval[0][k-1]);
 	  mult[i-cip] = yval[0][k-1] * frac + yval[0][k] * (1-frac);
 	}
-	i = (int)(((mult[0] * (1-cfrac) + mult[1] * cfrac)
-		* (row + top_margin) + num) * 2);
+	i = ((mult[0] * (1-cfrac) + mult[1] * cfrac)
+		* (row + top_margin) + num) * 2;
 	BAYER(row,col) = LIM(i,0,65535);
       }
     free (yval[0]);
@@ -1682,7 +1682,7 @@ void CLASS phase_one_load_raw_c()
   if (ph1.black_off)
     read_shorts ((ushort *) black[0], raw_height*2);
   for (i=0; i < 256; i++)
-    curve[i] = (int)(i*i / 3.969 + 0.5);
+    curve[i] = i*i / 3.969 + 0.5;
   for (row=0; row < raw_height; row++) {
     fseek (ifp, data_offset + offset[row], SEEK_SET);
     ph1_bits(-1);
@@ -2890,7 +2890,7 @@ void * CLASS foveon_camf_matrix (unsigned dim[3], const char *name)
       dim[i] = sget4(cp);
     }
     if ((dsize = (double) dim[0]*dim[1]*dim[2]) > meta_length/4) break;
-    mat = (unsigned *) malloc ((size = (int) dsize) * 4);
+    mat = (unsigned *) malloc ((size = dsize) * 4);
     merror (mat, "foveon_camf_matrix()");
     for (i=0; i < size; i++)
       if (type && type != 6)
@@ -2936,14 +2936,14 @@ short * CLASS foveon_make_curve (double max, double mul, double filt)
   double x;
 
   if (!filt) filt = 0.8;
-  size = (int)(4*M_PI*max / filt);
+  size = 4*M_PI*max / filt;
   if (size == UINT_MAX) size--;
   curve = (short *) calloc (size+1, sizeof *curve);
   merror (curve, "foveon_make_curve()");
   curve[0] = size;
   for (i=0; i < size; i++) {
     x = i*filt/max/4;
-    curve[i+1] = (int)((cos(x)+1)/2 * tanh(i*filt/mul) * mul + 0.5);
+    curve[i+1] = (cos(x)+1)/2 * tanh(i*filt/mul) * mul + 0.5;
   }
   return curve;
 }
@@ -3112,7 +3112,7 @@ void CLASS foveon_interpolate()
     pix = image[row*width];
     memcpy (prev, pix, sizeof prev);
     frow = row / (height-1.0) * (dim[2]-1);
-    if ((irow = (int)frow) == (int) dim[2]-1) irow--;
+    if ((irow = frow) == (int) dim[2]-1) irow--;
     frow -= irow;
     for (i=0; i < (int) dim[1]; i++)
       FORC3 sgrow[i][c] = sgain[ irow   *dim[1]+i][c] * (1-frow) +
@@ -3121,9 +3121,9 @@ void CLASS foveon_interpolate()
       FORC3 {
 	diff = pix[c] - prev[c];
 	prev[c] = pix[c];
-	ipix[c] = (int)(pix[c] + floor ((diff + (diff*diff >> 14)) * cfilt
+	ipix[c] = pix[c] + floor ((diff + (diff*diff >> 14)) * cfilt
 		- ddft[0][c][1] - ddft[0][c][0] * ((float) col/width - 0.5)
-		- black[row][c] ));
+		- black[row][c] );
       }
       FORC3 {
 	work[0][c] = ipix[c] * ipix[c] >> 14;
@@ -3134,7 +3134,7 @@ void CLASS foveon_interpolate()
 	for (val=i=0; i < 3; i++)
 	  for (  j=0; j < 3; j++)
 	    val += ppm[c][i][j] * work[i][j];
-	ipix[c] = (int)floor ((ipix[c] + floor(val)) *
+	ipix[c] = floor ((ipix[c] + floor(val)) *
 		( sgrow[col/sgx  ][c] * (sgx - col%sgx) +
 		  sgrow[col/sgx+1][c] * (col%sgx) ) / sgx / div[c]);
 	if (ipix[c] > 32000) ipix[c] = 32000;
@@ -3160,7 +3160,7 @@ void CLASS foveon_interpolate()
 		image[(row+hood[j*2])*width+col+hood[j*2+1]][c];
 	  sum++;
 	}
-      if (sum) FORC3 image[row*width+col][c] = (short)(fsum[c]/sum);
+      if (sum) FORC3 image[row*width+col][c] = fsum[c]/sum;
     }
     free (badpix);
   }
@@ -3201,7 +3201,7 @@ void CLASS foveon_interpolate()
   /* Adjust the brighter pixels for better linearity */
   min = 0xffff;
   FORC3 {
-    i = (int)(satlev[c] / div[c]);
+    i = satlev[c] / div[c];
     if (min > i) min = i;
   }
   limit = min * 9 >> 4;
@@ -3283,7 +3283,7 @@ void CLASS foveon_interpolate()
 	dsum += trans[c][i] * pix[i];
       if (dsum < 0)  dsum = 0;
       if (dsum > 24000) dsum = 24000;
-      ipix[c] = (int)(dsum + 0.5);
+      ipix[c] = dsum + 0.5;
     }
     FORC3 pix[c] = ipix[c];
   }
@@ -3678,7 +3678,7 @@ void CLASS wavelet_denoise()
       hpass = lpass;
     }
     for (i=0; i < size; i++)
-      image[i][c] = CLIP((ushort)(SQR(fimg[i]+fimg[lpass+i])/0x10000));
+      image[i][c] = CLIP(SQR(fimg[i]+fimg[lpass+i])/0x10000);
   }
   if (filters && colors == 3) {  /* pull G1 and G3 closer together */
     for (row=0; row < 2; row++)
@@ -3702,7 +3702,7 @@ void CLASS wavelet_denoise()
 	if      (diff < -thold) diff += thold;
 	else if (diff >  thold) diff -= thold;
 	else diff = 0;
-	BAYER(row,col) = CLIP((ushort)(SQR(avg+diff) + 0.5));
+	BAYER(row,col) = CLIP(SQR(avg+diff) + 0.5);
       }
     }
   }
@@ -3783,7 +3783,7 @@ skip_block: ;
     val = image[0][i];
     if (!val) continue;
     val -= black;
-    val = (int)(val*scale_mul[i & 3]);
+    val *= scale_mul[i & 3];
     image[0][i] = CLIP(val);
   }
   if ((aber[0] != 1 || aber[2] != 1) && colors == 3) {
@@ -3795,17 +3795,17 @@ skip_block: ;
       for (i=0; i < size; i++)
 	img[i] = image[i][c];
       for (row=0; row < iheight; row++) {
-	fr = (row - iheight*0.5) * aber[c] + iheight*0.5; ur = (unsigned)fr;
+	ur = fr = (row - iheight*0.5) * aber[c] + iheight*0.5;
 	if (ur > (unsigned)(iheight-2)) continue;
 	fr -= ur;
 	for (col=0; col < iwidth; col++) {
-	  fc = (col - iwidth*0.5) * aber[c] + iwidth*0.5; uc = (unsigned)fc;
+	  uc = fc = (col - iwidth*0.5) * aber[c] + iwidth*0.5;
 	  if (uc > (unsigned)(iwidth-2)) continue;
 	  fc -= uc;
 	  pix = img + ur*iwidth + uc;
-	  image[row*iwidth+col][c] = (ushort)(
+	  image[row*iwidth+col][c] =
 	    (pix[     0]*(1-fc) + pix[       1]*fc) * (1-fr) +
-	    (pix[iwidth]*(1-fc) + pix[iwidth+1]*fc) * fr);
+	    (pix[iwidth]*(1-fc) + pix[iwidth+1]*fc) * fr;
 	}
       }
       free(img);
@@ -4184,9 +4184,9 @@ void CLASS ahd_interpolate()
 	    xyz[0] = cbrt[CLIP((int) xyz[0])];
 	    xyz[1] = cbrt[CLIP((int) xyz[1])];
 	    xyz[2] = cbrt[CLIP((int) xyz[2])];
-	    lix[0][0] = (short)(64 * (116 * xyz[1] - 16));
-	    lix[0][1] = (short)(64 * 500 * (xyz[0] - xyz[1]));
-	    lix[0][2] = (short)(64 * 200 * (xyz[1] - xyz[2]));
+	    lix[0][0] = 64 * (116 * xyz[1] - 16);
+	    lix[0][1] = 64 * 500 * (xyz[0] - xyz[1]);
+	    lix[0][2] = 64 * 200 * (xyz[1] - xyz[2]);
 	  }
 /*  Build homogeneity maps from the CIELab images:		*/
       memset (homo, 0, 2*TS*TS);
@@ -4274,7 +4274,7 @@ void CLASS blend_highlights()
 
   if ((unsigned) (colors-3) > 1) return;
   dcraw_message (DCRAW_VERBOSE,_("Blending highlights...\n"));
-  FORCC if (clip > (i = (int)(65535*pre_mul[c]))) clip = i;
+  FORCC if (clip > (i = 65535*pre_mul[c])) clip = i;
   for (row=0; row < height; row++)
     for (col=0; col < width; col++) {
       FORCC if (image[row*width+col][c] > clip) break;
@@ -4294,7 +4294,7 @@ void CLASS blend_highlights()
 	lab[0][c] *= chratio;
       FORCC for (cam[0][c]=j=0; j < colors; j++)
 	cam[0][c] += itrans[colors-3][c][j] * lab[0][j];
-      FORCC image[row*width+col][c] = (ushort)(cam[0][c] / colors);
+      FORCC image[row*width+col][c] = cam[0][c] / colors;
     }
 }
 
@@ -4311,7 +4311,7 @@ void CLASS recover_highlights()
   dcraw_message (DCRAW_VERBOSE,_("Rebuilding highlights...\n"));
 
   grow = pow (2, 4-highlight);
-  FORCC hsat[c] = (int)(32000 * pre_mul[c]);
+  FORCC hsat[c] = 32000 * pre_mul[c];
   for (kc=0, c=1; c < colors; c++)
     if (pre_mul[kc] < pre_mul[c]) kc = c;
   high = height / SCALE;
@@ -4335,7 +4335,7 @@ void CLASS recover_highlights()
 	if (count == SCALE*SCALE)
 	  map[mrow*wide+mcol] = sum / wgt;
       }
-    for (spread = (int)(32/grow); spread--; ) {
+    for (spread = 32/grow; spread--; ) {
       for (mrow=0; mrow < high; mrow++)
 	for (mcol=0; mcol < wide; mcol++) {
 	  if (map[mrow*wide+mcol]) continue;
@@ -4366,7 +4366,7 @@ void CLASS recover_highlights()
 	  for (col = mcol*SCALE; col < (mcol+1)*SCALE; col++) {
 	    pixel = image[row*width+col];
 	    if (pixel[c] / hsat[c] > 1) {
-	      val = (int)(pixel[kc] * map[mrow*wide+mcol]);
+	      val = pixel[kc] * map[mrow*wide+mcol];
 	      if (pixel[c] < val) pixel[c] = CLIP(val);
 	    }
 	  }
@@ -5215,7 +5215,7 @@ guess_cfa_pc:
       case 50716:			/* BlackLevelDeltaV */
 	for (dblack=i=0; i < (int) len; i++)
 	  dblack += getreal(type);
-	black = (int)(black + dblack/len + 0.5);
+	black += dblack/len + 0.5;
 	break;
       case 50717:			/* WhiteLevel */
 	maximum = getint(type);
@@ -6717,7 +6717,7 @@ void CLASS identify()
       "MINOLTA", "Minolta", "Konica", "CASIO", "Sinar", "Phase One",
       "SAMSUNG", "Mamiya", "MOTOROLA" };
 
-  tiff_flip = flip = filters = (unsigned)-1;	/* 0 is valid, so -1 is unknown */
+  tiff_flip = flip = filters = -1;	/* 0 is valid, so -1 is unknown */
   raw_height = raw_width = fuji_width = fuji_layout = cr2_slice[0] = 0;
   maximum = height = width = top_margin = left_margin = 0;
   cdesc[0] = desc[0] = artist[0] = make[0] = model[0] = model2[0] = 0;
@@ -7589,7 +7589,7 @@ konica_400z:
       case 2568:
 	adobe_coeff ("Panasonic","DMC-LC1");  break;
       case 3130:
-	left_margin = (ushort)-14;
+	left_margin = -14;
       case 3170:
 	left_margin += 18;
 	width = 3096;
@@ -7625,7 +7625,7 @@ konica_400z:
 	adobe_coeff ("Panasonic","DMC-FZ18");  break;
       case 3690:
 	height -= 2;
-	left_margin = (ushort)-14;
+	left_margin = -14;
 	maximum = 0xf7f0;
       case 3770:
 	width = 3672;
@@ -7673,7 +7673,7 @@ lx3:	filters = 0x16161616;
 	adobe_coeff ("Panasonic","DMC-GH1");  break;
       case 4290:
 	height += 38;
-	left_margin = (ushort)-14;
+	left_margin = -14;
 	filters = 0x49494949;
       case 4330:
 	width = 4248;
@@ -8164,7 +8164,7 @@ void CLASS convert_to_rgb()
       for (j=0; j < 3; j++) {
 	for (num = k=0; k < 3; k++)
 	  num += xyzd50_srgb[i][k] * inverse[j][k];
-        oprof[pbody[j*3+23]/4+i+2] = (int)(num * 0x10000 + 0.5);
+        oprof[pbody[j*3+23]/4+i+2] = num * 0x10000 + 0.5;
       }
     for (i=0; i < (int)phead[0]/4; i++)
       oprof[i] = htonl(oprof[i]);
@@ -8211,23 +8211,23 @@ void CLASS fuji_rotate()
   dcraw_message (DCRAW_VERBOSE,_("Rotating image 45 degrees...\n"));
   fuji_width = (fuji_width - 1 + shrink) >> shrink;
   step = sqrt(0.5);
-  wide = (int)(fuji_width / step);
-  high = (int)((height - fuji_width) / step);
+  wide = fuji_width / step;
+  high = (height - fuji_width) / step;
   img = (ushort (*)[4]) calloc (wide*high, sizeof *img);
   merror (img, "fuji_rotate()");
 
   for (row=0; row < high; row++)
     for (col=0; col < wide; col++) {
-      ur = (int)(r = fuji_width + (row-col)*step);
-      uc = (int)(c = (row+col)*step);
+      ur = r = fuji_width + (row-col)*step;
+      uc = c = (row+col)*step;
       if (ur > height-2 || uc > width-2) continue;
       fr = r - ur;
       fc = c - uc;
       pix = image + ur*width + uc;
       for (i=0; i < colors; i++)
-	img[row*wide+col][i] = (ushort)(
+	img[row*wide+col][i] =
 	  (pix[    0][i]*(1-fc) + pix[      1][i]*fc) * (1-fr) +
-	  (pix[width][i]*(1-fc) + pix[width+1][i]*fc) * fr);
+	  (pix[width][i]*(1-fc) + pix[width+1][i]*fc) * fr;
     }
   free (image);
   width  = wide;
@@ -8246,29 +8246,27 @@ void CLASS stretch()
   if (pixel_aspect == 1) return;
   dcraw_message (DCRAW_VERBOSE,_("Stretching the image...\n"));
   if (pixel_aspect < 1) {
-    newdim = (int)(height / pixel_aspect + 0.5);
+    newdim = height / pixel_aspect + 0.5;
     img = (ushort (*)[4]) calloc (width*newdim, sizeof *img);
     merror (img, "stretch()");
     for (rc=row=0; row < newdim; row++, rc+=pixel_aspect) {
-      frac = rc - (c = (int)rc);
+      frac = rc - (c = rc);
       pix0 = pix1 = image[c*width];
       if (c+1 < height) pix1 += width*4;
       for (col=0; col < width; col++, pix0+=4, pix1+=4)
-	FORCC img[row*width+col][c] =
-		(ushort)(pix0[c]*(1-frac) + pix1[c]*frac + 0.5);
+	FORCC img[row*width+col][c] = pix0[c]*(1-frac) + pix1[c]*frac + 0.5;
     }
     height = newdim;
   } else {
-    newdim = (int)(width * pixel_aspect + 0.5);
+    newdim = width * pixel_aspect + 0.5;
     img = (ushort (*)[4]) calloc (height*newdim, sizeof *img);
     merror (img, "stretch()");
     for (rc=col=0; col < newdim; col++, rc+=1/pixel_aspect) {
-      frac = rc - (c = (int)rc);
+      frac = rc - (c = rc);
       pix0 = pix1 = image[c];
       if (c+1 < width) pix1 += 4;
       for (row=0; row < height; row++, pix0+=width*4, pix1+=width*4)
-	FORCC img[row*newdim+col][c] =
-		(ushort)(pix0[c]*(1-frac) + pix1[c]*frac + 0.5);
+	FORCC img[row*newdim+col][c] = pix0[c]*(1-frac) + pix1[c]*frac + 0.5;
     }
     width = newdim;
   }
@@ -8367,7 +8365,7 @@ void CLASS tiff_head (struct tiff_hdr *th, int full)
   if (psize) tiff_set (&th->ntag, 34675, 7, psize, sizeof *th);
   tiff_set (&th->nexif, 33434, 5, 1, TOFF(th->rat[4]));
   tiff_set (&th->nexif, 33437, 5, 1, TOFF(th->rat[6]));
-  tiff_set (&th->nexif, 34855, 3, 1, (int)iso_speed);
+  tiff_set (&th->nexif, 34855, 3, 1, iso_speed);
   tiff_set (&th->nexif, 37386, 5, 1, TOFF(th->rat[8]));
   if (gpsdata[1]) {
     tiff_set (&th->ntag, 34853, 4, 1, TOFF(th->ngps));
@@ -8386,9 +8384,9 @@ void CLASS tiff_head (struct tiff_hdr *th, int full)
   th->rat[0] = th->rat[2] = 300;
   th->rat[1] = th->rat[3] = 1;
   FORC(6) th->rat[4+c] = 1000000;
-  th->rat[4] = (int)(th->rat[4]*shutter);
-  th->rat[6] = (int)(th->rat[6]*aperture);
-  th->rat[8] = (int)(th->rat[8]*focal_len);
+  th->rat[4] *= shutter;
+  th->rat[6] *= aperture;
+  th->rat[8] *= focal_len;
   strncpy (th->desc, desc, 512);
   strncpy (th->make, make, 64);
   strncpy (th->model, model, 64);
@@ -8719,11 +8717,11 @@ int CLASS main (int argc, const char **argv)
 	if (use_fuji_rotate) {
 	  if (fuji_width) {
 	    fuji_width = (fuji_width - 1 + shrink) >> shrink;
-	    iwidth = (int)(fuji_width / sqrt(0.5));
-	    iheight = (int)((iheight - fuji_width) / sqrt(0.5));
+	    iwidth = fuji_width / sqrt(0.5);
+	    iheight = (iheight - fuji_width) / sqrt(0.5);
 	  } else {
-	    if (pixel_aspect < 1) iheight = (int)(iheight / pixel_aspect + 0.5);
-	    if (pixel_aspect > 1) iwidth  = (int)(iwidth  * pixel_aspect + 0.5);
+	    if (pixel_aspect < 1) iheight = iheight / pixel_aspect + 0.5;
+	    if (pixel_aspect > 1) iwidth  = iwidth  * pixel_aspect + 0.5;
 	  }
 	}
 	if (flip & 4)
