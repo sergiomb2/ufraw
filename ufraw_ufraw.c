@@ -712,7 +712,7 @@ int ufraw_convert_image(ufraw_data *uf)
     ufraw_developer_prepare(uf, file_developer);
     ufraw_convert_image_init(uf);
     ufraw_convert_image_first_phase(uf, TRUE);
-    if (uf->ConvertShrink>1) {
+    if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
 	ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
 	dcraw_image_data final;
 	final.height = FirstImage->height;
@@ -1190,8 +1190,7 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
                     return in;
 
                 dcraw_image_data tmp;
-                /* With shrink==2 the border should be 16 pixels */
-                int border = 16 * 2 / uf->ConvertShrink;
+                int border = 16;
                 int bx = MAX (x - border, 0);
                 int by = MAX (y - border, 0);
                 tmp.width = MIN ((x - bx) + w + border, in->width - bx);
