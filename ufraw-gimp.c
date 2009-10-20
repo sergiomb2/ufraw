@@ -408,7 +408,7 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
     if (uf->outputExifBuf!=NULL) {
 	if (uf->outputExifBufLen>65533) {
 	    ufraw_message(UFRAW_SET_WARNING,
-		    _("EXIF buffer length %d, too long, ignored.\n"),
+		    _("EXIF buffer length %d, too long, ignored."),
 		    uf->outputExifBufLen);
 	} else {
 	    GimpParasite *exif_parasite;

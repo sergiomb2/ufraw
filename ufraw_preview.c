@@ -4734,7 +4734,7 @@ static void corrections_fill_interface(preview_data *data, GtkWidget *page,
 	_("Reset curve to default"), G_CALLBACK(button_update), NULL);
     gtk_table_attach(subTable, data->ResetCurveButton, 8, 9, 7, 8, 0, 0, 0, 0);
 
-    data->BlackLabel = gtk_label_new(_("Black point: 0.000"));
+    data->BlackLabel = gtk_label_new(NULL);
 #if GTK_CHECK_VERSION(2,6,0)
     gtk_misc_set_alignment(GTK_MISC(data->BlackLabel), 0.5, 1.0);
     gtk_label_set_angle(GTK_LABEL(data->BlackLabel), 90);
@@ -4959,9 +4959,9 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
     data->RotationAdjustment = adjustment_scale(
 	table, 0, 0, _("Rotation"),
 	CFG->rotationAngle, NULL,
-	-180, 180, 0.1, 1, 2, TRUE, _("Rotation Angle"),
+	-180, 180, 0.1, 1, 2, TRUE, _("Rotation angle"),
 	G_CALLBACK(adjustment_update_rotation),
-	&data->ResetRotationAdjustment, _("Reset Rotation Angle"),
+	&data->ResetRotationAdjustment, _("Reset rotation angle"),
 	G_CALLBACK(adjustment_reset_rotation));
     ufraw_normalize_rotation(data->UF);
     gtk_widget_set_sensitive(data->ResetRotationAdjustment,
@@ -4969,12 +4969,9 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
 	    CFG->orientation != CFG->CameraOrientation);
 
     // drawLines toggle button
-    GtkWidget *subtable = gtk_table_new(10, 10, FALSE);
-    gtk_table_attach(table, subtable, 0, 7, 1, 2, GTK_FILL, 0, 0, 0);
-    // TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-    adjustment_scale(GTK_TABLE(subtable), 0, 0, _("Alignment Line Count"),
+    adjustment_scale(GTK_TABLE(table), 0, 1, _("Grid lines"),
 	CFG->drawLines, &CFG->drawLines, 0, 20, 1, 1, 0, FALSE,
-	_("Number of alignment lines to overlay over the crop area"),
+	_("Number of grid lines to overlay in the crop area"),
 	G_CALLBACK(adjustment_update_int), NULL, NULL, NULL);
 
     /* End of transformation page */
