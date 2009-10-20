@@ -875,7 +875,8 @@ void render_preview(preview_data *data)
     render_init(data);
     ufraw_convert_image_init_phase(data->UF);
     data->RenderSubArea = 0;
-    g_idle_remove_by_data(data);
+    while (g_idle_remove_by_data(data))
+	;
     g_idle_add_full(G_PRIORITY_DEFAULT_IDLE-10,
 	    (GSourceFunc)(render_prepare), data, NULL);
 }
@@ -2054,8 +2055,9 @@ static void update_crop_ranges(preview_data *data)
     CFG->drawLines = saveDrawLines;
     // Draw lines when idle if necessary
     if (CFG->drawLines>0 && data->BlinkTimer==0) {
-	g_idle_remove_by_data(data);
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+30,
+	if (data->DrawCropID != 0)
+	    g_source_remove(data->DrawCropID);
+	data->DrawCropID = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+30,
 		(GSourceFunc)(preview_draw_crop), data, NULL);
     }
     update_shrink_ranges(data);
@@ -2848,7 +2850,9 @@ static void adjustment_update_int(GtkAdjustment *adj, int *valuep)
     if (data->FreezeDialog) return;
 
     if (valuep==&CFG->drawLines) {
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+30,
+	if (data->DrawCropID != 0)
+	    g_source_remove(data->DrawCropID);
+	data->DrawCropID = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+30,
 		(GSourceFunc)(preview_draw_crop), data, NULL);
     }
 }
@@ -5250,6 +5254,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 
     data->AspectRatio = 0.0;
     data->BlinkTimer = 0;
+    data->DrawCropID = 0;
     for (i=0; i<num_buttons; i++) {
 	data->ControlButton[i] = NULL;
 	data->ButtonMnemonic[i] = 0;
@@ -5677,11 +5682,14 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     for (i=0; i<cursor_num; i++)
 	gdk_cursor_unref(data->Cursor[i]);
     /* Make sure that there are no preview idle task remaining */
-    g_idle_remove_by_data(data);
+    while (g_idle_remove_by_data(data))
+	;
     if (data->BlinkTimer) {
 	g_source_remove(data->BlinkTimer);
 	data->BlinkTimer = 0;
     }
+    if (data->DrawCropID != 0)
+	g_source_remove(data->DrawCropID);
 
     if ( status==GTK_RESPONSE_OK ) {
 	gboolean SaveRC = FALSE;

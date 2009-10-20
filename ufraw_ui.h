@@ -188,6 +188,7 @@ typedef struct {
     int OverUnderTicker;
     /* The event source number when the highlight blink function is enabled. */
     guint BlinkTimer;
+    guint DrawCropID;
 } preview_data;
 
 /* Response can be any unique positive integer */
