@@ -30,11 +30,8 @@
 #include "ufraw.h"
 #include "ufraw_ui.h"
 #include "curveeditor_widget.h"
-//#undef HAVE_GTKIMAGEVIEW
-#ifdef HAVE_GTKIMAGEVIEW
 #include <gtkimageview/gtkimagescrollwin.h>
 #include <gtkimageview/gtkimageview.h>
-#endif
 #if GTK_CHECK_VERSION(2,6,0)
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
@@ -515,79 +512,6 @@ static int zoom_to_scale(double zoom)
        return 0;
 }
 
-static void redraw_navigation_image(preview_data *data)
-{
-#if defined(HAVE_GTKIMAGEVIEW) && GTK_IMAGE_VIEW_DAMAGE_PIXELS==0
-    GtkWidget *scroll =
-	gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_IMAGE_SCROLL_WIN);
-    GtkImageNav *nav = GTK_IMAGE_NAV(GTK_IMAGE_SCROLL_WIN(scroll)->nav);
-    if ( nav->pixbuf==NULL ) return;
-    int navWidth = gdk_pixbuf_get_width(nav->pixbuf);
-    int navHeight = gdk_pixbuf_get_height(nav->pixbuf);
-    g_object_unref(nav->pixbuf);
-    // GDK_INTERP_BILINEAR is too slow
-    nav->pixbuf = gdk_pixbuf_scale_simple(data->PreviewPixbuf,
-	    navWidth, navHeight, GDK_INTERP_NEAREST);
-#else
-    (void)data;
-#endif
-}
-
-static void image_draw_area(preview_data *data, int x, int y,
-			    int width, int height)
-{
-    GtkWidget *widget = data->PreviewWidget;
-#ifdef HAVE_GTKIMAGEVIEW
-#if GTK_IMAGE_VIEW_DAMAGE_PIXELS==1
-    GtkImageView *view = GTK_IMAGE_VIEW(widget);
-    GdkRectangle rect;
-    rect.x = x;
-    rect.y = y;
-    rect.width = width;
-    rect.height = height;
-    gtk_image_view_damage_pixels(view, &rect);
-#else
-    GtkImageView *view = GTK_IMAGE_VIEW(widget);
-    /* Find location of area in the view. */
-    GdkRectangle viewRect;
-    gtk_image_view_get_viewport(view, &viewRect);
-    GdkPixbuf *pixbuf = gtk_image_view_get_pixbuf(view);
-    int pixbufWidth = gdk_pixbuf_get_width(pixbuf);
-    int pixbufHeight = gdk_pixbuf_get_height(pixbuf);
-    int viewWidth = GTK_WIDGET(view)->allocation.width;
-    int viewHeight = GTK_WIDGET(view)->allocation.height;
-    if ( pixbufWidth>viewWidth ) {
-	if (x<viewRect.x)
-	    width += x - viewRect.x;
-	x = MAX(x-viewRect.x, 0);
-    } else {
-	x += (viewWidth - pixbufWidth) / 2;
-    }
-    if ( pixbufHeight>viewHeight ) {
-	if (y<viewRect.y)
-	    height += y - viewRect.y;
-	y = MAX(y-viewRect.y, 0);
-    } else {
-	y += (viewHeight - pixbufHeight) / 2;
-    }
-//preview_notify_dirty(preview_data *data)
-    /* As a workaround we use the esoteric knowledge of GtkImageView's
-     * internal logic. It will reuse pieces of the cached old pixmap
-     * only if nothing changes in the view, otherwise it will discard
-     * the cache. So we will change the transparency background for our
-     * GtkImageView since anyway it is not seen through.
-     */
-    GTK_IMAGE_VIEW(data->PreviewWidget)->check_color1++;
-
-    if ( height>0 && width>0 )
-	gtk_widget_queue_draw_area(widget, x, y, width, height);
-#endif
-#else
-    if ( height>0 && width>0 )
-	gtk_widget_queue_draw_area(widget, x, y, width, height);
-#endif
-}
-
 /* Modify the preview image to mark crop and spot areas.
  * Note that all coordinate intervals are semi-inclusive, e.g.
  * X1 <= pixels < X2 and Y1 <= pixels < Y2
@@ -699,11 +623,22 @@ static void preview_draw_area(preview_data *data,
 	    }
 	}
     }
+    /* Redraw the changed areas */
 #ifdef _OPENMP
 #pragma omp critical
+    {
 #endif
-    /* Redraw the changed areas */
-    image_draw_area(data, x, y, width, height);
+    GtkWidget *widget = data->PreviewWidget;
+    GtkImageView *view = GTK_IMAGE_VIEW(widget);
+    GdkRectangle rect;
+    rect.x = x;
+    rect.y = y;
+    rect.width = width;
+    rect.height = height;
+    gtk_image_view_damage_pixels(view, &rect);
+#ifdef _OPENMP
+    }
+#endif
 }
 
 static void preview_draw_all(preview_data *data)
@@ -743,7 +678,6 @@ static gboolean switch_highlights(gpointer ptr)
 	float scale_x = ((float)pixbufWidth) / data->UF->rotatedWidth;
 	float scale_y = ((float)pixbufHeight) / data->UF->rotatedHeight;
 	/* Set the area to redraw based on the crop rectangle and view port. */
-#ifdef HAVE_GTKIMAGEVIEW
 	GdkRectangle viewRect;
 	gtk_image_view_get_viewport(GTK_IMAGE_VIEW(data->PreviewWidget),
 		&viewRect);
@@ -754,12 +688,7 @@ static gboolean switch_highlights(gpointer ptr)
 	int y = MAX(viewRect.y, floor(CFG->CropY1 * scale_y));
 	int y2 = MIN(viewRect.y+viewRect.height, ceil(CFG->CropY2 * scale_y));
 	int height = MAX(y2 - y, 0);
-#else
-	int x = floor(CFG->CropX1 * scale_x);
-	int width = MIN(ceil(CFG->CropX2 * scale_x), pixbufWidth-1) - x;
-	int y = floor(CFG->CropY1 * scale_y);
-	int height = MIN(ceil(CFG->CropY2 * scale_x), pixbufHeight-1) - y;
-#endif
+
 	data->OverUnderTicker++;
 	preview_draw_area(data, x, y, width, height);
     }
@@ -833,14 +762,9 @@ static void render_init(preview_data *data)
 					    image->width, image->height);
 	/* Clear the pixbuffer to avoid displaying garbage */
 	gdk_pixbuf_fill(data->PreviewPixbuf, 0);
-#ifdef HAVE_GTKIMAGEVIEW
 	gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
 		data->PreviewPixbuf, FALSE);
 	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
-#else
-	gtk_image_set_from_pixbuf(GTK_IMAGE(data->PreviewWidget),
-		data->PreviewPixbuf);
-#endif
 	g_object_unref(data->PreviewPixbuf);
     }
     if (data->ProgressBar!=NULL) {
@@ -1042,7 +966,6 @@ static gboolean render_raw_histogram(preview_data *data)
 static int choose_subarea(preview_data *data, int *chosen)
 {
     int subarea = -1;
-#ifdef HAVE_GTKIMAGEVIEW
     int max_area = -1;
     int i, x, y, w, h;
 
@@ -1097,17 +1020,6 @@ static int choose_subarea(preview_data *data, int *chosen)
                 break;
         }
     }
-
-#else
-
-    do {
-	subarea = data->RenderSubArea++;
-    } while (*chosen & (1 << subarea));
-    if (subarea > 31)
-	subarea = -1;
-
-#endif
-
     if (subarea >= 0)
 	*chosen |= 1 << subarea;
     return subarea;
@@ -1141,7 +1053,6 @@ static gboolean render_preview_image(preview_data *data)
     subarea = choose_subarea(data, &chosen);
     if (subarea < 0) {
         data->RenderSubArea = -1;
-        redraw_navigation_image(data);
     } else {
 	ufraw_image_data *img1 = ufraw_convert_image_area(
 	    data->UF, subarea, ufraw_phases_num - 1);
@@ -1711,7 +1622,7 @@ static void event_coordinate_rescale(gdouble *x, gdouble *y, preview_data *data)
 {
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-#ifdef HAVE_GTKIMAGEVIEW
+
     /* Find location of event in the view. */
     GdkRectangle viewRect;
     gtk_image_view_get_viewport(GTK_IMAGE_VIEW(data->PreviewWidget),
@@ -1728,7 +1639,6 @@ static void event_coordinate_rescale(gdouble *x, gdouble *y, preview_data *data)
     } else {
 	*y -= (viewHeight - height) / 2;
     }
-#endif
     if ( *x<0) *x = 0;
     if ( *x>width ) *x = width;
     if ( *y<0 ) *y = 0;
@@ -1876,9 +1786,8 @@ static gboolean preview_motion_notify_event(GtkWidget *event_box,
     preview_data *data = get_preview_data(event_box);
 
     (void)user_data;
-#ifdef HAVE_GTKIMAGEVIEW
-    if (!gtk_event_box_get_above_child(GTK_EVENT_BOX(event_box))) return FALSE;
-#endif
+    if (!gtk_event_box_get_above_child(GTK_EVENT_BOX(event_box)))
+	return FALSE;
     if ( data->PageNum==data->PageNumCrop )
 	return crop_motion_notify(data, event);
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
@@ -1892,7 +1801,6 @@ static gboolean preview_motion_notify_event(GtkWidget *event_box,
     return TRUE;
 }
 
-#ifdef HAVE_GTKIMAGEVIEW
 static gboolean (*gtk_image_view_scroll_event)(GtkWidget *widget,
 	GdkEventScroll *event);
 
@@ -1906,7 +1814,6 @@ static gboolean preview_scroll_event(GtkWidget *widget, GdkEventScroll *event)
 	(*gtk_image_view_scroll_event)(widget, event);
     return TRUE;
 }
-#endif
 
 static void create_base_image(preview_data *data)
 {
@@ -2061,7 +1968,6 @@ static void update_crop_ranges(preview_data *data)
 		(GSourceFunc)(preview_draw_crop), data, NULL);
     }
     update_shrink_ranges(data);
-    redraw_navigation_image(data);
 }
 
 static void crop_reset(GtkWidget *widget, gpointer user_data)
@@ -2126,7 +2032,6 @@ static void zoom_out_event(GtkWidget *widget, gpointer user_data)
     }
 }
 
-#ifdef HAVE_GTKIMAGEVIEW
 static void zoom_fit_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
@@ -2160,7 +2065,6 @@ static void zoom_max_event(GtkWidget *widget, gpointer user_data)
 	render_preview(data);
     }
 }
-#endif
 
 static void flip_image(GtkWidget *widget, int flip)
 {
@@ -3873,7 +3777,6 @@ static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
 
     GtkWidget *event_box =
 	    gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_EVENT_BOX);
-#ifdef HAVE_GTKIMAGEVIEW
     if ( page_num==data->PageNumSpot ||
 	 page_num==data->PageNumLightness ||
 	 page_num==data->PageNumGray ) {
@@ -3888,15 +3791,6 @@ static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
 	gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), FALSE);
 	draw_spot(data, TRUE);
     }
-#else
-    if ( page_num==data->PageNumCrop ) {
-	gdk_window_set_cursor(event_box->window, data->Cursor[crop_cursor]);
-	draw_spot(data, FALSE);
-    } else {
-	gdk_window_set_cursor(event_box->window, data->Cursor[spot_cursor]);
-	draw_spot(data, TRUE);
-    }
-#endif
     data->PageNum = page_num;
 }
 
@@ -4365,38 +4259,6 @@ static void whitebalance_fill_interface(preview_data *data,
     button = reset_button(
 	_("Reset dark frame"), G_CALLBACK(reset_darkframe), NULL);
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
-
-    /* Without GtkImageView, zoom controls cannot be bellow the image because
-     * if the image is zoomed in too much the controls will be out of
-     * the screen and it would be impossible to zoom out again. */
-#ifndef HAVE_GTKIMAGEVIEW
-    // Zoom controls:
-    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
-    label = gtk_label_new(_("Zoom:"));
-    gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
-
-    // Zoom out button:
-    button = stock_icon_button(GTK_STOCK_ZOOM_OUT, NULL,
-	    G_CALLBACK(zoom_out_event), NULL);
-    gtk_table_attach(table, button, 1, 2, 0, 1, 0, 0, 0, 0);
-
-    // Zoom percentage spin button:
-    data->ZoomAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
-		CFG->Zoom, 100/max_scale, 100/min_scale, 1, 1, 0));
-    g_object_set_data(G_OBJECT(data->ZoomAdjustment),
-		"Adjustment-Accuracy", (gpointer)0);
-    button = gtk_spin_button_new(data->ZoomAdjustment, 1, 0);
-    g_object_set_data(G_OBJECT(data->ZoomAdjustment), "Parent-Widget", button);
-    g_signal_connect(G_OBJECT(data->ZoomAdjustment), "value-changed",
-		G_CALLBACK(adjustment_update), &CFG->Zoom);
-    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
-    uf_widget_set_tooltip(button, _("Zoom percentage"));
-
-    // Zoom in button:
-    button = stock_icon_button(GTK_STOCK_ZOOM_IN, NULL,
-	    G_CALLBACK(zoom_in_event), NULL);
-    gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
-#endif // !HAVE_GTKIMAGEVIEW
 
     /* End of White Balance setting page */
 }
@@ -5427,7 +5289,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     vBox = gtk_vbox_new(FALSE, 0);
     gtk_box_pack_start(previewHBox, vBox, TRUE, TRUE, 2);
     GtkWidget *PreviewEventBox = gtk_event_box_new();
-#ifdef HAVE_GTKIMAGEVIEW
+
     data->PreviewWidget = gtk_image_view_new();
     gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
     gtk_event_box_set_above_child(GTK_EVENT_BOX(PreviewEventBox), TRUE);
@@ -5444,19 +5306,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     gtk_table_attach(GTK_TABLE(container), PreviewEventBox, 0, 1, 0, 1,
 	    GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
     gtk_box_pack_start(GTK_BOX(vBox), scroll, TRUE, TRUE, 0);
-#else
-    GtkWidget *align = gtk_alignment_new(0.5, 0.5, 0, 0);
-    gtk_box_pack_start(GTK_BOX(vBox), align, TRUE, TRUE, 0);
-    box = GTK_BOX(gtk_vbox_new(FALSE, 0));
-    gtk_container_add(GTK_CONTAINER(align), GTK_WIDGET(box));
-    gtk_box_pack_start(box, PreviewEventBox, FALSE, FALSE, 0);
-    data->PreviewPixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-	    preview_width, preview_height);
-    data->PreviewWidget = gtk_image_new_from_pixbuf(data->PreviewPixbuf);
-    g_object_unref(data->PreviewPixbuf);
-    gtk_misc_set_alignment(GTK_MISC(data->PreviewWidget), 0, 0);
-    gtk_container_add(GTK_CONTAINER(PreviewEventBox), data->PreviewWidget);
-#endif
+
     data->PreviewButtonPressed = FALSE;
     g_signal_connect(G_OBJECT(PreviewEventBox), "button-press-event",
 	    G_CALLBACK(preview_button_press_event), NULL);
@@ -5466,7 +5316,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 	    G_CALLBACK(preview_motion_notify_event), NULL);
     gtk_widget_add_events(PreviewEventBox, GDK_POINTER_MOTION_MASK);
 
-#ifdef HAVE_GTKIMAGEVIEW
     // Hide zoom key bindings from GtkImageView
     GtkImageViewClass *klass =
 	    GTK_IMAGE_VIEW_GET_CLASS(GTK_IMAGE_VIEW(data->PreviewWidget));
@@ -5484,7 +5333,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     GtkWidgetClass *widget_class = (GtkWidgetClass *)klass;
     gtk_image_view_scroll_event = widget_class->scroll_event;
     widget_class->scroll_event = preview_scroll_event;
-#endif
 
     data->ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
     gtk_box_pack_start(GTK_BOX(vBox), GTK_WIDGET(data->ProgressBar),
@@ -5496,7 +5344,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     // Zoom buttons are centered:
     GtkBox *ZoomBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
     gtk_box_pack_start(ControlsBox, GTK_WIDGET(ZoomBox), TRUE, FALSE, 0);
-#ifdef HAVE_GTKIMAGEVIEW
     // Zoom out button:
     button = stock_icon_button(GTK_STOCK_ZOOM_OUT, NULL,
 	    G_CALLBACK(zoom_out_event), NULL);
@@ -5528,7 +5375,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     button = stock_icon_button(GTK_STOCK_ZOOM_100, NULL,
 	    G_CALLBACK(zoom_max_event), NULL);
     gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
-#endif // HAVE_GTKIMAGEVIEW
 
     // The rest of the control button are aligned to the right
     box = GTK_BOX(gtk_hbox_new(FALSE, 6));
@@ -5585,11 +5431,9 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 		_("Send image to _Gimp"), gimp_button, data);
 	gtk_box_pack_start(box, gimpButton, FALSE, FALSE, 0);
     }
-#ifdef HAVE_GTKIMAGEVIEW
     // Apply WindowMaximized state from previous session
     if ( CFG->WindowMaximized )
 	gtk_window_maximize(GTK_WINDOW(previewWindow));
-#endif
     gtk_widget_show_all(previewWindow);
     gtk_widget_hide(GTK_WIDGET(data->SpotTable));
     for (i=CFG->lightnessAdjustmentCount; i<max_adjustments; i++)
@@ -5599,7 +5443,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     // preview_progress() changes the size of the progress bar
     // and processes the event queue.
     preview_progress(previewWindow, _("Loading preview"), 0.2);
-#ifdef HAVE_GTKIMAGEVIEW
 #if !GTK_CHECK_VERSION(2,8,0)
     /* There is a bug that causes the mouse location to be misplaced
      * in the event-box. The following voodoo seems to fix the mapping. */
@@ -5627,7 +5470,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     g_object_unref(data->PreviewPixbuf);
     // Get the empty preview displayed
     while (gtk_events_pending()) gtk_main_iteration();
-#endif
+
     for (i=0; i<cursor_num; i++)
 	data->Cursor[i] = gdk_cursor_new(Cursors[i]);
     gdk_window_set_cursor(PreviewEventBox->window, data->Cursor[spot_cursor]);
