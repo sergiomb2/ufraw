@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-05-13 12:19+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -686,8 +686,8 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr "Einbetten von Ausgabeprofil »%s« in Bild fehlgeschlagen."
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "EXIF-Pufferlänge %d zu lang, ignoriert.\n"
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "EXIF-Pufferlänge %d zu lang, ignoriert."
 
 msgid "Raw histogram with conversion curves"
 msgstr "Raw-Histogramm mit Konvertierungskurven"
@@ -1010,12 +1010,6 @@ msgstr "Dunkelbild:"
 msgid "Reset dark frame"
 msgstr "Dunkelbild zurücksetzen"
 
-msgid "Zoom:"
-msgstr "Zoom:"
-
-msgid "Zoom percentage"
-msgstr "Zoom-Prozentsatz"
-
 #, fuzzy
 msgid "Reset adjustment"
 msgstr "Globale Kontrastanpassung"
@@ -1118,9 +1112,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "Kurve auf Standard zurücksetzen"
 
-msgid "Black point: 0.000"
-msgstr "Schwarzpunkt: 0,000"
-
 msgid "Reset black-point to default"
 msgstr "Schwarzpunkt auf Standard zurücksetzen"
 
@@ -1175,17 +1166,18 @@ msgid "Rotation"
 msgstr "Sättigung"
 
 #, fuzzy
-msgid "Rotation Angle"
+msgid "Rotation angle"
 msgstr "Sättigung"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
+msgstr "Sättigung"
+
+#. drawLines toggle button
+msgid "Grid lines"
 msgstr ""
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
+msgid "Number of grid lines to overlay in the crop area"
 msgstr ""
 
 msgid "Path"
@@ -1337,6 +1329,9 @@ msgstr "Sichern"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "Zoom-Prozentsatz"
+
 msgid "Options"
 msgstr "Optionen"
 
@@ -1449,10 +1444,6 @@ msgstr "Einbetten des Ausgabeprofils »%s« in »%s« fehlgeschlagen."
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Nicht unterstützte Bit-Tiefe »%d« ignoriert."
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "EXIF-Pufferlänge %d zu lang, ignoriert."
 
 #, c-format
 msgid "Unknown file type %d."

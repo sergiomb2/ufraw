@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-12 22:11-0500\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-10-15 21:44+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -697,8 +697,8 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr "Échec lors de la copie du profil de sortie '%s' dans l'image."
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "Longueur du tampon EXIF %d, trop longue, ignorée.\n"
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "Longueur du tampon EXIF %d, trop longue, ignorée."
 
 msgid "Raw histogram with conversion curves"
 msgstr "Histogramme brut avec courbes de conversion"
@@ -1024,12 +1024,6 @@ msgstr "Bruit de référence:"
 msgid "Reset dark frame"
 msgstr "RàZ du bruit de référence"
 
-msgid "Zoom:"
-msgstr "Zoom:"
-
-msgid "Zoom percentage"
-msgstr "Pourcentage du Zoom"
-
 msgid "Reset adjustment"
 msgstr "R-à-Z Ajustement"
 
@@ -1136,9 +1130,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "RàZ de la courbe"
 
-msgid "Black point: 0.000"
-msgstr "Point Noir: 0.000"
-
 msgid "Reset black-point to default"
 msgstr "RàZ du point noir"
 
@@ -1193,17 +1184,20 @@ msgstr "Orientation:"
 msgid "Rotation"
 msgstr "Rotation"
 
-msgid "Rotation Angle"
+#, fuzzy
+msgid "Rotation angle"
 msgstr "Angle de rotation"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
 msgstr "RàZ de l'angle de rotation"
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr "Décompte des lignes d'alignement"
+#. drawLines toggle button
+msgid "Grid lines"
+msgstr ""
 
-msgid "Number of alignment lines to overlay over the crop area"
+#, fuzzy
+msgid "Number of grid lines to overlay in the crop area"
 msgstr "Nombre de lignes d'alignement en surimpression de la zone de découpe"
 
 msgid "Path"
@@ -1359,6 +1353,9 @@ msgstr "Sauver"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "Pourcentage du Zoom"
+
 msgid "Options"
 msgstr "Options"
 
@@ -1471,10 +1468,6 @@ msgstr "Échoue à inclure le profil de sortie '%s' dans '%s'"
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "La profondeur de couleur '%d' est ignorée."
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "Longueur du tampon EXIF %d, trop longue, ignorée."
 
 #, c-format
 msgid "Unknown file type %d."

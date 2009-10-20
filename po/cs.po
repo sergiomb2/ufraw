@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-10-04 10:41+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -674,8 +674,8 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr "Selhalo vložení výstupní profilu'%s' do snímku."
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "Délka %d EXIF bufferu příliš dlouhá, ignorováno.\n"
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "Délka %d EXIF bufferu příliš dlouhá, ignorováno."
 
 msgid "Raw histogram with conversion curves"
 msgstr "Raw histogram s konverzními křivkami"
@@ -995,12 +995,6 @@ msgstr "Černý snímek:"
 msgid "Reset dark frame"
 msgstr "Odstranit černý snímek"
 
-msgid "Zoom:"
-msgstr "Přiblížení:"
-
-msgid "Zoom percentage"
-msgstr "Procento přiblížení"
-
 msgid "Reset adjustment"
 msgstr "Obnovit nastavení"
 
@@ -1098,9 +1092,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "Nastavit křivku na standardní"
 
-msgid "Black point: 0.000"
-msgstr "Černý bod: 0.000"
-
 msgid "Reset black-point to default"
 msgstr "Nastavit černý bod na standardní"
 
@@ -1153,17 +1144,20 @@ msgstr "Orientace:"
 msgid "Rotation"
 msgstr "Otočení"
 
-msgid "Rotation Angle"
+#, fuzzy
+msgid "Rotation angle"
 msgstr "Úhel otočení"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
 msgstr "Nastavit standardní úhel otočení"
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr "Počet čar pro vyrovnání"
+#. drawLines toggle button
+msgid "Grid lines"
+msgstr ""
 
-msgid "Number of alignment lines to overlay over the crop area"
+#, fuzzy
+msgid "Number of grid lines to overlay in the crop area"
 msgstr "Počet čar pro vyrovnání, které mají být zobrazeny přes oblast výřezu"
 
 msgid "Path"
@@ -1313,6 +1307,9 @@ msgstr "Uložit"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "Procento přiblížení"
+
 msgid "Options"
 msgstr "Volby"
 
@@ -1425,10 +1422,6 @@ msgstr "Selhalo vložení výstupního profilu '%s' v '%s'."
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Nepodporovaná bitová hloubka '%d' ignorována."
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "Délka %d EXIF bufferu příliš dlouhá, ignorováno."
 
 #, c-format
 msgid "Unknown file type %d."

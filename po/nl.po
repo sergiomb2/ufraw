@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-09-30 13:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -678,8 +678,8 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr "Niet gelukt het output profiel '%s' te embedden in afbeelding."
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "EXIF buffer lengte %d, te groot, genegeerd.\n"
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "EXIF buffer lengte %d, te lang, genegeerd."
 
 msgid "Raw histogram with conversion curves"
 msgstr "Raw histogram met conversie curves"
@@ -1000,12 +1000,6 @@ msgstr "Zwartbeeld:"
 msgid "Reset dark frame"
 msgstr "Reset zwartbeeld"
 
-msgid "Zoom:"
-msgstr "Zoom:"
-
-msgid "Zoom percentage"
-msgstr "Zoom percentage"
-
 msgid "Reset adjustment"
 msgstr "Reset aanpassing"
 
@@ -1103,9 +1097,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "Reset curve naar verstekwaarde"
 
-msgid "Black point: 0.000"
-msgstr "Zwartpunt: 0.000"
-
 msgid "Reset black-point to default"
 msgstr "Reset zwartpunt naar verstekwaarde"
 
@@ -1158,17 +1149,20 @@ msgstr "Orientatie:"
 msgid "Rotation"
 msgstr "Rotatie"
 
-msgid "Rotation Angle"
+#, fuzzy
+msgid "Rotation angle"
 msgstr "Rotatiehoek"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
 msgstr "Reset Rotatiehoek"
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr "Aantal hulplijnen"
+#. drawLines toggle button
+msgid "Grid lines"
+msgstr ""
 
-msgid "Number of alignment lines to overlay over the crop area"
+#, fuzzy
+msgid "Number of grid lines to overlay in the crop area"
 msgstr "Aantal hulplijnen op het uitsnede gebied"
 
 msgid "Path"
@@ -1318,6 +1312,9 @@ msgstr "Opslaan"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "Zoom percentage"
+
 msgid "Options"
 msgstr "Opties"
 
@@ -1429,10 +1426,6 @@ msgstr "Mislukt om output profiel '%s' te embedden  in '%s'."
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Niet ondersteunde bitdiepte '%d' genegeerd."
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "EXIF buffer lengte %d, te lang, genegeerd."
 
 #, c-format
 msgid "Unknown file type %d."

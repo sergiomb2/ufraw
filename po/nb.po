@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -672,8 +672,8 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr "Feil ved inkludering av utdataprofilen «%s» i bildet."
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "Ignorerer for lang EXIF-buffer (lengde %d).\n"
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "EXIF-buffer med lengde %d er for lang, ignorert."
 
 msgid "Raw histogram with conversion curves"
 msgstr "Raw-histogram med konverteringskurver"
@@ -994,12 +994,6 @@ msgstr "Sortbilde:"
 msgid "Reset dark frame"
 msgstr "Tilbakestill sortbilde"
 
-msgid "Zoom:"
-msgstr "Zoom:"
-
-msgid "Zoom percentage"
-msgstr "Zoom-prosent"
-
 msgid "Reset adjustment"
 msgstr "Tilbakestill justering"
 
@@ -1097,9 +1091,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "Sett kurve tilbake til standardverdi"
 
-msgid "Black point: 0.000"
-msgstr "Sortpunkt: 0,000"
-
 msgid "Reset black-point to default"
 msgstr "Sett sortpunkt tilbake til standardverdi"
 
@@ -1152,17 +1143,20 @@ msgstr "Orientering:"
 msgid "Rotation"
 msgstr "Rotasjon"
 
-msgid "Rotation Angle"
+#, fuzzy
+msgid "Rotation angle"
 msgstr "Rotasjonsvinkel"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
 msgstr "Tilbakestill rotasjonsvinkel"
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr "Antall justeringslinjer"
+#. drawLines toggle button
+msgid "Grid lines"
+msgstr ""
 
-msgid "Number of alignment lines to overlay over the crop area"
+#, fuzzy
+msgid "Number of grid lines to overlay in the crop area"
 msgstr "Antall justeringslinjer som legges over beskjæringsområdet"
 
 msgid "Path"
@@ -1312,6 +1306,9 @@ msgstr "Lagre"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "Zoom-prosent"
+
 msgid "Options"
 msgstr "Alternativer"
 
@@ -1423,10 +1420,6 @@ msgstr "Kunne ikke inkludere utdataprofilen «%s» i «%s»."
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Ikke støttet bitdybde «%d» ignorert."
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "EXIF-buffer med lengde %d er for lang, ignorert."
 
 #, c-format
 msgid "Unknown file type %d."

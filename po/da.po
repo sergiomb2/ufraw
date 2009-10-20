@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
-"PO-Revision-Date: 2009-10-13 07:00+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"PO-Revision-Date: 2009-10-20 16:45+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -670,8 +670,8 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr "Fejl ved indlejring af uddataprofil '%s' i billede."
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "EXIF-buffer længde %d, for lang, ignoreret.\n"
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "EXIF-buffer længde %d, for lang, ignoreret."
 
 msgid "Raw histogram with conversion curves"
 msgstr "Raw-histogram med konverteringskurver"
@@ -992,12 +992,6 @@ msgstr "Sortbillede:"
 msgid "Reset dark frame"
 msgstr "Resæt sortbillede"
 
-msgid "Zoom:"
-msgstr "Zoom:"
-
-msgid "Zoom percentage"
-msgstr "Zoom-procent"
-
 msgid "Reset adjustment"
 msgstr "Resæt justering"
 
@@ -1095,9 +1089,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "Resæt kurve til standardværdi"
 
-msgid "Black point: 0.000"
-msgstr "Sortpunkt: 0,000"
-
 msgid "Reset black-point to default"
 msgstr "Resæt sortpunkt til standardværdi"
 
@@ -1150,18 +1141,18 @@ msgstr "Orientering:"
 msgid "Rotation"
 msgstr "Rotation"
 
-msgid "Rotation Angle"
+msgid "Rotation angle"
 msgstr "Rotationsvinkel"
 
-msgid "Reset Rotation Angle"
+msgid "Reset rotation angle"
 msgstr "Resæt rotationsvinkel"
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr "Antal opretningslinjer"
+#. drawLines toggle button
+msgid "Grid lines"
+msgstr "Gitterlinjer"
 
-msgid "Number of alignment lines to overlay over the crop area"
-msgstr "Antallet af opretningslinjer, der lægges over beskæringsområdet"
+msgid "Number of grid lines to overlay in the crop area"
+msgstr "Antallet af gitterlinjer, der lægges over beskæringsområdet"
 
 msgid "Path"
 msgstr "Sti"
@@ -1310,6 +1301,9 @@ msgstr "Gem"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "Zoom-procent"
+
 msgid "Options"
 msgstr "Tilvalg"
 
@@ -1421,10 +1415,6 @@ msgstr "Fejl ved indlejring af uddataprofil '%s' i '%s'."
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Ikke-understøttet bitdybde '%d' ignoreret."
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "EXIF-buffer længde %d, for lang, ignoreret."
 
 #, c-format
 msgid "Unknown file type %d."

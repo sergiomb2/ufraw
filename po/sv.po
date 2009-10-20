@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -581,7 +581,7 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr ""
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
+msgid "EXIF buffer length %d, too long, ignored."
 msgstr ""
 
 msgid "Raw histogram with conversion curves"
@@ -887,12 +887,6 @@ msgstr ""
 msgid "Reset dark frame"
 msgstr ""
 
-msgid "Zoom:"
-msgstr "Zoom:"
-
-msgid "Zoom percentage"
-msgstr "Zoom procentandel"
-
 msgid "Reset adjustment"
 msgstr ""
 
@@ -989,9 +983,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "Nollställ kurva till standard"
 
-msgid "Black point: 0.000"
-msgstr "Svartpunkt: 0.000"
-
 msgid "Reset black-point to default"
 msgstr "Nollställ svartpunkt till standard"
 
@@ -1043,17 +1034,18 @@ msgid "Rotation"
 msgstr "Färgmättnad"
 
 #, fuzzy
-msgid "Rotation Angle"
+msgid "Rotation angle"
 msgstr "Färgmättnad"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
+msgstr "Färgmättnad"
+
+#. drawLines toggle button
+msgid "Grid lines"
 msgstr ""
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
+msgid "Number of grid lines to overlay in the crop area"
 msgstr ""
 
 msgid "Path"
@@ -1207,6 +1199,9 @@ msgstr "Spara s_om"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "Zoom procentandel"
+
 msgid "Options"
 msgstr "Alternativ"
 
@@ -1317,10 +1312,6 @@ msgstr ""
 
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
-msgstr ""
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
 msgstr ""
 
 #, c-format

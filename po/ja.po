@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -650,8 +650,8 @@ msgstr "背景"
 msgid "Failed to embed output profile '%s' in image."
 msgstr "出力プロファイル'%s'を画像に埋め込むのに失敗しました。"
 
-#, fuzzy, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIFバッファ長 %d, が長すぎるので無視します"
 
 msgid "Raw histogram with conversion curves"
@@ -978,12 +978,6 @@ msgstr "ダークフレーム:"
 msgid "Reset dark frame"
 msgstr "ダークフレームをリセット"
 
-msgid "Zoom:"
-msgstr "ズーム:"
-
-msgid "Zoom percentage"
-msgstr "表示倍率（パーセント）"
-
 msgid "Reset adjustment"
 msgstr "調整をリセット"
 
@@ -1083,10 +1077,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "カーブをデフォルトに戻す"
 
-# ブラックポイントをどう訳すか
-msgid "Black point: 0.000"
-msgstr "ブラックポイント: 0.000"
-
 msgid "Reset black-point to default"
 msgstr "ブラックポイントをデフォルトに戻す"
 
@@ -1139,17 +1129,19 @@ msgstr "変換:"
 msgid "Rotation"
 msgstr "回転"
 
-msgid "Rotation Angle"
+#, fuzzy
+msgid "Rotation angle"
 msgstr "アングルの回転"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
 msgstr "アングルの回転をリセット"
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
+#. drawLines toggle button
+msgid "Grid lines"
 msgstr ""
 
-msgid "Number of alignment lines to overlay over the crop area"
+msgid "Number of grid lines to overlay in the crop area"
 msgstr ""
 
 msgid "Path"
@@ -1299,6 +1291,9 @@ msgstr "保存"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "表示倍率（パーセント）"
+
 msgid "Options"
 msgstr "オプション"
 
@@ -1409,10 +1404,6 @@ msgstr "出力プロファイル'%s'を'%s'へ埋込むのに失敗しました"
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "'%d' はサポートされない色深度なので無視しました。"
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "EXIFバッファ長 %d, が長すぎるので無視します"
 
 #, c-format
 msgid "Unknown file type %d."

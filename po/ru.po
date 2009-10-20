@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-10-13 18:45+0400\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -690,8 +690,8 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr "Невозможно встроить профиль вывода '%s' в изображение."
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "буфер EXIF длиной %d, слишком длинный, проигнорирован.\n"
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "Буфер EXIF длиной %d слишком велик, проигнорирован."
 
 msgid "Raw histogram with conversion curves"
 msgstr "Гистограмма RAW с кривыми преобразования"
@@ -1012,12 +1012,6 @@ msgstr "Темный кадр:"
 msgid "Reset dark frame"
 msgstr "Обнулить тёмный кадр"
 
-msgid "Zoom:"
-msgstr "Масштаб:"
-
-msgid "Zoom percentage"
-msgstr "Масштаб в процентах"
-
 msgid "Reset adjustment"
 msgstr "Обнулить коррекцию"
 
@@ -1115,9 +1109,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "Вернуть кривую в исходное состояние"
 
-msgid "Black point: 0.000"
-msgstr "Чёрная точка: 0.000"
-
 msgid "Reset black-point to default"
 msgstr "Сбросить значение чёрной точки до исходного"
 
@@ -1170,17 +1161,20 @@ msgstr "Ориентация:"
 msgid "Rotation"
 msgstr "Вращение"
 
-msgid "Rotation Angle"
+#, fuzzy
+msgid "Rotation angle"
 msgstr "Угол вращения"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
 msgstr "Сбросить угол поворота"
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr "Число линий выравнивания"
+#. drawLines toggle button
+msgid "Grid lines"
+msgstr ""
 
-msgid "Number of alignment lines to overlay over the crop area"
+#, fuzzy
+msgid "Number of grid lines to overlay in the crop area"
 msgstr "Число линий выравнивания, лежащих на вырезаемой области"
 
 msgid "Path"
@@ -1330,6 +1324,9 @@ msgstr "Сохранить"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "Масштаб в процентах"
+
 msgid "Options"
 msgstr "Параметры"
 
@@ -1442,10 +1439,6 @@ msgstr "Не удалось встроить профиль вывода '%s' в
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Игнорируется неподдерживаемая глубина цвета '%d'."
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "Буфер EXIF длиной %d слишком велик, проигнорирован."
 
 #, c-format
 msgid "Unknown file type %d."

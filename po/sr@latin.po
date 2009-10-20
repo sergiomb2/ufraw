@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -691,8 +691,8 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr "Nije uspelo umetanje izlaznog profila „%s“ u sliku."
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "EXIF bafera je prevelik (%d).  Ignorišem.\n"
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "EXIF bafera je prevelik (%d).  Ignorišem."
 
 msgid "Raw histogram with conversion curves"
 msgstr "Raw histogram sa krivama za prevođenje"
@@ -1014,12 +1014,6 @@ msgstr "Tamni kadar:"
 msgid "Reset dark frame"
 msgstr "Poništi tamni kadar"
 
-msgid "Zoom:"
-msgstr "Uvećanje:"
-
-msgid "Zoom percentage"
-msgstr "Uvećanje u procentima"
-
 msgid "Reset adjustment"
 msgstr "Poništi podešavanja"
 
@@ -1117,9 +1111,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "Vrati krivu na podrazumevano"
 
-msgid "Black point: 0.000"
-msgstr "Crna tačka: 0.000"
-
 msgid "Reset black-point to default"
 msgstr "Vrati crnu tačku na podrazumevano"
 
@@ -1172,17 +1163,20 @@ msgstr "Okretanje:"
 msgid "Rotation"
 msgstr "Rotacija"
 
-msgid "Rotation Angle"
+#, fuzzy
+msgid "Rotation angle"
 msgstr "Ugao rotacije"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
 msgstr "Poništi ugao rotacije"
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr "Broj linija za poravnanje"
+#. drawLines toggle button
+msgid "Grid lines"
+msgstr ""
 
-msgid "Number of alignment lines to overlay over the crop area"
+#, fuzzy
+msgid "Number of grid lines to overlay in the crop area"
 msgstr "Broj linija za poravnanje prikazanih iznad oblasti za isecanje"
 
 msgid "Path"
@@ -1332,6 +1326,9 @@ msgstr "Sačuvaj"
 msgid "EXIF"
 msgstr "EXIF podaci"
 
+msgid "Zoom percentage"
+msgstr "Uvećanje u procentima"
+
 msgid "Options"
 msgstr "Postavke"
 
@@ -1443,10 +1440,6 @@ msgstr "Ne mogu da umetnem izlazni profil „%s“ u „%s“."
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Zanemaren je nepodržan broj bitova „%d“"
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "EXIF bafera je prevelik (%d).  Ignorišem."
 
 #, c-format
 msgid "Unknown file type %d."

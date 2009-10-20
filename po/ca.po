@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-09-30 19:24+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -699,8 +699,8 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr "No ha estat possible incloure el perfil de sortida '%s' a la imatge."
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "La longitud %d, del buffer EXIF és massa gran, s'ignorarà.\n"
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "La longitud %d, del buffer EXIF és massa gran, s'ignorarà."
 
 msgid "Raw histogram with conversion curves"
 msgstr "Histograma en cru amb corbes de conversió"
@@ -1021,12 +1021,6 @@ msgstr "Marc Fosc:"
 msgid "Reset dark frame"
 msgstr "Reinicia el marc fosc"
 
-msgid "Zoom:"
-msgstr "Ampliació:"
-
-msgid "Zoom percentage"
-msgstr "Percentatge del zoom"
-
 msgid "Reset adjustment"
 msgstr "Reinicia l'ajustament"
 
@@ -1125,9 +1119,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "Reinicia la corba per omissió"
 
-msgid "Black point: 0.000"
-msgstr "Punt negre: 0.000"
-
 msgid "Reset black-point to default"
 msgstr "Reinicia el punt negre per omissió"
 
@@ -1180,17 +1171,20 @@ msgstr "Orientació:"
 msgid "Rotation"
 msgstr "Rotació"
 
-msgid "Rotation Angle"
+#, fuzzy
+msgid "Rotation angle"
 msgstr "Angle de rotació"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
 msgstr "Reinicia l'angle de rotació"
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr "Número de línia d'aliniament"
+#. drawLines toggle button
+msgid "Grid lines"
+msgstr ""
 
-msgid "Number of alignment lines to overlay over the crop area"
+#, fuzzy
+msgid "Number of grid lines to overlay in the crop area"
 msgstr "Número de línies d'aliniament per a superposar a l'àrea que es retalla"
 
 msgid "Path"
@@ -1340,6 +1334,9 @@ msgstr "Desa"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "Percentatge del zoom"
+
 msgid "Options"
 msgstr "Opcions"
 
@@ -1455,10 +1452,6 @@ msgstr "No ha estat possible incloure el perfil '%s' a '%s'."
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "S'ignorarà la profunditat de bits '%d' no suportada."
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "La longitud %d, del buffer EXIF és massa gran, s'ignorarà."
 
 #, c-format
 msgid "Unknown file type %d."

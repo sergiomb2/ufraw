@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-10-14 06:00+0100\n"
 "Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -679,8 +679,8 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr "Non è possibile integrare il profilo di output '%s' nell'immagine."
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "Buffer EXIF con lunghezza %d, troppo lungo quindi ignorato.\n"
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "Il buffer EXIF è troppo lungo (%d) e sarà ignorato."
 
 msgid "Raw histogram with conversion curves"
 msgstr "Istogramma Raw con curve di conversione"
@@ -1003,12 +1003,6 @@ msgstr "Cornice scura:"
 msgid "Reset dark frame"
 msgstr "Ripristina cornice scura"
 
-msgid "Zoom:"
-msgstr "Zoom:"
-
-msgid "Zoom percentage"
-msgstr "Zoom %"
-
 #, fuzzy
 msgid "Reset adjustment"
 msgstr "Aggiustamento globale del contrasto"
@@ -1111,9 +1105,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "Ripristina curva predefinita"
 
-msgid "Black point: 0.000"
-msgstr "Punto di nero: 0.000"
-
 msgid "Reset black-point to default"
 msgstr "Ripristina punto di nero predefinito"
 
@@ -1168,17 +1159,19 @@ msgid "Rotation"
 msgstr "Saturazione"
 
 #, fuzzy
-msgid "Rotation Angle"
+msgid "Rotation angle"
 msgstr "Saturazione"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
+msgstr "Saturazione"
+
+#. drawLines toggle button
+msgid "Grid lines"
 msgstr ""
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr "Contatore linee guida"
-
-msgid "Number of alignment lines to overlay over the crop area"
+#, fuzzy
+msgid "Number of grid lines to overlay in the crop area"
 msgstr "Numero di linee guida per sovrapporre l'area tagliata"
 
 msgid "Path"
@@ -1330,6 +1323,9 @@ msgstr "Salva"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "Zoom %"
+
 msgid "Options"
 msgstr "Opzioni"
 
@@ -1443,10 +1439,6 @@ msgstr "Non è stato possibile integrare il profilo di output '%s' in '%s'."
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "Ignorata,  profondità bit '%d' non supportata."
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "Il buffer EXIF è troppo lungo (%d) e sarà ignorato."
 
 #, c-format
 msgid "Unknown file type %d."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-10-06 09:38+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -651,8 +651,8 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr "출력 프로파일 '%s'을(를) 이미지에 내장 실패."
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "EXIF 버퍼 길이 %d이(가) 너무 길어서 무시되었습니다.\n"
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "EXIF 버퍼 길이 %d이(가) 매우 길어 무시됩니다."
 
 msgid "Raw histogram with conversion curves"
 msgstr "변환 곡선을 적용한 Raw 히스토그램"
@@ -974,12 +974,6 @@ msgstr "다크프레임:"
 msgid "Reset dark frame"
 msgstr "다크프레임 초기화"
 
-msgid "Zoom:"
-msgstr "확대:"
-
-msgid "Zoom percentage"
-msgstr "확대 비율"
-
 msgid "Reset adjustment"
 msgstr "조정 초기화"
 
@@ -1077,9 +1071,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "곡선 초기화"
 
-msgid "Black point: 0.000"
-msgstr "암부: 0.000"
-
 msgid "Reset black-point to default"
 msgstr "암부(black-point) 초기화"
 
@@ -1132,17 +1123,20 @@ msgstr "기준:"
 msgid "Rotation"
 msgstr "회전"
 
-msgid "Rotation Angle"
+#, fuzzy
+msgid "Rotation angle"
 msgstr "회전 각"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
 msgstr "회전 각 초기화"
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr "조정 선 개수"
+#. drawLines toggle button
+msgid "Grid lines"
+msgstr ""
 
-msgid "Number of alignment lines to overlay over the crop area"
+#, fuzzy
+msgid "Number of grid lines to overlay in the crop area"
 msgstr "크롭 영역과 겹치는 조정 선의 개수"
 
 msgid "Path"
@@ -1292,6 +1286,9 @@ msgstr "저장"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "확대 비율"
+
 msgid "Options"
 msgstr "옵션"
 
@@ -1403,10 +1400,6 @@ msgstr "출력 프로파일 '%s'을(를) '%s'에 포함하는데 실패하였습
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "비트 '%d'은(는) 지원하지 않습니다."
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "EXIF 버퍼 길이 %d이(가) 매우 길어 무시됩니다."
 
 #, c-format
 msgid "Unknown file type %d."

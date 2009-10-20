@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-15 20:54+0200\n"
+"POT-Creation-Date: 2009-10-20 16:30+0200\n"
 "PO-Revision-Date: 2009-06-15 00:00+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -640,8 +640,8 @@ msgid "Failed to embed output profile '%s' in image."
 msgstr "无法在图像中嵌入输出配置文件 '%s' "
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored.\n"
-msgstr "EXIF缓冲区长度 %d，太长，忽略。\n"
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "EXIF缓冲区长度 %d, 太长，忽略。"
 
 msgid "Raw histogram with conversion curves"
 msgstr "具有转换曲线的Raw直方图"
@@ -960,12 +960,6 @@ msgstr "黑色帧(Dark Frame)"
 msgid "Reset dark frame"
 msgstr "重设黑色帧(dark frame)"
 
-msgid "Zoom:"
-msgstr "缩放："
-
-msgid "Zoom percentage"
-msgstr "缩放比例"
-
 #, fuzzy
 msgid "Reset adjustment"
 msgstr "总体对比度调整"
@@ -1066,9 +1060,6 @@ msgstr ""
 msgid "Reset curve to default"
 msgstr "重设为曲线默认值"
 
-msgid "Black point: 0.000"
-msgstr "黑色控制点： 0.000"
-
 msgid "Reset black-point to default"
 msgstr "重设为黑色控制点默认值"
 
@@ -1123,17 +1114,18 @@ msgid "Rotation"
 msgstr "饱和度"
 
 #, fuzzy
-msgid "Rotation Angle"
+msgid "Rotation angle"
 msgstr "饱和度"
 
-msgid "Reset Rotation Angle"
+#, fuzzy
+msgid "Reset rotation angle"
+msgstr "饱和度"
+
+#. drawLines toggle button
+msgid "Grid lines"
 msgstr ""
 
-#. TODO: Change to "Alignment lines" or "Grid lines" after 0.16 release
-msgid "Alignment Line Count"
-msgstr ""
-
-msgid "Number of alignment lines to overlay over the crop area"
+msgid "Number of grid lines to overlay in the crop area"
 msgstr ""
 
 msgid "Path"
@@ -1285,6 +1277,9 @@ msgstr "保存"
 msgid "EXIF"
 msgstr "EXIF"
 
+msgid "Zoom percentage"
+msgstr "缩放比例"
+
 msgid "Options"
 msgstr "选项"
 
@@ -1395,10 +1390,6 @@ msgstr "无法嵌入输出配置文件 '%s' 到 '%s' 中。"
 #, c-format
 msgid "Unsupported bit depth '%d' ignored."
 msgstr "忽略不支持的位深 '%d' 。"
-
-#, c-format
-msgid "EXIF buffer length %d, too long, ignored."
-msgstr "EXIF缓冲区长度 %d, 太长，忽略。"
 
 #, c-format
 msgid "Unknown file type %d."
