@@ -102,9 +102,7 @@ typedef struct {
     void *colorTransform;
     void *rgbtolabTransform;
     double saturation;
-#ifdef UFRAW_CONTRAST
     double contrast;
-#endif
     CurveData baseCurveData, luminosityCurveData;
     guint16 gammaCurve[0x10000];
     void *luminosityProfile;
@@ -165,12 +163,8 @@ typedef struct {
     double temperature, green;
     double chanMul[4];
     double threshold;
-#ifdef UFRAW_HOTPIXELS
     double hotpixel;
-#endif
-#ifdef UFRAW_CONTRAST
     double contrast;
-#endif
     double exposure, saturation, black; /* black is only used in CMD */
     int ExposureNorm;
     int restoreDetails, clipHighlights;
@@ -285,10 +279,8 @@ typedef struct ufraw_struct {
     int postproc_ops; /* postprocessing operations (LF_MODIFY_XXX) */
     lfModifier *modifier;
 #endif /* HAVE_LENSFUN */
-#ifdef UFRAW_HOTPIXELS
     int hotpixels;
     gboolean mark_hotpixels;
-#endif
 } ufraw_data;
 
 extern const conf_data conf_default;

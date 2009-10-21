@@ -60,21 +60,15 @@ typedef struct {
     GtkTable *GrayscaleMixerTable;
     GtkLabel *GrayscaleMixerColor;
     GtkLabel *SpotPatch;
-#ifdef UFRAW_HOTPIXELS
     GtkLabel *HotpixelCount;
-#endif
     colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
     GtkToggleButton *AutoExposureButton, *AutoBlackButton, *LockAspectButton;
     GtkWidget *AutoCurveButton;
     GtkWidget *ResetWBButton, *ResetGammaButton, *ResetLinearButton;
     GtkWidget *ResetExposureButton, *ResetSaturationButton;
     GtkWidget *ResetThresholdButton;
-#ifdef UFRAW_HOTPIXELS
     GtkWidget *ResetHotpixelButton;
-#endif
-#ifdef UFRAW_CONTRAST
     GtkWidget *ResetContrastButton;
-#endif
     GtkWidget *ResetBlackButton, *ResetBaseCurveButton, *ResetCurveButton;
     GtkWidget *ResetGrayscaleChannelMixerButton;
     GtkWidget *SaveButton;
@@ -97,13 +91,9 @@ typedef struct {
     GtkAdjustment *LinearAdjustment;
     GtkAdjustment *ExposureAdjustment;
     GtkAdjustment *ThresholdAdjustment;
-#ifdef UFRAW_HOTPIXELS
     GtkAdjustment *HotpixelAdjustment;
-#endif
     GtkAdjustment *SaturationAdjustment;
-#ifdef UFRAW_CONTRAST
     GtkAdjustment *ContrastAdjustment;
-#endif
     GtkWidget *LightnessHueSelectNewButton;
     GtkTable *LightnessAdjustmentTable[max_adjustments];
     GtkAdjustment *LightnessAdjustment[max_adjustments];

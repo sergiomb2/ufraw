@@ -1370,12 +1370,8 @@ static void update_scales(preview_data *data)
     gtk_adjustment_set_value(data->GreenAdjustment, CFG->green);
     gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
     gtk_adjustment_set_value(data->ThresholdAdjustment, CFG->threshold);
-#ifdef UFRAW_HOTPIXELS
     gtk_adjustment_set_value(data->HotpixelAdjustment, CFG->hotpixel);
-#endif
-#ifdef UFRAW_CONTRAST
     gtk_adjustment_set_value(data->ContrastAdjustment, CFG->contrast);
-#endif
     gtk_adjustment_set_value(data->SaturationAdjustment, CFG->saturation);
     gtk_adjustment_set_value(data->GammaAdjustment,
 	    CFG->profile[0][CFG->profileIndex[0]].gamma);
@@ -1411,14 +1407,10 @@ static void update_scales(preview_data *data)
 	    fabs( conf_default.exposure - CFG->exposure) > 0.001);
     gtk_widget_set_sensitive(data->ResetThresholdButton,
 	    fabs( conf_default.threshold - CFG->threshold) > 1);
-#ifdef UFRAW_HOTPIXELS
     gtk_widget_set_sensitive(data->ResetHotpixelButton,
 	    fabs( conf_default.hotpixel - CFG->hotpixel) > 0);
-#endif
-#ifdef UFRAW_CONTRAST
     gtk_widget_set_sensitive(data->ResetContrastButton,
 	    fabs( conf_default.contrast - CFG->contrast) > 0.001);
-#endif
     gtk_widget_set_sensitive(data->ResetSaturationButton,
 	    fabs( conf_default.saturation - CFG->saturation) > 0.001);
     gtk_widget_set_sensitive(data->ResetBaseCurveButton,
@@ -1820,9 +1812,7 @@ static gboolean preview_scroll_event(GtkWidget *widget, GdkEventScroll *event)
 
 static void create_base_image(preview_data *data)
 {
-#ifdef UFRAW_HOTPIXELS
     gchar buf[20];
-#endif
     int shrinkSave = CFG->shrink;
     int sizeSave = CFG->size;
     CFG->shrink = zoom_to_scale(CFG->Zoom);
@@ -1842,10 +1832,8 @@ static void create_base_image(preview_data *data)
 	    data->UF->conf->rotationAngle);
     CFG->shrink = shrinkSave;
     CFG->size = sizeSave;
-#ifdef UFRAW_HOTPIXELS
     g_snprintf(buf, sizeof (buf), "%d", data->UF->hotpixels);
     gtk_label_set_text(data->HotpixelCount, buf);
-#endif
 }
 
 static void update_shrink_ranges(preview_data *data)
@@ -2569,17 +2557,13 @@ static void button_update(GtkWidget *button, gpointer user_data)
 	CFG->threshold = conf_default.threshold;
 	preview_invalidate_layer(data, ufraw_denoise_phase);
     }
-#ifdef UFRAW_HOTPIXELS
     if (button==data->ResetHotpixelButton) {
 	CFG->hotpixel = conf_default.hotpixel;
 	preview_invalidate_layer(data, ufraw_first_phase);
     }
-#endif
-#ifdef UFRAW_CONTRAST
     if (button==data->ResetContrastButton) {
         CFG->contrast = conf_default.contrast;
     }
-#endif
     if (button==data->ResetSaturationButton) {
 	CFG->saturation = conf_default.saturation;
     }
@@ -2730,13 +2714,11 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    if (!Developer->doWB) // !doWB means do interpolate
         	preview_invalidate_layer(data, ufraw_first_phase);
 	    render_preview(data);
-#ifdef UFRAW_HOTPIXELS
 	} else if ( valuep==&data->UF->mark_hotpixels ) {
 	    if (data->UF->hotpixels) {
 		preview_invalidate_layer(data, ufraw_first_phase);
 		render_preview(data);
 	    }
-#endif
 	}
     }
 }
@@ -2826,10 +2808,8 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
         if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     } else if (valuep==&CFG->threshold) {
 	preview_invalidate_layer(data, ufraw_denoise_phase);
-#ifdef UFRAW_HOTPIXELS
     } else if (valuep==&CFG->hotpixel) {
 	preview_invalidate_layer(data, ufraw_first_phase);
-#endif
     } else {
         if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
         if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
@@ -3867,7 +3847,6 @@ static void rawhistogram_fill_interface(preview_data *data,
     gtk_widget_show_all(menu);
 }
 
-#ifdef UFRAW_HOTPIXELS
 static void hotpixel_fill_interface(preview_data *data, GtkWidget *page)
 {
     GtkWidget *button;
@@ -3910,7 +3889,6 @@ static void hotpixel_fill_interface(preview_data *data, GtkWidget *page)
     gtk_widget_set_sensitive(button, FALSE);
     data->ResetHotpixelButton = button;
 }
-#endif
 
 static void livehistogram_fill_interface(preview_data *data,
 	GtkTable *table)
@@ -4244,10 +4222,8 @@ static void whitebalance_fill_interface(preview_data *data,
 	    &data->ResetThresholdButton,
 	    _("Reset denoise threshold to default"), G_CALLBACK(button_update));
 
-#ifdef UFRAW_HOTPIXELS
     /* Hot pixel shaving */
     hotpixel_fill_interface(data, page);
-#endif
 
     // Dark frame controls:
     box = GTK_BOX(gtk_hbox_new(FALSE, 0));
@@ -4554,13 +4530,11 @@ static void corrections_fill_interface(preview_data *data, GtkWidget *page,
     /* Contrast and Saturation adjustments */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
-#ifdef UFRAW_CONTRAST
     data->ContrastAdjustment = adjustment_scale(table, 0, 0, _("Contrast"),
 	    CFG->contrast, &CFG->contrast, 0, 8.0, 0.01, 0.1, 2, FALSE,
 	    _("Global contrast adjustment"), G_CALLBACK(adjustment_update),
 	    &data->ResetContrastButton, _("Reset global contrast to default"),
 	    G_CALLBACK(button_update));
-#endif
     data->SaturationAdjustment = adjustment_scale(table, 0, 1, _("Saturation"),
 	    CFG->saturation, &CFG->saturation, 0.0, 8.0, 0.01, 0.1, 2, FALSE,
 	    _("Saturation"), G_CALLBACK(adjustment_update),

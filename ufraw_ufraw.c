@@ -706,9 +706,7 @@ int ufraw_convert_image_init(ufraw_data *uf)
 
 int ufraw_convert_image(ufraw_data *uf)
 {
-#ifdef UFRAW_HOTPIXELS
     uf->mark_hotpixels = FALSE;
-#endif
     ufraw_developer_prepare(uf, file_developer);
     ufraw_convert_image_init(uf);
     ufraw_convert_image_first_phase(uf, TRUE);
@@ -900,7 +898,6 @@ no_distortion:
 
 #endif /* HAVE_LENSFUN */
 
-#ifdef UFRAW_HOTPIXELS
 /*
  * A pixel with a significantly larger value than all of its four direct
  * neighbours is considered "hot". It will be replaced by the maximum value
@@ -971,7 +968,6 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
     }
     uf->hotpixels = count;
 }
-#endif
 
 /* This is the part of the conversion which is not supported by
  * ufraw_convert_image_area() */
@@ -990,10 +986,8 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
     rawimage = raw->raw.image;
     raw->raw.image = g_memdup(rawimage, raw->raw.height * raw->raw.width *
 	    sizeof (dcraw_image_type));
-#ifdef UFRAW_HOTPIXELS
     ufraw_shave_hotpixels(uf, raw->raw.image, raw->raw.width, raw->raw.height,
 	    raw->raw.colors, raw->rgbMax);
-#endif
     if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
 	dcraw_finalize_shrink(&final, raw, dark, uf->ConvertShrink);
 	uf->developer->doWB = 1;
