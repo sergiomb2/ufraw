@@ -122,7 +122,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "Troppi punti di ancoraggio per la curva '%s'"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "Troppi aggiustamenti di lumonisità nel ID file, ignorati\n"
 
 #, c-format
 msgid ""
@@ -311,13 +311,16 @@ msgid ""
 "                      Wavelet denoising threshold (default 0.0).\n"
 msgstr ""
 "--wavelet-denoising-threshold=THRESHOLD\n"
-"                      Soglia per il wavelet denoising (predefinito 0.0).\n"
+"                      Soglia per il wavelet nella riduzione di disturbo (predefinito 0.0).\n"
 
 msgid ""
 "--hotpixel-sensitivity=VALUE\n"
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=VALUE\n"
+"Soglia per la ricerca e la riduzione dei pixel bruciati"
+"(default 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -417,6 +420,10 @@ msgid ""
 "                      clockwise, or do not rotate the image (default "
 "camera).\n"
 msgstr ""
+"--rotate=camera|ANGLE|no\n"
+"                      Ruota l'immagine come impostato dalla fotocamera, di ANGOLO gradi\n"
+"                      in senso orario, oppure non ruotare (default "
+"camera).\n"
 
 msgid ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
@@ -424,6 +431,9 @@ msgid ""
 "the\n"
 "                      raw image after rotation but before any scaling.\n"
 msgstr ""
+"--crop-(left|right|top|bottom)=PIXELS\n"
+"                      Taglia l'output al numero di pixel indicato, relativamente alla\n"
+"                      immagine raw dopo la rotazione ma prima di ogni scalatura.\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -437,7 +447,7 @@ msgstr ""
 
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
 msgstr ""
-"--darkframe=FILE      Usa FILE la sottrazione della cornice scura dal file "
+"--darkframe=FILE      Usa FILE la sottrazione della darkframe dal file "
 "raw.\n"
 
 msgid ""
@@ -447,7 +457,7 @@ msgstr ""
 "(disabilitato in maniera predefinita).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     Forza la finestra massimizzata.\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -690,7 +700,7 @@ msgstr "Istogramma attivo"
 
 #. No darkframe file
 msgid "None"
-msgstr "nessuna"
+msgstr "Nessuno"
 
 msgid "Lightness"
 msgstr "Luminosità"
@@ -757,7 +767,7 @@ msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "Errore: uf->conf->shrink<1"
 
 msgid "Load dark frame"
-msgstr "Carica cornice nera"
+msgstr "Carica darkframe"
 
 msgid "clip"
 msgstr "clip"
@@ -872,7 +882,7 @@ msgstr ""
 "\n"
 "Autore: Udi Fuchs\n"
 "Homepage: http://ufraw.sourceforge.net/\n"
-"Traduttore: Daniele Medri\n"
+"Traduttore: Daniele Medri & Eugenio Baldi\n"
 
 #, c-format
 msgid "%s%s (Alt-%s)"
@@ -885,16 +895,16 @@ msgid "Logarithmic"
 msgstr "Logaritmico"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "Pixel Bruciati:"
 
 msgid "mark"
-msgstr ""
+msgstr "evidenzia"
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "Soglia pixel Bruciati"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "Resetta la soglia dei Pixel Bruciati"
 
 msgid "RGB histogram"
 msgstr "Istogramma RGB"
@@ -998,10 +1008,10 @@ msgid "Reset denoise threshold to default"
 msgstr "Ripristina la soglia denoise predefinita"
 
 msgid "Dark Frame:"
-msgstr "Cornice scura:"
+msgstr "Darkframe:"
 
 msgid "Reset dark frame"
-msgstr "Ripristina cornice scura"
+msgstr "Ripristina darkframe"
 
 #, fuzzy
 msgid "Reset adjustment"
@@ -1009,9 +1019,7 @@ msgstr "Aggiustamento globale del contrasto"
 
 #, fuzzy
 msgid "Select a spot on the preview image to choose hue"
-msgstr ""
-"Seleziona un punto sull'anteprima immagine per applicare il bilanciamento di "
-"bianco"
+msgstr "Seleziona un punto sull'anteprima immagine per scegliere la tonalità"
 
 #, fuzzy
 msgid "Remove adjustment"
@@ -1100,7 +1108,7 @@ msgid ""
 "(Flatten histogram)"
 msgstr ""
 "Aggiustamento automatico curva\n"
-"(istogramma piatto)"
+"(Istogramma piatto)"
 
 msgid "Reset curve to default"
 msgstr "Ripristina curva predefinita"
@@ -1168,11 +1176,11 @@ msgstr "Saturazione"
 
 #. drawLines toggle button
 msgid "Grid lines"
-msgstr ""
+msgstr "Linee Griglia"
 
 #, fuzzy
 msgid "Number of grid lines to overlay in the crop area"
-msgstr "Numero di linee guida per sovrapporre l'area tagliata"
+msgstr "Numero di linee griglia per sovrapporre l'area tagliata"
 
 msgid "Path"
 msgstr "Posizione"
@@ -1389,15 +1397,15 @@ msgstr "errore della cornice di scuro: %s non è un file raw\n"
 
 #, c-format
 msgid "error loading darkframe '%s'\n"
-msgstr "errore durante l'apertura della cornice di scuro '%s'\n"
+msgstr "errore durante l'apertura della darkframe '%s'\n"
 
 #, c-format
 msgid "Darkframe '%s' is incompatible with main image"
-msgstr "Cornice di scuro '%s' incompatibile con l'immagine principale"
+msgstr "Darkframe '%s' incompatibile con l'immagine principale"
 
 #, c-format
 msgid "using darkframe '%s'\n"
-msgstr "utilizzo cornice di scuro '%s'\n"
+msgstr "utilizzo darkframe '%s'\n"
 
 msgid "Error reading NEF curve"
 msgstr "Errore durante la lettura della curva NEF"
@@ -1503,7 +1511,7 @@ msgid "Optical vignetting mathematical model"
 msgstr "Modello matematico per la vignettatura ottica"
 
 msgid "Lens distortion mathematical model"
-msgstr "Modello matamatico distorsione ottica"
+msgstr "Modello matematico distorsione ottica"
 
 #. Add the model combobox
 msgid "Lens geometry:"
