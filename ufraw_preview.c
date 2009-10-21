@@ -737,6 +737,22 @@ static void window_unmap_event(GtkWidget *widget, GdkEvent *event,
     (void)user_data;
 }
 
+static void render_status_text(preview_data *data)
+{
+    if (data->ProgressBar==NULL)
+	return;
+    char progressText[max_name];
+    int scale = zoom_to_scale(CFG->Zoom);
+    if (scale==0)
+	g_snprintf(progressText, max_name, _("size %dx%d, zoom %2.f%%"),
+		data->UF->rotatedWidth, data->UF->rotatedHeight, CFG->Zoom);
+    else
+	g_snprintf(progressText, max_name, _("size %dx%d, scale 1/%d"),
+		data->UF->rotatedWidth, data->UF->rotatedHeight, scale);
+    gtk_progress_bar_set_text(data->ProgressBar, progressText);
+    gtk_progress_bar_set_fraction(data->ProgressBar, 0);
+}
+
 static gboolean render_prepare(preview_data *data);
 static gboolean render_raw_histogram(preview_data *data);
 static gboolean render_preview_image(preview_data *data);
@@ -764,23 +780,9 @@ static void render_init(preview_data *data)
 	gdk_pixbuf_fill(data->PreviewPixbuf, 0);
 	gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
 		data->PreviewPixbuf, FALSE);
-	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
 	g_object_unref(data->PreviewPixbuf);
     }
-    if (data->ProgressBar!=NULL) {
-	char progressText[max_name];
-	int scale = zoom_to_scale(CFG->Zoom);
-	if (scale==0)
-	    g_snprintf(progressText, max_name, _("size %dx%d, zoom %2.f%%"),
-		    data->UF->rotatedWidth, data->UF->rotatedHeight,
-		    CFG->Zoom);
-	else
-	    g_snprintf(progressText, max_name, _("size %dx%d, scale 1/%d"),
-		    data->UF->rotatedWidth, data->UF->rotatedHeight,
-		    scale);
-	gtk_progress_bar_set_text(data->ProgressBar, progressText);
-	gtk_progress_bar_set_fraction(data->ProgressBar, 0);
-    }
+    render_status_text(data);
 }
 
 void preview_invalidate_layer(preview_data *data, UFRawPhase phase)
@@ -1644,8 +1646,9 @@ static void event_coordinate_rescale(gdouble *x, gdouble *y, preview_data *data)
     if ( *y<0 ) *y = 0;
     if ( *y>height ) *y = height;
     /* Scale pixbuf coordinates to image coordinates */
-    *x = *x * data->UF->rotatedWidth / width;
-    *y = *y * data->UF->rotatedHeight / height;
+    double zoom = gtk_image_view_get_zoom(GTK_IMAGE_VIEW(data->PreviewWidget));
+    *x = *x * data->UF->rotatedWidth / width / zoom;
+    *y = *y * data->UF->rotatedHeight / height / zoom;
 }
 
 static gboolean preview_button_press_event(GtkWidget *event_box,
@@ -1827,7 +1830,7 @@ static void create_base_image(preview_data *data)
 	int cropHeight = data->UF->conf->CropY2 - data->UF->conf->CropY1;
 	int cropWidth = data->UF->conf->CropX2 - data->UF->conf->CropX1;
 	int cropSize = MAX(cropHeight, cropWidth);
-	CFG->size = CFG->Zoom / 100.0 * cropSize;
+	CFG->size = MIN(CFG->Zoom, 100.0) / 100.0 * cropSize;
     } else {
 	CFG->size = 0;
     }
@@ -1986,84 +1989,95 @@ static void crop_reset(GtkWidget *widget, gpointer user_data)
     set_new_aspect(data);
 }
 
-static void zoom_in_event(GtkWidget *widget, gpointer user_data)
+static void zoom_update(GtkAdjustment *adj, gpointer user_data)
 {
-    preview_data *data = get_preview_data(widget);
-    const double prev_zoom = CFG->Zoom;
+    preview_data *data = get_preview_data(adj);
+    if (data->FreezeDialog)
+	return;
     (void)user_data;
-    if (data->FreezeDialog) return;
-    int scale = zoom_to_scale(CFG->Zoom);
-    if (scale==0) {
-//	if (CFG->Zoom<100.0/max_scale) CFG->Zoom = 100.0/max_scale;
-	scale = floor(100.0/CFG->Zoom);
-	if (scale==100.0/CFG->Zoom) scale--;
+    double newZoom = gtk_adjustment_get_value(data->ZoomAdjustment);
+    if (CFG->Zoom == newZoom)
+	return;
+    double oldZoom = CFG->Zoom;
+    CFG->Zoom = newZoom;
+    render_status_text(data);
+    if (oldZoom>=100.0 && newZoom>=100.0) {
+	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget),
+		CFG->Zoom/100.0);
     } else {
-	scale--;
-    }
-    scale = LIM(scale, min_scale, max_scale);
-    CFG->Zoom = MIN(MAX(floor(100.0/scale), CFG->Zoom+1), 100.0);
-    if (prev_zoom != CFG->Zoom) {
-	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
+	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
 	preview_invalidate_layer(data, ufraw_first_phase);
 	render_preview(data);
     }
+}
+
+static void zoom_in_event(GtkWidget *widget, gpointer user_data)
+{
+    preview_data *data = get_preview_data(widget);
+    (void)user_data;
+    if (data->FreezeDialog) return;
+
+    double zoom = CFG->Zoom;
+    if (zoom >= 100.0) {
+	zoom = (floor(zoom/100.0) + 1) * 100.0;
+    } else {
+	int scale = zoom_to_scale(zoom);
+	if (scale==0) {
+	    scale = floor(100.0/zoom);
+	    if (scale==100.0/zoom) scale--;
+	} else {
+	    scale--;
+	}
+	zoom = MIN(MAX(floor(100.0/scale), zoom+1), 100.0);
+    }
+    gtk_adjustment_set_value(data->ZoomAdjustment, zoom);
 }
 
 static void zoom_out_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    const double prev_zoom = CFG->Zoom;
     (void)user_data;
     if (data->FreezeDialog) return;
-    int scale = zoom_to_scale(CFG->Zoom);
-    if (scale==0) {
-//	if (CFG->Zoom<100.0/max_scale) CFG->Zoom = 100.0/max_scale;
-	scale = ceil(100.0/CFG->Zoom);
-	if (scale==100.0/CFG->Zoom) scale++;
+
+    double zoom = CFG->Zoom;
+    if (zoom > 100.0) {
+	zoom = (ceil(zoom / 100.0) - 1) * 100.0;
     } else {
-	scale++;
+	int scale = zoom_to_scale(zoom);
+	if (scale==0) {
+	    scale = ceil(100.0/zoom);
+	    if (scale==100.0/zoom) scale++;
+	} else {
+	    scale++;
+	}
+	zoom = floor(100.0/scale);
     }
-    scale = LIM(scale, min_scale, max_scale);
-    CFG->Zoom = floor(100.0/scale);
-    if (prev_zoom != CFG->Zoom) {
-	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
-	preview_invalidate_layer(data, ufraw_first_phase);
-	render_preview(data);
-    }
+    gtk_adjustment_set_value(data->ZoomAdjustment, zoom);
 }
 
 static void zoom_fit_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    const double prev_zoom = CFG->Zoom;
     (void)user_data;
     if (data->FreezeDialog) return;
+
     GtkWidget *preview =
 	gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_IMAGE_SCROLL_WIN);
     int previewWidth = preview->allocation.width;
     int previewHeight = preview->allocation.height;
     double wScale = (double)data->UF->rotatedWidth / previewWidth;
     double hScale = (double)data->UF->rotatedHeight / previewHeight;
-    CFG->Zoom = 100.0/LIM(MAX(wScale, hScale), min_scale, max_scale);
-    if (prev_zoom != CFG->Zoom) {
-	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
-	preview_invalidate_layer(data, ufraw_first_phase);
-	render_preview(data);
-    }
+    double zoom = 100.0/MAX(wScale, hScale);
+    gtk_adjustment_set_value(data->ZoomAdjustment, zoom);
 }
 
-static void zoom_max_event(GtkWidget *widget, gpointer user_data)
+static void zoom_100_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    const double prev_zoom = CFG->Zoom;
     (void)user_data;
     if (data->FreezeDialog) return;
-    CFG->Zoom = 100.0/min_scale;
-    if (prev_zoom != CFG->Zoom) {
-	gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
-	preview_invalidate_layer(data, ufraw_first_phase);
-	render_preview(data);
-    }
+    double zoom = 100.0;
+    gtk_adjustment_set_value(data->ZoomAdjustment, zoom);
 }
 
 static void flip_image(GtkWidget *widget, int flip)
@@ -2810,8 +2824,6 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
     } else if (valuep==&CFG->exposure) {
         CFG->autoExposure = FALSE;
         if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
-    } else if (valuep==&CFG->Zoom) {
-	preview_invalidate_layer(data, ufraw_first_phase);
     } else if (valuep==&CFG->threshold) {
 	preview_invalidate_layer(data, ufraw_denoise_phase);
 #ifdef UFRAW_HOTPIXELS
@@ -5147,7 +5159,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     max_preview_height = MIN(def_preview_height, screen.height-152);
     int scale = MAX((uf->rotatedWidth-1)/max_preview_width,
 	    (uf->rotatedHeight-1)/max_preview_height)+1;
-    scale = MAX(scale, min_scale);
+    scale = MAX(scale, 1);
     CFG->Zoom = 100.0 / scale;
     // Make preview size a tiny bit larger to prevent rounding errors
     // that will cause the scrollbars to appear.
@@ -5291,6 +5303,8 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     GtkWidget *PreviewEventBox = gtk_event_box_new();
 
     data->PreviewWidget = gtk_image_view_new();
+    gtk_image_view_set_interpolation(GTK_IMAGE_VIEW(data->PreviewWidget),
+	    GDK_INTERP_NEAREST);
     gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
     gtk_event_box_set_above_child(GTK_EVENT_BOX(PreviewEventBox), TRUE);
 
@@ -5351,13 +5365,13 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 
     // Zoom percentage spin button:
     data->ZoomAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
-		CFG->Zoom, 100/max_scale, 100/min_scale, 1, 1, 0));
+		CFG->Zoom, 100/max_scale, 400, 1, 1, 0));
     g_object_set_data(G_OBJECT(data->ZoomAdjustment),
 		"Adjustment-Accuracy", (gpointer)0);
     button = gtk_spin_button_new(data->ZoomAdjustment, 1, 0);
     g_object_set_data(G_OBJECT(data->ZoomAdjustment), "Parent-Widget", button);
     g_signal_connect(G_OBJECT(data->ZoomAdjustment), "value-changed",
-		G_CALLBACK(adjustment_update), &CFG->Zoom);
+		G_CALLBACK(zoom_update), NULL);
     gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
     uf_widget_set_tooltip(button, _("Zoom percentage"));
 
@@ -5373,7 +5387,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 
     // Zoom max button:
     button = stock_icon_button(GTK_STOCK_ZOOM_100, NULL,
-	    G_CALLBACK(zoom_max_event), NULL);
+	    G_CALLBACK(zoom_100_event), NULL);
     gtk_box_pack_start(ZoomBox, button, FALSE, FALSE, 0);
 
     // The rest of the control button are aligned to the right
