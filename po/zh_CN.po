@@ -1607,15 +1607,3 @@ msgstr "相机白平衡"
 
 msgid "Auto WB"
 msgstr "自动白平衡"
-
-#~ msgid "EXIF buffer length %d, too long, ignored.\n"
-#~ msgstr "EXIF缓冲区长度 %d，太长，忽略。\n"
-
-#~ msgid "Zoom:"
-#~ msgstr "缩放："
-
-#~ msgid "Black point: 0.000"
-#~ msgstr "黑色控制点： 0.000"
-
-#~ msgid "Alignment Line Count"
-#~ msgstr "校准线数"
