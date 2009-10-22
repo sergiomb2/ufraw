@@ -7,10 +7,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ufraw-0.15\n"
+"Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
-"PO-Revision-Date: 2009-06-15 00:00+0800\n"
+"POT-Creation-Date: 2009-10-21 23:26-0500\n"
+"PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -68,6 +68,15 @@ msgstr "所有文件"
 msgid "Show hidden files"
 msgstr "显示隐藏文件"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -102,7 +111,7 @@ msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (嵌入式)"
 
 msgid "System default"
 msgstr "系统默认"
@@ -122,7 +131,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "曲线锚点太多 '%s'"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "ID文件包含太多亮度调整，忽略\n"
 
 #, c-format
 msgid ""
@@ -262,7 +271,7 @@ msgstr ""
 "                      'clip' 不做任何恢复 - 获得无损的原件。\n"
 "                      'lch' 在 LCH 空间恢复 - 获得柔和细节。\n"
 "                      'hsv' 在 HSV 空间恢复 - 获得锐利细节。\n"
-"                      (默认为 lch).\n"
+"                      (默认为 lch)。\n"
 
 msgid ""
 "--clip=digital|film   Clip highlights for positive EV.\n"
@@ -271,7 +280,7 @@ msgid ""
 msgstr ""
 "--clip=digital|film   调整EV值削减高光细节(正的EV值)。\n"
 "                      'digital' 线性数字传感器的反应。\n"
-"                      'film' 模仿柔和影片反应。 (默认 digital).\n"
+"                      'film' 模仿柔和影片反应。 (默认 digital)。\n"
 
 msgid ""
 "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
@@ -281,7 +290,7 @@ msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
 msgstr "--linearity=LINEARITY 基础曲线的线性 (默认 0.10)。\n"
 
 msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
-msgstr "--contrast=CONT       调整对比度 (默认 1.0).\n"
+msgstr "--contrast=CONT       调整对比度 (默认 1.0)。\n"
 
 msgid ""
 "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
@@ -300,6 +309,8 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=VALUE\n"
+"                      检测和削减热像素的灵敏度(默认值 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -323,9 +334,8 @@ msgstr ""
 "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 "                      使用插值算法 (默认 ahd)。\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "应用颜色平滑"
+msgstr "--color-smoothing     应用颜色平滑\n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -363,9 +373,8 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   JPEG压缩值 (0-100, 默认 85)。\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
-msgstr "--[no]exif            JPEG或PNG中是否嵌入EXIF (默认嵌入 EXIF)。\n"
+msgstr "--[no]exif            是否嵌入EXIF (默认嵌入EXIF)。\n"
 
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
@@ -417,13 +426,12 @@ msgid ""
 msgstr "--overwrite           覆盖现有文件而不询问(默认 no)。\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     强制窗口最大化。\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
 msgstr "--silent              批量转换时不显示任何信息。\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -435,8 +443,8 @@ msgid ""
 "group of options is NOT read from the resource file.\n"
 msgstr ""
 "UFRaw首先从$HOME/.ufrawrc读取资源文件设置。然后，如果一个ID文件被指定，\n"
-"它将读取设置。接着，--conf选项设置被采用，并忽略ID文件中的输入/输出文件\n"
-"名。最后，设置命令行选项。在批处理模式下，第二组选择是不读取的资源档案。\n"
+"它将读取设置。接着，--conf选项设置被采用，并忽略ID文件中的输入/输出文件名。\n"
+"最后，设置命令行中的选项。在批处理模式下，第二组选项是不读取的资源文件。\n"
 
 msgid ""
 "Last, but not least, --version displays the version number and compilation\n"
@@ -710,9 +718,8 @@ msgstr "尺寸 %dx%d, 比例 1/%d"
 msgid "Black point: %0.3lf"
 msgstr "黑色控制点: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "没有足够的空间给新的曲线"
+msgstr "没有足够的空间给新的亮度曲线。"
 
 msgid "Fatal Error: uf->conf->shrink<1"
 msgstr "致命错误: uf->conf->shrink<1"
@@ -845,16 +852,16 @@ msgid "Logarithmic"
 msgstr "对数"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "热像素： "
 
 msgid "mark"
-msgstr ""
+msgstr "标记"
 
 msgid "Hot pixel sensitivity"
-msgstr ""
+msgstr "热像素灵敏度"
 
 msgid "Reset hot pixel sensitivity"
-msgstr ""
+msgstr "复位重热像素灵敏度"
 
 msgid "RGB histogram"
 msgstr "RGB 直方图"
@@ -960,17 +967,14 @@ msgstr "黑色帧(Dark Frame)"
 msgid "Reset dark frame"
 msgstr "重设黑色帧(dark frame)"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "总体对比度调整"
+msgstr "复位调整"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
-msgstr "在图像上选择一点以对白平衡进行实时预览"
+msgstr "选择预览图像上的一个点以选择色调"
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "总体对比度调整"
+msgstr "删除调整"
 
 msgid "Grayscale Mode:"
 msgstr "灰阶模式："
@@ -1109,24 +1113,24 @@ msgstr "宽度"
 msgid "Orientation:"
 msgstr "定位："
 
-#, fuzzy
 msgid "Rotation"
-msgstr "饱和度"
+msgstr "旋转"
 
 #, fuzzy
 msgid "Rotation angle"
-msgstr "饱和度"
+msgstr "旋转角度"
 
 #, fuzzy
 msgid "Reset rotation angle"
-msgstr "饱和度"
+msgstr "复位旋转角度"
 
 #. drawLines toggle button
 msgid "Grid lines"
 msgstr ""
 
+#, fuzzy
 msgid "Number of grid lines to overlay in the crop area"
-msgstr ""
+msgstr "覆盖裁剪区域的校准线数"
 
 msgid "Path"
 msgstr "路径"
@@ -1146,9 +1150,8 @@ msgstr "JPEG 渐进编码"
 msgid "TIFF lossless Compress"
 msgstr "TIFF 无损压缩"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr "将 EXIF 数据嵌入 JPEG 或 PNG 文件"
+msgstr "输出时嵌入EXIF数据"
 
 msgid "Create ID file "
 msgstr "创建 ID 文件"
@@ -1227,7 +1230,7 @@ msgstr "白平衡"
 
 #, c-format
 msgid "EXIF data read by %s"
-msgstr ""
+msgstr "读取EXIF数据 %s"
 
 msgid "Warning: EXIF data will not be sent to output"
 msgstr "警告： EXIF 数据不会被输出"
@@ -1264,9 +1267,8 @@ msgstr "色彩管理"
 msgid "Correct luminosity, saturation"
 msgstr "校正亮度，饱和度"
 
-#, fuzzy
 msgid "Lightness Adjustments"
-msgstr "亮度"
+msgstr "调整亮度"
 
 msgid "Crop and rotate"
 msgstr "裁剪、旋转"
@@ -1356,9 +1358,9 @@ msgstr "使用黑色帧(darkframe) '%s'\n"
 msgid "Error reading NEF curve"
 msgstr "读取 NEF 曲线出错"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Can not downsize from %d to %d."
-msgstr "无法缩小 。"
+msgstr "无法从 %d 缩小 %d 。"
 
 msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr "无法使用相机白平衡，恢复自动白平衡。"
@@ -1605,3 +1607,15 @@ msgstr "相机白平衡"
 
 msgid "Auto WB"
 msgstr "自动白平衡"
+
+#~ msgid "EXIF buffer length %d, too long, ignored.\n"
+#~ msgstr "EXIF缓冲区长度 %d，太长，忽略。\n"
+
+#~ msgid "Zoom:"
+#~ msgstr "缩放："
+
+#~ msgid "Black point: 0.000"
+#~ msgstr "黑色控制点： 0.000"
+
+#~ msgid "Alignment Line Count"
+#~ msgstr "校准线数"
