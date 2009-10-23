@@ -248,7 +248,7 @@ size_t nc_fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
     size_t num = fread(ptr, size, nmemb, stream);
     if ( num!=nmemb )
-	nc_message(NC_WARNING, "WARNING: fread %d != %d\n", num, nmemb);
+	nc_message(NC_WARNING, "WARNING: nc_fread %d != %d\n", num, nmemb);
     return num;
 }
 
