@@ -919,23 +919,23 @@ int LoadNikonData(char *fileName, NikonData *data)
 	//get box data
 	fseek(input, curveFilePos[i][0], curveFilePos[i][1]);
 
-	nc_fread(&curve->m_min_x,sizeof(double),1,input);
+	if (!fread(&curve->m_min_x,sizeof(double),1,input)) continue;
 	curve->m_min_x = DoubleVal(curve->m_min_x);
 
-	nc_fread(&curve->m_max_x,sizeof(double),1,input);
+	if (!fread(&curve->m_max_x,sizeof(double),1,input)) continue;
 	curve->m_max_x = DoubleVal(curve->m_max_x);
 
-	nc_fread(&curve->m_gamma,sizeof(double),1,input);
+	if (!fread(&curve->m_gamma,sizeof(double),1,input)) continue;
 	curve->m_gamma = DoubleVal(curve->m_gamma);
 
-	nc_fread(&curve->m_min_y,sizeof(double),1,input);
+	if (!fread(&curve->m_min_y,sizeof(double),1,input)) continue;
 	curve->m_min_y = DoubleVal(curve->m_min_y);
 
-	nc_fread(&curve->m_max_y,sizeof(double),1,input);
+	if (!fread(&curve->m_max_y,sizeof(double),1,input)) continue;
 	curve->m_max_y = DoubleVal(curve->m_max_y);
 
 	//get number of anchors (always located after box data)
-	nc_fread(&curve->m_numAnchors,1,1,input);
+	if (!fread(&curve->m_numAnchors,1,1,input)) continue;
 
 	// It seems that if there is no curve then the 62 bytes in the buffer
 	// are either all 0x00 (D70) or 0xFF (D2H).
