@@ -7394,10 +7394,8 @@ konica_400z:
       maximum = 0x3df;
       order = 0x4d4d;
     }
-#ifndef DCRAW_NOMAIN
   } else if (!strcmp(model,"*ist D")) {
     data_error = -1;
-#endif
   } else if (!strcmp(model,"*ist DS")) {
     height -= 2;
   } else if (!strcmp(model,"K20D")) {
