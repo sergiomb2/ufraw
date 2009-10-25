@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.143 2009/10/21 14:00:20 nkbj Exp $
+dnl $Id: configure.ac,v 1.144 2009/10/25 03:50:41 nkbj Exp $
 AC_INIT(UFRaw, 0.16)
 AC_PREREQ(2.57)
 
@@ -257,24 +257,11 @@ if test "$have_cfitsio" = "no"; then
   have_cfitsio=${ac_cv_lib_cfitsio_ffcmsg:-no}
 fi
 
-# check for exiv2 library
-AC_ARG_WITH([exiv2],
-  [AS_HELP_STRING([--with-exiv2],
-  [use exiv2 library for exif information extraction @<:@default=check@:>@])],
-  [],
-  [with_exiv2=check])
-
-have_exiv2=no
-AS_IF([test "x$with_exiv2" != xno],
-  [PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
-    [ have_exiv2=yes
-      AC_DEFINE(HAVE_EXIV2, 1, have exiv2) ],
-    [ have_exiv2=no
-      if test "x$with_exiv2" != xcheck; then
-        AC_MSG_FAILURE(
-          [--with-exiv2 was given, but test for exiv2 failed])
-      fi
-    ] ) ] )
+PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
+  [ have_exiv2=yes
+    AC_DEFINE(HAVE_EXIV2, 1, have the exiv2 library) ],
+  [ have_exiv2=no
+    AC_MSG_RESULT($EXIV2_PKG_ERRORS) ] )
 
 # Check for the lensfun library
 AC_ARG_WITH([lensfun],
