@@ -1235,10 +1235,12 @@ static gboolean render_spot(preview_data *data)
     height = img->height;
     outDepth = img->depth;
     outBuffer = img->buffer;
-    img = ufraw_rgb_image(data->UF, TRUE, __func__);
+    img = ufraw_rgb_image(data->UF, TRUE, G_STRFUNC);
     rawDepth = img->depth;
     rawBuffer = img->buffer;
 
+    /* We assume that first_phase and final_phase buffer sizes are the same. */
+    /* Scale image coordinates to Images[ufraw_develop_phase] coordinates */
     /* TODO: explain and cleanup if necessary */
     calculate_spot(data, &spot, width, height);
 
@@ -1508,7 +1510,7 @@ static void spot_wb_event(GtkWidget *widget, gpointer user_data)
     height = gdk_pixbuf_get_height(data->PreviewPixbuf);
     /* Scale image coordinates to pixbuf coordinates */
     calculate_spot(data, &spot, width, height);
-    ufraw_image_data *image = ufraw_rgb_image(data->UF, TRUE, __func__);
+    ufraw_image_data *image = ufraw_rgb_image(data->UF, TRUE, G_STRFUNC);
 
     for (c=0; c<4; c++) rgb[c] = 0;
     for (y=spot.StartY; y<spot.EndY; y++)
@@ -1563,7 +1565,7 @@ static void calculate_hue(preview_data *data, int i)
     img = ufraw_final_image(data->UF, FALSE);
     width = img->width;
     height = img->height;
-    img = ufraw_rgb_image(data->UF, TRUE, __func__);
+    img = ufraw_rgb_image(data->UF, TRUE, G_STRFUNC);
     rawDepth = img->depth;
     rawBuffer = img->buffer;
 
@@ -2951,6 +2953,7 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
      * fix_crop_aspect() and update_crop_ranges() because they attempt to draw.
      * Unfortunately the image is not yet there, causing some crap to appear
      * during a short time (try rotate -90 followed by -9). */
+    /* TODO: fix the above. */
     render_init(data);
     if (CFG->CropX2 > data->UF->rotatedWidth)
 	fix_crop_aspect(data, top_right_cursor);

@@ -560,6 +560,9 @@ static unsigned ufraw_scale_raw(dcraw_data *raw)
     if (scale) {
 	end = (guint16 *)(raw->raw.image + raw->raw.width * raw->raw.height);
 	/* OpenMP overhead appears to be too large in this case */
+	/* We are assuming here that there will be no overflow since all
+	 * pixel values should be below rgbMax. dcraw's wavelet_denoise()
+	 * makes the same assumption, so it seems like a safe bet. */
 	for (p = (guint16 *)raw->raw.image; p < end; ++p)
 	    *p <<= scale;
 	raw->black <<= scale;
@@ -723,8 +726,8 @@ int ufraw_convert_image(ufraw_data *uf)
 #ifdef HAVE_LENSFUN
 
 /* What about LF_MODIFY_ALL? */
-#define LF_ALL (LF_MODIFY_TCA | LF_MODIFY_VIGNETTING | LF_MODIFY_DISTORTION | \
-	LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
+#define UF_LF_ALL (LF_MODIFY_TCA | LF_MODIFY_VIGNETTING | \
+	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
 
 /* Lanczos kernel is precomputed in a table with this resolution
  * The value below seems to be enough for HQ upscaling up to eight times
@@ -759,7 +762,7 @@ void ufraw_lensfun_modify (
             img->width * sizeof (dcraw_image_type));
 
     /* Now apply distortion, TCA and geometry in a single pass */
-    if (modflags & (LF_ALL & ~LF_MODIFY_VIGNETTING))
+    if (modflags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING))
     {
         dcraw_image_type *image2 = g_new (dcraw_image_type, img->height * img->width);
         dcraw_image_type *cur = image2;
@@ -1004,7 +1007,6 @@ static void ufraw_convertshrink(ufraw_data *uf, dcraw_image_data *final, dcraw_d
     if (uf->conf->size==0 && uf->conf->shrink>1) {
 	dcraw_image_resize(final,
 	    scale * MAX(final->height, final->width)/uf->conf->shrink);
-	// scale = uf->conf->shrink;
     }
     if (uf->conf->size>0) {
 	int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
@@ -1018,7 +1020,6 @@ static void ufraw_convertshrink(ufraw_data *uf, dcraw_image_data *final, dcraw_d
 	     * We need to calculate from it the desired size of
 	     * the uncropped image. */
 	    int finalSize = scale * MAX(final->height, final->width);
-	    // scale = cropSize / uf->conf->size;
 	    dcraw_image_resize(final, uf->conf->size * finalSize / cropSize);
 	}
     }
@@ -1042,8 +1043,7 @@ void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase)
 	    img->height, raw->raw.colors, raw->rgbMax);
     rawimage = raw->raw.image;
     raw->raw.image = (dcraw_image_type *)img->buffer;
-    /* The threshold is scaled for compatibility */
-    dcraw_wavelet_denoise(raw, uf->conf->threshold * sqrt(uf->raw_multiplier));
+    dcraw_wavelet_denoise(raw, uf->conf->threshold);
     dcraw_finalize_raw(raw, dark, uf->developer->rgbWB);
     raw->raw.image = rawimage;
 }
@@ -1086,7 +1086,7 @@ static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase)
     guint16 *p16;
     int i, size, c;
 
-    ufraw_image_format(NULL, NULL, img, "6", __func__);
+    ufraw_image_format(NULL, NULL, img, "6", G_STRFUNC);
     /* The speedup trick is to keep the non-constant (or ugly constant)
      * divider out of the pixel iteration. If you really have to then
      * use double division (can be much faster, apparently). */
@@ -1129,8 +1129,8 @@ static void ufraw_convert_image_lensfun(ufraw_data *uf, UFRawPhase phase)
     real_scale = pow(2.0, conf->lens_scale);
     finmodflags = lf_modifier_initialize(modifier, conf->lens, LF_PF_U16,
 	    conf->focal_len, conf->aperture, conf->subject_distance,
-	    real_scale, conf->cur_lens_type, LF_ALL, FALSE);
-    if (finmodflags & LF_ALL) {
+	    real_scale, conf->cur_lens_type, UF_LF_ALL, FALSE);
+    if (finmodflags & UF_LF_ALL) {
 	dcraw_image_data args;
 	args.image = (image_type *)img->buffer;
 	args.width = img->width;
@@ -1213,8 +1213,8 @@ int ufraw_prepare_lensfun(ufraw_data *uf)
     real_scale = pow(2.0, conf->lens_scale);
     uf->postproc_ops = lf_modifier_initialize(uf->modifier, conf->lens,
 	    LF_PF_U8, conf->focal_len, conf->aperture, conf->subject_distance,
-	    real_scale, conf->cur_lens_type, LF_ALL, FALSE);
-    if (!(uf->postproc_ops & LF_ALL)) {
+	    real_scale, conf->cur_lens_type, UF_LF_ALL, FALSE);
+    if (!(uf->postproc_ops & UF_LF_ALL)) {
         lf_modifier_destroy(uf->modifier);
         uf->modifier = NULL;
         img->valid = 0;
@@ -1253,7 +1253,7 @@ void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
 	    b = 2;
 	    break;
     default:
-	    g_error("%s -> %s: unsupported depth %d\n", caller, __func__, img->depth);
+	    g_error("%s -> %s: unsupported depth %d\n", caller, G_STRFUNC, img->depth);
     }
     if (!strchr(formats, '0' + c * b))
 	g_error("%s: unsupported depth %d (rgbg=%d)\n", caller, img->depth, img->rgbg);
@@ -1275,7 +1275,7 @@ ufraw_image_data *ufraw_rgb_image(ufraw_data *uf, gboolean bufferok,
 
     if (dbg && uf->Images[phase].valid != (long)0xffffffff)
 	g_warning("%s->%s: conversion necessary (suboptimal).\n", dbg,
-		__func__);
+		G_STRFUNC);
     for (i = 0; i < 32; ++i) {
 	ufraw_convert_image_area(uf, i, phase);
 	if (!bufferok) {
@@ -1294,7 +1294,7 @@ ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok)
     phase = ufraw_develop_phase;
 #ifdef HAVE_LENSFUN
     if (uf->modifier &&
-	(uf->postproc_ops & (LF_ALL & ~LF_MODIFY_VIGNETTING)))
+	(uf->postproc_ops & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
 	phase = ufraw_lensfun_phase;
 #endif /* HAVE_LENSFUN */
     if (bufferok) {
@@ -1305,13 +1305,16 @@ ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok)
 	     * we can do is print a warning in case we need to finish the
 	     * conversion and finish it here. */
 	if (uf->Images[phase].valid != (long)0xffffffff) {
-	    g_warning("%s: fixing unfinished conversion.\n", __func__);
+	    g_warning("%s: fixing unfinished conversion.\n", G_STRFUNC);
 	    for (i = 0; i < 32; ++i)
 		ufraw_convert_image_area(uf, i, phase);
 	}
     } else {
-	/* this will update all buffer sizes (e.g. due to rotate) */
-	ufraw_convert_image_area(uf, 0, ufraw_first_phase);
+	if (uf->Images[phase].valid == 0) {
+	    g_warning("%s: starting conversion.\n", G_STRFUNC);
+	    /* this will update all buffer sizes (e.g. due to rotate) */
+	    ufraw_convert_image_area(uf, 0, ufraw_first_phase);
+	}
     }
     return &uf->Images[phase];
 }
@@ -1389,7 +1392,7 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 #ifdef HAVE_LENSFUN
             {
                 if (!uf->modifier ||
-                    !(uf->postproc_ops & (LF_ALL & ~LF_MODIFY_VIGNETTING))) {
+                    !(uf->postproc_ops & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING))) {
 		    out->valid = in->valid;	/* for invalidate_event */
 		    return in;
 		}
@@ -1470,10 +1473,12 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
                 g_free (buff);
             }
             break;
+#else /* HAVE_LENSFUN */
+            return in;
 #endif /* HAVE_LENSFUN */
 
         default:
-	    g_warning("%s: invalid phase %d\n", __func__, phase);
+	    g_warning("%s: invalid phase %d\n", G_STRFUNC, phase);
             return in;
     }
 
@@ -1618,7 +1623,7 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
     ufraw_flip_image_buffer(&uf->Images[ufraw_develop_phase], flip);
 #ifdef HAVE_LENSFUN
     if (uf->modifier &&
-	(uf->postproc_ops & (LF_ALL & ~LF_MODIFY_VIGNETTING)))
+	(uf->postproc_ops & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
 	ufraw_flip_image_buffer(&uf->Images[ufraw_lensfun_phase], flip);
 #endif /* HAVE_LENSFUN */
 
@@ -1628,7 +1633,7 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
 void ufraw_invalidate_layer(ufraw_data *uf, UFRawPhase phase)
 {
     for (; phase < ufraw_phases_num; phase++) {
-	if (uf->Images[phase].valid) {
+	if (uf->Images[phase].valid != 0) {
 	    uf->Images[phase].valid = 0;
 	    uf->Images[phase].invalidate_event = TRUE;
 	}
@@ -2108,7 +2113,7 @@ void ufraw_rotate_image_buffer(ufraw_image_data *img, double angle)
 
     if (!angle)
 	return;
-    ufraw_image_format(NULL, NULL, img, "36", __func__);
+    ufraw_image_format(NULL, NULL, img, "36", G_STRFUNC);
     sine = sin(angle * 2 * M_PI / 360);
     cosine = cos(angle * 2 * M_PI / 360);
     depth = img->depth;
