@@ -193,9 +193,6 @@ typedef struct {
 /* Start the render preview refresh thread for invalid layers in background */
 void render_preview (preview_data *data);
 
-/* Invalidate some preview layer and all layers above it */
-void preview_invalidate_layer (preview_data *data, UFRawPhase phase);
-
 preview_data *get_preview_data (void *object);
 
 void lens_fill_interface (preview_data *data, GtkWidget *page);

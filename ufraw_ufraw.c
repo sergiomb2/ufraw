@@ -33,6 +33,11 @@
 #include "nikon_curve.h"
 #include "ufraw.h"
 
+static void ufraw_convert_image_lensfun(ufraw_data *uf, UFRawPhase phase);
+static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase);
+static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_image_data *dcimg);
+static void ufraw_convert_prepare_buffers(ufraw_data *uf);
+
 static int make_temporary(char *basefilename, char **tmpfilename)
 {
     int fd;
@@ -220,8 +225,10 @@ ufraw_data *ufraw_open(char *filename)
     uf->conf = conf;
     g_strlcpy(uf->filename, filename, max_path);
     int i;
-    for (i=ufraw_first_phase; i<ufraw_phases_num; i++)
+    for (i=ufraw_raw_phase; i<ufraw_phases_num; i++) {
 	uf->Images[i].buffer = NULL;
+	uf->Images[i].invalidate_event = TRUE;
+    }
     uf->thumb.buffer = NULL;
     uf->raw = raw;
     uf->colors = raw->colors;
@@ -537,6 +544,29 @@ static void ufraw_load_raw_progress(void *user_data, double progress)
     preview_progress(user_data, _("Loading preview"), progress);
 }
 
+/* Scale pixel values: occupy 16 bits to get more precision. In addition
+ * this normalizes the pixel values which is good for non-linear algorithms
+ * which forget to check rgbMax or assume a particular value. */
+static unsigned ufraw_scale_raw(dcraw_data *raw)
+{
+    guint16 *p, *end;
+    int scale;
+
+    scale = 0;
+    while ((raw->rgbMax << 1) <= 0xffff) {
+	raw->rgbMax <<= 1;
+	++scale;
+    }
+    if (scale) {
+	end = (guint16 *)(raw->raw.image + raw->raw.width * raw->raw.height);
+	/* OpenMP overhead appears to be too large in this case */
+	for (p = (guint16 *)raw->raw.image; p < end; ++p)
+	    *p <<= scale;
+	raw->black <<= scale;
+    }
+    return 1 << scale;
+}
+
 int ufraw_load_raw(ufraw_data *uf)
 {
     int status;
@@ -558,6 +588,7 @@ int ufraw_load_raw(ufraw_data *uf)
 	ufraw_message(status, raw->message);
 	if (status!=DCRAW_WARNING) return status;
     }
+    uf->raw_multiplier = ufraw_scale_raw(raw);
     /* Canon EOS cameras require special exposure normalization */
     if ( strcmp(uf->conf->make, "Canon")==0 &&
 	 strncmp(uf->conf->model, "EOS", 3)==0 ) {
@@ -622,7 +653,7 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->inputExifBuf);
     g_free(uf->outputExifBuf);
     int i;
-    for (i=ufraw_first_phase; i<ufraw_phases_num; i++)
+    for (i=ufraw_raw_phase; i<ufraw_phases_num; i++)
 	g_free(uf->Images[i].buffer);
     g_free(uf->thumb.buffer);
     developer_destroy(uf->developer);
@@ -679,52 +710,21 @@ void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode)
     }
 }
 
-int ufraw_convert_image_init(ufraw_data *uf)
-{
-    dcraw_data *raw = uf->raw;
-
-    uf->ConvertShrink = 1;
-    /* We can do a simple interpolation in the following cases:
-     * We shrink by an integer value.
-     * If pixel_aspect<1 (e.g. NIKON D1X) shrink must be at least 4. */
-    if (uf->conf->size==0 && uf->conf->shrink>1) {
-	double pixel_aspect = MIN(raw->pixel_aspect, 1/raw->pixel_aspect);
-	uf->ConvertShrink = uf->conf->shrink * pixel_aspect;
-    } else if (uf->conf->interpolation==half_interpolation) {
-	uf->ConvertShrink = 2;
-    /* Wanted size is smaller than raw size (size is after a raw->shrink)
-     * (assuming there are filters). */
-    } else if (uf->conf->size>0 && uf->HaveFilters) {
-	int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
-	int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
-	int cropSize = MAX(cropHeight, cropWidth);
-	if (cropSize/uf->conf->size >= 2)
-	    uf->ConvertShrink = 2;
-    }
-    return UFRAW_SUCCESS;
-}
-
 int ufraw_convert_image(ufraw_data *uf)
 {
     uf->mark_hotpixels = FALSE;
     ufraw_developer_prepare(uf, file_developer);
-    ufraw_convert_image_init(uf);
-    ufraw_convert_image_first_phase(uf, TRUE);
-    if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
-	ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
-	dcraw_image_data final;
-	final.height = FirstImage->height;
-	final.width = FirstImage->width;
-	final.image = (image_type *)FirstImage->buffer;
-	/* Scale threshold according to shrink factor, as the effect of
-	 * neighbouring pixels decays about exponentially with distance. */
-	float threshold = uf->conf->threshold * exp(-(uf->ConvertShrink/2.0-1));
-	dcraw_wavelet_denoise_shrinked(&final, threshold);
-    }
+    ufraw_convert_image_raw(uf, ufraw_raw_phase);
+    ufraw_convert_image_first(uf, ufraw_first_phase);
+    ufraw_convert_image_lensfun(uf, ufraw_first_phase);
     return UFRAW_SUCCESS;
 }
 
 #ifdef HAVE_LENSFUN
+
+/* What about LF_MODIFY_ALL? */
+#define LF_ALL (LF_MODIFY_TCA | LF_MODIFY_VIGNETTING | LF_MODIFY_DISTORTION | \
+	LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
 
 /* Lanczos kernel is precomputed in a table with this resolution
  * The value below seems to be enough for HQ upscaling up to eight times
@@ -759,8 +759,7 @@ void ufraw_lensfun_modify (
             img->width * sizeof (dcraw_image_type));
 
     /* Now apply distortion, TCA and geometry in a single pass */
-    if (modflags & (LF_MODIFY_TCA | LF_MODIFY_DISTORTION |
-                    LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE))
+    if (modflags & (LF_ALL & ~LF_MODIFY_VIGNETTING))
     {
         dcraw_image_type *image2 = g_new (dcraw_image_type, img->height * img->width);
         dcraw_image_type *cur = image2;
@@ -908,6 +907,11 @@ no_distortion:
  * Note that the algorithm uses pixel values from previous (processed) and
  * next (unprocessed) row and whether or not pixels are marked may make a
  * difference for the hot pixel count.
+ *
+ * Cleanup issue:
+ * -	change prototype to void x(ufraw_data *uf, UFRawPhase phase)
+ * -	use ufraw_image_format()
+ * -	use uf->rgbMax (check, must be about 64k)
  */
 static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
 	int width, int height, int colors, unsigned rgbMax)
@@ -969,43 +973,38 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
     uf->hotpixels = count;
 }
 
-/* This is the part of the conversion which is not supported by
- * ufraw_convert_image_area() */
-int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
+static void ufraw_convertshrink(ufraw_data *uf, dcraw_image_data *final, dcraw_data *raw)
 {
-    ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
-    dcraw_data *raw = uf->raw;
-    dcraw_image_type *rawimage;
-    // final->image memory will be realloc'd as needed
-    dcraw_image_data final;
-    final.image = (image_type *)FirstImage->buffer;
-    final.width = FirstImage->width;
-    final.height = FirstImage->height;
-    dcraw_data *dark = uf->conf->darkframe ? uf->conf->darkframe->raw : NULL;
+    int scale = 1;
 
-    rawimage = raw->raw.image;
-    raw->raw.image = g_memdup(rawimage, raw->raw.height * raw->raw.width *
-	    sizeof (dcraw_image_type));
-    ufraw_shave_hotpixels(uf, raw->raw.image, raw->raw.width, raw->raw.height,
-	    raw->raw.colors, raw->rgbMax);
-    if ( uf->ConvertShrink>1 || !uf->HaveFilters ) {
-	dcraw_finalize_shrink(&final, raw, dark, uf->ConvertShrink);
-	uf->developer->doWB = 1;
-    } else {
-	dcraw_wavelet_denoise(raw, uf->conf->threshold);
-	dcraw_finalize_interpolate(&final, raw, dark,
-	    uf->conf->interpolation, uf->conf->smoothing,
-	    uf->developer->rgbWB);
-	uf->developer->doWB = 0;
-    }
-    g_free(raw->raw.image);
-    raw->raw.image = rawimage;
-
-    dcraw_image_stretch(&final, raw->pixel_aspect);
+    /* We can do a simple interpolation in the following cases:
+     * We shrink by an integer value.
+     * If pixel_aspect<1 (e.g. NIKON D1X) shrink must be at least 4. */
     if (uf->conf->size==0 && uf->conf->shrink>1) {
-	dcraw_image_resize(&final,
-	    uf->ConvertShrink*MAX(final.height, final.width)/uf->conf->shrink);
-	uf->ConvertShrink = uf->conf->shrink;
+	scale = uf->conf->shrink * MIN(raw->pixel_aspect, 1/raw->pixel_aspect);
+    } else if (uf->conf->interpolation==half_interpolation) {
+	scale = 2;
+    /* Wanted size is smaller than raw size (size is after a raw->shrink)
+     * (assuming there are filters). */
+    } else if (uf->conf->size>0 && uf->HaveFilters) {
+	int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
+	int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
+	int cropSize = MAX(cropHeight, cropWidth);
+	if (cropSize/uf->conf->size >= 2)
+	    scale = 2;
+    }
+
+    if (uf->HaveFilters && scale == 1)
+	dcraw_finalize_interpolate(final, raw, uf->conf->interpolation,
+	    uf->conf->smoothing);
+    else
+	dcraw_finalize_shrink(final, raw, scale);
+
+    dcraw_image_stretch(final, raw->pixel_aspect);
+    if (uf->conf->size==0 && uf->conf->shrink>1) {
+	dcraw_image_resize(final,
+	    scale * MAX(final->height, final->width)/uf->conf->shrink);
+	// scale = uf->conf->shrink;
     }
     if (uf->conf->size>0) {
 	int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
@@ -1018,79 +1017,156 @@ int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix)
 	    /* uf->conf->size holds the size of the cropped image.
 	     * We need to calculate from it the desired size of
 	     * the uncropped image. */
-	    int finalSize = uf->ConvertShrink * MAX(final.height, final.width);
-	    uf->ConvertShrink = cropSize / uf->conf->size;
-	    dcraw_image_resize(&final, uf->conf->size * finalSize / cropSize);
+	    int finalSize = scale * MAX(final->height, final->width);
+	    // scale = cropSize / uf->conf->size;
+	    dcraw_image_resize(final, uf->conf->size * finalSize / cropSize);
 	}
     }
+}
 
+/*
+ * Interface of ufraw_shave_hotpixels(), dcraw_finalize_raw() and preferably
+ * dcraw_wavelet_denoise() too should change to accept a phase argument and
+ * no longer require type casts.
+ */
+void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase)
+{
+    ufraw_image_data *img = &uf->Images[phase];
+    dcraw_data *dark = uf->conf->darkframe ? uf->conf->darkframe->raw : NULL;
+    dcraw_data *raw = uf->raw;
+    dcraw_image_type *rawimage;
+
+    ufraw_convert_import_buffer(uf, phase, &raw->raw);
+    img->rgbg = raw->raw.colors == 4;
+    ufraw_shave_hotpixels(uf, (dcraw_image_type *)(img->buffer), img->width,
+	    img->height, raw->raw.colors, raw->rgbMax);
+    rawimage = raw->raw.image;
+    raw->raw.image = (dcraw_image_type *)img->buffer;
+    /* The threshold is scaled for compatibility */
+    dcraw_wavelet_denoise(raw, uf->conf->threshold * sqrt(uf->raw_multiplier));
+    dcraw_finalize_raw(raw, dark, uf->developer->rgbWB);
+    raw->raw.image = rawimage;
+}
+
+/*
+ * Interface of ufraw_convertshrink() and dcraw_flip_image() should change
+ * to accept a phase argument and no longer require type casts.
+ */
+void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase)
+{
+    ufraw_image_data *in = &uf->Images[phase - 1];
+    ufraw_image_data *out = &uf->Images[phase];
+    dcraw_data *raw = uf->raw;
+    dcraw_image_type *rawimage;
+    dcraw_image_data final;
+
+    final.image = (image_type *)out->buffer;
+    final.width = out->width;
+    final.height = out->height;
+
+    rawimage = raw->raw.image;
+    raw->raw.image = (dcraw_image_type *)in->buffer;
+    ufraw_convertshrink(uf, &final, raw);
+    raw->raw.image = rawimage;
     dcraw_flip_image(&final, uf->conf->orientation);
 
-#ifdef HAVE_LENSFUN
-    if (lensfix && uf->conf->camera && uf->conf->lens)
-    {
-        lfModifier *modifier = lensfix ? lf_modifier_new (
-            uf->conf->lens, uf->conf->camera->CropFactor, final.width, final.height) : NULL;
+    out->height = final.height;
+    out->width = final.width;
+    out->depth = sizeof (dcraw_image_type);
+    out->rowstride = out->width * out->depth;
+    out->buffer = (guint8 *)final.image;
 
-        if (modifier)
-        {
-            float real_scale = pow (2.0, uf->conf->lens_scale);
-            const int modflags = LF_MODIFY_TCA | LF_MODIFY_VIGNETTING |
-                LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE;
-
-            int finmodflags = lf_modifier_initialize (
-                modifier, uf->conf->lens, LF_PF_U16,
-                uf->conf->focal_len, uf->conf->aperture,
-                uf->conf->subject_distance, real_scale,
-                uf->conf->cur_lens_type, modflags, FALSE);
-            if (finmodflags & modflags)
-                ufraw_lensfun_modify (&final, modifier, finmodflags);
-
-            lf_modifier_destroy (modifier);
-        }
-    }
-#else
-    (void)lensfix;
-#endif /* HAVE_LENSFUN */
-
-    FirstImage->height = final.height;
-    FirstImage->width = final.width;
-    FirstImage->depth = sizeof(dcraw_image_type);
-    FirstImage->rowstride = FirstImage->width * FirstImage->depth;
-    FirstImage->buffer = (guint8 *)final.image;
-    FirstImage->valid = 0xffffffff;
-
-    return UFRAW_SUCCESS;
+    ufraw_convert_reverse_wb(uf, phase);
 }
 
-static gboolean ufraw_do_denoise_phase(ufraw_data *uf)
+static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase)
 {
-    // !doWB means denoise was done in first phase
-    return uf->conf->threshold>0 && uf->developer->doWB;
+    ufraw_image_data *img = &uf->Images[phase];
+    guint32 mul[3], px;
+    guint16 *p16;
+    int i, size, c;
+
+    ufraw_image_format(NULL, NULL, img, "6", __func__);
+    /* The speedup trick is to keep the non-constant (or ugly constant)
+     * divider out of the pixel iteration. If you really have to then
+     * use double division (can be much faster, apparently). */
+    for (i = 0; i < 3; ++i)
+	mul[i] = (guint64)0x10000 * 0x10000 / uf->developer->rgbWB[i];
+    size = img->height * img->width;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static,65536) default(none) \
+  shared(uf,phase,img,mul,size) \
+  private(i,p16,c,px)
+#endif
+    for (i = 0; i < size; ++i) {
+	p16 = (guint16 *)&img->buffer[i * img->depth];
+	for (c = 0; c < 3; ++c) {
+	    px = p16[c] * (guint64)mul[c] / 0x10000;
+	    if (px > 0xffff)
+		px = 0xffff;
+	    p16[c] = px;
+	}
+    }
 }
 
-int ufraw_convert_image_init_phase(ufraw_data *uf)
+static void ufraw_convert_image_lensfun(ufraw_data *uf, UFRawPhase phase)
+{
+#ifdef HAVE_LENSFUN
+    conf_data *conf = uf->conf;
+    ufraw_image_data *img = &uf->Images[phase];
+    lfModifier *modifier;
+    float real_scale;
+    int finmodflags;
+
+    if (conf->camera == NULL || conf->lens == NULL)
+	return;
+
+    modifier = lf_modifier_new(conf->lens, conf->camera->CropFactor,
+	    img->width, img->height);
+    if (modifier == NULL)
+	return;
+
+    real_scale = pow(2.0, conf->lens_scale);
+    finmodflags = lf_modifier_initialize(modifier, conf->lens, LF_PF_U16,
+	    conf->focal_len, conf->aperture, conf->subject_distance,
+	    real_scale, conf->cur_lens_type, LF_ALL, FALSE);
+    if (finmodflags & LF_ALL) {
+	dcraw_image_data args;
+	args.image = (image_type *)img->buffer;
+	args.width = img->width;
+	args.height = img->height;
+	ufraw_lensfun_modify(&args, modifier, finmodflags);
+	img->buffer = (guint8 *)args.image;
+    }
+    lf_modifier_destroy(modifier);
+#else
+    (void)uf;
+    (void)phase;
+#endif /* HAVE_LENSFUN */
+}
+
+static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_image_data *dcimg)
+{
+    ufraw_image_data *img = &uf->Images[phase];
+
+    img->height = dcimg->height;
+    img->width = dcimg->width;
+    img->depth = sizeof (dcraw_image_type);
+    img->rowstride = img->width * img->depth;
+    if (img->buffer)
+	g_free(img->buffer);
+    img->buffer = g_memdup(dcimg->image, img->height * img->rowstride);
+}
+
+/*
+ * This function does not set img->invalidate_event because the
+ * invalidation here is a secondary effect of the need to resize
+ * buffers. The invalidate events should all have been set already.
+ */
+static void ufraw_convert_prepare_buffers(ufraw_data *uf)
 {
     ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
     ufraw_image_data *img;
-
-    /* Denoise image layer */
-    img = &uf->Images[ufraw_denoise_phase];
-    if (ufraw_do_denoise_phase(uf)) {
-        /* Mark layer invalid if we're resizing */
-        if (img->height != FirstImage->height ||
-            img->width != FirstImage->width ||
-            !img->buffer)
-            img->valid = 0;
-
-        img->height = FirstImage->height;
-        img->width = FirstImage->width;
-        img->depth = sizeof(dcraw_image_type);
-        img->rowstride = img->width * img->depth;
-        img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
-    }
-    else
-        img->valid = 0;
 
     /* Development image layer */
     img = &uf->Images[ufraw_develop_phase];
@@ -1110,52 +1186,134 @@ int ufraw_convert_image_init_phase(ufraw_data *uf)
     img = &uf->Images[ufraw_lensfun_phase];
     if (img->height != FirstImage->height ||
         img->width != FirstImage->width ||
-        !img->buffer || !uf->modifier)
+        !img->buffer)
         img->valid = 0;
 
     img->height = FirstImage->height;
     img->width = FirstImage->width;
     img->depth = 3;
     img->rowstride = img->width * img->depth;
+    /* ignore uf->modifier to avoid a call dependency */
+    img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
+#endif /* HAVE_LENSFUN */
+}
+
+#ifdef HAVE_LENSFUN
+int ufraw_prepare_lensfun(ufraw_data *uf)
+{
+    ufraw_image_data *img = &uf->Images[ufraw_lensfun_phase];
+    conf_data *conf = uf->conf;
+    float real_scale;
 
     if (uf->modifier)
-        lf_modifier_destroy (uf->modifier);
+        lf_modifier_destroy(uf->modifier);
+    uf->modifier = lf_modifier_new(conf->lens, conf->camera->CropFactor,
+	    img->width, img->height);
 
-    uf->modifier = lf_modifier_new (
-        uf->conf->lens, uf->conf->camera->CropFactor, img->width, img->height);
-
-    float real_scale = pow (2.0, uf->conf->lens_scale);
-    uf->postproc_ops = lf_modifier_initialize (
-        uf->modifier, uf->conf->lens, LF_PF_U8,
-        uf->conf->focal_len, uf->conf->aperture,
-        uf->conf->subject_distance, real_scale,
-        uf->conf->cur_lens_type, LF_MODIFY_TCA | LF_MODIFY_VIGNETTING |
-        LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE, FALSE);
-
-    if (uf->postproc_ops & (LF_MODIFY_TCA | LF_MODIFY_VIGNETTING |
-                            LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY |
-                            LF_MODIFY_SCALE))
-        img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
-    else
-    {
-        lf_modifier_destroy (uf->modifier);
+    real_scale = pow(2.0, conf->lens_scale);
+    uf->postproc_ops = lf_modifier_initialize(uf->modifier, conf->lens,
+	    LF_PF_U8, conf->focal_len, conf->aperture, conf->subject_distance,
+	    real_scale, conf->cur_lens_type, LF_ALL, FALSE);
+    if (!(uf->postproc_ops & LF_ALL)) {
+        lf_modifier_destroy(uf->modifier);
         uf->modifier = NULL;
         img->valid = 0;
     }
-#endif /* HAVE_LENSFUN */
-
     return UFRAW_SUCCESS;
 }
+#endif /* HAVE_LENSFUN */
 
-ufraw_image_data *ufraw_convert_get_final_image(ufraw_data *uf)
+/*
+ * This function is very permissive in accepting NULL pointers but it does
+ * so to make it easy to call this function: consider it documentation with
+ * a free consistency check. It is not necessarily good to change existing
+ * algorithms all over the place to accept more image formats: replacing
+ * constants by variables may turn off some compiler optimizations.
+ */
+void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
+	const char *formats, const char *caller)
 {
+    int b, c;
+
+    switch (img->depth) {
+    case 3:
+	    c = 3;
+	    b = 1;
+	    break;
+    case 4:
+	    c = img->rgbg ? 4 : 3;
+	    b = 1;
+	    break;
+    case 6:
+	    c = 3;
+	    b = 2;
+	    break;
+    case 8:
+	    c = img->rgbg ? 4 : 3;
+	    b = 2;
+	    break;
+    default:
+	    g_error("%s -> %s: unsupported depth %d\n", caller, __func__, img->depth);
+    }
+    if (!strchr(formats, '0' + c * b))
+	g_error("%s: unsupported depth %d (rgbg=%d)\n", caller, img->depth, img->rgbg);
+    if (colors)
+	*colors = c;
+    if (bytes)
+	*bytes = b;
+}
+
+/*
+ * Some algorithms need access to the RGB data before color adjustments
+ * such as white-balance, hue, saturation have been applied.
+ */
+ufraw_image_data *ufraw_rgb_image(ufraw_data *uf, gboolean bufferok,
+	const char *dbg)
+{
+    const UFRawPhase phase = ufraw_first_phase;
+    int i;
+
+    if (dbg && uf->Images[phase].valid != (long)0xffffffff)
+	g_warning("%s->%s: conversion necessary (suboptimal).\n", dbg,
+		__func__);
+    for (i = 0; i < 32; ++i) {
+	ufraw_convert_image_area(uf, i, phase);
+	if (!bufferok) {
+	    /* the first tile should yield the image dimensions already */
+	    break;
+	}
+    }
+    return &uf->Images[ufraw_first_phase];
+}
+
+ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok)
+{
+    UFRawPhase phase;
+    int i;
+
+    phase = ufraw_develop_phase;
 #ifdef HAVE_LENSFUN
     if (uf->modifier &&
-	(uf->postproc_ops & (LF_MODIFY_TCA | LF_MODIFY_DISTORTION |
-			     LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)))
-	return &uf->Images[ufraw_lensfun_phase];
+	(uf->postproc_ops & (LF_ALL & ~LF_MODIFY_VIGNETTING)))
+	phase = ufraw_lensfun_phase;
 #endif /* HAVE_LENSFUN */
-    return &uf->Images[ufraw_develop_phase];
+    if (bufferok) {
+	    /* It should never be necessary to actually finish the conversion
+	     * because it can break render_preview_image() which uses the
+	     * final image "valid" mask for deciding what to update in the
+	     * pixbuf. That can be fixed but is suboptimal anyway. The best
+	     * we can do is print a warning in case we need to finish the
+	     * conversion and finish it here. */
+	if (uf->Images[phase].valid != (long)0xffffffff) {
+	    g_warning("%s: fixing unfinished conversion.\n", __func__);
+	    for (i = 0; i < 32; ++i)
+		ufraw_convert_image_area(uf, i, phase);
+	}
+    } else {
+	/* this will update all buffer sizes (e.g. due to rotate) */
+	ufraw_convert_image_area(uf, 0, ufraw_first_phase);
+    }
+    return &uf->Images[phase];
 }
 
 ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
@@ -1168,53 +1326,37 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
         return out; // the subarea has been already computed
 
     /* Get the subarea image for previous phase */
-    ufraw_image_data *in = (phase > ufraw_first_phase) ?
-        ufraw_convert_image_area (uf, saidx, phase - 1) :
-        &uf->Images [ufraw_first_phase];
+    ufraw_image_data *in = NULL;
+    if (phase > ufraw_raw_phase)
+	in = ufraw_convert_image_area(uf, saidx, phase - 1);
 
     /* Get subarea coordinates */
     ufraw_img_get_subarea_coord(out, saidx, &x, &y, &w, &h);
 
     switch (phase)
     {
-        case ufraw_denoise_phase:
-            {
-		if (!ufraw_do_denoise_phase(uf))
-                    // No denoise phase, return the image from previous phase
-                    return in;
+        case ufraw_raw_phase:
+	    if (out->valid != (long)0xffffffff)
+	    {
+		if (out->producer)
+		    out->producer(uf, phase);
+		else
+		    ufraw_convert_image_raw(uf, phase);
+		out->valid = 0xffffffff;
+	    }
+	    return out;
 
-                dcraw_image_data tmp;
-                int border = 16;
-                int bx = MAX (x - border, 0);
-                int by = MAX (y - border, 0);
-                tmp.width = MIN ((x - bx) + w + border, in->width - bx);
-                if (tmp.width < 16)
-                {
-                    bx = bx + in->width - 16; // We assume in->width>16
-                    tmp.width = 16;
-                }
-                tmp.height = MIN ((y - by) + h + border, in->height - by);
-                if (tmp.height < 16)
-                {
-                    by = by + in->height - 16; // We assume in->height>16
-                    tmp.height = 16;
-                }
-                tmp.image = g_new (dcraw_image_type, tmp.height * tmp.width);
-                int yy;
-                for (yy = 0; yy < tmp.height; yy++)
-                    memcpy (tmp.image [yy * tmp.width],
-                            in->buffer + ((by + yy) * in->width + bx) * in->depth,
-                            tmp.width * in->depth);
-                /* Scale threshold according to shrink factor, as the effect of
-                 * neighbouring pixels decays about exponentially with distance. */
-                float threshold = uf->conf->threshold * exp(1.0 - uf->ConvertShrink / 2.0);
-                dcraw_wavelet_denoise_shrinked(&tmp, threshold);
-                for (yy = 0; yy < h; yy++)
-                    memcpy (out->buffer + ((y + yy) * out->width + x) * out->depth,
-                            tmp.image [(yy + y - by) * tmp.width + x - bx], w * out->depth);
-                g_free (tmp.image);
-            }
-            break;
+        case ufraw_first_phase:
+	    if (out->valid != (long)0xffffffff)
+	    {
+		if (out->producer)
+		    out->producer(uf, phase);
+		else
+		    ufraw_convert_image_first(uf, phase);
+		ufraw_convert_prepare_buffers(uf);
+		out->valid = 0xffffffff;
+	    }
+	    return out;
 
         case ufraw_develop_phase:
             {
@@ -1247,9 +1389,10 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 #ifdef HAVE_LENSFUN
             {
                 if (!uf->modifier ||
-                    !(uf->postproc_ops & (LF_MODIFY_TCA | LF_MODIFY_DISTORTION |
-                                          LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)))
-                    return in;
+                    !(uf->postproc_ops & (LF_ALL & ~LF_MODIFY_VIGNETTING))) {
+		    out->valid = in->valid;	/* for invalidate_event */
+		    return in;
+		}
 
                 int yy;
                 float *buff = g_new (float, (w < 8) ? 8 * 2 * 3 : w * 2 * 3);
@@ -1330,6 +1473,7 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 #endif /* HAVE_LENSFUN */
 
         default:
+	    g_warning("%s: invalid phase %d\n", __func__, phase);
             return in;
     }
 
@@ -1471,17 +1615,73 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
 	ufraw_normalize_rotation(uf);
     }
     ufraw_flip_image_buffer(&uf->Images[ufraw_first_phase], flip);
-    if (ufraw_do_denoise_phase(uf))
-	ufraw_flip_image_buffer(&uf->Images[ufraw_denoise_phase], flip);
     ufraw_flip_image_buffer(&uf->Images[ufraw_develop_phase], flip);
 #ifdef HAVE_LENSFUN
     if (uf->modifier &&
-	(uf->postproc_ops & (LF_MODIFY_TCA | LF_MODIFY_DISTORTION |
-			     LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)))
+	(uf->postproc_ops & (LF_ALL & ~LF_MODIFY_VIGNETTING)))
 	ufraw_flip_image_buffer(&uf->Images[ufraw_lensfun_phase], flip);
 #endif /* HAVE_LENSFUN */
 
     return UFRAW_SUCCESS;
+}
+
+void ufraw_invalidate_layer(ufraw_data *uf, UFRawPhase phase)
+{
+    for (; phase < ufraw_phases_num; phase++) {
+	if (uf->Images[phase].valid) {
+	    uf->Images[phase].valid = 0;
+	    uf->Images[phase].invalidate_event = TRUE;
+	}
+    }
+}
+
+void ufraw_invalidate_hotpixel_layer(ufraw_data *uf)
+{
+    ufraw_invalidate_layer(uf, ufraw_raw_phase);
+}
+
+void ufraw_invalidate_denoise_layer(ufraw_data *uf)
+{
+    ufraw_invalidate_layer(uf, ufraw_raw_phase);
+}
+
+void ufraw_invalidate_darkframe_layer(ufraw_data *uf)
+{
+    ufraw_invalidate_layer(uf, ufraw_raw_phase);
+}
+
+/*
+ * This one is special. The raw layer applies WB in preparation for optimal
+ * interpolation but the first layer undoes it for develop() et.al. So, the
+ * first layer stays valid but all the others must be invalidated upon WB
+ * adjustments.
+ */
+void ufraw_invalidate_whitebalance_layer(ufraw_data *uf)
+{
+    ufraw_invalidate_layer(uf, ufraw_develop_phase);
+    if (uf->Images[ufraw_raw_phase].valid) {
+	uf->Images[ufraw_raw_phase].valid = 0;
+	uf->Images[ufraw_raw_phase].invalidate_event = TRUE;
+    }
+}
+
+/*
+ * This should be a no-op in case we don't interpolate but we don't care: the
+ * delay will at least give the illusion that it matters. Color smoothing
+ * implementation is a bit too simplistic.
+ */
+void ufraw_invalidate_smoothing_layer(ufraw_data *uf)
+{
+    ufraw_invalidate_layer(uf, ufraw_first_phase);
+}
+
+gboolean ufraw_invalidate_layer_event(ufraw_data *uf, UFRawPhase phase)
+{
+    gboolean ret;
+
+    ret = uf->Images[phase].invalidate_event;
+    uf->Images[phase].invalidate_event = FALSE;
+    return ret;
 }
 
 int ufraw_set_wb(ufraw_data *uf)
@@ -1490,10 +1690,7 @@ int ufraw_set_wb(ufraw_data *uf)
     double rgbWB[3];
     int status, c, cc, i;
 
-    UFRawPhase phase = uf->developer!=NULL && uf->developer->doWB ?
-	    ufraw_develop_phase : ufraw_first_phase;
-    for (; phase < ufraw_phases_num; phase++)
-	uf->Images[phase].valid = 0;
+    ufraw_invalidate_whitebalance_layer(uf);
 
     /* For manual_wb we calculate chanMul from the temperature/green. */
     /* For all other it is the other way around. */
@@ -1911,6 +2108,7 @@ void ufraw_rotate_image_buffer(ufraw_image_data *img, double angle)
 
     if (!angle)
 	return;
+    ufraw_image_format(NULL, NULL, img, "36", __func__);
     sine = sin(angle * 2 * M_PI / 360);
     cosine = cos(angle * 2 * M_PI / 360);
     depth = img->depth;

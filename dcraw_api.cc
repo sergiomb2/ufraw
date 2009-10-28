@@ -328,12 +328,96 @@ static int get_pixel(const dcraw_data *h, const dcraw_data *dark,
     return pixel;
 }
 
+/*
+ * fc_INDI() optimizing wrapper.
+ * fc_sequence() cooks up the filter color sequence for a row knowing that
+ * it doesn't have to store more than 16 values. The result can be indexed
+ * by the column using fc_color() and that part must of course be inlined
+ * for maximum performance. The inner loop for image processing should
+ * always try to index the column and not the row in order to reduce the
+ * data cache footprint.
+ */
+static unsigned fc_sequence(int filters, int row)
+{
+    unsigned sequence = 0;
+    int c;
+
+    for (c = 15; c >= 0; --c)
+	sequence = (sequence << 2) | fc_INDI(filters, row, c);
+    return sequence;
+}
+
+/*
+ * Note: smart compilers will inline anyway in most cases: the "inline"
+ * below is a comment reminding not to make it an external function.
+ */
+static inline int fc_color(unsigned sequence, int col)
+{
+    return (sequence >> ((col << 1) & 0x1f)) & 3;
+}
+
+static inline void shrink_accumulate_row(unsigned *sum, int size,
+	dcraw_image_type *base, int scale, int color)
+{
+    int i, j;
+    unsigned v;
+
+    for (i = 0; i < size; ++i) {
+	v = 0;
+	for (j = 0; j < scale; ++j)
+	    v += base[i * scale + j][color];
+	sum[i] += v;
+    }
+}
+
+static inline void shrink_row(dcraw_image_type *obase, int osize,
+	dcraw_image_type *ibase, int isize, int colors, int scale)
+{
+    unsigned sum[osize];
+    dcraw_image_type *iptr;
+    int cl, i;
+
+    for (cl = 0; cl < colors; ++cl) {
+	memset(sum, 0, sizeof (sum));
+	iptr = ibase;
+	for (i = 0; i < scale; ++i) {
+	    shrink_accumulate_row(sum, osize, iptr, scale, cl);
+	    iptr += isize;
+	}
+	for (i = 0; i < osize; ++i)
+	    obase[i][cl] = sum[i] / (scale * scale);
+    }
+}
+
+static inline void shrink_pixel(dcraw_image_type pixp, int row, int col,
+	dcraw_data *hh, unsigned *fseq, int scale)
+{
+    unsigned sum[4], count[4];
+    int ri, ci, cl;
+    dcraw_image_type *ibase;
+
+    memset(sum, 0, sizeof (sum));
+    memset(count, 0, sizeof (count));
+    for (ri = 0; ri < scale; ++ri) {
+	ibase = hh->raw.image + ((row * scale + ri) / 2) * hh->raw.width;
+	for (ci = 0; ci < scale; ++ci) {
+	    cl = fc_color(fseq[ri], col * scale + ci);
+	    sum[cl] += ibase[(col * scale + ci) / 2][cl];
+	    ++count[cl];
+	}
+    }
+    for (cl = 0; cl < hh->raw.colors; ++cl)
+	pixp[cl] = sum[cl] / count[cl];
+}
+
 int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
-			  dcraw_data *dark, int scale)
+			  int scale)
 {
     DCRaw *d = (DCRaw *)hh->dcraw;
-    int h, w, fujiWidth, r, c, ri, ci, cl, norm, s, recombine, pixels;
-    int f4, sum[4], count[4];
+    int h, w, fujiWidth, r, c, ri, recombine, pixels, f4;
+    dcraw_image_type *ibase, *obase;
+    unsigned fseq[scale];
+    unsigned short *pixp;
 
     g_free(d->messageBuffer);
     d->messageBuffer = NULL;
@@ -341,56 +425,51 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
     pixels = hh->raw.width * hh->raw.height;
 
     recombine = ( hh->colors==3 && hh->raw.colors==4 );
+    /* the last row/column will be skipped if input is incomplete */
+    f->height = h = hh->height / scale;
+    f->width = w = hh->width / scale;
     f->colors = hh->colors;
 
-    int black = dark ? MAX(hh->black - dark->black, 0) : hh->black;
     /* hh->raw.image is shrunk in half if there are filters.
      * If scale is odd we need to "unshrink" it using the info in
      * hh->fourColorFilters before scaling it. */
     if (hh->filters!=0 && scale%2==1) {
-	/* I'm skiping the last row/column if it is not a full row/column */
-	f->height = h = hh->height / scale;
-	f->width = w = hh->width / scale;
 	fujiWidth = hh->fuji_width / scale;
 	f->image = (dcraw_image_type *)
 		g_realloc(f->image, h * w * sizeof(dcraw_image_type));
 	f4 = hh->fourColorFilters;
-	for(r=0; r<h; r++) {
-	    for(c=0; c<w; c++) {
-		for (cl=0; cl<hh->raw.colors; cl++) sum[cl] = count[cl] = 0;
-		for (ri=0; ri<scale; ri++)
-		    for (ci=0; ci<scale; ci++) {
-			cl = fc_INDI(f4, r*scale+ri, c*scale+ci);
-			sum[cl] += get_pixel(hh, dark,
-				(r*scale+ri)/2, (c*scale+ci)/2, cl, pixels);
-			count[cl]++;
-		    }
-		for (cl=0; cl<hh->raw.colors; cl++)
-		    f->image[r*w+c][cl] =
-				MAX(sum[cl]/count[cl] - black,0);
-		if (recombine) f->image[r*w+c][1] =
-			(f->image[r*w+c][1] + f->image[r*w+c][3])>>1;
+
+#ifdef _OPENMP
+  #pragma omp parallel for schedule(static,64) private(r,ri,fseq,c,pixp)
+#endif
+	for (r = 0; r < h; ++r) {
+	    for (ri = 0; ri < scale; ++ri)
+		fseq[ri] = fc_sequence(f4, r + ri);
+	    for (c = 0; c < w; ++c) {
+		pixp = f->image[r * w + c];
+		shrink_pixel(pixp, r, c, hh, fseq, scale);
+		if (recombine)
+		    pixp[1] = (pixp[1] + pixp[3]) / 2;
 	    }
 	}
     } else {
-	/* I'm skiping the last row/column if it is not a full row/column */
-	f->height = h = hh->height / scale;
-	f->width = w = hh->width / scale;
 	if (hh->filters!=0) scale /= 2;
 	fujiWidth = ( (hh->fuji_width+hh->shrink) >> hh->shrink ) / scale;
 	f->image = (dcraw_image_type *)g_realloc(
 			f->image, h * w * sizeof(dcraw_image_type));
-	norm = scale * scale;
-	for(r=0; r<h; r++) {
-	    for(c=0; c<w; c++) {
-		for (cl=0; cl<hh->raw.colors; cl++) {
-		    for (ri=0, s=0; ri<scale; ri++)
-			for (ci=0; ci<scale; ci++)
-			    s += get_pixel(hh, dark, r*scale+ri, c*scale+ci, cl, pixels);
-		    f->image[r*w+c][cl] = MAX(s/norm - black,0);
-		}
-		if (recombine) f->image[r*w+c][1] =
-		    (f->image[r*w+c][1] + f->image[r*w+c][3])>>1;
+#ifdef _OPENMP
+  #pragma omp parallel for schedule(static,64) private(r,ibase,obase,c)
+#endif
+	for (r = 0; r < h; ++r) {
+	    ibase = hh->raw.image + r * hh->raw.width * scale;
+	    obase = f->image + r * w;
+	    if (scale == 1)
+		memcpy(obase, ibase, sizeof (dcraw_image_type) * w);
+	    else
+		shrink_row(obase, w, ibase, hh->raw.width, hh->raw.colors, scale);
+	    if (recombine) {
+		for (c = 0; c < w; c++)
+		    obase[c][1] = (obase[c][1] + obase[c][3]) / 2;
 	    }
 	}
     }
@@ -529,8 +608,58 @@ void dcraw_wavelet_denoise_shrinked(dcraw_image_data *f, float threshold)
 		NULL, threshold, 0);
 }
 
+/*
+ * Do black level adjustment, dark frame subtraction and white balance
+ * (plus normalization to use the full 16 bit pixel value range) in one
+ * pass.
+ *
+ * TODO: recode and optimize dark frame path
+ */
+void dcraw_finalize_raw(dcraw_data *h, dcraw_data *dark, int rgbWB[4])
+{
+    int r, c, cc, pixels;
+    unsigned f4, px, fseq, black;
+    dcraw_image_type *base;
+
+    pixels = h->raw.width * h->raw.height;
+    black = dark ? MAX(h->black - dark->black, 0) : h->black;
+    f4 = h->fourColorFilters;
+    if (h->colors == 3)
+	rgbWB[3] = rgbWB[1];
+    if (dark) {
+	for(r=0; r<h->height; r++)
+	    for(c=0; c<h->width; c++) {
+		int cc = fc_INDI(f4,r,c);
+		h->raw.image[r/2 * h->raw.width + c/2][cc] = MIN( MAX( (gint64)
+		    (get_pixel(h, dark, r/2, c/2, cc, pixels) - black) *
+		    rgbWB[cc]/0x10000, 0), 0xFFFF);
+	    }
+    } else {
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static,64) default(none) \
+  shared(h,dark,rgbWB,pixels,f4,black) \
+  private(r,base,fseq,c,cc,px)
+#endif
+	for (r = 0; r < h->height; r++) {
+	    base = h->raw.image + (r/2) * h->raw.width;
+	    fseq = fc_sequence(f4, r);
+	    for (c = 0; c < h->width; c++) {
+		cc = fc_color(fseq, c);
+		if (base[c/2][cc] < black) {
+		    base[c/2][cc] = 0;
+		    continue;
+		}
+		px = (base[c/2][cc] - black) * (guint64)(unsigned)(rgbWB[cc]) / 0x10000;
+		if (px > 0xffff)
+		    px = 0xffff;
+		base[c/2][cc] = px;
+	    }
+	}
+    }
+}
+
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
-	dcraw_data *dark, int interpolation, int smoothing, int rgbWB[4])
+	int interpolation, int smoothing)
 {
     DCRaw *d = (DCRaw *)h->dcraw;
     int fujiWidth, i, r, c, cl, pixels;
@@ -560,7 +689,6 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     } else {
 	ff = h->filters &= ~((h->filters & 0x55555555) << 1);
     }
-    int black = dark ? MAX(h->black - dark->black, 0) : h->black;
 
     /* It might be better to report an error here: */
     /* (dcraw also forbids AHD for Fuji rotated images) */
@@ -569,13 +697,11 @@ int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
     if ( interpolation==dcraw_ppg_interpolation && h->colors > 3 )
 	interpolation = dcraw_vng_interpolation;
     f4 = h->fourColorFilters;
-    if (h->colors==3) rgbWB[3] = rgbWB[1];
     for(r=0; r<h->height; r++)
 	for(c=0; c<h->width; c++) {
 	    int cc = fc_INDI(f4,r,c);
-	    f->image[r*f->width+c][fc_INDI(ff,r,c)] = MIN( MAX( (gint64)
-		(get_pixel(h, dark, r/2, c/2, cc, pixels) - black) *
-		rgbWB[cc]/0x10000, 0), 0xFFFF);
+	    f->image[r*f->width+c][fc_INDI(ff,r,c)] =
+		    h->raw.image[r/2 * h->raw.width + c/2][cc];
 	}
     int smoothPasses = 1;
     if (interpolation==dcraw_bilinear_interpolation)

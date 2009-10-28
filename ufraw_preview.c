@@ -36,6 +36,9 @@
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
 
+/* We do the rotate so we define the layer where it's done */
+#define ufraw_rotate_phase ufraw_first_phase
+
 static void adjustment_update(GtkAdjustment *adj, double *valuep);
 static void button_update(GtkWidget *button, gpointer user_data);
 
@@ -566,7 +569,10 @@ static void preview_draw_area(preview_data *data,
     int SpotX2 =  ceil(MAX(data->SpotX1, data->SpotX2) * scale_x);
     int xx, yy, c;
 
-    ufraw_image_data *img = ufraw_convert_get_final_image(data->UF);
+    /* This is bad. `img' should have been a parameter because we
+     * cannot request an up to date buffer but it must be up to
+     * date to some extend. In theory we could get the wrong buffer */
+    ufraw_image_data *img = ufraw_final_image(data->UF, FALSE);
 
     for (yy=y; yy<y+height; yy++) {
 	p8 = pixies+yy*rowstride+x*3;
@@ -772,7 +778,7 @@ static void render_init(preview_data *data)
     /* Check if we need a new pixbuf */
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    ufraw_image_data *image = &data->UF->Images[ufraw_first_phase];
+    ufraw_image_data *image = ufraw_final_image(data->UF, FALSE);
     if (width!=image->width || height!=image->height) {
 	data->PreviewPixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
 					    image->width, image->height);
@@ -785,21 +791,11 @@ static void render_init(preview_data *data)
     render_status_text(data);
 }
 
-void preview_invalidate_layer(preview_data *data, UFRawPhase phase)
-{
-    if (phase==ufraw_denoise_phase && !Developer->doWB)
-	// !doWB means denoise should be done in first phase
-	phase = ufraw_first_phase;
-    for (; phase < ufraw_phases_num; phase++)
-	data->UF->Images[phase].valid = 0;
-}
-
 void render_preview(preview_data *data)
 {
     if (data->FreezeDialog) return;
 
     render_init(data);
-    ufraw_convert_image_init_phase(data->UF);
     data->RenderSubArea = 0;
     while (g_idle_remove_by_data(data))
 	;
@@ -901,8 +897,6 @@ static gboolean render_raw_histogram(preview_data *data)
     }
     /* Prepare pen color, which is not effected by exposure.
      * Use a small value to avoid highlights and then normalize. */
-    /* we use the developer for our own purpose so enable WB */
-    Developer->doWB++;
     for (c=0; c<colors; c++) {
 	for (cl=0; cl<colors; cl++) p16[cl] = 0;
 	p16[c] = Developer->max * 0x08000 / Developer->rgbWB[c] *
@@ -934,7 +928,6 @@ static gboolean render_raw_histogram(preview_data *data)
 		    (hisHeight-1) / MAXOUT;
 	}
     }
-    Developer->doWB--;
     for (x=0; x<raw_his_size; x++) {
 	/* draw the raw histogram */
 	for (c=0, y0=0; c<colors; c++) {
@@ -970,14 +963,14 @@ static int choose_subarea(preview_data *data, int *chosen)
     int subarea = -1;
     int max_area = -1;
     int i, x, y, w, h;
+    ufraw_image_data *img;
+    GdkRectangle viewport;
 
     /* First of all, find the maximally visible yet unrendered subarea.
      * Refreshing visible subareas in the first place improves visual
      * feedback and overall user experience.
      */
-    ufraw_image_data *img = ufraw_convert_get_final_image(data->UF);
-
-    GdkRectangle viewport;
+    img = ufraw_final_image(data->UF, FALSE);
     gtk_image_view_get_viewport(
         GTK_IMAGE_VIEW(data->PreviewWidget), &viewport);
 
@@ -1027,8 +1020,18 @@ static int choose_subarea(preview_data *data, int *chosen)
     return subarea;
 }
 
-static void create_base_image(preview_data *data);
-
+/*
+ * OpenMP notes:
+ *
+ * render_init() resizes the pixbuf and calls ufraw_final_image() for obtaining
+ * image dimensions. That one calls ufraw_convert_image_area() with a subarea
+ * index for ufraw_first_phase. After this all non-tiled phases are done and
+ * all buffers have been resized so ufraw_convert_image_area() should then be
+ * OpenMP safe.
+ *
+ * Unfortunately ufraw_convert_image_area() still has some OpenMP awareness
+ * which is related to OpenMP here. That should not be necessary.
+ */
 static gboolean render_preview_image(preview_data *data)
 {
     gboolean again = FALSE;
@@ -1036,13 +1039,14 @@ static gboolean render_preview_image(preview_data *data)
 
     if (data->FreezeDialog) return FALSE;
 
-    if (data->UF->Images[ufraw_first_phase].valid==0) {
-	create_base_image(data);
+    if (ufraw_invalidate_layer_event(data->UF, ufraw_first_phase))
 	render_init(data);
-	ufraw_convert_image_init_phase(data->UF);
-    }
-    if (data->RenderSubArea < 0)
-        return FALSE;
+#ifdef HAVE_LENSFUN
+    /* Vignetting is done in the development phase as an optimization
+     * but if development_phase is invalidated then lensfun is too. */
+    if (ufraw_invalidate_layer_event(data->UF, ufraw_lensfun_phase))
+	ufraw_prepare_lensfun(data->UF);
+#endif
 
 #ifdef _OPENMP
 #pragma omp parallel shared(chosen,data) reduction(||:again)
@@ -1081,13 +1085,13 @@ static gboolean render_live_histogram(preview_data *data)
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
     int i, x, y, c, min, max;
     guint8 *p8;
-    ufraw_image_data img = data->UF->Images[ufraw_develop_phase];
+    ufraw_image_data *img = ufraw_final_image(data->UF, TRUE);
     double rgb[3];
     guint64 sum[3], sqr[3];
     int live_his[live_his_size][4];
     memset(live_his, 0, sizeof(live_his));
-    for (i=0; i < img.height*img.width; i++) {
-	p8 = img.buffer + i*img.depth;
+    for (i=0; i < img->height*img->width; i++) {
+	p8 = img->buffer + i*img->depth;
 	for (c=0, max=0, min=0x100; c<3; c++) {
 	    max = MAX(max, p8[c]);
 	    min = MIN(min, p8[c]);
@@ -1216,21 +1220,28 @@ static void calculate_spot(preview_data *data, struct spot *spot,
 
 static gboolean render_spot(preview_data *data)
 {
+    ufraw_image_data *img;
+    int rawDepth, outDepth, width, height;
+    void *rawBuffer, *outBuffer;
+    struct spot spot;
+
     if (data->FreezeDialog) return FALSE;
 
     if (data->SpotX1<0) return FALSE;
     if ( data->SpotX1>=data->UF->rotatedWidth ||
 	 data->SpotY1>=data->UF->rotatedHeight ) return FALSE;
-    int width = data->UF->Images[ufraw_develop_phase].width;
-    int height = data->UF->Images[ufraw_develop_phase].height;
-    int outDepth = data->UF->Images[ufraw_develop_phase].depth;
-    void *outBuffer = data->UF->Images[ufraw_develop_phase].buffer;
-    int rawDepth = data->UF->Images[ufraw_first_phase].depth;
-    void *rawBuffer = data->UF->Images[ufraw_first_phase].buffer;
-    /* We assume that first_phase and final_phase buffer sizes are the same. */
-    /* Scale image coordinates to Images[ufraw_develop_phase] coordinates */
-    struct spot spot;
+    img = ufraw_final_image(data->UF, TRUE);
+    width = img->width;
+    height = img->height;
+    outDepth = img->depth;
+    outBuffer = img->buffer;
+    img = ufraw_rgb_image(data->UF, TRUE, __func__);
+    rawDepth = img->depth;
+    rawBuffer = img->buffer;
+
+    /* TODO: explain and cleanup if necessary */
     calculate_spot(data, &spot, width, height);
+
     guint64 rawSum[4], outSum[3];
     int c, y, x;
     for (c=0; c<3; c++) rawSum[c] = outSum[c] = 0;
@@ -1249,7 +1260,7 @@ static gboolean render_spot(preview_data *data)
     double rgb[5];
     for (c=0; c<3; c++) rgb[c] = outSum[c] / spot.Size;
     /*
-     * Convert RGB pixel value to 0-1 space, intending to reprsent,
+     * Convert RGB pixel value to 0-1 space, intending to represent,
      * absent contrast manipulation and color issues, luminance relative
      * to an 18% grey card at 0.18.
      * The RGB color space is approximately linearized sRGB as it is not
@@ -1478,7 +1489,7 @@ static void curve_update(GtkWidget *widget, long curveType)
 	    *curveeditor_widget_get_curve(data->CurveWidget);
 	CFG->autoBlack = FALSE;
     }
-    preview_invalidate_layer(data, ufraw_develop_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -1497,7 +1508,7 @@ static void spot_wb_event(GtkWidget *widget, gpointer user_data)
     height = gdk_pixbuf_get_height(data->PreviewPixbuf);
     /* Scale image coordinates to pixbuf coordinates */
     calculate_spot(data, &spot, width, height);
-    ufraw_image_data *image = &data->UF->Images[ufraw_first_phase];
+    ufraw_image_data *image = ufraw_rgb_image(data->UF, TRUE, __func__);
 
     for (c=0; c<4; c++) rgb[c] = 0;
     for (y=spot.StartY; y<spot.EndY; y++)
@@ -1518,7 +1529,7 @@ static void spot_wb_event(GtkWidget *widget, gpointer user_data)
     ufraw_set_wb(data->UF);
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
-    preview_invalidate_layer(data, ufraw_develop_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -1536,20 +1547,27 @@ static void remove_hue_event(GtkWidget *widget, gpointer user_data)
     gtk_widget_hide(GTK_WIDGET(data->LightnessAdjustmentTable[i]));
     CFG->lightnessAdjustmentCount--;
 
-    preview_invalidate_layer(data, ufraw_develop_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
     update_scales(data);
 }
 
 static void calculate_hue(preview_data *data, int i)
 {
+    ufraw_image_data *img;
+    int rawDepth;
+    void *rawBuffer;
     float lch[3];
-    int width = data->UF->Images[ufraw_develop_phase].width;
-    int height = data->UF->Images[ufraw_develop_phase].height;
-    int rawDepth = data->UF->Images[ufraw_first_phase].depth;
-    void *rawBuffer = data->UF->Images[ufraw_first_phase].buffer;
-    /* We assume that first_phase and final_phase buffer sizes are the same. */
-    /* Scale image coordinates to Images[ufraw_develop_phase] coordinates */
+    int width, height;
     struct spot spot;
+
+    img = ufraw_final_image(data->UF, FALSE);
+    width = img->width;
+    height = img->height;
+    img = ufraw_rgb_image(data->UF, TRUE, __func__);
+    rawDepth = img->depth;
+    rawBuffer = img->buffer;
+
+    /* TODO: explain and cleanup if necessary */
     calculate_spot(data, &spot, width, height);
 
     guint64 rawSum[4];
@@ -1608,7 +1626,7 @@ static void select_hue_event(GtkWidget *widget, gpointer user_data)
 	    CFG->lightnessAdjustment[i].hue);
     gtk_widget_show_all(GTK_WIDGET(data->LightnessAdjustmentTable[i]));
 
-    preview_invalidate_layer(data, ufraw_develop_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -1810,9 +1828,20 @@ static gboolean preview_scroll_event(GtkWidget *widget, GdkEventScroll *event)
     return TRUE;
 }
 
-static void create_base_image(preview_data *data)
+static void preview_convert_image_raw(ufraw_data *uf, UFRawPhase phase)
 {
+    preview_data *data = uf->Images[phase].producer_data;
     gchar buf[20];
+
+    ufraw_developer_prepare(uf, display_developer);	/* for rgbWB */
+    ufraw_convert_image_raw(uf, phase);
+    g_snprintf(buf, sizeof (buf), "%d", data->UF->hotpixels);
+    gtk_label_set_text(data->HotpixelCount, buf);
+}
+
+static void preview_convert_image_first(ufraw_data *uf, UFRawPhase phase)
+{
+    preview_data *data = uf->Images[phase].producer_data;
     int shrinkSave = CFG->shrink;
     int sizeSave = CFG->size;
     CFG->shrink = zoom_to_scale(CFG->Zoom);
@@ -1824,16 +1853,11 @@ static void create_base_image(preview_data *data)
     } else {
 	CFG->size = 0;
     }
-    preview_invalidate_layer(data, ufraw_first_phase);
-    ufraw_developer_prepare(data->UF, display_developer);
-    ufraw_convert_image_init(data->UF);
-    ufraw_convert_image_first_phase(data->UF, FALSE);
-    ufraw_rotate_image_buffer(&data->UF->Images[ufraw_first_phase],
-	    data->UF->conf->rotationAngle);
+    ufraw_developer_prepare(uf, display_developer);	/* for rgbWB */
+    ufraw_convert_image_first(uf, phase);
+    ufraw_rotate_image_buffer(&uf->Images[phase], uf->conf->rotationAngle);
     CFG->shrink = shrinkSave;
     CFG->size = sizeSave;
-    g_snprintf(buf, sizeof (buf), "%d", data->UF->hotpixels);
-    gtk_label_set_text(data->HotpixelCount, buf);
 }
 
 static void update_shrink_ranges(preview_data *data)
@@ -1994,7 +2018,7 @@ static void zoom_update(GtkAdjustment *adj, gpointer user_data)
 		CFG->Zoom/100.0);
     } else {
 	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
-	preview_invalidate_layer(data, ufraw_first_phase);
+	ufraw_invalidate_layer(data->UF, ufraw_first_phase);
 	render_preview(data);
     }
 }
@@ -2130,7 +2154,7 @@ static void flip_image(GtkWidget *widget, int flip)
     if ( data->RenderSubArea >= 0 ) {
 	/* We are in the middle or a rendering scan,
 	 * so just start from the beginning. */
-	data->RenderSubArea = 0;
+	data->RenderSubArea = 0;	/* TODO: feature does not exist */
     } else {
 	/* Full image was already rendered.
 	 * We only need to draw the flipped image. */
@@ -2409,7 +2433,7 @@ static void set_darkframe_label(preview_data *data)
 static void set_darkframe(preview_data *data)
 {
     set_darkframe_label(data);
-    preview_invalidate_layer(data, ufraw_first_phase);
+    ufraw_invalidate_darkframe_layer(data->UF);
     render_preview(data);
 }
 
@@ -2533,9 +2557,7 @@ static void button_update(GtkWidget *button, gpointer user_data)
 	CFG->green = data->initialGreen;
 	for (c=0; c<4; c++) CFG->chanMul[c] = data->initialChanMul[c];
 
-	UFRawPhase phase = Developer->doWB ?
-		ufraw_develop_phase : ufraw_first_phase;
-    	preview_invalidate_layer(data, phase);
+	ufraw_invalidate_whitebalance_layer(data->UF);
     }
     if (button==data->ResetGammaButton) {
 	CFG->profile[0][CFG->profileIndex[0]].gamma =
@@ -2555,11 +2577,11 @@ static void button_update(GtkWidget *button, gpointer user_data)
     }
     if (button==data->ResetThresholdButton) {
 	CFG->threshold = conf_default.threshold;
-	preview_invalidate_layer(data, ufraw_denoise_phase);
+	ufraw_invalidate_denoise_layer(data->UF);
     }
     if (button==data->ResetHotpixelButton) {
 	CFG->hotpixel = conf_default.hotpixel;
-	preview_invalidate_layer(data, ufraw_first_phase);
+	ufraw_invalidate_hotpixel_layer(data->UF);
     }
     if (button==data->ResetContrastButton) {
         CFG->contrast = conf_default.contrast;
@@ -2615,7 +2637,7 @@ static void button_update(GtkWidget *button, gpointer user_data)
     }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
-    preview_invalidate_layer(data, ufraw_develop_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -2630,7 +2652,7 @@ static void grayscale_update(GtkWidget *button, gpointer user_data)
 	    CFG->grayscaleMode = i;
 
     update_scales(data);
-    preview_invalidate_layer(data, ufraw_develop_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
     (void)user_data;
 }
 
@@ -2692,7 +2714,7 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    CFG->restoreDetails =
 		    (CFG->restoreDetails+1) % restore_types;
 	    restore_details_button_set(GTK_BUTTON(button), data);
-            preview_invalidate_layer(data, ufraw_develop_phase);
+            ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
 	    update_scales(data);
 	}
     } else if (valuep==&CFG->clipHighlights) {
@@ -2702,7 +2724,7 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    CFG->clipHighlights =
 		    (CFG->clipHighlights+1) % highlights_types;
 	    clip_highlights_button_set(GTK_BUTTON(button), data);
-            preview_invalidate_layer(data, ufraw_develop_phase);
+            ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
 	    update_scales(data);
 	}
     } else {
@@ -2711,12 +2733,11 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    start_blink(data);
 	    switch_highlights(data);
 	} else if ( valuep==&CFG->smoothing ) {
-	    if (!Developer->doWB) // !doWB means do interpolate
-        	preview_invalidate_layer(data, ufraw_first_phase);
+	    ufraw_invalidate_smoothing_layer(data->UF);
 	    render_preview(data);
 	} else if ( valuep==&data->UF->mark_hotpixels ) {
 	    if (data->UF->hotpixels) {
-		preview_invalidate_layer(data, ufraw_first_phase);
+		ufraw_invalidate_hotpixel_layer(data->UF);
 		render_preview(data);
 	    }
 	}
@@ -2807,9 +2828,9 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
         CFG->autoExposure = FALSE;
         if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     } else if (valuep==&CFG->threshold) {
-	preview_invalidate_layer(data, ufraw_denoise_phase);
+	ufraw_invalidate_denoise_layer(data->UF);
     } else if (valuep==&CFG->hotpixel) {
-	preview_invalidate_layer(data, ufraw_first_phase);
+	ufraw_invalidate_hotpixel_layer(data->UF);
     } else {
         if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
         if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
@@ -2830,7 +2851,7 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
         data->shrink = (double)croppedWidth / data->width;
     }
 
-    preview_invalidate_layer(data, ufraw_develop_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -2923,7 +2944,14 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
 	data->SpotY1 = -1;
 	data->SpotY2 = -1;
     }
-    preview_invalidate_layer(data, ufraw_first_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_rotate_phase);
+
+    /* render_init() will resize the pixbuf when it detects that the future
+     * final image will get a different size. This is required for
+     * fix_crop_aspect() and update_crop_ranges() because they attempt to draw.
+     * Unfortunately the image is not yet there, causing some crap to appear
+     * during a short time (try rotate -90 followed by -9). */
+    render_init(data);
     if (CFG->CropX2 > data->UF->rotatedWidth)
 	fix_crop_aspect(data, top_right_cursor);
     else if (CFG->CropY2 > data->UF->rotatedHeight)
@@ -3124,7 +3152,7 @@ static void combo_update(GtkWidget *combo, gint *valuep)
     }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
-    preview_invalidate_layer(data, ufraw_develop_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
     update_scales(data);
 }
 
@@ -3136,10 +3164,7 @@ static void combo_update_simple(GtkWidget *combo, UFRawPhase phase)
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
 
-    if (phase==ufraw_first_phase && Developer->doWB)
-	// doWB means don't interpolate
-	phase = ufraw_develop_phase;
-    preview_invalidate_layer(data, phase);
+    ufraw_invalidate_layer(data->UF, phase);
     update_scales(data);
 }
 
@@ -3512,7 +3537,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
 	ufraw_focus(optionsDialog, FALSE);
 	gtk_widget_destroy(optionsDialog);
 	start_blink(data);
-        preview_invalidate_layer(data, ufraw_develop_phase);
+	ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
 	render_preview(data);
 	return;
     }
@@ -3701,7 +3726,7 @@ static void control_button_event(GtkWidget *widget, long type)
     // cases that set error status require redrawing of the preview image
     if ( status!=UFRAW_SUCCESS ) {
 	preview_progress(widget, "", 0);
-	create_base_image(data);
+	ufraw_invalidate_layer(data->UF, ufraw_raw_phase);
     } else if ( response!=UFRAW_NO_RESPONSE ) {
 	g_object_set_data(G_OBJECT(window), "WindowResponse",
 		(gpointer)response);
@@ -3709,6 +3734,8 @@ static void control_button_event(GtkWidget *widget, long type)
     }
     data->FreezeDialog = FALSE;
     gtk_widget_set_sensitive(data->Controls, TRUE);
+    if ( status!=UFRAW_SUCCESS )
+	render_preview(data);
 }
 
 static gboolean control_button_key_press_event(
@@ -5466,11 +5493,19 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     ufraw_load_raw(uf);
     gtk_widget_set_sensitive(data->Controls, TRUE);
 
-    create_base_image(data);
+    ufraw_image_data *img;
+    img = &uf->Images[ufraw_raw_phase];
+    img->producer = preview_convert_image_raw;
+    img->producer_data = data;
+    img = &uf->Images[ufraw_first_phase];
+    img->producer = preview_convert_image_first;
+    img->producer_data = data;
+    ufraw_developer_prepare(uf, display_developer);
 
     /* Collect raw histogram data */
     memset(data->raw_his, 0, sizeof(data->raw_his));
-    ufraw_image_data *image = &data->UF->Images[ufraw_first_phase];
+    /* minor issue: this triggers the first phase conversion too soon */
+    ufraw_image_data *image = ufraw_rgb_image(data->UF, TRUE, NULL);
     for (i=0; i<image->height*image->width; i++) {
 	    guint16 *buf = (guint16*)(image->buffer+i*image->depth);
 	    for (c=0; c<data->UF->colors; c++)

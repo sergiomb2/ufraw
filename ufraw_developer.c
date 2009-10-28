@@ -41,7 +41,6 @@ developer_data *developer_init()
     int i;
     developer_data *d = g_new(developer_data,1);
     d->mode = -1;
-    d->doWB = 1;
     d->gamma = -1;
     d->linear = -1;
     d->saturation = -1;
@@ -735,10 +734,8 @@ void uf_raw_to_cielch(const developer_data *d,
 
     for (c = 0; c < d->colors; ++c) {
 	tmp[c] = raw[c];
-	if (d->doWB) {
-	    tmp[c] *= d->rgbWB[c];
-	    tmp[c] /= 0x10000;
-	}
+	tmp[c] *= d->rgbWB[c];
+	tmp[c] /= 0x10000;
     }
     cond_apply_matrix(d, tmp, tmp);
     for (c = 0; c < 3; ++c)
@@ -873,10 +870,8 @@ void develop_linear(guint16 in[4], guint16 out[3], developer_data *d)
     for (c=0; c<d->colors; c++) {
 	/* Set WB, normalizing tmppix[c]<0x10000 */
 	tmppix[c] = in[c];
-	if (d->doWB) {
-	    tmppix[c] *= d->rgbWB[c];
-	    tmppix[c] /= 0x10000;
-	}
+	tmppix[c] *= d->rgbWB[c];
+	tmppix[c] /= 0x10000;
 	if ( d->restoreDetails!=clip_details &&
 	    tmppix[c] > d->max ) {
 	    clipped = TRUE;

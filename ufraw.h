@@ -70,7 +70,7 @@ typedef enum { display_developer, file_developer, auto_developer }
 	DeveloperMode;
 typedef enum { perceptual_intent, relative_intent, saturation_intent,
 	absolute_intent, disable_intent } Intent;
-typedef enum { ufraw_first_phase, ufraw_denoise_phase, ufraw_develop_phase,
+typedef enum { ufraw_raw_phase, ufraw_first_phase, ufraw_develop_phase,
         ufraw_lensfun_phase, ufraw_phases_num } UFRawPhase;
 typedef enum { grayscale_none, grayscale_lightness, grayscale_luminance,
 	grayscale_value, grayscale_mixer } GrayscaleMode;
@@ -93,7 +93,7 @@ typedef struct {
     DeveloperMode mode;
     unsigned rgbMax, max, exposure, colors, useMatrix;
     int restoreDetails, clipHighlights;
-    int doWB, rgbWB[4], colorMatrix[3][4];
+    int rgbWB[4], colorMatrix[3][4];
     double gamma, linear;
     char profileFile[profile_types][max_path];
     void *profile[profile_types];
@@ -246,6 +246,10 @@ typedef struct {
        sizes are determined by dividing the width by 4 and height by 8.
        This field must always contain at least 32 bits. */
     long valid;
+    gboolean rgbg;
+    gboolean invalidate_event;
+    void (*producer)(struct ufraw_struct *uf, UFRawPhase phase);
+    void *producer_data;
 } ufraw_image_data;
 
 typedef struct ufraw_struct {
@@ -256,7 +260,6 @@ typedef struct ufraw_struct {
     int rotatedHeight, rotatedWidth;
     gboolean LoadingID; /* Indication that we are loading an ID file */
     float rgb_cam[3][4];
-    int ConvertShrink;
     ufraw_image_data Images[ufraw_phases_num];
     ufraw_image_data thumb;
     void *raw;
@@ -281,6 +284,7 @@ typedef struct ufraw_struct {
 #endif /* HAVE_LENSFUN */
     int hotpixels;
     gboolean mark_hotpixels;
+    unsigned raw_multiplier;
 } ufraw_data;
 
 extern const conf_data conf_default;
@@ -300,14 +304,27 @@ int ufraw_load_raw(ufraw_data *uf);
 int ufraw_load_darkframe(ufraw_data *uf);
 void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode);
 int ufraw_convert_image(ufraw_data *uf);
-int ufraw_convert_image_init(ufraw_data *uf);
-int ufraw_convert_image_first_phase(ufraw_data *uf, gboolean lensfix);
-int ufraw_convert_image_init_phase(ufraw_data *uf);
-ufraw_image_data *ufraw_convert_get_final_image(ufraw_data *uf);
+void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase);
+void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase);
+#ifdef HAVE_LENSFUN
+int ufraw_prepare_lensfun(ufraw_data *uf);
+#endif
+void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
+	const char *formats, const char *caller);
+ufraw_image_data *ufraw_rgb_image(ufraw_data *uf, gboolean bufferok,
+	const char *dbg);
+ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok);
 ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 	UFRawPhase phase);
 void ufraw_close(ufraw_data *uf);
 int ufraw_flip_image(ufraw_data *uf, int flip);
+void ufraw_invalidate_layer(ufraw_data *uf, UFRawPhase phase);
+void ufraw_invalidate_hotpixel_layer(ufraw_data *uf);
+void ufraw_invalidate_denoise_layer(ufraw_data *uf);
+void ufraw_invalidate_darkframe_layer(ufraw_data *uf);
+void ufraw_invalidate_whitebalance_layer(ufraw_data *uf);
+void ufraw_invalidate_smoothing_layer(ufraw_data *uf);
+gboolean ufraw_invalidate_layer_event(ufraw_data *uf, UFRawPhase phase);
 int ufraw_set_wb(ufraw_data *uf);
 void ufraw_auto_expose(ufraw_data *uf);
 void ufraw_auto_black(ufraw_data *uf);

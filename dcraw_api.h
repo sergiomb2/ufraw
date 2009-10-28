@@ -65,15 +65,16 @@ void dcraw_set_progress_handle(dcraw_data *h,
 int dcraw_load_raw(dcraw_data *h);
 int dcraw_load_thumb(dcraw_data *h, dcraw_image_data *thumb);
 int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *h,
-			  dcraw_data *dark, int scale);
+			  int scale);
 int dcraw_image_resize(dcraw_image_data *image, int size);
 int dcraw_image_stretch(dcraw_image_data *image, double pixel_aspect);
 int dcraw_flip_image(dcraw_image_data *image, int flip);
 int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB);
 void dcraw_wavelet_denoise(dcraw_data *h, float threshold);
 void dcraw_wavelet_denoise_shrinked(dcraw_image_data *f, float threshold);
+void dcraw_finalize_raw(dcraw_data *h, dcraw_data *dark, int rgbWB[4]);
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
-	dcraw_data *dark, int interpolation, int smoothing, int rgbWB[4]);
+	int interpolation, int smoothing);
 void dcraw_close(dcraw_data *h);
 int dcraw_image_dimensions(dcraw_data *raw, int flip, int *height, int *width);
 
