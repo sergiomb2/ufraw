@@ -440,7 +440,7 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
 	f4 = hh->fourColorFilters;
 
 #ifdef _OPENMP
-  #pragma omp parallel for schedule(static,64) private(r,ri,fseq,c,pixp)
+#pragma omp parallel for schedule(static) private(r,ri,fseq,c,pixp)
 #endif
 	for (r = 0; r < h; ++r) {
 	    for (ri = 0; ri < scale; ++ri)
@@ -458,7 +458,7 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
 	f->image = (dcraw_image_type *)g_realloc(
 			f->image, h * w * sizeof(dcraw_image_type));
 #ifdef _OPENMP
-  #pragma omp parallel for schedule(static,64) private(r,ibase,obase,c)
+#pragma omp parallel for schedule(static) private(r,ibase,obase,c)
 #endif
 	for (r = 0; r < h; ++r) {
 	    ibase = hh->raw.image + r * hh->raw.width * scale;
@@ -636,7 +636,7 @@ void dcraw_finalize_raw(dcraw_data *h, dcraw_data *dark, int rgbWB[4])
 	    }
     } else {
 #ifdef _OPENMP
-#pragma omp parallel for schedule(static,64) default(none) \
+#pragma omp parallel for schedule(static) default(none) \
   shared(h,dark,rgbWB,pixels,f4,black) \
   private(r,base,fseq,c,cc,px)
 #endif
