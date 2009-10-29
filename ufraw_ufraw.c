@@ -1043,7 +1043,8 @@ void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase)
 	    img->height, raw->raw.colors, raw->rgbMax);
     rawimage = raw->raw.image;
     raw->raw.image = (dcraw_image_type *)img->buffer;
-    dcraw_wavelet_denoise(raw, uf->conf->threshold);
+    /* The threshold is scaled for compatibility */
+    dcraw_wavelet_denoise(raw, uf->conf->threshold * sqrt(uf->raw_multiplier));
     dcraw_finalize_raw(raw, dark, uf->developer->rgbWB);
     raw->raw.image = rawimage;
 }
