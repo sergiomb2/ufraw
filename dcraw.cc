@@ -7190,6 +7190,7 @@ canon_cr2:
     height -= 3;
     width  -= 4;
   } else if (!strcmp(model,"D3")   ||
+	     !strcmp(model,"D3S")  ||
 	     !strcmp(model,"D700")) {
     width -= 4;
     left_margin = 2;
