@@ -651,8 +651,6 @@ void ufraw_close(ufraw_data *uf)
     dcraw_close(uf->raw);
     g_free(uf->unzippedBuf);
     g_free(uf->raw);
-    /* We cannot free uf->conf since it might be accessed after the close */
-//    g_free(uf->conf);
     g_free(uf->inputExifBuf);
     g_free(uf->outputExifBuf);
     int i;
@@ -666,6 +664,7 @@ void ufraw_close(ufraw_data *uf)
 	ufraw_close(uf->conf->darkframe);
 	g_free(uf->conf->darkframe);
     }
+    g_free(uf->conf);
     ufraw_message_reset(uf);
     ufraw_message(UFRAW_CLEAN, NULL);
 }

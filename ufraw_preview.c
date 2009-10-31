@@ -5500,6 +5500,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     // Allocate the preview pixbuf
     data->PreviewPixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
 	    preview_width, preview_height);
+    gdk_pixbuf_fill(data->PreviewPixbuf, 0);
     gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
 	    data->PreviewPixbuf, FALSE);
     g_object_unref(data->PreviewPixbuf);
@@ -5590,12 +5591,16 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 	    /* Save configuration from CFG, but not the output filename. */
 	    strcpy(CFG->outputFilename, "");
 	    conf_save(CFG, NULL, NULL);
+	    conf_copy_image(RC, CFG);
+	    conf_copy_save(RC, CFG);
 	/* If save 'only this once' was chosen, then so be it */
 	} else if ( CFG->saveConfiguration==apply_state ) {
 	    CFG->saveConfiguration = disabled_state;
 	    /* Save configuration from CFG, but not the output filename. */
 	    strcpy(CFG->outputFilename, "");
 	    conf_save(CFG, NULL, NULL);
+	    conf_copy_image(RC, CFG);
+	    conf_copy_save(RC, CFG);
 	} else if ( CFG->saveConfiguration==disabled_state ) {
 	    /* If save 'never again' was set in this session, we still
 	     * need to save this setting */
