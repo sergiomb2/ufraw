@@ -1169,7 +1169,7 @@ static void ufraw_convert_prepare_buffers(ufraw_data *uf)
     ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
     ufraw_image_data *img;
 
-    /* Development image layer */
+    /* Development output image layer */
     img = &uf->Images[ufraw_develop_phase];
     if (img->height != FirstImage->height ||
         img->width != FirstImage->width ||
@@ -1197,6 +1197,24 @@ static void ufraw_convert_prepare_buffers(ufraw_data *uf)
     /* ignore uf->modifier to avoid a call dependency */
     img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
 #endif /* HAVE_LENSFUN */
+
+    img = &uf->Images[ufraw_display_phase];
+    if (img->height != FirstImage->height ||
+	img->width != FirstImage->width ||
+	!img->buffer)
+	img->valid = 0;
+
+    img->height = FirstImage->height;
+    img->width = FirstImage->width;
+    img->depth = 3;
+    img->rowstride = img->width * img->depth;
+    // TODO: We should be able to allocate a buffer only if it is needed.
+//    if (uf->developer->working2displayTransform == NULL) {
+//	g_free(img->buffer);
+//	img->buffer = NULL;
+//    } else {
+	img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
+//    }
 }
 
 #ifdef HAVE_LENSFUN
@@ -1319,6 +1337,44 @@ ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok)
     }
     return &uf->Images[phase];
 }
+
+ufraw_image_data *ufraw_display_image(ufraw_data *uf, gboolean bufferok)
+{
+    UFRawPhase phase = ufraw_display_phase;
+    if (uf->developer->working2displayTransform == NULL) {
+#ifdef HAVE_LENSFUN
+	if (uf->modifier &&
+	    (uf->postproc_ops & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
+	    phase = ufraw_lensfun_phase;
+	else
+	    phase = ufraw_develop_phase;
+#else /* HAVE_LENSFUN */
+	phase = ufraw_develop_phase;
+#endif /* HAVE_LENSFUN */
+    }
+    if (bufferok) {
+	    /* It should never be necessary to actually finish the conversion
+	     * because it can break render_preview_image() which uses the
+	     * final image "valid" mask for deciding what to update in the
+	     * pixbuf. That can be fixed but is suboptimal anyway. The best
+	     * we can do is print a warning in case we need to finish the
+	     * conversion and finish it here. */
+	if (uf->Images[phase].valid != (long)0xffffffff) {
+	    g_warning("%s: fixing unfinished conversion.\n", G_STRFUNC);
+	    int i;
+	    for (i = 0; i < 32; ++i)
+		ufraw_convert_image_area(uf, i, phase);
+	}
+    } else {
+	if (uf->Images[phase].valid == 0) {
+	    g_warning("%s: starting conversion.\n", G_STRFUNC);
+	    /* this will update all buffer sizes (e.g. due to rotate) */
+	    ufraw_convert_image_area(uf, 0, ufraw_first_phase);
+	}
+    }
+    return &uf->Images[phase];
+}
+
 
 ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 	UFRawPhase phase)
@@ -1478,6 +1534,18 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
             return in;
 #endif /* HAVE_LENSFUN */
 
+        case ufraw_display_phase:
+	    if (uf->developer->working2displayTransform == NULL)
+		return in;
+
+            int yy;
+            for (yy = y; yy < y + h; yy++) {
+                guint8 *dest = out->buffer + (yy * out->width + x) * out->depth;
+                guint8 *source = in->buffer + (yy * in->width + x) * in->depth;
+                develop_display(dest, source, uf->developer, w);
+	    }
+	    break;
+
         default:
 	    g_warning("%s: invalid phase %d\n", G_STRFUNC, phase);
             return in;
@@ -1627,6 +1695,8 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
 	(uf->postproc_ops & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
 	ufraw_flip_image_buffer(&uf->Images[ufraw_lensfun_phase], flip);
 #endif /* HAVE_LENSFUN */
+    if (uf->developer->working2displayTransform != NULL)
+	ufraw_flip_image_buffer(&uf->Images[ufraw_display_phase], flip);
 
     return UFRAW_SUCCESS;
 }

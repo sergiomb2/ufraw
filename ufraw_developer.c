@@ -63,6 +63,7 @@ developer_data *developer_init()
     d->intent[display_profile] = -1;
     d->updateTransform = TRUE;
     d->colorTransform = NULL;
+    d->working2displayTransform = NULL;
     d->rgbtolabTransform = NULL;
     d->grayscaleMode = -1;
     d->grayscaleMixer[0] = d->grayscaleMixer[1] = d->grayscaleMixer[2] = -1;
@@ -88,6 +89,8 @@ void developer_destroy(developer_data *d)
     cmsCloseProfile(d->adjustmentProfile);
     if (d->colorTransform!=NULL)
 	cmsDeleteTransform(d->colorTransform);
+    if (d->working2displayTransform!=NULL)
+	cmsDeleteTransform(d->working2displayTransform);
     if (d->rgbtolabTransform!=NULL)
 	cmsDeleteTransform(d->rgbtolabTransform);
     g_free(d);
@@ -329,96 +332,77 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
     if ( !d->updateTransform )
 	return;
     d->updateTransform = FALSE;
+    /* Create transformations according to mode:
+     * auto_developer|output_developer:
+     *	    colorTransformation from in to out
+     *	    working2displayTransform is null
+     * display_developer:
+     *	    with softproofing:
+     *	        colorTransformation from in to out
+     *	        working2displayTransform from out to display
+     *	    without softproofing:
+     *	        colorTransformation from in to display
+     *	        working2displayTransform is null
+     */
+    int targetProfile;
+    if ( mode == display_developer
+      && d->intent[display_profile] == disable_intent ) {
+	targetProfile = display_profile;
+    } else {
+	targetProfile = out_profile;
+    }
     if (d->colorTransform!=NULL)
 	cmsDeleteTransform(d->colorTransform);
-    if (d->rgbtolabTransform!=NULL)
-	cmsDeleteTransform(d->rgbtolabTransform);
-
-    int targetProfile;
-    if ( mode==file_developer || mode==auto_developer ) {
-	targetProfile = out_profile;
-    } else { /* mode==display_developer */
-	targetProfile = display_profile;
-    }
-    /* When softproofing is disabled, use the out_profile intent. */
-    if ( mode==file_developer || mode==auto_developer ||
-	 d->intent[display_profile]==disable_intent ) {
-	/* No need for proofing transformation. */
-	if ( strcmp(d->profileFile[in_profile],"")==0 &&
-	     strcmp(d->profileFile[targetProfile],"")==0 &&
-	     d->luminosityProfile==NULL &&
-	     d->adjustmentProfile==NULL &&
-	     d->saturationProfile==NULL ) {
-	    /* No transformation at all. */
-	    d->colorTransform = NULL;
+    if ( strcmp(d->profileFile[in_profile],"")==0 &&
+	 strcmp(d->profileFile[targetProfile],"")==0 &&
+	 d->luminosityProfile==NULL &&
+	 d->adjustmentProfile==NULL &&
+	 d->saturationProfile==NULL ) {
+	/* No transformation at all. */
+	d->colorTransform = NULL;
 #if defined(LCMS_VERSION) && LCMS_VERSION <= 113 /* Bypass a lcms 1.13 bug. */
-	} else if ( d->luminosityProfile==NULL
-		    && d->adjustmentProfile==NULL
-		    && d->saturationProfile==NULL ) {
-	    d->colorTransform = cmsCreateTransform(
-		    d->profile[in_profile], TYPE_RGB_16,
-		    d->profile[targetProfile], TYPE_RGB_16,
-		    d->intent[out_profile], 0);
-#endif
-	} else {
-	    cmsHPROFILE prof[5];
-	    int i = 0;
-	    prof[i++] = d->profile[in_profile];
-	    if ( d->luminosityProfile!=NULL )
-		prof[i++] = d->luminosityProfile;
-	    if ( d->adjustmentProfile!=NULL )
-		prof[i++] = d->adjustmentProfile;
-	    if ( d->saturationProfile!=NULL )
-		prof[i++] = d->saturationProfile;
-	    prof[i++] = d->profile[targetProfile];
-	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
-		    TYPE_RGB_16, TYPE_RGB_16, d->intent[out_profile], 0);
-	}
-    } else {
-	/* Create a proofing profile */
-	if ( d->luminosityProfile==NULL
+    } else if ( d->luminosityProfile==NULL
 	     && d->adjustmentProfile==NULL
 	     && d->saturationProfile==NULL ) {
-	    /* No intermediate profiles, we can use lcms proofing directly. */
-	    d->colorTransform = cmsCreateProofingTransform(
-		    d->profile[in_profile], TYPE_RGB_16,
-		    d->profile[display_profile], TYPE_RGB_16,
-		    d->profile[out_profile],
-		    d->intent[out_profile], d->intent[display_profile],
-		    cmsFLAGS_SOFTPROOFING);
-	} else {
-	    /* Following code imitates the function
-	     * cmsCreateMultiprofileProofingTransform(),
-	     * which does not exist in lcms. */
-	    cmsHPROFILE prof[4];
-	    int i = 0;
-	    prof[i++] = d->profile[in_profile];
-	    if ( d->luminosityProfile!=NULL )
-		prof[i++] = d->luminosityProfile;
-	    if ( d->adjustmentProfile!=NULL )
-		prof[i++] = d->adjustmentProfile;
-	    if ( d->saturationProfile!=NULL )
-		prof[i++] = d->saturationProfile;
-	    d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
-		    TYPE_RGB_16, NOCOLORSPACECHECK(TYPE_RGB_16),
-		    d->intent[out_profile], cmsFLAGS_SOFTPROOFING);
-
-	    prof[0] = cmsTransform2DeviceLink(d->colorTransform,
-		    cmsFLAGS_GUESSDEVICECLASS);
-	    cmsDeleteTransform(d->colorTransform);
-	    d->colorTransform = cmsCreateProofingTransform(
-		    prof[0], TYPE_RGB_16,
-		    d->profile[display_profile], TYPE_RGB_16,
-		    d->profile[out_profile],
-		    d->intent[out_profile], d->intent[display_profile],
-		    cmsFLAGS_SOFTPROOFING);
-	}
+	d->colorTransform = cmsCreateTransform(
+		d->profile[in_profile], TYPE_RGB_16,
+		d->profile[targetProfile], TYPE_RGB_16,
+		d->intent[out_profile], 0);
+#endif
+    } else {
+	cmsHPROFILE prof[5];
+	int i = 0;
+	prof[i++] = d->profile[in_profile];
+	if ( d->luminosityProfile!=NULL )
+	    prof[i++] = d->luminosityProfile;
+	if ( d->adjustmentProfile!=NULL )
+	    prof[i++] = d->adjustmentProfile;
+	if ( d->saturationProfile!=NULL )
+	    prof[i++] = d->saturationProfile;
+	prof[i++] = d->profile[targetProfile];
+	d->colorTransform = cmsCreateMultiprofileTransform(prof, i,
+		TYPE_RGB_16, TYPE_RGB_16, d->intent[out_profile], 0);
     }
-    d->rgbtolabTransform = cmsCreateTransform(d->profile[in_profile], 
-					      TYPE_RGB_16,
-					      cmsCreateLabProfile(cmsD50_xyY()),
-					      TYPE_Lab_16,
-					      INTENT_ABSOLUTE_COLORIMETRIC, 0);
+
+    if (d->working2displayTransform != NULL)
+	cmsDeleteTransform(d->working2displayTransform);
+    if ( mode == display_developer
+      && d->intent[display_profile] != disable_intent
+      && strcmp(d->profileFile[out_profile],
+	  d->profileFile[display_profile]) != 0 ) {
+	// TODO: We should use TYPE_RGB_'bit_depth' for working profile.
+	d->working2displayTransform = cmsCreateTransform(
+		d->profile[out_profile], TYPE_RGB_8,
+		d->profile[display_profile], TYPE_RGB_8,
+		d->intent[display_profile], 0);
+    } else {
+	d->working2displayTransform = NULL;
+    }
+ 
+    if (d->rgbtolabTransform == NULL)
+	d->rgbtolabTransform = cmsCreateTransform(d->profile[in_profile], 
+		TYPE_RGB_16, cmsCreateLabProfile(cmsD50_xyY()),
+		TYPE_Lab_16, INTENT_ABSOLUTE_COLORIMETRIC, 0);
 }
 
 static gboolean test_adjustments(const lightness_adjustment values[max_adjustments],
@@ -822,6 +806,14 @@ void develop(void *po, guint16 pix[4], developer_data *d, int mode, int count)
 	guint8 *p8 = po;
 	for (i=0; i<3*count; i++) p8[i] = buf[i] >> 8;
     }
+}
+
+void develop_display(void *pout, void *pin, developer_data *d, int count)
+{
+    if (d->working2displayTransform == NULL)
+	g_error("develop_display: working2displayTransform == NULL");
+
+    cmsDoTransform(d->working2displayTransform, pin, pout, count);
 }
 
 static void develop_grayscale(guint16 *pixel, const developer_data *d)

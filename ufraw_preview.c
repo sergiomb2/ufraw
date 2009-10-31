@@ -542,9 +542,6 @@ static void preview_draw_area(preview_data *data,
 		x+width, pixbufWidth);
     if ( width==0 ) return; // Nothing to do
 
-    int rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
-    guint8 *pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf);
-    guint8 *p8;
     gboolean blinkOver = CFG->overExp &&
 	    ( !CFG->blinkOverUnder || (data->OverUnderTicker & 3) == 1 );
     gboolean blinkUnder = CFG->underExp &&
@@ -567,18 +564,24 @@ static void preview_draw_area(preview_data *data,
     int SpotY2 =  ceil(MAX(data->SpotY1, data->SpotY2) * scale_y);
     int SpotX1 = floor(MIN(data->SpotX1, data->SpotX2) * scale_x);
     int SpotX2 =  ceil(MAX(data->SpotX1, data->SpotX2) * scale_x);
-    int xx, yy, c;
 
+    int rowstride = gdk_pixbuf_get_rowstride(data->PreviewPixbuf);
+    guint8 *pixies = gdk_pixbuf_get_pixels(data->PreviewPixbuf) + x*3;
     /* This is bad. `img' should have been a parameter because we
      * cannot request an up to date buffer but it must be up to
      * date to some extend. In theory we could get the wrong buffer */
-    ufraw_image_data *img = ufraw_final_image(data->UF, FALSE);
+    ufraw_image_data *displayImage = ufraw_display_image(data->UF, FALSE);
+    guint8 *displayPixies = displayImage->buffer + x*displayImage->depth;
+    ufraw_image_data *workingImage = ufraw_final_image(data->UF, FALSE);
+    guint8 *workingPixies = workingImage->buffer + x*workingImage->depth;
 
+    int xx, yy, c;
     for (yy=y; yy<y+height; yy++) {
-	p8 = pixies+yy*rowstride+x*3;
-	memcpy(p8, img->buffer + yy*img->rowstride + x*img->depth,
-		width*img->depth);
-	for (xx=x; xx<x+width; xx++, p8+=3) {
+	guint8 *p8 = pixies + yy*rowstride;
+	memcpy(p8, displayPixies + yy*displayImage->rowstride,
+		width*displayImage->depth);
+	guint8 *p8working = workingPixies + yy*workingImage->rowstride;
+	for (xx=x; xx<x+width; xx++, p8+=3, p8working+=workingImage->depth) {
 	    if ( data->SpotDraw &&
 	         ( ((yy==SpotY1-1 || yy==SpotY2) && xx>=SpotX1-1 && xx<=SpotX2)
 		   ||
@@ -596,11 +599,14 @@ static void preview_draw_area(preview_data *data,
 		 ((xx==CropX1-1 || xx==CropX2) && yy>=CropY1-1 && yy<=CropY2) )
 	    {
 		p8[0] = p8[1] = p8[2] = 255;
+		continue;
 	    }
 	    /* Shade the cropped out area */
 	    else if ( yy<CropY1 || yy>=CropY2 || xx<CropX1 || xx>=CropX2 ) {
 		for (c=0; c<3; c++) p8[c] = p8[c]/4;
-	    } else if (data->RenderMode==render_default) {
+		continue;
+	    }
+	    if (data->RenderMode==render_default) {
 		/* Shade out the alignment lines */
 		if ( CFG->drawLines &&
 		     yy > CropY1 + 1 && yy < CropY2 - 2 &&
@@ -618,14 +624,14 @@ static void preview_draw_area(preview_data *data,
 		    }
 		}
 		/* Blink the overexposed/underexposed spots */
-		if ( blinkOver && (p8[0]==255 || p8[1]==255 || p8[2]==255) )
+		if ( blinkOver && (p8working[0]==255 || p8working[1]==255 || p8working[2]==255) )
 		    p8[0] = p8[1] = p8[2] = 0;
-		else if ( blinkUnder && (p8[0]==0 || p8[1]==0 || p8[2]==0) )
+		else if ( blinkUnder && (p8working[0]==0 || p8working[1]==0 || p8working[2]==0) )
 		    p8[0] = p8[1] = p8[2] = 255;
 	    } else if (data->RenderMode==render_overexposed) {
-		for (c=0; c<3; c++) if (p8[c]!=255) p8[c] = 0;
+		for (c=0; c<3; c++) if (p8working[c]!=255) p8[c] = 0;
 	    } else if (data->RenderMode==render_underexposed) {
-		for (c=0; c<3; c++) if (p8[c]!=0) p8[c] = 255;
+		for (c=0; c<3; c++) if (p8working[c]!=0) p8[c] = 255;
 	    }
 	}
     }
@@ -1081,17 +1087,24 @@ static gboolean render_live_histogram(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
 
-    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    int i, x, y, c, min, max;
-    guint8 *p8;
+    int x, y, c, min, max;
     ufraw_image_data *img = ufraw_final_image(data->UF, TRUE);
+
+    /* Scale crop image coordinates to pixbuf coordinates */
+    float scale_x = ((float)img->width) / data->UF->rotatedWidth;
+    float scale_y = ((float)img->height) / data->UF->rotatedHeight;
+    int CropY1 = floor(CFG->CropY1 * scale_y);
+    int CropY2 =  ceil(CFG->CropY2 * scale_y);
+    int CropX1 = floor(CFG->CropX1 * scale_x);
+    int CropX2 =  ceil(CFG->CropX2 * scale_x);
+
     double rgb[3];
     guint64 sum[3], sqr[3];
     int live_his[live_his_size][4];
     memset(live_his, 0, sizeof(live_his));
-    for (i=0; i < img->height*img->width; i++) {
-	p8 = img->buffer + i*img->depth;
+    for (y=CropY1; y < CropY2; y++)
+    for (x=CropX1; x < CropX2; x++) {
+	guint8 *p8 = img->buffer + y*img->rowstride + x*img->depth;
 	for (c=0, max=0, min=0x100; c<3; c++) {
 	    max = MAX(max, p8[c]);
 	    min = MIN(min, p8[c]);
@@ -1171,17 +1184,19 @@ static gboolean render_live_histogram(preview_data *data)
 		    pix[c] = 96; /* gray */
 	}
     gtk_widget_queue_draw(data->LiveHisto);
+
+    int CropCount = (CropX2 - CropX1) * (CropY2 - CropY1);
     for (c=0; c<3; c++)
-	rgb[c] = sum[c]/height/width;
+	rgb[c] = sum[c]/CropCount;
     color_labels_set(data->AvrLabels, rgb);
     for (c=0; c<3; c++)
-	rgb[c] = sqrt(sqr[c]/height/width-rgb[c]*rgb[c]);
+	rgb[c] = sqrt(sqr[c]/CropCount - rgb[c]*rgb[c]);
     color_labels_set(data->DevLabels, rgb);
     for (c=0; c<3; c++)
-	rgb[c] = 100.0*live_his[live_his_size-1][c]/height/width;
+	rgb[c] = 100.0*live_his[live_his_size-1][c]/CropCount;
     color_labels_set(data->OverLabels, rgb);
     for (c=0; c<3; c++)
-	rgb[c] = 100.0*live_his[0][c]/height/width;
+	rgb[c] = 100.0*live_his[0][c]/CropCount;
     color_labels_set(data->UnderLabels, rgb);
 
     return FALSE;
@@ -1985,6 +2000,8 @@ static void update_crop_ranges(preview_data *data)
 		(GSourceFunc)(preview_draw_crop), data, NULL);
     }
     update_shrink_ranges(data);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
+	    (GSourceFunc)(render_live_histogram), data, NULL);
 }
 
 static void crop_reset(GtkWidget *widget, gpointer user_data)

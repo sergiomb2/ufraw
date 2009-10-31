@@ -71,7 +71,7 @@ typedef enum { display_developer, file_developer, auto_developer }
 typedef enum { perceptual_intent, relative_intent, saturation_intent,
 	absolute_intent, disable_intent } Intent;
 typedef enum { ufraw_raw_phase, ufraw_first_phase, ufraw_develop_phase,
-        ufraw_lensfun_phase, ufraw_phases_num } UFRawPhase;
+        ufraw_lensfun_phase, ufraw_display_phase, ufraw_phases_num } UFRawPhase;
 typedef enum { grayscale_none, grayscale_lightness, grayscale_luminance,
 	grayscale_value, grayscale_mixer } GrayscaleMode;
 
@@ -100,6 +100,7 @@ typedef struct {
     Intent intent[profile_types];
     gboolean updateTransform;
     void *colorTransform;
+    void *working2displayTransform;
     void *rgbtolabTransform;
     double saturation;
     double contrast;
@@ -314,6 +315,7 @@ void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
 ufraw_image_data *ufraw_rgb_image(ufraw_data *uf, gboolean bufferok,
 	const char *dbg);
 ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok);
+ufraw_image_data *ufraw_display_image(ufraw_data *uf, gboolean bufferok);
 ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 	UFRawPhase phase);
 void ufraw_close(ufraw_data *uf);
@@ -411,6 +413,7 @@ void developer_prepare(developer_data *d, conf_data *conf,
     int rgbMax, float rgb_cam[3][4], int colors, int useMatrix,
     DeveloperMode mode);
 void develop(void *po, guint16 pix[4], developer_data *d, int mode, int count);
+void develop_display(void *pout, void *pin, developer_data *d, int count);
 void develop_linear(guint16 in[4], guint16 out[3], developer_data *d);
 
 /* prototype for functions in ufraw_saver.c */
