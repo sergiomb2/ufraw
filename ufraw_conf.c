@@ -156,8 +156,10 @@ static const char *intentNames[] =
     { "perceptual", "relative", "saturation", "absolute", "disable", NULL };
 static const char *grayscaleModeNames[] =
     { "none", "lightness", "luminance", "value", "mixer", NULL };
+#ifdef HAVE_LENSFUN
 static const char *lensfunModeNames[] =
     { "none", "auto", NULL };
+#endif
 
 void conf_init(conf_data *c)
 {
