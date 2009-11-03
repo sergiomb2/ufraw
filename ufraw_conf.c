@@ -1540,7 +1540,7 @@ N_("--crop-(left|right|top|bottom)=PIXELS\n"
 "                      Crop the output to the given pixel range, relative to the\n"
 "                      raw image after rotation but before any scaling.\n"),
 #ifdef HAVE_LENSFUN
-N_("--lensfun=none|auto	  Do not apply lens correction or try to apply\n"
+N_("--lensfun=none|auto   Do not apply lens correction or try to apply\n"
 "                      correction by auto-detecting the lens (default none).\n"),
 #endif
 N_("--out-path=PATH       PATH for output file (default use input file's path).\n"),
