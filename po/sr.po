@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -69,6 +69,15 @@ msgstr "Све датотеке"
 msgid "Show hidden files"
 msgstr "Прикажи скривене датотеке"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -437,6 +446,11 @@ msgstr ""
 "                      слику након ротације, али пре промене величине.\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=Путања     „Путања“ за излазну датотеку (подразумевано је у "
@@ -584,6 +598,10 @@ msgstr "„%d“ није исправан број битова за уметн
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "„%s“ није исправна вредност ротације."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "„%s“ није исправна могућност за исецање."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-10-01 10:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -70,6 +70,15 @@ msgstr "Wszystkie pliki"
 msgid "Show hidden files"
 msgstr "Poka¿ ukryte pliki"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -426,6 +435,11 @@ msgstr ""
 "                      pliku raw po obróceniu, ale przed skalowaniem.\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=PATH       ¦cie¿ka pliku wyj¶ciowego (domy¶lnie - ¶cie¿ka pliku "
@@ -576,6 +590,10 @@ msgstr "'%d' nie jest poprawn± ilo¶ci± bitów dla do³±czonego zdjêcia."
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s' nie jest poprawn± opcj± obrotu."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "'%s' nie jest poprawnym ustawieniem ucinania."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -67,6 +67,15 @@ msgstr "Alle filer"
 msgid "Show hidden files"
 msgstr "Vis skjulte filer"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -427,6 +436,11 @@ msgstr ""
 "                      raw-bildet etter rotasjon, men før skalering.\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=STI        STI for utdatafil (som standardverdi brukes\n"
@@ -570,6 +584,10 @@ msgstr "«%d» er en ugyldig bitdybde for inkluderte bilder."
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "«%s» er et ugyldig alternativ for rotate."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "«%s» er et ugyldig alternativ for klipping."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

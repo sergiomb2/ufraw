@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-21 23:26-0500\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -411,6 +411,11 @@ msgstr ""
 "                      前生效。\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=路径               输出文件的路径(默认使用的输入文件的路径) 。\n"
@@ -547,6 +552,10 @@ msgstr "'%d' 不是有效的嵌入式图像位深。"
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s' 不是有效的旋转选项。"
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "'%s' 不是有效的剪辑选项。"
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

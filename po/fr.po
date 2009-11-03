@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-10-15 21:44+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -66,6 +66,15 @@ msgstr "Tous les fichiers"
 msgid "Show hidden files"
 msgstr "Voir fichiers cachés"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -441,6 +450,11 @@ msgstr ""
 "l'échelle.\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=CHEMIN     CHEMIN pour le fichier de sortie (défaut utilise \n"
@@ -594,6 +608,10 @@ msgstr "'%d' n'est pas une profondeur de couleur valide pour l'image incluse."
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s' n'est pas une option valide pour '--rotate'."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "'%s' n'est pas une option valide pour '--clip'."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

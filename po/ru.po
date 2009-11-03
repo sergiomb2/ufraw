@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-10-13 18:45+0400\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -74,6 +74,15 @@ msgstr "Все файлы"
 msgid "Show hidden files"
 msgstr "Показывать скрытые файлы"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -441,6 +450,11 @@ msgstr ""
 "масштабированием.\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=ПУТЬ       Каталог для выходного файла (по умолчанию совпадает с\n"
@@ -588,6 +602,10 @@ msgstr "'%d' бит на пиксель не поддерживается для
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "Режим вращения '%s' не поддерживается."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "%s' не является корректным ключом обрезания пересветов."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

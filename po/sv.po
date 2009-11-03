@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -66,6 +66,15 @@ msgstr "Alla filer"
 msgid "Show hidden files"
 msgstr "Visa dolda filer"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -349,6 +358,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 
@@ -479,6 +493,10 @@ msgstr "\"%s\" är inte ett giltigt kurvnamn."
 
 #, fuzzy, c-format
 msgid "'%s' is not a valid rotate option."
+msgstr "\"%s\" är inte en giltig sökväg."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
 msgstr "\"%s\" är inte en giltig sökväg."
 
 #, c-format

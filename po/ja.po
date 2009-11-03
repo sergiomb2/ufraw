@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -71,6 +71,15 @@ msgstr "全てのファイル"
 msgid "Show hidden files"
 msgstr "隠しファイルを表示する"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -408,6 +417,11 @@ msgstr ""
 "                      指定した範囲を切り出す。\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=PATH       出力ファイルをPATHにする\n"
@@ -550,6 +564,10 @@ msgstr "'%s' は埋め込み画像として正しい出力形式ではありま�
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s' は正しい回転オプションではありません。"
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "'%s' は正しいclipオプションではありません。"
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-05-13 12:19+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -68,6 +68,15 @@ msgstr "Alle Dateien"
 msgid "Show hidden files"
 msgstr "Versteckte Dateien anzeigen"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -431,6 +440,11 @@ msgstr ""
 "                      vor jeglicher Skalierung.\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=PFAD       PFAD für Ausgabedatei (Standardmäßig wird Pfad der\n"
@@ -582,6 +596,10 @@ msgstr "»%d« ist keine gültige Bit-Tiefe für eingebettetes Bild."
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "»%s« ist keine gültige Drehoption."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "»%s« ist keine gültige Clip-Option."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

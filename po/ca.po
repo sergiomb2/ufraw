@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-09-30 19:24+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -69,6 +69,15 @@ msgstr "Tots els fitxers"
 msgid "Show hidden files"
 msgstr "Mostra els fitxers ocults"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -441,6 +450,11 @@ msgstr ""
 "d'escalar-la.\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=RUTA       RUTA del fitxer de sortida (per omissió és la ruta del "
@@ -595,6 +609,10 @@ msgstr "'%d' no és una profunditat de bits vàlida per la imatge incrustada."
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s' no és una opció de rotació vàlida."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "L'opció '%s' no és una opció de tall vàlida."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

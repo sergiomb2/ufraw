@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-10-06 09:38+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -69,6 +69,15 @@ msgstr "모든 파일"
 msgid "Show hidden files"
 msgstr "숨겨진 파일 표시"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -411,6 +420,11 @@ msgstr ""
 "                      스케일 되기 전에 값이 적용 된다.\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=PATH       출력 파일의 경로 (기본값 입력 파일의 경로 사용).\n"
@@ -550,6 +564,10 @@ msgstr "'%d'은(는) 내장 이미지 출력에 사용할 수 없는 비트수 �
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s'은(는) 올바른 회전 옵션이 아닙니다."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "'%s'은(는) 올바른 잘라내기 옵션이 아닙니다."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

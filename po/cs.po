@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-10-04 10:41+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -67,6 +67,15 @@ msgstr "Všechny soubory"
 msgid "Show hidden files"
 msgstr "Ukázat skryté soubory"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -427,6 +436,11 @@ msgstr ""
 "dole\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=CESTA      CESTA pro výstupní soubor (standardně cesta dle "
@@ -573,6 +587,10 @@ msgstr "'%d' není platná bitová hloubka pro vložený snímek."
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s' není platné pro volbu rotate."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "'%s' není platná volba oříznutí světel."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

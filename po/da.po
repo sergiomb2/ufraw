@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
-"PO-Revision-Date: 2009-10-20 16:45+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"PO-Revision-Date: 2009-11-03 08:30+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -67,6 +67,15 @@ msgstr "Alle filer"
 msgid "Show hidden files"
 msgstr "Vis skjulte filer"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -427,6 +436,14 @@ msgstr ""
 "                      raw-billedet efter rotation, men før skalering.\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+"--lensfun=none|auto   Anvend ikke objektivkorrektion eller prøv at anvende\n"
+"                      korrektion ved at auto-detektere objektivet\n"
+"                      (standardværdi none).\n"
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=STI        STI for uddatafil (som standardværdi bruges\n"
@@ -569,6 +586,10 @@ msgstr "'%d' er ikke en legal bitdybde for indlejrede billeder."
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s' er ikke et legalt rotate-tilvalg."
+
+#, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "'%s' er ikke et legalt lensfun-tilvalg."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
@@ -945,7 +966,7 @@ msgid "Green component"
 msgstr "Grøn komponent"
 
 msgid "Select a spot on the preview image to apply spot white balance"
-msgstr "Vælg et punkt på forhåndsvisningsbilledet for at måle punkthvidbalance"
+msgstr "Vælg et punkt på forhåndsvisningsbilledet for at anvende punkthvidbalance"
 
 msgid "Chan. multipliers:"
 msgstr "Kanalmultiplikatorer:"

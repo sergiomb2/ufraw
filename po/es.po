@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-10-13 21:13+0200\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -68,6 +68,15 @@ msgstr "Todos los archivos"
 msgid "Show hidden files"
 msgstr "Mostrar archivos ocultos"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -435,6 +444,11 @@ msgstr ""
 "escalado.\n"
 
 msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
+
+msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
 msgstr ""
 "--out-path=RUTA       RUTA para el archivo de salida.\n"
@@ -585,6 +599,10 @@ msgstr "'%d' no es una profundidad de bits válida para la imagen incrustada."
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s' no es una opción válida para rotar."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "'%s' no es una opción válida de recorte."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."

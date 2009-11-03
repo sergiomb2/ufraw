@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-20 16:30+0200\n"
+"POT-Creation-Date: 2009-11-03 08:15+0100\n"
 "PO-Revision-Date: 2009-10-14 06:00+0100\n"
 "Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -68,6 +68,15 @@ msgstr "Tutti i file"
 msgid "Show hidden files"
 msgstr "Mostra file nascosti"
 
+#. Internal data
+#. confSize, version
+#. Image manipulation settings
+#. wb, WBTuning
+#. temperature, green
+#. chanMul[]
+#. wavelet denoising threshold
+#. hotpixel sensitivity
+#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -311,7 +320,8 @@ msgid ""
 "                      Wavelet denoising threshold (default 0.0).\n"
 msgstr ""
 "--wavelet-denoising-threshold=THRESHOLD\n"
-"                      Soglia per il wavelet nella riduzione di disturbo (predefinito 0.0).\n"
+"                      Soglia per il wavelet nella riduzione di disturbo "
+"(predefinito 0.0).\n"
 
 msgid ""
 "--hotpixel-sensitivity=VALUE\n"
@@ -319,8 +329,7 @@ msgid ""
 "(default 0.0).\n"
 msgstr ""
 "--hotpixel-sensitivity=VALUE\n"
-"Soglia per la ricerca e la riduzione dei pixel bruciati"
-"(default 0.0).\n"
+"Soglia per la ricerca e la riduzione dei pixel bruciati(default 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -421,9 +430,9 @@ msgid ""
 "camera).\n"
 msgstr ""
 "--rotate=camera|ANGLE|no\n"
-"                      Ruota l'immagine come impostato dalla fotocamera, di ANGOLO gradi\n"
-"                      in senso orario, oppure non ruotare (default "
-"camera).\n"
+"                      Ruota l'immagine come impostato dalla fotocamera, di "
+"ANGOLO gradi\n"
+"                      in senso orario, oppure non ruotare (default camera).\n"
 
 msgid ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
@@ -432,8 +441,15 @@ msgid ""
 "                      raw image after rotation but before any scaling.\n"
 msgstr ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
-"                      Taglia l'output al numero di pixel indicato, relativamente alla\n"
-"                      immagine raw dopo la rotazione ma prima di ogni scalatura.\n"
+"                      Taglia l'output al numero di pixel indicato, "
+"relativamente alla\n"
+"                      immagine raw dopo la rotazione ma prima di ogni "
+"scalatura.\n"
+
+msgid ""
+"--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+msgstr ""
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -447,8 +463,7 @@ msgstr ""
 
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
 msgstr ""
-"--darkframe=FILE      Usa FILE la sottrazione della darkframe dal file "
-"raw.\n"
+"--darkframe=FILE      Usa FILE la sottrazione della darkframe dal file raw.\n"
 
 msgid ""
 "--overwrite           Overwrite existing files without asking (default no).\n"
@@ -585,6 +600,10 @@ msgstr "'%d' non è un valido bit di profondità per le immagini integrate."
 #, c-format
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s' non è un'opzione valida per la rotazione."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid lensfun option."
+msgstr "'%s' non è un'opzione valida di clip."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
