@@ -1145,6 +1145,42 @@ static void ufraw_convert_image_lensfun(ufraw_data *uf, UFRawPhase phase)
 #endif /* HAVE_LENSFUN */
 }
 
+#ifdef HAVE_LENSFUN
+void ufraw_lensfun_init(ufraw_data *uf)
+{
+    /* Load lens database only once */
+    static lfDatabase *lensdb = NULL;
+    if (lensdb == NULL) {
+	lensdb = lf_db_new();
+	lf_db_load(lensdb);
+    }
+    uf->conf->lensdb = lensdb;
+
+    /* Create a default lens & camera */
+    uf->conf->lens = lf_lens_new();
+    uf->conf->camera = lf_camera_new();
+    uf->conf->cur_lens_type = LF_UNKNOWN;
+
+    /* Set lens and camera from EXIF info, if possible */
+    if (uf->conf->real_make[0] || uf->conf->real_model[0]) {
+	const lfCamera **cams = lf_db_find_cameras(uf->conf->lensdb,
+		uf->conf->real_make, uf->conf->real_model);
+	if (cams != NULL) {
+	    lf_camera_copy(uf->conf->camera, cams[0]);
+	    lf_free(cams);
+	}
+    }
+    if (strlen(uf->conf->lensText) > 0) {
+	const lfLens **lenses = lf_db_find_lenses_hd(uf->conf->lensdb,
+		uf->conf->camera, NULL, uf->conf->lensText, 0);
+	if (lenses != NULL) {
+	    lf_lens_copy(uf->conf->lens, lenses[0]);
+	    lf_free(lenses);
+	}
+    }
+}
+#endif /* HAVE_LENSFUN */
+
 static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_image_data *dcimg)
 {
     ufraw_image_data *img = &uf->Images[phase];

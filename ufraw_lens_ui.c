@@ -146,54 +146,45 @@ static GtkComboBoxEntry *combo_entry_numeric_log (
     return cbe;
 }
 
-static void camera_set (preview_data *data, const lfCamera *cam)
+static void camera_set(preview_data *data)
 {
-    gchar *fm;
-    const char *maker, *model, *variant;
-    char _variant [100];
+    const char *maker = lf_mlstr_get(CFG->camera->Maker);
+    const char *model = lf_mlstr_get(CFG->camera->Model);
+    const char *variant = lf_mlstr_get(CFG->camera->Variant);
 
-    lf_camera_copy (CFG->camera, cam);
-    if (!cam)
+    if (model != NULL)
     {
-        gtk_entry_set_text(GTK_ENTRY(data->CameraModel), "");
-        uf_widget_set_tooltip(data->CameraModel, NULL);
-        return;
+	gchar *fm;
+	if (maker != NULL)
+	    fm = g_strdup_printf("%s, %s", maker, model);
+	else
+	    fm = g_strdup_printf("%s", model);
+	gtk_entry_set_text(GTK_ENTRY(data->CameraModel), fm);
+	g_free (fm);
     }
-
-    maker = lf_mlstr_get (cam->Maker);
-    model = lf_mlstr_get (cam->Model);
-    variant = lf_mlstr_get (cam->Variant);
-
-    if (model)
-    {
-        if (maker)
-            fm = g_strdup_printf ("%s, %s", maker, model);
-        else
-            fm = g_strdup_printf ("%s", model);
-        gtk_entry_set_text (GTK_ENTRY (data->CameraModel), fm);
-        g_free (fm);
-    }
-
-    if (variant)
-        snprintf (_variant, sizeof (_variant), " (%s)", variant);
+    char _variant[100];
+    if (variant != NULL)
+	snprintf(_variant, sizeof(_variant), " (%s)", variant);
     else
-        _variant [0] = 0;
+	_variant[0] = 0;
 
-    fm = g_strdup_printf (_("Maker:\t\t%s\n"
-                            "Model:\t\t%s%s\n"
-                            "Mount:\t\t%s\n"
-                            "Crop factor:\t%.1f"),
-                          maker, model, _variant,
-                          cam->Mount, cam->CropFactor);
+    gchar *fm = g_strdup_printf(_("Maker:\t\t%s\n"
+			"Model:\t\t%s%s\n"
+			"Mount:\t\t%s\n"
+			"Crop factor:\t%.1f"),
+			maker, model, _variant,
+			CFG->camera->Mount, CFG->camera->CropFactor);
     uf_widget_set_tooltip(data->CameraModel, fm);
-    g_free (fm);
+    g_free(fm);
 }
 
 static void camera_menu_select (
     GtkMenuItem *menuitem, gpointer user_data)
 {
     preview_data *data = (preview_data *)user_data;
-    camera_set (data, (lfCamera *)g_object_get_data(G_OBJECT(menuitem), "lfCamera"));
+    lfCamera *cam = g_object_get_data(G_OBJECT(menuitem), "lfCamera");
+    lf_camera_copy(CFG->camera, cam);
+    camera_set(data);
 }
 
 static void camera_menu_fill (
@@ -1243,36 +1234,23 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
         subnb, _("Lens geometry"), "geometry");
 
     /* Create a default lens & camera */
-    CFG->lens = lf_lens_new ();
-    CFG->camera = lf_camera_new ();
-    CFG->cur_lens_type = LF_UNKNOWN;
-
-    /* Set lens and camera from EXIF info, if possible */
-    if (CFG->real_make [0] || CFG->real_model [0])
-    {
-        const lfCamera **cams = lf_db_find_cameras (
-            CFG->lensdb, CFG->real_make, CFG->real_model);
-        if (cams)
-        {
-            camera_set (data, cams [0]);
-            lf_free (cams);
-        }
-    }
+    ufraw_lensfun_init(data->UF);
+    camera_set(data);
+    lens_set(data, CFG->lens);
 
     fill_tca_page (data);
     fill_vignetting_page (data);
     fill_distortion_page (data);
     fill_geometry_page (data);
 
-    const lfLens **lenses = NULL;
-    if (strlen(CFG->lensText) > 0)
-	lenses = lf_db_find_lenses_hd(CFG->lensdb,
-		CFG->camera, NULL, CFG->lensText, 0);
-    if (lenses!=NULL) {
-	lf_lens_copy(CFG->lens, lenses[0]);
-	lf_free(lenses);
+    if (CFG->lensfunMode == lensfun_none) {
+	gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensDistortionModel),
+		LF_DIST_MODEL_NONE);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensTCAModel),
+		LF_TCA_MODEL_NONE);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensVignettingModel),
+		LF_VIGNETTING_MODEL_NONE);
     }
-    lens_set(data, CFG->lens);
 }
 
 #endif /* HAVE_LENSFUN */

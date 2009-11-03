@@ -142,6 +142,7 @@ const conf_data conf_default = {
     { LF_VIGNETTING_MODEL_NONE, 0, 0, 0, { 0, 0, 0 } },
     LF_UNKNOWN,                   /* lens type */
     0,                            /* lens postprocessing scale power-of-two */ 
+    lensfun_none,                 /* do not apply any lensfun corrections */
 #endif /* HAVE_LENSFUN */
 };
 
@@ -155,25 +156,12 @@ static const char *intentNames[] =
     { "perceptual", "relative", "saturation", "absolute", "disable", NULL };
 static const char *grayscaleModeNames[] =
     { "none", "lightness", "luminance", "value", "mixer", NULL };
+static const char *lensfunModeNames[] =
+    { "none", "auto", NULL };
 
-void conf_init (conf_data *c)
+void conf_init(conf_data *c)
 {
-#ifdef HAVE_LENSFUN
-    static lfDatabase *lensdb = NULL;
-
-    if (!lensdb)
-    {
-	/* Load lens database */
-	lensdb = lf_db_new ();
-	lf_db_load (lensdb);
-    }
-#endif /* HAVE_LENSFUN */
-
     *c = conf_default;
-
-#ifdef HAVE_LENSFUN
-    c->lensdb = lensdb;
-#endif /* HAVE_LENSFUN */
 }
 
 static int conf_find_name(const char name[],const char *namesList[], int notFound)
@@ -725,7 +713,7 @@ int conf_load(conf_data *c, const char *IDFilename)
     GError *err = NULL;
     int i;
 
-    conf_init (c);
+    conf_init(c);
     if (IDFilename==NULL) {
 	hd = uf_get_home_dir();
 	confFilename = g_build_filename(hd, ".ufrawrc", NULL);
@@ -1311,6 +1299,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->intent[display_profile] = src->intent[display_profile];
 
 #ifdef HAVE_LENSFUN
+    dst->lensfunMode = src->lensfunMode;
     dst->lensdb = src->lensdb;
     if (src->camera)
     {
@@ -1381,6 +1370,9 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     if (cmd->CropX2 !=-1) conf->CropX2 = cmd->CropX2;
     if (cmd->CropY2 !=-1) conf->CropY2 = cmd->CropY2;
     if (cmd->silent!=-1) conf->silent = cmd->silent;
+#ifdef HAVE_LENSFUN
+    if (cmd->lensfunMode!=-1) conf->lensfunMode = cmd->lensfunMode;
+#endif
     if (cmd->compression!=NULLF) conf->compression = cmd->compression;
     if (cmd->autoExposure) {
 	conf->autoExposure = cmd->autoExposure;
@@ -1408,7 +1400,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 		cmd->profile[1][0].BitDepth;
     if (cmd->saturation!=NULLF)
 	conf->saturation=cmd->saturation;
-    if (cmd->grayscaleMode!=NULLF)
+    if (cmd->grayscaleMode!=-1)
       conf->grayscaleMode=cmd->grayscaleMode;
     if (cmd->BaseCurveIndex>=0) conf->BaseCurveIndex = cmd->BaseCurveIndex;
     if (cmd->curveIndex>=0) conf->curveIndex = cmd->curveIndex;
@@ -1545,6 +1537,10 @@ N_("--rotate=camera|ANGLE|no\n"
 N_("--crop-(left|right|top|bottom)=PIXELS\n"
 "                      Crop the output to the given pixel range, relative to the\n"
 "                      raw image after rotation but before any scaling.\n"),
+#ifdef HAVE_LENSFUN
+N_("--lensfun=none|auto	  Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"),
+#endif
 N_("--out-path=PATH       PATH for output file (default use input file's path).\n"),
 N_("--output=FILE         Output file name, use '-' to output to stdout.\n"),
 N_("--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"),
@@ -1616,7 +1612,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	 *curveName=NULL, *curveFile=NULL, *outTypeName=NULL, *rotateName=NULL,
 	 *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL,
 	 *interpolationName=NULL, *darkframeFile=NULL,
-	 *restoreName=NULL, *clipName=NULL, *grayscaleName=NULL;
+	 *restoreName=NULL, *clipName=NULL, *grayscaleName=NULL,
+	 *lensfunName = NULL;
     static const struct option options[] = {
 	{ "wb", 1, 0, 'w'},
 	{ "temperature", 1, 0, 't'},
@@ -1652,6 +1649,9 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{ "crop-top", 1, 0, '2'},
 	{ "crop-right", 1, 0, '3'},
 	{ "crop-bottom", 1, 0, '4'},
+#ifdef HAVE_LENSFUN
+        { "lensfun", 1, 0, 'A'},
+#endif
 /* Binary flags that don't have a value are here at the end */
 	{ "zip", 0, 0, 'z'},
 	{ "nozip", 0, 0, 'Z'},
@@ -1679,7 +1679,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	&outTypeName, &cmd->profile[1][0].BitDepth, &rotateName,
 	&createIDName, &outPath, &output, &darkframeFile,
 	&restoreName, &clipName, &conf,
-	&cmd->CropX1, &cmd->CropY1, &cmd->CropX2, &cmd->CropY2 };
+	&cmd->CropX1, &cmd->CropY1, &cmd->CropX2, &cmd->CropY2, &lensfunName };
     cmd->autoExposure = disabled_state;
     cmd->autoBlack = disabled_state;
     cmd->losslessCompress=-1;
@@ -1770,6 +1770,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'r':
 	case 'u':
 	case 'Y':
+	case 'A':
 	    *(char **)optPointer[index] = optarg;
 	    break;
 	case 'O': cmd->overwrite = TRUE; break;
@@ -1932,7 +1933,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	else
 	    cmd->smoothing = 1;
     }
-    cmd->grayscaleMode = NULLF;
+    cmd->grayscaleMode = -1;
     if (grayscaleName!=NULL) {
       cmd->grayscaleMode = conf_find_name(grayscaleName, grayscaleModeNames,
 					  conf_default.grayscaleMode);
@@ -2138,6 +2139,18 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    return -1;
 	}
     }
+#ifdef HAVE_LENSFUN
+    cmd->lensfunMode = -1;
+    if (lensfunName!=NULL) {
+      cmd->lensfunMode = conf_find_name(lensfunName, lensfunModeNames, -1);
+      if (cmd->lensfunMode==-1) {
+	    ufraw_message(UFRAW_ERROR,
+		_("'%s' is not a valid lensfun option."),
+		lensfunName);
+	    return -1;
+	}
+    }
+#endif
     cmd->createID = -1;
     if (createIDName!=NULL) {
 	if (!strcmp(createIDName, "no"))

@@ -74,6 +74,7 @@ typedef enum { ufraw_raw_phase, ufraw_first_phase, ufraw_develop_phase,
         ufraw_lensfun_phase, ufraw_display_phase, ufraw_phases_num } UFRawPhase;
 typedef enum { grayscale_none, grayscale_lightness, grayscale_luminance,
 	grayscale_value, grayscale_mixer } GrayscaleMode;
+typedef enum { lensfun_none, lensfun_auto } LensfunMode;
 
 typedef struct {
     const char *make;
@@ -235,6 +236,7 @@ typedef struct {
     lfLensCalibVignetting lens_vignetting; /* lens vignetting parameters */
     lfLensType cur_lens_type;
     float lens_scale; /* Additional lens postprocessing scale power-of-two, default 0 */
+    int lensfunMode;
 #endif /* HAVE_LENSFUN */
 } conf_data;
 
@@ -309,6 +311,7 @@ void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase);
 void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase);
 #ifdef HAVE_LENSFUN
 int ufraw_prepare_lensfun(ufraw_data *uf);
+void ufraw_lensfun_init(ufraw_data *uf);
 #endif
 void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
 	const char *formats, const char *caller);
