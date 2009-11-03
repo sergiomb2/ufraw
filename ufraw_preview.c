@@ -2157,7 +2157,7 @@ static void flip_image(GtkWidget *widget, int flip)
     }
     // image dimensions cannot really change here,
     // yet width and height might be flipped (independent of flip&4).
-    ufraw_get_image_dimensions(data->UF->raw, data->UF);
+    ufraw_get_image_dimensions(data->UF);
 
     ++data->FreezeDialog;
     ufraw_unnormalize_rotation(data->UF);
@@ -2919,7 +2919,7 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
     gtk_widget_set_sensitive(data->ResetRotationAdjustment,
 	    CFG->rotationAngle != 0 ||
 	    CFG->orientation != CFG->CameraOrientation);
-    ufraw_get_image_dimensions(data->UF->raw, data->UF);
+    ufraw_get_image_dimensions(data->UF);
     if (FullCrop) {
 	if (CFG->LockAspect) {
 	    double newAspect = (double)data->UF->rotatedWidth /

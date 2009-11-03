@@ -18,8 +18,6 @@
 #endif /* HAVE_LENSFUN */
 
 #include "nikon_curve.h"
-#include <time.h> // for time_t
-#include "dcraw_api.h"
 
 /* macro to clamp a number between two values */
 #ifndef LIM
@@ -339,7 +337,7 @@ void ufraw_rotate_row(ufraw_image_data *image, void *pixbuf, double angle,
 void ufraw_rotate_image_buffer(ufraw_image_data *img, double angle);
 void ufraw_normalize_rotation(ufraw_data *uf);
 void ufraw_unnormalize_rotation(ufraw_data *uf);
-void ufraw_get_image_dimensions(dcraw_data *raw, ufraw_data *uf);
+void ufraw_get_image_dimensions(ufraw_data *uf);
 
 void ufraw_img_get_subarea_coord (ufraw_image_data *img, unsigned saidx,
                                   int *x, int *y, int *w, int *h);

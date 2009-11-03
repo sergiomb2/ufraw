@@ -318,9 +318,9 @@ int ufraw_load_darkframe(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
-void ufraw_get_image_dimensions(dcraw_data *raw, ufraw_data *uf)
+void ufraw_get_image_dimensions(ufraw_data *uf)
 {
-    dcraw_image_dimensions(raw, uf->conf->orientation,
+    dcraw_image_dimensions(uf->raw, uf->conf->orientation,
 	    &uf->initialHeight, &uf->initialWidth);
 
     // update rotated dimensions
@@ -534,7 +534,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     }
     ufraw_load_darkframe(uf);
 
-    ufraw_get_image_dimensions(raw, uf);
+    ufraw_get_image_dimensions(uf);
 
     return UFRAW_SUCCESS;
 }
@@ -622,7 +622,7 @@ int ufraw_load_raw(ufraw_data *uf)
     memcpy(uf->rgb_cam, raw->rgb_cam, sizeof uf->rgb_cam);
 
     /* Foveon image dimensions are knows only after load_raw()*/
-    ufraw_get_image_dimensions(raw, uf);
+    ufraw_get_image_dimensions(uf);
     if (uf->conf->CropX2 > uf->rotatedWidth)
 	uf->conf->CropX2 = uf->rotatedWidth;
     if (uf->conf->CropY2 > uf->rotatedHeight)
