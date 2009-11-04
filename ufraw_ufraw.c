@@ -33,7 +33,9 @@
 #include "nikon_curve.h"
 #include "ufraw.h"
 
+#ifdef HAVE_LENSFUN
 static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img);
+#endif
 static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase);
 static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_image_data *dcimg);
 static void ufraw_convert_prepare_buffers(ufraw_data *uf);
