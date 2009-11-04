@@ -372,7 +372,7 @@ static void lens_interpolate (preview_data *data, const lfLens *lens)
         g_signal_emit_by_name (GTK_COMBO_BOX (data->LensVignettingModel),
                                "changed", NULL, NULL);
 
-    if (data->UF->postproc_ops & LF_MODIFY_VIGNETTING)
+    if (data->UF->modFlags & LF_MODIFY_VIGNETTING)
         ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
     else
         ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);

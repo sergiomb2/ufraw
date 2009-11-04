@@ -210,7 +210,8 @@ void ufraw_write_image_data(
 {
     int row, row0;
     int rowStride = uf->Images[ufraw_first_phase].width;
-    image_type *rawImage = (image_type *)uf->Images[ufraw_first_phase].buffer;
+    ufraw_image_type *rawImage =
+	    (ufraw_image_type *)uf->Images[ufraw_first_phase].buffer;
     int byteDepth = (bitDepth+7)/8;
     guint8 pixbuf8[width * 3 * byteDepth * DEVELOP_BATCH];
 
@@ -653,8 +654,8 @@ int ufraw_write_image(ufraw_data *uf)
 
 	int row;
 	int i;
-	image_type *rawImage =
-		(image_type *)uf->Images[ufraw_first_phase].buffer;
+	ufraw_image_type *rawImage =
+		(ufraw_image_type *)uf->Images[ufraw_first_phase].buffer;
 	int rowStride = uf->Images[ufraw_first_phase].width;
 	guint16 pixbuf16[3];
 

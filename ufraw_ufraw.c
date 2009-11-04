@@ -33,7 +33,7 @@
 #include "nikon_curve.h"
 #include "ufraw.h"
 
-static void ufraw_convert_image_lensfun(ufraw_data *uf, UFRawPhase phase);
+static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img);
 static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase);
 static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_image_data *dcimg);
 static void ufraw_convert_prepare_buffers(ufraw_data *uf);
@@ -238,6 +238,11 @@ ufraw_data *ufraw_open(char *filename)
     uf->widget = NULL;
     uf->RawHistogram = NULL;
     uf->HaveFilters = raw->filters!=0;
+#ifdef HAVE_LENSFUN
+    uf->modFlags = 0;
+    uf->modifier = NULL;
+    uf->lanczos_func = NULL;
+#endif
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
 	    raw->width, raw->height, raw->toneCurveSize);
 
@@ -660,6 +665,10 @@ void ufraw_close(ufraw_data *uf)
     developer_destroy(uf->developer);
     developer_destroy(uf->AutoDeveloper);
     g_free(uf->RawHistogram);
+#ifdef HAVE_LENSFUN
+    g_free(uf->modifier);
+    g_free(uf->lanczos_func);
+#endif
     if ( uf->conf->darkframe!=NULL ) {
 	ufraw_close(uf->conf->darkframe);
 	g_free(uf->conf->darkframe);
@@ -718,7 +727,11 @@ int ufraw_convert_image(ufraw_data *uf)
     ufraw_developer_prepare(uf, file_developer);
     ufraw_convert_image_raw(uf, ufraw_raw_phase);
     ufraw_convert_image_first(uf, ufraw_first_phase);
-    ufraw_convert_image_lensfun(uf, ufraw_first_phase);
+#ifdef HAVE_LENSFUN
+    ufraw_prepare_lensfun(uf, ufraw_first_phase);
+    if (uf->modifier != NULL)
+	ufraw_convert_image_lensfun(uf, &uf->Images[ufraw_first_phase]);
+#endif
     return UFRAW_SUCCESS;
 }
 
@@ -750,151 +763,117 @@ int ufraw_convert_image(ufraw_data *uf)
 #define LANCZOS_DATA_ONE 4096
 #endif
 
-void ufraw_lensfun_modify (
-    dcraw_image_data *img, lfModifier *modifier, int modflags)
+static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img)
 {
     /* Apply vignetting correction first, before distorting the image */
-    if (modflags & LF_MODIFY_VIGNETTING)
+    if (uf->modFlags & LF_MODIFY_VIGNETTING)
         lf_modifier_apply_color_modification (
-            modifier, img->image, 0.0, 0.0, img->width, img->height,
-            LF_CR_4 (RED, GREEN, BLUE, UNKNOWN),
-            img->width * sizeof (dcraw_image_type));
+            uf->modifier, img->buffer, 0.0, 0.0, img->width, img->height,
+            LF_CR_4(RED, GREEN, BLUE, UNKNOWN), img->rowstride);
 
     /* Now apply distortion, TCA and geometry in a single pass */
-    if (modflags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING))
-    {
-        dcraw_image_type *image2 = g_new (dcraw_image_type, img->height * img->width);
-        dcraw_image_type *cur = image2;
-        dcraw_image_type *tmp;
-        int i, x, y, c;
+    if ((uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)) == 0)
+	return;
 
-        /* Precompute the Lanczos kernel */
-        LANCZOS_DATA_TYPE lanczos_func [LANCZOS_SUPPORT * LANCZOS_SUPPORT * LANCZOS_TABLE_RES];
-        for (i = 0; i < LANCZOS_SUPPORT * LANCZOS_SUPPORT * LANCZOS_TABLE_RES; i++)
-            if (i == 0)
-                lanczos_func [i] = LANCZOS_DATA_ONE;
-            else
-            {
-                float d = sqrt (((float)i) / LANCZOS_TABLE_RES);
-                lanczos_func [i] = (LANCZOS_DATA_TYPE)
-                    ((LANCZOS_DATA_ONE * LANCZOS_SUPPORT *
-                      sin (M_PI * d) * sin ((M_PI / LANCZOS_SUPPORT) * d)) /
-                     (M_PI * M_PI * d * d));
-            }
+    guint8 *buffer2 = g_new(guint8, img->height * img->rowstride);
+    ufraw_image_type *cur = (ufraw_image_type *)buffer2;
+    int x, y, c;
 
-        float *buff = g_new (float, img->width * 3 * 2);
-        for (y = 0; y < img->height; y++)
-        {
-            if (!lf_modifier_apply_subpixel_geometry_distortion (
-                modifier, 0, y, img->width, 1, buff))
-                goto no_distortion; /* should not happen */
+    /* Use precomputed Lanczos kernel */
+    LANCZOS_DATA_TYPE *lanczos_func = uf->lanczos_func;
 
-            float *modcoord = buff;
-            for (x = 0; x < img->width; x++, cur++)
-                for (c = 0; c < 3; c++, modcoord += 2)
-                {
+    float *buff = g_new(float, img->width * 3 * 2);
+    for (y = 0; y < img->height; y++) {
+        if (!lf_modifier_apply_subpixel_geometry_distortion(uf->modifier,
+		    0, y, img->width, 1, buff))
+	    g_error("ufraw_convert_image_lensfun: "
+		    "lf_modifier_apply_subpixel_geometry_distortion() failed");
+
+	float *modcoord = buff;
+	for (x = 0; x < img->width; x++, cur++) {
+	    for (c = 0; c < 3; c++, modcoord += 2) {
 #ifdef LANCZOS_DATA_FLOAT
-                    float xs = ceilf  (modcoord [0]) - LANCZOS_SUPPORT;
-                    float xe = floorf (modcoord [0]) + LANCZOS_SUPPORT;
-                    float ys = ceilf  (modcoord [1]) - LANCZOS_SUPPORT;
-                    float ye = floorf (modcoord [1]) + LANCZOS_SUPPORT;
-                    int dsrc = img->width - (xe - xs) - 1;
-                    int r = 0;
-                    if (xs >= 0 && ys >= 0 && xe < img->width && ye < img->height)
-                    {
-                        dcraw_image_type *src = img->image +
-                            (((long)ys) * img->width + ((long)xs));
+		float xs = ceilf(modcoord[0]) - LANCZOS_SUPPORT;
+		float xe = floorf(modcoord[0]) + LANCZOS_SUPPORT;
+		float ys = ceilf(modcoord[1]) - LANCZOS_SUPPORT;
+		float ye = floorf(modcoord[1]) + LANCZOS_SUPPORT;
+		if (xs < 0 || ys < 0 || xe >= img->width || ye >= img->height) {
+		    cur[0][c] = 0;
+		    continue;
+		}
+		ufraw_image_type *src = (ufraw_image_type *)(img->buffer +
+			(long)ys * img->rowstride + (long)xs * img->depth);
+		int dsrc = img->width - (xe - xs) - 1;
 
-                        float norm = 0.0;
-                        float sum = 0.0;
+		float norm = 0.0;
+		float sum = 0.0;
 
-                        float _dx = modcoord [0] - xs;
-                        float dy = modcoord [1] - ys;
-                        for (; ys <= ye; ys += 1.0, dy -= 1.0)
-                        {
-                            float xc, dx = _dx;
-                            for (xc = xs; xc <= xe; xc += 1.0, dx -= 1.0, src++)
-                            {
-                                float d = dx * dx + dy * dy;
-                                if (d >= LANCZOS_SUPPORT * LANCZOS_SUPPORT)
-                                    continue;
+		float _dx = modcoord[0] - xs;
+		float dy = modcoord[1] - ys;
+		for (; ys <= ye; ys += 1.0, dy -= 1.0) {
+		    float xc, dx = _dx;
+		    for (xc = xs; xc <= xe; xc += 1.0, dx -= 1.0, src++) {
+			float d = dx * dx + dy * dy;
+			if (d >= LANCZOS_SUPPORT * LANCZOS_SUPPORT)
+			    continue;
 
-                                d = lanczos_func [(int)(d * LANCZOS_TABLE_RES)];
-                                norm += d;
-                                sum += d * src [0][c];
-                            }
-                            src += dsrc;
-                        }
-
-                        if (norm != 0.0)
-                        {
-                            r = (int)sum / norm;
-                            if (r > 0xffff)
-                                r = 0xffff;
-                            else if (r < 0)
-                                r = 0;
-                        }
+			d = lanczos_func[(int)(d * LANCZOS_TABLE_RES)];
+			norm += d;
+			sum += d * src[0][c];
                     }
-                    cur [0][c] = r;
+		    src += dsrc;
+		}
+		if (norm != 0.0)
+		    cur[0][c] = LIM((int)(sum / norm), 0, 0xffff);
+		else
+		    cur[0][c] = 0;
 #else
-                    /* Do it in integer arithmetic, it's faster */
-                    int xx = (int)modcoord [0];
-                    int yy = (int)modcoord [1];
-                    int xs = xx + 1 - LANCZOS_SUPPORT;
-                    int xe = xx     + LANCZOS_SUPPORT;
-                    int ys = yy + 1 - LANCZOS_SUPPORT;
-                    int ye = yy     + LANCZOS_SUPPORT;
-                    int dsrc = img->width - (xe - xs) - 1;
-                    int r = 0;
-                    if (xs >= 0 && ys >= 0 && xe < img->width && ye < img->height)
-                    {
-                        dcraw_image_type *src = img->image + (ys * img->width + xs);
+		/* Do it in integer arithmetic, it's faster */
+		int xx = (int)modcoord[0];
+		int yy = (int)modcoord[1];
+		int xs = xx + 1 - LANCZOS_SUPPORT;
+		int xe = xx     + LANCZOS_SUPPORT;
+		int ys = yy + 1 - LANCZOS_SUPPORT;
+		int ye = yy     + LANCZOS_SUPPORT;
+		if (xs < 0 || ys < 0 || xe >= img->width || ye >= img->height) {
+		    cur[0][c] = 0;
+		    continue;
+		}
+		ufraw_image_type *src = (ufraw_image_type *)(img->buffer +
+			ys * img->rowstride + xs * img->depth);
+		int dsrc = img->width - (xe - xs) - 1;
 
-                        int norm = 0;
-                        int sum = 0;
+		int norm = 0;
+		int sum = 0;
 
-                        int _dx = (int)(modcoord [0] * 4096.0) - (xs << 12);
-                        int dy = (int)(modcoord [1] * 4096.0) - (ys << 12);
-                        for (; ys <= ye; ys++, dy -= 4096)
-                        {
-                            int xc, dx = _dx;
-                            for (xc = xs; xc <= xe; xc++, src++, dx -= 4096)
-                            {
-                                int d = (dx * dx + dy * dy) >> 12;
-                                if (d >= 4096 * LANCZOS_SUPPORT * LANCZOS_SUPPORT)
-                                    continue;
+		int _dx = (int)(modcoord[0] * 4096.0) - (xs << 12);
+		int dy = (int)(modcoord[1] * 4096.0) - (ys << 12);
+		for (; ys <= ye; ys++, dy -= 4096) {
+		    int xc, dx = _dx;
+		    for (xc = xs; xc <= xe; xc++, src++, dx -= 4096) {
+			int d = (dx * dx + dy * dy) >> 12;
+			if (d >= 4096 * LANCZOS_SUPPORT * LANCZOS_SUPPORT)
+			    continue;
 
-                                d = lanczos_func [(d * LANCZOS_TABLE_RES) >> 12];
-                                norm += d;
-                                sum += d * src [0][c];
-                            }
-                            src += dsrc;
-                        }
-
-                        if (norm != 0)
-                        {
-                            r = sum / norm;
-                            if (r > 0xffff)
-                                r = 0xffff;
-                            else if (r < 0)
-                                r = 0;
-                        }
-                    }
-                    cur [0][c] = r;
+			d = lanczos_func[(d * LANCZOS_TABLE_RES) >> 12];
+			norm += d;
+			sum += d * src[0][c];
+		    }
+		    src += dsrc;
+		}
+		if (norm != 0)
+		    cur[0][c] = LIM(sum / norm, 0, 0xffff);
+		else
+		    cur[0][c] = 0;
 #endif
-                }
-        }
-
-        /* Exchange the original image and the modified one */
-        tmp = img->image;
-        img->image = image2;
-        image2 = tmp;
-
-no_distortion:
-        /* Intermediate buffers not needed anymore */
-        g_free (buff);
-        g_free (image2);
+	    }
+	}
     }
+
+    /* Exchange the original image and the modified one */
+    g_free(img->buffer);
+    img->buffer = buffer2;
+    g_free(buff);
 }
 
 #endif /* HAVE_LENSFUN */
@@ -1060,7 +1039,7 @@ void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase)
     dcraw_image_type *rawimage;
     dcraw_image_data final;
 
-    final.image = (image_type *)out->buffer;
+    final.image = (ufraw_image_type *)out->buffer;
     final.width = out->width;
     final.height = out->height;
 
@@ -1107,42 +1086,6 @@ static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase)
 	    p16[c] = px;
 	}
     }
-}
-
-static void ufraw_convert_image_lensfun(ufraw_data *uf, UFRawPhase phase)
-{
-#ifdef HAVE_LENSFUN
-    conf_data *conf = uf->conf;
-    ufraw_image_data *img = &uf->Images[phase];
-    lfModifier *modifier;
-    float real_scale;
-    int finmodflags;
-
-    if (conf->camera == NULL || conf->lens == NULL)
-	return;
-
-    modifier = lf_modifier_new(conf->lens, conf->camera->CropFactor,
-	    img->width, img->height);
-    if (modifier == NULL)
-	return;
-
-    real_scale = pow(2.0, conf->lens_scale);
-    finmodflags = lf_modifier_initialize(modifier, conf->lens, LF_PF_U16,
-	    conf->focal_len, conf->aperture, conf->subject_distance,
-	    real_scale, conf->cur_lens_type, UF_LF_ALL, FALSE);
-    if (finmodflags & UF_LF_ALL) {
-	dcraw_image_data args;
-	args.image = (image_type *)img->buffer;
-	args.width = img->width;
-	args.height = img->height;
-	ufraw_lensfun_modify(&args, modifier, finmodflags);
-	img->buffer = (guint8 *)args.image;
-    }
-    lf_modifier_destroy(modifier);
-#else
-    (void)uf;
-    (void)phase;
-#endif /* HAVE_LENSFUN */
 }
 
 #ifdef HAVE_LENSFUN
@@ -1253,27 +1196,52 @@ static void ufraw_convert_prepare_buffers(ufraw_data *uf)
 }
 
 #ifdef HAVE_LENSFUN
-int ufraw_prepare_lensfun(ufraw_data *uf)
+void ufraw_prepare_lensfun(ufraw_data *uf, UFRawPhase phase)
 {
-    ufraw_image_data *img = &uf->Images[ufraw_lensfun_phase];
+    ufraw_image_data *img = &uf->Images[phase];
     conf_data *conf = uf->conf;
-    float real_scale;
 
-    if (uf->modifier)
-        lf_modifier_destroy(uf->modifier);
+    if (uf->modifier != NULL)
+	lf_modifier_destroy(uf->modifier);
+    uf->modifier = NULL;
+
+    if (conf->camera == NULL || conf->lens == NULL)
+	return;
+
     uf->modifier = lf_modifier_new(conf->lens, conf->camera->CropFactor,
 	    img->width, img->height);
+    if (uf->modifier == NULL)
+	return;
 
-    real_scale = pow(2.0, conf->lens_scale);
-    uf->postproc_ops = lf_modifier_initialize(uf->modifier, conf->lens,
-	    LF_PF_U8, conf->focal_len, conf->aperture, conf->subject_distance,
+    int bitDepth = img->depth>4 ? LF_PF_U16 : LF_PF_U8;
+    float real_scale = pow(2.0, conf->lens_scale);
+    uf->modFlags = lf_modifier_initialize(uf->modifier, conf->lens,
+	    bitDepth, conf->focal_len, conf->aperture, conf->subject_distance,
 	    real_scale, conf->cur_lens_type, UF_LF_ALL, FALSE);
-    if (!(uf->postproc_ops & UF_LF_ALL)) {
-        lf_modifier_destroy(uf->modifier);
-        uf->modifier = NULL;
-        img->valid = 0;
+    if ((uf->modFlags & UF_LF_ALL) == 0) {
+	lf_modifier_destroy(uf->modifier);
+	uf->modifier = NULL;
+//    	img->valid = 0;
     }
-    return UFRAW_SUCCESS;
+
+    if (uf->lanczos_func != NULL)
+	return;
+    /* Precompute the Lanczos kernel */
+    LANCZOS_DATA_TYPE *lanczos_func = g_new(LANCZOS_DATA_TYPE,
+	    LANCZOS_SUPPORT * LANCZOS_SUPPORT * LANCZOS_TABLE_RES);
+    uf->lanczos_func = lanczos_func;
+    int i;
+    for (i = 0; i < LANCZOS_SUPPORT*LANCZOS_SUPPORT * LANCZOS_TABLE_RES; i++) {
+	if (i == 0) {
+            lanczos_func[i] = LANCZOS_DATA_ONE;
+        } else {
+            float d = sqrt((float)i / LANCZOS_TABLE_RES);
+            lanczos_func[i] = (LANCZOS_DATA_TYPE)(
+		    LANCZOS_DATA_ONE * LANCZOS_SUPPORT *
+		    sin(M_PI * d) * sin(M_PI / LANCZOS_SUPPORT * d) /
+		    (M_PI * M_PI * d * d) );
+	}
+    }
 }
 #endif /* HAVE_LENSFUN */
 
@@ -1348,7 +1316,7 @@ ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok)
     phase = ufraw_develop_phase;
 #ifdef HAVE_LENSFUN
     if (uf->modifier &&
-	(uf->postproc_ops & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
+	(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
 	phase = ufraw_lensfun_phase;
 #endif /* HAVE_LENSFUN */
     if (bufferok) {
@@ -1379,7 +1347,7 @@ ufraw_image_data *ufraw_display_image(ufraw_data *uf, gboolean bufferok)
     if (uf->developer->working2displayTransform == NULL) {
 #ifdef HAVE_LENSFUN
 	if (uf->modifier &&
-	    (uf->postproc_ops & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
+	    (uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
 	    phase = ufraw_lensfun_phase;
 	else
 	    phase = ufraw_develop_phase;
@@ -1465,7 +1433,7 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 
 #ifdef HAVE_LENSFUN
                     if (uf->modifier &&
-                        (uf->postproc_ops & LF_MODIFY_VIGNETTING))
+                        (uf->modFlags & LF_MODIFY_VIGNETTING))
                     {
                         /* Apply de-vignetting filter here, to avoid
                          * creating a separate pass for it which will
@@ -1484,7 +1452,7 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 #ifdef HAVE_LENSFUN
             {
                 if (!uf->modifier ||
-                    !(uf->postproc_ops & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING))) {
+                    !(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING))) {
 		    out->valid = in->valid;	/* for invalidate_event */
 		    return in;
 		}
@@ -1727,7 +1695,7 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
     ufraw_flip_image_buffer(&uf->Images[ufraw_develop_phase], flip);
 #ifdef HAVE_LENSFUN
     if (uf->modifier &&
-	(uf->postproc_ops & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
+	(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
 	ufraw_flip_image_buffer(&uf->Images[ufraw_lensfun_phase], flip);
 #endif /* HAVE_LENSFUN */
     if (uf->developer->working2displayTransform != NULL)
@@ -1851,8 +1819,7 @@ int ufraw_set_wb(ufraw_data *uf)
     } else if ( !strcmp(uf->conf->wb, auto_wb) ) {
 	int p;
 	/* Build a raw channel histogram */
-	image_type *histogram;
-	histogram = g_new0(image_type, uf->rgbMax+1);
+	ufraw_image_type *histogram = g_new0(ufraw_image_type, uf->rgbMax+1);
 	for (i=0; i<raw->raw.height*raw->raw.width; i++) {
 	    gboolean countPixel = TRUE;
 	    /* The -25 bound was copied from dcraw */
@@ -2025,7 +1992,7 @@ static void ufraw_build_raw_histogram(ufraw_data *uf)
 void ufraw_auto_expose(ufraw_data *uf)
 {
     int sum, stop, wp, c, pMax, pMin, p;
-    image_type pix;
+    ufraw_image_type pix;
     guint16 p16[3];
 
     if (uf->conf->autoExposure!=apply_state) return;
@@ -2069,7 +2036,7 @@ void ufraw_auto_expose(ufraw_data *uf)
 void ufraw_auto_black(ufraw_data *uf)
 {
     int sum, stop, bp, c;
-    image_type pix;
+    ufraw_image_type pix;
     guint16 p16[3];
 
     if (uf->conf->autoBlack==disabled_state) return;
@@ -2102,7 +2069,7 @@ void ufraw_auto_black(ufraw_data *uf)
 void ufraw_auto_curve(ufraw_data *uf)
 {
     int sum, stop, steps=8, bp, p, i, j, c;
-    image_type pix;
+    ufraw_image_type pix;
     guint16 p16[3];
     CurveData *curve = &uf->conf->curve[uf->conf->curveIndex];
     double decay = 0.90;

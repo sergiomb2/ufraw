@@ -871,7 +871,7 @@ static gboolean render_raw_histogram(preview_data *data)
 {
     if (data->FreezeDialog) return FALSE;
     guint8 pix[99], *p8, pen[4][3];
-    image_type p16;
+    ufraw_image_type p16;
     int x, c, cl, y, y0, y1;
     int raw_his[raw_his_size][4], raw_his_max;
 
@@ -1051,7 +1051,7 @@ static gboolean render_preview_image(preview_data *data)
     /* Vignetting is done in the development phase as an optimization
      * but if development_phase is invalidated then lensfun is too. */
     if (ufraw_invalidate_layer_event(data->UF, ufraw_lensfun_phase))
-	ufraw_prepare_lensfun(data->UF);
+	ufraw_prepare_lensfun(data->UF, ufraw_lensfun_phase);
 #endif
 
 #ifdef _OPENMP

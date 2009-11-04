@@ -114,7 +114,7 @@ typedef struct {
     lightness_adjustment lightnessAdjustment[max_adjustments];
 } developer_data;
 
-typedef guint16 image_type[4];
+typedef guint16 ufraw_image_type[4];
 
 typedef struct {
     char name[max_name];
@@ -280,8 +280,9 @@ typedef struct ufraw_struct {
     int RawChanMul[4];
     int RawCount;
 #ifdef HAVE_LENSFUN
-    int postproc_ops; /* postprocessing operations (LF_MODIFY_XXX) */
+    int modFlags; /* postprocessing operations (LF_MODIFY_XXX) */
     lfModifier *modifier;
+    void *lanczos_func; /* the Lanczos kernel */
 #endif /* HAVE_LENSFUN */
     int hotpixels;
     gboolean mark_hotpixels;
@@ -308,7 +309,7 @@ int ufraw_convert_image(ufraw_data *uf);
 void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase);
 void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase);
 #ifdef HAVE_LENSFUN
-int ufraw_prepare_lensfun(ufraw_data *uf);
+void ufraw_prepare_lensfun(ufraw_data *uf, UFRawPhase phase);
 void ufraw_lensfun_init(ufraw_data *uf);
 #endif
 void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
