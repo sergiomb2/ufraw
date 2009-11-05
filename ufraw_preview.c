@@ -515,6 +515,20 @@ static int zoom_to_scale(double zoom)
        return 0;
 }
 
+/* Scale crop coordinates to final image coordinates */
+void scale_crop_to_final_image(ufraw_data *uf,
+    int *x1, int *x2, int *y1, int *y2)
+{
+    ufraw_image_data *img = ufraw_final_image(uf, FALSE);
+
+    float scale_x = ((float)img->width) / uf->rotatedWidth;
+    float scale_y = ((float)img->height) / uf->rotatedHeight;
+    *x1 = MAX(floor(uf->conf->CropX1 * scale_x), 0);
+    *x2 = MIN(ceil(uf->conf->CropX2 * scale_x), img->width);
+    *y1 = MAX(floor(uf->conf->CropY1 * scale_y), 0);
+    *y2 = MIN(ceil(uf->conf->CropY2 * scale_y), img->height);
+}
+
 /* Modify the preview image to mark crop and spot areas.
  * Note that all coordinate intervals are semi-inclusive, e.g.
  * X1 <= pixels < X2 and Y1 <= pixels < Y2
@@ -547,19 +561,15 @@ static void preview_draw_area(preview_data *data,
     gboolean blinkUnder = CFG->underExp &&
 	    ( !CFG->blinkOverUnder || (data->OverUnderTicker & 3) == 3 );
 
-    /* Scale crop image coordinates to pixbuf coordinates */
-    float scale_x = ((float)pixbufWidth) / data->UF->rotatedWidth;
-    float scale_y = ((float)pixbufHeight) / data->UF->rotatedHeight;
-
-    int CropY1 = floor(CFG->CropY1 * scale_y);
-    int CropY2 =  ceil(CFG->CropY2 * scale_y);
-    int CropX1 = floor(CFG->CropX1 * scale_x);
-    int CropX2 =  ceil(CFG->CropX2 * scale_x);
+    int CropX1, CropX2, CropY1, CropY2;
+    scale_crop_to_final_image(data->UF, &CropX1, &CropX2, &CropY1, &CropY2);
     int CropWidth = CropX2 - CropX1;
     int CropHeight = CropY2 - CropY1;
     int drawLines = CFG->drawLines + 1;
 
     /* Scale spot image coordinates to pixbuf coordinates */
+    float scale_x = ((float)pixbufWidth) / data->UF->rotatedWidth;
+    float scale_y = ((float)pixbufHeight) / data->UF->rotatedHeight;
     int SpotY1 = floor(MIN(data->SpotY1, data->SpotY2) * scale_y);
     int SpotY2 =  ceil(MAX(data->SpotY1, data->SpotY2) * scale_y);
     int SpotX1 = floor(MIN(data->SpotX1, data->SpotX2) * scale_x);
@@ -660,19 +670,10 @@ static void preview_draw_all(preview_data *data)
     preview_draw_area(data, 0, 0, width, height);
 }
 
-static gboolean  preview_draw_crop(preview_data *data)
+static gboolean preview_draw_crop(preview_data *data)
 {
-    /* Scale crop image coordinates to pixbuf coordinates */
-    int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    float scale_x = ((float)pixbufWidth) / data->UF->rotatedWidth;
-    float scale_y = ((float)pixbufHeight) / data->UF->rotatedHeight;
-
-    int CropY1 = floor(CFG->CropY1 * scale_y);
-    int CropY2 =  ceil(CFG->CropY2 * scale_y);
-    int CropX1 = floor(CFG->CropX1 * scale_x);
-    int CropX2 =  ceil(CFG->CropX2 * scale_x);
-
+    int CropX1, CropX2, CropY1, CropY2;
+    scale_crop_to_final_image(data->UF, &CropX1, &CropX2, &CropY1, &CropY2);
     preview_draw_area(data, CropX1, CropY1, CropX2-CropX1, CropY2-CropY1);
 
     return FALSE;
@@ -684,25 +685,23 @@ static gboolean switch_highlights(gpointer ptr)
     /* Only redraw the highlights in the default rendering mode. */
     if (data->RenderMode!=render_default || data->FreezeDialog)
 	return TRUE;
-    int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
     if (data->RenderSubArea == -1) {
-	float scale_x = ((float)pixbufWidth) / data->UF->rotatedWidth;
-	float scale_y = ((float)pixbufHeight) / data->UF->rotatedHeight;
 	/* Set the area to redraw based on the crop rectangle and view port. */
+	int x1, x2, y1, y2;
+	scale_crop_to_final_image(data->UF, &x1, &x2, &y1, &y2);
 	GdkRectangle viewRect;
 	gtk_image_view_get_viewport(GTK_IMAGE_VIEW(data->PreviewWidget),
 		&viewRect);
 
-	int x = MAX(viewRect.x, floor(CFG->CropX1 * scale_x));
-	int x2 = MIN(viewRect.x+viewRect.width, ceil(CFG->CropX2 * scale_x));
-	int width = MAX(x2 - x, 0);
-	int y = MAX(viewRect.y, floor(CFG->CropY1 * scale_y));
-	int y2 = MIN(viewRect.y+viewRect.height, ceil(CFG->CropY2 * scale_y));
-	int height = MAX(y2 - y, 0);
+	x1 = MAX(x1, viewRect.x);
+	x2 = MIN(x2, viewRect.x);
+	int width = MAX(x2 - x1, 0);
+	y1 = MAX(y1, viewRect.y);
+	y2 = MIN(y2, viewRect.y);
+	int height = MAX(y2 - y1, 0);
 
 	data->OverUnderTicker++;
-	preview_draw_area(data, x, y, width, height);
+	preview_draw_area(data, x1, y1, width, height);
     }
     /* If no blinking is needed, disable this timeout function. */
     if (!CFG->blinkOverUnder || (!CFG->overExp && !CFG->underExp)) {
@@ -1090,13 +1089,8 @@ static gboolean render_live_histogram(preview_data *data)
     int x, y, c, min, max;
     ufraw_image_data *img = ufraw_final_image(data->UF, TRUE);
 
-    /* Scale crop image coordinates to pixbuf coordinates */
-    float scale_x = ((float)img->width) / data->UF->rotatedWidth;
-    float scale_y = ((float)img->height) / data->UF->rotatedHeight;
-    int CropY1 = floor(CFG->CropY1 * scale_y);
-    int CropY2 =  ceil(CFG->CropY2 * scale_y);
-    int CropX1 = floor(CFG->CropX1 * scale_x);
-    int CropX2 =  ceil(CFG->CropX2 * scale_x);
+    int CropX1, CropX2, CropY1, CropY2;
+    scale_crop_to_final_image(data->UF, &CropX1, &CropX2, &CropY1, &CropY2);
 
     double rgb[3];
     guint64 sum[3], sqr[3];
@@ -1919,34 +1913,22 @@ static void update_crop_ranges(preview_data *data)
     /* Avoid recursive handling of the same event */
     data->FreezeDialog++;
 
-    int CropX1 = CFG->CropX1;
-    int CropX2 = CFG->CropX2;
-    int CropY1 = CFG->CropY1;
-    int CropY2 = CFG->CropY2;
-
-    gtk_spin_button_set_range(data->CropX1Spin, 0, CropX2-1);
-    gtk_spin_button_set_range(data->CropY1Spin, 0, CropY2-1);
+    gtk_spin_button_set_range(data->CropX1Spin, 0, CFG->CropX2-1);
+    gtk_spin_button_set_range(data->CropY1Spin, 0, CFG->CropY2-1);
     gtk_spin_button_set_range(data->CropX2Spin,
-	CropX1+1, data->UF->rotatedWidth);
+	CFG->CropX1+1, data->UF->rotatedWidth);
     gtk_spin_button_set_range(data->CropY2Spin,
-	CropY1+1, data->UF->rotatedHeight);
+	CFG->CropY1+1, data->UF->rotatedHeight);
 
-    gtk_adjustment_set_value(data->CropX1Adjustment, CropX1);
-    gtk_adjustment_set_value(data->CropY1Adjustment, CropY1);
-    gtk_adjustment_set_value(data->CropX2Adjustment, CropX2);
-    gtk_adjustment_set_value(data->CropY2Adjustment, CropY2);
+    gtk_adjustment_set_value(data->CropX1Adjustment, CFG->CropX1);
+    gtk_adjustment_set_value(data->CropY1Adjustment, CFG->CropY1);
+    gtk_adjustment_set_value(data->CropX2Adjustment, CFG->CropX2);
+    gtk_adjustment_set_value(data->CropY2Adjustment, CFG->CropY2);
 
     data->FreezeDialog--;
 
-    int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    float scale_x = ((float)pixbufWidth) / data->UF->rotatedWidth;
-    float scale_y = ((float)pixbufHeight) / data->UF->rotatedHeight;
-
-    CropX1 = floor(CropX1 * scale_x);
-    CropX2 = MIN(ceil(CropX2 * scale_x), pixbufWidth-1);
-    CropY1 = floor(CropY1 * scale_y);
-    CropY2 = MIN(ceil(CropY2 * scale_y), pixbufHeight-1);
+    int CropX1, CropX2, CropY1, CropY2;
+    scale_crop_to_final_image(data->UF, &CropX1, &CropX2, &CropY1, &CropY2);
 
     int x1[4], x2[4], y1[4], y2[4], i = 0;
     if (CropX1!=data->DrawnCropX1) {
@@ -1984,6 +1966,8 @@ static void update_crop_ranges(preview_data *data)
     // It is better not to draw lines than to draw partial lines:
     int saveDrawLines = CFG->drawLines;
     CFG->drawLines = 0;
+    int pixbufHeight = gdk_pixbuf_get_height(data->PreviewPixbuf);
+    int pixbufWidth = gdk_pixbuf_get_width(data->PreviewPixbuf);
     for (i--; i>=0; i--) {
 	x1[i] = MAX(x1[i] - 1, 0);
 	x2[i] = MIN(x2[i] + 1, pixbufWidth);
