@@ -121,19 +121,19 @@ typedef struct {
     /* The menu used to choose lens - either full or limited by search criteria */
     GtkWidget *LensMenu;
     /* The lens fix notebook distortion page */
-    GtkWidget *LensDistortionPage, *LensDistortionTable, *LensDistortionDesc;
+    GtkWidget *LensDistortionTable, *LensDistortionDesc;
     /* The lens distortion model combobox */
     GtkWidget *LensDistortionModel;
     /* The lens fix notebook TCA page */
-    GtkWidget *LensTCAPage, *LensTCATable, *LensTCADesc;
+    GtkWidget *LensTCATable, *LensTCADesc;
     /* The lens TCA model combobox */
     GtkWidget *LensTCAModel;
     /* The lens fix notebook vignetting page */
-    GtkWidget *LensVignettingPage, *LensVignettingTable, *LensVignettingDesc;
+    GtkWidget *LensVignettingTable, *LensVignettingDesc;
     /* The lens vignetting model combobox */
     GtkWidget *LensVignettingModel;
     /* The lens fix notebook geometry page */
-    GtkWidget *LensGeometryPage, *LensGeometryTable, *LensFromGeometryDesc, *LensToGeometryDesc;
+    GtkWidget *LensGeometryTable, *LensFromGeometryDesc, *LensToGeometryDesc;
     /* The 'from' and 'to' geometry selectors */
     GtkWidget *LensFromGeometrySel, *LensToGeometrySel;
     /* The hbox containing focal, aperture, distance combos */

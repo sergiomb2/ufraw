@@ -34,7 +34,10 @@
 #include "ufraw.h"
 
 #ifdef HAVE_LENSFUN
-static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img);
+static void ufraw_convert_image_vignetting(ufraw_data *uf,
+	ufraw_image_data *img, UFRectangle *area);
+static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img,
+	ufraw_image_data *outimg, UFRectangle *area);
 #endif
 static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase);
 static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_image_data *dcimg);
@@ -229,6 +232,9 @@ ufraw_data *ufraw_open(char *filename)
     int i;
     for (i=ufraw_raw_phase; i<ufraw_phases_num; i++) {
 	uf->Images[i].buffer = NULL;
+	uf->Images[i].width = 0;
+	uf->Images[i].height = 0;
+	uf->Images[i].valid = 0;
 	uf->Images[i].invalidate_event = TRUE;
     }
     uf->thumb.buffer = NULL;
@@ -683,17 +689,19 @@ void ufraw_close(ufraw_data *uf)
 /* Return the coordinates and the size of given image subarea.
  * There are always 32 subareas, numbered 0 to 31, ordered in a 4x8 matrix.
  */
-void ufraw_img_get_subarea_coord (
-    ufraw_image_data *img, unsigned saidx, int *x, int *y, int *w, int *h)
+UFRectangle ufraw_image_get_subarea_rectangle(ufraw_image_data *img,
+	unsigned saidx)
 {
     int saw = (img->width + 3) / 4;
     int sah = (img->height + 7) / 8;
     int sax = saidx % 4;
     int say = saidx / 4;
-    *x = saw * sax;
-    *y = sah * say;
-    *w = (sax < 3) ? saw : (img->width - saw * 3);
-    *h = (say < 7) ? sah : (img->height - sah * 7);
+    UFRectangle area;
+    area.x = saw * sax;
+    area.y = sah * say;
+    area.width = (sax < 3) ? saw : (img->width - saw * 3);
+    area.height = (say < 7) ? sah : (img->height - sah * 7);
+    return area;
 }
 
 /* Return the subarea index given some X,Y image coordinates.
@@ -731,8 +739,21 @@ int ufraw_convert_image(ufraw_data *uf)
     ufraw_convert_image_first(uf, ufraw_first_phase);
 #ifdef HAVE_LENSFUN
     ufraw_prepare_lensfun(uf, ufraw_first_phase);
-    if (uf->modifier != NULL)
-	ufraw_convert_image_lensfun(uf, &uf->Images[ufraw_first_phase]);
+    if (uf->modifier != NULL) {
+	ufraw_image_data *img = &uf->Images[ufraw_first_phase];
+	UFRectangle area = { 0, 0, img->width, img->height };
+	ufraw_convert_image_vignetting(uf, img, &area);
+	ufraw_image_data *img2 = &uf->Images[ufraw_lensfun_phase];
+	img2->height = img->height;
+	img2->width = img->width;
+	img2->depth = img->depth;
+	img2->rowstride = img2->width * img2->depth;
+	img2->buffer = g_realloc(img2->buffer, img2->height * img2->rowstride);
+	ufraw_convert_image_lensfun(uf, img, img2, &area);
+	g_free(img->buffer);
+	img->buffer = img2->buffer;
+	img2->buffer = NULL;
+    }
 #endif
     return UFRAW_SUCCESS;
 }
@@ -765,34 +786,39 @@ int ufraw_convert_image(ufraw_data *uf)
 #define LANCZOS_DATA_ONE 4096
 #endif
 
-static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img)
+static void ufraw_convert_image_vignetting(ufraw_data *uf,
+	ufraw_image_data *img, UFRectangle *area)
 {
     /* Apply vignetting correction first, before distorting the image */
     if (uf->modFlags & LF_MODIFY_VIGNETTING)
         lf_modifier_apply_color_modification (
-            uf->modifier, img->buffer, 0.0, 0.0, img->width, img->height,
+            uf->modifier, img->buffer,
+	    area->x, area->y, area->width, area->height,
             LF_CR_4(RED, GREEN, BLUE, UNKNOWN), img->rowstride);
+}
 
+static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img,
+	ufraw_image_data *outimg, UFRectangle *area)
+{
     /* Now apply distortion, TCA and geometry in a single pass */
     if ((uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)) == 0)
 	return;
 
-    guint8 *buffer2 = g_new(guint8, img->height * img->rowstride);
-    ufraw_image_type *cur = (ufraw_image_type *)buffer2;
-    int x, y, c;
-
     /* Use precomputed Lanczos kernel */
     LANCZOS_DATA_TYPE *lanczos_func = uf->lanczos_func;
+    int x, y, c;
 
-    float *buff = g_new(float, img->width * 3 * 2);
-    for (y = 0; y < img->height; y++) {
+    float *buff = g_alloca(area->width * 3 * 2 * sizeof(float));
+    for (y = area->y; y < area->y + area->height; y++) {
         if (!lf_modifier_apply_subpixel_geometry_distortion(uf->modifier,
-		    0, y, img->width, 1, buff))
+		    area->x, y, area->width, 1, buff))
 	    g_error("ufraw_convert_image_lensfun: "
 		    "lf_modifier_apply_subpixel_geometry_distortion() failed");
 
 	float *modcoord = buff;
-	for (x = 0; x < img->width; x++, cur++) {
+	for (x = area->x; x < area->x + area->width; x++) {
+	    guint16 *cur = (guint16 *)(outimg->buffer +
+		    y * outimg->rowstride + x * outimg->depth);
 	    for (c = 0; c < 3; c++, modcoord += 2) {
 #ifdef LANCZOS_DATA_FLOAT
 		float xs = ceilf(modcoord[0]) - LANCZOS_SUPPORT;
@@ -800,7 +826,7 @@ static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img)
 		float ys = ceilf(modcoord[1]) - LANCZOS_SUPPORT;
 		float ye = floorf(modcoord[1]) + LANCZOS_SUPPORT;
 		if (xs < 0 || ys < 0 || xe >= img->width || ye >= img->height) {
-		    cur[0][c] = 0;
+		    cur[c] = 0;
 		    continue;
 		}
 		ufraw_image_type *src = (ufraw_image_type *)(img->buffer +
@@ -826,9 +852,9 @@ static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img)
 		    src += dsrc;
 		}
 		if (norm != 0.0)
-		    cur[0][c] = LIM((int)(sum / norm), 0, 0xffff);
+		    cur[c] = LIM((int)(sum / norm), 0, 0xffff);
 		else
-		    cur[0][c] = 0;
+		    cur[c] = 0;
 #else
 		/* Do it in integer arithmetic, it's faster */
 		int xx = (int)modcoord[0];
@@ -838,7 +864,7 @@ static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img)
 		int ys = yy + 1 - LANCZOS_SUPPORT;
 		int ye = yy     + LANCZOS_SUPPORT;
 		if (xs < 0 || ys < 0 || xe >= img->width || ye >= img->height) {
-		    cur[0][c] = 0;
+		    cur[c] = 0;
 		    continue;
 		}
 		ufraw_image_type *src = (ufraw_image_type *)(img->buffer +
@@ -864,18 +890,13 @@ static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img)
 		    src += dsrc;
 		}
 		if (norm != 0)
-		    cur[0][c] = LIM(sum / norm, 0, 0xffff);
+		    cur[c] = LIM(sum / norm, 0, 0xffff);
 		else
-		    cur[0][c] = 0;
+		    cur[c] = 0;
 #endif
 	    }
 	}
     }
-
-    /* Exchange the original image and the modified one */
-    g_free(img->buffer);
-    img->buffer = buffer2;
-    g_free(buff);
 }
 
 #endif /* HAVE_LENSFUN */
@@ -1139,6 +1160,19 @@ static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_
     img->buffer = g_memdup(dcimg->image, img->height * img->rowstride);
 }
 
+static void ufraw_image_init(ufraw_image_data *img,
+	int width, int height, int bitdepth)
+{
+    if (img->height != height || img->width != width || img->buffer == NULL)
+        img->valid = 0;
+
+    img->height = height;
+    img->width = width;
+    img->depth = bitdepth;
+    img->rowstride = img->width * img->depth;
+    img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
+}
+
 /*
  * This function does not set img->invalidate_event because the
  * invalidation here is a secondary effect of the need to resize
@@ -1147,53 +1181,23 @@ static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_
 static void ufraw_convert_prepare_buffers(ufraw_data *uf)
 {
     ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
-    ufraw_image_data *img;
-
-    /* Development output image layer */
-    img = &uf->Images[ufraw_develop_phase];
-    if (img->height != FirstImage->height ||
-        img->width != FirstImage->width ||
-        !img->buffer)
-        img->valid = 0;
-
-    img->height = FirstImage->height;
-    img->width = FirstImage->width;
-    img->depth = 3;
-    img->rowstride = img->width * img->depth;
-    img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
 
 #ifdef HAVE_LENSFUN
-    /* Postprocessing image layer */
-    img = &uf->Images[ufraw_lensfun_phase];
-    if (img->height != FirstImage->height ||
-        img->width != FirstImage->width ||
-        !img->buffer)
-        img->valid = 0;
-
-    img->height = FirstImage->height;
-    img->width = FirstImage->width;
-    img->depth = 3;
-    img->rowstride = img->width * img->depth;
-    /* ignore uf->modifier to avoid a call dependency */
-    img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
+    ufraw_image_init(&uf->Images[ufraw_lensfun_phase],
+	    FirstImage->width, FirstImage->height, 8);
 #endif /* HAVE_LENSFUN */
 
-    img = &uf->Images[ufraw_display_phase];
-    if (img->height != FirstImage->height ||
-	img->width != FirstImage->width ||
-	!img->buffer)
-	img->valid = 0;
+    ufraw_image_init(&uf->Images[ufraw_develop_phase],
+	    FirstImage->width, FirstImage->height, 3);
 
-    img->height = FirstImage->height;
-    img->width = FirstImage->width;
-    img->depth = 3;
-    img->rowstride = img->width * img->depth;
+    ufraw_image_init(&uf->Images[ufraw_display_phase],
+	    FirstImage->width, FirstImage->height, 3);
     // TODO: We should be able to allocate a buffer only if it is needed.
 //    if (uf->developer->working2displayTransform == NULL) {
 //	g_free(img->buffer);
 //	img->buffer = NULL;
 //    } else {
-	img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
+//	img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
 //    }
 }
 
@@ -1215,15 +1219,13 @@ void ufraw_prepare_lensfun(ufraw_data *uf, UFRawPhase phase)
     if (uf->modifier == NULL)
 	return;
 
-    int bitDepth = img->depth>4 ? LF_PF_U16 : LF_PF_U8;
     float real_scale = pow(2.0, conf->lens_scale);
     uf->modFlags = lf_modifier_initialize(uf->modifier, conf->lens,
-	    bitDepth, conf->focal_len, conf->aperture, conf->subject_distance,
+	    LF_PF_U16, conf->focal_len, conf->aperture, conf->subject_distance,
 	    real_scale, conf->cur_lens_type, UF_LF_ALL, FALSE);
     if ((uf->modFlags & UF_LF_ALL) == 0) {
 	lf_modifier_destroy(uf->modifier);
 	uf->modifier = NULL;
-//    	img->valid = 0;
     }
 
     if (uf->lanczos_func != NULL)
@@ -1294,7 +1296,12 @@ void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
 ufraw_image_data *ufraw_rgb_image(ufraw_data *uf, gboolean bufferok,
 	const char *dbg)
 {
-    const UFRawPhase phase = ufraw_first_phase;
+    UFRawPhase phase = ufraw_first_phase;
+#ifdef HAVE_LENSFUN
+    if (uf->modifier &&
+	(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
+	phase = ufraw_lensfun_phase;
+#endif /* HAVE_LENSFUN */
     int i;
 
     if (dbg && uf->Images[phase].valid != (long)0xffffffff)
@@ -1316,11 +1323,6 @@ ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok)
     int i;
 
     phase = ufraw_develop_phase;
-#ifdef HAVE_LENSFUN
-    if (uf->modifier &&
-	(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
-	phase = ufraw_lensfun_phase;
-#endif /* HAVE_LENSFUN */
     if (bufferok) {
 	    /* It should never be necessary to actually finish the conversion
 	     * because it can break render_preview_image() which uses the
@@ -1346,17 +1348,9 @@ ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok)
 ufraw_image_data *ufraw_display_image(ufraw_data *uf, gboolean bufferok)
 {
     UFRawPhase phase = ufraw_display_phase;
-    if (uf->developer->working2displayTransform == NULL) {
-#ifdef HAVE_LENSFUN
-	if (uf->modifier &&
-	    (uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
-	    phase = ufraw_lensfun_phase;
-	else
-	    phase = ufraw_develop_phase;
-#else /* HAVE_LENSFUN */
+    if (uf->developer->working2displayTransform == NULL)
 	phase = ufraw_develop_phase;
-#endif /* HAVE_LENSFUN */
-    }
+ 
     if (bufferok) {
 	    /* It should never be necessary to actually finish the conversion
 	     * because it can break render_preview_image() which uses the
@@ -1384,19 +1378,23 @@ ufraw_image_data *ufraw_display_image(ufraw_data *uf, gboolean bufferok)
 ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 	UFRawPhase phase)
 {
-    int x = 0, y = 0, w = 0, h = 0;
-    ufraw_image_data *out = &uf->Images [phase];
+    int yy;
+    ufraw_image_data *out = &uf->Images[phase];
 
     if (out->valid & (1 << saidx))
         return out; // the subarea has been already computed
 
+    /* Get subarea coordinates */
+    UFRectangle area = ufraw_image_get_subarea_rectangle(out, saidx);
+    guint8 *dest = out->buffer + area.y*out->rowstride + area.x*out->depth;
+
     /* Get the subarea image for previous phase */
     ufraw_image_data *in = NULL;
-    if (phase > ufraw_raw_phase)
+    guint8 *src = NULL;
+    if (phase > ufraw_raw_phase) {
 	in = ufraw_convert_image_area(uf, saidx, phase - 1);
-
-    /* Get subarea coordinates */
-    ufraw_img_get_subarea_coord(out, saidx, &x, &y, &w, &h);
+	src = in->buffer + area.y*in->rowstride + area.x*in->depth;
+    }
 
     switch (phase)
     {
@@ -1419,46 +1417,28 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 		else
 		    ufraw_convert_image_first(uf, phase);
 		ufraw_convert_prepare_buffers(uf);
+#ifdef HAVE_LENSFUN
+		ufraw_prepare_lensfun(uf, ufraw_lensfun_phase);
+		ufraw_image_data *img = &uf->Images[ufraw_first_phase];
+		UFRectangle area = { 0, 0, img->width, img->height };
+		ufraw_convert_image_vignetting(uf, img, &area);
+#endif /* HAVE_LENSFUN */
 		out->valid = 0xffffffff;
 	    }
 	    return out;
 
-        case ufraw_develop_phase:
-            {
-                int yy;
-                for (yy = y; yy < y + h; yy++)
-                {
-                    guint8 *dest = out->buffer + (yy * out->width + x) * out->depth;
-                    develop(
-                        dest, (void *)(in->buffer + (yy * in->width + x) * in->depth),
-                        uf->developer, 8, w);
-
-#ifdef HAVE_LENSFUN
-                    if (uf->modifier &&
-                        (uf->modFlags & LF_MODIFY_VIGNETTING))
-                    {
-                        /* Apply de-vignetting filter here, to avoid
-                         * creating a separate pass for it which will
-                         * take a lot of memory ... */
-                        lf_modifier_apply_color_modification (
-                            uf->modifier, dest, x, yy, w, 1,
-                            LF_CR_3 (RED, GREEN, BLUE),
-                            out->width * out->depth);
-                    }
-#endif /* HAVE_LENSFUN */
-                }
-            }
-            break;
-
         case ufraw_lensfun_phase:
 #ifdef HAVE_LENSFUN
             {
-                if (!uf->modifier ||
+                if (uf->modifier == NULL ||
                     !(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING))) {
-		    out->valid = in->valid;	/* for invalidate_event */
+//		    out->valid = in->valid;	/* for invalidate_event */
 		    return in;
 		}
 
+		/* Area calculation is not needed at the moment since
+		 * ufraw_first_phase is not tiled yet. */
+		/*
                 int yy;
                 float *buff = g_new (float, (w < 8) ? 8 * 2 * 3 : w * 2 * 3);
 
@@ -1486,68 +1466,28 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
                     if (idx <= 31)
                         ufraw_convert_image_area (uf, idx, phase - 1);
                 }
-
-                for (yy = 0; yy < h; yy++)
-                {
-                    if (!lf_modifier_apply_subpixel_geometry_distortion (
-                        uf->modifier, x, y + yy, w, 1, buff))
-                        break; // huh?? should never happen
-
-                    guint8 *out_buf = out->buffer + (y + yy) * out->rowstride + x * out->depth;
-
-                    float *cur, *end = buff + w * 2 * 3;
-                    for (cur = buff; cur < end; cur += 2 * 3, out_buf += out->depth)
-                    {
-                        // roundf() and truncf() are C99 and gcc warns on them
-                        // if used without -std=c99... oh well...
-                        int xi = cur [0] + 0.5;
-                        int yi = cur [1] + 0.5;
-                        if (xi<0 || xi >= in->width || yi<0 || yi >= in->height)
-                            out_buf [0] = 0;
-                        else
-                            /* Nearest interpolation: don't spend time
-                               for high-quality interpolation for preview */
-                            out_buf [0] = (in->buffer + yi * in->rowstride +
-                                           xi * in->depth) [0];
-
-                        xi = cur [2] + 0.5;
-                        yi = cur [3] + 0.5;
-                        if (xi<0 || xi >= in->width || yi<0 || yi >= in->height)
-                            out_buf [1] = 0;
-                        else
-                            /* Nearest interpolation: don't spend time
-                               for high-quality interpolation for preview */
-                            out_buf [1] = (in->buffer + yi * in->rowstride +
-                                           xi * in->depth) [1];
-
-                        xi = cur [4] + 0.5;
-                        yi = cur [5] + 0.5;
-                        if (xi<0 || xi >= in->width || yi<0 || yi >= in->height)
-                            out_buf [2] = 0;
-                        else
-                            /* Nearest interpolation: don't spend time
-                               for high-quality interpolation for preview */
-                            out_buf [2] = (in->buffer + yi * in->rowstride +
-                                           xi * in->depth) [2];
-                    }
-                }
-
-                g_free (buff);
+		*/
+		ufraw_convert_image_lensfun(uf, in, out, &area);
             }
             break;
 #else /* HAVE_LENSFUN */
             return in;
 #endif /* HAVE_LENSFUN */
 
+        case ufraw_develop_phase:
+            for (yy = 0; yy < area.height; yy++, dest += out->rowstride,
+				src += in->rowstride) {
+                develop(dest, (void *)src, uf->developer, 8, area.width);
+            }
+            break;
+
         case ufraw_display_phase:
 	    if (uf->developer->working2displayTransform == NULL)
 		return in;
 
-            int yy;
-            for (yy = y; yy < y + h; yy++) {
-                guint8 *dest = out->buffer + (yy * out->width + x) * out->depth;
-                guint8 *source = in->buffer + (yy * in->width + x) * in->depth;
-                develop_display(dest, source, uf->developer, w);
+            for (yy = 0; yy < area.height; yy++, dest += out->rowstride,
+				src += in->rowstride) {
+                develop_display(dest, src, uf->developer, area.width);
 	    }
 	    break;
 
@@ -1694,12 +1634,12 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
 	ufraw_normalize_rotation(uf);
     }
     ufraw_flip_image_buffer(&uf->Images[ufraw_first_phase], flip);
-    ufraw_flip_image_buffer(&uf->Images[ufraw_develop_phase], flip);
 #ifdef HAVE_LENSFUN
     if (uf->modifier &&
 	(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
 	ufraw_flip_image_buffer(&uf->Images[ufraw_lensfun_phase], flip);
 #endif /* HAVE_LENSFUN */
+    ufraw_flip_image_buffer(&uf->Images[ufraw_develop_phase], flip);
     if (uf->developer->working2displayTransform != NULL)
 	ufraw_flip_image_buffer(&uf->Images[ufraw_display_phase], flip);
 
@@ -1709,10 +1649,10 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
 void ufraw_invalidate_layer(ufraw_data *uf, UFRawPhase phase)
 {
     for (; phase < ufraw_phases_num; phase++) {
-	if (uf->Images[phase].valid != 0) {
+//	if (uf->Images[phase].valid != 0) {
 	    uf->Images[phase].valid = 0;
 	    uf->Images[phase].invalidate_event = TRUE;
-	}
+//	}
     }
 }
 
@@ -1740,10 +1680,10 @@ void ufraw_invalidate_darkframe_layer(ufraw_data *uf)
 void ufraw_invalidate_whitebalance_layer(ufraw_data *uf)
 {
     ufraw_invalidate_layer(uf, ufraw_develop_phase);
-    if (uf->Images[ufraw_raw_phase].valid) {
+//    if (uf->Images[ufraw_raw_phase].valid) {
 	uf->Images[ufraw_raw_phase].valid = 0;
 	uf->Images[ufraw_raw_phase].invalidate_event = TRUE;
-    }
+//    }
 }
 
 /*

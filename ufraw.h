@@ -68,8 +68,8 @@ typedef enum { display_developer, file_developer, auto_developer }
 	DeveloperMode;
 typedef enum { perceptual_intent, relative_intent, saturation_intent,
 	absolute_intent, disable_intent } Intent;
-typedef enum { ufraw_raw_phase, ufraw_first_phase, ufraw_develop_phase,
-        ufraw_lensfun_phase, ufraw_display_phase, ufraw_phases_num } UFRawPhase;
+typedef enum { ufraw_raw_phase, ufraw_first_phase, ufraw_lensfun_phase,
+	ufraw_develop_phase, ufraw_display_phase, ufraw_phases_num } UFRawPhase;
 typedef enum { grayscale_none, grayscale_lightness, grayscale_luminance,
 	grayscale_value, grayscale_mixer } GrayscaleMode;
 typedef enum { lensfun_none, lensfun_auto } LensfunMode;
@@ -123,6 +123,13 @@ typedef struct {
     double gamma, linear;
     int BitDepth;
 } profile_data;
+
+typedef struct {
+    gint x;
+    gint y;
+    gint width;
+    gint height;
+} UFRectangle;
 
 /* conf_data holds the configuration data of UFRaw.
  * The data can be split into three groups:
@@ -340,8 +347,8 @@ void ufraw_normalize_rotation(ufraw_data *uf);
 void ufraw_unnormalize_rotation(ufraw_data *uf);
 void ufraw_get_image_dimensions(ufraw_data *uf);
 
-void ufraw_img_get_subarea_coord (ufraw_image_data *img, unsigned saidx,
-                                  int *x, int *y, int *w, int *h);
+UFRectangle ufraw_image_get_subarea_rectangle(ufraw_image_data *img,
+	unsigned saidx);
 unsigned ufraw_img_get_subarea_idx (ufraw_image_data *img, int x, int y);
 
 /* prototypes for functions in ufraw_message.c */

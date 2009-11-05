@@ -967,7 +967,7 @@ static int choose_subarea(preview_data *data, int *chosen)
 {
     int subarea = -1;
     int max_area = -1;
-    int i, x, y, w, h;
+    int i;
     ufraw_image_data *img;
     GdkRectangle viewport;
 
@@ -987,31 +987,31 @@ static int choose_subarea(preview_data *data, int *chosen)
 	if (*chosen & (1 << i))
 	    continue;
 
-        ufraw_img_get_subarea_coord(img, i, &x, &y, &w, &h);
+
+        UFRectangle rec = ufraw_image_get_subarea_rectangle(img, i);
 
         gboolean noclip = TRUE;
-        if (x < viewport.x) {
-            w -= (viewport.x - x);
-            x = viewport.x;
+        if (rec.x < viewport.x) {
+            rec.width -= (viewport.x - rec.x);
+            rec.x = viewport.x;
             noclip = FALSE;
         }
-        if (x + w > viewport.x + viewport.width) {
-            w = viewport.x + viewport.width - x;
+        if (rec.x + rec.width > viewport.x + viewport.width) {
+            rec.width = viewport.x + viewport.width - rec.x;
             noclip = FALSE;
         }
-        if (y < viewport.y) {
-            h -= (viewport.y - y);
-            y = viewport.y;
+        if (rec.y < viewport.y) {
+            rec.height -= (viewport.y - rec.y);
+            rec.y = viewport.y;
             noclip = FALSE;
         }
-        if (y + h > viewport.y + viewport.height) {
-            h = viewport.y + viewport.height - y;
+        if (rec.y + rec.height > viewport.y + viewport.height) {
+            rec.height = viewport.y + viewport.height - rec.y;
             noclip = FALSE;
         }
 
         /* Compute the visible area of the subarea */
-        int area = (w > 0 && h > 0) ? w * h : 0;
-
+	int area = (rec.width > 0 && rec.height > 0) ? rec.width*rec.height : 0;
         if (area > max_area) {
             max_area = area;
             subarea = i;
@@ -1044,12 +1044,12 @@ static gboolean render_preview_image(preview_data *data)
 
     if (data->FreezeDialog) return FALSE;
 
-    if (ufraw_invalidate_layer_event(data->UF, ufraw_first_phase))
+    if (ufraw_invalidate_layer_event(data->UF, ufraw_first_phase)) {
 	render_init(data);
 #ifdef HAVE_LENSFUN
-    /* Vignetting is done in the development phase as an optimization
-     * but if development_phase is invalidated then lensfun is too. */
-    if (ufraw_invalidate_layer_event(data->UF, ufraw_lensfun_phase))
+	/* Vignetting is done in the first phase */
+	ufraw_prepare_lensfun(data->UF, ufraw_lensfun_phase);
+    } else if (ufraw_invalidate_layer_event(data->UF, ufraw_lensfun_phase))
 	ufraw_prepare_lensfun(data->UF, ufraw_lensfun_phase);
 #endif
 
@@ -1068,9 +1068,8 @@ static gboolean render_preview_image(preview_data *data)
 	ufraw_image_data *img1 = ufraw_convert_image_area(
 	    data->UF, subarea, ufraw_phases_num - 1);
 	if (img1) {
-	    int x, y, w, h;
-	    ufraw_img_get_subarea_coord(img1, subarea, &x, &y, &w, &h);
-	    preview_draw_area(data, x, y, w, h);
+	    UFRectangle area = ufraw_image_get_subarea_rectangle(img1, subarea);
+	    preview_draw_area(data, area.x, area.y, area.width, area.height);
 	    again = TRUE;
 	}
     }

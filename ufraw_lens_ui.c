@@ -373,7 +373,7 @@ static void lens_interpolate (preview_data *data, const lfLens *lens)
                                "changed", NULL, NULL);
 
     if (data->UF->modFlags & LF_MODIFY_VIGNETTING)
-        ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
+        ufraw_invalidate_layer(data->UF, ufraw_first_phase);
     else
         ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);
     render_preview (data);
@@ -759,17 +759,13 @@ static void tca_model_changed (GtkComboBox *widget, preview_data *data)
     render_preview (data);
 }
 
-static void fill_tca_page (preview_data *data)
+static void fill_tca_page(preview_data *data, GtkWidget *page)
 {
     GtkWidget *label;
     int i, active_index;
 
-    /* Remove all controls from the page */
-    gtk_container_foreach (
-        GTK_CONTAINER (data->LensTCAPage), delete_children, NULL);
-
     GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
-    gtk_box_pack_start (GTK_BOX (data->LensTCAPage), hbox, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
 
     /* Add the model combobox */
     label = gtk_label_new (_("Model:"));
@@ -796,14 +792,14 @@ static void fill_tca_page (preview_data *data)
 
     data->LensTCATable = gtk_table_new (10, 1, FALSE);
     GtkWidget *f = gtk_frame_new (_("Parameters"));
-    gtk_box_pack_start (GTK_BOX (data->LensTCAPage), f, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(page), f, TRUE, TRUE, 0);
     gtk_container_add(GTK_CONTAINER(f), data->LensTCATable);
 
     data->LensTCADesc = gtk_label_new ("");
     gtk_label_set_line_wrap (GTK_LABEL (data->LensTCADesc), TRUE);
     gtk_label_set_ellipsize(GTK_LABEL(data->LensTCADesc), PANGO_ELLIPSIZE_END);
     gtk_label_set_selectable(GTK_LABEL(data->LensTCADesc), TRUE);
-    gtk_box_pack_start (GTK_BOX (data->LensTCAPage), data->LensTCADesc, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(page), data->LensTCADesc, FALSE, FALSE, 0);
 
     gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensTCAModel), active_index);
 }
@@ -835,7 +831,7 @@ static void adjustment_update_vign (GtkAdjustment *adj, float *valuep)
     remove_vign_models (data, CFG->lens_vignetting.Model);
     lf_lens_add_calib_vignetting (CFG->lens, &CFG->lens_vignetting);
 
-    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_first_phase);
     render_preview (data);
 }
 
@@ -872,21 +868,17 @@ static void vignetting_model_changed (GtkComboBox *widget, preview_data *data)
     gtk_label_set_text (GTK_LABEL (data->LensVignettingDesc), details);
     gtk_widget_show_all (data->LensVignettingTable);
 
-    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_first_phase);
     render_preview (data);
 }
 
-static void fill_vignetting_page (preview_data *data)
+static void fill_vignetting_page(preview_data *data, GtkWidget *page)
 {
     GtkWidget *label;
     int i, active_index;
 
-    /* Remove all controls from the page */
-    gtk_container_foreach (
-        GTK_CONTAINER (data->LensVignettingPage), delete_children, NULL);
-
     GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
-    gtk_box_pack_start (GTK_BOX (data->LensVignettingPage), hbox, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
 
     /* Add the model combobox */
     label = gtk_label_new (_("Model:"));
@@ -913,7 +905,7 @@ static void fill_vignetting_page (preview_data *data)
 
     data->LensVignettingTable = gtk_table_new (10, 1, FALSE);
     GtkWidget *f = gtk_frame_new (_("Parameters"));
-    gtk_box_pack_start (GTK_BOX (data->LensVignettingPage), f, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(page), f, TRUE, TRUE, 0);
     gtk_container_add(GTK_CONTAINER(f), data->LensVignettingTable);
 
     data->LensVignettingDesc = gtk_label_new ("");
@@ -921,7 +913,7 @@ static void fill_vignetting_page (preview_data *data)
     gtk_label_set_ellipsize(GTK_LABEL(data->LensVignettingDesc),
 	    PANGO_ELLIPSIZE_END);
     gtk_label_set_selectable(GTK_LABEL(data->LensVignettingDesc), TRUE);
-    gtk_box_pack_start (GTK_BOX (data->LensVignettingPage), data->LensVignettingDesc, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(page), data->LensVignettingDesc, FALSE, FALSE, 0);
 
     gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensVignettingModel), active_index);
 }
@@ -989,24 +981,17 @@ static void distortion_model_changed (GtkComboBox *widget, preview_data *data)
     gtk_label_set_text (GTK_LABEL (data->LensDistortionDesc), details);
     gtk_widget_show_all (data->LensDistortionTable);
 
-    if (CFG->lens_distortion.Model == LF_DIST_MODEL_NONE)
-	ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
-    else
-	ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);
     render_preview (data);
 }
 
-static void fill_distortion_page (preview_data *data)
+static void fill_distortion_page(preview_data *data, GtkWidget *page)
 {
     GtkWidget *label;
     int i, active_index;
 
-    /* Remove all controls from the page */
-    gtk_container_foreach (
-        GTK_CONTAINER (data->LensDistortionPage), delete_children, NULL);
-
     GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
-    gtk_box_pack_start (GTK_BOX (data->LensDistortionPage), hbox, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
 
     /* Add the model combobox */
     label = gtk_label_new (_("Model:"));
@@ -1033,7 +1018,7 @@ static void fill_distortion_page (preview_data *data)
 
     data->LensDistortionTable = gtk_table_new (10, 1, FALSE);
     GtkWidget *f = gtk_frame_new (_("Parameters"));
-    gtk_box_pack_start (GTK_BOX (data->LensDistortionPage), f, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(page), f, TRUE, TRUE, 0);
     gtk_container_add (GTK_CONTAINER(f), data->LensDistortionTable);
 
     data->LensDistortionDesc = gtk_label_new ("");
@@ -1041,7 +1026,7 @@ static void fill_distortion_page (preview_data *data)
     gtk_label_set_ellipsize(GTK_LABEL(data->LensDistortionDesc),
 	    PANGO_ELLIPSIZE_END);
     gtk_label_set_selectable(GTK_LABEL(data->LensDistortionDesc), TRUE);
-    gtk_box_pack_start (GTK_BOX (data->LensDistortionPage),
+    gtk_box_pack_start(GTK_BOX(page),
                         data->LensDistortionDesc, FALSE, FALSE, 0);
 
     gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensDistortionModel), active_index);
@@ -1072,17 +1057,13 @@ static void geometry_model_changed (GtkComboBox *widget, preview_data *data)
     render_preview (data);
 }
 
-static void fill_geometry_page (preview_data *data)
+static void fill_geometry_page(preview_data *data, GtkWidget *page)
 {
     GtkWidget *label;
     int i;
 
-    /* Remove all controls from the page */
-    gtk_container_foreach (
-        GTK_CONTAINER (data->LensGeometryPage), delete_children, NULL);
-
     data->LensGeometryTable = gtk_table_new (10, 1, FALSE);
-    gtk_box_pack_start (GTK_BOX (data->LensGeometryPage),
+    gtk_box_pack_start(GTK_BOX(page),
                         data->LensGeometryTable, TRUE, TRUE, 0);
 
     /* Add the model combobox */
@@ -1150,7 +1131,7 @@ static void fill_geometry_page (preview_data *data)
 void lens_fill_interface (preview_data *data, GtkWidget *page)
 {
     GtkTable *table, *subTable;
-    GtkWidget *label, *button;
+    GtkWidget *label, *button, *subpage;
 
     /* Camera selector */
     table = GTK_TABLE(gtk_table_new(10, 10, FALSE));
@@ -1222,26 +1203,24 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
                        TRUE, TRUE, 0);
     gtk_notebook_set_tab_pos (subnb, GTK_POS_LEFT);
 
-    data->LensTCAPage = notebook_page_new(
-        subnb, _("Lateral chromatic aberration"), "tca");
-    data->LensVignettingPage = notebook_page_new(
-        subnb, _("Optical vignetting"), "vignetting");
-    data->LensDistortionPage = notebook_page_new(
-        subnb, _("Lens distortion"), "distortion");
-    //data->LensCCIPage = notebook_page_new(
-    //    subnb, _("Color contribution"), NULL);
-    data->LensGeometryPage = notebook_page_new(
-        subnb, _("Lens geometry"), "geometry");
-
     /* Create a default lens & camera */
     ufraw_lensfun_init(data->UF);
     camera_set(data);
-    lens_set(data, CFG->lens);
 
-    fill_tca_page (data);
-    fill_vignetting_page (data);
-    fill_distortion_page (data);
-    fill_geometry_page (data);
+    subpage = notebook_page_new(subnb,
+	    _("Lateral chromatic aberration"), "tca");
+    fill_tca_page(data, subpage);
+
+    subpage = notebook_page_new(subnb, _("Optical vignetting"), "vignetting");
+    fill_vignetting_page(data, subpage);
+
+    subpage = notebook_page_new(subnb, _("Lens distortion"), "distortion");
+    fill_distortion_page(data, subpage);
+
+    subpage = notebook_page_new(subnb, _("Lens geometry"), "geometry");
+    fill_geometry_page(data, subpage);
+
+    lens_set(data, CFG->lens);
 
     if (CFG->lensfunMode == lensfun_none) {
 	gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensDistortionModel),
