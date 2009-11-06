@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: 2009-10-06 09:38+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -741,9 +741,6 @@ msgstr "암부: %0.3lf"
 
 msgid "No more room for new lightness adjustments."
 msgstr "새 밝기 조정을 저장할 공간이 없습니다."
-
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "치명적인 오류: uf->conf->shrink<1"
 
 msgid "Load dark frame"
 msgstr "다크프레임 불러오기"

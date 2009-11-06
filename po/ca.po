@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: 2009-09-30 19:24+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -789,9 +789,6 @@ msgstr "Punt negre: %0.3lf"
 
 msgid "No more room for new lightness adjustments."
 msgstr "No hi ha espai per a més ajustaments de lluminositat."
-
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "S'ha produït un error que no es pot recuperar: uf->conf->shrink<1"
 
 msgid "Load dark frame"
 msgstr "Carrega el marc fosc"

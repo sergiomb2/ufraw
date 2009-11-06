@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -775,9 +775,6 @@ msgstr "Црна тачка: %0.3lf"
 
 msgid "No more room for new lightness adjustments."
 msgstr "Нема места за нова подешавања осветљења."
-
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "Кобан грешка: uf->conf->shrink<1"
 
 msgid "Load dark frame"
 msgstr "Учитај тамни кадар"

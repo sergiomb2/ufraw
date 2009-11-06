@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -746,9 +746,6 @@ msgstr "ブラックポイント: %0.3lf"
 #, fuzzy
 msgid "No more room for new lightness adjustments."
 msgstr "新しいカーブに対する余地がありません"
-
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "深刻なエラー: uf->conf->shrink<1"
 
 msgid "Load dark frame"
 msgstr "ダークフレームを読み込む"

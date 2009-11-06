@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: 2009-10-01 10:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -768,9 +768,6 @@ msgstr "Punkt czerni: %0.3lf"
 
 msgid "No more room for new lightness adjustments."
 msgstr "Brak miejsca na nowe poprawki jasno¶ci."
-
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "B³±d krytyczny: uf->conf->shrink<1"
 
 msgid "Load dark frame"
 msgstr "Wczytaj ciemn± klatkê"

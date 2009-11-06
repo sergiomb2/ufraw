@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -762,9 +762,6 @@ msgstr "Sortpunkt: %0.3lf"
 
 msgid "No more room for new lightness adjustments."
 msgstr "Ikke mere plass til nye lysverdijusteringer."
-
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "Fatal feil: uf->conf->shrink<1"
 
 msgid "Load dark frame"
 msgstr "Les inn sortbilde"

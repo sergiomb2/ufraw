@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: 2009-10-15 21:44+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -787,9 +787,6 @@ msgstr "Point noir: %0.3lf"
 
 msgid "No more room for new lightness adjustments."
 msgstr "Plus de place pour de nouveaux ajustements de clarté."
-
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "Erreur Fatale: uf->conf->shrink<1"
 
 msgid "Load dark frame"
 msgstr "Charger bruit de référence"

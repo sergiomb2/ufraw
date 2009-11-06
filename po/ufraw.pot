@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -658,9 +658,6 @@ msgid "Black point: %0.3lf"
 msgstr ""
 
 msgid "No more room for new lightness adjustments."
-msgstr ""
-
-msgid "Fatal Error: uf->conf->shrink<1"
 msgstr ""
 
 msgid "Load dark frame"

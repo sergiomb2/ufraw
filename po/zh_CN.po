@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -729,9 +729,6 @@ msgstr "黑色控制点: %0.3lf"
 
 msgid "No more room for new lightness adjustments."
 msgstr "没有足够的空间给新的亮度曲线。"
-
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "致命错误: uf->conf->shrink<1"
 
 msgid "Load dark frame"
 msgstr "加载黑色帧(dark frame)"

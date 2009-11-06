@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: 2009-09-30 13:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -768,9 +768,6 @@ msgstr "Zwartpunt: %0.3lf"
 
 msgid "No more room for new lightness adjustments."
 msgstr "Geen ruimte voor nieuwe lichtwaarde aanpassingen."
-
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "Fatale fout: uf->conf->shrink<1"
 
 msgid "Load dark frame"
 msgstr "Inlezen zwartbeeld"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: 2009-10-04 10:41+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -764,9 +764,6 @@ msgstr "Černý bod: %0.3lf"
 
 msgid "No more room for new lightness adjustments."
 msgstr "Není více místa pro nové úpravy světlosti."
-
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "Fatální chyba: uf->conf->shrink<1"
 
 msgid "Load dark frame"
 msgstr "Načíst černý snímek"

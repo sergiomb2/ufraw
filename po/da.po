@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: 2009-11-03 08:30+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
@@ -764,9 +764,6 @@ msgstr "Sortpunkt: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "Ikke mere plads til nye lysværdijusteringer."
 
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "Fatal fejl: uf->conf->shrink<1"
-
 msgid "Load dark frame"
 msgstr "Indlæs sortbillede"
 
@@ -966,7 +963,8 @@ msgid "Green component"
 msgstr "Grøn komponent"
 
 msgid "Select a spot on the preview image to apply spot white balance"
-msgstr "Vælg et punkt på forhåndsvisningsbilledet for at anvende punkthvidbalance"
+msgstr ""
+"Vælg et punkt på forhåndsvisningsbilledet for at anvende punkthvidbalance"
 
 msgid "Chan. multipliers:"
 msgstr "Kanalmultiplikatorer:"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-03 08:15+0100\n"
+"POT-Creation-Date: 2009-11-06 15:15+0100\n"
 "PO-Revision-Date: 2009-10-14 06:00+0100\n"
 "Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -781,9 +781,6 @@ msgstr "Punto di nero: %0.3lf"
 #, fuzzy
 msgid "No more room for new lightness adjustments."
 msgstr "Spazio esaurito per nuove curve."
-
-msgid "Fatal Error: uf->conf->shrink<1"
-msgstr "Errore: uf->conf->shrink<1"
 
 msgid "Load dark frame"
 msgstr "Carica darkframe"
