@@ -2224,14 +2224,14 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
 		if (cy + dy > data->UF->rotatedHeight)
 		    dy = data->UF->rotatedHeight - cy, fix_dx++;
 		if (fix_dx) {
-		    double dx = rint(dy * 2.0 * aspect);
+		    double dx = floor(dy * 2.0 * aspect + 0.5);
 		    if (cursor == left_cursor)
 			CFG->CropX1 = CFG->CropX2 - dx;
 		    else
 			CFG->CropX2 = CFG->CropX1 + dx;
 		}
-		CFG->CropY1 = rint(cy - dy);
-		CFG->CropY2 = rint(cy + dy);
+		CFG->CropY1 = floor(cy - dy + 0.5);
+		CFG->CropY2 = floor(cy + dy + 0.5);
 	    }
 	    break;
 	case top_cursor:
@@ -2247,14 +2247,14 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
 		if (cx + dx > data->UF->rotatedWidth)
 		    dx = data->UF->rotatedWidth - cx, fix_dy++;
 		if (fix_dy) {
-		    double dy = rint(dx * 2.0 / aspect);
+		    double dy = floor(dx * 2.0 / aspect + 0.5);
 		    if (cursor == top_cursor)
 			CFG->CropY1 = CFG->CropY2 - dy;
 		    else
 			CFG->CropY2 = CFG->CropY1 + dy;
 		}
-		CFG->CropX1 = rint(cx - dx);
-		CFG->CropX2 = rint(cx + dx);
+		CFG->CropX1 = floor(cx - dx + 0.5);
+		CFG->CropX2 = floor(cx + dx + 0.5);
 	    }
 	    break;
 
@@ -2354,10 +2354,10 @@ static void set_new_aspect(preview_data *data)
 	dx = dy * data->AspectRatio;
     }
 
-    CFG->CropX1 = rint(cx - dx);
-    CFG->CropX2 = rint(cx + dx);
-    CFG->CropY1 = rint(cy - dy);
-    CFG->CropY2 = rint(cy + dy);
+    CFG->CropX1 = floor(cx - dx + 0.5);
+    CFG->CropX2 = floor(cx + dx + 0.5);
+    CFG->CropY1 = floor(cy - dy + 0.5);
+    CFG->CropY2 = floor(cy + dy + 0.5);
 
     update_crop_ranges(data);
 }
