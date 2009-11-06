@@ -256,8 +256,6 @@ typedef struct {
     long valid;
     gboolean rgbg;
     gboolean invalidate_event;
-    void (*producer)(struct ufraw_struct *uf, UFRawPhase phase);
-    void *producer_data;
 } ufraw_image_data;
 
 typedef struct ufraw_struct {

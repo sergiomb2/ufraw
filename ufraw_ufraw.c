@@ -1399,23 +1399,16 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
     switch (phase)
     {
         case ufraw_raw_phase:
-	    if (out->valid != (long)0xffffffff)
-	    {
-		if (out->producer)
-		    out->producer(uf, phase);
-		else
-		    ufraw_convert_image_raw(uf, phase);
-		out->valid = 0xffffffff;
+	    if (out->valid != (long)0xffffffff) {
+		ufraw_convert_image_raw(uf, phase);
 	    }
 	    return out;
 
         case ufraw_first_phase:
-	    if (out->valid != (long)0xffffffff)
-	    {
-		if (out->producer)
-		    out->producer(uf, phase);
-		else
-		    ufraw_convert_image_first(uf, phase);
+	    if (out->valid != (long)0xffffffff) {
+		ufraw_convert_image_first(uf, phase);
+		ufraw_rotate_image_buffer(&uf->Images[phase],
+			uf->conf->rotationAngle);
 		ufraw_convert_prepare_buffers(uf);
 #ifdef HAVE_LENSFUN
 		ufraw_prepare_lensfun(uf, ufraw_lensfun_phase);

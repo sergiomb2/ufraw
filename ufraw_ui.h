@@ -27,7 +27,7 @@ typedef struct {
 typedef enum { render_default, render_overexposed, render_underexposed
 	} RenderModeType;
 
-typedef enum { cancel_button, ok_button, save_button,
+typedef enum { options_button, cancel_button, ok_button, save_button,
 	gimp_button, delete_button, num_buttons } ControlButtons;
 
 typedef enum { spot_cursor, crop_cursor,

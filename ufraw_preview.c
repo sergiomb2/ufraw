@@ -1192,6 +1192,10 @@ static gboolean render_live_histogram(preview_data *data)
 	rgb[c] = 100.0*live_his[0][c]/CropCount;
     color_labels_set(data->UnderLabels, rgb);
 
+    gchar buf[20];
+    g_snprintf(buf, sizeof(buf), "%d", data->UF->hotpixels);
+    gtk_label_set_text(data->HotpixelCount, buf);
+
     return FALSE;
 }
 
@@ -1401,7 +1405,6 @@ static void update_scales(preview_data *data)
     for (i=0; i<data->UF->colors; i++)
 	gtk_adjustment_set_value(data->ChannelAdjustment[i],
 		CFG->chanMul[i]);
-    gtk_adjustment_set_value(data->ZoomAdjustment, CFG->Zoom);
 
     uf_combo_box_set_data(data->BitDepthCombo,
 	&CFG->profile[out_profile][CFG->profileIndex[out_profile]].BitDepth);
@@ -1472,13 +1475,6 @@ static void update_scales(preview_data *data)
 	       (int)(MAX(CFG->grayscaleMixer[2], 0) / max * 255));
     gtk_label_set_markup(data->GrayscaleMixerColor, tmp);
 
-    if ( fabs(data->shrink-floor(data->shrink+0.0005))<0.0005 ) {
-	CFG->shrink = floor(data->shrink+0.0005);
-	CFG->size = 0;
-    } else {
-	CFG->shrink = 1;
-	CFG->size = floor(MAX(data->height, data->width)+0.5);
-    }
     data->FreezeDialog = FALSE;
     update_shrink_ranges(data);
     render_preview(data);
@@ -1838,38 +1834,6 @@ static gboolean preview_scroll_event(GtkWidget *widget, GdkEventScroll *event)
     return TRUE;
 }
 
-static void preview_convert_image_raw(ufraw_data *uf, UFRawPhase phase)
-{
-    preview_data *data = uf->Images[phase].producer_data;
-    gchar buf[20];
-
-    ufraw_developer_prepare(uf, display_developer);	/* for rgbWB */
-    ufraw_convert_image_raw(uf, phase);
-    g_snprintf(buf, sizeof (buf), "%d", data->UF->hotpixels);
-    gtk_label_set_text(data->HotpixelCount, buf);
-}
-
-static void preview_convert_image_first(ufraw_data *uf, UFRawPhase phase)
-{
-    preview_data *data = uf->Images[phase].producer_data;
-    int shrinkSave = CFG->shrink;
-    int sizeSave = CFG->size;
-    CFG->shrink = zoom_to_scale(CFG->Zoom);
-    if (CFG->shrink==0) {
-	int cropHeight = data->UF->conf->CropY2 - data->UF->conf->CropY1;
-	int cropWidth = data->UF->conf->CropX2 - data->UF->conf->CropX1;
-	int cropSize = MAX(cropHeight, cropWidth);
-	CFG->size = MIN(CFG->Zoom, 100.0) / 100.0 * cropSize;
-    } else {
-	CFG->size = 0;
-    }
-    ufraw_developer_prepare(uf, display_developer);	/* for rgbWB */
-    ufraw_convert_image_first(uf, phase);
-    ufraw_rotate_image_buffer(&uf->Images[phase], uf->conf->rotationAngle);
-    CFG->shrink = shrinkSave;
-    CFG->size = sizeSave;
-}
-
 static void update_shrink_ranges(preview_data *data)
 {
     if (data->FreezeDialog) return;
@@ -1877,27 +1841,24 @@ static void update_shrink_ranges(preview_data *data)
 
     int croppedWidth = CFG->CropX2 - CFG->CropX1;
     int croppedHeight = CFG->CropY2 - CFG->CropY1;
-    if (CFG->size > 0) {
-	if (croppedHeight > croppedWidth) {
-	    data->height = CFG->size;
-	    data->width = CFG->size * croppedWidth / croppedHeight;
-	    data->shrink = (double)croppedHeight / CFG->size;
-	} else {
-	    data->width = CFG->size;
-	    data->height = CFG->size * croppedHeight / croppedWidth;
-	    data->shrink = (double)croppedWidth / CFG->size;
-	}
+    if ( fabs(data->shrink-floor(data->shrink+0.0005))<0.0005 ) {
+	data->shrink = floor(data->shrink+0.0005);
+	data->height = croppedHeight / data->shrink;
+	data->width = croppedWidth / data->shrink;
     } else {
-	if (CFG->shrink<1) {
-	    ufraw_message(UFRAW_ERROR, _("Fatal Error: uf->conf->shrink<1"));
-	    CFG->shrink = 1;
+	int size = floor(MAX(data->height, data->width)+0.5);
+	if (croppedHeight > croppedWidth) {
+	    data->height = size;
+	    data->width = size * croppedWidth / croppedHeight;
+	    data->shrink = (double)croppedHeight / size;
+	} else {
+	    data->width = size;
+	    data->height = size * croppedHeight / croppedWidth;
+	    data->shrink = (double)croppedWidth / size;
 	}
-	data->height = croppedHeight / CFG->shrink;
-	data->width = croppedWidth / CFG->shrink;
-	data->shrink = CFG->shrink;
     }
-    gtk_spin_button_set_range(data->HeightSpin, 0, croppedHeight);
-    gtk_spin_button_set_range(data->WidthSpin, 0, croppedWidth);
+    gtk_spin_button_set_range(data->HeightSpin, 10, croppedHeight);
+    gtk_spin_button_set_range(data->WidthSpin, 10, croppedWidth);
     gtk_adjustment_set_value(data->ShrinkAdjustment, data->shrink);
     gtk_adjustment_set_value(data->HeightAdjustment, data->height);
     gtk_adjustment_set_value(data->WidthAdjustment, data->width);
@@ -2014,6 +1975,16 @@ static void zoom_update(GtkAdjustment *adj, gpointer user_data)
 	return;
     double oldZoom = CFG->Zoom;
     CFG->Zoom = newZoom;
+    // Set shrink/size values for preview rendering
+    CFG->shrink = zoom_to_scale(CFG->Zoom);
+    if (CFG->shrink==0) {
+	int cropHeight = data->UF->conf->CropY2 - data->UF->conf->CropY1;
+	int cropWidth = data->UF->conf->CropX2 - data->UF->conf->CropX1;
+	int cropSize = MAX(cropHeight, cropWidth);
+	CFG->size = MIN(CFG->Zoom, 100.0) / 100.0 * cropSize;
+    } else {
+	CFG->size = 0;
+    }
     render_status_text(data);
     if (oldZoom>=100.0 && newZoom>=100.0) {
 	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget),
@@ -2653,8 +2624,8 @@ static void grayscale_update(GtkWidget *button, gpointer user_data)
 	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
 	    CFG->grayscaleMode = i;
 
-    update_scales(data);
     ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
+    update_scales(data);
     (void)user_data;
 }
 
@@ -3260,9 +3231,8 @@ static void gimp_reset_clicked(GtkWidget *widget, GtkEntry *entry)
     gtk_entry_set_text(entry, conf_default.remoteGimpCommand);
 }
 
-static void options_dialog(GtkWidget *widget, gpointer user_data)
+static void options_dialog(preview_data *data)
 {
-    preview_data *data = get_preview_data(widget);
     GtkWidget *optionsDialog, *profileTable[profile_types];
     GtkWidget *notebook, *label, *page, *button, *text, *box, *image;
     GtkTable *baseCurveTable, *curveTable;
@@ -3270,7 +3240,6 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     char txt[max_name], *buf;
     long i, j, response;
 
-    user_data = user_data;
     if (data->FreezeDialog) return;
     data->OptionsChanged = FALSE;
     int saveBaseCurveIndex = CFG->BaseCurveIndex;
@@ -3279,7 +3248,7 @@ static void options_dialog(GtkWidget *widget, gpointer user_data)
     for (i=0; i<profile_types; i++)
 	saveProfileIndex[i] = CFG->profileIndex[i];
     optionsDialog = gtk_dialog_new_with_buttons(_("UFRaw options"),
-	    GTK_WINDOW(gtk_widget_get_toplevel(widget)),
+	    GTK_WINDOW(gtk_widget_get_toplevel(data->PreviewWidget)),
 	    GTK_DIALOG_DESTROY_WITH_PARENT,
 	    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 	    GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
@@ -3706,7 +3675,21 @@ static void control_button_event(GtkWidget *widget, long type)
     long response = UFRAW_NO_RESPONSE;
     int status = UFRAW_SUCCESS;
 
+    // Switch from preview shrink/size to final shrink/size
+    int shrinkSave = CFG->shrink;
+    int sizeSave = CFG->size;
+    if ( fabs(data->shrink-floor(data->shrink+0.0005))<0.0005 ) {
+	CFG->shrink = floor(data->shrink+0.0005);
+	CFG->size = 0;
+    } else {
+	CFG->shrink = 1;
+	CFG->size = floor(MAX(data->height, data->width)+0.5);
+    }
     switch (type) {
+    case options_button:
+	data->FreezeDialog = FALSE;
+	options_dialog(data);
+	break;
     case cancel_button:
 	response = GTK_RESPONSE_CANCEL;
 	break;
@@ -3716,7 +3699,8 @@ static void control_button_event(GtkWidget *widget, long type)
 	break;
     case save_button:
 	status = ufraw_save_now(data->UF, widget);
-	response = GTK_RESPONSE_OK;
+	if (status == UFRAW_SUCCESS)
+	    response = GTK_RESPONSE_OK;
 	break;
     case gimp_button:
 	if ( ufraw_send_to_gimp(data->UF)==UFRAW_SUCCESS )
@@ -3724,21 +3708,26 @@ static void control_button_event(GtkWidget *widget, long type)
 	break;
     case ok_button:
 	status = (*data->SaveFunc)(data->UF, widget);
-	response = GTK_RESPONSE_OK;
+	if (status == UFRAW_SUCCESS)
+	    response = GTK_RESPONSE_OK;
     }
-    // cases that set error status require redrawing of the preview image
-    if ( status!=UFRAW_SUCCESS ) {
-	preview_progress(widget, "", 0);
-	ufraw_invalidate_layer(data->UF, ufraw_raw_phase);
-    } else if ( response!=UFRAW_NO_RESPONSE ) {
+    if (response != UFRAW_NO_RESPONSE) {
+	// Finish this session
 	g_object_set_data(G_OBJECT(window), "WindowResponse",
 		(gpointer)response);
 	gtk_main_quit();
+    } else {
+	// Restore setting
+	CFG->shrink = shrinkSave;
+	CFG->size = sizeSave;
+	data->FreezeDialog = FALSE;
+	gtk_widget_set_sensitive(data->Controls, TRUE);
+	// cases that set error status require redrawing of the preview image
+	if (status != UFRAW_SUCCESS) {
+	    ufraw_invalidate_layer(data->UF, ufraw_raw_phase);
+	    render_preview(data);
+	}
     }
-    data->FreezeDialog = FALSE;
-    gtk_widget_set_sensitive(data->Controls, TRUE);
-    if ( status!=UFRAW_SUCCESS )
-	render_preview(data);
 }
 
 static gboolean control_button_key_press_event(
@@ -4760,10 +4749,11 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     label = gtk_label_new(_("Shrink factor"));
     gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, 0, 0, 0, 0);
-    data->ShrinkAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(CFG->shrink,
+    data->shrink = CFG->shrink;
+    data->ShrinkAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(data->shrink,
 	    1, 100, 1, 2, 0));
     g_object_set_data(G_OBJECT(data->ShrinkAdjustment),
-		"Adjustment-Accuracy", (gpointer)0);
+		"Adjustment-Accuracy", (gpointer)3);
     data->ShrinkSpin = GTK_SPIN_BUTTON(gtk_spin_button_new(
 	    data->ShrinkAdjustment, 1, 3));
     g_object_set_data(G_OBJECT(data->ShrinkAdjustment), "Parent-Widget",
@@ -5406,7 +5396,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     gtk_box_pack_start(hbox, gtk_label_new(_("Options")),
 	    FALSE, FALSE, 0);
     g_signal_connect(G_OBJECT(button), "clicked",
-	    G_CALLBACK(options_dialog), previewWindow);
+	    G_CALLBACK(control_button_event), (gpointer)options_button);
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
 
     if (!plugin) {
@@ -5421,7 +5411,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     // Cancel button:
     button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
     g_signal_connect(G_OBJECT(button), "clicked",
-	    G_CALLBACK(control_button_event), cancel_button);
+	    G_CALLBACK(control_button_event), (gpointer)cancel_button);
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
 
     /* plugin=0 : Normal stand-alone
@@ -5497,18 +5487,21 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     ufraw_load_raw(uf);
     gtk_widget_set_sensitive(data->Controls, TRUE);
 
-    ufraw_image_data *img;
-    img = &uf->Images[ufraw_raw_phase];
-    img->producer = preview_convert_image_raw;
-    img->producer_data = data;
-    img = &uf->Images[ufraw_first_phase];
-    img->producer = preview_convert_image_first;
-    img->producer_data = data;
-    ufraw_developer_prepare(uf, display_developer);
+    // Set shrink/size values for preview rendering
+    CFG->shrink = zoom_to_scale(CFG->Zoom);
+    if (CFG->shrink==0) {
+	int cropHeight = data->UF->conf->CropY2 - data->UF->conf->CropY1;
+	int cropWidth = data->UF->conf->CropX2 - data->UF->conf->CropX1;
+	int cropSize = MAX(cropHeight, cropWidth);
+	CFG->size = MIN(CFG->Zoom, 100.0) / 100.0 * cropSize;
+    } else {
+	CFG->size = 0;
+    }
 
     /* Collect raw histogram data */
     memset(data->raw_his, 0, sizeof(data->raw_his));
     /* minor issue: this triggers the first phase conversion too soon */
+    ufraw_developer_prepare(uf, display_developer);
     ufraw_image_data *image = ufraw_rgb_image(data->UF, TRUE, NULL);
     for (i=0; i<image->height*image->width; i++) {
 	    guint16 *buf = (guint16*)(image->buffer+i*image->depth);
