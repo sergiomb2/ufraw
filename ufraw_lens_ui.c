@@ -61,31 +61,15 @@ static GtkComboBoxEntry *combo_entry_text (
 
 /* simple function to compute the floating-point precision
    which is enough for "normal use". The criteria is to have
-   about 3 leading digits after the initial zeros.  */
-static int precision (double x, double adj)
+   about 2 significant digits. */
+static int precision(double x)
 {
-    x *= adj;
-    if (x < 1.0)
-        if (x < 0.1)
-            if (x < 0.01)
-                return 5;
-            else
-                return 4;
-        else
-            return 3;
-    else
-        if (x < 100.0)
-            if (x < 10.0)
-                return 2;
-            else
-                return 1;
-        else
-            return 0;
+    return MAX(-floor(log(x) / log(10) - 0.99), 0);
 }
 
 static GtkComboBoxEntry *combo_entry_numeric (
     GtkWidget *container, guint x, guint y, gchar *lbl, gchar *tip,
-    gdouble val, gdouble precadj, gdouble *values, int nvalues)
+    gdouble val, gdouble *values, int nvalues)
 {
     int i;
     char txt [30];
@@ -97,13 +81,13 @@ static GtkComboBoxEntry *combo_entry_numeric (
 
     gtk_entry_set_width_chars (entry, 4);
 
-    snprintf (txt, sizeof (txt), "%.*f", precision (val, precadj), val);
+    snprintf(txt, sizeof(txt), "%.*f", precision(val), val);
     gtk_entry_set_text (entry, txt);
 
     for (i = 0; i < nvalues; i++)
     {
         gdouble v = values [i];
-        snprintf (txt, sizeof (txt), "%.*f", precision (v, precadj), v);
+        snprintf(txt, sizeof(txt), "%.*f", precision(v), v);
         gtk_combo_box_append_text (GTK_COMBO_BOX (combo), txt);
     }
 
@@ -112,36 +96,16 @@ static GtkComboBoxEntry *combo_entry_numeric (
 
 static GtkComboBoxEntry *combo_entry_numeric_log (
     GtkWidget *container, guint x, guint y, gchar *lbl, gchar *tip,
-    gdouble val, gdouble min, gdouble max, gdouble step, gdouble precadj)
+    gdouble val, gdouble min, gdouble max, gdouble step)
 {
-    int phase, nvalues;
-    gdouble *values = NULL;
-    for (phase = 0; phase < 2; phase++)
-    {
-        nvalues = 0;
-        gboolean done = FALSE;
-        gdouble v = min;
-        while (!done)
-        {
-            if (v > max)
-            {
-                v = max;
-                done = TRUE;
-            }
-
-            if (values)
-                values [nvalues++] = v;
-            else
-                nvalues++;
-
-            v *= step;
-        }
-        if (!values)
-            values = g_new (gdouble, nvalues);
-    }
-
+    int i, nvalues = (int)ceil(log(max/min) / log(step)) + 1;
+    gdouble *values = g_new(gdouble, nvalues);
+    values[0] = min;
+    for (i=1; i < nvalues ; i++)
+	values[i] = values[i-1] * step;
+ 
     GtkComboBoxEntry *cbe = combo_entry_numeric (
-        container, x, y, lbl, tip, val, precadj, values, nvalues);
+        container, x, y, lbl, tip, val, values, nvalues);
     g_free (values);
     return cbe;
 }
@@ -478,7 +442,7 @@ static void lens_set (preview_data *data, const lfLens *lens)
         fli = ffi + 1;
     cbe = combo_entry_numeric (
         data->LensParamBox, 0, 0, _("Focal"), _("Focal length"),
-        CFG->focal_len, 10.0, focal_values + ffi, fli - ffi);
+        CFG->focal_len, focal_values + ffi, fli - ffi);
     g_signal_connect (G_OBJECT(cbe), "changed",
                       G_CALLBACK(lens_comboentry_update), &CFG->focal_len);
 
@@ -488,13 +452,13 @@ static void lens_set (preview_data *data, const lfLens *lens)
             ffi = i + 1;
     cbe = combo_entry_numeric (
         data->LensParamBox, 0, 0, _("F"), _("F-number (Aperture)"),
-        CFG->aperture, 10.0, aperture_values + ffi, sizeof (aperture_values) / sizeof (gdouble) - ffi);
+        CFG->aperture, aperture_values + ffi, sizeof (aperture_values) / sizeof (gdouble) - ffi);
     g_signal_connect (G_OBJECT(cbe), "changed",
                       G_CALLBACK(lens_comboentry_update), &CFG->aperture);
 
     cbe = combo_entry_numeric_log (
         data->LensParamBox, 0, 0, _("Distance"), _("Distance to subject"),
-        CFG->subject_distance, 0.25, 1000, 1.41421356237309504880, 10.0);
+        CFG->subject_distance, 0.25, 1000, sqrt(2));
     g_signal_connect (G_OBJECT(cbe), "changed",
                       G_CALLBACK(lens_comboentry_update), &CFG->subject_distance);
 
@@ -630,20 +594,9 @@ static GtkAdjustment *append_term (
     GtkWidget *table, int y, const lfParameter *param,
     float *term, GCallback callback)
 {
-    double step, page;
-    double tmp = (param->Max - param->Min) / 100000.0;
-    for (step = 0.00001; ; step *= 10.0)
-        if (step >= tmp)
-            break;
-
-    tmp = (param->Max - param->Min) / 10.0;
-    for (page = 0.00001; ; page *= 10.0)
-        if (page >= tmp)
-            break;
-
-    long accuracy = 0;
-    for (tmp = step; tmp < 1.0; tmp *= 10)
-        accuracy++;
+    int accuracy = -floor(log(param->Max - param->Min) / log(10)) + 3;
+    double step = pow(10, -accuracy + 1);
+    double page = pow(10, -accuracy + 2);
 
     GtkAdjustment *adj = adjustment_scale (
         GTK_TABLE (table), 0, y, param->Name, *term, term,
