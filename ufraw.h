@@ -253,7 +253,7 @@ typedef struct {
        the validity of the respective subarea of the whole image. The subarea
        sizes are determined by dividing the width by 4 and height by 8.
        This field must always contain at least 32 bits. */
-    long valid;
+    guint32 valid;
     gboolean rgbg;
     gboolean invalidate_event;
 } ufraw_image_data;

@@ -1304,7 +1304,7 @@ ufraw_image_data *ufraw_rgb_image(ufraw_data *uf, gboolean bufferok,
 #endif /* HAVE_LENSFUN */
     int i;
 
-    if (dbg && uf->Images[phase].valid != (long)0xffffffff)
+    if (dbg && uf->Images[phase].valid != 0xffffffff)
 	g_warning("%s->%s: conversion necessary (suboptimal).\n", dbg,
 		G_STRFUNC);
     for (i = 0; i < 32; ++i) {
@@ -1330,14 +1330,15 @@ ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok)
 	     * pixbuf. That can be fixed but is suboptimal anyway. The best
 	     * we can do is print a warning in case we need to finish the
 	     * conversion and finish it here. */
-	if (uf->Images[phase].valid != (long)0xffffffff) {
+	if (uf->Images[phase].valid != 0xffffffff) {
 	    g_warning("%s: fixing unfinished conversion.\n", G_STRFUNC);
 	    for (i = 0; i < 32; ++i)
 		ufraw_convert_image_area(uf, i, phase);
 	}
     } else {
 	if (uf->Images[phase].valid == 0) {
-	    g_warning("%s: starting conversion.\n", G_STRFUNC);
+	    // TODO: this warning should be avoided
+	    //g_warning("%s: starting conversion.\n", G_STRFUNC);
 	    /* this will update all buffer sizes (e.g. due to rotate) */
 	    ufraw_convert_image_area(uf, 0, ufraw_first_phase);
 	}
@@ -1358,7 +1359,7 @@ ufraw_image_data *ufraw_display_image(ufraw_data *uf, gboolean bufferok)
 	     * pixbuf. That can be fixed but is suboptimal anyway. The best
 	     * we can do is print a warning in case we need to finish the
 	     * conversion and finish it here. */
-	if (uf->Images[phase].valid != (long)0xffffffff) {
+	if (uf->Images[phase].valid != 0xffffffff) {
 	    g_warning("%s: fixing unfinished conversion.\n", G_STRFUNC);
 	    int i;
 	    for (i = 0; i < 32; ++i)
@@ -1366,7 +1367,8 @@ ufraw_image_data *ufraw_display_image(ufraw_data *uf, gboolean bufferok)
 	}
     } else {
 	if (uf->Images[phase].valid == 0) {
-	    g_warning("%s: starting conversion.\n", G_STRFUNC);
+	    // TODO: this warning should be avoided
+	    //g_warning("%s: starting conversion.\n", G_STRFUNC);
 	    /* this will update all buffer sizes (e.g. due to rotate) */
 	    ufraw_convert_image_area(uf, 0, ufraw_first_phase);
 	}
@@ -1399,13 +1401,13 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
     switch (phase)
     {
         case ufraw_raw_phase:
-	    if (out->valid != (long)0xffffffff) {
+	    if (out->valid != 0xffffffff) {
 		ufraw_convert_image_raw(uf, phase);
 	    }
 	    return out;
 
         case ufraw_first_phase:
-	    if (out->valid != (long)0xffffffff) {
+	    if (out->valid != 0xffffffff) {
 		ufraw_convert_image_first(uf, phase);
 		ufraw_rotate_image_buffer(&uf->Images[phase],
 			uf->conf->rotationAngle);
