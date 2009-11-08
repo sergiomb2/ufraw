@@ -1049,10 +1049,10 @@ static gboolean render_preview_image(preview_data *data)
 #ifdef HAVE_LENSFUN
 	/* Vignetting is done in the first phase */
 	ufraw_prepare_lensfun(data->UF, ufraw_lensfun_phase);
-    } else if (ufraw_invalidate_layer_event(data->UF, ufraw_lensfun_phase))
+    } else if (ufraw_invalidate_layer_event(data->UF, ufraw_lensfun_phase)) {
 	ufraw_prepare_lensfun(data->UF, ufraw_lensfun_phase);
 #endif
-
+    }
 #ifdef _OPENMP
 #pragma omp parallel shared(chosen,data) reduction(||:again)
     {
