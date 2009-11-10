@@ -1108,7 +1108,7 @@ static void ufraw_convertshrink(ufraw_data *uf, dcraw_image_data *final, dcraw_d
 	int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
 	int cropSize = MAX(cropHeight, cropWidth);
 	if (cropSize/uf->conf->size >= 2)
-	    scale = 2;
+	    scale = cropSize / uf->conf->size;
     }
 
     if (uf->HaveFilters && scale == 1)

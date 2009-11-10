@@ -812,7 +812,6 @@ void render_preview(preview_data *data)
 {
     if (data->FreezeDialog) return;
 
-    render_init(data);
     data->RenderSubArea = 0;
     while (g_idle_remove_by_data(data))
 	;
@@ -1077,13 +1076,11 @@ static gboolean render_preview_image(preview_data *data)
     if (subarea < 0) {
         data->RenderSubArea = -1;
     } else {
-	ufraw_image_data *img1 = ufraw_convert_image_area(
-	    data->UF, subarea, ufraw_phases_num - 1);
-	if (img1) {
-	    UFRectangle area = ufraw_image_get_subarea_rectangle(img1, subarea);
-	    preview_draw_area(data, area.x, area.y, area.width, area.height);
-	    again = TRUE;
-	}
+	ufraw_image_data *img1 = ufraw_convert_image_area(data->UF,
+		subarea, ufraw_phases_num - 1);
+	UFRectangle area = ufraw_image_get_subarea_rectangle(img1, subarea);
+	preview_draw_area(data, area.x, area.y, area.width, area.height);
+	again = TRUE;
     }
 
 #ifdef _OPENMP
