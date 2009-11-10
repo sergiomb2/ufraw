@@ -251,6 +251,7 @@ ufraw_data *ufraw_open(char *filename)
     uf->modifier = NULL;
     uf->lanczos_func = NULL;
 #endif
+    uf->channel_select = -1;
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
 	    raw->width, raw->height, raw->toneCurveSize);
 
@@ -734,6 +735,7 @@ void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode)
 int ufraw_convert_image(ufraw_data *uf)
 {
     uf->mark_hotpixels = FALSE;
+    uf->channel_select = -1;
     ufraw_developer_prepare(uf, file_developer);
     ufraw_convert_image_raw(uf, ufraw_raw_phase);
     ufraw_convert_image_first(uf, ufraw_first_phase);
@@ -977,6 +979,117 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
     uf->hotpixels = count;
 }
 
+static void ufraw_despeckle_line(guint16 *base, int step, int size, int window,
+	double decay, int colors, int c)
+{
+    unsigned lum[size];
+    int i, j, start, end, next, v, cold, hot, coldj, hotj, fix;
+    guint16 *p;
+
+    if (colors == 4) {
+	for (i = 0; i < size; ++i) {
+	    p = base + i * step;
+	    lum[i] = (p[0] + p[1] + p[2] + p[3] - p[c]) / 3;
+	}
+    } else {
+	for (i = 0; i < size; ++i) {
+	    p = base + i * step;
+	    lum[i] = (p[0] + p[1] + p[2] - p[c]) / 2;
+	}
+    }
+    p = base + c;
+    for (i = 1 - window; i < size; i = next) {
+	start = i;
+	end = i + window;
+	if (start < 0)
+	    start = 0;
+	if (end > size)
+	    end = size;
+	cold = hot = p[start * step] - lum[start];
+	coldj = hotj = start;
+	for (j = start + 1; j < end; ++j) {
+	    v = p[j * step] - lum[j];
+	    if (v < cold) {
+		cold = v;
+		coldj = j;
+	    }
+	    else if (v > hot) {
+		hot = v;
+		hotj = j;
+	    }
+	}
+	if (cold < 0 && hot > 0) {
+	    fix = -cold;
+	    if (fix > hot)
+		fix = hot;
+	    p[coldj * step] += fix;
+	    p[hotj * step] -= fix;
+	    hot -= fix;
+	}
+	if (hot > 0 && decay)
+	    p[hotj * step] -= hot * decay;
+	next = coldj < hotj ? coldj : hotj;
+	if (next == start)
+	    ++next;
+    }
+}
+
+void ufraw_despeckle(ufraw_data *uf, UFRawPhase phase)
+{
+    ufraw_image_data *img = &uf->Images[phase];
+    const int depth = img->depth / 2, rowstride = img->rowstride / 2;
+    int passes[4], pass, maxpass;
+    int win[4], i, c, colors;
+    guint16 *base;
+    double decay[4];
+
+    ufraw_image_format(&colors, NULL, img, "68", G_STRFUNC);
+    maxpass = 0;
+    for (c = 0; c < colors; ++c) {
+	win[c] = uf->conf->despeckleWindow[c < 3 ? c : 1] + 0.01;
+	decay[c] = uf->conf->despeckleDecay[c < 3 ? c : 1];
+	passes[c] = uf->conf->despecklePasses[c < 3 ? c : 1] + 0.01;
+	if (!win[c])
+	    passes[c] = 0;
+	if (passes[c] > maxpass)
+	    maxpass = passes[c];
+    }
+    for (pass = maxpass - 1; pass >= 0; --pass) {
+	for (c = 0; c < colors; ++c) {
+	    if (pass >= passes[c])
+		continue;
+#ifdef _OPENMP
+#pragma omp parallel for default(shared) private(i,base)
+#endif
+	    for (i = 0; i < img->height; ++i) {
+		base = (guint16 *)img->buffer + i * rowstride;
+		ufraw_despeckle_line(base, depth, img->width, win[c],
+			decay[c], colors, c);
+	    }
+#ifdef _OPENMP
+#pragma omp parallel for default(shared) private(i,base)
+#endif
+	    for (i = 0; i < img->width; ++i) {
+		base = (guint16 *)img->buffer + i * depth;
+		ufraw_despeckle_line(base, rowstride, img->height, win[c],
+			decay[c], colors, c);
+	    }
+	}
+    }
+}
+
+static gboolean ufraw_despeckle_active(ufraw_data *uf)
+{
+    int i;
+    gboolean active = FALSE;
+
+    for (i = 0; i < 3; ++i) {
+	if (uf->conf->despeckleWindow[i] && uf->conf->despecklePasses[i])
+	    active = TRUE;
+    }
+    return active;
+}
+
 static void ufraw_convertshrink(ufraw_data *uf, dcraw_image_data *final, dcraw_data *raw)
 {
     int scale = 1;
@@ -1048,6 +1161,7 @@ void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase)
     dcraw_wavelet_denoise(raw, uf->conf->threshold * sqrt(uf->raw_multiplier));
     dcraw_finalize_raw(raw, dark, uf->developer->rgbWB);
     raw->raw.image = rawimage;
+    ufraw_despeckle(uf, phase);
 }
 
 /*
@@ -1473,6 +1587,14 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
             for (yy = 0; yy < area.height; yy++, dest += out->rowstride,
 				src += in->rowstride) {
                 develop(dest, (void *)src, uf->developer, 8, area.width);
+		if (uf->channel_select >= 0) {
+		    int xx;
+		    guint8 *p = dest;
+		    for (xx = 0; xx < area.width; xx++, p += out->depth) {
+			guint8 px = p[uf->channel_select];
+			p[0] = p[1] = p[2] = px;
+		    }
+		}
             }
             break;
 
@@ -1666,6 +1788,11 @@ void ufraw_invalidate_darkframe_layer(ufraw_data *uf)
     ufraw_invalidate_layer(uf, ufraw_raw_phase);
 }
 
+void ufraw_invalidate_despeckle_layer(ufraw_data *uf)
+{
+    ufraw_invalidate_layer(uf, ufraw_raw_phase);
+}
+
 /*
  * This one is special. The raw layer applies WB in preparation for optimal
  * interpolation but the first layer undoes it for develop() et.al. So, the
@@ -1679,6 +1806,9 @@ void ufraw_invalidate_whitebalance_layer(ufraw_data *uf)
 	uf->Images[ufraw_raw_phase].valid = 0;
 	uf->Images[ufraw_raw_phase].invalidate_event = TRUE;
 //    }
+    /* Despeckling is sensitive for WB changes because it is nonlinear. */
+    if (ufraw_despeckle_active(uf))
+	ufraw_invalidate_despeckle_layer(uf);
 }
 
 /*

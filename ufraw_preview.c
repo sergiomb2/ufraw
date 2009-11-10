@@ -1366,6 +1366,7 @@ static void widget_set_hue(GtkWidget *widget, double hue)
 }
 
 static void update_shrink_ranges(preview_data *data);
+static void despeckle_update_sensitive(preview_data *data);
 
 /* update the UI entries that could have changed automatically */
 static void update_scales(preview_data *data)
@@ -1453,6 +1454,14 @@ static void update_scales(preview_data *data)
     for (i = 0; i < 3; ++i)
         gtk_adjustment_set_value(data->GrayscaleMixers[i],
 		CFG->grayscaleMixer[i]);
+    for (i = 0; i < 3; ++i) {
+        gtk_adjustment_set_value(data->DespeckleWindowAdj[i],
+		CFG->despeckleWindow[i]);
+        gtk_adjustment_set_value(data->DespeckleDecayAdj[i],
+		CFG->despeckleDecay[i]);
+        gtk_adjustment_set_value(data->DespecklePassesAdj[i],
+		CFG->despecklePasses[i]);
+    }
     for (i = 0; i < CFG->lightnessAdjustmentCount; ++i) {
 	gtk_adjustment_set_value(data->LightnessAdjustment[i],
 	    CFG->lightnessAdjustment[i].adjustment);
@@ -1465,6 +1474,7 @@ static void update_scales(preview_data *data)
 	|| (CFG->grayscaleMixer[2] != conf_default.grayscaleMixer[2]));
     gtk_widget_set_sensitive(GTK_WIDGET(data->GrayscaleMixerTable),
 	    CFG->grayscaleMode == grayscale_mixer);
+    despeckle_update_sensitive(data);
 
     for (max = 1, i = 0; i < 3; ++i)
         max = MAX(max, CFG->grayscaleMixer[i]);
@@ -2602,6 +2612,15 @@ static void button_update(GtkWidget *button, gpointer user_data)
         CFG->grayscaleMixer[1] = conf_default.grayscaleMixer[1];
         CFG->grayscaleMixer[2] = conf_default.grayscaleMixer[2];
     }
+    if (button==data->ResetDespeckleButton) {
+	memcpy(CFG->despeckleWindow, conf_default.despeckleWindow,
+		sizeof (CFG->despeckleWindow));
+	memcpy(CFG->despeckleDecay, conf_default.despeckleDecay,
+		sizeof (CFG->despeckleDecay));
+	memcpy(CFG->despecklePasses, conf_default.despecklePasses,
+		sizeof (CFG->despecklePasses));
+	ufraw_invalidate_despeckle_layer(data->UF);
+    }
     for (i = 0; i < max_adjustments; ++i) {
 	if (button == data->ResetLightnessAdjustmentButton[i]) {
 	    CFG->lightnessAdjustment[i].adjustment = 1.0;
@@ -2700,6 +2719,25 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
             ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
 	    update_scales(data);
 	}
+    } else if (valuep==(void*)data->ChannelSelectButton) {
+	if (data->UF->channel_select >= -1) {
+	    int i, b = 0;
+	    while (data->ChannelSelectButton[b] != button)
+		++b;
+	    if (gtk_toggle_button_get_active(button)) {
+		/* ignore generated events, for render_preview() */
+		data->UF->channel_select = -2;
+		for (i = 0; i < data->UF->colors; ++i)
+		    if (i != b)
+			gtk_toggle_button_set_active(
+				data->ChannelSelectButton[i], FALSE);
+		data->UF->channel_select = b;
+	    } else {
+		data->UF->channel_select = -1;
+	    }
+	    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
+	    render_preview(data);
+	}
     } else {
 	*valuep = gtk_toggle_button_get_active(button);
 	if ( valuep==&CFG->overExp || valuep==&CFG->underExp ) {
@@ -2749,6 +2787,98 @@ static void adjustment_update_int(GtkAdjustment *adj, int *valuep)
 	data->DrawCropID = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+30,
 		(GSourceFunc)(preview_draw_crop), data, NULL);
     }
+}
+
+static void despeckle_update_sensitive(preview_data *data)
+{
+    conf_data *c = CFG;
+    gboolean b;
+    int i;
+
+    b = FALSE;
+    for (i = 0; i < 3; ++i) {
+	b |= fabs(c->despeckleWindow[i] - conf_default.despeckleWindow[i]) > 0.1;
+	b |= fabs(c->despeckleDecay[i] - conf_default.despeckleDecay[i]) > 0.001;
+	b |= fabs(c->despecklePasses[i] - conf_default.despecklePasses[i]) > 0.1;
+    }
+    gtk_widget_set_sensitive(GTK_WIDGET(data->ResetDespeckleButton), b);
+    b = FALSE;
+    for (i = 1; i < 3; ++i) {
+	b |= c->despeckleWindow[0] != c->despeckleWindow[i];
+	b |= c->despeckleDecay[0] != c->despeckleDecay[i];
+	b |= c->despecklePasses[0] != c->despecklePasses[i];
+    }
+    gtk_widget_set_sensitive(GTK_WIDGET(data->DespeckleLockChannelsButton), !b);
+}
+
+/*
+ * passes > window makes no sense. Either the number of passes is
+ * ridiculously large or the same effect can be achieved by replacing
+ * decay by pow(decay, original_passes).
+ */
+static void despeckle_apply_constraints(preview_data *data,
+	GtkAdjustment **adjp, int ch)
+{
+    conf_data *c = CFG;
+    double value = gtk_adjustment_get_value(adjp[ch]);
+
+    ++data->FreezeDialog;
+    if (adjp == data->DespeckleWindowAdj &&
+	    value < c->despecklePasses[ch] && value) {
+	c->despecklePasses[ch] = value;
+	gtk_adjustment_set_value(data->DespecklePassesAdj[ch], value);
+    }
+    if (adjp == data->DespecklePassesAdj &&
+	    value > c->despeckleWindow[ch] && c->despeckleWindow[ch]) {
+	c->despeckleWindow[ch] = value;
+	gtk_adjustment_set_value(data->DespeckleWindowAdj[ch], value);
+    }
+    --data->FreezeDialog;
+}
+
+static gboolean despeckle_adjustment_update(preview_data *data, double *p)
+{
+    conf_data *c = CFG;
+    int i, j, match;
+    GtkAdjustment **adjp = NULL;
+
+    match = 0;
+    for (i = 0; i < 3; ++i) {
+	if (p == &c->despeckleWindow[i]) {
+	    adjp = data->DespeckleWindowAdj;
+	    match = c->despecklePasses[i] ? 1 : -1;
+	    break;
+	}
+	if (p == &c->despeckleDecay[i]) {
+	    adjp = data->DespeckleDecayAdj;
+	    match = c->despeckleWindow[i] && c->despecklePasses[i] ? 1 : -1;
+	    break;
+	}
+	if (p == &c->despecklePasses[i]) {
+	    adjp = data->DespecklePassesAdj;
+	    match = c->despeckleWindow[i] ? 1 : -1;
+	    break;
+	}
+    }
+    if (match > 0)
+	despeckle_apply_constraints(data, adjp, i);
+    if (match) {
+	if (gtk_toggle_button_get_active(data->DespeckleLockChannelsButton)) {
+	    ++data->FreezeDialog;
+	    for (j = 0; j < 3; ++j) {
+		p[j - i] = *p;
+		gtk_adjustment_set_value(adjp[j], *p);
+		despeckle_apply_constraints(data, adjp, j);
+	    }
+	    --data->FreezeDialog;
+	}
+	despeckle_update_sensitive(data);
+    }
+    if (match > 0) {
+	ufraw_invalidate_despeckle_layer(data->UF);
+	render_preview(data);
+    }
+    return match ? TRUE : FALSE;
 }
 
 static void adjustment_update(GtkAdjustment *adj, double *valuep)
@@ -2804,6 +2934,8 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
 	ufraw_invalidate_denoise_layer(data->UF);
     } else if (valuep==&CFG->hotpixel) {
 	ufraw_invalidate_hotpixel_layer(data->UF);
+    } else if (despeckle_adjustment_update(data, valuep)) {
+	return;
     } else {
         if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
         if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
@@ -4368,6 +4500,104 @@ static void grayscale_fill_interface(preview_data *data,
     /* End of Grayscale page */
 }
 
+static void denoise_fill_interface(preview_data *data, GtkWidget *page)
+{
+    GtkWidget *button, *label, *icon;
+    GtkTable *table;
+    GtkBox *box;
+    int i;
+
+    table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
+    icon = gtk_image_new_from_stock("gtk-help", GTK_ICON_SIZE_BUTTON);
+    gtk_table_attach(table, icon, 9, 10, 0, 1, 0, 0, 0, 0);
+    uf_widget_set_tooltip(icon, _(
+	    "Despeckling is mainly useful when combining a high ISO number "
+	    "with a high channel multiplier: when one channel has a very bad "
+	    "signal to noise ratio. Try setting window size, color decay and "
+	    "number of passes to 50,0,5 for that channel. When a channel "
+	    "contains only noise then try 1,0.6,1.\n"
+	    "Despeckling is off when window size or passes equals zero. When "
+	    "on then window size cannot be smaller than the number of passes."));
+
+    /* buttons on the right */
+    box = GTK_BOX(gtk_vbox_new(FALSE, 0));
+    button = gtk_toggle_button_new();
+    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+	    "object-lock", GTK_ICON_SIZE_BUTTON));
+    data->DespeckleLockChannelsButton = GTK_TOGGLE_BUTTON(button);
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
+    gtk_table_attach(table, GTK_WIDGET(box), 9, 10, 1, 4, GTK_FILL, 0, 0, 0);
+    uf_widget_set_tooltip(button, _("Update channel parameters together"));
+    data->ResetDespeckleButton = reset_button(_("Reset despeckle parameters"),
+	    G_CALLBACK(button_update), NULL);
+    gtk_box_pack_start(box, data->ResetDespeckleButton, FALSE, FALSE, 0);
+
+    /* channel to view */
+    label = gtk_label_new(_("View channel:"));
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+    gtk_table_attach(table, label, 0, 6, 0, 1, GTK_FILL|GTK_EXPAND, 0, 0, 0);
+    for (i = 0; i < data->UF->colors; ++i) {
+	button = gtk_toggle_button_new();
+	gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
+		i==0 ? "channel-red" : i==1 ? "channel-green" : "channel-blue",
+		GTK_ICON_SIZE_BUTTON));
+	data->ChannelSelectButton[i] = GTK_TOGGLE_BUTTON(button);
+	g_signal_connect(G_OBJECT(button), "toggled",
+		G_CALLBACK(toggle_button_update), data->ChannelSelectButton);
+	gtk_table_attach(table, button, 6 + i, 6 + i + 1, 0, 1, 0, 0, 0, 0);
+    }
+
+    /* Parameters */
+    label = gtk_label_new(_("Window size:"));
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+    gtk_table_attach(table, label, 0, 6, 1, 2, GTK_FILL|GTK_EXPAND, 0, 0, 0);
+    for (i = 0; i < data->UF->colors; ++i) {
+	data->DespeckleWindowAdj[i] = GTK_ADJUSTMENT(
+		gtk_adjustment_new(CFG->despeckleWindow[i],
+		0.0, 999.0, 1.0, 1.0, 0));
+	g_object_set_data(G_OBJECT(data->DespeckleWindowAdj[i]),
+		"Adjustment-Accuracy", (gpointer)0);
+	button = gtk_spin_button_new(data->DespeckleWindowAdj[i], 1.0, 0);
+	g_object_set_data(G_OBJECT(data->DespeckleWindowAdj[i]),
+		"Parent-Widget", button);
+	g_signal_connect(G_OBJECT(data->DespeckleWindowAdj[i]), "value-changed",
+		G_CALLBACK(adjustment_update), &CFG->despeckleWindow[i]);
+	gtk_table_attach(table, button, 6 + i, 6 + i + 1, 1, 2, GTK_FILL, 0, 0, 0);
+    }
+    label = gtk_label_new(_("Color decay:"));
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+    gtk_table_attach(table, label, 0, 6, 2, 3, GTK_FILL|GTK_EXPAND, 0, 0, 0);
+    for (i = 0; i < data->UF->colors; ++i) {
+	data->DespeckleDecayAdj[i] = GTK_ADJUSTMENT(
+		gtk_adjustment_new(CFG->despeckleDecay[i],
+		0.0, 1.0, 0.1, 0.1, 0));
+	g_object_set_data(G_OBJECT(data->DespeckleDecayAdj[i]),
+		"Adjustment-Accuracy", (gpointer)2);
+	button = gtk_spin_button_new(data->DespeckleDecayAdj[i], 1.0, 2);
+	g_object_set_data(G_OBJECT(data->DespeckleDecayAdj[i]),
+		"Parent-Widget", button);
+	g_signal_connect(G_OBJECT(data->DespeckleDecayAdj[i]), "value-changed",
+		G_CALLBACK(adjustment_update), &CFG->despeckleDecay[i]);
+	gtk_table_attach(table, button, 6 + i, 6 + i + 1, 2, 3, GTK_FILL, 0, 0, 0);
+    }
+    label = gtk_label_new(_("Passes:"));
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+    gtk_table_attach(table, label, 0, 6, 3, 4, GTK_FILL|GTK_EXPAND, 0, 0, 0);
+    for (i = 0; i < data->UF->colors; ++i) {
+	data->DespecklePassesAdj[i] = GTK_ADJUSTMENT(
+		gtk_adjustment_new(CFG->despecklePasses[i],
+		0.0, 99.0, 1.0, 1.0, 0));
+	g_object_set_data(G_OBJECT(data->DespecklePassesAdj[i]),
+		"Adjustment-Accuracy", (gpointer)0);
+	button = gtk_spin_button_new(data->DespecklePassesAdj[i], 1.0, 0);
+	g_object_set_data(G_OBJECT(data->DespecklePassesAdj[i]),
+		"Parent-Widget", button);
+	g_signal_connect(G_OBJECT(data->DespecklePassesAdj[i]), "value-changed",
+		G_CALLBACK(adjustment_update), &CFG->despecklePasses[i]);
+	gtk_table_attach(table, button, 6 + i, 6 + i + 1, 3, 4, GTK_FILL, 0, 0, 0);
+    }
+}
+
 static void basecurve_fill_interface(preview_data *data, GtkWidget *page,
 	int curveeditorHeight)
 {
@@ -5253,6 +5483,9 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     page = notebook_page_new(notebook, _("Grayscale"), "grayscale");
     data->PageNumGray = gtk_notebook_page_num(notebook, page);
     grayscale_fill_interface(data, page);
+
+    // page = notebook_page_new(notebook, _("Denoising"), "denoise");
+    denoise_fill_interface(data, page);
 
 #ifdef HAVE_LENSFUN
     /* Lens correction page */

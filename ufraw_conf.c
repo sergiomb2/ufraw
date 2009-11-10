@@ -87,6 +87,9 @@ const conf_data conf_default = {
     }, /* lightness adjustments */
     grayscale_none, /* grayscale mode */
     { 1.0, 1.0, 1.0 }, /* grayscale mixer */
+    { 0.0, 0.0, 0.0 }, /* despeckle window */
+    { 0.0, 0.0, 0.0 }, /* despeckle color decay */
+    { 1.0, 1.0, 1.0 }, /* despeckle passes */
     /* Save options */
     "", "", "", /* inputFilename, outputFilename, outputPath */
     "", "", /* inputURI, inputModTime */
@@ -670,6 +673,18 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
         sscanf(temp, "%lf %lf %lf", &c->grayscaleMixer[0],
 	       &c->grayscaleMixer[1], &c->grayscaleMixer[2]);
     }
+    if ( strcmp("DespeckleWindow", element)==0 ) {
+        sscanf(temp, "%lf %lf %lf", &c->despeckleWindow[0],
+	       &c->despeckleWindow[1], &c->despeckleWindow[2]);
+    }
+    if ( strcmp("DespeckleDecay", element)==0 ) {
+        sscanf(temp, "%lf %lf %lf", &c->despeckleDecay[0],
+	       &c->despeckleDecay[1], &c->despeckleDecay[2]);
+    }
+    if ( strcmp("DespecklePasses", element)==0 ) {
+        sscanf(temp, "%lf %lf %lf", &c->despecklePasses[0],
+	       &c->despecklePasses[1], &c->despecklePasses[2]);
+    }
     /* OutputIntent replaces Intent starting from ufraw-0.12. */
     if ( strcmp("OutputIntent", element)==0 )
 	c->intent[out_profile] = conf_find_name(temp, intentNames,
@@ -972,6 +987,24 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 		c->grayscaleMixer[1],
 		c->grayscaleMixer[2]);
     }
+    if (c->despeckleWindow[0] != conf_default.despeckleWindow[0] ||
+        c->despeckleWindow[1] != conf_default.despeckleWindow[1] ||
+        c->despeckleWindow[2] != conf_default.despeckleWindow[2]) {
+	buf = uf_markup_buf(buf, "<DespeckleWindow>%f %f %f</DespeckleWindow>\n",
+		c->despeckleWindow[0], c->despeckleWindow[1], c->despeckleWindow[2]);
+    }
+    if (c->despeckleDecay[0] != conf_default.despeckleDecay[0] ||
+        c->despeckleDecay[1] != conf_default.despeckleDecay[1] ||
+        c->despeckleDecay[2] != conf_default.despeckleDecay[2]) {
+	buf = uf_markup_buf(buf, "<DespeckleDecay>%f %f %f</DespeckleDecay>\n",
+		c->despeckleDecay[0], c->despeckleDecay[1], c->despeckleDecay[2]);
+    }
+    if (c->despecklePasses[0] != conf_default.despecklePasses[0] ||
+        c->despecklePasses[1] != conf_default.despecklePasses[1] ||
+        c->despecklePasses[2] != conf_default.despecklePasses[2]) {
+	buf = uf_markup_buf(buf, "<DespecklePasses>%f %f %f</DespecklePasses>\n",
+		c->despecklePasses[0], c->despecklePasses[1], c->despecklePasses[2]);
+    }
     if (c->size!=conf_default.size)
 	buf = uf_markup_buf(buf, "<Size>%d</Size>\n", c->size);
     if (c->shrink!=conf_default.shrink)
@@ -1216,6 +1249,9 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->grayscaleMode = src->grayscaleMode;
     memcpy(dst->grayscaleMixer, src->grayscaleMixer,
 	   sizeof dst->grayscaleMixer);
+    memcpy(dst->despeckleWindow, src->despeckleWindow, sizeof (dst->despeckleWindow));
+    memcpy(dst->despeckleDecay, src->despeckleDecay, sizeof (dst->despeckleDecay));
+    memcpy(dst->despecklePasses, src->despecklePasses, sizeof (dst->despecklePasses));
     g_strlcpy(dst->darkframeFile, src->darkframeFile, max_path);
     /* We only copy the current BaseCurve */
     if (src->BaseCurveIndex<=camera_curve) {

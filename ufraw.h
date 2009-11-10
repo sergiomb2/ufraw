@@ -194,6 +194,9 @@ typedef struct {
     lightness_adjustment lightnessAdjustment[max_adjustments];
     int grayscaleMode;
     double grayscaleMixer[3];
+    double despeckleWindow[3];
+    double despeckleDecay[3];
+    double despecklePasses[3];
 
     /* SAVE options */
     char inputFilename[max_path], outputFilename[max_path],
@@ -292,6 +295,7 @@ typedef struct ufraw_struct {
     int hotpixels;
     gboolean mark_hotpixels;
     unsigned raw_multiplier;
+    int channel_select;
 } ufraw_data;
 
 extern const conf_data conf_default;
@@ -331,6 +335,7 @@ void ufraw_invalidate_layer(ufraw_data *uf, UFRawPhase phase);
 void ufraw_invalidate_hotpixel_layer(ufraw_data *uf);
 void ufraw_invalidate_denoise_layer(ufraw_data *uf);
 void ufraw_invalidate_darkframe_layer(ufraw_data *uf);
+void ufraw_invalidate_despeckle_layer(ufraw_data *uf);
 void ufraw_invalidate_whitebalance_layer(ufraw_data *uf);
 void ufraw_invalidate_smoothing_layer(ufraw_data *uf);
 gboolean ufraw_invalidate_layer_event(ufraw_data *uf, UFRawPhase phase);
