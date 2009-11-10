@@ -785,6 +785,13 @@ static void render_init(preview_data *data)
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
     ufraw_image_data *image = ufraw_final_image(data->UF, FALSE);
     if (width!=image->width || height!=image->height) {
+    
+	/* Calculate current viewport center */
+	GdkRectangle vp;
+	gtk_image_view_get_viewport(GTK_IMAGE_VIEW(data->PreviewWidget), &vp);
+	double xc = (vp.x + vp.width / 2.0) / width * image->width;
+	double yc = (vp.y + vp.height / 2.0) / height * image->height;
+ 
 	data->PreviewPixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
 					    image->width, image->height);
 	/* Clear the pixbuffer to avoid displaying garbage */
@@ -792,6 +799,11 @@ static void render_init(preview_data *data)
 	gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
 		data->PreviewPixbuf, FALSE);
 	g_object_unref(data->PreviewPixbuf);
+
+	/* restore the viewport center */
+	gtk_image_view_set_offset(GTK_IMAGE_VIEW(data->PreviewWidget),
+		xc - vp.width / 2, yc - vp.height / 2, FALSE);
+
     }
     render_status_text(data);
 }
