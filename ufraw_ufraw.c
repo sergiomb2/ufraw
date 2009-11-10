@@ -1517,6 +1517,7 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
         case ufraw_raw_phase:
 	    if (out->valid != 0xffffffff) {
 		ufraw_convert_image_raw(uf, phase);
+		out->valid = 0xffffffff;
 	    }
 	    return out;
 
