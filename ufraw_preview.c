@@ -1992,11 +1992,10 @@ static void zoom_update(GtkAdjustment *adj, gpointer user_data)
     if (data->FreezeDialog)
 	return;
     (void)user_data;
-    double newZoom = gtk_adjustment_get_value(data->ZoomAdjustment);
-    if (CFG->Zoom == newZoom)
-	return;
     double oldZoom = CFG->Zoom;
-    CFG->Zoom = newZoom;
+    CFG->Zoom = gtk_adjustment_get_value(data->ZoomAdjustment);
+    if (CFG->Zoom == oldZoom)
+	return;
     // Set shrink/size values for preview rendering
     CFG->shrink = zoom_to_scale(CFG->Zoom);
     if (CFG->shrink==0) {
@@ -2008,11 +2007,9 @@ static void zoom_update(GtkAdjustment *adj, gpointer user_data)
 	CFG->size = 0;
     }
     render_status_text(data);
-    if (oldZoom>=100.0 && newZoom>=100.0) {
-	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget),
-		CFG->Zoom/100.0);
-    } else {
-	gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget), 1.0);
+    gtk_image_view_set_zoom(GTK_IMAGE_VIEW(data->PreviewWidget),
+	    MAX(CFG->Zoom, 100.0)/100.0);
+    if (oldZoom < 100.0 || CFG->Zoom < 100.0) {
 	ufraw_invalidate_layer(data->UF, ufraw_first_phase);
 	render_preview(data);
     }
