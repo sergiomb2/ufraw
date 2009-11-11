@@ -2027,7 +2027,7 @@ static void zoom_in_event(GtkWidget *widget, gpointer user_data)
 
     double zoom = CFG->Zoom;
     if (zoom >= 100.0) {
-	zoom = (floor(zoom/100.0) + 1) * 100.0;
+	zoom = (floor((zoom+0.5) / 100.0) + 1) * 100.0;
     } else {
 	int scale = zoom_to_scale(zoom);
 	if (scale==0) {
@@ -2049,7 +2049,7 @@ static void zoom_out_event(GtkWidget *widget, gpointer user_data)
 
     double zoom = CFG->Zoom;
     if (zoom > 100.0) {
-	zoom = (ceil(zoom / 100.0) - 1) * 100.0;
+	zoom = (ceil((zoom-0.5) / 100.0) - 1) * 100.0;
     } else {
 	int scale = zoom_to_scale(zoom);
 	if (scale==0) {
