@@ -295,7 +295,6 @@ typedef struct ufraw_struct {
     int hotpixels;
     gboolean mark_hotpixels;
     unsigned raw_multiplier;
-    int channel_select;
 } ufraw_data;
 
 extern const conf_data conf_default;

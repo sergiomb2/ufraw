@@ -590,6 +590,13 @@ static void preview_draw_area(preview_data *data,
 	guint8 *p8 = pixies + yy*rowstride;
 	memcpy(p8, displayPixies + yy*displayImage->rowstride,
 		width*displayImage->depth);
+	if (data->ChannelSelect >= 0) {
+	    guint8 *p = p8;
+	    for (xx = 0; xx < width; xx++, p += 3) {
+		guint8 px = p[data->ChannelSelect];
+		p[0] = p[1] = p[2] = px;
+	    }
+	}
 	guint8 *p8working = workingPixies + yy*workingImage->rowstride;
 	for (xx=x; xx<x+width; xx++, p8+=3, p8working+=workingImage->depth) {
 	    if ( data->SpotDraw &&
@@ -2726,20 +2733,20 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    update_scales(data);
 	}
     } else if (valuep==(void*)data->ChannelSelectButton) {
-	if (data->UF->channel_select >= -1) {
+	if (data->ChannelSelect >= -1) {
 	    int i, b = 0;
 	    while (data->ChannelSelectButton[b] != button)
 		++b;
 	    if (gtk_toggle_button_get_active(button)) {
 		/* ignore generated events, for render_preview() */
-		data->UF->channel_select = -2;
+		data->ChannelSelect = -2;
 		for (i = 0; i < data->UF->colors; ++i)
 		    if (i != b)
 			gtk_toggle_button_set_active(
 				data->ChannelSelectButton[i], FALSE);
-		data->UF->channel_select = b;
+		data->ChannelSelect = b;
 	    } else {
-		data->UF->channel_select = -1;
+		data->ChannelSelect = -1;
 	    }
 	    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
 	    render_preview(data);
@@ -3924,6 +3931,9 @@ static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
     preview_data *data = get_preview_data(notebook);
     if (data->FreezeDialog==TRUE) return;
 
+    if (data->ChannelSelect >= 0)
+	gtk_toggle_button_set_active(
+		data->ChannelSelectButton[data->ChannelSelect], FALSE);
     GtkWidget *event_box =
 	    gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_EVENT_BOX);
     if ( page_num==data->PageNumSpot ||
@@ -4552,6 +4562,7 @@ static void denoise_fill_interface(preview_data *data, GtkWidget *page)
 		G_CALLBACK(toggle_button_update), data->ChannelSelectButton);
 	gtk_table_attach(table, button, 6 + i, 6 + i + 1, 0, 1, 0, 0, 0, 0);
     }
+    data->ChannelSelect = -1;
 
     /* Parameters */
     label = gtk_label_new(_("Window size:"));

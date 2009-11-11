@@ -117,6 +117,7 @@ typedef struct {
     GtkAdjustment *DespecklePassesAdj[3];
     GtkToggleButton *DespeckleLockChannelsButton;
     GtkToggleButton *ChannelSelectButton[3];
+    int ChannelSelect;
 #ifdef HAVE_LENSFUN
     /* The GtkEntry with camera maker/model name */
     GtkWidget *CameraModel;

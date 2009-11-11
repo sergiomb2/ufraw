@@ -251,7 +251,6 @@ ufraw_data *ufraw_open(char *filename)
     uf->modifier = NULL;
     uf->lanczos_func = NULL;
 #endif
-    uf->channel_select = -1;
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
 	    raw->width, raw->height, raw->toneCurveSize);
 
@@ -735,7 +734,6 @@ void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode)
 int ufraw_convert_image(ufraw_data *uf)
 {
     uf->mark_hotpixels = FALSE;
-    uf->channel_select = -1;
     ufraw_developer_prepare(uf, file_developer);
     ufraw_convert_image_raw(uf, ufraw_raw_phase);
     ufraw_convert_image_first(uf, ufraw_first_phase);
@@ -1588,14 +1586,6 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
             for (yy = 0; yy < area.height; yy++, dest += out->rowstride,
 				src += in->rowstride) {
                 develop(dest, (void *)src, uf->developer, 8, area.width);
-		if (uf->channel_select >= 0) {
-		    int xx;
-		    guint8 *p = dest;
-		    for (xx = 0; xx < area.width; xx++, p += out->depth) {
-			guint8 px = p[uf->channel_select];
-			p[0] = p[1] = p[2] = px;
-		    }
-		}
             }
             break;
 
