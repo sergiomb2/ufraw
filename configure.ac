@@ -1,5 +1,5 @@
-dnl $Id: configure.ac,v 1.145 2009/11/05 15:30:07 nkbj Exp $
-AC_INIT(UFRaw, 0.16)
+dnl $Id: configure.ac,v 1.146 2009/11/13 16:25:22 nkbj Exp $
+AC_INIT(UFRaw, 0.17)
 AC_PREREQ(2.57)
 
 # Create host_os, host_cpu variables
@@ -235,27 +235,22 @@ AC_CHECK_HEADER(jpeglib.h,
   AC_CHECK_LIB(jpeg, jpeg_CreateCompress))
 have_jpeg=${ac_cv_lib_jpeg_jpeg_CreateCompress:-no}
 
+# Check for tiff headers and library.
+AC_CHECK_HEADER(tiffio.h,
+  AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
+have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
+
 PKG_CHECK_MODULES(LIBPNG, libpng,
   [ have_png=yes
     AC_DEFINE(HAVE_LIBPNG, 1, have the png library) ],
   [ have_png=no
     AC_MSG_RESULT($LIBPNG_PKG_ERRORS) ] )
 
-# Check for tiff headers and library.
-AC_CHECK_HEADER(tiffio.h,
-  AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
-have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
-
 PKG_CHECK_MODULES(CFITSIO, cfitsio,
   [ have_cfitsio=yes
     AC_DEFINE(HAVE_LIBCFITSIO, 1, have the cfitsio library) ],
   [ have_cfitsio=no
     AC_MSG_RESULT($CFITSIO_PKG_ERRORS) ] )
-if test "$have_cfitsio" = "no"; then
-  AC_CHECK_HEADER(fitsio.h,
-    AC_CHECK_LIB(cfitsio, ffcmsg))
-  have_cfitsio=${ac_cv_lib_cfitsio_ffcmsg:-no}
-fi
 
 PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
   [ have_exiv2=yes
@@ -356,9 +351,9 @@ AC_MSG_NOTICE(build GIMP plug-in: $have_gimp)
 AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint)
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
+AC_MSG_NOTICE(TIFF support: $have_tiff)
 AC_MSG_NOTICE(PNG support: $have_png)
 AC_MSG_NOTICE(FITS support: $have_cfitsio)
-AC_MSG_NOTICE(TIFF support: $have_tiff)
 AC_MSG_NOTICE(gzip compressed raw support: $have_zlib)
 AC_MSG_NOTICE(bzip2 compressed raw support: $have_libbz2)
 AC_MSG_NOTICE(Lens defects correction via lensfun: $have_lensfun)

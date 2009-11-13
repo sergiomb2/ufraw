@@ -56,9 +56,9 @@ configure: build GIMP plug-in: yes
 configure: build CinePaint plug-in: no
 configure: EXIF support using exiv2: yes
 configure: JPEG support: yes
+configure: TIFF support: yes
 configure: PNG support: yes
 configure: FITS support: no
-configure: TIFF support: yes
 configure: gzip compressed raw support: yes
 configure: bzip2 compressed raw support: yes
 configure: Scrolling in preview using GtkImageView: yes
@@ -112,12 +112,7 @@ Other options for the configuration script are:
 
 --enable-dst-correction: enable DST correction for file timestamps.
 
---enable-contrast: enable the contrast setting option.
-
 --enable-interp-none: enable 'None' interpolation (mostly for debugging).
-
---with-lensfun: use the lensfun library - experimental feature,
-		read http://ufraw.sourceforge.net/lensfun.html before using it.
 
 --with-prefix=PREFIX: use also PREFIX as input prefix for the build.
 

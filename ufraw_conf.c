@@ -1621,6 +1621,13 @@ EXV_PACKAGE_VERSION "\n"
 "disabled.\n"
 #endif
 
+"PNG "
+#ifdef HAVE_LIBPNG
+"enabled.\n"
+#else
+"disabled.\n"
+#endif
+
 "FITS "
 #ifdef HAVE_LIBCFITSIO
 "enabled.\n"
