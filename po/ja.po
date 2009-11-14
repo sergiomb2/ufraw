@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-06 15:15+0100\n"
+"POT-Creation-Date: 2009-11-14 19:00+0100\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -1008,6 +1008,36 @@ msgstr "グレースケールモード："
 
 msgid "Reset channel mixer"
 msgstr "チャンネルミキサーをリセット"
+
+msgid ""
+"Despeckling is mainly useful when combining a high ISO number with a high "
+"channel multiplier: when one channel has a very bad signal to noise ratio. "
+"Try setting window size, color decay and number of passes to 50,0,5 for that "
+"channel. When a channel contains only noise then try 1,0.6,1.\n"
+"Despeckling is off when window size or passes equals zero. When on then "
+"window size cannot be smaller than the number of passes."
+msgstr ""
+
+msgid "Update channel parameters together"
+msgstr ""
+
+#, fuzzy
+msgid "Reset despeckle parameters"
+msgstr "ダークフレームをリセット"
+
+#. channel to view
+msgid "View channel:"
+msgstr ""
+
+#. Parameters
+msgid "Window size:"
+msgstr ""
+
+msgid "Color decay:"
+msgstr ""
+
+msgid "Passes:"
+msgstr ""
 
 msgid "Load base curve"
 msgstr "基本カーブを読み込む"

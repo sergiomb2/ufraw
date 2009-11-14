@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw 0.16\n"
+"Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-06 15:15+0100\n"
-"PO-Revision-Date: 2009-11-03 08:30+0100\n"
+"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"PO-Revision-Date: 2009-11-14 19:15+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1025,6 +1025,41 @@ msgstr "Gråtoneskalamodus:"
 
 msgid "Reset channel mixer"
 msgstr "Resæt farvekanalmixer"
+
+msgid ""
+"Despeckling is mainly useful when combining a high ISO number with a high "
+"channel multiplier: when one channel has a very bad signal to noise ratio. "
+"Try setting window size, color decay and number of passes to 50,0,5 for that "
+"channel. When a channel contains only noise then try 1,0.6,1.\n"
+"Despeckling is off when window size or passes equals zero. When on then "
+"window size cannot be smaller than the number of passes."
+msgstr ""
+"Afpletning er især brugbart ved kombinationen af en høj ISO-værdi med en høj "
+"kanalmultiplikator: når en kanal har et meget dårligt signal/støj-forhold. "
+"Prøv at sætte vinduesstørrelse, farvehenfald og antal kørsler til 50,0,5 for "
+"den kanal. Prøv 1,0.6,1 når en kanal kun indeholder støj.\n"
+"Afpletning is slukket når vinduesstørrelse eller kørsler er nul. Når den er "
+"i brug kan vinduesstørrelsen ikke være mindre end antal kørsler."
+
+msgid "Update channel parameters together"
+msgstr "Opdater kanalparametre sammen"
+
+msgid "Reset despeckle parameters"
+msgstr "Resæt afpletningsparametre"
+
+#. channel to view
+msgid "View channel:"
+msgstr "Se kanal:"
+
+#. Parameters
+msgid "Window size:"
+msgstr "Vinduesstørrelse:"
+
+msgid "Color decay:"
+msgstr "Farvehenfald:"
+
+msgid "Passes:"
+msgstr "Kørsler:"
 
 msgid "Load base curve"
 msgstr "Indlæs basiskurve"
