@@ -1160,18 +1160,18 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
     ufraw_lensfun_init(data->UF);
     camera_set(data);
 
-    subpage = notebook_page_new(subnb,
-	    _("Lateral chromatic aberration"), "tca");
-    fill_tca_page(data, subpage);
-
-    subpage = notebook_page_new(subnb, _("Optical vignetting"), "vignetting");
-    fill_vignetting_page(data, subpage);
-
     subpage = notebook_page_new(subnb, _("Lens distortion"), "distortion");
     fill_distortion_page(data, subpage);
 
     subpage = notebook_page_new(subnb, _("Lens geometry"), "geometry");
     fill_geometry_page(data, subpage);
+
+    subpage = notebook_page_new(subnb, _("Optical vignetting"), "vignetting");
+    fill_vignetting_page(data, subpage);
+
+    subpage = notebook_page_new(subnb,
+	    _("Lateral chromatic aberration"), "tca");
+    fill_tca_page(data, subpage);
 
     lens_set(data, CFG->lens);
 
