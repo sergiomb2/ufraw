@@ -34,6 +34,10 @@
 #include "ufraw.h"
 
 #ifdef HAVE_LENSFUN
+/* What about LF_MODIFY_ALL? */
+#define UF_LF_ALL (LF_MODIFY_TCA | LF_MODIFY_VIGNETTING | \
+	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
+
 static void ufraw_convert_image_vignetting(ufraw_data *uf,
 	ufraw_image_data *img, UFRectangle *area);
 static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img,
@@ -743,26 +747,25 @@ int ufraw_convert_image(ufraw_data *uf)
 	ufraw_image_data *img = &uf->Images[ufraw_first_phase];
 	UFRectangle area = { 0, 0, img->width, img->height };
 	ufraw_convert_image_vignetting(uf, img, &area);
-	ufraw_image_data *img2 = &uf->Images[ufraw_lensfun_phase];
-	img2->height = img->height;
-	img2->width = img->width;
-	img2->depth = img->depth;
-	img2->rowstride = img2->width * img2->depth;
-	img2->buffer = g_realloc(img2->buffer, img2->height * img2->rowstride);
-	ufraw_convert_image_lensfun(uf, img, img2, &area);
-	g_free(img->buffer);
-	img->buffer = img2->buffer;
-	img2->buffer = NULL;
+	if ((uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)) != 0) {
+	    /* Apply distortion, TCA and geometry */
+	    ufraw_image_data *img2 = &uf->Images[ufraw_lensfun_phase];
+	    img2->height = img->height;
+	    img2->width = img->width;
+	    img2->depth = img->depth;
+	    img2->rowstride = img2->width * img2->depth;
+	    img2->buffer = g_realloc(img2->buffer, img2->height * img2->rowstride);
+	    ufraw_convert_image_lensfun(uf, img, img2, &area);
+	    g_free(img->buffer);
+	    img->buffer = img2->buffer;
+	    img2->buffer = NULL;
+	}
     }
 #endif
     return UFRAW_SUCCESS;
 }
 
 #ifdef HAVE_LENSFUN
-
-/* What about LF_MODIFY_ALL? */
-#define UF_LF_ALL (LF_MODIFY_TCA | LF_MODIFY_VIGNETTING | \
-	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
 
 /* Lanczos kernel is precomputed in a table with this resolution
  * The value below seems to be enough for HQ upscaling up to eight times
