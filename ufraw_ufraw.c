@@ -1426,7 +1426,7 @@ ufraw_image_data *ufraw_rgb_image(ufraw_data *uf, gboolean bufferok,
 	    break;
 	}
     }
-    return &uf->Images[ufraw_first_phase];
+    return &uf->Images[phase];
 }
 
 ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok)
