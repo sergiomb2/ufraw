@@ -1721,8 +1721,9 @@ static gboolean preview_button_release_event(GtkWidget *event_box,
     return TRUE;
 }
 
-static void update_crop_ranges(preview_data *data);
-static void fix_crop_aspect(preview_data *data, CursorType cursor);
+static void update_crop_ranges(preview_data *data, gboolean render);
+static void fix_crop_aspect(preview_data *data, CursorType cursor,
+	gboolean render);
 static void set_new_aspect(preview_data *data);
 static void refresh_aspect(preview_data *data);
 
@@ -1805,9 +1806,7 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 	    CFG->CropY2 += d;
 	}
 	if ( data->CropMotionType!=crop_cursor ) {
-	    fix_crop_aspect(data, data->CropMotionType);
-	    update_crop_ranges(data);
-	    if (!CFG->LockAspect) refresh_aspect(data);
+	    fix_crop_aspect(data, data->CropMotionType, TRUE);
 	}
     }
 
@@ -1884,7 +1883,7 @@ static void update_shrink_ranges(preview_data *data)
     data->FreezeDialog--;
 }
 
-static void update_crop_ranges(preview_data *data)
+static void update_crop_ranges(preview_data *data, gboolean render)
 {
     if (data->FreezeDialog) return;
 
@@ -1941,6 +1940,9 @@ static void update_crop_ranges(preview_data *data)
 	data->DrawnCropY2 = CropY2;
 	i++;
     }
+    update_shrink_ranges(data);
+    if (!render)
+	return;
     // It is better not to draw lines than to draw partial lines:
     int saveDrawLines = CFG->drawLines;
     CFG->drawLines = 0;
@@ -1961,7 +1963,6 @@ static void update_crop_ranges(preview_data *data)
 	data->DrawCropID = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+30,
 		(GSourceFunc)(preview_draw_crop), data, NULL);
     }
-    update_shrink_ranges(data);
     g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
 	    (GSourceFunc)(render_live_histogram), data, NULL);
 }
@@ -2148,7 +2149,7 @@ static void flip_image(GtkWidget *widget, int flip)
 	 * We only need to draw the flipped image. */
     	preview_draw_all(data);
     }
-    update_crop_ranges(data);
+    update_crop_ranges(data, TRUE);
     refresh_aspect(data);
 }
 
@@ -2198,7 +2199,8 @@ static void refresh_aspect(preview_data *data)
     g_free(text);
 }
 
-static void fix_crop_aspect(preview_data *data, CursorType cursor)
+static void fix_crop_aspect(preview_data *data, CursorType cursor,
+	gboolean render)
 {
     double aspect;
 
@@ -2326,8 +2328,9 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor)
 	default:
 	    return;
     }
-
-    update_crop_ranges(data);
+    update_crop_ranges(data, render);
+    if (!CFG->LockAspect)
+	refresh_aspect(data);
 }
 
 /* Modify current crop area so that it fits current aspect ratio */
@@ -2374,7 +2377,7 @@ static void set_new_aspect(preview_data *data)
     CFG->CropY1 = floor(cy - dy + 0.5);
     CFG->CropY2 = floor(cy + dy + 0.5);
 
-    update_crop_ranges(data);
+    update_crop_ranges(data, TRUE);
 }
 
 static void lock_aspect(GtkWidget *widget)
@@ -2904,9 +2907,7 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
 	if ( (int *)valuep==&CFG->CropX2) cursor = right_cursor;
 	if ( (int *)valuep==&CFG->CropY1) cursor = top_cursor;
 	if ( (int *)valuep==&CFG->CropY2) cursor = bottom_cursor;
-	fix_crop_aspect(data, cursor);
-	update_crop_ranges(data);
-	if (!CFG->LockAspect) refresh_aspect(data);
+	fix_crop_aspect(data, cursor, TRUE);
 	return;
     }
     /* Do nothing if value didn't really change */
@@ -3067,20 +3068,13 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
     }
     ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
 
-    /* render_init() will resize the pixbuf when it detects that the future
-     * final image will get a different size. This is required for
-     * fix_crop_aspect() and update_crop_ranges() because they attempt to draw.
-     * Unfortunately the image is not yet there, causing some crap to appear
-     * during a short time (try rotate -90 followed by -9). */
-    /* TODO: fix the above. */
     render_init(data);
     if (CFG->CropX2 > data->UF->rotatedWidth)
-	fix_crop_aspect(data, top_right_cursor);
+	fix_crop_aspect(data, top_right_cursor, FALSE);
     else if (CFG->CropY2 > data->UF->rotatedHeight)
-	fix_crop_aspect(data, bottom_left_cursor);
-    update_crop_ranges(data);
-    if (!CFG->LockAspect)
-	refresh_aspect(data);
+	fix_crop_aspect(data, bottom_left_cursor, FALSE);
+    else
+	update_crop_ranges(data, FALSE);
     update_scales(data);
 }
 
@@ -5779,7 +5773,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 
     data->FreezeDialog = FALSE;
     data->RenderMode = render_default;
-    update_crop_ranges(data);
+    update_crop_ranges(data, FALSE);
     update_scales(data);
 
     data->OverUnderTicker = 0;
