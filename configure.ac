@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.147 2009/11/20 04:40:05 udifuchs Exp $
+dnl $Id: configure.ac,v 1.148 2009/11/21 06:17:05 udifuchs Exp $
 AC_INIT(UFRaw, 0.17)
 AC_PREREQ(2.57)
 
@@ -258,7 +258,7 @@ PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
   [ have_exiv2=no
     AC_MSG_RESULT($EXIV2_PKG_ERRORS) ] )
 
-PKG_CHECK_MODULES(LENSFUN, lensfun >= 0.2.3,
+PKG_CHECK_MODULES(LENSFUN, lensfun >= 0.2.5,
   [ have_lensfun=yes
     AC_DEFINE(HAVE_LENSFUN, 1, have the lensfun library) ],
   [ have_lensfun=no

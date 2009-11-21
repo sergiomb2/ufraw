@@ -834,7 +834,11 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 			srcX, srcY, 1, 1, buff);
 	    }
 #endif
-	    for (c = 0; c < 3; c++, modcoord += 2) {
+	    for (c = 0; c < 3; c++
+#ifdef HAVE_LENSFUN
+		    , modcoord += 2
+#endif
+		) {
 #ifdef HAVE_LENSFUN
 		if (applyLF) {
 		    srcX = modcoord[0];
@@ -1351,10 +1355,10 @@ void ufraw_convert_prepare_buffers(ufraw_data *uf)
     img = &uf->Images[ufraw_transform_phase];
     if (img->valid == 0) {
 	ufraw_convert_prepare_transform_buffer(uf, img, width, height);
-	if (img->buffer != NULL) {
-	    width = img->width;
-	    height = img->height;
-	}
+    }
+    if (img->buffer != NULL) {
+	width = img->width;
+	height = img->height;
     }
     img = &uf->Images[ufraw_develop_phase];
     if (img->valid == 0) {
