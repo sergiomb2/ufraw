@@ -36,9 +36,6 @@
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
 
-/* We do the rotate so we define the layer where it's done */
-#define ufraw_rotate_phase ufraw_first_phase
-
 static void adjustment_update(GtkAdjustment *adj, double *valuep);
 static void button_update(GtkWidget *button, gpointer user_data);
 
@@ -869,6 +866,7 @@ static gboolean render_prepare(preview_data *data)
 			[CFG->profileIndex[display_profile]].productName);
     }
     ufraw_developer_prepare(data->UF, display_developer);
+    ufraw_convert_prepare_buffers(data->UF);
 
     /* The reset of the rendering can be triggered only after the call to
      * ufraw_developer_preare(). Otherwise error messages in this function
@@ -1062,14 +1060,8 @@ static gboolean render_preview_image(preview_data *data)
 
     if (data->FreezeDialog) return FALSE;
 
-    if (ufraw_invalidate_layer_event(data->UF, ufraw_first_phase)) {
+    if (ufraw_invalidate_layer_event(data->UF, ufraw_transform_phase)) {
 	render_init(data);
-#ifdef HAVE_LENSFUN
-	/* Vignetting is done in the first phase */
-	ufraw_prepare_lensfun(data->UF, ufraw_lensfun_phase);
-    } else if (ufraw_invalidate_layer_event(data->UF, ufraw_lensfun_phase)) {
-	ufraw_prepare_lensfun(data->UF, ufraw_lensfun_phase);
-#endif
     }
 #ifdef _OPENMP
 #pragma omp parallel shared(chosen,data) reduction(||:again)
@@ -3012,9 +3004,20 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
     gboolean FullCrop =
 	CFG->CropX1==0 && CFG->CropX2==data->UF->rotatedWidth &&
 	CFG->CropY1==0 && CFG->CropY2==data->UF->rotatedHeight;
+    int oldFlip = CFG->orientation;
     ufraw_unnormalize_rotation(data->UF);
     CFG->rotationAngle = gtk_adjustment_get_value(data->RotationAdjustment);
     ufraw_normalize_rotation(data->UF);
+    int newFlip = CFG->orientation;
+    int flip;
+    for (flip=0; flip<8; flip++) {
+	CFG->orientation = oldFlip;
+	ufraw_flip_orientation(data->UF, flip);
+	if (CFG->orientation == newFlip)
+	    break;
+    }
+    CFG->orientation = oldFlip;
+    ufraw_flip_image(data->UF, flip);
     gtk_widget_set_sensitive(data->ResetRotationAdjustment,
 	    CFG->rotationAngle != 0 ||
 	    CFG->orientation != CFG->CameraOrientation);
@@ -3062,7 +3065,7 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
 	data->SpotY1 = -1;
 	data->SpotY2 = -1;
     }
-    ufraw_invalidate_layer(data->UF, ufraw_rotate_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
 
     /* render_init() will resize the pixbuf when it detects that the future
      * final image will get a different size. This is required for
@@ -3086,6 +3089,8 @@ static void adjustment_reset_rotation(GtkWidget *widget, gpointer user_data)
     preview_data *data = get_preview_data(widget);
 
     (void)user_data;
+    int oldOrientation = CFG->orientation;
+    double oldAngle = CFG->rotationAngle;
     CFG->orientation = CFG->CameraOrientation;
     CFG->rotationAngle = 0;
 
@@ -3094,6 +3099,8 @@ static void adjustment_reset_rotation(GtkWidget *widget, gpointer user_data)
     gtk_adjustment_set_value(data->RotationAdjustment, CFG->rotationAngle);
     ufraw_normalize_rotation(data->UF);
     data->FreezeDialog--;
+    CFG->orientation = oldOrientation;
+    CFG->rotationAngle = oldAngle;
     gtk_adjustment_value_changed(data->RotationAdjustment);
 }
 

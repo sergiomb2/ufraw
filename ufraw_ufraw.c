@@ -40,12 +40,16 @@
 
 static void ufraw_convert_image_vignetting(ufraw_data *uf,
 	ufraw_image_data *img, UFRectangle *area);
-static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img,
-	ufraw_image_data *outimg, UFRectangle *area);
 #endif
+static void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase);
+static void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase);
+static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
+	ufraw_image_data *outimg, UFRectangle *area);
+static void ufraw_prepare_transform(ufraw_data *uf);
+static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
+	ufraw_image_data *img, int width, int height);
 static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase);
 static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_image_data *dcimg);
-static void ufraw_convert_prepare_buffers(ufraw_data *uf);
 
 static int make_temporary(char *basefilename, char **tmpfilename)
 {
@@ -741,31 +745,27 @@ int ufraw_convert_image(ufraw_data *uf)
     ufraw_developer_prepare(uf, file_developer);
     ufraw_convert_image_raw(uf, ufraw_raw_phase);
     ufraw_convert_image_first(uf, ufraw_first_phase);
+    ufraw_image_data *img = &uf->Images[ufraw_first_phase];
+    UFRectangle area = { 0, 0, img->width, img->height };
 #ifdef HAVE_LENSFUN
-    ufraw_prepare_lensfun(uf, ufraw_first_phase);
+    ufraw_prepare_transform(uf);
     if (uf->modifier != NULL) {
-	ufraw_image_data *img = &uf->Images[ufraw_first_phase];
-	UFRectangle area = { 0, 0, img->width, img->height };
 	ufraw_convert_image_vignetting(uf, img, &area);
-	if ((uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)) != 0) {
-	    /* Apply distortion, TCA and geometry */
-	    ufraw_image_data *img2 = &uf->Images[ufraw_lensfun_phase];
-	    img2->height = img->height;
-	    img2->width = img->width;
-	    img2->depth = img->depth;
-	    img2->rowstride = img2->width * img2->depth;
-	    img2->buffer = g_realloc(img2->buffer, img2->height * img2->rowstride);
-	    ufraw_convert_image_lensfun(uf, img, img2, &area);
-	    g_free(img->buffer);
-	    img->buffer = img2->buffer;
-	    img2->buffer = NULL;
-	}
     }
 #endif
+    ufraw_image_data *img2 = &uf->Images[ufraw_transform_phase];
+    ufraw_convert_prepare_transform_buffer(uf, img2, img->width, img->height);
+    if (img2->buffer != NULL) {
+	area.width = img2->width;
+	area.height = img2->height;
+	/* Apply distortion, TCA, geometry and rotation */
+	ufraw_convert_image_transform(uf, img, img2, &area);
+	g_free(img->buffer);
+	*img = *img2;
+	img2->buffer = NULL;
+    }
     return UFRAW_SUCCESS;
 }
-
-#ifdef HAVE_LENSFUN
 
 /* Lanczos kernel is precomputed in a table with this resolution
  * The value below seems to be enough for HQ upscaling up to eight times
@@ -789,6 +789,7 @@ int ufraw_convert_image(ufraw_data *uf)
 #define LANCZOS_DATA_ONE 4096
 #endif
 
+#ifdef HAVE_LENSFUN
 static void ufraw_convert_image_vignetting(ufraw_data *uf,
 	ufraw_image_data *img, UFRectangle *area)
 {
@@ -799,35 +800,52 @@ static void ufraw_convert_image_vignetting(ufraw_data *uf,
 	    area->x, area->y, area->width, area->height,
             LF_CR_4(RED, GREEN, BLUE, UNKNOWN), img->rowstride);
 }
+#endif
 
-static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img,
+/* Apply distortion, TCA, geometry and rotation in a single pass */
+static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 	ufraw_image_data *outimg, UFRectangle *area)
 {
-    /* Now apply distortion, TCA and geometry in a single pass */
-    if ((uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)) == 0)
-	return;
+    double sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
+    double cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
 
     /* Use precomputed Lanczos kernel */
     LANCZOS_DATA_TYPE *lanczos_func = uf->lanczos_func;
     int x, y, c;
 
-    float *buff = g_alloca(area->width * 3 * 2 * sizeof(float));
-    for (y = area->y; y < area->y + area->height; y++) {
-        if (!lf_modifier_apply_subpixel_geometry_distortion(uf->modifier,
-		    area->x, y, area->width, 1, buff))
-	    g_error("ufraw_convert_image_lensfun: "
-		    "lf_modifier_apply_subpixel_geometry_distortion() failed");
+#ifdef HAVE_LENSFUN
+    gboolean applyLF = uf->modifier != NULL &&
+	    (uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING));
+#endif
 
-	float *modcoord = buff;
+    for (y = area->y; y < area->y + area->height; y++) {
+	guint8 *cur0 = outimg->buffer + y * outimg->rowstride;
+	float srcX0 = y*sine - img->height*sine*cosine;
+	float srcY0 = y*cosine + img->height*sine*sine;
 	for (x = area->x; x < area->x + area->width; x++) {
-	    guint16 *cur = (guint16 *)(outimg->buffer +
-		    y * outimg->rowstride + x * outimg->depth);
+	    guint16 *cur = (guint16 *)(cur0 + x * outimg->depth);
+	    float srcX = srcX0 + x*cosine;
+	    float srcY = srcY0 - x*sine;
+#ifdef HAVE_LENSFUN
+	    float buff[3 * 2];
+	    float *modcoord = buff;
+	    if (applyLF) {
+		lf_modifier_apply_subpixel_geometry_distortion(uf->modifier,
+			srcX, srcY, 1, 1, buff);
+	    }
+#endif
 	    for (c = 0; c < 3; c++, modcoord += 2) {
+#ifdef HAVE_LENSFUN
+		if (applyLF) {
+		    srcX = modcoord[0];
+		    srcY = modcoord[1];
+		}
+#endif
 #ifdef LANCZOS_DATA_FLOAT
-		float xs = ceilf(modcoord[0]) - LANCZOS_SUPPORT;
-		float xe = floorf(modcoord[0]) + LANCZOS_SUPPORT;
-		float ys = ceilf(modcoord[1]) - LANCZOS_SUPPORT;
-		float ye = floorf(modcoord[1]) + LANCZOS_SUPPORT;
+		float xs = ceilf(srcX) - LANCZOS_SUPPORT;
+		float xe = floorf(srcX) + LANCZOS_SUPPORT;
+		float ys = ceilf(srcY) - LANCZOS_SUPPORT;
+		float ye = floorf(srcY) + LANCZOS_SUPPORT;
 		if (xs < 0 || ys < 0 || xe >= img->width || ye >= img->height) {
 		    cur[c] = 0;
 		    continue;
@@ -839,8 +857,8 @@ static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img,
 		float norm = 0.0;
 		float sum = 0.0;
 
-		float _dx = modcoord[0] - xs;
-		float dy = modcoord[1] - ys;
+		float _dx = srcX - xs;
+		float dy = srcY - ys;
 		for (; ys <= ye; ys += 1.0, dy -= 1.0) {
 		    float xc, dx = _dx;
 		    for (xc = xs; xc <= xe; xc += 1.0, dx -= 1.0, src++) {
@@ -860,8 +878,8 @@ static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img,
 		    cur[c] = 0;
 #else
 		/* Do it in integer arithmetic, it's faster */
-		int xx = (int)modcoord[0];
-		int yy = (int)modcoord[1];
+		int xx = (int)srcX;
+		int yy = (int)srcY;
 		int xs = xx + 1 - LANCZOS_SUPPORT;
 		int xe = xx     + LANCZOS_SUPPORT;
 		int ys = yy + 1 - LANCZOS_SUPPORT;
@@ -877,8 +895,8 @@ static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img,
 		int norm = 0;
 		int sum = 0;
 
-		int _dx = (int)(modcoord[0] * 4096.0) - (xs << 12);
-		int dy = (int)(modcoord[1] * 4096.0) - (ys << 12);
+		int _dx = (int)(srcX * 4096.0) - (xs << 12);
+		int dy = (int)(srcY * 4096.0) - (ys << 12);
 		for (; ys <= ye; ys++, dy -= 4096) {
 		    int xc, dx = _dx;
 		    for (xc = xs; xc <= xe; xc++, src++, dx -= 4096) {
@@ -901,8 +919,6 @@ static void ufraw_convert_image_lensfun(ufraw_data *uf, ufraw_image_data *img,
 	}
     }
 }
-
-#endif /* HAVE_LENSFUN */
 
 /*
  * A pixel with a significantly larger value than all of its four direct
@@ -1145,7 +1161,7 @@ static void ufraw_convertshrink(ufraw_data *uf, dcraw_image_data *final, dcraw_d
  * dcraw_wavelet_denoise() too should change to accept a phase argument and
  * no longer require type casts.
  */
-void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase)
+static void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase)
 {
     ufraw_image_data *img = &uf->Images[phase];
     dcraw_data *dark = uf->conf->darkframe ? uf->conf->darkframe->raw : NULL;
@@ -1169,7 +1185,7 @@ void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase)
  * Interface of ufraw_convertshrink() and dcraw_flip_image() should change
  * to accept a phase argument and no longer require type casts.
  */
-void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase)
+static void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase)
 {
     ufraw_image_data *in = &uf->Images[phase - 1];
     ufraw_image_data *out = &uf->Images[phase];
@@ -1278,9 +1294,11 @@ static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_
 static void ufraw_image_init(ufraw_image_data *img,
 	int width, int height, int bitdepth)
 {
-    if (img->height != height || img->width != width || img->buffer == NULL)
-        img->valid = 0;
+    if (img->height == height && img->width == width &&
+	    img->depth == bitdepth && img->buffer != NULL)
+	return;
 
+    img->valid = 0;
     img->height = height;
     img->width = width;
     img->depth = bitdepth;
@@ -1288,38 +1306,94 @@ static void ufraw_image_init(ufraw_image_data *img,
     img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
 }
 
+static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
+	ufraw_image_data *img, int width, int height)
+{
+    ufraw_prepare_transform(uf);
+#ifdef HAVE_LENSFUN
+    if (uf->conf->rotationAngle == 0 &&
+	(uf->modifier == NULL ||
+	!(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING))))
+#else
+    if (uf->conf->rotationAngle == 0)
+#endif /* HAVE_LENSFUN */
+    {
+	g_free(img->buffer);
+	img->buffer = NULL;
+    } else {
+	double sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
+	double cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
+	int newWidth = ceil((height * sine) + (width * cosine));
+	int newHeight = ceil((width * sine) + (height * cosine));
+	width = newWidth;
+	height = newHeight;
+	ufraw_image_init(img, width, height, 8);
+    }
+}
+
 /*
  * This function does not set img->invalidate_event because the
  * invalidation here is a secondary effect of the need to resize
  * buffers. The invalidate events should all have been set already.
  */
-static void ufraw_convert_prepare_buffers(ufraw_data *uf)
+void ufraw_convert_prepare_buffers(ufraw_data *uf)
 {
-    ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
+    ufraw_image_data *img = &uf->Images[ufraw_first_phase];
+    // Buffers can be prepared only after first image is generated.
+    // If first image is not valid we can easily skip the buffer
+    // preparation since it will be prepared after first image generation.
+    if (img->valid != 0xffffffff)
+	return;
 
-#ifdef HAVE_LENSFUN
-    ufraw_image_init(&uf->Images[ufraw_lensfun_phase],
-	    FirstImage->width, FirstImage->height, 8);
-#endif /* HAVE_LENSFUN */
+    int width = img->width;
+    int height = img->height;
 
-    ufraw_image_init(&uf->Images[ufraw_develop_phase],
-	    FirstImage->width, FirstImage->height, 3);
-
-    ufraw_image_init(&uf->Images[ufraw_display_phase],
-	    FirstImage->width, FirstImage->height, 3);
-    // TODO: We should be able to allocate a buffer only if it is needed.
-//    if (uf->developer->working2displayTransform == NULL) {
-//	g_free(img->buffer);
-//	img->buffer = NULL;
-//    } else {
-//	img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
-//    }
+    img = &uf->Images[ufraw_transform_phase];
+    if (img->valid == 0) {
+	ufraw_convert_prepare_transform_buffer(uf, img, width, height);
+	if (img->buffer != NULL) {
+	    width = img->width;
+	    height = img->height;
+	}
+    }
+    img = &uf->Images[ufraw_develop_phase];
+    if (img->valid == 0) {
+	ufraw_image_init(img, width, height, 3);
+    }
+    img = &uf->Images[ufraw_display_phase];
+    if (img->valid == 0) {
+	if (uf->developer->working2displayTransform == NULL) {
+	    g_free(img->buffer);
+	    img->buffer = NULL;
+	} else {
+	    ufraw_image_init(img, width, height, 3);
+	}
+    }
 }
 
-#ifdef HAVE_LENSFUN
-void ufraw_prepare_lensfun(ufraw_data *uf, UFRawPhase phase)
+static void ufraw_prepare_transform(ufraw_data *uf)
 {
-    ufraw_image_data *img = &uf->Images[phase];
+    if (uf->lanczos_func == NULL) {
+	/* Precompute the Lanczos kernel */
+	LANCZOS_DATA_TYPE *lanczos_func = g_new(LANCZOS_DATA_TYPE,
+		LANCZOS_SUPPORT * LANCZOS_SUPPORT * LANCZOS_TABLE_RES);
+	uf->lanczos_func = lanczos_func;
+	int i;
+	for (i = 0; i < LANCZOS_SUPPORT*LANCZOS_SUPPORT * LANCZOS_TABLE_RES;
+		i++) {
+	    if (i == 0) {
+		lanczos_func[i] = LANCZOS_DATA_ONE;
+	    } else {
+		float d = sqrt((float)i / LANCZOS_TABLE_RES);
+		lanczos_func[i] = (LANCZOS_DATA_TYPE)(
+			LANCZOS_DATA_ONE * LANCZOS_SUPPORT *
+			sin(M_PI * d) * sin(M_PI / LANCZOS_SUPPORT * d) /
+			(M_PI * M_PI * d * d) );
+	    }
+	}
+    }
+#ifdef HAVE_LENSFUN
+    ufraw_image_data *img = &uf->Images[ufraw_first_phase];
     conf_data *conf = uf->conf;
 
     if (uf->modifier != NULL)
@@ -1342,27 +1416,8 @@ void ufraw_prepare_lensfun(ufraw_data *uf, UFRawPhase phase)
 	lf_modifier_destroy(uf->modifier);
 	uf->modifier = NULL;
     }
-
-    if (uf->lanczos_func != NULL)
-	return;
-    /* Precompute the Lanczos kernel */
-    LANCZOS_DATA_TYPE *lanczos_func = g_new(LANCZOS_DATA_TYPE,
-	    LANCZOS_SUPPORT * LANCZOS_SUPPORT * LANCZOS_TABLE_RES);
-    uf->lanczos_func = lanczos_func;
-    int i;
-    for (i = 0; i < LANCZOS_SUPPORT*LANCZOS_SUPPORT * LANCZOS_TABLE_RES; i++) {
-	if (i == 0) {
-            lanczos_func[i] = LANCZOS_DATA_ONE;
-        } else {
-            float d = sqrt((float)i / LANCZOS_TABLE_RES);
-            lanczos_func[i] = (LANCZOS_DATA_TYPE)(
-		    LANCZOS_DATA_ONE * LANCZOS_SUPPORT *
-		    sin(M_PI * d) * sin(M_PI / LANCZOS_SUPPORT * d) /
-		    (M_PI * M_PI * d * d) );
-	}
-    }
-}
 #endif /* HAVE_LENSFUN */
+}
 
 /*
  * This function is very permissive in accepting NULL pointers but it does
@@ -1415,7 +1470,7 @@ ufraw_image_data *ufraw_rgb_image(ufraw_data *uf, gboolean bufferok,
 #ifdef HAVE_LENSFUN
     if (uf->modifier &&
 	(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
-	phase = ufraw_lensfun_phase;
+	phase = ufraw_transform_phase;
 #endif /* HAVE_LENSFUN */
     int i;
 
@@ -1501,17 +1556,21 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
     if (out->valid & (1 << saidx))
         return out; // the subarea has been already computed
 
+    /* Get the subarea image for previous phase */
+    ufraw_image_data *in = NULL;
+    if (phase > ufraw_raw_phase) {
+	in = ufraw_convert_image_area(uf, saidx, phase - 1);
+    }
+
+    if (phase>ufraw_first_phase && out->buffer == NULL)
+	return in; // skip phase
+
     /* Get subarea coordinates */
     UFRectangle area = ufraw_image_get_subarea_rectangle(out, saidx);
     guint8 *dest = out->buffer + area.y*out->rowstride + area.x*out->depth;
-
-    /* Get the subarea image for previous phase */
-    ufraw_image_data *in = NULL;
     guint8 *src = NULL;
-    if (phase > ufraw_raw_phase) {
-	in = ufraw_convert_image_area(uf, saidx, phase - 1);
+    if (in != NULL)
 	src = in->buffer + area.y*in->rowstride + area.x*in->depth;
-    }
 
     switch (phase)
     {
@@ -1525,28 +1584,17 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
         case ufraw_first_phase:
 	    if (out->valid != 0xffffffff) {
 		ufraw_convert_image_first(uf, phase);
-		ufraw_rotate_image_buffer(&uf->Images[phase],
-			uf->conf->rotationAngle);
+		out->valid = 0xffffffff;
 		ufraw_convert_prepare_buffers(uf);
 #ifdef HAVE_LENSFUN
-		ufraw_prepare_lensfun(uf, ufraw_lensfun_phase);
-		ufraw_image_data *img = &uf->Images[ufraw_first_phase];
-		UFRectangle area = { 0, 0, img->width, img->height };
-		ufraw_convert_image_vignetting(uf, img, &area);
+		UFRectangle area = { 0, 0, out->width, out->height };
+		ufraw_convert_image_vignetting(uf, out, &area);
 #endif /* HAVE_LENSFUN */
-		out->valid = 0xffffffff;
 	    }
 	    return out;
 
-        case ufraw_lensfun_phase:
-#ifdef HAVE_LENSFUN
+        case ufraw_transform_phase:
             {
-                if (uf->modifier == NULL ||
-                    !(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING))) {
-//		    out->valid = in->valid;	/* for invalidate_event */
-		    return in;
-		}
-
 		/* Area calculation is not needed at the moment since
 		 * ufraw_first_phase is not tiled yet. */
 		/*
@@ -1578,12 +1626,9 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
                         ufraw_convert_image_area (uf, idx, phase - 1);
                 }
 		*/
-		ufraw_convert_image_lensfun(uf, in, out, &area);
+		ufraw_convert_image_transform(uf, in, out, &area);
             }
             break;
-#else /* HAVE_LENSFUN */
-            return in;
-#endif /* HAVE_LENSFUN */
 
         case ufraw_develop_phase:
             for (yy = 0; yy < area.height; yy++, dest += out->rowstride,
@@ -1593,9 +1638,6 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
             break;
 
         case ufraw_display_phase:
-	    if (uf->developer->working2displayTransform == NULL)
-		return in;
-
             for (yy = 0; yy < area.height; yy++, dest += out->rowstride,
 				src += in->rowstride) {
                 develop_display(dest, src, uf->developer, area.width);
@@ -1616,8 +1658,10 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
     return out;
 }
 
-static int ufraw_flip_image_buffer(ufraw_image_data *img, int flip)
+static void ufraw_flip_image_buffer(ufraw_image_data *img, int flip)
 {
+    if (img->buffer == NULL)
+	return;
     /* Following code was copied from dcraw's flip_image()
      * and modified to work with any pixel depth. */
     int base, dest, next, row, col;
@@ -1659,10 +1703,9 @@ static int ufraw_flip_image_buffer(ufraw_image_data *img, int flip)
 	img->width = height;
 	img->rowstride = height * depth;
     }
-    return UFRAW_SUCCESS;
 }
 
-static void ufraw_flip_orientation(ufraw_data *uf, int flip)
+void ufraw_flip_orientation(ufraw_data *uf, int flip)
 {
     const char flipMatrix[8][8] = {
 	{ 0, 1, 2, 3, 4, 5, 6, 7 }, /* No flip */
@@ -1732,8 +1775,10 @@ void ufraw_unnormalize_rotation(ufraw_data *uf)
     uf->conf->rotationAngle = remainder(uf->conf->rotationAngle, 360.0);
 }
 
-int ufraw_flip_image(ufraw_data *uf, int flip)
+void ufraw_flip_image(ufraw_data *uf, int flip)
 {
+    if (flip == 0)
+	return;
     ufraw_flip_orientation(uf, flip);
     /* Usually orientation is applied before rotationAngle.
      * Here we are flipping after rotationAngle was applied.
@@ -1744,26 +1789,16 @@ int ufraw_flip_image(ufraw_data *uf, int flip)
 	uf->conf->rotationAngle = -uf->conf->rotationAngle;
 	ufraw_normalize_rotation(uf);
     }
-    ufraw_flip_image_buffer(&uf->Images[ufraw_first_phase], flip);
-#ifdef HAVE_LENSFUN
-    if (uf->modifier &&
-	(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
-	ufraw_flip_image_buffer(&uf->Images[ufraw_lensfun_phase], flip);
-#endif /* HAVE_LENSFUN */
-    ufraw_flip_image_buffer(&uf->Images[ufraw_develop_phase], flip);
-    if (uf->developer->working2displayTransform != NULL)
-	ufraw_flip_image_buffer(&uf->Images[ufraw_display_phase], flip);
-
-    return UFRAW_SUCCESS;
+    UFRawPhase phase;
+    for (phase = ufraw_first_phase; phase < ufraw_phases_num; phase++)
+	ufraw_flip_image_buffer(&uf->Images[phase], flip);
 }
 
 void ufraw_invalidate_layer(ufraw_data *uf, UFRawPhase phase)
 {
     for (; phase < ufraw_phases_num; phase++) {
-//	if (uf->Images[phase].valid != 0) {
-	    uf->Images[phase].valid = 0;
-	    uf->Images[phase].invalidate_event = TRUE;
-//	}
+	uf->Images[phase].valid = 0;
+	uf->Images[phase].invalidate_event = TRUE;
     }
 }
 
@@ -2175,128 +2210,4 @@ void ufraw_auto_curve(ufraw_data *uf)
 	}
 	curve->m_numAnchors = j+1;
     }
-}
-
-void ufraw_rotate_row(ufraw_image_data *image, void *pixbuf, double angle,
-		      int bitDepth, int row, int offset, int width)
-{
-    int col, ur, uc, i, j, in_image;
-    float r, c, fr, fc;
-    guint16 (*input)[3] = (guint16 (*)[3]) image->buffer;
-    guint16 (*iPix[2][2])[3];
-    guint16 pixValue;
-    guint8 (*oPix8)[3] = (guint8 (*)[3]) pixbuf;
-    guint16 (*oPix16)[3] = (guint16 (*)[3]) pixbuf;
-    double rotationRadians = (angle * 2 * M_PI) / 360;
-    double sine = sin(rotationRadians);
-    double cosine = cos(rotationRadians);
-    guint16 bgcolor[3] = {0, 0, 0};
-
-    for (col = 0; col < width; col++) {
-	// Find co-ordinates of output pixel in input image:
-	// c, r are the ideal subpixel co-ordinates.
-	// uc, ur are the integer co-ordinates to the top and left of c, r.
-	uc = (int)floor(c = row*sine + (offset+col)*cosine
-			    - image->height*sine*cosine);
-	ur = (int)floor(r = row*cosine -(offset+col)*sine
-			    + image->height*sine*sine);
-	// Differences between the ideal and integer co-ordinates, for weighting.
-	fr = r - ur;
-	fc = c - uc;
-	// Whether this pixel is within the image at all. Set in next loop.
-	in_image = 0;
-	// Find pointers to the four pixels surrouding the ideal co-ordinate,
-	// either from the input image or the background color.
-	for (i = 0; i < 2; i++)
-	    for (j = 0; j < 2; j++)
-		if (((uc+i) >= 0) && ((uc+i) <= image->width - 1) &&
-		    ((ur+j) >= 0) && ((ur+j) <= image->height - 1)) {
-		    iPix[i][j] = &input[(ur+j)*image->width + uc+i];
-		    in_image = 1;
-		} else iPix[i][j] = &bgcolor;
-	// Write output pixel.
-	for (i = 0; i < 3; i++) {
-	    if (in_image)
-		pixValue = (guint16)(
-		    ((*iPix[0][0])[i]*(1-fc) + (*iPix[1][0])[i]*fc) * (1-fr)
-		  + ((*iPix[0][1])[i]*(1-fc) + (*iPix[1][1])[i]*fc) * fr);
-	    else
-		// Shortcut some floating point work if outside image.
-		pixValue = bgcolor[i];
-
-	    if (bitDepth > 8)
-		oPix16[col][i] = pixValue;
-	    else
-		oPix8[col][i] = pixValue >> 8;
-	}
-    }
-}
-
-/*
- * Rotate an 8 or 16 bits per color image 0-90 degrees. The output pixel is
- * calculated as a weighted average of the 4 nearest input pixels.
- */
-void ufraw_rotate_image_buffer(ufraw_image_data *img, double angle)
-{
-    double sine, cosine, movecol, moverow;
-    int oldwidth, oldheight, oldrowstride;
-    int width, height, depth, rowstride;
-    int col, row, uc, ur, i;
-    float c, r, fc, fr;
-    guint8 *in, *in_00, *in_01, *in_10, *in_11, *out;
-
-    if (!angle)
-	return;
-    ufraw_image_format(NULL, NULL, img, "36", G_STRFUNC);
-    sine = sin(angle * 2 * M_PI / 360);
-    cosine = cos(angle * 2 * M_PI / 360);
-    depth = img->depth;
-    oldwidth = img->width;
-    oldheight = img->height;
-    oldrowstride = img->rowstride;
-    width = ceil((oldheight * sine) + (oldwidth * cosine));
-    height = ceil((oldwidth * sine) + (oldheight * cosine));
-    rowstride = width * depth;
-    in = img->buffer;
-    out = g_new0(guint8, height * rowstride);
-    img->buffer = out;
-    img->width = width;
-    img->height = height;
-    img->rowstride = rowstride;
-    movecol = -oldheight * sine * cosine;
-    moverow = oldheight * sine * sine;
-    for (row = 0; row < height; ++row) {
-	for (col = 0; col < width; col++) {
-	    // (c,r) are the float input subpixel coordinates. fc,fr are the
-	    // weighting factors for integer coordinates (uc,ur)..(uc+1,ur+1)
-	    // around (c,r)
-	    c = (col * cosine) + (row * sine) + movecol;
-	    r = (row * cosine) - (col * sine) + moverow;
-	    uc = (int)floor(c);
-	    ur = (int)floor(r);
-	    if (uc >= 0 && uc + 1 < oldwidth && ur >= 0 && ur + 1 < oldheight) {
-		fc = c - uc;
-		fr = r - ur;
-		in_00 = in + ((ur * oldwidth) + uc) * depth;	// (uc,ur)
-		in_01 = in_00 + depth;				// (uc+1,ur)
-		in_10 = in_00 + oldrowstride;			// (uc,ur+1)
-		in_11 = in_10 + depth;				// (uc+1,ur+1)
-		if (depth > 4) {
-		    for (i = 0; i < 3; ++i) {
-			((guint16 *)out)[i] =
-			    (((guint16 *)in_00)[i] * (1 - fc) + ((guint16 *)in_01)[i] * fc) * (1 - fr) +
-			    (((guint16 *)in_10)[i] * (1 - fc) + ((guint16 *)in_11)[i] * fc) * fr;
-		    }
-		} else {
-		    for (i = 0; i < 3; ++i) {
-			out[i] =
-			    (in_00[i] * (1 - fc) + in_01[i] * fc) * (1 - fr) +
-			    (in_10[i] * (1 - fc) + in_11[i] * fc) * fr;
-		    }
-		}
-	    }
-	    out += depth;
-	}
-    }
-    g_free(in);
 }

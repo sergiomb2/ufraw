@@ -68,7 +68,7 @@ typedef enum { display_developer, file_developer, auto_developer }
 	DeveloperMode;
 typedef enum { perceptual_intent, relative_intent, saturation_intent,
 	absolute_intent, disable_intent } Intent;
-typedef enum { ufraw_raw_phase, ufraw_first_phase, ufraw_lensfun_phase,
+typedef enum { ufraw_raw_phase, ufraw_first_phase, ufraw_transform_phase,
 	ufraw_develop_phase, ufraw_display_phase, ufraw_phases_num } UFRawPhase;
 typedef enum { grayscale_none, grayscale_lightness, grayscale_luminance,
 	grayscale_value, grayscale_mixer } GrayscaleMode;
@@ -290,8 +290,8 @@ typedef struct ufraw_struct {
 #ifdef HAVE_LENSFUN
     int modFlags; /* postprocessing operations (LF_MODIFY_XXX) */
     lfModifier *modifier;
-    void *lanczos_func; /* the Lanczos kernel */
 #endif /* HAVE_LENSFUN */
+    void *lanczos_func; /* the Lanczos kernel */
     int hotpixels;
     gboolean mark_hotpixels;
     unsigned raw_multiplier;
@@ -313,11 +313,9 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf,conf_data *cmd);
 int ufraw_load_raw(ufraw_data *uf);
 int ufraw_load_darkframe(ufraw_data *uf);
 void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode);
+void ufraw_convert_prepare_buffers(ufraw_data *uf);
 int ufraw_convert_image(ufraw_data *uf);
-void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase);
-void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase);
 #ifdef HAVE_LENSFUN
-void ufraw_prepare_lensfun(ufraw_data *uf, UFRawPhase phase);
 void ufraw_lensfun_init(ufraw_data *uf);
 #endif
 void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
@@ -329,7 +327,8 @@ ufraw_image_data *ufraw_display_image(ufraw_data *uf, gboolean bufferok);
 ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 	UFRawPhase phase);
 void ufraw_close(ufraw_data *uf);
-int ufraw_flip_image(ufraw_data *uf, int flip);
+void ufraw_flip_orientation(ufraw_data *uf, int flip);
+void ufraw_flip_image(ufraw_data *uf, int flip);
 void ufraw_invalidate_layer(ufraw_data *uf, UFRawPhase phase);
 void ufraw_invalidate_hotpixel_layer(ufraw_data *uf);
 void ufraw_invalidate_denoise_layer(ufraw_data *uf);
@@ -342,9 +341,6 @@ int ufraw_set_wb(ufraw_data *uf);
 void ufraw_auto_expose(ufraw_data *uf);
 void ufraw_auto_black(ufraw_data *uf);
 void ufraw_auto_curve(ufraw_data *uf);
-void ufraw_rotate_row(ufraw_image_data *image, void *pixbuf, double angle,
-		      int bitDepth, int row, int offset, int width);
-void ufraw_rotate_image_buffer(ufraw_image_data *img, double angle);
 void ufraw_normalize_rotation(ufraw_data *uf);
 void ufraw_unnormalize_rotation(ufraw_data *uf);
 void ufraw_get_image_dimensions(ufraw_data *uf);

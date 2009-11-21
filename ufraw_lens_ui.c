@@ -339,7 +339,7 @@ static void lens_interpolate (preview_data *data, const lfLens *lens)
     if (data->UF->modFlags & LF_MODIFY_VIGNETTING)
         ufraw_invalidate_layer(data->UF, ufraw_first_phase);
     else
-        ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);
+        ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
     render_preview (data);
 }
 
@@ -615,7 +615,7 @@ static void lens_scale_update (GtkAdjustment *adj, float *valuep)
 {
     preview_data *data = get_preview_data (adj);
     *valuep = gtk_adjustment_get_value (adj);
-    ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
     render_preview (data);
 }
 
@@ -624,7 +624,7 @@ static void lens_scale_reset (GtkWidget *button, gpointer user_data)
     (void)user_data;
     preview_data *data = get_preview_data (button);
     gtk_adjustment_set_value (data->LensScaleAdjustment, 0.0);
-    ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
     render_preview (data);
 }
 
@@ -640,7 +640,7 @@ static void lens_autoscale (GtkWidget *button, gpointer user_data)
         float as = lf_modifier_get_auto_scale (data->UF->modifier, 0);
         gtk_adjustment_set_value (data->LensScaleAdjustment,
                                   log (cs * as) / log (2.0));
-        ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);
+        ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
         render_preview (data);
     }
 }
@@ -670,7 +670,7 @@ static void adjustment_update_tca (GtkAdjustment *adj, float *valuep)
     remove_tca_models (data, CFG->lens_tca.Model);
     lf_lens_add_calib_tca (CFG->lens, &CFG->lens_tca);
 
-    ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
     render_preview (data);
 }
 
@@ -708,7 +708,7 @@ static void tca_model_changed (GtkComboBox *widget, preview_data *data)
     gtk_label_set_text (GTK_LABEL (data->LensTCADesc), details);
     gtk_widget_show_all (data->LensTCATable);
 
-    ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
     render_preview (data);
 }
 
@@ -896,7 +896,7 @@ static void adjustment_update_dist (GtkAdjustment *adj, float *valuep)
     remove_dist_models (data, CFG->lens_distortion.Model);
     lf_lens_add_calib_distortion (CFG->lens, &CFG->lens_distortion);
 
-    ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
     render_preview (data);
 }
 
@@ -934,7 +934,7 @@ static void distortion_model_changed (GtkComboBox *widget, preview_data *data)
     gtk_label_set_text (GTK_LABEL (data->LensDistortionDesc), details);
     gtk_widget_show_all (data->LensDistortionTable);
 
-    ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
     render_preview (data);
 }
 
@@ -1006,7 +1006,7 @@ static void geometry_model_changed (GtkComboBox *widget, preview_data *data)
     else
         gtk_label_set_text (GTK_LABEL (data->LensFromGeometryDesc), details);
 
-    ufraw_invalidate_layer(data->UF, ufraw_lensfun_phase);
+    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
     render_preview (data);
 }
 

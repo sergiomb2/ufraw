@@ -215,71 +215,25 @@ void ufraw_write_image_data(
     int byteDepth = (bitDepth+7)/8;
     guint8 pixbuf8[width * 3 * byteDepth * DEVELOP_BATCH];
 
-    if (uf->conf->rotationAngle != 0) {
-	// Buffer for unrotated image.
-	ufraw_image_data image;
-	image.width = uf->Images[ufraw_first_phase].width;
-	image.height = uf->Images[ufraw_first_phase].height;
-	image.depth = 6;
-	image.rowstride = image.width * image.depth;
-	image.buffer = g_new(guint8, image.height * image.rowstride);
-	// Develop complete raw image into buffer.
-#ifdef _OPENMP
-#pragma omp parallel for schedule(static,1) default(shared) private(row0)
-#endif
-	for (row0 = 0; row0 < image.height; row0 += DEVELOP_BATCH) {
-	    if (uf_omp_get_thread_num() == 0)
-		preview_progress(uf->widget, _("Converting image"),
-		    0.5 * row0/image.height);
-	    guint8 *rowbuf = &image.buffer[row0*image.rowstride];
-	    develop(rowbuf, rawImage[row0*rowStride],
-		     uf->developer, 16,
-		     MIN(image.height - row0, DEVELOP_BATCH) * image.width);
-	}
-	// Write rotated image to output.
-	for (row0 = 0; row0 < height; row0 += DEVELOP_BATCH) {
-	    preview_progress(uf->widget, _("Saving image"),
+    for (row0 = 0; row0 < height; row0 += DEVELOP_BATCH) {
+	preview_progress(uf->widget, _("Saving image"),
 		0.5 + 0.5*row0/height);
 #ifdef _OPENMP
 #pragma omp parallel for default(shared) private(row)
 #endif
-	    for (row = 0; row < DEVELOP_BATCH; row++) {
-		if (row + row0 >= height)
-		    continue;
-		guint8 *rowbuf = &pixbuf8[row * width * 3 * byteDepth];
-		ufraw_rotate_row(&image, rowbuf, uf->conf->rotationAngle,
-		    bitDepth, top+row+row0, left, width);
-		if (grayscaleMode)
-		    grayscale_buffer(rowbuf, width, bitDepth);
-	    }
-	    int batchHeight = MIN(height-row0, DEVELOP_BATCH);
-	    if ( row_writer(uf, out, pixbuf8, row0, width, batchHeight,
-		    grayscaleMode, bitDepth) != UFRAW_SUCCESS )
-		break;
-	}
-	g_free(image.buffer);
-    } else {
-	// No rotation required. Develop straight to output.
-	for (row0 = 0; row0 < height; row0 += DEVELOP_BATCH) {
-	    preview_progress(uf->widget, _("Saving image"),
-		0.5 + 0.5*row0/height);
-#ifdef _OPENMP
-#pragma omp parallel for default(shared) private(row)
-#endif
-	    for (row = 0; row < DEVELOP_BATCH; row++) {
-		if (row + row0 >= height)
-		    continue;
-		guint8 *rowbuf = &pixbuf8[row * width * 3 * byteDepth];
-		develop(rowbuf, rawImage[(top+row+row0)*rowStride+left],
+	for (row = 0; row < DEVELOP_BATCH; row++) {
+	    if (row + row0 >= height)
+		continue;
+	    guint8 *rowbuf = &pixbuf8[row * width * 3 * byteDepth];
+	    develop(rowbuf, rawImage[(top+row+row0)*rowStride+left],
 	            uf->developer, bitDepth, width);
-		if (grayscaleMode)
-		    grayscale_buffer(rowbuf, width, bitDepth);
-	    }
-	    int batchHeight = MIN(height-row0, DEVELOP_BATCH);
-	    if ( row_writer(uf, out, pixbuf8, row0, width, batchHeight,
-		    grayscaleMode, bitDepth) != UFRAW_SUCCESS )
-		break;
+	    if (grayscaleMode)
+		grayscale_buffer(rowbuf, width, bitDepth);
 	}
+	int batchHeight = MIN(height-row0, DEVELOP_BATCH);
+	if ( row_writer(uf, out, pixbuf8, row0, width, batchHeight,
+		grayscaleMode, bitDepth) != UFRAW_SUCCESS )
+	    break;
     }
 }
 
@@ -377,15 +331,15 @@ int ufraw_write_image(ufraw_data *uf)
     // TODO: error handling
     ufraw_convert_image(uf);
     ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
-    left = uf->conf->CropX1 * FirstImage->width / uf->initialWidth;
-    top = uf->conf->CropY1 * FirstImage->height / uf->initialHeight;
+    left = uf->conf->CropX1 * FirstImage->width / uf->rotatedWidth;
+    top = uf->conf->CropY1 * FirstImage->height / uf->rotatedHeight;
     volatile int BitDepth = uf->conf->profile[out_profile]
 			[uf->conf->profileIndex[out_profile]].BitDepth;
     if ( BitDepth!=16 ) BitDepth = 8;
     width = (uf->conf->CropX2 - uf->conf->CropX1)
-	    * FirstImage->width / uf->initialWidth;
+	    * FirstImage->width / uf->rotatedWidth;
     height = (uf->conf->CropY2 - uf->conf->CropY1)
-	    * FirstImage->height / uf->initialHeight;
+	    * FirstImage->height / uf->rotatedHeight;
     if ( uf->conf->type==ppm_type && BitDepth==8 ) {
 	fprintf(out, "P%c\n%d %d\n%d\n",
 		grayscaleMode ? '5' : '6', width, height, 0xFF);
