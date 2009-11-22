@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"POT-Creation-Date: 2009-11-22 05:15+0100\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -1448,9 +1448,6 @@ msgstr "Feil ved oppretting av filen «%s»."
 msgid "Error creating file."
 msgstr "Feil ved oppretting av fil."
 
-msgid "Converting image"
-msgstr "Konverterer bildet"
-
 msgid "Saving image"
 msgstr "Lagrer bildet"
 
@@ -1579,17 +1576,17 @@ msgstr "Sett bildeskala tilbake til standardverdi"
 msgid "Autoscale the image for best fit"
 msgstr "Autoskaler bildet til beste størrelse"
 
-msgid "Lateral chromatic aberration"
-msgstr "Sidelengs kromatisk aberrasjon"
-
-msgid "Optical vignetting"
-msgstr "Optisk vignettering"
-
 msgid "Lens distortion"
 msgstr "Objektivets forvrengning"
 
 msgid "Lens geometry"
 msgstr "Objektivets geometri"
+
+msgid "Optical vignetting"
+msgstr "Optisk vignettering"
+
+msgid "Lateral chromatic aberration"
+msgstr "Sidelengs kromatisk aberrasjon"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"POT-Creation-Date: 2009-11-22 05:15+0100\n"
 "PO-Revision-Date: 2009-09-30 13:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -1453,9 +1453,6 @@ msgstr "Fout bij aanmaken van bestand '%s'."
 msgid "Error creating file."
 msgstr "Fout bij aanmaken van bestand"
 
-msgid "Converting image"
-msgstr "Converteren van de afbeelding"
-
 msgid "Saving image"
 msgstr "Bewaren afbeelding"
 
@@ -1585,17 +1582,17 @@ msgstr "Reset afbeeldingsschaal naar verstekwaarde"
 msgid "Autoscale the image for best fit"
 msgstr "Automatisch schalen voor beste passing"
 
-msgid "Lateral chromatic aberration"
-msgstr "Laterale chromatische aberratie"
-
-msgid "Optical vignetting"
-msgstr "Optische vignettering"
-
 msgid "Lens distortion"
 msgstr "Lens vervorming"
 
 msgid "Lens geometry"
 msgstr "Lens geometrie"
+
+msgid "Optical vignetting"
+msgstr "Optische vignettering"
+
+msgid "Lateral chromatic aberration"
+msgstr "Laterale chromatische aberratie"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

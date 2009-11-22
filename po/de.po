@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"POT-Creation-Date: 2009-11-22 05:15+0100\n"
 "PO-Revision-Date: 2009-05-13 12:19+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -1472,9 +1472,6 @@ msgstr "Fehler beim Erstellen der Datei »%s«."
 msgid "Error creating file."
 msgstr "Fehler beim Erstellen der Datei."
 
-msgid "Converting image"
-msgstr "Bild umwandeln"
-
 msgid "Saving image"
 msgstr "Bild speichern"
 
@@ -1603,17 +1600,17 @@ msgstr "Bildskala auf Standard zurücksetzen"
 msgid "Autoscale the image for best fit"
 msgstr "Das Bild für beste Passform automatisch skalieren"
 
-msgid "Lateral chromatic aberration"
-msgstr "Seitliche farbliche Aberration"
-
-msgid "Optical vignetting"
-msgstr "optische Eckenabschattung"
-
 msgid "Lens distortion"
 msgstr "Linsenverzerrung"
 
 msgid "Lens geometry"
 msgstr "Linsengeometrie"
+
+msgid "Optical vignetting"
+msgstr "optische Eckenabschattung"
+
+msgid "Lateral chromatic aberration"
+msgstr "Seitliche farbliche Aberration"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

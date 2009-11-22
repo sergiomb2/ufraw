@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"POT-Creation-Date: 2009-11-22 05:15+0100\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -1467,9 +1467,6 @@ msgstr "Greška pri pravljenju datoteke „%s“."
 msgid "Error creating file."
 msgstr "Greška pri pravljenju datoteke."
 
-msgid "Converting image"
-msgstr "Prevodim sliku"
-
 msgid "Saving image"
 msgstr "Čuvam sliku"
 
@@ -1599,17 +1596,17 @@ msgstr "Vraća veličinu slike na početnu vrednost"
 msgid "Autoscale the image for best fit"
 msgstr "Povećava sliku na najbolju vrednost"
 
-msgid "Lateral chromatic aberration"
-msgstr "Bočne hromatske aberacije"
-
-msgid "Optical vignetting"
-msgstr "Optičko vinjetarenje"
-
 msgid "Lens distortion"
 msgstr "Izobličenja sočiva"
 
 msgid "Lens geometry"
 msgstr "Geometrija sočiva"
+
+msgid "Optical vignetting"
+msgstr "Optičko vinjetarenje"
+
+msgid "Lateral chromatic aberration"
+msgstr "Bočne hromatske aberacije"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"POT-Creation-Date: 2009-11-22 05:15+0100\n"
 "PO-Revision-Date: 2009-10-01 10:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -1456,9 +1456,6 @@ msgstr "B³±d tworzenia pliku '%s'."
 msgid "Error creating file."
 msgstr "B³±d tworzenia pliku."
 
-msgid "Converting image"
-msgstr "Konwertowanie zdjêcia"
-
 msgid "Saving image"
 msgstr "Zapisywanie zdjêcia"
 
@@ -1587,17 +1584,17 @@ msgstr "Ustaw domy¶ln± skalê"
 msgid "Autoscale the image for best fit"
 msgstr "Automatycznie dopasuj rozmiar zdjêcia"
 
-msgid "Lateral chromatic aberration"
-msgstr "Boczna aberracja chromatyczna"
-
-msgid "Optical vignetting"
-msgstr "Winietowanie"
-
 msgid "Lens distortion"
 msgstr "Dystorsja"
 
 msgid "Lens geometry"
 msgstr "Geometria obiektywu"
+
+msgid "Optical vignetting"
+msgstr "Winietowanie"
+
+msgid "Lateral chromatic aberration"
+msgstr "Boczna aberracja chromatyczna"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"POT-Creation-Date: 2009-11-22 05:15+0100\n"
 "PO-Revision-Date: 2009-10-04 10:41+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -1450,9 +1450,6 @@ msgstr "Chyba při vytváření souboru '%s'."
 msgid "Error creating file."
 msgstr "Chyba při vytváření souboru."
 
-msgid "Converting image"
-msgstr "Konvertuji snímek"
-
 msgid "Saving image"
 msgstr "Ukládám snímek"
 
@@ -1581,17 +1578,17 @@ msgstr "Nastavit měřítko na standardní"
 msgid "Autoscale the image for best fit"
 msgstr "Automatická velikost snímku"
 
-msgid "Lateral chromatic aberration"
-msgstr "Postranní chromatická vada"
-
-msgid "Optical vignetting"
-msgstr "Optická vinětace"
-
 msgid "Lens distortion"
 msgstr "Zkreslení objektivu"
 
 msgid "Lens geometry"
 msgstr "Projekce objektivu"
+
+msgid "Optical vignetting"
+msgstr "Optická vinětace"
+
+msgid "Lateral chromatic aberration"
+msgstr "Postranní chromatická vada"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

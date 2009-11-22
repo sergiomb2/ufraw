@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"POT-Creation-Date: 2009-11-22 05:15+0100\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -1411,9 +1411,6 @@ msgstr "创建文件时出错 '%s'"
 msgid "Error creating file."
 msgstr "创建文件时出错。"
 
-msgid "Converting image"
-msgstr "转换图像"
-
 msgid "Saving image"
 msgstr "保存图像"
 
@@ -1542,17 +1539,17 @@ msgstr "重设图像缩放为默认值"
 msgid "Autoscale the image for best fit"
 msgstr "自动缩放图像至最佳"
 
-msgid "Lateral chromatic aberration"
-msgstr "横向色差"
-
-msgid "Optical vignetting"
-msgstr "光学暗角"
-
 msgid "Lens distortion"
 msgstr "镜头畸变"
 
 msgid "Lens geometry"
 msgstr "镜头几何"
+
+msgid "Optical vignetting"
+msgstr "光学暗角"
+
+msgid "Lateral chromatic aberration"
+msgstr "横向色差"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

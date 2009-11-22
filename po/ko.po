@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"POT-Creation-Date: 2009-11-22 05:15+0100\n"
 "PO-Revision-Date: 2009-10-06 09:38+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -1428,9 +1428,6 @@ msgstr "%s 파일 만들기 실패."
 msgid "Error creating file."
 msgstr "파일 만들기 실패."
 
-msgid "Converting image"
-msgstr "이미지 변환 중"
-
 msgid "Saving image"
 msgstr "이미지 저장 중"
 
@@ -1559,17 +1556,17 @@ msgstr "스케일 초기화"
 msgid "Autoscale the image for best fit"
 msgstr "최적의 상태로 자동 스케일"
 
-msgid "Lateral chromatic aberration"
-msgstr "측면 색수차"
-
-msgid "Optical vignetting"
-msgstr "광학 비네팅"
-
 msgid "Lens distortion"
 msgstr "렌즈 외곡"
 
 msgid "Lens geometry"
 msgstr "렌즈 기하면"
+
+msgid "Optical vignetting"
+msgstr "광학 비네팅"
+
+msgid "Lateral chromatic aberration"
+msgstr "측면 색수차"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

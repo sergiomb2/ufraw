@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"POT-Creation-Date: 2009-11-22 05:15+0100\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -1432,9 +1432,6 @@ msgstr "ファイル作成エラー '%s'."
 msgid "Error creating file."
 msgstr "ファイル作成エラー。"
 
-msgid "Converting image"
-msgstr "画像を変換しています"
-
 msgid "Saving image"
 msgstr "画像を保存しています"
 
@@ -1548,16 +1545,16 @@ msgstr "画像の大きさを初期値に戻す"
 msgid "Autoscale the image for best fit"
 msgstr ""
 
-msgid "Lateral chromatic aberration"
+msgid "Lens distortion"
+msgstr "レンズの歪曲収差"
+
+msgid "Lens geometry"
 msgstr ""
 
 msgid "Optical vignetting"
 msgstr ""
 
-msgid "Lens distortion"
-msgstr "レンズの歪曲収差"
-
-msgid "Lens geometry"
+msgid "Lateral chromatic aberration"
 msgstr ""
 
 #. Column 1 - "make" of the camera.

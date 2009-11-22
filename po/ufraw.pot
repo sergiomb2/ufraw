@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"POT-Creation-Date: 2009-11-22 05:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1311,9 +1311,6 @@ msgstr ""
 msgid "Error creating file."
 msgstr ""
 
-msgid "Converting image"
-msgstr ""
-
 msgid "Saving image"
 msgstr ""
 
@@ -1427,16 +1424,16 @@ msgstr ""
 msgid "Autoscale the image for best fit"
 msgstr ""
 
-msgid "Lateral chromatic aberration"
+msgid "Lens distortion"
+msgstr ""
+
+msgid "Lens geometry"
 msgstr ""
 
 msgid "Optical vignetting"
 msgstr ""
 
-msgid "Lens distortion"
-msgstr ""
-
-msgid "Lens geometry"
+msgid "Lateral chromatic aberration"
 msgstr ""
 
 #. Column 1 - "make" of the camera.

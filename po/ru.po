@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"POT-Creation-Date: 2009-11-22 05:15+0100\n"
 "PO-Revision-Date: 2009-10-13 18:45+0400\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -1467,9 +1467,6 @@ msgstr "Ошибка при создании файла '%s'."
 msgid "Error creating file."
 msgstr "Ошибка при создании файла."
 
-msgid "Converting image"
-msgstr "Преобразуется снимок"
-
 msgid "Saving image"
 msgstr "Сохраняется снимок"
 
@@ -1598,17 +1595,17 @@ msgstr "Сбросить масштаб"
 msgid "Autoscale the image for best fit"
 msgstr "Автоподбор масштаба"
 
-msgid "Lateral chromatic aberration"
-msgstr "Хроматические аберрации"
-
-msgid "Optical vignetting"
-msgstr "Оптическое виньетирование"
-
 msgid "Lens distortion"
 msgstr "Искажения объектива"
 
 msgid "Lens geometry"
 msgstr "Геометрия объектива"
+
+msgid "Optical vignetting"
+msgstr "Оптическое виньетирование"
+
+msgid "Lateral chromatic aberration"
+msgstr "Хроматические аберрации"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

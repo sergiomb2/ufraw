@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 19:00+0100\n"
+"POT-Creation-Date: 2009-11-22 05:15+0100\n"
 "PO-Revision-Date: 2009-09-30 19:24+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -1479,9 +1479,6 @@ msgstr "Error creant el fitxer %s'"
 msgid "Error creating file."
 msgstr "Error creant el fitxer."
 
-msgid "Converting image"
-msgstr "S'està convertint la imatge"
-
 msgid "Saving image"
 msgstr "S'està desant la imatge"
 
@@ -1609,17 +1606,17 @@ msgstr "Reinicia la escala de la imatge al valor per omissió"
 msgid "Autoscale the image for best fit"
 msgstr "Escala automàticament la imatge al millor ajust"
 
-msgid "Lateral chromatic aberration"
-msgstr "Aberració cromàtica lateral"
-
-msgid "Optical vignetting"
-msgstr "Vinyetatge òptic"
-
 msgid "Lens distortion"
 msgstr "Distorsió de la lent"
 
 msgid "Lens geometry"
 msgstr "Geometria de la lent"
+
+msgid "Optical vignetting"
+msgstr "Vinyetatge òptic"
+
+msgid "Lateral chromatic aberration"
+msgstr "Aberració cromàtica lateral"
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
