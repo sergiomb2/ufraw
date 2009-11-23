@@ -698,11 +698,9 @@ static gboolean switch_highlights(gpointer ptr)
 		&viewRect);
 
 	x1 = MAX(x1, viewRect.x);
-	x2 = MIN(x2, viewRect.x);
-	int width = MAX(x2 - x1, 0);
+	int width = MIN(MAX(x2 - x1, 0), viewRect.width);
 	y1 = MAX(y1, viewRect.y);
-	y2 = MIN(y2, viewRect.y);
-	int height = MAX(y2 - y1, 0);
+	int height = MIN(MAX(y2 - y1, 0), viewRect.height);
 
 	data->OverUnderTicker++;
 	preview_draw_area(data, x1, y1, width, height);
