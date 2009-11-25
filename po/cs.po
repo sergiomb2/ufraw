@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 05:15+0100\n"
+"POT-Creation-Date: 2009-11-25 17:00+0100\n"
 "PO-Revision-Date: 2009-10-04 10:41+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -758,6 +758,26 @@ msgstr "velikost %dx%d, přiblížení %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "velikost %dx%d, měřítko 1/%d"
 
+#, fuzzy
+msgid "Wavelet denoising"
+msgstr "Práh pro vlnkové odstranění šumu"
+
+msgid "Despeckling"
+msgstr ""
+
+#, fuzzy
+msgid "Interpolating"
+msgstr "Žádná interpolace"
+
+msgid "Rendering"
+msgstr ""
+
+msgid "Loading preview"
+msgstr "Načítám náhled"
+
+msgid "Saving image"
+msgstr "Ukládám snímek"
+
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "Černý bod: %0.3lf"
@@ -1368,11 +1388,6 @@ msgstr "_Smazat"
 msgid "Send image to _Gimp"
 msgstr "Odeslat do _Gimpu"
 
-#. preview_progress() changes the size of the progress bar
-#. and processes the event queue.
-msgid "Loading preview"
-msgstr "Načítám náhled"
-
 msgid "Fatal error setting C locale"
 msgstr "Fatální chyba nastavení C locale"
 
@@ -1449,9 +1464,6 @@ msgstr "Chyba při vytváření souboru '%s'."
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "Chyba při vytváření souboru."
-
-msgid "Saving image"
-msgstr "Ukládám snímek"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 05:15+0100\n"
+"POT-Creation-Date: 2009-11-25 17:00+0100\n"
 "PO-Revision-Date: 2009-05-13 12:19+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -770,6 +770,26 @@ msgstr "Größe %dx%d, Zoom %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "Größe %dx%d, Skala 1/%d"
 
+#, fuzzy
+msgid "Wavelet denoising"
+msgstr "Schwelle für Wavelet-Rauschunterdrückung"
+
+msgid "Despeckling"
+msgstr ""
+
+#, fuzzy
+msgid "Interpolating"
+msgstr "Keine Interpolation"
+
+msgid "Rendering"
+msgstr ""
+
+msgid "Loading preview"
+msgstr "Vorschau laden"
+
+msgid "Saving image"
+msgstr "Bild speichern"
+
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "Schwarzpunkt: %0.3lf"
@@ -1390,11 +1410,6 @@ msgstr "_Löschen"
 msgid "Send image to _Gimp"
 msgstr "Bild an _Gimp senden"
 
-#. preview_progress() changes the size of the progress bar
-#. and processes the event queue.
-msgid "Loading preview"
-msgstr "Vorschau laden"
-
 msgid "Fatal error setting C locale"
 msgstr "Schwerwiegender Fehler beim Einstellen von C-Sprachumgebung"
 
@@ -1471,9 +1486,6 @@ msgstr "Fehler beim Erstellen der Datei »%s«."
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "Fehler beim Erstellen der Datei."
-
-msgid "Saving image"
-msgstr "Bild speichern"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"

@@ -153,15 +153,6 @@ int dcraw_open(dcraw_data *h, char *filename)
     return d->lastStatus;
 }
 
-void dcraw_set_progress_handle(dcraw_data *h,
-	void (*progressHandle)(void *user_data, double progress),
-	void *progressUserData)
-{
-    DCRaw *d = (DCRaw *)h->dcraw;
-    d->progressHandle = progressHandle;
-    d->progressUserData = progressUserData;
-}
-
 int dcraw_image_dimensions(dcraw_data *raw, int flip, int *height, int *width)
 {
     if (raw->fuji_width) {

@@ -33,6 +33,8 @@
 #include "nikon_curve.h"
 #include "ufraw.h"
 
+void (*ufraw_progress)(int what, int ticks);
+
 #ifdef HAVE_LENSFUN
 /* What about LF_MODIFY_ALL? */
 #define UF_LF_ALL (LF_MODIFY_TCA | LF_MODIFY_VIGNETTING | \
@@ -560,11 +562,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     return UFRAW_SUCCESS;
 }
 
-static void ufraw_load_raw_progress(void *user_data, double progress)
-{
-    preview_progress(user_data, _("Loading preview"), progress);
-}
-
 /* Scale pixel values: occupy 16 bits to get more precision. In addition
  * this normalizes the pixel values which is good for non-linear algorithms
  * which forget to check rgbMax or assume a particular value. */
@@ -606,7 +603,6 @@ int ufraw_load_raw(ufraw_data *uf)
 	uf->thumb.width = thumb.width;
 	return ufraw_read_embedded(uf);
     }
-    dcraw_set_progress_handle(raw, ufraw_load_raw_progress, uf->widget);
     if ( (status=dcraw_load_raw(raw))!=DCRAW_SUCCESS ) {
 	ufraw_message(UFRAW_SET_LOG, raw->message);
 	ufraw_message(status, raw->message);
@@ -1075,8 +1071,10 @@ void ufraw_despeckle(ufraw_data *uf, UFRawPhase phase)
 	if (passes[c] > maxpass)
 	    maxpass = passes[c];
     }
+    progress(PROGRESS_DESPECKLE, -maxpass * colors);
     for (pass = maxpass - 1; pass >= 0; --pass) {
 	for (c = 0; c < colors; ++c) {
+	    progress(PROGRESS_DESPECKLE, 1);
 	    if (pass >= passes[c])
 		continue;
 #ifdef _OPENMP

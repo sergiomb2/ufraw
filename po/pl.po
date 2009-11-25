@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 05:15+0100\n"
+"POT-Creation-Date: 2009-11-25 17:00+0100\n"
 "PO-Revision-Date: 2009-10-01 10:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -762,6 +762,26 @@ msgstr "rozmiar %dx%d, powiêkszenie %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "rozmiar %dx%d, skala 1/%d"
 
+#, fuzzy
+msgid "Wavelet denoising"
+msgstr "Próg falkowego odszumiania"
+
+msgid "Despeckling"
+msgstr ""
+
+#, fuzzy
+msgid "Interpolating"
+msgstr "Bez interpolacji"
+
+msgid "Rendering"
+msgstr ""
+
+msgid "Loading preview"
+msgstr "Wczytywanie podgl±du"
+
+msgid "Saving image"
+msgstr "Zapisywanie zdjêcia"
+
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "Punkt czerni: %0.3lf"
@@ -1375,11 +1395,6 @@ msgstr "_Usuñ"
 msgid "Send image to _Gimp"
 msgstr "Wy¶lij zdjêcie do _Gimpa"
 
-#. preview_progress() changes the size of the progress bar
-#. and processes the event queue.
-msgid "Loading preview"
-msgstr "Wczytywanie podgl±du"
-
 msgid "Fatal error setting C locale"
 msgstr "B³±d krytyczny ustawienia C locale"
 
@@ -1455,9 +1470,6 @@ msgstr "B³±d tworzenia pliku '%s'."
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "B³±d tworzenia pliku."
-
-msgid "Saving image"
-msgstr "Zapisywanie zdjêcia"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"

@@ -18,6 +18,9 @@
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
 #include "config.h"
 #endif
+extern "C" {
+#include "uf_progress.h"
+}
 
 #define DCRAW_VERSION "8.98"
 
@@ -139,7 +142,6 @@ ifname_display = NULL;
 ifpReadCount = 0;
 ifpSize = 0;
 ifpStepProgress = 0;
-progressHandle = NULL;
 }
 
 CLASS ~DCRaw()
@@ -152,8 +154,14 @@ void CLASS ifpProgress(unsigned readCount) {
     ifpReadCount += readCount;
     if (ifpSize==0) return;
     unsigned newStepProgress = STEPS * ifpReadCount / ifpSize;
-    if (newStepProgress!=ifpStepProgress && progressHandle!=NULL )
-        (*progressHandle)(progressUserData, (double)ifpReadCount/ifpSize);
+    if (newStepProgress > ifpStepProgress) {
+#ifdef DCRAW_NOMAIN
+	if (ifpStepProgress)
+	    progress(PROGRESS_LOAD, newStepProgress - ifpStepProgress);
+	else
+	    progress(PROGRESS_LOAD, -STEPS);
+#endif
+    }
     ifpStepProgress = newStepProgress;
 }
 

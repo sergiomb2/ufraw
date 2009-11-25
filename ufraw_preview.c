@@ -683,13 +683,18 @@ static gboolean preview_draw_crop(preview_data *data)
     return FALSE;
 }
 
+static gboolean is_rendering(preview_data *data)
+{
+    return data->RenderSubArea >= 0;
+}
+
 static gboolean switch_highlights(gpointer ptr)
 {
     preview_data *data = ptr;
     /* Only redraw the highlights in the default rendering mode. */
     if (data->RenderMode!=render_default || data->FreezeDialog)
 	return TRUE;
-    if (data->RenderSubArea == -1) {
+    if (!is_rendering(data)) {
 	/* Set the area to redraw based on the crop rectangle and view port. */
 	int x1, x2, y1, y2;
 	scale_crop_to_final_image(data->UF, &x1, &x2, &y1, &y2);
@@ -766,7 +771,6 @@ static void render_status_text(preview_data *data)
     gtk_progress_bar_set_fraction(data->ProgressBar, 0);
 }
 
-static gboolean render_prepare(preview_data *data);
 static gboolean render_raw_histogram(preview_data *data);
 static gboolean render_preview_image(preview_data *data);
 static gboolean render_live_histogram(preview_data *data);
@@ -807,23 +811,118 @@ static void render_init(preview_data *data)
 		xc - vp.width / 2, yc - vp.height / 2, FALSE);
 
     }
+}
+
+static GtkProgressBar *ProgressBar;
+static GTimer *ProgressTimer;
+static void preview_progress(int what, int ticks)
+{
+    static int last_what, todo, done;
+    char *text;
+    double start, stop, fraction;
+    gboolean update = FALSE;
+    gboolean events = TRUE;
+
+#ifdef _OPENMP
+#pragma omp master
+#endif
+    update = TRUE;
+#ifdef _OPENMP
+#pragma omp critical(preview_progress)
+    {
+#endif
+	if (ticks < 0) {
+	    todo = -ticks;
+	    done = 0;
+	    last_what = what;
+	} else {
+	    if (last_what == what)
+		done += ticks;
+	    else
+		update = FALSE;
+	}
+#ifdef _OPENMP
+    }
+#endif
+    if (!update)
+	return;		// wrong thread for GTK or "what" mismatch
+    if (g_timer_elapsed(ProgressTimer, NULL) < 0.07 && ticks >= 0)
+	return;		// avoid progress bar rendering hog
+    g_timer_start(ProgressTimer);
+    switch (what) {
+    case PROGRESS_WAVELET_DENOISE:
+	text = _("Wavelet denoising");
+	start = 0.0;
+	stop = 0.33;
+	break;
+    case PROGRESS_DESPECKLE:
+	text = _("Despeckling");
+	start = 0.0;
+	stop = 0.33;
+	break;
+    case PROGRESS_INTERPOLATE:
+	text = _("Interpolating");
+	start = 0.33;
+	stop = 0.66;
+	break;
+    case PROGRESS_RENDER:
+	text = _("Rendering");
+	start = 0.67;
+	stop = 1.0;
+	events = FALSE;
+	break;
+    case PROGRESS_LOAD:
+	text = _("Loading preview");
+	start = 0.0;
+	stop = 1.0;
+	break;
+    case PROGRESS_SAVE:
+	text = _("Saving image");
+	start = 0.0;
+	stop = 1.0;
+	break;
+    case PROGRESS_RESET:
+    default:
+	text = NULL;
+	start = stop = 0.0;
+	todo = done = 0;
+	events = FALSE;
+    }
+    if (ticks < 0 && text)
+	gtk_progress_bar_set_text(ProgressBar, text);
+    fraction = todo ? start + (stop - start) * done / todo : 0;
+    if (fraction > stop)
+	fraction = stop;
+    gtk_progress_bar_set_fraction(ProgressBar, fraction);
+    if (events)
+	while (gtk_events_pending())
+	    gtk_main_iteration();
+}
+
+static void preview_progress_enable(preview_data *data)
+{
+    ProgressBar = data->ProgressBar;
+    ProgressTimer = g_timer_new();
+    preview_progress(PROGRESS_RESET, 0);
+    ufraw_progress = preview_progress;
+}
+
+static void preview_progress_disable(preview_data *data)
+{
+    preview_progress(PROGRESS_RESET, 0);
+    ufraw_progress = NULL;
+    g_timer_destroy(ProgressTimer);
     render_status_text(data);
 }
 
-void render_preview(preview_data *data)
+static gboolean render_preview_now(preview_data *data)
 {
-    if (data->FreezeDialog) return;
+    if (data->FreezeDialog)
+	return FALSE;
 
-    data->RenderSubArea = 0;
     while (g_idle_remove_by_data(data))
 	;
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE-10,
-	    (GSourceFunc)(render_prepare), data, NULL);
-}
-
-static gboolean render_prepare(preview_data *data)
-{
-    if (data->FreezeDialog) return FALSE;
+    data->RenderSubArea = 0;
 
     if (CFG->autoExposure == apply_state) {
 	ufraw_auto_expose(data->UF);
@@ -850,6 +949,7 @@ static gboolean render_prepare(preview_data *data)
 	    CFG->curve[CFG->curveIndex].m_anchors[0].x);
     gtk_label_set_text(GTK_LABEL(data->BlackLabel), text);
 
+    ufraw_developer_prepare(data->UF, display_developer);
     if ( CFG->profileIndex[display_profile]==0 ) {
 	guint8 *displayProfile;
 	gint profileSize;
@@ -863,21 +963,32 @@ static gboolean render_prepare(preview_data *data)
 		CFG->profile[display_profile]
 			[CFG->profileIndex[display_profile]].productName);
     }
-    ufraw_developer_prepare(data->UF, display_developer);
     ufraw_convert_prepare_buffers(data->UF);
 
-    /* The reset of the rendering can be triggered only after the call to
-     * ufraw_developer_preare(). Otherwise error messages in this function
-     * would cause timing problems. */
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-	    (GSourceFunc)(render_raw_histogram), data, NULL);
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+10,
-	    (GSourceFunc)(render_preview_image), data, NULL);
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
-	    (GSourceFunc)(render_live_histogram), data, NULL);
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
-	    (GSourceFunc)(render_spot), data, NULL);
+    /* This will trigger the untiled phases if necessary. The progress bar
+     * updates require gtk_main_iteration() calls which can only be
+     * done when there are no pending idle tasks which could recurse
+     * into ufraw_convert_image_area(). */
+    preview_progress_enable(data);
+    gboolean again = render_preview_image(data);
+
+    if (again) {
+	preview_progress(PROGRESS_RENDER, -32);
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+		(GSourceFunc)(render_preview_image), data, NULL);
+    }
     return FALSE;
+}
+
+void render_preview(preview_data *data)
+{
+    if (is_rendering(data))
+	return;
+
+    while (g_idle_remove_by_data(data))
+	;
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	    (GSourceFunc)(render_preview_now), data, NULL);
 }
 
 static gboolean render_raw_histogram(preview_data *data)
@@ -1077,6 +1188,7 @@ static gboolean render_preview_image(preview_data *data)
 		subarea, ufraw_phases_num - 1);
 	UFRectangle area = ufraw_image_get_subarea_rectangle(img1, subarea);
 	preview_draw_area(data, area.x, area.y, area.width, area.height);
+	progress(PROGRESS_RENDER, 1);
 	again = TRUE;
     }
 
@@ -1084,6 +1196,15 @@ static gboolean render_preview_image(preview_data *data)
     }
 #endif
 
+    if (!again) {
+	preview_progress_disable(data);
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+		(GSourceFunc)(render_raw_histogram), data, NULL);
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+		(GSourceFunc)(render_live_histogram), data, NULL);
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+		(GSourceFunc)(render_spot), data, NULL);
+    }
     return again;
 }
 
@@ -1493,7 +1614,7 @@ static void update_scales(preview_data *data)
 
     data->FreezeDialog = FALSE;
     update_shrink_ranges(data);
-    render_preview(data);
+    render_preview_now(data);
 }
 
 static void curve_update(GtkWidget *widget, long curveType)
@@ -1698,8 +1819,9 @@ static gboolean preview_button_press_event(GtkWidget *event_box,
 	draw_spot(data, FALSE);
 	data->SpotX1 = data->SpotX2 = event->x;
 	data->SpotY1 = data->SpotY2 = event->y;
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
-		(GSourceFunc)(render_spot), data, NULL);
+	if (!is_rendering(data))
+	    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+		    (GSourceFunc)(render_spot), data, NULL);
 	return TRUE;
     }
     if ( data->PageNum==data->PageNumCrop ) {
@@ -1830,8 +1952,9 @@ static gboolean preview_motion_notify_event(GtkWidget *event_box,
     event_coordinate_rescale(&event->x, &event->y, data);
     data->SpotX2 = event->x;
     data->SpotY2 = event->y;
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
-	    (GSourceFunc)(render_spot), data, NULL);
+    if (!is_rendering(data))
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+		(GSourceFunc)(render_spot), data, NULL);
     return TRUE;
 }
 
@@ -1961,8 +2084,9 @@ static void update_crop_ranges(preview_data *data, gboolean render)
 	data->DrawCropID = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+30,
 		(GSourceFunc)(preview_draw_crop), data, NULL);
     }
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
-	    (GSourceFunc)(render_live_histogram), data, NULL);
+    if (!is_rendering(data))
+	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+		(GSourceFunc)(render_live_histogram), data, NULL);
 }
 
 static void crop_reset(GtkWidget *widget, gpointer user_data)
@@ -2138,10 +2262,9 @@ static void flip_image(GtkWidget *widget, int flip)
     --data->FreezeDialog;
 
     render_init(data);
-    if ( data->RenderSubArea >= 0 ) {
-	/* We are in the middle or a rendering scan,
-	 * so just start from the beginning. */
-	data->RenderSubArea = 0;	/* TODO: feature does not exist */
+    if (is_rendering(data)) {
+	/* TODO: We are in the middle or a rendering scan,
+	 * so we should restart from the beginning. */
     } else {
 	/* Full image was already rendered.
 	 * We only need to draw the flipped image. */
@@ -3776,18 +3899,21 @@ static void panel_size_allocate(GtkWidget *panel,
 		    "expander-maximized", (gpointer)FALSE);
 	}
     }
-    // Redraw histograms if size allocation has changed
-    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->RawHisto));
-    rawHisHeight = data->RawHisto->allocation.height;
-    if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=rawHisHeight )
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-		(GSourceFunc)(render_raw_histogram), data, NULL);
 
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
-    liveHisHeight = data->LiveHisto->allocation.height;
-    if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=liveHisHeight )
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+20,
-		(GSourceFunc)(render_live_histogram), data, NULL);
+    if (!is_rendering(data)) {
+	// Redraw histograms if size allocation has changed
+	GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->RawHisto));
+	rawHisHeight = data->RawHisto->allocation.height;
+	if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=rawHisHeight )
+	    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+		    (GSourceFunc)(render_raw_histogram), data, NULL);
+
+	pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
+	liveHisHeight = data->LiveHisto->allocation.height;
+	if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=liveHisHeight )
+	    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+		    (GSourceFunc)(render_live_histogram), data, NULL);
+    }
 }
 
 static gboolean histogram_menu(GtkMenu *menu, GdkEventButton *event)
@@ -3797,16 +3923,6 @@ static gboolean histogram_menu(GtkMenu *menu, GdkEventButton *event)
     if (event->button!=3) return FALSE;
     gtk_menu_popup(menu, NULL, NULL, NULL, NULL, event->button, event->time);
     return TRUE;
-}
-
-void preview_progress(void *widget, char *text, double progress)
-{
-    if (widget==NULL) return;
-    preview_data *data = get_preview_data(widget);
-    if (data->ProgressBar==NULL) return;
-    gtk_progress_bar_set_text(data->ProgressBar, text);
-    gtk_progress_bar_set_fraction(data->ProgressBar, progress);
-    while (gtk_events_pending()) gtk_main_iteration();
 }
 
 static void control_button_event(GtkWidget *widget, long type)
@@ -3842,7 +3958,9 @@ static void control_button_event(GtkWidget *widget, long type)
 	    response = UFRAW_RESPONSE_DELETE;
 	break;
     case save_button:
+	preview_progress_enable(data);
 	status = ufraw_save_now(data->UF, widget);
+	preview_progress_disable(data);
 	if (status == UFRAW_SUCCESS)
 	    response = GTK_RESPONSE_OK;
 	break;
@@ -5697,9 +5815,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 	gtk_widget_hide(GTK_WIDGET(data->LightnessAdjustmentTable[i]));
     gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), data->PageNumSpot);
 
-    // preview_progress() changes the size of the progress bar
-    // and processes the event queue.
-    preview_progress(previewWindow, _("Loading preview"), 0.2);
 #if !GTK_CHECK_VERSION(2,8,0)
     /* There is a bug that causes the mouse location to be misplaced
      * in the event-box. The following voodoo seems to fix the mapping. */
@@ -5733,7 +5848,9 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 	data->Cursor[i] = gdk_cursor_new(Cursors[i]);
     gdk_window_set_cursor(PreviewEventBox->window, data->Cursor[spot_cursor]);
     gtk_widget_set_sensitive(data->Controls, FALSE);
+    preview_progress_enable(data);
     ufraw_load_raw(uf);
+    preview_progress_disable(data);
     gtk_widget_set_sensitive(data->Controls, TRUE);
 
     // Set shrink/size values for preview rendering
@@ -5747,18 +5864,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 	CFG->size = 0;
     }
 
-    /* Collect raw histogram data */
-    memset(data->raw_his, 0, sizeof(data->raw_his));
-    /* minor issue: this triggers the first phase conversion too soon */
-    ufraw_developer_prepare(uf, display_developer);
-    ufraw_image_data *image = ufraw_rgb_image(data->UF, TRUE, NULL);
-    for (i=0; i<image->height*image->width; i++) {
-	    guint16 *buf = (guint16*)(image->buffer+i*image->depth);
-	    for (c=0; c<data->UF->colors; c++)
-		data->raw_his[MIN( buf[c] *
-			(raw_his_size-1) / data->UF->rgbMax,
-			raw_his_size-1) ][c]++;
-    }
     /* Save initial WB data for the sake of "Reset WB" */
     g_strlcpy(data->initialWB, CFG->wb, max_name);
     data->initialTemperature = CFG->temperature;
@@ -5769,10 +5874,24 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     curveeditor_widget_set_curve(data->CurveWidget,
 	    &CFG->curve[CFG->curveIndex]);
 
+    memset(data->raw_his, 0, sizeof(data->raw_his));
+    data->RenderSubArea = -1;
     data->FreezeDialog = FALSE;
     data->RenderMode = render_default;
-    update_crop_ranges(data, FALSE);
+
+    /* This will start the conversion and enqueue rendering functions */
     update_scales(data);
+    update_crop_ranges(data, FALSE);	// calls ufraw_final_image(uf, FALSE)
+
+    /* Collect raw histogram data */
+    ufraw_image_data *image = ufraw_rgb_image(data->UF, TRUE, G_STRFUNC);
+    for (i=0; i<image->height*image->width; i++) {
+	    guint16 *buf = (guint16*)(image->buffer+i*image->depth);
+	    for (c=0; c<data->UF->colors; c++)
+		data->raw_his[MIN( buf[c] *
+			(raw_his_size-1) / data->UF->rgbMax,
+			raw_his_size-1) ][c]++;
+    }
 
     data->OverUnderTicker = 0;
 

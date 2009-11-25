@@ -215,9 +215,9 @@ void ufraw_write_image_data(
     int byteDepth = (bitDepth+7)/8;
     guint8 pixbuf8[width * 3 * byteDepth * DEVELOP_BATCH];
 
+    progress(PROGRESS_SAVE, -height);
     for (row0 = 0; row0 < height; row0 += DEVELOP_BATCH) {
-	preview_progress(uf->widget, _("Saving image"),
-		0.5 + 0.5*row0/height);
+	progress(PROGRESS_SAVE, DEVELOP_BATCH);
 #ifdef _OPENMP
 #pragma omp parallel for default(shared) private(row)
 #endif
@@ -616,10 +616,9 @@ int ufraw_write_image(ufraw_data *uf)
 	// Avoid FITS images being saved upside down
 	ufraw_flip_image(uf, 2);
 
+	progress(PROGRESS_SAVE, -height);
 	for (row=0; row<height; row++) {
-	    if (row%100==99)
-		preview_progress(uf->widget, _("Saving image"),
-			0.5 + 0.5*row/height);
+	    progress(PROGRESS_SAVE, 1);
 	    for (i=0; i < width; i++)
 	    {
 		offset = row*width + i;

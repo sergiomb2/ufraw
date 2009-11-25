@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 05:15+0100\n"
-"PO-Revision-Date: 2009-11-14 19:15+0100\n"
+"POT-Creation-Date: 2009-11-25 17:00+0100\n"
+"PO-Revision-Date: 2009-11-25 17:15+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -757,6 +757,24 @@ msgstr "størrelse %dx%d, zoom %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "størrelse %dx%d, skala 1/%d"
 
+msgid "Wavelet denoising"
+msgstr "Wavelet-støjreduktion"
+
+msgid "Despeckling"
+msgstr "Afpletning"
+
+msgid "Interpolating"
+msgstr "Interpolerer"
+
+msgid "Rendering"
+msgstr "Renderer"
+
+msgid "Loading preview"
+msgstr "Indlæser forhåndsvisning"
+
+msgid "Saving image"
+msgstr "Gemmer billede"
+
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "Sortpunkt: %0.3lf"
@@ -1371,11 +1389,6 @@ msgstr "_Slet"
 msgid "Send image to _Gimp"
 msgstr "Send _billede til Gimp"
 
-#. preview_progress() changes the size of the progress bar
-#. and processes the event queue.
-msgid "Loading preview"
-msgstr "Indlæser forhåndsvisning"
-
 msgid "Fatal error setting C locale"
 msgstr "Fatal fejl ved indstilling af C-lokalisering"
 
@@ -1451,9 +1464,6 @@ msgstr "Fejl ved dannelse af fil '%s'."
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "Fejl ved dannelse af fil."
-
-msgid "Saving image"
-msgstr "Gemmer billede"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"

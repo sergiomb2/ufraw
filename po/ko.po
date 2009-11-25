@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 05:15+0100\n"
+"POT-Creation-Date: 2009-11-25 17:00+0100\n"
 "PO-Revision-Date: 2009-10-06 09:38+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -735,6 +735,26 @@ msgstr "사이즈 %dx%d, 확대 %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "사이즈 %dx%d, 스케일 1/%d"
 
+#, fuzzy
+msgid "Wavelet denoising"
+msgstr "잔 노이즈 제거를 위한 임계값"
+
+msgid "Despeckling"
+msgstr ""
+
+#, fuzzy
+msgid "Interpolating"
+msgstr "보간법 없음"
+
+msgid "Rendering"
+msgstr ""
+
+msgid "Loading preview"
+msgstr "미리보기 불러오는 중"
+
+msgid "Saving image"
+msgstr "이미지 저장 중"
+
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "암부: %0.3lf"
@@ -1347,11 +1367,6 @@ msgstr "삭제(_D)"
 msgid "Send image to _Gimp"
 msgstr "이미지를 김프로 전달(_G)"
 
-#. preview_progress() changes the size of the progress bar
-#. and processes the event queue.
-msgid "Loading preview"
-msgstr "미리보기 불러오는 중"
-
 msgid "Fatal error setting C locale"
 msgstr "C 로캘 설정 중 치명적인 오류"
 
@@ -1427,9 +1442,6 @@ msgstr "%s 파일 만들기 실패."
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "파일 만들기 실패."
-
-msgid "Saving image"
-msgstr "이미지 저장 중"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"

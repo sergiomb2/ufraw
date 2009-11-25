@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 05:15+0100\n"
+"POT-Creation-Date: 2009-11-25 17:00+0100\n"
 "PO-Revision-Date: 2009-10-13 21:13+0200\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -772,6 +772,26 @@ msgstr "tamaño %dx%d, zoom %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "tamaño %dx%d, escala 1/%d"
 
+#, fuzzy
+msgid "Wavelet denoising"
+msgstr "Umbral para reducción de ruido"
+
+msgid "Despeckling"
+msgstr ""
+
+#, fuzzy
+msgid "Interpolating"
+msgstr "Sin interpolación"
+
+msgid "Rendering"
+msgstr ""
+
+msgid "Loading preview"
+msgstr "Cargando previsualización"
+
+msgid "Saving image"
+msgstr "Guardando imagen"
+
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "Punto negro: %0.3lf"
@@ -1386,11 +1406,6 @@ msgstr "_Borrar"
 msgid "Send image to _Gimp"
 msgstr "Enviar imagen a _Gimp"
 
-#. preview_progress() changes the size of the progress bar
-#. and processes the event queue.
-msgid "Loading preview"
-msgstr "Cargando previsualización"
-
 msgid "Fatal error setting C locale"
 msgstr "Error fatal al poner la codificación C"
 
@@ -1467,9 +1482,6 @@ msgstr "Error al crear el archivo '%s'."
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "Error al crear el archivo."
-
-msgid "Saving image"
-msgstr "Guardando imagen"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"

@@ -18,6 +18,7 @@
 #endif /* HAVE_LENSFUN */
 
 #include "nikon_curve.h"
+#include "uf_progress.h"
 
 /* macro to clamp a number between two values */
 #ifndef LIM
@@ -368,7 +369,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 	long (*save_func)());
 void ufraw_focus(void *window, gboolean focus);
 void ufraw_messenger(char *message, void *parentWindow);
-void preview_progress(void *widget, char *text, double progress);
 
 /* prototypes for functions in ufraw_routines.c */
 const char *uf_get_home_dir();

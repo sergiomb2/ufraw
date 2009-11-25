@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 05:15+0100\n"
+"POT-Creation-Date: 2009-11-25 17:00+0100\n"
 "PO-Revision-Date: 2009-09-30 19:24+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -783,6 +783,26 @@ msgstr "mida %dx%d, ampliació %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "mida %dx%d, escala 1/%d"
 
+#, fuzzy
+msgid "Wavelet denoising"
+msgstr "Llindar per al filtratge de soroll per ondetes"
+
+msgid "Despeckling"
+msgstr ""
+
+#, fuzzy
+msgid "Interpolating"
+msgstr "Sense interpolació"
+
+msgid "Rendering"
+msgstr ""
+
+msgid "Loading preview"
+msgstr "S'està carregant la previsualització"
+
+msgid "Saving image"
+msgstr "S'està desant la imatge"
+
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "Punt negre: %0.3lf"
@@ -1395,11 +1415,6 @@ msgstr "_Suprimeix"
 msgid "Send image to _Gimp"
 msgstr "Envia la imatge al _GIMP"
 
-#. preview_progress() changes the size of the progress bar
-#. and processes the event queue.
-msgid "Loading preview"
-msgstr "S'està carregant la previsualització"
-
 msgid "Fatal error setting C locale"
 msgstr "S'ha produït un error al establir el locale C"
 
@@ -1478,9 +1493,6 @@ msgstr "Error creant el fitxer %s'"
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "Error creant el fitxer."
-
-msgid "Saving image"
-msgstr "S'està desant la imatge"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"

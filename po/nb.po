@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 05:15+0100\n"
+"POT-Creation-Date: 2009-11-25 17:00+0100\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -756,6 +756,26 @@ msgstr "størrelse %dx%d, zoom %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "størrelse %dx%d, skala 1/%d"
 
+#, fuzzy
+msgid "Wavelet denoising"
+msgstr "Terskelverdi for wavelet støyreduksjon"
+
+msgid "Despeckling"
+msgstr ""
+
+#, fuzzy
+msgid "Interpolating"
+msgstr "Ingen interpolasjon"
+
+msgid "Rendering"
+msgstr ""
+
+msgid "Loading preview"
+msgstr "Leser inn forhåndsvisning"
+
+msgid "Saving image"
+msgstr "Lagrer bildet"
+
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "Sortpunkt: %0.3lf"
@@ -1367,11 +1387,6 @@ msgstr "_Slett"
 msgid "Send image to _Gimp"
 msgstr "Send bildet til _Gimp"
 
-#. preview_progress() changes the size of the progress bar
-#. and processes the event queue.
-msgid "Loading preview"
-msgstr "Leser inn forhåndsvisning"
-
 msgid "Fatal error setting C locale"
 msgstr "Uopprettelig feil ved innstilling av C-lokalisering"
 
@@ -1447,9 +1462,6 @@ msgstr "Feil ved oppretting av filen «%s»."
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "Feil ved oppretting av fil."
-
-msgid "Saving image"
-msgstr "Lagrer bildet"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"

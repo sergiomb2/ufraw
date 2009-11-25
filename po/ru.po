@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 05:15+0100\n"
+"POT-Creation-Date: 2009-11-25 17:00+0100\n"
 "PO-Revision-Date: 2009-10-13 18:45+0400\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -774,6 +774,26 @@ msgstr "размер %dx%d, масштаб %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "размер %dx%d, масштаб 1/%d"
 
+#, fuzzy
+msgid "Wavelet denoising"
+msgstr "Порог для вейвлетного подавления шума"
+
+msgid "Despeckling"
+msgstr ""
+
+#, fuzzy
+msgid "Interpolating"
+msgstr "Без интерполяции"
+
+msgid "Rendering"
+msgstr ""
+
+msgid "Loading preview"
+msgstr "Загружается предосмотр"
+
+msgid "Saving image"
+msgstr "Сохраняется снимок"
+
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "Черная точка: %0.3lf"
@@ -1385,11 +1405,6 @@ msgstr "_Удалить"
 msgid "Send image to _Gimp"
 msgstr "Открыть изображение в _GIMP"
 
-#. preview_progress() changes the size of the progress bar
-#. and processes the event queue.
-msgid "Loading preview"
-msgstr "Загружается предосмотр"
-
 msgid "Fatal error setting C locale"
 msgstr "Критическая ошибка при установке локали С"
 
@@ -1466,9 +1481,6 @@ msgstr "Ошибка при создании файла '%s'."
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "Ошибка при создании файла."
-
-msgid "Saving image"
-msgstr "Сохраняется снимок"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"

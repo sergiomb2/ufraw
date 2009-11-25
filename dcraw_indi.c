@@ -25,6 +25,7 @@
 #include <glib.h>
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 #include "dcraw_api.h"
+#include "uf_progress.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -139,6 +140,7 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
   float temp[iheight + iwidth];
 #endif
   if ((nc = colors) == 3 && filters) nc++;
+  progress(PROGRESS_WAVELET_DENOISE, -nc*5);
 #ifdef _OPENMP
 #pragma omp parallel for				\
   default(none)						\
@@ -150,6 +152,7 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
     for (i=0; i < size; i++)
       fimg[i] = 256 * sqrt(image[i][c] /*<< scale*/);
     for (hpass=lev=0; lev < 5; lev++) {
+      progress(PROGRESS_WAVELET_DENOISE, 1);
       lpass = size*((lev & 1)+1);
       for (row=0; row < iheight; row++) {
 	hat_transform (temp, fimg+hpass+row*iwidth, 1, iwidth, 1 << lev);
@@ -481,6 +484,7 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 	  *ip++ = 0;
       }
     }
+    progress(PROGRESS_INTERPOLATE, -height);
 #ifdef _OPENMP
 #pragma omp parallel					\
     default(none)					\
@@ -492,6 +496,7 @@ void CLASS vng_interpolate_INDI(ushort (*image)[4], const unsigned filters,
     int start_row = 2 + slice * uf_omp_get_thread_num();
     int end_row = MIN(start_row + slice, height - 2);
     for (row=start_row; row < end_row; row++) {	/* Do VNG interpolation */
+      progress(PROGRESS_INTERPOLATE, 1);
       for (g = 0; g < 4; g++)
 	brow[g] = &rowtmp[(row + g - 2) % 4];
       for (col=2; col < width-2; col++) {
@@ -669,10 +674,12 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
   lab  = (short (*)[TS][TS][3])(buffer + 12*TS*TS);
   homo = (char  (*)[TS][TS])   (buffer + 24*TS*TS);
 
+  progress(PROGRESS_INTERPOLATE, -height);
 #ifdef _OPENMP
 #pragma omp for
 #endif
-  for (top=2; top < height-5; top += TS-6)
+  for (top=2; top < height-5; top += TS-6) {
+    progress(PROGRESS_INTERPOLATE, TS-6);
     for (left=2; left < width-5; left += TS-6) {
 
 /*  Interpolate green horizontally and vertically:		*/
@@ -764,8 +771,9 @@ void CLASS ahd_interpolate_INDI(ushort (*image)[4], const unsigned filters,
 	}
       }
     }
-  free (buffer);
   }
+  free (buffer);
+  }	/* _OPENMP */
 }
 #undef TS
 

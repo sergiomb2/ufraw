@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 05:15+0100\n"
+"POT-Creation-Date: 2009-11-25 17:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -653,6 +653,24 @@ msgstr ""
 msgid "size %dx%d, scale 1/%d"
 msgstr ""
 
+msgid "Wavelet denoising"
+msgstr ""
+
+msgid "Despeckling"
+msgstr ""
+
+msgid "Interpolating"
+msgstr ""
+
+msgid "Rendering"
+msgstr ""
+
+msgid "Loading preview"
+msgstr ""
+
+msgid "Saving image"
+msgstr ""
+
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr ""
@@ -1233,11 +1251,6 @@ msgstr ""
 msgid "Send image to _Gimp"
 msgstr ""
 
-#. preview_progress() changes the size of the progress bar
-#. and processes the event queue.
-msgid "Loading preview"
-msgstr ""
-
 msgid "Fatal error setting C locale"
 msgstr ""
 
@@ -1309,9 +1322,6 @@ msgstr ""
 #. 'errno' does seem to contain useful information
 #. Error was not already set before
 msgid "Error creating file."
-msgstr ""
-
-msgid "Saving image"
 msgstr ""
 
 #, c-format

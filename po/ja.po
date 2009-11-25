@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 05:15+0100\n"
+"POT-Creation-Date: 2009-11-25 17:00+0100\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -739,6 +739,26 @@ msgstr "画像サイズ %dx%d, ズーム %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "画像サイズ %dx%d, スケール 1/%d"
 
+#, fuzzy
+msgid "Wavelet denoising"
+msgstr "waveletノイズ除去のしきい値"
+
+msgid "Despeckling"
+msgstr ""
+
+#, fuzzy
+msgid "Interpolating"
+msgstr "補間無し"
+
+msgid "Rendering"
+msgstr ""
+
+msgid "Loading preview"
+msgstr "プレビュー画像を読み込んでいます"
+
+msgid "Saving image"
+msgstr "画像を保存しています"
+
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "ブラックポイント: %0.3lf"
@@ -1352,11 +1372,6 @@ msgstr "_削除"
 msgid "Send image to _Gimp"
 msgstr "イメージを_Gimpへ送る"
 
-#. preview_progress() changes the size of the progress bar
-#. and processes the event queue.
-msgid "Loading preview"
-msgstr "プレビュー画像を読み込んでいます"
-
 msgid "Fatal error setting C locale"
 msgstr "深刻なエラー : Cロケールの設定"
 
@@ -1431,9 +1446,6 @@ msgstr "ファイル作成エラー '%s'."
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "ファイル作成エラー。"
-
-msgid "Saving image"
-msgstr "画像を保存しています"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"

@@ -94,8 +94,6 @@ unsigned ifpReadCount;
 unsigned ifpSize;
 unsigned ifpStepProgress;
 #define STEPS 50
-void (*progressHandle)(void *user_data, double progress);
-void *progressUserData;
 void ifpProgress(unsigned readCount);
 // Override standard io function for integrity checks and progress report
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);

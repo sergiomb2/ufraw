@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 05:15+0100\n"
+"POT-Creation-Date: 2009-11-25 17:00+0100\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -723,6 +723,26 @@ msgstr "尺寸 %dx%d, 缩放 %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "尺寸 %dx%d, 比例 1/%d"
 
+#, fuzzy
+msgid "Wavelet denoising"
+msgstr "小波降噪的阈值"
+
+msgid "Despeckling"
+msgstr ""
+
+#, fuzzy
+msgid "Interpolating"
+msgstr "不插值"
+
+msgid "Rendering"
+msgstr ""
+
+msgid "Loading preview"
+msgstr "正在载入预览"
+
+msgid "Saving image"
+msgstr "保存图像"
+
 #, c-format
 msgid "Black point: %0.3lf"
 msgstr "黑色控制点: %0.3lf"
@@ -1331,11 +1351,6 @@ msgstr "删除(_D)"
 msgid "Send image to _Gimp"
 msgstr "发送图片到 _Gimp"
 
-#. preview_progress() changes the size of the progress bar
-#. and processes the event queue.
-msgid "Loading preview"
-msgstr "正在载入预览"
-
 msgid "Fatal error setting C locale"
 msgstr "C 区域严重错误"
 
@@ -1410,9 +1425,6 @@ msgstr "创建文件时出错 '%s'"
 #. Error was not already set before
 msgid "Error creating file."
 msgstr "创建文件时出错。"
-
-msgid "Saving image"
-msgstr "保存图像"
 
 #, c-format
 msgid "Image filename can not be the same as ID filename '%s'"
