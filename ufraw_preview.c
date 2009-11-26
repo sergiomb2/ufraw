@@ -1860,6 +1860,8 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 	    (CFG->CropY2-CFG->CropY1)/3);
 
     if ( (event->state&GDK_BUTTON1_MASK)==0 ) {
+	// While mouse button is not clicked we set the cursor type
+	// according to mouse pointer location.
 	const CursorType tr_cursor[16] = {
 	    crop_cursor, crop_cursor, crop_cursor, crop_cursor,
 	    crop_cursor, top_left_cursor, left_cursor, bottom_left_cursor,
@@ -1884,7 +1886,6 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 	    else if (x <= CFG->CropX2)
 		sel_cursor |= 12;
 	}
-
 	data->CropMotionType = tr_cursor[sel_cursor];
 
 	GtkWidget *event_box =
@@ -1892,6 +1893,8 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 	gdk_window_set_cursor(event_box->window,
 		data->Cursor[data->CropMotionType]);
     } else {
+	// While mouse button is clicked we change crop according to cursor
+	// type and mouse pointer location.
 	if ( data->CropMotionType==top_cursor ||
 	     data->CropMotionType==top_left_cursor ||
 	     data->CropMotionType==top_right_cursor )
@@ -2339,9 +2342,11 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor,
     if (CFG->CropY2 > data->UF->rotatedHeight)
 	CFG->CropY2 = data->UF->rotatedHeight;
 
-    if (!CFG->LockAspect)
+    if (!CFG->LockAspect) {
+	update_crop_ranges(data, render);
+	refresh_aspect(data);
 	return;
-
+    }
     if (data->AspectRatio == 0)
 	aspect = ((double)data->UF->rotatedWidth) / data->UF->rotatedHeight;
     else
@@ -2446,12 +2451,14 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor,
 	    }
 	    break;
 
+	case move_cursor:
+	    break;
+
 	default:
+	    g_warning("fix_crop_aspect(): unknown cursor %d", cursor);
 	    return;
     }
     update_crop_ranges(data, render);
-    if (!CFG->LockAspect)
-	refresh_aspect(data);
 }
 
 /* Modify current crop area so that it fits current aspect ratio */
