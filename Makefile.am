@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.53 2009/10/16 02:25:09 nkbj Exp $
+# $Id: Makefile.am,v 1.54 2009/11/26 00:30:08 nkbj Exp $
 
 SUBDIRS=po icons
 
@@ -64,7 +64,7 @@ if MAKE_GTK
     dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
     ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw_message.c ufraw.h \
     wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
-    nikon_curve.c nikon_curve.h \
+    nikon_curve.c nikon_curve.h uf_progress.h \
     uf_glib.h uf_gtk.cc uf_gtk.h ufraw_exiv2.cc iccjpeg.c iccjpeg.h \
     ufraw_preview.c ufraw_saver.c ufraw_delete.c \
     ufraw_chooser.c ufraw_icons.c icons/ufraw_icons.h \
@@ -75,7 +75,7 @@ else
     dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
     ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw_message.c ufraw.h \
     wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
-    nikon_curve.c nikon_curve.h \
+    nikon_curve.c nikon_curve.h uf_progress.h \
     uf_glib.h ufraw_exiv2.cc iccjpeg.c iccjpeg.h
 endif
 
