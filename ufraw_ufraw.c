@@ -253,7 +253,8 @@ ufraw_data *ufraw_open(char *filename)
     uf->raw_color = raw->raw_color;
     uf->developer = NULL;
     uf->AutoDeveloper = NULL;
-    uf->widget = NULL;
+    uf->displayProfile = NULL;
+    uf->displayProfileSize = 0;
     uf->RawHistogram = NULL;
     uf->HaveFilters = raw->filters!=0;
 #ifdef HAVE_LENSFUN
@@ -676,6 +677,7 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->thumb.buffer);
     developer_destroy(uf->developer);
     developer_destroy(uf->AutoDeveloper);
+    g_free(uf->displayProfile);
     g_free(uf->RawHistogram);
 #ifdef HAVE_LENSFUN
     g_free(uf->modifier);
@@ -730,6 +732,16 @@ void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode)
     } else {
 	if ( uf->developer==NULL )
 	    uf->developer = developer_init();
+	if (mode == display_developer) {
+	    if ( uf->conf->profileIndex[display_profile]!=0 ) {
+		g_free(uf->displayProfile);
+		uf->displayProfile = NULL;
+	    }
+	    developer_display_profile(uf->developer, uf->displayProfile,
+		    uf->displayProfileSize,
+		    uf->conf->profile[display_profile]
+			[uf->conf->profileIndex[display_profile]].productName);
+	}
 	developer_prepare(uf->developer, uf->conf,
 	    uf->rgbMax, uf->rgb_cam, uf->colors, useMatrix, mode);
     }

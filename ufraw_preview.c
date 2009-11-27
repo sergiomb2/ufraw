@@ -950,17 +950,8 @@ static gboolean render_preview_now(preview_data *data)
     gtk_label_set_text(GTK_LABEL(data->BlackLabel), text);
 
     if ( CFG->profileIndex[display_profile]==0 ) {
-	guint8 *displayProfile;
-	gint profileSize;
-	uf_get_display_profile(data->PreviewWidget, &displayProfile,
-		&profileSize);
-	developer_display_profile(Developer, displayProfile, profileSize,
-		CFG->profile[display_profile]
-			[CFG->profileIndex[display_profile]].productName);
-    } else {
-	developer_display_profile(Developer, NULL, 0,
-		CFG->profile[display_profile]
-			[CFG->profileIndex[display_profile]].productName);
+	uf_get_display_profile(data->PreviewWidget, &data->UF->displayProfile,
+		&data->UF->displayProfileSize);
     }
     ufraw_developer_prepare(data->UF, display_developer);
     ufraw_convert_prepare_buffers(data->UF);
@@ -5515,7 +5506,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 	    G_CALLBACK(control_button_key_press_event), data);
     g_object_set_data(G_OBJECT(previewWindow), "Preview-Data", data);
     ufraw_focus(previewWindow, TRUE);
-    uf->widget = previewWindow;
 
     /* With the following guesses the window usually fits into the screen.
      * There should be more intelligent settings to window size. */
@@ -5870,9 +5860,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     } else {
 	CFG->size = 0;
     }
-
-    /* There's another call in render_preview_now() and both are needed */
-    ufraw_developer_prepare(uf, display_developer);
 
     /* Save initial WB data for the sake of "Reset WB" */
     g_strlcpy(data->initialWB, CFG->wb, max_name);

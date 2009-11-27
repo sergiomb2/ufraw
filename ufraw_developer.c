@@ -136,7 +136,6 @@ void developer_display_profile(developer_data *d,
     if ( profile!=NULL ) {
 	if (d->profile[type]!=NULL) cmsCloseProfile(d->profile[type]);
 	d->profile[type] = cmsOpenProfileFromMem(profile, size);
-	g_free(profile);
 	// If embedded profile is invalid fall-back to sRGB
 	if (d->profile[type]==NULL)
 	    d->profile[type] = cmsCreate_sRGBProfile();

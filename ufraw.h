@@ -278,8 +278,9 @@ typedef struct ufraw_struct {
     gsize unzippedBufLen;
     developer_data *developer;
     developer_data *AutoDeveloper;
+    guint8 *displayProfile;
+    gint displayProfileSize;
     conf_data *conf;
-    void *widget;
     guchar *inputExifBuf;
     guint inputExifBufLen;
     guchar *outputExifBuf;

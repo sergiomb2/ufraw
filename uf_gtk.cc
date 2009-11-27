@@ -257,9 +257,11 @@ static OSErr _uf_lcms_flatten_profile(SInt32  command,
 }
 #endif /* GDK_WINDOWING_QUARTZ */
 
+// On X11 the display profile can be embedded using the 'xicc' command.
 void uf_get_display_profile(GtkWidget *widget,
     guint8 **buffer, gint *buffer_size)
 {
+    g_free(*buffer);
     *buffer = NULL;
     *buffer_size = 0;
 #if defined GDK_WINDOWING_X11
