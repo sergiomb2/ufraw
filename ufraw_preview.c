@@ -818,10 +818,7 @@ static GTimer *ProgressTimer;
 static void preview_progress(int what, int ticks)
 {
     static int last_what, todo, done;
-    char *text;
-    double start, stop, fraction;
     gboolean update = FALSE;
-    gboolean events = TRUE;
 
 #ifdef _OPENMP
 #pragma omp master
@@ -849,42 +846,34 @@ static void preview_progress(int what, int ticks)
     if (g_timer_elapsed(ProgressTimer, NULL) < 0.07 && ticks >= 0)
 	return;		// avoid progress bar rendering hog
     g_timer_start(ProgressTimer);
+
+    gboolean events = TRUE;
+    double start = 0.0, stop = 1.0, fraction;
+    char *text = NULL;
     switch (what) {
     case PROGRESS_WAVELET_DENOISE:
 	text = _("Wavelet denoising");
-	start = 0.0;
-	stop = 0.33;
 	break;
     case PROGRESS_DESPECKLE:
 	text = _("Despeckling");
-	start = 0.0;
-	stop = 0.33;
 	break;
     case PROGRESS_INTERPOLATE:
 	text = _("Interpolating");
-	start = 0.33;
-	stop = 0.66;
 	break;
     case PROGRESS_RENDER:
 	text = _("Rendering");
-	start = 0.67;
-	stop = 1.0;
-	events = FALSE;
+	stop = 0.0;
+	events = FALSE;		// not needed in render_preview_image()
 	break;
     case PROGRESS_LOAD:
 	text = _("Loading preview");
-	start = 0.0;
-	stop = 1.0;
 	break;
     case PROGRESS_SAVE:
 	text = _("Saving image");
-	start = 0.0;
-	stop = 1.0;
 	break;
     case PROGRESS_RESET:
     default:
-	text = NULL;
-	start = stop = 0.0;
+	stop = 0.0;
 	todo = done = 0;
 	events = FALSE;
     }
