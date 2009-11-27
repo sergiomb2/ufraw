@@ -949,7 +949,6 @@ static gboolean render_preview_now(preview_data *data)
 	    CFG->curve[CFG->curveIndex].m_anchors[0].x);
     gtk_label_set_text(GTK_LABEL(data->BlackLabel), text);
 
-    ufraw_developer_prepare(data->UF, display_developer);
     if ( CFG->profileIndex[display_profile]==0 ) {
 	guint8 *displayProfile;
 	gint profileSize;
@@ -963,6 +962,7 @@ static gboolean render_preview_now(preview_data *data)
 		CFG->profile[display_profile]
 			[CFG->profileIndex[display_profile]].productName);
     }
+    ufraw_developer_prepare(data->UF, display_developer);
     ufraw_convert_prepare_buffers(data->UF);
 
     /* This will trigger the untiled phases if necessary. The progress bar
@@ -5870,6 +5870,9 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     } else {
 	CFG->size = 0;
     }
+
+    /* There's another call in render_preview_now() and both are needed */
+    ufraw_developer_prepare(uf, display_developer);
 
     /* Save initial WB data for the sake of "Reset WB" */
     g_strlcpy(data->initialWB, CFG->wb, max_name);
