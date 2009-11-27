@@ -332,11 +332,11 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 	    return UFRAW_ERROR;
 	ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
 	height = (uf->conf->CropY2 - uf->conf->CropY1)
-		* FirstImage->height / uf->initialHeight;
+		* FirstImage->height / uf->rotatedHeight;
 	width = (uf->conf->CropX2 - uf->conf->CropX1)
-		* FirstImage->width / uf->initialWidth;
-	top = uf->conf->CropY1 * FirstImage->height / uf->initialHeight;
-	left = uf->conf->CropX1 * FirstImage->width / uf->initialWidth;
+		* FirstImage->width / uf->rotatedWidth;
+	top = uf->conf->CropY1 * FirstImage->height / uf->rotatedHeight;
+	left = uf->conf->CropX1 * FirstImage->width / uf->rotatedWidth;
 #ifdef UFRAW_CINEPAINT
 	if ( uf->conf->profile[out_profile]
 			[uf->conf->profileIndex[out_profile]].BitDepth==16 )
