@@ -3956,7 +3956,9 @@ static void control_button_event(GtkWidget *widget, long type)
 	    response = GTK_RESPONSE_OK;
 	break;
     case ok_button:
+	preview_progress_enable(data);
 	status = (*data->SaveFunc)(data->UF, widget);
+	preview_progress_disable(data);
 	if (status == UFRAW_SUCCESS)
 	    response = GTK_RESPONSE_OK;
     }
