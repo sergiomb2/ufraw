@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-25 17:00+0100\n"
+"POT-Creation-Date: 2009-11-27 21:51-0600\n"
 "PO-Revision-Date: 2009-10-14 06:00+0100\n"
 "Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -918,7 +918,7 @@ msgstr ""
 "\n"
 "Autore: Udi Fuchs\n"
 "Homepage: http://ufraw.sourceforge.net/\n"
-"Traduttore: Daniele Medri & Eugenio Baldi\n"
+"Traduttori: Daniele Medri & Eugenio Baldi\n"
 
 #, c-format
 msgid "%s%s (Alt-%s)"
@@ -1075,27 +1075,35 @@ msgid ""
 "Despeckling is off when window size or passes equals zero. When on then "
 "window size cannot be smaller than the number of passes."
 msgstr ""
+"La smacchiatuara è utilizzata principalmente in immagini con elevati valore "
+"ISOh con un alto moltiplicatore di canale: quando un canale ha una pessima "
+"qualità. Prova ad impostare demensione finestra, decadimento colere e numero "
+"di passate a 50,0,5 per quel canale. Quando un canale contiene solo disturbo "
+"puoi provare 1,0.6,1.\n"
+"La smacchiatura è disattivata quando la dimensione della finestra è "
+"impostata a zero. La dimensione finestra non può essere inferiore al numero "
+"di passate."
 
 msgid "Update channel parameters together"
-msgstr ""
+msgstr "Aggiorna contemporaneamente i parametri di canale"
 
 #, fuzzy
 msgid "Reset despeckle parameters"
-msgstr "Ripristina darkframe"
+msgstr "Azzera i parametri di smacchiatura"
 
 #. channel to view
 msgid "View channel:"
-msgstr ""
+msgstr "Visualizza canale:"
 
 #. Parameters
 msgid "Window size:"
-msgstr ""
+msgstr "Dimensione finestra;"
 
 msgid "Color decay:"
-msgstr ""
+msgstr "Decadimento colore"
 
 msgid "Passes:"
-msgstr ""
+msgstr "Passate"
 
 msgid "Load base curve"
 msgstr "Carica curva base"
