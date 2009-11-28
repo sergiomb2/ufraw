@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-25 17:00+0100\n"
-"PO-Revision-Date: 2009-10-15 21:44+0100\n"
+"POT-Creation-Date: 2009-11-27 21:51-0600\n"
+"PO-Revision-Date: 2009-11-28 00:03+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
@@ -453,6 +453,9 @@ msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
 "                      correction by auto-detecting the lens (default none).\n"
 msgstr ""
+"--lensfun=none|auto   Ne pas appliquer les corrections optiques ou essayer\n"
+"                      d'appliquer les corrections en auto-détectant "
+"l'optique (défaut none).\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -609,9 +612,9 @@ msgstr "'%d' n'est pas une profondeur de couleur valide pour l'image incluse."
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s' n'est pas une option valide pour '--rotate'."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid lensfun option."
-msgstr "'%s' n'est pas une option valide pour '--clip'."
+msgstr "'%s' n'est pas une option valide pour lensfun."
 
 #, c-format
 msgid "'%s' is not a valid create-id option."
@@ -781,19 +784,17 @@ msgstr "taille %dx%d, zoom %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "taille %dx%d, échelle 1/%d"
 
-#, fuzzy
 msgid "Wavelet denoising"
-msgstr "Seuil pour le débruitage par vaguelette"
+msgstr "Débruitage par vaguelette"
 
 msgid "Despeckling"
-msgstr ""
+msgstr "Suppression des tachetures"
 
-#, fuzzy
 msgid "Interpolating"
-msgstr "Pas d'interpolation"
+msgstr "Interpolation"
 
 msgid "Rendering"
-msgstr ""
+msgstr "Rendu"
 
 msgid "Loading preview"
 msgstr "Charge la pré-visualisation"
@@ -1085,27 +1086,36 @@ msgid ""
 "Despeckling is off when window size or passes equals zero. When on then "
 "window size cannot be smaller than the number of passes."
 msgstr ""
+"Suppression des tachetures est principalement utile quand on combine un "
+"nombre d'ISO élevé avec un multiplicateur de canal élevé: quand un canal a "
+"un très mauvais rapport signal/bruit. Essayer de paramétrer la taille de "
+"fenêtre, la décomposition des couleurs et le nombre de passes à 50,0,5 pour "
+"ce canal. Quand un canal contient seulement du bruit alors essayer 1,0.6,1.\n"
+"Suppression des tachetures est inactif quand la taille de fenêtre ou le "
+"nombre de passes sont égaux à zéro. Quand actif alors la taille de fenêtre "
+"ne peut pas être plus petite que le nombre de passes."
 
 msgid "Update channel parameters together"
-msgstr ""
+msgstr "Lier les canaux"
 
-#, fuzzy
 msgid "Reset despeckle parameters"
-msgstr "RàZ du bruit de référence"
+msgstr "RàZ des paramètres de retrait des tachetures"
 
 #. channel to view
 msgid "View channel:"
-msgstr ""
+msgstr "Voir canal:"
 
 #. Parameters
 msgid "Window size:"
-msgstr ""
+msgstr "Taille fenêtre:"
 
 msgid "Color decay:"
 msgstr ""
+"Décomposition\n"
+"couleur:"
 
 msgid "Passes:"
-msgstr ""
+msgstr "Passes:"
 
 msgid "Load base curve"
 msgstr "Charger courbe de base"
@@ -1249,19 +1259,16 @@ msgstr "Orientation:"
 msgid "Rotation"
 msgstr "Rotation"
 
-#, fuzzy
 msgid "Rotation angle"
 msgstr "Angle de rotation"
 
-#, fuzzy
 msgid "Reset rotation angle"
 msgstr "RàZ de l'angle de rotation"
 
 #. drawLines toggle button
 msgid "Grid lines"
-msgstr ""
+msgstr "Lignes de grille"
 
-#, fuzzy
 msgid "Number of grid lines to overlay in the crop area"
 msgstr "Nombre de lignes d'alignement en surimpression de la zone de découpe"
 
