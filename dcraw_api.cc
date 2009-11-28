@@ -153,28 +153,30 @@ int dcraw_open(dcraw_data *h, char *filename)
     return d->lastStatus;
 }
 
-int dcraw_image_dimensions(dcraw_data *raw, int flip, int *height, int *width)
+void dcraw_image_dimensions(dcraw_data *raw, int flip, int shrink,
+	int *height, int *width)
 {
+    // Effect of dcraw_finilize_shrink()
+    *width = raw->width / shrink;
+    *height = raw->height / shrink;
+    // Effect of fuji_rotate_INDI() */
     if (raw->fuji_width) {
-	/* Copied from DCRaw's fuji_rotate() */
-	*width = (raw->fuji_width - 1) / raw->fuji_step;
-	*height = (raw->height - raw->fuji_width + 1) / raw->fuji_step;
-    } else {
-	if (raw->pixel_aspect < 1)
-	    *height = raw->height / raw->pixel_aspect + 0.5;
-	else
-	    *height = raw->height;
-	if (raw->pixel_aspect > 1)
-	    *width = raw->width * raw->pixel_aspect + 0.5;
-	else
-	    *width = raw->width;
+	int fuji_width = raw->fuji_width / shrink - 1;
+	*width = fuji_width / raw->fuji_step;
+	*height = (*height - fuji_width) / raw->fuji_step;
     }
+    // Effect of dcraw_image_stretch()
+    if (raw->pixel_aspect < 1)
+        *height = *height / raw->pixel_aspect + 0.5;
+    if (raw->pixel_aspect > 1)
+        *width = *width * raw->pixel_aspect + 0.5;
+
+    // Effect of dcraw_flip_image()
     if (flip & 4) {
 	int tmp = *height;
 	*height = *width;
 	*width = tmp;
     }
-    return DCRAW_SUCCESS;
 }
 
 int dcraw_load_raw(dcraw_data *h)

@@ -48,6 +48,8 @@ static void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase);
 static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 	ufraw_image_data *outimg, UFRectangle *area);
 static void ufraw_prepare_transform(ufraw_data *uf);
+static void ufraw_convert_prepare_first_buffer(ufraw_data *uf,
+	ufraw_image_data *img);
 static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 	ufraw_image_data *img, int width, int height);
 static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase);
@@ -342,9 +344,11 @@ int ufraw_load_darkframe(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
+// Get the dimensions of the unshrunk, rotated image.
+// The crop coordinates are calculated based on these dimensions.
 void ufraw_get_image_dimensions(ufraw_data *uf)
 {
-    dcraw_image_dimensions(uf->raw, uf->conf->orientation,
+    dcraw_image_dimensions(uf->raw, uf->conf->orientation, 1,
 	    &uf->initialHeight, &uf->initialWidth);
 
     // update rotated dimensions
@@ -752,8 +756,11 @@ int ufraw_convert_image(ufraw_data *uf)
     uf->mark_hotpixels = FALSE;
     ufraw_developer_prepare(uf, file_developer);
     ufraw_convert_image_raw(uf, ufraw_raw_phase);
-    ufraw_convert_image_first(uf, ufraw_first_phase);
+
     ufraw_image_data *img = &uf->Images[ufraw_first_phase];
+    ufraw_convert_prepare_first_buffer(uf, img);
+    ufraw_convert_image_first(uf, ufraw_first_phase);
+
     UFRectangle area = { 0, 0, img->width, img->height };
 #ifdef HAVE_LENSFUN
     ufraw_prepare_transform(uf);
@@ -1121,8 +1128,9 @@ static gboolean ufraw_despeckle_active(ufraw_data *uf)
     return active;
 }
 
-static void ufraw_convertshrink(ufraw_data *uf, dcraw_image_data *final, dcraw_data *raw)
+static int ufraw_calculate_scale(ufraw_data *uf)
 {
+    dcraw_data *raw = uf->raw;
     int scale = 1;
 
     /* We can do a simple interpolation in the following cases:
@@ -1141,6 +1149,15 @@ static void ufraw_convertshrink(ufraw_data *uf, dcraw_image_data *final, dcraw_d
 	if (cropSize/uf->conf->size >= 2)
 	    scale = cropSize / uf->conf->size;
     }
+    return scale;
+}
+
+// Any change to ufraw_convertshrink() that might change the final image
+// dimensions should also be applied to ufraw_convert_prepare_first_buffer().
+static void ufraw_convertshrink(ufraw_data *uf, dcraw_image_data *final)
+{
+    dcraw_data *raw = uf->raw;
+    int scale = ufraw_calculate_scale(uf);
 
     if (uf->HaveFilters && scale == 1)
 	dcraw_finalize_interpolate(final, raw, uf->conf->interpolation,
@@ -1204,21 +1221,28 @@ static void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase)
     ufraw_image_data *in = &uf->Images[phase - 1];
     ufraw_image_data *out = &uf->Images[phase];
     dcraw_data *raw = uf->raw;
-    dcraw_image_type *rawimage;
+
     dcraw_image_data final;
-
     final.image = (ufraw_image_type *)out->buffer;
-    final.width = out->width;
-    final.height = out->height;
 
-    rawimage = raw->raw.image;
+    dcraw_image_type *rawimage = raw->raw.image;
     raw->raw.image = (dcraw_image_type *)in->buffer;
-    ufraw_convertshrink(uf, &final, raw);
+    ufraw_convertshrink(uf, &final);
     raw->raw.image = rawimage;
     dcraw_flip_image(&final, uf->conf->orientation);
 
-    out->height = final.height;
-    out->width = final.width;
+    // The 'out' image contains the predictated image dimensions.
+    // We want to be sure that our predictions were correct.
+    if (out->height != final.height) {
+	g_warning("ufraw_convert_image_first: height mismatch %d!=%d",
+		out->height, final.height);
+	out->height = final.height;
+    }
+    if (out->width != final.width) {
+	g_warning("ufraw_convert_image_first: width mismatch %d!=%d",
+		out->width, final.width);
+	out->width = final.width;
+    }
     out->depth = sizeof (dcraw_image_type);
     out->rowstride = out->width * out->depth;
     out->buffer = (guint8 *)final.image;
@@ -1320,6 +1344,40 @@ static void ufraw_image_init(ufraw_image_data *img,
     img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
 }
 
+static void ufraw_convert_prepare_first_buffer(ufraw_data *uf,
+	ufraw_image_data *img)
+{
+    // The actual buffer allocation is done in ufraw_convertshrink().
+    int scale = ufraw_calculate_scale(uf);
+    dcraw_image_dimensions(uf->raw, uf->conf->orientation, scale,
+	    &img->height, &img->width);
+    // The final resizing in ufraw_convertshrink() is calculate here:
+    if (uf->conf->size==0 && uf->conf->shrink>1) {
+	// This is the effect of first call to dcraw_image_resize().
+	// It only relevant when raw->pixel_aspect != 1.
+	img->width = img->width * scale / uf->conf->shrink;
+	img->height = img->height * scale / uf->conf->shrink;
+    }
+    if (uf->conf->size>0) {
+	int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
+	int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
+	int cropSize = MAX(cropHeight, cropWidth);
+	if ( uf->conf->size > cropSize ) {
+	    ufraw_message(UFRAW_ERROR, _("Can not downsize from %d to %d."),
+		    cropSize, uf->conf->size);
+	} else {
+	    /* uf->conf->size holds the size of the cropped image.
+	     * We need to calculate from it the desired size of
+	     * the uncropped image. */
+	    int finalSize = scale * MAX(img->height, img->width);
+	    int mul = uf->conf->size * finalSize / cropSize;
+	    int div = MAX(img->height, img->width);
+	    img->height = img->height * mul / div;
+	    img->width = img->width * mul / div;
+	}
+    }
+}
+ 
 static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 	ufraw_image_data *img, int width, int height)
 {
@@ -1353,12 +1411,9 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 void ufraw_convert_prepare_buffers(ufraw_data *uf)
 {
     ufraw_image_data *img = &uf->Images[ufraw_first_phase];
-    // Buffers can be prepared only after first image is generated.
-    // If first image is not valid we can easily skip the buffer
-    // preparation since it will be prepared after first image generation.
-    if (img->valid != 0xffffffff)
-	return;
-
+    if (img->valid == 0) {
+	ufraw_convert_prepare_first_buffer(uf, img);
+    }
     int width = img->width;
     int height = img->height;
 
@@ -1488,15 +1543,17 @@ ufraw_image_data *ufraw_rgb_image(ufraw_data *uf, gboolean bufferok,
 #endif /* HAVE_LENSFUN */
     int i;
 
-    if (dbg && uf->Images[phase].valid != 0xffffffff)
-	g_warning("%s->%s: conversion necessary (suboptimal).\n", dbg,
+    if (bufferok) {
+	if (dbg && uf->Images[phase].valid != 0xffffffff) {
+	    g_warning("%s->%s: conversion necessary (suboptimal).\n", dbg,
 		G_STRFUNC);
-    for (i = 0; i < 32; ++i) {
-	ufraw_convert_image_area(uf, i, phase);
-	if (!bufferok) {
-	    /* the first tile should yield the image dimensions already */
-	    break;
+	    for (i = 0; i < 32; ++i) {
+		ufraw_convert_image_area(uf, i, phase);
+	    }
 	}
+    } else {
+	if (uf->Images[phase].valid == 0)
+	    ufraw_convert_prepare_buffers(uf);
     }
     return &uf->Images[phase];
 }
@@ -1520,12 +1577,8 @@ ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok)
 		ufraw_convert_image_area(uf, i, phase);
 	}
     } else {
-	if (uf->Images[phase].valid == 0) {
-	    // TODO: this warning should be avoided
-	    //g_warning("%s: starting conversion.\n", G_STRFUNC);
-	    /* this will update all buffer sizes (e.g. due to rotate) */
-	    ufraw_convert_image_area(uf, 0, ufraw_first_phase);
-	}
+	if (uf->Images[phase].valid == 0)
+	    ufraw_convert_prepare_buffers(uf);
     }
     return &uf->Images[phase];
 }
@@ -1550,12 +1603,8 @@ ufraw_image_data *ufraw_display_image(ufraw_data *uf, gboolean bufferok)
 		ufraw_convert_image_area(uf, i, phase);
 	}
     } else {
-	if (uf->Images[phase].valid == 0) {
-	    // TODO: this warning should be avoided
-	    //g_warning("%s: starting conversion.\n", G_STRFUNC);
-	    /* this will update all buffer sizes (e.g. due to rotate) */
-	    ufraw_convert_image_area(uf, 0, ufraw_first_phase);
-	}
+	if (uf->Images[phase].valid == 0)
+	    ufraw_convert_prepare_buffers(uf);
     }
     return &uf->Images[phase];
 }
@@ -1599,7 +1648,6 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 	    if (out->valid != 0xffffffff) {
 		ufraw_convert_image_first(uf, phase);
 		out->valid = 0xffffffff;
-		ufraw_convert_prepare_buffers(uf);
 #ifdef HAVE_LENSFUN
 		UFRectangle area = { 0, 0, out->width, out->height };
 		ufraw_convert_image_vignetting(uf, out, &area);

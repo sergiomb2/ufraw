@@ -944,27 +944,27 @@ static gboolean render_preview_now(preview_data *data)
     }
     ufraw_developer_prepare(data->UF, display_developer);
     ufraw_convert_prepare_buffers(data->UF);
-
+    if (ufraw_invalidate_layer_event(data->UF, ufraw_transform_phase)) {
+	render_init(data);
+    }
     /* This will trigger the untiled phases if necessary. The progress bar
      * updates require gtk_main_iteration() calls which can only be
      * done when there are no pending idle tasks which could recurse
      * into ufraw_convert_image_area(). */
     preview_progress_enable(data);
-    gboolean again = render_preview_image(data);
+    data->FreezeDialog = TRUE;
+    ufraw_convert_image_area(data->UF, 0, ufraw_first_phase);
+    data->FreezeDialog = FALSE;
 
-    if (again) {
-	preview_progress(PROGRESS_RENDER, -32);
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
-		(GSourceFunc)(render_preview_image), data, NULL);
-    }
+    preview_progress(PROGRESS_RENDER, -32);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	    (GSourceFunc)(render_preview_image), data, NULL);
+
     return FALSE;
 }
 
 void render_preview(preview_data *data)
 {
-    if (is_rendering(data))
-	return;
-
     while (g_idle_remove_by_data(data))
 	;
     g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
@@ -1131,13 +1131,9 @@ static int choose_subarea(preview_data *data, int *chosen)
 }
 
 /*
- * OpenMP notes:
+ * render_preview_image() is called after all non-tiled phases are rendered.
  *
- * render_init() resizes the pixbuf and calls ufraw_final_image() for obtaining
- * image dimensions. That one calls ufraw_convert_image_area() with a subarea
- * index for ufraw_first_phase. After this all non-tiled phases are done and
- * all buffers have been resized so ufraw_convert_image_area() should then be
- * OpenMP safe.
+ * OpenMP notes:
  *
  * Unfortunately ufraw_convert_image_area() still has some OpenMP awareness
  * which is related to OpenMP here. That should not be necessary.
@@ -1148,10 +1144,6 @@ static gboolean render_preview_image(preview_data *data)
     int chosen = 0;
 
     if (data->FreezeDialog) return FALSE;
-
-    if (ufraw_invalidate_layer_event(data->UF, ufraw_transform_phase)) {
-	render_init(data);
-    }
 #ifdef _OPENMP
 #pragma omp parallel shared(chosen,data) reduction(||:again)
     {
@@ -1594,7 +1586,7 @@ static void update_scales(preview_data *data)
 
     data->FreezeDialog = FALSE;
     update_shrink_ranges(data);
-    render_preview_now(data);
+    render_preview(data);
 }
 
 static void curve_update(GtkWidget *widget, long curveType)
@@ -3000,7 +2992,6 @@ static gboolean despeckle_adjustment_update(preview_data *data, double *p)
 static void adjustment_update(GtkAdjustment *adj, double *valuep)
 {
     preview_data *data = get_preview_data(adj);
-    if (data->FreezeDialog) return;
 
     if (valuep==&CFG->profile[0][0].gamma)
 	valuep = (void *)&CFG->profile[0][CFG->profileIndex[0]].gamma;
@@ -5869,6 +5860,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 
     /* This will start the conversion and enqueue rendering functions */
     update_scales(data);
+    render_preview_now(data);
     update_crop_ranges(data, FALSE);	// calls ufraw_final_image(uf, FALSE)
 
     /* Collect raw histogram data */

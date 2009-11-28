@@ -73,7 +73,8 @@ void dcraw_finalize_raw(dcraw_data *h, dcraw_data *dark, int rgbWB[4]);
 int dcraw_finalize_interpolate(dcraw_image_data *f, dcraw_data *h,
 	int interpolation, int smoothing);
 void dcraw_close(dcraw_data *h);
-int dcraw_image_dimensions(dcraw_data *raw, int flip, int *height, int *width);
+void dcraw_image_dimensions(dcraw_data *raw, int flip, int shrink,
+	int *height, int *width);
 
 #define DCRAW_SUCCESS 0
 #define DCRAW_ERROR 1
