@@ -13,7 +13,6 @@
 #ifndef _UF_PROGRESS_H
 #define _UF_PROGRESS_H
 
-#define PROGRESS_RESET			0	/* special */
 #define PROGRESS_WAVELET_DENOISE	1
 #define PROGRESS_DESPECKLE		2
 #define PROGRESS_INTERPOLATE		3

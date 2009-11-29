@@ -848,7 +848,7 @@ static void preview_progress(int what, int ticks)
     g_timer_start(ProgressTimer);
 
     gboolean events = TRUE;
-    double start = 0.0, stop = 1.0, fraction;
+    double start = 0.0, stop = 1.0, fraction = 0.0;
     char *text = NULL;
     switch (what) {
     case PROGRESS_WAVELET_DENOISE:
@@ -870,12 +870,6 @@ static void preview_progress(int what, int ticks)
 	break;
     case PROGRESS_SAVE:
 	text = _("Saving image");
-	break;
-    case PROGRESS_RESET:
-    default:
-	stop = 0.0;
-	todo = done = 0;
-	events = FALSE;
     }
     if (ticks < 0 && text)
 	gtk_progress_bar_set_text(ProgressBar, text);
@@ -892,13 +886,11 @@ static void preview_progress_enable(preview_data *data)
 {
     ProgressBar = data->ProgressBar;
     ProgressTimer = g_timer_new();
-    preview_progress(PROGRESS_RESET, 0);
     ufraw_progress = preview_progress;
 }
 
 static void preview_progress_disable(preview_data *data)
 {
-    preview_progress(PROGRESS_RESET, 0);
     ufraw_progress = NULL;
     g_timer_destroy(ProgressTimer);
     render_status_text(data);
