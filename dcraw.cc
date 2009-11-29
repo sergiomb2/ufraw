@@ -6706,6 +6706,7 @@ void CLASS identify()
     {  7753344, "CASIO",    "EX-Z55"          ,1 },
     {  7816704, "CASIO",    "EX-Z60"          ,1 },
     { 10843712, "CASIO",    "EX-Z75"          ,1 },
+    { 10834368, "CASIO",    "EX-Z750"         ,1 },
     { 12310144, "CASIO",    "EX-Z850"         ,1 },
     {  7426656, "CASIO",    "EX-P505"         ,1 },
     {  9313536, "CASIO",    "EX-P600"         ,1 },
@@ -7990,6 +7991,11 @@ ezshare:
   } else if (!strcmp(model,"EX-Z75")) {
     height = 2321;
     width  = 3089;
+    raw_width = 4672;
+    maximum = 0xfff;
+  } else if (!strcmp(model,"EX-Z750")) {
+    height = 2319;
+    width = 3087;
     raw_width = 4672;
     maximum = 0xfff;
   } else if (!strcmp(model,"EX-Z850")) {
