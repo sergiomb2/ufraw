@@ -315,17 +315,12 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf,conf_data *cmd);
 int ufraw_load_raw(ufraw_data *uf);
 int ufraw_load_darkframe(ufraw_data *uf);
 void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode);
-void ufraw_convert_prepare_buffers(ufraw_data *uf);
 int ufraw_convert_image(ufraw_data *uf);
 #ifdef HAVE_LENSFUN
 void ufraw_lensfun_init(ufraw_data *uf);
 #endif
-void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
-	const char *formats, const char *caller);
-ufraw_image_data *ufraw_rgb_image(ufraw_data *uf, gboolean bufferok,
-	const char *dbg);
-ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok);
-ufraw_image_data *ufraw_display_image(ufraw_data *uf, gboolean bufferok);
+ufraw_image_data *ufraw_get_image(ufraw_data *uf, UFRawPhase phase,
+	gboolean bufferok);
 ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 	UFRawPhase phase);
 void ufraw_close(ufraw_data *uf);
@@ -338,7 +333,6 @@ void ufraw_invalidate_darkframe_layer(ufraw_data *uf);
 void ufraw_invalidate_despeckle_layer(ufraw_data *uf);
 void ufraw_invalidate_whitebalance_layer(ufraw_data *uf);
 void ufraw_invalidate_smoothing_layer(ufraw_data *uf);
-gboolean ufraw_invalidate_layer_event(ufraw_data *uf, UFRawPhase phase);
 int ufraw_set_wb(ufraw_data *uf);
 void ufraw_auto_expose(ufraw_data *uf);
 void ufraw_auto_black(ufraw_data *uf);

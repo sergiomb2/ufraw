@@ -43,6 +43,8 @@ void (*ufraw_progress)(int what, int ticks);
 static void ufraw_convert_image_vignetting(ufraw_data *uf,
 	ufraw_image_data *img, UFRectangle *area);
 #endif
+static void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
+	const char *formats, const char *caller);
 static void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase);
 static void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase);
 static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
@@ -1392,6 +1394,8 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
     {
 	g_free(img->buffer);
 	img->buffer = NULL;
+	img->width = width;
+	img->height = height;
     } else {
 	double sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
 	double cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
@@ -1408,35 +1412,42 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
  * invalidation here is a secondary effect of the need to resize
  * buffers. The invalidate events should all have been set already.
  */
-void ufraw_convert_prepare_buffers(ufraw_data *uf)
+static void ufraw_convert_prepare_buffers(ufraw_data *uf, UFRawPhase phase)
 {
-    ufraw_image_data *img = &uf->Images[ufraw_first_phase];
-    if (img->valid == 0) {
+    ufraw_image_data *img = &uf->Images[phase];
+    if (!img->invalidate_event)
+	return;
+    img->invalidate_event = FALSE;
+    int width = 0, height = 0;
+    if (phase > ufraw_first_phase) {
+	ufraw_convert_prepare_buffers(uf, phase-1);
+	width = uf->Images[phase-1].width;
+	height = uf->Images[phase-1].height;
+    }
+    switch (phase) {
+    case ufraw_raw_phase:
+	return;
+    case ufraw_first_phase:
 	ufraw_convert_prepare_first_buffer(uf, img);
-    }
-    int width = img->width;
-    int height = img->height;
-
-    img = &uf->Images[ufraw_transform_phase];
-    if (img->valid == 0) {
+	return;
+    case ufraw_transform_phase:
 	ufraw_convert_prepare_transform_buffer(uf, img, width, height);
-    }
-    if (img->buffer != NULL) {
-	width = img->width;
-	height = img->height;
-    }
-    img = &uf->Images[ufraw_develop_phase];
-    if (img->valid == 0) {
+	return;
+    case ufraw_develop_phase:
 	ufraw_image_init(img, width, height, 3);
-    }
-    img = &uf->Images[ufraw_display_phase];
-    if (img->valid == 0) {
+	return;
+    case ufraw_display_phase:
 	if (uf->developer->working2displayTransform == NULL) {
 	    g_free(img->buffer);
 	    img->buffer = NULL;
+	    img->width = width;
+	    img->height = height;
 	} else {
 	    ufraw_image_init(img, width, height, 3);
 	}
+	return;
+    default:
+	g_warning("ufraw_convert_prepare_buffers: unsupported phase %d", phase);
     }
 }
 
@@ -1495,7 +1506,7 @@ static void ufraw_prepare_transform(ufraw_data *uf)
  * algorithms all over the place to accept more image formats: replacing
  * constants by variables may turn off some compiler optimizations.
  */
-void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
+static void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
 	const char *formats, const char *caller)
 {
     int b, c;
@@ -1528,87 +1539,31 @@ void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
 	*bytes = b;
 }
 
-/*
- * Some algorithms need access to the RGB data before color adjustments
- * such as white-balance, hue, saturation have been applied.
- */
-ufraw_image_data *ufraw_rgb_image(ufraw_data *uf, gboolean bufferok,
-	const char *dbg)
+ufraw_image_data *ufraw_get_image(ufraw_data *uf, UFRawPhase phase,
+	gboolean bufferok)
 {
-    UFRawPhase phase = ufraw_first_phase;
-#ifdef HAVE_LENSFUN
-    if (uf->modifier &&
-	(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING)))
-	phase = ufraw_transform_phase;
-#endif /* HAVE_LENSFUN */
-    int i;
+    ufraw_convert_prepare_buffers(uf, phase);
+    // Find the closest phase that is actually rendered:
+    while (phase > ufraw_raw_phase && uf->Images[phase].buffer == NULL)
+	phase--;
 
     if (bufferok) {
-	if (dbg && uf->Images[phase].valid != 0xffffffff) {
-	    g_warning("%s->%s: conversion necessary (suboptimal).\n", dbg,
-		G_STRFUNC);
-	    for (i = 0; i < 32; ++i) {
-		ufraw_convert_image_area(uf, i, phase);
-	    }
-	}
-    } else {
-	if (uf->Images[phase].valid == 0)
-	    ufraw_convert_prepare_buffers(uf);
-    }
-    return &uf->Images[phase];
-}
-
-ufraw_image_data *ufraw_final_image(ufraw_data *uf, gboolean bufferok)
-{
-    UFRawPhase phase;
-    int i;
-
-    phase = ufraw_develop_phase;
-    if (bufferok) {
-	    /* It should never be necessary to actually finish the conversion
-	     * because it can break render_preview_image() which uses the
-	     * final image "valid" mask for deciding what to update in the
-	     * pixbuf. That can be fixed but is suboptimal anyway. The best
-	     * we can do is print a warning in case we need to finish the
-	     * conversion and finish it here. */
+	/* It should never be necessary to actually finish the conversion
+	 * because it can break render_preview_image() which uses the
+	 * final image "valid" mask for deciding what to update in the
+	 * pixbuf. That can be fixed but is suboptimal anyway. The best
+	 * we can do is print a warning in case we need to finish the
+	 * conversion and finish it here. */
 	if (uf->Images[phase].valid != 0xffffffff) {
-	    g_warning("%s: fixing unfinished conversion.\n", G_STRFUNC);
-	    for (i = 0; i < 32; ++i)
-		ufraw_convert_image_area(uf, i, phase);
-	}
-    } else {
-	if (uf->Images[phase].valid == 0)
-	    ufraw_convert_prepare_buffers(uf);
-    }
-    return &uf->Images[phase];
-}
-
-ufraw_image_data *ufraw_display_image(ufraw_data *uf, gboolean bufferok)
-{
-    UFRawPhase phase = ufraw_display_phase;
-    if (uf->developer->working2displayTransform == NULL)
-	phase = ufraw_develop_phase;
- 
-    if (bufferok) {
-	    /* It should never be necessary to actually finish the conversion
-	     * because it can break render_preview_image() which uses the
-	     * final image "valid" mask for deciding what to update in the
-	     * pixbuf. That can be fixed but is suboptimal anyway. The best
-	     * we can do is print a warning in case we need to finish the
-	     * conversion and finish it here. */
-	if (uf->Images[phase].valid != 0xffffffff) {
-	    g_warning("%s: fixing unfinished conversion.\n", G_STRFUNC);
+	    g_warning("%s: fixing unfinished conversion for phase %d.\n",
+		    G_STRFUNC, phase);
 	    int i;
 	    for (i = 0; i < 32; ++i)
 		ufraw_convert_image_area(uf, i, phase);
 	}
-    } else {
-	if (uf->Images[phase].valid == 0)
-	    ufraw_convert_prepare_buffers(uf);
     }
     return &uf->Images[phase];
 }
-
 
 ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
 	UFRawPhase phase)
@@ -1624,7 +1579,8 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
     if (phase > ufraw_raw_phase) {
 	in = ufraw_convert_image_area(uf, saidx, phase - 1);
     }
-
+    // ufraw_convert_prepare_buffers() may set out->buffer to NULL.
+    ufraw_convert_prepare_buffers(uf, phase);
     if (phase>ufraw_first_phase && out->buffer == NULL)
 	return in; // skip phase
 
@@ -1638,21 +1594,17 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
     switch (phase)
     {
         case ufraw_raw_phase:
-	    if (out->valid != 0xffffffff) {
-		ufraw_convert_image_raw(uf, phase);
-		out->valid = 0xffffffff;
-	    }
+	    ufraw_convert_image_raw(uf, phase);
+	    out->valid = 0xffffffff;
 	    return out;
 
         case ufraw_first_phase:
-	    if (out->valid != 0xffffffff) {
-		ufraw_convert_image_first(uf, phase);
-		out->valid = 0xffffffff;
+	    ufraw_convert_image_first(uf, phase);
+	    out->valid = 0xffffffff;
 #ifdef HAVE_LENSFUN
-		UFRectangle area = { 0, 0, out->width, out->height };
-		ufraw_convert_image_vignetting(uf, out, &area);
+	    UFRectangle allArea = { 0, 0, out->width, out->height };
+	    ufraw_convert_image_vignetting(uf, out, &allArea);
 #endif /* HAVE_LENSFUN */
-	    }
 	    return out;
 
         case ufraw_transform_phase:
@@ -1893,10 +1845,9 @@ void ufraw_invalidate_despeckle_layer(ufraw_data *uf)
 void ufraw_invalidate_whitebalance_layer(ufraw_data *uf)
 {
     ufraw_invalidate_layer(uf, ufraw_develop_phase);
-//    if (uf->Images[ufraw_raw_phase].valid) {
-	uf->Images[ufraw_raw_phase].valid = 0;
-	uf->Images[ufraw_raw_phase].invalidate_event = TRUE;
-//    }
+    uf->Images[ufraw_raw_phase].valid = 0;
+    uf->Images[ufraw_raw_phase].invalidate_event = TRUE;
+
     /* Despeckling is sensitive for WB changes because it is nonlinear. */
     if (ufraw_despeckle_active(uf))
 	ufraw_invalidate_despeckle_layer(uf);
@@ -1910,15 +1861,6 @@ void ufraw_invalidate_whitebalance_layer(ufraw_data *uf)
 void ufraw_invalidate_smoothing_layer(ufraw_data *uf)
 {
     ufraw_invalidate_layer(uf, ufraw_first_phase);
-}
-
-gboolean ufraw_invalidate_layer_event(ufraw_data *uf, UFRawPhase phase)
-{
-    gboolean ret;
-
-    ret = uf->Images[phase].invalidate_event;
-    uf->Images[phase].invalidate_event = FALSE;
-    return ret;
 }
 
 int ufraw_set_wb(ufraw_data *uf)

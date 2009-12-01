@@ -516,7 +516,7 @@ static int zoom_to_scale(double zoom)
 void scale_crop_to_final_image(ufraw_data *uf,
     int *x1, int *x2, int *y1, int *y2)
 {
-    ufraw_image_data *img = ufraw_final_image(uf, FALSE);
+    ufraw_image_data *img = ufraw_get_image(uf, ufraw_develop_phase, FALSE);
 
     float scale_x = ((float)img->width) / uf->rotatedWidth;
     float scale_y = ((float)img->height) / uf->rotatedHeight;
@@ -577,9 +577,10 @@ static void preview_draw_area(preview_data *data,
     /* This is bad. `img' should have been a parameter because we
      * cannot request an up to date buffer but it must be up to
      * date to some extend. In theory we could get the wrong buffer */
-    ufraw_image_data *displayImage = ufraw_display_image(data->UF, FALSE);
+    ufraw_image_data *displayImage = ufraw_get_image(data->UF, ufraw_display_phase, FALSE);
     guint8 *displayPixies = displayImage->buffer + x*displayImage->depth;
-    ufraw_image_data *workingImage = ufraw_final_image(data->UF, FALSE);
+    ufraw_image_data *workingImage = ufraw_get_image(data->UF,
+	    ufraw_develop_phase, FALSE);
     guint8 *workingPixies = workingImage->buffer + x*workingImage->depth;
 
     int xx, yy, c;
@@ -789,7 +790,8 @@ static void render_init(preview_data *data)
     /* Check if we need a new pixbuf */
     int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
     int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    ufraw_image_data *image = ufraw_final_image(data->UF, FALSE);
+    ufraw_image_data *image = ufraw_get_image(data->UF,
+	    ufraw_display_phase, FALSE);
     if (width!=image->width || height!=image->height) {
     
 	/* Calculate current viewport center */
@@ -935,10 +937,8 @@ static gboolean render_preview_now(preview_data *data)
 		&data->UF->displayProfileSize);
     }
     ufraw_developer_prepare(data->UF, display_developer);
-    ufraw_convert_prepare_buffers(data->UF);
-    if (ufraw_invalidate_layer_event(data->UF, ufraw_transform_phase)) {
-	render_init(data);
-    }
+    render_init(data);
+
     /* This will trigger the untiled phases if necessary. The progress bar
      * updates require gtk_main_iteration() calls which can only be
      * done when there are no pending idle tasks which could recurse
@@ -1064,18 +1064,18 @@ static int choose_subarea(preview_data *data, int *chosen)
 {
     int subarea = -1;
     int max_area = -1;
-    int i;
-    ufraw_image_data *img;
-    GdkRectangle viewport;
 
     /* First of all, find the maximally visible yet unrendered subarea.
      * Refreshing visible subareas in the first place improves visual
      * feedback and overall user experience.
      */
-    img = ufraw_final_image(data->UF, FALSE);
+    ufraw_image_data *img = ufraw_get_image(data->UF,
+	    ufraw_display_phase, FALSE);
+    GdkRectangle viewport;
     gtk_image_view_get_viewport(
         GTK_IMAGE_VIEW(data->PreviewWidget), &viewport);
 
+    int i;
     for (i = 0; i < 32; i++) {
         /* Skip valid subareas */
         if (img->valid & (1 << i))
@@ -1177,7 +1177,8 @@ static gboolean render_live_histogram(preview_data *data)
     if (data->FreezeDialog) return FALSE;
 
     int x, y, c, min, max;
-    ufraw_image_data *img = ufraw_final_image(data->UF, TRUE);
+    ufraw_image_data *img = ufraw_get_image(data->UF,
+	    ufraw_develop_phase, TRUE);
 
     int CropX1, CropX2, CropY1, CropY2;
     scale_crop_to_final_image(data->UF, &CropX1, &CropX2, &CropY1, &CropY2);
@@ -1323,28 +1324,26 @@ static void calculate_spot(preview_data *data, struct spot *spot,
 
 static gboolean render_spot(preview_data *data)
 {
-    ufraw_image_data *img;
-    int rawDepth, outDepth, width, height;
-    void *rawBuffer, *outBuffer;
-    struct spot spot;
-
     if (data->FreezeDialog) return FALSE;
 
     if (data->SpotX1<0) return FALSE;
     if ( data->SpotX1>=data->UF->rotatedWidth ||
 	 data->SpotY1>=data->UF->rotatedHeight ) return FALSE;
-    img = ufraw_final_image(data->UF, TRUE);
-    width = img->width;
-    height = img->height;
-    outDepth = img->depth;
-    outBuffer = img->buffer;
-    img = ufraw_rgb_image(data->UF, TRUE, G_STRFUNC);
-    rawDepth = img->depth;
-    rawBuffer = img->buffer;
+    ufraw_image_data *img = ufraw_get_image(data->UF,
+	    ufraw_develop_phase, TRUE);
+    int width = img->width;
+    int height = img->height;
+    int outDepth = img->depth;
+    void *outBuffer = img->buffer;
+    img = ufraw_get_image(data->UF, ufraw_transform_phase, TRUE);
+    int rawDepth = img->depth;
+    void *rawBuffer = img->buffer;
 
-    /* We assume that first_phase and final_phase buffer sizes are the same. */
+    /* We assume that transform_phase and develop_phase buffer sizes are the
+     * same. */
     /* Scale image coordinates to Images[ufraw_develop_phase] coordinates */
     /* TODO: explain and cleanup if necessary */
+    struct spot spot;
     calculate_spot(data, &spot, width, height);
 
     guint64 rawSum[4], outSum[3];
@@ -1615,7 +1614,8 @@ static void spot_wb_event(GtkWidget *widget, gpointer user_data)
     height = gdk_pixbuf_get_height(data->PreviewPixbuf);
     /* Scale image coordinates to pixbuf coordinates */
     calculate_spot(data, &spot, width, height);
-    ufraw_image_data *image = ufraw_rgb_image(data->UF, TRUE, G_STRFUNC);
+    ufraw_image_data *image = ufraw_get_image(data->UF,
+	    ufraw_transform_phase, TRUE);
 
     for (c=0; c<4; c++) rgb[c] = 0;
     for (y=spot.StartY; y<spot.EndY; y++)
@@ -1660,20 +1660,14 @@ static void remove_hue_event(GtkWidget *widget, gpointer user_data)
 
 static void calculate_hue(preview_data *data, int i)
 {
-    ufraw_image_data *img;
-    int rawDepth;
-    void *rawBuffer;
-    float lch[3];
-    int width, height;
+    ufraw_image_data *img = ufraw_get_image(data->UF,
+	    ufraw_transform_phase, FALSE);
+    int width = img->width;
+    int height = img->height;
+    int rawDepth = img->depth;
+    void *rawBuffer = img->buffer;
+
     struct spot spot;
-
-    img = ufraw_final_image(data->UF, FALSE);
-    width = img->width;
-    height = img->height;
-    img = ufraw_rgb_image(data->UF, TRUE, G_STRFUNC);
-    rawDepth = img->depth;
-    rawBuffer = img->buffer;
-
     /* TODO: explain and cleanup if necessary */
     calculate_spot(data, &spot, width, height);
 
@@ -1691,6 +1685,7 @@ static void calculate_hue(preview_data *data, int i)
     for (c=0; c<data->UF->colors; c++)
 	rawChannels[c] = rawSum[c] / spot.Size;
 
+    float lch[3];
     uf_raw_to_cielch(Developer, rawChannels, lch);
     CFG->lightnessAdjustment[i].hue = lch[2];
 
@@ -3159,7 +3154,6 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
     }
     ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
 
-    render_init(data);
     if (CFG->CropX2 > data->UF->rotatedWidth)
 	fix_crop_aspect(data, top_right_cursor, FALSE);
     else if (CFG->CropY2 > data->UF->rotatedHeight)
@@ -5853,10 +5847,11 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     /* This will start the conversion and enqueue rendering functions */
     update_scales(data);
     render_preview_now(data);
-    update_crop_ranges(data, FALSE);	// calls ufraw_final_image(uf, FALSE)
+    update_crop_ranges(data, FALSE);
 
     /* Collect raw histogram data */
-    ufraw_image_data *image = ufraw_rgb_image(data->UF, TRUE, G_STRFUNC);
+    ufraw_image_data *image = ufraw_get_image(data->UF,
+	    ufraw_first_phase, TRUE);
     for (i=0; i<image->height*image->width; i++) {
 	    guint16 *buf = (guint16*)(image->buffer+i*image->depth);
 	    for (c=0; c<data->UF->colors; c++)
