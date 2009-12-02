@@ -15,12 +15,25 @@
 
 ****************************************************/
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include <errno.h>
-#include <stdarg.h> /* For variable argument lists */
+//////////////////////////////////////////
+//COMPILER CONTROLS
+//////////////////////////////////////////
+//Undef this if you don't want to use the stand-alone program
+//This is mainly for debugging purposes
+//#define _STAND_ALONE_
+
+//Define this if you are using Microsoft Visual C++. This enables code to
+//deal with the fact the MSVC does not support variable argument macros.
+//#define __MSVC__
+
+//the only remaining incompatibility between MSVC and gcc
+#ifdef __MSVC__
+    #define vsnprintf _vsnprintf
+#endif
+
+//Define this if using with UFRaw
+#define __WITH_UFRAW__
+
 #include "nikon_curve.h"
 
 #ifdef __WITH_UFRAW__
@@ -30,6 +43,270 @@
     #define MAX(a,b) ((a) > (b) ? (a) : (b))
     #define MIN(a,b) ((a) < (b) ? (a) : (b))
     #define g_fopen fopen
+#endif
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <errno.h>
+#include <stdarg.h> /* For variable argument lists */
+
+/*************************************************
+ * Internal static functions
+ *************************************************/
+
+/************************************************************
+nc_message:
+  The Nikon Curve message handler.
+
+  code - Message code
+  format - The message to format
+  ... - variable arguments
+**************************************************************/
+static void nc_message(int code, char *format, ...);
+
+static void DEBUG_PRINT(char *format, ...);
+
+/*******************************************************************
+ d3_np_fs:
+   Helper function for calculating and storing tridiagnol matrices.
+   Cubic spline calculations involve these types of matrices.
+*********************************************************************/
+static double *d3_np_fs(int n, double a[], double b[]);
+
+/*******************************************************************
+ spline_cubic_set:
+   spline_cubic_set gets the second derivatives for the curve to be used in
+   spline construction
+
+    n = number of control points
+    t[] = x array
+    y[] = y array
+    ibcbeg = initial point condition (see function notes).
+    ybcbeg = beginning value depending on above flag
+    ibcend = end point condition (see function notes).
+    ybcend = end value depending on above flag
+
+    returns the y value at the given tval point
+*********************************************************************/
+static double *spline_cubic_set(int n, double t[], double y[], int ibcbeg,
+    double ybcbeg, int ibcend, double ybcend);
+
+/*******************************************************************
+ spline_cubic_val:
+   spline_cubic_val gets a value from spline curve.
+
+    n = number of control points
+    t[] = x array
+    tval = x value you're requesting the data for, can be anywhere on the interval.
+    y[] = y array
+    ypp[] = second derivative array calculated by spline_cubic_set
+    ypval = first derivative value of requested point
+    yppval = second derivative value of requested point
+
+    returns the y value at the given tval point
+*********************************************************************/
+static double spline_cubic_val(int n, double t[], double tval, double y[],
+    double ypp[], double *ypval, double *yppval);
+
+/************************************************************
+SaveNikonCurveFile:
+    Saves out curves to a Nikon ntc or ncv file. This function
+    takes a single curve and uses defaults for the other curves.
+    Typically, the curve used is the tone curve.
+
+    curve        - A NikonCurve structure. This is usually the tone curve
+    curve_type    - The curve type (TONE_CURVE, RED_CURVE, etc.)
+    fileName    - The filename.
+    filetype    - Indicator for an NCV or NTC file.
+
+NOTE:    The only version tested is Nikon 4.1 anything
+	other than this may result in unpredictable behavior.
+	For now, the version passed in is ignored and is forced
+	to 4.1.
+
+	This function is just a helper function that allows the user
+	to just carry around a single curve.
+**************************************************************/
+#ifdef _STAND_ALONE_
+static int SaveNikonCurveFile(CurveData *curve, int curve_type, char *outfile,
+	int filetype);
+#endif
+
+/*********************************************
+SaveSampledNikonCurve:
+    Saves a sampling from a curve to text file to
+    be processed by UFRaw.
+
+    sample        - Pointer to the sampled curve.
+    fileName    - The filename.
+**********************************************/
+#ifdef _STAND_ALONE_
+static int SaveSampledNikonCurve(CurveSample *sample, char *outfile);
+#endif
+
+/*****************************************************
+FindTIFFOffset:
+    Moves the file pointer to the location
+    indicated by the TAG-TYPE pairing. This is meant just
+    as a helper function for this code. Uses elsewhere
+    may be limited.
+
+    file    - Nikon File ptr
+    num_entries - Number of entries to search through
+    tiff_tag - The tiff tag to match.
+    tiff_type - The tiff type to match.
+*******************************************************/
+#ifdef _STAND_ALONE_
+static int FindTIFFOffset(FILE *file, unsigned short num_entries,
+	unsigned short tiff_tag, unsigned short tiff_type);
+#endif
+
+/****************************************************
+SampleToCameraCurve:
+    Transforms the curve generated by sampling the
+    spline interpolator into the curve that is used by
+    the camera.
+
+    This is a special function. While the function places
+    no special restrictions on sampling resolution or
+    output resolution, it should be noted that Nikon D70
+    camera curve is 4096 entries of 0-255.
+
+    If you intend on using this function as such, you should
+    set the sampling resolution and output resolution
+    accordingly.
+
+    curve - The Nikon curve to sample and transform.
+*****************************************************/
+#ifdef _STAND_ALONE_
+static int SampleToCameraCurve(CurveData *curve, CurveSample *sample);
+#endif
+
+/****************************************
+ConvertNikonCurveData:
+    The main driver. Takes a filename and
+    processes the curve, if possible.
+
+    fileName    -    The file to process.
+*****************************************/
+#ifdef _STAND_ALONE_
+static int ConvertNikonCurveData(char *inFileName, char *outFileName,
+	unsigned int samplingRes, unsigned int outputRes);
+#endif
+
+/*******************************************************
+RipNikonNEFData:
+    Gets Nikon NEF data. For now, this is just the tone
+    curve data. This is more of a helper function for running
+    in stand-alone. This function basically finds the correct
+    file offset, and then calls RipNikonNEFCurve.
+
+    infile - The input file
+    curve  - data structure to hold data in.
+    sample_p -  pointer to the curve sample reference.
+		can be NULL if curve sample is not needed.
+********************************************************/
+#ifdef _STAND_ALONE_
+static int RipNikonNEFData(char *infile, CurveData *data,
+	CurveSample **sample_p);
+#endif
+
+/*******************************************************************************
+Information regarding the file format.
+
+Section Headers:
+
+Order of Box Data: Left x, Right x, Midpoint x (gamma), Bottom y, Top y
+
+Order of Anchor Data: Start x, Start y, Anchor 1 x, Anchor 1 y, ... , End x, End y
+
+Anchor Point Data: This is aligned on 8 byte boundries. However, the section must
+	            end on a 16 byte boundary, which means an 8 byte pad is added.
+********************************************************************************/
+
+//DEFINES FOR WRITING OUT DATA (for ntc/ncv files)
+#define NCV_HEADER_SIZE		    0x3E    //Combined header length for an NCV file
+#define NCV_SECOND_FILE_SIZE_OFFSET 0x3F    //4 bytes (int). File size - NCV_header
+#define NCV_UNKNOWN_HEADER_DATA	    0x002    //2 bytes. (?)
+#define NCV_SECOND_HEADER_LENGTH    23
+#define NCV_FILE_TERMINATOR_LENGTH  23
+
+#define NTC_FILE_HEADER_LENGTH	    0x10    //16 bytes. Doesn't change
+//This seemed to change when Nikon released an updated capture program
+//from 4.1 to 4.2. This may be an int but not sure.
+#define NCV_PATCH_OFFSET            0x3D    //2 bytes(?)
+#define NTC_PATCH_OFFSET            0x10    //2 bytes(?)
+#define FILE_SIZE_OFFSET            0x12    //4 bytes (int). File size - header.
+#define NTC_VERSION_OFFSET          0x16    //4 bytes (int).(?)
+					    //9 byte pad(?)
+					    //16 bytes. Another section header goes here.
+
+//From here down repeats for every section
+#define NTC_SECTION_TYPE_OFFSET	    0x00    //4 bytes (int) (0,1,2,3)
+
+#define NTC_UNKNOWN		    0x05    //2 bytes. Doesn't change but not sure what they do (0x03ff)
+#define NTC_UNKNOWN_DATA            0x3FF    //
+
+#define NTC_RED_COMPONENT_OFFSET    0x08    //4 bytes (int) (0-255)
+#define NTC_GREEN_COMPONENT_OFFSET  0x0C    //4 bytes (int) (0-255)
+#define NTC_BLUE_COMPONENT_OFFSET   0x0F    //4 bytes (int) (0-255)
+					    //12 byte pad all zeros(align to 16?)
+
+#define NTC_RED_WEIGHT_OFFSET	    0x1F    //4 bytes (int) (0-255)
+#define NTC_GREEN_WEIGHT_OFFSET	    0x23    //4 bytes (int)    (0-255)
+#define NTC_BLUE_WEIGHT_OFFSET	    0x27    //4 bytes (int)    (0-255)
+
+#define END_ANCHOR_DATA_PAD_LENGTH  0x08    //Always all zeros
+#define NTC_SECTION_HEADER_LENGTH   0x10    //Doesn't change
+
+
+//DEFINES FOR READING IN DATA
+#define HEADER_SIZE		    0x10    //First characters may be unicode Japanese?
+
+#define NTC_BOX_DATA		    0x5C    //Start of box data
+#define NTC_NUM_ANCHOR_POINTS	    0x84    //Number of anchor points plus 2 for start and end points
+#define NTC_ANCHOR_DATA_START	    0x88    //Beginning of anchor point data
+
+#define NCV_BOX_DATA		    0x89    //Start of box data
+#define NCV_NUM_ANCHOR_POINTS	    0xB2    //Number of anchor points plus 2 for start and end points
+#define NCV_ANCHOR_DATA_START	    0xB5    //Beginning of anchor point data
+
+//array indices to retrive data
+#define PATCH_DATA	    0
+#define BOX_DATA	    1
+#define NUM_ANCHOR_POINTS   2
+#define ANCHOR_DATA	    3
+
+//Some data sections sizes for calculating offsets
+#define NEXT_SECTION_BOX_DATA_OFFSET	0x43    //after the anchor data, this is the offset to
+						//the beginning of the next section's box data
+
+#define NUM_POINTS_TO_ANCHOR_OFFSET	0x03    //number of bytes from the number of anchor points
+						//byte to the start of anchor data.
+//Nikon version defines
+#define NIKON_VERSION_4_1   0x00000401
+#define NIKON_PATCH_4       0x04ff
+#define NIKON_PATCH_5       0x05ff
+
+//Maximum resoltuion allowed due to space considerations.
+#define MAX_RESOLUTION    65536
+
+//////////////////////////////
+//NEF/TIFF MACROS AND DEFINES
+//////////////////////////////
+#define TIFF_TAG_EXIF_OFFSET        34665
+#define TIFF_TAG_MAKER_NOTE_OFFSET  37500
+#define TIFF_TAG_CURVE_OFFSET       140
+
+#define TIFF_TYPE_UNDEFINED         7
+#define TIFF_TYPE_LONG		    4
+
+//Flags used to determine what file we're trying to process.
+//Should only be used in standalone mode.
+#ifdef _STAND_ALONE_
+#define CURVE_MODE  0
+#define NEF_MODE    1
 #endif
 
 /*************************************************
@@ -89,7 +366,7 @@ ProcessArgs:
     Convenient function for processing the args
     for the test runner.
 ********************************************/
-int ProcessArgs(int num_args, char *args[])
+static int ProcessArgs(int num_args, char *args[])
 {
     exportFilename[0] = '\0';
     nikonFilename[0] = '\0';
@@ -180,7 +457,7 @@ to make the error handling consistent acros the code.
   code - Message code
   message - The message
 **************************************************************/
-void nc_message(int code, char *format, ...)
+static void nc_message(int code, char *format, ...)
 {
     char message[256];
     va_list ap;
@@ -219,7 +496,7 @@ void nc_message(int code, char *format, ...)
 #endif //End STAND_ALONE
 }
 
-void DEBUG_PRINT(char *format, ...)
+static void DEBUG_PRINT(char *format, ...)
 {
 #ifdef _DEBUG
     va_list ap;
@@ -233,7 +510,7 @@ void DEBUG_PRINT(char *format, ...)
 }
 
 /* nc_merror(): Handle memory allocaltion errors */
-void nc_merror(void *ptr, char *where)
+static void nc_merror(void *ptr, char *where)
 {
     if (ptr) return;
 #ifdef __WITH_UFRAW__
@@ -244,7 +521,7 @@ void nc_merror(void *ptr, char *where)
 #endif
 }
 
-size_t nc_fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
+static size_t nc_fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
     size_t num = fread(ptr, size, nmemb, stream);
     if ( num!=nmemb )
@@ -252,7 +529,7 @@ size_t nc_fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
     return num;
 }
 
-size_t nc_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
+static size_t nc_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
     size_t num = fwrite(ptr, size, nmemb, stream);
     if ( num!=nmemb )
@@ -269,7 +546,7 @@ size_t nc_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 isBigEndian:
 	Determines if the machine we are running on is big endian or not.
 ************************************************************************/
-int isBigEndian()
+static int isBigEndian()
 {
     STATIC_ASSERT(sizeof(short)==2);
     union {
@@ -287,7 +564,7 @@ int isBigEndian()
 ShortVal:
 	Convert short int (16 bit) from little endian to machine endianess.
 ************************************************************************/
-short ShortVal(short s)
+static short ShortVal(short s)
 {
     STATIC_ASSERT(sizeof(short)==2);
     if (isBigEndian()) {
@@ -305,7 +582,7 @@ short ShortVal(short s)
 LongVal:
 	Convert long int (32 bit) from little endian to machine endianess.
 ************************************************************************/
-int LongVal(int i)
+static int LongVal(int i)
 {
     STATIC_ASSERT(sizeof(int)==4);
     if (isBigEndian()) {
@@ -322,33 +599,10 @@ int LongVal(int i)
 }
 
 /***********************************************************************
-FloatVal:
-	Convert float from little endian to machine endianess.
-************************************************************************/
-float FloatVal(float f)
-{
-    STATIC_ASSERT(sizeof(float)==4);
-    if (isBigEndian()) {
-	union {
-	    float f;
-	    unsigned char b[4];
-	} dat1, dat2;
-
-	dat1.f = f;
-	dat2.b[0] = dat1.b[3];
-	dat2.b[1] = dat1.b[2];
-	dat2.b[2] = dat1.b[1];
-	dat2.b[3] = dat1.b[0];
-	return dat2.f;
-    } else
-	return f;
-}
-
-/***********************************************************************
 DoubleVal:
 	Convert double from little endian to machine endianess.
 ************************************************************************/
-double DoubleVal(double d)
+static double DoubleVal(double d)
 {
     STATIC_ASSERT(sizeof(double)==8);
     if (isBigEndian()) {
@@ -420,8 +674,7 @@ double DoubleVal(double d)
 //    This is NULL if there was an error because one of the diagonal
 //    entries was zero.
 //
-double *d3_np_fs ( int n, double a[], double b[] )
-
+static double *d3_np_fs(int n, double a[], double b[])
 {
   int i;
   double *x;
@@ -571,8 +824,8 @@ double *d3_np_fs ( int n, double a[], double b[] )
 //
 //    Output, double SPLINE_CUBIC_SET[N], the second derivatives of the cubic spline.
 //
-double *spline_cubic_set ( int n, double t[], double y[], int ibcbeg,
-    double ybcbeg, int ibcend, double ybcend )
+static double *spline_cubic_set(int n, double t[], double y[], int ibcbeg,
+    double ybcbeg, int ibcend, double ybcend)
 {
   double *a;
   double *b;
@@ -759,8 +1012,8 @@ double *spline_cubic_set ( int n, double t[], double y[], int ibcbeg,
 //
 //    Output, double SPLINE_VAL, the value of the spline at TVAL.
 //
-double spline_cubic_val ( int n, double t[], double tval, double y[],
-	double ypp[], double *ypval, double *yppval )
+static double spline_cubic_val(int n, double t[], double tval, double y[],
+	double ypp[], double *ypval, double *yppval)
 {
   double dt;
   double h;
@@ -811,7 +1064,7 @@ GetNikonFileType:
 
   file - The file to check.
 **********************************************/
-int GetNikonFileType(FILE *file)
+static int GetNikonFileType(FILE *file)
 {
     unsigned char buff[HEADER_SIZE];
     int i = 0, j = 0;
@@ -1195,10 +1448,11 @@ SampleToCameraCurve:
 
     curve - The Nikon curve to sample and transform.
 *****************************************************/
+#ifdef _STAND_ALONE_
 #define CAMERA_LINEAR_CURVE_SLOPE 0.26086956521739130434782608695652
 #define CAMERA_LINEAR_LIMIT ((276.0/4096.0)*65536.0)
 
-int SampleToCameraCurve(CurveData *curve, CurveSample *sample)
+static int SampleToCameraCurve(CurveData *curve, CurveSample *sample)
 {
     unsigned int i = 0;
 
@@ -1327,6 +1581,7 @@ int SampleToCameraCurve(CurveData *curve, CurveSample *sample)
     free(ypp);
     return NC_SUCCESS;
 }
+#endif
 
 /************************************************************
 SaveNikonDataFile:
@@ -1335,9 +1590,8 @@ SaveNikonDataFile:
     data        - A NikonData structure containing info of all the curves.
     fileName    - The filename.
     filetype    - Indicator for an NCV or NTC file.
-    version        - The version of the Nikon file to write
 **************************************************************/
-int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
+int SaveNikonDataFile(NikonData *data, char *outfile, int filetype)
 {
     FILE *output = NULL;
     int i = 0,r = 0,g = 0,b = 0;
@@ -1345,7 +1599,6 @@ int SaveNikonDataFile(NikonData *data, char *outfile, int filetype, int version)
     unsigned int long_tmp = 0;
     double double_tmp = 0;
     CurveData *curve = NULL;
-    version = version;
 
     //used for file padding
     unsigned char pad[32];
@@ -1614,7 +1867,6 @@ SaveNikonCurveFile:
     curve_type    - The curve type (TONE_CURVE, RED_CURVE, etc.)
     fileName    - The filename.
     filetype    - Indicator for an NCV or NTC file.
-    version        - The version of the Nikon file to write
 
 NOTE:    The only version tested is Nikon 4.1 anything
 	other than this may result in unpredictable behavior.
@@ -1624,8 +1876,9 @@ NOTE:    The only version tested is Nikon 4.1 anything
 	This function is just a helper function that allows the user
 	to just carry around a single curve.
 **************************************************************/
-int SaveNikonCurveFile(CurveData *curve, int curve_type, char *outfile,
-	int filetype, int version)
+#ifdef _STAND_ALONE_
+static int SaveNikonCurveFile(CurveData *curve, int curve_type, char *outfile,
+	int filetype)
 {
     NikonData data;
     //clear the structure
@@ -1633,8 +1886,9 @@ int SaveNikonCurveFile(CurveData *curve, int curve_type, char *outfile,
     //assume that it's the tone curve
     data.curves[curve_type] = *curve;
     //call the work horse
-    return SaveNikonDataFile(&data, outfile, filetype, version);
+    return SaveNikonDataFile(&data, outfile, filetype);
 }
+#endif
 
 /*********************************************
 SaveSampledNikonCurve:
@@ -1644,7 +1898,8 @@ SaveSampledNikonCurve:
     sample      - Pointer to sampled curve struct to hold the data.
     fileName    - The filename.
 **********************************************/
-int SaveSampledNikonCurve(CurveSample *sample, char *outfile)
+#ifdef _STAND_ALONE_
+static int SaveSampledNikonCurve(CurveSample *sample, char *outfile)
 {
     unsigned int i = 0;
     FILE *output = NULL;
@@ -1690,6 +1945,7 @@ int SaveSampledNikonCurve(CurveSample *sample, char *outfile)
     fclose(output);
     return NC_SUCCESS;
 }
+#endif
 
 /*******************************************************
 CurveSampleInit:
@@ -1737,7 +1993,8 @@ ConvertNikonCurveData:
 
     fileName    -    The file to process.
 *****************************************/
-int ConvertNikonCurveData(char *inFileName, char *outFileName,
+#ifdef _STAND_ALONE_
+static int ConvertNikonCurveData(char *inFileName, char *outFileName,
     unsigned int samplingRes, unsigned int outputRes)
 {
     //Load the curve data from the ncv/ntc file
@@ -1816,6 +2073,7 @@ int ConvertNikonCurveData(char *inFileName, char *outFileName,
 
     return NC_SUCCESS;
 }
+#endif
 
 /*****************************************************
 FindTIFFOffset:
@@ -1829,7 +2087,9 @@ FindTIFFOffset:
     tiff_tag - The tiff tag to match.
     tiff_type - The tiff type to match.
 *******************************************************/
-int FindTIFFOffset(FILE *file, unsigned short num_entries, unsigned short tiff_tag, unsigned short tiff_type)
+#ifdef _STAND_ALONE_
+static int FindTIFFOffset(FILE *file, unsigned short num_entries,
+	unsigned short tiff_tag, unsigned short tiff_type)
 {
     unsigned short tag = 0;
     unsigned short type = 0;
@@ -1862,6 +2122,7 @@ int FindTIFFOffset(FILE *file, unsigned short num_entries, unsigned short tiff_t
     }
     return 0; //false;
 }
+#endif
 
 /*******************************************************
 RipNikonNEFData:
@@ -1873,7 +2134,9 @@ RipNikonNEFData:
     sample_p -	pointer to the curve sample reference.
 		can be NULL if curve sample is not needed.
 ********************************************************/
-int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p)
+#ifdef _STAND_ALONE_
+static int RipNikonNEFData(char *infile, CurveData *data,
+	CurveSample **sample_p)
 {
     unsigned short byte_order = 0;
     unsigned short num_entries = 0;
@@ -2004,7 +2267,7 @@ int RipNikonNEFData(char *infile, CurveData *data, CurveSample **sample_p)
     offset = ftell(file);
     return RipNikonNEFCurve(file, offset+pos, data, sample_p);
 }
-
+#endif
 
 /*******************************************************
 RipNikonNEFCurve:
@@ -2017,7 +2280,7 @@ RipNikonNEFCurve:
     sample_p -	pointer to the curve sample reference.
 		can be NULL if curve sample is not needed.
 ********************************************************/
-int RipNikonNEFCurve(FILE *file, int offset, CurveData *data,
+int RipNikonNEFCurve(void *file, int offset, CurveData *data,
 	CurveSample **sample_p)
 {
     int i;
@@ -2154,14 +2417,14 @@ int main(int argc, char* argv[])
 	    }
 
 	    if (SaveNikonCurveFile(&data.curves[TONE_CURVE], TONE_CURVE,
-				"outcurve.ncv",NCV_FILE, NIKON_VERSION_4_1))
+				"outcurve.ncv",NCV_FILE))
 	    {
 		CurveSampleFree(sample);
 	        return NC_ERROR;
 	    }
 
 	    //This can also be used
-	    if (SaveNikonDataFile(&data,"outcurve2.ncv",NCV_FILE, NIKON_VERSION_4_1))
+	    if (SaveNikonDataFile(&data,"outcurve2.ncv",NCV_FILE))
 	    {
 		CurveSampleFree(sample);
 	        return NC_ERROR;

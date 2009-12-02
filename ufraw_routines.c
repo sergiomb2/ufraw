@@ -454,8 +454,8 @@ int curve_save(CurveData *cp, char *filename)
 
 	data.curves[TONE_CURVE] = *cp;
 
-	if (SaveNikonDataFile(&data, filename, nikon_file_type,
-			    NIKON_VERSION_4_1)!=UFRAW_SUCCESS) {
+	if (SaveNikonDataFile(&data, filename, nikon_file_type)
+		!= UFRAW_SUCCESS) {
 	    ufraw_message(UFRAW_ERROR, _("Invalid Nikon curve file '%s'"),
 			filename);
 	    return UFRAW_ERROR;
