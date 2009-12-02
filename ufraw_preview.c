@@ -5786,9 +5786,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     gtk_widget_set_size_request(scroll, preview_width+1, preview_height+1);
     while (gtk_events_pending()) gtk_main_iteration();
 #endif
-    /* After window size was set, the user may want to shrink it */
-    gtk_widget_set_size_request(scroll, -1, -1);
-
     if ( CFG->WindowMaximized ) {
 	// scroll widget is allocated size only after gtk_widget_show_all()
 	int scrollWidth = scroll->allocation.width;
@@ -5806,8 +5803,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     gtk_image_view_set_pixbuf(GTK_IMAGE_VIEW(data->PreviewWidget),
 	    data->PreviewPixbuf, FALSE);
     g_object_unref(data->PreviewPixbuf);
-    // Get the empty preview displayed
-    while (gtk_events_pending()) gtk_main_iteration();
 
     for (i=0; i<cursor_num; i++)
 	data->Cursor[i] = gdk_cursor_new(Cursors[i]);
@@ -5817,6 +5812,11 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     ufraw_load_raw(uf);
     preview_progress_disable(data);
     gtk_widget_set_sensitive(data->Controls, TRUE);
+
+    /* After window size was set, the user may want to re-size it.
+     * This function is called after the progress-bar text was set,
+     * to make sure that there are no scroll-bars on the initial preview. */
+    gtk_widget_set_size_request(scroll, -1, -1);
 
     // Set shrink/size values for preview rendering
     CFG->shrink = zoom_to_scale(CFG->Zoom);
