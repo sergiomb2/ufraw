@@ -619,7 +619,14 @@ void dcraw_finalize_raw(dcraw_data *h, dcraw_data *dark, int rgbWB[4])
     f4 = h->fourColorFilters;
     if (h->colors == 3)
 	rgbWB[3] = rgbWB[1];
-    if (dark) {
+    if (f4 == 0) {
+	for(r=0; r<h->height; r++)
+	    for(c=0; c<h->width; c++)
+		for (cc=0; cc<4; cc++)
+		h->raw.image[r * h->raw.width + c][cc] = MIN( MAX( (gint64)
+		    (get_pixel(h, dark, r, c, cc, pixels) - black) *
+		    rgbWB[cc]/0x10000, 0), 0xFFFF);
+    } else if (dark) {
 	for(r=0; r<h->height; r++)
 	    for(c=0; c<h->width; c++) {
 		int cc = fc_INDI(f4,r,c);
