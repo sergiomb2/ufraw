@@ -585,11 +585,12 @@ static unsigned ufraw_scale_raw(dcraw_data *raw)
     if (scale) {
 	end = (guint16 *)(raw->raw.image + raw->raw.width * raw->raw.height);
 	/* OpenMP overhead appears to be too large in this case */
-	/* We are assuming here that there will be no overflow since all
-	 * pixel values should be below rgbMax. dcraw's wavelet_denoise()
-	 * makes the same assumption, so it seems like a safe bet. */
+	int max = 0x10000 >> scale;
 	for (p = (guint16 *)raw->raw.image; p < end; ++p)
-	    *p <<= scale;
+	    if (*p < max)
+		*p <<= scale;
+	    else
+		*p = 0xffff;
 	raw->black <<= scale;
     }
     return 1 << scale;
