@@ -304,9 +304,8 @@ static int get_dark_pixel(const dcraw_data *h, const dcraw_data *dark,
 }
 
 static int get_pixel(const dcraw_data *h, const dcraw_data *dark,
-		     int r, int c, int cl, int pixels)
+		     int i, int cl, int pixels)
 {
-    int i = r * h->raw.width + c;
     int pixel = h->raw.image[i][cl];
     if (dark != 0) {
 	int w = h->raw.width;
@@ -610,50 +609,34 @@ void dcraw_wavelet_denoise_shrinked(dcraw_image_data *f, float threshold)
  */
 void dcraw_finalize_raw(dcraw_data *h, dcraw_data *dark, int rgbWB[4])
 {
-    int r, c, cc, pixels;
-    unsigned f4, px, fseq, black;
-    dcraw_image_type *base;
-
-    pixels = h->raw.width * h->raw.height;
-    black = dark ? MAX(h->black - dark->black, 0) : h->black;
-    f4 = h->fourColorFilters;
+    const int pixels = h->raw.width * h->raw.height;
+    const unsigned black = dark ? MAX(h->black - dark->black, 0) : h->black;
     if (h->colors == 3)
 	rgbWB[3] = rgbWB[1];
-    if (f4 == 0) {
-	for(r=0; r<h->height; r++)
-	    for(c=0; c<h->width; c++)
-		for (cc=0; cc<4; cc++)
-		h->raw.image[r * h->raw.width + c][cc] = MIN( MAX( (gint64)
-		    (get_pixel(h, dark, r, c, cc, pixels) - black) *
-		    rgbWB[cc]/0x10000, 0), 0xFFFF);
-    } else if (dark) {
-	for(r=0; r<h->height; r++)
-	    for(c=0; c<h->width; c++) {
-		int cc = fc_INDI(f4,r,c);
-		h->raw.image[r/2 * h->raw.width + c/2][cc] = MIN( MAX( (gint64)
-		    (get_pixel(h, dark, r/2, c/2, cc, pixels) - black) *
-		    rgbWB[cc]/0x10000, 0), 0xFFFF);
+    if (dark) {
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) default(none) \
+  shared(h,dark,rgbWB)
+#endif
+	for(int i=0; i<pixels; i++) {
+	    int cc;
+	    for (cc=0; cc<4; cc++) {
+		gint32 p = (gint64)(get_pixel(h, dark, i, cc, pixels) - black) *
+			rgbWB[cc] / 0x10000;
+		h->raw.image[i][cc] = MIN(MAX(p, 0), 0xFFFF);
 	    }
+	}
     } else {
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static) default(none) \
-  shared(h,dark,rgbWB,pixels,f4,black) \
-  private(r,base,fseq,c,cc,px)
+  shared(h,dark,rgbWB)
 #endif
-	for (r = 0; r < h->height; r++) {
-	    base = h->raw.image + (r/2) * h->raw.width;
-	    fseq = fc_sequence(f4, r);
-	    for (c = 0; c < h->width; c++) {
-		cc = fc_color(fseq, c);
-		if (base[c/2][cc] < black) {
-		    base[c/2][cc] = 0;
-		    continue;
-		}
-		px = (base[c/2][cc] - black) * (guint64)(unsigned)(rgbWB[cc]) / 0x10000;
-		if (px > 0xffff)
-		    px = 0xffff;
-		base[c/2][cc] = px;
-	    }
+	for(int i=0; i<pixels; i++) {
+	    int cc;
+	    for (cc=0; cc<4; cc++)
+		h->raw.image[i][cc] = MIN(MAX(
+			(gint64)(h->raw.image[i][cc] - black) *
+			rgbWB[cc] / 0x10000, 0), 0xFFFF);
 	}
     }
 }
