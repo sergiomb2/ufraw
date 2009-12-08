@@ -39,9 +39,11 @@ void (*ufraw_progress)(int what, int ticks);
 /* What about LF_MODIFY_ALL? */
 #define UF_LF_ALL (LF_MODIFY_TCA | LF_MODIFY_VIGNETTING | \
 	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
-
+#define UF_LF_TRANSFORM ( \
+	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
 static void ufraw_convert_image_vignetting(ufraw_data *uf,
 	ufraw_image_data *img, UFRectangle *area);
+static void ufraw_prepare_tca(ufraw_data *uf);
 #endif
 static void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
 	const char *formats, const char *caller);
@@ -263,6 +265,7 @@ ufraw_data *ufraw_open(char *filename)
     uf->HaveFilters = raw->filters!=0;
 #ifdef HAVE_LENSFUN
     uf->modFlags = 0;
+    uf->TCAmodifier = NULL;
     uf->modifier = NULL;
     uf->lanczos_func = NULL;
 #endif
@@ -688,6 +691,7 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->RawHistogram);
 #ifdef HAVE_LENSFUN
     lf_lens_destroy(uf->conf->lens);
+    lf_modifier_destroy(uf->TCAmodifier);
     lf_camera_destroy(uf->conf->camera);
     lf_modifier_destroy(uf->modifier);
     g_free(uf->lanczos_func);
@@ -778,7 +782,7 @@ int ufraw_convert_image(ufraw_data *uf)
     if (img2->buffer != NULL) {
 	area.width = img2->width;
 	area.height = img2->height;
-	/* Apply distortion, TCA, geometry and rotation */
+	/* Apply distortion, geometry and rotation */
 	ufraw_convert_image_transform(uf, img, img2, &area);
 	g_free(img->buffer);
 	*img = *img2;
@@ -822,7 +826,7 @@ static void ufraw_convert_image_vignetting(ufraw_data *uf,
 }
 #endif
 
-/* Apply distortion, TCA, geometry and rotation in a single pass */
+/* Apply distortion, geometry and rotation in a single pass */
 static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 	ufraw_image_data *outimg, UFRectangle *area)
 {
@@ -834,10 +838,8 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
     int x, y, c;
 
 #ifdef HAVE_LENSFUN
-    gboolean applyLF = uf->modifier != NULL &&
-	    (uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING));
+    gboolean applyLF = uf->modifier != NULL && (uf->modFlags & UF_LF_TRANSFORM);
 #endif
-
     for (y = area->y; y < area->y + area->height; y++) {
 	guint8 *cur0 = outimg->buffer + y * outimg->rowstride;
 	float srcX0 = y*sine - img->height*sine*cosine;
@@ -847,43 +849,35 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 	    float srcX = srcX0 + x*cosine;
 	    float srcY = srcY0 - x*sine;
 #ifdef HAVE_LENSFUN
-	    float buff[3 * 2];
-	    float *modcoord = buff;
+	    float buff[2];
 	    if (applyLF) {
-		lf_modifier_apply_subpixel_geometry_distortion(uf->modifier,
+		lf_modifier_apply_geometry_distortion(uf->modifier,
 			srcX, srcY, 1, 1, buff);
+		srcX = buff[0];
+		srcY = buff[1];
 	    }
 #endif
-	    for (c = 0; c < 3; c++
-#ifdef HAVE_LENSFUN
-		    , modcoord += 2
-#endif
-		) {
-#ifdef HAVE_LENSFUN
-		if (applyLF) {
-		    srcX = modcoord[0];
-		    srcY = modcoord[1];
-		}
-#endif
 #ifdef LANCZOS_DATA_FLOAT
-		float xs = ceilf(srcX) - LANCZOS_SUPPORT;
-		float xe = floorf(srcX) + LANCZOS_SUPPORT;
-		float ys = ceilf(srcY) - LANCZOS_SUPPORT;
-		float ye = floorf(srcY) + LANCZOS_SUPPORT;
-		if (xs < 0 || ys < 0 || xe >= img->width || ye >= img->height) {
+	    float xs = ceilf(srcX) - LANCZOS_SUPPORT;
+	    float xe = floorf(srcX) + LANCZOS_SUPPORT;
+	    float ys = ceilf(srcY) - LANCZOS_SUPPORT;
+	    float ye = floorf(srcY) + LANCZOS_SUPPORT;
+	    if (xs < 0 || ys < 0 || xe >= img->width || ye >= img->height) {
+		for (c = 0; c < 3; c++)
 		    cur[c] = 0;
-		    continue;
-		}
+		continue;
+	    }
+	    int dsrc = img->width - (xe - xs) - 1;
+
+	    for (c = 0; c < 3; c++) {
 		ufraw_image_type *src = (ufraw_image_type *)(img->buffer +
 			(long)ys * img->rowstride + (long)xs * img->depth);
-		int dsrc = img->width - (xe - xs) - 1;
-
 		float norm = 0.0;
 		float sum = 0.0;
 
 		float _dx = srcX - xs;
-		float dy = srcY - ys;
-		for (; ys <= ye; ys += 1.0, dy -= 1.0) {
+		float yc, dy = srcY - ys;
+		for (yc = ys; yc <= ye; yc += 1.0, dy -= 1.0) {
 		    float xc, dx = _dx;
 		    for (xc = xs; xc <= xe; xc += 1.0, dx -= 1.0, src++) {
 			float d = dx * dx + dy * dy;
@@ -900,28 +894,31 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 		    cur[c] = LIM((int)(sum / norm), 0, 0xffff);
 		else
 		    cur[c] = 0;
+	    }
 #else
-		/* Do it in integer arithmetic, it's faster */
-		int xx = (int)srcX;
-		int yy = (int)srcY;
-		int xs = xx + 1 - LANCZOS_SUPPORT;
-		int xe = xx     + LANCZOS_SUPPORT;
-		int ys = yy + 1 - LANCZOS_SUPPORT;
-		int ye = yy     + LANCZOS_SUPPORT;
-		if (xs < 0 || ys < 0 || xe >= img->width || ye >= img->height) {
+	    /* Do it in integer arithmetic, it's faster */
+	    int xx = (int)srcX;
+	    int yy = (int)srcY;
+	    int xs = xx + 1 - LANCZOS_SUPPORT;
+	    int xe = xx     + LANCZOS_SUPPORT;
+	    int ys = yy + 1 - LANCZOS_SUPPORT;
+	    int ye = yy     + LANCZOS_SUPPORT;
+	    if (xs < 0 || ys < 0 || xe >= img->width || ye >= img->height) {
+		for (c = 0; c < 3; c++)
 		    cur[c] = 0;
-		    continue;
-		}
+		continue;
+	    }
+	    int dsrc = img->width - (xe - xs) - 1;
+
+	    for (c = 0; c < 3; c++) {
 		ufraw_image_type *src = (ufraw_image_type *)(img->buffer +
 			ys * img->rowstride + xs * img->depth);
-		int dsrc = img->width - (xe - xs) - 1;
-
 		int norm = 0;
 		int sum = 0;
 
 		int _dx = (int)(srcX * 4096.0) - (xs << 12);
-		int dy = (int)(srcY * 4096.0) - (ys << 12);
-		for (; ys <= ye; ys++, dy -= 4096) {
+		int yc, dy = (int)(srcY * 4096.0) - (ys << 12);
+		for (yc = ys; yc <= ye; yc++, dy -= 4096) {
 		    int xc, dx = _dx;
 		    for (xc = xs; xc <= xe; xc++, src++, dx -= 4096) {
 			int d = (dx * dx + dy * dy) >> 12;
@@ -938,8 +935,8 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 		    cur[c] = LIM(sum / norm, 0, 0xffff);
 		else
 		    cur[c] = 0;
-#endif
 	    }
+#endif
 	}
     }
 }
@@ -1319,7 +1316,60 @@ void ufraw_lensfun_init(ufraw_data *uf)
 	}
     }
 }
-#endif /* HAVE_LENSFUN */
+
+/* Apply TCA */
+static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
+	ufraw_image_data *outimg, UFRectangle *area)
+{
+    if (uf->TCAmodifier == NULL)
+	return;
+    int y;
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) default(none) \
+  shared(uf,img,outimg,area)
+#endif
+    for (y = area->y; y < area->y + area->height; y++) {
+	guint16 *dst = (guint16*)(outimg->buffer + y * outimg->rowstride +
+		area->x * outimg->depth);
+	ufraw_image_type *src = (ufraw_image_type *)(img->buffer +
+		y * img->rowstride + area->x * img->depth);
+	ufraw_image_type *srcEnd = (ufraw_image_type *)(img->buffer +
+		y * img->rowstride + (area->x+area->width) * img->depth);
+	float buff[3 * 2 * area->width];
+	lf_modifier_apply_subpixel_distortion(uf->TCAmodifier,
+		area->x, y, area->width, 1, buff);
+	float *modcoord = buff;
+	for (; src < srcEnd; src++, dst += outimg->depth/2) {
+	    int c;
+	    // Only red and blue channels get corrected
+	    for (c = 0; c <= 2; c+=2, modcoord += 4) {
+		float srcX = modcoord[0];
+		float srcY = modcoord[1];
+		/* Do it in integer arithmetic, it's faster */
+		int xx = (int)srcX;
+		int yy = (int)srcY;
+		// TODO: better handling of the borders.
+		if (xx < 0 || yy < 0 || xx+1 >= img->width || yy+1 >= img->height) {
+		    dst[c] = 0;
+		    continue;
+		}
+		ufraw_image_type *lf_src = (ufraw_image_type *)(img->buffer +
+			yy * img->rowstride + xx * img->depth);
+		guint64 dx = (int)(srcX * 4096.0) - (xx << 12);
+		guint64 dy = (int)(srcY * 4096.0) - (yy << 12);
+		dst[c] = ( (4096-dy)*((4096-dx)*lf_src[0][c]
+				+ dx*lf_src[1][c])
+			+ dy*((4096-dx)*lf_src[img->width][c]
+				+ (dx)*lf_src[img->width+1][c]) ) >> 24;
+	    }
+	    modcoord -= 2;
+	    // Green channels are intact
+	    for (c = 1; c <= 3; c+=2)
+		dst[c] = src[0][c];
+	}
+    }
+}
+#endif // HAVE_LENSFUN
 
 static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_image_data *dcimg)
 {
@@ -1329,8 +1379,18 @@ static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_
     img->width = dcimg->width;
     img->depth = sizeof (dcraw_image_type);
     img->rowstride = img->width * img->depth;
-    if (img->buffer)
-	g_free(img->buffer);
+#ifdef HAVE_LENSFUN
+    ufraw_prepare_tca(uf);
+    if (uf->TCAmodifier != NULL) {
+	ufraw_image_data inImg = *img;
+	inImg.buffer = (guint8 *)dcimg->image;
+	img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
+	UFRectangle area = {0, 0, img->width, img->height };
+	ufraw_convert_image_tca(uf, &inImg, img, &area);
+	return;
+    }
+#endif
+    g_free(img->buffer);
     img->buffer = g_memdup(dcimg->image, img->height * img->rowstride);
 }
 
@@ -1389,8 +1449,7 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
     ufraw_prepare_transform(uf);
 #ifdef HAVE_LENSFUN
     if (uf->conf->rotationAngle == 0 &&
-	(uf->modifier == NULL ||
-	!(uf->modFlags & (UF_LF_ALL & ~LF_MODIFY_VIGNETTING))))
+	(uf->modifier == NULL || !(uf->modFlags & UF_LF_TRANSFORM)))
 #else
     if (uf->conf->rotationAngle == 0)
 #endif /* HAVE_LENSFUN */
@@ -1454,6 +1513,34 @@ static void ufraw_convert_prepare_buffers(ufraw_data *uf, UFRawPhase phase)
     }
 }
 
+#ifdef HAVE_LENSFUN
+static void ufraw_prepare_tca(ufraw_data *uf)
+{
+    ufraw_image_data *img = &uf->Images[ufraw_raw_phase];
+
+    if (uf->TCAmodifier != NULL)
+	lf_modifier_destroy(uf->TCAmodifier);
+    uf->TCAmodifier = NULL;
+
+    if (uf->conf->camera == NULL || uf->conf->lens == NULL)
+	return;
+
+    uf->TCAmodifier = lf_modifier_new(uf->conf->lens,
+	    uf->conf->camera->CropFactor, img->width, img->height);
+    if (uf->TCAmodifier == NULL)
+	return;
+
+    uf->modFlags = lf_modifier_initialize(uf->TCAmodifier, uf->conf->lens,
+	    LF_PF_U16, uf->conf->focal_len, uf->conf->aperture,
+	    uf->conf->subject_distance, 1.0, uf->conf->cur_lens_type,
+	    LF_MODIFY_TCA, FALSE);
+    if ((uf->modFlags & LF_MODIFY_TCA) == 0) {
+	lf_modifier_destroy(uf->TCAmodifier);
+	uf->TCAmodifier = NULL;
+    }
+}
+#endif
+
 static void ufraw_prepare_transform(ufraw_data *uf)
 {
     if (uf->lanczos_func == NULL) {
@@ -1494,7 +1581,8 @@ static void ufraw_prepare_transform(ufraw_data *uf)
     float real_scale = pow(2.0, conf->lens_scale);
     uf->modFlags = lf_modifier_initialize(uf->modifier, conf->lens,
 	    LF_PF_U16, conf->focal_len, conf->aperture, conf->subject_distance,
-	    real_scale, conf->cur_lens_type, UF_LF_ALL, FALSE);
+	    real_scale, conf->cur_lens_type,
+	    UF_LF_TRANSFORM | LF_MODIFY_VIGNETTING, FALSE);
     if ((uf->modFlags & UF_LF_ALL) == 0) {
 	lf_modifier_destroy(uf->modifier);
 	uf->modifier = NULL;
@@ -1817,6 +1905,11 @@ void ufraw_invalidate_layer(ufraw_data *uf, UFRawPhase phase)
 	uf->Images[phase].valid = 0;
 	uf->Images[phase].invalidate_event = TRUE;
     }
+}
+
+void ufraw_invalidate_tca_layer(ufraw_data *uf)
+{
+    ufraw_invalidate_layer(uf, ufraw_raw_phase);
 }
 
 void ufraw_invalidate_hotpixel_layer(ufraw_data *uf)

@@ -670,7 +670,7 @@ static void adjustment_update_tca (GtkAdjustment *adj, float *valuep)
     remove_tca_models (data, CFG->lens_tca.Model);
     lf_lens_add_calib_tca (CFG->lens, &CFG->lens_tca);
 
-    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+    ufraw_invalidate_tca_layer(data->UF);
     render_preview (data);
 }
 
@@ -708,7 +708,7 @@ static void tca_model_changed (GtkComboBox *widget, preview_data *data)
     gtk_label_set_text (GTK_LABEL (data->LensTCADesc), details);
     gtk_widget_show_all (data->LensTCATable);
 
-    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+    ufraw_invalidate_tca_layer(data->UF);
     render_preview (data);
 }
 

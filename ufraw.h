@@ -291,6 +291,7 @@ typedef struct ufraw_struct {
     int RawCount;
 #ifdef HAVE_LENSFUN
     int modFlags; /* postprocessing operations (LF_MODIFY_XXX) */
+    lfModifier *TCAmodifier;
     lfModifier *modifier;
 #endif /* HAVE_LENSFUN */
     void *lanczos_func; /* the Lanczos kernel */
@@ -327,6 +328,7 @@ void ufraw_close(ufraw_data *uf);
 void ufraw_flip_orientation(ufraw_data *uf, int flip);
 void ufraw_flip_image(ufraw_data *uf, int flip);
 void ufraw_invalidate_layer(ufraw_data *uf, UFRawPhase phase);
+void ufraw_invalidate_tca_layer(ufraw_data *uf);
 void ufraw_invalidate_hotpixel_layer(ufraw_data *uf);
 void ufraw_invalidate_denoise_layer(ufraw_data *uf);
 void ufraw_invalidate_darkframe_layer(ufraw_data *uf);
