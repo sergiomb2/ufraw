@@ -635,7 +635,7 @@ void dcraw_finalize_raw(dcraw_data *h, dcraw_data *dark, int rgbWB[4])
 	    int cc;
 	    for (cc=0; cc<4; cc++)
 		h->raw.image[i][cc] = MIN(MAX(
-			(gint64)(h->raw.image[i][cc] - black) *
+			((gint64)h->raw.image[i][cc] - black) *
 			rgbWB[cc] / 0x10000, 0), 0xFFFF);
 	}
     }
