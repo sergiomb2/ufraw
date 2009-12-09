@@ -1672,6 +1672,20 @@ const wb_data wb_preset[] = {
   { "NIKON", "D90", "9090K", 0,			{ 2.308594, 1, 1.027344, 0 } },
   { "NIKON", "D90", "10000K", 0,		{ 2.414063, 1, 1.007813, 0 } },
 
+
+  { "NIKON", "D3000", DirectSunlight, 0,	{ 1.851563, 1, 1.347656, 0 } },
+  { "NIKON", "D3000", Flash, 0,			{ 2.113281, 1, 1.164062, 0 } },
+  { "NIKON", "D3000", Cloudy, 0,		{ 2.019531, 1, 1.214844, 0 } },
+  { "NIKON", "D3000", Shade, 0,			{ 2.355469, 1, 1.082031, 0 } },
+  { "NIKON", "D3000", Incandescent, 0,		{ 1.171875, 1, 2.316406, 0 } },
+  { "NIKON", "D3000", SodiumVaporFluorescent, 0, { 1.023438, 1, 2.371094, 0 } },
+  { "NIKON", "D3000", WarmWhiteFluorescent, 0,	{ 1.179688, 1, 2.074219, 0 } },
+  { "NIKON", "D3000", WhiteFluorescent, 0,	{ 1.355469, 1, 2.328125, 0 } },
+  { "NIKON", "D3000", CoolWhiteFluorescent, 0,	{ 1.703125, 1, 2.019531, 0 } },
+  { "NIKON", "D3000", DayWhiteFluorescent, 0,	{ 1.750000, 1, 1.386719, 0 } },
+  { "NIKON", "D3000", DaylightFluorescent, 0,	{ 1.960937, 1, 1.105469, 0 } },
+  { "NIKON", "D3000", HighTempMercuryVaporFluorescent, 0, { 2.351563, 1, 1.328125, 0 } },
+
   { "NIKON", "D5000", DirectSunlight, 0,	{ 1.800781, 1, 1.308594, 0 } },
   { "NIKON", "D5000", Flash, 0,			{ 1.976562, 1, 1.152344, 0 } },
   { "NIKON", "D5000", Cloudy, 0,		{ 1.917969, 1, 1.187500, 0 } },
