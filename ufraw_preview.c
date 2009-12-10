@@ -5812,7 +5812,12 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     ufraw_load_raw(uf);
     preview_progress_disable(data);
     gtk_widget_set_sensitive(data->Controls, TRUE);
-
+    // Should only happen if ufraw_load_raw() failed:
+    if (data->UF->rgbMax == 0)
+	data->UF->rgbMax = 0xffff; // prevents division by zero
+    for (i=0; i<4; i++)
+	if (data->UF->conf->chanMul[i] < 0)
+	    data->UF->conf->chanMul[i] = 1;
     /* After window size was set, the user may want to re-size it.
      * This function is called after the progress-bar text was set,
      * to make sure that there are no scroll-bars on the initial preview. */
