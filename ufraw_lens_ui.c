@@ -11,19 +11,13 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <gtk/gtk.h>
+#include "ufraw.h"
+#include "uf_gtk.h"
+#include "ufraw_ui.h"
 #include <glib/gi18n.h>
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
-
-#include "ufraw.h"
-#include "ufraw_ui.h"
-#include "uf_gtk.h"
 
 #ifdef HAVE_LENSFUN
 

@@ -10,15 +10,10 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <stdio.h>     /* for printf */
-#include <string.h>
-#include "uf_gtk.h"
-#include <glib/gi18n.h>
 #include "ufraw.h"
+#include "uf_gtk.h"
+#include <string.h>
+#include <glib/gi18n.h>
 
 #if GTK_CHECK_VERSION(2,6,0)
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *fileChooser)

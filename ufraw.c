@@ -10,18 +10,12 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <stdio.h>     /* for printf */
+#include "ufraw.h"
+#include "uf_gtk.h"
 #include <stdlib.h>    /* for exit */
 #include <errno.h>     /* for errno */
 #include <string.h>
-#include "uf_glib.h"
 #include <glib/gi18n.h>
-#include "uf_gtk.h"
-#include "ufraw.h"
 
 char *ufraw_binary;
 

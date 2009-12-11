@@ -10,20 +10,12 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
+#include "ufraw.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-
-#include <stdio.h>
 #include <math.h>
 #include <lcms.h>
-#include "uf_glib.h"
-#include "nikon_curve.h"
-#include "ufraw.h"
 
 static int lcms_message(int ErrorCode, const char *ErrorText)
 {

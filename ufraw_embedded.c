@@ -10,13 +10,10 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
+#include "ufraw.h"
+#include "dcraw_api.h"
 #include <errno.h>     /* for errno */
 #include <string.h>
-#include "uf_glib.h"
 #include <glib/gi18n.h>
 #ifdef HAVE_LIBJPEG
 #include <jpeglib.h>
@@ -25,8 +22,6 @@
 #ifdef HAVE_LIBPNG
 #include <png.h>
 #endif
-#include "dcraw_api.h"
-#include "ufraw.h"
 
 #ifdef HAVE_LIBJPEG
 static void ufraw_jpeg_warning(j_common_ptr cinfo)

@@ -18,13 +18,12 @@
 #define _GNU_SOURCE /* needed for canonicalize_file_name() */
 #endif
 
+#include "ufraw.h"
+#include <glib/gi18n.h>
 #include <errno.h>
 #include <locale.h>
 #include <stdlib.h> /* needed for canonicalize_file_name() */
 #include <string.h>
-#include "uf_glib.h"
-#include <glib/gi18n.h>
-#include "ufraw.h"
 
 /* we start by some general purpose functions that mostly take care of
  * making the rest of the code platform independ */

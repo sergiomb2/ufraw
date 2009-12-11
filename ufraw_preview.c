@@ -15,23 +15,18 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <stdio.h>
+#include "ufraw.h"
+#include "uf_gtk.h"
+#include "ufraw_ui.h"
+#include "curveeditor_widget.h"
+#include <gdk/gdkkeysyms.h>
+#include <glib/gi18n.h>
+#include <gtkimageview/gtkimagescrollwin.h>
+#include <gtkimageview/gtkimageview.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include <errno.h>
-#include "uf_gtk.h"
-#include <gdk/gdkkeysyms.h>
-#include <glib/gi18n.h>
-#include "ufraw.h"
-#include "ufraw_ui.h"
-#include "curveeditor_widget.h"
-#include <gtkimageview/gtkimagescrollwin.h>
-#include <gtkimageview/gtkimageview.h>
 #if GTK_CHECK_VERSION(2,6,0)
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif

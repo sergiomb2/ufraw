@@ -10,20 +10,15 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
+#include "ufraw.h"
+#include <glib/gi18n.h>
 #include <errno.h>	/* for errno */
 #include <string.h>
 #include <lcms.h>
-#include "uf_glib.h"
-#include <glib/gi18n.h>
 #ifdef HAVE_LIBTIFF
 #include <tiffio.h>
 #endif
 #ifdef HAVE_LIBJPEG
-#include <jpeglib.h>
 #include <jerror.h>
 #include "iccjpeg.h"
 #endif
@@ -38,8 +33,6 @@
 #define uf_omp_get_thread_num() 0
 #endif
    
-#include "ufraw.h"
-
 #ifdef HAVE_LIBCFITSIO
 #include <fitsio.h>
 #endif

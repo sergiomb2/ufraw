@@ -13,13 +13,8 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <glib.h>
-#include <glib/gi18n.h>
 #include "ufraw.h"
+#include <glib/gi18n.h>
 
 /* Column 1 - "make" of the camera.
  * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

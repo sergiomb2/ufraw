@@ -13,6 +13,12 @@
 #ifndef _UFRAW_H
 #define _UFRAW_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include "uf_glib.h"
+
 #ifdef HAVE_LENSFUN
 #include <lensfun.h>
 #endif /* HAVE_LENSFUN */
@@ -310,6 +316,10 @@ extern const char *file_type[];
  * It should be set in every UFRaw main() */
 extern char *ufraw_binary;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* prototypes for functions in ufraw_ufraw.c */
 ufraw_data *ufraw_open(char *filename);
 int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf,conf_data *cmd);
@@ -451,6 +461,10 @@ void ufraw_icons_init();
 int ufraw_exif_read_input(ufraw_data *uf);
 int ufraw_exif_prepare_output(ufraw_data *uf);
 int ufraw_exif_write(ufraw_data *uf);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 /* status numbers from DCRaw and UFRaw */
 #define UFRAW_SUCCESS 0

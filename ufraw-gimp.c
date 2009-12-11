@@ -15,12 +15,7 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <string.h>
-#include "uf_glib.h"
+#include "ufraw.h"
 #include "uf_gtk.h"
 #ifdef UFRAW_CINEPAINT
 /* Bypass a bug in CinePaint header files */
@@ -41,7 +36,7 @@ typedef GimpRunModeType GimpRunMode;
 #define PLUGIN_MODE 1
 #endif
 #include <glib/gi18n.h>
-#include "ufraw.h"
+#include <string.h>
 
 void query();
 void run(GIMP_CONST gchar *name,

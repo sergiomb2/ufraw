@@ -10,13 +10,8 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <string.h>
-#include <glib.h>
 #include "ufraw.h"
+#include <string.h>
 
 /*
  * Every ufraw internal function that might fail should return a status

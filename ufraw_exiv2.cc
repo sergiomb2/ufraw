@@ -12,14 +12,7 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-extern "C" {
-#include "uf_glib.h"
 #include "ufraw.h"
-}
 
 #ifdef HAVE_EXIV2
 #include <exiv2/image.hpp>

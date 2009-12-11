@@ -34,18 +34,17 @@
 //Define this if using with UFRaw
 #define __WITH_UFRAW__
 
-#include "nikon_curve.h"
 
 #ifdef __WITH_UFRAW__
-    #include "uf_glib.h"
-    #include "ufraw.h"
+#include "ufraw.h"
 #else
-    #define MAX(a,b) ((a) > (b) ? (a) : (b))
-    #define MIN(a,b) ((a) < (b) ? (a) : (b))
-    #define g_fopen fopen
+#include "nikon_curve.h"
+#include <stdio.h>
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define g_fopen fopen
 #endif
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <math.h>
 #include <errno.h>

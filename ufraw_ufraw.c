@@ -10,10 +10,9 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
+#include "ufraw.h"
+#include "dcraw_api.h"
+#include <glib/gi18n.h>
 #include <string.h>
 #include <sys/stat.h> /* for fstat() */
 #include <math.h>
@@ -24,14 +23,6 @@
 #ifdef HAVE_LIBBZ2
 #include <bzlib.h>
 #endif
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#include "uf_glib.h"
-#include <glib/gi18n.h>
-#include "dcraw_api.h"
-#include "nikon_curve.h"
-#include "ufraw.h"
 
 void (*ufraw_progress)(int what, int ticks);
 

@@ -10,17 +10,11 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <stdio.h>	/* for printf */
+#include "ufraw.h"
+#include "uf_gtk.h"
 #include <errno.h>
 #include <string.h>
-#include "uf_glib.h"
 #include <glib/gi18n.h>
-#include "uf_gtk.h"
-#include "ufraw.h"
 
 static int ufraw_overwrite_dialog(char *filename, GtkWidget *widget)
 {

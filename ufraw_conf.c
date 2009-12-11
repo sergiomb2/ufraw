@@ -10,18 +10,13 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
+#include "ufraw.h"
 #include <string.h>
 #include <errno.h>
 #include <math.h>
 #include <sys/stat.h> /* needed for fstat() */
 #include <getopt.h>
-#include "uf_glib.h"
 #include <glib/gi18n.h>
-#include "ufraw.h"
 
 #ifdef HAVE_EXIV2
 #include <exiv2/exv_conf.h>

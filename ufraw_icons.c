@@ -10,13 +10,9 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <gtk/gtk.h>
 #include "ufraw.h"
 #include "icons/ufraw_icons.h"
+#include <gtk/gtk.h>
 
 static GdkPixbuf *load_icon(GtkIconFactory *factory,
     const guint8 *icon,const char *name)

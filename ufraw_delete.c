@@ -10,14 +10,10 @@
  * (at your option) any later version.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "ufraw.h"
 #include <string.h>
-#include "uf_glib.h"
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
-#include "ufraw.h"
 
 // Response can be any unique positive integer
 #define UFRAW_RESPONSE_DELETE_SELECTED 1
