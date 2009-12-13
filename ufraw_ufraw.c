@@ -17,6 +17,9 @@
 #include <sys/stat.h> /* for fstat() */
 #include <math.h>
 #include <errno.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 #ifdef HAVE_LIBZ
 #include <zlib.h>
 #endif
