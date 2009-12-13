@@ -1936,7 +1936,8 @@ static void update_shrink_ranges(preview_data *data)
 
     int croppedWidth = CFG->CropX2 - CFG->CropX1;
     int croppedHeight = CFG->CropY2 - CFG->CropY1;
-    if ( fabs(data->shrink-floor(data->shrink+0.0005))<0.0005 ) {
+    if ( data->shrink!=0 &&
+	    fabs(data->shrink-floor(data->shrink+0.0005))<0.0005 ) {
 	data->shrink = floor(data->shrink+0.0005);
 	data->height = croppedHeight / data->shrink;
 	data->width = croppedWidth / data->shrink;
@@ -5066,15 +5067,28 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
     data->LockAspectButton = GTK_TOGGLE_BUTTON(button);
 
     /* Get initial aspect ratio */
-    data->AspectRatio = ((float)data->UF->rotatedWidth) /
-	    data->UF->rotatedHeight;
     refresh_aspect(data);
 
     /* Size/shrink controls */
+    data->shrink = CFG->shrink;
+    if (CFG->size == 0) {
+	data->width = 0;
+	data->height = 0;
+    } else {
+	data->shrink = 0;
+	if ( data->UF->rotatedWidth > data->UF->rotatedHeight) {
+	    data->width = CFG->size;
+	    data->height = CFG->size * data->UF->rotatedHeight /
+		    data->UF->rotatedWidth;
+	} else {
+	    data->width = CFG->size * data->UF->rotatedWidth /
+		    data->UF->rotatedHeight;
+	    data->height = CFG->size;
+	}
+    }
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
     label = gtk_label_new(_("Shrink factor"));
     gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, 0, 0, 0, 0);
-    data->shrink = CFG->shrink;
     data->ShrinkAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(data->shrink,
 	    1, 100, 1, 2, 0));
     g_object_set_data(G_OBJECT(data->ShrinkAdjustment),
@@ -5090,9 +5104,8 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
 
     label = gtk_label_new(_("Height"));
     gtk_table_attach(GTK_TABLE(table), label, 1, 2, 1, 2, 0, 0, 0, 0);
-    data->height = 0;
     data->HeightAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(data->height,
-	    10, 0, 10, 100, 0));
+	    10, 99999, 10, 100, 0));
     g_object_set_data(G_OBJECT(data->HeightAdjustment),
 		"Adjustment-Accuracy", (gpointer)0);
     data->HeightSpin = GTK_SPIN_BUTTON(gtk_spin_button_new(
@@ -5106,9 +5119,8 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
 
     label = gtk_label_new(_("Width"));
     gtk_table_attach(GTK_TABLE(table), label, 3, 4, 1, 2, 0, 0, 0, 0);
-    data->width = 0;
     data->WidthAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(data->width,
-	    10, 0, 10, 100, 0));
+	    10, 99999, 10, 100, 0));
     g_object_set_data(G_OBJECT(data->WidthAdjustment),
 		"Adjustment-Accuracy", (gpointer)0);
     data->WidthSpin = GTK_SPIN_BUTTON(gtk_spin_button_new(
