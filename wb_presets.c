@@ -2657,6 +2657,15 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K-7", Tungsten, 0,		{ 1.074219, 1, 2.414062, 0 } },
   { "PENTAX", "K-7", Flash, 0,			{ 2.035156, 1, 1.109375, 0 } },
 
+  { "PENTAX", "K-m", Daylight, 0,		{ 1.738281, 1, 1.363281, 0 } },
+  { "PENTAX", "K-m", Shade, 0,			{ 2.027344, 1, 1.027344, 0 } },
+  { "PENTAX", "K-m", Cloudy, 0,			{ 1.832031, 1, 1.183594, 0 } },
+  { "PENTAX", "K-m", DaylightFluorescent, 0,	{ 2.183594, 1, 1.250000, 0 } },
+  { "PENTAX", "K-m", NeutralFluorescent, 0,	{ 1.824219, 1, 1.417969, 0 } },
+  { "PENTAX", "K-m", WhiteFluorescent, 0,	{ 1.644531, 1, 1.714844, 0 } },
+  { "PENTAX", "K-m", Tungsten, 0,		{ 1.429687, 1, 1.980469, 0 } },
+  { "PENTAX", "K-m", Flash, 0,			{ 1.738281, 1, 1.363281, 0 } },
+
   { "RICOH", "Caplio GX100", Daylight, 0,	{ 1.910001, 1, 1.820002, 0 } },
   { "RICOH", "Caplio GX100", Cloudy, 0,		{ 2.240003, 1, 1.530002, 0 } },
   { "RICOH", "Caplio GX100", Incandescent, 0,	{ 1.520002, 1, 2.520003, 0 } },
