@@ -6864,9 +6864,9 @@ void CLASS identify()
 	 (cp = strstr(model,"FILE VERSION"))))
      *cp = 0;
   cp = make + strlen(make);		/* Remove trailing spaces */
-  while (make[0] != 0 && *--cp == ' ') *cp = 0;
+  while (*--cp == ' ') *cp = 0;
   cp = model + strlen(model);
-  while (model[0] != 0 && *--cp == ' ') *cp = 0;
+  while (*--cp == ' ') *cp = 0;
   i = strlen(make);			/* Remove make from model */
   if (!strncasecmp (model, make, i) && model[i++] == ' ')
     memmove (model, model+i, 64-i);
