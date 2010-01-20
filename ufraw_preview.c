@@ -1349,7 +1349,7 @@ static gboolean render_spot(preview_data *data)
 	guint8 *outPixie = outBuffer + (y*width + spot.StartX)*outDepth;
 	for (x=spot.StartX;
 	     x<spot.EndX;
-	     x++, rawPixie += rawDepth, outPixie += outDepth) {
+	     x++, rawPixie += rawDepth/2, outPixie += outDepth) {
 	    for (c=0; c<data->UF->colors; c++)
 		rawSum[c] += rawPixie[c];
 	    for (c=0; c<3; c++)
