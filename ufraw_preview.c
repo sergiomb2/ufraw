@@ -5495,22 +5495,9 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     // that will cause the scrollbars to appear.
     preview_width = (uf->rotatedWidth+1) / scale;
     preview_height = (uf->rotatedHeight+1) / scale;
-    if (screen.height<=600) {
-	curveeditorHeight = 192;
-	data->HisMinHeight = 0;
-    } else if (screen.height<700) {
-	curveeditorHeight = 192;
-	data->HisMinHeight = 48;
-    } else if (screen.height<800) {
-	curveeditorHeight = 192;
-	data->HisMinHeight = 64;
-    } else if (screen.height<900) {
-	curveeditorHeight = 192;
-	data->HisMinHeight = 80;
-    } else {
-	curveeditorHeight = 256;
-	data->HisMinHeight = 96;
-    }
+    curveeditorHeight = screen.height<900 ? 192 : 256;
+    data->HisMinHeight = screen.height<900 ? 16*(screen.height-600)/50 : 96;
+    if (data->HisMinHeight<0) data->HisMinHeight = 0;
     previewHBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
     gtk_container_add(GTK_CONTAINER(previewWindow), GTK_WIDGET(previewHBox));
     previewVBox = gtk_vbox_new(FALSE, 0);
