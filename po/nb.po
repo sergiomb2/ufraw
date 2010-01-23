@@ -1,5 +1,5 @@
-# Norwegian Bokm�l translation for UFRaw.
-# Copyright (C) 2006-2009 Udi Fuchs.
+# Norwegian Bokmål translation for UFRaw.
+# Copyright (C) 2006-2010 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 # Alvin Brattli <alvin.brattli@gmail.com>, 2008-2009.
 #
@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-25 17:00+0100\n"
+"POT-Creation-Date: 2010-01-23 06:00+0100\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
