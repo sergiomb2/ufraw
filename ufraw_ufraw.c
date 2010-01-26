@@ -1170,6 +1170,8 @@ static void ufraw_convertshrink(ufraw_data *uf, dcraw_image_data *final)
 	int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
 	int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
 	int cropSize = MAX(cropHeight, cropWidth);
+	// cropSize needs to be a integer multiplier of scale
+	cropSize = cropSize / scale * scale;
 	if ( uf->conf->size > cropSize ) {
 	    ufraw_message(UFRAW_ERROR, _("Can not downsize from %d to %d."),
 		    cropSize, uf->conf->size);
@@ -1421,6 +1423,8 @@ static void ufraw_convert_prepare_first_buffer(ufraw_data *uf,
 	int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
 	int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
 	int cropSize = MAX(cropHeight, cropWidth);
+	// cropSize needs to be a integer multiplier of scale
+	cropSize = cropSize / scale * scale;
 	if ( uf->conf->size > cropSize ) {
 	    ufraw_message(UFRAW_ERROR, _("Can not downsize from %d to %d."),
 		    cropSize, uf->conf->size);
