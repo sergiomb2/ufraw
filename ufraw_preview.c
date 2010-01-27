@@ -1466,19 +1466,9 @@ static void update_scales(preview_data *data)
     gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
 
     int i;
-    GList *l;
     double max;
     char tmp[max_name];
 
-    gtk_combo_box_set_active(data->WBCombo, 0);
-    for (i=0, l=data->WBPresets; l!=NULL; i++, l=g_list_next(l))
-	if (!strcmp(CFG->wb, l->data))
-	    gtk_combo_box_set_active(data->WBCombo, i);
-
-    if (data->WBTuningAdjustment!=NULL)
-	gtk_adjustment_set_value(data->WBTuningAdjustment, CFG->WBTuning);
-    gtk_adjustment_set_value(data->TemperatureAdjustment, CFG->temperature);
-    gtk_adjustment_set_value(data->GreenAdjustment, CFG->green);
     gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
     gtk_adjustment_set_value(data->ThresholdAdjustment, CFG->threshold);
     gtk_adjustment_set_value(data->HotpixelAdjustment, CFG->hotpixel);
@@ -1488,9 +1478,6 @@ static void update_scales(preview_data *data)
 	    CFG->profile[0][CFG->profileIndex[0]].gamma);
     gtk_adjustment_set_value(data->LinearAdjustment,
 	    CFG->profile[0][CFG->profileIndex[0]].linear);
-    for (i=0; i<data->UF->colors; i++)
-	gtk_adjustment_set_value(data->ChannelAdjustment[i],
-		CFG->chanMul[i]);
 
     uf_combo_box_set_data(data->BitDepthCombo,
 	&CFG->profile[out_profile][CFG->profileIndex[out_profile]].BitDepth);
@@ -1499,14 +1486,6 @@ static void update_scales(preview_data *data)
     curveeditor_widget_set_curve(data->CurveWidget,
 	    &CFG->curve[CFG->curveIndex]);
 
-    gtk_widget_set_sensitive(data->ResetWBButton,
-	    ( strcmp(CFG->wb, data->initialWB)
-	    ||fabs(CFG->temperature-data->initialTemperature)>1
-	    ||fabs(CFG->green-data->initialGreen)>0.001
-	    ||CFG->chanMul[0]!=data->initialChanMul[0]
-	    ||CFG->chanMul[1]!=data->initialChanMul[1]
-	    ||CFG->chanMul[2]!=data->initialChanMul[2]
-	    ||CFG->chanMul[3]!=data->initialChanMul[3] ) );
     gtk_widget_set_sensitive(data->ResetGammaButton,
 	    fabs( profile_default_gamma(&CFG->profile[0][CFG->profileIndex[0]])
 		- CFG->profile[0][CFG->profileIndex[0]].gamma) > 0.001);
@@ -1621,18 +1600,13 @@ static void spot_wb_event(GtkWidget *widget, gpointer user_data)
 		rgb[c] += pixie[c];
 	}
     for (c=0; c<4; c++) rgb[c] = MAX(rgb[c], 1);
+    double chanMulArray[4];
     for (c=0; c<data->UF->colors; c++)
-	CFG->chanMul[c] = (double)spot.Size * data->UF->rgbMax / rgb[c];
-    if (data->UF->colors<4) CFG->chanMul[3] = 0.0;
-    ufraw_message(UFRAW_SET_LOG,
-	    "spot_wb: channel multipliers = { %.0f, %.0f, %.0f, %.0f }\n",
-	    CFG->chanMul[0], CFG->chanMul[1], CFG->chanMul[2], CFG->chanMul[3]);
-    g_strlcpy(CFG->wb, spot_wb, max_name);
-    ufraw_set_wb(data->UF);
-    if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
-    if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
-    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
-    update_scales(data);
+	chanMulArray[c] = (double)spot.Size * data->UF->rgbMax / rgb[c];
+    if (data->UF->colors<4) chanMulArray[3] = chanMulArray[1];
+    UFObject *chanMul = ufgroup_element(CFG->ufobject,
+            ufChannelMultipliers);
+    ufnumber_array_set(chanMul, chanMulArray);
 }
 
 static void remove_hue_event(GtkWidget *widget, gpointer user_data)
@@ -2624,15 +2598,6 @@ static void button_update(GtkWidget *button, gpointer user_data)
     user_data = user_data;
     int i;
 
-    if (button==data->ResetWBButton) {
-	int c;
-	g_strlcpy(CFG->wb, data->initialWB, max_name);
-	CFG->temperature = data->initialTemperature;
-	CFG->green = data->initialGreen;
-	for (c=0; c<4; c++) CFG->chanMul[c] = data->initialChanMul[c];
-
-	ufraw_invalidate_whitebalance_layer(data->UF);
-    }
     if (button==data->ResetGammaButton) {
 	CFG->profile[0][CFG->profileIndex[0]].gamma =
 		profile_default_gamma(&CFG->profile[0][CFG->profileIndex[0]]);
@@ -3002,20 +2967,7 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
     else
 	*valuep = gtk_adjustment_get_value(adj);
 
-    if (valuep==&CFG->temperature || valuep==&CFG->green) {
-	g_strlcpy(CFG->wb, manual_wb, max_name);
-	ufraw_set_wb(data->UF);
-    } else if (valuep>=&CFG->chanMul[0] && valuep<=&CFG->chanMul[3]) {
-	g_strlcpy(CFG->wb, spot_wb, max_name);
-	ufraw_set_wb(data->UF);
-    } else if (valuep==&CFG->WBTuning) {
-        if (strcmp(data->UF->conf->wb, auto_wb)==0 ||
-            strcmp(data->UF->conf->wb, camera_wb)==0)
-            /* Prevent recalculation of Camera/Auto WB on WBTuning events */
-            data->UF->conf->WBTuning = 0;
-        else
-	    ufraw_set_wb(data->UF);
-    } else if (valuep==&CFG->exposure) {
+    if (valuep==&CFG->exposure) {
         CFG->autoExposure = FALSE;
         if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     } else if (valuep==&CFG->threshold) {
@@ -3048,7 +3000,7 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
     update_scales(data);
 }
 
-GtkWidget *stock_image_button(const gchar *stock_id, GtkIconSize size,
+static GtkWidget *stock_image_button(const gchar *stock_id, GtkIconSize size,
 	const char *tip, GCallback callback, void *data)
 {
     GtkWidget *button;
@@ -3159,6 +3111,14 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
     update_scales(data);
 }
 
+void ufraw_image_changed(UFObject *obj, UFEventType type)
+{
+    if (type != uf_value_changed)
+	return;
+    preview_data *data = ufobject_user_data(obj);
+    render_preview(data);
+}
+
 static void adjustment_reset_rotation(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
@@ -3183,6 +3143,36 @@ GtkWidget *reset_button(const char *tip, GCallback callback, void *data)
 {
     return stock_icon_button(GTK_STOCK_REFRESH, tip, callback, data);
 }
+
+void ufnumber_adjustment_scale(UFObject *obj,
+    GtkTable *table, int x, int y, const char *label, const char *tip)
+{
+    GtkWidget *w, *l, *icon;
+
+    if ( label!=NULL ) {
+	w = gtk_event_box_new();
+	if (label[0] == '@') {
+	    icon = gtk_image_new_from_stock(label + 1,
+		    GTK_ICON_SIZE_LARGE_TOOLBAR);
+	    gtk_container_add(GTK_CONTAINER(w), icon);
+	} else {
+	    l = gtk_label_new(label);
+	    gtk_misc_set_alignment(GTK_MISC(l), 1, 0.5);
+	    gtk_container_add(GTK_CONTAINER(w), l);
+	}
+	gtk_table_attach(table, w, x, x+1, y, y+1,
+		GTK_SHRINK|GTK_FILL, 0, 0, 0);
+	uf_widget_set_tooltip(w, tip);
+    }
+    w = ufnumber_hscale_new(obj);
+    gtk_table_attach(table, w, x+1, x+5, y, y+1, GTK_EXPAND|GTK_FILL, 0, 0, 0);
+    uf_widget_set_tooltip(w, tip);
+
+    w = ufnumber_spin_button_new(obj);
+    gtk_table_attach(table, w, x+5, x+7, y, y+1, GTK_SHRINK|GTK_FILL, 0, 0, 0);
+    uf_widget_set_tooltip(w, tip);
+}
+
 
 GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y,
     const char *label, double value, void *valuep, double min, double max,
@@ -3334,12 +3324,8 @@ static void combo_update(GtkWidget *combo, gint *valuep)
     preview_data *data = get_preview_data(combo);
     if (data->FreezeDialog) return;
 
-    if ((char *)valuep==CFG->wb) {
-	int i = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
-	g_strlcpy(CFG->wb, g_list_nth_data(data->WBPresets, i), max_name);
-    } else {
-	*valuep = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
-    }
+    *valuep = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
+ 
     if (valuep==&CFG->BaseCurveIndex) {
 	if (!CFG_cameraCurve && CFG->BaseCurveIndex>camera_curve-2)
 	    CFG->BaseCurveIndex += 2;
@@ -3348,8 +3334,6 @@ static void combo_update(GtkWidget *combo, gint *valuep)
     } else if (valuep==&CFG->curveIndex) {
 	curveeditor_widget_set_curve(data->CurveWidget,
 		&CFG->curve[CFG->curveIndex]);
-    } else if ((char *)valuep==CFG->wb) {
-	ufraw_set_wb(data->UF);
     }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
@@ -4283,6 +4267,7 @@ static void whitebalance_fill_interface(preview_data *data,
     GtkBox *box;
     GtkWidget *frame;
     ufraw_data *uf = data->UF;
+    UFObject *image = CFG->ufobject;
 
     /* Start of White Balance setting page */
 
@@ -4290,72 +4275,18 @@ static void whitebalance_fill_interface(preview_data *data,
     subTable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
     gtk_table_attach(table, GTK_WIDGET(subTable), 0, 1, 0, 1,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
-//    label = gtk_label_new("White balance");
-//    gtk_table_attach(subTable, label, 0, 1, 0 , 1, 0, 0, 0, 0);
-    data->WBCombo = GTK_COMBO_BOX(uf_combo_box_new_text());
-    data->WBPresets = NULL;
-    const wb_data *lastPreset = NULL;
-    gboolean make_model_match = FALSE, make_model_fine_tuning = FALSE;
-    char model[max_name];
-    if ( strcmp(data->UF->conf->make, "MINOLTA")==0 &&
-	    ( strncmp(uf->conf->model, "ALPHA", 5)==0 ||
-	      strncmp(uf->conf->model, "MAXXUM", 6)==0 ) ) {
-	/* Canonize Minolta model names (copied from dcraw) */
-	g_snprintf(model, max_name, "DYNAX %s",
-	uf->conf->model+6+(uf->conf->model[0]=='M'));
-    } else {
-	g_strlcpy(model, uf->conf->model, max_name);
-    }
-    for (i=0; i<wb_preset_count; i++) {
-	if (strcmp(wb_preset[i].make, "")==0) {
-	    /* Common presets */
-	    data->WBPresets = g_list_append(data->WBPresets,
-		    (void*)wb_preset[i].name);
-	    gtk_combo_box_append_text(data->WBCombo, _(wb_preset[i].name));
-	} else if ( (strcmp(wb_preset[i].make, uf->conf->make)==0 ) &&
-		    (strcmp(wb_preset[i].model, model)==0)) {
-	    /* Camera specific presets */
-	    make_model_match = TRUE;
-	    if ( lastPreset==NULL ||
-		strcmp(wb_preset[i].name, lastPreset->name)!=0 ) {
-		data->WBPresets = g_list_append(data->WBPresets,
-			(void*)wb_preset[i].name);
-		gtk_combo_box_append_text(data->WBCombo, _(wb_preset[i].name));
-	    } else {
-		/* Fine tuning presets */
-		make_model_fine_tuning = TRUE;
-	    }
-	    lastPreset = &wb_preset[i];
-	}
-    }
-    GList *l;
-    gtk_combo_box_set_active(data->WBCombo, 0);
-    for (i=0, l=data->WBPresets; g_list_next(l)!=NULL; i++, l=g_list_next(l))
-	if (!strcmp(CFG->wb, l->data))
-	    gtk_combo_box_set_active(data->WBCombo, i);
-    g_signal_connect(G_OBJECT(data->WBCombo), "changed",
-	    G_CALLBACK(combo_update), CFG->wb);
-    event_box = gtk_event_box_new();
-    gtk_container_add(GTK_CONTAINER(event_box), GTK_WIDGET(data->WBCombo));
-    if ( make_model_fine_tuning || !make_model_match)
-	gtk_table_attach(subTable, event_box, 0, 6, 0, 1, GTK_FILL, 0, 0, 0);
-    else
-	gtk_table_attach(subTable, event_box, 0, 7, 0, 1, GTK_FILL, 0, 0, 0);
-    uf_widget_set_tooltip(event_box, _("White Balance"));
 
-    data->WBTuningAdjustment = NULL;
-    if (make_model_fine_tuning) {
-	data->WBTuningAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(
-		CFG->WBTuning, -9, 9, 1, 1, 0));
-	g_object_set_data(G_OBJECT(data->WBTuningAdjustment),
-		"Adjustment-Accuracy", (gpointer)0);
-	button = gtk_spin_button_new(data->WBTuningAdjustment, 1, 0);
-    	g_object_set_data(G_OBJECT(data->WBTuningAdjustment),
-		"Parent-Widget", button);
-	gtk_table_attach(subTable, button, 6, 7, 0, 1, GTK_SHRINK, 0, 0, 0);
-	g_signal_connect(G_OBJECT(data->WBTuningAdjustment), "value-changed",
-		G_CALLBACK(adjustment_update), &CFG->WBTuning);
-    } else if (!make_model_match) {
+    combo = GTK_COMBO_BOX(ufstring_combo_box_new(ufgroup_element(image, ufWB)));
+    gboolean make_model_match = uf->wb_presets_make_model_match;
+    gtk_table_attach(subTable, GTK_WIDGET(combo), 0, 5+make_model_match, 0, 1,
+	    GTK_FILL, 0, 0, 0);
+    uf_widget_set_tooltip(GTK_WIDGET(combo), _("White Balance"));
+
+    button = ufnumber_spin_button_new(
+	    ufgroup_element(image, ufWBFineTuning));
+    gtk_table_attach(subTable, button, 5+make_model_match, 6+make_model_match,
+	    0, 1, GTK_SHRINK, 0, 0, 0);
+    if (!make_model_match) {
 	event_box = gtk_event_box_new();
 	label = gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING,
 		GTK_ICON_SIZE_BUTTON);
@@ -4366,20 +4297,18 @@ static void whitebalance_fill_interface(preview_data *data,
 	      "Check UFRaw's webpage for information on how to get your\n"
 	      "camera supported."));
     }
-    data->ResetWBButton = reset_button(
-	_("Reset white balance to initial value"),
-	G_CALLBACK(button_update), NULL);
-    gtk_table_attach(subTable, data->ResetWBButton, 7, 8, 0, 1, 0, 0, 0, 0);
+    GtkWidget *resetWB = ufobject_reset_button_new(
+	_("Reset white balance to initial value"));
+    ufobject_reset_button_add(resetWB, ufgroup_element(image, ufWB));
+    ufobject_reset_button_add(resetWB, ufgroup_element(image, ufWBFineTuning));
+    gtk_table_attach(subTable, resetWB, 7, 8, 0, 1, 0, 0, 0, 0);
 
-    data->TemperatureAdjustment = adjustment_scale(subTable, 0, 1,
-	    _("Temperature"), CFG->temperature, &CFG->temperature,
-	    2000, 15000, 50, 200, 0, FALSE,
-	    _("White balance color temperature (K)"),
-	    G_CALLBACK(adjustment_update), NULL, NULL, NULL);
-    data->GreenAdjustment = adjustment_scale(subTable, 0, 2, _("Green"),
-	    CFG->green, &CFG->green, 0.2, 2.5, 0.010, 0.050, 3, FALSE,
-	    _("Green component"),
-	    G_CALLBACK(adjustment_update), NULL, NULL, NULL);
+    ufobject_set_user_data(image, data);
+    ufobject_set_changed_event_handle(image, ufraw_image_changed);
+    ufnumber_adjustment_scale(ufgroup_element(image, ufTemperature), subTable,
+	    0, 1, _("Temperature"), _("White balance color temperature (K)"));
+    ufnumber_adjustment_scale(ufgroup_element(image, ufGreen), subTable,
+	    0, 2, _("Green"), _("Green component"));
     // Spot WB button:
     button = stock_icon_button(GTK_STOCK_COLOR_PICKER,
 	_("Select a spot on the preview image to apply spot white balance"),
@@ -4391,17 +4320,12 @@ static void whitebalance_fill_interface(preview_data *data,
     label = gtk_label_new(_("Chan. multipliers:"));
     gtk_box_pack_start(subbox, label, 0, 0, 0);
     for (i=0; i<data->UF->colors; i++) {
-	data->ChannelAdjustment[i] = GTK_ADJUSTMENT(gtk_adjustment_new(
-		CFG->chanMul[i], 0.5, 99.999, 0.001, 0.001, 0));
-	g_object_set_data(G_OBJECT(data->ChannelAdjustment[i]),
-		"Adjustment-Accuracy", (gpointer)3);
-	button = gtk_spin_button_new(data->ChannelAdjustment[i], 0.001, 3);
-    	g_object_set_data(G_OBJECT(data->ChannelAdjustment[i]),
-		"Parent-Widget", button);
+	button = ufnumber_array_spin_button_new(
+		ufgroup_element(image, ufChannelMultipliers), i);
 	gtk_box_pack_start(subbox, button, 0, 0, 0);
-	g_signal_connect(G_OBJECT(data->ChannelAdjustment[i]), "value-changed",
-		G_CALLBACK(adjustment_update), &CFG->chanMul[i]);
     }
+    ufobject_reset_button_add(resetWB,
+	    ufgroup_element(image, ufChannelMultipliers));
     /* Interpolation is temporarily in the WB page */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 //    box = GTK_BOX(gtk_hbox_new(FALSE, 6));
@@ -5809,9 +5733,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     // Should only happen if ufraw_load_raw() failed:
     if (data->UF->rgbMax == 0)
 	data->UF->rgbMax = 0xffff; // prevents division by zero
-    for (i=0; i<4; i++)
-	if (data->UF->conf->chanMul[i] < 0)
-	    data->UF->conf->chanMul[i] = 1;
     /* After window size was set, the user may want to re-size it.
      * This function is called after the progress-bar text was set,
      * to make sure that there are no scroll-bars on the initial preview. */
@@ -5829,10 +5750,10 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     }
 
     /* Save initial WB data for the sake of "Reset WB" */
-    g_strlcpy(data->initialWB, CFG->wb, max_name);
-    data->initialTemperature = CFG->temperature;
-    data->initialGreen = CFG->green;
-    for (i=0; i<4; i++) data->initialChanMul[i] = CFG->chanMul[i];
+    UFObject *Image = CFG->ufobject;
+    ufobject_set_default(ufgroup_element(Image, ufChannelMultipliers));
+    ufobject_set_default(ufgroup_element(Image, ufWB));
+    ufobject_set_default(ufgroup_element(Image, ufWBFineTuning));
 
     /* Update the curve editor in case ufraw_convert_image() modified it. */
     curveeditor_widget_set_curve(data->CurveWidget,
@@ -5929,7 +5850,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     }
     // UFRAW_RESPONSE_DELETE requires no special action
     ufraw_close(data->UF);
-    g_list_free(data->WBPresets);
     g_free(data->SpotLabels);
     g_free(data->AvrLabels);
     g_free(data->DevLabels);

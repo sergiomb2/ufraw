@@ -130,5 +130,6 @@ int main (int argc, char **argv)
     if (dummyWindow!=NULL) gtk_widget_destroy(dummyWindow);
 
 //    ufraw_close(cmd.darkframe);
+    ufobject_delete(rc.ufobject);
     exit(exitCode);
 }

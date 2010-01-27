@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-23 06:00+0100\n"
+"POT-Creation-Date: 2010-01-27 13:57-0600\n"
 "PO-Revision-Date: 2009-10-13 21:13+0200\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -70,10 +70,8 @@ msgstr "Mostrar archivos ocultos"
 
 #. Internal data
 #. confSize, version
+#. ufobject
 #. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
 #. wavelet denoising threshold
 #. hotpixel sensitivity
 #. global contrast
@@ -519,14 +517,6 @@ msgstr "--batch está obsoleta. Utilice ufraw-batch en su lugar."
 #, c-format
 msgid "getopt returned character code 0%o ??"
 msgstr "getopt devolvió el código de caracter 0%o ??"
-
-#, c-format
-msgid "'%s' is not a valid white balance setting."
-msgstr "'%s' no es un valor válido para el balance de blancos."
-
-#, c-format
-msgid "--temperature and --green options override the --wb=%s option."
-msgstr "las opciones --temperature y --green anulan la opción --wb=%s."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -1442,6 +1432,14 @@ msgstr "Error al crear el archivo temporal."
 msgid "Error activating Gimp."
 msgstr "Error activando Gimp."
 
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "las opciones --temperature y --green anulan la opción --wb=%s."
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "'%s' no es un valor válido para el balance de blancos."
+
 msgid "Remote URI is not supported"
 msgstr "URI remotos no están soportados"
 
@@ -1621,6 +1619,14 @@ msgstr "Viñeteo óptico"
 
 msgid "Lateral chromatic aberration"
 msgstr "Aberración cromática lateral"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

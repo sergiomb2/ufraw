@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-23 06:00+0100\n"
+"POT-Creation-Date: 2010-01-27 13:57-0600\n"
 "PO-Revision-Date: 2009-11-28 00:03+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -68,10 +68,8 @@ msgstr "Voir fichiers cachés"
 
 #. Internal data
 #. confSize, version
+#. ufobject
 #. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
 #. wavelet denoising threshold
 #. hotpixel sensitivity
 #. global contrast
@@ -530,14 +528,6 @@ msgstr "--batch est obsolète. Utiliser ufraw-batch à la place."
 #, c-format
 msgid "getopt returned character code 0%o ??"
 msgstr "getopt retourne le code de caractère 0%o ??"
-
-#, c-format
-msgid "'%s' is not a valid white balance setting."
-msgstr "'%s' n'est pas un paramètre de balance des blancs valide."
-
-#, c-format
-msgid "--temperature and --green options override the --wb=%s option."
-msgstr "Les options --temperature et --green supplantent l'option --wb=%s."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -1477,6 +1467,14 @@ msgstr "Erreur en créant le fichier temporaire."
 msgid "Error activating Gimp."
 msgstr "Erreur à l'activation de Gimp."
 
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "Les options --temperature et --green supplantent l'option --wb=%s."
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "'%s' n'est pas un paramètre de balance des blancs valide."
+
 msgid "Remote URI is not supported"
 msgstr "URI distante non supportée"
 
@@ -1656,6 +1654,14 @@ msgstr "Vignettage optique"
 
 msgid "Lateral chromatic aberration"
 msgstr "Aberration chromatiques latérales"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

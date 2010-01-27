@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-23 06:00+0100\n"
+"POT-Creation-Date: 2010-01-27 13:57-0600\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -72,10 +72,8 @@ msgstr "Прикажи скривене датотеке"
 
 #. Internal data
 #. confSize, version
+#. ufobject
 #. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
 #. wavelet denoising threshold
 #. hotpixel sensitivity
 #. global contrast
@@ -519,14 +517,6 @@ msgstr "--batch могућност је превазиђена. Користит
 #, c-format
 msgid "getopt returned character code 0%o ??"
 msgstr "getopt је вратио код карактера 0%o ??"
-
-#, c-format
-msgid "'%s' is not a valid white balance setting."
-msgstr "„%s“ није исправна вредност равнотеже беле."
-
-#, c-format
-msgid "--temperature and --green options override the --wb=%s option."
-msgstr "могућности --temperature и --green имају предност над --wb=%s."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -1438,6 +1428,14 @@ msgstr "Грешка при прављењу привремене датотек
 msgid "Error activating Gimp."
 msgstr "Грешка у покретању Гимпа."
 
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "могућности --temperature и --green имају предност над --wb=%s."
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "„%s“ није исправна вредност равнотеже беле."
+
 msgid "Remote URI is not supported"
 msgstr "Удаљене адресе нису подржане"
 
@@ -1614,6 +1612,14 @@ msgstr "Оптичко вињетарење"
 
 msgid "Lateral chromatic aberration"
 msgstr "Бочне хроматске аберације"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

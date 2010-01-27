@@ -26,10 +26,8 @@ const conf_data conf_default = {
     /* Internal data */
     sizeof(conf_data), 7, /* confSize, version */
 
+    NULL, /* ufobject */
     /* Image manipulation settings */
-    camera_wb, 0, /* wb, WBTuning */
-    6500, 1.0, /* temperature, green */
-    { -1.0, -1.0, -1.0, -1.0 }, /* chanMul[] */
     0.0, /* wavelet denoising threshold */
     0.0, /* hotpixel sensitivity */
     1.0, /* global contrast */
@@ -378,6 +376,16 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     if (len>max_path-1) len=max_path-1;
     strncpy(temp, text, len);
     temp[len] = '\0';
+
+    UFObject *image;
+    if (ufobject_name(c->ufobject) == ufRawImage)
+	image = c->ufobject;
+    else
+	image = ufgroup_element(c->ufobject, ufRawImage);
+    if (ufgroup_has(image, element)) {
+	UFObject *obj = ufgroup_element(image, element);
+	ufobject_set_string(obj, text);
+    }
     if (c->curveCount<=0) {
 	i = - c->curveCount;
 	/* for backward compatibility with ufraw-0.4 */
@@ -582,34 +590,6 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	sscanf(temp, "%d", &c->RememberOutputPath);
     if (!strcmp("WindowMaximized", element))
 	sscanf(temp, "%d", &c->WindowMaximized);
-    if (!strcmp("WB", element)) {
-	/* Keep compatebility with old numbers from ufraw-0.6 */
-	if (sscanf(temp, "%d", &i)==1) {
-	    switch (i) {
-		case -1: g_strlcpy(c->wb, spot_wb, max_name); break;
-		case 0: g_strlcpy(c->wb, manual_wb, max_name); break;
-		case 1: g_strlcpy(c->wb, camera_wb, max_name); break;
-		case 2: g_strlcpy(c->wb, auto_wb, max_name); break;
-		case 3: g_strlcpy(c->wb, "Incandescent", max_name); break;
-		case 4: g_strlcpy(c->wb, "Fluorescent", max_name); break;
-		case 5: g_strlcpy(c->wb, "Direct sunlight", max_name);break;
-		case 6: g_strlcpy(c->wb, "Flash", max_name); break;
-		case 7: g_strlcpy(c->wb, "Cloudy", max_name); break;
-		case 8: g_strlcpy(c->wb, "Shade", max_name); break;
-		default: g_strlcpy(c->wb, "", max_name);
-	    }
-	} else {
-	    g_strlcpy(c->wb, temp, max_name);
-	}
-    }
-    if (!strcmp("WBFineTuning", element)) sscanf(temp, "%lf", &c->WBTuning);
-    if (!strcmp("Temperature", element)) sscanf(temp, "%lf", &c->temperature);
-    if (!strcmp("Green", element)) sscanf(temp, "%lf", &c->green);
-    if (!strcmp("ChannelMultipliers", element)) {
-	i = sscanf(temp, "%lf %lf %lf %lf",
-		&c->chanMul[0], &c->chanMul[1], &c->chanMul[2], &c->chanMul[3]);
-	if (i<4) c->chanMul[3] = 0.0;
-    }
     if (!strcmp("WaveletDenoisingThreshold", element))
 	sscanf(temp, "%lf", &c->threshold);
     if (!strcmp("HotpixelSensitivity", element))
@@ -726,6 +706,10 @@ int conf_load(conf_data *c, const char *IDFilename)
     int i;
 
     conf_init(c);
+    if (IDFilename == NULL)
+	c->ufobject = ufraw_resources_new();
+    else
+	c->ufobject = ufraw_image_new();
     if (IDFilename==NULL) {
 	hd = uf_get_home_dir();
 	confFilename = g_build_filename(hd, ".ufrawrc", NULL);
@@ -914,25 +898,17 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     if (c->smoothing!=conf_default.smoothing)
 	buf = uf_markup_buf(buf, "<ColorSmoothing>%d</ColorSmoothing>\n",
 		c->smoothing);
-    if (strcmp(c->wb, conf_default.wb))
-	buf = uf_markup_buf(buf, "<WB>%s</WB>\n", c->wb);
-    if (c->WBTuning!=conf_default.WBTuning)
-	buf = uf_markup_buf(buf, "<WBFineTuning>%d</WBFineTuning>\n",
-		(int)floor(c->WBTuning));
-    buf = uf_markup_buf(buf,
-	    "<Temperature>%d</Temperature>\n", (int)floor(c->temperature));
-    buf = uf_markup_buf(buf,
-	    "<Green>%lf</Green>\n", c->green);
-    if (c->chanMul[0]>0.0) {
-	if (c->chanMul[3]==0.0) {
-	    buf = uf_markup_buf(buf,
-		    "<ChannelMultipliers>%f %f %f</ChannelMultipliers>\n",
-		    c->chanMul[0], c->chanMul[1], c->chanMul[2]);
-	} else {
-	    buf = uf_markup_buf(buf,
-		    "<ChannelMultipliers>%f %f %f %f</ChannelMultipliers>\n",
-		    c->chanMul[0], c->chanMul[1], c->chanMul[2], c->chanMul[3]);
-	}
+    UFObject *image;
+    if (ufobject_name(c->ufobject) == ufRawImage)
+	image = c->ufobject;
+    else
+	image = ufgroup_element(c->ufobject, ufRawImage);
+    {
+	char *xml = ufobject_xml(image, "");
+	char *newbuf = g_strconcat(buf, xml, NULL);
+	g_free(xml);
+	g_free(buf);
+	buf = newbuf;
     }
     if (c->threshold!=conf_default.threshold)
 	buf = uf_markup_buf(buf,
@@ -1216,13 +1192,15 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
 {
     int i, j;
 
+    UFObject *dstImage;
+    if (ufobject_name(dst->ufobject) == ufRawImage)
+	dstImage = dst->ufobject;
+    else
+	dstImage = ufgroup_element(dst->ufobject, ufRawImage);
+    ufobject_copy(dstImage, src->ufobject);
+
     dst->interpolation = src->interpolation;
     dst->smoothing = src->smoothing;
-    g_strlcpy(dst->wb, src->wb, max_name);
-    dst->WBTuning = src->WBTuning;
-    dst->temperature = src->temperature;
-    dst->green = src->green;
-    for (i=0; i<4; i++) dst->chanMul[i] = src->chanMul[i];
     /* make and model are 'part of' ChanMul,
      * since on different make and model ChanMul are meaningless */
     g_strlcpy(dst->make, src->make, max_name);
@@ -1386,6 +1364,9 @@ void conf_copy_save(conf_data *dst, const conf_data *src)
 
 int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 {
+    UFObject *cmdImage = ufgroup_element(cmd->ufobject, ufRawImage);
+    ufobject_copy(conf->ufobject, cmdImage);
+
     if (cmd->overwrite!=-1) conf->overwrite = cmd->overwrite;
     if (cmd->WindowMaximized!=-1) conf->WindowMaximized = cmd->WindowMaximized;
     if (cmd->restoreDetails!=-1)
@@ -1417,11 +1398,6 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 	conf->exposure = cmd->exposure;
 	conf->autoExposure = disabled_state;
     }
-    if (strlen(cmd->wb)>0) g_strlcpy(conf->wb, cmd->wb, max_name);
-    if (cmd->temperature!=NULLF) conf->temperature = cmd->temperature;
-    if (cmd->green!=NULLF) conf->green = cmd->green;
-    if (cmd->temperature!=NULLF || cmd->green!=NULLF)
-	g_strlcpy(conf->wb, manual_wb, max_name);
     if (cmd->profile[0][0].gamma!=NULLF)
 	conf->profile[0][conf->profileIndex[0]].gamma =
 		cmd->profile[0][0].gamma;
@@ -1645,9 +1621,10 @@ EXV_PACKAGE_VERSION "\n"
  */
 int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 {
+    cmd->ufobject = ufraw_command_line_new();
+    UFObject *cmdImage = ufgroup_element(cmd->ufobject, ufRawImage);
     int index=0, c, i;
     char *base;
-    char *wbName=NULL;
     char *baseCurveName=NULL, *baseCurveFile=NULL,
 	 *curveName=NULL, *curveFile=NULL, *outTypeName=NULL, *rotateName=NULL,
 	 *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL,
@@ -1707,7 +1684,11 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{ "batch", 0, 0, 'b'},
 	{ 0, 0, 0, 0}
     };
-    void *optPointer[] = { &wbName, &cmd->temperature, &cmd->green,
+    UFObject *tmpImage = ufraw_image_new();
+    void *optPointer[] = {
+	ufgroup_element(tmpImage, ufWB),
+	ufgroup_element(tmpImage, ufTemperature),
+	ufgroup_element(tmpImage, ufGreen),
 	&baseCurveName, &baseCurveFile, &curveName, &curveFile,
 	&cmd->profile[0][0].gamma, &cmd->profile[0][0].linear,
 	&cmd->saturation,
@@ -1737,8 +1718,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->black=NULLF;
     cmd->threshold=NULLF;
     cmd->exposure=NULLF;
-    cmd->temperature=NULLF;
-    cmd->green=NULLF;
     cmd->shrink = NULLF;
     cmd->size = NULLF;
     cmd->compression=NULLF;
@@ -1754,6 +1733,18 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	c = getopt_long (*argc, *argv, "h", options, &index);
 	if (c == -1) break;
 	switch (c) {
+	case 'w': // --wb
+	case 't': // --temperature
+	case 'g': // -- green
+	    if (!ufobject_set_string(optPointer[index], optarg)) {
+		ufraw_message(UFRAW_ERROR,
+			_("'%s' is not a valid value for the --%s option."),
+			optarg, options[index].name);
+		return -1;
+	    }
+	    if (!ufgroup_add(cmdImage, optPointer[index]))
+		return -1;
+	    break;
 	case 'e':
 	    if (!strcmp(optarg, "auto")) {
 		cmd->autoExposure = apply_state;
@@ -1764,8 +1755,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 		cmd->autoBlack = apply_state;
 		break;
 	    }
-	case 't':
-	case 'g':
 	case 'G':
 	case 'L':
 	case 's':
@@ -1794,7 +1783,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 		return -1;
 	    }
 	    break;
-	case 'w':
 	case 'B':
 	case 'S':
 	case 'c':
@@ -1850,23 +1838,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    ufraw_message(UFRAW_ERROR, _("getopt returned "
 			"character code 0%o ??"), c);
 	    return -1;
-	}
-    }
-    g_strlcpy(cmd->wb, "", max_name);
-    if (wbName!=NULL) {
-	if (!strcmp(wbName, "camera"))
-	    g_strlcpy(cmd->wb, camera_wb, max_name);
-	else if (!strcmp(wbName, "auto"))
-	    g_strlcpy(cmd->wb, auto_wb, max_name);
-	else {
-	    ufraw_message(UFRAW_ERROR,
-		    _("'%s' is not a valid white balance setting."), wbName);
-	    return -1;
-	}
-	if (cmd->temperature!=NULLF || cmd->green!=NULLF) {
-	    ufraw_message(UFRAW_WARNING,
-		    _("--temperature and --green options override the --wb=%s option."), wbName);
-	    g_strlcpy(cmd->wb, "", max_name);
 	}
     }
     cmd->BaseCurveIndex = -1;
@@ -2242,5 +2213,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     if (conf!=NULL)
 	g_strlcpy(cmd->inputFilename, conf, max_path);
 
+    ufobject_delete(tmpImage);
     return optind;
 }

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-23 06:00+0100\n"
+"POT-Creation-Date: 2010-01-27 13:57-0600\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -73,10 +73,8 @@ msgstr "隠しファイルを表示する"
 
 #. Internal data
 #. confSize, version
+#. ufobject
 #. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
 #. wavelet denoising threshold
 #. hotpixel sensitivity
 #. global contrast
@@ -484,14 +482,6 @@ msgstr "--batchオプションでは無くufraw-batchプログラムを使って
 #, c-format
 msgid "getopt returned character code 0%o ??"
 msgstr "getoptが文字コード 0%o を返しました。"
-
-#, c-format
-msgid "'%s' is not a valid white balance setting."
-msgstr "'%s' はホワイトバランスの設定として正しくありません"
-
-#, c-format
-msgid "--temperature and --green options override the --wb=%s option."
-msgstr "--temperatureと--greenオプションは--wb=%sを上書きします"
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -1408,6 +1398,14 @@ msgstr "一時ファイル作成エラー"
 msgid "Error activating Gimp."
 msgstr ""
 
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "--temperatureと--greenオプションは--wb=%sを上書きします"
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "'%s' はホワイトバランスの設定として正しくありません"
+
 msgid "Remote URI is not supported"
 msgstr "リモートのURIはサポートしていません"
 
@@ -1567,6 +1565,14 @@ msgid "Optical vignetting"
 msgstr ""
 
 msgid "Lateral chromatic aberration"
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
 msgstr ""
 
 #. Column 1 - "make" of the camera.

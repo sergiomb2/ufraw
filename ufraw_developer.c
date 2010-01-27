@@ -390,10 +390,13 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
 	d->working2displayTransform = NULL;
     }
  
-    if (d->rgbtolabTransform == NULL)
+    if (d->rgbtolabTransform == NULL) {
+	cmsHPROFILE labProfile = cmsCreateLabProfile(cmsD50_xyY());
 	d->rgbtolabTransform = cmsCreateTransform(d->profile[in_profile], 
-		TYPE_RGB_16, cmsCreateLabProfile(cmsD50_xyY()),
+		TYPE_RGB_16, labProfile,
 		TYPE_Lab_16, INTENT_ABSOLUTE_COLORIMETRIC, 0);
+	cmsCloseProfile(labProfile);
+    }
 }
 
 static gboolean test_adjustments(const lightness_adjustment values[max_adjustments],
@@ -435,14 +438,17 @@ void developer_prepare(developer_data *d, conf_data *conf,
     d->useMatrix = useMatrix;
 
     double max = 0;
-    /* We assume that min(conf->chanMul[c])==1.0 */
-    for (c=0; c<d->colors; c++) max = MAX(max, conf->chanMul[c]);
+    UFObject *chanMul = ufgroup_element(conf->ufobject, ufChannelMultipliers);
+    /* We assume that min(chanMul)==1.0 */
+    for (c=0; c<d->colors; c++)
+	max = MAX(max, ufnumber_array_value(chanMul, c));
     d->max = 0x10000 / max;
     /* rgbWB is used in dcraw_finalized_interpolation() before the Bayer
      * Interpolation. It is normalized to guaranty that values do not
      * exceed 0xFFFF */
-    for (c=0; c<d->colors; c++) d->rgbWB[c] = conf->chanMul[c] * d->max
-	    * 0xFFFF / d->rgbMax;
+    for (c=0; c<d->colors; c++)
+	d->rgbWB[c] = ufnumber_array_value(chanMul, c) *  d->max *
+		0xFFFF / d->rgbMax;
 
     if (d->useMatrix)
 	for (i=0; i<3; i++)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-23 06:00+0100\n"
+"POT-Creation-Date: 2010-01-27 13:57-0600\n"
 "PO-Revision-Date: 2009-10-07 10:53-0300\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese\n"
@@ -69,10 +69,8 @@ msgstr "Exibir arquivos ocultos"
 
 #. Internal data
 #. confSize, version
+#. ufobject
 #. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
 #. wavelet denoising threshold
 #. hotpixel sensitivity
 #. global contrast
@@ -506,14 +504,6 @@ msgstr "--batch é obsoleto. Use ufraw-batch no lugar."
 #, c-format
 msgid "getopt returned character code 0%o ??"
 msgstr "getopt retornou código de caractere 0%o ??"
-
-#, c-format
-msgid "'%s' is not a valid white balance setting."
-msgstr "'%s' não é uma configuração de balanço de branco válida."
-
-#, c-format
-msgid "--temperature and --green options override the --wb=%s option."
-msgstr "as opções --temperature e --green substituem a opção --wb=%s."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -1429,6 +1419,14 @@ msgstr "Erro criando arquivo temporário."
 msgid "Error activating Gimp."
 msgstr "Erro ativando o Gimp"
 
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "as opções --temperature e --green substituem a opção --wb=%s."
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "'%s' não é uma configuração de balanço de branco válida."
+
 msgid "Remote URI is not supported"
 msgstr "URI remota não é suportada"
 
@@ -1606,6 +1604,14 @@ msgstr "'Vignetting' ótico"
 
 msgid "Lateral chromatic aberration"
 msgstr "Aberração cromática lateral"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

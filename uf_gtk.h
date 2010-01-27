@@ -13,11 +13,12 @@
 #ifndef _UF_GTK_H
 #define _UF_GTK_H
 
+#include <gtk/gtk.h>
+#include <ufobject.h>
+
 #ifdef  __cplusplus
 extern "C" {
 #endif
-
-#include <gtk/gtk.h>
 
 // Interface to gtk_widget_set_tooltip_text() introduced in 2.12
 // Should be called after widget has a toplevel to minimize number
@@ -53,6 +54,19 @@ void uf_combo_box_set_data(GtkComboBox *combo, int *valuep);
 // Get the display ICC profile of the monitor associated with the widget.
 void uf_get_display_profile(GtkWidget *widget,
      guint8 **buffer, gint *buffer_size);
+
+/*
+ * The following functions create GtkWidgets for UFObjects.
+ * These widgets are already created with callbacks, so that changes
+ * in the widget value are applied to the UFObjects and vice-versa.
+ */
+GtkWidget *ufnumber_hscale_new(UFObject *object);
+GtkWidget *ufnumber_spin_button_new(UFObject *object);
+GtkWidget *ufnumber_array_hscale_new(UFObject *object, int index);
+GtkWidget *ufnumber_array_spin_button_new(UFObject *object, int index);
+GtkWidget *ufobject_reset_button_new(const char *tip);
+void ufobject_reset_button_add(GtkWidget *button, UFObject *object);
+GtkWidget *ufstring_combo_box_new(UFObject *object);
 
 #ifdef  __cplusplus
 }

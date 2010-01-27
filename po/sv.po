@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-23 06:00+0100\n"
+"POT-Creation-Date: 2010-01-27 13:57-0600\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -68,10 +68,8 @@ msgstr "Visa dolda filer"
 
 #. Internal data
 #. confSize, version
+#. ufobject
 #. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
 #. wavelet denoising threshold
 #. hotpixel sensitivity
 #. global contrast
@@ -413,14 +411,6 @@ msgstr "--batch är föråldrad. använd ufraw-batch istället."
 #, c-format
 msgid "getopt returned character code 0%o ??"
 msgstr ""
-
-#, c-format
-msgid "'%s' is not a valid white balance setting."
-msgstr ""
-
-#, c-format
-msgid "--temperature and --green options override the --wb=%s option."
-msgstr "flaggorna --temperature och --green åsidosätter flaggan --wb=%s."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -1314,6 +1304,14 @@ msgstr "Fel vid skapandet av temporärfil."
 msgid "Error activating Gimp."
 msgstr "Fel vid aktivering av Gimp."
 
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "flaggorna --temperature och --green åsidosätter flaggan --wb=%s."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "\"%s\" är inte en giltig sökväg."
+
 msgid "Remote URI is not supported"
 msgstr ""
 
@@ -1476,6 +1474,14 @@ msgid "Optical vignetting"
 msgstr ""
 
 msgid "Lateral chromatic aberration"
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
 msgstr ""
 
 #. Column 1 - "make" of the camera.

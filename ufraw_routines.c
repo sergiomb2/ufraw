@@ -278,7 +278,7 @@ void RGB_to_Temperature(double RGB[3], double *T, double *Green)
     double Tmax, Tmin, testRGB[3];
     Tmin = 2000;
     Tmax = 15000;
-    for (*T=(Tmax+Tmin)/2; Tmax-Tmin>10; *T=(Tmax+Tmin)/2) {
+    for (*T=(Tmax+Tmin)/2; Tmax-Tmin>0.1; *T=(Tmax+Tmin)/2) {
 	Temperature_to_RGB(*T, testRGB);
 	if (testRGB[2]/testRGB[0] > RGB[2]/RGB[0])
 	    Tmax = *T;
@@ -286,6 +286,8 @@ void RGB_to_Temperature(double RGB[3], double *T, double *Green)
 	    Tmin = *T;
     }
     *Green = (testRGB[1]/testRGB[0]) / (RGB[1]/RGB[0]);
+    if (*Green < 0.2) *Green = 0.2;
+    if (*Green > 2.5) *Green = 2.5;
 }
 
 static void curve_parse_start(GMarkupParseContext *context,

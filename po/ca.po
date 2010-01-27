@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-23 06:00+0100\n"
+"POT-Creation-Date: 2010-01-27 13:57-0600\n"
 "PO-Revision-Date: 2009-09-30 19:24+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -71,10 +71,8 @@ msgstr "Mostra els fitxers ocults"
 
 #. Internal data
 #. confSize, version
+#. ufobject
 #. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
 #. wavelet denoising threshold
 #. hotpixel sensitivity
 #. global contrast
@@ -525,16 +523,6 @@ msgstr ""
 #, c-format
 msgid "getopt returned character code 0%o ??"
 msgstr "getopt() ha retornat 0%o com a codi de caràcter??"
-
-#, c-format
-msgid "'%s' is not a valid white balance setting."
-msgstr ""
-"'%s' no és una opció vàlida per la configuració de l'equilibri de blanc."
-
-#, c-format
-msgid "--temperature and --green options override the --wb=%s option."
-msgstr ""
-"les opcions --temperature i --green passen per davant de l'opció --wb=%s."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -1451,6 +1439,16 @@ msgstr "S'ha produït un error en escriure el fitxer temporal."
 msgid "Error activating Gimp."
 msgstr "S'ha produït un error mentre s'activava el GIMP."
 
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr ""
+"les opcions --temperature i --green passen per davant de l'opció --wb=%s."
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr ""
+"'%s' no és una opció vàlida per la configuració de l'equilibri de blanc."
+
 msgid "Remote URI is not supported"
 msgstr "No se suporta l'esquema URI"
 
@@ -1629,6 +1627,14 @@ msgstr "Vinyetatge òptic"
 
 msgid "Lateral chromatic aberration"
 msgstr "Aberració cromàtica lateral"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

@@ -1,3 +1,4 @@
+
 /*
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
@@ -18,6 +19,7 @@
 #endif
 
 #include "uf_glib.h"
+#include "ufobject.h"
 
 #ifdef HAVE_LENSFUN
 #include <lensfun.h>
@@ -48,10 +50,37 @@
  * has to act accourdingly, before changing to one of the first two states */
 enum { disabled_state, enabled_state, apply_state };
 
-#define spot_wb "Spot WB"
-#define manual_wb "Manual WB"
-#define camera_wb "Camera WB"
-#define auto_wb "Auto WB"
+extern const char uf_spot_wb[];
+extern const char uf_manual_wb[];
+extern const char uf_camera_wb[];
+extern const char uf_auto_wb[];
+
+/*
+ * UFObject Definitions for ufraw_settings.cc
+ */
+
+extern UFName ufWB;
+extern UFName ufWBFineTuning;
+extern UFName ufTemperature;
+extern UFName ufGreen;
+extern UFName ufChannelMultipliers;
+extern UFName ufRawImage;
+extern UFName ufRawResources;
+extern UFName ufCommandLine;
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+UFObject *ufraw_image_new();
+struct ufraw_struct;
+void ufraw_image_set_data(UFObject *obj, struct ufraw_struct *uf);
+UFObject *ufraw_resources_new();
+UFObject *ufraw_command_line_new();
+
+#ifdef __cplusplus
+} // extern "C"
+#endif // __cplusplus
 
 enum { rgb_histogram, r_g_b_histogram, luminosity_histogram, value_histogram,
        saturation_histogram };
@@ -170,12 +199,10 @@ typedef struct {
     /* Internal data */
     int confSize, version;
 
+    // Eventually ufobject should replace conf_data.
+    UFObject *ufobject;
+
     /* IMAGE manipulation settings */
-//    int wb;
-    char wb[max_name];
-    double WBTuning;
-    double temperature, green;
-    double chanMul[4];
     double threshold;
     double hotpixel;
     double contrast;
@@ -275,6 +302,7 @@ typedef struct ufraw_struct {
     int initialHeight, initialWidth, rgbMax, colors, raw_color, useMatrix;
     int rotatedHeight, rotatedWidth;
     gboolean LoadingID; /* Indication that we are loading an ID file */
+    gboolean WBDirty;
     float rgb_cam[3][4];
     ufraw_image_data Images[ufraw_phases_num];
     ufraw_image_data thumb;
@@ -304,6 +332,7 @@ typedef struct ufraw_struct {
     int hotpixels;
     gboolean mark_hotpixels;
     unsigned raw_multiplier;
+    gboolean wb_presets_make_model_match;
 } ufraw_data;
 
 extern const conf_data conf_default;

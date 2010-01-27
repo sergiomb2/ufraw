@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-23 06:00+0100\n"
+"POT-Creation-Date: 2010-01-27 13:57-0600\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -72,10 +72,8 @@ msgstr "Prikaži skrivene datoteke"
 
 #. Internal data
 #. confSize, version
+#. ufobject
 #. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
 #. wavelet denoising threshold
 #. hotpixel sensitivity
 #. global contrast
@@ -525,14 +523,6 @@ msgstr "--batch mogućnost je prevaziđena. Koristite ufraw-batch."
 #, c-format
 msgid "getopt returned character code 0%o ??"
 msgstr "getopt je vratio kod karaktera 0%o ??"
-
-#, c-format
-msgid "'%s' is not a valid white balance setting."
-msgstr "„%s“ nije ispravna vrednost ravnoteže bele."
-
-#, c-format
-msgid "--temperature and --green options override the --wb=%s option."
-msgstr "mogućnosti --temperature i --green imaju prednost nad --wb=%s."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -1444,6 +1434,14 @@ msgstr "Greška pri pravljenju privremene datoteke."
 msgid "Error activating Gimp."
 msgstr "Greška u pokretanju Gimpa."
 
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "mogućnosti --temperature i --green imaju prednost nad --wb=%s."
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "„%s“ nije ispravna vrednost ravnoteže bele."
+
 msgid "Remote URI is not supported"
 msgstr "Udaljene adrese nisu podržane"
 
@@ -1620,6 +1618,14 @@ msgstr "Optičko vinjetarenje"
 
 msgid "Lateral chromatic aberration"
 msgstr "Bočne hromatske aberacije"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

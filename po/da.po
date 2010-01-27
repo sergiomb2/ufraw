@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-23 06:00+0100\n"
+"POT-Creation-Date: 2010-01-27 13:57-0600\n"
 "PO-Revision-Date: 2009-11-25 17:15+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
@@ -69,10 +69,8 @@ msgstr "Vis skjulte filer"
 
 #. Internal data
 #. confSize, version
+#. ufobject
 #. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
 #. wavelet denoising threshold
 #. hotpixel sensitivity
 #. global contrast
@@ -506,14 +504,6 @@ msgstr "--batch er forældet. Anvend ufraw-batch i stedet for."
 #, c-format
 msgid "getopt returned character code 0%o ??"
 msgstr "getopt returnerede tegnkode 0%o ??"
-
-#, c-format
-msgid "'%s' is not a valid white balance setting."
-msgstr "'%s' er ikke en legal hvidbalanceindstilling."
-
-#, c-format
-msgid "--temperature and --green options override the --wb=%s option."
-msgstr "Tilvalgene --temperature og --green har forret for tilvalget --wb=%s."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -1425,6 +1415,14 @@ msgstr "Fejl ved dannelse af midlertidig fil."
 msgid "Error activating Gimp."
 msgstr "Fejl ved aktivering af Gimp."
 
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "Tilvalgene --temperature og --green har forret for tilvalget --wb=%s."
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "'%s' er ikke en legal hvidbalanceindstilling."
+
 msgid "Remote URI is not supported"
 msgstr "Ekstern URI er ikke understøttet"
 
@@ -1601,6 +1599,14 @@ msgstr "Optisk vignettering"
 
 msgid "Lateral chromatic aberration"
 msgstr "Lateral kromatisk aberration"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

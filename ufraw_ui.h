@@ -41,11 +41,7 @@ enum { base_curve, luminosity_curve };
 typedef struct {
     ufraw_data *UF;
     conf_data *rc;
-    char initialWB[max_name];
-    double initialTemperature, initialGreen;
-    double initialChanMul[4];
     int raw_his[raw_his_size][4];
-    GList *WBPresets; /* List of WB presets in WBCombo*/
     int TypeComboMap[num_types];
     GdkPixbuf *PreviewPixbuf;
     GdkCursor *Cursor[cursor_num];
@@ -53,7 +49,7 @@ typedef struct {
     GtkWidget *Controls, *PreviewWidget, *RawHisto, *LiveHisto;
     GtkLabel *DarkFrameLabel;
     GtkWidget *BaseCurveWidget, *CurveWidget, *BlackLabel;
-    GtkComboBox *WBCombo, *BaseCurveCombo, *CurveCombo,
+    GtkComboBox *BaseCurveCombo, *CurveCombo,
 		*ProfileCombo[profile_types], *BitDepthCombo, *TypeCombo;
     GtkWidget *GrayscaleButtons[6];
     GtkTable *SpotTable;
@@ -64,7 +60,7 @@ typedef struct {
     colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
     GtkToggleButton *AutoExposureButton, *AutoBlackButton, *LockAspectButton;
     GtkWidget *AutoCurveButton;
-    GtkWidget *ResetWBButton, *ResetGammaButton, *ResetLinearButton;
+    GtkWidget *ResetGammaButton, *ResetLinearButton;
     GtkWidget *ResetExposureButton, *ResetSaturationButton;
     GtkWidget *ResetThresholdButton;
     GtkWidget *ResetHotpixelButton;
@@ -84,10 +80,6 @@ typedef struct {
     GtkSpinButton *HeightSpin;
     GtkSpinButton *WidthSpin;
     /* We need the adjustments for update_scale() */
-    GtkAdjustment *WBTuningAdjustment;
-    GtkAdjustment *TemperatureAdjustment;
-    GtkAdjustment *GreenAdjustment;
-    GtkAdjustment *ChannelAdjustment[4];
     GtkAdjustment *GammaAdjustment;
     GtkAdjustment *LinearAdjustment;
     GtkAdjustment *ExposureAdjustment;
@@ -208,8 +200,6 @@ GtkWidget *table_with_frame (GtkWidget *box, char *label, gboolean expand);
 
 GtkWidget *notebook_page_new (GtkNotebook *notebook, char *text, char *icon);
 
-GtkWidget *stock_image_button(const gchar *stock_id, GtkIconSize size,
-			      const char *tip, GCallback callback, void *data);
 GtkWidget *stock_icon_button(const gchar *stock_id,
 			     const char *tip, GCallback callback, void *data);
 GtkWidget *reset_button (const char *tip, GCallback callback, void *data);

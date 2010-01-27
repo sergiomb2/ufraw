@@ -117,8 +117,10 @@ int main (int argc, char **argv)
 	g_free(uf);
     }
 //    ufraw_close(cmd.darkframe);
+    ufobject_delete(rc.ufobject);
     exit(exitCode);
 }
+
 int ufraw_batch_saver(ufraw_data *uf)
 {
     if ( !uf->conf->overwrite && uf->conf->createID!=only_id

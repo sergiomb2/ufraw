@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-23 06:00+0100\n"
+"POT-Creation-Date: 2010-01-27 13:57-0600\n"
 "PO-Revision-Date: 2009-09-30 13:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -72,10 +72,8 @@ msgstr "Laat verborgen bestanden zien"
 
 #. Internal data
 #. confSize, version
+#. ufobject
 #. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
 #. wavelet denoising threshold
 #. hotpixel sensitivity
 #. global contrast
@@ -510,14 +508,6 @@ msgstr "--batch is achterhaald. Gebruik ufraw-batch in plaats van deze optie."
 #, c-format
 msgid "getopt returned character code 0%o ??"
 msgstr "getopt geeft character code 0%o ??"
-
-#, c-format
-msgid "'%s' is not a valid white balance setting."
-msgstr "'%s' is geen geldige witbalans instelling."
-
-#, c-format
-msgid "--temperature and --green options override the --wb=%s option."
-msgstr "--temperature en --green opties gaan boven de --wb=%s optie."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -1429,6 +1419,14 @@ msgstr "Fout bij aanmaken tijdelijk bestand."
 msgid "Error activating Gimp."
 msgstr "Fout bij opstarten van Gimp"
 
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "--temperature en --green opties gaan boven de --wb=%s optie."
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "'%s' is geen geldige witbalans instelling."
+
 msgid "Remote URI is not supported"
 msgstr "Remote URI wordt niet ondersteund"
 
@@ -1605,6 +1603,14 @@ msgstr "Optische vignettering"
 
 msgid "Lateral chromatic aberration"
 msgstr "Laterale chromatische aberratie"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

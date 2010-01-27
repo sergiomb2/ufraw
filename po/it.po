@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-23 06:00+0100\n"
+"POT-Creation-Date: 2010-01-27 13:57-0600\n"
 "PO-Revision-Date: 2009-10-14 06:00+0100\n"
 "Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -70,10 +70,8 @@ msgstr "Mostra file nascosti"
 
 #. Internal data
 #. confSize, version
+#. ufobject
 #. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
 #. wavelet denoising threshold
 #. hotpixel sensitivity
 #. global contrast
@@ -520,14 +518,6 @@ msgstr "--batch è obsoleto. Utilizza ufraw-batch."
 #, c-format
 msgid "getopt returned character code 0%o ??"
 msgstr "getopt ha restituito il codice carattere 0%o ??"
-
-#, c-format
-msgid "'%s' is not a valid white balance setting."
-msgstr "'%s' non è un'impostazione valida per il bilanciamento del bianco."
-
-#, c-format
-msgid "--temperature and --green options override the --wb=%s option."
-msgstr "le opzioni --temperature e --green sovrastano l'opzione --wb=%s."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -1457,6 +1447,14 @@ msgstr "Errore durante la creazione del file temporaneo."
 msgid "Error activating Gimp."
 msgstr "Errore durante l'apertura di Gimp."
 
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "le opzioni --temperature e --green sovrastano l'opzione --wb=%s."
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "'%s' non è un'impostazione valida per il bilanciamento del bianco."
+
 msgid "Remote URI is not supported"
 msgstr "URI remoto non supportato"
 
@@ -1635,6 +1633,14 @@ msgstr "Vignettatura ottica"
 
 msgid "Lateral chromatic aberration"
 msgstr "Aberrazione cromatica laterale"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

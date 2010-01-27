@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-23 06:00+0100\n"
+"POT-Creation-Date: 2010-01-27 13:57-0600\n"
 "PO-Revision-Date: 2009-10-06 09:38+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -71,10 +71,8 @@ msgstr "숨겨진 파일 표시"
 
 #. Internal data
 #. confSize, version
+#. ufobject
 #. Image manipulation settings
-#. wb, WBTuning
-#. temperature, green
-#. chanMul[]
 #. wavelet denoising threshold
 #. hotpixel sensitivity
 #. global contrast
@@ -484,14 +482,6 @@ msgstr "--batch는 더이상 사용되지 않습니다. 대신 ufraw-batch를 �
 #, c-format
 msgid "getopt returned character code 0%o ??"
 msgstr "getopt가 문자코드 0%o ?? 를 반환하였습니다."
-
-#, c-format
-msgid "'%s' is not a valid white balance setting."
-msgstr "'%s'은(는) 올바른 화이트 벨런스 설정이 아닙니다."
-
-#, c-format
-msgid "--temperature and --green options override the --wb=%s option."
-msgstr "--temperature 와 --green 옵션은 --wb=%s 옵션을 덮어씁니다."
 
 #, c-format
 msgid "failed to load curve from %s, too many configured base curves"
@@ -1403,6 +1393,14 @@ msgstr "임시 파일 만들기 실패."
 msgid "Error activating Gimp."
 msgstr "김프 실행 중 오류 발생."
 
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "--temperature 와 --green 옵션은 --wb=%s 옵션을 덮어씁니다."
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "'%s'은(는) 올바른 화이트 벨런스 설정이 아닙니다."
+
 msgid "Remote URI is not supported"
 msgstr "원격 URI는 지원하지 않습니다"
 
@@ -1579,6 +1577,14 @@ msgstr "광학 비네팅"
 
 msgid "Lateral chromatic aberration"
 msgstr "측면 색수차"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

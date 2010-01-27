@@ -235,6 +235,7 @@ ufraw_data *ufraw_open(char *filename)
     }
     uf = g_new0(ufraw_data, 1);
     ufraw_message_init(uf);
+    uf->rgbMax = 0; // This indicates that the raw file was not loaded yet.
     uf->unzippedBuf = unzippedBuf;
     uf->unzippedBufLen = unzippedBufLen;
     uf->conf = conf;
@@ -367,7 +368,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 {
     int status;
 
-    if (strcmp(rc->wb, spot_wb)) rc->chanMul[0] = -1.0;
     if (rc->autoExposure==enabled_state) rc->autoExposure = apply_state;
     if (rc->autoBlack==enabled_state) rc->autoBlack = apply_state;
 
@@ -378,6 +378,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	/* ID file configuration is put "on top" of the rc data */
 	uf->LoadingID = TRUE;
 	conf_data tmp = *rc;
+	tmp.ufobject = uf->conf->ufobject;
 	conf_copy_image(&tmp, uf->conf);
 	conf_copy_transform(&tmp, uf->conf);
 	conf_copy_save(&tmp, uf->conf);
@@ -388,11 +389,22 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	uf->LoadingID = FALSE;
 	uf->conf = g_new(conf_data, 1);
 	*uf->conf = *rc;
+	uf->conf->ufobject = ufraw_image_new();
+	ufobject_copy(uf->conf->ufobject,
+		ufgroup_element(rc->ufobject, ufRawImage));
     }
+
+    if (ufobject_name(uf->conf->ufobject) != ufRawImage)
+	g_warning("uf->conf->ufobject is not a ufRawImage");
+    dcraw_data *raw = uf->raw;
+    // make, model are used in ufraw_image_set_data()
+    g_strlcpy(uf->conf->make, raw->make, max_name);
+    g_strlcpy(uf->conf->model, raw->model, max_name);
+    ufraw_image_set_data(uf->conf->ufobject, uf);
+
     if (conf!=NULL && conf->version!=0) {
 	conf_copy_image(uf->conf, conf);
 	conf_copy_save(uf->conf, conf);
-	if (strcmp(uf->conf->wb, spot_wb)) uf->conf->chanMul[0] = -1.0;
 	if (uf->conf->autoExposure==enabled_state)
 	    uf->conf->autoExposure = apply_state;
 	if (uf->conf->autoBlack==enabled_state)
@@ -403,7 +415,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	if (status!=UFRAW_SUCCESS) return status;
     }
 
-    dcraw_data *raw = uf->raw;
     char *absname = uf_file_set_absolute(uf->filename);
     g_strlcpy(uf->conf->inputFilename, absname, max_path);
     g_free(absname);
@@ -443,15 +454,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     }
     g_free(uf->unzippedBuf);
     uf->unzippedBuf = NULL;
-    /* If we switched cameras, ignore channel multipliers and
-     * change spot_wb to manual_wb */
-    if ( !uf->LoadingID &&
-	 ( strcmp(uf->conf->make, raw->make)!=0 ||
-	   strcmp(uf->conf->model, raw->model)!=0 ) ) {
-	uf->conf->chanMul[0] = -1.0;
-	if (strcmp(uf->conf->wb, spot_wb)==0)
-	    g_strlcpy(uf->conf->wb, manual_wb, max_name);
-    }
     /* Set the EXIF data */
 #ifdef __MINGW32__
     /* MinG32 does not have ctime_r(). */
@@ -469,8 +471,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 #endif
     if (uf->conf->timestampText[strlen(uf->conf->timestampText)-1]=='\n')
 	uf->conf->timestampText[strlen(uf->conf->timestampText)-1] = '\0';
-    g_strlcpy(uf->conf->make, raw->make, max_name);
-    g_strlcpy(uf->conf->model, raw->model, max_name);
 
     uf->conf->timestamp = raw->timestamp;
 
@@ -650,18 +650,20 @@ int ufraw_load_raw(ufraw_data *uf)
     if (uf->conf->CropY2 > uf->rotatedHeight)
 	uf->conf->CropY2 = uf->rotatedHeight;
 
-    /* chanMul[0]<0 signals that we need to recalculate the WB */
-    if (uf->conf->chanMul[0]<0) ufraw_set_wb(uf);
-    else {
-	/* Otherwise we just normalize the channels and recalculate
-	 * the temperature/green */
-	int WBTuning = uf->conf->WBTuning;
-	char wb[max_name];
-	g_strlcpy(wb, uf->conf->wb, max_name);
-	g_strlcpy(uf->conf->wb, spot_wb, max_name);
+    // If we are LoadingID, we want to keep the ChannelMultipliers from it.
+    if (!uf->LoadingID || uf->WBDirty) {
+	UFObject *wb = ufgroup_element(uf->conf->ufobject, ufWB);
+	char *oldWB = g_strdup(ufobject_string_value(wb));
+	UFObject *wbTuning = ufgroup_element(uf->conf->ufobject,
+		ufWBFineTuning);
+	double oldTuning = ufnumber_value(wbTuning);
 	ufraw_set_wb(uf);
-	g_strlcpy(uf->conf->wb, wb, max_name);
-	uf->conf->WBTuning = WBTuning;
+	/* Here ufobject's automation goes against us. A change in
+	 * ChannelMultipliers would change ufWB to uf_manual_wb.
+	 * So we need to change it back. */
+	ufobject_set_string(wb, oldWB);
+	ufnumber_set(wbTuning, oldTuning);
+	g_free(oldWB);
     }
     ufraw_auto_expose(uf);
     ufraw_auto_black(uf);
@@ -688,12 +690,13 @@ void ufraw_close(ufraw_data *uf)
     lf_modifier_destroy(uf->TCAmodifier);
     lf_camera_destroy(uf->conf->camera);
     lf_modifier_destroy(uf->modifier);
-    g_free(uf->lanczos_func);
 #endif
+    g_free(uf->lanczos_func);
     if ( uf->conf->darkframe!=NULL ) {
 	ufraw_close(uf->conf->darkframe);
 	g_free(uf->conf->darkframe);
     }
+    ufobject_delete(uf->conf->ufobject);
     g_free(uf->conf);
     ufraw_message_reset(uf);
     ufraw_message(UFRAW_CLEAN, NULL);
@@ -1962,14 +1965,20 @@ int ufraw_set_wb(ufraw_data *uf)
     dcraw_data *raw = uf->raw;
     double rgbWB[3];
     int status, c, cc, i;
+    UFObject *temperature = ufgroup_element(uf->conf->ufobject, ufTemperature);
+    UFObject *green = ufgroup_element(uf->conf->ufobject, ufGreen);
+    UFObject *chanMul = ufgroup_element(uf->conf->ufobject,
+	    ufChannelMultipliers);
+    UFObject *wb = ufgroup_element(uf->conf->ufobject, ufWB);
+    UFObject *wbTuning = ufgroup_element(uf->conf->ufobject, ufWBFineTuning);
 
     ufraw_invalidate_whitebalance_layer(uf);
 
-    /* For manual_wb we calculate chanMul from the temperature/green. */
+    /* For uf_manual_wb we calculate chanMul from the temperature/green. */
     /* For all other it is the other way around. */
-    if (!strcmp(uf->conf->wb, manual_wb)) {
-	Temperature_to_RGB(uf->conf->temperature, rgbWB);
-	rgbWB[1] = rgbWB[1] / uf->conf->green;
+    if (ufstring_is_equal(wb, uf_manual_wb)) {
+	Temperature_to_RGB(ufnumber_value(temperature), rgbWB);
+	rgbWB[1] = rgbWB[1] / ufnumber_value(green);
 	/* Suppose we shot a white card at some temperature:
 	 * rgbWB[3] = rgb_cam[3][4] * preMul[4] * camWhite[4]
 	 * Now we want to make it white (1,1,1), so we replace preMul
@@ -1985,32 +1994,28 @@ int ufraw_set_wb(ufraw_data *uf)
 	 */
 	if (uf->raw_color) {
 	    /* If there is no color matrix it is simple */
-	    for (c=0; c<3; c++) {
-		uf->conf->chanMul[c] = raw->pre_mul[c] / rgbWB[c];
-	    }
+	    double chanMulArray[4];
+	    for (c=0; c<3; c++)
+		chanMulArray[c] = raw->pre_mul[c] / rgbWB[c];
+	    ufnumber_array_set(chanMul, chanMulArray);
 	} else {
-	    for (c=0; c<raw->colors; c++) {
+	    double chanMulArray[4] = {1, 1, 1, 1 };
+	    for (c=0; c<uf->colors; c++) {
 		double chanMulInv = 0;
 		for (cc=0; cc<3; cc++)
 		    chanMulInv += 1/raw->pre_mul[c] * raw->cam_rgb[c][cc]
 			    * rgbWB[cc];
-		uf->conf->chanMul[c] = 1/chanMulInv;
+		chanMulArray[c] = 1/chanMulInv;
 	    }
+	    ufnumber_array_set(chanMul, chanMulArray);
 	}
-	/* Normalize chanMul[] so that MIN(chanMul[]) will be 1.0 */
-	double min = uf->conf->chanMul[0];
-	for (c=1; c<raw->colors; c++)
-	   if (uf->conf->chanMul[c] < min) min = uf->conf->chanMul[c];
-	if (min==0.0) min = 1.0; /* should never happen, just to be safe */
-	for (c=0; c<raw->colors; c++) uf->conf->chanMul[c] /= min;
-	if (raw->colors<4) uf->conf->chanMul[3] = 0.0;
-	uf->conf->WBTuning = 0;
+	ufnumber_set(wbTuning, 0);
 	return UFRAW_SUCCESS;
     }
-    if (!strcmp(uf->conf->wb, spot_wb)) {
+    if (ufstring_is_equal(wb, uf_spot_wb)) {
 	/* do nothing */
-	uf->conf->WBTuning = 0;
-    } else if ( !strcmp(uf->conf->wb, auto_wb) ) {
+	ufnumber_set(wbTuning, 0);
+    } else if (ufstring_is_equal(wb, uf_auto_wb)) {
 	int p;
 	/* Build a raw channel histogram */
 	ufraw_image_type *histogram = g_new0(ufraw_image_type, uf->rgbMax+1);
@@ -2027,19 +2032,26 @@ int ufraw_set_wb(ufraw_data *uf)
 		}
 	    }
 	}
+	double chanMulArray[4] = {1.0, 1.0, 1.0, 1.0 };
+	double min = 1.0;
 	for (c=0; c<uf->colors; c++) {
 	    gint64 sum = 0;
 	    for (i=0; i<uf->rgbMax+1; i++)
 		sum += (gint64)i*histogram[i][c];
-	    if (sum==0) uf->conf->chanMul[c] = 1.0;
-	    else uf->conf->chanMul[c] = 1.0/sum;
+	    if (sum==0) chanMulArray[c] = 1.0;
+	    else chanMulArray[c] = 1.0/sum;
+	    if (chanMulArray[c] < min)
+		min = chanMulArray[c];
 	}
+	for (c=0; c<uf->colors; c++)
+	    chanMulArray[c] /= min;
 	g_free(histogram);
-	uf->conf->WBTuning = 0;
-    } else if ( !strcmp(uf->conf->wb, camera_wb) ) {
+	ufnumber_array_set(chanMul, chanMulArray);
+	ufnumber_set(wbTuning, 0);
+    } else if (ufstring_is_equal(wb, uf_camera_wb)) {
 	if ( (status=dcraw_set_color_scale(raw,
-		!strcmp(uf->conf->wb, auto_wb),
-		!strcmp(uf->conf->wb, camera_wb)))!=DCRAW_SUCCESS ) {
+		ufstring_is_equal(wb, uf_auto_wb),
+		ufstring_is_equal(wb, uf_camera_wb)))!=DCRAW_SUCCESS ) {
 	    if (status==DCRAW_NO_CAMERA_WB) {
 		ufraw_message(UFRAW_BATCH_MESSAGE,
 		    _("Cannot use camera white balance, "
@@ -2047,15 +2059,17 @@ int ufraw_set_wb(ufraw_data *uf)
 		ufraw_message(UFRAW_INTERACTIVE_MESSAGE,
 		    _("Cannot use camera white balance, "
 		    "reverting to auto white balance."));
-		g_strlcpy(uf->conf->wb, auto_wb, max_name);
+		ufobject_set_string(wb, uf_auto_wb);
 		return ufraw_set_wb(uf);
 	    }
 	    if (status!=DCRAW_SUCCESS)
 		return status;
 	}
-	for (c=0; c<raw->colors; c++)
-	    uf->conf->chanMul[c] = raw->post_mul[c];
-	uf->conf->WBTuning = 0;
+	double chanMulArray[4];
+	for (c=0; c < 4; c++)
+	    chanMulArray[c] = raw->post_mul[c];
+	ufnumber_array_set(chanMul, chanMulArray);
+	ufnumber_set(wbTuning, 0);
     } else {
 	int lastTuning = -1;
 	char model[max_name];
@@ -2064,69 +2078,68 @@ int ufraw_set_wb(ufraw_data *uf)
 		  strncmp(uf->conf->model, "MAXXUM", 6)==0 ) ) {
 	    /* Canonize Minolta model names (copied from dcraw) */
 	    g_snprintf(model, max_name, "DYNAX %s",
-	    uf->conf->model+6+(uf->conf->model[0]=='M'));
+		    uf->conf->model+6+(uf->conf->model[0]=='M'));
 	} else {
 	    g_strlcpy(model, uf->conf->model, max_name);
 	}
 	for (i=0; i<wb_preset_count; i++) {
-	    if (!strcmp(uf->conf->wb, wb_preset[i].name) &&
+	    if (ufstring_is_equal(wb, wb_preset[i].name) &&
 		!strcmp(uf->conf->make, wb_preset[i].make) &&
 		!strcmp(model, wb_preset[i].model) ) {
-		if (uf->conf->WBTuning == wb_preset[i].tuning) {
-		    for (c=0; c<raw->colors; c++)
-			uf->conf->chanMul[c] = wb_preset[i].channel[c];
+		if (ufnumber_value(wbTuning) == wb_preset[i].tuning) {
+		    double chanMulArray[4] = {1, 1, 1, 1 };
+		    for (c=0; c<uf->colors; c++)
+			chanMulArray[c] = wb_preset[i].channel[c];
+		    ufnumber_array_set(chanMul, chanMulArray);
 		    break;
-		} else if (uf->conf->WBTuning < wb_preset[i].tuning) {
+		} else if (ufnumber_value(wbTuning) < wb_preset[i].tuning) {
 		    if (lastTuning == -1) {
-			/* WBTuning was set to a value smaller than possible */
-			uf->conf->WBTuning = wb_preset[i].tuning;
-			for (c=0; c<raw->colors; c++)
-			    uf->conf->chanMul[c] = wb_preset[i].channel[c];
+			/* wbTuning was set to a value smaller than possible */
+			ufnumber_set(wbTuning, wb_preset[i].tuning);
+			double chanMulArray[4] = {1, 1, 1, 1 };
+			for (c=0; c<uf->colors; c++)
+			    chanMulArray[c] = wb_preset[i].channel[c];
+			ufnumber_array_set(chanMul, chanMulArray);
 			break;
 		    } else {
 			/* Extrapolate WB tuning values:
 			 * f(x) = f(a) + (x-a)*(f(b)-f(a))/(b-a) */
-			for (c=0; c<raw->colors; c++)
-			    uf->conf->chanMul[c] = wb_preset[i].channel[c] +
-				(uf->conf->WBTuning - wb_preset[i].tuning) *
+			double chanMulArray[4] = {1, 1, 1, 1 };
+			for (c=0; c<uf->colors; c++)
+			    chanMulArray[c] = wb_preset[i].channel[c] +
+				(ufnumber_value(wbTuning)-wb_preset[i].tuning) *
 				(wb_preset[lastTuning].channel[c] -
 				 wb_preset[i].channel[c]) /
 				(wb_preset[lastTuning].tuning -
 				 wb_preset[i].tuning);
+			ufnumber_array_set(chanMul, chanMulArray);
 			break;
 		    }
-		} else if (uf->conf->WBTuning > wb_preset[i].tuning) {
+		} else if (ufnumber_value(wbTuning) > wb_preset[i].tuning) {
 			lastTuning = i;
 		}
 	    } else if (lastTuning!=-1) {
-		/* WBTuning was set to a value larger than possible */
-		uf->conf->WBTuning = wb_preset[lastTuning].tuning;
-		for (c=0; c<raw->colors; c++)
-		    uf->conf->chanMul[c] = wb_preset[lastTuning].channel[c];
+		/* wbTuning was set to a value larger than possible */
+		ufnumber_set(wbTuning, wb_preset[lastTuning].tuning);
+		double chanMulArray[4] = {1, 1, 1, 1 };
+		for (c=0; c<uf->colors; c++)
+		    chanMulArray[c] = wb_preset[lastTuning].channel[c];
+		ufnumber_array_set(chanMul, chanMulArray);
 		break;
 	    }
 	}
 	if (i==wb_preset_count) {
 	    if (lastTuning!=-1) {
-		/* WBTuning was set to a value larger than possible */
-		uf->conf->WBTuning = wb_preset[lastTuning].tuning;
-		for (c=0; c<raw->colors; c++)
-		    uf->conf->chanMul[c] = wb_preset[lastTuning].channel[c];
+		/* wbTuning was set to a value larger than possible */
+		ufnumber_set(wbTuning, wb_preset[lastTuning].tuning);
+		ufnumber_array_set(chanMul, wb_preset[lastTuning].channel);
 	    } else {
-		g_strlcpy(uf->conf->wb, manual_wb, max_name);
+		ufobject_set_string(wb, uf_manual_wb);
 		ufraw_set_wb(uf);
 		return UFRAW_WARNING;
 	    }
 	}
     }
-    /* Normalize chanMul[] so that MIN(chanMul[]) will be 1.0 */
-    double min = uf->conf->chanMul[0];
-    for (c=1; c<raw->colors; c++)
-	if (uf->conf->chanMul[c] < min) min = uf->conf->chanMul[c];
-    if (min==0.0) min = 1.0; /* should never happen, just to be safe */
-    for (c=0; c<raw->colors; c++) uf->conf->chanMul[c] /= min;
-    if (raw->colors<4) uf->conf->chanMul[3] = 0.0;
-
     /* (1/chanMul)[4] = (1/preMul)[4][4] * cam_rgb[4][3] * rgbWB[3]
      * Therefore:
      * rgbWB[3] = rgb_cam[3][4] * preMul[4][4] * (1/chanMul)[4]
@@ -2134,19 +2147,21 @@ int ufraw_set_wb(ufraw_data *uf)
     if (uf->raw_color) {
 	/* If there is no color matrix it is simple */
 	for (c=0; c<3; c++) {
-	    rgbWB[c] = raw->pre_mul[c] / uf->conf->chanMul[c];
+	    rgbWB[c] = raw->pre_mul[c] / ufnumber_array_value(chanMul, c);
 	}
     } else {
 	for (c=0; c<3; c++) {
 	    rgbWB[c] = 0;
-	    for (cc=0; cc<raw->colors; cc++)
+	    for (cc=0; cc<uf->colors; cc++)
 		rgbWB[c] += raw->rgb_cam[c][cc] * raw->pre_mul[cc]
-		    / uf->conf->chanMul[cc];
+		    / ufnumber_array_value(chanMul, cc);
 	}
     }
     /* From these values we calculate temperature, green values */
-    RGB_to_Temperature(rgbWB, &uf->conf->temperature, &uf->conf->green);
-
+    double temperatureValue, greenValue;
+    RGB_to_Temperature(rgbWB, &temperatureValue, &greenValue);
+    ufnumber_set(temperature, temperatureValue);
+    ufnumber_set(green, greenValue);
     return UFRAW_SUCCESS;
 }
 
@@ -2161,9 +2176,12 @@ static void ufraw_build_raw_histogram(ufraw_data *uf)
 	updateHistogram = TRUE;
     }
     double maxChan = 0;
-    for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
+    UFObject *chanMul = ufgroup_element(uf->conf->ufobject,
+	    ufChannelMultipliers);
+    for (c=0; c<uf->colors; c++)
+	maxChan = MAX(ufnumber_array_value(chanMul, c), maxChan);
     for (c=0; c<uf->colors; c++) {
-	int tmp = floor(uf->conf->chanMul[c]/maxChan*0x10000);
+	int tmp = floor(ufnumber_array_value(chanMul, c)/maxChan*0x10000);
 	if (uf->RawChanMul[c]!=tmp) {
 	    updateHistogram = TRUE;
 	    uf->RawChanMul[c] = tmp;
@@ -2199,11 +2217,15 @@ void ufraw_auto_expose(ufraw_data *uf)
     ufraw_developer_prepare(uf, auto_developer);
     /* Find the grey value that gives 99% luminosity */
     double maxChan = 0;
-    for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
+    UFObject *chanMul = ufgroup_element(uf->conf->ufobject,
+	    ufChannelMultipliers);
+    for (c=0; c<uf->colors; c++)
+	maxChan = MAX(ufnumber_array_value(chanMul, c), maxChan);
     for (pMax=uf->rgbMax, pMin=0, p=(pMax+pMin)/2; pMin<pMax-1; p=(pMax+pMin)/2)
     {
 	for (c=0; c<uf->colors; c++)
-	    pix[c] = MIN (p * maxChan/uf->conf->chanMul[c], uf->rgbMax);
+	    pix[c] = MIN(p * maxChan / ufnumber_array_value(chanMul, c),
+		    uf->rgbMax);
 	develop(p16, pix, uf->AutoDeveloper, 16, 1);
 	for (c=0, wp=0; c<3; c++) wp = MAX(wp, p16[c]);
 	if (wp < 0x10000 * 99/100) pMin = p;
@@ -2243,9 +2265,12 @@ void ufraw_auto_black(ufraw_data *uf)
     for (bp=0, sum=0; bp<uf->rgbMax && sum<stop; bp++)
 	sum += uf->RawHistogram[bp];
     double maxChan = 0;
-    for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
+    UFObject *chanMul = ufgroup_element(uf->conf->ufobject,
+	    ufChannelMultipliers);
     for (c=0; c<uf->colors; c++)
-	pix[c] = MIN (bp * maxChan/uf->conf->chanMul[c], uf->rgbMax);
+	maxChan = MAX(ufnumber_array_value(chanMul, c), maxChan);
+    for (c=0; c<uf->colors; c++)
+	pix[c] = MIN(bp*maxChan / ufnumber_array_value(chanMul, c), uf->rgbMax);
     develop(p16, pix, uf->AutoDeveloper, 16, 1);
     for (c=0, bp=0; c<3; c++) bp = MAX(bp, p16[c]);
 
@@ -2275,12 +2300,16 @@ void ufraw_auto_curve(ufraw_data *uf)
     ufraw_build_raw_histogram(uf);
     stop = uf->RawCount/256/4;
     double maxChan = 0;
-    for (c=0; c<uf->colors; c++) maxChan = MAX(uf->conf->chanMul[c], maxChan);
+    UFObject *chanMul = ufgroup_element(uf->conf->ufobject,
+	    ufChannelMultipliers);
+    for (c=0; c<uf->colors; c++)
+	maxChan = MAX(ufnumber_array_value(chanMul, c), maxChan);
     for (bp=0, sum=0, p=0, i=j=0; i<steps && bp<uf->rgbMax && p<0xFFFF; i++) {
 	for (; bp<uf->rgbMax && sum<stop; bp++)
 	    sum += uf->RawHistogram[bp];
 	for (c=0; c<uf->colors; c++)
-	    pix[c] = MIN (bp * maxChan/uf->conf->chanMul[c], uf->rgbMax);
+	    pix[c] = MIN(bp * maxChan / ufnumber_array_value(chanMul, c),
+		    uf->rgbMax);
 	develop(p16, pix, uf->AutoDeveloper, 16, 1);
 	for (c=0, p=0; c<3; c++) p = MAX(p, p16[c]);
 	stop += uf->RawCount * pow(decay,i) / norm;

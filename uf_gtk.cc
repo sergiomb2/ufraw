@@ -12,6 +12,8 @@
 
 #include "uf_gtk.h"
 #include <glib/gi18n.h>
+#include <assert.h>
+#include <list>
 
 #ifdef GDK_WINDOWING_QUARTZ
 #include <Carbon/Carbon.h>
@@ -324,5 +326,255 @@ void uf_get_display_profile(GtkWidget *widget,
 
 // Translate text message from GtkImageView:
 const char *uf_gtkimageview_text = N_("Open the navigator window");
+
+/*
+ * The following functions create GtkWidgets for UFObjects.
+ * These widgets are already created with callbacks, so that changes
+ * in the widget value are applied to the UFObjects and vice-versa.
+ */
+
+class _UFWidgetData {
+public:
+    GObject **gobject;
+    GtkButton *button;
+    explicit _UFWidgetData(int size = 1) {
+	if (size != 0)
+	    gobject = g_new0(GObject *, size);
+	else
+	    gobject = NULL;
+	button = NULL;
+    }
+    ~_UFWidgetData() {
+	g_free(gobject);
+    }
+    GtkAdjustment *adjustment(int index) {
+	return GTK_ADJUSTMENT(gobject[index]);
+    }
+};
+
+typedef std::list<UFObject *> _UFObjectList;
+
+void _ufobject_reset_button_state(UFObject *object) {
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData);
+    if (data->button == NULL)
+	return;
+    _UFObjectList *list = static_cast<_UFObjectList *>(
+	    g_object_get_data(G_OBJECT(data->button), "UFObjectList"));
+    bool isDefault = true;
+    for (_UFObjectList::iterator iter = list->begin();
+	    iter != list->end(); iter++) {
+	isDefault &= (*iter)->IsDefault();
+    }
+    gtk_widget_set_sensitive(GTK_WIDGET(data->button), !isDefault);
+}
+
+static void _ufnumber_adjustment_changed(GtkAdjustment *adj, UFObject *object) {
+    UFNumber &num = *object;
+    num.Set(gtk_adjustment_get_value(adj));
+}
+
+static void _ufnumber_object_event(UFObject *object, UFEventType type) {
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData);
+    if (type == uf_destroyed) {
+	delete data;
+	return;
+    }
+    UFNumber &num = *object;
+    gtk_adjustment_set_value(data->adjustment(0), num.DoubleValue());
+    _ufobject_reset_button_state(object);
+}
+
+static void _ufnumber_array_adjustment_changed(GtkAdjustment *adj,
+	UFObject *object) {
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData);
+    UFNumberArray &array = *object;
+    for (int i = 0; i < array.Size(); i++)
+	if (data->adjustment(i) == adj)
+	    array.Set(i, gtk_adjustment_get_value(data->adjustment(i)));
+}
+
+static void _ufnumber_array_object_event(UFObject *object, UFEventType type) {
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData);
+    if (type == uf_destroyed) {
+	delete data;
+	return;
+    }
+    UFNumberArray &array = *object;
+    for (int i = 0; i < array.Size(); i++)
+	gtk_adjustment_set_value(data->adjustment(i), array.DoubleValue(i));
+    _ufobject_reset_button_state(object);
+}
+
+static void _ufstring_object_event(UFObject *object, UFEventType type) {
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData);
+    if (type == uf_destroyed) {
+	delete data;
+	return;
+    }
+    UFString &string = *object;
+    GtkComboBox *combo = GTK_COMBO_BOX(data->gobject[0]);
+    UFTokenList &list = string.GetTokens();
+    int i = 0;
+    for (UFTokenList::iterator iter = list.begin();
+	    iter != list.end(); iter++, i++) {
+	if (string.IsEqual(*iter)) {
+	    gtk_combo_box_set_active(combo, i);
+	    return;
+	}
+    }
+    // If value not found activate first entry
+    g_warning("_ufstring_object_event() value not found");
+    gtk_combo_box_set_active(combo, 0);
+}
+
+/* Return the widget-data for the object.
+ * Create the widget-data, if it was not set already.
+ */
+static _UFWidgetData &_ufnumber_widget_data(UFNumber &number) {
+    if (number.UserData != NULL)
+	return *static_cast<_UFWidgetData *>(number.UserData);
+    _UFWidgetData &data = *(new _UFWidgetData);
+    number.UserData = &data;
+    data.gobject[0] = G_OBJECT(gtk_adjustment_new(number.DoubleValue(),
+	    number.Minimum(), number.Maximum(),
+	    number.Step(), number.Jump(), 0.0));
+    g_signal_connect(G_OBJECT(data.adjustment(0)), "value-changed",
+	    G_CALLBACK(_ufnumber_adjustment_changed), &number);
+    number.SetEventHandle(_ufnumber_object_event);
+    return data;
+}
+
+static _UFWidgetData &_ufnumber_array_widget_data(UFNumberArray &array) {
+    if (array.UserData != NULL)
+	return *static_cast<_UFWidgetData *>(array.UserData);
+    _UFWidgetData &data = *(new _UFWidgetData(array.Size()));
+    array.UserData = &data;
+    for (int i = 0; i < array.Size(); i++) {
+	data.gobject[i] = G_OBJECT(gtk_adjustment_new(array.DoubleValue(i),
+		array.Minimum(), array.Maximum(),
+		array.Step(), array.Jump(), 0.0));
+	g_signal_connect(G_OBJECT(data.adjustment(i)), "value-changed",
+	    G_CALLBACK(_ufnumber_array_adjustment_changed), &array);
+    }
+    array.SetEventHandle(_ufnumber_array_object_event);
+    return data;
+}
+
+static _UFWidgetData &_ufstring_widget_data(UFString &string) {
+    if (string.UserData != NULL)
+	return *static_cast<_UFWidgetData *>(string.UserData);
+    _UFWidgetData &data = *(new _UFWidgetData);
+    string.UserData = &data;
+    data.gobject[0] = NULL;
+    string.SetEventHandle(_ufstring_object_event);
+    return data;
+}
+
+GtkWidget *ufnumber_hscale_new(UFObject *object) {
+    UFNumber &number = *object;
+    _UFWidgetData &data = _ufnumber_widget_data(number);
+    GtkWidget *scale = gtk_hscale_new(data.adjustment(0));
+    gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
+    return scale;
+}
+
+GtkWidget *ufnumber_spin_button_new(UFObject *object) {
+    UFNumber &number = *object;
+    _UFWidgetData &data = _ufnumber_widget_data(number);
+    GtkWidget *spin = gtk_spin_button_new(data.adjustment(0), number.Step(),
+	    number.AccuracyDigits());
+    gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON(spin), FALSE);
+    gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(spin),
+	    GTK_UPDATE_IF_VALID);
+    return spin;
+}
+
+GtkWidget *ufnumber_array_hscale_new(UFObject *object, int index) {
+    UFNumberArray &array = *object;
+    _UFWidgetData &data = _ufnumber_array_widget_data(array);
+    GtkWidget *scale = gtk_hscale_new(data.adjustment(index));
+    gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
+    return scale;
+}
+
+GtkWidget *ufnumber_array_spin_button_new(UFObject *object, int index) {
+    UFNumberArray &array = *object;
+    _UFWidgetData &data = _ufnumber_array_widget_data(array);
+    GtkWidget *spin = gtk_spin_button_new(data.adjustment(index),
+	    array.Step(), array.AccuracyDigits());
+    gtk_spin_button_set_snap_to_ticks(GTK_SPIN_BUTTON(spin), FALSE);
+    gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(spin),
+	    GTK_UPDATE_IF_VALID);
+    return spin;
+}
+
+static void _ufobject_reset_clicked(GtkWidget * /*widget*/, _UFObjectList *list)
+{
+    for (_UFObjectList::iterator iter = list->begin();
+	    iter != list->end(); iter++) {
+	(*iter)->Reset();
+    }
+}
+
+static void _ufobject_reset_destroy(GtkWidget * /*widget*/, _UFObjectList *list)
+{
+    delete list;
+}
+
+GtkWidget *ufobject_reset_button_new(const char *tip) {
+    GtkWidget *button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), 
+	    gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON));
+    if (tip != NULL)
+	uf_widget_set_tooltip(button, tip);
+    _UFObjectList *objectList = new _UFObjectList;
+    g_object_set_data(G_OBJECT(button), "UFObjectList", objectList);
+    
+    g_signal_connect(G_OBJECT(button), "clicked",
+	    G_CALLBACK(_ufobject_reset_clicked), objectList);
+    g_signal_connect(G_OBJECT(button), "destroy",
+	    G_CALLBACK(_ufobject_reset_destroy), objectList);
+    return button;
+}
+
+void ufobject_reset_button_add(GtkWidget *button, UFObject *object) {
+    assert(object->UserData != NULL);
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData);
+    data->button = GTK_BUTTON(button);
+    _UFObjectList *objectList = static_cast<_UFObjectList *>(
+	    g_object_get_data(G_OBJECT(button), "UFObjectList"));
+    assert(objectList != NULL);
+    objectList->push_back(object);
+    _ufobject_reset_button_state(object);
+}
+
+static void _ufstring_combo_changed(GtkWidget *combo, UFObject *object) {
+    UFString &string = *object;
+    UFTokenList &list = string.GetTokens();
+    int i = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
+    UFTokenList::iterator iter = list.begin();
+    std::advance(iter, i);
+    string.Set(*iter);
+    _ufobject_reset_button_state(object);
+}
+
+// Create a new ComboBox text with small width.
+// The widget must be added with GTK_EXPAND|GTK_FILL.
+GtkWidget *ufstring_combo_box_new(UFObject *object) {
+    UFString &string = *object;
+    _UFWidgetData &data = _ufstring_widget_data(string);
+    GtkWidget *combo = gtk_combo_box_new_text();
+    gtk_widget_set_size_request(combo, 50, -1);
+    data.gobject[0] = G_OBJECT(combo);
+    g_signal_connect_after(G_OBJECT(combo), "changed",
+	G_CALLBACK(_ufstring_combo_changed), object);
+    UFTokenList &list = string.GetTokens();
+    for (UFTokenList::iterator iter = list.begin();
+	    iter != list.end(); iter++) {
+	gtk_combo_box_append_text(GTK_COMBO_BOX(combo), _(*iter));
+    }
+    _ufstring_object_event(object, uf_value_changed);
+    return combo;
+}
 
 } // extern "C"
