@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-27 13:57-0600\n"
-"PO-Revision-Date: 2009-11-25 17:15+0100\n"
+"PO-Revision-Date: 2010-01-28 05:15+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1602,11 +1602,11 @@ msgstr "Lateral kromatisk aberration"
 
 #, c-format
 msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
+msgstr "Værdien %.*f er for stor, beskåret til %.*f."
 
 #, c-format
 msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
+msgstr "Værdien %.*f er for lille, beskåret til %.*f."
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
