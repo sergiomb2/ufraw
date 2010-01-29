@@ -37,6 +37,8 @@ void (*ufraw_progress)(int what, int ticks);
 	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
 static void ufraw_convert_image_vignetting(ufraw_data *uf,
 	ufraw_image_data *img, UFRectangle *area);
+static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
+	ufraw_image_data *outimg, UFRectangle *area);
 static void ufraw_prepare_tca(ufraw_data *uf);
 #endif
 static void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
@@ -1211,6 +1213,16 @@ static void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase)
     dcraw_finalize_raw(raw, dark, uf->developer->rgbWB);
     raw->raw.image = rawimage;
     ufraw_despeckle(uf, phase);
+#ifdef HAVE_LENSFUN
+    ufraw_prepare_tca(uf);
+    if (uf->TCAmodifier != NULL) {
+	ufraw_image_data inImg = *img;
+	img->buffer = g_malloc(img->height * img->rowstride);
+	UFRectangle area = {0, 0, img->width, img->height };
+	ufraw_convert_image_tca(uf, &inImg, img, &area);
+	g_free(inImg.buffer);
+    }
+#endif
 }
 
 /*
@@ -1378,17 +1390,6 @@ static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase, dcraw_
     img->width = dcimg->width;
     img->depth = sizeof (dcraw_image_type);
     img->rowstride = img->width * img->depth;
-#ifdef HAVE_LENSFUN
-    ufraw_prepare_tca(uf);
-    if (uf->TCAmodifier != NULL) {
-	ufraw_image_data inImg = *img;
-	inImg.buffer = (guint8 *)dcimg->image;
-	img->buffer = g_realloc(img->buffer, img->height * img->rowstride);
-	UFRectangle area = {0, 0, img->width, img->height };
-	ufraw_convert_image_tca(uf, &inImg, img, &area);
-	return;
-    }
-#endif
     g_free(img->buffer);
     img->buffer = g_memdup(dcimg->image, img->height * img->rowstride);
 }
