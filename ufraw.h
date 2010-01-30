@@ -328,7 +328,6 @@ typedef struct ufraw_struct {
     lfModifier *TCAmodifier;
     lfModifier *modifier;
 #endif /* HAVE_LENSFUN */
-    void *lanczos_func; /* the Lanczos kernel */
     int hotpixels;
     gboolean mark_hotpixels;
     unsigned raw_multiplier;

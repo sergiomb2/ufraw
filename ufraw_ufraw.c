@@ -264,7 +264,6 @@ ufraw_data *ufraw_open(char *filename)
     uf->modFlags = 0;
     uf->TCAmodifier = NULL;
     uf->modifier = NULL;
-    uf->lanczos_func = NULL;
 #endif
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
 	    raw->width, raw->height, raw->toneCurveSize);
@@ -693,7 +692,6 @@ void ufraw_close(ufraw_data *uf)
     lf_camera_destroy(uf->conf->camera);
     lf_modifier_destroy(uf->modifier);
 #endif
-    g_free(uf->lanczos_func);
     if ( uf->conf->darkframe!=NULL ) {
 	ufraw_close(uf->conf->darkframe);
 	g_free(uf->conf->darkframe);
@@ -790,28 +788,6 @@ int ufraw_convert_image(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
-/* Lanczos kernel is precomputed in a table with this resolution
- * The value below seems to be enough for HQ upscaling up to eight times
- */
-#define LANCZOS_TABLE_RES  256
-/* A support of 3 gives an overall sharper looking image, but
- * it is a) slower b) gives more sharpening artefacts
- */
-#define LANCZOS_SUPPORT    2
-/* Define this to use a floating-point implementation of Lanczos interpolation.
- * The integer implementation is a little bit less accurate, but MUCH faster
- * (even on machines with FPU - ~2.5 times faster on Core2); besides, it will
- * run a hell lot faster on computers without a FPU (e.g. PDAs).
- */
-//#define LANCZOS_DATA_FLOAT
-#ifdef LANCZOS_DATA_FLOAT
-#define LANCZOS_DATA_TYPE float
-#define LANCZOS_DATA_ONE 1.0
-#else
-#define LANCZOS_DATA_TYPE int
-#define LANCZOS_DATA_ONE 4096
-#endif
-
 #ifdef HAVE_LENSFUN
 static void ufraw_convert_image_vignetting(ufraw_data *uf,
 	ufraw_image_data *img, UFRectangle *area)
@@ -829,11 +805,9 @@ static void ufraw_convert_image_vignetting(ufraw_data *uf,
 static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 	ufraw_image_data *outimg, UFRectangle *area)
 {
-    double sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
-    double cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
+    float sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
+    float cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
 
-    /* Use precomputed Lanczos kernel */
-    LANCZOS_DATA_TYPE *lanczos_func = uf->lanczos_func;
     int x, y, c;
 
 #ifdef HAVE_LENSFUN
@@ -848,93 +822,39 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 	    float srcX = srcX0 + x*cosine;
 	    float srcY = srcY0 - x*sine;
 #ifdef HAVE_LENSFUN
-	    float buff[2];
 	    if (applyLF) {
+		float buff[2];
 		lf_modifier_apply_geometry_distortion(uf->modifier,
 			srcX, srcY, 1, 1, buff);
 		srcX = buff[0];
 		srcY = buff[1];
 	    }
 #endif
-#ifdef LANCZOS_DATA_FLOAT
-	    float xs = ceilf(srcX) - LANCZOS_SUPPORT;
-	    float xe = floorf(srcX) + LANCZOS_SUPPORT;
-	    float ys = ceilf(srcY) - LANCZOS_SUPPORT;
-	    float ye = floorf(srcY) + LANCZOS_SUPPORT;
-	    if (xs < 0 || ys < 0 || xe >= img->width || ye >= img->height) {
+	    gint32 xx = (gint32)srcX;
+	    gint32 yy = (gint32)srcY;
+	    // TODO: better handling of the borders.
+	    if (xx < 0 || yy < 0 || xx+1 >= img->width || yy+1 >= img->height) {
 		for (c = 0; c < 3; c++)
 		    cur[c] = 0;
 		continue;
 	    }
-	    int dsrc = img->width - (xe - xs) - 1;
-
-	    for (c = 0; c < 3; c++) {
-		ufraw_image_type *src = (ufraw_image_type *)(img->buffer +
-			(long)ys * img->rowstride + (long)xs * img->depth);
-		float norm = 0.0;
-		float sum = 0.0;
-
-		float _dx = srcX - xs;
-		float yc, dy = srcY - ys;
-		for (yc = ys; yc <= ye; yc += 1.0, dy -= 1.0) {
-		    float xc, dx = _dx;
-		    for (xc = xs; xc <= xe; xc += 1.0, dx -= 1.0, src++) {
-			float d = dx * dx + dy * dy;
-			if (d >= LANCZOS_SUPPORT * LANCZOS_SUPPORT)
-			    continue;
-
-			d = lanczos_func[(int)(d * LANCZOS_TABLE_RES)];
-			norm += d;
-			sum += d * src[0][c];
-                    }
-		    src += dsrc;
-		}
-		if (norm != 0.0)
-		    cur[c] = LIM((int)(sum / norm), 0, 0xffff);
-		else
-		    cur[c] = 0;
-	    }
+	    ufraw_image_type *src = (ufraw_image_type *)(img->buffer +
+		    yy * img->rowstride + xx * img->depth);
+#if 1
+	    /* Do it in integer arithmetic, it's a bit faster */
+	    guint64 dx = (gint32)(srcX * 4096.0) - (xx << 12);
+	    guint64 dy = (gint32)(srcY * 4096.0) - (yy << 12);
+	    for (c = 0; c < 3; c++)
+		cur[c] = ( (4096-dy)*((4096-dx)*src[0][c] + dx*src[1][c])
+			+ dy*((4096-dx)*src[img->width][c]
+				+ (dx)*src[img->width+1][c]) ) >> 24;
 #else
-	    /* Do it in integer arithmetic, it's faster */
-	    int xx = (int)srcX;
-	    int yy = (int)srcY;
-	    int xs = xx + 1 - LANCZOS_SUPPORT;
-	    int xe = xx     + LANCZOS_SUPPORT;
-	    int ys = yy + 1 - LANCZOS_SUPPORT;
-	    int ye = yy     + LANCZOS_SUPPORT;
-	    if (xs < 0 || ys < 0 || xe >= img->width || ye >= img->height) {
-		for (c = 0; c < 3; c++)
-		    cur[c] = 0;
-		continue;
-	    }
-	    int dsrc = img->width - (xe - xs) - 1;
-
-	    for (c = 0; c < 3; c++) {
-		ufraw_image_type *src = (ufraw_image_type *)(img->buffer +
-			ys * img->rowstride + xs * img->depth);
-		int norm = 0;
-		int sum = 0;
-
-		int _dx = (int)(srcX * 4096.0) - (xs << 12);
-		int yc, dy = (int)(srcY * 4096.0) - (ys << 12);
-		for (yc = ys; yc <= ye; yc++, dy -= 4096) {
-		    int xc, dx = _dx;
-		    for (xc = xs; xc <= xe; xc++, src++, dx -= 4096) {
-			int d = (dx * dx + dy * dy) >> 12;
-			if (d >= 4096 * LANCZOS_SUPPORT * LANCZOS_SUPPORT)
-			    continue;
-
-			d = lanczos_func[(d * LANCZOS_TABLE_RES) >> 12];
-			norm += d;
-			sum += d * src[0][c];
-		    }
-		    src += dsrc;
-		}
-		if (norm != 0)
-		    cur[c] = LIM(sum / norm, 0, 0xffff);
-		else
-		    cur[c] = 0;
-	    }
+	    float dx = srcX - xx;
+	    float dy = srcY - yy;
+	    for (c = 0; c < 3; c++)
+		cur[c] = (1-dy)*((1-dx)*src[0][c] + dx*src[1][c])
+			    + dy*((1-dx)*src[img->width][c]
+				+ (dx)*src[img->width+1][c]);
 #endif
 	}
     }
@@ -1545,25 +1465,6 @@ static void ufraw_prepare_tca(ufraw_data *uf)
 
 static void ufraw_prepare_transform(ufraw_data *uf)
 {
-    if (uf->lanczos_func == NULL) {
-	/* Precompute the Lanczos kernel */
-	LANCZOS_DATA_TYPE *lanczos_func = g_new(LANCZOS_DATA_TYPE,
-		LANCZOS_SUPPORT * LANCZOS_SUPPORT * LANCZOS_TABLE_RES);
-	uf->lanczos_func = lanczos_func;
-	int i;
-	for (i = 0; i < LANCZOS_SUPPORT*LANCZOS_SUPPORT * LANCZOS_TABLE_RES;
-		i++) {
-	    if (i == 0) {
-		lanczos_func[i] = LANCZOS_DATA_ONE;
-	    } else {
-		float d = sqrt((float)i / LANCZOS_TABLE_RES);
-		lanczos_func[i] = (LANCZOS_DATA_TYPE)(
-			LANCZOS_DATA_ONE * LANCZOS_SUPPORT *
-			sin(M_PI * d) * sin(M_PI / LANCZOS_SUPPORT * d) /
-			(M_PI * M_PI * d * d) );
-	    }
-	}
-    }
 #ifdef HAVE_LENSFUN
     ufraw_image_data *img = &uf->Images[ufraw_first_phase];
     conf_data *conf = uf->conf;
@@ -1589,6 +1490,8 @@ static void ufraw_prepare_transform(ufraw_data *uf)
 	lf_modifier_destroy(uf->modifier);
 	uf->modifier = NULL;
     }
+#else /* HAVE_LENSFUN */
+    (void)uf;
 #endif /* HAVE_LENSFUN */
 }
 
