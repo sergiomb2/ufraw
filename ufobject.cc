@@ -300,8 +300,8 @@ public:
 		Default[i] = defaultValue;
     }
     ~_UFNumberArray() {
-	g_free(Array);
-	g_free(Default);
+	delete [] Array;
+	delete [] Default;
     }
     bool SilentChange(UFNumberArray *that, int index, double number) {
 	if (index < 0 || index >= Size)
