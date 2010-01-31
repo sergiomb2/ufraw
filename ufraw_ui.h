@@ -165,6 +165,7 @@ typedef struct {
     int PageNumLightness;
     int PageNumCrop;
     int HisMinHeight;
+    int UnnormalizedOrientation;
     /* Original aspect ratio (0) or actual aspect ratio */
     float AspectRatio;
     /* The aspect ratio entry field */

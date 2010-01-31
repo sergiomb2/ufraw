@@ -3042,6 +3042,7 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
     int oldFlip = CFG->orientation;
     ufraw_unnormalize_rotation(data->UF);
     CFG->rotationAngle = gtk_adjustment_get_value(data->RotationAdjustment);
+    CFG->orientation = data->UnnormalizedOrientation;
     ufraw_normalize_rotation(data->UF);
     int newFlip = CFG->orientation;
     int flip;
@@ -3132,6 +3133,7 @@ static void adjustment_reset_rotation(GtkWidget *widget, gpointer user_data)
     data->FreezeDialog++;
     ufraw_unnormalize_rotation(data->UF);
     gtk_adjustment_set_value(data->RotationAdjustment, CFG->rotationAngle);
+    data->UnnormalizedOrientation = CFG->orientation;
     ufraw_normalize_rotation(data->UF);
     data->FreezeDialog--;
     CFG->orientation = oldOrientation;
@@ -5092,6 +5094,7 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
 	G_CALLBACK(adjustment_update_rotation),
 	&data->ResetRotationAdjustment, _("Reset rotation angle"),
 	G_CALLBACK(adjustment_reset_rotation));
+    data->UnnormalizedOrientation = CFG->orientation;
     ufraw_normalize_rotation(data->UF);
     gtk_widget_set_sensitive(data->ResetRotationAdjustment,
 	    CFG->rotationAngle != 0 ||
