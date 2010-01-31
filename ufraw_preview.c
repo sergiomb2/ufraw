@@ -663,13 +663,6 @@ static void preview_draw_area(preview_data *data,
 #endif
 }
 
-static void preview_draw_all(preview_data *data)
-{
-    int width = gdk_pixbuf_get_width(data->PreviewPixbuf);
-    int height = gdk_pixbuf_get_height(data->PreviewPixbuf);
-    preview_draw_area(data, 0, 0, width, height);
-}
-
 static gboolean preview_draw_crop(preview_data *data)
 {
     int CropX1, CropX2, CropY1, CropY2;
@@ -2137,73 +2130,21 @@ static void zoom_100_event(GtkWidget *widget, gpointer user_data)
 
 static void flip_image(GtkWidget *widget, int flip)
 {
-    int temp;
     preview_data *data = get_preview_data(widget);
 
-    if (data->FreezeDialog) return;
-    ufraw_flip_image(data->UF, flip);
+    int oldOrientation = CFG->orientation;
+    double oldAngle = CFG->rotationAngle;
+    ufraw_flip_orientation(data->UF, flip);
 
-    if (flip & 1) {
-	temp = CFG->CropX1;
-	CFG->CropX1 = data->UF->rotatedWidth - CFG->CropX2;
-	CFG->CropX2 = data->UF->rotatedWidth - temp;
-	if ( data->SpotX1>=0 ) {
-	    temp = data->SpotX1;
-	    data->SpotX1 = data->UF->rotatedWidth - data->SpotX2;
-	    data->SpotX2 = data->UF->rotatedWidth - temp;
-	}
-    }
-    if (flip & 2) {
-	temp = CFG->CropY1;
-	CFG->CropY1 = data->UF->rotatedHeight - CFG->CropY2;
-	CFG->CropY2 = data->UF->rotatedHeight - temp;
-	if ( data->SpotX1>=0 ) {
-	    temp = data->SpotY1;
-	    data->SpotY1 = data->UF->rotatedHeight - data->SpotY2;
-	    data->SpotY2 = data->UF->rotatedHeight - temp;
-	}
-    }
-    if (flip & 4) {
-	temp = CFG->CropX1;
-	CFG->CropX1 = CFG->CropY1;
-	CFG->CropY1 = temp;
-	temp = CFG->CropX2;
-	CFG->CropX2 = CFG->CropY2;
-	CFG->CropY2 = temp;
-	if ( data->SpotX1>=0 ) {
-	    temp = data->SpotX1;
-	    data->SpotX1 = data->SpotY1;
-	    data->SpotY1 = temp;
-	    temp = data->SpotX2;
-	    data->SpotX2 = data->SpotY2;
-	    data->SpotY2 = temp;
-	}
-    }
-    // image dimensions cannot really change here,
-    // yet width and height might be flipped (independent of flip&4).
-    ufraw_get_image_dimensions(data->UF);
-
-    ++data->FreezeDialog;
+    data->FreezeDialog++;
     ufraw_unnormalize_rotation(data->UF);
-    gtk_adjustment_set_value(data->RotationAdjustment,
-	    CFG->rotationAngle);
+    gtk_adjustment_set_value(data->RotationAdjustment, CFG->rotationAngle);
+    data->UnnormalizedOrientation = CFG->orientation;
     ufraw_normalize_rotation(data->UF);
-    gtk_widget_set_sensitive(data->ResetRotationAdjustment,
-	    CFG->rotationAngle != 0 ||
-	    CFG->orientation != CFG->CameraOrientation);
-    --data->FreezeDialog;
-
-    render_init(data);
-    if (is_rendering(data)) {
-	/* TODO: We are in the middle or a rendering scan,
-	 * so we should restart from the beginning. */
-    } else {
-	/* Full image was already rendered.
-	 * We only need to draw the flipped image. */
-    	preview_draw_all(data);
-    }
-    update_crop_ranges(data, TRUE);
-    refresh_aspect(data);
+    data->FreezeDialog--;
+    CFG->orientation = oldOrientation;
+    CFG->rotationAngle = oldAngle;
+    gtk_adjustment_value_changed(data->RotationAdjustment);
 }
 
 /*
