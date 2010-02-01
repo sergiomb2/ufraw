@@ -2382,6 +2382,9 @@ static void lock_aspect(GtkWidget *widget)
 {
     preview_data *data = get_preview_data(widget);
     CFG->LockAspect = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+    uf_widget_set_tooltip(widget, CFG->LockAspect ?
+	    _("Aspect ratio locked, click to unlock") :
+	    _("Aspect ratio unlocked, click to lock"));
 }
 
 static void aspect_changed(GtkWidget *widget, gpointer user_data)
@@ -4923,14 +4926,15 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
 	    G_CALLBACK(aspect_changed), NULL);
 
     button = gtk_toggle_button_new();
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), CFG->LockAspect);
     gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
 	    "object-lock", GTK_ICON_SIZE_BUTTON));
     //gtk_box_pack_start(hbox, button, FALSE, FALSE, 0);
     gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
-    uf_widget_set_tooltip(button, _("Lock aspect ratio"));
     g_signal_connect(G_OBJECT(button), "clicked",
 	    G_CALLBACK(lock_aspect), 0);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), CFG->LockAspect);
+    // Update the tooltip.
+    lock_aspect(button);
     data->LockAspectButton = GTK_TOGGLE_BUTTON(button);
 
     /* Get initial aspect ratio */
@@ -4969,23 +4973,8 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
     gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(data->ShrinkSpin),
 	    1, 2, 0, 1, 0, 0, 0, 0);
 
-    label = gtk_label_new(_("Height"));
+   label = gtk_label_new(_("Width"));
     gtk_table_attach(GTK_TABLE(table), label, 1, 2, 1, 2, 0, 0, 0, 0);
-    data->HeightAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(data->height,
-	    10, 99999, 10, 100, 0));
-    g_object_set_data(G_OBJECT(data->HeightAdjustment),
-		"Adjustment-Accuracy", (gpointer)0);
-    data->HeightSpin = GTK_SPIN_BUTTON(gtk_spin_button_new(
-	    data->HeightAdjustment, 10, 0));
-    g_object_set_data(G_OBJECT(data->HeightAdjustment), "Parent-Widget",
-	    data->HeightSpin);
-    g_signal_connect(G_OBJECT(data->HeightAdjustment), "value-changed",
-	    G_CALLBACK(adjustment_update), &data->height);
-    gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(data->HeightSpin),
-		2, 3, 1, 2, 0, 0, 0, 0);
-
-    label = gtk_label_new(_("Width"));
-    gtk_table_attach(GTK_TABLE(table), label, 3, 4, 1, 2, 0, 0, 0, 0);
     data->WidthAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(data->width,
 	    10, 99999, 10, 100, 0));
     g_object_set_data(G_OBJECT(data->WidthAdjustment),
@@ -4997,6 +4986,21 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
     g_signal_connect(G_OBJECT(data->WidthAdjustment), "value-changed",
 	    G_CALLBACK(adjustment_update), &data->width);
     gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(data->WidthSpin),
+	    2, 3, 1, 2, 0, 0, 0, 0);
+ 
+    label = gtk_label_new(_("Height"));
+    gtk_table_attach(GTK_TABLE(table), label, 3, 4, 1, 2, 0, 0, 0, 0);
+    data->HeightAdjustment = GTK_ADJUSTMENT(gtk_adjustment_new(data->height,
+	    10, 99999, 10, 100, 0));
+    g_object_set_data(G_OBJECT(data->HeightAdjustment),
+		"Adjustment-Accuracy", (gpointer)0);
+    data->HeightSpin = GTK_SPIN_BUTTON(gtk_spin_button_new(
+	    data->HeightAdjustment, 10, 0));
+    g_object_set_data(G_OBJECT(data->HeightAdjustment), "Parent-Widget",
+	    data->HeightSpin);
+    g_signal_connect(G_OBJECT(data->HeightAdjustment), "value-changed",
+	    G_CALLBACK(adjustment_update), &data->height);
+    gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(data->HeightSpin),
 	    4, 5, 1, 2, 0, 0, 0, 0);
 
     /* Orientation controls */
