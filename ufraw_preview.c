@@ -3377,9 +3377,11 @@ static void delete_from_list(GtkWidget *widget, gpointer user_data)
 static void configuration_save(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    user_data = user_data;
-    conf_save(CFG, NULL, NULL);
+    (void)user_data;
+    UFObject *tmp = RC->ufobject;
     *RC = *data->UF->conf;
+    RC->ufobject = tmp;
+    conf_save(RC, NULL, NULL);
 }
 
 static void gimp_reset_clicked(GtkWidget *widget, GtkEntry *entry)
