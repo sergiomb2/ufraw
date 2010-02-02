@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -682,6 +682,12 @@ msgstr "Svartpunkt: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "Ingen plats för nya kurvor."
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr ""
 
@@ -1067,17 +1073,14 @@ msgid ""
 "or as a ratio of two numbers (14:11)"
 msgstr ""
 
-msgid "Lock aspect ratio"
-msgstr "Lås bildförhållande"
-
 msgid "Shrink factor"
 msgstr ""
 
-msgid "Height"
-msgstr "Höjd"
-
 msgid "Width"
 msgstr "Bredd"
+
+msgid "Height"
+msgstr "Höjd"
 
 msgid "Orientation:"
 msgstr "Orientering:"

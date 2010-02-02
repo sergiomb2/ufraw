@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: 2009-10-06 09:38+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -752,6 +752,12 @@ msgstr "암부: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "새 밝기 조정을 저장할 공간이 없습니다."
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr "다크프레임 불러오기"
 
@@ -1160,17 +1166,14 @@ msgstr ""
 "숫자 형식(1.273) 혹은 비율 형식(14:11)\n"
 "으로 입력 할 수 있습니다"
 
-msgid "Lock aspect ratio"
-msgstr "종횡비 고정"
-
 msgid "Shrink factor"
 msgstr "축소 인자"
 
-msgid "Height"
-msgstr "높이"
-
 msgid "Width"
 msgstr "너비"
+
+msgid "Height"
+msgstr "높이"
 
 msgid "Orientation:"
 msgstr "기준:"

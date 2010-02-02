@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -668,6 +668,12 @@ msgstr ""
 msgid "No more room for new lightness adjustments."
 msgstr ""
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr ""
 
@@ -1049,16 +1055,13 @@ msgid ""
 "or as a ratio of two numbers (14:11)"
 msgstr ""
 
-msgid "Lock aspect ratio"
-msgstr ""
-
 msgid "Shrink factor"
 msgstr ""
 
-msgid "Height"
+msgid "Width"
 msgstr ""
 
-msgid "Width"
+msgid "Height"
 msgstr ""
 
 msgid "Orientation:"

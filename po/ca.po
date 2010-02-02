@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: 2009-09-30 19:24+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -798,6 +798,12 @@ msgstr "Punt negre: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "No hi ha espai per a més ajustaments de lluminositat."
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr "Carrega el marc fosc"
 
@@ -1206,17 +1212,14 @@ msgstr ""
 "Es pot escriure en notació decimal (1.273)\n"
 "o com a relació de dos nombres (14:11)"
 
-msgid "Lock aspect ratio"
-msgstr "Manté la relació de l'aspecte"
-
 msgid "Shrink factor"
 msgstr "Factor de reducció"
 
-msgid "Height"
-msgstr "Alçada"
-
 msgid "Width"
 msgstr "Amplada"
+
+msgid "Height"
+msgstr "Alçada"
 
 msgid "Orientation:"
 msgstr "Orientació:"

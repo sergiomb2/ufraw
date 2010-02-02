@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: 2009-10-13 18:45+0400\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -789,6 +789,12 @@ msgstr "Черная точка: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "Не хватает места для последующей коррекции светлоты"
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr "Загрузить тёмный кадр"
 
@@ -1196,17 +1202,14 @@ msgstr ""
 "Может быть введено в десятичном виде (1.273)\n"
 "или как отношение двух чисел (14:11)"
 
-msgid "Lock aspect ratio"
-msgstr "Зафиксировать соотношение сторон"
-
 msgid "Shrink factor"
 msgstr "Коэффициент масштаба"
 
-msgid "Height"
-msgstr "Высота"
-
 msgid "Width"
 msgstr "Ширина"
+
+msgid "Height"
+msgstr "Высота"
 
 msgid "Orientation:"
 msgstr "Ориентация:"

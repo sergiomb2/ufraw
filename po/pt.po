@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: 2009-10-07 10:53-0300\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese\n"
@@ -775,6 +775,12 @@ msgstr "Ponto preto: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "Não há mais espaço para novos ajustes de luminosidade"
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr "Carregar quadro negro"
 
@@ -1186,17 +1192,14 @@ msgstr ""
 "Pode ser dado em notação decimal (1.273)\n"
 "ou como taxa entre dois números (14:11)"
 
-msgid "Lock aspect ratio"
-msgstr "Trancar o aspecto"
-
 msgid "Shrink factor"
 msgstr "Fator de encolhimento"
 
-msgid "Height"
-msgstr "Altura"
-
 msgid "Width"
 msgstr "Largura"
+
+msgid "Height"
+msgstr "Altura"
 
 msgid "Orientation:"
 msgstr "Orientação:"

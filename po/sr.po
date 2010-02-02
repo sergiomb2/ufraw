@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -787,6 +787,12 @@ msgstr "Црна тачка: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "Нема места за нова подешавања осветљења."
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr "Учитај тамни кадар"
 
@@ -1195,17 +1201,14 @@ msgstr ""
 "Можете унети децимални запис (1.273)\n"
 "или у виду два броја (14:11)"
 
-msgid "Lock aspect ratio"
-msgstr "Закључај размеру"
-
 msgid "Shrink factor"
 msgstr "Фактор сужења"
 
-msgid "Height"
-msgstr "Висина"
-
 msgid "Width"
 msgstr "Ширина"
+
+msgid "Height"
+msgstr "Висина"
 
 msgid "Orientation:"
 msgstr "Окретање:"

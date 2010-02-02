@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -757,6 +757,12 @@ msgstr "ブラックポイント: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "新しいカーブに対する余地がありません"
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr "ダークフレームを読み込む"
 
@@ -1166,17 +1172,14 @@ msgstr ""
 "10進数の小数点表記(1.273)\n"
 "又は2値による表記(14:11)"
 
-msgid "Lock aspect ratio"
-msgstr "縦横比を固定"
-
 msgid "Shrink factor"
 msgstr "縮小倍数"
 
-msgid "Height"
-msgstr "縦"
-
 msgid "Width"
 msgstr "横"
+
+msgid "Height"
+msgstr "縦"
 
 msgid "Orientation:"
 msgstr "変換:"

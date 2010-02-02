@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -740,6 +740,12 @@ msgstr "黑色控制点: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "没有足够的空间给新的亮度曲线。"
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr "加载黑色帧(dark frame)"
 
@@ -1144,17 +1150,14 @@ msgstr ""
 "可以输入十进制数值，如(1.273)\n"
 "或两个数字的比例，如(14:11)"
 
-msgid "Lock aspect ratio"
-msgstr "锁定宽高比"
-
 msgid "Shrink factor"
 msgstr "收缩因子"
 
-msgid "Height"
-msgstr "高度"
-
 msgid "Width"
 msgstr "宽度"
+
+msgid "Height"
+msgstr "高度"
 
 msgid "Orientation:"
 msgstr "定位："

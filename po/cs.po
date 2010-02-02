@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: 2009-10-04 10:41+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -775,6 +775,12 @@ msgstr "Černý bod: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "Není více místa pro nové úpravy světlosti."
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr "Načíst černý snímek"
 
@@ -1181,17 +1187,14 @@ msgstr ""
 "Může být vložen v desetiné notaci (1.273)\n"
 "nebo jako poměr dvou čísel (14:11)"
 
-msgid "Lock aspect ratio"
-msgstr "Uzamknout poměr stran"
-
 msgid "Shrink factor"
 msgstr "Faktor zmenšení"
 
-msgid "Height"
-msgstr "Výška"
-
 msgid "Width"
 msgstr "Šířka"
+
+msgid "Height"
+msgstr "Výška"
 
 msgid "Orientation:"
 msgstr "Orientace:"

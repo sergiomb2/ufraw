@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: 2009-09-30 13:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -779,6 +779,12 @@ msgstr "Zwartpunt: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "Geen ruimte voor nieuwe lichtwaarde aanpassingen."
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr "Inlezen zwartbeeld"
 
@@ -1186,17 +1192,14 @@ msgstr ""
 "Kan in decimale notatie (1.273)\n"
 "of als ratio van twee getallen (14:11)"
 
-msgid "Lock aspect ratio"
-msgstr "Bevries aspect ratio"
-
 msgid "Shrink factor"
 msgstr "Krimp factor"
 
-msgid "Height"
-msgstr "Hoogte"
-
 msgid "Width"
 msgstr "Breedte"
+
+msgid "Height"
+msgstr "Hoogte"
 
 msgid "Orientation:"
 msgstr "Orientatie:"

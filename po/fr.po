@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: 2009-11-28 00:03+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -799,6 +799,12 @@ msgstr "Point noir: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "Plus de place pour de nouveaux ajustements de clarté."
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr "Charger bruit de référence"
 
@@ -1229,19 +1235,16 @@ msgstr ""
 "Peuvent être saisies soient en notation décimale (1.273)\n"
 "soient comme une fraction (14:11)"
 
-msgid "Lock aspect ratio"
-msgstr "Garder les proportions"
-
 msgid "Shrink factor"
 msgstr ""
 "Facteur de\n"
 "réduction"
 
-msgid "Height"
-msgstr "Hauteur"
-
 msgid "Width"
 msgstr "Largeur"
+
+msgid "Height"
+msgstr "Hauteur"
 
 msgid "Orientation:"
 msgstr "Orientation:"

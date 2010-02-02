@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
-"PO-Revision-Date: 2010-01-28 05:15+0100\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
+"PO-Revision-Date: 2010-02-02 04:15+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -772,6 +772,12 @@ msgstr "Sortpunkt: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "Ikke mere plads til nye lysværdijusteringer."
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr "Sidelængdeforholdet er låst, klik for at låse op"
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr "Sidelængdeforholdet er låst op, klik for at låse"
+
 msgid "Load dark frame"
 msgstr "Indlæs sortbillede"
 
@@ -1185,17 +1191,14 @@ msgstr ""
 "Kan indtastes som decimaltal (1.273)\n"
 "eller som et forhold mellem to tal (14:11)"
 
-msgid "Lock aspect ratio"
-msgstr "Lås sidelængdeforhold"
-
 msgid "Shrink factor"
 msgstr "Formindskelsesfaktor"
 
-msgid "Height"
-msgstr "Højde"
-
 msgid "Width"
 msgstr "Bredde"
+
+msgid "Height"
+msgstr "Højde"
 
 msgid "Orientation:"
 msgstr "Orientering:"

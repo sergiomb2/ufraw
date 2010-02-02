@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-27 13:57-0600\n"
+"POT-Creation-Date: 2010-02-02 04:00+0100\n"
 "PO-Revision-Date: 2009-05-13 12:19+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -788,6 +788,12 @@ msgstr "Schwarzpunkt: %0.3lf"
 msgid "No more room for new lightness adjustments."
 msgstr "Kein Platz mehr für neue Kurven."
 
+msgid "Aspect ratio locked, click to unlock"
+msgstr ""
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr ""
+
 msgid "Load dark frame"
 msgstr "Dunkelbild laden"
 
@@ -1201,17 +1207,14 @@ msgstr ""
 "Kann in dezimaler Schreibweise (1,273)\n"
 "oder als Verhältnis von zwei Zahlen (14:11) eingegeben werden."
 
-msgid "Lock aspect ratio"
-msgstr "Aspektverhältnis sperren"
-
 msgid "Shrink factor"
 msgstr "Schrumpffaktor"
 
-msgid "Height"
-msgstr "Höhe"
-
 msgid "Width"
 msgstr "Breite"
+
+msgid "Height"
+msgstr "Höhe"
 
 msgid "Orientation:"
 msgstr "Ausrichtung:"
