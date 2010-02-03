@@ -132,7 +132,7 @@ The default is 'digital'.
 Adjust the color saturation. Range 0.00 to 3.00. Default 1.0,
 use 0 for black & white output.
 
-=item ---wavelet-denoising-threshold=THRESHOLD
+=item --wavelet-denoising-threshold=THRESHOLD
 
 Wavelet denoising threshold (default 0.0).
 
