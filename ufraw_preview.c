@@ -882,7 +882,8 @@ static void preview_progress_enable(preview_data *data)
 static void preview_progress_disable(preview_data *data)
 {
     ufraw_progress = NULL;
-    g_timer_destroy(ProgressTimer);
+    if (ProgressTimer != NULL)
+	g_timer_destroy(ProgressTimer);
     render_status_text(data);
 }
 
@@ -5655,6 +5656,8 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     while (gtk_events_pending()) gtk_main_iteration();
 #endif
     if ( CFG->WindowMaximized ) {
+	preview_progress_disable(data);
+	while (gtk_events_pending()) gtk_main_iteration();
 	// scroll widget is allocated size only after gtk_widget_show_all()
 	int scrollWidth = scroll->allocation.width;
 	int scrollHeight = scroll->allocation.height;
