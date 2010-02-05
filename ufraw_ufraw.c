@@ -47,7 +47,6 @@ static void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase);
 static void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase);
 static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 	ufraw_image_data *outimg, UFRectangle *area);
-static void ufraw_prepare_transform(ufraw_data *uf);
 static void ufraw_convert_prepare_first_buffer(ufraw_data *uf,
 	ufraw_image_data *img);
 static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
@@ -352,17 +351,27 @@ void ufraw_get_image_dimensions(ufraw_data *uf)
     dcraw_image_dimensions(uf->raw, uf->conf->orientation, 1,
 	    &uf->initialHeight, &uf->initialWidth);
 
-    // update rotated dimensions
-    double rotationRadians = (uf->conf->rotationAngle * 2 * M_PI) / 360;
-    uf->rotatedWidth = ceil((uf->initialHeight * sin(rotationRadians))
-	+ (uf->initialWidth * cos(rotationRadians)));
-    uf->rotatedHeight = ceil((uf->initialWidth * sin(rotationRadians))
-	+ (uf->initialHeight * cos(rotationRadians)));
+    ufraw_get_image(uf, ufraw_transform_phase, FALSE);
 
     if (uf->conf->CropX1 < 0) uf->conf->CropX1 = 0;
     if (uf->conf->CropY1 < 0) uf->conf->CropY1 = 0;
     if (uf->conf->CropX2 < 0) uf->conf->CropX2 = uf->rotatedWidth;
     if (uf->conf->CropY2 < 0) uf->conf->CropY2 = uf->rotatedHeight;
+}
+
+/* Get scaled crop coordinates in final image coordinates */
+void ufraw_get_scaled_crop(ufraw_data *uf, UFRectangle *crop)
+{
+    ufraw_image_data *img = ufraw_get_image(uf, ufraw_transform_phase, FALSE);
+
+    float scale_x = ((float)img->width) / uf->rotatedWidth;
+    float scale_y = ((float)img->height) / uf->rotatedHeight;
+    crop->x = MAX(floor(uf->conf->CropX1 * scale_x), 0);
+    int x2 = MIN(ceil(uf->conf->CropX2 * scale_x), img->width);
+    crop->width = x2 - crop->x;
+    crop->y = MAX(floor(uf->conf->CropY1 * scale_y), 0);
+    int y2 = MIN(ceil(uf->conf->CropY2 * scale_y), img->height);
+    crop->height = y2 - crop->y;
 }
 
 int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
@@ -768,14 +777,14 @@ int ufraw_convert_image(ufraw_data *uf)
     ufraw_convert_image_first(uf, ufraw_first_phase);
 
     UFRectangle area = { 0, 0, img->width, img->height };
+    // prepare_transform has to be called before applying vignetting
+    ufraw_image_data *img2 = &uf->Images[ufraw_transform_phase];
+    ufraw_convert_prepare_transform_buffer(uf, img2, img->width, img->height);
 #ifdef HAVE_LENSFUN
-    ufraw_prepare_transform(uf);
     if (uf->modifier != NULL) {
 	ufraw_convert_image_vignetting(uf, img, &area);
     }
 #endif
-    ufraw_image_data *img2 = &uf->Images[ufraw_transform_phase];
-    ufraw_convert_prepare_transform_buffer(uf, img2, img->width, img->height);
     if (img2->buffer != NULL) {
 	area.width = img2->width;
 	area.height = img2->height;
@@ -808,15 +817,23 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
     float sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
     float cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
 
-    int x, y, c;
-
+    // If we rotate around the center:
+    // srcX = (X-outimg->width/2)*cosine + (Y-outimg->height/2)*sine;
+    // srcY = -(X-outimg->width/2)*sine + (Y-outimg->height/2)*cosine;
+    // Then the base offset is:
+    // baseX = img->width/2;
+    // baseY = img->height/2;
+    // Since we rotate around the top-left corner, the base offset is:
+    float baseX = img->width/2 - outimg->width/2*cosine - outimg->height/2*sine;
+    float baseY = img->height/2 + outimg->width/2*sine - outimg->height/2*cosine;
 #ifdef HAVE_LENSFUN
     gboolean applyLF = uf->modifier != NULL && (uf->modFlags & UF_LF_TRANSFORM);
 #endif
+    int x, y, c;
     for (y = area->y; y < area->y + area->height; y++) {
 	guint8 *cur0 = outimg->buffer + y * outimg->rowstride;
-	float srcX0 = y*sine - img->height*sine*cosine;
-	float srcY0 = y*cosine + img->height*sine*sine;
+	float srcX0 = y*sine + baseX;
+	float srcY0 = y*cosine + baseY;
 	for (x = area->x; x < area->x + area->width; x++) {
 	    guint16 *cur = (guint16 *)(cur0 + x * outimg->depth);
 	    float srcX = srcX0 + x*cosine;
@@ -1365,10 +1382,46 @@ static void ufraw_convert_prepare_first_buffer(ufraw_data *uf,
     }
 }
  
+static void ufraw_convert_prepare_transform(ufraw_data *uf,
+	int width, int height, gboolean reverse)
+{
+#ifdef HAVE_LENSFUN
+    conf_data *conf = uf->conf;
+    if (uf->modifier != NULL)
+	lf_modifier_destroy(uf->modifier);
+    uf->modifier = NULL;
+
+    if (conf->camera == NULL || conf->lens == NULL)
+	return;
+
+    uf->modifier = lf_modifier_new(conf->lens, conf->camera->CropFactor,
+	    width, height);
+    if (uf->modifier == NULL)
+	return;
+
+    float real_scale = pow(2.0, conf->lens_scale);
+    uf->modFlags = lf_modifier_initialize(uf->modifier, conf->lens,
+	    LF_PF_U16, conf->focal_len, conf->aperture, conf->subject_distance,
+	    real_scale, conf->cur_lens_type,
+	    UF_LF_TRANSFORM | LF_MODIFY_VIGNETTING, reverse);
+    if ((uf->modFlags & UF_LF_ALL) == 0) {
+	lf_modifier_destroy(uf->modifier);
+	uf->modifier = NULL;
+    }
+#else /* HAVE_LENSFUN */
+    (void)uf;
+    (void)width;
+    (void)height;
+    (void)reverse;
+#endif /* HAVE_LENSFUN */
+}
+
 static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 	ufraw_image_data *img, int width, int height)
 {
-    ufraw_prepare_transform(uf);
+    const int iWidth = uf->initialWidth;
+    const int iHeight = uf->initialHeight;
+    ufraw_convert_prepare_transform(uf, iWidth, iHeight, TRUE);
 #ifdef HAVE_LENSFUN
     if (uf->conf->rotationAngle == 0 &&
 	(uf->modifier == NULL || !(uf->modFlags & UF_LF_TRANSFORM)))
@@ -1380,15 +1433,55 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 	img->buffer = NULL;
 	img->width = width;
 	img->height = height;
-    } else {
-	double sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
-	double cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
-	int newWidth = ceil((height * sine) + (width * cosine));
-	int newHeight = ceil((width * sine) + (height * cosine));
-	width = newWidth;
-	height = newHeight;
-	ufraw_image_init(img, width, height, 8);
+	// We still need the transform for vignetting
+	ufraw_convert_prepare_transform(uf, width, height, FALSE);
+	uf->rotatedWidth = iWidth;
+	uf->rotatedHeight = iHeight;
+	return;
     }
+    const float sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
+    const float cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
+    const float midX = iWidth/2.0 - 0.5;
+    const float midY = iHeight/2.0 - 0.5;
+#ifdef HAVE_LENSFUN
+    gboolean applyLF = uf->modifier != NULL && (uf->modFlags & UF_LF_TRANSFORM);
+#endif
+    float maxX = 0, maxY = 0;
+    int i;
+    for (i = 0; i < iWidth + iHeight - 1; i++) {
+	int x, y;
+	if (i < iWidth) { // Trace the left border of the image
+	    x = i;
+	    y = 0;
+	} else { // Trace the bottom border of the image
+	    x = iWidth - 1;
+	    y = i - iWidth + 1;
+	}
+	float buff[2];
+#ifdef HAVE_LENSFUN
+	if (applyLF) {
+	   lf_modifier_apply_geometry_distortion(uf->modifier,
+		  x, y, 1, 1, buff);
+	} else {
+	    buff[0] = x;
+	    buff[1] = y;
+	}
+#else
+	buff[0] = x;
+	buff[1] = y;
+#endif
+	float srcX = (buff[0]-midX)*cosine - (buff[1]-midY)*sine;
+	float srcY = (buff[0]-midX)*sine + (buff[1]-midY)*cosine;
+	maxX = MAX(maxX, fabs(srcX));
+	maxY = MAX(maxY, fabs(srcY));
+    }
+    // Do not allow increasing canvas size by more than a factor of 2
+    uf->rotatedWidth = MIN(ceil(2*maxX), 2*iWidth);
+    uf->rotatedHeight = MIN(ceil(2*maxY), 2*iHeight);
+    int newWidth = uf->rotatedWidth * width / iWidth;
+    int newHeight = uf->rotatedHeight * height / iHeight;
+    ufraw_image_init(img, newWidth, newHeight, 8);
+    ufraw_convert_prepare_transform(uf, width, height, FALSE);
 }
 
 /*
@@ -1462,38 +1555,6 @@ static void ufraw_prepare_tca(ufraw_data *uf)
     }
 }
 #endif
-
-static void ufraw_prepare_transform(ufraw_data *uf)
-{
-#ifdef HAVE_LENSFUN
-    ufraw_image_data *img = &uf->Images[ufraw_first_phase];
-    conf_data *conf = uf->conf;
-
-    if (uf->modifier != NULL)
-	lf_modifier_destroy(uf->modifier);
-    uf->modifier = NULL;
-
-    if (conf->camera == NULL || conf->lens == NULL)
-	return;
-
-    uf->modifier = lf_modifier_new(conf->lens, conf->camera->CropFactor,
-	    img->width, img->height);
-    if (uf->modifier == NULL)
-	return;
-
-    float real_scale = pow(2.0, conf->lens_scale);
-    uf->modFlags = lf_modifier_initialize(uf->modifier, conf->lens,
-	    LF_PF_U16, conf->focal_len, conf->aperture, conf->subject_distance,
-	    real_scale, conf->cur_lens_type,
-	    UF_LF_TRANSFORM | LF_MODIFY_VIGNETTING, FALSE);
-    if ((uf->modFlags & UF_LF_ALL) == 0) {
-	lf_modifier_destroy(uf->modifier);
-	uf->modifier = NULL;
-    }
-#else /* HAVE_LENSFUN */
-    (void)uf;
-#endif /* HAVE_LENSFUN */
-}
 
 /*
  * This function is very permissive in accepting NULL pointers but it does

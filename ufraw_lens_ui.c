@@ -334,6 +334,7 @@ static void lens_interpolate (preview_data *data, const lfLens *lens)
         ufraw_invalidate_layer(data->UF, ufraw_first_phase);
     else
         ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+    resize_canvas(data);
     render_preview (data);
 }
 
@@ -610,6 +611,7 @@ static void lens_scale_update (GtkAdjustment *adj, float *valuep)
     preview_data *data = get_preview_data (adj);
     *valuep = gtk_adjustment_get_value (adj);
     ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+    resize_canvas(data);
     render_preview (data);
 }
 
@@ -619,6 +621,7 @@ static void lens_scale_reset (GtkWidget *button, gpointer user_data)
     preview_data *data = get_preview_data (button);
     gtk_adjustment_set_value (data->LensScaleAdjustment, 0.0);
     ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+    resize_canvas(data);
     render_preview (data);
 }
 
@@ -635,6 +638,7 @@ static void lens_autoscale (GtkWidget *button, gpointer user_data)
         gtk_adjustment_set_value (data->LensScaleAdjustment,
                                   log (cs * as) / log (2.0));
         ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+	resize_canvas(data);
         render_preview (data);
     }
 }
@@ -891,6 +895,7 @@ static void adjustment_update_dist (GtkAdjustment *adj, float *valuep)
     lf_lens_add_calib_distortion (CFG->lens, &CFG->lens_distortion);
 
     ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+    resize_canvas(data);
     render_preview (data);
 }
 
@@ -929,6 +934,7 @@ static void distortion_model_changed (GtkComboBox *widget, preview_data *data)
     gtk_widget_show_all (data->LensDistortionTable);
 
     ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+    resize_canvas(data);
     render_preview (data);
 }
 
@@ -1001,6 +1007,7 @@ static void geometry_model_changed (GtkComboBox *widget, preview_data *data)
         gtk_label_set_text (GTK_LABEL (data->LensFromGeometryDesc), details);
 
     ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+    resize_canvas(data);
     render_preview (data);
 }
 

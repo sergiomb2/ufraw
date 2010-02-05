@@ -380,6 +380,8 @@ void ufraw_auto_curve(ufraw_data *uf);
 void ufraw_normalize_rotation(ufraw_data *uf);
 void ufraw_unnormalize_rotation(ufraw_data *uf);
 void ufraw_get_image_dimensions(ufraw_data *uf);
+/* Get scaled crop coordinates in final image coordinates */
+void ufraw_get_scaled_crop(ufraw_data *uf, UFRectangle *crop);
 
 UFRectangle ufraw_image_get_subarea_rectangle(ufraw_image_data *img,
 	unsigned saidx);
@@ -465,10 +467,9 @@ long ufraw_send_to_gimp(ufraw_data *uf);
 /* prototype for functions in ufraw_writer.c */
 int ufraw_write_image(ufraw_data *uf);
 void ufraw_write_image_data(
-    ufraw_data *uf,
-    void * volatile out,
-    int width, int height, int left, int top, int bitDepth, int grayscaleMode,
-    int (*row_writer) (ufraw_data *, void * volatile, void *, int, int, int, int, int));
+    ufraw_data *uf, void * volatile out,
+    const UFRectangle *Crop, int bitDepth, int grayscaleMode,
+    int (*row_writer)(ufraw_data *, void * volatile, void *, int, int, int, int, int));
 
 /* prototype for functions in ufraw_delete.c */
 long ufraw_delete(void *widget, ufraw_data *uf);

@@ -196,36 +196,35 @@ int png_row_writer(ufraw_data *uf, void *volatile out, void *pixbuf,
 #endif /*HAVE_LIBPNG*/
 
 void ufraw_write_image_data(
-    ufraw_data *uf,
-    void * volatile out,
-    int width, int height, int left, int top, int bitDepth, int grayscaleMode,
-    int (*row_writer) (ufraw_data *, void * volatile, void *, int, int, int, int, int))
+    ufraw_data *uf, void * volatile out,
+    const UFRectangle *Crop, int bitDepth, int grayscaleMode,
+    int (*row_writer)(ufraw_data *, void * volatile, void *, int, int, int, int, int))
 {
     int row, row0;
     int rowStride = uf->Images[ufraw_first_phase].width;
     ufraw_image_type *rawImage =
 	    (ufraw_image_type *)uf->Images[ufraw_first_phase].buffer;
     int byteDepth = (bitDepth+7)/8;
-    guint8 pixbuf8[width * 3 * byteDepth * DEVELOP_BATCH];
+    guint8 pixbuf8[Crop->width * 3 * byteDepth * DEVELOP_BATCH];
 
-    progress(PROGRESS_SAVE, -height);
-    for (row0 = 0; row0 < height; row0 += DEVELOP_BATCH) {
+    progress(PROGRESS_SAVE, -Crop->height);
+    for (row0 = 0; row0 < Crop->height; row0 += DEVELOP_BATCH) {
 	progress(PROGRESS_SAVE, DEVELOP_BATCH);
 #ifdef _OPENMP
 #pragma omp parallel for default(shared) private(row)
 #endif
 	for (row = 0; row < DEVELOP_BATCH; row++) {
-	    if (row + row0 >= height)
+	    if (row + row0 >= Crop->height)
 		continue;
-	    guint8 *rowbuf = &pixbuf8[row * width * 3 * byteDepth];
-	    develop(rowbuf, rawImage[(top+row+row0)*rowStride+left],
-	            uf->developer, bitDepth, width);
+	    guint8 *rowbuf = &pixbuf8[row * Crop->width * 3 * byteDepth];
+	    develop(rowbuf, rawImage[(Crop->y+row+row0)*rowStride+Crop->x],
+	            uf->developer, bitDepth, Crop->width);
 	    if (grayscaleMode)
-		grayscale_buffer(rowbuf, width, bitDepth);
+		grayscale_buffer(rowbuf, Crop->width, bitDepth);
 	}
-	int batchHeight = MIN(height-row0, DEVELOP_BATCH);
-	if ( row_writer(uf, out, pixbuf8, row0, width, batchHeight,
-		grayscaleMode, bitDepth) != UFRAW_SUCCESS )
+	int batchHeight = MIN(Crop->height-row0, DEVELOP_BATCH);
+	if (row_writer(uf, out, pixbuf8, row0, Crop->width, batchHeight,
+		grayscaleMode, bitDepth) != UFRAW_SUCCESS)
 	    break;
     }
 }
@@ -237,7 +236,6 @@ int ufraw_write_image(ufraw_data *uf)
 #ifdef HAVE_LIBCFITSIO
     fitsfile *fitsFile;
 #endif
-    int width, height, left, top;
     char * volatile confFilename=NULL;
     int grayscaleMode = uf->conf->grayscaleMode != grayscale_none;
     ufraw_message_reset(uf);
@@ -323,30 +321,25 @@ int ufraw_write_image(ufraw_data *uf)
     }
     // TODO: error handling
     ufraw_convert_image(uf);
-    ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
-    left = uf->conf->CropX1 * FirstImage->width / uf->rotatedWidth;
-    top = uf->conf->CropY1 * FirstImage->height / uf->rotatedHeight;
+    UFRectangle Crop;
+    ufraw_get_scaled_crop(uf, &Crop);
     volatile int BitDepth = uf->conf->profile[out_profile]
 			[uf->conf->profileIndex[out_profile]].BitDepth;
     if ( BitDepth!=16 ) BitDepth = 8;
-    width = (uf->conf->CropX2 - uf->conf->CropX1)
-	    * FirstImage->width / uf->rotatedWidth;
-    height = (uf->conf->CropY2 - uf->conf->CropY1)
-	    * FirstImage->height / uf->rotatedHeight;
     if ( uf->conf->type==ppm_type && BitDepth==8 ) {
 	fprintf(out, "P%c\n%d %d\n%d\n",
-		grayscaleMode ? '5' : '6', width, height, 0xFF);
-	ufraw_write_image_data(uf, out, width, height, left, top,
-			 BitDepth, grayscaleMode, ppm_row_writer);
+		grayscaleMode ? '5' : '6', Crop.width, Crop.height, 0xFF);
+	ufraw_write_image_data(uf, out, &Crop, BitDepth, grayscaleMode,
+		ppm_row_writer);
     } else if ( uf->conf->type==ppm_type && BitDepth==16 ) {
 	fprintf(out, "P%c\n%d %d\n%d\n",
-		grayscaleMode ? '5' : '6', width, height, 0xFFFF);
-	ufraw_write_image_data(uf, out, width, height, left, top,
-			 BitDepth, grayscaleMode, ppm_row_writer);
+		grayscaleMode ? '5' : '6', Crop.width, Crop.height, 0xFFFF);
+	ufraw_write_image_data(uf, out, &Crop, BitDepth, grayscaleMode,
+		ppm_row_writer);
 #ifdef HAVE_LIBTIFF
     } else if ( uf->conf->type==tiff_type ) {
-	TIFFSetField(out, TIFFTAG_IMAGEWIDTH, width);
-	TIFFSetField(out, TIFFTAG_IMAGELENGTH, height);
+	TIFFSetField(out, TIFFTAG_IMAGEWIDTH, Crop.width);
+	TIFFSetField(out, TIFFTAG_IMAGELENGTH, Crop.height);
 	TIFFSetField(out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
 	TIFFSetField(out, TIFFTAG_SAMPLESPERPIXEL, grayscaleMode ? 1 : 3);
 	TIFFSetField(out, TIFFTAG_BITSPERSAMPLE, BitDepth);
@@ -395,8 +388,8 @@ int ufraw_write_image(ufraw_data *uf)
 	}
 	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, TIFFDefaultStripSize(out, 0));
 
-	ufraw_write_image_data(uf, out, width, height, left, top,
-			 BitDepth, grayscaleMode, tiff_row_writer);
+	ufraw_write_image_data(uf, out, &Crop, BitDepth, grayscaleMode,
+		tiff_row_writer);
 
 #endif /*HAVE_LIBTIFF*/
 #ifdef HAVE_LIBJPEG
@@ -413,8 +406,8 @@ int ufraw_write_image(ufraw_data *uf)
 	cinfo.client_data = uf;
 	jpeg_create_compress(&cinfo);
 	jpeg_stdio_dest(&cinfo, out);
-	cinfo.image_width = width;
-	cinfo.image_height = height;
+	cinfo.image_width = Crop.width;
+	cinfo.image_height = Crop.height;
 	if (grayscaleMode) {
 	    cinfo.input_components = 1;
 	    cinfo.in_color_space = JCS_GRAYSCALE;
@@ -481,8 +474,8 @@ int ufraw_write_image(ufraw_data *uf)
 	    }
 	}
 
-	ufraw_write_image_data(uf, &cinfo, width, height, left, top,
-			 8, grayscaleMode, jpeg_row_writer);
+	ufraw_write_image_data(uf, &cinfo, &Crop, 8, grayscaleMode,
+		jpeg_row_writer);
 
 	if ( ufraw_is_error(uf) ) {
 	    char *message = g_strdup(ufraw_get_message(uf));
@@ -510,7 +503,7 @@ int ufraw_write_image(ufraw_data *uf)
 	    png_destroy_write_struct(&png, &info);
 	} else {
 	    png_init_io(png, out);
-	    png_set_IHDR(png, info, width, height, BitDepth,
+	    png_set_IHDR(png, info, Crop.width, Crop.height, BitDepth,
 		    grayscaleMode ? PNG_COLOR_TYPE_GRAY : PNG_COLOR_TYPE_RGB,
 		    PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE,
 		    PNG_FILTER_TYPE_BASE);
@@ -573,8 +566,8 @@ int ufraw_write_image(ufraw_data *uf)
 	    if (BitDepth != 8 && G_BYTE_ORDER==G_LITTLE_ENDIAN )
 		png_set_swap(png); // Swap byte order to big-endian
 
-	    ufraw_write_image_data(uf, png, width, height, left, top,
-			     BitDepth, grayscaleMode, png_row_writer);
+	    ufraw_write_image_data(uf, png, &Crop, BitDepth, grayscaleMode,
+		    png_row_writer);
 
 	    png_write_end(png, NULL);
 	    png_destroy_write_struct(&png, &info);
@@ -593,8 +586,8 @@ int ufraw_write_image(ufraw_data *uf)
 	int naxis  = 3;		    // 3-dimensional image
 	int status = 0;		    // status variable for fitsio
 
-	long naxes[3]  = { width, height, 3 };
-	long dim = width * height;
+	long naxes[3]  = { Crop.width, Crop.height, 3 };
+	long dim = Crop.width * Crop.height;
 	long offset = 0;
 
 	image = g_new(guint16, 3 * dim);
@@ -609,13 +602,13 @@ int ufraw_write_image(ufraw_data *uf)
 	// Avoid FITS images being saved upside down
 	ufraw_flip_image(uf, 2);
 
-	progress(PROGRESS_SAVE, -height);
-	for (row=0; row<height; row++) {
+	progress(PROGRESS_SAVE, -Crop.height);
+	for (row=0; row<Crop.height; row++) {
 	    progress(PROGRESS_SAVE, 1);
-	    for (i=0; i < width; i++)
+	    for (i=0; i < Crop.width; i++)
 	    {
-		offset = row*width + i;
-		develop_linear(rawImage[(top+row)*rowStride+left+i], pixbuf16,
+		offset = row*Crop.width + i;
+		develop_linear(rawImage[(Crop.y+row)*rowStride+Crop.x+i], pixbuf16,
 			uf->developer);
 		int c;
 		for (c=0; c<3; c++) {

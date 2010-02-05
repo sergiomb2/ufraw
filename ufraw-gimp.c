@@ -309,7 +309,8 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
     GimpDrawable *drawable;
     GimpPixelRgn pixel_region;
     gint32 layer;
-    int height, width, top, left, depth, tile_height, row, nrows;
+    UFRectangle Crop;
+    int depth, tile_height, row, nrows;
     (void)widget;
 
     uf->gimpImage = -1;
@@ -317,21 +318,15 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
     if (uf->conf->embeddedImage) {
 	if (ufraw_convert_embedded(uf)!=UFRAW_SUCCESS)
 	    return UFRAW_ERROR;
-	height = uf->thumb.height;
-	width = uf->thumb.width;
-	top = 0;
-	left = 0;
+	Crop.height = uf->thumb.height;
+	Crop.width = uf->thumb.width;
+	Crop.y = 0;
+	Crop.x = 0;
 	depth = 3;
     } else {
 	if (ufraw_convert_image(uf)!=UFRAW_SUCCESS)
 	    return UFRAW_ERROR;
-	ufraw_image_data *FirstImage = &uf->Images[ufraw_first_phase];
-	height = (uf->conf->CropY2 - uf->conf->CropY1)
-		* FirstImage->height / uf->rotatedHeight;
-	width = (uf->conf->CropX2 - uf->conf->CropX1)
-		* FirstImage->width / uf->rotatedWidth;
-	top = uf->conf->CropY1 * FirstImage->height / uf->rotatedHeight;
-	left = uf->conf->CropX1 * FirstImage->width / uf->rotatedWidth;
+	ufraw_get_scaled_crop(uf, &Crop);
 #ifdef UFRAW_CINEPAINT
 	if ( uf->conf->profile[out_profile]
 			[uf->conf->profileIndex[out_profile]].BitDepth==16 )
@@ -342,7 +337,7 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 	depth = 3;
 #endif
     }
-    uf->gimpImage = gimp_image_new(width, height,
+    uf->gimpImage = gimp_image_new(Crop.width, Crop.height,
 	    depth==3 ? GIMP_RGB : U16_RGB );
     if (uf->gimpImage== -1) {
 	ufraw_message(UFRAW_ERROR, _("Can't allocate new image."));
@@ -351,8 +346,8 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
     gimp_image_set_filename(uf->gimpImage, uf->filename);
 
     /* Create the "background" layer to hold the image... */
-    layer = gimp_layer_new(uf->gimpImage, _("Background"), width,
-	    height, depth==3 ? GIMP_RGB_IMAGE : U16_RGB_IMAGE,
+    layer = gimp_layer_new(uf->gimpImage, _("Background"), Crop.width,
+	    Crop.height, depth==3 ? GIMP_RGB_IMAGE : U16_RGB_IMAGE,
 	    100.0, GIMP_NORMAL_MODE);
     gimp_image_add_layer(uf->gimpImage, layer, 0);
 
@@ -363,14 +358,14 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
     tile_height = gimp_tile_height();
 
     if (uf->conf->embeddedImage) {
-	for (row = 0; row < height; row += tile_height) {
-	    nrows = MIN(height-row, tile_height);
+	for (row = 0; row < Crop.height; row += tile_height) {
+	    nrows = MIN(Crop.height-row, tile_height);
 	    gimp_pixel_rgn_set_rect(&pixel_region,
-		    uf->thumb.buffer+3*row*width, 0, row, width, nrows);
+		    uf->thumb.buffer+3*row*Crop.width, 0, row, Crop.width, nrows);
 	}
     } else {
-	ufraw_write_image_data(uf, &pixel_region, width, height, left, top,
-		depth==3 ? 8 : 16, 0, gimp_row_writer);
+	ufraw_write_image_data(uf, &pixel_region, &Crop, depth==3 ? 8 : 16, 0,
+		gimp_row_writer);
     }
     gimp_drawable_flush(drawable);
     gimp_drawable_detach(drawable);

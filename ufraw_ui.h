@@ -162,6 +162,7 @@ typedef struct {
     int PageNum;
     int PageNumSpot;
     int PageNumGray;
+    int PageNumLensfun;
     int PageNumLightness;
     int PageNumCrop;
     int HisMinHeight;
@@ -194,6 +195,8 @@ typedef struct {
 void render_preview (preview_data *data);
 
 preview_data *get_preview_data (void *object);
+
+void resize_canvas(preview_data *data);
 
 void lens_fill_interface (preview_data *data, GtkWidget *page);
 

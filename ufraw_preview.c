@@ -507,20 +507,6 @@ static int zoom_to_scale(double zoom)
        return 0;
 }
 
-/* Scale crop coordinates to final image coordinates */
-void scale_crop_to_final_image(ufraw_data *uf,
-    int *x1, int *x2, int *y1, int *y2)
-{
-    ufraw_image_data *img = ufraw_get_image(uf, ufraw_develop_phase, FALSE);
-
-    float scale_x = ((float)img->width) / uf->rotatedWidth;
-    float scale_y = ((float)img->height) / uf->rotatedHeight;
-    *x1 = MAX(floor(uf->conf->CropX1 * scale_x), 0);
-    *x2 = MIN(ceil(uf->conf->CropX2 * scale_x), img->width);
-    *y1 = MAX(floor(uf->conf->CropY1 * scale_y), 0);
-    *y2 = MIN(ceil(uf->conf->CropY2 * scale_y), img->height);
-}
-
 /* Modify the preview image to mark crop and spot areas.
  * Note that all coordinate intervals are semi-inclusive, e.g.
  * X1 <= pixels < X2 and Y1 <= pixels < Y2
@@ -553,10 +539,10 @@ static void preview_draw_area(preview_data *data,
     gboolean blinkUnder = CFG->underExp &&
 	    ( !CFG->blinkOverUnder || (data->OverUnderTicker & 3) == 3 );
 
-    int CropX1, CropX2, CropY1, CropY2;
-    scale_crop_to_final_image(data->UF, &CropX1, &CropX2, &CropY1, &CropY2);
-    int CropWidth = CropX2 - CropX1;
-    int CropHeight = CropY2 - CropY1;
+    UFRectangle Crop;
+    ufraw_get_scaled_crop(data->UF, &Crop);
+    int CropX2 = Crop.x + Crop.width;
+    int CropY2 = Crop.y + Crop.height;
     int drawLines = CFG->drawLines + 1;
 
     /* Scale spot image coordinates to pixbuf coordinates */
@@ -605,24 +591,24 @@ static void preview_draw_area(preview_data *data,
 		continue;
 	    }
 	    /* Draw white frame around crop area */
-	    if ( ((yy==CropY1-1 || yy==CropY2) && xx>=CropX1-1 && xx<=CropX2) ||
-		 ((xx==CropX1-1 || xx==CropX2) && yy>=CropY1-1 && yy<=CropY2) )
+	    if ( ((yy==Crop.y-1 || yy==CropY2) && xx>=Crop.x-1 && xx<=CropX2) ||
+		 ((xx==Crop.x-1 || xx==CropX2) && yy>=Crop.y-1 && yy<=CropY2) )
 	    {
 		p8[0] = p8[1] = p8[2] = 255;
 		continue;
 	    }
 	    /* Shade the cropped out area */
-	    else if ( yy<CropY1 || yy>=CropY2 || xx<CropX1 || xx>=CropX2 ) {
+	    else if ( yy<Crop.y || yy>=CropY2 || xx<Crop.x || xx>=CropX2 ) {
 		for (c=0; c<3; c++) p8[c] = p8[c]/4;
 		continue;
 	    }
 	    if (data->RenderMode==render_default) {
 		/* Shade out the alignment lines */
 		if ( CFG->drawLines &&
-		     yy > CropY1 + 1 && yy < CropY2 - 2 &&
-		     xx > CropX1 + 1 && xx < CropX2 - 2 ) {
-		    int dx = (xx - CropX1) * drawLines % CropWidth / drawLines;
-		    int dy = (yy - CropY1) * drawLines % CropHeight / drawLines;
+		     yy > Crop.y + 1 && yy < CropY2 - 2 &&
+		     xx > Crop.x + 1 && xx < CropX2 - 2 ) {
+		    int dx = (xx-Crop.x) * drawLines % Crop.width / drawLines;
+		    int dy = (yy-Crop.y) * drawLines % Crop.height / drawLines;
 		    if (dx == 0 || dy == 0) {
 			p8[0] /= 2;
 			p8[1] /= 2;
@@ -665,10 +651,9 @@ static void preview_draw_area(preview_data *data,
 
 static gboolean preview_draw_crop(preview_data *data)
 {
-    int CropX1, CropX2, CropY1, CropY2;
-    scale_crop_to_final_image(data->UF, &CropX1, &CropX2, &CropY1, &CropY2);
-    preview_draw_area(data, CropX1, CropY1, CropX2-CropX1, CropY2-CropY1);
-
+    UFRectangle Crop;
+    ufraw_get_scaled_crop(data->UF, &Crop);
+    preview_draw_area(data, Crop.x, Crop.y, Crop.width, Crop.height);
     return FALSE;
 }
 
@@ -685,16 +670,16 @@ static gboolean switch_highlights(gpointer ptr)
 	return TRUE;
     if (!is_rendering(data)) {
 	/* Set the area to redraw based on the crop rectangle and view port. */
-	int x1, x2, y1, y2;
-	scale_crop_to_final_image(data->UF, &x1, &x2, &y1, &y2);
+	UFRectangle Crop;
+	ufraw_get_scaled_crop(data->UF, &Crop);
 	GdkRectangle viewRect;
 	gtk_image_view_get_viewport(GTK_IMAGE_VIEW(data->PreviewWidget),
 		&viewRect);
 
-	x1 = MAX(x1, viewRect.x);
-	int width = MIN(MAX(x2 - x1, 0), viewRect.width);
-	y1 = MAX(y1, viewRect.y);
-	int height = MIN(MAX(y2 - y1, 0), viewRect.height);
+	int x1 = MAX(Crop.x, viewRect.x);
+	int width = MIN(Crop.width, viewRect.width);
+	int y1 = MAX(Crop.y, viewRect.y);
+	int height = MIN(Crop.height, viewRect.height);
 
 	data->OverUnderTicker++;
 	preview_draw_area(data, x1, y1, width, height);
@@ -1169,15 +1154,15 @@ static gboolean render_live_histogram(preview_data *data)
     ufraw_image_data *img = ufraw_get_image(data->UF,
 	    ufraw_develop_phase, TRUE);
 
-    int CropX1, CropX2, CropY1, CropY2;
-    scale_crop_to_final_image(data->UF, &CropX1, &CropX2, &CropY1, &CropY2);
+    UFRectangle Crop;
+    ufraw_get_scaled_crop(data->UF, &Crop);
 
     double rgb[3];
     guint64 sum[3], sqr[3];
     int live_his[live_his_size][4];
     memset(live_his, 0, sizeof(live_his));
-    for (y=CropY1; y < CropY2; y++)
-    for (x=CropX1; x < CropX2; x++) {
+    for (y=Crop.y; y < Crop.y+Crop.height; y++)
+    for (x=Crop.x; x < Crop.x+Crop.width; x++) {
 	guint8 *p8 = img->buffer + y*img->rowstride + x*img->depth;
 	for (c=0, max=0, min=0x100; c<3; c++) {
 	    max = MAX(max, p8[c]);
@@ -1259,7 +1244,7 @@ static gboolean render_live_histogram(preview_data *data)
 	}
     gtk_widget_queue_draw(data->LiveHisto);
 
-    int CropCount = (CropX2 - CropX1) * (CropY2 - CropY1);
+    int CropCount = Crop.width * Crop.height;
     for (c=0; c<3; c++)
 	rgb[c] = sum[c]/CropCount;
     color_labels_set(data->AvrLabels, rgb);
@@ -1746,7 +1731,8 @@ static gboolean preview_button_press_event(GtkWidget *event_box,
 		    (GSourceFunc)(render_spot), data, NULL);
 	return TRUE;
     }
-    if ( data->PageNum==data->PageNumCrop ) {
+    if (data->PageNum==data->PageNumCrop ||
+	data->PageNum==data->PageNumLensfun) {
 	data->PreviewButtonPressed = TRUE;
 	return TRUE;
     }
@@ -1869,7 +1855,8 @@ static gboolean preview_motion_notify_event(GtkWidget *event_box,
     (void)user_data;
     if (!gtk_event_box_get_above_child(GTK_EVENT_BOX(event_box)))
 	return FALSE;
-    if ( data->PageNum==data->PageNumCrop )
+    if (data->PageNum==data->PageNumCrop ||
+	data->PageNum==data->PageNumLensfun)
 	return crop_motion_notify(data, event);
     if ((event->state&GDK_BUTTON1_MASK)==0) return FALSE;
     if ( !data->PreviewButtonPressed ) return FALSE;
@@ -1951,38 +1938,40 @@ static void update_crop_ranges(preview_data *data, gboolean render)
 
     data->FreezeDialog--;
 
-    int CropX1, CropX2, CropY1, CropY2;
-    scale_crop_to_final_image(data->UF, &CropX1, &CropX2, &CropY1, &CropY2);
+    UFRectangle Crop;
+    ufraw_get_scaled_crop(data->UF, &Crop);
+    int CropX2 = Crop.x + Crop.width;
+    int CropY2 = Crop.y + Crop.height;
 
     int x1[4], x2[4], y1[4], y2[4], i = 0;
-    if (CropX1!=data->DrawnCropX1) {
-	x1[i] = MIN(CropX1, data->DrawnCropX1);
-	x2[i] = MAX(CropX1, data->DrawnCropX1);
-	y1[i] = MIN(CropY1, data->DrawnCropY1);
+    if (Crop.x!=data->DrawnCropX1) {
+	x1[i] = MIN(Crop.x, data->DrawnCropX1);
+	x2[i] = MAX(Crop.x, data->DrawnCropX1);
+	y1[i] = MIN(Crop.y, data->DrawnCropY1);
 	y2[i] = MAX(CropY2, data->DrawnCropY2);
-	data->DrawnCropX1 = CropX1;
+	data->DrawnCropX1 = Crop.x;
 	i++;
     }
     if (CropX2!=data->DrawnCropX2) {
 	x1[i] = MIN(CropX2, data->DrawnCropX2);
 	x2[i] = MAX(CropX2, data->DrawnCropX2);
-	y1[i] = MIN(CropY1, data->DrawnCropY1);
+	y1[i] = MIN(Crop.y, data->DrawnCropY1);
 	y2[i] = MAX(CropY2, data->DrawnCropY2);
 	data->DrawnCropX2 = CropX2;
 	i++;
     }
-    if (CropY1!=data->DrawnCropY1) {
-	y1[i] = MIN(CropY1, data->DrawnCropY1);
-	y2[i] = MAX(CropY1, data->DrawnCropY1);
-	x1[i] = MIN(CropX1, data->DrawnCropX1);
+    if (Crop.y!=data->DrawnCropY1) {
+	y1[i] = MIN(Crop.y, data->DrawnCropY1);
+	y2[i] = MAX(Crop.y, data->DrawnCropY1);
+	x1[i] = MIN(Crop.x, data->DrawnCropX1);
 	x2[i] = MAX(CropX2, data->DrawnCropX2);
-	data->DrawnCropY1 = CropY1;
+	data->DrawnCropY1 = Crop.y;
 	i++;
     }
     if (CropY2!=data->DrawnCropY2) {
 	y1[i] = MIN(CropY2, data->DrawnCropY2);
 	y2[i] = MAX(CropY2, data->DrawnCropY2);
-	x1[i] = MIN(CropX1, data->DrawnCropX1);
+	x1[i] = MIN(Crop.x, data->DrawnCropX1);
 	x2[i] = MAX(CropX2, data->DrawnCropX2);
 	data->DrawnCropY2 = CropY2;
 	i++;
@@ -2970,39 +2959,14 @@ GtkWidget *stock_icon_button(const gchar *stock_id,
  * are valid. Try to preserve them over a rotate forth and back and try to
  * preserve their geometry.
  */
-static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
+void resize_canvas(preview_data *data)
 {
-    preview_data *data = get_preview_data(adj);
-    (void)user_data;
-
-    /* Normalize the "unnormalized" value displayed to the user to
-     * -180 < a <= 180, though we later normalize to an orientation
-     * and flip plus 0 <= a < 90 rotation for processing.  */
-    if (data->FreezeDialog)
-	return;
-    
     gboolean FullCrop =
 	CFG->CropX1==0 && CFG->CropX2==data->UF->rotatedWidth &&
 	CFG->CropY1==0 && CFG->CropY2==data->UF->rotatedHeight;
-    int oldFlip = CFG->orientation;
-    ufraw_unnormalize_rotation(data->UF);
-    CFG->rotationAngle = gtk_adjustment_get_value(data->RotationAdjustment);
-    CFG->orientation = data->UnnormalizedOrientation;
-    ufraw_normalize_rotation(data->UF);
-    int newFlip = CFG->orientation;
-    int flip;
-    for (flip=0; flip<8; flip++) {
-	CFG->orientation = oldFlip;
-	ufraw_flip_orientation(data->UF, flip);
-	if (CFG->orientation == newFlip)
-	    break;
-    }
-    CFG->orientation = oldFlip;
-    ufraw_flip_image(data->UF, flip);
-    gtk_widget_set_sensitive(data->ResetRotationAdjustment,
-	    CFG->rotationAngle != 0 ||
-	    CFG->orientation != CFG->CameraOrientation);
+
     ufraw_get_image_dimensions(data->UF);
+
     if (FullCrop) {
 	if (CFG->LockAspect) {
 	    double newAspect = (double)data->UF->rotatedWidth /
@@ -3046,15 +3010,47 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
 	data->SpotY1 = -1;
 	data->SpotY2 = -1;
     }
-    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
-
     if (CFG->CropX2 > data->UF->rotatedWidth)
 	fix_crop_aspect(data, top_right_cursor, FALSE);
     else if (CFG->CropY2 > data->UF->rotatedHeight)
 	fix_crop_aspect(data, bottom_left_cursor, FALSE);
     else
 	update_crop_ranges(data, FALSE);
-    update_scales(data);
+}
+
+static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
+{
+    preview_data *data = get_preview_data(adj);
+    (void)user_data;
+
+    /* Normalize the "unnormalized" value displayed to the user to
+     * -180 < a <= 180, though we later normalize to an orientation
+     * and flip plus 0 <= a < 90 rotation for processing.  */
+    if (data->FreezeDialog)
+	return;
+    
+    int oldFlip = CFG->orientation;
+    ufraw_unnormalize_rotation(data->UF);
+    CFG->rotationAngle = gtk_adjustment_get_value(data->RotationAdjustment);
+    CFG->orientation = data->UnnormalizedOrientation;
+    ufraw_normalize_rotation(data->UF);
+    int newFlip = CFG->orientation;
+    int flip;
+    for (flip=0; flip<8; flip++) {
+	CFG->orientation = oldFlip;
+	ufraw_flip_orientation(data->UF, flip);
+	if (CFG->orientation == newFlip)
+	    break;
+    }
+    CFG->orientation = oldFlip;
+    ufraw_flip_image(data->UF, flip);
+    gtk_widget_set_sensitive(data->ResetRotationAdjustment,
+	    CFG->rotationAngle != 0 ||
+	    CFG->orientation != CFG->CameraOrientation);
+
+    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+    resize_canvas(data);
+    render_preview(data);
 }
 
 void ufraw_image_changed(UFObject *obj, UFEventType type)
@@ -3954,7 +3950,8 @@ static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
 	gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), TRUE);
 	gdk_window_set_cursor(event_box->window, data->Cursor[spot_cursor]);
 	draw_spot(data, TRUE);
-    } else if ( page_num==data->PageNumCrop ) {
+    } else if ( page_num==data->PageNumCrop ||
+		page_num==data->PageNumLensfun) {
 	gtk_event_box_set_above_child(GTK_EVENT_BOX(event_box), TRUE);
 	gdk_window_set_cursor(event_box->window, data->Cursor[crop_cursor]);
 	draw_spot(data, FALSE);
@@ -5458,7 +5455,10 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 #ifdef HAVE_LENSFUN
     /* Lens correction page */
     page = notebook_page_new(notebook, _("Lens correction"), "lens");
+    data->PageNumLensfun = gtk_notebook_page_num(notebook, page);
     lens_fill_interface(data, page);
+#else /* HAVE_LENSFUN */
+    data->PageNumLensfun = -1;
 #endif /* HAVE_LENSFUN */
 
     page = notebook_page_new(notebook, _("Base curve"), "base-curve");
@@ -5656,6 +5656,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     while (gtk_events_pending()) gtk_main_iteration();
 #endif
     if ( CFG->WindowMaximized ) {
+	gtk_widget_set_size_request(scroll, -1, -1);
 	preview_progress_disable(data);
 	while (gtk_events_pending()) gtk_main_iteration();
 	// scroll widget is allocated size only after gtk_widget_show_all()
@@ -5701,6 +5702,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     } else {
 	CFG->size = 0;
     }
+    ufraw_invalidate_layer(data->UF, ufraw_first_phase);
 
     /* Save initial WB data for the sake of "Reset WB" */
     UFObject *Image = CFG->ufobject;
