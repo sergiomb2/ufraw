@@ -209,7 +209,7 @@ typedef struct {
     double exposure, saturation, black; /* black is only used in CMD */
     int ExposureNorm;
     int restoreDetails, clipHighlights;
-    int autoExposure, autoBlack;
+    int autoExposure, autoBlack, autoCrop;
     int BaseCurveIndex, BaseCurveCount;
     CurveData BaseCurve[max_curves];
     int curveIndex, curveCount;
@@ -301,6 +301,7 @@ typedef struct ufraw_struct {
     char filename[max_path];
     int initialHeight, initialWidth, rgbMax, colors, raw_color, useMatrix;
     int rotatedHeight, rotatedWidth;
+    int autoCropHeight, autoCropWidth;
     gboolean LoadingID; /* Indication that we are loading an ID file */
     gboolean WBDirty;
     float rgb_cam[3][4];

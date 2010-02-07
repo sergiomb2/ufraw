@@ -58,7 +58,8 @@ typedef struct {
     GtkLabel *SpotPatch;
     GtkLabel *HotpixelCount;
     colorLabels *SpotLabels, *AvrLabels, *DevLabels, *OverLabels, *UnderLabels;
-    GtkToggleButton *AutoExposureButton, *AutoBlackButton, *LockAspectButton;
+    GtkToggleButton *AutoExposureButton, *AutoBlackButton;
+    GtkToggleButton *AutoCropButton, *LockAspectButton;
     GtkWidget *AutoCurveButton;
     GtkWidget *ResetGammaButton, *ResetLinearButton;
     GtkWidget *ResetExposureButton, *ResetSaturationButton;

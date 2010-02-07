@@ -37,6 +37,7 @@ const conf_data conf_default = {
     digital_highlights, /* clipHighlights */
     disabled_state, /* autoExposure */
     disabled_state, /* autoBlack */
+    disabled_state, /* autoCrop */
     camera_curve, camera_curve+1, /* BaseCurveIndex, BaseCurveCount */
     /* BaseCurve data defaults */
     { { N_("Manual curve"), TONE_CURVE, 0.0, 1.0, 0.0, 1.0, 1.0,
@@ -614,6 +615,7 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     }
     if (!strcmp("AutoExposure", element)) sscanf(temp, "%d", &c->autoExposure);
     if (!strcmp("AutoBlack", element)) sscanf(temp, "%d", &c->autoBlack);
+    if (!strcmp("AutoCrop", element)) sscanf(temp, "%d", &c->autoCrop);
     if (!strcmp("CurvePath", element)) {
 	char *utf8 = g_filename_from_utf8(temp, -1, NULL, NULL, NULL);
 	if (utf8!=NULL)
@@ -937,6 +939,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 		"<AutoExposure>%d</AutoExposure>\n", c->autoExposure);
     if (c->autoBlack!=conf_default.autoBlack)
 	buf = uf_markup_buf(buf, "<AutoBlack>%d</AutoBlack>\n", c->autoBlack);
+    if (c->autoCrop!=conf_default.autoCrop)
+	buf = uf_markup_buf(buf, "<AutoCrop>%d</AutoCrop>\n", c->autoCrop);
     if (c->saturation!=conf_default.saturation)
 	buf = uf_markup_buf(buf,
 		"<Saturation>%lf</Saturation>\n", c->saturation);
@@ -1214,6 +1218,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->black = src->black;
     dst->autoExposure = src->autoExposure;
     dst->autoBlack = src->autoBlack;
+    dst->autoCrop = src->autoCrop;
     dst->restoreDetails = src->restoreDetails;
     dst->clipHighlights = src->clipHighlights;
     memcpy(dst->lightnessAdjustment, src->lightnessAdjustment,
@@ -1379,6 +1384,9 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     if (cmd->embeddedImage!=-1) conf->embeddedImage = cmd->embeddedImage;
     if (cmd->rotate!=-1) conf->rotate = cmd->rotate;
     if (cmd->rotationAngle!=NULLF) conf->rotationAngle = cmd->rotationAngle;
+    if (cmd->CropX1 != -1 || cmd->CropX2 != -1 ||
+	cmd->CropY1 != -1 || cmd->CropY2 != -1)
+	conf->autoCrop = disabled_state;
     if (cmd->CropX1 !=-1) conf->CropX1 = cmd->CropX1;
     if (cmd->CropY1 !=-1) conf->CropY1 = cmd->CropY1;
     if (cmd->CropX2 !=-1) conf->CropX2 = cmd->CropX2;

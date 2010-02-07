@@ -1437,16 +1437,21 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 	ufraw_convert_prepare_transform(uf, width, height, FALSE);
 	uf->rotatedWidth = iWidth;
 	uf->rotatedHeight = iHeight;
+	uf->autoCropWidth = iWidth;
+	uf->autoCropHeight = iHeight;
 	return;
     }
     const float sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
     const float cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
+    const float aspectRatio = (float)(uf->conf->CropX2 - uf->conf->CropX1) /
+	    (uf->conf->CropY2 - uf->conf->CropY1);
     const float midX = iWidth/2.0 - 0.5;
     const float midY = iHeight/2.0 - 0.5;
 #ifdef HAVE_LENSFUN
     gboolean applyLF = uf->modifier != NULL && (uf->modFlags & UF_LF_TRANSFORM);
 #endif
     float maxX = 0, maxY = 0;
+    float minX = 999999, minY = 999999;
     int i;
     for (i = 0; i < iWidth + iHeight - 1; i++) {
 	int x, y;
@@ -1474,10 +1479,16 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 	float srcY = (buff[0]-midX)*sine + (buff[1]-midY)*cosine;
 	maxX = MAX(maxX, fabs(srcX));
 	maxY = MAX(maxY, fabs(srcY));
+	if (fabs(srcX/srcY) > aspectRatio) 
+	    minX = MIN(minX, fabs(srcX));
+	else
+	    minY = MIN(minY, fabs(srcY));
     }
     // Do not allow increasing canvas size by more than a factor of 2
     uf->rotatedWidth = MIN(ceil(2*maxX), 2*iWidth);
     uf->rotatedHeight = MIN(ceil(2*maxY), 2*iHeight);
+    uf->autoCropWidth = MIN(floor(2*minX), 2*iWidth);
+    uf->autoCropHeight = MIN(floor(2*minY), 2*iHeight);
     int newWidth = uf->rotatedWidth * width / iWidth;
     int newHeight = uf->rotatedHeight * height / iHeight;
     ufraw_image_init(img, newWidth, newHeight, 8);

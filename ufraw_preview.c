@@ -31,6 +31,7 @@
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
 
+static void update_crop_ranges(preview_data *data, gboolean render);
 static void adjustment_update(GtkAdjustment *adj, double *valuep);
 static void button_update(GtkWidget *button, gpointer user_data);
 
@@ -910,6 +911,14 @@ static gboolean render_preview_now(preview_data *data)
 	uf_get_display_profile(data->PreviewWidget, &data->UF->displayProfile,
 		&data->UF->displayProfileSize);
     }
+    if (CFG->autoCrop == apply_state) {
+	CFG->CropX1 = (data->UF->rotatedWidth - data->UF->autoCropWidth)/2;
+	CFG->CropX2 = (data->UF->rotatedWidth + data->UF->autoCropWidth)/2;
+	CFG->CropY1 = (data->UF->rotatedHeight - data->UF->autoCropHeight)/2;
+	CFG->CropY2 = (data->UF->rotatedHeight + data->UF->autoCropHeight)/2;
+	update_crop_ranges(data, FALSE);
+	CFG->autoCrop = enabled_state;
+    }
     ufraw_developer_prepare(data->UF, display_developer);
     render_init(data);
 
@@ -1462,6 +1471,7 @@ static void update_scales(preview_data *data)
 	&CFG->profile[out_profile][CFG->profileIndex[out_profile]].BitDepth);
     gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
     gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
+    gtk_toggle_button_set_active(data->AutoCropButton, CFG->autoCrop);
     curveeditor_widget_set_curve(data->CurveWidget,
 	    &CFG->curve[CFG->curveIndex]);
 
@@ -1749,7 +1759,6 @@ static gboolean preview_button_release_event(GtkWidget *event_box,
     return TRUE;
 }
 
-static void update_crop_ranges(preview_data *data, gboolean render);
 static void fix_crop_aspect(preview_data *data, CursorType cursor,
 	gboolean render);
 static void set_new_aspect(preview_data *data);
@@ -2617,6 +2626,12 @@ static void button_update(GtkWidget *button, gpointer user_data)
 	    break;
 	}
     }
+    if (button == GTK_WIDGET(data->AutoCropButton)) {
+	CFG->autoCrop =
+	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
+	if (CFG->autoCrop == enabled_state)
+	    CFG->autoCrop = apply_state;
+    }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
@@ -2889,6 +2904,7 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
 	if ( (int *)valuep==&CFG->CropY1) cursor = top_cursor;
 	if ( (int *)valuep==&CFG->CropY2) cursor = bottom_cursor;
 	fix_crop_aspect(data, cursor, TRUE);
+        if (CFG->autoCrop==enabled_state) CFG->autoCrop = apply_state;
 	return;
     }
     /* Do nothing if value didn't really change */
@@ -2961,6 +2977,8 @@ GtkWidget *stock_icon_button(const gchar *stock_id,
  */
 void resize_canvas(preview_data *data)
 {
+    if (CFG->autoCrop == enabled_state)
+	CFG->autoCrop = apply_state;
     gboolean FullCrop =
 	CFG->CropX1==0 && CFG->CropX2==data->UF->rotatedWidth &&
 	CFG->CropY1==0 && CFG->CropY2==data->UF->rotatedHeight;
@@ -4895,10 +4913,21 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
     g_signal_connect(G_OBJECT(data->CropY2Adjustment), "value-changed",
 	G_CALLBACK(adjustment_update), &CFG->CropY2);
 
+    data->AutoCropButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
+    gtk_container_add(GTK_CONTAINER(data->AutoCropButton),
+	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
+    gtk_table_attach(table, GTK_WIDGET(data->AutoCropButton), 4, 5, 1, 2,
+	    0, 0, 0, 0);
+    uf_widget_set_tooltip(GTK_WIDGET(data->AutoCropButton),
+	    _("Auto fit crop area"));
+    gtk_toggle_button_set_active(data->AutoCropButton, CFG->autoCrop);
+    g_signal_connect(G_OBJECT(data->AutoCropButton), "clicked",
+	    G_CALLBACK(button_update), NULL);
+
     // Crop reset button:
     button = reset_button(
 	_("Reset the crop region"), G_CALLBACK(crop_reset), NULL);
-    gtk_table_attach(table, button, 4, 5, 1, 2, 0, 0, 0, 0);
+    gtk_table_attach(table, button, 5, 6, 1, 2, 0, 0, 0, 0);
 
     /* Aspect ratio controls */
     table = GTK_TABLE(table_with_frame(page, NULL, FALSE));
