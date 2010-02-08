@@ -726,7 +726,7 @@ static void fill_tca_page(preview_data *data, GtkWidget *page)
     uf_widget_set_tooltip(data->LensTCAModel,
                           _("Chromatic Aberrations mathematical model"));
     active_index = 0;
-    for (i = 0; i <= LF_TCA_MODEL_LINEAR; i++)
+    for (i = 0; ; i++)
     {
         const char *model_name;
         lfTCAModel model = LF_TCA_MODEL_NONE + i;
@@ -839,7 +839,7 @@ static void fill_vignetting_page(preview_data *data, GtkWidget *page)
     uf_widget_set_tooltip(data->LensVignettingModel,
                           _("Optical vignetting mathematical model"));
     active_index = 0;
-    for (i = 0; i <= LF_VIGNETTING_MODEL_PA; i++)
+    for (i = 0; ; i++)
     {
         const char *model_name;
         lfVignettingModel model = LF_VIGNETTING_MODEL_NONE + i;
@@ -954,7 +954,7 @@ static void fill_distortion_page(preview_data *data, GtkWidget *page)
     uf_widget_set_tooltip (data->LensDistortionModel,
                            _("Lens distortion mathematical model"));
     active_index = 0;
-    for (i = 0; i <= LF_DIST_MODEL_PTLENS; i++)
+    for (i = 0; ; i++)
     {
         const char *model_name;
         lfDistortionModel model = LF_DIST_MODEL_NONE + i;
@@ -1059,7 +1059,7 @@ static void fill_geometry_page(preview_data *data, GtkWidget *page)
     gtk_table_attach (GTK_TABLE (data->LensGeometryTable), data->LensToGeometryDesc,
                       0, 2, 3, 4, GTK_EXPAND | GTK_FILL, 0, 0, 10);
 
-    for (i = 0; i <= LF_EQUIRECTANGULAR; i++)
+    for (i = 0; ; i++)
     {
         lfLensType type = LF_UNKNOWN + i;
         const char *type_name = lf_get_lens_type_desc (type, NULL);
