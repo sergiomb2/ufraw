@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-02 04:00+0100\n"
+"POT-Creation-Date: 2010-02-08 05:30+0100\n"
 "PO-Revision-Date: 2009-09-30 13:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -83,6 +83,7 @@ msgstr "Laat verborgen bestanden zien"
 #. clipHighlights
 #. autoExposure
 #. autoBlack
+#. autoCrop
 #. BaseCurveIndex, BaseCurveCount
 #. BaseCurve data defaults
 #. curveIndex, curveCount
@@ -1176,6 +1177,9 @@ msgstr "Rechts:"
 
 msgid "Bottom:"
 msgstr "Onder:"
+
+msgid "Auto fit crop area"
+msgstr ""
 
 msgid "Reset the crop region"
 msgstr "Reset de uitsnijgrenzen"

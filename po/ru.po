@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-02 04:00+0100\n"
+"POT-Creation-Date: 2010-02-08 05:30+0100\n"
 "PO-Revision-Date: 2009-10-13 18:45+0400\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -87,6 +87,7 @@ msgstr "Показывать скрытые файлы"
 #. clipHighlights
 #. autoExposure
 #. autoBlack
+#. autoCrop
 #. BaseCurveIndex, BaseCurveCount
 #. BaseCurve data defaults
 #. curveIndex, curveCount
@@ -1186,6 +1187,9 @@ msgstr "Справа:"
 
 msgid "Bottom:"
 msgstr "Снизу:"
+
+msgid "Auto fit crop area"
+msgstr ""
 
 msgid "Reset the crop region"
 msgstr "Сбросить область кадрирования"

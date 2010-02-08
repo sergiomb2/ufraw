@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-02 04:00+0100\n"
+"POT-Creation-Date: 2010-02-08 05:30+0100\n"
 "PO-Revision-Date: 2009-11-28 00:03+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -79,6 +79,7 @@ msgstr "Voir fichiers cachés"
 #. clipHighlights
 #. autoExposure
 #. autoBlack
+#. autoCrop
 #. BaseCurveIndex, BaseCurveCount
 #. BaseCurve data defaults
 #. curveIndex, curveCount
@@ -1219,6 +1220,9 @@ msgstr "Droite:"
 
 msgid "Bottom:"
 msgstr "Bas:"
+
+msgid "Auto fit crop area"
+msgstr ""
 
 msgid "Reset the crop region"
 msgstr "RàZ de la zone de découpe"

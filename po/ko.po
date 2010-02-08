@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-02 04:00+0100\n"
+"POT-Creation-Date: 2010-02-08 05:30+0100\n"
 "PO-Revision-Date: 2009-10-06 09:38+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -82,6 +82,7 @@ msgstr "숨겨진 파일 표시"
 #. clipHighlights
 #. autoExposure
 #. autoBlack
+#. autoCrop
 #. BaseCurveIndex, BaseCurveCount
 #. BaseCurve data defaults
 #. curveIndex, curveCount
@@ -1150,6 +1151,9 @@ msgstr "오른쪽:"
 
 msgid "Bottom:"
 msgstr "아래:"
+
+msgid "Auto fit crop area"
+msgstr ""
 
 msgid "Reset the crop region"
 msgstr "잘라내기 영역을 초기화"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-02 04:00+0100\n"
+"POT-Creation-Date: 2010-02-08 05:30+0100\n"
 "PO-Revision-Date: 2009-10-14 06:00+0100\n"
 "Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -81,6 +81,7 @@ msgstr "Mostra file nascosti"
 #. clipHighlights
 #. autoExposure
 #. autoBlack
+#. autoCrop
 #. BaseCurveIndex, BaseCurveCount
 #. BaseCurve data defaults
 #. curveIndex, curveCount
@@ -1201,6 +1202,9 @@ msgstr "Destra:"
 
 msgid "Bottom:"
 msgstr "Basso:"
+
+msgid "Auto fit crop area"
+msgstr ""
 
 msgid "Reset the crop region"
 msgstr "Ripristina la regione di taglio"
