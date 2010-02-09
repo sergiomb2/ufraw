@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-08 05:30+0100\n"
-"PO-Revision-Date: 2009-11-28 00:03+0100\n"
+"POT-Creation-Date: 2010-02-08 21:44-0600\n"
+"PO-Revision-Date: 2010-02-08 22:39+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "MIME-Version: 1.0\n"
@@ -801,10 +801,10 @@ msgid "No more room for new lightness adjustments."
 msgstr "Plus de place pour de nouveaux ajustements de clarté."
 
 msgid "Aspect ratio locked, click to unlock"
-msgstr ""
+msgstr "Ratio d'aspect verrouillé, cliquer pour déverrouiller"
 
 msgid "Aspect ratio unlocked, click to lock"
-msgstr ""
+msgstr "Ratio d'aspect déverrouillé, cliquer pour verrouiller"
 
 msgid "Load dark frame"
 msgstr "Charger bruit de référence"
@@ -1664,11 +1664,11 @@ msgstr "Aberration chromatiques latérales"
 
 #, c-format
 msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
+msgstr "Valeur %.*f trop grande, tronquée à %.*f."
 
 #, c-format
 msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
+msgstr "Valeur %.*f trop petite, tronquée à %.*f."
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
