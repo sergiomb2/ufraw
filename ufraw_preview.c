@@ -1471,7 +1471,6 @@ static void update_scales(preview_data *data)
 	&CFG->profile[out_profile][CFG->profileIndex[out_profile]].BitDepth);
     gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
     gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
-    gtk_toggle_button_set_active(data->AutoCropButton, CFG->autoCrop);
     curveeditor_widget_set_curve(data->CurveWidget,
 	    &CFG->curve[CFG->curveIndex]);
 
@@ -1847,6 +1846,8 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 	}
 	if ( data->CropMotionType!=crop_cursor ) {
 	    fix_crop_aspect(data, data->CropMotionType, TRUE);
+	    CFG->autoCrop = disabled_state;
+	    gtk_toggle_button_set_active(data->AutoCropButton, CFG->autoCrop);
 	}
     }
 
@@ -2027,6 +2028,8 @@ static void crop_reset(GtkWidget *widget, gpointer user_data)
 
     refresh_aspect(data);
     set_new_aspect(data);
+    CFG->autoCrop = disabled_state;
+    gtk_toggle_button_set_active(data->AutoCropButton, CFG->autoCrop);
 }
 
 static void zoom_update(GtkAdjustment *adj, gpointer user_data)
@@ -2386,6 +2389,19 @@ static void lock_aspect(GtkWidget *widget)
 	    _("Aspect ratio unlocked, click to lock"));
 }
 
+static void auto_crop_clicked(GtkToggleButton *button, gpointer user_data)
+{
+    preview_data *data = get_preview_data(button);
+    (void)user_data;
+    CFG->autoCrop = gtk_toggle_button_get_active(button);
+    if (CFG->autoCrop == enabled_state) {
+	CFG->autoCrop = apply_state;
+	ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+	ufraw_get_image_dimensions(data->UF);
+	render_preview(data);
+    }
+}
+
 static void aspect_changed(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
@@ -2407,6 +2423,7 @@ static void aspect_changed(GtkWidget *widget, gpointer user_data)
     CFG->LockAspect = TRUE;
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->LockAspectButton),
 	    TRUE);
+    auto_crop_clicked(data->AutoCropButton, NULL);
 }
 
 static void set_darkframe_label(preview_data *data)
@@ -2625,12 +2642,6 @@ static void button_update(GtkWidget *button, gpointer user_data)
 	    CFG->lightnessAdjustment[i].adjustment = 1.0;
 	    break;
 	}
-    }
-    if (button == GTK_WIDGET(data->AutoCropButton)) {
-	CFG->autoCrop =
-	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
-	if (CFG->autoCrop == enabled_state)
-	    CFG->autoCrop = apply_state;
     }
     if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
     if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
@@ -2904,7 +2915,10 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
 	if ( (int *)valuep==&CFG->CropY1) cursor = top_cursor;
 	if ( (int *)valuep==&CFG->CropY2) cursor = bottom_cursor;
 	fix_crop_aspect(data, cursor, TRUE);
-        if (CFG->autoCrop==enabled_state) CFG->autoCrop = apply_state;
+	if (!data->FreezeDialog) {
+	    CFG->autoCrop = disabled_state;
+	    gtk_toggle_button_set_active(data->AutoCropButton, CFG->autoCrop);
+	}
 	return;
     }
     /* Do nothing if value didn't really change */
@@ -4922,7 +4936,7 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
 	    _("Auto fit crop area"));
     gtk_toggle_button_set_active(data->AutoCropButton, CFG->autoCrop);
     g_signal_connect(G_OBJECT(data->AutoCropButton), "clicked",
-	    G_CALLBACK(button_update), NULL);
+	    G_CALLBACK(auto_crop_clicked), NULL);
 
     // Crop reset button:
     button = reset_button(
