@@ -138,7 +138,6 @@ const conf_data conf_default = {
     /* lens vignetting parameters */ 
     { LF_VIGNETTING_MODEL_NONE, 0, 0, 0, { 0, 0, 0 } },
     LF_UNKNOWN,                   /* lens type */
-    0,                            /* lens postprocessing scale power-of-two */ 
     lensfun_none,                 /* do not apply any lensfun corrections */
 #endif /* HAVE_LENSFUN */
 };

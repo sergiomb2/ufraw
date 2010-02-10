@@ -1383,7 +1383,7 @@ static void ufraw_convert_prepare_first_buffer(ufraw_data *uf,
 }
  
 static void ufraw_convert_prepare_transform(ufraw_data *uf,
-	int width, int height, gboolean reverse)
+	int width, int height, gboolean reverse, float scale)
 {
 #ifdef HAVE_LENSFUN
     conf_data *conf = uf->conf;
@@ -1399,10 +1399,9 @@ static void ufraw_convert_prepare_transform(ufraw_data *uf,
     if (uf->modifier == NULL)
 	return;
 
-    float real_scale = pow(2.0, conf->lens_scale);
     uf->modFlags = lf_modifier_initialize(uf->modifier, conf->lens,
 	    LF_PF_U16, conf->focal_len, conf->aperture, conf->subject_distance,
-	    real_scale, conf->cur_lens_type,
+	    scale, conf->cur_lens_type,
 	    UF_LF_TRANSFORM | LF_MODIFY_VIGNETTING, reverse);
     if ((uf->modFlags & UF_LF_ALL) == 0) {
 	lf_modifier_destroy(uf->modifier);
@@ -1421,7 +1420,7 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 {
     const int iWidth = uf->initialWidth;
     const int iHeight = uf->initialHeight;
-    ufraw_convert_prepare_transform(uf, iWidth, iHeight, TRUE);
+    ufraw_convert_prepare_transform(uf, iWidth, iHeight, TRUE, 1.0);
 #ifdef HAVE_LENSFUN
     if (uf->conf->rotationAngle == 0 &&
 	(uf->modifier == NULL || !(uf->modFlags & UF_LF_TRANSFORM)))
@@ -1434,15 +1433,15 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 	img->width = width;
 	img->height = height;
 	// We still need the transform for vignetting
-	ufraw_convert_prepare_transform(uf, width, height, FALSE);
+	ufraw_convert_prepare_transform(uf, width, height, FALSE, 1.0);
 	uf->rotatedWidth = iWidth;
 	uf->rotatedHeight = iHeight;
 	uf->autoCropWidth = iWidth;
 	uf->autoCropHeight = iHeight;
 	return;
     }
-    const float sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
-    const float cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
+    const double sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
+    const double cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
     const float aspectRatio = (float)(uf->conf->CropX2 - uf->conf->CropX1) /
 	    (uf->conf->CropY2 - uf->conf->CropY1);
     const float midX = iWidth/2.0 - 0.5;
@@ -1452,6 +1451,7 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 #endif
     float maxX = 0, maxY = 0;
     float minX = 999999, minY = 999999;
+    double lastX = 0, lastY = 0, area = 0;
     int i;
     for (i = 0; i < iWidth + iHeight - 1; i++) {
 	int x, y;
@@ -1475,8 +1475,12 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 	buff[0] = x;
 	buff[1] = y;
 #endif
-	float srcX = (buff[0]-midX)*cosine - (buff[1]-midY)*sine;
-	float srcY = (buff[0]-midX)*sine + (buff[1]-midY)*cosine;
+	double srcX = (buff[0]-midX)*cosine - (buff[1]-midY)*sine;
+	double srcY = (buff[0]-midX)*sine + (buff[1]-midY)*cosine;
+	// A digital planimeter:
+	area += srcY * lastX - srcX * lastY;
+	lastX = srcX;
+	lastY = srcY;
 	maxX = MAX(maxX, fabs(srcX));
 	maxY = MAX(maxY, fabs(srcY));
 	if (fabs(srcX/srcY) > aspectRatio) 
@@ -1484,15 +1488,16 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 	else
 	    minY = MIN(minY, fabs(srcY));
     }
+    float scale = sqrt((iWidth-1) * (iHeight-1) / area);
     // Do not allow increasing canvas size by more than a factor of 2
-    uf->rotatedWidth = MIN(ceil(2*maxX), 2*iWidth);
-    uf->rotatedHeight = MIN(ceil(2*maxY), 2*iHeight);
-    uf->autoCropWidth = MIN(floor(2*minX), 2*iWidth);
-    uf->autoCropHeight = MIN(floor(2*minY), 2*iHeight);
+    uf->rotatedWidth = MIN(ceil(2*maxX)*scale, 2*iWidth);
+    uf->rotatedHeight = MIN(ceil(2*maxY)*scale, 2*iHeight);
+    uf->autoCropWidth = MIN(floor(2*minX)*scale, 2*iWidth);
+    uf->autoCropHeight = MIN(floor(2*minY)*scale, 2*iHeight);
     int newWidth = uf->rotatedWidth * width / iWidth;
     int newHeight = uf->rotatedHeight * height / iHeight;
     ufraw_image_init(img, newWidth, newHeight, 8);
-    ufraw_convert_prepare_transform(uf, width, height, FALSE);
+    ufraw_convert_prepare_transform(uf, width, height, FALSE, scale);
 }
 
 /*

@@ -138,12 +138,6 @@ typedef struct {
     GtkWidget *LensFromGeometrySel, *LensToGeometrySel;
     /* The hbox containing focal, aperture, distance combos */
     GtkWidget *LensParamBox;
-    /* Additional image scale to be applied during postprocessing */
-    GtkAdjustment *LensScaleAdjustment;
-    /* The button that resets lens scale to 0.0 */
-    GtkWidget *LensScaleResetButton;
-    /* The button that automatically computes the optimal scale */
-    GtkWidget *LensAutoScaleButton;
 #endif /* HAVE_LENSFUN */
     long (*SaveFunc)();
     RenderModeType RenderMode;

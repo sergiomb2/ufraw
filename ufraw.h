@@ -277,7 +277,6 @@ typedef struct {
     lfLensCalibTCA lens_tca; /* lens tca parameters */
     lfLensCalibVignetting lens_vignetting; /* lens vignetting parameters */
     lfLensType cur_lens_type;
-    float lens_scale; /* Additional lens postprocessing scale power-of-two, default 0 */
     int lensfunMode;
 #endif /* HAVE_LENSFUN */
 } conf_data;

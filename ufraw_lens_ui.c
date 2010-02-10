@@ -460,7 +460,6 @@ static void lens_set (preview_data *data, const lfLens *lens)
     gtk_widget_show_all (data->LensParamBox);
 
     CFG->cur_lens_type = LF_UNKNOWN;
-    CFG->lens_scale = 0.0;
 
     lens_interpolate (data, lens);
 }
@@ -604,43 +603,6 @@ static GtkAdjustment *append_term (
     g_object_set_data (G_OBJECT(button), "Adjustment", adj);
 
     return adj;
-}
-
-static void lens_scale_update (GtkAdjustment *adj, float *valuep)
-{
-    preview_data *data = get_preview_data (adj);
-    *valuep = gtk_adjustment_get_value (adj);
-    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
-    resize_canvas(data);
-    render_preview (data);
-}
-
-static void lens_scale_reset (GtkWidget *button, gpointer user_data)
-{
-    (void)user_data;
-    preview_data *data = get_preview_data (button);
-    gtk_adjustment_set_value (data->LensScaleAdjustment, 0.0);
-    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
-    resize_canvas(data);
-    render_preview (data);
-}
-
-static void lens_autoscale (GtkWidget *button, gpointer user_data)
-{
-    (void)user_data;
-    preview_data *data = get_preview_data (button);
-    if (!data->UF->modifier)
-        gtk_adjustment_set_value (data->LensScaleAdjustment, 0.0);
-    else
-    {
-        float cs = pow (2.0, CFG->lens_scale);
-        float as = lf_modifier_get_auto_scale (data->UF->modifier, 0);
-        gtk_adjustment_set_value (data->LensScaleAdjustment,
-                                  log (cs * as) / log (2.0));
-        ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
-	resize_canvas(data);
-        render_preview (data);
-    }
 }
 
 /* --- TCA correction page --- */
@@ -1084,11 +1046,10 @@ static void fill_geometry_page(preview_data *data, GtkWidget *page)
  */
 void lens_fill_interface (preview_data *data, GtkWidget *page)
 {
-    GtkTable *table, *subTable;
     GtkWidget *label, *button, *subpage;
 
     /* Camera selector */
-    table = GTK_TABLE(gtk_table_new(10, 10, FALSE));
+    GtkTable *table = GTK_TABLE(gtk_table_new(10, 10, FALSE));
     gtk_box_pack_start(GTK_BOX(page), GTK_WIDGET(table), FALSE, FALSE, 0);
 
     label = gtk_label_new(_("Camera"));
@@ -1133,24 +1094,6 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
 
     data->LensParamBox = gtk_hbox_new (FALSE, 0);
     gtk_box_pack_start (GTK_BOX (page), data->LensParamBox, FALSE, FALSE, 2);
-
-    subTable = GTK_TABLE (gtk_table_new (10, 10, FALSE));
-    gtk_box_pack_start (GTK_BOX (page), GTK_WIDGET (subTable), FALSE, FALSE, 0);
-
-    data->LensScaleAdjustment = adjustment_scale (
-        subTable, 0, 0, _("Scale"), CFG->lens_scale, &CFG->lens_scale,
-        -3, 3, 0.001, 0.1, 3, FALSE, _("Image scale power-of-two"),
-        G_CALLBACK (lens_scale_update), NULL, NULL, NULL);
-
-    data->LensScaleResetButton = stock_icon_button(
-	GTK_STOCK_REFRESH, _("Reset image scale to default"),
-	G_CALLBACK (lens_scale_reset), NULL);
-    gtk_table_attach (subTable, data->LensScaleResetButton, 7, 8, 0, 1, 0,0,0,0);
-
-    data->LensAutoScaleButton = stock_icon_button(
-        GTK_STOCK_ZOOM_FIT, _("Autoscale the image for best fit"),
-	G_CALLBACK (lens_autoscale), NULL);
-    gtk_table_attach (subTable, data->LensAutoScaleButton, 8, 9, 0, 1, 0,0,0,0);
 
     GtkNotebook *subnb = GTK_NOTEBOOK(gtk_notebook_new());
     gtk_box_pack_start(GTK_BOX(page), GTK_WIDGET(subnb),
