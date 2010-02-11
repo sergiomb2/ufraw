@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-08 05:30+0100\n"
+"POT-Creation-Date: 2010-02-11 04:15+0100\n"
 "PO-Revision-Date: 2009-09-30 19:24+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -1610,18 +1610,6 @@ msgstr "Cerqueu "
 
 msgid "Choose lens from list of possible variants"
 msgstr "Trieu la lent de la llista de possibles variant"
-
-msgid "Scale"
-msgstr "Escala"
-
-msgid "Image scale power-of-two"
-msgstr "Escala la mida de la imatge en potències de dos"
-
-msgid "Reset image scale to default"
-msgstr "Reinicia la escala de la imatge al valor per omissió"
-
-msgid "Autoscale the image for best fit"
-msgstr "Escala automàticament la imatge al millor ajust"
 
 msgid "Lens distortion"
 msgstr "Distorsió de la lent"

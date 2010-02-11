@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-08 05:30+0100\n"
+"POT-Creation-Date: 2010-02-11 04:15+0100\n"
 "PO-Revision-Date: 2009-09-30 13:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -1586,18 +1586,6 @@ msgstr ""
 
 msgid "Choose lens from list of possible variants"
 msgstr "Kies een lens uit de lijst van mogelijke varianten"
-
-msgid "Scale"
-msgstr "Schaal"
-
-msgid "Image scale power-of-two"
-msgstr "Afbeeldingsschaal macht-van-twee"
-
-msgid "Reset image scale to default"
-msgstr "Reset afbeeldingsschaal naar verstekwaarde"
-
-msgid "Autoscale the image for best fit"
-msgstr "Automatisch schalen voor beste passing"
 
 msgid "Lens distortion"
 msgstr "Lens vervorming"

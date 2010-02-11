@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-08 05:30+0100\n"
+"POT-Creation-Date: 2010-02-11 04:15+0100\n"
 "PO-Revision-Date: 2010-02-08 05:45+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
@@ -1582,18 +1582,6 @@ msgstr ""
 
 msgid "Choose lens from list of possible variants"
 msgstr "Vælg objektiv fra liste over mulige varianter"
-
-msgid "Scale"
-msgstr "Skala"
-
-msgid "Image scale power-of-two"
-msgstr "Billedskala to-tals-potens"
-
-msgid "Reset image scale to default"
-msgstr "Resæt billedskala til standardværdi"
-
-msgid "Autoscale the image for best fit"
-msgstr "Autoskaler billedet til bedste værdi"
 
 msgid "Lens distortion"
 msgstr "Objektivforvrængning"

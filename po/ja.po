@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-08 05:30+0100\n"
+"POT-Creation-Date: 2010-02-11 04:15+0100\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -1548,18 +1548,6 @@ msgid ""
 msgstr ""
 
 msgid "Choose lens from list of possible variants"
-msgstr ""
-
-msgid "Scale"
-msgstr "拡大縮小"
-
-msgid "Image scale power-of-two"
-msgstr ""
-
-msgid "Reset image scale to default"
-msgstr "画像の大きさを初期値に戻す"
-
-msgid "Autoscale the image for best fit"
 msgstr ""
 
 msgid "Lens distortion"

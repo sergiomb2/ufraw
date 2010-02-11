@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-08 05:30+0100\n"
+"POT-Creation-Date: 2010-02-11 04:15+0100\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -1543,18 +1543,6 @@ msgstr ""
 
 msgid "Choose lens from list of possible variants"
 msgstr "从列表选择镜头及可能的变种"
-
-msgid "Scale"
-msgstr "缩放"
-
-msgid "Image scale power-of-two"
-msgstr "图像缩放百分比"
-
-msgid "Reset image scale to default"
-msgstr "重设图像缩放为默认值"
-
-msgid "Autoscale the image for best fit"
-msgstr "自动缩放图像至最佳"
 
 msgid "Lens distortion"
 msgstr "镜头畸变"

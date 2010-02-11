@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-08 21:44-0600\n"
+"POT-Creation-Date: 2010-02-11 04:15+0100\n"
 "PO-Revision-Date: 2010-02-08 22:39+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -1637,18 +1637,6 @@ msgstr ""
 
 msgid "Choose lens from list of possible variants"
 msgstr "Choisir l'objectif depuis une liste de variantes possibles"
-
-msgid "Scale"
-msgstr "Échelle"
-
-msgid "Image scale power-of-two"
-msgstr "Échelle de l'image en puissance de 2"
-
-msgid "Reset image scale to default"
-msgstr "RàZ de l'échelle"
-
-msgid "Autoscale the image for best fit"
-msgstr "Mise à l'échelle auto pour limiter les pertes"
 
 msgid "Lens distortion"
 msgstr "Distortion de l'objectif"

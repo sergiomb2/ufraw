@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-08 05:30+0100\n"
+"POT-Creation-Date: 2010-02-11 04:15+0100\n"
 "PO-Revision-Date: 2009-05-13 12:19+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -1604,18 +1604,6 @@ msgstr ""
 
 msgid "Choose lens from list of possible variants"
 msgstr "Linse aus einer Liste mit möglichen Varianten auswählen"
-
-msgid "Scale"
-msgstr "Skala"
-
-msgid "Image scale power-of-two"
-msgstr "Bildskala-Zweierpotenz"
-
-msgid "Reset image scale to default"
-msgstr "Bildskala auf Standard zurücksetzen"
-
-msgid "Autoscale the image for best fit"
-msgstr "Das Bild für beste Passform automatisch skalieren"
 
 msgid "Lens distortion"
 msgstr "Linsenverzerrung"

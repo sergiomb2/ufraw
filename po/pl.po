@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-08 05:30+0100\n"
+"POT-Creation-Date: 2010-02-11 04:15+0100\n"
 "PO-Revision-Date: 2009-10-01 10:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -1588,18 +1588,6 @@ msgstr ""
 
 msgid "Choose lens from list of possible variants"
 msgstr "Wybierz obiektyw z listy dostêpnych mo¿liwo¶ci"
-
-msgid "Scale"
-msgstr "Skala"
-
-msgid "Image scale power-of-two"
-msgstr "Skalowanie zdjêcia (jako potêga dwójki)"
-
-msgid "Reset image scale to default"
-msgstr "Ustaw domy¶ln± skalê"
-
-msgid "Autoscale the image for best fit"
-msgstr "Automatycznie dopasuj rozmiar zdjêcia"
 
 msgid "Lens distortion"
 msgstr "Dystorsja"

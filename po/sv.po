@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-08 05:30+0100\n"
+"POT-Creation-Date: 2010-02-11 04:15+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -1455,20 +1455,6 @@ msgid ""
 msgstr ""
 
 msgid "Choose lens from list of possible variants"
-msgstr ""
-
-#, fuzzy
-msgid "Scale"
-msgstr "Spara s_om"
-
-msgid "Image scale power-of-two"
-msgstr ""
-
-#, fuzzy
-msgid "Reset image scale to default"
-msgstr "Nollställ gamma till standardvärde"
-
-msgid "Autoscale the image for best fit"
 msgstr ""
 
 msgid "Lens distortion"

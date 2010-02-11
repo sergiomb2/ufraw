@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-08 05:30+0100\n"
+"POT-Creation-Date: 2010-02-11 04:15+0100\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -1601,18 +1601,6 @@ msgstr ""
 
 msgid "Choose lens from list of possible variants"
 msgstr "Bira objektiv iz celokupnog spiska"
-
-msgid "Scale"
-msgstr "Povećanje"
-
-msgid "Image scale power-of-two"
-msgstr "Promena veličine na drugi stepen"
-
-msgid "Reset image scale to default"
-msgstr "Vraća veličinu slike na početnu vrednost"
-
-msgid "Autoscale the image for best fit"
-msgstr "Povećava sliku na najbolju vrednost"
 
 msgid "Lens distortion"
 msgstr "Izobličenja sočiva"
