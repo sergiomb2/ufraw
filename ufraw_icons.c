@@ -49,6 +49,9 @@ void ufraw_icons_init()
     load_icon(factory, rotate_90_24, "object-rotate-right");
     load_icon(factory, rotate_270_24, "object-rotate-left");
     load_icon(factory, lock_24, "object-lock");
+    load_icon(factory, unlock_24, "object-unlock");
+    load_icon(factory, automatic_24, "object-automatic");
+    load_icon(factory, manual_24, "object-manual");
     load_icon(factory, exif_24, "exif");
     load_icon(factory, crop_24, "crop");
     load_icon(factory, rectify_24, "rectify");

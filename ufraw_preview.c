@@ -883,6 +883,7 @@ static gboolean render_preview_now(preview_data *data)
     data->RenderSubArea = 0;
 
     if (CFG->autoExposure == apply_state) {
+	ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
 	ufraw_auto_expose(data->UF);
 	gdouble lower, upper;
 	g_object_get(data->ExposureAdjustment, "lower", &lower,
@@ -893,8 +894,11 @@ static gboolean render_preview_now(preview_data *data)
 	gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
 	gtk_widget_set_sensitive(data->ResetExposureButton,
 		fabs( conf_default.exposure - CFG->exposure) > 0.001);
+	if (CFG->autoBlack == enabled_state)
+	    CFG->autoBlack = apply_state;
     }
     if (CFG->autoBlack == apply_state) {
+	ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
 	ufraw_auto_black(data->UF);
 	curveeditor_widget_set_curve(data->CurveWidget,
 		&CFG->curve[CFG->curveIndex]);
@@ -912,6 +916,8 @@ static gboolean render_preview_now(preview_data *data)
 		&data->UF->displayProfileSize);
     }
     if (CFG->autoCrop == apply_state) {
+	ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+	ufraw_get_image_dimensions(data->UF);
 	CFG->CropX1 = (data->UF->rotatedWidth - data->UF->autoCropWidth)/2;
 	CFG->CropX2 = (data->UF->rotatedWidth + data->UF->autoCropWidth)/2;
 	CFG->CropY1 = (data->UF->rotatedHeight - data->UF->autoCropHeight)/2;
@@ -1469,8 +1475,6 @@ static void update_scales(preview_data *data)
 
     uf_combo_box_set_data(data->BitDepthCombo,
 	&CFG->profile[out_profile][CFG->profileIndex[out_profile]].BitDepth);
-    gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
-    gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
     curveeditor_widget_set_curve(data->CurveWidget,
 	    &CFG->curve[CFG->curveIndex]);
 
@@ -1542,6 +1546,18 @@ static void update_scales(preview_data *data)
     render_preview(data);
 }
 
+static void auto_button_toggle(GtkToggleButton *button, gboolean *valuep)
+{
+    if (gtk_toggle_button_get_active(button)) {
+	*valuep = !*valuep;
+	gtk_toggle_button_set_active(button, FALSE);
+    }
+    if (*valuep)
+	uf_button_set_stock_image(GTK_BUTTON(button), "object-automatic");
+    else
+	uf_button_set_stock_image(GTK_BUTTON(button), "object-manual");
+}
+
 static void curve_update(GtkWidget *widget, long curveType)
 {
     preview_data *data = get_preview_data(widget);
@@ -1556,6 +1572,7 @@ static void curve_update(GtkWidget *widget, long curveType)
 	CFG->curve[CFG->curveIndex] =
 	    *curveeditor_widget_get_curve(data->CurveWidget);
 	CFG->autoBlack = FALSE;
+	auto_button_toggle(data->AutoBlackButton, &CFG->autoBlack);
     }
     ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
     update_scales(data);
@@ -1847,7 +1864,7 @@ static gboolean crop_motion_notify(preview_data *data, GdkEventMotion *event)
 	if ( data->CropMotionType!=crop_cursor ) {
 	    fix_crop_aspect(data, data->CropMotionType, TRUE);
 	    CFG->autoCrop = disabled_state;
-	    gtk_toggle_button_set_active(data->AutoCropButton, CFG->autoCrop);
+	    auto_button_toggle(data->AutoCropButton, &CFG->autoCrop);
 	}
     }
 
@@ -2029,7 +2046,7 @@ static void crop_reset(GtkWidget *widget, gpointer user_data)
     refresh_aspect(data);
     set_new_aspect(data);
     CFG->autoCrop = disabled_state;
-    gtk_toggle_button_set_active(data->AutoCropButton, CFG->autoCrop);
+    auto_button_toggle(data->AutoCropButton, &CFG->autoCrop);
 }
 
 static void zoom_update(GtkAdjustment *adj, gpointer user_data)
@@ -2380,25 +2397,20 @@ static void set_new_aspect(preview_data *data)
     update_crop_ranges(data, TRUE);
 }
 
-static void lock_aspect(GtkWidget *widget)
+static void lock_aspect(GtkToggleButton *button, gboolean *valuep)
 {
-    preview_data *data = get_preview_data(widget);
-    CFG->LockAspect = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-    uf_widget_set_tooltip(widget, CFG->LockAspect ?
-	    _("Aspect ratio locked, click to unlock") :
-	    _("Aspect ratio unlocked, click to lock"));
-}
-
-static void auto_crop_clicked(GtkToggleButton *button, gpointer user_data)
-{
-    preview_data *data = get_preview_data(button);
-    (void)user_data;
-    CFG->autoCrop = gtk_toggle_button_get_active(button);
-    if (CFG->autoCrop == enabled_state) {
-	CFG->autoCrop = apply_state;
-	ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
-	ufraw_get_image_dimensions(data->UF);
-	render_preview(data);
+    if (gtk_toggle_button_get_active(button)) {
+	*valuep = !*valuep;
+	gtk_toggle_button_set_active(button, FALSE);
+    }
+    if (*valuep) {
+	uf_button_set_stock_image(GTK_BUTTON(button), "object-lock");
+	uf_widget_set_tooltip(GTK_WIDGET(button),
+		_("Aspect ratio locked, click to unlock"));
+    } else {
+	uf_button_set_stock_image(GTK_BUTTON(button), "object-unlock");
+	uf_widget_set_tooltip(GTK_WIDGET(button),
+		_("Aspect ratio unlocked, click to lock"));
     }
 }
 
@@ -2421,9 +2433,11 @@ static void aspect_changed(GtkWidget *widget, gpointer user_data)
     }
     set_new_aspect(data);
     CFG->LockAspect = TRUE;
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->LockAspectButton),
-	    TRUE);
-    auto_crop_clicked(data->AutoCropButton, NULL);
+    lock_aspect(data->LockAspectButton, &CFG->LockAspect);
+    if (CFG->autoCrop == enabled_state) {
+	CFG->autoCrop = apply_state;
+	render_preview(data);
+    }
 }
 
 static void set_darkframe_label(preview_data *data)
@@ -2566,13 +2580,10 @@ static void button_update(GtkWidget *button, gpointer user_data)
 	CFG->profile[0][CFG->profileIndex[0]].linear =
 		profile_default_linear(&CFG->profile[0][CFG->profileIndex[0]]);
     }
-    if (button==GTK_WIDGET(data->AutoExposureButton)) {
-	CFG->autoExposure =
-	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
-    }
     if (button==data->ResetExposureButton) {
 	CFG->exposure = conf_default.exposure;
 	CFG->autoExposure = FALSE;
+	auto_button_toggle(data->AutoExposureButton, &CFG->autoExposure);
     }
     if (button==data->ResetThresholdButton) {
 	CFG->threshold = conf_default.threshold;
@@ -2588,18 +2599,17 @@ static void button_update(GtkWidget *button, gpointer user_data)
     if (button==data->ResetSaturationButton) {
 	CFG->saturation = conf_default.saturation;
     }
-    if (button==GTK_WIDGET(data->AutoBlackButton)) {
-	CFG->autoBlack =
-	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
-    }
     if (button==data->ResetBlackButton) {
 	CurveDataSetPoint(&CFG->curve[CFG->curveIndex], 0,
 		conf_default.black, 0);
 	CFG->autoBlack = FALSE;
+	auto_button_toggle(data->AutoBlackButton, &CFG->autoBlack);
     }
     if (button==data->AutoCurveButton) {
 	CFG->curveIndex = manual_curve;
 	ufraw_auto_curve(data->UF);
+	CFG->autoBlack = enabled_state;
+	auto_button_toggle(data->AutoBlackButton, &CFG->autoBlack);
     }
     if (button==data->ResetBaseCurveButton) {
 	if (CFG->BaseCurveIndex==manual_curve) {
@@ -2710,6 +2720,16 @@ static void clip_highlights_button_set(GtkButton *button, preview_data *data)
     uf_widget_set_tooltip(GTK_WIDGET(button), text);
     g_free(text);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
+}
+
+static void auto_button_toggled(GtkToggleButton *button, gboolean *valuep)
+{
+    preview_data *data = get_preview_data(button);
+    auto_button_toggle(button, valuep);
+    if (*valuep == enabled_state) {
+	*valuep = apply_state;
+	render_preview(data);
+    }
 }
 
 static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
@@ -2917,7 +2937,7 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
 	fix_crop_aspect(data, cursor, TRUE);
 	if (!data->FreezeDialog) {
 	    CFG->autoCrop = disabled_state;
-	    gtk_toggle_button_set_active(data->AutoCropButton, CFG->autoCrop);
+	    auto_button_toggle(data->AutoCropButton, &CFG->autoCrop);
 	}
 	return;
     }
@@ -2933,6 +2953,7 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
 
     if (valuep==&CFG->exposure) {
         CFG->autoExposure = FALSE;
+	auto_button_toggle(data->AutoExposureButton, &CFG->autoExposure);
         if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
     } else if (valuep==&CFG->threshold) {
 	ufraw_invalidate_denoise_layer(data->UF);
@@ -4820,7 +4841,7 @@ static void corrections_fill_interface(preview_data *data, GtkWidget *page,
     gtk_table_attach(subTable, data->CurveWidget, 1, 8, 1, 8,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 
-    data->AutoCurveButton = stock_icon_button(GTK_STOCK_EXECUTE,
+    data->AutoCurveButton = stock_icon_button("object-manual",
 	    _("Auto adjust curve\n(Flatten histogram)"),
 	    G_CALLBACK(button_update), NULL);
     gtk_table_attach(subTable, data->AutoCurveButton, 8, 9, 6, 7, 0, 0, 0, 0);
@@ -4848,15 +4869,13 @@ static void corrections_fill_interface(preview_data *data, GtkWidget *page,
 	    0, 0, 0, 0);
 
     data->AutoBlackButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
-    gtk_container_add(GTK_CONTAINER(data->AutoBlackButton),
-	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
     gtk_table_attach(subTable, GTK_WIDGET(data->AutoBlackButton), 0, 1, 6, 7,
 	    0, GTK_SHRINK, 0, 0);
     uf_widget_set_tooltip(GTK_WIDGET(data->AutoBlackButton),
 	    _("Auto adjust black-point"));
-    gtk_toggle_button_set_active(data->AutoBlackButton, CFG->autoBlack);
-    g_signal_connect(G_OBJECT(data->AutoBlackButton), "clicked",
-	    G_CALLBACK(button_update), NULL);
+    auto_button_toggle(data->AutoBlackButton, &CFG->autoBlack);
+    g_signal_connect(G_OBJECT(data->AutoBlackButton), "toggled",
+	    G_CALLBACK(auto_button_toggled), &CFG->autoBlack);
     /* End of Corrections page */
 }
 
@@ -4928,15 +4947,14 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
 	G_CALLBACK(adjustment_update), &CFG->CropY2);
 
     data->AutoCropButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
-    gtk_container_add(GTK_CONTAINER(data->AutoCropButton),
-	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
     gtk_table_attach(table, GTK_WIDGET(data->AutoCropButton), 4, 5, 1, 2,
 	    0, 0, 0, 0);
     uf_widget_set_tooltip(GTK_WIDGET(data->AutoCropButton),
 	    _("Auto fit crop area"));
+    auto_button_toggle(data->AutoCropButton, &CFG->autoCrop);
     gtk_toggle_button_set_active(data->AutoCropButton, CFG->autoCrop);
-    g_signal_connect(G_OBJECT(data->AutoCropButton), "clicked",
-	    G_CALLBACK(auto_crop_clicked), NULL);
+    g_signal_connect(G_OBJECT(data->AutoCropButton), "toggled",
+	    G_CALLBACK(auto_button_toggled), &CFG->autoCrop);
 
     // Crop reset button:
     button = reset_button(
@@ -4968,17 +4986,13 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
     g_signal_connect(G_OBJECT(entry), "changed",
 	    G_CALLBACK(aspect_changed), NULL);
 
-    button = gtk_toggle_button_new();
-    gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-	    "object-lock", GTK_ICON_SIZE_BUTTON));
-    //gtk_box_pack_start(hbox, button, FALSE, FALSE, 0);
-    gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
-    g_signal_connect(G_OBJECT(button), "clicked",
-	    G_CALLBACK(lock_aspect), 0);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), CFG->LockAspect);
-    // Update the tooltip.
-    lock_aspect(button);
-    data->LockAspectButton = GTK_TOGGLE_BUTTON(button);
+    data->LockAspectButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
+    gtk_table_attach(table, GTK_WIDGET(data->LockAspectButton),
+	    2, 3, 0, 1, 0, 0, 0, 0);
+    g_signal_connect(G_OBJECT(data->LockAspectButton), "clicked",
+	    G_CALLBACK(lock_aspect), &CFG->LockAspect);
+    // Update the icon and tooltip.
+    lock_aspect(data->LockAspectButton, &CFG->LockAspect);
 
     /* Get initial aspect ratio */
     refresh_aspect(data);
@@ -5460,15 +5474,13 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 	    G_CALLBACK(toggle_button_update), &CFG->clipHighlights);
 
     data->AutoExposureButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
-    gtk_container_add(GTK_CONTAINER(data->AutoExposureButton),
-	    gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON));
     gtk_table_attach(table, GTK_WIDGET(data->AutoExposureButton), 9, 10, 0, 1,
 	    0, 0, 0, 0);
     uf_widget_set_tooltip(GTK_WIDGET(data->AutoExposureButton),
 	    _("Auto adjust exposure"));
-    gtk_toggle_button_set_active(data->AutoExposureButton, CFG->autoExposure);
-    g_signal_connect(G_OBJECT(data->AutoExposureButton), "clicked",
-	    G_CALLBACK(button_update), NULL);
+    auto_button_toggle(data->AutoExposureButton, &CFG->autoExposure);
+    g_signal_connect(G_OBJECT(data->AutoExposureButton), "toggled",
+	    G_CALLBACK(auto_button_toggled), &CFG->autoExposure);
 
     data->ResetExposureButton = reset_button(_("Reset exposure to default"),
 	    G_CALLBACK(button_update), NULL);
