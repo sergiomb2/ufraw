@@ -228,7 +228,8 @@ void Image::SetWB(const char *mode) {
     if (uf == NULL)
 	return;
     if (uf->rgbMax == 0) { // Raw file was not loaded yet.
-	uf->WBDirty = true;
+	if (!wb.IsEqual(uf_manual_wb) && !wb.IsEqual(uf_manual_wb))
+	    uf->WBDirty = true; // ChannelMultipliers should be calculated later
 	return;
     }
     if (mode != NULL)

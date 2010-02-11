@@ -403,15 +403,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	ufobject_copy(uf->conf->ufobject,
 		ufgroup_element(rc->ufobject, ufRawImage));
     }
-
-    if (ufobject_name(uf->conf->ufobject) != ufRawImage)
-	g_warning("uf->conf->ufobject is not a ufRawImage");
-    dcraw_data *raw = uf->raw;
-    // make, model are used in ufraw_image_set_data()
-    g_strlcpy(uf->conf->make, raw->make, max_name);
-    g_strlcpy(uf->conf->model, raw->model, max_name);
-    ufraw_image_set_data(uf->conf->ufobject, uf);
-
     if (conf!=NULL && conf->version!=0) {
 	conf_copy_image(uf->conf, conf);
 	conf_copy_save(uf->conf, conf);
@@ -424,6 +415,16 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	status = conf_set_cmd(uf->conf, cmd);
 	if (status!=UFRAW_SUCCESS) return status;
     }
+    if (ufobject_name(uf->conf->ufobject) != ufRawImage)
+	g_warning("uf->conf->ufobject is not a ufRawImage");
+    dcraw_data *raw = uf->raw;
+    if (strcmp(uf->conf->make, raw->make) != 0 ||
+	strcmp(uf->conf->model, raw->model) != 0)
+	uf->WBDirty =TRUE; // Re-calculate channel multipliers.
+    // make, model are used in ufraw_image_set_data()
+    g_strlcpy(uf->conf->make, raw->make, max_name);
+    g_strlcpy(uf->conf->model, raw->model, max_name);
+    ufraw_image_set_data(uf->conf->ufobject, uf);
 
     char *absname = uf_file_set_absolute(uf->filename);
     g_strlcpy(uf->conf->inputFilename, absname, max_path);
@@ -660,8 +661,8 @@ int ufraw_load_raw(ufraw_data *uf)
     if (uf->conf->CropY2 > uf->rotatedHeight)
 	uf->conf->CropY2 = uf->rotatedHeight;
 
-    // If we are LoadingID, we want to keep the ChannelMultipliers from it.
-    if (!uf->LoadingID || uf->WBDirty) {
+    // Now we can finally calculate the channel multipliers.
+    if (uf->WBDirty) {
 	UFObject *wb = ufgroup_element(uf->conf->ufobject, ufWB);
 	char *oldWB = g_strdup(ufobject_string_value(wb));
 	UFObject *wbTuning = ufgroup_element(uf->conf->ufobject,
