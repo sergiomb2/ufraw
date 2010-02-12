@@ -35,6 +35,7 @@ void (*ufraw_progress)(int what, int ticks);
 	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
 #define UF_LF_TRANSFORM ( \
 	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
+static void ufraw_lensfun_init(ufraw_data *uf);
 static void ufraw_convert_image_vignetting(ufraw_data *uf,
 	ufraw_image_data *img, UFRectangle *area);
 static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
@@ -571,7 +572,23 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	    uf->conf->BaseCurveIndex = linear_curve;
     }
     ufraw_load_darkframe(uf);
-
+#ifdef HAVE_LENSFUN
+    ufraw_lensfun_init(uf);
+    if (uf->conf->lensfunMode == lensfun_none) {
+        uf->conf->lens_distortion.Model = LF_DIST_MODEL_NONE;
+	if (uf->conf->lens->CalibDistortion != NULL)
+	    while (uf->conf->lens->CalibDistortion[0] != NULL)
+		lf_lens_remove_calib_distortion(uf->conf->lens, 0);
+        uf->conf->lens_tca.Model = LF_TCA_MODEL_NONE;
+	if (uf->conf->lens->CalibTCA != NULL)
+	    while (uf->conf->lens->CalibTCA[0] != NULL)
+		lf_lens_remove_calib_tca(uf->conf->lens, 0);
+        uf->conf->lens_vignetting.Model = LF_VIGNETTING_MODEL_NONE;
+	if (uf->conf->lens->CalibVignetting != NULL)
+	    while (uf->conf->lens->CalibVignetting[0] != NULL)
+		lf_lens_remove_calib_vignetting(uf->conf->lens, 0);
+    }
+#endif
     ufraw_get_image_dimensions(uf);
 
     return UFRAW_SUCCESS;
@@ -1232,7 +1249,7 @@ static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase)
 }
 
 #ifdef HAVE_LENSFUN
-void ufraw_lensfun_init(ufraw_data *uf)
+static void ufraw_lensfun_init(ufraw_data *uf)
 {
     /* Load lens database only once */
     static lfDatabase *lensdb = NULL;

@@ -460,15 +460,14 @@ static void lens_set (preview_data *data, const lfLens *lens)
     gtk_widget_show_all (data->LensParamBox);
 
     CFG->cur_lens_type = LF_UNKNOWN;
-
-    lens_interpolate (data, lens);
 }
 
-static void lens_menu_select (
-    GtkMenuItem *menuitem, gpointer user_data)
+static void lens_menu_select(GtkMenuItem *menuitem, gpointer user_data)
 {
     preview_data *data = (preview_data *)user_data;
-    lens_set (data, (lfLens *)g_object_get_data(G_OBJECT(menuitem), "lfLens"));
+    lfLens *lens = (lfLens *)g_object_get_data(G_OBJECT(menuitem), "lfLens");
+    lens_set(data, lens);
+    lens_interpolate(data, lens);
 }
 
 static void lens_menu_fill (
@@ -636,8 +635,7 @@ static void adjustment_update_tca (GtkAdjustment *adj, float *valuep)
 
 static void tca_model_changed (GtkComboBox *widget, preview_data *data)
 {
-    lfTCAModel model =
-        (lfTCAModel) gtk_combo_box_get_active (widget);
+    lfTCAModel model = gtk_combo_box_get_active(widget) - LF_TCA_MODEL_NONE;
 
     const char *details;
     const lfParameter **params;
@@ -675,7 +673,7 @@ static void tca_model_changed (GtkComboBox *widget, preview_data *data)
 static void fill_tca_page(preview_data *data, GtkWidget *page)
 {
     GtkWidget *label;
-    int i, active_index;
+    int i;
 
     GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
     gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
@@ -687,17 +685,13 @@ static void fill_tca_page(preview_data *data, GtkWidget *page)
     data->LensTCAModel = gtk_combo_box_new_text ();
     uf_widget_set_tooltip(data->LensTCAModel,
                           _("Chromatic Aberrations mathematical model"));
-    active_index = 0;
-    for (i = 0; ; i++)
-    {
+    for (i = 0; ; i++) {
         const char *model_name;
         lfTCAModel model = LF_TCA_MODEL_NONE + i;
         model_name = lf_get_tca_model_desc (model, NULL, NULL);
         if (!model_name)
             break;
         gtk_combo_box_append_text (GTK_COMBO_BOX (data->LensTCAModel), model_name);
-        if (model == CFG->lens_tca.Model)
-            active_index = i;
     }
     g_signal_connect(G_OBJECT(data->LensTCAModel), "changed",
                      G_CALLBACK(tca_model_changed), data);
@@ -713,8 +707,6 @@ static void fill_tca_page(preview_data *data, GtkWidget *page)
     gtk_label_set_ellipsize(GTK_LABEL(data->LensTCADesc), PANGO_ELLIPSIZE_END);
     gtk_label_set_selectable(GTK_LABEL(data->LensTCADesc), TRUE);
     gtk_box_pack_start(GTK_BOX(page), data->LensTCADesc, FALSE, FALSE, 0);
-
-    gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensTCAModel), active_index);
 }
 
 /* --- Vignetting correction page --- */
@@ -750,8 +742,8 @@ static void adjustment_update_vign (GtkAdjustment *adj, float *valuep)
 
 static void vignetting_model_changed (GtkComboBox *widget, preview_data *data)
 {
-    lfVignettingModel model =
-        (lfVignettingModel) gtk_combo_box_get_active (widget);
+    lfVignettingModel model = gtk_combo_box_get_active(widget) -
+	     LF_VIGNETTING_MODEL_NONE;
 
     const char *details;
     const lfParameter **params;
@@ -788,7 +780,7 @@ static void vignetting_model_changed (GtkComboBox *widget, preview_data *data)
 static void fill_vignetting_page(preview_data *data, GtkWidget *page)
 {
     GtkWidget *label;
-    int i, active_index;
+    int i;
 
     GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
     gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
@@ -800,17 +792,13 @@ static void fill_vignetting_page(preview_data *data, GtkWidget *page)
     data->LensVignettingModel = gtk_combo_box_new_text ();
     uf_widget_set_tooltip(data->LensVignettingModel,
                           _("Optical vignetting mathematical model"));
-    active_index = 0;
-    for (i = 0; ; i++)
-    {
+    for (i = 0; ; i++) {
         const char *model_name;
         lfVignettingModel model = LF_VIGNETTING_MODEL_NONE + i;
         model_name = lf_get_vignetting_model_desc (model, NULL, NULL);
         if (!model_name)
             break;
         gtk_combo_box_append_text (GTK_COMBO_BOX (data->LensVignettingModel), model_name);
-        if (model == CFG->lens_vignetting.Model)
-            active_index = i;
     }
     g_signal_connect(G_OBJECT(data->LensVignettingModel), "changed",
                      G_CALLBACK(vignetting_model_changed), data);
@@ -827,8 +815,6 @@ static void fill_vignetting_page(preview_data *data, GtkWidget *page)
 	    PANGO_ELLIPSIZE_END);
     gtk_label_set_selectable(GTK_LABEL(data->LensVignettingDesc), TRUE);
     gtk_box_pack_start(GTK_BOX(page), data->LensVignettingDesc, FALSE, FALSE, 0);
-
-    gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensVignettingModel), active_index);
 }
 
 /* --- Distortion correction page --- */
@@ -863,8 +849,8 @@ static void adjustment_update_dist (GtkAdjustment *adj, float *valuep)
 
 static void distortion_model_changed (GtkComboBox *widget, preview_data *data)
 {
-    lfDistortionModel model =
-        (lfDistortionModel) gtk_combo_box_get_active (widget);
+    lfDistortionModel model = gtk_combo_box_get_active(widget) -
+	    LF_DIST_MODEL_NONE;
 
     const char *details;
     const lfParameter **params;
@@ -903,7 +889,7 @@ static void distortion_model_changed (GtkComboBox *widget, preview_data *data)
 static void fill_distortion_page(preview_data *data, GtkWidget *page)
 {
     GtkWidget *label;
-    int i, active_index;
+    int i;
 
     GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
     gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
@@ -915,17 +901,13 @@ static void fill_distortion_page(preview_data *data, GtkWidget *page)
     data->LensDistortionModel = gtk_combo_box_new_text ();
     uf_widget_set_tooltip (data->LensDistortionModel,
                            _("Lens distortion mathematical model"));
-    active_index = 0;
-    for (i = 0; ; i++)
-    {
+    for (i = 0; ; i++) {
         const char *model_name;
         lfDistortionModel model = LF_DIST_MODEL_NONE + i;
         model_name = lf_get_distortion_model_desc (model, NULL, NULL);
         if (!model_name)
             break;
         gtk_combo_box_append_text (GTK_COMBO_BOX (data->LensDistortionModel), model_name);
-        if (model == CFG->lens_distortion.Model)
-            active_index = i;
     }
     g_signal_connect (G_OBJECT (data->LensDistortionModel), "changed",
                       G_CALLBACK (distortion_model_changed), data);
@@ -943,8 +925,6 @@ static void fill_distortion_page(preview_data *data, GtkWidget *page)
     gtk_label_set_selectable(GTK_LABEL(data->LensDistortionDesc), TRUE);
     gtk_box_pack_start(GTK_BOX(page),
                         data->LensDistortionDesc, FALSE, FALSE, 0);
-
-    gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensDistortionModel), active_index);
 }
 
 /* --- Lens geometry page --- */
@@ -1036,9 +1016,6 @@ static void fill_geometry_page(preview_data *data, GtkWidget *page)
     g_object_set_data (G_OBJECT (data->LensToGeometrySel), "LensType", &CFG->cur_lens_type);
     g_signal_connect (G_OBJECT (data->LensToGeometrySel), "changed",
                       G_CALLBACK(geometry_model_changed), data);
-
-    gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensFromGeometrySel), CFG->lens->Type);
-    gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensToGeometrySel), CFG->cur_lens_type);
 }
 
 /**
@@ -1101,8 +1078,8 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
     gtk_notebook_set_tab_pos (subnb, GTK_POS_LEFT);
 
     /* Create a default lens & camera */
-    ufraw_lensfun_init(data->UF);
     camera_set(data);
+    lens_set(data, CFG->lens);
 
     subpage = notebook_page_new(subnb, _("Lens distortion"), "distortion");
     fill_distortion_page(data, subpage);
@@ -1117,16 +1094,7 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
 	    _("Lateral chromatic aberration"), "tca");
     fill_tca_page(data, subpage);
 
-    lens_set(data, CFG->lens);
-
-    if (CFG->lensfunMode == lensfun_none) {
-	gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensDistortionModel),
-		LF_DIST_MODEL_NONE);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensTCAModel),
-		LF_TCA_MODEL_NONE);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensVignettingModel),
-		LF_VIGNETTING_MODEL_NONE);
-    }
+    lens_interpolate(data, CFG->lens);
 }
 
 #endif /* HAVE_LENSFUN */

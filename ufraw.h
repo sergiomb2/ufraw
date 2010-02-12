@@ -355,9 +355,6 @@ int ufraw_load_raw(ufraw_data *uf);
 int ufraw_load_darkframe(ufraw_data *uf);
 void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode);
 int ufraw_convert_image(ufraw_data *uf);
-#ifdef HAVE_LENSFUN
-void ufraw_lensfun_init(ufraw_data *uf);
-#endif
 ufraw_image_data *ufraw_get_image(ufraw_data *uf, UFRawPhase phase,
 	gboolean bufferok);
 ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,

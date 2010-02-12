@@ -101,10 +101,6 @@ int main (int argc, char **argv)
 	else
 	    stat[0] = '\0';
 	ufraw_message(UFRAW_MESSAGE, _("Loaded %s %s"), uf->filename, stat);
-#ifdef HAVE_LENSFUN
-        if (uf->conf->lensfunMode == lensfun_auto)
-	    ufraw_lensfun_init(uf);
-#endif
 	status = ufraw_batch_saver(uf);
 	if (status==UFRAW_SUCCESS || status==UFRAW_WARNING) {
 	    if (uf->conf->createID!=only_id)
