@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-11 04:15+0100\n"
+"POT-Creation-Date: 2010-02-13 10:45+0100\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -21,6 +21,14 @@ msgstr ""
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
 msgstr "ナビゲータウインドウを開く"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 msgid "No input file, nothing to do."
 msgstr "入力ファイルが無いので、何もしません"
@@ -663,6 +671,107 @@ msgstr "出力プロファイル'%s'を画像に埋め込むのに失敗しま�
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIFバッファ長 %d, が長すぎるので無視します"
 
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+
+msgid "Focal"
+msgstr ""
+
+msgid "Focal length"
+msgstr "焦点距離"
+
+msgid "F"
+msgstr "F"
+
+msgid "F-number (Aperture)"
+msgstr "F-値(絞り値)"
+
+msgid "Distance"
+msgstr "距離"
+
+msgid "Distance to subject"
+msgstr ""
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "モデル:"
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr ""
+
+msgid "Parameters"
+msgstr "パラメータ"
+
+msgid "Optical vignetting mathematical model"
+msgstr ""
+
+msgid "Lens distortion mathematical model"
+msgstr ""
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr ""
+
+msgid "The geometry of the lens used to make the shot"
+msgstr ""
+
+msgid "Target geometry:"
+msgstr ""
+
+msgid "The target geometry for output image"
+msgstr ""
+
+msgid "Camera"
+msgstr "カメラ"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+
+msgid "Choose camera from complete list"
+msgstr "完成したリストからカメラを選ぶ"
+
+#. Lens selector
+msgid "Lens"
+msgstr "レンズ"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+
+msgid "Choose lens from list of possible variants"
+msgstr ""
+
+msgid "Lens distortion"
+msgstr "レンズの歪曲収差"
+
+msgid "Lens geometry"
+msgstr ""
+
+msgid "Optical vignetting"
+msgstr ""
+
+msgid "Lateral chromatic aberration"
+msgstr ""
+
 msgid "Raw histogram with conversion curves"
 msgstr ""
 
@@ -1286,15 +1395,8 @@ msgstr "絞り値"
 msgid "ISO speed"
 msgstr "ISO感度"
 
-msgid "Focal length"
-msgstr "焦点距離"
-
 msgid "35mm focal length"
 msgstr "35mmとしての焦点距離"
-
-#. Lens selector
-msgid "Lens"
-msgstr "レンズ"
 
 msgid "Flash"
 msgstr "フラッシュ"
@@ -1467,108 +1569,6 @@ msgstr "'%d' はサポートされない色深度なので無視しました。"
 #, c-format
 msgid "Unknown file type %d."
 msgstr "%dのファイルタイプが不明です。"
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Mount:\t\t%s\n"
-"Crop factor:\t%.1f"
-msgstr ""
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s\n"
-"Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
-"Crop factor:\t%.1f\n"
-"Type:\t\t%s\n"
-"Mounts:\t\t%s"
-msgstr ""
-
-msgid "Focal"
-msgstr ""
-
-msgid "F"
-msgstr "F"
-
-msgid "F-number (Aperture)"
-msgstr "F-値(絞り値)"
-
-msgid "Distance"
-msgstr "距離"
-
-msgid "Distance to subject"
-msgstr ""
-
-#. Add the model combobox
-msgid "Model:"
-msgstr "モデル:"
-
-msgid "Chromatic Aberrations mathematical model"
-msgstr ""
-
-msgid "Parameters"
-msgstr "パラメータ"
-
-msgid "Optical vignetting mathematical model"
-msgstr ""
-
-msgid "Lens distortion mathematical model"
-msgstr ""
-
-#. Add the model combobox
-msgid "Lens geometry:"
-msgstr ""
-
-msgid "The geometry of the lens used to make the shot"
-msgstr ""
-
-msgid "Target geometry:"
-msgstr ""
-
-msgid "The target geometry for output image"
-msgstr ""
-
-msgid "Camera"
-msgstr "カメラ"
-
-msgid ""
-"Search for camera using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-
-msgid "Choose camera from complete list"
-msgstr "完成したリストからカメラを選ぶ"
-
-msgid ""
-"Search for lens using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-
-msgid "Choose lens from list of possible variants"
-msgstr ""
-
-msgid "Lens distortion"
-msgstr "レンズの歪曲収差"
-
-msgid "Lens geometry"
-msgstr ""
-
-msgid "Optical vignetting"
-msgstr ""
-
-msgid "Lateral chromatic aberration"
-msgstr ""
-
-#, c-format
-msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
-
-#, c-format
-msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

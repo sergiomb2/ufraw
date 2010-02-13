@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-11 04:15+0100\n"
+"POT-Creation-Date: 2010-02-13 10:45+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -18,6 +18,14 @@ msgstr ""
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
 msgstr "Öppna navigatorfönstret"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 msgid "No input file, nothing to do."
 msgstr "Ingen inmatningsfil, ingenting att göra."
@@ -591,6 +599,108 @@ msgstr ""
 
 #, c-format
 msgid "EXIF buffer length %d, too long, ignored."
+msgstr ""
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+
+msgid "Focal"
+msgstr ""
+
+msgid "Focal length"
+msgstr "Brännvidd"
+
+msgid "F"
+msgstr ""
+
+msgid "F-number (Aperture)"
+msgstr ""
+
+msgid "Distance"
+msgstr ""
+
+msgid "Distance to subject"
+msgstr ""
+
+#. Add the model combobox
+msgid "Model:"
+msgstr ""
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr ""
+
+msgid "Parameters"
+msgstr ""
+
+msgid "Optical vignetting mathematical model"
+msgstr ""
+
+msgid "Lens distortion mathematical model"
+msgstr ""
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr ""
+
+msgid "The geometry of the lens used to make the shot"
+msgstr ""
+
+msgid "Target geometry:"
+msgstr ""
+
+msgid "The target geometry for output image"
+msgstr ""
+
+#, fuzzy
+msgid "Camera"
+msgstr "Kamera VB"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+
+msgid "Choose camera from complete list"
+msgstr ""
+
+#. Lens selector
+msgid "Lens"
+msgstr "Lins"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+
+msgid "Choose lens from list of possible variants"
+msgstr ""
+
+msgid "Lens distortion"
+msgstr ""
+
+msgid "Lens geometry"
+msgstr ""
+
+msgid "Optical vignetting"
+msgstr ""
+
+msgid "Lateral chromatic aberration"
 msgstr ""
 
 msgid "Raw histogram with conversion curves"
@@ -1191,15 +1301,8 @@ msgstr "Bländare"
 msgid "ISO speed"
 msgstr "ISO-hastighet"
 
-msgid "Focal length"
-msgstr "Brännvidd"
-
 msgid "35mm focal length"
 msgstr "35mm brännvidd"
-
-#. Lens selector
-msgid "Lens"
-msgstr "Lins"
 
 msgid "Flash"
 msgstr "Blixt"
@@ -1373,109 +1476,6 @@ msgstr ""
 #, c-format
 msgid "Unknown file type %d."
 msgstr "Okänd filtyp %d."
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Mount:\t\t%s\n"
-"Crop factor:\t%.1f"
-msgstr ""
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s\n"
-"Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
-"Crop factor:\t%.1f\n"
-"Type:\t\t%s\n"
-"Mounts:\t\t%s"
-msgstr ""
-
-msgid "Focal"
-msgstr ""
-
-msgid "F"
-msgstr ""
-
-msgid "F-number (Aperture)"
-msgstr ""
-
-msgid "Distance"
-msgstr ""
-
-msgid "Distance to subject"
-msgstr ""
-
-#. Add the model combobox
-msgid "Model:"
-msgstr ""
-
-msgid "Chromatic Aberrations mathematical model"
-msgstr ""
-
-msgid "Parameters"
-msgstr ""
-
-msgid "Optical vignetting mathematical model"
-msgstr ""
-
-msgid "Lens distortion mathematical model"
-msgstr ""
-
-#. Add the model combobox
-msgid "Lens geometry:"
-msgstr ""
-
-msgid "The geometry of the lens used to make the shot"
-msgstr ""
-
-msgid "Target geometry:"
-msgstr ""
-
-msgid "The target geometry for output image"
-msgstr ""
-
-#, fuzzy
-msgid "Camera"
-msgstr "Kamera VB"
-
-msgid ""
-"Search for camera using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-
-msgid "Choose camera from complete list"
-msgstr ""
-
-msgid ""
-"Search for lens using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-
-msgid "Choose lens from list of possible variants"
-msgstr ""
-
-msgid "Lens distortion"
-msgstr ""
-
-msgid "Lens geometry"
-msgstr ""
-
-msgid "Optical vignetting"
-msgstr ""
-
-msgid "Lateral chromatic aberration"
-msgstr ""
-
-#, c-format
-msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
-
-#, c-format
-msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

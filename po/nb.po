@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-11 04:15+0100\n"
+"POT-Creation-Date: 2010-02-13 10:45+0100\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -19,6 +19,14 @@ msgstr ""
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
 msgstr "Åpne navigasjonsvinduet"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 msgid "No input file, nothing to do."
 msgstr "Ingen inndatafil, ingenting å gjøre."
@@ -683,6 +691,122 @@ msgstr "Feil ved inkludering av utdataprofilen «%s» i bildet."
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIF-buffer med lengde %d er for lang, ignorert."
 
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+"Fabrikat:\t\t%s\n"
+"Modell:\t\t%s%s\n"
+"Fatning:\t\t%s\n"
+"Forlengelsesfaktor:\t%.1f"
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+"Fabrikat:\t\t%s\n"
+"Modell:\t\t\t%s\n"
+"Brennviddeområde:\t%s\n"
+"Blender:\t\t%s\n"
+"Forlengelsesfaktor:\t%.1f\n"
+"Type:\t\t\t%s\n"
+"Fatninger:\t\t%s"
+
+msgid "Focal"
+msgstr "Brennvidde"
+
+msgid "Focal length"
+msgstr "Brennvidde"
+
+msgid "F"
+msgstr "F"
+
+msgid "F-number (Aperture)"
+msgstr "F-tall (blender)"
+
+msgid "Distance"
+msgstr "Avstand"
+
+msgid "Distance to subject"
+msgstr "Avstand til motiv"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "Modell:"
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "Matematisk modell for kromatisk aberrasjon"
+
+msgid "Parameters"
+msgstr "Parametre"
+
+msgid "Optical vignetting mathematical model"
+msgstr "Matematisk modell for optisk vignettering"
+
+msgid "Lens distortion mathematical model"
+msgstr "Matematisk modell for forvrengning i objektiv"
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr "Objektivgeometri:"
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "Geometrien i objektivet som ble brukt for å ta bildet"
+
+msgid "Target geometry:"
+msgstr "Motivgeometri:"
+
+msgid "The target geometry for output image"
+msgstr "Ønsket motivgeometri i det ferdige bildet"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Let etter kamera ved hjelp av et mønster\n"
+"Format: [fabrikant, ][modell]"
+
+msgid "Choose camera from complete list"
+msgstr "Velg kamera fra fullstendig liste"
+
+#. Lens selector
+msgid "Lens"
+msgstr "Objektiv"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Let etter objektiv ved hjelp av et mønster\n"
+"Format: [fabrikant, ][modell]"
+
+msgid "Choose lens from list of possible variants"
+msgstr "Velg objektiv fra liste over mulige varianter"
+
+msgid "Lens distortion"
+msgstr "Objektivets forvrengning"
+
+msgid "Lens geometry"
+msgstr "Objektivets geometri"
+
+msgid "Optical vignetting"
+msgstr "Optisk vignettering"
+
+msgid "Lateral chromatic aberration"
+msgstr "Sidelengs kromatisk aberrasjon"
+
 msgid "Raw histogram with conversion curves"
 msgstr "Raw-histogram med konverteringskurver"
 
@@ -1300,15 +1424,8 @@ msgstr "Blender"
 msgid "ISO speed"
 msgstr "ISO-følsomhet"
 
-msgid "Focal length"
-msgstr "Brennvidde"
-
 msgid "35mm focal length"
 msgstr "35mm brennvidde"
-
-#. Lens selector
-msgid "Lens"
-msgstr "Objektiv"
 
 msgid "Flash"
 msgstr "Blits"
@@ -1483,123 +1600,6 @@ msgstr "Ikke støttet bitdybde «%d» ignorert."
 #, c-format
 msgid "Unknown file type %d."
 msgstr "Ukjent filtype %d."
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Mount:\t\t%s\n"
-"Crop factor:\t%.1f"
-msgstr ""
-"Fabrikat:\t\t%s\n"
-"Modell:\t\t%s%s\n"
-"Fatning:\t\t%s\n"
-"Forlengelsesfaktor:\t%.1f"
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s\n"
-"Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
-"Crop factor:\t%.1f\n"
-"Type:\t\t%s\n"
-"Mounts:\t\t%s"
-msgstr ""
-"Fabrikat:\t\t%s\n"
-"Modell:\t\t\t%s\n"
-"Brennviddeområde:\t%s\n"
-"Blender:\t\t%s\n"
-"Forlengelsesfaktor:\t%.1f\n"
-"Type:\t\t\t%s\n"
-"Fatninger:\t\t%s"
-
-msgid "Focal"
-msgstr "Brennvidde"
-
-msgid "F"
-msgstr "F"
-
-msgid "F-number (Aperture)"
-msgstr "F-tall (blender)"
-
-msgid "Distance"
-msgstr "Avstand"
-
-msgid "Distance to subject"
-msgstr "Avstand til motiv"
-
-#. Add the model combobox
-msgid "Model:"
-msgstr "Modell:"
-
-msgid "Chromatic Aberrations mathematical model"
-msgstr "Matematisk modell for kromatisk aberrasjon"
-
-msgid "Parameters"
-msgstr "Parametre"
-
-msgid "Optical vignetting mathematical model"
-msgstr "Matematisk modell for optisk vignettering"
-
-msgid "Lens distortion mathematical model"
-msgstr "Matematisk modell for forvrengning i objektiv"
-
-#. Add the model combobox
-msgid "Lens geometry:"
-msgstr "Objektivgeometri:"
-
-msgid "The geometry of the lens used to make the shot"
-msgstr "Geometrien i objektivet som ble brukt for å ta bildet"
-
-msgid "Target geometry:"
-msgstr "Motivgeometri:"
-
-msgid "The target geometry for output image"
-msgstr "Ønsket motivgeometri i det ferdige bildet"
-
-msgid "Camera"
-msgstr "Kamera"
-
-msgid ""
-"Search for camera using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"Let etter kamera ved hjelp av et mønster\n"
-"Format: [fabrikant, ][modell]"
-
-msgid "Choose camera from complete list"
-msgstr "Velg kamera fra fullstendig liste"
-
-msgid ""
-"Search for lens using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"Let etter objektiv ved hjelp av et mønster\n"
-"Format: [fabrikant, ][modell]"
-
-msgid "Choose lens from list of possible variants"
-msgstr "Velg objektiv fra liste over mulige varianter"
-
-msgid "Lens distortion"
-msgstr "Objektivets forvrengning"
-
-msgid "Lens geometry"
-msgstr "Objektivets geometri"
-
-msgid "Optical vignetting"
-msgstr "Optisk vignettering"
-
-msgid "Lateral chromatic aberration"
-msgstr "Sidelengs kromatisk aberrasjon"
-
-#, c-format
-msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
-
-#, c-format
-msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-11 04:15+0100\n"
+"POT-Creation-Date: 2010-02-13 10:45+0100\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -22,6 +22,14 @@ msgstr ""
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
 msgstr "Отвори навигациони прозор"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 msgid "No input file, nothing to do."
 msgstr "Нема улазне датотеке."
@@ -698,6 +706,122 @@ msgstr "Није успело уметање излазног профила „
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIF бафера је превелик (%d).  Игноришем."
 
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+"Творац:\t\t%s\n"
+"Модел:\t\t%s%s\n"
+"Статив:\t\t%s\n"
+"Фактор исецања:\t%.1f"
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+"Творац:\t\t%s\n"
+"Модел:\t\t%s\n"
+"Жижна даљина:\t%s\n"
+"Отвор бленде:\t\t%s\n"
+"Фактор исецања:\t%.1f\n"
+"Врста:\t\t%s\n"
+"Стативи:\t\t%s"
+
+msgid "Focal"
+msgstr "Жижа"
+
+msgid "Focal length"
+msgstr "Жижна даљина"
+
+msgid "F"
+msgstr "Ф"
+
+msgid "F-number (Aperture)"
+msgstr "Ф-број (отвор бленде)"
+
+msgid "Distance"
+msgstr "Удаљеност"
+
+msgid "Distance to subject"
+msgstr "Удаљеност од мотива"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "Модел:"
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "Математички модел хроматских аберација"
+
+msgid "Parameters"
+msgstr "Параметри"
+
+msgid "Optical vignetting mathematical model"
+msgstr "Математички модел оптичког вињетарења"
+
+msgid "Lens distortion mathematical model"
+msgstr "математички модел изобличења сочива"
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr "Геометрија сочива:"
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "Геометрија сочива којим је снимак направљен"
+
+msgid "Target geometry:"
+msgstr "Циљна геометрија:"
+
+msgid "The target geometry for output image"
+msgstr "Циљна геометрија излазне слике"
+
+msgid "Camera"
+msgstr "Камера"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Тражи камеру на основу мустре\n"
+"Формат: [Творац, ][Модел]"
+
+msgid "Choose camera from complete list"
+msgstr "Бира камеру из целокупног списка"
+
+#. Lens selector
+msgid "Lens"
+msgstr "Објектив"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Тражи објектив на основу мустре\n"
+"Формат: [Творац, ][Модел]"
+
+msgid "Choose lens from list of possible variants"
+msgstr "Бира објектив из целокупног списка"
+
+msgid "Lens distortion"
+msgstr "Изобличења сочива"
+
+msgid "Lens geometry"
+msgstr "Геометрија сочива"
+
+msgid "Optical vignetting"
+msgstr "Оптичко вињетарење"
+
+msgid "Lateral chromatic aberration"
+msgstr "Бочне хроматске аберације"
+
 msgid "Raw histogram with conversion curves"
 msgstr "Raw хистограм са кривама за превођење"
 
@@ -1316,15 +1440,8 @@ msgstr "Отвор бленде"
 msgid "ISO speed"
 msgstr "ISO вредност"
 
-msgid "Focal length"
-msgstr "Жижна даљина"
-
 msgid "35mm focal length"
 msgstr "Жижна даљина на 35mm"
-
-#. Lens selector
-msgid "Lens"
-msgstr "Објектив"
 
 msgid "Flash"
 msgstr "Блиц"
@@ -1498,123 +1615,6 @@ msgstr "Занемарен је неподржан број битова „%d�
 #, c-format
 msgid "Unknown file type %d."
 msgstr "Непозната врста датотеке %d."
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Mount:\t\t%s\n"
-"Crop factor:\t%.1f"
-msgstr ""
-"Творац:\t\t%s\n"
-"Модел:\t\t%s%s\n"
-"Статив:\t\t%s\n"
-"Фактор исецања:\t%.1f"
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s\n"
-"Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
-"Crop factor:\t%.1f\n"
-"Type:\t\t%s\n"
-"Mounts:\t\t%s"
-msgstr ""
-"Творац:\t\t%s\n"
-"Модел:\t\t%s\n"
-"Жижна даљина:\t%s\n"
-"Отвор бленде:\t\t%s\n"
-"Фактор исецања:\t%.1f\n"
-"Врста:\t\t%s\n"
-"Стативи:\t\t%s"
-
-msgid "Focal"
-msgstr "Жижа"
-
-msgid "F"
-msgstr "Ф"
-
-msgid "F-number (Aperture)"
-msgstr "Ф-број (отвор бленде)"
-
-msgid "Distance"
-msgstr "Удаљеност"
-
-msgid "Distance to subject"
-msgstr "Удаљеност од мотива"
-
-#. Add the model combobox
-msgid "Model:"
-msgstr "Модел:"
-
-msgid "Chromatic Aberrations mathematical model"
-msgstr "Математички модел хроматских аберација"
-
-msgid "Parameters"
-msgstr "Параметри"
-
-msgid "Optical vignetting mathematical model"
-msgstr "Математички модел оптичког вињетарења"
-
-msgid "Lens distortion mathematical model"
-msgstr "математички модел изобличења сочива"
-
-#. Add the model combobox
-msgid "Lens geometry:"
-msgstr "Геометрија сочива:"
-
-msgid "The geometry of the lens used to make the shot"
-msgstr "Геометрија сочива којим је снимак направљен"
-
-msgid "Target geometry:"
-msgstr "Циљна геометрија:"
-
-msgid "The target geometry for output image"
-msgstr "Циљна геометрија излазне слике"
-
-msgid "Camera"
-msgstr "Камера"
-
-msgid ""
-"Search for camera using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"Тражи камеру на основу мустре\n"
-"Формат: [Творац, ][Модел]"
-
-msgid "Choose camera from complete list"
-msgstr "Бира камеру из целокупног списка"
-
-msgid ""
-"Search for lens using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"Тражи објектив на основу мустре\n"
-"Формат: [Творац, ][Модел]"
-
-msgid "Choose lens from list of possible variants"
-msgstr "Бира објектив из целокупног списка"
-
-msgid "Lens distortion"
-msgstr "Изобличења сочива"
-
-msgid "Lens geometry"
-msgstr "Геометрија сочива"
-
-msgid "Optical vignetting"
-msgstr "Оптичко вињетарење"
-
-msgid "Lateral chromatic aberration"
-msgstr "Бочне хроматске аберације"
-
-#, c-format
-msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
-
-#, c-format
-msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

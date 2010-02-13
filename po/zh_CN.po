@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-11 04:15+0100\n"
+"POT-Creation-Date: 2010-02-13 10:45+0100\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -20,6 +20,14 @@ msgstr ""
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
 msgstr "打开导航窗口"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 msgid "No input file, nothing to do."
 msgstr "没有输入文件，没有任何操作。"
@@ -651,6 +659,122 @@ msgstr "无法在图像中嵌入输出配置文件 '%s' "
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIF缓冲区长度 %d, 太长，忽略。"
 
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+"制造者:\t\t%s\n"
+"型号:\t\t%s%s\n"
+"挂载:\t\t%s\n"
+"剪裁因子:\t%.1f"
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+"制造者:\t\t%s\n"
+"型号:\t\t%s\n"
+"焦距范围:\t%s\n"
+"光圈:\t\t%s\n"
+"剪裁因子:\t%.1f\n"
+"类型:\t\t%s\n"
+"挂载:\t\t%s"
+
+msgid "Focal"
+msgstr "焦点"
+
+msgid "Focal length"
+msgstr "焦距"
+
+msgid "F"
+msgstr "F"
+
+msgid "F-number (Aperture)"
+msgstr "F-数值(光圈)"
+
+msgid "Distance"
+msgstr "距离"
+
+msgid "Distance to subject"
+msgstr "主体距离"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "型号："
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "色差的数学模型"
+
+msgid "Parameters"
+msgstr "参数"
+
+msgid "Optical vignetting mathematical model"
+msgstr "光学暗角的数学模型"
+
+msgid "Lens distortion mathematical model"
+msgstr "镜头畸变的数学模型"
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr "镜头几何:"
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "拍摄镜头使用的几何"
+
+msgid "Target geometry:"
+msgstr "目标几何:"
+
+msgid "The target geometry for output image"
+msgstr "输出图像的目标几何"
+
+msgid "Camera"
+msgstr "照相机"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"搜索相机的使用模式\n"
+"格式: [Maker, ][Model]"
+
+msgid "Choose camera from complete list"
+msgstr "从完整列表中选择相机"
+
+#. Lens selector
+msgid "Lens"
+msgstr "镜头"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"搜索镜头的使用模式\n"
+"格式: [Maker, ][Model]"
+
+msgid "Choose lens from list of possible variants"
+msgstr "从列表选择镜头及可能的变种"
+
+msgid "Lens distortion"
+msgstr "镜头畸变"
+
+msgid "Lens geometry"
+msgstr "镜头几何"
+
+msgid "Optical vignetting"
+msgstr "光学暗角"
+
+msgid "Lateral chromatic aberration"
+msgstr "横向色差"
+
 msgid "Raw histogram with conversion curves"
 msgstr "具有转换曲线的Raw直方图"
 
@@ -1265,15 +1389,8 @@ msgstr "光圈"
 msgid "ISO speed"
 msgstr "ISO 速度"
 
-msgid "Focal length"
-msgstr "焦距"
-
 msgid "35mm focal length"
 msgstr "等效 35mm 焦距"
-
-#. Lens selector
-msgid "Lens"
-msgstr "镜头"
 
 msgid "Flash"
 msgstr "闪光灯"
@@ -1446,123 +1563,6 @@ msgstr "忽略不支持的位深 '%d' 。"
 #, c-format
 msgid "Unknown file type %d."
 msgstr "未知文件类型 %d 。"
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Mount:\t\t%s\n"
-"Crop factor:\t%.1f"
-msgstr ""
-"制造者:\t\t%s\n"
-"型号:\t\t%s%s\n"
-"挂载:\t\t%s\n"
-"剪裁因子:\t%.1f"
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s\n"
-"Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
-"Crop factor:\t%.1f\n"
-"Type:\t\t%s\n"
-"Mounts:\t\t%s"
-msgstr ""
-"制造者:\t\t%s\n"
-"型号:\t\t%s\n"
-"焦距范围:\t%s\n"
-"光圈:\t\t%s\n"
-"剪裁因子:\t%.1f\n"
-"类型:\t\t%s\n"
-"挂载:\t\t%s"
-
-msgid "Focal"
-msgstr "焦点"
-
-msgid "F"
-msgstr "F"
-
-msgid "F-number (Aperture)"
-msgstr "F-数值(光圈)"
-
-msgid "Distance"
-msgstr "距离"
-
-msgid "Distance to subject"
-msgstr "主体距离"
-
-#. Add the model combobox
-msgid "Model:"
-msgstr "型号："
-
-msgid "Chromatic Aberrations mathematical model"
-msgstr "色差的数学模型"
-
-msgid "Parameters"
-msgstr "参数"
-
-msgid "Optical vignetting mathematical model"
-msgstr "光学暗角的数学模型"
-
-msgid "Lens distortion mathematical model"
-msgstr "镜头畸变的数学模型"
-
-#. Add the model combobox
-msgid "Lens geometry:"
-msgstr "镜头几何:"
-
-msgid "The geometry of the lens used to make the shot"
-msgstr "拍摄镜头使用的几何"
-
-msgid "Target geometry:"
-msgstr "目标几何:"
-
-msgid "The target geometry for output image"
-msgstr "输出图像的目标几何"
-
-msgid "Camera"
-msgstr "照相机"
-
-msgid ""
-"Search for camera using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"搜索相机的使用模式\n"
-"格式: [Maker, ][Model]"
-
-msgid "Choose camera from complete list"
-msgstr "从完整列表中选择相机"
-
-msgid ""
-"Search for lens using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"搜索镜头的使用模式\n"
-"格式: [Maker, ][Model]"
-
-msgid "Choose lens from list of possible variants"
-msgstr "从列表选择镜头及可能的变种"
-
-msgid "Lens distortion"
-msgstr "镜头畸变"
-
-msgid "Lens geometry"
-msgstr "镜头几何"
-
-msgid "Optical vignetting"
-msgstr "光学暗角"
-
-msgid "Lateral chromatic aberration"
-msgstr "横向色差"
-
-#, c-format
-msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
-
-#, c-format
-msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

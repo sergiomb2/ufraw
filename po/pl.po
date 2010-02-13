@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-11 04:15+0100\n"
+"POT-Creation-Date: 2010-02-13 10:45+0100\n"
 "PO-Revision-Date: 2009-10-01 10:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -21,6 +21,14 @@ msgstr ""
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
 msgstr "Otwiera okno nawigacji"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 msgid "No input file, nothing to do."
 msgstr "Brak pliku wej¶ciowego, nic do roboty."
@@ -690,6 +698,122 @@ msgstr "B³±d osadzenia profilu wyj¶ciowego '%s' w pliku."
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "D³ugo¶æ bufora EXIF %d za du¿a, zignorowano."
 
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+"Firma:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Bagnet:\t\t%s\n"
+"Crop:\t%.1f"
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+"Firma:\t\t%s\n"
+"Model:\t\t%s\n"
+"Zakres ogniskowych:\t%s\n"
+"Przes³ona:\t\t%s\n"
+"Crop:\t%.1f\n"
+"Typ:\t\t%s\n"
+"Bagnet:\t\t%s"
+
+msgid "Focal"
+msgstr "Ogniskowa"
+
+msgid "Focal length"
+msgstr "Ogniskowa"
+
+msgid "F"
+msgstr "F"
+
+msgid "F-number (Aperture)"
+msgstr "Przes³ona"
+
+msgid "Distance"
+msgstr "Odleg³o¶æ"
+
+msgid "Distance to subject"
+msgstr "Odleg³o¶æ przedmiotowa"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "Model:"
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "Model matematyczny aberracji chromatycznej"
+
+msgid "Parameters"
+msgstr "Parametry"
+
+msgid "Optical vignetting mathematical model"
+msgstr "Model matematyczny winietowania"
+
+msgid "Lens distortion mathematical model"
+msgstr "Model matematyczny dystorsji"
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr "Geometria obiektywu"
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "Geometria obiektywu u¿ytego do zrobienia zdjêcia"
+
+msgid "Target geometry:"
+msgstr "Docelowa geometria"
+
+msgid "The target geometry for output image"
+msgstr "Docelowa geometria zdjêcia wynikowego"
+
+msgid "Camera"
+msgstr "Aparat"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Szukaj aparatu u¿ywaj±c wzorca\n"
+"Format: [Producent, ][Model]"
+
+msgid "Choose camera from complete list"
+msgstr "Wybierz aparat z pe³nej listy"
+
+#. Lens selector
+msgid "Lens"
+msgstr "Obiektyw"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Szukaj obiektywu u¿ywaj±c wzorca\n"
+"Format: [Producent, ][Model]"
+
+msgid "Choose lens from list of possible variants"
+msgstr "Wybierz obiektyw z listy dostêpnych mo¿liwo¶ci"
+
+msgid "Lens distortion"
+msgstr "Dystorsja"
+
+msgid "Lens geometry"
+msgstr "Geometria obiektywu"
+
+msgid "Optical vignetting"
+msgstr "Winietowanie"
+
+msgid "Lateral chromatic aberration"
+msgstr "Boczna aberracja chromatyczna"
+
 msgid "Raw histogram with conversion curves"
 msgstr "Histogram RAW z krzywymi konwersji"
 
@@ -1309,15 +1433,8 @@ msgstr "Przes³ona"
 msgid "ISO speed"
 msgstr "Czu³o¶æ ISO"
 
-msgid "Focal length"
-msgstr "Ogniskowa"
-
 msgid "35mm focal length"
 msgstr "Odpowiednik ogniskowej na 35mm"
-
-#. Lens selector
-msgid "Lens"
-msgstr "Obiektyw"
 
 msgid "Flash"
 msgstr "Lampa b³yskowa"
@@ -1491,123 +1608,6 @@ msgstr "Niepoprawna ilo¶æ bitów '%d' zignorowana."
 #, c-format
 msgid "Unknown file type %d."
 msgstr "Nieznany typ pliku %d."
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Mount:\t\t%s\n"
-"Crop factor:\t%.1f"
-msgstr ""
-"Firma:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Bagnet:\t\t%s\n"
-"Crop:\t%.1f"
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s\n"
-"Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
-"Crop factor:\t%.1f\n"
-"Type:\t\t%s\n"
-"Mounts:\t\t%s"
-msgstr ""
-"Firma:\t\t%s\n"
-"Model:\t\t%s\n"
-"Zakres ogniskowych:\t%s\n"
-"Przes³ona:\t\t%s\n"
-"Crop:\t%.1f\n"
-"Typ:\t\t%s\n"
-"Bagnet:\t\t%s"
-
-msgid "Focal"
-msgstr "Ogniskowa"
-
-msgid "F"
-msgstr "F"
-
-msgid "F-number (Aperture)"
-msgstr "Przes³ona"
-
-msgid "Distance"
-msgstr "Odleg³o¶æ"
-
-msgid "Distance to subject"
-msgstr "Odleg³o¶æ przedmiotowa"
-
-#. Add the model combobox
-msgid "Model:"
-msgstr "Model:"
-
-msgid "Chromatic Aberrations mathematical model"
-msgstr "Model matematyczny aberracji chromatycznej"
-
-msgid "Parameters"
-msgstr "Parametry"
-
-msgid "Optical vignetting mathematical model"
-msgstr "Model matematyczny winietowania"
-
-msgid "Lens distortion mathematical model"
-msgstr "Model matematyczny dystorsji"
-
-#. Add the model combobox
-msgid "Lens geometry:"
-msgstr "Geometria obiektywu"
-
-msgid "The geometry of the lens used to make the shot"
-msgstr "Geometria obiektywu u¿ytego do zrobienia zdjêcia"
-
-msgid "Target geometry:"
-msgstr "Docelowa geometria"
-
-msgid "The target geometry for output image"
-msgstr "Docelowa geometria zdjêcia wynikowego"
-
-msgid "Camera"
-msgstr "Aparat"
-
-msgid ""
-"Search for camera using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"Szukaj aparatu u¿ywaj±c wzorca\n"
-"Format: [Producent, ][Model]"
-
-msgid "Choose camera from complete list"
-msgstr "Wybierz aparat z pe³nej listy"
-
-msgid ""
-"Search for lens using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"Szukaj obiektywu u¿ywaj±c wzorca\n"
-"Format: [Producent, ][Model]"
-
-msgid "Choose lens from list of possible variants"
-msgstr "Wybierz obiektyw z listy dostêpnych mo¿liwo¶ci"
-
-msgid "Lens distortion"
-msgstr "Dystorsja"
-
-msgid "Lens geometry"
-msgstr "Geometria obiektywu"
-
-msgid "Optical vignetting"
-msgstr "Winietowanie"
-
-msgid "Lateral chromatic aberration"
-msgstr "Boczna aberracja chromatyczna"
-
-#, c-format
-msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
-
-#, c-format
-msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

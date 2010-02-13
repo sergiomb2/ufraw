@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-11 04:15+0100\n"
+"POT-Creation-Date: 2010-02-13 10:45+0100\n"
 "PO-Revision-Date: 2009-09-30 13:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -21,6 +21,14 @@ msgstr ""
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
 msgstr "Open het navigatorscherm"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 msgid "No input file, nothing to do."
 msgstr "Geen input file, niks te doen"
@@ -690,6 +698,122 @@ msgstr "Niet gelukt het output profiel '%s' te embedden in afbeelding."
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIF buffer lengte %d, te lang, genegeerd."
 
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+"Merk:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Vatting:\t\t%s\n"
+"Crop factor:\t%.1f"
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+"Merk:\t\t%s\n"
+"Model:\t\t%s\n"
+"Brandpuntsafstand:\t%s\n"
+"Diafragma:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Vattingen:\t\t%s"
+
+msgid "Focal"
+msgstr "Brandpunt"
+
+msgid "Focal length"
+msgstr "Brandpuntsafstand"
+
+msgid "F"
+msgstr "F"
+
+msgid "F-number (Aperture)"
+msgstr "F-getal (Diafragma)"
+
+msgid "Distance"
+msgstr "Afstand"
+
+msgid "Distance to subject"
+msgstr "Afstand tot onderwerp"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "Model:"
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "Chromatische Aberratie wiskundig model"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "Optical vignetting mathematical model"
+msgstr "Wiskundig model voor optische vignettering "
+
+msgid "Lens distortion mathematical model"
+msgstr "Wiskundig model voor lens vervorming"
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr "Lens geometrie:"
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "De geometrie van de lens gebruikt voor de foto"
+
+msgid "Target geometry:"
+msgstr "Doel geometrie:"
+
+msgid "The target geometry for output image"
+msgstr "De doel geometrie voor de output afbeelding"
+
+msgid "Camera"
+msgstr "Camera"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Zoek een camera met sjabloon\n"
+"Vorm: [Merk, ][Model]"
+
+msgid "Choose camera from complete list"
+msgstr "Kies camera uit de complete lijst"
+
+#. Lens selector
+msgid "Lens"
+msgstr "Lens"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Zoek een lens met een sjabloon\n"
+"Vorm: [Merk, ][Model]"
+
+msgid "Choose lens from list of possible variants"
+msgstr "Kies een lens uit de lijst van mogelijke varianten"
+
+msgid "Lens distortion"
+msgstr "Lens vervorming"
+
+msgid "Lens geometry"
+msgstr "Lens geometrie"
+
+msgid "Optical vignetting"
+msgstr "Optische vignettering"
+
+msgid "Lateral chromatic aberration"
+msgstr "Laterale chromatische aberratie"
+
 msgid "Raw histogram with conversion curves"
 msgstr "Raw histogram met conversie curves"
 
@@ -1307,15 +1431,8 @@ msgstr "Diafragma"
 msgid "ISO speed"
 msgstr "ISO snelheid"
 
-msgid "Focal length"
-msgstr "Brandpuntsafstand"
-
 msgid "35mm focal length"
 msgstr "35mm brandpuntsafstand"
-
-#. Lens selector
-msgid "Lens"
-msgstr "Lens"
 
 msgid "Flash"
 msgstr "Flits"
@@ -1489,123 +1606,6 @@ msgstr "Niet ondersteunde bitdiepte '%d' genegeerd."
 #, c-format
 msgid "Unknown file type %d."
 msgstr "Onbekend bestandstype %d."
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Mount:\t\t%s\n"
-"Crop factor:\t%.1f"
-msgstr ""
-"Merk:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Vatting:\t\t%s\n"
-"Crop factor:\t%.1f"
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s\n"
-"Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
-"Crop factor:\t%.1f\n"
-"Type:\t\t%s\n"
-"Mounts:\t\t%s"
-msgstr ""
-"Merk:\t\t%s\n"
-"Model:\t\t%s\n"
-"Brandpuntsafstand:\t%s\n"
-"Diafragma:\t\t%s\n"
-"Crop factor:\t%.1f\n"
-"Type:\t\t%s\n"
-"Vattingen:\t\t%s"
-
-msgid "Focal"
-msgstr "Brandpunt"
-
-msgid "F"
-msgstr "F"
-
-msgid "F-number (Aperture)"
-msgstr "F-getal (Diafragma)"
-
-msgid "Distance"
-msgstr "Afstand"
-
-msgid "Distance to subject"
-msgstr "Afstand tot onderwerp"
-
-#. Add the model combobox
-msgid "Model:"
-msgstr "Model:"
-
-msgid "Chromatic Aberrations mathematical model"
-msgstr "Chromatische Aberratie wiskundig model"
-
-msgid "Parameters"
-msgstr "Parameters"
-
-msgid "Optical vignetting mathematical model"
-msgstr "Wiskundig model voor optische vignettering "
-
-msgid "Lens distortion mathematical model"
-msgstr "Wiskundig model voor lens vervorming"
-
-#. Add the model combobox
-msgid "Lens geometry:"
-msgstr "Lens geometrie:"
-
-msgid "The geometry of the lens used to make the shot"
-msgstr "De geometrie van de lens gebruikt voor de foto"
-
-msgid "Target geometry:"
-msgstr "Doel geometrie:"
-
-msgid "The target geometry for output image"
-msgstr "De doel geometrie voor de output afbeelding"
-
-msgid "Camera"
-msgstr "Camera"
-
-msgid ""
-"Search for camera using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"Zoek een camera met sjabloon\n"
-"Vorm: [Merk, ][Model]"
-
-msgid "Choose camera from complete list"
-msgstr "Kies camera uit de complete lijst"
-
-msgid ""
-"Search for lens using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"Zoek een lens met een sjabloon\n"
-"Vorm: [Merk, ][Model]"
-
-msgid "Choose lens from list of possible variants"
-msgstr "Kies een lens uit de lijst van mogelijke varianten"
-
-msgid "Lens distortion"
-msgstr "Lens vervorming"
-
-msgid "Lens geometry"
-msgstr "Lens geometrie"
-
-msgid "Optical vignetting"
-msgstr "Optische vignettering"
-
-msgid "Lateral chromatic aberration"
-msgstr "Laterale chromatische aberratie"
-
-#, c-format
-msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
-
-#, c-format
-msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

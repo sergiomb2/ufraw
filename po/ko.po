@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-11 04:15+0100\n"
+"POT-Creation-Date: 2010-02-13 10:45+0100\n"
 "PO-Revision-Date: 2009-10-06 09:38+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -21,6 +21,14 @@ msgstr ""
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
 msgstr "네비게이션 창 열기"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 msgid "No input file, nothing to do."
 msgstr "입력 파일이 없으므로 아무것도 하지 않습니다."
@@ -663,6 +671,122 @@ msgstr "출력 프로파일 '%s'을(를) 이미지에 내장 실패."
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIF 버퍼 길이 %d이(가) 매우 길어 무시됩니다."
 
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+"제조사:\t\t%s\n"
+"모델:\t\t%s%s\n"
+"마운트:\t\t%s\n"
+"크롭 배수:\t%.1f"
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+"메이커:\t\t%s\n"
+"모델:\t\t%s\n"
+"초점 거리:\t%s\n"
+"조리개:\t\t%s\n"
+"크롭 배수:\t%.1f\n"
+"타입:\t\t%s\n"
+"마운트:\t\t%s"
+
+msgid "Focal"
+msgstr "초점"
+
+msgid "Focal length"
+msgstr "초점 거리"
+
+msgid "F"
+msgstr "F"
+
+msgid "F-number (Aperture)"
+msgstr "F-값 (조리개)"
+
+msgid "Distance"
+msgstr "거리"
+
+msgid "Distance to subject"
+msgstr "피사체 까지의 거리"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "모델:"
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "색수차의 수학적 모델"
+
+msgid "Parameters"
+msgstr "파라미터"
+
+msgid "Optical vignetting mathematical model"
+msgstr "비네팅의 수학적 모델"
+
+msgid "Lens distortion mathematical model"
+msgstr "렌즈 왜곡의 수학적 모델"
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr "렌즈 기하면:"
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "촬영에 사용한 렌즈의 기하면"
+
+msgid "Target geometry:"
+msgstr "대상 기하면:"
+
+msgid "The target geometry for output image"
+msgstr "출력 이미지에 사용할 기하면"
+
+msgid "Camera"
+msgstr "카메라"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"패턴으로 카메라 검색\n"
+"포멧:  [Maker, ][Model]"
+
+msgid "Choose camera from complete list"
+msgstr "전체 리스트에서 카메라를 선택"
+
+#. Lens selector
+msgid "Lens"
+msgstr "렌즈"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"패턴으로 렌즈 검색\n"
+"포멧: [Maker, ][Model]"
+
+msgid "Choose lens from list of possible variants"
+msgstr "가능한 리스트에서 렌즈 선택"
+
+msgid "Lens distortion"
+msgstr "렌즈 외곡"
+
+msgid "Lens geometry"
+msgstr "렌즈 기하면"
+
+msgid "Optical vignetting"
+msgstr "광학 비네팅"
+
+msgid "Lateral chromatic aberration"
+msgstr "측면 색수차"
+
 msgid "Raw histogram with conversion curves"
 msgstr "변환 곡선을 적용한 Raw 히스토그램"
 
@@ -1281,15 +1405,8 @@ msgstr "조리개"
 msgid "ISO speed"
 msgstr "ISO 감도"
 
-msgid "Focal length"
-msgstr "초점 거리"
-
 msgid "35mm focal length"
 msgstr "35mm 초첨 거리"
-
-#. Lens selector
-msgid "Lens"
-msgstr "렌즈"
 
 msgid "Flash"
 msgstr "플레쉬"
@@ -1463,123 +1580,6 @@ msgstr "비트 '%d'은(는) 지원하지 않습니다."
 #, c-format
 msgid "Unknown file type %d."
 msgstr "알 수 없는 파일 타입 %d."
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Mount:\t\t%s\n"
-"Crop factor:\t%.1f"
-msgstr ""
-"제조사:\t\t%s\n"
-"모델:\t\t%s%s\n"
-"마운트:\t\t%s\n"
-"크롭 배수:\t%.1f"
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s\n"
-"Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
-"Crop factor:\t%.1f\n"
-"Type:\t\t%s\n"
-"Mounts:\t\t%s"
-msgstr ""
-"메이커:\t\t%s\n"
-"모델:\t\t%s\n"
-"초점 거리:\t%s\n"
-"조리개:\t\t%s\n"
-"크롭 배수:\t%.1f\n"
-"타입:\t\t%s\n"
-"마운트:\t\t%s"
-
-msgid "Focal"
-msgstr "초점"
-
-msgid "F"
-msgstr "F"
-
-msgid "F-number (Aperture)"
-msgstr "F-값 (조리개)"
-
-msgid "Distance"
-msgstr "거리"
-
-msgid "Distance to subject"
-msgstr "피사체 까지의 거리"
-
-#. Add the model combobox
-msgid "Model:"
-msgstr "모델:"
-
-msgid "Chromatic Aberrations mathematical model"
-msgstr "색수차의 수학적 모델"
-
-msgid "Parameters"
-msgstr "파라미터"
-
-msgid "Optical vignetting mathematical model"
-msgstr "비네팅의 수학적 모델"
-
-msgid "Lens distortion mathematical model"
-msgstr "렌즈 왜곡의 수학적 모델"
-
-#. Add the model combobox
-msgid "Lens geometry:"
-msgstr "렌즈 기하면:"
-
-msgid "The geometry of the lens used to make the shot"
-msgstr "촬영에 사용한 렌즈의 기하면"
-
-msgid "Target geometry:"
-msgstr "대상 기하면:"
-
-msgid "The target geometry for output image"
-msgstr "출력 이미지에 사용할 기하면"
-
-msgid "Camera"
-msgstr "카메라"
-
-msgid ""
-"Search for camera using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"패턴으로 카메라 검색\n"
-"포멧:  [Maker, ][Model]"
-
-msgid "Choose camera from complete list"
-msgstr "전체 리스트에서 카메라를 선택"
-
-msgid ""
-"Search for lens using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"패턴으로 렌즈 검색\n"
-"포멧: [Maker, ][Model]"
-
-msgid "Choose lens from list of possible variants"
-msgstr "가능한 리스트에서 렌즈 선택"
-
-msgid "Lens distortion"
-msgstr "렌즈 외곡"
-
-msgid "Lens geometry"
-msgstr "렌즈 기하면"
-
-msgid "Optical vignetting"
-msgstr "광학 비네팅"
-
-msgid "Lateral chromatic aberration"
-msgstr "측면 색수차"
-
-#, c-format
-msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
-
-#, c-format
-msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

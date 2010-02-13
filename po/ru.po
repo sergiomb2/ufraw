@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-11 04:15+0100\n"
+"POT-Creation-Date: 2010-02-13 10:45+0100\n"
 "PO-Revision-Date: 2009-10-13 18:45+0400\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -25,6 +25,14 @@ msgstr ""
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
 msgstr "Открыть окно навигатора"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 msgid "No input file, nothing to do."
 msgstr "Нет файла на входе, нечего обрабатывать."
@@ -700,6 +708,122 @@ msgstr "Невозможно встроить профиль вывода '%s' �
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "Буфер EXIF длиной %d слишком велик, проигнорирован."
 
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+"Производитель:\t%s\n"
+"Модель:\t\t\t%s%s\n"
+"Крепление:\t\t%s\n"
+"Кроп фактор:\t%.1f"
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+"Производитель:\t%s\n"
+"Модель:\t\t\t%s\n"
+"Диапазон ф.р:\t%s\n"
+"Диафрагма:\t\t%s\n"
+"Кроп фактор:\t%.1f\n"
+"Тип:\t\t\t\t%s\n"
+"Крепление:\t\t%s"
+
+msgid "Focal"
+msgstr "Фокус"
+
+msgid "Focal length"
+msgstr "Фокусное расстояние"
+
+msgid "F"
+msgstr "F"
+
+msgid "F-number (Aperture)"
+msgstr "Диафрагма (F)"
+
+msgid "Distance"
+msgstr "Расстояние"
+
+msgid "Distance to subject"
+msgstr "Расстояние до объекта"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "Модель:"
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "Математическая модель хроматических аберраций"
+
+msgid "Parameters"
+msgstr "Параметры"
+
+msgid "Optical vignetting mathematical model"
+msgstr "Математическая модель виньетирования"
+
+msgid "Lens distortion mathematical model"
+msgstr "Математическая модель оптических искажений"
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr "Геометрия объектива:"
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "Геометрия объектива, которым производилась съёмка"
+
+msgid "Target geometry:"
+msgstr "Целевая геометрия:"
+
+msgid "The target geometry for output image"
+msgstr "Геометрия для выходного изображения"
+
+msgid "Camera"
+msgstr "Камера"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Поиск камеры по ключевым словам\n"
+"Формат: [Производитель, ][Модель]"
+
+msgid "Choose camera from complete list"
+msgstr "Выбрать камеру из полного списка"
+
+#. Lens selector
+msgid "Lens"
+msgstr "Объектив"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Поиск объектива по ключевым словам\n"
+"Формат: [Производитель, ][Модель]"
+
+msgid "Choose lens from list of possible variants"
+msgstr "Выбрать объектив из полного списка"
+
+msgid "Lens distortion"
+msgstr "Искажения объектива"
+
+msgid "Lens geometry"
+msgstr "Геометрия объектива"
+
+msgid "Optical vignetting"
+msgstr "Оптическое виньетирование"
+
+msgid "Lateral chromatic aberration"
+msgstr "Хроматические аберрации"
+
 msgid "Raw histogram with conversion curves"
 msgstr "Гистограмма RAW с кривыми преобразования"
 
@@ -1317,15 +1441,8 @@ msgstr "Диафрагма"
 msgid "ISO speed"
 msgstr "Чувствительность ISO"
 
-msgid "Focal length"
-msgstr "Фокусное расстояние"
-
 msgid "35mm focal length"
 msgstr "Эквивалент 35мм"
-
-#. Lens selector
-msgid "Lens"
-msgstr "Объектив"
 
 msgid "Flash"
 msgstr "Вспышка"
@@ -1502,123 +1619,6 @@ msgstr "Игнорируется неподдерживаемая глубина
 #, c-format
 msgid "Unknown file type %d."
 msgstr "Неизвестный тип данных %d."
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Mount:\t\t%s\n"
-"Crop factor:\t%.1f"
-msgstr ""
-"Производитель:\t%s\n"
-"Модель:\t\t\t%s%s\n"
-"Крепление:\t\t%s\n"
-"Кроп фактор:\t%.1f"
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s\n"
-"Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
-"Crop factor:\t%.1f\n"
-"Type:\t\t%s\n"
-"Mounts:\t\t%s"
-msgstr ""
-"Производитель:\t%s\n"
-"Модель:\t\t\t%s\n"
-"Диапазон ф.р:\t%s\n"
-"Диафрагма:\t\t%s\n"
-"Кроп фактор:\t%.1f\n"
-"Тип:\t\t\t\t%s\n"
-"Крепление:\t\t%s"
-
-msgid "Focal"
-msgstr "Фокус"
-
-msgid "F"
-msgstr "F"
-
-msgid "F-number (Aperture)"
-msgstr "Диафрагма (F)"
-
-msgid "Distance"
-msgstr "Расстояние"
-
-msgid "Distance to subject"
-msgstr "Расстояние до объекта"
-
-#. Add the model combobox
-msgid "Model:"
-msgstr "Модель:"
-
-msgid "Chromatic Aberrations mathematical model"
-msgstr "Математическая модель хроматических аберраций"
-
-msgid "Parameters"
-msgstr "Параметры"
-
-msgid "Optical vignetting mathematical model"
-msgstr "Математическая модель виньетирования"
-
-msgid "Lens distortion mathematical model"
-msgstr "Математическая модель оптических искажений"
-
-#. Add the model combobox
-msgid "Lens geometry:"
-msgstr "Геометрия объектива:"
-
-msgid "The geometry of the lens used to make the shot"
-msgstr "Геометрия объектива, которым производилась съёмка"
-
-msgid "Target geometry:"
-msgstr "Целевая геометрия:"
-
-msgid "The target geometry for output image"
-msgstr "Геометрия для выходного изображения"
-
-msgid "Camera"
-msgstr "Камера"
-
-msgid ""
-"Search for camera using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"Поиск камеры по ключевым словам\n"
-"Формат: [Производитель, ][Модель]"
-
-msgid "Choose camera from complete list"
-msgstr "Выбрать камеру из полного списка"
-
-msgid ""
-"Search for lens using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"Поиск объектива по ключевым словам\n"
-"Формат: [Производитель, ][Модель]"
-
-msgid "Choose lens from list of possible variants"
-msgstr "Выбрать объектив из полного списка"
-
-msgid "Lens distortion"
-msgstr "Искажения объектива"
-
-msgid "Lens geometry"
-msgstr "Геометрия объектива"
-
-msgid "Optical vignetting"
-msgstr "Оптическое виньетирование"
-
-msgid "Lateral chromatic aberration"
-msgstr "Хроматические аберрации"
-
-#, c-format
-msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
-
-#, c-format
-msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).

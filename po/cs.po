@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-11 04:15+0100\n"
+"POT-Creation-Date: 2010-02-13 10:45+0100\n"
 "PO-Revision-Date: 2009-10-04 10:41+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -19,6 +19,14 @@ msgstr ""
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
 msgstr "Otevřít okno navigátoru"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr ""
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr ""
 
 msgid "No input file, nothing to do."
 msgstr "Žádný vstupní soubor, nic ke zpracování."
@@ -686,6 +694,122 @@ msgstr "Selhalo vložení výstupní profilu'%s' do snímku."
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "Délka %d EXIF bufferu příliš dlouhá, ignorováno."
 
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr ""
+"Výrobce:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Bajonet:\t\t%s\n"
+"Faktor ořezu:\t%.1f"
+
+#, c-format
+msgid ""
+"Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr ""
+"Výrobce:\t\t%s\n"
+"Model:\t\t%s\n"
+"Rozsah ohnisek:\t%s\n"
+"Clona:\t\t%s\n"
+"Faktor ořezu:\t%.1f\n"
+"Typ:\t\t%s\n"
+"Bajonety:\t\t%s"
+
+msgid "Focal"
+msgstr "Ohnisko"
+
+msgid "Focal length"
+msgstr "Ohnisková vzdálenost"
+
+msgid "F"
+msgstr "F"
+
+msgid "F-number (Aperture)"
+msgstr "F-číslo (clona)"
+
+msgid "Distance"
+msgstr "Vzdálenost"
+
+msgid "Distance to subject"
+msgstr "Vzdálenost k předmětu"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "Model:"
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "Matematický model pro chromatickou vadu"
+
+msgid "Parameters"
+msgstr "Parametry"
+
+msgid "Optical vignetting mathematical model"
+msgstr "Matematický model pro optickou vinětaci"
+
+msgid "Lens distortion mathematical model"
+msgstr "Matematický model pro zkreslení objektivu"
+
+#. Add the model combobox
+msgid "Lens geometry:"
+msgstr "Projekce objektivu:"
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "Projekce (zobrazení) objektivu použitého pro vyfocení snímku"
+
+msgid "Target geometry:"
+msgstr "Cílové projekce:"
+
+msgid "The target geometry for output image"
+msgstr "Cílová projekce pro výstupní snímek"
+
+msgid "Camera"
+msgstr "Fotoaparát"
+
+msgid ""
+"Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Hledat fotoaparát pomocí dotazu\n"
+"Formát: [Výrobce, ][Model]"
+
+msgid "Choose camera from complete list"
+msgstr "Vybrat fotoaparát z úplného seznamu"
+
+#. Lens selector
+msgid "Lens"
+msgstr "Objektiv"
+
+msgid ""
+"Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr ""
+"Hledat objektiv pomocí dotazu\n"
+"Formát: [Výrobce, ][Model]"
+
+msgid "Choose lens from list of possible variants"
+msgstr "Vybrat objektiv ze seznamu možných variant"
+
+msgid "Lens distortion"
+msgstr "Zkreslení objektivu"
+
+msgid "Lens geometry"
+msgstr "Projekce objektivu"
+
+msgid "Optical vignetting"
+msgstr "Optická vinětace"
+
+msgid "Lateral chromatic aberration"
+msgstr "Postranní chromatická vada"
+
 msgid "Raw histogram with conversion curves"
 msgstr "Raw histogram s konverzními křivkami"
 
@@ -1302,15 +1426,8 @@ msgstr "Clona"
 msgid "ISO speed"
 msgstr "ISO"
 
-msgid "Focal length"
-msgstr "Ohnisková vzdálenost"
-
 msgid "35mm focal length"
 msgstr "35mm ohnisková vzdálenost"
-
-#. Lens selector
-msgid "Lens"
-msgstr "Objektiv"
 
 msgid "Flash"
 msgstr "Blesk"
@@ -1485,123 +1602,6 @@ msgstr "Nepodporovaná bitová hloubka '%d' ignorována."
 #, c-format
 msgid "Unknown file type %d."
 msgstr "Neznámý typ souboru %d."
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Mount:\t\t%s\n"
-"Crop factor:\t%.1f"
-msgstr ""
-"Výrobce:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Bajonet:\t\t%s\n"
-"Faktor ořezu:\t%.1f"
-
-#, c-format
-msgid ""
-"Maker:\t\t%s\n"
-"Model:\t\t%s\n"
-"Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
-"Crop factor:\t%.1f\n"
-"Type:\t\t%s\n"
-"Mounts:\t\t%s"
-msgstr ""
-"Výrobce:\t\t%s\n"
-"Model:\t\t%s\n"
-"Rozsah ohnisek:\t%s\n"
-"Clona:\t\t%s\n"
-"Faktor ořezu:\t%.1f\n"
-"Typ:\t\t%s\n"
-"Bajonety:\t\t%s"
-
-msgid "Focal"
-msgstr "Ohnisko"
-
-msgid "F"
-msgstr "F"
-
-msgid "F-number (Aperture)"
-msgstr "F-číslo (clona)"
-
-msgid "Distance"
-msgstr "Vzdálenost"
-
-msgid "Distance to subject"
-msgstr "Vzdálenost k předmětu"
-
-#. Add the model combobox
-msgid "Model:"
-msgstr "Model:"
-
-msgid "Chromatic Aberrations mathematical model"
-msgstr "Matematický model pro chromatickou vadu"
-
-msgid "Parameters"
-msgstr "Parametry"
-
-msgid "Optical vignetting mathematical model"
-msgstr "Matematický model pro optickou vinětaci"
-
-msgid "Lens distortion mathematical model"
-msgstr "Matematický model pro zkreslení objektivu"
-
-#. Add the model combobox
-msgid "Lens geometry:"
-msgstr "Projekce objektivu:"
-
-msgid "The geometry of the lens used to make the shot"
-msgstr "Projekce (zobrazení) objektivu použitého pro vyfocení snímku"
-
-msgid "Target geometry:"
-msgstr "Cílové projekce:"
-
-msgid "The target geometry for output image"
-msgstr "Cílová projekce pro výstupní snímek"
-
-msgid "Camera"
-msgstr "Fotoaparát"
-
-msgid ""
-"Search for camera using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"Hledat fotoaparát pomocí dotazu\n"
-"Formát: [Výrobce, ][Model]"
-
-msgid "Choose camera from complete list"
-msgstr "Vybrat fotoaparát z úplného seznamu"
-
-msgid ""
-"Search for lens using a pattern\n"
-"Format: [Maker, ][Model]"
-msgstr ""
-"Hledat objektiv pomocí dotazu\n"
-"Formát: [Výrobce, ][Model]"
-
-msgid "Choose lens from list of possible variants"
-msgstr "Vybrat objektiv ze seznamu možných variant"
-
-msgid "Lens distortion"
-msgstr "Zkreslení objektivu"
-
-msgid "Lens geometry"
-msgstr "Projekce objektivu"
-
-msgid "Optical vignetting"
-msgstr "Optická vinětace"
-
-msgid "Lateral chromatic aberration"
-msgstr "Postranní chromatická vada"
-
-#, c-format
-msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
-
-#, c-format
-msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
 
 #. Column 1 - "make" of the camera.
 #. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
