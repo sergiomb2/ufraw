@@ -1430,6 +1430,7 @@ static void ufraw_convert_prepare_transform(ufraw_data *uf,
     (void)width;
     (void)height;
     (void)reverse;
+    (void)scale;
 #endif /* HAVE_LENSFUN */
 }
 
