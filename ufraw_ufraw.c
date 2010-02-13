@@ -1511,6 +1511,10 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
     // Do not allow increasing canvas size by more than a factor of 2
     uf->rotatedWidth = MIN(ceil(2*maxX)*scale, 2*iWidth);
     uf->rotatedHeight = MIN(ceil(2*maxY)*scale, 2*iHeight);
+    if (minX/minY > aspectRatio)
+	minX = minY * aspectRatio;
+    else
+	minY = minX / aspectRatio;
     uf->autoCropWidth = MIN(floor(2*minX)*scale, 2*iWidth);
     uf->autoCropHeight = MIN(floor(2*minY)*scale, 2*iHeight);
     int newWidth = uf->rotatedWidth * width / iWidth;
