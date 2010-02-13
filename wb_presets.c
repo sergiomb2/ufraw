@@ -198,12 +198,12 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 5D", Shade, 0,		{ 2.300781, 1, 1.208008, 0 } }, /*7200K*/
   { "Canon", "EOS 5D", Daylight, 0,		{ 1.988281, 1, 1.457031, 0 } }, /*5250K*/
 
-  { "Canon", "EOS 5D Mark II", Daylight, 0,	{ 2.188477, 1, 1.686523, 0 } }, /* 5200K */
-  { "Canon", "EOS 5D Mark II", Shade, 0,	{ 2.515625, 1, 1.391602, 0 } }, /* 7000K */
-  { "Canon", "EOS 5D Mark II", Cloudy, 0,	{ 2.354492, 1, 1.519531, 0 } }, /* 6000K */
-  { "Canon", "EOS 5D Mark II", Tungsten, 0,	{ 1.564033, 1, 2.665758, 0 } }, /* 3200K */
-  { "Canon", "EOS 5D Mark II", Fluorescent, 0,	{ 1.877243, 1, 2.479698, 0 } }, /* 4000K */
-  { "Canon", "EOS 5D Mark II", Flash, 0,	{ 2.370117, 1, 1.503906, 0 } }, /* 5621K */
+  { "Canon", "EOS 5D Mark II", Daylight, 0,	{ 2.188477, 1, 1.686523, 0 } }, /*5200K*/
+  { "Canon", "EOS 5D Mark II", Shade, 0,	{ 2.515625, 1, 1.391602, 0 } }, /*7000K*/
+  { "Canon", "EOS 5D Mark II", Cloudy, 0,	{ 2.354492, 1, 1.519531, 0 } }, /*6000K*/
+  { "Canon", "EOS 5D Mark II", Tungsten, 0,	{ 1.564033, 1, 2.665758, 0 } }, /*3200K*/
+  { "Canon", "EOS 5D Mark II", Fluorescent, 0,	{ 1.877243, 1, 2.479698, 0 } }, /*4000K*/
+  { "Canon", "EOS 5D Mark II", Flash, 0,	{ 2.370117, 1, 1.503906, 0 } }, /*5621K*/
 
   { "Canon", "EOS 7D", Daylight, 0,		{ 2.111328, 1, 1.432617, 0 } }, /*6935K*/
   { "Canon", "EOS 7D", Shade, 0,		{ 2.444336, 1, 1.221680, 0 } }, /*11162K*/
@@ -1224,7 +1224,7 @@ const wb_data wb_preset[] = {
   { "NIKON", "D200", Incandescent, 0,		{ 1.148437, 1, 2.398438, 0 } },
   { "NIKON", "D200", Incandescent, 1,		{ 1.113281, 1, 2.519531, 0 } },
   { "NIKON", "D200", Incandescent, 2,		{ 1.074219, 1, 2.648438, 0 } },
-  { "NIKON", "D200", Incandescent, 3,		{ 1.03125, 1, 2.804688, 0 } },
+  { "NIKON", "D200", Incandescent, 3,		{ 1.031250, 1, 2.804688, 0 } },
   { "NIKON", "D200", Fluorescent, -3,		{ 2.273438, 1, 1.410156, 0 } },
   { "NIKON", "D200", Fluorescent, -2,		{ 1.933594, 1, 1.152344, 0 } },
   { "NIKON", "D200", Fluorescent, -1,		{ 1.675781, 1, 1.453125, 0 } },
@@ -1234,11 +1234,11 @@ const wb_data wb_preset[] = {
   { "NIKON", "D200", Fluorescent, 3,		{ 1.035156, 1, 2.410156, 0 } },
   { "NIKON", "D200", DirectSunlight, -3,	{ 1.863281, 1, 1.320312, 0 } },
   { "NIKON", "D200", DirectSunlight, -2,	{ 1.835938, 1, 1.355469, 0 } },
-  { "NIKON", "D200", DirectSunlight, -1,	{ 1.820313, 1, 1.375, 0 } },
+  { "NIKON", "D200", DirectSunlight, -1,	{ 1.820313, 1, 1.375000, 0 } },
   { "NIKON", "D200", DirectSunlight, 0,		{ 1.804688, 1, 1.398437, 0 } },
   { "NIKON", "D200", DirectSunlight, 1,		{ 1.746094, 1, 1.425781, 0 } },
-  { "NIKON", "D200", DirectSunlight, 2,		{ 1.714844, 1, 1.4375, 0 } },
-  { "NIKON", "D200", DirectSunlight, 3,		{ 1.6875, 1, 1.449219, 0 } },
+  { "NIKON", "D200", DirectSunlight, 2,		{ 1.714844, 1, 1.437500, 0 } },
+  { "NIKON", "D200", DirectSunlight, 3,		{ 1.687500, 1, 1.449219, 0 } },
   { "NIKON", "D200", Flash, -3,			{ 2.066406, 1, 1.183594, 0 } },
   { "NIKON", "D200", Flash, -2,			{ 2.046875, 1, 1.191406, 0 } },
   { "NIKON", "D200", Flash, -1,			{ 2.027344, 1, 1.199219, 0 } },
@@ -1256,14 +1256,14 @@ const wb_data wb_preset[] = {
   { "NIKON", "D200", Shade, -3,			{ 2.378906, 1, 1.066406, 0 } },
   { "NIKON", "D200", Shade, -2,			{ 2.332031, 1, 1.085938, 0 } },
   { "NIKON", "D200", Shade, -1,			{ 2.289063, 1, 1.105469, 0 } },
-  { "NIKON", "D200", Shade, 0,			{ 2.234375, 1, 1.125, 0 } },
+  { "NIKON", "D200", Shade, 0,			{ 2.234375, 1, 1.125000, 0 } },
   { "NIKON", "D200", Shade, 1,			{ 2.167969, 1, 1.152344, 0 } },
   { "NIKON", "D200", Shade, 2,			{ 2.105469, 1, 1.175781, 0 } },
   { "NIKON", "D200", Shade, 3,			{ 2.046875, 1, 1.199219, 0 } },
 
   /* D200 Kelvin presets */
-  { "NIKON", "D200", "2500K", 0,		{ 1, 1, 3.121094, 0 } },
-  { "NIKON", "D200", "2550K", 0,		{ 1, 1, 3.035156, 0 } },
+  { "NIKON", "D200", "2500K", 0,		{ 1.000000, 1, 3.121094, 0 } },
+  { "NIKON", "D200", "2550K", 0,		{ 1.000000, 1, 3.035156, 0 } },
   { "NIKON", "D200", "2650K", 0,		{ 1.011719, 1, 2.878906, 0 } },
   { "NIKON", "D200", "2700K", 0,		{ 1.031250, 1, 2.804688, 0 } },
   { "NIKON", "D200", "2800K", 0,		{ 1.074219, 1, 2.648438, 0 } },
@@ -1298,22 +1298,22 @@ const wb_data wb_preset[] = {
   { "NIKON", "D300", Incandescent, -6,		{ 1.097656, 1, 1.898438, 0 } },
   { "NIKON", "D300", Incandescent, -5,		{ 1.085938, 1, 1.929687, 0 } },
   { "NIKON", "D300", Incandescent, -4,		{ 1.070313, 1, 1.964844, 0 } },
-  { "NIKON", "D300", Incandescent, -3,		{ 1.058594, 1, 2, 0 } },
+  { "NIKON", "D300", Incandescent, -3,		{ 1.058594, 1, 2.000000, 0 } },
   { "NIKON", "D300", Incandescent, -2,		{ 1.042969, 1, 2.035156, 0 } },
-  { "NIKON", "D300", Incandescent, -1,		{ 1.03125, 1, 2.074219, 0 } },
+  { "NIKON", "D300", Incandescent, -1,		{ 1.031250, 1, 2.074219, 0 } },
   { "NIKON", "D300", Incandescent, 0,		{ 1.019531, 1, 2.109375, 0 } },
   { "NIKON", "D300", Incandescent, 1,		{ 1.007813, 1, 2.144531, 0 } },
-  { "NIKON", "D300", Incandescent, 2,		{ 1, 1, 2.183594, 0 } },
-  { "NIKON", "D300", Incandescent, 3,		{ 1, 1, 2.21875, 0 } },
-  { "NIKON", "D300", Incandescent, 4,		{ 1, 1, 2.257812, 0 } },
-  { "NIKON", "D300", Incandescent, 5,		{ 1, 1, 2.296875, 0 } },
-  { "NIKON", "D300", Incandescent, 6,		{ 1, 1, 2.335937, 0 } },
-  { "NIKON", "D300", SodiumVaporFluorescent, -6, { 1.03125, 1, 2.101563, 0 } },
+  { "NIKON", "D300", Incandescent, 2,		{ 1.000000, 1, 2.183594, 0 } },
+  { "NIKON", "D300", Incandescent, 3,		{ 1.000000, 1, 2.218750, 0 } },
+  { "NIKON", "D300", Incandescent, 4,		{ 1.000000, 1, 2.257812, 0 } },
+  { "NIKON", "D300", Incandescent, 5,		{ 1.000000, 1, 2.296875, 0 } },
+  { "NIKON", "D300", Incandescent, 6,		{ 1.000000, 1, 2.335937, 0 } },
+  { "NIKON", "D300", SodiumVaporFluorescent, -6, { 1.031250, 1, 2.101563, 0 } },
   { "NIKON", "D300", SodiumVaporFluorescent, -5, { 1.015625, 1, 2.136719, 0 } },
   { "NIKON", "D300", SodiumVaporFluorescent, -4, { 1.003906, 1, 2.167969, 0 } },
   { "NIKON", "D300", SodiumVaporFluorescent, -3, { 0.9882813, 1, 2.207031, 0 } },
   { "NIKON", "D300", SodiumVaporFluorescent, -2, { 0.9765625, 1, 2.242187, 0 } },
-  { "NIKON", "D300", SodiumVaporFluorescent, -1, { 0.9609375, 1, 2.28125, 0 } },
+  { "NIKON", "D300", SodiumVaporFluorescent, -1, { 0.9609375, 1, 2.281250, 0 } },
   { "NIKON", "D300", SodiumVaporFluorescent, 0,	{ 0.9492188, 1, 2.320313, 0 } },
   { "NIKON", "D300", SodiumVaporFluorescent, 1,	{ 0.9492188, 1, 2.363281, 0 } },
   { "NIKON", "D300", SodiumVaporFluorescent, 2, { 0.9492188, 1, 2.410156, 0 } },
@@ -1324,69 +1324,69 @@ const wb_data wb_preset[] = {
   { "NIKON", "D300", WarmWhiteFluorescent, -6,	{ 1.128906, 1, 1.847656, 0 } },
   { "NIKON", "D300", WarmWhiteFluorescent, -5,	{ 1.113281, 1, 1.867187, 0 } },
   { "NIKON", "D300", WarmWhiteFluorescent, -4,	{ 1.097656, 1, 1.886719, 0 } },
-  { "NIKON", "D300", WarmWhiteFluorescent, -3,	{ 1.085938, 1, 1.90625, 0 } },
+  { "NIKON", "D300", WarmWhiteFluorescent, -3,	{ 1.085938, 1, 1.906250, 0 } },
   { "NIKON", "D300", WarmWhiteFluorescent, -2,	{ 1.070313, 1, 1.925781, 0 } },
   { "NIKON", "D300", WarmWhiteFluorescent, -1,	{ 1.058594, 1, 1.945312, 0 } },
   { "NIKON", "D300", WarmWhiteFluorescent, 0,	{ 1.046875, 1, 1.960937, 0 } },
   { "NIKON", "D300", WarmWhiteFluorescent, 1,	{ 1.035156, 1, 1.980469, 0 } },
   { "NIKON", "D300", WarmWhiteFluorescent, 2,	{ 1.023437, 1, 1.996094, 0 } },
   { "NIKON", "D300", WarmWhiteFluorescent, 3,	{ 1.007813, 1, 2.015625, 0 } },
-  { "NIKON", "D300", WarmWhiteFluorescent, 4,	{ 1, 1, 2.03125, 0 } },
-  { "NIKON", "D300", WarmWhiteFluorescent, 5,	{ 1, 1, 2.046875, 0 } },
-  { "NIKON", "D300", WarmWhiteFluorescent, 6,	{ 1, 1, 2.0625, 0 } },
+  { "NIKON", "D300", WarmWhiteFluorescent, 4,	{ 1.000000, 1, 2.031250, 0 } },
+  { "NIKON", "D300", WarmWhiteFluorescent, 5,	{ 1.000000, 1, 2.046875, 0 } },
+  { "NIKON", "D300", WarmWhiteFluorescent, 6,	{ 1.000000, 1, 2.062500, 0 } },
   { "NIKON", "D300", WhiteFluorescent, -6,	{ 1.453125, 1, 2.050781, 0 } },
-  { "NIKON", "D300", WhiteFluorescent, -5,	{ 1.414062, 1, 2.09375, 0 } },
+  { "NIKON", "D300", WhiteFluorescent, -5,	{ 1.414062, 1, 2.093750, 0 } },
   { "NIKON", "D300", WhiteFluorescent, -4,	{ 1.371094, 1, 2.132813, 0 } },
   { "NIKON", "D300", WhiteFluorescent, -3,	{ 1.328125, 1, 2.175781, 0 } },
-  { "NIKON", "D300", WhiteFluorescent, -2,	{ 1.285156, 1, 2.21875, 0 } },
+  { "NIKON", "D300", WhiteFluorescent, -2,	{ 1.285156, 1, 2.218750, 0 } },
   { "NIKON", "D300", WhiteFluorescent, -1,	{ 1.238281, 1, 2.261719, 0 } },
   { "NIKON", "D300", WhiteFluorescent, 0,	{ 1.191406, 1, 2.304688, 0 } },
   { "NIKON", "D300", WhiteFluorescent, 1,	{ 1.140625, 1, 2.351563, 0 } },
   { "NIKON", "D300", WhiteFluorescent, 2,	{ 1.089844, 1, 2.394531, 0 } },
   { "NIKON", "D300", WhiteFluorescent, 3,	{ 1.039062, 1, 2.441406, 0 } },
-  { "NIKON", "D300", WhiteFluorescent, 4,	{ 1, 1, 2.488281, 0 } },
-  { "NIKON", "D300", WhiteFluorescent, 5,	{ 1, 1, 2.535156, 0 } },
-  { "NIKON", "D300", WhiteFluorescent, 6,	{ 1, 1, 2.582031, 0 } },
+  { "NIKON", "D300", WhiteFluorescent, 4,	{ 1.000000, 1, 2.488281, 0 } },
+  { "NIKON", "D300", WhiteFluorescent, 5,	{ 1.000000, 1, 2.535156, 0 } },
+  { "NIKON", "D300", WhiteFluorescent, 6,	{ 1.000000, 1, 2.582031, 0 } },
   { "NIKON", "D300", CoolWhiteFluorescent, -6,	{ 1.667969, 1, 1.800781, 0 } },
   { "NIKON", "D300", CoolWhiteFluorescent, -5,	{ 1.636719, 1, 1.835938, 0 } },
-  { "NIKON", "D300", CoolWhiteFluorescent, -4,	{ 1.605469, 1, 1.875, 0 } },
+  { "NIKON", "D300", CoolWhiteFluorescent, -4,	{ 1.605469, 1, 1.875000, 0 } },
   { "NIKON", "D300", CoolWhiteFluorescent, -3,	{ 1.574219, 1, 1.914062, 0 } },
   { "NIKON", "D300", CoolWhiteFluorescent, -2,	{ 1.539063, 1, 1.953125, 0 } },
   { "NIKON", "D300", CoolWhiteFluorescent, -1,	{ 1.503906, 1, 1.996094, 0 } },
-  { "NIKON", "D300", CoolWhiteFluorescent, 0,	{ 1.46875, 1, 2.035156, 0 } },
+  { "NIKON", "D300", CoolWhiteFluorescent, 0,	{ 1.468750, 1, 2.035156, 0 } },
   { "NIKON", "D300", CoolWhiteFluorescent, 1,	{ 1.429687, 1, 2.074219, 0 } },
   { "NIKON", "D300", CoolWhiteFluorescent, 2,	{ 1.386719, 1, 2.117188, 0 } },
   { "NIKON", "D300", CoolWhiteFluorescent, 3,	{ 1.347656, 1, 2.160156, 0 } },
   { "NIKON", "D300", CoolWhiteFluorescent, 4,	{ 1.304687, 1, 2.203125, 0 } },
   { "NIKON", "D300", CoolWhiteFluorescent, 5,	{ 1.257812, 1, 2.246094, 0 } },
   { "NIKON", "D300", CoolWhiteFluorescent, 6,	{ 1.210937, 1, 2.289063, 0 } },
-  { "NIKON", "D300", DayWhiteFluorescent, -6,	{ 1.625, 1, 1.195313, 0 } },
+  { "NIKON", "D300", DayWhiteFluorescent, -6,	{ 1.625000, 1, 1.195313, 0 } },
   { "NIKON", "D300", DayWhiteFluorescent, -5,	{ 1.601563, 1, 1.222656, 0 } },
   { "NIKON", "D300", DayWhiteFluorescent, -4,	{ 1.582031, 1, 1.253906, 0 } },
-  { "NIKON", "D300", DayWhiteFluorescent, -3,	{ 1.558594, 1, 1.28125, 0 } },
+  { "NIKON", "D300", DayWhiteFluorescent, -3,	{ 1.558594, 1, 1.281250, 0 } },
   { "NIKON", "D300", DayWhiteFluorescent, -2,	{ 1.535156, 1, 1.308594, 0 } },
   { "NIKON", "D300", DayWhiteFluorescent, -1,	{ 1.515625, 1, 1.335937, 0 } },
   { "NIKON", "D300", DayWhiteFluorescent, 0,	{ 1.492188, 1, 1.363281, 0 } },
   { "NIKON", "D300", DayWhiteFluorescent, 1,	{ 1.472656, 1, 1.390625, 0 } },
   { "NIKON", "D300", DayWhiteFluorescent, 2,	{ 1.453125, 1, 1.417969, 0 } },
   { "NIKON", "D300", DayWhiteFluorescent, 3,	{ 1.433594, 1, 1.441406, 0 } },
-  { "NIKON", "D300", DayWhiteFluorescent, 4,	{ 1.410156, 1, 1.46875, 0 } },
+  { "NIKON", "D300", DayWhiteFluorescent, 4,	{ 1.410156, 1, 1.468750, 0 } },
   { "NIKON", "D300", DayWhiteFluorescent, 5,	{ 1.390625, 1, 1.492188, 0 } },
-  { "NIKON", "D300", DayWhiteFluorescent, 6,	{ 1.375, 1, 1.519531, 0 } },
-  { "NIKON", "D300", DaylightFluorescent, -6,	{ 1.851563, 1, 1, 0 } },
-  { "NIKON", "D300", DaylightFluorescent, -5,	{ 1.824219, 1, 1, 0 } },
-  { "NIKON", "D300", DaylightFluorescent, -4,	{ 1.796875, 1, 1, 0 } },
+  { "NIKON", "D300", DayWhiteFluorescent, 6,	{ 1.375000, 1, 1.519531, 0 } },
+  { "NIKON", "D300", DaylightFluorescent, -6,	{ 1.851563, 1, 1.000000, 0 } },
+  { "NIKON", "D300", DaylightFluorescent, -5,	{ 1.824219, 1, 1.000000, 0 } },
+  { "NIKON", "D300", DaylightFluorescent, -4,	{ 1.796875, 1, 1.000000, 0 } },
   { "NIKON", "D300", DaylightFluorescent, -3,	{ 1.773438, 1, 1.007813, 0 } },
-  { "NIKON", "D300", DaylightFluorescent, -2,	{ 1.75, 1, 1.039062, 0 } },
+  { "NIKON", "D300", DaylightFluorescent, -2,	{ 1.750000, 1, 1.039062, 0 } },
   { "NIKON", "D300", DaylightFluorescent, -1,	{ 1.722656, 1, 1.070313, 0 } },
   { "NIKON", "D300", DaylightFluorescent, 0,	{ 1.699219, 1, 1.101563, 0 } },
   { "NIKON", "D300", DaylightFluorescent, 1,	{ 1.675781, 1, 1.128906, 0 } },
   { "NIKON", "D300", DaylightFluorescent, 2,	{ 1.652344, 1, 1.160156, 0 } },
-  { "NIKON", "D300", DaylightFluorescent, 3,	{ 1.628906, 1, 1.1875, 0 } },
-  { "NIKON", "D300", DaylightFluorescent, 4,	{ 1.605469, 1, 1.21875, 0 } },
+  { "NIKON", "D300", DaylightFluorescent, 3,	{ 1.628906, 1, 1.187500, 0 } },
+  { "NIKON", "D300", DaylightFluorescent, 4,	{ 1.605469, 1, 1.218750, 0 } },
   { "NIKON", "D300", DaylightFluorescent, 5,	{ 1.585938, 1, 1.246094, 0 } },
-  { "NIKON", "D300", DaylightFluorescent, 6,	{ 1.5625, 1, 1.273437, 0 } },
-  { "NIKON", "D300", HighTempMercuryVaporFluorescent, -6, { 2.039063, 1, 1.15625, 0 } },
+  { "NIKON", "D300", DaylightFluorescent, 6,	{ 1.562500, 1, 1.273437, 0 } },
+  { "NIKON", "D300", HighTempMercuryVaporFluorescent, -6, { 2.039063, 1, 1.156250, 0 } },
   { "NIKON", "D300", HighTempMercuryVaporFluorescent, -5, { 2.027344, 1, 1.183594, 0 } },
   { "NIKON", "D300", HighTempMercuryVaporFluorescent, -4, { 2.015625, 1, 1.210937, 0 } },
   { "NIKON", "D300", HighTempMercuryVaporFluorescent, -3, { 2.003906, 1, 1.238281, 0 } },
@@ -1397,93 +1397,93 @@ const wb_data wb_preset[] = {
   { "NIKON", "D300", HighTempMercuryVaporFluorescent, 2, { 1.929687, 1, 1.390625, 0 } },
   { "NIKON", "D300", HighTempMercuryVaporFluorescent, 3, { 1.914062, 1, 1.421875, 0 } },
   { "NIKON", "D300", HighTempMercuryVaporFluorescent, 4, { 1.894531, 1, 1.457031, 0 } },
-  { "NIKON", "D300", HighTempMercuryVaporFluorescent, 5, { 1.875, 1, 1.488281, 0 } },
+  { "NIKON", "D300", HighTempMercuryVaporFluorescent, 5, { 1.875000, 1, 1.488281, 0 } },
   { "NIKON", "D300", HighTempMercuryVaporFluorescent, 6, { 1.855469, 1, 1.523437, 0 } },
-  { "NIKON", "D300", DirectSunlight, -6,	{ 1.6875, 1, 1.167969, 0 } },
-  { "NIKON", "D300", DirectSunlight, -5,	{ 1.664062, 1, 1.1875, 0 } },
+  { "NIKON", "D300", DirectSunlight, -6,	{ 1.687500, 1, 1.167969, 0 } },
+  { "NIKON", "D300", DirectSunlight, -5,	{ 1.664062, 1, 1.187500, 0 } },
   { "NIKON", "D300", DirectSunlight, -4,	{ 1.644531, 1, 1.207031, 0 } },
-  { "NIKON", "D300", DirectSunlight, -3,	{ 1.625, 1, 1.230469, 0 } },
+  { "NIKON", "D300", DirectSunlight, -3,	{ 1.625000, 1, 1.230469, 0 } },
   { "NIKON", "D300", DirectSunlight, -2,	{ 1.601563, 1, 1.253906, 0 } },
-  { "NIKON", "D300", DirectSunlight, -1,	{ 1.582031, 1, 1.28125, 0 } },
-  { "NIKON", "D300", DirectSunlight, 0,		{ 1.5625, 1, 1.308594, 0 } },
+  { "NIKON", "D300", DirectSunlight, -1,	{ 1.582031, 1, 1.281250, 0 } },
+  { "NIKON", "D300", DirectSunlight, 0,		{ 1.562500, 1, 1.308594, 0 } },
   { "NIKON", "D300", DirectSunlight, 1,		{ 1.542969, 1, 1.335937, 0 } },
   { "NIKON", "D300", DirectSunlight, 2,		{ 1.523437, 1, 1.359375, 0 } },
   { "NIKON", "D300", DirectSunlight, 3,		{ 1.503906, 1, 1.386719, 0 } },
   { "NIKON", "D300", DirectSunlight, 4,		{ 1.480469, 1, 1.414062, 0 } },
-  { "NIKON", "D300", DirectSunlight, 5,		{ 1.457031, 1, 1.4375, 0 } },
+  { "NIKON", "D300", DirectSunlight, 5,		{ 1.457031, 1, 1.437500, 0 } },
   { "NIKON", "D300", DirectSunlight, 6,		{ 1.429687, 1, 1.457031, 0 } },
   { "NIKON", "D300", Flash, -6,			{ 1.910156, 1, 1.058594, 0 } },
   { "NIKON", "D300", Flash, -5,			{ 1.863281, 1, 1.078125, 0 } },
-  { "NIKON", "D300", Flash, -4,			{ 1.820313, 1, 1.09375, 0 } },
-  { "NIKON", "D300", Flash, -3,			{ 1.78125, 1, 1.105469, 0 } },
+  { "NIKON", "D300", Flash, -4,			{ 1.820313, 1, 1.093750, 0 } },
+  { "NIKON", "D300", Flash, -3,			{ 1.781250, 1, 1.105469, 0 } },
   { "NIKON", "D300", Flash, -2,			{ 1.746094, 1, 1.121094, 0 } },
   { "NIKON", "D300", Flash, -1,			{ 1.714844, 1, 1.136719, 0 } },
-  { "NIKON", "D300", Flash, 0,			{ 1.6875, 1, 1.152344, 0 } },
+  { "NIKON", "D300", Flash, 0,			{ 1.687500, 1, 1.152344, 0 } },
   { "NIKON", "D300", Flash, 1,			{ 1.660156, 1, 1.164062, 0 } },
   { "NIKON", "D300", Flash, 2,			{ 1.636719, 1, 1.179687, 0 } },
   { "NIKON", "D300", Flash, 3,			{ 1.613281, 1, 1.195313, 0 } },
-  { "NIKON", "D300", Flash, 4,			{ 1.59375, 1, 1.210937, 0 } },
+  { "NIKON", "D300", Flash, 4,			{ 1.593750, 1, 1.210937, 0 } },
   { "NIKON", "D300", Flash, 5,			{ 1.574219, 1, 1.230469, 0 } },
   { "NIKON", "D300", Flash, 6,			{ 1.554688, 1, 1.246094, 0 } },
-  { "NIKON", "D300", Cloudy, -6,		{ 1.820313, 1, 1.09375, 0 } },
+  { "NIKON", "D300", Cloudy, -6,		{ 1.820313, 1, 1.093750, 0 } },
   { "NIKON", "D300", Cloudy, -5,		{ 1.789063, 1, 1.105469, 0 } },
   { "NIKON", "D300", Cloudy, -4,		{ 1.761719, 1, 1.117188, 0 } },
   { "NIKON", "D300", Cloudy, -3,		{ 1.734375, 1, 1.132813, 0 } },
   { "NIKON", "D300", Cloudy, -2,		{ 1.710937, 1, 1.148437, 0 } },
-  { "NIKON", "D300", Cloudy, -1,		{ 1.6875, 1, 1.167969, 0 } },
-  { "NIKON", "D300", Cloudy, 0,			{ 1.664062, 1, 1.1875, 0 } },
+  { "NIKON", "D300", Cloudy, -1,		{ 1.687500, 1, 1.167969, 0 } },
+  { "NIKON", "D300", Cloudy, 0,			{ 1.664062, 1, 1.187500, 0 } },
   { "NIKON", "D300", Cloudy, 1,			{ 1.644531, 1, 1.207031, 0 } },
-  { "NIKON", "D300", Cloudy, 2,			{ 1.625, 1, 1.230469, 0 } },
+  { "NIKON", "D300", Cloudy, 2,			{ 1.625000, 1, 1.230469, 0 } },
   { "NIKON", "D300", Cloudy, 3,			{ 1.601563, 1, 1.253906, 0 } },
-  { "NIKON", "D300", Cloudy, 4,			{ 1.582031, 1, 1.28125, 0 } },
-  { "NIKON", "D300", Cloudy, 5,			{ 1.5625, 1, 1.308594, 0 } },
+  { "NIKON", "D300", Cloudy, 4,			{ 1.582031, 1, 1.281250, 0 } },
+  { "NIKON", "D300", Cloudy, 5,			{ 1.562500, 1, 1.308594, 0 } },
   { "NIKON", "D300", Cloudy, 6,			{ 1.542969, 1, 1.335937, 0 } },
-  { "NIKON", "D300", Shade, -6,			{ 2.15625, 1, 1, 0 } },
-  { "NIKON", "D300", Shade, -5,			{ 2.109375, 1, 1, 0 } },
-  { "NIKON", "D300", Shade, -4,			{ 2.0625, 1, 1.011719, 0 } },
+  { "NIKON", "D300", Shade, -6,			{ 2.156250, 1, 1.000000, 0 } },
+  { "NIKON", "D300", Shade, -5,			{ 2.109375, 1, 1.000000, 0 } },
+  { "NIKON", "D300", Shade, -4,			{ 2.062500, 1, 1.011719, 0 } },
   { "NIKON", "D300", Shade, -3,			{ 2.019531, 1, 1.027344, 0 } },
   { "NIKON", "D300", Shade, -2,			{ 1.976563, 1, 1.042969, 0 } },
-  { "NIKON", "D300", Shade, -1,			{ 1.9375, 1, 1.054688, 0 } },
+  { "NIKON", "D300", Shade, -1,			{ 1.937500, 1, 1.054688, 0 } },
   { "NIKON", "D300", Shade, 0,			{ 1.902344, 1, 1.066406, 0 } },
   { "NIKON", "D300", Shade, 1,			{ 1.867187, 1, 1.074219, 0 } },
   { "NIKON", "D300", Shade, 2,			{ 1.832031, 1, 1.085938, 0 } },
   { "NIKON", "D300", Shade, 3,			{ 1.804688, 1, 1.097656, 0 } },
   { "NIKON", "D300", Shade, 4,			{ 1.773438, 1, 1.113281, 0 } },
-  { "NIKON", "D300", Shade, 5,			{ 1.746094, 1, 1.125, 0 } },
+  { "NIKON", "D300", Shade, 5,			{ 1.746094, 1, 1.125000, 0 } },
   { "NIKON", "D300", Shade, 6,			{ 1.722656, 1, 1.140625, 0 } },
 
   /* D300 Kelvin presets */
-  { "NIKON", "D300", "2500K", 0,		{ 1, 1, 2.632813, 0 } },
-  { "NIKON", "D300", "2560K", 0,		{ 1, 1, 2.550781, 0 } },
-  { "NIKON", "D300", "2630K", 0,		{ 1, 1, 2.46875, 0 } },
-  { "NIKON", "D300", "2700K", 0,		{ 1, 1, 2.390625, 0 } },
-  { "NIKON", "D300", "2780K", 0,		{ 1, 1, 2.3125, 0 } },
-  { "NIKON", "D300", "2860K", 0,		{ 1, 1, 2.234375, 0 } },
+  { "NIKON", "D300", "2500K", 0,		{ 1.000000, 1, 2.632813, 0 } },
+  { "NIKON", "D300", "2560K", 0,		{ 1.000000, 1, 2.550781, 0 } },
+  { "NIKON", "D300", "2630K", 0,		{ 1.000000, 1, 2.468750, 0 } },
+  { "NIKON", "D300", "2700K", 0,		{ 1.000000, 1, 2.390625, 0 } },
+  { "NIKON", "D300", "2780K", 0,		{ 1.000000, 1, 2.312500, 0 } },
+  { "NIKON", "D300", "2860K", 0,		{ 1.000000, 1, 2.234375, 0 } },
   { "NIKON", "D300", "2940K", 0,		{ 1.003906, 1, 2.160156, 0 } },
   { "NIKON", "D300", "3030K", 0,		{ 1.027344, 1, 2.085938, 0 } },
   { "NIKON", "D300", "3130K", 0,		{ 1.050781, 1, 2.015625, 0 } },
   { "NIKON", "D300", "3230K", 0,		{ 1.078125, 1, 1.945312, 0 } },
-  { "NIKON", "D300", "3330K", 0,		{ 1.109375, 1, 1.875, 0 } },
+  { "NIKON", "D300", "3330K", 0,		{ 1.109375, 1, 1.875000, 0 } },
   { "NIKON", "D300", "3450K", 0,		{ 1.136719, 1, 1.808594, 0 } },
   { "NIKON", "D300", "3570K", 0,		{ 1.167969, 1, 1.742187, 0 } },
   { "NIKON", "D300", "3700K", 0,		{ 1.203125, 1, 1.679688, 0 } },
   { "NIKON", "D300", "3850K", 0,		{ 1.238281, 1, 1.617188, 0 } },
   { "NIKON", "D300", "4000K", 0,		{ 1.277344, 1, 1.554688, 0 } },
-  { "NIKON", "D300", "4170K", 0,		{ 1.316406, 1, 1.5, 0 } },
+  { "NIKON", "D300", "4170K", 0,		{ 1.316406, 1, 1.500000, 0 } },
   { "NIKON", "D300", "4350K", 0,		{ 1.386719, 1, 1.484375, 0 } },
   { "NIKON", "D300", "4550K", 0,		{ 1.441406, 1, 1.449219, 0 } },
   { "NIKON", "D300", "4760K", 0,		{ 1.488281, 1, 1.402344, 0 } },
-  { "NIKON", "D300", "5000K", 0,		{ 1.53125, 1, 1.351563, 0 } },
+  { "NIKON", "D300", "5000K", 0,		{ 1.531250, 1, 1.351563, 0 } },
   { "NIKON", "D300", "5260K", 0,		{ 1.570313, 1, 1.296875, 0 } },
   { "NIKON", "D300", "5560K", 0,		{ 1.613281, 1, 1.246094, 0 } },
   { "NIKON", "D300", "5880K", 0,		{ 1.652344, 1, 1.199219, 0 } },
   { "NIKON", "D300", "6250K", 0,		{ 1.695313, 1, 1.160156, 0 } },
-  { "NIKON", "D300", "6670K", 0,		{ 1.746094, 1, 1.125, 0 } },
+  { "NIKON", "D300", "6670K", 0,		{ 1.746094, 1, 1.125000, 0 } },
   { "NIKON", "D300", "7140K", 0,		{ 1.804688, 1, 1.097656, 0 } },
   { "NIKON", "D300", "7690K", 0,		{ 1.867187, 1, 1.074219, 0 } },
-  { "NIKON", "D300", "8330K", 0,		{ 1.9375, 1, 1.054688, 0 } },
+  { "NIKON", "D300", "8330K", 0,		{ 1.937500, 1, 1.054688, 0 } },
   { "NIKON", "D300", "9090K", 0,		{ 2.019531, 1, 1.027344, 0 } },
-  { "NIKON", "D300", "10000K", 0,		{ 2.109375, 1, 1, 0 } },
+  { "NIKON", "D300", "10000K", 0,		{ 2.109375, 1, 1.000000, 0 } },
 
   { "NIKON", "D700", DirectSunlight, -6,	{ 1.980469, 1, 1.199219, 0 } },
   { "NIKON", "D700", DirectSunlight, 0,		{ 1.816406, 1, 1.355469, 0 } },
@@ -1633,67 +1633,91 @@ const wb_data wb_preset[] = {
   { "NIKON", "D60", DaylightFluorescent, 0,	{ 1.953125, 1, 1.121094, 0 } },
   { "NIKON", "D60", HighTempMercuryVaporFluorescent, 0, { 2.296875, 1, 1.398438, 0 } },
 
-  { "NIKON", "D70", Incandescent, -3,		{ 1.429688, 1, 2.539062, 0 } },
+  { "NIKON", "D70", Incandescent, -3,		{ 1.429688, 1, 2.539063, 0 } }, /*3300K*/
+  { "NIKON", "D70", Incandescent, -2,		{ 1.398438, 1, 2.632813, 0 } }, /*3200K*/
+  { "NIKON", "D70", Incandescent, -1,		{ 1.378906, 1, 2.687500, 0 } }, /*3100K*/
   { "NIKON", "D70", Incandescent, 0,		{ 1.343750, 1, 2.816406, 0 } }, /*3000K*/
-  { "NIKON", "D70", Incandescent, 3,		{ 1.253906, 1, 3.250000, 0 } },
-  { "NIKON", "D70", Fluorescent, -3,		{ 2.734375, 1, 1.621094, 0 } },
+  { "NIKON", "D70", Incandescent, 1,		{ 1.312500, 1, 2.937500, 0 } }, /*2900K*/
+  { "NIKON", "D70", Incandescent, 2,		{ 1.281250, 1, 3.089844, 0 } }, /*2800K*/
+  { "NIKON", "D70", Incandescent, 3,		{ 1.253906, 1, 3.250000, 0 } }, /*2700K*/
+  { "NIKON", "D70", Fluorescent, -3,		{ 2.734375, 1, 1.621094, 0 } }, /*7200K*/
+  { "NIKON", "D70", Fluorescent, -2,		{ 2.417969, 1, 1.343750, 0 } }, /*6500K*/
+  { "NIKON", "D70", Fluorescent, -1,		{ 2.078125, 1, 1.691406, 0 } }, /*5000K*/
   { "NIKON", "D70", Fluorescent, 0,		{ 1.964844, 1, 2.476563, 0 } }, /*4200K*/
-  { "NIKON", "D70", Fluorescent, 3,		{ 1.312500, 1, 2.562500, 0 } },
-  { "NIKON", "D70", DirectSunlight, -3,		{ 2.156250, 1, 1.523438, 0 } },
+  { "NIKON", "D70", Fluorescent, 1,		{ 1.566406, 1, 2.753906, 0 } }, /*3700K*/
+  { "NIKON", "D70", Fluorescent, 2,		{ 1.406250, 1, 2.550781, 0 } }, /*3000K*/
+  { "NIKON", "D70", Fluorescent, 3,		{ 1.312500, 1, 2.562500, 0 } }, /*2700K*/
+  { "NIKON", "D70", DirectSunlight, -3,		{ 2.156250, 1, 1.523438, 0 } }, /*5600K*/
+  { "NIKON", "D70", DirectSunlight, -2,		{ 2.109375, 1, 1.562500, 0 } }, /*5400K*/
+  { "NIKON", "D70", DirectSunlight, -1,		{ 2.089844, 1, 1.574219, 0 } }, /*5300K*/
   { "NIKON", "D70", DirectSunlight, 0,		{ 2.062500, 1, 1.597656, 0 } }, /*5200K*/
-  { "NIKON", "D70", DirectSunlight, 3,		{ 1.953125, 1, 1.695312, 0 } },
-  { "NIKON", "D70", Flash, -3,			{ 2.578125, 1, 1.476562, 0 } },
+  { "NIKON", "D70", DirectSunlight, 1,		{ 2.007813, 1, 1.648438, 0 } }, /*5000K*/
+  { "NIKON", "D70", DirectSunlight, 2,		{ 1.980469, 1, 1.671875, 0 } }, /*4900K*/
+  { "NIKON", "D70", DirectSunlight, 3,		{ 1.953125, 1, 1.695313, 0 } }, /*4800K*/
+  { "NIKON", "D70", Flash, -3,			{ 2.578125, 1, 1.476563, 0 } }, /*6000K*/
+  { "NIKON", "D70", Flash, -2,			{ 2.535156, 1, 1.484375, 0 } }, /*5800K*/
+  { "NIKON", "D70", Flash, -1,			{ 2.488281, 1, 1.492188, 0 } }, /*5600K*/
   { "NIKON", "D70", Flash, 0,			{ 2.441406, 1, 1.500000, 0 } }, /*5400K*/
-  { "NIKON", "D70", Flash, 3,			{ 2.378906, 1, 1.523438, 0 } },
-  { "NIKON", "D70", Cloudy, -3,			{ 2.375000, 1, 1.386719, 0 } },
+  { "NIKON", "D70", Flash, 1,			{ 2.421875, 1, 1.507813, 0 } }, /*5200K*/
+  { "NIKON", "D70", Flash, 2,			{ 2.398438, 1, 1.515625, 0 } }, /*5000K*/
+  { "NIKON", "D70", Flash, 3,			{ 2.378906, 1, 1.523438, 0 } }, /*4800K*/
+  { "NIKON", "D70", Cloudy, -3,			{ 2.375000, 1, 1.386719, 0 } }, /*6600K*/
+  { "NIKON", "D70", Cloudy, -2,			{ 2.343750, 1, 1.406250, 0 } }, /*6400K*/
+  { "NIKON", "D70", Cloudy, -1,			{ 2.300781, 1, 1.429688, 0 } }, /*6200K*/
   { "NIKON", "D70", Cloudy, 0,			{ 2.257813, 1, 1.457031, 0 } }, /*6000K*/
-  { "NIKON", "D70", Cloudy, 3,			{ 2.109375, 1, 1.562500, 0 } },
-  { "NIKON", "D70", Shade, -3,			{ 2.757812, 1, 1.226562, 0 } },
+  { "NIKON", "D70", Cloudy, 1,			{ 2.207031, 1, 1.488281, 0 } }, /*5800K*/
+  { "NIKON", "D70", Cloudy, 2,			{ 2.156250, 1, 1.523438, 0 } }, /*5600K*/
+  { "NIKON", "D70", Cloudy, 3,			{ 2.109375, 1, 1.562500, 0 } }, /*5400K*/
+  { "NIKON", "D70", Shade, -3,			{ 2.757813, 1, 1.226563, 0 } }, /*9200K*/
+  { "NIKON", "D70", Shade, -2,			{ 2.710938, 1, 1.242188, 0 } }, /*8800K*/
+  { "NIKON", "D70", Shade, -1,			{ 2.660156, 1, 1.257813, 0 } }, /*8400K*/
   { "NIKON", "D70", Shade, 0,			{ 2.613281, 1, 1.277344, 0 } }, /*8000K*/
-  { "NIKON", "D70", Shade, 3,			{ 2.394531, 1, 1.375000, 0 } },
+  { "NIKON", "D70", Shade, 1,			{ 2.531250, 1, 1.308594, 0 } }, /*7500K*/
+  { "NIKON", "D70", Shade, 2,			{ 2.472656, 1, 1.335938, 0 } }, /*7100K*/
+  { "NIKON", "D70", Shade, 3,			{ 2.394531, 1, 1.375000, 0 } }, /*6700K*/
 
-  { "NIKON", "D70s", Incandescent, -3,		{ 1.429688, 1, 2.539063, 0 } },
-  { "NIKON", "D70s", Incandescent, -2,		{ 1.398438, 1, 2.632813, 0 } },
-  { "NIKON", "D70s", Incandescent, -1,		{ 1.378906, 1, 2.687500, 0 } },
-  { "NIKON", "D70s", Incandescent, 0,		{ 1.343750, 1, 2.816406, 0 } },
-  { "NIKON", "D70s", Incandescent, 1,		{ 1.312500, 1, 2.937500, 0 } },
-  { "NIKON", "D70s", Incandescent, 2,		{ 1.281250, 1, 3.089844, 0 } },
-  { "NIKON", "D70s", Incandescent, 3,		{ 1.253906, 1, 3.250000, 0 } },
-  { "NIKON", "D70s", Fluorescent, -3,		{ 2.734375, 1, 1.621094, 0 } },
-  { "NIKON", "D70s", Fluorescent, -2,		{ 2.417969, 1, 1.343750, 0 } },
-  { "NIKON", "D70s", Fluorescent, -1,		{ 2.078125, 1, 1.691406, 0 } },
-  { "NIKON", "D70s", Fluorescent, 0,		{ 1.964844, 1, 2.476563, 0 } },
-  { "NIKON", "D70s", Fluorescent, 1,		{ 1.566406, 1, 2.753906, 0 } },
-  { "NIKON", "D70s", Fluorescent, 2,		{ 1.406250, 1, 2.550781, 0 } },
-  { "NIKON", "D70s", Fluorescent, 3,		{ 1.312500, 1, 2.562500, 0 } },
-  { "NIKON", "D70s", DirectSunlight, -3,	{ 2.156250, 1, 1.523438, 0 } },
-  { "NIKON", "D70s", DirectSunlight, -2,	{ 2.109375, 1, 1.562500, 0 } },
-  { "NIKON", "D70s", DirectSunlight, -1,	{ 2.089844, 1, 1.574219, 0 } },
-  { "NIKON", "D70s", DirectSunlight, 0,		{ 2.062500, 1, 1.597656, 0 } },
-  { "NIKON", "D70s", DirectSunlight, 1,		{ 2.007813, 1, 1.648438, 0 } },
-  { "NIKON", "D70s", DirectSunlight, 2,		{ 1.980469, 1, 1.671875, 0 } },
-  { "NIKON", "D70s", DirectSunlight, 3,		{ 1.953125, 1, 1.695313, 0 } },
-  { "NIKON", "D70s", Flash, -3,			{ 2.578125, 1, 1.476563, 0 } },
-  { "NIKON", "D70s", Flash, -2,			{ 2.535156, 1, 1.484375, 0 } },
-  { "NIKON", "D70s", Flash, -1,			{ 2.488281, 1, 1.492188, 0 } },
-  { "NIKON", "D70s", Flash, 0,			{ 2.441406, 1, 1.500000, 0 } },
-  { "NIKON", "D70s", Flash, 1,			{ 2.421875, 1, 1.507813, 0 } },
-  { "NIKON", "D70s", Flash, 2,			{ 2.398438, 1, 1.515625, 0 } },
-  { "NIKON", "D70s", Flash, 3,			{ 2.378906, 1, 1.523438, 0 } },
-  { "NIKON", "D70s", Cloudy, -3,		{ 2.375000, 1, 1.386719, 0 } },
-  { "NIKON", "D70s", Cloudy, -2,		{ 2.343750, 1, 1.406250, 0 } },
-  { "NIKON", "D70s", Cloudy, -1,		{ 2.300781, 1, 1.429688, 0 } },
-  { "NIKON", "D70s", Cloudy, 0,			{ 2.257813, 1, 1.457031, 0 } },
-  { "NIKON", "D70s", Cloudy, 1,			{ 2.207031, 1, 1.488281, 0 } },
-  { "NIKON", "D70s", Cloudy, 2,			{ 2.156250, 1, 1.523438, 0 } },
-  { "NIKON", "D70s", Cloudy, 3,			{ 2.109375, 1, 1.562500, 0 } },
-  { "NIKON", "D70s", Shade, -3,			{ 2.757813, 1, 1.226563, 0 } },
-  { "NIKON", "D70s", Shade, -2,			{ 2.710938, 1, 1.242188, 0 } },
-  { "NIKON", "D70s", Shade, -1,			{ 2.660156, 1, 1.257813, 0 } },
-  { "NIKON", "D70s", Shade, 0,			{ 2.613281, 1, 1.277344, 0 } },
-  { "NIKON", "D70s", Shade, 1,			{ 2.531250, 1, 1.308594, 0 } },
-  { "NIKON", "D70s", Shade, 2,			{ 2.472656, 1, 1.335938, 0 } },
-  { "NIKON", "D70s", Shade, 3,			{ 2.394531, 1, 1.375000, 0 } },
+  { "NIKON", "D70s", Incandescent, -3,		{ 1.429688, 1, 2.539063, 0 } }, /*3300K*/
+  { "NIKON", "D70s", Incandescent, -2,		{ 1.398438, 1, 2.632813, 0 } }, /*3200K*/
+  { "NIKON", "D70s", Incandescent, -1,		{ 1.378906, 1, 2.687500, 0 } }, /*3100K*/
+  { "NIKON", "D70s", Incandescent, 0,		{ 1.343750, 1, 2.816406, 0 } }, /*3000K*/
+  { "NIKON", "D70s", Incandescent, 1,		{ 1.312500, 1, 2.937500, 0 } }, /*2900K*/
+  { "NIKON", "D70s", Incandescent, 2,		{ 1.281250, 1, 3.089844, 0 } }, /*2800K*/
+  { "NIKON", "D70s", Incandescent, 3,		{ 1.253906, 1, 3.250000, 0 } }, /*2700K*/
+  { "NIKON", "D70s", Fluorescent, -3,		{ 2.734375, 1, 1.621094, 0 } }, /*7200K*/
+  { "NIKON", "D70s", Fluorescent, -2,		{ 2.417969, 1, 1.343750, 0 } }, /*6500K*/
+  { "NIKON", "D70s", Fluorescent, -1,		{ 2.078125, 1, 1.691406, 0 } }, /*5000K*/
+  { "NIKON", "D70s", Fluorescent, 0,		{ 1.964844, 1, 2.476563, 0 } }, /*4200K*/
+  { "NIKON", "D70s", Fluorescent, 1,		{ 1.566406, 1, 2.753906, 0 } }, /*3700K*/
+  { "NIKON", "D70s", Fluorescent, 2,		{ 1.406250, 1, 2.550781, 0 } }, /*3000K*/
+  { "NIKON", "D70s", Fluorescent, 3,		{ 1.312500, 1, 2.562500, 0 } }, /*2700K*/
+  { "NIKON", "D70s", DirectSunlight, -3,	{ 2.156250, 1, 1.523438, 0 } }, /*5600K*/
+  { "NIKON", "D70s", DirectSunlight, -2,	{ 2.109375, 1, 1.562500, 0 } }, /*5400K*/
+  { "NIKON", "D70s", DirectSunlight, -1,	{ 2.089844, 1, 1.574219, 0 } }, /*5300K*/
+  { "NIKON", "D70s", DirectSunlight, 0,		{ 2.062500, 1, 1.597656, 0 } }, /*5200K*/
+  { "NIKON", "D70s", DirectSunlight, 1,		{ 2.007813, 1, 1.648438, 0 } }, /*5000K*/
+  { "NIKON", "D70s", DirectSunlight, 2,		{ 1.980469, 1, 1.671875, 0 } }, /*4900K*/
+  { "NIKON", "D70s", DirectSunlight, 3,		{ 1.953125, 1, 1.695313, 0 } }, /*4800K*/
+  { "NIKON", "D70s", Flash, -3,			{ 2.578125, 1, 1.476563, 0 } }, /*6000K*/
+  { "NIKON", "D70s", Flash, -2,			{ 2.535156, 1, 1.484375, 0 } }, /*5800K*/
+  { "NIKON", "D70s", Flash, -1,			{ 2.488281, 1, 1.492188, 0 } }, /*5600K*/
+  { "NIKON", "D70s", Flash, 0,			{ 2.441406, 1, 1.500000, 0 } }, /*5400K*/
+  { "NIKON", "D70s", Flash, 1,			{ 2.421875, 1, 1.507813, 0 } }, /*5200K*/
+  { "NIKON", "D70s", Flash, 2,			{ 2.398438, 1, 1.515625, 0 } }, /*5000K*/
+  { "NIKON", "D70s", Flash, 3,			{ 2.378906, 1, 1.523438, 0 } }, /*4800K*/
+  { "NIKON", "D70s", Cloudy, -3,		{ 2.375000, 1, 1.386719, 0 } }, /*6600K*/
+  { "NIKON", "D70s", Cloudy, -2,		{ 2.343750, 1, 1.406250, 0 } }, /*6400K*/
+  { "NIKON", "D70s", Cloudy, -1,		{ 2.300781, 1, 1.429688, 0 } }, /*6200K*/
+  { "NIKON", "D70s", Cloudy, 0,			{ 2.257813, 1, 1.457031, 0 } }, /*6000K*/
+  { "NIKON", "D70s", Cloudy, 1,			{ 2.207031, 1, 1.488281, 0 } }, /*5800K*/
+  { "NIKON", "D70s", Cloudy, 2,			{ 2.156250, 1, 1.523438, 0 } }, /*5600K*/
+  { "NIKON", "D70s", Cloudy, 3,			{ 2.109375, 1, 1.562500, 0 } }, /*5400K*/
+  { "NIKON", "D70s", Shade, -3,			{ 2.757813, 1, 1.226563, 0 } }, /*9200K*/
+  { "NIKON", "D70s", Shade, -2,			{ 2.710938, 1, 1.242188, 0 } }, /*8800K*/
+  { "NIKON", "D70s", Shade, -1,			{ 2.660156, 1, 1.257813, 0 } }, /*8400K*/
+  { "NIKON", "D70s", Shade, 0,			{ 2.613281, 1, 1.277344, 0 } }, /*8000K*/
+  { "NIKON", "D70s", Shade, 1,			{ 2.531250, 1, 1.308594, 0 } }, /*7500K*/
+  { "NIKON", "D70s", Shade, 2,			{ 2.472656, 1, 1.335938, 0 } }, /*7100K*/
+  { "NIKON", "D70s", Shade, 3,			{ 2.394531, 1, 1.375000, 0 } }, /*6700K*/
 
   { "NIKON", "D80", Incandescent, -3,		{ 1.234375, 1, 2.140625, 0 } },
   { "NIKON", "D80", Incandescent, 0,		{ 1.148438, 1, 2.386719, 0 } },
@@ -1784,7 +1808,6 @@ const wb_data wb_preset[] = {
   { "NIKON", "D90", "8330K", 0,			{ 2.218750, 1, 1.050781, 0 } },
   { "NIKON", "D90", "9090K", 0,			{ 2.308594, 1, 1.027344, 0 } },
   { "NIKON", "D90", "10000K", 0,		{ 2.414063, 1, 1.007813, 0 } },
-
 
   { "NIKON", "D3000", DirectSunlight, 0,	{ 1.851563, 1, 1.347656, 0 } },
   { "NIKON", "D3000", Flash, 0,			{ 2.113281, 1, 1.164062, 0 } },
@@ -2598,7 +2621,7 @@ const wb_data wb_preset[] = {
   { "Panasonic", "DMC-FZ28", Daylight, 0,	{ 1.684411, 1, 1.802281, 0 } },
   { "Panasonic", "DMC-FZ28", Cloudy, 0,		{ 1.825095, 1, 1.676806, 0 } },
   { "Panasonic", "DMC-FZ28", Shade, 0,		{ 1.996198, 1, 1.566540, 0 } },
-  { "Panasonic", "DMC-FZ28", Incandescent, 0,	{ 1.117871, 1, 2.558935 , 0 } },
+  { "Panasonic", "DMC-FZ28", Incandescent, 0,	{ 1.117871, 1, 2.558935, 0 } },
   { "Panasonic", "DMC-FZ28", Flash, 0,		{ 1.939164, 1, 1.596958, 0 } },
   { "Panasonic", "DMC-FZ28", "3000K", 0,	{ 1.015209, 1, 2.771863, 0 } },
   { "Panasonic", "DMC-FZ28", "4000K", 0,	{ 1.277566, 1, 2.171103, 0 } },
@@ -2702,14 +2725,14 @@ const wb_data wb_preset[] = {
   { "PENTAX", "*ist DL", Flash, 0,		{ 1.621094, 1, 1.027344, 0 } },
 
   /* It seems that the *ist DS WB settings are not really presets. */
-  { "PENTAX", "*ist DS", Daylight, 0,		{ 1.632812, 1, 1, 0 } },
-  { "PENTAX", "*ist DS", Shade, 0,		{ 1.964844, 1, 1, 0 } },
-  { "PENTAX", "*ist DS", Cloudy, 0,		{ 1.761719, 1, 1, 0 } },
-  { "PENTAX", "*ist DS", DaylightFluorescent, 0, { 1.910156, 1, 1, 0 } },
+  { "PENTAX", "*ist DS", Daylight, 0,		{ 1.632812, 1, 1.000000, 0 } },
+  { "PENTAX", "*ist DS", Shade, 0,		{ 1.964844, 1, 1.000000, 0 } },
+  { "PENTAX", "*ist DS", Cloudy, 0,		{ 1.761719, 1, 1.000000, 0 } },
+  { "PENTAX", "*ist DS", DaylightFluorescent, 0, { 1.910156, 1, 1.000000, 0 } },
   { "PENTAX", "*ist DS", NeutralFluorescent, 0,	{ 1.521569, 1.003922, 1, 0 } },
   { "PENTAX", "*ist DS", WhiteFluorescent, 0,	{ 1.496094, 1, 1.023438, 0 } },
-  { "PENTAX", "*ist DS", Tungsten, 0,		{ 1, 1, 2.027344, 0 } },
-  { "PENTAX", "*ist DS", Flash, 0,		{ 1.695312, 1, 1, 0 } },
+  { "PENTAX", "*ist DS", Tungsten, 0,		{ 1.000000, 1, 2.027344, 0 } },
+  { "PENTAX", "*ist DS", Flash, 0,		{ 1.695312, 1, 1.000000, 0 } },
 
   { "PENTAX", "K10D", Daylight, 0,		{ 1.660156, 1, 1.066406, 0 } },
   { "PENTAX", "K10D", Shade, 0,			{ 2.434783, 1.236715, 1, 0 } },
@@ -2730,16 +2753,16 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K20D", Flash, 0,			{ 1.792969, 1, 1.183594, 0 } },
 
   { "PENTAX", "K100D", Daylight, 0,		{ 1.468750, 1, 1.023438, 0 } },
-  { "PENTAX", "K100D", Shade, 0,		{ 1.769531, 1, 1, 0 } },
-  { "PENTAX", "K100D", Cloudy, 0,		{ 1.589844, 1, 1, 0 } },
+  { "PENTAX", "K100D", Shade, 0,		{ 1.769531, 1, 1.000000, 0 } },
+  { "PENTAX", "K100D", Cloudy, 0,		{ 1.589844, 1, 1.000000, 0 } },
   { "PENTAX", "K100D", DaylightFluorescent, 0,	{ 1.722656, 1, 1.039063, 0 } },
   { "PENTAX", "K100D", NeutralFluorescent, 0,	{ 1.425781, 1, 1.160156, 0 } },
   { "PENTAX", "K100D", WhiteFluorescent, 0,	{ 1.265625, 1, 1.414063, 0 } },
   { "PENTAX", "K100D", Tungsten, 0,		{ 1, 1.015873, 2.055556, 0 } },
-  { "PENTAX", "K100D", Flash, 0,		{ 1.527344, 1, 1, 0 } },
+  { "PENTAX", "K100D", Flash, 0,		{ 1.527344, 1, 1.000000, 0 } },
 
   { "PENTAX", "K100D Super", Daylight, 0,	{ 1.593750, 1, 1.011719, 0 } },
-  { "PENTAX", "K100D Super", Shade, 0,		{ 1.917969, 1, 1, 0 } },
+  { "PENTAX", "K100D Super", Shade, 0,		{ 1.917969, 1, 1.000000, 0 } },
   { "PENTAX", "K100D Super", Cloudy, 0,		{ 1.703125, 1, 1.015625, 0 } },
   { "PENTAX", "K100D Super", DaylightFluorescent, 0, { 1.708502, 1.036437, 1, 0 } },
   { "PENTAX", "K100D Super", NeutralFluorescent, 0, { 1.634538, 1.028112, 1, 0 } },
@@ -2748,13 +2771,13 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K100D Super", Flash, 0,		{ 1.670588, 1.003922, 1, 0 } },
 
   { "PENTAX", "K110D", Daylight, 0,		{ 1.468750, 1, 1.023438, 0 } },
-  { "PENTAX", "K110D", Shade, 0,		{ 1.769531, 1, 1, 0 } },
-  { "PENTAX", "K110D", Cloudy, 0,		{ 1.589844, 1, 1, 0 } },
+  { "PENTAX", "K110D", Shade, 0,		{ 1.769531, 1, 1.000000, 0 } },
+  { "PENTAX", "K110D", Cloudy, 0,		{ 1.589844, 1, 1.000000, 0 } },
   { "PENTAX", "K110D", DaylightFluorescent, 0,	{ 1.722656, 1, 1.039063, 0 } },
   { "PENTAX", "K110D", NeutralFluorescent, 0,	{ 1.425781, 1, 1.160156, 0 } },
   { "PENTAX", "K110D", WhiteFluorescent, 0,	{ 1.265625, 1, 1.414063, 0 } },
   { "PENTAX", "K110D", Tungsten, 0,		{ 1, 1.015873, 2.055556, 0 } },
-  { "PENTAX", "K110D", Flash, 0,		{ 1.527344, 1, 1, 0 } },
+  { "PENTAX", "K110D", Flash, 0,		{ 1.527344, 1, 1.000000, 0 } },
 
   { "PENTAX", "K200D", Daylight, 0,		{ 1.804688, 1, 1.304688, 0 } },
   { "PENTAX", "K200D", Shade, 0,		{ 2.140625, 1, 1.085937, 0 } },
