@@ -21,36 +21,36 @@
 
 #ifdef HAVE_LENSFUN
 
-static void delete_children (GtkWidget *widget, gpointer data)
+static void delete_children(GtkWidget *widget, gpointer data)
 {
     (void)data;
-    gtk_widget_destroy (widget);
+    gtk_widget_destroy(widget);
 }
 
 /**
  * Add a labeled GtkComboBoxEntry to a table or to a box.
  */
-static GtkComboBoxEntry *combo_entry_text (
-    GtkWidget *container, guint x, guint y, gchar *lbl, gchar *tip)
+static GtkComboBoxEntry *combo_entry_text(GtkWidget *container,
+	guint x, guint y, gchar *lbl, gchar *tip)
 {
-    GtkWidget *label, *combo;
-
-    label = gtk_label_new(lbl);
+    GtkWidget *label = gtk_label_new(lbl);
     gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-    if (GTK_IS_TABLE (container))
-        gtk_table_attach (GTK_TABLE (container), label, x, x + 1, y, y + 1, 0, 0, 2, 0);
-    else if (GTK_IS_BOX (container))
-        gtk_box_pack_start (GTK_BOX (container), label, FALSE, FALSE, 2);
-    uf_widget_set_tooltip (label, tip);
+    if (GTK_IS_TABLE(container))
+	gtk_table_attach(GTK_TABLE(container), label, x, x + 1, y, y + 1,
+		0, 0, 2, 0);
+    else if (GTK_IS_BOX(container))
+	gtk_box_pack_start(GTK_BOX(container), label, FALSE, FALSE, 2);
+    uf_widget_set_tooltip(label, tip);
 
-    combo = gtk_combo_box_entry_new_text ();
-    if (GTK_IS_TABLE (container))
-        gtk_table_attach (GTK_TABLE (container), combo, x+1, x+2, y, y+1, 0, 0, 2, 0);
-    else if (GTK_IS_BOX (container))
-        gtk_box_pack_start (GTK_BOX (container), combo, FALSE, FALSE, 2);
-    uf_widget_set_tooltip (combo, tip);
+    GtkWidget *combo = gtk_combo_box_entry_new_text();
+    if (GTK_IS_TABLE(container))
+	gtk_table_attach(GTK_TABLE(container), combo, x+1, x+2, y, y+1,
+		0, 0, 2, 0);
+    else if (GTK_IS_BOX(container))
+	gtk_box_pack_start(GTK_BOX(container), combo, FALSE, FALSE, 2);
+    uf_widget_set_tooltip(combo, tip);
 
-    return GTK_COMBO_BOX_ENTRY (combo);
+    return GTK_COMBO_BOX_ENTRY(combo);
 }
 
 /* simple function to compute the floating-point precision
@@ -61,47 +61,42 @@ static int precision(double x)
     return MAX(-floor(log(x) / log(10) - 0.99), 0);
 }
 
-static GtkComboBoxEntry *combo_entry_numeric (
-    GtkWidget *container, guint x, guint y, gchar *lbl, gchar *tip,
-    gdouble val, gdouble *values, int nvalues)
+static GtkComboBoxEntry *combo_entry_numeric(GtkWidget *container,
+	guint x, guint y, gchar *lbl, gchar *tip,
+	gdouble val, gdouble *values, int nvalues)
 {
     int i;
-    char txt [30];
-    GtkEntry *entry;
-    GtkComboBoxEntry *combo;
+    char txt[30];
+    GtkComboBoxEntry *combo = combo_entry_text(container, x, y, lbl, tip);
+    GtkEntry *entry = GTK_ENTRY(GTK_BIN(combo)->child);
 
-    combo = combo_entry_text (container, x, y, lbl, tip);
-    entry = GTK_ENTRY (GTK_BIN (combo)->child);
-
-    gtk_entry_set_width_chars (entry, 4);
+    gtk_entry_set_width_chars(entry, 4);
 
     snprintf(txt, sizeof(txt), "%.*f", precision(val), val);
-    gtk_entry_set_text (entry, txt);
+    gtk_entry_set_text(entry, txt);
 
-    for (i = 0; i < nvalues; i++)
-    {
-        gdouble v = values [i];
-        snprintf(txt, sizeof(txt), "%.*f", precision(v), v);
-        gtk_combo_box_append_text (GTK_COMBO_BOX (combo), txt);
+    for (i = 0; i < nvalues; i++) {
+	gdouble v = values[i];
+	snprintf(txt, sizeof(txt), "%.*f", precision(v), v);
+	gtk_combo_box_append_text(GTK_COMBO_BOX(combo), txt);
     }
-
     return combo;
 }
 
-static GtkComboBoxEntry *combo_entry_numeric_log (
-    GtkWidget *container, guint x, guint y, gchar *lbl, gchar *tip,
-    gdouble val, gdouble min, gdouble max, gdouble step)
+static GtkComboBoxEntry *combo_entry_numeric_log(GtkWidget *container,
+	guint x, guint y, gchar *lbl, gchar *tip,
+	gdouble val, gdouble min, gdouble max, gdouble step)
 {
     int i, nvalues = (int)ceil(log(max/min) / log(step)) + 1;
     gdouble *values = g_new(gdouble, nvalues);
     values[0] = min;
-    for (i=1; i < nvalues ; i++)
+    for (i=1; i < nvalues; i++)
 	values[i] = values[i-1] * step;
- 
-    GtkComboBoxEntry *cbe = combo_entry_numeric (
-        container, x, y, lbl, tip, val, values, nvalues);
-    g_free (values);
-    return cbe;
+
+    GtkComboBoxEntry *combo = combo_entry_numeric(container, x, y,
+	    lbl, tip, val, values, nvalues);
+    g_free(values);
+    return combo;
 }
 
 static void camera_set(preview_data *data)
@@ -110,15 +105,14 @@ static void camera_set(preview_data *data)
     const char *model = lf_mlstr_get(CFG->camera->Model);
     const char *variant = lf_mlstr_get(CFG->camera->Variant);
 
-    if (model != NULL)
-    {
+    if (model != NULL) {
 	gchar *fm;
 	if (maker != NULL)
 	    fm = g_strdup_printf("%s, %s", maker, model);
 	else
 	    fm = g_strdup_printf("%s", model);
 	gtk_entry_set_text(GTK_ENTRY(data->CameraModel), fm);
-	g_free (fm);
+	g_free(fm);
     }
     char _variant[100];
     if (variant != NULL)
@@ -136,8 +130,7 @@ static void camera_set(preview_data *data)
     g_free(fm);
 }
 
-static void camera_menu_select (
-    GtkMenuItem *menuitem, gpointer user_data)
+static void camera_menu_select(GtkMenuItem *menuitem, gpointer user_data)
 {
     preview_data *data = (preview_data *)user_data;
     lfCamera *cam = g_object_get_data(G_OBJECT(menuitem), "lfCamera");
@@ -145,565 +138,509 @@ static void camera_menu_select (
     camera_set(data);
 }
 
-static void camera_menu_fill (
-    preview_data *data, const lfCamera *const *camlist)
+static void camera_menu_fill(preview_data *data, const lfCamera *const *camlist)
 {
     unsigned i;
     GPtrArray *makers, *submenus;
 
-    if (data->CameraMenu)
-    {
-        gtk_widget_destroy (data->CameraMenu);
-        data->CameraMenu = NULL;
+    if (data->CameraMenu) {
+	gtk_widget_destroy(data->CameraMenu);
+	data->CameraMenu = NULL;
     }
 
     /* Count all existing camera makers and create a sorted list */
-    makers = g_ptr_array_new ();
-    submenus = g_ptr_array_new ();
-    for (i = 0; camlist [i]; i++)
-    {
-        GtkWidget *submenu, *item;
-        const char *m = lf_mlstr_get (camlist [i]->Maker);
-        int idx = ptr_array_find_sorted (makers, m, (GCompareFunc)g_utf8_collate);
-        if (idx < 0)
-        {
-            /* No such maker yet, insert it into the array */
-            idx = ptr_array_insert_sorted (makers, m, (GCompareFunc)g_utf8_collate);
-            /* Create a submenu for cameras by this maker */
-            submenu = gtk_menu_new ();
-            ptr_array_insert_index (submenus, submenu, idx);
-        }
+    makers = g_ptr_array_new();
+    submenus = g_ptr_array_new();
+    for (i = 0; camlist[i]; i++) {
+	GtkWidget *submenu, *item;
+	const char *m = lf_mlstr_get(camlist[i]->Maker);
+	int idx = ptr_array_find_sorted(makers, m,
+		(GCompareFunc)g_utf8_collate);
+	if (idx < 0) {
+	    /* No such maker yet, insert it into the array */
+	    idx = ptr_array_insert_sorted(makers, m,
+		    (GCompareFunc)g_utf8_collate);
+	    /* Create a submenu for cameras by this maker */
+	    submenu = gtk_menu_new();
+	    ptr_array_insert_index(submenus, submenu, idx);
+	}
 
-        submenu = g_ptr_array_index (submenus, idx);
-        /* Append current camera name to the submenu */
-        m = lf_mlstr_get (camlist [i]->Model);
-        if (!camlist [i]->Variant)
-            item = gtk_menu_item_new_with_label (m);
-        else
-        {
-            gchar *fm = g_strdup_printf ("%s (%s)", m, camlist [i]->Variant);
-            item = gtk_menu_item_new_with_label (fm);
-            g_free (fm);
-        }
-        gtk_widget_show (item);
-        g_object_set_data(G_OBJECT(item), "lfCamera", (void *)camlist [i]);
-        g_signal_connect(G_OBJECT(item), "activate",
-                         G_CALLBACK(camera_menu_select), data);
-        gtk_menu_shell_append (GTK_MENU_SHELL (submenu), item);
+	submenu = g_ptr_array_index(submenus, idx);
+	/* Append current camera name to the submenu */
+	m = lf_mlstr_get(camlist[i]->Model);
+	if (camlist[i]->Variant == NULL) {
+	    item = gtk_menu_item_new_with_label(m);
+	} else {
+	    gchar *fm = g_strdup_printf("%s (%s)", m, camlist[i]->Variant);
+	    item = gtk_menu_item_new_with_label(fm);
+	    g_free(fm);
+	}
+	gtk_widget_show(item);
+	g_object_set_data(G_OBJECT(item), "lfCamera", (void *)camlist[i]);
+	g_signal_connect(G_OBJECT(item), "activate",
+		G_CALLBACK(camera_menu_select), data);
+	gtk_menu_shell_append(GTK_MENU_SHELL(submenu), item);
     }
 
-    data->CameraMenu = gtk_menu_new ();
-    for (i = 0; i < makers->len; i++)
-    {
-        GtkWidget *item = gtk_menu_item_new_with_label (g_ptr_array_index (makers, i));
-        gtk_widget_show (item);
-        gtk_menu_shell_append (GTK_MENU_SHELL (data->CameraMenu), item);
-        gtk_menu_item_set_submenu (
-            GTK_MENU_ITEM (item), (GtkWidget *)g_ptr_array_index (submenus, i));
+    data->CameraMenu = gtk_menu_new();
+    for (i = 0; i < makers->len; i++) {
+	GtkWidget *item = gtk_menu_item_new_with_label(
+		g_ptr_array_index(makers, i));
+	gtk_widget_show(item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(data->CameraMenu), item);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(item),
+		(GtkWidget *)g_ptr_array_index(submenus, i));
     }
-
-    g_ptr_array_free (submenus, TRUE);
-    g_ptr_array_free (makers, TRUE);
+    g_ptr_array_free(submenus, TRUE);
+    g_ptr_array_free(makers, TRUE);
 }
 
-static void parse_maker_model (
-    const char *txt, char *make, size_t sz_make, char *model, size_t sz_model)
+static void parse_maker_model(const char *txt, char *make, size_t sz_make,
+	char *model, size_t sz_model)
 {
-    const gchar *sep;
+    while (txt[0] != '\0' && isspace(txt[0]))
+	txt++;
+    const gchar *sep = strchr(txt, ',');
+    if (sep != NULL) {
+	size_t len = sep - txt + 1;
+	len = MIN(len, sz_make);
+	g_strlcpy(make, txt, len);
 
-    while (txt [0] && isspace (txt [0]))
-        txt++;
-    sep = strchr (txt, ',');
-    if (sep)
-    {
-        size_t len = sep - txt;
-        if (len > sz_make - 1)
-            len = sz_make - 1;
-        memcpy (make, txt, len);
-        make [len] = 0;
-
-        while (*++sep && isspace (sep [0]))
-            ;
-        len = strlen (sep);
-        if (len > sz_model - 1)
-            len = sz_model - 1;
-        memcpy (model, sep, len);
-        model [len] = 0;
-    }
-    else
-    {
-        size_t len = strlen (txt);
-        if (len > sz_model - 1)
-            len = sz_model - 1;
-        memcpy (model, txt, len);
-        model [len] = 0;
-        make [0] = 0;
+	while (*++sep && isspace(sep[0])) { }
+	g_strlcpy(model, sep, sz_model);
+    } else {
+	g_strlcpy(model, txt, sz_model);
     }
 }
 
-static void camera_search_clicked(
-    GtkWidget *button, gpointer user_data)
+static void camera_search_clicked(GtkWidget *button, preview_data *data)
 {
-    preview_data *data = (preview_data *)user_data;
-    const lfCamera **camlist;
-    char make [200], model [200];
+    (void)button;
+    char make[200], model[200];
     const gchar *txt = gtk_entry_get_text(GTK_ENTRY(data->CameraModel));
+    parse_maker_model(txt, make, sizeof(make), model, sizeof(model));
 
-    (void)button;
+    const lfCamera **camlist =
+	    lf_db_find_cameras_ext(CFG->lensdb, make, model, 0);
+    if (camlist == NULL)
+	return;
+    camera_menu_fill(data, camlist);
+    lf_free(camlist);
 
-    parse_maker_model (txt, make, sizeof (make), model, sizeof (model));
-
-    camlist = lf_db_find_cameras_ext (CFG->lensdb, make, model, 0);
-    if (!camlist)
-        return;
-
-    camera_menu_fill (data, camlist);
-    lf_free (camlist);
-
-    gtk_menu_popup (GTK_MENU (data->CameraMenu), NULL, NULL, NULL, NULL,
-                    0, gtk_get_current_event_time ());
+    gtk_menu_popup(GTK_MENU(data->CameraMenu), NULL, NULL, NULL, NULL,
+	    0, gtk_get_current_event_time());
 }
 
-static void camera_list_clicked(
-    GtkWidget *button, gpointer user_data)
+static void camera_list_clicked(GtkWidget *button, preview_data *data)
 {
-    preview_data *data = (preview_data *)user_data;
-    const lfCamera *const *camlist;
-
     (void)button;
+    const lfCamera *const *camlist = lf_db_get_cameras(CFG->lensdb);
+    if (camlist == NULL)
+	return;
 
-    camlist = lf_db_get_cameras (CFG->lensdb);
-    if (!camlist)
-        return;
+    camera_menu_fill(data, camlist);
 
-    camera_menu_fill (data, camlist);
-
-    gtk_menu_popup (GTK_MENU (data->CameraMenu), NULL, NULL, NULL, NULL,
-                    0, gtk_get_current_event_time ());
+    gtk_menu_popup(GTK_MENU(data->CameraMenu), NULL, NULL, NULL, NULL,
+	    0, gtk_get_current_event_time());
 }
 
 /* Update all lens model-related controls to reflect current model */
-static void lens_update_controls (preview_data *data)
+static void lens_update_controls(preview_data *data)
 {
-    gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensDistortionModel),
-                              CFG->lens_distortion.Model - LF_DIST_MODEL_NONE);
-    gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensTCAModel),
-                              CFG->lens_tca.Model - LF_TCA_MODEL_NONE);
-    gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensVignettingModel),
-                              CFG->lens_vignetting.Model - LF_VIGNETTING_MODEL_NONE);
-    gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensFromGeometrySel),
-                              CFG->lens->Type);
-    gtk_combo_box_set_active (GTK_COMBO_BOX (data->LensToGeometrySel),
-                              CFG->cur_lens_type);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensDistortionModel),
+	    CFG->lens_distortion.Model - LF_DIST_MODEL_NONE);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensTCAModel),
+	    CFG->lens_tca.Model - LF_TCA_MODEL_NONE);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensVignettingModel),
+	    CFG->lens_vignetting.Model - LF_VIGNETTING_MODEL_NONE);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensFromGeometrySel),
+	    CFG->lens->Type);
+    gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensToGeometrySel),
+	    CFG->cur_lens_type);
 }
 
-static void lens_interpolate (preview_data *data, const lfLens *lens)
+static void lens_interpolate(preview_data *data, const lfLens *lens)
 {
     lfDistortionModel old_dist_model = CFG->lens_distortion.Model;
     lfTCAModel old_tca_model = CFG->lens_tca.Model;
     lfVignettingModel old_vignetting_model = CFG->lens_vignetting.Model;
 
     /* Interpolate all models and set the temp values accordingly */
-    if (!lf_lens_interpolate_distortion (lens, CFG->focal_len, &CFG->lens_distortion))
-        memset (&CFG->lens_distortion, 0, sizeof (CFG->lens_distortion));
-    if (!lf_lens_interpolate_tca (lens, CFG->focal_len, &CFG->lens_tca))
-        memset (&CFG->lens_tca, 0, sizeof (CFG->lens_tca));
-    if (!lf_lens_interpolate_vignetting (lens, CFG->focal_len, CFG->aperture,
-                                         CFG->subject_distance, &CFG->lens_vignetting))
-        memset (&CFG->lens_vignetting, 0, sizeof (CFG->lens_vignetting));
+    if (!lf_lens_interpolate_distortion(lens, CFG->focal_len,
+		&CFG->lens_distortion))
+	memset(&CFG->lens_distortion, 0, sizeof(CFG->lens_distortion));
+    if (!lf_lens_interpolate_tca(lens, CFG->focal_len, &CFG->lens_tca))
+	memset(&CFG->lens_tca, 0, sizeof(CFG->lens_tca));
+    if (!lf_lens_interpolate_vignetting(lens, CFG->focal_len, CFG->aperture,
+		CFG->subject_distance, &CFG->lens_vignetting))
+	memset(&CFG->lens_vignetting, 0, sizeof(CFG->lens_vignetting));
 
-    lens_update_controls (data);
+    lens_update_controls(data);
 
     /* If the model does not change, the parameter sliders won't be updated.
      * To solve this, we'll call the "changed" callback manually.
      */
     if (CFG->lens_distortion.Model != LF_DIST_MODEL_NONE &&
-        old_dist_model == CFG->lens_distortion.Model)
-        g_signal_emit_by_name (GTK_COMBO_BOX (data->LensDistortionModel),
-                               "changed", NULL, NULL);
+	old_dist_model == CFG->lens_distortion.Model)
+	g_signal_emit_by_name(GTK_COMBO_BOX(data->LensDistortionModel),
+		"changed", NULL, NULL);
     if (CFG->lens_tca.Model != LF_TCA_MODEL_NONE &&
-        old_tca_model == CFG->lens_tca.Model)
-        g_signal_emit_by_name (GTK_COMBO_BOX (data->LensTCAModel),
-                               "changed", NULL, NULL);
+	old_tca_model == CFG->lens_tca.Model)
+	g_signal_emit_by_name(GTK_COMBO_BOX(data->LensTCAModel),
+		"changed", NULL, NULL);
     if (CFG->lens_vignetting.Model != LF_VIGNETTING_MODEL_NONE &&
-        old_vignetting_model == CFG->lens_vignetting.Model)
-        g_signal_emit_by_name (GTK_COMBO_BOX (data->LensVignettingModel),
-                               "changed", NULL, NULL);
+	old_vignetting_model == CFG->lens_vignetting.Model)
+	g_signal_emit_by_name(GTK_COMBO_BOX(data->LensVignettingModel),
+		"changed", NULL, NULL);
 
     if (data->UF->modFlags & LF_MODIFY_VIGNETTING)
-        ufraw_invalidate_layer(data->UF, ufraw_first_phase);
+	ufraw_invalidate_layer(data->UF, ufraw_first_phase);
     else
-        ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
+	ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
     resize_canvas(data);
-    render_preview (data);
+    render_preview(data);
 }
 
-static void lens_comboentry_update (GtkComboBox *widget, float *valuep)
+static void lens_combo_entry_update(GtkComboBox *widget, float *valuep)
 {
-    preview_data *data = get_preview_data (widget);
-    if (sscanf (gtk_combo_box_get_active_text (widget), "%f", valuep) == 1)
-        lens_interpolate (data, CFG->lens);
+    preview_data *data = get_preview_data(widget);
+    char *text = gtk_combo_box_get_active_text(widget);
+    if (sscanf(text, "%f", valuep) == 1)
+	lens_interpolate(data, CFG->lens);
+    g_free(text);
 }
 
-static void lens_set (preview_data *data, const lfLens *lens)
+static void lens_set(preview_data *data, const lfLens *lens)
 {
     gchar *fm;
-    const char *maker, *model;
-    GtkComboBoxEntry *cbe;
+    GtkComboBoxEntry *combo;
     unsigned i;
-    static gdouble focal_values [] =
-    {
-        4.5, 8, 10, 12, 14, 15, 16, 17, 18, 20, 24, 28, 30, 31, 35, 38, 40, 43,
-        45, 50, 55, 60, 70, 75, 77, 80, 85, 90, 100, 105, 110, 120, 135,
-        150, 200, 210, 240, 250, 300, 400, 500, 600, 800, 1000
+    static gdouble focal_values[] = {
+	4.5, 8, 10, 12, 14, 15, 16, 17, 18, 20, 24, 28, 30, 31, 35, 38, 40, 43,
+	45, 50, 55, 60, 70, 75, 77, 80, 85, 90, 100, 105, 110, 120, 135,
+	150, 200, 210, 240, 250, 300, 400, 500, 600, 800, 1000
     };
-    static gdouble aperture_values [] =
-    {
-        1, 1.2, 1.4, 1.7, 2, 2.4, 2.8, 3.4, 4, 4.8, 5.6, 6.7,
-        8, 9.5, 11, 13, 16, 19, 22, 27, 32, 38
+    static gdouble aperture_values[] = {
+	1, 1.2, 1.4, 1.7, 2, 2.4, 2.8, 3.4, 4, 4.8, 5.6, 6.7,
+	8, 9.5, 11, 13, 16, 19, 22, 27, 32, 38
     };
 
-    if (!lens)
-    {
-        gtk_entry_set_text(GTK_ENTRY(data->LensModel), "");
-        uf_widget_set_tooltip(data->LensModel, NULL);
-        return;
+    if (lens == NULL) {
+	gtk_entry_set_text(GTK_ENTRY(data->LensModel), "");
+	uf_widget_set_tooltip(data->LensModel, NULL);
+	return;
+    }
+    if (CFG->lens != lens)
+	lf_lens_copy(CFG->lens, lens);
+
+    const char *maker = lf_mlstr_get(lens->Maker);
+    const char *model = lf_mlstr_get(lens->Model);
+
+    if (model != NULL) {
+	if (maker != NULL)
+	    fm = g_strdup_printf("%s, %s", maker, model);
+	else
+	    fm = g_strdup_printf("%s", model);
+	gtk_entry_set_text(GTK_ENTRY(data->LensModel), fm);
+	g_free(fm);
     }
 
-    if (CFG->lens!= lens)
-	lf_lens_copy (CFG->lens, lens);
-
-    maker = lf_mlstr_get (lens->Maker);
-    model = lf_mlstr_get (lens->Model);
-
-    if (model)
-    {
-        if (maker)
-            fm = g_strdup_printf ("%s, %s", maker, model);
-        else
-            fm = g_strdup_printf ("%s", model);
-        gtk_entry_set_text (GTK_ENTRY (data->LensModel), fm);
-        g_free (fm);
-    }
-
-    char focal [100], aperture [100], mounts [200];
+    char focal[100], aperture[100], mounts[200];
 
     if (lens->MinFocal < lens->MaxFocal)
-        snprintf (focal, sizeof (focal), "%g-%gmm", lens->MinFocal, lens->MaxFocal);
+	snprintf(focal, sizeof(focal), "%g-%gmm",
+		lens->MinFocal, lens->MaxFocal);
     else
-        snprintf (focal, sizeof (focal), "%gmm", lens->MinFocal);
+	snprintf(focal, sizeof(focal), "%gmm", lens->MinFocal);
     if (lens->MinAperture < lens->MaxAperture)
-        snprintf (aperture, sizeof (aperture), "%g-%g", lens->MinAperture, lens->MaxAperture);
+	snprintf(aperture, sizeof(aperture), "%g-%g",
+		lens->MinAperture, lens->MaxAperture);
     else
-        snprintf (aperture, sizeof (aperture), "%g", lens->MinAperture);
+	snprintf(aperture, sizeof(aperture), "%g", lens->MinAperture);
 
-    mounts [0] = 0;
-    if (lens->Mounts)
-        for (i = 0; lens->Mounts [i]; i++)
-        {
-            if (i > 0)
-                g_strlcat (mounts, ", ", sizeof (mounts));
-            g_strlcat (mounts, lens->Mounts [i], sizeof (mounts));
-        }
+    mounts[0] = 0;
+    if (lens->Mounts != NULL)
+	for (i = 0; lens->Mounts[i] != NULL; i++) {
+	    if (i > 0)
+		g_strlcat(mounts, ", ", sizeof(mounts));
+	    g_strlcat(mounts, lens->Mounts[i], sizeof(mounts));
+	}
 
-    fm = g_strdup_printf (_("Maker:\t\t%s\n"
-                            "Model:\t\t%s\n"
-                            "Focal range:\t%s\n"
-                            "Aperture:\t\t%s\n"
-                            "Crop factor:\t%.1f\n"
-                            "Type:\t\t%s\n"
-                            "Mounts:\t\t%s"),
-                          maker ? maker : "?", model ? model : "?",
-                          focal, aperture, lens->CropFactor,
-                          lf_get_lens_type_desc (lens->Type, NULL), mounts);
+    fm = g_strdup_printf(_("Maker:\t\t%s\n"
+			   "Model:\t\t%s\n"
+			   "Focal range:\t%s\n"
+			   "Aperture:\t\t%s\n"
+			   "Crop factor:\t%.1f\n"
+			   "Type:\t\t%s\n"
+			   "Mounts:\t\t%s"),
+			    maker ? maker : "?", model ? model : "?",
+			    focal, aperture, lens->CropFactor,
+			    lf_get_lens_type_desc(lens->Type, NULL), mounts);
     uf_widget_set_tooltip(data->LensModel, fm);
-    g_free (fm);
+    g_free(fm);
 
     /* Create the focal/aperture/distance combo boxes */
-    gtk_container_foreach (
-        GTK_CONTAINER (data->LensParamBox), delete_children, NULL);
+    gtk_container_foreach(GTK_CONTAINER(data->LensParamBox),
+	    delete_children, NULL);
 
     int ffi = 0, fli = -1;
-    for (i = 0; i < sizeof (focal_values) / sizeof (gdouble); i++)
-    {
-        if (focal_values [i] < lens->MinFocal)
-            ffi = i + 1;
-        if (focal_values [i] > lens->MaxFocal && fli == -1)
-            fli = i;
+    for (i = 0; i < sizeof(focal_values) / sizeof(gdouble); i++) {
+	if (focal_values[i] < lens->MinFocal)
+	    ffi = i + 1;
+	if (focal_values[i] > lens->MaxFocal && fli == -1)
+	    fli = i;
     }
     if (lens->MaxFocal == 0 || fli < 0)
-        fli = sizeof (focal_values) / sizeof (gdouble);
+	fli = sizeof(focal_values) / sizeof(gdouble);
     if (fli < ffi)
-        fli = ffi + 1;
-    cbe = combo_entry_numeric (
-        data->LensParamBox, 0, 0, _("Focal"), _("Focal length"),
-        CFG->focal_len, focal_values + ffi, fli - ffi);
-    g_signal_connect (G_OBJECT(cbe), "changed",
-                      G_CALLBACK(lens_comboentry_update), &CFG->focal_len);
+	fli = ffi + 1;
+    combo = combo_entry_numeric(data->LensParamBox, 0, 0,
+	    _("Focal"), _("Focal length"),
+	    CFG->focal_len, focal_values + ffi, fli - ffi);
+    g_signal_connect(G_OBJECT(combo), "changed",
+	    G_CALLBACK(lens_combo_entry_update), &CFG->focal_len);
 
     ffi = 0;
-    for (i = 0; i < sizeof (aperture_values) / sizeof (gdouble); i++)
-        if (aperture_values [i] < lens->MinAperture)
-            ffi = i + 1;
-    cbe = combo_entry_numeric (
-        data->LensParamBox, 0, 0, _("F"), _("F-number (Aperture)"),
-        CFG->aperture, aperture_values + ffi, sizeof (aperture_values) / sizeof (gdouble) - ffi);
-    g_signal_connect (G_OBJECT(cbe), "changed",
-                      G_CALLBACK(lens_comboentry_update), &CFG->aperture);
+    for (i = 0; i < sizeof(aperture_values) / sizeof(gdouble); i++)
+	if (aperture_values[i] < lens->MinAperture)
+	    ffi = i + 1;
+    combo = combo_entry_numeric(data->LensParamBox, 0, 0,
+	    _("F"), _("F-number (Aperture)"),
+	    CFG->aperture, aperture_values + ffi,
+	    sizeof(aperture_values) / sizeof(gdouble) - ffi);
+    g_signal_connect(G_OBJECT(combo), "changed",
+	    G_CALLBACK(lens_combo_entry_update), &CFG->aperture);
 
-    cbe = combo_entry_numeric_log (
-        data->LensParamBox, 0, 0, _("Distance"), _("Distance to subject"),
-        CFG->subject_distance, 0.25, 1000, sqrt(2));
-    g_signal_connect (G_OBJECT(cbe), "changed",
-                      G_CALLBACK(lens_comboentry_update), &CFG->subject_distance);
+    combo = combo_entry_numeric_log(data->LensParamBox, 0, 0,
+	    _("Distance"), _("Distance to subject"),
+	    CFG->subject_distance, 0.25, 1000, sqrt(2));
+    g_signal_connect(G_OBJECT(combo), "changed",
+	    G_CALLBACK(lens_combo_entry_update), &CFG->subject_distance);
 
-    gtk_widget_show_all (data->LensParamBox);
+    gtk_widget_show_all(data->LensParamBox);
 
     CFG->cur_lens_type = LF_UNKNOWN;
 }
 
-static void lens_menu_select(GtkMenuItem *menuitem, gpointer user_data)
+static void lens_menu_select(GtkMenuItem *menuitem, preview_data *data)
 {
-    preview_data *data = (preview_data *)user_data;
     lfLens *lens = (lfLens *)g_object_get_data(G_OBJECT(menuitem), "lfLens");
     lens_set(data, lens);
     lens_interpolate(data, lens);
 }
 
-static void lens_menu_fill (
-    preview_data *data, const lfLens *const *lenslist)
+static void lens_menu_fill(preview_data *data, const lfLens *const *lenslist)
 {
     unsigned i;
-    GPtrArray *makers, *submenus;
-
-    if (data->LensMenu)
-    {
-        gtk_widget_destroy (data->LensMenu);
-        data->LensMenu = NULL;
+    if (data->LensMenu != NULL) {
+	gtk_widget_destroy(data->LensMenu);
+	data->LensMenu = NULL;
     }
 
     /* Count all existing lens makers and create a sorted list */
-    makers = g_ptr_array_new ();
-    submenus = g_ptr_array_new ();
-    for (i = 0; lenslist [i]; i++)
-    {
-        GtkWidget *submenu, *item;
-        const char *m = lf_mlstr_get (lenslist [i]->Maker);
-        int idx = ptr_array_find_sorted (makers, m, (GCompareFunc)g_utf8_collate);
-        if (idx < 0)
-        {
-            /* No such maker yet, insert it into the array */
-            idx = ptr_array_insert_sorted (makers, m, (GCompareFunc)g_utf8_collate);
-            /* Create a submenu for lenses by this maker */
-            submenu = gtk_menu_new ();
-            ptr_array_insert_index (submenus, submenu, idx);
-        }
-
-        submenu = g_ptr_array_index (submenus, idx);
-        /* Append current lens name to the submenu */
-        item = gtk_menu_item_new_with_label (lf_mlstr_get (lenslist [i]->Model));
-        gtk_widget_show (item);
-        g_object_set_data(G_OBJECT(item), "lfLens", (void *)lenslist [i]);
-        g_signal_connect(G_OBJECT(item), "activate",
-                         G_CALLBACK(lens_menu_select), data);
-        gtk_menu_shell_append (GTK_MENU_SHELL (submenu), item);
+    GPtrArray *makers = g_ptr_array_new();
+    GPtrArray *submenus = g_ptr_array_new();
+    for (i = 0; lenslist[i]; i++) {
+	GtkWidget *submenu, *item;
+	const char *m = lf_mlstr_get(lenslist[i]->Maker);
+	int idx = ptr_array_find_sorted(makers, m,
+		(GCompareFunc)g_utf8_collate);
+	if (idx < 0) {
+	    /* No such maker yet, insert it into the array */
+	    idx = ptr_array_insert_sorted(makers, m,
+		    (GCompareFunc)g_utf8_collate);
+	    /* Create a submenu for lenses by this maker */
+	    submenu = gtk_menu_new();
+	    ptr_array_insert_index(submenus, submenu, idx);
+	}
+	submenu = g_ptr_array_index(submenus, idx);
+	/* Append current lens name to the submenu */
+	item = gtk_menu_item_new_with_label(lf_mlstr_get(lenslist[i]->Model));
+	gtk_widget_show(item);
+	g_object_set_data(G_OBJECT(item), "lfLens", (void *)lenslist[i]);
+	g_signal_connect(G_OBJECT(item), "activate",
+		G_CALLBACK(lens_menu_select), data);
+	gtk_menu_shell_append(GTK_MENU_SHELL(submenu), item);
     }
 
-    data->LensMenu = gtk_menu_new ();
-    for (i = 0; i < makers->len; i++)
-    {
-        GtkWidget *item = gtk_menu_item_new_with_label (g_ptr_array_index (makers, i));
-        gtk_widget_show (item);
-        gtk_menu_shell_append (GTK_MENU_SHELL (data->LensMenu), item);
-        gtk_menu_item_set_submenu (
-            GTK_MENU_ITEM (item), (GtkWidget *)g_ptr_array_index (submenus, i));
+    data->LensMenu = gtk_menu_new();
+    for (i = 0; i < makers->len; i++) {
+	GtkWidget *item =
+		gtk_menu_item_new_with_label(g_ptr_array_index(makers, i));
+	gtk_widget_show(item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(data->LensMenu), item);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(item),
+		(GtkWidget *)g_ptr_array_index(submenus, i));
     }
-
-    g_ptr_array_free (submenus, TRUE);
-    g_ptr_array_free (makers, TRUE);
+    g_ptr_array_free(submenus, TRUE);
+    g_ptr_array_free(makers, TRUE);
 }
 
-static void lens_search_clicked(
-    GtkWidget *button, gpointer user_data)
+static void lens_search_clicked(GtkWidget *button, preview_data *data)
 {
-    preview_data *data = (preview_data *)user_data;
-    const lfLens **lenslist;
-    char make [200], model [200];
+    (void)button;
+    char make[200], model[200];
     const gchar *txt = gtk_entry_get_text(GTK_ENTRY(data->LensModel));
 
+    parse_maker_model(txt, make, sizeof(make), model, sizeof(model));
+    const lfLens **lenslist = lf_db_find_lenses_hd(CFG->lensdb, CFG->camera,
+	    make[0] ? make : NULL, model[0] ? model : NULL, 0);
+    if (lenslist == NULL)
+	return;
+    lens_menu_fill(data, lenslist);
+    lf_free(lenslist);
+
+    gtk_menu_popup(GTK_MENU(data->LensMenu), NULL, NULL, NULL, NULL,
+	    0, gtk_get_current_event_time());
+}
+
+static void lens_list_clicked(GtkWidget *button, preview_data *data)
+{
     (void)button;
 
-    parse_maker_model (txt, make, sizeof (make), model, sizeof (model));
-    lenslist = lf_db_find_lenses_hd (CFG->lensdb, CFG->camera,
-                                     make [0] ? make : NULL,
-                                     model [0] ? model : NULL, 0);
-    if (!lenslist)
-        return;
-
-    lens_menu_fill (data, lenslist);
-    lf_free (lenslist);
-
-    gtk_menu_popup (GTK_MENU (data->LensMenu), NULL, NULL, NULL, NULL,
-                    0, gtk_get_current_event_time ());
-}
-
-static void lens_list_clicked(
-    GtkWidget *button, gpointer user_data)
-{
-    preview_data *data = (preview_data *)user_data;
-
-    (void)button;
-
-    if (CFG->camera)
-    {
-        const lfLens **lenslist = lf_db_find_lenses_hd (
-            CFG->lensdb, CFG->camera, NULL, NULL, 0);
-        if (!lenslist)
-            return;
-        lens_menu_fill (data, lenslist);
-        lf_free (lenslist);
+    if (CFG->camera != NULL) {
+	const lfLens **lenslist = lf_db_find_lenses_hd(CFG->lensdb,
+		CFG->camera, NULL, NULL, 0);
+	if (lenslist == NULL)
+	    return;
+	lens_menu_fill(data, lenslist);
+	lf_free(lenslist);
+    } else {
+	const lfLens *const *lenslist = lf_db_get_lenses(CFG->lensdb);
+	if (lenslist == NULL)
+	    return;
+	lens_menu_fill(data, lenslist);
     }
-    else
-    {
-        const lfLens *const *lenslist = lf_db_get_lenses (CFG->lensdb);
-        if (!lenslist)
-            return;
-        lens_menu_fill (data, lenslist);
-    }
-
-    gtk_menu_popup (GTK_MENU (data->LensMenu), NULL, NULL, NULL, NULL,
-                    0, gtk_get_current_event_time ());
+    gtk_menu_popup(GTK_MENU(data->LensMenu), NULL, NULL, NULL, NULL,
+	    0, gtk_get_current_event_time());
 }
 
-static void reset_adjustment_value (GtkWidget *widget, const lfParameter *param)
+static void reset_adjustment_value(GtkWidget *widget, const lfParameter *param)
 {
-    GtkAdjustment *adj = (GtkAdjustment *)g_object_get_data (
-        G_OBJECT (widget), "Adjustment");
-
-    gtk_adjustment_set_value (adj, param->Default);
+    GtkAdjustment *adj = (GtkAdjustment *)g_object_get_data(G_OBJECT(widget),
+	    "Adjustment");
+    gtk_adjustment_set_value(adj, param->Default);
 }
 
-static GtkAdjustment *append_term (
-    GtkWidget *table, int y, const lfParameter *param,
-    float *term, GCallback callback)
+static GtkAdjustment *append_term(GtkWidget *table, int y,
+	const lfParameter *param, float *term, GCallback callback)
 {
     int accuracy = -floor(log(param->Max - param->Min) / log(10)) + 3;
     double step = pow(10, -accuracy + 1);
     double page = pow(10, -accuracy + 2);
 
-    GtkAdjustment *adj = adjustment_scale (
-        GTK_TABLE (table), 0, y, param->Name, *term, term,
-        param->Min, param->Max, step, page, accuracy, FALSE, NULL, callback,
-	NULL, NULL, NULL);
+    GtkAdjustment *adj = adjustment_scale(GTK_TABLE(table), 0, y,
+	    param->Name, *term, term,
+	    param->Min, param->Max, step, page, accuracy, FALSE, NULL, callback,
+	    NULL, NULL, NULL);
 
     GtkWidget *button = stock_icon_button(GTK_STOCK_REFRESH, NULL,
-                      G_CALLBACK (reset_adjustment_value), (void *)param);
-    gtk_table_attach (GTK_TABLE (table), button, 7, 8, y, y + 1, 0, 0, 0, 0);
-    g_object_set_data (G_OBJECT(button), "Adjustment", adj);
+	    G_CALLBACK(reset_adjustment_value), (void *)param);
+    gtk_table_attach(GTK_TABLE(table), button, 7, 8, y, y + 1, 0, 0, 0, 0);
+    g_object_set_data(G_OBJECT(button), "Adjustment", adj);
 
     return adj;
 }
 
 /* --- TCA correction page --- */
 
-static void remove_tca_models (preview_data *data, lfTCAModel model)
+static void remove_tca_models(preview_data *data, lfTCAModel model)
 {
     int i;
 
     /* Remove calibration data which uses a different model */
-    if (CFG->lens->CalibTCA)
-        for (i = 0; CFG->lens->CalibTCA [i]; )
-            if (CFG->lens->CalibTCA [i]->Model != model)
-                lf_lens_remove_calib_tca (CFG->lens, i);
-            else
-                i++;
+    if (CFG->lens->CalibTCA != NULL)
+	for (i = 0; CFG->lens->CalibTCA[i] != NULL; )
+	    if (CFG->lens->CalibTCA[i]->Model != model)
+		lf_lens_remove_calib_tca(CFG->lens, i);
+	    else
+		i++;
 }
 
-static void adjustment_update_tca (GtkAdjustment *adj, float *valuep)
+static void adjustment_update_tca(GtkAdjustment *adj, float *valuep)
 {
-    preview_data *data = get_preview_data (adj);
-    *valuep = gtk_adjustment_get_value (adj);
+    preview_data *data = get_preview_data(adj);
+    *valuep = gtk_adjustment_get_value(adj);
 
     CFG->lens_tca.Focal = CFG->focal_len;
 
-    remove_tca_models (data, CFG->lens_tca.Model);
-    lf_lens_add_calib_tca (CFG->lens, &CFG->lens_tca);
+    remove_tca_models(data, CFG->lens_tca.Model);
+    lf_lens_add_calib_tca(CFG->lens, &CFG->lens_tca);
 
     ufraw_invalidate_tca_layer(data->UF);
-    render_preview (data);
+    render_preview(data);
 }
 
-static void tca_model_changed (GtkComboBox *widget, preview_data *data)
+static void tca_model_changed(GtkComboBox *widget, preview_data *data)
 {
     lfTCAModel model = gtk_combo_box_get_active(widget) - LF_TCA_MODEL_NONE;
 
     const char *details;
     const lfParameter **params;
-    if (!lf_get_tca_model_desc (model, &details, &params))
-        return; /* should never happen */
+    if (!lf_get_tca_model_desc(model, &details, &params))
+	return; /* should never happen */
 
-    gtk_container_foreach (
-        GTK_CONTAINER (data->LensTCATable), delete_children, NULL);
+    gtk_container_foreach(GTK_CONTAINER(data->LensTCATable),
+	    delete_children, NULL);
 
     gboolean reset_values = (CFG->lens_tca.Model != model);
     if (reset_values)
-        remove_tca_models (data, model);
+	remove_tca_models(data, model);
 
     CFG->lens_tca.Model = model;
 
     int i;
-    if (params)
-        for (i = 0; params [i]; i++)
-        {
-            if (reset_values)
-                CFG->lens_tca.Terms [i] = params [i]->Default;
+    if (params != NULL)
+	for (i = 0; params[i] != NULL; i++) {
+	    if (reset_values)
+		CFG->lens_tca.Terms[i] = params[i]->Default;
 
-            append_term (data->LensTCATable, i,
-                         params [i], &CFG->lens_tca.Terms [i],
-                         G_CALLBACK (adjustment_update_tca));
-        }
+	    append_term(data->LensTCATable, i,
+		    params[i], &CFG->lens_tca.Terms[i],
+		    G_CALLBACK(adjustment_update_tca));
+	}
 
-    gtk_label_set_text (GTK_LABEL (data->LensTCADesc), details);
-    gtk_widget_show_all (data->LensTCATable);
+    gtk_label_set_text(GTK_LABEL(data->LensTCADesc), details);
+    gtk_widget_show_all(data->LensTCATable);
 
     ufraw_invalidate_tca_layer(data->UF);
-    render_preview (data);
+    render_preview(data);
 }
 
 static void fill_tca_page(preview_data *data, GtkWidget *page)
 {
-    GtkWidget *label;
     int i;
 
-    GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
+    GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
     gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
 
     /* Add the model combobox */
-    label = gtk_label_new (_("Model:"));
-    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 5);
+    GtkWidget *label = gtk_label_new(_("Model:"));
+    gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
-    data->LensTCAModel = gtk_combo_box_new_text ();
+    data->LensTCAModel = gtk_combo_box_new_text();
     uf_widget_set_tooltip(data->LensTCAModel,
-                          _("Chromatic Aberrations mathematical model"));
+	    _("Chromatic Aberrations mathematical model"));
     for (i = 0; ; i++) {
-        const char *model_name;
-        lfTCAModel model = LF_TCA_MODEL_NONE + i;
-        model_name = lf_get_tca_model_desc (model, NULL, NULL);
-        if (!model_name)
-            break;
-        gtk_combo_box_append_text (GTK_COMBO_BOX (data->LensTCAModel), model_name);
+	const char *model_name;
+	lfTCAModel model = LF_TCA_MODEL_NONE + i;
+	model_name = lf_get_tca_model_desc(model, NULL, NULL);
+	if (model_name != NULL)
+	    break;
+	gtk_combo_box_append_text(GTK_COMBO_BOX(data->LensTCAModel),
+		model_name);
     }
     g_signal_connect(G_OBJECT(data->LensTCAModel), "changed",
-                     G_CALLBACK(tca_model_changed), data);
-    gtk_box_pack_start (GTK_BOX (hbox), data->LensTCAModel, TRUE, TRUE, 0);
+	    G_CALLBACK(tca_model_changed), data);
+    gtk_box_pack_start(GTK_BOX(hbox), data->LensTCAModel, TRUE, TRUE, 0);
 
-    data->LensTCATable = gtk_table_new (10, 1, FALSE);
-    GtkWidget *f = gtk_frame_new (_("Parameters"));
+    data->LensTCATable = gtk_table_new(10, 1, FALSE);
+    GtkWidget *f = gtk_frame_new(_("Parameters"));
     gtk_box_pack_start(GTK_BOX(page), f, TRUE, TRUE, 0);
     gtk_container_add(GTK_CONTAINER(f), data->LensTCATable);
 
-    data->LensTCADesc = gtk_label_new ("");
-    gtk_label_set_line_wrap (GTK_LABEL (data->LensTCADesc), TRUE);
+    data->LensTCADesc = gtk_label_new("");
+    gtk_label_set_line_wrap(GTK_LABEL(data->LensTCADesc), TRUE);
     gtk_label_set_ellipsize(GTK_LABEL(data->LensTCADesc), PANGO_ELLIPSIZE_END);
     gtk_label_set_selectable(GTK_LABEL(data->LensTCADesc), TRUE);
     gtk_box_pack_start(GTK_BOX(page), data->LensTCADesc, FALSE, FALSE, 0);
@@ -711,317 +648,321 @@ static void fill_tca_page(preview_data *data, GtkWidget *page)
 
 /* --- Vignetting correction page --- */
 
-static void remove_vign_models (preview_data *data, lfVignettingModel model)
+static void remove_vign_models(preview_data *data, lfVignettingModel model)
 {
     int i;
 
     /* Remove calibration data which uses a different model */
-    if (CFG->lens->CalibVignetting)
-        for (i = 0; CFG->lens->CalibVignetting [i]; )
-            if (CFG->lens->CalibVignetting [i]->Model != model)
-                lf_lens_remove_calib_vignetting (CFG->lens, i);
-            else
-                i++;
+    if (CFG->lens->CalibVignetting != NULL)
+	for (i = 0; CFG->lens->CalibVignetting[i] != NULL; )
+	    if (CFG->lens->CalibVignetting[i]->Model != model)
+		lf_lens_remove_calib_vignetting(CFG->lens, i);
+	    else
+		i++;
 }
 
-static void adjustment_update_vign (GtkAdjustment *adj, float *valuep)
+static void adjustment_update_vign(GtkAdjustment *adj, float *valuep)
 {
-    preview_data *data = get_preview_data (adj);
-    *valuep = gtk_adjustment_get_value (adj);
+    preview_data *data = get_preview_data(adj);
+    *valuep = gtk_adjustment_get_value(adj);
 
     CFG->lens_vignetting.Focal = CFG->focal_len;
     CFG->lens_vignetting.Aperture = CFG->aperture;
     CFG->lens_vignetting.Distance = CFG->subject_distance;
 
-    remove_vign_models (data, CFG->lens_vignetting.Model);
-    lf_lens_add_calib_vignetting (CFG->lens, &CFG->lens_vignetting);
+    remove_vign_models(data, CFG->lens_vignetting.Model);
+    lf_lens_add_calib_vignetting(CFG->lens, &CFG->lens_vignetting);
 
     ufraw_invalidate_layer(data->UF, ufraw_first_phase);
-    render_preview (data);
+    render_preview(data);
 }
 
-static void vignetting_model_changed (GtkComboBox *widget, preview_data *data)
+static void vignetting_model_changed(GtkComboBox *widget, preview_data *data)
 {
     lfVignettingModel model = gtk_combo_box_get_active(widget) -
-	     LF_VIGNETTING_MODEL_NONE;
+	    LF_VIGNETTING_MODEL_NONE;
 
     const char *details;
     const lfParameter **params;
-    if (!lf_get_vignetting_model_desc (model, &details, &params))
-        return; /* should never happen */
+    if (!lf_get_vignetting_model_desc(model, &details, &params))
+	return; /* should never happen */
 
-    gtk_container_foreach (
-        GTK_CONTAINER (data->LensVignettingTable), delete_children, NULL);
+    gtk_container_foreach(GTK_CONTAINER(data->LensVignettingTable),
+	    delete_children, NULL);
 
     gboolean reset_values = (CFG->lens_vignetting.Model != model);
     if (reset_values)
-        remove_vign_models (data, model);
+	remove_vign_models(data, model);
     CFG->lens_vignetting.Model = model;
 
     int i;
-    if (params)
-        for (i = 0; params [i]; i++)
-        {
-            if (reset_values)
-                CFG->lens_vignetting.Terms [i] = params [i]->Default;
+    if (params != NULL)
+	for (i = 0; params[i] != NULL; i++) {
+	    if (reset_values)
+		CFG->lens_vignetting.Terms[i] = params[i]->Default;
 
-            append_term (data->LensVignettingTable, i,
-                         params [i], &CFG->lens_vignetting.Terms [i],
-                         G_CALLBACK (adjustment_update_vign));
-        }
+	    append_term(data->LensVignettingTable, i,
+		    params[i], &CFG->lens_vignetting.Terms[i],
+		    G_CALLBACK(adjustment_update_vign));
+	}
 
-    gtk_label_set_text (GTK_LABEL (data->LensVignettingDesc), details);
-    gtk_widget_show_all (data->LensVignettingTable);
+    gtk_label_set_text(GTK_LABEL(data->LensVignettingDesc), details);
+    gtk_widget_show_all(data->LensVignettingTable);
 
     ufraw_invalidate_layer(data->UF, ufraw_first_phase);
-    render_preview (data);
+    render_preview(data);
 }
 
 static void fill_vignetting_page(preview_data *data, GtkWidget *page)
 {
-    GtkWidget *label;
     int i;
 
-    GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
+    GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
     gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
 
     /* Add the model combobox */
-    label = gtk_label_new (_("Model:"));
-    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 5);
+    GtkWidget *label = gtk_label_new(_("Model:"));
+    gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
-    data->LensVignettingModel = gtk_combo_box_new_text ();
+    data->LensVignettingModel = gtk_combo_box_new_text();
     uf_widget_set_tooltip(data->LensVignettingModel,
-                          _("Optical vignetting mathematical model"));
+	    _("Optical vignetting mathematical model"));
     for (i = 0; ; i++) {
-        const char *model_name;
-        lfVignettingModel model = LF_VIGNETTING_MODEL_NONE + i;
-        model_name = lf_get_vignetting_model_desc (model, NULL, NULL);
-        if (!model_name)
-            break;
-        gtk_combo_box_append_text (GTK_COMBO_BOX (data->LensVignettingModel), model_name);
+	const char *model_name;
+	lfVignettingModel model = LF_VIGNETTING_MODEL_NONE + i;
+	model_name = lf_get_vignetting_model_desc(model, NULL, NULL);
+	if (model_name == NULL)
+	    break;
+	gtk_combo_box_append_text(GTK_COMBO_BOX(data->LensVignettingModel),
+		model_name);
     }
     g_signal_connect(G_OBJECT(data->LensVignettingModel), "changed",
-                     G_CALLBACK(vignetting_model_changed), data);
-    gtk_box_pack_start (GTK_BOX (hbox), data->LensVignettingModel, TRUE, TRUE, 0);
+	    G_CALLBACK(vignetting_model_changed), data);
+    gtk_box_pack_start(GTK_BOX(hbox), data->LensVignettingModel, TRUE, TRUE, 0);
 
-    data->LensVignettingTable = gtk_table_new (10, 1, FALSE);
-    GtkWidget *f = gtk_frame_new (_("Parameters"));
+    data->LensVignettingTable = gtk_table_new(10, 1, FALSE);
+    GtkWidget *f = gtk_frame_new(_("Parameters"));
     gtk_box_pack_start(GTK_BOX(page), f, TRUE, TRUE, 0);
     gtk_container_add(GTK_CONTAINER(f), data->LensVignettingTable);
 
-    data->LensVignettingDesc = gtk_label_new ("");
-    gtk_label_set_line_wrap (GTK_LABEL (data->LensVignettingDesc), TRUE);
+    data->LensVignettingDesc = gtk_label_new("");
+    gtk_label_set_line_wrap(GTK_LABEL(data->LensVignettingDesc), TRUE);
     gtk_label_set_ellipsize(GTK_LABEL(data->LensVignettingDesc),
 	    PANGO_ELLIPSIZE_END);
     gtk_label_set_selectable(GTK_LABEL(data->LensVignettingDesc), TRUE);
-    gtk_box_pack_start(GTK_BOX(page), data->LensVignettingDesc, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(page), data->LensVignettingDesc,
+	    FALSE, FALSE, 0);
 }
 
 /* --- Distortion correction page --- */
 
-static void remove_dist_models (preview_data *data, lfDistortionModel model)
+static void remove_dist_models(preview_data *data, lfDistortionModel model)
 {
     int i;
 
     /* Remove calibration data which uses a different model */
-    if (CFG->lens->CalibDistortion)
-        for (i = 0; CFG->lens->CalibDistortion [i]; )
-            if (CFG->lens->CalibDistortion [i]->Model != model)
-                lf_lens_remove_calib_distortion (CFG->lens, i);
-            else
-                i++;
+    if (CFG->lens->CalibDistortion != NULL)
+	for (i = 0; CFG->lens->CalibDistortion[i] != NULL; )
+	    if (CFG->lens->CalibDistortion[i]->Model != model)
+		lf_lens_remove_calib_distortion(CFG->lens, i);
+	    else
+		i++;
 }
 
-static void adjustment_update_dist (GtkAdjustment *adj, float *valuep)
+static void adjustment_update_dist(GtkAdjustment *adj, float *valuep)
 {
-    preview_data *data = get_preview_data (adj);
-    *valuep = gtk_adjustment_get_value (adj);
+    preview_data *data = get_preview_data(adj);
+    *valuep = gtk_adjustment_get_value(adj);
 
     CFG->lens_distortion.Focal = CFG->focal_len;
 
-    remove_dist_models (data, CFG->lens_distortion.Model);
-    lf_lens_add_calib_distortion (CFG->lens, &CFG->lens_distortion);
+    remove_dist_models(data, CFG->lens_distortion.Model);
+    lf_lens_add_calib_distortion(CFG->lens, &CFG->lens_distortion);
 
     ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
     resize_canvas(data);
-    render_preview (data);
+    render_preview(data);
 }
 
-static void distortion_model_changed (GtkComboBox *widget, preview_data *data)
+static void distortion_model_changed(GtkComboBox *widget, preview_data *data)
 {
     lfDistortionModel model = gtk_combo_box_get_active(widget) -
 	    LF_DIST_MODEL_NONE;
 
     const char *details;
     const lfParameter **params;
-    if (!lf_get_distortion_model_desc (model, &details, &params))
-        return; // should never happen
+    if (!lf_get_distortion_model_desc(model, &details, &params))
+	return; // should never happen
 
-    gtk_container_foreach (
-        GTK_CONTAINER (data->LensDistortionTable), delete_children, NULL);
+    gtk_container_foreach(GTK_CONTAINER(data->LensDistortionTable),
+	    delete_children, NULL);
 
     gboolean reset_values = (CFG->lens_distortion.Model != model);
     if (reset_values)
-        remove_dist_models (data, model);
+	remove_dist_models(data, model);
 
     CFG->lens_distortion.Model = model;
 
     int i;
-    if (params)
-        for (i = 0; params [i]; i++)
-        {
-            if (reset_values)
-                CFG->lens_distortion.Terms [i] = params [i]->Default;
+    if (params != NULL)
+	for (i = 0; params[i] != NULL; i++) {
+	    if (reset_values)
+		CFG->lens_distortion.Terms[i] = params[i]->Default;
 
-            append_term (data->LensDistortionTable, i,
-                         params [i], &CFG->lens_distortion.Terms [i],
-                         G_CALLBACK (adjustment_update_dist));
-        }
+	    append_term(data->LensDistortionTable, i,
+		    params[i], &CFG->lens_distortion.Terms[i],
+		    G_CALLBACK(adjustment_update_dist));
+	}
 
-    gtk_label_set_text (GTK_LABEL (data->LensDistortionDesc), details);
-    gtk_widget_show_all (data->LensDistortionTable);
+    gtk_label_set_text(GTK_LABEL(data->LensDistortionDesc), details);
+    gtk_widget_show_all(data->LensDistortionTable);
 
     ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
     resize_canvas(data);
-    render_preview (data);
+    render_preview(data);
 }
 
 static void fill_distortion_page(preview_data *data, GtkWidget *page)
 {
-    GtkWidget *label;
     int i;
 
-    GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
+    GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
     gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
 
     /* Add the model combobox */
-    label = gtk_label_new (_("Model:"));
-    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 5);
+    GtkWidget *label = gtk_label_new(_("Model:"));
+    gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
-    data->LensDistortionModel = gtk_combo_box_new_text ();
-    uf_widget_set_tooltip (data->LensDistortionModel,
-                           _("Lens distortion mathematical model"));
+    data->LensDistortionModel = gtk_combo_box_new_text();
+    uf_widget_set_tooltip(data->LensDistortionModel,
+	    _("Lens distortion mathematical model"));
     for (i = 0; ; i++) {
-        const char *model_name;
-        lfDistortionModel model = LF_DIST_MODEL_NONE + i;
-        model_name = lf_get_distortion_model_desc (model, NULL, NULL);
-        if (!model_name)
-            break;
-        gtk_combo_box_append_text (GTK_COMBO_BOX (data->LensDistortionModel), model_name);
+	const char *model_name;
+	lfDistortionModel model = LF_DIST_MODEL_NONE + i;
+	model_name = lf_get_distortion_model_desc(model, NULL, NULL);
+	if (model_name == NULL)
+	    break;
+	gtk_combo_box_append_text(GTK_COMBO_BOX(data->LensDistortionModel),
+		model_name);
     }
-    g_signal_connect (G_OBJECT (data->LensDistortionModel), "changed",
-                      G_CALLBACK (distortion_model_changed), data);
-    gtk_box_pack_start (GTK_BOX (hbox), data->LensDistortionModel, TRUE, TRUE, 0);
+    g_signal_connect(G_OBJECT(data->LensDistortionModel), "changed",
+	    G_CALLBACK(distortion_model_changed), data);
+    gtk_box_pack_start(GTK_BOX(hbox), data->LensDistortionModel, TRUE, TRUE, 0);
 
-    data->LensDistortionTable = gtk_table_new (10, 1, FALSE);
-    GtkWidget *f = gtk_frame_new (_("Parameters"));
+    data->LensDistortionTable = gtk_table_new(10, 1, FALSE);
+    GtkWidget *f = gtk_frame_new(_("Parameters"));
     gtk_box_pack_start(GTK_BOX(page), f, TRUE, TRUE, 0);
-    gtk_container_add (GTK_CONTAINER(f), data->LensDistortionTable);
+    gtk_container_add(GTK_CONTAINER(f), data->LensDistortionTable);
 
-    data->LensDistortionDesc = gtk_label_new ("");
-    gtk_label_set_line_wrap (GTK_LABEL (data->LensDistortionDesc), TRUE);
+    data->LensDistortionDesc = gtk_label_new("");
+    gtk_label_set_line_wrap(GTK_LABEL(data->LensDistortionDesc), TRUE);
     gtk_label_set_ellipsize(GTK_LABEL(data->LensDistortionDesc),
 	    PANGO_ELLIPSIZE_END);
     gtk_label_set_selectable(GTK_LABEL(data->LensDistortionDesc), TRUE);
     gtk_box_pack_start(GTK_BOX(page),
-                        data->LensDistortionDesc, FALSE, FALSE, 0);
+	    data->LensDistortionDesc, FALSE, FALSE, 0);
 }
 
 /* --- Lens geometry page --- */
 
-static void geometry_model_changed (GtkComboBox *widget, preview_data *data)
+static void geometry_model_changed(GtkComboBox *widget, preview_data *data)
 {
-    lfLensType type =
-        (lfLensType) gtk_combo_box_get_active (widget);
+    lfLensType type = gtk_combo_box_get_active(widget);
 
     const char *details;
-    if (!lf_get_lens_type_desc (type, &details))
-        return; // should never happen
+    if (!lf_get_lens_type_desc(type, &details))
+	return; // should never happen
 
-    lfLensType *target = (lfLensType *)g_object_get_data (
-        G_OBJECT (widget), "LensType");
+    lfLensType *target = (lfLensType *)g_object_get_data(G_OBJECT(widget),
+	    "LensType");
 
     *target = type;
 
     if (target == &CFG->cur_lens_type)
-        gtk_label_set_text (GTK_LABEL (data->LensToGeometryDesc), details);
+	gtk_label_set_text(GTK_LABEL(data->LensToGeometryDesc), details);
     else
-        gtk_label_set_text (GTK_LABEL (data->LensFromGeometryDesc), details);
+	gtk_label_set_text(GTK_LABEL(data->LensFromGeometryDesc), details);
 
     ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
     resize_canvas(data);
-    render_preview (data);
+    render_preview(data);
 }
 
 static void fill_geometry_page(preview_data *data, GtkWidget *page)
 {
-    GtkWidget *label;
     int i;
 
-    data->LensGeometryTable = gtk_table_new (10, 1, FALSE);
+    data->LensGeometryTable = gtk_table_new(10, 1, FALSE);
     gtk_box_pack_start(GTK_BOX(page),
-                        data->LensGeometryTable, TRUE, TRUE, 0);
+	    data->LensGeometryTable, TRUE, TRUE, 0);
 
     /* Add the model combobox */
-    label = gtk_label_new (_("Lens geometry:"));
-    gtk_misc_set_alignment (GTK_MISC (label), 1.0, 0.5);
-    gtk_table_attach (GTK_TABLE (data->LensGeometryTable), label,
-                      0, 1, 0, 1, GTK_FILL, 0, 5, 0);
-    data->LensFromGeometrySel = gtk_combo_box_new_text ();
+    GtkWidget *label = gtk_label_new(_("Lens geometry:"));
+    gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
+    gtk_table_attach(GTK_TABLE(data->LensGeometryTable), label,
+	    0, 1, 0, 1, GTK_FILL, 0, 5, 0);
+    data->LensFromGeometrySel = gtk_combo_box_new_text();
     uf_widget_set_tooltip(data->LensFromGeometrySel,
 	    _("The geometry of the lens used to make the shot"));
-    gtk_table_attach (GTK_TABLE (data->LensGeometryTable), data->LensFromGeometrySel,
-                      1, 2, 0, 1, GTK_EXPAND | GTK_FILL, 0, 0, 0);
+    gtk_table_attach(GTK_TABLE(data->LensGeometryTable),
+	    data->LensFromGeometrySel, 1, 2, 0, 1,
+	    GTK_EXPAND | GTK_FILL, 0, 0, 0);
 
-    data->LensFromGeometryDesc = gtk_label_new ("");
-    gtk_label_set_line_wrap (GTK_LABEL (data->LensFromGeometryDesc), TRUE);
+    data->LensFromGeometryDesc = gtk_label_new("");
+    gtk_label_set_line_wrap(GTK_LABEL(data->LensFromGeometryDesc), TRUE);
     gtk_label_set_ellipsize(GTK_LABEL(data->LensFromGeometryDesc),
 	    PANGO_ELLIPSIZE_END);
     gtk_label_set_selectable(GTK_LABEL(data->LensFromGeometryDesc), TRUE);
-    gtk_misc_set_alignment (GTK_MISC (data->LensFromGeometryDesc), 0.5, 0.5);
-    gtk_table_attach (GTK_TABLE (data->LensGeometryTable), data->LensFromGeometryDesc,
-                      0, 2, 1, 2, GTK_EXPAND | GTK_FILL, 0, 0, 10);
+    gtk_misc_set_alignment(GTK_MISC(data->LensFromGeometryDesc), 0.5, 0.5);
+    gtk_table_attach(GTK_TABLE(data->LensGeometryTable),
+	    data->LensFromGeometryDesc, 0, 2, 1, 2,
+	    GTK_EXPAND | GTK_FILL, 0, 0, 10);
 
-    label = gtk_label_new (_("Target geometry:"));
-    gtk_misc_set_alignment (GTK_MISC (label), 1.0, 0.5);
-    gtk_table_attach (GTK_TABLE (data->LensGeometryTable), label,
-                      0, 1, 2, 3, GTK_FILL, 0, 5, 0);
-    data->LensToGeometrySel = gtk_combo_box_new_text ();
+    label = gtk_label_new(_("Target geometry:"));
+    gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
+    gtk_table_attach(GTK_TABLE(data->LensGeometryTable), label,
+	    0, 1, 2, 3, GTK_FILL, 0, 5, 0);
+    data->LensToGeometrySel = gtk_combo_box_new_text();
     uf_widget_set_tooltip(data->LensToGeometrySel,
 	    _("The target geometry for output image"));
-    gtk_table_attach (GTK_TABLE (data->LensGeometryTable), data->LensToGeometrySel,
-                      1, 2, 2, 3, GTK_EXPAND | GTK_FILL, 0, 0, 0);
+    gtk_table_attach(GTK_TABLE(data->LensGeometryTable),
+	    data->LensToGeometrySel, 1, 2, 2, 3,
+	    GTK_EXPAND | GTK_FILL, 0, 0, 0);
 
-    data->LensToGeometryDesc = gtk_label_new ("");
-    gtk_label_set_line_wrap (GTK_LABEL (data->LensToGeometryDesc), TRUE);
+    data->LensToGeometryDesc = gtk_label_new("");
+    gtk_label_set_line_wrap(GTK_LABEL(data->LensToGeometryDesc), TRUE);
     gtk_label_set_ellipsize(GTK_LABEL(data->LensToGeometryDesc),
 	    PANGO_ELLIPSIZE_END);
     gtk_label_set_selectable(GTK_LABEL(data->LensToGeometryDesc), TRUE);
-    gtk_misc_set_alignment (GTK_MISC (data->LensToGeometryDesc), 0.5, 0.5);
-    gtk_table_attach (GTK_TABLE (data->LensGeometryTable), data->LensToGeometryDesc,
-                      0, 2, 3, 4, GTK_EXPAND | GTK_FILL, 0, 0, 10);
+    gtk_misc_set_alignment(GTK_MISC(data->LensToGeometryDesc), 0.5, 0.5);
+    gtk_table_attach(GTK_TABLE(data->LensGeometryTable),
+	    data->LensToGeometryDesc, 0, 2, 3, 4,
+	    GTK_EXPAND | GTK_FILL, 0, 0, 10);
 
-    for (i = 0; ; i++)
-    {
-        lfLensType type = LF_UNKNOWN + i;
-        const char *type_name = lf_get_lens_type_desc (type, NULL);
-        if (!type_name)
-            break;
-        gtk_combo_box_append_text (GTK_COMBO_BOX (data->LensFromGeometrySel), type_name);
-        gtk_combo_box_append_text (GTK_COMBO_BOX (data->LensToGeometrySel), type_name);
+    for (i = 0; ; i++) {
+	lfLensType type = LF_UNKNOWN + i;
+	const char *type_name = lf_get_lens_type_desc(type, NULL);
+	if (type_name == NULL)
+	    break;
+	gtk_combo_box_append_text(GTK_COMBO_BOX(data->LensFromGeometrySel),
+		type_name);
+	gtk_combo_box_append_text(GTK_COMBO_BOX(data->LensToGeometrySel),
+		type_name);
     }
-    g_object_set_data (G_OBJECT (data->LensFromGeometrySel), "LensType", &CFG->lens->Type);
-    g_signal_connect (G_OBJECT (data->LensFromGeometrySel), "changed",
-                      G_CALLBACK(geometry_model_changed), data);
-    g_object_set_data (G_OBJECT (data->LensToGeometrySel), "LensType", &CFG->cur_lens_type);
-    g_signal_connect (G_OBJECT (data->LensToGeometrySel), "changed",
-                      G_CALLBACK(geometry_model_changed), data);
+    g_object_set_data(G_OBJECT(data->LensFromGeometrySel), "LensType",
+	    &CFG->lens->Type);
+    g_signal_connect(G_OBJECT(data->LensFromGeometrySel), "changed",
+	    G_CALLBACK(geometry_model_changed), data);
+    g_object_set_data(G_OBJECT(data->LensToGeometrySel), "LensType",
+	    &CFG->cur_lens_type);
+    g_signal_connect(G_OBJECT(data->LensToGeometrySel), "changed",
+	    G_CALLBACK(geometry_model_changed), data);
 }
 
 /**
  * Fill the "lens correction" page in the main notebook.
  */
-void lens_fill_interface (preview_data *data, GtkWidget *page)
+void lens_fill_interface(preview_data *data, GtkWidget *page)
 {
     GtkWidget *label, *button, *subpage;
 
@@ -1035,17 +976,17 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
 
     data->CameraModel = gtk_entry_new();
     gtk_table_attach(table, data->CameraModel, 1, 2, 0, 1,
-                     GTK_EXPAND|GTK_FILL, 0, 2, 0);
+	    GTK_EXPAND|GTK_FILL, 0, 2, 0);
 
     button = stock_icon_button(GTK_STOCK_FIND,
-                          _("Search for camera using a pattern\n"
-                            "Format: [Maker, ][Model]"),
-                     G_CALLBACK(camera_search_clicked), data);
+	    _("Search for camera using a pattern\n"
+	      "Format: [Maker, ][Model]"),
+	    G_CALLBACK(camera_search_clicked), data);
     gtk_table_attach(table, button, 2, 3, 0, 1, 0, 0, 0, 0);
 
     button = stock_icon_button(GTK_STOCK_INDEX,
-		    _("Choose camera from complete list"),
-                     G_CALLBACK(camera_list_clicked), data);
+	    _("Choose camera from complete list"),
+	    G_CALLBACK(camera_list_clicked), data);
     gtk_table_attach(table, button, 3, 4, 0, 1, 0, 0, 0, 0);
 
     /* Lens selector */
@@ -1056,26 +997,25 @@ void lens_fill_interface (preview_data *data, GtkWidget *page)
     data->LensModel = gtk_entry_new();
     //gtk_entry_set_text(GTK_ENTRY(data->LensModel), "");
     gtk_table_attach(table, data->LensModel, 1, 2, 1, 2,
-                     GTK_EXPAND|GTK_FILL, 0, 2, 0);
+	    GTK_EXPAND|GTK_FILL, 0, 2, 0);
 
     button = stock_icon_button(GTK_STOCK_FIND,
-                          _("Search for lens using a pattern\n"
-                            "Format: [Maker, ][Model]"),
-                     G_CALLBACK(lens_search_clicked), data);
+	    _("Search for lens using a pattern\n"
+	      "Format: [Maker, ][Model]"),
+	    G_CALLBACK(lens_search_clicked), data);
     gtk_table_attach(table, button, 2, 3, 1, 2, 0, 0, 0, 0);
 
     button = stock_icon_button(GTK_STOCK_INDEX,
-		     _("Choose lens from list of possible variants"),
-                     G_CALLBACK(lens_list_clicked), data);
+	    _("Choose lens from list of possible variants"),
+	    G_CALLBACK(lens_list_clicked), data);
     gtk_table_attach(table, button, 3, 4, 1, 2, 0, 0, 0, 0);
 
-    data->LensParamBox = gtk_hbox_new (FALSE, 0);
-    gtk_box_pack_start (GTK_BOX (page), data->LensParamBox, FALSE, FALSE, 2);
+    data->LensParamBox = gtk_hbox_new(FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(page), data->LensParamBox, FALSE, FALSE, 2);
 
     GtkNotebook *subnb = GTK_NOTEBOOK(gtk_notebook_new());
-    gtk_box_pack_start(GTK_BOX(page), GTK_WIDGET(subnb),
-                       TRUE, TRUE, 0);
-    gtk_notebook_set_tab_pos (subnb, GTK_POS_LEFT);
+    gtk_box_pack_start(GTK_BOX(page), GTK_WIDGET(subnb), TRUE, TRUE, 0);
+    gtk_notebook_set_tab_pos(subnb, GTK_POS_LEFT);
 
     /* Create a default lens & camera */
     camera_set(data);
