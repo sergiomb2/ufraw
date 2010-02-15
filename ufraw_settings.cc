@@ -85,7 +85,8 @@ public:
     void OriginalValueChangedEvent() {
 	/* Keep compatibility with old numbers from ufraw-0.6 */
 	int i;
-	if (sscanf(StringValue(), "%d", &i) == 1) {
+	if (strlen(StringValue()) <= 2 &&
+	    sscanf(StringValue(), "%d", &i) == 1) {
 	    switch (i) {
 		case -1: Set(uf_spot_wb); break;
 		case 0: Set(uf_manual_wb); break;
