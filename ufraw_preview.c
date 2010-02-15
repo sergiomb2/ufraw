@@ -5426,7 +5426,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     preview_height = (uf->rotatedHeight+1) / scale;
     curveeditorHeight = screen.height<900 ? 192 : 256;
     data->HisMinHeight = screen.height<900 ? 16*(screen.height-600)/50 : 96;
-    if (data->HisMinHeight<0) data->HisMinHeight = 0;
+    if (data->HisMinHeight<=0) data->HisMinHeight = 2;
     previewHBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
     gtk_container_add(GTK_CONTAINER(previewWindow), GTK_WIDGET(previewHBox));
     previewVBox = gtk_vbox_new(FALSE, 0);
