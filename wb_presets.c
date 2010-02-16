@@ -1943,6 +1943,7 @@ const wb_data wb_preset[] = {
   { "NIKON", "D50", Fluorescent, 0,		{ 1.945312, 1, 2.191406, 0 } },
   { "NIKON", "D50", DirectSunlight, 0,		{ 2.140625, 1, 1.398438, 0 } },
   { "NIKON", "D50", Flash, 0,			{ 2.398438, 1, 1.339844, 0 } },
+  { "NIKON", "D50", Cloudy, 0,			{ 2.360269, 1, 1.282828, 0 } },
   { "NIKON", "D50", Shade, 0,			{ 2.746094, 1, 1.156250, 0 } },
 
   { "NIKON", "D60", DirectSunlight, 0,		{ 1.792969, 1, 1.371094, 0 } },
