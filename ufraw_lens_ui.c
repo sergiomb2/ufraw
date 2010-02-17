@@ -625,7 +625,7 @@ static void fill_tca_page(preview_data *data, GtkWidget *page)
 	const char *model_name;
 	lfTCAModel model = LF_TCA_MODEL_NONE + i;
 	model_name = lf_get_tca_model_desc(model, NULL, NULL);
-	if (model_name != NULL)
+	if (model_name == NULL)
 	    break;
 	gtk_combo_box_append_text(GTK_COMBO_BOX(data->LensTCAModel),
 		model_name);
