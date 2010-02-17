@@ -2953,6 +2953,14 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "E-620", Flash, 0,		{ 2.039063, 1, 1.195313, 0 } },
   { "OLYMPUS", "E-620", Flash, 7,		{ 2.276786, 1.142857, 1, 0 } },
 
+  { "OLYMPUS", "E-P1", Daylight, 0,		{ 1.835938, 1, 1.351563, 0 } },
+  { "OLYMPUS", "E-P1", Shade, 0,		{ 2.195313, 1, 1.046875, 0 } },
+  { "OLYMPUS", "E-P1", Cloudy, 0,		{ 2.031250, 1, 1.203125, 0 } },
+  { "OLYMPUS", "E-P1", Incandescent, 0,		{ 1.078125, 1, 2.570312, 0 } },
+  { "OLYMPUS", "E-P1", WhiteFluorescent, 0,	{ 1.695313, 1, 1.937500, 0 } },
+  { "OLYMPUS", "E-P1", NeutralFluorescent, 0,	{ 1.687500, 1, 1.703125, 0 } },
+  { "OLYMPUS", "E-P1", DaylightFluorescent, 0,	{ 2.070312, 1, 1.312500, 0 } },
+
   { "OLYMPUS", "SP500UZ", Daylight, -7,		{ 1.136719, 1, 2.359375, 0 } },
   { "OLYMPUS", "SP500UZ", Daylight, 0,		{ 1.960937, 1, 1.585937, 0 } },
   { "OLYMPUS", "SP500UZ", Daylight, 7,		{ 3.927660, 1.089362, 1, 0 } },
