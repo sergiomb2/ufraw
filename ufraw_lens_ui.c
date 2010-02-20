@@ -55,10 +55,13 @@ static GtkComboBoxEntry *combo_entry_text(GtkWidget *container,
 
 /* simple function to compute the floating-point precision
    which is enough for "normal use". The criteria is to have
-   about 2 significant digits. */
+   2 or 3 significant digits. */
 static int precision(double x)
 {
-    return MAX(-floor(log(x) / log(10) - 0.99), 0);
+    if (x > 10.0 && (int)(10*x)%10 != 0)
+	return MAX(-floor(log(x) / log(10) - 1.99), 0);
+    else
+	return MAX(-floor(log(x) / log(10) - 0.99), 0);
 }
 
 static GtkComboBoxEntry *combo_entry_numeric(GtkWidget *container,
@@ -322,7 +325,7 @@ static void lens_set(preview_data *data, const lfLens *lens)
     };
     static gdouble aperture_values[] = {
 	1, 1.2, 1.4, 1.7, 2, 2.4, 2.8, 3.4, 4, 4.8, 5.6, 6.7,
-	8, 9.5, 11, 13, 16, 19, 22, 27, 32, 38
+	8, 9.5, 11, 13, 16, 19, 22, 27, 32, 38, 45
     };
 
     if (lens == NULL) {
