@@ -53,19 +53,8 @@ int main (int argc, char **argv)
     if (optInd==0) exit(0);
     silentMessenger = cmd.silent;
 
-    /* Load the --conf file. version==0 means ignore conf. */
-    conf.version = 0;
-    if (strlen(cmd.inputFilename)>0) {
-	status = conf_load(&conf, cmd.inputFilename);
-	if (status==UFRAW_SUCCESS) {
-	    strcpy(conf.inputFilename, "");
-	    strcpy(conf.outputFilename, "");
-	    strcpy(conf.outputPath, "");
-	} else {
-	    ufraw_message(UFRAW_REPORT, NULL);
-	    conf.version = 0;
-	}
-    }
+    conf_file_load(&conf, cmd.inputFilename);
+
     if (optInd==argc) {
 	    ufraw_message(UFRAW_WARNING, _("No input file, nothing to do."));
     }

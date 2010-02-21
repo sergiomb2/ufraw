@@ -24,7 +24,7 @@
 
 const conf_data conf_default = {
     /* Internal data */
-    sizeof(conf_data), 7, /* confSize, version */
+    7, /* configuration version */
 
     NULL, /* ufobject */
     /* Image manipulation settings */
@@ -133,12 +133,8 @@ const conf_data conf_default = {
     NULL,                         /* mount/camera/lens database */
     NULL,                         /* camera description */
     NULL,                         /* lens description */
-    { LF_DIST_MODEL_NONE, 0, { 0, 0, 0 } }, /* lens distortion parameters */
-    { LF_TCA_MODEL_NONE, 0, { 0, 0 } }, /* lens tca parameters */
-    /* lens vignetting parameters */ 
-    { LF_VIGNETTING_MODEL_NONE, 0, 0, 0, { 0, 0, 0 } },
     LF_UNKNOWN,                   /* lens type */
-    lensfun_none,                 /* do not apply any lensfun corrections */
+    lensfun_default,              /* lensfun starting mode */
 #endif /* HAVE_LENSFUN */
 };
 
@@ -179,15 +175,59 @@ static const char *conf_get_name(const char *namesList[], int index)
     return "Error";
 }
 
+typedef struct {
+    conf_data *conf;
+    UFObject *group;
+} parse_data;
+
 static void conf_parse_start(GMarkupParseContext *context,
 	const gchar *element, const gchar **names, const gchar **values,
 	gpointer user, GError **error)
 {
-    conf_data *c = user;
+    parse_data *data = (parse_data *)user;
+    conf_data *c = data->conf;
+
     int int_value;
     GQuark ufrawQuark = g_quark_from_static_string("UFRaw");
 
     context = context;
+
+    int i;
+    for (i = 0; names[i] != NULL; i++) {
+	if (strcmp(names[i], "Index") == 0) {
+	    if (!ufgroup_has(data->group, element)) {
+		ufraw_message(UFRAW_WARNING,
+			"UFGroup '%s' does not contain UFArray '%s'",
+			ufobject_name(data->group), element);
+		return;
+	    }
+	    data->group = ufgroup_element(data->group, element);
+	    if (!ufobject_set_string(data->group, values[i])) {
+		ufraw_message(UFRAW_WARNING,
+			"UFArray set '%s' to string value '%s' failed",
+			ufobject_name(data->group), values[i]);
+	    }
+	    return;
+	} else if (strcmp(names[i], "Label") == 0) {
+	    // We assume that only UFArray elements have a label.
+	    if (!ufgroup_has(data->group, values[i])) {
+		ufraw_message(UFRAW_WARNING,
+			"UFArray '%s' does not contain UFObject '%s'",
+			ufobject_name(data->group), element);
+		return;
+	    }
+	    data->group = ufgroup_element(data->group, values[i]);
+	    if (strcmp(ufobject_name(data->group), element) != 0)
+		g_set_error(error, ufrawQuark, UFRAW_ERROR,
+			"Expecting '%s' XML element and not '%s' XML element",
+			ufobject_name(data->group), element);
+	    return;
+	}
+    }
+    if (ufgroup_has(data->group, element)) {
+	data->group = ufgroup_element(data->group, element);
+	return;
+    }
     while (*names!=NULL) {
 	if (!strcasecmp(*values, "yes"))
 	    int_value = 1;
@@ -301,9 +341,16 @@ static void conf_parse_start(GMarkupParseContext *context,
 static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
 	gpointer user, GError **error)
 {
-    conf_data *c = user;
+    parse_data *data = (parse_data *)user;
+    conf_data *c = data->conf;
+
     (void)context;
     (void)error;
+
+    if (strcmp(ufobject_name(data->group), element) == 0) {
+	data->group = ufobject_parent(data->group);
+	return;
+    }
     if ( c->BaseCurveCount<=0 &&
 	 ( !strcmp("BaseManualCurve", element) ||
 	   !strcmp("BaseLinearCurve", element) ||
@@ -365,7 +412,9 @@ static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
 static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	gsize len, gpointer user, GError **error)
 {
-    conf_data *c = user;
+    parse_data *data = (parse_data *)user;
+    conf_data *c = data->conf;
+
     const gchar *element = g_markup_parse_context_get_element(context);
     char temp[max_path];
     int i;
@@ -377,14 +426,12 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
     strncpy(temp, text, len);
     temp[len] = '\0';
 
-    UFObject *image;
-    if (ufobject_name(c->ufobject) == ufRawImage)
-	image = c->ufobject;
-    else
-	image = ufgroup_element(c->ufobject, ufRawImage);
-    if (ufgroup_has(image, element)) {
-	UFObject *obj = ufgroup_element(image, element);
-	ufobject_set_string(obj, text);
+    if (strcmp(ufobject_name(data->group), element) == 0) {
+	if (!ufobject_set_string(data->group, text))
+	    ufraw_message(UFRAW_WARNING,
+		"UFObject set '%s' to string value '%s' failed",
+		ufobject_name(data->group), text);
+	return;
     }
     if (c->curveCount<=0) {
 	i = - c->curveCount;
@@ -741,7 +788,13 @@ int conf_load(conf_data *c, const char *IDFilename)
     g_snprintf(c->inputModTime, max_name, "%d", (int)s.st_mtime);
 
     locale = uf_set_locale_C();
-    context = g_markup_parse_context_new(&parser, 0, c, NULL);
+    parse_data user_data;
+    user_data.conf = c;
+    if (ufobject_name(c->ufobject) == ufRawImage)
+	user_data.group = c->ufobject;
+    else
+	user_data.group = ufgroup_element(c->ufobject, ufRawImage);
+    context = g_markup_parse_context_new(&parser, 0, &user_data, NULL);
     line[max_path-1] = '\0';
     char *dummy = fgets(line, max_path-1, in);
     while (!feof(in)) {
@@ -797,6 +850,28 @@ int conf_load(conf_data *c, const char *IDFilename)
     /* a few consistency settings */
     if (c->curveIndex>=c->curveCount) c->curveIndex = conf_default.curveIndex;
     return UFRAW_SUCCESS;
+}
+
+void conf_file_load(conf_data *conf, char *confFilename) {
+    /* Load the --conf file. version==0 means ignore conf. */
+    conf->version = 0;
+    if (strlen(confFilename) > 0) {
+        int status = conf_load(conf, confFilename);
+        if (status==UFRAW_SUCCESS) {
+            strcpy(conf->inputFilename, "");
+            strcpy(conf->outputFilename, "");
+            strcpy(conf->outputPath, "");
+        } else {
+            ufraw_message(UFRAW_REPORT, NULL);
+            conf->version = 0;
+        }
+    }
+#ifdef HAVE_LENSFUN
+    if (conf->ufobject != NULL) {
+	UFObject *lensfun = ufgroup_drop(conf->ufobject, ufLensfun);
+	ufobject_delete(lensfun);
+    }
+#endif
 }
 
 int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
@@ -1326,9 +1401,6 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
 	dst->lens = lf_lens_new ();
 	lf_lens_copy (dst->lens, src->lens);
     }
-    dst->lens_distortion = src->lens_distortion;
-    dst->lens_tca = src->lens_tca;
-    dst->lens_vignetting = src->lens_vignetting;
 #endif /* HAVE_LENSFUN */
 }
 

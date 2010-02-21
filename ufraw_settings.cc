@@ -52,8 +52,15 @@ private:
 public:
     // uf should be private
     ufraw_data *uf;
-    explicit Image(ufraw_data *data = NULL);
+    explicit Image(UFObject *root = NULL);
     void SetUFRawData(ufraw_data *data);
+    static ufraw_data *UFRawData(UFObject *object) {
+	if (object->Name() == ufRawImage)
+	    return dynamic_cast<Image *>(object)->uf;
+	if (!object->HasParent())
+	    return NULL;
+	return Image::UFRawData(&object->Parent());
+    }
     void SetWB(const char *mode = NULL);
     void Message(const char *Format, ...) const {
 	if (Format == NULL)
@@ -168,24 +175,24 @@ public:
 	    return UFObject::Event(type);
 	if (!HasParent())
 	    return UFObject::Event(type);
-	Image &image = ParentImage(this);
-	if (image.uf == NULL)
+	ufraw_data *uf = Image::UFRawData(this);
+	if (uf == NULL)
 	    return UFObject::Event(type);
 	/* Normalize chanMul so that min(chanMul) will be 1.0 */
 	double min = Maximum();
-	for (int c = 0; c < image.uf->colors; c++)
+	for (int c = 0; c < uf->colors; c++)
 	    if (DoubleValue(c) < min)
 		min = DoubleValue(c);
 	assert(min > 0.0);
 	double chanMulArray[4] = { 1.0, 1.0, 1.0, 1.0 };
-	for (int c = 0; c < image.uf->colors; c++)
+	for (int c = 0; c < uf->colors; c++)
 	    chanMulArray[c] = DoubleValue(c) / min;
 	Set(chanMulArray);
 	
-	if (image.uf->conf->autoExposure == enabled_state)
-	    image.uf->conf->autoExposure = apply_state;
-	if (image.uf->conf->autoBlack == enabled_state)
-	    image.uf->conf->autoBlack = apply_state;
+	if (uf->conf->autoExposure == enabled_state)
+	    uf->conf->autoExposure = apply_state;
+	if (uf->conf->autoBlack == enabled_state)
+	    uf->conf->autoBlack = apply_state;
 
 	UFObject::Event(type);
     }
@@ -203,9 +210,16 @@ public:
     }
 };
 
+#ifdef HAVE_LENSFUN
+class Lensfun : public UFGroup {
+public:
+    Lensfun();
+};
+#endif
+
 // ufRawImage is short for 'raw image processing parameters'.
 extern "C" { UFName ufRawImage = "Image"; }
-Image::Image(ufraw_data *data) : UFGroup(ufRawImage) {
+Image::Image(UFObject *root) : UFGroup(ufRawImage), uf(NULL) {
     *this
 	<< new WB
 	<< new WBFineTuning
@@ -213,7 +227,10 @@ Image::Image(ufraw_data *data) : UFGroup(ufRawImage) {
 	<< new Green
 	<< new ChannelMultipliers
     ;
-    SetUFRawData(data);
+#ifdef HAVE_LENSFUN
+    if (root == NULL || root->Name() != ufRawResources)
+	*this << new Lensfun; // Lensfun data is not saved to .ufrawrc
+#endif
 }
 
 void Image::SetWB(const char *mode) {
@@ -244,6 +261,7 @@ void Image::SetUFRawData(ufraw_data *data) {
     uf = data;
     if (uf == NULL)
 	return;
+
     const wb_data *lastPreset = NULL;
     uf->wb_presets_make_model_match = FALSE;
     char model[max_name];
@@ -279,7 +297,7 @@ extern "C" { UFName ufRawResources = "Resources"; }
 class Resources : public UFGroup {
 public:
     Resources(): UFGroup(ufRawResources) {
-	*this << new Image;
+	*this << new Image(this);
     }
 };
 
@@ -343,6 +361,10 @@ UFObject *ufraw_image_new() {
 
 void ufraw_image_set_data(UFObject *obj, struct ufraw_struct *uf) {
     dynamic_cast<UFRaw::Image *>(obj)->SetUFRawData(uf);
+}
+
+struct ufraw_struct *ufraw_image_get_data(UFObject *obj) {
+    return UFRaw::Image::UFRawData(obj);
 }
 
 UFObject *ufraw_resources_new() {

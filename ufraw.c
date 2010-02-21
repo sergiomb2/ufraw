@@ -79,19 +79,8 @@ int main (int argc, char **argv)
 	uf_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
 	ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
     }
-    /* Load the --conf file. version==0 means ignore conf. */
-    conf.version = 0;
-    if (strlen(cmd.inputFilename)>0) {
-	status = conf_load(&conf, cmd.inputFilename);
-	if (status==UFRAW_SUCCESS) {
-	    strcpy(conf.inputFilename, "");
-	    strcpy(conf.outputFilename, "");
-	    strcpy(conf.outputPath, "");
-	} else {
-	    ufraw_message(UFRAW_REPORT, NULL);
-	    conf.version = 0;
-	}
-    }
+    conf_file_load(&conf, cmd.inputFilename);
+
     if (optInd==argc) {
 	ufraw_chooser(&rc, &conf, &cmd, NULL);
 //	ufraw_close(cmd.darkframe);

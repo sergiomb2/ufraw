@@ -64,6 +64,11 @@ extern UFName ufWBFineTuning;
 extern UFName ufTemperature;
 extern UFName ufGreen;
 extern UFName ufChannelMultipliers;
+extern UFName ufLensfun;
+extern UFName ufTCA;
+extern UFName ufVignetting;
+extern UFName ufDistortion;
+extern UFName ufModel;
 extern UFName ufRawImage;
 extern UFName ufRawResources;
 extern UFName ufCommandLine;
@@ -73,7 +78,7 @@ extern "C" {
 #endif // __cplusplus
 
 UFObject *ufraw_image_new();
-struct ufraw_struct;
+struct ufraw_struct *ufraw_image_get_data(UFObject *obj);
 void ufraw_image_set_data(UFObject *obj, struct ufraw_struct *uf);
 UFObject *ufraw_resources_new();
 UFObject *ufraw_command_line_new();
@@ -108,7 +113,7 @@ typedef enum { ufraw_raw_phase, ufraw_first_phase, ufraw_transform_phase,
 	ufraw_develop_phase, ufraw_display_phase, ufraw_phases_num } UFRawPhase;
 typedef enum { grayscale_none, grayscale_lightness, grayscale_luminance,
 	grayscale_value, grayscale_mixer } GrayscaleMode;
-typedef enum { lensfun_none, lensfun_auto } LensfunMode;
+typedef enum { lensfun_none, lensfun_auto, lensfun_default } LensfunMode;
 
 typedef struct {
     const char *make;
@@ -197,7 +202,7 @@ typedef struct {
  */
 typedef struct {
     /* Internal data */
-    int confSize, version;
+    int version;
 
     // Eventually ufobject should replace conf_data.
     UFObject *ufobject;
@@ -273,9 +278,6 @@ typedef struct {
     lfDatabase *lensdb; /* mount/camera/lens database */
     lfCamera *camera; /* camera description */
     lfLens *lens; /* lens description */
-    lfLensCalibDistortion lens_distortion; /* lens distortion parameters */
-    lfLensCalibTCA lens_tca; /* lens tca parameters */
-    lfLensCalibVignetting lens_vignetting; /* lens vignetting parameters */
     lfLensType cur_lens_type;
     int lensfunMode;
 #endif /* HAVE_LENSFUN */
@@ -426,6 +428,7 @@ void ptr_array_insert_index (GPtrArray *array, const void *item, int index);
 
 /* prototypes for functions in ufraw_conf.c */
 int conf_load(conf_data *c, const char *confFilename);
+void conf_file_load(conf_data *conf, char *confFilename);
 int conf_save(conf_data *c, char *confFilename, char **confBuffer);
 /* copy default config to given instance and initialize non-const fields */
 void conf_init (conf_data *c);

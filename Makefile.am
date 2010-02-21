@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.55 2010/01/27 21:23:22 udifuchs Exp $
+# $Id: Makefile.am,v 1.56 2010/02/21 10:03:55 udifuchs Exp $
 
 SUBDIRS=po icons
 
@@ -63,7 +63,7 @@ if MAKE_GTK
   libufraw_a_SOURCES = \
     dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
     ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw_message.c ufraw.h \
-    ufobject.cc ufobject.h ufraw_settings.cc \
+    ufobject.cc ufobject.h ufraw_settings.cc ufraw_lensfun.cc \
     wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
     nikon_curve.c nikon_curve.h uf_progress.h \
     uf_glib.h uf_gtk.cc uf_gtk.h ufraw_exiv2.cc iccjpeg.c iccjpeg.h \
@@ -75,7 +75,7 @@ else
  libufraw_a_SOURCES = \
     dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
     ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw_message.c ufraw.h \
-    ufobject.cc ufobject.h ufraw_settings.cc \
+    ufobject.cc ufobject.h ufraw_settings.cc ufraw_lensfun.cc \
     wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
     nikon_curve.c nikon_curve.h uf_progress.h \
     uf_glib.h ufraw_exiv2.cc iccjpeg.c iccjpeg.h

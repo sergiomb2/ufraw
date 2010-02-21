@@ -30,10 +30,11 @@
 class _UFObject {
 public:
     const UFName Name;
+    void *UserData;
     char *String;
     class _UFGroup *Parent;
     UFEventHandle *EventHandle;
-    explicit _UFObject(UFName name) : Name(name), String(NULL),
+    explicit _UFObject(UFName name) : Name(name), UserData(NULL), String(NULL),
 	Parent(NULL), EventHandle(NULL) { }
     virtual ~_UFObject() {
 	g_free(String);
@@ -53,7 +54,7 @@ public:
     }
 };
 
-UFObject::UFObject(_UFObject *object) : UserData(NULL), ufobject(object) { }
+UFObject::UFObject(_UFObject *object) : ufobject(object) { }
 
 UFObject::~UFObject() {
     Event(uf_destroyed);
@@ -62,6 +63,15 @@ UFObject::~UFObject() {
 
 UFName UFObject::Name() const {
     return ufobject->Name;
+}
+
+void UFObject::SetUserData(void *userData) {
+    ufobject->UserData = userData;
+    Event(uf_user_data_set);
+}
+
+void *UFObject::UserData() {
+    return ufobject->UserData;
 }
 
 UFObject::operator class UFNumber&() {
@@ -96,6 +106,14 @@ UFObject::operator const class UFGroup&() const {
     return dynamic_cast<const UFGroup &>(*this);
 }
 
+UFObject::operator class UFArray&() {
+    return dynamic_cast<UFArray &>(*this);
+}
+
+UFObject::operator const class UFArray&() const {
+    return dynamic_cast<const UFArray &>(*this);
+}
+
 bool UFObject::HasParent() const {
     return ufobject->Parent != NULL;
 }
@@ -114,12 +132,12 @@ std::string UFObject::XML(const char *indent) const {
     return str;
 }
 
-void UFObject::Message(const char *Format, ...) const {
-    if (Format == NULL)
+void UFObject::Message(const char *format, ...) const {
+    if (format == NULL)
 	return;
     va_list ap;
-    va_start(ap, Format);
-    char *message = g_strdup_vprintf(Format, ap);
+    va_start(ap, format);
+    char *message = g_strdup_vprintf(format, ap);
     va_end(ap);
     if (HasParent()) {
 	Parent().Message("%s: %s", Name(), message);
@@ -129,12 +147,12 @@ void UFObject::Message(const char *Format, ...) const {
     g_free(message);
 }
 
-void UFObject::Throw(const char *Format, ...) const {
-    if (Format == NULL)
+void UFObject::Throw(const char *format, ...) const {
+    if (format == NULL)
 	return;
     va_list ap;
-    va_start(ap, Format);
-    char *message = g_strdup_vprintf(Format, ap);
+    va_start(ap, format);
+    char *message = g_strdup_vprintf(format, ap);
     va_end(ap);
     std::string mess(message);
     g_free(message);
@@ -462,7 +480,8 @@ class _UFString : public _UFObject {
 public:
     char *Default;
     UFTokenList Tokens;
-    _UFString(UFName name) : _UFObject(name) { }
+    int Index;
+    _UFString(UFName name) : _UFObject(name), Index(-1) { }
     ~_UFString() {
 	g_free(Default);
     }
@@ -490,7 +509,32 @@ void UFString::Set(const char *string) {
 	return;
     g_free(ufstring->String);
     ufstring->String = g_strdup(string);
+
+    ufstring->Index = -1;
+    UFTokenList &list = GetTokens();
+    int i = 0;
+    for (UFTokenList::iterator iter = list.begin();
+            iter != list.end(); iter++, i++) {
+        if (IsEqual(*iter)) {
+	    ufstring->Index = i;
+        }
+    }
     ufstring->CallValueChangedEvent(this);
+}
+
+void UFString::SetIndex(int index) {
+    if (ufstring->Index == index)
+	return;
+    ufstring->Index = index;
+    UFTokenList::iterator iter = ufstring->Tokens.begin();
+    std::advance(iter, index);
+    g_free(ufstring->String);
+    ufstring->String = g_strdup(*iter);
+    ufstring->CallValueChangedEvent(this);
+}
+
+int UFString::Index() const {
+    return ufstring->Index;
 }
 
 bool UFString::IsDefault() const {
@@ -539,8 +583,11 @@ public:
     _UFGroupList List;
     UFGroup *const This;
     bool GroupChanging;
-    _UFGroup(UFGroup *that, UFName name) : _UFObject(name), This(that),
-	GroupChanging(false) { }
+    UFString *Index; // Index is only used by UFArray
+    _UFGroup(UFGroup *that, UFName name, const char *label) :
+	    _UFObject(name), This(that), GroupChanging(false), Index(NULL) {
+	String = g_strdup(label);
+    }
     bool Changing() const {
 	if (Parent != NULL)
 	    return Parent->Changing();
@@ -575,25 +622,57 @@ UFGroup &UFObject::Parent() const {
 
 #define ufgroup (static_cast<_UFGroup *>(ufobject))
 
-UFGroup::UFGroup(UFName Name) : UFObject(new _UFGroup(this, Name)) { }
+// object is a <UFObject *> and generally not a <UFGroup *>.
+// The cast to <UFGroup *> is needed for accessing ufobject.
+#define _UFGROUP_PARENT(object) static_cast<UFGroup*>(object)->ufobject->Parent
+
+UFGroup::UFGroup(UFName name, const char *label) :
+	UFObject(new _UFGroup(this, name, label)) { }
 
 UFGroup::~UFGroup() {
     for (_UFGroupList::iterator iter = ufgroup->List.begin();
 		iter != ufgroup->List.end(); iter++) {
-	// (*iter) is a <UFObject *> and generally not a <UFGroup *>.
-	// The cast to <UFGroup*> is need for accessing ufobject.
-	static_cast<UFGroup*>(*iter)->ufobject->Parent = NULL;
+	_UFGROUP_PARENT(*iter) = NULL;
 	delete *iter;
     }
 }
 
-std::string UFGroup::XML(const char *fill) const {
+static std::string _UFGroup_XML(const UFGroup &group, _UFGroupList &list,
+	const char *indent, const char *attribute) {
     std::string xml = "";
-    for (_UFGroupList::iterator iter = ufgroup->List.begin();
-	    iter != ufgroup->List.end(); iter++) {
-	xml += (*iter)->XML(fill);
+    // For now, we don't want to surround the root XML with <[/]Image> tags.
+    if (strlen(indent) != 0) {
+	char *value = g_markup_escape_text(group.StringValue(), -1);
+	if (value[0] == '\0') {
+	    xml += (std::string)indent + "<" + group.Name() + ">\n";
+	} else {
+	    xml += (std::string)indent + "<" + group.Name() + " " +
+		attribute +"='" + value + "'>\n";
+	}
+	g_free(value);
     }
+    char *newIndent = static_cast<char *>(g_alloca(strlen(indent)+3));
+    int i = 0;
+    while (indent[i] != 0) {
+	newIndent[i] = indent[i];
+	i++;
+    }
+    newIndent[i + 0] = ' ';
+    newIndent[i + 1] = ' ';
+    newIndent[i + 2] = '\0';
+    for (_UFGroupList::iterator iter = list.begin(); iter != list.end(); iter++)
+    {
+	if (!(*iter)->IsDefault()) {
+	    xml += (*iter)->XML(newIndent);
+	}
+    }
+    if (strlen(indent) != 0)
+	xml  += (std::string)indent + "</" + group.Name() + ">\n";
     return xml;	
+}
+
+std::string UFGroup::XML(const char *indent) const {
+    return _UFGroup_XML(*this, ufgroup->List, indent, "Label");
 }
 
 void UFGroup::Set(const UFObject &object) {
@@ -606,7 +685,7 @@ void UFGroup::Set(const UFObject &object) {
     for (_UFGroupList::iterator iter = ufgroup->List.begin();
 	    iter != ufgroup->List.end(); iter++) {
 	if (group.Has((*iter)->Name()))
-	    (*this)[(*iter)->Name()].Set(group[(*iter)->Name()]);
+	    (*iter)->Set(group[(*iter)->Name()]);
     }
 }
 
@@ -626,7 +705,7 @@ bool UFGroup::IsDefault() const {
 void UFGroup::SetDefault() {
     for (_UFGroupList::iterator iter = ufgroup->List.begin();
 	    iter != ufgroup->List.end(); iter++) {
-	(*this)[(*iter)->Name()].SetDefault();
+	(*iter)->SetDefault();
     }
     Event(uf_default_changed);
 }
@@ -634,7 +713,7 @@ void UFGroup::SetDefault() {
 void UFGroup::Reset() {
     for (_UFGroupList::iterator iter = ufgroup->List.begin();
 	    iter != ufgroup->List.end(); iter++) {
-	(*this)[(*iter)->Name()].Reset();
+	(*iter)->Reset();
     }
 }
 
@@ -677,9 +756,120 @@ UFGroup &UFGroup::operator<<(UFObject *object) {
 	    }
 	}
     }
-    // object is a <UFObject *> and generally not a <UFGroup *>.
-    // The cast to <UFGroup*> is need for accessing ufobject.
-    static_cast<UFGroup*>(object)->ufobject->Parent = ufgroup;
+    _UFGROUP_PARENT(object) = ufgroup;
+    ufgroup->CallValueChangedEvent(this);
+    return *this;
+}
+
+UFObject &UFGroup::Drop(UFName name) {
+    _UFGroupMap::iterator iter = ufgroup->Map.find(name);
+    if (iter == ufgroup->Map.end())
+	Throw("index '%s' does not exists", name);
+    UFObject *dropObject = (*iter).second;
+    ufgroup->Map.erase(name);
+    for (_UFGroupList::iterator iter = ufgroup->List.begin();
+	    iter != ufgroup->List.end(); iter++) {
+	if (*iter == dropObject) {
+	    ufgroup->List.erase(iter);
+	    break;
+	}
+    }
+    _UFGROUP_PARENT(dropObject) = NULL;
+    return *dropObject;
+}
+
+// object is a <UFObject *> and generally not a <UFArray *>.
+// The cast to <UFArray *> is needed for accessing ufobject.
+#define _UFARRAY_PARENT(object) static_cast<UFArray *>( \
+	static_cast<UFObject *>(object))->ufobject->Parent
+
+UFArray::UFArray(UFName name, const char *defaultIndex) :
+	UFGroup(name, defaultIndex) {
+    ufgroup->Index = new UFString(name, defaultIndex);
+    _UFARRAY_PARENT(ufgroup->Index) = ufgroup;
+}
+
+UFArray::~UFArray() {
+    _UFARRAY_PARENT(ufgroup->Index) = NULL;
+    delete ufgroup->Index;
+}
+
+std::string UFArray::XML(const char *indent) const {
+    return _UFGroup_XML(*this, ufgroup->List, indent, "Index");
+}
+
+void UFArray::Set(const UFObject &object) {
+    if (this == &object) // Avoid self-assignment
+	return;
+    // We are comparing the strings ADDRESSes not values.
+    if (Name() != object.Name())
+	Throw("Object name mismatch with '%s'", object.Name());
+    const UFArray &array = object;
+    ufgroup->Index->Set(array.StringValue());
+    for (_UFGroupList::iterator iter = ufgroup->List.begin();
+	    iter != ufgroup->List.end(); iter++) {
+	if (array.Has((*iter)->StringValue()))
+	    (*iter)->Set(array[(*iter)->StringValue()]);
+    }
+}
+
+void UFArray::Set(const char *string) {
+    ufgroup->Index->Set(string);
+}
+
+const char *UFArray::StringValue() const {
+    return ufgroup->Index->StringValue();
+}
+
+bool UFArray::IsDefault() const {
+    if (!ufgroup->Index->IsDefault())
+	return false;
+    return UFGroup::IsDefault();
+}
+
+void UFArray::SetDefault() {
+    ufgroup->Index->SetDefault();
+    UFGroup::SetDefault();
+}
+
+void UFArray::Reset() {
+    ufgroup->Index->Reset();
+    UFGroup::Reset();
+}
+
+void UFArray::SetIndex(int index) {
+    ufgroup->Index->SetIndex(index);
+}
+
+int UFArray::Index() const {
+    return ufgroup->Index->Index();
+}
+
+UFString &UFArray::StringIndex() {
+    return *ufgroup->Index;
+}
+
+UFArray &UFArray::operator<<(UFObject *object) {
+    _UFGroupMap::iterator iter = ufgroup->Map.find(object->StringValue());
+    if (iter != ufgroup->Map.end())
+	Throw("index '%s' already exists", object->StringValue());
+    ufgroup->Map.insert(_UFObjectPair(object->StringValue(), object));
+    ufgroup->List.push_back(object);
+    ufgroup->Index->GetTokens().push_back(object->StringValue());
+    if (object->HasParent()) {
+	// Remove object from its original group.
+	_UFGroup *parent = static_cast<UFArray *>(object)->ufobject->Parent;
+	// We assume that the previous parent was also a UFArray.
+	parent->Map.erase(object->StringValue());
+	for (_UFGroupList::iterator iter = parent->List.begin();
+		iter != parent->List.end(); iter++) {
+	    if (*iter == object) {
+		parent->List.erase(iter);
+		break;
+	    }
+	}
+    }
+    _UFARRAY_PARENT(object) = ufgroup;
     ufgroup->CallValueChangedEvent(this);
     return *this;
 }
@@ -700,6 +890,15 @@ UFName ufobject_name(UFObject *object) {
 UFObject *ufobject_delete(UFObject *object) {
     delete object;
     return NULL;
+}
+
+UFObject *ufobject_parent(UFObject *object) {
+    try {
+	return &object->Parent();
+    } catch (UFException &e) {
+	object->Message(e.what());
+	return NULL;
+    }
 }
 
 const char *ufobject_string_value(UFObject *object) {
@@ -733,11 +932,11 @@ char *ufobject_xml(UFObject *object, const char *indent) {
 }
 
 void *ufobject_user_data(UFObject *object) {
-    return object->UserData;
+    return object->UserData();
 }
 
 void ufobject_set_user_data(UFObject *object, void *user_data) {
-    object->UserData = user_data;
+    object->SetUserData(user_data);
 }
 
 void ufobject_set_changed_event_handle(UFObject *object, UFEventHandle *handle) {
@@ -830,6 +1029,37 @@ UFBoolean ufgroup_add(UFObject *group, UFObject *object) {
     } catch (std::bad_cast &e) {
 	group->Message(e.what());
 	return false;
+    }
+}
+
+UFObject *ufgroup_drop(UFObject *group, UFName name) {
+    try {
+	return &dynamic_cast<UFGroup *>(group)->Drop(name);
+    } catch (UFException &e) {
+	group->Message(e.what());
+	return NULL;
+    } catch (std::bad_cast &e) {
+	group->Message(e.what());
+	return NULL;
+    }
+}
+
+UFBoolean ufarray_set_index(UFObject *object, int index) {
+    try {
+	dynamic_cast<UFArray *>(object)->SetIndex(index);
+	return true;
+    } catch (std::bad_cast &e) {
+	object->Message(e.what());
+	return false;
+    }
+}
+
+int ufarray_index(UFObject *object) {
+    try {
+	return dynamic_cast<UFArray *>(object)->Index();
+    } catch (std::bad_cast &e) {
+	object->Message(e.what());
+	return -2;
     }
 }
 

@@ -27,6 +27,7 @@ typedef struct UFObject UFObject;
 typedef enum {
     uf_value_changed, ///< Value changed.
     uf_default_changed, ///< Default value changed.
+    uf_user_data_set, ///< User data was set.
     uf_destroyed ///< UFObject is being destroyed.
 } UFEventType;
 
@@ -79,12 +80,15 @@ typedef void (UFEventHandle)(UFObject *, UFEventType);
  */
 class UFObject {
 public:
-    void *UserData; ///< Pointer to general user data.
     /// Trigger a #uf_destroyed event and destroy the object. An object that
     /// has a Parent() should never be destroyed directly. It will be
     /// destroyed when its parent is destroyed.
     virtual ~UFObject();
     UFName Name() const; ///< Retrieve the name of the UFObject.
+    /// Set pointer to general user data.
+    /// A #uf_user_data_set event is triggered.
+    void SetUserData(void *userData);
+    void *UserData(); ///< Retrieve pointer to general user data.
     /// Downcast UFObject to UFNumber.
     operator class UFNumber&();
     /// Downcast const UFObject to const UFNumber.
@@ -101,6 +105,10 @@ public:
     operator class UFGroup&();
     /// Downcast const UFObject to const UFGroup.
     operator const class UFGroup&() const;
+    /// Downcast UFObject to UFArray.
+    operator class UFArray&();
+    /// Downcast const UFObject to const UFArray.
+    operator const class UFArray&() const;
     bool HasParent() const; ///< Return true if object belongs to a UFGroup.
     /// Return the UFGroup the object belongs too.
     /// A std::logic_error will be thrown if the objects belongs to no group.
@@ -119,12 +127,12 @@ public:
     /// Override this method to implement your own message handling.
     /// The default handling is to send the message to the parent object.
     /// If no patent exists, send the message to stderr.
-    /// \param Format - a printf-like string format.
-    virtual void Message(const char *Format, ...) const;
+    /// \param format - a printf-like string format.
+    virtual void Message(const char *format, ...) const;
     /// Throw a UFException. Use this method to throw exceptions from
     /// within customized Event() methods.
-    /// \param Format - a printf-like string format.
-    void Throw(const char *Format, ...) const;
+    /// \param format - a printf-like string format.
+    void Throw(const char *format, ...) const;
     /// Set the value of the object to the value of the object parameter.
     /// Objects must be of same type and must have the same name. If the
     /// value changes, a #uf_value_changed event is triggered.
@@ -142,7 +150,7 @@ public:
     /// the values has to the same up to the prescribed accuracy.
     virtual bool IsDefault() const = 0;
     /// Set the current object value to its default value.
-    /// A #uf_default_changed events is triggered.
+    /// A #uf_default_changed event is triggered.
     virtual void SetDefault() = 0;
     /// Reset the object value to its default value. If the value changes,
     /// a #uf_value_changed event is triggered.
@@ -288,6 +296,11 @@ public:
     explicit UFString(UFName name, const char *defaultValue = "");
     void Set(const UFObject &object);
     void Set(const char *string);
+    /// Set string value to the @a index entry in the TokenList.
+    void SetIndex(int index);
+    /// Retriew the index location of the string in TokenList.
+    /// -1 is returned if the string is not in the TokenList.
+    int Index() const;
     bool IsDefault() const;
     void SetDefault();
     void Reset();
@@ -300,16 +313,17 @@ public:
 };
 
 /**
- * UFGRoup is a UFObject that contain a group of UFObject elements. This
+ * UFGroup is a UFObject that contain a group of UFObject elements. This
  * object is considered the Patent() of these elements.
  */
 class UFGroup : public UFObject {
 public:
     /// Construct an empty UFGroup, containing no objects.
-    explicit UFGroup(UFName Name);
+    /// The @a label is used to index the UFGroup inside a UFArray.
+    explicit UFGroup(UFName name, const char *label = "");
     /// Destroy a UFGroup after destroying all the objects it contains.
     ~UFGroup();
-    std::string XML(const char *fill = "") const;
+    std::string XML(const char *indent = "") const;
     void Set(const UFObject &object);
     void Set(const char *string);
     bool IsDefault() const;
@@ -325,12 +339,47 @@ public:
     /// \exception UFException is thrown if an element with the given name
     /// does not exist. This can be avoided with the use of the Has() method.
     const UFObject &operator[](UFName name) const;
-    /// Add (append) a UFObject to a UFGroup. If the object belongs to
+    /// Add (append) a UFObject to a UFGroup. If the object belonged to
     /// another group before, it will be detached from the original group.
     /// \exception UFException is thrown if UFGroup already contains
-    /// an object with the same name. This can be avoided with the of the
+    /// an object with the same name. This can be avoided with the use of the
     /// Has() method.
-    UFGroup &operator<<(UFObject *object);
+    virtual UFGroup &operator<<(UFObject *object);
+    /// Drop an object from the group. The dropped object is returned.
+    /// If it is not needed any more it should be deleted to free its memory.
+    UFObject &Drop(UFName name);
+};
+
+/**
+ * UFArray is a UFObject that contain an indexed group of UFObject elements.
+ * The array's elements are indexed by their StringValue(). In the current
+ * implementation, the StringValue() should not be changed after the
+ * UFObject was added to the UFArray.
+ */
+class UFArray : public UFGroup {
+public:
+    /// Construct an empty UFArray, containing no objects.
+    explicit UFArray(UFName name, const char *defaultIndex = "");
+    ~UFArray();
+    std::string XML(const char *indent = "") const;
+    void Set(const UFObject &object);
+    void Set(const char *string);
+    const char *StringValue() const;
+    bool IsDefault() const;
+    void SetDefault();
+    void Reset();
+    /// Set the current index position in the array.
+    void SetIndex(int index);
+    /// Retriew the current index location in the array. -1 is returned
+    /// if the string index value corresponds to no element's label.
+    int Index() const;
+    UFString &StringIndex();
+    /// Add (append) a UFObject to a UFArray. If the object belonged to
+    /// another array before, it will be detached from the original array.
+    /// \exception UFException is thrown if UFArray already contains
+    /// an object with the same StringValue. This can be avoided with the
+    /// use of the Has() method.
+    UFArray &operator<<(UFObject *object);
 };
 
 /// This is the common exception thrown by the UFObject implementation.
@@ -360,6 +409,7 @@ extern "C" {
 UFObject *ufobject_delete(UFObject *object);
 /// Retrieve the name of the UFObject.
 UFName ufobject_name(UFObject *object);
+UFObject *ufobject_parent(UFObject *object);
 /// Translate object to a string. See UFObject::StringValue() for details.
 const char *ufobject_string_value(UFObject *object);
 /// Set the value of the object from the string value.
@@ -407,6 +457,14 @@ UFObject *ufgroup_element(UFObject *object, UFName name);
 /// Add a UFObject to a UFGroup. Return false if UFGroup already contains
 /// an object with the same name. See \ref C-interface for more details.
 UFBoolean ufgroup_add(UFObject *group, UFObject *object);
+/// Drop an object from the group. The dropped object is returned.
+/// If it is not needed any more it should be deleted to free its memory.
+UFObject *ufgroup_drop(UFObject *group, UFName name);
+/// Set the current index position in the array.
+UFBoolean ufarray_set_index(UFObject *object, int index);
+/// Retriew the current index location in the array. -1 is returned
+/// if the string index value corresponds to no element's label.
+int ufarray_index(UFObject *object);
 
 #ifdef __cplusplus
 } // extern "C"

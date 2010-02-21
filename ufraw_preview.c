@@ -3106,7 +3106,7 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
     render_preview(data);
 }
 
-void ufraw_image_changed(UFObject *obj, UFEventType type)
+static void ufraw_image_changed(UFObject *obj, UFEventType type)
 {
     if (type != uf_value_changed)
 	return;
@@ -3135,7 +3135,7 @@ static void adjustment_reset_rotation(GtkWidget *widget, gpointer user_data)
     gtk_adjustment_value_changed(data->RotationAdjustment);
 }
 
-GtkWidget *reset_button(const char *tip, GCallback callback, void *data)
+static GtkWidget *reset_button(const char *tip, GCallback callback, void *data)
 {
     return stock_icon_button(GTK_STOCK_REFRESH, tip, callback, data);
 }
@@ -3170,7 +3170,7 @@ void ufnumber_adjustment_scale(UFObject *obj,
 }
 
 
-GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y,
+static GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y,
     const char *label, double value, void *valuep, double min, double max,
     double step, double jump, long accuracy, const gboolean wrap_spinner,
     const char *tip, GCallback callback, GtkWidget **resetButton,
@@ -3424,13 +3424,21 @@ static void delete_from_list(GtkWidget *widget, gpointer user_data)
     gtk_dialog_response(dialog, GTK_RESPONSE_APPLY);
 }
 
+// Duplicate CFG into RC, except for ufobject which is copied elegantly
+static void copy_conf_to_rc(preview_data *data)
+{
+    UFObject *tmp = RC->ufobject;
+    *RC = *data->UF->conf;
+    RC->ufobject = tmp;
+    UFObject *image = ufgroup_element(RC->ufobject, ufRawImage);
+    ufobject_copy(image, data->UF->conf->ufobject);
+}
+
 static void configuration_save(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     (void)user_data;
-    UFObject *tmp = RC->ufobject;
-    *RC = *data->UF->conf;
-    RC->ufobject = tmp;
+    copy_conf_to_rc(data);
     conf_save(RC, NULL, NULL);
 }
 
@@ -4968,7 +4976,7 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
     gtk_table_attach(table, label, 0, 1, 0, 1, 0, 0, 0, 0);
 
     entry = gtk_combo_box_entry_new_text();
-    data->AspectEntry = GTK_ENTRY(GTK_BIN(entry)->child);
+    data->AspectEntry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(entry)));
     gtk_entry_set_width_chars(data->AspectEntry, 6);
     gtk_entry_set_alignment(data->AspectEntry, 0.5);
     gtk_table_attach(table, GTK_WIDGET(entry), 1, 2, 0, 1, 0, 0, 5, 0);
@@ -5831,17 +5839,15 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 	if ( CFG->saveConfiguration==enabled_state ) {
 	    /* Save configuration from CFG, but not the output filename. */
 	    strcpy(CFG->outputFilename, "");
-	    conf_save(CFG, NULL, NULL);
-	    conf_copy_image(RC, CFG);
-	    conf_copy_save(RC, CFG);
+	    copy_conf_to_rc(data);
+	    conf_save(RC, NULL, NULL);
 	/* If save 'only this once' was chosen, then so be it */
 	} else if ( CFG->saveConfiguration==apply_state ) {
 	    CFG->saveConfiguration = disabled_state;
 	    /* Save configuration from CFG, but not the output filename. */
 	    strcpy(CFG->outputFilename, "");
-	    conf_save(CFG, NULL, NULL);
-	    conf_copy_image(RC, CFG);
-	    conf_copy_save(RC, CFG);
+	    copy_conf_to_rc(data);
+	    conf_save(RC, NULL, NULL);
 	} else if ( CFG->saveConfiguration==disabled_state ) {
 	    /* If save 'never again' was set in this session, we still
 	     * need to save this setting */

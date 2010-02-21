@@ -35,7 +35,7 @@ void (*ufraw_progress)(int what, int ticks);
 	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
 #define UF_LF_TRANSFORM ( \
 	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
-static void ufraw_lensfun_init(ufraw_data *uf);
+void ufraw_lensfun_init(ufraw_data *uf);
 static void ufraw_convert_image_vignetting(ufraw_data *uf,
 	ufraw_image_data *img, UFRectangle *area);
 static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
@@ -425,7 +425,25 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     // make, model are used in ufraw_image_set_data()
     g_strlcpy(uf->conf->make, raw->make, max_name);
     g_strlcpy(uf->conf->model, raw->model, max_name);
+    /*Reset EXIF data text fields to avoid spill over between images.*/
+    strcpy(uf->conf->isoText, "");
+    strcpy(uf->conf->shutterText, "");
+    strcpy(uf->conf->apertureText, "");
+    strcpy(uf->conf->focalLenText, "");
+    strcpy(uf->conf->focalLen35Text, "");
+    strcpy(uf->conf->lensText, "");
+    strcpy(uf->conf->flashText, "");
+    // lensText is used in ufraw_lensfun_init()
+    if ( !uf->conf->embeddedImage ) {
+	if ( ufraw_exif_read_input(uf)!=UFRAW_SUCCESS ) {
+	    ufraw_message(UFRAW_SET_LOG, "Error reading EXIF data from %s\n",
+		    uf->filename);
+	}
+    }
     ufraw_image_set_data(uf->conf->ufobject, uf);
+#ifdef HAVE_LENSFUN
+    ufraw_lensfun_init(uf);
+#endif
 
     char *absname = uf_file_set_absolute(uf->filename);
     g_strlcpy(uf->conf->inputFilename, absname, max_path);
@@ -449,20 +467,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	}
 	g_strlcpy(uf->conf->outputFilename, filename, max_path);
 	g_free(filename);
-    }
-    /*Reset EXIF data text fields to avoid spill over between images.*/
-    strcpy(uf->conf->isoText, "");
-    strcpy(uf->conf->shutterText, "");
-    strcpy(uf->conf->apertureText, "");
-    strcpy(uf->conf->focalLenText, "");
-    strcpy(uf->conf->focalLen35Text, "");
-    strcpy(uf->conf->lensText, "");
-    strcpy(uf->conf->flashText, "");
-    if ( !uf->conf->embeddedImage ) {
-	if ( ufraw_exif_read_input(uf)!=UFRAW_SUCCESS ) {
-	    ufraw_message(UFRAW_SET_LOG, "Error reading EXIF data from %s\n",
-		    uf->filename);
-	}
     }
     g_free(uf->unzippedBuf);
     uf->unzippedBuf = NULL;
@@ -572,23 +576,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	    uf->conf->BaseCurveIndex = linear_curve;
     }
     ufraw_load_darkframe(uf);
-#ifdef HAVE_LENSFUN
-    ufraw_lensfun_init(uf);
-    if (uf->conf->lensfunMode == lensfun_none) {
-        uf->conf->lens_distortion.Model = LF_DIST_MODEL_NONE;
-	if (uf->conf->lens->CalibDistortion != NULL)
-	    while (uf->conf->lens->CalibDistortion[0] != NULL)
-		lf_lens_remove_calib_distortion(uf->conf->lens, 0);
-        uf->conf->lens_tca.Model = LF_TCA_MODEL_NONE;
-	if (uf->conf->lens->CalibTCA != NULL)
-	    while (uf->conf->lens->CalibTCA[0] != NULL)
-		lf_lens_remove_calib_tca(uf->conf->lens, 0);
-        uf->conf->lens_vignetting.Model = LF_VIGNETTING_MODEL_NONE;
-	if (uf->conf->lens->CalibVignetting != NULL)
-	    while (uf->conf->lens->CalibVignetting[0] != NULL)
-		lf_lens_remove_calib_vignetting(uf->conf->lens, 0);
-    }
-#endif
+
     ufraw_get_image_dimensions(uf);
 
     return UFRAW_SUCCESS;
@@ -1249,40 +1237,6 @@ static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase)
 }
 
 #ifdef HAVE_LENSFUN
-static void ufraw_lensfun_init(ufraw_data *uf)
-{
-    /* Load lens database only once */
-    static lfDatabase *lensdb = NULL;
-    if (lensdb == NULL) {
-	lensdb = lf_db_new();
-	lf_db_load(lensdb);
-    }
-    uf->conf->lensdb = lensdb;
-
-    /* Create a default lens & camera */
-    uf->conf->lens = lf_lens_new();
-    uf->conf->camera = lf_camera_new();
-    uf->conf->cur_lens_type = LF_UNKNOWN;
-
-    /* Set lens and camera from EXIF info, if possible */
-    if (uf->conf->real_make[0] || uf->conf->real_model[0]) {
-	const lfCamera **cams = lf_db_find_cameras(uf->conf->lensdb,
-		uf->conf->real_make, uf->conf->real_model);
-	if (cams != NULL) {
-	    lf_camera_copy(uf->conf->camera, cams[0]);
-	    lf_free(cams);
-	}
-    }
-    if (strlen(uf->conf->lensText) > 0) {
-	const lfLens **lenses = lf_db_find_lenses_hd(uf->conf->lensdb,
-		uf->conf->camera, NULL, uf->conf->lensText, 0);
-	if (lenses != NULL) {
-	    lf_lens_copy(uf->conf->lens, lenses[0]);
-	    lf_free(lenses);
-	}
-    }
-}
-
 /* Apply TCA */
 static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
 	ufraw_image_data *outimg, UFRectangle *area)
@@ -1584,11 +1538,11 @@ static void ufraw_prepare_tca(ufraw_data *uf)
     if (uf->TCAmodifier == NULL)
 	return;
 
-    uf->modFlags = lf_modifier_initialize(uf->TCAmodifier, uf->conf->lens,
+    int modFlags = lf_modifier_initialize(uf->TCAmodifier, uf->conf->lens,
 	    LF_PF_U16, uf->conf->focal_len, uf->conf->aperture,
 	    uf->conf->subject_distance, 1.0, uf->conf->cur_lens_type,
 	    LF_MODIFY_TCA, FALSE);
-    if ((uf->modFlags & LF_MODIFY_TCA) == 0) {
+    if ((modFlags & LF_MODIFY_TCA) == 0) {
 	lf_modifier_destroy(uf->TCAmodifier);
 	uf->TCAmodifier = NULL;
     }

@@ -55,13 +55,10 @@ static GtkComboBoxEntry *combo_entry_text(GtkWidget *container,
 
 /* simple function to compute the floating-point precision
    which is enough for "normal use". The criteria is to have
-   2 or 3 significant digits. */
+   about 2 significant digits. */
 static int precision(double x)
 {
-    if (x > 10.0 && (int)(10*x)%10 != 0)
-	return MAX(-floor(log(x) / log(10) - 1.99), 0);
-    else
-	return MAX(-floor(log(x) / log(10) - 0.99), 0);
+    return MAX(-floor(log(x) / log(10) - 0.99), 0);
 }
 
 static GtkComboBoxEntry *combo_entry_numeric(GtkWidget *container,
@@ -250,58 +247,20 @@ static void camera_list_clicked(GtkWidget *button, preview_data *data)
 /* Update all lens model-related controls to reflect current model */
 static void lens_update_controls(preview_data *data)
 {
-    gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensDistortionModel),
-	    CFG->lens_distortion.Model - LF_DIST_MODEL_NONE);
-    gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensTCAModel),
-	    CFG->lens_tca.Model - LF_TCA_MODEL_NONE);
-    gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensVignettingModel),
-	    CFG->lens_vignetting.Model - LF_VIGNETTING_MODEL_NONE);
     gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensFromGeometrySel),
 	    CFG->lens->Type);
     gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensToGeometrySel),
 	    CFG->cur_lens_type);
 }
 
+void ufraw_lensfun_interpolate(UFObject *lensfun, const lfLens *lens);
+
 static void lens_interpolate(preview_data *data, const lfLens *lens)
 {
-    lfDistortionModel old_dist_model = CFG->lens_distortion.Model;
-    lfTCAModel old_tca_model = CFG->lens_tca.Model;
-    lfVignettingModel old_vignetting_model = CFG->lens_vignetting.Model;
-
     /* Interpolate all models and set the temp values accordingly */
-    if (!lf_lens_interpolate_distortion(lens, CFG->focal_len,
-		&CFG->lens_distortion))
-	memset(&CFG->lens_distortion, 0, sizeof(CFG->lens_distortion));
-    if (!lf_lens_interpolate_tca(lens, CFG->focal_len, &CFG->lens_tca))
-	memset(&CFG->lens_tca, 0, sizeof(CFG->lens_tca));
-    if (!lf_lens_interpolate_vignetting(lens, CFG->focal_len, CFG->aperture,
-		CFG->subject_distance, &CFG->lens_vignetting))
-	memset(&CFG->lens_vignetting, 0, sizeof(CFG->lens_vignetting));
-
+    UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
+    ufraw_lensfun_interpolate(lensfun, lens);
     lens_update_controls(data);
-
-    /* If the model does not change, the parameter sliders won't be updated.
-     * To solve this, we'll call the "changed" callback manually.
-     */
-    if (CFG->lens_distortion.Model != LF_DIST_MODEL_NONE &&
-	old_dist_model == CFG->lens_distortion.Model)
-	g_signal_emit_by_name(GTK_COMBO_BOX(data->LensDistortionModel),
-		"changed", NULL, NULL);
-    if (CFG->lens_tca.Model != LF_TCA_MODEL_NONE &&
-	old_tca_model == CFG->lens_tca.Model)
-	g_signal_emit_by_name(GTK_COMBO_BOX(data->LensTCAModel),
-		"changed", NULL, NULL);
-    if (CFG->lens_vignetting.Model != LF_VIGNETTING_MODEL_NONE &&
-	old_vignetting_model == CFG->lens_vignetting.Model)
-	g_signal_emit_by_name(GTK_COMBO_BOX(data->LensVignettingModel),
-		"changed", NULL, NULL);
-
-    if (data->UF->modFlags & LF_MODIFY_VIGNETTING)
-	ufraw_invalidate_layer(data->UF, ufraw_first_phase);
-    else
-	ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
-    resize_canvas(data);
-    render_preview(data);
 }
 
 static void lens_combo_entry_update(GtkComboBox *widget, float *valuep)
@@ -325,7 +284,7 @@ static void lens_set(preview_data *data, const lfLens *lens)
     };
     static gdouble aperture_values[] = {
 	1, 1.2, 1.4, 1.7, 2, 2.4, 2.8, 3.4, 4, 4.8, 5.6, 6.7,
-	8, 9.5, 11, 13, 16, 19, 22, 27, 32, 38, 45
+	8, 9.5, 11, 13, 16, 19, 22, 27, 32, 38
     };
 
     if (lens == NULL) {
@@ -518,102 +477,40 @@ static void lens_list_clicked(GtkWidget *button, preview_data *data)
 	    0, gtk_get_current_event_time());
 }
 
-static void reset_adjustment_value(GtkWidget *widget, const lfParameter *param)
-{
-    GtkAdjustment *adj = (GtkAdjustment *)g_object_get_data(G_OBJECT(widget),
-	    "Adjustment");
-    gtk_adjustment_set_value(adj, param->Default);
-}
-
-static GtkAdjustment *append_term(GtkWidget *table, int y,
-	const lfParameter *param, float *term, GCallback callback)
-{
-    int accuracy = -floor(log(param->Max - param->Min) / log(10)) + 3;
-    double step = pow(10, -accuracy + 1);
-    double page = pow(10, -accuracy + 2);
-
-    GtkAdjustment *adj = adjustment_scale(GTK_TABLE(table), 0, y,
-	    param->Name, *term, term,
-	    param->Min, param->Max, step, page, accuracy, FALSE, NULL, callback,
-	    NULL, NULL, NULL);
-
-    GtkWidget *button = stock_icon_button(GTK_STOCK_REFRESH, NULL,
-	    G_CALLBACK(reset_adjustment_value), (void *)param);
-    gtk_table_attach(GTK_TABLE(table), button, 7, 8, y, y + 1, 0, 0, 0, 0);
-    g_object_set_data(G_OBJECT(button), "Adjustment", adj);
-
-    return adj;
-}
-
 /* --- TCA correction page --- */
-
-static void remove_tca_models(preview_data *data, lfTCAModel model)
-{
-    int i;
-
-    /* Remove calibration data which uses a different model */
-    if (CFG->lens->CalibTCA != NULL)
-	for (i = 0; CFG->lens->CalibTCA[i] != NULL; )
-	    if (CFG->lens->CalibTCA[i]->Model != model)
-		lf_lens_remove_calib_tca(CFG->lens, i);
-	    else
-		i++;
-}
-
-static void adjustment_update_tca(GtkAdjustment *adj, float *valuep)
-{
-    preview_data *data = get_preview_data(adj);
-    *valuep = gtk_adjustment_get_value(adj);
-
-    CFG->lens_tca.Focal = CFG->focal_len;
-
-    remove_tca_models(data, CFG->lens_tca.Model);
-    lf_lens_add_calib_tca(CFG->lens, &CFG->lens_tca);
-
-    ufraw_invalidate_tca_layer(data->UF);
-    render_preview(data);
-}
 
 static void tca_model_changed(GtkComboBox *widget, preview_data *data)
 {
-    lfTCAModel model = gtk_combo_box_get_active(widget) - LF_TCA_MODEL_NONE;
-
-    const char *details;
-    const lfParameter **params;
-    if (!lf_get_tca_model_desc(model, &details, &params))
-	return; /* should never happen */
-
+    (void)widget;
     gtk_container_foreach(GTK_CONTAINER(data->LensTCATable),
 	    delete_children, NULL);
 
-    gboolean reset_values = (CFG->lens_tca.Model != model);
-    if (reset_values)
-	remove_tca_models(data, model);
-
-    CFG->lens_tca.Model = model;
-
+    UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
+    UFObject *tca = ufgroup_element(lensfun, ufTCA);
+    UFObject *model = ufgroup_element(tca, ufobject_string_value(tca));
+    lfTCAModel tcaModel = ufarray_index(tca);
+    const char *details;
+    const lfParameter **params;
+    if (!lf_get_tca_model_desc(tcaModel, &details, &params))
+	return; /* should never happen */
     int i;
-    if (params != NULL)
+    if (params != NULL) {
 	for (i = 0; params[i] != NULL; i++) {
-	    if (reset_values)
-		CFG->lens_tca.Terms[i] = params[i]->Default;
-
-	    append_term(data->LensTCATable, i,
-		    params[i], &CFG->lens_tca.Terms[i],
-		    G_CALLBACK(adjustment_update_tca));
+	    UFObject *param = ufgroup_element(model, params[i]->Name);
+	    ufnumber_adjustment_scale(param, GTK_TABLE(data->LensTCATable),
+		    0, i, params[i]->Name, NULL);
+	    GtkWidget *reset = ufobject_reset_button_new(NULL);
+	    ufobject_reset_button_add(reset, param);
+	    gtk_table_attach(GTK_TABLE(data->LensTCATable), reset,
+		    7, 8, i, i+1, 0, 0, 0, 0);
 	}
-
+    }
     gtk_label_set_text(GTK_LABEL(data->LensTCADesc), details);
     gtk_widget_show_all(data->LensTCATable);
-
-    ufraw_invalidate_tca_layer(data->UF);
-    render_preview(data);
 }
 
 static void fill_tca_page(preview_data *data, GtkWidget *page)
 {
-    int i;
-
     GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
     gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
 
@@ -621,21 +518,13 @@ static void fill_tca_page(preview_data *data, GtkWidget *page)
     GtkWidget *label = gtk_label_new(_("Model:"));
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
-    data->LensTCAModel = gtk_combo_box_new_text();
-    uf_widget_set_tooltip(data->LensTCAModel,
-	    _("Chromatic Aberrations mathematical model"));
-    for (i = 0; ; i++) {
-	const char *model_name;
-	lfTCAModel model = LF_TCA_MODEL_NONE + i;
-	model_name = lf_get_tca_model_desc(model, NULL, NULL);
-	if (model_name == NULL)
-	    break;
-	gtk_combo_box_append_text(GTK_COMBO_BOX(data->LensTCAModel),
-		model_name);
-    }
-    g_signal_connect(G_OBJECT(data->LensTCAModel), "changed",
-	    G_CALLBACK(tca_model_changed), data);
-    gtk_box_pack_start(GTK_BOX(hbox), data->LensTCAModel, TRUE, TRUE, 0);
+    UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
+    UFObject *tca = ufgroup_element(lensfun, ufTCA);
+    GtkWidget *combo = ufarray_combo_box_new(tca);
+    gtk_box_pack_start(GTK_BOX(hbox), combo, TRUE, TRUE, 0);
+    uf_widget_set_tooltip(combo, _("Chromatic Aberrations mathematical model"));
+    g_signal_connect_after(G_OBJECT(combo), "changed",
+            G_CALLBACK(tca_model_changed), data);
 
     data->LensTCATable = gtk_table_new(10, 1, FALSE);
     GtkWidget *f = gtk_frame_new(_("Parameters"));
@@ -651,75 +540,40 @@ static void fill_tca_page(preview_data *data, GtkWidget *page)
 
 /* --- Vignetting correction page --- */
 
-static void remove_vign_models(preview_data *data, lfVignettingModel model)
-{
-    int i;
-
-    /* Remove calibration data which uses a different model */
-    if (CFG->lens->CalibVignetting != NULL)
-	for (i = 0; CFG->lens->CalibVignetting[i] != NULL; )
-	    if (CFG->lens->CalibVignetting[i]->Model != model)
-		lf_lens_remove_calib_vignetting(CFG->lens, i);
-	    else
-		i++;
-}
-
-static void adjustment_update_vign(GtkAdjustment *adj, float *valuep)
-{
-    preview_data *data = get_preview_data(adj);
-    *valuep = gtk_adjustment_get_value(adj);
-
-    CFG->lens_vignetting.Focal = CFG->focal_len;
-    CFG->lens_vignetting.Aperture = CFG->aperture;
-    CFG->lens_vignetting.Distance = CFG->subject_distance;
-
-    remove_vign_models(data, CFG->lens_vignetting.Model);
-    lf_lens_add_calib_vignetting(CFG->lens, &CFG->lens_vignetting);
-
-    ufraw_invalidate_layer(data->UF, ufraw_first_phase);
-    render_preview(data);
-}
-
 static void vignetting_model_changed(GtkComboBox *widget, preview_data *data)
 {
-    lfVignettingModel model = gtk_combo_box_get_active(widget) -
-	    LF_VIGNETTING_MODEL_NONE;
-
-    const char *details;
-    const lfParameter **params;
-    if (!lf_get_vignetting_model_desc(model, &details, &params))
-	return; /* should never happen */
-
+    (void)widget;
     gtk_container_foreach(GTK_CONTAINER(data->LensVignettingTable),
 	    delete_children, NULL);
 
-    gboolean reset_values = (CFG->lens_vignetting.Model != model);
-    if (reset_values)
-	remove_vign_models(data, model);
-    CFG->lens_vignetting.Model = model;
-
+    UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
+    UFObject *vignetting = ufgroup_element(lensfun, ufVignetting);
+    UFObject *model = ufgroup_element(vignetting,
+	    ufobject_string_value(vignetting));
+    lfVignettingModel vignettingModel = ufarray_index(vignetting);
+    const char *details;
+    const lfParameter **params;
+    if (!lf_get_vignetting_model_desc(vignettingModel, &details, &params))
+	return; /* should never happen */
     int i;
-    if (params != NULL)
+    if (params != NULL) {
 	for (i = 0; params[i] != NULL; i++) {
-	    if (reset_values)
-		CFG->lens_vignetting.Terms[i] = params[i]->Default;
-
-	    append_term(data->LensVignettingTable, i,
-		    params[i], &CFG->lens_vignetting.Terms[i],
-		    G_CALLBACK(adjustment_update_vign));
+	    UFObject *param = ufgroup_element(model, params[i]->Name);
+	    ufnumber_adjustment_scale(param,
+		    GTK_TABLE(data->LensVignettingTable), 0, i,
+		    params[i]->Name, NULL);
+	    GtkWidget *reset = ufobject_reset_button_new(NULL);
+	    ufobject_reset_button_add(reset, param);
+	    gtk_table_attach(GTK_TABLE(data->LensVignettingTable), reset,
+		    7, 8, i, i+1, 0, 0, 0, 0);
 	}
-
+    }
     gtk_label_set_text(GTK_LABEL(data->LensVignettingDesc), details);
     gtk_widget_show_all(data->LensVignettingTable);
-
-    ufraw_invalidate_layer(data->UF, ufraw_first_phase);
-    render_preview(data);
 }
 
 static void fill_vignetting_page(preview_data *data, GtkWidget *page)
 {
-    int i;
-
     GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
     gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
 
@@ -727,21 +581,13 @@ static void fill_vignetting_page(preview_data *data, GtkWidget *page)
     GtkWidget *label = gtk_label_new(_("Model:"));
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
-    data->LensVignettingModel = gtk_combo_box_new_text();
-    uf_widget_set_tooltip(data->LensVignettingModel,
-	    _("Optical vignetting mathematical model"));
-    for (i = 0; ; i++) {
-	const char *model_name;
-	lfVignettingModel model = LF_VIGNETTING_MODEL_NONE + i;
-	model_name = lf_get_vignetting_model_desc(model, NULL, NULL);
-	if (model_name == NULL)
-	    break;
-	gtk_combo_box_append_text(GTK_COMBO_BOX(data->LensVignettingModel),
-		model_name);
-    }
-    g_signal_connect(G_OBJECT(data->LensVignettingModel), "changed",
-	    G_CALLBACK(vignetting_model_changed), data);
-    gtk_box_pack_start(GTK_BOX(hbox), data->LensVignettingModel, TRUE, TRUE, 0);
+    UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
+    UFObject *vignetting = ufgroup_element(lensfun, ufVignetting);
+    GtkWidget *combo = ufarray_combo_box_new(vignetting);
+    gtk_box_pack_start(GTK_BOX(hbox), combo, TRUE, TRUE, 0);
+    uf_widget_set_tooltip(combo, _("Optical vignetting mathematical model"));
+    g_signal_connect_after(G_OBJECT(combo), "changed",
+            G_CALLBACK(vignetting_model_changed), data);
 
     data->LensVignettingTable = gtk_table_new(10, 1, FALSE);
     GtkWidget *f = gtk_frame_new(_("Parameters"));
@@ -759,76 +605,40 @@ static void fill_vignetting_page(preview_data *data, GtkWidget *page)
 
 /* --- Distortion correction page --- */
 
-static void remove_dist_models(preview_data *data, lfDistortionModel model)
-{
-    int i;
-
-    /* Remove calibration data which uses a different model */
-    if (CFG->lens->CalibDistortion != NULL)
-	for (i = 0; CFG->lens->CalibDistortion[i] != NULL; )
-	    if (CFG->lens->CalibDistortion[i]->Model != model)
-		lf_lens_remove_calib_distortion(CFG->lens, i);
-	    else
-		i++;
-}
-
-static void adjustment_update_dist(GtkAdjustment *adj, float *valuep)
-{
-    preview_data *data = get_preview_data(adj);
-    *valuep = gtk_adjustment_get_value(adj);
-
-    CFG->lens_distortion.Focal = CFG->focal_len;
-
-    remove_dist_models(data, CFG->lens_distortion.Model);
-    lf_lens_add_calib_distortion(CFG->lens, &CFG->lens_distortion);
-
-    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
-    resize_canvas(data);
-    render_preview(data);
-}
-
 static void distortion_model_changed(GtkComboBox *widget, preview_data *data)
 {
-    lfDistortionModel model = gtk_combo_box_get_active(widget) -
-	    LF_DIST_MODEL_NONE;
-
-    const char *details;
-    const lfParameter **params;
-    if (!lf_get_distortion_model_desc(model, &details, &params))
-	return; // should never happen
-
+    (void)widget;
     gtk_container_foreach(GTK_CONTAINER(data->LensDistortionTable),
 	    delete_children, NULL);
 
-    gboolean reset_values = (CFG->lens_distortion.Model != model);
-    if (reset_values)
-	remove_dist_models(data, model);
-
-    CFG->lens_distortion.Model = model;
-
+    UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
+    UFObject *distortion = ufgroup_element(lensfun, ufDistortion);
+    UFObject *model = ufgroup_element(distortion,
+	    ufobject_string_value(distortion));
+    lfDistortionModel distortionModel = ufarray_index(distortion);
+    const char *details;
+    const lfParameter **params;
+    if (!lf_get_distortion_model_desc(distortionModel, &details, &params))
+	return; // should never happen
     int i;
-    if (params != NULL)
+    if (params != NULL) {
 	for (i = 0; params[i] != NULL; i++) {
-	    if (reset_values)
-		CFG->lens_distortion.Terms[i] = params[i]->Default;
-
-	    append_term(data->LensDistortionTable, i,
-		    params[i], &CFG->lens_distortion.Terms[i],
-		    G_CALLBACK(adjustment_update_dist));
+	    UFObject *param = ufgroup_element(model, params[i]->Name);
+	    ufnumber_adjustment_scale(param,
+		    GTK_TABLE(data->LensDistortionTable), 0, i,
+		    params[i]->Name, NULL);
+	    GtkWidget *reset = ufobject_reset_button_new(NULL);
+	    ufobject_reset_button_add(reset, param);
+	    gtk_table_attach(GTK_TABLE(data->LensDistortionTable), reset,
+		    7, 8, i, i+1, 0, 0, 0, 0);
 	}
-
+    }
     gtk_label_set_text(GTK_LABEL(data->LensDistortionDesc), details);
     gtk_widget_show_all(data->LensDistortionTable);
-
-    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
-    resize_canvas(data);
-    render_preview(data);
 }
 
 static void fill_distortion_page(preview_data *data, GtkWidget *page)
 {
-    int i;
-
     GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
     gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
 
@@ -836,21 +646,13 @@ static void fill_distortion_page(preview_data *data, GtkWidget *page)
     GtkWidget *label = gtk_label_new(_("Model:"));
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
-    data->LensDistortionModel = gtk_combo_box_new_text();
-    uf_widget_set_tooltip(data->LensDistortionModel,
-	    _("Lens distortion mathematical model"));
-    for (i = 0; ; i++) {
-	const char *model_name;
-	lfDistortionModel model = LF_DIST_MODEL_NONE + i;
-	model_name = lf_get_distortion_model_desc(model, NULL, NULL);
-	if (model_name == NULL)
-	    break;
-	gtk_combo_box_append_text(GTK_COMBO_BOX(data->LensDistortionModel),
-		model_name);
-    }
-    g_signal_connect(G_OBJECT(data->LensDistortionModel), "changed",
+    UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
+    UFObject *distortion = ufgroup_element(lensfun, ufDistortion);
+    GtkWidget *combo = ufarray_combo_box_new(distortion);
+    gtk_box_pack_start(GTK_BOX(hbox), combo, TRUE, TRUE, 0);
+    uf_widget_set_tooltip(combo, _("Lens distortion mathematical model"));
+    g_signal_connect_after(G_OBJECT(combo), "changed",
 	    G_CALLBACK(distortion_model_changed), data);
-    gtk_box_pack_start(GTK_BOX(hbox), data->LensDistortionModel, TRUE, TRUE, 0);
 
     data->LensDistortionTable = gtk_table_new(10, 1, FALSE);
     GtkWidget *f = gtk_frame_new(_("Parameters"));
@@ -893,8 +695,6 @@ static void geometry_model_changed(GtkComboBox *widget, preview_data *data)
 
 static void fill_geometry_page(preview_data *data, GtkWidget *page)
 {
-    int i;
-
     data->LensGeometryTable = gtk_table_new(10, 1, FALSE);
     gtk_box_pack_start(GTK_BOX(page),
 	    data->LensGeometryTable, TRUE, TRUE, 0);
@@ -942,6 +742,7 @@ static void fill_geometry_page(preview_data *data, GtkWidget *page)
 	    data->LensToGeometryDesc, 0, 2, 3, 4,
 	    GTK_EXPAND | GTK_FILL, 0, 0, 10);
 
+    int i;
     for (i = 0; ; i++) {
 	lfLensType type = LF_UNKNOWN + i;
 	const char *type_name = lf_get_lens_type_desc(type, NULL);
@@ -962,12 +763,25 @@ static void fill_geometry_page(preview_data *data, GtkWidget *page)
 	    G_CALLBACK(geometry_model_changed), data);
 }
 
+static void ufraw_lensfun_changed(UFObject *obj, UFEventType type)
+{
+    if (type != uf_value_changed)
+        return;
+    preview_data *data = ufobject_user_data(obj);
+    resize_canvas(data);
+}
+
 /**
  * Fill the "lens correction" page in the main notebook.
  */
 void lens_fill_interface(preview_data *data, GtkWidget *page)
 {
     GtkWidget *label, *button, *subpage;
+
+    UFObject *image = CFG->ufobject;
+    UFObject *lensfun = ufgroup_element(image, ufLensfun);
+    ufobject_set_user_data(lensfun, data);
+    ufobject_set_changed_event_handle(lensfun, ufraw_lensfun_changed);
 
     /* Camera selector */
     GtkTable *table = GTK_TABLE(gtk_table_new(10, 10, FALSE));
@@ -1024,20 +838,26 @@ void lens_fill_interface(preview_data *data, GtkWidget *page)
     camera_set(data);
     lens_set(data, CFG->lens);
 
+    subpage = notebook_page_new(subnb,
+	    _("Lateral chromatic aberration"), "tca");
+    fill_tca_page(data, subpage);
+    tca_model_changed(NULL, data);
+
+    subpage = notebook_page_new(subnb, _("Optical vignetting"), "vignetting");
+    fill_vignetting_page(data, subpage);
+    vignetting_model_changed(NULL, data);
+
     subpage = notebook_page_new(subnb, _("Lens distortion"), "distortion");
     fill_distortion_page(data, subpage);
+    distortion_model_changed(NULL, data);
+    gtk_widget_show_all(subpage); // Need to show the page for set page to work.
+    int pageNum = gtk_notebook_page_num(subnb, page);
+    gtk_notebook_set_current_page(subnb, pageNum);
 
     subpage = notebook_page_new(subnb, _("Lens geometry"), "geometry");
     fill_geometry_page(data, subpage);
 
-    subpage = notebook_page_new(subnb, _("Optical vignetting"), "vignetting");
-    fill_vignetting_page(data, subpage);
-
-    subpage = notebook_page_new(subnb,
-	    _("Lateral chromatic aberration"), "tca");
-    fill_tca_page(data, subpage);
-
-    lens_interpolate(data, CFG->lens);
+    lens_update_controls(data);
 }
 
 #endif /* HAVE_LENSFUN */

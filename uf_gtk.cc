@@ -355,7 +355,7 @@ public:
 typedef std::list<UFObject *> _UFObjectList;
 
 void _ufobject_reset_button_state(UFObject *object) {
-    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData);
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData());
     if (data->button == NULL)
 	return;
     _UFObjectList *list = static_cast<_UFObjectList *>(
@@ -374,7 +374,7 @@ static void _ufnumber_adjustment_changed(GtkAdjustment *adj, UFObject *object) {
 }
 
 static void _ufnumber_object_event(UFObject *object, UFEventType type) {
-    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData);
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData());
     if (type == uf_destroyed) {
 	delete data;
 	return;
@@ -386,7 +386,7 @@ static void _ufnumber_object_event(UFObject *object, UFEventType type) {
 
 static void _ufnumber_array_adjustment_changed(GtkAdjustment *adj,
 	UFObject *object) {
-    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData);
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData());
     UFNumberArray &array = *object;
     for (int i = 0; i < array.Size(); i++)
 	if (data->adjustment(i) == adj)
@@ -394,7 +394,7 @@ static void _ufnumber_array_adjustment_changed(GtkAdjustment *adj,
 }
 
 static void _ufnumber_array_object_event(UFObject *object, UFEventType type) {
-    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData);
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData());
     if (type == uf_destroyed) {
 	delete data;
 	return;
@@ -406,13 +406,17 @@ static void _ufnumber_array_object_event(UFObject *object, UFEventType type) {
 }
 
 static void _ufstring_object_event(UFObject *object, UFEventType type) {
-    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData);
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData());
     if (type == uf_destroyed) {
 	delete data;
 	return;
     }
-    UFString &string = *object;
     GtkComboBox *combo = GTK_COMBO_BOX(data->gobject[0]);
+    UFString &string = *object;
+    if (string.Index() >= 0) {
+	gtk_combo_box_set_active(combo, string.Index());
+	return;
+    }
     UFTokenList &list = string.GetTokens();
     int i = 0;
     for (UFTokenList::iterator iter = list.begin();
@@ -430,41 +434,56 @@ static void _ufstring_object_event(UFObject *object, UFEventType type) {
 /* Return the widget-data for the object.
  * Create the widget-data, if it was not set already.
  */
+static void _ufobject_adjustment_destroyed(GtkAdjustment *,
+    void **adjustmentPointer) {
+    *adjustmentPointer = NULL;
+}
+
 static _UFWidgetData &_ufnumber_widget_data(UFNumber &number) {
-    if (number.UserData != NULL)
-	return *static_cast<_UFWidgetData *>(number.UserData);
-    _UFWidgetData &data = *(new _UFWidgetData);
-    number.UserData = &data;
+    if (number.UserData() == NULL) {
+	_UFWidgetData *datap = new _UFWidgetData;
+	number.SetUserData(datap);
+    }
+    _UFWidgetData &data = *static_cast<_UFWidgetData *>(number.UserData());
+    if (data.gobject[0] != NULL)
+	return data;
     data.gobject[0] = G_OBJECT(gtk_adjustment_new(number.DoubleValue(),
 	    number.Minimum(), number.Maximum(),
 	    number.Step(), number.Jump(), 0.0));
     g_signal_connect(G_OBJECT(data.adjustment(0)), "value-changed",
 	    G_CALLBACK(_ufnumber_adjustment_changed), &number);
+    g_signal_connect(G_OBJECT(data.adjustment(0)), "destroy",
+	    G_CALLBACK(_ufobject_adjustment_destroyed), &data.gobject[0]);
     number.SetEventHandle(_ufnumber_object_event);
     return data;
 }
 
 static _UFWidgetData &_ufnumber_array_widget_data(UFNumberArray &array) {
-    if (array.UserData != NULL)
-	return *static_cast<_UFWidgetData *>(array.UserData);
-    _UFWidgetData &data = *(new _UFWidgetData(array.Size()));
-    array.UserData = &data;
+    if (array.UserData() == NULL) {
+	_UFWidgetData *datap = new _UFWidgetData(array.Size());
+	array.SetUserData(datap);
+    }
+    _UFWidgetData &data = *static_cast<_UFWidgetData *>(array.UserData());
     for (int i = 0; i < array.Size(); i++) {
+	if (data.gobject[i] != NULL)
+	    continue;
 	data.gobject[i] = G_OBJECT(gtk_adjustment_new(array.DoubleValue(i),
 		array.Minimum(), array.Maximum(),
 		array.Step(), array.Jump(), 0.0));
 	g_signal_connect(G_OBJECT(data.adjustment(i)), "value-changed",
-	    G_CALLBACK(_ufnumber_array_adjustment_changed), &array);
+		G_CALLBACK(_ufnumber_array_adjustment_changed), &array);
+	g_signal_connect(G_OBJECT(data.adjustment(0)), "destroy",
+		G_CALLBACK(_ufobject_adjustment_destroyed), &data.gobject[i]);
     }
     array.SetEventHandle(_ufnumber_array_object_event);
     return data;
 }
 
 static _UFWidgetData &_ufstring_widget_data(UFString &string) {
-    if (string.UserData != NULL)
-	return *static_cast<_UFWidgetData *>(string.UserData);
+    if (string.UserData() != NULL)
+	return *static_cast<_UFWidgetData *>(string.UserData());
     _UFWidgetData &data = *(new _UFWidgetData);
-    string.UserData = &data;
+    string.SetUserData(&data);
     data.gobject[0] = NULL;
     string.SetEventHandle(_ufstring_object_event);
     return data;
@@ -538,8 +557,8 @@ GtkWidget *ufobject_reset_button_new(const char *tip) {
 }
 
 void ufobject_reset_button_add(GtkWidget *button, UFObject *object) {
-    assert(object->UserData != NULL);
-    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData);
+    assert(object->UserData() != NULL);
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData());
     data->button = GTK_BUTTON(button);
     _UFObjectList *objectList = static_cast<_UFObjectList *>(
 	    g_object_get_data(G_OBJECT(button), "UFObjectList"));
@@ -550,11 +569,8 @@ void ufobject_reset_button_add(GtkWidget *button, UFObject *object) {
 
 static void _ufstring_combo_changed(GtkWidget *combo, UFObject *object) {
     UFString &string = *object;
-    UFTokenList &list = string.GetTokens();
     int i = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
-    UFTokenList::iterator iter = list.begin();
-    std::advance(iter, i);
-    string.Set(*iter);
+    string.SetIndex(i);
     _ufobject_reset_button_state(object);
 }
 
@@ -575,6 +591,11 @@ GtkWidget *ufstring_combo_box_new(UFObject *object) {
     }
     _ufstring_object_event(object, uf_value_changed);
     return combo;
+}
+
+GtkWidget *ufarray_combo_box_new(UFObject *object) {
+    UFArray &array = *object;
+    return ufstring_combo_box_new(&array.StringIndex());
 }
 
 } // extern "C"

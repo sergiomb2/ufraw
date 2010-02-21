@@ -201,12 +201,7 @@ GtkWidget *notebook_page_new (GtkNotebook *notebook, char *text, char *icon);
 
 GtkWidget *stock_icon_button(const gchar *stock_id,
 			     const char *tip, GCallback callback, void *data);
-GtkWidget *reset_button (const char *tip, GCallback callback, void *data);
-
-GtkAdjustment *adjustment_scale (GtkTable *table, int x, int y,
-    const char *label, double value, void *valuep, double min, double max,
-    double step, double jump, long accuracy, const gboolean wrap_spinner,
-    const char *tip, GCallback callback, GtkWidget **resetButton,
-    const char *resetTip, void (*resetCallback)());
+void ufnumber_adjustment_scale(UFObject *obj,
+    GtkTable *table, int x, int y, const char *label, const char *tip);
 
 #endif /* _UFRAW_UI_H */
