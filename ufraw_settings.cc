@@ -230,6 +230,8 @@ Image::Image(UFObject *root) : UFGroup(ufRawImage), uf(NULL) {
 #ifdef HAVE_LENSFUN
     if (root == NULL || root->Name() != ufRawResources)
 	*this << new Lensfun; // Lensfun data is not saved to .ufrawrc
+#else
+    (void)root;
 #endif
 }
 
