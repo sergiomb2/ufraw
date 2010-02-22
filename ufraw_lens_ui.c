@@ -59,6 +59,7 @@ static GtkComboBoxEntry *combo_entry_text(GtkWidget *container,
 static int precision(double x)
 {
     if (x > 10.0 && (int)(10*x)%10 != 0)
+	// Support focal length such as 10.5mm fisheye.
 	return MAX(-floor(log(x) / log(10) - 1.99), 0);
     else
 	return MAX(-floor(log(x) / log(10) - 0.99), 0);
