@@ -60,6 +60,7 @@ extern const char uf_auto_wb[];
  */
 
 extern UFName ufWB;
+extern UFName ufPreset;
 extern UFName ufWBFineTuning;
 extern UFName ufTemperature;
 extern UFName ufGreen;

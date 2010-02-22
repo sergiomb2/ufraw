@@ -53,6 +53,7 @@ typedef void (UFEventHandle)(UFObject *, UFEventType);
  * - UFNumberArray - holds a fixed length array of numbers.
  * - UFString - holds a string and possibly a list of tokens for this string.
  * - UFGroup - holds a group of UFObjects.
+ * - UFIndex - holds an indexed group of UFObjects.
  *
  * There are downcasting definitions from all these implementations down
  * to UFObject. These are needed because each UFObject type has different
@@ -283,12 +284,8 @@ public:
     double Jump() const;
 };
 
-/// A list of string tokens used in UFString.
-typedef std::list<const char *> UFTokenList;
-
 /**
- * UFString is a UFObject that holds a character string. It can also hold
- * a list of string tokens that represent possible values of the object.
+ * UFString is a UFObject that holds a character string.
  */
 class UFString : public UFObject {
 public:
@@ -296,20 +293,11 @@ public:
     explicit UFString(UFName name, const char *defaultValue = "");
     void Set(const UFObject &object);
     void Set(const char *string);
-    /// Set string value to the @a index entry in the TokenList.
-    void SetIndex(int index);
-    /// Retriew the index location of the string in TokenList.
-    /// -1 is returned if the string is not in the TokenList.
-    int Index() const;
     bool IsDefault() const;
     void SetDefault();
     void Reset();
     /// Return true if object value is equal to @a string.
     bool IsEqual(const char *string) const;
-    /// Return the UFTokenList associated with the object. The object value
-    /// is not restricted to the values of the tokens. These tokens are
-    /// useful for constructing a GtkComboBox as in ufstring_combo_box_new().
-    UFTokenList &GetTokens() const;
 };
 
 /**
@@ -360,7 +348,6 @@ class UFArray : public UFGroup {
 public:
     /// Construct an empty UFArray, containing no objects.
     explicit UFArray(UFName name, const char *defaultIndex = "");
-    ~UFArray();
     std::string XML(const char *indent = "") const;
     void Set(const UFObject &object);
     void Set(const char *string);
@@ -369,11 +356,13 @@ public:
     void SetDefault();
     void Reset();
     /// Set the current index position in the array.
-    void SetIndex(int index);
+    /// Return false if @a index is out of range.
+    bool SetIndex(int index);
     /// Retriew the current index location in the array. -1 is returned
     /// if the string index value corresponds to no element's label.
     int Index() const;
-    UFString &StringIndex();
+    /// Return true if the string index value is equal to @a string.
+    bool IsEqual(const char *string) const;
     /// Add (append) a UFObject to a UFArray. If the object belonged to
     /// another array before, it will be detached from the original array.
     /// \exception UFException is thrown if UFArray already contains
@@ -444,9 +433,6 @@ double ufnumber_array_value(UFObject *object, int index);
 /// Returns false if @a object is not a UFNumberArray. See \ref C-interface
 /// and UFNumberArray::Set(const double array[]) for more details.
 UFBoolean ufnumber_array_set(UFObject *object, const double array[]);
-/// Return true if object value is equal to @a string. Return false if it is not
-/// equal or if object is not a UFString. See \ref C-interface for more details.
-UFBoolean ufstring_is_equal(UFObject *object, const char *string);
 /// Return true if the UFGroup @a object contains an object called name.
 /// Return false if it does not, or if object is not a UFGroup.
 /// See \ref C-interface for more details.
@@ -465,6 +451,10 @@ UFBoolean ufarray_set_index(UFObject *object, int index);
 /// Retriew the current index location in the array. -1 is returned
 /// if the string index value corresponds to no element's label.
 int ufarray_index(UFObject *object);
+/// Return true if array's string value is equal to @a string.
+/// Return false if it is not equal or if object is not a UFArray.
+/// See \ref C-interface for more details.
+UFBoolean ufarray_is_equal(UFObject *object, const char *string);
 
 #ifdef __cplusplus
 } // extern "C"

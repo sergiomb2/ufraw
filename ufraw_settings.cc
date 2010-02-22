@@ -81,9 +81,10 @@ static Image &ParentImage(UFObject *obj) {
 //UF_STRING(CameraMake, ufCameraMake, "Make", "");
 
 extern "C" { UFName ufWB = "WB"; }
-class WB : public UFString {
+extern "C" { UFName ufPreset = "Preset"; }
+class WB : public UFArray {
 public:
-    WB() : UFString(ufWB, uf_camera_wb) { }
+    WB() : UFArray(ufWB, uf_camera_wb) { }
     void Event(UFEventType type) {
 	// spot_wb is a temporary value, that would be changed in SetWB()
 	if (!this->IsEqual(uf_spot_wb))
@@ -111,6 +112,7 @@ public:
 	if (HasParent())
 	    ParentImage(this).SetWB();
     }
+    // Use the original XML format instead of UFArray's format.
     // Output XML block even if IsDefault().
     std::string XML(const char *indent) const {
 	char *value = g_markup_escape_text(StringValue(), -1);
@@ -128,7 +130,7 @@ public:
     void OriginalValueChangedEvent() {
 	if (!HasParent())
 	    return;
-	UFString &wb = ParentImage(this)[ufWB];
+	UFArray &wb = ParentImage(this)[ufWB];
 	if (wb.IsEqual(uf_auto_wb) || wb.IsEqual(uf_camera_wb))
 	    /* Prevent recalculation of Camera/Auto WB on WBTuning events */
 	    Set(0.0);
@@ -236,7 +238,7 @@ Image::Image(UFObject *root) : UFGroup(ufRawImage), uf(NULL) {
 }
 
 void Image::SetWB(const char *mode) {
-    UFString &wb = (*this)[ufWB];
+    UFArray &wb = (*this)[ufWB];
     if (wb.IsEqual(uf_manual_wb) || wb.IsEqual(uf_camera_wb) ||
 	wb.IsEqual(uf_auto_wb) || wb.IsEqual(uf_spot_wb)) {
 	if (!Has(ufWBFineTuning))
@@ -276,19 +278,18 @@ void Image::SetUFRawData(ufraw_data *data) {
     } else {
 	g_strlcpy(model, uf->conf->model, max_name);
     }
-    UFString &wb = (*this)[ufWB];
-    UFTokenList &tokens = wb.GetTokens();
+    UFArray &wb = (*this)[ufWB];
     for (int i = 0; i<wb_preset_count; i++) {
 	if (strcmp(wb_preset[i].make, "") == 0) {
 	    /* Common presets */
-	    tokens.push_back(wb_preset[i].name);
+	    wb << new UFString(ufPreset, wb_preset[i].name);
 	} else if (strcmp(wb_preset[i].make, uf->conf->make) == 0 &&
 		   strcmp(wb_preset[i].model, model) == 0) {
 	    /* Camera specific presets */
 	    uf->wb_presets_make_model_match = TRUE;
 	    if (lastPreset == NULL ||
 		strcmp(wb_preset[i].name, lastPreset->name) != 0) {
-		tokens.push_back(wb_preset[i].name);
+		wb << new UFString(ufPreset, wb_preset[i].name);
 	    }
 	    lastPreset = &wb_preset[i];
 	}
@@ -309,7 +310,7 @@ public:
     void OriginalValueChangedEvent() {
 	if (Has(ufTemperature) || Has(ufGreen)) {
 	    if (Has(ufWB)) {
-		UFString &wb = (*this)[ufWB];
+		UFArray &wb = (*this)[ufWB];
 		if (!wb.IsEqual(uf_manual_wb)) {
 		    ufraw_message(UFRAW_WARNING,
 			    _("--temperature and --green options override "
@@ -322,7 +323,7 @@ public:
 	} else {
 	    if (Has(ufWB)) {
 		// We don't have green or temperature so this must be from --wb
-		UFString &wb = (*this)[ufWB];
+		UFArray &wb = (*this)[ufWB];
 		if (wb.IsEqual("camera"))
 		    wb.Set(uf_camera_wb);
 		else if (wb.IsEqual("auto"))

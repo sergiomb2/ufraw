@@ -405,29 +405,20 @@ static void _ufnumber_array_object_event(UFObject *object, UFEventType type) {
     _ufobject_reset_button_state(object);
 }
 
-static void _ufstring_object_event(UFObject *object, UFEventType type) {
+static void _ufarray_object_event(UFObject *object, UFEventType type) {
     _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData());
     if (type == uf_destroyed) {
 	delete data;
 	return;
     }
     GtkComboBox *combo = GTK_COMBO_BOX(data->gobject[0]);
-    UFString &string = *object;
-    if (string.Index() >= 0) {
-	gtk_combo_box_set_active(combo, string.Index());
+    UFArray &array = *object;
+    if (array.Index() >= 0) {
+	gtk_combo_box_set_active(combo, array.Index());
 	return;
     }
-    UFTokenList &list = string.GetTokens();
-    int i = 0;
-    for (UFTokenList::iterator iter = list.begin();
-	    iter != list.end(); iter++, i++) {
-	if (string.IsEqual(*iter)) {
-	    gtk_combo_box_set_active(combo, i);
-	    return;
-	}
-    }
     // If value not found activate first entry
-    g_warning("_ufstring_object_event() value not found");
+    g_warning("_ufarray_object_event() value not found");
     gtk_combo_box_set_active(combo, 0);
 }
 
@@ -479,13 +470,13 @@ static _UFWidgetData &_ufnumber_array_widget_data(UFNumberArray &array) {
     return data;
 }
 
-static _UFWidgetData &_ufstring_widget_data(UFString &string) {
-    if (string.UserData() != NULL)
-	return *static_cast<_UFWidgetData *>(string.UserData());
+static _UFWidgetData &_ufarray_widget_data(UFArray &array) {
+    if (array.UserData() != NULL)
+	return *static_cast<_UFWidgetData *>(array.UserData());
     _UFWidgetData &data = *(new _UFWidgetData);
-    string.SetUserData(&data);
+    array.SetUserData(&data);
     data.gobject[0] = NULL;
-    string.SetEventHandle(_ufstring_object_event);
+    array.SetEventHandle(_ufarray_object_event);
     return data;
 }
 
@@ -567,35 +558,32 @@ void ufobject_reset_button_add(GtkWidget *button, UFObject *object) {
     _ufobject_reset_button_state(object);
 }
 
-static void _ufstring_combo_changed(GtkWidget *combo, UFObject *object) {
-    UFString &string = *object;
+static void _ufarray_combo_changed(GtkWidget *combo, UFObject *object) {
+    UFArray &array = *object;
     int i = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
-    string.SetIndex(i);
+    array.SetIndex(i);
     _ufobject_reset_button_state(object);
 }
 
 // Create a new ComboBox text with small width.
 // The widget must be added with GTK_EXPAND|GTK_FILL.
-GtkWidget *ufstring_combo_box_new(UFObject *object) {
-    UFString &string = *object;
-    _UFWidgetData &data = _ufstring_widget_data(string);
+GtkWidget *ufarray_combo_box_new(UFObject *object) {
+    UFArray &array = *object;
+    _UFWidgetData &data = _ufarray_widget_data(array);
     GtkWidget *combo = gtk_combo_box_new_text();
     gtk_widget_set_size_request(combo, 50, -1);
     data.gobject[0] = G_OBJECT(combo);
     g_signal_connect_after(G_OBJECT(combo), "changed",
-	G_CALLBACK(_ufstring_combo_changed), object);
-    UFTokenList &list = string.GetTokens();
-    for (UFTokenList::iterator iter = list.begin();
-	    iter != list.end(); iter++) {
-	gtk_combo_box_append_text(GTK_COMBO_BOX(combo), _(*iter));
+	G_CALLBACK(_ufarray_combo_changed), object);
+    int saveIndex = array.Index();
+    int i = 0;
+    while (array.SetIndex(i)) {
+	gtk_combo_box_append_text(GTK_COMBO_BOX(combo), _(array.StringValue()));
+	i++;
     }
-    _ufstring_object_event(object, uf_value_changed);
+    array.SetIndex(saveIndex);
+    _ufarray_object_event(object, uf_value_changed);
     return combo;
-}
-
-GtkWidget *ufarray_combo_box_new(UFObject *object) {
-    UFArray &array = *object;
-    return ufstring_combo_box_new(&array.StringIndex());
 }
 
 } // extern "C"

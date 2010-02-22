@@ -4283,7 +4283,7 @@ static void whitebalance_fill_interface(preview_data *data,
     gtk_table_attach(table, GTK_WIDGET(subTable), 0, 1, 0, 1,
 	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 
-    combo = GTK_COMBO_BOX(ufstring_combo_box_new(ufgroup_element(image, ufWB)));
+    combo = GTK_COMBO_BOX(ufarray_combo_box_new(ufgroup_element(image, ufWB)));
     gboolean make_model_match = uf->wb_presets_make_model_match;
     gtk_table_attach(subTable, GTK_WIDGET(combo), 0, 5+make_model_match, 0, 1,
 	    GTK_FILL, 0, 0, 0);

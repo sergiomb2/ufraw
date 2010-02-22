@@ -1934,7 +1934,7 @@ int ufraw_set_wb(ufraw_data *uf)
 
     /* For uf_manual_wb we calculate chanMul from the temperature/green. */
     /* For all other it is the other way around. */
-    if (ufstring_is_equal(wb, uf_manual_wb)) {
+    if (ufarray_is_equal(wb, uf_manual_wb)) {
 	Temperature_to_RGB(ufnumber_value(temperature), rgbWB);
 	rgbWB[1] = rgbWB[1] / ufnumber_value(green);
 	/* Suppose we shot a white card at some temperature:
@@ -1970,10 +1970,10 @@ int ufraw_set_wb(ufraw_data *uf)
 	ufnumber_set(wbTuning, 0);
 	return UFRAW_SUCCESS;
     }
-    if (ufstring_is_equal(wb, uf_spot_wb)) {
+    if (ufarray_is_equal(wb, uf_spot_wb)) {
 	/* do nothing */
 	ufnumber_set(wbTuning, 0);
-    } else if (ufstring_is_equal(wb, uf_auto_wb)) {
+    } else if (ufarray_is_equal(wb, uf_auto_wb)) {
 	int p;
 	/* Build a raw channel histogram */
 	ufraw_image_type *histogram = g_new0(ufraw_image_type, uf->rgbMax+1);
@@ -2006,10 +2006,10 @@ int ufraw_set_wb(ufraw_data *uf)
 	g_free(histogram);
 	ufnumber_array_set(chanMul, chanMulArray);
 	ufnumber_set(wbTuning, 0);
-    } else if (ufstring_is_equal(wb, uf_camera_wb)) {
+    } else if (ufarray_is_equal(wb, uf_camera_wb)) {
 	if ( (status=dcraw_set_color_scale(raw,
-		ufstring_is_equal(wb, uf_auto_wb),
-		ufstring_is_equal(wb, uf_camera_wb)))!=DCRAW_SUCCESS ) {
+		ufarray_is_equal(wb, uf_auto_wb),
+		ufarray_is_equal(wb, uf_camera_wb)))!=DCRAW_SUCCESS ) {
 	    if (status==DCRAW_NO_CAMERA_WB) {
 		ufraw_message(UFRAW_BATCH_MESSAGE,
 		    _("Cannot use camera white balance, "
@@ -2041,7 +2041,7 @@ int ufraw_set_wb(ufraw_data *uf)
 	    g_strlcpy(model, uf->conf->model, max_name);
 	}
 	for (i=0; i<wb_preset_count; i++) {
-	    if (ufstring_is_equal(wb, wb_preset[i].name) &&
+	    if (ufarray_is_equal(wb, wb_preset[i].name) &&
 		!strcmp(uf->conf->make, wb_preset[i].make) &&
 		!strcmp(model, wb_preset[i].model) ) {
 		if (ufnumber_value(wbTuning) == wb_preset[i].tuning) {

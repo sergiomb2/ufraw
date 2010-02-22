@@ -479,9 +479,7 @@ double UFNumberArray::Jump() const {
 class _UFString : public _UFObject {
 public:
     char *Default;
-    UFTokenList Tokens;
-    int Index;
-    _UFString(UFName name) : _UFObject(name), Index(-1) { }
+    _UFString(UFName name) : _UFObject(name) { }
     ~_UFString() {
 	g_free(Default);
     }
@@ -509,32 +507,7 @@ void UFString::Set(const char *string) {
 	return;
     g_free(ufstring->String);
     ufstring->String = g_strdup(string);
-
-    ufstring->Index = -1;
-    UFTokenList &list = GetTokens();
-    int i = 0;
-    for (UFTokenList::iterator iter = list.begin();
-            iter != list.end(); iter++, i++) {
-        if (IsEqual(*iter)) {
-	    ufstring->Index = i;
-        }
-    }
     ufstring->CallValueChangedEvent(this);
-}
-
-void UFString::SetIndex(int index) {
-    if (ufstring->Index == index)
-	return;
-    ufstring->Index = index;
-    UFTokenList::iterator iter = ufstring->Tokens.begin();
-    std::advance(iter, index);
-    g_free(ufstring->String);
-    ufstring->String = g_strdup(*iter);
-    ufstring->CallValueChangedEvent(this);
-}
-
-int UFString::Index() const {
-    return ufstring->Index;
 }
 
 bool UFString::IsDefault() const {
@@ -560,10 +533,6 @@ bool UFString::IsEqual(const char *string) const {
     return strcmp(ufstring->String, string) == 0;
 }
 
-UFTokenList &UFString::GetTokens() const {
-    return ufstring->Tokens;
-}
-
 /**************************\
  * UFGroup implementation *
 \**************************/
@@ -583,9 +552,12 @@ public:
     _UFGroupList List;
     UFGroup *const This;
     bool GroupChanging;
-    UFString *Index; // Index is only used by UFArray
+    // Index and Default Index are only used by UFArray
+    int Index;
+    char *DefaultIndex;
     _UFGroup(UFGroup *that, UFName name, const char *label) :
-	    _UFObject(name), This(that), GroupChanging(false), Index(NULL) {
+	    _UFObject(name), This(that), GroupChanging(false),
+	    Index(-1), DefaultIndex(NULL) {
 	String = g_strdup(label);
     }
     bool Changing() const {
@@ -635,10 +607,13 @@ UFGroup::~UFGroup() {
 	_UFGROUP_PARENT(*iter) = NULL;
 	delete *iter;
     }
+    g_free(ufgroup->DefaultIndex);
 }
 
 static std::string _UFGroup_XML(const UFGroup &group, _UFGroupList &list,
 	const char *indent, const char *attribute) {
+    if (group.IsDefault())
+	return "";
     std::string xml = "";
     // For now, we don't want to surround the root XML with <[/]Image> tags.
     if (strlen(indent) != 0) {
@@ -661,11 +636,7 @@ static std::string _UFGroup_XML(const UFGroup &group, _UFGroupList &list,
     newIndent[i + 1] = ' ';
     newIndent[i + 2] = '\0';
     for (_UFGroupList::iterator iter = list.begin(); iter != list.end(); iter++)
-    {
-	if (!(*iter)->IsDefault()) {
-	    xml += (*iter)->XML(newIndent);
-	}
-    }
+	xml += (*iter)->XML(newIndent);
     if (strlen(indent) != 0)
 	xml  += (std::string)indent + "</" + group.Name() + ">\n";
     return xml;	
@@ -780,18 +751,11 @@ UFObject &UFGroup::Drop(UFName name) {
 
 // object is a <UFObject *> and generally not a <UFArray *>.
 // The cast to <UFArray *> is needed for accessing ufobject.
-#define _UFARRAY_PARENT(object) static_cast<UFArray *>( \
-	static_cast<UFObject *>(object))->ufobject->Parent
+#define _UFARRAY_PARENT(object) static_cast<UFArray *>(object)->ufobject->Parent
 
 UFArray::UFArray(UFName name, const char *defaultIndex) :
 	UFGroup(name, defaultIndex) {
-    ufgroup->Index = new UFString(name, defaultIndex);
-    _UFARRAY_PARENT(ufgroup->Index) = ufgroup;
-}
-
-UFArray::~UFArray() {
-    _UFARRAY_PARENT(ufgroup->Index) = NULL;
-    delete ufgroup->Index;
+    defaultIndex = g_strdup(defaultIndex);
 }
 
 std::string UFArray::XML(const char *indent) const {
@@ -805,48 +769,77 @@ void UFArray::Set(const UFObject &object) {
     if (Name() != object.Name())
 	Throw("Object name mismatch with '%s'", object.Name());
     const UFArray &array = object;
-    ufgroup->Index->Set(array.StringValue());
     for (_UFGroupList::iterator iter = ufgroup->List.begin();
 	    iter != ufgroup->List.end(); iter++) {
 	if (array.Has((*iter)->StringValue()))
 	    (*iter)->Set(array[(*iter)->StringValue()]);
     }
+    Set(array.StringValue());
 }
 
 void UFArray::Set(const char *string) {
-    ufgroup->Index->Set(string);
+    if (this->IsEqual(string))
+	return;
+    g_free(ufgroup->String);
+    ufgroup->String = g_strdup(string);
+
+    ufgroup->Index = -1;
+    int i = 0;
+    for (_UFGroupList::iterator iter = ufgroup->List.begin();
+            iter != ufgroup->List.end(); iter++, i++) {
+        if (IsEqual((*iter)->StringValue())) {
+	    ufgroup->Index = i;
+        }
+    }
+    ufgroup->CallValueChangedEvent(this);
 }
 
 const char *UFArray::StringValue() const {
-    return ufgroup->Index->StringValue();
+    return ufgroup->String;
 }
 
 bool UFArray::IsDefault() const {
-    if (!ufgroup->Index->IsDefault())
+    if (!IsEqual(ufgroup->DefaultIndex))
 	return false;
     return UFGroup::IsDefault();
 }
 
 void UFArray::SetDefault() {
-    ufgroup->Index->SetDefault();
+    g_free(ufgroup->DefaultIndex);
+    ufgroup->DefaultIndex = g_strdup(ufgroup->String);
     UFGroup::SetDefault();
 }
 
 void UFArray::Reset() {
-    ufgroup->Index->Reset();
+    Set(ufgroup->DefaultIndex);
     UFGroup::Reset();
 }
 
-void UFArray::SetIndex(int index) {
-    ufgroup->Index->SetIndex(index);
+bool UFArray::SetIndex(int index) {
+    if (ufgroup->Index == index)
+	return true;
+    ufgroup->Index = index;
+    _UFGroupList::iterator iter = ufgroup->List.begin();
+    std::advance(iter, index);
+    if (iter == ufgroup->List.end())
+	return false;
+    g_free(ufgroup->String);
+    ufgroup->String = g_strdup((*iter)->StringValue());
+    ufgroup->CallValueChangedEvent(this);
+    return true;
 }
 
 int UFArray::Index() const {
-    return ufgroup->Index->Index();
+    return ufgroup->Index;
 }
 
-UFString &UFArray::StringIndex() {
-    return *ufgroup->Index;
+bool UFArray::IsEqual(const char *string) const {
+    // If the pointers are equal, the strings are equal
+    if (ufgroup->String == string)
+	return true;
+    if (ufgroup->String == NULL || string == NULL)
+	return false;
+    return strcmp(ufstring->String, string) == 0;
 }
 
 UFArray &UFArray::operator<<(UFObject *object) {
@@ -855,7 +848,8 @@ UFArray &UFArray::operator<<(UFObject *object) {
 	Throw("index '%s' already exists", object->StringValue());
     ufgroup->Map.insert(_UFObjectPair(object->StringValue(), object));
     ufgroup->List.push_back(object);
-    ufgroup->Index->GetTokens().push_back(object->StringValue());
+    if (IsEqual(object->StringValue()))
+	ufgroup->Index = ufgroup->List.size() - 1;
     if (object->HasParent()) {
 	// Remove object from its original group.
 	_UFGroup *parent = static_cast<UFArray *>(object)->ufobject->Parent;
@@ -988,15 +982,6 @@ UFBoolean ufnumber_array_set(UFObject *object, const double array[]) {
     }
 }
 
-UFBoolean ufstring_is_equal(UFObject *object, const char *string) {
-    try {
-	return dynamic_cast<UFString *>(object)->IsEqual(string);
-    } catch (std::bad_cast &e) {
-	object->Message(e.what());
-	return false;
-    }
-}
-
 UFBoolean ufgroup_has(UFObject *object, UFName name) {
     try {
 	return dynamic_cast<UFGroup *>(object)->Has(name);
@@ -1046,8 +1031,7 @@ UFObject *ufgroup_drop(UFObject *group, UFName name) {
 
 UFBoolean ufarray_set_index(UFObject *object, int index) {
     try {
-	dynamic_cast<UFArray *>(object)->SetIndex(index);
-	return true;
+	return dynamic_cast<UFArray *>(object)->SetIndex(index);
     } catch (std::bad_cast &e) {
 	object->Message(e.what());
 	return false;
@@ -1060,6 +1044,15 @@ int ufarray_index(UFObject *object) {
     } catch (std::bad_cast &e) {
 	object->Message(e.what());
 	return -2;
+    }
+}
+
+UFBoolean ufarray_is_equal(UFObject *object, const char *string) {
+    try {
+	return dynamic_cast<UFArray *>(object)->IsEqual(string);
+    } catch (std::bad_cast &e) {
+	object->Message(e.what());
+	return false;
     }
 }
 
