@@ -849,13 +849,14 @@ static void preview_progress(int what, int ticks)
     }
     if (ticks < 0 && text)
 	gtk_progress_bar_set_text(ProgressBar, text);
+    if (!events)
+	return;
     fraction = todo ? start + (stop - start) * done / todo : 0;
     if (fraction > stop)
 	fraction = stop;
     gtk_progress_bar_set_fraction(ProgressBar, fraction);
-    if (events)
-	while (gtk_events_pending())
-	    gtk_main_iteration();
+    while (gtk_events_pending())
+	gtk_main_iteration();
 }
 
 static void preview_progress_enable(preview_data *data)
