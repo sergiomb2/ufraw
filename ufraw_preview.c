@@ -2302,7 +2302,7 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor,
 		double dy, dx = sqrt(aspect * (CFG->CropX2 - CFG->CropX1) *
 				    (CFG->CropY2 - CFG->CropY1));
 		int i;
-		for (i=0;i<10;i++) {
+		for (i=0;i<20;i++) {
 		    if (cursor == top_left_cursor ||
 			cursor == bottom_left_cursor) {
 			if (CFG->CropX2 < dx)
@@ -4280,26 +4280,31 @@ static void whitebalance_fill_interface(preview_data *data,
     /* Start of White Balance setting page */
 
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
-    subTable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
-    gtk_table_attach(table, GTK_WIDGET(subTable), 0, 1, 0, 1,
-	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
 
-    combo = GTK_COMBO_BOX(ufarray_combo_box_new(ufgroup_element(image, ufWB)));
-    gboolean make_model_match = uf->wb_presets_make_model_match;
-    gtk_table_attach(subTable, GTK_WIDGET(combo), 0, 5+make_model_match, 0, 1,
-	    GTK_FILL, 0, 0, 0);
+    box = GTK_BOX(gtk_hbox_new(FALSE, 0));
+    gtk_table_attach(table, GTK_WIDGET(box), 0, 8, 0, 1,
+	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
+    UFObject *wb = ufgroup_element(image, ufWB);
+    combo = GTK_COMBO_BOX(ufarray_combo_box_new(wb));
+    gtk_box_pack_start(box, GTK_WIDGET(combo), TRUE, TRUE, 0);
     uf_widget_set_tooltip(GTK_WIDGET(combo), _("White Balance"));
 
     button = ufnumber_spin_button_new(
 	    ufgroup_element(image, ufWBFineTuning));
-    gtk_table_attach(subTable, button, 5+make_model_match, 6+make_model_match,
-	    0, 1, GTK_SHRINK, 0, 0, 0);
-    if (!make_model_match) {
+    gtk_box_pack_start(box, button, FALSE, FALSE, 0);
+    if (!ufgroup_has(wb, uf_camera_wb)) {
 	event_box = gtk_event_box_new();
 	label = gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING,
 		GTK_ICON_SIZE_BUTTON);
 	gtk_container_add(GTK_CONTAINER(event_box), label);
-	gtk_table_attach(subTable, event_box, 6, 7, 0, 1, GTK_FILL, 0, 0, 0);
+	gtk_box_pack_start(box, event_box, FALSE, FALSE, 0);
+	uf_widget_set_tooltip(event_box, _("Cannot use camera white balance."));
+    } else if (!uf->wb_presets_make_model_match) {
+	event_box = gtk_event_box_new();
+	label = gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING,
+		GTK_ICON_SIZE_BUTTON);
+	gtk_container_add(GTK_CONTAINER(event_box), label);
+	gtk_box_pack_start(box, event_box, FALSE, FALSE, 0);
 	uf_widget_set_tooltip(event_box,
 	    _("There are no white balance presets for your camera model.\n"
 	      "Check UFRaw's webpage for information on how to get your\n"
@@ -4309,31 +4314,36 @@ static void whitebalance_fill_interface(preview_data *data,
 	_("Reset white balance to initial value"));
     ufobject_reset_button_add(resetWB, ufgroup_element(image, ufWB));
     ufobject_reset_button_add(resetWB, ufgroup_element(image, ufWBFineTuning));
-    gtk_table_attach(subTable, resetWB, 7, 8, 0, 1, 0, 0, 0, 0);
+    gtk_box_pack_start(box, resetWB, FALSE, FALSE, 0);
 
     ufobject_set_user_data(image, data);
     ufobject_set_changed_event_handle(image, ufraw_image_changed);
+
+    subTable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
+    gtk_table_attach(table, GTK_WIDGET(subTable), 0, 1, 1, 2,
+	    GTK_EXPAND|GTK_FILL, 0, 0, 0);
     ufnumber_adjustment_scale(ufgroup_element(image, ufTemperature), subTable,
-	    0, 1, _("Temperature"), _("White balance color temperature (K)"));
+	    0, 0, _("Temperature"), _("White balance color temperature (K)"));
     ufnumber_adjustment_scale(ufgroup_element(image, ufGreen), subTable,
-	    0, 2, _("Green"), _("Green component"));
+	    0, 1, _("Green"), _("Green component"));
     // Spot WB button:
     button = stock_icon_button(GTK_STOCK_COLOR_PICKER,
 	_("Select a spot on the preview image to apply spot white balance"),
 	G_CALLBACK(spot_wb_event), NULL);
-    gtk_table_attach(subTable, button, 7, 8, 1, 3, 0, 0, 0, 0);
+    gtk_table_attach(subTable, button, 7, 8, 0, 2, 0, 0, 0, 0);
 
-    GtkBox *subbox = GTK_BOX(gtk_hbox_new(0, 0));
-    gtk_table_attach(table, GTK_WIDGET(subbox), 0, 1, 1, 2, 0, 0, 0, 0);
+    box = GTK_BOX(gtk_hbox_new(0, 0));
+    gtk_table_attach(table, GTK_WIDGET(box), 0, 1, 2, 3, 0, 0, 0, 0);
     label = gtk_label_new(_("Chan. multipliers:"));
-    gtk_box_pack_start(subbox, label, 0, 0, 0);
+    gtk_box_pack_start(box, label, FALSE, FALSE, 0);
     for (i=0; i<data->UF->colors; i++) {
 	button = ufnumber_array_spin_button_new(
 		ufgroup_element(image, ufChannelMultipliers), i);
-	gtk_box_pack_start(subbox, button, 0, 0, 0);
+	gtk_box_pack_start(box, button, FALSE, FALSE, 0);
     }
     ufobject_reset_button_add(resetWB,
 	    ufgroup_element(image, ufChannelMultipliers));
+
     /* Interpolation is temporarily in the WB page */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 //    box = GTK_BOX(gtk_hbox_new(FALSE, 6));

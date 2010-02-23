@@ -210,33 +210,26 @@ void CLASS wavelet_denoise_INDI(ushort (*image)[4], const int black,
 #endif
 }
 
-void CLASS scale_colors_INDI(ushort (*image)[4], int maximum, const int black,
-       const int use_auto_wb, const int use_camera_wb, const float cam_mul[4],
-       const unsigned iheight, const unsigned iwidth, const int colors,
+void CLASS scale_colors_INDI(int maximum, const int black,
+       const int use_camera_wb, const float cam_mul[4], const int colors,
        float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
-       const int shrink, const char *ifname_display, void *dcraw)
+       const char *ifname_display, void *dcraw)
 {
-  unsigned /*bottom, right, size,*/ row, col, /*ur, uc, i,*/ x, y, c, sum[8];
+  unsigned /*bottom, right, size,*/ row, col, /*ur, uc, i, x, y,*/ c, sum[8];
   int val, dark, sat;
-  double dsum[8], dmin, dmax;
+  double /*dsum[8],*/ dmin, dmax;
   float scale_mul[4]/*, fr, fc*/;
 #if 0
   ushort *img=0, *pix;
 
   if (user_mul[0])
     memcpy (pre_mul, user_mul, sizeof pre_mul);
-#endif
   if (use_auto_wb || (use_camera_wb && cam_mul[0] == -1)) {
     memset (dsum, 0, sizeof dsum);
-#if 0
     bottom = MIN (greybox[1]+greybox[3], height);
     right  = MIN (greybox[0]+greybox[2], width);
     for (row=greybox[1]; row < bottom; row += 8)
       for (col=greybox[0]; col < right; col += 8) {
-#else
-    for (row=0; row < iheight-7; row += 8)
-      for (col=0; col < iwidth-7; col += 8) {
-#endif
 	memset (sum, 0, sizeof sum);
 	for (y=row; y < row+8 /*&& y < bottom*/; y++)
 	  for (x=col; x < col+8 /*&& x < right*/; x++)
@@ -257,6 +250,7 @@ skip_block: ;
       }
     FORC4 if (dsum[c]) pre_mul[c] = dsum[c+4] / dsum[c];
   }
+#endif
   if (use_camera_wb && cam_mul[0] != -1) {
     memset (sum, 0, sizeof sum);
     for (row=0; row < 8; row++)
@@ -272,6 +266,9 @@ skip_block: ;
       /* 'sizeof pre_mul' does not work because pre_mul is an argument (UF)*/
       memcpy (pre_mul, cam_mul, 4*sizeof(float));
     else
+      dcraw_message (dcraw, DCRAW_NO_CAMERA_WB,
+	      _("%s: Cannot use camera white balance.\n"), ifname_display);
+  } else {
       dcraw_message (dcraw, DCRAW_NO_CAMERA_WB,
 	      _("%s: Cannot use camera white balance.\n"), ifname_display);
   }

@@ -39,11 +39,10 @@ void wavelet_denoise_INDI(gushort (*image)[4], const int black,
     const int iheight, const int iwidth, const int height, const int width,
     const int colors, const int shrink, const float pre_mul[4],
     const float threshold, const unsigned filters);
-void scale_colors_INDI(gushort (*image)[4], const int maximum, const int black,
-    const int use_auto_wb, const int use_camera_wb, const float cam_mul[4],
-    const unsigned iheight, const unsigned iwidth, const int colors,
+void scale_colors_INDI(const int maximum, const int black,
+    const int use_camera_wb, const float cam_mul[4], const int colors,
     float pre_mul[4], const unsigned filters, /*const*/ gushort white[8][8],
-    const int shrink, const char *ifname_display, void *dcraw);
+    const char *ifname_display, void *dcraw);
 void lin_interpolate_INDI(gushort (*image)[4], const unsigned filters,
     const int width, const int height, const int colors, void *dcraw);
 void vng_interpolate_INDI(gushort (*image)[4], const unsigned filters,
@@ -127,6 +126,11 @@ int dcraw_open(dcraw_data *h, char *filename)
     h->colors = d->colors;
     h->filters = d->filters;
     h->raw_color = d->raw_color;
+    memcpy(h->cam_mul, d->cam_mul, sizeof d->cam_mul);
+    // maximun and black might change during load_raw. We need them for the
+    // camera-wb. If they'll change we will recalculate the camera-wb.
+    h->rgbMax = d->maximum;
+    h->black = d->black;
     h->shrink = d->shrink = (h->filters!=0);
     h->pixel_aspect = d->pixel_aspect;
     /* copied from dcraw's main() */
@@ -225,6 +229,8 @@ int dcraw_load_raw(dcraw_data *h)
     }
     fclose(d->ifp);
     h->ifp = NULL;
+    // TODO: Go over the following settings to see if they change during
+    // load_raw. If they change, document where. If not, move to dcraw_open().
     h->rgbMax = d->maximum;
     h->black = d->black;
     d->dcraw_message(DCRAW_VERBOSE,_("Black: %d, Maximum: %d\n"),
@@ -233,13 +239,7 @@ int dcraw_load_raw(dcraw_data *h)
     for (i=0; i<h->colors; i++) if (dmin > d->pre_mul[i]) dmin = d->pre_mul[i];
     for (i=0; i<h->colors; i++) h->pre_mul[i] = d->pre_mul[i]/dmin;
     if (h->colors==3) h->pre_mul[3] = 0;
-    memcpy(h->cam_mul, d->cam_mul, sizeof d->cam_mul);
     memcpy(h->rgb_cam, d->rgb_cam, sizeof d->rgb_cam);
-    // set post_mul in case wavelet_denoise() is called and scale_colors()
-    // was never called.
-    memcpy(h->post_mul, h->pre_mul, sizeof h->post_mul);
-    if (h->post_mul[3] == 0)
-	h->post_mul[3] = h->colors < 4 ? h->post_mul[1] : 1;
 
     double rgb_cam_transpose[4][3];
     for (i=0; i<4; i++) for (j=0; j<3; j++)
@@ -567,20 +567,22 @@ int dcraw_flip_image(dcraw_image_data *image, int flip)
     return DCRAW_SUCCESS;
 }
 
-int dcraw_set_color_scale(dcraw_data *h, int useAutoWB, int useCameraWB)
+int dcraw_set_color_scale(dcraw_data *h, int useCameraWB)
 {
     DCRaw *d = (DCRaw *)h->dcraw;
     g_free(d->messageBuffer);
     d->messageBuffer = NULL;
     d->lastStatus = DCRAW_SUCCESS;
     memcpy(h->post_mul, h->pre_mul, sizeof h->post_mul);
-    if (!d->is_foveon) /* foveon_interpolate() do this. */
-	/* BUG white should not be global */
-	scale_colors_INDI(h->raw.image,
-		h->rgbMax-h->black, h->black, useAutoWB, useCameraWB,
-		h->cam_mul, h->raw.height, h->raw.width, h->raw.colors,
-		h->post_mul, h->filters, d->white, h->shrink, 
+    if (d->is_foveon) {
+        // foveon_interpolate() applies the camera-wb already.
+        for (int c=0; c<4; c++)
+            h->post_mul[c] = 1.0;
+    } else {
+	scale_colors_INDI(h->rgbMax-h->black, h->black, useCameraWB,
+		h->cam_mul, h->raw.colors, h->post_mul, h->filters, d->white,
 		d->ifname_display, d);
+    }
     h->message = d->messageBuffer;
     return d->lastStatus;
 }

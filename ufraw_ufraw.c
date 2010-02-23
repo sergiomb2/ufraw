@@ -418,13 +418,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     }
     if (ufobject_name(uf->conf->ufobject) != ufRawImage)
 	g_warning("uf->conf->ufobject is not a ufRawImage");
-    dcraw_data *raw = uf->raw;
-    if (strcmp(uf->conf->make, raw->make) != 0 ||
-	strcmp(uf->conf->model, raw->model) != 0)
-	uf->WBDirty =TRUE; // Re-calculate channel multipliers.
-    // make, model are used in ufraw_image_set_data()
-    g_strlcpy(uf->conf->make, raw->make, max_name);
-    g_strlcpy(uf->conf->model, raw->model, max_name);
     /*Reset EXIF data text fields to avoid spill over between images.*/
     strcpy(uf->conf->isoText, "");
     strcpy(uf->conf->shutterText, "");
@@ -445,6 +438,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     ufraw_lensfun_init(uf);
 #endif
 
+    dcraw_data *raw = uf->raw;
     char *absname = uf_file_set_absolute(uf->filename);
     g_strlcpy(uf->conf->inputFilename, absname, max_path);
     g_free(absname);
@@ -677,7 +671,7 @@ int ufraw_load_raw(ufraw_data *uf)
 	/* Here ufobject's automation goes against us. A change in
 	 * ChannelMultipliers might change ufWB to uf_manual_wb.
 	 * So we need to change it back. */
-	if (!ufarray_is_equal(wb, uf_auto_wb))
+	if (ufarray_is_equal(wb, uf_manual_wb))
 	    ufobject_set_string(wb, oldWB);
 	ufnumber_set(wbTuning, oldTuning);
 	g_free(oldWB);
@@ -1923,7 +1917,7 @@ int ufraw_set_wb(ufraw_data *uf)
 {
     dcraw_data *raw = uf->raw;
     double rgbWB[3];
-    int status, c, cc, i;
+    int c, cc, i;
     UFObject *temperature = ufgroup_element(uf->conf->ufobject, ufTemperature);
     UFObject *green = ufgroup_element(uf->conf->ufobject, ufGreen);
     UFObject *chanMul = ufgroup_element(uf->conf->ufobject,
@@ -2008,24 +2002,8 @@ int ufraw_set_wb(ufraw_data *uf)
 	ufnumber_array_set(chanMul, chanMulArray);
 	ufnumber_set(wbTuning, 0);
     } else if (ufarray_is_equal(wb, uf_camera_wb)) {
-	if ( (status=dcraw_set_color_scale(raw,
-		ufarray_is_equal(wb, uf_auto_wb),
-		ufarray_is_equal(wb, uf_camera_wb)))!=DCRAW_SUCCESS ) {
-	    if (status==DCRAW_NO_CAMERA_WB) {
-		ufraw_message(UFRAW_BATCH_MESSAGE,
-		    _("Cannot use camera white balance, "
-		    "reverting to auto white balance."));
-		ufraw_message(UFRAW_INTERACTIVE_MESSAGE,
-		    _("Cannot use camera white balance, "
-		    "reverting to auto white balance."));
-		ufobject_set_string(wb, uf_auto_wb);
-		return UFRAW_SUCCESS;
-	    }
-	    if (status!=DCRAW_SUCCESS)
-		return status;
-	}
-	double chanMulArray[4];
-	for (c=0; c < 4; c++)
+	double chanMulArray[4] = { 1.0, 1.0, 1.0, 1.0 };
+	for (c=0; c < uf->colors; c++)
 	    chanMulArray[c] = raw->post_mul[c];
 	ufnumber_array_set(chanMul, chanMulArray);
 	ufnumber_set(wbTuning, 0);

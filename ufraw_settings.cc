@@ -15,6 +15,7 @@
 #endif
 
 #include "ufraw.h"
+#include "dcraw_api.h"
 #include <glib/gi18n.h>
 #include <string.h>
 #include <assert.h>
@@ -250,7 +251,7 @@ void Image::SetWB(const char *mode) {
     if (uf == NULL)
 	return;
     if (uf->rgbMax == 0) { // Raw file was not loaded yet.
-	if (!wb.IsEqual(uf_manual_wb) && !wb.IsEqual(uf_manual_wb))
+	if (!wb.IsEqual(uf_manual_wb))
 	    uf->WBDirty = true; // ChannelMultipliers should be calculated later
 	return;
     }
@@ -265,6 +266,13 @@ void Image::SetUFRawData(ufraw_data *data) {
     uf = data;
     if (uf == NULL)
 	return;
+
+    dcraw_data *raw = static_cast<dcraw_data *>(uf->raw);
+    if (strcmp(uf->conf->make, raw->make) != 0 ||
+        strcmp(uf->conf->model, raw->model) != 0)
+        uf->WBDirty = TRUE; // Re-calculate channel multipliers.
+    g_strlcpy(uf->conf->make, raw->make, max_name);
+    g_strlcpy(uf->conf->model, raw->model, max_name);
 
     const wb_data *lastPreset = NULL;
     uf->wb_presets_make_model_match = FALSE;
@@ -282,6 +290,20 @@ void Image::SetUFRawData(ufraw_data *data) {
     for (int i = 0; i<wb_preset_count; i++) {
 	if (strcmp(wb_preset[i].make, "") == 0) {
 	    /* Common presets */
+	    if (strcmp(wb_preset[i].name, uf_camera_wb) == 0) {
+		// Get the camera's presets.
+		int status=dcraw_set_color_scale(raw, TRUE);
+		// Failure means that dcraw does not support this model.
+		if (status != DCRAW_SUCCESS) {
+		    if (wb.IsEqual(uf_camera_wb)) {
+			ufraw_message(UFRAW_SET_LOG,
+				_("Cannot use camera white balance, "
+				"reverting to auto white balance.\n"));
+			wb.Set(uf_auto_wb);
+		    }
+		    continue;
+		}
+	    }
 	    wb << new UFString(ufPreset, wb_preset[i].name);
 	} else if (strcmp(wb_preset[i].make, uf->conf->make) == 0 &&
 		   strcmp(wb_preset[i].model, model) == 0) {
