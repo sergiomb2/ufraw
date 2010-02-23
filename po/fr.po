@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2010-02-08 22:39+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -75,7 +75,7 @@ msgid "Show hidden files"
 msgstr "Voir fichiers cachés"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -826,17 +826,17 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr "Choisir l'objectif depuis une liste de variantes possibles"
 
+msgid "Lateral chromatic aberration"
+msgstr "Aberration chromatiques latérales"
+
+msgid "Optical vignetting"
+msgstr "Vignettage optique"
+
 msgid "Lens distortion"
 msgstr "Distortion de l'objectif"
 
 msgid "Lens geometry"
 msgstr "Géométrie de l'objectif"
-
-msgid "Optical vignetting"
-msgstr "Vignettage optique"
-
-msgid "Lateral chromatic aberration"
-msgstr "Aberration chromatiques latérales"
 
 msgid "Raw histogram with conversion curves"
 msgstr "Histogramme brut avec courbes de conversion"
@@ -1106,6 +1106,10 @@ msgstr "Sous-exposé:"
 
 msgid "White Balance"
 msgstr "Balance des Blancs"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr "Balance des blancs boiter non utilisable, retour à la balance auto."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1593,6 +1597,9 @@ msgstr "Erreur en créant le fichier temporaire."
 msgid "Error activating Gimp."
 msgstr "Erreur à l'activation de Gimp."
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr "Balance des blancs boiter non utilisable, retour à la balance auto.\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr "Les options --temperature et --green supplantent l'option --wb=%s."
@@ -1626,9 +1633,6 @@ msgstr "Erreur en lisant la courbe NEF"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "Ne peux pas réduire la taille de %d à %d."
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr "Balance des blancs boiter non utilisable, retour à la balance auto."
 
 #. Error was not already set before
 #, c-format

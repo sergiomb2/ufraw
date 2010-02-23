@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -76,7 +76,7 @@ msgid "Show hidden files"
 msgstr ""
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -678,16 +678,16 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr ""
 
-msgid "Lens distortion"
-msgstr ""
-
-msgid "Lens geometry"
+msgid "Lateral chromatic aberration"
 msgstr ""
 
 msgid "Optical vignetting"
 msgstr ""
 
-msgid "Lateral chromatic aberration"
+msgid "Lens distortion"
+msgstr ""
+
+msgid "Lens geometry"
 msgstr ""
 
 msgid "Raw histogram with conversion curves"
@@ -939,6 +939,9 @@ msgid "Underexposed:"
 msgstr ""
 
 msgid "White Balance"
+msgstr ""
+
+msgid "Cannot use camera white balance."
 msgstr ""
 
 msgid ""
@@ -1384,6 +1387,9 @@ msgstr ""
 msgid "Error activating Gimp."
 msgstr ""
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr ""
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr ""
@@ -1416,9 +1422,6 @@ msgstr ""
 
 #, c-format
 msgid "Can not downsize from %d to %d."
-msgstr ""
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
 msgstr ""
 
 #. Error was not already set before

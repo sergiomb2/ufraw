@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2009-10-14 06:00+0100\n"
 "Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -77,7 +77,7 @@ msgid "Show hidden files"
 msgstr "Mostra file nascosti"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -814,17 +814,17 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr "Scegli lenti dalla lista di possibili varianti"
 
+msgid "Lateral chromatic aberration"
+msgstr "Aberrazione cromatica laterale"
+
+msgid "Optical vignetting"
+msgstr "Vignettatura ottica"
+
 msgid "Lens distortion"
 msgstr "Distorsione lente"
 
 msgid "Lens geometry"
 msgstr "Geometria lente"
-
-msgid "Optical vignetting"
-msgstr "Vignettatura ottica"
-
-msgid "Lateral chromatic aberration"
-msgstr "Aberrazione cromatica laterale"
 
 msgid "Raw histogram with conversion curves"
 msgstr "Istogramma Raw con curve di conversione"
@@ -1095,6 +1095,12 @@ msgstr "Sottoesposto:"
 
 msgid "White Balance"
 msgstr "Bilanciamento del bianco"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr ""
+"Non è possibile utilizzare il bilanciamento del bianco della fotocamera, si "
+"utilizzerà quello automatico."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1571,6 +1577,11 @@ msgstr "Errore durante la creazione del file temporaneo."
 msgid "Error activating Gimp."
 msgstr "Errore durante l'apertura di Gimp."
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr ""
+"Non è possibile utilizzare il bilanciamento del bianco della fotocamera, si "
+"utilizzerà quello automatico.\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr "le opzioni --temperature e --green sovrastano l'opzione --wb=%s."
@@ -1604,11 +1615,6 @@ msgstr "Errore durante la lettura della curva NEF"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "Non è possibile scalare da %d a %d."
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
-"Non è possibile utilizzare il bilanciamento del bianco della fotocamera, si "
-"utilizzerà quello automatico."
 
 #. Error was not already set before
 #, c-format

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2009-09-30 13:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -79,7 +79,7 @@ msgid "Show hidden files"
 msgstr "Laat verborgen bestanden zien"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -802,17 +802,17 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr "Kies een lens uit de lijst van mogelijke varianten"
 
+msgid "Lateral chromatic aberration"
+msgstr "Laterale chromatische aberratie"
+
+msgid "Optical vignetting"
+msgstr "Optische vignettering"
+
 msgid "Lens distortion"
 msgstr "Lens vervorming"
 
 msgid "Lens geometry"
 msgstr "Lens geometrie"
-
-msgid "Optical vignetting"
-msgstr "Optische vignettering"
-
-msgid "Lateral chromatic aberration"
-msgstr "Laterale chromatische aberratie"
 
 msgid "Raw histogram with conversion curves"
 msgstr "Raw histogram met conversie curves"
@@ -1083,6 +1083,10 @@ msgstr "Onderbelicht:"
 
 msgid "White Balance"
 msgstr "Witbalans"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr "Kan camera witbalans niet gebruiken, verder met auto witbalans."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1543,6 +1547,9 @@ msgstr "Fout bij aanmaken tijdelijk bestand."
 msgid "Error activating Gimp."
 msgstr "Fout bij opstarten van Gimp"
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr "Kan camera witbalans niet gebruiken, verder met auto witbalans.\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr "--temperature en --green opties gaan boven de --wb=%s optie."
@@ -1576,9 +1583,6 @@ msgstr "Fout bij inlezen NEF curve"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "Kan niet terugschalen van %d naar %d."
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr "Kan camera witbalans niet gebruiken, verder met auto witbalans."
 
 #. Error was not already set before
 #, c-format

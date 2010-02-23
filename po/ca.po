@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2009-09-30 19:24+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -78,7 +78,7 @@ msgid "Show hidden files"
 msgstr "Mostra els fitxers ocults"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -819,17 +819,17 @@ msgstr "Cerqueu "
 msgid "Choose lens from list of possible variants"
 msgstr "Trieu la lent de la llista de possibles variant"
 
+msgid "Lateral chromatic aberration"
+msgstr "Aberració cromàtica lateral"
+
+msgid "Optical vignetting"
+msgstr "Vinyetatge òptic"
+
 msgid "Lens distortion"
 msgstr "Distorsió de la lent"
 
 msgid "Lens geometry"
 msgstr "Geometria de la lent"
-
-msgid "Optical vignetting"
-msgstr "Vinyetatge òptic"
-
-msgid "Lateral chromatic aberration"
-msgstr "Aberració cromàtica lateral"
 
 msgid "Raw histogram with conversion curves"
 msgstr "Histograma en cru amb corbes de conversió"
@@ -1099,6 +1099,12 @@ msgstr "Infraexoposat:"
 
 msgid "White Balance"
 msgstr "Equilibri de Blanc"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr ""
+"No es pot fer servir l'equilibri de blanc de la càmera, es farà servir "
+"l'equilibri de blanc automàtic."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1561,6 +1567,11 @@ msgstr "S'ha produït un error en escriure el fitxer temporal."
 msgid "Error activating Gimp."
 msgstr "S'ha produït un error mentre s'activava el GIMP."
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr ""
+"No es pot fer servir l'equilibri de blanc de la càmera, es farà servir "
+"l'equilibri de blanc automàtic.\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr ""
@@ -1598,11 +1609,6 @@ msgstr "S'ha produït un error en llegir la corba NEF"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "No s'ha pogut reduïr de %d a %d."
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
-"No es pot fer servir l'equilibri de blanc de la càmera, es farà servir "
-"l'equilibri de blanc automàtic."
 
 #. Error was not already set before
 #, c-format

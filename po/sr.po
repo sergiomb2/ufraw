@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -79,7 +79,7 @@ msgid "Show hidden files"
 msgstr "Прикажи скривене датотеке"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -810,17 +810,17 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr "Бира објектив из целокупног списка"
 
+msgid "Lateral chromatic aberration"
+msgstr "Бочне хроматске аберације"
+
+msgid "Optical vignetting"
+msgstr "Оптичко вињетарење"
+
 msgid "Lens distortion"
 msgstr "Изобличења сочива"
 
 msgid "Lens geometry"
 msgstr "Геометрија сочива"
-
-msgid "Optical vignetting"
-msgstr "Оптичко вињетарење"
-
-msgid "Lateral chromatic aberration"
-msgstr "Бочне хроматске аберације"
 
 msgid "Raw histogram with conversion curves"
 msgstr "Raw хистограм са кривама за превођење"
@@ -1091,6 +1091,10 @@ msgstr "Подекспонирано:"
 
 msgid "White Balance"
 msgstr "Равнотежа беле"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr "Не могу да користим равнотежу беле из камере, сам одређујем равнотежу."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1552,6 +1556,10 @@ msgstr "Грешка при прављењу привремене датотек
 msgid "Error activating Gimp."
 msgstr "Грешка у покретању Гимпа."
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr ""
+"Не могу да користим равнотежу беле из камере, сам одређујем равнотежу.\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr "могућности --temperature и --green имају предност над --wb=%s."
@@ -1585,9 +1593,6 @@ msgstr "Грешка при читању NEF криве"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "Не могу да смањим са %d на %d."
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr "Не могу да користим равнотежу беле из камере, сам одређујем равнотежу."
 
 #. Error was not already set before
 #, c-format

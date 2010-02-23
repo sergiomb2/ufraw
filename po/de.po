@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2009-05-13 12:19+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -77,7 +77,7 @@ msgid "Show hidden files"
 msgstr "Versteckte Dateien anzeigen"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -810,17 +810,17 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr "Linse aus einer Liste mit möglichen Varianten auswählen"
 
+msgid "Lateral chromatic aberration"
+msgstr "Seitliche farbliche Aberration"
+
+msgid "Optical vignetting"
+msgstr "optische Eckenabschattung"
+
 msgid "Lens distortion"
 msgstr "Linsenverzerrung"
 
 msgid "Lens geometry"
 msgstr "Linsengeometrie"
-
-msgid "Optical vignetting"
-msgstr "optische Eckenabschattung"
-
-msgid "Lateral chromatic aberration"
-msgstr "Seitliche farbliche Aberration"
 
 msgid "Raw histogram with conversion curves"
 msgstr "Raw-Histogramm mit Konvertierungskurven"
@@ -1091,6 +1091,12 @@ msgstr "Unterbelichtet:"
 
 msgid "White Balance"
 msgstr "Weißabgleich"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr ""
+"Der Weißabgleich der Kamera kann nicht verwendet werden, es wird zum "
+"automatischen Weißabgleich zurückgekehrt."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1560,6 +1566,11 @@ msgstr "Fehler beim Erstellen der temporären Datei."
 msgid "Error activating Gimp."
 msgstr "Fehler bei der Aktivierung von Gimp."
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr ""
+"Der Weißabgleich der Kamera kann nicht verwendet werden, es wird zum "
+"automatischen Weißabgleich zurückgekehrt.\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr "--temperature- und --green-Optionen überschreiben die Option --wb=%s."
@@ -1593,11 +1604,6 @@ msgstr "Fehler beim Lesen der NEF-Kurve"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "Es kann nicht von %d auf %d verkleinert werden."
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
-"Der Weißabgleich der Kamera kann nicht verwendet werden, es wird zum "
-"automatischen Weißabgleich zurückgekehrt."
 
 #. Error was not already set before
 #, c-format

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2009-10-13 18:45+0400\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -83,7 +83,7 @@ msgid "Show hidden files"
 msgstr "Показывать скрытые файлы"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -812,17 +812,17 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr "Выбрать объектив из полного списка"
 
+msgid "Lateral chromatic aberration"
+msgstr "Хроматические аберрации"
+
+msgid "Optical vignetting"
+msgstr "Оптическое виньетирование"
+
 msgid "Lens distortion"
 msgstr "Искажения объектива"
 
 msgid "Lens geometry"
 msgstr "Геометрия объектива"
-
-msgid "Optical vignetting"
-msgstr "Оптическое виньетирование"
-
-msgid "Lateral chromatic aberration"
-msgstr "Хроматические аберрации"
 
 msgid "Raw histogram with conversion curves"
 msgstr "Гистограмма RAW с кривыми преобразования"
@@ -1092,6 +1092,12 @@ msgstr "Недоэкспонировано:"
 
 msgid "White Balance"
 msgstr "Баланс белого"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr ""
+"Невозможно использовать баланс белого камеры,\n"
+"возврат к автоматическому балансу белого"
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1553,6 +1559,11 @@ msgstr "Ошибка при создании временного файла."
 msgid "Error activating Gimp."
 msgstr "Ошибка при запуске GIMP."
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr ""
+"Невозможно использовать баланс белого камеры,\n"
+"возврат к автоматическому балансу белого\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr ""
@@ -1588,11 +1599,6 @@ msgstr "Ошибка чтения кривой NEF"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "Невозможно уменьшить размер из %d в %d."
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
-"Невозможно использовать баланс белого камеры,\n"
-"возврат к автоматическому балансу белого"
 
 #. Error was not already set before
 #, c-format

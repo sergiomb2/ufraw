@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -76,7 +76,7 @@ msgid "Show hidden files"
 msgstr "Vis skjulte filer"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -795,17 +795,17 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr "Velg objektiv fra liste over mulige varianter"
 
+msgid "Lateral chromatic aberration"
+msgstr "Sidelengs kromatisk aberrasjon"
+
+msgid "Optical vignetting"
+msgstr "Optisk vignettering"
+
 msgid "Lens distortion"
 msgstr "Objektivets forvrengning"
 
 msgid "Lens geometry"
 msgstr "Objektivets geometri"
-
-msgid "Optical vignetting"
-msgstr "Optisk vignettering"
-
-msgid "Lateral chromatic aberration"
-msgstr "Sidelengs kromatisk aberrasjon"
 
 msgid "Raw histogram with conversion curves"
 msgstr "Raw-histogram med konverteringskurver"
@@ -1076,6 +1076,11 @@ msgstr "Undereksponert:"
 
 msgid "White Balance"
 msgstr "Hvitbalanse"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr ""
+"Kan ikke bruke kameraets hvitbalanse, bruker automatisk hvitbalanse isteden."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1536,6 +1541,11 @@ msgstr "Feil ved opprettelse av midlertidig fil."
 msgid "Error activating Gimp."
 msgstr "Kunne ikke starte Gimp."
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr ""
+"Kan ikke bruke kameraets hvitbalanse, bruker automatisk hvitbalanse "
+"isteden.\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr ""
@@ -1570,10 +1580,6 @@ msgstr "Det oppstod en feil ved innlesing av NEF-kurven"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "Kan ikke forminske fra %d til %d."
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
-"Kan ikke bruke kameraets hvitbalanse, bruker automatisk hvitbalanse isteden."
 
 #. Error was not already set before
 #, c-format

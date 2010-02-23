@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2010-02-08 05:45+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
@@ -76,7 +76,7 @@ msgid "Show hidden files"
 msgstr "Vis skjulte filer"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -797,17 +797,17 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr "Vælg objektiv fra liste over mulige varianter"
 
+msgid "Lateral chromatic aberration"
+msgstr "Lateral kromatisk aberration"
+
+msgid "Optical vignetting"
+msgstr "Optisk vignettering"
+
 msgid "Lens distortion"
 msgstr "Objektivforvrængning"
 
 msgid "Lens geometry"
 msgstr "Objektivgeometri"
-
-msgid "Optical vignetting"
-msgstr "Optisk vignettering"
-
-msgid "Lateral chromatic aberration"
-msgstr "Lateral kromatisk aberration"
 
 msgid "Raw histogram with conversion curves"
 msgstr "Raw-histogram med konverteringskurver"
@@ -1076,6 +1076,11 @@ msgstr "Undereksponeret:"
 
 msgid "White Balance"
 msgstr "Hvidbalance"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr ""
+"Kamerahvidbalance kan ikke anvendes, skifter to automatisk hvidbalance."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1539,6 +1544,10 @@ msgstr "Fejl ved dannelse af midlertidig fil."
 msgid "Error activating Gimp."
 msgstr "Fejl ved aktivering af Gimp."
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr ""
+"Kamerahvidbalance kan ikke anvendes, skifter to automatisk hvidbalance.\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr "Tilvalgene --temperature og --green har forret for tilvalget --wb=%s."
@@ -1572,10 +1581,6 @@ msgstr "Fejl i indlæsning af NEF-kurve"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "Kan ikke formindske fra %d til %d."
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
-"Kamerahvidbalance kan ikke anvendes, skifter to automatisk hvidbalance."
 
 #. Error was not already set before
 #, c-format

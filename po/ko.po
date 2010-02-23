@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2009-10-06 09:38+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
@@ -78,7 +78,7 @@ msgid "Show hidden files"
 msgstr "숨겨진 파일 표시"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -775,17 +775,17 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr "가능한 리스트에서 렌즈 선택"
 
+msgid "Lateral chromatic aberration"
+msgstr "측면 색수차"
+
+msgid "Optical vignetting"
+msgstr "광학 비네팅"
+
 msgid "Lens distortion"
 msgstr "렌즈 외곡"
 
 msgid "Lens geometry"
 msgstr "렌즈 기하면"
-
-msgid "Optical vignetting"
-msgstr "광학 비네팅"
-
-msgid "Lateral chromatic aberration"
-msgstr "측면 색수차"
 
 msgid "Raw histogram with conversion curves"
 msgstr "변환 곡선을 적용한 Raw 히스토그램"
@@ -1056,6 +1056,11 @@ msgstr "노출부족:"
 
 msgid "White Balance"
 msgstr "화이트 벨런스"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr ""
+"카메라 화이트 벨런스를 사용할 수 없으므로, 자동 화이트 벨런스로 되돌립니다."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1517,6 +1522,10 @@ msgstr "임시 파일 만들기 실패."
 msgid "Error activating Gimp."
 msgstr "김프 실행 중 오류 발생."
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr ""
+"카메라 화이트 벨런스를 사용할 수 없으므로, 자동 화이트 벨런스로 되돌립니다.\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr "--temperature 와 --green 옵션은 --wb=%s 옵션을 덮어씁니다."
@@ -1550,10 +1559,6 @@ msgstr "NEF 곡선 읽기 실패"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "%d에서 %d(으)로 크기를 축소할 수 없습니다."
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
-"카메라 화이트 벨런스를 사용할 수 없으므로, 자동 화이트 벨런스로 되돌립니다."
 
 #. Error was not already set before
 #, c-format

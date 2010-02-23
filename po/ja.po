@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -80,7 +80,7 @@ msgid "Show hidden files"
 msgstr "隠しファイルを表示する"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -760,16 +760,16 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr ""
 
-msgid "Lens distortion"
-msgstr "レンズの歪曲収差"
-
-msgid "Lens geometry"
+msgid "Lateral chromatic aberration"
 msgstr ""
 
 msgid "Optical vignetting"
 msgstr ""
 
-msgid "Lateral chromatic aberration"
+msgid "Lens distortion"
+msgstr "レンズの歪曲収差"
+
+msgid "Lens geometry"
 msgstr ""
 
 msgid "Raw histogram with conversion curves"
@@ -1046,6 +1046,10 @@ msgstr "露出不足:"
 
 msgid "White Balance"
 msgstr "ホワイトバランス"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr "カメラのホワイトバランスが使えないので自動ホワイトバランスに戻ります。"
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1507,6 +1511,10 @@ msgstr "一時ファイル作成エラー"
 msgid "Error activating Gimp."
 msgstr ""
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr ""
+"カメラのホワイトバランスが使えないので自動ホワイトバランスに戻ります。\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr "--temperatureと--greenオプションは--wb=%sを上書きします"
@@ -1540,9 +1548,6 @@ msgstr "NEFカーブの読込に失敗しました"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "%d から %d へダウンサイズできません。"
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr "カメラのホワイトバランスが使えないので自動ホワイトバランスに戻ります。"
 
 #. Error was not already set before
 #, c-format

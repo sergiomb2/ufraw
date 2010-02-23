@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2009-10-01 10:58+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish <tomaszg@alpha.uwb.edu.pl>\n"
@@ -79,7 +79,7 @@ msgid "Show hidden files"
 msgstr "Poka¿ ukryte pliki"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -802,17 +802,17 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr "Wybierz obiektyw z listy dostêpnych mo¿liwo¶ci"
 
+msgid "Lateral chromatic aberration"
+msgstr "Boczna aberracja chromatyczna"
+
+msgid "Optical vignetting"
+msgstr "Winietowanie"
+
 msgid "Lens distortion"
 msgstr "Dystorsja"
 
 msgid "Lens geometry"
 msgstr "Geometria obiektywu"
-
-msgid "Optical vignetting"
-msgstr "Winietowanie"
-
-msgid "Lateral chromatic aberration"
-msgstr "Boczna aberracja chromatyczna"
 
 msgid "Raw histogram with conversion curves"
 msgstr "Histogram RAW z krzywymi konwersji"
@@ -1084,6 +1084,11 @@ msgstr "Niedo¶wietlone:"
 
 msgid "White Balance"
 msgstr "Balans bieli"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr ""
+"Nie mogê u¿yæ balansu bieli aparatu, stosujê automatyczny balans bieli."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1545,6 +1550,10 @@ msgstr "B³±d tworzenia tymczasowego pliku."
 msgid "Error activating Gimp."
 msgstr "B³±d uruchomienia Gimpa"
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr ""
+"Nie mogê u¿yæ balansu bieli aparatu, stosujê automatyczny balans bieli.\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr "opcje --temperature i --green anuluj± opcjê --wb=%s."
@@ -1578,10 +1587,6 @@ msgstr "B³±d odczytu krzywej NEF"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "Nie mogê zmniejszyæ z %d do %d."
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
-"Nie mogê u¿yæ balansu bieli aparatu, stosujê automatyczny balans bieli."
 
 #. Error was not already set before
 #, c-format

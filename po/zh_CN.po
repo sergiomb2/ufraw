@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -77,7 +77,7 @@ msgid "Show hidden files"
 msgstr "显示隐藏文件"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -763,17 +763,17 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr "从列表选择镜头及可能的变种"
 
+msgid "Lateral chromatic aberration"
+msgstr "横向色差"
+
+msgid "Optical vignetting"
+msgstr "光学暗角"
+
 msgid "Lens distortion"
 msgstr "镜头畸变"
 
 msgid "Lens geometry"
 msgstr "镜头几何"
-
-msgid "Optical vignetting"
-msgstr "光学暗角"
-
-msgid "Lateral chromatic aberration"
-msgstr "横向色差"
 
 msgid "Raw histogram with conversion curves"
 msgstr "具有转换曲线的Raw直方图"
@@ -1042,6 +1042,10 @@ msgstr "曝光不足："
 
 msgid "White Balance"
 msgstr "白平衡"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr "无法使用相机白平衡，恢复自动白平衡。"
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1501,6 +1505,9 @@ msgstr "创建临时文件时出错。"
 msgid "Error activating Gimp."
 msgstr "激活 Gimp 时出错。"
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr "无法使用相机白平衡，恢复自动白平衡。\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr "在 --wb=%s 选项中--temperature 和 --green 选项是无效的。"
@@ -1534,9 +1541,6 @@ msgstr "读取 NEF 曲线出错"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "无法从 %d 缩小 %d 。"
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr "无法使用相机白平衡，恢复自动白平衡。"
 
 #. Error was not already set before
 #, c-format

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 10:45+0100\n"
+"POT-Creation-Date: 2010-02-23 14:54-0600\n"
 "PO-Revision-Date: 2009-10-04 10:41+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -76,7 +76,7 @@ msgid "Show hidden files"
 msgstr "Ukázat skryté soubory"
 
 #. Internal data
-#. confSize, version
+#. configuration version
 #. ufobject
 #. Image manipulation settings
 #. wavelet denoising threshold
@@ -798,17 +798,17 @@ msgstr ""
 msgid "Choose lens from list of possible variants"
 msgstr "Vybrat objektiv ze seznamu možných variant"
 
+msgid "Lateral chromatic aberration"
+msgstr "Postranní chromatická vada"
+
+msgid "Optical vignetting"
+msgstr "Optická vinětace"
+
 msgid "Lens distortion"
 msgstr "Zkreslení objektivu"
 
 msgid "Lens geometry"
 msgstr "Projekce objektivu"
-
-msgid "Optical vignetting"
-msgstr "Optická vinětace"
-
-msgid "Lateral chromatic aberration"
-msgstr "Postranní chromatická vada"
 
 msgid "Raw histogram with conversion curves"
 msgstr "Raw histogram s konverzními křivkami"
@@ -1078,6 +1078,12 @@ msgstr "Podexp.:"
 
 msgid "White Balance"
 msgstr "Vyvážení bílé"
+
+#, fuzzy
+msgid "Cannot use camera white balance."
+msgstr ""
+"Nemohu použít nastavení bílé dle fotoaparátu, nastavuji automatické vyvážení "
+"bílé."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1538,6 +1544,11 @@ msgstr "Chyba při vytváření dočasného souboru."
 msgid "Error activating Gimp."
 msgstr "Chyba při spouštění Gimpu."
 
+msgid "Cannot use camera white balance, reverting to auto white balance.\n"
+msgstr ""
+"Nemohu použít nastavení bílé dle fotoaparátu, nastavuji automatické vyvážení "
+"bílé.\n"
+
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
 msgstr "volby --temperature a --green potlačí volbu --wb=%s."
@@ -1571,11 +1582,6 @@ msgstr "Chyba při čtení NEF křivky"
 #, c-format
 msgid "Can not downsize from %d to %d."
 msgstr "Nemohu zmenšit velikost z %d na %d."
-
-msgid "Cannot use camera white balance, reverting to auto white balance."
-msgstr ""
-"Nemohu použít nastavení bílé dle fotoaparátu, nastavuji automatické vyvážení "
-"bílé."
 
 #. Error was not already set before
 #, c-format
