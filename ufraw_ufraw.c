@@ -675,9 +675,10 @@ int ufraw_load_raw(ufraw_data *uf)
 	double oldTuning = ufnumber_value(wbTuning);
 	ufraw_set_wb(uf);
 	/* Here ufobject's automation goes against us. A change in
-	 * ChannelMultipliers would change ufWB to uf_manual_wb.
+	 * ChannelMultipliers might change ufWB to uf_manual_wb.
 	 * So we need to change it back. */
-	ufobject_set_string(wb, oldWB);
+	if (!ufarray_is_equal(wb, uf_auto_wb))
+	    ufobject_set_string(wb, oldWB);
 	ufnumber_set(wbTuning, oldTuning);
 	g_free(oldWB);
     }
@@ -2018,7 +2019,7 @@ int ufraw_set_wb(ufraw_data *uf)
 		    _("Cannot use camera white balance, "
 		    "reverting to auto white balance."));
 		ufobject_set_string(wb, uf_auto_wb);
-		return ufraw_set_wb(uf);
+		return UFRAW_SUCCESS;
 	    }
 	    if (status!=DCRAW_SUCCESS)
 		return status;
