@@ -178,6 +178,7 @@ static const char *conf_get_name(const char *namesList[], int index)
 typedef struct {
     conf_data *conf;
     UFObject *group;
+    GQuark ufrawQuark;
 } parse_data;
 
 static void conf_parse_start(GMarkupParseContext *context,
@@ -186,11 +187,8 @@ static void conf_parse_start(GMarkupParseContext *context,
 {
     parse_data *data = (parse_data *)user;
     conf_data *c = data->conf;
-
     int int_value;
-    GQuark ufrawQuark = g_quark_from_static_string("UFRaw");
-
-    context = context;
+    (void)context;
 
     int i;
     for (i = 0; names[i] != NULL; i++) {
@@ -218,7 +216,7 @@ static void conf_parse_start(GMarkupParseContext *context,
 	    }
 	    data->group = ufgroup_element(data->group, values[i]);
 	    if (strcmp(ufobject_name(data->group), element) != 0)
-		g_set_error(error, ufrawQuark, UFRAW_ERROR,
+		g_set_error(error, data->ufrawQuark, UFRAW_ERROR,
 			"Expecting '%s' XML element and not '%s' XML element",
 			ufobject_name(data->group), element);
 	    return;
@@ -248,7 +246,7 @@ static void conf_parse_start(GMarkupParseContext *context,
 		c->version = int_value;
 	    }
 	    if (int_value!=c->version)
-		g_set_error(error, ufrawQuark, UFRAW_RC_VERSION,
+		g_set_error(error, data->ufrawQuark, UFRAW_RC_VERSION,
 		    _("UFRaw version in .ufrawrc is not supported"));
 	}
 	if (!strcmp(*names,"Current") && int_value!=0) {
@@ -794,6 +792,7 @@ int conf_load(conf_data *c, const char *IDFilename)
 	user_data.group = c->ufobject;
     else
 	user_data.group = ufgroup_element(c->ufobject, ufRawImage);
+    user_data.ufrawQuark = g_quark_from_static_string("UFRaw");
     context = g_markup_parse_context_new(&parser, 0, &user_data, NULL);
     line[max_path-1] = '\0';
     char *dummy = fgets(line, max_path-1, in);
@@ -807,7 +806,7 @@ int conf_load(conf_data *c, const char *IDFilename)
 	    fclose(in);
 	    // We could if needed check explicitly for a version mismatch error
 	    //GQuark ufrawQuark = g_quark_from_static_string("UFRaw");
-	    //if (g_error_matches(err, ufrawQuark, UFRAW_RC_VERSION))
+	    //if (g_error_matches(err, data->ufrawQuark, UFRAW_RC_VERSION))
 	    g_error_free(err);
 	    uf_reset_locale(locale);
 	    return UFRAW_ERROR;

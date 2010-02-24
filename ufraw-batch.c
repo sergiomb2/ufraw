@@ -102,6 +102,7 @@ int main (int argc, char **argv)
 	g_free(uf);
     }
 //    ufraw_close(cmd.darkframe);
+    ufobject_delete(cmd.ufobject);
     ufobject_delete(rc.ufobject);
     exit(exitCode);
 }

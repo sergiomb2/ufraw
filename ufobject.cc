@@ -755,7 +755,7 @@ UFObject &UFGroup::Drop(UFName name) {
 
 UFArray::UFArray(UFName name, const char *defaultIndex) :
 	UFGroup(name, defaultIndex) {
-    defaultIndex = g_strdup(defaultIndex);
+    ufgroup->DefaultIndex = g_strdup(defaultIndex);
 }
 
 std::string UFArray::XML(const char *indent) const {

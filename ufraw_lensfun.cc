@@ -23,9 +23,19 @@
 namespace UFRaw {
 
 class Lensfun : public UFGroup {
+private:
+    static lfDatabase *GlobalLensDB;
 public:
     Lensfun();
+#if 0 // Can be useful for valgrind --leak-check=full
+    ~Lensfun() {
+	if (GlobalLensDB != NULL)
+	    lf_db_destroy(GlobalLensDB);
+	GlobalLensDB = NULL;
+    }
+#endif
     void Interpolate(const lfLens *lens);
+    void Init();
 };
 
 extern "C" { UFName ufModel = "Model"; }
@@ -271,21 +281,16 @@ void Lensfun::Interpolate(const lfLens *lens) {
     static_cast<Distortion &>((*this)[ufDistortion]).Interpolate(lens);
 }
 
-extern "C" {
-void ufraw_lensfun_interpolate(UFObject *lensfun, const lfLens *lens) {
-    Lensfun &Lensfun = dynamic_cast<UFRaw::Lensfun &>(*lensfun);
-    Lensfun.Interpolate(lens);
-}
+lfDatabase *Lensfun::GlobalLensDB = NULL;
 
-void ufraw_lensfun_init(ufraw_data *uf)
-{
+void Lensfun::Init() {
     /* Load lens database only once */
-    static lfDatabase *lensdb = NULL;
-    if (lensdb == NULL) {
-	lensdb = lf_db_new();
-	lf_db_load(lensdb);
+    if (GlobalLensDB == NULL) {
+	GlobalLensDB = lfDatabase::Create();
+	GlobalLensDB->Load();
     }
-    uf->conf->lensdb = lensdb;
+    ufraw_data *uf = ufraw_image_get_data(this);
+    uf->conf->lensdb = GlobalLensDB;
 
     /* Create a default lens & camera */
     uf->conf->lens = lf_lens_new();
@@ -309,24 +314,34 @@ void ufraw_lensfun_init(ufraw_data *uf)
 	    lf_free(lenses);
 	}
     }
-    UFGroup &Image = *uf->conf->ufobject;
-    UFGroup &Lensfun = Image[ufLensfun];
     if (uf->conf->lensfunMode == lensfun_default) {
 	if (uf->LoadingID) {
-	    Lensfun[ufTCA].Event(uf_value_changed);
-	    Lensfun[ufVignetting].Event(uf_value_changed);
-	    Lensfun[ufDistortion].Event(uf_value_changed);
+	    (*this)[ufTCA].Event(uf_value_changed);
+	    (*this)[ufVignetting].Event(uf_value_changed);
+	    (*this)[ufDistortion].Event(uf_value_changed);
 	    return;
 	}
 	uf->conf->lensfunMode = lensfun_auto;
     }
     if (uf->conf->lensfunMode == lensfun_none) {
-	Lensfun[ufTCA].Reset();
-	Lensfun[ufVignetting].Reset();
-	Lensfun[ufDistortion].Reset();
+	(*this)[ufTCA].Reset();
+	(*this)[ufVignetting].Reset();
+	(*this)[ufDistortion].Reset();
     } else {
-	static_cast<UFRaw::Lensfun &>(Lensfun).Interpolate(uf->conf->lens);
+	Interpolate(uf->conf->lens);
     }
+}
+
+extern "C" {
+void ufraw_lensfun_interpolate(UFObject *lensfun, const lfLens *lens) {
+    Lensfun &Lensfun = dynamic_cast<UFRaw::Lensfun &>(*lensfun);
+    Lensfun.Interpolate(lens);
+}
+
+void ufraw_lensfun_init(ufraw_data *uf) {
+    UFGroup &Image = *uf->conf->ufobject;
+    UFRaw::Lensfun &Lensfun =  static_cast<UFRaw::Lensfun &>(Image[ufLensfun]);
+    Lensfun.Init();
 }
 
 }
