@@ -27,7 +27,7 @@
 #include <bzlib.h>
 #endif
 
-void (*ufraw_progress)(int what, int ticks);
+void (*ufraw_progress)(int what, int ticks) = NULL;
 
 #ifdef HAVE_LENSFUN
 /* What about LF_MODIFY_ALL? */

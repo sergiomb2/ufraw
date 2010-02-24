@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.150 2010/02/07 22:37:26 udifuchs Exp $
+dnl $Id: configure.ac,v 1.151 2010/02/24 17:44:26 udifuchs Exp $
 AC_INIT(UFRaw, 0.17)
 AC_PREREQ(2.57)
 
@@ -105,7 +105,7 @@ AC_ARG_WITH(dosprefix,
   [ with_dosprefix=$withval],
   [ with_dosprefix=NONE ] )
 
-PKG_CHECK_MODULES(GLIB, glib-2.0)
+PKG_CHECK_MODULES(GLIB, glib-2.0 gthread-2.0)
 PKG_CHECK_MODULES(LCMS, lcms)
 
 AC_ARG_WITH([gtk],

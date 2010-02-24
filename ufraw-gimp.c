@@ -147,6 +147,9 @@ void run(GIMP_CONST gchar *name,
     conf_data rc;
     int status;
 
+    g_thread_init(NULL);
+    gdk_threads_init();
+    gdk_threads_enter();
     ufraw_binary = g_path_get_basename(gimp_get_progname());
     uf_init_locale(gimp_get_progname());
 
@@ -164,6 +167,7 @@ void run(GIMP_CONST gchar *name,
     } else {
 	values[0].type = GIMP_PDB_STATUS;
 	values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+	gdk_threads_leave();
 	return;
     }
     gboolean loadThumbnail = size>0;
@@ -183,6 +187,7 @@ void run(GIMP_CONST gchar *name,
 	    else
 		*return_vals = gimp_run_procedure2 ("file_jpeg_load",
 			nreturn_vals, nparams, param);
+	    gdk_threads_leave();
 	    return;
 	} else if (!strcasecmp(filename+strlen(filename)-4, ".tif")) {
 	    if ( !loadThumbnail )
@@ -203,12 +208,15 @@ void run(GIMP_CONST gchar *name,
 		    	nreturn_vals, 3, tiffParam);
 		*/
 	    }
+	    gdk_threads_leave();
 	    return;
 	} else {
 	    /* Don't issue a message on thumbnail failure, since ufraw-gimp
 	     * will be called again with "file_ufraw_load" */
-	    if ( loadThumbnail ) return;
-
+	    if ( loadThumbnail ) {
+		gdk_threads_leave();
+		return;
+	    }
 	    ufraw_icons_init();
 	    GtkWidget *dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	    uf_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
@@ -220,6 +228,7 @@ void run(GIMP_CONST gchar *name,
 	    values[0].data.d_status = GIMP_PDB_CANCEL;
 
 	    gtk_widget_destroy(dummyWindow);
+	    gdk_threads_leave();
 	    return;
 	}
     }
@@ -258,6 +267,7 @@ void run(GIMP_CONST gchar *name,
 	if ( status!=UFRAW_SUCCESS ) {
 	    values[0].type = GIMP_PDB_STATUS;
 	    values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+	    gdk_threads_leave();
 	    return;
 	}
 	if ( sendToGimpMode ) gimp_progress_update(0.3);
@@ -276,6 +286,7 @@ void run(GIMP_CONST gchar *name,
 	    values[0].data.d_status = GIMP_PDB_CANCEL;
 	else
 	    values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+	gdk_threads_leave();
 	return;
     }
     *nreturn_vals = 2;
@@ -290,6 +301,8 @@ void run(GIMP_CONST gchar *name,
 	values[3].type = GIMP_PDB_INT32;
 	values[3].data.d_int32 = uf->initialHeight;
     }
+    gdk_threads_leave();
+    return;
 }
 
 int gimp_row_writer(ufraw_data *uf, void *volatile out, void *pixbuf,

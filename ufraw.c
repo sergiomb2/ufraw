@@ -28,6 +28,9 @@ int main (int argc, char **argv)
     int optInd;
     int plugin = 0;
 
+    g_thread_init(NULL);
+    gdk_threads_init();
+    gdk_threads_enter();
     char *argFile = uf_win32_locale_to_utf8(argv[0]);
     ufraw_binary = g_path_get_basename(argFile);
     uf_init_locale(argFile);
@@ -70,9 +73,14 @@ int main (int argc, char **argv)
 	ufraw_message(UFRAW_ERROR, _("Extracting embedded image is not supported in interactive mode"));
 	optInd = -1;
     }
-    if (optInd<0) exit(1);
-    if (optInd==0) exit(0);
-
+    if (optInd < 0) {
+	gdk_threads_leave();
+	exit(1);
+    }
+    if (optInd == 0) {
+	gdk_threads_leave();
+	exit(0);
+    }
     /* Create a dummyWindow for the GUI error messenger */
     if (dummyWindow==NULL) {
 	dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -84,6 +92,7 @@ int main (int argc, char **argv)
     if (optInd==argc) {
 	ufraw_chooser(&rc, &conf, &cmd, NULL);
 //	ufraw_close(cmd.darkframe);
+	gdk_threads_leave();
 	exit(0);
     }
     /* If there only one argument and it is a directory, use it as the
@@ -93,6 +102,7 @@ int main (int argc, char **argv)
 	ufraw_chooser(&rc, &conf, &cmd, argFile);
 	uf_win32_locale_free(argFile);
 //	ufraw_close(cmd.darkframe);
+	gdk_threads_leave();
 	exit(0);
     }
     uf_win32_locale_free(argFile);
@@ -111,6 +121,7 @@ int main (int argc, char **argv)
 	if (status==UFRAW_ERROR) {
 	    ufraw_close(uf);
 	    g_free(uf);
+	    gdk_threads_leave();
 	    exit(1);
 	}
 	ufraw_preview(uf, &rc, plugin, NULL);
@@ -121,5 +132,6 @@ int main (int argc, char **argv)
 //    ufraw_close(cmd.darkframe);
     ufobject_delete(cmd.ufobject);
     ufobject_delete(rc.ufobject);
+    gdk_threads_leave();
     exit(exitCode);
 }

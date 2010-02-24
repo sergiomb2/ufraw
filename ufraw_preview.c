@@ -1141,6 +1141,9 @@ static gboolean render_preview_image(preview_data *data)
 	ufraw_image_data *img1 = ufraw_convert_image_area(data->UF,
 		subarea, ufraw_phases_num - 1);
 	UFRectangle area = ufraw_image_get_subarea_rectangle(img1, subarea);
+#ifdef _OPENMP
+#pragma omp critical
+#endif
 	preview_draw_area(data, area.x, area.y, area.width, area.height);
 	progress(PROGRESS_RENDER, 1);
 	again = TRUE;

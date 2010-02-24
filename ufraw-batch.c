@@ -28,6 +28,7 @@ int main (int argc, char **argv)
     int status;
     int exitCode = 0;
 
+    g_thread_init(NULL);
     char *argFile = uf_win32_locale_to_utf8(argv[0]);
     ufraw_binary = g_path_get_basename(argFile);
     uf_init_locale(argFile);
