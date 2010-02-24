@@ -12,7 +12,10 @@ ufraw_developer.c
 ufraw_embedded.c
 ufraw_exiv2.cc
 ufraw-gimp.c
+ufraw_icons.c
+ufraw_lensfun.cc
 ufraw_lens_ui.c
+ufraw_message.c
 ufraw_preview.c
 ufraw_routines.c
 ufraw_saver.c

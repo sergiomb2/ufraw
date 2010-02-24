@@ -1,5 +1,3 @@
 dcraw_api.cc
 dcraw.cc
 dcraw_indi.c
-ufraw_icons.c
-ufraw_message.c
