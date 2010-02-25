@@ -1702,18 +1702,3 @@ msgstr "Balans bieli aparatu"
 
 msgid "Auto WB"
 msgstr "Automatyczny balans bieli"
-
-#~ msgid "Lock aspect ratio"
-#~ msgstr "Zablokuj stosunek boków"
-
-#~ msgid "Scale"
-#~ msgstr "Skala"
-
-#~ msgid "Image scale power-of-two"
-#~ msgstr "Skalowanie zdjęcia (jako potęga dwójki)"
-
-#~ msgid "Reset image scale to default"
-#~ msgstr "Ustaw domyślną skalę"
-
-#~ msgid "Autoscale the image for best fit"
-#~ msgstr "Automatycznie dopasuj rozmiar zdjęcia"
