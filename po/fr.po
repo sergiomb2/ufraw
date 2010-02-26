@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-23 14:54-0600\n"
+"POT-Creation-Date: 2010-02-26 08:30+0100\n"
 "PO-Revision-Date: 2010-02-08 22:39+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -765,7 +765,8 @@ msgstr "nombre F (ouverture)"
 msgid "Distance"
 msgstr "Distance"
 
-msgid "Distance to subject"
+#, fuzzy
+msgid "Distance to subject in meters"
 msgstr "Distance au sujet"
 
 #. Add the model combobox

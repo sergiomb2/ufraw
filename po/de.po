@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-23 14:54-0600\n"
+"POT-Creation-Date: 2010-02-26 08:30+0100\n"
 "PO-Revision-Date: 2009-05-13 12:19+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -751,7 +751,8 @@ msgstr "F-Nummer (Blende)"
 msgid "Distance"
 msgstr "Entfernung"
 
-msgid "Distance to subject"
+#, fuzzy
+msgid "Distance to subject in meters"
 msgstr "Entfernung zum Objekt"
 
 #. Add the model combobox

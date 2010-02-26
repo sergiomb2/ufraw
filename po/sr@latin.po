@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-23 14:54-0600\n"
+"POT-Creation-Date: 2010-02-26 08:30+0100\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -757,7 +757,8 @@ msgstr "F-broj (otvor blende)"
 msgid "Distance"
 msgstr "Udaljenost"
 
-msgid "Distance to subject"
+#, fuzzy
+msgid "Distance to subject in meters"
 msgstr "Udaljenost od motiva"
 
 #. Add the model combobox

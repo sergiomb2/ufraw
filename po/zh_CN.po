@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-23 14:54-0600\n"
+"POT-Creation-Date: 2010-02-26 08:30+0100\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -704,7 +704,8 @@ msgstr "F-数值(光圈)"
 msgid "Distance"
 msgstr "距离"
 
-msgid "Distance to subject"
+#, fuzzy
+msgid "Distance to subject in meters"
 msgstr "主体距离"
 
 #. Add the model combobox
