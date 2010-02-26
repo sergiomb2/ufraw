@@ -23,12 +23,6 @@
 #include <sstream>
 #include <cassert>
 
-// EXIV2_TEST_VERSION is defined in Exiv2 0.15 and newer.
-#ifndef EXIV2_TEST_VERSION
-# define EXIV2_TEST_VERSION(major,minor,patch) \
-	( EXIV2_VERSION >= EXIV2_MAKE_VERSION(major,minor,patch) )
-#endif
-
 /*
  * Helper function to copy a string to a buffer, converting it from
  * current locale (in which exiv2 often returns strings) to UTF-8.
@@ -196,11 +190,9 @@ try {
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Minolta.LensID")))
 		!= exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
-#if EXIV2_TEST_VERSION(0,16,0)
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.LensType")))
 		!= exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
-#endif
     }
 #endif
     /* Read flash mode */
@@ -322,11 +314,9 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
     /* Delete various MakerNote fields only applicable to the raw file */
 
     // Nikon thumbnail data
-#if EXIV2_TEST_VERSION(0,13,0)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.Preview")))
 	    != exifData.end() )
 	exifData.erase(pos);
-#endif
 #if EXIV2_TEST_VERSION(0,18,0)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.NikonPreview.JPEGInterchangeFormat")))
 	    != exifData.end() )
@@ -338,7 +328,6 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
 	exifData.erase(pos);
 #endif
 
-#if EXIV2_TEST_VERSION(0,16,0)
     // Pentax thumbnail data
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.PreviewResolution")))
 	    != exifData.end() )
@@ -349,7 +338,6 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.PreviewOffset")))
 	    != exifData.end() )
 	exifData.erase(pos);
-#endif
 
     // Minolta thumbnail data
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Minolta.Thumbnail")))
@@ -362,7 +350,6 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
 	    != exifData.end() )
 	exifData.erase(pos);
 
-#if EXIV2_TEST_VERSION(0,13,0)
     // Olympus thumbnail data
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Olympus.Thumbnail")))
 	    != exifData.end() )
@@ -373,16 +360,14 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Olympus.ThumbnailLength")))
 	    != exifData.end() )
 	exifData.erase(pos);
-#endif
 
     /* Write appropriate color space tag if using sRGB output */
     if (!strcmp(uf->developer->profileFile[out_profile], ""))
 	exifData["Exif.Photo.ColorSpace"] = uint16_t(1); /* sRGB */
 
-#if EXIV2_TEST_VERSION(0,14,0)
     /* Add "UFRaw" and version used to output file as processing software. */
     exifData["Exif.Image.ProcessingSoftware"] = "UFRaw " VERSION;
-#endif
+
     return exifData;
 }
 

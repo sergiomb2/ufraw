@@ -351,15 +351,6 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
 	 d->saturationProfile==NULL ) {
 	/* No transformation at all. */
 	d->colorTransform = NULL;
-#if defined(LCMS_VERSION) && LCMS_VERSION <= 113 /* Bypass a lcms 1.13 bug. */
-    } else if ( d->luminosityProfile==NULL
-	     && d->adjustmentProfile==NULL
-	     && d->saturationProfile==NULL ) {
-	d->colorTransform = cmsCreateTransform(
-		d->profile[in_profile], TYPE_RGB_16,
-		d->profile[targetProfile], TYPE_RGB_16,
-		d->intent[out_profile], 0);
-#endif
     } else {
 	cmsHPROFILE prof[5];
 	int i = 0;

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.151 2010/02/24 17:44:26 udifuchs Exp $
+dnl $Id: configure.ac,v 1.152 2010/02/26 03:30:10 nkbj Exp $
 AC_INIT(UFRaw, 0.17)
 AC_PREREQ(2.57)
 
@@ -106,7 +106,7 @@ AC_ARG_WITH(dosprefix,
   [ with_dosprefix=NONE ] )
 
 PKG_CHECK_MODULES(GLIB, glib-2.0 gthread-2.0)
-PKG_CHECK_MODULES(LCMS, lcms)
+PKG_CHECK_MODULES(LCMS, lcms >= 1.14)
 
 AC_ARG_WITH([gtk],
   [AS_HELP_STRING([--with-gtk],
@@ -252,7 +252,7 @@ PKG_CHECK_MODULES(CFITSIO, cfitsio,
   [ have_cfitsio=no
     AC_MSG_RESULT($CFITSIO_PKG_ERRORS) ] )
 
-PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.11,
+PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.16,
   [ have_exiv2=yes
     AC_DEFINE(HAVE_EXIV2, 1, have the exiv2 library) ],
   [ have_exiv2=no
