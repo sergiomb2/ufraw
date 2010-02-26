@@ -61,13 +61,14 @@ extern "C" {
 #else
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 #endif
-/*fseeko() is handled by the configuration system - NKBJ*/
-//#ifdef DJGPP
-//#define fseeko fseek
-//#define ftello ftell
-//#else
-//#define fgetc getc_unlocked
-//#endif
+#ifndef HAVE_CONFIG_H /*fseeko() is handled by the UFRaw config system - NKBJ*/
+#ifdef DJGPP
+#define fseeko fseek
+#define ftello ftell
+#else
+#define fgetc getc_unlocked
+#endif
+#endif
 #ifdef __CYGWIN__
 #include <io.h>
 #endif
