@@ -213,13 +213,6 @@ public:
     }
 };
 
-#ifdef HAVE_LENSFUN
-class Lensfun : public UFGroup {
-public:
-    Lensfun();
-};
-#endif
-
 // ufRawImage is short for 'raw image processing parameters'.
 extern "C" { UFName ufRawImage = "Image"; }
 Image::Image(UFObject *root) : UFGroup(ufRawImage), uf(NULL) {
@@ -232,7 +225,7 @@ Image::Image(UFObject *root) : UFGroup(ufRawImage), uf(NULL) {
     ;
 #ifdef HAVE_LENSFUN
     if (root == NULL || root->Name() != ufRawResources)
-	*this << new Lensfun; // Lensfun data is not saved to .ufrawrc
+	*this << ufraw_lensfun_new(); // Lensfun data is not saved to .ufrawrc
 #else
     (void)root;
 #endif

@@ -874,6 +874,8 @@ static void preview_progress_disable(preview_data *data)
     render_status_text(data);
 }
 
+void resize_canvas(preview_data *data);
+
 static gboolean render_preview_now(preview_data *data)
 {
     if (data->FreezeDialog)
@@ -882,6 +884,9 @@ static gboolean render_preview_now(preview_data *data)
     while (g_idle_remove_by_data(data))
 	;
     data->RenderSubArea = 0;
+
+    if (data->UF->Images[ufraw_transform_phase].invalidate_event)
+	resize_canvas(data);
 
     if (CFG->autoExposure == apply_state) {
 	ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
@@ -3103,7 +3108,6 @@ static void adjustment_update_rotation(GtkAdjustment *adj, gpointer user_data)
 	    CFG->orientation != CFG->CameraOrientation);
 
     ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
-    resize_canvas(data);
     render_preview(data);
 }
 

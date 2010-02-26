@@ -68,6 +68,7 @@ GtkWidget *ufobject_reset_button_new(const char *tip);
 void ufobject_reset_button_add(GtkWidget *button, UFObject *object);
 GtkWidget *ufstring_combo_box_new(UFObject *object);
 GtkWidget *ufarray_combo_box_new(UFObject *object);
+GtkWidget *ufarray_combo_box_entry_new(UFObject *object);
 
 #ifdef  __cplusplus
 }

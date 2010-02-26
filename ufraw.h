@@ -66,6 +66,9 @@ extern UFName ufTemperature;
 extern UFName ufGreen;
 extern UFName ufChannelMultipliers;
 extern UFName ufLensfun;
+extern UFName ufFocalLength;
+extern UFName ufAperture;
+extern UFName ufDistance;
 extern UFName ufTCA;
 extern UFName ufVignetting;
 extern UFName ufDistortion;
@@ -79,6 +82,9 @@ extern "C" {
 #endif // __cplusplus
 
 UFObject *ufraw_image_new();
+#ifdef HAVE_LENSFUN
+UFObject *ufraw_lensfun_new();
+#endif
 struct ufraw_struct *ufraw_image_get_data(UFObject *obj);
 void ufraw_image_set_data(UFObject *obj, struct ufraw_struct *uf);
 UFObject *ufraw_resources_new();

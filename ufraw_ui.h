@@ -122,16 +122,10 @@ typedef struct {
     GtkWidget *LensMenu;
     /* The lens fix notebook distortion page */
     GtkWidget *LensDistortionTable, *LensDistortionDesc;
-    /* The lens distortion model combobox */
-    GtkWidget *LensDistortionModel;
     /* The lens fix notebook TCA page */
     GtkWidget *LensTCATable, *LensTCADesc;
-    /* The lens TCA model combobox */
-    GtkWidget *LensTCAModel;
     /* The lens fix notebook vignetting page */
     GtkWidget *LensVignettingTable, *LensVignettingDesc;
-    /* The lens vignetting model combobox */
-    GtkWidget *LensVignettingModel;
     /* The lens fix notebook geometry page */
     GtkWidget *LensGeometryTable, *LensFromGeometryDesc, *LensToGeometryDesc;
     /* The 'from' and 'to' geometry selectors */
@@ -188,10 +182,6 @@ typedef struct {
 
 /* Start the render preview refresh thread for invalid layers in background */
 void render_preview (preview_data *data);
-
-preview_data *get_preview_data (void *object);
-
-void resize_canvas(preview_data *data);
 
 void lens_fill_interface (preview_data *data, GtkWidget *page);
 

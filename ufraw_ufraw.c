@@ -697,7 +697,6 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->displayProfile);
     g_free(uf->RawHistogram);
 #ifdef HAVE_LENSFUN
-    lf_lens_destroy(uf->conf->lens);
     lf_modifier_destroy(uf->TCAmodifier);
     lf_camera_destroy(uf->conf->camera);
     lf_modifier_destroy(uf->modifier);

@@ -417,9 +417,14 @@ static void _ufarray_object_event(UFObject *object, UFEventType type) {
 	gtk_combo_box_set_active(combo, array.Index());
 	return;
     }
-    // If value not found activate first entry
-    g_warning("_ufarray_object_event() value not found");
-    gtk_combo_box_set_active(combo, 0);
+    if (GTK_IS_COMBO_BOX_ENTRY(combo)) {
+	GtkWidget *entry = gtk_bin_get_child(GTK_BIN(combo));
+	gtk_entry_set_text(GTK_ENTRY(entry), array.StringValue());
+    } else { // GTK_IS_COMBO_BOX()
+	// If value not found activate first entry
+	g_warning("_ufarray_object_event() value not found");
+	gtk_combo_box_set_active(combo, 0);
+    }
 }
 
 /* Return the widget-data for the object.
@@ -565,25 +570,47 @@ static void _ufarray_combo_changed(GtkWidget *combo, UFObject *object) {
     _ufobject_reset_button_state(object);
 }
 
-// Create a new ComboBox text with small width.
-// The widget must be added with GTK_EXPAND|GTK_FILL.
-GtkWidget *ufarray_combo_box_new(UFObject *object) {
+static void _ufarray_entry_changed(GtkWidget *entry, UFObject *object) {
+    UFArray &array = *object;
+    array.Set(gtk_entry_get_text(GTK_ENTRY(entry)));
+    _ufobject_reset_button_state(object);
+}
+
+GtkWidget *_ufarray_combo_box_new(UFObject *object, GtkWidget *combo) {
     UFArray &array = *object;
     _UFWidgetData &data = _ufarray_widget_data(array);
-    GtkWidget *combo = gtk_combo_box_new_text();
     gtk_widget_set_size_request(combo, 50, -1);
     data.gobject[0] = G_OBJECT(combo);
-    g_signal_connect_after(G_OBJECT(combo), "changed",
-	G_CALLBACK(_ufarray_combo_changed), object);
-    int saveIndex = array.Index();
+    char *saveIndex = g_strdup(array.StringValue());
     int i = 0;
     while (array.SetIndex(i)) {
 	gtk_combo_box_append_text(GTK_COMBO_BOX(combo), _(array.StringValue()));
 	i++;
     }
-    array.SetIndex(saveIndex);
+    array.Set(saveIndex);
+    g_free(saveIndex);
     _ufarray_object_event(object, uf_value_changed);
+    gtk_widget_set_sensitive(combo, i > 0);
     return combo;
+}
+
+// Create a new ComboBox with small width.
+// The widget must be added with GTK_EXPAND|GTK_FILL.
+GtkWidget *ufarray_combo_box_new(UFObject *object) {
+    GtkWidget *combo = gtk_combo_box_new_text();
+    g_signal_connect_after(G_OBJECT(combo), "changed",
+	G_CALLBACK(_ufarray_combo_changed), object);
+    return _ufarray_combo_box_new(object, combo);
+}
+
+// Create a new ComboBoxEntry with small width.
+// The widget must be added with GTK_EXPAND|GTK_FILL.
+GtkWidget *ufarray_combo_box_entry_new(UFObject *object) {
+    GtkWidget *combo = gtk_combo_box_entry_new_text();
+    GtkWidget *entry = gtk_bin_get_child(GTK_BIN(combo));
+    g_signal_connect_after(G_OBJECT(entry), "changed",
+	G_CALLBACK(_ufarray_entry_changed), object);
+    return _ufarray_combo_box_new(object, combo);
 }
 
 } // extern "C"

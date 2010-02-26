@@ -18,24 +18,157 @@
 #include <glib/gi18n.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 
 #ifdef HAVE_LENSFUN
 namespace UFRaw {
 
 class Lensfun : public UFGroup {
 private:
-    static lfDatabase *GlobalLensDB;
+    static lfDatabase *LensDB;
 public:
+    lfLens Transformation;
+    lfLens Interpolation;
+    double FocalLengthValue;
+    double ApertureValue;
+    double DistanceValue;
     Lensfun();
 #if 0 // Can be useful for valgrind --leak-check=full
     ~Lensfun() {
-	if (GlobalLensDB != NULL)
-	    lf_db_destroy(GlobalLensDB);
-	GlobalLensDB = NULL;
+	if (LensDB != NULL)
+	    lf_db_destroy(LensDB);
+	LensDB = NULL;
     }
 #endif
-    void Interpolate(const lfLens *lens);
+    static Lensfun &Parent(UFObject &object) {
+	if (strcmp(object.Parent().Name(), ufLensfun) == 0)
+	    return static_cast<Lensfun &>(object.Parent());
+	return Lensfun::Parent(object.Parent());
+    }
+    void Interpolate();
     void Init();
+};
+
+#define _buffer_size 80
+
+char *_StringNumber(char *buffer, double number) {
+/*    int precision = 0;
+    while (floor(number * pow(10, precision))*10 <
+	    floor(number * pow(10, precision+1)))
+	precision++;*/
+    // Compute the floating-point precision which is enough for "normal use".
+    // The criteria is to have 2 or 3 significant digits.
+    int precision;
+    if (number > 10.0 && (int)(10*number)%10 != 0)
+        // Support focal length such as 10.5mm fisheye.
+        precision = MAX(-floor(log(number) / log(10) - 1.99), 0);
+    else
+        precision = MAX(-floor(log(number) / log(10) - 0.99), 0);
+    snprintf(buffer, _buffer_size, "%.*f", precision, number);
+    return buffer;
+}
+
+extern "C" { UFName ufFocalLength = "FocalLength"; }
+class FocalLength : public UFArray {
+public:
+    FocalLength() : UFArray(ufFocalLength) { }
+    void OriginalValueChangedEvent() {
+	if (!HasParent())
+	    return;
+	double value;
+	if (sscanf(StringValue(), "%lf", &value) != 1)
+	    return;
+	Lensfun::Parent(*this).FocalLengthValue = value;
+	Lensfun::Parent(*this).Interpolate();
+    }
+    void CreatePresets() {
+	if (!HasParent())
+	    return;
+	Clear();
+	lfLens &lens = Lensfun::Parent(*this).Interpolation;
+
+	static double focalValues[] = { 4, 5, 6, 7, 8, 10, 12, 14, 17, 21, 24,
+		28, 35, 43, 50, 70, 85, 105, 135, 200, 300, 400, 600, 800, 0 };
+	char buffer[_buffer_size];
+	double min = lens.MinFocal, max = lens.MaxFocal;
+	if (min > 0)
+	    *this << new UFString(ufPreset, _StringNumber(buffer, min));
+	int i = 0;
+	while (focalValues[i] < min && focalValues[i] != 0)
+	    i++; 
+	if (Has(_StringNumber(buffer, focalValues[i])))
+	    i++; // Comparing string works better than comparing doubles.
+	while (focalValues[i] < max && focalValues[i] != 0) {
+	    *this << new UFString(ufPreset, _StringNumber(buffer,
+		    focalValues[i]));
+	    i++;
+	}
+	if (max > min)
+	    *this << new UFString(ufPreset, _StringNumber(buffer, max));
+    }
+};
+
+extern "C" { UFName ufAperture = "Aperture"; }
+class Aperture : public UFArray {
+public:
+    Aperture() : UFArray(ufAperture) { }
+    void OriginalValueChangedEvent() {
+	if (!HasParent())
+	    return;
+	double value;
+	if (sscanf(StringValue(), "%lf", &value) != 1)
+	    return;
+	Lensfun::Parent(*this).ApertureValue = value;
+	Lensfun::Parent(*this).Interpolate();
+    }
+    void CreatePresets() {
+	if (!HasParent())
+	    return;
+	Clear();
+	lfLens &lens = Lensfun::Parent(*this).Interpolation;
+
+	static double apertureValues[] = { 1, 1.2, 1.4, 1.7, 2, 2.4, 2.8, 3.4,
+	    4, 4.8, 5.6, 6.7, 8, 9.5, 11, 13, 16, 19, 22, 27, 32, 38, 45, 0 };
+	char buffer[_buffer_size];
+	double min = lens.MinAperture;
+	if (min > 0)
+	    *this << new UFString(ufPreset, _StringNumber(buffer, min));
+	int i = 0;
+	while (apertureValues[i] < min && apertureValues[i] != 0)
+	    i++;
+	if (Has(_StringNumber(buffer, apertureValues[i])))
+	    i++; // Comparing string works better than comparing doubles.
+	while (apertureValues[i] != 0) {
+	    *this << new UFString(ufPreset, _StringNumber(buffer,
+		    apertureValues[i]));
+	    i++;
+	}
+    }
+};
+
+extern "C" { UFName ufDistance = "Distance"; }
+class Distance : public UFArray {
+public:
+    Distance() : UFArray(ufDistance) { }
+    void OriginalValueChangedEvent() {
+	if (!HasParent())
+	    return;
+	double value;
+	if (sscanf(StringValue(), "%lf", &value) != 1)
+	    return;
+	Lensfun::Parent(*this).DistanceValue = value;
+	Lensfun::Parent(*this).Interpolate();
+    }
+    void CreatePresets() {
+	Clear();
+	char buffer[_buffer_size];
+	double value = 0.25;
+	while (value < 1001) {
+	    *this << new UFString(ufPreset, _StringNumber(buffer, value));
+	    value *= sqrt(2);
+	    if (value > 127 && value < 129) value = 125;
+	}
+    }
 };
 
 extern "C" { UFName ufModel = "Model"; }
@@ -66,14 +199,13 @@ public:
 	ufraw_data *uf = ufraw_image_get_data(this);
 	if (uf == NULL)
 	    return UFObject::Event(type);
-	if (uf->conf->lens == NULL)
-	    return UFObject::Event(type);
-	if (uf->conf->lens->CalibTCA != NULL)
-	    while (uf->conf->lens->CalibTCA[0] != NULL)
-		uf->conf->lens->RemoveCalibTCA(0);
+	lfLens &lens = Lensfun::Parent(*this).Transformation;
+	if (lens.CalibTCA != NULL)
+	    while (lens.CalibTCA[0] != NULL)
+		lens.RemoveCalibTCA(0);
 	lfLensCalibTCA calib;
 	calib.Model = static_cast<lfTCAModel>(Index());
-	calib.Focal = uf->conf->focal_len;
+	calib.Focal = Lensfun::Parent(*this).FocalLengthValue;
 	const lfParameter **params;
 	lfLens::GetTCAModelDesc(calib.Model, NULL, &params);
 	if (params != NULL) {
@@ -83,16 +215,17 @@ public:
 		calib.Terms[i] = Param.DoubleValue();
 	    }
 	}
-	uf->conf->lens->AddCalibTCA(&calib);
+	lens.AddCalibTCA(&calib);
 	ufraw_invalidate_tca_layer(uf);
 	return UFObject::Event(type);
     }
-    void Interpolate(const lfLens *lens) {
-	ufraw_data *uf = ufraw_image_get_data(this);
-	if (uf == NULL)
+    void Interpolate() {
+	if (!HasParent())
 	    return;
+	Lensfun &Lensfun = Lensfun::Parent(*this);
 	lfLensCalibTCA calib;
-	if (!lens->InterpolateTCA(uf->conf->focal_len, calib)) {
+	if (!Lensfun.Interpolation.InterpolateTCA(
+		Lensfun.FocalLengthValue, calib)) {
 	    SetIndex(0);
 	    return;
 	}
@@ -136,16 +269,15 @@ public:
 	ufraw_data *uf = ufraw_image_get_data(this);
 	if (uf == NULL)
 	    return UFObject::Event(type);
-	if (uf->conf->lens == NULL)
-	    return UFObject::Event(type);
-	if (uf->conf->lens->CalibVignetting != NULL)
-	    while (uf->conf->lens->CalibVignetting[0] != NULL)
-		uf->conf->lens->RemoveCalibVignetting(0);
+	lfLens &lens = Lensfun::Parent(*this).Transformation;
+	if (lens.CalibVignetting != NULL)
+	    while (lens.CalibVignetting[0] != NULL)
+		lens.RemoveCalibVignetting(0);
 	lfLensCalibVignetting calib;
 	calib.Model = static_cast<lfVignettingModel>(Index());
-	calib.Focal = uf->conf->focal_len;
-	calib.Aperture = uf->conf->aperture;
-	calib.Distance = uf->conf->subject_distance;
+	calib.Focal = Lensfun::Parent(*this).FocalLengthValue;
+	calib.Aperture = Lensfun::Parent(*this).ApertureValue;
+	calib.Distance = Lensfun::Parent(*this).DistanceValue;
 	const lfParameter **params;
 	lfLens::GetVignettingModelDesc(calib.Model, NULL, &params);
 	if (params != NULL) {
@@ -155,17 +287,19 @@ public:
 		calib.Terms[i] = Param.DoubleValue();
 	    }
 	}
-	uf->conf->lens->AddCalibVignetting(&calib);
+	lens.AddCalibVignetting(&calib);
 	ufraw_invalidate_layer(uf, ufraw_first_phase);
 	return UFObject::Event(type);
     }
-    void Interpolate(const lfLens *lens) {
+    void Interpolate() {
 	ufraw_data *uf = ufraw_image_get_data(this);
 	if (uf == NULL)
 	    return;
+	Lensfun &Lensfun = Lensfun::Parent(*this);
 	lfLensCalibVignetting calib;
-	if (!lens->InterpolateVignetting(uf->conf->focal_len,
-		uf->conf->aperture, uf->conf->subject_distance, calib)) {
+	if (!Lensfun.Interpolation.InterpolateVignetting(
+		Lensfun.FocalLengthValue, Lensfun.FocalLengthValue,
+		Lensfun.DistanceValue, calib)) {
 	    SetIndex(0);
 	    return;
 	}
@@ -223,14 +357,13 @@ public:
 	ufraw_data *uf = ufraw_image_get_data(this);
 	if (uf == NULL)
 	    return UFObject::Event(type);
-	if (uf->conf->lens == NULL)
-	    return UFObject::Event(type);
-	if (uf->conf->lens->CalibDistortion != NULL)
-	    while (uf->conf->lens->CalibDistortion[0] != NULL)
-		uf->conf->lens->RemoveCalibDistortion(0);
+	lfLens &lens = Lensfun::Parent(*this).Transformation;
+	if (lens.CalibDistortion != NULL)
+	    while (lens.CalibDistortion[0] != NULL)
+		lens.RemoveCalibDistortion(0);
 	lfLensCalibDistortion calib;
 	calib.Model = static_cast<lfDistortionModel>(Index());
-	calib.Focal = uf->conf->focal_len;
+	calib.Focal = Lensfun::Parent(*this).FocalLengthValue;
 	const lfParameter **params;
 	lfLens::GetDistortionModelDesc(calib.Model, NULL, &params);
 	if (params != NULL) {
@@ -240,16 +373,17 @@ public:
 		calib.Terms[i] = Param.DoubleValue();
 	    }
 	}
-	uf->conf->lens->AddCalibDistortion(&calib);
+	lens.AddCalibDistortion(&calib);
 	ufraw_invalidate_layer(uf, ufraw_transform_phase);
 	return UFObject::Event(type);
     }
-    void Interpolate(const lfLens *lens) {
-	ufraw_data *uf = ufraw_image_get_data(this);
-	if (uf == NULL)
+    void Interpolate() {
+	if (!HasParent())
 	    return;
+	Lensfun &Lensfun = Lensfun::Parent(*this);
 	lfLensCalibDistortion calib;
-	if (!lens->InterpolateDistortion(uf->conf->focal_len, calib)) {
+	if (!Lensfun.Interpolation.InterpolateDistortion(
+		Lensfun.FocalLengthValue, calib)) {
 	    SetIndex(0);
 	    return;
 	}
@@ -267,39 +401,43 @@ public:
 };
 
 extern "C" { UFName ufLensfun = "Lensfun"; }
-Lensfun::Lensfun() : UFGroup(ufLensfun) {
+Lensfun::Lensfun() : UFGroup(ufLensfun), FocalLengthValue(0.0),
+	ApertureValue(0.0), DistanceValue(0.0) {
     *this
+	<< new FocalLength
+	<< new Aperture
+	<< new Distance
 	<< new TCA
 	<< new Vignetting
 	<< new Distortion
     ;
 }
 
-void Lensfun::Interpolate(const lfLens *lens) {
-    static_cast<TCA &>((*this)[ufTCA]).Interpolate(lens);
-    static_cast<Vignetting &>((*this)[ufVignetting]).Interpolate(lens);
-    static_cast<Distortion &>((*this)[ufDistortion]).Interpolate(lens);
+void Lensfun::Interpolate() {
+    static_cast<TCA &>((*this)[ufTCA]).Interpolate();
+    static_cast<Vignetting &>((*this)[ufVignetting]).Interpolate();
+    static_cast<Distortion &>((*this)[ufDistortion]).Interpolate();
 }
 
-lfDatabase *Lensfun::GlobalLensDB = NULL;
+lfDatabase *Lensfun::LensDB = NULL;
 
 void Lensfun::Init() {
     /* Load lens database only once */
-    if (GlobalLensDB == NULL) {
-	GlobalLensDB = lfDatabase::Create();
-	GlobalLensDB->Load();
+    if (LensDB == NULL) {
+	LensDB = lfDatabase::Create();
+	LensDB->Load();
     }
     ufraw_data *uf = ufraw_image_get_data(this);
-    uf->conf->lensdb = GlobalLensDB;
+    uf->conf->lensdb = LensDB;
 
     /* Create a default lens & camera */
-    uf->conf->lens = lf_lens_new();
+    uf->conf->lens = &Transformation;
     uf->conf->camera = lf_camera_new();
     uf->conf->cur_lens_type = LF_UNKNOWN;
 
     /* Set lens and camera from EXIF info, if possible */
     if (uf->conf->real_make[0] || uf->conf->real_model[0]) {
-	const lfCamera **cams = lf_db_find_cameras(uf->conf->lensdb,
+	const lfCamera **cams = LensDB->FindCameras(
 		uf->conf->real_make, uf->conf->real_model);
 	if (cams != NULL) {
 	    lf_camera_copy(uf->conf->camera, cams[0]);
@@ -307,10 +445,11 @@ void Lensfun::Init() {
 	}
     }
     if (strlen(uf->conf->lensText) > 0) {
-	const lfLens **lenses = lf_db_find_lenses_hd(uf->conf->lensdb,
-		uf->conf->camera, NULL, uf->conf->lensText, 0);
+	const lfLens **lenses = LensDB->FindLenses(
+		uf->conf->camera, NULL, uf->conf->lensText);
 	if (lenses != NULL) {
-	    lf_lens_copy(uf->conf->lens, lenses[0]);
+	    Interpolation = *lenses[0];
+	    Transformation = *lenses[0];
 	    lf_free(lenses);
 	}
     }
@@ -328,14 +467,28 @@ void Lensfun::Init() {
 	(*this)[ufVignetting].Reset();
 	(*this)[ufDistortion].Reset();
     } else {
-	Interpolate(uf->conf->lens);
+	static_cast<FocalLength &>((*this)[ufFocalLength]).CreatePresets();
+	static_cast<Aperture &>((*this)[ufAperture]).CreatePresets();
+	static_cast<Distance &>((*this)[ufDistance]).CreatePresets();
+	Interpolate();
     }
+    char buffer[_buffer_size];
+    (*this)[ufFocalLength].Set(_StringNumber(buffer, uf->conf->focal_len));
+    (*this)[ufFocalLength].SetDefault();
+    (*this)[ufAperture].Set(_StringNumber(buffer, uf->conf->aperture));
+    (*this)[ufAperture].SetDefault();
+    (*this)[ufDistance].Set(_StringNumber(buffer, uf->conf->subject_distance));
+    (*this)[ufDistance].SetDefault();
 }
 
 extern "C" {
 void ufraw_lensfun_interpolate(UFObject *lensfun, const lfLens *lens) {
     Lensfun &Lensfun = dynamic_cast<UFRaw::Lensfun &>(*lensfun);
-    Lensfun.Interpolate(lens);
+    Lensfun.Interpolation = *lens;
+    static_cast<FocalLength &>(Lensfun[ufFocalLength]).CreatePresets();
+    static_cast<Aperture &>(Lensfun[ufAperture]).CreatePresets();
+    static_cast<Distance &>(Lensfun[ufDistance]).CreatePresets();
+    Lensfun.Interpolate();
 }
 
 void ufraw_lensfun_init(ufraw_data *uf) {
@@ -347,4 +500,9 @@ void ufraw_lensfun_init(ufraw_data *uf) {
 }
 
 } // namespace UFRaw
+
+extern "C" UFObject *ufraw_lensfun_new() {
+    return new UFRaw::Lensfun();
+}
+
 #endif // HAVE_LENSFUN

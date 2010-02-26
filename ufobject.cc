@@ -199,18 +199,17 @@ class _UFNumber : public _UFNumberCommon {
 public:
     double Number;
     double Default;
-    _UFNumber(UFName name, double number, double minimum, double maximum,
-	    double defaultValue, int accuracyDigits,
-	    double step, double jump) :
+    _UFNumber(UFName name, double defaultValue, double minimum, double maximum,
+	    int accuracyDigits, double step, double jump) :
 	_UFNumberCommon(name, minimum, maximum, accuracyDigits, step, jump),
-	Number(number), Default(defaultValue) { }
+	Number(defaultValue), Default(defaultValue) { }
 };
 
 #define ufnumber (static_cast<_UFNumber *>(ufobject))
 
 UFNumber::UFNumber(UFName name, double minimum, double maximum,
 	double defaultValue, int accuracyDigits, double step, double jump) :
-    UFObject(new _UFNumber(name, defaultValue, minimum, maximum, defaultValue,
+    UFObject(new _UFNumber(name, defaultValue, minimum, maximum,
 	    accuracyDigits, step, jump)) { }
 
 const char *UFNumber::StringValue() const {
@@ -614,6 +613,14 @@ static std::string _UFGroup_XML(const UFGroup &group, _UFGroupList &list,
 	const char *indent, const char *attribute) {
     if (group.IsDefault())
 	return "";
+    if (strcmp(attribute, "Index") == 0 && // If object is a UFArray and
+	    group.UFGroup::IsDefault()) { // all the array elements are default
+	// Just print the value in a simple format.
+	char *value = g_markup_escape_text(group.StringValue(), -1);
+	std::string xml = (std::string)indent + "<" + group.Name() + ">" +
+		value + "</" + group.Name() + ">\n";
+	return xml;
+    }
     std::string xml = "";
     // For now, we don't want to surround the root XML with <[/]Image> tags.
     if (strlen(indent) != 0) {
@@ -728,7 +735,6 @@ UFGroup &UFGroup::operator<<(UFObject *object) {
 	}
     }
     _UFGROUP_PARENT(object) = ufgroup;
-    ufgroup->CallValueChangedEvent(this);
     return *this;
 }
 
@@ -747,6 +753,16 @@ UFObject &UFGroup::Drop(UFName name) {
     }
     _UFGROUP_PARENT(dropObject) = NULL;
     return *dropObject;
+}
+
+void UFGroup::Clear() {
+    for (_UFGroupMap::iterator iter = ufgroup->Map.begin();
+	    iter != ufgroup->Map.end(); iter++) {
+	_UFGROUP_PARENT(iter->second) = NULL;
+	delete iter->second;
+    }
+    ufgroup->Map.clear();
+    ufgroup->List.clear();
 }
 
 // object is a <UFObject *> and generally not a <UFArray *>.
@@ -816,16 +832,12 @@ void UFArray::Reset() {
 }
 
 bool UFArray::SetIndex(int index) {
-    if (ufgroup->Index == index)
-	return true;
-    ufgroup->Index = index;
     _UFGroupList::iterator iter = ufgroup->List.begin();
     std::advance(iter, index);
     if (iter == ufgroup->List.end())
 	return false;
-    g_free(ufgroup->String);
-    ufgroup->String = g_strdup((*iter)->StringValue());
-    ufgroup->CallValueChangedEvent(this);
+    ufgroup->Index = index;
+    Set((*iter)->StringValue());
     return true;
 }
 
@@ -864,7 +876,6 @@ UFArray &UFArray::operator<<(UFObject *object) {
 	}
     }
     _UFARRAY_PARENT(object) = ufgroup;
-    ufgroup->CallValueChangedEvent(this);
     return *this;
 }
 

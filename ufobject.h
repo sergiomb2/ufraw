@@ -335,7 +335,14 @@ public:
     virtual UFGroup &operator<<(UFObject *object);
     /// Drop an object from the group. The dropped object is returned.
     /// If it is not needed any more it should be deleted to free its memory.
+    /// \exception UFException is thrown if an element with the given name
+    /// does not exist. This can be avoided with the use of the Has() method.
+    /// For UFArray, the index does not get updated.
     UFObject &Drop(UFName name);
+    /// Remove all elements from the group.
+    /// The removed elements are deleted from memory.
+    /// For UFArray, the index does not get updated.
+    void Clear();
 };
 
 /**

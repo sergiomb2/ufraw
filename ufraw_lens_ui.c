@@ -15,9 +15,7 @@
 #include "uf_gtk.h"
 #include "ufraw_ui.h"
 #include <glib/gi18n.h>
-#include <string.h>
 #include <ctype.h>
-#include <math.h>
 
 #ifdef HAVE_LENSFUN
 
@@ -25,82 +23,6 @@ static void delete_children(GtkWidget *widget, gpointer data)
 {
     (void)data;
     gtk_widget_destroy(widget);
-}
-
-/**
- * Add a labeled GtkComboBoxEntry to a table or to a box.
- */
-static GtkComboBoxEntry *combo_entry_text(GtkWidget *container,
-	guint x, guint y, gchar *lbl, gchar *tip)
-{
-    GtkWidget *label = gtk_label_new(lbl);
-    gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-    if (GTK_IS_TABLE(container))
-	gtk_table_attach(GTK_TABLE(container), label, x, x + 1, y, y + 1,
-		0, 0, 2, 0);
-    else if (GTK_IS_BOX(container))
-	gtk_box_pack_start(GTK_BOX(container), label, FALSE, FALSE, 2);
-    uf_widget_set_tooltip(label, tip);
-
-    GtkWidget *combo = gtk_combo_box_entry_new_text();
-    if (GTK_IS_TABLE(container))
-	gtk_table_attach(GTK_TABLE(container), combo, x+1, x+2, y, y+1,
-		0, 0, 2, 0);
-    else if (GTK_IS_BOX(container))
-	gtk_box_pack_start(GTK_BOX(container), combo, FALSE, FALSE, 2);
-    uf_widget_set_tooltip(combo, tip);
-
-    return GTK_COMBO_BOX_ENTRY(combo);
-}
-
-/* simple function to compute the floating-point precision
-   which is enough for "normal use". The criteria is to have
-   2 or 3 significant digits. */
-static int precision(double x)
-{
-    if (x > 10.0 && (int)(10*x)%10 != 0)
-	// Support focal length such as 10.5mm fisheye.
-	return MAX(-floor(log(x) / log(10) - 1.99), 0);
-    else
-	return MAX(-floor(log(x) / log(10) - 0.99), 0);
-}
-
-static GtkComboBoxEntry *combo_entry_numeric(GtkWidget *container,
-	guint x, guint y, gchar *lbl, gchar *tip,
-	gdouble val, gdouble *values, int nvalues)
-{
-    int i;
-    char txt[30];
-    GtkComboBoxEntry *combo = combo_entry_text(container, x, y, lbl, tip);
-    GtkEntry *entry = GTK_ENTRY(GTK_BIN(combo)->child);
-
-    gtk_entry_set_width_chars(entry, 4);
-
-    snprintf(txt, sizeof(txt), "%.*f", precision(val), val);
-    gtk_entry_set_text(entry, txt);
-
-    for (i = 0; i < nvalues; i++) {
-	gdouble v = values[i];
-	snprintf(txt, sizeof(txt), "%.*f", precision(v), v);
-	gtk_combo_box_append_text(GTK_COMBO_BOX(combo), txt);
-    }
-    return combo;
-}
-
-static GtkComboBoxEntry *combo_entry_numeric_log(GtkWidget *container,
-	guint x, guint y, gchar *lbl, gchar *tip,
-	gdouble val, gdouble min, gdouble max, gdouble step)
-{
-    int i, nvalues = (int)ceil(log(max/min) / log(step)) + 1;
-    gdouble *values = g_new(gdouble, nvalues);
-    values[0] = min;
-    for (i=1; i < nvalues; i++)
-	values[i] = values[i-1] * step;
-
-    GtkComboBoxEntry *combo = combo_entry_numeric(container, x, y,
-	    lbl, tip, val, values, nvalues);
-    g_free(values);
-    return combo;
 }
 
 static void camera_set(preview_data *data)
@@ -257,47 +179,21 @@ static void lens_update_controls(preview_data *data)
 	    CFG->cur_lens_type);
 }
 
-void ufraw_lensfun_interpolate(UFObject *lensfun, const lfLens *lens);
-
-static void lens_interpolate(preview_data *data, const lfLens *lens)
+static void combo_entry_new(UFObject *object, GtkWidget *box,
+	const char *labelText, const char *tooltip)
 {
-    /* Interpolate all models and set the temp values accordingly */
-    UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
-    ufraw_lensfun_interpolate(lensfun, lens);
-    lens_update_controls(data);
+    GtkWidget *label = gtk_label_new(labelText);
+    gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
+    gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 2);
+    GtkWidget *combo = ufarray_combo_box_entry_new(object);
+    gtk_box_pack_start(GTK_BOX(box), combo, TRUE, TRUE, 2);
+    uf_widget_set_tooltip(label, tooltip);
 }
 
-static void lens_combo_entry_update(GtkComboBox *widget, float *valuep)
-{
-    preview_data *data = get_preview_data(widget);
-    char *text = gtk_combo_box_get_active_text(widget);
-    if (sscanf(text, "%f", valuep) == 1)
-	lens_interpolate(data, CFG->lens);
-    g_free(text);
-}
-
-static void lens_set(preview_data *data, const lfLens *lens)
+static void lens_set(preview_data *data)
 {
     gchar *fm;
-    GtkComboBoxEntry *combo;
-    unsigned i;
-    static gdouble focal_values[] = {
-	4.5, 8, 10, 12, 14, 15, 16, 17, 18, 20, 24, 28, 30, 31, 35, 38, 40, 43,
-	45, 50, 55, 60, 70, 75, 77, 80, 85, 90, 100, 105, 110, 120, 135,
-	150, 200, 210, 240, 250, 300, 400, 500, 600, 800, 1000
-    };
-    static gdouble aperture_values[] = {
-	1, 1.2, 1.4, 1.7, 2, 2.4, 2.8, 3.4, 4, 4.8, 5.6, 6.7,
-	8, 9.5, 11, 13, 16, 19, 22, 27, 32, 38, 45
-    };
-
-    if (lens == NULL) {
-	gtk_entry_set_text(GTK_ENTRY(data->LensModel), "");
-	uf_widget_set_tooltip(data->LensModel, NULL);
-	return;
-    }
-    if (CFG->lens != lens)
-	lf_lens_copy(CFG->lens, lens);
+    lfLens *lens = CFG->lens;
 
     const char *maker = lf_mlstr_get(lens->Maker);
     const char *model = lf_mlstr_get(lens->Model);
@@ -324,14 +220,15 @@ static void lens_set(preview_data *data, const lfLens *lens)
     else
 	snprintf(aperture, sizeof(aperture), "%g", lens->MinAperture);
 
-    mounts[0] = 0;
-    if (lens->Mounts != NULL)
+    if (lens->Mounts != NULL) {
+	mounts[0] = 0;
+	unsigned i;
 	for (i = 0; lens->Mounts[i] != NULL; i++) {
 	    if (i > 0)
 		g_strlcat(mounts, ", ", sizeof(mounts));
 	    g_strlcat(mounts, lens->Mounts[i], sizeof(mounts));
 	}
-
+    }
     fm = g_strdup_printf(_("Maker:\t\t%s\n"
 			   "Model:\t\t%s\n"
 			   "Focal range:\t%s\n"
@@ -348,51 +245,32 @@ static void lens_set(preview_data *data, const lfLens *lens)
     /* Create the focal/aperture/distance combo boxes */
     gtk_container_foreach(GTK_CONTAINER(data->LensParamBox),
 	    delete_children, NULL);
+    UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
 
-    int ffi = 0, fli = -1;
-    for (i = 0; i < sizeof(focal_values) / sizeof(gdouble); i++) {
-	if (focal_values[i] < lens->MinFocal)
-	    ffi = i + 1;
-	if (focal_values[i] > lens->MaxFocal && fli == -1)
-	    fli = i;
-    }
-    if (lens->MaxFocal == 0 || fli < 0)
-	fli = sizeof(focal_values) / sizeof(gdouble);
-    if (fli < ffi)
-	fli = ffi + 1;
-    combo = combo_entry_numeric(data->LensParamBox, 0, 0,
-	    _("Focal"), _("Focal length"),
-	    CFG->focal_len, focal_values + ffi, fli - ffi);
-    g_signal_connect(G_OBJECT(combo), "changed",
-	    G_CALLBACK(lens_combo_entry_update), &CFG->focal_len);
-
-    ffi = 0;
-    for (i = 0; i < sizeof(aperture_values) / sizeof(gdouble); i++)
-	if (aperture_values[i] < lens->MinAperture)
-	    ffi = i + 1;
-    combo = combo_entry_numeric(data->LensParamBox, 0, 0,
-	    _("F"), _("F-number (Aperture)"),
-	    CFG->aperture, aperture_values + ffi,
-	    sizeof(aperture_values) / sizeof(gdouble) - ffi);
-    g_signal_connect(G_OBJECT(combo), "changed",
-	    G_CALLBACK(lens_combo_entry_update), &CFG->aperture);
-
-    combo = combo_entry_numeric_log(data->LensParamBox, 0, 0,
-	    _("Distance"), _("Distance to subject"),
-	    CFG->subject_distance, 0.25, 1000, sqrt(2));
-    g_signal_connect(G_OBJECT(combo), "changed",
-	    G_CALLBACK(lens_combo_entry_update), &CFG->subject_distance);
+    UFObject *FocalLength = ufgroup_element(lensfun, ufFocalLength);
+    combo_entry_new(FocalLength, data->LensParamBox,
+	    _("Focal"), _("Focal length"));
+    UFObject *Aperture = ufgroup_element(lensfun, ufAperture);
+    combo_entry_new(Aperture, data->LensParamBox,
+	    _("F"), _("F-number (Aperture)"));
+    UFObject *Distance = ufgroup_element(lensfun, ufDistance);
+    combo_entry_new(Distance, data->LensParamBox,
+	    _("Distance"), _("Distance to subject in meters"));
 
     gtk_widget_show_all(data->LensParamBox);
 
     CFG->cur_lens_type = LF_UNKNOWN;
 }
 
+void ufraw_lensfun_interpolate(UFObject *lensfun, const lfLens *lens);
+
 static void lens_menu_select(GtkMenuItem *menuitem, preview_data *data)
 {
     lfLens *lens = (lfLens *)g_object_get_data(G_OBJECT(menuitem), "lfLens");
-    lens_set(data, lens);
-    lens_interpolate(data, lens);
+    UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
+    ufraw_lensfun_interpolate(lensfun, lens);
+    lens_set(data);
+    lens_update_controls(data);
 }
 
 static void lens_menu_fill(preview_data *data, const lfLens *const *lenslist)
@@ -693,7 +571,6 @@ static void geometry_model_changed(GtkComboBox *widget, preview_data *data)
 	gtk_label_set_text(GTK_LABEL(data->LensFromGeometryDesc), details);
 
     ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
-    resize_canvas(data);
     render_preview(data);
 }
 
@@ -767,25 +644,12 @@ static void fill_geometry_page(preview_data *data, GtkWidget *page)
 	    G_CALLBACK(geometry_model_changed), data);
 }
 
-static void ufraw_lensfun_changed(UFObject *obj, UFEventType type)
-{
-    if (type != uf_value_changed)
-        return;
-    preview_data *data = ufobject_user_data(obj);
-    resize_canvas(data);
-}
-
 /**
  * Fill the "lens correction" page in the main notebook.
  */
 void lens_fill_interface(preview_data *data, GtkWidget *page)
 {
     GtkWidget *label, *button, *subpage;
-
-    UFObject *image = CFG->ufobject;
-    UFObject *lensfun = ufgroup_element(image, ufLensfun);
-    ufobject_set_user_data(lensfun, data);
-    ufobject_set_changed_event_handle(lensfun, ufraw_lensfun_changed);
 
     /* Camera selector */
     GtkTable *table = GTK_TABLE(gtk_table_new(10, 10, FALSE));
@@ -840,7 +704,7 @@ void lens_fill_interface(preview_data *data, GtkWidget *page)
 
     /* Create a default lens & camera */
     camera_set(data);
-    lens_set(data, CFG->lens);
+    lens_set(data);
 
     subpage = notebook_page_new(subnb,
 	    _("Lateral chromatic aberration"), "tca");
