@@ -34,7 +34,6 @@ Comment[sr]=Алат за читање и обраду raw слика из ди�
 Comment[sr@latin]=Alat za čitanje i obradu raw slika iz digitalnih kamera
 Comment[zh_CN]=一个从数码相机中读取并处理原始图像的工具
 
-Encoding=UTF-8
 Version=1.0
 
 Type=Application
@@ -45,6 +44,6 @@ TryExec=ufraw
 Terminal=false
 StartupNotify=true
 
-MimeType=application/x-ufraw;image/x-dcraw
+MimeType=application/x-ufraw;image/x-dcraw;
 
-Icon=ufraw.png
+Icon=ufraw
