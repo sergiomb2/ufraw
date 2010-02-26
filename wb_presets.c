@@ -205,12 +205,25 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 5D Mark II", Fluorescent, 0,	{ 1.877243, 1, 2.479698, 0 } }, /*4000K*/
   { "Canon", "EOS 5D Mark II", Flash, 0,	{ 2.370117, 1, 1.503906, 0 } }, /*5621K*/
 
-  { "Canon", "EOS 7D", Daylight, 0,		{ 2.111328, 1, 1.432617, 0 } }, /*6935K*/
-  { "Canon", "EOS 7D", Shade, 0,		{ 2.444336, 1, 1.221680, 0 } }, /*11162K*/
-  { "Canon", "EOS 7D", Cloudy, 0,		{ 2.270508, 1, 1.319336, 0 } }, /*8490K*/
-  { "Canon", "EOS 7D", Tungsten, 0,		{ 1.507813, 1, 2.102539, 0 } }, /*3888K*/
-  { "Canon", "EOS 7D", Fluorescent, 0,		{ 1.868164, 1, 1.980469, 0 } }, /*4643K*/
-  { "Canon", "EOS 7D", Flash, 0,		{ 2.322266, 1, 1.312500, 0 } }, /*8928K*/
+  /* Fine-tuning for the 7D are the camera's Amber-Blue bracketing. */
+  { "Canon", "EOS 7D", Daylight, -3,		{ 2.036, 1, 1.595, 0 } },
+  { "Canon", "EOS 7D", Daylight, 0,		{ 2.120, 1, 1.506, 0 } },
+  { "Canon", "EOS 7D", Daylight, 3,		{ 2.217, 1, 1.437, 0 } },
+  { "Canon", "EOS 7D", Shade, -3,		{ 2.349, 1, 1.348, 0 } },
+  { "Canon", "EOS 7D", Shade, 0,		{ 2.468, 1, 1.276, 0 } },
+  { "Canon", "EOS 7D", Shade, 3,		{ 2.573, 1, 1.228, 0 } },
+  { "Canon", "EOS 7D", Cloudy, -3,		{ 2.188, 1, 1.457, 0 } },
+  { "Canon", "EOS 7D", Cloudy, 0,		{ 2.286, 1, 1.384, 0 } },
+  { "Canon", "EOS 7D", Cloudy, 3,		{ 2.393, 1, 1.319, 0 } },
+  { "Canon", "EOS 7D", Tungsten, -3,		{ 1.426, 1, 2.398, 0 } },
+  { "Canon", "EOS 7D", Tungsten, 0,		{ 1.490, 1, 2.261, 0 } },
+  { "Canon", "EOS 7D", Tungsten, 3,		{ 1.557, 1, 2.156, 0 } },
+  { "Canon", "EOS 7D", WhiteFluorescent, -3,	{ 1.771, 1, 2.235, 0 } },
+  { "Canon", "EOS 7D", WhiteFluorescent, 0,	{ 1.858, 1, 2.124, 0 } },
+  { "Canon", "EOS 7D", WhiteFluorescent, 3,	{ 1.936, 1, 2.023, 0 } },
+  { "Canon", "EOS 7D", Flash, -3,		{ 2.240, 1, 1.448, 0 } },
+  { "Canon", "EOS 7D", Flash, 0,		{ 2.338, 1, 1.376, 0 } },
+  { "Canon", "EOS 7D", Flash, 3,		{ 2.462, 1, 1.312, 0 } },
 
   { "Canon", "EOS 10D", Daylight, 0,		{ 2.159856, 1, 1.218750, 0 } },
   { "Canon", "EOS 10D", Shade, 0,		{ 2.533654, 1, 1.036058, 0 } },
