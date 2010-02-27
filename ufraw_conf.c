@@ -1702,7 +1702,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->ufobject = ufraw_command_line_new();
     UFObject *cmdImage = ufgroup_element(cmd->ufobject, ufRawImage);
     int index=0, c, i;
-    char *base;
+    char *base, *locale;
     char *baseCurveName=NULL, *baseCurveFile=NULL,
 	 *curveName=NULL, *curveFile=NULL, *outTypeName=NULL, *rotateName=NULL,
 	 *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL,
@@ -1814,12 +1814,15 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'w': // --wb
 	case 't': // --temperature
 	case 'g': // -- green
+	    locale = uf_set_locale_C();
 	    if (!ufobject_set_string(optPointer[index], optarg)) {
 		ufraw_message(UFRAW_ERROR,
 			_("'%s' is not a valid value for the --%s option."),
 			optarg, options[index].name);
+		uf_reset_locale(locale);
 		return -1;
 	    }
+	    uf_reset_locale(locale);
 	    if (!ufgroup_add(cmdImage, optPointer[index]))
 		return -1;
 	    break;
@@ -1839,12 +1842,15 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'H':
 	case 'y':
 	case 'n':
+	    locale = uf_set_locale_C();
 	    if (sscanf(optarg, "%lf", (double *)optPointer[index])==0) {
 		ufraw_message(UFRAW_ERROR,
 			_("'%s' is not a valid value for the --%s option."),
 			optarg, options[index].name);
+		uf_reset_locale(locale);
 		return -1;
 	    }
+	    uf_reset_locale(locale);
 	    break;
 	case 'x':
 	case 'X':
@@ -1854,12 +1860,15 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case '2':
 	case '3':
 	case '4':
+	    locale = uf_set_locale_C();
 	    if (sscanf(optarg, "%d", (int *)optPointer[index])==0) {
 		ufraw_message(UFRAW_ERROR,
 			_("'%s' is not a valid value for the --%s option."),
 			optarg, options[index].name);
+		uf_reset_locale(locale);
 		return -1;
 	    }
+	    uf_reset_locale(locale);
 	    break;
 	case 'B':
 	case 'S':
