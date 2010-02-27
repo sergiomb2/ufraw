@@ -126,10 +126,6 @@ typedef struct {
     GtkWidget *LensTCATable, *LensTCADesc;
     /* The lens fix notebook vignetting page */
     GtkWidget *LensVignettingTable, *LensVignettingDesc;
-    /* The lens fix notebook geometry page */
-    GtkWidget *LensGeometryTable, *LensFromGeometryDesc, *LensToGeometryDesc;
-    /* The 'from' and 'to' geometry selectors */
-    GtkWidget *LensFromGeometrySel, *LensToGeometrySel;
     /* The hbox containing focal, aperture, distance combos */
     GtkWidget *LensParamBox;
 #endif /* HAVE_LENSFUN */

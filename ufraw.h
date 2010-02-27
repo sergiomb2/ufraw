@@ -73,6 +73,8 @@ extern UFName ufTCA;
 extern UFName ufVignetting;
 extern UFName ufDistortion;
 extern UFName ufModel;
+extern UFName ufLensGeometry;
+extern UFName ufTargetLensGeometry;
 extern UFName ufRawImage;
 extern UFName ufRawResources;
 extern UFName ufCommandLine;

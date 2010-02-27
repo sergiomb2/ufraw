@@ -170,15 +170,6 @@ static void camera_list_clicked(GtkWidget *button, preview_data *data)
 	    0, gtk_get_current_event_time());
 }
 
-/* Update all lens model-related controls to reflect current model */
-static void lens_update_controls(preview_data *data)
-{
-    gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensFromGeometrySel),
-	    CFG->lens->Type);
-    gtk_combo_box_set_active(GTK_COMBO_BOX(data->LensToGeometrySel),
-	    CFG->cur_lens_type);
-}
-
 static void combo_entry_new(UFObject *object, GtkWidget *box,
 	const char *labelText, const char *tooltip)
 {
@@ -270,7 +261,6 @@ static void lens_menu_select(GtkMenuItem *menuitem, preview_data *data)
     UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
     ufraw_lensfun_interpolate(lensfun, lens);
     lens_set(data);
-    lens_update_controls(data);
 }
 
 static void lens_menu_fill(preview_data *data, const lfLens *const *lenslist)
@@ -552,7 +542,7 @@ static void fill_distortion_page(preview_data *data, GtkWidget *page)
 
 /* --- Lens geometry page --- */
 
-static void geometry_model_changed(GtkComboBox *widget, preview_data *data)
+static void geometry_model_changed(GtkComboBox *widget, GtkLabel *label)
 {
     lfLensType type = gtk_combo_box_get_active(widget);
 
@@ -560,88 +550,57 @@ static void geometry_model_changed(GtkComboBox *widget, preview_data *data)
     if (!lf_get_lens_type_desc(type, &details))
 	return; // should never happen
 
-    lfLensType *target = (lfLensType *)g_object_get_data(G_OBJECT(widget),
-	    "LensType");
-
-    *target = type;
-
-    if (target == &CFG->cur_lens_type)
-	gtk_label_set_text(GTK_LABEL(data->LensToGeometryDesc), details);
-    else
-	gtk_label_set_text(GTK_LABEL(data->LensFromGeometryDesc), details);
-
-    ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
-    render_preview(data);
+    gtk_label_set_text(label, details);
 }
 
-static void fill_geometry_page(preview_data *data, GtkWidget *page)
+static GtkWidget *fill_geometry_page(UFObject *ufobject)
 {
-    data->LensGeometryTable = gtk_table_new(10, 1, FALSE);
-    gtk_box_pack_start(GTK_BOX(page),
-	    data->LensGeometryTable, TRUE, TRUE, 0);
+    UFObject *lensfun = ufgroup_element(ufobject, ufLensfun);
+    GtkTable *geometryTable = GTK_TABLE(gtk_table_new(10, 1, FALSE));
 
-    /* Add the model combobox */
+    /* Lens geometry combobox */
     GtkWidget *label = gtk_label_new(_("Lens geometry:"));
     gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-    gtk_table_attach(GTK_TABLE(data->LensGeometryTable), label,
-	    0, 1, 0, 1, GTK_FILL, 0, 5, 0);
-    data->LensFromGeometrySel = gtk_combo_box_new_text();
-    uf_widget_set_tooltip(data->LensFromGeometrySel,
+    gtk_table_attach(geometryTable, label, 0, 1, 0, 1, GTK_FILL, 0, 5, 0);
+    UFObject *lensGeometry = ufgroup_element(lensfun, ufLensGeometry);
+    GtkWidget *combo = ufarray_combo_box_new(lensGeometry);
+    uf_widget_set_tooltip(combo,
 	    _("The geometry of the lens used to make the shot"));
-    gtk_table_attach(GTK_TABLE(data->LensGeometryTable),
-	    data->LensFromGeometrySel, 1, 2, 0, 1,
+    gtk_table_attach(geometryTable, combo, 1, 2, 0, 1,
 	    GTK_EXPAND | GTK_FILL, 0, 0, 0);
 
-    data->LensFromGeometryDesc = gtk_label_new("");
-    gtk_label_set_line_wrap(GTK_LABEL(data->LensFromGeometryDesc), TRUE);
-    gtk_label_set_ellipsize(GTK_LABEL(data->LensFromGeometryDesc),
-	    PANGO_ELLIPSIZE_END);
-    gtk_label_set_selectable(GTK_LABEL(data->LensFromGeometryDesc), TRUE);
-    gtk_misc_set_alignment(GTK_MISC(data->LensFromGeometryDesc), 0.5, 0.5);
-    gtk_table_attach(GTK_TABLE(data->LensGeometryTable),
-	    data->LensFromGeometryDesc, 0, 2, 1, 2,
+    GtkWidget *description = gtk_label_new("");
+    gtk_label_set_line_wrap(GTK_LABEL(description), TRUE);
+    gtk_label_set_ellipsize(GTK_LABEL(description), PANGO_ELLIPSIZE_END);
+    gtk_label_set_selectable(GTK_LABEL(description), TRUE);
+    gtk_misc_set_alignment(GTK_MISC(description), 0.5, 0.5);
+    gtk_table_attach(geometryTable, description, 0, 2, 1, 2,
 	    GTK_EXPAND | GTK_FILL, 0, 0, 10);
+    g_signal_connect(G_OBJECT(combo), "changed",
+	    G_CALLBACK(geometry_model_changed), description);
 
+    /* Target lens geometry combobox */
     label = gtk_label_new(_("Target geometry:"));
     gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-    gtk_table_attach(GTK_TABLE(data->LensGeometryTable), label,
-	    0, 1, 2, 3, GTK_FILL, 0, 5, 0);
-    data->LensToGeometrySel = gtk_combo_box_new_text();
-    uf_widget_set_tooltip(data->LensToGeometrySel,
-	    _("The target geometry for output image"));
-    gtk_table_attach(GTK_TABLE(data->LensGeometryTable),
-	    data->LensToGeometrySel, 1, 2, 2, 3,
+    gtk_table_attach(geometryTable, label, 0, 1, 2, 3, GTK_FILL, 0, 5, 0);
+    UFObject *targetLensGeometry =
+	    ufgroup_element(lensfun, ufTargetLensGeometry);
+    combo = ufarray_combo_box_new(targetLensGeometry);
+    uf_widget_set_tooltip(combo, _("The target geometry for output image"));
+    gtk_table_attach(geometryTable, combo, 1, 2, 2, 3,
 	    GTK_EXPAND | GTK_FILL, 0, 0, 0);
 
-    data->LensToGeometryDesc = gtk_label_new("");
-    gtk_label_set_line_wrap(GTK_LABEL(data->LensToGeometryDesc), TRUE);
-    gtk_label_set_ellipsize(GTK_LABEL(data->LensToGeometryDesc),
-	    PANGO_ELLIPSIZE_END);
-    gtk_label_set_selectable(GTK_LABEL(data->LensToGeometryDesc), TRUE);
-    gtk_misc_set_alignment(GTK_MISC(data->LensToGeometryDesc), 0.5, 0.5);
-    gtk_table_attach(GTK_TABLE(data->LensGeometryTable),
-	    data->LensToGeometryDesc, 0, 2, 3, 4,
+    description = gtk_label_new("");
+    gtk_label_set_line_wrap(GTK_LABEL(description), TRUE);
+    gtk_label_set_ellipsize(GTK_LABEL(description), PANGO_ELLIPSIZE_END);
+    gtk_label_set_selectable(GTK_LABEL(description), TRUE);
+    gtk_misc_set_alignment(GTK_MISC(description), 0.5, 0.5);
+    gtk_table_attach(geometryTable, description, 0, 2, 3, 4,
 	    GTK_EXPAND | GTK_FILL, 0, 0, 10);
+    g_signal_connect(G_OBJECT(combo), "changed",
+	    G_CALLBACK(geometry_model_changed), description);
 
-    int i;
-    for (i = 0; ; i++) {
-	lfLensType type = LF_UNKNOWN + i;
-	const char *type_name = lf_get_lens_type_desc(type, NULL);
-	if (type_name == NULL)
-	    break;
-	gtk_combo_box_append_text(GTK_COMBO_BOX(data->LensFromGeometrySel),
-		type_name);
-	gtk_combo_box_append_text(GTK_COMBO_BOX(data->LensToGeometrySel),
-		type_name);
-    }
-    g_object_set_data(G_OBJECT(data->LensFromGeometrySel), "LensType",
-	    &CFG->lens->Type);
-    g_signal_connect(G_OBJECT(data->LensFromGeometrySel), "changed",
-	    G_CALLBACK(geometry_model_changed), data);
-    g_object_set_data(G_OBJECT(data->LensToGeometrySel), "LensType",
-	    &CFG->cur_lens_type);
-    g_signal_connect(G_OBJECT(data->LensToGeometrySel), "changed",
-	    G_CALLBACK(geometry_model_changed), data);
+    return GTK_WIDGET(geometryTable);
 }
 
 /**
@@ -723,9 +682,8 @@ void lens_fill_interface(preview_data *data, GtkWidget *page)
     gtk_notebook_set_current_page(subnb, pageNum);
 
     subpage = notebook_page_new(subnb, _("Lens geometry"), "geometry");
-    fill_geometry_page(data, subpage);
-
-    lens_update_controls(data);
+    gtk_box_pack_start(GTK_BOX(subpage), fill_geometry_page(CFG->ufobject),
+	    TRUE, TRUE, 0);
 }
 
 #endif /* HAVE_LENSFUN */

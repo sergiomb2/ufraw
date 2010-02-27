@@ -30,9 +30,6 @@
 void (*ufraw_progress)(int what, int ticks) = NULL;
 
 #ifdef HAVE_LENSFUN
-/* What about LF_MODIFY_ALL? */
-#define UF_LF_ALL (LF_MODIFY_TCA | LF_MODIFY_VIGNETTING | \
-	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
 #define UF_LF_TRANSFORM ( \
 	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
 void ufraw_lensfun_init(ufraw_data *uf);
@@ -40,7 +37,7 @@ static void ufraw_convert_image_vignetting(ufraw_data *uf,
 	ufraw_image_data *img, UFRectangle *area);
 static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
 	ufraw_image_data *outimg, UFRectangle *area);
-static void ufraw_prepare_tca(ufraw_data *uf);
+void ufraw_prepare_tca(ufraw_data *uf);
 #endif
 static void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
 	const char *formats, const char *caller);
@@ -1348,47 +1345,18 @@ static void ufraw_convert_prepare_first_buffer(ufraw_data *uf,
     }
 }
  
-static void ufraw_convert_prepare_transform(ufraw_data *uf,
-	int width, int height, gboolean reverse, float scale)
-{
 #ifdef HAVE_LENSFUN
-    conf_data *conf = uf->conf;
-    if (uf->modifier != NULL)
-	lf_modifier_destroy(uf->modifier);
-    uf->modifier = NULL;
-
-    if (conf->camera == NULL || conf->lens == NULL)
-	return;
-
-    uf->modifier = lf_modifier_new(conf->lens, conf->camera->CropFactor,
-	    width, height);
-    if (uf->modifier == NULL)
-	return;
-
-    uf->modFlags = lf_modifier_initialize(uf->modifier, conf->lens,
-	    LF_PF_U16, conf->focal_len, conf->aperture, conf->subject_distance,
-	    scale, conf->cur_lens_type,
-	    UF_LF_TRANSFORM | LF_MODIFY_VIGNETTING, reverse);
-    if ((uf->modFlags & UF_LF_ALL) == 0) {
-	lf_modifier_destroy(uf->modifier);
-	uf->modifier = NULL;
-    }
-#else /* HAVE_LENSFUN */
-    (void)uf;
-    (void)width;
-    (void)height;
-    (void)reverse;
-    (void)scale;
-#endif /* HAVE_LENSFUN */
-}
+void ufraw_convert_prepare_transform(ufraw_data *uf,
+	int width, int height, gboolean reverse, float scale);
+#endif
 
 static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 	ufraw_image_data *img, int width, int height)
 {
     const int iWidth = uf->initialWidth;
     const int iHeight = uf->initialHeight;
-    ufraw_convert_prepare_transform(uf, iWidth, iHeight, TRUE, 1.0);
 #ifdef HAVE_LENSFUN
+    ufraw_convert_prepare_transform(uf, iWidth, iHeight, TRUE, 1.0);
     if (uf->conf->rotationAngle == 0 &&
 	(uf->modifier == NULL || !(uf->modFlags & UF_LF_TRANSFORM)))
 #else
@@ -1400,7 +1368,9 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 	img->width = width;
 	img->height = height;
 	// We still need the transform for vignetting
+#ifdef HAVE_LENSFUN
 	ufraw_convert_prepare_transform(uf, width, height, FALSE, 1.0);
+#endif
 	uf->rotatedWidth = iWidth;
 	uf->rotatedHeight = iHeight;
 	uf->autoCropWidth = iWidth;
@@ -1468,7 +1438,9 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
     int newWidth = uf->rotatedWidth * width / iWidth;
     int newHeight = uf->rotatedHeight * height / iHeight;
     ufraw_image_init(img, newWidth, newHeight, 8);
+#ifdef HAVE_LENSFUN
     ufraw_convert_prepare_transform(uf, width, height, FALSE, scale);
+#endif
 }
 
 /*
@@ -1514,34 +1486,6 @@ static void ufraw_convert_prepare_buffers(ufraw_data *uf, UFRawPhase phase)
 	g_warning("ufraw_convert_prepare_buffers: unsupported phase %d", phase);
     }
 }
-
-#ifdef HAVE_LENSFUN
-static void ufraw_prepare_tca(ufraw_data *uf)
-{
-    ufraw_image_data *img = &uf->Images[ufraw_raw_phase];
-
-    if (uf->TCAmodifier != NULL)
-	lf_modifier_destroy(uf->TCAmodifier);
-    uf->TCAmodifier = NULL;
-
-    if (uf->conf->camera == NULL || uf->conf->lens == NULL)
-	return;
-
-    uf->TCAmodifier = lf_modifier_new(uf->conf->lens,
-	    uf->conf->camera->CropFactor, img->width, img->height);
-    if (uf->TCAmodifier == NULL)
-	return;
-
-    int modFlags = lf_modifier_initialize(uf->TCAmodifier, uf->conf->lens,
-	    LF_PF_U16, uf->conf->focal_len, uf->conf->aperture,
-	    uf->conf->subject_distance, 1.0, uf->conf->cur_lens_type,
-	    LF_MODIFY_TCA, FALSE);
-    if ((modFlags & LF_MODIFY_TCA) == 0) {
-	lf_modifier_destroy(uf->TCAmodifier);
-	uf->TCAmodifier = NULL;
-    }
-}
-#endif
 
 /*
  * This function is very permissive in accepting NULL pointers but it does

@@ -21,6 +21,10 @@
 #include <math.h>
 
 #ifdef HAVE_LENSFUN
+
+#define UF_LF_TRANSFORM ( \
+	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
+
 namespace UFRaw {
 
 class Lensfun : public UFGroup {
@@ -60,10 +64,10 @@ char *_StringNumber(char *buffer, double number) {
     // The criteria is to have 2 or 3 significant digits.
     int precision;
     if (number > 10.0 && (int)(10*number)%10 != 0)
-        // Support focal length such as 10.5mm fisheye.
-        precision = MAX(-floor(log(number) / log(10) - 1.99), 0);
+	// Support focal length such as 10.5mm fisheye.
+	precision = MAX(-floor(log(number) / log(10) - 1.99), 0);
     else
-        precision = MAX(-floor(log(number) / log(10) - 0.99), 0);
+	precision = MAX(-floor(log(number) / log(10) - 0.99), 0);
     snprintf(buffer, _buffer_size, "%.*f", precision, number);
     return buffer;
 }
@@ -95,9 +99,9 @@ public:
 	    *this << new UFString(ufPreset, _StringNumber(buffer, min));
 	int i = 0;
 	while (focalValues[i] < min && focalValues[i] != 0)
-	    i++; 
+	    i++;
 	if (Has(_StringNumber(buffer, focalValues[i])))
-	    i++; // Comparing string works better than comparing doubles.
+	    i++; // Comparing strings works better than comparing doubles.
 	while (focalValues[i] < max && focalValues[i] != 0) {
 	    *this << new UFString(ufPreset, _StringNumber(buffer,
 		    focalValues[i]));
@@ -137,7 +141,7 @@ public:
 	while (apertureValues[i] < min && apertureValues[i] != 0)
 	    i++;
 	if (Has(_StringNumber(buffer, apertureValues[i])))
-	    i++; // Comparing string works better than comparing doubles.
+	    i++; // Comparing strings works better than comparing doubles.
 	while (apertureValues[i] != 0) {
 	    *this << new UFString(ufPreset, _StringNumber(buffer,
 		    apertureValues[i]));
@@ -400,6 +404,39 @@ public:
     }
 };
 
+extern "C" { UFName ufLensGeometry = "LensGeometry"; }
+class LensGeometry : public UFArray {
+public:
+    explicit LensGeometry(UFName name = ufLensGeometry) : UFArray(name,
+	    lfLens::GetLensTypeDesc(LF_UNKNOWN, NULL)) {
+	for (lfLensType type = LF_UNKNOWN; ; type = lfLensType(type+1)) {
+	    const char *typeName = lfLens::GetLensTypeDesc(type, NULL);
+	    if (typeName == NULL)
+		break; // End of loop.
+	    *this << new UFString("Type", typeName);
+	}
+    }
+    void OriginalValueChangedEvent() {
+	ufraw_data *uf = ufraw_image_get_data(this);
+	if (uf == NULL)
+	    return;
+	Lensfun::Parent(*this).Transformation.Type = lfLensType(Index());
+	ufraw_invalidate_layer(uf, ufraw_transform_phase);
+    }
+};
+
+extern "C" { UFName ufTargetLensGeometry = "TargetLensGeometry"; }
+class TargetLensGeometry : public LensGeometry {
+public:
+    TargetLensGeometry() : LensGeometry(ufTargetLensGeometry) { }
+    void OriginalValueChangedEvent() {
+	ufraw_data *uf = ufraw_image_get_data(this);
+	if (uf == NULL)
+	    return;
+	ufraw_invalidate_layer(uf, ufraw_transform_phase);
+    }
+};
+
 extern "C" { UFName ufLensfun = "Lensfun"; }
 Lensfun::Lensfun() : UFGroup(ufLensfun), FocalLengthValue(0.0),
 	ApertureValue(0.0), DistanceValue(0.0) {
@@ -410,6 +447,8 @@ Lensfun::Lensfun() : UFGroup(ufLensfun), FocalLengthValue(0.0),
 	<< new TCA
 	<< new Vignetting
 	<< new Distortion
+	<< new LensGeometry
+	<< new TargetLensGeometry
     ;
 }
 
@@ -495,6 +534,56 @@ void ufraw_lensfun_init(ufraw_data *uf) {
     UFGroup &Image = *uf->conf->ufobject;
     UFRaw::Lensfun &Lensfun =  static_cast<UFRaw::Lensfun &>(Image[ufLensfun]);
     Lensfun.Init();
+}
+
+void ufraw_convert_prepare_transform(ufraw_data *uf,
+	int width, int height, gboolean reverse, float scale)
+{
+    UFGroup &Image = *uf->conf->ufobject;
+    UFRaw::Lensfun &Lensfun =  static_cast<UFRaw::Lensfun &>(Image[ufLensfun]);
+    conf_data *conf = uf->conf;
+    if (uf->modifier != NULL)
+	uf->modifier->Destroy();
+    uf->modifier = lfModifier::Create(&Lensfun.Transformation,
+	    conf->camera->CropFactor, width, height);
+    if (uf->modifier == NULL)
+	return;
+
+    UFArray &targetLensGeometry = Lensfun[ufTargetLensGeometry];
+    uf->modFlags = uf->modifier->Initialize(&Lensfun.Transformation,
+	    LF_PF_U16, Lensfun.FocalLengthValue, Lensfun.ApertureValue,
+	    Lensfun.DistanceValue, scale,
+	    lfLensType(targetLensGeometry.Index()),
+	    UF_LF_TRANSFORM | LF_MODIFY_VIGNETTING, reverse);
+    if ((uf->modFlags & (UF_LF_TRANSFORM | LF_MODIFY_VIGNETTING)) == 0) {
+	uf->modifier->Destroy();
+	uf->modifier = NULL;
+    }
+}
+
+void ufraw_prepare_tca(ufraw_data *uf)
+{
+    UFGroup &Image = *uf->conf->ufobject;
+    UFRaw::Lensfun &Lensfun =  static_cast<UFRaw::Lensfun &>(Image[ufLensfun]);
+    ufraw_image_data *img = &uf->Images[ufraw_raw_phase];
+
+    if (uf->TCAmodifier != NULL)
+	uf->TCAmodifier->Destroy();
+    uf->TCAmodifier = lfModifier::Create(&Lensfun.Transformation,
+	    uf->conf->camera->CropFactor, img->width, img->height);
+    if (uf->TCAmodifier == NULL)
+	return;
+
+    UFArray &targetLensGeometry = Lensfun[ufTargetLensGeometry];
+    int modFlags = uf->TCAmodifier->Initialize(&Lensfun.Transformation,
+	    LF_PF_U16, Lensfun.FocalLengthValue, Lensfun.ApertureValue,
+	    Lensfun.DistanceValue, 1.0,
+	    lfLensType(targetLensGeometry.Index()),
+	    LF_MODIFY_TCA, false);
+    if ((modFlags & LF_MODIFY_TCA) == 0) {
+	uf->TCAmodifier->Destroy();
+	uf->TCAmodifier = NULL;
+    }
 }
 
 }
