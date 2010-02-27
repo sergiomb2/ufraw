@@ -64,10 +64,12 @@ char *_StringNumber(char *buffer, double number) {
     // The criteria is to have 2 or 3 significant digits.
     int precision;
     if (number > 10.0 && (int)(10*number)%10 != 0)
-	// Support focal length such as 10.5mm fisheye.
+	// Support non-integer focal lengths longer than 10mm.
 	precision = MAX(-floor(log(number) / log(10) - 1.99), 0);
-    else
+    else if (number > 0.0)
 	precision = MAX(-floor(log(number) / log(10) - 0.99), 0);
+    else
+	precision = 0;
     snprintf(buffer, _buffer_size, "%.*f", precision, number);
     return buffer;
 }
