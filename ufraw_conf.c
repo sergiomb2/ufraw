@@ -808,7 +808,6 @@ int conf_load(conf_data *c, const char *IDFilename)
 	    //GQuark ufrawQuark = g_quark_from_static_string("UFRaw");
 	    //if (g_error_matches(err, data->ufrawQuark, UFRAW_RC_VERSION))
 	    g_error_free(err);
-	    uf_reset_locale(locale);
 	    return UFRAW_ERROR;
 	}
 	dummy = fgets(line, max_path, in);
