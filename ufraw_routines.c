@@ -220,10 +220,9 @@ double profile_default_linear(profile_data *p)
 double profile_default_gamma(profile_data *p)
 {
     if ( !strcmp(p->name, "No profile")
-       || !strcmp(p->name, "Color matrix") )
-	return 0.45;
-    else if ( !strncmp(p->productName, "Nikon D", 7)
-	    || !strncmp(p->productName, "Adobe RGB (1998)", 16) )
+       || !strcmp(p->name, "Color matrix")
+       || !strncmp(p->productName, "Nikon D", 7)
+       || !strncmp(p->productName, "Adobe RGB (1998)", 16) )
 	return 0.45;
     else
 	return 1.0;
