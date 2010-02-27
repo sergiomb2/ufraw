@@ -416,7 +416,6 @@ int curve_load(CurveData *cp, char *filename)
 		uf_reset_locale(locale);
 		fclose(in);
 		g_error_free(err);
-		uf_reset_locale(locale);
 		return UFRAW_ERROR;
 	    }
 	    dummy = fgets(line, max_path, in);
