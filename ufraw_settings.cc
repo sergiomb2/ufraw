@@ -205,8 +205,16 @@ public:
     }
     // Output XML block even if IsDefault().
     std::string XML(const char *indent) const {
-	char *value = g_markup_escape_text(StringValue(), -1);
-	std::string str = (std::string)indent +
+	std::string str = "";
+	char num[10];
+	for (int i = 0; i < Size(); i++) {
+	    g_snprintf(num, 10, "%.4lf", DoubleValue(i));
+	    str += num;
+	    if (i < Size()-1)
+		str += " ";
+	}
+	char *value = g_markup_escape_text(str.c_str(), -1);
+	str = (std::string)indent +
 		"<" + Name() + ">" + value + "</" + Name() + ">\n";
 	g_free(value);
 	return str;
