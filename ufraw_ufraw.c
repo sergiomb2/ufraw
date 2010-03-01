@@ -12,6 +12,9 @@
 
 #include "ufraw.h"
 #include "dcraw_api.h"
+#ifdef HAVE_LENSFUN
+#include <lensfun.h>
+#endif
 #include <glib/gi18n.h>
 #include <string.h>
 #include <sys/stat.h> /* for fstat() */
@@ -262,6 +265,8 @@ ufraw_data *ufraw_open(char *filename)
     uf->TCAmodifier = NULL;
     uf->modifier = NULL;
 #endif
+    uf->inputExifBuf = NULL;
+    uf->outputExifBuf = NULL;
     ufraw_message(UFRAW_SET_LOG, "ufraw_open: w:%d h:%d curvesize:%d\n",
 	    raw->width, raw->height, raw->toneCurveSize);
 
@@ -413,6 +418,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	status = conf_set_cmd(uf->conf, cmd);
 	if (status!=UFRAW_SUCCESS) return status;
     }
+    dcraw_data *raw = uf->raw;
     if (ufobject_name(uf->conf->ufobject) != ufRawImage)
 	g_warning("uf->conf->ufobject is not a ufRawImage");
     /*Reset EXIF data text fields to avoid spill over between images.*/
@@ -428,6 +434,24 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	if ( ufraw_exif_read_input(uf)!=UFRAW_SUCCESS ) {
 	    ufraw_message(UFRAW_SET_LOG, "Error reading EXIF data from %s\n",
 		    uf->filename);
+	} else {
+	    g_strlcpy(uf->conf->exifSource, "DCRaw", max_name);
+	    uf->conf->iso_speed = raw->iso_speed;
+	    g_snprintf(uf->conf->isoText, max_name, "%d",
+		    (int)uf->conf->iso_speed);
+	    uf->conf->shutter = raw->shutter;
+	    if (uf->conf->shutter>0 && uf->conf->shutter<1)
+		g_snprintf(uf->conf->shutterText, max_name, "1/%0.1f s",
+			1/uf->conf->shutter);
+	    else
+		g_snprintf(uf->conf->shutterText, max_name, "%0.1f s",
+			uf->conf->shutter);
+	    uf->conf->aperture = raw->aperture;
+	    g_snprintf(uf->conf->apertureText, max_name, "F/%0.1f",
+		    uf->conf->aperture);
+	    uf->conf->focal_len = raw->focal_len;
+	    g_snprintf(uf->conf->focalLenText, max_name, "%0.1f mm",
+		    uf->conf->focal_len);
 	}
     }
     ufraw_image_set_data(uf->conf->ufobject, uf);
@@ -435,7 +459,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     ufraw_lensfun_init(uf);
 #endif
 
-    dcraw_data *raw = uf->raw;
     char *absname = uf_file_set_absolute(uf->filename);
     g_strlcpy(uf->conf->inputFilename, absname, max_path);
     g_free(absname);
@@ -492,26 +515,6 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 	// Normalise rotations to a flip, then rotation of 0 < a < 90 degrees.
 	ufraw_normalize_rotation(uf);
     }
-
-    if (uf->inputExifBuf==NULL) {
-	g_strlcpy(uf->conf->exifSource, "DCRaw", max_name);
-	uf->conf->iso_speed = raw->iso_speed;
-	g_snprintf(uf->conf->isoText, max_name, "%d", (int)uf->conf->iso_speed);
-	uf->conf->shutter = raw->shutter;
-	if (uf->conf->shutter>0 && uf->conf->shutter<1)
-	    g_snprintf(uf->conf->shutterText, max_name, "1/%0.1f s",
-		    1/uf->conf->shutter);
-	else
-	    g_snprintf(uf->conf->shutterText, max_name, "%0.1f s",
-		    uf->conf->shutter);
-	uf->conf->aperture = raw->aperture;
-	g_snprintf(uf->conf->apertureText, max_name, "F/%0.1f",
-		uf->conf->aperture);
-	uf->conf->focal_len = raw->focal_len;
-	g_snprintf(uf->conf->focalLenText, max_name, "%0.1f mm",
-		uf->conf->focal_len);
-    }
-
     /* If there is an embeded curve we "turn on" the custom/camera curve
      * mechanism */
     if (raw->toneCurveSize!=0) {

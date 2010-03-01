@@ -21,6 +21,7 @@
 #include <math.h>
 
 #ifdef HAVE_LENSFUN
+#include <lensfun.h>
 
 #define UF_LF_TRANSFORM ( \
 	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
@@ -28,9 +29,8 @@
 namespace UFRaw {
 
 class Lensfun : public UFGroup {
-private:
-    static lfDatabase *LensDB;
 public:
+    static lfDatabase *LensDB;
     lfLens Transformation;
     lfLens Interpolation;
     double FocalLengthValue;
@@ -482,12 +482,9 @@ void Lensfun::Init() {
 	LensDB->Load();
     }
     ufraw_data *uf = ufraw_image_get_data(this);
-    uf->conf->lensdb = LensDB;
 
-    /* Create a default lens & camera */
-    uf->conf->lens = &Transformation;
+    /* Create a default camera */
     uf->conf->camera = lf_camera_new();
-    uf->conf->cur_lens_type = LF_UNKNOWN;
 
     /* Set lens and camera from EXIF info, if possible */
     if (uf->conf->real_make[0] || uf->conf->real_model[0]) {
@@ -601,12 +598,20 @@ void ufraw_prepare_tca(ufraw_data *uf)
     }
 }
 
+UFObject *ufraw_lensfun_new() {
+    return new Lensfun();
 }
+
+struct lfLens *ufraw_lensfun_transformation_lens(UFObject *lensfun) {
+    return &static_cast<UFRaw::Lensfun *>(lensfun)->Transformation;
+}
+
+lfDatabase *ufraw_lensfun_db() {
+    return Lensfun::LensDB;
+}
+
+} // extern "C"
 
 } // namespace UFRaw
-
-extern "C" UFObject *ufraw_lensfun_new() {
-    return new UFRaw::Lensfun();
-}
 
 #endif // HAVE_LENSFUN

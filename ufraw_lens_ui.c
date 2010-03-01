@@ -18,6 +18,7 @@
 #include <ctype.h>
 
 #ifdef HAVE_LENSFUN
+#include <lensfun.h>
 
 static void delete_children(GtkWidget *widget, gpointer data)
 {
@@ -146,8 +147,8 @@ static void camera_search_clicked(GtkWidget *button, preview_data *data)
     const gchar *txt = gtk_entry_get_text(GTK_ENTRY(data->CameraModel));
     parse_maker_model(txt, make, sizeof(make), model, sizeof(model));
 
-    const lfCamera **camlist =
-	    lf_db_find_cameras_ext(CFG->lensdb, make, model, 0);
+    lfDatabase *lensdb = ufraw_lensfun_db();
+    const lfCamera **camlist = lf_db_find_cameras_ext(lensdb, make, model, 0);
     if (camlist == NULL)
 	return;
     camera_menu_fill(data, camlist);
@@ -160,7 +161,8 @@ static void camera_search_clicked(GtkWidget *button, preview_data *data)
 static void camera_list_clicked(GtkWidget *button, preview_data *data)
 {
     (void)button;
-    const lfCamera *const *camlist = lf_db_get_cameras(CFG->lensdb);
+    lfDatabase *lensdb = ufraw_lensfun_db();
+    const lfCamera *const *camlist = lf_db_get_cameras(lensdb);
     if (camlist == NULL)
 	return;
 
@@ -183,8 +185,9 @@ static void combo_entry_new(UFObject *object, GtkWidget *box,
 
 static void lens_set(preview_data *data)
 {
+    UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
+    lfLens *lens = ufraw_lensfun_transformation_lens(lensfun);
     gchar *fm;
-    lfLens *lens = CFG->lens;
 
     const char *maker = lf_mlstr_get(lens->Maker);
     const char *model = lf_mlstr_get(lens->Model);
@@ -236,7 +239,6 @@ static void lens_set(preview_data *data)
     /* Create the focal/aperture/distance combo boxes */
     gtk_container_foreach(GTK_CONTAINER(data->LensParamBox),
 	    delete_children, NULL);
-    UFObject *lensfun = ufgroup_element(CFG->ufobject, ufLensfun);
 
     UFObject *FocalLength = ufgroup_element(lensfun, ufFocalLength);
     combo_entry_new(FocalLength, data->LensParamBox,
@@ -249,11 +251,7 @@ static void lens_set(preview_data *data)
 	    _("Distance"), _("Distance to subject in meters"));
 
     gtk_widget_show_all(data->LensParamBox);
-
-    CFG->cur_lens_type = LF_UNKNOWN;
 }
-
-void ufraw_lensfun_interpolate(UFObject *lensfun, const lfLens *lens);
 
 static void lens_menu_select(GtkMenuItem *menuitem, preview_data *data)
 {
@@ -317,7 +315,8 @@ static void lens_search_clicked(GtkWidget *button, preview_data *data)
     const gchar *txt = gtk_entry_get_text(GTK_ENTRY(data->LensModel));
 
     parse_maker_model(txt, make, sizeof(make), model, sizeof(model));
-    const lfLens **lenslist = lf_db_find_lenses_hd(CFG->lensdb, CFG->camera,
+    lfDatabase *lensdb = ufraw_lensfun_db();
+    const lfLens **lenslist = lf_db_find_lenses_hd(lensdb, CFG->camera,
 	    make[0] ? make : NULL, model[0] ? model : NULL, 0);
     if (lenslist == NULL)
 	return;
@@ -332,15 +331,16 @@ static void lens_list_clicked(GtkWidget *button, preview_data *data)
 {
     (void)button;
 
+    lfDatabase *lensdb = ufraw_lensfun_db();
     if (CFG->camera != NULL) {
-	const lfLens **lenslist = lf_db_find_lenses_hd(CFG->lensdb,
+	const lfLens **lenslist = lf_db_find_lenses_hd(lensdb,
 		CFG->camera, NULL, NULL, 0);
 	if (lenslist == NULL)
 	    return;
 	lens_menu_fill(data, lenslist);
 	lf_free(lenslist);
     } else {
-	const lfLens *const *lenslist = lf_db_get_lenses(CFG->lensdb);
+	const lfLens *const *lenslist = lf_db_get_lenses(lensdb);
 	if (lenslist == NULL)
 	    return;
 	lens_menu_fill(data, lenslist);

@@ -21,10 +21,6 @@
 #include "uf_glib.h"
 #include "ufobject.h"
 
-#ifdef HAVE_LENSFUN
-#include <lensfun.h>
-#endif /* HAVE_LENSFUN */
-
 #include "nikon_curve.h"
 #include "uf_progress.h"
 
@@ -86,6 +82,9 @@ extern "C" {
 UFObject *ufraw_image_new();
 #ifdef HAVE_LENSFUN
 UFObject *ufraw_lensfun_new();
+struct lfDatabase *ufraw_lensfun_db(); /* mount/camera/lens database */
+struct lfLens *ufraw_lensfun_transformation_lens(UFObject *lensfun);
+void ufraw_lensfun_interpolate(UFObject *lensfun, const struct lfLens *lens);
 #endif
 struct ufraw_struct *ufraw_image_get_data(UFObject *obj);
 void ufraw_image_set_data(UFObject *obj, struct ufraw_struct *uf);
@@ -284,10 +283,7 @@ typedef struct {
     char real_make[max_name], real_model[max_name];
 
 #ifdef HAVE_LENSFUN
-    lfDatabase *lensdb; /* mount/camera/lens database */
-    lfCamera *camera; /* camera description */
-    lfLens *lens; /* lens description */
-    lfLensType cur_lens_type;
+    struct lfCamera *camera; /* camera description */
     int lensfunMode;
 #endif /* HAVE_LENSFUN */
 } conf_data;
@@ -336,8 +332,8 @@ typedef struct ufraw_struct {
     int RawCount;
 #ifdef HAVE_LENSFUN
     int modFlags; /* postprocessing operations (LF_MODIFY_XXX) */
-    lfModifier *TCAmodifier;
-    lfModifier *modifier;
+    struct lfModifier *TCAmodifier;
+    struct lfModifier *modifier;
 #endif /* HAVE_LENSFUN */
     int hotpixels;
     gboolean mark_hotpixels;

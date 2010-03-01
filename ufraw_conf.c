@@ -11,6 +11,9 @@
  */
 
 #include "ufraw.h"
+#ifdef HAVE_LENSFUN
+#include <lensfun.h>
+#endif
 #include <string.h>
 #include <errno.h>
 #include <math.h>
@@ -130,10 +133,7 @@ const conf_data conf_default = {
     "", "", /* real_make, real_model */
 
 #ifdef HAVE_LENSFUN
-    NULL,                         /* mount/camera/lens database */
     NULL,                         /* camera description */
-    NULL,                         /* lens description */
-    LF_UNKNOWN,                   /* lens type */
     lensfun_default,              /* lensfun starting mode */
 #endif /* HAVE_LENSFUN */
 };
@@ -1388,16 +1388,10 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
 
 #ifdef HAVE_LENSFUN
     dst->lensfunMode = src->lensfunMode;
-    dst->lensdb = src->lensdb;
     if (src->camera)
     {
 	dst->camera = lf_camera_new ();
 	lf_camera_copy (dst->camera, src->camera);
-    }
-    if (src->lens)
-    {
-	dst->lens = lf_lens_new ();
-	lf_lens_copy (dst->lens, src->lens);
     }
 #endif /* HAVE_LENSFUN */
 }
