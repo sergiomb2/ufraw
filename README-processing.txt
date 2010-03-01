@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.23 2009/04/12 12:17:16 lexort Exp $
+$Id: README-processing.txt,v 1.24 2010/03/01 01:50:50 lexort Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -222,18 +222,20 @@ See this thread for a summary:
 
 http://sourceforge.net/mailarchive/message.php?msg_name=481D7313.10009%40telenet.be
 
-on 2009-04-11, Martin Ling posted to ufraw-devel and hypothesized (or
-pointed our his earlier hypothes) that unpleasing fogginess when the
+On 2009-04-11, Martin Ling posted to ufraw-devel and hypothesized (or
+pointed out his earlier hypothesis) that unpleasing fogginess when the
 objectively correct gamma processing is done is due to fixed-point
 quantization errors in lcms.
-
-Probably ufraw should use a linear-encoded connection space and avoid
-most of this, but that's a separate issue.
 
 Argyll CMS uses LUTs that intend to be equally spaced perceptually and
 linear encodings break this assumption:
 
 http://www.freelists.org/post/argyllcms/icclink-G-and-source-gamuts-profiles,5
+http://www.freelists.org/post/argyllcms/icclink-G-and-source-gamuts-profiles,9
+
+Another semi-relevant message:
+
+http://www.freelists.org/post/argyllcms/icclink-G-and-source-gamuts-profiles,1
 
 ==== Way Forward
 
@@ -241,9 +243,8 @@ There has been ongoing discussion on ufraw-devel about the validity of
 using a gamma encoding different from the sRGB specification and then
 assuming the pixels are in sRGB.  It is generally agreed that this is
 not strictly correct, but that images produced this way are more
-pleasing than images with the ostensibly correct values.  Martin Ling
-has hypothesized that the 0.45/0.10 encoding compensates for
-quantization noise in fixed-point lcms code.
+pleasing than images where the input linear encoding is passed to a
+CMS directly, rather than being transformed to a perceptually uniform space.
 
 As part of the discussion, a goal of some is to use lcms to apply the
 input profile mapping even in the case of Color Matrices, and to
@@ -252,8 +253,8 @@ RGB->XYZ matrix to create a profile from camera space to XYZ and then
 link it to the sRGB profile to get a combination profile to go from
 (linear) camera space to sRGB with the standard encoding.
 
-This is blocked until the image quality issues are resolved because
-currently it would be a functional step backwards.
+Currently, the obstacles are a lack of spare time and that this is not
+quite fully agreed on or understood.
 
 === Highlight processing
 
