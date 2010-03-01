@@ -179,6 +179,19 @@ public:
 
 extern "C" { UFName ufModel = "Model"; }
 
+class Param : public UFNumber {
+public:
+    Param(UFName name, double min, double max, double defaultValue) :
+	    UFNumber(name, min, max, defaultValue) { }
+    std::string XML(const char *indent) const {
+	char num[10];
+        g_snprintf(num, 10, "%.*lf", AccuracyDigits()+2, DoubleValue());
+        return (std::string)indent +
+                "<" + Name() + ">" + num + "</" + Name() + ">\n";
+    }
+
+};
+
 extern "C" { UFName ufTCA = "TCA"; }
 class TCA : public UFArray {
 public:
@@ -195,7 +208,7 @@ public:
 	    (*this) << &Model;
 	    assert(params != NULL);
 	    for (int i = 0; params[i] != NULL; i++)
-		Model << new UFNumber(params[i]->Name, params[i]->Min,
+		Model << new Param(params[i]->Name, params[i]->Min,
 			params[i]->Max, params[i]->Default);
 	}
     }
@@ -265,7 +278,7 @@ public:
 	    (*this) << &Model;
 	    assert(params != NULL);
 	    for (int i = 0; params[i] != NULL; i++)
-		Model << new UFNumber(params[i]->Name, params[i]->Min,
+		Model << new Param(params[i]->Name, params[i]->Min,
 			params[i]->Max, params[i]->Default);
 	}
     }
@@ -353,7 +366,7 @@ public:
 	    (*this) << &Model;
 	    assert(params != NULL);
 	    for (int i = 0; params[i] != NULL; i++)
-		Model << new UFNumber(params[i]->Name, params[i]->Min,
+		Model << new Param(params[i]->Name, params[i]->Min,
 			params[i]->Max, params[i]->Default);
 	}
     }
