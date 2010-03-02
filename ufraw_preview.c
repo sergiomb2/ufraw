@@ -697,7 +697,8 @@ static void start_blink(preview_data *data)
 {
     if ( CFG->blinkOverUnder && (CFG->overExp || CFG->underExp) ) {
 	if (!data->BlinkTimer) {
-	    data->BlinkTimer = g_timeout_add(500, switch_highlights, data);
+	    data->BlinkTimer = gdk_threads_add_timeout(500,
+		    switch_highlights, data);
 	}
     }
 }
@@ -944,6 +945,8 @@ static gboolean render_preview_now(preview_data *data)
     data->FreezeDialog = FALSE;
 
     preview_progress(PROGRESS_RENDER, -32);
+    // Since we are already inside an idle callback, we should not use
+    // gdk_threads_add_idle_full().
     g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
 	    (GSourceFunc)(render_preview_image), data, NULL);
 
@@ -954,7 +957,7 @@ void render_preview(preview_data *data)
 {
     while (g_idle_remove_by_data(data))
 	;
-    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+    gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
 	    (GSourceFunc)(render_preview_now), data, NULL);
 }
 
@@ -1157,11 +1160,11 @@ static gboolean render_preview_image(preview_data *data)
 
     if (!again) {
 	preview_progress_disable(data);
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
 		(GSourceFunc)(render_raw_histogram), data, NULL);
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
 		(GSourceFunc)(render_live_histogram), data, NULL);
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
 		(GSourceFunc)(render_spot), data, NULL);
     }
     return again;
@@ -1759,7 +1762,7 @@ static gboolean preview_button_press_event(GtkWidget *event_box,
 	data->SpotX1 = data->SpotX2 = event->x;
 	data->SpotY1 = data->SpotY2 = event->y;
 	if (!is_rendering(data))
-	    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	    gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
 		    (GSourceFunc)(render_spot), data, NULL);
 	return TRUE;
     }
@@ -1898,7 +1901,7 @@ static gboolean preview_motion_notify_event(GtkWidget *event_box,
     data->SpotX2 = event->x;
     data->SpotY2 = event->y;
     if (!is_rendering(data))
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
 		(GSourceFunc)(render_spot), data, NULL);
     return TRUE;
 }
@@ -2029,11 +2032,11 @@ static void update_crop_ranges(preview_data *data, gboolean render)
     if (CFG->drawLines>0 && data->BlinkTimer==0) {
 	if (data->DrawCropID != 0)
 	    g_source_remove(data->DrawCropID);
-	data->DrawCropID = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+30,
+	data->DrawCropID = gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE+30,
 		(GSourceFunc)(preview_draw_crop), data, NULL);
     }
     if (!is_rendering(data))
-	g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
 		(GSourceFunc)(render_live_histogram), data, NULL);
 }
 
@@ -2826,7 +2829,7 @@ static void adjustment_update_int(GtkAdjustment *adj, int *valuep)
     if (valuep==&CFG->drawLines) {
 	if (data->DrawCropID != 0)
 	    g_source_remove(data->DrawCropID);
-	data->DrawCropID = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE+30,
+	data->DrawCropID = gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE+30,
 		(GSourceFunc)(preview_draw_crop), data, NULL);
     }
 }
@@ -3860,13 +3863,13 @@ static void panel_size_allocate(GtkWidget *panel,
 	GdkPixbuf *pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->RawHisto));
 	rawHisHeight = data->RawHisto->allocation.height;
 	if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=rawHisHeight )
-	    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	    gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
 		    (GSourceFunc)(render_raw_histogram), data, NULL);
 
 	pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
 	liveHisHeight = data->LiveHisto->allocation.height;
 	if ( pixbuf==NULL || gdk_pixbuf_get_height(pixbuf)!=liveHisHeight )
-	    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+	    gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
 		    (GSourceFunc)(render_live_histogram), data, NULL);
     }
 }
