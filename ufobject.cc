@@ -513,10 +513,14 @@ bool UFString::IsDefault() const {
     return this->IsEqual(ufstring->Default);
 }
 
-void UFString::SetDefault() {
+void UFString::SetDefault(const char *string) {
     g_free(ufstring->Default);
-    ufstring->Default = g_strdup(ufstring->String);
+    ufstring->Default = g_strdup(string);
     Event(uf_default_changed);
+}
+
+void UFString::SetDefault() {
+    SetDefault(ufstring->String);
 }
 
 void UFString::Reset() {
@@ -820,9 +824,13 @@ bool UFArray::IsDefault() const {
     return UFGroup::IsDefault();
 }
 
-void UFArray::SetDefault() {
+void UFArray::SetDefault(const char *string) {
     g_free(ufgroup->DefaultIndex);
-    ufgroup->DefaultIndex = g_strdup(ufgroup->String);
+    ufgroup->DefaultIndex = g_strdup(string);
+}
+
+void UFArray::SetDefault() {
+    SetDefault(ufgroup->String);
     UFGroup::SetDefault();
 }
 

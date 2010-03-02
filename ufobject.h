@@ -295,6 +295,9 @@ public:
     void Set(const char *string);
     bool IsDefault() const;
     void SetDefault();
+    /// Set @a string as a default value.
+    /// A #uf_default_changed event is triggered.
+    void SetDefault(const char *string);
     void Reset();
     /// Return true if object value is equal to @a string.
     bool IsEqual(const char *string) const;
@@ -361,6 +364,11 @@ public:
     const char *StringValue() const;
     bool IsDefault() const;
     void SetDefault();
+    /// Set @a string as a default string value for the UFArray. As opposed
+    /// to the SetDefault() method with no arguments, this method does not
+    /// changes the default of the array's elements.
+    /// A #uf_default_changed event is triggered.
+    void SetDefault(const char *string);
     void Reset();
     /// Set the current index position in the array.
     /// Return false if @a index is out of range.

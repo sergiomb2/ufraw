@@ -29,8 +29,9 @@
 namespace UFRaw {
 
 class Lensfun : public UFGroup {
+private:
+    static lfDatabase *_LensDB;
 public:
-    static lfDatabase *LensDB;
     lfLens Transformation;
     lfLens Interpolation;
     double FocalLengthValue;
@@ -48,6 +49,14 @@ public:
 	if (strcmp(object.Parent().Name(), ufLensfun) == 0)
 	    return static_cast<Lensfun &>(object.Parent());
 	return Lensfun::Parent(object.Parent());
+    }
+    static lfDatabase *LensDB() {
+	/* Load lens database only once */
+	if (_LensDB == NULL) {
+	    _LensDB = lfDatabase::Create();
+	    _LensDB->Load();
+	}
+	return _LensDB;
     }
     void Interpolate();
     void Init();
@@ -473,22 +482,25 @@ void Lensfun::Interpolate() {
     static_cast<Distortion &>((*this)[ufDistortion]).Interpolate();
 }
 
-lfDatabase *Lensfun::LensDB = NULL;
+lfDatabase *Lensfun::_LensDB = NULL;
 
 void Lensfun::Init() {
-    /* Load lens database only once */
-    if (LensDB == NULL) {
-	LensDB = lfDatabase::Create();
-	LensDB->Load();
-    }
     ufraw_data *uf = ufraw_image_get_data(this);
+
+    char buffer[_buffer_size];
+    UFArray &FocalLength = (*this)[ufFocalLength];
+    FocalLength.SetDefault(_StringNumber(buffer, uf->conf->focal_len));
+    UFArray &Aperture = (*this)[ufAperture];
+    Aperture.SetDefault(_StringNumber(buffer, uf->conf->aperture));
+    UFArray &Distance = (*this)[ufDistance];
+    Distance.SetDefault(_StringNumber(buffer, uf->conf->subject_distance));
 
     /* Create a default camera */
     uf->conf->camera = lf_camera_new();
 
     /* Set lens and camera from EXIF info, if possible */
     if (uf->conf->real_make[0] || uf->conf->real_model[0]) {
-	const lfCamera **cams = LensDB->FindCameras(
+	const lfCamera **cams = LensDB()->FindCameras(
 		uf->conf->real_make, uf->conf->real_model);
 	if (cams != NULL) {
 	    lf_camera_copy(uf->conf->camera, cams[0]);
@@ -496,7 +508,7 @@ void Lensfun::Init() {
 	}
     }
     if (strlen(uf->conf->lensText) > 0) {
-	const lfLens **lenses = LensDB->FindLenses(
+	const lfLens **lenses = LensDB()->FindLenses(
 		uf->conf->camera, NULL, uf->conf->lensText);
 	if (lenses != NULL) {
 	    Interpolation = *lenses[0];
@@ -513,23 +525,19 @@ void Lensfun::Init() {
 	}
 	uf->conf->lensfunMode = lensfun_auto;
     }
+    FocalLength.Reset();
+    Aperture.Reset();
+    Distance.Reset();
     if (uf->conf->lensfunMode == lensfun_none) {
 	(*this)[ufTCA].Reset();
 	(*this)[ufVignetting].Reset();
 	(*this)[ufDistortion].Reset();
     } else {
-	static_cast<FocalLength &>((*this)[ufFocalLength]).CreatePresets();
-	static_cast<Aperture &>((*this)[ufAperture]).CreatePresets();
-	static_cast<Distance &>((*this)[ufDistance]).CreatePresets();
+	static_cast<UFRaw::FocalLength &>(FocalLength).CreatePresets();
+	static_cast<UFRaw::Aperture &>(Aperture).CreatePresets();
+	static_cast<UFRaw::Distance &>(Distance).CreatePresets();
 	Interpolate();
     }
-    char buffer[_buffer_size];
-    (*this)[ufFocalLength].Set(_StringNumber(buffer, uf->conf->focal_len));
-    (*this)[ufFocalLength].SetDefault();
-    (*this)[ufAperture].Set(_StringNumber(buffer, uf->conf->aperture));
-    (*this)[ufAperture].SetDefault();
-    (*this)[ufDistance].Set(_StringNumber(buffer, uf->conf->subject_distance));
-    (*this)[ufDistance].SetDefault();
 }
 
 extern "C" {
@@ -607,7 +615,7 @@ struct lfLens *ufraw_lensfun_transformation_lens(UFObject *lensfun) {
 }
 
 lfDatabase *ufraw_lensfun_db() {
-    return Lensfun::LensDB;
+    return Lensfun::LensDB();
 }
 
 } // extern "C"
