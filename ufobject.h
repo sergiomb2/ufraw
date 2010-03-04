@@ -27,6 +27,7 @@ typedef struct UFObject UFObject;
 typedef enum {
     uf_value_changed, ///< Value changed.
     uf_default_changed, ///< Default value changed.
+    uf_element_added, ///< An UFObject was added to a UFGroup or a UFArray.
     uf_user_data_set, ///< User data was set.
     uf_destroyed ///< UFObject is being destroyed.
 } UFEventType;
@@ -448,6 +449,10 @@ double ufnumber_array_value(UFObject *object, int index);
 /// Returns false if @a object is not a UFNumberArray. See \ref C-interface
 /// and UFNumberArray::Set(const double array[]) for more details.
 UFBoolean ufnumber_array_set(UFObject *object, const double array[]);
+/// Return true if string value is equal to @a string.
+/// Return false if it is not equal or if object is not a UFString.
+/// See \ref C-interface for more details.
+UFBoolean ufstring_is_equal(UFObject *object, const char *string);
 /// Return true if the UFGroup @a object contains an object called name.
 /// Return false if it does not, or if object is not a UFGroup.
 /// See \ref C-interface for more details.

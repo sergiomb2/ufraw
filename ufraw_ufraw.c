@@ -35,7 +35,6 @@ void (*ufraw_progress)(int what, int ticks) = NULL;
 #ifdef HAVE_LENSFUN
 #define UF_LF_TRANSFORM ( \
 	LF_MODIFY_DISTORTION | LF_MODIFY_GEOMETRY | LF_MODIFY_SCALE)
-void ufraw_lensfun_init(ufraw_data *uf);
 static void ufraw_convert_image_vignetting(ufraw_data *uf,
 	ufraw_image_data *img, UFRectangle *area);
 static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
@@ -456,7 +455,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     }
     ufraw_image_set_data(uf->conf->ufobject, uf);
 #ifdef HAVE_LENSFUN
-    ufraw_lensfun_init(uf);
+    ufraw_lensfun_init(ufgroup_element(uf->conf->ufobject, ufLensfun));
 #endif
 
     char *absname = uf_file_set_absolute(uf->filename);
@@ -698,7 +697,6 @@ void ufraw_close(ufraw_data *uf)
     g_free(uf->RawHistogram);
 #ifdef HAVE_LENSFUN
     lf_modifier_destroy(uf->TCAmodifier);
-    lf_camera_destroy(uf->conf->camera);
     lf_modifier_destroy(uf->modifier);
 #endif
     if ( uf->conf->darkframe!=NULL ) {

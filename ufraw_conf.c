@@ -11,9 +11,6 @@
  */
 
 #include "ufraw.h"
-#ifdef HAVE_LENSFUN
-#include <lensfun.h>
-#endif
 #include <string.h>
 #include <errno.h>
 #include <math.h>
@@ -131,11 +128,6 @@ const conf_data conf_default = {
     "", "", "", /* timestamp, make, model */
     0, /* timestamp */
     "", "", /* real_make, real_model */
-
-#ifdef HAVE_LENSFUN
-    NULL,                         /* camera description */
-    lensfun_default,              /* lensfun starting mode */
-#endif /* HAVE_LENSFUN */
 };
 
 static const char *interpolationNames[] =
@@ -148,10 +140,6 @@ static const char *intentNames[] =
     { "perceptual", "relative", "saturation", "absolute", "disable", NULL };
 static const char *grayscaleModeNames[] =
     { "none", "lightness", "luminance", "value", "mixer", NULL };
-#ifdef HAVE_LENSFUN
-static const char *lensfunModeNames[] =
-    { "none", "auto", NULL };
-#endif
 
 void conf_init(conf_data *c)
 {
@@ -1385,15 +1373,6 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     }
     dst->intent[out_profile] = src->intent[out_profile];
     dst->intent[display_profile] = src->intent[display_profile];
-
-#ifdef HAVE_LENSFUN
-    dst->lensfunMode = src->lensfunMode;
-    if (src->camera)
-    {
-	dst->camera = lf_camera_new ();
-	lf_camera_copy (dst->camera, src->camera);
-    }
-#endif /* HAVE_LENSFUN */
 }
 
 /* Copy the transformation information from *src to *dst. */
@@ -1455,9 +1434,6 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     if (cmd->CropX2 !=-1) conf->CropX2 = cmd->CropX2;
     if (cmd->CropY2 !=-1) conf->CropY2 = cmd->CropY2;
     if (cmd->silent!=-1) conf->silent = cmd->silent;
-#ifdef HAVE_LENSFUN
-    if (cmd->lensfunMode!=-1) conf->lensfunMode = cmd->lensfunMode;
-#endif
     if (cmd->compression!=NULLF) conf->compression = cmd->compression;
     if (cmd->autoExposure) {
 	conf->autoExposure = cmd->autoExposure;
@@ -1700,12 +1676,14 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	 *curveName=NULL, *curveFile=NULL, *outTypeName=NULL, *rotateName=NULL,
 	 *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL,
 	 *interpolationName=NULL, *darkframeFile=NULL,
-	 *restoreName=NULL, *clipName=NULL, *grayscaleName=NULL,
-	 *lensfunName = NULL;
+	 *restoreName=NULL, *clipName=NULL, *grayscaleName=NULL;
     static const struct option options[] = {
 	{ "wb", 1, 0, 'w'},
 	{ "temperature", 1, 0, 't'},
 	{ "green", 1, 0, 'g'},
+#ifdef HAVE_LENSFUN
+        { "lensfun", 1, 0, 'A'},
+#endif
 	{ "base-curve", 1, 0, 'B'},
 	{ "base-curve-file", 1, 0, 'S'},
 	{ "curve", 1, 0, 'c'},
@@ -1737,9 +1715,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{ "crop-top", 1, 0, '2'},
 	{ "crop-right", 1, 0, '3'},
 	{ "crop-bottom", 1, 0, '4'},
-#ifdef HAVE_LENSFUN
-        { "lensfun", 1, 0, 'A'},
-#endif
 /* Binary flags that don't have a value are here at the end */
 	{ "zip", 0, 0, 'z'},
 	{ "nozip", 0, 0, 'Z'},
@@ -1760,6 +1735,9 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	ufgroup_element(tmpImage, ufWB),
 	ufgroup_element(tmpImage, ufTemperature),
 	ufgroup_element(tmpImage, ufGreen),
+#ifdef HAVE_LENSFUN
+	ufgroup_element(tmpImage, ufLensfunAuto),
+#endif
 	&baseCurveName, &baseCurveFile, &curveName, &curveFile,
 	&cmd->profile[0][0].gamma, &cmd->profile[0][0].linear,
 	&cmd->saturation,
@@ -1771,7 +1749,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	&outTypeName, &cmd->profile[1][0].BitDepth, &rotateName,
 	&createIDName, &outPath, &output, &darkframeFile,
 	&restoreName, &clipName, &conf,
-	&cmd->CropX1, &cmd->CropY1, &cmd->CropX2, &cmd->CropY2, &lensfunName };
+	&cmd->CropX1, &cmd->CropY1, &cmd->CropX2, &cmd->CropY2 };
     cmd->autoExposure = disabled_state;
     cmd->autoBlack = disabled_state;
     cmd->losslessCompress=-1;
@@ -1806,7 +1784,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	switch (c) {
 	case 'w': // --wb
 	case 't': // --temperature
-	case 'g': // -- green
+	case 'g': // --green
+	case 'A': // --lensfun
 	    locale = uf_set_locale_C();
 	    if (!ufobject_set_string(optPointer[index], optarg)) {
 		ufraw_message(UFRAW_ERROR,
@@ -1878,7 +1857,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'r':
 	case 'u':
 	case 'Y':
-	case 'A':
 	    *(char **)optPointer[index] = optarg;
 	    break;
 	case 'O': cmd->overwrite = TRUE; break;
@@ -2230,18 +2208,6 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    return -1;
 	}
     }
-#ifdef HAVE_LENSFUN
-    cmd->lensfunMode = -1;
-    if (lensfunName!=NULL) {
-      cmd->lensfunMode = conf_find_name(lensfunName, lensfunModeNames, -1);
-      if (cmd->lensfunMode==-1) {
-	    ufraw_message(UFRAW_ERROR,
-		_("'%s' is not a valid lensfun option."),
-		lensfunName);
-	    return -1;
-	}
-    }
-#endif
     cmd->createID = -1;
     if (createIDName!=NULL) {
 	if (!strcmp(createIDName, "no"))

@@ -61,7 +61,10 @@ extern UFName ufWBFineTuning;
 extern UFName ufTemperature;
 extern UFName ufGreen;
 extern UFName ufChannelMultipliers;
+extern UFName ufLensfunAuto;
 extern UFName ufLensfun;
+extern UFName ufCameraModel;
+extern UFName ufLensModel;
 extern UFName ufFocalLength;
 extern UFName ufAperture;
 extern UFName ufDistance;
@@ -82,9 +85,12 @@ extern "C" {
 UFObject *ufraw_image_new();
 #ifdef HAVE_LENSFUN
 UFObject *ufraw_lensfun_new();
+void ufraw_lensfun_init(UFObject *lensfun);
 struct lfDatabase *ufraw_lensfun_db(); /* mount/camera/lens database */
-struct lfLens *ufraw_lensfun_transformation_lens(UFObject *lensfun);
-void ufraw_lensfun_interpolate(UFObject *lensfun, const struct lfLens *lens);
+const struct lfCamera *ufraw_lensfun_camera(const UFObject *lensfun);
+void ufraw_lensfun_set_camera(UFObject *lensfun, const struct lfCamera *camera);
+const struct lfLens *ufraw_lensfun_interpolation_lens(const UFObject *lensfun);
+void ufraw_lensfun_set_lens(UFObject *lensfun, const struct lfLens *lens);
 #endif
 struct ufraw_struct *ufraw_image_get_data(UFObject *obj);
 void ufraw_image_set_data(UFObject *obj, struct ufraw_struct *uf);
@@ -121,7 +127,6 @@ typedef enum { ufraw_raw_phase, ufraw_first_phase, ufraw_transform_phase,
 	ufraw_develop_phase, ufraw_display_phase, ufraw_phases_num } UFRawPhase;
 typedef enum { grayscale_none, grayscale_lightness, grayscale_luminance,
 	grayscale_value, grayscale_mixer } GrayscaleMode;
-typedef enum { lensfun_none, lensfun_auto, lensfun_default } LensfunMode;
 
 typedef struct {
     const char *make;
@@ -281,11 +286,6 @@ typedef struct {
     time_t timestamp;
     /* Unfortunately dcraw strips make and model, but we need originals too */
     char real_make[max_name], real_model[max_name];
-
-#ifdef HAVE_LENSFUN
-    struct lfCamera *camera; /* camera description */
-    int lensfunMode;
-#endif /* HAVE_LENSFUN */
 } conf_data;
 
 typedef struct {

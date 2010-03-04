@@ -360,6 +360,8 @@ void _ufobject_reset_button_state(UFObject *object) {
 	return;
     _UFObjectList *list = static_cast<_UFObjectList *>(
 	    g_object_get_data(G_OBJECT(data->button), "UFObjectList"));
+    if (list == NULL)
+	return;
     bool isDefault = true;
     for (_UFObjectList::iterator iter = list->begin();
 	    iter != list->end(); iter++) {
@@ -380,7 +382,8 @@ static void _ufnumber_object_event(UFObject *object, UFEventType type) {
 	return;
     }
     UFNumber &num = *object;
-    gtk_adjustment_set_value(data->adjustment(0), num.DoubleValue());
+    if (data->adjustment(0) != NULL)
+	gtk_adjustment_set_value(data->adjustment(0), num.DoubleValue());
     _ufobject_reset_button_state(object);
 }
 
@@ -403,6 +406,16 @@ static void _ufnumber_array_object_event(UFObject *object, UFEventType type) {
     for (int i = 0; i < array.Size(); i++)
 	gtk_adjustment_set_value(data->adjustment(i), array.DoubleValue(i));
     _ufobject_reset_button_state(object);
+}
+
+static void _ufstring_object_event(UFObject *object, UFEventType type) {
+    _UFWidgetData *data = static_cast<_UFWidgetData *>(object->UserData());
+    if (type == uf_destroyed) {
+	delete data;
+	return;
+    }
+    UFString &string = *object;
+    gtk_entry_set_text(GTK_ENTRY(data->gobject[0]), string.StringValue());
 }
 
 static void _ufarray_object_event(UFObject *object, UFEventType type) {
@@ -475,6 +488,16 @@ static _UFWidgetData &_ufnumber_array_widget_data(UFNumberArray &array) {
     return data;
 }
 
+static _UFWidgetData &_ufstring_widget_data(UFString &string) {
+    if (string.UserData() != NULL)
+	return *static_cast<_UFWidgetData *>(string.UserData());
+    _UFWidgetData &data = *(new _UFWidgetData);
+    string.SetUserData(&data);
+    data.gobject[0] = NULL;
+    string.SetEventHandle(_ufstring_object_event);
+    return data;
+}
+
 static _UFWidgetData &_ufarray_widget_data(UFArray &array) {
     if (array.UserData() != NULL)
 	return *static_cast<_UFWidgetData *>(array.UserData());
@@ -533,6 +556,11 @@ static void _ufobject_reset_clicked(GtkWidget * /*widget*/, _UFObjectList *list)
 
 static void _ufobject_reset_destroy(GtkWidget * /*widget*/, _UFObjectList *list)
 {
+    for (_UFObjectList::iterator iter = list->begin();
+	    iter != list->end(); iter++) {
+	_UFWidgetData *data = static_cast<_UFWidgetData *>((*iter)->UserData());
+	data->button = NULL;
+    }
     delete list;
 }
 
@@ -563,6 +591,26 @@ void ufobject_reset_button_add(GtkWidget *button, UFObject *object) {
     _ufobject_reset_button_state(object);
 }
 
+static void _ufstring_entry_changed(GtkWidget *entry, UFObject *object) {
+    UFString &string = *object;
+    string.Set(gtk_entry_get_text(GTK_ENTRY(entry)));
+    _ufobject_reset_button_state(object);
+}
+
+// Create a new GtkEntry with small width.
+// The widget must be added with GTK_EXPAND|GTK_FILL.
+GtkWidget *ufstring_entry_new(UFObject *object) {
+    GtkWidget *entry = gtk_entry_new();
+    gtk_widget_set_size_request(entry, 50, -1);
+    g_signal_connect_after(G_OBJECT(entry), "changed",
+	G_CALLBACK(_ufstring_entry_changed), object);
+    UFString &string = *object;
+    _UFWidgetData &data = _ufstring_widget_data(string);
+    data.gobject[0] = G_OBJECT(entry);
+    _ufstring_object_event(object, uf_value_changed);
+    return entry;
+}
+
 static void _ufarray_combo_changed(GtkWidget *combo, UFObject *object) {
     UFArray &array = *object;
     int i = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
@@ -570,10 +618,14 @@ static void _ufarray_combo_changed(GtkWidget *combo, UFObject *object) {
     _ufobject_reset_button_state(object);
 }
 
-static void _ufarray_entry_changed(GtkWidget *entry, UFObject *object) {
+static bool _ufarray_entry_changed(GtkWidget *entry, GdkEventFocus *event,
+	UFObject *object) {
+    if (event->in)
+	return false;
     UFArray &array = *object;
     array.Set(gtk_entry_get_text(GTK_ENTRY(entry)));
     _ufobject_reset_button_state(object);
+    return false;
 }
 
 GtkWidget *_ufarray_combo_box_new(UFObject *object, GtkWidget *combo) {
@@ -607,8 +659,10 @@ GtkWidget *ufarray_combo_box_new(UFObject *object) {
 // The widget must be added with GTK_EXPAND|GTK_FILL.
 GtkWidget *ufarray_combo_box_entry_new(UFObject *object) {
     GtkWidget *combo = gtk_combo_box_entry_new_text();
+    g_signal_connect_after(G_OBJECT(combo), "changed",
+	G_CALLBACK(_ufarray_combo_changed), object);
     GtkWidget *entry = gtk_bin_get_child(GTK_BIN(combo));
-    g_signal_connect_after(G_OBJECT(entry), "changed",
+    g_signal_connect_after(G_OBJECT(entry), "focus-out-event",
 	G_CALLBACK(_ufarray_entry_changed), object);
     return _ufarray_combo_box_new(object, combo);
 }

@@ -739,6 +739,7 @@ UFGroup &UFGroup::operator<<(UFObject *object) {
 	}
     }
     _UFGROUP_PARENT(object) = ufgroup;
+    Event(uf_element_added);
     return *this;
 }
 
@@ -884,6 +885,7 @@ UFArray &UFArray::operator<<(UFObject *object) {
 	}
     }
     _UFARRAY_PARENT(object) = ufgroup;
+    Event(uf_element_added);
     return *this;
 }
 
@@ -995,6 +997,15 @@ UFBoolean ufnumber_array_set(UFObject *object, const double array[]) {
     try {
 	dynamic_cast<UFNumberArray &>(*object).Set(array);
 	return true;
+    } catch (std::bad_cast &e) {
+	object->Message(e.what());
+	return false;
+    }
+}
+
+UFBoolean ufstring_is_equal(UFObject *object, const char *string) {
+    try {
+	return dynamic_cast<UFString *>(object)->IsEqual(string);
     } catch (std::bad_cast &e) {
 	object->Message(e.what());
 	return false;

@@ -221,6 +221,32 @@ public:
     }
 };
 
+extern "C" { UFName ufLensfunAuto = "LensfunAuto"; }
+class LensfunAuto : public UFString {
+public:
+    LensfunAuto() : UFString(ufLensfunAuto, "yes") { }
+    void OriginalValueChangedEvent() {
+	if (!HasParent())
+	    return;
+	if (IsEqual("auto")) {
+	    Set("yes");
+	    return;
+	}
+	if (IsEqual("none")) {
+	    Set("no");
+	    return;
+	}
+	if (!IsEqual("yes") && !IsEqual("no"))
+	    Throw("Invalid value '%s'", StringValue());
+#ifdef HAVE_LENSFUN
+	if (!Parent().Has(ufLensfun))
+	    return;
+	if (IsDefault())
+	    ufraw_lensfun_init(&Parent()[ufLensfun]);
+#endif
+    }
+};
+
 // ufRawImage is short for 'raw image processing parameters'.
 extern "C" { UFName ufRawImage = "Image"; }
 Image::Image(UFObject *root) : UFGroup(ufRawImage), uf(NULL) {
@@ -232,6 +258,7 @@ Image::Image(UFObject *root) : UFGroup(ufRawImage), uf(NULL) {
 	<< new ChannelMultipliers
     ;
 #ifdef HAVE_LENSFUN
+    *this << new LensfunAuto;
     if (root == NULL || root->Name() != ufRawResources)
 	*this << ufraw_lensfun_new(); // Lensfun data is not saved to .ufrawrc
 #else
@@ -330,11 +357,13 @@ public:
 class CommandLineImage : public UFGroup {
 public:
     CommandLineImage(): UFGroup(ufRawImage) { }
-    void OriginalValueChangedEvent() {
+    void Event(UFEventType type) {
+	if (type != uf_element_added)
+	    return UFObject::Event(type);
 	if (Has(ufTemperature) || Has(ufGreen)) {
 	    if (Has(ufWB)) {
 		UFArray &wb = (*this)[ufWB];
-		if (!wb.IsEqual(uf_manual_wb)) {
+		if (!wb.IsEqual(uf_manual_wb) && !wb.IsEqual(uf_camera_wb)) {
 		    ufraw_message(UFRAW_WARNING,
 			    _("--temperature and --green options override "
 			    "the --wb=%s option."), wb.StringValue());
@@ -347,6 +376,8 @@ public:
 	    if (Has(ufWB)) {
 		// We don't have green or temperature so this must be from --wb
 		UFArray &wb = (*this)[ufWB];
+		if (wb.IsEqual(uf_auto_wb) || wb.IsEqual(uf_camera_wb))
+		    return UFObject::Event(type);
 		if (wb.IsEqual("camera"))
 		    wb.Set(uf_camera_wb);
 		else if (wb.IsEqual("auto"))
@@ -356,6 +387,7 @@ public:
 			    wb.StringValue());
 	    }
 	}
+	return UFObject::Event(type);
     }
 };
 
