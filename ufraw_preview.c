@@ -1475,7 +1475,9 @@ static void update_scales(preview_data *data)
     gtk_adjustment_set_value(data->ExposureAdjustment, CFG->exposure);
     gtk_adjustment_set_value(data->ThresholdAdjustment, CFG->threshold);
     gtk_adjustment_set_value(data->HotpixelAdjustment, CFG->hotpixel);
+#ifdef UFRAW_CONTRAST
     gtk_adjustment_set_value(data->ContrastAdjustment, CFG->contrast);
+#endif
     gtk_adjustment_set_value(data->SaturationAdjustment, CFG->saturation);
     gtk_adjustment_set_value(data->GammaAdjustment,
 	    CFG->profile[0][CFG->profileIndex[0]].gamma);
@@ -1499,8 +1501,10 @@ static void update_scales(preview_data *data)
 	    fabs( conf_default.threshold - CFG->threshold) > 1);
     gtk_widget_set_sensitive(data->ResetHotpixelButton,
 	    fabs( conf_default.hotpixel - CFG->hotpixel) > 0);
+#ifdef UFRAW_CONTRAST
     gtk_widget_set_sensitive(data->ResetContrastButton,
 	    fabs( conf_default.contrast - CFG->contrast) > 0.001);
+#endif
     gtk_widget_set_sensitive(data->ResetSaturationButton,
 	    fabs( conf_default.saturation - CFG->saturation) > 0.001);
     gtk_widget_set_sensitive(data->ResetBaseCurveButton,
@@ -2602,9 +2606,11 @@ static void button_update(GtkWidget *button, gpointer user_data)
 	CFG->hotpixel = conf_default.hotpixel;
 	ufraw_invalidate_hotpixel_layer(data->UF);
     }
+#ifdef UFRAW_CONTRAST
     if (button==data->ResetContrastButton) {
         CFG->contrast = conf_default.contrast;
     }
+#endif
     if (button==data->ResetSaturationButton) {
 	CFG->saturation = conf_default.saturation;
     }
@@ -4824,11 +4830,13 @@ static void corrections_fill_interface(preview_data *data, GtkWidget *page,
     /* Contrast and Saturation adjustments */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
 
+#ifdef UFRAW_CONTRAST
     data->ContrastAdjustment = adjustment_scale(table, 0, 0, _("Contrast"),
 	    CFG->contrast, &CFG->contrast, 0, 8.0, 0.01, 0.1, 2, FALSE,
 	    _("Global contrast adjustment"), G_CALLBACK(adjustment_update),
 	    &data->ResetContrastButton, _("Reset global contrast to default"),
 	    G_CALLBACK(button_update));
+#endif
     data->SaturationAdjustment = adjustment_scale(table, 0, 1, _("Saturation"),
 	    CFG->saturation, &CFG->saturation, 0.0, 8.0, 0.01, 0.1, 2, FALSE,
 	    _("Saturation"), G_CALLBACK(adjustment_update),

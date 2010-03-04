@@ -156,7 +156,9 @@ typedef struct {
     void *working2displayTransform;
     void *rgbtolabTransform;
     double saturation;
+#ifdef UFRAW_CONTRAST
     double contrast;
+#endif
     CurveData baseCurveData, luminosityCurveData;
     guint16 gammaCurve[0x10000];
     void *luminosityProfile;
@@ -223,7 +225,9 @@ typedef struct {
     /* IMAGE manipulation settings */
     double threshold;
     double hotpixel;
+#ifdef UFRAW_CONTRAST
     double contrast;
+#endif
     double exposure, saturation, black; /* black is only used in CMD */
     int ExposureNorm;
     int restoreDetails, clipHighlights;

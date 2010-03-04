@@ -65,7 +65,9 @@ typedef struct {
     GtkWidget *ResetExposureButton, *ResetSaturationButton;
     GtkWidget *ResetThresholdButton;
     GtkWidget *ResetHotpixelButton;
+#ifdef UFRAW_CONTRAST
     GtkWidget *ResetContrastButton;
+#endif
     GtkWidget *ResetBlackButton, *ResetBaseCurveButton, *ResetCurveButton;
     GtkWidget *ResetGrayscaleChannelMixerButton;
     GtkWidget *ResetDespeckleButton;
@@ -87,7 +89,9 @@ typedef struct {
     GtkAdjustment *ThresholdAdjustment;
     GtkAdjustment *HotpixelAdjustment;
     GtkAdjustment *SaturationAdjustment;
+#ifdef UFRAW_CONTRAST
     GtkAdjustment *ContrastAdjustment;
+#endif
     GtkWidget *LightnessHueSelectNewButton;
     GtkTable *LightnessAdjustmentTable[max_adjustments];
     GtkAdjustment *LightnessAdjustment[max_adjustments];
