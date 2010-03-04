@@ -3,14 +3,14 @@
 # Copyright (C) 2006-2010 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 #
-# Simon Oosthoek <simon@margo.student.utwente.nl>, 2008, 2009.
+# Simon Oosthoek <simon@margo.student.utwente.nl>, 2008, 2009, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-03-04 13:45+0100\n"
-"PO-Revision-Date: 2009-09-30 13:16+0200\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2010-03-04 16:10+0100\n"
+"Last-Translator: Simon Oosthoek\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,11 +24,11 @@ msgstr "Open het navigatorscherm"
 
 #, c-format
 msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
+msgstr "Waarde %.*f te groot, ingekort tot %.*f"
 
 #, c-format
 msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
+msgstr "Waarde %.*f te klein, ingekort tot %.*f"
 
 msgid "No input file, nothing to do."
 msgstr "Geen input file, niks te doen"
@@ -440,6 +440,9 @@ msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
 "                      correction by auto-detecting the lens (default none).\n"
 msgstr ""
+"--lensfun=none|auto   Pas geen lens-correctie toe of probeer\n"
+"                      te corrigeren door middel van autodetectie van"
+"                      de lens (standaard none)\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -699,7 +702,7 @@ msgstr ""
 "Vatting:\t\t%s\n"
 "Crop factor:\t%.1f"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
@@ -732,9 +735,8 @@ msgstr "F-getal (Diafragma)"
 msgid "Distance"
 msgstr "Afstand"
 
-#, fuzzy
 msgid "Distance to subject in meters"
-msgstr "Afstand tot onderwerp"
+msgstr "Afstand tot onderwerp in meters"
 
 #. Add the model combobox
 msgid "Model:"
@@ -780,7 +782,7 @@ msgid "Choose camera from complete list"
 msgstr "Kies camera uit de complete lijst"
 
 msgid "Reset all lens correction settings"
-msgstr ""
+msgstr "Reset alle lenscorrectie instellingen"
 
 #. Lens selector
 msgid "Lens"
@@ -797,7 +799,7 @@ msgid "Choose lens from list of possible variants"
 msgstr "Kies een lens uit de lijst van mogelijke varianten"
 
 msgid "Automatically find lens and set lens corrections"
-msgstr ""
+msgstr "lenscorrecties zetten door automatische lensherkenning"
 
 msgid "Lateral chromatic aberration"
 msgstr "Laterale chromatische aberratie"
@@ -874,19 +876,17 @@ msgstr "afmeting %dx%d, zoom %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "afmeting %dx%d, schaal 1/%d"
 
-#, fuzzy
 msgid "Wavelet denoising"
-msgstr "Drempelwaarde voor wavelet ontruising"
+msgstr "Wavelet ruisonderdrukking"
 
 msgid "Despeckling"
-msgstr ""
+msgstr "Despeckling"
 
-#, fuzzy
 msgid "Interpolating"
-msgstr "Geen interpolatie"
+msgstr "Interpoleren"
 
 msgid "Rendering"
-msgstr ""
+msgstr "Rendering"
 
 msgid "Loading preview"
 msgstr "Inlezen voorbeeld"
@@ -902,10 +902,10 @@ msgid "No more room for new lightness adjustments."
 msgstr "Geen ruimte voor nieuwe lichtwaarde aanpassingen."
 
 msgid "Aspect ratio locked, click to unlock"
-msgstr ""
+msgstr "beeldverhouding vast, klik om vrij te maken"
 
 msgid "Aspect ratio unlocked, click to lock"
-msgstr ""
+msgstr "beeldverhouding vrij, klik om vast te zetten"
 
 msgid "Load dark frame"
 msgstr "Inlezen zwartbeeld"
@@ -1040,7 +1040,7 @@ msgid "Hot pixels: "
 msgstr "Hot pixels: "
 
 msgid "mark"
-msgstr ""
+msgstr "markeer"
 
 msgid "Hot pixel sensitivity"
 msgstr "Hot pixel gevoeligheid"
@@ -1081,9 +1081,8 @@ msgstr "Onderbelicht:"
 msgid "White Balance"
 msgstr "Witbalans"
 
-#, fuzzy
 msgid "Cannot use camera white balance."
-msgstr "Kan camera witbalans niet gebruiken, verder met auto witbalans."
+msgstr "Kan camera witbalans niet gebruiken."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1172,6 +1171,11 @@ msgstr "Grijsschaal algoritme:"
 msgid "Reset channel mixer"
 msgstr "Reset Kleurmixer"
 
+# There's a few problems here:
+# The last sentence should be put before the next-to-last one. (I did so in the translation). 
+# I don't know how to translate the numbers, since the normal dutch way of representing numbers is using a comma for decimal separator. I don't know how this would end up in a completely dutch environment (which I'm not using)
+# 
+
 msgid ""
 "Despeckling is mainly useful when combining a high ISO number with a high "
 "channel multiplier: when one channel has a very bad signal to noise ratio. "
@@ -1180,27 +1184,35 @@ msgid ""
 "Despeckling is off when window size or passes equals zero. When on then "
 "window size cannot be smaller than the number of passes."
 msgstr ""
+"Despeckling is vooral nuttig bij hoge ISO waardes samen met een hoge "
+"kanaalvermenigvuldiging: "
+"wanneer één kanaal een erg lage signaal/ruis verhouding heeft. "
+"Probeer een instelling van window size, kleurverval en aantal iteraties van "
+"50,0,5 voor dat kanaal. "
+"Als een kanaal alleen maar ruis bevat, probeer dan 1,0.6,1.\n"
+"De waarde van window size mag niet kleiner zijn dan het aantal iteraties. "
+"Despeckling wordt niet toegepast als de window size of aantal iteraties nul "
+"is. "
 
 msgid "Update channel parameters together"
-msgstr ""
+msgstr "kanaalparameters tegelijk aanpassen"
 
-#, fuzzy
 msgid "Reset despeckle parameters"
-msgstr "Reset zwartbeeld"
+msgstr "Reset despeckle parameters"
 
 #. channel to view
 msgid "View channel:"
-msgstr ""
+msgstr "bekijk kanaal:"
 
 #. Parameters
 msgid "Window size:"
-msgstr ""
+msgstr "Window size:"
 
 msgid "Color decay:"
-msgstr ""
+msgstr "Kleurverval:"
 
 msgid "Passes:"
-msgstr ""
+msgstr "Iteraties:"
 
 msgid "Load base curve"
 msgstr "Inlezen basis curve"
@@ -1304,7 +1316,7 @@ msgid "Bottom:"
 msgstr "Onder:"
 
 msgid "Auto fit crop area"
-msgstr ""
+msgstr "Automatisch aanpassen uitsnede"
 
 msgid "Reset the crop region"
 msgstr "Reset de uitsnijgrenzen"
@@ -1336,19 +1348,16 @@ msgstr "Orientatie:"
 msgid "Rotation"
 msgstr "Rotatie"
 
-#, fuzzy
 msgid "Rotation angle"
 msgstr "Rotatiehoek"
 
-#, fuzzy
 msgid "Reset rotation angle"
 msgstr "Reset Rotatiehoek"
 
 #. drawLines toggle button
 msgid "Grid lines"
-msgstr ""
+msgstr "Hulplijnen"
 
-#, fuzzy
 msgid "Number of grid lines to overlay in the crop area"
 msgstr "Aantal hulplijnen op het uitsnede gebied"
 
@@ -1697,3 +1706,4 @@ msgstr "Camera WB"
 
 msgid "Auto WB"
 msgstr "Auto WB"
+
