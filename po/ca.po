@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.70\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-26 08:30+0100\n"
+"POT-Creation-Date: 2010-03-04 13:45+0100\n"
 "PO-Revision-Date: 2009-09-30 19:24+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -77,13 +77,6 @@ msgstr "Tots els fitxers"
 msgid "Show hidden files"
 msgstr "Mostra els fitxers ocults"
 
-#. Internal data
-#. configuration version
-#. ufobject
-#. Image manipulation settings
-#. wavelet denoising threshold
-#. hotpixel sensitivity
-#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -607,10 +600,6 @@ msgstr "'%d' no és una profunditat de bits vàlida per la imatge incrustada."
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s' no és una opció de rotació vàlida."
 
-#, fuzzy, c-format
-msgid "'%s' is not a valid lensfun option."
-msgstr "L'opció '%s' no és una opció de tall vàlida."
-
 #, c-format
 msgid "'%s' is not a valid create-id option."
 msgstr "L'opció '%s' no és una opció de creació d'identificador vàlida."
@@ -729,12 +718,12 @@ msgstr ""
 "Muntatge:\t\t%s\n"
 "Factor d'escapçament:\t%.1f"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
 "Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
+"Aperture:\t%s\n"
 "Crop factor:\t%.1f\n"
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
@@ -782,13 +771,14 @@ msgstr "Model matemàtic del vinyetatge òptic"
 msgid "Lens distortion mathematical model"
 msgstr "Model matemàtic de la distorsió de la lent"
 
-#. Add the model combobox
+#. Lens geometry combobox
 msgid "Lens geometry:"
 msgstr "Geometria de la lent:"
 
 msgid "The geometry of the lens used to make the shot"
 msgstr "La geometria de la lent que s'ha fet servir per fer la foto"
 
+#. Target lens geometry combobox
 msgid "Target geometry:"
 msgstr "Geometria desitjada:"
 
@@ -808,6 +798,9 @@ msgstr ""
 msgid "Choose camera from complete list"
 msgstr "Escolliu la càmera de la llista"
 
+msgid "Reset all lens correction settings"
+msgstr ""
+
 #. Lens selector
 msgid "Lens"
 msgstr "Lent"
@@ -819,6 +812,9 @@ msgstr "Cerqueu "
 
 msgid "Choose lens from list of possible variants"
 msgstr "Trieu la lent de la llista de possibles variant"
+
+msgid "Automatically find lens and set lens corrections"
+msgstr ""
 
 msgid "Lateral chromatic aberration"
 msgstr "Aberració cromàtica lateral"

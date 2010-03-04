@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-26 08:30+0100\n"
+"POT-Creation-Date: 2010-03-04 13:45+0100\n"
 "PO-Revision-Date: 2009-09-30 14:38+0000\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -78,13 +78,6 @@ msgstr "Sve datoteke"
 msgid "Show hidden files"
 msgstr "Prikaži skrivene datoteke"
 
-#. Internal data
-#. configuration version
-#. ufobject
-#. Image manipulation settings
-#. wavelet denoising threshold
-#. hotpixel sensitivity
-#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -605,10 +598,6 @@ msgstr "„%d“ nije ispravan broj bitova za umetnutu sliku."
 msgid "'%s' is not a valid rotate option."
 msgstr "„%s“ nije ispravna vrednost rotacije."
 
-#, fuzzy, c-format
-msgid "'%s' is not a valid lensfun option."
-msgstr "„%s“ nije ispravna mogućnost za isecanje."
-
 #, c-format
 msgid "'%s' is not a valid create-id option."
 msgstr "„%s“ nije ispravna create-id mogućnost."
@@ -724,12 +713,12 @@ msgstr ""
 "Stativ:\t\t%s\n"
 "Faktor isecanja:\t%.1f"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
 "Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
+"Aperture:\t%s\n"
 "Crop factor:\t%.1f\n"
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
@@ -777,13 +766,14 @@ msgstr "Matematički model optičkog vinjetarenja"
 msgid "Lens distortion mathematical model"
 msgstr "matematički model izobličenja sočiva"
 
-#. Add the model combobox
+#. Lens geometry combobox
 msgid "Lens geometry:"
 msgstr "Geometrija sočiva:"
 
 msgid "The geometry of the lens used to make the shot"
 msgstr "Geometrija sočiva kojim je snimak napravljen"
 
+#. Target lens geometry combobox
 msgid "Target geometry:"
 msgstr "Ciljna geometrija:"
 
@@ -803,6 +793,9 @@ msgstr ""
 msgid "Choose camera from complete list"
 msgstr "Bira kameru iz celokupnog spiska"
 
+msgid "Reset all lens correction settings"
+msgstr ""
+
 #. Lens selector
 msgid "Lens"
 msgstr "Objektiv"
@@ -816,6 +809,9 @@ msgstr ""
 
 msgid "Choose lens from list of possible variants"
 msgstr "Bira objektiv iz celokupnog spiska"
+
+msgid "Automatically find lens and set lens corrections"
+msgstr ""
 
 msgid "Lateral chromatic aberration"
 msgstr "Bočne hromatske aberacije"

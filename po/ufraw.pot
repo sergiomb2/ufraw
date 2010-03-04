@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-26 08:30+0100\n"
+"POT-Creation-Date: 2010-03-04 13:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,13 +75,6 @@ msgstr ""
 msgid "Show hidden files"
 msgstr ""
 
-#. Internal data
-#. configuration version
-#. ufobject
-#. Image manipulation settings
-#. wavelet denoising threshold
-#. hotpixel sensitivity
-#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -485,10 +478,6 @@ msgid "'%s' is not a valid rotate option."
 msgstr ""
 
 #, c-format
-msgid "'%s' is not a valid lensfun option."
-msgstr ""
-
-#, c-format
 msgid "'%s' is not a valid create-id option."
 msgstr ""
 
@@ -602,7 +591,7 @@ msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
 "Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
+"Aperture:\t%s\n"
 "Crop factor:\t%.1f\n"
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
@@ -642,13 +631,14 @@ msgstr ""
 msgid "Lens distortion mathematical model"
 msgstr ""
 
-#. Add the model combobox
+#. Lens geometry combobox
 msgid "Lens geometry:"
 msgstr ""
 
 msgid "The geometry of the lens used to make the shot"
 msgstr ""
 
+#. Target lens geometry combobox
 msgid "Target geometry:"
 msgstr ""
 
@@ -666,6 +656,9 @@ msgstr ""
 msgid "Choose camera from complete list"
 msgstr ""
 
+msgid "Reset all lens correction settings"
+msgstr ""
+
 #. Lens selector
 msgid "Lens"
 msgstr ""
@@ -676,6 +669,9 @@ msgid ""
 msgstr ""
 
 msgid "Choose lens from list of possible variants"
+msgstr ""
+
+msgid "Automatically find lens and set lens corrections"
 msgstr ""
 
 msgid "Lateral chromatic aberration"

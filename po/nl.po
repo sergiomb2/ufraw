@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-26 08:30+0100\n"
+"POT-Creation-Date: 2010-03-04 13:45+0100\n"
 "PO-Revision-Date: 2009-09-30 13:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -78,13 +78,6 @@ msgstr "Alle bestanden"
 msgid "Show hidden files"
 msgstr "Laat verborgen bestanden zien"
 
-#. Internal data
-#. configuration version
-#. ufobject
-#. Image manipulation settings
-#. wavelet denoising threshold
-#. hotpixel sensitivity
-#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -590,10 +583,6 @@ msgstr "'%d' is geen geldige bit diepte voor embedded afbeeldingen."
 msgid "'%s' is not a valid rotate option."
 msgstr "'%s' is geen geldige rotatie optie."
 
-#, fuzzy, c-format
-msgid "'%s' is not a valid lensfun option."
-msgstr "'%s' is geen geldige clip optie."
-
 #, c-format
 msgid "'%s' is not a valid create-id option."
 msgstr "'%s' is geen geldige create-id optie."
@@ -710,12 +699,12 @@ msgstr ""
 "Vatting:\t\t%s\n"
 "Crop factor:\t%.1f"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
 "Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
+"Aperture:\t%s\n"
 "Crop factor:\t%.1f\n"
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
@@ -763,13 +752,14 @@ msgstr "Wiskundig model voor optische vignettering "
 msgid "Lens distortion mathematical model"
 msgstr "Wiskundig model voor lens vervorming"
 
-#. Add the model combobox
+#. Lens geometry combobox
 msgid "Lens geometry:"
 msgstr "Lens geometrie:"
 
 msgid "The geometry of the lens used to make the shot"
 msgstr "De geometrie van de lens gebruikt voor de foto"
 
+#. Target lens geometry combobox
 msgid "Target geometry:"
 msgstr "Doel geometrie:"
 
@@ -789,6 +779,9 @@ msgstr ""
 msgid "Choose camera from complete list"
 msgstr "Kies camera uit de complete lijst"
 
+msgid "Reset all lens correction settings"
+msgstr ""
+
 #. Lens selector
 msgid "Lens"
 msgstr "Lens"
@@ -802,6 +795,9 @@ msgstr ""
 
 msgid "Choose lens from list of possible variants"
 msgstr "Kies een lens uit de lijst van mogelijke varianten"
+
+msgid "Automatically find lens and set lens corrections"
+msgstr ""
 
 msgid "Lateral chromatic aberration"
 msgstr "Laterale chromatische aberratie"

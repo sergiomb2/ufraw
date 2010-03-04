@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-26 08:30+0100\n"
+"POT-Creation-Date: 2010-03-04 13:45+0100\n"
 "PO-Revision-Date: 2010-02-24 14:19+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish\n"
@@ -75,13 +75,6 @@ msgstr "Wszystkie pliki"
 msgid "Show hidden files"
 msgstr "Pokaż ukryte pliki"
 
-#. Internal data
-#. configuration version
-#. ufobject
-#. Image manipulation settings
-#. wavelet denoising threshold
-#. hotpixel sensitivity
-#. global contrast
 #. exposure, saturation, black
 #. ExposureNorm
 #. restoreDetails
@@ -591,10 +584,6 @@ msgid "'%s' is not a valid rotate option."
 msgstr "'%s' nie jest poprawną opcją obrotu."
 
 #, c-format
-msgid "'%s' is not a valid lensfun option."
-msgstr "'%s' nie jest poprawnym ustawieniem dla lensfun."
-
-#, c-format
 msgid "'%s' is not a valid create-id option."
 msgstr "'%s' nie jest poprawną opcją tworzenia plików ID."
 
@@ -710,12 +699,12 @@ msgstr ""
 "Bagnet:\t\t%s\n"
 "Crop:\t%.1f"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
 "Focal range:\t%s\n"
-"Aperture:\t\t%s\n"
+"Aperture:\t%s\n"
 "Crop factor:\t%.1f\n"
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
@@ -763,13 +752,14 @@ msgstr "Model matematyczny winietowania"
 msgid "Lens distortion mathematical model"
 msgstr "Model matematyczny dystorsji"
 
-#. Add the model combobox
+#. Lens geometry combobox
 msgid "Lens geometry:"
 msgstr "Geometria obiektywu"
 
 msgid "The geometry of the lens used to make the shot"
 msgstr "Geometria obiektywu użytego do zrobienia zdjęcia"
 
+#. Target lens geometry combobox
 msgid "Target geometry:"
 msgstr "Docelowa geometria"
 
@@ -789,6 +779,9 @@ msgstr ""
 msgid "Choose camera from complete list"
 msgstr "Wybierz aparat z pełnej listy"
 
+msgid "Reset all lens correction settings"
+msgstr ""
+
 #. Lens selector
 msgid "Lens"
 msgstr "Obiektyw"
@@ -802,6 +795,9 @@ msgstr ""
 
 msgid "Choose lens from list of possible variants"
 msgstr "Wybierz obiektyw z listy dostępnych możliwości"
+
+msgid "Automatically find lens and set lens corrections"
+msgstr ""
 
 msgid "Lateral chromatic aberration"
 msgstr "Boczna aberracja chromatyczna"
