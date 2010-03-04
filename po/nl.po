@@ -1706,4 +1706,3 @@ msgstr "Camera WB"
 
 msgid "Auto WB"
 msgstr "Auto WB"
-
