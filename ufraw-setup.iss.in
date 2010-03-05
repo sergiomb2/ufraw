@@ -58,7 +58,6 @@ Source: "po\nl.mo"; DestDir: "{app}\lib\locale\nl\LC_MESSAGES\"; DestName: "ufra
 Source: "po\pl.mo"; DestDir: "{app}\lib\locale\pl\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\pt.mo"; DestDir: "{app}\lib\locale\pt\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\ru.mo"; DestDir: "{app}\lib\locale\ru\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
-Source: "po\sr@latin.mo"; DestDir: "{app}\lib\locale\sr@latin\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\sr.mo"; DestDir: "{app}\lib\locale\sr\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\sr@latin.mo"; DestDir: "{app}\lib\locale\sr@latin\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\sv.mo"; DestDir: "{app}\lib\locale\sv\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
