@@ -1,8 +1,9 @@
 [Desktop Entry]
 Name=UFRaw
 GenericName=Raw image converter
+GenericName[ca]=Convertidor d'imatges Raw
 GenericName[cs]=Konvertor raw snímků
-GenericName[da]=Raw-billedbehandler
+GenericName[da]=Råbilledbehandler
 GenericName[de]=Konverter für Raw-Bilder
 GenericName[es]=Conversor de imágenes raw
 GenericName[fr]=Convertisseur d'image RAW
@@ -18,8 +19,9 @@ GenericName[sr@latin]=Prevodilac Raw slika
 GenericName[zh_CN]=Raw 图像转换器
 
 Comment=A utility to read and manipulate raw images from digital cameras
+Comment[ca]=Una eina per llegir i manipular les imatges Raw d'una càmera digital
 Comment[cs]=Program ke čtení a manipulaci raw snímků z digitálních fotoaparátů
-Comment[da]=Et program til at læse og behandle raw-billeder fra digitalkameraer
+Comment[da]=Et program til at læse og behandle råbilleder fra digitalkameraer
 Comment[de]=Ein Werkzeug, um Raw-Bilder von Digitalkameras zu lesen und zu manipulieren
 Comment[es]=Programa para leer y manipular imágenes raw de cámaras digitales
 Comment[fr]=Un utilitaire pour lire et manipuler les images RAW des appareils photos numériques
