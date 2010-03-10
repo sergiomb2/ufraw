@@ -711,7 +711,7 @@ msgstr ""
 "Posizione:\t\t%s\n"
 "Fattore di crop:\t%.1f"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
@@ -724,7 +724,7 @@ msgstr ""
 "Produttore:\t\t%s\n"
 "Modello:\t\t%s\n"
 "Estensione Focale:\t%s\n"
-"Apertura:\t\t%s\n"
+"Apertura:\t%s\n"
 "Fattore riduzione:\t%.1f\n"
 "Tipo:\t\t%s\n"
 "Posizione:\t\t%s"
@@ -1713,6 +1713,3 @@ msgstr "Bilanciamento del bianco - Fotocamera"
 
 msgid "Auto WB"
 msgstr "Bilanciamento del bianco - Automatico"
-
-#~ msgid "'%s' is not a valid lensfun option."
-#~ msgstr "'%s' non è un'opzione valida per la correzzione ottica."
