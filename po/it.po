@@ -22,11 +22,11 @@ msgstr "Apri finestra navigatore"
 
 #, c-format
 msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
+msgstr "Valore  %.*f troppo grande, truncato a %.*f."
 
 #, c-format
 msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
+msgstr "Valore  %.*f troppo piccolo, truncato a %.*f."
 
 msgid "No input file, nothing to do."
 msgstr "Nessun file input, niente da fare."
@@ -355,9 +355,8 @@ msgstr ""
 "                      Algoritmo di interpolazione da utilizzare "
 "(predefinito: ahd).\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "Applica definizione colore"
+msgstr "--color-smoothing  Applica definizione colore.\n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -402,11 +401,10 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=VALUE   Compressione JPEG (0-100, predefinita 85).\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
-"--[no]exif            Integra nell'output JPEG E PNG i dati EXIF "
-"(integrazione predefinita).\n"
+"--[no]exif          Integra nell'output JPEG E PNG i dati EXIF\n"
+" (integrazione predefinita).\n"
 
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
@@ -450,6 +448,9 @@ msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
 "                      correction by auto-detecting the lens (default none).\n"
 msgstr ""
+"--lensfun=none|auto   Non applica la correzione ottica oppure cerca di "
+"applicarla\n"
+"                      riconoscendo automaticamente le lenti (default none).\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -480,7 +481,6 @@ msgstr ""
 "--silent              Non mostrare alcun messaggio durante la conversione "
 "batch.\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -744,9 +744,8 @@ msgstr "F-numero (apertura)"
 msgid "Distance"
 msgstr "Distanza"
 
-#, fuzzy
 msgid "Distance to subject in meters"
-msgstr "Distanza dal soggetto"
+msgstr "Distanza al soggetto in metri"
 
 #. Add the model combobox
 msgid "Model:"
@@ -886,19 +885,17 @@ msgstr "dimensione %dx%d, zoom %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "dimensione %dx%d, scala 1/%d"
 
-#, fuzzy
 msgid "Wavelet denoising"
-msgstr "Soglia per il wavelet denoising"
+msgstr "Riduzione del rumore"
 
 msgid "Despeckling"
-msgstr ""
+msgstr "Smacchiatura"
 
-#, fuzzy
 msgid "Interpolating"
-msgstr "Nessuna interpolazione"
+msgstr "Interpolazione"
 
 msgid "Rendering"
-msgstr ""
+msgstr "Rendering"
 
 msgid "Loading preview"
 msgstr "Caricamento anteprima"
@@ -910,15 +907,14 @@ msgstr "Salvataggio immagine"
 msgid "Black point: %0.3lf"
 msgstr "Punto di nero: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "Spazio esaurito per nuove curve."
+msgstr "Non e possibile fare altre correzzioni di luminostà"
 
 msgid "Aspect ratio locked, click to unlock"
-msgstr ""
+msgstr "Rapporto dimensioni bloccato, click per sbloccarlo"
 
 msgid "Aspect ratio unlocked, click to lock"
-msgstr ""
+msgstr "Rapporto dimensioni sbloccato, click per bloccarlo"
 
 msgid "Load dark frame"
 msgstr "Carica darkframe"
@@ -1093,11 +1089,9 @@ msgstr "Sottoesposto:"
 msgid "White Balance"
 msgstr "Bilanciamento del bianco"
 
-#, fuzzy
 msgid "Cannot use camera white balance."
 msgstr ""
-"Non è possibile utilizzare il bilanciamento del bianco della fotocamera, si "
-"utilizzerà quello automatico."
+"Non è possibile utilizzare il bilanciamento del bianco della fotocamera."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1173,17 +1167,14 @@ msgstr "Darkframe:"
 msgid "Reset dark frame"
 msgstr "Ripristina darkframe"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "Aggiustamento globale del contrasto"
+msgstr "Reset sistemazione"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
 msgstr "Seleziona un punto sull'anteprima immagine per scegliere la tonalità"
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "Aggiustamento globale del contrasto"
+msgstr "Rimuovi sistemazione"
 
 msgid "Grayscale Mode:"
 msgstr "Modalità scala di grigio:"
@@ -1211,7 +1202,6 @@ msgstr ""
 msgid "Update channel parameters together"
 msgstr "Aggiorna contemporaneamente i parametri di canale"
 
-#, fuzzy
 msgid "Reset despeckle parameters"
 msgstr "Azzera i parametri di smacchiatura"
 
@@ -1331,7 +1321,7 @@ msgid "Bottom:"
 msgstr "Basso:"
 
 msgid "Auto fit crop area"
-msgstr ""
+msgstr "Adattamento automatico area di ritaglio"
 
 msgid "Reset the crop region"
 msgstr "Ripristina la regione di taglio"
@@ -1360,23 +1350,19 @@ msgstr "Altezza"
 msgid "Orientation:"
 msgstr "Orientamento:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "Saturazione"
+msgstr "Rotazione"
 
-#, fuzzy
 msgid "Rotation angle"
-msgstr "Saturazione"
+msgstr "Angolo di Rotazione"
 
-#, fuzzy
 msgid "Reset rotation angle"
-msgstr "Saturazione"
+msgstr "Azzera Angolo di Rotazione"
 
 #. drawLines toggle button
 msgid "Grid lines"
 msgstr "Linee Griglia"
 
-#, fuzzy
 msgid "Number of grid lines to overlay in the crop area"
 msgstr "Numero di linee griglia per sovrapporre l'area tagliata"
 
@@ -1398,9 +1384,8 @@ msgstr "Codifica progressiva JPEG"
 msgid "TIFF lossless Compress"
 msgstr "Compressione TIFF senza perdita"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr "Integra dati EXIF nei file JPEG e PNG"
+msgstr "Integra dati EXIF nel file da registrare"
 
 msgid "Create ID file "
 msgstr "Crea file ID"
@@ -1509,9 +1494,8 @@ msgstr "Gestione colore"
 msgid "Correct luminosity, saturation"
 msgstr "Corretta luminosità, saturazione"
 
-#, fuzzy
 msgid "Lightness Adjustments"
-msgstr "Luminosità"
+msgstr "Correzzione Luminosità"
 
 msgid "Crop and rotate"
 msgstr "Taglia e ruota"
@@ -1729,3 +1713,6 @@ msgstr "Bilanciamento del bianco - Fotocamera"
 
 msgid "Auto WB"
 msgstr "Bilanciamento del bianco - Automatico"
+
+#~ msgid "'%s' is not a valid lensfun option."
+#~ msgstr "'%s' non è un'opzione valida per la correzzione ottica."
