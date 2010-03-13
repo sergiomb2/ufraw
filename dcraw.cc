@@ -5997,7 +5997,11 @@ void CLASS parse_foveon()
     switch (tag) {
       case 0x47414d49:			/* IMAG */
       case 0x32414d49:			/* IMA2 */
-	fseek (ifp, 12, SEEK_CUR);
+	fseek (ifp, 8, SEEK_CUR);
+	if (get4() == 30) {		/* SIGMA DPx cameras are unsupported */
+	  is_foveon = 0;
+	  return;
+	}
 	wide = get4();
 	high = get4();
 	if (wide > raw_width && high > raw_height) {
