@@ -30,7 +30,10 @@
 #include "dcraw_api.h"
 #include "dcraw.h"
 
-#define FORCC for (c=0; c < colors; c++)
+#define FORC(cnt) for (c=0; c < cnt; c++)
+#define FORC3 FORC(3)
+#define FORC4 FORC(4)
+#define FORCC FORC(colors)
 #define FC(filters,row,col) \
     (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 extern "C" {
@@ -63,6 +66,7 @@ void fuji_rotate_INDI(gushort (**image_p)[4], int *height_p, int *width_p,
 int dcraw_open(dcraw_data *h, char *filename)
 {
     DCRaw *d = new DCRaw;
+    int c, i;
 
 #ifndef LOCALTIME
     putenv (const_cast<char *>("TZ=UTC"));
@@ -131,6 +135,10 @@ int dcraw_open(dcraw_data *h, char *filename)
     // camera-wb. If they'll change we will recalculate the camera-wb.
     h->rgbMax = d->maximum;
     h->black = d->black;
+    i = d->cblack[3];
+    FORC3 if ((unsigned)i > d->cblack[c]) i = d->cblack[c];
+    FORC4 d->cblack[c] -= i;
+    h->black += i;
     h->shrink = d->shrink = (h->filters!=0);
     h->pixel_aspect = d->pixel_aspect;
     /* copied from dcraw's main() */
@@ -186,7 +194,7 @@ void dcraw_image_dimensions(dcraw_data *raw, int flip, int shrink,
 int dcraw_load_raw(dcraw_data *h)
 {
     DCRaw *d = (DCRaw *)h->dcraw;
-    int i, j;
+    int c, i, j;
     double dmin;
 
     g_free(d->messageBuffer);
@@ -233,6 +241,10 @@ int dcraw_load_raw(dcraw_data *h)
     // load_raw. If they change, document where. If not, move to dcraw_open().
     h->rgbMax = d->maximum;
     h->black = d->black;
+    i = d->cblack[3];
+    FORC3 if ((unsigned)i > d->cblack[c]) i = d->cblack[c];
+    FORC4 d->cblack[c] -= i;
+    h->black += i;
     d->dcraw_message(DCRAW_VERBOSE,_("Black: %d, Maximum: %d\n"),
 	    d->black, d->maximum);
     dmin = DBL_MAX;
