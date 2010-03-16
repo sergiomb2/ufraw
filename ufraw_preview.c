@@ -27,6 +27,16 @@
 #include <string.h>
 #include <math.h>
 #include <errno.h>
+
+#ifdef _OPENMP
+#include <omp.h>
+#define uf_omp_get_thread_num() omp_get_thread_num() 
+#define uf_omp_get_max_threads() omp_get_max_threads()
+#else
+#define uf_omp_get_thread_num() 0
+#define uf_omp_get_max_threads() 1
+#endif
+
 #if GTK_CHECK_VERSION(2,6,0)
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 #endif
@@ -1134,30 +1144,37 @@ static gboolean render_preview_image(preview_data *data)
     int chosen = 0;
 
     if (data->FreezeDialog) return FALSE;
+    int subarea[uf_omp_get_max_threads()];
+    int i;
+    for (i = 0; i < uf_omp_get_max_threads(); i++)
+	subarea[i] = -1;
 #ifdef _OPENMP
 #pragma omp parallel shared(chosen,data) reduction(||:again)
     {
-#endif
-    int subarea;
-#ifdef _OPENMP
 #pragma omp critical
 #endif
-    subarea = choose_subarea(data, &chosen);
-    if (subarea < 0) {
+    subarea[uf_omp_get_thread_num()] = choose_subarea(data, &chosen);
+    if (subarea[uf_omp_get_thread_num()] < 0) {
         data->RenderSubArea = -1;
     } else {
-	ufraw_image_data *img1 = ufraw_convert_image_area(data->UF,
-		subarea, ufraw_phases_num - 1);
-	UFRectangle area = ufraw_image_get_subarea_rectangle(img1, subarea);
-	preview_draw_area(data, area.x, area.y, area.width, area.height);
-	progress(PROGRESS_RENDER, 1);
+	ufraw_convert_image_area(data->UF,
+		subarea[uf_omp_get_thread_num()], ufraw_phases_num - 1);
 	again = TRUE;
     }
 
 #ifdef _OPENMP
     }
 #endif
-
+    ufraw_image_data *img = ufraw_get_image(data->UF,
+	    ufraw_display_phase, FALSE);
+    for (i = 0; i < uf_omp_get_max_threads(); i++) {
+	if (subarea[i] >= 0) {
+	    UFRectangle area = ufraw_image_get_subarea_rectangle(img,
+		    subarea[i]);
+	    preview_draw_area(data, area.x, area.y, area.width, area.height);
+	    progress(PROGRESS_RENDER, 1);
+	}
+    }
     if (!again) {
 	preview_progress_disable(data);
 	gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
