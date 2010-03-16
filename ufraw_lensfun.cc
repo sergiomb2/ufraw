@@ -124,7 +124,7 @@ public:
 	parse_maker_model(StringValue(), make, sizeof(make),
 		model, sizeof(model));
 	const lfLens **lensList = Lensfun.LensDB()->FindLenses(&Lensfun.Camera,
-		make, model, 0);
+		make, model, LF_SEARCH_LOOSE);
 	if (lensList == NULL) {
 	    lfLens emptyLens;
 	    Lensfun.SetInterpolation(emptyLens);
@@ -626,7 +626,7 @@ void Lensfun::Init() {
     if (LensfunAuto.IsEqual("yes")) {
 	if (strlen(uf->conf->lensText) > 0) {
 	    const lfLens **lenses = LensDB()->FindLenses(&Camera,
-		    NULL, uf->conf->lensText);
+		    NULL, uf->conf->lensText, LF_SEARCH_LOOSE);
 	    if (lenses != NULL) {
 		SetLensModel(*lenses[0]);
 		LensfunAuto.Set("yes");
