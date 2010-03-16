@@ -4,13 +4,13 @@
 #
 # This file is distributed under the same license as the ufraw package.
 #
-# Miloš Popović <gpopac@gmail.com>
+# Miloš Popović <gpopac@gmail.com>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-03-16 08:00+0100\n"
-"PO-Revision-Date: 2009-09-30 14:38+0000\n"
+"PO-Revision-Date: 2010-03-16 12:54+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
 "MIME-Version: 1.0\n"
@@ -25,11 +25,11 @@ msgstr "Otvori navigacioni prozor"
 
 #, c-format
 msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
+msgstr "Vrednost %.*f je prevelika, skraćujem na %.*f."
 
 #, c-format
 msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
+msgstr "Vrednost %.*f je premala, povećavam na %.*f."
 
 msgid "No input file, nothing to do."
 msgstr "Nema ulazne datoteke."
@@ -456,6 +456,10 @@ msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
 "                      correction by auto-detecting the lens (default none).\n"
 msgstr ""
+"--lensfun=none|auto   Ne ispravlja izobličenja sočiva ili\n"
+"                      pokušava da automatski pronađe objektiv kojim \n"
+"                      je slikano i sam ispravi izobličenja (podrazumevano\n"
+"                      ne ispravlja izobličenja).\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -713,7 +717,7 @@ msgstr ""
 "Stativ:\t\t%s\n"
 "Faktor isecanja:\t%.1f"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
@@ -723,12 +727,12 @@ msgid ""
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
-"Tvorac:\t\t%s\n"
-"Model:\t\t%s\n"
+"Proizvođač:\t\t%s\n"
+"Model:\t\t\t%s\n"
 "Žižna daljina:\t%s\n"
-"Otvor blende:\t\t%s\n"
-"Faktor isecanja:\t%.1f\n"
-"Vrsta:\t\t%s\n"
+"Otvor blende:\t%s\n"
+"Isecanje senzora:%.1f\n"
+"Vrsta:\t\t\t%s\n"
 "Stativi:\t\t%s"
 
 msgid "Focal"
@@ -746,9 +750,8 @@ msgstr "F-broj (otvor blende)"
 msgid "Distance"
 msgstr "Udaljenost"
 
-#, fuzzy
 msgid "Distance to subject in meters"
-msgstr "Udaljenost od motiva"
+msgstr "Udaljenost od motiva u metrima"
 
 #. Add the model combobox
 msgid "Model:"
@@ -794,7 +797,7 @@ msgid "Choose camera from complete list"
 msgstr "Bira kameru iz celokupnog spiska"
 
 msgid "Reset all lens correction settings"
-msgstr ""
+msgstr "Vraća sva podešavanja sočiva"
 
 #. Lens selector
 msgid "Lens"
@@ -811,7 +814,7 @@ msgid "Choose lens from list of possible variants"
 msgstr "Bira objektiv iz celokupnog spiska"
 
 msgid "Automatically find lens and set lens corrections"
-msgstr ""
+msgstr "Sam nalazi model objektiva i ispravlja izobličenja"
 
 msgid "Lateral chromatic aberration"
 msgstr "Bočne hromatske aberacije"
@@ -888,19 +891,17 @@ msgstr "veličina %dx%d, uvećanje %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "veličina %dx%d, u razmeri 1/%d"
 
-#, fuzzy
 msgid "Wavelet denoising"
-msgstr "Osetljivost za talasno uklanjanje šuma"
+msgstr "Talasno uklanjanje šuma"
 
 msgid "Despeckling"
-msgstr ""
+msgstr "Rasplitanje"
 
-#, fuzzy
 msgid "Interpolating"
-msgstr "Bez interpolacije"
+msgstr "Primenjujem interpolaciju"
 
 msgid "Rendering"
-msgstr ""
+msgstr "Iscrtavam"
 
 msgid "Loading preview"
 msgstr "Učitavam pregled"
@@ -916,10 +917,10 @@ msgid "No more room for new lightness adjustments."
 msgstr "Nema mesta za nova podešavanja osvetljenja."
 
 msgid "Aspect ratio locked, click to unlock"
-msgstr ""
+msgstr "Razmera je zaključana, kliknite da je otključate"
 
 msgid "Aspect ratio unlocked, click to lock"
-msgstr ""
+msgstr "Razmera je otključana, kliknite da je zaključate"
 
 msgid "Load dark frame"
 msgstr "Učitaj tamni kadar"
@@ -1054,7 +1055,7 @@ msgid "Hot pixels: "
 msgstr "Pregoreli pikseli:"
 
 msgid "mark"
-msgstr ""
+msgstr "označi"
 
 msgid "Hot pixel sensitivity"
 msgstr "Osetljivost na pregorevanje"
@@ -1095,18 +1096,17 @@ msgstr "Podeksponirano:"
 msgid "White Balance"
 msgstr "Ravnoteža bele"
 
-#, fuzzy
 msgid "Cannot use camera white balance."
-msgstr "Ne mogu da koristim ravnotežu bele iz kamere, sam određujem ravnotežu."
+msgstr "Ne mogu da koristim ravnotežu bele iz aparata."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
 "Check UFRaw's webpage for information on how to get your\n"
 "camera supported."
 msgstr ""
-"Ne postoje podešavanja ravnoteže bele za vaš odel kamere.\n"
-"Proverite NLRaw veb stranicu za podatke o uključivanju vaše\n"
-"kamere u listu podržanih."
+"Ne postoje podešavanja ravnoteže bele za vaš foto-aparat.\n"
+"Proverite NLRaw veb stranicu za podatke o uključivanju\n"
+"vašeg aparata u listu podržanih."
 
 msgid "Reset white balance to initial value"
 msgstr "Vrati ravnotežu bele na početnu vrednost"
@@ -1195,27 +1195,33 @@ msgid ""
 "Despeckling is off when window size or passes equals zero. When on then "
 "window size cannot be smaller than the number of passes."
 msgstr ""
+"Rasplitanje je korisno kada upotrebite veliku ISO vrednost i velike množioce "
+"kanala: kada je određeni kanal ima loš odnos signala i šuma. Pokušajte da "
+"postavite vrednosti veličine prozora, smanjenja boje i broja prolaza na "
+"50,0,5 za taj kanal. Kada kanal sadrži samo šum, probajte vrednosti "
+"1,0.6,1.\n"
+"Despeckling is off when window size or passes equals zero. When on then "
+"window size cannot be smaller than the number of passes."
 
 msgid "Update channel parameters together"
-msgstr ""
+msgstr "Osvežava sve vrednosti kanala zajedno"
 
-#, fuzzy
 msgid "Reset despeckle parameters"
-msgstr "Poništi tamni kadar"
+msgstr "Poništiava vrednosti za rasplitanje"
 
 #. channel to view
 msgid "View channel:"
-msgstr ""
+msgstr "Prikaz kanala:"
 
 #. Parameters
 msgid "Window size:"
-msgstr ""
+msgstr "Veličina prozora:"
 
 msgid "Color decay:"
-msgstr ""
+msgstr "Smanjenje boje:"
 
 msgid "Passes:"
-msgstr ""
+msgstr "Broj prolaza:"
 
 msgid "Load base curve"
 msgstr "Učitaj osnovnu krivu"
@@ -1319,7 +1325,7 @@ msgid "Bottom:"
 msgstr "Dole:"
 
 msgid "Auto fit crop area"
-msgstr ""
+msgstr "Sam iseca sliku na najbolju veličinu"
 
 msgid "Reset the crop region"
 msgstr "Poništi region za isecanje"
@@ -1351,21 +1357,18 @@ msgstr "Okretanje:"
 msgid "Rotation"
 msgstr "Rotacija"
 
-#, fuzzy
 msgid "Rotation angle"
 msgstr "Ugao rotacije"
 
-#, fuzzy
 msgid "Reset rotation angle"
-msgstr "Poništi ugao rotacije"
+msgstr "Poništiava ugao rotacije"
 
 #. drawLines toggle button
 msgid "Grid lines"
-msgstr ""
+msgstr "Linije mreže"
 
-#, fuzzy
 msgid "Number of grid lines to overlay in the crop area"
-msgstr "Broj linija za poravnanje prikazanih iznad oblasti za isecanje"
+msgstr "Broj linija u mreži koje se prikazuju iznad slike"
 
 msgid "Path"
 msgstr "Putanja"
