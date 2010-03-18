@@ -134,11 +134,11 @@ int dcraw_open(dcraw_data *h, char *filename)
     // maximun and black might change during load_raw. We need them for the
     // camera-wb. If they'll change we will recalculate the camera-wb.
     h->rgbMax = d->maximum;
-    h->black = d->black;
     i = d->cblack[3];
     FORC3 if ((unsigned)i > d->cblack[c]) i = d->cblack[c];
     FORC4 d->cblack[c] -= i;
-    h->black += i;
+    d->black += i;
+    h->black = d->black;
     h->shrink = d->shrink = (h->filters!=0);
     h->pixel_aspect = d->pixel_aspect;
     /* copied from dcraw's main() */
@@ -240,11 +240,11 @@ int dcraw_load_raw(dcraw_data *h)
     // TODO: Go over the following settings to see if they change during
     // load_raw. If they change, document where. If not, move to dcraw_open().
     h->rgbMax = d->maximum;
-    h->black = d->black;
     i = d->cblack[3];
     FORC3 if ((unsigned)i > d->cblack[c]) i = d->cblack[c];
     FORC4 d->cblack[c] -= i;
-    h->black += i;
+    d->black += i;
+    h->black = d->black;
     d->dcraw_message(DCRAW_VERBOSE,_("Black: %d, Maximum: %d\n"),
 	    d->black, d->maximum);
     dmin = DBL_MAX;
