@@ -1,16 +1,16 @@
 # Korean translation for UFRaw.
 # Copyright (C) 2006-2010 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-# Homin,Lee <ff4500@gmail.com>, 2007-2009.
+# Homin,Lee <ff4500@gmail.com>, 2007-2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: Homin Lee <ff4500@gmail.com>\n"
 "POT-Creation-Date: 2010-03-16 08:00+0100\n"
-"PO-Revision-Date: 2009-10-06 09:38+0900\n"
+"PO-Revision-Date: 2010-03-18 14:45+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
-"Language-Team: Gnome-kr-hackers <gnome-kr-hackers@lists.kldp.net>\n"
+"Language-Team: Gnome-kr-hackers <gnome-kr@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,11 +24,11 @@ msgstr "네비게이션 창 열기"
 
 #, c-format
 msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
+msgstr "값 %.*f이(가) 너무 커서, %.*f로 조정합니다."
 
 #, c-format
 msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
+msgstr "값 %.*f이(가) 너무 작아서, %.*f로 조정합니다."
 
 msgid "No input file, nothing to do."
 msgstr "입력 파일이 없으므로 아무것도 하지 않습니다."
@@ -204,14 +204,11 @@ msgid ""
 "One can also use an ID file with the option:\n"
 msgstr ""
 "입력 파일로는 raw 이미지나 ufraw의 ID 파일이 가능합니다.\n"
-"ID 파일은 raw 이미지의 파일 이름과 이미지를 처리하기 위한 조정값을 포함합니"
-"다.\n"
+"ID 파일은 raw 이미지의 파일 이름과 이미지를 처리하기 위한 조정값을 포함합니다.\n"
 "ID 파일과 함께 사용 가능한 옵션은 다음과 같습니다:\n"
 
-msgid ""
-"--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
-msgstr ""
-"--conf=ID-file        ID-file에 있는 파라미터를 다른 raw 이미지에 적용함.\n"
+msgid "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+msgstr "--conf=ID-file        ID-file에 있는 파라미터를 다른 raw 이미지에 적용함.\n"
 
 msgid "The rest of the options are separated into two groups.\n"
 msgstr "나머지 옵션들은 두 그룹으로 분리 됩니다.\n"
@@ -290,8 +287,7 @@ msgstr ""
 "                      'digital' linear digital sensor response.\n"
 "                      'film' emulate soft film response. (default digital).\n"
 
-msgid ""
-"--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+msgid "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
 msgstr "--gamma=GAMMA         기본 곡선의 감마 보정값 (기본값 0.45).\n"
 
 msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
@@ -300,9 +296,7 @@ msgstr "--linearity=LINEARITY 기본 곡선읜 선형도 (기본값 0.10).\n"
 msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
 msgstr "--contrast=CONT       대비 조정 (기본값 1.0)\n"
 
-msgid ""
-"--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W "
-"output).\n"
+msgid "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"
 msgstr "--saturation=SAT      채도 조정 (기본값 1.0, 흑백 사진을 원하면 0).\n"
 
 msgid ""
@@ -314,16 +308,14 @@ msgstr ""
 
 msgid ""
 "--hotpixel-sensitivity=VALUE\n"
-"                      Sensitivity for detecting and shaving hot pixels "
-"(default 0.0).\n"
+"                      Sensitivity for detecting and shaving hot pixels (default 0.0).\n"
 msgstr ""
 "--hotpixel-sensitivity=VALUE\n"
 "                      핫픽셀을 감지하고 제거하기 위한 감도 (기본값 0.0).\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
-"                      Auto exposure or exposure correction in EV (default "
-"0).\n"
+"                      Auto exposure or exposure correction in EV (default 0).\n"
 msgstr ""
 "--exposure=auto|EXPOSURE\n"
 "                      자동 노출 보정| 노출 보정 값 EV (기본값 0).\n"
@@ -384,11 +376,8 @@ msgstr "--compression=VALUE   JPEG 압축률 (0-100, 기본값 85).\n"
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr "--[no]exif            출력에 EXIF 포함 여부(기본값 exif).\n"
 
-msgid ""
-"--[no]zip             Enable [disable] TIFF zip compression (default "
-"nozip).\n"
-msgstr ""
-"--[no]zip             TIFF zip 압축을 활성[비활성] 하기 (기본값 nozip).\n"
+msgid "--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"
+msgstr "--[no]zip             TIFF zip 압축을 활성[비활성] 하기 (기본값 nozip).\n"
 
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
@@ -400,68 +389,57 @@ msgstr ""
 msgid ""
 "--rotate=camera|ANGLE|no\n"
 "                      Rotate image to camera's setting, by ANGLE degrees\n"
-"                      clockwise, or do not rotate the image (default "
-"camera).\n"
+"                      clockwise, or do not rotate the image (default camera).\n"
 msgstr ""
 "--rotate=camera|ANGLE|no\n"
-"                      카메라 설정에 따라 회전|ANGLE 값(각)으로 시계 방향 회"
-"전|\n"
+"                      카메라 설정에 따라 회전|ANGLE 값(각)으로 시계 방향 회전|\n"
 "                      회전하지 않음 (기본값 camera).\n"
 
 msgid ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
-"                      Crop the output to the given pixel range, relative to "
-"the\n"
+"                      Crop the output to the given pixel range, relative to the\n"
 "                      raw image after rotation but before any scaling.\n"
 msgstr ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
-"                      주어진 픽셀 영역 만큼 출력물을 잘라(Crop)낸다. 이미지"
-"를 회전한 후,\n"
+"                      주어진 픽셀 영역 만큼 출력물을 잘라(Crop)낸다. 이미지를 회전한 후,\n"
 "                      스케일 되기 전에 값이 적용 된다.\n"
 
 msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
 "                      correction by auto-detecting the lens (default none).\n"
 msgstr ""
+"--lensfun=none|auto   렌즈 보정을 하지 않거나 렌즈를 자동으로 감지하여\n"
+"                      보정 실행 (기본값 none).\n"
 
-msgid ""
-"--out-path=PATH       PATH for output file (default use input file's path).\n"
-msgstr ""
-"--out-path=PATH       출력 파일의 경로 (기본값 입력 파일의 경로 사용).\n"
+msgid "--out-path=PATH       PATH for output file (default use input file's path).\n"
+msgstr "--out-path=PATH       출력 파일의 경로 (기본값 입력 파일의 경로 사용).\n"
 
 msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
-msgstr ""
-"--output=FILE         출력 파일 이름, 표준출력으로 내보내려면 '-'를 사용하세"
-"요.\n"
+msgstr "--output=FILE         출력 파일 이름, 표준출력으로 내보내려면 '-'를 사용하세요.\n"
 
 msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
 msgstr "--darkframe=FILE      핫픽셀 제거를 위한 다크프레임 파일.\n"
 
-msgid ""
-"--overwrite           Overwrite existing files without asking (default no).\n"
+msgid "--overwrite           Overwrite existing files without asking (default no).\n"
 msgstr "--overwrite           기존 파일에 덮어 쓰기 (기본값 no).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
 msgstr "--maximize-window     창 크기를 강제로 최대화 하기.\n"
 
-msgid ""
-"--silent              Do not display any messages during batch conversion.\n"
+msgid "--silent              Do not display any messages during batch conversion.\n"
 msgstr "--silent              변환하는 동안 아무 메시지도 표시하지 않음.\n"
 
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
-"Then, if an ID file is specified, its setting are read. Next, the setting "
-"from\n"
-"the --conf option are taken, ignoring input/output filenames in the ID "
-"file.\n"
-"Lastly, the options from the command line are set. In batch mode, the "
-"second\n"
+"Then, if an ID file is specified, its setting are read. Next, the setting from\n"
+"the --conf option are taken, ignoring input/output filenames in the ID file.\n"
+"Lastly, the options from the command line are set. In batch mode, the second\n"
 "group of options is NOT read from the resource file.\n"
 msgstr ""
 "UFRaw는 가장 먼저 $HOME/.ufrawrc 리소스 파일의 설정들을 읽습니다.\n"
-"다음으로, 지정한 ID파일(이 있으면) 에서 설정을 읽고, --conf 옵션으로 받은\n"
+"다음으로, 지정한 ID파일(이 있으면)에서 설정을 읽고, --conf 옵션으로 받은\n"
 "설정을 읽습니다. ID파일의 입/출력 파일 이름은 무시합니다.\n"
-"마지막으로, 커맨드 라인으로 주어진 옵션들이 설정됩니다. 배치모드 에서는\n"
+"마지막으로, 커맨드 라인으로 주어진 옵션들이 설정됩니다. 배치모드에서는\n"
 "두번재 그룹의 옵션들은 리소스 파일에서 읽지 않습니다.\n"
 
 msgid ""
@@ -672,7 +650,7 @@ msgstr ""
 "마운트:\t\t%s\n"
 "크롭 배수:\t%.1f"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
@@ -705,9 +683,8 @@ msgstr "F-값 (조리개)"
 msgid "Distance"
 msgstr "거리"
 
-#, fuzzy
 msgid "Distance to subject in meters"
-msgstr "피사체 까지의 거리"
+msgstr "피사체 까지의 거리(미터)"
 
 #. Add the model combobox
 msgid "Model:"
@@ -753,7 +730,7 @@ msgid "Choose camera from complete list"
 msgstr "전체 리스트에서 카메라를 선택"
 
 msgid "Reset all lens correction settings"
-msgstr ""
+msgstr "렌즈 보정 설정 초기화"
 
 #. Lens selector
 msgid "Lens"
@@ -770,7 +747,7 @@ msgid "Choose lens from list of possible variants"
 msgstr "가능한 리스트에서 렌즈 선택"
 
 msgid "Automatically find lens and set lens corrections"
-msgstr ""
+msgstr "자동으로 렌즈를 찾아서 렌즈 보정값 설정"
 
 msgid "Lateral chromatic aberration"
 msgstr "측면 색수차"
@@ -847,19 +824,17 @@ msgstr "사이즈 %dx%d, 확대 %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "사이즈 %dx%d, 스케일 1/%d"
 
-#, fuzzy
 msgid "Wavelet denoising"
-msgstr "잔 노이즈 제거를 위한 임계값"
+msgstr "잔 노이즈 제거"
 
 msgid "Despeckling"
-msgstr ""
+msgstr "얼룩 제거"
 
-#, fuzzy
 msgid "Interpolating"
-msgstr "보간법 없음"
+msgstr "보간법"
 
 msgid "Rendering"
-msgstr ""
+msgstr "렌더링"
 
 msgid "Loading preview"
 msgstr "미리보기 불러오는 중"
@@ -875,10 +850,10 @@ msgid "No more room for new lightness adjustments."
 msgstr "새 밝기 조정을 저장할 공간이 없습니다."
 
 msgid "Aspect ratio locked, click to unlock"
-msgstr ""
+msgstr "종횡비가 고정되었음. 클릭하면 고정을 풉니다"
 
 msgid "Aspect ratio unlocked, click to lock"
-msgstr ""
+msgstr "종횡비가 고정되지 않음. 클릭하면 고정합니다."
 
 msgid "Load dark frame"
 msgstr "다크프레임 불러오기"
@@ -979,8 +954,7 @@ msgid "About"
 msgstr "정보"
 
 msgid ""
-"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
-"to\n"
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility to\n"
 "read and manipulate raw images from digital cameras.\n"
 "UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
 "for the actual encoding of the raw images.\n"
@@ -989,8 +963,7 @@ msgid ""
 "Homepage: http://ufraw.sourceforge.net/\n"
 "\n"
 msgstr ""
-"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility "
-"to\n"
+"The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility to\n"
 "read and manipulate raw images from digital cameras.\n"
 "UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
 "for the actual encoding of the raw images.\n"
@@ -1013,7 +986,7 @@ msgid "Hot pixels: "
 msgstr "핫픽셀: "
 
 msgid "mark"
-msgstr ""
+msgstr "표시"
 
 msgid "Hot pixel sensitivity"
 msgstr "핫픽셀 감도"
@@ -1054,10 +1027,8 @@ msgstr "노출부족:"
 msgid "White Balance"
 msgstr "화이트 벨런스"
 
-#, fuzzy
 msgid "Cannot use camera white balance."
-msgstr ""
-"카메라 화이트 벨런스를 사용할 수 없으므로, 자동 화이트 벨런스로 되돌립니다."
+msgstr "카메라의 화이트 벨런스를 사용할 수 없음."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1084,8 +1055,7 @@ msgid "Green component"
 msgstr "녹색 성분"
 
 msgid "Select a spot on the preview image to apply spot white balance"
-msgstr ""
-"스팟 화이트 벨런스를 적용하기 위해 미리보기 이미지 중 스팟(부분)을 선택하세요"
+msgstr "스팟 화이트 벨런스를 적용하기 위해 미리보기 이미지 중 스팟(부분)을 선택하세요"
 
 msgid "Chan. multipliers:"
 msgstr "재널 증폭:"
@@ -1148,34 +1118,31 @@ msgid "Reset channel mixer"
 msgstr "채널 믹서 초기화"
 
 msgid ""
-"Despeckling is mainly useful when combining a high ISO number with a high "
-"channel multiplier: when one channel has a very bad signal to noise ratio. "
-"Try setting window size, color decay and number of passes to 50,0,5 for that "
-"channel. When a channel contains only noise then try 1,0.6,1.\n"
-"Despeckling is off when window size or passes equals zero. When on then "
-"window size cannot be smaller than the number of passes."
+"Despeckling is mainly useful when combining a high ISO number with a high channel multiplier: when one channel has a very bad signal to noise ratio. Try setting window size, color decay and number of passes to 50,0,5 for that channel. When a channel contains only noise then try 1,0.6,1.\n"
+"Despeckling is off when window size or passes equals zero. When on then window size cannot be smaller than the number of passes."
 msgstr ""
+"얼룩 제거는 높은 ISO에 높은 채널 배수를 조합할 때 즉, 채널 하나에 신호대비 노이즈가 매우 많은 경우 유용합니다. 노이즈가 많은 채널에 창 크기, 색상 바램, 회수를 50,0,5로 설정해 보세요. 채널이 노이즈로 가득 찬 경우에는 1,0.6,1을 사용해 보세요. \n"
+"창 크기에나 회수에 0을 넣으면 얼룩 제거기능을 수행하지 않습니다. 얼룩 제거 기능을 활성화 한 경우 창 크기에는 회수보다 큰 값을 입력해야 합니다."
 
 msgid "Update channel parameters together"
-msgstr ""
+msgstr "채널 파라미터도 함께 업데이트"
 
-#, fuzzy
 msgid "Reset despeckle parameters"
-msgstr "다크프레임 초기화"
+msgstr "얼룩제거 파라미터 초기화"
 
 #. channel to view
 msgid "View channel:"
-msgstr ""
+msgstr "채널 보이기:"
 
 #. Parameters
 msgid "Window size:"
-msgstr ""
+msgstr "창 크기:"
 
 msgid "Color decay:"
-msgstr ""
+msgstr "색상 바램:"
 
 msgid "Passes:"
-msgstr ""
+msgstr "회수:"
 
 msgid "Load base curve"
 msgstr "기본 곡선 불러오기"
@@ -1279,7 +1246,7 @@ msgid "Bottom:"
 msgstr "아래:"
 
 msgid "Auto fit crop area"
-msgstr ""
+msgstr "자동 맞춤 크롭 영역"
 
 msgid "Reset the crop region"
 msgstr "잘라내기 영역을 초기화"
@@ -1311,21 +1278,18 @@ msgstr "기준:"
 msgid "Rotation"
 msgstr "회전"
 
-#, fuzzy
 msgid "Rotation angle"
 msgstr "회전 각"
 
-#, fuzzy
 msgid "Reset rotation angle"
 msgstr "회전 각 초기화"
 
 #. drawLines toggle button
 msgid "Grid lines"
-msgstr ""
+msgstr "안내 선"
 
-#, fuzzy
 msgid "Number of grid lines to overlay in the crop area"
-msgstr "크롭 영역과 겹치는 조정 선의 개수"
+msgstr "크롭 영역에 표시되는 안내선의 개수"
 
 msgid "Path"
 msgstr "경로"
@@ -1520,8 +1484,7 @@ msgid "Error activating Gimp."
 msgstr "김프 실행 중 오류 발생."
 
 msgid "Cannot use camera white balance, reverting to auto white balance.\n"
-msgstr ""
-"카메라 화이트 벨런스를 사용할 수 없으므로, 자동 화이트 벨런스로 되돌립니다.\n"
+msgstr "카메라 화이트 벨런스를 사용할 수 없으므로, 자동 화이트 벨런스로 되돌립니다.\n"
 
 #, c-format
 msgid "--temperature and --green options override the --wb=%s option."
@@ -1672,3 +1635,8 @@ msgstr "카메라 화벨"
 
 msgid "Auto WB"
 msgstr "자동 화벨"
+
+#, fuzzy
+#~ msgid "'%s' is not a valid lensfun option."
+#~ msgstr "'%s'은(는) 올바른 잘라내기 옵션이 아닙니다."
+
