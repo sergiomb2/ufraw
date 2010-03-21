@@ -4,20 +4,22 @@
 # Alexey Voinov <voins@voins.program.ru>, 2006.
 # Alexander Rabtchevich <alexander.v.rabtchevich@iaph.bas-net.by>, 2006, 2007, 2009.
 # Andrew Zabolotny <andyz@users.sourceforge.net>, 2007, 2008.
-# Alexandre Prokoudine <alexandre.prokoudine@gmail.com>, 2009.
+# Alexandre Prokoudine <alexandre.prokoudine@gmail.com>, 2009, 2010.
+# Александр Прокудин <alexandre.prokoudine@gmail.com>, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: ru\n"
+"Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-03-16 08:00+0100\n"
-"PO-Revision-Date: 2009-10-13 18:45+0400\n"
-"Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
+"PO-Revision-Date: 2010-03-21 22:24+0300\n"
+"Last-Translator: Александр Прокудин <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: UTF-8\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2); 10<=4 && (n%100<10 || n%"
+"100>=20) ? 1 : 2);\n"
 "X-Generator: KBabel 1.11.4\n"
 "X-Poedit-Language: Russian\n"
 "X-Poedit-Country: RUSSIAN FEDERATION\n"
@@ -28,11 +30,11 @@ msgstr "Открыть окно навигатора"
 
 #, c-format
 msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
+msgstr "Значение %.*f слишком велико, сокращено до %.*f."
 
 #, c-format
 msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
+msgstr "Значение %.*f слишком мало, повышено до %.*f."
 
 msgid "No input file, nothing to do."
 msgstr "Нет файла на входе, нечего обрабатывать."
@@ -453,6 +455,9 @@ msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
 "                      correction by auto-detecting the lens (default none).\n"
 msgstr ""
+"--lensfun=none|auto   Не выполнять коррекцию искажений, либо\n"
+"                      попытаться автоматически скорректировать их (по "
+"умолчанию -- none).\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -709,7 +714,7 @@ msgstr ""
 "Крепление:\t\t%s\n"
 "Кроп фактор:\t%.1f"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
@@ -723,7 +728,7 @@ msgstr ""
 "Модель:\t\t\t%s\n"
 "Диапазон ф.р:\t%s\n"
 "Диафрагма:\t\t%s\n"
-"Кроп фактор:\t%.1f\n"
+"Кроп-фактор:\t%.1f\n"
 "Тип:\t\t\t\t%s\n"
 "Крепление:\t\t%s"
 
@@ -742,9 +747,8 @@ msgstr "Диафрагма (F)"
 msgid "Distance"
 msgstr "Расстояние"
 
-#, fuzzy
 msgid "Distance to subject in meters"
-msgstr "Расстояние до объекта"
+msgstr "Расстояние до объекта в метрах"
 
 #. Add the model combobox
 msgid "Model:"
@@ -790,7 +794,7 @@ msgid "Choose camera from complete list"
 msgstr "Выбрать камеру из полного списка"
 
 msgid "Reset all lens correction settings"
-msgstr ""
+msgstr "Сбросить все параметры коррекции искажений"
 
 #. Lens selector
 msgid "Lens"
@@ -807,7 +811,7 @@ msgid "Choose lens from list of possible variants"
 msgstr "Выбрать объектив из полного списка"
 
 msgid "Automatically find lens and set lens corrections"
-msgstr ""
+msgstr "Автоматически определить объектив и подобрать коррекцию искажений"
 
 msgid "Lateral chromatic aberration"
 msgstr "Хроматические аберрации"
@@ -884,19 +888,17 @@ msgstr "размер %dx%d, масштаб %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "размер %dx%d, масштаб 1/%d"
 
-#, fuzzy
 msgid "Wavelet denoising"
-msgstr "Порог для вейвлетного подавления шума"
+msgstr "Выполняется вейвлетное подавление шума"
 
 msgid "Despeckling"
-msgstr ""
+msgstr "Выполняется удаление пятен"
 
-#, fuzzy
 msgid "Interpolating"
-msgstr "Без интерполяции"
+msgstr "Выполняется интерполяция"
 
 msgid "Rendering"
-msgstr ""
+msgstr "Выполняется отрисовка"
 
 msgid "Loading preview"
 msgstr "Загружается предосмотр"
@@ -912,10 +914,10 @@ msgid "No more room for new lightness adjustments."
 msgstr "Не хватает места для последующей коррекции светлоты"
 
 msgid "Aspect ratio locked, click to unlock"
-msgstr ""
+msgstr "Соотношение сторон заблокировано, щёлкните для разблокировки"
 
 msgid "Aspect ratio unlocked, click to lock"
-msgstr ""
+msgstr "Соотношение сторон разблокировано, щёлкните для блокировки"
 
 msgid "Load dark frame"
 msgstr "Загрузить тёмный кадр"
@@ -1049,7 +1051,7 @@ msgid "Hot pixels: "
 msgstr "Горячие пикселы:"
 
 msgid "mark"
-msgstr ""
+msgstr "отметить"
 
 msgid "Hot pixel sensitivity"
 msgstr "Чувствительность к горячим пикселам"
@@ -1090,11 +1092,8 @@ msgstr "Недоэкспонировано:"
 msgid "White Balance"
 msgstr "Баланс белого"
 
-#, fuzzy
 msgid "Cannot use camera white balance."
-msgstr ""
-"Невозможно использовать баланс белого камеры,\n"
-"возврат к автоматическому балансу белого"
+msgstr "Невозможно использовать баланс белого камеры."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1155,7 +1154,7 @@ msgid "Apply color smoothing"
 msgstr "Применить цветовое сглаживание"
 
 msgid "Denoise"
-msgstr "Шумодав"
+msgstr "Подавление шума:"
 
 msgid "Threshold for wavelet denoising"
 msgstr "Порог для вейвлетного подавления шума"
@@ -1192,27 +1191,35 @@ msgid ""
 "Despeckling is off when window size or passes equals zero. When on then "
 "window size cannot be smaller than the number of passes."
 msgstr ""
+"Удаление пятен главным образом полезно в тех случаях, когда высокому "
+"значению ISO сопутствует высокое значение множителя канала. Иными словами, "
+"когда в одном из каналов очень много шума. Попробуйте установить для этого "
+"канала значения размера окна, распада цвета и количества проходов равным "
+"50,0,5 соответственно. Если канал содержит только шум, попробуйте "
+"комбинацию1,0.6,1.\n"
+"При значении размера окна или количества проходов равном нулю удаление пятен "
+"не выполняется. Когда оно выполняется, размер окна не может быть меньше "
+"числа проходов."
 
 msgid "Update channel parameters together"
-msgstr ""
+msgstr "Синхронизировать изменения в каналах"
 
-#, fuzzy
 msgid "Reset despeckle parameters"
-msgstr "Обнулить тёмный кадр"
+msgstr "Сбросить параметры удаления пятен"
 
 #. channel to view
 msgid "View channel:"
-msgstr ""
+msgstr "Просмотреть канал:"
 
 #. Parameters
 msgid "Window size:"
-msgstr ""
+msgstr "Размер окна:"
 
 msgid "Color decay:"
-msgstr ""
+msgstr "Распад цвета:"
 
 msgid "Passes:"
-msgstr ""
+msgstr "Проходов:"
 
 msgid "Load base curve"
 msgstr "Загрузить базовую кривую"
@@ -1316,7 +1323,7 @@ msgid "Bottom:"
 msgstr "Снизу:"
 
 msgid "Auto fit crop area"
-msgstr ""
+msgstr "Автоматически подобрать область кадрирования"
 
 msgid "Reset the crop region"
 msgstr "Сбросить область кадрирования"
@@ -1348,21 +1355,18 @@ msgstr "Ориентация:"
 msgid "Rotation"
 msgstr "Вращение"
 
-#, fuzzy
 msgid "Rotation angle"
 msgstr "Угол вращения"
 
-#, fuzzy
 msgid "Reset rotation angle"
-msgstr "Сбросить угол поворота"
+msgstr "Сбросить угол вращения"
 
 #. drawLines toggle button
 msgid "Grid lines"
-msgstr ""
+msgstr "Линий сетки"
 
-#, fuzzy
 msgid "Number of grid lines to overlay in the crop area"
-msgstr "Число линий выравнивания, лежащих на вырезаемой области"
+msgstr "Число линий сетки, лежащих на кадрируемой области"
 
 msgid "Path"
 msgstr "Путь"
