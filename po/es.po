@@ -1,15 +1,13 @@
 # Spanish translation of ufraw.
 # Copyright (C) 2006-2010 Udi Fuchs.
 # This file is distributed under the same license as the ufraw package.
-# Enrique Jorreto <ejorreto@gmail.com>, 2007-2009.
-#
-#
+# Enrique Jorreto <ejorreto@gmail.com>, 2007-2009, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw 0.16\n"
+"Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-03-16 08:00+0100\n"
-"PO-Revision-Date: 2009-10-13 21:13+0200\n"
+"PO-Revision-Date: 2010-03-18 08:33+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -22,11 +20,11 @@ msgstr "Abrir la ventana del navegador"
 
 #, c-format
 msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
+msgstr "Valor %.*f demasiado grande, truncado a %.*f."
 
 #, c-format
 msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
+msgstr "Valor %.*f demasiado peque√±o, truncado a %.*f."
 
 msgid "No input file, nothing to do."
 msgstr "No hay archivo de entrada, nada que hacer."
@@ -447,6 +445,9 @@ msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
 "                      correction by auto-detecting the lens (default none).\n"
 msgstr ""
+"--lensfun=none|auto   No aplicar correcci√≥n de lente o intentar\n"
+"                      aplicar la correcci√≥n autodetectando la lente (por "
+"defecto, no aplicar)\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -709,7 +710,7 @@ msgstr ""
 "Montura:\t\t%s\n"
 "Factor de recorte:\t%.1f"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
@@ -722,7 +723,7 @@ msgstr ""
 "Fabricante:\t\t%s\n"
 "Modelo:\t\t%s\n"
 "Rango focal:\t%s\n"
-"Apertura:\t\t%s\n"
+"Apertura:\t%s\n"
 "Factor de recorte:\t%.1f\n"
 "Tipo:\t\t%s\n"
 "Monturas:\t\t%s"
@@ -742,9 +743,8 @@ msgstr "N˙mero F (Apertura)"
 msgid "Distance"
 msgstr "Distancia"
 
-#, fuzzy
 msgid "Distance to subject in meters"
-msgstr "Distancia al sujeto"
+msgstr "Distancia al sujeto en metros"
 
 #. Add the model combobox
 msgid "Model:"
@@ -790,7 +790,7 @@ msgid "Choose camera from complete list"
 msgstr "Elegir c·mara de una lista completa"
 
 msgid "Reset all lens correction settings"
-msgstr ""
+msgstr "Restaurar los ajustes de correcci√≥n de lente"
 
 #. Lens selector
 msgid "Lens"
@@ -807,7 +807,7 @@ msgid "Choose lens from list of possible variants"
 msgstr "Elegir una lente de una lista de posibles variantes"
 
 msgid "Automatically find lens and set lens corrections"
-msgstr ""
+msgstr "Encontrar lente y ajustar correcciones autom√°ticamente"
 
 msgid "Lateral chromatic aberration"
 msgstr "AberraciÛn crom·tica lateral"
@@ -884,19 +884,17 @@ msgstr "tamaÒo %dx%d, zoom %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "tamaÒo %dx%d, escala 1/%d"
 
-#, fuzzy
 msgid "Wavelet denoising"
-msgstr "Umbral para reducciÛn de ruido"
+msgstr "Reducci√≥n de ruido"
 
 msgid "Despeckling"
-msgstr ""
+msgstr "Desparasitado"
 
-#, fuzzy
 msgid "Interpolating"
-msgstr "Sin interpolaciÛn"
+msgstr "Interpolando"
 
 msgid "Rendering"
-msgstr ""
+msgstr "Renderizado"
 
 msgid "Loading preview"
 msgstr "Cargando previsualizaciÛn"
@@ -912,10 +910,10 @@ msgid "No more room for new lightness adjustments."
 msgstr "No hay m·s espacio para nuevos ajustes de luminosidad"
 
 msgid "Aspect ratio locked, click to unlock"
-msgstr ""
+msgstr "Relaci√≥n de aspecto bloqueada, pincha para desbloquear"
 
 msgid "Aspect ratio unlocked, click to lock"
-msgstr ""
+msgstr "Relaci√≥n de aspecto desbloqueada, pincha para bloquear"
 
 msgid "Load dark frame"
 msgstr "Cargar dark frame"
@@ -1091,11 +1089,8 @@ msgstr "Subexpuesto:"
 msgid "White Balance"
 msgstr "Balance de blancos"
 
-#, fuzzy
 msgid "Cannot use camera white balance."
-msgstr ""
-"No puedo usar el balance de blancos de la c·mara, usando balance de blancos "
-"autom·tico"
+msgstr "No puedo usar el balance de blancos de la c√°mara"
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1195,27 +1190,34 @@ msgid ""
 "Despeckling is off when window size or passes equals zero. When on then "
 "window size cannot be smaller than the number of passes."
 msgstr ""
+"El desparasitado es principalmente √∫til cuando se combina un valor ISO alto "
+"con un multiplicador de canal alto: cuando un canal tiene una muy mala "
+"proporcion se√±al/ruido. Intente ajustar el tama√±o de ventana, degradaci√≥n "
+"de color y n√∫mero de pases a 50,0,5 para ese canal. Cuando un canal "
+"contiene s√≥lo ruido intente 1,0.6,1.\n"
+"El desparasitado se desconecta cuando el tama√±o de ventana o los pases son "
+"0. Para estar activado el tama√±o de ventana no puede ser menor que el "
+"n√∫mero de pases."
 
 msgid "Update channel parameters together"
-msgstr ""
+msgstr "Actualizar los par√°metros del canal juntos"
 
-#, fuzzy
 msgid "Reset despeckle parameters"
-msgstr "Reiniciar dark frame"
+msgstr "Restaurar par√°metros de desparasitado"
 
 #. channel to view
 msgid "View channel:"
-msgstr ""
+msgstr "Ver canal:"
 
 #. Parameters
 msgid "Window size:"
-msgstr ""
+msgstr "Tama√±o de ventana:"
 
 msgid "Color decay:"
-msgstr ""
+msgstr "Degradaci√≥n de color"
 
 msgid "Passes:"
-msgstr ""
+msgstr "Pases:"
 
 msgid "Load base curve"
 msgstr "Cargar curva base"
@@ -1319,7 +1321,7 @@ msgid "Bottom:"
 msgstr "Abajo:"
 
 msgid "Auto fit crop area"
-msgstr ""
+msgstr "Auto encajar √°rea recortada"
 
 msgid "Reset the crop region"
 msgstr "Restaurar la regiÛn de recorte"
@@ -1351,21 +1353,18 @@ msgstr "OrientaciÛn:"
 msgid "Rotation"
 msgstr "RotaciÛn"
 
-#, fuzzy
 msgid "Rotation angle"
-msgstr "¡ngulo de rotaciÛn"
+msgstr "√Ångulo de rotaci√≥n"
 
-#, fuzzy
 msgid "Reset rotation angle"
-msgstr "Reiniciar ·ngulo de rotaciÛn"
+msgstr "Restaurar √°ngulo de rotaci√≥n"
 
 #. drawLines toggle button
 msgid "Grid lines"
-msgstr ""
+msgstr "L√≠neas de cuadr√≠cula"
 
-#, fuzzy
 msgid "Number of grid lines to overlay in the crop area"
-msgstr "N˙mero de lÌneas de alineaciÛn a superponer sobre el area de recorte"
+msgstr "N√∫mero de l√≠neas de cuadr√≠cula a superponer en el √°rea recortada"
 
 msgid "Path"
 msgstr "Ruta"
