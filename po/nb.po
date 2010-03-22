@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-16 08:00+0100\n"
+"POT-Creation-Date: 2010-03-04 13:45+0100\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -22,11 +22,11 @@ msgstr "Åpne navigasjonsvinduet"
 
 #, c-format
 msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
+msgstr "Verdien %.*f er for stor, beskåret til %.*f."
 
 #, c-format
 msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
+msgstr "Verdien %.*f er for liten, beskåret til %.*f."
 
 msgid "No input file, nothing to do."
 msgstr "Ingen inndatafil, ingenting å gjøre."
@@ -333,9 +333,8 @@ msgid ""
 "0).\n"
 msgstr ""
 "--exposure=auto|EKSPONERING\n"
-"                      Automatisk eksponering eller eksponeringskorreksjon i "
-"EV\n"
-"                      (standardverdi: 0).\n"
+"                      Automatisk eksponering eller eksponeringskorreksjon\n"
+"                      i EV (standardverdi: 0).\n"
 
 msgid ""
 "--black-point=auto|BLACK\n"
@@ -419,10 +418,9 @@ msgid ""
 "camera).\n"
 msgstr ""
 "--rotate=camera|VINKEL|no\n"
-"                      Roter bildet i henhold til kameraets innstilling, "
-"VINKEL\n"
-"                      grader med klokka eller ingen rotasjon (standardverdi: "
-"camera).\n"
+"                      Roter bildet i henhold til kameraets innstilling,\n"
+"                      VINKEL grader med klokka eller ingen rotasjon\n"
+"                      (standardverdi: camera).\n"
 
 msgid ""
 "--crop-(left|right|top|bottom)=PIXELS\n"
@@ -439,6 +437,9 @@ msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
 "                      correction by auto-detecting the lens (default none).\n"
 msgstr ""
+"--lensfun=none|auto   Ikke korriger for objektivet (none) eller prøv å\n"
+"                      korrigere ved å automatisk oppdage hvilket objektiv\n"
+"                      som har vært brukt (standardverdi none).\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -773,7 +774,7 @@ msgid "Choose camera from complete list"
 msgstr "Velg kamera fra fullstendig liste"
 
 msgid "Reset all lens correction settings"
-msgstr ""
+msgstr "Tilbakestill alle instillinger for objektivkorreksjon"
 
 #. Lens selector
 msgid "Lens"
@@ -790,7 +791,7 @@ msgid "Choose lens from list of possible variants"
 msgstr "Velg objektiv fra liste over mulige varianter"
 
 msgid "Automatically find lens and set lens corrections"
-msgstr ""
+msgstr "Finn objektiv og sett korreksjon for objektivet automatisk"
 
 msgid "Lateral chromatic aberration"
 msgstr "Sidelengs kromatisk aberrasjon"
@@ -872,14 +873,14 @@ msgid "Wavelet denoising"
 msgstr "Terskelverdi for wavelet støyreduksjon"
 
 msgid "Despeckling"
-msgstr ""
+msgstr "Fjern flekker"
 
 #, fuzzy
 msgid "Interpolating"
 msgstr "Ingen interpolasjon"
 
 msgid "Rendering"
-msgstr ""
+msgstr "Tegner opp"
 
 msgid "Loading preview"
 msgstr "Leser inn forhåndsvisning"
@@ -895,10 +896,10 @@ msgid "No more room for new lightness adjustments."
 msgstr "Ikke mere plass til nye lysverdijusteringer."
 
 msgid "Aspect ratio locked, click to unlock"
-msgstr ""
+msgstr "Høyde-/breddeforholdet er låst, klikk for å låse opp"
 
 msgid "Aspect ratio unlocked, click to lock"
-msgstr ""
+msgstr "Høyde-/breddeforholdet er ulåst, klikk for å låse"
 
 msgid "Load dark frame"
 msgstr "Les inn sortbilde"
@@ -1174,27 +1175,33 @@ msgid ""
 "Despeckling is off when window size or passes equals zero. When on then "
 "window size cannot be smaller than the number of passes."
 msgstr ""
+"Denne funksjonen er mest nytting når høye ISO-tall kombineres med en stor "
+"kanalmultiplikator, dvs. når en kanal har et veldig dårlig signal-/ "
+"støyforhold. Prøv med verdier for vindusstørrelse, «color decay» og "
+"antall kjøringer på henholdsvis 50, 0 og 5 for gjeldende kanal. For en "
+"kanal som bare inneholder støy, prøv 1, 0.6 og 1. Funksjonaliteten slås av "
+"når vindusstørrelse eller antall kjøringer er null. "
+"Vindusstørrelse kan ikke være mindre enn antall kjøringer."
 
 msgid "Update channel parameters together"
-msgstr ""
+msgstr "Oppdater kanalparametre samtidig"
 
-#, fuzzy
 msgid "Reset despeckle parameters"
-msgstr "Tilbakestill sortbilde"
+msgstr "Tilbakestill parametre for fjerning av flekker"
 
 #. channel to view
 msgid "View channel:"
-msgstr ""
+msgstr "Vis kanal:"
 
 #. Parameters
 msgid "Window size:"
-msgstr ""
+msgstr "Vindusstørrelse:"
 
 msgid "Color decay:"
 msgstr ""
 
 msgid "Passes:"
-msgstr ""
+msgstr "Kjøringer:"
 
 msgid "Load base curve"
 msgstr "Les inn basiskurve"
@@ -1298,10 +1305,10 @@ msgid "Bottom:"
 msgstr "Bunn:"
 
 msgid "Auto fit crop area"
-msgstr ""
+msgstr "Tilpass beskjæringsområdet automatisk"
 
 msgid "Reset the crop region"
-msgstr "Tilbakestill beskjæringsareal"
+msgstr "Tilbakestill beskjæringsområde"
 
 msgid "Aspect ratio:"
 msgstr "Høyde/bredde-forhold:"
@@ -1340,7 +1347,7 @@ msgstr "Tilbakestill rotasjonsvinkel"
 
 #. drawLines toggle button
 msgid "Grid lines"
-msgstr ""
+msgstr "Gitterlinjer"
 
 #, fuzzy
 msgid "Number of grid lines to overlay in the crop area"
