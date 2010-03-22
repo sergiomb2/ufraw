@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-16 08:00+0100\n"
+"POT-Creation-Date: 2010-03-22 05:30+0100\n"
 "PO-Revision-Date: 2010-03-18 14:45+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr@googlegroups.com>\n"
@@ -1671,7 +1671,3 @@ msgstr "카메라 화벨"
 
 msgid "Auto WB"
 msgstr "자동 화벨"
-
-#, fuzzy
-#~ msgid "'%s' is not a valid lensfun option."
-#~ msgstr "'%s'은(는) 올바른 잘라내기 옵션이 아닙니다."
