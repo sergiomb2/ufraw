@@ -634,6 +634,15 @@ void Lensfun::Init() {
 		return;
 	    }
 	}
+	// Try using the "standard" lens of compact cameras.
+	const lfLens **lenses = LensDB()->FindLenses(&Camera,
+		NULL, "Standard", LF_SEARCH_LOOSE);
+	if (lenses != NULL) {
+	    SetLensModel(*lenses[0]);
+	    LensfunAuto.Set("yes");
+	    lf_free(lenses);
+	    return;
+	}
     }
     // LensfunAuto == "no"
     (*this)[ufTCA].Reset();
