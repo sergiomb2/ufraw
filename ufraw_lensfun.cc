@@ -41,9 +41,9 @@ public:
     Lensfun();
 #if 0 // Can be useful for valgrind --leak-check=full
     ~Lensfun() {
-	if (LensDB != NULL)
-	    lf_db_destroy(LensDB);
-	LensDB = NULL;
+	if (_LensDB != NULL)
+	    lf_db_destroy(_LensDB);
+	_LensDB = NULL;
     }
 #endif
     static Lensfun &Parent(UFObject &object) {
