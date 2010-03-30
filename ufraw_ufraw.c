@@ -1209,7 +1209,7 @@ static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase)
     /* The speedup trick is to keep the non-constant (or ugly constant)
      * divider out of the pixel iteration. If you really have to then
      * use double division (can be much faster, apparently). */
-    for (i = 0; i < 3; ++i)
+    for (i = 0; i < uf->colors; ++i)
 	mul[i] = (guint64)0x10000 * 0x10000 / uf->developer->rgbWB[i];
     size = img->height * img->width;
 #ifdef _OPENMP
@@ -1219,7 +1219,7 @@ static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase)
 #endif
     for (i = 0; i < size; ++i) {
 	p16 = (guint16 *)&img->buffer[i * img->depth];
-	for (c = 0; c < 3; ++c) {
+	for (c = 0; c < uf->colors; ++c) {
 	    px = p16[c] * (guint64)mul[c] / 0x10000;
 	    if (px > 0xffff)
 		px = 0xffff;
