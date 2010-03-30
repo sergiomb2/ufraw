@@ -407,7 +407,7 @@ public:
 	Lensfun &Lensfun = Lensfun::Parent(*this);
 	lfLensCalibVignetting calib;
 	if (!Lensfun.Interpolation.InterpolateVignetting(
-		Lensfun.FocalLengthValue, Lensfun.FocalLengthValue,
+		Lensfun.FocalLengthValue, Lensfun.ApertureValue,
 		Lensfun.DistanceValue, calib)) {
 	    SetIndex(0);
 	    return;
