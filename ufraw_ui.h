@@ -70,7 +70,9 @@ typedef struct {
 #endif
     GtkWidget *ResetBlackButton, *ResetBaseCurveButton, *ResetCurveButton;
     GtkWidget *ResetGrayscaleChannelMixerButton;
+#ifdef UFRAW_DESPECKLE
     GtkWidget *ResetDespeckleButton;
+#endif
     GtkWidget *SaveButton;
     GtkWidget *ControlButton[num_buttons];
     guint16 ButtonMnemonic[num_buttons];
@@ -109,12 +111,14 @@ typedef struct {
     GtkAdjustment *RotationAdjustment;
     GtkWidget *ResetRotationAdjustment;
     GtkAdjustment *GrayscaleMixers[3];
+#ifdef UFRAW_DESPECKLE
     GtkAdjustment *DespeckleWindowAdj[3];
     GtkAdjustment *DespeckleDecayAdj[3];
     GtkAdjustment *DespecklePassesAdj[3];
     GtkToggleButton *DespeckleLockChannelsButton;
     GtkToggleButton *ChannelSelectButton[3];
     int ChannelSelect;
+#endif
 #ifdef HAVE_LENSFUN
     /* The GtkEntry with camera maker/model name */
     GtkWidget *CameraModel;

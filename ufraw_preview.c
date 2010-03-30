@@ -580,6 +580,7 @@ static void preview_draw_area(preview_data *data,
 	guint8 *p8 = pixies + yy*rowstride;
 	memcpy(p8, displayPixies + yy*displayImage->rowstride,
 		width*displayImage->depth);
+#ifdef UFRAW_DESPECKLE
 	if (data->ChannelSelect >= 0) {
 	    guint8 *p = p8;
 	    for (xx = 0; xx < width; xx++, p += 3) {
@@ -587,6 +588,7 @@ static void preview_draw_area(preview_data *data,
 		p[0] = p[1] = p[2] = px;
 	    }
 	}
+#endif
 	guint8 *p8working = workingPixies + yy*workingImage->rowstride;
 	for (xx=x; xx<x+width; xx++, p8+=3, p8working+=workingImage->depth) {
 	    if ( data->SpotDraw &&
@@ -1471,7 +1473,9 @@ static void widget_set_hue(GtkWidget *widget, double hue)
 }
 
 static void update_shrink_ranges(preview_data *data);
+#ifdef UFRAW_DESPECKLE
 static void despeckle_update_sensitive(preview_data *data);
+#endif
 
 /* update the UI entries that could have changed automatically */
 static void update_scales(preview_data *data)
@@ -1540,6 +1544,7 @@ static void update_scales(preview_data *data)
     for (i = 0; i < 3; ++i)
         gtk_adjustment_set_value(data->GrayscaleMixers[i],
 		CFG->grayscaleMixer[i]);
+#ifdef UFRAW_DESPECKLE
     for (i = 0; i < 3; ++i) {
         gtk_adjustment_set_value(data->DespeckleWindowAdj[i],
 		CFG->despeckleWindow[i]);
@@ -1548,6 +1553,7 @@ static void update_scales(preview_data *data)
         gtk_adjustment_set_value(data->DespecklePassesAdj[i],
 		CFG->despecklePasses[i]);
     }
+#endif
     for (i = 0; i < CFG->lightnessAdjustmentCount; ++i) {
 	gtk_adjustment_set_value(data->LightnessAdjustment[i],
 	    CFG->lightnessAdjustment[i].adjustment);
@@ -1560,7 +1566,9 @@ static void update_scales(preview_data *data)
 	|| (CFG->grayscaleMixer[2] != conf_default.grayscaleMixer[2]));
     gtk_widget_set_sensitive(GTK_WIDGET(data->GrayscaleMixerTable),
 	    CFG->grayscaleMode == grayscale_mixer);
+#ifdef UFRAW_DESPECKLE
     despeckle_update_sensitive(data);
+#endif
 
     for (max = 1, i = 0; i < 3; ++i)
         max = MAX(max, CFG->grayscaleMixer[i]);
@@ -2670,6 +2678,7 @@ static void button_update(GtkWidget *button, gpointer user_data)
         CFG->grayscaleMixer[1] = conf_default.grayscaleMixer[1];
         CFG->grayscaleMixer[2] = conf_default.grayscaleMixer[2];
     }
+#ifdef UFRAW_DESPECKLE
     if (button==data->ResetDespeckleButton) {
 	memcpy(CFG->despeckleWindow, conf_default.despeckleWindow,
 		sizeof (CFG->despeckleWindow));
@@ -2679,6 +2688,7 @@ static void button_update(GtkWidget *button, gpointer user_data)
 		sizeof (CFG->despecklePasses));
 	ufraw_invalidate_despeckle_layer(data->UF);
     }
+#endif
     for (i = 0; i < max_adjustments; ++i) {
 	if (button == data->ResetLightnessAdjustmentButton[i]) {
 	    CFG->lightnessAdjustment[i].adjustment = 1.0;
@@ -2787,6 +2797,7 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
             ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
 	    update_scales(data);
 	}
+#ifdef UFRAW_DESPECKLE
     } else if (valuep==(void*)data->ChannelSelectButton) {
 	if (data->ChannelSelect >= -1) {
 	    int i, b = 0;
@@ -2806,6 +2817,7 @@ static void toggle_button_update(GtkToggleButton *button, gboolean *valuep)
 	    ufraw_invalidate_layer(data->UF, ufraw_develop_phase);
 	    render_preview(data);
 	}
+#endif
     } else {
 	*valuep = gtk_toggle_button_get_active(button);
 	if ( valuep==&CFG->overExp || valuep==&CFG->underExp ) {
@@ -2857,6 +2869,7 @@ static void adjustment_update_int(GtkAdjustment *adj, int *valuep)
     }
 }
 
+#ifdef UFRAW_DESPECKLE
 static void despeckle_update_sensitive(preview_data *data)
 {
     conf_data *c = CFG;
@@ -2948,6 +2961,7 @@ static gboolean despeckle_adjustment_update(preview_data *data, double *p)
     }
     return match ? TRUE : FALSE;
 }
+#endif
 
 static void adjustment_update(GtkAdjustment *adj, double *valuep)
 {
@@ -2991,8 +3005,10 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
 	ufraw_invalidate_denoise_layer(data->UF);
     } else if (valuep==&CFG->hotpixel) {
 	ufraw_invalidate_hotpixel_layer(data->UF);
+#ifdef UFRAW_DESPECKLE
     } else if (despeckle_adjustment_update(data, valuep)) {
 	return;
+#endif
     } else {
         if (CFG->autoExposure==enabled_state) CFG->autoExposure = apply_state;
         if (CFG->autoBlack==enabled_state) CFG->autoBlack = apply_state;
@@ -4031,9 +4047,11 @@ static void notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page,
     preview_data *data = get_preview_data(notebook);
     if (data->FreezeDialog==TRUE) return;
 
+#ifdef UFRAW_DESPECKLE
     if (data->ChannelSelect >= 0)
 	gtk_toggle_button_set_active(
 		data->ChannelSelectButton[data->ChannelSelect], FALSE);
+#endif
     GtkWidget *event_box =
 	    gtk_widget_get_ancestor(data->PreviewWidget, GTK_TYPE_EVENT_BOX);
     if ( page_num==data->PageNumSpot ||
@@ -4567,6 +4585,7 @@ static void grayscale_fill_interface(preview_data *data,
     /* End of Grayscale page */
 }
 
+#ifdef UFRAW_DESPECKLE
 static void denoise_fill_interface(preview_data *data, GtkWidget *page)
 {
     GtkWidget *button, *label, *icon;
@@ -4665,6 +4684,7 @@ static void denoise_fill_interface(preview_data *data, GtkWidget *page)
 	gtk_table_attach(table, button, 6 + i, 6 + i + 1, 3, 4, GTK_FILL, 0, 0, 0);
     }
 }
+#endif
 
 static void basecurve_fill_interface(preview_data *data, GtkWidget *page,
 	int curveeditorHeight)
@@ -5555,8 +5575,10 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     data->PageNumGray = gtk_notebook_page_num(notebook, page);
     grayscale_fill_interface(data, page);
 
+#ifdef UFRAW_DESPECKLE
     // page = notebook_page_new(notebook, _("Denoising"), "denoise");
     denoise_fill_interface(data, page);
+#endif
 
 #ifdef HAVE_LENSFUN
     /* Lens correction page */

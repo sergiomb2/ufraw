@@ -250,9 +250,11 @@ typedef struct {
     lightness_adjustment lightnessAdjustment[max_adjustments];
     int grayscaleMode;
     double grayscaleMixer[3];
+#ifdef UFRAW_DESPECKLE
     double despeckleWindow[3];
     double despeckleDecay[3];
     double despecklePasses[3];
+#endif
 
     /* SAVE options */
     char inputFilename[max_path], outputFilename[max_path],
@@ -378,7 +380,9 @@ void ufraw_invalidate_tca_layer(ufraw_data *uf);
 void ufraw_invalidate_hotpixel_layer(ufraw_data *uf);
 void ufraw_invalidate_denoise_layer(ufraw_data *uf);
 void ufraw_invalidate_darkframe_layer(ufraw_data *uf);
+#ifdef UFRAW_DESPECKLE
 void ufraw_invalidate_despeckle_layer(ufraw_data *uf);
+#endif
 void ufraw_invalidate_whitebalance_layer(ufraw_data *uf);
 void ufraw_invalidate_smoothing_layer(ufraw_data *uf);
 int ufraw_set_wb(ufraw_data *uf);
