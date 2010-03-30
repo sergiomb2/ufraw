@@ -859,14 +859,14 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 	    /* Do it in integer arithmetic, it's a bit faster */
 	    guint64 dx = (gint32)(srcX * 4096.0) - (xx << 12);
 	    guint64 dy = (gint32)(srcY * 4096.0) - (yy << 12);
-	    for (c = 0; c < 3; c++)
+	    for (c = 0; c < uf->colors; c++)
 		cur[c] = ( (4096-dy)*((4096-dx)*src[0][c] + dx*src[1][c])
 			+ dy*((4096-dx)*src[img->width][c]
 				+ (dx)*src[img->width+1][c]) ) >> 24;
 #else
 	    float dx = srcX - xx;
 	    float dy = srcY - yy;
-	    for (c = 0; c < 3; c++)
+	    for (c = 0; c < uf->colors; c++)
 		cur[c] = (1-dy)*((1-dx)*src[0][c] + dx*src[1][c])
 			    + dy*((1-dx)*src[img->width][c]
 				+ (dx)*src[img->width+1][c]);
@@ -951,7 +951,6 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
     uf->hotpixels = count;
 }
 
-#ifdef UFRAW_DESPECKLE
 static void ufraw_despeckle_line(guint16 *base, int step, int size, int window,
 	double decay, int colors, int c)
 {
@@ -1064,7 +1063,6 @@ static gboolean ufraw_despeckle_active(ufraw_data *uf)
     }
     return active;
 }
-#endif
 
 static int ufraw_calculate_scale(ufraw_data *uf)
 {
@@ -1149,9 +1147,7 @@ static void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase)
     dcraw_wavelet_denoise(raw, uf->conf->threshold * sqrt(uf->raw_multiplier));
     dcraw_finalize_raw(raw, dark, uf->developer->rgbWB);
     raw->raw.image = rawimage;
-#ifdef UFRAW_DESPECKLE
     ufraw_despeckle(uf, phase);
-#endif
 #ifdef HAVE_LENSFUN
     ufraw_prepare_tca(uf);
     if (uf->TCAmodifier != NULL) {
@@ -1829,12 +1825,10 @@ void ufraw_invalidate_darkframe_layer(ufraw_data *uf)
     ufraw_invalidate_layer(uf, ufraw_raw_phase);
 }
 
-#ifdef UFRAW_DESPECKLE
 void ufraw_invalidate_despeckle_layer(ufraw_data *uf)
 {
     ufraw_invalidate_layer(uf, ufraw_raw_phase);
 }
-#endif
 
 /*
  * This one is special. The raw layer applies WB in preparation for optimal
@@ -1848,11 +1842,9 @@ void ufraw_invalidate_whitebalance_layer(ufraw_data *uf)
     uf->Images[ufraw_raw_phase].valid = 0;
     uf->Images[ufraw_raw_phase].invalidate_event = TRUE;
 
-#ifdef UFRAW_DESPECKLE
     /* Despeckling is sensitive for WB changes because it is nonlinear. */
     if (ufraw_despeckle_active(uf))
 	ufraw_invalidate_despeckle_layer(uf);
-#endif
 }
 
 /*

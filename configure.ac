@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.155 2010/03/30 02:45:24 nkbj Exp $
+dnl $Id: configure.ac,v 1.156 2010/03/30 04:49:08 udifuchs Exp $
 AC_INIT(UFRaw, 0.17)
 AC_PREREQ(2.57)
 
@@ -338,13 +338,6 @@ AC_ARG_ENABLE(contrast,
   AC_DEFINE(UFRAW_CONTRAST, 1, Contrast setting option enabled),
   enable_contrast=no)
 AC_MSG_RESULT($enable_contrast)
-
-AC_MSG_CHECKING(whether to enable despeckle)
-AC_ARG_ENABLE(despeckle,
-  [  --enable-despeckle      enable despeckle],
-  AC_DEFINE(UFRAW_DESPECKLE, 1, Despeckle enabled),
-  enable_despeckle=no)
-AC_MSG_RESULT($enable_despeckle)
 
 AC_MSG_CHECKING(whether to enable 'None' interpolation)
 AC_ARG_ENABLE(interp_none,

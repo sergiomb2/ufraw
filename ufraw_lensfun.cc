@@ -624,8 +624,6 @@ void Lensfun::Init() {
     Distance.Reset();
     UFString &LensfunAuto = Image[ufLensfunAuto];
     if (LensfunAuto.IsEqual("yes")) {
-	// XXX: Remove this test when lensfun is updated to handle 4-color raws.
-	if (uf->colors < 4) {
 	if (strlen(uf->conf->lensText) > 0) {
 	    const lfLens **lenses = LensDB()->FindLenses(&Camera,
 		    NULL, uf->conf->lensText, LF_SEARCH_LOOSE);
@@ -644,7 +642,6 @@ void Lensfun::Init() {
 	    LensfunAuto.Set("yes");
 	    lf_free(lenses);
 	    return;
-	}
 	}
     }
     // LensfunAuto == "no"
