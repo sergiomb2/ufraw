@@ -627,7 +627,7 @@ void Lensfun::Init() {
 	if (strlen(uf->conf->lensText) > 0) {
 	    const lfLens **lenses = LensDB()->FindLenses(&Camera,
 		    NULL, uf->conf->lensText, LF_SEARCH_LOOSE);
-	    if (lenses != NULL) {
+	    if (!CameraModel.IsEqual("") && lenses != NULL) {
 		SetLensModel(*lenses[0]);
 		LensfunAuto.Set("yes");
 		lf_free(lenses);
@@ -637,7 +637,7 @@ void Lensfun::Init() {
 	// Try using the "standard" lens of compact cameras.
 	const lfLens **lenses = LensDB()->FindLenses(&Camera,
 		NULL, "Standard", LF_SEARCH_LOOSE);
-	if (lenses != NULL) {
+	if (!CameraModel.IsEqual("") && lenses != NULL) {
 	    SetLensModel(*lenses[0]);
 	    LensfunAuto.Set("yes");
 	    lf_free(lenses);
