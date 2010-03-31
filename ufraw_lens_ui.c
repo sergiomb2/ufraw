@@ -690,7 +690,10 @@ void lens_fill_interface(preview_data *data, GtkWidget *page)
 
     GtkNotebook *subnb = GTK_NOTEBOOK(gtk_notebook_new());
     gtk_box_pack_start(GTK_BOX(page), GTK_WIDGET(subnb), TRUE, TRUE, 0);
+#ifndef WIN32
+    // This call causes a crash on win32
     gtk_notebook_set_tab_pos(subnb, GTK_POS_LEFT);
+#endif
 
     /* Create a default lens & camera */
     camera_set(data);
