@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-22 05:30+0100\n"
+"POT-Creation-Date: 2010-03-04 13:45+0100\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -691,7 +691,7 @@ msgstr ""
 "Fabrikat:\t\t%s\n"
 "Modell:\t\t%s%s\n"
 "Fatning:\t\t%s\n"
-"Forlengelsesfaktor:\t%.1f"
+"Beskjæringsfaktor:\t%.1f"
 
 #, c-format
 msgid ""
@@ -706,8 +706,8 @@ msgstr ""
 "Fabrikat:\t\t%s\n"
 "Modell:\t\t\t%s\n"
 "Brennviddeområde:\t%s\n"
-"Blender:\t%s\n"
-"Forlengelsesfaktor:\t%.1f\n"
+"Blender:\t\t%s\n"
+"Beskjæringsfaktor:\t%.1f\n"
 "Type:\t\t\t%s\n"
 "Fatninger:\t\t%s"
 
@@ -726,9 +726,8 @@ msgstr "F-tall (blender)"
 msgid "Distance"
 msgstr "Avstand"
 
-#, fuzzy
 msgid "Distance to subject in meters"
-msgstr "Avstand til motiv"
+msgstr "Avstand til motivet i meter"
 
 #. Add the model combobox
 msgid "Model:"
@@ -868,16 +867,14 @@ msgstr "størrelse %dx%d, zoom %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "størrelse %dx%d, skala 1/%d"
 
-#, fuzzy
 msgid "Wavelet denoising"
-msgstr "Terskelverdi for wavelet støyreduksjon"
+msgstr "Wavelet støyreduksjon"
 
 msgid "Despeckling"
 msgstr "Fjern flekker"
 
-#, fuzzy
 msgid "Interpolating"
-msgstr "Ingen interpolasjon"
+msgstr "Interpolerer"
 
 msgid "Rendering"
 msgstr "Tegner opp"
@@ -1075,10 +1072,8 @@ msgstr "Undereksponert:"
 msgid "White Balance"
 msgstr "Hvitbalanse"
 
-#, fuzzy
 msgid "Cannot use camera white balance."
-msgstr ""
-"Kan ikke bruke kameraets hvitbalanse, bruker automatisk hvitbalanse isteden."
+msgstr "Kan ikke bruke kameraets hvitbalanse."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1175,13 +1170,13 @@ msgid ""
 "Despeckling is off when window size or passes equals zero. When on then "
 "window size cannot be smaller than the number of passes."
 msgstr ""
-"Denne funksjonen er mest nytting når høye ISO-tall kombineres med en stor "
+"Fjerning av flekker er mest nyttig når høye ISO-tall kombineres med en stor "
 "kanalmultiplikator, dvs. når en kanal har et veldig dårlig signal-/ "
-"støyforhold. Prøv med verdier for vindusstørrelse, «color decay» og antall "
-"kjøringer på henholdsvis 50, 0 og 5 for gjeldende kanal. For en kanal som "
-"bare inneholder støy, prøv 1, 0.6 og 1. Funksjonaliteten slås av når "
-"vindusstørrelse eller antall kjøringer er null. Vindusstørrelse kan ikke "
-"være mindre enn antall kjøringer."
+"støyforhold. Prøv med verdier for vindusstørrelse, «color decay» og "
+"antall kjøringer på henholdsvis 50, 0 og 5 for gjeldende kanal. For en "
+"kanal som bare inneholder støy, prøv 1, 0.6 og 1. Funksjonaliteten slås av "
+"når vindusstørrelse eller antall kjøringer er null. "
+"Vindusstørrelse kan ikke være mindre enn antall kjøringer."
 
 msgid "Update channel parameters together"
 msgstr "Oppdater kanalparametre samtidig"
@@ -1337,11 +1332,9 @@ msgstr "Orientering:"
 msgid "Rotation"
 msgstr "Rotasjon"
 
-#, fuzzy
 msgid "Rotation angle"
 msgstr "Rotasjonsvinkel"
 
-#, fuzzy
 msgid "Reset rotation angle"
 msgstr "Tilbakestill rotasjonsvinkel"
 
@@ -1349,7 +1342,6 @@ msgstr "Tilbakestill rotasjonsvinkel"
 msgid "Grid lines"
 msgstr "Gitterlinjer"
 
-#, fuzzy
 msgid "Number of grid lines to overlay in the crop area"
 msgstr "Antall justeringslinjer som legges over beskjæringsområdet"
 
