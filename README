@@ -270,8 +270,8 @@ Notice also that the UFRaw executables have different dependencies.
 * ufraw-gimp depends on libgimp and all its derivatives.
 * ufraw only depends on libgtk and its derivatives.
 * ufraw-batch only depends on glib.
-In addition all the executables may depend on lcms, libjpeg, libtiff, zlib
-and exiv2, depending on the way you configured UFRaw's build.
+In addition all the executables may depend on lcms, libjpeg, libtiff, zlib,
+exiv2 and lensfun, depending on the way you configured UFRaw's build.
 
 Lastly, I'm requesting that you should consider adding a link to
 http://ufraw.sourceforge.net/ where ever is appropriate on the package page.
@@ -280,6 +280,20 @@ date user guide.
 
 History
 =======
+
+01/04/2010 - UFRaw-0.17 released, based on DCRaw v 8.99.
+
+* Lens distortion corrections using lenfun. This feature is now fully
+  implemented and enabled by default.
+* Added a despeckling/denoising algorithm to solve issues with images taken
+  under very difficult lighting conditions, like deep sea diving.
+  It may be useful in other situations too. Patch by Frank van Maarseveen.
+* Enabled hot pixel elimination by default.
+* Calculate live histogram from working color-space instead of display
+  color-space. Calculate live histogram from cropped area only.
+  Based on patches by Konrad.
+* Added auto-crop option.
+* Allow upto 400% zoom.
 
 15/10/2009 - UFRaw-0.16 released, based on DCRaw v 8.98.
 
