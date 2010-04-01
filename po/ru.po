@@ -6,11 +6,12 @@
 # Andrew Zabolotny <andyz@users.sourceforge.net>, 2007, 2008.
 # Alexandre Prokoudine <alexandre.prokoudine@gmail.com>, 2009, 2010.
 # Александр Прокудин <alexandre.prokoudine@gmail.com>, 2010.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-22 05:30+0100\n"
+"POT-Creation-Date: 2010-04-01 06:00+0200\n"
 "PO-Revision-Date: 2010-03-21 22:24+0300\n"
 "Last-Translator: Александр Прокудин <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -719,7 +720,7 @@ msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
 "Focal range:\t%s\n"
-"Aperture:\t%s\n"
+"Aperture:\t\t%s\n"
 "Crop factor:\t%.1f\n"
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
@@ -729,7 +730,7 @@ msgstr ""
 "Диапазон ф.р:\t%s\n"
 "Диафрагма:\t\t%s\n"
 "Кроп-фактор:\t%.1f\n"
-"Тип:\t\t\t\t%s\n"
+"Тип:\t\t\t%s\n"
 "Крепление:\t\t%s"
 
 msgid "Focal"

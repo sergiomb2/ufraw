@@ -2,13 +2,12 @@
 # Copyright (C) 2006-2010 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 # Milan Knizek <knizek@volny.cz>, 2007-2010.
-# 
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-22 05:30+0100\n"
+"POT-Creation-Date: 2010-04-01 06:00+0200\n"
 "PO-Revision-Date: 2010-03-04 23:04+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -705,17 +704,17 @@ msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
 "Focal range:\t%s\n"
-"Aperture:\t%s\n"
+"Aperture:\t\t%s\n"
 "Crop factor:\t%.1f\n"
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
-"Výrobce:\t\t%s\n"
-"Model:\t\t%s\n"
+"Výrobce:\t\t\t%s\n"
+"Model:\t\t\t%s\n"
 "Rozsah ohnisek:\t%s\n"
-"Clona:\t\t%s\n"
-"Faktor ořezu:\t%.1f\n"
-"Typ:\t\t%s\n"
+"Clona:\t\t\t%s\n"
+"Faktor ořezu:\t\t%.1f\n"
+"Typ:\t\t\t\t%s\n"
 "Bajonety:\t\t%s"
 
 msgid "Focal"

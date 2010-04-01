@@ -2,12 +2,12 @@
 # Copyright (C) 2006-2010 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 # Tomasz Golinski tomaszg@alpha.uwb.edu.pl, 2007-2010.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-22 05:30+0100\n"
+"POT-Creation-Date: 2010-04-01 06:00+0200\n"
 "PO-Revision-Date: 2010-03-04 23:12+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish\n"
@@ -697,25 +697,25 @@ msgstr ""
 "Firma:\t\t%s\n"
 "Model:\t\t%s%s\n"
 "Bagnet:\t\t%s\n"
-"Crop:\t%.1f"
+"Crop:\t\t%.1f"
 
 #, c-format
 msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
 "Focal range:\t%s\n"
-"Aperture:\t%s\n"
+"Aperture:\t\t%s\n"
 "Crop factor:\t%.1f\n"
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
-"Firma:\t\t%s\n"
-"Model:\t\t%s\n"
+"Firma:\t\t\t\t%s\n"
+"Model:\t\t\t\t%s\n"
 "Zakres ogniskowych:\t%s\n"
-"Przesłona:\t%s\n"
-"Crop:\t%.1f\n"
-"Typ:\t\t%s\n"
-"Bagnet:\t\t%s"
+"Przesłona:\t\t\t%s\n"
+"Crop:\t\t\t\t%.1f\n"
+"Typ:\t\t\t\t\t%s\n"
+"Bagnet:\t\t\t\t%s"
 
 msgid "Focal"
 msgstr "Ogniskowa"

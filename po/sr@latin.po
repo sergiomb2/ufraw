@@ -1,15 +1,14 @@
 # Serbian translation of UFRaw
 # Copyright (C) 2008-2010 Udi Fuchs.
-# Courtesy of Prevod.org team (http://prevod.org/) -- 2008, 2009.
-#
 # This file is distributed under the same license as the ufraw package.
-#
+# Courtesy of Prevod.org team (http://prevod.org/) -- 2008, 2009.
 # Miloš Popović <gpopac@gmail.com>, 2010.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-22 05:30+0100\n"
+"POT-Creation-Date: 2010-04-01 06:00+0200\n"
 "PO-Revision-Date: 2010-03-16 12:54+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -712,9 +711,9 @@ msgid ""
 "Mount:\t\t%s\n"
 "Crop factor:\t%.1f"
 msgstr ""
-"Tvorac:\t\t%s\n"
-"Model:\t\t%s%s\n"
-"Stativ:\t\t%s\n"
+"Tvorac:\t\t\t%s\n"
+"Model:\t\t\t%s%s\n"
+"Stativ:\t\t\t%s\n"
 "Faktor isecanja:\t%.1f"
 
 #, c-format
@@ -722,18 +721,18 @@ msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
 "Focal range:\t%s\n"
-"Aperture:\t%s\n"
+"Aperture:\t\t%s\n"
 "Crop factor:\t%.1f\n"
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
 "Proizvođač:\t\t%s\n"
 "Model:\t\t\t%s\n"
-"Žižna daljina:\t%s\n"
-"Otvor blende:\t%s\n"
-"Isecanje senzora:%.1f\n"
+"Žižna daljina:\t\t%s\n"
+"Otvor blende:\t\t%s\n"
+"Isecanje senzora:\t%.1f\n"
 "Vrsta:\t\t\t%s\n"
-"Stativi:\t\t%s"
+"Stativi:\t\t\t%s"
 
 msgid "Focal"
 msgstr "Žiža"

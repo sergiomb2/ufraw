@@ -211,7 +211,7 @@ static void lens_set(GtkWidget *lensModel, preview_data *data)
     fm = g_strdup_printf(_("Maker:\t\t%s\n"
 			   "Model:\t\t%s\n"
 			   "Focal range:\t%s\n"
-			   "Aperture:\t%s\n"
+			   "Aperture:\t\t%s\n"
 			   "Crop factor:\t%.1f\n"
 			   "Type:\t\t%s\n"
 			   "Mounts:\t\t%s"),

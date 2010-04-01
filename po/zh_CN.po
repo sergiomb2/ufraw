@@ -1,7 +1,6 @@
 # Translation of ufraw.pot to Simplified Chinese.
 # Copyright (C) 2009-2010 Udi Fuchs & Xu Yuanfei.
 # This file is distributed under the same license as the UFraw package.
-#
 # Xu Yuanfei <stardust858@gmail.com>, 2009.
 # Aron Xu <aronmalache@163.com>, 2009.
 #
@@ -9,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-22 05:30+0100\n"
+"POT-Creation-Date: 2010-04-01 06:00+0200\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -658,23 +657,23 @@ msgstr ""
 "制造者:\t\t%s\n"
 "型号:\t\t%s%s\n"
 "挂载:\t\t%s\n"
-"剪裁因子:\t%.1f"
+"剪裁因子:\t\t%.1f"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Maker:\t\t%s\n"
 "Model:\t\t%s\n"
 "Focal range:\t%s\n"
-"Aperture:\t%s\n"
+"Aperture:\t\t%s\n"
 "Crop factor:\t%.1f\n"
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
 "制造者:\t\t%s\n"
 "型号:\t\t%s\n"
-"焦距范围:\t%s\n"
+"焦距范围:\t\t%s\n"
 "光圈:\t\t%s\n"
-"剪裁因子:\t%.1f\n"
+"剪裁因子:\t\t%.1f\n"
 "类型:\t\t%s\n"
 "挂载:\t\t%s"
 
