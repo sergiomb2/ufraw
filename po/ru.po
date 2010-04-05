@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-01 06:00+0200\n"
+"POT-Creation-Date: 2010-04-05 16:45+0200\n"
 "PO-Revision-Date: 2010-03-21 22:24+0300\n"
 "Last-Translator: Александр Прокудин <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -377,6 +377,15 @@ msgstr ""
 "                      Алгоритм перевода в уровни серого (по умолчанию - "
 "нет).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Grayscale mixer values to use (default 1,1,1).\n"
+msgstr ""
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Алгоритм перевода в уровни серого (по умолчанию - "
+"нет).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Ключи, относящиеся к конечному результату:\n"
 
@@ -553,6 +562,10 @@ msgstr "'%s' не является правильным идентификато
 
 #, c-format
 msgid "'%s' is not a valid grayscale option."
+msgstr "%s' не идентифицирует алгоритм перевода в оттенки серого."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale-mixer option."
 msgstr "%s' не идентифицирует алгоритм перевода в оттенки серого."
 
 #, c-format

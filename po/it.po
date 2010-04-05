@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-01 06:00+0200\n"
+"POT-Creation-Date: 2010-04-05 16:45+0200\n"
 "PO-Revision-Date: 2009-10-14 06:00+0100\n"
 "Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -366,6 +366,15 @@ msgstr ""
 "                      Algoritmo per la conversione della scala di grigio "
 "(predefinito nessuno).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Grayscale mixer values to use (default 1,1,1).\n"
+msgstr ""
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Algoritmo per la conversione della scala di grigio "
+"(predefinito nessuno).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Le opzioni relative all'output finale sono:\n"
 
@@ -547,6 +556,10 @@ msgstr "'%s' non è una valida opzione per l'interpolazione."
 
 #, c-format
 msgid "'%s' is not a valid grayscale option."
+msgstr "'%s' non è un'opzione valida per la scala di grigio."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale-mixer option."
 msgstr "'%s' non è un'opzione valida per la scala di grigio."
 
 #, c-format

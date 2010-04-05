@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-01 06:00+0200\n"
+"POT-Creation-Date: 2010-04-05 16:45+0200\n"
 "PO-Revision-Date: 2010-03-18 14:45+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr@googlegroups.com>\n"
@@ -352,6 +352,14 @@ msgstr ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      그레이스케일 변환에 사용할 알고리즘 (기본값 none).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Grayscale mixer values to use (default 1,1,1).\n"
+msgstr ""
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      그레이스케일 변환에 사용할 알고리즘 (기본값 none).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "최종 출력에 관련된 옵션들:\n"
 
@@ -513,6 +521,10 @@ msgstr "'%s'은(는) 올바른 보간 옵션이 아닙니다."
 
 #, c-format
 msgid "'%s' is not a valid grayscale option."
+msgstr "'%s'은(는) 올바른 그레이스케일 옵션이 아닙니다."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale-mixer option."
 msgstr "'%s'은(는) 올바른 그레이스케일 옵션이 아닙니다."
 
 #, c-format

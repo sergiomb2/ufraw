@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-01 06:00+0200\n"
+"POT-Creation-Date: 2010-04-05 16:45+0200\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -352,6 +352,14 @@ msgstr ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      グレースケールの変換方式 (デフォルトnone).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Grayscale mixer values to use (default 1,1,1).\n"
+msgstr ""
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      グレースケールの変換方式 (デフォルトnone).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "最終出力に関連するオプション:\n"
 
@@ -511,6 +519,10 @@ msgstr "'%s' は正しい補間オプションではありません"
 
 #, c-format
 msgid "'%s' is not a valid grayscale option."
+msgstr "'%s' は正しいグレースケールオプションではありません。"
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale-mixer option."
 msgstr "'%s' は正しいグレースケールオプションではありません。"
 
 #, c-format

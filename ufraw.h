@@ -125,8 +125,9 @@ typedef enum { perceptual_intent, relative_intent, saturation_intent,
 	absolute_intent, disable_intent } Intent;
 typedef enum { ufraw_raw_phase, ufraw_first_phase, ufraw_transform_phase,
 	ufraw_develop_phase, ufraw_display_phase, ufraw_phases_num } UFRawPhase;
-typedef enum { grayscale_none, grayscale_lightness, grayscale_luminance,
-	grayscale_value, grayscale_mixer } GrayscaleMode;
+typedef enum { grayscale_none, grayscale_lightness,
+	       grayscale_luminance, grayscale_value,
+	       grayscale_mixer, grayscale_invalid } GrayscaleMode;
 
 typedef struct {
     const char *make;
@@ -250,6 +251,7 @@ typedef struct {
     lightness_adjustment lightnessAdjustment[max_adjustments];
     int grayscaleMode;
     double grayscaleMixer[3];
+    int grayscaleMixerDefined;
     double despeckleWindow[4];
     double despeckleDecay[4];
     double despecklePasses[4];

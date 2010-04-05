@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-01 06:00+0200\n"
+"POT-Creation-Date: 2010-04-05 16:45+0200\n"
 "PO-Revision-Date: 2010-03-05 23:22+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -375,6 +375,14 @@ msgstr ""
 "utiliser\n"
 "                      (défaut none).\n"
 
+msgid ""
+"--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Grayscale mixer values to use (default 1,1,1).\n"
+msgstr ""
+"--grayscale-mixer=ROUGE,VERT,BLEU\n"
+"                      Valeurs du mixeur de niveau de gris à utiliser\n"
+"                      (défaut 1,1,1).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Les options concernant la sortie finale sont:\n"
 
@@ -559,6 +567,10 @@ msgstr "'%s' n'est pas une option d'interpolation valide."
 #, c-format
 msgid "'%s' is not a valid grayscale option."
 msgstr "'%s' n'est pas une option valide pour niveaux de gris."
+
+#, c-format
+msgid "'%s' is not a valid grayscale-mixer option."
+msgstr "'%s' n'est pas une option valide pour '--grayscale-mixer'."
 
 #, c-format
 msgid "'%s' is not a valid restore option."

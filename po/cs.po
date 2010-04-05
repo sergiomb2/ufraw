@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-01 06:00+0200\n"
+"POT-Creation-Date: 2010-04-05 16:45+0200\n"
 "PO-Revision-Date: 2010-03-04 23:04+0100\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -363,6 +363,17 @@ msgstr ""
 "                      none - žádný, lightness - světlost,\n"
 "                      luminance - jas, mixer - mixér kanálů.\n"
 
+#, fuzzy
+msgid ""
+"--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Grayscale mixer values to use (default 1,1,1).\n"
+msgstr ""
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Algoritmus pro převod do šedé škály (standardně "
+"none).\n"
+"                      none - žádný, lightness - světlost,\n"
+"                      luminance - jas, mixer - mixér kanálů.\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Volby, které se týkají konečného výstupu, jsou:\n"
 
@@ -538,6 +549,10 @@ msgstr "'%s' není platná volba interpolace."
 
 #, c-format
 msgid "'%s' is not a valid grayscale option."
+msgstr "'%s' není platné pro volbu grayscale."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale-mixer option."
 msgstr "'%s' není platné pro volbu grayscale."
 
 #, c-format

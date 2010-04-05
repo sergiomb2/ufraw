@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw 0.17\n"
+"Project-Id-Version: UFRaw 0.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-01 06:00+0200\n"
-"PO-Revision-Date: 2010-03-04 14:00+0100\n"
+"POT-Creation-Date: 2010-04-05 16:45+0200\n"
+"PO-Revision-Date: 2010-04-05 17:00+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -365,6 +365,13 @@ msgstr ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Gråtonekonverteringsalgoritme (standardværdi none).\n"
 
+msgid ""
+"--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Grayscale mixer values to use (default 1,1,1).\n"
+msgstr ""
+"--grayscale-mixer=RØD,GRØN,BLÅ\n"
+"                      Gråtonemikserværdier (standardværdier 1,1,1).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Tilvalgene, der er relateret til de endelige uddata, er:\n"
 
@@ -534,6 +541,10 @@ msgstr "'%s' er ikke et legalt interpolationstilvalg."
 #, c-format
 msgid "'%s' is not a valid grayscale option."
 msgstr "'%s' er ikke et legalt gråtone-tilvalg."
+
+#, c-format
+msgid "'%s' is not a valid grayscale-mixer option."
+msgstr "'%s' er ikke et legalt gråtonemiksertilvalg."
 
 #, c-format
 msgid "'%s' is not a valid restore option."

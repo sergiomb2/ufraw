@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-01 06:00+0200\n"
+"POT-Creation-Date: 2010-04-05 16:45+0200\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -343,6 +343,14 @@ msgstr ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
 "                      使用灰阶换算法 (默认 none)。\n"
 
+#, fuzzy
+msgid ""
+"--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Grayscale mixer values to use (default 1,1,1).\n"
+msgstr ""
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      使用灰阶换算法 (默认 none)。\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "涉及到最终输出的选项：\n"
 
@@ -498,6 +506,10 @@ msgstr "'%s' 不是有效的插值选项。"
 
 #, c-format
 msgid "'%s' is not a valid grayscale option."
+msgstr "'%s' 不是有效的灰阶选项。"
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale-mixer option."
 msgstr "'%s' 不是有效的灰阶选项。"
 
 #, c-format

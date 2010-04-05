@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-01 06:00+0200\n"
+"POT-Creation-Date: 2010-04-05 16:45+0200\n"
 "PO-Revision-Date: 2010-03-16 12:54+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -376,6 +376,15 @@ msgstr ""
 "                      Algoritam za prevod u sive tonove (podrazumevano ne\n"
 "                      koristi ni jedan).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Grayscale mixer values to use (default 1,1,1).\n"
+msgstr ""
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Algoritam za prevod u sive tonove (podrazumevano ne\n"
+"                      koristi ni jedan).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Mogućnosti vezane za krajnji izlaz su:\n"
 
@@ -555,6 +564,10 @@ msgstr "„%s“ nije ispravna mogućnost za interpolaciju."
 
 #, c-format
 msgid "'%s' is not a valid grayscale option."
+msgstr "„%s“ nije ispravna mogućnost za sive tonove."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale-mixer option."
 msgstr "„%s“ nije ispravna mogućnost za sive tonove."
 
 #, c-format

@@ -83,6 +83,7 @@ const conf_data conf_default = {
     }, /* lightness adjustments */
     grayscale_none, /* grayscale mode */
     { 1.0, 1.0, 1.0 }, /* grayscale mixer */
+    1, /* grayscale mixer defined */
     { 0.0, 0.0, 0.0, 0.0 }, /* despeckle window */
     { 0.0, 0.0, 0.0, 0.0 }, /* despeckle color decay */
     { 1.0, 1.0, 1.0, 1.0 }, /* despeckle passes */
@@ -682,9 +683,11 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 	  : conf_find_name(temp, grayscaleModeNames,
 			   conf_default.grayscaleMode);
     }
+    c->grayscaleMixerDefined = 0;
     if ( strcmp("GrayscaleMixer", element)==0 ) {
         sscanf(temp, "%lf %lf %lf", &c->grayscaleMixer[0],
 	       &c->grayscaleMixer[1], &c->grayscaleMixer[2]);
+	c->grayscaleMixerDefined = 1;
     }
     if ( strcmp("DespeckleWindow", element)==0 ) {
         sscanf(temp, "%lf %lf %lf", &c->despeckleWindow[0],
@@ -1017,11 +1020,13 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
 				a->adjustment, a->hue, a->hueWidth);
 	}
     }
-    if (c->grayscaleMode!=conf_default.grayscaleMode)
+    if (c->grayscaleMode != grayscale_invalid &&
+	c->grayscaleMode != conf_default.grayscaleMode)
         buf = uf_markup_buf(buf,
 		"<GrayscaleMode>%s</GrayscaleMode>\n",
 		grayscaleModeNames[c->grayscaleMode]);
-    if (c->grayscaleMode==grayscale_mixer) {
+    if (c->grayscaleMode == grayscale_mixer &&
+	c->grayscaleMixerDefined == 1) {
         buf = uf_markup_buf(buf,
 		"<GrayscaleMixer>%f %f %f</GrayscaleMixer>\n",
 		c->grayscaleMixer[0],
@@ -1293,6 +1298,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
 	   sizeof dst->lightnessAdjustment);
     dst->lightnessAdjustmentCount = src->lightnessAdjustmentCount;
     dst->grayscaleMode = src->grayscaleMode;
+    dst->grayscaleMixerDefined = src->grayscaleMixerDefined;
     memcpy(dst->grayscaleMixer, src->grayscaleMixer,
 	   sizeof dst->grayscaleMixer);
     memcpy(dst->despeckleWindow, src->despeckleWindow, sizeof (dst->despeckleWindow));
@@ -1466,8 +1472,16 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
 		cmd->profile[1][0].BitDepth;
     if (cmd->saturation!=NULLF)
 	conf->saturation=cmd->saturation;
-    if (cmd->grayscaleMode!=-1)
+    if (cmd->grayscaleMode!=-1) {
       conf->grayscaleMode=cmd->grayscaleMode;
+      if (cmd->grayscaleMode == grayscale_mixer &&
+	  cmd->grayscaleMixerDefined == 1) {
+	conf->grayscaleMixerDefined = 1;
+	conf->grayscaleMixer[0] = cmd->grayscaleMixer[0];
+	conf->grayscaleMixer[1] = cmd->grayscaleMixer[1];
+	conf->grayscaleMixer[2] = cmd->grayscaleMixer[2];
+      }
+    }
     if (cmd->BaseCurveIndex>=0) conf->BaseCurveIndex = cmd->BaseCurveIndex;
     if (cmd->curveIndex>=0) conf->curveIndex = cmd->curveIndex;
     if (cmd->autoBlack) {
@@ -1584,6 +1598,8 @@ N_("--interpolation=ahd|vng|four-color|ppg|bilinear\n"
 N_("--color-smoothing     Apply color smoothing.\n"),
 N_("--grayscale=none|lightness|luminance|value|mixer\n"
 "                      Grayscale conversion algorithm to use (default none).\n"),
+N_("--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Grayscale mixer values to use (default 1,1,1).\n"),
 "\n",
 N_("The options which are related to the final output are:\n"),
 "\n",
@@ -1688,7 +1704,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	 *curveName=NULL, *curveFile=NULL, *outTypeName=NULL, *rotateName=NULL,
 	 *createIDName=NULL, *outPath=NULL, *output=NULL, *conf=NULL,
 	 *interpolationName=NULL, *darkframeFile=NULL,
-	 *restoreName=NULL, *clipName=NULL, *grayscaleName=NULL;
+         *restoreName=NULL, *clipName=NULL, *grayscaleName=NULL,
+         *grayscaleMixer=NULL;
     static const struct option options[] = {
 	{ "wb", 1, 0, 'w'},
 	{ "temperature", 1, 0, 't'},
@@ -1712,6 +1729,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	{ "black-point", 1, 0, 'k'},
 	{ "interpolation", 1, 0, 'i'},
 	{ "grayscale", 1, 0, 'Y'},
+	{ "grayscale-mixer", 1, 0, 'a'},
 	{ "shrink", 1, 0, 'x'},
 	{ "size", 1, 0, 'X'},
 	{ "compression", 1, 0, 'j'},
@@ -1761,6 +1779,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 #endif
 	&cmd->threshold,
 	&cmd->exposure, &cmd->black, &interpolationName, &grayscaleName,
+	&grayscaleMixer,
 	&cmd->shrink, &cmd->size, &cmd->compression,
 	&outTypeName, &cmd->profile[1][0].BitDepth, &rotateName,
 	&createIDName, &outPath, &output, &darkframeFile,
@@ -1877,6 +1896,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	case 'r':
 	case 'u':
 	case 'Y':
+	case 'a':
 	    *(char **)optPointer[index] = optarg;
 	    break;
 	case 'O': cmd->overwrite = TRUE; break;
@@ -2023,15 +2043,31 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
 	    cmd->smoothing = 1;
     }
     cmd->grayscaleMode = -1;
+    cmd->grayscaleMixerDefined = 0;
     if (grayscaleName!=NULL) {
       cmd->grayscaleMode = conf_find_name(grayscaleName, grayscaleModeNames,
-					  conf_default.grayscaleMode);
-      if (cmd->grayscaleMode==-1) {
+					  grayscale_invalid);
+      if (cmd->grayscaleMode==grayscale_invalid) {
 	    ufraw_message(UFRAW_ERROR,
 		_("'%s' is not a valid grayscale option."),
 		grayscaleName);
 	    return -1;
 	}
+      if (cmd->grayscaleMode==grayscale_mixer) {
+	if (grayscaleMixer != NULL) {
+	  double	red, green, blue;
+	  if (sscanf(grayscaleMixer, "%lf,%lf,%lf", &red, &green, &blue) != 3) {
+	    ufraw_message(UFRAW_ERROR,
+			  _("'%s' is not a valid grayscale-mixer option."),
+			  grayscaleMixer);
+	    return -1;
+	  }
+	  cmd->grayscaleMixerDefined = 1;
+	  cmd->grayscaleMixer[0] = red;
+	  cmd->grayscaleMixer[1] = green;
+	  cmd->grayscaleMixer[2] = blue;
+	}
+      }
     }
     cmd->restoreDetails = -1;
     if (restoreName!=NULL) {

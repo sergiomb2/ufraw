@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-01 06:00+0200\n"
+"POT-Creation-Date: 2010-04-05 16:45+0200\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -362,6 +362,15 @@ msgstr ""
 "                      Algoritme for konvertering av gråtoner\n"
 "                      (standardverdi none).\n"
 
+#, fuzzy
+msgid ""
+"--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Grayscale mixer values to use (default 1,1,1).\n"
+msgstr ""
+"--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Algoritme for konvertering av gråtoner\n"
+"                      (standardverdi none).\n"
+
 msgid "The options which are related to the final output are:\n"
 msgstr "Alternativene knyttet til endelige utdata er:\n"
 
@@ -531,6 +540,10 @@ msgstr "«%s» er et ugyldig alternativ for interpolasjon."
 
 #, c-format
 msgid "'%s' is not a valid grayscale option."
+msgstr "«%s» er et ugyldig alternativ for gråtone."
+
+#, fuzzy, c-format
+msgid "'%s' is not a valid grayscale-mixer option."
 msgstr "«%s» er et ugyldig alternativ for gråtone."
 
 #, c-format
