@@ -1,4 +1,5 @@
 Makefile
 Makefile.in
 POTFILES
+messages.mo
 *.gmo
