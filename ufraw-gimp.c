@@ -23,7 +23,6 @@
 #include <plugin_main.h>
 #define GIMP_CONST
 /* Fix some compatibility issues between CinePaint and GIMP */
-#define GIMP_CHECK_VERSION(a,b,c) 0
 typedef GimpRunModeType GimpRunMode;
 #define PLUGIN_MODE 2
 #else
@@ -66,7 +65,7 @@ void query()
     static GIMP_CONST GimpParamDef load_return_vals[] = {
 	{ GIMP_PDB_IMAGE, "image", "Output image" },
     };
-#if GIMP_CHECK_VERSION(2,2,0)
+#ifndef UFRAW_CINEPAINT
     static GIMP_CONST GimpParamDef thumb_args[] = {
 	{ GIMP_PDB_STRING, "filename",     "The name of the file to load" },
 	{ GIMP_PDB_INT32,  "thumb_size",   "Preferred thumbnail size" }
@@ -85,7 +84,7 @@ void query()
 	    "Copyright 2004 by Pawel Jochym\n"
 	    "Copyright 2004-2010 by Udi Fuchs",
 	    "ufraw-" VERSION,
-#if GIMP_CHECK_VERSION(2,2,0)
+#ifndef UFRAW_CINEPAINT
 	    "raw image",
 #else
 	    "<Load>/UFRaw",
@@ -99,7 +98,7 @@ void query()
 
     gimp_register_load_handler("file_ufraw_load", (char *)raw_ext, "");
 
-#if GIMP_CHECK_VERSION(2,2,0)
+#ifndef UFRAW_CINEPAINT
     gimp_install_procedure ("file_ufraw_load_thumb",
 	    "Loads thumbnails from digital camera raw files.",
 	    "Loads thumbnails from digital camera raw files.",
@@ -219,7 +218,7 @@ void run(GIMP_CONST gchar *name,
 	    }
 	    ufraw_icons_init();
 	    GtkWidget *dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	    uf_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
+	    gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
 	    ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
 
 	    ufraw_message(UFRAW_REPORT, NULL);
@@ -237,7 +236,7 @@ void run(GIMP_CONST gchar *name,
 
     ufraw_config(uf, &rc, NULL, NULL);
     sendToGimpMode = (uf->conf->createID==send_id);
-#if GIMP_CHECK_VERSION(2,2,0)
+#ifndef UFRAW_CINEPAINT
     if ( loadThumbnail ) {
 	uf->conf->size = size;
 	uf->conf->embeddedImage = TRUE;

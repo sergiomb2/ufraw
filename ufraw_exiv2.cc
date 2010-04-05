@@ -16,9 +16,7 @@
 
 #ifdef HAVE_EXIV2
 #include <exiv2/image.hpp>
-#if EXIV2_TEST_VERSION(0,18,1)
 #include <exiv2/easyaccess.hpp>
-#endif
 #include <exiv2/exif.hpp>
 #include <sstream>
 #include <cassert>
@@ -30,14 +28,7 @@
 static void uf_strlcpy_to_utf8(char *dest, size_t dest_max,
 	Exiv2::ExifData::const_iterator pos, Exiv2::ExifData& exifData)
 {
-#if EXIV2_TEST_VERSION(0,18,0)
     std::string str = pos->print(&exifData);
-#else
-    (void)exifData;
-    std::stringstream strm;
-    strm << *pos;
-    std::string str = strm.str();
-#endif
 
     char *s = g_locale_to_utf8(str.c_str(), str.length(),
 				NULL, NULL, NULL);
@@ -104,55 +95,18 @@ try {
 	uf->conf->aperture = pos->toFloat ();
     }
     /* Read ISO speed */
-#if EXIV2_TEST_VERSION(0,18,1)
     if ( (pos=Exiv2::isoSpeed(exifData)) != exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
     }
-#else
-    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.ISOSpeedRatings")))
-	    != exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
-    } else if ( (pos=exifData.findKey(Exiv2::ExifKey(
-			"Exif.CanonSi.ISOSpeed"))) != exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
-    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon1.ISOSpeed")))
-	    != exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
-    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon2.ISOSpeed")))
-	    != exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
-    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.ISOSpeed")))
-	    != exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
-    } else if ( (pos=exifData.findKey(
-		    Exiv2::ExifKey("Exif.MinoltaCsNew.ISOSpeed")))
-	    != exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
-    } else if ( (pos=exifData.findKey(
-		    Exiv2::ExifKey("Exif.MinoltaCsOld.ISOSpeed")))
-	    != exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
-    } else if ( (pos=exifData.findKey(
-		    Exiv2::ExifKey("Exif.MinoltaCs5D.ISOSpeed")))
-	    != exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
-    } else if ( (pos=exifData.findKey(Exiv2::ExifKey(
-			"Exif.MinoltaCs7D.ISOSpeed")))
-	    != exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
-    }
-#endif
     /* Read focal length */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.FocalLength")))
 	    != exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->focalLenText, max_name, pos, exifData);
 	uf->conf->focal_len = pos->toFloat ();
-#if EXIV2_TEST_VERSION(0,18,1)
     } else if ( (pos=exifData.findKey(Exiv2::ExifKey(
 			"Exif.Canon.FocalLength"))) != exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->focalLenText, max_name, pos, exifData);
 	uf->conf->focal_len = pos->toFloat ();
-#endif
     }
     /* Read focal length in 35mm equivalent */
     if ( (pos=exifData.findKey(Exiv2::ExifKey(
@@ -161,40 +115,9 @@ try {
 	uf_strlcpy_to_utf8(uf->conf->focalLen35Text, max_name, pos, exifData);
     }
     /* Read full lens name */
-#if EXIV2_TEST_VERSION(0,18,1)
     if ( (pos=Exiv2::lensName(exifData)) != exifData.end() ) {
 	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
     }
-#else
-    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.LensData")))
-	    != exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
-	/* Read short lens name if full lens name if not defined */
-	if ( isdigit(uf->conf->lensText[0]) ) {
-	    ufraw_message(UFRAW_SET_LOG,
-		    "Value of EXIF tag 'Exif.Nikon3.LensData' is not defined. "
-		    "Reading 'Exif.Nikon3.Lens'.\n");
-	    if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.Lens")))
-		    != exifData.end() ) {
-		uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
-	    }
-	}
-#if EXIV2_TEST_VERSION(0,18,0)
-    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.CanonCs.LensType")))
-		!= exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
-#endif
-    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Canon.0x0095")))
-		!= exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
-    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Minolta.LensID")))
-		!= exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
-    } else if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.LensType")))
-		!= exifData.end() ) {
-	uf_strlcpy_to_utf8(uf->conf->lensText, max_name, pos, exifData);
-    }
-#endif
     /* Read flash mode */
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Photo.Flash")))
 	    != exifData.end() ) {
@@ -216,18 +139,11 @@ try {
     }
 
     /* Store all EXIF data read in. */
-#if EXIV2_TEST_VERSION(0,18,0)
     Exiv2::Blob blob;
     Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
     uf->inputExifBufLen = blob.size();
     uf->inputExifBuf = g_new(unsigned char, uf->inputExifBufLen);
     memcpy(uf->inputExifBuf, &blob[0], blob.size());
-#else
-    Exiv2::DataBuf buf(exifData.copy());
-    uf->inputExifBufLen = buf.size_;
-    uf->inputExifBuf = g_new(unsigned char, uf->inputExifBufLen);
-    memcpy(uf->inputExifBuf, buf.pData_, buf.size_);
-#endif
     ufraw_message(UFRAW_SET_LOG, "EXIF data read using exiv2, buflen %d\n",
 	    uf->inputExifBufLen);
     g_strlcpy(uf->conf->exifSource, EXV_PACKAGE_STRING, max_name);
@@ -251,11 +167,7 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
     Exiv2::ExifData exifData = Exiv2::ExifData();
 
     /* Start from the input EXIF data */
-#if EXIV2_TEST_VERSION(0,18,0)
     Exiv2::ExifParser::decode(exifData, uf->inputExifBuf, uf->inputExifBufLen);
-#else
-    exifData.load(uf->inputExifBuf, uf->inputExifBufLen);
-#endif
     Exiv2::ExifData::iterator pos;
     if ( uf->conf->rotate ) {
 	/* Reset orientation tag since UFRaw already rotates the image */
@@ -317,7 +229,6 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Nikon3.Preview")))
 	    != exifData.end() )
 	exifData.erase(pos);
-#if EXIV2_TEST_VERSION(0,18,0)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.NikonPreview.JPEGInterchangeFormat")))
 	    != exifData.end() )
 	exifData.erase(pos);
@@ -326,7 +237,6 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Image.DNGPrivateData")))
 	    != exifData.end() )
 	exifData.erase(pos);
-#endif
 
     // Pentax thumbnail data
     if ( (pos=exifData.findKey(Exiv2::ExifKey("Exif.Pentax.PreviewResolution")))
@@ -384,14 +294,9 @@ try {
     Exiv2::ExifData exifData = ufraw_prepare_exifdata(uf);
 
     int size;
-#if EXIV2_TEST_VERSION(0,18,0)
     Exiv2::Blob blob;
     Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
     size = blob.size();
-#else
-    Exiv2::DataBuf buf(exifData.copy());
-    size = buf.size_;
-#endif
     const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
     /* If buffer too big for JPEG, try deleting some stuff. */
     if ( size+sizeof(ExifHeader)>65533 ) {
@@ -402,41 +307,23 @@ try {
 	    ufraw_message(UFRAW_SET_LOG,
 		    "buflen %d too big, erasing Exif.Photo.MakerNote\n",
 		    size+sizeof(ExifHeader));
-#if EXIV2_TEST_VERSION(0,18,0)
 	    Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
 	    size = blob.size();
-#else
-	    buf = exifData.copy();
-	    size = buf.size_;
-#endif
 	}
     }
     if ( size+sizeof(ExifHeader)>65533 ) {
-#if EXIV2_TEST_VERSION(0,18,0)
 	Exiv2::ExifThumb thumb(exifData);
 	thumb.erase();
-#else
-	exifData.eraseThumbnail();
-#endif
 	ufraw_message(UFRAW_SET_LOG,
 		"buflen %d too big, erasing Thumbnail\n",
 		size+sizeof(ExifHeader));
-#if EXIV2_TEST_VERSION(0,18,0)
 	Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
 	size = blob.size();
-#else
-	buf = exifData.copy();
-	size = buf.size_;
-#endif
     }
     uf->outputExifBufLen = size + sizeof(ExifHeader);
     uf->outputExifBuf = g_new(unsigned char, uf->outputExifBufLen);
     memcpy(uf->outputExifBuf, ExifHeader, sizeof(ExifHeader));
-#if EXIV2_TEST_VERSION(0,18,0)
     memcpy(uf->outputExifBuf+sizeof(ExifHeader), &blob[0], blob.size());
-#else
-    memcpy(uf->outputExifBuf+sizeof(ExifHeader), buf.pData_, buf.size_);
-#endif
     std::cerr.rdbuf(savecerr);
     ufraw_message(UFRAW_SET_LOG, "%s\n", stderror.str().c_str());
 
@@ -453,7 +340,6 @@ catch (Exiv2::AnyError& e) {
 
 extern "C" int ufraw_exif_write(ufraw_data *uf)
 {
-#if EXIV2_TEST_VERSION(0,18,0)
     /* Redirect exiv2 errors to a string buffer */
     std::ostringstream stderror;
     std::streambuf *savecerr = std::cerr.rdbuf();
@@ -489,10 +375,6 @@ catch (Exiv2::AnyError& e) {
     ufraw_message(UFRAW_SET_WARNING, "%s\n", s.c_str());
     return UFRAW_ERROR;
 }
-#else
-    (void)uf;
-    return UFRAW_SUCCESS;
-#endif
 }
 
 #else

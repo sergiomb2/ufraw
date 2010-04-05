@@ -15,13 +15,11 @@
 #include <string.h>
 #include <glib/gi18n.h>
 
-#if GTK_CHECK_VERSION(2,6,0)
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *fileChooser)
 {
     gtk_file_chooser_set_show_hidden(fileChooser,
 	    gtk_toggle_button_get_active(button));
 }
-#endif
 
 /* Create a GtkFileChooser dialog for selecting raw files */
 GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
@@ -45,7 +43,7 @@ GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
 				 GDK_WINDOW_TYPE_HINT_NORMAL);
     else
 	ufraw_focus(fileChooser, TRUE);
-    uf_window_set_icon_name(GTK_WINDOW(fileChooser), "ufraw");
+    gtk_window_set_icon_name(GTK_WINDOW(fileChooser), "ufraw");
     ufraw_message(UFRAW_SET_PARENT, (char *)fileChooser);
 
     if (defPath!=NULL) {
@@ -113,14 +111,12 @@ GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
     gtk_file_filter_add_pattern(filter, "*");
     gtk_file_chooser_add_filter(fileChooser, filter);
 
-#if GTK_CHECK_VERSION(2,6,0)
     gtk_file_chooser_set_show_hidden(fileChooser, FALSE);
     GtkWidget *button = gtk_check_button_new_with_label(_("Show hidden files"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
     g_signal_connect(G_OBJECT(button), "toggled",
 	    G_CALLBACK(ufraw_chooser_toggle), fileChooser);
     gtk_file_chooser_set_extra_widget(fileChooser, button);
-#endif
     if (multiple)
 	gtk_file_chooser_set_select_multiple(fileChooser, TRUE);
     /* Add shortcut to folder of last opened file */

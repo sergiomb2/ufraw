@@ -43,7 +43,7 @@ int main (int argc, char **argv)
     ufraw_icons_init();
 #ifdef WIN32
     dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    uf_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
+    gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
     ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
 #endif
     /* Load $HOME/.ufrawrc */
@@ -84,7 +84,7 @@ int main (int argc, char **argv)
     /* Create a dummyWindow for the GUI error messenger */
     if (dummyWindow==NULL) {
 	dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	uf_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
+	gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
 	ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);
     }
     conf_file_load(&conf, cmd.inputFilename);

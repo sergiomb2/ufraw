@@ -1,5 +1,5 @@
-dnl $Id: configure.ac,v 1.156 2010/03/30 04:49:08 udifuchs Exp $
-AC_INIT(UFRaw, 0.17)
+dnl $Id: configure.ac,v 1.157 2010/04/05 14:30:18 nkbj Exp $
+AC_INIT(UFRaw, 0.18)
 AC_PREREQ(2.57)
 
 # Create host_os, host_cpu variables
@@ -105,7 +105,7 @@ AC_ARG_WITH(dosprefix,
   [ with_dosprefix=$withval],
   [ with_dosprefix=NONE ] )
 
-PKG_CHECK_MODULES(GLIB, glib-2.0 gthread-2.0)
+PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.12 gthread-2.0)
 PKG_CHECK_MODULES(LCMS, lcms >= 1.14)
 
 AC_ARG_WITH([gtk],
@@ -116,7 +116,7 @@ AC_ARG_WITH([gtk],
 
 have_gtk=no
 AS_IF([test "x$with_gtk" != xno],
-  [PKG_CHECK_MODULES(GTKBASE, gtk+-2.0 >= 2.6,
+  [PKG_CHECK_MODULES(GTKBASE, gtk+-2.0 >= 2.12,
     [ have_gtk=yes ],
     [ have_gtk=no
       if test "x$with_gtk" != xcheck; then
@@ -146,7 +146,7 @@ if test "$have_gtk" = "yes"; then
     [with_gimp=check])
 
   AS_IF([test "x$with_gimp" != xno],
-    [PKG_CHECK_MODULES(GIMP, gimpui-2.0,
+    [PKG_CHECK_MODULES(GIMP, gimpui-2.0 >= 2.2.0,
       [ have_gimp=yes
         GIMP_LIBDIR=`$pkg_prefix --variable=gimplibdir gimp-2.0` ],
       [ have_gimp=no
@@ -252,7 +252,7 @@ PKG_CHECK_MODULES(CFITSIO, cfitsio,
   [ have_cfitsio=no
     AC_MSG_RESULT($CFITSIO_PKG_ERRORS) ] )
 
-PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.16,
+PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.18.1,
   [ have_exiv2=yes
     AC_DEFINE(HAVE_EXIV2, 1, have the exiv2 library) ],
   [ have_exiv2=no
@@ -345,6 +345,13 @@ AC_ARG_ENABLE(interp_none,
   AC_DEFINE(ENABLE_INTERP_NONE, 1, 'None' interpolation enabled),
   enable_interp_none=no)
 AC_MSG_RESULT($enable_interp_none)
+
+AC_MSG_CHECKING(whether to enable debugging with valgrind)
+AC_ARG_ENABLE(valgrind,
+  [  --enable-valgrind       enable debugging with valgrind],
+  AC_DEFINE(UFRAW_VALGRIND, 1, Debugging with valgrind enabled),
+  enable_valgrind=no)
+AC_MSG_RESULT($enable_valgrind)
 
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(icons/Makefile)

@@ -46,7 +46,7 @@ static void camera_set(preview_data *data)
 			"Crop factor:\t%.1f"),
 			maker, model, _variant,
 			camera->Mount, camera->CropFactor);
-    uf_widget_set_tooltip(data->CameraModel, fm);
+    gtk_widget_set_tooltip_text(data->CameraModel, fm);
     g_free(fm);
 }
 
@@ -174,7 +174,7 @@ static void combo_entry_new(UFObject *object, GtkWidget *box,
     gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 2);
     GtkWidget *combo = ufarray_combo_box_entry_new(object);
     gtk_box_pack_start(GTK_BOX(box), combo, TRUE, TRUE, 2);
-    uf_widget_set_tooltip(label, tooltip);
+    gtk_widget_set_tooltip_text(label, tooltip);
 }
 
 static void lens_set(GtkWidget *lensModel, preview_data *data)
@@ -218,7 +218,7 @@ static void lens_set(GtkWidget *lensModel, preview_data *data)
 			    maker ? maker : "?", model ? model : "?",
 			    focal, aperture, lens->CropFactor,
 			    lf_get_lens_type_desc(lens->Type, NULL), mounts);
-    uf_widget_set_tooltip(lensModel, fm);
+    gtk_widget_set_tooltip_text(lensModel, fm);
     g_free(fm);
 
     /* Create the focal/aperture/distance combo boxes */
@@ -347,9 +347,11 @@ static void auto_lens_event(UFObject *object, UFEventType type) {
         return;
     GtkButton *button = ufobject_user_data(object);
     if (ufstring_is_equal(object, "yes"))
-        uf_button_set_stock_image(button, "object-automatic");
+	gtk_button_set_image(button, gtk_image_new_from_stock(
+		"object-automatic", GTK_ICON_SIZE_BUTTON));
     else
-        uf_button_set_stock_image(button, "object-manual");
+	gtk_button_set_image(button, gtk_image_new_from_stock(
+		"object-manual", GTK_ICON_SIZE_BUTTON));
 }
 
 /* --- TCA correction page --- */
@@ -397,7 +399,8 @@ static void fill_tca_page(preview_data *data, GtkWidget *page, GtkWidget *reset)
     UFObject *tca = ufgroup_element(lensfun, ufTCA);
     GtkWidget *combo = ufarray_combo_box_new(tca);
     gtk_box_pack_start(GTK_BOX(hbox), combo, TRUE, TRUE, 0);
-    uf_widget_set_tooltip(combo, _("Chromatic Aberrations mathematical model"));
+    gtk_widget_set_tooltip_text(combo,
+            _("Chromatic Aberrations mathematical model"));
     g_signal_connect_after(G_OBJECT(combo), "changed",
             G_CALLBACK(tca_model_changed), data);
     ufobject_reset_button_add(reset, tca);
@@ -462,7 +465,8 @@ static void fill_vignetting_page(preview_data *data, GtkWidget *page,
     UFObject *vignetting = ufgroup_element(lensfun, ufVignetting);
     GtkWidget *combo = ufarray_combo_box_new(vignetting);
     gtk_box_pack_start(GTK_BOX(hbox), combo, TRUE, TRUE, 0);
-    uf_widget_set_tooltip(combo, _("Optical vignetting mathematical model"));
+    gtk_widget_set_tooltip_text(combo,
+            _("Optical vignetting mathematical model"));
     g_signal_connect_after(G_OBJECT(combo), "changed",
             G_CALLBACK(vignetting_model_changed), data);
     ufobject_reset_button_add(reset, vignetting);
@@ -529,7 +533,7 @@ static void fill_distortion_page(preview_data *data, GtkWidget *page,
     UFObject *distortion = ufgroup_element(lensfun, ufDistortion);
     GtkWidget *combo = ufarray_combo_box_new(distortion);
     gtk_box_pack_start(GTK_BOX(hbox), combo, TRUE, TRUE, 0);
-    uf_widget_set_tooltip(combo, _("Lens distortion mathematical model"));
+    gtk_widget_set_tooltip_text(combo, _("Lens distortion mathematical model"));
     g_signal_connect_after(G_OBJECT(combo), "changed",
 	    G_CALLBACK(distortion_model_changed), data);
     ufobject_reset_button_add(reset, distortion);
@@ -572,7 +576,7 @@ static GtkWidget *fill_geometry_page(UFObject *ufobject, GtkWidget *reset)
     gtk_table_attach(geometryTable, label, 0, 1, 0, 1, GTK_FILL, 0, 5, 0);
     UFObject *lensGeometry = ufgroup_element(lensfun, ufLensGeometry);
     GtkWidget *combo = ufarray_combo_box_new(lensGeometry);
-    uf_widget_set_tooltip(combo,
+    gtk_widget_set_tooltip_text(combo,
 	    _("The geometry of the lens used to make the shot"));
     gtk_table_attach(geometryTable, combo, 1, 2, 0, 1,
 	    GTK_EXPAND | GTK_FILL, 0, 0, 0);
@@ -595,7 +599,8 @@ static GtkWidget *fill_geometry_page(UFObject *ufobject, GtkWidget *reset)
     UFObject *targetLensGeometry =
 	    ufgroup_element(lensfun, ufTargetLensGeometry);
     combo = ufarray_combo_box_new(targetLensGeometry);
-    uf_widget_set_tooltip(combo, _("The target geometry for output image"));
+    gtk_widget_set_tooltip_text(combo,
+	    _("The target geometry for output image"));
     gtk_table_attach(geometryTable, combo, 1, 2, 2, 3,
 	    GTK_EXPAND | GTK_FILL, 0, 0, 0);
     ufobject_reset_button_add(reset, targetLensGeometry);
@@ -676,7 +681,7 @@ void lens_fill_interface(preview_data *data, GtkWidget *page)
 
     GtkWidget *autoLens = gtk_toggle_button_new();
     gtk_table_attach(table, autoLens, 4, 5, 1, 2, 0, 0, 0, 0);
-    uf_widget_set_tooltip(autoLens,
+    gtk_widget_set_tooltip_text(autoLens,
             _("Automatically find lens and set lens corrections"));
     UFObject *lensfunAuto = ufgroup_element(CFG->ufobject, ufLensfunAuto);
     g_signal_connect(G_OBJECT(autoLens), "toggled",

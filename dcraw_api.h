@@ -16,7 +16,7 @@
 #ifndef _DCRAW_API_H
 #define _DCRAW_API_H
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -82,7 +82,7 @@ void dcraw_image_dimensions(dcraw_data *raw, int flip, int shrink,
 
 void dcraw_message(void *dcraw, int code, char *format, ...);
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 }
 #endif
 

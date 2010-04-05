@@ -26,12 +26,10 @@ typedef unsigned short ushort;
  */
 #if !defined(DCRAW_NOMAIN) && defined(WIN32)
 #include <glib.h>
-#if GLIB_CHECK_VERSION(2,6,0)
 extern "C" {
 #include <glib/gstdio.h>
 }
 #define fopen g_fopen
-#endif
 #endif
 
 class DCRaw { public:

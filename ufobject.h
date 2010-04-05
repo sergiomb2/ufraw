@@ -396,7 +396,7 @@ public:
     explicit UFException(std::string &Message);
 };
 
-#endif /*__cplusplus*/
+#endif // __cplusplus
 
 /*************************\
  * UFObject C interface *

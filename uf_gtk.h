@@ -16,23 +16,11 @@
 #include <gtk/gtk.h>
 #include <ufobject.h>
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
-// Interface to gtk_widget_set_tooltip_text() introduced in 2.12
-// Should be called after widget has a toplevel to minimize number
-// of calls to gtk_tooltips_new()
-void uf_widget_set_tooltip(GtkWidget *widget, const gchar *text);
-
-void uf_button_set_stock_image(GtkButton *button, const gchar *stock_image);
-
-void uf_label_set_width_chars(GtkLabel *label, gint n_chars);
-
-// Interface to gtk_window_set_icon_name() introduced in 2.6
-void uf_window_set_icon_name(GtkWindow *window, const gchar *name);
-
-// Create a GtkCheckButton with a label an a value that gets updated
+// Create a GtkCheckButton with a label and a value that gets updated
 GtkWidget *uf_check_button_new(const char *label, gboolean *valuep);
 
 // Create a new ComboBox text with small width.
@@ -70,7 +58,7 @@ GtkWidget *ufstring_entry_new(UFObject *object);
 GtkWidget *ufarray_combo_box_new(UFObject *object);
 GtkWidget *ufarray_combo_box_entry_new(UFObject *object);
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 }
 #endif
 

@@ -39,7 +39,7 @@ public:
     double ApertureValue;
     double DistanceValue;
     Lensfun();
-#if 0 // Can be useful for valgrind --leak-check=full
+#ifdef UFRAW_VALGRIND // Can be useful for valgrind --leak-check=full
     ~Lensfun() {
 	if (_LensDB != NULL)
 	    lf_db_destroy(_LensDB);

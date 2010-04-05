@@ -855,22 +855,12 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 	    }
 	    ufraw_image_type *src = (ufraw_image_type *)(img->buffer +
 		    yy * img->rowstride + xx * img->depth);
-#if 1
-	    /* Do it in integer arithmetic, it's a bit faster */
 	    guint64 dx = (gint32)(srcX * 4096.0) - (xx << 12);
 	    guint64 dy = (gint32)(srcY * 4096.0) - (yy << 12);
 	    for (c = 0; c < uf->colors; c++)
 		cur[c] = ( (4096-dy)*((4096-dx)*src[0][c] + dx*src[1][c])
 			+ dy*((4096-dx)*src[img->width][c]
 				+ (dx)*src[img->width+1][c]) ) >> 24;
-#else
-	    float dx = srcX - xx;
-	    float dy = srcY - yy;
-	    for (c = 0; c < uf->colors; c++)
-		cur[c] = (1-dy)*((1-dx)*src[0][c] + dx*src[1][c])
-			    + dy*((1-dx)*src[img->width][c]
-				+ (dx)*src[img->width+1][c]);
-#endif
 	}
     }
 }
