@@ -361,6 +361,7 @@ try {
 	outExifData.add(*pos);
 	pos = rawExifData.erase(pos);
     }
+    outExifData.sortByTag();
     image->setExifData(outExifData);
     image->writeMetadata();
 
