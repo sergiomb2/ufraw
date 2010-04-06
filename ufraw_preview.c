@@ -5756,7 +5756,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 
     if ( CFG->WindowMaximized ) {
 	gtk_widget_set_size_request(scroll, -1, -1);
-	preview_progress_disable(data);
+	render_status_text(data);
 	while (gtk_events_pending()) gtk_main_iteration();
 	// scroll widget is allocated size only after gtk_widget_show_all()
 	int scrollWidth = scroll->allocation.width;
