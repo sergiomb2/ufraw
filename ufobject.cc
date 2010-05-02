@@ -190,7 +190,7 @@ public:
 	AccuracyDigits(std::max(accuracyDigits < 0 ?
 	    3 - (int)floor(log(Maximum - Minimum) / log(10.0)) :
 	    accuracyDigits, 0)),
-	Accuracy(pow(10, -AccuracyDigits)),
+	Accuracy(pow(10.0, -AccuracyDigits)),
 	Step(step == 0.0 ? Accuracy * 10.0 : step),
 	Jump(jump == 0.0 ? Step * 10.0 : jump) { }
 };
@@ -542,7 +542,7 @@ bool UFString::IsEqual(const char *string) const {
 
 class _UFNameCompare {
 public:
-    bool operator()(char const *a, char const *b) {
+    bool operator()(char const *a, char const *b) const {
 	return strcmp(a, b) < 0;
     }
 };

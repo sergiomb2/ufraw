@@ -365,12 +365,13 @@ static inline void shrink_accumulate_row(unsigned *sum, int size,
 static inline void shrink_row(dcraw_image_type *obase, int osize,
 	dcraw_image_type *ibase, int isize, int colors, int scale)
 {
-    unsigned sum[osize];
+    unsigned *sum;
     dcraw_image_type *iptr;
     int cl, i;
 
+    sum = (unsigned*) g_malloc(osize * sizeof(unsigned));
     for (cl = 0; cl < colors; ++cl) {
-	memset(sum, 0, sizeof (sum));
+	memset(sum, 0, osize * sizeof (unsigned));
 	iptr = ibase;
 	for (i = 0; i < scale; ++i) {
 	    shrink_accumulate_row(sum, osize, iptr, scale, cl);
@@ -379,6 +380,7 @@ static inline void shrink_row(dcraw_image_type *obase, int osize,
 	for (i = 0; i < osize; ++i)
 	    obase[i][cl] = sum[i] / (scale * scale);
     }
+    g_free(sum); 
 }
 
 static inline void shrink_pixel(dcraw_image_type pixp, int row, int col,
@@ -388,8 +390,8 @@ static inline void shrink_pixel(dcraw_image_type pixp, int row, int col,
     int ri, ci, cl;
     dcraw_image_type *ibase;
 
-    memset(sum, 0, sizeof (sum));
-    memset(count, 0, sizeof (count));
+    memset(sum, 0, 4 * sizeof (unsigned));
+    memset(count, 0, 4 * sizeof (unsigned));
     for (ri = 0; ri < scale; ++ri) {
 	ibase = hh->raw.image + ((row * scale + ri) / 2) * hh->raw.width;
 	for (ci = 0; ci < scale; ++ci) {
@@ -408,7 +410,7 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
     DCRaw *d = (DCRaw *)hh->dcraw;
     int h, w, fujiWidth, r, c, ri, recombine, pixels, f4;
     dcraw_image_type *ibase, *obase;
-    unsigned fseq[scale];
+    unsigned *fseq;
     unsigned short *pixp;
 
     g_free(d->messageBuffer);
@@ -435,6 +437,7 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
 #pragma omp parallel for schedule(static) private(r,ri,fseq,c,pixp)
 #endif
 	for (r = 0; r < h; ++r) {
+	    fseq = (unsigned*) g_malloc(scale * sizeof(unsigned));
 	    for (ri = 0; ri < scale; ++ri)
 		fseq[ri] = fc_sequence(f4, r + ri);
 	    for (c = 0; c < w; ++c) {
@@ -443,6 +446,7 @@ int dcraw_finalize_shrink(dcraw_image_data *f, dcraw_data *hh,
 		if (recombine)
 		    pixp[1] = (pixp[1] + pixp[3]) / 2;
 	    }
+	    g_free(fseq);
 	}
     } else {
 	if (hh->filters!=0) scale /= 2;

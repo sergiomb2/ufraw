@@ -3663,7 +3663,7 @@ void CLASS wavelet_denoise()
   if ((nc = colors) == 3 && filters) nc++;
   FORC(nc) {			/* denoise R,G1,B,G3 individually */
     for (i=0; i < size; i++)
-      fimg[i] = 256 * sqrt(image[i][c] << scale);
+      fimg[i] = 256 * sqrt((float) (image[i][c] << scale));
     for (hpass=lev=0; lev < 5; lev++) {
       lpass = size*((lev & 1)+1);
       for (row=0; row < iheight; row++) {
@@ -3707,7 +3707,7 @@ void CLASS wavelet_denoise()
 		window[2][col-1] + window[2][col+1] - black*4 )
 	      * mul[row & 1] + (window[1][col] - black) * 0.5 + black;
 	avg = avg < 0 ? 0 : sqrt(avg);
-	diff = sqrt(BAYER(row,col)) - avg;
+	diff = sqrt((float) BAYER(row,col)) - avg;
 	if      (diff < -thold) diff += thold;
 	else if (diff >  thold) diff -= thold;
 	else diff = 0;
@@ -4132,7 +4132,7 @@ void CLASS ahd_interpolate()
 
   for (i=0; i < 0x10000; i++) {
     r = i / 65535.0;
-    cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
+    cbrt[i] = r > 0.008856 ? pow(r, (float) (1/3.0)) : 7.787*r + 16/116.0;
   }
   for (i=0; i < 3; i++)
     for (j=0; j < colors; j++)
@@ -4319,7 +4319,7 @@ void CLASS recover_highlights()
 
   dcraw_message (DCRAW_VERBOSE,_("Rebuilding highlights...\n"));
 
-  grow = pow (2, 4-highlight);
+  grow = pow (2.0, 4-highlight);
   FORCC hsat[c] = 32000 * pre_mul[c];
   for (kc=0, c=1; c < colors; c++)
     if (pre_mul[kc] < pre_mul[c]) kc = c;

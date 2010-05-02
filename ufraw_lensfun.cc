@@ -149,9 +149,9 @@ char *_StringNumber(char *buffer, double number) {
     int precision;
     if (number > 10.0 && (int)(10*number)%10 != 0)
 	// Support non-integer focal lengths longer than 10mm.
-	precision = MAX(-floor(log(number) / log(10) - 1.99), 0);
+	precision = MAX(-floor(log(number) / log(10.0) - 1.99), 0);
     else if (number > 0.0)
-	precision = MAX(-floor(log(number) / log(10) - 0.99), 0);
+	precision = MAX(-floor(log(number) / log(10.0) - 0.99), 0);
     else
 	precision = 0;
     snprintf(buffer, _buffer_size, "%.*f", precision, number);
@@ -256,7 +256,7 @@ public:
 	double value = 0.25;
 	while (value < 1001) {
 	    *this << new UFString(ufPreset, _StringNumber(buffer, value));
-	    value *= sqrt(2);
+	    value *= sqrt(2.0);
 	    if (value > 127 && value < 129) value = 125;
 	}
     }
