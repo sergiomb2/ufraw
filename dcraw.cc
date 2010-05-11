@@ -5813,9 +5813,12 @@ void CLASS parse_fuji (int offset)
     tag = get2();
     len = get2();
     save = ftell(ifp);
-    if (tag == 0x100) {
+    if (tag == 0x100 || tag == 0x111) {
       raw_height = get2();
       raw_width  = get2();
+    } else if (tag == 0x113) {
+      height = get2();
+      width  = get2();
     } else if (tag == 0x121) {
       height = get2();
       if ((width = get2()) == 4284) width += 3;
@@ -6221,6 +6224,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 11044,-3888,-1120,-7248,15168,2208,-1531,2277,8069 } },
     { "FUJIFILM FinePix F7", 0, 0,
 	{ 10004,-3219,-1201,-7036,15047,2107,-1863,2565,7736 } },
+    { "FUJIFILM FinePix HS10 HS11", 64, 0xf00,
+	{ 0 } },
     { "FUJIFILM FinePix S100FS", 514, 0,
 	{ 11521,-4355,-1065,-6524,13767,3058,-1466,1984,6045 } },
     { "FUJIFILM FinePix S200EXR", 512, 0x3fff,
@@ -7371,6 +7376,12 @@ cp_e2500:
   } else if (!strcmp(model,"FinePix S5100") ||
 	     !strcmp(model,"FinePix S5500")) {
     height -= top_margin = 6;
+  } else if (!strcmp(model,"FinePix HS10 HS11")) {
+    flip = 0;
+    filters = 0x61616161;
+    data_offset += 9900;
+    load_flags = 24;
+    load_raw = &CLASS packed_load_raw;
   } else if (!strcmp(make,"FUJIFILM")) {
     if (!strcmp(model+7,"S2Pro")) {
       strcpy (model+7," S2Pro");
