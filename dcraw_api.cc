@@ -30,7 +30,10 @@
 #include "dcraw_api.h"
 #include "dcraw.h"
 
-#define FORCC for (c=0; c < colors; c++)
+#define FORC(cnt) for (c=0; c < cnt; c++)
+#define FORC3 FORC(3)
+#define FORC4 FORC(4)
+#define FORCC FORC(colors)
 #define FC(filters,row,col) \
     (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 extern "C" {
@@ -63,6 +66,7 @@ void fuji_rotate_INDI(gushort (**image_p)[4], int *height_p, int *width_p,
 int dcraw_open(dcraw_data *h, char *filename)
 {
     DCRaw *d = new DCRaw;
+    int c, i;
 
 #ifndef LOCALTIME
     putenv (const_cast<char *>("TZ=UTC"));
@@ -130,6 +134,10 @@ int dcraw_open(dcraw_data *h, char *filename)
     // maximun and black might change during load_raw. We need them for the
     // camera-wb. If they'll change we will recalculate the camera-wb.
     h->rgbMax = d->maximum;
+    i = d->cblack[3];
+    FORC3 if ((unsigned)i > d->cblack[c]) i = d->cblack[c];
+    FORC4 d->cblack[c] -= i;
+    d->black += i;
     h->black = d->black;
     h->shrink = d->shrink = (h->filters!=0);
     h->pixel_aspect = d->pixel_aspect;
@@ -186,7 +194,7 @@ void dcraw_image_dimensions(dcraw_data *raw, int flip, int shrink,
 int dcraw_load_raw(dcraw_data *h)
 {
     DCRaw *d = (DCRaw *)h->dcraw;
-    int i, j;
+    int c, i, j;
     double dmin;
 
     g_free(d->messageBuffer);
@@ -205,11 +213,8 @@ int dcraw_load_raw(dcraw_data *h)
     d->meta_data = (char *) (d->image + d->iheight*d->iwidth);
     /* copied from the end of dcraw's identify() */
     if (d->filters && d->colors == 3) {
-	for (i=0; i < 32; i+=4) {
-	    if ((d->filters >> i & 15) == 9) d->filters |= 2 << i;
-	    if ((d->filters >> i & 15) == 6) d->filters |= 8 << i;
-	}
-	d->colors++;
+	d->filters |= ((d->filters >> 2 & 0x22222222) |
+		(d->filters << 2 & 0x88888888)) & d->filters << 1;
     }
     h->raw.colors = d->colors;
     h->fourColorFilters = d->filters;
@@ -232,6 +237,10 @@ int dcraw_load_raw(dcraw_data *h)
     // TODO: Go over the following settings to see if they change during
     // load_raw. If they change, document where. If not, move to dcraw_open().
     h->rgbMax = d->maximum;
+    i = d->cblack[3];
+    FORC3 if ((unsigned)i > d->cblack[c]) i = d->cblack[c];
+    FORC4 d->cblack[c] -= i;
+    d->black += i;
     h->black = d->black;
     d->dcraw_message(DCRAW_VERBOSE,_("Black: %d, Maximum: %d\n"),
 	    d->black, d->maximum);
