@@ -1,6 +1,6 @@
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
-   Copyright 1997-2009 by Dave Coffin, dcoffin a cybercom o net
+   Copyright 1997-2010 by Dave Coffin, dcoffin a cybercom o net
 
    This is a command-line ANSI C program to convert raw photos from
    any digital camera on any computer running any operating system.
@@ -5752,7 +5752,7 @@ void CLASS parse_fuji (int offset)
   }
   if (!raw_height) {
     filters = 0x16161616;
-    load_raw = packed_load_raw;
+    load_raw = &CLASS packed_load_raw;
     load_flags = 24;
   }
   height <<= fuji_layout;
