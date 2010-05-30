@@ -1,6 +1,6 @@
 /*
    dcraw.cc - Dave Coffin's raw photo decoder - C++ adaptation
-   Copyright 1997-2009 by Dave Coffin, dcoffin a cybercom o net
+   Copyright 1997-2010 by Dave Coffin, dcoffin a cybercom o net
    Copyright 2004-2010 by Udi Fuchs, udifuchs a gmail o com
 
    This program is free software; you can redistribute it and/or modify
@@ -1440,8 +1440,8 @@ int CLASS bayer (unsigned row, unsigned col)
 
 void CLASS phase_one_flat_field (int is_float, int nc)
 {
-  ushort head[8], y;
-  unsigned wide, x, rend, cend, row, col;
+  ushort head[8];
+  unsigned wide, y, x, rend, cend, row, col;
   int c;
   float *mrow, num, mult[4];
 
@@ -6686,11 +6686,10 @@ float CLASS find_green (int bps, int bite, int off0, int off1)
 void CLASS identify()
 {
   char head[32], *cp;
-  int hlen, flen, zero_fsize=1, i, c, is_canon;
-  unsigned fsize;
+  int hlen, flen, fsize, zero_fsize=1, i, c, is_canon;
   struct jhead jh;
   static const struct {
-    unsigned fsize;
+    int fsize;
     const char make[12], model[19], withjpeg;
   } table[] = {
     {    62464, "Kodak",    "DC20"            ,0 },
