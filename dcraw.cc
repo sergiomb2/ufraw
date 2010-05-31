@@ -11,8 +11,8 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.433 $
-   $Date: 2010/05/28 01:29:41 $
+   $Revision: 1.434 $
+   $Date: 2010/05/30 15:57:43 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -22,7 +22,7 @@ extern "C" {
 #include "uf_progress.h"
 }
 
-#define DCRAW_VERSION "9.00"
+#define DCRAW_VERSION "9.01"
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -3918,7 +3918,7 @@ void CLASS lin_interpolate()
 
    "Interpolation using a Threshold-based variable number of gradients"
 
-   described in http://scien.stanford.edu/class/psych221/projects/99/tingchen/algodep/vargra.html
+   described in http://scien.stanford.edu/pages/labsite/1999/psych221/projects/99/tingchen/algodep/vargra.html
 
    I've extended the basic idea to work with non-Bayer filter arrays.
    Gradients are numbered clockwise from NW=0 to W=7.
@@ -6594,7 +6594,11 @@ void CLASS adobe_coeff (const char *make, const char *model)
     { "SONY DSLR-A850", 128, 0,
 	{ 5413,-1162,-365,-5665,13098,2866,-608,1179,8440 } },
     { "SONY DSLR-A900", 128, 0,
-	{ 5209,-1072,-397,-8845,16120,2919,-1618,1803,8654 } }
+	{ 5209,-1072,-397,-8845,16120,2919,-1618,1803,8654 } },
+    { "SONY NEX-3", 138, 0,		/* DJC */
+	{ 6907,-1256,-645,-4940,12621,2320,-1710,2581,6230 } },
+    { "SONY NEX-5", 116, 0,		/* DJC */
+	{ 6807,-1350,-342,-4216,11649,2567,-1089,2001,6420 } }
   };
   double cam_xyz[4][3];
   char name[130];
