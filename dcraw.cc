@@ -11,8 +11,8 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.435 $
-   $Date: 2010/06/11 07:03:46 $
+   $Revision: 1.436 $
+   $Date: 2010/06/14 19:44:30 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -7536,6 +7536,16 @@ konica_400z:
   } else if (!strcmp(model,"NX10")) {
     height -= top_margin = 4;
     width -= 2 * (left_margin = 8);
+  } else if (!strcmp(model,"EX1")) {
+    order = 0x4949;
+    height = 2760;
+    top_margin = 2;
+    if ((width -= 6) > 3682) {
+      height = 2750;
+      width  = 3668;
+      top_margin = 8;
+    }
+    maximum = 0x3e00;
   } else if (fsize == 20487168) {
     height = 2808;
     width  = 3648;
