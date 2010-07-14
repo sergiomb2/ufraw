@@ -2995,17 +2995,15 @@ void CLASS foveon_interpolate()
   		 foveon_fixed (&cfilt, 1, "ColumnFilter");
 
   memset (ddft, 0, sizeof ddft);
-  if (strcmp (make, "Polaroid") && strcmp (model, "x530")) {
-    if (!foveon_camf_param ("IncludeBlocks", "DarkDrift")
-	   || !foveon_fixed (ddft[1][0], 12, "DarkDrift"))
-      for (i=0; i < 2; i++) {
-	foveon_fixed (dstb, 4, i ? "DarkShieldBottom":"DarkShieldTop");
-	for (row = dstb[1]; row <= dstb[3]; row++)
-	  for (col = dstb[0]; col <= dstb[2]; col++)
-	    FORC3 ddft[i+1][c][1] += (short) image[row*width+col][c];
-	FORC3 ddft[i+1][c][1] /= (dstb[3]-dstb[1]+1) * (dstb[2]-dstb[0]+1);
-      }
-  }
+  if (!foveon_camf_param ("IncludeBlocks", "DarkDrift")
+	 || !foveon_fixed (ddft[1][0], 12, "DarkDrift"))
+    for (i=0; i < 2; i++) {
+      foveon_fixed (dstb, 4, i ? "DarkShieldBottom":"DarkShieldTop");
+      for (row = dstb[1]; row <= dstb[3]; row++)
+	for (col = dstb[0]; col <= dstb[2]; col++)
+	  FORC3 ddft[i+1][c][1] += (short) image[row*width+col][c];
+      FORC3 ddft[i+1][c][1] /= (dstb[3]-dstb[1]+1) * (dstb[2]-dstb[0]+1);
+    }
 
   if (!(cp = foveon_camf_param ("WhiteBalanceIlluminants", model2)))
   { dcraw_message (DCRAW_ERROR,_("%s: Invalid white balance \"%s\"\n"), ifname_display, model2);
@@ -3023,11 +3021,9 @@ void CLASS foveon_interpolate()
     FORC3 diag[c][i] = LAST(1,1)*LAST(2,2) - LAST(1,2)*LAST(2,1);
   #undef LAST
   FORC3 div[c] = diag[c][0]*0.3127 + diag[c][1]*0.329 + diag[c][2]*0.3583;
-  if (strcmp (make, "Polaroid") && strcmp (model, "x530")) {
-    sprintf (str, "%sRGBNeutral", model2);
-    if (foveon_camf_param ("IncludeBlocks", str))
-      foveon_fixed (div, 3, str);
-  }
+  sprintf (str, "%sRGBNeutral", model2);
+  if (foveon_camf_param ("IncludeBlocks", str))
+    foveon_fixed (div, 3, str);
   num = 0;
   FORC3 if (num < div[c]) num = div[c];
   FORC3 div[c] /= num;
