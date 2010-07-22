@@ -6219,7 +6219,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 13124,-5329,-1390,-3602,11658,1944,-1612,2863,4885 } },
     { "Canon PowerShot A650", 0, 0,	/* DJC */
 	{ 9427,-3036,-959,-2581,10671,1911,-1039,1982,4430 } },
-    { "Canon PowerShot A720", 0, 0,	/* DJC */
+    { "Canon PowerShot A720 IS", 0, 0,	/* DJC */
 	{ 14573,-5482,-1546,-1266,9799,1468,-1040,1912,3810 } },
     { "Canon PowerShot S3 IS", 0, 0,	/* DJC */
 	{ 14062,-5199,-1446,-4712,12470,2243,-1286,2028,4836 } },
@@ -6747,7 +6747,7 @@ void CLASS identify()
     {  6573120, "Canon",    "PowerShot A610"  ,0 },
     {  9219600, "Canon",    "PowerShot A620"  ,0 },
     {  9243240, "Canon",    "PowerShot A470"  ,0 },
-    { 10341600, "Canon",    "PowerShot A720"  ,0 },
+    { 10341600, "Canon",    "PowerShot A720 IS",0 },
     { 10383120, "Canon",    "PowerShot A630"  ,0 },
     { 12945240, "Canon",    "PowerShot A640"  ,0 },
     { 15636240, "Canon",    "PowerShot A650"  ,0 },
@@ -7072,7 +7072,7 @@ void CLASS identify()
     top_margin  = 6;
     left_margin = 12;
     goto canon_a5;
-  } else if (!strcmp(model,"PowerShot A720")) {
+  } else if (!strcmp(model,"PowerShot A720 IS")) {
     height = 2472;
     width  = 3298;
     raw_height = 2480;
