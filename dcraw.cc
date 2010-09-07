@@ -668,7 +668,7 @@ ushort * CLASS make_decoder_ref (const uchar **source)
   ushort *huff;
 
   count = (*source += 16) - 17;
-  for (max=16; max && !count[max]; max--) {};
+  for (max=16; max && !count[max]; max--);
   huff = (ushort *) calloc (1 + (1 << max), sizeof *huff);
   merror (huff, "make_decoder()");
   huff[0] = max;
@@ -1032,7 +1032,7 @@ void CLASS canon_sraw_load_raw()
       }
     }
   }
-  for (cp=model2; *cp && !isdigit(*cp); cp++) {};
+  for (cp=model2; *cp && !isdigit(*cp); cp++);
   sscanf (cp, "%d.%d.%d", v, v+1, v+2);
   ver = (v[0]*1000 + v[1])*1000 + v[2];
   hue = (jh.sraw+1) << 2;
@@ -1687,7 +1687,7 @@ void CLASS phase_one_load_raw_c()
 	len[0] = len[1] = 14;
       else if ((col & 7) == 0)
 	for (i=0; i < 2; i++) {
-	  for (j=0; j < 5 && !ph1_bits(1); j++) {};
+	  for (j=0; j < 5 && !ph1_bits(1); j++);
 	  if (j--) len[i] = length[j*2 + ph1_bits(1)];
 	}
       if ((i = len[col & 1]) == 14)
@@ -1861,7 +1861,7 @@ void CLASS unpacked_load_raw()
   ushort *pixel;
   int row, col, bits=0;
 
-  while (1 << ++bits < (int) maximum) {};
+  while (1 << ++bits < (int) maximum);
   fseek (ifp, (top_margin*raw_width + left_margin) * 2, SEEK_CUR);
   pixel = (ushort *) calloc (width, sizeof *pixel);
   merror (pixel, "unpacked_load_raw()");
@@ -1953,7 +1953,7 @@ void CLASS olympus_load_raw()
     for (col=0; col < raw_width; col++) {
       carry = acarry[col & 1];
       i = 2 * (carry[2] < 3);
-      for (nbits=2+i; (ushort) carry[0] >> (nbits+i); nbits++) {};
+      for (nbits=2+i; (ushort) carry[0] >> (nbits+i); nbits++);
       low = (sign = getbits(3)) & 3;
       sign = sign << 29 >> 31;
       if ((high = getbithuff(12,huff)) == 12)
@@ -2558,7 +2558,7 @@ void CLASS sony_arw2_load_raw()
       min = 0x7ff & val >> 11;
       imax = 0x0f & val >> 22;
       imin = 0x0f & val >> 26;
-      for (sh=0; sh < 4 && 0x80 << sh <= max-min; sh++) {};
+      for (sh=0; sh < 4 && 0x80 << sh <= max-min; sh++);
       for (bit=30, i=0; i < 16; i++)
 	if      (i == imax) pix[i] = max;
 	else if (i == imin) pix[i] = min;
@@ -2607,11 +2607,11 @@ void CLASS smal_decode_segment (unsigned seg[2][2], int holes)
 	carry = nbits - 8;
       }
       count = ((((data-range+1) & 0xffff) << 2) - 1) / (high >> 4);
-      for (bin=0; hist[s][bin+5] > count; bin++) {};
+      for (bin=0; hist[s][bin+5] > count; bin++);
 		low = hist[s][bin+5] * (high >> 4) >> 2;
       if (bin) high = hist[s][bin+4] * (high >> 4) >> 2;
       high -= low;
-      for (nbits=0; high << nbits < 128; nbits++) {};
+      for (nbits=0; high << nbits < 128; nbits++);
       range = (range+low) << nbits;
       high <<= nbits;
       next = hist[s][1];
@@ -3393,7 +3393,7 @@ void CLASS bad_pixels (const char *cfname)
       strcpy (cp, "/.badpixels");
       if ((fp = fopen (fname, "r"))) break;
       if (cp == fname) break;
-      while (*--cp != '/') {};
+      while (*--cp != '/');
     }
     free (fname);
   }
@@ -5931,7 +5931,7 @@ void CLASS parse_riff()
     memset (&t, 0, sizeof t);
     if (sscanf (date, "%*s %s %d %d:%d:%d %d", month, &t.tm_mday,
 	&t.tm_hour, &t.tm_min, &t.tm_sec, &t.tm_year) == 6) {
-      for (i=0; i < 12 && strcasecmp(mon[i],month); i++) {};
+      for (i=0; i < 12 && strcasecmp(mon[i],month); i++);
       t.tm_mon = i;
       t.tm_year -= 1900;
       if (mktime(&t) > 0)
@@ -6042,7 +6042,7 @@ void CLASS parse_foveon()
       case 0x47414d49:			/* IMAG */
       case 0x32414d49:			/* IMA2 */
 	fseek (ifp, 8, SEEK_CUR);
-	if (get4() == 30) {		/* SIGMA DPx cameras are unsupported */
+	if (get4() == 30) {		/* SIGMA DP* and SD15 are unsupported */
 	  is_foveon = 0;
 	  return;
 	}
@@ -6234,7 +6234,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 13124,-5329,-1390,-3602,11658,1944,-1612,2863,4885 } },
     { "Canon PowerShot A650", 0, 0,	/* DJC */
 	{ 9427,-3036,-959,-2581,10671,1911,-1039,1982,4430 } },
-    { "Canon PowerShot A720 IS", 0, 0,	/* DJC */
+    { "Canon PowerShot A720", 0, 0,	/* DJC */
 	{ 14573,-5482,-1546,-1266,9799,1468,-1040,1912,3810 } },
     { "Canon PowerShot S3 IS", 0, 0,	/* DJC */
 	{ 14062,-5199,-1446,-4712,12470,2243,-1286,2028,4836 } },
