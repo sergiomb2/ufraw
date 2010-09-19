@@ -6964,6 +6964,8 @@ void CLASS identify()
   }
   if (height == 2624 && width == 3936)	/* Pentax K10D and Samsung GX10 */
     { height  = 2616;   width  = 3896; }
+  if (height == 2868 && width == 4352)	/* Pentax K-x */
+			width  = 4308;
   if (height == 3136 && width == 4864)	/* Pentax K20D */
     { height  = 3124;   width  = 4688; }
   if (height == 3136 && width == 4736)	/* Pentax K-7 */
