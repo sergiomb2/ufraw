@@ -7310,6 +7310,9 @@ canon_cr2:
 	     !strcmp(model,"D3000")) {
     height -= 3;
     width  -= 4;
+  } else if (!strcmp(model,"D3100")) {
+    width -= 28;
+    left_margin = 6;
   } else if (!strcmp(model,"D3")   ||
 	     !strcmp(model,"D3S")  ||
 	     !strcmp(model,"D700")) {
