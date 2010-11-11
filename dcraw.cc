@@ -20,7 +20,7 @@
    homepage qualifies as "full source code".
 
    $Revision: 1.439 $
-   $Date: 2010/11/10 16:33:44 $
+   $Date: 2010/11/10 19:00:00 $
  */
 
 #define VERSION "9.05"
@@ -6974,7 +6974,7 @@ void CLASS identify()
     { height  = 2616;   width  = 3896; }
   if (height == 3136 && width == 4864)  /* Pentax K20D and Samsung GX20 */
     { height  = 3124;   width  = 4688; filters = 0x16161616; }
-  if (!strcmp(model,"K-r"))
+  if (!strcmp(model,"K-r") || !strcmp(model,"K-x"))
     {			width  = 4309; filters = 0x16161616; }
   if (!strcmp(model,"K-5"))
     { left_margin = 10; width  = 4950; filters = 0x16161616; }
