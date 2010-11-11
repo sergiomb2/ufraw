@@ -12,7 +12,7 @@
    It can work as either a command-line tool or called by other programs.
 
    $Revision: 1.439 $
-   $Date: 2010/11/10 16:33:44 $
+   $Date: 2010/11/10 19:00:00 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
