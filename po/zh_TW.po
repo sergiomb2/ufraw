@@ -1,0 +1,1659 @@
+# Traditional Chinese translation of UFRaw.
+# Copyright (C) 2010 Lu, Chao-Ming (Tetralet) <tetralet@gmail.com>.
+# This file is distributed under the same license as the UFRaw package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ufraw-0.18\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-11-11 00:26-0500\n"
+"PO-Revision-Date: 2009-06-15 00:00+0800\n"
+"Last-Translator: Tetralet <tetralet@gmail.com>\n"
+"Language-Team: Tetralet <tetralet@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+""
+
+#. Translate text message from GtkImageView:
+msgid "Open the navigator window"
+msgstr "開啟導航視窗"
+
+#, c-format
+msgid "Value %.*f too large, truncated to %.*f."
+msgstr "數值 %.*f 過大。調整為 %.*f。"
+
+#, c-format
+msgid "Value %.*f too small, truncated to %.*f."
+msgstr "數值 %.*f 過小。調整為 %.*f。"
+
+msgid "No input file, nothing to do."
+msgstr "沒有輸入檔，無事可做。"
+
+#, c-format
+msgid "Loaded %s %s"
+msgstr "已載入 %s %s"
+
+#, c-format
+msgid "Saved %s %s"
+msgstr "已儲存 %s %s"
+
+#. First letter of the word 'yes' for the y/n question
+msgid "y"
+msgstr "是(y)"
+
+#. First letter of the word 'no' for the y/n question
+msgid "n"
+msgstr "否(n)"
+
+#, c-format
+msgid "%s: overwrite '%s'?"
+msgstr "%s：是否覆寫 '%s'？"
+
+msgid "--silent option is valid only in batch mode"
+msgstr "--silent 選項只適用於批次處理模式"
+
+msgid "Extracting embedded image is not supported in interactive mode"
+msgstr "不支援在互動模式中匯出內嵌影像"
+
+msgid "Raw images"
+msgstr "Raw 影像"
+
+msgid "UFRaw ID files"
+msgstr "UFRaw ID 檔"
+
+msgid "Raw jpg's"
+msgstr "jpg 格式的 Raw"
+
+msgid "Raw tif's"
+msgstr "tif 格式的 Raw"
+
+msgid "All files"
+msgstr "所有檔案"
+
+msgid "Show hidden files"
+msgstr "顯示隱藏檔"
+
+#. exposure, saturation, black
+#. ExposureNorm
+#. restoreDetails
+#. clipHighlights
+#. autoExposure
+#. autoBlack
+#. autoCrop
+#. BaseCurveIndex, BaseCurveCount
+#. BaseCurve data defaults
+#. curveIndex, curveCount
+#. Curve data defaults
+msgid "Manual curve"
+msgstr "手動曲線"
+
+msgid "Linear curve"
+msgstr "線性曲線"
+
+msgid "Custom curve"
+msgstr "自訂曲線"
+
+msgid "Camera curve"
+msgstr "相機曲線"
+
+#. profileIndex[], profileCount[]
+#. Profile data defaults
+msgid "No profile"
+msgstr "沒有設定檔"
+
+msgid "Color matrix"
+msgstr "顏色調整矩陣"
+
+msgid "sRGB"
+msgstr "sRGB"
+
+msgid "sRGB (embedded)"
+msgstr "sRGB（內嵌）"
+
+msgid "System default"
+msgstr "系統預設值"
+
+msgid "Trying to convert .ufrawrc from UFRaw-0.4 or earlier"
+msgstr "嘗試轉換 UFRaw-0.4 或更早版本的 .ufrawrc"
+
+msgid "Trying to convert .ufrawrc from UFRaw-0.6 or earlier"
+msgstr "嘗試轉換 UFRaw-0.6 或更早版本的 .ufrawrc"
+
+#, c-format
+msgid "UFRaw version in .ufrawrc is not supported"
+msgstr "在 .ufrawrc 裡的版本資訊不被支援"
+
+#, c-format
+msgid "Too many anchors for curve '%s'"
+msgstr "曲線 '%s' 的錨點過多"
+
+msgid "Too many lightness adjustments in the ID file, ignored\n"
+""
+msgstr "在 ID 檔案裡有太多的亮度調整值。已忽略\n"
+""
+
+#, c-format
+msgid "ID file %s does not appear to be a regular file\n"
+"%s\n"
+""
+msgstr "ID 檔案 %s 似乎不是一般的檔案\n"
+"%s\n"
+""
+
+#, c-format
+msgid "Can't open ID file %s for reading\n"
+"%s\n"
+""
+msgstr "無法開啟 ID 檔案 %s 以供讀取\n"
+"%s\n"
+""
+
+#, c-format
+msgid "Error parsing '%s'\n"
+"%s"
+msgstr "在解析 '%s' 時發生錯誤\n"
+"%s"
+
+#, c-format
+msgid "Can't open file %s for writing\n"
+"%s\n"
+""
+msgstr "無法開啟檔案 %s 以供寫入\n"
+"%s\n"
+""
+
+msgid "cannot --create-id with stdout"
+msgstr "不能在標準輸出上使用 --create-id 參數"
+
+msgid "UFRaw "
+msgstr "UFRaw "
+
+msgid " - Unidentified Flying Raw converter for digital camera images.\n"
+""
+msgstr " - Unidentified Flying Raw 數位相機影像轉換程式。\n"
+""
+
+msgid "Usage: ufraw [ options ... ] [ raw-image-files ... ]\n"
+""
+msgstr "用法：ufraw [ 選項 ... ] [ raw-影像檔 ... ]\n"
+""
+
+msgid "       ufraw-batch [ options ... ] [ raw-image-files ... ]\n"
+""
+msgstr "       ufraw-batch [ 選項 ... ] [ raw-影像檔 ... ]\n"
+""
+
+msgid "       ufraw [ options ... ] [ default-directory ]\n"
+""
+msgstr "       ufraw [ 選項 ... ] [ 預設目錄 ]\n"
+""
+
+msgid "By default 'ufraw' displays a preview window for each raw image allowing\n"
+"the user to tweak the image parameters before saving. If no raw images\n"
+"are given at the command line, UFRaw will display a file chooser dialog.\n"
+"To process the images with no questions asked (and no preview) use\n"
+"'ufraw-batch'.\n"
+""
+msgstr ""
+"在預設情況下，'ufraw' 會替每個 RAW 影像顯示預覽視窗，讓使用者可以在儲存之前\n"
+"調整影像參數。如果沒有在命令列中事先指定 RAW 影像，UFRaw 會跳出一個選擇檔案\n"
+"的對話視窗。若要以非互動式（且沒有預覽）進行圖片處理，請使用 'ufraw-batch'。\n"
+""
+
+msgid "The input files can be either raw images or ufraw's ID files. ID files\n"
+"contain a raw image filename and the parameters for handling the image.\n"
+"One can also use an ID file with the option:\n"
+""
+msgstr "輸入檔可以是 RAW 影像或 ufraw 的 ID 檔案。ID 檔案包含了原始影像的\n"
+"檔案名稱，和該影像的處理參數。在指定 ID 檔案的同時也可以使用以下選項：\n"
+""
+
+msgid "--conf=ID-file        Apply the parameters in ID-file to other raw images.\n"
+""
+msgstr "--conf=ID-file        將 ID 檔案裡的參數套用到其他的 raw 影像。\n"
+""
+
+msgid "The rest of the options are separated into two groups.\n"
+""
+msgstr "其餘的選項分為兩大類。\n"
+""
+
+msgid "The options which are related to the image manipulation are:\n"
+""
+msgstr "和影像處理相關的選項：\n"
+""
+
+msgid "--wb=camera|auto      White balance setting.\n"
+""
+msgstr "--wb=camera|auto      白平衡設定。\n"
+""
+
+msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
+""
+msgstr "--temperature=TEMP    色溫，以絕對溫度 K 標示 (2000-7000)。\n"
+""
+
+msgid "--green=GREEN         Green color normalization.\n"
+""
+msgstr "--green=GREEN         綠色正規化。\n"
+""
+
+msgid "--base-curve=manual|linear|camera|custom|CURVE\n"
+"                      Type of base tone curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default camera if such exists, linear otherwise).\n"
+""
+msgstr "--base-curve=manual|linear|camera|custom|CURVE\n"
+"                      要使用的基本曲線。CURVE 的話就是使用在 GUI 裡已經\n"
+"                      載入的曲線。（預設值為 camera，如果有的話；否則為\n"
+"                      linear）。\n"
+""
+
+msgid "--base-curve-file=file\n"
+"                      Use base tone curve included in specified file.\n"
+"                      Overrides --base-curve option.\n"
+""
+msgstr "--base-curve-file=file\n"
+"                      使用包含於指定檔案中的基本曲線。\n"
+"                      會蓋過 --base-curve 選項。\n"
+""
+
+msgid "--curve=manual|linear|CURVE\n"
+"                      Type of luminosity curve to use. CURVE can be any\n"
+"                      curve that was previously loaded in the GUI.\n"
+"                      (default linear).\n"
+""
+msgstr "--curve=manual|linear|CURVE\n"
+"                      要使用的光度曲線。CURVE 的話就是在 GUI 裡已經載入的\n"
+"                      曲線。（預設值為 linear）。\n"
+""
+
+msgid "--curve-file=file     Use luminosity curve included in specified file.\n"
+"                      Overrides --curve option.\n"
+""
+msgstr "--curve-file=file     使用包含於指定檔案中的光度曲線。\n"
+"                      會蓋過 --curve-file 選項。\n"
+""
+
+msgid "--restore=clip|lch|hsv\n"
+"                      Restore details for negative EV.\n"
+"                      'clip' restores nothing - safe from artifacts.\n"
+"                      'lch' restores in LCH space - giving soft details.\n"
+"                      'hsv' restores in HSV space - giving sharp details.\n"
+"                      (default lch).\n"
+""
+msgstr "--restore=clip|lch|hsv\n"
+"                      當 EV 值為負時還原細節。\n"
+"                      'clip' 不做任何還原 - 保留原始影像。\n"
+"                      'lch' 以 LCH 色彩空間還原 - 會讓細節柔化。\n"
+"                      'hsv' 以 HSV 色彩空間還原 - 會讓細節銳化。\n"
+"                      （預設值為 lch）。\n"
+""
+
+msgid "--clip=digital|film   Clip highlights for positive EV.\n"
+"                      'digital' linear digital sensor response.\n"
+"                      'film' emulate soft film response. (default digital).\n"
+""
+msgstr "--clip=digital|film   當 EV 值為正時削減過亮區域。\n"
+"                      'digital' 以線性數位感應為基準。\n"
+"                      'film' 模擬柔和影片的感覺。（預設為 digital）。\n"
+""
+
+msgid "--gamma=GAMMA         Gamma adjustment of the base curve (default 0.45).\n"
+""
+msgstr "--gamma=GAMMA         基本曲線的 Gamma 調整值（預設值為 0.45）。\n"
+""
+
+msgid "--linearity=LINEARITY Linearity of the base curve (default 0.10).\n"
+""
+msgstr "--linearity=LINEARITY 基本曲線的直線性（預設值為 0.10）。\n"
+""
+
+msgid "--contrast=CONT       Contrast adjustment (default 1.0).\n"
+""
+msgstr "--contrast=CONT       調整對比度（預設值為 1.0）。\n"
+""
+
+msgid "--saturation=SAT      Saturation adjustment (default 1.0, 0 for B&W output).\n"
+""
+msgstr "--saturation=SAT      調整飽和度（預設值為 1.0，0 為黑白輸出）。\n"
+""
+
+msgid "--wavelet-denoising-threshold=THRESHOLD\n"
+"                      Wavelet denoising threshold (default 0.0).\n"
+""
+msgstr "--wavelet-denoising-threshold=THRESHOLD\n"
+"                      小波消除雜訊臨界值（預設值為 0.0）。\n"
+""
+
+msgid "--hotpixel-sensitivity=VALUE\n"
+"                      Sensitivity for detecting and shaving hot pixels (default 0.0).\n"
+""
+msgstr "--hotpixel-sensitivity=VALUE\n"
+"                      偵測及修補熱燥點時的敏感度（預設值為 0.0）。\n"
+""
+
+msgid "--exposure=auto|EXPOSURE\n"
+"                      Auto exposure or exposure correction in EV (default 0).\n"
+""
+msgstr "--exposure=auto|EXPOSURE\n"
+"                      自動曝光或是 EV 的曝光校正值（預設值為 0）。\n"
+""
+
+msgid "--black-point=auto|BLACK\n"
+"                      Auto black-point or black-point value (default 0).\n"
+""
+msgstr "--black-point=auto|BLACK\n"
+"                      自動黑點，或是黑點的值（預設值為 0）。\n"
+""
+
+msgid "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      Interpolation algorithm to use (default ahd).\n"
+""
+msgstr "--interpolation=ahd|vng|four-color|ppg|bilinear\n"
+"                      要使用的內插演算法（預設值為 ahd）。\n"
+""
+
+msgid "--color-smoothing     Apply color smoothing.\n"
+""
+msgstr "--color-smoothing     套用顏色平滑。\n"
+
+msgid "--grayscale=none|lightness|luminance|value|mixer\n"
+"                      Grayscale conversion algorithm to use (default none).\n"
+""
+msgstr "--grayscale=none|lightness|luminance|value|mixer\n"
+"                      要使用的灰階換算演算法（預設值為 none）。\n"
+""
+
+msgid "The options which are related to the final output are:\n"
+""
+msgstr "和最終輸出結果相關的選項：\n"
+""
+
+msgid "--shrink=FACTOR       Shrink the image by FACTOR (default 1).\n"
+""
+msgstr "--shrink=FACTOR       影像縮小至 1/FACTOR（預設值為 1）。\n"
+""
+
+msgid "--size=SIZE           Downsize max(height,width) to SIZE.\n"
+""
+msgstr "--size=SIZE           縮小（高，寬）的最大值至 SIZE。\n"
+""
+
+msgid "--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
+"                      Output file format (default ppm).\n"
+""
+msgstr "--out-type=ppm|tiff|tif|png|jpeg|jpg|fits\n"
+"                      輸出檔的格式（預設值為 ppm）。\n"
+""
+
+msgid "--out-depth=8|16      Output bit depth per channel (default 8).\n"
+""
+msgstr "--out-depth=8|16      每個顏色頻道的輸出位元深度（預設值為 8）。\n"
+""
+
+msgid "--create-id=no|also|only\n"
+"                      Create no|also|only ID file (default no).\n"
+""
+msgstr "--create-id=no|also|only\n"
+"                      no（不）| also（同時）| only（只）產生 ID 檔案。\n"
+"                      （預設值為 no）。\n"
+
+msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
+""
+msgstr "--compression=VALUE   JPEG 壓縮值 (0-100, 預設值為 85）。\n"
+""
+
+msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
+""
+msgstr "--[no]exif            輸出時是否嵌入 EXIF （預設為嵌入 EXIF）。\n"
+""
+
+msgid "--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"
+""
+msgstr "--[no]zip             啟用 [關閉] TIFF zip 壓縮（預設值為 nozip）。\n"
+""
+
+msgid "--embedded-image      Extract the preview image embedded in the raw file\n"
+"                      instead of converting the raw image.\n"
+""
+msgstr "--embedded-image      匯出內嵌於 raw 檔案中的預覽影像，而不是轉換 raw 影像。\n"
+""
+
+msgid "--rotate=camera|ANGLE|no\n"
+"                      Rotate image to camera's setting, by ANGLE degrees\n"
+"                      clockwise, or do not rotate the image (default camera).\n"
+""
+msgstr "--rotate=camera|ANGLE|no\n"
+"                      旋轉影像。camera 為採用相機設定；以 ANGLE 角度順時針旋轉；\n"
+"                      或是不旋轉影像（預設值為 camera）。\n"
+""
+
+msgid "--crop-(left|right|top|bottom)=PIXELS\n"
+"                      Crop the output to the given pixel range, relative to the\n"
+"                      raw image after rotation but before any scaling.\n"
+""
+msgstr "--crop-(left|right|top|bottom)=PIXELS\n"
+"                      根據指定的像素範圍裁剪輸出影像。這項操作是在影像旋轉後、\n"
+"                      縮放比例之前進行。\n"
+""
+
+msgid "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
+"                      correction by auto-detecting the lens (default none).\n"
+""
+msgstr "--lensfun=none|auto   不要套用鏡頭校正；或是試著自動偵測鏡頭並套用校正。\n"
+"                      （預設值為 none）。\n"
+
+msgid "--out-path=PATH       PATH for output file (default use input file's path).\n"
+""
+msgstr "--out-path=PATH       輸出檔案的 PATH（預設使用輸入檔的路徑） 。\n"
+""
+
+msgid "--output=FILE         Output file name, use '-' to output to stdout.\n"
+""
+msgstr "--output=檔案名       輸出檔案名, 使用 '-' 為輸出到標準輸出。\n"
+""
+
+msgid "--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"
+""
+msgstr "--darkframe=FILE      使用 FILE 來進行 Raw 的暗場景 (darkframe) 消減。\n"
+""
+
+msgid "--overwrite           Overwrite existing files without asking (default no).\n"
+""
+msgstr "--overwrite           覆寫現有檔案而不要求確認（預設值為 no）。\n"
+""
+
+msgid "--maximize-window     Force window to be maximized.\n"
+""
+msgstr "--maximize-window     強制將視窗最大化。\n"
+
+msgid "--silent              Do not display any messages during batch conversion.\n"
+""
+msgstr "--silent              在批次轉換期間不顯示任何信息。\n"
+""
+
+msgid "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
+"Then, if an ID file is specified, its setting are read. Next, the setting from\n"
+"the --conf option are taken, ignoring input/output filenames in the ID file.\n"
+"Lastly, the options from the command line are set. In batch mode, the second\n"
+"group of options is NOT read from the resource file.\n"
+""
+msgstr ""
+"UFRaw 首先會從 $HOME/.ufrawrc 資源檔中讀取設定值。若有指定了 ID 檔的話，\n"
+"會接著讀取它的設定值。然後，會處理 --conf 選項的設定，並忽略其 ID 檔中所\n"
+"指定的輸入/輸出檔案名稱。最後，會設定由命令列所指定的選項。在批次處理模式\n"
+"下，並 不 會 由資源檔中讀取屬於第二類的選項。\n"
+""
+
+msgid "Last, but not least, --version displays the version number and compilation\n"
+"options for ufraw and --help displays this help message and exits.\n"
+""
+msgstr "最後，但並不就是不重要，--version 顯示 ufraw 的版本號碼和編譯選項；\n"
+"--help 將會顯示此幫助訊息後退出。\n"
+""
+
+#, c-format
+msgid "'%s' is not a valid value for the --%s option."
+msgstr "'%s' 不是 --%s 選項的有效值。"
+
+msgid "ufraw was build without ZIP support."
+msgstr "ufraw 在編譯時沒有編入對 ZIP 的支援。"
+
+msgid "--batch is obsolete. Use ufraw-batch instead."
+msgstr "--batch 已廢棄。請替而使用 ufraw-batch。"
+
+#, c-format
+msgid "getopt returned character code 0%o ??"
+msgstr "getopt 返回字元碼 0%o ??"
+
+#, c-format
+msgid "failed to load curve from %s, too many configured base curves"
+msgstr "未能從 %s 中載入曲線，包含了太多的基本曲線設定"
+
+#, c-format
+msgid "failed to load curve from %s"
+msgstr "未能從 %s 中載入曲線"
+
+#, c-format
+msgid "'%s' is not a valid base curve name."
+msgstr "'%s' 不是有效的基本曲線名稱。"
+
+#, c-format
+msgid "failed to load curve from %s, too many configured curves"
+msgstr "未能從 %s 中載入曲線，包含了太多的曲線設定"
+
+#, c-format
+msgid "'%s' is not a valid curve name."
+msgstr "'%s' 不是有效的曲線名稱。"
+
+#, c-format
+msgid "'%s' is not a valid interpolation option."
+msgstr "'%s' 不是有效的 interpolation 選項。"
+
+#, c-format
+msgid "'%s' is not a valid grayscale option."
+msgstr "'%s' 不是有效的 grayscale 選項。"
+
+#, c-format
+msgid "'%s' is not a valid restore option."
+msgstr "'%s' 不是有效的 restore 選項。"
+
+#, c-format
+msgid "'%s' is not a valid clip option."
+msgstr "'%s' 不是有效的 clip 選項。"
+
+msgid "you can not specify both --shrink and --size"
+msgstr "您不能同時指定 --shrink 和 --size"
+
+#, c-format
+msgid "'%d' is not a valid bit depth."
+msgstr "'%d' 不是有效的位元深度。"
+
+#, c-format
+msgid "Output type '%s' is deprecated"
+msgstr "不建議使用 '%s' 輸出類型"
+
+msgid "ufraw was build without TIFF support."
+msgstr "ufraw 在編譯時沒有編入對 TIFF 的支援。"
+
+msgid "ufraw was build without JPEG support."
+msgstr "ufraw 在編譯時沒有編入對 JPEG 的支援。"
+
+msgid "ufraw was build without PNG support."
+msgstr "ufraw 在編譯時沒有編入對 ZIP 的支援。"
+
+#, c-format
+msgid "'%s' is not a valid output type."
+msgstr "'%s' 不是有效的輸出類型。"
+
+#, c-format
+msgid "'%s' is not a valid output type for embedded image."
+msgstr "'%s' 不是有效的內嵌影像輸出類型。"
+
+#, c-format
+msgid "'%d' is not a valid bit depth for embedded image."
+msgstr "'%d' 不是有效的內嵌影像位元深度。"
+
+#, c-format
+msgid "'%s' is not a valid rotate option."
+msgstr "'%s' 不是有效的 rotate 選項。"
+
+#, c-format
+msgid "'%s' is not a valid create-id option."
+msgstr "'%s' 不是有效的 create-id 選項。"
+
+#, c-format
+msgid "'%s' is not a valid path."
+msgstr "'%s' 不是有效的路徑。"
+
+msgid "cannot output more than one file to the same output"
+msgstr "在相同的輸出下不能輸出多個檔案"
+
+#, c-format
+msgid "Raw file '%s' missing."
+msgstr "找不到 Raw 檔 '%s'。"
+
+msgid "Delete raw file"
+msgstr "刪除 raw 檔"
+
+msgid "_Delete selected"
+msgstr "刪除已選取 (_D)"
+
+msgid "Delete _All"
+msgstr "全部刪除 (_A)"
+
+msgid "Select files to delete"
+msgstr "選擇檔案以便刪除"
+
+#, c-format
+msgid "Error reading directory '%s'."
+msgstr "在讀取目錄 '%s' 時發生錯誤。"
+
+#, c-format
+msgid "Error deleting '%s'"
+msgstr "在刪除 '%s' 時發生錯誤"
+
+msgid "Reading embedded image requires libjpeg."
+msgstr "需有 libjpeg 以讀取內嵌影像。"
+
+msgid "No embedded image found"
+msgstr "沒有找到內嵌影像"
+
+#, c-format
+msgid "Original size (%d) is smaller than the requested size (%d)"
+msgstr "原始大小 (%d) 小於要求的大小 (%d)"
+
+#, c-format
+msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
+msgstr "ppm 縮圖不相符；高 %d；寬 %d；而緩衝區為 %d。"
+
+#, c-format
+msgid "JPEG thumb height %d different than expected %d."
+msgstr "JPEG 縮圖高為 %d 不同於預期的 %d。"
+
+#, c-format
+msgid "JPEG thumb width %d different than expected %d."
+msgstr "JPEG 縮圖寬為 %d 不同於預期的 %d。"
+
+#, c-format
+msgid "Error creating file '%s'.\n"
+"%s"
+msgstr "在建立檔案 '%s' 時發生錯誤。\n"
+"%s"
+
+msgid "No embedded image read"
+msgstr "未讀到任何的內嵌影像"
+
+#, c-format
+msgid "Error creating file '%s'. Unknown file type %d."
+msgstr "在建立檔案 '%s' 時發生錯誤。未知的檔案類型 %d。"
+
+#, c-format
+msgid "Error creating file '%s': %s"
+msgstr "在建立檔案 '%s' 時發生錯誤：%s"
+
+#, c-format
+msgid "Error writing '%s'"
+msgstr "在寫入 '%s' 時發生錯誤"
+
+#, c-format
+msgid "Unsupported output type (%d) for embedded image"
+msgstr "輸出類型 (%d) 不支援內嵌影像"
+
+#, c-format
+msgid "Loading raw file '%s'"
+msgstr "正在載入 raw 檔案 '%s'"
+
+msgid "Can't allocate new image."
+msgstr "無法配置新的影像。"
+
+#. Create the "background" layer to hold the image...
+msgid "Background"
+msgstr "背景"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "無法在影像中嵌入輸出設定檔 '%s'。"
+
+#, c-format
+msgid "EXIF buffer length %d, too long, ignored."
+msgstr "EXIF 緩衝區長度 %d 太長，已忽略。"
+
+#, c-format
+msgid "Maker:\t\t%s\n"
+"Model:\t\t%s%s\n"
+"Mount:\t\t%s\n"
+"Crop factor:\t%.1f"
+msgstr "生產者：\t\t%s\n"
+"型號：\t\t%s%s\n"
+"熱靴：\t\t%s\n"
+"焦距轉換率：\t%.1f"
+
+#, c-format
+msgid "Maker:\t\t%s\n"
+"Model:\t\t%s\n"
+"Focal range:\t%s\n"
+"Aperture:\t\t%s\n"
+"Crop factor:\t%.1f\n"
+"Type:\t\t%s\n"
+"Mounts:\t\t%s"
+msgstr "製造商：\t\t%s\n"
+"型號：\t\t%s\n"
+"焦距範圍：\t%s\n"
+"光圈：\t\t%s\n"
+"焦距轉換率：\t%.1f\n"
+"類型：\t\t%s\n"
+"熱靴：\t\t%s"
+
+msgid "Focal"
+msgstr "焦點"
+
+msgid "Focal length"
+msgstr "焦距"
+
+msgid "F"
+msgstr "F"
+
+msgid "F-number (Aperture)"
+msgstr "F-數值（光圈）"
+
+msgid "Distance"
+msgstr "距離"
+
+#| msgid "Distance to subject"
+msgid "Distance to subject in meters"
+msgstr "主體距離（公尺）"
+
+#. Add the model combobox
+msgid "Model:"
+msgstr "型號："
+
+msgid "Chromatic Aberrations mathematical model"
+msgstr "色像差的數學模型"
+
+msgid "Parameters"
+msgstr "參數"
+
+msgid "Optical vignetting mathematical model"
+msgstr "光學暗角的數學模型"
+
+msgid "Lens distortion mathematical model"
+msgstr "鏡頭形變的數學模型"
+
+#. Lens geometry combobox
+msgid "Lens geometry:"
+msgstr "鏡頭幾何："
+
+msgid "The geometry of the lens used to make the shot"
+msgstr "拍攝時鏡頭取得的幾何大小"
+
+#. Target lens geometry combobox
+msgid "Target geometry:"
+msgstr "成品幾何："
+
+msgid "The target geometry for output image"
+msgstr "輸出影像時成品的幾何大小"
+
+msgid "Camera"
+msgstr "照相機"
+
+msgid "Search for camera using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr "使用範本來搜尋相機\n"
+"格式：[製造商, ][型號]"
+
+msgid "Choose camera from complete list"
+msgstr "從完整列表中選擇相機"
+
+msgid "Reset all lens correction settings"
+msgstr "重置所有的鏡頭校正設定"
+
+#. Lens selector
+msgid "Lens"
+msgstr "鏡頭"
+
+msgid "Search for lens using a pattern\n"
+"Format: [Maker, ][Model]"
+msgstr "使用範本來搜尋鏡頭\n"
+"格式：[製造商, ][型號]"
+
+# fuzzy
+msgid "Choose lens from list of possible variants"
+msgstr "從可能的衍生版列表中選取鏡頭"
+
+msgid "Automatically find lens and set lens corrections"
+msgstr "自動搜尋鏡頭並設定鏡頭校正"
+
+msgid "Lateral chromatic aberration"
+msgstr "橫向色像差"
+
+msgid "Optical vignetting"
+msgstr "光學暗角"
+
+msgid "Lens distortion"
+msgstr "鏡頭形變"
+
+msgid "Lens geometry"
+msgstr "鏡頭幾何"
+
+msgid "Raw histogram with conversion curves"
+msgstr "加上轉換曲線的 Raw 直方圖"
+
+msgid "Live histogram"
+msgstr "動態直方圖"
+
+#. No darkframe file
+msgid "None"
+msgstr "無"
+
+msgid "Lightness"
+msgstr "亮度"
+
+msgid "Luminance"
+msgstr "輝度"
+
+msgid "Value"
+msgstr "值"
+
+msgid "Channel Mixer"
+msgstr "顏色頻道混合器"
+
+msgid "No more room for new curves."
+msgstr "沒有足夠的空間給新的曲線。"
+
+msgid "Load curve"
+msgstr "載入曲線"
+
+msgid "All curve formats"
+msgstr "所有曲線格式"
+
+msgid "UFRaw curve format"
+msgstr "UFRaw 曲線格式"
+
+msgid "Nikon curve format"
+msgstr "Nicon 曲線格式"
+
+msgid "Save curve"
+msgstr "儲存曲線"
+
+msgid "No more room for new profiles."
+msgstr "沒有足夠的空間給新的設定檔。"
+
+msgid "Load color profile"
+msgstr "載入顏色設定檔"
+
+msgid "Color Profiles"
+msgstr "顏色設定檔"
+
+msgid "Luminosity (Y value)"
+msgstr "光度（Y值）"
+
+msgid "Adams' zone"
+msgstr "Adams' zone"
+
+#, c-format
+msgid "size %dx%d, zoom %2.f%%"
+msgstr "尺寸 %dx%d, 縮放 %2.f%%"
+
+#, c-format
+msgid "size %dx%d, scale 1/%d"
+msgstr "尺寸 %dx%d, 比例 1/%d"
+
+msgid "Wavelet denoising"
+msgstr "小波消除雜訊"
+
+msgid "Despeckling"
+msgstr "去除網點"
+
+msgid "Interpolating"
+msgstr "插值"
+
+msgid "Rendering"
+msgstr "渲染"
+
+msgid "Loading preview"
+msgstr "正在載入預覽"
+
+msgid "Saving image"
+msgstr "儲存影像"
+
+#, c-format
+msgid "Black point: %0.3lf"
+msgstr "黑點：%0.3lf"
+
+msgid "No more room for new lightness adjustments."
+msgstr "沒有足夠的空間給新的亮度調整。"
+
+msgid "Aspect ratio locked, click to unlock"
+msgstr "已鎖定縮放比率，請點擊以解除鎖定"
+
+msgid "Aspect ratio unlocked, click to lock"
+msgstr "縮放比率未鎖定，請點擊以進行鎖定"
+
+msgid "Load dark frame"
+msgstr "載入暗場景"
+
+msgid "clip"
+msgstr "削減"
+
+msgid "restore in LCH space for soft details"
+msgstr "以 LCH 色彩空間還原柔和細節"
+
+msgid "restore in HSV space for sharp details"
+msgstr "以 HSV 色彩空間還原銳利細節"
+
+#, c-format
+msgid "Restore details for negative EV\n"
+"Current state: %s"
+msgstr "當 EV 值為負時還原細節\n"
+"現況：%s"
+
+msgid "digital linear"
+msgstr "數位線性"
+
+msgid "soft film like"
+msgstr "模仿柔和影片"
+
+#, c-format
+msgid "Clip highlights for positive EV\n"
+"Current state: %s"
+msgstr "當 EV 值為正時削減過亮區域\n"
+"現況：%s"
+
+#, c-format
+msgid "Filename: %s%s"
+msgstr "檔案名：%s%s"
+
+msgid "\n"
+"Create also ID file"
+msgstr "\n"
+"同時建立 ID 檔"
+
+msgid "\n"
+"Create only ID file"
+msgstr "\n"
+"只建立 ID 檔案"
+
+msgid "UFRaw options"
+msgstr "UFRaw 選項"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "Input color profiles"
+msgstr "輸入顏色設定檔"
+
+msgid "Output color profiles"
+msgstr "輸出顏色設定檔"
+
+msgid "Display color profiles"
+msgstr "顯示顏色設定檔"
+
+msgid "Base Curves"
+msgstr "基本曲線"
+
+msgid "Luminosity Curves"
+msgstr "光度曲線"
+
+#. Remote Gimp command entry
+msgid "Remote Gimp command"
+msgstr "Remote Gimp 命令"
+
+msgid "Reset command to default"
+msgstr "重置命令至預設值"
+
+msgid "Blink Over/Underexposure Indicators"
+msgstr "閃爍 過度/曝光不足 區域"
+
+msgid "Configuration"
+msgstr "設定"
+
+msgid "Save configuration"
+msgstr "儲存設定"
+
+msgid "Save configuration to resource file ($HOME/.ufrawrc)"
+msgstr "將設定儲存至資源檔 ($HOME/.ufrawrc)"
+
+msgid "Log"
+msgstr "日誌"
+
+msgid "About"
+msgstr "關於"
+
+msgid "The <b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) is a utility to\n"
+"read and manipulate raw images from digital cameras.\n"
+"UFRaw relies on <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>)\n"
+"for the actual encoding of the raw images.\n"
+"\n"
+"Author: Udi Fuchs\n"
+"Homepage: http://ufraw.sourceforge.net/\n"
+"\n"
+""
+msgstr "<b>U</b>nidentified <b>F</b>lying <b>Raw</b> (<b>UFRaw</b>) 是用來\n"
+"讀取和操作數位相機 raw 影像的工具程式。\n"
+"UFRaw 藉由 <b>D</b>igital <b>C</b>amera <b>Raw</b> (<b>DCRaw</b>) 以取得\n"
+"raw 影像的真實編碼。\n"
+"\n"
+"作者：Udi Fuchs\n"
+"首頁：http://ufraw.sourceforge.net/\n"
+"\n"
+
+#, c-format
+msgid "%s%s (Alt-%s)"
+msgstr "%s%s (Alt-%s)"
+
+msgid "Linear"
+msgstr "線性"
+
+msgid "Logarithmic"
+msgstr "對數"
+
+msgid "Hot pixels: "
+msgstr "熱燥點"
+
+msgid "mark"
+msgstr "遮罩"
+
+msgid "Hot pixel sensitivity"
+msgstr "熱燥點敏感度"
+
+msgid "Reset hot pixel sensitivity"
+msgstr "重置熱燥點敏感度"
+
+msgid "RGB histogram"
+msgstr "RGB 直方圖"
+
+msgid "R+G+B histogram"
+msgstr "R+G+B 直方圖"
+
+msgid "Luminosity histogram"
+msgstr "光度直方圖"
+
+msgid "Value (maximum) histogram"
+msgstr "定值 (最大) 直方圖"
+
+msgid "Saturation histogram"
+msgstr "飽和度直方圖"
+
+msgid "Average:"
+msgstr "平均："
+
+msgid "Std. deviation:"
+msgstr "標準偏差："
+
+msgid "Overexposed:"
+msgstr "過度曝光："
+
+msgid "Indicate"
+msgstr "顯示"
+
+msgid "Underexposed:"
+msgstr "曝光不足："
+
+msgid "White Balance"
+msgstr "白平衡"
+
+msgid "Cannot use camera white balance."
+msgstr "無法使用相機白平衡。"
+
+msgid "There are no white balance presets for your camera model.\n"
+"Check UFRaw's webpage for information on how to get your\n"
+"camera supported."
+msgstr "沒有和您的相機型號相對應的白平衡。\n"
+"請查看 UFRaw 的網站以取得如何支援您的相機的資訊。"
+
+msgid "Reset white balance to initial value"
+msgstr "重置白平衡為初始值"
+
+msgid "Temperature"
+msgstr "色溫"
+
+msgid "White balance color temperature (K)"
+msgstr "白平衡色溫 (K)"
+
+msgid "Green"
+msgstr "綠色"
+
+msgid "Green component"
+msgstr "綠色部分"
+
+msgid "Select a spot on the preview image to apply spot white balance"
+msgstr "在預覽影像上選擇一個點以作為白平衡的基準點"
+
+msgid "Chan. multipliers:"
+msgstr "顏色頻道增幅數："
+
+msgid "Bayer pattern interpolation"
+msgstr "Bayer 範本插值"
+
+msgid "VNG four color interpolation"
+msgstr "VNG 四色插值"
+
+msgid "Bilinear interpolation"
+msgstr "Bilinear 插值"
+
+msgid "AHD interpolation"
+msgstr "AHD 插值"
+
+msgid "VNG interpolation"
+msgstr "VNG 插值"
+
+msgid "PPG interpolation"
+msgstr "PPG 插值"
+
+msgid "No interpolation"
+msgstr "不插值"
+
+msgid "No Bayer pattern"
+msgstr "沒有 Bayer 範本"
+
+msgid "Apply color smoothing"
+msgstr "套用顏色平滑"
+
+msgid "Denoise"
+msgstr "消除雜訊"
+
+msgid "Threshold for wavelet denoising"
+msgstr "小波消除雜訊的臨界值"
+
+msgid "Reset denoise threshold to default"
+msgstr "重置消除雜訊臨界值至預設值"
+
+msgid "Dark Frame:"
+msgstr "暗場景："
+
+msgid "Reset dark frame"
+msgstr "重置暗場景"
+
+msgid "Reset adjustment"
+msgstr "重置調整值"
+
+msgid "Select a spot on the preview image to choose hue"
+msgstr "在預覽影像上選擇一個點以作為指定色調"
+
+msgid "Remove adjustment"
+msgstr "移除調整值"
+
+msgid "Grayscale Mode:"
+msgstr "灰階模式："
+
+msgid "Reset channel mixer"
+msgstr "重置顏色頻道混合器"
+
+msgid "Despeckling is mainly useful when combining a high ISO number with a high channel multiplier: when one channel has a very bad signal to noise ratio. Try setting window size, color decay and number of passes to 50,0,5 for that channel. When a channel contains only noise then try 1,0.6,1.\n"
+"Despeckling is off when window size or passes equals zero. When on then window size cannot be smaller than the number of passes."
+msgstr "去除網點主要是用在同時使用高 ISO 值與高顏色頻道增幅：當某個顏色頻道已有很糟的訊號雜訊比時。可以試著將這個頻道的視窗大小、顏色衰減及衰變值的數量設定為 50,0,5。當某個顏色頻道裡已全是雜訊時試試 1,0.6,1。\n"
+"當視窗大小或衰變值為零時，去除網點會被關閉。當啟用時，視窗大小不能小於衰變值。"
+
+msgid "Update channel parameters together"
+msgstr "同時更新顏色頻道參數值"
+
+msgid "Reset despeckle parameters"
+msgstr "重置去除網點的參數"
+
+#. channel to view
+msgid "View channel:"
+msgstr "檢視顏色頻道："
+
+#. Parameters
+msgid "Window size:"
+msgstr "視窗大小"
+
+msgid "Color decay:"
+msgstr "顏色衰減："
+
+msgid "Passes:"
+msgstr "衰變值："
+
+msgid "Load base curve"
+msgstr "載入基本曲線"
+
+msgid "Save base curve"
+msgstr "儲存基本曲線"
+
+msgid "Reset base curve to default"
+msgstr "重置基本曲線至預設值"
+
+msgid "Input ICC profile"
+msgstr "輸入 ICC 設定檔"
+
+msgid "Output ICC profile"
+msgstr "輸出 ICC 設定檔"
+
+msgid "Display ICC profile"
+msgstr "顯示 ICC 設定檔"
+
+msgid "Gamma"
+msgstr "Gamma"
+
+msgid "Gamma correction for the input profile"
+msgstr "輸入設定檔的 Gamma 校正"
+
+msgid "Reset gamma to default"
+msgstr "重置 Gamma 至預設值"
+
+msgid "Linearity"
+msgstr "線性"
+
+msgid "Linear part of the gamma correction"
+msgstr "Gamma 校正的線性部分"
+
+msgid "Reset linearity to default"
+msgstr "重置線性至預設值"
+
+msgid "Output intent"
+msgstr "輸出對象"
+
+msgid "Perceptual"
+msgstr "感知式"
+
+msgid "Relative colorimetric"
+msgstr "相對色度"
+
+msgid "Saturation"
+msgstr "飽和度"
+
+msgid "Absolute colorimetric"
+msgstr "絕對色度"
+
+msgid "Output bit depth"
+msgstr "輸出位元深度"
+
+msgid "Display intent"
+msgstr "顯示對象"
+
+msgid "Disable soft proofing"
+msgstr "關閉軟式打樣"
+
+msgid "Contrast"
+msgstr "對比度"
+
+msgid "Global contrast adjustment"
+msgstr "整體對比度調整"
+
+msgid "Reset global contrast to default"
+msgstr "重置整體對比度至預設值"
+
+msgid "Reset saturation to default"
+msgstr "重置飽和度至預設值"
+
+msgid "Auto adjust curve\n"
+"(Flatten histogram)"
+msgstr "自動調整曲線\n"
+"(平化直方圖)"
+
+msgid "Reset curve to default"
+msgstr "重置曲線至預設值"
+
+msgid "Reset black-point to default"
+msgstr "重置黑點至預設值"
+
+msgid "Auto adjust black-point"
+msgstr "自動調整黑點"
+
+#. Start of Crop controls
+msgid "Left:"
+msgstr "左："
+
+msgid "Top:"
+msgstr "上："
+
+msgid "Right:"
+msgstr "右："
+
+msgid "Bottom:"
+msgstr "下："
+
+msgid "Auto fit crop area"
+msgstr "自動符合裁剪區域"
+
+msgid "Reset the crop region"
+msgstr "重置裁剪區域"
+
+msgid "Aspect ratio:"
+msgstr "縮放比率："
+
+msgid "Crop area aspect ratio.\n"
+"Can be entered in decimal notation (1.273)\n"
+"or as a ratio of two numbers (14:11)"
+msgstr "裁剪區域的縮放比率。\n"
+"可以輸入十進制數值，如 (1.273)\n"
+"或兩個數字的比例，如 (14:11)"
+
+msgid "Shrink factor"
+msgstr "影像縮放比率"
+
+msgid "Width"
+msgstr "寬度"
+
+msgid "Height"
+msgstr "高度"
+
+msgid "Orientation:"
+msgstr "方位："
+
+msgid "Rotation"
+msgstr "旋轉"
+
+msgid "Rotation angle"
+msgstr "旋轉角度"
+
+msgid "Reset rotation angle"
+msgstr "重置旋轉角度"
+
+#. drawLines toggle button
+msgid "Grid lines"
+msgstr "格線"
+
+msgid "Number of grid lines to overlay in the crop area"
+msgstr "在裁剪區上要顯示多少格線"
+
+msgid "Path"
+msgstr "路徑"
+
+msgid "Select output path"
+msgstr "選擇輸出路徑"
+
+msgid "Filename"
+msgstr "檔案名"
+
+msgid "JPEG compression level"
+msgstr "JPEG 壓縮等級"
+
+msgid "JPEG progressive encoding"
+msgstr "JPEG 漸進編碼"
+
+msgid "TIFF lossless Compress"
+msgstr "TIFF 無損壓縮"
+
+msgid "Embed EXIF data in output"
+msgstr "將 EXIF 數據嵌入輸出檔"
+
+msgid "Create ID file "
+msgstr "建立 ID 檔"
+
+msgid "No"
+msgstr "不要"
+
+msgid "Also"
+msgstr "同時"
+
+msgid "Only"
+msgstr "只有"
+
+msgid "Save image defaults "
+msgstr "儲存為圖片預設值"
+
+msgid "Save current image manipulation parameters as defaults.\n"
+"The output parameters in this window are always saved."
+msgstr "將目前的影像處理參數儲存至預設值。\n"
+"這個視窗中的輸出參數將會不斷得被儲存。"
+
+msgid "Never again"
+msgstr "不再提示"
+
+msgid "Always"
+msgstr "總是"
+
+msgid "Just this once"
+msgstr "只此一次"
+
+msgid "Remember output path"
+msgstr "記住輸出路徑"
+
+msgid "Overwrite existing files without asking"
+msgstr "覆寫現有檔案而不要求確認"
+
+msgid "Tag"
+msgstr "標記"
+
+#. Fill table with EXIF tags
+msgid "Camera maker"
+msgstr "相機製造商"
+
+msgid "Camera model"
+msgstr "相機型號"
+
+msgid "Timestamp"
+msgstr "拍照時間"
+
+msgid "Shutter time"
+msgstr "曝光時間"
+
+msgid "Aperture"
+msgstr "光圈"
+
+msgid "ISO speed"
+msgstr "ISO 速度"
+
+msgid "35mm focal length"
+msgstr "35mm 固定焦距"
+
+msgid "Flash"
+msgstr "閃光燈"
+
+msgid "White balance"
+msgstr "白平衡"
+
+#, c-format
+msgid "EXIF data read by %s"
+msgstr "由 %s 讀出的 EXIF 資訊"
+
+msgid "Warning: EXIF data will not be sent to output"
+msgstr "警告：EXIF 數據將不會傳送到輸出"
+
+#, c-format
+msgid "%s - UFRaw"
+msgstr "%s - UFRaw"
+
+msgid "Spot values:"
+msgstr "點值："
+
+msgid "Exposure compensation in EV"
+msgstr "EV 曝光補償"
+
+msgid "Auto adjust exposure"
+msgstr "自動調整曝光"
+
+msgid "Reset exposure to default"
+msgstr "重置曝光至預設值"
+
+msgid "Grayscale"
+msgstr "灰階"
+
+#. Lens correction page
+msgid "Lens correction"
+msgstr "鏡頭校正"
+
+msgid "Base curve"
+msgstr "基本曲線"
+
+msgid "Color management"
+msgstr "色彩管理"
+
+msgid "Correct luminosity, saturation"
+msgstr "校正光度及飽和度"
+
+msgid "Lightness Adjustments"
+msgstr "調整亮度"
+
+msgid "Crop and rotate"
+msgstr "裁剪和旋轉"
+
+msgid "Save"
+msgstr "儲存"
+
+msgid "EXIF"
+msgstr "EXIF"
+
+msgid "Zoom percentage"
+msgstr "縮放比例"
+
+msgid "Options"
+msgstr "選項"
+
+#. Comment to translator: All control buttons
+#. "_Delete", "_Cancel", "_Save", "Save _As", "Send to _Gimp"
+#. should have unique mnemonics.
+#. Delete button:
+msgid "_Delete"
+msgstr "刪除(_D)"
+
+msgid "Send image to _Gimp"
+msgstr "傳送圖片至 _Gimp"
+
+msgid "Fatal error setting C locale"
+msgstr "在設定 C 區域資訊時發生嚴重錯誤"
+
+#, c-format
+msgid "Curve version is not supported"
+msgstr "不支援的曲線版本"
+
+#, c-format
+msgid "Invalid Nikon curve file '%s'"
+msgstr "無效的 Nikon 曲線檔 '%s'"
+
+#, c-format
+msgid "Error opening Curve file '%s': %s"
+msgstr "在開啟曲線檔 '%s' 時發生錯誤：%s"
+
+#, c-format
+msgid "Error opening file '%s': %s"
+msgstr "在開啟檔案 '%s' 時發生錯誤：%s"
+
+msgid "File exists"
+msgstr "檔案已經存在"
+
+#, c-format
+msgid "File '%s' already exists.\n"
+"Overwrite?"
+msgstr "檔案 '%s' 已經存在。\n"
+"是否覆寫？"
+
+msgid "Error creating temporary file."
+msgstr "在建立臨時檔時發生錯誤。"
+
+msgid "Error activating Gimp."
+msgstr "在呼叫 Gimp 時發生錯誤。"
+
+msgid "   Cannot use camera white balance, reverting to auto white balance.\n"
+""
+msgstr "無法使用相機白平衡，回復為使用自動白平衡。\n"
+
+#, c-format
+msgid "--temperature and --green options override the --wb=%s option."
+msgstr "--temperature 及 --green 選項會蓋過 --wb=%s 選項。"
+
+#, c-format
+msgid "'%s' is not a valid white balance setting."
+msgstr "'%s' 不是有效的白平衡設定值。"
+
+msgid "Remote URI is not supported"
+msgstr "尚未支援遠程的 URI"
+
+#, c-format
+msgid "darkframe error: %s is not a raw file\n"
+""
+msgstr "暗場景錯誤：%s 不是 raw 檔案\n"
+""
+
+#, c-format
+msgid "error loading darkframe '%s'\n"
+""
+msgstr "在載入暗場景 '%s' 時發生錯誤\n"
+""
+
+#, c-format
+msgid "Darkframe '%s' is incompatible with main image"
+msgstr "暗場景 '%s' 和主影像不相符"
+
+#, c-format
+msgid "using darkframe '%s'\n"
+""
+msgstr "使用暗場景 '%s'\n"
+""
+
+msgid "Error reading NEF curve"
+msgstr "在讀取 NEF 曲線時發生錯誤"
+
+msgid "Can not downsize from %d to %d."
+msgstr "無法由 %d 縮小至 %d。"
+
+#. Error was not already set before
+#, c-format
+msgid "Error creating file '%s'."
+msgstr "在建立檔案 '%s' 時發生錯誤。"
+
+#. 'errno' does seem to contain useful information
+#. Error was not already set before
+msgid "Error creating file."
+msgstr "在建立檔案時發生錯誤。"
+
+#, c-format
+msgid "Image filename can not be the same as ID filename '%s'"
+msgstr "圖片的檔案名不能和 ID 檔名 '%s' 相同"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in '%s'."
+msgstr "無法在 '%2$s' 中嵌入輸出設定檔 '%1$s'。"
+
+#, c-format
+msgid "Unsupported bit depth '%d' ignored."
+msgstr "已忽略不被支援的位元深度 '%d' 。"
+
+#, c-format
+msgid "Unknown file type %d."
+msgstr "未知的檔案類型 %d。"
+
+#. Column 1 - "make" of the camera.
+#. * Column 2 - "model" (use the "make" and "model" as provided by DCRaw).
+#. * Column 3 - WB name.
+#. * Column 4 - Fine tuning. MUST be in increasing order. 0 for no fine tuning.
+#. *	      It is enough to give only the extreme values, the other values
+#. *	      will be interpolated.
+#. * Column 5 - Channel multipliers.
+#. *
+#. * Minolta's ALPHA and MAXXUM models are treated as the DYNAX model.
+#. *
+#. * WB name is standardized to one of the following:
+#. "Sunlight" and other variation should be switched to this:
+msgid "Daylight"
+msgstr "日光"
+
+#. Probably same as above:
+msgid "Direct sunlight"
+msgstr "陽光直射"
+
+msgid "Cloudy"
+msgstr "陰天"
+
+#. "Shadows" should be switched to this:
+msgid "Shade"
+msgstr "陰影"
+
+msgid "Incandescent"
+msgstr "燈泡"
+
+msgid "Incandescent warm"
+msgstr "溫暖白熾燈"
+
+#. Same as "Incandescent":
+msgid "Tungsten"
+msgstr "鎢燈"
+
+msgid "Fluorescent"
+msgstr "螢光燈"
+
+#. In Canon cameras and some newer Nikon cameras:
+msgid "Fluorescent high"
+msgstr "高螢光燈"
+
+msgid "Cool white fluorescent"
+msgstr "冷白色螢光燈"
+
+msgid "Warm white fluorescent"
+msgstr "暖白色螢光燈"
+
+msgid "Daylight fluorescent"
+msgstr "日光螢光燈"
+
+msgid "Neutral fluorescent"
+msgstr "自然螢光燈"
+
+msgid "White fluorescent"
+msgstr "白色螢光燈"
+
+#. In some newer Nikon cameras:
+msgid "Sodium-vapor fluorescent"
+msgstr "鈉蒸氣螢光燈"
+
+msgid "Day white fluorescent"
+msgstr "日光白色螢光燈"
+
+msgid "High temp. mercury-vapor fluorescent"
+msgstr "高溫汞蒸氣螢光燈"
+
+#. For Olympus with no real "Flash" preset:
+msgid "Flash (auto mode)"
+msgstr "閃光（自動模式）"
+
+msgid "Evening sun"
+msgstr "傍晚"
+
+msgid "Underwater"
+msgstr "水下"
+
+msgid "Black & white"
+msgstr "黑白"
+
+msgid "Manual WB"
+msgstr "手動白平衡"
+
+msgid "Camera WB"
+msgstr "相機白平衡"
+
+msgid "Auto WB"
+msgstr "自動白平衡"
+

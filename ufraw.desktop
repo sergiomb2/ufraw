@@ -17,6 +17,7 @@ GenericName[ru]=Проявитель цифровых негативов
 GenericName[sr]=Преводилац Raw слика
 GenericName[sr@latin]=Prevodilac Raw slika
 GenericName[zh_CN]=Raw 图像转换器
+GenericName[zh_TW]=Raw 影像轉換器
 
 Comment=A utility to read and manipulate raw images from digital cameras
 Comment[ca]=Una eina per llegir i manipular les imatges Raw d'una càmera digital
@@ -35,6 +36,7 @@ Comment[ru]=Проявка цифровых негативов и сохране
 Comment[sr]=Алат за читање и обраду raw слика из дигиталних камера
 Comment[sr@latin]=Alat za čitanje i obradu raw slika iz digitalnih kamera
 Comment[zh_CN]=一个从数码相机中读取并处理原始图像的工具
+Comment[zh_TW]=用來讀取和操作數位相機 raw 影像的工具程式
 
 Version=1.0
 
