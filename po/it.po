@@ -1,5 +1,5 @@
 # Italian translation of Ufraw.
-# Copyright (C) 2006-2010 Udi Fuchs.
+# Copyright (C) 2006-2011 Udi Fuchs.
 # This file is distributed under the same license as the Ufraw package.
 # daniele <dmedri@SPAMgmail.com>, 2007-2009.
 # eugenio <eugeniob@SPAMracine.ra.it>, 2009.
@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-15 15:30+0100\n"
+"POT-Creation-Date: 2011-01-18 04:00+0100\n"
 "PO-Revision-Date: 2009-10-14 06:00+0100\n"
 "Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
-"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: it\n"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
@@ -655,8 +655,8 @@ msgstr "La dimensione originale (%d) è più piccola di quella richiesta (%d)"
 #, c-format
 msgid "ppm thumb mismatch, height %d, width %d, while buffer %d."
 msgstr ""
-"miniature ppm non coincidenti, altezza %d, larghezza %d, mentre il buffer è "
-"%d."
+"miniature ppm non coincidenti, altezza %d, larghezza %d, mentre il buffer è %"
+"d."
 
 #, c-format
 msgid "JPEG thumb height %d different than expected %d."

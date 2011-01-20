@@ -1,6 +1,6 @@
 # Catalan translation for UFRaw.
 # Traducció al català de UFRaw Convertidor de Dades en Cru No Identificades per a imatges de càmeres digitals.
-# Copyright (C) 2008-2010 Udi Fuchs & Paco Rivière.
+# Copyright (C) 2008-2011 Udi Fuchs & Paco Rivière.
 # This file is distributed under the same license as the UFRaw package.
 # Paco Rivière http://pacoriviere.cat/, 2008, 2009, 2010.
 #
@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-15 15:30+0100\n"
+"POT-Creation-Date: 2011-01-18 04:00+0100\n"
 "PO-Revision-Date: 2010-03-04 21:05+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "X-Poedit-Language: Catalan\n"
 "X-Poedit-Country: ANDORRA\n"
 

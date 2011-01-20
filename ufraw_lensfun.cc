@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw_lensfun.cc - define lensfun UFObject settings.
- * Copyright 2004-2010 by Udi Fuchs
+ * Copyright 2004-2011 by Udi Fuchs
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
