@@ -4532,7 +4532,8 @@ void CLASS parse_makernote (int base, int uptag)
     }
     if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
       fread (buf97, 1, sizeof buf97, ifp);
-      i = (uchar *) memmem (buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
+      i = (uchar *) memmem ((const char *)buf97, sizeof buf97, "\xbb\xbb", 2)
+	  - buf97 + 10;	/* Fix build error on MacOSX - NKBJ */
       if (i < 70 && buf97[i] < 3)
 	flip = "065"[buf97[i]]-'0';
     }
