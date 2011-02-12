@@ -387,7 +387,7 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 40D", Fluorescent, 0,		{ 2.019084, 1, 2.129771, 0 } },
   { "Canon", "EOS 40D", Flash, 0,		{ 2.409180, 1, 1.260742, 0 } },
 
-  // Canon EOS 50D (firmware 1.0.3) 
+  // Canon EOS 50D (firmware 1.0.3)
   { "Canon", "EOS 50D", Daylight, -9,		{ 1.865234, 1, 1.599609, 0 } },
   { "Canon", "EOS 50D", Daylight, -8,		{ 1.889648, 1, 1.580078, 0 } },
   { "Canon", "EOS 50D", Daylight, -7,		{ 1.910156, 1, 1.556641, 0 } },
@@ -1098,7 +1098,7 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "FinePix S7000", CoolWhiteFluorescent, 0, { 1.836957, 1, 2.130435, 0 } },
   { "FUJIFILM", "FinePix S7000", Incandescent, 0, { 1.221239, 1, 2.548673, 0 } },
 
- /* The S9000 and S9500 are the same camera */
+  /* The S9000 and S9500 are the same camera */
   { "FUJIFILM", "FinePix S9000", Daylight, 0,	{ 1.618750, 1, 1.231250, 0 } },
   { "FUJIFILM", "FinePix S9000", Cloudy, 0,	{ 1.700000, 1, 1.046875, 0 } },
   { "FUJIFILM", "FinePix S9000", DaylightFluorescent, 0, { 1.902174, 1, 1.057065, 0 } },
@@ -2174,7 +2174,7 @@ const wb_data wb_preset[] = {
   { "NIKON", "D300S", DaylightFluorescent, -6,	{ 1.852, 1, 1.000, 0 } },
   { "NIKON", "D300S", DaylightFluorescent, 0,	{ 1.699, 1, 1.102, 0 } },
   { "NIKON", "D300S", DaylightFluorescent, 6,	{ 1.563, 1, 1.273, 0 } },
-  { "NIKON", "D300S", HighTempMercuryVaporFluorescent, -6, { 2.039, 1, 1.156, 0 } }, 
+  { "NIKON", "D300S", HighTempMercuryVaporFluorescent, -6, { 2.039, 1, 1.156, 0 } },
   { "NIKON", "D300S", HighTempMercuryVaporFluorescent, 0, { 1.961, 1, 1.328, 0 } },
   { "NIKON", "D300S", HighTempMercuryVaporFluorescent, 6, { 1.855, 1, 1.523, 0 } },
 
