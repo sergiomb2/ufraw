@@ -69,39 +69,39 @@ CurveData:
     Structure for the curve data inside a NTC/NCV file.
 ***********************************************************/
 typedef struct {
-    double x;
-    double y;
+  double x;
+  double y;
 } CurveAnchorPoint;
 
 typedef struct {
-    char name[80];
+  char name[80];
 
-    //Type for this curve
-    unsigned int m_curveType;
+  //Type for this curve
+  unsigned int m_curveType;
 
-    //Box data
-    double m_min_x;
-    double m_max_x;
-    double m_min_y;
-    double m_max_y;
-    double m_gamma;
+  //Box data
+  double m_min_x;
+  double m_max_x;
+  double m_min_y;
+  double m_max_y;
+  double m_gamma;
 
-    //Number of anchor points
-    unsigned char m_numAnchors;
+  //Number of anchor points
+  unsigned char m_numAnchors;
 
-    //contains a list of anchors, 2 doubles per each point, x-y format
-    //max is 20 points
-    CurveAnchorPoint m_anchors[NIKON_MAX_ANCHORS];
+  //contains a list of anchors, 2 doubles per each point, x-y format
+  //max is 20 points
+  CurveAnchorPoint m_anchors[NIKON_MAX_ANCHORS];
 
 } CurveData;
 
 typedef struct {
-    //Number of samples to use for the curve.
-    unsigned int m_samplingRes;
-    unsigned int m_outputRes;
+  //Number of samples to use for the curve.
+  unsigned int m_samplingRes;
+  unsigned int m_outputRes;
 
-    //Sampling array
-    unsigned int *m_Samples;
+  //Sampling array
+  unsigned int *m_Samples;
 
 } CurveSample;
 
@@ -110,10 +110,10 @@ NikonData:
     Overall data structure for Nikon file data
 **********************************************/
 typedef struct {
-    //Number of output points
-    int m_fileType;
-    unsigned short m_patch_version;
-    CurveData curves[4];
+  //Number of output points
+  int m_fileType;
+  unsigned short m_patch_version;
+  CurveData curves[4];
 } NikonData;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -194,6 +194,6 @@ RipNikonNEFCurve:
 		can be NULL if curve sample is not needed.
 ********************************************************/
 int RipNikonNEFCurve(void *file, int offset, CurveData *data,
-	CurveSample **sample_p);
+                     CurveSample **sample_p);
 
 #endif
