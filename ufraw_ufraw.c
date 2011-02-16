@@ -1348,87 +1348,87 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 #ifdef HAVE_LENSFUN
   ufraw_convert_prepare_transform(uf, iWidth, iHeight, TRUE, 1.0);
   if (uf->conf->rotationAngle == 0 &&
-      (uf->modifier == NULL || !(uf->modFlags & UF_LF_TRANSFORM)))
+      (uf->modifier == NULL || !(uf->modFlags & UF_LF_TRANSFORM))) {
 #else
-  if (uf->conf->rotationAngle == 0)
-#endif { /* HAVE_LENSFUN */
+  if (uf->conf->rotationAngle == 0) {
+#endif
     g_free(img->buffer);
-  img->buffer = NULL;
-  img->width = width;
-  img->height = height;
-  // We still need the transform for vignetting
+    img->buffer = NULL;
+    img->width = width;
+    img->height = height;
+    // We still need the transform for vignetting
 #ifdef HAVE_LENSFUN
-  ufraw_convert_prepare_transform(uf, width, height, FALSE, 1.0);
+    ufraw_convert_prepare_transform(uf, width, height, FALSE, 1.0);
 #endif
-  uf->rotatedWidth = iWidth;
-  uf->rotatedHeight = iHeight;
-  uf->autoCropWidth = iWidth;
-  uf->autoCropHeight = iHeight;
-  return;
-}
-const double sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
-const double cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
-const float aspectRatio = (float)(uf->conf->CropX2 - uf->conf->CropX1) /
-                          (uf->conf->CropY2 - uf->conf->CropY1);
-const float midX = iWidth/2.0 - 0.5;
-const float midY = iHeight/2.0 - 0.5;
-#ifdef HAVE_LENSFUN
-gboolean applyLF = uf->modifier != NULL && (uf->modFlags & UF_LF_TRANSFORM);
-#endif
-float maxX = 0, maxY = 0;
-float minX = 999999, minY = 999999;
-double lastX = 0, lastY = 0, area = 0;
-int i;
-for (i = 0; i < iWidth + iHeight - 1; i++) {
-  int x, y;
-  if (i < iWidth) { // Trace the left border of the image
-    x = i;
-    y = 0;
-  } else { // Trace the bottom border of the image
-    x = iWidth - 1;
-    y = i - iWidth + 1;
+    uf->rotatedWidth = iWidth;
+    uf->rotatedHeight = iHeight;
+    uf->autoCropWidth = iWidth;
+    uf->autoCropHeight = iHeight;
+    return;
   }
-  float buff[2];
+  const double sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
+  const double cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
+  const float aspectRatio = (float)(uf->conf->CropX2 - uf->conf->CropX1) /
+                            (uf->conf->CropY2 - uf->conf->CropY1);
+  const float midX = iWidth/2.0 - 0.5;
+  const float midY = iHeight/2.0 - 0.5;
 #ifdef HAVE_LENSFUN
-  if (applyLF) {
-    lf_modifier_apply_geometry_distortion(uf->modifier,
-                                          x, y, 1, 1, buff);
-  } else {
+  gboolean applyLF = uf->modifier != NULL && (uf->modFlags & UF_LF_TRANSFORM);
+#endif
+  float maxX = 0, maxY = 0;
+  float minX = 999999, minY = 999999;
+  double lastX = 0, lastY = 0, area = 0;
+  int i;
+  for (i = 0; i < iWidth + iHeight - 1; i++) {
+    int x, y;
+    if (i < iWidth) { // Trace the left border of the image
+      x = i;
+      y = 0;
+    } else { // Trace the bottom border of the image
+      x = iWidth - 1;
+      y = i - iWidth + 1;
+    }
+    float buff[2];
+#ifdef HAVE_LENSFUN
+    if (applyLF) {
+      lf_modifier_apply_geometry_distortion(uf->modifier,
+                                            x, y, 1, 1, buff);
+    } else {
+      buff[0] = x;
+      buff[1] = y;
+    }
+#else
     buff[0] = x;
     buff[1] = y;
-  }
-#else
-  buff[0] = x;
-  buff[1] = y;
 #endif
-  double srcX = (buff[0]-midX)*cosine - (buff[1]-midY)*sine;
-  double srcY = (buff[0]-midX)*sine + (buff[1]-midY)*cosine;
-  // A digital planimeter:
-  area += srcY * lastX - srcX * lastY;
-  lastX = srcX;
-  lastY = srcY;
-  maxX = MAX(maxX, fabs(srcX));
-  maxY = MAX(maxY, fabs(srcY));
-  if (fabs(srcX/srcY) > aspectRatio)
-    minX = MIN(minX, fabs(srcX));
+    double srcX = (buff[0]-midX)*cosine - (buff[1]-midY)*sine;
+    double srcY = (buff[0]-midX)*sine + (buff[1]-midY)*cosine;
+    // A digital planimeter:
+    area += srcY * lastX - srcX * lastY;
+    lastX = srcX;
+    lastY = srcY;
+    maxX = MAX(maxX, fabs(srcX));
+    maxY = MAX(maxY, fabs(srcY));
+    if (fabs(srcX/srcY) > aspectRatio)
+      minX = MIN(minX, fabs(srcX));
+    else
+      minY = MIN(minY, fabs(srcY));
+  }
+  float scale = sqrt((iWidth-1) * (iHeight-1) / area);
+  // Do not allow increasing canvas size by more than a factor of 2
+  uf->rotatedWidth = MIN(ceil(2*maxX)*scale, 2*iWidth);
+  uf->rotatedHeight = MIN(ceil(2*maxY)*scale, 2*iHeight);
+  if (minX/minY > aspectRatio)
+    minX = minY * aspectRatio;
   else
-    minY = MIN(minY, fabs(srcY));
-}
-float scale = sqrt((iWidth-1) * (iHeight-1) / area);
-// Do not allow increasing canvas size by more than a factor of 2
-uf->rotatedWidth = MIN(ceil(2*maxX)*scale, 2*iWidth);
-uf->rotatedHeight = MIN(ceil(2*maxY)*scale, 2*iHeight);
-if (minX/minY > aspectRatio)
-  minX = minY * aspectRatio;
-else
-  minY = minX / aspectRatio;
-uf->autoCropWidth = MIN(floor(2*minX)*scale, 2*iWidth);
-uf->autoCropHeight = MIN(floor(2*minY)*scale, 2*iHeight);
-int newWidth = uf->rotatedWidth * width / iWidth;
-int newHeight = uf->rotatedHeight * height / iHeight;
-ufraw_image_init(img, newWidth, newHeight, 8);
+    minY = minX / aspectRatio;
+  uf->autoCropWidth = MIN(floor(2*minX)*scale, 2*iWidth);
+  uf->autoCropHeight = MIN(floor(2*minY)*scale, 2*iHeight);
+  int newWidth = uf->rotatedWidth * width / iWidth;
+  int newHeight = uf->rotatedHeight * height / iHeight;
+  ufraw_image_init(img, newWidth, newHeight, 8);
 #ifdef HAVE_LENSFUN
-ufraw_convert_prepare_transform(uf, width, height, FALSE, scale);
+  ufraw_convert_prepare_transform(uf, width, height, FALSE, scale);
 #endif
 }
 

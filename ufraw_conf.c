@@ -789,14 +789,14 @@ int conf_load(conf_data *c, const char *IDFilename)
   } else {
     if ( !g_file_test(IDFilename, G_FILE_TEST_IS_REGULAR) ) {
       ufraw_message(UFRAW_SET_ERROR,
-      _("ID file %s does not appear to be a regular file\n%s\n"),
-      IDFilename, strerror(errno) );
+                    _("ID file %s does not appear to be a regular file\n%s\n"),
+                    IDFilename, strerror(errno) );
       return UFRAW_ERROR;
     }
     if ( (in=g_fopen(IDFilename, "r"))==NULL ) {
       ufraw_message(UFRAW_SET_ERROR,
-      _("Can't open ID file %s for reading\n%s\n"),
-      IDFilename, strerror(errno) );
+                    _("Can't open ID file %s for reading\n%s\n"),
+                    IDFilename, strerror(errno) );
       return UFRAW_ERROR;
     }
     confFilename = g_strdup(IDFilename);
@@ -820,7 +820,7 @@ int conf_load(conf_data *c, const char *IDFilename)
   while (!feof(in)) {
     if (!g_markup_parse_context_parse(context, line, strlen(line), &err)) {
       ufraw_message(UFRAW_ERROR, _("Error parsing '%s'\n%s"),
-      confFilename, err->message);
+                    confFilename, err->message);
       g_markup_parse_context_free(context);
       uf_reset_locale(locale);
       g_free(confFilename);
@@ -851,7 +851,7 @@ int conf_load(conf_data *c, const char *IDFilename)
   // Display profile should not be read from ID files.
   if (IDFilename!=NULL)
     c->profileIndex[display_profile] =
-    conf_default.profileIndex[display_profile];
+      conf_default.profileIndex[display_profile];
 
   // Support OutputType's deprecated in UFRaw-0.14
   if ( c->type==ppm16_deprecated_type ) {
@@ -923,52 +923,52 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
   if (IDFilename==NULL) {
     if (c->saveConfiguration!=conf_default.saveConfiguration)
       buf = uf_markup_buf(buf,
-      "<SaveConfiguration>%d</SaveConfiguration>\n",
-      c->saveConfiguration);
+                          "<SaveConfiguration>%d</SaveConfiguration>\n",
+                          c->saveConfiguration);
     if (c->expander[raw_expander]!=conf_default.expander[raw_expander])
       buf = uf_markup_buf(buf, "<RawExpander>%d</RawExpander>\n",
-      c->expander[raw_expander]);
+                          c->expander[raw_expander]);
     if (c->expander[live_expander]!=conf_default.expander[live_expander])
       buf = uf_markup_buf(buf, "<LiveExpander>%d</LiveExpander>\n",
-      c->expander[live_expander]);
+                          c->expander[live_expander]);
     if (c->histogram!=conf_default.histogram)
       buf = uf_markup_buf(buf,
-      "<Histogram>%d</Histogram>\n", c->histogram);
+                          "<Histogram>%d</Histogram>\n", c->histogram);
     if (c->liveHistogramScale!=conf_default.liveHistogramScale)
       buf = uf_markup_buf(buf,
-      "<LiveHistogramScale>%d</LiveHistogramScale>\n",
-      c->liveHistogramScale);
+                          "<LiveHistogramScale>%d</LiveHistogramScale>\n",
+                          c->liveHistogramScale);
     if (c->rawHistogramScale!=conf_default.rawHistogramScale)
       buf = uf_markup_buf(buf,
-      "<RawHistogramScale>%d</RawHistogramScale>\n",
-      c->rawHistogramScale);
+                          "<RawHistogramScale>%d</RawHistogramScale>\n",
+                          c->rawHistogramScale);
     if (c->LockAspect!=conf_default.LockAspect)
       buf = uf_markup_buf(buf,
-      "<LockAspectRatio>%d</LockAspectRatio>\n", c->LockAspect);
+                          "<LockAspectRatio>%d</LockAspectRatio>\n", c->LockAspect);
     if (c->overExp!=conf_default.overExp)
       buf = uf_markup_buf(buf,
-      "<OverExposure>%d</OverExposure>\n", c->overExp);
+                          "<OverExposure>%d</OverExposure>\n", c->overExp);
     if (c->underExp!=conf_default.underExp)
       buf = uf_markup_buf(buf,
-      "<UnderExposure>%d</UnderExposure>\n", c->underExp);
+                          "<UnderExposure>%d</UnderExposure>\n", c->underExp);
     if (c->blinkOverUnder!=conf_default.blinkOverUnder)
       buf = uf_markup_buf(buf,
-      "<BlinkOverUnder>%d</BlinkOverUnder>\n", c->blinkOverUnder);
+                          "<BlinkOverUnder>%d</BlinkOverUnder>\n", c->blinkOverUnder);
     if (c->drawLines!=conf_default.drawLines)
       buf = uf_markup_buf(buf,
-      "<DrawLines>%d</DrawLines>\n", c->drawLines);
+                          "<DrawLines>%d</DrawLines>\n", c->drawLines);
     if (c->RememberOutputPath!=conf_default.RememberOutputPath)
       buf = uf_markup_buf(buf,
-      "<RememberOutputPath>%d</RememberOutputPath>\n",
-      c->RememberOutputPath);
+                          "<RememberOutputPath>%d</RememberOutputPath>\n",
+                          c->RememberOutputPath);
     if (c->WindowMaximized!=conf_default.WindowMaximized)
       buf = uf_markup_buf(buf,
-      "<WindowMaximized>%d</WindowMaximized>\n",
-      c->WindowMaximized);
+                          "<WindowMaximized>%d</WindowMaximized>\n",
+                          c->WindowMaximized);
     if ( strcmp(c->remoteGimpCommand, conf_default.remoteGimpCommand)!=0 )
       buf = uf_markup_buf(buf,
-      "<RemoteGimpCommand>%s</RemoteGimpCommand>\n",
-      c->remoteGimpCommand);
+                          "<RemoteGimpCommand>%s</RemoteGimpCommand>\n",
+                          c->remoteGimpCommand);
     if (strlen(c->curvePath)>0) {
       char *utf8 = g_filename_display_name(c->curvePath);
       buf = uf_markup_buf(buf, "<CurvePath>%s</CurvePath>\n", utf8);
@@ -982,7 +982,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
   }
   if (c->interpolation!=conf_default.interpolation)
     buf = uf_markup_buf(buf, "<Interpolation>%s</Interpolation>\n",
-    conf_get_name(interpolationNames, c->interpolation));
+                        conf_get_name(interpolationNames, c->interpolation));
   // 'smoothing' is boolean at the moment, but we keep the option
   // to upgrade it to the number of color smoothing passes.
   if (c->smoothing!=0) {
@@ -993,7 +993,7 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
   }
   if (c->smoothing!=conf_default.smoothing)
     buf = uf_markup_buf(buf, "<ColorSmoothing>%d</ColorSmoothing>\n",
-    c->smoothing);
+                        c->smoothing);
   UFObject *image;
   if (ufobject_name(c->ufobject) == ufRawImage)
     image = c->ufobject;
@@ -1008,74 +1008,74 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
   }
   if (c->threshold!=conf_default.threshold)
     buf = uf_markup_buf(buf,
-    "<WaveletDenoisingThreshold>%d</WaveletDenoisingThreshold>\n",
-    (int)floor(c->threshold));
+                        "<WaveletDenoisingThreshold>%d</WaveletDenoisingThreshold>\n",
+                        (int)floor(c->threshold));
   if (c->hotpixel!=conf_default.hotpixel)
     buf = uf_markup_buf(buf,
-    "<HotpixelSensitivity>%f</HotpixelSensitivity>\n",
-    c->hotpixel);
+                        "<HotpixelSensitivity>%f</HotpixelSensitivity>\n",
+                        c->hotpixel);
 #ifdef UFRAW_CONTRAST
   if (c->contrast!=conf_default.contrast)
     buf = uf_markup_buf(buf,
-    "<Contrast>%f</Contrast>\n", c->contrast);
+                        "<Contrast>%f</Contrast>\n", c->contrast);
 #endif
   if (c->exposure!=conf_default.exposure)
     buf = uf_markup_buf(buf, "<Exposure>%lf</Exposure>\n", c->exposure);
   if (c->ExposureNorm!=conf_default.ExposureNorm)
     buf = uf_markup_buf(buf, "<ExposureNorm>%d</ExposureNorm>\n",
-    c->ExposureNorm);
+                        c->ExposureNorm);
   if (c->restoreDetails!=conf_default.restoreDetails)
     buf = uf_markup_buf(buf, "<RestoreDetails>%s</RestoreDetails>\n",
-    conf_get_name(restoreDetailsNames, c->restoreDetails));
+                        conf_get_name(restoreDetailsNames, c->restoreDetails));
   if (c->clipHighlights!=conf_default.clipHighlights)
     buf = uf_markup_buf(buf, "<ClipHighlights>%s</ClipHighlights>\n",
-    conf_get_name(clipHighlightsNames, c->clipHighlights));
+                        conf_get_name(clipHighlightsNames, c->clipHighlights));
   if (c->autoExposure!=conf_default.autoExposure)
     buf = uf_markup_buf(buf,
-    "<AutoExposure>%d</AutoExposure>\n", c->autoExposure);
+                        "<AutoExposure>%d</AutoExposure>\n", c->autoExposure);
   if (c->autoBlack!=conf_default.autoBlack)
     buf = uf_markup_buf(buf, "<AutoBlack>%d</AutoBlack>\n", c->autoBlack);
   if (c->autoCrop!=conf_default.autoCrop)
     buf = uf_markup_buf(buf, "<AutoCrop>%d</AutoCrop>\n", c->autoCrop);
   if (c->saturation!=conf_default.saturation)
     buf = uf_markup_buf(buf,
-    "<Saturation>%lf</Saturation>\n", c->saturation);
+                        "<Saturation>%lf</Saturation>\n", c->saturation);
   for (i = 0; i < max_adjustments; ++i) {
     lightness_adjustment *a = &c->lightnessAdjustment[i];
     if (fabs(a->adjustment - conf_default.lightnessAdjustment[i].adjustment) > 0.01) {
       buf = uf_markup_buf(buf, "<LightnessAdjustment>%f %f %f</LightnessAdjustment>\n",
-      a->adjustment, a->hue, a->hueWidth);
+                          a->adjustment, a->hue, a->hueWidth);
     }
   }
   if (c->grayscaleMode != grayscale_invalid &&
-  c->grayscaleMode != conf_default.grayscaleMode)
+      c->grayscaleMode != conf_default.grayscaleMode)
     buf = uf_markup_buf(buf,
-    "<GrayscaleMode>%s</GrayscaleMode>\n",
-    grayscaleModeNames[c->grayscaleMode]);
+                        "<GrayscaleMode>%s</GrayscaleMode>\n",
+                        grayscaleModeNames[c->grayscaleMode]);
   if (c->grayscaleMode == grayscale_mixer) {
     buf = uf_markup_buf(buf,
-    "<GrayscaleMixer>%f %f %f</GrayscaleMixer>\n",
-    c->grayscaleMixer[0],
-    c->grayscaleMixer[1],
-    c->grayscaleMixer[2]);
+                        "<GrayscaleMixer>%f %f %f</GrayscaleMixer>\n",
+                        c->grayscaleMixer[0],
+                        c->grayscaleMixer[1],
+                        c->grayscaleMixer[2]);
   }
   if (c->despeckleWindow[0] != conf_default.despeckleWindow[0] ||
-  c->despeckleWindow[1] != conf_default.despeckleWindow[1] ||
-  c->despeckleWindow[2] != conf_default.despeckleWindow[2]) {
+      c->despeckleWindow[1] != conf_default.despeckleWindow[1] ||
+      c->despeckleWindow[2] != conf_default.despeckleWindow[2]) {
     buf = uf_markup_buf(buf, "<DespeckleWindow>%f %f %f</DespeckleWindow>\n",
-    c->despeckleWindow[0], c->despeckleWindow[1], c->despeckleWindow[2]);
+                        c->despeckleWindow[0], c->despeckleWindow[1], c->despeckleWindow[2]);
   }
   if (c->despeckleDecay[0] != conf_default.despeckleDecay[0] ||
-  c->despeckleDecay[1] != conf_default.despeckleDecay[1] ||
-  c->despeckleDecay[2] != conf_default.despeckleDecay[2]) {
+      c->despeckleDecay[1] != conf_default.despeckleDecay[1] ||
+      c->despeckleDecay[2] != conf_default.despeckleDecay[2]) {
     buf = uf_markup_buf(buf, "<DespeckleDecay>%f %f %f</DespeckleDecay>\n",
-    c->despeckleDecay[0], c->despeckleDecay[1], c->despeckleDecay[2]);
+                        c->despeckleDecay[0], c->despeckleDecay[1], c->despeckleDecay[2]);
   }
   if (c->despecklePasses[0] != conf_default.despecklePasses[0] ||
-  c->despecklePasses[1] != conf_default.despecklePasses[1] ||
-  c->despecklePasses[2] != conf_default.despecklePasses[2]) {
+      c->despecklePasses[1] != conf_default.despecklePasses[1] ||
+      c->despecklePasses[2] != conf_default.despecklePasses[2]) {
     buf = uf_markup_buf(buf, "<DespecklePasses>%f %f %f</DespecklePasses>\n",
-    c->despecklePasses[0], c->despecklePasses[1], c->despecklePasses[2]);
+                        c->despecklePasses[0], c->despecklePasses[1], c->despecklePasses[2]);
   }
   if (c->size!=conf_default.size)
     buf = uf_markup_buf(buf, "<Size>%d</Size>\n", c->size);
@@ -1091,13 +1091,13 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     buf = uf_markup_buf(buf, "<ProgressiveJPEG>%d</ProgressiveJPEG>\n", c->progressiveJPEG);
   if (c->compression!=conf_default.compression)
     buf = uf_markup_buf(buf,
-    "<Compression>%d</Compression>\n", c->compression);
+                        "<Compression>%d</Compression>\n", c->compression);
   if (c->overwrite!=conf_default.overwrite)
     buf = uf_markup_buf(buf, "<Overwrite>%d</Overwrite>\n", c->overwrite);
   if (c->losslessCompress!=conf_default.losslessCompress)
     buf = uf_markup_buf(buf,
-    "<LosslessCompression>%d</LosslessCompression>\n",
-    c->losslessCompress);
+                        "<LosslessCompression>%d</LosslessCompression>\n",
+                        c->losslessCompress);
   for (i=0; i<c->BaseCurveCount; i++) {
     char *curveBuf = curve_buffer(&c->BaseCurve[i]);
     /* Write curve if it is non-default and we are not writing to .ufraw */
@@ -1108,32 +1108,32 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
       switch (i) {
         case manual_curve:
           buf = uf_markup_buf(buf,
-          "<BaseManualCurve Current='%s'>\n", current);
+                              "<BaseManualCurve Current='%s'>\n", current);
           buf = uf_markup_buf(buf, curveBuf);
           buf = uf_markup_buf(buf, "</BaseManualCurve>\n");
           break;
         case linear_curve:
           buf = uf_markup_buf(buf,
-          "<BaseLinearCurve Current='%s'>\n", current);
+                              "<BaseLinearCurve Current='%s'>\n", current);
           buf = uf_markup_buf(buf, curveBuf);
           buf = uf_markup_buf(buf, "</BaseLinearCurve>\n");
           break;
         case custom_curve:
           buf = uf_markup_buf(buf,
-          "<BaseCustomCurve Current='%s'>\n", current);
+                              "<BaseCustomCurve Current='%s'>\n", current);
           buf = uf_markup_buf(buf, curveBuf);
           buf = uf_markup_buf(buf, "</BaseCustomCurve>\n");
           break;
         case camera_curve:
           buf = uf_markup_buf(buf,
-          "<BaseCameraCurve Current='%s'>\n", current);
+                              "<BaseCameraCurve Current='%s'>\n", current);
           buf = uf_markup_buf(buf, curveBuf);
           buf = uf_markup_buf(buf, "</BaseCameraCurve>\n");
           break;
         default:
           buf = uf_markup_buf(buf,
-          "<BaseCurve Current='%s'>%s\n", current,
-          c->BaseCurve[i].name);
+                              "<BaseCurve Current='%s'>%s\n", current,
+                              c->BaseCurve[i].name);
           buf = uf_markup_buf(buf, curveBuf);
           buf = uf_markup_buf(buf, "</BaseCurve>\n");
       }
@@ -1150,20 +1150,20 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
       switch (i) {
         case manual_curve:
           buf = uf_markup_buf(buf,
-          "<ManualCurve Current='%s'>\n", current);
+                              "<ManualCurve Current='%s'>\n", current);
           buf = uf_markup_buf(buf, curveBuf);
           buf = uf_markup_buf(buf, "</ManualCurve>\n");
           break;
         case linear_curve:
           buf = uf_markup_buf(buf,
-          "<LinearCurve Current='%s'>\n", current);
+                              "<LinearCurve Current='%s'>\n", current);
           buf = uf_markup_buf(buf, curveBuf);
           buf = uf_markup_buf(buf, "</LinearCurve>\n");
           break;
         default:
           buf = uf_markup_buf(buf,
-          "<Curve Current='%s'>%s\n", current,
-          c->curve[i].name);
+                              "<Curve Current='%s'>%s\n", current,
+                              c->curve[i].name);
           buf = uf_markup_buf(buf, curveBuf);
           buf = uf_markup_buf(buf, "</Curve>\n");
       }
@@ -1175,8 +1175,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     if (IDFilename!=NULL && j==display_profile)
       continue;
     char *type = j==in_profile ? "InputProfile" :
-    j==out_profile ? "OutputProfile" :
-    j==display_profile ? "DisplayProfile" : "Error";
+                 j==out_profile ? "OutputProfile" :
+                 j==display_profile ? "DisplayProfile" : "Error";
 
     for (i=0; i<c->profileCount[j]; i++) {
 
@@ -1187,10 +1187,10 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
       /* For the default profiles, if it is not the current profile
        * and nothing change, do not write it. */
       if ( i < conf_default.profileCount[j] && !current &&
-      ( c->profile[j][i].gamma==conf_default.profile[j][i].gamma &&
-      c->profile[j][i].linear==conf_default.profile[j][i].linear &&
-      c->profile[j][i].BitDepth==
-      conf_default.profile[j][i].BitDepth ) )
+           ( c->profile[j][i].gamma==conf_default.profile[j][i].gamma &&
+             c->profile[j][i].linear==conf_default.profile[j][i].linear &&
+             c->profile[j][i].BitDepth==
+             conf_default.profile[j][i].BitDepth ) )
         continue;
       char *profile = "";
       if ( j==in_profile && i==0 ) profile = "No";
@@ -1200,32 +1200,32 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
       if ( j==display_profile && i==0 ) profile = "System";
       if ( j==display_profile && i==1 ) profile = "sRGB";
       buf = uf_markup_buf(buf, "<%s%s Current='%s'>%s\n",
-      profile, type, current?"yes":"no", c->profile[j][i].name);
+                          profile, type, current?"yes":"no", c->profile[j][i].name);
       if ( i >= conf_default.profileCount[j] ) {
         char *utf8 = g_filename_display_name(c->profile[j][i].file);
         buf = uf_markup_buf(buf, "\t<File>%s</File>\n", utf8);
         g_free(utf8);
         buf = uf_markup_buf(buf, "\t<ProductName>%s</ProductName>\n",
-        c->profile[j][i].productName);
+                            c->profile[j][i].productName);
       }
       if (c->profile[j][i].gamma!=conf_default.profile[j][1].gamma)
         buf = uf_markup_buf(buf,
-        "\t<Gamma>%lf</Gamma>\n", c->profile[j][i].gamma);
+                            "\t<Gamma>%lf</Gamma>\n", c->profile[j][i].gamma);
       if (c->profile[j][i].linear!=conf_default.profile[j][1].linear)
         buf = uf_markup_buf(buf, "\t<Linearity>%lf</Linearity>\n",
-        c->profile[j][i].linear);
+                            c->profile[j][i].linear);
       if (c->profile[j][i].BitDepth!= conf_default.profile[j][1].BitDepth)
         buf = uf_markup_buf(buf, "\t<BitDepth>%d</BitDepth>\n",
-        c->profile[j][i].BitDepth);
+                            c->profile[j][i].BitDepth);
       buf = uf_markup_buf(buf, "</%s%s>\n", profile, type);
     }
   }
   if (c->intent[out_profile]!=conf_default.intent[out_profile])
     buf = uf_markup_buf(buf, "<OutputIntent>%s</OutputIntent>\n",
-    conf_get_name(intentNames, c->intent[out_profile]));
+                        conf_get_name(intentNames, c->intent[out_profile]));
   if (c->intent[display_profile]!=conf_default.intent[display_profile])
     buf = uf_markup_buf(buf, "<DisplayIntent>%s</DisplayIntent>\n",
-    conf_get_name(intentNames, c->intent[display_profile]));
+                        conf_get_name(intentNames, c->intent[display_profile]));
   /* We always write the Make and Mode information
    * to know if the WB setting is relevant */
   buf = uf_markup_buf(buf, "<Make>%s</Make>\n", c->make);
@@ -1233,24 +1233,24 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
   if (IDFilename!=NULL) {
     if (strcmp(c->darkframeFile, conf_default.darkframeFile)!=0)
       buf = uf_markup_buf(buf,
-      "<DarkframeFile>%s</DarkframeFile>\n", c->darkframeFile);
+                          "<DarkframeFile>%s</DarkframeFile>\n", c->darkframeFile);
     buf = uf_markup_buf(buf, "<Timestamp>%s</Timestamp>\n",
-    c->timestampText);
+                        c->timestampText);
     buf = uf_markup_buf(buf, "<Orientation>%d</Orientation>\n",
-    c->orientation);
+                        c->orientation);
     buf = uf_markup_buf(buf, "<ISOSpeed>%s</ISOSpeed>\n", c->isoText);
     buf = uf_markup_buf(buf, "<Shutter>%s</Shutter>\n", c->shutterText);
     buf = uf_markup_buf(buf, "<Aperture>%s</Aperture>\n", c->apertureText);
     buf = uf_markup_buf(buf, "<FocalLength>%s</FocalLength>\n",
-    c->focalLenText);
+                        c->focalLenText);
     buf = uf_markup_buf(buf, "<FocalLength35>%s</FocalLength35>\n",
-    c->focalLen35Text);
+                        c->focalLen35Text);
     if (strlen(c->lensText)>0)
       buf = uf_markup_buf(buf, "<Lens>%s</Lens>\n", c->lensText);
     buf = uf_markup_buf(buf, "<EXIFSource>%s</EXIFSource>\n",
-    c->exifSource);
+                        c->exifSource);
     buf = uf_markup_buf(buf, "<Crop>%d %d %d %d</Crop>\n",
-    c->CropX1, c->CropY1, c->CropX2, c->CropY2);
+                        c->CropX1, c->CropY1, c->CropX2, c->CropY2);
     buf = uf_markup_buf(buf, "<Rotation>%lf</Rotation>\n", c->rotationAngle);
     char *log = ufraw_message(UFRAW_GET_LOG, NULL);
     if (log!=NULL) {
@@ -1272,8 +1272,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
       confFilename = g_strdup(IDFilename);
     if ( (out=g_fopen(confFilename, "w"))==NULL ) {
       ufraw_message(UFRAW_ERROR,
-      _("Can't open file %s for writing\n%s\n"),
-      confFilename, strerror(errno) );
+                    _("Can't open file %s for writing\n%s\n"),
+                    confFilename, strerror(errno) );
       g_free(confFilename);
       g_free(buf);
       return UFRAW_ERROR;
@@ -1321,12 +1321,12 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
   dst->restoreDetails = src->restoreDetails;
   dst->clipHighlights = src->clipHighlights;
   memcpy(dst->lightnessAdjustment, src->lightnessAdjustment,
-  sizeof dst->lightnessAdjustment);
+         sizeof dst->lightnessAdjustment);
   dst->lightnessAdjustmentCount = src->lightnessAdjustmentCount;
   dst->grayscaleMode = src->grayscaleMode;
   dst->grayscaleMixerDefined = src->grayscaleMixerDefined;
   memcpy(dst->grayscaleMixer, src->grayscaleMixer,
-  sizeof dst->grayscaleMixer);
+         sizeof dst->grayscaleMixer);
   memcpy(dst->despeckleWindow, src->despeckleWindow, sizeof (dst->despeckleWindow));
   memcpy(dst->despeckleDecay, src->despeckleDecay, sizeof (dst->despeckleDecay));
   memcpy(dst->despecklePasses, src->despecklePasses, sizeof (dst->despecklePasses));
@@ -1341,7 +1341,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
      * and override it, assuming it is the same curve. */
     for (i=camera_curve+1; i<dst->BaseCurveCount; i++) {
       if (!strcmp(dst->BaseCurve[i].name,
-      src->BaseCurve[src->BaseCurveIndex].name)) {
+                  src->BaseCurve[src->BaseCurveIndex].name)) {
         dst->BaseCurve[i] = src->BaseCurve[src->BaseCurveIndex];
         dst->BaseCurveIndex = i;
         break;
@@ -1352,7 +1352,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
       /* If there is no more room we throw away the last curve. */
       if (dst->BaseCurveCount==max_curves) dst->BaseCurveCount--;
       dst->BaseCurve[dst->BaseCurveCount] =
-      src->BaseCurve[src->BaseCurveIndex];
+        src->BaseCurve[src->BaseCurveIndex];
       dst->BaseCurveIndex = dst->BaseCurveCount;
       dst->BaseCurveCount++;
     }
@@ -1394,7 +1394,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
        * name and override it, assuming it is the same profile. */
       for (i=1; i<dst->profileCount[j]; i++) {
         if (!strcmp(dst->profile[j][i].name,
-        src->profile[j][src->profileIndex[j]].name)) {
+                    src->profile[j][src->profileIndex[j]].name)) {
           dst->profile[j][i] = src->profile[j][src->profileIndex[j]];
           dst->profileIndex[j] = i;
           break;
@@ -1405,7 +1405,7 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
         /* If there is no more room we throw away the last profile. */
         if (dst->profileCount[j]==max_profiles) dst->profileCount[j]--;
         dst->profile[j][dst->profileCount[j]] =
-        src->profile[j][src->profileIndex[j]];
+          src->profile[j][src->profileIndex[j]];
         dst->profileIndex[j] = dst->profileCount[j];
         dst->profileCount[j]++;
       }
@@ -1467,7 +1467,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
   if (cmd->rotate!=-1) conf->rotate = cmd->rotate;
   if (cmd->rotationAngle!=NULLF) conf->rotationAngle = cmd->rotationAngle;
   if (cmd->CropX1 != -1 || cmd->CropX2 != -1 ||
-  cmd->CropY1 != -1 || cmd->CropY2 != -1)
+      cmd->CropY1 != -1 || cmd->CropY2 != -1)
     conf->autoCrop = disabled_state;
   if (cmd->CropX1 !=-1) conf->CropX1 = cmd->CropX1;
   if (cmd->CropY1 !=-1) conf->CropY1 = cmd->CropY1;
@@ -1489,19 +1489,19 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
   }
   if (cmd->profile[0][0].gamma!=NULLF)
     conf->profile[0][conf->profileIndex[0]].gamma =
-    cmd->profile[0][0].gamma;
+      cmd->profile[0][0].gamma;
   if (cmd->profile[0][0].linear!=NULLF)
     conf->profile[0][conf->profileIndex[0]].linear =
-    cmd->profile[0][0].linear;
+      cmd->profile[0][0].linear;
   if (cmd->profile[1][0].BitDepth!=-1)
     conf->profile[1][conf->profileIndex[1]].BitDepth =
-    cmd->profile[1][0].BitDepth;
+      cmd->profile[1][0].BitDepth;
   if (cmd->saturation!=NULLF)
     conf->saturation=cmd->saturation;
   if (cmd->grayscaleMode!=-1) {
     conf->grayscaleMode=cmd->grayscaleMode;
     if (cmd->grayscaleMode == grayscale_mixer &&
-    cmd->grayscaleMixerDefined == 1) {
+        cmd->grayscaleMixerDefined == 1) {
       conf->grayscaleMixerDefined = 1;
       conf->grayscaleMixer[0] = cmd->grayscaleMixer[0];
       conf->grayscaleMixer[1] = cmd->grayscaleMixer[1];
@@ -1515,7 +1515,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
   }
   if (cmd->black!=NULLF) {
     CurveDataSetPoint(&conf->curve[conf->curveIndex],
-    0, cmd->black, 0);
+                      0, cmd->black, 0);
     conf->autoBlack = disabled_state;
   }
   if (cmd->smoothing!=-1) conf->smoothing = cmd->smoothing;
@@ -1546,7 +1546,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     g_strlcpy(conf->outputPath, cmd->outputPath, max_path);
   if (strlen(cmd->outputFilename)>0) {
     if ( conf->createID!=no_id && !strcmp(cmd->outputFilename,"-") &&
-    !cmd->embeddedImage ) {
+         !cmd->embeddedImage ) {
       ufraw_message(UFRAW_ERROR, _("cannot --create-id with stdout"));
       return UFRAW_ERROR;
     }
