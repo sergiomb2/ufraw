@@ -24,6 +24,9 @@
 #endif
 #ifdef HAVE_LIBPNG
 #include <png.h>
+#ifdef HAVE_LIBZ
+#include <zlib.h>	/* for libpng 1.5.x */
+#endif
 #endif
 
 #ifdef _OPENMP
