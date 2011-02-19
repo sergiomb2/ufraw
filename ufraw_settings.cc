@@ -49,12 +49,24 @@ typedef UF_STRING<ufCameraMake> UFCameraMake;
 	Class() : UFNumber(Name, __VA_ARGS__) { } \
     }
 
-class Image : public UFGroup
+// ufRawImage is short for 'raw image processing parameters'.
+extern "C" {
+  UFName ufRawImage = "Image";
+}
+// Common class for Image and CommandLineImage
+class ImageCommon : public UFGroup
 {
 private:
 public:
   // uf should be private
   ufraw_data *uf;
+  ImageCommon() : UFGroup(ufRawImage), uf(NULL) { }
+};
+
+class Image : public ImageCommon
+{
+private:
+public:
   explicit Image(UFObject *root = NULL);
   void SetUFRawData(ufraw_data *data);
   static ufraw_data *UFRawData(UFObject *object) {
@@ -291,11 +303,7 @@ public:
   }
 };
 
-// ufRawImage is short for 'raw image processing parameters'.
-extern "C" {
-  UFName ufRawImage = "Image";
-}
-Image::Image(UFObject *root) : UFGroup(ufRawImage), uf(NULL)
+Image::Image(UFObject *root) : ImageCommon()
 {
   *this
       << new WB
@@ -406,10 +414,10 @@ public:
   }
 };
 
-class CommandLineImage : public UFGroup
+class CommandLineImage : public ImageCommon
 {
 public:
-  CommandLineImage(): UFGroup(ufRawImage) { }
+  CommandLineImage(): ImageCommon() { }
   void Event(UFEventType type) {
     if (type != uf_element_added)
       return UFObject::Event(type);
