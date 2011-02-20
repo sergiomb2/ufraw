@@ -18,5 +18,5 @@ void curveeditor_widget_set_curve(GtkWidget *widget, CurveData *curve);
 CurveData *curveeditor_widget_get_curve(GtkWidget *widget);
 
 gboolean curveeditor_widget_get_coordinates(GtkWidget *widget,
-    double *x, double *y);
+        double *x, double *y);
 

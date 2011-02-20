@@ -21,42 +21,42 @@ extern "C" {
 #endif
 
 // Create a GtkCheckButton with a label and a value that gets updated
-  GtkWidget *uf_check_button_new(const char *label, gboolean *valuep);
+    GtkWidget *uf_check_button_new(const char *label, gboolean *valuep);
 
 // Create a new ComboBox text with small width.
 // The widget must be added with GTK_EXPAND|GTK_FILL.
-  GtkWidget *uf_combo_box_new_text();
+    GtkWidget *uf_combo_box_new_text();
 
 // Append text with data to combo box
-  void uf_combo_box_append_text(GtkComboBox *combo, const char *text, void *data);
+    void uf_combo_box_append_text(GtkComboBox *combo, const char *text, void *data);
 
 // activate combo box according to data or index, if there is no data
-  void uf_combo_box_set_active(GtkComboBox *combo, int value);
+    void uf_combo_box_set_active(GtkComboBox *combo, int value);
 
 // remove combo box entry according to data or index, if there is no data
-  void uf_combo_box_remove_text(GtkComboBox *combo, int value);
+    void uf_combo_box_remove_text(GtkComboBox *combo, int value);
 
 // Set combo box data and keep it up to date
-  void uf_combo_box_set_data(GtkComboBox *combo, int *valuep);
+    void uf_combo_box_set_data(GtkComboBox *combo, int *valuep);
 
 // Get the display ICC profile of the monitor associated with the widget.
-  void uf_get_display_profile(GtkWidget *widget,
-                              guint8 **buffer, gint *buffer_size);
+    void uf_get_display_profile(GtkWidget *widget,
+                                guint8 **buffer, gint *buffer_size);
 
-  /*
-   * The following functions create GtkWidgets for UFObjects.
-   * These widgets are already created with callbacks, so that changes
-   * in the widget value are applied to the UFObjects and vice-versa.
-   */
-  GtkWidget *ufnumber_hscale_new(UFObject *object);
-  GtkWidget *ufnumber_spin_button_new(UFObject *object);
-  GtkWidget *ufnumber_array_hscale_new(UFObject *object, int index);
-  GtkWidget *ufnumber_array_spin_button_new(UFObject *object, int index);
-  GtkWidget *ufobject_reset_button_new(const char *tip);
-  void ufobject_reset_button_add(GtkWidget *button, UFObject *object);
-  GtkWidget *ufstring_entry_new(UFObject *object);
-  GtkWidget *ufarray_combo_box_new(UFObject *object);
-  GtkWidget *ufarray_combo_box_entry_new(UFObject *object);
+    /*
+     * The following functions create GtkWidgets for UFObjects.
+     * These widgets are already created with callbacks, so that changes
+     * in the widget value are applied to the UFObjects and vice-versa.
+     */
+    GtkWidget *ufnumber_hscale_new(UFObject *object);
+    GtkWidget *ufnumber_spin_button_new(UFObject *object);
+    GtkWidget *ufnumber_array_hscale_new(UFObject *object, int index);
+    GtkWidget *ufnumber_array_spin_button_new(UFObject *object, int index);
+    GtkWidget *ufobject_reset_button_new(const char *tip);
+    void ufobject_reset_button_add(GtkWidget *button, UFObject *object);
+    GtkWidget *ufstring_entry_new(UFObject *object);
+    GtkWidget *ufarray_combo_box_new(UFObject *object);
+    GtkWidget *ufarray_combo_box_entry_new(UFObject *object);
 
 #ifdef __cplusplus
 }

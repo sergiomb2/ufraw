@@ -34,8 +34,8 @@ extern void (*ufraw_progress)(int what, int ticks);
  */
 static inline void progress(int what, int ticks)
 {
-  if (ufraw_progress)
-    ufraw_progress(what, ticks);
+    if (ufraw_progress)
+        ufraw_progress(what, ticks);
 }
 
 #endif /* _UF_PROGRESS_H */
