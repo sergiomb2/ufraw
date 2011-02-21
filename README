@@ -281,6 +281,11 @@ date user guide.
 History
 =======
 
+20/02/2011 - UFRaw-0.18 released, based on DCRaw v 9.06.
+
+* New Traditional Chinese translation by Tetralet.
+* Port UFRaw to OpenSolaris. Patch by James Lee.
+
 01/04/2010 - UFRaw-0.17 released, based on DCRaw v 8.99.
 
 * Lens distortion corrections using lenfun. This feature is now fully
