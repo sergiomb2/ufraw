@@ -64,10 +64,10 @@ extern const float d65_white[3];
    Return values are either 0/1/2/3 = G/M/C/Y or 0/1/2/3 = R/G1/B/G2
  */
 #define FC(row,col) \
-	(int)(filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
+    (int)(filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 
 #define BAYER(row,col) \
-	image[((row) >> shrink)*iwidth + ((col) >> shrink)][FC(row,col)]
+    image[((row) >> shrink)*iwidth + ((col) >> shrink)][FC(row,col)]
 
 int CLASS fc_INDI(const unsigned filters, const int row, const int col)
 {
@@ -115,9 +115,9 @@ static void CLASS hat_transform(float *temp, float *base, int st, int size, int 
 }
 
 void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
-                                const int iheight, const int iwidth, const int height, const int width,
-                                const int colors, const int shrink, const float pre_mul[4],
-                                const float threshold, const unsigned filters)
+    const int iheight, const int iwidth, const int height, const int width,
+    const int colors, const int shrink, const float pre_mul[4],
+    const float threshold, const unsigned filters)
 {
     float *fimg = 0, /* *temp,*/ thold, mul[2], avg, diff;
     int /*scale=1,*/ size, lev, hpass, lpass, row, col, nc, c, i, wlast;
@@ -199,9 +199,9 @@ void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
 }
 
 void CLASS scale_colors_INDI(int maximum, const int black,
-const int use_camera_wb, const float cam_mul[4], const int colors,
-float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
-const char *ifname_display, void *dcraw)
+    const int use_camera_wb, const float cam_mul[4], const int colors,
+    float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
+    const char *ifname_display, void *dcraw)
 {
     unsigned /*bottom, right, size,*/ row, col, /*ur, uc, i, x, y,*/ c, sum[8];
     int val, dark, sat;
@@ -250,8 +250,7 @@ const char *ifname_display, void *dcraw)
 }
 
 void CLASS border_interpolate_INDI(const int height, const int width,
-ushort(*image)[4], const unsigned filters, int colors,
-int border)
+    ushort(*image)[4], const unsigned filters, int colors, int border)
 {
     int row, col, y, x, f, c, sum[8];
 
@@ -274,7 +273,7 @@ int border)
 }
 
 void CLASS lin_interpolate_INDI(ushort(*image)[4], const unsigned filters,
-const int width, const int height, const int colors, void *dcraw) /*UF*/
+    const int width, const int height, const int colors, void *dcraw) /*UF*/
 {
     int code[16][16][32], *ip, sum[4];
     int c, i, x, y, row, col, shift, color;
@@ -283,7 +282,7 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
     dcraw_message(dcraw, DCRAW_VERBOSE, _("Bilinear interpolation...\n")); /*UF*/
 
     border_interpolate_INDI(height, width, image, filters, colors, 1);
-    for (row = 0; row < 16; row++)
+    for (row = 0; row < 16; row++) {
         for (col = 0; col < 16; col++) {
             ip = code[row][col];
             memset(sum, 0, sizeof sum);
@@ -303,10 +302,11 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
                 *ip++ = 256 / sum[c];
             }
         }
+    }
 #ifdef _OPENMP
 #pragma omp parallel for default(shared) private(row,col,pix,ip,sum,i)
 #endif
-    for (row = 1; row < height - 1; row++)
+    for (row = 1; row < height - 1; row++) {
         for (col = 1; col < width - 1; col++) {
             pix = image[row*width+col];
             ip = code[row & 15][col & 15];
@@ -316,6 +316,7 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
             for (i = colors; --i; ip += 2)
                 pix[ip[0]] = sum[ip[0]] * ip[1] >> 8;
         }
+    }
 }
 
 /*
@@ -329,7 +330,7 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
    Gradients are numbered clockwise from NW=0 to W=7.
  */
 void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
-const int width, const int height, const int colors, void *dcraw) /*UF*/
+    const int width, const int height, const int colors, void *dcraw) /*UF*/
 {
     static const signed char *cp, terms[] = {
         -2, -2, +0, -1, 0, 0x01, -2, -2, +0, +0, 1, 0x01, -2, -1, -1, +0, 0, 0x01,
@@ -411,7 +412,7 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
         int slice = (height - 4) / uf_omp_get_num_threads();
         int start_row = 2 + slice * uf_omp_get_thread_num();
         int end_row = MIN(start_row + slice, height - 2);
-        for (row = start_row; row < end_row; row++) {	/* Do VNG interpolation */
+        for (row = start_row; row < end_row; row++) { /* Do VNG interpolation */
             progress(PROGRESS_INTERPOLATE, 1);
             for (g = 0; g < 4; g++)
                 brow[g] = &rowtmp[(row + g - 2) % 4];
@@ -419,7 +420,7 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
                 pix = image[row*width+col];
                 ip = code[row & prow][col & pcol];
                 memset(gval, 0, sizeof gval);
-                while ((g = ip[0]) != INT_MAX) {	/* Calculate gradients */
+                while ((g = ip[0]) != INT_MAX) { /* Calculate gradients */
                     diff = ABS(pix[g] - pix[ip[1]]) << ip[2];
                     gval[ip[3]] += diff;
                     ip += 5;
@@ -429,7 +430,7 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
                         gval[g] += diff;
                 }
                 ip++;
-                gmin = gmax = gval[0];			/* Choose a threshold */
+                gmin = gmax = gval[0]; /* Choose a threshold */
                 for (g = 1; g < 8; g++) {
                     if (gmin > gval[g]) gmin = gval[g];
                     if (gmax < gval[g]) gmax = gval[g];
@@ -441,7 +442,7 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
                 thold = gmin + (gmax >> 1);
                 memset(sum, 0, sizeof sum);
                 color = fc_INDI(filters, row, col);
-                for (num = g = 0; g < 8; g++, ip += 2) {	/* Average the neighbors */
+                for (num = g = 0; g < 8; g++, ip += 2) { /* Average the neighbors */
                     if (gval[g] <= thold) {
                         FORCC
                         if (c == color && ip[1])
@@ -451,14 +452,14 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
                         num++;
                     }
                 }
-                FORCC {					/* Save to buffer */
+                FORCC {				/* Save to buffer */
                     t = pix[color];
                     if (c != color)
                         t += (sum[c] - sum[color]) / num;
                     brow[2][col][c] = CLIP(t);
                 }
             }
-            if (row > start_row + 1)			/* Write buffer to image */
+            if (row > start_row + 1)		/* Write buffer to image */
                 memcpy(image[(row-2)*width+2], brow[0] + 2, (width - 4)*sizeof * image);
         }
         if (row == height - 2) {
@@ -473,7 +474,7 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
    Patterned Pixel Grouping Interpolation by Alain Desbiolles
 */
 void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
-                                const int width, const int height, const int colors, void *dcraw)
+    const int width, const int height, const int colors, void *dcraw)
 {
     int dir[5] = { 1, width, -1, -width, 1 };
     int row, col, diff[2], guess[2], c, d, i;
@@ -493,7 +494,7 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
 #ifdef _OPENMP
 #pragma omp for
 #endif
-        for (row = 3; row < height - 3; row++)
+        for (row = 3; row < height - 3; row++) {
             for (col = 3 + (FC(row, 3) & 1), c = FC(row, col); col < width - 3; col += 2) {
                 pix = image + row * width + col;
                 for (i = 0; (d = dir[i]) > 0; i++) {
@@ -508,22 +509,24 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                 d = dir[i = diff[0] > diff[1]];
                 pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
             }
-        /*  Calculate red and blue for each green pixel:		*/
+        }
+        /*  Calculate red and blue for each green pixel: */
 #ifdef _OPENMP
 #pragma omp for
 #endif
-        for (row = 1; row < height - 1; row++)
+        for (row = 1; row < height - 1; row++) {
             for (col = 1 + (FC(row, 2) & 1), c = FC(row, col + 1); col < width - 1; col += 2) {
                 pix = image + row * width + col;
                 for (i = 0; (d = dir[i]) > 0; c = 2 - c, i++)
                     pix[0][c] = CLIP((pix[-d][c] + pix[d][c] + 2 * pix[0][1]
                                       - pix[-d][1] - pix[d][1]) >> 1);
             }
-        /*  Calculate blue for red pixels and vice versa:		*/
+        }
+        /*  Calculate blue for red pixels and vice versa: */
 #ifdef _OPENMP
 #pragma omp for
 #endif
-        for (row = 1; row < height - 1; row++)
+        for (row = 1; row < height - 1; row++) {
             for (col = 1 + (FC(row, 1) & 1), c = 2 - FC(row, col); col < width - 1; col += 2) {
                 pix = image + row * width + col;
                 for (i = 0; (d = dir[i] + dir[i+1]) > 0; i++) {
@@ -538,6 +541,7 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                 else
                     pix[0][c] = CLIP((guess[0] + guess[1]) >> 2);
             }
+        }
     }
 }
 
@@ -545,11 +549,11 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
    Adaptive Homogeneity-Directed interpolation is based on
    the work of Keigo Hirakawa, Thomas Parks, and Paul Lee.
  */
-#define TS 256		/* Tile Size */
+#define TS 256 /* Tile Size */
 
 void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
-                                const int width, const int height, const int colors,
-                                const float rgb_cam[3][4], void *dcraw)
+    const int width, const int height, const int colors,
+    const float rgb_cam[3][4], void *dcraw)
 {
     int i, j, k, top, left, row, col, tr, tc, c, d, val, hm[2];
     ushort(*pix)[4], (*rix)[3];
@@ -584,7 +588,7 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                     xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65_white[i];
 
         border_interpolate_INDI(height, width, image, filters, colors, 5);
-        buffer = (char *) malloc(26 * TS * TS);		/* 1664 kB */
+        buffer = (char *) malloc(26 * TS * TS); /* 1664 kB */
         merror(buffer, "ahd_interpolate()");
         rgb  = (ushort(*)[TS][TS][3]) buffer;
         lab  = (short(*)[TS][TS][3])(buffer + 12 * TS * TS);
@@ -598,7 +602,7 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
             progress(PROGRESS_INTERPOLATE, TS - 6);
             for (left = 2; left < width - 5; left += TS - 6) {
 
-                /*  Interpolate green horizontally and vertically:		*/
+                /*  Interpolate green horizontally and vertically: */
                 for (row = top; row < top + TS && row < height - 2; row++) {
                     col = left + (FC(row, left) & 1);
                     for (c = FC(row, col); col < left + TS && col < width - 2; col += 2) {
@@ -611,7 +615,7 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                         rgb[1][row-top][col-left][1] = ULIM(val, pix[-width][1], pix[width][1]);
                     }
                 }
-                /*  Interpolate red and blue, and convert to CIELab:		*/
+                /*  Interpolate red and blue, and convert to CIELab: */
                 for (d = 0; d < 2; d++)
                     for (row = top + 1; row < top + TS - 1 && row < height - 3; row++)
                         for (col = left + 1; col < left + TS - 1 && col < width - 3; col++) {
@@ -646,7 +650,7 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                             lix[0][1] = 64 * 500 * (xyz[0] - xyz[1]);
                             lix[0][2] = 64 * 200 * (xyz[1] - xyz[2]);
                         }
-                /*  Build homogeneity maps from the CIELab images:		*/
+                /*  Build homogeneity maps from the CIELab images: */
                 memset(homo, 0, 2 * TS * TS);
                 for (row = top + 2; row < top + TS - 2 && row < height - 4; row++) {
                     tr = row - top;
@@ -670,7 +674,7 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                                     homo[d][tr][tc]++;
                     }
                 }
-                /*  Combine the most homogenous pixels for the final result:	*/
+                /*  Combine the most homogenous pixels for the final result: */
                 for (row = top + 3; row < top + TS - 3 && row < height - 5; row++) {
                     tr = row - top;
                     for (col = left + 3; col < left + TS - 3 && col < width - 5; col++) {
@@ -689,7 +693,7 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
             }
         }
         free(buffer);
-    }	/* _OPENMP */
+    } /* _OPENMP */
 }
 #undef TS
 
@@ -737,7 +741,7 @@ static inline int median9(int *p)
 
 // Just making this function inline speeds up ahd_interpolate_INDI() up to 15%
 static inline ushort eahd_median(int row, int col, int color,
-                                 ushort(*image)[4], const int width)
+    ushort(*image)[4], const int width)
 {
     //declare the pixel array
     int pArray[9];
@@ -769,7 +773,7 @@ static inline ushort eahd_median(int row, int col, int color,
 // Add the color smoothing from Kimmel as suggested in the AHD paper
 // Algorithm updated by Michael Goertz
 void CLASS color_smooth(ushort(*image)[4], const int width, const int height,
-                        const int passes)
+    const int passes)
 {
     int row, col;
     int row_start = 2;
@@ -799,8 +803,8 @@ void CLASS color_smooth(ushort(*image)[4], const int width, const int height,
 }
 
 void CLASS fuji_rotate_INDI(ushort(**image_p)[4], int *height_p,
-                            int *width_p, int *fuji_width_p, const int colors, const double step,
-                            void *dcraw)
+    int *width_p, int *fuji_width_p, const int colors, const double step,
+    void *dcraw)
 {
     int height = *height_p, width = *width_p, fuji_width = *fuji_width_p; /*UF*/
     ushort(*image)[4] = *image_p;  /*UF*/
@@ -822,7 +826,7 @@ void CLASS fuji_rotate_INDI(ushort(**image_p)[4], int *height_p,
 #ifdef _OPENMP
 #pragma omp parallel for default(shared) private(row,col,ur,uc,r,c,fr,fc,pix,i)
 #endif
-    for (row = 0; row < high; row++)
+    for (row = 0; row < high; row++) {
         for (col = 0; col < wide; col++) {
             ur = r = fuji_width + (row - col) * step;
             uc = c = (row + col) * step;
@@ -835,6 +839,7 @@ void CLASS fuji_rotate_INDI(ushort(**image_p)[4], int *height_p,
                     (pix[    0][i] * (1 - fc) + pix[      1][i] * fc) * (1 - fr) +
                     (pix[width][i] * (1 - fc) + pix[width+1][i] * fc) * fr;
         }
+    }
     free(image);
     width  = wide;
     height = high;
@@ -847,7 +852,7 @@ void CLASS fuji_rotate_INDI(ushort(**image_p)[4], int *height_p,
 }
 
 void CLASS flip_image_INDI(ushort(*image)[4], int *height_p, int *width_p,
-                           /*const*/ int flip) /*UF*/
+    /*const*/ int flip) /*UF*/
 {
     unsigned *flag;
     int size, base, dest, next, row, col;
@@ -856,7 +861,7 @@ void CLASS flip_image_INDI(ushort(*image)[4], int *height_p, int *width_p,
 
 //  Message is suppressed because error handling is not enabled here.
 //  dcraw_message (dcraw, DCRAW_VERBOSE,_("Flipping image %c:%c:%c...\n"),
-//	flip & 1 ? 'H':'0', flip & 2 ? 'V':'0', flip & 4 ? 'T':'0'); /*UF*/
+//      flip & 1 ? 'H':'0', flip & 2 ? 'V':'0', flip & 4 ? 'T':'0'); /*UF*/
 
     img = (INT64 *) image;
     size = height * width;
