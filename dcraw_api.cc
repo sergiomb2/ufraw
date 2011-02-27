@@ -610,8 +610,8 @@ extern "C" {
                 h->post_mul[c] = 1.0;
         } else {
             scale_colors_INDI(h->rgbMax - h->black, h->black, useCameraWB,
-                              h->cam_mul, h->raw.colors, h->post_mul, h->filters, d->white,
-                              d->ifname_display, d);
+                              h->cam_mul, h->colors, h->post_mul, h->filters,
+                              d->white, d->ifname_display, d);
         }
         h->message = d->messageBuffer;
         return d->lastStatus;

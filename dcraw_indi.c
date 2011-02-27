@@ -241,8 +241,8 @@ void CLASS scale_colors_INDI(int maximum, const int black,
     }
     FORC4 scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / maximum;
     dcraw_message(dcraw, DCRAW_VERBOSE,
-    _("Scaling with darkness %d, saturation %d, and\nmultipliers"),
-    dark, sat);
+        _("Scaling with darkness %d, saturation %d, and\nmultipliers"),
+        dark, sat);
     FORC4 dcraw_message(dcraw, DCRAW_VERBOSE, " %f", pre_mul[c]);
     dcraw_message(dcraw, DCRAW_VERBOSE, "\n");
 
