@@ -434,7 +434,8 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
         if (ufraw_exif_read_input(uf) != UFRAW_SUCCESS) {
             ufraw_message(UFRAW_SET_LOG, "Error reading EXIF data from %s\n",
                           uf->filename);
-        } else {
+            // If exiv2 fails to read the EXIF data, use the EXIF tags read
+            // by dcraw.
             g_strlcpy(uf->conf->exifSource, "DCRaw", max_name);
             uf->conf->iso_speed = raw->iso_speed;
             g_snprintf(uf->conf->isoText, max_name, "%d",
