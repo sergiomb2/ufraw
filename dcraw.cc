@@ -143,6 +143,7 @@ ifname_display = NULL;
 ifpReadCount = 0;
 ifpSize = 0;
 ifpStepProgress = 0;
+eofCount = 0;
 }
 
 CLASS ~DCRaw()
@@ -168,10 +169,16 @@ void CLASS ifpProgress(unsigned readCount) {
 
 size_t CLASS fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
     size_t num = ::fread(ptr, size, nmemb, stream);
-    if ( num != nmemb )
-//	Maybe this should be a DCRAW_WARNING
-        dcraw_message(DCRAW_VERBOSE, "%s: fread %d != %d\n",
-                ifname_display, num, nmemb);
+    if ( num != nmemb ) {
+        if (eofCount < 10)
+            // Maybe this should be a DCRAW_WARNING
+            dcraw_message(DCRAW_VERBOSE, "%s: fread %d != %d\n",
+                    ifname_display, num, nmemb);
+        if (eofCount == 10)
+            dcraw_message(DCRAW_VERBOSE, "%s: fread eof reached 10 times\n",
+                    ifname_display);
+        eofCount++;
+    }
     if (stream==ifp) ifpProgress(size*nmemb);
     return num;
 }
@@ -186,10 +193,16 @@ size_t CLASS fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
 
 char *CLASS fgets(char *s, int size, FILE *stream) {
     char *str = ::fgets(s, size, stream);
-    if ( str==NULL )
-//	Maybe this should be a DCRAW_WARNING
-        dcraw_message(DCRAW_VERBOSE, "%s: fgets returned NULL\n",
-                ifname_display);
+    if (str == NULL) {
+        if (eofCount < 10)
+            // Maybe this should be a DCRAW_WARNING
+            dcraw_message(DCRAW_VERBOSE, "%s: fgets returned NULL\n",
+                    ifname_display);
+        if (eofCount == 10)
+            dcraw_message(DCRAW_VERBOSE, "%s: fgets eof reached 10 times\n",
+                    ifname_display);
+        eofCount++;
+    }
     if (stream==ifp) ifpProgress(strlen(s));
     return str;
 }

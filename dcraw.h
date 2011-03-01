@@ -94,6 +94,7 @@ public:
     unsigned ifpReadCount;
     unsigned ifpSize;
     unsigned ifpStepProgress;
+    int eofCount;
 #define STEPS 50
     void ifpProgress(unsigned readCount);
 // Override standard io function for integrity checks and progress report
