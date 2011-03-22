@@ -294,6 +294,8 @@ int ufraw_load_darkframe(ufraw_data *uf)
     }
     dark->conf = g_new(conf_data, 1);
     conf_init(dark->conf);
+    /* initialize ufobject member */
+    dark->conf->ufobject = ufraw_image_new();
     /* disable all auto settings on darkframe */
     dark->conf->autoExposure = disabled_state;
     dark->conf->autoBlack = disabled_state;
