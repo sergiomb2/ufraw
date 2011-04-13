@@ -137,6 +137,10 @@ void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
   default(none)						\
   shared(nc,image,size)					\
   private(c,i,hpass,lev,lpass,row,col,thold,fimg,temp)
+#ifdef __sun			/* Fix bug #3205673 - NKBJ */
+#pragma omp parallel for				\
+  shared(noise)
+#endif
 #endif
     FORC(nc) {			/* denoise R,G1,B,G3 individually */
         fimg = (float *) malloc(size * 3 * sizeof * fimg);
