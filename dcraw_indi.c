@@ -115,9 +115,11 @@ static void CLASS hat_transform(float *temp, float *base, int st, int size, int 
 }
 
 void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
-    const int iheight, const int iwidth, const int height, const int width,
-    const int colors, const int shrink, const float pre_mul[4],
-    const float threshold, const unsigned filters)
+                                const int iheight, const int iwidth,
+                                const int height, const int width,
+                                const int colors, const int shrink,
+                                const float pre_mul[4], const float threshold,
+                                const unsigned filters)
 {
     float *fimg = 0, /* *temp,*/ thold, mul[2], avg, diff;
     int /*scale=1,*/ size, lev, hpass, lpass, row, col, nc, c, i, wlast;
@@ -206,9 +208,9 @@ void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
 }
 
 void CLASS scale_colors_INDI(int maximum, const int black,
-    const int use_camera_wb, const float cam_mul[4], const int colors,
-    float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
-    const char *ifname_display, void *dcraw)
+const int use_camera_wb, const float cam_mul[4], const int colors,
+float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
+const char *ifname_display, void *dcraw)
 {
     unsigned /*bottom, right, size,*/ row, col, /*ur, uc, i, x, y,*/ c, sum[8];
     int val, dark, sat;
@@ -248,8 +250,8 @@ void CLASS scale_colors_INDI(int maximum, const int black,
     }
     FORC4 scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / maximum;
     dcraw_message(dcraw, DCRAW_VERBOSE,
-        _("Scaling with darkness %d, saturation %d, and\nmultipliers"),
-        dark, sat);
+    _("Scaling with darkness %d, saturation %d, and\nmultipliers"),
+    dark, sat);
     FORC4 dcraw_message(dcraw, DCRAW_VERBOSE, " %f", pre_mul[c]);
     dcraw_message(dcraw, DCRAW_VERBOSE, "\n");
 
@@ -257,7 +259,7 @@ void CLASS scale_colors_INDI(int maximum, const int black,
 }
 
 void CLASS border_interpolate_INDI(const int height, const int width,
-    ushort(*image)[4], const unsigned filters, int colors, int border)
+ushort(*image)[4], const unsigned filters, int colors, int border)
 {
     int row, col, y, x, f, c, sum[8];
 
@@ -280,7 +282,7 @@ void CLASS border_interpolate_INDI(const int height, const int width,
 }
 
 void CLASS lin_interpolate_INDI(ushort(*image)[4], const unsigned filters,
-    const int width, const int height, const int colors, void *dcraw) /*UF*/
+const int width, const int height, const int colors, void *dcraw) /*UF*/
 {
     int code[16][16][32], *ip, sum[4];
     int c, i, x, y, row, col, shift, color;
@@ -337,7 +339,7 @@ void CLASS lin_interpolate_INDI(ushort(*image)[4], const unsigned filters,
    Gradients are numbered clockwise from NW=0 to W=7.
  */
 void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
-    const int width, const int height, const int colors, void *dcraw) /*UF*/
+const int width, const int height, const int colors, void *dcraw) /*UF*/
 {
     static const signed char *cp, terms[] = {
         -2, -2, +0, -1, 0, 0x01, -2, -2, +0, +0, 1, 0x01, -2, -1, -1, +0, 0, 0x01,
@@ -481,7 +483,8 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
    Patterned Pixel Grouping Interpolation by Alain Desbiolles
 */
 void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
-    const int width, const int height, const int colors, void *dcraw)
+                                const int width, const int height,
+                                const int colors, void *dcraw)
 {
     int dir[5] = { 1, width, -1, -width, 1 };
     int row, col, diff[2], guess[2], c, d, i;
@@ -559,8 +562,9 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
 #define TS 256 /* Tile Size */
 
 void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
-    const int width, const int height, const int colors,
-    const float rgb_cam[3][4], void *dcraw)
+                                const int width, const int height,
+                                const int colors, const float rgb_cam[3][4],
+                                void *dcraw)
 {
     int i, j, k, top, left, row, col, tr, tc, c, d, val, hm[2];
     ushort(*pix)[4], (*rix)[3];
@@ -748,7 +752,7 @@ static inline int median9(int *p)
 
 // Just making this function inline speeds up ahd_interpolate_INDI() up to 15%
 static inline ushort eahd_median(int row, int col, int color,
-    ushort(*image)[4], const int width)
+                                 ushort(*image)[4], const int width)
 {
     //declare the pixel array
     int pArray[9];
@@ -780,7 +784,7 @@ static inline ushort eahd_median(int row, int col, int color,
 // Add the color smoothing from Kimmel as suggested in the AHD paper
 // Algorithm updated by Michael Goertz
 void CLASS color_smooth(ushort(*image)[4], const int width, const int height,
-    const int passes)
+                        const int passes)
 {
     int row, col;
     int row_start = 2;
@@ -810,8 +814,8 @@ void CLASS color_smooth(ushort(*image)[4], const int width, const int height,
 }
 
 void CLASS fuji_rotate_INDI(ushort(**image_p)[4], int *height_p,
-    int *width_p, int *fuji_width_p, const int colors, const double step,
-    void *dcraw)
+                            int *width_p, int *fuji_width_p, const int colors,
+                            const double step, void *dcraw)
 {
     int height = *height_p, width = *width_p, fuji_width = *fuji_width_p; /*UF*/
     ushort(*image)[4] = *image_p;  /*UF*/
@@ -859,7 +863,7 @@ void CLASS fuji_rotate_INDI(ushort(**image_p)[4], int *height_p,
 }
 
 void CLASS flip_image_INDI(ushort(*image)[4], int *height_p, int *width_p,
-    /*const*/ int flip) /*UF*/
+                           /*const*/ int flip) /*UF*/
 {
     unsigned *flag;
     int size, base, dest, next, row, col;

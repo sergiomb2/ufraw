@@ -38,11 +38,12 @@ void (*ufraw_progress)(int what, int ticks) = NULL;
 static void ufraw_convert_image_vignetting(ufraw_data *uf,
         ufraw_image_data *img, UFRectangle *area);
 static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
-        ufraw_image_data *outimg, UFRectangle *area);
+                                    ufraw_image_data *outimg,
+                                    UFRectangle *area);
 void ufraw_prepare_tca(ufraw_data *uf);
 #endif
 static void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
-        const char *formats, const char *caller);
+                               const char *formats, const char *caller);
 static void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase);
 static void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase);
 static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
@@ -53,7 +54,7 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
         ufraw_image_data *img, int width, int height);
 static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase);
 static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase,
-        dcraw_image_data *dcimg);
+                                        dcraw_image_data *dcimg);
 
 static int make_temporary(char *basefilename, char **tmpfilename)
 {
@@ -885,7 +886,8 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
  * -	use uf->rgbMax (check, must be about 64k)
  */
 static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
-        int width, int height, int colors, unsigned rgbMax)
+                                  int width, int height, int colors,
+                                  unsigned rgbMax)
 {
     int w, h, c, i, count;
     unsigned delta, t, v, hi;
@@ -945,7 +947,7 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
 }
 
 static void ufraw_despeckle_line(guint16 *base, int step, int size, int window,
-        double decay, int colors, int c)
+                                 double decay, int colors, int c)
 {
     unsigned lum[size];
     int i, j, start, end, next, v, cold, hot, coldj, hotj, fix;
@@ -1063,7 +1065,7 @@ static int ufraw_calculate_scale(ufraw_data *uf)
      * only calculated later in ufraw_convert_prepare_transform_buffer().
      * Therefore, if size > 0, scale = 1 will be returned.
      * Since the first call is from ufraw_convert_prepare_first_buffer(),
-     * this is not a real issue. There should always be a second call to 
+     * this is not a real issue. There should always be a second call to
      * this function before the actual buffer allocation. */
     dcraw_data *raw = uf->raw;
     int scale = 1;
@@ -1075,8 +1077,8 @@ static int ufraw_calculate_scale(ufraw_data *uf)
         scale = uf->conf->shrink * MIN(raw->pixel_aspect, 1 / raw->pixel_aspect);
     } else if (uf->conf->interpolation == half_interpolation) {
         scale = 2;
-    /* Wanted size is smaller than raw size (size is after a raw->shrink)
-     * (assuming there are filters). */
+        /* Wanted size is smaller than raw size (size is after a raw->shrink)
+         * (assuming there are filters). */
     } else if (uf->conf->size > 0 && uf->HaveFilters) {
         int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
         int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
@@ -1235,7 +1237,8 @@ static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase)
 #ifdef HAVE_LENSFUN
 /* Apply TCA */
 static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
-        ufraw_image_data *outimg, UFRectangle *area)
+                                    ufraw_image_data *outimg,
+                                    UFRectangle *area)
 {
     if (uf->TCAmodifier == NULL)
         return;
@@ -1288,7 +1291,7 @@ static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
 #endif // HAVE_LENSFUN
 
 static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase,
-        dcraw_image_data *dcimg)
+                                        dcraw_image_data *dcimg)
 {
     ufraw_image_data *img = &uf->Images[phase];
 
@@ -1301,7 +1304,7 @@ static void ufraw_convert_import_buffer(ufraw_data *uf, UFRawPhase phase,
 }
 
 static void ufraw_image_init(ufraw_image_data *img,
-        int width, int height, int bitdepth)
+                             int width, int height, int bitdepth)
 {
     if (img->height == height && img->width == width &&
             img->depth == bitdepth && img->buffer != NULL)
@@ -1358,7 +1361,8 @@ static void ufraw_convert_prepare_first_buffer(ufraw_data *uf,
 
 #ifdef HAVE_LENSFUN
 void ufraw_convert_prepare_transform(ufraw_data *uf,
-        int width, int height, gboolean reverse, float scale);
+                                     int width, int height, gboolean reverse,
+                                     float scale);
 #endif
 
 static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
@@ -1505,7 +1509,7 @@ static void ufraw_convert_prepare_buffers(ufraw_data *uf, UFRawPhase phase)
  * constants by variables may turn off some compiler optimizations.
  */
 static void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
-        const char *formats, const char *caller)
+                               const char *formats, const char *caller)
 {
     int b, c;
 
@@ -1538,7 +1542,7 @@ static void ufraw_image_format(int *colors, int *bytes, ufraw_image_data *img,
 }
 
 ufraw_image_data *ufraw_get_image(ufraw_data *uf, UFRawPhase phase,
-        gboolean bufferok)
+                                  gboolean bufferok)
 {
     ufraw_convert_prepare_buffers(uf, phase);
     // Find the closest phase that is actually rendered:
