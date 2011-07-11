@@ -215,7 +215,6 @@ const char *ifname_display, void *dcraw)
     unsigned /*bottom, right, size,*/ row, col, /*ur, uc, i, x, y,*/ c, sum[8];
     int val, dark, sat;
     double /*dsum[8],*/ dmin, dmax;
-    float scale_mul[4]/*, fr, fc*/;
 
     if (use_camera_wb && cam_mul[0] != -1) {
         memset(sum, 0, sizeof sum);
@@ -248,7 +247,6 @@ const char *ifname_display, void *dcraw)
         if (dmax < pre_mul[c])
             dmax = pre_mul[c];
     }
-    FORC4 scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / maximum;
     dcraw_message(dcraw, DCRAW_VERBOSE,
     _("Scaling with darkness %d, saturation %d, and\nmultipliers"),
     dark, sat);

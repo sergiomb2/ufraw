@@ -24,6 +24,11 @@ extern "C" {
 
 #define DCRAW_VERSION "9.08"
 
+// dcraw plays with array bounds everywhere, there is no point to warn about it.
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) && !defined(__INTEL_COMPILER) 
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif

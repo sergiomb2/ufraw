@@ -422,7 +422,7 @@ extern "C" {
                               int scale)
     {
         DCRaw *d = (DCRaw *)hh->dcraw;
-        int h, w, fujiWidth, r, c, ri, recombine, pixels, f4;
+        int h, w, fujiWidth, r, c, ri, recombine, f4;
         dcraw_image_type *ibase, *obase;
         unsigned *fseq;
         unsigned short *pixp;
@@ -430,7 +430,6 @@ extern "C" {
         g_free(d->messageBuffer);
         d->messageBuffer = NULL;
         d->lastStatus = DCRAW_SUCCESS;
-        pixels = hh->raw.width * hh->raw.height;
 
         recombine = (hh->colors == 3 && hh->raw.colors == 4);
         /* the last row/column will be skipped if input is incomplete */
@@ -677,13 +676,12 @@ extern "C" {
                                    int interpolation, int smoothing)
     {
         DCRaw *d = (DCRaw *)h->dcraw;
-        int fujiWidth, i, r, c, cl, pixels;
+        int fujiWidth, i, r, c, cl;
         unsigned ff, f4;
 
         g_free(d->messageBuffer);
         d->messageBuffer = NULL;
         d->lastStatus = DCRAW_SUCCESS;
-        pixels = h->raw.width * h->raw.height;
 
         f->width = h->width;
         f->height = h->height;
