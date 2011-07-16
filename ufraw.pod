@@ -129,7 +129,7 @@ The default is 'digital'.
 
 =item --saturation=SAT
 
-Adjust the color saturation. Range 0.00 to 3.00. Default 1.0,
+Adjust the color saturation. Range 0.00 to 8.00. Default 1.0,
 use 0 for black & white output.
 
 =item --wavelet-denoising-threshold=THRESHOLD
