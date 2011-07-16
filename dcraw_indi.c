@@ -247,6 +247,7 @@ const char *ifname_display, void *dcraw)
         if (dmax < pre_mul[c])
             dmax = pre_mul[c];
     }
+    FORC4 pre_mul[c] /= dmax;
     dcraw_message(dcraw, DCRAW_VERBOSE,
     _("Scaling with darkness %d, saturation %d, and\nmultipliers"),
     dark, sat);
