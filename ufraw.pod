@@ -12,6 +12,8 @@ UFRaw - Convert camera RAW images to standard image files.
 
 =item ufraw-batch [OPTIONS] <rawfile(s)>
 
+=back
+
 =head1 DESCRIPTION
 
 The Unidentified Flying Raw (UFRaw) is a utility to read and manipulate
@@ -217,8 +219,6 @@ Apply color smoothing.
 =item --grayscale=none|lightness|luminance|value|mixer
 
 Grayscale conversion algorithm to use (default none).
-
-=back
 
 =item --darkframe=FILE
 
