@@ -12,9 +12,12 @@
    It can work as either a command-line tool or called by other programs.
  */
 
-#define ushort UshORt
-typedef unsigned char uchar;
-typedef unsigned short ushort;
+#if !defined(uchar)
+#define uchar unsigned char
+#endif
+#if !defined(ushort)
+#define ushort unsigned short
+#endif
 
 /*
  * The following is somewhat ugly because of various requirements:
@@ -195,6 +198,7 @@ public:
     int median4(int *p);
     void fill_holes(int holes);
     void smal_v9_load_raw();
+    void redcine_load_raw();
     void foveon_decoder(unsigned size, unsigned code);
     void foveon_thumb();
     void foveon_load_camf();
@@ -252,6 +256,7 @@ public:
     void parse_riff();
     void parse_smal(int offset, unsigned fsize);
     void parse_cine();
+    void parse_redcine();
     char * foveon_gets(int offset, char *str, int len);
     void parse_foveon();
     void adobe_coeff(const char *make, const char *model);
