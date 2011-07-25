@@ -25,7 +25,7 @@ extern "C" {
 #define DCRAW_VERSION "9.10"
 
 // dcraw plays with array bounds everywhere, there is no point to warn about it.
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) && !defined(__INTEL_COMPILER) 
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5)) && !defined(__INTEL_COMPILER) 
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #endif
 
@@ -72,8 +72,8 @@ extern "C" {
 #else
 #include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 #endif
-#ifndef HAVE_CONFIG_H /*fseeko() is handled by the UFRaw config system - NKBJ*/
 
+#ifndef HAVE_CONFIG_H /*fseeko() is handled by the UFRaw config system - NKBJ*/
 #if defined(DJGPP) || defined(__MINGW32__)
 #define fseeko fseek
 #define ftello ftell
@@ -5901,7 +5901,7 @@ void CLASS parse_sinar_ia()
 
 void CLASS parse_phase_one (int base)
 {
-  unsigned entries, tag, type, len, data, save, i, j, c;
+  unsigned entries, tag, type, len, data, save, i, c;
   float romm_cam[3][3];
   char *cp;
 
@@ -5922,9 +5922,8 @@ void CLASS parse_phase_one (int base)
     switch (tag) {
       case 0x100:  flip = "0653"[data & 3]-'0';  break;
       case 0x106:
-	for (i=0; i < 3; i++)
-	  for (j=0; j < 3; j++)
-	    romm_cam[i][j] = getreal(11);
+	for (i=0; i < 9; i++)
+	  romm_cam[0][i] = getreal(11);
 	romm_coeff (romm_cam);
 	break;
       case 0x107:
@@ -6149,7 +6148,8 @@ void CLASS parse_redcine()
   fseek (ifp, 0, SEEK_END);
   fseek (ifp, -(i = ftello(ifp) & 511), SEEK_CUR);
   if (get4() != i || get4() != 0x52454f42) {
-    fprintf (stderr,_("%s: Tail is missing, parsing from head...\n"), ifname);
+    dcraw_message (DCRAW_WARNING,
+	    _("%s: Tail is missing, parsing from head...\n"), ifname_display);
     fseek (ifp, 0, SEEK_SET);
     while ((len = get4()) != EOF) {
       if (get4() == 0x52454456)
@@ -6892,7 +6892,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
   };
   double cam_xyz[4][3];
   char name[130];
-  int i, j, k;
+  int i, j;
 
   sprintf (name, "%s %s", make, model);
   for (i=0; i < (int) sizeof table / (int) sizeof *table; i++)
@@ -6900,9 +6900,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
       if (table[i].black)   black   = (ushort) table[i].black;
       if (table[i].maximum) maximum = (ushort) table[i].maximum;
       if (table[i].trans[0]) {
-	for (j=0; j < 4; j++)
-	  for (k=0; k < 3; k++)
-	    cam_xyz[j][k] = table[i].trans[3*j+k] / 10000.0;
+	for (j=0; j < 12; j++)
+	  cam_xyz[0][j] = table[i].trans[j] / 10000.0;
 	cam_xyz_coeff (cam_xyz);
       }
       break;
