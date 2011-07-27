@@ -85,7 +85,7 @@ extern "C" {
     UFObject *ufraw_image_new();
 #ifdef HAVE_LENSFUN
     UFObject *ufraw_lensfun_new();
-    void ufraw_lensfun_init(UFObject *lensfun);
+    void ufraw_lensfun_init(UFObject *lensfun, UFBoolean reset);
     struct lfDatabase *ufraw_lensfun_db(); /* mount/camera/lens database */
     const struct lfCamera *ufraw_lensfun_camera(const UFObject *lensfun);
     void ufraw_lensfun_set_camera(UFObject *lensfun, const struct lfCamera *camera);

@@ -439,6 +439,8 @@ extern "C" {
     void ufobject_set_user_data(UFObject *object, void *user_data);
     void ufobject_set_changed_event_handle(UFObject *object,
                                            UFEventHandle *handle);
+/// Return TRUE if object is set to its default value.
+    UFBoolean ufobject_is_default(UFObject *object);
 /// Set the current object value to its default value.
     void ufobject_set_default(UFObject *object);
 /// Return the numerical value of the object. Returns NaN if object is not a

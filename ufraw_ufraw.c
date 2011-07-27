@@ -460,7 +460,16 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     }
     ufraw_image_set_data(uf->conf->ufobject, uf);
 #ifdef HAVE_LENSFUN
-    ufraw_lensfun_init(ufgroup_element(uf->conf->ufobject, ufLensfun));
+    // Do not reset lensfun settings while loading ID.
+    UFBoolean reset = !uf->LoadingID;
+    if (conf != NULL && conf->ufobject != NULL) {
+        UFObject *conf_lensfun_auto = ufgroup_element(conf->ufobject,
+                ufLensfunAuto);
+	// Do not reset lensfun settings from conf file.
+        if (ufstring_is_equal(conf_lensfun_auto, "no"))
+            reset = FALSE;
+    }
+    ufraw_lensfun_init(ufgroup_element(uf->conf->ufobject, ufLensfun), reset);
 #endif
 
     char *absname = uf_file_set_absolute(uf->filename);

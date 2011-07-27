@@ -885,12 +885,6 @@ void conf_file_load(conf_data *conf, char *confFilename)
             ufraw_message(UFRAW_REPORT, NULL);
             conf->version = 0;
         }
-#ifdef HAVE_LENSFUN
-        if (conf->ufobject != NULL) {
-            UFObject *lensfun = ufgroup_drop(conf->ufobject, ufLensfun);
-            ufobject_delete(lensfun);
-        }
-#endif
     }
 }
 

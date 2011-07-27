@@ -1064,6 +1064,11 @@ extern "C" {
         object->SetEventHandle(handle);
     }
 
+    UFBoolean ufobject_is_default(UFObject *object)
+    {
+        return object->IsDefault();
+    }
+
     void ufobject_set_default(UFObject *object)
     {
         object->SetDefault();

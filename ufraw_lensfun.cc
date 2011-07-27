@@ -84,7 +84,7 @@ public:
     void SetLensModel(const lfLens &lens);
     void SetInterpolation(const lfLens &lens);
     void Interpolate();
-    void Init();
+    void Init(bool reset);
 };
 
 static void parse_maker_model(const char *txt, char *make, size_t sz_make,
@@ -126,11 +126,10 @@ public:
             return UFObject::Event(type);
         if (!HasParent())
             return UFObject::Event(type);
-        Lensfun &Lensfun = Lensfun::Parent(*this);
-        Lensfun.UFObject::Parent()[ufLensfunAuto].Set("no");
         char make[200], model[200];
         parse_maker_model(StringValue(), make, sizeof(make),
                           model, sizeof(model));
+        Lensfun &Lensfun = Lensfun::Parent(*this);
         const lfLens **lensList = Lensfun.LensDB()->FindLenses(&Lensfun.Camera,
                                   make, model, LF_SEARCH_LOOSE);
         if (lensList == NULL) {
@@ -142,6 +141,14 @@ public:
         Lensfun.Interpolate();
         lf_free(lensList);
         return UFObject::Event(type);
+    }
+    void OriginalValueChangedEvent() {
+        if (!HasParent())
+            return;
+        Lensfun &Lensfun = Lensfun::Parent(*this);
+        // While loading rc/cmd/conf data, do not reset the auto setting
+        if (ufraw_image_get_data(this) != NULL)
+            Lensfun.UFObject::Parent()[ufLensfunAuto].Set("no");
     }
 };
 
@@ -300,8 +307,11 @@ public:
     void OriginalValueChangedEvent() {
         if (!HasParent())
             return;
-        lfLens emptyLens;
-        Lensfun::Parent(*this)[ufLensModel].Reset();
+        Lensfun &Lensfun = Lensfun::Parent(*this);
+        Lensfun[ufLensModel].Reset();
+        // While loading rc/cmd/conf data, do not reset the auto setting
+        if (ufraw_image_get_data(this) != NULL)
+            Lensfun.UFObject::Parent()[ufLensfunAuto].Set("no");
     }
 };
 
@@ -633,9 +643,11 @@ void Lensfun::Interpolate()
 
 lfDatabase *Lensfun::_LensDB = NULL;
 
-void Lensfun::Init()
+void Lensfun::Init(bool reset)
 {
     ufraw_data *uf = ufraw_image_get_data(this);
+    if (uf == NULL)
+        return;
     UFGroup &Image = UFObject::Parent();
 
     /* Set lens and camera from EXIF info, if possible */
@@ -658,7 +670,7 @@ void Lensfun::Init()
     UFArray &Distance = (*this)[ufDistance];
     Distance.SetDefault(_StringNumber(buffer, uf->conf->subject_distance));
 
-    if (uf->LoadingID) {
+    if (!reset) {
         (*this)[ufTCA].Event(uf_value_changed);
         (*this)[ufVignetting].Event(uf_value_changed);
         (*this)[ufDistortion].Event(uf_value_changed);
@@ -697,9 +709,9 @@ void Lensfun::Init()
 
 extern "C" {
 
-    void ufraw_lensfun_init(UFObject *lensfun)
+    void ufraw_lensfun_init(UFObject *lensfun, UFBoolean reset)
     {
-        static_cast<UFRaw::Lensfun *>(lensfun)->Init();
+        static_cast<UFRaw::Lensfun *>(lensfun)->Init(reset);
     }
 
     void ufraw_convert_prepare_transform(ufraw_data *uf,

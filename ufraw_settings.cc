@@ -298,8 +298,8 @@ public:
 #ifdef HAVE_LENSFUN
         if (!Parent().Has(ufLensfun))
             return;
-        if (IsDefault())
-            ufraw_lensfun_init(&Parent()[ufLensfun]);
+        if (IsEqual("yes"))
+            ufraw_lensfun_init(&Parent()[ufLensfun], TRUE);
 #endif
     }
 };
