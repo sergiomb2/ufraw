@@ -130,6 +130,18 @@ public:
         parse_maker_model(StringValue(), make, sizeof(make),
                           model, sizeof(model));
         Lensfun &Lensfun = Lensfun::Parent(*this);
+        if (strcmp(make, "Generic") == 0) {
+            double crop_factor;
+            int count = sscanf(model, "Crop factor %lf", &crop_factor);
+            if (count == 1) {
+                lfLens cropLens;
+                cropLens.SetMaker(make);
+                cropLens.SetModel(model);
+                cropLens.CropFactor = crop_factor;
+                Lensfun.SetInterpolation(cropLens);
+                return UFObject::Event(type);
+            }
+        }
         const lfLens **lensList = Lensfun.LensDB()->FindLenses(&Lensfun.Camera,
                                   make, model, LF_SEARCH_LOOSE);
         if (lensList == NULL) {
@@ -308,7 +320,14 @@ public:
         if (!HasParent())
             return;
         Lensfun &Lensfun = Lensfun::Parent(*this);
-        Lensfun[ufLensModel].Reset();
+        if (Lensfun.Transformation.CropFactor == 1.0) {
+            Lensfun[ufLensModel].Reset();
+        } else {
+            char *lens_model = g_strdup_printf("Generic, Crop factor %.4g",
+                    Lensfun.Transformation.CropFactor);
+            Lensfun[ufLensModel].Set(lens_model);
+            g_free(lens_model);
+        }
         // While loading rc/cmd/conf data, do not reset the auto setting
         if (ufraw_image_get_data(this) != NULL)
             Lensfun.UFObject::Parent()[ufLensfunAuto].Set("no");
@@ -613,6 +632,7 @@ Lensfun::Lensfun() : UFGroup(ufLensfun), FocalLengthValue(0.0),
 void Lensfun::SetInterpolation(const lfLens &lens)
 {
     Interpolation = lens;
+    Transformation.CropFactor = lens.CropFactor;
     static_cast<UFRaw::FocalLength &>((*this)[ufFocalLength]).CreatePresets();
     static_cast<UFRaw::Aperture &>((*this)[ufAperture]).CreatePresets();
     static_cast<UFRaw::Distance &>((*this)[ufDistance]).CreatePresets();
