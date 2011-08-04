@@ -25,7 +25,7 @@ extern "C" {
 #define DCRAW_VERSION "9.10"
 
 // dcraw plays with array bounds everywhere, there is no point to warn about it.
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5)) && !defined(__INTEL_COMPILER) 
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)) && !defined(__INTEL_COMPILER) 
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #endif
 
@@ -6138,7 +6138,8 @@ void CLASS parse_cine()
 
 void CLASS parse_redcine()
 {
-  unsigned i, len, rdvo;
+  int len;
+  unsigned i, rdvo;
 
   order = 0x4d4d;
   is_raw = 0;
