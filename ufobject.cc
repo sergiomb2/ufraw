@@ -918,12 +918,14 @@ void UFArray::SetDefault(const char *string)
 {
     g_free(ufgroup->DefaultIndex);
     ufgroup->DefaultIndex = g_strdup(string);
+    Event(uf_default_changed);
 }
 
 void UFArray::SetDefault()
 {
-    SetDefault(ufgroup->String);
-    UFGroup::SetDefault();
+    g_free(ufgroup->DefaultIndex);
+    ufgroup->DefaultIndex = g_strdup(ufgroup->String);
+    Event(uf_default_changed);
 }
 
 void UFArray::Reset()

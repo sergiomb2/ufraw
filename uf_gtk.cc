@@ -351,6 +351,8 @@ extern "C" {
             delete data;
             return;
         }
+        if (type != uf_value_changed)
+            return;
         GtkComboBox *combo = GTK_COMBO_BOX(data->gobject[0]);
         UFArray &array = *object;
         if (array.Index() >= 0) {
