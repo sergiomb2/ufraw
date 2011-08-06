@@ -46,12 +46,12 @@ extern "C" {
 #include <time.h>
 #include <sys/types.h>
 
-//#ifdef NODEPS
+#ifdef NODEPS
 #define NO_JASPER
-//#define NO_JPEG
-//#define NO_LCMS
-//#endif
-#ifndef NO_JASPER
+#define NO_JPEG
+#define NO_LCMS
+#endif
+#ifdef HAVE_LIBJASPER
 #include <jasper/jasper.h>	/* Decode RED camera movies */
 #endif
 #ifdef HAVE_LIBJPEG
@@ -2755,7 +2755,7 @@ void CLASS smal_v9_load_raw()
 
 void CLASS redcine_load_raw()
 {
-#ifndef NO_JASPER
+#ifdef HAVE_LIBJASPER
   int c, row, col;
   jas_stream_t *in;
   jas_image_t *jimg;
@@ -8458,7 +8458,7 @@ dng_skip:
   if (!tiff_bps) tiff_bps = 12;
   if (!maximum) maximum = (1 << tiff_bps) - 1;
   if (!load_raw || height < 22) is_raw = 0;
-#ifdef NO_JASPER
+#ifndef HAVE_LIBJASPER
   if (load_raw == &CLASS redcine_load_raw) {
     dcraw_message (DCRAW_ERROR,_("%s: You must link dcraw with %s!!\n"),
 	ifname_display, "libjasper");

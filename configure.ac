@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.159 2011/08/05 02:35:29 udifuchs Exp $
+dnl $Id: configure.ac,v 1.160 2011/08/06 16:10:46 nkbj Exp $
 AC_INIT(UFRaw, 0.19)
 AC_PREREQ(2.57)
 
@@ -235,6 +235,10 @@ AC_CHECK_HEADER(jpeglib.h,
   AC_CHECK_LIB(jpeg, jpeg_CreateCompress))
 have_jpeg=${ac_cv_lib_jpeg_jpeg_CreateCompress:-no}
 
+# Check for libjasper.
+AC_CHECK_LIB(jasper, jas_image_decode)
+have_jasper=${ac_cv_lib_jasper_jas_image_decode:-no}
+
 # Check for tiff headers and library.
 AC_CHECK_HEADER(tiffio.h,
   AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
@@ -365,6 +369,7 @@ AC_MSG_NOTICE(build GIMP plug-in: $have_gimp)
 AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint)
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
+AC_MSG_NOTICE(JPEG2000 (libjasper) support: $have_jasper)
 AC_MSG_NOTICE(TIFF support: $have_tiff)
 AC_MSG_NOTICE(PNG support: $have_png)
 AC_MSG_NOTICE(FITS support: $have_cfitsio)
