@@ -180,7 +180,7 @@ class FocalLength : public UFArray
 public:
     FocalLength() : UFArray(ufFocalLength) { }
     void Event(UFEventType type) {
-        if (type == uf_default_changed && Index()==-1) {
+        if (type == uf_default_changed && Index() == -1) {
             // Default value is changed during Init. Reset to this default
             // value if no other value was set.
             Reset();
@@ -235,7 +235,7 @@ class Aperture : public UFArray
 public:
     Aperture() : UFArray(ufAperture) { }
     void Event(UFEventType type) {
-        if (type == uf_default_changed && Index()==-1) {
+        if (type == uf_default_changed && Index() == -1) {
             // Default value is changed during Init. Reset to this default
             // value if no other value was set.
             Reset();
@@ -289,7 +289,7 @@ class Distance : public UFArray
 public:
     Distance() : UFArray(ufDistance) { }
     void Event(UFEventType type) {
-        if (type == uf_default_changed && Index()==-1) {
+        if (type == uf_default_changed && Index() == -1) {
             // Default value is changed during Init. Reset to this default
             // value if no other value was set.
             Reset();
@@ -346,7 +346,7 @@ public:
             Lensfun[ufLensModel].Reset();
         } else {
             char *lens_model = g_strdup_printf("Generic, Crop factor %.4g",
-                    Lensfun.Transformation.CropFactor);
+                                               Lensfun.Transformation.CropFactor);
             Lensfun[ufLensModel].Set(lens_model);
             g_free(lens_model);
         }
@@ -650,7 +650,7 @@ void Lensfun::SetLensInterpolation()
 {
     char make[200], model[200];
     parse_maker_model((*this)[ufLensModel].StringValue(), make, sizeof(make),
-            model, sizeof(model));
+                      model, sizeof(model));
     if (strcmp(make, "Generic") == 0) {
         double crop_factor;
         int count = sscanf(model, "Crop factor %lf", &crop_factor);
@@ -663,7 +663,7 @@ void Lensfun::SetLensInterpolation()
         }
     } else {
         const lfLens **lensList = LensDB()->FindLenses(&Camera,
-                                                make, model, LF_SEARCH_LOOSE);
+                                  make, model, LF_SEARCH_LOOSE);
         if (lensList == NULL || lensList[0] == NULL) {
             lfLens emptyLens;
             Interpolation = emptyLens;

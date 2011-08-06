@@ -464,8 +464,8 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     UFBoolean reset = !uf->LoadingID;
     if (conf != NULL && conf->ufobject != NULL) {
         UFObject *conf_lensfun_auto = ufgroup_element(conf->ufobject,
-                ufLensfunAuto);
-	// Do not reset lensfun settings from conf file.
+                                      ufLensfunAuto);
+        // Do not reset lensfun settings from conf file.
         if (ufstring_is_equal(conf_lensfun_auto, "no"))
             reset = FALSE;
     }
