@@ -6200,7 +6200,7 @@ void CLASS parse_foveon()
       case 0x47414d49:			/* IMAG */
       case 0x32414d49:			/* IMA2 */
 	fseek (ifp, 8, SEEK_CUR);
-	if (get4() == 30) {		/* SIGMA DP* and SD15 are unsupported */
+	if (get4() == 30) {		/* SIGMA SD15/SD1/DP* are unsupported */
 	  is_foveon = 0;
 	  return;
 	}

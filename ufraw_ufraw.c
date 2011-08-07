@@ -1194,7 +1194,7 @@ static void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase)
     raw->raw.image = rawimage;
     dcraw_flip_image(&final, uf->conf->orientation);
 
-    // The 'out' image contains the predictated image dimensions.
+    // The 'out' image contains the predicted image dimensions.
     // We want to be sure that our predictions were correct.
     if (out->height != final.height) {
         g_warning("ufraw_convert_image_first: height mismatch %d!=%d",
