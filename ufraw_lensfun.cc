@@ -93,6 +93,14 @@ public:
     void SetLensInterpolation();
     // Interpolate the TCA, Vignetting and Distortion models.
     void Interpolate();
+    // Mark settings as manual (not from LensDB).
+    void Manual() {
+        char *lens_model = g_strdup_printf("Generic, Crop factor %.4g",
+                                           Transformation.CropFactor);
+        (*this)[ufLensModel].Set(lens_model);
+        g_free(lens_model);
+        UFObject::Parent()[ufLensfunAuto].Set("no");
+    }
     void Init(bool reset);
 };
 
@@ -197,6 +205,7 @@ public:
             return UFObject::Event(type);
         Lensfun::Parent(*this).FocalLengthValue = value;
         Lensfun::Parent(*this).Interpolate();
+        ufraw_invalidate_layer(uf, ufraw_transform_phase);
         return UFObject::Event(type);
     }
     void CreatePresets() {
@@ -342,15 +351,7 @@ public:
         if (ufraw_image_get_data(this) == NULL)
             return;
         Lensfun &Lensfun = Lensfun::Parent(*this);
-        if (Lensfun.Transformation.CropFactor == 1.0) {
-            Lensfun[ufLensModel].Reset();
-        } else {
-            char *lens_model = g_strdup_printf("Generic, Crop factor %.4g",
-                                               Lensfun.Transformation.CropFactor);
-            Lensfun[ufLensModel].Set(lens_model);
-            g_free(lens_model);
-        }
-        Lensfun.UFObject::Parent()[ufLensfunAuto].Set("no");
+	Lensfun.Manual();
     }
 };
 
@@ -602,22 +603,42 @@ public:
             *this << new UFString("Type", typeName);
         }
     }
-    void OriginalValueChangedEvent() {
+    void Event(UFEventType type) {
+        if (type != uf_value_changed)
+            return UFObject::Event(type);
         ufraw_data *uf = ufraw_image_get_data(this);
         if (uf == NULL)
-            return;
+            return UFObject::Event(type);
         Lensfun::Parent(*this).Transformation.Type = lfLensType(Index());
         ufraw_invalidate_layer(uf, ufraw_transform_phase);
+        return UFObject::Event(type);
+    }
+    void OriginalValueChangedEvent() {
+        if (!HasParent())
+            return;
+        // While loading rc/cmd/conf data, do not reset other settings
+        if (ufraw_image_get_data(this) == NULL)
+            return;
+        Lensfun &Lensfun = Lensfun::Parent(*this);
+	Lensfun.Manual();
     }
 };
 
 extern "C" {
     UFName ufTargetLensGeometry = "TargetLensGeometry";
 }
-class TargetLensGeometry : public LensGeometry
+class TargetLensGeometry : public UFArray
 {
 public:
-    TargetLensGeometry() : LensGeometry(ufTargetLensGeometry) { }
+    explicit TargetLensGeometry(UFName name = ufTargetLensGeometry) :
+            UFArray(name, lfLens::GetLensTypeDesc(LF_UNKNOWN, NULL)) {
+        for (lfLensType type = LF_UNKNOWN; ; type = lfLensType(type + 1)) {
+            const char *typeName = lfLens::GetLensTypeDesc(type, NULL);
+            if (typeName == NULL)
+                break; // End of loop.
+            *this << new UFString("Type", typeName);
+        }
+    }
     void OriginalValueChangedEvent() {
         ufraw_data *uf = ufraw_image_get_data(this);
         if (uf == NULL)
@@ -651,16 +672,19 @@ void Lensfun::SetLensInterpolation()
     char make[200], model[200];
     parse_maker_model((*this)[ufLensModel].StringValue(), make, sizeof(make),
                       model, sizeof(model));
-    if (strcmp(make, "Generic") == 0) {
-        double crop_factor;
-        int count = sscanf(model, "Crop factor %lf", &crop_factor);
-        if (count == 1) {
-            lfLens cropLens;
-            cropLens.SetMaker(make);
-            cropLens.SetModel(model);
-            cropLens.CropFactor = crop_factor;
-            Interpolation = cropLens;
-        }
+    double crop_factor = 1.0;
+    int count = sscanf(model, "Crop factor %lf", &crop_factor);
+    if ((strcmp(make, "Generic") == 0 && count == 1) ||
+        (strcmp(make, "") == 0 && strcmp(model, "") == 0)) {
+        lfLens cropLens;
+        cropLens.SetMaker(make);
+        cropLens.SetModel(model);
+        cropLens.CropFactor = crop_factor;
+        cropLens.MinFocal = 1.0;
+	cropLens.MaxFocal = 800.0;
+	UFArray &LensGeometry = (*this)[ufLensGeometry];
+	cropLens.Type = lfLensType(LensGeometry.Index());
+        Interpolation = cropLens;
     } else {
         const lfLens **lensList = LensDB()->FindLenses(&Camera,
                                   make, model, LF_SEARCH_LOOSE);
@@ -674,6 +698,8 @@ void Lensfun::SetLensInterpolation()
             lf_free(lensList);
     }
     Transformation.CropFactor = Interpolation.CropFactor;
+    UFArray &LensGeometry = (*this)[ufLensGeometry];
+    LensGeometry.SetIndex(Interpolation.Type);
     static_cast<UFRaw::FocalLength &>((*this)[ufFocalLength]).CreatePresets();
     static_cast<UFRaw::Aperture &>((*this)[ufAperture]).CreatePresets();
     static_cast<UFRaw::Distance &>((*this)[ufDistance]).CreatePresets();
