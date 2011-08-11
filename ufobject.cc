@@ -613,12 +613,11 @@ public:
 };
 typedef std::map<const char *, UFObject *, _UFNameCompare> _UFGroupMap;
 typedef std::pair<const char *, UFObject *> _UFObjectPair;
-typedef std::list<UFObject *> _UFGroupList;
 class _UFGroup : public _UFObject
 {
 public:
     _UFGroupMap Map;
-    _UFGroupList List;
+    UFGroupList List;
     UFGroup *const This;
     bool GroupChanging;
     // Index and Default Index are only used by UFArray
@@ -675,7 +674,7 @@ UFGroup::UFGroup(UFName name, const char *label) :
 
 UFGroup::~UFGroup()
 {
-    for (_UFGroupList::iterator iter = ufgroup->List.begin();
+    for (UFGroupList::iterator iter = ufgroup->List.begin();
             iter != ufgroup->List.end(); iter++) {
         _UFGROUP_PARENT(*iter) = NULL;
         delete *iter;
@@ -683,7 +682,7 @@ UFGroup::~UFGroup()
     g_free(ufgroup->DefaultIndex);
 }
 
-static std::string _UFGroup_XML(const UFGroup &group, _UFGroupList &list,
+static std::string _UFGroup_XML(const UFGroup &group, UFGroupList &list,
                                 const char *indent, const char *attribute)
 {
     if (group.IsDefault())
@@ -717,7 +716,7 @@ static std::string _UFGroup_XML(const UFGroup &group, _UFGroupList &list,
     newIndent[i + 0] = ' ';
     newIndent[i + 1] = ' ';
     newIndent[i + 2] = '\0';
-    for (_UFGroupList::iterator iter = list.begin(); iter != list.end(); iter++)
+    for (UFGroupList::iterator iter = list.begin(); iter != list.end(); iter++)
         xml += (*iter)->XML(newIndent);
     if (strlen(indent) != 0)
         xml  += (std::string)indent + "</" + group.Name() + ">\n";
@@ -737,7 +736,7 @@ void UFGroup::Set(const UFObject &object)
     if (Name() != object.Name())
         Throw("Object name mismatch with '%s'", object.Name());
     const UFGroup &group = object;
-    for (_UFGroupList::iterator iter = ufgroup->List.begin();
+    for (UFGroupList::iterator iter = ufgroup->List.begin();
             iter != ufgroup->List.end(); iter++) {
         if (group.Has((*iter)->Name()))
             (*iter)->Set(group[(*iter)->Name()]);
@@ -751,7 +750,7 @@ void UFGroup::Set(const char * /*string*/)
 
 bool UFGroup::IsDefault() const
 {
-    for (_UFGroupList::iterator iter = ufgroup->List.begin();
+    for (UFGroupList::iterator iter = ufgroup->List.begin();
             iter != ufgroup->List.end(); iter++) {
         if (!(*iter)->IsDefault())
             return false;
@@ -761,7 +760,7 @@ bool UFGroup::IsDefault() const
 
 void UFGroup::SetDefault()
 {
-    for (_UFGroupList::iterator iter = ufgroup->List.begin();
+    for (UFGroupList::iterator iter = ufgroup->List.begin();
             iter != ufgroup->List.end(); iter++) {
         (*iter)->SetDefault();
     }
@@ -770,7 +769,7 @@ void UFGroup::SetDefault()
 
 void UFGroup::Reset()
 {
-    for (_UFGroupList::iterator iter = ufgroup->List.begin();
+    for (UFGroupList::iterator iter = ufgroup->List.begin();
             iter != ufgroup->List.end(); iter++) {
         (*iter)->Reset();
     }
@@ -799,6 +798,11 @@ const UFObject &UFGroup::operator[](UFName name) const
     return *ufgroup->Map[name];
 }
 
+const UFGroupList UFGroup::List() const
+{
+    return ufgroup->List;
+}
+
 UFGroup &UFGroup::operator<<(UFObject *object)
 {
     _UFGroupMap::iterator iter = ufgroup->Map.find(object->Name());
@@ -811,7 +815,7 @@ UFGroup &UFGroup::operator<<(UFObject *object)
         //_UFGroup *parent = static_cast<_UFGroup *>(object->ufobject->Parent);
         _UFGroup *parent = static_cast<_UFGroup *>(object->Parent().ufobject);
         parent->Map.erase(object->Name());
-        for (_UFGroupList::iterator iter = parent->List.begin();
+        for (UFGroupList::iterator iter = parent->List.begin();
                 iter != parent->List.end(); iter++) {
             if (*iter == object) {
                 parent->List.erase(iter);
@@ -831,7 +835,7 @@ UFObject &UFGroup::Drop(UFName name)
         Throw("index '%s' does not exists", name);
     UFObject *dropObject = (*iter).second;
     ufgroup->Map.erase(name);
-    for (_UFGroupList::iterator iter = ufgroup->List.begin();
+    for (UFGroupList::iterator iter = ufgroup->List.begin();
             iter != ufgroup->List.end(); iter++) {
         if (*iter == dropObject) {
             ufgroup->List.erase(iter);
@@ -876,7 +880,7 @@ void UFArray::Set(const UFObject &object)
     if (Name() != object.Name())
         Throw("Object name mismatch with '%s'", object.Name());
     const UFArray &array = object;
-    for (_UFGroupList::iterator iter = ufgroup->List.begin();
+    for (UFGroupList::iterator iter = ufgroup->List.begin();
             iter != ufgroup->List.end(); iter++) {
         if (array.Has((*iter)->StringValue()))
             (*iter)->Set(array[(*iter)->StringValue()]);
@@ -893,7 +897,7 @@ void UFArray::Set(const char *string)
 
     ufgroup->Index = -1;
     int i = 0;
-    for (_UFGroupList::iterator iter = ufgroup->List.begin();
+    for (UFGroupList::iterator iter = ufgroup->List.begin();
             iter != ufgroup->List.end(); iter++, i++) {
         if (IsEqual((*iter)->StringValue())) {
             ufgroup->Index = i;
@@ -936,7 +940,7 @@ void UFArray::Reset()
 
 bool UFArray::SetIndex(int index)
 {
-    _UFGroupList::iterator iter = ufgroup->List.begin();
+    UFGroupList::iterator iter = ufgroup->List.begin();
     std::advance(iter, index);
     if (iter == ufgroup->List.end())
         return false;
@@ -974,7 +978,7 @@ UFArray &UFArray::operator<<(UFObject *object)
         _UFGroup *parent = static_cast<UFArray *>(object)->ufobject->Parent;
         // We assume that the previous parent was also a UFArray.
         parent->Map.erase(object->StringValue());
-        for (_UFGroupList::iterator iter = parent->List.begin();
+        for (UFGroupList::iterator iter = parent->List.begin();
                 iter != parent->List.end(); iter++) {
             if (*iter == object) {
                 parent->List.erase(iter);

@@ -578,16 +578,13 @@ extern "C" {
         _UFWidgetData &data = _ufarray_widget_data(array);
         gtk_widget_set_size_request(combo, 50, -1);
         data.gobject[0] = G_OBJECT(combo);
-        char *saveIndex = g_strdup(array.StringValue());
-        int i = 0;
-        while (array.SetIndex(i)) {
-            gtk_combo_box_append_text(GTK_COMBO_BOX(combo), _(array.StringValue()));
-            i++;
+	UFGroupList list = array.List();
+	for (UFGroupList::iterator iter = list.begin();
+             iter != list.end(); iter++) {
+            gtk_combo_box_append_text(GTK_COMBO_BOX(combo),
+                                      _((*iter)->StringValue()));
         }
-        array.Set(saveIndex);
-        g_free(saveIndex);
         _ufarray_object_event(object, uf_value_changed);
-        gtk_widget_set_sensitive(combo, i > 0);
         return combo;
     }
 

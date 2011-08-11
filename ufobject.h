@@ -308,6 +308,9 @@ public:
     bool IsEqual(const char *string) const;
 };
 
+/// A list of UFObjects returned by UFGroup or UFArray.
+typedef std::list<UFObject *> UFGroupList;
+
 /**
  * UFGroup is a UFObject that contain a group of UFObject elements. This
  * object is considered the Patent() of these elements.
@@ -336,6 +339,8 @@ public:
     /// \exception UFException is thrown if an element with the given name
     /// does not exist. This can be avoided with the use of the Has() method.
     const UFObject &operator[](UFName name) const;
+    /// Return a list of all UFObjects in the group.
+    const UFGroupList List() const;
     /// Add (append) a UFObject to a UFGroup. If the object belonged to
     /// another group before, it will be detached from the original group.
     /// \exception UFException is thrown if UFGroup already contains
