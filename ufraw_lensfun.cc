@@ -669,7 +669,7 @@ Lensfun::Lensfun() : UFGroup(ufLensfun), FocalLengthValue(0.0),
 
 void Lensfun::SetLensInterpolation()
 {
-    char make[200], model[200];
+    char make[200] = "", model[200] = "";
     parse_maker_model((*this)[ufLensModel].StringValue(), make, sizeof(make),
                       model, sizeof(model));
     double crop_factor = 1.0;

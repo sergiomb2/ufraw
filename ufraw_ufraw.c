@@ -462,7 +462,7 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
 #ifdef HAVE_LENSFUN
     // Do not reset lensfun settings while loading ID.
     UFBoolean reset = !uf->LoadingID;
-    if (conf != NULL && conf->ufobject != NULL) {
+    if (conf != NULL && conf->version > 0 && conf->ufobject != NULL) {
         UFObject *conf_lensfun_auto = ufgroup_element(conf->ufobject,
                                       ufLensfunAuto);
         // Do not reset lensfun settings from conf file.
