@@ -3453,12 +3453,14 @@ static void delete_from_list(GtkWidget *widget, gpointer user_data)
     gtk_dialog_response(dialog, GTK_RESPONSE_APPLY);
 }
 
-// Duplicate CFG into RC, except for ufobject which is copied elegantly
+// Duplicate CFG into RC, except for transform data, which is reset and
+// ufobject which is copied elegantly
 static void copy_conf_to_rc(preview_data *data)
 {
     UFObject *tmp = RC->ufobject;
     *RC = *data->UF->conf;
     RC->ufobject = tmp;
+    conf_copy_transform(RC, &conf_default);
     UFObject *image = ufgroup_element(RC->ufobject, ufRawImage);
     ufobject_copy(image, data->UF->conf->ufobject);
 }
