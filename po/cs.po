@@ -1,15 +1,15 @@
 # Czech translation for UFRaw package.
 # Copyright (C) 2006-2011 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-# Milan Knizek <knizek@volny.cz>, 2007-2010.
+# Milan Knizek <knizek@volny.cz>, 2007-2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ufraw 0.17\n"
+"Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-06 13:00+0200\n"
-"PO-Revision-Date: 2010-03-04 23:04+0100\n"
-"Last-Translator: Milan Knizek <knizek@volny.cz>\n"
+"POT-Creation-Date: 2011-08-11 23:28-0500\n"
+"PO-Revision-Date: 2011-08-12 05:57+0100\n"
+"Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
@@ -353,16 +353,13 @@ msgstr ""
 "                      none - žádný, lightness - světlost,\n"
 "                      luminance - jas, mixer - mixér kanálů.\n"
 
-#, fuzzy
 msgid ""
 "--grayscale-mixer=RED,GREEN,BLUE\n"
 "                      Grayscale mixer values to use (default 1,1,1).\n"
 msgstr ""
-"--grayscale=none|lightness|luminance|value|mixer\n"
-"                      Algoritmus pro převod do šedé škály (standardně "
-"none).\n"
-"                      none - žádný, lightness - světlost,\n"
-"                      luminance - jas, mixer - mixér kanálů.\n"
+"--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Hodnoty červené, zelené a modré pro mixér kanálů "
+"(standardně 1,1,1).\n"
 
 msgid "The options which are related to the final output are:\n"
 msgstr "Volby, které se týkají konečného výstupu, jsou:\n"
@@ -541,9 +538,9 @@ msgstr "'%s' není platná volba interpolace."
 msgid "'%s' is not a valid grayscale option."
 msgstr "'%s' není platné pro volbu grayscale."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid grayscale-mixer option."
-msgstr "'%s' není platné pro volbu grayscale."
+msgstr "'%s' není platná volba pro mixér kanálů."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
