@@ -17,6 +17,7 @@
 extern "C" {
 #endif
 
+#include <glib.h>
 #include <glib/gstdio.h>
 
 // g_win32_locale_filename_from_utf8 is needed only on win32
