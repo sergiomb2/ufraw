@@ -296,7 +296,13 @@ int ufraw_write_image(ufraw_data *uf)
             int status = 0;
             char *filename =
                 uf_win32_locale_filename_from_utf8(uf->conf->outputFilename);
-            fits_create_file(&fitsFile, filename, &status);
+            if (strcmp(filename, "-") != 0)
+                // Use fits_create_diskfile() to allow more characters in
+                // filenames.
+                fits_create_diskfile(&fitsFile, filename, &status);
+            else
+                // fits_create_file() can write to stdout.
+                fits_create_file(&fitsFile, filename, &status);
             uf_win32_locale_filename_free(filename);
             if (status) {
                 ufraw_set_error(uf, _("Error creating file '%s'."),
