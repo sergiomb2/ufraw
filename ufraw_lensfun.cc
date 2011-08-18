@@ -782,6 +782,11 @@ void Lensfun::Init(bool reset)
                 // Changing the lens reset Auto="no". So set it back.
                 LensfunAuto.Set("yes");
                 lf_free(lenses);
+                // When loading a configuration file nothing changes, so we
+                // need to manually trigger the uf_value_changed event.
+                (*this)[ufTCA].Event(uf_value_changed);
+                (*this)[ufVignetting].Event(uf_value_changed);
+                (*this)[ufDistortion].Event(uf_value_changed);
                 return;
             }
         }
@@ -793,6 +798,11 @@ void Lensfun::Init(bool reset)
             // Changing the lens reset Auto="no". So set it back.
             LensfunAuto.Set("yes");
             lf_free(lenses);
+            // When loading a configuration file nothing changes, so we
+            // need to manually trigger the uf_value_changed event.
+            (*this)[ufTCA].Event(uf_value_changed);
+            (*this)[ufVignetting].Event(uf_value_changed);
+            (*this)[ufDistortion].Event(uf_value_changed);
             return;
         }
     }
