@@ -862,7 +862,7 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
             gint32 yy = (gint32)srcY;
             // TODO: better handling of the borders.
             if (xx < 0 || yy < 0 || xx + 1 >= img->width || yy + 1 >= img->height) {
-                for (c = 0; c < 3; c++)
+                for (c = 0; c < uf->colors; c++)
                     cur[c] = 0;
                 continue;
             }
