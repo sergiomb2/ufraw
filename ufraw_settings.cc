@@ -357,8 +357,12 @@ void Image::SetUFRawData(ufraw_data *data)
     if (strcmp(uf->conf->make, raw->make) != 0 ||
             strcmp(uf->conf->model, raw->model) != 0)
         uf->WBDirty = TRUE; // Re-calculate channel multipliers.
+    if (uf->LoadingID)
+        uf->WBDirty = TRUE; // Re-calculate channel multipliers.
     g_strlcpy(uf->conf->make, raw->make, max_name);
     g_strlcpy(uf->conf->model, raw->model, max_name);
+    if (!uf->LoadingID)
+        uf->WBDirty = TRUE; // Re-calculate channel multipliers.
 
     const wb_data *lastPreset = NULL;
     uf->wb_presets_make_model_match = FALSE;
