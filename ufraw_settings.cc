@@ -198,7 +198,7 @@ extern "C" {
 class Temperature : public UFNumber
 {
 public:
-    Temperature() : UFNumber(ufTemperature, 2000, 15000, 6500, 0, 50, 200) { }
+    Temperature() : UFNumber(ufTemperature, 2000, 20000, 6500, 0, 50, 200) { }
     void OriginalValueChangedEvent() {
         if (HasParent())
             ParentImage(this).SetWB(uf_manual_wb);
