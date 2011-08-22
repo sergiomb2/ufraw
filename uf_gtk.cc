@@ -578,9 +578,9 @@ extern "C" {
         _UFWidgetData &data = _ufarray_widget_data(array);
         gtk_widget_set_size_request(combo, 50, -1);
         data.gobject[0] = G_OBJECT(combo);
-	UFGroupList list = array.List();
-	for (UFGroupList::iterator iter = list.begin();
-             iter != list.end(); iter++) {
+        UFGroupList list = array.List();
+        for (UFGroupList::iterator iter = list.begin();
+                iter != list.end(); iter++) {
             gtk_combo_box_append_text(GTK_COMBO_BOX(combo),
                                       _((*iter)->StringValue()));
         }

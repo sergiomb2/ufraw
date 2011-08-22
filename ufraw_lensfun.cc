@@ -351,7 +351,7 @@ public:
         if (ufraw_image_get_data(this) == NULL)
             return;
         Lensfun &Lensfun = Lensfun::Parent(*this);
-	Lensfun.Manual();
+        Lensfun.Manual();
     }
 };
 
@@ -620,7 +620,7 @@ public:
         if (ufraw_image_get_data(this) == NULL)
             return;
         Lensfun &Lensfun = Lensfun::Parent(*this);
-	Lensfun.Manual();
+        Lensfun.Manual();
     }
 };
 
@@ -631,7 +631,7 @@ class TargetLensGeometry : public UFArray
 {
 public:
     explicit TargetLensGeometry(UFName name = ufTargetLensGeometry) :
-            UFArray(name, lfLens::GetLensTypeDesc(LF_UNKNOWN, NULL)) {
+        UFArray(name, lfLens::GetLensTypeDesc(LF_UNKNOWN, NULL)) {
         for (lfLensType type = LF_UNKNOWN; ; type = lfLensType(type + 1)) {
             const char *typeName = lfLens::GetLensTypeDesc(type, NULL);
             if (typeName == NULL)
@@ -675,15 +675,15 @@ void Lensfun::SetLensInterpolation()
     double crop_factor = 1.0;
     int count = sscanf(model, "Crop factor %lf", &crop_factor);
     if ((strcmp(make, "Generic") == 0 && count == 1) ||
-        (strcmp(make, "") == 0 && strcmp(model, "") == 0)) {
+            (strcmp(make, "") == 0 && strcmp(model, "") == 0)) {
         lfLens cropLens;
         cropLens.SetMaker(make);
         cropLens.SetModel(model);
         cropLens.CropFactor = crop_factor;
         cropLens.MinFocal = 1.0;
-	cropLens.MaxFocal = 800.0;
-	UFArray &LensGeometry = (*this)[ufLensGeometry];
-	cropLens.Type = lfLensType(LensGeometry.Index());
+        cropLens.MaxFocal = 800.0;
+        UFArray &LensGeometry = (*this)[ufLensGeometry];
+        cropLens.Type = lfLensType(LensGeometry.Index());
         Interpolation = cropLens;
     } else {
         const lfLens **lensList = LensDB()->FindLenses(&Camera,
