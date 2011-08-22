@@ -805,6 +805,13 @@ int ufraw_convert_image(ufraw_data *uf)
         *img = *img2;
         img2->buffer = NULL;
     }
+    if (uf->conf->autoCrop && !uf->LoadingID) {
+        ufraw_get_image_dimensions(uf);
+        uf->conf->CropX1 = (uf->rotatedWidth - uf->autoCropWidth) / 2;
+        uf->conf->CropX2 = (uf->rotatedWidth + uf->autoCropWidth) / 2;
+        uf->conf->CropY1 = (uf->rotatedHeight - uf->autoCropHeight) / 2;
+        uf->conf->CropY2 = (uf->rotatedHeight + uf->autoCropHeight) / 2;
+    }
     return UFRAW_SUCCESS;
 }
 
