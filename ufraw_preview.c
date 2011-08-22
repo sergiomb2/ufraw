@@ -938,7 +938,11 @@ static gboolean render_preview_now(preview_data *data)
         update_crop_ranges(data, FALSE);
         CFG->autoCrop = enabled_state;
     }
+    // We need to freeze the dialog in case an error message pops up in
+    // lcms error handler.
+    data->FreezeDialog = TRUE;
     ufraw_developer_prepare(data->UF, display_developer);
+    data->FreezeDialog = FALSE;
     render_init(data);
 
     /* This will trigger the untiled phases if necessary. The progress bar
