@@ -1479,7 +1479,7 @@ void CLASS phase_one_flat_field (int is_float, int nc)
   wide = head[2] / head[4];
   mrow = (float *) calloc (nc*wide, sizeof *mrow);
   merror (mrow, "phase_one_flat_field()");
-  for (y=0; y < head[3] / head[5]; y++) {
+  for (y=0; y < (unsigned)(head[3] / head[5]); y++) {
     for (x=0; x < wide; x++)
       for (c=0; c < nc; c+=2) {
 	num = is_float ? getreal(11) : get2()/32768.0;
