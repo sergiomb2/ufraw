@@ -210,8 +210,8 @@ msgstr "Volby, které se týkají manipulace se snímkem, jsou:\n"
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr "--wb=camera|auto      Nastavení vyvážení bílé.\n"
 
-msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
-msgstr "--temperature=TEPLOTA Barevná teplota v Kelvinech (2000 - 7000).\n"
+msgid "--temperature=TEMP    Color temperature in Kelvin.\n"
+msgstr "--temperature=TEPLOTA Barevná teplota v Kelvinech.\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
 msgstr "--green=GREEN        Normalizace zelené barvy.\n"

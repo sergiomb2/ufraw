@@ -214,10 +214,10 @@ msgstr "Могућности везане за рад са сликом су:\n"
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr "--wb=camera|auto      Подешавање равнотеже беле.\n"
 
-msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
+msgid "--temperature=TEMP    Color temperature in Kelvin.\n"
 msgstr ""
 "--temperature=Темпeratura\n"
-"                      Температура боје у Келвинима (2000 - 7000).\n"
+"                      Температура боје у Келвинима.\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
 msgstr "--green=Зелена        Уједначење зелене компоненте у равнотежи беле.\n"

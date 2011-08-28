@@ -93,7 +93,7 @@ options.
 
 =item --temperature=TEMP
 
-Manually set the color temperature in Kelvin (2000 - 7000).
+Manually set the color temperature in Kelvin.
 
 =item --green=GREEN
 

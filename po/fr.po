@@ -215,9 +215,8 @@ msgstr "Les options qui sont liées à la manipulation des images sont:\n"
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr "--wb=camera|auto      Réglage de la balance des blancs.\n"
 
-msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
-msgstr ""
-"--temperature=TEMP    Température de couleur en Kelvins (2000 - 7000).\n"
+msgid "--temperature=TEMP    Color temperature in Kelvin.\n"
+msgstr "--temperature=TEMP    Température de couleur en Kelvin.\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
 msgstr "--green=VERT          Normalisation du vert.\n"

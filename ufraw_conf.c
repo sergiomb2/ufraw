@@ -1575,7 +1575,7 @@ char *helpText[] = {
     N_("The options which are related to the image manipulation are:\n"),
     "\n",
     N_("--wb=camera|auto      White balance setting.\n"),
-    N_("--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"),
+    N_("--temperature=TEMP    Color temperature in Kelvin.\n"),
     N_("--green=GREEN         Green color normalization.\n"),
     N_("--base-curve=manual|linear|camera|custom|CURVE\n"
     "                      Type of base tone curve to use. CURVE can be any\n"

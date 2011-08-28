@@ -206,8 +206,8 @@ msgstr "图像处理相关选项：\n"
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr "--wb=camera|auto      白平衡设置。\n"
 
-msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
-msgstr "--temperature=TEMP    色温(开尔文)  (2000K-7000K)。\n"
+msgid "--temperature=TEMP    Color temperature in Kelvin.\n"
+msgstr "--temperature=TEMP    色温。\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
 msgstr "--green=GREEN         绿色正常化。\n"

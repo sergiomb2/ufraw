@@ -212,8 +212,8 @@ msgstr "이미지 조정에 관련된 옵션들:\n"
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr "--wb=camera|auto      화이트 벨런스 설정.\n"
 
-msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
-msgstr "--temperature=TEMP    색온도 캘빈값 (2000 - 7000).\n"
+msgid "--temperature=TEMP    Color temperature in Kelvin.\n"
+msgstr "--temperature=TEMP    색온도 캘빈값.\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
 msgstr "--green=GREEN         녹색 정상화.\n"

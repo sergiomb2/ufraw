@@ -220,9 +220,8 @@ msgstr "Ключи, относящиеся к обработке изображ�
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr "--wb=camera|auto      Параметры баланса белого.\n"
 
-msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
-msgstr ""
-"--temperature=TEMP    Цветовая температура в градусах Кельвина (2000-7000).\n"
+msgid "--temperature=TEMP    Color temperature in Kelvin.\n"
+msgstr "--temperature=TEMP    Цветовая температура в градусах Кельвина.\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
 msgstr "--green=GREEN         Нормализация зелёного цвета.\n"

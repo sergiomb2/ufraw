@@ -191,7 +191,7 @@ msgstr ""
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr ""
 
-msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
+msgid "--temperature=TEMP    Color temperature in Kelvin.\n"
 msgstr ""
 
 msgid "--green=GREEN         Green color normalization.\n"

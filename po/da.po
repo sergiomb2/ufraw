@@ -209,8 +209,8 @@ msgstr "Tilvalgene, der er relateret til billedbehandling, er:\n"
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr "--wb=camera|auto      Hvidbalanceindstilling.\n"
 
-msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
-msgstr "--temperature=TEMP    Farvetemperatur i Kelvin (2000 - 7000).\n"
+msgid "--temperature=TEMP    Color temperature in Kelvin.\n"
+msgstr "--temperature=TEMP    Farvetemperatur i Kelvin.\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
 msgstr "--green=GRØN          Grøn farvenormalisering.\n"

@@ -211,8 +211,8 @@ msgstr "画像調整に関連するオプション:\n"
 msgid "--wb=camera|auto      White balance setting.\n"
 msgstr "--wb=camera|auto      ホワイトバランスの設定。\n"
 
-msgid "--temperature=TEMP    Color temperature in Kelvins (2000 - 7000).\n"
-msgstr "--temperature=TEMP    ケルビンで色温度指定 (2000 - 7000)。\n"
+msgid "--temperature=TEMP    Color temperature in Kelvin.\n"
+msgstr "--temperature=TEMP    ケルビンで色温度指定。\n"
 
 msgid "--green=GREEN         Green color normalization.\n"
 msgstr "--green=GREEN         緑色の標準化。\n"
