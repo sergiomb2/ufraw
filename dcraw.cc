@@ -6889,7 +6889,9 @@ void CLASS adobe_coeff (const char *make, const char *model)
     { "SONY SLT-A35", 128, 0,		/* DJC */
 	{ 4504,-1495,115,-3507,9101,4407,-669,1844,6806 } },
     { "SONY SLT-A55", 128, 0,
-	{ 5932,-1492,-411,-4813,12285,2856,-741,1524,6739 } }
+	{ 5932,-1492,-411,-4813,12285,2856,-741,1524,6739 } },
+    { "SONY SLT-A77", 128, 0,
+	{ 0 } }
   };
   double cam_xyz[4][3];
   char name[130];
@@ -8190,6 +8192,8 @@ wb550:
     filters = 0x61616161;
   } else if (!strcmp(model,"DSLR-A350")) {
     height -= 4;
+  } else if (!strncmp(model,"SLT-A77",7)) {
+    width -= 32;
   } else if (!strcmp(model,"PIXL")) {
     height -= top_margin = 4;
     width -= left_margin = 32;
