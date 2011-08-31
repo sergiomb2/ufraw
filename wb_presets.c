@@ -4159,7 +4159,7 @@ const wb_data wb_preset[] = {
   { "SONY", "DSLR-A380", Flash, -3,		{ 2.574219, 1, 1.664063, 0 } },
   { "SONY", "DSLR-A380", Flash, 0,		{ 2.816406, 1, 1.453125, 0 } },
   { "SONY", "DSLR-A380", Flash, 3,		{ 3.070312, 1, 1.273437, 0 } },
-  
+
   /* Sony A450 presets */
   { "SONY", "DSLR-A450", Daylight, -3,		{ 2.109375, 1, 1.593750, 0 } },
   { "SONY", "DSLR-A450", Daylight, 0,		{ 2.296875, 1, 1.445312, 0 } },
@@ -4182,7 +4182,7 @@ const wb_data wb_preset[] = {
 
   { "SONY", "DSLR-A550", Daylight, 0,		{ 2.160156, 1, 1.496094, 0 } },
   { "SONY", "DSLR-A550", Shade, 0,		{ 2.519531, 1, 1.234375, 0 } },
-  { "SONY", "DSLR-A550", Cloudy, 0,		{ 2.3125,   1, 1.375,    0 } },
+  { "SONY", "DSLR-A550", Cloudy, 0,		{ 2.312500, 1, 1.375000, 0 } },
   { "SONY", "DSLR-A550", Tungsten, 0,		{ 1.367188, 1, 2.632813, 0 } },
   { "SONY", "DSLR-A550", Fluorescent, 0,	{ 1.902344, 1, 2.117188, 0 } },
   { "SONY", "DSLR-A550", Flash, 0,		{ 2.390625, 1, 1.335938, 0 } },
