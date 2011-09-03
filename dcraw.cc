@@ -24,11 +24,6 @@ extern "C" {
 
 #define DCRAW_VERSION "9.10"
 
-// dcraw plays with array bounds everywhere, there is no point to warn about it.
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)) && !defined(__INTEL_COMPILER) 
-#pragma GCC diagnostic ignored "-Warray-bounds"
-#endif
-
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -2144,7 +2139,7 @@ void CLASS kodak_radc_load_raw()
     2,-26, 2,-13, 2,1, 3,-39, 4,16, 5,-55, 6,-76, 6,37
   };
   ushort huff[19][256];
-  int row, col, tree, nreps, rep, step, i, c, s, r, x, y, val;
+  int row, col, tree, nreps, rep, step, i, j, k, c, s, r, x, y, val;
   short last[3] = { 16,16,16 }, mul[3], buf[3][3][386];
   static const ushort pt[] =
     { 0,0, 1280,1344, 2320,3616, 3328,8000, 4095,16383, 65535,16383 };
@@ -2159,8 +2154,10 @@ void CLASS kodak_radc_load_raw()
   s = kodak_cbpp == 243 ? 2 : 3;
   FORC(256) huff[18][c] = (8-s) << 8 | c >> s << s | 1 << (s-1);
   getbits(-1);
-  for (i=0; i < (int) sizeof(buf)/(int) sizeof(short); i++)
-    buf[0][0][i] = 2048;
+  for (i=0; i < 3; i++)
+    for (j=0; j < 3; j++)
+      for (k=0; k < 386; k++)
+	buf[i][j][k] = 2048;
   for (row=0; row < height; row+=4) {
     FORC3 mul[c] = getbits(6);
     FORC3 {
@@ -3145,9 +3142,10 @@ void CLASS foveon_interpolate()
 
   black = (float (*)[3]) calloc (height, sizeof *black);
   for (row=0; row < height; row++) {
-    for (i=0; i < 6; i++)
-      ddft[0][0][i] = ddft[1][0][i] +
-	row / (height-1.0) * (ddft[2][0][i] - ddft[1][0][i]);
+    for (i=0; i < 3; i++)
+      for (j=0; j < 2; j++)
+	ddft[0][i][j] = ddft[1][i][j] +
+	  row / (height-1.0) * (ddft[2][i][j] - ddft[1][i][j]);
     FORC3 black[row][c] =
  	( foveon_avg (image[row*width]+c, dscr[0], cfilt) +
 	  foveon_avg (image[row*width]+c, dscr[1], cfilt) * 3
@@ -3191,9 +3189,10 @@ void CLASS foveon_interpolate()
     FORC3 black[row][c] += fsum[c]/2 + total[c]/(total[3]*100.0);
 
   for (row=0; row < height; row++) {
-    for (i=0; i < 6; i++)
-      ddft[0][0][i] = ddft[1][0][i] +
-	row / (height-1.0) * (ddft[2][0][i] - ddft[1][0][i]);
+    for (i=0; i < 3; i++)
+      for (j=0; j < 2; j++)
+	ddft[0][i][j] = ddft[1][i][j] +
+	  row / (height-1.0) * (ddft[2][i][j] - ddft[1][i][j]);
     pix = image[row*width];
     memcpy (prev, pix, sizeof prev);
     frow = row / (height-1.0) * (dim[2]-1);
@@ -5901,7 +5900,7 @@ void CLASS parse_sinar_ia()
 
 void CLASS parse_phase_one (int base)
 {
-  unsigned entries, tag, type, len, data, save, i, c;
+  unsigned entries, tag, len, data, save, i, j, c;
   float romm_cam[3][3];
   char *cp;
 
@@ -5914,7 +5913,7 @@ void CLASS parse_phase_one (int base)
   get4();
   while (entries--) {
     tag  = get4();
-    type = get4();
+    fseek (ifp, 4, SEEK_CUR);
     len  = get4();
     data = get4();
     save = ftell(ifp);
@@ -5922,8 +5921,9 @@ void CLASS parse_phase_one (int base)
     switch (tag) {
       case 0x100:  flip = "0653"[data & 3]-'0';  break;
       case 0x106:
-	for (i=0; i < 9; i++)
-	  romm_cam[0][i] = getreal(11);
+	for (i=0; i < 3; i++)
+	  for (j=0; j < 3; j++)
+	    romm_cam[i][j] = getreal(11);
 	romm_coeff (romm_cam);
 	break;
       case 0x107:
@@ -6895,7 +6895,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
   };
   double cam_xyz[4][3];
   char name[130];
-  int i, j;
+  int i, j, k;
 
   sprintf (name, "%s %s", make, model);
   for (i=0; i < (int) sizeof table / (int) sizeof *table; i++)
@@ -6903,8 +6903,9 @@ void CLASS adobe_coeff (const char *make, const char *model)
       if (table[i].black)   black   = (ushort) table[i].black;
       if (table[i].maximum) maximum = (ushort) table[i].maximum;
       if (table[i].trans[0]) {
-	for (j=0; j < 12; j++)
-	  cam_xyz[0][j] = table[i].trans[j] / 10000.0;
+	for (j=0; j < 4; j++)
+	  for (k=0; k < 3; k++)
+	    cam_xyz[j][k] = table[i].trans[3*j+k] / 10000.0;
 	cam_xyz_coeff (cam_xyz);
       }
       break;

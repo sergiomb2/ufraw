@@ -409,7 +409,10 @@ int curve_load(CurveData *cp, char *filename)
         locale = uf_set_locale_C();
         context = g_markup_parse_context_new(&parser, 0, cp, NULL);
         line[max_path-1] = '\0';
-        char *dummy = fgets(line, max_path - 1, in);
+        if (fgets(line, max_path - 1, in) == NULL) {
+            fclose(in);
+            return UFRAW_ERROR;
+        }
         while (!feof(in)) {
             if (!g_markup_parse_context_parse(context, line,
                                               strlen(line), &err)) {
@@ -421,7 +424,10 @@ int curve_load(CurveData *cp, char *filename)
                 g_error_free(err);
                 return UFRAW_ERROR;
             }
-            dummy = fgets(line, max_path, in);
+            if (fgets(line, max_path, in) == NULL) {
+                fclose(in);
+                return UFRAW_ERROR;
+            }
         }
         g_markup_parse_context_end_parse(context, NULL);
         g_markup_parse_context_free(context);

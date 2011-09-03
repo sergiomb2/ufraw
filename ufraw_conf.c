@@ -816,7 +816,10 @@ int conf_load(conf_data *c, const char *IDFilename)
     user_data.ufrawQuark = g_quark_from_static_string("UFRaw");
     context = g_markup_parse_context_new(&parser, 0, &user_data, NULL);
     line[max_path-1] = '\0';
-    char *dummy = fgets(line, max_path - 1, in);
+    if (fgets(line, max_path - 1, in) == NULL) {
+        fclose(in);
+        return UFRAW_ERROR;
+    }
     while (!feof(in)) {
         if (!g_markup_parse_context_parse(context, line, strlen(line), &err)) {
             ufraw_message(UFRAW_ERROR, _("Error parsing '%s'\n%s"),
@@ -831,7 +834,10 @@ int conf_load(conf_data *c, const char *IDFilename)
             g_error_free(err);
             return UFRAW_ERROR;
         }
-        dummy = fgets(line, max_path, in);
+        if (fgets(line, max_path, in) == NULL) {
+            fclose(in);
+            return UFRAW_ERROR;
+        }
     }
     g_markup_parse_context_end_parse(context, NULL);
     g_markup_parse_context_free(context);
