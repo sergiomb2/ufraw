@@ -816,7 +816,10 @@ int conf_load(conf_data *c, const char *IDFilename)
     user_data.ufrawQuark = g_quark_from_static_string("UFRaw");
     context = g_markup_parse_context_new(&parser, 0, &user_data, NULL);
     line[max_path-1] = '\0';
-    if (fgets(line, max_path - 1, in) == NULL) {
+    if (fgets(line, max_path - 1, in) == NULL && !feof(in)) {
+//        ufraw_message(UFRAW_ERROR, _("Error reading from file '%s'\n"),
+//                      confFilename);
+        g_free(confFilename);
         fclose(in);
         return UFRAW_ERROR;
     }
@@ -834,7 +837,10 @@ int conf_load(conf_data *c, const char *IDFilename)
             g_error_free(err);
             return UFRAW_ERROR;
         }
-        if (fgets(line, max_path, in) == NULL) {
+        if (fgets(line, max_path, in) == NULL && !feof(in)) {
+//            ufraw_message(UFRAW_ERROR, _("Error reading from file '%s'\n"),
+//                          confFilename);
+            g_free(confFilename);
             fclose(in);
             return UFRAW_ERROR;
         }
