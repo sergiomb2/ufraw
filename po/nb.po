@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-22 17:45+0200\n"
+"POT-Creation-Date: 2011-09-04 05:00+0200\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -137,6 +137,10 @@ msgid ""
 msgstr ""
 "Kan ikke åpne ID-filen %s for lesing\n"
 "%s\n"
+
+#, fuzzy, c-format
+msgid "Error reading from file '%s'."
+msgstr "Feil ved oppretting av filen «%s»."
 
 #, c-format
 msgid ""

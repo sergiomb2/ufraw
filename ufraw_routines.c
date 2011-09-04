@@ -410,8 +410,9 @@ int curve_load(CurveData *cp, char *filename)
         context = g_markup_parse_context_new(&parser, 0, cp, NULL);
         line[max_path-1] = '\0';
         if (fgets(line, max_path - 1, in) == NULL && !feof(in)) {
-//            ufraw_message(UFRAW_ERROR, _("Error reading from file '%s'\n"),
-//                          filename);
+            ufraw_message(UFRAW_ERROR, _("Error reading from file '%s'."),
+                          filename);
+            uf_reset_locale(locale);
             fclose(in);
             return UFRAW_ERROR;
         }
@@ -427,8 +428,9 @@ int curve_load(CurveData *cp, char *filename)
                 return UFRAW_ERROR;
             }
             if (fgets(line, max_path, in) == NULL && !feof(in)) {
-//                ufraw_message(UFRAW_ERROR, _("Error reading from file '%s'\n"),
-//                              filename);
+                ufraw_message(UFRAW_ERROR, _("Error reading from file '%s'."),
+                              filename);
+                uf_reset_locale(locale);
                 fclose(in);
                 return UFRAW_ERROR;
             }

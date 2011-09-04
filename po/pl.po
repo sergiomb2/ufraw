@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-22 17:45+0200\n"
+"POT-Creation-Date: 2011-09-04 05:00+0200\n"
 "PO-Revision-Date: 2010-03-04 23:12+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish\n"
@@ -137,6 +137,10 @@ msgid ""
 msgstr ""
 "Nie mogę odczytać pliku ID %s\n"
 "%s\n"
+
+#, fuzzy, c-format
+msgid "Error reading from file '%s'."
+msgstr "Błąd tworzenia pliku '%s'."
 
 #, c-format
 msgid ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-22 17:45+0200\n"
+"POT-Creation-Date: 2011-09-04 05:00+0200\n"
 "PO-Revision-Date: 2009-10-07 10:53-0300\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese\n"
@@ -137,6 +137,10 @@ msgid ""
 msgstr ""
 "Não é possível abrir o arquivo ID %s para leitura\n"
 "%s\n"
+
+#, fuzzy, c-format
+msgid "Error reading from file '%s'."
+msgstr "Erro criando arquivo '%s'."
 
 #, c-format
 msgid ""

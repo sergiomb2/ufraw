@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-22 17:45+0200\n"
+"POT-Creation-Date: 2011-09-04 05:00+0200\n"
 "PO-Revision-Date: 2009-06-15 00:00+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Tetralet <tetralet@gmail.com>\n"
@@ -135,6 +135,10 @@ msgid ""
 msgstr ""
 "無法開啟 ID 檔案 %s 以供讀取\n"
 "%s\n"
+
+#, fuzzy, c-format
+msgid "Error reading from file '%s'."
+msgstr "在建立檔案 '%s' 時發生錯誤。"
 
 #, c-format
 msgid ""

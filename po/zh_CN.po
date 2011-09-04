@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-22 17:45+0200\n"
+"POT-Creation-Date: 2011-09-04 05:00+0200\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -137,6 +137,10 @@ msgid ""
 msgstr ""
 "无法打开ID文件 %s 进行读取 \n"
 "%s\n"
+
+#, fuzzy, c-format
+msgid "Error reading from file '%s'."
+msgstr "创建文件时出错 '%s'"
 
 #, c-format
 msgid ""
