@@ -121,8 +121,8 @@ void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
                                 const float pre_mul[4], const float threshold,
                                 const unsigned filters)
 {
-    float *fimg = 0, /* *temp,*/ thold, mul[2], avg, diff;
-    int /*scale=1,*/ size, lev, hpass, lpass, row, col, nc, c, i, wlast;
+    float *fimg = 0, thold, mul[2], avg, diff;
+    int size, lev, hpass, lpass, row, col, nc, c, i, wlast;
     ushort *window[4];
     static const float noise[] =
     { 0.8002, 0.2735, 0.1202, 0.0585, 0.0291, 0.0152, 0.0080, 0.0044 };
@@ -212,9 +212,9 @@ const int use_camera_wb, const float cam_mul[4], const int colors,
 float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
 const char *ifname_display, void *dcraw)
 {
-    unsigned /*bottom, right, size,*/ row, col, /*ur, uc, i, x, y,*/ c, sum[8];
+    unsigned row, col, c, sum[8];
     int val, dark, sat;
-    double /*dsum[8],*/ dmin, dmax;
+    double dmin, dmax;
 
     if (use_camera_wb && cam_mul[0] != -1) {
         memset(sum, 0, sizeof sum);
@@ -240,7 +240,6 @@ const char *ifname_display, void *dcraw)
     if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
     dark = black;
     sat = maximum;
-    maximum -= black;
     for (dmin = DBL_MAX, dmax = c = 0; c < 4; c++) {
         if (dmin > pre_mul[c])
             dmin = pre_mul[c];
@@ -819,7 +818,6 @@ void CLASS fuji_rotate_INDI(ushort(**image_p)[4], int *height_p,
     int height = *height_p, width = *width_p, fuji_width = *fuji_width_p; /*UF*/
     ushort(*image)[4] = *image_p;  /*UF*/
     int i, row, col;
-//  double step;
     float r, c, fr, fc;
     int ur, uc;
     ushort wide, high, (*img)[4], (*pix)[4];
@@ -827,7 +825,6 @@ void CLASS fuji_rotate_INDI(ushort(**image_p)[4], int *height_p,
     if (!fuji_width) return;
     dcraw_message(dcraw, DCRAW_VERBOSE, _("Rotating image 45 degrees...\n"));
     fuji_width = (fuji_width - 1/* + shrink*/)/* >> shrink*/;
-//  step = sqrt(0.5);
     wide = fuji_width / step;
     high = (height - fuji_width) / step;
     img = (ushort(*)[4]) calloc(wide * high, sizeof * img);
