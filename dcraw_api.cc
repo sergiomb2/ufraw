@@ -608,9 +608,9 @@ extern "C" {
             for (int c = 0; c < 4; c++)
                 h->post_mul[c] = 1.0;
         } else {
-            scale_colors_INDI(h->rgbMax - h->black, h->black, useCameraWB,
-                              h->cam_mul, h->colors, h->post_mul, h->filters,
-                              d->white, d->ifname_display, d);
+            scale_colors_INDI(h->rgbMax, h->black, useCameraWB, h->cam_mul,
+                              h->colors, h->post_mul, h->filters, d->white,
+                              d->ifname_display, d);
         }
         h->message = d->messageBuffer;
         return d->lastStatus;

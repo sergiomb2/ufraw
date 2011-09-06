@@ -207,13 +207,13 @@ void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
     }
 }
 
-void CLASS scale_colors_INDI(int maximum, const int black,
+void CLASS scale_colors_INDI(const int maximum, const int black,
 const int use_camera_wb, const float cam_mul[4], const int colors,
 float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
 const char *ifname_display, void *dcraw)
 {
     unsigned row, col, c, sum[8];
-    int val, dark, sat;
+    int val;
     double dmin, dmax;
 
     if (use_camera_wb && cam_mul[0] != -1) {
@@ -238,8 +238,6 @@ const char *ifname_display, void *dcraw)
         _("%s: Cannot use camera white balance.\n"), ifname_display);
     }
     if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
-    dark = black;
-    sat = maximum;
     for (dmin = DBL_MAX, dmax = c = 0; c < 4; c++) {
         if (dmin > pre_mul[c])
             dmin = pre_mul[c];
@@ -249,7 +247,7 @@ const char *ifname_display, void *dcraw)
     FORC4 pre_mul[c] /= dmax;
     dcraw_message(dcraw, DCRAW_VERBOSE,
     _("Scaling with darkness %d, saturation %d, and\nmultipliers"),
-    dark, sat);
+    black, maximum);
     FORC4 dcraw_message(dcraw, DCRAW_VERBOSE, " %f", pre_mul[c]);
     dcraw_message(dcraw, DCRAW_VERBOSE, "\n");
 
