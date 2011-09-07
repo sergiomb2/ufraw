@@ -1,12 +1,12 @@
 # German translation for UFRaw.
-# Copyright (C) 2006-2011, Udi Fuchs, Matthias Urlichs and Chris Leick
+# Copyright (C) 2006-2011 Udi Fuchs, Matthias Urlichs and Chris Leick.
 # This file is distributed under the same license as the ufraw package.
 # Chris Leick <c.leick@vollbio.de>, 2009-2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.19\n"
-"Report-Msgid-Bugs-To: ufraw@packages.debian.org\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-04 05:00+0200\n"
 "PO-Revision-Date: 2011-09-06 22:21+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
@@ -445,7 +445,8 @@ msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
 "                      correction by auto-detecting the lens (default none).\n"
 msgstr ""
-"--lensfun=none|auto   Wenden Sie keine Linsenkorrektur an oder versuchen Sie\n"
+"--lensfun=none|auto   Wenden Sie keine Linsenkorrektur an oder versuchen "
+"Sie\n"
 "                      nicht eine anzuwenden.\n"
 "                      Korrektur durch automatisches Erkennen der Linse\n"
 "                      (Standard none).\n"
@@ -1205,8 +1206,8 @@ msgstr ""
 "50,0,5 zu setzen. Wenn ein Kanal nur Rauschen enthält, dann versuchen Sie "
 "1,0.6,1.\n"
 "Störungsentfernung ist ausgeschaltet, wenn die Fenstergröße oder die "
-"Durchgänge gleich Null sind. Wenn es eingeschaltet ist, kann die Fenstergröße "
-"nicht kleiner sein, als die Anzahl der Durchgänge."
+"Durchgänge gleich Null sind. Wenn es eingeschaltet ist, kann die "
+"Fenstergröße nicht kleiner sein, als die Anzahl der Durchgänge."
 
 msgid "Update channel parameters together"
 msgstr "Kanalparameter zusammen aktualisieren"
