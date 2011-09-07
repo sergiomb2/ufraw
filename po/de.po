@@ -1,14 +1,14 @@
 # German translation for UFRaw.
-# Copyright (C) 2006-2011 Udi Fuchs, Matthias Urlichs and Chris Leick.
+# Copyright (C) 2006-2011, Udi Fuchs, Matthias Urlichs and Chris Leick
 # This file is distributed under the same license as the ufraw package.
-# Chris Leick <c.leick@vollbio.de>, 2009.
+# Chris Leick <c.leick@vollbio.de>, 2009-2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.16\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: 0.19\n"
+"Report-Msgid-Bugs-To: ufraw@packages.debian.org\n"
 "POT-Creation-Date: 2011-09-04 05:00+0200\n"
-"PO-Revision-Date: 2009-05-13 12:19+0100\n"
+"PO-Revision-Date: 2011-09-06 22:21+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
 "Language: de\n"
@@ -23,11 +23,11 @@ msgstr "Das Navigatorfenster öffnen"
 
 #, c-format
 msgid "Value %.*f too large, truncated to %.*f."
-msgstr ""
+msgstr "Wert %.*f zu groß, auf %.*f gekürzt"
 
 #, c-format
 msgid "Value %.*f too small, truncated to %.*f."
-msgstr ""
+msgstr "Wert %.*f zu klein, auf %.*f gekürzt"
 
 msgid "No input file, nothing to do."
 msgstr "Keine Eingabedatei, nichts zu tun."
@@ -101,7 +101,7 @@ msgid "sRGB"
 msgstr "sRGB"
 
 msgid "sRGB (embedded)"
-msgstr ""
+msgstr "sRGB (eingebettet)"
 
 msgid "System default"
 msgstr "Systemstandard"
@@ -121,7 +121,7 @@ msgid "Too many anchors for curve '%s'"
 msgstr "Zu viele Anker für Kurve »%s«"
 
 msgid "Too many lightness adjustments in the ID file, ignored\n"
-msgstr ""
+msgstr "Zu viele Helligkeitsanpassungen in der ID-Datei, wird ignoriert\n"
 
 #, c-format
 msgid ""
@@ -139,9 +139,9 @@ msgstr ""
 "ID-Datei %s kann nicht zum Lesen geöffnet werden\n"
 "%s\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading from file '%s'."
-msgstr "Fehler beim Erstellen der Datei »%s«."
+msgstr "Fehler beim Lesen der Datei »%s«."
 
 #, c-format
 msgid ""
@@ -323,6 +323,10 @@ msgid ""
 "                      Sensitivity for detecting and shaving hot pixels "
 "(default 0.0).\n"
 msgstr ""
+"--hotpixel-sensitivity=WERT\n"
+"                      Empfindlichkeit für das Erkennen und Verkleinern von\n"
+"                      Hotpixeln (Bildpunkte mit nicht "
+"proportionalem                       Lichteinfall; Standard 0.0)\n"
 
 msgid ""
 "--exposure=auto|EXPOSURE\n"
@@ -350,9 +354,8 @@ msgstr ""
 "                      Zu benutzender Interpolationsalgorithmus\n"
 "                      (Standard: ahd).\n"
 
-#, fuzzy
 msgid "--color-smoothing     Apply color smoothing.\n"
-msgstr "Farbglättung übernehmen"
+msgstr "--color-smoothing    Farbglättung übernehmen\n"
 
 msgid ""
 "--grayscale=none|lightness|luminance|value|mixer\n"
@@ -362,14 +365,12 @@ msgstr ""
 "                      Zu benutzender Grausstufen-Umwandlungsalgorithmus\n"
 "                      (Standard: none).\n"
 
-#, fuzzy
 msgid ""
 "--grayscale-mixer=RED,GREEN,BLUE\n"
 "                      Grayscale mixer values to use (default 1,1,1).\n"
 msgstr ""
-"--grayscale=none|lightness|luminance|value|mixer\n"
-"                      Zu benutzender Grausstufen-Umwandlungsalgorithmus\n"
-"                      (Standard: none).\n"
+"--grayscale-mixer=RED,GREEN,BLUE\n"
+"                      Zu benutzender Graustufenmixerwerte (Standard 1,1,1).\n"
 
 msgid "The options which are related to the final output are:\n"
 msgstr "Die Optionen, die zu der endgültigen Ausgabe gehören, sind:\n"
@@ -400,17 +401,15 @@ msgstr ""
 msgid "--compression=VALUE   JPEG compression (0-100, default 85).\n"
 msgstr "--compression=WERT   JPEG-Komprimierung (0-100, Standard: 85).\n"
 
-#, fuzzy
 msgid "--[no]exif            Embed EXIF in output (default embed EXIF).\n"
 msgstr ""
-"--[no]exif            EXIF in Ausgabe-JPEG oder -PNG einbetten\n"
-"                      (Standard: EXIF einbetten).\n"
+"--[no]exif            EXIF in Ausgabe einbetten (Standard: EXIF einbetten)\n"
 
 msgid ""
 "--[no]zip             Enable [disable] TIFF zip compression (default "
 "nozip).\n"
 msgstr ""
-"--[no]zip             Einschalten [ausschalten] der\n"
+"--[no]zip             Einschalten [Ausschalten] der\n"
 "                      TIFF-zip-Komprimierung (Standard: nozip).\n"
 
 msgid ""
@@ -446,6 +445,10 @@ msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
 "                      correction by auto-detecting the lens (default none).\n"
 msgstr ""
+"--lensfun=none|auto   Wenden Sie keine Linsenkorrektur an oder versuchen Sie\n"
+"                      nicht eine anzuwenden.\n"
+"                      Korrektur durch automatisches Erkennen der Linse\n"
+"                      (Standard none).\n"
 
 msgid ""
 "--out-path=PATH       PATH for output file (default use input file's path).\n"
@@ -470,7 +473,7 @@ msgstr ""
 "                      (Standard: Nein).\n"
 
 msgid "--maximize-window     Force window to be maximized.\n"
-msgstr ""
+msgstr "--maximize-window     Maximierung des Fensters erzwingen\n"
 
 msgid ""
 "--silent              Do not display any messages during batch conversion.\n"
@@ -478,7 +481,6 @@ msgstr ""
 "--silent              Während der Stapelkonvertierung keine Nachrichten\n"
 "                      anzeigen.\n"
 
-#, fuzzy
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
 "Then, if an ID file is specified, its setting are read. Next, the setting "
@@ -489,13 +491,13 @@ msgid ""
 "second\n"
 "group of options is NOT read from the resource file.\n"
 msgstr ""
-"UFRaw liest zuerst die Einstellung aus der Einstellungsdatei\n"
-"$HOME/.ufrawrc. Dann, wenn eine ID-Datei angegeben ist, wird deren\n"
-"Einstellung gelesen. Als nächstes wird die Einstellung aus der\n"
-"--conf-Option genommen, wobei die Eingabe-/Ausgabedateinamen in der\n"
-"ID-Datei ignoriert werden. Als letztes werden die Optionen von der\n"
-"Befehlszeile gesetzt. Im Stapelverarbeitungsmodus wird die zweite Gruppe\n"
-"von Optionen NICHT aus der Quelldatei gelesen.\n"
+"UFRaw liest zuerst die Einstellung aus der Ressourcen-Datei $HOME/.ufrawrc.\n"
+"Falls eine ID-Datei angegeben ist, wird dann deren Einstellung gelesen.\n"
+"Als nächstes wird die Einstellung aus der Option --conf genommen, wobei die\n"
+"Eingabe-/Ausgabedateinamen in der ID-Datei ignoriert werden. Als letztes\n"
+"werden die Optionen von der Befehlszeile gesetzt. Im\n"
+"Stapelverarbeitungsmodus wird die zweite Gruppe von Optionen NICHT aus der\n"
+"Ressourcen-Datei gelesen.\n"
 
 msgid ""
 "Last, but not least, --version displays the version number and compilation\n"
@@ -548,9 +550,9 @@ msgstr "»%s« ist keine gültige Interpolationsoption."
 msgid "'%s' is not a valid grayscale option."
 msgstr "»%s« ist keine gültige Graustufenoption."
 
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not a valid grayscale-mixer option."
-msgstr "»%s« ist keine gültige Graustufenoption."
+msgstr "»%s« ist keine gültige Graustufenmixeroption."
 
 #, c-format
 msgid "'%s' is not a valid restore option."
@@ -709,9 +711,9 @@ msgid ""
 "Mount:\t\t%s\n"
 "Crop factor:\t%.1f"
 msgstr ""
-"Hersteller:\t%s\n"
+"Hersteller:\t\t%s\n"
 "Modell:\t\t%s%s\n"
-"Eingehängt:\t%s\n"
+"Eingehängt:\t\t%s\n"
 "Schnittfaktor:\t%.1f"
 
 #, c-format
@@ -724,12 +726,12 @@ msgid ""
 "Type:\t\t%s\n"
 "Mounts:\t\t%s"
 msgstr ""
-"Hersteller:\t\t\t%s\n"
-"Modell:\t\t\t\t%s\n"
+"Hersteller:\t\t%s\n"
+"Modell:\t\t%s\n"
 "Brennweitenbereich:\t%s\n"
-"Blende:\t\t\t\t%s\n"
-"Schnittfaktor:\t\t\t%.1f\n"
-"Typ:\t\t\t\t\t%s\n"
+"Blende:\t\t%s\n"
+"Schnittfaktor:\t%.1f\n"
+"Typ:\t\t%s\n"
 "Einhängungen:\t\t%s"
 
 msgid "Focal"
@@ -747,9 +749,8 @@ msgstr "F-Nummer (Blende)"
 msgid "Distance"
 msgstr "Entfernung"
 
-#, fuzzy
 msgid "Distance to subject in meters"
-msgstr "Entfernung zum Objekt"
+msgstr "Entfernung zum Objekt in Meter"
 
 #. Add the model combobox
 msgid "Model:"
@@ -795,7 +796,7 @@ msgid "Choose camera from complete list"
 msgstr "Kamera aus kompletter Liste auswählen"
 
 msgid "Reset all lens correction settings"
-msgstr ""
+msgstr "Alle Linsenjorrektureinstellungen zurücksetzen"
 
 #. Lens selector
 msgid "Lens"
@@ -812,7 +813,7 @@ msgid "Choose lens from list of possible variants"
 msgstr "Linse aus einer Liste mit möglichen Varianten auswählen"
 
 msgid "Automatically find lens and set lens corrections"
-msgstr ""
+msgstr "Linse automatisch suchen und Linsenkorrektur einstellen"
 
 msgid "Lateral chromatic aberration"
 msgstr "Seitliche farbliche Aberration"
@@ -889,19 +890,17 @@ msgstr "Größe %dx%d, Zoom %2.f%%"
 msgid "size %dx%d, scale 1/%d"
 msgstr "Größe %dx%d, Skala 1/%d"
 
-#, fuzzy
 msgid "Wavelet denoising"
-msgstr "Schwelle für Wavelet-Rauschunterdrückung"
+msgstr "Wavelet-Rauschunterdrückung"
 
 msgid "Despeckling"
-msgstr ""
+msgstr "Störungsentfernung"
 
-#, fuzzy
 msgid "Interpolating"
-msgstr "Keine Interpolation"
+msgstr "Interpolation"
 
 msgid "Rendering"
-msgstr ""
+msgstr "Rendering"
 
 msgid "Loading preview"
 msgstr "Vorschau laden"
@@ -913,15 +912,14 @@ msgstr "Bild speichern"
 msgid "Black point: %0.3lf"
 msgstr "Schwarzpunkt: %0.3lf"
 
-#, fuzzy
 msgid "No more room for new lightness adjustments."
-msgstr "Kein Platz mehr für neue Kurven."
+msgstr "Kein Platz mehr für neue Helligkeitsanpassungen"
 
 msgid "Aspect ratio locked, click to unlock"
-msgstr ""
+msgstr "Seitenverhältnis gesperrt, klicken zum Entsperren"
 
 msgid "Aspect ratio unlocked, click to lock"
-msgstr ""
+msgstr "Seitenverhältnis entsperrt, klicken zum Sperren"
 
 msgid "Load dark frame"
 msgstr "Dunkelbild laden"
@@ -1052,16 +1050,20 @@ msgid "Logarithmic"
 msgstr "Logarithmisch"
 
 msgid "Hot pixels: "
-msgstr ""
+msgstr "Hotpixel (Bildpunkte mit nicht proportionalem Lichteinfall): "
 
 msgid "mark"
-msgstr ""
+msgstr "markieren"
 
 msgid "Hot pixel sensitivity"
 msgstr ""
+"Empfindlichkeit für Hotpixel (Bildpunkte mit nicht proportionalem "
+"Lichteinfall)"
 
 msgid "Reset hot pixel sensitivity"
 msgstr ""
+"Empfindlichkeit für Hotpixel (Bildpunkte mit nicht proportionalem "
+"Lichteinfall) zurücksetzen"
 
 msgid "RGB histogram"
 msgstr "RGB-Histogramm"
@@ -1096,11 +1098,8 @@ msgstr "Unterbelichtet:"
 msgid "White Balance"
 msgstr "Weißabgleich"
 
-#, fuzzy
 msgid "Cannot use camera white balance."
-msgstr ""
-"Der Weißabgleich der Kamera kann nicht verwendet werden, es wird zum "
-"automatischen Weißabgleich zurückgekehrt."
+msgstr "Kamera kann nicht mit Weißabgleich verwandt werden."
 
 msgid ""
 "There are no white balance presets for your camera model.\n"
@@ -1176,19 +1175,14 @@ msgstr "Dunkelbild:"
 msgid "Reset dark frame"
 msgstr "Dunkelbild zurücksetzen"
 
-#, fuzzy
 msgid "Reset adjustment"
-msgstr "Globale Kontrastanpassung"
+msgstr "Anpassung zurücksetzen"
 
-#, fuzzy
 msgid "Select a spot on the preview image to choose hue"
-msgstr ""
-"Wählen Sie einen Punkt auf dem Vorschaubild, um den Weißabgleichspunkt "
-"anzuwenden."
+msgstr "Wählen Sie einen Punkt auf dem Vorschaubild, um Farbton auszuwählen "
 
-#, fuzzy
 msgid "Remove adjustment"
-msgstr "Globale Kontrastanpassung"
+msgstr "Anpassung entfernen"
 
 msgid "Grayscale Mode:"
 msgstr "Graustufenmodus:"
@@ -1204,27 +1198,35 @@ msgid ""
 "Despeckling is off when window size or passes equals zero. When on then "
 "window size cannot be smaller than the number of passes."
 msgstr ""
+"Störungsentfernung ist hauptsächlich nützlich, wenn eine hohe ISO-Nummer mit "
+"einem hohen Kanalmultiplikator kombiniert wird: wenn ein Kanal ein sehr "
+"schlechtes Verhältnis zwischen Signal und Rauschen hat. Versuchen Sie die "
+"Fenstergröße, Farbdämpfung und die Zahl der Durchgänge für diesen Kanal auf "
+"50,0,5 zu setzen. Wenn ein Kanal nur Rauschen enthält, dann versuchen Sie "
+"1,0.6,1.\n"
+"Störungsentfernung ist ausgeschaltet, wenn die Fenstergröße oder die "
+"Durchgänge gleich Null sind. Wenn es eingeschaltet ist, kann die Fenstergröße "
+"nicht kleiner sein, als die Anzahl der Durchgänge."
 
 msgid "Update channel parameters together"
-msgstr ""
+msgstr "Kanalparameter zusammen aktualisieren"
 
-#, fuzzy
 msgid "Reset despeckle parameters"
-msgstr "Dunkelbild zurücksetzen"
+msgstr "Störungsentfernungsparameter zurücksetzen"
 
 #. channel to view
 msgid "View channel:"
-msgstr ""
+msgstr "Kanal ansehen:"
 
 #. Parameters
 msgid "Window size:"
-msgstr ""
+msgstr "Fenstergröße:"
 
 msgid "Color decay:"
-msgstr ""
+msgstr "Farbdämpfung:"
 
 msgid "Passes:"
-msgstr ""
+msgstr "Durchgänge:"
 
 msgid "Load base curve"
 msgstr "Basiskurve laden"
@@ -1328,20 +1330,20 @@ msgid "Bottom:"
 msgstr "Fußende:"
 
 msgid "Auto fit crop area"
-msgstr ""
+msgstr "Schnittbereich automatisch anpassen"
 
 msgid "Reset the crop region"
 msgstr "Schnittregion zurücksetzen"
 
 msgid "Aspect ratio:"
-msgstr "Aspektverhältnis:"
+msgstr "Seitenverhältnis:"
 
 msgid ""
 "Crop area aspect ratio.\n"
 "Can be entered in decimal notation (1.273)\n"
 "or as a ratio of two numbers (14:11)"
 msgstr ""
-"Aspektverhältnis der Schnittregion.\n"
+"Seitenverhältnis der Schnittregion.\n"
 "Kann in dezimaler Schreibweise (1,273)\n"
 "oder als Verhältnis von zwei Zahlen (14:11) eingegeben werden."
 
@@ -1357,24 +1359,21 @@ msgstr "Höhe"
 msgid "Orientation:"
 msgstr "Ausrichtung:"
 
-#, fuzzy
 msgid "Rotation"
-msgstr "Sättigung"
+msgstr "Drehung"
 
-#, fuzzy
 msgid "Rotation angle"
-msgstr "Sättigung"
+msgstr "Drehwinkel"
 
-#, fuzzy
 msgid "Reset rotation angle"
-msgstr "Sättigung"
+msgstr "Drehwinkel zurücksetzen"
 
 #. drawLines toggle button
 msgid "Grid lines"
-msgstr ""
+msgstr "Gitterlinien"
 
 msgid "Number of grid lines to overlay in the crop area"
-msgstr ""
+msgstr "Anzahl der Gitterlinien, die über den Ausschneidebereich gelegt werden"
 
 msgid "Path"
 msgstr "Pfad"
@@ -1394,9 +1393,8 @@ msgstr "fortlaufende JPEG-Kodierung"
 msgid "TIFF lossless Compress"
 msgstr "verlustfreie TIFF-Komprimierung"
 
-#, fuzzy
 msgid "Embed EXIF data in output"
-msgstr "EXIF-Datein in JPEG- oder PNG-Dateien einbetten"
+msgstr "EXIF-Daten-Ausgabe einbetten"
 
 msgid "Create ID file "
 msgstr "ID-Datei erzeugen"
@@ -1505,9 +1503,8 @@ msgstr "Farbverwaltung"
 msgid "Correct luminosity, saturation"
 msgstr "Leuchtstärke und Sättigung korrigieren"
 
-#, fuzzy
 msgid "Lightness Adjustments"
-msgstr "Helligkeit"
+msgstr "Helligkeitsanpassungen"
 
 msgid "Crop and rotate"
 msgstr "Schneiden und drehen"
@@ -1568,7 +1565,7 @@ msgid "Error creating temporary file."
 msgstr "Fehler beim Erstellen der temporären Datei."
 
 msgid "Error activating Gimp."
-msgstr "Fehler bei der Aktivierung von Gimp."
+msgstr "Fehler bei der Aktivierung von Gimp"
 
 msgid "Cannot use camera white balance, reverting to auto white balance.\n"
 msgstr ""
