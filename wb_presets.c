@@ -148,7 +148,7 @@ const wb_data wb_preset[] = {
   { "Canon", "PowerShot G12", Cloudy, 0,	{ 1.804323, 1, 2.021615, 0 } },
   { "Canon", "PowerShot G12", Tungsten, 0,	{ 1.310127, 1, 3.170886, 0 } },
   { "Canon", "PowerShot G12", Fluorescent, 0,	{ 1.771139, 1, 2.064262, 0 } },
-  { "Canon", "PowerShot G12", DaylightFluorescent, 0, { 1.806122, 1, 2.032880, 0 } },
+  { "Canon", "PowerShot G12", FluorescentHigh, 0, { 1.806122, 1, 2.032880, 0 } },
   { "Canon", "PowerShot G12", Flash, 0,		{ 2.102157, 1, 1.706016, 0 } },
   { "Canon", "PowerShot G12", Underwater, 0,	{ 1.807650, 1, 2.112568, 0 } },
 
