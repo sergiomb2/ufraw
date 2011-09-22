@@ -6890,7 +6890,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 4504,-1495,115,-3507,9101,4407,-669,1844,6806 } },
     { "SONY SLT-A55", 128, 0,
 	{ 5932,-1492,-411,-4813,12285,2856,-741,1524,6739 } },
-    { "SONY SLT-A77", 128, 0,
+    { "SONY SLT-A", 128, 0,
 	{ 0 } }
   };
   double cam_xyz[4][3];
@@ -7704,6 +7704,8 @@ canon_cr2:
     else width -= 8;
   } else if (!strncmp(model,"D300",4)) {
     width -= 32;
+  } else if (!strncmp(model,"1 ",2)) {
+    height -= 2;
   } else if (!strncmp(model,"COOLPIX P",9)) {
     load_flags = 24;
     filters = 0x94949494;
@@ -8194,6 +8196,8 @@ wb550:
   } else if (!strcmp(model,"DSLR-A350")) {
     height -= 4;
   } else if (!strcmp(model,"SLT-A77V") ||
+	     !strncmp(model,"SLT-A65", 7) ||
+	     !strcmp(model,"NEX-7") ||
 	     !strcmp(model,"NEX-5N")) {
     width -= 32;
   } else if (!strcmp(model,"PIXL")) {
