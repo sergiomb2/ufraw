@@ -8218,6 +8218,8 @@ wb550:
     filters = 0x61616161;
   } else if (!strcmp(model,"DSLR-A350")) {
     height -= 4;
+  } else if (!strcmp(model,"NEX-5N")) {
+    width -= 24;
   } else if (!strcmp(model,"PIXL")) {
     height -= top_margin = 4;
     width -= left_margin = 32;
