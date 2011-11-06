@@ -119,6 +119,7 @@ int main(int argc, char **argv)
         }
         status = ufraw_config(uf, &rc, &conf, &cmd);
         if (status == UFRAW_ERROR) {
+            ufraw_close_darkframe(uf->conf);
             ufraw_close(uf);
             g_free(uf);
             gdk_threads_leave();

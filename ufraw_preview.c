@@ -2521,10 +2521,7 @@ static void reset_darkframe(GtkWidget *widget, void *unused)
     if (data->FreezeDialog) return;
     if (CFG->darkframe == NULL) return;
 
-    ufraw_close(CFG->darkframe);
-    g_free(CFG->darkframe);
-    CFG->darkframe = NULL;
-    CFG->darkframeFile[0] = '\0';
+    ufraw_close_darkframe(CFG);
 
     set_darkframe(data);
     (void)unused;
@@ -5904,6 +5901,8 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
         strcpy(RC->outputFilename, "");
     }
     // UFRAW_RESPONSE_DELETE requires no special action
+    if (rc->darkframe != data->UF->conf->darkframe)
+        ufraw_close_darkframe(data->UF->conf);
     ufraw_close(data->UF);
     g_free(data->SpotLabels);
     g_free(data->AvrLabels);

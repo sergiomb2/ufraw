@@ -379,6 +379,7 @@ extern "C" {
                                       gboolean bufferok);
     ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
             UFRawPhase phase);
+    void ufraw_close_darkframe(conf_data *uf);
     void ufraw_close(ufraw_data *uf);
     void ufraw_flip_orientation(ufraw_data *uf, int flip);
     void ufraw_flip_image(ufraw_data *uf, int flip);

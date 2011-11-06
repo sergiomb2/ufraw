@@ -283,7 +283,7 @@ int ufraw_load_darkframe(ufraw_data *uf)
         if (strcmp(uf->conf->darkframeFile, uf->conf->darkframe->filename) == 0)
             return UFRAW_SUCCESS;
         // Otherwise we need to close the previous darkframe
-        ufraw_close(uf->conf->darkframe);
+        ufraw_close_darkframe(uf->conf);
     }
     ufraw_data *dark = uf->conf->darkframe =
                            ufraw_open(uf->conf->darkframeFile);
@@ -694,6 +694,17 @@ int ufraw_load_raw(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
+/* Free any darkframe associated with conf */
+void ufraw_close_darkframe(conf_data *conf)
+{
+    if (conf && conf->darkframe != NULL) {
+        ufraw_close(conf->darkframe);
+        g_free(conf->darkframe);
+        conf->darkframe = NULL;
+        conf->darkframeFile[0] = '\0';
+    }
+}
+
 void ufraw_close(ufraw_data *uf)
 {
     dcraw_close(uf->raw);
@@ -713,10 +724,6 @@ void ufraw_close(ufraw_data *uf)
     lf_modifier_destroy(uf->TCAmodifier);
     lf_modifier_destroy(uf->modifier);
 #endif
-    if (uf->conf->darkframe != NULL) {
-        ufraw_close(uf->conf->darkframe);
-        g_free(uf->conf->darkframe);
-    }
     ufobject_delete(uf->conf->ufobject);
     g_free(uf->conf);
     ufraw_message_reset(uf);

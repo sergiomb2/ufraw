@@ -75,12 +75,14 @@ int main(int argc, char **argv)
             uf->conf->createID = also_id;
         if (status == UFRAW_ERROR) {
             exitCode = 1;
+            ufraw_close_darkframe(uf->conf);
             ufraw_close(uf);
             g_free(uf);
             exit(1);
         }
         if (ufraw_load_raw(uf) != UFRAW_SUCCESS) {
             exitCode = 1;
+            ufraw_close_darkframe(uf->conf);
             ufraw_close(uf);
             g_free(uf);
             continue;
@@ -99,6 +101,7 @@ int main(int argc, char **argv)
         } else {
             exitCode = 1;
         }
+        ufraw_close_darkframe(uf->conf);
         ufraw_close(uf);
         g_free(uf);
     }

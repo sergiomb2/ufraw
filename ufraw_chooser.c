@@ -151,6 +151,7 @@ void ufraw_chooser(conf_data *rc, conf_data *conf, conf_data *cmd,
             }
             int status = ufraw_config(uf, rc, conf, cmd);
             if (status == UFRAW_ERROR) {
+                ufraw_close_darkframe(uf->conf);
                 ufraw_close(uf);
             } else {
                 ufraw_preview(uf, rc, FALSE, NULL);
@@ -160,6 +161,9 @@ void ufraw_chooser(conf_data *rc, conf_data *conf, conf_data *cmd,
         }
         g_slist_free(saveList);
     }
+    if (rc->darkframe != NULL)
+        ufraw_close_darkframe(rc);
+
     gtk_widget_destroy(GTK_WIDGET(fileChooser));
     ufraw_message(UFRAW_SET_PARENT, NULL);
 }

@@ -272,6 +272,7 @@ void run(GIMP_CONST gchar *name,
         if (sendToGimpMode) gimp_progress_update(0.3);
         ufraw_save_gimp_image(uf, NULL);
         if (sendToGimpMode) gimp_progress_update(1.0);
+        ufraw_close_darkframe(uf->conf);
         ufraw_close(uf);
         /* To make sure we don't delete the raw file by mistake we check
          * that the file is really an ID file. */
