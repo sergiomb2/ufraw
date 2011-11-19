@@ -232,6 +232,11 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
             != exifData.end())
         exifData.erase(pos);
 
+    // DCRaw handles TIFF files as raw if DNGVersion is found.
+    if ((pos = exifData.findKey(Exiv2::ExifKey("Exif.Image.DNGVersion")))
+            != exifData.end())
+        exifData.erase(pos);
+
     // DNG private data
     if ((pos = exifData.findKey(Exiv2::ExifKey("Exif.Image.DNGPrivateData")))
             != exifData.end())
