@@ -89,6 +89,7 @@ const conf_data conf_default = {
     ahd_interpolation, 0, /* interpolation, smoothing */
     "", NULL, /* darkframeFile, darkframe */
     -1, -1, -1, -1, /* Crop X1,Y1,X2,Y2 */
+    0.0, /* aspectRatio */
     -1, /* orientation */
     0, /* rotationAngle */
     0, /* lightness adjustment count */
@@ -746,6 +747,7 @@ gsize len, gpointer user, GError **error)
     if (!strcmp("Orientation", element)) sscanf(temp, "%d", &c->orientation);
     if (!strcmp("Crop", element)) sscanf(temp, "%d %d %d %d",
         &c->CropX1, &c->CropY1, &c->CropX2, &c->CropY2);
+    if (!strcmp("AspectRatio", element)) sscanf(temp, "%lf", &c->aspectRatio);
     if (!strcmp("Rotation", element)) sscanf(temp, "%lf", &c->rotationAngle);
     if (!strcmp("Shrink", element)) sscanf(temp, "%d", &c->shrink);
     if (!strcmp("Size", element)) sscanf(temp, "%d", &c->size);
@@ -1259,6 +1261,8 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
                             c->exifSource);
         buf = uf_markup_buf(buf, "<Crop>%d %d %d %d</Crop>\n",
                             c->CropX1, c->CropY1, c->CropX2, c->CropY2);
+        if (c->aspectRatio != 0.0)
+            buf = uf_markup_buf(buf, "<AspectRatio>%lf</AspectRatio>\n", c->aspectRatio);
         buf = uf_markup_buf(buf, "<Rotation>%lf</Rotation>\n", c->rotationAngle);
         char *log = ufraw_message(UFRAW_GET_LOG, NULL);
         if (log != NULL) {
@@ -1431,6 +1435,7 @@ void conf_copy_transform(conf_data *dst, const conf_data *src)
     dst->CropY1 = src->CropY1;
     dst->CropX2 = src->CropX2;
     dst->CropY2 = src->CropY2;
+    dst->aspectRatio = src->aspectRatio;
     dst->rotationAngle = src->rotationAngle;
 }
 
@@ -1474,6 +1479,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     if (cmd->embeddedImage != -1) conf->embeddedImage = cmd->embeddedImage;
     if (cmd->rotate != -1) conf->rotate = cmd->rotate;
     if (cmd->rotationAngle != NULLF) conf->rotationAngle = cmd->rotationAngle;
+    if (cmd->autoCrop != -1) conf->autoCrop = cmd->autoCrop;
     if (cmd->CropX1 != -1 || cmd->CropX2 != -1 ||
             cmd->CropY1 != -1 || cmd->CropY2 != -1)
         conf->autoCrop = disabled_state;
@@ -1481,6 +1487,7 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     if (cmd->CropY1 != -1) conf->CropY1 = cmd->CropY1;
     if (cmd->CropX2 != -1) conf->CropX2 = cmd->CropX2;
     if (cmd->CropY2 != -1) conf->CropY2 = cmd->CropY2;
+    if (cmd->aspectRatio != 0.0) conf->aspectRatio = cmd->aspectRatio;
     if (cmd->silent != -1) conf->silent = cmd->silent;
     if (cmd->compression != NULLF) conf->compression = cmd->compression;
     if (cmd->autoExposure) {
@@ -1655,6 +1662,8 @@ char *helpText[] = {
     N_("--crop-(left|right|top|bottom)=PIXELS\n"
     "                      Crop the output to the given pixel range, relative to the\n"
     "                      raw image after rotation but before any scaling.\n"),
+    N_("--auto-crop           Crop the output automatically.\n"),
+    N_("--aspect-ratio X:Y    Set crop area aspect ratio.\n"),
 #ifdef HAVE_LENSFUN
     N_("--lensfun=none|auto   Do not apply lens correction or try to apply\n"
     "                      correction by auto-detecting the lens (default none).\n"),
@@ -1781,6 +1790,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         { "crop-top", 1, 0, '2'},
         { "crop-right", 1, 0, '3'},
         { "crop-bottom", 1, 0, '4'},
+        { "aspect-ratio", 1, 0, 'P'},
         /* Binary flags that don't have a value are here at the end */
         { "zip", 0, 0, 'z'},
         { "nozip", 0, 0, 'Z'},
@@ -1794,6 +1804,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         { "help", 0, 0, 'h'},
         { "version", 0, 0, 'v'},
         { "batch", 0, 0, 'b'},
+        { "auto-crop", 0, 0, '0'},
         { 0, 0, 0, 0}
     };
     UFObject *tmpImage = ufraw_image_new();
@@ -1818,7 +1829,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         &outTypeName, &cmd->profile[1][0].BitDepth, &rotateName,
         &createIDName, &outPath, &output, &darkframeFile,
         &restoreName, &clipName, &conf,
-        &cmd->CropX1, &cmd->CropY1, &cmd->CropX2, &cmd->CropY2
+        &cmd->CropX1, &cmd->CropY1, &cmd->CropX2, &cmd->CropY2,
+        &cmd->aspectRatio
     };
     cmd->autoExposure = disabled_state;
     cmd->autoBlack = disabled_state;
@@ -1847,6 +1859,8 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->CropY1 = -1;
     cmd->CropX2 = -1;
     cmd->CropY2 = -1;
+    cmd->autoCrop = -1;
+    cmd->aspectRatio = 0.0;
     cmd->rotate = -1;
     cmd->smoothing = -1;
 
@@ -1982,6 +1996,25 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
                 ufraw_message(UFRAW_ERROR,
                               _("--batch is obsolete. Use ufraw-batch instead."));
                 return -1;
+            case '0':
+                cmd->autoCrop = enabled_state;
+                break;
+            case 'P': {
+                double num = 0.0, denom = 1.0;
+                locale = uf_set_locale_C();
+                if (sscanf(optarg, "%lf:%lf", &num, &denom) < 2 &&
+                        sscanf(optarg, "%lf/%lf", &num, &denom) < 2 &&
+                        sscanf(optarg, "%lf", &num) == 0) {
+                    ufraw_message(UFRAW_ERROR,
+                                  _("'%s' is not a valid value for the --%s option."),
+                                  optarg, options[index].name);
+                    uf_reset_locale(locale);
+                    return -1;
+                }
+                *(double *)optPointer[index] = num / denom;
+                uf_reset_locale(locale);
+            }
+            break;
             case '?': /* invalid option. Warning printed by getopt() */
                 return -1;
             default:

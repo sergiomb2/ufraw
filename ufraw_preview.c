@@ -932,9 +932,9 @@ static gboolean render_preview_now(preview_data *data)
         ufraw_invalidate_layer(data->UF, ufraw_transform_phase);
         ufraw_get_image_dimensions(data->UF);
         CFG->CropX1 = (data->UF->rotatedWidth - data->UF->autoCropWidth) / 2;
-        CFG->CropX2 = (data->UF->rotatedWidth + data->UF->autoCropWidth) / 2;
+        CFG->CropX2 = CFG->CropX1 + data->UF->autoCropWidth;
         CFG->CropY1 = (data->UF->rotatedHeight - data->UF->autoCropHeight) / 2;
-        CFG->CropY2 = (data->UF->rotatedHeight + data->UF->autoCropHeight) / 2;
+        CFG->CropY2 = CFG->CropY1 + data->UF->autoCropHeight;
         update_crop_ranges(data, FALSE);
         CFG->autoCrop = enabled_state;
     }
@@ -1578,9 +1578,17 @@ static void update_scales(preview_data *data)
 static void auto_button_toggle(GtkToggleButton *button, gboolean *valuep)
 {
     if (gtk_toggle_button_get_active(button)) {
+        /* the button is inactive most of the time,
+           clicking on it activates it, but
+           we immediately deactivate it here
+           so this function is called again recursively
+           via callback from gtk_toggle_button_set_active */
         *valuep = !*valuep;
         gtk_toggle_button_set_active(button, FALSE);
     }
+    /* if this function is called directly,
+       the condition above is false and we only
+       update the button image */
     if (*valuep)
         gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(
                                  "object-automatic", GTK_ICON_SIZE_BUTTON));
@@ -2071,8 +2079,8 @@ static void crop_reset(GtkWidget *widget, gpointer user_data)
     CFG->CropY1 = 0;
     CFG->CropX2 = data->UF->rotatedWidth;
     CFG->CropY2 = data->UF->rotatedHeight;
-    data->AspectRatio = ((float)data->UF->rotatedWidth) /
-                        data->UF->rotatedHeight;
+    CFG->aspectRatio = ((float)data->UF->rotatedWidth) /
+                       data->UF->rotatedHeight;
 
     refresh_aspect(data);
     set_new_aspect(data);
@@ -2221,20 +2229,17 @@ static const struct {
 
 static void refresh_aspect(preview_data *data)
 {
-    int dy = CFG->CropY2 - CFG->CropY1;
-    data->AspectRatio = dy ? ((CFG->CropX2 - CFG->CropX1) / (float)dy) : 1.0;
-
     // Look through a predefined list of aspect ratios
     size_t i;
     for (i = 0; i < sizeof(predef_aspects) / sizeof(predef_aspects[0]); i++)
-        if (data->AspectRatio >= predef_aspects[i].val * 0.999 &&
-                data->AspectRatio <= predef_aspects[i].val * 1.001) {
+        if (CFG->aspectRatio >= predef_aspects[i].val * 0.999 &&
+                CFG->aspectRatio <= predef_aspects[i].val * 1.001) {
             data->FreezeDialog++;
             gtk_entry_set_text(data->AspectEntry, predef_aspects[i].text);
             data->FreezeDialog--;
             return;
         }
-    char *text = g_strdup_printf("%.4g", data->AspectRatio);
+    char *text = g_strdup_printf("%.4g", CFG->aspectRatio);
     data->FreezeDialog++;
     gtk_entry_set_text(data->AspectEntry, text);
     data->FreezeDialog--;
@@ -2262,13 +2267,16 @@ static void fix_crop_aspect(preview_data *data, CursorType cursor,
 
     if (!CFG->LockAspect) {
         update_crop_ranges(data, render);
+
+        int dy = CFG->CropY2 - CFG->CropY1;
+        CFG->aspectRatio = dy ? ((CFG->CropX2 - CFG->CropX1) / (float)dy) : 1.0;
         refresh_aspect(data);
         return;
     }
-    if (data->AspectRatio == 0)
+    if (CFG->aspectRatio == 0)
         aspect = ((double)data->UF->rotatedWidth) / data->UF->rotatedHeight;
     else
-        aspect = data->AspectRatio;
+        aspect = CFG->aspectRatio;
 
     switch (cursor) {
         case left_cursor:
@@ -2391,27 +2399,27 @@ static void set_new_aspect(preview_data *data)
      */
     dx = CFG->CropX2 - cx;
     dy = CFG->CropY2 - cy;
-    if (dx / dy > data->AspectRatio)
-        dy = dx / data->AspectRatio;
+    if (dx / dy > CFG->aspectRatio)
+        dy = dx / CFG->aspectRatio;
     else
-        dx = dy * data->AspectRatio;
+        dx = dy * CFG->aspectRatio;
 
     if (dx > cx) {
         dx = cx;
-        dy = dx / data->AspectRatio;
+        dy = dx / CFG->aspectRatio;
     }
     if (cx + dx > data->UF->rotatedWidth) {
         dx = data->UF->rotatedWidth - cx;
-        dy = dx / data->AspectRatio;
+        dy = dx / CFG->aspectRatio;
     }
 
     if (dy > cy) {
         dy = cy;
-        dx = dy * data->AspectRatio;
+        dx = dy * CFG->aspectRatio;
     }
     if (cy + dy > data->UF->rotatedHeight) {
         dy = data->UF->rotatedHeight - cy;
-        dx = dy * data->AspectRatio;
+        dx = dy * CFG->aspectRatio;
     }
 
     CFG->CropX1 = floor(cx - dx + 0.5);
@@ -2456,7 +2464,7 @@ static void aspect_changed(GtkWidget *widget, gpointer user_data)
             sscanf(text, "%g", &aspect);
         }
         if (aspect >= 0.1 && aspect <= 10.0)
-            data->AspectRatio = aspect;
+            CFG->aspectRatio = aspect;
     }
     set_new_aspect(data);
     CFG->LockAspect = TRUE;
@@ -2959,14 +2967,16 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
 
     if ((int *)valuep == &CFG->CropX1 || (int *)valuep == &CFG->CropX2 ||
             (int *)valuep == &CFG->CropY1 || (int *)valuep == &CFG->CropY2) {
-        *((int *)valuep) = (int) gtk_adjustment_get_value(adj);
-        CursorType cursor = left_cursor;
-        if ((int *)valuep == &CFG->CropX1) cursor = left_cursor;
-        if ((int *)valuep == &CFG->CropX2) cursor = right_cursor;
-        if ((int *)valuep == &CFG->CropY1) cursor = top_cursor;
-        if ((int *)valuep == &CFG->CropY2) cursor = bottom_cursor;
-        fix_crop_aspect(data, cursor, TRUE);
+        /* values set by update_crop_ranges are ok and
+           do not have to be fixed */
         if (!data->FreezeDialog) {
+            *((int *)valuep) = (int) gtk_adjustment_get_value(adj);
+            CursorType cursor = left_cursor;
+            if ((int *)valuep == &CFG->CropX1) cursor = left_cursor;
+            if ((int *)valuep == &CFG->CropX2) cursor = right_cursor;
+            if ((int *)valuep == &CFG->CropY1) cursor = top_cursor;
+            if ((int *)valuep == &CFG->CropY2) cursor = bottom_cursor;
+            fix_crop_aspect(data, cursor, TRUE);
             CFG->autoCrop = disabled_state;
             auto_button_toggle(data->AutoCropButton, &CFG->autoCrop);
         }
@@ -3056,9 +3066,10 @@ void resize_canvas(preview_data *data)
             double newAspect = (double)data->UF->rotatedWidth /
                                data->UF->rotatedHeight;
             // Allow 1/aspect switch even if aspect is locked.
-            if (fabs(data->AspectRatio - 1 / newAspect) < 0.0001) {
+            if (fabs(CFG->aspectRatio - 1 / newAspect) < 0.0001) {
                 CFG->CropX2 = data->UF->rotatedWidth;
                 CFG->CropY2 = data->UF->rotatedHeight;
+                CFG->aspectRatio = newAspect;
                 refresh_aspect(data);
             }
         } else { // Keep full crop
@@ -5002,13 +5013,12 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
     gtk_widget_set_tooltip_text(GTK_WIDGET(data->AutoCropButton),
                                 _("Auto fit crop area"));
     auto_button_toggle(data->AutoCropButton, &CFG->autoCrop);
-    gtk_toggle_button_set_active(data->AutoCropButton, CFG->autoCrop);
     g_signal_connect(G_OBJECT(data->AutoCropButton), "toggled",
                      G_CALLBACK(auto_button_toggled), &CFG->autoCrop);
 
     // Crop reset button:
     button = reset_button(
-                 _("Reset the crop region"), G_CALLBACK(crop_reset), NULL);
+                 _("Reset the crop area"), G_CALLBACK(crop_reset), NULL);
     gtk_table_attach(table, button, 5, 6, 1, 2, 0, 0, 0, 0);
 
     /* Aspect ratio controls */
@@ -5045,6 +5055,12 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
     lock_aspect(data->LockAspectButton, &CFG->LockAspect);
 
     /* Get initial aspect ratio */
+    if (CFG->aspectRatio != 0.0)
+        set_new_aspect(data);
+    else {
+        int dy = CFG->CropY2 - CFG->CropY1;
+        CFG->aspectRatio = dy ? ((CFG->CropX2 - CFG->CropX1) / (float)dy) : 1.0;
+    }
     refresh_aspect(data);
 
     /* Size/shrink controls */
@@ -5433,7 +5449,6 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     data->DrawnCropY1 = 0;
     data->DrawnCropY2 = 99999;
 
-    data->AspectRatio = 0.0;
     data->BlinkTimer = 0;
     data->DrawCropID = 0;
     for (i = 0; i < num_buttons; i++) {

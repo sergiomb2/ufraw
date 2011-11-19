@@ -254,6 +254,13 @@ int ufraw_write_image(ufraw_data *uf)
         }
     }
     if (uf->conf->createID == only_id) {
+        if (uf->conf->autoCrop && !uf->LoadingID) {
+            ufraw_get_image_dimensions(uf);
+            uf->conf->CropX1 = (uf->rotatedWidth - uf->autoCropWidth) / 2;
+            uf->conf->CropX2 = uf->conf->CropX1 + uf->autoCropWidth;
+            uf->conf->CropY1 = (uf->rotatedHeight - uf->autoCropHeight) / 2;
+            uf->conf->CropY2 = uf->conf->CropY1 + uf->autoCropHeight;
+        }
         int status = conf_save(uf->conf, confFilename, NULL);
         g_free(confFilename);
         return status;

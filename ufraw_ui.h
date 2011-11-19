@@ -159,7 +159,6 @@ typedef struct {
     int HisMinHeight;
     int UnnormalizedOrientation;
     /* Original aspect ratio (0) or actual aspect ratio */
-    float AspectRatio;
     /* The aspect ratio entry field */
     GtkEntry *AspectEntry;
     /* Output base filename (without the path) */

@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-13 06:30+0100\n"
+"POT-Creation-Date: 2011-11-19 06:00+0100\n"
 "PO-Revision-Date: 2010-03-18 08:33+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
@@ -444,6 +444,12 @@ msgstr ""
 "                      Recortar la salida por el lado seleccionado, respecto\n"
 "                      a la imagen raw despues de la rotación, pero antes del "
 "escalado.\n"
+
+msgid "--auto-crop           Crop the output automatically.\n"
+msgstr ""
+
+msgid "--aspect-ratio X:Y    Set crop area aspect ratio.\n"
+msgstr ""
 
 msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
@@ -1331,7 +1337,8 @@ msgstr "Abajo:"
 msgid "Auto fit crop area"
 msgstr "Auto encajar Ã¡rea recortada"
 
-msgid "Reset the crop region"
+#, fuzzy
+msgid "Reset the crop area"
 msgstr "Restaurar la región de recorte"
 
 msgid "Aspect ratio:"

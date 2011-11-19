@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-13 06:30+0100\n"
+"POT-Creation-Date: 2011-11-19 06:00+0100\n"
 "PO-Revision-Date: 2011-09-06 22:21+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Translate text message from GtkImageView:
@@ -440,6 +440,12 @@ msgstr ""
 "                      Die Ausgabe auf den gegebenen Punktebereich\n"
 "                      kürzen, relativ zum raw-Bild nach der Drehung aber\n"
 "                      vor jeglicher Skalierung.\n"
+
+msgid "--auto-crop           Crop the output automatically.\n"
+msgstr ""
+
+msgid "--aspect-ratio X:Y    Set crop area aspect ratio.\n"
+msgstr ""
 
 msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
@@ -1333,7 +1339,8 @@ msgstr "Fußende:"
 msgid "Auto fit crop area"
 msgstr "Schnittbereich automatisch anpassen"
 
-msgid "Reset the crop region"
+#, fuzzy
+msgid "Reset the crop area"
 msgstr "Schnittregion zurücksetzen"
 
 msgid "Aspect ratio:"

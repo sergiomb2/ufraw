@@ -252,6 +252,7 @@ typedef struct {
     char darkframeFile[max_path];
     struct ufraw_struct *darkframe;
     int CropX1, CropY1, CropX2, CropY2;
+    double aspectRatio;
     int orientation;
     double rotationAngle;
     int lightnessAdjustmentCount;

@@ -363,6 +363,35 @@ void ufraw_get_image_dimensions(ufraw_data *uf)
     if (uf->conf->CropY1 < 0) uf->conf->CropY1 = 0;
     if (uf->conf->CropX2 < 0) uf->conf->CropX2 = uf->rotatedWidth;
     if (uf->conf->CropY2 < 0) uf->conf->CropY2 = uf->rotatedHeight;
+
+    if (uf->conf->aspectRatio <= 0) {
+        if (uf->conf->autoCrop)
+            /* preserve the initial aspect ratio - this should be consistent
+               with ufraw_convert_prepare_transform */
+            uf->conf->aspectRatio = ((double)uf->initialWidth) / uf->initialHeight;
+        else
+            /* full rotated image / manually entered crop */
+            uf->conf->aspectRatio = ((double)uf->conf->CropX2 - uf->conf->CropX1)
+                                    / (uf->conf->CropY2 - uf->conf->CropY1);
+    } else {
+        /* given aspectRatio */
+        int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
+        int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
+
+        if (cropWidth != (int)(cropHeight * uf->conf->aspectRatio + 0.5)) {
+            /* aspectRatio does not match the crop area - shrink the area */
+
+            if ((double)cropWidth / cropHeight > uf->conf->aspectRatio) {
+                cropWidth = cropHeight * uf->conf->aspectRatio + 0.5;
+                uf->conf->CropX1 = (uf->conf->CropX1 + uf->conf->CropX2 - cropWidth) / 2;
+                uf->conf->CropX2 = uf->conf->CropX1 + cropWidth;
+            } else {
+                cropHeight = cropWidth / uf->conf->aspectRatio + 0.5;
+                uf->conf->CropY1 = (uf->conf->CropY1 + uf->conf->CropY2 - cropHeight) / 2;
+                uf->conf->CropY2 = uf->conf->CropY1 + cropHeight;
+            }
+        }
+    }
 }
 
 /* Get scaled crop coordinates in final image coordinates */
@@ -815,9 +844,9 @@ int ufraw_convert_image(ufraw_data *uf)
     if (uf->conf->autoCrop && !uf->LoadingID) {
         ufraw_get_image_dimensions(uf);
         uf->conf->CropX1 = (uf->rotatedWidth - uf->autoCropWidth) / 2;
-        uf->conf->CropX2 = (uf->rotatedWidth + uf->autoCropWidth) / 2;
+        uf->conf->CropX2 = uf->conf->CropX1 + uf->autoCropWidth;
         uf->conf->CropY1 = (uf->rotatedHeight - uf->autoCropHeight) / 2;
-        uf->conf->CropY2 = (uf->rotatedHeight + uf->autoCropHeight) / 2;
+        uf->conf->CropY2 = uf->conf->CropY1 + uf->autoCropHeight;
     }
     return UFRAW_SUCCESS;
 }
@@ -1393,6 +1422,12 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
 {
     const int iWidth = uf->initialWidth;
     const int iHeight = uf->initialHeight;
+
+    double aspectRatio = uf->conf->aspectRatio;
+
+    if (aspectRatio == 0)
+        aspectRatio = ((double)iWidth) / iHeight;
+
 #ifdef HAVE_LENSFUN
     ufraw_convert_prepare_transform(uf, iWidth, iHeight, TRUE, 1.0);
     if (uf->conf->rotationAngle == 0 &&
@@ -1412,12 +1447,16 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
         uf->rotatedHeight = iHeight;
         uf->autoCropWidth = iWidth;
         uf->autoCropHeight = iHeight;
+        if ((double)uf->autoCropWidth / uf->autoCropHeight > aspectRatio)
+            uf->autoCropWidth = uf->autoCropHeight * aspectRatio + 0.5;
+        else
+            uf->autoCropHeight = uf->autoCropWidth / aspectRatio + 0.5;
+
         return;
     }
     const double sine = sin(uf->conf->rotationAngle * 2 * M_PI / 360);
     const double cosine = cos(uf->conf->rotationAngle * 2 * M_PI / 360);
-    const float aspectRatio = (float)(uf->conf->CropX2 - uf->conf->CropX1) /
-                              (uf->conf->CropY2 - uf->conf->CropY1);
+
     const float midX = iWidth / 2.0 - 0.5;
     const float midY = iHeight / 2.0 - 0.5;
 #ifdef HAVE_LENSFUN
@@ -1464,14 +1503,17 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
     }
     float scale = sqrt((iWidth - 1) * (iHeight - 1) / area);
     // Do not allow increasing canvas size by more than a factor of 2
-    uf->rotatedWidth = MIN(ceil(2 * maxX) * scale, 2 * iWidth);
-    uf->rotatedHeight = MIN(ceil(2 * maxY) * scale, 2 * iHeight);
-    if (minX / minY > aspectRatio)
-        minX = minY * aspectRatio;
-    else
-        minY = minX / aspectRatio;
+    uf->rotatedWidth = MIN(ceil(2 * maxX + 1.0) * scale, 2 * iWidth);
+    uf->rotatedHeight = MIN(ceil(2 * maxY + 1.0) * scale, 2 * iHeight);
+
     uf->autoCropWidth = MIN(floor(2 * minX) * scale, 2 * iWidth);
     uf->autoCropHeight = MIN(floor(2 * minY) * scale, 2 * iHeight);
+
+    if ((double)uf->autoCropWidth / uf->autoCropHeight > aspectRatio)
+        uf->autoCropWidth = uf->autoCropHeight * aspectRatio + 0.5;
+    else
+        uf->autoCropHeight = uf->autoCropWidth / aspectRatio + 0.5;
+
     int newWidth = uf->rotatedWidth * width / iWidth;
     int newHeight = uf->rotatedHeight * height / iHeight;
     ufraw_image_init(img, newWidth, newHeight, 8);
