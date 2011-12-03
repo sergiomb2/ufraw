@@ -362,7 +362,15 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
     layer = gimp_layer_new(uf->gimpImage, _("Background"), Crop.width,
                            Crop.height, depth == 3 ? GIMP_RGB_IMAGE : U16_RGB_IMAGE,
                            100.0, GIMP_NORMAL_MODE);
+#ifdef UFRAW_CINEPAINT
     gimp_image_add_layer(uf->gimpImage, layer, 0);
+#else
+#if defined(GIMP_CHECK_VERSION) && GIMP_CHECK_VERSION(2,7,2)
+    gimp_image_insert_layer(uf->gimpImage, layer, 0, 0);
+#else
+    gimp_image_add_layer(uf->gimpImage, layer, 0);
+#endif
+#endif
 
     /* Get the drawable and set the pixel region for our load... */
     drawable = gimp_drawable_get(layer);
