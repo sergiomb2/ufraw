@@ -1,5 +1,5 @@
 # German translation for UFRaw.
-# Copyright (C) 2006-2011 Udi Fuchs, Matthias Urlichs and Chris Leick.
+# Copyright (C) 2006-2012 Udi Fuchs, Matthias Urlichs and Chris Leick.
 # This file is distributed under the same license as the ufraw package.
 # Chris Leick <c.leick@vollbio.de>, 2009-2011.
 #
@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-19 06:00+0100\n"
+"POT-Creation-Date: 2012-01-01 16:30+0100\n"
 "PO-Revision-Date: 2011-09-06 22:21+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"

@@ -1,5 +1,5 @@
 # Czech translation for UFRaw package.
-# Copyright (C) 2006-2011 Udi Fuchs.
+# Copyright (C) 2006-2012 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 # Milan Knizek <knizek@volny.cz>, 2007-2011.
 #
@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-19 06:00+0100\n"
+"POT-Creation-Date: 2012-01-01 16:30+0100\n"
 "PO-Revision-Date: 2011-08-12 05:57+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
