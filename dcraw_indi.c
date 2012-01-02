@@ -464,12 +464,13 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
                     brow[2][col][c] = CLIP(t);
                 }
             }
-            if (row > start_row + 1)		/* Write buffer to image */
+            /* Write buffer to image */
+            if ((row > start_row + 1) || (row == height - 2))
                 memcpy(image[(row-2)*width+2], brow[0] + 2, (width - 4)*sizeof * image);
-        }
-        if (row == height - 2) {
-            memcpy(image[(row-2)*width+2], brow[0] + 2, (width - 4)*sizeof * image);
-            memcpy(image[(row-1)*width+2], brow[1] + 2, (width - 4)*sizeof * image);
+            if (row == height - 2) {
+                memcpy(image[(row-1)*width+2], brow[1] + 2, (width - 4)*sizeof * image);
+                break;
+            }
         }
     }
     free(ipalloc);
