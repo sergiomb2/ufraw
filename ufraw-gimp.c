@@ -146,7 +146,9 @@ void run(GIMP_CONST gchar *name,
     conf_data rc;
     int status;
 
+#if !GLIB_CHECK_VERSION(2,31,0)
     g_thread_init(NULL);
+#endif
     gdk_threads_init();
     gdk_threads_enter();
     ufraw_binary = g_path_get_basename(gimp_get_progname());

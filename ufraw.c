@@ -28,7 +28,9 @@ int main(int argc, char **argv)
     int optInd;
     int plugin = 0;
 
+#if !GLIB_CHECK_VERSION(2,31,0)
     g_thread_init(NULL);
+#endif
     gdk_threads_init();
     gdk_threads_enter();
     char *argFile = uf_win32_locale_to_utf8(argv[0]);

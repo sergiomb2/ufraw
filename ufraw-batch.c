@@ -28,7 +28,9 @@ int main(int argc, char **argv)
     int status;
     int exitCode = 0;
 
+#if !GLIB_CHECK_VERSION(2,31,0)
     g_thread_init(NULL);
+#endif
     char *argFile = uf_win32_locale_to_utf8(argv[0]);
     ufraw_binary = g_path_get_basename(argFile);
     uf_init_locale(argFile);
