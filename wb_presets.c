@@ -3110,6 +3110,7 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "E-10", Cloudy, 0,		{ 1.687500, 1, 1.437500, 0 } }, /*6500K*/
   { "OLYMPUS", "E-10", Shade, 0,		{ 1.812500, 1, 1.312500, 0 } }, /*7500K*/
 
+  /* Firmware version 1.4 */
   { "OLYMPUS", "E-3", Daylight, 0,		{ 1.7812, 1, 1.4688, 0 } },
   { "OLYMPUS", "E-3", Shade, 0,			{ 2.1406, 1, 1.1484, 0 } },
   { "OLYMPUS", "E-3", Cloudy, 0,		{ 1.9531, 1, 1.3359, 0 } },
@@ -3118,7 +3119,7 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "E-3", NeutralFluorescent, 0,	{ 1.6641, 1, 1.7734, 0 } },
   { "OLYMPUS", "E-3", DaylightFluorescent, 0,	{ 1.9531, 1, 1.4844, 0 } },
   { "OLYMPUS", "E-3", Flash, 0,			{ 1.9609, 1, 1.3359, 0 } },
-  { "OLYMPUS", "E-3", "2000K", 0,		{ 1, 2.2535, 10.0000, 0 } },
+  { "OLYMPUS", "E-3", "2000K", 0,		{ 1, 2.5600, 11.3600, 0 } },
   { "OLYMPUS", "E-3", "2050K", 0,		{ 1, 2.2069, 9.4655, 0 } },
   { "OLYMPUS", "E-3", "2100K", 0,		{ 1, 2.0000, 8.3281, 0 } },
   { "OLYMPUS", "E-3", "2150K", 0,		{ 1, 1.8286, 7.3857, 0 } },
@@ -3135,7 +3136,6 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "E-3", "2700K", 0,		{ 1, 1.0240, 3.0080, 0 } },
   { "OLYMPUS", "E-3", "2750K", 0,		{ 1.0078, 1, 2.8516, 0 } },
   { "OLYMPUS", "E-3", "2800K", 0,		{ 1.0312, 1, 2.7891, 0 } },
-  { "OLYMPUS", "E-3", "2850K", 0,		{ 1.0859, 1, 2.6406, 0 } },
   { "OLYMPUS", "E-3", "2900K", 0,		{ 1.0859, 1, 2.6406, 0 } },
   { "OLYMPUS", "E-3", "3000K", 0,		{ 1.1328, 1, 2.5156, 0 } },
   { "OLYMPUS", "E-3", "3100K", 0,		{ 1.1875, 1, 2.3906, 0 } },
@@ -3635,6 +3635,7 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "E-P3", Flash, 0,		{ 2.2109, 1, 1.3672, 0 } },
   { "OLYMPUS", "E-P3", Flash, 7,		{ 2.1562, 1, 1.0078, 0 } },
 
+  /* Firmware version 1.2 */
   /* -7/+7 fine tuning is -7/+7 in both amber-blue and green-magenta */
   { "OLYMPUS", "E-PL1", Daylight, -7,		{ 1.687500, 1, 1.742187, 0 } },
   { "OLYMPUS", "E-PL1", Daylight, 0,		{ 1.726562, 1, 1.343750, 0 } },
