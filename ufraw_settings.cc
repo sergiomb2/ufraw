@@ -225,7 +225,7 @@ class ChannelMultipliers : public UFNumberArray
 {
 public:
     ChannelMultipliers() : UFNumberArray(ufChannelMultipliers, 4,
-                                             0.100, 99.000, 1.0, 3, 0.001,
+                                             0.010, 99.000, 1.0, 3, 0.001,
                                              0.001) { };
     void Event(UFEventType type) {
         if (type != uf_value_changed)
