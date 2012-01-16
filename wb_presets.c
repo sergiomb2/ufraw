@@ -4098,6 +4098,17 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K-m", Tungsten, 0,		{ 1.429687, 1, 1.980469, 0 } },
   { "PENTAX", "K-m", Flash, 0,			{ 1.738281, 1, 1.363281, 0 } },
 
+  /* Firmware version 1.11 */
+  { "PENTAX", "K-r", Daylight, 0,		{ 1.8477, 1, 1.3906, 0 } },
+  { "PENTAX", "K-r", Shade, 0,			{ 2.1133, 1, 1.0586, 0 } },
+  { "PENTAX", "K-r", Cloudy, 0,			{ 1.9766, 1, 1.1445, 0 } },
+  { "PENTAX", "K-r", DaylightFluorescent, 0,	{ 2.2617, 1, 1.3203, 0 } },
+  { "PENTAX", "K-r", WhiteFluorescent, 0,	{ 1.9414, 1, 1.4688, 0 } },
+  { "PENTAX", "K-r", CoolWhiteFluorescent, 0,	{ 1.7656, 1, 1.8164, 0 } },
+  { "PENTAX", "K-r", WarmWhiteFluorescent, 0,	{ 1.4766, 1, 2.2734, 0 } },
+  { "PENTAX", "K-r", Tungsten, 0,		{ 1.1016, 1, 2.5391, 0 } },
+  { "PENTAX", "K-r", Flash, 0,			{ 2.0117, 1, 1.1172, 0 } },
+
   { "PENTAX", "K-x", Daylight, 0,		{ 1.8803, 1, 1.4054, 0 } },
   { "PENTAX", "K-x", Shade, 0,			{ 2.2278, 1, 1.0309, 0 } },
   { "PENTAX", "K-x", Cloudy, 0,			{ 2.0077, 1, 1.1853, 0 } },
