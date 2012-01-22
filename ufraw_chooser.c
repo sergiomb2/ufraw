@@ -55,7 +55,8 @@ GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
     gtk_file_filter_set_name(filter, _("Raw images"));
     extList = g_strsplit(raw_ext, ",", 100);
     for (l = extList; *l != NULL; l++)
-        if (strcmp(*l, "jpg") && strcmp(*l, "tif") && strcmp(*l, "ufraw")) {
+        if (strcmp(*l, "jpeg") && strcmp(*l, "jpg") && strcmp(*l, "tif") &&
+                strcmp(*l, "tiff") && strcmp(*l, "ufraw")) {
             snprintf(ext, max_name, "*.%s", *l);
             gtk_file_filter_add_pattern(filter, ext);
             gtk_file_filter_add_pattern(filter, cp = g_ascii_strup(ext, -1));
@@ -95,15 +96,19 @@ GtkFileChooser *ufraw_raw_chooser(conf_data *conf,
     gtk_file_chooser_add_filter(fileChooser, filter);
 
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
-    gtk_file_filter_set_name(filter, _("Raw jpg's"));
+    gtk_file_filter_set_name(filter, _("Raw jpeg's"));
+    gtk_file_filter_add_pattern(filter, "*.jpeg");
     gtk_file_filter_add_pattern(filter, "*.jpg");
+    gtk_file_filter_add_pattern(filter, "*.JPEG");
     gtk_file_filter_add_pattern(filter, "*.JPG");
     gtk_file_chooser_add_filter(fileChooser, filter);
 
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
-    gtk_file_filter_set_name(filter, _("Raw tif's"));
+    gtk_file_filter_set_name(filter, _("Raw tiff's"));
     gtk_file_filter_add_pattern(filter, "*.tif");
+    gtk_file_filter_add_pattern(filter, "*.tiff");
     gtk_file_filter_add_pattern(filter, "*.TIF");
+    gtk_file_filter_add_pattern(filter, "*.TIFF");
     gtk_file_chooser_add_filter(fileChooser, filter);
 
     filter = GTK_FILE_FILTER(gtk_file_filter_new());
