@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-01 16:30+0100\n"
+"POT-Creation-Date: 2012-02-19 12:30+0100\n"
 "PO-Revision-Date: 2010-03-04 21:05+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -66,10 +66,12 @@ msgstr "Imatges en cru"
 msgid "UFRaw ID files"
 msgstr "Fitxers de identificació de UFRaw"
 
-msgid "Raw jpg's"
+#, fuzzy
+msgid "Raw jpeg's"
 msgstr "JPGs en cru"
 
-msgid "Raw tif's"
+#, fuzzy
+msgid "Raw tiff's"
 msgstr "TIFs en cru"
 
 msgid "All files"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-01 16:30+0100\n"
+"POT-Creation-Date: 2012-02-19 12:30+0100\n"
 "PO-Revision-Date: 2009-06-15 00:00+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Tetralet <tetralet@gmail.com>\n"
@@ -62,10 +62,12 @@ msgstr "Raw 影像"
 msgid "UFRaw ID files"
 msgstr "UFRaw ID 檔"
 
-msgid "Raw jpg's"
+#, fuzzy
+msgid "Raw jpeg's"
 msgstr "jpg 格式的 Raw"
 
-msgid "Raw tif's"
+#, fuzzy
+msgid "Raw tiff's"
 msgstr "tif 格式的 Raw"
 
 msgid "All files"

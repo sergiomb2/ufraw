@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-01 16:30+0100\n"
+"POT-Creation-Date: 2012-02-19 12:30+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -63,11 +63,13 @@ msgstr "Råbilder"
 msgid "UFRaw ID files"
 msgstr ""
 
-msgid "Raw jpg's"
-msgstr ""
+#, fuzzy
+msgid "Raw jpeg's"
+msgstr "Råbilder"
 
-msgid "Raw tif's"
-msgstr ""
+#, fuzzy
+msgid "Raw tiff's"
+msgstr "Råbilder"
 
 msgid "All files"
 msgstr "Alla filer"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-01 16:30+0100\n"
+"POT-Creation-Date: 2012-02-19 12:30+0100\n"
 "PO-Revision-Date: 2010-03-18 08:33+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -64,10 +64,12 @@ msgstr "Imágenes RAW"
 msgid "UFRaw ID files"
 msgstr "Archivos ID de UFRaw"
 
-msgid "Raw jpg's"
+#, fuzzy
+msgid "Raw jpeg's"
 msgstr "jpg RAW"
 
-msgid "Raw tif's"
+#, fuzzy
+msgid "Raw tiff's"
 msgstr "tif RAW"
 
 msgid "All files"

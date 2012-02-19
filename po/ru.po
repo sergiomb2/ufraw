@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-01 16:30+0100\n"
+"POT-Creation-Date: 2012-02-19 12:30+0100\n"
 "PO-Revision-Date: 2010-03-21 22:24+0300\n"
 "Last-Translator: Александр Прокудин <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -74,10 +74,12 @@ msgstr "Снимки RAW"
 msgid "UFRaw ID files"
 msgstr "ID-файлы UFRaw"
 
-msgid "Raw jpg's"
+#, fuzzy
+msgid "Raw jpeg's"
 msgstr "Raw JPEG"
 
-msgid "Raw tif's"
+#, fuzzy
+msgid "Raw tiff's"
 msgstr "Raw TIFF"
 
 msgid "All files"
