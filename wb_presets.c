@@ -1265,6 +1265,14 @@ const wb_data wb_preset[] = {
   { "Leica Camera AG", "M8 Digital Camera", Shade, 0, { 2.197754, 1, 1.111084, 0 } },
   { "Leica Camera AG", "M8 Digital Camera", Tungsten, 0, { 1.160034, 1, 2.028381, 0 } },
 
+  { "Leica", "M9 Digital Camera", Tungsten, 0,	{ 1.321288, 1, 2.077024, 0 } },
+  { "Leica", "M9 Digital Camera", Fluorescent, 0, { 1.673827, 1, 1.855043, 0 } },
+  { "Leica", "M9 Digital Camera", DaylightFluorescent, 0, { 2.224852, 1, 1.388000, 0 } },
+  { "Leica", "M9 Digital Camera", Daylight, 0,	{ 2.013733, 1, 1.364869, 0 } },
+  { "Leica", "M9 Digital Camera", Flash, 0,	{ 1.980652, 1, 1.331111, 0 } },
+  { "Leica", "M9 Digital Camera", Cloudy, 0,	{ 2.146728, 1, 1.252197, 0 } },
+  { "Leica", "M9 Digital Camera", Shade, 0,	{ 2.249268, 1, 1.179015, 0 } },
+
   { "Leica Camera AG", "R8 - Digital Back DMR", Incandescent, 0, { 1, 1.109985, 2.430664, 0 } },
   { "Leica Camera AG", "R8 - Digital Back DMR", Fluorescent, 0, { 1.234985, 1, 1.791138, 0 } },
   { "Leica Camera AG", "R8 - Digital Back DMR", Daylight, 0, { 1.459961, 1, 1.184937, 0 } },
