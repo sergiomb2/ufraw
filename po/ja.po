@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-19 12:30+0100\n"
+"POT-Creation-Date: 2012-03-06 16:30+0100\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -66,13 +66,11 @@ msgstr "Raw画像"
 msgid "UFRaw ID files"
 msgstr "UFRaw IDファイル"
 
-#, fuzzy
 msgid "Raw jpeg's"
-msgstr "Raw形式のjpg"
+msgstr "Raw形式のjpeg"
 
-#, fuzzy
 msgid "Raw tiff's"
-msgstr "Raw形式のtif"
+msgstr "Raw形式のtiff"
 
 msgid "All files"
 msgstr "全てのファイル"

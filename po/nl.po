@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw-0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-19 12:30+0100\n"
+"POT-Creation-Date: 2012-03-06 16:30+0100\n"
 "PO-Revision-Date: 2011-08-12 13:37+0200\n"
 "Last-Translator: Simon Oosthoek\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -66,13 +66,11 @@ msgstr "RAW afbeeldingen"
 msgid "UFRaw ID files"
 msgstr "UFRaw ID bestanden"
 
-#, fuzzy
 msgid "Raw jpeg's"
-msgstr "RAW jpg's"
+msgstr "RAW jpeg's"
 
-#, fuzzy
 msgid "Raw tiff's"
-msgstr "RAW tif's"
+msgstr "RAW tiff's"
 
 msgid "All files"
 msgstr "Alle bestanden"

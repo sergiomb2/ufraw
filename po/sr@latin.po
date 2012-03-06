@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-19 12:30+0100\n"
+"POT-Creation-Date: 2012-03-06 16:30+0100\n"
 "PO-Revision-Date: 2010-03-16 12:54+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -66,13 +66,11 @@ msgstr "Raw slike"
 msgid "UFRaw ID files"
 msgstr "NLRaw IB datoteke"
 
-#, fuzzy
 msgid "Raw jpeg's"
-msgstr "Raw jpg"
+msgstr "Raw jpeg"
 
-#, fuzzy
 msgid "Raw tiff's"
-msgstr "Raw tif"
+msgstr "Raw tiff"
 
 msgid "All files"
 msgstr "Sve datoteke"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-19 12:30+0100\n"
+"POT-Creation-Date: 2012-03-06 16:30+0100\n"
 "PO-Revision-Date: 2010-03-05 23:22+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -63,11 +63,9 @@ msgstr "Images brutes (raw)"
 msgid "UFRaw ID files"
 msgstr "Fichiers ID UFRaw"
 
-#, fuzzy
 msgid "Raw jpeg's"
 msgstr ".jpg Raw"
 
-#, fuzzy
 msgid "Raw tiff's"
 msgstr ".tif Raw"
 
