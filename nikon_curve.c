@@ -670,7 +670,7 @@ static double *d3_np_fs(int n, double a[], double b[])
 //  Check.
 //
     for (i = 0; i < n; i++) {
-        if (a[1+i*3] == 0.0E+00) {
+        if (a[1 + i * 3] == 0.0E+00) {
             return NULL;
         }
     }
@@ -682,14 +682,14 @@ static double *d3_np_fs(int n, double a[], double b[])
     }
 
     for (i = 1; i < n; i++) {
-        xmult = a[2+(i-1)*3] / a[1+(i-1)*3];
-        a[1+i*3] = a[1+i*3] - xmult * a[0+i*3];
-        x[i] = x[i] - xmult * x[i-1];
+        xmult = a[2 + (i - 1) * 3] / a[1 + (i - 1) * 3];
+        a[1 + i * 3] = a[1 + i * 3] - xmult * a[0 + i * 3];
+        x[i] = x[i] - xmult * x[i - 1];
     }
 
-    x[n-1] = x[n-1] / a[1+(n-1)*3];
+    x[n - 1] = x[n - 1] / a[1 + (n - 1) * 3];
     for (i = n - 2; 0 <= i; i--) {
-        x[i] = (x[i] - a[0+(i+1)*3] * x[i+1]) / a[1+i*3];
+        x[i] = (x[i] - a[0 + (i + 1) * 3] * x[i + 1]) / a[1 + i * 3];
     }
 
     return x;
@@ -823,10 +823,10 @@ static double *spline_cubic_set(int n, double t[], double y[], int ibcbeg,
     }
 
     for (i = 0; i < n - 1; i++) {
-        if (t[i+1] <= t[i]) {
+        if (t[i + 1] <= t[i]) {
             nc_message(NC_SET_ERROR, "spline_cubic_set() error: "
                        "The knots must be strictly increasing, but "
-                       "T(%u) = %e, T(%u) = %e\n", i, t[i], i + 1, t[i+1]);
+                       "T(%u) = %e, T(%u) = %e\n", i, t[i], i + 1, t[i + 1]);
             return NULL;
         }
     }
@@ -839,16 +839,16 @@ static double *spline_cubic_set(int n, double t[], double y[], int ibcbeg,
 //
     if (ibcbeg == 0) {
         b[0] = 0.0E+00;
-        a[1+0*3] = 1.0E+00;
-        a[0+1*3] = -1.0E+00;
+        a[1 + 0 * 3] = 1.0E+00;
+        a[0 + 1 * 3] = -1.0E+00;
     } else if (ibcbeg == 1) {
         b[0] = (y[1] - y[0]) / (t[1] - t[0]) - ybcbeg;
-        a[1+0*3] = (t[1] - t[0]) / 3.0E+00;
-        a[0+1*3] = (t[1] - t[0]) / 6.0E+00;
+        a[1 + 0 * 3] = (t[1] - t[0]) / 3.0E+00;
+        a[0 + 1 * 3] = (t[1] - t[0]) / 6.0E+00;
     } else if (ibcbeg == 2) {
         b[0] = ybcbeg;
-        a[1+0*3] = 1.0E+00;
-        a[0+1*3] = 0.0E+00;
+        a[1 + 0 * 3] = 1.0E+00;
+        a[0 + 1 * 3] = 0.0E+00;
     } else {
         nc_message(NC_SET_ERROR, "spline_cubic_set() error: "
                    "IBCBEG must be 0, 1 or 2. The input value is %u.\n", ibcbeg);
@@ -860,27 +860,27 @@ static double *spline_cubic_set(int n, double t[], double y[], int ibcbeg,
 //  Set up the intermediate equations.
 //
     for (i = 1; i < n - 1; i++) {
-        b[i] = (y[i+1] - y[i]) / (t[i+1] - t[i])
-               - (y[i] - y[i-1]) / (t[i] - t[i-1]);
-        a[2+(i-1)*3] = (t[i] - t[i-1]) / 6.0E+00;
-        a[1+ i   *3] = (t[i+1] - t[i-1]) / 3.0E+00;
-        a[0+(i+1)*3] = (t[i+1] - t[i]) / 6.0E+00;
+        b[i] = (y[i + 1] - y[i]) / (t[i + 1] - t[i])
+               - (y[i] - y[i - 1]) / (t[i] - t[i - 1]);
+        a[2 + (i - 1) * 3] = (t[i] - t[i - 1]) / 6.0E+00;
+        a[1 + i   * 3] = (t[i + 1] - t[i - 1]) / 3.0E+00;
+        a[0 + (i + 1) * 3] = (t[i + 1] - t[i]) / 6.0E+00;
     }
 //
 //  Set up the last equation.
 //
     if (ibcend == 0) {
-        b[n-1] = 0.0E+00;
-        a[2+(n-2)*3] = -1.0E+00;
-        a[1+(n-1)*3] = 1.0E+00;
+        b[n - 1] = 0.0E+00;
+        a[2 + (n - 2) * 3] = -1.0E+00;
+        a[1 + (n - 1) * 3] = 1.0E+00;
     } else if (ibcend == 1) {
-        b[n-1] = ybcend - (y[n-1] - y[n-2]) / (t[n-1] - t[n-2]);
-        a[2+(n-2)*3] = (t[n-1] - t[n-2]) / 6.0E+00;
-        a[1+(n-1)*3] = (t[n-1] - t[n-2]) / 3.0E+00;
+        b[n - 1] = ybcend - (y[n - 1] - y[n - 2]) / (t[n - 1] - t[n - 2]);
+        a[2 + (n - 2) * 3] = (t[n - 1] - t[n - 2]) / 6.0E+00;
+        a[1 + (n - 1) * 3] = (t[n - 1] - t[n - 2]) / 3.0E+00;
     } else if (ibcend == 2) {
-        b[n-1] = ybcend;
-        a[2+(n-2)*3] = 0.0E+00;
-        a[1+(n-1)*3] = 1.0E+00;
+        b[n - 1] = ybcend;
+        a[2 + (n - 2) * 3] = 0.0E+00;
+        a[1 + (n - 1) * 3] = 1.0E+00;
     } else {
         nc_message(NC_SET_ERROR, "spline_cubic_set() error: "
                    "IBCEND must be 0, 1 or 2. The input value is %u", ibcend);
@@ -987,7 +987,7 @@ static double spline_cubic_val(int n, double t[], double tval, double y[],
     ival = n - 2;
 
     for (i = 0; i < n - 1; i++) {
-        if (tval < t[i+1]) {
+        if (tval < t[i + 1]) {
             ival = i;
             break;
         }
@@ -997,20 +997,20 @@ static double spline_cubic_val(int n, double t[], double tval, double y[],
 //  coordinate between 0 and 1.
 //
     dt = tval - t[ival];
-    h = t[ival+1] - t[ival];
+    h = t[ival + 1] - t[ival];
 
     yval = y[ival]
-           + dt * ((y[ival+1] - y[ival]) / h
-                   - (ypp[ival+1] / 6.0E+00 + ypp[ival] / 3.0E+00) * h
+           + dt * ((y[ival + 1] - y[ival]) / h
+                   - (ypp[ival + 1] / 6.0E+00 + ypp[ival] / 3.0E+00) * h
                    + dt * (0.5E+00 * ypp[ival]
-                           + dt * ((ypp[ival+1] - ypp[ival]) / (6.0E+00 * h))));
+                           + dt * ((ypp[ival + 1] - ypp[ival]) / (6.0E+00 * h))));
 
-    *ypval = (y[ival+1] - y[ival]) / h
-             - (ypp[ival+1] / 6.0E+00 + ypp[ival] / 3.0E+00) * h
+    *ypval = (y[ival + 1] - y[ival]) / h
+             - (ypp[ival + 1] / 6.0E+00 + ypp[ival] / 3.0E+00) * h
              + dt * (ypp[ival]
-                     + dt * (0.5E+00 * (ypp[ival+1] - ypp[ival]) / h));
+                     + dt * (0.5E+00 * (ypp[ival + 1] - ypp[ival]) / h));
 
-    *yppval = ypp[ival] + dt * (ypp[ival+1] - ypp[ival]) / h;
+    *yppval = ypp[ival] + dt * (ypp[ival + 1] - ypp[ival]) / h;
 
     return yval;
 }
@@ -1277,8 +1277,8 @@ int CurveDataSample(CurveData *curve, CurveSample *sample)
 
     int firstPointX = x[0] * (sample->m_samplingRes - 1);
     int firstPointY = pow(y[0], gamma) * (sample->m_outputRes - 1);
-    int lastPointX = x[n-1] * (sample->m_samplingRes - 1);
-    int lastPointY = pow(y[n-1], gamma) * (sample->m_outputRes - 1);
+    int lastPointX = x[n - 1] * (sample->m_samplingRes - 1);
+    int lastPointY = pow(y[n - 1], gamma) * (sample->m_outputRes - 1);
     int maxY = curve->m_max_y * (sample->m_outputRes - 1);
     int minY = curve->m_min_y * (sample->m_outputRes - 1);
 
@@ -1357,7 +1357,7 @@ void CurveDataSetPoint(CurveData *curve, int point, double x, double y)
 {
     int i;
     double left = curve->m_anchors[0].x;
-    double right = curve->m_anchors[curve->m_numAnchors-1].x;
+    double right = curve->m_anchors[curve->m_numAnchors - 1].x;
     if (point == 0) {
         for (i = 0; i < curve->m_numAnchors; i++)
             curve->m_anchors[i].x = x + (curve->m_anchors[i].x - left) *
@@ -1843,13 +1843,13 @@ static int SaveSampledNikonCurve(CurveSample *sample, char *outfile)
     fprintf(output, "%u %u\n", 0, sample->m_Samples[0]);
     for (i = 1; i < sample->m_samplingRes; i++) {
         // Print sample point only if different than previous one
-        if (sample->m_Samples[i] != sample->m_Samples[i-1]) {
+        if (sample->m_Samples[i] != sample->m_Samples[i - 1]) {
             fprintf(output, "%u %u\n", i, sample->m_Samples[i]);
         }
     }
     // Make sure the last point is also printed
-    if (sample->m_Samples[i-1] == sample->m_Samples[i-2]) {
-        fprintf(output, "%u %u\n", i - 1, sample->m_Samples[i-1]);
+    if (sample->m_Samples[i - 1] == sample->m_Samples[i - 2]) {
+        fprintf(output, "%u %u\n", i - 1, sample->m_Samples[i - 1]);
     }
 
     fclose(output);
@@ -1937,8 +1937,8 @@ static int ConvertNikonCurveData(char *inFileName, char *outFileName,
         strncpy(tmpstr, outFileName, 1023);
         tmpstr[1023] = '\0';
         //if the name has an extension, attempt to remove it
-        if (tmpstr[strlen(tmpstr)-4] == '.') {
-            tmpstr[strlen(tmpstr)-4] = '\0';
+        if (tmpstr[strlen(tmpstr) - 4] == '.') {
+            tmpstr[strlen(tmpstr) - 4] = '\0';
         }
 
         switch (i) {

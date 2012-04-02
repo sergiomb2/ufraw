@@ -245,8 +245,8 @@ static gboolean curveeditor_widget_on_button_press_event(GtkWidget * widget,
     data->selectedPoint = -1;
 
     for (i = 0; i < curve->m_numAnchors; i++) {
-        if (abs(event->x - curve->m_anchors[i].x*(w - 1)) < 7 &&
-                abs(event->y - (1 - pow(curve->m_anchors[i].y, g))*(h - 1)) < 7) {
+        if (abs(event->x - curve->m_anchors[i].x * (w - 1)) < 7 &&
+                abs(event->y - (1 - pow(curve->m_anchors[i].y, g)) * (h - 1)) < 7) {
             data->selectedPoint = i;
             break;
         }
@@ -259,7 +259,7 @@ static gboolean curveeditor_widget_on_button_press_event(GtkWidget * widget,
     if (data->selectedPoint == -1 &&
             !curveeditor_point_exists(curve, -1, x) &&
             x > curve->m_anchors[0].x &&
-            x < curve->m_anchors[curve->m_numAnchors-1].x) {
+            x < curve->m_anchors[curve->m_numAnchors - 1].x) {
         //add point
         int num = curve->m_numAnchors;
 
@@ -352,7 +352,7 @@ static gboolean curveeditor_widget_on_motion_notify_event(GtkWidget *widget,
     if (!curveeditor_point_exists(curve, data->selectedPoint, x) &&
             (data->selectedPoint == 0 || x > curve->m_anchors[0].x) &&
             (data->selectedPoint == curve->m_numAnchors - 1 ||
-             x < curve->m_anchors[curve->m_numAnchors-1].x)) {
+             x < curve->m_anchors[curve->m_numAnchors - 1].x)) {
         CurveDataSetPoint(curve, data->selectedPoint, x, y);
 
         curveeditor_widget_draw(data);
@@ -380,7 +380,7 @@ static gboolean curveeditor_widget_on_key_press_event(GtkWidget *widget,
     if (event->keyval == GDK_Insert) {
         if (data->selectedPoint >= curve->m_numAnchors - 1) return TRUE;
         if (curve->m_numAnchors >= NIKON_MAX_ANCHORS) return TRUE;
-        if ((curve->m_anchors[data->selectedPoint+1].x -
+        if ((curve->m_anchors[data->selectedPoint + 1].x -
                 curve->m_anchors[data->selectedPoint].x) < 2.0 / (w - 1))
             return TRUE;
 
@@ -393,7 +393,7 @@ static gboolean curveeditor_widget_on_key_press_event(GtkWidget *widget,
         //Add the point at the end - it will be sorted later anyway
         curve->m_anchors[curve->m_numAnchors].x =
             (curve->m_anchors[data->selectedPoint].x +
-             curve->m_anchors[data->selectedPoint+1].x) / 2;
+             curve->m_anchors[data->selectedPoint + 1].x) / 2;
         curve->m_anchors[curve->m_numAnchors].y =
             (double)sample->m_Samples[(int)(curve->m_anchors[
                                                 curve->m_numAnchors].x * (w))] / (h - 1);
@@ -487,7 +487,7 @@ static gboolean curveeditor_widget_on_key_press_event(GtkWidget *widget,
             if (x > 1.0) x = 1.0;
             // Update point only if it does not override the next one
             if (data->selectedPoint == curve->m_numAnchors - 1 ||
-                    x < curve->m_anchors[data->selectedPoint+1].x - 0.5 / (w - 1)) {
+                    x < curve->m_anchors[data->selectedPoint + 1].x - 0.5 / (w - 1)) {
                 CurveDataSetPoint(curve, data->selectedPoint, x, y);
             }
         }
@@ -497,7 +497,7 @@ static gboolean curveeditor_widget_on_key_press_event(GtkWidget *widget,
             if (x < 0.0) x = 0.0;
             // Update point only if it does not override the previous one
             if (data->selectedPoint == 0 ||
-                    x > curve->m_anchors[data->selectedPoint-1].x + 0.5 / (w - 1)) {
+                    x > curve->m_anchors[data->selectedPoint - 1].x + 0.5 / (w - 1)) {
                 CurveDataSetPoint(curve, data->selectedPoint, x, y);
             }
         }

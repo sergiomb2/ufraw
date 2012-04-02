@@ -70,7 +70,7 @@ static int ppm_row_writer(ufraw_data *uf, void *volatile out, void *pixbuf,
             pixbuf16[i] = g_htons(pixbuf16[i]);
     }
     for (i = 0; i < height; i++) {
-        if ((int)fwrite(pixbuf + i * width*(bitDepth > 8 ? 6 : 3), rowStride, 1, out) < 1) {
+        if ((int)fwrite(pixbuf + i * width * (bitDepth > 8 ? 6 : 3), rowStride, 1, out) < 1) {
             ufraw_set_error(uf, _("Error creating file '%s'."),
                             uf->conf->outputFilename);
             ufraw_set_error(uf, g_strerror(errno));
@@ -214,13 +214,13 @@ void ufraw_write_image_data(
     for (row0 = 0; row0 < Crop->height; row0 += DEVELOP_BATCH) {
         progress(PROGRESS_SAVE, DEVELOP_BATCH);
 #ifdef _OPENMP
-#pragma omp parallel for default(shared) private(row)
+        #pragma omp parallel for default(shared) private(row)
 #endif
         for (row = 0; row < DEVELOP_BATCH; row++) {
             if (row + row0 >= Crop->height)
                 continue;
             guint8 *rowbuf = &pixbuf8[row * Crop->width * 3 * byteDepth];
-            develop(rowbuf, rawImage[(Crop->y+row+row0)*rowStride+Crop->x],
+            develop(rowbuf, rawImage[(Crop->y + row + row0)*rowStride + Crop->x],
                     uf->developer, bitDepth, Crop->width);
             if (grayscaleMode)
                 grayscale_buffer(rowbuf, Crop->width, bitDepth);
@@ -621,11 +621,11 @@ int ufraw_write_image(ufraw_data *uf)
             progress(PROGRESS_SAVE, 1);
             for (i = 0; i < Crop.width; i++) {
                 offset = row * Crop.width + i;
-                develop_linear(rawImage[(Crop.y+row)*rowStride+Crop.x+i], pixbuf16,
+                develop_linear(rawImage[(Crop.y + row)*rowStride + Crop.x + i], pixbuf16,
                                uf->developer);
                 int c;
                 for (c = 0; c < 3; c++) {
-                    sum[c] += image[c*dim + offset] = pixbuf16[c];
+                    sum[c] += image[c * dim + offset] = pixbuf16[c];
                     max[c] = MAX(pixbuf16[c], max[c]);
                     min[c] = MIN(pixbuf16[c], min[c]);
                 }

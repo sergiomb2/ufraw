@@ -776,11 +776,11 @@ void develop(void *po, guint16 pix[4], developer_data *d, int mode, int count)
     else buf = g_alloca(count * 6);
 
 #ifdef _OPENMP
-#pragma omp parallel				\
+    #pragma omp parallel				\
     if (count > 16)				\
-    default(none)				\
-    shared(d, buf, count, pix)			\
-    private(i, tmppix, c)
+        default(none)				\
+        shared(d, buf, count, pix)			\
+        private(i, tmppix, c)
     {
         int chunk = count / omp_get_num_threads() + 1;
         int offset = chunk * omp_get_thread_num();
@@ -788,7 +788,7 @@ void develop(void *po, guint16 pix[4], developer_data *d, int mode, int count)
         for (i = offset; i < offset + width; i++) {
             develop_linear(pix + i * 4, tmppix, d);
             for (c = 0; c < 3; c++)
-                buf[i*3+c] = d->gammaCurve[tmppix[c]];
+                buf[i * 3 + c] = d->gammaCurve[tmppix[c]];
         }
         if (d->colorTransform != NULL)
             cmsDoTransform(d->colorTransform,
@@ -798,7 +798,7 @@ void develop(void *po, guint16 pix[4], developer_data *d, int mode, int count)
     for (i = 0; i < count; i++) {
         develop_linear(pix + i * 4, tmppix, d);
         for (c = 0; c < 3; c++)
-            buf[i*3+c] = d->gammaCurve[tmppix[c]];
+            buf[i * 3 + c] = d->gammaCurve[tmppix[c]];
     }
     if (d->colorTransform != NULL)
         cmsDoTransform(d->colorTransform, buf, buf, count);

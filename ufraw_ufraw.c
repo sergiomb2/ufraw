@@ -541,8 +541,8 @@ int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd)
     /* POSIX.1c version of ctime_r() */
     ctime_r(&raw->timestamp, uf->conf->timestampText);
 #endif
-    if (uf->conf->timestampText[strlen(uf->conf->timestampText)-1] == '\n')
-        uf->conf->timestampText[strlen(uf->conf->timestampText)-1] = '\0';
+    if (uf->conf->timestampText[strlen(uf->conf->timestampText) - 1] == '\n')
+        uf->conf->timestampText[strlen(uf->conf->timestampText) - 1] = '\0';
 
     uf->conf->timestamp = raw->timestamp;
 
@@ -916,7 +916,7 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
             for (c = 0; c < uf->colors; c++)
                 cur[c] = ((4096 - dy) * ((4096 - dx) * src[0][c] + dx * src[1][c])
                           + dy * ((4096 - dx) * src[img->width][c]
-                                  + (dx) * src[img->width+1][c])) >> 24;
+                                  + (dx) * src[img->width + 1][c])) >> 24;
         }
     }
 }
@@ -951,10 +951,10 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
     delta = rgbMax / (uf->conf->hotpixel + 1.0);
     count = 0;
 #ifdef _OPENMP
-#pragma omp parallel for schedule(static) default(none) \
-  shared(uf,img,width,height,colors,rgbMax,delta) \
-  reduction(+:count) \
-  private(h,p,w,c,t,v,hi,i)
+    #pragma omp parallel for schedule(static) default(none) \
+    shared(uf,img,width,height,colors,rgbMax,delta) \
+reduction(+:count) \
+    private(h,p,w,c,t,v,hi,i)
 #endif
     for (h = 1; h < height - 1; ++h) {
         p = img + 1 + h * width;
@@ -1079,7 +1079,7 @@ void ufraw_despeckle(ufraw_data *uf, UFRawPhase phase)
             if (pass >= passes[c])
                 continue;
 #ifdef _OPENMP
-#pragma omp parallel for default(shared) private(i,base)
+            #pragma omp parallel for default(shared) private(i,base)
 #endif
             for (i = 0; i < img->height; ++i) {
                 base = (guint16 *)img->buffer + i * rowstride;
@@ -1087,7 +1087,7 @@ void ufraw_despeckle(ufraw_data *uf, UFRawPhase phase)
                                      decay[c], colors, c);
             }
 #ifdef _OPENMP
-#pragma omp parallel for default(shared) private(i,base)
+            #pragma omp parallel for default(shared) private(i,base)
 #endif
             for (i = 0; i < img->width; ++i) {
                 base = (guint16 *)img->buffer + i * depth;
@@ -1271,9 +1271,9 @@ static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase)
         mul[i] = (guint64)0x10000 * 0x10000 / uf->developer->rgbWB[i];
     size = img->height * img->width;
 #ifdef _OPENMP
-#pragma omp parallel for schedule(static) default(none) \
-  shared(uf,phase,img,mul,size) \
-  private(i,p16,c,px)
+    #pragma omp parallel for schedule(static) default(none) \
+    shared(uf,phase,img,mul,size) \
+    private(i,p16,c,px)
 #endif
     for (i = 0; i < size; ++i) {
         p16 = (guint16 *)&img->buffer[i * img->depth];
@@ -1296,8 +1296,8 @@ static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
         return;
     int y;
 #ifdef _OPENMP
-#pragma omp parallel for schedule(static) default(none) \
-  shared(uf,img,outimg,area)
+    #pragma omp parallel for schedule(static) default(none) \
+    shared(uf,img,outimg,area)
 #endif
     for (y = area->y; y < area->y + area->height; y++) {
         guint16 *dst = (guint16*)(outimg->buffer + y * outimg->rowstride +
@@ -1331,7 +1331,7 @@ static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
                 dst[c] = ((4096 - dy) * ((4096 - dx) * lf_src[0][c]
                                          + dx * lf_src[1][c])
                           + dy * ((4096 - dx) * lf_src[img->width][c]
-                                  + (dx) * lf_src[img->width+1][c])) >> 24;
+                                  + (dx) * lf_src[img->width + 1][c])) >> 24;
             }
             modcoord -= 2;
             // Green channels are intact
@@ -1536,8 +1536,8 @@ static void ufraw_convert_prepare_buffers(ufraw_data *uf, UFRawPhase phase)
     int width = 0, height = 0;
     if (phase > ufraw_first_phase) {
         ufraw_convert_prepare_buffers(uf, phase - 1);
-        width = uf->Images[phase-1].width;
-        height = uf->Images[phase-1].height;
+        width = uf->Images[phase - 1].width;
+        height = uf->Images[phase - 1].height;
     }
     switch (phase) {
         case ufraw_raw_phase:
@@ -1729,7 +1729,7 @@ ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
     }
 
 #ifdef _OPENMP
-#pragma omp critical
+    #pragma omp critical
 #endif
     // Mark the subarea as valid
     out->valid |= (1 << saidx);
@@ -2276,7 +2276,7 @@ void ufraw_auto_curve(ufraw_data *uf)
         for (c = 0, p = 0; c < 3; c++) p = MAX(p, p16[c]);
         stop += uf->RawCount * pow(decay, i) / norm;
         /* Skip adding point if slope is too big (more than 4) */
-        if (j > 0 && p - curve->m_anchors[j-1].x * 0x10000 < (i + 1 - j) * 0x04000 / steps)
+        if (j > 0 && p - curve->m_anchors[j - 1].x * 0x10000 < (i + 1 - j) * 0x04000 / steps)
             continue;
         curve->m_anchors[j].x = (double)p / 0x10000;
         curve->m_anchors[j].y = (double)i / steps;
@@ -2289,10 +2289,10 @@ void ufraw_auto_curve(ufraw_data *uf)
         /* The last point can be up to twice the height of a linear
          * interpolation of the last two points */
         if (j > 1) {
-            curve->m_anchors[j].y = curve->m_anchors[j-1].y +
-                                    2 * (1.0 - curve->m_anchors[j-1].x) *
-                                    (curve->m_anchors[j-1].y - curve->m_anchors[j-2].y) /
-                                    (curve->m_anchors[j-1].x - curve->m_anchors[j-2].x);
+            curve->m_anchors[j].y = curve->m_anchors[j - 1].y +
+                                    2 * (1.0 - curve->m_anchors[j - 1].x) *
+                                    (curve->m_anchors[j - 1].y - curve->m_anchors[j - 2].y) /
+                                    (curve->m_anchors[j - 1].x - curve->m_anchors[j - 2].x);
             if (curve->m_anchors[j].y > 1.0) curve->m_anchors[j].y = 1.0;
         } else {
             curve->m_anchors[j].y = 1.0;

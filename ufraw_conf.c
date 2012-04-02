@@ -190,8 +190,8 @@ typedef struct {
 } parse_data;
 
 static void conf_parse_start(GMarkupParseContext *context,
-const gchar *element, const gchar **names, const gchar **values,
-gpointer user, GError **error)
+                             const gchar *element, const gchar **names, const gchar **values,
+                             gpointer user, GError **error)
 {
     parse_data *data = (parse_data *)user;
     conf_data *c = data->conf;
@@ -203,30 +203,30 @@ gpointer user, GError **error)
         if (strcmp(names[i], "Index") == 0) {
             if (!ufgroup_has(data->group, element)) {
                 ufraw_message(UFRAW_WARNING,
-                "UFGroup '%s' does not contain UFArray '%s'",
-                ufobject_name(data->group), element);
+                              "UFGroup '%s' does not contain UFArray '%s'",
+                              ufobject_name(data->group), element);
                 return;
             }
             data->group = ufgroup_element(data->group, element);
             if (!ufobject_set_string(data->group, values[i])) {
                 ufraw_message(UFRAW_WARNING,
-                "UFArray set '%s' to string value '%s' failed",
-                ufobject_name(data->group), values[i]);
+                              "UFArray set '%s' to string value '%s' failed",
+                              ufobject_name(data->group), values[i]);
             }
             return;
         } else if (strcmp(names[i], "Label") == 0) {
             // We assume that only UFArray elements have a label.
             if (!ufgroup_has(data->group, values[i])) {
                 ufraw_message(UFRAW_WARNING,
-                "UFArray '%s' does not contain UFObject '%s'",
-                ufobject_name(data->group), element);
+                              "UFArray '%s' does not contain UFObject '%s'",
+                              ufobject_name(data->group), element);
                 return;
             }
             data->group = ufgroup_element(data->group, values[i]);
             if (strcmp(ufobject_name(data->group), element) != 0)
                 g_set_error(error, data->ufrawQuark, UFRAW_ERROR,
-                "Expecting '%s' XML element and not '%s' XML element",
-                ufobject_name(data->group), element);
+                            "Expecting '%s' XML element and not '%s' XML element",
+                            ufobject_name(data->group), element);
             return;
         }
     }
@@ -244,18 +244,18 @@ gpointer user, GError **error)
         if (!strcmp(element, "UFRaw") && !strcmp(*names, "Version")) {
             if (int_value == 3) {
                 ufraw_message(UFRAW_WARNING,
-                _("Trying to convert .ufrawrc from UFRaw-0.4 or earlier"));
+                              _("Trying to convert .ufrawrc from UFRaw-0.4 or earlier"));
                 c->version = int_value;
             }
             /* In version 7 temperature calculation has changed */
             if (int_value == 5) {
                 ufraw_message(UFRAW_WARNING,
-                _("Trying to convert .ufrawrc from UFRaw-0.6 or earlier"));
+                              _("Trying to convert .ufrawrc from UFRaw-0.6 or earlier"));
                 c->version = int_value;
             }
             if (int_value != c->version)
                 g_set_error(error, data->ufrawQuark, UFRAW_RC_VERSION,
-                _("UFRaw version in .ufrawrc is not supported"));
+                            _("UFRaw version in .ufrawrc is not supported"));
         }
         if (!strcmp(*names, "Current") && int_value != 0) {
             if (!strcmp("BaseManualCurve", element))
@@ -295,7 +295,7 @@ gpointer user, GError **error)
                 c->profileIndex[out_profile] = c->profileCount[out_profile];
             if (!strcmp("DisplayProfile", element))
                 c->profileIndex[display_profile] =
-                c->profileCount[display_profile];
+                    c->profileCount[display_profile];
         }
         names++;
         values++;
@@ -345,7 +345,7 @@ gpointer user, GError **error)
 }
 
 static void conf_parse_end(GMarkupParseContext *context, const gchar *element,
-gpointer user, GError **error)
+                           gpointer user, GError **error)
 {
     parse_data *data = (parse_data *)user;
     conf_data *c = data->conf;
@@ -358,10 +358,10 @@ gpointer user, GError **error)
         return;
     }
     if (c->BaseCurveCount <= 0 &&
-    (!strcmp("BaseManualCurve", element) ||
-    !strcmp("BaseLinearCurve", element) ||
-    !strcmp("BaseCustomCurve", element) ||
-    !strcmp("BaseCameraCurve", element))) {
+            (!strcmp("BaseManualCurve", element) ||
+             !strcmp("BaseLinearCurve", element) ||
+             !strcmp("BaseCustomCurve", element) ||
+             !strcmp("BaseCameraCurve", element))) {
         if (c->BaseCurve[-c->BaseCurveCount].m_numAnchors == 0)
             c->BaseCurve[-c->BaseCurveCount].m_numAnchors = 2;
         c->BaseCurveCount = camera_curve + 1;
@@ -372,8 +372,8 @@ gpointer user, GError **error)
         c->BaseCurveCount = - c->BaseCurveCount + 1;
     }
     if (c->curveCount <= 0 &&
-    (!strcmp("ManualCurve", element) ||
-    !strcmp("LinearCurve", element))) {
+            (!strcmp("ManualCurve", element) ||
+             !strcmp("LinearCurve", element))) {
         if (c->curve[-c->curveCount].m_numAnchors == 0)
             c->curve[-c->curveCount].m_numAnchors = 2;
         c->curveCount = linear_curve + 1;
@@ -386,37 +386,37 @@ gpointer user, GError **error)
     // For compatibility with ufraw-0.13 or older
     if (!strcmp("sRGBInputProfile", element))
         c->profileCount[in_profile] =
-        conf_default.profileCount[in_profile];
+            conf_default.profileCount[in_profile];
     if (!strcmp("NoInputProfile", element))
         c->profileCount[in_profile] =
-        conf_default.profileCount[in_profile];
+            conf_default.profileCount[in_profile];
     if (!strcmp("MatrixInputProfile", element))
         c->profileCount[in_profile] =
-        conf_default.profileCount[in_profile];
+            conf_default.profileCount[in_profile];
     if (!strcmp("sRGBOutputProfile", element))
         c->profileCount[out_profile] =
-        conf_default.profileCount[out_profile];
+            conf_default.profileCount[out_profile];
     if (!strcmp("sRGBEmbeddedOutputProfile", element))
         c->profileCount[out_profile] =
-        conf_default.profileCount[out_profile];
+            conf_default.profileCount[out_profile];
     if (!strcmp("SystemDisplayProfile", element))
         c->profileCount[display_profile] =
-        conf_default.profileCount[display_profile];
+            conf_default.profileCount[display_profile];
     if (!strcmp("sRGBDisplayProfile", element))
         c->profileCount[display_profile] =
-        conf_default.profileCount[display_profile];
+            conf_default.profileCount[display_profile];
     if (c->profileCount[in_profile] <= 0 && strcmp("InputProfile", element) == 0)
         c->profileCount[in_profile] = -c->profileCount[in_profile] + 1;
     if (c->profileCount[out_profile] <= 0 &&
-    strcmp("OutputProfile", element) == 0)
+            strcmp("OutputProfile", element) == 0)
         c->profileCount[out_profile] = - c->profileCount[out_profile] + 1;
     if (c->profileCount[display_profile] <= 0 &&
-    strcmp("DisplayProfile", element) == 0)
+            strcmp("DisplayProfile", element) == 0)
         c->profileCount[display_profile] = -c->profileCount[display_profile] + 1;
 }
 
 static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
-gsize len, gpointer user, GError **error)
+                            gsize len, gpointer user, GError **error)
 {
     parse_data *data = (parse_data *)user;
     conf_data *c = data->conf;
@@ -426,7 +426,7 @@ gsize len, gpointer user, GError **error)
     int i;
     error = error;
     for (; len > 0 && g_ascii_isspace(*text); len--, text++);
-    for (; len > 0 && g_ascii_isspace(text[len-1]); len--);
+    for (; len > 0 && g_ascii_isspace(text[len - 1]); len--);
     if (len == 0) return;
     if (len > max_path - 1) len = max_path - 1;
     strncpy(temp, text, len);
@@ -435,8 +435,8 @@ gsize len, gpointer user, GError **error)
     if (strcmp(ufobject_name(data->group), element) == 0) {
         if (!ufobject_set_string(data->group, text))
             ufraw_message(UFRAW_WARNING,
-            "UFObject set '%s' to string value '%s' failed",
-            ufobject_name(data->group), text);
+                          "UFObject set '%s' to string value '%s' failed",
+                          ufobject_name(data->group), text);
         return;
     }
     if (c->curveCount <= 0) {
@@ -460,18 +460,18 @@ gsize len, gpointer user, GError **error)
         if (!strcmp("AnchorXY", element)) {
             if (c->curve[i].m_numAnchors == max_anchors) {
                 ufraw_message(UFRAW_WARNING,
-                _("Too many anchors for curve '%s'"), c->curve[i].name);
+                              _("Too many anchors for curve '%s'"), c->curve[i].name);
                 /* We try to keep the last anchor point */
                 c->curve[i].m_numAnchors--;
             }
             /* If one anchor is supplied then all anchors should be supplied */
             sscanf(temp, "%lf %lf",
-            &c->curve[i].m_anchors[c->curve[i].m_numAnchors].x,
-            &c->curve[i].m_anchors[c->curve[i].m_numAnchors].y);
+                   &c->curve[i].m_anchors[c->curve[i].m_numAnchors].x,
+                   &c->curve[i].m_anchors[c->curve[i].m_numAnchors].y);
             c->curve[i].m_anchors[c->curve[i].m_numAnchors].x =
-            LIM(c->curve[i].m_anchors[c->curve[i].m_numAnchors].x, 0, 1);
+                LIM(c->curve[i].m_anchors[c->curve[i].m_numAnchors].x, 0, 1);
             c->curve[i].m_anchors[c->curve[i].m_numAnchors].y =
-            LIM(c->curve[i].m_anchors[c->curve[i].m_numAnchors].y, 0, 1);
+                LIM(c->curve[i].m_anchors[c->curve[i].m_numAnchors].y, 0, 1);
             c->curve[i].m_numAnchors++;
         }
         return;
@@ -492,12 +492,12 @@ gsize len, gpointer user, GError **error)
         if (!strcmp("AnchorXY", element)) {
             /* If one anchor is supplied then all anchors should be supplied */
             sscanf(temp, "%lf %lf",
-            &c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].x,
-            &c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].y);
+                   &c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].x,
+                   &c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].y);
             c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].x =
-            LIM(c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].x, 0, 1);
+                LIM(c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].x, 0, 1);
             c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].y =
-            LIM(c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].y, 0, 1);
+                LIM(c->BaseCurve[i].m_anchors[c->BaseCurve[i].m_numAnchors].y, 0, 1);
             c->BaseCurve[i].m_numAnchors++;
         }
         return;
@@ -542,7 +542,7 @@ gsize len, gpointer user, GError **error)
         }
         if (!strcmp("ProductName", element))
             g_strlcpy(c->profile[display_profile][i].productName, temp,
-            max_name);
+                      max_name);
         return;
     }
     if (!strcmp("BaseCurve", element)) {
@@ -577,7 +577,7 @@ gsize len, gpointer user, GError **error)
         c->profileCount[display_profile] = - c->profileCount[display_profile];
         i = - c->profileCount[display_profile];
         c->profile[display_profile][i] =
-        conf_default.profile[display_profile][0];
+            conf_default.profile[display_profile][0];
         g_strlcpy(c->profile[display_profile][i].name, temp, max_name);
     }
     if (!strcmp("InputFilename", element)) {
@@ -621,7 +621,7 @@ gsize len, gpointer user, GError **error)
             }
         } else {
             c->interpolation = conf_find_name(temp, interpolationNames,
-            conf_default.interpolation);
+                                              conf_default.interpolation);
             if (c->interpolation == obsolete_eahd_interpolation) {
                 c->interpolation = ahd_interpolation;
                 c->smoothing = 3;
@@ -665,10 +665,10 @@ gsize len, gpointer user, GError **error)
     if (!strcmp("Saturation", element)) sscanf(temp, "%lf", &c->saturation);
     if (!strcmp("RestoreDetails", element))
         c->restoreDetails = conf_find_name(temp, restoreDetailsNames,
-        conf_default.restoreDetails);
+                                           conf_default.restoreDetails);
     if (!strcmp("ClipHighlights", element))
         c->clipHighlights = conf_find_name(temp, clipHighlightsNames,
-        conf_default.clipHighlights);
+                                           conf_default.clipHighlights);
     /* For compatibility with UFRaw-0.10 and earlier. */
     if (!strcmp("Unclip", element)) {
         int unclip;
@@ -689,50 +689,50 @@ gsize len, gpointer user, GError **error)
         /* Keep compatibility with numbers from ufraw-0.11 */
         if (sscanf(temp, "%d", &i) == 1) c->intent[out_profile] = i;
         else c->intent[out_profile] = conf_find_name(temp, intentNames,
-            conf_default.intent[out_profile]);
+                                          conf_default.intent[out_profile]);
     }
     if (strcmp("LightnessAdjustment", element) == 0) {
         if (c->lightnessAdjustmentCount < max_adjustments) {
             lightness_adjustment *a = &c->lightnessAdjustment[c->lightnessAdjustmentCount];
             sscanf(temp, "%lf %lf %lf",
-            &a->adjustment, &a->hue, &a->hueWidth);
+                   &a->adjustment, &a->hue, &a->hueWidth);
             c->lightnessAdjustmentCount++;
         } else {
             ufraw_message(UFRAW_SET_ERROR,
-            _("Too many lightness adjustments in the ID file, ignored\n"));
+                          _("Too many lightness adjustments in the ID file, ignored\n"));
         }
     }
     if (strcmp("GrayscaleMode", element) == 0) {
         c->grayscaleMode = (sscanf(temp, "%d", &i) == 1)
-        ? i
-        : conf_find_name(temp, grayscaleModeNames,
-        conf_default.grayscaleMode);
+                           ? i
+                           : conf_find_name(temp, grayscaleModeNames,
+                                            conf_default.grayscaleMode);
     }
     c->grayscaleMixerDefined = 0;
     if (strcmp("GrayscaleMixer", element) == 0) {
         sscanf(temp, "%lf %lf %lf", &c->grayscaleMixer[0],
-        &c->grayscaleMixer[1], &c->grayscaleMixer[2]);
+               &c->grayscaleMixer[1], &c->grayscaleMixer[2]);
         c->grayscaleMixerDefined = 1;
     }
     if (strcmp("DespeckleWindow", element) == 0) {
         sscanf(temp, "%lf %lf %lf", &c->despeckleWindow[0],
-        &c->despeckleWindow[1], &c->despeckleWindow[2]);
+               &c->despeckleWindow[1], &c->despeckleWindow[2]);
     }
     if (strcmp("DespeckleDecay", element) == 0) {
         sscanf(temp, "%lf %lf %lf", &c->despeckleDecay[0],
-        &c->despeckleDecay[1], &c->despeckleDecay[2]);
+               &c->despeckleDecay[1], &c->despeckleDecay[2]);
     }
     if (strcmp("DespecklePasses", element) == 0) {
         sscanf(temp, "%lf %lf %lf", &c->despecklePasses[0],
-        &c->despecklePasses[1], &c->despecklePasses[2]);
+               &c->despecklePasses[1], &c->despecklePasses[2]);
     }
     /* OutputIntent replaces Intent starting from ufraw-0.12. */
     if (strcmp("OutputIntent", element) == 0)
         c->intent[out_profile] = conf_find_name(temp, intentNames,
-        conf_default.intent[out_profile]);
+                                                conf_default.intent[out_profile]);
     if (strcmp("DisplayIntent", element) == 0)
         c->intent[display_profile] = conf_find_name(temp, intentNames,
-        conf_default.intent[display_profile]);
+                                     conf_default.intent[display_profile]);
     if (!strcmp("Make", element)) g_strlcpy(c->make, temp, max_name);
     if (!strcmp("Model", element)) g_strlcpy(c->model, temp, max_name);
     if (!strcmp("Lens", element)) g_strlcpy(c->lensText, temp, max_name);
@@ -746,7 +746,7 @@ gsize len, gpointer user, GError **error)
     }
     if (!strcmp("Orientation", element)) sscanf(temp, "%d", &c->orientation);
     if (!strcmp("Crop", element)) sscanf(temp, "%d %d %d %d",
-        &c->CropX1, &c->CropY1, &c->CropX2, &c->CropY2);
+                                             &c->CropX1, &c->CropY1, &c->CropX2, &c->CropY2);
     if (!strcmp("AspectRatio", element)) sscanf(temp, "%lf", &c->aspectRatio);
     if (!strcmp("Rotation", element)) sscanf(temp, "%lf", &c->rotationAngle);
     if (!strcmp("Shrink", element)) sscanf(temp, "%d", &c->shrink);
@@ -817,7 +817,7 @@ int conf_load(conf_data *c, const char *IDFilename)
         user_data.group = ufgroup_element(c->ufobject, ufRawImage);
     user_data.ufrawQuark = g_quark_from_static_string("UFRaw");
     context = g_markup_parse_context_new(&parser, 0, &user_data, NULL);
-    line[max_path-1] = '\0';
+    line[max_path - 1] = '\0';
     if (fgets(line, max_path - 1, in) == NULL && !feof(in)) {
         ufraw_message(UFRAW_ERROR, _("Error reading from file '%s'."),
                       confFilename);

@@ -640,7 +640,7 @@ static void preview_draw_area(preview_data *data,
     }
     /* Redraw the changed areas */
 #ifdef _OPENMP
-#pragma omp critical
+    #pragma omp critical
     {
 #endif
         GtkWidget *widget = data->PreviewWidget;
@@ -804,11 +804,11 @@ static void preview_progress(int what, int ticks)
     gboolean update = FALSE;
 
 #ifdef _OPENMP
-#pragma omp master
+    #pragma omp master
 #endif
     update = TRUE;
 #ifdef _OPENMP
-#pragma omp critical(preview_progress)
+    #pragma omp critical(preview_progress)
     {
 #endif
         if (ticks < 0) {
@@ -1018,8 +1018,8 @@ static gboolean render_raw_histogram(preview_data *data)
     }
     /* Calculate the curves */
     p8 = pix;
-    guint8 grayCurve[raw_his_size+1][4];
-    guint8 pureCurve[raw_his_size+1][4];
+    guint8 grayCurve[raw_his_size + 1][4];
+    guint8 pureCurve[raw_his_size + 1][4];
     for (x = 0; x < raw_his_size + 1; x++) {
         for (c = 0; c < colors; c++) {
             /* Value for pixel x of color c in a gray pixel */
@@ -1043,25 +1043,25 @@ static gboolean render_raw_histogram(preview_data *data)
         for (c = 0, y0 = 0; c < colors; c++) {
             for (y = 0; y < raw_his[x][c]*hisHeight / raw_his_max; y++)
                 for (cl = 0; cl < 3; cl++)
-                    pixies[(hisHeight-y-y0)*rowstride
-                           + 3*(x+1)+cl] = pen[c][cl];
+                    pixies[(hisHeight - y - y0)*rowstride
+                           + 3 * (x + 1) + cl] = pen[c][cl];
             y0 += y;
         }
         /* draw curves on the raw histogram */
         for (c = 0; c < colors; c++) {
             y = grayCurve[x][c];
-            y1 = grayCurve[x+1][c];
+            y1 = grayCurve[x + 1][c];
             for (; y <= y1; y++)
                 for (cl = 0; cl < 3; cl++)
-                    pixies[(hisHeight-y)*rowstride + 3*(x+1)+cl] = pen[c][cl];
+                    pixies[(hisHeight - y)*rowstride + 3 * (x + 1) + cl] = pen[c][cl];
             y1 = pureCurve[x][c];
             for (; y < y1; y++)
                 for (cl = 0; cl < 3; cl++)
-                    pixies[(hisHeight-y)*rowstride + 3*(x+1)+cl] = pen[c][cl] / 2;
-            y1 = pureCurve[x+1][c];
+                    pixies[(hisHeight - y)*rowstride + 3 * (x + 1) + cl] = pen[c][cl] / 2;
+            y1 = pureCurve[x + 1][c];
             for (; y <= y1; y++)
                 for (cl = 0; cl < 3; cl++)
-                    pixies[(hisHeight-y)*rowstride + 3*(x+1)+cl] = pen[c][cl];
+                    pixies[(hisHeight - y)*rowstride + 3 * (x + 1) + cl] = pen[c][cl];
         }
     }
     gtk_widget_queue_draw(data->RawHisto);
@@ -1149,9 +1149,9 @@ static gboolean render_preview_image(preview_data *data)
     for (i = 0; i < uf_omp_get_max_threads(); i++)
         subarea[i] = -1;
 #ifdef _OPENMP
-#pragma omp parallel shared(chosen,data) reduction(||:again)
+    #pragma omp parallel shared(chosen,data) reduction(||:again)
     {
-#pragma omp critical
+        #pragma omp critical
 #endif
         subarea[uf_omp_get_thread_num()] = choose_subarea(data, &chosen);
         if (subarea[uf_omp_get_thread_num()] < 0) {
@@ -1211,12 +1211,12 @@ static gboolean render_live_histogram(preview_data *data)
                 live_his[p8[c]][c]++;
             }
             if (CFG->histogram == luminosity_histogram)
-                live_his[(int)(0.3*p8[0] + 0.59 * p8[1] + 0.11 * p8[2])][3]++;
+                live_his[(int)(0.3 * p8[0] + 0.59 * p8[1] + 0.11 * p8[2])][3]++;
             if (CFG->histogram == value_histogram)
                 live_his[max][3]++;
             if (CFG->histogram == saturation_histogram) {
                 if (max == 0) live_his[0][3]++;
-                else live_his[255*(max-min)/max][3]++;
+                else live_his[255 * (max - min) / max][3]++;
             }
         }
     int hisHeight = MIN(data->LiveHisto->allocation.height - 2, his_max_height);
@@ -1256,22 +1256,22 @@ static gboolean render_live_histogram(preview_data *data)
     for (x = 0; x < live_his_size; x++) for (y = 0; y < hisHeight; y++)
             if (CFG->histogram == r_g_b_histogram) {
                 if (y * live_his_max < live_his[x][0]*hisHeight)
-                    pixies[(hisHeight-y)*rowstride+3*(x+1)+0] = 255;
+                    pixies[(hisHeight - y)*rowstride + 3 * (x + 1) + 0] = 255;
                 else if (y * live_his_max <
                          (live_his[x][0] + live_his[x][1])*hisHeight)
-                    pixies[(hisHeight-y)*rowstride+3*(x+1)+1] = 255;
+                    pixies[(hisHeight - y)*rowstride + 3 * (x + 1) + 1] = 255;
                 else if (y * live_his_max <
                          (live_his[x][0] + live_his[x][1] + live_his[x][2])
                          *hisHeight)
-                    pixies[(hisHeight-y)*rowstride+3*(x+1)+2] = 255;
+                    pixies[(hisHeight - y)*rowstride + 3 * (x + 1) + 2] = 255;
             } else {
                 for (c = 0; c < 3; c++)
                     if (CFG->histogram == rgb_histogram) {
                         if (y * live_his_max < live_his[x][c]*hisHeight)
-                            pixies[(hisHeight-y)*rowstride+3*(x+1)+c] = 255;
+                            pixies[(hisHeight - y)*rowstride + 3 * (x + 1) + c] = 255;
                     } else {
                         if (y * live_his_max < live_his[x][3]*hisHeight)
-                            pixies[(hisHeight-y)*rowstride+3*(x+1)+c] = 255;
+                            pixies[(hisHeight - y)*rowstride + 3 * (x + 1) + c] = 255;
                     }
             }
 
@@ -1293,7 +1293,7 @@ static gboolean render_live_histogram(preview_data *data)
         rgb[c] = sqrt(sqr[c] / CropCount - rgb[c] * rgb[c]);
     color_labels_set(data->DevLabels, rgb);
     for (c = 0; c < 3; c++)
-        rgb[c] = 100.0 * live_his[live_his_size-1][c] / CropCount;
+        rgb[c] = 100.0 * live_his[live_his_size - 1][c] / CropCount;
     color_labels_set(data->OverLabels, rgb);
     for (c = 0; c < 3; c++)
         rgb[c] = 100.0 * live_his[0][c] / CropCount;
@@ -1659,7 +1659,7 @@ static void remove_hue_event(GtkWidget *widget, gpointer user_data)
     long i = (long)user_data;
 
     for (; i < CFG->lightnessAdjustmentCount - 1; i++) {
-        CFG->lightnessAdjustment[i] = CFG->lightnessAdjustment[i+1];
+        CFG->lightnessAdjustment[i] = CFG->lightnessAdjustment[i + 1];
         widget_set_hue(data->LightnessHueSelectButton[i],
                        CFG->lightnessAdjustment[i].hue);
     }
@@ -3423,7 +3423,7 @@ static void delete_from_list(GtkWidget *widget, gpointer user_data)
         else if (CFG->profileIndex[type] > index)
             CFG->profileIndex[type]--;
         for (; index < CFG->profileCount[type]; index++)
-            CFG->profile[type][index] = CFG->profile[type][index+1];
+            CFG->profile[type][index] = CFG->profile[type][index + 1];
         gtk_combo_box_set_active(data->ProfileCombo[type],
                                  CFG->profileIndex[type]);
     } else if (type == profile_types + base_curve) {
@@ -3439,7 +3439,7 @@ static void delete_from_list(GtkWidget *widget, gpointer user_data)
         if (CFG->BaseCurveIndex == camera_curve && !CFG_cameraCurve)
             CFG->BaseCurveIndex = linear_curve;
         for (; index < CFG->BaseCurveCount; index++)
-            CFG->BaseCurve[index] = CFG->BaseCurve[index+1];
+            CFG->BaseCurve[index] = CFG->BaseCurve[index + 1];
         if (CFG->BaseCurveIndex > camera_curve && !CFG_cameraCurve)
             gtk_combo_box_set_active(data->BaseCurveCombo,
                                      CFG->BaseCurveIndex - 2);
@@ -3456,7 +3456,7 @@ static void delete_from_list(GtkWidget *widget, gpointer user_data)
         else if (CFG->curveIndex > index)
             CFG->curveIndex--;
         for (; index < CFG->curveCount; index++)
-            CFG->curve[index] = CFG->curve[index+1];
+            CFG->curve[index] = CFG->curve[index + 1];
         gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
         curveeditor_widget_set_curve(data->CurveWidget,
                                      &CFG->curve[CFG->curveIndex]);

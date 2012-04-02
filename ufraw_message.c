@@ -34,7 +34,7 @@ static void message_append(ufraw_data *uf, char *message)
         uf->message = g_strdup(message);
         return;
     }
-    if (uf->message[strlen(uf->message)-1] == '\n')
+    if (uf->message[strlen(uf->message) - 1] == '\n')
         uf->message = g_strconcat(uf->message, message, NULL);
     else
         uf->message = g_strconcat(uf->message, "\n", message, NULL);
@@ -125,7 +125,7 @@ void ufraw_batch_messenger(char *message)
      * Otherwise, the header will be printed only for the first line. */
     if (g_strstr_len(message, strlen(message) - 1, "\n") == NULL)
         g_printerr("%s: ", ufraw_binary);
-    g_printerr("%s%c", message, message[strlen(message)-1] != '\n' ? '\n' : 0);
+    g_printerr("%s%c", message, message[strlen(message) - 1] != '\n' ? '\n' : 0);
 }
 
 char *ufraw_message(int code, const char *format, ...)

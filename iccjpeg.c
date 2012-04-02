@@ -183,9 +183,9 @@ read_icc_profile(j_decompress_ptr cinfo,
     JOCTET *icc_data;
     unsigned int total_length;
 #define MAX_SEQ_NO  255		/* sufficient since marker numbers are bytes */
-    char marker_present[MAX_SEQ_NO+1];	  /* 1 if marker found */
-    unsigned int data_length[MAX_SEQ_NO+1]; /* size of profile data in marker */
-    unsigned int data_offset[MAX_SEQ_NO+1]; /* offset for data in marker */
+    char marker_present[MAX_SEQ_NO + 1];	 /* 1 if marker found */
+    unsigned int data_length[MAX_SEQ_NO + 1]; /* size of profile data in marker */
+    unsigned int data_offset[MAX_SEQ_NO + 1]; /* offset for data in marker */
 
     *icc_data_ptr = NULL;		/* avoid confusion if FALSE return */
     *icc_data_len = 0;

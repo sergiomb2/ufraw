@@ -200,8 +200,8 @@ int ufraw_convert_embedded(ufraw_data *uf)
             for (c = 0; c < srcWidth; c++) {
                 nc = c * dstWidth / srcWidth;
                 for (m = 0; m < 3; m++)
-                    uf->thumb.buffer[(nr*dstWidth+nc) * 3 + m] =
-                        uf->thumb.buffer[(r*srcWidth+c) * 3 + m];
+                    uf->thumb.buffer[(nr * dstWidth + nc) * 3 + m] =
+                        uf->thumb.buffer[(r * srcWidth + c) * 3 + m];
             }
         }
     }
@@ -226,7 +226,7 @@ int ufraw_convert_embedded(ufraw_data *uf)
                 else tmp = nr * width + nc;
                 for (m = 0; m < 3; m++) {
                     newBuffer[tmp * 3 + m] =
-                        uf->thumb.buffer[(r*dstWidth+c) * 3 + m];
+                        uf->thumb.buffer[(r * dstWidth + c) * 3 + m];
                 }
             }
         }

@@ -94,7 +94,7 @@ int CLASS fc_INDI(const unsigned filters, const int row, const int col)
     /* Assume that we are handling the Leaf CatchLight with
      * top_margin = 8; left_margin = 18; */
 //  return filter[(row+top_margin) & 15][(col+left_margin) & 15];
-    return filter[(row+8) & 15][(col+18) & 15];
+    return filter[(row + 8) & 15][(col + 18) & 15];
 }
 
 static void CLASS merror(void *ptr, char *where)
@@ -107,11 +107,11 @@ static void CLASS hat_transform(float *temp, float *base, int st, int size, int 
 {
     int i;
     for (i = 0; i < sc; i++)
-        temp[i] = 2 * base[st*i] + base[st*(sc-i)] + base[st*(i+sc)];
+        temp[i] = 2 * base[st * i] + base[st * (sc - i)] + base[st * (i + sc)];
     for (; i + sc < size; i++)
-        temp[i] = 2 * base[st*i] + base[st*(i-sc)] + base[st*(i+sc)];
+        temp[i] = 2 * base[st * i] + base[st * (i - sc)] + base[st * (i + sc)];
     for (; i < size; i++)
-        temp[i] = 2 * base[st*i] + base[st*(i-sc)] + base[st*(2*size-2-(i+sc))];
+        temp[i] = 2 * base[st * i] + base[st * (i - sc)] + base[st * (2 * size - 2 - (i + sc))];
 }
 
 void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
@@ -136,15 +136,15 @@ void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
     progress(PROGRESS_WAVELET_DENOISE, -nc * 5);
 #ifdef _OPENMP
 #ifdef __sun			/* Fix bug #3205673 - NKBJ */
-#pragma omp parallel for				\
-  default(none)						\
-  shared(nc,image,size,noise)				\
-  private(c,i,hpass,lev,lpass,row,col,thold,fimg,temp)
+    #pragma omp parallel for				\
+    default(none)						\
+    shared(nc,image,size,noise)				\
+    private(c,i,hpass,lev,lpass,row,col,thold,fimg,temp)
 #else
-#pragma omp parallel for				\
-  default(none)						\
-  shared(nc,image,size)					\
-  private(c,i,hpass,lev,lpass,row,col,thold,fimg,temp)
+    #pragma omp parallel for				\
+    default(none)						\
+    shared(nc,image,size)					\
+    private(c,i,hpass,lev,lpass,row,col,thold,fimg,temp)
 #endif
 #endif
     FORC(nc) {			/* denoise R,G1,B,G3 individually */
@@ -157,45 +157,45 @@ void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
             for (row = 0; row < iheight; row++) {
                 hat_transform(temp, fimg + hpass + row * iwidth, 1, iwidth, 1 << lev);
                 for (col = 0; col < iwidth; col++)
-                    fimg[lpass + row*iwidth + col] = temp[col] * 0.25;
+                    fimg[lpass + row * iwidth + col] = temp[col] * 0.25;
             }
             for (col = 0; col < iwidth; col++) {
                 hat_transform(temp, fimg + lpass + col, iwidth, iheight, 1 << lev);
                 for (row = 0; row < iheight; row++)
-                    fimg[lpass + row*iwidth + col] = temp[row] * 0.25;
+                    fimg[lpass + row * iwidth + col] = temp[row] * 0.25;
             }
             thold = threshold * noise[lev];
             for (i = 0; i < size; i++) {
-                fimg[hpass+i] -= fimg[lpass+i];
-                if	(fimg[hpass+i] < -thold) fimg[hpass+i] += thold;
-                else if (fimg[hpass+i] >  thold) fimg[hpass+i] -= thold;
-                else	 fimg[hpass+i] = 0;
-                if (hpass) fimg[i] += fimg[hpass+i];
+                fimg[hpass + i] -= fimg[lpass + i];
+                if	(fimg[hpass + i] < -thold) fimg[hpass + i] += thold;
+                else if (fimg[hpass + i] >  thold) fimg[hpass + i] -= thold;
+                else	 fimg[hpass + i] = 0;
+                if (hpass) fimg[i] += fimg[hpass + i];
             }
             hpass = lpass;
         }
         for (i = 0; i < size; i++)
-            image[i][c] = CLIP(SQR(fimg[i] + fimg[lpass+i]) / 0x10000);
+            image[i][c] = CLIP(SQR(fimg[i] + fimg[lpass + i]) / 0x10000);
         free(fimg);
     }
     if (filters && colors == 3) {  /* pull G1 and G3 closer together */
         for (row = 0; row < 2; row++)
-            mul[row] = 0.125 * pre_mul[FC(row+1, 0) | 1] / pre_mul[FC(row, 0) | 1];
+            mul[row] = 0.125 * pre_mul[FC(row + 1, 0) | 1] / pre_mul[FC(row, 0) | 1];
         ushort window_mem[4][width];
         for (i = 0; i < 4; i++)
             window[i] = window_mem[i]; /*(ushort *) fimg + width*i;*/
         for (wlast = -1, row = 1; row < height - 1; row++) {
             while (wlast < row + 1) {
                 for (wlast++, i = 0; i < 4; i++)
-                    window[(i+3) & 3] = window[i];
+                    window[(i + 3) & 3] = window[i];
                 for (col = FC(wlast, 1) & 1; col < width; col += 2)
                     window[2][col] = BAYER(wlast, col);
             }
             thold = threshold / 512;
             for (col = (FC(row, 0) & 1) + 1; col < width - 1; col += 2) {
-                avg = (window[0][col-1] + window[0][col+1] +
-                window[2][col-1] + window[2][col+1] - black * 4)
-                * mul[row & 1] + (window[1][col] - black) * 0.5 + black;
+                avg = (window[0][col - 1] + window[0][col + 1] +
+                       window[2][col - 1] + window[2][col + 1] - black * 4)
+                      * mul[row & 1] + (window[1][col] - black) * 0.5 + black;
                 avg = avg < 0 ? 0 : sqrt(avg);
                 diff = sqrt(BAYER(row, col)) - avg;
                 if (diff < -thold) diff += thold;
@@ -208,9 +208,9 @@ void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
 }
 
 void CLASS scale_colors_INDI(const int maximum, const int black,
-const int use_camera_wb, const float cam_mul[4], const int colors,
-float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
-const char *ifname_display, void *dcraw)
+                             const int use_camera_wb, const float cam_mul[4], const int colors,
+                             float pre_mul[4], const unsigned filters, /*const*/ ushort white[8][8],
+                             const char *ifname_display, void *dcraw)
 {
     unsigned row, col, c, sum[8];
     int val;
@@ -223,19 +223,19 @@ const char *ifname_display, void *dcraw)
                 c = FC(row, col);
                 if ((val = white[row][col] - black) > 0)
                     sum[c] += val;
-                sum[c+4]++;
+                sum[c + 4]++;
             }
         if (sum[0] && sum[1] && sum[2] && sum[3])
-            FORC4 pre_mul[c] = (float) sum[c+4] / sum[c];
+            FORC4 pre_mul[c] = (float) sum[c + 4] / sum[c];
         else if (cam_mul[0] && cam_mul[2])
             /* 'sizeof pre_mul' does not work because pre_mul is an argument (UF)*/
             memcpy(pre_mul, cam_mul, 4 * sizeof(float));
         else
             dcraw_message(dcraw, DCRAW_NO_CAMERA_WB,
-            _("%s: Cannot use camera white balance.\n"), ifname_display);
+                          _("%s: Cannot use camera white balance.\n"), ifname_display);
     } else {
         dcraw_message(dcraw, DCRAW_NO_CAMERA_WB,
-        _("%s: Cannot use camera white balance.\n"), ifname_display);
+                      _("%s: Cannot use camera white balance.\n"), ifname_display);
     }
     if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
     for (dmin = DBL_MAX, dmax = c = 0; c < 4; c++) {
@@ -246,8 +246,8 @@ const char *ifname_display, void *dcraw)
     }
     FORC4 pre_mul[c] /= dmax;
     dcraw_message(dcraw, DCRAW_VERBOSE,
-    _("Scaling with darkness %d, saturation %d, and\nmultipliers"),
-    black, maximum);
+                  _("Scaling with darkness %d, saturation %d, and\nmultipliers"),
+                  black, maximum);
     FORC4 dcraw_message(dcraw, DCRAW_VERBOSE, " %f", pre_mul[c]);
     dcraw_message(dcraw, DCRAW_VERBOSE, "\n");
 
@@ -255,7 +255,7 @@ const char *ifname_display, void *dcraw)
 }
 
 void CLASS border_interpolate_INDI(const int height, const int width,
-ushort(*image)[4], const unsigned filters, int colors, int border)
+                                   ushort(*image)[4], const unsigned filters, int colors, int border)
 {
     int row, col, y, x, f, c, sum[8];
 
@@ -268,17 +268,17 @@ ushort(*image)[4], const unsigned filters, int colors, int border)
                 for (x = col - 1; x != col + 2; x++)
                     if (y >= 0 && y < height && x >= 0 && x < width) {
                         f = fc_INDI(filters, y, x);
-                        sum[f] += image[y*width+x][f];
-                        sum[f+4]++;
+                        sum[f] += image[y * width + x][f];
+                        sum[f + 4]++;
                     }
             f = fc_INDI(filters, row, col);
-            FORCC if (c != f && sum[c+4])
-                image[row*width+col][c] = sum[c] / sum[c+4];
+            FORCC if (c != f && sum[c + 4])
+                image[row * width + col][c] = sum[c] / sum[c + 4];
         }
 }
 
 void CLASS lin_interpolate_INDI(ushort(*image)[4], const unsigned filters,
-const int width, const int height, const int colors, void *dcraw) /*UF*/
+                                const int width, const int height, const int colors, void *dcraw) /*UF*/
 {
     int code[16][16][32], *ip, sum[4];
     int c, i, x, y, row, col, shift, color;
@@ -309,11 +309,11 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
         }
     }
 #ifdef _OPENMP
-#pragma omp parallel for default(shared) private(row,col,pix,ip,sum,i)
+    #pragma omp parallel for default(shared) private(row,col,pix,ip,sum,i)
 #endif
     for (row = 1; row < height - 1; row++) {
         for (col = 1; col < width - 1; col++) {
-            pix = image[row*width+col];
+            pix = image[row * width + col];
             ip = code[row & 15][col & 15];
             memset(sum, 0, sizeof sum);
             for (i = 8; i--; ip += 3)
@@ -335,7 +335,7 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
    Gradients are numbered clockwise from NW=0 to W=7.
  */
 void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
-const int width, const int height, const int colors, void *dcraw) /*UF*/
+                                const int width, const int height, const int colors, void *dcraw) /*UF*/
 {
     static const signed char *cp, terms[] = {
         -2, -2, +0, -1, 0, 0x01, -2, -2, +0, +0, 1, 0x01, -2, -1, -1, +0, 0, 0x01,
@@ -365,7 +365,7 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
     int prow = 7, pcol = 1, *ip, *code[16][16], gval[8], gmin, gmax, sum[4];
     int row, col, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
     int g, diff, thold, num, c;
-    ushort rowtmp[4][width*4];
+    ushort rowtmp[4][width * 4];
 
     lin_interpolate_INDI(image, filters, width, height, colors, dcraw); /*UF*/
     dcraw_message(dcraw, DCRAW_VERBOSE, _("VNG interpolation...\n")); /*UF*/
@@ -408,7 +408,7 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
         }
     progress(PROGRESS_INTERPOLATE, -height);
 #ifdef _OPENMP
-#pragma omp parallel					\
+    #pragma omp parallel					\
     default(none)					\
     shared(image,code,prow,pcol)			\
     private(row,col,g,brow,rowtmp,pix,ip,gval,diff,gmin,gmax,thold,sum,color,num,c,t)
@@ -422,7 +422,7 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
             for (g = 0; g < 4; g++)
                 brow[g] = &rowtmp[(row + g - 2) % 4];
             for (col = 2; col < width - 2; col++) {
-                pix = image[row*width+col];
+                pix = image[row * width + col];
                 ip = code[row & prow][col & pcol];
                 memset(gval, 0, sizeof gval);
                 while ((g = ip[0]) != INT_MAX) { /* Calculate gradients */
@@ -466,9 +466,9 @@ const int width, const int height, const int colors, void *dcraw) /*UF*/
             }
             /* Write buffer to image */
             if ((row > start_row + 1) || (row == height - 2))
-                memcpy(image[(row-2)*width+2], brow[0] + 2, (width - 4)*sizeof * image);
+                memcpy(image[(row - 2)*width + 2], brow[0] + 2, (width - 4)*sizeof * image);
             if (row == height - 2) {
-                memcpy(image[(row-1)*width+2], brow[1] + 2, (width - 4)*sizeof * image);
+                memcpy(image[(row - 1)*width + 2], brow[1] + 2, (width - 4)*sizeof * image);
                 break;
             }
         }
@@ -491,27 +491,27 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     dcraw_message(dcraw, DCRAW_VERBOSE, _("PPG interpolation...\n")); /*UF*/
 
 #ifdef _OPENMP
-#pragma omp parallel					\
-  default(none)						\
-  shared(image,dir)					\
-  private(row,col,i,d,c,pix,diff,guess)
+    #pragma omp parallel					\
+    default(none)						\
+    shared(image,dir)					\
+    private(row,col,i,d,c,pix,diff,guess)
 #endif
     {
         /*  Fill in the green layer with gradients and pattern recognition: */
 #ifdef _OPENMP
-#pragma omp for
+        #pragma omp for
 #endif
         for (row = 3; row < height - 3; row++) {
             for (col = 3 + (FC(row, 3) & 1), c = FC(row, col); col < width - 3; col += 2) {
                 pix = image + row * width + col;
                 for (i = 0; (d = dir[i]) > 0; i++) {
                     guess[i] = (pix[-d][1] + pix[0][c] + pix[d][1]) * 2
-                               - pix[-2*d][c] - pix[2*d][c];
-                    diff[i] = (ABS(pix[-2*d][c] - pix[ 0][c]) +
-                               ABS(pix[ 2*d][c] - pix[ 0][c]) +
+                               - pix[-2 * d][c] - pix[2 * d][c];
+                    diff[i] = (ABS(pix[-2 * d][c] - pix[ 0][c]) +
+                               ABS(pix[ 2 * d][c] - pix[ 0][c]) +
                                ABS(pix[  -d][1] - pix[ d][1])) * 3 +
-                              (ABS(pix[ 3*d][1] - pix[ d][1]) +
-                               ABS(pix[-3*d][1] - pix[-d][1])) * 2;
+                              (ABS(pix[ 3 * d][1] - pix[ d][1]) +
+                               ABS(pix[-3 * d][1] - pix[-d][1])) * 2;
                 }
                 d = dir[i = diff[0] > diff[1]];
                 pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
@@ -519,7 +519,7 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
         }
         /*  Calculate red and blue for each green pixel: */
 #ifdef _OPENMP
-#pragma omp for
+        #pragma omp for
 #endif
         for (row = 1; row < height - 1; row++) {
             for (col = 1 + (FC(row, 2) & 1), c = FC(row, col + 1); col < width - 1; col += 2) {
@@ -531,12 +531,12 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
         }
         /*  Calculate blue for red pixels and vice versa: */
 #ifdef _OPENMP
-#pragma omp for
+        #pragma omp for
 #endif
         for (row = 1; row < height - 1; row++) {
             for (col = 1 + (FC(row, 1) & 1), c = 2 - FC(row, col); col < width - 1; col += 2) {
                 pix = image + row * width + col;
-                for (i = 0; (d = dir[i] + dir[i+1]) > 0; i++) {
+                for (i = 0; (d = dir[i] + dir[i + 1]) > 0; i++) {
                     diff[i] = ABS(pix[-d][c] - pix[d][c]) +
                               ABS(pix[-d][1] - pix[0][1]) +
                               ABS(pix[ d][1] - pix[0][1]);
@@ -575,20 +575,20 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     dcraw_message(dcraw, DCRAW_VERBOSE, _("AHD interpolation...\n")); /*UF*/
 
 #ifdef _OPENMP
-#pragma omp parallel					\
-  default(shared)					\
-  private(top, left, row, col, pix, rix, lix, c, xyz, val, d, tc, tr, i, j, k, ldiff, abdiff, leps, abeps, hm, buffer, rgb, lab, homo, r)
+    #pragma omp parallel					\
+    default(shared)					\
+    private(top, left, row, col, pix, rix, lix, c, xyz, val, d, tc, tr, i, j, k, ldiff, abdiff, leps, abeps, hm, buffer, rgb, lab, homo, r)
 #endif
     {
 #ifdef _OPENMP
-#pragma omp for schedule(static) nowait
+        #pragma omp for schedule(static) nowait
 #endif
         for (i = 0; i < 0x10000; i++) {
             r = i / 65535.0;
             cbrt[i] = r > 0.008856 ? pow(r, 1 / 3.0) : 7.787 * r + 16 / 116.0;
         }
 #ifdef _OPENMP
-#pragma omp for
+        #pragma omp for
 #endif
         for (i = 0; i < 3; i++)
             for (j = 0; j < colors; j++)
@@ -604,7 +604,7 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
 
         progress(PROGRESS_INTERPOLATE, -height);
 #ifdef _OPENMP
-#pragma omp for
+        #pragma omp for
 #endif
         for (top = 2; top < height - 5; top += TS - 6) {
             progress(PROGRESS_INTERPOLATE, TS - 6);
@@ -617,10 +617,10 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                         pix = image + row * width + col;
                         val = ((pix[-1][1] + pix[0][c] + pix[1][1]) * 2
                                - pix[-2][c] - pix[2][c]) >> 2;
-                        rgb[0][row-top][col-left][1] = ULIM(val, pix[-1][1], pix[1][1]);
+                        rgb[0][row - top][col - left][1] = ULIM(val, pix[-1][1], pix[1][1]);
                         val = ((pix[-width][1] + pix[0][c] + pix[width][1]) * 2
-                               - pix[-2*width][c] - pix[2*width][c]) >> 2;
-                        rgb[1][row-top][col-left][1] = ULIM(val, pix[-width][1], pix[width][1]);
+                               - pix[-2 * width][c] - pix[2 * width][c]) >> 2;
+                        rgb[1][row - top][col - left][1] = ULIM(val, pix[-width][1], pix[width][1]);
                     }
                 }
                 /*  Interpolate red and blue, and convert to CIELab: */
@@ -628,20 +628,20 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                     for (row = top + 1; row < top + TS - 1 && row < height - 3; row++)
                         for (col = left + 1; col < left + TS - 1 && col < width - 3; col++) {
                             pix = image + row * width + col;
-                            rix = &rgb[d][row-top][col-left];
-                            lix = &lab[d][row-top][col-left];
+                            rix = &rgb[d][row - top][col - left];
+                            lix = &lab[d][row - top][col - left];
                             if ((c = 2 - FC(row, col)) == 1) {
                                 c = FC(row + 1, col);
-                                val = pix[0][1] + ((pix[-1][2-c] + pix[1][2-c]
+                                val = pix[0][1] + ((pix[-1][2 - c] + pix[1][2 - c]
                                                     - rix[-1][1] - rix[1][1]) >> 1);
-                                rix[0][2-c] = CLIP(val);
+                                rix[0][2 - c] = CLIP(val);
                                 val = pix[0][1] + ((pix[-width][c] + pix[width][c]
                                                     - rix[-TS][1] - rix[TS][1]) >> 1);
                             } else
-                                val = rix[0][1] + ((pix[-width-1][c] + pix[-width+1][c]
-                                                    + pix[+width-1][c] + pix[+width+1][c]
-                                                    - rix[-TS-1][1] - rix[-TS+1][1]
-                                                    - rix[+TS-1][1] - rix[+TS+1][1] + 1) >> 2);
+                                val = rix[0][1] + ((pix[-width - 1][c] + pix[-width + 1][c]
+                                                    + pix[+width - 1][c] + pix[+width + 1][c]
+                                                    - rix[-TS - 1][1] - rix[-TS + 1][1]
+                                                    - rix[+TS - 1][1] - rix[+TS + 1][1] + 1) >> 2);
                             rix[0][c] = CLIP(val);
                             c = FC(row, col);
                             rix[0][c] = pix[0][c];
@@ -692,9 +692,9 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                                 for (j = tc - 1; j <= tc + 1; j++)
                                     hm[d] += homo[d][i][j];
                         if (hm[0] != hm[1])
-                            FORC3 image[row*width+col][c] = rgb[hm[1] > hm[0]][tr][tc][c];
+                            FORC3 image[row * width + col][c] = rgb[hm[1] > hm[0]][tr][tc][c];
                         else
-                            FORC3 image[row*width+col][c] =
+                            FORC3 image[row * width + col][c] =
                                 (rgb[0][tr][tc][c] + rgb[1][tr][tc][c]) >> 1;
                     }
                 }
@@ -762,18 +762,18 @@ static inline ushort eahd_median(int row, int col, int color,
     //  results = (median(G-R)+median(G-B)+R+B)/2
 
     //no checks are done here to speed up the inlining
-    pArray[0] = image[width*(row)+col+1][color] - image[width*(row)+col+1][1];
-    pArray[1] = image[width*(row-1)+col+1][color] - image[width*(row-1)+col+1][1];
-    pArray[2] = image[width*(row-1)+col  ][color] - image[width*(row-1)+col  ][1];
-    pArray[3] = image[width*(row-1)+col-1][color] - image[width*(row-1)+col-1][1];
-    pArray[4] = image[width*(row)+col-1][color] - image[width*(row)+col-1][1];
-    pArray[5] = image[width*(row+1)+col-1][color] - image[width*(row+1)+col-1][1];
-    pArray[6] = image[width*(row+1)+col  ][color] - image[width*(row+1)+col  ][1];
-    pArray[7] = image[width*(row+1)+col+1][color] - image[width*(row+1)+col+1][1];
-    pArray[8] = image[width*(row)+col  ][color] - image[width*(row)+col  ][1];
+    pArray[0] = image[width * (row) + col + 1][color] - image[width * (row) + col + 1][1];
+    pArray[1] = image[width * (row - 1) + col + 1][color] - image[width * (row - 1) + col + 1][1];
+    pArray[2] = image[width * (row - 1) + col  ][color] - image[width * (row - 1) + col  ][1];
+    pArray[3] = image[width * (row - 1) + col - 1][color] - image[width * (row - 1) + col - 1][1];
+    pArray[4] = image[width * (row) + col - 1][color] - image[width * (row) + col - 1][1];
+    pArray[5] = image[width * (row + 1) + col - 1][color] - image[width * (row + 1) + col - 1][1];
+    pArray[6] = image[width * (row + 1) + col  ][color] - image[width * (row + 1) + col  ][1];
+    pArray[7] = image[width * (row + 1) + col + 1][color] - image[width * (row + 1) + col + 1][1];
+    pArray[8] = image[width * (row) + col  ][color] - image[width * (row) + col  ][1];
 
     median9(pArray);
-    result = pArray[4] + image[width*(row)+col  ][1];
+    result = pArray[4] + image[width * (row) + col  ][1];
     return DTOP(result);
 
 }
@@ -796,13 +796,13 @@ void CLASS color_smooth(ushort(*image)[4], const int width, const int height,
     for (count = 0; count < passes; count++) {
         //perform 3 iterations - seems to be a commonly settled upon number of iterations
 #ifdef _OPENMP
-#pragma omp parallel for default(shared) private(row,col,mpix)
+        #pragma omp parallel for default(shared) private(row,col,mpix)
 #endif
         for (row = row_start; row < row_stop; row++) {
             for (col = col_start; col < col_stop; col++) {
                 //calculate the median only over the red and blue
                 //calculating over green seems to offer very little additional quality
-                mpix = image[row*width+col];
+                mpix = image[row * width + col];
                 mpix[0] = eahd_median(row, col, 0, image, width);
                 mpix[2] = eahd_median(row, col, 2, image, width);
             }
@@ -830,7 +830,7 @@ void CLASS fuji_rotate_INDI(ushort(**image_p)[4], int *height_p,
     merror(img, "fuji_rotate()");
 
 #ifdef _OPENMP
-#pragma omp parallel for default(shared) private(row,col,ur,uc,r,c,fr,fc,pix,i)
+    #pragma omp parallel for default(shared) private(row,col,ur,uc,r,c,fr,fc,pix,i)
 #endif
     for (row = 0; row < high; row++) {
         for (col = 0; col < wide; col++) {
@@ -841,9 +841,9 @@ void CLASS fuji_rotate_INDI(ushort(**image_p)[4], int *height_p,
             fc = c - uc;
             pix = image + ur * width + uc;
             for (i = 0; i < colors; i++)
-                img[row*wide+col][i] =
+                img[row * wide + col][i] =
                     (pix[    0][i] * (1 - fc) + pix[      1][i] * fc) * (1 - fr) +
-                    (pix[width][i] * (1 - fc) + pix[width+1][i] * fc) * fr;
+                    (pix[width][i] * (1 - fc) + pix[width + 1][i] * fc) * fr;
         }
     }
     free(image);

@@ -343,7 +343,7 @@ static void curve_parse_text(GMarkupParseContext *context, const gchar *text,
     char temp[max_path];
     error = error;
     for (; len > 0 && g_ascii_isspace(*text); len--, text++);
-    for (; len > 0 && g_ascii_isspace(text[len-1]); len--);
+    for (; len > 0 && g_ascii_isspace(text[len - 1]); len--);
     if (len == 0) return;
     if (len > max_path - 1) len = max_path - 1;
     strncpy(temp, text, len);
@@ -408,7 +408,7 @@ int curve_load(CurveData *cp, char *filename)
         }
         locale = uf_set_locale_C();
         context = g_markup_parse_context_new(&parser, 0, cp, NULL);
-        line[max_path-1] = '\0';
+        line[max_path - 1] = '\0';
         if (fgets(line, max_path - 1, in) == NULL && !feof(in)) {
             ufraw_message(UFRAW_ERROR, _("Error reading from file '%s'."),
                           filename);

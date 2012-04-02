@@ -447,7 +447,7 @@ extern "C" {
             f4 = hh->fourColorFilters;
 
 #ifdef _OPENMP
-#pragma omp parallel for schedule(static) private(r,ri,fseq,c,pixp)
+            #pragma omp parallel for schedule(static) private(r,ri,fseq,c,pixp)
 #endif
             for (r = 0; r < h; ++r) {
                 fseq = (unsigned*) g_malloc(scale * sizeof(unsigned));
@@ -467,7 +467,7 @@ extern "C" {
             f->image = (dcraw_image_type *)g_realloc(
                            f->image, h * w * sizeof(dcraw_image_type));
 #ifdef _OPENMP
-#pragma omp parallel for schedule(static) private(r,ibase,obase,c)
+            #pragma omp parallel for schedule(static) private(r,ibase,obase,c)
 #endif
             for (r = 0; r < h; ++r) {
                 ibase = hh->raw.image + r * hh->raw.width * scale;
@@ -534,10 +534,10 @@ extern "C" {
                     ciw = 0;
                 }
                 for (cl = 0; cl < image->colors; cl++) {
-                    iBuf[ri *w+ci ][cl] += image->image[r*wid+c][cl] * riw * ciw ;
-                    iBuf[ri *w+cii][cl] += image->image[r*wid+c][cl] * riw * ciiw;
-                    iBuf[rii*w+ci ][cl] += image->image[r*wid+c][cl] * riiw * ciw ;
-                    iBuf[rii*w+cii][cl] += image->image[r*wid+c][cl] * riiw * ciiw;
+                    iBuf[ri * w + ci ][cl] += image->image[r * wid + c][cl] * riw * ciw ;
+                    iBuf[ri * w + cii][cl] += image->image[r * wid + c][cl] * riw * ciiw;
+                    iBuf[rii * w + ci ][cl] += image->image[r * wid + c][cl] * riiw * ciw ;
+                    iBuf[rii * w + cii][cl] += image->image[r * wid + c][cl] * riiw * ciiw;
                 }
             }
         }
@@ -563,10 +563,10 @@ extern "C" {
             iBuf = g_new(dcraw_image_type, image->width * newdim);
             for (rc = row = 0; row < newdim; row++, rc += pixel_aspect) {
                 frac = rc - (c = (int)rc);
-                pix0 = pix1 = image->image[c*image->width];
+                pix0 = pix1 = image->image[c * image->width];
                 if (c + 1 < image->height) pix1 += image->width * 4;
                 for (col = 0; col < image->width; col++, pix0 += 4, pix1 += 4)
-                    FORCC iBuf[row*image->width+col][c] =
+                    FORCC iBuf[row * image->width + col][c] =
                         (guint16)(pix0[c] * (1 - frac) + pix1[c] * frac + 0.5);
             }
             image->height = newdim;
@@ -579,7 +579,7 @@ extern "C" {
                 if (c + 1 < image->width) pix1 += 4;
                 for (row = 0; row < image->height;
                         row++, pix0 += image->width * 4, pix1 += image->width * 4)
-                    FORCC iBuf[row*newdim+col][c] =
+                    FORCC iBuf[row * newdim + col][c] =
                         (guint16)(pix0[c] * (1 - frac) + pix1[c] * frac + 0.5);
             }
             image->width = newdim;
@@ -646,8 +646,8 @@ extern "C" {
             rgbWB[3] = rgbWB[1];
         if (dark) {
 #ifdef _OPENMP
-#pragma omp parallel for schedule(static) default(none) \
-  shared(h,dark,rgbWB)
+            #pragma omp parallel for schedule(static) default(none) \
+            shared(h,dark,rgbWB)
 #endif
             for (int i = 0; i < pixels; i++) {
                 int cc;
@@ -659,8 +659,8 @@ extern "C" {
             }
         } else {
 #ifdef _OPENMP
-#pragma omp parallel for schedule(static) default(none) \
-  shared(h,dark,rgbWB)
+            #pragma omp parallel for schedule(static) default(none) \
+            shared(h,dark,rgbWB)
 #endif
             for (int i = 0; i < pixels; i++) {
                 int cc;
@@ -713,8 +713,8 @@ extern "C" {
         for (r = 0; r < h->height; r++)
             for (c = 0; c < h->width; c++) {
                 int cc = fc_INDI(f4, r, c);
-                f->image[r*f->width+c][fc_INDI(ff, r, c)] =
-                    h->raw.image[r/2 * h->raw.width + c/2][cc];
+                f->image[r * f->width + c][fc_INDI(ff, r, c)] =
+                    h->raw.image[r / 2 * h->raw.width + c / 2][cc];
             }
         int smoothPasses = 1;
         if (interpolation == dcraw_bilinear_interpolation)
