@@ -367,7 +367,7 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 #ifdef UFRAW_CINEPAINT
     gimp_image_add_layer(uf->gimpImage, layer, 0);
 #else
-#if defined(GIMP_CHECK_VERSION) && GIMP_CHECK_VERSION(2,7,2)
+#if defined(GIMP_CHECK_VERSION) && GIMP_CHECK_VERSION(2,7,3)
     gimp_image_insert_layer(uf->gimpImage, layer, 0, 0);
 #else
     gimp_image_add_layer(uf->gimpImage, layer, 0);
