@@ -6358,6 +6358,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 12177,-4817,-1069,-1612,9864,2049,-98,850,4471 } },
     { "Canon PowerShot G12", 0, 0,
 	{ 13244,-5501,-1248,-1508,9858,1935,-270,1083,4366 } },
+    { "Canon PowerShot G1 X", 0, 0,
+	{ 0 } },
     { "Canon PowerShot G1", 0, 0,
 	{ -4778,9467,2172,4743,-1141,4344,-5146,9908,6077,-1566,11051,557 } },
     { "Canon PowerShot G2", 0, 0,
@@ -7660,6 +7662,11 @@ canon_a5:
     top_margin  = 10;
     left_margin = 12;
     filters = 0x49494949;
+  } else if (is_canon && raw_width == 4496) {
+    height = 3316;
+    width  = 4404;
+    top_margin  = 50;
+    left_margin = 80;
   } else if (is_canon && raw_width == 4832) {
     top_margin = unique_id == 0x80000261 ? 51:26;
     left_margin = 62;
@@ -7880,7 +7887,7 @@ cp_e2500:
       width = 3262;
       left_margin = 34;
     }
-    if (!strcmp(model,"X10"))
+    if (!strcmp(model,"X10") || !strcmp(model,"X-S1"))
       filters = 0x16161616;
     if (fuji_layout) raw_width *= is_raw;
     if (load_raw == &CLASS fuji_load_raw) {
