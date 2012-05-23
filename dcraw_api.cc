@@ -705,9 +705,9 @@ extern "C" {
 
         /* It might be better to report an error here: */
         /* (dcraw also forbids AHD for Fuji rotated images) */
-        if (interpolation == dcraw_ahd_interpolation && h->colors > 3)
+        if (interpolation == dcraw_ahd_interpolation && (h->colors > 3 || ff < 1000))
             interpolation = dcraw_vng_interpolation;
-        if (interpolation == dcraw_ppg_interpolation && h->colors > 3)
+        if (interpolation == dcraw_ppg_interpolation && (h->colors > 3 || ff < 1000))
             interpolation = dcraw_vng_interpolation;
         f4 = h->fourColorFilters;
         for (r = 0; r < h->height; r++)

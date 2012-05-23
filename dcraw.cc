@@ -311,8 +311,16 @@ int CLASS fc (int row, int col)
     { 0,2,0,3,1,0,0,1,1,3,3,2,3,2,2,1 },
     { 2,1,3,2,3,1,2,1,0,3,0,2,0,2,0,2 },
     { 0,3,1,0,0,2,0,3,2,1,3,1,1,3,1,3 } };
+  static const char filter2[6][6] =
+  { { 1,1,0,1,1,2 },
+    { 1,1,2,1,1,0 },
+    { 2,0,1,0,2,1 },
+    { 1,1,2,1,1,0 },
+    { 1,1,0,1,1,2 },
+    { 0,2,1,2,0,1 } };
 
-  if (filters != 1) return FC(row,col);
+  if (filters > 1000) return FC(row,col);
+  if (filters == 2) return filter2[(row+6) % 6][(col+6) % 6];
   return filter[(row+top_margin) & 15][(col+left_margin) & 15];
 }
 
@@ -1871,7 +1879,7 @@ void CLASS packed_load_raw()
       val = bitbuf << (64-tiff_bps-vbits) >> (64-tiff_bps);
       i = (col ^ (load_flags >> 6)) - left_margin;
       if ((unsigned) i < width)
-	BAYER(row,i) = val;
+	BAYER2(row,i) = val;
       else if (load_flags & 32) {
 	black += val;
 	zero += !val;
@@ -3926,7 +3934,7 @@ void CLASS pre_interpolate()
       shrink = 0;
     }
   }
-  if (filters && colors == 3) {
+  if (filters > 1000 && colors == 3) {
     if (four_color_rgb && colors++)
       mix_green = !half_size;
     else {
@@ -3964,29 +3972,31 @@ void CLASS border_interpolate (int border)
 
 void CLASS lin_interpolate()
 {
-  int code[16][16][32], *ip, sum[4];
-  int c, i, x, y, row, col, shift, color;
+  int code[16][16][32], size=16, *ip, sum[4];
+  int f, c, i, x, y, row, col, shift, color;
   ushort *pix;
 
   dcraw_message (DCRAW_VERBOSE,_("Bilinear interpolation...\n"));
-
+  if (filters == 2) size = 6;
   border_interpolate(1);
-  for (row=0; row < 16; row++)
-    for (col=0; col < 16; col++) {
-      ip = code[row][col];
+  for (row=0; row < size; row++)
+    for (col=0; col < size; col++) {
+      ip = code[row][col]+1;
+      f = fc(row,col);
       memset (sum, 0, sizeof sum);
       for (y=-1; y <= 1; y++)
 	for (x=-1; x <= 1; x++) {
 	  shift = (y==0) + (x==0);
-	  if (shift == 2) continue;
 	  color = fc(row+y,col+x);
+	  if (color == f) continue;
 	  *ip++ = (width*y + x)*4 + color;
 	  *ip++ = shift;
 	  *ip++ = color;
 	  sum[color] += 1 << shift;
 	}
+      code[row][col][0] = (ip - code[row][col]) / 3;
       FORCC
-	if (c != fc(row,col)) {
+	if (c != f) {
 	  *ip++ = c;
 	  *ip++ = 256 / sum[c];
 	}
@@ -3994,9 +4004,9 @@ void CLASS lin_interpolate()
   for (row=1; row < height-1; row++)
     for (col=1; col < width-1; col++) {
       pix = image[row*width+col];
-      ip = code[row & 15][col & 15];
+      ip = code[row % size][col % size];
       memset (sum, 0, sizeof sum);
-      for (i=8; i--; ip+=3)
+      for (i=*ip++; i--; ip+=3)
 	sum[ip[2]] += pix[ip[0]] << ip[1];
       for (i=colors; --i; ip+=2)
 	pix[ip[0]] = sum[ip[0]] * ip[1] >> 8;
@@ -4040,18 +4050,19 @@ void CLASS vng_interpolate()
     +1,+0,+2,+1,0,0x10
   }, chood[] = { -1,-1, -1,0, -1,+1, 0,+1, +1,+1, +1,0, +1,-1, 0,-1 };
   ushort (*brow[5])[4], *pix;
-  int prow=7, pcol=1, *ip, *code[16][16], gval[8], gmin, gmax, sum[4];
+  int prow=8, pcol=2, *ip, *code[16][16], gval[8], gmin, gmax, sum[4];
   int row, col, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
   int g, diff, thold, num, c;
 
   lin_interpolate();
   dcraw_message (DCRAW_VERBOSE,_("VNG interpolation...\n"));
 
-  if (filters == 1) prow = pcol = 15;
-  ip = (int *) calloc ((prow+1)*(pcol+1), 1280);
+  if (filters == 1) prow = pcol = 16;
+  if (filters == 2) prow = pcol =  6;
+  ip = (int *) calloc (prow*pcol, 1280);
   merror (ip, "vng_interpolate()");
-  for (row=0; row <= prow; row++)		/* Precalculate for VNG */
-    for (col=0; col <= pcol; col++) {
+  for (row=0; row < prow; row++)		/* Precalculate for VNG */
+    for (col=0; col < pcol; col++) {
       code[row][col] = ip;
       for (cp=terms, t=0; t < 64; t++) {
 	y1 = *cp++;  x1 = *cp++;
@@ -4087,7 +4098,7 @@ void CLASS vng_interpolate()
   for (row=2; row < height-2; row++) {		/* Do VNG interpolation */
     for (col=2; col < width-2; col++) {
       pix = image[row*width+col];
-      ip = code[row & prow][col & pcol];
+      ip = code[row % prow][col % pcol];
       memset (gval, 0, sizeof gval);
       while ((g = ip[0]) != INT_MAX) {		/* Calculate gradients */
 	diff = ABS(pix[g] - pix[ip[1]]) << ip[2];
@@ -7889,6 +7900,10 @@ cp_e2500:
     }
     if (!strcmp(model,"X10") || !strcmp(model,"X-S1"))
       filters = 0x16161616;
+    if (!strcmp(model,"X-Pro1")) {
+      left_margin = 0;
+      filters = 2;
+    }
     if (fuji_layout) raw_width *= is_raw;
     if (load_raw == &CLASS fuji_load_raw) {
       fuji_width = width >> !fuji_layout;
@@ -9312,7 +9327,7 @@ next:
     if (filters && !document_mode) {
       if (quality == 0)
 	lin_interpolate();
-      else if (quality == 1 || colors > 3)
+      else if (quality == 1 || colors > 3 || filters < 1000)
 	vng_interpolate();
       else if (quality == 2)
 	ppg_interpolate();

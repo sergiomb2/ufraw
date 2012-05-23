@@ -89,8 +89,17 @@ int CLASS fc_INDI(const unsigned filters, const int row, const int col)
         { 2, 1, 3, 2, 3, 1, 2, 1, 0, 3, 0, 2, 0, 2, 0, 2 },
         { 0, 3, 1, 0, 0, 2, 0, 3, 2, 1, 3, 1, 1, 3, 1, 3 }
     };
+    static const char filter2[6][6] = {
+        { 1, 1, 0, 1, 1, 2 },
+        { 1, 1, 2, 1, 1, 0 },
+        { 2, 0, 1, 0, 2, 1 },
+        { 1, 1, 2, 1, 1, 0 },
+        { 1, 1, 0, 1, 1, 2 },
+        { 0, 2, 1, 2, 0, 1 }
+    };
 
-    if (filters != 1) return FC(row, col);
+    if (filters > 1000) return FC(row, col);
+    if (filters == 2) return filter2[(row + 6) % 6][(col + 6) % 6];
     /* Assume that we are handling the Leaf CatchLight with
      * top_margin = 8; left_margin = 18; */
 //  return filter[(row+top_margin) & 15][(col+left_margin) & 15];
@@ -137,13 +146,13 @@ void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
 #ifdef _OPENMP
 #ifdef __sun			/* Fix bug #3205673 - NKBJ */
     #pragma omp parallel for				\
-    default(none)						\
+    default(none)					\
     shared(nc,image,size,noise)				\
     private(c,i,hpass,lev,lpass,row,col,thold,fimg,temp)
 #else
     #pragma omp parallel for				\
-    default(none)						\
-    shared(nc,image,size)					\
+    default(none)					\
+    shared(nc,image,size)				\
     private(c,i,hpass,lev,lpass,row,col,thold,fimg,temp)
 #endif
 #endif
@@ -280,29 +289,31 @@ void CLASS border_interpolate_INDI(const int height, const int width,
 void CLASS lin_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                                 const int width, const int height, const int colors, void *dcraw) /*UF*/
 {
-    int code[16][16][32], *ip, sum[4];
-    int c, i, x, y, row, col, shift, color;
+    int code[16][16][32], size = 16, *ip, sum[4];
+    int f, c, i, x, y, row, col, shift, color;
     ushort *pix;
 
     dcraw_message(dcraw, DCRAW_VERBOSE, _("Bilinear interpolation...\n")); /*UF*/
-
+    if (filters == 2) size = 6;
     border_interpolate_INDI(height, width, image, filters, colors, 1);
-    for (row = 0; row < 16; row++) {
-        for (col = 0; col < 16; col++) {
-            ip = code[row][col];
+    for (row = 0; row < size; row++) {
+        for (col = 0; col < size; col++) {
+            ip = code[row][col] + 1;
+            f = fc_INDI(filters, row, col);
             memset(sum, 0, sizeof sum);
             for (y = -1; y <= 1; y++)
                 for (x = -1; x <= 1; x++) {
                     shift = (y == 0) + (x == 0);
-                    if (shift == 2) continue;
                     color = fc_INDI(filters, row + y, col + x);
+                    if (color == f) continue;
                     *ip++ = (width * y + x) * 4 + color;
                     *ip++ = shift;
                     *ip++ = color;
                     sum[color] += 1 << shift;
                 }
+            code[row][col][0] = (ip - code[row][col]) / 3;
             FORCC
-            if (c != fc_INDI(filters, row, col)) {
+            if (c != f) {
                 *ip++ = c;
                 *ip++ = 256 / sum[c];
             }
@@ -314,9 +325,9 @@ void CLASS lin_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     for (row = 1; row < height - 1; row++) {
         for (col = 1; col < width - 1; col++) {
             pix = image[row * width + col];
-            ip = code[row & 15][col & 15];
+            ip = code[row % size][col % size];
             memset(sum, 0, sizeof sum);
-            for (i = 8; i--; ip += 3)
+            for (i = *ip++; i--; ip += 3)
                 sum[ip[2]] += pix[ip[0]] << ip[1];
             for (i = colors; --i; ip += 2)
                 pix[ip[0]] = sum[ip[0]] * ip[1] >> 8;
@@ -362,7 +373,7 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
         +1, +0, +2, +1, 0, 0x10
     }, chood[] = { -1, -1, -1, 0, -1, +1, 0, +1, +1, +1, +1, 0, +1, -1, 0, -1 };
     ushort(*brow[4])[4], *pix;
-    int prow = 7, pcol = 1, *ip, *code[16][16], gval[8], gmin, gmax, sum[4];
+    int prow = 8, pcol = 2, *ip, *code[16][16], gval[8], gmin, gmax, sum[4];
     int row, col, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
     int g, diff, thold, num, c;
     ushort rowtmp[4][width * 4];
@@ -370,11 +381,12 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     lin_interpolate_INDI(image, filters, width, height, colors, dcraw); /*UF*/
     dcraw_message(dcraw, DCRAW_VERBOSE, _("VNG interpolation...\n")); /*UF*/
 
-    if (filters == 1) prow = pcol = 15;
-    int *ipalloc = ip = (int *) calloc((prow + 1) * (pcol + 1), 1280);
+    if (filters == 1) prow = pcol = 16;
+    if (filters == 2) prow = pcol =  6;
+    int *ipalloc = ip = (int *) calloc(prow * pcol, 1280);
     merror(ip, "vng_interpolate()");
-    for (row = 0; row <= prow; row++)		/* Precalculate for VNG */
-        for (col = 0; col <= pcol; col++) {
+    for (row = 0; row < prow; row++)		/* Precalculate for VNG */
+        for (col = 0; col < pcol; col++) {
             code[row][col] = ip;
             for (cp = terms, t = 0; t < 64; t++) {
                 y1 = *cp++;
@@ -408,7 +420,7 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
         }
     progress(PROGRESS_INTERPOLATE, -height);
 #ifdef _OPENMP
-    #pragma omp parallel					\
+    #pragma omp parallel				\
     default(none)					\
     shared(image,code,prow,pcol)			\
     private(row,col,g,brow,rowtmp,pix,ip,gval,diff,gmin,gmax,thold,sum,color,num,c,t)
@@ -423,7 +435,7 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                 brow[g] = &rowtmp[(row + g - 2) % 4];
             for (col = 2; col < width - 2; col++) {
                 pix = image[row * width + col];
-                ip = code[row & prow][col & pcol];
+                ip = code[row % prow][col % pcol];
                 memset(gval, 0, sizeof gval);
                 while ((g = ip[0]) != INT_MAX) { /* Calculate gradients */
                     diff = ABS(pix[g] - pix[ip[1]]) << ip[2];
@@ -491,8 +503,8 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     dcraw_message(dcraw, DCRAW_VERBOSE, _("PPG interpolation...\n")); /*UF*/
 
 #ifdef _OPENMP
-    #pragma omp parallel					\
-    default(none)						\
+    #pragma omp parallel				\
+    default(none)					\
     shared(image,dir)					\
     private(row,col,i,d,c,pix,diff,guess)
 #endif
@@ -575,7 +587,7 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     dcraw_message(dcraw, DCRAW_VERBOSE, _("AHD interpolation...\n")); /*UF*/
 
 #ifdef _OPENMP
-    #pragma omp parallel					\
+    #pragma omp parallel				\
     default(shared)					\
     private(top, left, row, col, pix, rix, lix, c, xyz, val, d, tc, tr, i, j, k, ldiff, abdiff, leps, abeps, hm, buffer, rgb, lab, homo, r)
 #endif
