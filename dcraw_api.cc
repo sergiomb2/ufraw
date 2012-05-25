@@ -34,8 +34,6 @@
 #define FORC3 FORC(3)
 #define FORC4 FORC(4)
 #define FORCC FORC(colors)
-#define FC(filters,row,col) \
-    (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 extern "C" {
     int fc_INDI(const unsigned filters, const int row, const int col);
     void wavelet_denoise_INDI(gushort(*image)[4], const int black,
@@ -705,9 +703,9 @@ extern "C" {
 
         /* It might be better to report an error here: */
         /* (dcraw also forbids AHD for Fuji rotated images) */
-        if (interpolation == dcraw_ahd_interpolation && (h->colors > 3 || ff < 1000))
+        if (interpolation == dcraw_ahd_interpolation && h->colors > 3)
             interpolation = dcraw_vng_interpolation;
-        if (interpolation == dcraw_ppg_interpolation && (h->colors > 3 || ff < 1000))
+        if (interpolation == dcraw_ppg_interpolation && h->colors > 3)
             interpolation = dcraw_vng_interpolation;
         f4 = h->fourColorFilters;
         for (r = 0; r < h->height; r++)
