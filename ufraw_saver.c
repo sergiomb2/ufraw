@@ -120,7 +120,7 @@ long ufraw_send_to_gimp(ufraw_data *uf)
         if (strcmp(uf->conf->remoteGimpCommand,
                    conf_default.remoteGimpCommand) == 0) {
             /* If the user didn't play with the remoteGimpCommand,
-             * try to run Gimp-2.6 instead of Gimp-2.4 */
+             * try to run Gimp-2.6 instead of Gimp-2.8 */
             g_strlcpy(uf->conf->remoteGimpCommand, "gimp-2.6.exe", max_path);
             commandLine = g_strdup_printf("%s \"%s\"",
                                           uf->conf->remoteGimpCommand, fullConfFilename);

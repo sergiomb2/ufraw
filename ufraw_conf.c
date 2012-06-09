@@ -132,7 +132,7 @@ const conf_data conf_default = {
     "", "", /* curvePath, profilePath */
     FALSE, /* silent */
 #ifdef WIN32
-    "gimp-win-remote gimp-2.4.exe", /* remoteGimpCommand */
+    "gimp-win-remote gimp-2.8.exe", /* remoteGimpCommand */
 #elif HAVE_GIMP_2_6
     "gimp", /* remoteGimpCommand */
 #else
