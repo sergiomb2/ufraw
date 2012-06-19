@@ -1,6 +1,6 @@
 /*
    dcraw.h - Dave Coffin's raw photo decoder - header for C++ adaptation
-   Copyright 1997-2011 by Dave Coffin, dcoffin a cybercom o net
+   Copyright 1997-2012 by Dave Coffin, dcoffin a cybercom o net
    Copyright 2004-2012 by Udi Fuchs, udifuchs a gmail o com
 
    This program is free software; you can redistribute it and/or modify
@@ -53,14 +53,15 @@ public:
     unsigned thumb_length, meta_length, profile_length;
     unsigned thumb_misc, *oprof, fuji_layout, shot_select, multi_out;
     unsigned tiff_nifds, tiff_samples, tiff_bps, tiff_compress;
-    unsigned black, cblack[8], maximum, mix_green, raw_color, zero_is_bad;
+    unsigned black, cblack[4], maximum, mix_green, raw_color, zero_is_bad;
     unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
     unsigned tile_width, tile_length, gpsdata[32], load_flags;
     ushort raw_height, raw_width, height, width, top_margin, left_margin;
     ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
-    int flip, tiff_flip, colors;
+    ushort *raw_image, (*image)[4];
+    ushort white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
+    int mask[8][4], flip, tiff_flip, colors;
     double pixel_aspect, aber[4], gamm[6];
-    ushort(*image)[4], white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
     float bright, user_mul[4], threshold;
     int half_size, four_color_rgb, document_mode, highlight;
     int verbose, use_auto_wb, use_camera_wb, use_camera_matrix;
@@ -80,6 +81,7 @@ public:
 
     struct tiff_ifd {
         int width, height, bps, comp, phint, offset, flip, samples, bytes;
+        int tile_width, tile_length;
     } tiff_ifd[10];
 
     struct ph1 {
@@ -115,7 +117,7 @@ public:
     ~DCRaw();
     void dcraw_message(int code, const char *format, ...);
     /* All dcraw functions with the CLASS prefix are members of this class. */
-    int fc(int row, int col);
+    int fcol(int row, int col);
     void merror(void *ptr, const char *where);
     void derror();
     ushort sget2(uchar *s);
@@ -131,36 +133,36 @@ public:
     void canon_600_auto_wb();
     void canon_600_coeff();
     void canon_600_load_raw();
-    void remove_zeroes();
+    void canon_600_correct();
     int canon_s2is();
     unsigned getbithuff(int nbits, ushort *huff);
     ushort * make_decoder_ref(const uchar **source);
     ushort * make_decoder(const uchar *source);
     void crw_init_tables(unsigned table, ushort *huff[2]);
     int canon_has_lowbits();
-    void canon_compressed_load_raw();
+    void canon_load_raw();
     int ljpeg_start(struct jhead *jh, int info_only);
     void ljpeg_end(struct jhead *jh);
     int ljpeg_diff(ushort *huff);
     ushort * ljpeg_row(int jrow, struct jhead *jh);
     void lossless_jpeg_load_raw();
     void canon_sraw_load_raw();
-    void adobe_copy_pixel(int row, int col, ushort **rp);
-    void adobe_dng_load_raw_lj();
-    void adobe_dng_load_raw_nc();
+    void adobe_copy_pixel(unsigned row, unsigned col, ushort **rp);
+    void lossless_dng_load_raw();
+    void packed_dng_load_raw();
     void pentax_load_raw();
-    void nikon_compressed_load_raw();
+    void nikon_load_raw();
     int nikon_is_compressed();
     int nikon_e995();
     int nikon_e2100();
     void nikon_3700();
     int minolta_z2();
-    void fuji_load_raw();
     void ppm_thumb();
+    void ppm16_thumb();
     void layer_thumb();
     void rollei_thumb();
     void rollei_load_raw();
-    int bayer(unsigned row, unsigned col);
+    int raw(unsigned row, unsigned col);
     void phase_one_flat_field(int is_float, int nc);
     void phase_one_correct();
     void phase_one_load_raw();
@@ -168,10 +170,10 @@ public:
     void phase_one_load_raw_c();
     void hasselblad_load_raw();
     void leaf_hdr_load_raw();
+    void unpacked_load_raw();
     void sinar_4shot_load_raw();
     void imacon_full_load_raw();
     void packed_load_raw();
-    void unpacked_load_raw();
     void nokia_load_raw();
     unsigned pana_bits(int nbits);
     void panasonic_load_raw();
@@ -180,6 +182,7 @@ public:
     void quicktake_100_load_raw();
     void kodak_radc_load_raw();
     void kodak_jpeg_load_raw();
+    void lossy_dng_load_raw();
     void kodak_dc120_load_raw();
     void eight_bit_load_raw();
     void kodak_yrgb_load_raw();
@@ -201,8 +204,10 @@ public:
     void redcine_load_raw();
     void foveon_decoder(unsigned size, unsigned code);
     void foveon_thumb();
+    void foveon_sd_load_raw();
+    void foveon_huff(ushort *huff);
+    void foveon_dp_load_raw();
     void foveon_load_camf();
-    void foveon_load_raw();
     const char * foveon_camf_param(const char *block, const char *param);
     void * foveon_camf_matrix(unsigned dim[3], const char *name);
     int foveon_fixed(void *ptr, int size, const char *name);
@@ -212,6 +217,8 @@ public:
     (short **curvep, float dq[3], float div[3], float filt);
     int foveon_apply_curve(short *curve, int i);
     void foveon_interpolate();
+    void crop_masked_pixels();
+    void remove_zeroes();
     void bad_pixels(const char *fname);
     void subtract(const char *fname);
     void gamma_curve(double pwr, double ts, int mode, int imax);
