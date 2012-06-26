@@ -136,6 +136,7 @@ extern "C" {
         FORC3 if ((unsigned)i > d->cblack[c]) i = d->cblack[c];
         FORC4 d->cblack[c] -= i;
         d->black += i;
+        FORC4 d->cblack[c] += d->black;
         h->black = d->black;
         h->shrink = d->shrink = (h->filters != 0);
         h->pixel_aspect = d->pixel_aspect;
@@ -203,6 +204,7 @@ extern "C" {
         g_free(d->messageBuffer);
         d->messageBuffer = NULL;
         d->lastStatus = DCRAW_SUCCESS;
+        d->raw_image = 0;
         if (setjmp(d->failure)) {
             d->dcraw_message(DCRAW_ERROR, _("Fatal internal error\n"));
             h->message = d->messageBuffer;
@@ -221,17 +223,27 @@ extern "C" {
         }
         h->raw.colors = d->colors;
         h->fourColorFilters = d->filters;
+        if (d->filters) {
+            d->raw_image = (ushort *) calloc((d->raw_height + 7) * d->raw_width, 2);
+        }
         d->dcraw_message(DCRAW_VERBOSE, _("Loading %s %s image from %s ...\n"),
                          d->make, d->model, d->ifname_display);
         fseek(d->ifp, 0, SEEK_END);
         d->ifpSize = ftell(d->ifp);
         fseek(d->ifp, d->data_offset, SEEK_SET);
         (d->*d->load_raw)();
+        if (d->raw_image) {
+            d->crop_masked_pixels();
+            free(d->raw_image);
+        }
         if (!--d->data_error) d->lastStatus = DCRAW_ERROR;
         if (d->zero_is_bad) d->remove_zeroes();
         d->bad_pixels(NULL);
         if (d->is_foveon) {
-            d->foveon_interpolate();
+            if (d->model[0] == 'D') {
+                for (i = 0; i < d->height * d->width * 4; i++)
+                    if ((short) d->image[0][i] < 0) d->image[0][i] = 0;
+            } else d->foveon_interpolate();
             h->raw.width = h->width = d->width;
             h->raw.height = h->height = d->height;
         }
@@ -703,9 +715,9 @@ extern "C" {
 
         /* It might be better to report an error here: */
         /* (dcraw also forbids AHD for Fuji rotated images) */
-        if (interpolation == dcraw_ahd_interpolation && h->colors > 3)
+        if (interpolation == dcraw_ahd_interpolation && (h->colors > 3 || h->filters < 1000))
             interpolation = dcraw_vng_interpolation;
-        if (interpolation == dcraw_ppg_interpolation && h->colors > 3)
+        if (interpolation == dcraw_ppg_interpolation && (h->colors > 3 || h->filters < 1000))
             interpolation = dcraw_vng_interpolation;
         f4 = h->fourColorFilters;
         for (r = 0; r < h->height; r++)

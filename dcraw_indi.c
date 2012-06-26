@@ -98,12 +98,12 @@ int CLASS fc_INDI(const unsigned filters, const int row, const int col)
         { 0, 2, 1, 2, 0, 1 }
     };
 
-    if (filters > 1000) return FC(row, col);
-    if (filters == 2) return filter2[(row + 6) % 6][(col + 6) % 6];
     /* Assume that we are handling the Leaf CatchLight with
      * top_margin = 8; left_margin = 18; */
-//  return filter[(row+top_margin) & 15][(col+left_margin) & 15];
-    return filter[(row + 8) & 15][(col + 18) & 15];
+//  if (filters == 1) return filter[(row+top_margin) & 15][(col+left_margin) & 15];
+    if (filters == 1) return filter[(row + 8) & 15][(col + 18) & 15];
+    if (filters == 2) return filter2[(row + 6) % 6][(col + 6) % 6];
+    return FC(row, col);
 }
 
 static void CLASS merror(void *ptr, char *where)
