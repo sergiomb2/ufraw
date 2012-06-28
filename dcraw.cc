@@ -2939,7 +2939,7 @@ void CLASS foveon_dp_load_raw()
   FORC3 {
     fseek (ifp, data_offset+roff[c], SEEK_SET);
     getbits(-1);
-    vpred = 1024;
+    hpred = vpred = 1024;
     for (row=0; row < height; row++) {
       for (col=0; col < width; col++) {
 	diff = ljpeg_diff(huff);
@@ -4779,7 +4779,7 @@ nf: order = 0x4949;
     if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
       for (c=i=2; (ushort) c != 0xbbbb && (unsigned) i < len; i++)
 	c = c << 8 | fgetc(ifp);
-      while ((i+=4) < len-5)
+      while ((unsigned)(i+=4) < len-5)
 	if (get4() == 257 && (i=len) && (c = (get4(),fgetc(ifp))) < 3)
 	  flip = "065"[c]-'0';
     }
