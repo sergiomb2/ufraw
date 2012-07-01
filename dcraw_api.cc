@@ -136,7 +136,6 @@ extern "C" {
         FORC3 if ((unsigned)i > d->cblack[c]) i = d->cblack[c];
         FORC4 d->cblack[c] -= i;
         d->black += i;
-        FORC4 d->cblack[c] += d->black;
         h->black = d->black;
         h->shrink = d->shrink = (h->filters != 0);
         h->pixel_aspect = d->pixel_aspect;
