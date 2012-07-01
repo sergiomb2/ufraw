@@ -35,7 +35,7 @@
 #define FORC4 FORC(4)
 #define FORCC FORC(colors)
 extern "C" {
-    int fc_INDI(const unsigned filters, const int row, const int col);
+    int fcol_INDI(const unsigned filters, const int row, const int col);
     void wavelet_denoise_INDI(gushort(*image)[4], const int black,
                               const int iheight, const int iwidth, const int height, const int width,
                               const int colors, const int shrink, const float pre_mul[4],
@@ -240,7 +240,7 @@ extern "C" {
         if (d->zero_is_bad) d->remove_zeroes();
         d->bad_pixels(NULL);
         if (d->is_foveon) {
-            if (d->model[0] == 'D') {
+            if (d->load_raw == &DCRaw::foveon_dp_load_raw) {
                 for (i = 0; i < d->height * d->width * 4; i++)
                     if ((short) d->image[0][i] < 0) d->image[0][i] = 0;
             } else d->foveon_interpolate();
@@ -345,21 +345,21 @@ extern "C" {
     }
 
     /*
-     * fc_INDI() optimizing wrapper.
-     * fc_sequence() cooks up the filter color sequence for a row knowing that
+     * fcol_INDI() optimizing wrapper.
+     * fcol_sequence() cooks up the filter color sequence for a row knowing that
      * it doesn't have to store more than 16 values. The result can be indexed
-     * by the column using fc_color() and that part must of course be inlined
+     * by the column using fcol_color() and that part must of course be inlined
      * for maximum performance. The inner loop for image processing should
      * always try to index the column and not the row in order to reduce the
      * data cache footprint.
      */
-    static unsigned fc_sequence(int filters, int row)
+    static unsigned fcol_sequence(int filters, int row)
     {
         unsigned sequence = 0;
         int c;
 
         for (c = 15; c >= 0; --c)
-            sequence = (sequence << 2) | fc_INDI(filters, row, c);
+            sequence = (sequence << 2) | fcol_INDI(filters, row, c);
         return sequence;
     }
 
@@ -367,7 +367,7 @@ extern "C" {
      * Note: smart compilers will inline anyway in most cases: the "inline"
      * below is a comment reminding not to make it an external function.
      */
-    static inline int fc_color(unsigned sequence, int col)
+    static inline int fcol_color(unsigned sequence, int col)
     {
         return (sequence >> ((col << 1) & 0x1f)) & 3;
     }
@@ -419,7 +419,7 @@ extern "C" {
         for (ri = 0; ri < scale; ++ri) {
             ibase = hh->raw.image + ((row * scale + ri) / 2) * hh->raw.width;
             for (ci = 0; ci < scale; ++ci) {
-                cl = fc_color(fseq[ri], col * scale + ci);
+                cl = fcol_color(fseq[ri], col * scale + ci);
                 sum[cl] += ibase[(col * scale + ci) / 2][cl];
                 ++count[cl];
             }
@@ -462,7 +462,7 @@ extern "C" {
             for (r = 0; r < h; ++r) {
                 fseq = (unsigned*) g_malloc(scale * sizeof(unsigned));
                 for (ri = 0; ri < scale; ++ri)
-                    fseq[ri] = fc_sequence(f4, r + ri);
+                    fseq[ri] = fcol_sequence(f4, r + ri);
                 for (c = 0; c < w; ++c) {
                     pixp = f->image[r * w + c];
                     shrink_pixel(pixp, r, c, hh, fseq, scale);
@@ -722,8 +722,8 @@ extern "C" {
         f4 = h->fourColorFilters;
         for (r = 0; r < h->height; r++)
             for (c = 0; c < h->width; c++) {
-                int cc = fc_INDI(f4, r, c);
-                f->image[r * f->width + c][fc_INDI(ff, r, c)] =
+                int cc = fcol_INDI(f4, r, c);
+                f->image[r * f->width + c][fcol_INDI(ff, r, c)] =
                     h->raw.image[r / 2 * h->raw.width + c / 2][cc];
             }
         int smoothPasses = 1;

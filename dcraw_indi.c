@@ -69,7 +69,7 @@ extern const float d65_white[3];
 #define BAYER(row,col) \
     image[((row) >> shrink)*iwidth + ((col) >> shrink)][FC(row,col)]
 
-int CLASS fc_INDI(const unsigned filters, const int row, const int col)
+int CLASS fcol_INDI(const unsigned filters, const int row, const int col)
 {
     static const char filter[16][16] = {
         { 2, 1, 1, 3, 2, 3, 2, 0, 3, 2, 3, 0, 1, 2, 1, 0 },
@@ -276,11 +276,11 @@ void CLASS border_interpolate_INDI(const int height, const int width,
             for (y = row - 1; y != row + 2; y++)
                 for (x = col - 1; x != col + 2; x++)
                     if (y >= 0 && y < height && x >= 0 && x < width) {
-                        f = fc_INDI(filters, y, x);
+                        f = fcol_INDI(filters, y, x);
                         sum[f] += image[y * width + x][f];
                         sum[f + 4]++;
                     }
-            f = fc_INDI(filters, row, col);
+            f = fcol_INDI(filters, row, col);
             FORCC if (c != f && sum[c + 4])
                 image[row * width + col][c] = sum[c] / sum[c + 4];
         }
@@ -299,12 +299,12 @@ void CLASS lin_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     for (row = 0; row < size; row++) {
         for (col = 0; col < size; col++) {
             ip = code[row][col] + 1;
-            f = fc_INDI(filters, row, col);
+            f = fcol_INDI(filters, row, col);
             memset(sum, 0, sizeof sum);
             for (y = -1; y <= 1; y++)
                 for (x = -1; x <= 1; x++) {
                     shift = (y == 0) + (x == 0);
-                    color = fc_INDI(filters, row + y, col + x);
+                    color = fcol_INDI(filters, row + y, col + x);
                     if (color == f) continue;
                     *ip++ = (width * y + x) * 4 + color;
                     *ip++ = shift;
@@ -395,9 +395,9 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                 x2 = *cp++;
                 weight = *cp++;
                 grads = *cp++;
-                color = fc_INDI(filters, row + y1, col + x1);
-                if (fc_INDI(filters, row + y2, col + x2) != color) continue;
-                diag = (fc_INDI(filters, row, col + 1) == color && fc_INDI(filters, row + 1, col) == color) ? 2 : 1;
+                color = fcol_INDI(filters, row + y1, col + x1);
+                if (fcol_INDI(filters, row + y2, col + x2) != color) continue;
+                diag = (fcol_INDI(filters, row, col + 1) == color && fcol_INDI(filters, row + 1, col) == color) ? 2 : 1;
                 if (abs(y1 - y2) == diag && abs(x1 - x2) == diag) continue;
                 *ip++ = (y1 * width + x1) * 4 + color;
                 *ip++ = (y2 * width + x2) * 4 + color;
@@ -411,8 +411,8 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                 y = *cp++;
                 x = *cp++;
                 *ip++ = (y * width + x) * 4;
-                color = fc_INDI(filters, row, col);
-                if (fc_INDI(filters, row + y, col + x) != color && fc_INDI(filters, row + y * 2, col + x * 2) == color)
+                color = fcol_INDI(filters, row, col);
+                if (fcol_INDI(filters, row + y, col + x) != color && fcol_INDI(filters, row + y * 2, col + x * 2) == color)
                     *ip++ = (y * width + x) * 8 + color;
                 else
                     *ip++ = 0;
@@ -458,7 +458,7 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                 }
                 thold = gmin + (gmax >> 1);
                 memset(sum, 0, sizeof sum);
-                color = fc_INDI(filters, row, col);
+                color = fcol_INDI(filters, row, col);
                 for (num = g = 0; g < 8; g++, ip += 2) { /* Average the neighbors */
                     if (gval[g] <= thold) {
                         FORCC
