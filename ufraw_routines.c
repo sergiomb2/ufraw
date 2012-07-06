@@ -165,13 +165,14 @@ char *uf_markup_buf(char *buffer, const char *format, ...)
     }
 }
 
-const char raw_ext[] = "3fr,ari,arw,bay,bmq,cine,cr2,crw,cs1,dc2,dcr,dng,erf,"
-                       "fff,hdr,ia,iiq,jpeg,jpg,k25,kc2,kdc,mdc,mef,mos,mrw,"
-                       "nef,nrw,orf,pef,pxn,qtk,r3d,raf,raw,rdc,rw2,rwl,sr2,"
-                       "srf,srw,sti,tif,tiff,ufraw,x3f";
+const char raw_ext[] = "3fr,ari,arw,cap,cine,cr2,crw,cs1,dc2,dcr,dng,erf,fff,"
+                       "hdr,ia,iiq,jpeg,jpg,k25,kc2,kdc,mdc,mef,mos,mrw,nef,"
+                       "nrw,orf,pef,pxn,qtk,r3d,raf,raw,rdc,rw2,rwl,sr2,srf,"
+                       "srw,sti,tif,tiff,ufraw,x3f";
 
 const char *file_type[] = { ".ppm", ".ppm", ".tif", ".tif", ".jpg",
-                            ".png", ".png", ".embedded.jpg", ".embedded.png", ".fits"
+                            ".png", ".png", ".embedded.jpg", ".embedded.png",
+                            ".fits"
                           };
 
 /* Set locale of LC_NUMERIC to "C" to make sure that printf behaves correctly.*/
