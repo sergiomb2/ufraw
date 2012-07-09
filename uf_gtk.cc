@@ -136,48 +136,6 @@ extern "C" {
         }
     }
 
-// Get the display ICC profile of the monitor associated with the widget.
-// For X display, uses the ICC profile specifications version 0.2 from
-// http://burtonini.com/blog/computers/xicc
-// Based on code from Gimp's modules/cdisplay_lcms.c
-#ifdef GDK_WINDOWING_QUARTZ
-    typedef struct {
-        guchar *data;
-        gsize   len;
-    } ProfileTransfer;
-
-    enum {
-        openReadSpool  = 1, /* start read data process         */
-        openWriteSpool = 2, /* start write data process        */
-        readSpool      = 3, /* read specified number of bytes  */
-        writeSpool     = 4, /* write specified number of bytes */
-        closeSpool     = 5  /* complete data transfer process  */
-    };
-
-    static OSErr _uf_lcms_flatten_profile(SInt32  command,
-                                          SInt32 *size, void *data, void *refCon)
-    {
-        ProfileTransfer *transfer = static_cast<ProfileTransfer*>(refCon);
-
-        switch (command) {
-            case openWriteSpool:
-                g_return_val_if_fail(transfer->data == NULL && transfer->len == 0, -1);
-                break;
-
-            case writeSpool:
-                transfer->data = static_cast<guchar*>(
-                                     g_realloc(transfer->data, transfer->len + *size));
-                memcpy(transfer->data + transfer->len, data, *size);
-                transfer->len += *size;
-                break;
-
-            default:
-                break;
-        }
-        return 0;
-    }
-#endif /* GDK_WINDOWING_QUARTZ */
-
 // On X11 the display profile can be embedded using the 'xicc' command.
     void uf_get_display_profile(GtkWidget *widget,
                                 guint8 **buffer, gint *buffer_size)
@@ -215,13 +173,17 @@ extern "C" {
         if (prof == NULL)
             return;
 
-        ProfileTransfer transfer = { NULL, 0 };
-        Boolean foo;
-        CMFlattenProfile(prof, 0, _uf_lcms_flatten_profile, &transfer, &foo);
+        CFDataRef data;
+        data = CMProfileCopyICCData(NULL, prof);
         CMCloseProfile(prof);
 
-        *buffer = transfer.data;
-        *buffer_size = transfer.len;
+        UInt8 *tmp_buffer = (UInt8 *) g_malloc(CFDataGetLength(data));
+        CFDataGetBytes(data, CFRangeMake(0, CFDataGetLength(data)), tmp_buffer);
+
+        *buffer = (guint8 *) tmp_buffer;
+        *buffer_size = CFDataGetLength(data);
+
+        CFRelease(data);
 
 #elif defined G_OS_WIN32
         (void)widget;
