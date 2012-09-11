@@ -309,8 +309,19 @@ extern "C" int ufraw_exif_prepare_output(ufraw_data *uf)
                     != exifData.end()) {
                 exifData.erase(pos);
                 ufraw_message(UFRAW_SET_LOG,
-                              "buflen %d too big, erasing Exif.Photo.MakerNote\n",
+                              "buflen %d too big, erasing Exif.Photo.MakerNote "
+                              "and related decoded metadata\n",
                               size + sizeof(ExifHeader));
+                /* Delete decoded metadata associated with
+                 * Exif.Photo.MakerNote, otherwise erasing it isn't
+                 * effective. */
+                for (pos = exifData.begin(); pos != exifData.end();) {
+                    if (!strcmp(pos->ifdName(), "Makernote"))
+                        pos = exifData.erase(pos);
+                    else
+                        pos++;
+                }
+                blob.clear();
                 Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
                 size = blob.size();
             }
@@ -321,6 +332,7 @@ extern "C" int ufraw_exif_prepare_output(ufraw_data *uf)
             ufraw_message(UFRAW_SET_LOG,
                           "buflen %d too big, erasing Thumbnail\n",
                           size + sizeof(ExifHeader));
+            blob.clear();
             Exiv2::ExifParser::encode(blob, Exiv2::bigEndian, exifData);
             size = blob.size();
         }
