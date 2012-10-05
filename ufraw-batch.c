@@ -123,10 +123,12 @@ int ufraw_batch_saver(ufraw_data *uf)
         gchar *yChar = g_utf8_strdown(_("y"), -1);
         /* First letter of the word 'no' for the y/n question */
         gchar *nChar = g_utf8_strup(_("n"), -1);
-        g_printerr(_("%s: overwrite '%s'?"), ufraw_binary,
-                   uf->conf->outputFilename);
-        g_printerr(" [%s/%s] ", yChar, nChar);
-        if (fgets(ans, max_name, stdin) == NULL) ans[0] = '\0';
+        if (!silentMessenger) {
+            g_printerr(_("%s: overwrite '%s'?"), ufraw_binary,
+                       uf->conf->outputFilename);
+            g_printerr(" [%s/%s] ", yChar, nChar);
+            if (fgets(ans, max_name, stdin) == NULL) ans[0] = '\0';
+        }
         gchar *ans8 = g_utf8_strdown(ans, 1);
         if (g_utf8_collate(ans8, yChar) != 0) {
             g_free(yChar);
