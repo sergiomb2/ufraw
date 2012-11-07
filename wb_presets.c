@@ -1768,6 +1768,14 @@ const wb_data wb_preset[] = {
   { "MINOLTA", "DYNAX 7D", "9800K", 0,		{ 2.226562, 1, 1.144531, 0 } },
   { "MINOLTA", "DYNAX 7D", "9900K", 0,		{ 2.242188, 1, 1.144531, 0 } },
 
+  // copied from NIKON 1 V1
+  { "NIKON", "1 J1", Incandescent, 0,		{ 1.210938, 1, 2.308594, 0 } },
+  { "NIKON", "1 J1", CoolWhiteFluorescent, 0,	{ 1.687500, 1, 2.199219, 0 } },
+  { "NIKON", "1 J1", DirectSunlight, 0,		{ 1.828125, 1, 1.550781, 0 } },
+  { "NIKON", "1 J1", Flash, 0,			{ 2.101563, 1, 1.335938, 0 } },
+  { "NIKON", "1 J1", Cloudy, 0,			{ 1.960938, 1, 1.406250, 0 } },
+  { "NIKON", "1 J1", Shade, 0,			{ 2.257813, 1, 1.277344, 0 } },
+
   { "NIKON", "1 V1", Incandescent, 0,		{ 1.210938, 1, 2.308594, 0 } },
   { "NIKON", "1 V1", CoolWhiteFluorescent, 0,	{ 1.687500, 1, 2.199219, 0 } },
   { "NIKON", "1 V1", DirectSunlight, 0,		{ 1.828125, 1, 1.550781, 0 } },
