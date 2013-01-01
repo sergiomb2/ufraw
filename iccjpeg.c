@@ -15,18 +15,7 @@
  * with ICC profiles exceeding 64K bytes in size.  If you need to do that,
  * change all the "unsigned int" variables to "INT32".  You'll also need
  * to find a malloc() replacement that can allocate more than 64K.
- *
- * This code was copied to UFRaw from lcms-1.14 in Jan 2005.
- * Changes:
- * 15-Jun-2005 #ifdef HAVE_LIBJPEG on the entire code
- *    Jan-2005 added this comment...
  */
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#ifdef HAVE_LIBJPEG
 
 #include "iccjpeg.h"
 #include <stdlib.h>			/* define malloc() */
@@ -257,5 +246,3 @@ read_icc_profile(j_decompress_ptr cinfo,
 
     return TRUE;
 }
-
-#endif /*HAVE_LIBJPEG*/
