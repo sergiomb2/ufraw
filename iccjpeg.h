@@ -14,10 +14,12 @@
  * NOTE: this code would need surgery to work on 16-bit-int machines
  * with ICC profiles exceeding 64K bytes in size.  See iccprofile.c
  * for details.
+ *
+ * UFRaw: Copied from lcms-2.4 January 2013.
  */
 
 #include <stdio.h>		/* needed to define "FILE", "NULL" */
-#include "jpeglib.h"
+#include <jpeglib.h>
 
 
 /*
