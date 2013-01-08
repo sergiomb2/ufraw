@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: autogen.sh,v 1.5 2012/10/20 15:00:22 nkbj Exp $
+# $Id: autogen.sh,v 1.6 2013/01/08 17:00:08 nkbj Exp $
 
 # Generate all autoconf/automake files, to prepare for running
 # configure from only the contents of CVS.
@@ -15,8 +15,12 @@
 # minimum version in Makefile.am and assuming that in 2006 the program
 # automake will be a modern version.
 
-AUTOMAKE=automake-1.12
-ACLOCAL=aclocal-1.12
+AUTOMAKE=automake-1.13
+ACLOCAL=aclocal-1.13
+($AUTOMAKE --version) < /dev/null > /dev/null 2>&1 || {
+    AUTOMAKE=automake-1.12
+    ACLOCAL=aclocal-1.12
+}
 ($AUTOMAKE --version) < /dev/null > /dev/null 2>&1 || {
     AUTOMAKE=automake-1.11
     ACLOCAL=aclocal-1.11
