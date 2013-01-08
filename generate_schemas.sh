@@ -78,13 +78,16 @@ do_mime image@x-kodak-k25
 do_mime image@x-kodak-kdc
 do_mime image@x-minolta-mrw
 do_mime image@x-nikon-nef
+do_mime image@x-nikon-nrw
 do_mime image@x-olympus-orf
 do_mime image@x-panasonic-raw
+do_mime image@x-panasonic-rw2
 do_mime image@x-pentax-pef
 do_mime image@x-sigma-x3f
 do_mime image@x-sony-srf
 do_mime image@x-sony-sr2
 do_mime image@x-sony-arw
+do_mime image@x-samsung-srw
 
 echo "   </schemalist>" >> $SCHEMAS
 echo "</gconfschemafile>" >> $SCHEMAS

@@ -34,12 +34,13 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"
 Name: "UFRawAssociation"; Description: "UFRaw ID files"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "DNGAssociation"; Description: "DNG - Adobe Digital Negative"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "CRWAssociation"; Description: "CRW,CR2 - Canon Raw"; GroupDescription: "Associate the following file types with UFRaw:"
-Name: "NEFAssociation"; Description: "NEF - Nikon Electronic Format"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "NEFAssociation"; Description: "NEF,NRW - Nikon Raw"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "PEFAssociation"; Description: "PEF - Pentax Electronic Format"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "RAFAssociation"; Description: "RAF - Fuji Raw Format"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "ORFAssociation"; Description: "ORF - Olympus Raw Format"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "MRWAssociation"; Description: "MRW - Minolta Raw"; GroupDescription: "Associate the following file types with UFRaw:"
-Name: "ARWAssociation"; Description: "ARW - Sony DSLR Raw"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "ARWAssociation"; Description: "ARW,SRF,SR2 - Sony Raw"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "SRWAssociation"; Description: "SRW - Samsung Raw"; GroupDescription: "Associate the following file types with UFRaw:"
 
 [Files]
 Source: "ufraw.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -84,11 +85,15 @@ Root: HKCR; Subkey: ".dng"; ValueType: string; ValueName: ""; ValueData: "UFRaw"
 Root: HKCR; Subkey: ".crw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: CRWAssociation
 Root: HKCR; Subkey: ".cr2"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: CRWAssociation
 Root: HKCR; Subkey: ".nef"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: NEFAssociation
+Root: HKCR; Subkey: ".nrw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: NEFAssociation
 Root: HKCR; Subkey: ".pef"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: PEFAssociation
 Root: HKCR; Subkey: ".raf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: RAFAssociation
 Root: HKCR; Subkey: ".orf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ORFAssociation
 Root: HKCR; Subkey: ".mrw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: MRWAssociation
 Root: HKCR; Subkey: ".arw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ARWAssociation
+Root: HKCR; Subkey: ".srf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ARWAssociation
+Root: HKCR; Subkey: ".sr2"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ARWAssociation
+Root: HKCR; Subkey: ".srw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: SRWAssociation
 
 Root: HKCR; Subkey: "UFRawID"; ValueType: string; ValueName: ""; ValueData: "UFRawID"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "UFRawID"; ValueType: string; ValueName: ""; ValueData: "UFRaw ID file"; Flags: uninsdeletevalue

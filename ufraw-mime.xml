@@ -12,7 +12,7 @@
   <mime-type type="image/x-dcraw">
     <comment>Digital raw image</comment>
     <acronym>DCRaw</acronym>
-    <expanded-acronym>Digital camera Raw</expanded-acronym>
+    <expanded-acronym>Digital Ramera Raw</expanded-acronym>
   </mime-type>
 
   <mime-type type="image/x-adobe-dng">
@@ -106,6 +106,15 @@
     <glob pattern="*.nef"/>
   </mime-type>
 
+  <mime-type type="image/x-nikon-nrw">
+    <sub-class-of type="image/x-dcraw"/>
+    <sub-class-of type="image/tiff"/>
+    <comment>Nikon raw image</comment>
+    <acronym>NRW</acronym>
+    <expanded-acronym>Nikon RaW</expanded-acronym>
+    <glob pattern="*.nrw"/>
+  </mime-type>
+
   <mime-type type="image/x-olympus-orf">
     <sub-class-of type="image/x-dcraw"/>
     <comment>Olympus raw image</comment>
@@ -125,11 +134,25 @@
   <mime-type type="image/x-panasonic-raw">
     <sub-class-of type="image/x-dcraw"/>
     <comment>Panasonic raw image</comment>
+    <acronym>RAW</acronym>
+    <expanded-acronym>Panasonic RAW</expanded-acronym>
     <magic priority="50">
       <!-- Some kind of TIFF file with a non-standard version in prefix !-->
       <match value="IIU\x00\x08\x00\x00\x00" type="string" offset="0"/>
     </magic>
     <glob pattern="*.raw"/>
+  </mime-type>
+
+  <mime-type type="image/x-panasonic-rw2">
+    <_comment>Panasonic raw2 image</_comment>
+    <acronym>RW2</acronym>
+    <expanded-acronym>Panasonic RaW format 2</expanded-acronym>
+    <sub-class-of type="image/x-dcraw"/>
+    <magic priority="50">
+      <!-- Some kind of TIFF file with a non-standard version in prefix !-->
+      <match value="IIU\x00\x18\x00\x00\x00" type="string" offset="0"/>
+    </magic>
+    <glob pattern="*.rw2"/>
   </mime-type>
 
   <mime-type type="image/x-pentax-pef">
@@ -178,9 +201,18 @@
     <sub-class-of type="image/x-dcraw"/>
     <sub-class-of type="image/tiff"/>
     <acronym>ARW</acronym>
-    <expanded-acronym>Alpha Raw format</expanded-acronym>
+    <expanded-acronym>Alpha RaW</expanded-acronym>
     <comment>Sony raw image</comment>
     <glob pattern="*.arw"/>
+  </mime-type>
+
+  <mime-type type="image/x-samsung-srw">
+    <sub-class-of type="image/x-dcraw"/>
+    <sub-class-of type="image/tiff"/>
+    <acronym>SRW</acronym>
+    <expanded-acronym>Samsung RaW</expanded-acronym>
+    <comment>Samsung raw image</comment>
+    <glob pattern="*.srw"/>
   </mime-type>
 
 </mime-info>
