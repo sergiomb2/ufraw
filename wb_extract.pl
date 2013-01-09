@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: wb_extract.pl,v 1.4 2008/01/22 12:24:18 lexort Exp $
+# $Id: wb_extract.pl,v 1.5 2013/01/09 16:30:07 nkbj Exp $
 
 # This program helps to prepare white balance preset lines for
 # wb_presets.c.  To add a new camera, take exposures with every white
@@ -27,18 +27,30 @@ if (@ARGV < 1) {
 # debug:
 #my ($lastmul1, $lastmul2, $lastmul3) = (0,0,0);
 
+my($const_WB);
+$const_WB = 0;
+
 for my $file (@ARGV) {
-  my ($make, $model, $wbname, $wbfinetune, $mulred, $mulgreen, $mulblue);
+  if ($file eq "-const") {
+	$const_WB = 1;
+	next
+  }
 
+  my ($make, $model, $fw_version, $wbname, $wbfinetune, $wbfinetune_1, $mulred, $mulgreen, $mulblue);
   $mulgreen = 1;  # default value for green balance
+  $wbfinetune = $wbfinetune_1 = 0;  # avoid warnings about uninitialized vars
 
-  open(EXIFTOOL, "exiftool -s -t -Model -ColorBalance1 -RedBalance -BlueBalance -WhiteBalance -WhiteBalanceFineTune $file|") 
+  open(EXIFTOOL, "exiftool -s -t -Model -CanonModelID -FirmwareVersion -ColorBalance1 -RedBalance -BlueBalance -WhiteBalance -WBShiftAB -WBBracketValueAB $file|") 
     or die "can't open $file: $!";
   while (my $line = <EXIFTOOL>) {
     $line =~ /([^\t]+)\t(.*)/ or next;
     my ($field, $value) = ($1, $2);
     if ($field eq "Model") {
       ($make, $model) = split(/ +/, $value);
+    } elsif ($field eq "CanonModelID") {
+      $model = $value;
+    } elsif ($field eq "FirmwareVersion") {
+      $fw_version = $value;
     } elsif ($field eq "ColorBalance1") {   # Field for D200
       my $mul_unknown;
       ($mulred, $mulblue, $mulgreen, $mul_unknown) = split(/ +/, $value);
@@ -50,16 +62,28 @@ for my $file (@ARGV) {
       $wbname = $value;
     } elsif ($field eq "WhiteBalanceFineTune") {
       $wbfinetune = $value;
+    } elsif ($field eq "WBShiftAB") {
+      $wbfinetune = $value;
+    } elsif ($field eq "WBBracketValueAB") {
+      $wbfinetune_1 = $value;
     }
   }
   close EXIFTOOL;
 
   # Fix names for consistency across Nikon cameras (D70 and D2X use "Direct sunlight")
   $wbname =~ s/^Sunny$/Direct sunlight/;
-  
+
+  # printf "  /* $make $model Firmware Version $fw_version */\n";
+ 
   # Format and print the line
   my $result;
-  $result = sprintf "  { \"%s\", \"%s\", \"%s\", %d,", $make, $model, $wbname, $wbfinetune;
+  $result = sprintf "  { \"%s\", \"%s\", ", $make, $model;
+  if ($const_WB eq 1) {
+    $result .= sprintf "%s, ", $wbname;
+  } else {
+    $result .= sprintf "\"%s\", ", $wbname;
+  }
+  $result .= sprintf "%d,", $wbfinetune+$wbfinetune_1;
   $result .= " " while length($result) < 48;
   $result .= "{ $mulred, $mulgreen, $mulblue, 0 } },";
 
