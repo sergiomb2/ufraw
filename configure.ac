@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.161 2013/01/18 02:30:21 nkbj Exp $
+dnl $Id: configure.ac,v 1.162 2013/01/20 06:00:06 nkbj Exp $
 AC_INIT(UFRaw, 0.19)
 AC_PREREQ(2.57)
 
@@ -256,7 +256,7 @@ PKG_CHECK_MODULES(CFITSIO, cfitsio,
   [ have_cfitsio=no
     AC_MSG_RESULT($CFITSIO_PKG_ERRORS) ] )
 
-PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.18.1,
+PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.20,
   [ have_exiv2=yes
     AC_DEFINE(HAVE_EXIV2, 1, have the exiv2 library) ],
   [ have_exiv2=no
