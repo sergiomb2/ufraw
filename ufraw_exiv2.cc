@@ -73,24 +73,12 @@ extern "C" int ufraw_exif_read_input(ufraw_data *uf)
         /* List of tag names taken from exiv2's printSummary() in actions.cpp */
         Exiv2::ExifData::const_iterator pos;
         /* Read shutter time */
-        if ((pos = exifData.findKey(Exiv2::ExifKey("Exif.Photo.ExposureTime")))
-                != exifData.end()) {
+        if ((pos = Exiv2::exposureTime(exifData)) != exifData.end()) {
             uf_strlcpy_to_utf8(uf->conf->shutterText, max_name, pos, exifData);
             uf->conf->shutter = pos->toFloat();
-        } else if ((pos = exifData.findKey(
-                              Exiv2::ExifKey("Exif.Photo.ShutterSpeedValue")))
-                   != exifData.end()) {
-            uf_strlcpy_to_utf8(uf->conf->shutterText, max_name, pos, exifData);
-            uf->conf->shutter = 1.0 / pos->toFloat();
         }
         /* Read aperture */
-        if ((pos = exifData.findKey(Exiv2::ExifKey("Exif.Photo.FNumber")))
-                != exifData.end()) {
-            uf_strlcpy_to_utf8(uf->conf->apertureText, max_name, pos, exifData);
-            uf->conf->aperture = pos->toFloat();
-        } else if ((pos = exifData.findKey(
-                              Exiv2::ExifKey("Exif.Photo.ApertureValue")))
-                   != exifData.end()) {
+        if ((pos = Exiv2::fNumber(exifData)) != exifData.end()) {
             uf_strlcpy_to_utf8(uf->conf->apertureText, max_name, pos, exifData);
             uf->conf->aperture = pos->toFloat();
         }
@@ -99,12 +87,7 @@ extern "C" int ufraw_exif_read_input(ufraw_data *uf)
             uf_strlcpy_to_utf8(uf->conf->isoText, max_name, pos, exifData);
         }
         /* Read focal length */
-        if ((pos = exifData.findKey(Exiv2::ExifKey("Exif.Photo.FocalLength")))
-                != exifData.end()) {
-            uf_strlcpy_to_utf8(uf->conf->focalLenText, max_name, pos, exifData);
-            uf->conf->focal_len = pos->toFloat();
-        } else if ((pos = exifData.findKey(Exiv2::ExifKey(
-                                               "Exif.Canon.FocalLength"))) != exifData.end()) {
+        if ((pos = Exiv2::focalLength(exifData)) != exifData.end()) {
             uf_strlcpy_to_utf8(uf->conf->focalLenText, max_name, pos, exifData);
             uf->conf->focal_len = pos->toFloat();
         }
@@ -124,17 +107,14 @@ extern "C" int ufraw_exif_read_input(ufraw_data *uf)
             uf_strlcpy_to_utf8(uf->conf->flashText, max_name, pos, exifData);
         }
         /* Read White Balance Setting */
-        if ((pos = exifData.findKey(Exiv2::ExifKey("Exif.Photo.WhiteBalance")))
-                != exifData.end()) {
+        if ((pos = Exiv2::whiteBalance(exifData)) != exifData.end()) {
             uf_strlcpy_to_utf8(uf->conf->whiteBalanceText, max_name, pos, exifData);
         }
 
-        if ((pos = exifData.findKey(Exiv2::ExifKey("Exif.Image.Make")))
-                != exifData.end()) {
+        if ((pos = Exiv2::make(exifData)) != exifData.end()) {
             uf_strlcpy_to_utf8(uf->conf->real_make, max_name, pos, exifData);
         }
-        if ((pos = exifData.findKey(Exiv2::ExifKey("Exif.Image.Model")))
-                != exifData.end()) {
+        if ((pos = Exiv2::model(exifData)) != exifData.end()) {
             uf_strlcpy_to_utf8(uf->conf->real_model, max_name, pos, exifData);
         }
 
