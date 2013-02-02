@@ -91,6 +91,9 @@ extern "C" {
             return DCRAW_OPEN_ERROR;
         }
         d->identify();
+#ifndef UFRAW_X_TRANS
+        if (d->filters == 2) d->is_raw = 0;
+#endif
         /* We first check if dcraw recognizes the file, this is equivalent
          * to 'dcraw -i' succeeding */
         if (!d->make[0]) {
