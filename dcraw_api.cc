@@ -215,8 +215,6 @@ extern "C" {
         }
         h->raw.height = d->iheight = (h->height + h->shrink) >> h->shrink;
         h->raw.width = d->iwidth = (h->width + h->shrink) >> h->shrink;
-        h->raw.image = d->image = g_new0(dcraw_image_type, d->iheight * d->iwidth
-                                         + d->meta_length);
         d->meta_data = (char *)(d->image + d->iheight * d->iwidth);
         /* copied from the end of dcraw's identify() */
         if (d->filters && d->colors == 3) {
@@ -226,7 +224,10 @@ extern "C" {
         h->raw.colors = d->colors;
         h->fourColorFilters = d->filters;
         if (d->filters) {
-            d->raw_image = (ushort *) calloc((d->raw_height + 7) * d->raw_width, 2);
+            d->raw_image = (ushort *) g_malloc((d->raw_height + 7) * d->raw_width * 2);
+        } else {
+            h->raw.image = d->image = g_new0(dcraw_image_type, d->iheight * d->iwidth
+                                             + d->meta_length);
         }
         d->dcraw_message(DCRAW_VERBOSE, _("Loading %s %s image from %s ...\n"),
                          d->make, d->model, d->ifname_display);
@@ -234,9 +235,13 @@ extern "C" {
         d->ifpSize = ftell(d->ifp);
         fseek(d->ifp, d->data_offset, SEEK_SET);
         (d->*d->load_raw)();
+        h->raw.height = d->iheight = (h->height + h->shrink) >> h->shrink;
+        h->raw.width = d->iwidth = (h->width + h->shrink) >> h->shrink;
         if (d->raw_image) {
+            h->raw.image = d->image = g_new0(dcraw_image_type, d->iheight * d->iwidth
+                                             + d->meta_length);
             d->crop_masked_pixels();
-            free(d->raw_image);
+            g_free(d->raw_image);
         }
         if (!--d->data_error) d->lastStatus = DCRAW_ERROR;
         if (d->zero_is_bad) d->remove_zeroes();
