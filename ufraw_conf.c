@@ -1691,13 +1691,20 @@ char versionText[] =
 
     "EXIV2 "
 #ifdef HAVE_EXIV2
-    EXV_PACKAGE_VERSION "\n"
+    "version " EXV_PACKAGE_VERSION "\n"
 #else
     "disabled.\n"
 #endif
 
     "JPEG "
 #ifdef HAVE_LIBJPEG
+    "enabled.\n"
+#else
+    "disabled.\n"
+#endif
+
+    "JPEG2000 (libjasper) "
+#ifdef HAVE_LIBJASPER
     "enabled.\n"
 #else
     "disabled.\n"
@@ -1726,6 +1733,20 @@ char versionText[] =
 
     "ZIP "
 #ifdef HAVE_LIBZ
+    "enabled.\n"
+#else
+    "disabled.\n"
+#endif
+
+    "BZIP2 "
+#ifdef HAVE_LIBBZ2
+    "enabled.\n"
+#else
+    "disabled.\n"
+#endif
+
+    "LENSFUN "
+#ifdef HAVE_LENSFUN
     "enabled.\n"
 #else
     "disabled.\n"
