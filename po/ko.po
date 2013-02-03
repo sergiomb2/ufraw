@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-03 13:00+0100\n"
+"POT-Creation-Date: 2013-02-03 19:00+0100\n"
 "PO-Revision-Date: 2010-03-18 14:45+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr@googlegroups.com>\n"
@@ -55,11 +55,11 @@ msgid "%s: overwrite '%s'?"
 msgstr "%s: '%s'을(를) 덮어 쓸까요?"
 
 #, fuzzy
-msgid "--silent option is valid only in ufraw-batch"
+msgid "The --silent option is only valid with 'ufraw-batch'"
 msgstr "--silent 옵션은 배치모드에서만 유효합니다."
 
 #, fuzzy
-msgid "--embedded-image option is valid only in ufraw-batch"
+msgid "The --embedded-image option is only valid with 'ufraw-batch'"
 msgstr "--silent 옵션은 배치모드에서만 유효합니다."
 
 msgid "Raw images"
@@ -398,7 +398,7 @@ msgstr ""
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image. This option\n"
-"                      is valid only in ufraw-batch.\n"
+"                      is only valid with 'ufraw-batch'.\n"
 msgstr ""
 "--embedded-image      raw파일을 변환하는 대신 raw파일에 포함된\n"
 "                      미리보기 이미지를 추출하기.\n"
@@ -461,7 +461,7 @@ msgstr "--maximize-window     창 크기를 강제로 최대화 하기.\n"
 #, fuzzy
 msgid ""
 "--silent              Do not display any messages during conversion. This\n"
-"                      option is valid only in ufraw-batch.\n"
+"                      option is only valid with 'ufraw-batch'.\n"
 msgstr "--silent              변환하는 동안 아무 메시지도 표시하지 않음.\n"
 
 msgid ""
@@ -494,7 +494,8 @@ msgstr "'%s'은(는) --%s의 올바른 값이 아닙니다."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw가 ZIP 지원이 빠진 채로 빌드됨."
 
-msgid "--batch is obsolete. Use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. Use 'ufraw-batch' instead."
 msgstr "--batch는 더이상 사용되지 않습니다. 대신 ufraw-batch를 사용하세요."
 
 #, c-format

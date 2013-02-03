@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-03 13:00+0100\n"
+"POT-Creation-Date: 2013-02-03 19:00+0100\n"
 "PO-Revision-Date: 2011-09-06 22:21+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -53,11 +53,11 @@ msgid "%s: overwrite '%s'?"
 msgstr "%s: »%s« überschreiben?"
 
 #, fuzzy
-msgid "--silent option is valid only in ufraw-batch"
+msgid "The --silent option is only valid with 'ufraw-batch'"
 msgstr "--silent-Option ist nur im Stapelverarbeitungsmodus gültig"
 
 #, fuzzy
-msgid "--embedded-image option is valid only in ufraw-batch"
+msgid "The --embedded-image option is only valid with 'ufraw-batch'"
 msgstr "--silent-Option ist nur im Stapelverarbeitungsmodus gültig"
 
 msgid "Raw images"
@@ -417,7 +417,7 @@ msgstr ""
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image. This option\n"
-"                      is valid only in ufraw-batch.\n"
+"                      is only valid with 'ufraw-batch'.\n"
 msgstr ""
 "--embedded-image      Das in der raw-Datei eingebettete Vorschaubild\n"
 "                      entpacken, anstatt das raw-Bild zu konvertieren.\n"
@@ -488,7 +488,7 @@ msgstr "--maximize-window     Maximierung des Fensters erzwingen\n"
 #, fuzzy
 msgid ""
 "--silent              Do not display any messages during conversion. This\n"
-"                      option is valid only in ufraw-batch.\n"
+"                      option is only valid with 'ufraw-batch'.\n"
 msgstr ""
 "--silent              Während der Stapelkonvertierung keine Nachrichten\n"
 "                      anzeigen.\n"
@@ -526,7 +526,8 @@ msgstr "»%s« ist kein gültiger Wert für die --%s-Option."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw wurde ohne ZIP-Unterstützung erstellt."
 
-msgid "--batch is obsolete. Use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. Use 'ufraw-batch' instead."
 msgstr "--batch ist veraltet. Benutzen Sie anstelle dessen ufraw-batch."
 
 #, c-format

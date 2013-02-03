@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-03 13:00+0100\n"
+"POT-Creation-Date: 2013-02-03 19:00+0100\n"
 "PO-Revision-Date: 2009-10-07 10:53-0300\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese\n"
@@ -53,11 +53,11 @@ msgid "%s: overwrite '%s'?"
 msgstr "%s: sobrescrever '%s'?"
 
 #, fuzzy
-msgid "--silent option is valid only in ufraw-batch"
+msgid "The --silent option is only valid with 'ufraw-batch'"
 msgstr "opção --silent é válida somente no modo em lotes"
 
 #, fuzzy
-msgid "--embedded-image option is valid only in ufraw-batch"
+msgid "The --embedded-image option is only valid with 'ufraw-batch'"
 msgstr "opção --silent é válida somente no modo em lotes"
 
 msgid "Raw images"
@@ -410,7 +410,7 @@ msgstr ""
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image. This option\n"
-"                      is valid only in ufraw-batch.\n"
+"                      is only valid with 'ufraw-batch'.\n"
 msgstr ""
 "--embedded-image      Extrai a imagem miniatura embutida no arquivo cru\n"
 "                      em vez de convertê-la.\n"
@@ -477,7 +477,7 @@ msgstr "--maximize-window     Faz a janela ser maximizada.\n"
 #, fuzzy
 msgid ""
 "--silent              Do not display any messages during conversion. This\n"
-"                      option is valid only in ufraw-batch.\n"
+"                      option is only valid with 'ufraw-batch'.\n"
 msgstr ""
 "--silent              Não mostra nenhuma mensagem durante conversão em "
 "lote.\n"
@@ -515,7 +515,8 @@ msgstr "'%s' não é um valor válido para a opção --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw foi compilado sem suporte a zip."
 
-msgid "--batch is obsolete. Use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. Use 'ufraw-batch' instead."
 msgstr "--batch é obsoleto. Use ufraw-batch no lugar."
 
 #, c-format

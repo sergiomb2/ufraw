@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-03 13:00+0100\n"
+"POT-Creation-Date: 2013-02-03 19:00+0100\n"
 "PO-Revision-Date: 2009-06-15 00:00+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Tetralet <tetralet@gmail.com>\n"
@@ -51,11 +51,11 @@ msgid "%s: overwrite '%s'?"
 msgstr "%s：是否覆寫 '%s'？"
 
 #, fuzzy
-msgid "--silent option is valid only in ufraw-batch"
+msgid "The --silent option is only valid with 'ufraw-batch'"
 msgstr "--silent 選項只適用於批次處理模式"
 
 #, fuzzy
-msgid "--embedded-image option is valid only in ufraw-batch"
+msgid "The --embedded-image option is only valid with 'ufraw-batch'"
 msgstr "--silent 選項只適用於批次處理模式"
 
 msgid "Raw images"
@@ -388,7 +388,7 @@ msgstr "--[no]zip             啟用 [關閉] TIFF zip 壓縮（預設值為 noz
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image. This option\n"
-"                      is valid only in ufraw-batch.\n"
+"                      is only valid with 'ufraw-batch'.\n"
 msgstr ""
 "--embedded-image      匯出內嵌於 raw 檔案中的預覽影像，而不是轉換 raw 影"
 "像。\n"
@@ -449,7 +449,7 @@ msgstr "--maximize-window     強制將視窗最大化。\n"
 #, fuzzy
 msgid ""
 "--silent              Do not display any messages during conversion. This\n"
-"                      option is valid only in ufraw-batch.\n"
+"                      option is only valid with 'ufraw-batch'.\n"
 msgstr "--silent              在批次轉換期間不顯示任何信息。\n"
 
 msgid ""
@@ -481,7 +481,8 @@ msgstr "'%s' 不是 --%s 選項的有效值。"
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw 在編譯時沒有編入對 ZIP 的支援。"
 
-msgid "--batch is obsolete. Use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. Use 'ufraw-batch' instead."
 msgstr "--batch 已廢棄。請替而使用 ufraw-batch。"
 
 #, c-format

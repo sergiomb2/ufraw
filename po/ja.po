@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-03 13:00+0100\n"
+"POT-Creation-Date: 2013-02-03 19:00+0100\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -55,11 +55,11 @@ msgid "%s: overwrite '%s'?"
 msgstr "%s: 上書きしますか '%s'?"
 
 #, fuzzy
-msgid "--silent option is valid only in ufraw-batch"
+msgid "The --silent option is only valid with 'ufraw-batch'"
 msgstr "--silent オプションはバッチモードのみで有効です"
 
 #, fuzzy
-msgid "--embedded-image option is valid only in ufraw-batch"
+msgid "The --embedded-image option is only valid with 'ufraw-batch'"
 msgstr "--silent オプションはバッチモードのみで有効です"
 
 msgid "Raw images"
@@ -395,7 +395,7 @@ msgstr "--[no]zip             TIFFのzip圧縮の有効[無効](デフォルト 
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image. This option\n"
-"                      is valid only in ufraw-batch.\n"
+"                      is only valid with 'ufraw-batch'.\n"
 msgstr ""
 "--embedded-image      Raw画像を変換するのでは無く、\n"
 "                      rawファイルに埋込まれているプレビュー画像を抽出\n"
@@ -455,7 +455,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "--silent              Do not display any messages during conversion. This\n"
-"                      option is valid only in ufraw-batch.\n"
+"                      option is only valid with 'ufraw-batch'.\n"
 msgstr "--silent              バッチ処理の間なにもメッセージを表示しません。\n"
 
 msgid ""
@@ -490,7 +490,7 @@ msgid "ufraw was build without ZIP support."
 msgstr "ufrawはZIPサポート無しでビルドされました。"
 
 #, fuzzy
-msgid "--batch is obsolete. Use ufraw-batch instead."
+msgid "--batch is obsolete. Use 'ufraw-batch' instead."
 msgstr "--batchオプションでは無くufraw-batchプログラムを使ってください。"
 
 #, c-format

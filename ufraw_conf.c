@@ -1656,7 +1656,7 @@ char *helpText[] = {
     N_("--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"),
     N_("--embedded-image      Extract the preview image embedded in the raw file\n"
     "                      instead of converting the raw image. This option\n"
-    "                      is valid only in ufraw-batch.\n"),
+    "                      is only valid with 'ufraw-batch'.\n"),
     N_("--rotate=camera|ANGLE|no\n"
     "                      Rotate image to camera's setting, by ANGLE degrees\n"
     "                      clockwise, or do not rotate the image (default camera).\n"),
@@ -1675,7 +1675,7 @@ char *helpText[] = {
     N_("--overwrite           Overwrite existing files without asking (default no).\n"),
     N_("--maximize-window     Force window to be maximized.\n"),
     N_("--silent              Do not display any messages during conversion. This\n"
-    "                      option is valid only in ufraw-batch.\n"),
+    "                      option is only valid with 'ufraw-batch'.\n"),
     "\n",
     N_("UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
     "Then, if an ID file is specified, its setting are read. Next, the setting from\n"
@@ -2017,7 +2017,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
                 return 0;
             case 'b':
                 ufraw_message(UFRAW_ERROR,
-                              _("--batch is obsolete. Use ufraw-batch instead."));
+                              _("--batch is obsolete. Use 'ufraw-batch' instead."));
                 return -1;
             case '0':
                 cmd->autoCrop = enabled_state;

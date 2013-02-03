@@ -68,11 +68,12 @@ int main(int argc, char **argv)
     }
     if (cmd.silent) {
         ufraw_message(UFRAW_ERROR,
-                      _("--silent option is valid only in ufraw-batch"));
+                      _("The --silent option is only valid with 'ufraw-batch'"));
         optInd = -1;
     }
     if (cmd.embeddedImage) {
-        ufraw_message(UFRAW_ERROR, _("--embedded-image option is valid only in ufraw-batch"));
+        ufraw_message(UFRAW_ERROR,
+                      _("The --embedded-image option is only valid with 'ufraw-batch'"));
         optInd = -1;
     }
     if (optInd < 0) {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-03 13:00+0100\n"
+"POT-Creation-Date: 2013-02-03 19:00+0100\n"
 "PO-Revision-Date: 2010-03-16 12:54+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -55,11 +55,11 @@ msgid "%s: overwrite '%s'?"
 msgstr "%s: да препишем „%s“?"
 
 #, fuzzy
-msgid "--silent option is valid only in ufraw-batch"
+msgid "The --silent option is only valid with 'ufraw-batch'"
 msgstr "--silent могућност се користи само у пакетном режиму"
 
 #, fuzzy
-msgid "--embedded-image option is valid only in ufraw-batch"
+msgid "The --embedded-image option is only valid with 'ufraw-batch'"
 msgstr "--silent могућност се користи само у пакетном режиму"
 
 msgid "Raw images"
@@ -425,7 +425,7 @@ msgstr ""
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image. This option\n"
-"                      is valid only in ufraw-batch.\n"
+"                      is only valid with 'ufraw-batch'.\n"
 msgstr ""
 "--embedded-image      Извлачи преглед слике уметнут у raw датотеку уместо\n"
 "                      да преводи raw слику.\n"
@@ -495,7 +495,7 @@ msgstr "--maximize-window     Покреће програм у увећаном 
 #, fuzzy
 msgid ""
 "--silent              Do not display any messages during conversion. This\n"
-"                      option is valid only in ufraw-batch.\n"
+"                      option is only valid with 'ufraw-batch'.\n"
 msgstr "--silent              Не приказује никакве поруке у пакетном режиму.\n"
 
 # Шта је заправо second group of options?
@@ -531,7 +531,8 @@ msgstr "„%s“ није исправна вредност за --%s могућ
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw је изграђен без подршке за ZIP датотеке."
 
-msgid "--batch is obsolete. Use ufraw-batch instead."
+#, fuzzy
+msgid "--batch is obsolete. Use 'ufraw-batch' instead."
 msgstr "--batch могућност је превазиђена. Користите ufraw-batch."
 
 #, c-format

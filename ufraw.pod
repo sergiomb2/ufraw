@@ -57,7 +57,8 @@ Display a brief description of how to use UFRaw and exit.
 
 =item --silent
 
-Do not display any messages during batch conversion.
+Do not display any messages during conversion. This option is only
+valid with 'ufraw-batch'.
 
 =item --conf=<ID-filename>
 
@@ -311,7 +312,7 @@ Control whether UFRaw ID files are created for the output image.
 =item --embedded-image
 
 Extract the preview image embedded in the raw file instead of converting
-the raw image.
+the raw image. This option is only valid with 'ufraw-batch'.
 
 =back
 
