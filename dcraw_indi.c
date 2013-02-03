@@ -89,6 +89,7 @@ int CLASS fcol_INDI(const unsigned filters, const int row, const int col)
         { 2, 1, 3, 2, 3, 1, 2, 1, 0, 3, 0, 2, 0, 2, 0, 2 },
         { 0, 3, 1, 0, 0, 2, 0, 3, 2, 1, 3, 1, 1, 3, 1, 3 }
     };
+#ifdef UFRAW_X_TRANS
     static const char filter2[6][6] = {
         { 1, 1, 0, 1, 1, 2 },
         { 1, 1, 2, 1, 1, 0 },
@@ -97,12 +98,15 @@ int CLASS fcol_INDI(const unsigned filters, const int row, const int col)
         { 1, 1, 0, 1, 1, 2 },
         { 0, 2, 1, 2, 0, 1 }
     };
+#endif
 
     /* Assume that we are handling the Leaf CatchLight with
      * top_margin = 8; left_margin = 18; */
 //  if (filters == 1) return filter[(row+top_margin) & 15][(col+left_margin) & 15];
     if (filters == 1) return filter[(row + 8) & 15][(col + 18) & 15];
+#ifdef UFRAW_X_TRANS
     if (filters == 2) return filter2[(row + 6) % 6][(col + 6) % 6];
+#endif
     return FC(row, col);
 }
 
@@ -294,7 +298,9 @@ void CLASS lin_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     ushort *pix;
 
     dcraw_message(dcraw, DCRAW_VERBOSE, _("Bilinear interpolation...\n")); /*UF*/
+#ifdef UFRAW_X_TRANS
     if (filters == 2) size = 6;
+#endif
     border_interpolate_INDI(height, width, image, filters, colors, 1);
     for (row = 0; row < size; row++) {
         for (col = 0; col < size; col++) {
@@ -382,7 +388,9 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     dcraw_message(dcraw, DCRAW_VERBOSE, _("VNG interpolation...\n")); /*UF*/
 
     if (filters == 1) prow = pcol = 16;
+#ifdef UFRAW_X_TRANS
     if (filters == 2) prow = pcol =  6;
+#endif
     int *ipalloc = ip = (int *) calloc(prow * pcol, 1280);
     merror(ip, "vng_interpolate()");
     for (row = 0; row < prow; row++)		/* Precalculate for VNG */
