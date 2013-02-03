@@ -73,8 +73,8 @@ int main(int argc, char **argv)
             continue;
         }
         status = ufraw_config(uf, &rc, &conf, &cmd);
-        if (uf->conf && uf->conf->createID == only_id && cmd.createID != only_id)
-            uf->conf->createID = also_id;
+        if (uf->conf && uf->conf->createID == only_id && cmd.createID == -1)
+            uf->conf->createID = no_id;
         if (status == UFRAW_ERROR) {
             exitCode = 1;
             ufraw_close_darkframe(uf->conf);
