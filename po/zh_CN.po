@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw-0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-01 05:00+0100\n"
+"POT-Creation-Date: 2013-02-03 13:00+0100\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -52,11 +52,13 @@ msgstr "否(n)"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: 覆盖 '%s'?"
 
-msgid "--silent option is valid only in batch mode"
+#, fuzzy
+msgid "--silent option is valid only in ufraw-batch"
 msgstr "--沉默选项，只适用于批处理模式"
 
-msgid "Extracting embedded image is not supported in interactive mode"
-msgstr "嵌入式图像提取，不支持交互模式"
+#, fuzzy
+msgid "--embedded-image option is valid only in ufraw-batch"
+msgstr "--沉默选项，只适用于批处理模式"
 
 msgid "Raw images"
 msgstr "Raw 图像"
@@ -382,9 +384,11 @@ msgid ""
 "nozip).\n"
 msgstr "--[no]zip             启用 [禁用] TIFF zip 压缩 (默认 nozip)。\n"
 
+#, fuzzy
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
-"                      instead of converting the raw image.\n"
+"                      instead of converting the raw image. This option\n"
+"                      is valid only in ufraw-batch.\n"
 msgstr ""
 "--embedded-image      提取嵌入在 raw 文件中的预览图像，而不是转换 raw 图"
 "像。\n"
@@ -440,8 +444,10 @@ msgstr "--overwrite           覆盖现有文件而不询问(默认 no)。\n"
 msgid "--maximize-window     Force window to be maximized.\n"
 msgstr "--maximize-window     强制窗口最大化。\n"
 
+#, fuzzy
 msgid ""
-"--silent              Do not display any messages during batch conversion.\n"
+"--silent              Do not display any messages during conversion. This\n"
+"                      option is valid only in ufraw-batch.\n"
 msgstr "--silent              批量转换时不显示任何信息。\n"
 
 msgid ""
@@ -1666,3 +1672,6 @@ msgstr "相机白平衡"
 
 msgid "Auto WB"
 msgstr "自动白平衡"
+
+#~ msgid "Extracting embedded image is not supported in interactive mode"
+#~ msgstr "嵌入式图像提取，不支持交互模式"

@@ -1655,7 +1655,8 @@ char *helpText[] = {
     N_("--[no]exif            Embed EXIF in output (default embed EXIF).\n"),
     N_("--[no]zip             Enable [disable] TIFF zip compression (default nozip).\n"),
     N_("--embedded-image      Extract the preview image embedded in the raw file\n"
-    "                      instead of converting the raw image.\n"),
+    "                      instead of converting the raw image. This option\n"
+    "                      is valid only in ufraw-batch.\n"),
     N_("--rotate=camera|ANGLE|no\n"
     "                      Rotate image to camera's setting, by ANGLE degrees\n"
     "                      clockwise, or do not rotate the image (default camera).\n"),
@@ -1673,7 +1674,8 @@ char *helpText[] = {
     N_("--darkframe=FILE      Use FILE for raw darkframe subtraction.\n"),
     N_("--overwrite           Overwrite existing files without asking (default no).\n"),
     N_("--maximize-window     Force window to be maximized.\n"),
-    N_("--silent              Do not display any messages during batch conversion.\n"),
+    N_("--silent              Do not display any messages during conversion. This\n"
+    "                      option is valid only in ufraw-batch.\n"),
     "\n",
     N_("UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
     "Then, if an ID file is specified, its setting are read. Next, the setting from\n"

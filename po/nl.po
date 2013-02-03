@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw-0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-01 05:00+0100\n"
+"POT-Creation-Date: 2013-02-03 13:00+0100\n"
 "PO-Revision-Date: 2011-08-12 13:37+0200\n"
 "Last-Translator: Simon Oosthoek\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -53,12 +53,13 @@ msgstr "n"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: overschrijven '%s'?"
 
-msgid "--silent option is valid only in batch mode"
+#, fuzzy
+msgid "--silent option is valid only in ufraw-batch"
 msgstr "--silent parameter is alleen geldig in batch modus"
 
-msgid "Extracting embedded image is not supported in interactive mode"
-msgstr ""
-"Ingebedde afbeelding uitpakken wordt niet ondersteund in interactieve modus"
+#, fuzzy
+msgid "--embedded-image option is valid only in ufraw-batch"
+msgstr "--silent parameter is alleen geldig in batch modus"
 
 msgid "Raw images"
 msgstr "RAW afbeeldingen"
@@ -408,9 +409,11 @@ msgstr ""
 "--[no]zip             Gebruik [geen] TIFF zip (deflate) compressie "
 "(standaard: nozip).\n"
 
+#, fuzzy
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
-"                      instead of converting the raw image.\n"
+"                      instead of converting the raw image. This option\n"
+"                      is valid only in ufraw-batch.\n"
 msgstr ""
 "--embedded-image      Extraheer de voorbeeldafbeelding uit het raw bestand\n"
 "                      in plaats van het raw bestand te converteren.\n"
@@ -474,8 +477,10 @@ msgstr ""
 msgid "--maximize-window     Force window to be maximized.\n"
 msgstr "--maximize-window     Forceer schermvullend venster.\n"
 
+#, fuzzy
 msgid ""
-"--silent              Do not display any messages during batch conversion.\n"
+"--silent              Do not display any messages during conversion. This\n"
+"                      option is valid only in ufraw-batch.\n"
 msgstr ""
 "--silent              Geef geen berichten weer tijdens batch conversie.\n"
 
@@ -1716,3 +1721,8 @@ msgstr "Camera WB"
 
 msgid "Auto WB"
 msgstr "Auto WB"
+
+#~ msgid "Extracting embedded image is not supported in interactive mode"
+#~ msgstr ""
+#~ "Ingebedde afbeelding uitpakken wordt niet ondersteund in interactieve "
+#~ "modus"

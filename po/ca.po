@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-01 05:00+0100\n"
+"POT-Creation-Date: 2013-02-03 13:00+0100\n"
 "PO-Revision-Date: 2010-03-04 21:05+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -54,11 +54,13 @@ msgstr "n"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: voleu sobreescriure '%s'? "
 
-msgid "--silent option is valid only in batch mode"
+#, fuzzy
+msgid "--silent option is valid only in ufraw-batch"
 msgstr "--silent aquesta opció només és vàlida al mode per lots"
 
-msgid "Extracting embedded image is not supported in interactive mode"
-msgstr "El mode interactiu no permet extreure imatges incrustades"
+#, fuzzy
+msgid "--embedded-image option is valid only in ufraw-batch"
+msgstr "--silent aquesta opció només és vàlida al mode per lots"
 
 msgid "Raw images"
 msgstr "Imatges en cru"
@@ -420,9 +422,11 @@ msgstr ""
 "--[no]zip             Habilita [inhabilita] la compressió zip als fitxers "
 "TIFF (per omissió nozip).\n"
 
+#, fuzzy
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
-"                      instead of converting the raw image.\n"
+"                      instead of converting the raw image. This option\n"
+"                      is valid only in ufraw-batch.\n"
 msgstr ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image.\n"
@@ -489,8 +493,10 @@ msgstr ""
 msgid "--maximize-window     Force window to be maximized.\n"
 msgstr "--maximize-window     Fés que la finestre sigui màxima.\n"
 
+#, fuzzy
 msgid ""
-"--silent              Do not display any messages during batch conversion.\n"
+"--silent              Do not display any messages during conversion. This\n"
+"                      option is valid only in ufraw-batch.\n"
 msgstr ""
 "--silent              No mostris cap missatge durant la conversió per lots.\n"
 
@@ -1737,3 +1743,6 @@ msgstr "Equilibri de blancs de la càmera"
 
 msgid "Auto WB"
 msgstr "Equilibri de blancs automàtic"
+
+#~ msgid "Extracting embedded image is not supported in interactive mode"
+#~ msgstr "El mode interactiu no permet extreure imatges incrustades"

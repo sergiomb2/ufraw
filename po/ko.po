@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-01 05:00+0100\n"
+"POT-Creation-Date: 2013-02-03 13:00+0100\n"
 "PO-Revision-Date: 2010-03-18 14:45+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr@googlegroups.com>\n"
@@ -54,11 +54,13 @@ msgstr "n"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: '%s'을(를) 덮어 쓸까요?"
 
-msgid "--silent option is valid only in batch mode"
+#, fuzzy
+msgid "--silent option is valid only in ufraw-batch"
 msgstr "--silent 옵션은 배치모드에서만 유효합니다."
 
-msgid "Extracting embedded image is not supported in interactive mode"
-msgstr "내장 이미지 추출은 대화식 모드에서 지원되지 않습니다."
+#, fuzzy
+msgid "--embedded-image option is valid only in ufraw-batch"
+msgstr "--silent 옵션은 배치모드에서만 유효합니다."
 
 msgid "Raw images"
 msgstr "Raw 이미지"
@@ -392,9 +394,11 @@ msgid ""
 msgstr ""
 "--[no]zip             TIFF zip 압축을 활성[비활성] 하기 (기본값 nozip).\n"
 
+#, fuzzy
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
-"                      instead of converting the raw image.\n"
+"                      instead of converting the raw image. This option\n"
+"                      is valid only in ufraw-batch.\n"
 msgstr ""
 "--embedded-image      raw파일을 변환하는 대신 raw파일에 포함된\n"
 "                      미리보기 이미지를 추출하기.\n"
@@ -454,8 +458,10 @@ msgstr "--overwrite           기존 파일에 덮어 쓰기 (기본값 no).\n"
 msgid "--maximize-window     Force window to be maximized.\n"
 msgstr "--maximize-window     창 크기를 강제로 최대화 하기.\n"
 
+#, fuzzy
 msgid ""
-"--silent              Do not display any messages during batch conversion.\n"
+"--silent              Do not display any messages during conversion. This\n"
+"                      option is valid only in ufraw-batch.\n"
 msgstr "--silent              변환하는 동안 아무 메시지도 표시하지 않음.\n"
 
 msgid ""
@@ -1684,3 +1690,6 @@ msgstr "카메라 화벨"
 
 msgid "Auto WB"
 msgstr "자동 화벨"
+
+#~ msgid "Extracting embedded image is not supported in interactive mode"
+#~ msgstr "내장 이미지 추출은 대화식 모드에서 지원되지 않습니다."

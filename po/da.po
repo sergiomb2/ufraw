@@ -1,14 +1,14 @@
 # Danish translation for UFRaw.
 # Copyright (C) 2006-2013 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-# Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>, 2006-2012.
+# Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>, 2006-2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-01 05:00+0100\n"
-"PO-Revision-Date: 2012-02-19 12:30+0100\n"
+"POT-Creation-Date: 2013-02-03 13:00+0100\n"
+"PO-Revision-Date: 2013-02-03 13:00+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "Language: da\n"
@@ -51,12 +51,11 @@ msgstr "n"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: overskriv '%s'?"
 
-msgid "--silent option is valid only in batch mode"
-msgstr "Tilvalget --silent kan kun anvendes i batch-modus"
+msgid "--silent option is valid only in ufraw-batch"
+msgstr "Tilvalget --silent kan kun anvendes i ufraw-batch"
 
-msgid "Extracting embedded image is not supported in interactive mode"
-msgstr ""
-"Udtrækning af indlejret billede er ikke understøttet i interaktivt modus"
+msgid "--embedded-image option is valid only in ufraw-batch"
+msgstr "Tilvalget --embedded-image kan kun anvendes i ufraw-batch"
 
 msgid "Raw images"
 msgstr "Raw-billeder"
@@ -409,10 +408,13 @@ msgstr ""
 
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
-"                      instead of converting the raw image.\n"
+"                      instead of converting the raw image. This option\n"
+"                      is valid only in ufraw-batch.\n"
 msgstr ""
 "--embedded-image      Brug det i raw-filen indlejrede miniaturebillede\n"
-"                      i stedet for at konvertere raw-billedet.\n"
+"                      i stedet for at konvertere raw-billedet. Dette "
+"tilvalg\n"
+"                      kan kun anvendes i ufraw-batch.\n"
 
 msgid ""
 "--rotate=camera|ANGLE|no\n"
@@ -474,9 +476,11 @@ msgid "--maximize-window     Force window to be maximized.\n"
 msgstr "--maximize-window     Tving vinduet til at være maksimeret.\n"
 
 msgid ""
-"--silent              Do not display any messages during batch conversion.\n"
+"--silent              Do not display any messages during conversion. This\n"
+"                      option is valid only in ufraw-batch.\n"
 msgstr ""
-"--silent              Vis ingen meddelelser under batch-konvertering.\n"
+"--silent              Vis ingen meddelelser under konvertering. Dette\n"
+"                      tilvalg kan kun anvendes i ufraw-batch.\n"
 
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"

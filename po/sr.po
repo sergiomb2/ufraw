@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ufraw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-01 05:00+0100\n"
+"POT-Creation-Date: 2013-02-03 13:00+0100\n"
 "PO-Revision-Date: 2010-03-16 12:54+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -54,11 +54,13 @@ msgstr "н"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: да препишем „%s“?"
 
-msgid "--silent option is valid only in batch mode"
+#, fuzzy
+msgid "--silent option is valid only in ufraw-batch"
 msgstr "--silent могућност се користи само у пакетном режиму"
 
-msgid "Extracting embedded image is not supported in interactive mode"
-msgstr "Извлачење уметнуте слике није подржано у упитном режиму"
+#, fuzzy
+msgid "--embedded-image option is valid only in ufraw-batch"
+msgstr "--silent могућност се користи само у пакетном режиму"
 
 msgid "Raw images"
 msgstr "Raw слике"
@@ -419,9 +421,11 @@ msgstr ""
 "--[no]zip             Zip паковање TIFF датотека (подразумевано не пакује у "
 "Zip).\n"
 
+#, fuzzy
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
-"                      instead of converting the raw image.\n"
+"                      instead of converting the raw image. This option\n"
+"                      is valid only in ufraw-batch.\n"
 msgstr ""
 "--embedded-image      Извлачи преглед слике уметнут у raw датотеку уместо\n"
 "                      да преводи raw слику.\n"
@@ -488,8 +492,10 @@ msgstr ""
 msgid "--maximize-window     Force window to be maximized.\n"
 msgstr "--maximize-window     Покреће програм у увећаном прозор.\n"
 
+#, fuzzy
 msgid ""
-"--silent              Do not display any messages during batch conversion.\n"
+"--silent              Do not display any messages during conversion. This\n"
+"                      option is valid only in ufraw-batch.\n"
 msgstr "--silent              Не приказује никакве поруке у пакетном режиму.\n"
 
 # Шта је заправо second group of options?
@@ -1722,3 +1728,6 @@ msgstr "Равнотежа беле из камере"
 
 msgid "Auto WB"
 msgstr "Сам одреди равнотежу беле"
+
+#~ msgid "Extracting embedded image is not supported in interactive mode"
+#~ msgstr "Извлачење уметнуте слике није подржано у упитном режиму"

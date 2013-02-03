@@ -68,11 +68,11 @@ int main(int argc, char **argv)
     }
     if (cmd.silent) {
         ufraw_message(UFRAW_ERROR,
-                      _("--silent option is valid only in batch mode"));
+                      _("--silent option is valid only in ufraw-batch"));
         optInd = -1;
     }
     if (cmd.embeddedImage) {
-        ufraw_message(UFRAW_ERROR, _("Extracting embedded image is not supported in interactive mode"));
+        ufraw_message(UFRAW_ERROR, _("--embedded-image option is valid only in ufraw-batch"));
         optInd = -1;
     }
     if (optInd < 0) {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-01 05:00+0100\n"
+"POT-Creation-Date: 2013-02-03 13:00+0100\n"
 "PO-Revision-Date: 2009-10-07 10:53-0300\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese\n"
@@ -52,11 +52,13 @@ msgstr "n"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: sobrescrever '%s'?"
 
-msgid "--silent option is valid only in batch mode"
+#, fuzzy
+msgid "--silent option is valid only in ufraw-batch"
 msgstr "opção --silent é válida somente no modo em lotes"
 
-msgid "Extracting embedded image is not supported in interactive mode"
-msgstr "Extrair imagens embutidas não é suportado em modo interativo"
+#, fuzzy
+msgid "--embedded-image option is valid only in ufraw-batch"
+msgstr "opção --silent é válida somente no modo em lotes"
 
 msgid "Raw images"
 msgstr "Imagens cruas"
@@ -404,9 +406,11 @@ msgstr ""
 "--[no]zip             Habilita [desabilita] compressão zip em TIFF (padrão "
 "nozip).\n"
 
+#, fuzzy
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
-"                      instead of converting the raw image.\n"
+"                      instead of converting the raw image. This option\n"
+"                      is valid only in ufraw-batch.\n"
 msgstr ""
 "--embedded-image      Extrai a imagem miniatura embutida no arquivo cru\n"
 "                      em vez de convertê-la.\n"
@@ -470,8 +474,10 @@ msgstr ""
 msgid "--maximize-window     Force window to be maximized.\n"
 msgstr "--maximize-window     Faz a janela ser maximizada.\n"
 
+#, fuzzy
 msgid ""
-"--silent              Do not display any messages during batch conversion.\n"
+"--silent              Do not display any messages during conversion. This\n"
+"                      option is valid only in ufraw-batch.\n"
 msgstr ""
 "--silent              Não mostra nenhuma mensagem durante conversão em "
 "lote.\n"
@@ -1714,3 +1720,6 @@ msgstr "WB da câmera"
 
 msgid "Auto WB"
 msgstr "Auto WB"
+
+#~ msgid "Extracting embedded image is not supported in interactive mode"
+#~ msgstr "Extrair imagens embutidas não é suportado em modo interativo"
