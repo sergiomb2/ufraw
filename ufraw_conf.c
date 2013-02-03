@@ -1691,7 +1691,7 @@ char versionText[] =
 
     "EXIV2 "
 #ifdef HAVE_EXIV2
-    "version " EXV_PACKAGE_VERSION "\n"
+    "enabled.\n"
 #else
     "disabled.\n"
 #endif
