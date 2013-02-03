@@ -1714,6 +1714,3 @@ msgstr "Kameraets HB"
 
 msgid "Auto WB"
 msgstr "Automatisk HB"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr "Utpakking av inkludert bilde er ikke støttet i interaktiv modus"

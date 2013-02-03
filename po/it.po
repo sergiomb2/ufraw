@@ -1732,8 +1732,3 @@ msgstr "Bilanciamento del bianco - Fotocamera"
 
 msgid "Auto WB"
 msgstr "Bilanciamento del bianco - Automatico"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr ""
-#~ "L'estrazione di immagini integrate non è supportata in modalità "
-#~ "interattiva"

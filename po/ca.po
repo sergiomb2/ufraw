@@ -1743,6 +1743,3 @@ msgstr "Equilibri de blancs de la càmera"
 
 msgid "Auto WB"
 msgstr "Equilibri de blancs automàtic"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr "El mode interactiu no permet extreure imatges incrustades"

@@ -1720,6 +1720,3 @@ msgstr "WB da câmera"
 
 msgid "Auto WB"
 msgstr "Auto WB"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr "Extrair imagens embutidas não é suportado em modo interativo"

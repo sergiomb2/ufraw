@@ -1674,6 +1674,3 @@ msgstr "相機白平衡"
 
 msgid "Auto WB"
 msgstr "自動白平衡"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr "不支援在互動模式中匯出內嵌影像"

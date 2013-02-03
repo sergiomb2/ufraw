@@ -1721,8 +1721,3 @@ msgstr "Camera WB"
 
 msgid "Auto WB"
 msgstr "Auto WB"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr ""
-#~ "Ingebedde afbeelding uitpakken wordt niet ondersteund in interactieve "
-#~ "modus"

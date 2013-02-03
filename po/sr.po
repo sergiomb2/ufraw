@@ -1728,6 +1728,3 @@ msgstr "Равнотежа беле из камере"
 
 msgid "Auto WB"
 msgstr "Сам одреди равнотежу беле"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr "Извлачење уметнуте слике није подржано у упитном режиму"

@@ -1734,8 +1734,3 @@ msgstr "Kamera-SW"
 
 msgid "Auto WB"
 msgstr "Automatisches SW"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr ""
-#~ "Entpacken eingebetteter Bilder wird im interaktiven Modus nicht "
-#~ "unterstützt"

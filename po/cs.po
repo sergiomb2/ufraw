@@ -1715,6 +1715,3 @@ msgstr "Dle fotoaparátu"
 
 msgid "Auto WB"
 msgstr "Automatické"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr "Vyjmutí vloženého snímku není v interaktivním režimu podporováno"

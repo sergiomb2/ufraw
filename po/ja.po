@@ -1677,7 +1677,3 @@ msgstr "カメラWB"
 
 msgid "Auto WB"
 msgstr "自動WB"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr ""
-#~ "抽出した埋め込み画像はインタラクティブモードをサポートしていません。"

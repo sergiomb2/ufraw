@@ -1690,6 +1690,3 @@ msgstr "카메라 화벨"
 
 msgid "Auto WB"
 msgstr "자동 화벨"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr "내장 이미지 추출은 대화식 모드에서 지원되지 않습니다."

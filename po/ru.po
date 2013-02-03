@@ -1735,8 +1735,3 @@ msgstr "ББ камеры"
 
 msgid "Auto WB"
 msgstr "Автоматический ББ"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr ""
-#~ "Извлечение встроенного изображения не поддерживается в интерактивном "
-#~ "режиме"

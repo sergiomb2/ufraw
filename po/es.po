@@ -1734,8 +1734,3 @@ msgstr "Balance de la cámara"
 
 msgid "Auto WB"
 msgstr "Balance automático"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr ""
-#~ "La extracción de la imagen incrustada no esta soportada en modo "
-#~ "interactivo"

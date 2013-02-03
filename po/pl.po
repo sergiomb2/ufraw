@@ -1715,7 +1715,3 @@ msgstr "Balans bieli aparatu"
 
 msgid "Auto WB"
 msgstr "Automatyczny balans bieli"
-
-#~ msgid "Extracting embedded image is not supported in interactive mode"
-#~ msgstr ""
-#~ "Ekstrakcja dołączonego zdjęcia nie jest obsługiwana w trybie interaktywnym"
