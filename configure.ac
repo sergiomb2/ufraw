@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.163 2013/02/02 17:00:17 nkbj Exp $
+dnl $Id: configure.ac,v 1.164 2013/02/21 05:00:07 nkbj Exp $
 AC_INIT(UFRaw, 0.19)
 AC_PREREQ(2.57)
 
@@ -160,6 +160,9 @@ if test "$have_gtk" = "yes"; then
     PKG_CHECK_MODULES(GIMP_2_6, gimpui-2.0 >= 2.6.0,
       [ AC_DEFINE_UNQUOTED(HAVE_GIMP_2_6, 1, have Gimp 2.6 or later) ],
       [ AC_DEFINE_UNQUOTED(HAVE_GIMP_2_6, 0, have Gimp 2.6 or later) ])
+    PKG_CHECK_MODULES(GIMP_2_9, gimpui-2.0 >= 2.9.0,
+      [ AC_DEFINE_UNQUOTED(HAVE_GIMP_2_9, 1, have Gimp 2.9 or later) ],
+      [ AC_DEFINE_UNQUOTED(HAVE_GIMP_2_9, 0, have Gimp 2.9 or later) ])
   fi
 
   AC_ARG_WITH([cinepaint],

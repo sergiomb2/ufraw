@@ -25,14 +25,25 @@
 /* Fix some compatibility issues between CinePaint and GIMP */
 typedef GimpRunModeType GimpRunMode;
 #define PLUGIN_MODE 2
+#define DEPTH_TO_BASETYPE(depth) (depth == 3 ? RGB : U16_RGB)
+#define DEPTH_TO_IMAGETYPE(depth) (depth == 3 ? RGB_IMAGE : U16_RGB_IMAGE)
+#else /* GIMP */
+#if HAVE_GIMP_2_9
+#include <gegl.h>
+#define PLUGIN_MODE 2
 #else
+#define PLUGIN_MODE 1
+#endif
+#include <libgimpbase/gimpbase.h>
 #include <libgimp/gimp.h>
 #include <libgimp/gimpui.h>
 #define GIMP_CONST const
 /* Missing and irrelevant definitions in GIMP */
 #define U16_RGB 0
 #define U16_RGB_IMAGE 0
-#define PLUGIN_MODE 1
+#define DEPTH_TO_BASETYPE(depth) GIMP_RGB
+#define DEPTH_TO_IMAGETYPE(depth) GIMP_RGB_IMAGE
+#define DEPTH_TO_PRECISION(depth) (depth == 3 ? GIMP_PRECISION_U8 : GIMP_PRECISION_U16)
 #endif
 #include <glib/gi18n.h>
 #include <string.h>
@@ -153,6 +164,9 @@ void run(GIMP_CONST gchar *name,
     gdk_threads_enter();
     ufraw_binary = g_path_get_basename(gimp_get_progname());
     uf_init_locale(gimp_get_progname());
+#if HAVE_GIMP_2_9
+    gegl_init(NULL, NULL);
+#endif
 
     *nreturn_vals = 1;
     *return_vals = values;
@@ -238,7 +252,7 @@ void run(GIMP_CONST gchar *name,
 
     ufraw_config(uf, &rc, NULL, NULL);
     sendToGimpMode = (uf->conf->createID == send_id);
-#ifndef UFRAW_CINEPAINT
+#if !defined(UFRAW_CINEPAINT) && !HAVE_GIMP_2_9
     if (loadThumbnail) {
         uf->conf->size = size;
         uf->conf->embeddedImage = TRUE;
@@ -314,18 +328,29 @@ int gimp_row_writer(ufraw_data *uf, void *volatile out, void *pixbuf,
     (void)grayscale;
     (void)bitDepth;
 
+#if HAVE_GIMP_2_9
+    gegl_buffer_set(out, GEGL_RECTANGLE(0, row, width, height),
+                    0, NULL, pixbuf,
+                    GEGL_AUTO_ROWSTRIDE);
+#else
     gimp_pixel_rgn_set_rect(out, pixbuf, 0, row, width, height);
+#endif
 
     return UFRAW_SUCCESS;
 }
 
 long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 {
+#if HAVE_GIMP_2_9
+    GeglBuffer *buffer;
+#else
     GimpDrawable *drawable;
     GimpPixelRgn pixel_region;
+    int tile_height, row, nrows;
+#endif
     gint32 layer;
     UFRectangle Crop;
-    int depth, tile_height, row, nrows;
+    int depth;
     (void)widget;
 
     uf->gimpImage = -1;
@@ -342,7 +367,7 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
         if (ufraw_convert_image(uf) != UFRAW_SUCCESS)
             return UFRAW_ERROR;
         ufraw_get_scaled_crop(uf, &Crop);
-#ifdef UFRAW_CINEPAINT
+#if defined(UFRAW_CINEPAINT) || HAVE_GIMP_2_9
         if (uf->conf->profile[out_profile]
                 [uf->conf->profileIndex[out_profile]].BitDepth == 16)
             depth = 6;
@@ -352,8 +377,15 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
         depth = 3;
 #endif
     }
+#if HAVE_GIMP_2_9
+    uf->gimpImage =
+        gimp_image_new_with_precision(Crop.width, Crop.height,
+                                      DEPTH_TO_BASETYPE(depth),
+                                      DEPTH_TO_PRECISION(depth));
+#else
     uf->gimpImage = gimp_image_new(Crop.width, Crop.height,
-                                   depth == 3 ? GIMP_RGB : U16_RGB);
+                                   DEPTH_TO_BASETYPE(depth));
+#endif
     if (uf->gimpImage == -1) {
         ufraw_message(UFRAW_ERROR, _("Can't allocate new image."));
         return UFRAW_ERROR;
@@ -362,7 +394,7 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 
     /* Create the "background" layer to hold the image... */
     layer = gimp_layer_new(uf->gimpImage, _("Background"), Crop.width,
-                           Crop.height, depth == 3 ? GIMP_RGB_IMAGE : U16_RGB_IMAGE,
+                           Crop.height, DEPTH_TO_IMAGETYPE(depth),
                            100.0, GIMP_NORMAL_MODE);
 #ifdef UFRAW_CINEPAINT
     gimp_image_add_layer(uf->gimpImage, layer, 0);
@@ -375,23 +407,43 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 #endif
 
     /* Get the drawable and set the pixel region for our load... */
+#if HAVE_GIMP_2_9
+    buffer = gimp_drawable_get_buffer(layer);
+#else
     drawable = gimp_drawable_get(layer);
     gimp_pixel_rgn_init(&pixel_region, drawable, 0, 0, drawable->width,
                         drawable->height, TRUE, FALSE);
     tile_height = gimp_tile_height();
+#endif
 
     if (uf->conf->embeddedImage) {
+#if HAVE_GIMP_2_9
+        gegl_buffer_set(buffer,
+                        GEGL_RECTANGLE(0, 0, Crop.width, Crop.height),
+                        0, NULL, uf->thumb.buffer,
+                        GEGL_AUTO_ROWSTRIDE);
+#else
         for (row = 0; row < Crop.height; row += tile_height) {
             nrows = MIN(Crop.height - row, tile_height);
             gimp_pixel_rgn_set_rect(&pixel_region,
                                     uf->thumb.buffer + 3 * row * Crop.width, 0, row, Crop.width, nrows);
         }
+#endif
     } else {
+#if HAVE_GIMP_2_9
+        ufraw_write_image_data(uf, buffer, &Crop, depth == 3 ? 8 : 16, 0,
+                               gimp_row_writer);
+#else
         ufraw_write_image_data(uf, &pixel_region, &Crop, depth == 3 ? 8 : 16, 0,
                                gimp_row_writer);
+#endif
     }
+#if HAVE_GIMP_2_9
+    gegl_buffer_flush(buffer);
+#else
     gimp_drawable_flush(drawable);
     gimp_drawable_detach(drawable);
+#endif
 
     if (uf->conf->embeddedImage) return UFRAW_SUCCESS;
 
