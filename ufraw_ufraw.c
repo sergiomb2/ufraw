@@ -378,15 +378,15 @@ void ufraw_get_image_dimensions(ufraw_data *uf)
         int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
         int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
 
-        if (cropWidth != (int)(cropHeight * uf->conf->aspectRatio + 0.5)) {
+        if (cropWidth != (int)floor(cropHeight * uf->conf->aspectRatio + 0.5)) {
             /* aspectRatio does not match the crop area - shrink the area */
 
             if ((double)cropWidth / cropHeight > uf->conf->aspectRatio) {
-                cropWidth = cropHeight * uf->conf->aspectRatio + 0.5;
+                cropWidth = floor(cropHeight * uf->conf->aspectRatio + 0.5);
                 uf->conf->CropX1 = (uf->conf->CropX1 + uf->conf->CropX2 - cropWidth) / 2;
                 uf->conf->CropX2 = uf->conf->CropX1 + cropWidth;
             } else {
-                cropHeight = cropWidth / uf->conf->aspectRatio + 0.5;
+                cropHeight = floor(cropWidth / uf->conf->aspectRatio + 0.5);
                 uf->conf->CropY1 = (uf->conf->CropY1 + uf->conf->CropY2 - cropHeight) / 2;
                 uf->conf->CropY2 = uf->conf->CropY1 + cropHeight;
             }
@@ -1448,9 +1448,9 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
         uf->autoCropWidth = iWidth;
         uf->autoCropHeight = iHeight;
         if ((double)uf->autoCropWidth / uf->autoCropHeight > aspectRatio)
-            uf->autoCropWidth = uf->autoCropHeight * aspectRatio + 0.5;
+            uf->autoCropWidth = floor(uf->autoCropHeight * aspectRatio + 0.5);
         else
-            uf->autoCropHeight = uf->autoCropWidth / aspectRatio + 0.5;
+            uf->autoCropHeight = floor(uf->autoCropWidth / aspectRatio + 0.5);
 
         return;
     }
@@ -1510,9 +1510,9 @@ static void ufraw_convert_prepare_transform_buffer(ufraw_data *uf,
     uf->autoCropHeight = MIN(floor(2 * minY) * scale, 2 * iHeight);
 
     if ((double)uf->autoCropWidth / uf->autoCropHeight > aspectRatio)
-        uf->autoCropWidth = uf->autoCropHeight * aspectRatio + 0.5;
+        uf->autoCropWidth = floor(uf->autoCropHeight * aspectRatio + 0.5);
     else
-        uf->autoCropHeight = uf->autoCropWidth / aspectRatio + 0.5;
+        uf->autoCropHeight = floor(uf->autoCropWidth / aspectRatio + 0.5);
 
     int newWidth = uf->rotatedWidth * width / iWidth;
     int newHeight = uf->rotatedHeight * height / iHeight;

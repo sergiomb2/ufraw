@@ -492,8 +492,8 @@ bool UFNumberArray::IsEqual(int index, double number) const
 {
     if (index < 0 || index >= Size())
         Throw("index (%d) out of range 0..%d", index, Size() - 1);
-    int newValue = number / ufnumberarray->Accuracy + 0.5;
-    int oldValue = ufnumberarray->Array[index] / ufnumberarray->Accuracy + 0.5;
+    int newValue = floor(number / ufnumberarray->Accuracy + 0.5);
+    int oldValue = floor(ufnumberarray->Array[index] / ufnumberarray->Accuracy + 0.5);
     return oldValue == newValue;
 }
 
