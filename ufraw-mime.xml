@@ -12,7 +12,7 @@
   <mime-type type="image/x-dcraw">
     <comment>Digital raw image</comment>
     <acronym>DCRaw</acronym>
-    <expanded-acronym>Digital Ramera Raw</expanded-acronym>
+    <expanded-acronym>Digital Camera Raw</expanded-acronym>
   </mime-type>
 
   <mime-type type="image/x-adobe-dng">
