@@ -1,5 +1,5 @@
-dnl $Id: configure.ac,v 1.164 2013/02/21 05:00:07 nkbj Exp $
-AC_INIT(UFRaw, 0.19)
+dnl $Id: configure.ac,v 1.165 2013/03/02 13:45:07 nkbj Exp $
+AC_INIT(UFRaw, 0.19.1)
 AC_PREREQ(2.57)
 
 # Create host_os, host_cpu variables
@@ -33,10 +33,10 @@ esac
 # default CFLAGS, CXXFLAGS for GCC in case they were not set by the user.
 if test "$GCC" = "yes"; then
   if test "$ac_test_CFLAGS" != "set"; then
-    CFLAGS="-W -Wall -g -O3 -ffast-math -fomit-frame-pointer -D_FORTIFY_SOURCE=2 $UFRAW_MARCH"
+    CFLAGS="-W -Wall -g -O2 -fomit-frame-pointer -D_FORTIFY_SOURCE=2 $UFRAW_MARCH"
   fi
   if test "$ac_test_CXXFLAGS" != "set"; then
-    CXXFLAGS="-W -Wall -g -O3 -ffast-math -fomit-frame-pointer -D_FORTIFY_SOURCE=2 $UFRAW_MARCH"
+    CXXFLAGS="-W -Wall -g -O2 -fomit-frame-pointer -D_FORTIFY_SOURCE=2 $UFRAW_MARCH"
   fi
 fi
 
