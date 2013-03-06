@@ -8,8 +8,8 @@ AppPublisher=Udi Fuchs
 AppPublisherURL=http://ufraw.sourceforge.net/
 AppSupportURL=http://ufraw.sourceforge.net/
 AppUpdatesURL=http://ufraw.sourceforge.net/
-DefaultDirName={reg:HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinGimp-2.0_is1,InstallLocation|{pf}\UFRaw}
-DefaultGroupName={reg:HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinGimp-2.0_is1,Inno Setup: Icon Group|UFRaw}
+DefaultDirName={pf}\UFRaw
+DefaultGroupName=(Default)
 AllowNoIcons=yes
 Compression=lzma
 SolidCompression=yes
@@ -64,8 +64,34 @@ Source: "po\sr@latin.mo"; DestDir: "{app}\lib\locale\sr@latin\LC_MESSAGES\"; Des
 Source: "po\sv.mo"; DestDir: "{app}\lib\locale\sv\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\zh_CN.mo"; DestDir: "{app}\lib\locale\zh_CN\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\zh_TW.mo"; DestDir: "{app}\lib\locale\zh_TW\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
-Source: "@DOSPREFIX@\bin\liblcms-1-ufraw.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+
 Source: "@DOSPREFIX@\bin\bzip2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\freetype6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\intl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\jpeg62.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\lensfun.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libatk-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libcairo-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libexpat-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libfontconfig-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libgdk_pixbuf-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libgdk-win32-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libgio-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libglib-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libgmodule-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libgobject-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libgthread-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libgtk-win32-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libjpeg-7.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\liblcms-1-ufraw.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libpango-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libpangocairo-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libpangoft2-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libpangowin32-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libpng12-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libtiff-3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\zlib1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+
 Source: "ufraw-gimp.exe"; DestDir: "{app}\lib\gimp\2.0\plug-ins"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
@@ -75,11 +101,6 @@ Name: "{userdesktop}\UFRaw"; Filename: "{app}\bin\ufraw.exe"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\UFRaw"; Filename: "{app}\bin\ufraw.exe"; Tasks: quicklaunchicon
 
 [Registry]
-Root: HKLM; SubKey: "Software\Microsoft\Windows\CurrentVersion\App Paths\ufraw.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\ufraw.exe";
-Root: HKLM; SubKey: "Software\Microsoft\Windows\CurrentVersion\App Paths\ufraw.exe"; ValueType: string; ValueName: "Path"; ValueData: "{app}\bin;{reg:HKLM\SOFTWARE\GTK\2.0,DllPath|none}";
-Root: HKLM; SubKey: "Software\Microsoft\Windows\CurrentVersion\App Paths\ufraw-batch.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\ufraw-batch.exe";
-Root: HKLM; SubKey: "Software\Microsoft\Windows\CurrentVersion\App Paths\ufraw-batch.exe"; ValueType: string; ValueName: "Path"; ValueData: "{app}\bin;{reg:HKLM\SOFTWARE\GTK\2.0,DllPath|none}";
-
 Root: HKCR; Subkey: ".ufraw"; ValueType: string; ValueName: ""; ValueData: "UFRawID"; Flags: uninsdeletevalue; Tasks: UFRAWAssociation
 Root: HKCR; Subkey: ".dng"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: DNGAssociation
 Root: HKCR; Subkey: ".crw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: CRWAssociation
