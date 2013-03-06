@@ -99,7 +99,7 @@ not find this package the preview window will not be scrollable.
 
 UFRaw is written in both C and C++, so if you set CFLAGS you should
 also set CXXFLAGS. If you do not set them, then the default for
-GNU C is "-W -Wall -g -O2 -fomit-frame-pointer".
+GNU C is "-W -Wall -g -O3 -fomit-frame-pointer".
 
 Other options for the configuration script are:
 
