@@ -25,7 +25,6 @@ ChangesAssociations=yes
 
 [Tasks]
 Name: "unplug"; Description: "Attempt to delete old versions of the UFRaw plug-in"
-; that were installed in the user's folders. This option only deletes ufraw-gimp.exe from the current user folders. You should make sure that there are no other copies of ufraw-gimp.exe in any of the user's folders that wish to use the new version of the UFRaw plug-in."
 ; GroupDescription: "Delete previous plug-in versions:";
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 ; GroupDescription: "{cm:AdditionalIcons}";
@@ -45,6 +44,7 @@ Name: "SRWAssociation"; Description: "SRW - Samsung Raw"; GroupDescription: "Ass
 [Files]
 Source: "ufraw.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "ufraw-batch.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "ufraw-gimp.exe"; DestDir: "{app}\lib\gimp\2.0\plug-ins"; Flags: ignoreversion
 Source: "po\ca.mo"; DestDir: "{app}\lib\locale\ca\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\cs.mo"; DestDir: "{app}\lib\locale\cs\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\da.mo"; DestDir: "{app}\lib\locale\da\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
@@ -69,7 +69,6 @@ Source: "@DOSPREFIX@\bin\bzip2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\freetype6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\intl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\jpeg62.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "@DOSPREFIX@\bin\lensfun.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libatk-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libcairo-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libexpat-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -82,17 +81,18 @@ Source: "@DOSPREFIX@\bin\libgmodule-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ign
 Source: "@DOSPREFIX@\bin\libgobject-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libgthread-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libgtk-win32-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "@DOSPREFIX@\bin\libjpeg-7.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "@DOSPREFIX@\bin\liblcms-1-ufraw.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\liblcms-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\liblensfun.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libpango-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libpangocairo-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libpangoft2-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libpangowin32-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "@DOSPREFIX@\bin\libpng12-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "@DOSPREFIX@\bin\libtiff-3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libpng14-14.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libtiff3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\zlib1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 
-Source: "ufraw-gimp.exe"; DestDir: "{app}\lib\gimp\2.0\plug-ins"; Flags: ignoreversion
+Source: "@DOSPREFIX@\share\lensfun\*.xml"; DestDir: "{app}\share\lensfun"; Flags: ignoreversion
+Source: "@DOSPREFIX@\share\locale\*"; DestDir: "{app}\lib\locale\"; Flags: ignoreversion recursesubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -135,7 +135,5 @@ Type: files; Name: {%USERPROFILE}\.gimp-2.2\plug-ins\ufraw-gimp.exe; Tasks: unpl
 Type: files; Name: {app}\bin\liblcms-1-16-ufraw.dll;
 
 [messages]
-SelectDirDesc=[name] should be installed in the GIMP directory. Hopefully, the wizard will guess your GIMP directory correctly.
-SelectDirLabel3=Setup will install [name] into the following folder. Do not change this folder unless you really know what you are doing.
-WelcomeLabel2=%nThis wizard will install [name/ver] on your computer.%n%nYou must install GIMP (at least version 2.4.6) before installing [name]. GIMP can be downloaded from http://gimp-win.sourceforge.net/%n%nIt is recommended that you will not run the GIMP application during this installation.
+WelcomeLabel2=%nThis wizard will install [name/ver] on your computer.
 SelectTasksLabel2=Select the additional tasks you would like to perform while installing UFRaw:
