@@ -27,6 +27,9 @@
 #ifdef HAVE_LIBZ
 #include <zlib.h>	/* for libpng 1.5.x */
 #endif
+#if (PNG_LIBPNG_VER_MAJOR == 1) && (PNG_LIBPNG_VER_MINOR < 6)
+#define png_const_bytep png_charp
+#endif
 #endif
 
 #ifdef _OPENMP
@@ -541,7 +544,7 @@ int ufraw_write_image(ufraw_data *uf)
                     png_set_iCCP(png, info,
                                  uf->developer->profileFile[out_profile],
                                  PNG_COMPRESSION_TYPE_BASE,
-                                 buf, len);
+                                 (png_const_bytep) buf, len);
                     g_free(buf);
                 } else {
                     ufraw_set_warning(uf,
@@ -560,7 +563,7 @@ int ufraw_write_image(ufraw_data *uf)
                                  uf->conf->profile[out_profile]
                                  [uf->conf->profileIndex[out_profile]].name,
                                  PNG_COMPRESSION_TYPE_BASE,
-                                 buf, len);
+                                 (png_const_bytep) buf, len);
                 } else {
                     ufraw_set_warning(uf,
                                       _("Failed to embed output profile '%s' in '%s'."),
