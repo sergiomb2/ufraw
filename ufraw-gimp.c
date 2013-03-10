@@ -193,9 +193,10 @@ void run(GIMP_CONST gchar *name,
     gimp_ui_init("ufraw-gimp", TRUE);
 
     uf = ufraw_open(filename);
-    /* if UFRaw fails on jpg or tif then open with GIMP */
+    /* if UFRaw fails on jpg/jpeg or tif/tiff then open with GIMP */
     if (uf == NULL) {
-        if (!strcasecmp(filename + strlen(filename) - 4, ".jpg")) {
+        if (!strcasecmp(filename + strlen(filename) - 4, ".jpg") ||
+                !strcasecmp(filename + strlen(filename) - 5, ".jpeg")) {
             if (loadThumbnail)
                 *return_vals = gimp_run_procedure2("file_jpeg_load_thumb",
                                                    nreturn_vals, nparams, param);
@@ -204,7 +205,8 @@ void run(GIMP_CONST gchar *name,
                                                    nreturn_vals, nparams, param);
             gdk_threads_leave();
             return;
-        } else if (!strcasecmp(filename + strlen(filename) - 4, ".tif")) {
+        } else if (!strcasecmp(filename + strlen(filename) - 4, ".tif") ||
+                   !strcasecmp(filename + strlen(filename) - 5, ".tiff")) {
             if (!loadThumbnail)
                 *return_vals = gimp_run_procedure2("file_tiff_load",
                                                    nreturn_vals, nparams, param);
