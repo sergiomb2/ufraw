@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw\n"
+"Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-26 22:22-0600\n"
+"POT-Creation-Date: 2013-03-10 19:30+0100\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -731,6 +731,10 @@ msgstr "Värde"
 
 msgid "Channel Mixer"
 msgstr ""
+
+#, fuzzy
+msgid "UFRaw Message"
+msgstr "UFRaw "
 
 msgid "No more room for new curves."
 msgstr "Ingen plats för nya kurvor."

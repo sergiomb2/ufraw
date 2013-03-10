@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-26 22:22-0600\n"
+"POT-Creation-Date: 2013-03-10 19:30+0100\n"
 "PO-Revision-Date: 2010-03-18 08:33+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -862,6 +862,10 @@ msgstr "Valor"
 
 msgid "Channel Mixer"
 msgstr "Mezclador de canales"
+
+#, fuzzy
+msgid "UFRaw Message"
+msgstr "UFRaw "
 
 msgid "No more room for new curves."
 msgstr "No hay más espacio para nuevas curvas"

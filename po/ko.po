@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw\n"
+"Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-26 22:22-0600\n"
+"POT-Creation-Date: 2013-03-10 19:30+0100\n"
 "PO-Revision-Date: 2010-03-18 14:45+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr@googlegroups.com>\n"
@@ -825,6 +825,10 @@ msgstr "값"
 
 msgid "Channel Mixer"
 msgstr "채널 믹서"
+
+#, fuzzy
+msgid "UFRaw Message"
+msgstr "UFRaw "
 
 msgid "No more room for new curves."
 msgstr "새 곡선을 저장할 공간이 없습니다."

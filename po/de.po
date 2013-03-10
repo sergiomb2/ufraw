@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.19\n"
+"Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-26 22:22-0600\n"
+"POT-Creation-Date: 2013-03-10 19:30+0100\n"
 "PO-Revision-Date: 2011-09-06 22:21+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -861,6 +861,10 @@ msgstr "Wert"
 
 msgid "Channel Mixer"
 msgstr "Kanalmixer"
+
+#, fuzzy
+msgid "UFRaw Message"
+msgstr "UFRaw "
 
 msgid "No more room for new curves."
 msgstr "Kein Platz mehr für neue Kurven."

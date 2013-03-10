@@ -4,9 +4,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw\n"
+"Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-26 22:22-0600\n"
+"POT-Creation-Date: 2013-03-10 19:30+0100\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -806,6 +806,10 @@ msgstr "値"
 
 msgid "Channel Mixer"
 msgstr "チャンネルミキサー"
+
+#, fuzzy
+msgid "UFRaw Message"
+msgstr "UFRaw "
 
 #, fuzzy
 msgid "No more room for new curves."

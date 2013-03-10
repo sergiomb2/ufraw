@@ -6,9 +6,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.17\n"
+"Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-26 22:22-0600\n"
+"POT-Creation-Date: 2013-03-10 19:30+0100\n"
 "PO-Revision-Date: 2010-03-04 21:05+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -870,6 +870,10 @@ msgstr "Valor"
 
 msgid "Channel Mixer"
 msgstr "Mesclador de canal"
+
+#, fuzzy
+msgid "UFRaw Message"
+msgstr "UFRaw "
 
 msgid "No more room for new curves."
 msgstr "No hi ha espai per a més corbes."
