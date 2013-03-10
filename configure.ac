@@ -1,5 +1,5 @@
-dnl $Id: configure.ac,v 1.166 2013/03/06 05:03:33 udifuchs Exp $
-AC_INIT(UFRaw, 0.19.1)
+dnl $Id: configure.ac,v 1.167 2013/03/10 09:00:08 nkbj Exp $
+AC_INIT(UFRaw, 0.19.2)
 AC_PREREQ(2.57)
 
 # Create host_os, host_cpu variables
@@ -247,7 +247,7 @@ AC_CHECK_HEADER(tiffio.h,
   AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
 have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
 
-PKG_CHECK_MODULES(LIBPNG, libpng,
+PKG_CHECK_MODULES(LIBPNG, libpng >= 1.2,
   [ have_png=yes
     AC_DEFINE(HAVE_LIBPNG, 1, have the png library) ],
   [ have_png=no
