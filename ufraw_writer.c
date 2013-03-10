@@ -27,7 +27,8 @@
 #ifdef HAVE_LIBZ
 #include <zlib.h>	/* for libpng 1.5.x */
 #endif
-#if (PNG_LIBPNG_VER_MAJOR == 1) && ((PNG_LIBPNG_VER_MINOR < 5) || ((PNG_LIBPNG_VER_MINOR == 5) && (PNG_LIBPNG_VER_RELEASE < 1)))
+#if (PNG_LIBPNG_VER_MAJOR == 1) && ((PNG_LIBPNG_VER_MINOR < 5) || \
+    ((PNG_LIBPNG_VER_MINOR == 5) && (PNG_LIBPNG_VER_RELEASE < 1)))
 #define png_const_bytep png_charp
 #endif
 #endif
