@@ -85,6 +85,7 @@ int ufraw_read_embedded(ufraw_data *uf)
         uf->thumb.buffer[0] = 0xff;
     } else {
         unsigned srcHeight = uf->thumb.height, srcWidth = uf->thumb.width;
+        int scaleNum = 1, scaleDenom = 1;
 
         if (uf->conf->size > 0) {
             int srcSize = MAX(srcHeight, srcWidth);
@@ -92,7 +93,13 @@ int ufraw_read_embedded(ufraw_data *uf)
                 ufraw_message(UFRAW_WARNING, _("Original size (%d) "
                                                "is smaller than the requested size (%d)"),
                               srcSize, uf->conf->size);
+            } else {
+                scaleNum = uf->conf->size;
+                scaleDenom = srcSize;
             }
+        } else if (uf->conf->shrink > 1) {
+            scaleNum = 1;
+            scaleDenom = uf->conf->shrink;
         }
         if (raw->thumbType == ppm_thumb_type) {
             if (srcHeight*srcWidth * 3 != (unsigned)raw->thumbBufferLength) {
