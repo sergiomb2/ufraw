@@ -1259,7 +1259,7 @@ static void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase)
 static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase)
 {
     ufraw_image_data *img = &uf->Images[phase];
-    guint32 mul[3], px;
+    guint32 mul[4], px;
     guint16 *p16;
     int i, size, c;
 
