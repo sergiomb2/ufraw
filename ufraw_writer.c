@@ -212,7 +212,8 @@ void ufraw_write_image_data(
     ufraw_image_type *rawImage =
         (ufraw_image_type *)uf->Images[ufraw_first_phase].buffer;
     int byteDepth = (bitDepth + 7) / 8;
-    guint8 pixbuf8[Crop->width * 3 * byteDepth * DEVELOP_BATCH];
+    guint8 *pixbuf8 = g_new(guint8,
+            Crop->width * 3 * byteDepth * DEVELOP_BATCH);
 
     progress(PROGRESS_SAVE, -Crop->height);
     for (row0 = 0; row0 < Crop->height; row0 += DEVELOP_BATCH) {
@@ -234,6 +235,7 @@ void ufraw_write_image_data(
                        grayscaleMode, bitDepth) != UFRAW_SUCCESS)
             break;
     }
+    g_free(pixbuf8);
 }
 
 int ufraw_write_image(ufraw_data *uf)
