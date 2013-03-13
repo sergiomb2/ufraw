@@ -1,4 +1,4 @@
-$Id: TODO,v 1.32 2009/04/07 23:34:28 lexort Exp $
+$Id: TODO,v 1.33 2013/03/13 13:30:06 nkbj Exp $
 
 These items are not ordered or prioritized, but are roughly grouped by
 kind of change.
@@ -9,34 +9,43 @@ For the next release
 For the future
 ==============
 * Master reset button to set all adjustments to default.
+
 * Help (based on the webpage).
 
 * Calculate width of the dialog control column
   and set raw histogram to that width.
 
 * Curve corrections per channel.
+
 * Show camera overexposures.
 
 * Add the UFRaw parameters used to the Exif data in saved images.
+
 * Display "exposure value" in Exif (Av, Tv, and also with ISO).
 
 * Display scene zones and scene luminance (raw data with input profile
   but no other adjustments.
+
 * Display "developed raw zone", which is zone relative to the working
   colorspace after all adjustments but before the output profile.
 
 * Spot query - mark on histograms.
+
 * Multi spot query (when pressing the control key).
+
 * Show WB spot/area values in HSV (in addition to output colorspace pixels).
+
 * Add the ability to save a spot measurement, and then to adjust WB to
   make a new measurement match the old.  Usage is shooting a whitish
   wall with a white card, doing WB to card, saving wall, and then later
   adjusting wall to wall's color, e.g. for actual shots with no white
   card.
 
-* Leaf embedded profiles
-* fuji sqrt(0.5) factor in size
-* Canon 10D presets from ExifTool
+* Leaf embedded profiles.
+
+* fuji sqrt(0.5) factor in size.
+
+* Canon 10D presets from ExifTool.
 
 * Add the ability to have groups of saved values, perhaps one for flash
   and one not, so one can save 2 color temperatures and exposure
@@ -46,6 +55,9 @@ For the future
 
 * Create or obtain an input profile which uses the sRGB primaries but
   is linear.
+
+* Build with lcms2 if present.
+
 * Understand why the default gamma/linearity values are pleasing,
   despite them being different from the sRGB standard.  Resolve those
   issues, and then link gamma/linearity to profile selection.
