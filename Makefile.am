@@ -1,6 +1,6 @@
-# $Id: Makefile.am,v 1.58 2013/03/08 03:38:33 udifuchs Exp $
+# $Id: Makefile.am,v 1.59 2013/03/14 08:30:06 nkbj Exp $
 
-SUBDIRS=po icons
+SUBDIRS = po icons
 
 if MAKE_EXTRAS
   bin_PROGRAMS = ufraw-batch dcraw nikon-curve
@@ -23,7 +23,7 @@ if MAKE_CINEPAINT
   cinepaintbindir = $(CINEPAINT_PROGRAMPLUGINDIR)/plug-ins
 endif
 
-POD2MAN= @POD2MAN@
+POD2MAN = @POD2MAN@
 man_MANS = ufraw.1
 
 noinst_LIBRARIES = libufraw.a
