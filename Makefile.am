@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.59 2013/03/14 08:30:06 nkbj Exp $
+# $Id: Makefile.am,v 1.60 2013/03/14 09:00:16 nkbj Exp $
 
 SUBDIRS = po icons
 
@@ -110,9 +110,10 @@ if MAKE_EXTRAS
   dcraw_LDADD = $(UFRAW_LDADD)
 
   nikon_curve_SOURCES = nikon_curve.c
-  nikon_curve_CFLAGS = $(UFRAW_CPPFLAGS) -D_STAND_ALONE_
+  nikon_curve_CPPFLAGS = $(UFRAW_CPPFLAGS) -D_STAND_ALONE_
   nikon_curve_LDFLAGS = @CONSOLE@
   nikon_curve_LDADD = $(UFRAW_LDADD)
+  nikon_curve_LINK = $(CXXLINK) @CONSOLE@
 endif
 
 #ufraw_icon.ico: icons/ufraw.png
