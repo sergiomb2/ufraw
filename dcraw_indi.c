@@ -148,7 +148,7 @@ void CLASS wavelet_denoise_INDI(ushort(*image)[4], const int black,
     if ((nc = colors) == 3 && filters) nc++;
     progress(PROGRESS_WAVELET_DENOISE, -nc * 5);
 #ifdef _OPENMP
-#ifdef __sun			/* Fix bug #3205673 - NKBJ */
+#if defined(__sun) || defined(__SUNPRO_C)	/* Fix bug #3205673 - NKBJ */
     #pragma omp parallel for				\
     default(none)					\
     shared(nc,image,size,noise)				\
