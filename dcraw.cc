@@ -3041,6 +3041,10 @@ int CLASS foveon_fixed (void *ptr, int size, const char *name)
   return 1;
 }
 
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 6))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
 float CLASS foveon_avg (short *pix, int range[2], float cfilt)
 {
   int i;
@@ -3054,6 +3058,9 @@ float CLASS foveon_avg (short *pix, int range[2], float cfilt)
   if (range[1] - range[0] == 1) return sum/2;
   return (sum - min - max) / (range[1] - range[0] - 1);
 }
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 6))
+#pragma GCC diagnostic pop
+#endif
 
 short * CLASS foveon_make_curve (double max, double mul, double filt)
 {
@@ -3093,6 +3100,10 @@ int CLASS foveon_apply_curve (short *curve, int i)
 
 #define image ((short (*)[4]) image)
 
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 6))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
 void CLASS foveon_interpolate()
 {
   static const short hood[] = { -1,-1, -1,0, -1,1, 0,-1, 0,1, 1,-1, 1,0, 1,1 };
@@ -3490,6 +3501,10 @@ void CLASS foveon_interpolate()
   width = i;
   height = row;
 }
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 6))
+#pragma GCC diagnostic pop
+#endif
+
 #undef image
 
 /* RESTRICTED code ends here */
@@ -4152,22 +4167,22 @@ void CLASS vng_interpolate()
     -2,+0,+0,-1,0,0x06, -2,+0,+0,+0,1,0x02, -2,+0,+0,+1,0,0x03,
     -2,+1,-1,+0,0,0x04, -2,+1,+0,-1,1,0x04, -2,+1,+0,+0,0,0x06,
     -2,+1,+0,+1,0,0x02, -2,+2,+0,+0,1,0x04, -2,+2,+0,+1,0,0x04,
-    -1,-2,-1,+0,0,0x80, -1,-2,+0,-1,0,0x01, -1,-2,+1,-1,0,0x01,
-    -1,-2,+1,+0,1,0x01, -1,-1,-1,+1,0,0x88, -1,-1,+1,-2,0,0x40,
+    -1,-2,-1,+0,0,static_cast<signed char>(0x80), -1,-2,+0,-1,0,0x01, -1,-2,+1,-1,0,0x01,
+    -1,-2,+1,+0,1,0x01, -1,-1,-1,+1,0,static_cast<signed char>(0x88), -1,-1,+1,-2,0,0x40,
     -1,-1,+1,-1,0,0x22, -1,-1,+1,+0,0,0x33, -1,-1,+1,+1,1,0x11,
     -1,+0,-1,+2,0,0x08, -1,+0,+0,-1,0,0x44, -1,+0,+0,+1,0,0x11,
     -1,+0,+1,-2,1,0x40, -1,+0,+1,-1,0,0x66, -1,+0,+1,+0,1,0x22,
     -1,+0,+1,+1,0,0x33, -1,+0,+1,+2,1,0x10, -1,+1,+1,-1,1,0x44,
     -1,+1,+1,+0,0,0x66, -1,+1,+1,+1,0,0x22, -1,+1,+1,+2,0,0x10,
     -1,+2,+0,+1,0,0x04, -1,+2,+1,+0,1,0x04, -1,+2,+1,+1,0,0x04,
-    +0,-2,+0,+0,1,0x80, +0,-1,+0,+1,1,0x88, +0,-1,+1,-2,0,0x40,
+    +0,-2,+0,+0,1,static_cast<signed char>(0x80), +0,-1,+0,+1,1,static_cast<signed char>(0x88), +0,-1,+1,-2,0,0x40,
     +0,-1,+1,+0,0,0x11, +0,-1,+2,-2,0,0x40, +0,-1,+2,-1,0,0x20,
     +0,-1,+2,+0,0,0x30, +0,-1,+2,+1,1,0x10, +0,+0,+0,+2,1,0x08,
     +0,+0,+2,-2,1,0x40, +0,+0,+2,-1,0,0x60, +0,+0,+2,+0,1,0x20,
     +0,+0,+2,+1,0,0x30, +0,+0,+2,+2,1,0x10, +0,+1,+1,+0,0,0x44,
     +0,+1,+1,+2,0,0x10, +0,+1,+2,-1,1,0x40, +0,+1,+2,+0,0,0x60,
-    +0,+1,+2,+1,0,0x20, +0,+1,+2,+2,0,0x10, +1,-2,+1,+0,0,0x80,
-    +1,-1,+1,+1,0,0x88, +1,+0,+1,+2,0,0x08, +1,+0,+2,-1,0,0x40,
+    +0,+1,+2,+1,0,0x20, +0,+1,+2,+2,0,0x10, +1,-2,+1,+0,0,static_cast<signed char>(0x80),
+    +1,-1,+1,+1,0,static_cast<signed char>(0x88), +1,+0,+1,+2,0,0x08, +1,+0,+2,-1,0,0x40,
     +1,+0,+2,+1,0,0x10
   }, chood[] = { -1,-1, -1,0, -1,+1, 0,+1, +1,+1, +1,0, +1,-1, 0,-1 };
   ushort (*brow[5])[4], *pix;
@@ -5117,7 +5132,7 @@ void CLASS parse_kodak_ifd (int base)
   unsigned entries, tag, type, len, save;
   int i, c, wbi=-2, wbtemp=6500;
   float mul[3]={1,1,1}, num;
-  static const unsigned wbtag[] = { 64037,64040,64039,64041,-1,-1,64042 };
+  static const unsigned wbtag[] = { 64037,64040,64039,64041,static_cast<unsigned>(-1),static_cast<unsigned>(-1),64042 };
 
   entries = get2();
   if (entries > 1024) return;
@@ -7084,7 +7099,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 } },
     { "Phase One P65", 0, 0,
 	{ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 } },
-    { "RED ONE", 704, 0xffff,		/* DJC */
+    { "RED ONE", 704, static_cast<short>(0xffff),	/* DJC */
 	{ 21014,-7891,-2613,-3056,12201,856,-2203,5125,8042 } },
     { "SAMSUNG EX1", 0, 0x3e00,
 	{ 8898,-2498,-994,-3144,11328,2066,-760,1381,4576 } },
@@ -7100,7 +7115,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 12093,-3557,-1155,-1000,9534,1733,-22,1787,4576 } },
     { "SAMSUNG GX-1", 0, 0,
 	{ 10504,-2438,-1189,-8603,16207,2531,-1022,863,12242 } },
-    { "SAMSUNG S85", 0, 0xffff,		/* DJC */
+    { "SAMSUNG S85", 0, static_cast<short>(0xffff),	/* DJC */
 	{ 11885,-3968,-1473,-4214,12299,1916,-835,1655,5549 } },
     { "Sinar", 0, 0,			/* DJC */
 	{ 16442,-2956,-2422,-2877,12128,750,-1136,6066,4559 } },
