@@ -21,7 +21,7 @@ extern "C" {
 #include <glib/gstdio.h>
 
 // g_win32_locale_filename_from_utf8 is needed only on win32
-#ifdef WIN32
+#ifdef _WIN32
 #define uf_win32_locale_filename_from_utf8(__some_string__) \
     g_win32_locale_filename_from_utf8(__some_string__)
 #define uf_win32_locale_filename_free(__some_string__) g_free(__some_string__)
@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 // On win32 command-line arguments need to be translated to UTF-8
-#ifdef WIN32
+#ifdef _WIN32
 #define uf_win32_locale_to_utf8(__some_string__) \
     g_locale_to_utf8(__some_string__, -1, NULL, NULL, NULL)
 #define uf_win32_locale_free(__some_string__) g_free(__some_string__)

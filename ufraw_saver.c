@@ -116,7 +116,7 @@ long ufraw_send_to_gimp(ufraw_data *uf)
      * Therefore we must call it asynchronously. */
     if (!g_spawn_command_line_async(commandLine, &err)) {
         g_free(commandLine);
-#ifdef WIN32
+#ifdef _WIN32
         if (strcmp(uf->conf->remoteGimpCommand,
                    conf_default.remoteGimpCommand) == 0) {
             /* If the user didn't play with the remoteGimpCommand,

@@ -32,7 +32,7 @@ const char *uf_get_home_dir()
 {
     const char *hd = g_get_home_dir();
     if (hd == NULL)
-#ifdef WIN32
+#ifdef _WIN32
         hd = "C:\\";
 #else
         hd = "/";
@@ -59,7 +59,7 @@ void uf_init_locale(const char *exename)
     char *localedir = g_strconcat(g_getenv("UFRAW_LOCALEDIR"), NULL);
     if (localedir == NULL) {
         /* If that fails, there are two defaults: */
-#ifdef WIN32
+#ifdef _WIN32
         /* In Windows the localedir is found relative to the exe file.
          * The exact location here should match ufraw-setup.iss.in */
         char *basename = g_path_get_basename(exename);

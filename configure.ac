@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.167 2013/03/10 09:00:08 nkbj Exp $
+dnl $Id: configure.ac,v 1.168 2013/03/16 05:15:13 nkbj Exp $
 AC_INIT(UFRaw, 0.19.2)
 AC_PREREQ(2.57)
 
@@ -215,7 +215,7 @@ AC_SUBST(CINEPAINT_PROGRAMPLUGINDIR)
 AC_SEARCH_LIBS(getopt_long, gnugetopt, ,
   AC_MSG_ERROR(can not build UFRaw without getopt_long))
 
-# The ws2_32 library is required for the ntohs symbol on WIN32.
+# The ws2_32 library is required for the ntohs symbol on win32.
 if test $ufraw_win32 = yes; then
   LIBS="$LIBS -lws2_32"
 fi

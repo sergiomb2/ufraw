@@ -131,7 +131,7 @@ const conf_data conf_default = {
     0, /* number of helper lines to draw */
     "", "", /* curvePath, profilePath */
     FALSE, /* silent */
-#ifdef WIN32
+#ifdef _WIN32
     "gimp-win-remote gimp-2.8.exe", /* remoteGimpCommand */
 #elif HAVE_GIMP_2_6
     "gimp", /* remoteGimpCommand */

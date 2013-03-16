@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     g_free(gtkrcfile);
     gtk_init(&argc, &argv);
     ufraw_icons_init();
-#ifdef WIN32
+#ifdef _WIN32
     dummyWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_icon_name(GTK_WINDOW(dummyWindow), "ufraw");
     ufraw_message(UFRAW_SET_PARENT, (char *)dummyWindow);

@@ -27,7 +27,7 @@
  * 4. On other systems g_fopen is defined as a macro
  * 5. g_fopen only exists since glib 2.6
  */
-#if !defined(DCRAW_NOMAIN) && defined(WIN32)
+#if !defined(DCRAW_NOMAIN) && defined(_WIN32)
 #include <glib.h>
 extern "C" {
 #include <glib/gstdio.h>
