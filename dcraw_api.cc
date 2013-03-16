@@ -227,8 +227,8 @@ extern "C" {
         } else {
             h->raw.image = d->image = g_new0(dcraw_image_type, d->iheight * d->iwidth
                                              + d->meta_length);
+            d->meta_data = (char *)(d->image + d->iheight * d->iwidth);
         }
-        d->meta_data = (char *)(d->image + d->iheight * d->iwidth);
         d->dcraw_message(DCRAW_VERBOSE, _("Loading %s %s image from %s ...\n"),
                          d->make, d->model, d->ifname_display);
         fseek(d->ifp, 0, SEEK_END);
@@ -240,6 +240,7 @@ extern "C" {
         if (d->raw_image) {
             h->raw.image = d->image = g_new0(dcraw_image_type, d->iheight * d->iwidth
                                              + d->meta_length);
+            d->meta_data = (char *)(d->image + d->iheight * d->iwidth);
             d->crop_masked_pixels();
             g_free(d->raw_image);
         }
