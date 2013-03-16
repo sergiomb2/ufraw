@@ -1,11 +1,11 @@
-dnl $Id: configure.ac,v 1.168 2013/03/16 05:15:13 nkbj Exp $
+dnl $Id: configure.ac,v 1.169 2013/03/16 12:15:09 nkbj Exp $
 AC_INIT(UFRaw, 0.19.2)
 AC_PREREQ(2.57)
 
 # Create host_os, host_cpu variables
 AC_CANONICAL_HOST
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AC_CONFIG_HEADERS(config.h)
 AC_PROG_CC
