@@ -59,6 +59,7 @@ extern "C" {
 #endif
 #ifndef DCRAW_NOMAIN
 #ifdef LOCALEDIR
+#include <locale.h>
 #include <libintl.h>
 #define _(String) gettext(String)
 #else
