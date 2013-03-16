@@ -27,8 +27,8 @@
 #ifdef HAVE_LIBZ
 #include <zlib.h>	/* for libpng 1.5.x */
 #endif
-#if (PNG_LIBPNG_VER_MAJOR == 1) && ((PNG_LIBPNG_VER_MINOR < 5) || \
-    ((PNG_LIBPNG_VER_MINOR == 5) && (PNG_LIBPNG_VER_RELEASE < 1)))
+#if PNG_LIBPNG_VER_MAJOR == 1 && (PNG_LIBPNG_VER_MINOR < 5 || \
+    (PNG_LIBPNG_VER_MINOR == 5 && PNG_LIBPNG_VER_RELEASE < 1))
 #define png_const_bytep png_charp
 #endif
 #endif
@@ -831,8 +831,8 @@ static void PNGwriteRawProfile(png_struct *ping,
     *dp++ = '\n';
     *dp = '\0';
 
-#if ((PNG_LIBPNG_VER_MAJOR > 1) || ((PNG_LIBPNG_VER_MAJOR == 1) && \
-(PNG_LIBPNG_VER_MINOR > 2))) && (defined(INT_MAX) && (INT_MAX > 0x7ffffffeL))
+#if (PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && \
+PNG_LIBPNG_VER_MINOR > 2)) && (defined(INT_MAX) && INT_MAX > 0x7ffffffeL)
     g_snprintf(dp, allocated_length - strlen(text[0].text), "%8u ", length);
 #else
     g_snprintf(dp, allocated_length - strlen(text[0].text), "%8lu ", length);
