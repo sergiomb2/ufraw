@@ -6324,7 +6324,11 @@ void CLASS parse_redcine()
   width  = get4();
   height = get4();
   fseek (ifp, 0, SEEK_END);
+#ifdef HAVE_FSEEKO
   fseek (ifp, -(i = ftello(ifp) & 511), SEEK_CUR);
+#else
+  fseek (ifp, -(i = ftell(ifp) & 511), SEEK_CUR);
+#endif
   if (get4() != i || get4() != 0x52454f42) {
     dcraw_message (DCRAW_WARNING,
 	    _("%s: Tail is missing, parsing from head...\n"), ifname_display);
@@ -6332,14 +6336,22 @@ void CLASS parse_redcine()
     while ((len = get4()) != EOF) {
       if (get4() == 0x52454456)
 	if (is_raw++ == shot_select)
+#ifdef HAVE_FSEEKO
 	  data_offset = ftello(ifp) - 8;
+#else
+	  data_offset = ftell(ifp) - 8;
+#endif
       fseek (ifp, len-8, SEEK_CUR);
     }
   } else {
     rdvo = get4();
     fseek (ifp, 12, SEEK_CUR);
     is_raw = get4();
+#ifdef HAVE_FSEEKO
     fseeko (ifp, rdvo+8 + shot_select*4, SEEK_SET);
+#else
+    fseek (ifp, rdvo+8 + shot_select*4, SEEK_SET);
+#endif
     data_offset = get4();
   }
 }
