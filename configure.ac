@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.171 2013/03/18 04:45:21 nkbj Exp $
+dnl $Id: configure.ac,v 1.172 2013/03/18 15:45:22 nkbj Exp $
 AC_INIT(UFRaw, 0.19.2)
 AC_PREREQ(2.57)
 
@@ -19,6 +19,16 @@ AC_CHECK_PROGS(POD2MAN, pod2man,
     echo you can ignore this problem by typing: touch ufraw.1; \
     echo cannot execute: pod2man], $PATH)
 AC_FUNC_FSEEKO
+
+# Ensure that getopt_long is available.  It is included in GNU libc and
+# in at least most BSD libcs.  If not found, search for it in libgnugetopt.
+AC_SEARCH_LIBS(getopt_long, gnugetopt, ,
+  AC_MSG_ERROR(can not build UFRaw without getopt_long))
+
+# Make sure that pow is available, trying libm if necessary.
+AC_SEARCH_LIBS(pow, m)
+AC_CHECK_FUNCS(canonicalize_file_name)
+AC_CHECK_FUNCS(memmem)
 
 # For binary package creation, adjusting for the build CPU is not appropriate.
 case $host_cpu in
@@ -45,49 +55,6 @@ AC_OPENMP
 CFLAGS="$CFLAGS $OPENMP_CFLAGS"
 CXXFLAGS="$CXXFLAGS $OPENMP_CFLAGS"
 
-# Windows and Darwin (Mac OS X) will require some special attention.
-case $host_os in
-  *mingw* )
-    ufraw_win32=yes
-    ufraw_darwin=no
-    ;;
-  *darwin* )
-    ufraw_win32=no
-    ufraw_darwin=yes
-    ;;
-  * )
-    ufraw_win32=no
-    ufraw_darwin=no
-    ;;
-esac
-AM_CONDITIONAL(UFRAW_WIN32, test x$ufraw_win32 = xyes)
-
-if test $ufraw_win32 = yes; then
-  CFLAGS="$CFLAGS -mno-cygwin -mwindows -mms-bitfields"
-  CXXFLAGS="$CXXFLAGS -mno-cygwin -mwindows -mms-bitfields"
-  CONSOLE="-mconsole"
-else
-  CONSOLE=
-fi
-AC_SUBST(CONSOLE)
-
-# Check for the Apple Carbon framework (needed for GDK_WINDOWING_QUARTZ). 
-CARBON_LIBS=
-if test $ufraw_darwin = yes; then
-  carbon_ok=no
-  AC_MSG_CHECKING([for Mac OS X Carbon support])
-  AC_TRY_CPP([
-  #include <Carbon/Carbon.h>
-  #include <ApplicationServices/ApplicationServices.h>
-  #include <CoreServices/CoreServices.h>
-  ], carbon_ok=yes)
-  AC_MSG_RESULT($carbon_ok)
-  if test "x$carbon_ok" = "xyes"; then
-    CARBON_LIBS="-framework Carbon -framework Cocoa"
-  fi
-fi
-AC_SUBST(CARBON_LIBS)
-
 # point to programs/libraries installed in a non-default place
 AC_ARG_WITH(prefix,
   [  --with-prefix=PREFIX    use also PREFIX as an input prefix for the build],
@@ -98,12 +65,6 @@ AC_ARG_WITH(prefix,
     LDFLAGS="$LDFLAGS -L$with_prefix/lib"
   ],
   [ with_prefix=NONE ] )
-
-AC_ARG_WITH(dosprefix,
-  [  --with-dosprefix=PREFIX PREFIX is the prefix in dos format
-                          (needed only in windows) ],
-  [ with_dosprefix=$withval],
-  [ with_dosprefix=NONE ] )
 
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.12 gthread-2.0)
 PKG_CHECK_MODULES(LCMS, lcms >= 1.14)
@@ -210,21 +171,6 @@ AC_SUBST(CINEPAINT_CFLAGS)
 AC_SUBST(CINEPAINT_LIBS)
 AC_SUBST(CINEPAINT_PROGRAMPLUGINDIR)
 
-# Ensure that getopt_long is available.  It is included in GNU libc and
-# in at least most BSD libcs.  If not found, search for it in libgnugetopt.
-AC_SEARCH_LIBS(getopt_long, gnugetopt, ,
-  AC_MSG_ERROR(can not build UFRaw without getopt_long))
-
-# The ws2_32 library is required for the ntohs symbol on win32.
-if test $ufraw_win32 = yes; then
-  LIBS="$LIBS -lws2_32"
-fi
-
-# Make sure that pow is available, trying libm if necessary.
-AC_SEARCH_LIBS(pow, m)
-AC_CHECK_FUNCS(canonicalize_file_name)
-AC_CHECK_FUNCS(memmem)
-
 # Check for zlib.
 AC_CHECK_LIB(z, deflate)
 have_zlib=${ac_cv_lib_z_deflate:-no}
@@ -278,6 +224,18 @@ PKG_CHECK_MODULES(LENSFUN, lensfun >= 0.2.5,
   [ have_lensfun=no
     AC_MSG_RESULT($LENSFUN_PKG_ERRORS) ] )
 
+# Make sure MSGFMT_OPTS is defined for all combinations of autoconf and glib.
+MSGFMT_OPTS=
+ALL_LINGUAS="ca cs da de es fr it ja ko nb nl pl pt ru sr sr@latin sv zh_CN zh_TW"
+AM_GLIB_GNU_GETTEXT
+LIBS="$LIBS $INTLLIBS"
+# The following might not work with some combinations of autoconf and glib due
+# to a missing update of the glib-gettext.m4 file.
+#AM_GLIB_DEFINE_LOCALEDIR(UFRAW_LOCALEDIR)
+GETTEXT_PACKAGE=ufraw
+AC_SUBST(GETTEXT_PACKAGE)
+AC_SUBST(MSGFMT_OPTS)
+
 # UFRAW_CPPFLAGS is added to the preprocessor flags AM_CPPFLAGS,
 # affecting also the C and C++ compilers.
 UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS $LIBTIFF_CFLAGS $LIBPNG_CFLAGS $CFITSIO_CFLAGS"
@@ -285,6 +243,69 @@ AC_SUBST(UFRAW_CPPFLAGS)
 # UFRAW_LDADD is added to the linker flags LDADD.
 UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS $LIBTIFF_LIBS $LIBPNG_LIBS $CFITSIO_LIBS $CARBON_LIBS"
 AC_SUBST(UFRAW_LDADD)
+
+# Windows and Darwin (Mac OS X) will require some special attention.
+case $host_os in
+  *mingw* )
+    ufraw_win32=yes
+    ufraw_darwin=no
+    ;;
+  *darwin* )
+    ufraw_win32=no
+    ufraw_darwin=yes
+    ;;
+  * )
+    ufraw_win32=no
+    ufraw_darwin=no
+    ;;
+esac
+AM_CONDITIONAL(UFRAW_WIN32, test x$ufraw_win32 = xyes)
+
+if test $ufraw_win32 = yes; then
+  CFLAGS="$CFLAGS -mwindows -mms-bitfields"
+  CXXFLAGS="$CXXFLAGS -mwindows -mms-bitfields"
+  CONSOLE="-mconsole"
+  AC_MSG_CHECKING(whether to add the -mno-cygwin flag to CFLAGS and CXXFLAGS)
+  AC_ARG_ENABLE(no_cygwin,
+    [  --enable-no-cygwin      add the -mno-cygwin flag to CFLAGS and CXXFLAGS],
+    , enable_no_cygwin=no)
+  AC_MSG_RESULT($enable_no_cygwin)
+  if test $enable_no_cygwin = yes; then
+    CFLAGS="$CFLAGS -mno-cygwin" 
+    CXXFLAGS="$CXXFLAGS -mno-cygwin" 
+  fi
+else
+  CONSOLE=
+fi
+AC_SUBST(CONSOLE)
+
+# Check for the Apple Carbon framework (needed for GDK_WINDOWING_QUARTZ). 
+CARBON_LIBS=
+if test $ufraw_darwin = yes; then
+  carbon_ok=no
+  AC_MSG_CHECKING([for Mac OS X Carbon support])
+  AC_TRY_CPP([
+  #include <Carbon/Carbon.h>
+  #include <ApplicationServices/ApplicationServices.h>
+  #include <CoreServices/CoreServices.h>
+  ], carbon_ok=yes)
+  AC_MSG_RESULT($carbon_ok)
+  if test "x$carbon_ok" = "xyes"; then
+    CARBON_LIBS="-framework Carbon -framework Cocoa"
+  fi
+fi
+AC_SUBST(CARBON_LIBS)
+
+AC_ARG_WITH(dosprefix,
+  [  --with-dosprefix=PREFIX PREFIX is the prefix in dos format
+                          (needed only in windows) ],
+  [ with_dosprefix=$withval],
+  [ with_dosprefix=NONE ] )
+
+# The ws2_32 library is required for the ntohs symbol on win32.
+if test $ufraw_win32 = yes; then
+  LIBS="$LIBS -lws2_32"
+fi
 
 if test $ufraw_win32 = yes; then
   AC_CHECK_PROGS(WINDRES, $host_alias-windres $target_alias-windres windres, , $PATH)
@@ -312,18 +333,6 @@ if test $ufraw_win32 = yes; then
   AC_SUBST(WINE)
   AC_SUBST(COMMENT_ICON)
 fi
-
-# Make sure MSGFMT_OPTS is defined for all combinations of autoconf and glib.
-MSGFMT_OPTS=
-ALL_LINGUAS="ca cs da de es fr it ja ko nb nl pl pt ru sr sr@latin sv zh_CN zh_TW"
-AM_GLIB_GNU_GETTEXT
-LIBS="$LIBS $INTLLIBS"
-# The following might not work with some combinations of autoconf and glib due
-# to a missing update of the glib-gettext.m4 file.
-#AM_GLIB_DEFINE_LOCALEDIR(UFRAW_LOCALEDIR)
-GETTEXT_PACKAGE=ufraw
-AC_SUBST(GETTEXT_PACKAGE)
-AC_SUBST(MSGFMT_OPTS)
 
 AC_MSG_CHECKING(whether to install mime types)
 AC_ARG_ENABLE(mime,
