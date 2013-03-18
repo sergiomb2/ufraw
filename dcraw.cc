@@ -41,34 +41,6 @@ extern "C" {
 #include <time.h>
 #include <sys/types.h>
 
-#ifdef NODEPS
-#define NO_JASPER
-#define NO_JPEG
-#define NO_LCMS
-#endif
-#ifdef HAVE_LIBJASPER
-#include <jasper/jasper.h>	/* Decode RED camera movies */
-#endif
-#ifdef HAVE_LIBJPEG
-extern "C" {
-#include <jpeglib.h>		/* Decode compressed Kodak DC120 photos */
-}
-#endif				/* and Adobe Lossy DNGs */
-#ifndef NO_LCMS
-#include <lcms.h>		/* Support color profiles */
-#endif
-#ifndef DCRAW_NOMAIN
-#ifdef LOCALEDIR
-#include <locale.h>
-#include <libintl.h>
-#define _(String) gettext(String)
-#else
-#define _(String) (String)
-#endif
-#else
-#include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
-#endif
-
 #ifndef HAVE_CONFIG_H /*fseeko() is handled by the UFRaw config system - NKBJ*/
 #if defined(DJGPP) || defined(__MINGW32__)
 #define fseeko fseek
@@ -97,6 +69,34 @@ typedef unsigned __int64 UINT64;
 #include <netinet/in.h>
 typedef long long INT64;
 typedef unsigned long long UINT64;
+#endif
+
+#ifdef NODEPS
+#define NO_JASPER
+#define NO_JPEG
+#define NO_LCMS
+#endif
+#ifdef HAVE_LIBJASPER
+#include <jasper/jasper.h>	/* Decode RED camera movies */
+#endif
+#ifdef HAVE_LIBJPEG
+extern "C" {
+#include <jpeglib.h>		/* Decode compressed Kodak DC120 photos */
+}
+#endif				/* and Adobe Lossy DNGs */
+#ifndef NO_LCMS
+#include <lcms.h>		/* Support color profiles */
+#endif
+#ifndef DCRAW_NOMAIN
+#ifdef LOCALEDIR
+#include <locale.h>
+#include <libintl.h>
+#define _(String) gettext(String)
+#else
+#define _(String) (String)
+#endif
+#else
+#include <glib/gi18n.h> /*For _(String) definition - NKBJ*/
 #endif
 
 #ifdef LJPEG_DECODE
@@ -296,9 +296,15 @@ int CLASS fscanf(FILE *stream, const char *format, void *ptr) {
 
 #define SQR(x) ((x)*(x))
 #ifndef DCRAW_NOMAIN
+#ifndef ABS
 #define ABS(x) (((int)(x) ^ ((int)(x) >> 31)) - ((int)(x) >> 31))
+#endif
+#ifndef MIN
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
+#endif
+#ifndef MAX
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
+#endif
 #endif
 #define LIM(x,min,max) MAX(min,MIN(x,max))
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
