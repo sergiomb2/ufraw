@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.170 2013/03/18 03:45:20 nkbj Exp $
+dnl $Id: configure.ac,v 1.171 2013/03/18 04:45:21 nkbj Exp $
 AC_INIT(UFRaw, 0.19.2)
 AC_PREREQ(2.57)
 
@@ -243,9 +243,16 @@ AC_CHECK_LIB(jasper, jas_image_decode)
 have_jasper=${ac_cv_lib_jasper_jas_image_decode:-no}
 
 # Check for tiff headers and library.
-AC_CHECK_HEADER(tiffio.h,
-  AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
-have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
+PKG_CHECK_MODULES(LIBTIFF, libtiff-4,
+  [ have_tiff=yes
+    AC_DEFINE(HAVE_LIBTIFF, 1, have the tiff library) ],
+  [ have_tiff=no
+    AC_MSG_RESULT($LIBTIFF_PKG_ERRORS) ] )
+if test $have_tiff = no; then
+  AC_CHECK_HEADER(tiffio.h,
+    AC_CHECK_LIB(tiff, TIFFSetErrorHandler))
+  have_tiff=${ac_cv_lib_tiff_TIFFSetErrorHandler:-no}
+fi
 
 PKG_CHECK_MODULES(LIBPNG, libpng >= 1.2,
   [ have_png=yes
@@ -273,14 +280,14 @@ PKG_CHECK_MODULES(LENSFUN, lensfun >= 0.2.5,
 
 # UFRAW_CPPFLAGS is added to the preprocessor flags AM_CPPFLAGS,
 # affecting also the C and C++ compilers.
-UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS $LIBPNG_CFLAGS $CFITSIO_CFLAGS"
+UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS $LIBTIFF_CFLAGS $LIBPNG_CFLAGS $CFITSIO_CFLAGS"
 AC_SUBST(UFRAW_CPPFLAGS)
 # UFRAW_LDADD is added to the linker flags LDADD.
-UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS $LIBPNG_LIBS $CFITSIO_LIBS $CARBON_LIBS"
+UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS $LIBTIFF_LIBS $LIBPNG_LIBS $CFITSIO_LIBS $CARBON_LIBS"
 AC_SUBST(UFRAW_LDADD)
 
 if test $ufraw_win32 = yes; then
-  AC_CHECK_PROGS(WINDRES, $host_alias-windres windres, , $PATH)
+  AC_CHECK_PROGS(WINDRES, $host_alias-windres $target_alias-windres windres, , $PATH)
   AC_SUBST(WINDRES)
   # For the windows-installer make needs the location of the DLLs
   PREFIX=$with_prefix
