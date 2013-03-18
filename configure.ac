@@ -1,8 +1,8 @@
-dnl $Id: configure.ac,v 1.169 2013/03/16 12:15:09 nkbj Exp $
+dnl $Id: configure.ac,v 1.170 2013/03/18 03:45:20 nkbj Exp $
 AC_INIT(UFRaw, 0.19.2)
 AC_PREREQ(2.57)
 
-# Create host_os, host_cpu variables
+# Create host_os, host_cpu, host_alias variables
 AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE([foreign])
@@ -280,9 +280,9 @@ UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS $LIBPN
 AC_SUBST(UFRAW_LDADD)
 
 if test $ufraw_win32 = yes; then
-  AC_CHECK_PROGS(WINDRES, $target_alias-windres windres, , $PATH)
+  AC_CHECK_PROGS(WINDRES, $host_alias-windres windres, , $PATH)
   AC_SUBST(WINDRES)
-  # For the windows-intstaller make needs the location of the DLLs
+  # For the windows-installer make needs the location of the DLLs
   PREFIX=$with_prefix
   AC_SUBST(PREFIX)
   # and ISCC (ufraw-setup.iss.in) needs them in dos format...
