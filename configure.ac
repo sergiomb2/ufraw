@@ -1,8 +1,8 @@
-dnl $Id: configure.ac,v 1.173 2013/03/23 08:00:07 nkbj Exp $
+dnl $Id: configure.ac,v 1.174 2013/03/23 13:45:07 nkbj Exp $
 AC_INIT(UFRaw, 0.19.2)
 AC_PREREQ(2.57)
 
-# Create host_os, host_cpu, host_alias variables
+# Create host_os, host_cpu, host_alias variables.
 AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE([foreign])
@@ -20,8 +20,8 @@ AC_CHECK_PROGS(POD2MAN, pod2man,
     echo cannot execute: pod2man], $PATH)
 AC_FUNC_FSEEKO
 
-# Ensure that getopt_long is available.  It is included in GNU libc and
-# in at least most BSD libcs.  If not found, search for it in libgnugetopt.
+# Ensure that getopt_long is available. It is included in GNU libc and
+# in at least most BSD libcs. If not found, search for it in libgnugetopt.
 AC_SEARCH_LIBS(getopt_long, gnugetopt, ,
   AC_MSG_ERROR(can not build UFRaw without getopt_long))
 
@@ -40,7 +40,7 @@ case $host_cpu in
     ;;
 esac
 
-# default CFLAGS, CXXFLAGS for GCC in case they were not set by the user.
+# Default CFLAGS, CXXFLAGS for GCC in case they were not set by the user.
 if test "$GCC" = "yes"; then
   if test "$ac_test_CFLAGS" != "set"; then
     CFLAGS="-W -Wall -g -O3 -fomit-frame-pointer -D_FORTIFY_SOURCE=2 $UFRAW_MARCH"
@@ -55,7 +55,7 @@ AC_OPENMP
 CFLAGS="$CFLAGS $OPENMP_CFLAGS"
 CXXFLAGS="$CXXFLAGS $OPENMP_CFLAGS"
 
-# point to programs/libraries installed in a non-default place
+# Point to programs/libraries installed in a non-default place.
 AC_ARG_WITH(prefix,
   [  --with-prefix=PREFIX    use also PREFIX as an input prefix for the build],
   [ with_prefix=$withval
@@ -93,9 +93,9 @@ if test "$have_gtk" = "yes"; then
 
 # It is not clear if we should install the GIMP and Cinepaint plugins
 # in the corresponding place in our prefix, or in GIMP's or
-# Cinepaint's lib dir in their prefixes.  Currently, we install the
-# plugin in our prefix.  (If the gimp/cinepaint prefix and the
-# configured ufraw prefix are the same, this doesn't matter.)
+# Cinepaint's lib dir in their prefixes. Currently, we install the
+# plugin in our prefix. If the gimp/cinepaint prefix and the
+# configured UFRaw prefix are the same, this doesn't matter.
   pkg_prefix="$PKG_CONFIG"
   test $prefix = NONE || pkg_prefix="$pkg_prefix --define-variable=prefix=$prefix"
   test $exec_prefix = NONE || pkg_prefix="$pkg_prefix --define-variable=exec_prefix=$exec_prefix"
@@ -146,16 +146,13 @@ if test "$have_gtk" = "yes"; then
         fi
       ] ) ] )
 
-  # Disable deprecated functions on tested versions of GTK
-  # unless using an old gimp-dev package.
-  if $PKG_CONFIG --atleast-version=2.2 gimpui-2.0; then
-    if $PKG_CONFIG --max-version=2.18.99 gtk+-2.0; then
-      AC_DEFINE(G_DISABLE_DEPRECATED, [], disable deprecated glib features)
-      AC_DEFINE(GDK_DISABLE_DEPRECATED, [], disable deprecated gdk features)
-      AC_DEFINE(GTK_DISABLE_DEPRECATED, [], disable deprecated gtk+ features)
-      AC_DEFINE(GTK_DISABLE_SINGLE_INCLUDES, [], disable deprecated gtk headers)
-      AC_DEFINE(GDK_PIXBUF_DISABLE_SINGLE_INCLUDES, [], disable deprecated gdk headers)
-    fi
+  # Disable deprecated functions on tested versions of GTK.
+  if $PKG_CONFIG --max-version=2.18.99 gtk+-2.0; then
+    AC_DEFINE(G_DISABLE_DEPRECATED, [], disable deprecated glib features)
+    AC_DEFINE(GDK_DISABLE_DEPRECATED, [], disable deprecated gdk features)
+    AC_DEFINE(GTK_DISABLE_DEPRECATED, [], disable deprecated gtk+ features)
+    AC_DEFINE(GTK_DISABLE_SINGLE_INCLUDES, [], disable deprecated gtk headers)
+    AC_DEFINE(GDK_PIXBUF_DISABLE_SINGLE_INCLUDES, [], disable deprecated gdk headers)
   fi
 fi
 AM_CONDITIONAL(MAKE_GTK, test $have_gtk = yes)
@@ -175,7 +172,7 @@ AC_SUBST(CINEPAINT_PROGRAMPLUGINDIR)
 AC_CHECK_LIB(z, deflate)
 have_zlib=${ac_cv_lib_z_deflate:-no}
 
-# Check for libbz2
+# Check for libbz2.
 AC_CHECK_LIB(bz2, BZ2_bzReadOpen)
 have_libbz2=${ac_cv_lib_bz2_BZ2_bzReadOpen:-no}
 
@@ -240,6 +237,7 @@ AC_SUBST(MSGFMT_OPTS)
 # affecting also the C and C++ compilers.
 UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS $LIBTIFF_CFLAGS $LIBPNG_CFLAGS $CFITSIO_CFLAGS"
 AC_SUBST(UFRAW_CPPFLAGS)
+
 # UFRAW_LDADD is added to the linker flags LDADD.
 UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS $LIBTIFF_LIBS $LIBPNG_LIBS $CFITSIO_LIBS $CARBON_LIBS"
 AC_SUBST(UFRAW_LDADD)
@@ -310,10 +308,10 @@ fi
 if test $ufraw_win32 = yes; then
   AC_CHECK_PROGS(WINDRES, $host_alias-windres $target_alias-windres windres, , $PATH)
   AC_SUBST(WINDRES)
-  # For the windows-installer make needs the location of the DLLs
+  # For the Windows-installer make needs the location of the DLLs
   PREFIX=$with_prefix
   AC_SUBST(PREFIX)
-  # and ISCC (ufraw-setup.iss.in) needs them in dos format...
+  # and ISCC (ufraw-setup.iss.in) needs them in DOS format...
   DOSPREFIX=$with_dosprefix
   AC_SUBST(DOSPREFIX)
   ISCC="\"\$(PROGRAMFILES)\"/Inno\ Setup\ 5/ISCC.exe"
@@ -324,8 +322,8 @@ if test $ufraw_win32 = yes; then
       COMMENT_ICON=""
       ;;
     * )
-      # Only needed if you plan to cross-build windows-installer from linux
-      test -z "$PROGRAMFILES" && PROGRAMFILES="c:\\Program Files"
+      # Only needed if you plan to cross-build Windows-installer from Linux.
+      test -z "$PROGRAMFILES" && PROGRAMFILES="C:\\Program Files"
       AC_SUBST(PROGRAMFILES)
       WINE="wine"
       COMMENT_ICON=";"
