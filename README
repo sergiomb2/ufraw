@@ -20,9 +20,9 @@ Terminology
 This document uses the (Linux) term "development package" to denote
 that not only must a program be installed so that it can be run
 (binaries, shared libraries), but also so that other programs can be
-compiled against it (include files, static libraries).  Many Linux
+compiled against it (include files, static libraries). Many Linux
 packaging systems split programs into a regular and development
-package along these lines.  Other packaging systems, such as pkgsrc,
+package along these lines. Other packaging systems, such as pkgsrc,
 generally have a single package that includes the entire program,
 including header files.
 
@@ -31,14 +31,14 @@ Installation
 (If building from CVS rather than a release see also "Building UFRaw
 from CVS", below.)
 
-Building UFRaw requires development packages for GTK+ >= 2.4 and lcms.
+Building UFRaw requires development packages for GLib >= 2.12 and lcms >= 1.14.
 There are many optional dependencies which enable building additional
 programs and adding features to existing programs.
 
 The UFRaw build process expects Perl to be present (for pod2man). It is
 needed only if you are changing ufraw.pod or if you are building from CVS.
 
-A modern make is required.  GNU make and BSD make both work currently.
+A modern make is required. GNU make and BSD make both work currently.
 In case of trouble, try GNU make.
 
 Building UFRaw on the PowerPC platform requires GCC version 3.4 or newer.
@@ -48,37 +48,49 @@ The first step of the installation is to run the configure script:
 ./configure
 
 At the end of the configuration you will get a summary of the
-installation settings.  If most optional dependencies are present it
+installation settings. If most optional dependencies are present it
 will look like this:
 
 configure: ====================== summary =====================
+configure: build GTK GUI: yes
 configure: build GIMP plug-in: yes
-configure: build CinePaint plug-in: no
+configure: build CinePaint plug-in: yes
 configure: EXIF support using exiv2: yes
 configure: JPEG support: yes
+configure: JPEG2000 (libjasper) support: yes
 configure: TIFF support: yes
 configure: PNG support: yes
-configure: FITS support: no
+configure: FITS support: yes
 configure: gzip compressed raw support: yes
 configure: bzip2 compressed raw support: yes
-configure: Scrolling in preview using GtkImageView: yes
-configure: Lens defects correction via lensfun: no
+configure: Lens defects correction via lensfun: yes
 
 If some of the lines end with 'no' instead of 'yes', UFRaw can still
 be built, but the named option will be disabled.
 
-GTK+ version 2.6 or higher is required for the GUI.
+Development packages for GTK+ version 2.12 or higher and
+GtkImageView version 1.6 or higher are required for the GUI.
 
-The exiv2 development package is required for reading the EXIF data.
-Supported formats are Canon (CRW, CR2), Fuji (RAF), Minolta (MRW),
-Nikon (NEF), Pentax (PEF), Samsung (PEF), Sony (SR2, ARW)
-and Adobe's DNG. If the configuration script does not find this package
-EXIF support will be omitted.
+Development packages for GIMP version 2.2 or higher is required to build
+the GIMP plug-in.
+
+Development packages for Cinepaint-gtk version 0.22 or higher is required to
+build the Cinepaint plug-in.
+
+The development package for exiv2 version 0.20 or higher is required for
+reading the EXIF data. Among the supported formats are Canon (CRW, CR2),
+Fuji (RAF), Minolta (MRW), Nikon (NEF), Pentax (PEF), Samsung (PEF),
+Sony (SR2, ARW) and Adobe's DNG. If the configuration script does not find
+this package EXIF support will be omitted.
 
 The libjpeg development package is required for saving image in the
 JPEG format in the stand-alone tool. It is also needed to support
-Kodak DC120. If the configuration script does not find this package
-JPEG support will be omitted.
+Kodak DC120 and Adobe's lossy DNG. If the configuration script does not
+find this package JPEG support will be omitted.
+
+The libjasper development package is required to support image files from
+Red movie cameras. If the configuration script does not find this package
+support for such image files will be omitted.
 
 The libtiff development package is required for saving images in the
 TIFF format. If the configuration script does not find this package
@@ -86,16 +98,11 @@ TIFF support will be omitted.
 
 The zlib development package is required for saving images in the TIFF
 format with lossless compression. If the configuration script does not
-find this package compressed TIFF support will be omitted.
-This pacakage also enables loading of raw files compressed with gzip.
+find this package compressed TIFF support will be omitted. This pacakage
+also enables loading of raw files compressed with gzip.
 
 The libbz2 development package is required for loading of raw
 files compressed with bzip2.
-
-The gtkimageview package (very new - see
-http://trac.bjourne.webfactional.com/wiki) is required to enable
-scrollable preview window support.  If the configuration script does
-not find this package the preview window will not be scrollable.
 
 UFRaw is written in both C and C++, so if you set CFLAGS you should
 also set CXXFLAGS. If you do not set them, then the default for
@@ -112,12 +119,21 @@ Other options for the configuration script are:
 
 --enable-dst-correction: enable DST correction for file timestamps.
 
+--enable-contrast: enable the contrast setting option.
+
+--enable-x-trans: enable support for the FUJIFILM 'X-Trans' sensor.
+
 --enable-interp-none: enable 'None' interpolation (mostly for debugging).
+
+--enable-valgrind: enable debugging with valgrind
 
 --with-prefix=PREFIX: use also PREFIX as input prefix for the build.
 
---with-dosprefix=PREFIX: PREFIX is the prefix in dos format
-                         (needed only in windows).
+--enable-no-cygwin: add the -mno-cygwin flag to CFLAGS and CXXFLAGS
+                    (only in Windows).
+
+--with-dosprefix=PREFIX: PREFIX is the prefix in DOS format
+                         (needed only in Windows).
 
 To build UFRaw:
   make
@@ -125,16 +141,16 @@ To build UFRaw:
 To make a system wide installation:
   make install
 
-Note that the gimp and cinepaint plugins, if built, will be installed
-into ufraw's prefix.  Thus, if ufraw's prefix is different from gimp's
-and cinepaint's prefix, you may have to add plugin directories to the
+Note that the GIMP and Cinepaint plugins, if built, will be installed
+into UFRaw's prefix.  Thus, if UFRaw's prefix is different from GIMP's
+and Cinepaint's prefix, you may have to add plugin directories to the
 search path, add symbolic links, or something similar.
 
-To use the ufraw gimp plugin, ensure that other raw converters
+To use the UFRaw GIMP plugin, ensure that other raw converters
 (e.g. rawphoto) are not installed because they may claim the raw file
-first, preventing ufraw from running.
+first, preventing UFRaw from running.
 
-If one of the packages (lcms, libjpeg, libtiff, zlib) is not installed
+If one of the packages (lcms, libjpeg, libtiff, zlib etc.) is not installed
 on your system, and you can not install it using the normal packaging
 system, you can build it locally and use UFRaw's configuration option
 --with-prefix to point to its location.  To build any of the above
@@ -184,7 +200,7 @@ installs UFRaw.
 Here are a few pointers if you still want to build UFRaw yourself.
 
 'make install' will try to make a Unix like installation into /usr/local.
-'make windows-installer' will create a windows installer and
+'make windows-installer' will create a Windows installer and
 'make install-windows' will run this installer.
 
 For creating the installer UFRaw needs to know the path to all the DLLs.
@@ -194,9 +210,9 @@ For example, from CygWin:
     --target=i686-mingw32msvc --host=i686-mingw32msvc --build=i686-mingw32msvc
 
 pkg-config behaves differently under MinGW32. Therefore, if you are
-cross compiling from Linux or CygWin, you will have to modify all the
+cross-compiling from Linux or CygWin, you will have to modify all the
 *.pc files that come with the different packages. The following script
-should do the trick in debian (update TARGET to your needs):
+should do the trick in Debian (update TARGET to your needs):
 
 TARGET=/opt/i586-mingw32msvc
 for f in $TARGET/lib/pkgconfig/*.pc ; do
@@ -280,6 +296,10 @@ date user guide.
 
 History
 =======
+
+07/03/2013 - UFRaw-0.19.1 released, based on DCRaw v 9.17.
+
+* Fix crash triggered by compiler optimization.
 
 26/02/2013 - UFRaw-0.19 released, based on DCRaw v 9.17.
 

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.174 2013/03/23 13:45:07 nkbj Exp $
+dnl $Id: configure.ac,v 1.175 2013/03/23 14:15:11 nkbj Exp $
 AC_INIT(UFRaw, 0.19.2)
 AC_PREREQ(2.57)
 
@@ -265,7 +265,8 @@ if test $ufraw_win32 = yes; then
   CONSOLE="-mconsole"
   AC_MSG_CHECKING(whether to add the -mno-cygwin flag to CFLAGS and CXXFLAGS)
   AC_ARG_ENABLE(no_cygwin,
-    [  --enable-no-cygwin      add the -mno-cygwin flag to CFLAGS and CXXFLAGS],
+    [  --enable-no-cygwin      add the -mno-cygwin flag to CFLAGS and CXXFLAGS
+                          (only in Windows) ],
     , enable_no_cygwin=no)
   AC_MSG_RESULT($enable_no_cygwin)
   if test $enable_no_cygwin = yes; then
@@ -296,7 +297,7 @@ AC_SUBST(CARBON_LIBS)
 
 AC_ARG_WITH(dosprefix,
   [  --with-dosprefix=PREFIX PREFIX is the prefix in dos format
-                          (needed only in windows) ],
+                          (needed only in Windows) ],
   [ with_dosprefix=$withval],
   [ with_dosprefix=NONE ] )
 
