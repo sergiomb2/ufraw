@@ -40,6 +40,7 @@ Name: "ORFAssociation"; Description: "ORF - Olympus Raw Format"; GroupDescriptio
 Name: "MRWAssociation"; Description: "MRW - Minolta Raw"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "ARWAssociation"; Description: "ARW,SRF,SR2 - Sony Raw"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "SRWAssociation"; Description: "SRW - Samsung Raw"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "X3FAssociation"; Description: "X3F - Sigma Foveon Raw"; GroupDescription: "Associate the following file types with UFRaw:"
 
 [Files]
 Source: "ufraw.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -115,6 +116,7 @@ Root: HKCR; Subkey: ".arw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"
 Root: HKCR; Subkey: ".srf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ARWAssociation
 Root: HKCR; Subkey: ".sr2"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ARWAssociation
 Root: HKCR; Subkey: ".srw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: SRWAssociation
+Root: HKCR; Subkey: ".x3f"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: X3FAssociation
 
 Root: HKCR; Subkey: "UFRawID"; ValueType: string; ValueName: ""; ValueData: "UFRawID"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "UFRawID"; ValueType: string; ValueName: ""; ValueData: "UFRaw ID file"; Flags: uninsdeletevalue
