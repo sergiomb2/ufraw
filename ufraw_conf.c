@@ -133,7 +133,7 @@ const conf_data conf_default = {
     FALSE, /* silent */
 #ifdef _WIN32
     "gimp-win-remote gimp-2.8.exe", /* remoteGimpCommand */
-#elif HAVE_GIMP_2_6
+#elif HAVE_GIMP_2_4
     "gimp", /* remoteGimpCommand */
 #else
     "gimp-remote", /* remoteGimpCommand */
