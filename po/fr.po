@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-10 19:30+0100\n"
-"PO-Revision-Date: 2010-03-05 23:22+0100\n"
+"POT-Creation-Date: 2013-03-24 01:16-0500\n"
+"PO-Revision-Date: 2013-03-24 01:50+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language: fr\n"
@@ -50,15 +50,15 @@ msgstr "n"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: écraser '%s'?"
 
-#, fuzzy
 msgid "The --silent option is only valid with 'ufraw-batch'"
 msgstr ""
-"--silent cette option est valable uniquement en mode de traitement par lot"
+"L'option --silent n'est valable qu'en mode de traitement par lot ('ufraw-"
+"batch')"
 
-#, fuzzy
 msgid "The --embedded-image option is only valid with 'ufraw-batch'"
 msgstr ""
-"--silent cette option est valable uniquement en mode de traitement par lot"
+"L'option --embedded-image n'est valable qu'en mode de traitement par lot "
+"('ufraw-batch')"
 
 msgid "Raw images"
 msgstr "Images brutes (raw)"
@@ -140,9 +140,9 @@ msgstr ""
 "Ne peut ouvrir le fichier ID %s en lecture\n"
 "%s\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading from file '%s'."
-msgstr "Erreur en créant le fichier '%s'."
+msgstr "Erreur en lisant le fichier '%s'."
 
 #, c-format
 msgid ""
@@ -423,7 +423,6 @@ msgstr ""
 "--[no]zip             Active [désactive] compression zip du TIFF (défaut "
 "nozip).\n"
 
-#, fuzzy
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image. This option\n"
@@ -431,7 +430,8 @@ msgid ""
 msgstr ""
 "--embedded-image      Extrait l'imagette contenue dans le fichier brut "
 "(raw)\n"
-"                      plutôt que de convertir l'image brute.\n"
+"                      plutôt que de convertir l'image brute. Cette option\n"
+"                      n'est valable qu'en traitement par lot 'ufraw-batch'.\n"
 
 msgid ""
 "--rotate=camera|ANGLE|no\n"
@@ -456,10 +456,11 @@ msgstr ""
 "l'échelle.\n"
 
 msgid "--auto-crop           Crop the output automatically.\n"
-msgstr ""
+msgstr "--auto-crop           Découpe la sortie automatiquement.\n"
 
 msgid "--aspect-ratio X:Y    Set crop area aspect ratio.\n"
 msgstr ""
+"--aspect-ratio X:Y    Définit le ratio d'aspect de la zone de découpe.\n"
 
 msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
@@ -494,13 +495,14 @@ msgstr ""
 msgid "--maximize-window     Force window to be maximized.\n"
 msgstr "--maximize-window     Force la fenêtre maximisée.\n"
 
-#, fuzzy
 msgid ""
 "--silent              Do not display any messages during conversion. This\n"
 "                      option is only valid with 'ufraw-batch'.\n"
 msgstr ""
 "--silent              N'afficher aucun message durant le traitement par "
 "lot.\n"
+"                      Cette option n'est valable uniquement avec 'ufraw-"
+"batch'.\n"
 
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
@@ -538,9 +540,8 @@ msgstr "'%s' n'est pas une valeur valide pour l'option --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw a été compilé sans le support du ZIP."
 
-#, fuzzy
 msgid "--batch is obsolete. Use 'ufraw-batch' instead."
-msgstr "--batch est obsolète. Utiliser ufraw-batch à la place."
+msgstr "--batch est obsolète. Utiliser 'ufraw-batch' à la place."
 
 #, c-format
 msgid "getopt returned character code 0%o ??"
@@ -875,9 +876,8 @@ msgstr "Valeur"
 msgid "Channel Mixer"
 msgstr "Mélangeur de couches"
 
-#, fuzzy
 msgid "UFRaw Message"
-msgstr "UFRaw"
+msgstr "Message UFRaw"
 
 msgid "No more room for new curves."
 msgstr "Plus de place pour de nouvelles courbes."
@@ -1372,7 +1372,6 @@ msgstr "Bas:"
 msgid "Auto fit crop area"
 msgstr "Sélection automatique du recadrage"
 
-#, fuzzy
 msgid "Reset the crop area"
 msgstr "RàZ de la zone de découpe"
 
