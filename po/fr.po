@@ -4,9 +4,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw 0.17\n"
+"Project-Id-Version: UFRaw 0.19.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 01:16-0500\n"
+"POT-Creation-Date: 2013-03-24 08:30+0100\n"
 "PO-Revision-Date: 2013-03-24 01:50+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"

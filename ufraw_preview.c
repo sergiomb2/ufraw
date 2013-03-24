@@ -3901,14 +3901,16 @@ static void panel_size_allocate(GtkWidget *panel,
         if (pixbuf == NULL || gdk_pixbuf_get_height(pixbuf) != rawHisHeight)
             if (rawExpanded)
                 gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
-                            (GSourceFunc)(render_raw_histogram), data, NULL);
+                                          (GSourceFunc)(render_raw_histogram),
+                                          data, NULL);
 
         pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(data->LiveHisto));
         liveHisHeight = data->LiveHisto->allocation.height;
         if (pixbuf == NULL || gdk_pixbuf_get_height(pixbuf) != liveHisHeight)
             if (liveExpanded)
                 gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
-                            (GSourceFunc)(render_live_histogram), data, NULL);
+                                          (GSourceFunc)(render_live_histogram),
+                                          data, NULL);
     }
 }
 
