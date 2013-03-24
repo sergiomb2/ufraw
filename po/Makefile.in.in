@@ -57,7 +57,7 @@ SOURCES =
 POFILES = @POFILES@
 GMOFILES = @GMOFILES@
 DISTFILES = Makefile.in.in POTFILES.in $(GETTEXT_PACKAGE).pot \
-$(POFILES) $(GMOFILES) $(SOURCES)
+$(POFILES) $(SOURCES)
 
 POTFILES = \
 
@@ -79,7 +79,7 @@ INSTOBJEXT = @INSTOBJEXT@
 	$(MSGFMT) -o $@ $<
 
 .po.gmo:
-	file=$(srcdir)/`echo $* | sed 's,.*/,,'`.gmo \
+	file=./`echo $* | sed 's,.*/,,'`.gmo \
 	  && rm -f $$file && $(GMSGFMT) $(MSGFMT_OPTS) -o $$file $<
 
 .po.cat:
@@ -202,11 +202,11 @@ clean: mostlyclean
 
 distclean: clean
 	rm -f Makefile Makefile.in POTFILES *.mo *.msg *.cat *.cat.m
+	rm -f $(GMOFILES)
 
 maintainer-clean: distclean
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
-	rm -f $(GMOFILES)
 
 distdir = ../$(GETTEXT_PACKAGE)-$(VERSION)/$(subdir)
 dist distdir: update-po $(DISTFILES)
