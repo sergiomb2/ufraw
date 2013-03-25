@@ -297,6 +297,10 @@ date user guide.
 History
 =======
 
+25/03/2013 - UFRaw-0.19.2 released, based on DCRaw v 9.17.
+
+* Bug fix release.
+
 07/03/2013 - UFRaw-0.19.1 released, based on DCRaw v 9.17.
 
 * Fix crash triggered by compiler optimization.
