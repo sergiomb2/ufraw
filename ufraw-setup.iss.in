@@ -45,7 +45,7 @@ Name: "X3FAssociation"; Description: "X3F - Sigma Foveon Raw"; GroupDescription:
 [Files]
 Source: "ufraw.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "ufraw-batch.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "ufraw-gimp.exe"; DestDir: "{app}\lib\gimp\2.0\plug-ins"; Flags: ignoreversion
+Source: "ufraw-gimp.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "po\ca.mo"; DestDir: "{app}\lib\locale\ca\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\cs.mo"; DestDir: "{app}\lib\locale\cs\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
 Source: "po\da.mo"; DestDir: "{app}\lib\locale\da\LC_MESSAGES\"; DestName: "ufraw.mo"; Flags: ignoreversion
