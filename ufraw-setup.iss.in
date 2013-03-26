@@ -37,10 +37,12 @@ Name: "NEFAssociation"; Description: "NEF,NRW - Nikon Raw"; GroupDescription: "A
 Name: "PEFAssociation"; Description: "PEF - Pentax Electronic Format"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "RAFAssociation"; Description: "RAF - Fuji Raw Format"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "ORFAssociation"; Description: "ORF - Olympus Raw Format"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "RW2Association"; Description: "RW2 - Panasonic Raw"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "RWLAssociation"; Description: "RWL - Leica Raw"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "MRWAssociation"; Description: "MRW - Minolta Raw"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "ARWAssociation"; Description: "ARW,SRF,SR2 - Sony Raw"; GroupDescription: "Associate the following file types with UFRaw:"
 Name: "SRWAssociation"; Description: "SRW - Samsung Raw"; GroupDescription: "Associate the following file types with UFRaw:"
-Name: "X3FAssociation"; Description: "X3F - Sigma Foveon Raw"; GroupDescription: "Associate the following file types with UFRaw:"
+Name: "X3FAssociation"; Description: "X3F - Sigma (Foveon) Raw"; GroupDescription: "Associate the following file types with UFRaw:"
 
 [Files]
 Source: "ufraw.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -69,7 +71,6 @@ Source: "po\zh_TW.mo"; DestDir: "{app}\lib\locale\zh_TW\LC_MESSAGES\"; DestName:
 Source: "@DOSPREFIX@\bin\bzip2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\freetype6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\intl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "@DOSPREFIX@\bin\libjpeg-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libatk-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libcairo-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libexpat-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -82,6 +83,7 @@ Source: "@DOSPREFIX@\bin\libgmodule-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ign
 Source: "@DOSPREFIX@\bin\libgobject-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libgthread-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libgtk-win32-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libjpeg-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\liblcms-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\liblensfun.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libpango-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -111,6 +113,8 @@ Root: HKCR; Subkey: ".nrw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"
 Root: HKCR; Subkey: ".pef"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: PEFAssociation
 Root: HKCR; Subkey: ".raf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: RAFAssociation
 Root: HKCR; Subkey: ".orf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ORFAssociation
+Root: HKCR; Subkey: ".rw2"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: RW2Association
+Root: HKCR; Subkey: ".rwl"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: RWLAssociation
 Root: HKCR; Subkey: ".mrw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: MRWAssociation
 Root: HKCR; Subkey: ".arw"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ARWAssociation
 Root: HKCR; Subkey: ".srf"; ValueType: string; ValueName: ""; ValueData: "UFRaw"; Flags: uninsdeletevalue; Tasks: ARWAssociation
