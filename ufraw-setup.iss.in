@@ -69,7 +69,7 @@ Source: "po\zh_TW.mo"; DestDir: "{app}\lib\locale\zh_TW\LC_MESSAGES\"; DestName:
 Source: "@DOSPREFIX@\bin\bzip2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\freetype6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\intl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "@DOSPREFIX@\bin\jpeg62.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libjpeg-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libatk-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libcairo-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libexpat-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -89,7 +89,7 @@ Source: "@DOSPREFIX@\bin\libpangocairo-1.0-0.dll"; DestDir: "{app}\bin"; Flags: 
 Source: "@DOSPREFIX@\bin\libpangoft2-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libpangowin32-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\libpng14-14.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "@DOSPREFIX@\bin\libtiff3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "@DOSPREFIX@\bin\libtiff-5.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "@DOSPREFIX@\bin\zlib1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 
 Source: "@DOSPREFIX@\share\lensfun\*.xml"; DestDir: "{app}\share\lensfun"; Flags: ignoreversion
