@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.20\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 08:30+0100\n"
+"POT-Creation-Date: 2013-03-26 17:30+0100\n"
 "PO-Revision-Date: 2013-03-10 19:30+0100\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
@@ -691,12 +691,12 @@ msgid "Background"
 msgstr "Baggrund"
 
 #, c-format
-msgid "Failed to embed output profile '%s' in image."
-msgstr "Fejl ved indlejring af uddataprofil '%s' i billede."
-
-#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIF-buffer længde %d, for lang, ignoreret."
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "Fejl ved indlejring af uddataprofil '%s' i billede."
 
 #, c-format
 msgid ""

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.60 2013/03/14 09:00:16 nkbj Exp $
+# $Id: Makefile.am,v 1.61 2013/03/26 16:30:12 nkbj Exp $
 
 SUBDIRS = po icons
 
@@ -16,11 +16,6 @@ endif
 if MAKE_GIMP
   gimpbin_PROGRAMS = ufraw-gimp
   gimpbindir = $(GIMP_LIBDIR)/plug-ins
-endif
-
-if MAKE_CINEPAINT
-  cinepaintbin_PROGRAMS = ufraw-cinepaint
-  cinepaintbindir = $(CINEPAINT_PROGRAMPLUGINDIR)/plug-ins
 endif
 
 POD2MAN = @POD2MAN@
@@ -94,13 +89,6 @@ if MAKE_GIMP
   ufraw_gimp_SOURCES = ufraw-gimp.c
   ufraw_gimp_CPPFLAGS = $(AM_CPPFLAGS) $(GIMP_CFLAGS) 
   ufraw_gimp_LDADD = $(LDADD) $(GIMP_LIBS) $(GTK_LIBS)
-endif
-
-if MAKE_CINEPAINT
-  ufraw_cinepaint_SOURCES = ufraw-gimp.c
-  ufraw_cinepaint_CPPFLAGS = $(AM_CPPFLAGS) $(CINEPAINT_CFLAGS) \
-				-DUFRAW_CINEPAINT
-  ufraw_cinepaint_LDADD = $(LDADD) $(CINEPAINT_LIBS) $(GTK_LIBS)
 endif
 
 if MAKE_EXTRAS

@@ -1,5 +1,5 @@
-dnl $Id: configure.ac,v 1.175 2013/03/23 14:15:11 nkbj Exp $
-AC_INIT(UFRaw, 0.19.2)
+dnl $Id: configure.ac,v 1.176 2013/03/26 16:30:12 nkbj Exp $
+AC_INIT(UFRaw, 0.20)
 AC_PREREQ(2.57)
 
 # Create host_os, host_cpu, host_alias variables.
@@ -87,14 +87,13 @@ AS_IF([test "x$with_gtk" != xno],
     ] ) ] )
 
 have_gimp=no
-have_cinepaint=no
 if test "$have_gtk" = "yes"; then
   PKG_CHECK_MODULES(GTK, gtkimageview >= 1.6)
 
-# It is not clear if we should install the GIMP and Cinepaint plugins
-# in the corresponding place in our prefix, or in GIMP's or
-# Cinepaint's lib dir in their prefixes. Currently, we install the
-# plugin in our prefix. If the gimp/cinepaint prefix and the
+# It is not clear if we should install the GIMP plugin
+# in the corresponding place in our prefix, or in GIMP's
+# lib dir in its prefix. Currently, we install the
+# plugin in our prefix. If the GIMP prefix and the
 # configured UFRaw prefix are the same, this doesn't matter.
   pkg_prefix="$PKG_CONFIG"
   test $prefix = NONE || pkg_prefix="$pkg_prefix --define-variable=prefix=$prefix"
@@ -126,26 +125,6 @@ if test "$have_gtk" = "yes"; then
       [ AC_DEFINE_UNQUOTED(HAVE_GIMP_2_9, 0, have Gimp 2.9 or later) ])
   fi
 
-  AC_ARG_WITH([cinepaint],
-    [AS_HELP_STRING([--with-cinepaint],
-    [build cinepaint plugin @<:@default=check@:>@])],
-    [],
-    [with_cinepaint=check])
-
-  AS_IF([test "x$with_cinepaint" != xno],
-    [PKG_CHECK_MODULES(CINEPAINT, cinepaint-gtk >= 0.22,
-      [ have_cinepaint=yes
-        CINEPAINT_LIBDIR=`$pkg_prefix --variable=libdir cinepaint-gtk`
-        CINEPAINT_PROGRAMPLUGINDIR=`$pkg_prefix --variable=programplugindir cinepaint-gtk` ],
-      [ have_cinepaint=no
-        CINEPAINT_LIBDIR=
-        CINEPAINT_PROGRAMPLUGINDIR=
-        if test "x$with_cinepaint" != xcheck; then
-          AC_MSG_FAILURE(
-            [--with-cinepaint was given, but test for cinepaint failed])
-        fi
-      ] ) ] )
-
   # Disable deprecated functions on tested versions of GTK.
   if $PKG_CONFIG --max-version=2.18.99 gtk+-2.0; then
     AC_DEFINE(G_DISABLE_DEPRECATED, [], disable deprecated glib features)
@@ -162,11 +141,6 @@ AM_CONDITIONAL(MAKE_GIMP, test $have_gimp = yes)
 AC_SUBST(GIMP_CFLAGS)
 AC_SUBST(GIMP_LIBS)
 AC_SUBST(GIMP_LIBDIR)
-
-AM_CONDITIONAL(MAKE_CINEPAINT, test $have_cinepaint = yes)
-AC_SUBST(CINEPAINT_CFLAGS)
-AC_SUBST(CINEPAINT_LIBS)
-AC_SUBST(CINEPAINT_PROGRAMPLUGINDIR)
 
 # Check for zlib.
 AC_CHECK_LIB(z, deflate)
@@ -391,7 +365,6 @@ AC_OUTPUT
 AC_MSG_NOTICE(====================== summary =====================)
 AC_MSG_NOTICE(build GTK GUI: $have_gtk)
 AC_MSG_NOTICE(build GIMP plug-in: $have_gimp)
-AC_MSG_NOTICE(build CinePaint plug-in: $have_cinepaint)
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
 AC_MSG_NOTICE(JPEG support: $have_jpeg)
 AC_MSG_NOTICE(JPEG2000 (libjasper) support: $have_jasper)

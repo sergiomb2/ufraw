@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 08:30+0100\n"
+"POT-Creation-Date: 2013-03-26 17:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -582,11 +582,11 @@ msgid "Background"
 msgstr ""
 
 #, c-format
-msgid "Failed to embed output profile '%s' in image."
+msgid "EXIF buffer length %d, too long, ignored."
 msgstr ""
 
 #, c-format
-msgid "EXIF buffer length %d, too long, ignored."
+msgid "Failed to embed output profile '%s' in image."
 msgstr ""
 
 #, c-format

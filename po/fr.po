@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 08:30+0100\n"
+"POT-Creation-Date: 2013-03-26 17:30+0100\n"
 "PO-Revision-Date: 2013-03-24 01:50+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -722,12 +722,12 @@ msgid "Background"
 msgstr "Fond"
 
 #, c-format
-msgid "Failed to embed output profile '%s' in image."
-msgstr "Échec lors de la copie du profil de sortie '%s' dans l'image."
-
-#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "Longueur du tampon EXIF %d, trop longue, ignorée."
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "Échec lors de la copie du profil de sortie '%s' dans l'image."
 
 #, c-format
 msgid ""

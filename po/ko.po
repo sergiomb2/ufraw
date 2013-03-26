@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 08:30+0100\n"
+"POT-Creation-Date: 2013-03-26 17:30+0100\n"
 "PO-Revision-Date: 2010-03-18 14:45+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr@googlegroups.com>\n"
@@ -674,12 +674,12 @@ msgid "Background"
 msgstr "배경"
 
 #, c-format
-msgid "Failed to embed output profile '%s' in image."
-msgstr "출력 프로파일 '%s'을(를) 이미지에 내장 실패."
-
-#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIF 버퍼 길이 %d이(가) 매우 길어 무시됩니다."
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "출력 프로파일 '%s'을(를) 이미지에 내장 실패."
 
 #, c-format
 msgid ""

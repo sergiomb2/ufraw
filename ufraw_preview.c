@@ -4831,7 +4831,9 @@ static void colormgmt_fill_interface(preview_data *data, GtkWidget *page,
     gtk_table_attach(table, label, 0, 4, 7, 8, 0, 0, 0, 0);
     data->BitDepthCombo = GTK_COMBO_BOX(uf_combo_box_new_text());
     uf_combo_box_append_text(data->BitDepthCombo, "8", (void*)8);
-    if (plugin != 1)
+#if !HAVE_GIMP_2_9
+    if (plugin != ufraw_gimp_plugin)
+#endif
         uf_combo_box_append_text(data->BitDepthCombo, "16", (void*)16);
     uf_combo_box_set_data(GTK_COMBO_BOX(data->BitDepthCombo),
                           &CFG->profile[out_profile][CFG->profileIndex[out_profile]].BitDepth);
@@ -5223,7 +5225,7 @@ static void save_fill_interface(preview_data *data,
     gtk_box_pack_start(GTK_BOX(hBox), chooser, TRUE, TRUE, 0);
     g_signal_connect(G_OBJECT(chooser), "selection-changed",
                      G_CALLBACK(outpath_chooser_changed), NULL);
-    if (plugin == 3)
+    if (plugin == ufraw_standalone_output)
         gtk_widget_set_sensitive(chooser, FALSE);
 
     hBox = gtk_hbox_new(FALSE, 0);
@@ -5240,7 +5242,7 @@ static void save_fill_interface(preview_data *data,
                        TRUE, TRUE, 0);
     g_signal_connect(G_OBJECT(data->OutFileEntry), "changed",
                      G_CALLBACK(outfile_entry_changed), NULL);
-    if (plugin == 3)
+    if (plugin == ufraw_standalone_output)
         gtk_widget_set_sensitive(GTK_WIDGET(data->OutFileEntry), FALSE);
     data->TypeCombo = GTK_COMBO_BOX(gtk_combo_box_new_text());
     i = 0;
@@ -5270,7 +5272,7 @@ static void save_fill_interface(preview_data *data,
                        FALSE, FALSE, 0);
     g_signal_connect(G_OBJECT(data->TypeCombo), "changed",
                      G_CALLBACK(type_combo_changed), &CFG->type);
-    if (plugin == 3)
+    if (plugin == ufraw_standalone_output)
         gtk_widget_set_sensitive(GTK_WIDGET(data->TypeCombo), FALSE);
 
     gtk_box_pack_start(GTK_BOX(vBox), gtk_hseparator_new(),
@@ -5605,7 +5607,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     data->PageNumCrop = gtk_notebook_page_num(notebook, page);
     transformations_fill_interface(data, page);
 
-    if (plugin == 0 || plugin == 3) {
+    if (plugin != ufraw_gimp_plugin) {
         page = notebook_page_new(notebook, _("Save"), GTK_STOCK_SAVE_AS);
         save_fill_interface(data, page, plugin);
     }
@@ -5740,11 +5742,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
                      G_CALLBACK(control_button_event), (gpointer)cancel_button);
     gtk_box_pack_start(box, button, FALSE, FALSE, 0);
 
-    /* plugin=0 : Normal stand-alone
-     * plugin=1 : Gimp plug-in
-     * plugin=2 : Cinepaint plug-in
-     * plugin=3 : Stand-alone with --output option */
-    if (plugin == 1 || plugin == 2) {
+    if (plugin == ufraw_gimp_plugin) {
         // OK button for the plug-in
         data->SaveButton = gtk_button_new_from_stock(GTK_STOCK_OK);
         gtk_box_pack_start(box, data->SaveButton, FALSE, FALSE, 0);
@@ -5759,7 +5757,7 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
                          G_CALLBACK(control_button_event), (gpointer)save_button);
         set_save_tooltip(data);
     }
-    if (plugin == 0) {
+    if (plugin == ufraw_standalone) {
         // Send to Gimp button
         GtkWidget *gimpButton = control_button("gimp",
                                                _("Send image to _Gimp"), gimp_button, data);

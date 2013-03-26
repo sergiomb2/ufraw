@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 08:30+0100\n"
+"POT-Creation-Date: 2013-03-26 17:30+0100\n"
 "PO-Revision-Date: 2010-03-21 22:24+0300\n"
 "Last-Translator: Александр Прокудин <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -714,12 +714,12 @@ msgid "Background"
 msgstr "Фон"
 
 #, c-format
-msgid "Failed to embed output profile '%s' in image."
-msgstr "Невозможно встроить профиль вывода '%s' в изображение."
-
-#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "Буфер EXIF длиной %d слишком велик, проигнорирован."
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "Невозможно встроить профиль вывода '%s' в изображение."
 
 #, c-format
 msgid ""

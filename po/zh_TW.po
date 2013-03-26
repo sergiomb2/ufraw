@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 08:30+0100\n"
+"POT-Creation-Date: 2013-03-26 17:30+0100\n"
 "PO-Revision-Date: 2009-06-15 00:00+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Tetralet <tetralet@gmail.com>\n"
@@ -661,12 +661,12 @@ msgid "Background"
 msgstr "背景"
 
 #, c-format
-msgid "Failed to embed output profile '%s' in image."
-msgstr "無法在影像中嵌入輸出設定檔 '%s'。"
-
-#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIF 緩衝區長度 %d 太長，已忽略。"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "無法在影像中嵌入輸出設定檔 '%s'。"
 
 #, c-format
 msgid ""

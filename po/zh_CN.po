@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 08:30+0100\n"
+"POT-Creation-Date: 2013-03-26 17:30+0100\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -659,12 +659,12 @@ msgid "Background"
 msgstr "背景"
 
 #, c-format
-msgid "Failed to embed output profile '%s' in image."
-msgstr "无法在图像中嵌入输出配置文件 '%s' "
-
-#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIF缓冲区长度 %d, 太长，忽略。"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "无法在图像中嵌入输出配置文件 '%s' "
 
 #, c-format
 msgid ""

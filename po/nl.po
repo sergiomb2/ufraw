@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 08:30+0100\n"
+"POT-Creation-Date: 2013-03-26 17:30+0100\n"
 "PO-Revision-Date: 2011-08-12 13:37+0200\n"
 "Last-Translator: Simon Oosthoek\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -700,12 +700,12 @@ msgid "Background"
 msgstr "Achtergrond"
 
 #, c-format
-msgid "Failed to embed output profile '%s' in image."
-msgstr "Niet gelukt het output profiel '%s' te embedden in afbeelding."
-
-#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIF buffer lengte %d, te lang, genegeerd."
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "Niet gelukt het output profiel '%s' te embedden in afbeelding."
 
 #, c-format
 msgid ""

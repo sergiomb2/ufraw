@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 08:30+0100\n"
+"POT-Creation-Date: 2013-03-26 17:30+0100\n"
 "PO-Revision-Date: 2011-08-12 05:57+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -699,12 +699,12 @@ msgid "Background"
 msgstr "Pozadí"
 
 #, c-format
-msgid "Failed to embed output profile '%s' in image."
-msgstr "Selhalo vložení výstupního profilu'%s' do snímku."
-
-#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "Délka %d bufferu EXIF příliš dlouhá, ignorováno."
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "Selhalo vložení výstupního profilu'%s' do snímku."
 
 #, c-format
 msgid ""

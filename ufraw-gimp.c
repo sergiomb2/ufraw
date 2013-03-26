@@ -17,41 +17,19 @@
 
 #include "ufraw.h"
 #include "uf_gtk.h"
-#ifdef UFRAW_CINEPAINT
-/* Bypass a bug in CinePaint header files */
-#define RNH_FLOAT
-#include <plugin_main.h>
-#define GIMP_CONST
-/* Fix some compatibility issues between CinePaint and GIMP */
-typedef GimpRunModeType GimpRunMode;
-#define PLUGIN_MODE 2
-#define DEPTH_TO_BASETYPE(depth) (depth == 3 ? RGB : U16_RGB)
-#define DEPTH_TO_IMAGETYPE(depth) (depth == 3 ? RGB_IMAGE : U16_RGB_IMAGE)
-#else /* GIMP */
 #if HAVE_GIMP_2_9
 #include <gegl.h>
-#define PLUGIN_MODE 2
-#else
-#define PLUGIN_MODE 1
 #endif
 #include <libgimpbase/gimpbase.h>
 #include <libgimp/gimp.h>
 #include <libgimp/gimpui.h>
-#define GIMP_CONST const
-/* Missing and irrelevant definitions in GIMP */
-#define U16_RGB 0
-#define U16_RGB_IMAGE 0
-#define DEPTH_TO_BASETYPE(depth) GIMP_RGB
-#define DEPTH_TO_IMAGETYPE(depth) GIMP_RGB_IMAGE
-#define DEPTH_TO_PRECISION(depth) (depth == 3 ? GIMP_PRECISION_U8 : GIMP_PRECISION_U16)
-#endif
 #include <glib/gi18n.h>
 #include <string.h>
 
 void query();
-void run(GIMP_CONST gchar *name,
+void run(const gchar *name,
          gint nparams,
-         GIMP_CONST GimpParam *param,
+         const GimpParam *param,
          gint *nreturn_vals,
          GimpParam **return_vals);
 
@@ -68,25 +46,23 @@ MAIN()
 
 void query()
 {
-    static GIMP_CONST GimpParamDef load_args[] = {
+    static const GimpParamDef load_args[] = {
         { GIMP_PDB_INT32,  "run_mode", "Interactive, non-interactive" },
         { GIMP_PDB_STRING, "filename", "The name of the file to load" },
         { GIMP_PDB_STRING, "raw_filename", "The name of the file to load" },
     };
-    static GIMP_CONST GimpParamDef load_return_vals[] = {
+    static const GimpParamDef load_return_vals[] = {
         { GIMP_PDB_IMAGE, "image", "Output image" },
     };
-#ifndef UFRAW_CINEPAINT
-    static GIMP_CONST GimpParamDef thumb_args[] = {
+    static const GimpParamDef thumb_args[] = {
         { GIMP_PDB_STRING, "filename",     "The name of the file to load" },
         { GIMP_PDB_INT32,  "thumb_size",   "Preferred thumbnail size" }
     };
-    static GIMP_CONST GimpParamDef thumb_return_vals[] = {
+    static const GimpParamDef thumb_return_vals[] = {
         { GIMP_PDB_IMAGE,  "image",        "Thumbnail image" },
         { GIMP_PDB_INT32,  "image_width",  "Width of full-sized image" },
         { GIMP_PDB_INT32,  "image_height", "Height of full-sized image" }
     };
-#endif
     gimp_install_procedure("file_ufraw_load",
                            "Loads digital camera raw files",
                            "Loads digital camera raw files.",
@@ -95,11 +71,7 @@ void query()
                            "Copyright 2004 by Pawel Jochym\n"
                            "Copyright 2004-2013 by Udi Fuchs",
                            "ufraw-" VERSION,
-#ifndef UFRAW_CINEPAINT
                            "raw image",
-#else
-                           "<Load>/UFRaw",
-#endif
                            NULL,
                            GIMP_PLUGIN,
                            G_N_ELEMENTS(load_args),
@@ -109,7 +81,6 @@ void query()
 
     gimp_register_load_handler("file_ufraw_load", (char *)raw_ext, "");
 
-#ifndef UFRAW_CINEPAINT
     gimp_install_procedure("file_ufraw_load_thumb",
                            "Loads thumbnails from digital camera raw files.",
                            "Loads thumbnails from digital camera raw files.",
@@ -125,25 +96,14 @@ void query()
 
     gimp_register_thumbnail_loader("file_ufraw_load",
                                    "file_ufraw_load_thumb");
-#endif
 }
 
 char *ufraw_binary;
-
-#ifdef UFRAW_CINEPAINT
-/* There is no way to get the full executable path in Cinepaint.
- * It is only needed for windows, so no big deal. */
-char *gimp_get_progname()
-{
-    return "ufraw-cinepaint";
-}
-#endif
-
 gboolean sendToGimpMode;
 
-void run(GIMP_CONST gchar *name,
+void run(const gchar *name,
          gint nparams,
-         GIMP_CONST GimpParam *param,
+         const GimpParam *param,
          gint *nreturn_vals,
          GimpParam **return_vals)
 {
@@ -254,7 +214,7 @@ void run(GIMP_CONST gchar *name,
 
     ufraw_config(uf, &rc, NULL, NULL);
     sendToGimpMode = (uf->conf->createID == send_id);
-#if !defined(UFRAW_CINEPAINT) && !HAVE_GIMP_2_9
+#if !HAVE_GIMP_2_9
     if (loadThumbnail) {
         uf->conf->size = size;
         uf->conf->embeddedImage = TRUE;
@@ -271,7 +231,7 @@ void run(GIMP_CONST gchar *name,
             !loadThumbnail && !sendToGimpMode) {
         /* Show the preview in interactive mode, unless if we are
          * in thumbnail mode or 'send to gimp' mode. */
-        status = ufraw_preview(uf, &rc, PLUGIN_MODE, ufraw_save_gimp_image);
+        status = ufraw_preview(uf, &rc, ufraw_gimp_plugin, ufraw_save_gimp_image);
     } else {
         if (sendToGimpMode) {
             char *text = g_strdup_printf(_("Loading raw file '%s'"),
@@ -369,7 +329,7 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
         if (ufraw_convert_image(uf) != UFRAW_SUCCESS)
             return UFRAW_ERROR;
         ufraw_get_scaled_crop(uf, &Crop);
-#if defined(UFRAW_CINEPAINT) || HAVE_GIMP_2_9
+#if HAVE_GIMP_2_9
         if (uf->conf->profile[out_profile]
                 [uf->conf->profileIndex[out_profile]].BitDepth == 16)
             depth = 6;
@@ -381,12 +341,11 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
     }
 #if HAVE_GIMP_2_9
     uf->gimpImage =
-        gimp_image_new_with_precision(Crop.width, Crop.height,
-                                      DEPTH_TO_BASETYPE(depth),
-                                      DEPTH_TO_PRECISION(depth));
+        gimp_image_new_with_precision(Crop.width, Crop.height, GIMP_RGB,
+                                      depth == 3 ? GIMP_PRECISION_U8 :
+                                      GIMP_PRECISION_U16);
 #else
-    uf->gimpImage = gimp_image_new(Crop.width, Crop.height,
-                                   DEPTH_TO_BASETYPE(depth));
+    uf->gimpImage = gimp_image_new(Crop.width, Crop.height, GIMP_RGB);
 #endif
     if (uf->gimpImage == -1) {
         ufraw_message(UFRAW_ERROR, _("Can't allocate new image."));
@@ -396,16 +355,12 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 
     /* Create the "background" layer to hold the image... */
     layer = gimp_layer_new(uf->gimpImage, _("Background"), Crop.width,
-                           Crop.height, DEPTH_TO_IMAGETYPE(depth),
-                           100.0, GIMP_NORMAL_MODE);
-#ifdef UFRAW_CINEPAINT
-    gimp_image_add_layer(uf->gimpImage, layer, 0);
-#else
+                           Crop.height, GIMP_RGB_IMAGE, 100.0,
+                           GIMP_NORMAL_MODE);
 #if defined(GIMP_CHECK_VERSION) && GIMP_CHECK_VERSION(2,7,3)
     gimp_image_insert_layer(uf->gimpImage, layer, 0, 0);
 #else
     gimp_image_add_layer(uf->gimpImage, layer, 0);
-#endif
 #endif
 
     /* Get the drawable and set the pixel region for our load... */
@@ -449,27 +404,6 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 
     if (uf->conf->embeddedImage) return UFRAW_SUCCESS;
 
-#ifdef UFRAW_CINEPAINT
-    /* No parasites in CinePaint.
-     * We need to disable EXIF export.
-     * ICC profile export works differently. */
-    if (strcmp(uf->developer->profileFile[out_profile], "") == 0) {
-        gimp_image_set_srgb_profile(uf->gimpImage);
-    } else {
-        char *buf;
-        gsize len;
-        if (g_file_get_contents(uf->developer->profileFile[out_profile],
-                                &buf, &len, NULL)) {
-            gimp_image_set_icc_profile_by_mem(uf->gimpImage, len, buf,
-                                              ICC_IMAGE_PROFILE);
-            g_free(buf);
-        } else {
-            ufraw_message(UFRAW_WARNING,
-                          _("Failed to embed output profile '%s' in image."),
-                          uf->developer->profileFile[out_profile]);
-        }
-    }
-#else
     ufraw_exif_prepare_output(uf);
     if (uf->outputExifBuf != NULL) {
         if (uf->outputExifBufLen > 65533) {
@@ -503,7 +437,6 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
                           uf->developer->profileFile[out_profile]);
         }
     }
-#endif
     return UFRAW_SUCCESS;
 }
 

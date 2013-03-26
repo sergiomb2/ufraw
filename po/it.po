@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 08:30+0100\n"
+"POT-Creation-Date: 2013-03-26 17:30+0100\n"
 "PO-Revision-Date: 2009-10-14 06:00+0100\n"
 "Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -711,12 +711,12 @@ msgid "Background"
 msgstr "Sfondo"
 
 #, c-format
-msgid "Failed to embed output profile '%s' in image."
-msgstr "Non è possibile integrare il profilo di output '%s' nell'immagine."
-
-#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "Il buffer EXIF è troppo lungo (%d) e sarà ignorato."
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "Non è possibile integrare il profilo di output '%s' nell'immagine."
 
 #, c-format
 msgid ""

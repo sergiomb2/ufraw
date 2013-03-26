@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 08:30+0100\n"
+"POT-Creation-Date: 2013-03-26 17:30+0100\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -669,12 +669,12 @@ msgid "Background"
 msgstr "背景"
 
 #, c-format
-msgid "Failed to embed output profile '%s' in image."
-msgstr "出力プロファイル'%s'を画像に埋め込むのに失敗しました。"
-
-#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIFバッファ長 %d, が長すぎるので無視します"
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "出力プロファイル'%s'を画像に埋め込むのに失敗しました。"
 
 #, c-format
 msgid ""

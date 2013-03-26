@@ -123,6 +123,13 @@ enum { clip_details, restore_lch_details, restore_hsv_details,
        restore_types
      };
 enum { digital_highlights, film_highlights, highlights_types };
+
+/* ufraw_standalone        : Normal stand-alone
+ * ufraw_gimp_plugin       : Gimp plug-in
+ * ufraw_standalone_output : Stand-alone with --output option
+ */
+enum { ufraw_standalone, ufraw_gimp_plugin, ufraw_standalone_output };
+
 typedef enum { display_developer, file_developer, auto_developer }
 DeveloperMode;
 typedef enum { perceptual_intent, relative_intent, saturation_intent,

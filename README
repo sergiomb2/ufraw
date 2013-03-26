@@ -4,7 +4,7 @@ http://ufraw.sourceforge.net/
 by Udi Fuchs
 
 UFRaw is a utility to read and manipulate raw images from digital cameras.
-It can be used by itself or as a GIMP or CinePaint plug-in.
+It can be used by itself or as a GIMP plug-in.
 It reads raw images using Dave Coffin's raw conversion utility DCRaw.
 It supports basic color management using Little CMS, allowing the user to
 apply color profiles.
@@ -54,7 +54,6 @@ will look like this:
 configure: ====================== summary =====================
 configure: build GTK GUI: yes
 configure: build GIMP plug-in: yes
-configure: build CinePaint plug-in: yes
 configure: EXIF support using exiv2: yes
 configure: JPEG support: yes
 configure: JPEG2000 (libjasper) support: yes
@@ -73,9 +72,6 @@ GtkImageView version 1.6 or higher are required for the GUI.
 
 Development packages for GIMP version 2.2 or higher is required to build
 the GIMP plug-in.
-
-Development packages for Cinepaint-gtk version 0.22 or higher is required to
-build the Cinepaint plug-in.
 
 The development package for exiv2 version 0.20 or higher is required for
 reading the EXIF data. Among the supported formats are Canon (CRW, CR2),
@@ -141,10 +137,10 @@ To build UFRaw:
 To make a system wide installation:
   make install
 
-Note that the GIMP and Cinepaint plugins, if built, will be installed
-into UFRaw's prefix.  Thus, if UFRaw's prefix is different from GIMP's
-and Cinepaint's prefix, you may have to add plugin directories to the
-search path, add symbolic links, or something similar.
+Note that the GIMP plugin, if built, will be installed into UFRaw's prefix.
+Thus, if UFRaw's prefix is different from GIMP's prefix, you may have to add
+the plugin directory to the search path, add a symbolic link, or something
+similar.
 
 To use the UFRaw GIMP plugin, ensure that other raw converters
 (e.g. rawphoto) are not installed because they may claim the raw file

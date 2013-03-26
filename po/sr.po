@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-24 08:30+0100\n"
+"POT-Creation-Date: 2013-03-26 17:30+0100\n"
 "PO-Revision-Date: 2010-03-16 12:54+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -711,12 +711,12 @@ msgid "Background"
 msgstr "Позадина"
 
 #, c-format
-msgid "Failed to embed output profile '%s' in image."
-msgstr "Није успело уметање излазног профила „%s“ у слику."
-
-#, c-format
 msgid "EXIF buffer length %d, too long, ignored."
 msgstr "EXIF бафера је превелик (%d).  Игноришем."
+
+#, c-format
+msgid "Failed to embed output profile '%s' in image."
+msgstr "Није успело уметање излазног профила „%s“ у слику."
 
 #, c-format
 msgid ""
