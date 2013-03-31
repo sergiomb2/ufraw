@@ -8069,7 +8069,8 @@ canon_cr2:
 	     !strcmp(model,"D90")) {
     width -= 42;
   } else if (!strcmp(model,"D5100") ||
-	     !strcmp(model,"D7000")) {
+	     !strcmp(model,"D7000") ||
+	     !strcmp(model,"COOLPIX A")) {
     width -= 44;
   } else if (!strcmp(model,"D3200") ||
 	     !strcmp(model,"D600")  ||
