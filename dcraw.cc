@@ -2120,8 +2120,9 @@ void CLASS kodak_radc_load_raw()
       s = val > 65564 ? 10:12;
       x = ~(-1 << (s-1));
       val <<= 12-s;
-      for (i=0; i < (int) sizeof(buf[0])/(int) sizeof(short); i++)
-	buf[c][0][i] = (buf[c][0][i] * val + x) >> s;
+      for (i=0; i < 3; i++)
+	for (j=0; j < 386; j++)
+	  buf[c][i][j] = (buf[c][i][j] * val + x) >> s;
       last[c] = mul[c];
       for (r=0; r <= !c; r++) {
 	buf[c][1][width/2] = buf[c][2][width/2] = mul[c] << 7;
@@ -2608,6 +2609,10 @@ void CLASS sony_arw2_load_raw()
 
 #define HOLE(row) ((holes >> (((row) - raw_height) & 7)) & 1)
 
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
 /* Kudos to Rich Taylor for figuring out SMaL's compression algorithm. */
 void CLASS smal_decode_segment (unsigned seg[2][2], int holes)
 {
@@ -2670,6 +2675,9 @@ void CLASS smal_decode_segment (unsigned seg[2][2], int holes)
   }
   maximum = 0xff;
 }
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7))
+#pragma GCC diagnostic pop
+#endif
 
 void CLASS smal_v6_load_raw()
 {
@@ -4299,7 +4307,7 @@ void CLASS vng_interpolate()
 void CLASS ppg_interpolate()
 {
   int dir[5] = { 1, width, -1, -width, 1 };
-  int row, col, diff[2], guess[2], c, d, i;
+  int row, col, diff[2] = { 0, 0 }, guess[2], c, d, i;
   ushort (*pix)[4];
 
   border_interpolate(3);
@@ -4506,6 +4514,10 @@ void CLASS median_filter()
   }
 }
 
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
 void CLASS blend_highlights()
 {
   int clip=INT_MAX, row, col, c, i, j;
@@ -4542,6 +4554,9 @@ void CLASS blend_highlights()
       FORCC image[row*width+col][c] = cam[0][c] / colors;
     }
 }
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7))
+#pragma GCC diagnostic pop
+#endif
 
 #define SCALE (4 >> shrink)
 void CLASS recover_highlights()

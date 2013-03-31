@@ -504,7 +504,7 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                                 const int colors, void *dcraw)
 {
     int dir[5] = { 1, width, -1, -width, 1 };
-    int row, col, diff[2], guess[2], c, d, i;
+    int row, col, diff[2] = { 0, 0 }, guess[2], c, d, i;
     ushort(*pix)[4];
 
     border_interpolate_INDI(height, width, image, filters, colors, 3);
