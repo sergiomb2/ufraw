@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.61 2013/03/26 16:30:12 nkbj Exp $
+# $Id: Makefile.am,v 1.62 2013/04/14 07:30:08 nkbj Exp $
 
 SUBDIRS = po icons
 
@@ -67,7 +67,7 @@ if MAKE_GTK
     curveeditor_widget.c curveeditor_widget.h \
     ufraw_lens_ui.c ufraw_ui.h
 else
- libufraw_a_SOURCES = \
+  libufraw_a_SOURCES = \
     dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
     ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw_message.c ufraw.h \
     ufobject.cc ufobject.h ufraw_settings.cc ufraw_lensfun.cc \
@@ -79,9 +79,9 @@ endif
 ufraw_batch_LINK = $(CXXLINK) @CONSOLE@
 
 if MAKE_GTK
-	ufraw_SOURCES = ufraw.c
-  	ufraw_CPPFLAGS = $(UFRAW_CPPFLAGS)
-	ufraw_LDADD = $(LDADD) $(GTK_LIBS)
+  ufraw_SOURCES = ufraw.c
+  ufraw_CPPFLAGS = $(UFRAW_CPPFLAGS)
+  ufraw_LDADD = $(LDADD) $(GTK_LIBS)
 endif
 
 ufraw_batch_SOURCES = ufraw-batch.c
