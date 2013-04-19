@@ -513,8 +513,8 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
 #ifdef _OPENMP
     #pragma omp parallel				\
     default(none)					\
-    shared(image,dir)					\
-    private(row,col,i,d,c,pix,diff,guess)
+    shared(image,dir,diff)				\
+    private(row,col,i,d,c,pix,guess)
 #endif
     {
         /*  Fill in the green layer with gradients and pattern recognition: */

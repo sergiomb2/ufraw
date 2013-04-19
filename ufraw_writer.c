@@ -259,7 +259,7 @@ int ufraw_write_image(ufraw_data *uf)
     fitsfile *fitsFile;
 #endif
     char * volatile confFilename = NULL;
-    int grayscaleMode = uf->conf->grayscaleMode != grayscale_none;
+    int volatile grayscaleMode = uf->conf->grayscaleMode != grayscale_none;
     ufraw_message_reset(uf);
 
     if (uf->conf->createID == only_id ||
