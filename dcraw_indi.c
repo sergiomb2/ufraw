@@ -36,10 +36,6 @@
 #define uf_omp_get_num_threads() 1
 #endif
 
-#define ushort UshORt
-typedef unsigned short ushort;
-typedef gint64 INT64;
-
 extern const double xyz_rgb[3][3];
 extern const float d65_white[3];
 
@@ -882,14 +878,14 @@ void CLASS flip_image_INDI(ushort(*image)[4], int *height_p, int *width_p,
 {
     unsigned *flag;
     int size, base, dest, next, row, col;
-    INT64 *img, hold;
+    gint64 *img, hold;
     int height = *height_p, width = *width_p;/* INDI - UF*/
 
 //  Message is suppressed because error handling is not enabled here.
 //  dcraw_message (dcraw, DCRAW_VERBOSE,_("Flipping image %c:%c:%c...\n"),
 //      flip & 1 ? 'H':'0', flip & 2 ? 'V':'0', flip & 4 ? 'T':'0'); /*UF*/
 
-    img = (INT64 *) image;
+    img = (gint64 *) image;
     size = height * width;
     flag = calloc((size + 31) >> 5, sizeof * flag);
     merror(flag, "flip_image()");

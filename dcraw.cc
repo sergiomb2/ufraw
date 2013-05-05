@@ -111,13 +111,6 @@ extern "C" {
 /* All definitions of global variables are defined inside a class in dcraw.h */
 #include "dcraw.h"
 
-#ifdef DCRAW_NOMAIN
-extern
-#endif
-#if !defined(ushort)
-#define ushort unsigned short
-#endif
-
 /*
    All global variables are defined here, and all functions that
    access them are prefixed with "CLASS".  Note that a thread-safe
