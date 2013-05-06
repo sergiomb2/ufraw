@@ -36,6 +36,10 @@
 #define uf_omp_get_num_threads() 1
 #endif
 
+#if !defined(ushort)
+#define ushort unsigned short
+#endif
+
 extern const double xyz_rgb[3][3];
 extern const float d65_white[3];
 
