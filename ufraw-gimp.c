@@ -120,8 +120,10 @@ void run(const gchar *name,
 #if !GLIB_CHECK_VERSION(2,31,0)
     g_thread_init(NULL);
 #endif
+#ifndef _WIN32
     gdk_threads_init();
     gdk_threads_enter();
+#endif
     ufraw_binary = g_path_get_basename(gimp_get_progname());
     uf_init_locale(gimp_get_progname());
 #if HAVE_GIMP_2_9
@@ -142,7 +144,9 @@ void run(const gchar *name,
     } else {
         values[0].type = GIMP_PDB_STATUS;
         values[0].data.d_status = GIMP_PDB_CALLING_ERROR;
+#ifndef _WIN32
         gdk_threads_leave();
+#endif
         return;
     }
     gboolean loadThumbnail = size > 0;
@@ -163,7 +167,9 @@ void run(const gchar *name,
             else
                 *return_vals = gimp_run_procedure2("file_jpeg_load",
                                                    nreturn_vals, nparams, param);
+#ifndef _WIN32
             gdk_threads_leave();
+#endif
             return;
         } else if (!strcasecmp(filename + strlen(filename) - 4, ".tif") ||
                    !strcasecmp(filename + strlen(filename) - 5, ".tiff")) {
@@ -185,13 +191,17 @@ void run(const gchar *name,
                     	nreturn_vals, 3, tiffParam);
                 */
             }
+#ifndef _WIN32
             gdk_threads_leave();
+#endif
             return;
         } else {
             /* Don't issue a message on thumbnail failure, since ufraw-gimp
              * will be called again with "file_ufraw_load" */
             if (loadThumbnail) {
+#ifndef _WIN32
                 gdk_threads_leave();
+#endif
                 return;
             }
             ufraw_icons_init();
@@ -205,7 +215,9 @@ void run(const gchar *name,
             values[0].data.d_status = GIMP_PDB_CANCEL;
 
             gtk_widget_destroy(dummyWindow);
+#ifndef _WIN32
             gdk_threads_leave();
+#endif
             return;
         }
     }
@@ -244,7 +256,9 @@ void run(const gchar *name,
         if (status != UFRAW_SUCCESS) {
             values[0].type = GIMP_PDB_STATUS;
             values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+#ifndef _WIN32
             gdk_threads_leave();
+#endif
             return;
         }
         if (sendToGimpMode) gimp_progress_update(0.3);
@@ -264,7 +278,9 @@ void run(const gchar *name,
             values[0].data.d_status = GIMP_PDB_CANCEL;
         else
             values[0].data.d_status = GIMP_PDB_EXECUTION_ERROR;
+#ifndef _WIN32
         gdk_threads_leave();
+#endif
         return;
     }
     *nreturn_vals = 2;
@@ -279,7 +295,9 @@ void run(const gchar *name,
         values[3].type = GIMP_PDB_INT32;
         values[3].data.d_int32 = uf->initialHeight;
     }
+#ifndef _WIN32
     gdk_threads_leave();
+#endif
     return;
 }
 

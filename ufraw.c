@@ -31,8 +31,10 @@ int main(int argc, char **argv)
 #if !GLIB_CHECK_VERSION(2,31,0)
     g_thread_init(NULL);
 #endif
+#ifndef _WIN32
     gdk_threads_init();
     gdk_threads_enter();
+#endif
     char *argFile = uf_win32_locale_to_utf8(argv[0]);
     ufraw_binary = g_path_get_basename(argFile);
     uf_init_locale(argFile);
@@ -77,11 +79,15 @@ int main(int argc, char **argv)
         optInd = -1;
     }
     if (optInd < 0) {
+#ifndef _WIN32
         gdk_threads_leave();
+#endif
         exit(1);
     }
     if (optInd == 0) {
+#ifndef _WIN32
         gdk_threads_leave();
+#endif
         exit(0);
     }
     /* Create a dummyWindow for the GUI error messenger */
@@ -95,7 +101,9 @@ int main(int argc, char **argv)
     if (optInd == argc) {
         ufraw_chooser(&rc, &conf, &cmd, NULL);
 //	ufraw_close(cmd.darkframe);
+#ifndef _WIN32
         gdk_threads_leave();
+#endif
         exit(0);
     }
     /* If there only one argument and it is a directory, use it as the
@@ -105,7 +113,9 @@ int main(int argc, char **argv)
         ufraw_chooser(&rc, &conf, &cmd, argFile);
         uf_win32_locale_free(argFile);
 //	ufraw_close(cmd.darkframe);
+#ifndef _WIN32
         gdk_threads_leave();
+#endif
         exit(0);
     }
     uf_win32_locale_free(argFile);
@@ -125,7 +135,9 @@ int main(int argc, char **argv)
             ufraw_close_darkframe(uf->conf);
             ufraw_close(uf);
             g_free(uf);
+#ifndef _WIN32
             gdk_threads_leave();
+#endif
             exit(1);
         }
         ufraw_preview(uf, &rc, plugin, NULL);
@@ -136,6 +148,8 @@ int main(int argc, char **argv)
 //    ufraw_close(cmd.darkframe);
     ufobject_delete(cmd.ufobject);
     ufobject_delete(rc.ufobject);
+#ifndef _WIN32
     gdk_threads_leave();
+#endif
     exit(exitCode);
 }

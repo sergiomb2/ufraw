@@ -704,7 +704,11 @@ static void start_blink(preview_data *data)
 {
     if (CFG->blinkOverUnder && (CFG->overExp || CFG->underExp)) {
         if (!data->BlinkTimer) {
+#ifndef _WIN32
             data->BlinkTimer = gdk_threads_add_timeout(500,
+#else
+            data->BlinkTimer = g_timeout_add(500,
+#endif
                                switch_highlights, data);
         }
     }
@@ -968,7 +972,11 @@ void render_preview(preview_data *data)
 {
     while (g_idle_remove_by_data(data))
         ;
+#ifndef _WIN32
     gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
+#else
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+#endif
                               (GSourceFunc)(render_preview_now), data, NULL);
 }
 
@@ -1178,11 +1186,23 @@ static gboolean render_preview_image(preview_data *data)
     }
     if (!again) {
         preview_progress_disable(data);
+#ifndef _WIN32
         gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
+#else
+        g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+#endif
                                   (GSourceFunc)(render_raw_histogram), data, NULL);
+#ifndef _WIN32
         gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
+#else
+        g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+#endif
                                   (GSourceFunc)(render_live_histogram), data, NULL);
+#ifndef _WIN32
         gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
+#else
+        g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+#endif
                                   (GSourceFunc)(render_spot), data, NULL);
     }
     return again;
@@ -1793,7 +1813,11 @@ static gboolean preview_button_press_event(GtkWidget *event_box,
         data->SpotX1 = data->SpotX2 = event->x;
         data->SpotY1 = data->SpotY2 = event->y;
         if (!is_rendering(data))
+#ifndef _WIN32
             gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
+#else
+            g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+#endif
                                       (GSourceFunc)(render_spot), data, NULL);
         return TRUE;
     }
@@ -1932,7 +1956,11 @@ static gboolean preview_motion_notify_event(GtkWidget *event_box,
     data->SpotX2 = event->x;
     data->SpotY2 = event->y;
     if (!is_rendering(data))
+#ifndef _WIN32
         gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
+#else
+        g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+#endif
                                   (GSourceFunc)(render_spot), data, NULL);
     return TRUE;
 }
@@ -2063,11 +2091,19 @@ static void update_crop_ranges(preview_data *data, gboolean render)
     if (CFG->drawLines > 0 && data->BlinkTimer == 0) {
         if (data->DrawCropID != 0)
             g_source_remove(data->DrawCropID);
+#ifndef _WIN32
         data->DrawCropID = gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE + 30,
+#else
+        data->DrawCropID = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE + 30,
+#endif
                            (GSourceFunc)(preview_draw_crop), data, NULL);
     }
     if (!is_rendering(data))
+#ifndef _WIN32
         gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
+#else
+        g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+#endif
                                   (GSourceFunc)(render_live_histogram), data, NULL);
 }
 
@@ -2860,7 +2896,11 @@ static void adjustment_update_int(GtkAdjustment *adj, int *valuep)
     if (valuep == &CFG->drawLines) {
         if (data->DrawCropID != 0)
             g_source_remove(data->DrawCropID);
+#ifndef _WIN32
         data->DrawCropID = gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE + 30,
+#else
+        data->DrawCropID = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE + 30,
+#endif
                            (GSourceFunc)(preview_draw_crop), data, NULL);
     }
 }
@@ -3900,7 +3940,11 @@ static void panel_size_allocate(GtkWidget *panel,
         rawHisHeight = data->RawHisto->allocation.height;
         if (pixbuf == NULL || gdk_pixbuf_get_height(pixbuf) != rawHisHeight)
             if (rawExpanded)
+#ifndef _WIN32
                 gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
+#else
+                g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+#endif
                                           (GSourceFunc)(render_raw_histogram),
                                           data, NULL);
 
@@ -3908,7 +3952,11 @@ static void panel_size_allocate(GtkWidget *panel,
         liveHisHeight = data->LiveHisto->allocation.height;
         if (pixbuf == NULL || gdk_pixbuf_get_height(pixbuf) != liveHisHeight)
             if (liveExpanded)
+#ifndef _WIN32
                 gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE,
+#else
+                g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+#endif
                                           (GSourceFunc)(render_live_histogram),
                                           data, NULL);
     }
