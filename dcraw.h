@@ -1,6 +1,6 @@
 /*
    dcraw.h - Dave Coffin's raw photo decoder - header for C++ adaptation
-   Copyright 1997-2012 by Dave Coffin, dcoffin a cybercom o net
+   Copyright 1997-2013 by Dave Coffin, dcoffin a cybercom o net
    Copyright 2004-2013 by Udi Fuchs, udifuchs a gmail o com
 
    This program is free software; you can redistribute it and/or modify
@@ -43,26 +43,27 @@ public:
     short order;
     /*const*/
     char *ifname, *ifname_display;
-    char *meta_data;
+    char *meta_data, xtrans[6][6];
     char cdesc[5], desc[512], make[64], model[64], model2[64], artist[64];
     float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
     time_t timestamp;
-    unsigned shot_order, kodak_cbpp, filters, exif_cfa, unique_id;
-    off_t    strip_offset, data_offset;
-    off_t    thumb_offset, meta_offset, profile_offset;
+    off_t strip_offset, data_offset;
+    off_t thumb_offset, meta_offset, profile_offset;
+    unsigned shot_order, kodak_cbpp, exif_cfa, unique_id;
     unsigned thumb_length, meta_length, profile_length;
     unsigned thumb_misc, *oprof, fuji_layout, shot_select, multi_out;
     unsigned tiff_nifds, tiff_samples, tiff_bps, tiff_compress;
     unsigned black, cblack[4], maximum, mix_green, raw_color, zero_is_bad;
     unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
     unsigned tile_width, tile_length, gpsdata[32], load_flags;
+    unsigned flip, tiff_flip, filters, colors;
     ushort raw_height, raw_width, height, width, top_margin, left_margin;
     ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
     ushort *raw_image, (*image)[4];
     ushort white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
-    int mask[8][4], flip, tiff_flip, colors;
     double pixel_aspect, aber[4], gamm[6];
     float bright, user_mul[4], threshold;
+    int mask[8][4];
     int half_size, four_color_rgb, document_mode, highlight;
     int verbose, use_auto_wb, use_camera_wb, use_camera_matrix;
     int output_color, output_bps, output_tiff, med_passes;
@@ -174,6 +175,7 @@ public:
     void imacon_full_load_raw();
     void packed_load_raw();
     void nokia_load_raw();
+    void canon_rmf_load_raw();
     unsigned pana_bits(int nbits);
     void panasonic_load_raw();
     void olympus_load_raw();
@@ -195,13 +197,14 @@ public:
     void sony_load_raw();
     void sony_arw_load_raw();
     void sony_arw2_load_raw();
+    void samsung_load_raw();
     void smal_decode_segment(unsigned seg[2][2], int holes);
     void smal_v6_load_raw();
     int median4(int *p);
     void fill_holes(int holes);
     void smal_v9_load_raw();
     void redcine_load_raw();
-    void foveon_decoder(unsigned size, unsigned code);
+    void foveon_decoder(int size, unsigned code);
     void foveon_thumb();
     void foveon_sd_load_raw();
     void foveon_huff(ushort *huff);
@@ -228,10 +231,12 @@ public:
     void wavelet_denoise();
     void scale_colors();
     void pre_interpolate();
-    void border_interpolate(int border);
+    void border_interpolate(unsigned border);
     void lin_interpolate();
     void vng_interpolate();
     void ppg_interpolate();
+    void cielab(ushort rgb[3], short lab[3]);
+    void xtrans_interpolate(int passes);
     void ahd_interpolate();
     void median_filter();
     void blend_highlights();
@@ -253,7 +258,7 @@ public:
     void parse_minolta(int base);
     void parse_external_jpeg();
     void ciff_block_1030();
-    void parse_ciff(int offset, int length);
+    void parse_ciff(int offset, int length, int depth);
     void parse_rollei();
     void parse_sinar_ia();
     void parse_phase_one(int base);

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.176 2013/03/26 16:30:12 nkbj Exp $
+dnl $Id: configure.ac,v 1.177 2013/06/01 18:30:12 nkbj Exp $
 AC_INIT(UFRaw, 0.20)
 AC_PREREQ(2.57)
 
@@ -29,6 +29,8 @@ AC_SEARCH_LIBS(getopt_long, gnugetopt, ,
 AC_SEARCH_LIBS(pow, m)
 AC_CHECK_FUNCS(canonicalize_file_name)
 AC_CHECK_FUNCS(memmem)
+AC_CHECK_FUNCS(strcasecmp)
+AC_CHECK_FUNCS(strcasestr)
 
 # For binary package creation, adjusting for the build CPU is not appropriate.
 case $host_cpu in

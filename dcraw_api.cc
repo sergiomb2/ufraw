@@ -92,7 +92,7 @@ extern "C" {
         }
         d->identify();
 #ifndef UFRAW_X_TRANS
-        if (d->filters == 2) d->is_raw = 0;
+        if (d->filters == 9) d->is_raw = 0;
 #endif
         /* We first check if dcraw recognizes the file, this is equivalent
          * to 'dcraw -i' succeeding */
@@ -216,7 +216,7 @@ extern "C" {
         h->raw.height = d->iheight = (h->height + h->shrink) >> h->shrink;
         h->raw.width = d->iwidth = (h->width + h->shrink) >> h->shrink;
         /* copied from the end of dcraw's identify() */
-        if (d->filters && d->colors == 3) {
+        if (d->filters > 999 && d->colors == 3) {
             d->filters |= ((d->filters >> 2 & 0x22222222) |
                            (d->filters << 2 & 0x88888888)) & d->filters << 1;
         }
@@ -723,9 +723,9 @@ extern "C" {
 
         /* It might be better to report an error here: */
         /* (dcraw also forbids AHD for Fuji rotated images) */
-        if (interpolation == dcraw_ahd_interpolation && (h->colors > 3 || h->filters < 1000))
+        if (interpolation == dcraw_ahd_interpolation && h->colors > 3)
             interpolation = dcraw_vng_interpolation;
-        if (interpolation == dcraw_ppg_interpolation && (h->colors > 3 || h->filters < 1000))
+        if (interpolation == dcraw_ppg_interpolation && h->colors > 3)
             interpolation = dcraw_vng_interpolation;
         f4 = h->fourColorFilters;
         for (r = 0; r < h->height; r++)
@@ -747,7 +747,7 @@ extern "C" {
             ahd_interpolate_INDI(f->image, ff, f->width, f->height, cl,
                                  h->rgb_cam, d);
             smoothPasses = 3;
-        } else if (interpolation == dcraw_ppg_interpolation)
+        } else if (interpolation == dcraw_ppg_interpolation && h->filters > 1000)
             ppg_interpolate_INDI(f->image, ff, f->width, f->height, cl, d);
 
         if (smoothing)
