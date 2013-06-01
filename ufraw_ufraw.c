@@ -667,7 +667,7 @@ int ufraw_load_raw(ufraw_data *uf)
     }
     uf->raw_multiplier = ufraw_scale_raw(raw);
     /* Canon EOS cameras require special exposure normalization */
-    if (strcmp(uf->conf->make, "Canon") == 0 &&
+    if (strcasecmp(uf->conf->make, "Canon") == 0 &&
             strncmp(uf->conf->model, "EOS", 3) == 0) {
         int c, max = raw->cam_mul[0];
         for (c = 1; c < raw->colors; c++) max = MAX(raw->cam_mul[c], max);
@@ -2036,7 +2036,7 @@ int ufraw_set_wb(ufraw_data *uf)
     } else {
         int lastTuning = -1;
         char model[max_name];
-        if (strcmp(uf->conf->make, "MINOLTA") == 0 &&
+        if (strcasecmp(uf->conf->make, "Minolta") == 0 &&
                 (strncmp(uf->conf->model, "ALPHA", 5) == 0 ||
                  strncmp(uf->conf->model, "MAXXUM", 6) == 0)) {
             /* Canonize Minolta model names (copied from dcraw) */
@@ -2047,7 +2047,7 @@ int ufraw_set_wb(ufraw_data *uf)
         }
         for (i = 0; i < wb_preset_count; i++) {
             if (ufarray_is_equal(wb, wb_preset[i].name) &&
-                    !strcmp(uf->conf->make, wb_preset[i].make) &&
+                    !strcasecmp(uf->conf->make, wb_preset[i].make) &&
                     !strcmp(model, wb_preset[i].model)) {
                 if (ufnumber_value(wbTuning) == wb_preset[i].tuning) {
                     double chanMulArray[4] = {1, 1, 1, 1 };

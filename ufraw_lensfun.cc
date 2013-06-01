@@ -675,7 +675,7 @@ void Lensfun::SetLensInterpolation()
     double crop_factor = 1.0;
     int count = sscanf(model, "Crop factor %lf", &crop_factor);
     if ((strcmp(make, "Generic") == 0 && count == 1) ||
-            (strcmp(make, "") == 0 && strcmp(model, "") == 0)) {
+            (strcasecmp(make, "") == 0 && strcmp(model, "") == 0)) {
         lfLens cropLens;
         cropLens.SetMaker(make);
         cropLens.SetModel(model);

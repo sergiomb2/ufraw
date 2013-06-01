@@ -24,6 +24,10 @@
 #include "nikon_curve.h"
 #include "uf_progress.h"
 
+#ifndef HAVE_STRCASECMP
+#define strcasecmp stricmp
+#endif
+
 /* macro to clamp a number between two values */
 #ifndef LIM
 #define LIM(x,min,max) MAX(min,MIN(x,max))

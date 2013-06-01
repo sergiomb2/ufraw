@@ -97,8 +97,8 @@ extern "C" {
 // Set combo box data and keep it up to date
     void uf_combo_box_set_data(GtkComboBox *combo, int *valuep)
     {
-        gulong handler_id = reinterpret_cast<gulong>(
-                                g_object_get_data(G_OBJECT(combo), "uf-combo-handler-id"));
+        guint64 handler_id = reinterpret_cast<guint64>(
+                                 g_object_get_data(G_OBJECT(combo), "uf-combo-handler-id"));
         if (handler_id != 0)
             g_signal_handler_disconnect(G_OBJECT(combo), handler_id);
 

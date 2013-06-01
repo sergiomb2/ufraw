@@ -354,7 +354,7 @@ void Image::SetUFRawData(ufraw_data *data)
         return;
 
     dcraw_data *raw = static_cast<dcraw_data *>(uf->raw);
-    if (strcmp(uf->conf->make, raw->make) != 0 ||
+    if (strcasecmp(uf->conf->make, raw->make) != 0 ||
             strcmp(uf->conf->model, raw->model) != 0)
         uf->WBDirty = TRUE; // Re-calculate channel multipliers.
     if (uf->LoadingID)
@@ -367,7 +367,7 @@ void Image::SetUFRawData(ufraw_data *data)
     const wb_data *lastPreset = NULL;
     uf->wb_presets_make_model_match = FALSE;
     char model[max_name];
-    if (strcmp(uf->conf->make, "MINOLTA") == 0 &&
+    if (strcasecmp(uf->conf->make, "Minolta") == 0 &&
             (strncmp(uf->conf->model, "ALPHA", 5) == 0 ||
              strncmp(uf->conf->model, "MAXXUM", 6) == 0)) {
         /* Canonize Minolta model names (copied from dcraw) */
@@ -395,7 +395,7 @@ void Image::SetUFRawData(ufraw_data *data)
                 }
             }
             wb << new UFString(ufPreset, wb_preset[i].name);
-        } else if (strcmp(wb_preset[i].make, uf->conf->make) == 0 &&
+        } else if (strcasecmp(wb_preset[i].make, uf->conf->make) == 0 &&
                    strcmp(wb_preset[i].model, model) == 0) {
             /* Camera specific presets */
             uf->wb_presets_make_model_match = TRUE;

@@ -42,6 +42,16 @@
 #define gdk_threads_add_idle_full g_idle_add_full
 #endif
 
+#ifdef __MINGW32__
+#ifdef __MINGW64__
+#define uf_long gint64
+#else
+#define uf_long gint32
+#endif
+#else
+#define uf_long long
+#endif
+
 void ufraw_chooser_toggle(GtkToggleButton *button, GtkFileChooser *filechooser);
 
 static void update_crop_ranges(preview_data *data, gboolean render);
@@ -1662,7 +1672,7 @@ static void spot_wb_event(GtkWidget *widget, gpointer user_data)
 static void remove_hue_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    long i = (long)user_data;
+    uf_long i = (uf_long)user_data;
 
     for (; i < CFG->lightnessAdjustmentCount - 1; i++) {
         CFG->lightnessAdjustment[i] = CFG->lightnessAdjustment[i + 1];
@@ -1728,7 +1738,7 @@ static void calculate_hue(preview_data *data, int i)
 static void select_hue_event(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
-    long i = (long)user_data;
+    uf_long i = (uf_long)user_data;
 
     if (data->FreezeDialog) return;
     if (data->SpotX1 == -1) return;
@@ -2989,8 +2999,8 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
         return;
     }
     /* Do nothing if value didn't really change */
-    long accuracy =
-        (long)g_object_get_data(G_OBJECT(adj), "Adjustment-Accuracy");
+    uf_long accuracy =
+        (uf_long)g_object_get_data(G_OBJECT(adj), "Adjustment-Accuracy");
     float change = fabs(*valuep - gtk_adjustment_get_value(adj));
     float min_change = pow(10, -accuracy) / 2;
     if (change < min_change)
@@ -3219,7 +3229,7 @@ void ufnumber_adjustment_scale(UFObject *obj,
 
 static GtkAdjustment *adjustment_scale(GtkTable *table, int x, int y,
                                        const char *label, double value, void *valuep, double min, double max,
-                                       double step, double jump, long accuracy, const gboolean wrap_spinner,
+                                       double step, double jump, uf_long accuracy, const gboolean wrap_spinner,
                                        const char *tip, GCallback callback, GtkWidget **resetButton,
                                        const char *resetTip, GCallback resetCallback)
 {
@@ -3416,11 +3426,11 @@ static void delete_from_list(GtkWidget *widget, gpointer user_data)
 {
     preview_data *data = get_preview_data(widget);
     GtkDialog *dialog;
-    long type, index;
+    uf_long type, index;
 
     dialog = GTK_DIALOG(gtk_widget_get_ancestor(widget, GTK_TYPE_DIALOG));
-    type = (long)g_object_get_data(G_OBJECT(widget), "Type");
-    index = (long)user_data;
+    type = (uf_long)g_object_get_data(G_OBJECT(widget), "Type");
+    index = (uf_long)user_data;
     if (type < profile_types) {
         gtk_combo_box_remove_text(data->ProfileCombo[type], index);
         CFG->profileCount[type]--;
@@ -3504,7 +3514,8 @@ static void options_dialog(preview_data *data)
     GtkTable *baseCurveTable, *curveTable;
     GtkTextBuffer *confBuffer, *buffer;
     char txt[max_name], *buf;
-    long i, j, response;
+    uf_long i, j;
+    long response;
 
     if (data->FreezeDialog) return;
     data->OptionsChanged = FALSE;
@@ -3634,7 +3645,7 @@ static void options_dialog(preview_data *data)
                 label = gtk_label_new(txt);
                 gtk_table_attach_defaults(table, label, 0, 1, i, i + 1);
                 button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-                g_object_set_data(G_OBJECT(button), "Type", (void*)j);
+                g_object_set_data(G_OBJECT(button), "Type", (gpointer)j);
                 g_signal_connect(G_OBJECT(button), "clicked",
                                  G_CALLBACK(delete_from_list), (gpointer)i);
                 gtk_table_attach(table, button, 1, 2, i, i + 1, 0, 0, 0, 0);
@@ -3935,7 +3946,7 @@ static void control_button_event(GtkWidget *widget, long type)
     data->FreezeDialog = TRUE;
     GtkWindow *window = GTK_WINDOW(gtk_widget_get_toplevel(widget));
     gtk_widget_set_sensitive(data->Controls, FALSE);
-    long response = UFRAW_NO_RESPONSE;
+    uf_long response = UFRAW_NO_RESPONSE;
     int status = UFRAW_SUCCESS;
 
     // Switch from preview shrink/size to final shrink/size
@@ -4495,7 +4506,7 @@ static void whitebalance_fill_interface(preview_data *data,
 
 static void lightness_fill_interface(preview_data *data, GtkWidget *page)
 {
-    long i;
+    uf_long i;
 
     /* Start of Lightness Adjustments page */
     GtkTable *table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
@@ -4767,7 +4778,7 @@ static void colormgmt_fill_interface(preview_data *data, GtkWidget *page,
     GtkWidget *label;
     GtkComboBox *combo;
     int i;
-    long j;
+    uf_long j;
 
     /* Start of Color management page */
     table = GTK_TABLE(table_with_frame(page, NULL, TRUE));
@@ -4799,7 +4810,7 @@ static void colormgmt_fill_interface(preview_data *data, GtkWidget *page,
         gtk_table_attach(table, GTK_WIDGET(data->ProfileCombo[j]),
                          1, 8, 4 * j + 1, 4 * j + 2, GTK_FILL, GTK_FILL, 0, 0);
         button = stock_icon_button(GTK_STOCK_OPEN, NULL,
-                                   G_CALLBACK(load_profile), (void *)j);
+                                   G_CALLBACK(load_profile), (gpointer)j);
         gtk_table_attach(table, button, 8, 9, 4 * j + 1, 4 * j + 2,
                          GTK_SHRINK, GTK_FILL, 0, 0);
     }
@@ -5439,7 +5450,8 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     GdkRectangle screen;
     int max_preview_width, max_preview_height;
     int preview_width, preview_height, i, c;
-    int status, curveeditorHeight;
+    int curveeditorHeight;
+    uf_long status;
     preview_data PreviewData;
     preview_data *data = &PreviewData;
 
@@ -5860,8 +5872,8 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     data->OverUnderTicker = 0;
 
     gtk_main();
-    status = (long)g_object_get_data(G_OBJECT(previewWindow),
-                                     "WindowResponse");
+    status = (uf_long)g_object_get_data(G_OBJECT(previewWindow),
+                                        "WindowResponse");
     gtk_container_foreach(GTK_CONTAINER(previewVBox),
                           (GtkCallback)(expander_state), NULL);
 

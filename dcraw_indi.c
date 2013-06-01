@@ -105,7 +105,7 @@ int CLASS fcol_INDI(const unsigned filters, const int row, const int col)
 //  if (filters == 1) return filter[(row+top_margin) & 15][(col+left_margin) & 15];
     if (filters == 1) return filter[(row + 8) & 15][(col + 18) & 15];
 #ifdef UFRAW_X_TRANS
-    if (filters == 2) return filter2[(row + 6) % 6][(col + 6) % 6];
+    if (filters == 9) return filter2[(row + 6) % 6][(col + 6) % 6];
 #endif
     return FC(row, col);
 }
@@ -299,7 +299,7 @@ void CLASS lin_interpolate_INDI(ushort(*image)[4], const unsigned filters,
 
     dcraw_message(dcraw, DCRAW_VERBOSE, _("Bilinear interpolation...\n")); /*UF*/
 #ifdef UFRAW_X_TRANS
-    if (filters == 2) size = 6;
+    if (filters == 9) size = 6;
 #endif
     border_interpolate_INDI(height, width, image, filters, colors, 1);
     for (row = 0; row < size; row++) {
@@ -389,7 +389,7 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
 
     if (filters == 1) prow = pcol = 16;
 #ifdef UFRAW_X_TRANS
-    if (filters == 2) prow = pcol =  6;
+    if (filters == 9) prow = pcol =  6;
 #endif
     int *ipalloc = ip = (int *) calloc(prow * pcol, 1280);
     merror(ip, "vng_interpolate()");
