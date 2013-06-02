@@ -576,7 +576,7 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
    Adaptive Homogeneity-Directed interpolation is based on
    the work of Keigo Hirakawa, Thomas Parks, and Paul Lee.
  */
-#define TS 256 /* Tile Size */
+#define TS 512		/* Tile Size */
 
 void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                                 const int width, const int height,

@@ -343,7 +343,7 @@ int CLASS fcol (int row, int col)
 
 #ifndef HAVE_MEMMEM
 const char *memmem (const char *haystack, size_t haystacklen,
-	            const char *needle, size_t needlelen)
+	      const char *needle, size_t needlelen)
 {
   const char *c;
   for (c = haystack; c <= haystack + haystacklen - needlelen; c++)
@@ -8262,9 +8262,6 @@ canon_a5:
       height = 2144;
       width  = 2880;
       flip = 6;
-    } else if (!strcmp(model+7,"FinePix S5100") ||
-               !strcmp(model+7,"FinePix S5500")) {
-      height -= top_margin = 6;
     } else if (load_raw != &CLASS packed_load_raw)
       maximum = (is_raw == 2 && shot_select) ? 0x2f00 : 0x3e00;
     top_margin = (raw_height - height) >> 2 << 1;
