@@ -432,7 +432,11 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
             GimpParasite *exif_parasite;
             exif_parasite = gimp_parasite_new("exif-data",
                                               GIMP_PARASITE_PERSISTENT, uf->outputExifBufLen, uf->outputExifBuf);
+#if defined(GIMP_CHECK_VERSION) && GIMP_CHECK_VERSION(2,8,0)
+            gimp_image_attach_parasite(uf->gimpImage, exif_parasite);
+#else
             gimp_image_parasite_attach(uf->gimpImage, exif_parasite);
+#endif
             gimp_parasite_free(exif_parasite);
         }
     }
@@ -446,7 +450,11 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
             GimpParasite *icc_parasite;
             icc_parasite = gimp_parasite_new("icc-profile",
                                              GIMP_PARASITE_PERSISTENT, len, buf);
+#if defined(GIMP_CHECK_VERSION) && GIMP_CHECK_VERSION(2,8,0)
+            gimp_image_attach_parasite(uf->gimpImage, icc_parasite);
+#else
             gimp_image_parasite_attach(uf->gimpImage, icc_parasite);
+#endif
             gimp_parasite_free(icc_parasite);
             g_free(buf);
         } else {

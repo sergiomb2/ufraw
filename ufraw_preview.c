@@ -4768,8 +4768,11 @@ static void basecurve_fill_interface(preview_data *data, GtkWidget *page,
     /* End of Base Curve page */
 }
 
-static void colormgmt_fill_interface(preview_data *data, GtkWidget *page,
-                                     int plugin)
+static void colormgmt_fill_interface(preview_data *data, GtkWidget *page
+#if !HAVE_GIMP_2_9
+                                     , int plugin
+#endif
+                                    )
 {
     GtkTable *table;
     GtkWidget *button;
@@ -5610,8 +5613,11 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
 
     page = notebook_page_new(notebook, _("Color management"),
                              "color-management");
-    colormgmt_fill_interface(data, page, plugin);
-
+    colormgmt_fill_interface(data, page
+#if !HAVE_GIMP_2_9
+                             , plugin
+#endif
+                            );
     page = notebook_page_new(notebook, _("Correct luminosity, saturation"),
                              "color-corrections");
     corrections_fill_interface(data, page, curveeditorHeight);
