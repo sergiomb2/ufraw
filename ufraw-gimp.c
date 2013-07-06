@@ -360,8 +360,8 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 #if HAVE_GIMP_2_9
     uf->gimpImage =
         gimp_image_new_with_precision(Crop.width, Crop.height, GIMP_RGB,
-                                      depth == 3 ? GIMP_PRECISION_U8 :
-                                      GIMP_PRECISION_U16);
+                                      depth == 3 ? GIMP_PRECISION_U8_GAMMA :
+                                      GIMP_PRECISION_U16_GAMMA);
 #else
     uf->gimpImage = gimp_image_new(Crop.width, Crop.height, GIMP_RGB);
 #endif
