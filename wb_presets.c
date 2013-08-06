@@ -3571,7 +3571,6 @@ const wb_data wb_preset[] = {
   { "NIKON", "D3100", DaylightFluorescent, 0,	{ 2.214844, 1, 1.015625, 0 } },
   { "NIKON", "D3100", HighTempMercuryVaporFluorescent, 0, { 2.589844, 1, 1.250000, 0 } },
 
-
   /* Firmware version 1.01 */
   /* -6/+6 fine tuning is A6/B6 in amber-blue and zero in green-magenta */
   { "NIKON", "D3200", DirectSunlight, -6,	{ 2.199219, 1, 1.140625, 0 } },
