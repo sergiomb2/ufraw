@@ -2402,6 +2402,14 @@ const wb_data wb_preset[] = {
   { "NIKON", "1 J1", Cloudy, 0,			{ 1.960938, 1, 1.406250, 0 } },
   { "NIKON", "1 J1", Shade, 0,			{ 2.257813, 1, 1.277344, 0 } },
 
+  { "NIKON", "1 J3", Incandescent, 0,		{ 1.484375, 1, 2.308594, 0 } },
+  { "NIKON", "1 J3", CoolWhiteFluorescent, 0,	{ 2.003906, 1, 2.160156, 0 } },
+  { "NIKON", "1 J3", DirectSunlight, 0,		{ 2.269531, 1, 1.621094, 0 } },
+  { "NIKON", "1 J3", Flash, 0,			{ 2.648438, 1, 1.390625, 0 } },
+  { "NIKON", "1 J3", Cloudy, 0,			{ 2.394531, 1, 1.519531, 0 } },
+  { "NIKON", "1 J3", Shade, 0,			{ 2.718750, 1, 1.382813, 0 } },
+  { "NIKON", "1 J3", Underwater, 0,		{ 2.144531, 1, 1.660156, 0 } },
+
   { "NIKON", "1 V1", Incandescent, 0,		{ 1.210938, 1, 2.308594, 0 } },
   { "NIKON", "1 V1", CoolWhiteFluorescent, 0,	{ 1.687500, 1, 2.199219, 0 } },
   { "NIKON", "1 V1", DirectSunlight, 0,		{ 1.828125, 1, 1.550781, 0 } },
