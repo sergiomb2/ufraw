@@ -5481,14 +5481,15 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K10D", Tungsten, 0,		{ 1.000000, 1, 2.558594, 0 } },
   { "PENTAX", "K10D", Flash, 0,			{ 1.664062, 1, 1.046875, 0 } },
 
-  { "PENTAX", "K20D", Daylight, 0,		{ 1.691406, 1, 1.257812, 0 } },
-  { "PENTAX", "K20D", Shade, 0,			{ 2.012245, 1.299492, 1, 0 } },
-  { "PENTAX", "K20D", Cloudy, 0,		{ 1.792969, 1, 1.109375, 0 } },
-  { "PENTAX", "K20D", DaylightFluorescent, 0,	{ 2.234375, 1, 1.183594, 0 } },
-  { "PENTAX", "K20D", NeutralFluorescent, 0,	{ 1.898438, 1, 1.347656, 0 } },
-  { "PENTAX", "K20D", WhiteFluorescent, 0,	{ 1.769531, 1, 1.675781, 0 } },
-  { "PENTAX", "K20D", Tungsten, 0,		{ 1, 1.089362, 2.961702, 0 } },
-  { "PENTAX", "K20D", Flash, 0,			{ 1.792969, 1, 1.183594, 0 } },
+  /* DSP Firmware version 1.04.00.11 */
+  { "PENTAX", "K20D", Daylight, 0,		{ 1.578735, 1, 1.263428, 0 } },
+  { "PENTAX", "K20D", Shade, 0,			{ 1.800293, 1, 0.961304, 0 } },
+  { "PENTAX", "K20D", Cloudy, 0,		{ 1.673706, 1, 1.116943, 0 } },
+  { "PENTAX", "K20D", DaylightFluorescent, 0,	{ 2.089111, 1, 1.190186, 0 } },
+  { "PENTAX", "K20D", NeutralFluorescent, 0,	{ 1.772583, 1, 1.354980, 0 } },
+  { "PENTAX", "K20D", WhiteFluorescent, 0,	{ 1.653931, 1, 1.684570, 0 } },
+  { "PENTAX", "K20D", Tungsten, 0,		{ 1.012939, 1, 2.343750, 0 } },
+  { "PENTAX", "K20D", Flash, 0,			{ 1.673706, 1, 1.190186, 0 } },
 
   { "PENTAX", "K100D", Daylight, 0,		{ 1.468750, 1, 1.023438, 0 } },
   { "PENTAX", "K100D", Shade, 0,		{ 1.769531, 1, 1.000000, 0 } },
@@ -5576,6 +5577,17 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K-7", WarmWhiteFluorescent, 0,	{ 1.589844, 1, 2.164063, 0 } },
   { "PENTAX", "K-7", Tungsten, 0,		{ 1.105469, 1, 2.347656, 0 } },
   { "PENTAX", "K-7", Flash, 0,			{ 2.093750, 1, 1.082031, 0 } },
+
+  // Pentax K-30 (FW v1.05)
+  { "PENTAX", "K-30", Daylight, 0,		{ 2.213013, 1, 1.629150, 0 } },
+  { "PENTAX", "K-30", Shade, 0,			{ 2.644287, 1, 1.215942, 0 } },
+  { "PENTAX", "K-30", Cloudy, 0,		{ 2.384521, 1, 1.392944, 0 } },
+  { "PENTAX", "K-30", DaylightFluorescent, 0,	{ 2.732544, 1, 1.570068, 0 } },
+  { "PENTAX", "K-30", WhiteFluorescent, 0,	{ 2.342896, 1, 1.747192, 0 } },
+  { "PENTAX", "K-30", CoolWhiteFluorescent, 0,	{ 2.130005, 1, 2.160400, 0 } },
+  { "PENTAX", "K-30", WarmWhiteFluorescent, 0,	{ 1.781860, 1, 2.703369, 0 } },
+  { "PENTAX", "K-30", Tungsten, 0,		{ 1.329956, 1, 3.022217, 0 } },
+  { "PENTAX", "K-30", Flash, 0,			{ 2.509155, 1, 1.499268, 0 } },
 
   { "PENTAX", "K-m", Daylight, 0,		{ 1.738281, 1, 1.363281, 0 } },
   { "PENTAX", "K-m", Shade, 0,			{ 2.027344, 1, 1.027344, 0 } },
