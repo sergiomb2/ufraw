@@ -14,7 +14,23 @@
 #include <glib/gi18n.h>
 #include <errno.h>	/* for errno */
 #include <string.h>
+#ifdef HAVE_LCMS2
+#include <lcms2.h>
+#else
 #include <lcms.h>
+typedef DWORD cmsUInt32Number;
+static LCMSBOOL cmsSaveProfileToMem(cmsHPROFILE hProfile, void *MemPtr,
+                                    cmsUInt32Number *BytesNeeded)
+{
+    size_t _BytesNeeded;
+    LCMSBOOL retval;
+
+    retval = _cmsSaveProfileToMem(hProfile, MemPtr, &_BytesNeeded);
+    if (BytesNeeded)
+        *(BytesNeeded) = (cmsUInt32Number) _BytesNeeded;
+    return retval;
+}
+#endif
 #ifdef HAVE_LIBTIFF
 #include <tiffio.h>
 #endif
@@ -405,11 +421,11 @@ int ufraw_write_image(ufraw_data *uf)
             }
         } else if (uf->conf->profileIndex[out_profile] == 1) { // Embed sRGB.
             cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
-            gsize len = 0;
-            _cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
+            cmsUInt32Number len = 0;
+            cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
             if (len > 0) {
                 unsigned char buf[len];
-                _cmsSaveProfileToMem(hOutProfile, buf, &len);
+                cmsSaveProfileToMem(hOutProfile, buf, &len);
                 TIFFSetField(out, TIFFTAG_ICCPROFILE, len, buf);
             } else {
                 ufraw_set_warning(uf,
@@ -478,11 +494,11 @@ int ufraw_write_image(ufraw_data *uf)
             }
         } else if (uf->conf->profileIndex[out_profile] == 1) { // Embed sRGB.
             cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
-            gsize len = 0;
-            _cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
+            cmsUInt32Number len = 0;
+            cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
             if (len > 0) {
                 unsigned char buf[len];
-                _cmsSaveProfileToMem(hOutProfile, buf, &len);
+                cmsSaveProfileToMem(hOutProfile, buf, &len);
                 write_icc_profile(&cinfo, buf, len);
             } else {
                 ufraw_set_warning(uf,
@@ -570,11 +586,11 @@ int ufraw_write_image(ufraw_data *uf)
                 }
             } else if (uf->conf->profileIndex[out_profile] == 1) { // Embed sRGB.
                 cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
-                gsize len = 0;
-                _cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
+                cmsUInt32Number len = 0;
+                cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
                 if (len > 0) {
                     char buf[len];
-                    _cmsSaveProfileToMem(hOutProfile, buf, &len);
+                    cmsSaveProfileToMem(hOutProfile, buf, &len);
                     png_set_iCCP(png, info,
                                  uf->conf->profile[out_profile]
                                  [uf->conf->profileIndex[out_profile]].name,

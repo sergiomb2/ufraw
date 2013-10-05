@@ -15,17 +15,34 @@
 #include <omp.h>
 #endif
 #include <math.h>
+#include <string.h>
+#ifdef HAVE_LCMS2
+#include <lcms2.h>
+#include <lcms2_plugin.h>
+#else
 #include <lcms.h>
+#define cmsCreateLab2Profile(x) cmsCreateLabProfile(x)
+typedef GAMMATABLE cmsToneCurve;
+typedef WORD cmsUInt16Number;
+#endif
 
+#ifdef HAVE_LCMS2
+static void lcms_message(cmsContext ContextID,
+                         cmsUInt32Number ErrorCode,
+                         const char *ErrorText)
+{
+    (void) ContextID;
+#else
 static int lcms_message(int ErrorCode, const char *ErrorText)
 {
+#endif
     /* Possible ErrorCode:
-     * LCMS_ERRC_WARNING        0x1000
-     * LCMS_ERRC_RECOVERABLE    0x2000
-     * LCMS_ERRC_ABORTED        0x3000 */
-    (void)ErrorCode;
+     * see cmsERROR_* in <lcms2.h> or LCMS_ERRC_* in <lcms.h>. */
+    (void) ErrorCode;
     ufraw_message(UFRAW_ERROR, "%s", ErrorText);
+#ifdef HAVE_LCMS1
     return 1; /* Tell lcms that we handled the error */
+#endif
 }
 
 developer_data *developer_init()
@@ -48,9 +65,14 @@ developer_data *developer_init()
     memset(&d->luminosityCurveData, 0, sizeof(d->luminosityCurveData));
     d->luminosityCurveData.m_gamma = -1.0;
     d->luminosityProfile = NULL;
-    LPGAMMATABLE *TransferFunction = (LPGAMMATABLE *)d->TransferFunction;
+    cmsToneCurve **TransferFunction = (cmsToneCurve **)d->TransferFunction;
+#ifdef HAVE_LCMS2
+    TransferFunction[0] = cmsBuildGamma(NULL, 1.0);
+    TransferFunction[1] = TransferFunction[2] = cmsBuildGamma(NULL, 1.0);
+#else
     TransferFunction[0] = cmsAllocGamma(0x100);
     TransferFunction[1] = TransferFunction[2] = cmsBuildGamma(0x100, 1.0);
+#endif
     d->saturationProfile = NULL;
     d->adjustmentProfile = NULL;
     d->intent[out_profile] = -1;
@@ -66,7 +88,11 @@ developer_data *developer_init()
         d->lightnessAdjustment[i].hue = 0.0;
         d->lightnessAdjustment[i].hueWidth = 0.0;
     }
+#ifdef HAVE_LCMS2
+    cmsSetLogErrorHandler(lcms_message);
+#else
     cmsSetErrorHandler(lcms_message);
+#endif
     return d;
 }
 
@@ -77,8 +103,13 @@ void developer_destroy(developer_data *d)
     for (i = 0; i < profile_types; i++)
         if (d->profile[i] != NULL) cmsCloseProfile(d->profile[i]);
     cmsCloseProfile(d->luminosityProfile);
+#ifdef HAVE_LCMS2
+    cmsFreeToneCurve(d->TransferFunction[0]);
+    cmsFreeToneCurve(d->TransferFunction[1]);
+#else
     cmsFreeGamma(d->TransferFunction[0]);
     cmsFreeGamma(d->TransferFunction[1]);
+#endif
     cmsCloseProfile(d->saturationProfile);
     cmsCloseProfile(d->adjustmentProfile);
     if (d->colorTransform != NULL)
@@ -91,6 +122,40 @@ void developer_destroy(developer_data *d)
 }
 
 static const char *embedded_display_profile = "embedded display profile";
+
+#ifdef HAVE_LCMS2
+/*
+ * Emulates cmsTakeProductName() from lcms 1.x.
+ *
+ * This is tailored for use with statically allocated strings and not
+ * thread-safe.
+ */
+const char *cmsTakeProductName(cmsHPROFILE profile)
+{
+    static char name[max_name * 2 + 4];
+    char manufacturer[max_name], model[max_name];
+
+    name[0] = manufacturer[0] = model[0] = '\0';
+
+    cmsGetProfileInfoASCII(profile, cmsInfoManufacturer,
+                           "en", "US", manufacturer, max_name);
+    cmsGetProfileInfoASCII(profile, cmsInfoModel,
+                           "en", "US", model, max_name);
+
+    if (!manufacturer[0] && !model[0]) {
+        cmsGetProfileInfoASCII(profile, cmsInfoDescription,
+                               "en", "US", name, max_name * 2 + 4);
+    } else {
+        if (!manufacturer[0] || (strncmp(model, manufacturer, 8) == 0) ||
+                strlen(model) > 30)
+            strcpy(name, model);
+        else
+            sprintf(name, "%s - %s", model, manufacturer);
+    }
+
+    return name;
+}
+#endif
 
 /* Update the profile in the developer
  * and init values in the profile if needed */
@@ -185,7 +250,14 @@ static double scale_curve(double in, double min, double max, double scale)
 static const double max_luminance = 100.0;
 static const double max_colorfulness = 181.019336; /* sqrt(128*128+128*128) */
 
-static int contrast_saturation_sampler(WORD In[], WORD Out[], LPVOID Cargo)
+#ifdef HAVE_LCMS2
+static cmsInt32Number contrast_saturation_sampler(const cmsUInt16Number In[],
+        cmsUInt16Number Out[],
+        void *Cargo)
+#else
+static int contrast_saturation_sampler(cmsUInt16Number In[],
+                                       cmsUInt16Number Out[], void *Cargo)
+#endif
 {
     cmsCIELab Lab;
     cmsCIELCh LCh;
@@ -207,8 +279,55 @@ static cmsHPROFILE create_contrast_saturation_profile(double contrast,
         double saturation)
 {
     cmsHPROFILE hICC;
-    LPLUT Lut;
     struct contrast_saturation cs = { contrast, saturation };
+
+#ifdef HAVE_LCMS2
+    cmsPipeline* Pipeline = NULL;
+    cmsStage* CLUT = NULL;
+    cmsUInt32Number Dimensions[MAX_INPUT_DIMENSIONS];
+    int i;
+
+    hICC = cmsCreateProfilePlaceholder(NULL);
+    if (hICC == NULL) return NULL; // can't allocate
+
+    cmsSetDeviceClass(hICC, cmsSigAbstractClass);
+    cmsSetColorSpace(hICC, cmsSigLabData);
+    cmsSetPCS(hICC, cmsSigLabData);
+    cmsSetHeaderRenderingIntent(hICC, INTENT_PERCEPTUAL);
+
+    // Creates a pipeline with 3D grid only
+    Pipeline = cmsPipelineAlloc(NULL, 3, 3);
+    if (!Pipeline) goto error_out;
+
+    for (i = 0; i < MAX_INPUT_DIMENSIONS; i++) Dimensions[i] = 11;
+    CLUT = cmsStageAllocCLut16bitGranular(NULL, Dimensions, 3, 3, NULL);
+    if (!CLUT ||
+            !cmsStageSampleCLut16bit(CLUT, contrast_saturation_sampler, &cs, 0))
+        goto error_out;
+
+#if LCMS_VERSION >= 2050
+    if (!cmsPipelineInsertStage(Pipeline, cmsAT_END, CLUT))
+        goto error_out;
+#else
+    cmsPipelineInsertStage(Pipeline, cmsAT_END, CLUT);
+#endif
+
+    // Create tags
+    cmsWriteTag(hICC, cmsSigMediaWhitePointTag, (void *) cmsD50_XYZ());
+    cmsWriteTag(hICC, cmsSigAToB0Tag, (void *) Pipeline);
+
+    // Pipeline is already on virtual profile
+    cmsPipelineFree(Pipeline);
+
+    return hICC;
+
+error_out:
+    if (CLUT) cmsStageFree(CLUT);
+    if (Pipeline) cmsPipelineFree(Pipeline);
+    if (hICC) cmsCloseProfile(hICC);
+    return NULL;
+#else /* HAVE_LCMS1 */
+    LPLUT Lut;
 
     hICC = _cmsCreateProfilePlaceholder();
     if (hICC == NULL) return NULL; // can't allocate
@@ -228,14 +347,23 @@ static cmsHPROFILE create_contrast_saturation_profile(double contrast,
         return NULL;
     }
     // Create tags
-    cmsAddTag(hICC, icSigMediaWhitePointTag, (LPVOID) cmsD50_XYZ());
-    cmsAddTag(hICC, icSigAToB0Tag, (LPVOID) Lut);
+    cmsAddTag(hICC, icSigMediaWhitePointTag, (void *) cmsD50_XYZ());
+    cmsAddTag(hICC, icSigAToB0Tag, (void *) Lut);
     // LUT is already on virtual profile
     cmsFreeLUT(Lut);
+
     return hICC;
+#endif /* HAVE_LCMS1 */
 }
 
-static int luminance_adjustment_sampler(WORD In[], WORD Out[], LPVOID Cargo)
+#ifdef HAVE_LCMS2
+static cmsInt32Number luminance_adjustment_sampler(const cmsUInt16Number In[],
+        cmsUInt16Number Out[],
+        void *Cargo)
+#else
+static int luminance_adjustment_sampler(cmsUInt16Number In[],
+                                        cmsUInt16Number Out[], void *Cargo)
+#endif
 {
     cmsCIELab Lab;
     cmsCIELCh LCh;
@@ -275,6 +403,55 @@ static int luminance_adjustment_sampler(WORD In[], WORD Out[], LPVOID Cargo)
 static cmsHPROFILE create_adjustment_profile(const developer_data *d)
 {
     cmsHPROFILE hICC;
+
+#ifdef HAVE_LCMS2
+    cmsPipeline* Pipeline = NULL;
+    cmsStage* CLUT = NULL;
+    cmsUInt32Number Dimensions[MAX_INPUT_DIMENSIONS];
+    int i;
+
+    hICC = cmsCreateProfilePlaceholder(NULL);
+    if (hICC == NULL) return NULL; // can't allocate
+
+    cmsSetDeviceClass(hICC, cmsSigAbstractClass);
+    cmsSetColorSpace(hICC, cmsSigLabData);
+    cmsSetPCS(hICC, cmsSigLabData);
+    cmsSetHeaderRenderingIntent(hICC, INTENT_PERCEPTUAL);
+
+    // Creates a pipeline with 3D grid only
+    Pipeline = cmsPipelineAlloc(NULL, 3, 3);
+    if (!Pipeline) goto error_out;
+
+    for (i = 0; i < MAX_INPUT_DIMENSIONS; i++) Dimensions[i] = 33;
+    CLUT = cmsStageAllocCLut16bitGranular(NULL, Dimensions, 3, 3, NULL);
+
+    if (!CLUT ||
+            !cmsStageSampleCLut16bit(CLUT, luminance_adjustment_sampler,
+                                     (void*)d, 0))
+        goto error_out;
+
+#if LCMS_VERSION >= 2050
+    if (!cmsPipelineInsertStage(Pipeline, cmsAT_END, CLUT))
+        goto error_out;
+#else
+    cmsPipelineInsertStage(Pipeline, cmsAT_END, CLUT);
+#endif
+
+    // Create tags
+    cmsWriteTag(hICC, cmsSigMediaWhitePointTag, (void *) cmsD50_XYZ());
+    cmsWriteTag(hICC, cmsSigAToB0Tag, (void *) Pipeline);
+
+    // Pipeline is already on virtual profile
+    cmsPipelineFree(Pipeline);
+
+    return hICC;
+
+error_out:
+    if (CLUT) cmsStageFree(CLUT);
+    if (Pipeline) cmsPipelineFree(Pipeline);
+    if (hICC) cmsCloseProfile(hICC);
+    return NULL;
+#else /* HAVE_LCMS1 */
     LPLUT Lut;
 
     hICC = _cmsCreateProfilePlaceholder();
@@ -295,11 +472,12 @@ static cmsHPROFILE create_adjustment_profile(const developer_data *d)
         return NULL;
     }
     // Create tags
-    cmsAddTag(hICC, icSigMediaWhitePointTag, (LPVOID) cmsD50_XYZ());
-    cmsAddTag(hICC, icSigAToB0Tag, (LPVOID) Lut);
+    cmsAddTag(hICC, icSigMediaWhitePointTag, (void *) cmsD50_XYZ());
+    cmsAddTag(hICC, icSigAToB0Tag, (void *) Lut);
     // LUT is already on virtual profile
     cmsFreeLUT(Lut);
     return hICC;
+#endif /* HAVE_LCMS1 */
 }
 
 /* Find a for which (1-exp(-a x)/(1-exp(-a)) has derivative b at x=0 */
@@ -384,7 +562,7 @@ static void developer_create_transform(developer_data *d, DeveloperMode mode)
     }
 
     if (d->rgbtolabTransform == NULL) {
-        cmsHPROFILE labProfile = cmsCreateLabProfile(cmsD50_xyY());
+        cmsHPROFILE labProfile = cmsCreateLab2Profile(cmsD50_xyY());
         d->rgbtolabTransform = cmsCreateTransform(d->profile[in_profile],
                                TYPE_RGB_16, labProfile,
                                TYPE_Lab_16, INTENT_ABSOLUTE_COLORIMETRIC, 0);
@@ -559,6 +737,19 @@ void developer_prepare(developer_data *d, conf_data *conf,
                 ufraw_message(UFRAW_REPORT, NULL);
                 d->luminosityProfile = NULL;
             } else {
+#ifdef HAVE_LCMS2
+                cmsToneCurve **TransferFunction =
+                    (cmsToneCurve **)d->TransferFunction;
+                cmsFloat32Number values[0x100];
+                cmsFreeToneCurve(TransferFunction[0]);
+                for (i = 0; i < 0x100; i++)
+                    values[i] = (cmsFloat32Number) cs->m_Samples[i];
+                TransferFunction[0] =
+                    cmsBuildTabulatedToneCurveFloat(NULL, 0x100, values);
+                d->luminosityProfile = cmsCreateLinearizationDeviceLink(
+                                           cmsSigLabData, TransferFunction);
+                cmsSetDeviceClass(d->luminosityProfile, cmsSigAbstractClass);
+#else
                 LPGAMMATABLE *TransferFunction =
                     (LPGAMMATABLE *)d->TransferFunction;
                 for (i = 0; i < 0x100; i++)
@@ -566,6 +757,7 @@ void developer_prepare(developer_data *d, conf_data *conf,
                 d->luminosityProfile = cmsCreateLinearizationDeviceLink(
                                            icSigLabData, TransferFunction);
                 cmsSetDeviceClass(d->luminosityProfile, icSigAbstractClass);
+#endif
             }
             CurveSampleFree(cs);
         }

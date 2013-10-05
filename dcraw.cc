@@ -85,7 +85,11 @@ extern "C" {
 }
 #endif				/* and Adobe Lossy DNGs */
 #ifndef NO_LCMS
-#include <lcms.h>		/* Support color profiles */
+#ifdef HAVE_LCMS2
+#include <lcms2.h>		/* Support color profiles */
+#else
+#include <lcms.h>
+#endif
 #endif
 #ifndef DCRAW_NOMAIN
 #ifdef LOCALEDIR
@@ -8759,6 +8763,35 @@ notraw:
 }
 
 #ifndef NO_LCMS
+#ifdef DCRAW_NOMAIN
+extern "C" { char *ufraw_message(int code, const char *format, ...); }
+#define UFRAW_ERROR 100
+#endif
+#ifdef HAVE_LCMS2
+static void dcraw_lcms_message (cmsContext ContextID,
+                                cmsUInt32Number ErrorCode,
+                                const char *ErrorText)
+{
+    (void) ContextID;
+#else
+static int dcraw_lcms_message (int ErrorCode, const char *ErrorText)
+{
+#endif
+    /* Possible ErrorCode:
+     * see cmsERROR_* in <lcms2.h> or LCMS_ERRC_* in <lcms.h>. */
+    (void) ErrorCode;
+
+#ifdef DCRAW_NOMAIN
+    ufraw_message (UFRAW_ERROR, "%s", ErrorText);
+#else
+    fprintf (stderr, "%s", ErrorText);
+#endif
+
+#ifdef HAVE_LCMS1
+    return 1; /* Tell lcms that we handled the error */
+#endif
+}
+
 void CLASS apply_profile (const char *input, const char *output)
 {
   char *prof;
@@ -8767,7 +8800,11 @@ void CLASS apply_profile (const char *input, const char *output)
   FILE *fp;
   unsigned size;
 
-  cmsErrorAction (LCMS_ERROR_SHOW);
+#ifdef HAVE_LCMS2
+  cmsSetLogErrorHandler (dcraw_lcms_message);
+#else
+  cmsSetErrorHandler (dcraw_lcms_message);
+#endif
   if (strcmp (input, "embed"))
     hInProfile = cmsOpenProfileFromFile (input, "r");
   else if (profile_length) {
@@ -8806,7 +8843,7 @@ void CLASS apply_profile (const char *input, const char *output)
 quit:
   cmsCloseProfile (hInProfile);
 }
-#endif
+#endif /* !NO_LCMS */
 
 void CLASS convert_to_rgb()
 {
