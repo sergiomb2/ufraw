@@ -1,4 +1,4 @@
-$Id: TODO,v 1.33 2013/03/13 13:30:06 nkbj Exp $
+$Id: TODO,v 1.34 2013/10/05 17:30:21 nkbj Exp $
 
 These items are not ordered or prioritized, but are roughly grouped by
 kind of change.
@@ -55,8 +55,6 @@ For the future
 
 * Create or obtain an input profile which uses the sRGB primaries but
   is linear.
-
-* Build with lcms2 if present.
 
 * Understand why the default gamma/linearity values are pleasing,
   despite them being different from the sRGB standard.  Resolve those
