@@ -31,9 +31,9 @@ Installation
 (If building from CVS rather than a release see also "Building UFRaw
 from CVS", below.)
 
-Building UFRaw requires development packages for GLib >= 2.12 and lcms >= 1.14.
-There are many optional dependencies which enable building additional
-programs and adding features to existing programs.
+Building UFRaw requires development packages for GLib >= 2.12 and lcms >= 1.14
+(lcms 2.x is used if found). There are many optional dependencies which enable
+building additional programs and adding features to existing programs.
 
 The UFRaw build process expects Perl to be present (for pod2man). It is
 needed only if you are changing ufraw.pod or if you are building from CVS.
@@ -48,10 +48,11 @@ The first step of the installation is to run the configure script:
 ./configure
 
 At the end of the configuration you will get a summary of the
-installation settings. If most optional dependencies are present it
+installation settings. If all optional dependencies are present it
 will look like this:
 
 configure: ====================== summary =====================
+configure: color management support: lcms 2.x
 configure: build GTK GUI: yes
 configure: build GIMP plug-in: yes
 configure: EXIF support using exiv2: yes
@@ -62,7 +63,7 @@ configure: PNG support: yes
 configure: FITS support: yes
 configure: gzip compressed raw support: yes
 configure: bzip2 compressed raw support: yes
-configure: Lens defects correction via lensfun: yes
+configure: lens defects correction support using lensfun: yes
 
 If some of the lines end with 'no' instead of 'yes', UFRaw can still
 be built, but the named option will be disabled.
@@ -226,7 +227,8 @@ Building UFRaw from CVS
 =======================
 The development version has the following caveats:
 
-autoconf and automake must be installed.
+autoconf (version 2.57 or higher) and automake (version 1.5 or higher) must be
+installed.
 
 ./autogen.sh must be run before ./configure.
 

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.178 2013/10/05 16:00:10 nkbj Exp $
+dnl $Id: configure.ac,v 1.179 2013/10/06 05:00:15 nkbj Exp $
 AC_INIT(UFRaw, 0.20)
 AC_PREREQ(2.57)
 
@@ -71,15 +71,15 @@ AC_ARG_WITH(prefix,
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.12 gthread-2.0)
 
 PKG_CHECK_MODULES(LCMS2, lcms2,
-  [have_lcms="yes (lcms 2.x)"
+  [have_lcms="lcms 2.x"
    AC_DEFINE(HAVE_LCMS2, 1, have the lcms 2.x library)
    LCMS_CFLAGS="$LCMS2_CFLAGS"
    LCMS_LIBS="$LCMS2_LIBS"],
-  [have_lcms="no (lcms 2.x not found)"])
+  [have_lcms="lcms 2.x not found"])
 
-if test "x$have_lcms" != "xyes (lcms 2.x)"; then
+if test "x$have_lcms" != "xlcms 2.x"; then
   PKG_CHECK_MODULES(LCMS1, lcms >= 1.14,
-    [have_lcms="yes (lcms 1.x)"
+    [have_lcms="lcms 1.x"
      AC_DEFINE(HAVE_LCMS1, 1, have the lcms 1.x library)
      LCMS_CFLAGS="$LCMS1_CFLAGS"
      LCMS_LIBS="$LCMS1_LIBS"],
@@ -380,7 +380,7 @@ AC_CONFIG_FILES(ufraw-setup.iss)
 AC_OUTPUT
 
 AC_MSG_NOTICE(====================== summary =====================)
-AC_MSG_NOTICE(Color management support: $have_lcms)
+AC_MSG_NOTICE(color management support: $have_lcms)
 AC_MSG_NOTICE(build GTK GUI: $have_gtk)
 AC_MSG_NOTICE(build GIMP plug-in: $have_gimp)
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)
@@ -391,4 +391,4 @@ AC_MSG_NOTICE(PNG support: $have_png)
 AC_MSG_NOTICE(FITS support: $have_cfitsio)
 AC_MSG_NOTICE(gzip compressed raw support: $have_zlib)
 AC_MSG_NOTICE(bzip2 compressed raw support: $have_libbz2)
-AC_MSG_NOTICE(Lens defects correction via lensfun: $have_lensfun)
+AC_MSG_NOTICE(lens defects correction support using lensfun: $have_lensfun)
