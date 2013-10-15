@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: wb_extract.pl,v 1.5 2013/01/09 16:30:07 nkbj Exp $
+# $Id: wb_extract.pl,v 1.6 2013/10/15 14:30:10 nkbj Exp $
 
 # This program helps to prepare white balance preset lines for
 # wb_presets.c.  To add a new camera, take exposures with every white
@@ -32,16 +32,16 @@ $const_WB = 0;
 
 for my $file (@ARGV) {
   if ($file eq "-const") {
-	$const_WB = 1;
-	next
+    $const_WB = 1;
+    next
   }
 
   my ($make, $model, $fw_version, $wbname, $wbfinetune, $wbfinetune_1, $mulred, $mulgreen, $mulblue);
   $mulgreen = 1;  # default value for green balance
-  $wbfinetune = $wbfinetune_1 = 0;  # avoid warnings about uninitialized vars
+  $wbfinetune = $wbfinetune_1 = 0, $mulred = -1, $mulblue = -1;  # avoid warnings about uninitialized vars
 
-  open(EXIFTOOL, "exiftool -s -t -Model -CanonModelID -FirmwareVersion -ColorBalance1 -RedBalance -BlueBalance -WhiteBalance -WBShiftAB -WBBracketValueAB $file|") 
-    or die "can't open $file: $!";
+  open(EXIFTOOL, "exiftool -s -t -Model -CanonModelID -SonyModelID -FirmwareVersion -Software -ColorBalance1 -RedBalance -BlueBalance -WhiteBalance -WBShiftAB -WBBracketValueAB -\"WB_RGGB*\" $file|") 
+  or die "can't open $file: $!";
   while (my $line = <EXIFTOOL>) {
     $line =~ /([^\t]+)\t(.*)/ or next;
     my ($field, $value) = ($1, $2);
@@ -49,7 +49,11 @@ for my $file (@ARGV) {
       ($make, $model) = split(/ +/, $value);
     } elsif ($field eq "CanonModelID") {
       $model = $value;
+    } elsif ($field eq "SonyModelID") {
+      $model = $value;
     } elsif ($field eq "FirmwareVersion") {
+      $fw_version = $value;
+    } elsif ($field eq "Software") {
       $fw_version = $value;
     } elsif ($field eq "ColorBalance1") {   # Field for D200
       my $mul_unknown;
@@ -66,6 +70,25 @@ for my $file (@ARGV) {
       $wbfinetune = $value;
     } elsif ($field eq "WBBracketValueAB") {
       $wbfinetune_1 = $value;
+    } elsif ($field eq "WB_RGGBLevels") {
+      my ($mul_tmp1, $mul_tmp2, $mul_tmp3, $mul_tmp4) = split(/ +/, $value);
+      $mulred = ($mul_tmp1 / $mul_tmp2);
+      $mulblue = ($mul_tmp4 / $mul_tmp3);
+    } elsif ($field =~ /WB_RGGBLevels/) { # Get embedded whitebalance values
+      $field =~ s/^WB_RGGBLevels//; # Truncate for whitebalance-name
+      my ($mul_tmp1, $mul_tmp2, $mul_tmp3, $mul_tmp4) = split(/ +/, $value);
+      
+      my $tmp_mulred = ($mul_tmp1 / $mul_tmp2);
+      my $tmp_mulblue = ($mul_tmp4 / $mul_tmp3);
+      
+      my $result;
+      $result = sprintf "  { \"%s\", \"%s\", ", $make, $model;
+      $result .= sprintf "\"%s\", ", $field;
+      $result .= sprintf "%d,", 0;
+      $result .= " " while length($result) < 48;
+      $result .= "{ $tmp_mulred, 0, $tmp_mulblue, 0 } },";
+  
+      print $result, "\n";
     }
   }
   close EXIFTOOL;
