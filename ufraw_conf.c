@@ -2175,6 +2175,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
                     ufraw_message(UFRAW_ERROR,
                                   _("'%s' is not a valid grayscale-mixer option."),
                                   grayscaleMixer);
+                    uf_reset_locale(locale);
                     return -1;
                 }
                 cmd->grayscaleMixerDefined = 1;
