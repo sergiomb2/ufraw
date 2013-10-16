@@ -743,7 +743,7 @@ void developer_prepare(developer_data *d, conf_data *conf,
                 cmsFloat32Number values[0x100];
                 cmsFreeToneCurve(TransferFunction[0]);
                 for (i = 0; i < 0x100; i++)
-                    values[i] = (cmsFloat32Number) cs->m_Samples[i];
+                    values[i] = (cmsFloat32Number) cs->m_Samples[i] / 0x10000;
                 TransferFunction[0] =
                     cmsBuildTabulatedToneCurveFloat(NULL, 0x100, values);
                 d->luminosityProfile = cmsCreateLinearizationDeviceLink(
