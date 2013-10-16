@@ -2170,6 +2170,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
         if (cmd->grayscaleMode == grayscale_mixer) {
             if (grayscaleMixer != NULL) {
                 double	red, green, blue;
+                char *locale = uf_set_locale_C();
                 if (sscanf(grayscaleMixer, "%lf,%lf,%lf", &red, &green, &blue) != 3) {
                     ufraw_message(UFRAW_ERROR,
                                   _("'%s' is not a valid grayscale-mixer option."),
@@ -2180,6 +2181,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
                 cmd->grayscaleMixer[0] = red;
                 cmd->grayscaleMixer[1] = green;
                 cmd->grayscaleMixer[2] = blue;
+                uf_reset_locale(locale);
             }
         }
     }
