@@ -4422,7 +4422,10 @@ static void whitebalance_fill_interface(preview_data *data,
     gtk_widget_set_tooltip_text(event_box, _("Bayer pattern interpolation"));
     combo = GTK_COMBO_BOX(uf_combo_box_new_text());
     if (data->UF->HaveFilters) {
-        if (data->UF->colors == 4) {
+        if (data->UF->IsXTrans) {
+            uf_combo_box_append_text(combo, _("Bilinear interpolation"),
+                                     (void*)bilinear_interpolation);
+        } else if (data->UF->colors == 4) {
             uf_combo_box_append_text(combo, _("VNG four color interpolation"),
                                      (void*)four_color_interpolation);
             uf_combo_box_append_text(combo, _("Bilinear interpolation"),

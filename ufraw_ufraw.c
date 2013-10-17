@@ -261,6 +261,7 @@ ufraw_data *ufraw_open(char *filename)
     uf->displayProfileSize = 0;
     uf->RawHistogram = NULL;
     uf->HaveFilters = raw->filters != 0;
+    uf->IsXTrans = raw->filters == 9;
 #ifdef HAVE_LENSFUN
     uf->modFlags = 0;
     uf->TCAmodifier = NULL;

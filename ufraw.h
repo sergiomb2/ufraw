@@ -340,6 +340,7 @@ typedef struct ufraw_struct {
     ufraw_image_data thumb;
     void *raw;
     gboolean HaveFilters;
+    gboolean IsXTrans;
     void *unzippedBuf;
     gsize unzippedBufLen;
     developer_data *developer;
