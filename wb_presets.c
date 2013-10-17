@@ -778,6 +778,14 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 60D", Fluorescent, 0,		{ 1.9248, 1, 2.1836, 0 } },
   { "Canon", "EOS 60D", Flash, 0,		{ 2.1514, 1, 1.5420, 0 } },
 
+  /* Canon EOS 70D Firmware Version 1.1.1 */
+  { "Canon", "EOS 70D", Daylight, 0,		{ 2.068359, 1, 1.672852, 0 } },
+  { "Canon", "EOS 70D", Shade, 0,		{ 2.403320, 1, 1.446289, 0 } },
+  { "Canon", "EOS 70D", Cloudy, 0,		{ 2.226563, 1, 1.551758, 0 } },
+  { "Canon", "EOS 70D", Tungsten, 0,		{ 1.448242, 1, 2.409180, 0 } },
+  { "Canon", "EOS 70D", Fluorescent, 0,		{ 1.790039, 1, 2.280273, 0 } },
+  { "Canon", "EOS 70D", Flash, 0,		{ 2.286133, 1, 1.548828, 0 } },
+
   // Copied from Canon EOS 650D
   { "Canon", "EOS 100D", Daylight, -3,		{ 1.9502, 1, 1.7539, 0 } },
   { "Canon", "EOS 100D", Daylight, 0,		{ 2.0322, 1, 1.6572, 0 } },
@@ -1868,6 +1876,14 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS-1D Mark IV", Tungsten, 0,	{ 1.458333, 1, 2.305254, 0 } },
   { "Canon", "EOS-1D Mark IV", Fluorescent, 0,	{ 1.767892, 1, 2.205029, 0 } },
   { "Canon", "EOS-1D Mark IV", Flash, 0,	{ 2.230469, 1, 1.423828, 0 } },
+
+  /* Canon EOS-1D X Firmware Version 1.0.6 */
+  { "Canon", "EOS-1D X", Daylight, 0,		{ 1.943359, 1, 1.374023, 0 } },
+  { "Canon", "EOS-1D X", Shade, 0,		{ 2.230469, 1, 1.175781, 0 } },
+  { "Canon", "EOS-1D X", Cloudy, 0,		{ 2.085938, 1, 1.268555, 0 } },
+  { "Canon", "EOS-1D X", Tungsten, 0,		{ 1.385742, 1, 2.068359, 0 } },
+  { "Canon", "EOS-1D X", Fluorescent, 0,	{ 1.726563, 1, 1.950195, 0 } },
+  { "Canon", "EOS-1D X", Flash, 0,		{ 2.173828, 1, 1.239258, 0 } },
 
   // Canon EOS M Firmware 1.0.6
   { "Canon", "EOS M", Cloudy, 0,		{ 2.156250, 1, 1.448242, 0 } },
@@ -5533,6 +5549,17 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K200D", Tungsten, 0,		{ 1.000000, 1, 2.835937, 0 } },
   { "PENTAX", "K200D", Flash, 0,		{ 1.917969, 1, 1.214844, 0 } },
 
+  /* PENTAX K-01 Firmware Version 1.00 */
+  { "PENTAX", "K-01", Daylight, 0,		{ 2.197021, 1, 1.613647, 0 } },
+  { "PENTAX", "K-01", Shade, 0,			{ 2.625122, 1, 1.204348, 0 } },
+  { "PENTAX", "K-01", Cloudy, 0,		{ 2.367188, 1, 1.379761, 0 } },
+  { "PENTAX", "K-01", DaylightFluorescent, 0,	{ 2.712769, 1, 1.555176, 0 } },
+  { "PENTAX", "K-01", WhiteFluorescent, 0,	{ 2.325928, 1, 1.730591, 0 } },
+  { "PENTAX", "K-01", CoolWhiteFluorescent, 0,	{ 2.114502, 1, 2.139893, 0 } },
+  { "PENTAX", "K-01", WarmWhiteFluorescent, 0,	{ 1.768921, 1, 2.677734, 0 } },
+  { "PENTAX", "K-01", Tungsten, 0,		{ 1.320313, 1, 2.993530, 0 } },
+  { "PENTAX", "K-01", Flash, 0,			{ 2.490967, 1, 1.484985, 0 } },
+
   { "PENTAX", "K-5", Daylight, 0,		{ 2.1211, 1, 1.5781, 0 } },
   { "PENTAX", "K-5", Shade, 0,			{ 2.5312, 1, 1.1758, 0 } },
   { "PENTAX", "K-5", Cloudy, 0,			{ 2.2852, 1, 1.3477, 0 } },
@@ -5595,6 +5622,28 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K-30", Tungsten, 0,		{ 1.329956, 1, 3.022217, 0 } },
   { "PENTAX", "K-30", Flash, 0,			{ 2.509155, 1, 1.499268, 0 } },
 
+  /* PENTAX K-50 Firmware Version 1.00 */
+  { "PENTAX", "K-50", Daylight, 0,		{ 2.244385, 1, 1.560303, 0 } },
+  { "PENTAX", "K-50", Shade, 0,			{ 2.681641, 1, 1.164551, 0 } },
+  { "PENTAX", "K-50", Cloudy, 0,		{ 2.418213, 1, 1.334229, 0 } },
+  { "PENTAX", "K-50", DaylightFluorescent, 0,	{ 2.771240, 1, 1.503784, 0 } },
+  { "PENTAX", "K-50", WhiteFluorescent, 0,	{ 2.376099, 1, 1.673462, 0 } },
+  { "PENTAX", "K-50", CoolWhiteFluorescent, 0,	{ 2.160034, 1, 2.069214, 0 } },
+  { "PENTAX", "K-50", WarmWhiteFluorescent, 0,	{ 1.807007, 1, 2.589355, 0 } },
+  { "PENTAX", "K-50", Tungsten, 0,		{ 1.348755, 1, 2.894653, 0 } },
+  { "PENTAX", "K-50", Flash, 0,			{ 2.544678, 1, 1.435913, 0 } },
+
+  /* PENTAX K-500 Firmware Version 1.00 */
+  { "PENTAX", "K-500", Daylight, 0,		{ 2.207642, 1, 1.606079, 0 } },
+  { "PENTAX", "K-500", Shade, 0,		{ 2.637695, 1, 1.198730, 0 } },
+  { "PENTAX", "K-500", Cloudy, 0,		{ 2.378540, 1, 1.373413, 0 } },
+  { "PENTAX", "K-500", DaylightFluorescent, 0,	{ 2.725830, 1, 1.547974, 0 } },
+  { "PENTAX", "K-500", WhiteFluorescent, 0,	{ 2.337158, 1, 1.722534, 0 } },
+  { "PENTAX", "K-500", CoolWhiteFluorescent, 0,	{ 2.124634, 1, 2.129883, 0 } },
+  { "PENTAX", "K-500", WarmWhiteFluorescent, 0,	{ 1.777466, 1, 2.665283, 0 } },
+  { "PENTAX", "K-500", Tungsten, 0,		{ 1.326660, 1, 2.979614, 0 } },
+  { "PENTAX", "K-500", Flash, 0,		{ 2.502930, 1, 1.478149, 0 } },
+
   { "PENTAX", "K-m", Daylight, 0,		{ 1.738281, 1, 1.363281, 0 } },
   { "PENTAX", "K-m", Shade, 0,			{ 2.027344, 1, 1.027344, 0 } },
   { "PENTAX", "K-m", Cloudy, 0,			{ 1.832031, 1, 1.183594, 0 } },
@@ -5624,6 +5673,50 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K-x", WarmWhiteFluorescent, 0,	{ 1.5019, 1, 2.2973, 0 } },
   { "PENTAX", "K-x", Tungsten, 0,		{ 1.0463, 1, 3.4015, 0 } },
   { "PENTAX", "K-x", Flash, 0,			{ 2.1120, 1, 1.2741, 0 } },
+
+  /* PENTAX Q Firmware Version 1.00 */
+  { "PENTAX", "Q", Daylight, 0,			{ 1.515137, 1, 1.858890, 0 } },
+  { "PENTAX", "Q", Shade, 0,			{ 1.818237, 1, 1.417951, 0 } },
+  { "PENTAX", "Q", Cloudy, 0,			{ 1.704590, 1, 1.608584, 0 } },
+  { "PENTAX", "Q", DaylightFluorescent, 0,	{ 1.969727, 1, 1.787356, 0 } },
+  { "PENTAX", "Q", WhiteFluorescent, 0,		{ 1.742432, 1, 2.025679, 0 } },
+  { "PENTAX", "Q", CoolWhiteFluorescent, 0,	{ 1.579590, 1, 2.502323, 0 } },
+  { "PENTAX", "Q", WarmWhiteFluorescent, 0,	{ 1.325684, 1, 2.907435, 0 } },
+  { "PENTAX", "Q", Tungsten, 0,			{ 0.969727, 1, 3.050501, 0 } },
+  { "PENTAX", "Q", Flash, 0,			{ 1.829590, 1, 1.513328, 0 } },
+
+  /* PENTAX Q7 Firmware Version 1.00 */
+  { "PENTAX", "Q7", Daylight, 0,		{ 1.668823, 1, 1.794344, 0 } },
+  { "PENTAX", "Q7", Shade, 0,			{ 2.050293, 1, 1.401073, 0 } },
+  { "PENTAX", "Q7", Cloudy, 0,			{ 1.923096, 1, 1.597708, 0 } },
+  { "PENTAX", "Q7", DaylightFluorescent, 0,	{ 2.221069, 1, 1.769840, 0 } },
+  { "PENTAX", "Q7", WhiteFluorescent, 0,	{ 1.907227, 1, 2.003291, 0 } },
+  { "PENTAX", "Q7", CoolWhiteFluorescent, 0,	{ 1.780029, 1, 2.482628, 0 } },
+  { "PENTAX", "Q7", WarmWhiteFluorescent, 0,	{ 1.494019, 1, 2.888212, 0 } },
+  { "PENTAX", "Q7", Tungsten, 0,		{ 1.017212, 1, 3.146410, 0 } },
+  { "PENTAX", "Q7", Flash, 0,			{ 1.986694, 1, 1.499451, 0 } },
+
+  /* PENTAX Q10 Firmware Version 1.00 */
+  { "PENTAX", "Q10", Daylight, 0,		{ 1.561401, 1, 1.653244, 0 } },
+  { "PENTAX", "Q10", Shade, 0,			{ 1.965088, 1, 1.327173, 0 } },
+  { "PENTAX", "Q10", Cloudy, 0,			{ 1.843262, 1, 1.513464, 0 } },
+  { "PENTAX", "Q10", DaylightFluorescent, 0,	{ 2.128906, 1, 1.676499, 0 } },
+  { "PENTAX", "Q10", WhiteFluorescent, 0,	{ 1.828003, 1, 1.897674, 0 } },
+  { "PENTAX", "Q10", CoolWhiteFluorescent, 0,	{ 1.706177, 1, 2.351775, 0 } },
+  { "PENTAX", "Q10", WarmWhiteFluorescent, 0,	{ 1.431885, 1, 2.735985, 0 } },
+  { "PENTAX", "Q10", Tungsten, 0,		{ 0.974976, 1, 2.980539, 0 } },
+  { "PENTAX", "Q10", Flash, 0,			{ 1.904175, 1, 1.420318, 0 } },
+
+  /* PENTAX 645D Firmware Version 1.00 */
+  { "PENTAX", "645D", Daylight, 0,		{ 1.805664, 1, 1.327393, 0 } },
+  { "PENTAX", "645D", Shade, 0,			{ 2.092651, 1, 0.983276, 0 } },
+  { "PENTAX", "645D", Cloudy, 0,		{ 1.916016, 1, 1.106079, 0 } },
+  { "PENTAX", "645D", DaylightFluorescent, 0,	{ 2.207397, 1, 1.294556, 0 } },
+  { "PENTAX", "645D", WhiteFluorescent, 0,	{ 1.889526, 1, 1.458496, 0 } },
+  { "PENTAX", "645D", CoolWhiteFluorescent, 0,	{ 1.748291, 1, 1.737061, 0 } },
+  { "PENTAX", "645D", WarmWhiteFluorescent, 0,	{ 1.492188, 1, 2.146729, 0 } },
+  { "PENTAX", "645D", Tungsten, 0,		{ 1.130249, 1, 2.097656, 0 } },
+  { "PENTAX", "645D", Flash, 0,			{ 1.986694, 1, 1.081543, 0 } },
 
   { "RICOH", "Caplio GX100", Daylight, 0,	{ 1.910001, 1, 1.820002, 0 } },
   { "RICOH", "Caplio GX100", Cloudy, 0,		{ 2.240003, 1, 1.530002, 0 } },
