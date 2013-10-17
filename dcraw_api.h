@@ -52,7 +52,7 @@ extern "C" {
     enum { dcraw_ahd_interpolation,
            dcraw_vng_interpolation, dcraw_four_color_interpolation,
            dcraw_ppg_interpolation, dcraw_bilinear_interpolation,
-           dcraw_none_interpolation
+           dcraw_xtrans_interpolation, dcraw_none_interpolation
          };
     enum { unknown_thumb_type, jpeg_thumb_type, ppm_thumb_type };
     int dcraw_open(dcraw_data *h, char *filename);

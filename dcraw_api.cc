@@ -52,6 +52,10 @@ extern "C" {
     void vng_interpolate_INDI(gushort(*image)[4], const unsigned filters,
                               const int width, const int height, const int colors, const int rgb_max,
                               void *dcraw, dcraw_data *h);
+    void xtrans_interpolate_INDI(ushort(*image)[4], const unsigned filters,
+                                 const int width, const int height,
+                                 const int colors, const float rgb_cam[3][4],
+                                 void *dcraw, dcraw_data *hh, const int passes);
     void ahd_interpolate_INDI(gushort(*image)[4], const unsigned filters,
                               const int width, const int height, const int colors, float rgb_cam[3][4],
                               void *dcraw, dcraw_data *h);
@@ -728,7 +732,7 @@ extern "C" {
         /* It might be better to report an error here: */
         /* (dcraw also forbids AHD for Fuji rotated images) */
         if (h->filters == 9)
-            interpolation = dcraw_bilinear_interpolation;
+            interpolation = dcraw_xtrans_interpolation;
         if (interpolation == dcraw_ahd_interpolation && h->colors > 3)
             interpolation = dcraw_vng_interpolation;
         if (interpolation == dcraw_ppg_interpolation && h->colors > 3)
@@ -747,15 +751,20 @@ extern "C" {
         else if (interpolation == dcraw_none_interpolation)
             smoothing = 0;
 #endif
-        else if (interpolation == dcraw_vng_interpolation)
+        else if (interpolation == dcraw_vng_interpolation || h->colors > 3)
             vng_interpolate_INDI(f->image, ff, f->width, f->height, cl, 0xFFFF, d, h);
-        else if (interpolation == dcraw_ahd_interpolation) {
+        else if (interpolation == dcraw_ppg_interpolation && h->filters > 1000)
+            ppg_interpolate_INDI(f->image, ff, f->width, f->height, cl, d, h);
+
+        else if (interpolation == dcraw_xtrans_interpolation) {
+            xtrans_interpolate_INDI(f->image, h->filters, f->width, f->height,
+                                    h->colors, h->rgb_cam, d, h, 3);
+            smoothing = 0;
+        } else if (interpolation == dcraw_ahd_interpolation) {
             ahd_interpolate_INDI(f->image, ff, f->width, f->height, cl,
                                  h->rgb_cam, d, h);
             smoothPasses = 3;
-        } else if (interpolation == dcraw_ppg_interpolation && h->filters > 1000)
-            ppg_interpolate_INDI(f->image, ff, f->width, f->height, cl, d, h);
-
+        }
         if (smoothing)
             color_smooth(f->image, f->width, f->height, smoothPasses);
 

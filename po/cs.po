@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-26 17:30+0100\n"
+"POT-Creation-Date: 2013-10-17 09:30+0200\n"
 "PO-Revision-Date: 2011-08-12 05:57+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -1136,11 +1136,15 @@ msgstr "Násobitele kanálů:"
 msgid "Bayer pattern interpolation"
 msgstr "Interpolace Bayerovy matice"
 
-msgid "VNG four color interpolation"
-msgstr "VNG Interpolace čtyř barev"
+#, fuzzy
+msgid "X-Trans interpolation"
+msgstr "Žádná interpolace"
 
 msgid "Bilinear interpolation"
 msgstr "Bilineární interpolace"
+
+msgid "VNG four color interpolation"
+msgstr "VNG Interpolace čtyř barev"
 
 msgid "AHD interpolation"
 msgstr "AHD interpolace"

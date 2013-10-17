@@ -112,8 +112,9 @@ enum { linear_histogram, log_histogram };
 /* The following enum should match the dcraw_interpolation enum
  * in dcraw_api.h. */
 enum { ahd_interpolation, vng_interpolation, four_color_interpolation,
-       ppg_interpolation, bilinear_interpolation, none_interpolation,
-       half_interpolation, obsolete_eahd_interpolation, num_interpolations
+       ppg_interpolation, bilinear_interpolation, xtrans_interpolation,
+       none_interpolation, half_interpolation, obsolete_eahd_interpolation,
+       num_interpolations
      };
 enum { no_id, also_id, only_id, send_id };
 enum { manual_curve, linear_curve, custom_curve, camera_curve };

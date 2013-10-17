@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-26 17:30+0100\n"
+"POT-Creation-Date: 2013-10-17 09:30+0200\n"
 "PO-Revision-Date: 2010-03-04 23:12+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish\n"
@@ -1137,11 +1137,15 @@ msgstr "Mnożniki kanałów:"
 msgid "Bayer pattern interpolation"
 msgstr "Interpolacja wzorca Bayera"
 
-msgid "VNG four color interpolation"
-msgstr "Interpolacja VNG (czterokolorowa)"
+#, fuzzy
+msgid "X-Trans interpolation"
+msgstr "Bez interpolacji"
 
 msgid "Bilinear interpolation"
 msgstr "Interpolacja dwuliniowa"
+
+msgid "VNG four color interpolation"
+msgstr "Interpolacja VNG (czterokolorowa)"
 
 msgid "AHD interpolation"
 msgstr "Interpolacja AHD"

@@ -150,8 +150,10 @@ const conf_data conf_default = {
     "", "", /* real_make, real_model */
 };
 
-static const char *interpolationNames[] =
-{ "ahd", "vng", "four-color", "ppg", "bilinear", "none", "half", "eahd", NULL };
+static const char *interpolationNames[] = {
+    "ahd", "vng", "four-color", "ppg", "bilinear", "xtrans", "none", "half",
+    "eahd", NULL
+};
 static const char *restoreDetailsNames[] =
 { "clip", "lch", "hsv", NULL };
 static const char *clipHighlightsNames[] =

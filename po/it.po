@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-26 17:30+0100\n"
+"POT-Creation-Date: 2013-10-17 09:30+0200\n"
 "PO-Revision-Date: 2009-10-14 06:00+0100\n"
 "Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -1151,11 +1151,15 @@ msgstr "Moltiplicatori canale:"
 msgid "Bayer pattern interpolation"
 msgstr "Interpolazione del motivo Bayer"
 
-msgid "VNG four color interpolation"
-msgstr "Interpolazione VNG a quattro colori"
+#, fuzzy
+msgid "X-Trans interpolation"
+msgstr "Nessuna interpolazione"
 
 msgid "Bilinear interpolation"
 msgstr "Interpolazione Bilineare"
+
+msgid "VNG four color interpolation"
+msgstr "Interpolazione VNG a quattro colori"
 
 msgid "AHD interpolation"
 msgstr "Interpolazione AHD"
