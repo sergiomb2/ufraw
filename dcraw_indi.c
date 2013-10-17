@@ -555,6 +555,38 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     }
 }
 
+void CLASS cielab_INDI(ushort rgb[3], short lab[3], const int colors,
+                       const float rgb_cam[3][4])
+{
+    int c, i, j, k;
+    float r, xyz[3];
+    static float cbrt[0x10000], xyz_cam[3][4];
+
+    if (!rgb) {
+        for (i = 0; i < 0x10000; i++) {
+            r = i / 65535.0;
+            cbrt[i] = r > 0.008856 ? pow(r, (float)(1 / 3.0)) : 7.787 * r + 16 / 116.0;
+        }
+        for (i = 0; i < 3; i++)
+            for (j = 0; j < colors; j++)
+                for (xyz_cam[i][j] = k = 0; k < 3; k++)
+                    xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65_white[i];
+        return;
+    }
+    xyz[0] = xyz[1] = xyz[2] = 0.5;
+    FORCC {
+        xyz[0] += xyz_cam[0][c] * rgb[c];
+        xyz[1] += xyz_cam[1][c] * rgb[c];
+        xyz[2] += xyz_cam[2][c] * rgb[c];
+    }
+    xyz[0] = cbrt[CLIP((int) xyz[0])];
+    xyz[1] = cbrt[CLIP((int) xyz[1])];
+    xyz[2] = cbrt[CLIP((int) xyz[2])];
+    lab[0] = 64 * (116 * xyz[1] - 16);
+    lab[1] = 64 * 500 * (xyz[0] - xyz[1]);
+    lab[2] = 64 * 200 * (xyz[1] - xyz[2]);
+}
+
 #define TS 512		/* Tile Size */
 
 /*
@@ -566,12 +598,10 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                                 const int colors, const float rgb_cam[3][4],
                                 void *dcraw, dcraw_data *h)
 {
-    int i, j, k, top, left, row, col, tr, tc, c, d, val, hm[2];
-    ushort(*pix)[4], (*rix)[3];
+    int i, j, top, left, row, col, tr, tc, c, d, val, hm[2];
     static const int dir[4] = { -1, 1, -TS, TS };
     unsigned ldiff[2][4], abdiff[2][4], leps, abeps;
-    float r, cbrt[0x10000], xyz[3], xyz_cam[3][4];
-    ushort(*rgb)[TS][TS][3];
+    ushort(*rgb)[TS][TS][3], (*rix)[3], (*pix)[4];
     short(*lab)[TS][TS][3], (*lix)[3];
     char(*homo)[TS][TS], *buffer;
 
@@ -580,26 +610,12 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
 #ifdef _OPENMP
     #pragma omp parallel				\
     default(shared)					\
-    private(top, left, row, col, pix, rix, lix, c, xyz, val, d, tc, tr, i, j, k, ldiff, abdiff, leps, abeps, hm, buffer, rgb, lab, homo, r)
+    private(top, left, row, col, pix, rix, lix, c, val, d, tc, tr, i, j, ldiff, abdiff, leps, abeps, hm, buffer, rgb, lab, homo)
 #endif
     {
-#ifdef _OPENMP
-        #pragma omp for schedule(static) nowait
-#endif
-        for (i = 0; i < 0x10000; i++) {
-            r = i / 65535.0;
-            cbrt[i] = r > 0.008856 ? pow(r, 1 / 3.0) : 7.787 * r + 16 / 116.0;
-        }
-#ifdef _OPENMP
-        #pragma omp for
-#endif
-        for (i = 0; i < 3; i++)
-            for (j = 0; j < colors; j++)
-                for (xyz_cam[i][j] = k = 0; k < 3; k++)
-                    xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65_white[i];
-
+        cielab_INDI(0, 0, colors, rgb_cam);
         border_interpolate_INDI(height, width, image, filters, colors, 5, h);
-        buffer = (char *) malloc(26 * TS * TS); /* 1664 kB */
+        buffer = (char *) malloc(26 * TS * TS);
         merror(buffer, "ahd_interpolate()");
         rgb  = (ushort(*)[TS][TS][3]) buffer;
         lab  = (short(*)[TS][TS][3])(buffer + 12 * TS * TS);
@@ -648,18 +664,7 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                             rix[0][c] = CLIP(val);
                             c = FC(row, col);
                             rix[0][c] = pix[0][c];
-                            xyz[0] = xyz[1] = xyz[2] = 0.5;
-                            FORCC {
-                                xyz[0] += xyz_cam[0][c] * rix[0][c];
-                                xyz[1] += xyz_cam[1][c] * rix[0][c];
-                                xyz[2] += xyz_cam[2][c] * rix[0][c];
-                            }
-                            xyz[0] = cbrt[CLIP((int) xyz[0])];
-                            xyz[1] = cbrt[CLIP((int) xyz[1])];
-                            xyz[2] = cbrt[CLIP((int) xyz[2])];
-                            lix[0][0] = 64 * (116 * xyz[1] - 16);
-                            lix[0][1] = 64 * 500 * (xyz[0] - xyz[1]);
-                            lix[0][2] = 64 * 200 * (xyz[1] - xyz[2]);
+                            cielab_INDI(rix[0], lix[0], colors, rgb_cam);
                         }
                 /*  Build homogeneity maps from the CIELab images: */
                 memset(homo, 0, 2 * TS * TS);
