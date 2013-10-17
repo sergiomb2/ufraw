@@ -35,7 +35,9 @@
 #define FORC4 FORC(4)
 #define FORCC FORC(colors)
 extern "C" {
-    int fcol_INDI(const unsigned filters, const int row, const int col);
+    int fcol_INDI(const unsigned filters, const int row, const int col,
+                  const int top_margin, const int left_margin,
+                  /*const*/ char xtrans[6][6]);
     void wavelet_denoise_INDI(gushort(*image)[4], const int black,
                               const int iheight, const int iwidth, const int height, const int width,
                               const int colors, const int shrink, const float pre_mul[4],
@@ -45,17 +47,18 @@ extern "C" {
                            float pre_mul[4], const unsigned filters, /*const*/ gushort white[8][8],
                            const char *ifname_display, void *dcraw);
     void lin_interpolate_INDI(gushort(*image)[4], const unsigned filters,
-                              const int width, const int height, const int colors, void *dcraw);
+                              const int width, const int height,
+                              const int colors, void *dcraw, dcraw_data *h);
     void vng_interpolate_INDI(gushort(*image)[4], const unsigned filters,
                               const int width, const int height, const int colors, const int rgb_max,
-                              void *dcraw);
+                              void *dcraw, dcraw_data *h);
     void ahd_interpolate_INDI(gushort(*image)[4], const unsigned filters,
                               const int width, const int height, const int colors, float rgb_cam[3][4],
-                              void *dcraw);
+                              void *dcraw, dcraw_data *h);
     void color_smooth(gushort(*image)[4], const int width, const int height,
                       const int passes);
     void ppg_interpolate_INDI(gushort(*image)[4], const unsigned filters,
-                              const int width, const int height, const int colors, void *dcraw);
+                              const int width, const int height, const int colors, void *dcraw, dcraw_data *h);
     void flip_image_INDI(gushort(*image)[4], int *height_p, int *width_p,
                          const int flip);
     void fuji_rotate_INDI(gushort(**image_p)[4], int *height_p, int *width_p,
@@ -91,9 +94,6 @@ extern "C" {
             return DCRAW_OPEN_ERROR;
         }
         d->identify();
-#ifndef UFRAW_X_TRANS
-        if (d->filters == 9) d->is_raw = 0;
-#endif
         /* We first check if dcraw recognizes the file, this is equivalent
          * to 'dcraw -i' succeeding */
         if (!d->make[0]) {
@@ -131,6 +131,8 @@ extern "C" {
         h->colors = d->colors;
         h->filters = d->filters;
         h->raw_color = d->raw_color;
+        h->top_margin = d->top_margin;
+        h->left_margin = d->left_margin;
         memcpy(h->cam_mul, d->cam_mul, sizeof d->cam_mul);
         // maximum and black might change during load_raw. We need them for the
         // camera-wb. If they'll change we will recalculate the camera-wb.
@@ -168,6 +170,7 @@ extern "C" {
         h->raw.image = NULL;
         h->thumbType = unknown_thumb_type;
         h->message = d->messageBuffer;
+        memcpy(h->xtrans, d->xtrans, sizeof d->xtrans);
         return d->lastStatus;
     }
 
@@ -361,13 +364,14 @@ extern "C" {
      * always try to index the column and not the row in order to reduce the
      * data cache footprint.
      */
-    static unsigned fcol_sequence(int filters, int row)
+    static unsigned fcol_sequence(int filters, int row, int top_margin,
+                                  int left_margin, char xtrans[6][6])
     {
         unsigned sequence = 0;
         int c;
 
         for (c = 15; c >= 0; --c)
-            sequence = (sequence << 2) | fcol_INDI(filters, row, c);
+            sequence = (sequence << 2) | fcol_INDI(filters, row, c, top_margin, left_margin, xtrans);
         return sequence;
     }
 
@@ -470,7 +474,7 @@ extern "C" {
             for (r = 0; r < h; ++r) {
                 fseq = (unsigned*) g_malloc(scale * sizeof(unsigned));
                 for (ri = 0; ri < scale; ++ri)
-                    fseq[ri] = fcol_sequence(f4, r + ri);
+                    fseq[ri] = fcol_sequence(f4, r + ri, hh->top_margin, hh->left_margin, hh->xtrans);
                 for (c = 0; c < w; ++c) {
                     pixp = f->image[r * w + c];
                     shrink_pixel(pixp, r, c, hh, fseq, scale);
@@ -723,6 +727,8 @@ extern "C" {
 
         /* It might be better to report an error here: */
         /* (dcraw also forbids AHD for Fuji rotated images) */
+        if (h->filters == 9)
+            interpolation = dcraw_bilinear_interpolation;
         if (interpolation == dcraw_ahd_interpolation && h->colors > 3)
             interpolation = dcraw_vng_interpolation;
         if (interpolation == dcraw_ppg_interpolation && h->colors > 3)
@@ -730,25 +736,25 @@ extern "C" {
         f4 = h->fourColorFilters;
         for (r = 0; r < h->height; r++)
             for (c = 0; c < h->width; c++) {
-                int cc = fcol_INDI(f4, r, c);
-                f->image[r * f->width + c][fcol_INDI(ff, r, c)] =
+                int cc = fcol_INDI(f4, r, c, h->top_margin, h->left_margin, h->xtrans);
+                f->image[r * f->width + c][fcol_INDI(ff, r, c, h->top_margin, h->left_margin, h->xtrans)] =
                     h->raw.image[r / 2 * h->raw.width + c / 2][cc];
             }
         int smoothPasses = 1;
         if (interpolation == dcraw_bilinear_interpolation)
-            lin_interpolate_INDI(f->image, ff, f->width, f->height, cl, d);
+            lin_interpolate_INDI(f->image, ff, f->width, f->height, cl, d, h);
 #ifdef ENABLE_INTERP_NONE
         else if (interpolation == dcraw_none_interpolation)
             smoothing = 0;
 #endif
         else if (interpolation == dcraw_vng_interpolation)
-            vng_interpolate_INDI(f->image, ff, f->width, f->height, cl, 0xFFFF, d);
+            vng_interpolate_INDI(f->image, ff, f->width, f->height, cl, 0xFFFF, d, h);
         else if (interpolation == dcraw_ahd_interpolation) {
             ahd_interpolate_INDI(f->image, ff, f->width, f->height, cl,
-                                 h->rgb_cam, d);
+                                 h->rgb_cam, d, h);
             smoothPasses = 3;
         } else if (interpolation == dcraw_ppg_interpolation && h->filters > 1000)
-            ppg_interpolate_INDI(f->image, ff, f->width, f->height, cl, d);
+            ppg_interpolate_INDI(f->image, ff, f->width, f->height, cl, d, h);
 
         if (smoothing)
             color_smooth(f->image, f->width, f->height, smoothPasses);

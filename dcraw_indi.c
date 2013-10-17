@@ -69,7 +69,9 @@ extern const float d65_white[3];
 #define BAYER(row,col) \
     image[((row) >> shrink)*iwidth + ((col) >> shrink)][FC(row,col)]
 
-int CLASS fcol_INDI(const unsigned filters, const int row, const int col)
+int CLASS fcol_INDI(const unsigned filters, const int row, const int col,
+                    const int top_margin, const int left_margin,
+                    /*const*/ char xtrans[6][6])
 {
     static const char filter[16][16] = {
         { 2, 1, 1, 3, 2, 3, 2, 0, 3, 2, 3, 0, 1, 2, 1, 0 },
@@ -89,24 +91,9 @@ int CLASS fcol_INDI(const unsigned filters, const int row, const int col)
         { 2, 1, 3, 2, 3, 1, 2, 1, 0, 3, 0, 2, 0, 2, 0, 2 },
         { 0, 3, 1, 0, 0, 2, 0, 3, 2, 1, 3, 1, 1, 3, 1, 3 }
     };
-#ifdef UFRAW_X_TRANS
-    static const char filter2[6][6] = {
-        { 1, 1, 0, 1, 1, 2 },
-        { 1, 1, 2, 1, 1, 0 },
-        { 2, 0, 1, 0, 2, 1 },
-        { 1, 1, 2, 1, 1, 0 },
-        { 1, 1, 0, 1, 1, 2 },
-        { 0, 2, 1, 2, 0, 1 }
-    };
-#endif
 
-    /* Assume that we are handling the Leaf CatchLight with
-     * top_margin = 8; left_margin = 18; */
-//  if (filters == 1) return filter[(row+top_margin) & 15][(col+left_margin) & 15];
-    if (filters == 1) return filter[(row + 8) & 15][(col + 18) & 15];
-#ifdef UFRAW_X_TRANS
-    if (filters == 9) return filter2[(row + 6) % 6][(col + 6) % 6];
-#endif
+    if (filters == 1) return filter[(row + top_margin) & 15][(col + left_margin) & 15];
+    if (filters == 9) return xtrans[(row + top_margin + 6) % 6][(col + left_margin + 6) % 6];
     return FC(row, col);
 }
 
@@ -268,7 +255,7 @@ void CLASS scale_colors_INDI(const int maximum, const int black,
 }
 
 void CLASS border_interpolate_INDI(const int height, const int width,
-                                   ushort(*image)[4], const unsigned filters, int colors, int border)
+                                   ushort(*image)[4], const unsigned filters, int colors, int border, dcraw_data *h)
 {
     int row, col, y, x, f, c, sum[8];
 
@@ -280,37 +267,35 @@ void CLASS border_interpolate_INDI(const int height, const int width,
             for (y = row - 1; y != row + 2; y++)
                 for (x = col - 1; x != col + 2; x++)
                     if (y >= 0 && y < height && x >= 0 && x < width) {
-                        f = fcol_INDI(filters, y, x);
+                        f = fcol_INDI(filters, y, x, h->top_margin, h->left_margin, h->xtrans);
                         sum[f] += image[y * width + x][f];
                         sum[f + 4]++;
                     }
-            f = fcol_INDI(filters, row, col);
+            f = fcol_INDI(filters, row, col, h->top_margin, h->left_margin, h->xtrans);
             FORCC if (c != f && sum[c + 4])
                 image[row * width + col][c] = sum[c] / sum[c + 4];
         }
 }
 
 void CLASS lin_interpolate_INDI(ushort(*image)[4], const unsigned filters,
-                                const int width, const int height, const int colors, void *dcraw) /*UF*/
+                                const int width, const int height, const int colors, void *dcraw, dcraw_data *h) /*UF*/
 {
     int code[16][16][32], size = 16, *ip, sum[4];
     int f, c, i, x, y, row, col, shift, color;
     ushort *pix;
 
     dcraw_message(dcraw, DCRAW_VERBOSE, _("Bilinear interpolation...\n")); /*UF*/
-#ifdef UFRAW_X_TRANS
     if (filters == 9) size = 6;
-#endif
-    border_interpolate_INDI(height, width, image, filters, colors, 1);
+    border_interpolate_INDI(height, width, image, filters, colors, 1, h);
     for (row = 0; row < size; row++) {
         for (col = 0; col < size; col++) {
             ip = code[row][col] + 1;
-            f = fcol_INDI(filters, row, col);
+            f = fcol_INDI(filters, row, col, h->top_margin, h->left_margin, h->xtrans);
             memset(sum, 0, sizeof sum);
             for (y = -1; y <= 1; y++)
                 for (x = -1; x <= 1; x++) {
                     shift = (y == 0) + (x == 0);
-                    color = fcol_INDI(filters, row + y, col + x);
+                    color = fcol_INDI(filters, row + y, col + x, h->top_margin, h->left_margin, h->xtrans);
                     if (color == f) continue;
                     *ip++ = (width * y + x) * 4 + color;
                     *ip++ = shift;
@@ -352,7 +337,7 @@ void CLASS lin_interpolate_INDI(ushort(*image)[4], const unsigned filters,
    Gradients are numbered clockwise from NW=0 to W=7.
  */
 void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
-                                const int width, const int height, const int colors, void *dcraw) /*UF*/
+                                const int width, const int height, const int colors, void *dcraw, dcraw_data *h) /*UF*/
 {
     static const signed char *cp, terms[] = {
         -2, -2, +0, -1, 0, 0x01, -2, -2, +0, +0, 1, 0x01, -2, -1, -1, +0, 0, 0x01,
@@ -384,13 +369,11 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     int g, diff, thold, num, c;
     ushort rowtmp[4][width * 4];
 
-    lin_interpolate_INDI(image, filters, width, height, colors, dcraw); /*UF*/
+    lin_interpolate_INDI(image, filters, width, height, colors, dcraw, h); /*UF*/
     dcraw_message(dcraw, DCRAW_VERBOSE, _("VNG interpolation...\n")); /*UF*/
 
     if (filters == 1) prow = pcol = 16;
-#ifdef UFRAW_X_TRANS
     if (filters == 9) prow = pcol =  6;
-#endif
     int *ipalloc = ip = (int *) calloc(prow * pcol, 1280);
     merror(ip, "vng_interpolate()");
     for (row = 0; row < prow; row++)		/* Precalculate for VNG */
@@ -403,9 +386,9 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                 x2 = *cp++;
                 weight = *cp++;
                 grads = *cp++;
-                color = fcol_INDI(filters, row + y1, col + x1);
-                if (fcol_INDI(filters, row + y2, col + x2) != color) continue;
-                diag = (fcol_INDI(filters, row, col + 1) == color && fcol_INDI(filters, row + 1, col) == color) ? 2 : 1;
+                color = fcol_INDI(filters, row + y1, col + x1, h->top_margin, h->left_margin, h->xtrans);
+                if (fcol_INDI(filters, row + y2, col + x2, h->top_margin, h->left_margin, h->xtrans) != color) continue;
+                diag = (fcol_INDI(filters, row, col + 1, h->top_margin, h->left_margin, h->xtrans) == color && fcol_INDI(filters, row + 1, col, h->top_margin, h->left_margin, h->xtrans) == color) ? 2 : 1;
                 if (abs(y1 - y2) == diag && abs(x1 - x2) == diag) continue;
                 *ip++ = (y1 * width + x1) * 4 + color;
                 *ip++ = (y2 * width + x2) * 4 + color;
@@ -419,8 +402,8 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                 y = *cp++;
                 x = *cp++;
                 *ip++ = (y * width + x) * 4;
-                color = fcol_INDI(filters, row, col);
-                if (fcol_INDI(filters, row + y, col + x) != color && fcol_INDI(filters, row + y * 2, col + x * 2) == color)
+                color = fcol_INDI(filters, row, col, h->top_margin, h->left_margin, h->xtrans);
+                if (fcol_INDI(filters, row + y, col + x, h->top_margin, h->left_margin, h->xtrans) != color && fcol_INDI(filters, row + y * 2, col + x * 2, h->top_margin, h->left_margin, h->xtrans) == color)
                     *ip++ = (y * width + x) * 8 + color;
                 else
                     *ip++ = 0;
@@ -430,7 +413,7 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
 #ifdef _OPENMP
     #pragma omp parallel				\
     default(none)					\
-    shared(image,code,prow,pcol)			\
+    shared(image,code,prow,pcol,h)			\
     private(row,col,g,brow,rowtmp,pix,ip,gval,diff,gmin,gmax,thold,sum,color,num,c,t)
 #endif
     {
@@ -466,7 +449,7 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                 }
                 thold = gmin + (gmax >> 1);
                 memset(sum, 0, sizeof sum);
-                color = fcol_INDI(filters, row, col);
+                color = fcol_INDI(filters, row, col, h->top_margin, h->left_margin, h->xtrans);
                 for (num = g = 0; g < 8; g++, ip += 2) { /* Average the neighbors */
                     if (gval[g] <= thold) {
                         FORCC
@@ -501,13 +484,13 @@ void CLASS vng_interpolate_INDI(ushort(*image)[4], const unsigned filters,
 */
 void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                                 const int width, const int height,
-                                const int colors, void *dcraw)
+                                const int colors, void *dcraw, dcraw_data *h)
 {
     int dir[5] = { 1, width, -1, -width, 1 };
     int row, col, diff[2] = { 0, 0 }, guess[2], c, d, i;
     ushort(*pix)[4];
 
-    border_interpolate_INDI(height, width, image, filters, colors, 3);
+    border_interpolate_INDI(height, width, image, filters, colors, 3, h);
     dcraw_message(dcraw, DCRAW_VERBOSE, _("PPG interpolation...\n")); /*UF*/
 
 #ifdef _OPENMP
@@ -572,16 +555,16 @@ void CLASS ppg_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     }
 }
 
+#define TS 512		/* Tile Size */
+
 /*
    Adaptive Homogeneity-Directed interpolation is based on
    the work of Keigo Hirakawa, Thomas Parks, and Paul Lee.
  */
-#define TS 512		/* Tile Size */
-
 void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                                 const int width, const int height,
                                 const int colors, const float rgb_cam[3][4],
-                                void *dcraw)
+                                void *dcraw, dcraw_data *h)
 {
     int i, j, k, top, left, row, col, tr, tc, c, d, val, hm[2];
     ushort(*pix)[4], (*rix)[3];
@@ -615,7 +598,7 @@ void CLASS ahd_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                 for (xyz_cam[i][j] = k = 0; k < 3; k++)
                     xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65_white[i];
 
-        border_interpolate_INDI(height, width, image, filters, colors, 5);
+        border_interpolate_INDI(height, width, image, filters, colors, 5, h);
         buffer = (char *) malloc(26 * TS * TS); /* 1664 kB */
         merror(buffer, "ahd_interpolate()");
         rgb  = (ushort(*)[TS][TS][3]) buffer;

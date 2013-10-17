@@ -31,7 +31,7 @@ extern "C" {
         void *dcraw;
         FILE *ifp;
         int width, height, colors, fourColorFilters, filters, raw_color;
-        int flip, shrink;
+        int top_margin, left_margin, flip, shrink;
         double pixel_aspect;
         dcraw_image_data raw;
         dcraw_image_type thresholds;
@@ -41,7 +41,7 @@ extern "C" {
         double fuji_step;
         int toneCurveSize, toneCurveOffset;
         int toneModeSize, toneModeOffset;
-        char *message;
+        char *message, xtrans[6][6];
         float iso_speed, shutter, aperture, focal_len;
         time_t timestamp;
         char make[80], model[80];

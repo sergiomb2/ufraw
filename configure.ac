@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.179 2013/10/06 05:00:15 nkbj Exp $
+dnl $Id: configure.ac,v 1.180 2013/10/17 04:30:17 nkbj Exp $
 AC_INIT(UFRaw, 0.20)
 AC_PREREQ(2.57)
 
@@ -351,13 +351,6 @@ AC_ARG_ENABLE(contrast,
   AC_DEFINE(UFRAW_CONTRAST, 1, Contrast setting option enabled),
   enable_contrast=no)
 AC_MSG_RESULT($enable_contrast)
-
-AC_MSG_CHECKING(whether to enable support for the FUJIFILM 'X-Trans' sensor)
-AC_ARG_ENABLE(x_trans,
-  [  --enable-x-trans        enable support for the FUJIFILM 'X-Trans' sensor],
-  AC_DEFINE(UFRAW_X_TRANS, 1, FUJIFILM 'X-Trans' sensor support enabled),
-  enable_x_trans=no)
-AC_MSG_RESULT($enable_x_trans)
 
 AC_MSG_CHECKING(whether to enable 'None' interpolation)
 AC_ARG_ENABLE(interp_none,
