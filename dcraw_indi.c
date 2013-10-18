@@ -237,6 +237,7 @@ void CLASS scale_colors_INDI(const int maximum, const int black,
         dcraw_message(dcraw, DCRAW_NO_CAMERA_WB,
                       _("%s: Cannot use camera white balance.\n"), ifname_display);
     }
+    if (pre_mul[1] == 0) pre_mul[1] = 1;
     if (pre_mul[3] == 0) pre_mul[3] = colors < 4 ? pre_mul[1] : 1;
     for (dmin = DBL_MAX, dmax = c = 0; c < 4; c++) {
         if (dmin > pre_mul[c])
