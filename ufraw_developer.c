@@ -284,8 +284,6 @@ static cmsHPROFILE create_contrast_saturation_profile(double contrast,
 #ifdef HAVE_LCMS2
     cmsPipeline* Pipeline = NULL;
     cmsStage* CLUT = NULL;
-    cmsUInt32Number Dimensions[MAX_INPUT_DIMENSIONS];
-    int i;
 
     hICC = cmsCreateProfilePlaceholder(NULL);
     if (hICC == NULL) return NULL; // can't allocate
@@ -299,10 +297,9 @@ static cmsHPROFILE create_contrast_saturation_profile(double contrast,
     Pipeline = cmsPipelineAlloc(NULL, 3, 3);
     if (!Pipeline) goto error_out;
 
-    for (i = 0; i < MAX_INPUT_DIMENSIONS; i++) Dimensions[i] = 11;
-    CLUT = cmsStageAllocCLut16bitGranular(NULL, Dimensions, 3, 3, NULL);
-    if (!CLUT ||
-            !cmsStageSampleCLut16bit(CLUT, contrast_saturation_sampler, &cs, 0))
+    if (!(CLUT = cmsStageAllocCLut16bit(NULL, 11, 3, 3, NULL)))
+        goto error_out;
+    if (!cmsStageSampleCLut16bit(CLUT, contrast_saturation_sampler, &cs, 0))
         goto error_out;
 
 #if LCMS_VERSION >= 2050
@@ -313,8 +310,8 @@ static cmsHPROFILE create_contrast_saturation_profile(double contrast,
 #endif
 
     // Create tags
-    cmsWriteTag(hICC, cmsSigMediaWhitePointTag, (void *) cmsD50_XYZ());
-    cmsWriteTag(hICC, cmsSigAToB0Tag, (void *) Pipeline);
+    cmsWriteTag(hICC, cmsSigMediaWhitePointTag, cmsD50_XYZ());
+    cmsWriteTag(hICC, cmsSigAToB0Tag, Pipeline);
 
     // Pipeline is already on virtual profile
     cmsPipelineFree(Pipeline);
@@ -407,8 +404,6 @@ static cmsHPROFILE create_adjustment_profile(const developer_data *d)
 #ifdef HAVE_LCMS2
     cmsPipeline* Pipeline = NULL;
     cmsStage* CLUT = NULL;
-    cmsUInt32Number Dimensions[MAX_INPUT_DIMENSIONS];
-    int i;
 
     hICC = cmsCreateProfilePlaceholder(NULL);
     if (hICC == NULL) return NULL; // can't allocate
@@ -422,12 +417,11 @@ static cmsHPROFILE create_adjustment_profile(const developer_data *d)
     Pipeline = cmsPipelineAlloc(NULL, 3, 3);
     if (!Pipeline) goto error_out;
 
-    for (i = 0; i < MAX_INPUT_DIMENSIONS; i++) Dimensions[i] = 33;
-    CLUT = cmsStageAllocCLut16bitGranular(NULL, Dimensions, 3, 3, NULL);
+    if (!(CLUT = cmsStageAllocCLut16bit(NULL, 11, 3, 3, NULL)))
+        goto error_out;
 
-    if (!CLUT ||
-            !cmsStageSampleCLut16bit(CLUT, luminance_adjustment_sampler,
-                                     (void*)d, 0))
+    if (!cmsStageSampleCLut16bit(CLUT, luminance_adjustment_sampler,
+                                 (void*)d, 0))
         goto error_out;
 
 #if LCMS_VERSION >= 2050
@@ -438,8 +432,8 @@ static cmsHPROFILE create_adjustment_profile(const developer_data *d)
 #endif
 
     // Create tags
-    cmsWriteTag(hICC, cmsSigMediaWhitePointTag, (void *) cmsD50_XYZ());
-    cmsWriteTag(hICC, cmsSigAToB0Tag, (void *) Pipeline);
+    cmsWriteTag(hICC, cmsSigMediaWhitePointTag, cmsD50_XYZ());
+    cmsWriteTag(hICC, cmsSigAToB0Tag, Pipeline);
 
     // Pipeline is already on virtual profile
     cmsPipelineFree(Pipeline);
