@@ -5804,6 +5804,7 @@ guess_cfa_pc:
 	break;
       case 61450:
 	blrr = blrc = 2;
+	if (filters == UINT_MAX) filters = 0x94949494;
       case 50714:			/* BlackLevel */
 	black = getreal(type);
 	if ((unsigned)(filters+1) < 1000) break;
