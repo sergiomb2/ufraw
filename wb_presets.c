@@ -6527,6 +6527,18 @@ const wb_data wb_preset[] = {
   { "SONY", "DSLR-A900", Flash, 0,		{ 2.910156, 1, 1.183594, 0 } },
   { "SONY", "DSLR-A900", Flash, 3,		{ 3.183594, 1, 1.062500, 0 } },
 
+  // firmware ILCE-7 (A7) Ver 1.0.1
+  { "SONY", "ILCE-7", Daylight, 0,		{ 2.398438, 1, 1.464844, 0 } },
+  { "SONY", "ILCE-7", Shade, 0,			{ 2.871094, 1, 1.210938, 0 } },
+  { "SONY", "ILCE-7", Cloudy, 0,		{ 2.597656, 1, 1.347656, 0 } },
+  { "SONY", "ILCE-7", Incandescent, 0,		{ 1.464844, 1, 2.621094, 0 } },
+  { "SONY", "ILCE-7", WarmWhiteFluorescent, 0,	{ 1.703125, 1, 2.605469, 0 } },
+  { "SONY", "ILCE-7", CoolWhiteFluorescent, 0,	{ 2.246094, 1, 2.117188, 0 } },
+  { "SONY", "ILCE-7", DayWhiteFluorescent, 0,	{ 2.296875, 1, 1.589844, 0 } },
+  { "SONY", "ILCE-7", DaylightFluorescent, 0,	{ 2.578125, 1, 1.382813, 0 } },
+  { "SONY", "ILCE-7", Flash, 0,			{ 2.648438, 1, 1.324219, 0 } },
+  { "SONY", "ILCE-7", "5500K", 0,		{ 2.214844, 1, 1.406250, 0 } },
+
   { "SONY", "NEX-3", Daylight, -3,		{ 2.0742, 1, 1.6289, 0 } },
   { "SONY", "NEX-3", Daylight, -2,		{ 2.1328, 1, 1.5742, 0 } },
   { "SONY", "NEX-3", Daylight, -1,		{ 2.1914, 1, 1.5195, 0 } },
