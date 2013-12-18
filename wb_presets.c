@@ -5729,6 +5729,17 @@ const wb_data wb_preset[] = {
   { "RICOH", "Caplio GX100", Incandescent, 0,	{ 1.520002, 1, 2.520003, 0 } },
   { "RICOH", "Caplio GX100", Fluorescent, 0,	{ 1.840001, 1, 1.970001, 0 } },
 
+  /* RICOH PENTAX K-3 Firmware version 1.00 */
+  { "RICOH", "PENTAX K-3", Daylight, 0,		{ 2.31250, 1, 1.48047, 0 } },
+  { "RICOH", "PENTAX K-3", Shade, 0,		{ 2.78516, 1, 1.16797, 0 } },
+  { "RICOH", "PENTAX K-3", Cloudy, 0,		{ 2.49219, 1, 1.35156, 0 } },
+  { "RICOH", "PENTAX K-3", Tungsten, 0,		{ 1.35938, 1, 2.74609, 0 } },
+  { "RICOH", "PENTAX K-3", DaylightFluorescent, 0, { 2.71094, 1, 1.51953, 0 } },
+  { "RICOH", "PENTAX K-3", DayWhiteFluorescent, 0, { 2.30469, 1, 1.70312, 0 } },
+  { "RICOH", "PENTAX K-3", WhiteFluorescent, 0,	{ 2.07031, 1, 2.03516, 0 } },
+  { "RICOH", "PENTAX K-3", WarmWhiteFluorescent, 0, { 1.74609, 1, 2.53125, 0 } },
+  { "RICOH", "PENTAX K-3", Flash, 0,		{ 2.56641, 1, 1.31641, 0 } },
+
   { "SAMSUNG", "EX1", Daylight, 0,		{ 1.8711, 1, 2.0039, 0 } },
   { "SAMSUNG", "EX1", Cloudy, 0,		{ 2.3672, 1, 1.6797, 0 } },
   { "SAMSUNG", "EX1", DaylightFluorescent, 0,	{ 1.9492, 1, 2.0586, 0 } },
