@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * wb_presets.c - White balance preset values for various cameras
- * Copyright 2004-2013 by Udi Fuchs
+ * Copyright 2004-2014 by Udi Fuchs
  *
  * Thanks goes for all the people who sent in the preset values
  * for their cameras.

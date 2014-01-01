@@ -1,6 +1,6 @@
 /***************************************************
  * curveeditor_widget.h - a curve editor widget for GTK+
- * Copyright 2004-2013 by Shawn Freeman, Udi Fuchs
+ * Copyright 2004-2014 by Shawn Freeman, Udi Fuchs
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

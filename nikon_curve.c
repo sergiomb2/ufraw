@@ -1,7 +1,7 @@
 /***************************************************
  nikon_curve.c - read Nikon NTC/NCV files
 
- Copyright 2004-2013 by Shawn Freeman, Udi Fuchs
+ Copyright 2004-2014 by Shawn Freeman, Udi Fuchs
 
  This program reads in a Nikon NTC/NCV file,
  interperates it's tone curve, and writes out a
