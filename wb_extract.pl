@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: wb_extract.pl,v 1.6 2013/10/15 14:30:10 nkbj Exp $
+# $Id: wb_extract.pl,v 1.7 2014/01/05 13:45:10 nkbj Exp $
 
 # This program helps to prepare white balance preset lines for
 # wb_presets.c.  To add a new camera, take exposures with every white
@@ -30,9 +30,15 @@ if (@ARGV < 1) {
 my($const_WB);
 $const_WB = 0;
 
+my($print_fw);
+$print_fw = 0;
+
 for my $file (@ARGV) {
   if ($file eq "-const") {
     $const_WB = 1;
+    next
+  } elsif ($file eq "-printfw") {
+    $print_fw = 1;
     next
   }
 
@@ -40,13 +46,21 @@ for my $file (@ARGV) {
   $mulgreen = 1;  # default value for green balance
   $wbfinetune = $wbfinetune_1 = 0, $mulred = -1, $mulblue = -1;  # avoid warnings about uninitialized vars
 
-  open(EXIFTOOL, "exiftool -s -t -Model -CanonModelID -SonyModelID -FirmwareVersion -Software -ColorBalance1 -RedBalance -BlueBalance -WhiteBalance -WBShiftAB -WBBracketValueAB -\"WB_RGGB*\" $file|") 
+  open(EXIFTOOL, "exiftool -s -t -Model -CanonModelID -SonyModelID -FirmwareVersion -Software -ColorBalance1 -RedBalance -BlueBalance -WhiteBalance -WBShiftAB -WBBracketValueAB -\"WB_RGGB*\" -ColorTemperature $file|") 
   or die "can't open $file: $!";
   while (my $line = <EXIFTOOL>) {
     $line =~ /([^\t]+)\t(.*)/ or next;
     my ($field, $value) = ($1, $2);
+    # debug: show field
+    # print $field . "\n";
     if ($field eq "Model") {
       ($make, $model) = split(/ +/, $value);
+      # exiftool's -Make and -Model are correct, but this should not
+      # cause any regression
+      if ($make eq "X-E1") {
+        $model = $make;
+        $make = "FUJIFILM";
+      }
     } elsif ($field eq "CanonModelID") {
       $model = $value;
     } elsif ($field eq "SonyModelID") {
@@ -58,12 +72,16 @@ for my $file (@ARGV) {
     } elsif ($field eq "ColorBalance1") {   # Field for D200
       my $mul_unknown;
       ($mulred, $mulblue, $mulgreen, $mul_unknown) = split(/ +/, $value);
-    } elsif ($field eq "RedBalance") {   # Field for D70 (red)
+    } elsif ($field eq "RedBalance") {   # Field for D70 and X-E1 (red)
       $mulred = $value;
-    } elsif ($field eq "BlueBalance") {   # Field for D70 (blue)
+    } elsif ($field eq "BlueBalance") {   # Field for D70 and X-E1 (blue)
       $mulblue = $value;
     } elsif ($field eq "WhiteBalance") {
-      $wbname = $value;
+      if ($model eq "X-E1" && $value eq "Unknown (0x600)") {
+        $wbname = "Underwater";
+      } else {
+        $wbname = $value;
+      }
     } elsif ($field eq "WhiteBalanceFineTune") {
       $wbfinetune = $value;
     } elsif ($field eq "WBShiftAB") {
@@ -74,6 +92,8 @@ for my $file (@ARGV) {
       my ($mul_tmp1, $mul_tmp2, $mul_tmp3, $mul_tmp4) = split(/ +/, $value);
       $mulred = ($mul_tmp1 / $mul_tmp2);
       $mulblue = ($mul_tmp4 / $mul_tmp3);
+    } elsif ($field eq "ColorTemperature" && $wbname eq "Kelvin" ) { # Field for X-E1
+      $wbname = sprintf "%dK", $value;
     } elsif ($field =~ /WB_RGGBLevels/) { # Get embedded whitebalance values
       $field =~ s/^WB_RGGBLevels//; # Truncate for whitebalance-name
       my ($mul_tmp1, $mul_tmp2, $mul_tmp3, $mul_tmp4) = split(/ +/, $value);
@@ -96,12 +116,25 @@ for my $file (@ARGV) {
   # Fix names for consistency across Nikon cameras (D70 and D2X use "Direct sunlight")
   $wbname =~ s/^Sunny$/Direct sunlight/;
 
-  # printf "  /* $make $model Firmware Version $fw_version */\n";
+  # Fix names for wb_presets.c
+  if ($make eq "FUJIFILM") {
+    if ($model eq "X-E1") {
+      # The manual calls it "Shade", but exiftool shows it as "Cloudy".
+      $wbname =~ s/^Cloudy$/Shade/;
+    }
+    $wbname =~ s/^Daylight Fluorescent$/DaylightFluorescent/;
+    $wbname =~ s/^Day White Fluorescent$/WarmWhiteFluorescent/;
+    $wbname =~ s/^White Fluorescent$/CoolWhiteFluorescent/;
+  }
+
+  if ($print_fw eq 1) {
+    printf "  /* $make $model Firmware Version $fw_version */\n";
+  }
  
   # Format and print the line
   my $result;
   $result = sprintf "  { \"%s\", \"%s\", ", $make, $model;
-  if ($const_WB eq 1) {
+  if ($const_WB eq 1 && $wbname !~ "K") {
     $result .= sprintf "%s, ", $wbname;
   } else {
     $result .= sprintf "\"%s\", ", $wbname;
