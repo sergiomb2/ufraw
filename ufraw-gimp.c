@@ -435,8 +435,6 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
                           uf->outputExifBufLen);
         } else {
             GimpParasite *exif_parasite;
-            GimpParam    *return_vals;
-            gint          nreturn_vals;
 
             exif_parasite = gimp_parasite_new("exif-data",
                                               GIMP_PARASITE_PERSISTENT, uf->outputExifBufLen, uf->outputExifBuf);
@@ -447,15 +445,21 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
 #endif
             gimp_parasite_free(exif_parasite);
 
-            return_vals = gimp_run_procedure("plug-in-metadata-decode-exif",
-                                             &nreturn_vals,
-                                             GIMP_PDB_IMAGE, uf->gimpImage,
-                                             GIMP_PDB_INT32, 7,
-                                             GIMP_PDB_INT8ARRAY, "unused",
-                                             GIMP_PDB_END);
-            if (return_vals[0].data.d_status != GIMP_PDB_SUCCESS) {
-                g_warning("UFRaw Exif -> XMP Merge failed");
+#if defined(GIMP_CHECK_VERSION) && GIMP_CHECK_VERSION(2,8,0)
+            {
+                GimpParam    *return_vals;
+                gint          nreturn_vals;
+                return_vals = gimp_run_procedure("plug-in-metadata-decode-exif",
+                                                 &nreturn_vals,
+                                                 GIMP_PDB_IMAGE, uf->gimpImage,
+                                                 GIMP_PDB_INT32, 7,
+                                                 GIMP_PDB_INT8ARRAY, "unused",
+                                                 GIMP_PDB_END);
+                if (return_vals[0].data.d_status != GIMP_PDB_SUCCESS) {
+                    g_warning("UFRaw Exif -> XMP Merge failed");
+                }
             }
+#endif
         }
     }
     /* Create "icc-profile" parasite from output profile
