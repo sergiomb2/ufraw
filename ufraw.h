@@ -45,46 +45,48 @@
 /* An impossible value for conf float values */
 #define NULLF -10000.0
 
-/* Options, like auto-adjust buttons can be in 3 states. Enabled and disabled
- * are obvious. Apply means that the option was selected and some function
- * has to act accourdingly, before changing to one of the first two states */
-enum { disabled_state, enabled_state, apply_state };
-
-extern const char uf_spot_wb[];
-extern const char uf_manual_wb[];
-extern const char uf_camera_wb[];
-extern const char uf_auto_wb[];
-
-/*
- * UFObject Definitions for ufraw_settings.cc
- */
-
-extern UFName ufWB;
-extern UFName ufPreset;
-extern UFName ufWBFineTuning;
-extern UFName ufTemperature;
-extern UFName ufGreen;
-extern UFName ufChannelMultipliers;
-extern UFName ufLensfunAuto;
-extern UFName ufLensfun;
-extern UFName ufCameraModel;
-extern UFName ufLensModel;
-extern UFName ufFocalLength;
-extern UFName ufAperture;
-extern UFName ufDistance;
-extern UFName ufTCA;
-extern UFName ufVignetting;
-extern UFName ufDistortion;
-extern UFName ufModel;
-extern UFName ufLensGeometry;
-extern UFName ufTargetLensGeometry;
-extern UFName ufRawImage;
-extern UFName ufRawResources;
-extern UFName ufCommandLine;
-
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
+
+    /* Options, like auto-adjust buttons can be in 3 states. Enabled and disabled
+     * are obvious. Apply means that the option was selected and some function
+     * has to act accourdingly, before changing to one of the first two states */
+    enum {
+        disabled_state, enabled_state, apply_state
+    };
+
+    extern const char uf_spot_wb[];
+    extern const char uf_manual_wb[];
+    extern const char uf_camera_wb[];
+    extern const char uf_auto_wb[];
+
+    /*
+     * UFObject Definitions for ufraw_settings.cc
+     */
+
+    extern UFName ufWB;
+    extern UFName ufPreset;
+    extern UFName ufWBFineTuning;
+    extern UFName ufTemperature;
+    extern UFName ufGreen;
+    extern UFName ufChannelMultipliers;
+    extern UFName ufLensfunAuto;
+    extern UFName ufLensfun;
+    extern UFName ufCameraModel;
+    extern UFName ufLensModel;
+    extern UFName ufFocalLength;
+    extern UFName ufAperture;
+    extern UFName ufDistance;
+    extern UFName ufTCA;
+    extern UFName ufVignetting;
+    extern UFName ufDistortion;
+    extern UFName ufModel;
+    extern UFName ufLensGeometry;
+    extern UFName ufTargetLensGeometry;
+    extern UFName ufRawImage;
+    extern UFName ufRawResources;
+    extern UFName ufCommandLine;
 
     UFObject *ufraw_image_new();
 #ifdef HAVE_LENSFUN
