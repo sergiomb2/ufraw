@@ -145,6 +145,12 @@ extern "C" {
         FORC3 if ((unsigned)i > d->cblack[c]) i = d->cblack[c];
         FORC4 d->cblack[c] -= i;
         d->black += i;
+        i = d->cblack[6];
+        FORC(d->cblack[4] * d->cblack[5])
+        if (i > d->cblack[6 + c]) i = d->cblack[6 + c];
+        FORC(d->cblack[4] * d->cblack[5])
+        d->cblack[6 + c] -= i;
+        d->black += i;
         h->black = d->black;
         h->shrink = d->shrink = (h->filters != 0);
         h->pixel_aspect = d->pixel_aspect;
@@ -222,11 +228,6 @@ extern "C" {
         }
         h->raw.height = d->iheight = (h->height + h->shrink) >> h->shrink;
         h->raw.width = d->iwidth = (h->width + h->shrink) >> h->shrink;
-        /* copied from the end of dcraw's identify() */
-        if (d->filters > 999 && d->colors == 3) {
-            d->filters |= ((d->filters >> 2 & 0x22222222) |
-                           (d->filters << 2 & 0x88888888)) & d->filters << 1;
-        }
         h->raw.colors = d->colors;
         h->fourColorFilters = d->filters;
         if (d->filters || d->colors == 1) {
@@ -270,6 +271,12 @@ extern "C" {
         i = d->cblack[3];
         FORC3 if ((unsigned)i > d->cblack[c]) i = d->cblack[c];
         FORC4 d->cblack[c] -= i;
+        d->black += i;
+        i = d->cblack[6];
+        FORC(d->cblack[4] * d->cblack[5])
+        if (i > d->cblack[6 + c]) i = d->cblack[6 + c];
+        FORC(d->cblack[4] * d->cblack[5])
+        d->cblack[6 + c] -= i;
         d->black += i;
         h->black = d->black;
         d->dcraw_message(DCRAW_VERBOSE, _("Black: %d, Maximum: %d\n"),

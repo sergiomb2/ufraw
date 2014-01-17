@@ -1,6 +1,6 @@
 /*
    dcraw.h - Dave Coffin's raw photo decoder - header for C++ adaptation
-   Copyright 1997-2013 by Dave Coffin, dcoffin a cybercom o net
+   Copyright 1997-2014 by Dave Coffin, dcoffin a cybercom o net
    Copyright 2004-2014 by Udi Fuchs, udifuchs a gmail o com
 
    This program is free software; you can redistribute it and/or modify
@@ -53,13 +53,13 @@ public:
     unsigned thumb_length, meta_length, profile_length;
     unsigned thumb_misc, *oprof, fuji_layout, shot_select, multi_out;
     unsigned tiff_nifds, tiff_samples, tiff_bps, tiff_compress;
-    unsigned black, cblack[4], maximum, mix_green, raw_color, zero_is_bad;
+    unsigned black, maximum, mix_green, raw_color, zero_is_bad;
     unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
     unsigned tile_width, tile_length, gpsdata[32], load_flags;
     unsigned flip, tiff_flip, filters, colors;
     ushort raw_height, raw_width, height, width, top_margin, left_margin;
     ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
-    ushort *raw_image, (*image)[4];
+    ushort *raw_image, (*image)[4], cblack[4102];
     ushort white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
     double pixel_aspect, aber[4], gamm[6];
     float bright, user_mul[4], threshold;
@@ -225,7 +225,7 @@ public:
     void subtract(const char *fname);
     void gamma_curve(double pwr, double ts, int mode, int imax);
     void pseudoinverse(double(*in)[3], double(*out)[3], int size);
-    void cam_xyz_coeff(double cam_xyz[4][3]);
+    void cam_xyz_coeff(float rgb_cam[3][4], double cam_xyz[4][3]);
     void colorcheck();
     void hat_transform(float *temp, float *base, int st, int size, int sc);
     void wavelet_denoise();
