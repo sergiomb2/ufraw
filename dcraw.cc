@@ -661,7 +661,7 @@ unsigned CLASS getbithuff (int nbits, ushort *huff)
   if (nbits < 0)
     return bitbuf = vbits = reset = 0;
   if (nbits == 0 || vbits < 0) return 0;
-  while (!reset && vbits < nbits && (c = fgetc(ifp)) != EOF &&
+  while (!reset && vbits < nbits && (c = fgetc(ifp)) != (unsigned) EOF &&
     !(reset = zero_after_ff && c == 0xff && fgetc(ifp))) {
     bitbuf = (bitbuf << 8) + (uchar) c;
     vbits += 8;
@@ -3078,6 +3078,10 @@ int CLASS foveon_fixed (void *ptr, int size, const char *name)
   return 1;
 }
 
+#if defined(__GNUC__) && (__GNUC__ == 4 && __GNUC_MINOR__ == 7)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
 float CLASS foveon_avg (short *pix, int range[2], float cfilt)
 {
   int i;
@@ -3091,6 +3095,9 @@ float CLASS foveon_avg (short *pix, int range[2], float cfilt)
   if (range[1] - range[0] == 1) return sum/2;
   return (sum - min - max) / (range[1] - range[0] - 1);
 }
+#if defined(__GNUC__) && (__GNUC__ == 4 && __GNUC_MINOR__ == 7)
+#pragma GCC diagnostic pop
+#endif
 
 short * CLASS foveon_make_curve (double max, double mul, double filt)
 {
@@ -6634,7 +6641,7 @@ void CLASS parse_redcine()
     dcraw_message (DCRAW_WARNING,
 	    _("%s: Tail is missing, parsing from head...\n"), ifname_display);
     fseek (ifp, 0, SEEK_SET);
-    while ((len = get4()) != EOF) {
+    while ((len = get4()) != (unsigned) EOF) {
       if (get4() == 0x52454456)
 	if (is_raw++ == shot_select)
 #ifdef HAVE_FSEEKO
