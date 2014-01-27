@@ -399,7 +399,7 @@ int ufraw_write_image(ufraw_data *uf)
                      ? PHOTOMETRIC_MINISBLACK : PHOTOMETRIC_RGB);
 #ifdef HAVE_LIBZ
         if (uf->conf->losslessCompress) {
-            TIFFSetField(out, TIFFTAG_COMPRESSION, COMPRESSION_DEFLATE);
+            TIFFSetField(out, TIFFTAG_COMPRESSION, COMPRESSION_ADOBE_DEFLATE);
             TIFFSetField(out, TIFFTAG_ZIPQUALITY, 9);
             TIFFSetField(out, TIFFTAG_PREDICTOR, 2);
         } else
