@@ -86,7 +86,8 @@ public:
     } tiff_ifd[10];
 
     struct ph1 {
-        int format, key_off, black, black_off, split_col, tag_21a;
+        int format, key_off, tag_21a;
+        int black, split_col, black_col, split_row, black_row;
         float tag_210;
     } ph1;
 
@@ -129,6 +130,7 @@ public:
     float int_to_float(int i);
     double getreal(int type);
     void read_shorts(ushort *pixel, unsigned count);
+    void cubic_spline(const int *x_, const int *y_, const int len);
     void canon_600_fixed_wb(int temp);
     int canon_600_color(int ratio[2], int mar);
     void canon_600_auto_wb();
@@ -198,6 +200,7 @@ public:
     void sony_arw_load_raw();
     void sony_arw2_load_raw();
     void samsung_load_raw();
+    void samsung2_load_raw();
     void smal_decode_segment(unsigned seg[2][2], int holes);
     void smal_v6_load_raw();
     int median4(int *p);
