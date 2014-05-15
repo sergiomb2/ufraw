@@ -1957,6 +1957,7 @@ int ufraw_set_wb(ufraw_data *uf)
     /* For uf_manual_wb we calculate chanMul from the temperature/green. */
     /* For all other it is the other way around. */
     if (ufarray_is_equal(wb, uf_manual_wb)) {
+        double chanMulArray[4] = {1, 1, 1, 1 };
         Temperature_to_RGB(ufnumber_value(temperature), rgbWB);
         rgbWB[1] = rgbWB[1] / ufnumber_value(green);
         /* Suppose we shot a white card at some temperature:
@@ -1974,12 +1975,10 @@ int ufraw_set_wb(ufraw_data *uf)
          */
         if (uf->raw_color) {
             /* If there is no color matrix it is simple */
-            double chanMulArray[4];
             for (c = 0; c < 3; c++)
                 chanMulArray[c] = raw->pre_mul[c] / rgbWB[c];
             ufnumber_array_set(chanMul, chanMulArray);
         } else {
-            double chanMulArray[4] = {1, 1, 1, 1 };
             for (c = 0; c < uf->colors; c++) {
                 double chanMulInv = 0;
                 for (cc = 0; cc < 3; cc++)
