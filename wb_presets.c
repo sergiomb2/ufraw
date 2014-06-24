@@ -4944,6 +4944,14 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "E-P3", Fluorescent, 0,		{ 1.9766, 1, 1.9766, 0 } },
   { "OLYMPUS", "E-P3", Flash, 0,		{ 2.2109, 1, 1.3672, 0 } },
 
+  /* Firmware version 1.5 */
+  { "OLYMPUS", "E-P5", Daylight, 0,		{ 1.945313, 1, 1.796875, 0 } },
+  { "OLYMPUS", "E-P5", Shade, 0,		{ 2.273438, 1, 1.406250, 0 } },
+  { "OLYMPUS", "E-P5", Cloudy, 0,		{ 2.093750, 1, 1.625000, 0 } },
+  { "OLYMPUS", "E-P5", Incandescent, 0,		{ 1.203125, 1, 3.218750, 0 } },
+  { "OLYMPUS", "E-P5", Fluorescent, 0,		{ 1.890625, 1, 2.585938, 0 } },
+  { "OLYMPUS", "E-P5", Flash, 0,		{ 2.218750, 1, 1.531250, 0 } },
+
   /* Firmware version 1.2 */
   /* -7/+7 fine tuning is -7/+7 in amber-blue and zero in green-magenta */
   { "OLYMPUS", "E-PL1", Daylight, -7,		{ 1.492188, 1, 1.531250, 0 } },
