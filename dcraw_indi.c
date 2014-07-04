@@ -93,7 +93,7 @@ int CLASS fcol_INDI(const unsigned filters, const int row, const int col,
     };
 
     if (filters == 1) return filter[(row + top_margin) & 15][(col + left_margin) & 15];
-    if (filters == 9) return xtrans[(row + top_margin + 6) % 6][(col + left_margin + 6) % 6];
+    if (filters == 9) return xtrans[(row + 6) % 6][(col + 6) % 6];
     return FC(row, col);
 }
 
