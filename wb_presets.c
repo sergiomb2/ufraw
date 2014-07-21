@@ -2053,6 +2053,24 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "X100", "9100K", 0,		{ 1.8940, 1, 1.0464, 0 } },
   { "FUJIFILM", "X100", "10000K", 0,		{ 1.9503, 1, 1.0298, 0 } },
 
+  /* Fujifilm X100S firmware 1.10 */
+  { "FUJIFILM", "X100S", Daylight, 0,		{ 1.850993, 1, 1.533113, 0 } },
+  { "FUJIFILM", "X100S", Shade, 0,		{ 2.029801, 1, 1.324503, 0 } },
+  { "FUJIFILM", "X100S", DaylightFluorescent, 0, { 2.324503, 1, 1.317881, 0 } },
+  { "FUJIFILM", "X100S", WarmWhiteFluorescent, 0, { 1.976821, 1, 1.549669, 0 } },
+  { "FUJIFILM", "X100S", CoolWhiteFluorescent, 0, { 1.850993, 1, 1.933775, 0 } },
+  { "FUJIFILM", "X100S", Incandescent, 0,	{ 1.172185, 1, 2.341060, 0 } },
+  { "FUJIFILM", "X100S", Underwater, 0,		{ 1.850993, 1, 1.533113, 0 } },
+  { "FUJIFILM", "X100S", "2500K", 0,		{ 0.907285, 1, 3.331126, 0 } },
+  { "FUJIFILM", "X100S", "2700K", 0,		{ 0.976821, 1, 2.930464, 0 } },
+  { "FUJIFILM", "X100S", "3000K", 0,		{ 1.096026, 1, 2.509934, 0 } },
+  { "FUJIFILM", "X100S", "3300K", 0,		{ 1.218543, 1, 2.228477, 0 } },
+  { "FUJIFILM", "X100S", "5000K", 0,		{ 1.751656, 1, 1.559603, 0 } },
+  { "FUJIFILM", "X100S", "5000K", 0,		{ 1.751656, 1, 1.559603, 0 } },
+  { "FUJIFILM", "X100S", "5600K", 0,		{ 1.880795, 1, 1.460265, 0 } },
+  { "FUJIFILM", "X100S", "6700K", 0,		{ 2.059603, 1, 1.334437, 0 } },
+  { "FUJIFILM", "X100S", "10000K", 0,		{ 2.370861, 1, 1.132450, 0 } },
+
   /* FUJIFILM X-E1 Firmware Version 1.01 */
   // The manual calls it "Direct sunlight".
   { "FUJIFILM", "X-E1", Daylight, 0,		{ 1.821192, 1, 1.804636, 0 } },
