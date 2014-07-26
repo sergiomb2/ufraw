@@ -85,9 +85,9 @@ UFObject::operator class UFNumber&()
 }
 
 UFObject::operator const class UFNumber&() const
-    {
-        return dynamic_cast<const UFNumber &>(*this);
-    }
+{
+    return dynamic_cast<const UFNumber &>(*this);
+}
 
 UFObject::operator class UFNumberArray&()
 {
@@ -95,9 +95,9 @@ UFObject::operator class UFNumberArray&()
 }
 
 UFObject::operator const class UFNumberArray&() const
-    {
-        return dynamic_cast<const UFNumberArray &>(*this);
-    }
+{
+    return dynamic_cast<const UFNumberArray &>(*this);
+}
 
 UFObject::operator class UFString&()
 {
@@ -105,9 +105,9 @@ UFObject::operator class UFString&()
 }
 
 UFObject::operator const class UFString&() const
-    {
-        return dynamic_cast<const UFString &>(*this);
-    }
+{
+    return dynamic_cast<const UFString &>(*this);
+}
 
 UFObject::operator class UFGroup&()
 {
@@ -115,9 +115,9 @@ UFObject::operator class UFGroup&()
 }
 
 UFObject::operator const class UFGroup&() const
-    {
-        return dynamic_cast<const UFGroup &>(*this);
-    }
+{
+    return dynamic_cast<const UFGroup &>(*this);
+}
 
 UFObject::operator class UFArray&()
 {
@@ -125,9 +125,9 @@ UFObject::operator class UFArray&()
 }
 
 UFObject::operator const class UFArray&() const
-    {
-        return dynamic_cast<const UFArray &>(*this);
-    }
+{
+    return dynamic_cast<const UFArray &>(*this);
+}
 
 bool UFObject::HasParent() const
 {

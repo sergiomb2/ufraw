@@ -49,59 +49,59 @@
 extern "C" {
 #endif // __cplusplus
 
-    /* Options, like auto-adjust buttons can be in 3 states. Enabled and disabled
-     * are obvious. Apply means that the option was selected and some function
-     * has to act accourdingly, before changing to one of the first two states */
-    enum {
-        disabled_state, enabled_state, apply_state
-    };
+/* Options, like auto-adjust buttons can be in 3 states. Enabled and disabled
+ * are obvious. Apply means that the option was selected and some function
+ * has to act accourdingly, before changing to one of the first two states */
+enum {
+    disabled_state, enabled_state, apply_state
+};
 
-    extern const char uf_spot_wb[];
-    extern const char uf_manual_wb[];
-    extern const char uf_camera_wb[];
-    extern const char uf_auto_wb[];
+extern const char uf_spot_wb[];
+extern const char uf_manual_wb[];
+extern const char uf_camera_wb[];
+extern const char uf_auto_wb[];
 
-    /*
-     * UFObject Definitions for ufraw_settings.cc
-     */
+/*
+ * UFObject Definitions for ufraw_settings.cc
+ */
 
-    extern UFName ufWB;
-    extern UFName ufPreset;
-    extern UFName ufWBFineTuning;
-    extern UFName ufTemperature;
-    extern UFName ufGreen;
-    extern UFName ufChannelMultipliers;
-    extern UFName ufLensfunAuto;
-    extern UFName ufLensfun;
-    extern UFName ufCameraModel;
-    extern UFName ufLensModel;
-    extern UFName ufFocalLength;
-    extern UFName ufAperture;
-    extern UFName ufDistance;
-    extern UFName ufTCA;
-    extern UFName ufVignetting;
-    extern UFName ufDistortion;
-    extern UFName ufModel;
-    extern UFName ufLensGeometry;
-    extern UFName ufTargetLensGeometry;
-    extern UFName ufRawImage;
-    extern UFName ufRawResources;
-    extern UFName ufCommandLine;
+extern UFName ufWB;
+extern UFName ufPreset;
+extern UFName ufWBFineTuning;
+extern UFName ufTemperature;
+extern UFName ufGreen;
+extern UFName ufChannelMultipliers;
+extern UFName ufLensfunAuto;
+extern UFName ufLensfun;
+extern UFName ufCameraModel;
+extern UFName ufLensModel;
+extern UFName ufFocalLength;
+extern UFName ufAperture;
+extern UFName ufDistance;
+extern UFName ufTCA;
+extern UFName ufVignetting;
+extern UFName ufDistortion;
+extern UFName ufModel;
+extern UFName ufLensGeometry;
+extern UFName ufTargetLensGeometry;
+extern UFName ufRawImage;
+extern UFName ufRawResources;
+extern UFName ufCommandLine;
 
-    UFObject *ufraw_image_new();
+UFObject *ufraw_image_new();
 #ifdef HAVE_LENSFUN
-    UFObject *ufraw_lensfun_new();
-    void ufraw_lensfun_init(UFObject *lensfun, UFBoolean reset);
-    struct lfDatabase *ufraw_lensfun_db(); /* mount/camera/lens database */
-    const struct lfCamera *ufraw_lensfun_camera(const UFObject *lensfun);
-    void ufraw_lensfun_set_camera(UFObject *lensfun, const struct lfCamera *camera);
-    const struct lfLens *ufraw_lensfun_interpolation_lens(const UFObject *lensfun);
-    void ufraw_lensfun_set_lens(UFObject *lensfun, const struct lfLens *lens);
+UFObject *ufraw_lensfun_new();
+void ufraw_lensfun_init(UFObject *lensfun, UFBoolean reset);
+struct lfDatabase *ufraw_lensfun_db(); /* mount/camera/lens database */
+const struct lfCamera *ufraw_lensfun_camera(const UFObject *lensfun);
+void ufraw_lensfun_set_camera(UFObject *lensfun, const struct lfCamera *camera);
+const struct lfLens *ufraw_lensfun_interpolation_lens(const UFObject *lensfun);
+void ufraw_lensfun_set_lens(UFObject *lensfun, const struct lfLens *lens);
 #endif
-    struct ufraw_struct *ufraw_image_get_data(UFObject *obj);
-    void ufraw_image_set_data(UFObject *obj, struct ufraw_struct *uf);
-    UFObject *ufraw_resources_new();
-    UFObject *ufraw_command_line_new();
+struct ufraw_struct *ufraw_image_get_data(UFObject *obj);
+void ufraw_image_set_data(UFObject *obj, struct ufraw_struct *uf);
+UFObject *ufraw_resources_new();
+UFObject *ufraw_command_line_new();
 
 #ifdef __cplusplus
 } // extern "C"
@@ -384,148 +384,148 @@ extern char *ufraw_binary;
 extern "C" {
 #endif
 
-    /* prototypes for functions in ufraw_ufraw.c */
-    ufraw_data *ufraw_open(char *filename);
-    int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd);
-    int ufraw_load_raw(ufraw_data *uf);
-    int ufraw_load_darkframe(ufraw_data *uf);
-    void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode);
-    int ufraw_convert_image(ufraw_data *uf);
-    ufraw_image_data *ufraw_get_image(ufraw_data *uf, UFRawPhase phase,
-                                      gboolean bufferok);
-    ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
-            UFRawPhase phase);
-    void ufraw_close_darkframe(conf_data *uf);
-    void ufraw_close(ufraw_data *uf);
-    void ufraw_flip_orientation(ufraw_data *uf, int flip);
-    void ufraw_flip_image(ufraw_data *uf, int flip);
-    void ufraw_invalidate_layer(ufraw_data *uf, UFRawPhase phase);
-    void ufraw_invalidate_tca_layer(ufraw_data *uf);
-    void ufraw_invalidate_hotpixel_layer(ufraw_data *uf);
-    void ufraw_invalidate_denoise_layer(ufraw_data *uf);
-    void ufraw_invalidate_darkframe_layer(ufraw_data *uf);
-    void ufraw_invalidate_despeckle_layer(ufraw_data *uf);
-    void ufraw_invalidate_whitebalance_layer(ufraw_data *uf);
-    void ufraw_invalidate_smoothing_layer(ufraw_data *uf);
-    int ufraw_set_wb(ufraw_data *uf);
-    void ufraw_auto_expose(ufraw_data *uf);
-    void ufraw_auto_black(ufraw_data *uf);
-    void ufraw_auto_curve(ufraw_data *uf);
-    void ufraw_normalize_rotation(ufraw_data *uf);
-    void ufraw_unnormalize_rotation(ufraw_data *uf);
-    void ufraw_get_image_dimensions(ufraw_data *uf);
-    /* Get scaled crop coordinates in final image coordinates */
-    void ufraw_get_scaled_crop(ufraw_data *uf, UFRectangle *crop);
+/* prototypes for functions in ufraw_ufraw.c */
+ufraw_data *ufraw_open(char *filename);
+int ufraw_config(ufraw_data *uf, conf_data *rc, conf_data *conf, conf_data *cmd);
+int ufraw_load_raw(ufraw_data *uf);
+int ufraw_load_darkframe(ufraw_data *uf);
+void ufraw_developer_prepare(ufraw_data *uf, DeveloperMode mode);
+int ufraw_convert_image(ufraw_data *uf);
+ufraw_image_data *ufraw_get_image(ufraw_data *uf, UFRawPhase phase,
+                                  gboolean bufferok);
+ufraw_image_data *ufraw_convert_image_area(ufraw_data *uf, unsigned saidx,
+        UFRawPhase phase);
+void ufraw_close_darkframe(conf_data *uf);
+void ufraw_close(ufraw_data *uf);
+void ufraw_flip_orientation(ufraw_data *uf, int flip);
+void ufraw_flip_image(ufraw_data *uf, int flip);
+void ufraw_invalidate_layer(ufraw_data *uf, UFRawPhase phase);
+void ufraw_invalidate_tca_layer(ufraw_data *uf);
+void ufraw_invalidate_hotpixel_layer(ufraw_data *uf);
+void ufraw_invalidate_denoise_layer(ufraw_data *uf);
+void ufraw_invalidate_darkframe_layer(ufraw_data *uf);
+void ufraw_invalidate_despeckle_layer(ufraw_data *uf);
+void ufraw_invalidate_whitebalance_layer(ufraw_data *uf);
+void ufraw_invalidate_smoothing_layer(ufraw_data *uf);
+int ufraw_set_wb(ufraw_data *uf);
+void ufraw_auto_expose(ufraw_data *uf);
+void ufraw_auto_black(ufraw_data *uf);
+void ufraw_auto_curve(ufraw_data *uf);
+void ufraw_normalize_rotation(ufraw_data *uf);
+void ufraw_unnormalize_rotation(ufraw_data *uf);
+void ufraw_get_image_dimensions(ufraw_data *uf);
+/* Get scaled crop coordinates in final image coordinates */
+void ufraw_get_scaled_crop(ufraw_data *uf, UFRectangle *crop);
 
-    UFRectangle ufraw_image_get_subarea_rectangle(ufraw_image_data *img,
-            unsigned saidx);
-    unsigned ufraw_img_get_subarea_idx(ufraw_image_data *img, int x, int y);
+UFRectangle ufraw_image_get_subarea_rectangle(ufraw_image_data *img,
+        unsigned saidx);
+unsigned ufraw_img_get_subarea_idx(ufraw_image_data *img, int x, int y);
 
-    /* prototypes for functions in ufraw_message.c */
-    char *ufraw_get_message(ufraw_data *uf);
-    /* The following functions should only be used internally */
-    void ufraw_message_init(ufraw_data *uf);
-    void ufraw_message_reset(ufraw_data *uf);
-    void ufraw_set_error(ufraw_data *uf, const char *format, ...);
-    void ufraw_set_warning(ufraw_data *uf, const char *format, ...);
-    void ufraw_set_info(ufraw_data *uf, const char *format, ...);
-    int ufraw_get_status(ufraw_data *uf);
-    int ufraw_is_error(ufraw_data *uf);
+/* prototypes for functions in ufraw_message.c */
+char *ufraw_get_message(ufraw_data *uf);
+/* The following functions should only be used internally */
+void ufraw_message_init(ufraw_data *uf);
+void ufraw_message_reset(ufraw_data *uf);
+void ufraw_set_error(ufraw_data *uf, const char *format, ...);
+void ufraw_set_warning(ufraw_data *uf, const char *format, ...);
+void ufraw_set_info(ufraw_data *uf, const char *format, ...);
+int ufraw_get_status(ufraw_data *uf);
+int ufraw_is_error(ufraw_data *uf);
 // Old error handling, should be removed after being fully implemented.
-    char *ufraw_message(int code, const char *format, ...);
-    void ufraw_batch_messenger(char *message);
+char *ufraw_message(int code, const char *format, ...);
+void ufraw_batch_messenger(char *message);
 
-    /* prototypes for functions in ufraw_preview.c */
-    int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
-                      long(*save_func)());
-    void ufraw_focus(void *window, gboolean focus);
-    void ufraw_messenger(char *message, void *parentWindow);
+/* prototypes for functions in ufraw_preview.c */
+int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
+                  long(*save_func)());
+void ufraw_focus(void *window, gboolean focus);
+void ufraw_messenger(char *message, void *parentWindow);
 
-    /* prototypes for functions in ufraw_routines.c */
-    const char *uf_get_home_dir();
-    void uf_init_locale(const char *exename);
-    char *uf_file_set_type(const char *filename, const char *type);
-    char *uf_file_set_absolute(const char *filename);
-    /* Set locale of LC_NUMERIC to "C" to make sure that printf behaves correctly.*/
-    char *uf_set_locale_C();
-    void uf_reset_locale(char *locale);
-    char *uf_markup_buf(char *buffer, const char *format, ...);
-    double profile_default_linear(profile_data *p);
-    double profile_default_gamma(profile_data *p);
-    void Temperature_to_RGB(double T, double RGB[3]);
-    void RGB_to_Temperature(double RGB[3], double *T, double *Green);
-    int curve_load(CurveData *cp, char *filename);
-    int curve_save(CurveData *cp, char *filename);
-    char *curve_buffer(CurveData *cp);
-    /* Useful functions for handling the underappreciated Glib ptr arrays */
-    int ptr_array_insert_sorted(GPtrArray *array, const void *item, GCompareFunc compare);
-    int ptr_array_find_sorted(const GPtrArray *array, const void *item, GCompareFunc compare);
-    void ptr_array_insert_index(GPtrArray *array, const void *item, int index);
+/* prototypes for functions in ufraw_routines.c */
+const char *uf_get_home_dir();
+void uf_init_locale(const char *exename);
+char *uf_file_set_type(const char *filename, const char *type);
+char *uf_file_set_absolute(const char *filename);
+/* Set locale of LC_NUMERIC to "C" to make sure that printf behaves correctly.*/
+char *uf_set_locale_C();
+void uf_reset_locale(char *locale);
+char *uf_markup_buf(char *buffer, const char *format, ...);
+double profile_default_linear(profile_data *p);
+double profile_default_gamma(profile_data *p);
+void Temperature_to_RGB(double T, double RGB[3]);
+void RGB_to_Temperature(double RGB[3], double *T, double *Green);
+int curve_load(CurveData *cp, char *filename);
+int curve_save(CurveData *cp, char *filename);
+char *curve_buffer(CurveData *cp);
+/* Useful functions for handling the underappreciated Glib ptr arrays */
+int ptr_array_insert_sorted(GPtrArray *array, const void *item, GCompareFunc compare);
+int ptr_array_find_sorted(const GPtrArray *array, const void *item, GCompareFunc compare);
+void ptr_array_insert_index(GPtrArray *array, const void *item, int index);
 
-    /* prototypes for functions in ufraw_conf.c */
-    int conf_load(conf_data *c, const char *confFilename);
-    void conf_file_load(conf_data *conf, char *confFilename);
-    int conf_save(conf_data *c, char *confFilename, char **confBuffer);
-    /* copy default config to given instance and initialize non-const fields */
-    void conf_init(conf_data *c);
-    /* Copy the image manipulation options from *src to *dst */
-    void conf_copy_image(conf_data *dst, const conf_data *src);
-    /* Copy the transformation options from *src to *dst */
-    void conf_copy_transform(conf_data *dst, const conf_data *src);
-    /* Copy the 'save options' from *src to *dst */
-    void conf_copy_save(conf_data *dst, const conf_data *src);
-    int conf_set_cmd(conf_data *conf, const conf_data *cmd);
-    int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc);
+/* prototypes for functions in ufraw_conf.c */
+int conf_load(conf_data *c, const char *confFilename);
+void conf_file_load(conf_data *conf, char *confFilename);
+int conf_save(conf_data *c, char *confFilename, char **confBuffer);
+/* copy default config to given instance and initialize non-const fields */
+void conf_init(conf_data *c);
+/* Copy the image manipulation options from *src to *dst */
+void conf_copy_image(conf_data *dst, const conf_data *src);
+/* Copy the transformation options from *src to *dst */
+void conf_copy_transform(conf_data *dst, const conf_data *src);
+/* Copy the 'save options' from *src to *dst */
+void conf_copy_save(conf_data *dst, const conf_data *src);
+int conf_set_cmd(conf_data *conf, const conf_data *cmd);
+int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc);
 
-    /* prototype for functions in ufraw_developer.c */
+/* prototype for functions in ufraw_developer.c */
 // Convert linear RGB to CIE-LCh
-    void uf_rgb_to_cielch(gint64 rgb[3], float lch[3]);
+void uf_rgb_to_cielch(gint64 rgb[3], float lch[3]);
 // Convert CIE-LCh to linear RGB
-    void uf_cielch_to_rgb(float lch[3], gint64 rgb[3]);
-    void uf_raw_to_cielch(const developer_data *d,
-                          const guint16 raw[4], float lch[3]);
-    developer_data *developer_init();
-    void developer_destroy(developer_data *d);
-    void developer_profile(developer_data *d, int type, profile_data *p);
-    void developer_display_profile(developer_data *d,
-                                   unsigned char *profile, int size, char productName[]);
-    void developer_prepare(developer_data *d, conf_data *conf,
-                           int rgbMax, float rgb_cam[3][4], int colors, int useMatrix,
-                           DeveloperMode mode);
-    void develop(void *po, guint16 pix[4], developer_data *d, int mode, int count);
-    void develop_display(void *pout, void *pin, developer_data *d, int count);
-    void develop_linear(guint16 in[4], guint16 out[3], developer_data *d);
+void uf_cielch_to_rgb(float lch[3], gint64 rgb[3]);
+void uf_raw_to_cielch(const developer_data *d,
+                      const guint16 raw[4], float lch[3]);
+developer_data *developer_init();
+void developer_destroy(developer_data *d);
+void developer_profile(developer_data *d, int type, profile_data *p);
+void developer_display_profile(developer_data *d,
+                               unsigned char *profile, int size, char productName[]);
+void developer_prepare(developer_data *d, conf_data *conf,
+                       int rgbMax, float rgb_cam[3][4], int colors, int useMatrix,
+                       DeveloperMode mode);
+void develop(void *po, guint16 pix[4], developer_data *d, int mode, int count);
+void develop_display(void *pout, void *pin, developer_data *d, int count);
+void develop_linear(guint16 in[4], guint16 out[3], developer_data *d);
 
-    /* prototype for functions in ufraw_saver.c */
-    long ufraw_save_now(ufraw_data *uf, void *widget);
-    long ufraw_send_to_gimp(ufraw_data *uf);
+/* prototype for functions in ufraw_saver.c */
+long ufraw_save_now(ufraw_data *uf, void *widget);
+long ufraw_send_to_gimp(ufraw_data *uf);
 
-    /* prototype for functions in ufraw_writer.c */
-    int ufraw_write_image(ufraw_data *uf);
-    void ufraw_write_image_data(
-        ufraw_data *uf, void * volatile out,
-        const UFRectangle *Crop, int bitDepth, int grayscaleMode,
-        int (*row_writer)(ufraw_data *, void * volatile, void *, int, int, int, int, int));
+/* prototype for functions in ufraw_writer.c */
+int ufraw_write_image(ufraw_data *uf);
+void ufraw_write_image_data(
+    ufraw_data *uf, void * volatile out,
+    const UFRectangle *Crop, int bitDepth, int grayscaleMode,
+    int (*row_writer)(ufraw_data *, void * volatile, void *, int, int, int, int, int));
 
-    /* prototype for functions in ufraw_delete.c */
-    long ufraw_delete(void *widget, ufraw_data *uf);
+/* prototype for functions in ufraw_delete.c */
+long ufraw_delete(void *widget, ufraw_data *uf);
 
-    /* prototype for functions in ufraw_embedded.c */
-    int ufraw_read_embedded(ufraw_data *uf);
-    int ufraw_convert_embedded(ufraw_data *uf);
-    int ufraw_write_embedded(ufraw_data *uf);
+/* prototype for functions in ufraw_embedded.c */
+int ufraw_read_embedded(ufraw_data *uf);
+int ufraw_convert_embedded(ufraw_data *uf);
+int ufraw_write_embedded(ufraw_data *uf);
 
-    /* prototype for functions in ufraw_chooser.c */
-    void ufraw_chooser(conf_data *conf, conf_data *rc, conf_data *cmd,
-                       const char *defPath);
+/* prototype for functions in ufraw_chooser.c */
+void ufraw_chooser(conf_data *conf, conf_data *rc, conf_data *cmd,
+                   const char *defPath);
 
-    /* prototype for functions in ufraw_icons.c */
-    void ufraw_icons_init();
+/* prototype for functions in ufraw_icons.c */
+void ufraw_icons_init();
 
-    /* prototype for functions in ufraw_exiv2.cc */
-    int ufraw_exif_read_input(ufraw_data *uf);
-    int ufraw_exif_prepare_output(ufraw_data *uf);
-    int ufraw_exif_write(ufraw_data *uf);
+/* prototype for functions in ufraw_exiv2.cc */
+int ufraw_exif_read_input(ufraw_data *uf);
+int ufraw_exif_prepare_output(ufraw_data *uf);
+int ufraw_exif_write(ufraw_data *uf);
 
 #ifdef __cplusplus
 } // extern "C"

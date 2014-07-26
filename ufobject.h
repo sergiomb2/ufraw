@@ -423,72 +423,72 @@ extern "C" {
 #endif
 
 /// Delete a UFObject and free its resources. Never use free() on UFObject s.
-    UFObject *ufobject_delete(UFObject *object);
+UFObject *ufobject_delete(UFObject *object);
 /// Retrieve the name of the UFObject.
-    UFName ufobject_name(UFObject *object);
-    UFObject *ufobject_parent(UFObject *object);
+UFName ufobject_name(UFObject *object);
+UFObject *ufobject_parent(UFObject *object);
 /// Translate object to a string. See UFObject::StringValue() for details.
-    const char *ufobject_string_value(UFObject *object);
+const char *ufobject_string_value(UFObject *object);
 /// Set the value of the object from the string value.
 /// Returns false on  failure.
 /// See \ref C-interface and UFObject::Set(const char *string) for details.
-    UFBoolean ufobject_set_string(UFObject *object, const char *string);
+UFBoolean ufobject_set_string(UFObject *object, const char *string);
 /// Copy the value of the source object to the destination object.
 /// Returns false on failure.
 /// See \ref C-interface and UFObject::Set(const UFObject &object) for details.
-    UFBoolean ufobject_copy(UFObject *destination, UFObject *source);
+UFBoolean ufobject_copy(UFObject *destination, UFObject *source);
 /// Create an XML block for the object. The returned buffer should be
 /// free()'d by the caller. See UFObject::XML() for details.
-    char *ufobject_xml(UFObject *object, const char *indent);
-    void *ufobject_user_data(UFObject *object);
-    void ufobject_set_user_data(UFObject *object, void *user_data);
-    void ufobject_set_changed_event_handle(UFObject *object,
-                                           UFEventHandle *handle);
+char *ufobject_xml(UFObject *object, const char *indent);
+void *ufobject_user_data(UFObject *object);
+void ufobject_set_user_data(UFObject *object, void *user_data);
+void ufobject_set_changed_event_handle(UFObject *object,
+                                       UFEventHandle *handle);
 /// Return TRUE if object is set to its default value.
-    UFBoolean ufobject_is_default(UFObject *object);
+UFBoolean ufobject_is_default(UFObject *object);
 /// Set the current object value to its default value.
-    void ufobject_set_default(UFObject *object);
+void ufobject_set_default(UFObject *object);
 /// Return the numerical value of the object. Returns NaN if object is not a
 /// UFNumber. See \ref C-interface and UFNumber::DoubleValue() for more details.
-    double ufnumber_value(UFObject *object);
+double ufnumber_value(UFObject *object);
 /// Set the value of the object to the given number. Returns false if @a object
 /// is not a UFNumber. See \ref C-interface and UFNumber::Set(double number)
 /// for more details.
-    UFBoolean ufnumber_set(UFObject *object, double number);
+UFBoolean ufnumber_set(UFObject *object, double number);
 /// Return the numerical value of the @a index element of the object.
 /// Returns NaN if @a object is not a UFNumberArray or @a index is out of range.
 /// See \ref C-interface and UFNumberArray::DoubleValue() for more details.
-    double ufnumber_array_value(UFObject *object, int index);
+double ufnumber_array_value(UFObject *object, int index);
 /// Set the value of all the array elements at once.
 /// Returns false if @a object is not a UFNumberArray. See \ref C-interface
 /// and UFNumberArray::Set(const double array[]) for more details.
-    UFBoolean ufnumber_array_set(UFObject *object, const double array[]);
+UFBoolean ufnumber_array_set(UFObject *object, const double array[]);
 /// Return true if string value is equal to @a string.
 /// Return false if it is not equal or if object is not a UFString.
 /// See \ref C-interface for more details.
-    UFBoolean ufstring_is_equal(UFObject *object, const char *string);
+UFBoolean ufstring_is_equal(UFObject *object, const char *string);
 /// Return true if the UFGroup @a object contains an object called name.
 /// Return false if it does not, or if object is not a UFGroup.
 /// See \ref C-interface for more details.
-    UFBoolean ufgroup_has(UFObject *object, UFName name);
+UFBoolean ufgroup_has(UFObject *object, UFName name);
 /// Return a UFObject element in a UFGroup. Return NULL if element is not found
 /// or if @a object is not a UFGroup. See \ref C-interface for more details.
-    UFObject *ufgroup_element(UFObject *object, UFName name);
+UFObject *ufgroup_element(UFObject *object, UFName name);
 /// Add a UFObject to a UFGroup. Return false if UFGroup already contains
 /// an object with the same name. See \ref C-interface for more details.
-    UFBoolean ufgroup_add(UFObject *group, UFObject *object);
+UFBoolean ufgroup_add(UFObject *group, UFObject *object);
 /// Drop an object from the group. The dropped object is returned.
 /// If it is not needed any more it should be deleted to free its memory.
-    UFObject *ufgroup_drop(UFObject *group, UFName name);
+UFObject *ufgroup_drop(UFObject *group, UFName name);
 /// Set the current index position in the array.
-    UFBoolean ufarray_set_index(UFObject *object, int index);
+UFBoolean ufarray_set_index(UFObject *object, int index);
 /// Retriew the current index location in the array. -1 is returned
 /// if the string index value corresponds to no element's label.
-    int ufarray_index(UFObject *object);
+int ufarray_index(UFObject *object);
 /// Return true if array's string value is equal to @a string.
 /// Return false if it is not equal or if object is not a UFArray.
 /// See \ref C-interface for more details.
-    UFBoolean ufarray_is_equal(UFObject *object, const char *string);
+UFBoolean ufarray_is_equal(UFObject *object, const char *string);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -102,7 +102,7 @@ int ufraw_read_embedded(ufraw_data *uf)
             scaleDenom = uf->conf->shrink;
         }
         if (raw->thumbType == ppm_thumb_type) {
-            if (srcHeight*srcWidth * 3 != (unsigned)raw->thumbBufferLength) {
+            if (srcHeight * srcWidth * 3 != (unsigned)raw->thumbBufferLength) {
                 ufraw_message(UFRAW_ERROR, _("ppm thumb mismatch, "
                                              "height %d, width %d, while buffer %d."),
                               srcHeight, srcWidth, raw->thumbBufferLength);

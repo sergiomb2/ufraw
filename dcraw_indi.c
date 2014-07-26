@@ -638,8 +638,8 @@ void CLASS xtrans_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                 if (ng == g + 1) FORC(8) {
                     v = orth[d  ] * patt[g][c * 2] + orth[d + 1] * patt[g][c * 2 + 1];
                     h = orth[d + 2] * patt[g][c * 2] + orth[d + 3] * patt[g][c * 2 + 1];
-                    allhex[row][col][0][c ^(g * 2 & d)] = h + v * width;
-                    allhex[row][col][1][c ^(g * 2 & d)] = h + v * TS;
+                    allhex[row][col][0][c ^ (g * 2 & d)] = h + v * width;
+                    allhex[row][col][1][c ^ (g * 2 & d)] = h + v * TS;
                 }
             }
 
@@ -987,7 +987,7 @@ static inline int median9(int *p)
     PIX_SORT(p[4], p[2]) ;
     PIX_SORT(p[6], p[4]) ;
     PIX_SORT(p[4], p[2]) ;
-    return(p[4]) ;
+    return (p[4]) ;
 }
 
 #undef PIX_SWAP

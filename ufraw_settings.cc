@@ -492,7 +492,8 @@ extern "C" {
         dynamic_cast<UFRaw::Image *>(obj)->SetUFRawData(uf);
     }
 
-    struct ufraw_struct *ufraw_image_get_data(UFObject *obj) {
+    struct ufraw_struct *ufraw_image_get_data(UFObject *obj)
+    {
         return UFRaw::Image::UFRawData(obj);
     }
 

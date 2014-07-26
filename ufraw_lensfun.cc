@@ -873,7 +873,8 @@ extern "C" {
         return new Lensfun();
     }
 
-    const struct lfCamera *ufraw_lensfun_camera(const UFObject *lensfun) {
+    const struct lfCamera *ufraw_lensfun_camera(const UFObject *lensfun)
+    {
         return &static_cast<const UFRaw::Lensfun *>(lensfun)->Camera;
     }
 
@@ -882,7 +883,8 @@ extern "C" {
         static_cast<UFRaw::Lensfun *>(lensfun)->SetCamera(*camera);
     }
 
-    const struct lfLens *ufraw_lensfun_interpolation_lens(const UFObject *lensfun) {
+    const struct lfLens *ufraw_lensfun_interpolation_lens(const UFObject *lensfun)
+    {
         return &static_cast<const UFRaw::Lensfun *>(lensfun)->Interpolation;
     }
 

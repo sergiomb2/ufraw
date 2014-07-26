@@ -220,7 +220,8 @@ int png_row_writer(ufraw_data *uf, void *volatile out, void *pixbuf,
 
 #if defined(HAVE_LIBCFITSIO) && defined(_WIN32)
 /* localtime_r() is not included in the _WIN32 API. */
-static struct tm *localtime_r(const time_t *timep, struct tm *result) {
+static struct tm *localtime_r(const time_t *timep, struct tm *result)
+{
     struct tm *p = localtime(timep);
     memset(result, 0, sizeof(*result));
     if (p) {
