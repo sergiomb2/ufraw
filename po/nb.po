@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-01 07:00+0100\n"
+"POT-Creation-Date: 2014-07-26 06:00+0200\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -1138,11 +1138,11 @@ msgstr "Bayermønsterinterpolasjon"
 msgid "X-Trans interpolation"
 msgstr "Ingen interpolasjon"
 
-msgid "Bilinear interpolation"
-msgstr "Bilineær interpolasjon"
-
 msgid "VNG four color interpolation"
 msgstr "VNG firefargers interpolasjon"
+
+msgid "Bilinear interpolation"
+msgstr "Bilineær interpolasjon"
 
 msgid "AHD interpolation"
 msgstr "AHD-interpolasjon"

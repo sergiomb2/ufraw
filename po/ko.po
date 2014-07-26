@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-01 07:00+0100\n"
+"POT-Creation-Date: 2014-07-26 06:00+0200\n"
 "PO-Revision-Date: 2010-03-18 14:45+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr@googlegroups.com>\n"
@@ -1117,11 +1117,11 @@ msgstr "베이어 패턴 보간법"
 msgid "X-Trans interpolation"
 msgstr "보간법 없음"
 
-msgid "Bilinear interpolation"
-msgstr "Bilinear 보간법"
-
 msgid "VNG four color interpolation"
 msgstr "VNG four color 보간법"
+
+msgid "Bilinear interpolation"
+msgstr "Bilinear 보간법"
 
 msgid "AHD interpolation"
 msgstr "AHD 보간법"

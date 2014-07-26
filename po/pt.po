@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-01 07:00+0100\n"
+"POT-Creation-Date: 2014-07-26 06:00+0200\n"
 "PO-Revision-Date: 2009-10-07 10:53-0300\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese\n"
@@ -1146,11 +1146,11 @@ msgstr "Interpolação por padrão de Bayer"
 msgid "X-Trans interpolation"
 msgstr "Sem interpolação"
 
-msgid "Bilinear interpolation"
-msgstr "Interpolação bilinear"
-
 msgid "VNG four color interpolation"
 msgstr "Interpolação VNG de quatro cores"
+
+msgid "Bilinear interpolation"
+msgstr "Interpolação bilinear"
 
 msgid "AHD interpolation"
 msgstr "Interpolação AHD"

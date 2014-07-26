@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-01 07:00+0100\n"
+"POT-Creation-Date: 2014-07-26 06:00+0200\n"
 "PO-Revision-Date: 2011-09-06 22:21+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -1157,11 +1157,11 @@ msgstr "Bayer-Musterinterpolation"
 msgid "X-Trans interpolation"
 msgstr "Keine Interpolation"
 
-msgid "Bilinear interpolation"
-msgstr "Bilineare Interpolation"
-
 msgid "VNG four color interpolation"
 msgstr "VNG-Vierfarbinterpolation"
+
+msgid "Bilinear interpolation"
+msgstr "Bilineare Interpolation"
 
 msgid "AHD interpolation"
 msgstr "AHD-Interpolation"
