@@ -6676,7 +6676,7 @@ void CLASS parse_fuji (int offset)
     } else if (tag == 0x131) {
       filters = 9;
       for (i=0; i < 6; i++)
-        FORC(6) xtrans_abs[i][35-(i*c+c)] = fgetc(ifp) & 3;
+        FORC(6) xtrans_abs[5-i][5-c] = fgetc(ifp) & 3;
     } else if (tag == 0x2ff0) {
       FORC4 cam_mul[c ^ 1] = get2();
     } else if (tag == 0xc000) {
@@ -8655,7 +8655,7 @@ canon_a5:
     if (filters == 9)
       for (i=0; i < 6; i++)
 	FORC(6) xtrans[i][c] =
-	  xtrans_abs[((i*c+c)/6+top_margin) % 6][((i*c+c)+left_margin) % 6];
+	  xtrans_abs[(i+top_margin) % 6][(c+left_margin) % 6];
   } else if (!strcmp(model,"KD-400Z")) {
     height = 1712;
     width  = 2312;
