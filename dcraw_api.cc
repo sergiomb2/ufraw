@@ -152,7 +152,7 @@ extern "C" {
         d->cblack[6 + c] -= i;
         d->black += i;
         h->black = d->black;
-        h->shrink = d->shrink = (h->filters != 0);
+        h->shrink = d->shrink = (h->filters == 1 || h->filters > 1000);
         h->pixel_aspect = d->pixel_aspect;
         /* copied from dcraw's main() */
         switch ((d->flip + 3600) % 360) {
@@ -231,7 +231,10 @@ extern "C" {
         h->raw.colors = d->colors;
         h->fourColorFilters = d->filters;
         if (d->filters || d->colors == 1) {
-            d->raw_image = (ushort *) g_malloc((d->raw_height + 7) * d->raw_width * 2);
+            if (d->colors == 1 || d->filters == 1 || d->filters > 1000)
+                d->raw_image = (ushort *) g_malloc((d->raw_height + 7) * d->raw_width * 2);
+            else
+                d->raw_image = (ushort *) g_malloc(sizeof(dcraw_image_type) * (d->raw_height + 7) * d->raw_width);
         } else {
             h->raw.image = d->image = g_new0(dcraw_image_type, d->iheight * d->iwidth
                                              + d->meta_length);
@@ -251,6 +254,9 @@ extern "C" {
             d->meta_data = (char *)(d->image + d->iheight * d->iwidth);
             d->crop_masked_pixels();
             g_free(d->raw_image);
+
+            if (d->filters > 1 && d->filters <= 1000)
+                lin_interpolate_INDI(d->image, d->filters, d->width, d->height, d->colors, d, h);
         }
         if (!--d->data_error) d->lastStatus = DCRAW_ERROR;
         if (d->zero_is_bad) d->remove_zeroes();
@@ -473,7 +479,7 @@ extern "C" {
         /* hh->raw.image is shrunk in half if there are filters.
          * If scale is odd we need to "unshrink" it using the info in
          * hh->fourColorFilters before scaling it. */
-        if (hh->filters != 0 && scale % 2 == 1) {
+        if ((hh->filters == 1 || hh->filters > 1000) && scale % 2 == 1) {
             fujiWidth = hh->fuji_width / scale;
             f->image = (dcraw_image_type *)
                        g_realloc(f->image, h * w * sizeof(dcraw_image_type));
@@ -495,7 +501,7 @@ extern "C" {
                 g_free(fseq);
             }
         } else {
-            if (hh->filters != 0) scale /= 2;
+            if (hh->filters == 1 || hh->filters > 1000) scale /= 2;
             fujiWidth = ((hh->fuji_width + hh->shrink) >> hh->shrink) / scale;
             f->image = (dcraw_image_type *)g_realloc(
                            f->image, h * w * sizeof(dcraw_image_type));
@@ -745,12 +751,15 @@ extern "C" {
         if (interpolation == dcraw_ppg_interpolation && h->colors > 3)
             interpolation = dcraw_vng_interpolation;
         f4 = h->fourColorFilters;
-        for (r = 0; r < h->height; r++)
-            for (c = 0; c < h->width; c++) {
-                int cc = fcol_INDI(f4, r, c, h->top_margin, h->left_margin, h->xtrans);
-                f->image[r * f->width + c][fcol_INDI(ff, r, c, h->top_margin, h->left_margin, h->xtrans)] =
-                    h->raw.image[r / 2 * h->raw.width + c / 2][cc];
-            }
+        if (h->filters == 1 || h->filters > 1000) {
+            for (r = 0; r < h->height; r++)
+                for (c = 0; c < h->width; c++) {
+                    int cc = fcol_INDI(f4, r, c, h->top_margin, h->left_margin, h->xtrans);
+                    f->image[r * f->width + c][fcol_INDI(ff, r, c, h->top_margin, h->left_margin, h->xtrans)] =
+                        h->raw.image[r / 2 * h->raw.width + c / 2][cc];
+                }
+        } else
+            memcpy(f->image, h->raw.image, h->height * h->width * sizeof(dcraw_image_type));
         int smoothPasses = 1;
         if (interpolation == dcraw_bilinear_interpolation)
             lin_interpolate_INDI(f->image, ff, f->width, f->height, cl, d, h);

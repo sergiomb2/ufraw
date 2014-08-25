@@ -30,7 +30,8 @@ typedef struct {
 typedef struct {
     void *dcraw;
     FILE *ifp;
-    int width, height, colors, fourColorFilters, filters, raw_color;
+    int width, height, colors, fourColorFilters, raw_color;
+    unsigned filters;
     int top_margin, left_margin, flip, shrink;
     double pixel_aspect;
     dcraw_image_data raw;

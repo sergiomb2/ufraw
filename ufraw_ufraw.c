@@ -1132,7 +1132,7 @@ static int ufraw_calculate_scale(ufraw_data *uf)
         scale = 2;
         /* Wanted size is smaller than raw size (size is after a raw->shrink)
          * (assuming there are filters). */
-    } else if (uf->conf->size > 0 && uf->HaveFilters) {
+    } else if (uf->conf->size > 0 && uf->HaveFilters && !uf->IsXTrans) {
         int cropHeight = uf->conf->CropY2 - uf->conf->CropY1;
         int cropWidth = uf->conf->CropX2 - uf->conf->CropX1;
         int cropSize = MAX(cropHeight, cropWidth);

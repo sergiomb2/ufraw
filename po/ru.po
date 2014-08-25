@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-26 06:00+0200\n"
+"POT-Creation-Date: 2014-08-25 13:30+0200\n"
 "PO-Revision-Date: 2010-03-21 22:24+0300\n"
 "Last-Translator: Александр Прокудин <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -1153,7 +1153,7 @@ msgid "Bayer pattern interpolation"
 msgstr "Интерполяция Баейеровской структуры"
 
 #, fuzzy
-msgid "X-Trans interpolation"
+msgid "X-Trans interpolation (slow!)"
 msgstr "Без интерполяции"
 
 msgid "VNG four color interpolation"

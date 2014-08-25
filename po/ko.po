@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-26 06:00+0200\n"
+"POT-Creation-Date: 2014-08-25 13:30+0200\n"
 "PO-Revision-Date: 2010-03-18 14:45+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr@googlegroups.com>\n"
@@ -1114,7 +1114,7 @@ msgid "Bayer pattern interpolation"
 msgstr "베이어 패턴 보간법"
 
 #, fuzzy
-msgid "X-Trans interpolation"
+msgid "X-Trans interpolation (slow!)"
 msgstr "보간법 없음"
 
 msgid "VNG four color interpolation"

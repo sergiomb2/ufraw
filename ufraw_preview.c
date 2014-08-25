@@ -4423,7 +4423,7 @@ static void whitebalance_fill_interface(preview_data *data,
     combo = GTK_COMBO_BOX(uf_combo_box_new_text());
     if (data->UF->HaveFilters) {
         if (data->UF->IsXTrans) {
-            uf_combo_box_append_text(combo, _("X-Trans interpolation"),
+            uf_combo_box_append_text(combo, _("X-Trans interpolation (slow!)"),
                                      (void*)xtrans_interpolation);
         } else if (data->UF->colors == 4) {
             uf_combo_box_append_text(combo, _("VNG four color interpolation"),

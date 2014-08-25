@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-26 06:00+0200\n"
+"POT-Creation-Date: 2014-08-25 13:30+0200\n"
 "PO-Revision-Date: 2010-03-18 08:33+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -1153,7 +1153,7 @@ msgid "Bayer pattern interpolation"
 msgstr "Interpolación de patrón Bayer"
 
 #, fuzzy
-msgid "X-Trans interpolation"
+msgid "X-Trans interpolation (slow!)"
 msgstr "Sin interpolación"
 
 msgid "VNG four color interpolation"
