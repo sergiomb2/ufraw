@@ -766,7 +766,7 @@ static void conf_parse_text(GMarkupParseContext *context, const gchar *text,
 int conf_load(conf_data *c, const char *IDFilename)
 {
     char *confFilename, line[max_path], *locale;
-    const char *hd;
+    const char *xdgconf;
     FILE *in;
     GMarkupParser parser = {
         &conf_parse_start, &conf_parse_end,
@@ -782,10 +782,13 @@ int conf_load(conf_data *c, const char *IDFilename)
     else
         c->ufobject = ufraw_image_new();
     if (IDFilename == NULL) {
-        hd = uf_get_home_dir();
-        confFilename = g_build_filename(hd, ".ufrawrc", NULL);
+        confFilename = g_build_filename(uf_get_home_dir(), ".ufrawrc", NULL);
+        if (!g_file_test(confFilename, G_FILE_TEST_IS_REGULAR))
+            if ((xdgconf = g_get_user_config_dir()))
+                confFilename = g_build_filename(xdgconf, "ufrawrc", NULL);
+
         in = g_fopen(confFilename, "r");
-        /* We don't mind if ~/.ufrawrc does not exist. */
+        /* We don't mind if confFilename does not exist. */
         if (in == NULL) {
             g_free(confFilename);
             return UFRAW_SUCCESS;
@@ -1278,10 +1281,13 @@ int conf_save(conf_data *c, char *IDFilename, char **confBuffer)
     uf_reset_locale(locale);
     if (confBuffer == NULL) {
         char *confFilename;
+        const char *xdgconf;
         FILE *out;
         if (IDFilename == NULL) {
-            const char *hd = uf_get_home_dir();
-            confFilename = g_build_filename(hd, ".ufrawrc", NULL);
+            confFilename = g_build_filename(uf_get_home_dir(), ".ufrawrc", NULL);
+            if (!g_file_test(confFilename, G_FILE_TEST_IS_REGULAR))
+                if ((xdgconf = g_get_user_config_dir()))
+                    confFilename = g_build_filename(xdgconf, "ufrawrc", NULL);
         } else
             confFilename = g_strdup(IDFilename);
         if ((out = g_fopen(confFilename, "w")) == NULL) {
