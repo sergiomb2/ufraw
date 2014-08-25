@@ -1747,9 +1747,3 @@ msgstr "Bilanciamento del bianco - Fotocamera"
 
 msgid "Auto WB"
 msgstr "Bilanciamento del bianco - Automatico"
-
-#~ msgid "Bayer pattern interpolation"
-#~ msgstr "Interpolazione del motivo Bayer"
-
-#~ msgid "No Bayer pattern"
-#~ msgstr "Nessun motivo Bayer"

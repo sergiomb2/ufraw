@@ -1749,9 +1749,3 @@ msgstr "Kamera-SW"
 
 msgid "Auto WB"
 msgstr "Automatisches SW"
-
-#~ msgid "Bayer pattern interpolation"
-#~ msgstr "Bayer-Musterinterpolation"
-
-#~ msgid "No Bayer pattern"
-#~ msgstr "Kein Bayer-Muster"

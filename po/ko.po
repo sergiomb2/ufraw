@@ -1705,9 +1705,3 @@ msgstr "카메라 화벨"
 
 msgid "Auto WB"
 msgstr "자동 화벨"
-
-#~ msgid "Bayer pattern interpolation"
-#~ msgstr "베이어 패턴 보간법"
-
-#~ msgid "No Bayer pattern"
-#~ msgstr "베이어 패턴이 없음"

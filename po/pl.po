@@ -1730,9 +1730,3 @@ msgstr "Balans bieli aparatu"
 
 msgid "Auto WB"
 msgstr "Automatyczny balans bieli"
-
-#~ msgid "Bayer pattern interpolation"
-#~ msgstr "Interpolacja wzorca Bayera"
-
-#~ msgid "No Bayer pattern"
-#~ msgstr "Brak wzorca Bayera"

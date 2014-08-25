@@ -1750,9 +1750,3 @@ msgstr "ББ камеры"
 
 msgid "Auto WB"
 msgstr "Автоматический ББ"
-
-#~ msgid "Bayer pattern interpolation"
-#~ msgstr "Интерполяция Баейеровской структуры"
-
-#~ msgid "No Bayer pattern"
-#~ msgstr "Без баейеровской структуры"

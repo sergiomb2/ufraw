@@ -1592,6 +1592,3 @@ msgstr "Kamera VB"
 
 msgid "Auto WB"
 msgstr "Automatisk VB"
-
-#~ msgid "No Bayer pattern"
-#~ msgstr "Inget Bayer-mönster"

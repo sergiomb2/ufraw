@@ -1750,9 +1750,3 @@ msgstr "Ravnoteža bele iz kamere"
 
 msgid "Auto WB"
 msgstr "Sam odredi ravnotežu bele"
-
-#~ msgid "Bayer pattern interpolation"
-#~ msgstr "Interpolacija Bajerovom mustrom"
-
-#~ msgid "No Bayer pattern"
-#~ msgstr "Ne postoji Bajerova mustra"

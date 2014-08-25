@@ -1691,9 +1691,3 @@ msgstr "カメラWB"
 
 msgid "Auto WB"
 msgstr "自動WB"
-
-#~ msgid "Bayer pattern interpolation"
-#~ msgstr "Bayerパターン補間"
-
-#~ msgid "No Bayer pattern"
-#~ msgstr "Bayerパターン無し"

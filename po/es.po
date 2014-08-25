@@ -1749,9 +1749,3 @@ msgstr "Balance de la cámara"
 
 msgid "Auto WB"
 msgstr "Balance automático"
-
-#~ msgid "Bayer pattern interpolation"
-#~ msgstr "Interpolación de patrón Bayer"
-
-#~ msgid "No Bayer pattern"
-#~ msgstr "Sin patrón Bayer"

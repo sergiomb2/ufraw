@@ -1730,9 +1730,3 @@ msgstr "Dle fotoaparátu"
 
 msgid "Auto WB"
 msgstr "Automatické"
-
-#~ msgid "Bayer pattern interpolation"
-#~ msgstr "Interpolace Bayerovy matice"
-
-#~ msgid "No Bayer pattern"
-#~ msgstr "Žádná Baeyrova matice"

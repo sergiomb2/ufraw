@@ -1689,9 +1689,3 @@ msgstr "相機白平衡"
 
 msgid "Auto WB"
 msgstr "自動白平衡"
-
-#~ msgid "Bayer pattern interpolation"
-#~ msgstr "Bayer 範本插值"
-
-#~ msgid "No Bayer pattern"
-#~ msgstr "沒有 Bayer 範本"

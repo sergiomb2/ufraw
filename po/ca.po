@@ -1758,9 +1758,3 @@ msgstr "Equilibri de blancs de la càmera"
 
 msgid "Auto WB"
 msgstr "Equilibri de blancs automàtic"
-
-#~ msgid "Bayer pattern interpolation"
-#~ msgstr "Interpolació del model Bayer"
-
-#~ msgid "No Bayer pattern"
-#~ msgstr "No hi ha cap patró Bayer"
