@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:00+0200\n"
+"POT-Creation-Date: 2014-08-25 17:00+0200\n"
 "PO-Revision-Date: 2011-08-12 13:37+0200\n"
 "Last-Translator: Simon Oosthoek\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -1140,18 +1140,11 @@ msgid "Color filter array interpolation"
 msgstr "Bilineaire interpolatie"
 
 #, fuzzy
-msgid "Bilinear interpolation (fast)"
-msgstr "Bilineaire interpolatie"
-
-#, fuzzy
-msgid "X-Trans interpolation (slow)"
+msgid "X-Trans interpolation"
 msgstr "Geen interpolatie"
 
 msgid "VNG four color interpolation"
 msgstr "VNG vier kleuren interpolatie"
-
-msgid "Bilinear interpolation"
-msgstr "Bilineaire interpolatie"
 
 msgid "AHD interpolation"
 msgstr "AHD interpolatie"
@@ -1161,6 +1154,9 @@ msgstr "VNG interpolatie"
 
 msgid "PPG interpolation"
 msgstr "PPG interpolatie"
+
+msgid "Bilinear interpolation"
+msgstr "Bilineaire interpolatie"
 
 msgid "No interpolation"
 msgstr "Geen interpolatie"
@@ -1736,3 +1732,7 @@ msgstr "Camera WB"
 
 msgid "Auto WB"
 msgstr "Auto WB"
+
+#, fuzzy
+#~ msgid "Bilinear interpolation (fast)"
+#~ msgstr "Bilineaire interpolatie"

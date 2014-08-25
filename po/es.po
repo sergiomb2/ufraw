@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:00+0200\n"
+"POT-Creation-Date: 2014-08-25 17:00+0200\n"
 "PO-Revision-Date: 2010-03-18 08:33+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -1154,18 +1154,11 @@ msgid "Color filter array interpolation"
 msgstr "Interpolación bilineal"
 
 #, fuzzy
-msgid "Bilinear interpolation (fast)"
-msgstr "Interpolación bilineal"
-
-#, fuzzy
-msgid "X-Trans interpolation (slow)"
+msgid "X-Trans interpolation"
 msgstr "Sin interpolación"
 
 msgid "VNG four color interpolation"
 msgstr "Interpolación VNG de cuatro colores"
-
-msgid "Bilinear interpolation"
-msgstr "Interpolación bilineal"
 
 msgid "AHD interpolation"
 msgstr "Interpolación AHD"
@@ -1175,6 +1168,9 @@ msgstr "Interpolación VNG"
 
 msgid "PPG interpolation"
 msgstr "Interpolación PPG"
+
+msgid "Bilinear interpolation"
+msgstr "Interpolación bilineal"
 
 msgid "No interpolation"
 msgstr "Sin interpolación"
@@ -1749,3 +1745,7 @@ msgstr "Balance de la cámara"
 
 msgid "Auto WB"
 msgstr "Balance automático"
+
+#, fuzzy
+#~ msgid "Bilinear interpolation (fast)"
+#~ msgstr "Interpolación bilineal"

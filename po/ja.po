@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:00+0200\n"
+"POT-Creation-Date: 2014-08-25 17:00+0200\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -1102,18 +1102,11 @@ msgid "Color filter array interpolation"
 msgstr "バイリニア補間"
 
 #, fuzzy
-msgid "Bilinear interpolation (fast)"
-msgstr "バイリニア補間"
-
-#, fuzzy
-msgid "X-Trans interpolation (slow)"
+msgid "X-Trans interpolation"
 msgstr "補間無し"
 
 msgid "VNG four color interpolation"
 msgstr "VNG4色補間"
-
-msgid "Bilinear interpolation"
-msgstr "バイリニア補間"
 
 msgid "AHD interpolation"
 msgstr "AHD補間"
@@ -1123,6 +1116,9 @@ msgstr "VNG補間"
 
 msgid "PPG interpolation"
 msgstr "PPG補間"
+
+msgid "Bilinear interpolation"
+msgstr "バイリニア補間"
 
 msgid "No interpolation"
 msgstr "補間無し"
@@ -1691,3 +1687,7 @@ msgstr "カメラWB"
 
 msgid "Auto WB"
 msgstr "自動WB"
+
+#, fuzzy
+#~ msgid "Bilinear interpolation (fast)"
+#~ msgstr "バイリニア補間"

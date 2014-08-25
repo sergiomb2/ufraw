@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:00+0200\n"
+"POT-Creation-Date: 2014-08-25 17:00+0200\n"
 "PO-Revision-Date: 2013-03-24 01:50+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -1168,18 +1168,11 @@ msgid "Color filter array interpolation"
 msgstr "Interpolation bilinéaire"
 
 #, fuzzy
-msgid "Bilinear interpolation (fast)"
-msgstr "Interpolation bilinéaire"
-
-#, fuzzy
-msgid "X-Trans interpolation (slow)"
+msgid "X-Trans interpolation"
 msgstr "Pas d'interpolation"
 
 msgid "VNG four color interpolation"
 msgstr "Interpolation VNG 4 couleurs"
-
-msgid "Bilinear interpolation"
-msgstr "Interpolation bilinéaire"
 
 msgid "AHD interpolation"
 msgstr "Interpolation AHD"
@@ -1189,6 +1182,9 @@ msgstr "Interpolation VNG"
 
 msgid "PPG interpolation"
 msgstr "Interpolation PPG"
+
+msgid "Bilinear interpolation"
+msgstr "Interpolation bilinéaire"
 
 msgid "No interpolation"
 msgstr "Pas d'interpolation"
@@ -1779,3 +1775,7 @@ msgstr "Bal. du Blanc Boitier"
 
 msgid "Auto WB"
 msgstr "Bal. du Blanc Auto"
+
+#, fuzzy
+#~ msgid "Bilinear interpolation (fast)"
+#~ msgstr "Interpolation bilinéaire"

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:00+0200\n"
+"POT-Creation-Date: 2014-08-25 17:00+0200\n"
 "PO-Revision-Date: 2010-03-21 22:24+0300\n"
 "Last-Translator: Александр Прокудин <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -1154,18 +1154,11 @@ msgid "Color filter array interpolation"
 msgstr "Билинейная интерполяция"
 
 #, fuzzy
-msgid "Bilinear interpolation (fast)"
-msgstr "Билинейная интерполяция"
-
-#, fuzzy
-msgid "X-Trans interpolation (slow)"
+msgid "X-Trans interpolation"
 msgstr "Без интерполяции"
 
 msgid "VNG four color interpolation"
 msgstr "Интерполяция VNG для 4-х цветов"
-
-msgid "Bilinear interpolation"
-msgstr "Билинейная интерполяция"
 
 msgid "AHD interpolation"
 msgstr "Интерполяция AHD"
@@ -1175,6 +1168,9 @@ msgstr "Интерполяция VNG"
 
 msgid "PPG interpolation"
 msgstr "Интерполяция PPG"
+
+msgid "Bilinear interpolation"
+msgstr "Билинейная интерполяция"
 
 msgid "No interpolation"
 msgstr "Без интерполяции"
@@ -1750,3 +1746,7 @@ msgstr "ББ камеры"
 
 msgid "Auto WB"
 msgstr "Автоматический ББ"
+
+#, fuzzy
+#~ msgid "Bilinear interpolation (fast)"
+#~ msgstr "Билинейная интерполяция"

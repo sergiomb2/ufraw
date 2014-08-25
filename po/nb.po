@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:00+0200\n"
+"POT-Creation-Date: 2014-08-25 17:00+0200\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -1136,18 +1136,11 @@ msgid "Color filter array interpolation"
 msgstr "Bilineær interpolasjon"
 
 #, fuzzy
-msgid "Bilinear interpolation (fast)"
-msgstr "Bilineær interpolasjon"
-
-#, fuzzy
-msgid "X-Trans interpolation (slow)"
+msgid "X-Trans interpolation"
 msgstr "Ingen interpolasjon"
 
 msgid "VNG four color interpolation"
 msgstr "VNG firefargers interpolasjon"
-
-msgid "Bilinear interpolation"
-msgstr "Bilineær interpolasjon"
 
 msgid "AHD interpolation"
 msgstr "AHD-interpolasjon"
@@ -1157,6 +1150,9 @@ msgstr "VNG-interpolasjon"
 
 msgid "PPG interpolation"
 msgstr "PPG-interpolasjon"
+
+msgid "Bilinear interpolation"
+msgstr "Bilineær interpolasjon"
 
 msgid "No interpolation"
 msgstr "Ingen interpolasjon"
@@ -1729,3 +1725,7 @@ msgstr "Kameraets HB"
 
 msgid "Auto WB"
 msgstr "Automatisk HB"
+
+#, fuzzy
+#~ msgid "Bilinear interpolation (fast)"
+#~ msgstr "Bilineær interpolasjon"

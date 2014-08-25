@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:00+0200\n"
+"POT-Creation-Date: 2014-08-25 17:00+0200\n"
 "PO-Revision-Date: 2010-03-18 14:45+0900\n"
 "Last-Translator: Homin Lee <ff4500@gmail.com>\n"
 "Language-Team: Gnome-kr-hackers <gnome-kr@googlegroups.com>\n"
@@ -1115,18 +1115,11 @@ msgid "Color filter array interpolation"
 msgstr "Bilinear 보간법"
 
 #, fuzzy
-msgid "Bilinear interpolation (fast)"
-msgstr "Bilinear 보간법"
-
-#, fuzzy
-msgid "X-Trans interpolation (slow)"
+msgid "X-Trans interpolation"
 msgstr "보간법 없음"
 
 msgid "VNG four color interpolation"
 msgstr "VNG four color 보간법"
-
-msgid "Bilinear interpolation"
-msgstr "Bilinear 보간법"
 
 msgid "AHD interpolation"
 msgstr "AHD 보간법"
@@ -1136,6 +1129,9 @@ msgstr "VNG 보간법"
 
 msgid "PPG interpolation"
 msgstr "PPG 보간법"
+
+msgid "Bilinear interpolation"
+msgstr "Bilinear 보간법"
 
 msgid "No interpolation"
 msgstr "보간법 없음"
@@ -1705,3 +1701,7 @@ msgstr "카메라 화벨"
 
 msgid "Auto WB"
 msgstr "자동 화벨"
+
+#, fuzzy
+#~ msgid "Bilinear interpolation (fast)"
+#~ msgstr "Bilinear 보간법"

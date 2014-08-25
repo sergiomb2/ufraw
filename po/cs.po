@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:00+0200\n"
+"POT-Creation-Date: 2014-08-25 17:00+0200\n"
 "PO-Revision-Date: 2011-08-12 05:57+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -1138,18 +1138,11 @@ msgid "Color filter array interpolation"
 msgstr "Bilineární interpolace"
 
 #, fuzzy
-msgid "Bilinear interpolation (fast)"
-msgstr "Bilineární interpolace"
-
-#, fuzzy
-msgid "X-Trans interpolation (slow)"
+msgid "X-Trans interpolation"
 msgstr "Žádná interpolace"
 
 msgid "VNG four color interpolation"
 msgstr "VNG Interpolace čtyř barev"
-
-msgid "Bilinear interpolation"
-msgstr "Bilineární interpolace"
 
 msgid "AHD interpolation"
 msgstr "AHD interpolace"
@@ -1159,6 +1152,9 @@ msgstr "VNG interpolace"
 
 msgid "PPG interpolation"
 msgstr "PPG interpolace"
+
+msgid "Bilinear interpolation"
+msgstr "Bilineární interpolace"
 
 msgid "No interpolation"
 msgstr "Žádná interpolace"
@@ -1730,3 +1726,7 @@ msgstr "Dle fotoaparátu"
 
 msgid "Auto WB"
 msgstr "Automatické"
+
+#, fuzzy
+#~ msgid "Bilinear interpolation (fast)"
+#~ msgstr "Bilineární interpolace"

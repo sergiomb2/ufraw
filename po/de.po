@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:00+0200\n"
+"POT-Creation-Date: 2014-08-25 17:00+0200\n"
 "PO-Revision-Date: 2011-09-06 22:21+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -1155,18 +1155,11 @@ msgid "Color filter array interpolation"
 msgstr "Bilineare Interpolation"
 
 #, fuzzy
-msgid "Bilinear interpolation (fast)"
-msgstr "Bilineare Interpolation"
-
-#, fuzzy
-msgid "X-Trans interpolation (slow)"
+msgid "X-Trans interpolation"
 msgstr "Keine Interpolation"
 
 msgid "VNG four color interpolation"
 msgstr "VNG-Vierfarbinterpolation"
-
-msgid "Bilinear interpolation"
-msgstr "Bilineare Interpolation"
 
 msgid "AHD interpolation"
 msgstr "AHD-Interpolation"
@@ -1176,6 +1169,9 @@ msgstr "VNG-Interpolation"
 
 msgid "PPG interpolation"
 msgstr "PPG-Interpolation"
+
+msgid "Bilinear interpolation"
+msgstr "Bilineare Interpolation"
 
 msgid "No interpolation"
 msgstr "Keine Interpolation"
@@ -1749,3 +1745,7 @@ msgstr "Kamera-SW"
 
 msgid "Auto WB"
 msgstr "Automatisches SW"
+
+#, fuzzy
+#~ msgid "Bilinear interpolation (fast)"
+#~ msgstr "Bilineare Interpolation"

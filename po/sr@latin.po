@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:00+0200\n"
+"POT-Creation-Date: 2014-08-25 17:00+0200\n"
 "PO-Revision-Date: 2010-03-16 12:54+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -1158,18 +1158,11 @@ msgid "Color filter array interpolation"
 msgstr "Dvolinearna interpolacija"
 
 #, fuzzy
-msgid "Bilinear interpolation (fast)"
-msgstr "Dvolinearna interpolacija"
-
-#, fuzzy
-msgid "X-Trans interpolation (slow)"
+msgid "X-Trans interpolation"
 msgstr "Bez interpolacije"
 
 msgid "VNG four color interpolation"
 msgstr "VNG četvorobojna interpolacija"
-
-msgid "Bilinear interpolation"
-msgstr "Dvolinearna interpolacija"
 
 msgid "AHD interpolation"
 msgstr "AHD interpolacija"
@@ -1179,6 +1172,9 @@ msgstr "VNG interpolacija"
 
 msgid "PPG interpolation"
 msgstr "PPG interpolacija"
+
+msgid "Bilinear interpolation"
+msgstr "Dvolinearna interpolacija"
 
 msgid "No interpolation"
 msgstr "Bez interpolacije"
@@ -1750,3 +1746,7 @@ msgstr "Ravnoteža bele iz kamere"
 
 msgid "Auto WB"
 msgstr "Sam odredi ravnotežu bele"
+
+#, fuzzy
+#~ msgid "Bilinear interpolation (fast)"
+#~ msgstr "Dvolinearna interpolacija"

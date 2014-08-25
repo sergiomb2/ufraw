@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:00+0200\n"
+"POT-Creation-Date: 2014-08-25 17:00+0200\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -1100,18 +1100,11 @@ msgid "Color filter array interpolation"
 msgstr "Bilinear 插值"
 
 #, fuzzy
-msgid "Bilinear interpolation (fast)"
-msgstr "Bilinear 插值"
-
-#, fuzzy
-msgid "X-Trans interpolation (slow)"
+msgid "X-Trans interpolation"
 msgstr "不插值"
 
 msgid "VNG four color interpolation"
 msgstr "VNG 四色插值"
-
-msgid "Bilinear interpolation"
-msgstr "Bilinear 插值"
 
 msgid "AHD interpolation"
 msgstr "AHD 插值"
@@ -1121,6 +1114,9 @@ msgstr "VNG 插值"
 
 msgid "PPG interpolation"
 msgstr "PPG 插值"
+
+msgid "Bilinear interpolation"
+msgstr "Bilinear 插值"
 
 msgid "No interpolation"
 msgstr "不插值"
@@ -1687,3 +1683,7 @@ msgstr "相机白平衡"
 
 msgid "Auto WB"
 msgstr "自动白平衡"
+
+#, fuzzy
+#~ msgid "Bilinear interpolation (fast)"
+#~ msgstr "Bilinear 插值"
