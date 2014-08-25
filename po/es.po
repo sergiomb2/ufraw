@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: 2010-03-18 08:33+0100\n"
 "Last-Translator: Enrique Jorreto <ejorreto@gmail.com>\n"
 "Language-Team: Spanish/Spain <ejorreto@gmail.com>\n"
@@ -1149,11 +1149,16 @@ msgstr ""
 msgid "Chan. multipliers:"
 msgstr "Multiplic. de canal:"
 
-msgid "Bayer pattern interpolation"
-msgstr "Interpolación de patrón Bayer"
+#, fuzzy
+msgid "Color filter array interpolation"
+msgstr "Interpolación bilineal"
 
 #, fuzzy
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "Interpolación bilineal"
+
+#, fuzzy
+msgid "X-Trans interpolation (slow)"
 msgstr "Sin interpolación"
 
 msgid "VNG four color interpolation"
@@ -1174,8 +1179,9 @@ msgstr "Interpolación PPG"
 msgid "No interpolation"
 msgstr "Sin interpolación"
 
-msgid "No Bayer pattern"
-msgstr "Sin patrón Bayer"
+#, fuzzy
+msgid "No color filter array"
+msgstr "Cargar perfil de color"
 
 msgid "Apply color smoothing"
 msgstr "Aplicar suavizado de color"
@@ -1743,3 +1749,9 @@ msgstr "Balance de la cámara"
 
 msgid "Auto WB"
 msgstr "Balance automático"
+
+#~ msgid "Bayer pattern interpolation"
+#~ msgstr "Interpolación de patrón Bayer"
+
+#~ msgid "No Bayer pattern"
+#~ msgstr "Sin patrón Bayer"

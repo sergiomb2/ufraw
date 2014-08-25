@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: 2010-03-04 23:12+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish\n"
@@ -1134,11 +1134,16 @@ msgstr ""
 msgid "Chan. multipliers:"
 msgstr "Mnożniki kanałów:"
 
-msgid "Bayer pattern interpolation"
-msgstr "Interpolacja wzorca Bayera"
+#, fuzzy
+msgid "Color filter array interpolation"
+msgstr "Interpolacja dwuliniowa"
 
 #, fuzzy
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "Interpolacja dwuliniowa"
+
+#, fuzzy
+msgid "X-Trans interpolation (slow)"
 msgstr "Bez interpolacji"
 
 msgid "VNG four color interpolation"
@@ -1159,8 +1164,9 @@ msgstr "Interpolacja PPG"
 msgid "No interpolation"
 msgstr "Bez interpolacji"
 
-msgid "No Bayer pattern"
-msgstr "Brak wzorca Bayera"
+#, fuzzy
+msgid "No color filter array"
+msgstr "Wczytaj profil kolorów"
 
 msgid "Apply color smoothing"
 msgstr "Zastosuj wygładzanie kolorów"
@@ -1724,3 +1730,9 @@ msgstr "Balans bieli aparatu"
 
 msgid "Auto WB"
 msgstr "Automatyczny balans bieli"
+
+#~ msgid "Bayer pattern interpolation"
+#~ msgstr "Interpolacja wzorca Bayera"
+
+#~ msgid "No Bayer pattern"
+#~ msgstr "Brak wzorca Bayera"

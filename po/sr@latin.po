@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: 2010-03-16 12:54+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -1153,11 +1153,16 @@ msgstr ""
 msgid "Chan. multipliers:"
 msgstr "Množioci kanala:"
 
-msgid "Bayer pattern interpolation"
-msgstr "Interpolacija Bajerovom mustrom"
+#, fuzzy
+msgid "Color filter array interpolation"
+msgstr "Dvolinearna interpolacija"
 
 #, fuzzy
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "Dvolinearna interpolacija"
+
+#, fuzzy
+msgid "X-Trans interpolation (slow)"
 msgstr "Bez interpolacije"
 
 msgid "VNG four color interpolation"
@@ -1178,8 +1183,9 @@ msgstr "PPG interpolacija"
 msgid "No interpolation"
 msgstr "Bez interpolacije"
 
-msgid "No Bayer pattern"
-msgstr "Ne postoji Bajerova mustra"
+#, fuzzy
+msgid "No color filter array"
+msgstr "Učitaj profil boja"
 
 msgid "Apply color smoothing"
 msgstr "Primeljuje uglađivanje boja"
@@ -1744,3 +1750,9 @@ msgstr "Ravnoteža bele iz kamere"
 
 msgid "Auto WB"
 msgstr "Sam odredi ravnotežu bele"
+
+#~ msgid "Bayer pattern interpolation"
+#~ msgstr "Interpolacija Bajerovom mustrom"
+
+#~ msgid "No Bayer pattern"
+#~ msgstr "Ne postoji Bajerova mustra"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: 2010-03-04 21:05+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -1154,11 +1154,16 @@ msgstr ""
 msgid "Chan. multipliers:"
 msgstr "Multiplicadors en cadena:"
 
-msgid "Bayer pattern interpolation"
-msgstr "Interpolació del model Bayer"
+#, fuzzy
+msgid "Color filter array interpolation"
+msgstr "Interpolació bilineal"
 
 #, fuzzy
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "Interpolació bilineal"
+
+#, fuzzy
+msgid "X-Trans interpolation (slow)"
 msgstr "Sense interpolació"
 
 msgid "VNG four color interpolation"
@@ -1179,8 +1184,9 @@ msgstr "Interpolació PPG"
 msgid "No interpolation"
 msgstr "Sense interpolació"
 
-msgid "No Bayer pattern"
-msgstr "No hi ha cap patró Bayer"
+#, fuzzy
+msgid "No color filter array"
+msgstr "Carrega el perfil de color"
 
 msgid "Apply color smoothing"
 msgstr "Fes que els colors siguin suaus"
@@ -1752,3 +1758,9 @@ msgstr "Equilibri de blancs de la càmera"
 
 msgid "Auto WB"
 msgstr "Equilibri de blancs automàtic"
+
+#~ msgid "Bayer pattern interpolation"
+#~ msgstr "Interpolació del model Bayer"
+
+#~ msgid "No Bayer pattern"
+#~ msgstr "No hi ha cap patró Bayer"

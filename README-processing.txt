@@ -1,6 +1,6 @@
 UFRaw detailed processing description
 
-$Id: README-processing.txt,v 1.24 2010/03/01 01:50:50 lexort Exp $
+$Id: README-processing.txt,v 1.25 2014/08/25 13:00:18 nkbj Exp $
 
 This document is a work in progress and may contain inaccurate information.
 
@@ -11,7 +11,7 @@ files.  The description is intended to be correct and precise, even at
 the expense of readability.  This document is not a HOWTO.
 
 This document assumes that the reader is generally familiar with computer
-image processing, and understands the issues surrounding Bayer arrays,
+image processing, and understands the issues surrounding color filter arrays,
 white balance, and color management.
 
 == References

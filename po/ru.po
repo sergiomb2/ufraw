@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: 2010-03-21 22:24+0300\n"
 "Last-Translator: Александр Прокудин <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -1149,11 +1149,16 @@ msgstr ""
 msgid "Chan. multipliers:"
 msgstr "Множ. каналов:"
 
-msgid "Bayer pattern interpolation"
-msgstr "Интерполяция Баейеровской структуры"
+#, fuzzy
+msgid "Color filter array interpolation"
+msgstr "Билинейная интерполяция"
 
 #, fuzzy
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "Билинейная интерполяция"
+
+#, fuzzy
+msgid "X-Trans interpolation (slow)"
 msgstr "Без интерполяции"
 
 msgid "VNG four color interpolation"
@@ -1174,8 +1179,9 @@ msgstr "Интерполяция PPG"
 msgid "No interpolation"
 msgstr "Без интерполяции"
 
-msgid "No Bayer pattern"
-msgstr "Без баейеровской структуры"
+#, fuzzy
+msgid "No color filter array"
+msgstr "Загрузить цветовой профиль"
 
 msgid "Apply color smoothing"
 msgstr "Применить цветовое сглаживание"
@@ -1744,3 +1750,9 @@ msgstr "ББ камеры"
 
 msgid "Auto WB"
 msgstr "Автоматический ББ"
+
+#~ msgid "Bayer pattern interpolation"
+#~ msgstr "Интерполяция Баейеровской структуры"
+
+#~ msgid "No Bayer pattern"
+#~ msgstr "Без баейеровской структуры"

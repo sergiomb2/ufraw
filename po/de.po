@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: 2011-09-06 22:21+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -1150,11 +1150,16 @@ msgstr ""
 msgid "Chan. multipliers:"
 msgstr "Kanalmultiplikatoren:"
 
-msgid "Bayer pattern interpolation"
-msgstr "Bayer-Musterinterpolation"
+#, fuzzy
+msgid "Color filter array interpolation"
+msgstr "Bilineare Interpolation"
 
 #, fuzzy
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "Bilineare Interpolation"
+
+#, fuzzy
+msgid "X-Trans interpolation (slow)"
 msgstr "Keine Interpolation"
 
 msgid "VNG four color interpolation"
@@ -1175,8 +1180,9 @@ msgstr "PPG-Interpolation"
 msgid "No interpolation"
 msgstr "Keine Interpolation"
 
-msgid "No Bayer pattern"
-msgstr "Kein Bayer-Muster"
+#, fuzzy
+msgid "No color filter array"
+msgstr "Farbprofil laden"
 
 msgid "Apply color smoothing"
 msgstr "Farbglättung übernehmen"
@@ -1743,3 +1749,9 @@ msgstr "Kamera-SW"
 
 msgid "Auto WB"
 msgstr "Automatisches SW"
+
+#~ msgid "Bayer pattern interpolation"
+#~ msgstr "Bayer-Musterinterpolation"
+
+#~ msgid "No Bayer pattern"
+#~ msgstr "Kein Bayer-Muster"

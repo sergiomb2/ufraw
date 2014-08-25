@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -1095,11 +1095,16 @@ msgstr "在图像上选择一点以对白平衡进行实时预览"
 msgid "Chan. multipliers:"
 msgstr "通道倍增数:"
 
-msgid "Bayer pattern interpolation"
-msgstr "Bayer模式插值"
+#, fuzzy
+msgid "Color filter array interpolation"
+msgstr "Bilinear 插值"
 
 #, fuzzy
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "Bilinear 插值"
+
+#, fuzzy
+msgid "X-Trans interpolation (slow)"
 msgstr "不插值"
 
 msgid "VNG four color interpolation"
@@ -1120,8 +1125,9 @@ msgstr "PPG 插值"
 msgid "No interpolation"
 msgstr "不插值"
 
-msgid "No Bayer pattern"
-msgstr "无 Bayer 样式"
+#, fuzzy
+msgid "No color filter array"
+msgstr "加载颜色配置文件"
 
 msgid "Apply color smoothing"
 msgstr "应用颜色平滑"
@@ -1681,3 +1687,9 @@ msgstr "相机白平衡"
 
 msgid "Auto WB"
 msgstr "自动白平衡"
+
+#~ msgid "Bayer pattern interpolation"
+#~ msgstr "Bayer模式插值"
+
+#~ msgid "No Bayer pattern"
+#~ msgstr "无 Bayer 样式"

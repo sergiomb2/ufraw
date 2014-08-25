@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: 2011-08-12 13:37+0200\n"
 "Last-Translator: Simon Oosthoek\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -1135,11 +1135,16 @@ msgstr "Selecteer een plek in het voorbeeld voor \"spot\" witbalans"
 msgid "Chan. multipliers:"
 msgstr "Kanaal multiplicatoren:"
 
-msgid "Bayer pattern interpolation"
-msgstr "Bayer patroon interpolatie"
+#, fuzzy
+msgid "Color filter array interpolation"
+msgstr "Bilineaire interpolatie"
 
 #, fuzzy
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "Bilineaire interpolatie"
+
+#, fuzzy
+msgid "X-Trans interpolation (slow)"
 msgstr "Geen interpolatie"
 
 msgid "VNG four color interpolation"
@@ -1160,8 +1165,9 @@ msgstr "PPG interpolatie"
 msgid "No interpolation"
 msgstr "Geen interpolatie"
 
-msgid "No Bayer pattern"
-msgstr "Geen Bayer patroon"
+#, fuzzy
+msgid "No color filter array"
+msgstr "Inlezen kleurprofiel"
 
 msgid "Apply color smoothing"
 msgstr "Pas kleur vereffening toe"
@@ -1730,3 +1736,9 @@ msgstr "Camera WB"
 
 msgid "Auto WB"
 msgstr "Auto WB"
+
+#~ msgid "Bayer pattern interpolation"
+#~ msgstr "Bayer patroon interpolatie"
+
+#~ msgid "No Bayer pattern"
+#~ msgstr "Geen Bayer patroon"

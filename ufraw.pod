@@ -198,7 +198,7 @@ Black-point value. Range 0.0 to 1.0, default 0.0.
 
 =item --interpolation=ahd|vng|four-color|ppg|bilinear
 
-Interpolation algorithm to use when converting from the Bayer-pattern
+Interpolation algorithm to use when converting from the color filter array
 to normal RGB values. AHD (Adaptive Homogeneity Directed) interpolation
 is the best, but also the slowest. VNG (Variable Number Gradients)
 is second best and a bit faster. Bilinear is the simplest yet fastest

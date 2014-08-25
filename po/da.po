@@ -1,14 +1,14 @@
 # Danish translation for UFRaw.
 # Copyright (C) 2006-2014 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-# Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>, 2006-2013.
+# Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>, 2006-2014.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.20\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
-"PO-Revision-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
+"PO-Revision-Date: 2014-08-25 15:00+0200\n"
 "Last-Translator: Niels Kristian Bech Jensen <nkbj@users.sourceforge.net>\n"
 "Language-Team: Danish <da@li.org>\n"
 "Language: da\n"
@@ -1126,11 +1126,14 @@ msgstr ""
 msgid "Chan. multipliers:"
 msgstr "Kanalmultiplikatorer:"
 
-msgid "Bayer pattern interpolation"
-msgstr "Bayermønsterinterpolation"
+msgid "Color filter array interpolation"
+msgstr "Farvefilterinterpolation"
 
-msgid "X-Trans interpolation (slow!)"
-msgstr "X-Trans-interpolation (langsom!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "Bilineær interpolation (hurtig)"
+
+msgid "X-Trans interpolation (slow)"
+msgstr "X-Trans-interpolation (langsom)"
 
 msgid "VNG four color interpolation"
 msgstr "VNG firfarveinterpolation"
@@ -1150,8 +1153,8 @@ msgstr "PPG-interpolation"
 msgid "No interpolation"
 msgstr "Ingen interpolation"
 
-msgid "No Bayer pattern"
-msgstr "Intet Bayermønster"
+msgid "No color filter array"
+msgstr "Intet farvefilter"
 
 msgid "Apply color smoothing"
 msgstr "Anvend farveudjævning"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -981,10 +981,13 @@ msgstr ""
 msgid "Chan. multipliers:"
 msgstr ""
 
-msgid "Bayer pattern interpolation"
+msgid "Color filter array interpolation"
 msgstr ""
 
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr ""
+
+msgid "X-Trans interpolation (slow)"
 msgstr ""
 
 msgid "VNG four color interpolation"
@@ -1005,7 +1008,7 @@ msgstr ""
 msgid "No interpolation"
 msgstr ""
 
-msgid "No Bayer pattern"
+msgid "No color filter array"
 msgstr ""
 
 msgid "Apply color smoothing"

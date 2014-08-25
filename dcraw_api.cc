@@ -744,7 +744,7 @@ extern "C" {
 
         /* It might be better to report an error here: */
         /* (dcraw also forbids AHD for Fuji rotated images) */
-        if (h->filters == 9)
+        if (h->filters == 9 && interpolation != dcraw_bilinear_interpolation)
             interpolation = dcraw_xtrans_interpolation;
         if (interpolation == dcraw_ahd_interpolation && h->colors > 3)
             interpolation = dcraw_vng_interpolation;
@@ -761,7 +761,7 @@ extern "C" {
         } else
             memcpy(f->image, h->raw.image, h->height * h->width * sizeof(dcraw_image_type));
         int smoothPasses = 1;
-        if (interpolation == dcraw_bilinear_interpolation)
+        if (interpolation == dcraw_bilinear_interpolation && (h->filters == 1 || h->filters > 1000))
             lin_interpolate_INDI(f->image, ff, f->width, f->height, cl, d, h);
 #ifdef ENABLE_INTERP_NONE
         else if (interpolation == dcraw_none_interpolation)

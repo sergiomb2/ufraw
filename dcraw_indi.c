@@ -624,6 +624,8 @@ void CLASS xtrans_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     drv  = (float(*)[TS][TS])(buffer + TS * TS * (ndir * 6 + 6));
     homo = (char(*)[TS][TS])(buffer + TS * TS * (ndir * 10 + 6));
 
+    progress(PROGRESS_INTERPOLATE, -height);
+
     /* Map a green hexagon around each non-green pixel and vice versa:      */
     for (row = 0; row < 3; row++)
         for (col = 0; col < 3; col++)
@@ -668,7 +670,8 @@ void CLASS xtrans_interpolate_INDI(ushort(*image)[4], const unsigned filters,
             }
         }
 
-    for (top = 3; top < height - 19; top += TS - 16)
+    for (top = 3; top < height - 19; top += TS - 16) {
+        progress(PROGRESS_INTERPOLATE, TS - 16);
         for (left = 3; left < width - 19; left += TS - 16) {
             mrow = MIN(top + TS, height - 3);
             mcol = MIN(left + TS, width - 3);
@@ -824,6 +827,8 @@ void CLASS xtrans_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                     FORC3 image[(row + top)*width + col + left][c] = avg[c] / avg[3];
                 }
         }
+    }
+
     free(buffer);
 }
 

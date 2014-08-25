@@ -521,7 +521,7 @@ static void color_labels_set(colorLabels *l, double data[])
 static int zoom_to_scale(double zoom)
 {
     /* Try to setup for shrink instead of resize because of speed.
-     * We only round down to guaranty that scale-to-fit actually fits.
+     * We only round down to guarantee that scale-to-fit actually fits.
      */
     int percent = zoom;
     int mul = 100 / percent;
@@ -4419,11 +4419,13 @@ static void whitebalance_fill_interface(preview_data *data,
                       GTK_ICON_SIZE_LARGE_TOOLBAR);
     gtk_container_add(GTK_CONTAINER(event_box), icon);
     gtk_table_attach(table, event_box, 0, 1, 0, 1, 0, 0, 0, 0);
-    gtk_widget_set_tooltip_text(event_box, _("Bayer pattern interpolation"));
+    gtk_widget_set_tooltip_text(event_box, _("Color filter array interpolation"));
     combo = GTK_COMBO_BOX(uf_combo_box_new_text());
     if (data->UF->HaveFilters) {
         if (data->UF->IsXTrans) {
-            uf_combo_box_append_text(combo, _("X-Trans interpolation (slow!)"),
+            uf_combo_box_append_text(combo, _("Bilinear interpolation (fast)"),
+                                     (void*)bilinear_interpolation);
+            uf_combo_box_append_text(combo, _("X-Trans interpolation (slow)"),
                                      (void*)xtrans_interpolation);
         } else if (data->UF->colors == 4) {
             uf_combo_box_append_text(combo, _("VNG four color interpolation"),
@@ -4450,7 +4452,7 @@ static void whitebalance_fill_interface(preview_data *data,
         g_signal_connect_after(G_OBJECT(combo), "changed",
                                G_CALLBACK(combo_update_simple), (gpointer)ufraw_first_phase);
     } else {
-        gtk_combo_box_append_text(combo, _("No Bayer pattern"));
+        gtk_combo_box_append_text(combo, _("No color filter array"));
         gtk_combo_box_set_active(combo, 0);
         gtk_widget_set_sensitive(GTK_WIDGET(combo), FALSE);
     }

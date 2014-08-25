@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: 2011-08-12 05:57+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.cz>\n"
@@ -1133,11 +1133,16 @@ msgstr "Před nastavením bodového vyvážení bílé zvolte bod na snímku ná
 msgid "Chan. multipliers:"
 msgstr "Násobitele kanálů:"
 
-msgid "Bayer pattern interpolation"
-msgstr "Interpolace Bayerovy matice"
+#, fuzzy
+msgid "Color filter array interpolation"
+msgstr "Bilineární interpolace"
 
 #, fuzzy
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "Bilineární interpolace"
+
+#, fuzzy
+msgid "X-Trans interpolation (slow)"
 msgstr "Žádná interpolace"
 
 msgid "VNG four color interpolation"
@@ -1158,8 +1163,9 @@ msgstr "PPG interpolace"
 msgid "No interpolation"
 msgstr "Žádná interpolace"
 
-msgid "No Bayer pattern"
-msgstr "Žádná Baeyrova matice"
+#, fuzzy
+msgid "No color filter array"
+msgstr "Načíst barvové profily"
 
 msgid "Apply color smoothing"
 msgstr "Použít vyhlazení barev"
@@ -1724,3 +1730,9 @@ msgstr "Dle fotoaparátu"
 
 msgid "Auto WB"
 msgstr "Automatické"
+
+#~ msgid "Bayer pattern interpolation"
+#~ msgstr "Interpolace Bayerovy matice"
+
+#~ msgid "No Bayer pattern"
+#~ msgstr "Žádná Baeyrova matice"

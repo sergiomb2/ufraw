@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: 2009-10-12 18:00+0200\n"
 "Last-Translator: Alvin Brattli\n"
 "Language-Team:  <en@li.org>\n"
@@ -1131,11 +1131,16 @@ msgstr "Velg et punkt på forhåndsvisningsbildet for å måle punkthvitbalanse"
 msgid "Chan. multipliers:"
 msgstr "Kanalmultiplikatorer:"
 
-msgid "Bayer pattern interpolation"
-msgstr "Bayermønsterinterpolasjon"
+#, fuzzy
+msgid "Color filter array interpolation"
+msgstr "Bilineær interpolasjon"
 
 #, fuzzy
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "Bilineær interpolasjon"
+
+#, fuzzy
+msgid "X-Trans interpolation (slow)"
 msgstr "Ingen interpolasjon"
 
 msgid "VNG four color interpolation"
@@ -1156,8 +1161,9 @@ msgstr "PPG-interpolasjon"
 msgid "No interpolation"
 msgstr "Ingen interpolasjon"
 
-msgid "No Bayer pattern"
-msgstr "Intet Bayermønster"
+#, fuzzy
+msgid "No color filter array"
+msgstr "Les inn fargeprofil"
 
 msgid "Apply color smoothing"
 msgstr "Bruk fargeutjevning"
@@ -1723,3 +1729,9 @@ msgstr "Kameraets HB"
 
 msgid "Auto WB"
 msgstr "Automatisk HB"
+
+#~ msgid "Bayer pattern interpolation"
+#~ msgstr "Bayermønsterinterpolasjon"
+
+#~ msgid "No Bayer pattern"
+#~ msgstr "Intet Bayermønster"

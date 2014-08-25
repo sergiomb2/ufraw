@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: 2009-01-04 06:00+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <LL@li.org>\n"
@@ -999,11 +999,16 @@ msgstr ""
 msgid "Chan. multipliers:"
 msgstr ""
 
-msgid "Bayer pattern interpolation"
-msgstr ""
+#, fuzzy
+msgid "Color filter array interpolation"
+msgstr "Bilinjär interpolering"
 
 #, fuzzy
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "Bilinjär interpolering"
+
+#, fuzzy
+msgid "X-Trans interpolation (slow)"
 msgstr "VNG-interpolering"
 
 msgid "VNG four color interpolation"
@@ -1025,8 +1030,9 @@ msgstr "PPG-interpolering"
 msgid "No interpolation"
 msgstr "VNG-interpolering"
 
-msgid "No Bayer pattern"
-msgstr "Inget Bayer-mönster"
+#, fuzzy
+msgid "No color filter array"
+msgstr "Läs in färgprofil"
 
 msgid "Apply color smoothing"
 msgstr "Tillämpa färgutjämning"
@@ -1586,3 +1592,6 @@ msgstr "Kamera VB"
 
 msgid "Auto WB"
 msgstr "Automatisk VB"
+
+#~ msgid "No Bayer pattern"
+#~ msgstr "Inget Bayer-mönster"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 13:30+0200\n"
+"POT-Creation-Date: 2014-08-25 15:00+0200\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -1097,11 +1097,16 @@ msgstr "選択した箇所を基本値として全体にホワイトバランス
 msgid "Chan. multipliers:"
 msgstr "チャンネル乗数:"
 
-msgid "Bayer pattern interpolation"
-msgstr "Bayerパターン補間"
+#, fuzzy
+msgid "Color filter array interpolation"
+msgstr "バイリニア補間"
 
 #, fuzzy
-msgid "X-Trans interpolation (slow!)"
+msgid "Bilinear interpolation (fast)"
+msgstr "バイリニア補間"
+
+#, fuzzy
+msgid "X-Trans interpolation (slow)"
 msgstr "補間無し"
 
 msgid "VNG four color interpolation"
@@ -1122,8 +1127,9 @@ msgstr "PPG補間"
 msgid "No interpolation"
 msgstr "補間無し"
 
-msgid "No Bayer pattern"
-msgstr "Bayerパターン無し"
+#, fuzzy
+msgid "No color filter array"
+msgstr "カラープロファイルの読込"
 
 msgid "Apply color smoothing"
 msgstr ""
@@ -1685,3 +1691,9 @@ msgstr "カメラWB"
 
 msgid "Auto WB"
 msgstr "自動WB"
+
+#~ msgid "Bayer pattern interpolation"
+#~ msgstr "Bayerパターン補間"
+
+#~ msgid "No Bayer pattern"
+#~ msgstr "Bayerパターン無し"

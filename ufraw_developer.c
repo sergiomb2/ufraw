@@ -608,8 +608,8 @@ void developer_prepare(developer_data *d, conf_data *conf,
     for (c = 0; c < d->colors; c++)
         max = MAX(max, ufnumber_array_value(chanMul, c));
     d->max = 0x10000 / max;
-    /* rgbWB is used in dcraw_finalized_interpolation() before the Bayer
-     * Interpolation. It is normalized to guaranty that values do not
+    /* rgbWB is used in dcraw_finalized_interpolation() before the color filter
+     * array interpolation. It is normalized to guarantee that values do not
      * exceed 0xFFFF */
     for (c = 0; c < d->colors; c++)
         d->rgbWB[c] = ufnumber_array_value(chanMul, c) *  d->max *
