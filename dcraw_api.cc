@@ -775,7 +775,7 @@ extern "C" {
         else if (interpolation == dcraw_xtrans_interpolation) {
             xtrans_interpolate_INDI(f->image, h->filters, f->width, f->height,
                                     h->colors, h->rgb_cam, d, h, 3);
-            smoothing = 0;
+            smoothPasses = 3;
         } else if (interpolation == dcraw_ahd_interpolation) {
             ahd_interpolate_INDI(f->image, ff, f->width, f->height, cl,
                                  h->rgb_cam, d, h);
