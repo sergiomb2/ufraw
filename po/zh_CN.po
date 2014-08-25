@@ -1683,7 +1683,3 @@ msgstr "相机白平衡"
 
 msgid "Auto WB"
 msgstr "自动白平衡"
-
-#, fuzzy
-#~ msgid "Bilinear interpolation (fast)"
-#~ msgstr "Bilinear 插值"

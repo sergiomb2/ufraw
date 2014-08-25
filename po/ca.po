@@ -1754,7 +1754,3 @@ msgstr "Equilibri de blancs de la càmera"
 
 msgid "Auto WB"
 msgstr "Equilibri de blancs automàtic"
-
-#, fuzzy
-#~ msgid "Bilinear interpolation (fast)"
-#~ msgstr "Interpolació bilineal"

@@ -1701,7 +1701,3 @@ msgstr "카메라 화벨"
 
 msgid "Auto WB"
 msgstr "자동 화벨"
-
-#, fuzzy
-#~ msgid "Bilinear interpolation (fast)"
-#~ msgstr "Bilinear 보간법"

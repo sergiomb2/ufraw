@@ -1726,7 +1726,3 @@ msgstr "Balans bieli aparatu"
 
 msgid "Auto WB"
 msgstr "Automatyczny balans bieli"
-
-#, fuzzy
-#~ msgid "Bilinear interpolation (fast)"
-#~ msgstr "Interpolacja dwuliniowa"

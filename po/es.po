@@ -1745,7 +1745,3 @@ msgstr "Balance de la cámara"
 
 msgid "Auto WB"
 msgstr "Balance automático"
-
-#, fuzzy
-#~ msgid "Bilinear interpolation (fast)"
-#~ msgstr "Interpolación bilineal"

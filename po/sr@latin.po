@@ -1746,7 +1746,3 @@ msgstr "Ravnoteža bele iz kamere"
 
 msgid "Auto WB"
 msgstr "Sam odredi ravnotežu bele"
-
-#, fuzzy
-#~ msgid "Bilinear interpolation (fast)"
-#~ msgstr "Dvolinearna interpolacija"

@@ -1687,7 +1687,3 @@ msgstr "カメラWB"
 
 msgid "Auto WB"
 msgstr "自動WB"
-
-#, fuzzy
-#~ msgid "Bilinear interpolation (fast)"
-#~ msgstr "バイリニア補間"

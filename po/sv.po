@@ -1588,7 +1588,3 @@ msgstr "Kamera VB"
 
 msgid "Auto WB"
 msgstr "Automatisk VB"
-
-#, fuzzy
-#~ msgid "Bilinear interpolation (fast)"
-#~ msgstr "Bilinjär interpolering"

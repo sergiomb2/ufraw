@@ -1726,7 +1726,3 @@ msgstr "Dle fotoaparátu"
 
 msgid "Auto WB"
 msgstr "Automatické"
-
-#, fuzzy
-#~ msgid "Bilinear interpolation (fast)"
-#~ msgstr "Bilineární interpolace"

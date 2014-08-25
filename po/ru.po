@@ -1746,7 +1746,3 @@ msgstr "ББ камеры"
 
 msgid "Auto WB"
 msgstr "Автоматический ББ"
-
-#, fuzzy
-#~ msgid "Bilinear interpolation (fast)"
-#~ msgstr "Билинейная интерполяция"

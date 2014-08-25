@@ -1745,7 +1745,3 @@ msgstr "Kamera-SW"
 
 msgid "Auto WB"
 msgstr "Automatisches SW"
-
-#, fuzzy
-#~ msgid "Bilinear interpolation (fast)"
-#~ msgstr "Bilineare Interpolation"
