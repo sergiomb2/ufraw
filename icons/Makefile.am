@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.16 2010/02/11 07:11:06 udifuchs Exp $
+# $Id: Makefile.am,v 1.17 2014/08/26 03:00:39 nkbj Exp $
 
 noinst_HEADERS = ufraw_icons.h
 icon_DATA = ufraw.png
@@ -14,7 +14,7 @@ UFRAW_ICONS = ufraw.png exposure-24.png film-24.png digital-24.png \
     flip-horiz-24.png flip-vert-24.png rotate-90-24.png rotate-270-24.png \
     lock-24.png unlock-24.png exif-24.png crop-24.png rectify-24.png \
     gimp-24.png channel-blue-24.png channel-green-24.png channel-red-24.png \
-    lens-24.png tca-24.png vignetting-24.png distortion-24.png \
+    channel-grey-24.png lens-24.png tca-24.png vignetting-24.png distortion-24.png \
     automatic-24.png manual-24.png \
     geometry-24.png hueadjust-24.png
 
@@ -58,6 +58,7 @@ ufraw_icons.h: $(UFRAW_ICONS) Makefile.am
 		channel_blue_24 $(srcdir)/channel-blue-24.png \
 		channel_green_24 $(srcdir)/channel-green-24.png \
 		channel_red_24 $(srcdir)/channel-red-24.png \
+		channel_grey_24 $(srcdir)/channel-grey-24.png \
 		tca_24 $(srcdir)/tca-24.png \
 		distortion_24 $(srcdir)/distortion-24.png \
 		vignetting_24 $(srcdir)/vignetting-24.png \

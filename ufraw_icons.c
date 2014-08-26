@@ -60,6 +60,7 @@ void ufraw_icons_init()
     load_icon(factory, channel_blue_24, "channel-blue");
     load_icon(factory, channel_green_24, "channel-green");
     load_icon(factory, channel_red_24, "channel-red");
+    load_icon(factory, channel_grey_24, "channel-grey");
     load_icon(factory, lens_24, "lens");
     load_icon(factory, tca_24, "tca");
     load_icon(factory, vignetting_24, "vignetting");

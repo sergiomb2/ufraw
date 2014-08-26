@@ -4645,7 +4645,7 @@ static void denoise_fill_interface(preview_data *data, GtkWidget *page)
     for (i = 0; i < data->UF->colors; ++i) {
         button = gtk_toggle_button_new();
         gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(
-                              i == 0 ? "channel-red" :
+                      i == 0 ? data->UF->colors == 1 ? "channel-grey" : "channel-red" :
                               i == 1 || i == 3 ? "channel-green" : "channel-blue",
                               GTK_ICON_SIZE_BUTTON));
         data->ChannelSelectButton[i] = GTK_TOGGLE_BUTTON(button);

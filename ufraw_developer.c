@@ -615,10 +615,15 @@ void developer_prepare(developer_data *d, conf_data *conf,
         d->rgbWB[c] = ufnumber_array_value(chanMul, c) *  d->max *
                       0xFFFF / d->rgbMax;
 
-    if (d->useMatrix)
-        for (i = 0; i < 3; i++)
-            for (c = 0; c < d->colors; c++)
-                d->colorMatrix[i][c] = rgb_cam[i][c] * 0x10000;
+    if (d->useMatrix) {
+        if (d->colors == 1)
+            for (i = 0; i < 3; i++)
+                d->colorMatrix[i][0] = rgb_cam[0][0] * 0x10000;
+        else
+            for (i = 0; i < 3; i++)
+                for (c = 0; c < d->colors; c++)
+                    d->colorMatrix[i][c] = rgb_cam[i][c] * 0x10000;
+    }
 
     switch (conf->grayscaleMode) {
 
@@ -1065,6 +1070,8 @@ void develop_linear(guint16 in[4], guint16 out[3], developer_data *d)
         else
             tmppix[c] = tmppix[c] * d->exposure / d->max;
     }
+    if (d->colors == 1)
+        tmppix[1] = tmppix[2] = tmppix[0];
     if (clipped) {
         /* At this point a value of d->exposure in tmppix[c] corresponds
          * to "1.0" (full exposure). Still the maximal value can be
