@@ -1302,6 +1302,7 @@ static gboolean render_live_histogram(preview_data *data)
     gtk_widget_queue_draw(data->LiveHisto);
 
     int CropCount = Crop.width * Crop.height;
+    if (CropCount == 0) CropCount = 1;	// Bug #387: Fix divide-by-zero crash.
     for (c = 0; c < 3; c++)
         rgb[c] = sum[c] / CropCount;
     color_labels_set(data->AvrLabels, rgb);
@@ -1980,7 +1981,9 @@ static void update_shrink_ranges(preview_data *data)
         data->width = croppedWidth / data->shrink;
     } else {
         int size = floor(MAX(data->height, data->width) + 0.5);
-        if (croppedHeight > croppedWidth) {
+        if (size == 0 || (croppedHeight == 0 && croppedWidth == 0))
+            data->height = data->width = data->shrink = 0;
+        else if (croppedHeight > croppedWidth) {
             data->height = size;
             data->width = size * croppedWidth / croppedHeight;
             data->shrink = (double)croppedHeight / size;
