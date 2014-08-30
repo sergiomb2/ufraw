@@ -1975,7 +1975,7 @@ int ufraw_set_wb(ufraw_data *uf)
          */
         if (uf->raw_color) {
             /* If there is no color matrix it is simple */
-            for (c = 0; c < 3; c++)
+            for (c = 0; c < uf->colors; c++)
                 chanMulArray[c] = raw->pre_mul[c] / rgbWB[c];
             ufnumber_array_set(chanMul, chanMulArray);
         } else {
