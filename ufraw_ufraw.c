@@ -1964,14 +1964,14 @@ int ufraw_set_wb(ufraw_data *uf)
          * rgbWB[3] = rgb_cam[3][4] * preMul[4] * camWhite[4]
          * Now we want to make it white (1,1,1), so we replace preMul
          * with chanMul, which is defined as:
-         * chanMul[4] = cam_rgb[4][3] * (1/rgbWB[3][3]) * rgb_cam[3][4]
-         *		* preMul[4]
+         * chanMul[4][4] = cam_rgb[4][3] * (1/rgbWB[3][3]) * rgb_cam[3][4]
+         *		* preMul[4][4]
          * We "upgraded" preMul, chanMul and rgbWB to diagonal matrices.
          * This allows for the manipulation:
          * (1/chanMul)[4][4] = (1/preMul)[4][4] * cam_rgb[4][3] * rgbWB[3][3]
          *		* rgb_cam[3][4]
          * We use the fact that rgb_cam[3][4] * (1,1,1,1) = (1,1,1) and get:
-         * (1/chanMul)[4] = (1/preMul)[4] * cam_rgb[4][3] * rgbWB[3]
+         * (1/chanMul)[4] = (1/preMul)[4][4] * cam_rgb[4][3] * rgbWB[3]
          */
         if (uf->raw_color) {
             /* If there is no color matrix it is simple */
