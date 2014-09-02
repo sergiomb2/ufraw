@@ -698,10 +698,11 @@ static gboolean switch_highlights(gpointer ptr)
         GdkRectangle viewRect;
         gtk_image_view_get_viewport(GTK_IMAGE_VIEW(data->PreviewWidget),
                                     &viewRect);
+        gdouble zoom = gtk_image_view_get_zoom(GTK_IMAGE_VIEW(data->PreviewWidget));
 
-        int x1 = MAX(Crop.x, viewRect.x);
+        int x1 = MAX(Crop.x, viewRect.x / zoom);
         int width = MIN(Crop.width, viewRect.width);
-        int y1 = MAX(Crop.y, viewRect.y);
+        int y1 = MAX(Crop.y, viewRect.y / zoom);
         int height = MIN(Crop.height, viewRect.height);
 
         data->OverUnderTicker++;
