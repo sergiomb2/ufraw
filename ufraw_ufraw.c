@@ -1203,7 +1203,7 @@ static void ufraw_convert_image_raw(ufraw_data *uf, UFRawPhase phase)
     rawimage = raw->raw.image;
     raw->raw.image = (dcraw_image_type *)img->buffer;
     /* The threshold is scaled for compatibility */
-    dcraw_wavelet_denoise(raw, uf->conf->threshold * sqrt(uf->raw_multiplier));
+    if (!uf->IsXTrans) dcraw_wavelet_denoise(raw, uf->conf->threshold * sqrt(uf->raw_multiplier));
     dcraw_finalize_raw(raw, dark, uf->developer->rgbWB);
     raw->raw.image = rawimage;
     ufraw_despeckle(uf, phase);
@@ -1237,6 +1237,8 @@ static void ufraw_convert_image_first(ufraw_data *uf, UFRawPhase phase)
     ufraw_convertshrink(uf, &final);
     raw->raw.image = rawimage;
     dcraw_flip_image(&final, uf->conf->orientation);
+    /* The threshold is scaled for compatibility */
+    if (uf->IsXTrans) dcraw_wavelet_denoise_shrinked(&final, uf->conf->threshold * sqrt(uf->raw_multiplier));
 
     // The 'out' image contains the predicted image dimensions.
     // We want to be sure that our predictions were correct.
