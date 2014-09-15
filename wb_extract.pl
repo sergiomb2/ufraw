@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: wb_extract.pl,v 1.7 2014/01/05 13:45:10 nkbj Exp $
+# $Id: wb_extract.pl,v 1.8 2014/09/15 03:15:12 nkbj Exp $
 
 # This program helps to prepare white balance preset lines for
 # wb_presets.c.  To add a new camera, take exposures with every white
@@ -57,7 +57,7 @@ for my $file (@ARGV) {
       ($make, $model) = split(/ +/, $value);
       # exiftool's -Make and -Model are correct, but this should not
       # cause any regression
-      if ($make eq "X-E1") {
+      if ($make eq "X-E1" || $make eq "X-Pro1") {
         $model = $make;
         $make = "FUJIFILM";
       }
@@ -77,7 +77,7 @@ for my $file (@ARGV) {
     } elsif ($field eq "BlueBalance") {   # Field for D70 and X-E1 (blue)
       $mulblue = $value;
     } elsif ($field eq "WhiteBalance") {
-      if ($model eq "X-E1" && $value eq "Unknown (0x600)") {
+      if (($model eq "X-E1" || $model eq "X-Pro1" && $value eq "Unknown (0x600)") {
         $wbname = "Underwater";
       } else {
         $wbname = $value;
@@ -118,7 +118,7 @@ for my $file (@ARGV) {
 
   # Fix names for wb_presets.c
   if ($make eq "FUJIFILM") {
-    if ($model eq "X-E1") {
+    if ($model eq "X-E1" || $model eq "X-Pro1") {
       # The manual calls it "Shade", but exiftool shows it as "Cloudy".
       $wbname =~ s/^Cloudy$/Shade/;
     }
