@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: wb_extract.pl,v 1.8 2014/09/15 03:15:12 nkbj Exp $
+# $Id: wb_extract.pl,v 1.9 2014/09/16 02:15:18 nkbj Exp $
 
 # This program helps to prepare white balance preset lines for
 # wb_presets.c.  To add a new camera, take exposures with every white
@@ -77,7 +77,7 @@ for my $file (@ARGV) {
     } elsif ($field eq "BlueBalance") {   # Field for D70 and X-E1 (blue)
       $mulblue = $value;
     } elsif ($field eq "WhiteBalance") {
-      if (($model eq "X-E1" || $model eq "X-Pro1" && $value eq "Unknown (0x600)") {
+      if (($model eq "X-E1" || $model eq "X-Pro1") && $value eq "Unknown (0x600)") {
         $wbname = "Underwater";
       } else {
         $wbname = $value;
