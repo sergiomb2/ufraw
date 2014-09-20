@@ -7,13 +7,14 @@ msgstr ""
 "Project-Id-Version: UFRaw 0.19.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-31 14:00+0200\n"
-"PO-Revision-Date: 2013-03-24 01:50+0100\n"
+"PO-Revision-Date: 2014-09-16 23:33+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
@@ -1135,8 +1136,8 @@ msgid ""
 "camera supported."
 msgstr ""
 "Il n'y a pas de pré-réglages de balance des blancs pour ce boîtier.\n"
-"Consulter le site web d'UFRaw pour savoir que faire pour que votre\n"
-" boîtier soit supporté."
+"Consulter le site web d'UFRaw pour savoir que faire pour que votre boîtier "
+"soit supporté."
 
 msgid "Reset white balance to initial value"
 msgstr "RàZ de la balance des blancs"
@@ -1163,13 +1164,11 @@ msgstr ""
 "Multiplicateurs\n"
 "de canaux:"
 
-#, fuzzy
 msgid "Color filter array interpolation"
-msgstr "Interpolation bilinéaire"
+msgstr "Matrice d'interpolation des couleurs"
 
-#, fuzzy
 msgid "X-Trans interpolation"
-msgstr "Pas d'interpolation"
+msgstr "Interpolation X-Trans"
 
 msgid "VNG four color interpolation"
 msgstr "Interpolation VNG 4 couleurs"
@@ -1189,9 +1188,8 @@ msgstr "Interpolation bilinéaire"
 msgid "No interpolation"
 msgstr "Pas d'interpolation"
 
-#, fuzzy
 msgid "No color filter array"
-msgstr "Charger un profil couleur"
+msgstr "Pas de matrice d'interpolation des couleurs"
 
 msgid "Apply color smoothing"
 msgstr "Appliquer le lissage des couleurs"
