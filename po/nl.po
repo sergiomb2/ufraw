@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-31 14:00+0200\n"
+"POT-Creation-Date: 2014-09-20 06:00+0200\n"
 "PO-Revision-Date: 2011-08-12 13:37+0200\n"
 "Last-Translator: Simon Oosthoek\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -1143,14 +1143,14 @@ msgstr "Bilineaire interpolatie"
 msgid "X-Trans interpolation"
 msgstr "Geen interpolatie"
 
+msgid "VNG interpolation"
+msgstr "VNG interpolatie"
+
 msgid "VNG four color interpolation"
 msgstr "VNG vier kleuren interpolatie"
 
 msgid "AHD interpolation"
 msgstr "AHD interpolatie"
-
-msgid "VNG interpolation"
-msgstr "VNG interpolatie"
 
 msgid "PPG interpolation"
 msgstr "PPG interpolatie"

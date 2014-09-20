@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-31 14:00+0200\n"
+"POT-Creation-Date: 2014-09-20 06:00+0200\n"
 "PO-Revision-Date: 2010-03-21 22:24+0300\n"
 "Last-Translator: Александр Прокудин <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@lists.gnome.org>\n"
@@ -1157,14 +1157,14 @@ msgstr "Билинейная интерполяция"
 msgid "X-Trans interpolation"
 msgstr "Без интерполяции"
 
+msgid "VNG interpolation"
+msgstr "Интерполяция VNG"
+
 msgid "VNG four color interpolation"
 msgstr "Интерполяция VNG для 4-х цветов"
 
 msgid "AHD interpolation"
 msgstr "Интерполяция AHD"
-
-msgid "VNG interpolation"
-msgstr "Интерполяция VNG"
 
 msgid "PPG interpolation"
 msgstr "Интерполяция PPG"

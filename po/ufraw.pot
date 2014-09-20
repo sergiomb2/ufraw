@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-31 14:00+0200\n"
+"POT-Creation-Date: 2014-09-20 06:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -987,13 +987,13 @@ msgstr ""
 msgid "X-Trans interpolation"
 msgstr ""
 
+msgid "VNG interpolation"
+msgstr ""
+
 msgid "VNG four color interpolation"
 msgstr ""
 
 msgid "AHD interpolation"
-msgstr ""
-
-msgid "VNG interpolation"
 msgstr ""
 
 msgid "PPG interpolation"

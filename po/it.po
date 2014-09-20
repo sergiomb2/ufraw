@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-31 14:00+0200\n"
+"POT-Creation-Date: 2014-09-20 06:00+0200\n"
 "PO-Revision-Date: 2009-10-14 06:00+0100\n"
 "Last-Translator: Eugenio Baldi <eugeniob@SPAMracine.ra.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -1156,14 +1156,14 @@ msgstr "Interpolazione Bilineare"
 msgid "X-Trans interpolation"
 msgstr "Nessuna interpolazione"
 
+msgid "VNG interpolation"
+msgstr "Interpolazione VNG"
+
 msgid "VNG four color interpolation"
 msgstr "Interpolazione VNG a quattro colori"
 
 msgid "AHD interpolation"
 msgstr "Interpolazione AHD"
-
-msgid "VNG interpolation"
-msgstr "Interpolazione VNG"
 
 msgid "PPG interpolation"
 msgstr "Interpolazione PPG"

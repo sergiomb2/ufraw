@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-31 14:00+0200\n"
+"POT-Creation-Date: 2014-09-20 06:00+0200\n"
 "PO-Revision-Date: 2014-09-16 23:33+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
@@ -1170,14 +1170,14 @@ msgstr "Matrice d'interpolation des couleurs"
 msgid "X-Trans interpolation"
 msgstr "Interpolation X-Trans"
 
+msgid "VNG interpolation"
+msgstr "Interpolation VNG"
+
 msgid "VNG four color interpolation"
 msgstr "Interpolation VNG 4 couleurs"
 
 msgid "AHD interpolation"
 msgstr "Interpolation AHD"
-
-msgid "VNG interpolation"
-msgstr "Interpolation VNG"
 
 msgid "PPG interpolation"
 msgstr "Interpolation PPG"

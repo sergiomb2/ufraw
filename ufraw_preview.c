@@ -2497,14 +2497,14 @@ static void aspect_modify(GtkWidget *widget, gpointer user_data)
 
 static int aspect_activate(GtkWidget *widget, gpointer user_data)
 {
-	aspect_modify(widget, user_data);
+    aspect_modify(widget, user_data);
     return FALSE;
 }
 
 static void aspect_changed(GtkWidget *widget, gpointer user_data)
 {
-	if (gtk_combo_box_get_active((GtkComboBox *)widget) >= 0)
-		aspect_modify(widget, user_data);
+    if (gtk_combo_box_get_active((GtkComboBox *)widget) >= 0)
+        aspect_modify(widget, user_data);
 }
 
 static void set_darkframe_label(preview_data *data)
@@ -5090,10 +5090,10 @@ static void transformations_fill_interface(preview_data *data, GtkWidget *page)
 
     g_signal_connect(G_OBJECT(entry), "changed",
                      G_CALLBACK(aspect_changed), NULL);
-	g_signal_connect(G_OBJECT(data->AspectEntry), "focus-out-event",
-					 G_CALLBACK(aspect_activate), NULL);
-	g_signal_connect(G_OBJECT(data->AspectEntry), "activate",
-					 G_CALLBACK(aspect_activate), NULL);
+    g_signal_connect(G_OBJECT(data->AspectEntry), "focus-out-event",
+                     G_CALLBACK(aspect_activate), NULL);
+    g_signal_connect(G_OBJECT(data->AspectEntry), "activate",
+                     G_CALLBACK(aspect_activate), NULL);
 
     data->LockAspectButton = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
     gtk_table_attach(table, GTK_WIDGET(data->LockAspectButton),

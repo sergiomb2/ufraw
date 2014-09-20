@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-31 14:00+0200\n"
+"POT-Creation-Date: 2014-09-20 06:00+0200\n"
 "PO-Revision-Date: 2009-10-10 01:38+0900\n"
 "Last-Translator: Yot <yot@ku2.org>\n"
 "Language-Team: Japanese <tyaoknok@gmail.com>\n"
@@ -1105,14 +1105,14 @@ msgstr "バイリニア補間"
 msgid "X-Trans interpolation"
 msgstr "補間無し"
 
+msgid "VNG interpolation"
+msgstr "VNG補間"
+
 msgid "VNG four color interpolation"
 msgstr "VNG4色補間"
 
 msgid "AHD interpolation"
 msgstr "AHD補間"
-
-msgid "VNG interpolation"
-msgstr "VNG補間"
 
 msgid "PPG interpolation"
 msgstr "PPG補間"

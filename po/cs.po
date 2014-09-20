@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-31 14:00+0200\n"
+"POT-Creation-Date: 2014-09-20 06:00+0200\n"
 "PO-Revision-Date: 2014-09-18 15:27+0200\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -1137,14 +1137,14 @@ msgstr "Interpolace barev (CFA)"
 msgid "X-Trans interpolation"
 msgstr "Interpolace X-Trans"
 
+msgid "VNG interpolation"
+msgstr "VNG interpolace"
+
 msgid "VNG four color interpolation"
 msgstr "VNG Interpolace čtyř barev"
 
 msgid "AHD interpolation"
 msgstr "AHD interpolace"
-
-msgid "VNG interpolation"
-msgstr "VNG interpolace"
 
 msgid "PPG interpolation"
 msgstr "PPG interpolace"
@@ -1720,4 +1720,3 @@ msgstr "Dle fotoaparátu"
 
 msgid "Auto WB"
 msgstr "Automatické"
-
