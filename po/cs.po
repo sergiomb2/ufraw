@@ -1,22 +1,24 @@
 # Czech translation for UFRaw package.
 # Copyright (C) 2006-2014 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-# Milan Knizek <knizek@volny.cz>, 2007-2011.
 #
+# Milan Knizek <knizek@volny.cz>, 2007-2011, 2014.
 msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.19\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-31 14:00+0200\n"
-"PO-Revision-Date: 2011-08-12 05:57+0100\n"
-"Last-Translator: Milan Knížek <knizek@volny.cz>\n"
-"Language-Team: Czech <cs@li.cz>\n"
+"PO-Revision-Date: 2014-09-18 15:27+0200\n"
+"Last-Translator: Milan Knizek <knizek@volny.cz>\n"
+"Language-Team: Czech <kde-i18n-doc@kde.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Czech\n"
 "X-Poedit-Country: CZECH REPUBLIC\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Lokalize 1.5\n"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
@@ -53,13 +55,11 @@ msgstr "n"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: přepsat '%s'?"
 
-#, fuzzy
 msgid "The --silent option is only valid with 'ufraw-batch'"
-msgstr "--silent volba je platná pouze v dávkovém režimu"
+msgstr "Volba --silent je platná pouze při použití 'ufraw-batch'"
 
-#, fuzzy
 msgid "The --embedded-image option is only valid with 'ufraw-batch'"
-msgstr "--silent volba je platná pouze v dávkovém režimu"
+msgstr "Volba --embedded-image je platná pouze při použití 'ufraw-batch'"
 
 msgid "Raw images"
 msgstr "Raw snímky"
@@ -141,9 +141,9 @@ msgstr ""
 "Nelze otevřít ID soubor %s pro čtení\n"
 "%s\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading from file '%s'."
-msgstr "Chyba při vytváření souboru '%s'."
+msgstr "Chyba při čtení ze souboru '%s'."
 
 #, c-format
 msgid ""
@@ -410,14 +410,14 @@ msgid ""
 msgstr ""
 "--[no]zip             [Ne]aktivní zip komprese TIFF (standardně neaktivní).\n"
 
-#, fuzzy
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image. This option\n"
 "                      is only valid with 'ufraw-batch'.\n"
 msgstr ""
 "--embedded-image      Extrahovat náhled snímku vloženého v raw souboru\n"
-"                      místo konvertování raw souboru.\n"
+"                      místo konvertování raw souboru. Tato volba\n"
+"                      je platná pouze při použití 'ufraw-batch'.\n"
 
 msgid ""
 "--rotate=camera|ANGLE|no\n"
@@ -443,10 +443,10 @@ msgstr ""
 "dole\n"
 
 msgid "--auto-crop           Crop the output automatically.\n"
-msgstr ""
+msgstr "--auto-crop           Automaticky oříznout výstup.\n"
 
 msgid "--aspect-ratio X:Y    Set crop area aspect ratio.\n"
-msgstr ""
+msgstr "--aspect-ratio X:Y    Nastavit poměr stran pro oblast ořezu.\n"
 
 msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
@@ -480,12 +480,12 @@ msgstr ""
 msgid "--maximize-window     Force window to be maximized.\n"
 msgstr "--maximize-window     Vnutit maximální velikost okna.\n"
 
-#, fuzzy
 msgid ""
 "--silent              Do not display any messages during conversion. This\n"
 "                      option is only valid with 'ufraw-batch'.\n"
 msgstr ""
-"--silent              Nezobrazovat žádné zprávy během dávkové konverze.\n"
+"--silent              Nezobrazovat žádné zprávy během konverze. Tato\n"
+"                      volba je platná pouze při použití 'ufraw-batch'.\n"
 
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
@@ -519,9 +519,8 @@ msgstr "'%s' není platná hodnota pro volbu --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw byl kompilován bez podpory ZIP."
 
-#, fuzzy
 msgid "--batch is obsolete. Use 'ufraw-batch' instead."
-msgstr "--batch je zastaralá volba. Použijte ufraw-batch."
+msgstr "--batch je zastaralá volba. Použijte namísto toho 'ufraw-batch'."
 
 #, c-format
 msgid "getopt returned character code 0%o ??"
@@ -851,9 +850,8 @@ msgstr "Hodnota"
 msgid "Channel Mixer"
 msgstr "Mixér kanálů"
 
-#, fuzzy
 msgid "UFRaw Message"
-msgstr "UFRaw "
+msgstr "UFRaw zpráva"
 
 msgid "No more room for new curves."
 msgstr "Není více místa pro nové křivky."
@@ -1133,13 +1131,11 @@ msgstr "Před nastavením bodového vyvážení bílé zvolte bod na snímku ná
 msgid "Chan. multipliers:"
 msgstr "Násobitele kanálů:"
 
-#, fuzzy
 msgid "Color filter array interpolation"
-msgstr "Bilineární interpolace"
+msgstr "Interpolace barev (CFA)"
 
-#, fuzzy
 msgid "X-Trans interpolation"
-msgstr "Žádná interpolace"
+msgstr "Interpolace X-Trans"
 
 msgid "VNG four color interpolation"
 msgstr "VNG Interpolace čtyř barev"
@@ -1159,9 +1155,8 @@ msgstr "Bilineární interpolace"
 msgid "No interpolation"
 msgstr "Žádná interpolace"
 
-#, fuzzy
 msgid "No color filter array"
-msgstr "Načíst barvové profily"
+msgstr "Chybí CFA"
 
 msgid "Apply color smoothing"
 msgstr "Použít vyhlazení barev"
@@ -1336,9 +1331,8 @@ msgstr "Dole:"
 msgid "Auto fit crop area"
 msgstr "Automaticky vyplnit oblastí ořezu."
 
-#, fuzzy
 msgid "Reset the crop area"
-msgstr "Obnovit původní ořez"
+msgstr "Obnovit oblast ořezu"
 
 msgid "Aspect ratio:"
 msgstr "Poměr stran:"
@@ -1726,3 +1720,4 @@ msgstr "Dle fotoaparátu"
 
 msgid "Auto WB"
 msgstr "Automatické"
+
