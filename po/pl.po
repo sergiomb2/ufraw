@@ -8,13 +8,14 @@ msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-31 14:00+0200\n"
-"PO-Revision-Date: 2010-03-04 23:12+0100\n"
+"PO-Revision-Date: 2014-09-15 21:08+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #. Translate text message from GtkImageView:
 msgid "Open the navigator window"
@@ -51,13 +52,11 @@ msgstr "n"
 msgid "%s: overwrite '%s'?"
 msgstr "%s: nadpisać '%s'?"
 
-#, fuzzy
 msgid "The --silent option is only valid with 'ufraw-batch'"
-msgstr "opcja --silent działa tylko w trybie batch"
+msgstr "Opcja --silent działa tylko z 'ufraw-batch'"
 
-#, fuzzy
 msgid "The --embedded-image option is only valid with 'ufraw-batch'"
-msgstr "opcja --silent działa tylko w trybie batch"
+msgstr "Opcja --silent działa tylko z 'ufraw-batch'"
 
 msgid "Raw images"
 msgstr "Zdjęcia RAW"
@@ -139,9 +138,9 @@ msgstr ""
 "Nie mogę odczytać pliku ID %s\n"
 "%s\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading from file '%s'."
-msgstr "Błąd tworzenia pliku '%s'."
+msgstr "Błąd odczytu pliku '%s'."
 
 #, c-format
 msgid ""
@@ -405,14 +404,14 @@ msgstr ""
 "--[no]zip             Włącz [wyłącz] kompresję zip pliku TIFF (domyślnie "
 "nozip).\n"
 
-#, fuzzy
 msgid ""
 "--embedded-image      Extract the preview image embedded in the raw file\n"
 "                      instead of converting the raw image. This option\n"
 "                      is only valid with 'ufraw-batch'.\n"
 msgstr ""
 "--embedded-image      Zapisz zdjęcie dołączone do pliku RAW\n"
-"                      zamiast konwertować RAW.\n"
+"                      zamiast konwertować RAW. Opcja działa tylko z 'ufraw-"
+"batch'\n"
 
 msgid ""
 "--rotate=camera|ANGLE|no\n"
@@ -436,10 +435,10 @@ msgstr ""
 "                      pliku raw po obróceniu, ale przed skalowaniem.\n"
 
 msgid "--auto-crop           Crop the output automatically.\n"
-msgstr ""
+msgstr "--auto-crop           Automatycznie wykadruj zdjęcie wynikowe.\n"
 
 msgid "--aspect-ratio X:Y    Set crop area aspect ratio.\n"
-msgstr ""
+msgstr "--aspect-ratio X:Y    Ustaw stosunek boków kadru.\n"
 
 msgid ""
 "--lensfun=none|auto   Do not apply lens correction or try to apply\n"
@@ -471,13 +470,13 @@ msgstr ""
 msgid "--maximize-window     Force window to be maximized.\n"
 msgstr "--maximize-window     Wymuś maksymalizację okna.\n"
 
-#, fuzzy
 msgid ""
 "--silent              Do not display any messages during conversion. This\n"
 "                      option is only valid with 'ufraw-batch'.\n"
 msgstr ""
 "--silent              Nie wyświetlaj żadnych komunikatów w trakcie "
 "konwersji.\n"
+"                      Ta opcja działa tylko z 'ufraw-batch'.\n"
 
 msgid ""
 "UFRaw first reads the setting from the resource file $HOME/.ufrawrc.\n"
@@ -512,9 +511,8 @@ msgstr "'%s' nie jest poprawną wartością dla opcji --%s."
 msgid "ufraw was build without ZIP support."
 msgstr "ufraw został skompilowany bez obsługi ZIP."
 
-#, fuzzy
 msgid "--batch is obsolete. Use 'ufraw-batch' instead."
-msgstr "--batch jest przestarzałą opcją. Proszę używać ufraw-batch."
+msgstr "--batch jest przestarzałą opcją. Proszę używać 'ufraw-batch'."
 
 #, c-format
 msgid "getopt returned character code 0%o ??"
@@ -849,9 +847,8 @@ msgstr "Wartość"
 msgid "Channel Mixer"
 msgstr "Mikser kanałów"
 
-#, fuzzy
 msgid "UFRaw Message"
-msgstr "UFRaw "
+msgstr "Komunikat UFRaw"
 
 msgid "No more room for new curves."
 msgstr "Brak miejsca na nowe krzywe."
@@ -1134,13 +1131,11 @@ msgstr ""
 msgid "Chan. multipliers:"
 msgstr "Mnożniki kanałów:"
 
-#, fuzzy
 msgid "Color filter array interpolation"
-msgstr "Interpolacja dwuliniowa"
+msgstr ""
 
-#, fuzzy
 msgid "X-Trans interpolation"
-msgstr "Bez interpolacji"
+msgstr ""
 
 msgid "VNG four color interpolation"
 msgstr "Interpolacja VNG (czterokolorowa)"
@@ -1160,9 +1155,8 @@ msgstr "Interpolacja dwuliniowa"
 msgid "No interpolation"
 msgstr "Bez interpolacji"
 
-#, fuzzy
 msgid "No color filter array"
-msgstr "Wczytaj profil kolorów"
+msgstr ""
 
 msgid "Apply color smoothing"
 msgstr "Zastosuj wygładzanie kolorów"
@@ -1337,7 +1331,6 @@ msgstr "Dół:"
 msgid "Auto fit crop area"
 msgstr "Automatycznie dopasuj kadr"
 
-#, fuzzy
 msgid "Reset the crop area"
 msgstr "Zresetuj kadr"
 
