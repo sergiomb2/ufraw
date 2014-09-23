@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.62 2013/04/14 07:30:08 nkbj Exp $
+# $Id: Makefile.am,v 1.63 2014/09/23 01:00:25 nkbj Exp $
 
 SUBDIRS = po icons
 
@@ -31,6 +31,9 @@ if INSTALL_MIME
   app_DATA = ufraw.desktop
   appdir = $(datadir)/applications
 
+  appdata_DATA = ufraw.appdata.xml
+  appdatadir = $(datadir)/appdata
+
 #  Not needed since it is contained in shared-mime-info 0.21
 #  mime_DATA = ufraw-mime.xml
 #  mimedir = $(datadir)/mime/packages
@@ -45,7 +48,7 @@ else
   UFRAW_ICON =
 endif
 
-EXTRA_DIST = ufraw.desktop ufraw_icon.ico ufraw_icon.rc \
+EXTRA_DIST = ufraw.desktop ufraw.appdata.xml ufraw_icon.ico ufraw_icon.rc \
     ufraw-mime.xml generate_schemas.sh ac_openmp.m4 Doxyfile \
     ufraw-setup.jpg autogen.sh mkinstalldirs MANIFEST ufraw.pod ufraw.1
 
