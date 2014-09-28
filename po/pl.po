@@ -1,13 +1,13 @@
 # Polish translation for UFRaw
 # Copyright (C) 2006-2014 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
-# Tomasz Golinski tomaszg@alpha.uwb.edu.pl, 2007-2010.
+# Tomasz Golinski tomaszg@alpha.uwb.edu.pl, 2007-2010, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UFRaw 0.17\n"
+"Project-Id-Version: UFRaw 0.20\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-20 06:00+0200\n"
+"POT-Creation-Date: 2014-09-28 17:00+0200\n"
 "PO-Revision-Date: 2014-09-15 21:08+0100\n"
 "Last-Translator: Tomasz Golinski <tomaszg@alpha.uwb.edu.pl>\n"
 "Language-Team: Polish\n"
@@ -1137,14 +1137,14 @@ msgstr ""
 msgid "X-Trans interpolation"
 msgstr ""
 
-msgid "VNG interpolation"
-msgstr "Interpolacja VNG"
-
 msgid "VNG four color interpolation"
 msgstr "Interpolacja VNG (czterokolorowa)"
 
 msgid "AHD interpolation"
 msgstr "Interpolacja AHD"
+
+msgid "VNG interpolation"
+msgstr "Interpolacja VNG"
 
 msgid "PPG interpolation"
 msgstr "Interpolacja PPG"

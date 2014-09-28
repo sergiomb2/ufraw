@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.17\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-20 06:00+0200\n"
+"POT-Creation-Date: 2014-09-28 17:00+0200\n"
 "PO-Revision-Date: 2010-03-04 21:05+0100\n"
 "Last-Translator: Paco Rivière <http://pacoriviere.cat>\n"
 "Language-Team: http://pacoriviere.cat/ <http://pacoriviere.cat/>\n"
@@ -1162,14 +1162,14 @@ msgstr "Interpolació bilineal"
 msgid "X-Trans interpolation"
 msgstr "Sense interpolació"
 
-msgid "VNG interpolation"
-msgstr "Interpolació VNG"
-
 msgid "VNG four color interpolation"
 msgstr "Interpolació VNG de quatre colors"
 
 msgid "AHD interpolation"
 msgstr "Interpolació AHD"
+
+msgid "VNG interpolation"
+msgstr "Interpolació VNG"
 
 msgid "PPG interpolation"
 msgstr "Interpolació PPG"
