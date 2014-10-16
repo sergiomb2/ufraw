@@ -6908,6 +6908,15 @@ const wb_data wb_preset[] = {
   { "SAMSUNG", "NX1100", Tungsten, 0,		{ 1.511719, 1, 2.941406, 0 } },
   { "SAMSUNG", "NX1100", Flash, 0,		{ 2.914063, 1, 1.191406, 0 } },
 
+  // Firmware NXF1_01.01
+  { "SAMSUNG", "NX3000", Daylight, 0,		{ 2.214844, 1, 1.816406, 0 } },
+  { "SAMSUNG", "NX3000", Cloudy, 0,		{ 2.347656, 1, 1.656250, 0 } },
+  { "SAMSUNG", "NX3000", CoolWhiteFluorescent, 0, { 2.023438, 1, 2.460938, 0 } },
+  { "SAMSUNG", "NX3000", DayWhiteFluorescent, 0, { 2.175781, 1, 2.152344, 0 } },
+  { "SAMSUNG", "NX3000", DaylightFluorescent, 0, { 2.582031, 1, 1.835938, 0 } },
+  { "SAMSUNG", "NX3000", Tungsten, 0,		{ 1.539063, 1, 2.816406, 0 } },
+  { "SAMSUNG", "NX3000", Flash, 0,		{ 2.597656, 1, 1.566406, 0 } },
+
   { "SONY", "DSC-RX100", Daylight, 0,		{ 2.0703, 1, 2.1602, 0 } },
   { "SONY", "DSC-RX100", Shade, 0,		{ 2.4531, 1, 1.7852, 0 } },
   { "SONY", "DSC-RX100", Cloudy, 0,		{ 2.2305, 1, 1.9844, 0 } },
