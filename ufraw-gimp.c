@@ -79,12 +79,16 @@ void query()
                            load_args,
                            load_return_vals);
 
+#if HAVE_GIMP_2_9
     gimp_register_magic_load_handler("file_ufraw_load",
                                      (char *)raw_ext,
                                      "",
                                      "0,string,II*\\0,"
                                      "0,string,MM\\0*,"
                                      "0,string,<?xml");
+#else
+    gimp_register_load_handler("file_ufraw_load", (char *)raw_ext, "");
+#endif
 
     gimp_install_procedure("file_ufraw_load_thumb",
                            "Loads thumbnails from digital camera raw files.",
