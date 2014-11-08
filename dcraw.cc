@@ -4973,6 +4973,10 @@ void CLASS median_filter()
   }
 }
 
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 8))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
 void CLASS blend_highlights()
 {
   unsigned c, j;
@@ -5010,6 +5014,9 @@ void CLASS blend_highlights()
       FORCC image[row*width+col][c] = cam[0][c] / colors;
     }
 }
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 8))
+#pragma GCC diagnostic pop
+#endif
 
 #define SCALE (4 >> shrink)
 void CLASS recover_highlights()
