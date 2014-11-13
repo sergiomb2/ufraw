@@ -2345,6 +2345,12 @@ const wb_data wb_preset[] = {
   { "LEICA", "DIGILUX 3", "9000K", 0,		{ 2.429658, 1, 1.007605, 0 } },
   { "LEICA", "DIGILUX 3", "10000K", 0,		{ 2.680608, 1.057034, 1, 0 } },
 
+  { "LEICA", "D-LUX 6", Daylight, 0,		{ 1.992453, 1, 1.750943, 0 } },
+  { "LEICA", "D-LUX 6", Cloudy, 0,		{ 2.143396, 1, 1.603774, 0 } },
+  { "LEICA", "D-LUX 6", Shade, 0,		{ 2.286792, 1, 1.498113, 0 } },
+  { "LEICA", "D-LUX 6", Flash, 0,		{ 2.219697, 1, 1.659091, 0 } },
+  { "LEICA", "D-LUX 6", Incandescent, 0,	{ 1.335849, 1, 2.762264, 0 } },
+
   { "Minolta", "DiMAGE 5", Daylight, 0,		{ 2.023438, 1, 1.371094, 0 } },
   { "Minolta", "DiMAGE 5", Incandescent, 0,	{ 1.113281, 1, 2.480469, 0 } },
   { "Minolta", "DiMAGE 5", Fluorescent, 0,	{ 1.957031, 1, 2.058594, 0 } },
