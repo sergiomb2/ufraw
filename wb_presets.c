@@ -6125,6 +6125,22 @@ const wb_data wb_preset[] = {
   { "Panasonic", "DMC-LX5", Flash, 0,		{ 2.0760, 1, 1.6388, 0 } },
   { "Panasonic", "DMC-LX5", Incandescent, 0,	{ 1.2243, 1, 2.5741, 0 } },
 
+  { "Panasonic", "DMC-LX7", Daylight, -9,	{ 2.1358, 1, 1.5547, 0 } },
+  { "Panasonic", "DMC-LX7", Daylight, 0,	{ 1.8906, 1, 1.7698, 0 } },
+  { "Panasonic", "DMC-LX7", Daylight, 9,	{ 1.6755, 1, 2.0868, 0 } },
+  { "Panasonic", "DMC-LX7", Cloudy, -9,		{ 2.2906, 1, 1.4226, 0 } },
+  { "Panasonic", "DMC-LX7", Cloudy, 0,		{ 2.0341, 1, 1.6250, 0 } },
+  { "Panasonic", "DMC-LX7", Cloudy, 9,		{ 1.8000, 1, 1.9132, 0 } },
+  { "Panasonic", "DMC-LX7", Shade, -9,		{ 2.4415, 1, 1.3283, 0 } },
+  { "Panasonic", "DMC-LX7", Shade, 0,		{ 2.1623, 1, 1.5132, 0 } },
+  { "Panasonic", "DMC-LX7", Shade, 9,		{ 1.9170, 1, 1.7849, 0 } },
+  { "Panasonic", "DMC-LX7", Flash, -9,		{ 2.3660, 1, 1.4679, 0 } },
+  { "Panasonic", "DMC-LX7", Flash, 0,		{ 2.0943, 1, 1.6679, 0 } },
+  { "Panasonic", "DMC-LX7", Flash, 9,		{ 1.8566, 1, 1.9698, 0 } },
+  { "Panasonic", "DMC-LX7", Incandescent, -9,	{ 1.4566, 1, 2.4377, 0 } },
+  { "Panasonic", "DMC-LX7", Incandescent, 0,	{ 1.2917, 1, 2.7841, 0 } },
+  { "Panasonic", "DMC-LX7", Incandescent, 9,	{ 1.1434, 1, 3.2755, 0 } },
+
   /* It seems that the *ist D WB settings are not really presets. */
   { "PENTAX", "*ist D", Daylight, 0,		{ 1.460938, 1, 1.019531, 0 } },
   { "PENTAX", "*ist D", Shade, 0,		{ 1.734375, 1, 1.000000, 0 } },
