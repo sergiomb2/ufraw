@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2014 Ryan Lerch <rlerch@redhat.com>, Udi Fuchs -->
+<!-- Copyright 2014-2015 Ryan Lerch <rlerch@redhat.com>, Udi Fuchs -->
 
 <application>
   <id type="desktop">ufraw.desktop</id>
