@@ -753,14 +753,19 @@ void CLASS xtrans_interpolate_INDI(ushort(*image)[4], const unsigned filters,
                         }
 
                     /* Interpolate red for blue pixels and vice versa:              */
-                    for (row = top + 1; row < mrow - 1; row++)
-                        for (col = left + 1; col < mcol - 1; col++) {
+                    for (row = top + 3; row < mrow - 3; row++)
+                        for (col = left + 3; col < mcol - 3; col++) {
                             if ((f = 2 - fcol_INDI(filters, row, col, hh->top_margin, hh->left_margin, hh->xtrans)) == 1) continue;
                             rix = &rgb[0][row - top][col - left];
-                            i = (row - sgrow) % 3 ? TS : 1;
-                            for (d = 0; d < 4; d++, rix += TS * TS)
+                            c = (row - sgrow) % 3 ? TS : 1;
+                            h = 3 * (c ^ TS ^ 1);
+                            for (d = 0; d < 4; d++, rix += TS * TS) {
+                                i = d > 1 || ((d ^ c) & 1) ||
+                                    ((ABS(rix[0][1] - rix[c][1]) + ABS(rix[0][1] - rix[-c][1])) <
+                                     2 * (ABS(rix[0][1] - rix[h][1]) + ABS(rix[0][1] - rix[-h][1]))) ? c : h;
                                 rix[0][f] = CLIP((rix[i][f] + rix[-i][f] +
                                                   2 * rix[0][1] - rix[i][1] - rix[-i][1]) / 2);
+                            }
                         }
 
                     /* Fill in red and blue for 2x2 blocks of green:                */

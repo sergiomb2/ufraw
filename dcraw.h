@@ -1,6 +1,6 @@
 /*
    dcraw.h - Dave Coffin's raw photo decoder - header for C++ adaptation
-   Copyright 1997-2014 by Dave Coffin, dcoffin a cybercom o net
+   Copyright 1997-2015 by Dave Coffin, dcoffin a cybercom o net
    Copyright 2004-2015 by Udi Fuchs, udifuchs a gmail o com
 
    This program is free software; you can redistribute it and/or modify
@@ -188,7 +188,8 @@ public:
     void lossy_dng_load_raw();
     void kodak_dc120_load_raw();
     void eight_bit_load_raw();
-    void kodak_yrgb_load_raw();
+    void kodak_c330_load_raw();
+    void kodak_c603_load_raw();
     void kodak_262_load_raw();
     int kodak_65000_decode(short *out, int bsize);
     void kodak_65000_load_raw();
@@ -201,6 +202,7 @@ public:
     void sony_arw2_load_raw();
     void samsung_load_raw();
     void samsung2_load_raw();
+    void samsung3_load_raw();
     void smal_decode_segment(unsigned seg[2][2], int holes);
     void smal_v6_load_raw();
     int median4(int *p);
@@ -268,6 +270,7 @@ public:
     void parse_fuji(int offset);
     int parse_jpeg(int offset);
     void parse_riff();
+    void parse_qt(int end);
     void parse_smal(int offset, unsigned fsize);
     void parse_cine();
     void parse_redcine();
