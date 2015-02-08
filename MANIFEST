@@ -5,8 +5,10 @@ The Unix philosophy is "Do one thing, do it well".
 UFRaw tries to take this idea to the extreme and "Do nothing", or at least
 not do anything by itself.
 UFRaw uses DCRaw to convert the raw files.
-Little CMS takes care of the color management.
-libjpeg/libtiff are responsible to saving the image.
+LittleCMS takes care of the color management.
+Exiv2 takes care of EXIF data.
+Lensfun takes care of lens corrections.
+libjpeg/libtiff/pnglib/libcfitsio are responsible to saving the image.
 The user interface is made up of GTK+ widgets.
 GNUgetopt handles the command-line parameters.
 Glib reads the XML formated UFRaw ID files and takes care of
@@ -38,33 +40,16 @@ Existing tools like Nautilus, GQview, Gthumb and Digikam could be configured
 or modified to handle the rest of the steps. It is also possible to add this
 functionality to UFRaw - as long as one remember that UFRaw should "Do nothing".
 
-Everything in UFRaw is written in C. I like to keep it this way but other
-languages like C++ could be considered. I would not like to rely on "heavy"
-artillery like Java or C#. Perl and other scripts could be used as
-warpers, but not in the internals. UFRaw should be usable on all platforms.
+Everything in UFRaw is written in C and C++. I would not like to rely on
+"heavy" artillery like Java or C#. Perl and other scripts could be used as
+wrappers, but not in the internals. UFRaw should be usable on all platforms.
 MS-Windows users are not used to command-line interfaces (they don't know
 what they are missing), still they should be able to use UFRaw's command-line
 interface using Cygwin and maybe also MinGW.
 
 Possible future features:
 
-Exif support - there is partial support already using libexif. This support
-should be enhanced, hopefully by making better use of libexif or other tools.
-ExifTool seems to be the best tool in the market for handling Exif data of
-raw files. Unfortunately it is written in Perl.
-
-Zoom in/out - it is a part of the graphical interface that should be
-added to UFRaw. This feature should open the way to other features
-which are at the pixel level.
-
-Noise reduction - UFRaw should not handle this by itself. It would be nice
-if it could use some external package.
-
-Sharping - Same goes here. Maybe use refocus.sourceforge.net.
-
-Lens distortion - PanoTools or something equivalent should be used.
-
-Cropping/Rotation - this basic manipulations could be handled by UFRaw itself.
+Sharping - maybe use refocus.sourceforge.net.
 
 Thumbnails - maybe thumbnails should be added to the ID files (remember that
 ID files are text files). I think that this will enable one to write
