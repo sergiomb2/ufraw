@@ -1,4 +1,4 @@
-$Id: README-documentation.txt,v 1.2 2007/12/01 01:58:58 lexort Exp $
+$Id: README-documentation.txt,v 1.3 2015/02/08 04:30:16 nkbj Exp $
 
 This file gives pointers to all UFRaw documentation.  It does not
 contain documentation itself.
@@ -31,5 +31,3 @@ such as anoncvs, mailinglists, forums, etc., and also
   overview
   explanation of processing workflow
   explanation of color management
-
-
