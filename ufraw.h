@@ -253,7 +253,7 @@ typedef struct {
     double exposure, saturation, black; /* black is only used in CMD */
     int ExposureNorm;
     int restoreDetails, clipHighlights;
-    int autoExposure, autoBlack, autoCrop;
+    int autoExposure, autoBlack, fullCrop, autoCrop;
     int BaseCurveIndex, BaseCurveCount;
     CurveData BaseCurve[max_curves];
     int curveIndex, curveCount;

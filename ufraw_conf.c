@@ -39,6 +39,7 @@ const conf_data conf_default = {
     digital_highlights, /* clipHighlights */
     disabled_state, /* autoExposure */
     disabled_state, /* autoBlack */
+    enabled_state, /* fullCrop */
     disabled_state, /* autoCrop */
     camera_curve, camera_curve + 1, /* BaseCurveIndex, BaseCurveCount */
     /* BaseCurve data defaults */
@@ -1338,6 +1339,8 @@ void conf_copy_image(conf_data *dst, const conf_data *src)
     dst->autoExposure = src->autoExposure;
     dst->autoBlack = src->autoBlack;
     dst->autoCrop = src->autoCrop;
+    if (src->autoCrop == enabled_state)
+        dst->fullCrop = disabled_state;
     dst->restoreDetails = src->restoreDetails;
     dst->clipHighlights = src->clipHighlights;
     memcpy(dst->lightnessAdjustment, src->lightnessAdjustment,
@@ -1445,6 +1448,12 @@ void conf_copy_transform(conf_data *dst, const conf_data *src)
     dst->CropY2 = src->CropY2;
     dst->aspectRatio = src->aspectRatio;
     dst->rotationAngle = src->rotationAngle;
+
+    if (src->CropX1 != -1 || src->CropX2 != -1 ||
+            src->CropY1 != -1 || src->CropY2 != -1) {
+        dst->fullCrop = disabled_state;
+        dst->autoCrop = disabled_state;
+    }
 }
 
 /* Copy the 'save options' from *src to *dst */
@@ -1487,10 +1496,14 @@ int conf_set_cmd(conf_data *conf, const conf_data *cmd)
     if (cmd->embeddedImage != -1) conf->embeddedImage = cmd->embeddedImage;
     if (cmd->rotate != -1) conf->rotate = cmd->rotate;
     if (cmd->rotationAngle != NULLF) conf->rotationAngle = cmd->rotationAngle;
-    if (cmd->autoCrop != -1) conf->autoCrop = cmd->autoCrop;
+    if (cmd->autoCrop != -1)
+        if ((conf->autoCrop = cmd->autoCrop) == enabled_state)
+            conf->fullCrop = disabled_state;
     if (cmd->CropX1 != -1 || cmd->CropX2 != -1 ||
-            cmd->CropY1 != -1 || cmd->CropY2 != -1)
+            cmd->CropY1 != -1 || cmd->CropY2 != -1) {
+        conf->fullCrop = disabled_state;
         conf->autoCrop = disabled_state;
+    }
     if (cmd->CropX1 != -1) conf->CropX1 = cmd->CropX1;
     if (cmd->CropY1 != -1) conf->CropY1 = cmd->CropY1;
     if (cmd->CropX2 != -1) conf->CropX2 = cmd->CropX2;
@@ -1897,6 +1910,7 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     cmd->CropY1 = -1;
     cmd->CropX2 = -1;
     cmd->CropY2 = -1;
+    cmd->fullCrop = -1;
     cmd->autoCrop = -1;
     cmd->aspectRatio = 0.0;
     cmd->rotate = -1;

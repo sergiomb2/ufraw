@@ -2104,6 +2104,7 @@ static void crop_reset(GtkWidget *widget, gpointer user_data)
 
     refresh_aspect(data);
     set_new_aspect(data);
+    CFG->fullCrop = enabled_state;
     CFG->autoCrop = disabled_state;
     auto_button_toggle(data->AutoCropButton, &CFG->autoCrop);
 }
@@ -3009,6 +3010,7 @@ static void adjustment_update(GtkAdjustment *adj, double *valuep)
             if ((int *)valuep == &CFG->CropY1) cursor = top_cursor;
             if ((int *)valuep == &CFG->CropY2) cursor = bottom_cursor;
             fix_crop_aspect(data, cursor, TRUE);
+            CFG->fullCrop = disabled_state;
             CFG->autoCrop = disabled_state;
             auto_button_toggle(data->AutoCropButton, &CFG->autoCrop);
         }

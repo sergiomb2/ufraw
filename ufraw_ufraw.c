@@ -351,7 +351,7 @@ int ufraw_load_darkframe(ufraw_data *uf)
     return UFRAW_SUCCESS;
 }
 
-// Get the dimensions of the unshrunk, rotated image.
+// Get the dimensions of the unshrunk, rotated image.autoCrop
 // The crop coordinates are calculated based on these dimensions.
 void ufraw_get_image_dimensions(ufraw_data *uf)
 {
@@ -360,12 +360,14 @@ void ufraw_get_image_dimensions(ufraw_data *uf)
 
     ufraw_get_image(uf, ufraw_transform_phase, FALSE);
 
-    if (uf->conf->CropX1 < 0) uf->conf->CropX1 = 0;
-    if (uf->conf->CropY1 < 0) uf->conf->CropY1 = 0;
-    if (uf->conf->CropX2 < 0) uf->conf->CropX2 = uf->rotatedWidth;
-    if (uf->conf->CropY2 < 0) uf->conf->CropY2 = uf->rotatedHeight;
+    if (uf->conf->fullCrop || uf->conf->CropX1 < 0) uf->conf->CropX1 = 0;
+    if (uf->conf->fullCrop || uf->conf->CropY1 < 0) uf->conf->CropY1 = 0;
+    if (uf->conf->fullCrop || uf->conf->CropX2 < 0) uf->conf->CropX2 = uf->rotatedWidth;
+    if (uf->conf->fullCrop || uf->conf->CropY2 < 0) uf->conf->CropY2 = uf->rotatedHeight;
 
-    if (uf->conf->aspectRatio <= 0) {
+    if (uf->conf->fullCrop)
+        uf->conf->aspectRatio = (double)uf->rotatedWidth / uf->rotatedHeight;
+    else if (uf->conf->aspectRatio <= 0) {
         if (uf->conf->autoCrop)
             /* preserve the initial aspect ratio - this should be consistent
                with ufraw_convert_prepare_transform */
