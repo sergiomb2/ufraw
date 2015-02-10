@@ -262,7 +262,7 @@ public:
         std::string str = "";
         char num[10];
         for (int i = 0; i < Size(); i++) {
-            g_snprintf(num, 10, "%.4lf", DoubleValue(i));
+            g_snprintf(num, 10, "%.6lf", DoubleValue(i));
             str += num;
             if (i < Size() - 1)
                 str += " ";

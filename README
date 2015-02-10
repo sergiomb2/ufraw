@@ -293,6 +293,10 @@ date user guide.
 History
 =======
 
+10/02/2015 - UFRaw-0.21 released, based on DCRaw v 9.23.
+
+* Bug fix release.
+
 24/09/2014 - UFRaw-0.20 released, based on DCRaw v 9.22.
 
 * Fuji X-Trans filters are finally supported.

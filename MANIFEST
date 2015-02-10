@@ -5,7 +5,7 @@ The Unix philosophy is "Do one thing, do it well".
 UFRaw tries to take this idea to the extreme and "Do nothing", or at least
 not do anything by itself.
 UFRaw uses DCRaw to convert the raw files.
-LittleCMS takes care of the color management.
+Little CMS (lcms) takes care of the color management.
 Exiv2 takes care of EXIF data.
 Lensfun takes care of lens corrections.
 libjpeg/libtiff/pnglib/libcfitsio are responsible to saving the image.
