@@ -346,11 +346,11 @@ In batch mode, the output options are NOT read from the resource file.
 
 =head1 FILES
 
-$HOME/.ufrawrc - UFRaw resource file containing the user default settings.
-This is an XML file that can be modified with any text editor. Still, it is
-recommended not to edit this file. This file is updated from the GUI when
-you save an image, or when you explicitly ask to save this file in the
-'Options' menu.
+$HOME/.ufrawrc or $HOME/.config/ufrawrc (depending on the system) - UFRaw
+resource file containing the user default settings. This is an XML file that
+can be modified with any text editor. Still, it is recommended not to edit
+this file. This file is updated from the GUI when you save an image, or when
+you explicitly ask to save this file in the 'Options' menu.
 
 $HOME/.ufraw-gtkrc - An optional file for setting up a specific GTK theme
 for UFRaw.
