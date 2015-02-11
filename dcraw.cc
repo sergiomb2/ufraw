@@ -19,8 +19,8 @@
    *If you have not modified dcraw.c in any way, a link to my
    homepage qualifies as "full source code".
 
-   $Revision: 1.468 $
-   $Date: 2015/01/30 05:02:56 $
+   $Revision: 1.469 $
+   $Date: 2015/02/10 23:02:37 $
  */
 
 #define DCRAW_VERSION "9.23"
@@ -1722,7 +1722,7 @@ void CLASS hasselblad_load_raw()
   if (!ljpeg_start (&jh, 0)) return;
   order = 0x4949;
   ph1_bits(-1);
-  back[4] = calloc (raw_width, 3*sizeof **back);
+  back[4] = (int *) calloc (raw_width, 3*sizeof **back);
   merror (back[4], "hasselblad_load_raw()");
   FORC3 back[c] = back[4] + c*raw_width;
   cblack[6] >>= sh = tiff_samples > 1;
@@ -6694,7 +6694,7 @@ void CLASS parse_riff()
     fseek (ifp, size, SEEK_CUR);
 }
 
-void parse_qt (int end)
+void CLASS parse_qt (int end)
 {
   unsigned save, size;
   char tag[4];
@@ -8125,6 +8125,7 @@ void CLASS identify()
     { 12272756,4040,3030, 2, 0, 0,13, 0,0x49,0,0,"Kodak","12MP",31556 },
     { 18000000,4000,3000, 0, 0, 0, 0, 0,0x00,0,0,"Kodak","12MP" },
     {   614400, 640, 480, 0, 3, 0, 0,64,0x94,0,0,"Kodak","KAI-0340" },
+    { 15360000,3200,2400, 0, 0, 0, 0,96,0x16,0,0,"Lenovo","A820" },
     {  3884928,1608,1207, 0, 0, 0, 0,96,0x16,0,0,"Micron","2010",3212 },
     {  1138688,1534, 986, 0, 0, 0, 0, 0,0x61,0,0,"Minolta","RD175",513 },
     {  1581060,1305, 969, 0, 0,18, 6, 6,0x1e,4,1,"Nikon","E900" },
