@@ -867,6 +867,94 @@ static void ufraw_convert_image_vignetting(ufraw_data *uf,
 }
 #endif
 
+/*
+	ufraw_interpolate_pixel_linearly()
+	Interpolate a new pixel value, for one or all colors, from a 2x2 pixel
+	patch around coordinates x and y in the image, and write it to dst.
+*/
+/*
+	Because integer arithmetic is faster than floating point operations,
+	on popular CISC architectures, we cast floats to 32 bit integers,
+	scaling them first will maintain sufficient precision.
+*/
+#define SCALAR 256
+
+static inline void ufraw_interpolate_pixel_linearly(ufraw_image_data *image, float x, float y, ufraw_image_type *dst, int color)
+{
+
+    int i, j, c, cmax, xx, yy;
+    unsigned int dx, dy, v, weights[2][2];
+    ufraw_image_type *src;
+
+    /*
+    	When casting a float to an integer it will be rounded toward zero,
+    	that will cause problems when x or y is negative (along the top and
+    	left border) so, we add 2 and subtract that later, using floor()
+    	and round() is much slower.
+    */
+    x += 2;
+    y += 2;
+
+    xx = x;
+    yy = y;
+
+    /*
+    	Calculate weights for every pixel in the patch using the fractional
+    	part of the coordinates.
+    */
+    dx = (int)(x * SCALAR + 0.5) - (xx * SCALAR);
+    dy = (int)(y * SCALAR + 0.5) - (yy * SCALAR);
+
+    weights[0][0] = (SCALAR - dy) * (SCALAR - dx);
+    weights[0][1] = (SCALAR - dy) *           dx;
+    weights[1][0] =           dy  * (SCALAR - dx);
+    weights[1][1] =           dy  *           dx;
+
+    xx -= 2;
+    yy -= 2;
+
+    src = (ufraw_image_type *)image->buffer + yy * image->width + xx;
+
+    /* If an existing color number is given, then only that color will be interpolated, else all will be. */
+    if (color < 0 || color >= (3 + (image->rgbg == TRUE)))
+        c = 0, cmax = 2 + (image->rgbg == TRUE);
+    else
+        c = cmax = color;
+
+    /* Check if the source pixels are near a border, if they aren't we can use faster code. */
+    if (xx >= 0 && yy >= 0 && xx + 1 < image->width && yy + 1 < image->height) {
+
+        for (; c <= cmax ; c++) {
+
+            v = 0;
+
+            for (i = 0 ; i < 2 ; i++)
+                for (j = 0 ; j < 2 ; j++)
+                    v += weights[i][j] * src[i * image->width + j][c];
+
+            dst[0][c] =  v / (SCALAR * SCALAR);
+        }
+
+    } else { /* Near a border. */
+
+        for (; c <= cmax ; c++) {
+
+            v = 0;
+
+            for (i = 0 ; i < 2 ; i++)
+                for (j = 0 ; j < 2 ; j++)
+                    /* Check if the source pixel lies inside the image */
+                    if (xx + j >= 0 && yy + i >= 0 && xx + j < image->width && yy + i < image->height)
+                        v += weights[i][j] * src[i * image->width + j][c];
+
+            dst[0][c] =  v / (SCALAR * SCALAR);
+        }
+    }
+}
+
+#undef SCALAR
+
+
 /* Apply distortion, geometry and rotation in a single pass */
 static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
         ufraw_image_data *outimg, UFRectangle *area)
@@ -886,7 +974,7 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
 #ifdef HAVE_LENSFUN
     gboolean applyLF = uf->modifier != NULL && (uf->modFlags & UF_LF_TRANSFORM);
 #endif
-    int x, y, c;
+    int x, y;
     for (y = area->y; y < area->y + area->height; y++) {
         guint8 *cur0 = outimg->buffer + y * outimg->rowstride;
         float srcX0 = y * sine + baseX;
@@ -904,22 +992,7 @@ static void ufraw_convert_image_transform(ufraw_data *uf, ufraw_image_data *img,
                 srcY = buff[1];
             }
 #endif
-            gint32 xx = (gint32)srcX;
-            gint32 yy = (gint32)srcY;
-            // TODO: better handling of the borders.
-            if (xx < 0 || yy < 0 || xx + 1 >= img->width || yy + 1 >= img->height) {
-                for (c = 0; c < uf->colors; c++)
-                    cur[c] = 0;
-                continue;
-            }
-            ufraw_image_type *src = (ufraw_image_type *)(img->buffer +
-                                    yy * img->rowstride + xx * img->depth);
-            guint64 dx = (gint32)(srcX * 4096.0) - (xx << 12);
-            guint64 dy = (gint32)(srcY * 4096.0) - (yy << 12);
-            for (c = 0; c < uf->colors; c++)
-                cur[c] = ((4096 - dy) * ((4096 - dx) * src[0][c] + dx * src[1][c])
-                          + dy * ((4096 - dx) * src[img->width][c]
-                                  + (dx) * src[img->width + 1][c])) >> 24;
+            ufraw_interpolate_pixel_linearly(img, srcX, srcY, (ufraw_image_type *)cur, -1);
         }
     }
 }
@@ -1318,26 +1391,9 @@ static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
         for (; src < srcEnd; src++, dst += outimg->depth / 2) {
             int c;
             // Only red and blue channels get corrected
-            for (c = 0; c <= 2; c += 2, modcoord += 4) {
-                float srcX = modcoord[0];
-                float srcY = modcoord[1];
-                /* Do it in integer arithmetic, it's faster */
-                int xx = (int)srcX;
-                int yy = (int)srcY;
-                // TODO: better handling of the borders.
-                if (xx < 0 || yy < 0 || xx + 1 >= img->width || yy + 1 >= img->height) {
-                    dst[c] = 0;
-                    continue;
-                }
-                ufraw_image_type *lf_src = (ufraw_image_type *)(img->buffer +
-                                           yy * img->rowstride + xx * img->depth);
-                guint64 dx = (int)(srcX * 4096.0) - (xx << 12);
-                guint64 dy = (int)(srcY * 4096.0) - (yy << 12);
-                dst[c] = ((4096 - dy) * ((4096 - dx) * lf_src[0][c]
-                                         + dx * lf_src[1][c])
-                          + dy * ((4096 - dx) * lf_src[img->width][c]
-                                  + (dx) * lf_src[img->width + 1][c])) >> 24;
-            }
+            for (c = 0; c <= 2; c += 2, modcoord += 4)
+                ufraw_interpolate_pixel_linearly(img, modcoord[0], modcoord[1], (ufraw_image_type *)dst, c);
+
             modcoord -= 2;
             // Green channels are intact
             for (c = 1; c <= 3; c += 2)
