@@ -534,6 +534,14 @@ extern "C" {
         return false;
     }
 
+    static bool _ufarray_entry_activate(GtkWidget *entry, UFObject *object)
+    {
+        UFArray &array = *object;
+        array.Set(gtk_entry_get_text(GTK_ENTRY(entry)));
+        _ufobject_reset_button_state(object);
+        return false;
+    }
+
     GtkWidget *_ufarray_combo_box_new(UFObject *object, GtkWidget *combo)
     {
         UFArray &array = *object;
@@ -570,6 +578,8 @@ extern "C" {
         GtkWidget *entry = gtk_bin_get_child(GTK_BIN(combo));
         g_signal_connect_after(G_OBJECT(entry), "focus-out-event",
                                G_CALLBACK(_ufarray_entry_changed), object);
+        g_signal_connect_after(G_OBJECT(entry), "activate",
+                               G_CALLBACK(_ufarray_entry_activate), object);
         return _ufarray_combo_box_new(object, combo);
     }
 
