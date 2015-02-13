@@ -11,8 +11,8 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.469 $
-   $Date: 2015/02/10 23:02:37 $
+   $Revision: 1.470 $
+   $Date: 2015/02/13 03:48:53 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -2000,8 +2000,8 @@ void CLASS packed_load_raw()
       }
       val = bitbuf << (64-tiff_bps-vbits) >> (64-tiff_bps);
       RAW(row,col ^ (load_flags >> 6 & 1)) = val;
-      if (load_flags & 1 && (col % 10) == 9 &&
-	fgetc(ifp) && col < width+left_margin) derror();
+      if (load_flags & 1 && (col % 10) == 9 && fgetc(ifp) &&
+	row < height+top_margin && col < width+left_margin) derror();
     }
     vbits -= rbits;
   }
@@ -9083,6 +9083,7 @@ konica_400z:
     if (exif_cfa) filters = exif_cfa;
     if (width == 4100) width -= 4;
     if (width == 4080) width -= 24;
+    if (width == 9280) { width -= 6; height -= 6; }
     if (load_raw == &CLASS unpacked_load_raw)
       load_flags = 4;
     tiff_bps = 12;
