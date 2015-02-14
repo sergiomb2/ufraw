@@ -263,8 +263,8 @@ extern "C" {
         d->bad_pixels(NULL);
         if (d->is_foveon) {
             if (d->load_raw == &DCRaw::foveon_dp_load_raw) {
-                for (i = 0; i < d->height * d->width * 4; i++)
-                    if ((short) d->image[0][i] < 0) d->image[0][i] = 0;
+		d->meta_data = 0;
+		d->foveon_dp_interpolate();
             } else d->foveon_interpolate();
             h->raw.width = h->width = d->width;
             h->raw.height = h->height = d->height;

@@ -43,8 +43,8 @@ public:
     short order;
     /*const*/
     char *ifname, *ifname_display;
-    char *meta_data, xtrans[6][6], xtrans_abs[6][6];
-    char cdesc[5], desc[512], make[64], model[64], model2[64], artist[64];
+    char *meta_data, xtrans[6][6], xtrans_abs[6][6], cdesc[5], desc[512];
+    char make[64], model[64], model2[64], cm_desc[64], artist[64];
     float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
     time_t timestamp;
     off_t strip_offset, data_offset;
@@ -223,6 +223,7 @@ public:
     void foveon_make_curves
     (short **curvep, float dq[3], float div[3], float filt);
     int foveon_apply_curve(short *curve, int i);
+    void foveon_dp_interpolate();
     void foveon_interpolate();
     void crop_masked_pixels();
     void remove_zeroes();
