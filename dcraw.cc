@@ -3479,6 +3479,7 @@ void CLASS foveon_dp_interpolate()
     { fprintf (stderr,_("%s: Invalid white balance \"%s\"\n"), ifname, model2);
       return; }
   } else {
+    if (!strcmp(model2, "Daylight")) strcpy(model2, "Sunlight");
     if (!(cp = foveon_camf_param ("WhiteBalanceColorCorrections", model2)))
     { fprintf (stderr,_("%s: Invalid white balance \"%s\"\n"), ifname, model2);
       return; }
