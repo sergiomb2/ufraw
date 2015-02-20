@@ -132,6 +132,7 @@ extern "C" {
         h->width = d->width;
         h->fuji_width = d->fuji_width;
         h->fuji_step = sqrt(0.5);
+        h->fuji_dr = d->fuji_dr;
         h->colors = d->colors;
         h->filters = d->filters;
         h->raw_color = d->raw_color;
@@ -263,8 +264,8 @@ extern "C" {
         d->bad_pixels(NULL);
         if (d->is_foveon) {
             if (d->load_raw == &DCRaw::foveon_dp_load_raw) {
-		d->meta_data = 0;
-		d->foveon_dp_interpolate();
+                d->meta_data = 0;
+                d->foveon_dp_interpolate();
             } else d->foveon_interpolate();
             h->raw.width = h->width = d->width;
             h->raw.height = h->height = d->height;

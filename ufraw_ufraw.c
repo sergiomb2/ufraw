@@ -692,6 +692,21 @@ int ufraw_load_raw(ufraw_data *uf)
                           uf->conf->ExposureNorm,
                           log(1.0 * raw->rgbMax / uf->conf->ExposureNorm) / log(2));
         }
+        /* FUJIFILM cameras have a special tag for exposure normalization */
+    } else if (strcasecmp(uf->conf->make, "FUJIFILM") == 0) {
+        if (raw->fuji_dr == 0) {
+            uf->conf->ExposureNorm = 0;
+        } else {
+            int c, max = raw->cam_mul[0];
+            for (c = 1; c < raw->colors; c++) max = MAX(raw->cam_mul[c], max);
+            if (uf->LoadingID && uf->conf->ExposureNorm == 0)
+                uf->conf->exposure -= log(1.0 * raw->rgbMax / max) / log(2);
+            uf->conf->ExposureNorm = (int)(1.0 * raw->rgbMax * pow(2, (double)raw->fuji_dr / 100));
+            ufraw_message(UFRAW_SET_LOG,
+                          "Exposure Normalization set to %d (%.2f EV)\n",
+                          uf->conf->ExposureNorm,
+                          fabs((float)raw->fuji_dr / 100));
+        }
     } else {
         uf->conf->ExposureNorm = 0;
     }

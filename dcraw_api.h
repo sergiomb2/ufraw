@@ -40,6 +40,7 @@ typedef struct {
     double cam_rgb[4][3];
     int rgbMax, black, fuji_width;
     double fuji_step;
+    short fuji_dr;
     int toneCurveSize, toneCurveOffset;
     int toneModeSize, toneModeOffset;
     char *message, xtrans[6][6];

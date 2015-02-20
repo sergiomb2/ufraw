@@ -153,7 +153,7 @@ struct ph1 {
 
 CLASS DCRaw()
 {
-order=0; /* Suppress valgrind error. */
+order=0, fuji_dr=0; /* Suppress valgrind error. */
 shot_select=0, multi_out=0, aber[0] = aber[1] = aber[2] = aber[3] = 1;
 gamm[0] = 0.45, gamm[1] = 4.5, gamm[2] = gamm[3] = gamm[4] = gamm[5] = 0;
 bright=1, user_mul[0] = user_mul[1] = user_mul[2] = user_mul[3] = 0;
@@ -7241,6 +7241,8 @@ void CLASS parse_fuji (int offset)
         FORC(6) xtrans_abs[5-i][5-c] = fgetc(ifp) & 3;
     } else if (tag == 0x2ff0) {
       FORC4 cam_mul[c ^ 1] = get2();
+    } else if (tag == 0x9650) {	/* FUJIFILM exposure bias */
+      fuji_dr = get2();
     } else if (tag == 0xc000) {
       c = order;
       order = 0x4949;

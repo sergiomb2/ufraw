@@ -40,7 +40,7 @@ class DCRaw
 public:
     /* All dcraw's global variables are members of this class. */
     FILE *ifp, *ofp;
-    short order;
+    short order, fuji_dr;
     /*const*/
     char *ifname, *ifname_display;
     char *meta_data, xtrans[6][6], xtrans_abs[6][6], cdesc[5], desc[512];
