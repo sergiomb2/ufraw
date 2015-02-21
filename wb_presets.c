@@ -5800,6 +5800,24 @@ const wb_data wb_preset[] = {
   { "Panasonic", "DMC-FZ1000", Incandescent, 0,	{ 1.718750, 1, 2.750000, 0 } },
   { "Panasonic", "DMC-FZ1000", Flash, 0,	{ 2.585938, 1, 1.796875, 0 } },
 
+  // Panasonic DMC-TZ60, DMC-TZ61 and DMC-ZS40 are the same camera model.
+  { "Panasonic", "DMC-TZ60", Daylight, 0,	{ 2.060377, 1, 1.656604, 0 } },
+  { "Panasonic", "DMC-TZ60", Cloudy, 0,		{ 2.192453, 1, 1.520755, 0 } },
+  { "Panasonic", "DMC-TZ60", Shade, 0,		{ 2.335849, 1, 1.415094, 0 } },
+  { "Panasonic", "DMC-TZ60", Incandescent, 0,	{ 1.384906, 1, 2.577358, 0 } },
+
+  // Panasonic DMC-TZ60, DMC-TZ61 and DMC-ZS40 are the same camera model.
+  { "Panasonic", "DMC-TZ61", Daylight, 0,	{ 2.060377, 1, 1.656604, 0 } },
+  { "Panasonic", "DMC-TZ61", Cloudy, 0,		{ 2.192453, 1, 1.520755, 0 } },
+  { "Panasonic", "DMC-TZ61", Shade, 0,		{ 2.335849, 1, 1.415094, 0 } },
+  { "Panasonic", "DMC-TZ61", Incandescent, 0,	{ 1.384906, 1, 2.577358, 0 } },
+
+  // Panasonic DMC-TZ60, DMC-TZ61 and DMC-ZS40 are the same camera model.
+  { "Panasonic", "DMC-ZS40", Daylight, 0,	{ 2.060377, 1, 1.656604, 0 } },
+  { "Panasonic", "DMC-ZS40", Cloudy, 0,		{ 2.192453, 1, 1.520755, 0 } },
+  { "Panasonic", "DMC-ZS40", Shade, 0,		{ 2.335849, 1, 1.415094, 0 } },
+  { "Panasonic", "DMC-ZS40", Incandescent, 0,	{ 1.384906, 1, 2.577358, 0 } },
+
   { "Panasonic", "DMC-G1", Daylight, 0,		{ 1.942966, 1, 1.448669, 0 } },
   { "Panasonic", "DMC-G1", Cloudy, 0,		{ 2.106464, 1, 1.326996, 0 } },
   { "Panasonic", "DMC-G1", Shade, 0,		{ 2.323194, 1, 1.224335, 0 } },
