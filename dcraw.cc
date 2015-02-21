@@ -3629,12 +3629,14 @@ void CLASS foveon_dp_interpolate()
   free (black);
   free (sgrow);
   free (sgain);
+#endif
 
-  if ((badpix = (unsigned int *) foveon_camf_matrix (dim, "BadPixels"))) {
-    for (i=0; i < dim[0]; i++) {
+  if (foveon_camf_param ("IncludeBlocks", "BadPixels")) {
+    badpix = (unsigned int *) foveon_camf_matrix (dim, "BadPixels");
+    for (i=0; i < (int) dim[0]; i++) {
       col = (badpix[i] >> 8 & 0xfff) - keep[0];
       row = (badpix[i] >> 20       ) - keep[1];
-      if ((unsigned)(row-1) > height-3 || (unsigned)(col-1) > width-3)
+      if (row-1 < 0 || row-1 > height-3 || col-1 < 0 || col-1 > width-3)
 	continue;
       memset (fsum, 0, sizeof fsum);
       for (sum=j=0; j < 8; j++)
@@ -3647,7 +3649,6 @@ void CLASS foveon_dp_interpolate()
     }
     free (badpix);
   }
-#endif
 
   /* Array for 5x5 Gaussian averaging of red values */
   smrow[6] = (int (*)[3]) calloc (width*5, sizeof **smrow);
