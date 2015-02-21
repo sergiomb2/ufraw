@@ -704,8 +704,7 @@ int ufraw_load_raw(ufraw_data *uf)
             uf->conf->ExposureNorm = (int)(1.0 * raw->rgbMax * pow(2, (double)raw->fuji_dr / 100));
             ufraw_message(UFRAW_SET_LOG,
                           "Exposure Normalization set to %d (%.2f EV)\n",
-                          uf->conf->ExposureNorm,
-                          fabs((float)raw->fuji_dr / 100));
+                          uf->conf->ExposureNorm, -(float)raw->fuji_dr / 100);
         }
     } else {
         uf->conf->ExposureNorm = 0;

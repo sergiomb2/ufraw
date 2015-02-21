@@ -7241,7 +7241,7 @@ void CLASS parse_fuji (int offset)
         FORC(6) xtrans_abs[5-i][5-c] = fgetc(ifp) & 3;
     } else if (tag == 0x2ff0) {
       FORC4 cam_mul[c ^ 1] = get2();
-    } else if (tag == 0x9650) {	/* FUJIFILM exposure bias */
+    } else if (tag == 0x9650) {		/* FUJIFILM exposure bias - NKBJ */
       fuji_dr = get2();
     } else if (tag == 0xc000) {
       c = order;
