@@ -155,6 +155,7 @@ public:
     void packed_dng_load_raw();
     void pentax_load_raw();
     void nikon_load_raw();
+    void nikon_yuv_load_raw();
     int nikon_e995();
     int nikon_e2100();
     void nikon_3700();
