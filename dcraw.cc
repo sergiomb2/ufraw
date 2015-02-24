@@ -11,8 +11,8 @@
    This is a adaptation of Dave Coffin's original dcraw.c to C++.
    It can work as either a command-line tool or called by other programs.
 
-   $Revision: 1.471 $
-   $Date: 2015/02/23 03:53:34 $
+   $Revision: 1.472 $
+   $Date: 2015/02/23 23:15:48 $
  */
 
 #ifdef HAVE_CONFIG_H /*For UFRaw config system - NKBJ*/
@@ -5204,7 +5204,6 @@ void CLASS xtrans_interpolate (int passes)
   dcraw_message (DCRAW_VERBOSE,_("%d-pass X-Trans interpolation...\n"), passes);
 
   cielab (0,0);
-  border_interpolate(6);
   ndir = 4 << (passes > 1);
   buffer = (char *) malloc (TS*TS*(ndir*11+6));
   merror (buffer, "xtrans_interpolate()");
@@ -5409,6 +5408,7 @@ void CLASS xtrans_interpolate (int passes)
 	}
     }
   free(buffer);
+  border_interpolate(8);
 }
 #undef fcol
 

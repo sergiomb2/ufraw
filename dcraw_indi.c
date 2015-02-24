@@ -614,7 +614,6 @@ void CLASS xtrans_interpolate_INDI(ushort(*image)[4], const unsigned filters,
     dcraw_message(dcraw, DCRAW_VERBOSE, _("%d-pass X-Trans interpolation...\n"), passes); /*NKBJ*/
 
     cielab_INDI(0, 0, colors, rgb_cam);
-    border_interpolate_INDI(height, width, image, filters, colors, 6, hh);
     ndir = 4 << (passes > 1);
 
     /* Map a green hexagon around each non-green pixel and vice versa:      */
@@ -846,6 +845,7 @@ void CLASS xtrans_interpolate_INDI(ushort(*image)[4], const unsigned filters,
         }
         free(buffer);
     } /* _OPENMP */
+    border_interpolate_INDI(height, width, image, filters, colors, 8, hh);
 }
 
 /*
@@ -1170,3 +1170,4 @@ void CLASS flip_image_INDI(ushort(*image)[4], int *height_p, int *width_p,
     *height_p = height; /* INDI - UF*/
     *width_p = width;
 }
+
