@@ -1688,7 +1688,7 @@ char *helpText[] = {
     N_("--aspect-ratio X:Y    Set crop area aspect ratio.\n"),
 #ifdef HAVE_LENSFUN
     N_("--lensfun=none|auto   Do not apply lens correction or try to apply\n"
-    "                      correction by auto-detecting the lens (default none).\n"),
+    "                      correction by auto-detecting the lens (default auto).\n"),
 #endif
     N_("--out-path=PATH       PATH for output file (default use input file's path).\n"),
     N_("--output=FILE         Output file name, use '-' to output to stdout.\n"),
