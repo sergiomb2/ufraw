@@ -7568,6 +7568,16 @@ const wb_data wb_preset[] = {
   { "SONY", "DSLR-A900", Flash, 0,		{ 2.910156, 1, 1.183594, 0 } },
   { "SONY", "DSLR-A900", Flash, 3,		{ 3.183594, 1, 1.062500, 0 } },
 
+  { "SONY", "ILCA-77M2", Daylight, 0,		{ 2.785156, 1, 1.679688, 0 } },
+  { "SONY", "ILCA-77M2", Shade, 0,		{ 3.285156, 1, 1.386719, 0 } },
+  { "SONY", "ILCA-77M2", Cloudy, 0,		{ 2.996094, 1, 1.542969, 0 } },
+  { "SONY", "ILCA-77M2", Incandescent, 0,	{ 1.750000, 1, 3.015625, 0 } },
+  { "SONY", "ILCA-77M2", WarmWhiteFluorescent, 0, { 2.019531, 1, 2.976563, 0 } },
+  { "SONY", "ILCA-77M2", CoolWhiteFluorescent, 0, { 2.531250, 1, 2.472656, 0 } },
+  { "SONY", "ILCA-77M2", DayWhiteFluorescent, 0, { 2.683594, 1, 1.781250, 0 } },
+  { "SONY", "ILCA-77M2", DaylightFluorescent, 0, { 3.003906, 1, 1.609375, 0 } },
+  { "SONY", "ILCA-77M2", Flash, 0,		{ 3.203125, 1, 1.433594, 0 } },
+
   // firmware ILCE-7 (A7) Ver 1.0.1
   { "SONY", "ILCE-7", Daylight, 0,		{ 2.398438, 1, 1.464844, 0 } },
   { "SONY", "ILCE-7", Shade, 0,			{ 2.871094, 1, 1.210938, 0 } },
