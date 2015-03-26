@@ -2375,4 +2375,3 @@ void ufraw_auto_curve(ufraw_data *uf)
         curve->m_numAnchors = j + 1;
     }
 }
-

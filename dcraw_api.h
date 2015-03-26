@@ -90,4 +90,3 @@ void dcraw_message(void *dcraw, int code, char *format, ...);
 #endif
 
 #endif /*_DCRAW_API_H*/
-

@@ -63,4 +63,3 @@ GtkWidget *ufarray_combo_box_entry_new(UFObject *object);
 #endif
 
 #endif /*_UF_GTK_H*/
-

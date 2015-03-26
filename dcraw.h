@@ -297,4 +297,3 @@ public:
     void write_ppm_tiff();
     int main(int argc, const char **argv);
 };
-

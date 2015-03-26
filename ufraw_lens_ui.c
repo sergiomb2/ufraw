@@ -732,4 +732,3 @@ void lens_fill_interface(preview_data *data, GtkWidget *page)
 }
 
 #endif /* HAVE_LENSFUN */
-

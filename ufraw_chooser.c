@@ -172,4 +172,3 @@ void ufraw_chooser(conf_data *rc, conf_data *conf, conf_data *cmd,
     gtk_widget_destroy(GTK_WIDGET(fileChooser));
     ufraw_message(UFRAW_SET_PARENT, NULL);
 }
-

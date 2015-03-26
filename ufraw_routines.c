@@ -605,5 +605,3 @@ void ptr_array_insert_index(
     memmove(root + index + 1, root + index, (length - index) * sizeof(void *));
     root [index] = item;
 }
-
-

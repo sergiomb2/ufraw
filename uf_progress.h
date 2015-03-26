@@ -39,4 +39,3 @@ static inline void progress(int what, int ticks)
 }
 
 #endif /* _UF_PROGRESS_H */
-

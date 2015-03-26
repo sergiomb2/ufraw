@@ -5977,4 +5977,3 @@ int ufraw_preview(ufraw_data *uf, conf_data *rc, int plugin,
     if (status != GTK_RESPONSE_OK) return UFRAW_CANCEL;
     return UFRAW_SUCCESS;
 }
-

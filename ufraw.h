@@ -558,4 +558,3 @@ int ufraw_exif_write(ufraw_data *uf);
 #define UFRAW_SET_PARENT 211 /* Set parent window for message dialog */
 
 #endif /*_UFRAW_H*/
-

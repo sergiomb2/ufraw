@@ -392,4 +392,3 @@ extern "C" int ufraw_exif_write(ufraw_data *uf)
     return UFRAW_ERROR;
 }
 #endif /* HAVE_EXIV2 */
-

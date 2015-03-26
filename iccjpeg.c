@@ -255,4 +255,3 @@ read_icc_profile(j_decompress_ptr cinfo,
 }
 
 #endif /* HAVE_LIBJPEG */
-

@@ -2457,4 +2457,3 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
     ufobject_delete(tmpImage);
     return optind;
 }
-

@@ -933,4 +933,3 @@ extern "C" {
 } // namespace UFRaw
 
 #endif // HAVE_LENSFUN
-

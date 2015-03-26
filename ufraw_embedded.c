@@ -378,4 +378,3 @@ int ufraw_write_embedded(ufraw_data *uf)
 
     return status;
 }
-

@@ -1149,4 +1149,3 @@ void develop_linear(guint16 in[4], guint16 out[3], developer_data *d)
         out[c] = MIN(MAX(tmppix[c], 0), 0xFFFF);
     develop_grayscale(out, d);
 }
-

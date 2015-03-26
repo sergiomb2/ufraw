@@ -68,4 +68,3 @@ void ufraw_icons_init()
     load_icon(factory, geometry_24, "geometry");
     load_icon(factory, hueadjust_24, "hueadjust");
 }
-

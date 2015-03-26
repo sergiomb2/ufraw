@@ -495,4 +495,3 @@ UFBoolean ufarray_is_equal(UFObject *object, const char *string);
 #endif
 
 #endif /*_UFOBJECT_H*/
-
