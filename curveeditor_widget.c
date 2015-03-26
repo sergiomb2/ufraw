@@ -604,3 +604,4 @@ gboolean curveeditor_widget_get_coordinates(GtkWidget *widget,
         return FALSE;
     }
 }
+

@@ -892,3 +892,4 @@ static void PNGwriteRawProfile(png_struct *ping,
     png_free(ping, text);
 }
 #endif /*HAVE_LIBPNG*/
+

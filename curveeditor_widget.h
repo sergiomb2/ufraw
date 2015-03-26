@@ -19,3 +19,4 @@ CurveData *curveeditor_widget_get_curve(GtkWidget *widget);
 
 gboolean curveeditor_widget_get_coordinates(GtkWidget *widget,
         double *x, double *y);
+

@@ -117,3 +117,4 @@ long ufraw_delete(void *widget, ufraw_data *uf)
     gtk_widget_destroy(GTK_WIDGET(dialog));
     return status;
 }
+

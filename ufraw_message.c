@@ -192,3 +192,4 @@ char *ufraw_message(int code, const char *format, ...)
             return NULL;
     }
 }
+

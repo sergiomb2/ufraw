@@ -1043,7 +1043,7 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
 #ifdef _OPENMP
     #pragma omp parallel for schedule(static) default(none) \
     shared(uf,img,width,height,colors,rgbMax,delta) \
-reduction(+:count) \
+    reduction(+:count) \
     private(h,p,w,c,t,v,hi,i)
 #endif
     for (h = 1; h < height - 1; ++h) {
@@ -2375,3 +2375,4 @@ void ufraw_auto_curve(ufraw_data *uf)
         curve->m_numAnchors = j + 1;
     }
 }
+

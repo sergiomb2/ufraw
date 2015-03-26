@@ -492,3 +492,4 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
     return UFRAW_SUCCESS;
 }
 
+

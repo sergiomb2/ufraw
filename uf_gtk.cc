@@ -219,17 +219,20 @@ extern "C" {
     public:
         GObject **gobject;
         GtkButton *button;
-        explicit _UFWidgetData(int size = 1) {
+        explicit _UFWidgetData(int size = 1)
+        {
             if (size != 0)
                 gobject = g_new0(GObject *, size);
             else
                 gobject = NULL;
             button = NULL;
         }
-        ~_UFWidgetData() {
+        ~_UFWidgetData()
+        {
             g_free(gobject);
         }
-        GtkAdjustment *adjustment(int index) {
+        GtkAdjustment *adjustment(int index)
+        {
             return GTK_ADJUSTMENT(gobject[index]);
         }
     };
@@ -584,3 +587,4 @@ extern "C" {
     }
 
 } // extern "C"
+

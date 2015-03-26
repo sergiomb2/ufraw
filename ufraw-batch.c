@@ -164,3 +164,4 @@ void ufraw_messenger(char *message, void *parentWindow)
     parentWindow = parentWindow;
     if (!silentMessenger) ufraw_batch_messenger(message);
 }
+

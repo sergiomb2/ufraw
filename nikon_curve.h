@@ -197,3 +197,4 @@ int RipNikonNEFCurve(void *file, int offset, CurveData *data,
                      CurveSample **sample_p);
 
 #endif
+

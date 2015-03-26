@@ -152,3 +152,4 @@ long ufraw_send_to_gimp(ufraw_data *uf)
     g_usleep(200 * 1000);
     return UFRAW_SUCCESS;
 }
+

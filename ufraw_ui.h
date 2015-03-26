@@ -196,3 +196,4 @@ void ufnumber_adjustment_scale(UFObject *obj,
                                GtkTable *table, int x, int y, const char *label, const char *tip);
 
 #endif /* _UFRAW_UI_H */
+
