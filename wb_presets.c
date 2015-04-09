@@ -6497,6 +6497,18 @@ const wb_data wb_preset[] = {
   { "RICOH", "Caplio GX100", Incandescent, 0,	{ 1.520002, 1, 2.520003, 0 } },
   { "RICOH", "Caplio GX100", Fluorescent, 0,	{ 1.840001, 1, 1.970001, 0 } },
 
+  /* RICOH GR Firmware Version 4.00 */
+  { "RICOH", "GR", Daylight, 0,			{ 2.980000, 1, 1.580000, 0 } },
+  { "RICOH", "GR", Shade, 0,			{ 3.450000, 1, 1.360000, 0 } },
+  { "RICOH", "GR", Cloudy, 0,			{ 3.170000, 1, 1.500000, 0 } },
+  { "RICOH", "GR", Incandescent, 0,		{ 1.920000, 1, 2.530000, 0 } },
+  { "RICOH", "GR", IncandescentWarm, 0,		{ 2.090000, 1, 2.030000, 0 } },
+  { "RICOH", "GR", DaylightFluorescent, 0,	{ 3.220000, 1, 1.510000, 0 } },
+  { "RICOH", "GR", WhiteFluorescent, 0,		{ 2.860000, 1, 1.700000, 0 } },
+  { "RICOH", "GR", CoolWhiteFluorescent, 0,	{ 2.610000, 1, 2.080000, 0 } },
+  { "RICOH", "GR", WarmWhiteFluorescent, 0,	{ 2.240000, 1, 2.160000, 0 } },
+  { "RICOH", "GR", "5000K", 0,			{ 2.890000, 1, 1.520000, 0 } },
+
   /* RICOH PENTAX K-3 Firmware version 1.00 */
   { "RICOH", "PENTAX K-3", Daylight, 0,		{ 2.31250, 1, 1.48047, 0 } },
   { "RICOH", "PENTAX K-3", Shade, 0,		{ 2.78516, 1, 1.16797, 0 } },
