@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.64 2015/05/09 03:00:17 nkbj Exp $
+# $Id: Makefile.am,v 1.65 2015/05/09 04:00:25 nkbj Exp $
 
 SUBDIRS = po icons
 
@@ -59,23 +59,22 @@ LINK = $(CXXLINK)
 
 if MAKE_GTK
   libufraw_a_SOURCES = \
-    dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
-    ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw_message.c ufraw.h \
-    ufobject.cc ufobject.h ufraw_settings.cc ufraw_lensfun.cc \
-    wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
-    nikon_curve.c nikon_curve.h uf_progress.h \
+    dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_colorspaces.c \
+    ufraw_colorspaces.h ufraw_developer.c ufraw_conf.c ufraw_writer.c \
+    ufraw_embedded.c ufraw_message.c ufraw.h ufobject.cc ufobject.h \
+    ufraw_settings.cc ufraw_lensfun.cc wb_presets.c dcraw_api.cc dcraw_api.h \
+    dcraw_indi.c dcraw.h nikon_curve.c nikon_curve.h uf_progress.h \
     uf_glib.h uf_gtk.cc uf_gtk.h ufraw_exiv2.cc iccjpeg.c iccjpeg.h \
-    ufraw_preview.c ufraw_saver.c ufraw_delete.c \
-    ufraw_chooser.c ufraw_icons.c icons/ufraw_icons.h \
-    curveeditor_widget.c curveeditor_widget.h \
-    ufraw_lens_ui.c ufraw_ui.h
+    ufraw_preview.c ufraw_saver.c ufraw_delete.c ufraw_chooser.c \
+    ufraw_icons.c icons/ufraw_icons.h curveeditor_widget.c \
+    curveeditor_widget.h ufraw_lens_ui.c ufraw_ui.h
 else
   libufraw_a_SOURCES = \
-    dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_developer.c \
-    ufraw_conf.c ufraw_writer.c ufraw_embedded.c ufraw_message.c ufraw.h \
-    ufobject.cc ufobject.h ufraw_settings.cc ufraw_lensfun.cc \
-    wb_presets.c dcraw_api.cc dcraw_api.h dcraw_indi.c dcraw.h \
-    nikon_curve.c nikon_curve.h uf_progress.h \
+    dcraw.cc ufraw_ufraw.c ufraw_routines.c ufraw_colorspaces.c \
+    ufraw_colorspaces.h ufraw_developer.c ufraw_conf.c ufraw_writer.c \
+    ufraw_embedded.c ufraw_message.c ufraw.h ufobject.cc ufobject.h \
+    ufraw_settings.cc ufraw_lensfun.cc wb_presets.c dcraw_api.cc dcraw_api.h \
+    dcraw_indi.c dcraw.h nikon_curve.c nikon_curve.h uf_progress.h \
     uf_glib.h ufraw_exiv2.cc iccjpeg.c iccjpeg.h
 endif
 

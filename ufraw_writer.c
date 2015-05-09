@@ -15,6 +15,7 @@
 #include <errno.h>	/* for errno */
 #include <string.h>
 #include <lcms2.h>
+#include "ufraw_colorspaces.h"
 #ifdef HAVE_LIBTIFF
 #include <tiffio.h>
 #endif
@@ -406,7 +407,7 @@ int ufraw_write_image(ufraw_data *uf)
                                   uf->conf->outputFilename);
             }
         } else if (uf->conf->profileIndex[out_profile] == 1) { // Embed sRGB.
-            cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
+            cmsHPROFILE hOutProfile = uf_colorspaces_create_srgb_profile();
             cmsUInt32Number len = 0;
             cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
             if (len > 0) {
@@ -479,7 +480,7 @@ int ufraw_write_image(ufraw_data *uf)
                                   uf->conf->outputFilename);
             }
         } else if (uf->conf->profileIndex[out_profile] == 1) { // Embed sRGB.
-            cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
+            cmsHPROFILE hOutProfile = uf_colorspaces_create_srgb_profile();
             cmsUInt32Number len = 0;
             cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
             if (len > 0) {
@@ -571,7 +572,7 @@ int ufraw_write_image(ufraw_data *uf)
                                       uf->conf->outputFilename);
                 }
             } else if (uf->conf->profileIndex[out_profile] == 1) { // Embed sRGB.
-                cmsHPROFILE hOutProfile = cmsCreate_sRGBProfile();
+                cmsHPROFILE hOutProfile = uf_colorspaces_create_srgb_profile();
                 cmsUInt32Number len = 0;
                 cmsSaveProfileToMem(hOutProfile, 0, &len); // Calculate len.
                 if (len > 0) {

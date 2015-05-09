@@ -6,6 +6,7 @@ ufobject.cc
 ufraw-batch.c
 ufraw.c
 ufraw_chooser.c
+ufraw_colorspaces.c
 ufraw_conf.c
 ufraw_delete.c
 ufraw_developer.c

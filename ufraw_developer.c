@@ -18,6 +18,7 @@
 #include <string.h>
 #include <lcms2.h>
 #include <lcms2_plugin.h>
+#include "ufraw_colorspaces.h"
 
 static void lcms_message(cmsContext ContextID,
                          cmsUInt32Number ErrorCode,
@@ -136,14 +137,14 @@ void developer_profile(developer_data *d, int type, profile_data *p)
         g_strlcpy(d->profileFile[type], p->file, max_path);
         if (d->profile[type] != NULL) cmsCloseProfile(d->profile[type]);
         if (!strcmp(d->profileFile[type], ""))
-            d->profile[type] = cmsCreate_sRGBProfile();
+            d->profile[type] = uf_colorspaces_create_srgb_profile();
         else {
             char *filename =
                 uf_win32_locale_filename_from_utf8(d->profileFile[type]);
             d->profile[type] = cmsOpenProfileFromFile(filename, "r");
             uf_win32_locale_filename_free(filename);
             if (d->profile[type] == NULL)
-                d->profile[type] = cmsCreate_sRGBProfile();
+                d->profile[type] = uf_colorspaces_create_srgb_profile();
         }
         d->updateTransform = TRUE;
     }
@@ -165,7 +166,7 @@ void developer_display_profile(developer_data *d,
         d->profile[type] = cmsOpenProfileFromMem(profile, size);
         // If embedded profile is invalid fall-back to sRGB
         if (d->profile[type] == NULL)
-            d->profile[type] = cmsCreate_sRGBProfile();
+            d->profile[type] = uf_colorspaces_create_srgb_profile();
         if (strcmp(d->profileFile[type], embedded_display_profile) != 0) {
             // start using embedded profile
             g_strlcpy(d->profileFile[type], embedded_display_profile, max_path);
@@ -175,7 +176,7 @@ void developer_display_profile(developer_data *d,
         if (strcmp(d->profileFile[type], embedded_display_profile) == 0) {
             // embedded profile is no longer used
             if (d->profile[type] != NULL) cmsCloseProfile(d->profile[type]);
-            d->profile[type] = cmsCreate_sRGBProfile();
+            d->profile[type] = uf_colorspaces_create_srgb_profile();
             strcpy(d->profileFile[type], "");
             d->updateTransform = TRUE;
         }
