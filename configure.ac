@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.183 2015/02/11 05:30:09 nkbj Exp $
+dnl $Id: configure.ac,v 1.184 2015/05/09 03:00:17 nkbj Exp $
 AC_INIT(UFRaw, 0.22)
 AC_PREREQ(2.57)
 
@@ -70,21 +70,7 @@ AC_ARG_WITH(prefix,
 
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.12 gthread-2.0)
 
-PKG_CHECK_MODULES(LCMS2, lcms2,
-  [have_lcms="lcms 2.x"
-   AC_DEFINE(HAVE_LCMS2, 1, have the lcms 2.x library)
-   LCMS_CFLAGS="$LCMS2_CFLAGS"
-   LCMS_LIBS="$LCMS2_LIBS"],
-  [have_lcms="lcms 2.x not found"])
-
-if test "x$have_lcms" != "xlcms 2.x"; then
-  PKG_CHECK_MODULES(LCMS1, lcms >= 1.14,
-    [have_lcms="lcms 1.x"
-     AC_DEFINE(HAVE_LCMS1, 1, have the lcms 1.x library)
-     LCMS_CFLAGS="$LCMS1_CFLAGS"
-     LCMS_LIBS="$LCMS1_LIBS"],
-    [AC_MSG_ERROR(can not build UFRaw without lcms)])
-fi
+PKG_CHECK_MODULES(LCMS2, lcms2)
 
 AC_ARG_WITH([gtk],
   [AS_HELP_STRING([--with-gtk],
@@ -226,11 +212,11 @@ AC_SUBST(MSGFMT_OPTS)
 
 # UFRAW_CPPFLAGS is added to the preprocessor flags AM_CPPFLAGS,
 # affecting also the C and C++ compilers.
-UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS_CFLAGS $LENSFUN_CFLAGS $LIBTIFF_CFLAGS $LIBPNG_CFLAGS $CFITSIO_CFLAGS"
+UFRAW_CPPFLAGS="$UFRAW_CPPFLAGS $EXIV2_CFLAGS $GTK_CFLAGS $GLIB_CFLAGS $LCMS2_CFLAGS $LENSFUN_CFLAGS $LIBTIFF_CFLAGS $LIBPNG_CFLAGS $CFITSIO_CFLAGS"
 AC_SUBST(UFRAW_CPPFLAGS)
 
 # UFRAW_LDADD is added to the linker flags LDADD.
-UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS_LIBS $LENSFUN_LIBS $LIBTIFF_LIBS $LIBPNG_LIBS $CFITSIO_LIBS $CARBON_LIBS"
+UFRAW_LDADD="$UFRAW_LDADD $EXIV2_LIBS $GLIB_LIBS $LCMS2_LIBS $LENSFUN_LIBS $LIBTIFF_LIBS $LIBPNG_LIBS $CFITSIO_LIBS $CARBON_LIBS"
 AC_SUBST(UFRAW_LDADD)
 
 # Windows and Darwin (Mac OS X) will require some special attention.
@@ -373,7 +359,6 @@ AC_CONFIG_FILES(ufraw-setup.iss)
 AC_OUTPUT
 
 AC_MSG_NOTICE(====================== summary =====================)
-AC_MSG_NOTICE(color management support: $have_lcms)
 AC_MSG_NOTICE(build GTK GUI: $have_gtk)
 AC_MSG_NOTICE(build GIMP plug-in: $have_gimp)
 AC_MSG_NOTICE(EXIF support using exiv2: $have_exiv2)

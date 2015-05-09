@@ -16,33 +16,17 @@
 #endif
 #include <math.h>
 #include <string.h>
-#ifdef HAVE_LCMS2
 #include <lcms2.h>
 #include <lcms2_plugin.h>
-#else
-#include <lcms.h>
-#define cmsCreateLab2Profile(x) cmsCreateLabProfile(x)
-typedef GAMMATABLE cmsToneCurve;
-typedef WORD cmsUInt16Number;
-#endif
 
-#ifdef HAVE_LCMS2
 static void lcms_message(cmsContext ContextID,
                          cmsUInt32Number ErrorCode,
                          const char *ErrorText)
 {
     (void) ContextID;
-#else
-static int lcms_message(int ErrorCode, const char *ErrorText)
-{
-#endif
-    /* Possible ErrorCode:
-     * see cmsERROR_* in <lcms2.h> or LCMS_ERRC_* in <lcms.h>. */
+    /* Possible ErrorCode: see cmsERROR_* in <lcms2.h>. */
     (void) ErrorCode;
     ufraw_message(UFRAW_ERROR, "%s", ErrorText);
-#ifdef HAVE_LCMS1
-    return 1; /* Tell lcms that we handled the error */
-#endif
 }
 
 developer_data *developer_init()
@@ -66,13 +50,8 @@ developer_data *developer_init()
     d->luminosityCurveData.m_gamma = -1.0;
     d->luminosityProfile = NULL;
     cmsToneCurve **TransferFunction = (cmsToneCurve **)d->TransferFunction;
-#ifdef HAVE_LCMS2
     TransferFunction[0] = cmsBuildGamma(NULL, 1.0);
     TransferFunction[1] = TransferFunction[2] = cmsBuildGamma(NULL, 1.0);
-#else
-    TransferFunction[0] = cmsAllocGamma(0x100);
-    TransferFunction[1] = TransferFunction[2] = cmsBuildGamma(0x100, 1.0);
-#endif
     d->saturationProfile = NULL;
     d->adjustmentProfile = NULL;
     d->intent[out_profile] = -1;
@@ -88,11 +67,7 @@ developer_data *developer_init()
         d->lightnessAdjustment[i].hue = 0.0;
         d->lightnessAdjustment[i].hueWidth = 0.0;
     }
-#ifdef HAVE_LCMS2
     cmsSetLogErrorHandler(lcms_message);
-#else
-    cmsSetErrorHandler(lcms_message);
-#endif
     return d;
 }
 
@@ -103,13 +78,8 @@ void developer_destroy(developer_data *d)
     for (i = 0; i < profile_types; i++)
         if (d->profile[i] != NULL) cmsCloseProfile(d->profile[i]);
     cmsCloseProfile(d->luminosityProfile);
-#ifdef HAVE_LCMS2
     cmsFreeToneCurve(d->TransferFunction[0]);
     cmsFreeToneCurve(d->TransferFunction[1]);
-#else
-    cmsFreeGamma(d->TransferFunction[0]);
-    cmsFreeGamma(d->TransferFunction[1]);
-#endif
     cmsCloseProfile(d->saturationProfile);
     cmsCloseProfile(d->adjustmentProfile);
     if (d->colorTransform != NULL)
@@ -123,7 +93,6 @@ void developer_destroy(developer_data *d)
 
 static const char *embedded_display_profile = "embedded display profile";
 
-#ifdef HAVE_LCMS2
 /*
  * Emulates cmsTakeProductName() from lcms 1.x.
  *
@@ -155,7 +124,6 @@ const char *cmsTakeProductName(cmsHPROFILE profile)
 
     return name;
 }
-#endif
 
 /* Update the profile in the developer
  * and init values in the profile if needed */
@@ -250,14 +218,9 @@ static double scale_curve(double in, double min, double max, double scale)
 static const double max_luminance = 100.0;
 static const double max_colorfulness = 181.019336; /* sqrt(128*128+128*128) */
 
-#ifdef HAVE_LCMS2
 static cmsInt32Number contrast_saturation_sampler(const cmsUInt16Number In[],
         cmsUInt16Number Out[],
         void *Cargo)
-#else
-static int contrast_saturation_sampler(cmsUInt16Number In[],
-                                       cmsUInt16Number Out[], void *Cargo)
-#endif
 {
     cmsCIELab Lab;
     cmsCIELCh LCh;
@@ -281,7 +244,6 @@ static cmsHPROFILE create_contrast_saturation_profile(double contrast,
     cmsHPROFILE hICC;
     struct contrast_saturation cs = { contrast, saturation };
 
-#ifdef HAVE_LCMS2
     cmsPipeline* Pipeline = NULL;
     cmsStage* CLUT = NULL;
 
@@ -323,44 +285,11 @@ error_out:
     if (Pipeline) cmsPipelineFree(Pipeline);
     if (hICC) cmsCloseProfile(hICC);
     return NULL;
-#else /* HAVE_LCMS1 */
-    LPLUT Lut;
-
-    hICC = _cmsCreateProfilePlaceholder();
-    if (hICC == NULL) return NULL; // can't allocate
-
-    cmsSetDeviceClass(hICC, icSigAbstractClass);
-    cmsSetColorSpace(hICC, icSigLabData);
-    cmsSetPCS(hICC, icSigLabData);
-    cmsSetRenderingIntent(hICC, INTENT_PERCEPTUAL);
-
-    // Creates a LUT with 3D grid only
-    Lut = cmsAllocLUT();
-    cmsAlloc3DGrid(Lut, 11, 3, 3);
-    if (!cmsSample3DGrid(Lut, contrast_saturation_sampler, &cs , 0)) {
-        // Shouldn't reach here
-        cmsFreeLUT(Lut);
-        cmsCloseProfile(hICC);
-        return NULL;
-    }
-    // Create tags
-    cmsAddTag(hICC, icSigMediaWhitePointTag, (void *) cmsD50_XYZ());
-    cmsAddTag(hICC, icSigAToB0Tag, (void *) Lut);
-    // LUT is already on virtual profile
-    cmsFreeLUT(Lut);
-
-    return hICC;
-#endif /* HAVE_LCMS1 */
 }
 
-#ifdef HAVE_LCMS2
 static cmsInt32Number luminance_adjustment_sampler(const cmsUInt16Number In[],
         cmsUInt16Number Out[],
         void *Cargo)
-#else
-static int luminance_adjustment_sampler(cmsUInt16Number In[],
-                                        cmsUInt16Number Out[], void *Cargo)
-#endif
 {
     cmsCIELab Lab;
     cmsCIELCh LCh;
@@ -401,7 +330,6 @@ static cmsHPROFILE create_adjustment_profile(const developer_data *d)
 {
     cmsHPROFILE hICC;
 
-#ifdef HAVE_LCMS2
     cmsPipeline* Pipeline = NULL;
     cmsStage* CLUT = NULL;
 
@@ -445,33 +373,6 @@ error_out:
     if (Pipeline) cmsPipelineFree(Pipeline);
     if (hICC) cmsCloseProfile(hICC);
     return NULL;
-#else /* HAVE_LCMS1 */
-    LPLUT Lut;
-
-    hICC = _cmsCreateProfilePlaceholder();
-    if (hICC == NULL) return NULL; // can't allocate
-
-    cmsSetDeviceClass(hICC, icSigAbstractClass);
-    cmsSetColorSpace(hICC, icSigLabData);
-    cmsSetPCS(hICC, icSigLabData);
-    cmsSetRenderingIntent(hICC, INTENT_PERCEPTUAL);
-
-    // Creates a LUT with 3D grid only
-    Lut = cmsAllocLUT();
-    cmsAlloc3DGrid(Lut, 33, 3, 3);
-    if (!cmsSample3DGrid(Lut, luminance_adjustment_sampler, (void*)d, 0)) {
-        // Shouldn't reach here
-        cmsFreeLUT(Lut);
-        cmsCloseProfile(hICC);
-        return NULL;
-    }
-    // Create tags
-    cmsAddTag(hICC, icSigMediaWhitePointTag, (void *) cmsD50_XYZ());
-    cmsAddTag(hICC, icSigAToB0Tag, (void *) Lut);
-    // LUT is already on virtual profile
-    cmsFreeLUT(Lut);
-    return hICC;
-#endif /* HAVE_LCMS1 */
 }
 
 /* Find a for which (1-exp(-a x)/(1-exp(-a)) has derivative b at x=0 */
@@ -736,7 +637,6 @@ void developer_prepare(developer_data *d, conf_data *conf,
                 ufraw_message(UFRAW_REPORT, NULL);
                 d->luminosityProfile = NULL;
             } else {
-#ifdef HAVE_LCMS2
                 cmsToneCurve **TransferFunction =
                     (cmsToneCurve **)d->TransferFunction;
                 cmsFloat32Number values[0x100];
@@ -748,15 +648,6 @@ void developer_prepare(developer_data *d, conf_data *conf,
                 d->luminosityProfile = cmsCreateLinearizationDeviceLink(
                                            cmsSigLabData, TransferFunction);
                 cmsSetDeviceClass(d->luminosityProfile, cmsSigAbstractClass);
-#else
-                LPGAMMATABLE *TransferFunction =
-                    (LPGAMMATABLE *)d->TransferFunction;
-                for (i = 0; i < 0x100; i++)
-                    TransferFunction[0]->GammaTable[i] = cs->m_Samples[i];
-                d->luminosityProfile = cmsCreateLinearizationDeviceLink(
-                                           icSigLabData, TransferFunction);
-                cmsSetDeviceClass(d->luminosityProfile, icSigAbstractClass);
-#endif
             }
             CurveSampleFree(cs);
         }

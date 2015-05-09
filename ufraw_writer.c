@@ -14,23 +14,7 @@
 #include <glib/gi18n.h>
 #include <errno.h>	/* for errno */
 #include <string.h>
-#ifdef HAVE_LCMS2
 #include <lcms2.h>
-#else
-#include <lcms.h>
-typedef DWORD cmsUInt32Number;
-static LCMSBOOL cmsSaveProfileToMem(cmsHPROFILE hProfile, void *MemPtr,
-                                    cmsUInt32Number *BytesNeeded)
-{
-    size_t _BytesNeeded;
-    LCMSBOOL retval;
-
-    retval = _cmsSaveProfileToMem(hProfile, MemPtr, &_BytesNeeded);
-    if (BytesNeeded)
-        *(BytesNeeded) = (cmsUInt32Number) _BytesNeeded;
-    return retval;
-}
-#endif
 #ifdef HAVE_LIBTIFF
 #include <tiffio.h>
 #endif

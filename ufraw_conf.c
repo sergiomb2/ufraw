@@ -1712,13 +1712,6 @@ char *helpText[] = {
 char versionText[] =
     "%s " VERSION "\n"
 
-    "LCMS "
-#ifdef HAVE_LCMS2
-    "2.x\n"
-#else
-    "1.x\n"
-#endif
-
     "EXIV2 "
 #ifdef HAVE_EXIV2
     "enabled.\n"
