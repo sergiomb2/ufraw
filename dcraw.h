@@ -83,6 +83,7 @@ public:
     struct tiff_ifd {
         int width, height, bps, comp, phint, offset, flip, samples, bytes;
         int tile_width, tile_length;
+        float shutter;
     } tiff_ifd[10];
 
     struct ph1 {
@@ -151,6 +152,7 @@ public:
     void lossless_jpeg_load_raw();
     void canon_sraw_load_raw();
     void adobe_copy_pixel(unsigned row, unsigned col, ushort **rp);
+    void ljpeg_idct (struct jhead *jh);
     void lossless_dng_load_raw();
     void packed_dng_load_raw();
     void pentax_load_raw();
@@ -290,7 +292,7 @@ public:
     void fuji_rotate();
     void stretch();
     int flip_index(int row, int col);
-    void tiff_set(ushort *ntag,
+    void tiff_set(struct tiff_hdr *th, ushort *ntag,
                   ushort tag, ushort type, int count, int val);
     void tiff_head(struct tiff_hdr *th, int full);
     void jpeg_thumb();
