@@ -113,23 +113,6 @@ extern
 #endif
 const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
-struct decode {
-  struct decode *branch[2];
-  int leaf;
-} first_decode[2048], *second_decode, *free_decode;
-
-struct tiff_ifd {
-  int width, height, bps, comp, phint, offset, flip, samples, bytes;
-  int tile_width, tile_length;
-  float shutter;
-} tiff_ifd[10];
-
-struct ph1 {
-  int format, key_off, tag_21a;
-  int black, split_col, black_col, split_row, black_row;
-  float tag_210;
-} ph1;
-
 #define DCRAW_SUCCESS 0		/* Centralize the error handling - UF*/
 #define DCRAW_ERROR 1
 #define DCRAW_UNSUPPORTED 2
@@ -3534,7 +3517,7 @@ void CLASS foveon_dp_interpolate()
 
 #if 0
   if (!(cp = foveon_camf_param ("WhiteBalanceIlluminants", model2)))
-  { fprintf (stderr,_("%s: Invalid white balance \"%s\"\n"), ifname, model2);
+  { dcraw_message (DCRAW_ERROR,_("%s: Invalid white balance \"%s\"\n"), ifname_display, model2);
     return; }
   foveon_fixed (cam_xyz, 9, cp);
   foveon_fixed (correct, 9,
@@ -3542,12 +3525,12 @@ void CLASS foveon_dp_interpolate()
 #endif
   if (dp1) {
     if (!(cp = foveon_camf_param ("DP1_WhiteBalanceColorCorrections", model2)))
-    { fprintf (stderr,_("%s: Invalid white balance \"%s\"\n"), ifname, model2);
+    { dcraw_message (DCRAW_ERROR,_("%s: Invalid white balance \"%s\"\n"), ifname_display, model2);
       return; }
   } else {
     if (!strcmp(model2, "Daylight")) strcpy(model2, "Sunlight");
     if (!(cp = foveon_camf_param ("WhiteBalanceColorCorrections", model2)))
-    { fprintf (stderr,_("%s: Invalid white balance \"%s\"\n"), ifname, model2);
+    { dcraw_message (DCRAW_ERROR,_("%s: Invalid white balance \"%s\"\n"), ifname_display, model2);
       return; }
   }
   foveon_fixed (cam_xyz, 9, cp);
