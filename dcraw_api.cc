@@ -265,7 +265,7 @@ extern "C" {
         if (d->is_foveon) {
             if (d->load_raw == &DCRaw::foveon_dp_load_raw) {
                 d->meta_data = 0;
-                d->foveon_dp_interpolate();
+                d->sigma_true_ii_interpolate();
             } else d->foveon_interpolate();
             h->raw.width = h->width = d->width;
             h->raw.height = h->height = d->height;

@@ -3461,43 +3461,33 @@ int CLASS foveon_apply_curve (short *curve, int i)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #endif
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-variable"
-void CLASS foveon_dp_interpolate()
+void CLASS sigma_true_ii_interpolate()
 {
   static const short hood[] = { -1,-1, -1,0, -1,1, 0,-1, 0,1, 1,-1, 1,0, 1,1 };
-  short *pix, prev[3], *curve[8], (*shrink)[3];
-  float cfilt=0, ddft[3][3][2], ppm[3][3][3];
-  float cam_xyz[3][3], correct[3][3], last[3][3], trans[3][3];
-  float chroma_dq[3], color_dq[3], diag[3][3], div[3];
-  float (*black)[3], (*sgain)[3], (*sgrow)[3];
-  float fsum[3], val, frow, num;
-  int row, col, c, i, j, diff, sgx, irow, sum, min, max, limit;
+  short *pix, *curve[8];
+  float cfilt=0, ddft[3][3][2];
+  float cam_xyz[3][3], correct[3][3], last[3][3];
+  float chroma_dq[3], color_dq[3], diag[3][3], div[3], tempgainfact[3];
+  float fsum[3], num;
+  int row, col, c, i, j, sum, min, max, limit;
   int dscr[2][2], dstb[4], (*smrow[7])[3], total[4], ipix[3];
-  int work[3][3], smlast, smred, smred_p=0, dev[3];
+  int smlast, smred, smred_p=0, dev[3];
   int satlev[3], keep[4], active[4], version[2], dp1=0;
   unsigned dim[3], *badpix;
-  double dsum=0, trsum[3];
-  char str[128];
+  double dsum=0;
   const char* cp;
 
-  dcraw_message (DCRAW_VERBOSE,_("Foveon DP interpolation...\n"));
+  dcraw_message (DCRAW_VERBOSE,_("Sigma TRUE II interpolation...\n"));
 
   foveon_load_camf();
   foveon_fixed (version, 2, "ContentVersionNumber");
   if (version[1] == 70) dp1=1;
+  if (!dp1) simple_coeff(4);
   foveon_fixed (dscr, 4, "DarkShieldColRange");
-#if 0
-  foveon_fixed (ppm[0][0], 27, "PostPolyMatrix");
-#endif
-  if (foveon_camf_param ("IncludeBlocks", "SaturationLevel"))
-		 foveon_fixed (satlev, 3, "SaturationLevel");
-  else satlev[0] = satlev[1] = satlev[2] = 0xfff;	/* FIXME */
   foveon_fixed (keep, 4, "KeepImageArea");
   foveon_fixed (active, 4, "ActiveImageArea");
   if (foveon_camf_param ("IncludeBlocks", "ChromaDQ"))
 	      foveon_fixed (chroma_dq, 3, "ChromaDQ");
-  else chroma_dq[0] = chroma_dq[1] = chroma_dq[2] = 10;	/* FIXME */
   foveon_fixed (color_dq, 3,
 	foveon_camf_param ("IncludeBlocks", "ColorDQ") ?
 		"ColorDQ" : "ColorDQCamRGB");
@@ -3515,14 +3505,6 @@ void CLASS foveon_dp_interpolate()
       FORC3 ddft[i+1][c][1] /= (dstb[3]-dstb[1]+1) * (dstb[2]-dstb[0]+1);
     }
 
-#if 0
-  if (!(cp = foveon_camf_param ("WhiteBalanceIlluminants", model2)))
-  { dcraw_message (DCRAW_ERROR,_("%s: Invalid white balance \"%s\"\n"), ifname_display, model2);
-    return; }
-  foveon_fixed (cam_xyz, 9, cp);
-  foveon_fixed (correct, 9,
-	foveon_camf_param ("WhiteBalanceCorrections", model2));
-#endif
   if (dp1) {
     if (!(cp = foveon_camf_param ("DP1_WhiteBalanceColorCorrections", model2)))
     { dcraw_message (DCRAW_ERROR,_("%s: Invalid white balance \"%s\"\n"), ifname_display, model2);
@@ -3548,11 +3530,6 @@ void CLASS foveon_dp_interpolate()
     FORC3 diag[c][i] = LAST(1,1)*LAST(2,2) - LAST(1,2)*LAST(2,1);
   #undef LAST
   FORC3 div[c] = diag[c][0]*0.3127 + diag[c][1]*0.329 + diag[c][2]*0.3583;
-#if 0
-  sprintf (str, "%sRGBNeutral", model2);
-  if (foveon_camf_param ("IncludeBlocks", str))
-    foveon_fixed (div, 3, str);
-#endif
   if (dp1) {
     if (foveon_camf_param ("IncludeBlocks", "DP1_WhiteBalanceGains"))
       foveon_fixed (div, 3, foveon_camf_param ("DP1_WhiteBalanceGains", model2));
@@ -3560,22 +3537,33 @@ void CLASS foveon_dp_interpolate()
     if (foveon_camf_param ("IncludeBlocks", "WhiteBalanceGains"))
       foveon_fixed (div, 3, foveon_camf_param ("WhiteBalanceGains", model2));
   }
+  if (foveon_camf_param("IncludeBlocks", "TempGainFact")) {
+    foveon_fixed(tempgainfact, 3, "TempGainFact");
+    FORC3 div[c]*=tempgainfact[c];
+  }
+  if (foveon_camf_param("IncludeBlocks", "SensorAdjustmentGainFact")) {
+    foveon_fixed(tempgainfact, 3, "SensorAdjustmentGainFact");
+    FORC3 div[c]*=tempgainfact[c];
+  }
+  if (foveon_camf_param("IncludeBlocks", "CorrectColorGain_BR")) {
+    foveon_fixed(tempgainfact, 3, "CorrectColorGain_BR");
+    FORC3 div[c]*=tempgainfact[c];
+  }
+  if (foveon_camf_param("IncludeBlocks", "CorrectColorGain_GR")) {
+    foveon_fixed(tempgainfact, 3, "CorrectColorGain_GR");
+    FORC3 div[c]*=tempgainfact[c];
+  }
+  if (foveon_camf_param("IncludeBlocks", "CorrectColorGain_RR")) {
+    foveon_fixed(tempgainfact, 3, "CorrectColorGain_RR");
+    FORC3 div[c]*=tempgainfact[c];
+  }
+  if (foveon_camf_param("IncludeBlocks", "DespAdjust")) {
+    foveon_fixed(tempgainfact, 3, "DespAdjust");
+    FORC3 div[c]*=tempgainfact[c];
+  }
   num = 0;
   FORC3 if (num < div[c]) num = div[c];
   FORC3 div[c] /= num;
-
-  memset (trans, 0, sizeof trans);
-  for (i=0; i < 3; i++)
-    for (j=0; j < 3; j++)
-      FORC3 trans[i][j] += rgb_cam[i][c] * last[c][j] * div[j];
-  FORC3 trsum[c] = trans[c][0] + trans[c][1] + trans[c][2];
-  dsum = (6*trsum[0] + 11*trsum[1] + 3*trsum[2]) / 20;
-  for (i=0; i < 3; i++)
-    FORC3 last[i][c] = trans[i][c] * dsum / trsum[i];
-  memset (trans, 0, sizeof trans);
-  for (i=0; i < 3; i++)
-    for (j=0; j < 3; j++)
-      FORC3 trans[i][j] += (i==c ? 32 : -1) * last[c][j] / 30;
 
   foveon_make_curves (curve, color_dq, div, cfilt);
   FORC3 chroma_dq[c] /= 3;
@@ -3583,102 +3571,6 @@ void CLASS foveon_dp_interpolate()
   FORC3 dsum += chroma_dq[c] / div[c];
   curve[6] = foveon_make_curve (dsum, dsum, cfilt);
   curve[7] = foveon_make_curve (dsum*2, dsum*2, cfilt);
-
-#if 0
-  sgain = (float (*)[3]) foveon_camf_matrix (dim, "SpatialGain");
-  if (!sgain) return;
-  sgrow = (float (*)[3]) calloc (dim[1], sizeof *sgrow);
-  sgx = (width + dim[1]-2) / (dim[1]-1);
-
-  black = (float (*)[3]) calloc (height, sizeof *black);
-  for (row=0; row < height; row++) {
-    for (i=0; i < 6; i++)
-      ((float *)ddft[0])[i] = ((float *)ddft[1])[i] +
-	row / (height-1.0) * (((float *)ddft[2])[i] - ((float *)ddft[1])[i]);
-    FORC3 black[row][c] =
-	( foveon_avg (image[row*width]+c, dscr[0], cfilt) +
-	  foveon_avg (image[row*width]+c, dscr[1], cfilt) * 3
-	  - ddft[0][c][0] ) / 4 - ddft[0][c][1];
-  }
-  memcpy (black, black+8, sizeof *black*8);
-  memcpy (black+height-11, black+height-22, 11*sizeof *black);
-  memcpy (last, black, sizeof last);
-
-  for (row=1; row < height-1; row++) {
-    FORC3 if (last[1][c] > last[0][c]) {
-	if (last[1][c] > last[2][c])
-	  black[row][c] = (last[0][c] > last[2][c]) ? last[0][c]:last[2][c];
-      } else
-	if (last[1][c] < last[2][c])
-	  black[row][c] = (last[0][c] < last[2][c]) ? last[0][c]:last[2][c];
-    memmove (last, last+1, 2*sizeof last[0]);
-    memcpy (last[2], black[row+1], sizeof last[2]);
-  }
-  FORC3 black[row][c] = (last[0][c] + last[1][c])/2;
-  FORC3 black[0][c] = (black[1][c] + black[3][c])/2;
-
-  val = 1 - exp(-1/24.0);
-  memcpy (fsum, black, sizeof fsum);
-  for (row=1; row < height; row++)
-    FORC3 fsum[c] += black[row][c] =
-	(black[row][c] - black[row-1][c])*val + black[row-1][c];
-  memcpy (last[0], black[height-1], sizeof last[0]);
-  FORC3 fsum[c] /= height;
-  for (row = height; row--; )
-    FORC3 last[0][c] = black[row][c] =
-	(black[row][c] - fsum[c] - last[0][c])*val + last[0][c];
-
-  memset (total, 0, sizeof total);
-  for (row=2; row < height; row+=4)
-    for (col=2; col < width; col+=4) {
-      FORC3 total[c] += (short) image[row*width+col][c];
-      total[3]++;
-    }
-  for (row=0; row < height; row++)
-    FORC3 black[row][c] += fsum[c]/2 + total[c]/(total[3]*100.0);
-
-  for (row=0; row < height; row++) {
-    for (i=0; i < 6; i++)
-      ((float *)ddft[0])[i] = ((float *)ddft[1])[i] +
-	row / (height-1.0) * (((float *)ddft[2])[i] - ((float *)ddft[1])[i]);
-    pix = image[row*width];
-    memcpy (prev, pix, sizeof prev);
-    frow = row / (height-1.0) * (dim[2]-1);
-    if ((irow = frow) == dim[2]-1) irow--;
-    frow -= irow;
-    for (i=0; i < dim[1]; i++)
-      FORC3 sgrow[i][c] = sgain[ irow   *dim[1]+i][c] * (1-frow) +
-			  sgain[(irow+1)*dim[1]+i][c] *    frow;
-    for (col=0; col < width; col++) {
-      FORC3 {
-	diff = pix[c] - prev[c];
-	prev[c] = pix[c];
-	ipix[c] = pix[c] + floor ((diff + (diff*diff >> 14)) * cfilt
-		- ddft[0][c][1] - ddft[0][c][0] * ((float) col/width - 0.5)
-		- black[row][c] );
-      }
-      FORC3 {
-	work[0][c] = ipix[c] * ipix[c] >> 14;
-	work[2][c] = ipix[c] * work[0][c] >> 14;
-	work[1][2-c] = ipix[(c+1) % 3] * ipix[(c+2) % 3] >> 14;
-      }
-      FORC3 {
-	for (val=i=0; i < 3; i++)
-	  for (  j=0; j < 3; j++)
-	    val += ppm[c][i][j] * work[i][j];
-	ipix[c] = floor ((ipix[c] + floor(val)) *
-		( sgrow[col/sgx  ][c] * (sgx - col%sgx) +
-		  sgrow[col/sgx+1][c] * (col%sgx) ) / sgx / div[c]);
-	if (ipix[c] > 32000) ipix[c] = 32000;
-	pix[c] = ipix[c];
-      }
-      pix += 4;
-    }
-  }
-  free (black);
-  free (sgrow);
-  free (sgain);
-#endif
 
   if (foveon_camf_param ("IncludeBlocks", "BadPixels")) {
     badpix = (unsigned *) foveon_camf_matrix (dim, "BadPixels");
@@ -3701,7 +3593,7 @@ void CLASS foveon_dp_interpolate()
 
   /* Array for 5x5 Gaussian averaging of red values */
   smrow[6] = (int (*)[3]) calloc (width*5, sizeof **smrow);
-  merror (smrow[6], "foveon_dp_interpolate()");
+  merror (smrow[6], "sigma_true_ii_interpolate()");
   for (i=0; i < 5; i++)
     smrow[i] = smrow[6] + i*width;
 
@@ -3733,27 +3625,30 @@ void CLASS foveon_dp_interpolate()
   }
 
   /* Adjust the brighter pixels for better linearity */
-  min = 0xffff;
-  FORC3 {
-    i = satlev[c] / div[c];
-    if (min > i) min = i;
-  }
-  limit = min * 9 >> 4;
-  for (pix=image[0]; pix < image[height*width]; pix+=4) {
-    if (pix[0] <= limit || pix[1] <= limit || pix[2] <= limit)
-      continue;
-    min = max = pix[0];
-    for (c=1; c < 3; c++) {
-      if (min > pix[c]) min = pix[c];
-      if (max < pix[c]) max = pix[c];
+  if (foveon_camf_param ("IncludeBlocks", "SaturationLevel")) {
+    foveon_fixed (satlev, 3, "SaturationLevel");
+    min = 0xffff;
+    FORC3 {
+      i = satlev[c] / div[c];
+      if (min > i) min = i;
     }
-    if (min >= limit*2) {
-      pix[0] = pix[1] = pix[2] = max;
-    } else {
-      i = 0x4000 - ((min - limit) << 14) / limit;
-      i = 0x4000 - (i*i >> 14);
-      i = i*i >> 14;
-      FORC3 pix[c] += (max - pix[c]) * i >> 14;
+    limit = min * 9 >> 4;
+    for (pix=image[0]; pix < image[height*width]; pix+=4) {
+      if (pix[0] <= limit || pix[1] <= limit || pix[2] <= limit)
+	continue;
+      min = max = pix[0];
+      for (c=1; c < 3; c++) {
+	if (min > pix[c]) min = pix[c];
+	if (max < pix[c]) max = pix[c];
+      }
+      if (min >= limit*2) {
+	pix[0] = pix[1] = pix[2] = max;
+      } else {
+	i = 0x4000 - ((min - limit) << 14) / limit;
+	i = 0x4000 - (i*i >> 14);
+	i = i*i >> 14;
+	FORC3 pix[c] += (max - pix[c]) * i >> 14;
+      }
     }
   }
 /*
@@ -3807,83 +3702,26 @@ void CLASS foveon_dp_interpolate()
     }
   }
 
-#if 0
   /* Transform the image to a different colorspace */
+  min = 0xffff;
+  max = 0;
   for (pix=image[0]; pix < image[height*width]; pix+=4) {
     FORC3 pix[c] -= foveon_apply_curve (curve[c], pix[c]);
     sum = (pix[0]+pix[1]+pix[1]+pix[2]) >> 2;
     FORC3 pix[c] -= foveon_apply_curve (curve[c], pix[c]-sum);
     FORC3 {
       for (dsum=i=0; i < 3; i++)
-	dsum += trans[c][i] * pix[i];
+	dsum += rgb_cam[c][i] * last[c][i] * div[i] * pix[i];
       if (dsum < 0)  dsum = 0;
       if (dsum > 24000) dsum = 24000;
       ipix[c] = dsum + 0.5;
     }
-    FORC3 pix[c] = ipix[c];
-  }
-#endif
-
-  /* Smooth the image bottom-to-top and save at 1/4 scale */
-  shrink = (short (*)[3]) calloc ((height/4), (width/4)*sizeof *shrink);
-  merror (shrink, "foveon_dp_interpolate()");
-  for (row = height/4; row--; )
-    for (col=0; col < width/4; col++) {
-      ipix[0] = ipix[1] = ipix[2] = 0;
-      for (i=0; i < 4; i++)
-	for (j=0; j < 4; j++)
-	  FORC3 ipix[c] += image[(row*4+i)*width+col*4+j][c];
-      FORC3
-	if (row+2 > height/4)
-	  shrink[row*(width/4)+col][c] = ipix[c] >> 4;
-	else
-	  shrink[row*(width/4)+col][c] =
-	    (shrink[(row+1)*(width/4)+col][c]*1840 + ipix[c]*141 + 2048) >> 12;
-    }
-  /* From the 1/4-scale image, smooth right-to-left */
-  for (row=0; row < (height & ~3); row++) {
-    ipix[0] = ipix[1] = ipix[2] = 0;
-    if ((row & 3) == 0)
-      for (col = width & ~3 ; col--; )
-	FORC3 smrow[0][col][c] = ipix[c] =
-	  (shrink[(row/4)*(width/4)+col/4][c]*1485 + ipix[c]*6707 + 4096) >> 13;
-
-  /* Then smooth left-to-right */
-    ipix[0] = ipix[1] = ipix[2] = 0;
-    for (col=0; col < (width & ~3); col++)
-      FORC3 smrow[1][col][c] = ipix[c] =
-	(smrow[0][col][c]*1485 + ipix[c]*6707 + 4096) >> 13;
-
-  /* Smooth top-to-bottom */
-    if (row == 0)
-      memcpy (smrow[2], smrow[1], sizeof **smrow * width);
-    else
-      for (col=0; col < (width & ~3); col++)
-	FORC3 smrow[2][col][c] =
-	  (smrow[2][col][c]*6707 + smrow[1][col][c]*1485 + 4096) >> 13;
-
-  /* Adjust the chroma toward the smooth values */
-    for (col=0; col < (width & ~3); col++) {
-      for (i=j=30, c=0; c < 3; c++) {
-	i += smrow[2][col][c];
-	j += image[row*width+col][c];
-      }
-      j = (j << 16) / i;
-      for (sum=c=0; c < 3; c++) {
-	ipix[c] = foveon_apply_curve (curve[c+3],
-	  ((smrow[2][col][c] * j + 0x8000) >> 16) - image[row*width+col][c]);
-	sum += ipix[c];
-      }
-      sum >>= 3;
-      FORC3 {
-	i = image[row*width+col][c] + ipix[c] - sum;
-	if (i < 0) i = 0;
-	image[row*width+col][c] = i;
-      }
+    FORC3 {
+      pix[c] = ipix[c];
+      if (pix[c] < min) min = pix[c];
+      if (pix[c] > max) max = pix[c];
     }
   }
-  free (shrink);
-  free (smrow[6]);
   for (i=0; i < 8; i++)
     free (curve[i]);
 
@@ -3897,7 +3735,6 @@ void CLASS foveon_dp_interpolate()
   width = i;
   height = row;
 }
-#pragma GCC diagnostic pop
 
 void CLASS foveon_interpolate()
 {
@@ -8623,7 +8460,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
 void CLASS simple_coeff (int index)
 {
   static const float table[][12] = {
-  /* index 0 -- all Foveon cameras */
+  /* index 0 -- Older Foveon cameras including Sigma DP1/DP1S */
   { 1.4032,-0.2231,-0.1016,-0.5263,1.4816,0.017,-0.0112,0.0183,0.9113 },
   /* index 1 -- Kodak DC20 and DC25 */
   { 2.25,0.75,-1.75,-0.25,-0.25,0.75,0.75,-0.25,-0.25,-1.75,0.75,2.25 },
@@ -8632,7 +8469,9 @@ void CLASS simple_coeff (int index)
   /* index 3 -- Nikon E880, E900, and E990 */
   { -1.936280,  1.800443, -1.448486,  2.584324,
      1.405365, -0.524955, -0.289090,  0.408680,
-    -1.204965,  1.082304,  2.941367, -1.818705 }
+    -1.204965,  1.082304,  2.941367, -1.818705 },
+  /* index 4 -- Sigma TRUE II cameras except Sigma DP1/DP1S */
+  { 1.0832,-0.1931,-0.1016,-0.5763,1.0616,0.017,-0.0612,0.0183,0.8613 }
   };
   unsigned i, c;
 
@@ -10724,7 +10563,7 @@ next:
 	for (i=0; i < height*width*4; i++)
 	  if ((short) image[0][i] < 0) image[0][i] = 0;
       } else if (load_raw == &CLASS foveon_dp_load_raw)
-	foveon_dp_interpolate();
+	sigma_true_ii_interpolate();
       else foveon_interpolate();
     } else if (document_mode < 2)
       scale_colors();

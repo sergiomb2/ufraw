@@ -226,7 +226,7 @@ public:
     void foveon_make_curves
     (short **curvep, float dq[3], float div[3], float filt);
     int foveon_apply_curve(short *curve, int i);
-    void foveon_dp_interpolate();
+    void sigma_true_ii_interpolate();
     void foveon_interpolate();
     void crop_masked_pixels();
     void remove_zeroes();
