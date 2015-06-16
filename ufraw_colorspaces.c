@@ -141,5 +141,7 @@ cmsHPROFILE uf_colorspaces_create_srgb_profile()
     cmsLinkTag(hsRGB, cmsSigGreenTRCTag, cmsSigRedTRCTag);
     cmsLinkTag(hsRGB, cmsSigBlueTRCTag, cmsSigRedTRCTag);
 
+    cmsFreeToneCurve(transferFunction);
+
     return hsRGB;
 }
