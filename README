@@ -292,6 +292,13 @@ date user guide.
 History
 =======
 
+16/06/2015 - UFRaw-0.22 released, based on DCRaw v 9.26.
+
+* Fix security issue CVE-2015-3885.
+* Removal of liblcms1 support.
+* Better Foveon support.
+* Lot of new camera support and bug fixes.
+
 10/02/2015 - UFRaw-0.21 released, based on DCRaw v 9.23.
 
 * Bug fix release.
