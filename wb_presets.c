@@ -7490,6 +7490,15 @@ const wb_data wb_preset[] = {
   { "SAMSUNG", "NX300M", "5500K", 0,		{ 2.636719, 1, 1.792969, 0 } },
   { "SAMSUNG", "NX300M", "6500K", 0,		{ 3.003906, 1, 1.644531, 0 } },
 
+  // Firmware 1.00
+  { "SAMSUNG", "NX500", Daylight, 0,		{ 1.810484, 1, 1.471774, 0 } },
+  { "SAMSUNG", "NX500", Cloudy, 0,		{ 1.895161, 1, 1.302419, 0 } },
+  { "SAMSUNG", "NX500", CoolWhiteFluorescent, 0, { 1.802419, 1, 2.350806, 0 } },
+  { "SAMSUNG", "NX500", DayWhiteFluorescent, 0,	{ 1.975806, 1, 1.826613, 0 } },
+  { "SAMSUNG", "NX500", DaylightFluorescent, 0,	{ 2.274194, 1, 1.512097, 0 } },
+  { "SAMSUNG", "NX500", Tungsten, 0,		{ 1.298387, 1, 2.439516, 0 } },
+  { "SAMSUNG", "NX500", Flash, 0,		{ 1.959677, 1, 1.169355, 0 } },
+
   // Copied from Samsung NX200
   { "SAMSUNG", "NX1000", Daylight, 0,		{ 2.773438, 1, 1.625000, 0 } },
   { "SAMSUNG", "NX1000", Cloudy, 0,		{ 2.902344, 1, 1.546875, 0 } },
@@ -8389,3 +8398,4 @@ const wb_data wb_preset[] = {
 };
 
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
+
