@@ -213,10 +213,12 @@ extern "C" {
 
     int dcraw_load_raw(dcraw_data *h)
     {
-        DCRaw *d = (DCRaw *)h->dcraw;
+        /* 'volatile' supresses clobbering warning */
+        DCRaw * volatile d = (DCRaw *)h->dcraw;
         int c, i, j;
         double dmin;
 
+start:
         g_free(d->messageBuffer);
         d->messageBuffer = NULL;
         d->lastStatus = DCRAW_SUCCESS;
@@ -247,6 +249,55 @@ extern "C" {
         d->ifpSize = ftell(d->ifp);
         fseek(d->ifp, d->data_offset, SEEK_SET);
         (d->*d->load_raw)();
+
+        /* multishot support, for now Pentax only. */
+        if (d->is_raw == 4 && !strncasecmp(d->make, "Pentax", 6)) {
+
+            int row, col, i;
+            int positions[4][2] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
+            static dcraw_image_type *tmp = NULL;
+
+            if (!tmp)
+                tmp = d->image = g_new0(dcraw_image_type, d->height * d->width + d->meta_length);
+
+#ifdef _OPENMP
+            #pragma omp parallel for private(col)
+#endif
+            for (row = 0 ; row < d->height ; row++)
+                for (col = 0 ; col < d->width ; col++)
+                    tmp[row * d->width + col][fcol_INDI(d->filters, row + positions[d->shot_select][0], col + positions[d->shot_select][1], d->top_margin, d->left_margin, d->xtrans)] = d->raw_image[(row + d->top_margin + positions[d->shot_select][0]) * d->raw_width + col + d->left_margin + positions[d->shot_select][1]];
+
+            g_free(d->raw_image);
+            d->raw_image = NULL;
+
+            if (d->shot_select < 3) {
+                d->shot_select++;
+                fseek(d->ifp, 0, SEEK_SET);
+                d->identify();
+                goto start;
+            }
+
+            if (d->shot_select == 3) /* Just to keep the compiler happy. */
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+                for (i = 0 ; i < d->height * d->width ; i++)
+                    tmp[i][1] = (tmp[i][1] + tmp[i][3]) / 2;
+
+            d->image = tmp;
+            d->shot_select = 0;
+            d->is_raw = 0;
+            d->filters = 0;
+            d->shrink = 0;
+            d->meta_data = (char *)(tmp + d->height * d->width);
+
+            h->raw.image = tmp;
+            h->filters = 0;
+            h->shrink = 0;
+
+            tmp = NULL;
+        }
+
         h->raw.height = d->iheight = (h->height + h->shrink) >> h->shrink;
         h->raw.width = d->iwidth = (h->width + h->shrink) >> h->shrink;
         if (d->raw_image) {

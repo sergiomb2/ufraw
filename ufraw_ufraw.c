@@ -668,6 +668,7 @@ int ufraw_load_raw(ufraw_data *uf)
         ufraw_message(status, raw->message);
         if (status != DCRAW_WARNING) return status;
     }
+    uf->HaveFilters = raw->filters != 0;
     uf->raw_multiplier = ufraw_scale_raw(raw);
     /* Canon EOS cameras require special exposure normalization */
     if (strcasecmp(uf->conf->make, "Canon") == 0 &&
