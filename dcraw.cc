@@ -1966,7 +1966,7 @@ void CLASS unpacked_load_raw()
   int row, col, bits=0;
 
   while ((unsigned) 1 << ++bits < maximum);
-  read_shorts (raw_image, raw_width*raw_height);
+  read_shorts (raw_image, raw_width*raw_height - (fuji_layout && shot_select ? raw_width >> 1 : 0));
   for (row=0; row < raw_height; row++)
     for (col=0; col < raw_width; col++)
       if ((RAW(row,col) >>= load_flags) >> bits

@@ -34,6 +34,10 @@
 #define FORC3 FORC(3)
 #define FORC4 FORC(4)
 #define FORCC FORC(colors)
+
+#define LIM(x,min,max) MAX(min,MIN(x,max))
+#define CLIP(x) LIM((int)(x),0,65535)
+
 extern "C" {
     int fcol_INDI(const unsigned filters, const int row, const int col,
                   const int top_margin, const int left_margin,
@@ -211,6 +215,132 @@ extern "C" {
         }
     }
 
+    void fuji_merge(DCRaw *d, ushort *saved_raw_image, float saved_cam_mul[4], int saved_fuji_dr)
+    {
+        int i, j, c, s;
+        unsigned b;
+        float  S, R, w, l, m, th, tl, mul[4][4];
+
+        if (d->fuji_width) { /* Super CCD SR */
+
+            /* Populate a small array for converting the whitebalance */
+            /* of the second image to that of the first one.          */
+
+            if (d->fuji_layout) {
+                /* First generation Super CCD SR (S20Pro, F700, F710)         */
+                /* Many of these sensors are defective and have a colourcast. */
+
+                /* RBRB */
+                /* GGGG */
+                /* BRBR */
+                /* GGGG */
+                mul[1][1] = mul[1][0] = mul[1][2] = mul[1][3] = 1;
+                mul[3][1] = mul[3][0] = mul[3][2] = mul[3][3] = 1;
+                mul[0][0] = mul[0][2] = mul[2][1] = mul[2][3] = d->cam_mul[0] / saved_cam_mul[0];
+                mul[0][1] = mul[0][3] = mul[2][0] = mul[2][2] = d->cam_mul[2] / saved_cam_mul[2];
+
+            } else { /* Super CCD SR II (S3Pro, S5Pro) */
+
+                /* RGBG */
+                /* BGRG */
+                /* RGBG */
+                /* BGRG */
+                mul[0][1] = mul[0][3] = mul[1][1] = mul[1][3] = 1;
+                mul[2][1] = mul[2][3] = mul[3][1] = mul[3][3] = 1;
+                mul[0][0] = mul[1][2] = mul[2][0] = mul[3][2] = d->cam_mul[0] / saved_cam_mul[0];
+                mul[0][2] = mul[1][0] = mul[2][2] = mul[3][0] = d->cam_mul[2] / saved_cam_mul[2];
+            }
+
+            for (i = 0 ; i < d->raw_height; i++)
+                for (j = 0 ; j < d->raw_width; j++) {
+
+                    S = saved_raw_image[i * d->raw_width + j];
+                    R = d->raw_image[i * d->raw_width + j] * mul[i & 3][j & 3] * 16;
+
+                    /* Fade from S to R in one stop. */
+                    /* Response of these sensors appears to be non-linear, */
+                    /* causing a slight colourcast in the transition zone. */
+                    if (S > 0x1f00) {
+                        if (S < 0x3e00) {
+                            w = (S - 0x1f00) / 0x1f00;
+                            S = (1 - w) * S + w * R;
+                        } else
+                            S = R;
+                    }
+
+                    d->raw_image[i * d->raw_width + j] = CLIP((S * 0xffff / 0x2f000));
+                }
+
+            d->maximum = 0xffff;
+
+            FORC4 d->cam_mul[c] = saved_cam_mul[c];
+
+            d->fuji_dr = -400;
+
+        } else { /* EXR */
+
+            if (d->black)
+                b = d->black;
+            else
+                b = d->cblack[6];
+
+            s = (saved_fuji_dr - d->fuji_dr) / 100;
+
+
+            if (s) { /* DR-mode */
+
+                th = l = d->maximum - b;
+                m = 1 << s;
+                tl = th / m;
+                th += tl;
+                m += 1;
+                l *= m;
+
+                for (i = 0 ; i < d->raw_height * d->raw_width; i++) {
+
+                    /* Range check to avoid problems when value is below black. */
+                    S = LIM(saved_raw_image[i], b, d->maximum) - b;
+                    R = LIM(d->raw_image[i], b, d->maximum) - b;
+                    /* Adding R to S pixels reduces noise a bit. */
+                    S += R;
+                    R *= m;
+
+                    /* Fade from S to R in ~1.5 or 2.25 stops. */
+                    /* Response of EXR sensors appears to be linear. */
+                    if (S > tl) {
+                        if (S < th) {
+                            w = (S - tl) / (th - tl);
+                            S = (1 - w) * S + w * R;
+                        } else
+                            S = R;
+                    }
+
+                    /* l can be larger than 0xffff. */
+                    d->raw_image[i] = CLIP(S * 0xffff / l);
+                }
+
+                d->maximum = 0xffff;
+                d->black = 0;
+
+                for (i = 6 ; i < 10 ; i++)
+                    d->cblack[i] = 0;
+
+                //d->fuji_dr = saved_fuji_dr;
+
+            } else { /* Low-noise-mode */
+
+                for (i = 0 ; i < d->raw_height * d->raw_width ; i++)
+                    d->raw_image[i] += saved_raw_image[i];
+
+                d->maximum *= 2;
+                d->black *= 2;
+
+                for (i = 6 ; i < 10 ; i++)
+                    d->cblack[i] *= 2;
+            }
+        }
+    }
+
     int dcraw_load_raw(dcraw_data *h)
     {
         /* 'volatile' supresses clobbering warning */
@@ -296,6 +426,39 @@ start:
             h->shrink = 0;
 
             tmp = NULL;
+        }
+
+        /* Fuji Super CCD SR and EXR support */
+        if (d->is_raw == 2 && !strncasecmp(d->make, "Fujifilm", 8)) {
+
+            static int saved_fuji_dr;
+            static float saved_cam_mul[4];
+            static guint16 *saved_raw_image = NULL;
+
+            if (!saved_raw_image) {
+
+                saved_raw_image = d->raw_image;
+                d->raw_image = NULL;
+                saved_fuji_dr = d->fuji_dr;
+                FORC4 saved_cam_mul[c] = d->cam_mul[c];
+
+                d->shot_select++;
+                fseek(d->ifp, 0, SEEK_SET);
+                d->identify();
+                goto start;
+            }
+
+            fuji_merge(d, saved_raw_image, saved_cam_mul, saved_fuji_dr);
+
+            free(saved_raw_image);
+            saved_raw_image = NULL;
+            d->shot_select--;
+
+            FORC4 h->cam_mul[c] = d->cam_mul[c];
+            h->fuji_dr = d->fuji_dr;
+            h->filters = d->filters;
+            h->rgbMax = d->maximum;
+            h->black = d->black;
         }
 
         h->raw.height = d->iheight = (h->height + h->shrink) >> h->shrink;
