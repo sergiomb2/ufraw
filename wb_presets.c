@@ -2739,6 +2739,13 @@ const wb_data wb_preset[] = {
   { "NIKON", "1 J3", Shade, 0,			{ 2.718750, 1, 1.382813, 0 } },
   { "NIKON", "1 J3", Underwater, 0,		{ 2.144531, 1, 1.660156, 0 } },
 
+  { "NIKON", "1 J5", Incandescent, 0,		{ 1.546875, 1, 2.171875, 0 } },
+  { "NIKON", "1 J5", CoolWhiteFluorescent, 0,	{ 2.156250, 1, 1.949219, 0 } },
+  { "NIKON", "1 J5", DirectSunlight, 0,		{ 2.316406, 1, 1.378906, 0 } },
+  { "NIKON", "1 J5", Flash, 0,			{ 2.621094, 1, 1.167969, 0 } },
+  { "NIKON", "1 J5", Cloudy, 0,			{ 2.460938, 1, 1.257813, 0 } },
+  { "NIKON", "1 J5", Shade, 0,			{ 2.785156, 1, 1.125000, 0 } },
+
   { "NIKON", "1 V1", Incandescent, 0,		{ 1.210938, 1, 2.308594, 0 } },
   { "NIKON", "1 V1", CoolWhiteFluorescent, 0,	{ 1.687500, 1, 2.199219, 0 } },
   { "NIKON", "1 V1", DirectSunlight, 0,		{ 1.828125, 1, 1.550781, 0 } },
@@ -6018,6 +6025,13 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "SP510UZ", WhiteFluorescent, 0,	{ 1.929688, 1, 1.562500, 0 } },
   { "OLYMPUS", "SP510UZ", NeutralFluorescent, 0, { 1.644531, 1, 1.843750, 0 } },
   { "OLYMPUS", "SP510UZ", DaylightFluorescent, 0, { 1.628906, 1, 2.210938, 0 } },
+
+  /* Firmware version 1.002 */
+  { "OLYMPUS", "TG-4", Daylight, 0,		{ 1.703125, 1, 1.695313, 0 } },
+  { "OLYMPUS", "TG-4", Cloudy, 0,		{ 1.812500, 1, 1.562500, 0 } },
+  { "OLYMPUS", "TG-4", Incandescent, 0,		{ 1.070313, 1, 2.765625, 0 } },
+  { "OLYMPUS", "TG-4", Fluorescent, 0,		{ 1.601563, 1, 2.156250, 0 } },
+  { "OLYMPUS", "TG-4", Underwater, 0,		{ 1.312500, 1, 2.257813, 0 } },
 
   /* Firmware version 1.5 */
   /* -7/+7 fine tuning is -7/+7 in amber-blue and zero in green-magenta */
