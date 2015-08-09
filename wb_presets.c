@@ -6747,6 +6747,17 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K-01", Tungsten, 0,		{ 1.320313, 1, 2.993530, 0 } },
   { "PENTAX", "K-01", Flash, 0,			{ 2.490967, 1, 1.484985, 0 } },
 
+  /* PENTAX K-3 Firmware version 1.00 */
+  { "PENTAX", "K-3", Daylight, 0,		{ 2.31250, 1, 1.48047, 0 } },
+  { "PENTAX", "K-3", Shade, 0,			{ 2.78516, 1, 1.16797, 0 } },
+  { "PENTAX", "K-3", Cloudy, 0,			{ 2.49219, 1, 1.35156, 0 } },
+  { "PENTAX", "K-3", Tungsten, 0,		{ 1.35938, 1, 2.74609, 0 } },
+  { "PENTAX", "K-3", DaylightFluorescent, 0,	{ 2.71094, 1, 1.51953, 0 } },
+  { "PENTAX", "K-3", DayWhiteFluorescent, 0,	{ 2.30469, 1, 1.70312, 0 } },
+  { "PENTAX", "K-3", WhiteFluorescent, 0,	{ 2.07031, 1, 2.03516, 0 } },
+  { "PENTAX", "K-3", WarmWhiteFluorescent, 0,	{ 1.74609, 1, 2.53125, 0 } },
+  { "PENTAX", "K-3", Flash, 0,			{ 2.56641, 1, 1.31641, 0 } },
+
   { "PENTAX", "K-5", Daylight, 0,		{ 2.1211, 1, 1.5781, 0 } },
   { "PENTAX", "K-5", Shade, 0,			{ 2.5312, 1, 1.1758, 0 } },
   { "PENTAX", "K-5", Cloudy, 0,			{ 2.2852, 1, 1.3477, 0 } },
@@ -6921,17 +6932,6 @@ const wb_data wb_preset[] = {
   { "RICOH", "GR", CoolWhiteFluorescent, 0,	{ 2.610000, 1, 2.080000, 0 } },
   { "RICOH", "GR", WarmWhiteFluorescent, 0,	{ 2.240000, 1, 2.160000, 0 } },
   { "RICOH", "GR", "5000K", 0,			{ 2.890000, 1, 1.520000, 0 } },
-
-  /* RICOH PENTAX K-3 Firmware version 1.00 */
-  { "RICOH", "PENTAX K-3", Daylight, 0,		{ 2.31250, 1, 1.48047, 0 } },
-  { "RICOH", "PENTAX K-3", Shade, 0,		{ 2.78516, 1, 1.16797, 0 } },
-  { "RICOH", "PENTAX K-3", Cloudy, 0,		{ 2.49219, 1, 1.35156, 0 } },
-  { "RICOH", "PENTAX K-3", Tungsten, 0,		{ 1.35938, 1, 2.74609, 0 } },
-  { "RICOH", "PENTAX K-3", DaylightFluorescent, 0, { 2.71094, 1, 1.51953, 0 } },
-  { "RICOH", "PENTAX K-3", DayWhiteFluorescent, 0, { 2.30469, 1, 1.70312, 0 } },
-  { "RICOH", "PENTAX K-3", WhiteFluorescent, 0,	{ 2.07031, 1, 2.03516, 0 } },
-  { "RICOH", "PENTAX K-3", WarmWhiteFluorescent, 0, { 1.74609, 1, 2.53125, 0 } },
-  { "RICOH", "PENTAX K-3", Flash, 0,		{ 2.56641, 1, 1.31641, 0 } },
 
   { "SAMSUNG", "EX1", Daylight, 0,		{ 1.8711, 1, 2.0039, 0 } },
   { "SAMSUNG", "EX1", Cloudy, 0,		{ 2.3672, 1, 1.6797, 0 } },
