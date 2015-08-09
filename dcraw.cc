@@ -8989,6 +8989,8 @@ void CLASS identify()
 	((cp = strcasestr(model," DIGITAL CAMERA")) ||
 	 (cp = strstr(model,"FILE VERSION"))))
      *cp = 0;
+  if (!strcmp(make,"Pentax") && !strncmp(model,"GR",2))
+    strcpy (make, "Ricoh");		/* Ricoh GR not Pentax GR */
   if (!strncasecmp(model,"PENTAX",6))
     strcpy (make, "Pentax");
   cp = make + strlen(make);		/* Remove trailing spaces */
