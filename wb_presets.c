@@ -254,6 +254,14 @@ const wb_data wb_preset[] = {
   { "Canon", "PowerShot SX50 HS", Flash, 0,	{ 1.876289, 1, 1.398969, 0 } },
   { "Canon", "PowerShot SX50 HS", Flash, 9,	{ 4.536036, 1.073574, 1, 0 } },
 
+  { "Canon", "PowerShot SX60 HS", Daylight, 0,	{ 1.605208, 1, 1.726042, 0 } },
+  { "Canon", "PowerShot SX60 HS", Shade, 0,	{ 1.993697, 1, 1.379202, 0 } },
+  { "Canon", "PowerShot SX60 HS", Cloudy, 0,	{ 1.876042, 1, 1.456250, 0 } },
+  { "Canon", "PowerShot SX60 HS", Tungsten, 0,	{ 1.158014, 1, 2.616253, 0 } },
+  { "Canon", "PowerShot SX60 HS", Fluorescent, 0, { 1.675497, 1, 2.254967, 0 } },
+  { "Canon", "PowerShot SX60 HS", FluorescentHigh, 0, { 2.098851, 1, 1.785057, 0 } },
+  { "Canon", "PowerShot SX60 HS", Flash, 0,	{ 1.966387, 1, 1.408613, 0 } },
+
   { "Canon", "EOS D60", Daylight, 0,		{ 2.472594, 1, 1.225335, 0 } },
   { "Canon", "EOS D60", Cloudy, 0,		{ 2.723926, 1, 1.137423, 0 } },
   { "Canon", "EOS D60", Tungsten, 0,		{ 1.543054, 1, 1.907003, 0 } },
