@@ -7985,6 +7985,16 @@ const wb_data wb_preset[] = {
   { "SONY", "DSC-RX100M3", Flash, 0,		{ 2.761719, 1, 1.515625, 0 } },
   { "SONY", "DSC-RX100M3", "5500K", 0,		{ 2.441406, 1, 1.742188, 0 } },
 
+  { "SONY", "DSC-RX100M4", Daylight, 0,		{ 2.566406, 1, 1.769531, 0 } },
+  { "SONY", "DSC-RX100M4", Cloudy, 0,		{ 2.773438, 1, 1.628906, 0 } },
+  { "SONY", "DSC-RX100M4", Incandescent, 0,	{ 1.582031, 1, 3.082031, 0 } },
+  { "SONY", "DSC-RX100M4", WarmWhiteFluorescent, 0, { 1.917969, 1, 2.933594, 0 } },
+  { "SONY", "DSC-RX100M4", CoolWhiteFluorescent, 0, { 2.488281, 1, 2.402344, 0 } },
+  { "SONY", "DSC-RX100M4", DayWhiteFluorescent, 0, { 2.535156, 1, 1.769531, 0 } },
+  { "SONY", "DSC-RX100M4", DaylightFluorescent, 0, { 2.808594, 1, 1.582031, 0 } },
+  { "SONY", "DSC-RX100M4", Flash, 0,		{ 2.953125, 1, 1.464844, 0 } },
+  { "SONY", "DSC-RX100M4", "5500K", 0,		{ 2.625000, 1, 1.726563, 0 } },
+
   { "SONY", "DSLR-A100", Daylight, -3,		{ 1.601562, 1, 2.101562, 0 } },
   { "SONY", "DSLR-A100", Daylight, 0,		{ 1.746094, 1, 1.843750, 0 } },
   { "SONY", "DSLR-A100", Daylight, 3,		{ 1.914062, 1, 1.628906, 0 } },
@@ -8826,4 +8836,3 @@ const wb_data wb_preset[] = {
 };
 
 const int wb_preset_count = sizeof(wb_preset) / sizeof(wb_data);
-
