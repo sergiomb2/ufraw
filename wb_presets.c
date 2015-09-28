@@ -8350,6 +8350,18 @@ const wb_data wb_preset[] = {
   { "SONY", "ILCE-7R", Flash, 0,		{ 2.750000, 1, 1.343750, 0 } },
   { "SONY", "ILCE-7R", "5500K", 0,		{ 2.558594, 1, 1.457031, 0 } },
 
+  // firmware ILCE-7RM2 (A7R II) Ver 1.0
+  { "SONY", "ILCE-7RM2", Daylight, 0,		{ 2.402344, 1, 1.566406, 0 } },
+  { "SONY", "ILCE-7RM2", Shade, 0,		{ 2.878906, 1, 1.289063, 0 } },
+  { "SONY", "ILCE-7RM2", Cloudy, 0,		{ 2.601563, 1, 1.433594, 0 } },
+  { "SONY", "ILCE-7RM2", Incandescent, 0,	{ 1.464844, 1, 2.847656, 0 } },
+  { "SONY", "ILCE-7RM2", WarmWhiteFluorescent, 0, { 1.730469, 1, 2.734375, 0 } },
+  { "SONY", "ILCE-7RM2", CoolWhiteFluorescent, 0, { 2.187500, 1, 2.226563, 0 } },
+  { "SONY", "ILCE-7RM2", DayWhiteFluorescent, 0, { 2.328125, 1, 1.644531, 0 } },
+  { "SONY", "ILCE-7RM2", DaylightFluorescent, 0, { 2.617188, 1, 1.515625, 0 } },
+  { "SONY", "ILCE-7RM2", Flash, 0,		{ 2.656250, 1, 1.410156, 0 } },
+  { "SONY", "ILCE-7RM2", "5500K", 0,		{ 2.457031, 1, 1.527344, 0 } },
+
   { "SONY", "NEX-3", Daylight, -3,		{ 2.0742, 1, 1.6289, 0 } },
   { "SONY", "NEX-3", Daylight, -2,		{ 2.1328, 1, 1.5742, 0 } },
   { "SONY", "NEX-3", Daylight, -1,		{ 2.1914, 1, 1.5195, 0 } },
