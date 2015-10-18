@@ -374,6 +374,13 @@ const wb_data wb_preset[] = {
   { "Canon", "PowerShot S100", Flash, 0,	{ 2.615783, 1, 2.001294, 0 } },
   { "Canon", "PowerShot S100", Underwater, 0,	{ 2.248391, 1, 2.338481, 0 } },
 
+  { "Canon", "PowerShot S120", Daylight, 0,	{ 2.333333, 1, 1.469388, 0 } },
+  { "Canon", "PowerShot S120", Cloudy, 0,	{ 2.500000, 1, 1.370413, 0 } },
+  { "Canon", "PowerShot S120", Flash, 0,	{ 2.635198, 1, 1.329837, 0 } },
+  { "Canon", "PowerShot S120", Fluorescent, 0,	{ 2.523645, 1, 1.378316, 0 } },
+  { "Canon", "PowerShot S120", Shade, 0,	{ 2.500000, 1, 1.370413, 0 } },
+  { "Canon", "PowerShot S120", Tungsten, 0,	{ 1.754505, 1, 2.006757, 0 } },
+
   { "Canon", "PowerShot Pro1", Daylight, 0,	{ 1.829238, 1, 1.571253, 0 } },
   { "Canon", "PowerShot Pro1", Cloudy, 0,	{ 1.194139, 1, 2.755800, 0 } },
   { "Canon", "PowerShot Pro1", Tungsten, 0,	{ 1.701416, 1, 2.218790, 0 } },
@@ -2171,6 +2178,13 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS M", Shade, 0,			{ 2.300781, 1, 1.334961, 0 } },
   { "Canon", "EOS M", Fluorescent, 0,		{ 1.784180, 1, 2.275391, 0 } },
 
+  { "Canon", "EOS M2", Cloudy, 0,		{ 2.085938, 1, 1.493164, 0 } },
+  { "Canon", "EOS M2", Daylight, 0,		{ 1.943359, 1, 1.615234, 0 } },
+  { "Canon", "EOS M2", Flash, 0,		{ 2.165039, 1, 1.475586, 0 } },
+  { "Canon", "EOS M2", Tungsten, 0,		{ 1.391602, 1, 2.392578, 0 } },
+  { "Canon", "EOS M2", Shade, 0,		{ 2.226563, 1, 1.381836, 0 } },
+  { "Canon", "EOS M2", Fluorescent, 0,		{ 1.735352, 1, 2.280273, 0 } },
+
   { "FUJIFILM", "E900", Daylight, 0,		{ 1.571875, 1, 1.128125, 0 } },
   { "FUJIFILM", "E900", Shade, 0,		{ 1.668750, 1, 1.006250, 0 } },
   { "FUJIFILM", "E900", DaylightFluorescent, 0,	{ 1.907609, 1, 1.016304, 0 } },
@@ -2434,6 +2448,13 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "X-E2", CoolWhiteFluorescent, 0, { 1.917219, 1, 2.006623, 0 } },
   { "FUJIFILM", "X-E2", Incandescent, 0,	{ 1.215232, 1, 2.400662, 0 } },
   { "FUJIFILM", "X-E2", Underwater, 0,		{ 1.864238, 1, 1.559603, 0 } },
+
+  { "FUJIFILM", "X-M1", Daylight, 0,		{ 1.943709, 1, 1.824503, 0 } },
+  { "FUJIFILM", "X-M1", Cloudy, 0,		{ 2.139073, 1, 1.599338, 0 } },
+  { "FUJIFILM", "X-M1", DaylightFluorescent, 0,	{ 2.440397, 1, 1.592715, 0 } },
+  { "FUJIFILM", "X-M1", DayWhiteFluorescent, 0,	{ 2.066225, 1, 1.870861, 0 } },
+  { "FUJIFILM", "X-M1", WhiteFluorescent, 0,	{ 1.937086, 1, 2.360927, 0 } },
+  { "FUJIFILM", "X-M1", Incandescent, 0,	{ 1.225166, 1, 2.976821, 0 } },
 
   /* FUJIFILM X-T1 Firmware Version 1.10 */
   { "FUJIFILM", "X-T1", Daylight, 0,		{ 1.894040, 1, 1.569536, 0 } },
