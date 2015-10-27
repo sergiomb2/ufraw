@@ -7983,6 +7983,15 @@ const wb_data wb_preset[] = {
   { "SONY", "DSC-RX10", "9800K", 0,		{ 3.273438, 1, 1.375000, 0 } },
   { "SONY", "DSC-RX10", "9900K", 0,		{ 3.285156, 1, 1.367188, 0 } },
 
+  { "SONY", "DSC-RX10M2", Cloudy, 0,		{ 2.886719, 1, 1.652344, 0 } },
+  { "SONY", "DSC-RX10M2", Daylight, 0,		{ 2.667969, 1, 1.796875, 0 } },
+  { "SONY", "DSC-RX10M2", Incandescent, 0,	{ 1.636719, 1, 3.117188, 0 } },
+  { "SONY", "DSC-RX10M2", WarmWhiteFluorescent, 0, { 1.996094, 1, 3.039063, 0 } },
+  { "SONY", "DSC-RX10M2", CoolWhiteFluorescent, 0, { 2.578125, 1, 2.476563, 0 } },
+  { "SONY", "DSC-RX10M2", DayWhiteFluorescent, 0, { 2.628906, 1, 1.812500, 0 } },
+  { "SONY", "DSC-RX10M2", DaylightFluorescent, 0, { 2.921875, 1, 1.628906, 0 } },
+  { "SONY", "DSC-RX10M2", Flash, 0,		{ 3.140625, 1, 1.460938, 0 } },
+
   { "SONY", "DSC-RX100", Daylight, 0,		{ 2.0703, 1, 2.1602, 0 } },
   { "SONY", "DSC-RX100", Shade, 0,		{ 2.4531, 1, 1.7852, 0 } },
   { "SONY", "DSC-RX100", Cloudy, 0,		{ 2.2305, 1, 1.9844, 0 } },
