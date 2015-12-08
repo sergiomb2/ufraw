@@ -91,6 +91,12 @@ const wb_data wb_preset[] = {
   { "Canon", "PowerShot A720 IS", Underwater, 0, { 2.303465, 1, 1.882915, 0 } },
   { "Canon", "PowerShot A720 IS", Flash, 0,	{ 2.151586, 1, 1.864865, 0 } },
 
+  { "Canon", "PowerShot G1 X", Daylight, 0,	{ 1.950873, 1, 1.720524, 0 } },
+  { "Canon", "PowerShot G1 X", Cloudy, 0,	{ 2.123060, 1, 1.578714, 0 } },
+  { "Canon", "PowerShot G1 X", Tungsten, 0,	{ 1.244848, 1, 3.175758, 0 } },
+  { "Canon", "PowerShot G1 X", Fluorescent, 0,	{ 1.674806, 1, 2.216426, 0 } },
+  { "Canon", "PowerShot G1 X", Flash, 0,	{ 2.468997, 1, 1.299887, 0 } },
+
   { "Canon", "PowerShot G2", Daylight, 0,	{ 2.011483, 1, 1.299522, 0 } },
   { "Canon", "PowerShot G2", Cloudy, 0,		{ 2.032505, 1, 1.285851, 0 } },
   { "Canon", "PowerShot G2", Tungsten, 0,	{ 1.976008, 1, 1.332054, 0 } },
@@ -104,6 +110,13 @@ const wb_data wb_preset[] = {
   { "Canon", "PowerShot G3", Fluorescent, 0,	{ 1.715573, 1, 2.194337, 0 } },
   { "Canon", "PowerShot G3", FluorescentHigh, 0, { 2.580563, 1, 1.496164, 0 } },
   { "Canon", "PowerShot G3", Flash, 0,		{ 2.293173, 1, 1.187416, 0 } },
+
+  { "Canon", "PowerShot G3 X", Daylight, 0,	{ 2.090493, 1, 1.770905, 0 } },
+  { "Canon", "PowerShot G3 X", Shade, 0,	{ 2.371264, 1, 1.511494, 0 } },
+  { "Canon", "PowerShot G3 X", Cloudy, 0,	{ 2.242286, 1, 1.608000, 0 } },
+  { "Canon", "PowerShot G3 X", Tungsten, 0,	{ 1.463675, 1, 2.698718, 0 } },
+  { "Canon", "PowerShot G3 X", Fluorescent, 0,	{ 2.119710, 1, 2.443773, 0 } },
+  { "Canon", "PowerShot G3 X", Flash, 0,	{ 2.555426, 1, 1.417736, 0 } },
 
   { "Canon", "PowerShot G5", Daylight, 0,	{ 1.639521, 1, 1.528144, 0 } },
   { "Canon", "PowerShot G5", Cloudy, 0,		{ 1.702153, 1, 1.462919, 0 } },
@@ -312,6 +325,18 @@ const wb_data wb_preset[] = {
   { "Canon", "PowerShot G12", FluorescentHigh, 0, { 1.806122, 1, 2.032880, 0 } },
   { "Canon", "PowerShot G12", Flash, 0,		{ 2.102157, 1, 1.706016, 0 } },
   { "Canon", "PowerShot G12", Underwater, 0,	{ 1.807650, 1, 2.112568, 0 } },
+
+  { "Canon", "PowerShot G15", Daylight, 0,	{ 2.321149, 1, 2.357702, 0 } },
+  { "Canon", "PowerShot G15", Cloudy, 0,	{ 2.733601, 1, 2.116466, 0 } },
+  { "Canon", "PowerShot G15", Tungsten, 0,	{ 1.599064, 1, 4.386895, 0 } },
+  { "Canon", "PowerShot G15", Fluorescent, 0,	{ 2.233933, 1, 2.728792, 0 } },
+  { "Canon", "PowerShot G15", Flash, 0,		{ 2.919028, 1, 1.987854, 0 } },
+
+  { "Canon", "PowerShot G16", Daylight, 0,	{ 2.042745, 1, 1.786277, 0 } },
+  { "Canon", "PowerShot G16", Cloudy, 0,	{ 2.212571, 1, 1.657143, 0 } },
+  { "Canon", "PowerShot G16", Tungsten, 0,	{ 1.678571, 1, 2.625616, 0 } },
+  { "Canon", "PowerShot G16", Fluorescent, 0,	{ 2.075472, 1, 1.957547, 0 } },
+  { "Canon", "PowerShot G16", Flash, 0,		{ 2.634884, 1, 1.317442, 0 } },
 
   /* Canon PowerShot S3 IS does not support native WB presets. These are made
      as custom WB presets. */
@@ -2161,6 +2186,20 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS-1D Mark II N", Shade, 0,	{ 2.337891, 1, 1.112305, 0 } },
   { "Canon", "EOS-1D Mark II N", Tungsten, 0,	{ 1.408514, 1, 2.147645, 0 } },
 
+  { "Canon", "EOS-1D Mark III", Daylight, 0,	{ 1.980469, 1, 1.471680, 0 } },
+  { "Canon", "EOS-1D Mark III", Shade, 0,	{ 2.291016, 1, 1.205078, 0 } },
+  { "Canon", "EOS-1D Mark III", Cloudy, 0,	{ 2.142578, 1, 1.325195, 0 } },
+  { "Canon", "EOS-1D Mark III", Tungsten, 0,	{ 1.363470, 1, 2.380822, 0 } },
+  { "Canon", "EOS-1D Mark III", Fluorescent, 0,	{ 1.742612, 1, 2.222116, 0 } },
+  { "Canon", "EOS-1D Mark III", Flash, 0,	{ 2.173828, 1, 1.288086, 0 } },
+
+  { "Canon", "EOS-1Ds Mark III", Daylight, 0,	{ 2.093750, 1, 1.521484, 0 } },
+  { "Canon", "EOS-1Ds Mark III", Shade, 0,	{ 2.420898, 1, 1.238281, 0 } },
+  { "Canon", "EOS-1Ds Mark III", Cloudy, 0,	{ 2.250977, 1, 1.361328, 0 } },
+  { "Canon", "EOS-1Ds Mark III", Tungsten, 0,	{ 1.455382, 1, 2.404784, 0 } },
+  { "Canon", "EOS-1Ds Mark III", Fluorescent, 0, { 1.842718, 1, 2.330097, 0 } },
+  { "Canon", "EOS-1Ds Mark III", Flash, 0,	{ 2.311523, 1, 1.316406, 0 } },
+
   // Firmware Version 1.0.6 (Temporary)
   { "Canon", "EOS-1D Mark IV", Daylight, 0,	{ 2.040039, 1, 1.558594, 0 } },
   { "Canon", "EOS-1D Mark IV", Shade, 0,	{ 2.342773, 1, 1.333008, 0 } },
@@ -2191,6 +2230,13 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS M2", Tungsten, 0,		{ 1.391602, 1, 2.392578, 0 } },
   { "Canon", "EOS M2", Shade, 0,		{ 2.226563, 1, 1.381836, 0 } },
   { "Canon", "EOS M2", Fluorescent, 0,		{ 1.735352, 1, 2.280273, 0 } },
+
+  { "Canon", "EOS M3", Cloudy, 0,		{ 2.316032, 1, 1.585928, 0 } },
+  { "Canon", "EOS M3", Daylight, 0,		{ 2.140411, 1, 1.702055, 0 } },
+  { "Canon", "EOS M3", Flash, 0,		{ 2.787515, 1, 1.357743, 0 } },
+  { "Canon", "EOS M3", Tungsten, 0,		{ 1.488650, 1, 2.624851, 0 } },
+  { "Canon", "EOS M3", Shade, 0,		{ 2.477855, 1, 1.488345, 0 } },
+  { "Canon", "EOS M3", Fluorescent, 0,		{ 1.870460, 1, 2.325666, 0 } },
 
   { "FUJIFILM", "E900", Daylight, 0,		{ 1.571875, 1, 1.128125, 0 } },
   { "FUJIFILM", "E900", Shade, 0,		{ 1.668750, 1, 1.006250, 0 } },
@@ -6759,11 +6805,17 @@ const wb_data wb_preset[] = {
   { "Panasonic", "DMC-GX1", "9900K", 0,		{ 3.452830, 1, 1.305660, 0 } },
   { "Panasonic", "DMC-GX1", "10000K", 0,	{ 3.467925, 1, 1.298113, 0 } },
 
-  { "Panasonic", "DMC-GX7", "Daylight", 0,	{ 2.539623, 1, 1.611321, 0 } },
-  { "Panasonic", "DMC-GX7", "Cloudy", 0,	{ 2.667925, 1, 1.509434, 0 } },
-  { "Panasonic", "DMC-GX7", "Shade", 0,		{ 2.879245, 1, 1.422642, 0 } },
-  { "Panasonic", "DMC-GX7", "Incandescent", 0,	{ 1.758491, 1, 2.320755, 0 } },
-  { "Panasonic", "DMC-GX7", "Flash", 0,		{ 2.607547, 1, 1.479245, 0 } },
+  { "Panasonic", "DMC-GX7", Daylight, 0,	{ 2.539623, 1, 1.611321, 0 } },
+  { "Panasonic", "DMC-GX7", Cloudy, 0,		{ 2.667925, 1, 1.509434, 0 } },
+  { "Panasonic", "DMC-GX7", Shade, 0,		{ 2.879245, 1, 1.422642, 0 } },
+  { "Panasonic", "DMC-GX7", Incandescent, 0,	{ 1.758491, 1, 2.320755, 0 } },
+  { "Panasonic", "DMC-GX7", Flash, 0,		{ 2.607547, 1, 1.479245, 0 } },
+
+  { "Panasonic", "DMC-GX8", Daylight, 0,	{ 2.296875, 1, 1.914063, 0 } },
+  { "Panasonic", "DMC-GX8", Cloudy, 0,		{ 2.437500, 1, 1.761719, 0 } },
+  { "Panasonic", "DMC-GX8", Shade, 0,		{ 2.605469, 1, 1.656250, 0 } },
+  { "Panasonic", "DMC-GX8", Incandescent, 0,	{ 1.664063, 1, 2.800781, 0 } },
+  { "Panasonic", "DMC-GX8", Flash, 0,		{ 2.320313, 1, 1.824219, 0 } },
 
   { "Panasonic", "DMC-L1", Daylight, 0,		{ 1.980989, 1, 1.444867, 0 } },
   { "Panasonic", "DMC-L1", Cloudy, 0,		{ 2.129278, 1, 1.300380, 0 } },
