@@ -2124,7 +2124,7 @@ int ufraw_set_wb(ufraw_data *uf)
         for (i = 0; i < wb_preset_count; i++) {
             if (ufarray_is_equal(wb, wb_preset[i].name) &&
                     !strcasecmp(uf->conf->make, wb_preset[i].make) &&
-                    !strcmp(model, wb_preset[i].model)) {
+                    !strcasecmp(model, wb_preset[i].model)) {
                 if (ufnumber_value(wbTuning) == wb_preset[i].tuning) {
                     double chanMulArray[4] = {1, 1, 1, 1 };
                     for (c = 0; c < uf->colors; c++)

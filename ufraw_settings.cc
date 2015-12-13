@@ -368,7 +368,7 @@ void Image::SetUFRawData(ufraw_data *data)
 
     dcraw_data *raw = static_cast<dcraw_data *>(uf->raw);
     if (strcasecmp(uf->conf->make, raw->make) != 0 ||
-            strcmp(uf->conf->model, raw->model) != 0)
+        strcasecmp(uf->conf->model, raw->model) != 0)
         uf->WBDirty = TRUE; // Re-calculate channel multipliers.
     if (uf->LoadingID)
         uf->WBDirty = TRUE; // Re-calculate channel multipliers.
@@ -391,7 +391,7 @@ void Image::SetUFRawData(ufraw_data *data)
     }
     UFArray &wb = (*this)[ufWB];
     for (int i = 0; i < wb_preset_count; i++) {
-        if (strcmp(wb_preset[i].make, "") == 0) {
+        if (strcasecmp(wb_preset[i].make, "") == 0) {
             /* Common presets */
             if (strcmp(wb_preset[i].name, uf_camera_wb) == 0) {
                 // Get the camera's presets.
@@ -409,7 +409,7 @@ void Image::SetUFRawData(ufraw_data *data)
             }
             wb << new UFString(ufPreset, wb_preset[i].name);
         } else if (strcasecmp(wb_preset[i].make, uf->conf->make) == 0 &&
-                   strcmp(wb_preset[i].model, model) == 0) {
+                   strcasecmp(wb_preset[i].model, model) == 0) {
             /* Camera specific presets */
             uf->wb_presets_make_model_match = TRUE;
             if (lastPreset == NULL ||
