@@ -2457,6 +2457,14 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "X100S", "9100K", 0,		{ 2.304636, 1, 1.122517, 0 } },
   { "FUJIFILM", "X100S", "10000K", 0,		{ 2.360927, 1, 1.079470, 0 } },
 
+  { "FUJIFILM", "X100T", Daylight, 0,		{ 1.930464, 1, 1.539735, 0 } },
+  { "FUJIFILM", "X100T", Shade, 0,		{ 2.109272, 1, 1.324503, 0 } },
+  { "FUJIFILM", "X100T", DaylightFluorescent, 0, { 2.456954, 1, 1.334437, 0 } },
+  { "FUJIFILM", "X100T", DayWhiteFluorescent, 0, { 2.102649, 1, 1.589404, 0 } },
+  { "FUJIFILM", "X100T", WhiteFluorescent, 0,	{ 2.013245, 1, 1.970199, 0 } },
+  { "FUJIFILM", "X100T", Incandescent, 0,	{ 1.238411, 1, 2.307947, 0 } },
+  { "FUJIFILM", "X100T", Underwater, 0,		{ 1.927152, 1, 1.549669, 0 } },
+
   { "FUJIFILM", "X-A2", Daylight, 0,		{ 1.824503, 1, 1.758278, 0 } },
   { "FUJIFILM", "X-A2", Shade, 0,		{ 2.033113, 1, 1.496689, 0 } },
   { "FUJIFILM", "X-A2", DaylightFluorescent, 0,	{ 2.327815, 1, 1.500000, 0 } },
