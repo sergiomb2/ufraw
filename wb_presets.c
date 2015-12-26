@@ -2350,14 +2350,14 @@ const wb_data wb_preset[] = {
 
   /* The S9000 and S9500 are the same camera */
   { "FUJIFILM", "S9000", Daylight, 0,		{ 1.618750, 1, 1.231250, 0 } },
-  { "FUJIFILM", "S9000", Cloudy, 0,		{ 1.700000, 1, 1.046875, 0 } },
+  { "FUJIFILM", "S9000", Shade, 0,		{ 1.700000, 1, 1.046875, 0 } },
   { "FUJIFILM", "S9000", DaylightFluorescent, 0, { 1.902174, 1, 1.057065, 0 } },
   { "FUJIFILM", "S9000", WarmWhiteFluorescent, 0, { 1.633152, 1, 1.293478, 0 } },
   { "FUJIFILM", "S9000", CoolWhiteFluorescent, 0, { 1.546196, 1, 1.622283, 0 } },
   { "FUJIFILM", "S9000", Incandescent, 0,	{ 1.064159, 1, 1.960177, 0 } },
 
   { "FUJIFILM", "S9100", Daylight, 0,		{ 1.506250, 1, 1.318750, 0 } },
-  { "FUJIFILM", "S9100", Cloudy, 0,		{ 1.587500, 1, 1.128125, 0 } },
+  { "FUJIFILM", "S9100", Shade, 0,		{ 1.587500, 1, 1.128125, 0 } },
   { "FUJIFILM", "S9100", DaylightFluorescent, 0, { 1.777174, 1, 1.138587, 0 } },
   { "FUJIFILM", "S9100", WarmWhiteFluorescent, 0, { 1.521739, 1, 1.380435, 0 } },
   { "FUJIFILM", "S9100", CoolWhiteFluorescent, 0, { 1.437500, 1, 1.720109, 0 } },
@@ -2365,7 +2365,7 @@ const wb_data wb_preset[] = {
 
   /* The S9000 and S9500 are the same camera */
   { "FUJIFILM", "S9500", Daylight, 0,		{ 1.618750, 1, 1.231250, 0 } },
-  { "FUJIFILM", "S9500", Cloudy, 0,		{ 1.700000, 1, 1.046875, 0 } },
+  { "FUJIFILM", "S9500", Shade, 0,		{ 1.700000, 1, 1.046875, 0 } },
   { "FUJIFILM", "S9500", DaylightFluorescent, 0, { 1.902174, 1, 1.057065, 0 } },
   { "FUJIFILM", "S9500", WarmWhiteFluorescent, 0, { 1.633152, 1, 1.293478, 0 } },
   { "FUJIFILM", "S9500", CoolWhiteFluorescent, 0, { 1.546196, 1, 1.622283, 0 } },
@@ -2460,16 +2460,16 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "X100T", Daylight, 0,		{ 1.930464, 1, 1.539735, 0 } },
   { "FUJIFILM", "X100T", Shade, 0,		{ 2.109272, 1, 1.324503, 0 } },
   { "FUJIFILM", "X100T", DaylightFluorescent, 0, { 2.456954, 1, 1.334437, 0 } },
-  { "FUJIFILM", "X100T", DayWhiteFluorescent, 0, { 2.102649, 1, 1.589404, 0 } },
-  { "FUJIFILM", "X100T", WhiteFluorescent, 0,	{ 2.013245, 1, 1.970199, 0 } },
+  { "FUJIFILM", "X100T", WarmWhiteFluorescent, 0, { 2.102649, 1, 1.589404, 0 } },
+  { "FUJIFILM", "X100T", CoolWhiteFluorescent, 0, { 2.013245, 1, 1.970199, 0 } },
   { "FUJIFILM", "X100T", Incandescent, 0,	{ 1.238411, 1, 2.307947, 0 } },
   { "FUJIFILM", "X100T", Underwater, 0,		{ 1.927152, 1, 1.549669, 0 } },
 
   { "FUJIFILM", "X-A2", Daylight, 0,		{ 1.824503, 1, 1.758278, 0 } },
   { "FUJIFILM", "X-A2", Shade, 0,		{ 2.033113, 1, 1.496689, 0 } },
   { "FUJIFILM", "X-A2", DaylightFluorescent, 0,	{ 2.327815, 1, 1.500000, 0 } },
-  { "FUJIFILM", "X-A2", DayWhiteFluorescent, 0,	{ 1.986755, 1, 1.804636, 0 } },
-  { "FUJIFILM", "X-A2", WhiteFluorescent, 0,	{ 1.900662, 1, 2.284768, 0 } },
+  { "FUJIFILM", "X-A2", WarmWhiteFluorescent, 0, { 1.986755, 1, 1.804636, 0 } },
+  { "FUJIFILM", "X-A2", CoolWhiteFluorescent, 0, { 1.900662, 1, 2.284768, 0 } },
   { "FUJIFILM", "X-A2", Incandescent, 0,	{ 1.162252, 1, 2.864238, 0 } },
 
   /* FUJIFILM X-E1 Firmware Version 1.01 */
@@ -2523,10 +2523,10 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "X-E2", Underwater, 0,		{ 1.864238, 1, 1.559603, 0 } },
 
   { "FUJIFILM", "X-M1", Daylight, 0,		{ 1.943709, 1, 1.824503, 0 } },
-  { "FUJIFILM", "X-M1", Cloudy, 0,		{ 2.139073, 1, 1.599338, 0 } },
+  { "FUJIFILM", "X-M1", Shade, 0,		{ 2.139073, 1, 1.599338, 0 } },
   { "FUJIFILM", "X-M1", DaylightFluorescent, 0,	{ 2.440397, 1, 1.592715, 0 } },
-  { "FUJIFILM", "X-M1", DayWhiteFluorescent, 0,	{ 2.066225, 1, 1.870861, 0 } },
-  { "FUJIFILM", "X-M1", WhiteFluorescent, 0,	{ 1.937086, 1, 2.360927, 0 } },
+  { "FUJIFILM", "X-M1", WarmWhiteFluorescent, 0, { 2.066225, 1, 1.870861, 0 } },
+  { "FUJIFILM", "X-M1", CoolWhiteFluorescent, 0, { 1.937086, 1, 2.360927, 0 } },
   { "FUJIFILM", "X-M1", Incandescent, 0,	{ 1.225166, 1, 2.976821, 0 } },
 
   /* FUJIFILM X-T1 Firmware Version 1.10 */
