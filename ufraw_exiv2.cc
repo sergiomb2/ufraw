@@ -2,7 +2,7 @@
  * UFRaw - Unidentified Flying Raw converter for digital camera images
  *
  * ufraw_exiv2.cc - read the EXIF data from the RAW file using exiv2.
- * Copyright 2004-2015 by Udi Fuchs
+ * Copyright 2004-2016 by Udi Fuchs
  *
  * Based on a sample program from exiv2 and neftags2jpg.
  *

@@ -1,12 +1,12 @@
 # French translation for UFRaw.
-# Copyright (C) 2006-2015 Udi Fuchs.
+# Copyright (C) 2006-2016 Udi Fuchs.
 # This file is distributed under the same license as the UFRaw package.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.20\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-16 17:00+0200\n"
+"POT-Creation-Date: 2016-01-02 17:00+0100\n"
 "PO-Revision-Date: 2014-09-16 23:33+0100\n"
 "Last-Translator: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
 "Language-Team: Gaëtan PERRIER <gaetan.perrier@free.fr>\n"
