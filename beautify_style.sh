@@ -2,7 +2,7 @@
 
 # This uses astyle to standardize our indentation/braces etc.
 
-SOURCES=$(find . -name "*.c" -or -name "*.cc" -or -name "*.h" | grep -v dcraw.cc | grep -v wb_presets.c)
+SOURCES=$(find . -name "*.c" -or -name "*.cc" -or -name "*.h" | grep -v dcraw.cc | grep -v iccjpeg.c | grep -v iccjpeg.h | grep -v wb_presets.c)
 
 for i in $SOURCES
 do
