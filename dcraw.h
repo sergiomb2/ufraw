@@ -1,6 +1,6 @@
 /*
    dcraw.h - Dave Coffin's raw photo decoder - header for C++ adaptation
-   Copyright 1997-2015 by Dave Coffin, dcoffin a cybercom o net
+   Copyright 1997-2016 by Dave Coffin, dcoffin a cybercom o net
    Copyright 2004-2016 by Udi Fuchs, udifuchs a gmail o com
 
    This program is free software; you can redistribute it and/or modify
