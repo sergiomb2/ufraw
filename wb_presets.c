@@ -467,6 +467,12 @@ const wb_data wb_preset[] = {
   { "Canon", "PowerShot SX60 HS", FluorescentHigh, 0, { 2.098851, 1, 1.785057, 0 } },
   { "Canon", "PowerShot SX60 HS", Flash, 0,	{ 1.966387, 1, 1.408613, 0 } },
 
+  { "Canon", "PowerShot SX160 IS", Daylight, 0,	{ 1.725252, 1, 1.444444, 0 } },
+  { "Canon", "PowerShot SX160 IS", Cloudy, 0,	{ 1.843781, 1, 1.359204, 0 } },
+  { "Canon", "PowerShot SX160 IS", Tungsten, 0,	{ 1.103726, 1, 2.322256, 0 } },
+  { "Canon", "PowerShot SX160 IS", Fluorescent, 0, { 1.704705, 1, 1.463463, 0 } },
+  { "Canon", "PowerShot SX160 IS", FluorescentHigh, 0, { 1.848423, 1, 1.355036, 0 } },
+
   { "Canon", "EOS D60", Daylight, 0,		{ 2.472594, 1, 1.225335, 0 } },
   { "Canon", "EOS D60", Cloudy, 0,		{ 2.723926, 1, 1.137423, 0 } },
   { "Canon", "EOS D60", Tungsten, 0,		{ 1.543054, 1, 1.907003, 0 } },
@@ -8951,6 +8957,18 @@ const wb_data wb_preset[] = {
   { "SONY", "ILCE-6000", "6000K", 0,		{ 2.988281, 1, 1.546875, 0 } },
   { "SONY", "ILCE-6000", "8500K", 0,		{ 3.453125, 1, 1.308594, 0 } },
 
+  { "SONY", "ILCE-6300", Daylight, 0,		{ 2.601563, 1, 1.785156, 0 } },
+  { "SONY", "ILCE-6300", Shade, 0,		{ 3.058594, 1, 1.472656, 0 } },
+  { "SONY", "ILCE-6300", Cloudy, 0,		{ 2.792969, 1, 1.636719, 0 } },
+  { "SONY", "ILCE-6300", Tungsten, 0,		{ 1.644531, 1, 3.226563, 0 } },
+  { "SONY", "ILCE-6300", WarmWhiteFluorescent, 0, { 1.910156, 1, 3.179688, 0 } },
+  { "SONY", "ILCE-6300", CoolWhiteFluorescent, 0, { 2.429688, 1, 2.625000, 0 } },
+  { "SONY", "ILCE-6300", DayWhiteFluorescent, 0, { 2.531250, 1, 1.886719, 0 } },
+  { "SONY", "ILCE-6300", DaylightFluorescent, 0, { 2.812500, 1, 1.710938, 0 } },
+  { "SONY", "ILCE-6300", Flash, 0,		{ 2.914063, 1, 1.636719, 0 } },
+  { "SONY", "ILCE-6300", Underwater, 0,		{ 2.812500, 1, 1.875000, 0 } },
+  { "SONY", "ILCE-6300", "5500k", 0,		{ 2.652344, 1, 1.746094, 0 } },
+
   { "SONY", "NEX-3", Daylight, -3,		{ 2.0742, 1, 1.6289, 0 } },
   { "SONY", "NEX-3", Daylight, -2,		{ 2.1328, 1, 1.5742, 0 } },
   { "SONY", "NEX-3", Daylight, -1,		{ 2.1914, 1, 1.5195, 0 } },
@@ -9207,16 +9225,16 @@ const wb_data wb_preset[] = {
   { "SONY", "NEX-5T", "6000K", 0,		{ 2.625000, 1, 1.433594, 0 } },
   { "SONY", "NEX-5T", "8500K", 0,		{ 3.105469, 1, 1.207031, 0 } },
 
-  // copied from NEX-5R
-  { "SONY", "NEX-6", Daylight, 0,		{ 2.5000, 1, 1.5117, 0 } },
-  { "SONY", "NEX-6", Shade, 0,			{ 3.0156, 1, 1.2422, 0 } },
-  { "SONY", "NEX-6", Cloudy, 0,			{ 2.7188, 1, 1.3828, 0 } },
-  { "SONY", "NEX-6", Tungsten, 0,		{ 1.5039, 1, 2.7695, 0 } },
-  { "SONY", "NEX-6", WarmWhiteFluorescent, 0,	{ 1.8164, 1, 2.7305, 0 } },
-  { "SONY", "NEX-6", CoolWhiteFluorescent, 0,	{ 2.3086, 1, 2.1758, 0 } },
-  { "SONY", "NEX-6", DayWhiteFluorescent, 0,	{ 2.4844, 1, 1.5703, 0 } },
-  { "SONY", "NEX-6", DaylightFluorescent, 0,	{ 2.8555, 1, 1.4648, 0 } },
-  { "SONY", "NEX-6", Flash, 0,			{ 2.8828, 1, 1.3906, 0 } },
+  // firmware NEX-6 1.03
+  { "SONY", "NEX-6", Daylight, 0,		{ 2.6250, 1, 1.4765, 0 } },
+  { "SONY", "NEX-6", Shade, 0,			{ 3.1718, 1, 1.2109, 0 } },
+  { "SONY", "NEX-6", Cloudy, 0,			{ 2.8515, 1, 1.3515, 0 } },
+  { "SONY", "NEX-6", Tungsten, 0,		{ 1.5742, 1, 2.7148, 0 } },
+  { "SONY", "NEX-6", WarmWhiteFluorescent, 0,	{ 1.9023, 1, 2.6796, 0 } },
+  { "SONY", "NEX-6", CoolWhiteFluorescent, 0,	{ 2.4218, 1, 2.1289, 0 } },
+  { "SONY", "NEX-6", DayWhiteFluorescent, 0,	{ 2.6054, 1, 1.5312, 0 } },
+  { "SONY", "NEX-6", DaylightFluorescent, 0,	{ 3.0000, 1, 1.4296, 0 } },
+  { "SONY", "NEX-6", Flash, 0,			{ 3.0312, 1, 1.3554, 0 } },
 
   { "SONY", "NEX-7", Daylight, 0,		{ 2.5820, 1, 1.5273, 0 } },
   { "SONY", "NEX-7", Shade, 0,			{ 3.0781, 1, 1.2734, 0 } },
