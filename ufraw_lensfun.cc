@@ -47,27 +47,23 @@ public:
     double DistanceValue;
     Lensfun();
 #ifdef UFRAW_VALGRIND // Can be useful for valgrind --leak-check=full
-    ~Lensfun()
-    {
+    ~Lensfun() {
         if (_LensDB != NULL)
             lf_db_destroy(_LensDB);
         _LensDB = NULL;
     }
 #endif
-    static Lensfun &Parent(UFObject &object)
-    {
+    static Lensfun &Parent(UFObject &object) {
         if (strcmp(object.Parent().Name(), ufLensfun) == 0)
             return static_cast<Lensfun &>(object.Parent());
         return Lensfun::Parent(object.Parent());
     }
-    static const Lensfun &Parent(const UFObject &object)
-    {
+    static const Lensfun &Parent(const UFObject &object) {
         if (strcmp(object.Parent().Name(), ufLensfun) == 0)
             return static_cast<Lensfun &>(object.Parent());
         return Lensfun::Parent(object.Parent());
     }
-    static lfDatabase *LensDB()
-    {
+    static lfDatabase *LensDB() {
         /* Load lens database only once */
         if (_LensDB == NULL) {
             _LensDB = lfDatabase::Create();
@@ -75,8 +71,7 @@ public:
         }
         return _LensDB;
     }
-    void SetCamera(const lfCamera &camera)
-    {
+    void SetCamera(const lfCamera &camera) {
         Camera = camera;
         const char *maker = lf_mlstr_get(camera.Maker);
         const char *model = lf_mlstr_get(camera.Model);
@@ -99,8 +94,7 @@ public:
     // Interpolate the TCA, Vignetting and Distortion models.
     void Interpolate();
     // Mark settings as manual (not from LensDB).
-    void Manual()
-    {
+    void Manual() {
         char *lens_model = g_strdup_printf("Generic, Crop factor %.4g",
                                            Transformation.CropFactor);
         (*this)[ufLensModel].Set(lens_model);
@@ -144,8 +138,7 @@ class LensModel : public UFString
 {
 public:
     LensModel() : UFString(ufLensModel) { }
-    void Event(UFEventType type)
-    {
+    void Event(UFEventType type) {
         if (type != uf_value_changed)
             return UFObject::Event(type);
         if (!HasParent())
@@ -155,8 +148,7 @@ public:
         Lensfun.Interpolate();
         return UFObject::Event(type);
     }
-    void OriginalValueChangedEvent()
-    {
+    void OriginalValueChangedEvent() {
         if (!HasParent())
             return;
         Lensfun &Lensfun = Lensfun::Parent(*this);
@@ -195,8 +187,7 @@ class FocalLength : public UFArray
 {
 public:
     FocalLength() : UFArray(ufFocalLength) { }
-    void Event(UFEventType type)
-    {
+    void Event(UFEventType type) {
         if (type == uf_default_changed && Index() == -1) {
             // Default value is changed during Init. Reset to this default
             // value if no other value was set.
@@ -217,8 +208,7 @@ public:
         ufraw_invalidate_layer(uf, ufraw_transform_phase);
         return UFObject::Event(type);
     }
-    void CreatePresets()
-    {
+    void CreatePresets() {
         if (!HasParent())
             return;
         Clear();
@@ -253,8 +243,7 @@ class Aperture : public UFArray
 {
 public:
     Aperture() : UFArray(ufAperture) { }
-    void Event(UFEventType type)
-    {
+    void Event(UFEventType type) {
         if (type == uf_default_changed && Index() == -1) {
             // Default value is changed during Init. Reset to this default
             // value if no other value was set.
@@ -274,8 +263,7 @@ public:
         Lensfun::Parent(*this).Interpolate();
         return UFObject::Event(type);
     }
-    void CreatePresets()
-    {
+    void CreatePresets() {
         if (!HasParent())
             return;
         Clear();
@@ -309,8 +297,7 @@ class Distance : public UFArray
 {
 public:
     Distance() : UFArray(ufDistance) { }
-    void Event(UFEventType type)
-    {
+    void Event(UFEventType type) {
         if (type == uf_default_changed && Index() == -1) {
             // Default value is changed during Init. Reset to this default
             // value if no other value was set.
@@ -330,8 +317,7 @@ public:
         Lensfun::Parent(*this).Interpolate();
         return UFObject::Event(type);
     }
-    void CreatePresets()
-    {
+    void CreatePresets() {
         Clear();
         char buffer[_buffer_size];
         double value = 0.25;
@@ -352,15 +338,13 @@ class Param : public UFNumber
 public:
     Param(UFName name, double min, double max, double defaultValue) :
         UFNumber(name, min, max, defaultValue) { }
-    std::string XML(const char *indent) const
-    {
+    std::string XML(const char *indent) const {
         char num[10];
         g_snprintf(num, 10, "%.*lf", AccuracyDigits() + 2, DoubleValue());
         return (std::string)indent +
                "<" + Name() + ">" + num + "</" + Name() + ">\n";
     }
-    void OriginalValueChangedEvent()
-    {
+    void OriginalValueChangedEvent() {
         if (!HasParent())
             return;
         // While loading rc/cmd/conf data, do not reset other settings
@@ -378,8 +362,7 @@ class TCA : public UFArray
 {
 public:
     TCA() : UFArray(ufTCA,
-                        lfLens::GetTCAModelDesc(LF_TCA_MODEL_NONE, NULL, NULL))
-    {
+                        lfLens::GetTCAModelDesc(LF_TCA_MODEL_NONE, NULL, NULL)) {
         for (lfTCAModel model = LF_TCA_MODEL_NONE; ;
                 model = lfTCAModel(model + 1)) {
             const lfParameter **params;
@@ -395,8 +378,7 @@ public:
                                    params[i]->Max, params[i]->Default);
         }
     }
-    void Event(UFEventType type)
-    {
+    void Event(UFEventType type) {
         if (type != uf_value_changed)
             return UFObject::Event(type);
         ufraw_data *uf = ufraw_image_get_data(this);
@@ -422,8 +404,7 @@ public:
         ufraw_invalidate_tca_layer(uf);
         return UFObject::Event(type);
     }
-    void Interpolate()
-    {
+    void Interpolate() {
         if (!HasParent())
             return;
         Lensfun &Lensfun = Lensfun::Parent(*this);
@@ -453,8 +434,7 @@ class Vignetting : public UFArray
 public:
     Vignetting() : UFArray(ufVignetting,
                                lfLens::GetVignettingModelDesc(LF_VIGNETTING_MODEL_NONE,
-                                       NULL, NULL))
-    {
+                                       NULL, NULL)) {
         for (lfVignettingModel model = LF_VIGNETTING_MODEL_NONE; ;
                 model = lfVignettingModel(model + 1)) {
             const lfParameter **params;
@@ -470,8 +450,7 @@ public:
                                    params[i]->Max, params[i]->Default);
         }
     }
-    void Event(UFEventType type)
-    {
+    void Event(UFEventType type) {
         if (type != uf_value_changed)
             return UFObject::Event(type);
         ufraw_data *uf = ufraw_image_get_data(this);
@@ -499,8 +478,7 @@ public:
         ufraw_invalidate_layer(uf, ufraw_first_phase);
         return UFObject::Event(type);
     }
-    void Interpolate()
-    {
+    void Interpolate() {
         ufraw_data *uf = ufraw_image_get_data(this);
         if (uf == NULL)
             return;
@@ -546,8 +524,7 @@ public:
     //   </Model>
     // </Distortion>
     Distortion() : UFArray(ufDistortion,
-                               lfLens::GetDistortionModelDesc(LF_DIST_MODEL_NONE, NULL, NULL))
-    {
+                               lfLens::GetDistortionModelDesc(LF_DIST_MODEL_NONE, NULL, NULL)) {
         for (lfDistortionModel model = LF_DIST_MODEL_NONE; ;
                 model = lfDistortionModel(model + 1)) {
             const lfParameter **params;
@@ -563,8 +540,7 @@ public:
                                    params[i]->Max, params[i]->Default);
         }
     }
-    void Event(UFEventType type)
-    {
+    void Event(UFEventType type) {
         if (type != uf_value_changed)
             return UFObject::Event(type);
         ufraw_data *uf = ufraw_image_get_data(this);
@@ -590,8 +566,7 @@ public:
         ufraw_invalidate_layer(uf, ufraw_transform_phase);
         return UFObject::Event(type);
     }
-    void Interpolate()
-    {
+    void Interpolate() {
         if (!HasParent())
             return;
         Lensfun &Lensfun = Lensfun::Parent(*this);
@@ -620,8 +595,7 @@ class LensGeometry : public UFArray
 {
 public:
     explicit LensGeometry(UFName name = ufLensGeometry) : UFArray(name,
-                lfLens::GetLensTypeDesc(LF_UNKNOWN, NULL))
-    {
+                lfLens::GetLensTypeDesc(LF_UNKNOWN, NULL)) {
         for (lfLensType type = LF_UNKNOWN; ; type = lfLensType(type + 1)) {
             const char *typeName = lfLens::GetLensTypeDesc(type, NULL);
             if (typeName == NULL)
@@ -629,8 +603,7 @@ public:
             *this << new UFString("Type", typeName);
         }
     }
-    void Event(UFEventType type)
-    {
+    void Event(UFEventType type) {
         if (type != uf_value_changed)
             return UFObject::Event(type);
         ufraw_data *uf = ufraw_image_get_data(this);
@@ -640,8 +613,7 @@ public:
         ufraw_invalidate_layer(uf, ufraw_transform_phase);
         return UFObject::Event(type);
     }
-    void OriginalValueChangedEvent()
-    {
+    void OriginalValueChangedEvent() {
         if (!HasParent())
             return;
         // While loading rc/cmd/conf data, do not reset other settings
@@ -659,8 +631,7 @@ class TargetLensGeometry : public UFArray
 {
 public:
     explicit TargetLensGeometry(UFName name = ufTargetLensGeometry) :
-        UFArray(name, lfLens::GetLensTypeDesc(LF_UNKNOWN, NULL))
-    {
+        UFArray(name, lfLens::GetLensTypeDesc(LF_UNKNOWN, NULL)) {
         for (lfLensType type = LF_UNKNOWN; ; type = lfLensType(type + 1)) {
             const char *typeName = lfLens::GetLensTypeDesc(type, NULL);
             if (typeName == NULL)
@@ -668,8 +639,7 @@ public:
             *this << new UFString("Type", typeName);
         }
     }
-    void OriginalValueChangedEvent()
-    {
+    void OriginalValueChangedEvent() {
         ufraw_data *uf = ufraw_image_get_data(this);
         if (uf == NULL)
             return;

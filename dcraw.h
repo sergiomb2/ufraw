@@ -152,7 +152,7 @@ public:
     void lossless_jpeg_load_raw();
     void canon_sraw_load_raw();
     void adobe_copy_pixel(unsigned row, unsigned col, ushort **rp);
-    void ljpeg_idct (struct jhead *jh);
+    void ljpeg_idct(struct jhead *jh);
     void lossless_dng_load_raw();
     void packed_dng_load_raw();
     void pentax_load_raw();

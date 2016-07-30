@@ -69,8 +69,7 @@ private:
 public:
     explicit Image(UFObject *root = NULL);
     void SetUFRawData(ufraw_data *data);
-    static ufraw_data *UFRawData(UFObject *object)
-    {
+    static ufraw_data *UFRawData(UFObject *object) {
         if (object->Name() == ufRawImage)
             return dynamic_cast<Image *>(object)->uf;
         if (!object->HasParent())
@@ -78,8 +77,7 @@ public:
         return Image::UFRawData(&object->Parent());
     }
     void SetWB(const char *mode = NULL);
-    void Message(const char *Format, ...) const
-    {
+    void Message(const char *Format, ...) const {
         if (Format == NULL)
             return;
         va_list ap;
@@ -108,14 +106,12 @@ class WB : public UFArray
 {
 public:
     WB() : UFArray(ufWB, uf_camera_wb) { }
-    void Event(UFEventType type)
-    {
+    void Event(UFEventType type) {
         // spot_wb is a temporary value, that would be changed in SetWB()
         if (!this->IsEqual(uf_spot_wb))
             UFObject::Event(type);
     }
-    void OriginalValueChangedEvent()
-    {
+    void OriginalValueChangedEvent() {
         /* Keep compatibility with old numbers from ufraw-0.6 */
         int i;
         if (strlen(StringValue()) <= 2 &&
@@ -160,8 +156,7 @@ public:
     }
     // Use the original XML format instead of UFArray's format.
     // Output XML block even if IsDefault().
-    std::string XML(const char *indent) const
-    {
+    std::string XML(const char *indent) const {
         char *value = g_markup_escape_text(StringValue(), -1);
         std::string str = (std::string)indent +
                           "<" + Name() + ">" + value + "</" + Name() + ">\n";
@@ -177,8 +172,7 @@ class WBFineTuning : public UFNumber
 {
 public:
     WBFineTuning() : UFNumber(ufWBFineTuning, -9, 9, 0, 0, 1, 1) { }
-    void OriginalValueChangedEvent()
-    {
+    void OriginalValueChangedEvent() {
         if (!HasParent())
             return;
         UFArray &wb = ParentImage(this)[ufWB];
@@ -189,8 +183,7 @@ public:
             ParentImage(this).SetWB();
     }
     // Output XML block even if IsDefault().
-    std::string XML(const char *indent) const
-    {
+    std::string XML(const char *indent) const {
         char *value = g_markup_escape_text(StringValue(), -1);
         std::string str = (std::string)indent +
                           "<" + Name() + ">" + value + "</" + Name() + ">\n";
@@ -206,8 +199,7 @@ class Temperature : public UFNumber
 {
 public:
     Temperature() : UFNumber(ufTemperature, 2000, 23000, 6500, 0, 50, 200) { }
-    void OriginalValueChangedEvent()
-    {
+    void OriginalValueChangedEvent() {
         if (HasParent())
             ParentImage(this).SetWB(uf_manual_wb);
     }
@@ -220,8 +212,7 @@ class Green : public UFNumber
 {
 public:
     Green() : UFNumber(ufGreen, 0.2, 2.5, 1.0, 3, 0.01, 0.05) { };
-    void OriginalValueChangedEvent()
-    {
+    void OriginalValueChangedEvent() {
         if (HasParent())
             ParentImage(this).SetWB(uf_manual_wb);
     }
@@ -236,8 +227,7 @@ public:
     ChannelMultipliers() : UFNumberArray(ufChannelMultipliers, 4,
                                              0.010, 99.000, 1.0, 3, 0.001,
                                              0.001) { };
-    void Event(UFEventType type)
-    {
+    void Event(UFEventType type) {
         if (type != uf_value_changed)
             return UFObject::Event(type);
         if (!HasParent())
@@ -263,14 +253,12 @@ public:
 
         UFObject::Event(type);
     }
-    void OriginalValueChangedEvent()
-    {
+    void OriginalValueChangedEvent() {
         if (HasParent())
             ParentImage(this).SetWB(uf_spot_wb);
     }
     // Output XML block even if IsDefault().
-    std::string XML(const char *indent) const
-    {
+    std::string XML(const char *indent) const {
         std::string str = "";
         char num[10];
         for (int i = 0; i < Size(); i++) {
@@ -294,8 +282,7 @@ class LensfunAuto : public UFString
 {
 public:
     LensfunAuto() : UFString(ufLensfunAuto, "yes") { }
-    void OriginalValueChangedEvent()
-    {
+    void OriginalValueChangedEvent() {
         if (!HasParent())
             return;
         if (IsEqual("auto")) {
@@ -368,7 +355,7 @@ void Image::SetUFRawData(ufraw_data *data)
 
     dcraw_data *raw = static_cast<dcraw_data *>(uf->raw);
     if (strcasecmp(uf->conf->make, raw->make) != 0 ||
-        strcasecmp(uf->conf->model, raw->model) != 0)
+            strcasecmp(uf->conf->model, raw->model) != 0)
         uf->WBDirty = TRUE; // Re-calculate channel multipliers.
     if (uf->LoadingID)
         uf->WBDirty = TRUE; // Re-calculate channel multipliers.
@@ -427,8 +414,7 @@ extern "C" {
 class Resources : public UFGroup
 {
 public:
-    Resources(): UFGroup(ufRawResources)
-    {
+    Resources(): UFGroup(ufRawResources) {
         *this << new Image(this);
     }
 };
@@ -437,8 +423,7 @@ class CommandLineImage : public ImageCommon
 {
 public:
     CommandLineImage(): ImageCommon() { }
-    void Event(UFEventType type)
-    {
+    void Event(UFEventType type) {
         if (type != uf_element_added)
             return UFObject::Event(type);
         if (Has(ufTemperature) || Has(ufGreen)) {
@@ -478,12 +463,10 @@ extern "C" {
 class CommandLine : public UFGroup
 {
 public:
-    CommandLine(): UFGroup(ufCommandLine)
-    {
+    CommandLine(): UFGroup(ufCommandLine) {
         *this << new CommandLineImage;
     }
-    void Message(const char *Format, ...) const
-    {
+    void Message(const char *Format, ...) const {
         if (Format == NULL)
             return;
         va_list ap;
