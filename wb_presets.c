@@ -2417,6 +2417,13 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS M3", Shade, 0,		{ 2.477855, 1, 1.488345, 0 } },
   { "Canon", "EOS M3", Fluorescent, 0,		{ 1.870460, 1, 2.325666, 0 } },
 
+  { "Canon", "EOS M10", Cloudy, 0,		{ 2.171053, 1, 1.438596, 0 } },
+  { "Canon", "EOS M10", Daylight, 0,		{ 1.992408, 1, 1.556399, 0 } },
+  { "Canon", "EOS M10", Flash, 0,		{ 2.557562, 1, 1.220090, 0 } },
+  { "Canon", "EOS M10", Tungsten, 0,		{ 1.399530, 1, 2.615746, 0 } },
+  { "Canon", "EOS M10", Shade, 0,		{ 2.334441, 1, 1.330011, 0 } },
+  { "Canon", "EOS M10", Fluorescent, 0,		{ 1.809693, 1, 2.239953, 0 } },
+
   { "FUJIFILM", "E900", Daylight, 0,		{ 1.571875, 1, 1.128125, 0 } },
   { "FUJIFILM", "E900", Shade, 0,		{ 1.668750, 1, 1.006250, 0 } },
   { "FUJIFILM", "E900", DaylightFluorescent, 0,	{ 1.907609, 1, 1.016304, 0 } },
