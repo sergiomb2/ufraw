@@ -723,14 +723,14 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 5DS", Shade, 0,		{ 2.605469, 1, 1.484375, 0 } },
   { "Canon", "EOS 5DS", Cloudy, 0,		{ 2.438477, 1, 1.589844, 0 } },
   { "Canon", "EOS 5DS", Tungsten, 0,		{ 1.605469, 1, 2.467773, 0 } },
-  { "Canon", "EOS 5DS", CoolWhiteFluorescent, 0, { 1.931641, 1, 2.354492, 0 } },
+  { "Canon", "EOS 5DS", WhiteFluorescent, 0,	{ 1.931641, 1, 2.354492, 0 } },
   { "Canon", "EOS 5DS", Flash, 0,		{ 2.528320, 1, 1.583008, 0 } },
 
   { "Canon", "EOS 5DS R", Daylight, 0,		{ 2.192383, 1, 1.738281, 0 } },
   { "Canon", "EOS 5DS R", Shade, 0,		{ 2.541016, 1, 1.497070, 0 } },
   { "Canon", "EOS 5DS R", Cloudy, 0,		{ 2.370117, 1, 1.607422, 0 } },
   { "Canon", "EOS 5DS R", Tungsten, 0,		{ 1.546875, 1, 2.503906, 0 } },
-  { "Canon", "EOS 5DS R", CoolWhiteFluorescent, 0, { 1.865234, 1, 2.386719, 0 } },
+  { "Canon", "EOS 5DS R", WhiteFluorescent, 0,	{ 1.865234, 1, 2.386719, 0 } },
   { "Canon", "EOS 5DS R", Flash, 0,		{ 2.461914, 1, 1.599609, 0 } },
 
   /* Canon EOS 6D Firmware Version 1.0.9 */
@@ -2232,21 +2232,21 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 750D", Shade, 0,		{ 2.461914, 1, 1.458984, 0 } },
   { "Canon", "EOS 750D", Cloudy, 0,		{ 2.286133, 1, 1.570312, 0 } },
   { "Canon", "EOS 750D", Tungsten, 0,		{ 1.473633, 1, 2.467773, 0 } },
-  { "Canon", "EOS 750D", CoolWhiteFluorescent, 0, { 1.784180, 1, 2.300781, 0 } },
+  { "Canon", "EOS 750D", WhiteFluorescent, 0,	{ 1.784180, 1, 2.300781, 0 } },
   { "Canon", "EOS 750D", Flash, 0,		{ 2.359375, 1, 1.548828, 0 } },
 
   { "Canon", "EOS REBEL T6i", Daylight, 0,	{ 2.115234, 1, 1.701172, 0 } },
   { "Canon", "EOS REBEL T6i", Shade, 0,		{ 2.461914, 1, 1.458984, 0 } },
   { "Canon", "EOS REBEL T6i", Cloudy, 0,	{ 2.286133, 1, 1.570312, 0 } },
   { "Canon", "EOS REBEL T6i", Tungsten, 0,	{ 1.473633, 1, 2.467773, 0 } },
-  { "Canon", "EOS REBEL T6i", CoolWhiteFluorescent, 0, { 1.784180, 1, 2.300781, 0 } },
+  { "Canon", "EOS REBEL T6i", WhiteFluorescent, 0, { 1.784180, 1, 2.300781, 0 } },
   { "Canon", "EOS REBEL T6i", Flash, 0,	{ 2.359375, 1, 1.548828, 0 } },
 
   { "Canon", "EOS Kiss X8i", Daylight, 0,	{ 2.115234, 1, 1.701172, 0 } },
   { "Canon", "EOS Kiss X8i", Shade, 0,		{ 2.461914, 1, 1.458984, 0 } },
   { "Canon", "EOS Kiss X8i", Cloudy, 0,		{ 2.286133, 1, 1.570312, 0 } },
   { "Canon", "EOS Kiss X8i", Tungsten, 0,	{ 1.473633, 1, 2.467773, 0 } },
-  { "Canon", "EOS Kiss X8i", CoolWhiteFluorescent, 0, { 1.784180, 1, 2.300781, 0 } },
+  { "Canon", "EOS Kiss X8i", WhiteFluorescent, 0, { 1.784180, 1, 2.300781, 0 } },
   { "Canon", "EOS Kiss X8i", Flash, 0,		{ 2.359375, 1, 1.548828, 0 } },
 
   // Firmware version 1.0.0
@@ -2254,7 +2254,7 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 760D", Shade, 0,		{ 2.528320, 1, 1.466797, 0 } },
   { "Canon", "EOS 760D", Cloudy, 0,		{ 2.342773, 1, 1.578125, 0 } },
   { "Canon", "EOS 760D", Tungsten, 0,		{ 1.510742, 1, 2.479492, 0 } },
-  { "Canon", "EOS 760D", CoolWhiteFluorescent, 0, { 1.825195, 1, 2.311523, 0 } },
+  { "Canon", "EOS 760D", WhiteFluorescent, 0,	{ 1.825195, 1, 2.311523, 0 } },
   { "Canon", "EOS 760D", Flash, 0,		{ 2.420898, 1, 1.556641, 0 } },
 
   // Firmware version 1.0.0
@@ -2262,7 +2262,7 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS REBEL T6s", Shade, 0,		{ 2.528320, 1, 1.466797, 0 } },
   { "Canon", "EOS REBEL T6s", Cloudy, 0,	{ 2.342773, 1, 1.578125, 0 } },
   { "Canon", "EOS REBEL T6s", Tungsten, 0,	{ 1.510742, 1, 2.479492, 0 } },
-  { "Canon", "EOS REBEL T6s", CoolWhiteFluorescent, 0, { 1.825195, 1, 2.311523, 0 } },
+  { "Canon", "EOS REBEL T6s", WhiteFluorescent, 0, { 1.825195, 1, 2.311523, 0 } },
   { "Canon", "EOS REBEL T6s", Flash, 0,		{ 2.420898, 1, 1.556641, 0 } },
 
   // Firmware version 1.0.0
@@ -2270,7 +2270,7 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 8000D", Shade, 0,		{ 2.528320, 1, 1.466797, 0 } },
   { "Canon", "EOS 8000D", Cloudy, 0,		{ 2.342773, 1, 1.578125, 0 } },
   { "Canon", "EOS 8000D", Tungsten, 0,		{ 1.510742, 1, 2.479492, 0 } },
-  { "Canon", "EOS 8000D", CoolWhiteFluorescent, 0, { 1.825195, 1, 2.311523, 0 } },
+  { "Canon", "EOS 8000D", WhiteFluorescent, 0,	{ 1.825195, 1, 2.311523, 0 } },
   { "Canon", "EOS 8000D", Flash, 0,		{ 2.420898, 1, 1.556641, 0 } },
 
   { "Canon", "EOS 1000D", Daylight, 0,		{ 2.183594, 1, 1.526367, 0 } },
@@ -2319,22 +2319,43 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS 1200D", Shade, 0,		{ 2.322266, 1, 1.361328, 0 } },
   { "Canon", "EOS 1200D", Cloudy, 0,		{ 2.160156, 1, 1.471680, 0 } },
   { "Canon", "EOS 1200D", Tungsten, 0,		{ 1.444336, 1, 2.392578, 0 } },
-  { "Canon", "EOS 1200D", CoolWhiteFluorescent, 0, { 1.759766, 1, 2.275391, 0 } },
+  { "Canon", "EOS 1200D", WhiteFluorescent, 0,	{ 1.759766, 1, 2.275391, 0 } },
   { "Canon", "EOS 1200D", Flash, 0,		{ 2.246094, 1, 1.452148, 0 } },
 
   { "Canon", "EOS REBEL T5", Daylight, 0,	{ 2.007812, 1, 1.599609, 0 } },
   { "Canon", "EOS REBEL T5", Shade, 0,		{ 2.322266, 1, 1.361328, 0 } },
   { "Canon", "EOS REBEL T5", Cloudy, 0,		{ 2.160156, 1, 1.471680, 0 } },
   { "Canon", "EOS REBEL T5", Tungsten, 0,	{ 1.444336, 1, 2.392578, 0 } },
-  { "Canon", "EOS REBEL T5", CoolWhiteFluorescent, 0, { 1.759766, 1, 2.275391, 0 } },
+  { "Canon", "EOS REBEL T5", WhiteFluorescent, 0, { 1.759766, 1, 2.275391, 0 } },
   { "Canon", "EOS REBEL T5", Flash, 0,		{ 2.246094, 1, 1.452148, 0 } },
 
   { "Canon", "EOS Kiss Digital X70", Daylight, 0, { 2.007812, 1, 1.599609, 0 } },
   { "Canon", "EOS Kiss Digital X70", Shade, 0,	{ 2.322266, 1, 1.361328, 0 } },
   { "Canon", "EOS Kiss Digital X70", Cloudy, 0,	{ 2.160156, 1, 1.471680, 0 } },
   { "Canon", "EOS Kiss Digital X70", Tungsten, 0, { 1.444336, 1, 2.392578, 0 } },
-  { "Canon", "EOS Kiss Digital X70", CoolWhiteFluorescent, 0, { 1.759766, 1, 2.275391, 0 } },
+  { "Canon", "EOS Kiss Digital X70", WhiteFluorescent, 0, { 1.759766, 1, 2.275391, 0 } },
   { "Canon", "EOS Kiss Digital X70", Flash, 0,	{ 2.246094, 1, 1.452148, 0 } },
+
+  { "Canon", "EOS 1300D", Daylight, 0,		{ 1.988281, 1, 1.530273, 0 } },
+  { "Canon", "EOS 1300D", Shade, 0,		{ 2.295898, 1, 1.300781, 0 } },
+  { "Canon", "EOS 1300D", Cloudy, 0,		{ 2.137695, 1, 1.406250, 0 } },
+  { "Canon", "EOS 1300D", Tungsten, 0,		{ 1.432617, 1, 2.300781, 0 } },
+  { "Canon", "EOS 1300D", WhiteFluorescent, 0,	{ 1.747070, 1, 2.188477, 0 } },
+  { "Canon", "EOS 1300D", Flash, 0,		{ 2.221680, 1, 1.387695, 0 } },
+
+  { "Canon", "EOS REBEL T6", Daylight, 0,	{ 1.988281, 1, 1.530273, 0 } },
+  { "Canon", "EOS REBEL T6", Shade, 0,		{ 2.295898, 1, 1.300781, 0 } },
+  { "Canon", "EOS REBEL T6", Cloudy, 0,		{ 2.137695, 1, 1.406250, 0 } },
+  { "Canon", "EOS REBEL T6", Tungsten, 0,	{ 1.432617, 1, 2.300781, 0 } },
+  { "Canon", "EOS REBEL T6", WhiteFluorescent, 0, { 1.747070, 1, 2.188477, 0 } },
+  { "Canon", "EOS REBEL T6", Flash, 0,		{ 2.221680, 1, 1.387695, 0 } },
+
+  { "Canon", "EOS Kiss Digital X80", Daylight, 0, { 1.988281, 1, 1.530273, 0 } },
+  { "Canon", "EOS Kiss Digital X80", Shade, 0,	{ 2.295898, 1, 1.300781, 0 } },
+  { "Canon", "EOS Kiss Digital X80", Cloudy, 0,	{ 2.137695, 1, 1.406250, 0 } },
+  { "Canon", "EOS Kiss Digital X80", Tungsten, 0, { 1.432617, 1, 2.300781, 0 } },
+  { "Canon", "EOS Kiss Digital X80", WhiteFluorescent, 0, { 1.747070, 1, 2.188477, 0 } },
+  { "Canon", "EOS Kiss Digital X80", Flash, 0,	{ 2.221680, 1, 1.387695, 0 } },
 
   { "Canon", "EOS-1DS", Daylight, 0,		{ 1.6133, 1, 1.2500, 0 } }, /* 5302K */
   { "Canon", "EOS-1DS", Shade, 0,		{ 1.8477, 1, 1.0684, 0 } }, /* 6685K */
@@ -2395,6 +2416,13 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS-1D X", Fluorescent, 0,	{ 1.726563, 1, 1.950195, 0 } },
   { "Canon", "EOS-1D X", Flash, 0,		{ 2.173828, 1, 1.239258, 0 } },
 
+  { "Canon", "EOS-1D X Mark II", Daylight, 0,	{ 1.822266, 1, 1.584961, 0 } },
+  { "Canon", "EOS-1D X Mark II", Shade, 0,	{ 2.081055, 1, 1.381836, 0 } },
+  { "Canon", "EOS-1D X Mark II", Cloudy, 0,	{ 1.954102, 1, 1.481445, 0 } },
+  { "Canon", "EOS-1D X Mark II", Tungsten, 0,	{ 1.300781, 1, 2.275391, 0 } },
+  { "Canon", "EOS-1D X Mark II", WhiteFluorescent, 0, { 1.540039, 1, 2.169922, 0 } },
+  { "Canon", "EOS-1D X Mark II", Flash, 0,	{ 2.011719, 1, 1.454102, 0 } },
+
   // Canon EOS M Firmware 1.0.6
   { "Canon", "EOS M", Cloudy, 0,		{ 2.156250, 1, 1.448242, 0 } },
   { "Canon", "EOS M", Daylight, 0,		{ 2.007813, 1, 1.575195, 0 } },
@@ -2422,7 +2450,7 @@ const wb_data wb_preset[] = {
   { "Canon", "EOS M10", Flash, 0,		{ 2.557562, 1, 1.220090, 0 } },
   { "Canon", "EOS M10", Tungsten, 0,		{ 1.399530, 1, 2.615746, 0 } },
   { "Canon", "EOS M10", Shade, 0,		{ 2.334441, 1, 1.330011, 0 } },
-  { "Canon", "EOS M10", Fluorescent, 0,		{ 1.809693, 1, 2.239953, 0 } },
+  { "Canon", "EOS M10", WhiteFluorescent, 0,	{ 1.809693, 1, 2.239953, 0 } },
 
   { "FUJIFILM", "E900", Daylight, 0,		{ 1.571875, 1, 1.128125, 0 } },
   { "FUJIFILM", "E900", Shade, 0,		{ 1.668750, 1, 1.006250, 0 } },
