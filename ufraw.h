@@ -284,7 +284,7 @@ typedef struct {
     char inputURI[max_path], inputModTime[max_name];
     int type, compression, createID, embedExif, progressiveJPEG;
     int shrink, size;
-    gboolean overwrite, losslessCompress, embeddedImage;
+    gboolean overwrite, losslessCompress, embeddedImage, noExit;
     gboolean rotate;
 
     /* GUI settings */
@@ -407,7 +407,7 @@ void ufraw_invalidate_darkframe_layer(ufraw_data *uf);
 void ufraw_invalidate_despeckle_layer(ufraw_data *uf);
 void ufraw_invalidate_whitebalance_layer(ufraw_data *uf);
 void ufraw_invalidate_smoothing_layer(ufraw_data *uf);
-int ufraw_set_wb(ufraw_data *uf);
+int ufraw_set_wb(ufraw_data *uf, gboolean interactive);
 void ufraw_auto_expose(ufraw_data *uf);
 void ufraw_auto_black(ufraw_data *uf);
 void ufraw_auto_curve(ufraw_data *uf);

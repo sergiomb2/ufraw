@@ -342,7 +342,7 @@ void Image::SetWB(const char *mode)
     }
     if (mode != NULL)
         wb.Set(mode);
-    ufraw_set_wb(uf);
+    ufraw_set_wb(uf, TRUE);
     if (wb.IsEqual(uf_spot_wb))
         wb.Set(uf_manual_wb);
 }

@@ -3983,6 +3983,7 @@ static void control_button_event(GtkWidget *widget, long type)
             options_dialog(data);
             break;
         case cancel_button:
+            CFG->noExit = FALSE;
             response = GTK_RESPONSE_CANCEL;
             break;
         case delete_button:
@@ -4011,18 +4012,18 @@ static void control_button_event(GtkWidget *widget, long type)
         // Finish this session
         g_object_set_data(G_OBJECT(window), "WindowResponse",
                           (gpointer)response);
-        gtk_main_quit();
-    } else {
-        // Restore setting
-        CFG->shrink = shrinkSave;
-        CFG->size = sizeSave;
-        data->FreezeDialog = FALSE;
-        gtk_widget_set_sensitive(data->Controls, TRUE);
-        // cases that set error status require redrawing of the preview image
-        if (status != UFRAW_SUCCESS) {
-            ufraw_invalidate_layer(data->UF, ufraw_raw_phase);
-            render_preview(data);
-        }
+        if (!CFG->noExit)
+            gtk_main_quit();
+    }
+    // Restore setting
+    CFG->shrink = shrinkSave;
+    CFG->size = sizeSave;
+    data->FreezeDialog = FALSE;
+    gtk_widget_set_sensitive(data->Controls, TRUE);
+    // cases that set error status require redrawing of the preview image
+    if (status != UFRAW_SUCCESS || CFG->noExit) {
+        ufraw_invalidate_layer(data->UF, ufraw_raw_phase);
+        render_preview(data);
     }
 }
 
@@ -5389,6 +5390,10 @@ static void save_fill_interface(preview_data *data,
 
     button = uf_check_button_new(
                  _("Overwrite existing files without asking"), &CFG->overwrite);
+    gtk_box_pack_start(GTK_BOX(vBox), button, FALSE, FALSE, 0);
+
+    button = uf_check_button_new(
+                 _("Do not Exit after raw development"), &CFG->noExit);
     gtk_box_pack_start(GTK_BOX(vBox), button, FALSE, FALSE, 0);
     /* End of Save page */
 }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-30 05:00+0200\n"
+"POT-Creation-Date: 2016-08-06 07:00+0200\n"
 "PO-Revision-Date: 2009-10-21 23:21+0800\n"
 "Last-Translator: Xu Yuanfei <stardust858@gmail.com>\n"
 "Language-Team: Simplified Chinese <i18n-zh@googlegroups.com>\n"
@@ -1396,6 +1396,9 @@ msgstr "记住输出路径"
 
 msgid "Overwrite existing files without asking"
 msgstr "覆盖现有文件而不询问"
+
+msgid "Do not Exit after raw development"
+msgstr ""
 
 msgid "Tag"
 msgstr "标记"

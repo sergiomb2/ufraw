@@ -727,7 +727,7 @@ int ufraw_load_raw(ufraw_data *uf)
         UFObject *wbTuning = ufgroup_element(uf->conf->ufobject,
                                              ufWBFineTuning);
         double oldTuning = ufnumber_value(wbTuning);
-        ufraw_set_wb(uf);
+        ufraw_set_wb(uf, FALSE);
         /* Here ufobject's automation goes against us. A change in
          * ChannelMultipliers might change ufWB to uf_manual_wb.
          * So we need to change it back. */
@@ -2015,7 +2015,7 @@ void ufraw_invalidate_smoothing_layer(ufraw_data *uf)
     ufraw_invalidate_layer(uf, ufraw_first_phase);
 }
 
-int ufraw_set_wb(ufraw_data *uf)
+int ufraw_set_wb(ufraw_data *uf, gboolean interactive)
 {
     dcraw_data *raw = uf->raw;
     double rgbWB[3];
@@ -2032,37 +2032,39 @@ int ufraw_set_wb(ufraw_data *uf)
     /* For uf_manual_wb we calculate chanMul from the temperature/green. */
     /* For all other it is the other way around. */
     if (ufarray_is_equal(wb, uf_manual_wb)) {
-        double chanMulArray[4] = {1, 1, 1, 1 };
-        Temperature_to_RGB(ufnumber_value(temperature), rgbWB);
-        rgbWB[1] = rgbWB[1] / ufnumber_value(green);
-        /* Suppose we shot a white card at some temperature:
-         * rgbWB[3] = rgb_cam[3][4] * preMul[4] * camWhite[4]
-         * Now we want to make it white (1,1,1), so we replace preMul
-         * with chanMul, which is defined as:
-         * chanMul[4][4] = cam_rgb[4][3] * (1/rgbWB[3][3]) * rgb_cam[3][4]
-         *		* preMul[4][4]
-         * We "upgraded" preMul, chanMul and rgbWB to diagonal matrices.
-         * This allows for the manipulation:
-         * (1/chanMul)[4][4] = (1/preMul)[4][4] * cam_rgb[4][3] * rgbWB[3][3]
-         *		* rgb_cam[3][4]
-         * We use the fact that rgb_cam[3][4] * (1,1,1,1) = (1,1,1) and get:
-         * (1/chanMul)[4] = (1/preMul)[4][4] * cam_rgb[4][3] * rgbWB[3]
-         */
-        if (uf->raw_color) {
-            /* If there is no color matrix it is simple */
-            if (uf->colors > 1)
-                for (c = 0; c < 3; c++)
-                    chanMulArray[c] = raw->pre_mul[c] / rgbWB[c];
-            ufnumber_array_set(chanMul, chanMulArray);
-        } else {
-            for (c = 0; c < uf->colors; c++) {
-                double chanMulInv = 0;
-                for (cc = 0; cc < 3; cc++)
-                    chanMulInv += 1 / raw->pre_mul[c] * raw->cam_rgb[c][cc]
-                                  * rgbWB[cc];
-                chanMulArray[c] = 1 / chanMulInv;
+        if (interactive) {
+            double chanMulArray[4] = {1, 1, 1, 1 };
+            Temperature_to_RGB(ufnumber_value(temperature), rgbWB);
+            rgbWB[1] = rgbWB[1] / ufnumber_value(green);
+            /* Suppose we shot a white card at some temperature:
+             * rgbWB[3] = rgb_cam[3][4] * preMul[4] * camWhite[4]
+             * Now we want to make it white (1,1,1), so we replace preMul
+             * with chanMul, which is defined as:
+             * chanMul[4][4] = cam_rgb[4][3] * (1/rgbWB[3][3]) * rgb_cam[3][4]
+             *          * preMul[4][4]
+             * We "upgraded" preMul, chanMul and rgbWB to diagonal matrices.
+             * This allows for the manipulation:
+             * (1/chanMul)[4][4] = (1/preMul)[4][4] * cam_rgb[4][3] * rgbWB[3][3]
+             *          * rgb_cam[3][4]
+             * We use the fact that rgb_cam[3][4] * (1,1,1,1) = (1,1,1) and get:
+             * (1/chanMul)[4] = (1/preMul)[4][4] * cam_rgb[4][3] * rgbWB[3]
+             */
+            if (uf->raw_color) {
+                /* If there is no color matrix it is simple */
+                if (uf->colors > 1)
+                    for (c = 0; c < 3; c++)
+                        chanMulArray[c] = raw->pre_mul[c] / rgbWB[c];
+                ufnumber_array_set(chanMul, chanMulArray);
+            } else {
+                for (c = 0; c < uf->colors; c++) {
+                    double chanMulInv = 0;
+                    for (cc = 0; cc < 3; cc++)
+                        chanMulInv += 1 / raw->pre_mul[c] * raw->cam_rgb[c][cc]
+                                      * rgbWB[cc];
+                    chanMulArray[c] = 1 / chanMulInv;
+                }
+                ufnumber_array_set(chanMul, chanMulArray);
             }
-            ufnumber_array_set(chanMul, chanMulArray);
         }
         ufnumber_set(wbTuning, 0);
         return UFRAW_SUCCESS;
@@ -2174,7 +2176,7 @@ int ufraw_set_wb(ufraw_data *uf)
                 ufnumber_array_set(chanMul, wb_preset[lastTuning].channel);
             } else {
                 ufobject_set_string(wb, uf_manual_wb);
-                ufraw_set_wb(uf);
+                ufraw_set_wb(uf, interactive);
                 return UFRAW_WARNING;
             }
         }

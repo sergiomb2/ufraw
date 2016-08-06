@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.20\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-30 05:00+0200\n"
+"POT-Creation-Date: 2016-08-06 07:00+0200\n"
 "PO-Revision-Date: 2014-09-18 15:27+0200\n"
 "Last-Translator: Milan Knizek <knizek@volny.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -1432,6 +1432,9 @@ msgstr "Pamatovat si výstupní cestu"
 
 msgid "Overwrite existing files without asking"
 msgstr "Přepsat existující soubory bez vyzvání"
+
+msgid "Do not Exit after raw development"
+msgstr ""
 
 msgid "Tag"
 msgstr "Štítek"

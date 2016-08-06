@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFRaw 0.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-30 05:00+0200\n"
+"POT-Creation-Date: 2016-08-06 07:00+0200\n"
 "PO-Revision-Date: 2009-10-07 10:53-0300\n"
 "Last-Translator: Bruno Buys <brunobuys@gmail.com>\n"
 "Language-Team: Portuguese\n"
@@ -1442,6 +1442,9 @@ msgstr "Lembrar o caminho de saída"
 
 msgid "Overwrite existing files without asking"
 msgstr "Sobrescrever arquivos existentes sem perguntar"
+
+msgid "Do not Exit after raw development"
+msgstr ""
 
 msgid "Tag"
 msgstr "Tag"
