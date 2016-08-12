@@ -300,6 +300,15 @@ const wb_data wb_preset[] = {
   { "Canon", "PowerShot G7 X", Underwater, 8,	{ 2.882016, 1, 1.278351, 0 } },
   { "Canon", "PowerShot G7 X", Underwater, 9,	{ 3.025362, 1, 1.225845, 0 } },
 
+  { "Canon", "PowerShot G7 X Mark II", Daylight, 0, { 2.111328, 1, 1.791992, 0 } },
+  { "Canon", "PowerShot G7 X Mark II", Shade, 0, { 2.419922, 1, 1.485351, 0 } },
+  { "Canon", "PowerShot G7 X Mark II", Cloudy, 0, { 2.274414, 1, 1.631836, 0 } },
+  { "Canon", "PowerShot G7 X Mark II", Tungsten, 0, { 1.440430, 1, 2.782227, 0 } },
+  { "Canon", "PowerShot G7 X Mark II", Fluorescent, 0, { 2.149414, 1, 2.474609, 0 } },
+  { "Canon", "PowerShot G7 X Mark II", FluorescentHigh, 0, { 2.419922, 1, 1.485352, 0 } },
+  { "Canon", "PowerShot G7 X Mark II", Underwater, 0, { 2.327148, 1, 1.642578, 0 } },
+  { "Canon", "PowerShot G7 X Mark II", Flash, 0, { 2.576172, 1, 1.362305, 0 } },
+
   { "Canon", "PowerShot G9", Daylight, 0,	{ 2.089552, 1, 1.786452, 0 } },
   { "Canon", "PowerShot G9", Cloudy, 0,		{ 2.208716, 1, 1.660550, 0 } },
   { "Canon", "PowerShot G9", Tungsten, 0,	{ 1.533493, 1, 2.586124, 0 } },
