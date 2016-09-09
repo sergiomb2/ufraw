@@ -24,7 +24,7 @@
  *	      will be interpolated.
  * Column 5 - Channel multipliers.
  *
- * Minolta's ALPHA and MAXXUM models are treated as the DYNAX model.
+ * MINOLTA's ALPHA and MAXXUM models are treated as the DYNAX model.
  *
  * WB name is standardized to one of the following: */
 // "Sunlight" and other variation should be switched to this:
@@ -39,20 +39,20 @@ static const char IncandescentWarm[] = N_("Incandescent warm");
 // Same as "Incandescent":
 static const char Tungsten[] = N_("Tungsten");
 static const char Fluorescent[] = N_("Fluorescent");
-// In Canon cameras and some newer Nikon cameras:
+// In Canon cameras and some newer NIKON cameras:
 static const char FluorescentHigh[] = N_("Fluorescent high");
 static const char CoolWhiteFluorescent[] = N_("Cool white fluorescent");
 static const char WarmWhiteFluorescent[] = N_("Warm white fluorescent");
 static const char DaylightFluorescent[] = N_("Daylight fluorescent");
 static const char NeutralFluorescent[] = N_("Neutral fluorescent");
 static const char WhiteFluorescent[] = N_("White fluorescent");
-// In some newer Nikon cameras:
+// In some newer NIKON cameras:
 static const char SodiumVaporFluorescent[] = N_("Sodium-vapor fluorescent");
 static const char DayWhiteFluorescent[] = N_("Day white fluorescent");
 static const char HighTempMercuryVaporFluorescent[] = N_("High temp. mercury-vapor fluorescent");
 
 static const char Flash[] = N_("Flash");
-// For Olympus with no real "Flash" preset:
+// For OLYMPUS with no real "Flash" preset:
 static const char FlashAuto[] = N_("Flash (auto mode)");
 static const char EveningSun[] = N_("Evening sun");
 static const char Underwater[] = N_("Underwater");
@@ -2644,7 +2644,7 @@ const wb_data wb_preset[] = {
   { "FUJIFILM", "X100", "9100K", 0,		{ 1.8940, 1, 1.0464, 0 } },
   { "FUJIFILM", "X100", "10000K", 0,		{ 1.9503, 1, 1.0298, 0 } },
 
-  /* Fujifilm X100S firmware 1.20 */
+  /* FUJIFILM X100S firmware 1.20 */
   { "FUJIFILM", "X100S", Daylight, 0,		{ 1.874172, 1, 1.490066, 0 } },
   { "FUJIFILM", "X100S", Shade, 0,		{ 2.049669, 1, 1.271523, 0 } },
   { "FUJIFILM", "X100S", DaylightFluorescent, 0, { 2.344371, 1, 1.264901, 0 } },
@@ -3033,65 +3033,65 @@ const wb_data wb_preset[] = {
   { "LEICA", "D-LUX 6", Flash, 0,		{ 2.219697, 1, 1.659091, 0 } },
   { "LEICA", "D-LUX 6", Incandescent, 0,	{ 1.335849, 1, 2.762264, 0 } },
 
-  { "Minolta", "DiMAGE 5", Daylight, 0,		{ 2.023438, 1, 1.371094, 0 } },
-  { "Minolta", "DiMAGE 5", Incandescent, 0,	{ 1.113281, 1, 2.480469, 0 } },
-  { "Minolta", "DiMAGE 5", Fluorescent, 0,	{ 1.957031, 1, 2.058594, 0 } },
-  { "Minolta", "DiMAGE 5", Cloudy, 0,		{ 2.199219, 1, 1.300781, 0 } },
+  { "MINOLTA", "DiMAGE 5", Daylight, 0,		{ 2.023438, 1, 1.371094, 0 } },
+  { "MINOLTA", "DiMAGE 5", Incandescent, 0,	{ 1.113281, 1, 2.480469, 0 } },
+  { "MINOLTA", "DiMAGE 5", Fluorescent, 0,	{ 1.957031, 1, 2.058594, 0 } },
+  { "MINOLTA", "DiMAGE 5", Cloudy, 0,		{ 2.199219, 1, 1.300781, 0 } },
 
-  { "Minolta", "DiMAGE 7", Cloudy, 0,		{ 2.082031, 1, 1.226562, 0 } },
-  { "Minolta", "DiMAGE 7", Daylight, 0,		{ 1.914062, 1, 1.527344, 0 } },
-  { "Minolta", "DiMAGE 7", Fluorescent, 0,	{ 1.917969, 1, 2.007812, 0 } },
-  { "Minolta", "DiMAGE 7", Tungsten, 0,		{ 1.050781, 1, 2.437500, 0 } },
+  { "MINOLTA", "DiMAGE 7", Cloudy, 0,		{ 2.082031, 1, 1.226562, 0 } },
+  { "MINOLTA", "DiMAGE 7", Daylight, 0,		{ 1.914062, 1, 1.527344, 0 } },
+  { "MINOLTA", "DiMAGE 7", Fluorescent, 0,	{ 1.917969, 1, 2.007812, 0 } },
+  { "MINOLTA", "DiMAGE 7", Tungsten, 0,		{ 1.050781, 1, 2.437500, 0 } },
 
-  { "Minolta", "DiMAGE 7i", Daylight, 0,	{ 1.441406, 1, 1.457031, 0 } },
-  { "Minolta", "DiMAGE 7i", Tungsten, 0,	{ 1, 1.333333, 3.572917, 0 } },
-  { "Minolta", "DiMAGE 7i", Fluorescent, 0,	{ 1.554688, 1, 2.230469, 0 } },
-  { "Minolta", "DiMAGE 7i", Cloudy, 0,		{ 1.550781, 1, 1.402344, 0 } },
+  { "MINOLTA", "DiMAGE 7i", Daylight, 0,	{ 1.441406, 1, 1.457031, 0 } },
+  { "MINOLTA", "DiMAGE 7i", Tungsten, 0,	{ 1, 1.333333, 3.572917, 0 } },
+  { "MINOLTA", "DiMAGE 7i", Fluorescent, 0,	{ 1.554688, 1, 2.230469, 0 } },
+  { "MINOLTA", "DiMAGE 7i", Cloudy, 0,		{ 1.550781, 1, 1.402344, 0 } },
 
-  { "Minolta", "DiMAGE 7Hi", Daylight, 0,	{ 1.609375, 1, 1.328125, 0 } }, /*5500K*/
-  { "Minolta", "DiMAGE 7Hi", Tungsten, 0,	{ 1, 1.137778, 2.768889, 0 } }, /*2800K*/
-  { "Minolta", "DiMAGE 7Hi", WhiteFluorescent, 0, { 1.664062, 1, 2.105469, 0 } }, /*4060K*/
-  { "Minolta", "DiMAGE 7Hi", CoolWhiteFluorescent, 0, { 1.796875, 1, 1.734375, 0 } }, /*4938K*/
-  { "Minolta", "DiMAGE 7Hi", Cloudy, 0,		{ 1.730469, 1, 1.269531, 0 } }, /*5823K*/
+  { "MINOLTA", "DiMAGE 7Hi", Daylight, 0,	{ 1.609375, 1, 1.328125, 0 } }, /*5500K*/
+  { "MINOLTA", "DiMAGE 7Hi", Tungsten, 0,	{ 1, 1.137778, 2.768889, 0 } }, /*2800K*/
+  { "MINOLTA", "DiMAGE 7Hi", WhiteFluorescent, 0, { 1.664062, 1, 2.105469, 0 } }, /*4060K*/
+  { "MINOLTA", "DiMAGE 7Hi", CoolWhiteFluorescent, 0, { 1.796875, 1, 1.734375, 0 } }, /*4938K*/
+  { "MINOLTA", "DiMAGE 7Hi", Cloudy, 0,		{ 1.730469, 1, 1.269531, 0 } }, /*5823K*/
 
-  { "Minolta", "DiMAGE A1", Daylight, 0,	{ 1.808594, 1, 1.304688, 0 } },
-  { "Minolta", "DiMAGE A1", Tungsten, 0,	{ 1.062500, 1, 2.675781, 0 } },
-  { "Minolta", "DiMAGE A1", Fluorescent, 0,	{ 1.707031, 1, 2.039063, 0 } },
-  { "Minolta", "DiMAGE A1", Cloudy, 0,		{ 1.960938, 1, 1.339844, 0 } },
-  { "Minolta", "DiMAGE A1", Shade, 0,		{ 2.253906, 1, 1.199219, 0 } },
-  { "Minolta", "DiMAGE A1", Shade, 2,		{ 2.000000, 1, 1.183594, 0 } },
-  { "Minolta", "DiMAGE A1", Flash, 0,		{ 1.972656, 1, 1.265625, 0 } },
+  { "MINOLTA", "DiMAGE A1", Daylight, 0,	{ 1.808594, 1, 1.304688, 0 } },
+  { "MINOLTA", "DiMAGE A1", Tungsten, 0,	{ 1.062500, 1, 2.675781, 0 } },
+  { "MINOLTA", "DiMAGE A1", Fluorescent, 0,	{ 1.707031, 1, 2.039063, 0 } },
+  { "MINOLTA", "DiMAGE A1", Cloudy, 0,		{ 1.960938, 1, 1.339844, 0 } },
+  { "MINOLTA", "DiMAGE A1", Shade, 0,		{ 2.253906, 1, 1.199219, 0 } },
+  { "MINOLTA", "DiMAGE A1", Shade, 2,		{ 2.000000, 1, 1.183594, 0 } },
+  { "MINOLTA", "DiMAGE A1", Flash, 0,		{ 1.972656, 1, 1.265625, 0 } },
 
-  { "Minolta", "DiMAGE A2", Cloudy, -3,		{ 2.109375, 1, 1.578125, 0 } },
-  { "Minolta", "DiMAGE A2", Cloudy, 0,		{ 2.203125, 1, 1.296875, 0 } },
-  { "Minolta", "DiMAGE A2", Cloudy, 3,		{ 2.296875, 1, 1.015625, 0 } },
-  { "Minolta", "DiMAGE A2", Daylight, -3,	{ 1.867188, 1, 1.683594, 0 } },
-  { "Minolta", "DiMAGE A2", Daylight, 0,	{ 1.960938, 1, 1.402344, 0 } },
-  { "Minolta", "DiMAGE A2", Daylight, 3,	{ 2.054688, 1, 1.121094, 0 } },
-  { "Minolta", "DiMAGE A2", Flash, -3,		{ 1.945312, 1, 1.613281, 0 } },
-  { "Minolta", "DiMAGE A2", Flash, 0,		{ 2.039062, 1, 1.332031, 0 } },
-  { "Minolta", "DiMAGE A2", Flash, 3,		{ 2.132812, 1, 1.050781, 0 } },
-  { "Minolta", "DiMAGE A2", Fluorescent, -2,	{ 1.136719, 1, 2.746094, 0 } },
-  { "Minolta", "DiMAGE A2", Fluorescent, 0,	{ 1.722656, 1, 2.132812, 0 } },
-  { "Minolta", "DiMAGE A2", Fluorescent, 4,	{ 2.347656, 1, 1.535156, 0 } },
-  { "Minolta", "DiMAGE A2", Shade, -3,		{ 2.273438, 1, 1.546875, 0 } },
-  { "Minolta", "DiMAGE A2", Shade, 0,		{ 2.367188, 1, 1.265625, 0 } },
-  { "Minolta", "DiMAGE A2", Shade, 3,		{ 2.500000, 1.015873, 1, 0 } },
-  { "Minolta", "DiMAGE A2", Tungsten, -3,	{ 1.003906, 1, 3.164062, 0 } },
-  { "Minolta", "DiMAGE A2", Tungsten, 0,	{ 1.097656, 1, 2.882812, 0 } },
-  { "Minolta", "DiMAGE A2", Tungsten, 3,	{ 1.191406, 1, 2.601562, 0 } },
+  { "MINOLTA", "DiMAGE A2", Cloudy, -3,		{ 2.109375, 1, 1.578125, 0 } },
+  { "MINOLTA", "DiMAGE A2", Cloudy, 0,		{ 2.203125, 1, 1.296875, 0 } },
+  { "MINOLTA", "DiMAGE A2", Cloudy, 3,		{ 2.296875, 1, 1.015625, 0 } },
+  { "MINOLTA", "DiMAGE A2", Daylight, -3,	{ 1.867188, 1, 1.683594, 0 } },
+  { "MINOLTA", "DiMAGE A2", Daylight, 0,	{ 1.960938, 1, 1.402344, 0 } },
+  { "MINOLTA", "DiMAGE A2", Daylight, 3,	{ 2.054688, 1, 1.121094, 0 } },
+  { "MINOLTA", "DiMAGE A2", Flash, -3,		{ 1.945312, 1, 1.613281, 0 } },
+  { "MINOLTA", "DiMAGE A2", Flash, 0,		{ 2.039062, 1, 1.332031, 0 } },
+  { "MINOLTA", "DiMAGE A2", Flash, 3,		{ 2.132812, 1, 1.050781, 0 } },
+  { "MINOLTA", "DiMAGE A2", Fluorescent, -2,	{ 1.136719, 1, 2.746094, 0 } },
+  { "MINOLTA", "DiMAGE A2", Fluorescent, 0,	{ 1.722656, 1, 2.132812, 0 } },
+  { "MINOLTA", "DiMAGE A2", Fluorescent, 4,	{ 2.347656, 1, 1.535156, 0 } },
+  { "MINOLTA", "DiMAGE A2", Shade, -3,		{ 2.273438, 1, 1.546875, 0 } },
+  { "MINOLTA", "DiMAGE A2", Shade, 0,		{ 2.367188, 1, 1.265625, 0 } },
+  { "MINOLTA", "DiMAGE A2", Shade, 3,		{ 2.500000, 1.015873, 1, 0 } },
+  { "MINOLTA", "DiMAGE A2", Tungsten, -3,	{ 1.003906, 1, 3.164062, 0 } },
+  { "MINOLTA", "DiMAGE A2", Tungsten, 0,	{ 1.097656, 1, 2.882812, 0 } },
+  { "MINOLTA", "DiMAGE A2", Tungsten, 3,	{ 1.191406, 1, 2.601562, 0 } },
 
-  { "Minolta", "DiMAGE Z2", Daylight, 0,	{ 1.843749, 1, 1.664062, 0 } },
-  { "Minolta", "DiMAGE Z2", Cloudy, 0,		{ 2.195312, 1, 1.449218, 0 } },
-  { "Minolta", "DiMAGE Z2", Tungsten, 0,	{ 1.097656, 1, 3.050780, 0 } },
-  { "Minolta", "DiMAGE Z2", Fluorescent, 0,	{ 1.796874, 1, 2.257810, 0 } },
-  { "Minolta", "DiMAGE Z2", Flash, 0,		{ 2.117186, 1, 1.472656, 0 } },
+  { "MINOLTA", "DiMAGE Z2", Daylight, 0,	{ 1.843749, 1, 1.664062, 0 } },
+  { "MINOLTA", "DiMAGE Z2", Cloudy, 0,		{ 2.195312, 1, 1.449218, 0 } },
+  { "MINOLTA", "DiMAGE Z2", Tungsten, 0,	{ 1.097656, 1, 3.050780, 0 } },
+  { "MINOLTA", "DiMAGE Z2", Fluorescent, 0,	{ 1.796874, 1, 2.257810, 0 } },
+  { "MINOLTA", "DiMAGE Z2", Flash, 0,		{ 2.117186, 1, 1.472656, 0 } },
 
-  { "Minolta", "DiMAGE G500", Daylight, 0,	{ 1.496094, 1, 1.121094, 0 } },
-  { "Minolta", "DiMAGE G500", Cloudy, 0,	{ 1.527344, 1, 1.105469, 0 } },
-  { "Minolta", "DiMAGE G500", Fluorescent, 0,	{ 1.382813, 1, 1.347656, 0 } },
-  { "Minolta", "DiMAGE G500", Tungsten, 0,	{ 1.042969, 1, 1.859375, 0 } },
-  { "Minolta", "DiMAGE G500", Flash, 0,		{ 1.647078, 1, 1.218159, 0 } },
+  { "MINOLTA", "DiMAGE G500", Daylight, 0,	{ 1.496094, 1, 1.121094, 0 } },
+  { "MINOLTA", "DiMAGE G500", Cloudy, 0,	{ 1.527344, 1, 1.105469, 0 } },
+  { "MINOLTA", "DiMAGE G500", Fluorescent, 0,	{ 1.382813, 1, 1.347656, 0 } },
+  { "MINOLTA", "DiMAGE G500", Tungsten, 0,	{ 1.042969, 1, 1.859375, 0 } },
+  { "MINOLTA", "DiMAGE G500", Flash, 0,		{ 1.647078, 1, 1.218159, 0 } },
 
   { "MINOLTA", "DYNAX 5D", Daylight, -3,	{ 1.593750, 1, 1.875000, 0 } },
   { "MINOLTA", "DYNAX 5D", Daylight, -2,	{ 1.644531, 1, 1.792969, 0 } },
@@ -3268,7 +3268,7 @@ const wb_data wb_preset[] = {
   { "NIKON", "1 V3", Cloudy, 0,			{ 2.910156, 1, 1.644531, 0 } },
   { "NIKON", "1 V3", Shade, 0,			{ 3.359375, 1, 1.507812, 0 } },
 
-  // Nikon CoolPix P330 firmware 1.0
+  // NIKON COOLPIX P330 firmware 1.0
   { "NIKON", "COOLPIX P330", DirectSunlight, 0,	{ 1.792969, 1, 1.656250, 0 } },
   { "NIKON", "COOLPIX P330", Incandescent, 0,	{ 1.171875, 1, 2.730469, 0 } },
   { "NIKON", "COOLPIX P330", CoolWhiteFluorescent, 0, { 1.867188, 1, 2.421875, 0 } },
@@ -4721,7 +4721,7 @@ const wb_data wb_preset[] = {
   { "NIKON", "D5100", HighTempMercuryVaporFluorescent, 5, { 2.375000, 1, 1.511719, 0 } },
   { "NIKON", "D5100", HighTempMercuryVaporFluorescent, 6, { 2.375000, 1, 1.511719, 0 } },
 
-  /* Nikon D5200 firmware version 1.01 */
+  /* NIKON D5200 firmware version 1.01 */
   { "NIKON", "D5200", DirectSunlight, 0,	{ 2.386719, 1, 1.597656, 0 } },
   { "NIKON", "D5200", Flash, 0,			{ 2.753906, 1, 1.371094, 0 } },
   { "NIKON", "D5200", Cloudy, 0,		{ 2.656250, 1, 1.453125, 0 } },
@@ -5027,7 +5027,7 @@ const wb_data wb_preset[] = {
   { "OLYMPUS", "C5060WZ", Incandescent, 0,	{ 1, 1.153153, 3.662162, 0 } },
   { "OLYMPUS", "C5060WZ", FlashAuto, 0,		{ 1.850000, 1, 1.308044, 0 } },
 
-  // Olympus C8080WZ - firmware 757-78
+  // OLYMPUS C8080WZ - firmware 757-78
   { "OLYMPUS", "C8080WZ", Shade, -7,		{ 1.515625, 1, 1.773438, 0 } },
   { "OLYMPUS", "C8080WZ", Shade, -6,		{ 1.671875, 1, 1.691406, 0 } },
   { "OLYMPUS", "C8080WZ", Shade, -5,		{ 1.832031, 1, 1.605469, 0 } },
@@ -7565,7 +7565,7 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K-7", Tungsten, 0,		{ 1.105469, 1, 2.347656, 0 } },
   { "PENTAX", "K-7", Flash, 0,			{ 2.093750, 1, 1.082031, 0 } },
 
-  // Pentax K-30 (FW v1.05)
+  // PENTAX K-30 (FW v1.05)
   { "PENTAX", "K-30", Daylight, 0,		{ 2.213013, 1, 1.629150, 0 } },
   { "PENTAX", "K-30", Shade, 0,			{ 2.644287, 1, 1.215942, 0 } },
   { "PENTAX", "K-30", Cloudy, 0,		{ 2.384521, 1, 1.392944, 0 } },
@@ -8063,7 +8063,7 @@ const wb_data wb_preset[] = {
   { "SAMSUNG", "NX11", "5500K", 0,		{ 1.692022, 1, 0.843950, 0 } },
   { "SAMSUNG", "NX11", "6500K", 0,		{ 2.110371, 1, 0.879107, 0 } },
 
-  // Copied from Samsung NX200
+  // Copied from SAMSUNG NX200
   { "SAMSUNG", "NX20", Daylight, 0,		{ 2.773438, 1, 1.625000, 0 } },
   { "SAMSUNG", "NX20", Cloudy, 0,		{ 2.902344, 1, 1.546875, 0 } },
   { "SAMSUNG", "NX20", WhiteFluorescent, 0,	{ 2.445313, 1, 2.316406, 0 } },
@@ -8191,7 +8191,7 @@ const wb_data wb_preset[] = {
   { "SAMSUNG", "NX200", Tungsten, 0,		{ 1.511719, 1, 2.941406, 0 } },
   { "SAMSUNG", "NX200", Flash, 0,		{ 2.914063, 1, 1.191406, 0 } },
 
-  // Copied from Samsung NX200
+  // Copied from SAMSUNG NX200
   { "SAMSUNG", "NX210", Daylight, 0,		{ 2.773438, 1, 1.625000, 0 } },
   { "SAMSUNG", "NX210", Cloudy, 0,		{ 2.902344, 1, 1.546875, 0 } },
   { "SAMSUNG", "NX210", WhiteFluorescent, 0,	{ 2.445313, 1, 2.316406, 0 } },
@@ -8429,7 +8429,7 @@ const wb_data wb_preset[] = {
   { "SAMSUNG", "NX500", Tungsten, 0,		{ 1.298387, 1, 2.439516, 0 } },
   { "SAMSUNG", "NX500", Flash, 0,		{ 1.959677, 1, 1.169355, 0 } },
 
-  // Copied from Samsung NX200
+  // Copied from SAMSUNG NX200
   { "SAMSUNG", "NX1000", Daylight, 0,		{ 2.773438, 1, 1.625000, 0 } },
   { "SAMSUNG", "NX1000", Cloudy, 0,		{ 2.902344, 1, 1.546875, 0 } },
   { "SAMSUNG", "NX1000", WhiteFluorescent, 0,	{ 2.445313, 1, 2.316406, 0 } },
@@ -8438,7 +8438,7 @@ const wb_data wb_preset[] = {
   { "SAMSUNG", "NX1000", Tungsten, 0,		{ 1.511719, 1, 2.941406, 0 } },
   { "SAMSUNG", "NX1000", Flash, 0,		{ 2.914063, 1, 1.191406, 0 } },
 
-  // Copied from Samsung NX200
+  // Copied from SAMSUNG NX200
   { "SAMSUNG", "NX1100", Daylight, 0,		{ 2.773438, 1, 1.625000, 0 } },
   { "SAMSUNG", "NX1100", Cloudy, 0,		{ 2.902344, 1, 1.546875, 0 } },
   { "SAMSUNG", "NX1100", WhiteFluorescent, 0,	{ 2.445313, 1, 2.316406, 0 } },
@@ -8681,7 +8681,7 @@ const wb_data wb_preset[] = {
   { "SONY", "DSLR-A200", Flash, 3 ,		{ 2.109375, 1, 1.285156, 0 } },
   { "SONY", "DSLR-A200", "5600K", 0 ,		{ 1.710938, 1, 1.683594, 0 } },
 
-  /* Sony A230 presets - firmware v1.10 */
+  /* SONY DSLR-A230 presets - firmware v1.10 */
   { "SONY", "DSLR-A230", Daylight, -3,		{ 1.621094, 1, 1.949219, 0 } },
   { "SONY", "DSLR-A230", Daylight, -2,		{ 1.675781, 1, 1.859375, 0 } },
   { "SONY", "DSLR-A230", Daylight, -1,		{ 1.726563, 1, 1.773438, 0 } },
@@ -8852,7 +8852,7 @@ const wb_data wb_preset[] = {
   { "SONY", "DSLR-A390", Flash, 0,		{ 2.4336, 1, 1.1953, 0 } },
   { "SONY", "DSLR-A390", Flash, 3,		{ 2.6484, 1, 1.0313, 0 } },
 
-  /* Sony A450 presets */
+  /* SONY DSLR-A450 presets */
   { "SONY", "DSLR-A450", Daylight, -3,		{ 2.109375, 1, 1.593750, 0 } },
   { "SONY", "DSLR-A450", Daylight, 0,		{ 2.296875, 1, 1.445312, 0 } },
   { "SONY", "DSLR-A450", Daylight, 3,		{ 2.503906, 1, 1.312500, 0 } },
@@ -8909,7 +8909,7 @@ const wb_data wb_preset[] = {
   { "SONY", "DSLR-A580", "6000K", 0,		{ 2.734375, 1, 1.464844, 0 } },
   { "SONY", "DSLR-A580", "8500K", 0,		{ 3.156250, 1, 1.238281, 0 } },
 
-  /* Sony A700 presets - firmware v4 */
+  /* SONY DSLR-A700 presets - firmware v4 */
   { "SONY", "DSLR-A700", Daylight, -3,		{ 1.972656, 1, 1.777344, 0 } },
   { "SONY", "DSLR-A700", Daylight, -2,		{ 2.027344, 1, 1.718750, 0 } },
   { "SONY", "DSLR-A700", Daylight, -1,		{ 2.089844, 1, 1.664063, 0 } },
@@ -8953,7 +8953,7 @@ const wb_data wb_preset[] = {
   { "SONY", "DSLR-A700", Flash, 2,		{ 2.484375, 1, 1.328125, 0 } },
   { "SONY", "DSLR-A700", Flash, 3,		{ 2.554688, 1, 1.285156, 0 } },
 
-  /* Sony A850 presets - firmware v1.00 */
+  /* SONY DSLR-A850 presets - firmware v1.00 */
   { "SONY", "DSLR-A850", Daylight, -3,		{ 2.445313, 1, 1.515625, 0 } },
   { "SONY", "DSLR-A850", Daylight, 0,		{ 2.683594, 1, 1.359375, 0 } },
   { "SONY", "DSLR-A850", Daylight, 3,		{ 2.929688, 1, 1.222656, 0 } },
