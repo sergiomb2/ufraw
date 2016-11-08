@@ -7655,6 +7655,20 @@ const wb_data wb_preset[] = {
   { "PENTAX", "K-01", Tungsten, 0,		{ 1.320313, 1, 2.993530, 0 } },
   { "PENTAX", "K-01", Flash, 0,			{ 2.490967, 1, 1.484985, 0 } },
 
+  /* PENTAX K-1 Firmware Version 1.10 */
+  { "PENTAX", "K-1", Daylight, 0,		{ 2.14062, 1, 1.66406, 0 } },
+  { "PENTAX", "K-1", Shade, 0,			{ 2.65625, 1, 1.25000, 0 } },
+  { "PENTAX", "K-1", Cloudy, 0,			{ 2.37109, 1, 1.43750, 0 } },
+  { "PENTAX", "K-1", DaylightFluorescent, 0,	{ 2.61328, 1, 1.60938, 0 } },
+  { "PENTAX", "K-1", CoolWhiteFluorescent, 0,	{ 2.23047, 1, 1.82031, 0 } },
+  { "PENTAX", "K-1", WhiteFluorescent, 0,	{ 2.01953, 1, 2.19531, 0 } },
+  { "PENTAX", "K-1", WarmWhiteFluorescent, 0,	{ 1.70312, 1, 2.77734, 0 } },
+  { "PENTAX", "K-1", Tungsten, 0,		{ 1.32422, 1, 2.92969, 0 } },
+  { "PENTAX", "K-1", "2500K", 0,		{ 1.14062, 1, 2.75391, 0 } },
+  { "PENTAX", "K-1", "3000K", 0,		{ 1.40234, 1, 2.33984, 0 } },
+  { "PENTAX", "K-1", "5000K", 0,		{ 2.07812, 1, 1.54688, 0 } },
+  { "PENTAX", "K-1", "5500K", 0,		{ 2.19141, 1, 1.45703, 0 } },
+
   /* PENTAX K-3 Firmware version 1.00 */
   { "PENTAX", "K-3", Daylight, 0,		{ 2.31250, 1, 1.48047, 0 } },
   { "PENTAX", "K-3", Shade, 0,			{ 2.78516, 1, 1.16797, 0 } },
