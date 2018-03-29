@@ -215,7 +215,6 @@ static void load_curve(GtkWidget *widget, long curveType)
                 CFG->BaseCurveCount++;
                 /* Add curve to .ufrawrc but don't make it default */
                 RC->BaseCurve[RC->BaseCurveCount++] = c;
-                RC->BaseCurveCount++;
                 if (CFG_cameraCurve)
                     gtk_combo_box_set_active(data->BaseCurveCombo,
                                              CFG->BaseCurveIndex);
@@ -230,7 +229,6 @@ static void load_curve(GtkWidget *widget, long curveType)
                 CFG->curveCount++;
                 /* Add curve to .ufrawrc but don't make it default */
                 RC->curve[RC->curveCount++] = c;
-                RC->curveCount++;
                 gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
             }
             cp = g_path_get_dirname(list->data);
