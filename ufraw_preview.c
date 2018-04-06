@@ -142,6 +142,36 @@ void ufraw_messenger(char *message,  void *parentWindow)
     }
 }
 
+/*
+ * Check if a named curve exists in a table of curves
+ *   First cut is to check for name match only.
+ *   Ideally, we should check points defining the curve as well.
+ *   However, if we do that we also need to have some way of
+ *   differentiating them by name in the drop-downs
+ *   and those names must be consistent across reloads,
+ *   regardless of the order in the .ufrawrc file
+ * returns:
+ *   -1 if curve does not exist in the table of curves
+ *   index into the curve table if the curve is there
+ *     0 < return value < table.curveCount
+ * TODO: The various curve tables and their counts, max counts, and current index
+ * should be combined into a single object/structure which can be passed
+ * as one param.
+ */
+static int find_curve_in_conf(CurveData *newCurve, CurveData *curveTbl, int curveCount)
+{
+    int curveIdx = -1;
+    for (int i = 0 ; i < curveCount ; i++) {
+        if (!strcmp(newCurve->name, curveTbl->name)) {
+            curveIdx = i;
+            break;
+        }
+        curveTbl++;
+    }
+    printf("find_curve_in_conf, curveIdx=%d\n", curveIdx);
+    return curveIdx;
+}
+
 static void load_curve(GtkWidget *widget, long curveType)
 {
     preview_data *data = get_preview_data(widget);
@@ -149,6 +179,7 @@ static void load_curve(GtkWidget *widget, long curveType)
     GtkFileFilter *filter;
     GSList *list, *saveList;
     CurveData c;
+    int curveIdx;   /* index into curve table; < 0 means not there */
     char *cp;
 
     if (data->FreezeDialog) return;
@@ -209,34 +240,48 @@ static void load_curve(GtkWidget *widget, long curveType)
             if (curve_load(&c, list->data) != UFRAW_SUCCESS) continue;
             if (curveType == base_curve) {
                 if (CFG->BaseCurveCount >= max_curves) break;
-                gtk_combo_box_append_text(data->BaseCurveCombo, c.name);
-                CFG->BaseCurve[CFG->BaseCurveCount] = c;
-                CFG->BaseCurveIndex = CFG->BaseCurveCount;
-                CFG->BaseCurveCount++;
-                /* Add curve to .ufrawrc but don't make it default */
-                RC->BaseCurve[RC->BaseCurveCount++] = c;
-                RC->BaseCurveCount++;
-                if (CFG_cameraCurve)
-                    gtk_combo_box_set_active(data->BaseCurveCombo,
+                curveIdx = find_curve_in_conf(&c, CFG->curve, CFG->curveCount);
+                if (curveIdx < 0) {   /* check if unknown curve */
+                    gtk_combo_box_append_text(data->BaseCurveCombo, c.name);
+                    CFG->BaseCurve[CFG->BaseCurveCount] = c;
+                    CFG->BaseCurveIndex = CFG->BaseCurveCount;
+                    CFG->BaseCurveCount++;
+                    /* Add curve to .ufrawrc but don't make it default */
+                    RC->BaseCurve[RC->BaseCurveCount++] = c;
+                    if (CFG_cameraCurve)
+                        gtk_combo_box_set_active(data->BaseCurveCombo,
                                              CFG->BaseCurveIndex);
-                else
-                    gtk_combo_box_set_active(data->BaseCurveCombo,
+                    else
+                        gtk_combo_box_set_active(data->BaseCurveCombo,
                                              CFG->BaseCurveIndex - 2);
+                } else { /* change the active curve */
+                    gtk_combo_box_set_active(data->CurveCombo, curveIdx);
+                }
             } else { /* curveType==luminosity_curve */
                 if (CFG->curveCount >= max_curves) break;
-                gtk_combo_box_append_text(data->CurveCombo, c.name);
-                CFG->curve[CFG->curveCount] = c;
-                CFG->curveIndex = CFG->curveCount;
-                CFG->curveCount++;
-                /* Add curve to .ufrawrc but don't make it default */
-                RC->curve[RC->curveCount++] = c;
-                RC->curveCount++;
-                gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
+                curveIdx = find_curve_in_conf(&c, CFG->curve, CFG->curveCount);
+                if (curveIdx < 0) {
+                    /* curve is a new one we don't know about, record it */
+                    gtk_combo_box_append_text(data->CurveCombo, c.name);
+                    CFG->curve[CFG->curveCount] = c;
+                    CFG->curveIndex = CFG->curveCount;
+                    CFG->curveCount++;
+                    /* Add curve to .ufrawrc but don't make it default */
+                    RC->curve[RC->curveCount++] = c;
+                    gtk_combo_box_set_active(data->CurveCombo, CFG->curveIndex);
+                } else { /* change active curve to existing one */
+                    gtk_combo_box_set_active(data->CurveCombo, curveIdx);
+                }
             }
+            /* Save the curve to the config, as it is the one used by this image
+             * if it is a new one, also save it to the .ufrawrc file
+             */
             cp = g_path_get_dirname(list->data);
             g_strlcpy(CFG->curvePath, cp, max_path);
-            g_strlcpy(RC->curvePath, cp, max_path);
-            conf_save(RC, NULL, NULL);
+            if (curveIdx < 0) {
+                g_strlcpy(RC->curvePath, cp, max_path);
+                conf_save(RC, NULL, NULL);
+            }
             g_free(cp);
             g_free(list->data);
         }
