@@ -828,8 +828,19 @@ extern "C" {
             uf->modifier->Destroy();
         uf->modifier = lfModifier::Create(&Lensfun.Transformation,
                                           Lensfun.Camera.CropFactor, width, height);
-        if (uf->modifier == NULL)
+        /* Make sure the Camera is valid;
+         * Operations can return nan (not-a-number) values if not
+         * We should instead guarantee a valid camera,
+         * and if none present, skip everything.
+         */
+        if (uf->modifier == NULL) {
             return;
+        } else if (! Lensfun.Camera.Check()) {
+            g_warning("ufraw_convert_prepare_transform: Camare check failed, skipping lens correction");
+            uf->modifier->Destroy();
+            uf->modifier = NULL;
+            return;
+        }
 
         UFArray &targetLensGeometry = Lensfun[ufTargetLensGeometry];
         uf->modFlags = uf->modifier->Initialize(&Lensfun.Transformation,
@@ -853,8 +864,19 @@ extern "C" {
             uf->TCAmodifier->Destroy();
         uf->TCAmodifier = lfModifier::Create(&Lensfun.Transformation,
                                              Lensfun.Camera.CropFactor, img->width, img->height);
-        if (uf->TCAmodifier == NULL)
+        /* Make sure the Camera is valid;
+         * Operations can return nan (not-a-number) values if not
+         * We should instead guarantee a valid camera,
+         * and if none present, skip everything.
+         */
+        if (uf->TCAmodifier == NULL) {
             return;
+        } else if (! Lensfun.Camera.Check()) {
+            g_warning("ufraw_prepare_tca: Camare check failed, skipping lens correction");
+            uf->TCAmodifier->Destroy();
+            uf->TCAmodifier = NULL;
+            return;
+        }
 
         UFArray &targetLensGeometry = Lensfun[ufTargetLensGeometry];
         int modFlags = uf->TCAmodifier->Initialize(&Lensfun.Transformation,
