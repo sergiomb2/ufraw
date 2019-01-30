@@ -8866,8 +8866,8 @@ void CLASS identify()
       "Nikon", "Nokia", "Olympus", "Ricoh", "Pentax", "Phase One",
       "Samsung", "Sigma", "Sinar", "Sony" };
   char head[32], *cp;
-  unsigned fsize, i, c;
-  int hlen, flen, zero_fsize=1;
+  unsigned fsize;
+  int hlen, flen, zero_fsize=1, i, c;
   struct jhead jh;
 
   tiff_flip = flip = filters = UINT_MAX;	/* unknown */
