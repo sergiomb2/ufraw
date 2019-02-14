@@ -900,7 +900,7 @@ start:
             rgbWB[3] = rgbWB[1];
         if (dark) {
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(static) default(none) \
+            #pragma omp parallel for schedule(static) \
             shared(h,dark,rgbWB)
 #endif
             for (int i = 0; i < pixels; i++) {
@@ -913,7 +913,7 @@ start:
             }
         } else {
 #ifdef _OPENMP
-            #pragma omp parallel for schedule(static) default(none) \
+            #pragma omp parallel for schedule(static) \
             shared(h,dark,rgbWB)
 #endif
             for (int i = 0; i < pixels; i++) {

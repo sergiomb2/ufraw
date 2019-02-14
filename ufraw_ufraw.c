@@ -1044,7 +1044,7 @@ static void ufraw_shave_hotpixels(ufraw_data *uf, dcraw_image_type *img,
     delta = rgbMax / (uf->conf->hotpixel + 1.0);
     count = 0;
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(static) default(none) \
+    #pragma omp parallel for schedule(static) \
     shared(uf,img,width,height,colors,rgbMax,delta) \
 reduction(+:count) \
     private(h,p,w,c,t,v,hi,i)
@@ -1366,7 +1366,7 @@ static void ufraw_convert_reverse_wb(ufraw_data *uf, UFRawPhase phase)
         mul[i] = (guint64)0x10000 * 0x10000 / uf->developer->rgbWB[i];
     size = img->height * img->width;
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(static) default(none) \
+    #pragma omp parallel for schedule(static) \
     shared(uf,phase,img,mul,size) \
     private(i,p16,c,px)
 #endif
@@ -1391,7 +1391,7 @@ static void ufraw_convert_image_tca(ufraw_data *uf, ufraw_image_data *img,
         return;
     int y;
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(static) default(none) \
+    #pragma omp parallel for schedule(static) \
     shared(uf,img,outimg,area)
 #endif
     for (y = area->y; y < area->y + area->height; y++) {
