@@ -188,11 +188,19 @@ PKG_CHECK_MODULES(LIBPNG, libpng >= 1.2,
   [ have_png=no
     AC_MSG_RESULT($LIBPNG_PKG_ERRORS) ] )
 
-PKG_CHECK_MODULES(CFITSIO, cfitsio,
-  [ have_cfitsio=yes
-    AC_DEFINE(HAVE_LIBCFITSIO, 1, have the cfitsio library) ],
-  [ have_cfitsio=no
-    AC_MSG_RESULT($CFITSIO_PKG_ERRORS) ] )
+AC_ARG_WITH([cfitsio],
+  [AS_HELP_STRING([--with-cfitsio],
+  [build fits support @<:@default=check@:>@])],
+  [],
+  [with_cfitsio=check])
+
+have_cfitsio=no
+AS_IF([test "x$with_cfitsio" != xno],
+  [PKG_CHECK_MODULES(CFITSIO, cfitsio,
+    [ have_cfitsio=yes
+      AC_DEFINE(HAVE_LIBCFITSIO, 1, have the cfitsio library) ],
+    [ have_cfitsio=no
+      AC_MSG_RESULT($CFITSIO_PKG_ERRORS) ] ) ] )
 
 PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.20,
   [ have_exiv2=yes
