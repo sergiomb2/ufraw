@@ -217,6 +217,9 @@ public:
     void foveon_sd_load_raw();
     void foveon_huff(ushort *huff);
     void foveon_dp_load_raw();
+    void canon_crx_load_raw();
+    void fuji_xtrans_load_raw();
+    void parse_crx (int end);
     void foveon_load_camf();
     const char * foveon_camf_param(const char *block, const char *param);
     void * foveon_camf_matrix(unsigned dim[3], const char *name);
