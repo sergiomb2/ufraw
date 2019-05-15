@@ -7296,7 +7296,7 @@ void CLASS parse_crx (int end)
 	base = ftell(ifp);
 	order = get2();
 	fseek (ifp, 6, SEEK_CUR);
-	tag & 1 ? parse_tiff_ifd (base) : parse_exif (base);
+	tag & 1 ? (void)parse_tiff_ifd (base) : parse_exif (base);
 	order = 0x4d4d;
 	break;
       case 0x746b6864:				/* tkhd */
