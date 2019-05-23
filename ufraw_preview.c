@@ -161,7 +161,8 @@ void ufraw_messenger(char *message,  void *parentWindow)
 static int find_curve_in_conf(CurveData *newCurve, CurveData *curveTbl, int curveCount)
 {
     int curveIdx = -1;
-    for (int i = 0 ; i < curveCount ; i++) {
+    int i;
+    for ( i = 0 ; i < curveCount ; i++) {
         if (!strcmp(newCurve->name, curveTbl->name)) {
             curveIdx = i;
             break;
