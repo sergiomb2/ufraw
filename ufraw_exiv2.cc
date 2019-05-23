@@ -18,6 +18,7 @@
 #include <exiv2/exiv2.hpp>
 #include <sstream>
 #include <cassert>
+#include <iostream>
 
 /*
  * Helper function to copy a string to a buffer, converting it from
