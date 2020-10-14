@@ -152,8 +152,10 @@ char *ufraw_message(int code, const char *format, ...)
     switch (code) {
         case UFRAW_SET_ERROR:
             errorFlag = TRUE;
+            // fall through
         case UFRAW_SET_WARNING:
             errorBuffer = ufraw_message_buffer(errorBuffer, message);
+            // fall through
         case UFRAW_SET_LOG:
         case UFRAW_DCRAW_SET_LOG:
             logBuffer = ufraw_message_buffer(logBuffer, message);
@@ -161,6 +163,7 @@ char *ufraw_message(int code, const char *format, ...)
             return NULL;
         case UFRAW_GET_ERROR:
             if (!errorFlag) return NULL;
+            // fall through
         case UFRAW_GET_WARNING:
             return errorBuffer;
         case UFRAW_GET_LOG:
@@ -168,6 +171,7 @@ char *ufraw_message(int code, const char *format, ...)
         case UFRAW_CLEAN:
             g_free(logBuffer);
             logBuffer = NULL;
+            // fall through
         case UFRAW_RESET:
             g_free(errorBuffer);
             errorBuffer = NULL;
