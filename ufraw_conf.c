@@ -1941,11 +1941,13 @@ int ufraw_process_args(int *argc, char ***argv, conf_data *cmd, conf_data *rc)
                     cmd->autoExposure = apply_state;
                     break;
                 }
+                // fall through
             case 'k':
                 if (!strcmp(optarg, "auto")) {
                     cmd->autoBlack = apply_state;
                     break;
                 }
+                // fall through
             case 'G':
             case 'L':
             case 's':

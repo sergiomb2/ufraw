@@ -1915,20 +1915,26 @@ void ufraw_unnormalize_rotation(ufraw_data *uf)
     switch (uf->conf->orientation) {
         case 5: /* Rotate 270 */
             uf->conf->rotationAngle += 90;
+            // fall through
         case 3: /* Rotate 180 */
             uf->conf->rotationAngle += 90;
+            // fall through
         case 6: /* Rotate 90 */
             uf->conf->rotationAngle += 90;
             uf->conf->orientation = 0;
+            // fall through
         case 0: /* No flip */
             break;
         case 4: /* Flip over diagonal "\" */
             uf->conf->rotationAngle += 90;
+            // fall through
         case 2: /* Flip vertical */
             uf->conf->rotationAngle += 90;
+            // fall through
         case 7: /* Flip over diagonal "/" */
             uf->conf->rotationAngle += 90;
             uf->conf->orientation = 1;
+            // fall through
         case 1: /* Flip horizontal */
             break;
         default:
