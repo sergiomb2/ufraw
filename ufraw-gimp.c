@@ -438,6 +438,17 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
                           _("EXIF buffer length %d, too long, ignored."),
                           uf->outputExifBufLen);
         } else {
+#if HAVE_GIMP_2_9
+            GimpMetadata *metadata;
+            metadata = gimp_metadata_new();
+            if (gimp_metadata_set_from_exif(metadata,
+                                            uf->outputExifBuf,
+                                            uf->outputExifBufLen,
+                                            NULL)) {
+                gimp_image_set_metadata(uf->gimpImage, metadata);
+            }
+            g_object_unref(metadata);
+#else // !HAVE_GIMP_2_9
             GimpParasite *exif_parasite;
 
             exif_parasite = gimp_parasite_new("exif-data",
@@ -464,6 +475,7 @@ long ufraw_save_gimp_image(ufraw_data *uf, GtkWidget *widget)
                 }
             }
 #endif
+#endif // HAVE_GIMP_2_9
         }
     }
     /* Create "icc-profile" parasite from output profile
