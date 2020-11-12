@@ -4060,16 +4060,17 @@ static void control_button_event(GtkWidget *widget, long type)
                           (gpointer)response);
         if (!CFG->noExit)
             gtk_main_quit();
-    }
-    // Restore setting
-    CFG->shrink = shrinkSave;
-    CFG->size = sizeSave;
-    data->FreezeDialog = FALSE;
-    gtk_widget_set_sensitive(data->Controls, TRUE);
-    // cases that set error status require redrawing of the preview image
-    if (status != UFRAW_SUCCESS || CFG->noExit) {
-        ufraw_invalidate_layer(data->UF, ufraw_raw_phase);
-        render_preview(data);
+    } else {
+        // Restore setting
+        CFG->shrink = shrinkSave;
+        CFG->size = sizeSave;
+        data->FreezeDialog = FALSE;
+        gtk_widget_set_sensitive(data->Controls, TRUE);
+        // cases that set error status require redrawing of the preview image
+        if (status != UFRAW_SUCCESS || CFG->noExit) {
+            ufraw_invalidate_layer(data->UF, ufraw_raw_phase);
+            render_preview(data);
+        }
     }
 }
 
