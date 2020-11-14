@@ -91,7 +91,7 @@ AS_IF([test "x$with_gtk" != xno],
 
 have_gimp=no
 if test "$have_gtk" = "yes"; then
-  PKG_CHECK_MODULES(GTK, gtkimageview >= 1.6)
+  PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.10.0)
 
 # It is not clear if we should install the GIMP plugin
 # in the corresponding place in our prefix, or in GIMP's
