@@ -13,12 +13,12 @@
 #ifndef _UF_GLIB_H
 #define _UF_GLIB_H
 
+#include <glib.h>
+#include <glib/gstdio.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <glib.h>
-#include <glib/gstdio.h>
 
 // g_win32_locale_filename_from_utf8 is needed only on win32
 #ifdef _WIN32
