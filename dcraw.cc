@@ -1317,7 +1317,7 @@ void CLASS nikon_load_raw()
     split = get2();
   } else if (ver0 != 0x46 && csize <= 0x4001)
     read_shorts (curve, max=csize);
-  while (curve[max-2] == curve[max-1]) max--;
+  while (max > 2 && (curve[max-2] == curve[max-1])) max--;
   huff = make_decoder (nikon_tree[tree]);
   fseek (ifp, data_offset, SEEK_SET);
   getbits(-1);
