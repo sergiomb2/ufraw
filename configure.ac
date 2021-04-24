@@ -1,6 +1,6 @@
 dnl $Id: configure.ac,v 1.185 2015/06/20 02:30:15 nkbj Exp $
-AC_INIT(UFRaw, 0.23)
-AC_PREREQ(2.57)
+AC_INIT([UFRaw],[0.23])
+AC_PREREQ([2.69])
 
 # Create host_os, host_cpu, host_alias variables.
 AC_CANONICAL_HOST
@@ -276,11 +276,11 @@ CARBON_LIBS=
 if test $ufraw_darwin = yes; then
   carbon_ok=no
   AC_MSG_CHECKING([for Mac OS X Carbon support])
-  AC_TRY_CPP([
+  AC_PREPROC_IFELSE([AC_LANG_SOURCE([[
   #include <Carbon/Carbon.h>
   #include <ApplicationServices/ApplicationServices.h>
   #include <CoreServices/CoreServices.h>
-  ], carbon_ok=yes)
+  ]])],[carbon_ok=yes],[])
   AC_MSG_RESULT($carbon_ok)
   if test "x$carbon_ok" = "xyes"; then
     CARBON_LIBS="-framework Carbon -framework Cocoa"
