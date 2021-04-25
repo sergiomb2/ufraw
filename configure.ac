@@ -44,10 +44,10 @@ esac
 
 # Default CFLAGS, CXXFLAGS for GCC in case they were not set by the user.
 if test "$GCC" = "yes"; then
-  if test "$ac_test_CFLAGS" != "set"; then
+  if test -z $CFLAGS; then
     CFLAGS="-W -Wall -g -O3 -fomit-frame-pointer -D_FORTIFY_SOURCE=2 $UFRAW_MARCH"
   fi
-  if test "$ac_test_CXXFLAGS" != "set"; then
+  if test -z $CXXFLAGS; then
     CXXFLAGS="-W -Wall -g -O3 -fomit-frame-pointer -D_FORTIFY_SOURCE=2 $UFRAW_MARCH"
   fi
 fi
