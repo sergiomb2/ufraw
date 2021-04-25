@@ -7,7 +7,4 @@
 
 # We silently assume that Automake 1.5 (released 2001-08-23) or higher is used.
 
-aclocal
-autoconf
-autoheader
-automake --foreign --add-missing --copy
+autoreconf -i

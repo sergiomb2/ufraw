@@ -217,7 +217,8 @@ PKG_CHECK_MODULES(LENSFUN, lensfun >= 0.2.5,
 # Make sure MSGFMT_OPTS is defined for all combinations of autoconf and glib.
 MSGFMT_OPTS=
 ALL_LINGUAS="ca cs da de es fr it ja ko nb nl pl pt ru sr sr@latin sv zh_CN zh_TW"
-AM_GLIB_GNU_GETTEXT
+AM_GNU_GETTEXT_VERSION([0.21])
+AM_GNU_GETTEXT([external])
 LIBS="$LIBS $INTLLIBS"
 # The following might not work with some combinations of autoconf and glib due
 # to a missing update of the glib-gettext.m4 file.

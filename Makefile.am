@@ -133,3 +133,5 @@ ufraw-setup.bmp: ufraw-setup.jpg
 
 ufraw_icon.bmp: icons/ufraw.png
 	montage -geometry +0+0 $< $@
+
+ACLOCAL_AMFLAGS = -I m4
