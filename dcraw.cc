@@ -10978,7 +10978,7 @@ thumbnail:
       strcpy (ofname,_("standard output"));
     else {
       strcpy (ofname, ifname);
-      if ((cp = strrchr (ofname, '.'))) *cp = 0;
+      if ((cp = (char*)strrchr (ofname, '.'))) *cp = 0;
       if (multi_out)
 	sprintf (ofname+strlen(ofname), "_%0*d",
 		snprintf(0,0,"%d",is_raw-1), shot_select);
