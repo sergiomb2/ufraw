@@ -9327,9 +9327,9 @@ void CLASS identify()
   if (!strncasecmp(model,"PENTAX",6))
     strcpy (make, "Pentax");
   cp = make + strlen(make);		/* Remove trailing spaces */
-  while (*--cp == ' ') *cp = 0;
+  while (cp > make && *--cp == ' ') *cp = 0;
   cp = model + strlen(model);
-  while (*--cp == ' ') *cp = 0;
+  while (cp > model && *--cp == ' ') *cp = 0;
   i = strlen(make);			/* Remove make from model */
   if (!strncasecmp (model, make, i) && model[i++] == ' ')
     memmove (model, model+i, 64-i);
