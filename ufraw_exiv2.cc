@@ -18,7 +18,17 @@
 #include <exiv2/exiv2.hpp>
 #include <sstream>
 #include <cassert>
+#include <cinttypes>
 #include <iostream>
+#include <memory>
+
+#if EXIV2_TEST_VERSION(0,28,0)
+    typedef Exiv2::Error Exiv2Error;
+    typedef Exiv2::Image::UniquePtr ImagePtr;
+#else
+    typedef Exiv2::AnyError Exiv2Error;
+    typedef Exiv2::Image::AutoPtr ImagePtr;
+#endif
 
 /*
  * Helper function to copy a string to a buffer, converting it from
@@ -50,7 +60,7 @@ extern "C" int ufraw_exif_read_input(ufraw_data *uf)
         uf->inputExifBuf = NULL;
         uf->inputExifBufLen = 0;
 
-        Exiv2::Image::AutoPtr image;
+        ImagePtr image;
         if (uf->unzippedBuf != NULL) {
             image = Exiv2::ImageFactory::open(
                         (const Exiv2::byte*)uf->unzippedBuf, uf->unzippedBufLen);
@@ -66,11 +76,7 @@ extern "C" int ufraw_exif_read_input(ufraw_data *uf)
         if (exifData.empty()) {
             std::string error(uf->filename);
             error += ": No Exif data found in the file";
-#if EXIV2_TEST_VERSION(0,27,0)
-            throw Exiv2::Error(Exiv2::kerErrorMessage, error);
-#else
-            throw Exiv2::Error(1, error);
-#endif
+            throw Exiv2Error(Exiv2::ErrorCode::kerErrorMessage, error);
         }
 
         /* List of tag names taken from exiv2's printSummary() in actions.cpp */
@@ -135,7 +141,7 @@ extern "C" int ufraw_exif_read_input(ufraw_data *uf)
         ufraw_message(UFRAW_SET_LOG, "%s\n", stderror.str().c_str());
 
         return UFRAW_SUCCESS;
-    } catch (Exiv2::AnyError& e) {
+    } catch (Exiv2Error& e) {
         std::cerr.rdbuf(savecerr);
         std::string s(e.what());
         ufraw_message(UFRAW_SET_WARNING, "%s\n", s.c_str());
@@ -155,8 +161,8 @@ static Exiv2::ExifData ufraw_prepare_exifdata(ufraw_data *uf)
         /* Reset orientation tag since UFRaw already rotates the image */
         if ((pos = exifData.findKey(Exiv2::ExifKey("Exif.Image.Orientation")))
                 != exifData.end()) {
-            ufraw_message(UFRAW_SET_LOG, "Resetting %s from '%d' to '1'\n",
-                          pos->key().c_str(), pos->value().toLong());
+            ufraw_message(UFRAW_SET_LOG, "Resetting %s from '%" PRId64 "' to '1'\n",
+                          pos->key().c_str(), pos->value().toInt64());
             pos->setValue("1"); /* 1 = Normal orientation */
         }
     }
@@ -327,7 +333,7 @@ extern "C" int ufraw_exif_prepare_output(ufraw_data *uf)
         ufraw_message(UFRAW_SET_LOG, "%s\n", stderror.str().c_str());
 
         return UFRAW_SUCCESS;
-    } catch (Exiv2::AnyError& e) {
+    } catch (Exiv2Error& e) {
         std::cerr.rdbuf(savecerr);
         std::string s(e.what());
         ufraw_message(UFRAW_SET_WARNING, "%s\n", s.c_str());
@@ -347,7 +353,7 @@ extern "C" int ufraw_exif_write(ufraw_data *uf)
 
         char *filename =
             uf_win32_locale_filename_from_utf8(uf->conf->outputFilename);
-        Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(filename);
+        ImagePtr image = Exiv2::ImageFactory::open(filename);
         uf_win32_locale_filename_free(filename);
         assert(image.get() != 0);
 
@@ -367,7 +373,7 @@ extern "C" int ufraw_exif_write(ufraw_data *uf)
         ufraw_message(UFRAW_SET_LOG, "%s\n", stderror.str().c_str());
 
         return UFRAW_SUCCESS;
-    } catch (Exiv2::AnyError& e) {
+    } catch (Exiv2Error& e) {
         std::cerr.rdbuf(savecerr);
         std::string s(e.what());
         ufraw_message(UFRAW_SET_WARNING, "%s\n", s.c_str());
