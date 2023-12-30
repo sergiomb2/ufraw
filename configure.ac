@@ -202,7 +202,7 @@ AS_IF([test "x$with_cfitsio" != xno],
     [ have_cfitsio=no
       AC_MSG_RESULT($CFITSIO_PKG_ERRORS) ] ) ] )
 
-PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.20,
+PKG_CHECK_MODULES(EXIV2, exiv2 >= 0.27,
   [ have_exiv2=yes
     AC_DEFINE(HAVE_EXIV2, 1, have the exiv2 library) ],
   [ have_exiv2=no
