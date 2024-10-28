@@ -21,6 +21,8 @@
 #include "curveeditor_widget.h"
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
+#include <gtkimageview/gtkimagescrollwin.h>
+#include <gtkimageview/gtkimageview.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
